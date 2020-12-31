@@ -92,6 +92,9 @@ namespace Polycode.RetroPlayer.RetroPlayerLibrary.Players
 					// Find the author
 					Author = FindAuthor();
 
+					// Find the number of channels used
+					Channels = currentPlayer.GetModuleChannelCount();
+
 					// Find number of sub-songs
 					subSongs = currentPlayer.GetSubSongs();
 
@@ -150,6 +153,7 @@ namespace Polycode.RetroPlayer.RetroPlayerLibrary.Players
 					songLength = 0;
 					ModuleName = string.Empty;
 					Author = string.Empty;
+					Channels = 0;
 					TotalTime = new TimeSpan(0);
 					positionTimes = null;
 
@@ -264,6 +268,18 @@ namespace Polycode.RetroPlayer.RetroPlayerLibrary.Players
 		/// </summary>
 		/********************************************************************/
 		public string Author
+		{
+			get; private set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the number of channels the module use
+		/// </summary>
+		/********************************************************************/
+		public int Channels
 		{
 			get; private set;
 		}

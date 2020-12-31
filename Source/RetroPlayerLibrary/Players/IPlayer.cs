@@ -51,6 +51,11 @@ namespace Polycode.RetroPlayer.RetroPlayerLibrary.Players
 		string Author { get; }
 
 		/// <summary>
+		/// Return the number of channels the module use
+		/// </summary>
+		int Channels { get; }
+
+		/// <summary>
 		/// Return the total time of the current song
 		/// </summary>
 		TimeSpan TotalTime { get; }

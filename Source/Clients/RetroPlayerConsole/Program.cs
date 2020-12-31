@@ -102,14 +102,17 @@ namespace Polycode.RetroPlayer.RetroPlayerConsole
 
 						try
 						{
-							Console.WriteLine("Playing file: " + Path.GetFileName(fileName));
-							Console.WriteLine("Module format: " + player.ModuleFormat);
-							Console.WriteLine("Player name: " + player.PlayerName);
-							Console.WriteLine("Module size: " + player.ModuleSize);
+							Console.WriteLine("Playing module");
 							Console.WriteLine();
-							Console.WriteLine("Module name: " + (string.IsNullOrEmpty(player.ModuleName) ? "Unknown" : player.ModuleName));
+							Console.WriteLine("Module name/file name: " + (string.IsNullOrEmpty(player.ModuleName) ? Path.GetFileName(fileName) : player.ModuleName));
 							Console.WriteLine("Author: " + (string.IsNullOrEmpty(player.Author) ? "Unknown" : player.Author));
-							Console.WriteLine("Total time: " + player.TotalTime.ToString(@"mm\:ss"));
+							Console.WriteLine("Module format: " + player.ModuleFormat);
+							Console.WriteLine("Active player: " + player.PlayerName);
+							Console.WriteLine("Used channels: " + player.Channels);
+							Console.WriteLine("Total time: " + player.TotalTime.ToString(@"m\:ss"));
+							Console.WriteLine("Module size: " + player.ModuleSize);
+							Console.WriteLine("File name: " + fileName);
+							Console.WriteLine();
 
 							// Output extra information
 							foreach (string info in player.ModuleInformation)
