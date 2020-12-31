@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B9CEF7E4-C74C-4AF0-B01D-802F0D1B4CC7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Polycode.RetroPlayer.Agent.Output.CoreAudio</RootNamespace>
+    <AssemblyName>CoreAudio</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\CoreAudio.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>bin\CoreAudio.xml</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CoreAudio.cs" />
+    <Compile Include="CoreAudioWorker.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioCaptureClient.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioClient.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioClientBufferFlags.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioClientProperties.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioClientShareMode.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioClientStreamFlags.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioClientStreamOptions.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioClockClient.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioEndpointVolume.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioEndpointVolumeCallback.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioEndpointVolumeChannel.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioEndpointVolumeChannels.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioEndpointVolumeNotificationDelegate.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioEndpointVolumeStepInformation.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioEndpointVolumeVolumeRange.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioMeterInformation.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioMeterInformationChannels.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioRenderClient.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioSessionControl.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioSessionEventsCallback.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioSessionManager.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioSessionNotification.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioStreamCategory.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioStreamVolume.cs" />
+    <Compile Include="NAudio\CoreAudioApi\AudioVolumeNotificationData.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Connector.cs" />
+    <Compile Include="NAudio\CoreAudioApi\ConnectorType.cs" />
+    <Compile Include="NAudio\CoreAudioApi\DataFlow.cs" />
+    <Compile Include="NAudio\CoreAudioApi\DeviceState.cs" />
+    <Compile Include="NAudio\CoreAudioApi\DeviceTopology.cs" />
+    <Compile Include="NAudio\CoreAudioApi\EEndpointHardwareSupport.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\AudioVolumeNotificationDataStruct.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\Blob.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\ClsCtx.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\ErrorCodes.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IAudioCaptureClient.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IAudioClient.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IAudioClock2.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IAudioEndpointVolume.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IAudioEndpointVolumeCallback.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IAudioMeterInformation.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IAudioRenderClient.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IAudioSessionControl.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IAudioSessionEnumerator.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IAudioSessionEvents.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IAudioSessionEventsHandler.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IAudioSessionManager.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IAudioSessionNotification.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IAudioStreamVolume.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IConnector.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IDeviceTopology.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IMMDevice.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IMMDeviceCollection.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IMMDeviceEnumerator.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IMMEndpoint.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IMMNotificationClient.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IPart.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IPartsList.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\IPropertyStore.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\ISimpleAudioVolume.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\ISubunit.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\MMDeviceEnumeratorComObject.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Interfaces\StorageAccessMode.cs" />
+    <Compile Include="NAudio\CoreAudioApi\MMDevice.cs" />
+    <Compile Include="NAudio\CoreAudioApi\MMDeviceCollection.cs" />
+    <Compile Include="NAudio\CoreAudioApi\MMDeviceEnumerator.cs" />
+    <Compile Include="NAudio\CoreAudioApi\PropertyKey.cs" />
+    <Compile Include="NAudio\CoreAudioApi\PropertyKeys.cs" />
+    <Compile Include="NAudio\CoreAudioApi\PropertyStore.cs" />
+    <Compile Include="NAudio\CoreAudioApi\PropertyStoreProperty.cs" />
+    <Compile Include="NAudio\CoreAudioApi\PropVariant.cs" />
+    <Compile Include="NAudio\CoreAudioApi\PropVariantNative.cs" />
+    <Compile Include="NAudio\CoreAudioApi\Role.cs" />
+    <Compile Include="NAudio\CoreAudioApi\SessionCollection.cs" />
+    <Compile Include="NAudio\CoreAudioApi\SimpleAudioVolume.cs" />
+    <Compile Include="NAudio\Dmo\AudioMediaSubtypes.cs" />
+    <Compile Include="NAudio\Utils\HResult.cs" />
+    <Compile Include="NAudio\Utils\MarshalHelpers.cs" />
+    <Compile Include="NAudio\Wave\WaveFormats\AdpcmWaveFormat.cs" />
+    <Compile Include="NAudio\Wave\WaveFormats\Gsm610WaveFormat.cs" />
+    <Compile Include="NAudio\Wave\WaveFormats\WaveFormat.cs" />
+    <Compile Include="NAudio\Wave\WaveFormats\WaveFormatEncoding.cs" />
+    <Compile Include="NAudio\Wave\WaveFormats\WaveFormatExtensible.cs" />
+    <Compile Include="NAudio\Wave\WaveFormats\WaveFormatExtraData.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\RetroPlayerKit\RetroPlayerKit.csproj">
+      <Project>{391acd4a-55f4-4687-a38e-83f9bc42a870}</Project>
+      <Name>RetroPlayerKit</Name>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

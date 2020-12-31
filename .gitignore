@@ -1,0 +1,7 @@
+.vs
+bin
+obj
+Win32
+x64
+*.user
+*.aps
