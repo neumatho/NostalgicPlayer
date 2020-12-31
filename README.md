@@ -3,7 +3,7 @@ Modules are relatively small files which contains various sound samples and info
 
 RetroPlayer is a program that can play these modules. RetroPlayer is a Windows version of the APlayer started on the Amiga computer back in 1993, later continued on BeOS, and was a reaction to the lack of good module players for the Amiga.
 
-Please enjoy this program, and support the development by giving any feedback (bugreports and flattering comments ;)...
+Please enjoy this program, and support the development by giving any feedback (bug reports and flattering comments :-))
 
 # Formats supported
 
