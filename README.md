@@ -7,9 +7,9 @@ Please enjoy this program, and support the development by giving any feedback (b
 
 # Formats supported
 
-| Format | Agent/Player | File extension | Description |
-| ------ | ------------ | -------------- | ----------- |
-| JamCracker | JamCracker | .jam | It came from the Amiga, but it's not the most used format. There are some nice tunes available by Dr. Awesome (Bjørn Lynne). |
+| Format | File extension | Converter | Player | Description |
+| ------ | -------------- | --------- | ------ | ----------- |
+| JamCracker | .jam | | JamCracker | It came from the Amiga, but it's not the most used format. There are some nice tunes available by Dr. Awesome (BjÃ¸rn Lynne). |
 
 # Note
 This project has just started and so far, only a console player is available. I'm working on a GUI player at the moment.
