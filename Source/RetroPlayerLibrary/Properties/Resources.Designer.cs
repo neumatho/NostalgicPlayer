@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Polycode.RetroPlayer.Agent.Output.CoreAudio {
+namespace Polycode.RetroPlayer.RetroPlayerLibrary.Properties {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace Polycode.RetroPlayer.Agent.Output.CoreAudio {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resource {
+    internal class Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resource() {
+        internal Resources() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Polycode.RetroPlayer.Agent.Output.CoreAudio {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Polycode.RetroPlayer.Agent.Output.CoreAudio.Resource", typeof(Resource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Polycode.RetroPlayer.RetroPlayerLibrary.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,43 +61,61 @@ namespace Polycode.RetroPlayer.Agent.Output.CoreAudio {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Output agent which uses Core Audio.
-        ///Written by Thomas Neumann.
-        ///Based on some of the code from NAudio by Mark Heath.
-        ///
-        ///This agent plays the sound using the Windows Core Audio API.
+        ///   Looks up a localized string similar to A file error occurred on file ({0}) with error 0x{1}.
+        ///{2}..
         /// </summary>
-        internal static string IDS_DESCRIPTION {
+        internal static string IDS_ERR_FILE {
             get {
-                return ResourceManager.GetString("IDS_DESCRIPTION", resourceCulture);
+                return ResourceManager.GetString("IDS_ERR_FILE", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed with error 0x{0}:
+        ///   Looks up a localized string similar to Failed to load the file ({0}).
+        ///
+        ///Player {1} returned the following error:
+        ///{2}..
+        /// </summary>
+        internal static string IDS_ERR_LOAD_MODULE {
+            get {
+                return ResourceManager.GetString("IDS_ERR_LOAD_MODULE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to initialize the mixer with error 0x{0}.
         ///{1}..
         /// </summary>
-        internal static string IDS_ERR_INITIALIZE {
+        internal static string IDS_ERR_MIXER_INIT {
             get {
-                return ResourceManager.GetString("IDS_ERR_INITIALIZE", resourceCulture);
+                return ResourceManager.GetString("IDS_ERR_MIXER_INIT", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No endpoint device could be found.
+        ///   Looks up a localized string similar to Failed to initialize the player and mixer..
         /// </summary>
-        internal static string IDS_ERR_NO_OUTPUT_DEVICE_FOUND {
+        internal static string IDS_ERR_PLAYER_INIT {
             get {
-                return ResourceManager.GetString("IDS_ERR_NO_OUTPUT_DEVICE_FOUND", resourceCulture);
+                return ResourceManager.GetString("IDS_ERR_PLAYER_INIT", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CoreAudio.
+        ///   Looks up a localized string similar to A song number need to be set before start playing..
         /// </summary>
-        internal static string IDS_NAME {
+        internal static string IDS_ERR_SONG_NOT_SET {
             get {
-                return ResourceManager.GetString("IDS_NAME", resourceCulture);
+                return ResourceManager.GetString("IDS_ERR_SONG_NOT_SET", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown module format in file ({0})..
+        /// </summary>
+        internal static string IDS_ERR_UNKNOWN_MODULE {
+            get {
+                return ResourceManager.GetString("IDS_ERR_UNKNOWN_MODULE", resourceCulture);
             }
         }
     }

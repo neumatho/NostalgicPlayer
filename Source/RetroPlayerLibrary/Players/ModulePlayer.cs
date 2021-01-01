@@ -116,7 +116,7 @@ namespace Polycode.RetroPlayer.RetroPlayerLibrary.Players
 			}
 			catch (Exception)
 			{
-				errorMessage = Resource.IDS_ERR_PLAYER_INIT;
+				errorMessage = Properties.Resources.IDS_ERR_PLAYER_INIT;
 				initOk = false;
 			}
 
@@ -217,7 +217,7 @@ namespace Polycode.RetroPlayer.RetroPlayerLibrary.Players
 		public void StartPlaying()
 		{
 			if (!songNumber.HasValue)
-				throw new Exception(Resource.IDS_ERR_SONG_NOT_SET);
+				throw new Exception(Properties.Resources.IDS_ERR_SONG_NOT_SET);
 
 			soundStream.Start();
 

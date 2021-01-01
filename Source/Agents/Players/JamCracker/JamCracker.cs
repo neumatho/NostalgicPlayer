@@ -25,7 +25,7 @@ namespace Polycode.RetroPlayer.Agent.Player.JamCracker
 		{
 			get
 			{
-				return Resource.IDS_NAME;
+				return Properties.Resources.IDS_NAME;
 			}
 		}
 
@@ -40,7 +40,7 @@ namespace Polycode.RetroPlayer.Agent.Player.JamCracker
 		{
 			get
 			{
-				return Resource.IDS_DESCRIPTION;
+				return Properties.Resources.IDS_DESCRIPTION;
 			}
 		}
 

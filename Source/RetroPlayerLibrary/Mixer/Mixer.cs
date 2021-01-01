@@ -97,7 +97,7 @@ namespace Polycode.RetroPlayer.RetroPlayerLibrary.Mixer
 			{
 				CleanupMixer();
 
-				errorMessage = string.Format(Resource.IDS_ERR_MIXER_INIT, ex.HResult, ex.Message);
+				errorMessage = string.Format(Properties.Resources.IDS_ERR_MIXER_INIT, ex.HResult, ex.Message);
 				retVal = false;
 			}
 

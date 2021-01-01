@@ -259,7 +259,7 @@ namespace Polycode.RetroPlayer.Agent.Player.JamCracker
 
 				if (stream.EndOfStream)
 				{
-					errorMessage = Resource.IDS_JAM_ERR_LOADING_HEADER;
+					errorMessage = Properties.Resources.IDS_JAM_ERR_LOADING_HEADER;
 					throw new StopException();
 				}
 
@@ -289,7 +289,7 @@ namespace Polycode.RetroPlayer.Agent.Player.JamCracker
 
 					if (stream.EndOfStream)
 					{
-						errorMessage = Resource.IDS_JAM_ERR_LOADING_PATTERNS;
+						errorMessage = Properties.Resources.IDS_JAM_ERR_LOADING_PATTERNS;
 						throw new StopException();
 					}
 				}
@@ -307,7 +307,7 @@ namespace Polycode.RetroPlayer.Agent.Player.JamCracker
 
 						if (stream.EndOfStream && (i != samplesNum - 1))
 						{
-							errorMessage = Resource.IDS_JAM_ERR_LOADING_SAMPLES;
+							errorMessage = Properties.Resources.IDS_JAM_ERR_LOADING_SAMPLES;
 							throw new StopException();
 						}
 					}
@@ -525,7 +525,7 @@ namespace Polycode.RetroPlayer.Agent.Player.JamCracker
 				// Song length
 				case 0:
 				{
-					description = Resource.IDS_JAM_INFODESCLINE0;
+					description = Properties.Resources.IDS_JAM_INFODESCLINE0;
 					value = songLen.ToString();
 					break;
 				}
@@ -533,7 +533,7 @@ namespace Polycode.RetroPlayer.Agent.Player.JamCracker
 				// Used patterns
 				case 1:
 				{
-					description = Resource.IDS_JAM_INFODESCLINE1;
+					description = Properties.Resources.IDS_JAM_INFODESCLINE1;
 					value = patternNum.ToString();
 					break;
 				}
@@ -541,7 +541,7 @@ namespace Polycode.RetroPlayer.Agent.Player.JamCracker
 				// Used instruments
 				case 2:
 				{
-					description = Resource.IDS_JAM_INFODESCLINE2;
+					description = Properties.Resources.IDS_JAM_INFODESCLINE2;
 					value = samplesNum.ToString();
 					break;
 				}
