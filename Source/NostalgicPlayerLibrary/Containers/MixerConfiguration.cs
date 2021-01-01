@@ -6,56 +6,33 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
-
-namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
+namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Containers
 {
 	/// <summary>
-	/// NostalgicPlayer agent interface implementation
+	/// Different configuration settings for the mixer
 	/// </summary>
-	public class CoreAudio : AgentBase
+	public class MixerConfiguration
 	{
-		#region IAgent implementation
 		/********************************************************************/
 		/// <summary>
-		/// Returns the name of this agent
+		/// Indicate if Amiga filter should be emulated
 		/// </summary>
 		/********************************************************************/
-		public override string Name
+		public bool EnableAmigaFilter
 		{
-			get
-			{
-				return Properties.Resources.IDS_NAME;
-			}
-		}
+			get; set;
+		} = false;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns a description of this agent
+		/// The stereo separation in percent
 		/// </summary>
 		/********************************************************************/
-		public override string Description
+		public int StereoSeparator
 		{
-			get
-			{
-				return Properties.Resources.IDS_DESCRIPTION;
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Creates a new worker instance
-		/// </summary>
-		/********************************************************************/
-		public override IAgentWorker CreateInstance()
-		{
-			return new CoreAudioWorker();
-		}
-		#endregion
+			get; set;
+		} = 100;
 	}
 }

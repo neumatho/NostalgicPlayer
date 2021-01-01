@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("JamCracker")]
-[assembly: AssemblyDescription("Plays modules of type JamCracker")]
+[assembly: AssemblyTitle("NostalgicPlayerHandler")]
+[assembly: AssemblyDescription("The main player library")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Polycode")]
 [assembly: AssemblyProduct("NostalgicPlayer")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("490bca2e-89e9-44da-ac33-4bf09609346d")]
+[assembly: Guid("2ddb43c4-b9b1-448d-8beb-8b147115d00e")]
 
 // Version information for an assembly consists of the following four values:
 //

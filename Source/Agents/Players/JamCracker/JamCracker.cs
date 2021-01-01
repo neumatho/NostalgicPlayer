@@ -1,17 +1,18 @@
 ﻿/******************************************************************************/
 /* This source, or parts thereof, may be used in any software as long the     */
-/* license of RetroPlayer is keep. See the LICENSE file for more information. */
+/* license of NostalgicPlayer is keep. See the LICENSE file for more          */
+/* information.                                                               */
 /*                                                                            */
-/* Copyright (C) 2021 by Polycode / RetroPlayer team.                         */
+/* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.RetroPlayer.RetroPlayerKit.Bases;
-using Polycode.RetroPlayer.RetroPlayerKit.Interfaces;
+using Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases;
+using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
 
-namespace Polycode.RetroPlayer.Agent.Player.JamCracker
+namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 {
 	/// <summary>
-	/// RetroPlayer agent interface implementation
+	/// NostalgicPlayer agent interface implementation
 	/// </summary>
 	public class JamCracker : AgentBase
 	{

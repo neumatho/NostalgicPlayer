@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Output sound to a device via the Windows Core Audio API")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Polycode")]
-[assembly: AssemblyProduct("RetroPlayer")]
+[assembly: AssemblyProduct("NostalgicPlayer")]
 [assembly: AssemblyCopyright("Copyright © 2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

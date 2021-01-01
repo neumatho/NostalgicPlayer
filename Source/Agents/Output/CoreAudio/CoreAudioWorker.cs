@@ -1,8 +1,9 @@
 ﻿/******************************************************************************/
 /* This source, or parts thereof, may be used in any software as long the     */
-/* license of RetroPlayer is keep. See the LICENSE file for more information. */
+/* license of NostalgicPlayer is keep. See the LICENSE file for more          */
+/* information.                                                               */
 /*                                                                            */
-/* Copyright (C) 2021 by Polycode / RetroPlayer team.                         */
+/* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
@@ -11,11 +12,11 @@ using System.Threading;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using NAudio.Wave;
-using Polycode.RetroPlayer.RetroPlayerKit.Containers;
-using Polycode.RetroPlayer.RetroPlayerKit.Interfaces;
-using Polycode.RetroPlayer.RetroPlayerKit.Streams;
+using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;
+using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
+using Polycode.NostalgicPlayer.NostalgicPlayerKit.Streams;
 
-namespace Polycode.RetroPlayer.Agent.Output.CoreAudio
+namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 {
 	/// <summary>
 	/// Main worker class

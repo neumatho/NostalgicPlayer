@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Polycode.RetroPlayer.Agent.Output.CoreAudio.Properties {
+namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Polycode.RetroPlayer.Agent.Output.CoreAudio.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Polycode.RetroPlayer.Agent.Output.CoreAudio.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Polycode.NostalgicPlayer.Agent.Output.CoreAudio.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

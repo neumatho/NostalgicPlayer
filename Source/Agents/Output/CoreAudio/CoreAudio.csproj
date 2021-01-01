@@ -7,7 +7,7 @@
     <ProjectGuid>{B9CEF7E4-C74C-4AF0-B01D-802F0D1B4CC7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Polycode.RetroPlayer.Agent.Output.CoreAudio</RootNamespace>
+    <RootNamespace>Polycode.NostalgicPlayer.Agent.Output.CoreAudio</RootNamespace>
     <AssemblyName>CoreAudio</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -133,17 +133,16 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\RetroPlayerKit\RetroPlayerKit.csproj">
-      <Project>{391acd4a-55f4-4687-a38e-83f9bc42a870}</Project>
-      <Name>RetroPlayerKit</Name>
-      <Private>True</Private>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj">
+      <Project>{391acd4a-55f4-4687-a38e-83f9bc42a870}</Project>
+      <Name>NostalgicPlayerKit</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

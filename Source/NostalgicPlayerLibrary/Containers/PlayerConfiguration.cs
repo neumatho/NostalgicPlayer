@@ -6,56 +6,62 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases;
 using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
+using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players;
 
-namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
+namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Containers
 {
 	/// <summary>
-	/// NostalgicPlayer agent interface implementation
+	/// Different configuration settings for the player
 	/// </summary>
-	public class CoreAudio : AgentBase
+	public class PlayerConfiguration
 	{
-		#region IAgent implementation
 		/********************************************************************/
 		/// <summary>
-		/// Returns the name of this agent
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public override string Name
+		public PlayerConfiguration(IOutputAgent outputAgent, Loader loader, MixerConfiguration mixerConfiguration)
 		{
-			get
-			{
-				return Properties.Resources.IDS_NAME;
-			}
+			OutputAgent = outputAgent;
+			Loader = loader;
+			MixerConfiguration = mixerConfiguration;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns a description of this agent
+		/// Holds the output agent to use
 		/// </summary>
 		/********************************************************************/
-		public override string Description
+		public IOutputAgent OutputAgent
 		{
-			get
-			{
-				return Properties.Resources.IDS_DESCRIPTION;
-			}
+			get;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Creates a new worker instance
+		/// Holds the loader object that has loaded the module
 		/// </summary>
 		/********************************************************************/
-		public override IAgentWorker CreateInstance()
+		public Loader Loader
 		{
-			return new CoreAudioWorker();
+			get;
 		}
-		#endregion
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the mixer configuration
+		/// </summary>
+		/********************************************************************/
+		public MixerConfiguration MixerConfiguration
+		{
+			get;
+		}
 	}
 }

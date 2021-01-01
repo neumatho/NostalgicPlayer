@@ -6,56 +6,46 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
-
-namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
+namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers
 {
 	/// <summary>
-	/// NostalgicPlayer agent interface implementation
+	/// This class holds the information about sub-songs
 	/// </summary>
-	public class CoreAudio : AgentBase
+	public class SubSongInfo
 	{
-		#region IAgent implementation
 		/********************************************************************/
 		/// <summary>
-		/// Returns the name of this agent
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public override string Name
+		public SubSongInfo(int number, int defaultStartSong)
 		{
-			get
-			{
-				return Properties.Resources.IDS_NAME;
-			}
+			Number = number;
+			DefaultStartSong = defaultStartSong;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns a description of this agent
+		/// Holds the number of sub-songs
 		/// </summary>
 		/********************************************************************/
-		public override string Description
+		public int Number
 		{
-			get
-			{
-				return Properties.Resources.IDS_DESCRIPTION;
-			}
+			get;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Creates a new worker instance
+		/// Holds the default song number to start playing
 		/// </summary>
 		/********************************************************************/
-		public override IAgentWorker CreateInstance()
+		public int DefaultStartSong
 		{
-			return new CoreAudioWorker();
+			get;
 		}
-		#endregion
 	}
 }

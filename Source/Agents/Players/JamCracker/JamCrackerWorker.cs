@@ -1,20 +1,21 @@
 ﻿/******************************************************************************/
 /* This source, or parts thereof, may be used in any software as long the     */
-/* license of RetroPlayer is keep. See the LICENSE file for more information. */
+/* license of NostalgicPlayer is keep. See the LICENSE file for more          */
+/* information.                                                               */
 /*                                                                            */
-/* Copyright (C) 2021 by Polycode / RetroPlayer team.                         */
+/* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
 using System.IO;
 using System.Linq;
-using Polycode.RetroPlayer.RetroPlayerKit.Bases;
-using Polycode.RetroPlayer.RetroPlayerKit.Containers;
-using Polycode.RetroPlayer.RetroPlayerKit.Exceptions;
-using Polycode.RetroPlayer.RetroPlayerKit.Mixer;
-using Polycode.RetroPlayer.RetroPlayerKit.Streams;
+using Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases;
+using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;
+using Polycode.NostalgicPlayer.NostalgicPlayerKit.Exceptions;
+using Polycode.NostalgicPlayer.NostalgicPlayerKit.Mixer;
+using Polycode.NostalgicPlayer.NostalgicPlayerKit.Streams;
 
-namespace Polycode.RetroPlayer.Agent.Player.JamCracker
+namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 {
 	/// <summary>
 	/// Main worker class

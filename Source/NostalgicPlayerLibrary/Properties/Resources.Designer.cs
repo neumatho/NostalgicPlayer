@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker.Properties {
+namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Polycode.NostalgicPlayer.Agent.Player.JamCracker.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,77 +61,61 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to JamCracker Original player by M. Gemmel.
-        ///Converted to C# by Thomas Neumann.
+        ///   Looks up a localized string similar to A file error occurred on file ({0}) with error 0x{1}.
+        ///{2}..
+        /// </summary>
+        internal static string IDS_ERR_FILE {
+            get {
+                return ResourceManager.GetString("IDS_ERR_FILE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to load the file ({0}).
         ///
-        ///The player came from the Amiga, but it&apos;s not the most used format. There are some nice tunes available by Dr. Awesome (Bjørn Lynne)..
+        ///Player {1} returned the following error:
+        ///{2}..
         /// </summary>
-        internal static string IDS_DESCRIPTION {
+        internal static string IDS_ERR_LOAD_MODULE {
             get {
-                return ResourceManager.GetString("IDS_DESCRIPTION", resourceCulture);
+                return ResourceManager.GetString("IDS_ERR_LOAD_MODULE", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Can&apos;t read the module header.
+        ///   Looks up a localized string similar to Failed to initialize the mixer with error 0x{0}.
+        ///{1}..
         /// </summary>
-        internal static string IDS_JAM_ERR_LOADING_HEADER {
+        internal static string IDS_ERR_MIXER_INIT {
             get {
-                return ResourceManager.GetString("IDS_JAM_ERR_LOADING_HEADER", resourceCulture);
+                return ResourceManager.GetString("IDS_ERR_MIXER_INIT", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Can&apos;t read the module patterns.
+        ///   Looks up a localized string similar to Failed to initialize the player and mixer..
         /// </summary>
-        internal static string IDS_JAM_ERR_LOADING_PATTERNS {
+        internal static string IDS_ERR_PLAYER_INIT {
             get {
-                return ResourceManager.GetString("IDS_JAM_ERR_LOADING_PATTERNS", resourceCulture);
+                return ResourceManager.GetString("IDS_ERR_PLAYER_INIT", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Can&apos;t read the module samples.
+        ///   Looks up a localized string similar to A song number need to be set before start playing..
         /// </summary>
-        internal static string IDS_JAM_ERR_LOADING_SAMPLES {
+        internal static string IDS_ERR_SONG_NOT_SET {
             get {
-                return ResourceManager.GetString("IDS_JAM_ERR_LOADING_SAMPLES", resourceCulture);
+                return ResourceManager.GetString("IDS_ERR_SONG_NOT_SET", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Song length.
+        ///   Looks up a localized string similar to Unknown module format in file ({0})..
         /// </summary>
-        internal static string IDS_JAM_INFODESCLINE0 {
+        internal static string IDS_ERR_UNKNOWN_MODULE {
             get {
-                return ResourceManager.GetString("IDS_JAM_INFODESCLINE0", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Used patterns.
-        /// </summary>
-        internal static string IDS_JAM_INFODESCLINE1 {
-            get {
-                return ResourceManager.GetString("IDS_JAM_INFODESCLINE1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Used instruments.
-        /// </summary>
-        internal static string IDS_JAM_INFODESCLINE2 {
-            get {
-                return ResourceManager.GetString("IDS_JAM_INFODESCLINE2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to JamCracker.
-        /// </summary>
-        internal static string IDS_NAME {
-            get {
-                return ResourceManager.GetString("IDS_NAME", resourceCulture);
+                return ResourceManager.GetString("IDS_ERR_UNKNOWN_MODULE", resourceCulture);
             }
         }
     }

@@ -6,56 +6,48 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
+using Polycode.NostalgicPlayer.NostalgicPlayerKit.Streams;
 
-namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
+namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers
 {
 	/// <summary>
-	/// NostalgicPlayer agent interface implementation
+	/// This class holds the information about the current file
 	/// </summary>
-	public class CoreAudio : AgentBase
+	public class PlayerFileInfo
 	{
-		#region IAgent implementation
 		/********************************************************************/
 		/// <summary>
-		/// Returns the name of this agent
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public override string Name
+		public PlayerFileInfo(string fileName, ModuleStream moduleStream)
 		{
-			get
-			{
-				return Properties.Resources.IDS_NAME;
-			}
+			FileName = fileName;
+			ModuleStream = moduleStream;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns a description of this agent
+		/// Holds the full path to the file
 		/// </summary>
 		/********************************************************************/
-		public override string Description
+		public string FileName
 		{
-			get
-			{
-				return Properties.Resources.IDS_DESCRIPTION;
-			}
+			get;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Creates a new worker instance
+		/// Holds the stream with the file data
 		/// </summary>
 		/********************************************************************/
-		public override IAgentWorker CreateInstance()
+		public ModuleStream ModuleStream
 		{
-			return new CoreAudioWorker();
+			get;
 		}
-		#endregion
 	}
 }

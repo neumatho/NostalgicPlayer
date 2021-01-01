@@ -6,56 +6,74 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
-
-namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
+namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers
 {
 	/// <summary>
-	/// NostalgicPlayer agent interface implementation
+	/// This class holds information about how the output should
+	/// be given to the output agent
 	/// </summary>
-	public class CoreAudio : AgentBase
+	public class OutputInfo
 	{
-		#region IAgent implementation
 		/********************************************************************/
 		/// <summary>
-		/// Returns the name of this agent
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public override string Name
+		public OutputInfo(int channels, int frequency, int bufferSizeInSamples, int bytesPerSample)
 		{
-			get
-			{
-				return Properties.Resources.IDS_NAME;
-			}
+			Channels = channels;
+			Frequency = frequency;
+			BufferSizeInSamples = bufferSizeInSamples;
+			BytesPerSample = bytesPerSample;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns a description of this agent
+		/// Holds the number of channels. This can either be 1 for mono or
+		/// 2 for stereo
 		/// </summary>
 		/********************************************************************/
-		public override string Description
+		public int Channels
 		{
-			get
-			{
-				return Properties.Resources.IDS_DESCRIPTION;
-			}
+			get;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Creates a new worker instance
+		/// Holds the output frequency
 		/// </summary>
 		/********************************************************************/
-		public override IAgentWorker CreateInstance()
+		public int Frequency
 		{
-			return new CoreAudioWorker();
+			get;
 		}
-		#endregion
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the average buffer size in samples
+		/// </summary>
+		/********************************************************************/
+		public int BufferSizeInSamples
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the number of bytes each sample is using
+		/// </summary>
+		/********************************************************************/
+		public int BytesPerSample
+		{
+			get;
+		}
 	}
 }

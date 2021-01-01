@@ -6,28 +6,56 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases;
+using System;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
+namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases
 {
 	/// <summary>
-	/// NostalgicPlayer agent interface implementation
+	/// Base class that have some default implementations that can be used
 	/// </summary>
-	public class CoreAudio : AgentBase
+	public abstract class AgentBase : IAgent
 	{
-		#region IAgent implementation
+		/********************************************************************/
+		/// <summary>
+		/// Returns an unique ID for this agent
+		/// </summary>
+		/********************************************************************/
+		public virtual Guid Id
+		{
+			get
+			{
+				return new Guid(Assembly.GetAssembly(GetType()).GetCustomAttribute<GuidAttribute>().Value);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the version of this agent
+		/// </summary>
+		/********************************************************************/
+		public virtual Version Version
+		{
+			get
+			{
+				return Assembly.GetAssembly(GetType()).GetName().Version;
+			}
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Returns the name of this agent
 		/// </summary>
 		/********************************************************************/
-		public override string Name
+		public abstract string Name
 		{
-			get
-			{
-				return Properties.Resources.IDS_NAME;
-			}
+			get;
 		}
 
 
@@ -37,12 +65,9 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/// Returns a description of this agent
 		/// </summary>
 		/********************************************************************/
-		public override string Description
+		public abstract string Description
 		{
-			get
-			{
-				return Properties.Resources.IDS_DESCRIPTION;
-			}
+			get;
 		}
 
 
@@ -52,10 +77,6 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/// Creates a new worker instance
 		/// </summary>
 		/********************************************************************/
-		public override IAgentWorker CreateInstance()
-		{
-			return new CoreAudioWorker();
-		}
-		#endregion
+		public abstract IAgentWorker CreateInstance();
 	}
 }
