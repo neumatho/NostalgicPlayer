@@ -65,7 +65,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Mixer
 			currentPlayer = (IModulePlayerAgent)playerConfiguration.Loader.AgentPlayer;
 
 			// Get player information
-			moduleChannelNumber = currentPlayer.GetVirtualChannelCount();
+			moduleChannelNumber = currentPlayer.VirtualChannelCount;
 
 			// Initialize other member variables
 			filterPrevLeft = 0;
@@ -73,8 +73,6 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Mixer
 
 			// Set flag for different mixer modes
 			mixerMode = MixerMode.None;
-
-			emulateFilter = playerConfiguration.MixerConfiguration.EnableAmigaFilter;
 
 			try
 			{
@@ -92,7 +90,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Mixer
 				currentPlayer.Channels = channels;
 
 				// Initialize the mixers
-				SetStereoSeparation(playerConfiguration.MixerConfiguration.StereoSeparator);
+				ChangeConfiguration(playerConfiguration.MixerConfiguration);
 			}
 			catch (Exception ex)
 			{
@@ -187,12 +185,13 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Mixer
 
 		/********************************************************************/
 		/// <summary>
-		/// Sets a new stereo separation value in percent
+		/// Will change the mixer configuration
 		/// </summary>
 		/********************************************************************/
-		public void SetStereoSeparation(int separation)
+		public void ChangeConfiguration(MixerConfiguration mixerConfiguration)
 		{
-			currentMixer.SetStereoSeparation(separation);
+			emulateFilter = mixerConfiguration.EnableAmigaFilter;
+			currentMixer?.SetStereoSeparation(mixerConfiguration.StereoSeparator);
 		}
 
 

@@ -132,9 +132,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] GetFileExtensions()
+		public override string[] FileExtensions
 		{
-			return new [] { "jam" };
+			get
+			{
+				return new [] { "jam" };
+			}
 		}
 
 
@@ -189,9 +192,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/// Will load the file into memory
 		/// </summary>
 		/********************************************************************/
-		public override ModulePlayerSupportFlag GetSupportFlags()
+		public override ModulePlayerSupportFlag SupportFlags
 		{
-			return ModulePlayerSupportFlag.SetPosition;
+			get
+			{
+				return ModulePlayerSupportFlag.SetPosition;
+			}
 		}
 
 
@@ -459,9 +465,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/// Return the length of the current song
 		/// </summary>
 		/********************************************************************/
-		public override int GetSongLength()
+		public override int SongLength
 		{
-			return songLen;
+			get
+			{
+				return songLen;
+			}
 		}
 
 

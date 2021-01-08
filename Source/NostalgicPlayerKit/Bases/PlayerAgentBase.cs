@@ -21,7 +21,10 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public abstract string[] GetFileExtensions();
+		public abstract string[] FileExtensions
+		{
+			get;
+		}
 
 
 
@@ -39,9 +42,12 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases
 		/// Return the name of the module
 		/// </summary>
 		/********************************************************************/
-		public virtual string GetModuleName()
+		public virtual string ModuleName
 		{
-			return string.Empty;
+			get
+			{
+				return string.Empty;
+			}
 		}
 
 
@@ -51,9 +57,12 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases
 		/// Return the name of the author
 		/// </summary>
 		/********************************************************************/
-		public virtual string GetAuthor()
+		public virtual string Author
 		{
-			return string.Empty;
+			get
+			{
+				return string.Empty;
+			}
 		}
 
 

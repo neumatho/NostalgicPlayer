@@ -18,20 +18,12 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 	/// <summary>
 	/// Main class to play modules
 	/// </summary>
-	internal class ModulePlayer : IPlayer
+	internal class ModulePlayer : IModulePlayer
 	{
 		private IModulePlayerAgent currentPlayer;
 
 		private IOutputAgent outputAgent;
 		private MixerStream soundStream;
-
-		private SubSongInfo subSongs;
-		private int? songNumber;
-		private int songLength;
-
-		private TimeSpan[] positionTimes;
-
-		private List<string> moduleInfo;
 
 		/********************************************************************/
 		/// <summary>
@@ -41,10 +33,8 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 		public ModulePlayer()
 		{
 			// Initialize member variables
-			songNumber = null;
-			songLength = 0;
-			ModuleSize = 0;
-			moduleInfo = new List<string>();
+			StaticModuleInformation = new ModuleInfoStatic();
+			PlayingModuleInformation = new ModuleInfoFloating();
 
 			currentPlayer = null;
 		}
@@ -69,51 +59,29 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 				// Remember the player
 				currentPlayer = (IModulePlayerAgent)loader.AgentPlayer;
 
-				// Remember the module length
-				ModuleSize = loader.ModuleSize;
-
-				// Initialize other stuff
-				ModuleFormat = loader.ModuleFormat;
-				PlayerName = loader.PlayerName;
-
-				// Initialize the player
-				initOk = currentPlayer.InitPlayer();
-
-				if (initOk)
+				lock (currentPlayer)
 				{
-					// Add all extra files loaded file size to the module length
-					ModuleSize += currentPlayer.GetExtraFilesSizes();
+					// Initialize the player
+					initOk = currentPlayer.InitPlayer();
 
-					// Fill out the sample list
-					GetSamples();
+					if (initOk)
+					{
+						// Initialize module information
+						StaticModuleInformation = new ModuleInfoStatic(currentPlayer.ModuleName.Trim(), FindAuthor(), loader.ModuleFormat, loader.PlayerName, currentPlayer.ModuleChannelCount, loader.ModuleSize + currentPlayer.ExtraFilesSizes, currentPlayer.SupportFlags, currentPlayer.SubSongs.Number);
 
-					// Find the name of the module
-					ModuleName = currentPlayer.GetModuleName().Trim();
+						// Fill out the sample list
+						GetSamples();
 
-					// Find the author
-					Author = FindAuthor();
+						// Initialize the mixer
+						soundStream = new MixerStream();
+						initOk = soundStream.Initialize(playerConfiguration, out errorMessage);
 
-					// Find the number of channels used
-					Channels = currentPlayer.GetModuleChannelCount();
-
-					// Find number of sub-songs
-					subSongs = currentPlayer.GetSubSongs();
-
-					// Reset the song length
-					songLength = 0;
-
-					// Get the position times for the default song
-					TotalTime = currentPlayer.GetPositionTimeTable(subSongs.DefaultStartSong, out positionTimes);
-
-					// Initialize the mixer
-					soundStream = new MixerStream();
-					initOk = soundStream.Initialize(playerConfiguration, out errorMessage);
-
-					if (!initOk)
+						if (!initOk)
+							CleanupPlayer();
+					}
+					else
 						CleanupPlayer();
 				}
-				else
-					CleanupPlayer();
 			}
 			catch (Exception)
 			{
@@ -150,18 +118,8 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 					currentPlayer = null;
 
 					// Clear player information
-					songNumber = null;
-					songLength = 0;
-					ModuleName = string.Empty;
-					Author = string.Empty;
-					Channels = 0;
-					TotalTime = new TimeSpan(0);
-					positionTimes = null;
-
-					ModuleFormat = string.Empty;
-					PlayerName = string.Empty;
-					ModuleSize = 0;
-					moduleInfo.Clear();
+					StaticModuleInformation = new ModuleInfoStatic();
+					PlayingModuleInformation = new ModuleInfoFloating();
 				}
 			}
 			catch (Exception)
@@ -175,50 +133,13 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 
 		/********************************************************************/
 		/// <summary>
-		/// Will select the song you want to play
-		/// </summary>
-		/********************************************************************/
-		public void SelectSong(int song)
-		{
-			// Remember the song number
-			songNumber = song == -1 ? subSongs.DefaultStartSong : song;
-
-			lock (currentPlayer)
-			{
-				// Initialize the player with the new song
-				currentPlayer.InitSound(songNumber.Value);
-
-				// Find the length of the song
-				songLength = currentPlayer.GetSongLength();
-
-				// Get the position times for the current song
-				TotalTime = currentPlayer.GetPositionTimeTable(subSongs.DefaultStartSong, out positionTimes);
-
-				// Get module information
-				moduleInfo.Clear();
-				for (int i = 0; currentPlayer.GetInformationString(i, out string description, out string value); i++)
-				{
-					// Make sure we don't have any invalid characters
-					description = description.Replace("\t", " ").Replace("\n", " ").Replace("\r", string.Empty);
-					value = value.Replace("\t", " ").Replace("\n", " ").Replace("\r", string.Empty);
-
-					// Build the information in the list
-					moduleInfo.Add($"{description}\t{value}");
-				}
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Will start playing the music
 		/// </summary>
 		/********************************************************************/
-		public void StartPlaying()
+		public void StartPlaying(MixerConfiguration newMixerConfiguration)
 		{
-			if (!songNumber.HasValue)
-				throw new Exception(Properties.Resources.IDS_ERR_SONG_NOT_SET);
+			if (newMixerConfiguration != null)
+				soundStream.ChangeConfiguration(newMixerConfiguration);
 
 			soundStream.Start();
 
@@ -253,10 +174,10 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns the name of the module
+		/// Return all the static information about the module
 		/// </summary>
 		/********************************************************************/
-		public string ModuleName
+		public ModuleInfoStatic StaticModuleInformation
 		{
 			get; private set;
 		}
@@ -265,86 +186,58 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns the name of the author
+		/// Return all the information about the module which changes while
+		/// playing
 		/// </summary>
 		/********************************************************************/
-		public string Author
+		public ModuleInfoFloating PlayingModuleInformation
 		{
 			get; private set;
 		}
+		#endregion
 
-
-
+		#region IModulePlayer implementation
 		/********************************************************************/
 		/// <summary>
-		/// Return the number of channels the module use
+		/// Will select the song you want to play
 		/// </summary>
 		/********************************************************************/
-		public int Channels
+		public void SelectSong(int songNumber)
 		{
-			get; private set;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the total time of the current song
-		/// </summary>
-		/********************************************************************/
-		public TimeSpan TotalTime
-		{
-			get; private set;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the format of the module
-		/// </summary>
-		/********************************************************************/
-		public string ModuleFormat
-		{
-			get; private set;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the player
-		/// </summary>
-		/********************************************************************/
-		public string PlayerName
-		{
-			get; private set;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the size of the module
-		/// </summary>
-		/********************************************************************/
-		public long ModuleSize
-		{
-			get; private set;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the module information list of the current song
-		/// </summary>
-		/********************************************************************/
-		public string[] ModuleInformation
-		{
-			get
+			if (currentPlayer != null)
 			{
-				return moduleInfo.ToArray();
+				lock (currentPlayer)
+				{
+					// Get sub-song information
+					SubSongInfo subSongs = currentPlayer.SubSongs;
+
+					// Find the right song number
+					int songNum = songNumber == -1 ? subSongs.DefaultStartSong : songNumber;
+
+					// Initialize the player with the new song
+					currentPlayer.InitSound(songNum);
+
+					// Find the length of the song
+					int songLength = currentPlayer.SongLength;
+
+					// Get the position times for the current song
+					TimeSpan totalTime = currentPlayer.GetPositionTimeTable(subSongs.DefaultStartSong, out TimeSpan[] positionTimes);
+
+					// Get module information
+					List<string> moduleInfo = new List<string>();
+					for (int i = 0; currentPlayer.GetInformationString(i, out string description, out string value); i++)
+					{
+						// Make sure we don't have any invalid characters
+						description = description.Replace("\t", " ").Replace("\n", " ").Replace("\r", string.Empty);
+						value = value.Replace("\t", " ").Replace("\n", " ").Replace("\r", string.Empty);
+
+						// Build the information in the list
+						moduleInfo.Add($"{description}\t{value}");
+					}
+
+					// Initialize the module information
+					PlayingModuleInformation = new ModuleInfoFloating(songNum, totalTime, songLength, positionTimes, moduleInfo.ToArray());
+				}
 			}
 		}
 		#endregion
@@ -357,7 +250,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 		/********************************************************************/
 		private string FindAuthor()
 		{
-			string name = currentPlayer.GetAuthor();
+			string name = currentPlayer.Author;
 
 			if (string.IsNullOrWhiteSpace(name))
 			{

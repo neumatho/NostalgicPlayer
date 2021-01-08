@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces
 		/// <summary>
 		/// Return some flags telling what the player supports
 		/// </summary>
-		ModulePlayerSupportFlag GetSupportFlags();
+		ModulePlayerSupportFlag SupportFlags { get; }
 
 		/// <summary>
 		/// Will load the file into memory
@@ -50,22 +50,22 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces
 		/// <summary>
 		/// Return the number of channels the module want to reserve
 		/// </summary>
-		int GetVirtualChannelCount();
+		int VirtualChannelCount { get; }
 
 		/// <summary>
 		/// Return the number of channels the module use
 		/// </summary>
-		int GetModuleChannelCount();
+		int ModuleChannelCount { get; }
 
 		/// <summary>
 		/// Return information about sub-songs
 		/// </summary>
-		SubSongInfo GetSubSongs();
+		SubSongInfo SubSongs { get; }
 
 		/// <summary>
 		/// Return the length of the current song
 		/// </summary>
-		int GetSongLength();
+		int SongLength { get; }
 
 		/// <summary>
 		/// Holds the current position of the song
@@ -86,7 +86,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces
 		/// <summary>
 		/// Return the total size of all the extra files loaded
 		/// </summary>
-		long GetExtraFilesSizes();
+		long ExtraFilesSizes { get; }
 
 		/// <summary>
 		/// Holds all the virtual channel instances used to play the samples

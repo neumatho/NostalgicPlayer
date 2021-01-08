@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces
 		/// <summary>
 		/// Returns the file extensions that identify this player
 		/// </summary>
-		string[] GetFileExtensions();
+		string[] FileExtensions { get; }
 
 		/// <summary>
 		/// Test the file to see if it could be identified
@@ -28,12 +28,12 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces
 		/// <summary>
 		/// Return the name of the module
 		/// </summary>
-		string GetModuleName();
+		string ModuleName { get; }
 
 		/// <summary>
 		/// Return the name of the author
 		/// </summary>
-		string GetAuthor();
+		string Author { get; }
 
 		/// <summary>
 		/// This is the main player method

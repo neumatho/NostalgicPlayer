@@ -39,7 +39,11 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 			/// <summary>
 			/// Playing
 			/// </summary>
-			Playing
+			Playing,
+			/// <summary>
+			/// Paused
+			/// </summary>
+			Paused
 		}
 
 		private const int LatencyMilliseconds = 200;
@@ -66,7 +70,9 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		private ManualResetEvent streamSwitchCompletedEvent;
 		private Thread renderThread;
 
-		private PlaybackState playbackState;
+		private AutoResetEvent flushBufferEvent;
+
+		private volatile PlaybackState playbackState;
 		private bool inStreamSwitch;
 
 		#region IOutputAgent implementation
@@ -93,6 +99,9 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 				shutdownEvent = new AutoResetEvent(false);
 				audioSamplesReadyEvent = new AutoResetEvent(false);
 				streamSwitchEvent = new AutoResetEvent(false);
+
+				// Create stop/flush events
+				flushBufferEvent = new AutoResetEvent(false);
 
 				// Initialize the audio engine
 				InitializeAudioEngine();
@@ -161,6 +170,9 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 			deviceEnumerator?.Dispose();
 			deviceEnumerator = null;
 
+			flushBufferEvent?.Dispose();
+			flushBufferEvent = null;
+
 			stream = null;
 		}
 
@@ -176,6 +188,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 			switch (playbackState)
 			{
 				case PlaybackState.Initialized:
+				case PlaybackState.Stopped:
 				{
 					// Fill a whole buffer
 					FillBuffer(bufferFrameCount);
@@ -186,7 +199,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 					break;
 				}
 
-				case PlaybackState.Stopped:
+				case PlaybackState.Paused:
 				{
 					// Just continue playing
 					audioClient.Start();
@@ -205,10 +218,35 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/********************************************************************/
 		public void Stop()
 		{
+			if ((playbackState == PlaybackState.Playing) || (playbackState == PlaybackState.Stopped))
+			{
+				// Stop the audio
+				audioClient.Stop();
+
+				// Set state
+				playbackState = PlaybackState.Stopped;
+
+				// Tell the render thread to flush buffers
+				flushBufferEvent.Set();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tell the engine to pause playing
+		/// </summary>
+		/********************************************************************/
+		public void Pause()
+		{
 			if (playbackState == PlaybackState.Playing)
 			{
+				// Stop the audio
 				audioClient.Stop();
-				playbackState = PlaybackState.Stopped;
+
+				// Set state
+				playbackState = PlaybackState.Paused;
 			}
 		}
 
@@ -283,7 +321,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 			// Get the RenderClient
 			audioRenderClient = audioClient.AudioRenderClient;
 
-			// set up the read buffer
+			// Set up the read buffer
 			bufferFrameCount = audioClient.BufferSize;
 			bytesPerFrame = outputFormat.Channels * outputFormat.BitsPerSample / 8;
 			readBuffer = new byte[bufferFrameCount * bytesPerFrame];
@@ -423,7 +461,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 			try
 			{
 				bool stillPlaying = true;
-				WaitHandle[] waitArray = { shutdownEvent, streamSwitchEvent, audioSamplesReadyEvent };
+				WaitHandle[] waitArray = { shutdownEvent, streamSwitchEvent, audioSamplesReadyEvent, flushBufferEvent };
 
 				while (stillPlaying)
 				{
@@ -453,11 +491,20 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 						// AudioSamplesReadyEvent
 						case 2:
 						{
-							int numFramesPadding = audioClient.CurrentPadding;
-							int numFramesAvailable = bufferFrameCount - numFramesPadding;
-							if (numFramesAvailable > 0)
-								FillBuffer(numFramesAvailable);
+							if (playbackState == PlaybackState.Playing)
+							{
+								int numFramesPadding = audioClient.CurrentPadding;
+								int numFramesAvailable = bufferFrameCount - numFramesPadding;
+								if (numFramesAvailable > 0)
+									FillBuffer(numFramesAvailable);
+							}
+							break;
+						}
 
+						// FlushBufferEvent
+						case 3:
+						{
+							audioClient.Reset();
 							break;
 						}
 					}

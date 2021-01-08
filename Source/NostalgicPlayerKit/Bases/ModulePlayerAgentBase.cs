@@ -41,12 +41,15 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases
 
 		/********************************************************************/
 		/// <summary>
-		/// Will load the file into memory
+		/// Return some flags telling what the player supports
 		/// </summary>
 		/********************************************************************/
-		public virtual ModulePlayerSupportFlag GetSupportFlags()
+		public virtual ModulePlayerSupportFlag SupportFlags
 		{
-			return ModulePlayerSupportFlag.None;
+			get
+			{
+				return ModulePlayerSupportFlag.None;
+			}
 		}
 
 
@@ -110,9 +113,12 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases
 		/// Return the number of channels the module want to reserve
 		/// </summary>
 		/********************************************************************/
-		public virtual int GetVirtualChannelCount()
+		public virtual int VirtualChannelCount
 		{
-			return GetModuleChannelCount();
+			get
+			{
+				return ModuleChannelCount;
+			}
 		}
 
 
@@ -122,9 +128,12 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases
 		/// Return the number of channels the module use
 		/// </summary>
 		/********************************************************************/
-		public virtual int GetModuleChannelCount()
+		public virtual int ModuleChannelCount
 		{
-			return 4;
+			get
+			{
+				return 4;
+			}
 		}
 
 
@@ -134,9 +143,12 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases
 		/// Return information about sub-songs
 		/// </summary>
 		/********************************************************************/
-		public virtual SubSongInfo GetSubSongs()
+		public virtual SubSongInfo SubSongs
 		{
-			return subSongInfo;
+			get
+			{
+				return subSongInfo;
+			}
 		}
 
 
@@ -146,9 +158,12 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases
 		/// Return the length of the current song
 		/// </summary>
 		/********************************************************************/
-		public virtual int GetSongLength()
+		public virtual int SongLength
 		{
-			return 0;
+			get
+			{
+				return 0;
+			}
 		}
 
 
@@ -200,9 +215,12 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases
 		/// Return the total size of all the extra files loaded
 		/// </summary>
 		/********************************************************************/
-		public virtual long GetExtraFilesSizes()
+		public virtual long ExtraFilesSizes
 		{
-			return totalSize;
+			get
+			{
+				return totalSize;
+			}
 		}
 
 

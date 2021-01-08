@@ -64,6 +64,18 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Mixer
 
 		/********************************************************************/
 		/// <summary>
+		/// Will change the mixer configuration
+		/// </summary>
+		/********************************************************************/
+		public void ChangeConfiguration(MixerConfiguration mixerConfiguration)
+		{
+			mixer.ChangeConfiguration(mixerConfiguration);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Start the playing
 		/// </summary>
 		/********************************************************************/

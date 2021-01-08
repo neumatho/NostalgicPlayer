@@ -40,6 +40,8 @@
   <ItemGroup>
     <Compile Include="Agent\Manager.cs" />
     <Compile Include="Containers\MixerConfiguration.cs" />
+    <Compile Include="Containers\ModuleInfoFloating.cs" />
+    <Compile Include="Containers\ModuleInfoStatic.cs" />
     <Compile Include="Containers\PlayerConfiguration.cs" />
     <Compile Include="Mixer\Containers\Panning.cs" />
     <Compile Include="Mixer\Containers\SampleFlags.cs" />
@@ -50,6 +52,7 @@
     <Compile Include="Mixer\MixerNormal.cs" />
     <Compile Include="Mixer\MixerStream.cs" />
     <Compile Include="Mixer\ChannelParser.cs" />
+    <Compile Include="Players\IModulePlayer.cs" />
     <Compile Include="Players\IPlayer.cs" />
     <Compile Include="Players\Loader.cs" />
     <Compile Include="Players\ModulePlayer.cs" />

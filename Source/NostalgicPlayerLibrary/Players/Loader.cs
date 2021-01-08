@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;
 using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
+using Polycode.NostalgicPlayer.NostalgicPlayerKit.Streams;
 using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Agent;
 
 namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
@@ -31,6 +32,8 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 		private string moduleFormat;
 		private string playerName;
 
+		private ModuleStream stream;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -42,6 +45,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 
 			agent = null;
 			playerAgent = null;
+			stream = null;
 		}
 
 
@@ -125,11 +129,38 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 			// Close the files again if needed
 			if (!result || playerAgent is IModulePlayerAgent)
 				fileInfo.ModuleStream.Dispose();
+			else
+			{
+				// Remember the stream, so it can be closed later on
+				stream = fileInfo.ModuleStream;
+			}
 
 			if (result)
 				player = playerAgent is IModulePlayerAgent ? new ModulePlayer() : null;
 
 			return result;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will unload the loaded file and free it from memory
+		/// </summary>
+		/********************************************************************/
+		public void Unload()
+		{
+			stream?.Dispose();
+			stream = null;
+
+			agent = null;
+			playerAgent = null;
+
+			player = null;
+
+			fileLength = 0;
+			moduleFormat = string.Empty;
+			playerName = string.Empty;
 		}
 
 
@@ -215,7 +246,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 				if (a.CreateInstance() is IPlayerAgent player)
 				{
 					// Get the player type
-					string[] playerTypes = player.GetFileExtensions();
+					string[] playerTypes = player.FileExtensions;
 
 					// Did we get a match
 					if (playerTypes.Contains(fileExtension) || (!string.IsNullOrEmpty(postExtension) && playerTypes.Contains(postExtension)))

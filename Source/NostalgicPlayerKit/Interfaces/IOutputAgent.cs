@@ -37,6 +37,11 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces
 		void Stop();
 
 		/// <summary>
+		/// Tell the engine to pause playing
+		/// </summary>
+		void Pause();
+
+		/// <summary>
 		/// Will switch the stream to read the sound data from without
 		/// interrupting the sound
 		/// </summary>

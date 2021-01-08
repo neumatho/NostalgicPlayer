@@ -6,7 +6,6 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System;
 using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Containers;
 
 namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
@@ -27,14 +26,9 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 		void CleanupPlayer();
 
 		/// <summary>
-		/// Will select the song you want to play
-		/// </summary>
-		void SelectSong(int songNumber);
-
-		/// <summary>
 		/// Will start playing the music
 		/// </summary>
-		void StartPlaying();
+		void StartPlaying(MixerConfiguration newMixerConfiguration = null);
 
 		/// <summary>
 		/// Will stop the playing
@@ -42,43 +36,14 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 		void StopPlaying();
 
 		/// <summary>
-		/// Return the name of the module
+		/// Return all the static information about the module
 		/// </summary>
-		string ModuleName { get; }
+		ModuleInfoStatic StaticModuleInformation { get; }
 
 		/// <summary>
-		/// Return the name of the author
+		/// Return all the information about the module which changes while
+		/// playing
 		/// </summary>
-		string Author { get; }
-
-		/// <summary>
-		/// Return the number of channels the module use
-		/// </summary>
-		int Channels { get; }
-
-		/// <summary>
-		/// Return the total time of the current song
-		/// </summary>
-		TimeSpan TotalTime { get; }
-
-		/// <summary>
-		/// Return the format of the module
-		/// </summary>
-		string ModuleFormat { get; }
-
-		/// <summary>
-		/// Return the name of the player
-		/// </summary>
-		string PlayerName { get; }
-
-		/// <summary>
-		/// Return the size of the module
-		/// </summary>
-		long ModuleSize { get; }
-
-		/// <summary>
-		/// Return the module information list of the current song
-		/// </summary>
-		string[] ModuleInformation { get; }
+		ModuleInfoFloating PlayingModuleInformation { get; }
 	}
 }

@@ -1,0 +1,359 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Add" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Add.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Disk" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Disk.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Eject" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Eject.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FastForward" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\FastForward.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IDS_ERR_EXCEPTION" xml:space="preserve">
+    <value>An exception has been thrown in the program. The program will exit. Error message is:
+{0}</value>
+  </data>
+  <data name="IDS_ERR_INITOUTPUTAGENT" xml:space="preserve">
+    <value>Failed to initialize the output agent.
+{0}</value>
+  </data>
+  <data name="IDS_ERR_INIT_PLAYER" xml:space="preserve">
+    <value>Failed to initialize player.
+{0}</value>
+  </data>
+  <data name="IDS_ERR_LOAD_FILE" xml:space="preserve">
+    <value>Failed to load module.
+{0}</value>
+  </data>
+  <data name="IDS_ERR_NOOUTPUTAGENT" xml:space="preserve">
+    <value>There doesn't exist any output agent, so NostalgicPlayer can't play anything</value>
+  </data>
+  <data name="IDS_MAIN_TITLE" xml:space="preserve">
+    <value>NostalgicPlayer</value>
+  </data>
+  <data name="IDS_MENU_FILE" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="IDS_MENU_FILE_EXIT" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="IDS_MENU_FILE_OPEN" xml:space="preserve">
+    <value>Open…</value>
+  </data>
+  <data name="IDS_MENU_HELP" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="IDS_MENU_HELP_ABOUT" xml:space="preserve">
+    <value>About NostalgicPlayer…</value>
+  </data>
+  <data name="IDS_MENU_HELP_HELP" xml:space="preserve">
+    <value>Help…</value>
+  </data>
+  <data name="IDS_MENU_WINDOW" xml:space="preserve">
+    <value>Window</value>
+  </data>
+  <data name="IDS_MENU_WINDOW_AGENTS" xml:space="preserve">
+    <value>Agents</value>
+  </data>
+  <data name="IDS_MENU_WINDOW_PLAYERS" xml:space="preserve">
+    <value>Players</value>
+  </data>
+  <data name="IDS_MENU_WINDOW_SETTINGS" xml:space="preserve">
+    <value>Settings…</value>
+  </data>
+  <data name="IDS_NONEGATIVETIME" xml:space="preserve">
+    <value>Time: -??:??:??</value>
+  </data>
+  <data name="IDS_NOPOSITION" xml:space="preserve">
+    <value>Position: ???/??? = ??%</value>
+  </data>
+  <data name="IDS_NOSUBSONGS" xml:space="preserve">
+    <value>Subsongs: ??/??</value>
+  </data>
+  <data name="IDS_NOTIME" xml:space="preserve">
+    <value>Time: ??:??:??</value>
+  </data>
+  <data name="IDS_POSITION" xml:space="preserve">
+    <value>Position: {0:d3}/{1:d3} = {2,2}%</value>
+  </data>
+  <data name="IDS_SUBSONGS" xml:space="preserve">
+    <value>Subsongs: {0}/{1}</value>
+  </data>
+  <data name="IDS_TIME" xml:space="preserve">
+    <value>Time:</value>
+  </data>
+  <data name="IDS_TIMEFORMAT" xml:space="preserve">
+    <value>hh\:mm\:ss</value>
+  </data>
+  <data name="IDS_TIMEFORMAT_SMALL" xml:space="preserve">
+    <value>m\:ss</value>
+  </data>
+  <data name="IDS_TIP_MAIN_ADD" xml:space="preserve">
+    <value>Add new modules to the list.
+The modules will be added in the bottom or
+right before the first selected module in the list</value>
+  </data>
+  <data name="IDS_TIP_MAIN_DISK" xml:space="preserve">
+    <value>Shows a pop-up menu where you can read and write the module list to disk</value>
+  </data>
+  <data name="IDS_TIP_MAIN_DOWN" xml:space="preserve">
+    <value>Move all the selected items one item down.
+If you hold down shift while pressing the button,
+all the selected modules will be moved to the bottom of the list</value>
+  </data>
+  <data name="IDS_TIP_MAIN_EJECT" xml:space="preserve">
+    <value>Pressing once, ejects the current playing module.
+Pressing twice, it will clear the module list</value>
+  </data>
+  <data name="IDS_TIP_MAIN_FORWARD" xml:space="preserve">
+    <value>Fast forward</value>
+  </data>
+  <data name="IDS_TIP_MAIN_INFO" xml:space="preserve">
+    <value>Press the left mouse button over here to switch between
+elapsed and remaining time</value>
+  </data>
+  <data name="IDS_TIP_MAIN_MODULEINFO" xml:space="preserve">
+    <value>Opens the module information window</value>
+  </data>
+  <data name="IDS_TIP_MAIN_MODULELOOP" xml:space="preserve">
+    <value>When active, the current playing module will play forever</value>
+  </data>
+  <data name="IDS_TIP_MAIN_MUTE" xml:space="preserve">
+    <value>Mute/Unmute the volume</value>
+  </data>
+  <data name="IDS_TIP_MAIN_NEXTMOD" xml:space="preserve">
+    <value>Loads the next module in the module list</value>
+  </data>
+  <data name="IDS_TIP_MAIN_NEXTSONG" xml:space="preserve">
+    <value>Play the next subsong</value>
+  </data>
+  <data name="IDS_TIP_MAIN_PAUSE" xml:space="preserve">
+    <value>Pause/starting the playing module</value>
+  </data>
+  <data name="IDS_TIP_MAIN_PLAY" xml:space="preserve">
+    <value>Adds new modules to the module list.
+The module list will be cleared before the new modules are added</value>
+  </data>
+  <data name="IDS_TIP_MAIN_POSITIONSLIDER" xml:space="preserve">
+    <value>Shows the current position in the playing module.
+Press the left mouse button on the rectangle and hold it while
+moving the mouse to the left or right to change the position</value>
+  </data>
+  <data name="IDS_TIP_MAIN_PREVMOD" xml:space="preserve">
+    <value>When pressing in the first 2 seconds of a module, the previous module in the list will be loaded.
+If you press the button after the first 2 seconds, the module will start over again</value>
+  </data>
+  <data name="IDS_TIP_MAIN_PREVSONG" xml:space="preserve">
+    <value>Play the previous subsong</value>
+  </data>
+  <data name="IDS_TIP_MAIN_REMOVE" xml:space="preserve">
+    <value>Remove the selected modules from the list</value>
+  </data>
+  <data name="IDS_TIP_MAIN_REWIND" xml:space="preserve">
+    <value>Rewind</value>
+  </data>
+  <data name="IDS_TIP_MAIN_SAMP" xml:space="preserve">
+    <value>Opens the sample info window where you can see
+a lot of information about the samples in the
+current playing module</value>
+  </data>
+  <data name="IDS_TIP_MAIN_SELECT" xml:space="preserve">
+    <value>Shows a pop-up menu where you can do different selections on the module list</value>
+  </data>
+  <data name="IDS_TIP_MAIN_SORT" xml:space="preserve">
+    <value>Shows a pop-up menu, where you can select different things to do on the module list</value>
+  </data>
+  <data name="IDS_TIP_MAIN_SWAP" xml:space="preserve">
+    <value>Will swap two selected modules in the list.
+Select the two modules you want to swap and press this button</value>
+  </data>
+  <data name="IDS_TIP_MAIN_TIME" xml:space="preserve">
+    <value>Shows the total time of items selected + the total time in the module list</value>
+  </data>
+  <data name="IDS_TIP_MAIN_TOTAL" xml:space="preserve">
+    <value>Shows the selected number of items + the total number of items in the module list</value>
+  </data>
+  <data name="IDS_TIP_MAIN_UP" xml:space="preserve">
+    <value>Move all the selected items one item up.
+If you hold down shift while pressing the button,
+all the selected modules will be moved to the top of the list</value>
+  </data>
+  <data name="IDS_TIP_MAIN_VOLUME" xml:space="preserve">
+    <value>Change the volume</value>
+  </data>
+  <data name="Information" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Information.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="List" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\List.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Loop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Loop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MoveDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MoveDown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MoveUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\MoveUp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Mute" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Mute.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NextModule" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\NextModule.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NextSong" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\NextSong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Pause" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Pause.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Play" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Play.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PlayingItem" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PlayingItem.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PreviousModule" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PreviousModule.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PreviousSong" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\PreviousSong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Remove" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Remove.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Rewind" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Rewind.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Samples" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Samples.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Sort" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Sort.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Swap" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Swap.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+</root>

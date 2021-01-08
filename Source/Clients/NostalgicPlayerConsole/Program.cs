@@ -57,88 +57,100 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerConsole
 
 				// Load the file
 				Loader loader = new Loader(agentManager);
-				if (!loader.Load(new PlayerFileInfo(fileName, new ModuleStream(new FileStream(args[0], FileMode.Open, FileAccess.Read))), out errorMessage))
+				if (!loader.Load(new PlayerFileInfo(fileName, new ModuleStream(new FileStream(fileName, FileMode.Open, FileAccess.Read))), out errorMessage))
 				{
 					Console.WriteLine("Could not load the module. Failed with error:");
 					Console.WriteLine(errorMessage);
 					return;
 				}
 
-				// Find the output agent to use
-				IOutputAgent outputAgent = FindOutputAgent(agentManager);
-				if (outputAgent == null)
-				{
-					Console.WriteLine("Could not find CoreAudio output agent");
-					return;
-				}
-
-				// Initialize output agent so its ready for use
-				if (outputAgent.Initialize(out errorMessage) == AgentResult.Error)
-				{
-					Console.WriteLine("Cannot initialize output device.");
-					Console.WriteLine(errorMessage);
-					return;
-				}
-
 				try
 				{
-					IPlayer player = loader.Player;
-
-					if (!player.InitPlayer(new PlayerConfiguration(outputAgent, loader, new MixerConfiguration
-						{
-							EnableAmigaFilter = true,
-							StereoSeparator = 100
-						}), out errorMessage))
+					// Find the output agent to use
+					IOutputAgent outputAgent = FindOutputAgent(agentManager);
+					if (outputAgent == null)
 					{
-						Console.WriteLine("Cannot initialize player.");
+						Console.WriteLine("Could not find CoreAudio output agent");
+						return;
+					}
+
+					// Initialize output agent so its ready for use
+					if (outputAgent.Initialize(out errorMessage) == AgentResult.Error)
+					{
+						Console.WriteLine("Cannot initialize output device.");
 						Console.WriteLine(errorMessage);
 						return;
 					}
 
 					try
 					{
-						// Start to play the music
-						player.SelectSong(0);
-						player.StartPlaying();
+						IPlayer player = loader.Player;
+
+						if (!player.InitPlayer(new PlayerConfiguration(outputAgent, loader, new MixerConfiguration
+							{
+								EnableAmigaFilter = true,
+								StereoSeparator = 100
+							}), out errorMessage))
+						{
+							Console.WriteLine("Cannot initialize player.");
+							Console.WriteLine(errorMessage);
+							return;
+						}
 
 						try
 						{
-							Console.WriteLine("Playing module");
-							Console.WriteLine();
-							Console.WriteLine("Module name/file name: " + (string.IsNullOrEmpty(player.ModuleName) ? Path.GetFileName(fileName) : player.ModuleName));
-							Console.WriteLine("Author: " + (string.IsNullOrEmpty(player.Author) ? "Unknown" : player.Author));
-							Console.WriteLine("Module format: " + player.ModuleFormat);
-							Console.WriteLine("Active player: " + player.PlayerName);
-							Console.WriteLine("Used channels: " + player.Channels);
-							Console.WriteLine("Total time: " + player.TotalTime.ToString(@"m\:ss"));
-							Console.WriteLine("Module size: " + player.ModuleSize);
-							Console.WriteLine("File name: " + fileName);
-							Console.WriteLine();
+							// Start to play the music
+							if (player is IModulePlayer modulePlayer)
+								modulePlayer.SelectSong(0);
 
-							// Output extra information
-							foreach (string info in player.ModuleInformation)
+							player.StartPlaying();
+
+							try
 							{
-								string[] parts = info.Split('\t');
-								Console.WriteLine(parts[0] + ": " + parts[1]);
-							}
+								ModuleInfoStatic moduleInfoStatic = player.StaticModuleInformation;
+								ModuleInfoFloating moduleInfoFloating = player.PlayingModuleInformation;
 
-							Console.WriteLine();
-							Console.WriteLine("Press enter to stop playing");
-							Console.ReadLine();
+								Console.WriteLine("Playing module");
+								Console.WriteLine();
+								Console.WriteLine("Module name/file name: " + (string.IsNullOrEmpty(moduleInfoStatic.ModuleName) ? Path.GetFileName(fileName) : moduleInfoStatic.ModuleName));
+								Console.WriteLine("Author: " + (string.IsNullOrEmpty(moduleInfoStatic.Author) ? "Unknown" : moduleInfoStatic.Author));
+								Console.WriteLine("Module format: " + moduleInfoStatic.ModuleFormat);
+								Console.WriteLine("Active player: " + moduleInfoStatic.PlayerName);
+								Console.WriteLine("Used channels: " + moduleInfoStatic.Channels);
+								Console.WriteLine("Total time: " + moduleInfoFloating.TotalTime.ToString(@"m\:ss"));
+								Console.WriteLine("Module size: " + moduleInfoStatic.ModuleSize);
+								Console.WriteLine("File name: " + fileName);
+								Console.WriteLine();
+
+								// Output extra information
+								foreach (string info in moduleInfoFloating.ModuleInformation)
+								{
+									string[] parts = info.Split('\t');
+									Console.WriteLine(parts[0] + ": " + parts[1]);
+								}
+
+								Console.WriteLine();
+								Console.WriteLine("Press enter to stop playing");
+								Console.ReadLine();
+							}
+							finally
+							{
+								player.StopPlaying();
+							}
 						}
 						finally
 						{
-							player.StopPlaying();
+							player.CleanupPlayer();
 						}
 					}
 					finally
 					{
-						player.CleanupPlayer();
+						outputAgent.Shutdown();
 					}
 				}
 				finally
 				{
-					outputAgent.Shutdown();
+					loader.Unload();
 				}
 			}
 			catch (Exception ex)

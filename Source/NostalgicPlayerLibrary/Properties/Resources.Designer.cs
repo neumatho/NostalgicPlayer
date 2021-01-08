@@ -102,15 +102,6 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A song number need to be set before start playing..
-        /// </summary>
-        internal static string IDS_ERR_SONG_NOT_SET {
-            get {
-                return ResourceManager.GetString("IDS_ERR_SONG_NOT_SET", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Unknown module format in file ({0})..
         /// </summary>
         internal static string IDS_ERR_UNKNOWN_MODULE {
