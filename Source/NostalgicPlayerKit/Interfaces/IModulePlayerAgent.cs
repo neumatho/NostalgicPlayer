@@ -97,5 +97,10 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces
 		/// Return the current playing frequency
 		/// </summary>
 		float PlayingFrequency { get; }
+
+		/// <summary>
+		/// Event called when the player change position
+		/// </summary>
+		event EventHandler PositionChanged;
 	}
 }

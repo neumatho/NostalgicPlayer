@@ -247,14 +247,25 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases
 			get; protected set;
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Event called when the player change position
+		/// </summary>
+		/********************************************************************/
+		public event EventHandler PositionChanged;
+
 		#region Helper methods
 		/********************************************************************/
 		/// <summary>
 		/// Call this every time your player change it's position
 		/// </summary>
 		/********************************************************************/
-		protected void ChangePosition()
+		protected void OnPositionChanged()
 		{
+			if (PositionChanged != null)
+				PositionChanged(this, EventArgs.Empty);
 		}
 		#endregion
 	}

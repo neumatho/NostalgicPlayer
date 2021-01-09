@@ -49,7 +49,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 		// Module variables
 		private ModuleListItem playItem;
 		private TimeSpan songTotalTime;
-		private int subSongMultiply;
+		//XXprivate int subSongMultiply;
 
 		// List times
 		private TimeSpan listTime;
@@ -92,172 +92,38 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 				// Create other windows
 				CreateWindows();
 			}
+
+			SetupHandlers();
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will add all the given files to the module list
-		/// </summary>
-		/********************************************************************/
-		public void AddFilesToList(string[] files, int startIndex = -1)
-		{
-			using (new SleepCursor())
-			{
-				List<FileInformation> itemList = new List<FileInformation>();
-
-				foreach (string file in files)
-				{
-					//XX TODO: When adding drag'n'drop support, check for folders here
-					AppendFile(file, itemList);
-				}
-
-				// Add the items to the list
-				moduleListBox.BeginUpdate();
-
-				try
-				{
-					if (startIndex == -1)
-						moduleListBox.Items.AddRange(itemList.Select(fi => new ModuleListItem(new SingleFileListItem(fi.FullPath))).ToArray());
-					else
-					{
-						for (int i = itemList.Count - 1; i >= 0; i--)
-							moduleListBox.Items.Insert(startIndex, new ModuleListItem(new SingleFileListItem(itemList[i].FullPath)));
-					}
-				}
-				finally
-				{
-					moduleListBox.EndUpdate();
-				}
-
-				// Update the controls
-				UpdateListCount();
-				UpdateTimes();
-				UpdateTapeDeck();
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Initialize the sub-songs variables
-		/// </summary>
-		/********************************************************************/
-		public void InitSubSongs()
-		{
-			subSongMultiply = 0;
-		}
-
-		#region Methods that are invoked from other places
-		/********************************************************************/
-		/// <summary>
-		/// Initialize window controls
-		/// </summary>
-		/********************************************************************/
-		public void InitControls()
-		{
-			prevPosition = -1;
-
-			// Start the timers
-			if (playItem != null)
-				StartTimers();
-
-			// Make sure the pause button isn't pressed
-			pauseCheckButton.Checked = false;
-
-			// Set the position slider on the first position
-			positionTrackBar.Value = 0;
-
-			// Update the tape deck buttons
-			UpdateTapeDeck();
-
-			// Get module information
-			ModuleInfoFloating playingModuleInfo = moduleHandler.PlayingModuleInformation;
-
-			// Get the total time of the playing song
-			songTotalTime = playingModuleInfo.TotalTime;
-
-			// Change the time to the position time
-			SetPositionTime(playingModuleInfo.SongPosition);
-
-			// Print the module information
-			PrintInfo();
-
-			// Update the list item
-			SetTimeOnItem(playItem, songTotalTime);
-
-			if (playItem != null)
-			{
-				// Check to see if the playing item can be seen
-				int itemIndex = moduleListBox.Items.IndexOf(playItem);
-				Rectangle listRect = moduleListBox.Bounds;
-				Rectangle itemRect = moduleListBox.GetItemRectangle(itemIndex);
-
-				if (!listRect.Contains(itemRect))
-				{
-					// Make sure the item can be seen
-					moduleListBox.TopIndex = itemIndex;
-				}
-
-				// Add the new index to the random list
-				randomList.Add(itemIndex);
-
-				// Do we need to remove any previous items
-				if (randomList.Count > (moduleListBox.Items.Count / 3))
-					randomList.RemoveAt(0);
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Change the play item
-		/// </summary>
-		/********************************************************************/
-		public void ChangePlayItem(ModuleListItem listItem)
-		{
-			moduleListBox.BeginUpdate();
-
-			try
-			{
-				// First deselect any previous item
-				if (playItem != null)
-				{
-					playItem.IsPlaying = false;
-					moduleListBox.Invalidate(moduleListBox.GetItemRectangle(moduleListBox.Items.IndexOf(playItem)));
-				}
-
-				// Remember the item
-				playItem = listItem;
-
-				if (playItem != null)
-				{
-					playItem.IsPlaying = true;
-					moduleListBox.Invalidate(moduleListBox.GetItemRectangle(moduleListBox.Items.IndexOf(playItem)));
-				}
-			}
-			finally
-			{
-				moduleListBox.EndUpdate();
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will make sure to refresh all the windows
-		/// </summary>
-		/********************************************************************/
-		public void RefreshWindows()//XX
-		{
-		}
-		#endregion
 
 		#region Event handlers
+		/********************************************************************/
+		/// <summary>
+		/// Setup event handlers
+		/// </summary>
+		/********************************************************************/
+		private void SetupHandlers()
+		{
+			// Form
+			FormClosed += MainWindowForm_FormClosed;
+
+			// Module information
+			infoGroup.Panel.Click += InfoGroup_Click;
+			infoLabel.Click += InfoGroup_Click;
+
+			// Module list
+			moduleListBox.SelectedIndexChanged += ModuleListBox_SelectedIndexChanged;
+			moduleListBox.ListBox.MouseDoubleClick += ModuleListBox_MouseDoubleClick;
+
+			// Tape deck
+			playButton.Click += PlayButton_Click;
+			ejectButton.Click += EjectButton_Click;
+
+			// Module handler
+			moduleHandler.PositionChanged += ModuleHandler_PositionChanged;
+		}
+
+		#region Form events
 		/********************************************************************/
 		/// <summary>
 		/// Is called when the main window is closed
@@ -278,9 +144,110 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			// Save and cleanup the settings
 			CleanupSettings();
 		}
+		#endregion
+
+		#region Module information events
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user clicks on the module information
+		/// </summary>
+		/********************************************************************/
+		private void InfoGroup_Click(object sender, EventArgs e)
+		{
+			// Switch between the time formats
+			if (timeFormat == TimeFormat.Elapsed)
+				timeFormat = TimeFormat.Remaining;
+			else
+				timeFormat = TimeFormat.Elapsed;
+
+			// Show it to the user
+			PrintInfo();
+		}
 
 
 
+		/********************************************************************/
+		/// <summary>
+		/// Is called every second to update the module information
+		/// </summary>
+		/********************************************************************/
+		private void ClockTimer_Tick(object sender, EventArgs e)
+		{
+			// Do only print the information if the module is playing
+			if ((playItem != null) && moduleHandler.IsPlaying)
+			{
+				// Calculate time offset
+				timeOccurred = DateTime.Now - timeStart;
+
+				// Print the module information
+				PrintInfo();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called every time the player changed position
+		/// </summary>
+		/********************************************************************/
+		private void ModuleHandler_PositionChanged(object sender, EventArgs e)
+		{
+			BeginInvoke(new Action(() =>
+			{
+				int newPos = moduleHandler.PlayingModuleInformation.SongPosition;
+
+				// Change the time to the position time
+				if (newPos < prevPosition)
+					SetPositionTime(newPos);
+
+				prevPosition = newPos;
+
+				// Print the information
+				PrintInfo();
+			}));
+		}
+		#endregion
+
+		#region Module list events
+		/********************************************************************/
+		/// <summary>
+		/// The user changed the selection of the modules
+		/// </summary>
+		/********************************************************************/
+		private void ModuleListBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			// Update the time and count controls
+			UpdateTimes();
+			UpdateListCount();
+
+			// Update the list controls
+			UpdateListControls();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The user double-clicked in the module list box
+		/// </summary>
+		/********************************************************************/
+		private void ModuleListBox_MouseDoubleClick(object sender, MouseEventArgs e)
+		{
+			// Find out, if an item has been clicked and which one
+			int index = moduleListBox.IndexFromPoint(e.Location);
+			if (index != -1)
+			{
+				// Stop playing any modules
+				StopAndFreeModule();
+
+				// Load and play the selected module
+				LoadAndPlayModule((ModuleListItem)moduleListBox.Items[index]);
+			}
+		}
+		#endregion
+
+		#region Tapedeck events
 		/********************************************************************/
 		/// <summary>
 		/// The user clicked on the play button
@@ -328,6 +295,8 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 				EmptyList();
 			}
 		}
+		#endregion
+
 		#endregion
 
 		#region Private methods
@@ -503,6 +472,171 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			// Remember settings from main window
 			windowSettings.SetStringEntry("General", "TimeFormat", timeFormat.ToString());
 			windowSettings.SetIntEntry("General", "MasterVolume", masterVolumeTrackBar.Value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will add all the given files to the module list
+		/// </summary>
+		/********************************************************************/
+		private void AddFilesToList(string[] files, int startIndex = -1)
+		{
+			using (new SleepCursor())
+			{
+				List<FileInformation> itemList = new List<FileInformation>();
+
+				foreach (string file in files)
+				{
+					//XX TODO: When adding drag'n'drop support, check for folders here
+					AppendFile(file, itemList);
+				}
+
+				// Add the items to the list
+				moduleListBox.BeginUpdate();
+
+				try
+				{
+					if (startIndex == -1)
+						moduleListBox.Items.AddRange(itemList.Select(fi => new ModuleListItem(new SingleFileListItem(fi.FullPath))).ToArray());
+					else
+					{
+						for (int i = itemList.Count - 1; i >= 0; i--)
+							moduleListBox.Items.Insert(startIndex, new ModuleListItem(new SingleFileListItem(itemList[i].FullPath)));
+					}
+				}
+				finally
+				{
+					moduleListBox.EndUpdate();
+				}
+
+				// Update the controls
+				UpdateListCount();
+				UpdateTimes();
+				UpdateTapeDeck();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the sub-songs variables
+		/// </summary>
+		/********************************************************************/
+		private void InitSubSongs()
+		{
+			//XXsubSongMultiply = 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize window controls
+		/// </summary>
+		/********************************************************************/
+		private void InitControls()
+		{
+			prevPosition = -1;
+
+			// Start the timers
+			if (playItem != null)
+				StartTimers();
+
+			// Make sure the pause button isn't pressed
+			pauseCheckButton.Checked = false;
+
+			// Set the position slider on the first position
+			positionTrackBar.Value = 0;
+
+			// Update the tape deck buttons
+			UpdateTapeDeck();
+
+			// Get module information
+			ModuleInfoFloating playingModuleInfo = moduleHandler.PlayingModuleInformation;
+
+			// Get the total time of the playing song
+			songTotalTime = playingModuleInfo.TotalTime;
+
+			// Change the time to the position time
+			SetPositionTime(playingModuleInfo.SongPosition);
+
+			// Print the module information
+			PrintInfo();
+
+			// Update the list item
+			SetTimeOnItem(playItem, songTotalTime);
+
+			if (playItem != null)
+			{
+				// Check to see if the playing item can be seen
+				int itemIndex = moduleListBox.Items.IndexOf(playItem);
+				Rectangle listRect = moduleListBox.Bounds;
+				Rectangle itemRect = moduleListBox.GetItemRectangle(itemIndex);
+				itemRect.X += listRect.X;
+				itemRect.Y += listRect.Y;
+
+				if (!listRect.Contains(itemRect))
+				{
+					// Make sure the item can be seen
+					moduleListBox.TopIndex = itemIndex;
+				}
+
+				// Add the new index to the random list
+				randomList.Add(itemIndex);
+
+				// Do we need to remove any previous items
+				if (randomList.Count > (moduleListBox.Items.Count / 3))
+					randomList.RemoveAt(0);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Change the play item
+		/// </summary>
+		/********************************************************************/
+		private void ChangePlayItem(ModuleListItem listItem)
+		{
+			moduleListBox.BeginUpdate();
+
+			try
+			{
+				// First deselect any previous item
+				if (playItem != null)
+				{
+					playItem.IsPlaying = false;
+					moduleListBox.Invalidate(moduleListBox.GetItemRectangle(moduleListBox.Items.IndexOf(playItem)));
+				}
+
+				// Remember the item
+				playItem = listItem;
+
+				if (playItem != null)
+				{
+					playItem.IsPlaying = true;
+					moduleListBox.Invalidate(moduleListBox.GetItemRectangle(moduleListBox.Items.IndexOf(playItem)));
+				}
+			}
+			finally
+			{
+				moduleListBox.EndUpdate();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will make sure to refresh all the windows
+		/// </summary>
+		/********************************************************************/
+		private void RefreshWindows()//XX
+		{
 		}
 
 
@@ -729,6 +863,44 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// Will update the list controls
+		/// </summary>
+		/********************************************************************/
+		private void UpdateListControls()
+		{
+			if (moduleListBox.SelectedIndex == -1)
+			{
+				// No items are selected
+				removeModuleButton.Enabled = false;
+				swapModulesButton.Enabled = false;
+				moveModulesUpButton.Enabled = false;
+				moveModulesDownButton.Enabled = false;
+			}
+			else
+			{
+				// Some items are selected
+				removeModuleButton.Enabled = true;
+				moveModulesUpButton.Enabled = true;
+				moveModulesDownButton.Enabled = true;
+
+				// Are two and only two items selected?
+				if (moduleListBox.SelectedItems.Count == 2)
+				{
+					// Enable the swap button
+					swapModulesButton.Enabled = true;
+				}
+				else
+				{
+					// Disable the swap button
+					swapModulesButton.Enabled = false;
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Print the current information in the info bar
 		/// </summary>
 		/********************************************************************/
@@ -853,13 +1025,15 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 		/********************************************************************/
 		private void LoadAndPlayModule(ModuleListItem listItem)
 		{
-			moduleHandler.LoadAndPlayModule(listItem);
+			bool ok = moduleHandler.LoadAndPlayModule(listItem);
+			if (ok)
+			{
+				// Initialize other stuff in the window
+				InitSubSongs();
+			}
 
 			// Mark the item in the list
-			ChangePlayItem(listItem);
-
-			// Initialize other stuff in the window
-			InitSubSongs();
+			ChangePlayItem(ok ? listItem : null);
 
 			// Initialize controls
 			InitControls();
@@ -940,7 +1114,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			// Start the playing timer
 			timeStart = DateTime.Now;
 			timeOccurred = new TimeSpan(0);
-			timer.Start();
+			clockTimer.Start();
 
 			//XX Start the never ending timer if needed
 		}
@@ -954,7 +1128,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 		/********************************************************************/
 		private void StopTimers()
 		{
-			timer.Stop();
+			clockTimer.Stop();
 
 			//XX Never ending timer
 		}

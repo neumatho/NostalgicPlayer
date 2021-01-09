@@ -6,6 +6,8 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System;
+
 namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 {
 	/// <summary>
@@ -17,5 +19,10 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 		/// Will select the song you want to play
 		/// </summary>
 		void SelectSong(int songNumber);
+
+		/// <summary>
+		/// Event called when the player change position
+		/// </summary>
+		event EventHandler PositionChanged;
 	}
 }

@@ -611,7 +611,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				}
 
 				// Next position
-				ChangePosition();
+				OnPositionChanged();
 
 				PattInfo pattInfo = pattTable[songTable[songPos]];
 				noteCnt = pattInfo.size;

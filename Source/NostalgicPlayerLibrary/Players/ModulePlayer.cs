@@ -66,6 +66,9 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 
 					if (initOk)
 					{
+						// Subscribe the events
+						currentPlayer.PositionChanged += Player_PositionChanged;
+
 						// Initialize module information
 						StaticModuleInformation = new ModuleInfoStatic(currentPlayer.ModuleName.Trim(), FindAuthor(), loader.ModuleFormat, loader.PlayerName, currentPlayer.ModuleChannelCount, loader.ModuleSize + currentPlayer.ExtraFilesSizes, currentPlayer.SupportFlags, currentPlayer.SubSongs.Number);
 
@@ -112,6 +115,9 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 
 					// Shutdown the player
 					currentPlayer.CleanupPlayer();
+
+					// Unsubscribe the events
+					currentPlayer.PositionChanged -= Player_PositionChanged;
 
 					// Free the sample list
 					FreeSamples();
@@ -238,6 +244,38 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 					// Initialize the module information
 					PlayingModuleInformation = new ModuleInfoFloating(songNum, totalTime, songLength, positionTimes, moduleInfo.ToArray());
 				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Event called when the player change position
+		/// </summary>
+		/********************************************************************/
+		public event EventHandler PositionChanged;
+		#endregion
+
+		#region Event handlers
+		/********************************************************************/
+		/// <summary>
+		/// Is called every time the player changed position
+		/// </summary>
+		/********************************************************************/
+		private void Player_PositionChanged(object sender, EventArgs e)
+		{
+			if (currentPlayer != null)
+			{
+				lock (currentPlayer)
+				{
+					// Update the position
+					PlayingModuleInformation.SongPosition = currentPlayer.SongPosition;
+				}
+
+				// Call the next event handler
+				if (PositionChanged != null)
+					PositionChanged(sender, e);
 			}
 		}
 		#endregion

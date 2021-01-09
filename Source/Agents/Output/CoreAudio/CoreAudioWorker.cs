@@ -72,6 +72,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 		private AutoResetEvent flushBufferEvent;
 
+		private object playingLock;
 		private volatile PlaybackState playbackState;
 		private bool inStreamSwitch;
 
@@ -102,6 +103,9 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 				// Create stop/flush events
 				flushBufferEvent = new AutoResetEvent(false);
+
+				// Create lock used when playing
+				playingLock = new object();
 
 				// Initialize the audio engine
 				InitializeAudioEngine();
@@ -173,6 +177,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 			flushBufferEvent?.Dispose();
 			flushBufferEvent = null;
 
+			playingLock = null;
+
 			stream = null;
 		}
 
@@ -185,26 +191,29 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/********************************************************************/
 		public void Play()
 		{
-			switch (playbackState)
+			lock (playingLock)
 			{
-				case PlaybackState.Initialized:
-				case PlaybackState.Stopped:
+				switch (playbackState)
 				{
-					// Fill a whole buffer
-					FillBuffer(bufferFrameCount);
+					case PlaybackState.Initialized:
+					case PlaybackState.Stopped:
+					{
+						// Fill a whole buffer
+						FillBuffer(bufferFrameCount);
 
-					// Begin to play sound
-					audioClient.Start();
-					playbackState = PlaybackState.Playing;
-					break;
-				}
+						// Begin to play sound
+						audioClient.Start();
+						playbackState = PlaybackState.Playing;
+						break;
+					}
 
-				case PlaybackState.Paused:
-				{
-					// Just continue playing
-					audioClient.Start();
-					playbackState = PlaybackState.Playing;
-					break;
+					case PlaybackState.Paused:
+					{
+						// Just continue playing
+						audioClient.Start();
+						playbackState = PlaybackState.Playing;
+						break;
+					}
 				}
 			}
 		}
@@ -223,8 +232,11 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 				// Stop the audio
 				audioClient.Stop();
 
-				// Set state
-				playbackState = PlaybackState.Stopped;
+				lock (playingLock)
+				{
+					// Set state
+					playbackState = PlaybackState.Stopped;
+				}
 
 				// Tell the render thread to flush buffers
 				flushBufferEvent.Set();
@@ -245,8 +257,11 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 				// Stop the audio
 				audioClient.Stop();
 
-				// Set state
-				playbackState = PlaybackState.Paused;
+				lock (playingLock)
+				{
+					// Set state
+					playbackState = PlaybackState.Paused;
+				}
 			}
 		}
 
@@ -491,12 +506,15 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 						// AudioSamplesReadyEvent
 						case 2:
 						{
-							if (playbackState == PlaybackState.Playing)
+							lock (playingLock)
 							{
-								int numFramesPadding = audioClient.CurrentPadding;
-								int numFramesAvailable = bufferFrameCount - numFramesPadding;
-								if (numFramesAvailable > 0)
-									FillBuffer(numFramesAvailable);
+								if (playbackState == PlaybackState.Playing)
+								{
+									int numFramesPadding = audioClient.CurrentPadding;
+									int numFramesAvailable = bufferFrameCount - numFramesPadding;
+									if (numFramesAvailable > 0)
+										FillBuffer(numFramesAvailable);
+								}
 							}
 							break;
 						}

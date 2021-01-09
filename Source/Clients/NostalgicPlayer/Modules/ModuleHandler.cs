@@ -45,6 +45,15 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 
 		/********************************************************************/
 		/// <summary>
+		/// Event called when the player change position
+		/// </summary>
+		/********************************************************************/
+		public event EventHandler PositionChanged;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Initialize and start the module handler thread
 		/// </summary>
 		/********************************************************************/
@@ -139,13 +148,13 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 		/// Will load and play the module at the index given
 		/// </summary>
 		/********************************************************************/
-		public void LoadAndPlayModule(ModuleListItem listItem, int subSong = -1, int startPos = -1)
+		public bool LoadAndPlayModule(ModuleListItem listItem, int subSong = -1, int startPos = -1)
 		{
 			// Start to free all loaded modules
 			FreeAllModules();
 
 			// Now load and play the first module
-			LoadAndInitModule(listItem, subSong, startPos);
+			return LoadAndInitModule(listItem, subSong, startPos);
 		}
 
 
@@ -165,15 +174,24 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 					// Get the first one
 					ModuleItem item = loadedFiles[0];
 
+					IPlayer player = item.Loader.Player;
+
 					if (IsPlaying)
 					{
 						// Stop the playing
-						item.Loader.Player.StopPlaying();
+						player.StopPlaying();
+
+						if (player is IModulePlayer modulePlayer)
+						{
+							// Unsubscribe to position changes
+							modulePlayer.PositionChanged -= Player_PositionChanged;
+						}
+
 						IsPlaying = false;
 					}
 
 					// Cleanup the player
-					item.Loader.Player.CleanupPlayer();
+					player.CleanupPlayer();
 
 					// Unload the module
 					item.Loader.Unload();
@@ -220,6 +238,20 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 		{
 			TimeSpan[] positionTimes = PlayingModuleInformation.PositionTimes;
 			return positionTimes == null ? new TimeSpan(0) : positionTimes[position];
+		}
+		#endregion
+
+		#region Event handlers
+		/********************************************************************/
+		/// <summary>
+		/// Is called every time the player changed position
+		/// </summary>
+		/********************************************************************/
+		private void Player_PositionChanged(object sender, EventArgs e)
+		{
+			// Just call the next event handler
+			if (PositionChanged != null)
+				PositionChanged(sender, e);
 		}
 		#endregion
 
@@ -291,7 +323,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 		/// Load and/or initialize module
 		/// </summary>
 		/********************************************************************/
-		private void LoadAndInitModule(ModuleListItem listItem, int? subSong = null, int? startPos = null, bool showError = true)
+		private bool LoadAndInitModule(ModuleListItem listItem, int? subSong = null, int? startPos = null, bool showError = true)
 		{
 			// Should we load a module?
 			if (listItem != null)
@@ -313,7 +345,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 					if (showError)
 						ShowErrorMessage(string.Format(Properties.Resources.IDS_ERR_LOAD_FILE, errorMessage));
 
-					return;
+					return false;
 				}
 
 				// Setup mixer settings
@@ -331,7 +363,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 						ShowErrorMessage(string.Format(Properties.Resources.IDS_ERR_INIT_PLAYER, errorMessage));
 
 					item.Loader.Unload();
-					return;
+					return false;
 				}
 
 				lock (loadedFiles)
@@ -350,6 +382,8 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 				// Start to play the module
 				StartPlaying(subSong.Value, startPos.Value);
 			}
+
+			return true;
 		}
 
 
@@ -361,20 +395,13 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 		/********************************************************************/
 		private void StartPlaying(int subSong, int startPos)
 		{
-			ModuleItem modItem;
-
-			lock (loadedFiles)
-			{
-				modItem = loadedFiles.Count > 0 ? loadedFiles[0] : null;
-			}
+			IPlayer player = GetActivePlayer();
 
 			// Is there any modules loaded?
-			if (modItem != null)
+			if (player != null)
 			{
 				// Change the volume//XX
 				;
-
-				IPlayer player = modItem.Loader.Player;
 
 				// Initialize the module
 				if (player is IModulePlayer modulePlayer)
@@ -383,6 +410,9 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 
 //XX					if (startPos != -1)
 //						modulePlayer.SongPosition = startPos;	// Skal først bruges ved load og start ved opstart
+
+					// Subscribe to position changes
+					modulePlayer.PositionChanged += Player_PositionChanged;
 				}
 
 				// The module is playing

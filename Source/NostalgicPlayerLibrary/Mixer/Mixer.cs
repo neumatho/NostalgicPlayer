@@ -32,8 +32,8 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Mixer
 		private int bufferSize;				// The maximum number of samples a buffer can be
 		private int ticksLeft;				// Number of ticks left to call the player
 
-		private int filterPrevLeft;			// The previous value for the left channel
-		private int filterPrevRight;		// The previous value for the right channel
+//XX		private int filterPrevLeft;			// The previous value for the left channel
+//XX		private int filterPrevRight;		// The previous value for the right channel
 
 		private bool emulateFilter;
 
@@ -68,8 +68,8 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Mixer
 			moduleChannelNumber = currentPlayer.VirtualChannelCount;
 
 			// Initialize other member variables
-			filterPrevLeft = 0;
-			filterPrevRight = 0;
+			//XXfilterPrevLeft = 0;
+			//XXfilterPrevRight = 0;
 
 			// Set flag for different mixer modes
 			mixerMode = MixerMode.None;

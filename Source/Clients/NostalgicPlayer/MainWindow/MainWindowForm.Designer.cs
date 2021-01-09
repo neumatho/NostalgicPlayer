@@ -66,7 +66,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			this.showSamplesButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
 			this.muteCheckButton = new ComponentFactory.Krypton.Toolkit.KryptonCheckButton();
 			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-			this.timer = new System.Windows.Forms.Timer(this.components);
+			this.clockTimer = new System.Windows.Forms.Timer(this.components);
 			this.kryptonManager = new ComponentFactory.Krypton.Toolkit.KryptonManager(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.infoGroup)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.infoGroup.Panel)).BeginInit();
@@ -304,6 +304,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			this.positionTrackBar.BackStyle = ComponentFactory.Krypton.Toolkit.PaletteBackStyle.SeparatorLowProfile;
 			this.positionTrackBar.DrawBackground = true;
 			this.positionTrackBar.Location = new System.Drawing.Point(4, 216);
+			this.positionTrackBar.Maximum = 100;
 			this.positionTrackBar.Name = "positionTrackBar";
 			this.positionTrackBar.Size = new System.Drawing.Size(376, 21);
 			this.positionTrackBar.TabIndex = 13;
@@ -349,7 +350,6 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			this.ejectButton.TabIndex = 7;
 			this.ejectButton.Values.Image = global::Polycode.NostalgicPlayer.NostalgicPlayer.Properties.Resources.Eject;
 			this.ejectButton.Values.Text = "";
-			this.ejectButton.Click += new System.EventHandler(this.EjectButton_Click);
 			// 
 			// nextModuleButton
 			// 
@@ -386,7 +386,6 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			this.playButton.TabIndex = 3;
 			this.playButton.Values.Image = global::Polycode.NostalgicPlayer.NostalgicPlayer.Properties.Resources.Play;
 			this.playButton.Values.Text = "";
-			this.playButton.Click += new System.EventHandler(this.PlayButton_Click);
 			// 
 			// rewindButton
 			// 
@@ -459,9 +458,10 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			this.muteCheckButton.Values.Image = global::Polycode.NostalgicPlayer.NostalgicPlayer.Properties.Resources.Mute;
 			this.muteCheckButton.Values.Text = "";
 			// 
-			// timer
+			// clockTimer
 			// 
-			this.timer.Interval = 1000;
+			this.clockTimer.Interval = 995;
+			this.clockTimer.Tick += new System.EventHandler(this.ClockTimer_Tick);
 			// 
 			// MainWindowForm
 			// 
@@ -483,7 +483,6 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			this.MainMenuStrip = this.menuStrip;
 			this.MinimumSize = new System.Drawing.Size(400, 320);
 			this.Name = "MainWindowForm";
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainWindowForm_FormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.infoGroup.Panel)).EndInit();
 			this.infoGroup.Panel.ResumeLayout(false);
 			this.infoGroup.Panel.PerformLayout();
@@ -547,7 +546,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 		private KryptonButton showSamplesButton;
 		private KryptonCheckButton muteCheckButton;
 		private System.Windows.Forms.ToolTip toolTip;
-		private System.Windows.Forms.Timer timer;
+		private System.Windows.Forms.Timer clockTimer;
 		private KryptonManager kryptonManager;
 	}
 }
