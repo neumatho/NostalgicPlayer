@@ -227,7 +227,8 @@ all the selected modules will be moved to the bottom of the list</value>
 Pressing twice, it will clear the module list</value>
   </data>
   <data name="IDS_TIP_MAIN_FORWARD" xml:space="preserve">
-    <value>Fast forward</value>
+    <value>Moves to the next position.
+If on the last position, the next module is loaded instead</value>
   </data>
   <data name="IDS_TIP_MAIN_INFO" xml:space="preserve">
     <value>Press the left mouse button over here to switch between
@@ -271,7 +272,8 @@ If you press the button after the first 2 seconds, the module will start over ag
     <value>Remove the selected modules from the list</value>
   </data>
   <data name="IDS_TIP_MAIN_REWIND" xml:space="preserve">
-    <value>Rewind</value>
+    <value>Rewind to the previous position.
+If on first position, the previous module is loaded instead</value>
   </data>
   <data name="IDS_TIP_MAIN_SAMP" xml:space="preserve">
     <value>Opens the sample info window where you can see

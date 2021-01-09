@@ -36,6 +36,21 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 		void StopPlaying();
 
 		/// <summary>
+		/// Will pause the playing
+		/// </summary>
+		void PausePlaying();
+
+		/// <summary>
+		/// Will resume the playing
+		/// </summary>
+		void ResumePlaying();
+
+		/// <summary>
+		/// Will set the master volume
+		/// </summary>
+		void SetMasterVolume(int volume);
+
+		/// <summary>
 		/// Return all the static information about the module
 		/// </summary>
 		ModuleInfoStatic StaticModuleInformation { get; }

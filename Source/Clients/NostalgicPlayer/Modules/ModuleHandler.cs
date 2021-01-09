@@ -8,13 +8,11 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Windows.Forms;
 using ComponentFactory.Krypton.Toolkit;
 using Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow;
 using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;
 using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Streams;
 using Polycode.NostalgicPlayer.NostalgicPlayerKit.Utility;
 using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Containers;
@@ -42,6 +40,8 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 		private List<ModuleItem> loadedFiles;
 
 		private volatile bool isPlaying = false;
+		private int currentMasterVolume;
+		private bool isMuted = false;
 
 		/********************************************************************/
 		/// <summary>
@@ -57,12 +57,14 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 		/// Initialize and start the module handler thread
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(MainWindowForm mainWindow, Manager manager, Settings userSettings)
+		public void Initialize(MainWindowForm mainWindow, Manager manager, Settings userSettings, int startVolume)
 		{
 			// Remember the arguments
 			mainWindowForm = mainWindow;
 			agentManager = manager;
 			settings = userSettings;
+
+			currentMasterVolume = startVolume;
 
 			// Initialize the loader
 			loadedFiles = new List<ModuleItem>();
@@ -224,6 +226,115 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 
 				// Empty the list
 				loadedFiles.Clear();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will start to play the song given
+		/// </summary>
+		/********************************************************************/
+		public void StartSong(int newSong)
+		{
+			IPlayer player = GetActivePlayer();
+
+			if (player != null)
+			{
+				// Stop the playing
+				player.StopPlaying();
+
+				// Switch song if possible
+				if (player is IModulePlayer modulePlayer)
+					modulePlayer.SelectSong(newSong);
+
+				// And start playing again
+				player.StartPlaying();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will tell the player to change to the position given
+		/// </summary>
+		/********************************************************************/
+		public void SetSongPosition(int newPosition)
+		{
+			IPlayer player = GetActivePlayer();
+
+			if (player != null)
+			{
+				if (player is IModulePlayer modulePlayer)
+					modulePlayer.SetSongPosition(newPosition);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will remember the mute status
+		/// </summary>
+		/********************************************************************/
+		public void SetMuteStatus(bool muted)
+		{
+			isMuted = muted;
+			SetVolume(currentMasterVolume);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will tell the mixer to change the volume
+		/// </summary>
+		/********************************************************************/
+		public void SetVolume(int newVolume)
+		{
+			IPlayer player = GetActivePlayer();
+
+			if (player != null)
+				player.SetMasterVolume(isMuted ? 0 : newVolume);
+
+			currentMasterVolume = newVolume;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will pause the player
+		/// </summary>
+		/********************************************************************/
+		public void PausePlaying()
+		{
+			IPlayer player = GetActivePlayer();
+
+			if (player != null)
+			{
+				player.PausePlaying();
+				IsPlaying = false;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will resume the player
+		/// </summary>
+		/********************************************************************/
+		public void ResumePlaying()
+		{
+			IPlayer player = GetActivePlayer();
+
+			if (player != null)
+			{
+				player.ResumePlaying();
+				IsPlaying = true;
 			}
 		}
 
@@ -400,16 +511,16 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 			// Is there any modules loaded?
 			if (player != null)
 			{
-				// Change the volume//XX
-				;
+				// Change the volume
+				SetVolume(currentMasterVolume);
 
 				// Initialize the module
 				if (player is IModulePlayer modulePlayer)
 				{
 					modulePlayer.SelectSong(subSong);
 
-//XX					if (startPos != -1)
-//						modulePlayer.SongPosition = startPos;	// Skal først bruges ved load og start ved opstart
+					if (startPos != -1)
+						modulePlayer.SetSongPosition(startPos);
 
 					// Subscribe to position changes
 					modulePlayer.PositionChanged += Player_PositionChanged;

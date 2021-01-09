@@ -21,6 +21,11 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 		void SelectSong(int songNumber);
 
 		/// <summary>
+		/// Will set a new song position
+		/// </summary>
+		void SetSongPosition(int position);
+
+		/// <summary>
 		/// Event called when the player change position
 		/// </summary>
 		event EventHandler PositionChanged;

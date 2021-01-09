@@ -180,6 +180,44 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 
 		/********************************************************************/
 		/// <summary>
+		/// Will pause the playing
+		/// </summary>
+		/********************************************************************/
+		public void PausePlaying()
+		{
+			if (currentPlayer != null)
+				outputAgent.Pause();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will resume the playing
+		/// </summary>
+		/********************************************************************/
+		public void ResumePlaying()
+		{
+			if (currentPlayer != null)
+				outputAgent.Play();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will set the master volume
+		/// </summary>
+		/********************************************************************/
+		public void SetMasterVolume(int volume)
+		{
+			soundStream?.SetMasterVolume(volume);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return all the static information about the module
 		/// </summary>
 		/********************************************************************/
@@ -244,6 +282,26 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 					// Initialize the module information
 					PlayingModuleInformation = new ModuleInfoFloating(songNum, totalTime, songLength, positionTimes, moduleInfo.ToArray());
 				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will set a new song position
+		/// </summary>
+		/********************************************************************/
+		public void SetSongPosition(int position)
+		{
+			if (currentPlayer != null)
+			{
+				lock (currentPlayer)
+				{
+					currentPlayer.SongPosition = position;
+				}
+
+				PlayingModuleInformation.SongPosition = position;
 			}
 		}
 

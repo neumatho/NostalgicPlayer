@@ -371,7 +371,8 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fast forward.
+        ///   Looks up a localized string similar to Moves to the next position.
+        ///If on the last position, the next module is loaded instead.
         /// </summary>
         internal static string IDS_TIP_MAIN_FORWARD {
             get {
@@ -493,7 +494,8 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rewind.
+        ///   Looks up a localized string similar to Rewind to the previous position.
+        ///If on first position, the previous module is loaded instead.
         /// </summary>
         internal static string IDS_TIP_MAIN_REWIND {
             get {

@@ -115,9 +115,25 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			moduleListBox.SelectedIndexChanged += ModuleListBox_SelectedIndexChanged;
 			moduleListBox.ListBox.MouseDoubleClick += ModuleListBox_MouseDoubleClick;
 
+			// Volume
+			muteCheckButton.CheckedChanged += MuteCheckButton_CheckedChanged;
+			masterVolumeTrackBar.ValueChanged += MasterVolumeTrackBar_ValueChanged;
+
+			// Position slider
+			positionTrackBar.MouseDown += PositionTrackBar_MouseDown;
+			positionTrackBar.MouseUp += PositionTrackBar_MouseUp;
+			positionTrackBar.ValueChanged += PositionTrackBar_ValueChanged;
+
 			// Tape deck
 			playButton.Click += PlayButton_Click;
+			pauseCheckButton.CheckedChanged += PauseCheckButton_CheckedChanged;
 			ejectButton.Click += EjectButton_Click;
+
+			rewindButton.Click += RewindButton_Click;
+			fastForwardButton.Click += FastForwardButton_Click;
+
+			previousModuleButton.Click += PreviousModuleButton_Click;
+			nextModuleButton.Click += NextModuleButton_Click;
 
 			// Module handler
 			moduleHandler.PositionChanged += ModuleHandler_PositionChanged;
@@ -247,7 +263,80 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 		}
 		#endregion
 
-		#region Tapedeck events
+		#region Volume events
+		/********************************************************************/
+		/// <summary>
+		/// The user has changed the mute status
+		/// </summary>
+		/********************************************************************/
+		private void MuteCheckButton_CheckedChanged(object sender, EventArgs e)
+		{
+			moduleHandler.SetMuteStatus(muteCheckButton.Checked);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the master volume has changed
+		/// </summary>
+		/********************************************************************/
+		private void MasterVolumeTrackBar_ValueChanged(object sender, EventArgs e)
+		{
+			moduleHandler.SetVolume(masterVolumeTrackBar.Value);
+		}
+		#endregion
+
+		#region Position slider events
+		/********************************************************************/
+		/// <summary>
+		/// The user hold down the mouse button on the slider
+		/// </summary>
+		/********************************************************************/
+
+		private void PositionTrackBar_MouseDown(object sender, MouseEventArgs e)
+		{
+			// Prevent slider updates when printing information
+			allowPosSliderUpdate = false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The user released the mouse button on the slider
+		/// </summary>
+		/********************************************************************/
+
+		private void PositionTrackBar_MouseUp(object sender, MouseEventArgs e)
+		{
+			allowPosSliderUpdate = true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The value has changed
+		/// </summary>
+		/********************************************************************/
+		private void PositionTrackBar_ValueChanged(object sender, EventArgs e)
+		{
+			// Only do this, if the user change the position and not the player
+			if (!allowPosSliderUpdate)
+			{
+				// Calculate the song position
+				int newSongPos = positionTrackBar.Value * moduleHandler.PlayingModuleInformation.SongLength / 100;
+				if (newSongPos > 0)
+					newSongPos--;
+
+				// Set the new song position
+				SetPosition(newSongPos);
+			}
+		}
+#endregion
+
+		#region Tape deck events
 		/********************************************************************/
 		/// <summary>
 		/// The user clicked on the play button
@@ -278,6 +367,36 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// The user clicked on the pause button
+		/// </summary>
+		/********************************************************************/
+		private void PauseCheckButton_CheckedChanged(object sender, EventArgs e)
+		{
+			if (pauseCheckButton.Checked)
+			{
+				moduleHandler.PausePlaying();
+
+				// Stop the timers
+				StopTimers();
+			}
+			else
+			{
+				// Start to play again
+				moduleHandler.ResumePlaying();
+
+				// We add the time to the start time, so there won't be added
+				// a lot of seconds to the played time
+				timeStart += (DateTime.Now - timeStart - timeOccurred);
+
+				// Start the timers again
+				StartTimers(false);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// The user clicked on the eject button
 		/// </summary>
 		/********************************************************************/
@@ -293,6 +412,134 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			{
 				// Clear the module list
 				EmptyList();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The user clicked on the rewind button
+		/// </summary>
+		/********************************************************************/
+		private void RewindButton_Click(object sender, EventArgs e)
+		{
+			if (playItem != null)
+			{
+				int songPos = moduleHandler.PlayingModuleInformation.SongPosition;
+
+				// Only load the previous module if song position is 0 and
+				// module loop isn't on
+				if (songPos == 0)
+				{
+					if (!loopCheckButton.Checked)
+						previousModuleButton.PerformClick();
+
+					songPos = 1;
+				}
+
+				// Change the position
+				SetPosition(songPos - 1);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The user clicked on the fast forward button
+		/// </summary>
+		/********************************************************************/
+		private void FastForwardButton_Click(object sender, EventArgs e)
+		{
+			if (playItem != null)
+			{
+				int songLength = moduleHandler.PlayingModuleInformation.SongLength;
+				int songPos = moduleHandler.PlayingModuleInformation.SongPosition;
+
+				// Only load the next module if song position is the last and
+				// module loop isn't on
+				if (songPos == (songLength - 1))
+				{
+					if (!loopCheckButton.Checked)
+						nextModuleButton.PerformClick();
+
+					songPos = -1;
+				}
+
+				// Change the position
+				SetPosition(songPos + 1);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The user clicked on the previous module button
+		/// </summary>
+		/********************************************************************/
+		private void PreviousModuleButton_Click(object sender, EventArgs e)
+		{
+			if (playItem != null)
+			{
+				// Did the song played for more than 2 seconds?
+				if (timeOccurred.TotalSeconds > 2)
+				{
+					// Yes, start the module over again
+					int currentSong = moduleHandler.PlayingModuleInformation.CurrentSong;
+					StartSong(currentSong);
+				}
+				else
+				{
+					// Load previous module
+					int newIndex = moduleListBox.Items.IndexOf(playItem) - 1;
+					int count = moduleListBox.Items.Count;
+
+					if (newIndex < 0)
+					{
+						newIndex = count - 1;
+						if (newIndex == 0)
+						{
+							// Start over anyway, since this is the only module in the list
+							int currentSong = moduleHandler.PlayingModuleInformation.CurrentSong;
+							StartSong(currentSong);
+							return;
+						}
+					}
+
+					// Stop playing the module
+					StopAndFreeModule();
+
+					// Load and play the new module
+					LoadAndPlayModule((ModuleListItem)moduleListBox.Items[newIndex]);
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The user clicked on the next module button
+		/// </summary>
+		/********************************************************************/
+		private void NextModuleButton_Click(object sender, EventArgs e)
+		{
+			if (playItem != null)
+			{
+				// Load next module
+				int newIndex = moduleListBox.Items.IndexOf(playItem) + 1;
+				int count = moduleListBox.Items.Count;
+
+				if (newIndex == count)
+					newIndex = 0;
+
+				// Stop playing the module
+				StopAndFreeModule();
+
+				// Load and play the new module
+				LoadAndPlayModule((ModuleListItem)moduleListBox.Items[newIndex]);
 			}
 		}
 		#endregion
@@ -312,6 +559,14 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			userSettings.LoadSettings();
 
 			LoadWindowSettings("MainWindow");
+
+			// Set the time format
+			string tempStr = windowSettings.GetStringEntry("General", "TimeFormat");
+			if (!Enum.TryParse(tempStr, out timeFormat))
+				timeFormat = TimeFormat.Elapsed;
+
+			// Set the master volume
+			masterVolumeTrackBar.Value = windowSettings.GetIntEntry("General", "MasterVolume", 256);
 		}
 
 
@@ -339,14 +594,6 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 		{
 			// Set the window title
 			ShowNormalTitle();
-
-			// Set the time format
-			string tempStr = windowSettings.GetStringEntry("General", "TimeFormat");
-			if (!Enum.TryParse(tempStr, out timeFormat))
-				timeFormat = TimeFormat.Elapsed;
-
-			// Set the master volume
-			masterVolumeTrackBar.Value = windowSettings.GetIntEntry("General", "MasterVolume", 256);
 
 			// Create the file menu
 			ToolStripMenuItem fileMenuItem = new ToolStripMenuItem(Properties.Resources.IDS_MENU_FILE);
@@ -543,7 +790,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 
 			// Start the timers
 			if (playItem != null)
-				StartTimers();
+				StartTimers(true);
 
 			// Make sure the pause button isn't pressed
 			pauseCheckButton.Checked = false;
@@ -715,7 +962,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			CreateHandle();
 
 			moduleHandler = new ModuleHandler();
-			moduleHandler.Initialize(this, agentManager, userSettings);
+			moduleHandler.Initialize(this, agentManager, userSettings, masterVolumeTrackBar.Value);
 		}
 
 
@@ -767,7 +1014,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 
 			// If only one item is in the list or none is playing, disable
 			// the previous and next module buttons
-			if (isPlaying || (count > 1))
+			if (isPlaying && (count > 1))
 			{
 				previousModuleButton.Enabled = true;
 				nextModuleButton.Enabled = true;
@@ -1077,6 +1324,51 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// Will start to play the song given
+		/// </summary>
+		/********************************************************************/
+		private void StartSong(int newSong)
+		{
+			// First stop any timers
+			StopTimers();
+
+			// Now tell the module handler to switch song
+			moduleHandler.StartSong(newSong);
+
+			// Initialize all the controls
+			InitControls();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will change the module position
+		/// </summary>
+		/********************************************************************/
+		private void SetPosition(int newPosition)
+		{
+			if (playItem != null)
+			{
+				if (newPosition != moduleHandler.PlayingModuleInformation.SongPosition)
+				{
+					// Change the time to the position time
+					SetPositionTime(newPosition);
+
+					// Change the position
+					moduleHandler.SetSongPosition(newPosition);
+					prevPosition = newPosition;
+
+					// Show it to the user
+					PrintInfo();
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will remove all the items from the module list
 		/// </summary>
 		/********************************************************************/
@@ -1109,11 +1401,15 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 		/// Will start all the timers
 		/// </summary>
 		/********************************************************************/
-		private void StartTimers()
+		private void StartTimers(bool resetTimes)
 		{
 			// Start the playing timer
-			timeStart = DateTime.Now;
-			timeOccurred = new TimeSpan(0);
+			if (resetTimes)
+			{
+				timeStart = DateTime.Now;
+				timeOccurred = new TimeSpan(0);
+			}
+
 			clockTimer.Start();
 
 			//XX Start the never ending timer if needed

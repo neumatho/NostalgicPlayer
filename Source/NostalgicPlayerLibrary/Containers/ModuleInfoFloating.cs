@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructor
+		/// Constructor (for module players)
 		/// </summary>
 		/********************************************************************/
 		internal ModuleInfoFloating(int songNumber, TimeSpan totalTime, int songLength, TimeSpan[] positionTimes, string[] moduleInfo)
