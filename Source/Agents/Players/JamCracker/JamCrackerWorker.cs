@@ -683,6 +683,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 							if ((instInfo.flags & 2) == 0)
 							{
 								voice.insAddress = instInfo.address;
+								voice.realInsAddress = instInfo.address;
 								voice.insLen = (ushort)(instInfo.size / 2);
 							}
 							else
