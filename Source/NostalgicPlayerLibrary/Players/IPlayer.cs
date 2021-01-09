@@ -6,6 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System;
 using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Containers;
 
 namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
@@ -60,5 +61,10 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 		/// playing
 		/// </summary>
 		ModuleInfoFloating PlayingModuleInformation { get; }
+
+		/// <summary>
+		/// Event called when the player reached the end
+		/// </summary>
+		event EventHandler EndReached;
 	}
 }

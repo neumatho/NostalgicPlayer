@@ -44,12 +44,14 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 		private TimeFormat timeFormat;
 		private DateTime timeStart;
 		private TimeSpan timeOccurred;
-		private int prevPosition;
 
 		// Module variables
 		private ModuleListItem playItem;
 		private TimeSpan songTotalTime;
 		//XXprivate int subSongMultiply;
+
+		// Information variables
+		private int prevSongPosition;
 
 		// List times
 		private TimeSpan listTime;
@@ -122,6 +124,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			// Position slider
 			positionTrackBar.MouseDown += PositionTrackBar_MouseDown;
 			positionTrackBar.MouseUp += PositionTrackBar_MouseUp;
+			positionTrackBar.Click += PositionTrackBar_Click;
 			positionTrackBar.ValueChanged += PositionTrackBar_ValueChanged;
 
 			// Tape deck
@@ -137,6 +140,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 
 			// Module handler
 			moduleHandler.PositionChanged += ModuleHandler_PositionChanged;
+			moduleHandler.EndReached += ModuleHandler_EndReached;
 		}
 
 		#region Form events
@@ -214,13 +218,49 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 				int newPos = moduleHandler.PlayingModuleInformation.SongPosition;
 
 				// Change the time to the position time
-				if (newPos < prevPosition)
+				if (newPos < prevSongPosition)
 					SetPositionTime(newPos);
 
-				prevPosition = newPos;
+				prevSongPosition = newPos;
 
 				// Print the information
 				PrintInfo();
+			}));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the player has reached the end
+		/// </summary>
+		/********************************************************************/
+		private void ModuleHandler_EndReached(object sender, EventArgs e)
+		{
+			BeginInvoke(new Action(() =>
+			{
+				// Check to see if there is module loop on
+				if (!loopCheckButton.Checked)
+				{
+					// Get the number of modules in the list
+					int count = moduleListBox.Items.Count;
+
+					// Get the index of the current playing module
+					int curPlay = moduleListBox.Items.IndexOf(playItem);
+
+					// The next module to load
+					int newPlay = curPlay + 1;
+
+					// Test to see if we is at the end of the list
+					if (newPlay == count)
+						newPlay = 0;
+
+					// Free the module
+					StopAndFreeModule();
+
+					// Load the module
+					LoadAndPlayModule((ModuleListItem)moduleListBox.Items[newPlay]);
+				}
 			}));
 		}
 		#endregion
@@ -317,6 +357,25 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// The user clicked on the track bar
+		/// </summary>
+		/********************************************************************/
+		private void PositionTrackBar_Click(object sender, EventArgs e)
+		{
+			// Calculate the song position
+			int songLength = moduleHandler.PlayingModuleInformation.SongLength;
+			int val = positionTrackBar.Value;
+
+			int newSongPos = val == 100 ? songLength - 1 : val * songLength / 100;
+
+			// Set the new song position
+			SetPosition(newSongPos);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// The value has changed
 		/// </summary>
 		/********************************************************************/
@@ -326,15 +385,16 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			if (!allowPosSliderUpdate)
 			{
 				// Calculate the song position
-				int newSongPos = positionTrackBar.Value * moduleHandler.PlayingModuleInformation.SongLength / 100;
-				if (newSongPos > 0)
-					newSongPos--;
+				int songLength = moduleHandler.PlayingModuleInformation.SongLength;
+				int val = positionTrackBar.Value;
+
+				int newSongPos = val == 100 ? songLength - 1 : val * songLength / 100;
 
 				// Set the new song position
 				SetPosition(newSongPos);
 			}
 		}
-#endregion
+		#endregion
 
 		#region Tape deck events
 		/********************************************************************/
@@ -786,7 +846,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 		/********************************************************************/
 		private void InitControls()
 		{
-			prevPosition = -1;
+			prevSongPosition = -1;
 
 			// Start the timers
 			if (playItem != null)
@@ -1357,7 +1417,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 
 					// Change the position
 					moduleHandler.SetSongPosition(newPosition);
-					prevPosition = newPosition;
+					prevSongPosition = newPosition;
 
 					// Show it to the user
 					PrintInfo();

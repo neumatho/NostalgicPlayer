@@ -54,6 +54,15 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 
 		/********************************************************************/
 		/// <summary>
+		/// Event called when the player reached the end
+		/// </summary>
+		/********************************************************************/
+		public event EventHandler EndReached;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Initialize and start the module handler thread
 		/// </summary>
 		/********************************************************************/
@@ -188,6 +197,9 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 							// Unsubscribe to position changes
 							modulePlayer.PositionChanged -= Player_PositionChanged;
 						}
+
+						// Unsubscribe to end notifications
+						player.EndReached -= Player_EndReached;
 
 						IsPlaying = false;
 					}
@@ -364,6 +376,20 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 			if (PositionChanged != null)
 				PositionChanged(sender, e);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the player has reached the end
+		/// </summary>
+		/********************************************************************/
+		private void Player_EndReached(object sender, EventArgs e)
+		{
+			// Just call the next event handler
+			if (EndReached != null)
+				EndReached(sender, e);
+		}
 		#endregion
 
 		#region Private methods
@@ -525,6 +551,9 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 					// Subscribe to position changes
 					modulePlayer.PositionChanged += Player_PositionChanged;
 				}
+
+				// Subscribe to end notifications
+				player.EndReached += Player_EndReached;
 
 				// The module is playing
 				IsPlaying = true;

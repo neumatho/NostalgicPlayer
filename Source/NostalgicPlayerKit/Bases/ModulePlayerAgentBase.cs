@@ -32,8 +32,6 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases
 			Channels = null;
 			PlayingFrequency = 50.0f;
 
-			EndReached = false;
-
 			totalSize = 0;
 		}
 

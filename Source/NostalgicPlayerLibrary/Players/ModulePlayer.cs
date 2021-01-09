@@ -68,6 +68,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 					{
 						// Subscribe the events
 						currentPlayer.PositionChanged += Player_PositionChanged;
+						currentPlayer.EndReached += Player_EndReached;
 
 						// Initialize module information
 						StaticModuleInformation = new ModuleInfoStatic(currentPlayer.ModuleName.Trim(), FindAuthor(), loader.ModuleFormat, loader.PlayerName, currentPlayer.ModuleChannelCount, loader.ModuleSize + currentPlayer.ExtraFilesSizes, currentPlayer.SupportFlags, currentPlayer.SubSongs.Number);
@@ -238,6 +239,15 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 		{
 			get; private set;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Event called when the player reached the end
+		/// </summary>
+		/********************************************************************/
+		public event EventHandler EndReached;
 		#endregion
 
 		#region IModulePlayer implementation
@@ -334,6 +344,23 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
 				// Call the next event handler
 				if (PositionChanged != null)
 					PositionChanged(sender, e);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the player has reached the end
+		/// </summary>
+		/********************************************************************/
+		private void Player_EndReached(object sender, EventArgs e)
+		{
+			if (currentPlayer != null)
+			{
+				// Just call the next event handler
+				if (EndReached != null)
+					EndReached(sender, e);
 			}
 		}
 		#endregion

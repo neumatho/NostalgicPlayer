@@ -6,6 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System;
 using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;
 
 namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces
@@ -41,8 +42,8 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces
 		void Play();
 
 		/// <summary>
-		/// Indicate if the end has been reached of the file
+		/// Event called when the player has reached the end
 		/// </summary>
-		bool EndReached { get; set; }
+		event EventHandler EndReached;
 	}
 }

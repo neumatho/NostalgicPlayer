@@ -607,7 +607,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 					songCnt = songLen;
 
 					// Next module
-					EndReached = true;
+					OnEndReached();
 				}
 
 				// Next position

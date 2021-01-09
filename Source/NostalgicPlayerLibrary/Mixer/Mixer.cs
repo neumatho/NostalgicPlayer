@@ -256,24 +256,17 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Mixer
 					lock (currentPlayer)
 					{
 						currentPlayer.Play();
-					}
 
-					// Get some mixer information we need to parse the data
-					VoiceInfo[] voiceInfo = currentMixer.GetMixerChannels();
-					int click = currentMixer.GetClickConstant();
+						// Get some mixer information we need to parse the data
+						VoiceInfo[] voiceInfo = currentMixer.GetMixerChannels();
+						int click = currentMixer.GetClickConstant();
 
-					for (int t = 0; t < moduleChannelNumber; t++)
-						((ChannelParser)currentPlayer.Channels[t]).ParseInfo(ref voiceInfo[t], click);
+						for (int t = 0; t < moduleChannelNumber; t++)
+							((ChannelParser)currentPlayer.Channels[t]).ParseInfo(ref voiceInfo[t], click);
 
-					// Calculate the number of sample pair to mix before the
-					// player need to be called again
-					ticksLeft = (int)(mixerFrequency / currentPlayer.PlayingFrequency);
-
-					if (currentPlayer.EndReached)
-					{
-						// We got an end flag, so stop playing and start the next module
-						currentPlayer.EndReached = false;
-						break;
+						// Calculate the number of sample pair to mix before the
+						// player need to be called again
+						ticksLeft = (int)(mixerFrequency / currentPlayer.PlayingFrequency);
 					}
 
 					// If ticksLeft is still 0, the player doesn't play

@@ -6,6 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System;
 using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;
 using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
 
@@ -78,12 +79,22 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases
 
 		/********************************************************************/
 		/// <summary>
-		/// Indicate if the end has been reached of the file
+		/// Event called when the player reached the end
 		/// </summary>
 		/********************************************************************/
-		public virtual bool EndReached
+		public event EventHandler EndReached;
+
+		#region Helper methods
+		/********************************************************************/
+		/// <summary>
+		/// Call this when your player has reached the end of the module
+		/// </summary>
+		/********************************************************************/
+		protected void OnEndReached()
 		{
-			get; set;
+			if (EndReached != null)
+				EndReached(this, EventArgs.Empty);
 		}
+		#endregion
 	}
 }
