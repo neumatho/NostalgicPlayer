@@ -97,6 +97,100 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			SetupHandlers();
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will show an error message to the user with options
+		/// </summary>
+		/********************************************************************/
+		public void ShowErrorMessage(string message, ModuleListItem listItem)
+		{
+			CustomMessageBox dialog = new CustomMessageBox(message, Properties.Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error);
+			dialog.AddButton(Properties.Resources.IDS_BUT_SKIP, '1');
+			dialog.AddButton(Properties.Resources.IDS_BUT_SKIPREMOVE, '2');
+			dialog.AddButton(Properties.Resources.IDS_BUT_STOP, '3');
+			dialog.ShowDialog();
+			char response = dialog.GetButtonResult();
+
+			switch (response)
+			{
+				// Skip
+				case '1':
+				{
+					// Get the index of the module that couldn't be loaded + 1
+					int index = moduleListBox.Items.IndexOf(listItem) + 1;
+
+					// Get the number of items in the list
+					int count = moduleListBox.Items.Count;
+
+					// Deselect the playing flag
+					ChangePlayItem(null);
+
+					// Do there exist a "next" module
+					if (index < count)
+					{
+						// Yes, load it
+						LoadAndPlayModule((ModuleListItem)moduleListBox.Items[index]);
+					}
+					else
+					{
+						// No
+						if (count != 1)
+						{
+							// Load the first module, but only if it's valid
+							// or haven't been loaded before
+							ModuleListItem item = (ModuleListItem)moduleListBox.Items[0];
+							if (!item.HaveTime || (item.HaveTime && item.Time.TotalMilliseconds != 0))
+								LoadAndPlayModule(item);
+						}
+					}
+					break;
+				}
+
+				// Skip and remove
+				case '2':
+				{
+					// Get the index of the module that couldn't be loaded
+					int index = moduleListBox.Items.IndexOf(listItem);
+
+					// Get the number of items in the list - 1
+					int count = moduleListBox.Items.Count - 1;
+
+					// Deselect the playing flag
+					ChangePlayItem(null);
+
+					// Remove the module from the list
+					moduleListBox.Items.RemoveAt(index);
+
+					// Do there exist a "next" module
+					if (index < count)
+					{
+						// Yes, load it
+						LoadAndPlayModule((ModuleListItem)moduleListBox.Items[index]);
+					}
+					else
+					{
+						// No
+						if (count >= 1)
+						{
+							// Load the first module
+							LoadAndPlayModule((ModuleListItem)moduleListBox.Items[0]);
+						}
+					}
+					break;
+				}
+
+				// Stop playing
+				case '3':
+				{
+					// Deselect the playing flag
+					ChangePlayItem(null);
+					break;
+				}
+			}
+		}
+
 		#region Event handlers
 		/********************************************************************/
 		/// <summary>

@@ -37,6 +37,8 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 
 			ShortText = listItem.DisplayName;
 			time = new TimeSpan(0);
+			HaveTime = false;
+
 			Image = new Bitmap(ImageSize,ImageSize);
 		}
 
@@ -92,6 +94,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			set
 			{
 				time = value;
+				HaveTime = true;
 
 				if (time.Ticks == 0)
 					LongText = string.Empty;
@@ -104,6 +107,18 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 						LongText = tempTime.ToString(Properties.Resources.IDS_TIMEFORMAT_SMALL);
 				}
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Indicate if the time has been set
+		/// </summary>
+		/********************************************************************/
+		public bool HaveTime
+		{
+			get; private set;
 		}
 	}
 }

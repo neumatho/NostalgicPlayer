@@ -101,6 +101,42 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ok.
+        /// </summary>
+        internal static string IDS_BUT_OK {
+            get {
+                return ResourceManager.GetString("IDS_BUT_OK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Skip.
+        /// </summary>
+        internal static string IDS_BUT_SKIP {
+            get {
+                return ResourceManager.GetString("IDS_BUT_SKIP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Skip and remove.
+        /// </summary>
+        internal static string IDS_BUT_SKIPREMOVE {
+            get {
+                return ResourceManager.GetString("IDS_BUT_SKIPREMOVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop playing.
+        /// </summary>
+        internal static string IDS_BUT_STOP {
+            get {
+                return ResourceManager.GetString("IDS_BUT_STOP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An exception has been thrown in the program. The program will exit. Error message is:
         ///{0}.
         /// </summary>

@@ -8,9 +8,8 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
-using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.NostalgicPlayer.Containers.Settings;
+using Polycode.NostalgicPlayer.NostalgicPlayer.Controls;
 using Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow;
 using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;
 using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
@@ -27,7 +26,6 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 	{
 		private class ModuleItem
 		{
-			public ModuleListItem ListItem;
 			public Loader Loader;
 		}
 
@@ -400,9 +398,11 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 		/********************************************************************/
 		private void ShowSimpleErrorMessage(string message)
 		{
-			mainWindowForm.Invoke(new Action(() =>
+			mainWindowForm.BeginInvoke(new Action(() =>
 			{
-				KryptonMessageBox.Show(message, Properties.Resources.IDS_MAIN_TITLE, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				CustomMessageBox dialog = new CustomMessageBox(message, Properties.Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error);
+				dialog.AddButton(Properties.Resources.IDS_BUT_OK, 'O');
+				dialog.ShowDialog();
 			}));
 		}
 
@@ -413,11 +413,11 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 		/// Will show an error message to the user with options
 		/// </summary>
 		/********************************************************************/
-		private void ShowErrorMessage(string message)//XX
+		private void ShowErrorMessage(string message, ModuleListItem listItem)
 		{
-			mainWindowForm.Invoke(new Action(() =>
+			mainWindowForm.BeginInvoke(new Action(() =>
 			{
-				KryptonMessageBox.Show(message, Properties.Resources.IDS_MAIN_TITLE, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				mainWindowForm.ShowErrorMessage(message, listItem);
 			}));
 		}
 
@@ -467,7 +467,6 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 				string errorMessage;
 
 				ModuleItem item = new ModuleItem();
-				item.ListItem = listItem;
 
 				// Get the file name
 				string fileName = listItem.ShortText;
@@ -479,7 +478,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 				if (!item.Loader.Load(new PlayerFileInfo(fileName, listItem.OpenFile()), out errorMessage))
 				{
 					if (showError)
-						ShowErrorMessage(string.Format(Properties.Resources.IDS_ERR_LOAD_FILE, errorMessage));
+						ShowErrorMessage(string.Format(Properties.Resources.IDS_ERR_LOAD_FILE, errorMessage), listItem);
 
 					return false;
 				}
@@ -496,7 +495,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 				if (!item.Loader.Player.InitPlayer(playerConfig, out errorMessage))
 				{
 					if (showError)
-						ShowErrorMessage(string.Format(Properties.Resources.IDS_ERR_INIT_PLAYER, errorMessage));
+						ShowErrorMessage(string.Format(Properties.Resources.IDS_ERR_INIT_PLAYER, errorMessage), listItem);
 
 					item.Loader.Unload();
 					return false;

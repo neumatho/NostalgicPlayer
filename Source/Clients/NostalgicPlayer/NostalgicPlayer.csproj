@@ -54,6 +54,12 @@
     <Compile Include="Containers\Settings\MainWindowSettings.cs" />
     <Compile Include="Containers\Settings\PathSettings.cs" />
     <Compile Include="Containers\Settings\WindowSettings.cs" />
+    <Compile Include="Controls\CustomMessageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\CustomMessageBox.Designer.cs">
+      <DependentUpon>CustomMessageBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SleepCursor.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -72,6 +78,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Containers\Settings\SoundSettings.cs" />
+    <EmbeddedResource Include="Controls\CustomMessageBox.resx">
+      <DependentUpon>CustomMessageBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainWindow\MainWindowForm.resx">
       <DependentUpon>MainWindowForm.cs</DependentUpon>
     </EmbeddedResource>
