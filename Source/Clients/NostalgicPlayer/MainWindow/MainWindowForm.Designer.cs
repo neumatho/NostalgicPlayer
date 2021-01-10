@@ -1,4 +1,4 @@
-﻿using ComponentFactory.Krypton.Toolkit;
+﻿using Krypton.Toolkit;
 
 namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 {
@@ -33,41 +33,41 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindowForm));
 			this.menuStrip = new System.Windows.Forms.MenuStrip();
-			this.infoLabel = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
-			this.infoGroup = new ComponentFactory.Krypton.Toolkit.KryptonGroup();
-			this.moduleInfoButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.masterVolumeTrackBar = new ComponentFactory.Krypton.Toolkit.KryptonTrackBar();
-			this.moduleListBox = new ComponentFactory.Krypton.Toolkit.KryptonListBox();
-			this.listButtonsGroup = new ComponentFactory.Krypton.Toolkit.KryptonGroup();
-			this.diskButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.listButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.moveModulesDownButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.moveModulesUpButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.sortModulesButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.swapModulesButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.removeModuleButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.addModuleButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.listInfoGroup = new ComponentFactory.Krypton.Toolkit.KryptonGroup();
-			this.totalLabel = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
-			this.timeLabel = new ComponentFactory.Krypton.Toolkit.KryptonLabel();
-			this.positionTrackBar = new ComponentFactory.Krypton.Toolkit.KryptonTrackBar();
-			this.controlGroup = new ComponentFactory.Krypton.Toolkit.KryptonGroup();
-			this.pauseCheckButton = new ComponentFactory.Krypton.Toolkit.KryptonCheckButton();
-			this.ejectButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.nextModuleButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.nextSongButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.fastForwardButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.playButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.rewindButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.previousSongButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.previousModuleButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.loopSampleGroup = new ComponentFactory.Krypton.Toolkit.KryptonGroup();
-			this.loopCheckButton = new ComponentFactory.Krypton.Toolkit.KryptonCheckButton();
-			this.showSamplesButton = new ComponentFactory.Krypton.Toolkit.KryptonButton();
-			this.muteCheckButton = new ComponentFactory.Krypton.Toolkit.KryptonCheckButton();
+			this.infoLabel = new Krypton.Toolkit.KryptonLabel();
+			this.infoGroup = new Krypton.Toolkit.KryptonGroup();
+			this.moduleInfoButton = new Krypton.Toolkit.KryptonButton();
+			this.masterVolumeTrackBar = new Krypton.Toolkit.KryptonTrackBar();
+			this.moduleListBox = new Krypton.Toolkit.KryptonListBox();
+			this.listButtonsGroup = new Krypton.Toolkit.KryptonGroup();
+			this.diskButton = new Krypton.Toolkit.KryptonButton();
+			this.listButton = new Krypton.Toolkit.KryptonButton();
+			this.moveModulesDownButton = new Krypton.Toolkit.KryptonButton();
+			this.moveModulesUpButton = new Krypton.Toolkit.KryptonButton();
+			this.sortModulesButton = new Krypton.Toolkit.KryptonButton();
+			this.swapModulesButton = new Krypton.Toolkit.KryptonButton();
+			this.removeModuleButton = new Krypton.Toolkit.KryptonButton();
+			this.addModuleButton = new Krypton.Toolkit.KryptonButton();
+			this.listInfoGroup = new Krypton.Toolkit.KryptonGroup();
+			this.totalLabel = new Krypton.Toolkit.KryptonLabel();
+			this.timeLabel = new Krypton.Toolkit.KryptonLabel();
+			this.positionTrackBar = new Krypton.Toolkit.KryptonTrackBar();
+			this.controlGroup = new Krypton.Toolkit.KryptonGroup();
+			this.pauseCheckButton = new Krypton.Toolkit.KryptonCheckButton();
+			this.ejectButton = new Krypton.Toolkit.KryptonButton();
+			this.nextModuleButton = new Krypton.Toolkit.KryptonButton();
+			this.nextSongButton = new Krypton.Toolkit.KryptonButton();
+			this.fastForwardButton = new Krypton.Toolkit.KryptonButton();
+			this.playButton = new Krypton.Toolkit.KryptonButton();
+			this.rewindButton = new Krypton.Toolkit.KryptonButton();
+			this.previousSongButton = new Krypton.Toolkit.KryptonButton();
+			this.previousModuleButton = new Krypton.Toolkit.KryptonButton();
+			this.loopSampleGroup = new Krypton.Toolkit.KryptonGroup();
+			this.loopCheckButton = new Krypton.Toolkit.KryptonCheckButton();
+			this.showSamplesButton = new Krypton.Toolkit.KryptonButton();
+			this.muteCheckButton = new Krypton.Toolkit.KryptonCheckButton();
 			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.clockTimer = new System.Windows.Forms.Timer(this.components);
-			this.kryptonManager = new ComponentFactory.Krypton.Toolkit.KryptonManager(this.components);
+			this.kryptonManager = new Krypton.Toolkit.KryptonManager(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.infoGroup)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.infoGroup.Panel)).BeginInit();
 			this.infoGroup.Panel.SuspendLayout();
@@ -101,7 +101,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			// 
 			// infoLabel
 			// 
-			this.infoLabel.LabelStyle = ComponentFactory.Krypton.Toolkit.LabelStyle.NormalPanel;
+			this.infoLabel.LabelStyle = Krypton.Toolkit.LabelStyle.NormalPanel;
 			this.infoLabel.Location = new System.Drawing.Point(3, 3);
 			this.infoLabel.Name = "infoLabel";
 			this.infoLabel.Size = new System.Drawing.Size(6, 2);
@@ -113,8 +113,8 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			// 
 			this.infoGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.infoGroup.GroupBackStyle = ComponentFactory.Krypton.Toolkit.PaletteBackStyle.PanelCustom1;
-			this.infoGroup.GroupBorderStyle = ComponentFactory.Krypton.Toolkit.PaletteBorderStyle.ButtonStandalone;
+			this.infoGroup.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.PanelCustom1;
+			this.infoGroup.GroupBorderStyle = Krypton.Toolkit.PaletteBorderStyle.ButtonStandalone;
 			this.infoGroup.Location = new System.Drawing.Point(4, 28);
 			this.infoGroup.Name = "infoGroup";
 			// 
@@ -168,8 +168,8 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			// listButtonsGroup
 			// 
 			this.listButtonsGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.listButtonsGroup.GroupBackStyle = ComponentFactory.Krypton.Toolkit.PaletteBackStyle.PanelCustom1;
-			this.listButtonsGroup.GroupBorderStyle = ComponentFactory.Krypton.Toolkit.PaletteBorderStyle.ButtonStandalone;
+			this.listButtonsGroup.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.PanelCustom1;
+			this.listButtonsGroup.GroupBorderStyle = Krypton.Toolkit.PaletteBorderStyle.ButtonStandalone;
 			this.listButtonsGroup.Location = new System.Drawing.Point(4, 176);
 			this.listButtonsGroup.Name = "listButtonsGroup";
 			// 
@@ -263,8 +263,8 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			// 
 			this.listInfoGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.listInfoGroup.GroupBackStyle = ComponentFactory.Krypton.Toolkit.PaletteBackStyle.PanelCustom1;
-			this.listInfoGroup.GroupBorderStyle = ComponentFactory.Krypton.Toolkit.PaletteBorderStyle.ButtonStandalone;
+			this.listInfoGroup.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.PanelCustom1;
+			this.listInfoGroup.GroupBorderStyle = Krypton.Toolkit.PaletteBorderStyle.ButtonStandalone;
 			this.listInfoGroup.Location = new System.Drawing.Point(238, 176);
 			this.listInfoGroup.Name = "listInfoGroup";
 			// 
@@ -279,7 +279,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			// totalLabel
 			// 
 			this.totalLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.totalLabel.LabelStyle = ComponentFactory.Krypton.Toolkit.LabelStyle.NormalPanel;
+			this.totalLabel.LabelStyle = Krypton.Toolkit.LabelStyle.NormalPanel;
 			this.totalLabel.Location = new System.Drawing.Point(108, 7);
 			this.totalLabel.Name = "totalLabel";
 			this.totalLabel.Size = new System.Drawing.Size(27, 17);
@@ -289,7 +289,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			// 
 			// timeLabel
 			// 
-			this.timeLabel.LabelStyle = ComponentFactory.Krypton.Toolkit.LabelStyle.NormalPanel;
+			this.timeLabel.LabelStyle = Krypton.Toolkit.LabelStyle.NormalPanel;
 			this.timeLabel.Location = new System.Drawing.Point(3, 7);
 			this.timeLabel.Name = "timeLabel";
 			this.timeLabel.Size = new System.Drawing.Size(59, 17);
@@ -301,7 +301,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			// 
 			this.positionTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.positionTrackBar.BackStyle = ComponentFactory.Krypton.Toolkit.PaletteBackStyle.SeparatorLowProfile;
+			this.positionTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.SeparatorLowProfile;
 			this.positionTrackBar.DrawBackground = true;
 			this.positionTrackBar.Location = new System.Drawing.Point(4, 216);
 			this.positionTrackBar.Maximum = 100;
@@ -313,8 +313,8 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			// controlGroup
 			// 
 			this.controlGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.controlGroup.GroupBackStyle = ComponentFactory.Krypton.Toolkit.PaletteBackStyle.PanelCustom1;
-			this.controlGroup.GroupBorderStyle = ComponentFactory.Krypton.Toolkit.PaletteBorderStyle.ButtonStandalone;
+			this.controlGroup.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.PanelCustom1;
+			this.controlGroup.GroupBorderStyle = Krypton.Toolkit.PaletteBorderStyle.ButtonStandalone;
 			this.controlGroup.Location = new System.Drawing.Point(4, 243);
 			this.controlGroup.Name = "controlGroup";
 			// 
@@ -417,8 +417,8 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			// loopSampleGroup
 			// 
 			this.loopSampleGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.loopSampleGroup.GroupBackStyle = ComponentFactory.Krypton.Toolkit.PaletteBackStyle.PanelCustom1;
-			this.loopSampleGroup.GroupBorderStyle = ComponentFactory.Krypton.Toolkit.PaletteBorderStyle.ButtonStandalone;
+			this.loopSampleGroup.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.PanelCustom1;
+			this.loopSampleGroup.GroupBorderStyle = Krypton.Toolkit.PaletteBorderStyle.ButtonStandalone;
 			this.loopSampleGroup.Location = new System.Drawing.Point(318, 243);
 			this.loopSampleGroup.Name = "loopSampleGroup";
 			// 
@@ -513,8 +513,8 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 		#endregion
 
 		private System.Windows.Forms.MenuStrip menuStrip;
-		private ComponentFactory.Krypton.Toolkit.KryptonLabel infoLabel;
-		private ComponentFactory.Krypton.Toolkit.KryptonGroup infoGroup;
+		private Krypton.Toolkit.KryptonLabel infoLabel;
+		private Krypton.Toolkit.KryptonGroup infoGroup;
 		private KryptonButton moduleInfoButton;
 		private KryptonTrackBar masterVolumeTrackBar;
 		private KryptonListBox moduleListBox;

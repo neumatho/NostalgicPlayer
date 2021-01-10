@@ -9,7 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using ComponentFactory.Krypton.Toolkit;
+using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.NostalgicPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow;
 using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;

@@ -8,7 +8,7 @@
 /******************************************************************************/
 using System;
 using System.Drawing;
-using ComponentFactory.Krypton.Toolkit;
+using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow.ListItem;
 using Polycode.NostalgicPlayer.NostalgicPlayerKit.Streams;
 

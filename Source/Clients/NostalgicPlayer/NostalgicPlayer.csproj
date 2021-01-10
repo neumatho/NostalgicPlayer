@@ -41,9 +41,6 @@
     <ApplicationIcon>App.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ComponentFactory.Krypton.Toolkit">
-      <HintPath>..\..\3rdParty\Krypton\ComponentFactory.Krypton.Toolkit.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -162,7 +159,11 @@
     <None Include="Resources\Swap.png" />
     <None Include="Resources\PlayingItem.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <PackageReference Include="Krypton.Toolkit.Lite">
+      <Version>5.550.2101</Version>
+    </PackageReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /Y $(SolutionDir)NostalgicPlayerLibrary_Native\bin\ $(TargetDir)
