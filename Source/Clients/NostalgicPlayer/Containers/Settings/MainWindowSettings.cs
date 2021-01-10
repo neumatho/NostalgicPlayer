@@ -1,0 +1,76 @@
+﻿/******************************************************************************/
+/* This source, or parts thereof, may be used in any software as long the     */
+/* license of NostalgicPlayer is keep. See the LICENSE file for more          */
+/* information.                                                               */
+/*                                                                            */
+/* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
+/* All rights reserved.                                                       */
+/******************************************************************************/
+using System;
+
+namespace Polycode.NostalgicPlayer.NostalgicPlayer.Containers.Settings
+{
+	/// <summary>
+	/// This class holds all the main window settings
+	/// </summary>
+	public class MainWindowSettings
+	{
+		/// <summary>
+		/// The different time formats
+		/// </summary>
+		public enum TimeFormat
+		{
+			/// <summary></summary>
+			Elapsed,
+			/// <summary></summary>
+			Remaining
+		}
+
+		private readonly NostalgicPlayerKit.Utility.Settings settings;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public MainWindowSettings(NostalgicPlayerKit.Utility.Settings windowSettings)
+		{
+			settings = windowSettings;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Time format
+		/// </summary>
+		/********************************************************************/
+		public TimeFormat Time
+		{
+			get
+			{
+				string tempStr = settings.GetStringEntry("General", "TimeFormat");
+				if (!Enum.TryParse(tempStr, out TimeFormat timeFormat))
+					timeFormat = TimeFormat.Elapsed;
+
+				return timeFormat;
+			}
+
+			set => settings.SetStringEntry("General", "TimeFormat", value.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Time format
+		/// </summary>
+		/********************************************************************/
+		public int MasterVolume
+		{
+			get => settings.GetIntEntry("General", "MasterVolume", 256);
+
+			set => settings.SetIntEntry("General", "MasterVolume", value);
+		}
+	}
+}

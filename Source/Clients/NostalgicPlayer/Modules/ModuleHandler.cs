@@ -10,10 +10,10 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using ComponentFactory.Krypton.Toolkit;
+using Polycode.NostalgicPlayer.NostalgicPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow;
 using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;
 using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Utility;
 using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Containers;
 using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players;
@@ -33,7 +33,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 
 		private MainWindowForm mainWindowForm;
 		private Manager agentManager;
-		private Settings settings;
+		private SoundSettings soundSettings;
 
 		private IOutputAgent outputAgent;
 
@@ -66,12 +66,12 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 		/// Initialize and start the module handler thread
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(MainWindowForm mainWindow, Manager manager, Settings userSettings, int startVolume)
+		public void Initialize(MainWindowForm mainWindow, Manager manager, SoundSettings soundSettings, int startVolume)
 		{
 			// Remember the arguments
 			mainWindowForm = mainWindow;
 			agentManager = manager;
-			settings = userSettings;
+			this.soundSettings = soundSettings;
 
 			currentMasterVolume = startVolume;
 
@@ -98,7 +98,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 			outputAgent?.Shutdown();
 			outputAgent = null;
 
-			settings = null;
+			soundSettings = null;
 			agentManager = null;
 		}
 
@@ -430,16 +430,15 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
 		/********************************************************************/
 		private void FindOutputAgent()
 		{
-			string defaultAgentId = "b9cef7e4-c74c-4af0-b01d-802f0d1b4cc7";		// This is the ID of the CoreAudio output agent
+			Guid agentId = soundSettings.OutputAgent;
 
-			string agentId = settings.GetStringEntry("Mixer", "OutputAgent", defaultAgentId);
-			IAgent agent = agentManager.GetAgent(Manager.AgentType.Output, new Guid(agentId));
+			IAgent agent = agentManager.GetAgent(Manager.AgentType.Output, agentId);
 			if (agent == null)
 			{
 				// Selected output agent could not be loaded, try with the default one if not already that one
-				if (agentId != defaultAgentId)
+				if (agentId != soundSettings.DefaultOutputAgent)
 				{
-					agent = agentManager.GetAgent(Manager.AgentType.Output, new Guid(agentId));
+					agent = agentManager.GetAgent(Manager.AgentType.Output, soundSettings.DefaultOutputAgent);
 					if (agent == null)
 						ShowSimpleErrorMessage(Properties.Resources.IDS_ERR_NOOUTPUTAGENT);
 				}

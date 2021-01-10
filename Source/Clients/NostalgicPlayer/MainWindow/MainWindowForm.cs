@@ -13,6 +13,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.NostalgicPlayer.Bases;
 using Polycode.NostalgicPlayer.NostalgicPlayer.Containers;
+using Polycode.NostalgicPlayer.NostalgicPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.NostalgicPlayer.Controls;
 using Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow.ListItem;
 using Polycode.NostalgicPlayer.NostalgicPlayer.Modules;
@@ -27,21 +28,19 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 	/// </summary>
 	public partial class MainWindowForm : WindowFormBase
 	{
-		private enum TimeFormat
-		{
-			Elapsed,
-			Remaining
-		}
-
 		private Manager agentManager;
 		private ModuleHandler moduleHandler;
 
 		private Settings userSettings;
+		private PathSettings pathSettings;
+		private SoundSettings soundSettings;
+
+		private MainWindowSettings mainWindowSettings;
 
 		private OpenFileDialog moduleFileDialog;
 
 		// Timer variables
-		private TimeFormat timeFormat;
+		private MainWindowSettings.TimeFormat timeFormat;
 		private DateTime timeStart;
 		private TimeSpan timeOccurred;
 
@@ -175,10 +174,10 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 		private void InfoGroup_Click(object sender, EventArgs e)
 		{
 			// Switch between the time formats
-			if (timeFormat == TimeFormat.Elapsed)
-				timeFormat = TimeFormat.Remaining;
+			if (timeFormat == MainWindowSettings.TimeFormat.Elapsed)
+				timeFormat = MainWindowSettings.TimeFormat.Remaining;
 			else
-				timeFormat = TimeFormat.Elapsed;
+				timeFormat = MainWindowSettings.TimeFormat.Elapsed;
 
 			// Show it to the user
 			PrintInfo();
@@ -618,15 +617,18 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			userSettings = new Settings("Settings");
 			userSettings.LoadSettings();
 
+			// Setup setting wrappers
+			pathSettings = new PathSettings(userSettings);
+			soundSettings = new SoundSettings(userSettings);
+
 			LoadWindowSettings("MainWindow");
+			mainWindowSettings = new MainWindowSettings(allWindowSettings);
 
 			// Set the time format
-			string tempStr = windowSettings.GetStringEntry("General", "TimeFormat");
-			if (!Enum.TryParse(tempStr, out timeFormat))
-				timeFormat = TimeFormat.Elapsed;
+			timeFormat = mainWindowSettings.Time;
 
 			// Set the master volume
-			masterVolumeTrackBar.Value = windowSettings.GetIntEntry("General", "MasterVolume", 256);
+			masterVolumeTrackBar.Value = mainWindowSettings.MasterVolume;
 		}
 
 
@@ -641,6 +643,9 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			userSettings.SaveSettings();
 			userSettings.Dispose();
 			userSettings = null;
+
+			soundSettings = null;
+			pathSettings = null;
 		}
 
 
@@ -777,8 +782,8 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			}
 
 			// Remember settings from main window
-			windowSettings.SetStringEntry("General", "TimeFormat", timeFormat.ToString());
-			windowSettings.SetIntEntry("General", "MasterVolume", masterVolumeTrackBar.Value);
+			mainWindowSettings.Time = timeFormat;
+			mainWindowSettings.MasterVolume = masterVolumeTrackBar.Value;
 		}
 
 
@@ -1022,7 +1027,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			CreateHandle();
 
 			moduleHandler = new ModuleHandler();
-			moduleHandler.Initialize(this, agentManager, userSettings, masterVolumeTrackBar.Value);
+			moduleHandler.Initialize(this, agentManager, soundSettings, masterVolumeTrackBar.Value);
 		}
 
 
@@ -1249,14 +1254,14 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 				if (maxSong == 0)
 				{
 					subStr = Properties.Resources.IDS_NOSUBSONGS;
-					timeStr = timeFormat == TimeFormat.Elapsed ? Properties.Resources.IDS_NOTIME : Properties.Resources.IDS_NONEGATIVETIME;
+					timeStr = timeFormat == MainWindowSettings.TimeFormat.Elapsed ? Properties.Resources.IDS_NOTIME : Properties.Resources.IDS_NONEGATIVETIME;
 				}
 				else
 				{
 					subStr = string.Format(Properties.Resources.IDS_SUBSONGS, currentSong, maxSong);
 
 					// Format the time string
-					if (timeFormat == TimeFormat.Elapsed)
+					if (timeFormat == MainWindowSettings.TimeFormat.Elapsed)
 					{
 						timeStr = string.Format("{0} {1}", Properties.Resources.IDS_TIME, timeOccurred.ToString(Properties.Resources.IDS_TIMEFORMAT));
 					}
@@ -1278,7 +1283,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			{
 				posStr = Properties.Resources.IDS_NOPOSITION;
 				subStr = Properties.Resources.IDS_NOSUBSONGS;
-				timeStr = timeFormat == TimeFormat.Elapsed ? Properties.Resources.IDS_NOTIME : Properties.Resources.IDS_NONEGATIVETIME;
+				timeStr = timeFormat == MainWindowSettings.TimeFormat.Elapsed ? Properties.Resources.IDS_NOTIME : Properties.Resources.IDS_NONEGATIVETIME;
 			}
 
 			infoLabel.Text = $"{posStr} {subStr} {timeStr}";
@@ -1316,7 +1321,7 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
 			if (moduleFileDialog == null)
 			{
 				moduleFileDialog = new OpenFileDialog();
-				moduleFileDialog.InitialDirectory = userSettings.GetStringEntry("Paths", "Modules");
+				moduleFileDialog.InitialDirectory = pathSettings.Modules;
 				moduleFileDialog.Multiselect = true;
 			}
 

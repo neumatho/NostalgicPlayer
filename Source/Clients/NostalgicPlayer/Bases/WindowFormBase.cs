@@ -9,6 +9,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using ComponentFactory.Krypton.Toolkit;
+using Polycode.NostalgicPlayer.NostalgicPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.NostalgicPlayerKit.Utility;
 
 namespace Polycode.NostalgicPlayer.NostalgicPlayer.Bases
@@ -19,9 +20,11 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Bases
 	public class WindowFormBase : KryptonForm
 	{
 		/// <summary>
-		/// Holds the settings for the form itself
+		/// Holds all the settings for the form itself
 		/// </summary>
-		protected Settings windowSettings;
+		protected Settings allWindowSettings;
+
+		private WindowSettings windowSettings;
 
 		/********************************************************************/
 		/// <summary>
@@ -31,27 +34,28 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Bases
 		protected void LoadWindowSettings(string windowSettingsName)
 		{
 			// Load the windows settings
-			windowSettings = new Settings(windowSettingsName);
-			windowSettings.LoadSettings();
+			allWindowSettings = new Settings(windowSettingsName);
+			allWindowSettings.LoadSettings();
 
-			string geometry = windowSettings.GetStringEntry("Window", "Geometry");
+			windowSettings = new WindowSettings(allWindowSettings);
+
+			string geometry = windowSettings.Geometry;
 			if (!string.IsNullOrEmpty(geometry) && (ScreensGeometry() == geometry))
 			{
 				StartPosition = FormStartPosition.Manual;
-				Location = new Point(windowSettings.GetIntEntry("Window", "X"), windowSettings.GetIntEntry("Window", "Y"));
+				Location = windowSettings.Location;
 			}
 
-			int width = windowSettings.GetIntEntry("Window", "Width");
-			int height = windowSettings.GetIntEntry("Window", "Height");
+			Size windowSize = windowSettings.Size;
 
-			if (width < MinimumSize.Width)
-				width = MinimumSize.Width;
+			if (windowSize.Width < MinimumSize.Width)
+				windowSize.Width = MinimumSize.Width;
 
-			if (height < MinimumSize.Height)
-				height = MinimumSize.Height;
+			if (windowSize.Height < MinimumSize.Height)
+				windowSize.Height = MinimumSize.Height;
 
-			if ((width != 0) && (height != 0))
-				Size = new Size(width, height);
+			if ((windowSize.Width != 0) && (windowSize.Height != 0))
+				Size = new Size(windowSize.Width, windowSize.Height);
 		}
 
 
@@ -68,20 +72,18 @@ namespace Polycode.NostalgicPlayer.NostalgicPlayer.Bases
 			if (windowSettings != null)
 			{
 				// Update the settings with the window position
-				windowSettings.SetIntEntry("Window", "X", Location.X);
-				windowSettings.SetIntEntry("Window", "Y", Location.Y);
+				windowSettings.Location = Location;
 
 				if (FormBorderStyle == FormBorderStyle.Sizable)
-				{
-					windowSettings.SetIntEntry("Window", "Width", Size.Width);
-					windowSettings.SetIntEntry("Window", "Height", Size.Height);
-				}
+					windowSettings.Size = Size;
 
-				windowSettings.SetStringEntry("Window", "Geometry", ScreensGeometry());
+				windowSettings.Geometry = ScreensGeometry();
 
 				// Save the window settings
-				windowSettings.SaveSettings();
-				windowSettings.Dispose();
+				allWindowSettings.SaveSettings();
+				allWindowSettings.Dispose();
+				allWindowSettings = null;
+
 				windowSettings = null;
 			}
 		}
