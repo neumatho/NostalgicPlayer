@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>NostalgicPlayer manual</title>
+	<link rel="stylesheet" href="css/docstyles.css">
+</head>
+<body>
+<table class="bgtable">
+	<tr>
+		<td>
+			<table class="menutable">
+				<tr><th><div class="tableheader"><h2>Menu</h2></div></th></tr>
+				<tr><td><a href="features.html">Features</a></td></tr>
+				<tr><td><a href="howtouse.html">How to use</a></td></tr>
+				<tr><td><a href="moduletypes.html">Module types</a></td></tr>
+				<tr><td><a href="requirements.html">Requirements</a></td></tr>
+				<tr><td><a href="thanks.html">Thanks</a></td></tr>
+				<tr><td><a href="history.html">Version history</a></td></tr>
+			</table>
+		</td>
+		<td>
+			<table class="contenttable">
+				<tr><th><div class="tableheader"><h3>How to use</h3></div></th></tr>
+				<tr><td>
+					<span>
+						<p>Click on the controls in below picture to get more information.</p>
+						<br>
+					</span>
+					<map name="mainwindow">
+						<area shape="rect" coords="12,59,358,81" href="#statusbar">
+						<area shape="rect" coords="12,84,38,105" href="#mute">
+						<area shape="rect" coords="12,117,38,202" href="#volume">
+						<area shape="rect" coords="246,204,330,238" href="#playingtime">
+						<area shape="rect" coords="331,204,387,238" href="#modulecount">
+						<area shape="rect" coords="12,244,387,263" href="#position">
+						<area shape="rect" coords="17,279,40,302" href="#previousmod">
+						<area shape="rect" coords="73,279,96,302" href="#rewind">
+						<area shape="rect" coords="101,279,124,302" href="#play">
+						<area shape="rect" coords="128,279,152,302" href="#forward">
+						<area shape="rect" coords="185,279,208,302" href="#nextmod">
+						<area shape="rect" coords="213,279,236,302" href="#eject">
+						<area shape="rect" coords="241,279,264,302" href="#pause">
+						<area shape="rect" coords="331,279,354,302" href="#repeat">
+<!--
+<AREA SHAPE="rect" COORDS="15,166,33,183" HREF="howtouse.html#plus">
+<AREA SHAPE="rect" COORDS="38,166,56,183" HREF="howtouse.html#minus">
+<AREA SHAPE="rect" COORDS="61,166,79,183" HREF="howtouse.html#swap">
+<AREA SHAPE="rect" COORDS="84,166,102,183" HREF="howtouse.html#sort">
+<AREA SHAPE="rect" COORDS="107,166,125,183" HREF="howtouse.html#up">
+<AREA SHAPE="rect" COORDS="130,166,148,183" HREF="howtouse.html#down">
+<AREA SHAPE="rect" COORDS="153,166,171,183" HREF="howtouse.html#select">
+<AREA SHAPE="rect" COORDS="176,166,194,183" HREF="howtouse.html#save">
+<AREA SHAPE="rect" COORDS="30,74,372,156" HREF="howtouse.html#playlist">
+<AREA SHAPE="rect" COORDS="38,217,56,234" HREF="howtouse.html#previoussub">
+<AREA SHAPE="rect" COORDS="131,217,149,234" HREF="howtouse.html#nextsub">
+<AREA SHAPE="rect" COORDS="7,25,40,44" HREF="howtouse.html#file">
+<AREA SHAPE="rect" COORDS="45,25,100,44" HREF="howtouse.html#window">
+<AREA SHAPE="rect" COORDS="353,51,372,68" HREF="modinfo.html">
+<AREA SHAPE="rect" COORDS="349,217,368,234" HREF="sampleinfo.html#sinfo">
+<AREA SHAPE="rect" COORDS="101,25,140,44" HREF="howtouse.html#help">
+-->
+					</map>
+					<img src="images/mainwindow.png" alt="Main window" usemap="#mainwindow"/>
+					<span>
+						<a name="statusbar"><h3>Statusbar</h3></a>
+						<p>Statusbar shows module position and progress in percent. It also tells elapsed or remaining time. You can change time mode by clicking time with mouse.</p>
+					</span>
+					<span>
+						<a name="mute"><h3>Mute / unmute</h3></a>
+						<table class="usagetable">
+							<tr>
+								<td><img src="images/mute.png" alt="mute"/></td>
+								<td>This button can mute / unmute the sound.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="volume"><h3>Volume</h3></a>
+						<table class="usagetable">
+							<tr>
+								<td><img src="images/volume.png" alt="volume"/></td>
+								<td>This slider can be used to adjust sound volume. You can click in it to set volume by small steps or just drag slider to position of you choice with mouse.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="playingtime"><h3>Playing time</h3></a>
+						<p>This area shows time information of all selected modules in playlist and total playing time of entire playlist.</p>
+						<p><b>NOTE:</b> Since playing time is calculated when module is loaded, total playing time may change as you load new modules.</p>
+					</span>
+					<span>
+						<a name="modulecount"><h3>Module count</h3></a>
+						<p>This area shows number of currently selected modules and total number of modules in playlist.</p>
+					</span>
+					<span>
+						<a name="position"><h3>Position slider</h3></a>
+						<p>This slider can be used to set module position. You can drag slider with mouse to change module position.</p>
+						<p><b>NOTE:</b> Slider is enabled only if current module format supports position seeking.</p>
+					</span>
+					<span>
+						<a name="previousmod"><h3>Load previous module</h3></a>
+						<table class="usagetable">
+							<tr>
+								<td><img src="images/previousmod.png" alt="previous module"/></td>
+								<td>This button loads previous module from playlist. If you press it within two seconds after module started to play it loads previous module from playlist, otherwise it starts module from beginning.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="rewind"><h3>Rewind</h3></a>
+						<table class="usagetable">
+							<tr>
+								<td><img src="images/rewind.png" alt="rewind"/></td>
+								<td>This button works like rewind in CD-players.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="play"><h3>Play</h3></a>
+						<table class="usagetable">
+							<tr>
+								<td><img src="images/play.png" alt="play"/></td>
+								<td>This button opens file dialog where you can select files for playlist. Playlist will be cleared before adding new modules.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="forward"><h3>Fast forward</h3></a>
+						<table class="usagetable">
+							<tr>
+								<td><img src="images/forward.png" alt="fast forward"/></td>
+								<td>This button works like fast forward in CD-players.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="nextmod"><h3>Load next module</h3></a>
+						<table class="usagetable">
+							<tr>
+								<td><img src="images/nextmod.png" alt="next module"/></td>
+								<td>This button loads next module from playlist.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="eject"><h3>Eject</h3></a>
+						<table class="usagetable">
+							<tr>
+								<td><img src="images/eject.png" alt="eject"/></td>
+								<td>This button stops module playing and sets module position to beginning. If you press it twice, it will clear playlist.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="pause"><h3>Pause</h3></a>
+						<table class="usagetable">
+							<tr>
+								<td><img src="images/pause.png" alt="pause"/></td>
+								<td>This button sets pause on / off.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="repeat"><h3>Repeat</h3></a>
+						<table class="usagetable">
+							<tr>
+								<td><img src="images/repeat.png" alt="repeat"/></td>
+								<td>This button sets repeat on / off. If repeat is on, then currently playing module will loop forever.</td>
+							</tr>
+						</table>
+					</span>
+				</td></tr>
+			</table>
+		</td>
+	</tr>
+</table>
+</body>
+</html>
