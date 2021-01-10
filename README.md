@@ -7,6 +7,6 @@ Please enjoy this program, and support the development by giving any feedback (b
 
 # Formats supported
 
-| Format | File extension | Converter | Player | Description |
+| Format | Extension | Converter | Player | Description |
 | ------ | -------------- | --------- | ------ | ----------- |
 | JamCracker | .jam | | JamCracker | It came from the Amiga, but it's not the most used format. There are some nice tunes available by Dr. Awesome (Bjørn Lynne). |
