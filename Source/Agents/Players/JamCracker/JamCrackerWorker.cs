@@ -27,67 +27,68 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		#region Note info structure
 		private class NoteInfo
 		{
-			public byte period;
-			public sbyte instr;
-			public byte speed;
-			public byte arpeggio;
-			public byte vibrato;
-			public byte phase;
-			public byte volume;
-			public byte porta;
+			public byte Period;
+			public sbyte Instr;
+			public byte Speed;
+			public byte Arpeggio;
+			public byte Vibrato;
+			public byte Phase;
+			public byte Volume;
+			public byte Porta;
 		}
 		#endregion
 
 		#region Instrument info structure
 		private class InstInfo
 		{
-			public byte[] name = new byte[32];
-			public byte flags;
-			public uint size;
-			public sbyte[] address;
+			public byte[] Name = new byte[32];
+			public byte Flags;
+			public uint Size;
+			public sbyte[] Address;
 		}
 		#endregion
 
 		#region Pattern info structure
 		private class PattInfo
 		{
-			public ushort size;
-			public NoteInfo[] address;
+			public ushort Size;
+			public NoteInfo[] Address;
 		}
 		#endregion
 
 		#region Voice info structure
 		private class VoiceInfo
 		{
-			public ushort waveOffset = 0;
-			public ushort dmacon;
-			public Channel channel;
-			public ushort insLen;
-			public sbyte[] insAddress;
-			public sbyte[] realInsAddress;
-			public int perIndex;
-			public ushort[] pers = new ushort[3];
-			public short por;
-			public short deltaPor;
-			public short porLevel;
-			public short vib;
-			public short deltaVib;
-			public short vol;
-			public short deltaVol;
-			public ushort volLevel;
-			public ushort phase;
-			public short deltaPhase;
-			public byte vibCnt;
-			public byte vibMax;
-			public byte flags;
+			public ushort WaveOffset = 0;
+			public ushort Dmacon;
+			public Channel Channel;
+			public ushort InsLen;
+			public sbyte[] InsAddress;
+			public sbyte[] RealInsAddress;
+			public sbyte[] WaveBuffer = new sbyte[0x40];
+			public int PerIndex;
+			public ushort[] Pers = new ushort[3];
+			public short Por;
+			public short DeltaPor;
+			public short PorLevel;
+			public short Vib;
+			public short DeltaVib;
+			public short Vol;
+			public short DeltaVol;
+			public ushort VolLevel;
+			public ushort Phase;
+			public short DeltaPhase;
+			public byte VibCnt;
+			public byte VibMax;
+			public byte Flags;
 		}
 		#endregion
 
 		#region Position info structure
 		private class PosInfo
 		{
-			public byte speed;
-			public TimeSpan time;
+			public byte Speed;
+			public TimeSpan Time;
 		}
 		#endregion
 
@@ -117,7 +118,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 		private int addressIndex;
 
-		private ushort tmpDMACON;
+		private ushort tmpDmacon;
 
 		private ushort songPos;
 		private ushort songCnt;
@@ -230,10 +231,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				{
 					InstInfo instInfo = new InstInfo();
 
-					stream.ReadString(instInfo.name, 31);
+					stream.ReadString(instInfo.Name, 31);
 
-					instInfo.flags = stream.Read_UINT8();
-					instInfo.size = stream.Read_B_UINT32();
+					instInfo.Flags = stream.Read_UINT8();
+					instInfo.Size = stream.Read_B_UINT32();
 					stream.Read_B_UINT32();		// Skip the address
 
 					instTable[i] = instInfo;
@@ -250,7 +251,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				{
 					PattInfo pattInfo = new PattInfo();
 
-					pattInfo.size = stream.Read_B_UINT16();
+					pattInfo.Size = stream.Read_B_UINT16();
 					stream.Read_B_UINT32();		// Skip the address
 
 					pattTable[i] = pattInfo;
@@ -274,22 +275,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				for (int i = 0; i < patternNum; i++)
 				{
 					// Allocate the pattern data
-					NoteInfo[] note = new NoteInfo[pattTable[i].size * 4];
-					pattTable[i].address = note;
+					NoteInfo[] note = new NoteInfo[pattTable[i].Size * 4];
+					pattTable[i].Address = note;
 
 					// Read the data from the stream
-					for (int j = 0; j < pattTable[i].size * 4; j++)
+					for (int j = 0; j < pattTable[i].Size * 4; j++)
 					{
 						NoteInfo noteInfo = new NoteInfo();
 
-						noteInfo.period = stream.Read_UINT8();
-						noteInfo.instr = stream.Read_INT8();
-						noteInfo.speed = stream.Read_UINT8();
-						noteInfo.arpeggio = stream.Read_UINT8();
-						noteInfo.vibrato = stream.Read_UINT8();
-						noteInfo.phase = stream.Read_UINT8();
-						noteInfo.volume = stream.Read_UINT8();
-						noteInfo.porta = stream.Read_UINT8();
+						noteInfo.Period = stream.Read_UINT8();
+						noteInfo.Instr = stream.Read_INT8();
+						noteInfo.Speed = stream.Read_UINT8();
+						noteInfo.Arpeggio = stream.Read_UINT8();
+						noteInfo.Vibrato = stream.Read_UINT8();
+						noteInfo.Phase = stream.Read_UINT8();
+						noteInfo.Volume = stream.Read_UINT8();
+						noteInfo.Porta = stream.Read_UINT8();
 
 						note[j] = noteInfo;
 					}
@@ -306,11 +307,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				{
 					InstInfo instInfo = instTable[i];
 
-					if (instInfo.size != 0)
+					if (instInfo.Size != 0)
 					{
-						instInfo.address = new sbyte[instInfo.size];
+						instInfo.Address = new sbyte[instInfo.Size];
 
-						stream.ReadSigned(instInfo.address, 0, (int)instInfo.size);
+						stream.ReadSigned(instInfo.Address, 0, (int)instInfo.Size);
 
 						if (stream.EndOfStream && (i != samplesNum - 1))
 						{
@@ -356,23 +357,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				// Add the position information to the list
 				PosInfo posInfo = new PosInfo();
 
-				posInfo.speed = curSpeed;
-				posInfo.time = new TimeSpan((long)(total * TimeSpan.TicksPerMillisecond));
+				posInfo.Speed = curSpeed;
+				posInfo.Time = new TimeSpan((long)(total * TimeSpan.TicksPerMillisecond));
 
 				posInfoList[i] = posInfo;
 
 				// Get next pattern
 				PattInfo pattInfo = pattTable[songTable[i]];
-				ushort noteCount = pattInfo.size;
-				NoteInfo[] noteInfo = pattInfo.address;
+				ushort noteCount = pattInfo.Size;
+				NoteInfo[] noteInfo = pattInfo.Address;
 
 				for (int j = 0; j < noteCount; j++)
 				{
 					for (int k = 0; k < 4; k++)
 					{
 						// Should the speed be changed
-						if ((noteInfo[j + k].speed & 15) != 0)
-							curSpeed = (byte)(noteInfo[j + k].speed & 15);
+						if ((noteInfo[j + k].Speed & 15) != 0)
+							curSpeed = (byte)(noteInfo[j + k].Speed & 15);
 					}
 
 					// Add the row time
@@ -412,8 +413,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 			songCnt = songLen;
 
 			PattInfo pattInfo = pattTable[songTable[0]];
-			noteCnt = pattInfo.size;
-			address = pattInfo.address;
+			noteCnt = pattInfo.Size;
+			address = pattInfo.Address;
 
 			addressIndex = 0;
 
@@ -428,29 +429,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 			{
 				VoiceInfo voiceInfo = new VoiceInfo();
 
-				voiceInfo.waveOffset = waveOff;
-				voiceInfo.dmacon = (ushort)(1 << i);
-				voiceInfo.channel = Channels[i];
-				voiceInfo.insLen = 0;
-				voiceInfo.insAddress = null;
-				voiceInfo.realInsAddress = null;
-				voiceInfo.perIndex = 0;
-				voiceInfo.pers[0] = 1019;
-				voiceInfo.pers[1] = 0;
-				voiceInfo.pers[2] = 0;
-				voiceInfo.por = 0;
-				voiceInfo.deltaPor = 0;
-				voiceInfo.porLevel = 0;
-				voiceInfo.vib = 0;
-				voiceInfo.deltaVib = 0;
-				voiceInfo.vol = 0;
-				voiceInfo.deltaVol = 0;
-				voiceInfo.volLevel = 0x40;
-				voiceInfo.phase = 0;
-				voiceInfo.deltaPhase = 0;
-				voiceInfo.vibCnt = 0;
-				voiceInfo.vibMax = 0;
-				voiceInfo.flags = 0;
+				voiceInfo.WaveOffset = waveOff;
+				voiceInfo.Dmacon = (ushort)(1 << i);
+				voiceInfo.Channel = Channels[i];
+				voiceInfo.InsLen = 0;
+				voiceInfo.InsAddress = null;
+				voiceInfo.RealInsAddress = null;
+				voiceInfo.PerIndex = 0;
+				voiceInfo.Pers[0] = 1019;
+				voiceInfo.Pers[1] = 0;
+				voiceInfo.Pers[2] = 0;
+				voiceInfo.Por = 0;
+				voiceInfo.DeltaPor = 0;
+				voiceInfo.PorLevel = 0;
+				voiceInfo.Vib = 0;
+				voiceInfo.DeltaVib = 0;
+				voiceInfo.Vol = 0;
+				voiceInfo.DeltaVol = 0;
+				voiceInfo.VolLevel = 0x40;
+				voiceInfo.Phase = 0;
+				voiceInfo.DeltaPhase = 0;
+				voiceInfo.VibCnt = 0;
+				voiceInfo.VibMax = 0;
+				voiceInfo.Flags = 0;
 
 				variables[i] = voiceInfo;
 
@@ -494,14 +495,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				songPos = (ushort)value;
 
 				PattInfo pattInfo = pattTable[songTable[songPos]];
-				noteCnt = pattInfo.size;
-				address = pattInfo.address;
+				noteCnt = pattInfo.Size;
+				address = pattInfo.Address;
 
 				addressIndex = 0;
 
 				// Change the speed
 				waitCnt = 1;
-				wait = posInfoList[value].speed;
+				wait = posInfoList[value].Speed;
 			}
 		}
 
@@ -514,7 +515,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/********************************************************************/
 		public override TimeSpan GetPositionTimeTable(int songNumber, out TimeSpan[] positionTimes)
 		{
-			positionTimes = posInfoList.Select(pi => pi.time).ToArray();
+			positionTimes = posInfoList.Select(pi => pi.Time).ToArray();
 
 			return totalTime;
 		}
@@ -614,13 +615,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				OnPositionChanged();
 
 				PattInfo pattInfo = pattTable[songTable[songPos]];
-				noteCnt = pattInfo.size;
-				address = pattInfo.address;
+				noteCnt = pattInfo.Size;
+				address = pattInfo.Address;
 
 				addressIndex = 0;
 			}
 
-			tmpDMACON = 0;
+			tmpDmacon = 0;
 
 			NwNote(adr[adrIndex], variables[0]);
 			NwNote(adr[++adrIndex], variables[1]);
@@ -644,181 +645,181 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		{
 			int perIndex;
 
-			if (adr.period != 0)
+			if (adr.Period != 0)
 			{
-				perIndex = adr.period - 1;
+				perIndex = adr.Period - 1;
 
-				if ((adr.speed & 64) != 0)
-					voice.porLevel = (short)periods[perIndex];
+				if ((adr.Speed & 64) != 0)
+					voice.PorLevel = (short)periods[perIndex];
 				else
 				{
-					tmpDMACON |= voice.dmacon;
+					tmpDmacon |= voice.Dmacon;
 
-					voice.perIndex = perIndex;
-					voice.pers[0] = periods[perIndex];
-					voice.pers[1] = periods[perIndex];
-					voice.pers[2] = periods[perIndex];
+					voice.PerIndex = perIndex;
+					voice.Pers[0] = periods[perIndex];
+					voice.Pers[1] = periods[perIndex];
+					voice.Pers[2] = periods[perIndex];
 
-					voice.por = 0;
+					voice.Por = 0;
 
-					if (adr.instr > samplesNum)
+					if (adr.Instr > samplesNum)
 					{
-						voice.insAddress = null;
-						voice.realInsAddress = null;
-						voice.insLen = 0;
-						voice.flags = 0;
+						voice.InsAddress = null;
+						voice.RealInsAddress = null;
+						voice.InsLen = 0;
+						voice.Flags = 0;
 					}
 					else
 					{
-						InstInfo instInfo = instTable[adr.instr];
-						if (instInfo.address == null)
+						InstInfo instInfo = instTable[adr.Instr];
+						if (instInfo.Address == null)
 						{
-							voice.insAddress = null;
-							voice.realInsAddress = null;
-							voice.insLen = 0;
-							voice.flags = 0;
+							voice.InsAddress = null;
+							voice.RealInsAddress = null;
+							voice.InsLen = 0;
+							voice.Flags = 0;
 						}
 						else
 						{
-							if ((instInfo.flags & 2) == 0)
+							if ((instInfo.Flags & 2) == 0)
 							{
-								voice.insAddress = instInfo.address;
-								voice.realInsAddress = instInfo.address;
-								voice.insLen = (ushort)(instInfo.size / 2);
+								voice.InsAddress = instInfo.Address;
+								voice.RealInsAddress = instInfo.Address;
+								voice.InsLen = (ushort)(instInfo.Size / 2);
 							}
 							else
 							{
-								voice.realInsAddress = instInfo.address;
-								voice.insAddress = new sbyte[0x40];
-								Array.Copy(instInfo.address, voice.waveOffset, voice.insAddress, 0, 0x40);
-								voice.insLen = 0x20;
+								voice.RealInsAddress = instInfo.Address;
+								voice.InsAddress = voice.WaveBuffer;
+								Array.Copy(instInfo.Address, voice.WaveOffset, voice.InsAddress, 0, 0x40);
+								voice.InsLen = 0x20;
 							}
 
-							voice.flags = instInfo.flags;
-							voice.vol = (short)voice.volLevel;
+							voice.Flags = instInfo.Flags;
+							voice.Vol = (short)voice.VolLevel;
 						}
 					}
 				}
 			}
 
-			if ((adr.speed & 15) != 0)
-				wait = (byte)(adr.speed & 15);
+			if ((adr.Speed & 15) != 0)
+				wait = (byte)(adr.Speed & 15);
 
 			// Do arpeggio
-			perIndex = voice.perIndex;
+			perIndex = voice.PerIndex;
 
-			if (adr.arpeggio != 0)
+			if (adr.Arpeggio != 0)
 			{
-				if (adr.arpeggio == 255)
+				if (adr.Arpeggio == 255)
 				{
-					voice.pers[0] = periods[perIndex];
-					voice.pers[1] = periods[perIndex];
-					voice.pers[2] = periods[perIndex];
+					voice.Pers[0] = periods[perIndex];
+					voice.Pers[1] = periods[perIndex];
+					voice.Pers[2] = periods[perIndex];
 				}
 				else
 				{
-					voice.pers[2] = periods[perIndex + adr.arpeggio & 15];
-					voice.pers[1] = periods[perIndex + adr.arpeggio >> 4];
-					voice.pers[0] = periods[perIndex];
+					voice.Pers[2] = periods[perIndex + adr.Arpeggio & 15];
+					voice.Pers[1] = periods[perIndex + adr.Arpeggio >> 4];
+					voice.Pers[0] = periods[perIndex];
 				}
 			}
 
 			// Do vibrato
-			if (adr.vibrato != 0)
+			if (adr.Vibrato != 0)
 			{
-				if (adr.vibrato == 255)
+				if (adr.Vibrato == 255)
 				{
-					voice.vib = 0;
-					voice.deltaVib = 0;
-					voice.vibCnt = 0;
+					voice.Vib = 0;
+					voice.DeltaVib = 0;
+					voice.VibCnt = 0;
 				}
 				else
 				{
-					voice.vib = 0;
-					voice.deltaVib = (short)(adr.vibrato & 15);
-					voice.vibMax = (byte)(adr.vibrato >> 4);
-					voice.vibCnt = (byte)(adr.vibrato >> 5);
+					voice.Vib = 0;
+					voice.DeltaVib = (short)(adr.Vibrato & 15);
+					voice.VibMax = (byte)(adr.Vibrato >> 4);
+					voice.VibCnt = (byte)(adr.Vibrato >> 5);
 				}
 			}
 
 			// Do phase
-			if (adr.phase != 0)
+			if (adr.Phase != 0)
 			{
-				if (adr.phase == 255)
+				if (adr.Phase == 255)
 				{
-					voice.phase = 0;
-					voice.deltaPhase = -1;
+					voice.Phase = 0;
+					voice.DeltaPhase = -1;
 				}
 				else
 				{
-					voice.phase = 0;
-					voice.deltaPhase = (short)(adr.phase & 15);
+					voice.Phase = 0;
+					voice.DeltaPhase = (short)(adr.Phase & 15);
 				}
 			}
 
 			// Do volume
 			short temp;
-			if ((temp = adr.volume) == 0)
+			if ((temp = adr.Volume) == 0)
 			{
-				if ((adr.speed & 128) != 0)
+				if ((adr.Speed & 128) != 0)
 				{
-					voice.vol = temp;
-					voice.volLevel = (ushort)temp;
-					voice.deltaVol = 0;
+					voice.Vol = temp;
+					voice.VolLevel = (ushort)temp;
+					voice.DeltaVol = 0;
 				}
 			}
 			else
 			{
 				if (temp == 255)
-					voice.deltaVol = 0;
+					voice.DeltaVol = 0;
 				else
 				{
-					if ((adr.speed & 128) != 0)
+					if ((adr.Speed & 128) != 0)
 					{
-						voice.vol = temp;
-						voice.volLevel = (ushort)temp;
-						voice.deltaVol = 0;
+						voice.Vol = temp;
+						voice.VolLevel = (ushort)temp;
+						voice.DeltaVol = 0;
 					}
 					else
 					{
 						temp &= 0x7f;
-						if ((adr.volume & 128) != 0)
+						if ((adr.Volume & 128) != 0)
 							temp = (short)-temp;
 
-						voice.deltaVol = temp;
+						voice.DeltaVol = temp;
 					}
 				}
 			}
 
 			// Do portamento
-			if ((temp = adr.porta) != 0)
+			if ((temp = adr.Porta) != 0)
 			{
 				if (temp == 255)
 				{
-					voice.por = 0;
-					voice.deltaPor = 0;
+					voice.Por = 0;
+					voice.DeltaPor = 0;
 				}
 				else
 				{
-					voice.por = 0;
-					if ((adr.speed & 64) != 0)
+					voice.Por = 0;
+					if ((adr.Speed & 64) != 0)
 					{
-						if (voice.porLevel <= voice.pers[0])
+						if (voice.PorLevel <= voice.Pers[0])
 							temp = (short)-temp;
 					}
 					else
 					{
 						temp &= 0x7f;
-						if ((adr.porta & 128) == 0)
+						if ((adr.Porta & 128) == 0)
 						{
 							temp = (short)-temp;
-							voice.porLevel = 135;
+							voice.PorLevel = 135;
 						}
 						else
-							voice.porLevel = 1019;
+							voice.PorLevel = 1019;
 					}
 
-					voice.deltaPor = temp;
+					voice.DeltaPor = temp;
 				}
 			}
 		}
@@ -832,30 +833,30 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/********************************************************************/
 		private void SetVoice(VoiceInfo voice)
 		{
-			if ((tmpDMACON & voice.dmacon) != 0)
+			if ((tmpDmacon & voice.Dmacon) != 0)
 			{
-				Channel chan = voice.channel;
+				Channel chan = voice.Channel;
 
 				// Setup the start sample
-				if (voice.insAddress == null)
+				if (voice.InsAddress == null)
 					chan.Mute();
 				else
 				{
-					chan.PlaySample(voice.insAddress, 0, (uint)(voice.insLen * 2));
-					chan.SetAmigaPeriod(voice.pers[0]);
+					chan.PlaySample(voice.InsAddress, 0, (uint)(voice.InsLen * 2));
+					chan.SetAmigaPeriod(voice.Pers[0]);
 				}
 
 				// Check to see if sample loops
-				if ((voice.flags & 1) == 0)
+				if ((voice.Flags & 1) == 0)
 				{
-					voice.insAddress = null;
-					voice.realInsAddress = null;
-					voice.insLen = 0;
+					voice.InsAddress = null;
+					voice.RealInsAddress = null;
+					voice.InsLen = 0;
 				}
 
 				// Setup loop
-				if (voice.insAddress != null)
-					chan.SetLoop(0, (uint)(voice.insLen * 2));
+				if (voice.InsAddress != null)
+					chan.SetLoop(0, (uint)(voice.InsLen * 2));
 			}
 		}
 
@@ -868,25 +869,25 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/********************************************************************/
 		private void SetChannel(VoiceInfo voice)
 		{
-			Channel chan = voice.channel;
+			Channel chan = voice.Channel;
 
-			while (voice.pers[0] == 0)
+			while (voice.Pers[0] == 0)
 				RotatePeriods(voice);
 
-			short per = (short)(voice.pers[0] + voice.por);
-			if (voice.por < 0)
+			short per = (short)(voice.Pers[0] + voice.Por);
+			if (voice.Por < 0)
 			{
-				if (per < voice.porLevel)
-					per = voice.porLevel;
+				if (per < voice.PorLevel)
+					per = voice.PorLevel;
 			}
 			else
 			{
-				if ((voice.por != 0) && (per > voice.porLevel))
-					per = voice.porLevel;
+				if ((voice.Por != 0) && (per > voice.PorLevel))
+					per = voice.PorLevel;
 			}
 
 			// Add vibrato
-			per += voice.vib;
+			per += voice.Vib;
 
 			if (per < 135)
 				per = 135;
@@ -896,38 +897,38 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 			chan.SetAmigaPeriod((uint)per);
 			RotatePeriods(voice);
 
-			voice.por += voice.deltaPor;
-			if (voice.por < -1019)
-				voice.por = -1019;
-			else if (voice.por > 1019)
-				voice.por = 1019;
+			voice.Por += voice.DeltaPor;
+			if (voice.Por < -1019)
+				voice.Por = -1019;
+			else if (voice.Por > 1019)
+				voice.Por = 1019;
 
-			if (voice.vibCnt != 0)
+			if (voice.VibCnt != 0)
 			{
-				voice.vib += voice.deltaVib;
-				if (--voice.vibCnt == 0)
+				voice.Vib += voice.DeltaVib;
+				if (--voice.VibCnt == 0)
 				{
-					voice.deltaVib = (short)-voice.deltaVib;
-					voice.vibCnt = voice.vibMax;
+					voice.DeltaVib = (short)-voice.DeltaVib;
+					voice.VibCnt = voice.VibMax;
 				}
 			}
 
-			chan.SetVolume((ushort)(voice.vol * 4));
+			chan.SetVolume((ushort)(voice.Vol * 4));
 
-			voice.vol += voice.deltaVol;
-			if (voice.vol < 0)
-				voice.vol = 0;
-			else if (voice.vol > 64)
-				voice.vol = 64;
+			voice.Vol += voice.DeltaVol;
+			if (voice.Vol < 0)
+				voice.Vol = 0;
+			else if (voice.Vol > 64)
+				voice.Vol = 64;
 
-			if (((voice.flags & 1) != 0) && (voice.deltaPhase != 0))
+			if (((voice.Flags & 1) != 0) && (voice.DeltaPhase != 0))
 			{
-				if (voice.deltaPhase < 0)
-					voice.deltaPhase = 0;
+				if (voice.DeltaPhase < 0)
+					voice.DeltaPhase = 0;
 
-				sbyte[] instData = voice.insAddress;
-				sbyte[] wave = voice.realInsAddress;
-				int wavePhase = voice.phase / 4;
+				sbyte[] instData = voice.InsAddress;
+				sbyte[] wave = voice.RealInsAddress;
+				int wavePhase = voice.Phase / 4;
 
 				for (int i = 0; i < 64; i++)
 				{
@@ -937,9 +938,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 					instData[i] = (sbyte)temp;
 				}
 
-				voice.phase = (ushort)(voice.phase + voice.deltaPhase);
-				if (voice.phase >= 256)
-					voice.phase -= 256;
+				voice.Phase = (ushort)(voice.Phase + voice.DeltaPhase);
+				if (voice.Phase >= 256)
+					voice.Phase -= 256;
 			}
 		}
 
@@ -952,10 +953,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/********************************************************************/
 		private void RotatePeriods(VoiceInfo voice)
 		{
-			ushort temp = voice.pers[0];
-			voice.pers[0] = voice.pers[1];
-			voice.pers[1] = voice.pers[2];
-			voice.pers[2] = temp;
+			ushort temp = voice.Pers[0];
+			voice.Pers[0] = voice.Pers[1];
+			voice.Pers[1] = voice.Pers[2];
+			voice.Pers[2] = temp;
 		}
 		#endregion
 	}
