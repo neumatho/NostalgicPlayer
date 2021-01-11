@@ -11,9 +11,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Agent
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 {
 	/// <summary>
 	/// This class manage all available agents

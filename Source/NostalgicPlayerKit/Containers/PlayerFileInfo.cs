@@ -6,9 +6,9 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Streams;
+using Polycode.NostalgicPlayer.Kit.Streams;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers
+namespace Polycode.NostalgicPlayer.Kit.Containers
 {
 	/// <summary>
 	/// This class holds the information about the current file

@@ -8,12 +8,12 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
-using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Containers;
-using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Mixer;
+using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
+using Polycode.NostalgicPlayer.PlayerLibrary.Mixer;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 {
 	/// <summary>
 	/// Main class to play modules

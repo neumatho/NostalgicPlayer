@@ -7,9 +7,9 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System.IO;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Streams;
+using Polycode.NostalgicPlayer.Kit.Streams;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow.ListItem
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 {
 	/// <summary>
 	/// This class holds a list item pointing to a file

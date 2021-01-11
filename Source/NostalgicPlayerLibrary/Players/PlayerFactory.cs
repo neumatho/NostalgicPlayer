@@ -6,11 +6,11 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
-using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Agent;
+using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 {
 	/// <summary>
 	/// Factory class to create the right player based on the data given

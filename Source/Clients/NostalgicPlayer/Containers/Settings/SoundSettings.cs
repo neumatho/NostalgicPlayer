@@ -8,21 +8,21 @@
 /******************************************************************************/
 using System;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayer.Containers.Settings
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 {
 	/// <summary>
 	/// This class holds all the settings for sounds
 	/// </summary>
 	public class SoundSettings
 	{
-		private readonly NostalgicPlayerKit.Utility.Settings settings;
+		private readonly Kit.Utility.Settings settings;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SoundSettings(NostalgicPlayerKit.Utility.Settings userSettings)
+		public SoundSettings(Kit.Utility.Settings userSettings)
 		{
 			settings = userSettings;
 		}

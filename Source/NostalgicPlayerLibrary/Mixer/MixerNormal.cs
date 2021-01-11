@@ -10,9 +10,9 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Mixer.Containers;
+using Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Mixer
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 {
 	/// <summary>
 	/// Normal mixer implementation

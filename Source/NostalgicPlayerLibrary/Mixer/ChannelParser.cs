@@ -7,10 +7,10 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Mixer;
-using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Mixer.Containers;
+using Polycode.NostalgicPlayer.Kit.Mixer;
+using Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Mixer
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 {
 	/// <summary>
 	/// Helper class for the mixer to parse the channel information given

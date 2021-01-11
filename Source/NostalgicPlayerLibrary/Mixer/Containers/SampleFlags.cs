@@ -8,7 +8,7 @@
 /******************************************************************************/
 using System;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Mixer.Containers
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers
 {
 	/// <summary>
 	/// Different flags used when playing a sample

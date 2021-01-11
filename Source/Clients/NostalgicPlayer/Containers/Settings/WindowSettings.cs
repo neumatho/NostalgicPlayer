@@ -8,21 +8,21 @@
 /******************************************************************************/
 using System.Drawing;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayer.Containers.Settings
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 {
 	/// <summary>
 	/// This class holds the window position and size
 	/// </summary>
 	public class WindowSettings
 	{
-		private readonly NostalgicPlayerKit.Utility.Settings settings;
+		private readonly Kit.Utility.Settings settings;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public WindowSettings(NostalgicPlayerKit.Utility.Settings windowSettings)
+		public WindowSettings(Kit.Utility.Settings windowSettings)
 		{
 			settings = windowSettings;
 		}

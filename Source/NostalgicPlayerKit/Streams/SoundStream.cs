@@ -8,9 +8,9 @@
 /******************************************************************************/
 using System;
 using System.IO;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Streams
+namespace Polycode.NostalgicPlayer.Kit.Streams
 {
 	/// <summary>
 	/// This class is the base class for streams that return sound data

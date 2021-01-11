@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{96505BEF-30CE-42FF-AF6A-7DD35807EED0}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Polycode.NostalgicPlayer.NostalgicPlayer</RootNamespace>
+    <RootNamespace>Polycode.NostalgicPlayer.Client.GuiPlayer</RootNamespace>
     <AssemblyName>NostalgicPlayer</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

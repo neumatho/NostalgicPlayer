@@ -6,21 +6,21 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.NostalgicPlayer.Containers.Settings
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 {
 	/// <summary>
 	/// This class holds all the path settings
 	/// </summary>
 	public class PathSettings
 	{
-		private readonly NostalgicPlayerKit.Utility.Settings settings;
+		private readonly Kit.Utility.Settings settings;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public PathSettings(NostalgicPlayerKit.Utility.Settings userSettings)
+		public PathSettings(Kit.Utility.Settings userSettings)
 		{
 			settings = userSettings;
 		}

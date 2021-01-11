@@ -9,11 +9,11 @@
 using System;
 using System.IO;
 using System.Linq;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Exceptions;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Mixer;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Streams;
+using Polycode.NostalgicPlayer.Kit.Bases;
+using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Exceptions;
+using Polycode.NostalgicPlayer.Kit.Mixer;
+using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 {

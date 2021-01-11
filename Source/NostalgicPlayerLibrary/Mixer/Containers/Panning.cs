@@ -6,7 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Mixer.Containers
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers
 {
 	/// <summary>
 	/// This enum only holds some points in the panning

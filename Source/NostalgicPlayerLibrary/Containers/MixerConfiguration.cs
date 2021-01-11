@@ -6,7 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Containers
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 {
 	/// <summary>
 	/// Different configuration settings for the mixer

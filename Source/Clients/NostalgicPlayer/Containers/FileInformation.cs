@@ -6,7 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.NostalgicPlayer.Containers
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers
 {
 	/// <summary>
 	/// This class holds information about a single file

@@ -7,11 +7,11 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Streams;
-using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Mixer
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 {
 	/// <summary>
 	/// This stream do the playing of the modules and mix the channels

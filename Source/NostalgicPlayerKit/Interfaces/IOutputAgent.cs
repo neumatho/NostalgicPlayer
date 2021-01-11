@@ -6,10 +6,10 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Streams;
+using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Streams;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces
+namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
 	/// <summary>
 	/// Agents of this type outputs the sound to some device

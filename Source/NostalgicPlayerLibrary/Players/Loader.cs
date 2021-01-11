@@ -9,12 +9,12 @@
 using System;
 using System.IO;
 using System.Linq;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Streams;
-using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Agent;
+using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 {
 	/// <summary>
 	/// Loader class that helps load a module

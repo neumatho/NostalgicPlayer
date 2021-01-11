@@ -8,16 +8,16 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
-using Polycode.NostalgicPlayer.NostalgicPlayer.Containers.Settings;
-using Polycode.NostalgicPlayer.NostalgicPlayer.Controls;
-using Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
-using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Agent;
-using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Containers;
-using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
+using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
+using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
+using Polycode.NostalgicPlayer.PlayerLibrary.Players;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayer.Modules
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 {
 	/// <summary>
 	/// This class handles all the loading and playing of modules

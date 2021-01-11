@@ -7,11 +7,11 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Mixer;
+using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Mixer;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases
+namespace Polycode.NostalgicPlayer.Kit.Bases
 {
 	/// <summary>
 	/// Base class that can be used for player agents

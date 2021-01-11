@@ -8,7 +8,7 @@
 /******************************************************************************/
 using System;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Exceptions
+namespace Polycode.NostalgicPlayer.Kit.Exceptions
 {
 	/// <summary>
 	/// This exception is just used to stop execution of a method

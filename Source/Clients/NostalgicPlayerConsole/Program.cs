@@ -8,14 +8,14 @@
 /******************************************************************************/
 using System;
 using System.IO;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Streams;
-using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Agent;
-using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Containers;
-using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players;
+using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
+using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
+using Polycode.NostalgicPlayer.PlayerLibrary.Players;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerConsole
+namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 {
 	/// <summary>
 	/// NostalgicPlayer console player. Mainly used to easily test players

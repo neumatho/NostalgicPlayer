@@ -9,10 +9,10 @@
 using System;
 using System.Drawing;
 using Krypton.Toolkit;
-using Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow.ListItem;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Streams;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
+using Polycode.NostalgicPlayer.Kit.Streams;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 {
 	/// <summary>
 	/// This is the class used for each item in the module list

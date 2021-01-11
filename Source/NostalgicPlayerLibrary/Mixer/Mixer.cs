@@ -7,12 +7,12 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
-using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Containers;
-using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Mixer.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
+using Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Mixer
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 {
 	/// <summary>
 	/// This is the main mixer implementation

@@ -7,10 +7,10 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Mixer;
+using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Mixer;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces
+namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
 	/// <summary>
 	/// Agents of this type can play modules

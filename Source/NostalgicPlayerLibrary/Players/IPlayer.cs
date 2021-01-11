@@ -7,9 +7,9 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Containers;
+using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 {
 	/// <summary>
 	/// Common interface to different player implementations

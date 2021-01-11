@@ -8,7 +8,7 @@
 /******************************************************************************/
 using System;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Containers
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 {
 	/// <summary>
 	/// This class holds all information about the player which changes while playing

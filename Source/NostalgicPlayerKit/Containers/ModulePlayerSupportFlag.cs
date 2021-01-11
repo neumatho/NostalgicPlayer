@@ -8,7 +8,7 @@
 /******************************************************************************/
 using System;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers
+namespace Polycode.NostalgicPlayer.Kit.Containers
 {
 	/// <summary>
 	/// Different flags indicating what a module player supports

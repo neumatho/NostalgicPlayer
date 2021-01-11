@@ -9,9 +9,9 @@
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Bases
+namespace Polycode.NostalgicPlayer.Kit.Bases
 {
 	/// <summary>
 	/// Base class that have some default implementations that can be used

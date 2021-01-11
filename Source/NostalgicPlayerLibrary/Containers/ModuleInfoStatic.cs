@@ -6,9 +6,9 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Containers
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 {
 	/// <summary>
 	/// This class holds all static information about the player

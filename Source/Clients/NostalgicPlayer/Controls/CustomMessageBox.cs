@@ -11,7 +11,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayer.Controls
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Controls
 {
 	/// <summary>
 	/// Show a message box with customized buttons

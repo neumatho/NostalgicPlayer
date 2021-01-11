@@ -8,9 +8,9 @@
 /******************************************************************************/
 using System;
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayer
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 {
 	/// <summary>
 	/// Main entry point

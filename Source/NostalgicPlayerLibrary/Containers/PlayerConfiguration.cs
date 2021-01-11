@@ -6,10 +6,10 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces;
-using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Players;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.PlayerLibrary.Players;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Containers
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 {
 	/// <summary>
 	/// Different configuration settings for the player

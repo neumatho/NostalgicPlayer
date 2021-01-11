@@ -9,10 +9,10 @@
 using System.Drawing;
 using System.Windows.Forms;
 using Krypton.Toolkit;
-using Polycode.NostalgicPlayer.NostalgicPlayer.Containers.Settings;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Utility;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayer.Bases
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 {
 	/// <summary>
 	/// Use the class as the base class for all windows

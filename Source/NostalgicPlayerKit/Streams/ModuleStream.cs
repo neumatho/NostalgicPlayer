@@ -9,7 +9,7 @@
 using System;
 using System.IO;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Streams
+namespace Polycode.NostalgicPlayer.Kit.Streams
 {
 	/// <summary>
 	/// This class wraps another stream and adds some helper methods to read the data

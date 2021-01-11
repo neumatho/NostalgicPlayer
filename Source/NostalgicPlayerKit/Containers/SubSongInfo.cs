@@ -6,7 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Containers
+namespace Polycode.NostalgicPlayer.Kit.Containers
 {
 	/// <summary>
 	/// This class holds the information about sub-songs

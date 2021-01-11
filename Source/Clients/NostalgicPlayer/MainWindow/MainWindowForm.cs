@@ -11,17 +11,17 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.NostalgicPlayer.Bases;
-using Polycode.NostalgicPlayer.NostalgicPlayer.Containers;
-using Polycode.NostalgicPlayer.NostalgicPlayer.Containers.Settings;
-using Polycode.NostalgicPlayer.NostalgicPlayer.Controls;
-using Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow.ListItem;
-using Polycode.NostalgicPlayer.NostalgicPlayer.Modules;
-using Polycode.NostalgicPlayer.NostalgicPlayerKit.Utility;
-using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Agent;
-using Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Containers;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
+using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
+using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayer.MainWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 {
 	/// <summary>
 	/// This is the main window

@@ -8,7 +8,7 @@
 /******************************************************************************/
 using System;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces
+namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
 	/// <summary>
 	/// All agents implements this interface

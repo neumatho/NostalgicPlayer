@@ -1,4 +1,4 @@
-﻿namespace Polycode.NostalgicPlayer.NostalgicPlayer.Controls
+﻿namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Controls
 {
 	partial class CustomMessageBox
 	{

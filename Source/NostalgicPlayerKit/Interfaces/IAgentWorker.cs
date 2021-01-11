@@ -6,7 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.NostalgicPlayerKit.Interfaces
+namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
 	/// <summary>
 	/// All worker classes implements this interface

@@ -8,7 +8,7 @@
 /******************************************************************************/
 using System;
 
-namespace Polycode.NostalgicPlayer.NostalgicPlayerLibrary.Mixer.Containers
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers
 {
 	/// <summary>
 	/// Different modes the mixer can be set in

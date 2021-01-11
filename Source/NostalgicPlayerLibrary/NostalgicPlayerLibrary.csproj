@@ -7,7 +7,7 @@
     <ProjectGuid>{2DDB43C4-B9B1-448D-8BEB-8B147115D00E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Polycode.NostalgicPlayer.NostalgicPlayerLibrary</RootNamespace>
+    <RootNamespace>Polycode.NostalgicPlayer.PlayerLibrary</RootNamespace>
     <AssemblyName>NostalgicPlayerLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
