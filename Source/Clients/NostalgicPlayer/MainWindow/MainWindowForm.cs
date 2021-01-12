@@ -60,7 +60,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private bool allowPosSliderUpdate;
 
 		// Misc.
-		private List<int> randomList;
+		private readonly Random rnd;
+		private readonly List<int> randomList;
 
 		/********************************************************************/
 		/// <summary>
@@ -74,6 +75,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Initialize member variables
 			playItem = null;
 			allowPosSliderUpdate = true;
+
+			rnd = new Random();
 			randomList = new List<int>();
 
 			if (!DesignMode)
@@ -131,7 +134,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					if (index < count)
 					{
 						// Yes, load it
-						LoadAndPlayModule((ModuleListItem)moduleListBox.Items[index]);
+						LoadAndPlayModule(index);
 					}
 					else
 					{
@@ -167,7 +170,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					if (index < count)
 					{
 						// Yes, load it
-						LoadAndPlayModule((ModuleListItem)moduleListBox.Items[index]);
+						LoadAndPlayModule(index);
 					}
 					else
 					{
@@ -175,7 +178,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						if (count >= 1)
 						{
 							// Load the first module
-							LoadAndPlayModule((ModuleListItem)moduleListBox.Items[0]);
+							LoadAndPlayModule(0);
 						}
 					}
 					break;
@@ -209,6 +212,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Module list
 			moduleListBox.SelectedIndexChanged += ModuleListBox_SelectedIndexChanged;
 			moduleListBox.ListBox.MouseDoubleClick += ModuleListBox_MouseDoubleClick;
+			moduleListBox.KeyPress += ModuleListBox_KeyPress;
 
 			// Volume
 			muteCheckButton.CheckedChanged += MuteCheckButton_CheckedChanged;
@@ -235,6 +239,132 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			moduleHandler.PositionChanged += ModuleHandler_PositionChanged;
 			moduleHandler.EndReached += ModuleHandler_EndReached;
 		}
+
+		#region Keyboard shortcuts
+		/********************************************************************/
+		/// <summary>
+		/// Is called when a key is pressed in the main window
+		/// </summary>
+		/********************************************************************/
+		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+		{
+			// Check for different keyboard shortcuts
+			Keys modifiers = keyData & Keys.Modifiers;
+			Keys key = keyData & Keys.KeyCode;
+
+			if (modifiers == Keys.None)
+			{
+				// Keys without any modifiers
+				switch (key)
+				{
+					// F12 - Play a random module
+					case Keys.F12:
+					{
+						int total = moduleListBox.Items.Count;
+
+						// Do only continue if we have more than one
+						// module in the list
+						if (total > 1)
+						{
+							// Find a random module until we found
+							// one that is not the playing one
+							int playingIndex = playItem == null ? -1 : moduleListBox.Items.IndexOf(playItem);
+							int index;
+
+							do
+							{
+								index = rnd.Next(total);
+							}
+							while ((index == playingIndex) || randomList.Contains(index));
+
+							// Free any playing module
+							StopAndFreeModule();
+
+							// Now load the module
+							LoadAndPlayModule(index);
+						}
+
+						return true;
+					}
+
+					// Delete - Eject
+					case Keys.Delete:
+					{
+						ejectButton.PerformClick();
+						return true;
+					}
+
+					// Insert - Play
+					case Keys.Insert:
+					{
+						playButton.PerformClick();
+						return true;
+					}
+
+					// Space - Pause
+					case Keys.Space:
+					{
+						pauseCheckButton.PerformClick();
+						return true;
+					}
+
+					// Left arrow - Rewind
+					case Keys.Left:
+					{
+						rewindButton.PerformClick();
+						return true;
+					}
+
+					// Right arrow - Fast forward
+					case Keys.Right:
+					{
+						fastForwardButton.PerformClick();
+						return true;
+					}
+
+					// Backspace - Module loop
+					case Keys.Back:
+					{
+						loopCheckButton.PerformClick();
+						return true;
+					}
+				}
+			}
+			else if (modifiers == Keys.Shift)
+			{
+				// Keys with shift pressed down
+				switch (key)
+				{
+					// Space - Mute
+					case Keys.Space:
+					{
+						muteCheckButton.PerformClick();
+						return true;
+					}
+
+					// Left arrow - Load previous module
+					case Keys.Left:
+					{
+						if (moduleListBox.Items.Count > 1)
+							previousModuleButton.PerformClick();
+
+						return true;
+					}
+
+					// Right arrow - Fast forward
+					case Keys.Right:
+					{
+						if (moduleListBox.Items.Count > 1)
+							nextModuleButton.PerformClick();
+
+						return true;
+					}
+				}
+			}
+
+			return base.ProcessCmdKey(ref msg, keyData);
+		}
+		#endregion
 
 		#region Form events
 		/********************************************************************/
@@ -352,7 +482,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					StopAndFreeModule();
 
 					// Load the module
-					LoadAndPlayModule((ModuleListItem)moduleListBox.Items[newPlay]);
+					LoadAndPlayModule(newPlay);
 				}
 			}));
 		}
@@ -391,7 +521,30 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				StopAndFreeModule();
 
 				// Load and play the selected module
-				LoadAndPlayModule((ModuleListItem)moduleListBox.Items[index]);
+				LoadAndPlayModule(index);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// User clicked on a key in the module list box
+		/// </summary>
+		/********************************************************************/
+		private void ModuleListBox_KeyPress(object sender, KeyPressEventArgs e)
+		{
+			// Enter - Load the selected module
+			if (e.KeyChar == '\r')
+			{
+				if (moduleListBox.SelectedItem != null)
+				{
+					// Stop playing any modules
+					StopAndFreeModule();
+
+					// Load and play the selected module
+					LoadAndPlayModule((ModuleListItem)moduleListBox.SelectedItem);
+				}
 			}
 		}
 		#endregion
@@ -511,7 +664,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					AddFilesToList(moduleFileDialog.FileNames);
 
 					// Start to load and play the first module
-					LoadAndPlayModule((ModuleListItem)moduleListBox.Items[0]);
+					LoadAndPlayModule(0);
 				}
 			}
 		}
@@ -665,7 +818,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					StopAndFreeModule();
 
 					// Load and play the new module
-					LoadAndPlayModule((ModuleListItem)moduleListBox.Items[newIndex]);
+					LoadAndPlayModule(newIndex);
 				}
 			}
 		}
@@ -692,7 +845,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				StopAndFreeModule();
 
 				// Load and play the new module
-				LoadAndPlayModule((ModuleListItem)moduleListBox.Items[newIndex]);
+				LoadAndPlayModule(newIndex);
 			}
 		}
 		#endregion
@@ -1420,6 +1573,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 
 			return moduleFileDialog.ShowDialog();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will load and play the given module
+		/// </summary>
+		/********************************************************************/
+		private void LoadAndPlayModule(int index)
+		{
+			LoadAndPlayModule((ModuleListItem)moduleListBox.Items[index]);
 		}
 
 

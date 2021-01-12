@@ -480,6 +480,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.Controls.Add(this.infoGroup);
 			this.Controls.Add(this.menuStrip);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.KeyPreview = true;
 			this.MainMenuStrip = this.menuStrip;
 			this.MinimumSize = new System.Drawing.Size(400, 320);
 			this.Name = "MainWindowForm";
