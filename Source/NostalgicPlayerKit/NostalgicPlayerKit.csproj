@@ -1,66 +1,26 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{391ACD4A-55F4-4687-A38E-83F9BC42A870}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Polycode.NostalgicPlayer.Kit</RootNamespace>
-    <AssemblyName>NostalgicPlayerKit</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
+    <Company>Polycode</Company>
+    <Product>NostalgicPlayer</Product>
+    <Authors>Thomas Neumann</Authors>
+    <Description>Kit used for all agents</Description>
+    <Copyright>Copyright © 2021</Copyright>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>bin</OutputPath>
     <DocumentationFile>bin\NostalgicPlayerKit.xml</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>bin</OutputPath>
+    <DocumentationFile>bin\NostalgicPlayerKit.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>bin\NostalgicPlayerKit.xml</DocumentationFile>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Bases\AgentBase.cs" />
-    <Compile Include="Bases\ModulePlayerAgentBase.cs" />
-    <Compile Include="Bases\PlayerAgentBase.cs" />
-    <Compile Include="Exceptions\StopException.cs" />
-    <Compile Include="Streams\ModuleStream.cs" />
-    <Compile Include="Streams\SoundStream.cs" />
-    <Compile Include="Containers\AgentResult.cs" />
-    <Compile Include="Containers\ModulePlayerSupportFlag.cs" />
-    <Compile Include="Containers\PlayerFileInfo.cs" />
-    <Compile Include="Containers\OutputInfo.cs" />
-    <Compile Include="Containers\SubSongInfo.cs" />
-    <Compile Include="Interfaces\IAgent.cs" />
-    <Compile Include="Interfaces\IAgentWorker.cs" />
-    <Compile Include="Interfaces\IModulePlayerAgent.cs" />
-    <Compile Include="Interfaces\IOutputAgent.cs" />
-    <Compile Include="Interfaces\IPlayerAgent.cs" />
-    <Compile Include="Mixer\Channel.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utility\Settings.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="README.md" />
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

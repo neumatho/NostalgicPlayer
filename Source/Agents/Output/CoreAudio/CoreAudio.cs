@@ -6,8 +6,12 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+
+// This is needed to uniquely identify this agent
+[assembly: Guid("b9cef7e4-c74c-4af0-b01d-802f0d1b4cc7")]
 
 namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 {
@@ -26,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		{
 			get
 			{
-				return Properties.Resources.IDS_NAME;
+				return Resources.IDS_NAME;
 			}
 		}
 
@@ -41,7 +45,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		{
 			get
 			{
-				return Properties.Resources.IDS_DESCRIPTION;
+				return Resources.IDS_DESCRIPTION;
 			}
 		}
 

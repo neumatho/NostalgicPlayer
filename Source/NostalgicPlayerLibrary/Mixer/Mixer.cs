@@ -96,7 +96,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			{
 				CleanupMixer();
 
-				errorMessage = string.Format(Properties.Resources.IDS_ERR_MIXER_INIT, ex.HResult, ex.Message);
+				errorMessage = string.Format(Resources.IDS_ERR_MIXER_INIT, ex.HResult, ex.Message);
 				retVal = false;
 			}
 

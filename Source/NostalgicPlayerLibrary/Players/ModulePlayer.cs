@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			}
 			catch (Exception)
 			{
-				errorMessage = Properties.Resources.IDS_ERR_PLAYER_INIT;
+				errorMessage = Resources.IDS_ERR_PLAYER_INIT;
 				initOk = false;
 			}
 

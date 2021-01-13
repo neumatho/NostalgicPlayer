@@ -123,7 +123,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 			{
 				Shutdown();
 
-				errorMessage = string.Format(Properties.Resources.IDS_ERR_INITIALIZE, ex.HResult, ex.Message);
+				errorMessage = string.Format(Resources.IDS_ERR_INITIALIZE, ex.HResult, ex.Message);
 				return AgentResult.Error;
 			}
 		}
@@ -325,7 +325,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 					{
 						outputFormat = new WaveFormat(audioClient.MixFormat.SampleRate, 16, 1);
 						if (!audioClient.IsFormatSupported(AudioClientShareMode.Shared, outputFormat, out WaveFormatExtensible _))
-							throw new Exception(Properties.Resources.IDS_ERR_NO_OUTPUT_DEVICE_FOUND);
+							throw new Exception(Resources.IDS_ERR_NO_OUTPUT_DEVICE_FOUND);
 					}
 				}
 			}

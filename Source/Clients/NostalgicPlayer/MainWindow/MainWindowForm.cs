@@ -110,10 +110,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		public void ShowErrorMessage(string message, ModuleListItem listItem)
 		{
-			CustomMessageBox dialog = new CustomMessageBox(message, Properties.Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error);
-			dialog.AddButton(Properties.Resources.IDS_BUT_SKIP, '1');
-			dialog.AddButton(Properties.Resources.IDS_BUT_SKIPREMOVE, '2');
-			dialog.AddButton(Properties.Resources.IDS_BUT_STOP, '3');
+			CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error);
+			dialog.AddButton(Resources.IDS_BUT_SKIP, '1');
+			dialog.AddButton(Resources.IDS_BUT_SKIPREMOVE, '2');
+			dialog.AddButton(Resources.IDS_BUT_STOP, '3');
 			dialog.ShowDialog();
 			char response = dialog.GetButtonResult();
 
@@ -1240,51 +1240,51 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private void CreateMainMenu()
 		{
 			// Create the file menu
-			ToolStripMenuItem fileMenuItem = new ToolStripMenuItem(Properties.Resources.IDS_MENU_FILE);
+			ToolStripMenuItem fileMenuItem = new ToolStripMenuItem(Resources.IDS_MENU_FILE);
 
-			ToolStripMenuItem menuItem = new ToolStripMenuItem(Properties.Resources.IDS_MENU_FILE_OPEN);
+			ToolStripMenuItem menuItem = new ToolStripMenuItem(Resources.IDS_MENU_FILE_OPEN);
 			menuItem.ShortcutKeys = Keys.Alt | Keys.O;
 			menuItem.Click += PlayButton_Click;
 			fileMenuItem.DropDownItems.Add(menuItem);
 
 			fileMenuItem.DropDownItems.Add(new ToolStripSeparator());
 
-			menuItem = new ToolStripMenuItem(Properties.Resources.IDS_MENU_FILE_EXIT);
+			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_FILE_EXIT);
 			menuItem.ShortcutKeys = Keys.Alt | Keys.F4;
 			fileMenuItem.DropDownItems.Add(menuItem);
 
 			menuStrip.Items.Add(fileMenuItem);
 
 			// Create the window menu
-			ToolStripMenuItem windowMenuItem = new ToolStripMenuItem(Properties.Resources.IDS_MENU_WINDOW);
+			ToolStripMenuItem windowMenuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW);
 
-			menuItem = new ToolStripMenuItem(Properties.Resources.IDS_MENU_WINDOW_SETTINGS);
+			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_SETTINGS);
 			menuItem.Enabled = false;
 			windowMenuItem.DropDownItems.Add(menuItem);
 
 			windowMenuItem.DropDownItems.Add(new ToolStripSeparator());
 
-			menuItem = new ToolStripMenuItem(Properties.Resources.IDS_MENU_WINDOW_PLAYERS);
+			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_PLAYERS);
 			menuItem.Visible = false;
 			windowMenuItem.DropDownItems.Add(menuItem);
 
-			menuItem = new ToolStripMenuItem(Properties.Resources.IDS_MENU_WINDOW_AGENTS);
+			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_AGENTS);
 			menuItem.Visible = false;
 			windowMenuItem.DropDownItems.Add(menuItem);
 
 			menuStrip.Items.Add(windowMenuItem);
 
 			// Create the help menu
-			ToolStripMenuItem helpMenuItem = new ToolStripMenuItem(Properties.Resources.IDS_MENU_HELP);
+			ToolStripMenuItem helpMenuItem = new ToolStripMenuItem(Resources.IDS_MENU_HELP);
 
-			menuItem = new ToolStripMenuItem(Properties.Resources.IDS_MENU_HELP_HELP);
+			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_HELP_HELP);
 			menuItem.ShortcutKeys = Keys.Alt | Keys.H;
 			menuItem.Enabled = false;
 			helpMenuItem.DropDownItems.Add(menuItem);
 
 			helpMenuItem.DropDownItems.Add(new ToolStripSeparator());
 
-			menuItem = new ToolStripMenuItem(Properties.Resources.IDS_MENU_HELP_ABOUT);
+			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_HELP_ABOUT);
 			menuItem.Enabled = false;
 			helpMenuItem.DropDownItems.Add(menuItem);
 
@@ -1302,18 +1302,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			KryptonContextMenuItems menuItems = new KryptonContextMenuItems();
 
-			KryptonContextMenuItem item = new KryptonContextMenuItem(Properties.Resources.IDS_SORTMENU_SORT_AZ);
-			item.Image = Properties.Resources.IDB_AZ;
+			KryptonContextMenuItem item = new KryptonContextMenuItem(Resources.IDS_SORTMENU_SORT_AZ);
+			item.Image = Resources.IDB_AZ;
 			item.Click += SortMenu_AZ;
 			menuItems.Items.Add(item);
 
-			item = new KryptonContextMenuItem(Properties.Resources.IDS_SORTMENU_SORT_ZA);
-			item.Image = Properties.Resources.IDB_ZA;
+			item = new KryptonContextMenuItem(Resources.IDS_SORTMENU_SORT_ZA);
+			item.Image = Resources.IDB_ZA;
 			item.Click += SortMenu_ZA;
 			menuItems.Items.Add(item);
 
-			item = new KryptonContextMenuItem(Properties.Resources.IDS_SORTMENU_SHUFFLE);
-			item.Image = Properties.Resources.IDB_SHUFFLE;
+			item = new KryptonContextMenuItem(Resources.IDS_SORTMENU_SHUFFLE);
+			item.Image = Resources.IDB_SHUFFLE;
 			item.Click += SortMenu_Shuffle;
 			menuItems.Items.Add(item);
 
@@ -1331,11 +1331,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			KryptonContextMenuItems menuItems = new KryptonContextMenuItems();
 
-			KryptonContextMenuItem item = new KryptonContextMenuItem(Properties.Resources.IDS_SELECTMENU_ALL);
+			KryptonContextMenuItem item = new KryptonContextMenuItem(Resources.IDS_SELECTMENU_ALL);
 			item.Click += SelectMenu_All;
 			menuItems.Items.Add(item);
 
-			item = new KryptonContextMenuItem(Properties.Resources.IDS_SELECTMENU_NONE);
+			item = new KryptonContextMenuItem(Resources.IDS_SELECTMENU_NONE);
 			item.Click += SelectMenu_None;
 			menuItems.Items.Add(item);
 
@@ -1351,39 +1351,39 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void SetTooltips()
 		{
-			toolTip.SetToolTip(infoGroup.Panel, Properties.Resources.IDS_TIP_MAIN_INFO);
-			toolTip.SetToolTip(infoLabel, Properties.Resources.IDS_TIP_MAIN_INFO);
-			toolTip.SetToolTip(moduleInfoButton, Properties.Resources.IDS_TIP_MAIN_MODULEINFO);
+			toolTip.SetToolTip(infoGroup.Panel, Resources.IDS_TIP_MAIN_INFO);
+			toolTip.SetToolTip(infoLabel, Resources.IDS_TIP_MAIN_INFO);
+			toolTip.SetToolTip(moduleInfoButton, Resources.IDS_TIP_MAIN_MODULEINFO);
 
-			toolTip.SetToolTip(muteCheckButton, Properties.Resources.IDS_TIP_MAIN_MUTE);
-			toolTip.SetToolTip(masterVolumeTrackBar, Properties.Resources.IDS_TIP_MAIN_VOLUME);
+			toolTip.SetToolTip(muteCheckButton, Resources.IDS_TIP_MAIN_MUTE);
+			toolTip.SetToolTip(masterVolumeTrackBar, Resources.IDS_TIP_MAIN_VOLUME);
 
-			toolTip.SetToolTip(addModuleButton, Properties.Resources.IDS_TIP_MAIN_ADD);
-			toolTip.SetToolTip(removeModuleButton, Properties.Resources.IDS_TIP_MAIN_REMOVE);
-			toolTip.SetToolTip(swapModulesButton, Properties.Resources.IDS_TIP_MAIN_SWAP);
-			toolTip.SetToolTip(sortModulesButton, Properties.Resources.IDS_TIP_MAIN_SORT);
-			toolTip.SetToolTip(moveModulesUpButton, Properties.Resources.IDS_TIP_MAIN_UP);
-			toolTip.SetToolTip(moveModulesDownButton, Properties.Resources.IDS_TIP_MAIN_DOWN);
-			toolTip.SetToolTip(listButton, Properties.Resources.IDS_TIP_MAIN_SELECT);
-			toolTip.SetToolTip(diskButton, Properties.Resources.IDS_TIP_MAIN_DISK);
+			toolTip.SetToolTip(addModuleButton, Resources.IDS_TIP_MAIN_ADD);
+			toolTip.SetToolTip(removeModuleButton, Resources.IDS_TIP_MAIN_REMOVE);
+			toolTip.SetToolTip(swapModulesButton, Resources.IDS_TIP_MAIN_SWAP);
+			toolTip.SetToolTip(sortModulesButton, Resources.IDS_TIP_MAIN_SORT);
+			toolTip.SetToolTip(moveModulesUpButton, Resources.IDS_TIP_MAIN_UP);
+			toolTip.SetToolTip(moveModulesDownButton, Resources.IDS_TIP_MAIN_DOWN);
+			toolTip.SetToolTip(listButton, Resources.IDS_TIP_MAIN_SELECT);
+			toolTip.SetToolTip(diskButton, Resources.IDS_TIP_MAIN_DISK);
 
-			toolTip.SetToolTip(timeLabel, Properties.Resources.IDS_TIP_MAIN_TIME);
-			toolTip.SetToolTip(totalLabel, Properties.Resources.IDS_TIP_MAIN_TOTAL);
+			toolTip.SetToolTip(timeLabel, Resources.IDS_TIP_MAIN_TIME);
+			toolTip.SetToolTip(totalLabel, Resources.IDS_TIP_MAIN_TOTAL);
 
-			toolTip.SetToolTip(positionTrackBar, Properties.Resources.IDS_TIP_MAIN_POSITIONSLIDER);
+			toolTip.SetToolTip(positionTrackBar, Resources.IDS_TIP_MAIN_POSITIONSLIDER);
 
-			toolTip.SetToolTip(previousModuleButton, Properties.Resources.IDS_TIP_MAIN_PREVMOD);
-			toolTip.SetToolTip(previousSongButton, Properties.Resources.IDS_TIP_MAIN_PREVSONG);
-			toolTip.SetToolTip(rewindButton, Properties.Resources.IDS_TIP_MAIN_REWIND);
-			toolTip.SetToolTip(playButton, Properties.Resources.IDS_TIP_MAIN_PLAY);
-			toolTip.SetToolTip(fastForwardButton, Properties.Resources.IDS_TIP_MAIN_FORWARD);
-			toolTip.SetToolTip(nextSongButton, Properties.Resources.IDS_TIP_MAIN_NEXTSONG);
-			toolTip.SetToolTip(nextModuleButton, Properties.Resources.IDS_TIP_MAIN_NEXTMOD);
-			toolTip.SetToolTip(ejectButton, Properties.Resources.IDS_TIP_MAIN_EJECT);
-			toolTip.SetToolTip(pauseCheckButton, Properties.Resources.IDS_TIP_MAIN_PAUSE);
+			toolTip.SetToolTip(previousModuleButton, Resources.IDS_TIP_MAIN_PREVMOD);
+			toolTip.SetToolTip(previousSongButton, Resources.IDS_TIP_MAIN_PREVSONG);
+			toolTip.SetToolTip(rewindButton, Resources.IDS_TIP_MAIN_REWIND);
+			toolTip.SetToolTip(playButton, Resources.IDS_TIP_MAIN_PLAY);
+			toolTip.SetToolTip(fastForwardButton, Resources.IDS_TIP_MAIN_FORWARD);
+			toolTip.SetToolTip(nextSongButton, Resources.IDS_TIP_MAIN_NEXTSONG);
+			toolTip.SetToolTip(nextModuleButton, Resources.IDS_TIP_MAIN_NEXTMOD);
+			toolTip.SetToolTip(ejectButton, Resources.IDS_TIP_MAIN_EJECT);
+			toolTip.SetToolTip(pauseCheckButton, Resources.IDS_TIP_MAIN_PAUSE);
 
-			toolTip.SetToolTip(loopCheckButton, Properties.Resources.IDS_TIP_MAIN_MODULELOOP);
-			toolTip.SetToolTip(showSamplesButton, Properties.Resources.IDS_TIP_MAIN_SAMP);
+			toolTip.SetToolTip(loopCheckButton, Resources.IDS_TIP_MAIN_MODULELOOP);
+			toolTip.SetToolTip(showSamplesButton, Resources.IDS_TIP_MAIN_SAMP);
 		}
 
 
@@ -1439,7 +1439,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void ShowNormalTitle()
 		{
-			Text = Properties.Resources.IDS_MAIN_TITLE;
+			Text = Resources.IDS_MAIN_TITLE;
 		}
 		#endregion
 
@@ -1674,16 +1674,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			TimeSpan tempTime = new TimeSpan((((long)selectedTime.TotalMilliseconds + 500) / 1000 * 1000) * TimeSpan.TicksPerMillisecond);
 			if ((int)tempTime.TotalHours > 0)
-				selStr = tempTime.ToString(Properties.Resources.IDS_TIMEFORMAT);
+				selStr = tempTime.ToString(Resources.IDS_TIMEFORMAT);
 			else
-				selStr = tempTime.ToString(Properties.Resources.IDS_TIMEFORMAT_SMALL);
+				selStr = tempTime.ToString(Resources.IDS_TIMEFORMAT_SMALL);
 
 			// And build the list time string
 			tempTime = new TimeSpan((((long)listTime.TotalMilliseconds + 500) / 1000 * 1000) * TimeSpan.TicksPerMillisecond);
 			if ((int)tempTime.TotalHours > 0)
-				listStr = tempTime.ToString(Properties.Resources.IDS_TIMEFORMAT);
+				listStr = tempTime.ToString(Resources.IDS_TIMEFORMAT);
 			else
-				listStr = tempTime.ToString(Properties.Resources.IDS_TIMEFORMAT_SMALL);
+				listStr = tempTime.ToString(Resources.IDS_TIMEFORMAT_SMALL);
 
 			// And update the label control
 			timeLabel.Text = $"{selStr}/{listStr}";
@@ -1768,7 +1768,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				{
 					// We got a length, so we can create the position string
 					int percent = songPos * 100 / songLength;
-					posStr = string.Format(Properties.Resources.IDS_POSITION, songPos, songLength, percent);
+					posStr = string.Format(Resources.IDS_POSITION, songPos, songLength, percent);
 
 					// Set the position slider
 					if (allowPosSliderUpdate && (positionTrackBar.Value != percent))
@@ -1777,7 +1777,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				else
 				{
 					// Set the position string to n/a
-					posStr = Properties.Resources.IDS_NOPOSITION;
+					posStr = Resources.IDS_NOPOSITION;
 
 					//XX Never ending update
 				}
@@ -1788,17 +1788,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				if (maxSong == 0)
 				{
-					subStr = Properties.Resources.IDS_NOSUBSONGS;
-					timeStr = timeFormat == MainWindowSettings.TimeFormat.Elapsed ? Properties.Resources.IDS_NOTIME : Properties.Resources.IDS_NONEGATIVETIME;
+					subStr = Resources.IDS_NOSUBSONGS;
+					timeStr = timeFormat == MainWindowSettings.TimeFormat.Elapsed ? Resources.IDS_NOTIME : Resources.IDS_NONEGATIVETIME;
 				}
 				else
 				{
-					subStr = string.Format(Properties.Resources.IDS_SUBSONGS, currentSong, maxSong);
+					subStr = string.Format(Resources.IDS_SUBSONGS, currentSong, maxSong);
 
 					// Format the time string
 					if (timeFormat == MainWindowSettings.TimeFormat.Elapsed)
 					{
-						timeStr = string.Format("{0} {1}", Properties.Resources.IDS_TIME, timeOccurred.ToString(Properties.Resources.IDS_TIMEFORMAT));
+						timeStr = string.Format("{0} {1}", Resources.IDS_TIME, timeOccurred.ToString(Resources.IDS_TIMEFORMAT));
 					}
 					else
 					{
@@ -1810,15 +1810,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							tempSpan = new TimeSpan(0);
 
 						// Format the string
-						timeStr = string.Format("{0} -{1}", Properties.Resources.IDS_TIME, tempSpan.ToString(Properties.Resources.IDS_TIMEFORMAT));
+						timeStr = string.Format("{0} -{1}", Resources.IDS_TIME, tempSpan.ToString(Resources.IDS_TIMEFORMAT));
 					}
 				}
 			}
 			else
 			{
-				posStr = Properties.Resources.IDS_NOPOSITION;
-				subStr = Properties.Resources.IDS_NOSUBSONGS;
-				timeStr = timeFormat == MainWindowSettings.TimeFormat.Elapsed ? Properties.Resources.IDS_NOTIME : Properties.Resources.IDS_NONEGATIVETIME;
+				posStr = Resources.IDS_NOPOSITION;
+				subStr = Resources.IDS_NOSUBSONGS;
+				timeStr = timeFormat == MainWindowSettings.TimeFormat.Elapsed ? Resources.IDS_NOTIME : Resources.IDS_NONEGATIVETIME;
 			}
 
 			infoLabel.Text = $"{posStr} {subStr} {timeStr}";

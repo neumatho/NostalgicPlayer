@@ -61,7 +61,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				isPlaying = value;
 
 				Image.Dispose();
-				Image = isPlaying ? Properties.Resources.IDB_PLAYING_ITEM : new Bitmap(ImageSize, ImageSize);
+				Image = isPlaying ? Resources.IDB_PLAYING_ITEM : new Bitmap(ImageSize, ImageSize);
 			}
 		}
 
@@ -102,9 +102,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				{
 					TimeSpan tempTime = new TimeSpan((((long)value.TotalMilliseconds + 500) / 1000 * 1000) * TimeSpan.TicksPerMillisecond);
 					if ((int)tempTime.TotalHours > 0)
-						LongText = tempTime.ToString(Properties.Resources.IDS_TIMEFORMAT);
+						LongText = tempTime.ToString(Resources.IDS_TIMEFORMAT);
 					else
-						LongText = tempTime.ToString(Properties.Resources.IDS_TIMEFORMAT_SMALL);
+						LongText = tempTime.ToString(Resources.IDS_TIMEFORMAT_SMALL);
 				}
 			}
 		}

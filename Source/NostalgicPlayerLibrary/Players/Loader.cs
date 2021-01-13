@@ -97,7 +97,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 							// Well, something went wrong when loading the file
 							//
 							// Build the error string
-							errorMessage = string.Format(Properties.Resources.IDS_ERR_LOAD_MODULE, fileInfo.FileName, agent.Name, playerError);
+							errorMessage = string.Format(Resources.IDS_ERR_LOAD_MODULE, fileInfo.FileName, agent.Name, playerError);
 
 							agent = null;
 							playerAgent = null;
@@ -116,13 +116,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				else
 				{
 					// No, send an error back
-					errorMessage = string.Format(Properties.Resources.IDS_ERR_UNKNOWN_MODULE, fileInfo.FileName);
+					errorMessage = string.Format(Resources.IDS_ERR_UNKNOWN_MODULE, fileInfo.FileName);
 				}
 			}
 			catch (Exception ex)
 			{
 				// Build an error message
-				errorMessage = string.Format(Properties.Resources.IDS_ERR_FILE, fileInfo.FileName, ex.HResult, ex.Message);
+				errorMessage = string.Format(Resources.IDS_ERR_FILE, fileInfo.FileName, ex.HResult, ex.Message);
 				result = false;
 			}
 

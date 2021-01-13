@@ -400,8 +400,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		{
 			mainWindowForm.BeginInvoke(new Action(() =>
 			{
-				CustomMessageBox dialog = new CustomMessageBox(message, Properties.Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error);
-				dialog.AddButton(Properties.Resources.IDS_BUT_OK, 'O');
+				CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error);
+				dialog.AddButton(Resources.IDS_BUT_OK, 'O');
 				dialog.ShowDialog();
 			}));
 		}
@@ -440,7 +440,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				{
 					agent = agentManager.GetAgent(Manager.AgentType.Output, soundSettings.DefaultOutputAgent);
 					if (agent == null)
-						ShowSimpleErrorMessage(Properties.Resources.IDS_ERR_NOOUTPUTAGENT);
+						ShowSimpleErrorMessage(Resources.IDS_ERR_NOOUTPUTAGENT);
 				}
 			}
 
@@ -448,7 +448,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 			{
 				outputAgent = (IOutputAgent)agent.CreateInstance();
 				if (outputAgent.Initialize(out string errorMessage) == AgentResult.Error)
-					ShowSimpleErrorMessage(string.Format(Properties.Resources.IDS_ERR_INITOUTPUTAGENT, errorMessage));
+					ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_INITOUTPUTAGENT, errorMessage));
 			}
 		}
 
@@ -478,7 +478,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				if (!item.Loader.Load(new PlayerFileInfo(fileName, listItem.OpenFile()), out errorMessage))
 				{
 					if (showError)
-						ShowErrorMessage(string.Format(Properties.Resources.IDS_ERR_LOAD_FILE, errorMessage), listItem);
+						ShowErrorMessage(string.Format(Resources.IDS_ERR_LOAD_FILE, errorMessage), listItem);
 
 					return false;
 				}
@@ -495,7 +495,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				if (!item.Loader.Player.InitPlayer(playerConfig, out errorMessage))
 				{
 					if (showError)
-						ShowErrorMessage(string.Format(Properties.Resources.IDS_ERR_INIT_PLAYER, errorMessage), listItem);
+						ShowErrorMessage(string.Format(Resources.IDS_ERR_INIT_PLAYER, errorMessage), listItem);
 
 					item.Loader.Unload();
 					return false;

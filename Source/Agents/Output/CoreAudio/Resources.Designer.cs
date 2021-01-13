@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker.Properties {
+namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Polycode.NostalgicPlayer.Agent.Player.JamCracker.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Polycode.NostalgicPlayer.Agent.Output.CoreAudio.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,10 +61,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to JamCracker Original player by M. Gemmel.
-        ///Converted to C# by Thomas Neumann.
+        ///   Looks up a localized string similar to Output agent which uses Core Audio.
+        ///Written by Thomas Neumann.
+        ///Based on some of the code from NAudio by Mark Heath.
         ///
-        ///The player came from the Amiga, but it&apos;s not the most used format. There are some nice tunes available by Dr. Awesome (Bjørn Lynne)..
+        ///This agent plays the sound using the Windows Core Audio API.
         /// </summary>
         internal static string IDS_DESCRIPTION {
             get {
@@ -73,61 +74,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Can&apos;t read the module header.
+        ///   Looks up a localized string similar to Failed with error 0x{0}:
+        ///{1}..
         /// </summary>
-        internal static string IDS_JAM_ERR_LOADING_HEADER {
+        internal static string IDS_ERR_INITIALIZE {
             get {
-                return ResourceManager.GetString("IDS_JAM_ERR_LOADING_HEADER", resourceCulture);
+                return ResourceManager.GetString("IDS_ERR_INITIALIZE", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Can&apos;t read the module patterns.
+        ///   Looks up a localized string similar to No endpoint device could be found.
         /// </summary>
-        internal static string IDS_JAM_ERR_LOADING_PATTERNS {
+        internal static string IDS_ERR_NO_OUTPUT_DEVICE_FOUND {
             get {
-                return ResourceManager.GetString("IDS_JAM_ERR_LOADING_PATTERNS", resourceCulture);
+                return ResourceManager.GetString("IDS_ERR_NO_OUTPUT_DEVICE_FOUND", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Can&apos;t read the module samples.
-        /// </summary>
-        internal static string IDS_JAM_ERR_LOADING_SAMPLES {
-            get {
-                return ResourceManager.GetString("IDS_JAM_ERR_LOADING_SAMPLES", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Song length.
-        /// </summary>
-        internal static string IDS_JAM_INFODESCLINE0 {
-            get {
-                return ResourceManager.GetString("IDS_JAM_INFODESCLINE0", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Used patterns.
-        /// </summary>
-        internal static string IDS_JAM_INFODESCLINE1 {
-            get {
-                return ResourceManager.GetString("IDS_JAM_INFODESCLINE1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Used instruments.
-        /// </summary>
-        internal static string IDS_JAM_INFODESCLINE2 {
-            get {
-                return ResourceManager.GetString("IDS_JAM_INFODESCLINE2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to JamCracker.
+        ///   Looks up a localized string similar to CoreAudio.
         /// </summary>
         internal static string IDS_NAME {
             get {

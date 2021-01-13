@@ -6,8 +6,12 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+
+// This is needed to uniquely identify this agent
+[assembly: Guid("490bca2e-89e9-44da-ac33-4bf09609346d")]
 
 namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 {
@@ -26,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		{
 			get
 			{
-				return Properties.Resources.IDS_NAME;
+				return Resources.IDS_NAME;
 			}
 		}
 
@@ -41,7 +45,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		{
 			get
 			{
-				return Properties.Resources.IDS_DESCRIPTION;
+				return Resources.IDS_DESCRIPTION;
 			}
 		}
 
