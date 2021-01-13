@@ -163,6 +163,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.ico" />
+    <None Include="Resources\ZA.png" />
+    <None Include="Resources\Shuffle.png" />
+    <None Include="Resources\AZ.png" />
     <None Include="Resources\Remove.png" />
     <None Include="Resources\Add.png" />
     <None Include="Resources\Swap.png" />

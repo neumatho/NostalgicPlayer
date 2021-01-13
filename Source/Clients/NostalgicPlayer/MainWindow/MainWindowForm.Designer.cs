@@ -68,6 +68,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.clockTimer = new System.Windows.Forms.Timer(this.components);
 			this.kryptonManager = new Krypton.Toolkit.KryptonManager(this.components);
+			this.sortContextMenu = new Krypton.Toolkit.KryptonContextMenu();
+			this.listContextMenu = new Krypton.Toolkit.KryptonContextMenu();
 			((System.ComponentModel.ISupportInitialize)(this.infoGroup)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.infoGroup.Panel)).BeginInit();
 			this.infoGroup.Panel.SuspendLayout();
@@ -133,7 +135,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.moduleInfoButton.Name = "moduleInfoButton";
 			this.moduleInfoButton.Size = new System.Drawing.Size(24, 24);
 			this.moduleInfoButton.TabIndex = 7;
-			this.moduleInfoButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.Information;
+			this.moduleInfoButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.IDB_INFORMATION;
 			this.moduleInfoButton.Values.Text = "";
 			// 
 			// masterVolumeTrackBar
@@ -193,7 +195,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.diskButton.Name = "diskButton";
 			this.diskButton.Size = new System.Drawing.Size(24, 24);
 			this.diskButton.TabIndex = 7;
-			this.diskButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.Disk;
+			this.diskButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.IDB_DISK;
 			this.diskButton.Values.Text = "";
 			// 
 			// listButton
@@ -202,7 +204,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.listButton.Name = "listButton";
 			this.listButton.Size = new System.Drawing.Size(24, 24);
 			this.listButton.TabIndex = 6;
-			this.listButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.List;
+			this.listButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.IDB_LIST;
 			this.listButton.Values.Text = "";
 			// 
 			// moveModulesDownButton
@@ -211,7 +213,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.moveModulesDownButton.Name = "moveModulesDownButton";
 			this.moveModulesDownButton.Size = new System.Drawing.Size(24, 24);
 			this.moveModulesDownButton.TabIndex = 5;
-			this.moveModulesDownButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.MoveDown;
+			this.moveModulesDownButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.IDB_MOVE_DOWN;
 			this.moveModulesDownButton.Values.Text = "";
 			// 
 			// moveModulesUpButton
@@ -220,7 +222,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.moveModulesUpButton.Name = "moveModulesUpButton";
 			this.moveModulesUpButton.Size = new System.Drawing.Size(24, 24);
 			this.moveModulesUpButton.TabIndex = 4;
-			this.moveModulesUpButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.MoveUp;
+			this.moveModulesUpButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.IDB_MOVE_UP;
 			this.moveModulesUpButton.Values.Text = "";
 			// 
 			// sortModulesButton
@@ -229,7 +231,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.sortModulesButton.Name = "sortModulesButton";
 			this.sortModulesButton.Size = new System.Drawing.Size(24, 24);
 			this.sortModulesButton.TabIndex = 3;
-			this.sortModulesButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.Sort;
+			this.sortModulesButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.IDB_SORT;
 			this.sortModulesButton.Values.Text = "";
 			// 
 			// swapModulesButton
@@ -238,7 +240,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.swapModulesButton.Name = "swapModulesButton";
 			this.swapModulesButton.Size = new System.Drawing.Size(24, 24);
 			this.swapModulesButton.TabIndex = 2;
-			this.swapModulesButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.Swap;
+			this.swapModulesButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.IDB_SWAP;
 			this.swapModulesButton.Values.Text = "";
 			// 
 			// removeModuleButton
@@ -247,7 +249,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.removeModuleButton.Name = "removeModuleButton";
 			this.removeModuleButton.Size = new System.Drawing.Size(24, 24);
 			this.removeModuleButton.TabIndex = 1;
-			this.removeModuleButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.Remove;
+			this.removeModuleButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.IDB_REMOVE;
 			this.removeModuleButton.Values.Text = "";
 			// 
 			// addModuleButton
@@ -256,7 +258,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.addModuleButton.Name = "addModuleButton";
 			this.addModuleButton.Size = new System.Drawing.Size(24, 24);
 			this.addModuleButton.TabIndex = 0;
-			this.addModuleButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.Add;
+			this.addModuleButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.IDB_ADD;
 			this.addModuleButton.Values.Text = "";
 			// 
 			// listInfoGroup
@@ -339,7 +341,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.pauseCheckButton.Name = "pauseCheckButton";
 			this.pauseCheckButton.Size = new System.Drawing.Size(24, 24);
 			this.pauseCheckButton.TabIndex = 8;
-			this.pauseCheckButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.Pause;
+			this.pauseCheckButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.IDB_PAUSE;
 			this.pauseCheckButton.Values.Text = "";
 			// 
 			// ejectButton
@@ -348,7 +350,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.ejectButton.Name = "ejectButton";
 			this.ejectButton.Size = new System.Drawing.Size(24, 24);
 			this.ejectButton.TabIndex = 7;
-			this.ejectButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.Eject;
+			this.ejectButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.IDB_EJECT;
 			this.ejectButton.Values.Text = "";
 			// 
 			// nextModuleButton
@@ -357,7 +359,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.nextModuleButton.Name = "nextModuleButton";
 			this.nextModuleButton.Size = new System.Drawing.Size(24, 24);
 			this.nextModuleButton.TabIndex = 6;
-			this.nextModuleButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.NextModule;
+			this.nextModuleButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.IDB_NEXT_MODULE;
 			this.nextModuleButton.Values.Text = "";
 			// 
 			// nextSongButton
@@ -366,7 +368,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.nextSongButton.Name = "nextSongButton";
 			this.nextSongButton.Size = new System.Drawing.Size(24, 24);
 			this.nextSongButton.TabIndex = 5;
-			this.nextSongButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.NextSong;
+			this.nextSongButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.IDB_NEXT_SONG;
 			this.nextSongButton.Values.Text = "";
 			// 
 			// fastForwardButton
@@ -375,7 +377,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.fastForwardButton.Name = "fastForwardButton";
 			this.fastForwardButton.Size = new System.Drawing.Size(24, 24);
 			this.fastForwardButton.TabIndex = 4;
-			this.fastForwardButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.FastForward;
+			this.fastForwardButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.IDB_FAST_FORWARD;
 			this.fastForwardButton.Values.Text = "";
 			// 
 			// playButton
@@ -384,7 +386,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.playButton.Name = "playButton";
 			this.playButton.Size = new System.Drawing.Size(24, 24);
 			this.playButton.TabIndex = 3;
-			this.playButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.Play;
+			this.playButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.IDB_PLAY;
 			this.playButton.Values.Text = "";
 			// 
 			// rewindButton
@@ -393,7 +395,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.rewindButton.Name = "rewindButton";
 			this.rewindButton.Size = new System.Drawing.Size(24, 24);
 			this.rewindButton.TabIndex = 2;
-			this.rewindButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.Rewind;
+			this.rewindButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.IDB_REWIND;
 			this.rewindButton.Values.Text = "";
 			// 
 			// previousSongButton
@@ -402,7 +404,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.previousSongButton.Name = "previousSongButton";
 			this.previousSongButton.Size = new System.Drawing.Size(24, 24);
 			this.previousSongButton.TabIndex = 1;
-			this.previousSongButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.PreviousSong;
+			this.previousSongButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.IDB_PREVIOUS_SONG;
 			this.previousSongButton.Values.Text = "";
 			// 
 			// previousModuleButton
@@ -411,7 +413,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.previousModuleButton.Name = "previousModuleButton";
 			this.previousModuleButton.Size = new System.Drawing.Size(24, 24);
 			this.previousModuleButton.TabIndex = 0;
-			this.previousModuleButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.PreviousModule;
+			this.previousModuleButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.IDB_PREVIOUS_MODULE;
 			this.previousModuleButton.Values.Text = "";
 			// 
 			// loopSampleGroup
@@ -436,7 +438,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.loopCheckButton.Name = "loopCheckButton";
 			this.loopCheckButton.Size = new System.Drawing.Size(24, 24);
 			this.loopCheckButton.TabIndex = 8;
-			this.loopCheckButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.Loop;
+			this.loopCheckButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.IDB_LOOP;
 			this.loopCheckButton.Values.Text = "";
 			// 
 			// showSamplesButton
@@ -446,7 +448,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.showSamplesButton.Name = "showSamplesButton";
 			this.showSamplesButton.Size = new System.Drawing.Size(24, 24);
 			this.showSamplesButton.TabIndex = 1;
-			this.showSamplesButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.Samples;
+			this.showSamplesButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.IDB_SAMPLES;
 			this.showSamplesButton.Values.Text = "";
 			// 
 			// muteCheckButton
@@ -455,7 +457,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.muteCheckButton.Name = "muteCheckButton";
 			this.muteCheckButton.Size = new System.Drawing.Size(27, 24);
 			this.muteCheckButton.TabIndex = 16;
-			this.muteCheckButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.Mute;
+			this.muteCheckButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Properties.Resources.IDB_MUTE;
 			this.muteCheckButton.Values.Text = "";
 			// 
 			// clockTimer
@@ -549,6 +551,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private System.Windows.Forms.ToolTip toolTip;
 		private System.Windows.Forms.Timer clockTimer;
 		private KryptonManager kryptonManager;
+		private KryptonContextMenu sortContextMenu;
+		private KryptonContextMenu listContextMenu;
 	}
 }
 

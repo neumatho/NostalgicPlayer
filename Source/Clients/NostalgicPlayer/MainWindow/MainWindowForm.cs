@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
@@ -91,7 +92,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				InitModuleHandler();
 
 				// Initialize main window
-				InitializeControls();
+				SetupControls();
 
 				// Create other windows
 				CreateWindows();
@@ -217,6 +218,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Volume
 			muteCheckButton.CheckedChanged += MuteCheckButton_CheckedChanged;
 			masterVolumeTrackBar.ValueChanged += MasterVolumeTrackBar_ValueChanged;
+
+			// List controls
+			addModuleButton.Click += AddModuleButton_Click;
+			removeModuleButton.Click += RemoveModuleButton_Click;
+			swapModulesButton.Click += SwapModulesButton_Click;
+			sortModulesButton.Click += SortModulesButton_Click;
+			moveModulesUpButton.Click += MoveModulesUpButton_Click;
+			moveModulesDownButton.Click += MoveModulesDownButton_Click;
+			listButton.Click += ListButton_Click;
 
 			// Position slider
 			positionTrackBar.MouseDown += PositionTrackBar_MouseDown;
@@ -573,6 +583,287 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		}
 		#endregion
 
+		#region List controls events
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user clicks on the add module button
+		/// </summary>
+		/********************************************************************/
+		private void AddModuleButton_Click(object sender, EventArgs e)
+		{
+			if (ShowModuleFileDialog() == DialogResult.OK)
+			{
+				using (new SleepCursor())
+				{
+//XX				int jumpNumber;
+
+					// Get the selected item
+					int selected = moduleListBox.SelectedIndex;
+					if (selected < 0)
+					{
+						selected = -1;
+	//XX					jumpNumber = moduleListBox.Items.Count;
+					}
+	//XX				else
+	//XX					jumpNumber = selected;
+
+					// Add all the files in the module list
+					AddFilesToList(moduleFileDialog.FileNames, selected);
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user clicks on the remove module button
+		/// </summary>
+		/********************************************************************/
+		private void RemoveModuleButton_Click(object sender, EventArgs e)
+		{
+			using (new SleepCursor())
+			{
+				RemoveSelectedItems();
+
+				// Update the controls
+				UpdateListCount();
+				UpdateTimes();
+				UpdateTapeDeck();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user clicks on the swap modules button
+		/// </summary>
+		/********************************************************************/
+		private void SwapModulesButton_Click(object sender, EventArgs e)
+		{
+			int index1 = moduleListBox.SelectedIndices[0];
+			int index2 = moduleListBox.SelectedIndices[1];
+
+			moduleListBox.BeginUpdate();
+
+			try
+			{
+				// Swap the items
+				ModuleListItem item1 = (ModuleListItem)moduleListBox.Items[index1];
+				ModuleListItem item2 = (ModuleListItem)moduleListBox.Items[index2];
+
+				moduleListBox.Items.RemoveAt(index1);
+				moduleListBox.Items.Insert(index1, item2);
+
+				moduleListBox.Items.RemoveAt(index2);
+				moduleListBox.Items.Insert(index2, item1);
+
+				// Keep the selection
+				moduleListBox.SetSelected(index1, true);
+				moduleListBox.SetSelected(index2, true);
+			}
+			finally
+			{
+				moduleListBox.EndUpdate();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user clicks on the sort modules button
+		/// </summary>
+		/********************************************************************/
+		private void SortModulesButton_Click(object sender, EventArgs e)
+		{
+			// Show the menu
+			sortContextMenu.Show(sender);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user clicks on the move up button
+		/// </summary>
+		/********************************************************************/
+		private void MoveModulesUpButton_Click(object sender, EventArgs e)
+		{
+			using (new SleepCursor())
+			{
+				// Get the keyboard modifiers
+				Keys modifiers = ModifierKeys;
+
+				// Move the items
+				if ((modifiers & Keys.Shift) != 0)
+					MoveSelectedItemsToTop();
+				else
+					MoveSelectedItemsUp();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user clicks on the move down button
+		/// </summary>
+		/********************************************************************/
+		private void MoveModulesDownButton_Click(object sender, EventArgs e)
+		{
+			using (new SleepCursor())
+			{
+				// Get the keyboard modifiers
+				Keys modifiers = ModifierKeys;
+
+				// Move the items
+				if ((modifiers & Keys.Shift) != 0)
+					MoveSelectedItemsToBottom();
+				else
+					MoveSelectedItemsDown();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user clicks on the list button
+		/// </summary>
+		/********************************************************************/
+		private void ListButton_Click(object sender, EventArgs e)
+		{
+			// Show the menu
+			listContextMenu.Show(sender);
+		}
+
+		#region Sort menu events
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user selects the A-Z menu item
+		/// </summary>
+		/********************************************************************/
+		private void SortMenu_AZ(object sender, EventArgs e)
+		{
+			using (new SleepCursor())
+			{
+				moduleListBox.BeginUpdate();
+
+				try
+				{
+					ModuleListItem[] newList = moduleListBox.Items.Cast<ModuleListItem>().OrderBy(i => i.ShortText).ToArray();
+
+					moduleListBox.Items.Clear();
+					moduleListBox.Items.AddRange(newList);
+				}
+				finally
+				{
+					moduleListBox.EndUpdate();
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user selects the Z-A menu item
+		/// </summary>
+		/********************************************************************/
+		private void SortMenu_ZA(object sender, EventArgs e)
+		{
+			using (new SleepCursor())
+			{
+				moduleListBox.BeginUpdate();
+
+				try
+				{
+					ModuleListItem[] newList = moduleListBox.Items.Cast<ModuleListItem>().OrderByDescending(i => i.ShortText).ToArray();
+
+					moduleListBox.Items.Clear();
+					moduleListBox.Items.AddRange(newList);
+				}
+				finally
+				{
+					moduleListBox.EndUpdate();
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user selects the shuffle menu item
+		/// </summary>
+		/********************************************************************/
+		private void SortMenu_Shuffle(object sender, EventArgs e)
+		{
+			using (new SleepCursor())
+			{
+				ShuffleList();
+
+				// If no module is playing, load the first one
+				if (playItem == null)
+					LoadAndPlayModule(0);
+			}
+		}
+		#endregion
+
+		#region Select menu events
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user selects the all menu item
+		/// </summary>
+		/********************************************************************/
+		private void SelectMenu_All(object sender, EventArgs e)
+		{
+			using (new SleepCursor())
+			{
+				moduleListBox.BeginUpdate();
+
+				try
+				{
+					for (int i = moduleListBox.Items.Count - 1; i >= 0; i--)
+						moduleListBox.SetSelected(i, true);
+				}
+				finally
+				{
+					moduleListBox.EndUpdate();
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user selects the none menu item
+		/// </summary>
+		/********************************************************************/
+		private void SelectMenu_None(object sender, EventArgs e)
+		{
+			using (new SleepCursor())
+			{
+				moduleListBox.BeginUpdate();
+
+				try
+				{
+					for (int i = moduleListBox.Items.Count - 1; i >= 0; i--)
+						moduleListBox.SetSelected(i, false);
+				}
+				finally
+				{
+					moduleListBox.EndUpdate();
+				}
+			}
+		}
+		#endregion
+
+		#endregion
+
 		#region Position slider events
 		/********************************************************************/
 		/// <summary>
@@ -853,6 +1144,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		#endregion
 
 		#region Private methods
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the sub-songs variables
+		/// </summary>
+		/********************************************************************/
+		private void InitSubSongs()
+		{
+			//XXsubSongMultiply = 0;
+		}
+
+		#region Settings
 		/********************************************************************/
 		/// <summary>
 		/// Will read the settings
@@ -894,19 +1197,48 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			soundSettings = null;
 			pathSettings = null;
 		}
+		#endregion
 
-
-
+		#region Window
 		/********************************************************************/
 		/// <summary>
 		/// Will setup the controls
 		/// </summary>
 		/********************************************************************/
-		private void InitializeControls()
+		private void SetupControls()
 		{
 			// Set the window title
 			ShowNormalTitle();
 
+			// Create the menu
+			CreateMainMenu();
+
+			// Create button menus
+			CreateSortMenu();
+			CreateListMenu();
+
+			// Set tooltip on all controls
+			SetTooltips();
+
+			// Update the list controls
+			UpdateListControls();
+
+			// Update the tape deck buttons
+			UpdateTapeDeck();
+
+			// Print the module information
+			PrintInfo();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Creates the main menu
+		/// </summary>
+		/********************************************************************/
+		private void CreateMainMenu()
+		{
 			// Create the file menu
 			ToolStripMenuItem fileMenuItem = new ToolStripMenuItem(Properties.Resources.IDS_MENU_FILE);
 
@@ -957,8 +1289,68 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			helpMenuItem.DropDownItems.Add(menuItem);
 
 			menuStrip.Items.Add(helpMenuItem);
+		}
 
-			// Set tooltip on all controls
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create the sort button context menu
+		/// </summary>
+		/********************************************************************/
+		private void CreateSortMenu()
+		{
+			KryptonContextMenuItems menuItems = new KryptonContextMenuItems();
+
+			KryptonContextMenuItem item = new KryptonContextMenuItem(Properties.Resources.IDS_SORTMENU_SORT_AZ);
+			item.Image = Properties.Resources.IDB_AZ;
+			item.Click += SortMenu_AZ;
+			menuItems.Items.Add(item);
+
+			item = new KryptonContextMenuItem(Properties.Resources.IDS_SORTMENU_SORT_ZA);
+			item.Image = Properties.Resources.IDB_ZA;
+			item.Click += SortMenu_ZA;
+			menuItems.Items.Add(item);
+
+			item = new KryptonContextMenuItem(Properties.Resources.IDS_SORTMENU_SHUFFLE);
+			item.Image = Properties.Resources.IDB_SHUFFLE;
+			item.Click += SortMenu_Shuffle;
+			menuItems.Items.Add(item);
+
+			sortContextMenu.Items.Add(menuItems);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create the list button context menu
+		/// </summary>
+		/********************************************************************/
+		private void CreateListMenu()
+		{
+			KryptonContextMenuItems menuItems = new KryptonContextMenuItems();
+
+			KryptonContextMenuItem item = new KryptonContextMenuItem(Properties.Resources.IDS_SELECTMENU_ALL);
+			item.Click += SelectMenu_All;
+			menuItems.Items.Add(item);
+
+			item = new KryptonContextMenuItem(Properties.Resources.IDS_SELECTMENU_NONE);
+			item.Click += SelectMenu_None;
+			menuItems.Items.Add(item);
+
+			listContextMenu.Items.Add(menuItems);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set tooltip on all the controls
+		/// </summary>
+		/********************************************************************/
+		private void SetTooltips()
+		{
 			toolTip.SetToolTip(infoGroup.Panel, Properties.Resources.IDS_TIP_MAIN_INFO);
 			toolTip.SetToolTip(infoLabel, Properties.Resources.IDS_TIP_MAIN_INFO);
 			toolTip.SetToolTip(moduleInfoButton, Properties.Resources.IDS_TIP_MAIN_MODULEINFO);
@@ -992,12 +1384,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			toolTip.SetToolTip(loopCheckButton, Properties.Resources.IDS_TIP_MAIN_MODULELOOP);
 			toolTip.SetToolTip(showSamplesButton, Properties.Resources.IDS_TIP_MAIN_SAMP);
-
-			// Update the tape deck buttons
-			UpdateTapeDeck();
-
-			// Print the module information
-			PrintInfo();
 		}
 
 
@@ -1037,60 +1423,27 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Will add all the given files to the module list
+		/// Will make sure to refresh all the windows
 		/// </summary>
 		/********************************************************************/
-		private void AddFilesToList(string[] files, int startIndex = -1)
+		private void RefreshWindows()//XX
 		{
-			using (new SleepCursor())
-			{
-				List<FileInformation> itemList = new List<FileInformation>();
-
-				foreach (string file in files)
-				{
-					//XX TODO: When adding drag'n'drop support, check for folders here
-					AppendFile(file, itemList);
-				}
-
-				// Add the items to the list
-				moduleListBox.BeginUpdate();
-
-				try
-				{
-					if (startIndex == -1)
-						moduleListBox.Items.AddRange(itemList.Select(fi => new ModuleListItem(new SingleFileListItem(fi.FullPath))).ToArray());
-					else
-					{
-						for (int i = itemList.Count - 1; i >= 0; i--)
-							moduleListBox.Items.Insert(startIndex, new ModuleListItem(new SingleFileListItem(itemList[i].FullPath)));
-					}
-				}
-				finally
-				{
-					moduleListBox.EndUpdate();
-				}
-
-				// Update the controls
-				UpdateListCount();
-				UpdateTimes();
-				UpdateTapeDeck();
-			}
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Initialize the sub-songs variables
+		/// Will set the window title to normal
 		/// </summary>
 		/********************************************************************/
-		private void InitSubSongs()
+		private void ShowNormalTitle()
 		{
-			//XXsubSongMultiply = 0;
+			Text = Properties.Resources.IDS_MAIN_TITLE;
 		}
+		#endregion
 
-
-
+		#region Control updating
 		/********************************************************************/
 		/// <summary>
 		/// Initialize window controls
@@ -1191,29 +1544,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Will make sure to refresh all the windows
-		/// </summary>
-		/********************************************************************/
-		private void RefreshWindows()//XX
-		{
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will set the window title to normal
-		/// </summary>
-		/********************************************************************/
-		private void ShowNormalTitle()
-		{
-			Text = Properties.Resources.IDS_MAIN_TITLE;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Will change the time on the item given
 		/// </summary>
 		/********************************************************************/
@@ -1251,56 +1581,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Will load all available agents
+		/// Will subtract the time from the item given from the list time
 		/// </summary>
 		/********************************************************************/
-		private void LoadAgents()
+		private void RemoveItemTimeFromList(ModuleListItem listItem)
 		{
-			agentManager = new Manager();
-			agentManager.LoadAllAgents();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will initialize the module handler and start it
-		/// </summary>
-		/********************************************************************/
-		private void InitModuleHandler()
-		{
-			// Force the creation of the handle, because it is needed if
-			// an error occur before the main window is opened
-			CreateHandle();
-
-			moduleHandler = new ModuleHandler();
-			moduleHandler.Initialize(this, agentManager, soundSettings, masterVolumeTrackBar.Value);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will shutdown the module handler again
-		/// </summary>
-		/********************************************************************/
-		private void CleanupModuleHandler()
-		{
-			moduleHandler?.Shutdown();
-			moduleHandler = null;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will append the given file to the list given
-		/// </summary>
-		/********************************************************************/
-		private void AppendFile(string fileName, List<FileInformation> list)
-		{
-			//XX TODO: Add archive support here
-			list.Add(new FileInformation(fileName));
+			// Subtract the item time
+			if (listItem.HaveTime)
+				listTime -= listItem.Time;
 		}
 
 
@@ -1553,26 +1841,48 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				timeOccurred = newTime;
 			}
 		}
+		#endregion
+
+		#region Module handling
+		/********************************************************************/
+		/// <summary>
+		/// Will load all available agents
+		/// </summary>
+		/********************************************************************/
+		private void LoadAgents()
+		{
+			agentManager = new Manager();
+			agentManager.LoadAllAgents();
+		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Will show the file dialog where the user can select the modules
-		/// to put in the module list
+		/// Will initialize the module handler and start it
 		/// </summary>
 		/********************************************************************/
-		private DialogResult ShowModuleFileDialog()
+		private void InitModuleHandler()
 		{
-			// Create the dialog if not already created
-			if (moduleFileDialog == null)
-			{
-				moduleFileDialog = new OpenFileDialog();
-				moduleFileDialog.InitialDirectory = pathSettings.Modules;
-				moduleFileDialog.Multiselect = true;
-			}
+			// Force the creation of the handle, because it is needed if
+			// an error occur before the main window is opened
+			CreateHandle();
 
-			return moduleFileDialog.ShowDialog();
+			moduleHandler = new ModuleHandler();
+			moduleHandler.Initialize(this, agentManager, soundSettings, masterVolumeTrackBar.Value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will shutdown the module handler again
+		/// </summary>
+		/********************************************************************/
+		private void CleanupModuleHandler()
+		{
+			moduleHandler?.Shutdown();
+			moduleHandler = null;
 		}
 
 
@@ -1688,6 +1998,116 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				}
 			}
 		}
+		#endregion
+
+		#region File handling
+		/********************************************************************/
+		/// <summary>
+		/// Will append the given file to the list given
+		/// </summary>
+		/********************************************************************/
+		private void AppendFile(string fileName, List<FileInformation> list)
+		{
+			//XX TODO: Add archive support here
+			list.Add(new FileInformation(fileName));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will show the file dialog where the user can select the modules
+		/// to put in the module list
+		/// </summary>
+		/********************************************************************/
+		private DialogResult ShowModuleFileDialog()
+		{
+			// Create the dialog if not already created
+			if (moduleFileDialog == null)
+			{
+				moduleFileDialog = new OpenFileDialog();
+				moduleFileDialog.InitialDirectory = pathSettings.Modules;
+				moduleFileDialog.Multiselect = true;
+			}
+
+			return moduleFileDialog.ShowDialog();
+		}
+		#endregion
+
+		#region Timers
+		/********************************************************************/
+		/// <summary>
+		/// Will start all the timers
+		/// </summary>
+		/********************************************************************/
+		private void StartTimers(bool resetTimes)
+		{
+			// Start the playing timer
+			if (resetTimes)
+			{
+				timeStart = DateTime.Now;
+				timeOccurred = new TimeSpan(0);
+			}
+
+			clockTimer.Start();
+
+			//XX Start the never ending timer if needed
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will stop all the timers
+		/// </summary>
+		/********************************************************************/
+		private void StopTimers()
+		{
+			clockTimer.Stop();
+
+			//XX Never ending timer
+		}
+		#endregion
+
+		#region Module list methods
+		/********************************************************************/
+		/// <summary>
+		/// Will add all the given files to the module list
+		/// </summary>
+		/********************************************************************/
+		private void AddFilesToList(string[] files, int startIndex = -1)
+		{
+			List<FileInformation> itemList = new List<FileInformation>();
+
+			foreach (string file in files)
+			{
+				//XX TODO: When adding drag'n'drop support, check for folders here
+				AppendFile(file, itemList);
+			}
+
+			// Add the items to the list
+			moduleListBox.BeginUpdate();
+
+			try
+			{
+				if (startIndex == -1)
+					moduleListBox.Items.AddRange(itemList.Select(fi => new ModuleListItem(new SingleFileListItem(fi.FullPath))).ToArray());
+				else
+				{
+					for (int i = itemList.Count - 1; i >= 0; i--)
+						moduleListBox.Items.Insert(startIndex, new ModuleListItem(new SingleFileListItem(itemList[i].FullPath)));
+				}
+			}
+			finally
+			{
+				moduleListBox.EndUpdate();
+			}
+
+			// Update the controls
+			UpdateListCount();
+			UpdateTimes();
+			UpdateTapeDeck();
+		}
 
 
 
@@ -1722,36 +2142,250 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Will start all the timers
+		/// Will remove all the selected items from the list
 		/// </summary>
 		/********************************************************************/
-		private void StartTimers(bool resetTimes)
+		private void RemoveSelectedItems()
 		{
-			// Start the playing timer
-			if (resetTimes)
+			moduleListBox.BeginUpdate();
+
+			try
 			{
-				timeStart = DateTime.Now;
-				timeOccurred = new TimeSpan(0);
+				// Remove all the selected module items
+				foreach (int index in moduleListBox.SelectedIndices.Cast<int>().Reverse())	// Take the items in reverse order, which is done via a copy of the selected items
+				{
+					ModuleListItem listItem = (ModuleListItem)moduleListBox.Items[index];
+
+					// If the item is the one that is playing, stop it
+					if (listItem.IsPlaying)
+					{
+						playItem = null;
+
+						StopAndFreeModule();
+						moduleHandler.FreeAllModules();
+					}
+
+					// Subtract the item time from the list
+					RemoveItemTimeFromList(listItem);
+
+					moduleListBox.Items.Remove(listItem);
+				}
 			}
-
-			clockTimer.Start();
-
-			//XX Start the never ending timer if needed
+			finally
+			{
+				moduleListBox.EndUpdate();
+			}
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Will stop all the timers
+		/// Will move all the selected items one index up
 		/// </summary>
 		/********************************************************************/
-		private void StopTimers()
+		private void MoveSelectedItemsUp()
 		{
-			clockTimer.Stop();
+			moduleListBox.BeginUpdate();
 
-			//XX Never ending timer
+			try
+			{
+				int previousSelected = -1;
+				bool previousMoved = false;
+
+				foreach (int selected in moduleListBox.SelectedIndices)
+				{
+					if ((selected > 0) && (((selected - 1) != previousSelected) || previousMoved))
+					{
+						MoveItem(selected, selected - 1);
+						previousMoved = true;
+					}
+					else
+						previousMoved = false;
+
+					previousSelected = selected;
+				}
+			}
+			finally
+			{
+				moduleListBox.EndUpdate();
+			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will move all the selected items one index up
+		/// </summary>
+		/********************************************************************/
+		private void MoveSelectedItemsDown()
+		{
+			moduleListBox.BeginUpdate();
+
+			try
+			{
+				int previousSelected = -1;
+				bool previousMoved = false;
+				int listCount = moduleListBox.Items.Count;
+
+				foreach (int selected in moduleListBox.SelectedIndices.Cast<int>().Reverse())	// Take the items in reverse order, which is done via a copy of the selected items
+				{
+					if (((selected + 1) < listCount) && (((selected + 1) != previousSelected) || previousMoved))
+					{
+						MoveItem(selected, selected + 1);
+						previousMoved = true;
+					}
+					else
+						previousMoved = false;
+
+					previousSelected = selected;
+				}
+			}
+			finally
+			{
+				moduleListBox.EndUpdate();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will move all the selected items to the top of the list
+		/// </summary>
+		/********************************************************************/
+		private void MoveSelectedItemsToTop()
+		{
+			moduleListBox.BeginUpdate();
+
+			try
+			{
+				// Move all the items
+				int index = 0;
+
+				foreach (int selected in moduleListBox.SelectedIndices)
+				{
+					MoveItem(selected, index);
+					index++;
+				}
+			}
+			finally
+			{
+				moduleListBox.EndUpdate();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will move all the selected items to the bottom of the list
+		/// </summary>
+		/********************************************************************/
+		private void MoveSelectedItemsToBottom()
+		{
+			moduleListBox.BeginUpdate();
+
+			try
+			{
+				// Move all the items
+				int listCount = moduleListBox.Items.Count;
+				int index = 0;
+
+				foreach (int selected in moduleListBox.SelectedIndices.Cast<int>().Reverse())	// Take the items in reverse order, which is done via a copy of the selected items
+				{
+					MoveItem(selected, listCount - index - 1);
+					index++;
+				}
+			}
+			finally
+			{
+				moduleListBox.EndUpdate();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will shuffle the entire list
+		/// </summary>
+		/********************************************************************/
+		private void ShuffleList()
+		{
+			moduleListBox.BeginUpdate();
+
+			try
+			{
+				// Get the number of items
+				int total = moduleListBox.Items.Count;
+
+				// Do we have enough items in the list?
+				if (total > 1)
+				{
+					// Create a new resulting list
+					List<ModuleListItem> newList = new List<ModuleListItem>();
+
+					// Make a copy of all the items in the list
+					List<ModuleListItem> tempList = new List<ModuleListItem>(moduleListBox.Items.Cast<ModuleListItem>());
+
+					// Well, if a module is playing, we want to
+					// place that module in the top of the list
+					if (playItem != null)
+					{
+						// Find the item index
+						int index = moduleListBox.Items.IndexOf(playItem);
+
+						// Move the item to the new list
+						newList.Add(tempList[index]);
+						tempList.RemoveAt(index);
+
+						// One item less to shuffle
+						total--;
+					}
+
+					// Ok, now it's time to shuffle
+					for (; total > 0; total--)
+					{
+						// Find a random item and add it to the new list +
+						// remove it from the old one
+						int index = rnd.Next(total);
+
+						// Move the item to the new list
+						newList.Add(tempList[index]);
+						tempList.RemoveAt(index);
+					}
+
+					// Copy the new list into the list control
+					moduleListBox.Items.Clear();
+					moduleListBox.Items.AddRange(newList.ToArray());
+				}
+			}
+			finally
+			{
+				moduleListBox.EndUpdate();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will move a item in the list
+		/// </summary>
+		/********************************************************************/
+		private void MoveItem(int from, int to)
+		{
+			ModuleListItem listItem = (ModuleListItem)moduleListBox.Items[from];
+			moduleListBox.Items.RemoveAt(from);
+			moduleListBox.Items.Insert(to, listItem);
+
+			// Keep selection
+			moduleListBox.SetSelected(to, true);
+		}
+		#endregion
+
 		#endregion
 	}
 }

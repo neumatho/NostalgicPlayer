@@ -31,6 +31,13 @@
 						<area shape="rect" coords="12,59,358,81" href="#statusbar">
 						<area shape="rect" coords="12,84,38,105" href="#mute">
 						<area shape="rect" coords="12,117,38,202" href="#volume">
+						<area shape="rect" coords="17,212,40,235" href="#add">
+						<area shape="rect" coords="45,212,68,235" href="#remove">
+						<area shape="rect" coords="73,212,96,235" href="#swap">
+						<area shape="rect" coords="101,212,124,235" href="#sort">
+						<area shape="rect" coords="128,212,152,235" href="#up">
+						<area shape="rect" coords="157,212,180,235" href="#down">
+						<area shape="rect" coords="185,212,208,235" href="#select">
 						<area shape="rect" coords="246,204,330,238" href="#playingtime">
 						<area shape="rect" coords="331,204,387,238" href="#modulecount">
 						<area shape="rect" coords="12,244,387,263" href="#position">
@@ -43,13 +50,6 @@
 						<area shape="rect" coords="241,279,264,302" href="#pause">
 						<area shape="rect" coords="331,279,354,302" href="#repeat">
 <!--
-<AREA SHAPE="rect" COORDS="15,166,33,183" HREF="howtouse.html#plus">
-<AREA SHAPE="rect" COORDS="38,166,56,183" HREF="howtouse.html#minus">
-<AREA SHAPE="rect" COORDS="61,166,79,183" HREF="howtouse.html#swap">
-<AREA SHAPE="rect" COORDS="84,166,102,183" HREF="howtouse.html#sort">
-<AREA SHAPE="rect" COORDS="107,166,125,183" HREF="howtouse.html#up">
-<AREA SHAPE="rect" COORDS="130,166,148,183" HREF="howtouse.html#down">
-<AREA SHAPE="rect" COORDS="153,166,171,183" HREF="howtouse.html#select">
 <AREA SHAPE="rect" COORDS="176,166,194,183" HREF="howtouse.html#save">
 <AREA SHAPE="rect" COORDS="30,74,372,156" HREF="howtouse.html#playlist">
 <AREA SHAPE="rect" COORDS="38,217,56,234" HREF="howtouse.html#previoussub">
@@ -66,7 +66,7 @@
 						<h3>Shortcuts & key combinations</h3>
 						<p>These can used in main window only:</p>
 						<br>
-						<table class="shortcuttable">
+						<table class="usage2table">
 							<tr>
 								<td><b>F12</b></td>
 								<td>Selects a random module in the list and plays it. It will not select any of the last 4 modules played, so it get more random.</td>
@@ -128,6 +128,89 @@
 							<tr>
 								<td><img src="images/volume.png" alt="volume"/></td>
 								<td>This slider can be used to adjust sound volume. You can click in it to set volume by small steps or just drag slider to position of you choice with mouse.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="add"><h3>Add module(s) to playlist</h3></a>
+						<table class="usagetable">
+							<tr>
+								<td><img src="images/add.png" alt="add"/></td>
+								<td>This button opens standard file dialog, in which you can select new files to be added in the playlist.<p>If one or more modules are selected in playlist, then modules will added before first selected module. Otherwise modules will be added to the end of playlist.</p></td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="remove"><h3>Remove module(s) from playlist</h3></a>
+						<table class="usagetable">
+							<tr>
+								<td><img src="images/remove.png" alt="remove"/></td>
+								<td>This button removes all selected modules from playlist.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="swap"><h3>Swap module positions</h3></a>
+						<table class="usagetable">
+							<tr>
+								<td><img src="images/swap.png" alt="swap"/></td>
+								<td>This button swaps positions of two selected modules in playlist.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="sort"><h3>Sort / shuffle playlist</h3></a>
+						<span>This button shows menu:</span>
+						<br>
+						<img src="images/sort.png" alt="sort menu"/>
+						<br>
+						<table class="usage2table">
+							<tr>
+								<td>Sort ascending</td>
+								<td>Sorts playlist in ascending order (A-Z).</td>
+							</tr>
+							<tr>
+								<td>Sort decending</td>
+								<td>Sorts playlist in decending order (Z-A).</td>
+							</tr>
+							<tr>
+								<td>Shuffle</td>
+								<td>Shuffles playlist. If no module is playing, NostalgicPlayer will start to play the first module. If a module is playing, the playing module will be in top of the list.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="up"><h3>Move upwards</h3></a>
+						<table class="usagetable">
+							<tr>
+								<td><img src="images/up.png" alt="swap"/></td>
+								<td>This button moves all selected modules upwards in playlist. If you hold down shift while pressing the button, all selected modules will be moved to the top of the list.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="down"><h3>Move downwards</h3></a>
+						<table class="usagetable">
+							<tr>
+								<td><img src="images/down.png" alt="swap"/></td>
+								<td>This button moves all selected modules downwards in playlist. If you hold down shift while pressing the button, all selected modules will be moved to the bottom of the list.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="select"><h3>Select</h3></a>
+						<span>This button shows menu:</span>
+						<br>
+						<img src="images/select.png" alt="select menu"/>
+						<br>
+						<table class="usage2table">
+							<tr>
+								<td>Select all</td>
+								<td>Selects all modules in playlist.</td>
+							</tr>
+							<tr>
+								<td>Deselect all</td>
+								<td>Deselects all selections.</td>
 							</tr>
 						</table>
 					</span>

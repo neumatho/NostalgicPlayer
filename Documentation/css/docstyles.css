@@ -236,19 +236,19 @@ body {
 	width: 50px;
 }
 
-.shortcuttable {
+.usage2table {
 	width: 100%;
 	border: none;
 	border-collapse: collapse;
 	text-align: left;
 }
 
-.shortcuttable td {
+.usage2table td {
 	height: 100%;
 	vertical-align: top;
 	padding: 0;
 }
 
-.shortcuttable td:nth-child(1) {
+.usage2table td:nth-child(1) {
 	width: 140px;
 }

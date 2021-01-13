@@ -61,7 +61,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				isPlaying = value;
 
 				Image.Dispose();
-				Image = isPlaying ? Properties.Resources.PlayingItem : new Bitmap(ImageSize, ImageSize);
+				Image = isPlaying ? Properties.Resources.IDB_PLAYING_ITEM : new Bitmap(ImageSize, ImageSize);
 			}
 		}
 
