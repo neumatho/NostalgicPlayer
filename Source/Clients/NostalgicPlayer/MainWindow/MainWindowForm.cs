@@ -73,6 +73,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			InitializeComponent();
 
+			// Some controls need to be initialized here, since the
+			// designer remove the properties
+			positionTrackBar.BackStyle = PaletteBackStyle.SeparatorLowProfile;
+
 			// Initialize member variables
 			playItem = null;
 			allowPosSliderUpdate = true;

@@ -73,28 +73,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			((System.ComponentModel.ISupportInitialize)(this.infoGroup)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.infoGroup.Panel)).BeginInit();
 			this.infoGroup.Panel.SuspendLayout();
-			this.infoGroup.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.listButtonsGroup)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.listButtonsGroup.Panel)).BeginInit();
 			this.listButtonsGroup.Panel.SuspendLayout();
-			this.listButtonsGroup.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.listInfoGroup)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.listInfoGroup.Panel)).BeginInit();
 			this.listInfoGroup.Panel.SuspendLayout();
-			this.listInfoGroup.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.controlGroup)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.controlGroup.Panel)).BeginInit();
 			this.controlGroup.Panel.SuspendLayout();
-			this.controlGroup.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.loopSampleGroup)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.loopSampleGroup.Panel)).BeginInit();
 			this.loopSampleGroup.Panel.SuspendLayout();
-			this.loopSampleGroup.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// menuStrip
 			// 
-			this.menuStrip.Font = new System.Drawing.Font("Segoe UI", 9F);
+			this.menuStrip.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.menuStrip.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip.Name = "menuStrip";
 			this.menuStrip.Size = new System.Drawing.Size(384, 24);
@@ -103,11 +98,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// infoLabel
 			// 
-			this.infoLabel.LabelStyle = Krypton.Toolkit.LabelStyle.NormalPanel;
 			this.infoLabel.Location = new System.Drawing.Point(3, 3);
 			this.infoLabel.Name = "infoLabel";
 			this.infoLabel.Size = new System.Drawing.Size(6, 2);
-			this.infoLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Rockwell", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.infoLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Rockwell", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.infoLabel.TabIndex = 4;
 			this.infoLabel.Values.Text = "";
 			// 
@@ -115,12 +109,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			this.infoGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.infoGroup.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.PanelCustom1;
-			this.infoGroup.GroupBorderStyle = Krypton.Toolkit.PaletteBorderStyle.ButtonStandalone;
 			this.infoGroup.Location = new System.Drawing.Point(4, 28);
 			this.infoGroup.Name = "infoGroup";
 			// 
-			// infoGroup.Panel
+			// 
 			// 
 			this.infoGroup.Panel.Controls.Add(this.infoLabel);
 			this.infoGroup.Size = new System.Drawing.Size(348, 24);
@@ -135,7 +127,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.moduleInfoButton.Name = "moduleInfoButton";
 			this.moduleInfoButton.Size = new System.Drawing.Size(24, 24);
 			this.moduleInfoButton.TabIndex = 7;
-			this.moduleInfoButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_INFORMATION;
+			this.moduleInfoButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("moduleInfoButton.Values.Image")));
 			this.moduleInfoButton.Values.Text = "";
 			// 
 			// masterVolumeTrackBar
@@ -163,19 +155,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.moduleListBox.ScrollAlwaysVisible = true;
 			this.moduleListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
 			this.moduleListBox.Size = new System.Drawing.Size(345, 116);
-			this.moduleListBox.StateCommon.Item.Content.LongText.Font = new System.Drawing.Font("Rockwell", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.moduleListBox.StateCommon.Item.Content.ShortText.Font = new System.Drawing.Font("Rockwell", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.moduleListBox.StateCommon.Item.Content.LongText.Font = new System.Drawing.Font("Rockwell", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.moduleListBox.StateCommon.Item.Content.ShortText.Font = new System.Drawing.Font("Rockwell", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.moduleListBox.TabIndex = 10;
 			// 
 			// listButtonsGroup
 			// 
 			this.listButtonsGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.listButtonsGroup.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.PanelCustom1;
-			this.listButtonsGroup.GroupBorderStyle = Krypton.Toolkit.PaletteBorderStyle.ButtonStandalone;
 			this.listButtonsGroup.Location = new System.Drawing.Point(4, 176);
 			this.listButtonsGroup.Name = "listButtonsGroup";
 			// 
-			// listButtonsGroup.Panel
+			// 
 			// 
 			this.listButtonsGroup.Panel.Controls.Add(this.diskButton);
 			this.listButtonsGroup.Panel.Controls.Add(this.listButton);
@@ -191,86 +181,85 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// diskButton
 			// 
-			this.diskButton.Location = new System.Drawing.Point(199, 3);
+			this.diskButton.Location = new System.Drawing.Point(200, 4);
 			this.diskButton.Name = "diskButton";
 			this.diskButton.Size = new System.Drawing.Size(24, 24);
 			this.diskButton.TabIndex = 7;
-			this.diskButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_DISK;
+			this.diskButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("diskButton.Values.Image")));
 			this.diskButton.Values.Text = "";
 			// 
 			// listButton
 			// 
-			this.listButton.Location = new System.Drawing.Point(171, 3);
+			this.listButton.Location = new System.Drawing.Point(172, 4);
 			this.listButton.Name = "listButton";
 			this.listButton.Size = new System.Drawing.Size(24, 24);
 			this.listButton.TabIndex = 6;
-			this.listButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_LIST;
+			this.listButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("listButton.Values.Image")));
 			this.listButton.Values.Text = "";
 			// 
 			// moveModulesDownButton
 			// 
-			this.moveModulesDownButton.Location = new System.Drawing.Point(143, 3);
+			this.moveModulesDownButton.Location = new System.Drawing.Point(144, 4);
 			this.moveModulesDownButton.Name = "moveModulesDownButton";
 			this.moveModulesDownButton.Size = new System.Drawing.Size(24, 24);
 			this.moveModulesDownButton.TabIndex = 5;
-			this.moveModulesDownButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_MOVE_DOWN;
+			this.moveModulesDownButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("moveModulesDownButton.Values.Image")));
 			this.moveModulesDownButton.Values.Text = "";
 			// 
 			// moveModulesUpButton
 			// 
-			this.moveModulesUpButton.Location = new System.Drawing.Point(115, 3);
+			this.moveModulesUpButton.Location = new System.Drawing.Point(116, 4);
 			this.moveModulesUpButton.Name = "moveModulesUpButton";
 			this.moveModulesUpButton.Size = new System.Drawing.Size(24, 24);
 			this.moveModulesUpButton.TabIndex = 4;
-			this.moveModulesUpButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_MOVE_UP;
+			this.moveModulesUpButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("moveModulesUpButton.Values.Image")));
 			this.moveModulesUpButton.Values.Text = "";
 			// 
 			// sortModulesButton
 			// 
-			this.sortModulesButton.Location = new System.Drawing.Point(87, 3);
+			this.sortModulesButton.Location = new System.Drawing.Point(88, 4);
 			this.sortModulesButton.Name = "sortModulesButton";
 			this.sortModulesButton.Size = new System.Drawing.Size(24, 24);
 			this.sortModulesButton.TabIndex = 3;
-			this.sortModulesButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_SORT;
+			this.sortModulesButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("sortModulesButton.Values.Image")));
 			this.sortModulesButton.Values.Text = "";
 			// 
 			// swapModulesButton
 			// 
-			this.swapModulesButton.Location = new System.Drawing.Point(59, 3);
+			this.swapModulesButton.Location = new System.Drawing.Point(60, 4);
 			this.swapModulesButton.Name = "swapModulesButton";
 			this.swapModulesButton.Size = new System.Drawing.Size(24, 24);
 			this.swapModulesButton.TabIndex = 2;
-			this.swapModulesButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_SWAP;
+			this.swapModulesButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("swapModulesButton.Values.Image")));
 			this.swapModulesButton.Values.Text = "";
 			// 
 			// removeModuleButton
 			// 
-			this.removeModuleButton.Location = new System.Drawing.Point(31, 3);
+			this.removeModuleButton.Location = new System.Drawing.Point(32, 4);
 			this.removeModuleButton.Name = "removeModuleButton";
 			this.removeModuleButton.Size = new System.Drawing.Size(24, 24);
 			this.removeModuleButton.TabIndex = 1;
-			this.removeModuleButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_REMOVE;
+			this.removeModuleButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("removeModuleButton.Values.Image")));
 			this.removeModuleButton.Values.Text = "";
 			// 
 			// addModuleButton
 			// 
-			this.addModuleButton.Location = new System.Drawing.Point(3, 3);
+			this.addModuleButton.Location = new System.Drawing.Point(4, 4);
 			this.addModuleButton.Name = "addModuleButton";
 			this.addModuleButton.Size = new System.Drawing.Size(24, 24);
 			this.addModuleButton.TabIndex = 0;
-			this.addModuleButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_ADD;
+			this.addModuleButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("addModuleButton.Values.Image")));
 			this.addModuleButton.Values.Text = "";
 			// 
 			// listInfoGroup
 			// 
 			this.listInfoGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.listInfoGroup.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.PanelCustom1;
-			this.listInfoGroup.GroupBorderStyle = Krypton.Toolkit.PaletteBorderStyle.ButtonStandalone;
 			this.listInfoGroup.Location = new System.Drawing.Point(238, 176);
+			this.listInfoGroup.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.listInfoGroup.Name = "listInfoGroup";
 			// 
-			// listInfoGroup.Panel
+			// 
 			// 
 			this.listInfoGroup.Panel.Controls.Add(this.totalLabel);
 			this.listInfoGroup.Panel.Controls.Add(this.timeLabel);
@@ -281,21 +270,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// totalLabel
 			// 
 			this.totalLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.totalLabel.LabelStyle = Krypton.Toolkit.LabelStyle.NormalPanel;
-			this.totalLabel.Location = new System.Drawing.Point(108, 7);
+			this.totalLabel.Location = new System.Drawing.Point(108, 8);
 			this.totalLabel.Name = "totalLabel";
 			this.totalLabel.Size = new System.Drawing.Size(27, 17);
-			this.totalLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Rockwell", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.totalLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Rockwell", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.totalLabel.TabIndex = 5;
 			this.totalLabel.Values.Text = "0/0";
 			// 
 			// timeLabel
 			// 
-			this.timeLabel.LabelStyle = Krypton.Toolkit.LabelStyle.NormalPanel;
-			this.timeLabel.Location = new System.Drawing.Point(3, 7);
+			this.timeLabel.Location = new System.Drawing.Point(3, 8);
 			this.timeLabel.Name = "timeLabel";
 			this.timeLabel.Size = new System.Drawing.Size(59, 17);
-			this.timeLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Rockwell", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.timeLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Rockwell", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.timeLabel.TabIndex = 4;
 			this.timeLabel.Values.Text = "0:00/0:00";
 			// 
@@ -303,7 +290,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			this.positionTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.positionTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.SeparatorLowProfile;
 			this.positionTrackBar.DrawBackground = true;
 			this.positionTrackBar.Location = new System.Drawing.Point(4, 216);
 			this.positionTrackBar.Maximum = 100;
@@ -315,12 +301,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// controlGroup
 			// 
 			this.controlGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.controlGroup.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.PanelCustom1;
-			this.controlGroup.GroupBorderStyle = Krypton.Toolkit.PaletteBorderStyle.ButtonStandalone;
 			this.controlGroup.Location = new System.Drawing.Point(4, 243);
 			this.controlGroup.Name = "controlGroup";
 			// 
-			// controlGroup.Panel
+			// 
 			// 
 			this.controlGroup.Panel.Controls.Add(this.pauseCheckButton);
 			this.controlGroup.Panel.Controls.Add(this.ejectButton);
@@ -337,94 +321,92 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// pauseCheckButton
 			// 
-			this.pauseCheckButton.Location = new System.Drawing.Point(227, 3);
+			this.pauseCheckButton.Location = new System.Drawing.Point(228, 4);
 			this.pauseCheckButton.Name = "pauseCheckButton";
 			this.pauseCheckButton.Size = new System.Drawing.Size(24, 24);
 			this.pauseCheckButton.TabIndex = 8;
-			this.pauseCheckButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_PAUSE;
+			this.pauseCheckButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("pauseCheckButton.Values.Image")));
 			this.pauseCheckButton.Values.Text = "";
 			// 
 			// ejectButton
 			// 
-			this.ejectButton.Location = new System.Drawing.Point(199, 3);
+			this.ejectButton.Location = new System.Drawing.Point(200, 4);
 			this.ejectButton.Name = "ejectButton";
 			this.ejectButton.Size = new System.Drawing.Size(24, 24);
 			this.ejectButton.TabIndex = 7;
-			this.ejectButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_EJECT;
+			this.ejectButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("ejectButton.Values.Image")));
 			this.ejectButton.Values.Text = "";
 			// 
 			// nextModuleButton
 			// 
-			this.nextModuleButton.Location = new System.Drawing.Point(171, 3);
+			this.nextModuleButton.Location = new System.Drawing.Point(172, 4);
 			this.nextModuleButton.Name = "nextModuleButton";
 			this.nextModuleButton.Size = new System.Drawing.Size(24, 24);
 			this.nextModuleButton.TabIndex = 6;
-			this.nextModuleButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_NEXT_MODULE;
+			this.nextModuleButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("nextModuleButton.Values.Image")));
 			this.nextModuleButton.Values.Text = "";
 			// 
 			// nextSongButton
 			// 
-			this.nextSongButton.Location = new System.Drawing.Point(143, 3);
+			this.nextSongButton.Location = new System.Drawing.Point(144, 4);
 			this.nextSongButton.Name = "nextSongButton";
 			this.nextSongButton.Size = new System.Drawing.Size(24, 24);
 			this.nextSongButton.TabIndex = 5;
-			this.nextSongButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_NEXT_SONG;
+			this.nextSongButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("nextSongButton.Values.Image")));
 			this.nextSongButton.Values.Text = "";
 			// 
 			// fastForwardButton
 			// 
-			this.fastForwardButton.Location = new System.Drawing.Point(115, 3);
+			this.fastForwardButton.Location = new System.Drawing.Point(116, 4);
 			this.fastForwardButton.Name = "fastForwardButton";
 			this.fastForwardButton.Size = new System.Drawing.Size(24, 24);
 			this.fastForwardButton.TabIndex = 4;
-			this.fastForwardButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_FAST_FORWARD;
+			this.fastForwardButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("fastForwardButton.Values.Image")));
 			this.fastForwardButton.Values.Text = "";
 			// 
 			// playButton
 			// 
-			this.playButton.Location = new System.Drawing.Point(87, 3);
+			this.playButton.Location = new System.Drawing.Point(88, 4);
 			this.playButton.Name = "playButton";
 			this.playButton.Size = new System.Drawing.Size(24, 24);
 			this.playButton.TabIndex = 3;
-			this.playButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_PLAY;
+			this.playButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("playButton.Values.Image")));
 			this.playButton.Values.Text = "";
 			// 
 			// rewindButton
 			// 
-			this.rewindButton.Location = new System.Drawing.Point(59, 3);
+			this.rewindButton.Location = new System.Drawing.Point(60, 4);
 			this.rewindButton.Name = "rewindButton";
 			this.rewindButton.Size = new System.Drawing.Size(24, 24);
 			this.rewindButton.TabIndex = 2;
-			this.rewindButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_REWIND;
+			this.rewindButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("rewindButton.Values.Image")));
 			this.rewindButton.Values.Text = "";
 			// 
 			// previousSongButton
 			// 
-			this.previousSongButton.Location = new System.Drawing.Point(31, 3);
+			this.previousSongButton.Location = new System.Drawing.Point(32, 4);
 			this.previousSongButton.Name = "previousSongButton";
 			this.previousSongButton.Size = new System.Drawing.Size(24, 24);
 			this.previousSongButton.TabIndex = 1;
-			this.previousSongButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_PREVIOUS_SONG;
+			this.previousSongButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("previousSongButton.Values.Image")));
 			this.previousSongButton.Values.Text = "";
 			// 
 			// previousModuleButton
 			// 
-			this.previousModuleButton.Location = new System.Drawing.Point(3, 3);
+			this.previousModuleButton.Location = new System.Drawing.Point(4, 4);
 			this.previousModuleButton.Name = "previousModuleButton";
 			this.previousModuleButton.Size = new System.Drawing.Size(24, 24);
 			this.previousModuleButton.TabIndex = 0;
-			this.previousModuleButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_PREVIOUS_MODULE;
+			this.previousModuleButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("previousModuleButton.Values.Image")));
 			this.previousModuleButton.Values.Text = "";
 			// 
 			// loopSampleGroup
 			// 
 			this.loopSampleGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.loopSampleGroup.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.PanelCustom1;
-			this.loopSampleGroup.GroupBorderStyle = Krypton.Toolkit.PaletteBorderStyle.ButtonStandalone;
 			this.loopSampleGroup.Location = new System.Drawing.Point(318, 243);
 			this.loopSampleGroup.Name = "loopSampleGroup";
 			// 
-			// loopSampleGroup.Panel
+			// 
 			// 
 			this.loopSampleGroup.Panel.Controls.Add(this.loopCheckButton);
 			this.loopSampleGroup.Panel.Controls.Add(this.showSamplesButton);
@@ -434,30 +416,31 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// loopCheckButton
 			// 
-			this.loopCheckButton.Location = new System.Drawing.Point(3, 3);
+			this.loopCheckButton.Location = new System.Drawing.Point(4, 4);
 			this.loopCheckButton.Name = "loopCheckButton";
 			this.loopCheckButton.Size = new System.Drawing.Size(24, 24);
 			this.loopCheckButton.TabIndex = 8;
-			this.loopCheckButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_LOOP;
+			this.loopCheckButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("loopCheckButton.Values.Image")));
 			this.loopCheckButton.Values.Text = "";
 			// 
 			// showSamplesButton
 			// 
 			this.showSamplesButton.Enabled = false;
-			this.showSamplesButton.Location = new System.Drawing.Point(31, 3);
+			this.showSamplesButton.Location = new System.Drawing.Point(32, 4);
 			this.showSamplesButton.Name = "showSamplesButton";
 			this.showSamplesButton.Size = new System.Drawing.Size(24, 24);
 			this.showSamplesButton.TabIndex = 1;
-			this.showSamplesButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_SAMPLES;
+			this.showSamplesButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("showSamplesButton.Values.Image")));
 			this.showSamplesButton.Values.Text = "";
 			// 
 			// muteCheckButton
 			// 
 			this.muteCheckButton.Location = new System.Drawing.Point(4, 56);
+			this.muteCheckButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.muteCheckButton.Name = "muteCheckButton";
 			this.muteCheckButton.Size = new System.Drawing.Size(27, 24);
 			this.muteCheckButton.TabIndex = 16;
-			this.muteCheckButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_MUTE;
+			this.muteCheckButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("muteCheckButton.Values.Image")));
 			this.muteCheckButton.Values.Text = "";
 			// 
 			// clockTimer
@@ -467,7 +450,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// MainWindowForm
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(384, 281);
 			this.Controls.Add(this.muteCheckButton);
@@ -484,30 +467,26 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.KeyPreview = true;
 			this.MainMenuStrip = this.menuStrip;
+			this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.MinimumSize = new System.Drawing.Size(400, 320);
 			this.Name = "MainWindowForm";
 			((System.ComponentModel.ISupportInitialize)(this.infoGroup.Panel)).EndInit();
 			this.infoGroup.Panel.ResumeLayout(false);
 			this.infoGroup.Panel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.infoGroup)).EndInit();
-			this.infoGroup.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.listButtonsGroup.Panel)).EndInit();
 			this.listButtonsGroup.Panel.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.listButtonsGroup)).EndInit();
-			this.listButtonsGroup.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.listInfoGroup.Panel)).EndInit();
 			this.listInfoGroup.Panel.ResumeLayout(false);
 			this.listInfoGroup.Panel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.listInfoGroup)).EndInit();
-			this.listInfoGroup.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.controlGroup.Panel)).EndInit();
 			this.controlGroup.Panel.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.controlGroup)).EndInit();
-			this.controlGroup.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.loopSampleGroup.Panel)).EndInit();
 			this.loopSampleGroup.Panel.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.loopSampleGroup)).EndInit();
-			this.loopSampleGroup.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
