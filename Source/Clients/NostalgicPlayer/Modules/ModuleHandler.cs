@@ -400,9 +400,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		{
 			mainWindowForm.BeginInvoke(new Action(() =>
 			{
-				CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error);
-				dialog.AddButton(Resources.IDS_BUT_OK, 'O');
-				dialog.ShowDialog();
+				mainWindowForm.ShowSimpleErrorMessage(message);
 			}));
 		}
 

@@ -236,9 +236,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			if (lastIndex == -1)
 				return false;
 
-			string fileExtension = fileName.Substring(lastIndex + 1);
+			string fileExtension = fileName.Substring(lastIndex + 1).ToLower();
 			int index = fileName.IndexOf('.');
-			string postExtension = index == lastIndex ? string.Empty : fileName.Substring(0, index);
+			string postExtension = index == lastIndex ? string.Empty : fileName.Substring(0, index).ToLower();
 
 			foreach (IAgent a in agentManager.GetAllAgents(Manager.AgentType.Players))
 			{

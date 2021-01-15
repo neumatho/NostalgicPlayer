@@ -21,8 +21,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 	{
 		private const int ImageSize = 8;
 
-		private readonly IModuleListItem listItem;
-
 		private bool isPlaying;
 		private TimeSpan time;
 
@@ -33,13 +31,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		public ModuleListItem(IModuleListItem listItem)
 		{
-			this.listItem = listItem;
+			ListItem = listItem;
 
 			ShortText = listItem.DisplayName;
 			time = new TimeSpan(0);
 			HaveTime = false;
 
 			Image = new Bitmap(ImageSize,ImageSize);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the list item information
+		/// </summary>
+		/********************************************************************/
+		public IModuleListItem ListItem
+		{
+			get;
 		}
 
 
@@ -74,7 +84,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		public ModuleStream OpenFile()
 		{
-			return listItem.OpenStream();
+			return ListItem.OpenStream();
 		}
 
 

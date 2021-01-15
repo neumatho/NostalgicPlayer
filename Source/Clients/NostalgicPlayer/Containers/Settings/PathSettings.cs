@@ -38,5 +38,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 			set => settings.SetStringEntry("Path", "Modules", value);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Module list start path
+		/// </summary>
+		/********************************************************************/
+		public string ModuleList
+		{
+			get => settings.GetStringEntry("Path", "List");
+
+			set => settings.SetStringEntry("Path", "List", value);
+		}
 	}
 }

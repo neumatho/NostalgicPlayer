@@ -6,63 +6,58 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System.IO;
-using Polycode.NostalgicPlayer.Kit.Streams;
+using System;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers
 {
 	/// <summary>
-	/// This class holds a list item pointing to a file
+	/// This class holds information about a item in the multi file
 	/// </summary>
-	public class SingleFileListItem : IModuleListItem
+	public class MultiFileInfo
 	{
-		#region IModuleListItem implementation
+		/// <summary>
+		/// The different types that can be stored in the list
+		/// </summary>
+		public enum FileType
+		{
+			/// <summary>
+			/// Just a plain file
+			/// </summary>
+			Plain
+		}
+
 		/********************************************************************/
 		/// <summary>
-		/// Constructor
+		/// Holds the type of the file
 		/// </summary>
 		/********************************************************************/
-		public SingleFileListItem(string fullFileName)
+		public FileType Type
 		{
-			FileName = fullFileName;
+			get; set;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the name which is shown in the list
-		/// </summary>
-		/********************************************************************/
-		public string DisplayName
-		{
-			get
-			{
-				return Path.GetFileName(FileName);
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Opens a stream containing the file data
-		/// </summary>
-		/********************************************************************/
-		public ModuleStream OpenStream()
-		{
-			return new ModuleStream(new FileStream(FileName, FileMode.Open, FileAccess.Read));
-		}
-		#endregion
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the file name to the file
+		/// Holds the file name
 		/// </summary>
 		/********************************************************************/
 		public string FileName
 		{
-			get;
+			get; set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the time to play the file if available
+		/// </summary>
+		/********************************************************************/
+		public TimeSpan? PlayTime
+		{
+			get; set;
 		}
 	}
 }

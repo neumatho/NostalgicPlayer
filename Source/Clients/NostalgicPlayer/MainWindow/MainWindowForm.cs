@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Krypton.Toolkit;
@@ -18,6 +19,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
@@ -39,6 +41,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private MainWindowSettings mainWindowSettings;
 
 		private OpenFileDialog moduleFileDialog;
+		private OpenFileDialog loadListFileDialog;
+		private SaveFileDialog saveListFileDialog;
 
 		// Timer variables
 		private MainWindowSettings.TimeFormat timeFormat;
@@ -103,6 +107,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 
 			SetupHandlers();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will show an error message to the user
+		/// </summary>
+		/********************************************************************/
+		public void ShowSimpleErrorMessage(string message)
+		{
+			CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error);
+			dialog.AddButton(Resources.IDS_BUT_OK, 'O');
+			dialog.ShowDialog();
 		}
 
 
@@ -231,6 +249,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			moveModulesUpButton.Click += MoveModulesUpButton_Click;
 			moveModulesDownButton.Click += MoveModulesDownButton_Click;
 			listButton.Click += ListButton_Click;
+			diskButton.Click += DiskButton_Click;
 
 			// Position slider
 			positionTrackBar.MouseDown += PositionTrackBar_MouseDown;
@@ -743,6 +762,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			listContextMenu.Show(sender);
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user clicks on the disk button
+		/// </summary>
+		/********************************************************************/
+		private void DiskButton_Click(object sender, EventArgs e)
+		{
+			// Show the menu
+			diskContextMenu.Show(sender);
+		}
+
 		#region Sort menu events
 		/********************************************************************/
 		/// <summary>
@@ -861,6 +893,80 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				finally
 				{
 					moduleListBox.EndUpdate();
+				}
+			}
+		}
+		#endregion
+
+		#region Disk menu events
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user selects the load list menu item
+		/// </summary>
+		/********************************************************************/
+		private void DiskMenu_LoadList(object sender, EventArgs e)
+		{
+			if (ShowLoadListFileDialog() == DialogResult.OK)
+			{
+				using (new SleepCursor())
+				{
+					// Stop and free any modules
+					StopAndFreeModule();
+
+					// Clear the module list
+					EmptyList();
+
+					// Load the file into the module list
+					LoadModuleList(loadListFileDialog.FileName);
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user selects the append list menu item
+		/// </summary>
+		/********************************************************************/
+		private void DiskMenu_AppendList(object sender, EventArgs e)
+		{
+			if (ShowLoadListFileDialog() == DialogResult.OK)
+			{
+				using (new SleepCursor())
+				{
+//XX				int jumpNumber;
+
+					// Get the selected item
+					int selected = moduleListBox.SelectedIndex;
+					if (selected < 0)
+					{
+						selected = -1;
+	//XX					jumpNumber = moduleListBox.Items.Count;
+					}
+	//XX				else
+	//XX					jumpNumber = selected;
+
+					// Load the file into the module list
+					LoadModuleList(loadListFileDialog.FileName, selected);
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user selects the save list menu item
+		/// </summary>
+		/********************************************************************/
+		private void DiskMenu_SaveList(object sender, EventArgs e)
+		{
+			if (ShowSaveListFileDialog() == DialogResult.OK)
+			{
+				using (new SleepCursor())
+				{
+					SaveModuleList(saveListFileDialog.FileName);
 				}
 			}
 		}
@@ -1148,7 +1254,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		#endregion
 
 		#region Private methods
-
 		/********************************************************************/
 		/// <summary>
 		/// Initialize the sub-songs variables
@@ -1220,6 +1325,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Create button menus
 			CreateSortMenu();
 			CreateListMenu();
+			CreateDiskMenu();
 
 			// Set tooltip on all controls
 			SetTooltips();
@@ -1350,6 +1456,34 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// Create the disk button context menu
+		/// </summary>
+		/********************************************************************/
+		private void CreateDiskMenu()
+		{
+			KryptonContextMenuItems menuItems = new KryptonContextMenuItems();
+
+			KryptonContextMenuItem item = new KryptonContextMenuItem(Resources.IDS_DISKMENU_LOAD);
+			item.Image = Resources.IDB_LOAD;
+			item.Click += DiskMenu_LoadList;
+			menuItems.Items.Add(item);
+
+			item = new KryptonContextMenuItem(Resources.IDS_DISKMENU_APPEND);
+			item.Click += DiskMenu_AppendList;
+			menuItems.Items.Add(item);
+
+			item = new KryptonContextMenuItem(Resources.IDS_DISKMENU_SAVE);
+			item.Image = Resources.IDB_SAVE;
+			item.Click += DiskMenu_SaveList;
+			menuItems.Items.Add(item);
+
+			diskContextMenu.Items.Add(menuItems);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Set tooltip on all the controls
 		/// </summary>
 		/********************************************************************/
@@ -1416,6 +1550,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			{
 				moduleFileDialog.Dispose();
 				moduleFileDialog = null;
+			}
+
+			// Destroy the load list file dialog
+			if (loadListFileDialog != null)
+			{
+				loadListFileDialog.Dispose();
+				loadListFileDialog = null;
+			}
+
+			// Destroy the save list file dialog
+			if (saveListFileDialog != null)
+			{
+				saveListFileDialog.Dispose();
+				saveListFileDialog = null;
 			}
 
 			// Remember settings from main window
@@ -2035,6 +2183,133 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 
 			return moduleFileDialog.ShowDialog();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will show the file dialog where the user can select where to
+		/// load the module list
+		/// </summary>
+		/********************************************************************/
+		private DialogResult ShowLoadListFileDialog()
+		{
+			// Create the dialog if not already created
+			if (loadListFileDialog == null)
+			{
+				loadListFileDialog = new OpenFileDialog();
+				loadListFileDialog.InitialDirectory = pathSettings.ModuleList;
+				loadListFileDialog.DefaultExt = "npml";
+				loadListFileDialog.Filter = "List files|*.npml";
+			}
+
+			return loadListFileDialog.ShowDialog();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will show the file dialog where the user can select where to
+		/// save the module list
+		/// </summary>
+		/********************************************************************/
+		private DialogResult ShowSaveListFileDialog()
+		{
+			// Create the dialog if not already created
+			if (saveListFileDialog == null)
+			{
+				saveListFileDialog = new SaveFileDialog();
+				saveListFileDialog.InitialDirectory = pathSettings.ModuleList;
+				saveListFileDialog.DefaultExt = "npml";
+				saveListFileDialog.Filter = "List files|*.npml";
+			}
+
+			return saveListFileDialog.ShowDialog();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will load a module list into the list at the index given
+		/// </summary>
+		/********************************************************************/
+		private void LoadModuleList(string fileName, int index = -1)
+		{
+			try
+			{
+				using (FileStream fs = File.OpenRead(fileName))
+				{
+					IMultiFileLoader loader = ListFactory.Create(fs);
+					if (loader == null)
+						ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_UNKNOWN_LIST_FORMAT, fileName));
+					else
+					{
+						List<ModuleListItem> tempList = new List<ModuleListItem>();
+
+						foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs))
+							tempList.Add(ListItemConverter.Convert(info));
+
+						moduleListBox.BeginUpdate();
+
+						try
+						{
+							if (index == -1)
+								moduleListBox.Items.AddRange(tempList.ToArray());
+							else
+							{
+								for (int i = tempList.Count - 1; i >= 0; i--)
+									moduleListBox.Items.Insert(index, tempList[i]);
+
+							}
+						}
+						finally
+						{
+							moduleListBox.EndUpdate();
+						}
+					}
+				}
+			}
+			catch(Exception ex)
+			{
+				// Show error
+				ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_LOAD_LIST, ex.Message));
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will save the whole module list to an NPML file
+		/// </summary>
+		/********************************************************************/
+		private void SaveModuleList(string fileName)
+		{
+			try
+			{
+				NpmlList.SaveList(fileName, GetModuleList());
+			}
+			catch(Exception ex)
+			{
+				// Show error
+				ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_SAVE_LIST, ex.Message));
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will return an enumerator returning all the module list items
+		/// </summary>
+		/********************************************************************/
+		private IEnumerable<MultiFileInfo> GetModuleList()
+		{
+			foreach (ModuleListItem listItem in moduleListBox.Items)
+				yield return ListItemConverter.Convert(listItem);
 		}
 		#endregion
 

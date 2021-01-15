@@ -133,6 +133,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap IDB_LOAD {
+            get {
+                object obj = ResourceManager.GetObject("IDB_LOAD", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap IDB_LOOP {
             get {
                 object obj = ResourceManager.GetObject("IDB_LOOP", resourceCulture);
@@ -273,6 +283,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap IDB_SAVE {
+            get {
+                object obj = ResourceManager.GetObject("IDB_SAVE", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap IDB_SHUFFLE {
             get {
                 object obj = ResourceManager.GetObject("IDB_SHUFFLE", resourceCulture);
@@ -347,6 +367,33 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Append list.
+        /// </summary>
+        internal static string IDS_DISKMENU_APPEND {
+            get {
+                return ResourceManager.GetString("IDS_DISKMENU_APPEND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Load list.
+        /// </summary>
+        internal static string IDS_DISKMENU_LOAD {
+            get {
+                return ResourceManager.GetString("IDS_DISKMENU_LOAD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save list.
+        /// </summary>
+        internal static string IDS_DISKMENU_SAVE {
+            get {
+                return ResourceManager.GetString("IDS_DISKMENU_SAVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An exception has been thrown in the program. The program will exit. Error message is:
         ///{0}.
         /// </summary>
@@ -387,11 +434,49 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to load the module list. Failed with error:
+        ///{0}.
+        /// </summary>
+        internal static string IDS_ERR_LOAD_LIST {
+            get {
+                return ResourceManager.GetString("IDS_ERR_LOAD_LIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There doesn&apos;t exist any output agent, so NostalgicPlayer can&apos;t play anything.
         /// </summary>
         internal static string IDS_ERR_NOOUTPUTAGENT {
             get {
                 return ResourceManager.GetString("IDS_ERR_NOOUTPUTAGENT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to save the module list. Failed with error:
+        ///{0}.
+        /// </summary>
+        internal static string IDS_ERR_SAVE_LIST {
+            get {
+                return ResourceManager.GetString("IDS_ERR_SAVE_LIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file {0} could not be regonized as a module list..
+        /// </summary>
+        internal static string IDS_ERR_UNKNOWN_LIST_FORMAT {
+            get {
+                return ResourceManager.GetString("IDS_ERR_UNKNOWN_LIST_FORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown version ({0}) of a NPML list..
+        /// </summary>
+        internal static string IDS_ERR_UNKNOWN_LIST_VERSION {
+            get {
+                return ResourceManager.GetString("IDS_ERR_UNKNOWN_LIST_VERSION", resourceCulture);
             }
         }
         

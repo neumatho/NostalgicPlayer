@@ -112,12 +112,12 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="IDB_ADD" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Add.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -138,6 +138,9 @@
   </data>
   <data name="IDB_LIST" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\List.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IDB_LOAD" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Load.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="IDB_LOOP" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Loop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -181,6 +184,9 @@
   <data name="IDB_SAMPLES" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Samples.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="IDB_SAVE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="IDB_SHUFFLE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Shuffle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -205,6 +211,15 @@
   <data name="IDS_BUT_STOP" xml:space="preserve">
     <value>Stop playing</value>
   </data>
+  <data name="IDS_DISKMENU_APPEND" xml:space="preserve">
+    <value>Append list</value>
+  </data>
+  <data name="IDS_DISKMENU_LOAD" xml:space="preserve">
+    <value>Load list</value>
+  </data>
+  <data name="IDS_DISKMENU_SAVE" xml:space="preserve">
+    <value>Save list</value>
+  </data>
   <data name="IDS_ERR_EXCEPTION" xml:space="preserve">
     <value>An exception has been thrown in the program. The program will exit. Error message is:
 {0}</value>
@@ -221,8 +236,22 @@
     <value>Failed to load module.
 {0}</value>
   </data>
+  <data name="IDS_ERR_LOAD_LIST" xml:space="preserve">
+    <value>Failed to load the module list. Failed with error:
+{0}</value>
+  </data>
   <data name="IDS_ERR_NOOUTPUTAGENT" xml:space="preserve">
     <value>There doesn't exist any output agent, so NostalgicPlayer can't play anything</value>
+  </data>
+  <data name="IDS_ERR_SAVE_LIST" xml:space="preserve">
+    <value>Failed to save the module list. Failed with error:
+{0}</value>
+  </data>
+  <data name="IDS_ERR_UNKNOWN_LIST_FORMAT" xml:space="preserve">
+    <value>The file {0} could not be regonized as a module list.</value>
+  </data>
+  <data name="IDS_ERR_UNKNOWN_LIST_VERSION" xml:space="preserve">
+    <value>Unknown version ({0}) of a NPML list.</value>
   </data>
   <data name="IDS_MAIN_TITLE" xml:space="preserve">
     <value>NostalgicPlayer</value>

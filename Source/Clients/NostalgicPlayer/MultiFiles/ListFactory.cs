@@ -7,62 +7,50 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System.IO;
-using Polycode.NostalgicPlayer.Kit.Streams;
+using System.Linq;
+using System.Text;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 {
 	/// <summary>
-	/// This class holds a list item pointing to a file
+	/// This class can create multi file loaders which can handle module lists
 	/// </summary>
-	public class SingleFileListItem : IModuleListItem
+	public static class ListFactory
 	{
-		#region IModuleListItem implementation
+		private static readonly byte[] npmlSignature;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SingleFileListItem(string fullFileName)
+		static ListFactory()
 		{
-			FileName = fullFileName;
+			npmlSignature = Encoding.UTF8.GetBytes("@*NpML*@");
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the name which is shown in the list
+		/// Try to figure out which kind of list this is and return a loader
+		/// if anyone could be found
 		/// </summary>
 		/********************************************************************/
-		public string DisplayName
+		public static IMultiFileLoader Create(Stream stream)
 		{
-			get
-			{
-				return Path.GetFileName(FileName);
-			}
-		}
+			byte[] buffer = new byte[16];
 
+			// Make sure the file position is at the beginning of the file
+			stream.Seek(0, SeekOrigin.Begin);
 
+			// Read the first line
+			stream.Read(buffer, 0, 16);
 
-		/********************************************************************/
-		/// <summary>
-		/// Opens a stream containing the file data
-		/// </summary>
-		/********************************************************************/
-		public ModuleStream OpenStream()
-		{
-			return new ModuleStream(new FileStream(FileName, FileMode.Open, FileAccess.Read));
-		}
-		#endregion
+			if (buffer.Skip(3).Take(8).SequenceEqual(npmlSignature))	// Skip BOM
+				return new NpmlList();
 
-		/********************************************************************/
-		/// <summary>
-		/// Return the file name to the file
-		/// </summary>
-		/********************************************************************/
-		public string FileName
-		{
-			get;
+			return null;
 		}
 	}
 }

@@ -38,6 +38,7 @@
 						<area shape="rect" coords="128,212,152,235" href="#up">
 						<area shape="rect" coords="157,212,180,235" href="#down">
 						<area shape="rect" coords="185,212,208,235" href="#select">
+						<area shape="rect" coords="213,212,236,235" href="#list">
 						<area shape="rect" coords="246,204,330,238" href="#playingtime">
 						<area shape="rect" coords="331,204,387,238" href="#modulecount">
 						<area shape="rect" coords="12,244,387,263" href="#position">
@@ -50,7 +51,6 @@
 						<area shape="rect" coords="241,279,264,302" href="#pause">
 						<area shape="rect" coords="331,279,354,302" href="#repeat">
 <!--
-<AREA SHAPE="rect" COORDS="176,166,194,183" HREF="howtouse.html#save">
 <AREA SHAPE="rect" COORDS="30,74,372,156" HREF="howtouse.html#playlist">
 <AREA SHAPE="rect" COORDS="38,217,56,234" HREF="howtouse.html#previoussub">
 <AREA SHAPE="rect" COORDS="131,217,149,234" HREF="howtouse.html#nextsub">
@@ -211,6 +211,27 @@
 							<tr>
 								<td>Deselect all</td>
 								<td>Deselects all selections.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="list"><h3>Playlist options</h3></a>
+						<span>This button shows menu:</span>
+						<br>
+						<img src="images/list.png" alt="list menu"/>
+						<br>
+						<table class="usage2table">
+							<tr>
+								<td>Load list</td>
+								<td>Loads new playlist. Clears playlist before adding new modules. The following playlist types are supported:<ul><li><i>NostalgicPlayer</i></li></ul>It's also possible to drag'n'drop playlist directly into the NostalgicPlayer main window.</td>
+							</tr>
+							<tr>
+								<td>Append list</td>
+								<td>Loads new playlist. NostalgicPlayer will append new module(s) before the first selected module. If none is selected, it will append to the end of the list.</td>
+							</tr>
+							<tr>
+								<td>Save list</td>
+								<td>Saves current playlist.</td>
 							</tr>
 						</table>
 					</span>

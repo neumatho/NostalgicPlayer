@@ -18,6 +18,8 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	{
 		/// <summary>
 		/// Returns the file extensions that identify this player
+		///
+		/// Has to be in lowercase
 		/// </summary>
 		string[] FileExtensions { get; }
 
