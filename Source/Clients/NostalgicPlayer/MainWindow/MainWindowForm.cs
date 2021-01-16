@@ -8,9 +8,11 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
@@ -448,6 +450,30 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			// Save and cleanup the settings
 			CleanupSettings();
+		}
+		#endregion
+
+		#region Menu events
+		/********************************************************************/
+		/// <summary>
+		/// User selected the help menu item
+		/// </summary>
+		/********************************************************************/
+		private void Menu_Help_Help_Click(object sender, EventArgs e)
+		{
+			try
+			{
+#if DEBUG
+				string docFile = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"..\..\..\..\..\Documentation\index.html");
+#else
+				string docFile = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"Documentation\index.html");
+#endif
+				Process.Start("cmd.exe",@$"/C ""{docFile}""");
+			}
+			catch (Exception ex)
+			{
+				ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_OPEN_HELP, ex.Message));
+			}
 		}
 		#endregion
 
@@ -1848,7 +1874,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_HELP_HELP);
 			menuItem.ShortcutKeys = Keys.Alt | Keys.H;
-			menuItem.Enabled = false;
+			menuItem.Click += Menu_Help_Help_Click;
 			helpMenuItem.DropDownItems.Add(menuItem);
 
 			helpMenuItem.DropDownItems.Add(new ToolStripSeparator());

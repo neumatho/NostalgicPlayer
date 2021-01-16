@@ -453,6 +453,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not open the help documentation. Failed with:
+        ///{0}.
+        /// </summary>
+        internal static string IDS_ERR_OPEN_HELP {
+            get {
+                return ResourceManager.GetString("IDS_ERR_OPEN_HELP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to save the module list. Failed with error:
         ///{0}.
         /// </summary>

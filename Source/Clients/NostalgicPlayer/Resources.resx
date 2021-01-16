@@ -243,6 +243,10 @@
   <data name="IDS_ERR_NOOUTPUTAGENT" xml:space="preserve">
     <value>There doesn't exist any output agent, so NostalgicPlayer can't play anything</value>
   </data>
+  <data name="IDS_ERR_OPEN_HELP" xml:space="preserve">
+    <value>Could not open the help documentation. Failed with:
+{0}</value>
+  </data>
   <data name="IDS_ERR_SAVE_LIST" xml:space="preserve">
     <value>Failed to save the module list. Failed with error:
 {0}</value>
