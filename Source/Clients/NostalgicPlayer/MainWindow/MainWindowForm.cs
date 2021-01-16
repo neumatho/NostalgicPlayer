@@ -31,6 +31,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 	/// </summary>
 	public partial class MainWindowForm : WindowFormBase
 	{
+		private enum FileDropType
+		{
+			ClearAndAdd,
+			Append,
+			Insert
+		}
+
 		private Manager agentManager;
 		private ModuleHandler moduleHandler;
 
@@ -64,6 +71,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		// Window/control status variables
 		private bool allowPosSliderUpdate;
 
+		// Drag'n'drop variables
+		private int indexOfItemUnderMouseToDrop = -2;
+		private Rectangle dragBoxFromMouseDown;
+		private bool drawLine;
+		private FileDropType dropType;
+
+		private bool restoreSelection = false;
+		private int[] savedSelection = new int[0];
+
 		// Misc.
 		private readonly Random rnd;
 		private readonly List<int> randomList;
@@ -80,6 +96,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Some controls need to be initialized here, since the
 			// designer remove the properties
 			positionTrackBar.BackStyle = PaletteBackStyle.SeparatorLowProfile;
+
+			// Enable drag'n'drop
+			moduleListBox.ListBox.AllowDrop = true;
 
 			// Initialize member variables
 			playItem = null;
@@ -231,11 +250,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Module information
 			infoGroup.Panel.Click += InfoGroup_Click;
 			infoLabel.Click += InfoGroup_Click;
+			clockTimer.Tick += ClockTimer_Tick;
 
 			// Module list
 			moduleListBox.SelectedIndexChanged += ModuleListBox_SelectedIndexChanged;
 			moduleListBox.ListBox.MouseDoubleClick += ModuleListBox_MouseDoubleClick;
 			moduleListBox.KeyPress += ModuleListBox_KeyPress;
+
+			moduleListBox.ListBox.MouseDown += ModuleListBox_MouseDown;
+			moduleListBox.ListBox.MouseUp += ModuleListBox_MouseUp;
+			moduleListBox.ListBox.MouseMove += ModuleListBox_MouseMove;
+			moduleListBox.ListBox.DragEnter += ModuleListBox_DragEnter;
+			moduleListBox.ListBox.DragOver += ModuleListBox_DragOver;
+			moduleListBox.ListBox.DragLeave += ModuleListBox_DragLeave;
+			moduleListBox.ListBox.DragDrop += ModuleListBox_DragDrop;
+			scrollTimer.Tick += ScrollTimer_Tick;
 
 			// Volume
 			muteCheckButton.CheckedChanged += MuteCheckButton_CheckedChanged;
@@ -535,6 +564,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			// Update the list controls
 			UpdateListControls();
+
+			if (!restoreSelection)
+				SaveSelection();
 		}
 
 
@@ -580,6 +612,430 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				}
 			}
 		}
+
+		#region Drag'n'drop
+		/********************************************************************/
+		/// <summary>
+		/// User clicked in the module list box
+		/// </summary>
+		/********************************************************************/
+		private void ModuleListBox_MouseDown(object sender, MouseEventArgs e)
+		{
+			// If no items is selected, then do not start drag'n'drop
+			if (moduleListBox.SelectedIndex != -1)
+			{
+				int clickedItemIndex = moduleListBox.IndexFromPoint(e.Location);
+				if ((clickedItemIndex >= 0) && ((e.Button & MouseButtons.Left) != 0) && (moduleListBox.GetSelected(clickedItemIndex) /*|| (ModifierKeys == Keys.Shift)*/))	// Shift test is removed, because there is some issue that the selection collection isn't updated when selecting items with shift and begin to drag without release the mouse button first
+				{
+					RestoreSelection(clickedItemIndex);
+
+					// Remember the point where the mouse down occurred. The DragSize
+					// indicates the size that the mouse can move before a drag event
+					// should be started
+					Size dragSize = SystemInformation.DragSize;
+
+					// Create a rectangle using DragSize, with the mouse position
+					// being at the center of the rectangle
+					dragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width / 2), e.Y - (dragSize.Height / 2)), dragSize);
+				}
+				else
+					dragBoxFromMouseDown = Rectangle.Empty;
+			}
+			else
+			{
+				// Reset the rectangle if no item is selected
+				dragBoxFromMouseDown = Rectangle.Empty;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// User released the mouse in the module list box
+		/// </summary>
+		/********************************************************************/
+		private void ModuleListBox_MouseUp(object sender, MouseEventArgs e)
+		{
+			dragBoxFromMouseDown = Rectangle.Empty;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// User moves the mouse around in the module list box
+		/// </summary>
+		/********************************************************************/
+		private void ModuleListBox_MouseMove(object sender, MouseEventArgs e)
+		{
+			// If the mouse moves outside the rectangle, start the drag
+			if ((dragBoxFromMouseDown != Rectangle.Empty) && !dragBoxFromMouseDown.Contains(e.X, e.Y))
+			{
+				// Start the dragging, where custom data is all the selected items.
+				// Also make a copy of the collection
+				moduleListBox.DoDragDrop(this, DragDropEffects.Move);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the mouse enters the list control and a dragging
+		/// begins
+		/// </summary>
+		/********************************************************************/
+		private void ModuleListBox_DragEnter(object sender, DragEventArgs e)
+		{
+			indexOfItemUnderMouseToDrop = -2;
+
+			// Start the timer
+			scrollTimer.Start();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the mouse leaves the list control
+		/// </summary>
+		/********************************************************************/
+		private void ModuleListBox_DragLeave(object sender, EventArgs e)
+		{
+			DrawLine(true);
+
+			// Stop the timer again
+			scrollTimer.Stop();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Should set if it is valid to drag into the list box
+		/// </summary>
+		/********************************************************************/
+		private void ModuleListBox_DragOver(object sender, DragEventArgs e)
+		{
+			if (e.Data.GetDataPresent(GetType()))
+			{
+				// Drag started from our own list, so it is ok
+				e.Effect = DragDropEffects.Move;
+				drawLine = true;
+			}
+			else if (e.Data.GetDataPresent(DataFormats.FileDrop))
+			{
+				// Either a file or directory is dropped from File Explorer
+				if ((ModifierKeys & Keys.Control) != 0)
+				{
+					if ((ModifierKeys & Keys.Shift) != 0)
+					{
+						e.Effect = DragDropEffects.Copy;		// Append to list
+						dropType = FileDropType.Append;
+						drawLine = false;
+					}
+					else
+					{
+						e.Effect = DragDropEffects.Move;		// Insert into position in list
+						dropType = FileDropType.Insert;
+						drawLine = true;
+					}
+				}
+				else
+				{
+					e.Effect = DragDropEffects.Move;			// Clear list and add files
+					dropType = FileDropType.ClearAndAdd;
+					drawLine = false;
+				}
+			}
+			else
+			{
+				// Unknown type, so it is not allowed
+				e.Effect = DragDropEffects.None;
+			}
+
+			if (e.Effect != DragDropEffects.None)
+			{
+				// Remember the index where the drop will occur
+				Point clientPoint = moduleListBox.PointToClient(new Point(e.X, e.Y));
+				int index = moduleListBox.IndexFromPoint(clientPoint);
+
+				// Because Krypton ListBox control uses OwnerDrawVariable when
+				// drawing the control, the above IndexFromPoint will always
+				// return the last item, even if the mouse is over the empty area.
+				// https://stackoverflow.com/questions/48387671/ownerdrawvariable-listbox-selects-last-item-when-clicking-on-control-below-items
+				//
+				// We try to make a work-around for this
+				if ((index == moduleListBox.Items.Count - 1) && (index != -1))      // It would be -1, if the list is empty
+				{
+					// Get the rectangle for the last item
+					Rectangle lastItemRect = moduleListBox.GetItemRectangle(moduleListBox.Items.Count - 1);
+
+					// Is the mouse inside this rect?
+					if (!lastItemRect.Contains(clientPoint))
+					{
+						// No, then the mouse is over the empty area
+						index = -1;
+					}
+				}
+
+				// If the drop point has changed, redraw the line
+				if (index != indexOfItemUnderMouseToDrop)
+				{
+					// First erase the old line
+					DrawLine(true);
+
+					indexOfItemUnderMouseToDrop = index;
+
+					// Then draw the new one
+					DrawLine(false);
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the drop ends
+		/// </summary>
+		/********************************************************************/
+		private void ModuleListBox_DragDrop(object sender, DragEventArgs e)
+		{
+			// Stop the timer again
+			scrollTimer.Stop();
+
+			using (new SleepCursor())
+			{
+				if (e.Data.GetDataPresent(GetType()))
+				{
+					// Moving list items around
+					//
+					// Get the selected items and order them in reverse
+					var selectedItems = moduleListBox.SelectedIndices.Cast<int>().OrderByDescending(i => i);
+
+					if (indexOfItemUnderMouseToDrop == -1)
+					{
+						int insertAt = moduleListBox.Items.Count;
+
+						foreach (int index in selectedItems)
+						{
+							ModuleListItem listItem = (ModuleListItem)moduleListBox.Items[index];
+
+							moduleListBox.Items.Insert(insertAt--, listItem);
+							moduleListBox.Items.RemoveAt(index);
+						}
+					}
+					else
+					{
+						int insertAt = indexOfItemUnderMouseToDrop;
+
+						foreach (int index in selectedItems)
+						{
+							ModuleListItem listItem = (ModuleListItem)moduleListBox.Items[index];
+
+							moduleListBox.Items.Insert(insertAt, listItem);
+
+							if (index < insertAt)
+								moduleListBox.Items.RemoveAt(index);
+							else
+								moduleListBox.Items.RemoveAt(index + 1);
+						}
+					}
+				}
+				else if (e.Data.GetDataPresent(DataFormats.FileDrop))
+				{
+					// File or directory dragged from File Explorer
+					string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+					switch (dropType)
+					{
+						case FileDropType.Append:
+						{
+							AddFilesToList(files, checkForList: true);
+							break;
+						}
+
+						case FileDropType.ClearAndAdd:
+						{
+							StopAndFreeModule();
+							EmptyList();
+
+							AddFilesToList(files, checkForList: true);
+
+							LoadAndPlayModule(0);
+							break;
+						}
+
+						case FileDropType.Insert:
+						{
+							AddFilesToList(files, indexOfItemUnderMouseToDrop, true);
+							break;
+						}
+					}
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called by an interval to check if a scroll is needed
+		/// </summary>
+		/********************************************************************/
+		private void ScrollTimer_Tick(object sender, EventArgs e)
+		{
+			if (moduleListBox.Items.Count > 0)
+			{
+				int y = moduleListBox.PointToClient(MousePosition).Y;
+
+				if ((moduleListBox.Height - y) <= 10)
+				{
+					int itemsThatCanBeSeen = moduleListBox.Height / moduleListBox.GetItemHeight(0);
+					if (moduleListBox.TopIndex + itemsThatCanBeSeen < moduleListBox.Items.Count)
+					{
+						DrawLine(true);
+						moduleListBox.TopIndex++;
+					}
+				}
+				else if (y <= 10)
+				{
+					if (moduleListBox.TopIndex > 0)
+					{
+						DrawLine(true);
+						moduleListBox.TopIndex--;
+					}
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will draw a line at the place where the drop will happen
+		/// </summary>
+		/********************************************************************/
+		private void DrawLine(bool erase)
+		{
+			if (erase || drawLine)
+			{
+				using (Graphics g = moduleListBox.ListBox.CreateGraphics())
+				{
+					// Find the position where to draw the line
+					int pos;
+
+					int count = moduleListBox.Items.Count;
+
+					int indexCheck;
+
+					// If no items in the list or it is the first position to insert,
+					// just draw the line at top of the control
+					int indexFromTop = indexOfItemUnderMouseToDrop - moduleListBox.TopIndex;
+
+					if ((count == 0) || (indexFromTop == 0))
+					{
+						pos = 0;
+						indexCheck = -1;
+					}
+					else
+					{
+						int height = moduleListBox.GetItemHeight(0);
+
+						// Do we point at any item?
+						if (indexOfItemUnderMouseToDrop < 0)
+						{
+							pos = (count - moduleListBox.TopIndex) * height - 1;
+							indexCheck = count - 1;
+						}
+						else
+						{
+							pos = indexFromTop * height - 1;
+							indexCheck = indexOfItemUnderMouseToDrop - 1;
+						}
+					}
+
+					if (erase && moduleListBox.SelectedIndices.Contains(indexCheck))
+					{
+						Rectangle itemRect = moduleListBox.GetItemRectangle(indexCheck);
+
+						// This is hardcoded to draw how Krypton list box draw a selected item
+						using (SolidBrush corner1 = new SolidBrush(Color.FromArgb(251, 249, 244)))
+						{
+							using (SolidBrush corner2 = new SolidBrush(Color.FromArgb(215, 193, 136)))
+							{
+								using (SolidBrush corner3 = new SolidBrush(Color.FromArgb(208, 181, 113)))
+								{
+									using (SolidBrush corner4 = new SolidBrush(Color.FromArgb(247, 243, 232)))
+									{
+										using (Pen line = new Pen(Color.FromArgb(194, 160, 73)))
+										{
+											g.FillRectangle(corner1, itemRect.Left, pos, 1, 1);
+											g.FillRectangle(corner2, itemRect.Left + 1, pos, 1, 1);
+											g.DrawLine(line, itemRect.Left + 2, pos, itemRect.Right - 3, pos);
+											g.FillRectangle(corner3, itemRect.Right - 2, pos, 1, 1);
+											g.FillRectangle(corner4, itemRect.Right - 1, pos, 1, 1);
+										}
+									}
+								}
+							}
+						}
+					}
+					else
+					{
+						// Draw the line
+						Rectangle rect = indexCheck < 0 ? moduleListBox.ClientRectangle : moduleListBox.GetItemRectangle(indexCheck);
+
+						using (Pen pen = new Pen(erase ? Color.White : Color.CornflowerBlue))
+						{
+							g.DrawLine(pen, rect.Left, pos, rect.Right, pos);
+						}
+					}
+				}
+			}
+		}
+
+
+		// This saving and restoring stuff of the selected items, is made
+		// so the list box behaves like the list view, when the user selects
+		// the item. See https://www.codeproject.com/Articles/36412/Drag-and-Drop-ListBox
+
+		/********************************************************************/
+		/// <summary>
+		/// Will save the current selected items
+		/// </summary>
+		/********************************************************************/
+		private void SaveSelection()
+		{
+			savedSelection = moduleListBox.SelectedIndices.Cast<int>().ToArray();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will restore the saved selection back again
+		/// </summary>
+		/********************************************************************/
+		private void RestoreSelection(int clickedItemIndex)
+		{
+			if ((ModifierKeys == Keys.None) && savedSelection.Contains(clickedItemIndex))
+			{
+				restoreSelection = true;
+
+				foreach (int index in savedSelection)
+					moduleListBox.SetSelected(index, true);
+
+				// Select the clicked item again to make it the current item
+				moduleListBox.SetSelected(clickedItemIndex, true);
+
+				restoreSelection = false;
+			}
+		}
+		#endregion
+
 		#endregion
 
 		#region Volume events
@@ -2158,10 +2614,49 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Will append the given file to the list given
 		/// </summary>
 		/********************************************************************/
-		private void AppendFile(string fileName, List<FileInformation> list)
+		private void AddSingleFileToList(string fileName, List<ModuleListItem> list, bool checkForList)
 		{
+			IMultiFileLoader loader = null;
+
+			if (checkForList)
+			{
+				using (FileStream fs = File.OpenRead(fileName))
+				{
+					loader = ListFactory.Create(fs);
+					if (loader != null)
+					{
+						foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs))
+							list.Add(ListItemConverter.Convert(info));
+					}
+				}
+			}
+
 			//XX TODO: Add archive support here
-			list.Add(new FileInformation(fileName));
+
+			if (loader == null)
+			{
+				// Just a plain file
+				list.Add(new ModuleListItem(new SingleFileListItem(fileName)));
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will append all the files inside the given directory to the list
+		/// given
+		/// </summary>
+		/********************************************************************/
+		private void AddDirectoryToList(string directory, List<ModuleListItem> list, bool checkForList)
+		{
+			// First go through all the files
+			foreach (string fileName in Directory.EnumerateFiles(directory))
+				AddSingleFileToList(fileName, list, checkForList);
+
+			// Now go through all the directories
+			foreach (string directoryName in Directory.EnumerateDirectories(directory))
+				AddDirectoryToList(directoryName, list, checkForList);
 		}
 
 
@@ -2354,14 +2849,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Will add all the given files to the module list
 		/// </summary>
 		/********************************************************************/
-		private void AddFilesToList(string[] files, int startIndex = -1)
+		private void AddFilesToList(string[] files, int startIndex = -1, bool checkForList = false)
 		{
-			List<FileInformation> itemList = new List<FileInformation>();
+			List<ModuleListItem> itemList = new List<ModuleListItem>();
 
 			foreach (string file in files)
 			{
-				//XX TODO: When adding drag'n'drop support, check for folders here
-				AppendFile(file, itemList);
+				if (Directory.Exists(file))
+				{
+					// It's a directory, so add all files inside it
+					AddDirectoryToList(file, itemList, checkForList);
+				}
+				else
+				{
+					// It's a file
+					AddSingleFileToList(file, itemList, checkForList);
+				}
 			}
 
 			// Add the items to the list
@@ -2370,11 +2873,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			try
 			{
 				if (startIndex == -1)
-					moduleListBox.Items.AddRange(itemList.Select(fi => new ModuleListItem(new SingleFileListItem(fi.FullPath))).ToArray());
+					moduleListBox.Items.AddRange(itemList.ToArray());
 				else
 				{
 					for (int i = itemList.Count - 1; i >= 0; i--)
-						moduleListBox.Items.Insert(startIndex, new ModuleListItem(new SingleFileListItem(itemList[i].FullPath)));
+						moduleListBox.Items.Insert(startIndex, itemList[i]);
 				}
 			}
 			finally

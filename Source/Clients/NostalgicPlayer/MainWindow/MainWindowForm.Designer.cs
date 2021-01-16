@@ -71,6 +71,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.sortContextMenu = new Krypton.Toolkit.KryptonContextMenu();
 			this.listContextMenu = new Krypton.Toolkit.KryptonContextMenu();
 			this.diskContextMenu = new Krypton.Toolkit.KryptonContextMenu();
+			this.scrollTimer = new System.Windows.Forms.Timer(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.infoGroup)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.infoGroup.Panel)).BeginInit();
 			this.infoGroup.Panel.SuspendLayout();
@@ -152,7 +153,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.moduleListBox.Location = new System.Drawing.Point(35, 56);
 			this.moduleListBox.Name = "moduleListBox";
-			this.moduleListBox.Padding = new System.Windows.Forms.Padding(2, 1, 2, 1);
 			this.moduleListBox.ScrollAlwaysVisible = true;
 			this.moduleListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
 			this.moduleListBox.Size = new System.Drawing.Size(345, 116);
@@ -447,7 +447,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// clockTimer
 			// 
 			this.clockTimer.Interval = 995;
-			this.clockTimer.Tick += new System.EventHandler(this.ClockTimer_Tick);
+			// 
+			// scrollTimer
+			// 
+			this.scrollTimer.Interval = 300;
 			// 
 			// MainWindowForm
 			// 
@@ -534,6 +537,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private KryptonContextMenu sortContextMenu;
 		private KryptonContextMenu listContextMenu;
 		private KryptonContextMenu diskContextMenu;
+		private System.Windows.Forms.Timer scrollTimer;
 	}
 }
 

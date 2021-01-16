@@ -20,17 +20,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NostalgicPlayerLibrary", "N
 		{E09C9206-A893-43B9-95FA-17B5504AD99D} = {E09C9206-A893-43B9-95FA-17B5504AD99D}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreAudio", "Agents\Output\CoreAudio\CoreAudio.csproj", "{8784649C-9865-451D-8080-69426E349894}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreAudio", "Agents\Output\CoreAudio\CoreAudio.csproj", "{8784649C-9865-451D-8080-69426E349894}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JamCracker", "Agents\Players\JamCracker\JamCracker.csproj", "{AB573AA0-6761-4FFB-82EA-3671F49805F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JamCracker", "Agents\Players\JamCracker\JamCracker.csproj", "{AB573AA0-6761-4FFB-82EA-3671F49805F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostalgicPlayerConsole", "Clients\NostalgicPlayerConsole\NostalgicPlayerConsole.csproj", "{EAD4D3A6-9AE0-4060-9C24-E9902A620BC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NostalgicPlayerConsole", "Clients\NostalgicPlayerConsole\NostalgicPlayerConsole.csproj", "{EAD4D3A6-9AE0-4060-9C24-E9902A620BC7}"
 	ProjectSection(ProjectDependencies) = postProject
 		{8784649C-9865-451D-8080-69426E349894} = {8784649C-9865-451D-8080-69426E349894}
 		{AB573AA0-6761-4FFB-82EA-3671F49805F1} = {AB573AA0-6761-4FFB-82EA-3671F49805F1}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NostalgicPlayer", "Clients\NostalgicPlayer\NostalgicPlayer.csproj", "{5805A6B4-6FFC-4BC0-9B44-91ADD71B6426}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NostalgicPlayer", "Clients\NostalgicPlayer\NostalgicPlayer.csproj", "{5805A6B4-6FFC-4BC0-9B44-91ADD71B6426}"
 	ProjectSection(ProjectDependencies) = postProject
 		{8784649C-9865-451D-8080-69426E349894} = {8784649C-9865-451D-8080-69426E349894}
 		{AB573AA0-6761-4FFB-82EA-3671F49805F1} = {AB573AA0-6761-4FFB-82EA-3671F49805F1}

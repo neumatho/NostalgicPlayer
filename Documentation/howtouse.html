@@ -29,8 +29,9 @@
 					</span>
 					<map name="mainwindow">
 						<area shape="rect" coords="12,59,358,81" href="#statusbar">
-						<area shape="rect" coords="12,84,38,105" href="#mute">
-						<area shape="rect" coords="12,117,38,202" href="#volume">
+						<area shape="rect" coords="12,87,38,110" href="#mute">
+						<area shape="rect" coords="12,115,38,202" href="#volume">
+						<area shape="rect" coords="43,87,387,202" href="#playlist">
 						<area shape="rect" coords="17,212,40,235" href="#add">
 						<area shape="rect" coords="45,212,68,235" href="#remove">
 						<area shape="rect" coords="73,212,96,235" href="#swap">
@@ -51,7 +52,6 @@
 						<area shape="rect" coords="241,279,264,302" href="#pause">
 						<area shape="rect" coords="331,279,354,302" href="#repeat">
 <!--
-<AREA SHAPE="rect" COORDS="30,74,372,156" HREF="howtouse.html#playlist">
 <AREA SHAPE="rect" COORDS="38,217,56,234" HREF="howtouse.html#previoussub">
 <AREA SHAPE="rect" COORDS="131,217,149,234" HREF="howtouse.html#nextsub">
 <AREA SHAPE="rect" COORDS="7,25,40,44" HREF="howtouse.html#file">
@@ -128,6 +128,22 @@
 							<tr>
 								<td><img src="images/volume.png" alt="volume"/></td>
 								<td>This slider can be used to adjust sound volume. You can click in it to set volume by small steps or just drag slider to position of you choice with mouse.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="playlist"><h3>Playlist</h3></a>
+						<p>It is possible to move the modules around in the playlist to reorder them. This is done by first selecting the module you want to move. Then press left mouse button on one of the selected modules and keep it down while moving the mouse. A line appear where the modules will be inserted.</p>
+						<p>You can also drag'n'drop modules from File Explorer into playlist. Playlist will be cleared before new files are added.</p>
+						<p>You can also use control keys to change drag & drop behaviour:</p>
+						<table class="usage2table">
+							<tr>
+								<td><b>CTRL + dragging</b></td>
+								<td>Insert. Inserts modules to playlist. Playlist is not cleared before inserting.</td>
+							</tr>
+							<tr>
+								<td><b>CTRL + SHIFT + dragging</b></td>
+								<td>Append. Add modules to end of existing playlist. Playlist is not cleared before appending.</td>
 							</tr>
 						</table>
 					</span>
