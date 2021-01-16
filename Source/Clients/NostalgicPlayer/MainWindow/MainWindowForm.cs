@@ -675,6 +675,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				// Start the dragging, where custom data is all the selected items.
 				// Also make a copy of the collection
 				moduleListBox.DoDragDrop(this, DragDropEffects.Move);
+
+				// Stop drag functionality by clearing the rectangle
+				dragBoxFromMouseDown = Rectangle.Empty;
 			}
 		}
 
