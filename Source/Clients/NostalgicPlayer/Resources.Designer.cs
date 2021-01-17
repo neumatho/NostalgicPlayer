@@ -649,6 +649,123 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        internal static string IDS_MODULE_INFO_COLUMN_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_COLUMN_DESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value.
+        /// </summary>
+        internal static string IDS_MODULE_INFO_COLUMN_VALUE {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_COLUMN_VALUE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Active player:.
+        /// </summary>
+        internal static string IDS_MODULE_INFO_ITEM_ACTIVEPLAYER {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_ITEM_ACTIVEPLAYER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Author:.
+        /// </summary>
+        internal static string IDS_MODULE_INFO_ITEM_AUTHOR {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_ITEM_AUTHOR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Used channels:.
+        /// </summary>
+        internal static string IDS_MODULE_INFO_ITEM_CHANNELS {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_ITEM_CHANNELS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File name:.
+        /// </summary>
+        internal static string IDS_MODULE_INFO_ITEM_FILE {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_ITEM_FILE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Module format:.
+        /// </summary>
+        internal static string IDS_MODULE_INFO_ITEM_MODULEFORMAT {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_ITEM_MODULEFORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Module name/file name:.
+        /// </summary>
+        internal static string IDS_MODULE_INFO_ITEM_MODULENAME {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_ITEM_MODULENAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Module size:.
+        /// </summary>
+        internal static string IDS_MODULE_INFO_ITEM_MODULESIZE {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_ITEM_MODULESIZE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to n/a.
+        /// </summary>
+        internal static string IDS_MODULE_INFO_ITEM_NA {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_ITEM_NA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Total time:.
+        /// </summary>
+        internal static string IDS_MODULE_INFO_ITEM_TIME {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_ITEM_TIME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Module Information.
+        /// </summary>
+        internal static string IDS_MODULE_INFO_TITLE {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown.
+        /// </summary>
+        internal static string IDS_MODULE_INFO_UNKNOWN {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_UNKNOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to None installed.
         /// </summary>
         internal static string IDS_NO_AGENTS {

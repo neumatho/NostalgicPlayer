@@ -358,6 +358,45 @@ Formats supported:
   <data name="IDS_MENU_WINDOW_SETTINGS" xml:space="preserve">
     <value>Settings…</value>
   </data>
+  <data name="IDS_MODULE_INFO_COLUMN_DESCRIPTION" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="IDS_MODULE_INFO_COLUMN_VALUE" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="IDS_MODULE_INFO_ITEM_ACTIVEPLAYER" xml:space="preserve">
+    <value>Active player:</value>
+  </data>
+  <data name="IDS_MODULE_INFO_ITEM_AUTHOR" xml:space="preserve">
+    <value>Author:</value>
+  </data>
+  <data name="IDS_MODULE_INFO_ITEM_CHANNELS" xml:space="preserve">
+    <value>Used channels:</value>
+  </data>
+  <data name="IDS_MODULE_INFO_ITEM_FILE" xml:space="preserve">
+    <value>File name:</value>
+  </data>
+  <data name="IDS_MODULE_INFO_ITEM_MODULEFORMAT" xml:space="preserve">
+    <value>Module format:</value>
+  </data>
+  <data name="IDS_MODULE_INFO_ITEM_MODULENAME" xml:space="preserve">
+    <value>Module name/file name:</value>
+  </data>
+  <data name="IDS_MODULE_INFO_ITEM_MODULESIZE" xml:space="preserve">
+    <value>Module size:</value>
+  </data>
+  <data name="IDS_MODULE_INFO_ITEM_NA" xml:space="preserve">
+    <value>n/a</value>
+  </data>
+  <data name="IDS_MODULE_INFO_ITEM_TIME" xml:space="preserve">
+    <value>Total time:</value>
+  </data>
+  <data name="IDS_MODULE_INFO_TITLE" xml:space="preserve">
+    <value>Module Information</value>
+  </data>
+  <data name="IDS_MODULE_INFO_UNKNOWN" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
   <data name="IDS_NONEGATIVETIME" xml:space="preserve">
     <value>Time: -??:??:??</value>
   </data>

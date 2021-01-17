@@ -53,8 +53,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 			// 
 			// AboutWindowForm
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(318, 188);
 			this.Controls.Add(this.pictureBox);
 			this.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -63,6 +62,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "AboutWindowForm";
+			this.ShowInTaskbar = false;
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
 			this.ResumeLayout(false);
 

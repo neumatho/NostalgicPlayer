@@ -21,6 +21,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -89,6 +90,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		// Other windows
 		private AboutWindowForm aboutWindow = null;
+		private ModuleInfoWindowForm moduleInfoWindow = null;
 
 		/********************************************************************/
 		/// <summary>
@@ -245,6 +247,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return some information about the current playing file
+		/// </summary>
+		/********************************************************************/
+		public MultiFileInfo GetFileInfo()
+		{
+			return playItem == null ? null : ListItemConverter.Convert(playItem);
+		}
+
 		#region Event handlers
 		/********************************************************************/
 		/// <summary>
@@ -260,6 +274,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			infoGroup.Panel.Click += InfoGroup_Click;
 			infoLabel.Click += InfoGroup_Click;
 			clockTimer.Tick += ClockTimer_Tick;
+
+			moduleInfoButton.Click += ModuleInfoButton_Click;
 
 			// Module list
 			moduleListBox.SelectedIndexChanged += ModuleListBox_SelectedIndexChanged;
@@ -440,7 +456,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		#region Form events
 		/********************************************************************/
 		/// <summary>
-		/// Is called when the main window is closed
+		/// Is called when the window is closed
 		/// </summary>
 		/********************************************************************/
 
@@ -522,6 +538,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			// Show it to the user
 			PrintInfo();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user clicks on the module information button
+		/// </summary>
+		/********************************************************************/
+		private void ModuleInfoButton_Click(object sender, EventArgs e)
+		{
+			if ((moduleInfoWindow == null) || moduleInfoWindow.IsDisposed)
+			{
+				moduleInfoWindow = new ModuleInfoWindowForm(moduleHandler, this);
+				moduleInfoWindow.Show();
+			}
+			else
+				moduleInfoWindow.Activate();
 		}
 
 
@@ -2045,8 +2079,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Will create and open other windows
 		/// </summary>
 		/********************************************************************/
-		private void CreateWindows()//XX
+		private void CreateWindows()
 		{
+			if (mainWindowSettings.OpenModuleInformationWindow)
+			{
+				moduleInfoWindow = new ModuleInfoWindowForm(moduleHandler, this);
+				moduleInfoWindow.Show();
+			}
 		}
 
 
@@ -2086,10 +2125,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			// Close the about window
 			if ((aboutWindow != null) && !aboutWindow.IsDisposed)
-			{
 				aboutWindow.Close();
-				aboutWindow = null;
-			}
+
+			aboutWindow = null;
+
+			// Close the module information window
+			bool openAgain = (moduleInfoWindow != null) && !moduleInfoWindow.IsDisposed;
+			if (openAgain)
+				moduleInfoWindow.Close();
+
+			moduleInfoWindow = null;
+			mainWindowSettings.OpenModuleInformationWindow = openAgain;
 		}
 
 
@@ -2099,8 +2145,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Will make sure to refresh all the windows
 		/// </summary>
 		/********************************************************************/
-		private void RefreshWindows()//XX
+		private void RefreshWindows()
 		{
+			if ((moduleInfoWindow != null) && !moduleInfoWindow.IsDisposed)
+				moduleInfoWindow.RefreshWindow();
 		}
 
 

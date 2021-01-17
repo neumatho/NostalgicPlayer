@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 
@@ -273,7 +274,31 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 			if (string.IsNullOrEmpty(value))
 				return defaultValue;
 
-			return int.Parse(value);
+			if (int.TryParse(value, out int i))
+				return i;
+
+			return defaultValue;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will try to find the entry in the settings. If it couldn't be
+		/// found, the default value is returned
+		/// </summary>
+		/********************************************************************/
+		public bool GetBoolEntry(string section, string entry, bool defaultValue = false)
+		{
+			// Use the string read function
+			string value = GetStringEntry(section, entry);
+			if (string.IsNullOrEmpty(value))
+				return defaultValue;
+
+			if (bool.TryParse(value, out bool b))
+				return b;
+
+			return defaultValue;
 		}
 
 
@@ -335,6 +360,20 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		public void SetIntEntry(string section, string entry, int value)
+		{
+			// Use the string write function to write the number
+			SetStringEntry(section, entry, value.ToString(CultureInfo.InvariantCulture));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will store the entry in the settings. If it already exists, it
+		/// will be overwritten
+		/// </summary>
+		/********************************************************************/
+		public void SetBoolEntry(string section, string entry, bool value)
 		{
 			// Use the string write function to write the number
 			SetStringEntry(section, entry, value.ToString(CultureInfo.InvariantCulture));

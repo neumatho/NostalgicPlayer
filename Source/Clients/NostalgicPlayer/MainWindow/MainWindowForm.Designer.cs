@@ -124,7 +124,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// moduleInfoButton
 			// 
 			this.moduleInfoButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.moduleInfoButton.Enabled = false;
 			this.moduleInfoButton.Location = new System.Drawing.Point(356, 28);
 			this.moduleInfoButton.Name = "moduleInfoButton";
 			this.moduleInfoButton.Size = new System.Drawing.Size(24, 24);
@@ -454,8 +453,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// MainWindowForm
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(384, 281);
 			this.Controls.Add(this.muteCheckButton);
 			this.Controls.Add(this.loopSampleGroup);

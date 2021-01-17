@@ -6,26 +6,13 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System;
-
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 {
 	/// <summary>
-	/// This class holds all the main window settings
+	/// This class holds all the module information window settings
 	/// </summary>
-	public class MainWindowSettings
+	public class ModuleInfoSettings
 	{
-		/// <summary>
-		/// The different time formats
-		/// </summary>
-		public enum TimeFormat
-		{
-			/// <summary></summary>
-			Elapsed,
-			/// <summary></summary>
-			Remaining
-		}
-
 		private readonly Kit.Utility.Settings settings;
 
 		/********************************************************************/
@@ -33,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public MainWindowSettings(Kit.Utility.Settings windowSettings)
+		public ModuleInfoSettings(Kit.Utility.Settings windowSettings)
 		{
 			settings = windowSettings;
 		}
@@ -42,49 +29,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
-		/// Time format
+		/// Column 1 width
 		/// </summary>
 		/********************************************************************/
-		public TimeFormat Time
+		public int Column1Width
 		{
-			get
-			{
-				string tempStr = settings.GetStringEntry("General", "TimeFormat");
-				if (!Enum.TryParse(tempStr, out TimeFormat timeFormat))
-					timeFormat = TimeFormat.Elapsed;
+			get => settings.GetIntEntry("List", "Col1Width", 142);
 
-				return timeFormat;
-			}
-
-			set => settings.SetStringEntry("General", "TimeFormat", value.ToString());
+			set => settings.SetIntEntry("List", "Col1Width", value);
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Time format
+		/// Column 2 width
 		/// </summary>
 		/********************************************************************/
-		public int MasterVolume
+		public int Column2Width
 		{
-			get => settings.GetIntEntry("General", "MasterVolume", 256);
+			get => settings.GetIntEntry("List", "Col2Width", 141);
 
-			set => settings.SetIntEntry("General", "MasterVolume", value);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Open module information window
-		/// </summary>
-		/********************************************************************/
-		public bool OpenModuleInformationWindow
-		{
-			get => settings.GetBoolEntry("Window", "InfoOpenWindow");
-
-			set => settings.SetBoolEntry("Window", "InfoOpenWindow", value);
+			set => settings.SetIntEntry("List", "Col2Width", value);
 		}
 	}
 }
