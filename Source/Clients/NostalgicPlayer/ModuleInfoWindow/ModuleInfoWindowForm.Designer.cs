@@ -52,12 +52,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			this.moduleInfoDataGridView.RowHeadersVisible = false;
 			this.moduleInfoDataGridView.RowTemplate.Height = 25;
 			this.moduleInfoDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+			this.moduleInfoDataGridView.ShowCellErrors = false;
+			this.moduleInfoDataGridView.ShowEditingIcon = false;
+			this.moduleInfoDataGridView.ShowRowErrors = false;
 			this.moduleInfoDataGridView.Size = new System.Drawing.Size(282, 182);
 			this.moduleInfoDataGridView.StateCommon.Background.Color1 = System.Drawing.Color.White;
 			this.moduleInfoDataGridView.StateCommon.DataCell.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.moduleInfoDataGridView.StateCommon.DataCell.Content.Padding = new System.Windows.Forms.Padding(0);
 			this.moduleInfoDataGridView.StateCommon.HeaderColumn.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.moduleInfoDataGridView.TabIndex = 0;
+			this.moduleInfoDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ModuleInfoDataGridView_CellContentClick);
 			// 
 			// listGroup
 			// 

@@ -6,8 +6,8 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
@@ -112,6 +112,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			mainWindow = null;
 			moduleHandler = null;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user clicks in a cell in the data grid
+		/// </summary>
+		/********************************************************************/
+		private void ModuleInfoDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+		{
+			// Check if the file name has been clicked
+			if ((e.RowIndex == 7) && (e.ColumnIndex == 1))
+			{
+				// Start File Explorer and select the file
+				Process.Start("explorer.exe", $"/select,\"{moduleInfoDataGridView[e.ColumnIndex, e.RowIndex].Value}\"");
+			}
+		}
 		#endregion
 
 		#region Private methods
@@ -161,7 +178,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_TIME, val);
 
 				moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE, $"{staticInfo.ModuleSize:n0}");
-				moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, fileInfo.FileName);
+
+				int row = moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, fileInfo.FileName);
+				moduleInfoDataGridView.Rows[row].Cells[1] = new KryptonDataGridViewLinkCell { Value = moduleInfoDataGridView.Rows[row].Cells[1].Value, TrackVisitedState = false };
 
 				// Add player specific items
 				if (floatingInfo.ModuleInformation != null)
