@@ -10,6 +10,7 @@
     <Authors>Thomas Neumann</Authors>
     <Copyright>Copyright © 2021</Copyright>
     <ApplicationIcon>App.ico</ApplicationIcon>
+    <Version>1.0.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

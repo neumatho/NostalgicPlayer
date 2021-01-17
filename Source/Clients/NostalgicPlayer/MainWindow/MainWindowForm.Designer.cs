@@ -103,7 +103,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.infoLabel.Location = new System.Drawing.Point(3, 3);
 			this.infoLabel.Name = "infoLabel";
 			this.infoLabel.Size = new System.Drawing.Size(6, 2);
-			this.infoLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Rockwell", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.infoLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.infoLabel.TabIndex = 4;
 			this.infoLabel.Values.Text = "";
 			// 
@@ -156,8 +156,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.moduleListBox.ScrollAlwaysVisible = true;
 			this.moduleListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
 			this.moduleListBox.Size = new System.Drawing.Size(345, 116);
-			this.moduleListBox.StateCommon.Item.Content.LongText.Font = new System.Drawing.Font("Rockwell", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.moduleListBox.StateCommon.Item.Content.ShortText.Font = new System.Drawing.Font("Rockwell", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.moduleListBox.StateCommon.Item.Content.LongText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.moduleListBox.StateCommon.Item.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.moduleListBox.TabIndex = 10;
 			// 
 			// listButtonsGroup
@@ -271,10 +271,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// totalLabel
 			// 
 			this.totalLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.totalLabel.Location = new System.Drawing.Point(108, 8);
+			this.totalLabel.Location = new System.Drawing.Point(106, 8);
 			this.totalLabel.Name = "totalLabel";
-			this.totalLabel.Size = new System.Drawing.Size(27, 17);
-			this.totalLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Rockwell", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.totalLabel.Size = new System.Drawing.Size(29, 18);
+			this.totalLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.totalLabel.TabIndex = 5;
 			this.totalLabel.Values.Text = "0/0";
 			// 
@@ -282,8 +282,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			this.timeLabel.Location = new System.Drawing.Point(3, 8);
 			this.timeLabel.Name = "timeLabel";
-			this.timeLabel.Size = new System.Drawing.Size(59, 17);
-			this.timeLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Rockwell", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.timeLabel.Size = new System.Drawing.Size(64, 18);
+			this.timeLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.timeLabel.TabIndex = 4;
 			this.timeLabel.Values.Text = "0:00/0:00";
 			// 

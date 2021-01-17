@@ -118,6 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="IDB_ABOUT_LOGO" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\AboutLogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="IDB_ADD" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Add.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -198,6 +201,71 @@
   </data>
   <data name="IDB_ZA" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\ZA.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IDS_ABOUT_TEXT" xml:space="preserve">
+    <value>¤L
+¤V¤R¤CVersion
+
+¤B¤CA polycode production (www.nostalgicplayer.dk)
+
+Credits:
+
+Main programming: Thomas Neumann
+
+Documentation: Thomas Neumann
+(based on the one written by Jaakko Leikas)
+
+
+
+Special thanks to these people:
+(See documentation for what)
+
+¤CPhil Wright
+¤CPeter William Wagner
+¤CSimon Coghlan
+¤CThomas Bolon
+¤CDave Gandy
+¤CAdrien Destugues
+¤CAnd to all you users out there :-)
+
+
+
+Features in NostalgicPlayer:
+
+¤1¤CSupports ¤¤ module formats
+¤CMost accurate player
+¤CEdit and save your favorite lists of modules
+¤CShows the module length, no matter what type it is
+
+
+
+Formats supported:
+
+¤U¤F
+
+¤BOutput agents installed:
+
+¤U¤O
+
+¤B¤CThank you for using NostalgicPlayer!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</value>
+  </data>
+  <data name="IDS_ABOUT_TITLE" xml:space="preserve">
+    <value>About NostalgicPlayer</value>
   </data>
   <data name="IDS_BUT_OK" xml:space="preserve">
     <value>Ok</value>
@@ -301,6 +369,9 @@
   </data>
   <data name="IDS_NOTIME" xml:space="preserve">
     <value>Time: ??:??:??</value>
+  </data>
+  <data name="IDS_NO_AGENTS" xml:space="preserve">
+    <value>None installed</value>
   </data>
   <data name="IDS_POSITION" xml:space="preserve">
     <value>Position: {0:d3}/{1:d3} = {2,2}%</value>

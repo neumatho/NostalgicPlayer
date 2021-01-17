@@ -63,6 +63,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap IDB_ABOUT_LOGO {
+            get {
+                object obj = ResourceManager.GetObject("IDB_ABOUT_LOGO", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap IDB_ADD {
             get {
                 object obj = ResourceManager.GetObject("IDB_ADD", resourceCulture);
@@ -331,6 +341,55 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ¤L
+        ///¤V¤R¤CVersion
+        ///
+        ///¤B¤CA polycode production (www.nostalgicplayer.dk)
+        ///
+        ///Credits:
+        ///
+        ///Main programming: Thomas Neumann
+        ///
+        ///Documentation: Thomas Neumann
+        ///(based on the one written by Jaakko Leikas)
+        ///
+        ///
+        ///
+        ///Special thanks to these people:
+        ///(See documentation for what)
+        ///
+        ///¤CPhil Wright
+        ///¤CPeter William Wagner
+        ///¤CSimon Coghlan
+        ///¤CThomas Bolon
+        ///¤CDave Gandy
+        ///¤CAdrien Destugues
+        ///¤CAnd to all you users out there :-)
+        ///
+        ///
+        ///
+        ///Features in NostalgicPlayer:
+        ///
+        ///¤1¤CSupports ¤¤ module formats
+        ///¤CMost accurate player
+        ///¤CEd [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string IDS_ABOUT_TEXT {
+            get {
+                return ResourceManager.GetString("IDS_ABOUT_TEXT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to About NostalgicPlayer.
+        /// </summary>
+        internal static string IDS_ABOUT_TITLE {
+            get {
+                return ResourceManager.GetString("IDS_ABOUT_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ok.
         /// </summary>
         internal static string IDS_BUT_OK {
@@ -586,6 +645,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_MENU_WINDOW_SETTINGS {
             get {
                 return ResourceManager.GetString("IDS_MENU_WINDOW_SETTINGS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to None installed.
+        /// </summary>
+        internal static string IDS_NO_AGENTS {
+            get {
+                return ResourceManager.GetString("IDS_NO_AGENTS", resourceCulture);
             }
         }
         

@@ -15,6 +15,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using Krypton.Toolkit;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
@@ -86,6 +87,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private readonly Random rnd;
 		private readonly List<int> randomList;
 
+		// Other windows
+		private AboutWindowForm aboutWindow = null;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -101,6 +105,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			// Enable drag'n'drop
 			moduleListBox.ListBox.AllowDrop = true;
+
+			// Disable escape key closing
+			disableEscapeKey = true;
 
 			// Initialize member variables
 			playItem = null;
@@ -454,6 +461,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		#endregion
 
 		#region Menu events
+
+		#region Help menu
 		/********************************************************************/
 		/// <summary>
 		/// User selected the help menu item
@@ -475,6 +484,26 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_OPEN_HELP, ex.Message));
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// User selected the about menu item
+		/// </summary>
+		/********************************************************************/
+		private void Menu_Help_About_Click(object sender, EventArgs e)
+		{
+			if ((aboutWindow == null) || aboutWindow.IsDisposed)
+			{
+				aboutWindow = new AboutWindowForm(agentManager);
+				aboutWindow.Show();
+			}
+			else
+				aboutWindow.Activate();
+		}
+		#endregion
+
 		#endregion
 
 		#region Module information events
@@ -1802,7 +1831,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private void SetupControls()
 		{
 			// Set the window title
-			ShowNormalTitle();
+			SetNormalTitle();
 
 			// Create the menu
 			CreateMainMenu();
@@ -1880,7 +1909,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			helpMenuItem.DropDownItems.Add(new ToolStripSeparator());
 
 			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_HELP_ABOUT);
-			menuItem.Enabled = false;
+			menuItem.Click += Menu_Help_About_Click;
 			helpMenuItem.DropDownItems.Add(menuItem);
 
 			menuStrip.Items.Add(helpMenuItem);
@@ -2054,6 +2083,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Remember settings from main window
 			mainWindowSettings.Time = timeFormat;
 			mainWindowSettings.MasterVolume = masterVolumeTrackBar.Value;
+
+			// Close the about window
+			if ((aboutWindow != null) && !aboutWindow.IsDisposed)
+			{
+				aboutWindow.Close();
+				aboutWindow = null;
+			}
 		}
 
 
@@ -2074,7 +2110,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Will set the window title to normal
 		/// </summary>
 		/********************************************************************/
-		private void ShowNormalTitle()
+		private void SetNormalTitle()
 		{
 			Text = Resources.IDS_MAIN_TITLE;
 		}
@@ -2585,7 +2621,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			InitControls();
 
 			// Set the window title back to normal
-			ShowNormalTitle();
+			SetNormalTitle();
 
 			// Update the other windows
 			RefreshWindows();

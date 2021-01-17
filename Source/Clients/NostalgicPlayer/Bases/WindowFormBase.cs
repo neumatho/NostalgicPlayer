@@ -24,6 +24,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 		/// </summary>
 		protected Settings allWindowSettings;
 
+		/// <summary>
+		/// Set this to true, if you don't want the escape
+		/// key to close the window
+		/// </summary>
+		protected bool disableEscapeKey = false;
+
 		private WindowSettings windowSettings;
 
 		/********************************************************************/
@@ -46,16 +52,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 				Location = windowSettings.Location;
 			}
 
-			Size windowSize = windowSettings.Size;
+			if (FormBorderStyle == FormBorderStyle.Sizable)
+			{
+				Size windowSize = windowSettings.Size;
 
-			if (windowSize.Width < MinimumSize.Width)
-				windowSize.Width = MinimumSize.Width;
+				if (windowSize.Width < MinimumSize.Width)
+					windowSize.Width = MinimumSize.Width;
 
-			if (windowSize.Height < MinimumSize.Height)
-				windowSize.Height = MinimumSize.Height;
+				if (windowSize.Height < MinimumSize.Height)
+					windowSize.Height = MinimumSize.Height;
 
-			if ((windowSize.Width != 0) && (windowSize.Height != 0))
-				Size = new Size(windowSize.Width, windowSize.Height);
+				if ((windowSize.Width != 0) && (windowSize.Height != 0))
+					Size = new Size(windowSize.Width, windowSize.Height);
+			}
 		}
 
 
@@ -86,6 +95,34 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 
 				windowSettings = null;
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when a key is pressed in the main window
+		/// </summary>
+		/********************************************************************/
+		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+		{
+			if (!disableEscapeKey)
+			{
+				// Check for different keyboard shortcuts
+				Keys modifiers = keyData & Keys.Modifiers;
+				Keys key = keyData & Keys.KeyCode;
+
+				if (modifiers == Keys.None)
+				{
+					if (key == Keys.Escape)
+					{
+						Close();
+						return true;
+					}
+				}
+			}
+
+			return base.ProcessCmdKey(ref msg, keyData);
 		}
 
 
