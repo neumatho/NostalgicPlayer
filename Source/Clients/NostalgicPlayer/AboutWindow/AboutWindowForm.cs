@@ -6,8 +6,8 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -55,8 +55,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 		private int logoLine;
 		private Color color;
 
-		private IAgent[] players;
-		private IAgent[] outputAgents;
+		private string[] supportedFormats;
+		private string[] outputAgents;
 
 		private string[] agentsToShow;
 		private int agentIndex;
@@ -118,8 +118,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 				waitCount = 20;
 
 				// Find all the different types of agents
-				players = agentManager.GetAllAgents(Manager.AgentType.Players);
-				outputAgents = agentManager.GetAllAgents(Manager.AgentType.Output);
+				FindAgents(agentManager);
 
 				// Start the timer
 				pulseTimer.Start();
@@ -158,6 +157,53 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 
 			// Force the control to redraw itself
 			pictureBox.Invalidate();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Find all the different agents installed and build the needed lists
+		/// </summary>
+		/********************************************************************/
+		private void FindAgents(Manager agentManager)
+		{
+			List<string> names = new List<string>();
+
+			// Find all supported formats from the players
+			foreach (IAgent agent in agentManager.GetAllAgents(Manager.AgentType.Players))
+			{
+				try
+				{
+					string name = agent.Name;
+
+					IPlayerAgent playerAgent = agent.CreateInstance() as IPlayerAgent;
+					if (playerAgent != null)
+						names.AddRange(playerAgent.FormatsSupported.Select(f => $"{f} ({name})"));
+				}
+				catch (Exception)
+				{
+					// Ignore exception
+				}
+			}
+
+			supportedFormats = names.OrderBy(n => n).ToArray();
+			names.Clear();
+
+			// Find output agents
+			foreach (IAgent agent in agentManager.GetAllAgents(Manager.AgentType.Output))
+			{
+				try
+				{
+					names.Add(agent.Name);
+				}
+				catch (Exception)
+				{
+					// Ignore exception
+				}
+			}
+
+			outputAgents = names.OrderBy(n => n).ToArray();
 		}
 
 
@@ -369,7 +415,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 												// Add number of supported module formats
 												case '1':
 												{
-													str = str.Substring(2).Replace("¤¤", players.Length.ToString());
+													str = str.Substring(2).Replace("¤¤", supportedFormats.Length.ToString());
 													break;
 												}
 
@@ -386,15 +432,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 												{
 													str = str.Substring(2);
 
-													try
-													{
-														agentsToShow = players.Select(a => a.Name).OrderBy(n => n).ToArray();
-													}
-													catch (Exception)
-													{
-														agentsToShow = new string[0];
-													}
-
+													agentsToShow = supportedFormats;
 													agentIndex = 0;
 
 													showMode = Mode.Agents;
@@ -407,15 +445,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 												{
 													str = str.Substring(2);
 
-													try
-													{
-														agentsToShow = outputAgents.Select(a => a.Name).OrderBy(n => n).ToArray();
-													}
-													catch (Exception)
-													{
-														agentsToShow = new string[0];
-													}
-
+													agentsToShow = outputAgents;
 													agentIndex = 0;
 
 													showMode = Mode.Agents;

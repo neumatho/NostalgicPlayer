@@ -130,6 +130,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		#region IPlayerAgent implementation
 		/********************************************************************/
 		/// <summary>
+		/// Returns all the formats this player can play directly
+		/// </summary>
+		/********************************************************************/
+		public override string[] FormatsSupported
+		{
+			get
+			{
+				return new [] { Resources.IDS_NAME };
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/

@@ -17,6 +17,11 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	public interface IPlayerAgent : IAgentWorker
 	{
 		/// <summary>
+		/// Returns all the formats this player can play directly
+		/// </summary>
+		string[] FormatsSupported { get; }
+
+		/// <summary>
 		/// Returns the file extensions that identify this player
 		///
 		/// Has to be in lowercase

@@ -19,6 +19,18 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 	{
 		/********************************************************************/
 		/// <summary>
+		/// Returns all the formats this player can play directly
+		/// </summary>
+		/********************************************************************/
+		public abstract string[] FormatsSupported
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
