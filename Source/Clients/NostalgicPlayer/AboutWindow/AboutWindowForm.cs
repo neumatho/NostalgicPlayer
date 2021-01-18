@@ -179,7 +179,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 
 					IPlayerAgent playerAgent = agent.CreateInstance() as IPlayerAgent;
 					if (playerAgent != null)
-						names.AddRange(playerAgent.FormatsSupported.Select(f => $"{f} ({name})"));
+						names.AddRange(playerAgent.FormatsSupported.Select(f => f == name ? f : $"{f} ({name})"));
 				}
 				catch (Exception)
 				{
