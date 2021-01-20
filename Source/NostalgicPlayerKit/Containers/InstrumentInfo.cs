@@ -8,97 +8,83 @@
 /******************************************************************************/
 using System;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
+namespace Polycode.NostalgicPlayer.Kit.Containers
 {
 	/// <summary>
-	/// This class holds all the main window settings
+	/// This class holds information about a single instrument in a module
 	/// </summary>
-	public class MainWindowSettings
+	public class InstrumentInfo
 	{
 		/// <summary>
-		/// The different time formats
+		/// The different flags that can be set for the instrument
 		/// </summary>
-		public enum TimeFormat
+		[Flags]
+		public enum InstrumentFlags
 		{
-			/// <summary></summary>
-			Elapsed,
-			/// <summary></summary>
-			Remaining
+			/// <summary>
+			/// Nothing
+			/// </summary>
+			None = 0x00
 		}
 
-		private readonly Kit.Utility.Settings settings;
+		/// <summary>
+		/// Number of octaves supported
+		/// </summary>
+		public const int Octaves = 10;
+
+		/// <summary>
+		/// Number of notes per octave
+		/// </summary>
+		public const int NotesPerOctave = 12;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public MainWindowSettings(Kit.Utility.Settings windowSettings)
+		public InstrumentInfo()
 		{
-			settings = windowSettings;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Time format
-		/// </summary>
-		/********************************************************************/
-		public TimeFormat Time
-		{
-			get
+			for (int o = 0; o < Octaves; o++)
 			{
-				string tempStr = settings.GetStringEntry("General", "TimeFormat");
-				if (!Enum.TryParse(tempStr, out TimeFormat timeFormat))
-					timeFormat = TimeFormat.Elapsed;
-
-				return timeFormat;
+				for (int n = 0; n < NotesPerOctave; n++)
+					Notes[o, n] = -1;
 			}
-
-			set => settings.SetStringEntry("General", "TimeFormat", value.ToString());
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Time format
+		/// Holds the name of the instrument
 		/// </summary>
 		/********************************************************************/
-		public int MasterVolume
+		public string Name
 		{
-			get => settings.GetIntEntry("General", "MasterVolume", 256);
-
-			set => settings.SetIntEntry("General", "MasterVolume", value);
+			get; set;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Open module information window
+		/// Holds the different flags
 		/// </summary>
 		/********************************************************************/
-		public bool OpenModuleInformationWindow
+		public InstrumentFlags Flags
 		{
-			get => settings.GetBoolEntry("Window", "InfoOpenWindow");
-
-			set => settings.SetBoolEntry("Window", "InfoOpenWindow", value);
+			get; set;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Open sample information window
+		/// Holds the sample numbers for each note (-1 means not used)
 		/// </summary>
 		/********************************************************************/
-		public bool OpenSampleInformationWindow
+		public int[,] Notes
 		{
-			get => settings.GetBoolEntry("Window", "SampleOpenWindow");
-
-			set => settings.SetBoolEntry("Window", "SampleOpenWindow", value);
-		}
+			get;
+		} = new int[Octaves, NotesPerOctave];
 	}
 }

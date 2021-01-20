@@ -24,6 +24,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
@@ -91,6 +92,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		// Other windows
 		private AboutWindowForm aboutWindow = null;
 		private ModuleInfoWindowForm moduleInfoWindow = null;
+		private SampleInfoWindowForm sampleInfoWindow = null;
 
 		/********************************************************************/
 		/// <summary>
@@ -321,6 +323,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			previousModuleButton.Click += PreviousModuleButton_Click;
 			nextModuleButton.Click += NextModuleButton_Click;
+
+			// Loop/sample group
+			sampleInfoButton.Click += SampleInfoButton_Click;
 
 			// Module handler
 			moduleHandler.PositionChanged += ModuleHandler_PositionChanged;
@@ -1799,6 +1804,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		}
 		#endregion
 
+		#region Loop / sample events
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user clicks on the sample information button
+		/// </summary>
+		/********************************************************************/
+		private void SampleInfoButton_Click(object sender, EventArgs e)
+		{
+			if ((sampleInfoWindow == null) || sampleInfoWindow.IsDisposed)
+			{
+				sampleInfoWindow = new SampleInfoWindowForm(moduleHandler);
+				sampleInfoWindow.Show();
+			}
+			else
+				sampleInfoWindow.Activate();
+		}
+		#endregion
+
 		#endregion
 
 		#region Private methods
@@ -2069,7 +2092,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			toolTip.SetToolTip(pauseCheckButton, Resources.IDS_TIP_MAIN_PAUSE);
 
 			toolTip.SetToolTip(loopCheckButton, Resources.IDS_TIP_MAIN_MODULELOOP);
-			toolTip.SetToolTip(showSamplesButton, Resources.IDS_TIP_MAIN_SAMP);
+			toolTip.SetToolTip(sampleInfoButton, Resources.IDS_TIP_MAIN_SAMP);
 		}
 
 
@@ -2085,6 +2108,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			{
 				moduleInfoWindow = new ModuleInfoWindowForm(moduleHandler, this);
 				moduleInfoWindow.Show();
+			}
+
+			if (mainWindowSettings.OpenSampleInformationWindow)
+			{
+				sampleInfoWindow = new SampleInfoWindowForm(moduleHandler);
+				sampleInfoWindow.Show();
 			}
 		}
 
@@ -2136,6 +2165,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			moduleInfoWindow = null;
 			mainWindowSettings.OpenModuleInformationWindow = openAgain;
+
+			// Close the sample information window
+			openAgain = (sampleInfoWindow != null) && !sampleInfoWindow.IsDisposed;
+			if (openAgain)
+				sampleInfoWindow.Close();
+
+			sampleInfoWindow = null;
+			mainWindowSettings.OpenSampleInformationWindow = openAgain;
 		}
 
 
@@ -2149,6 +2186,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			if ((moduleInfoWindow != null) && !moduleInfoWindow.IsDisposed)
 				moduleInfoWindow.RefreshWindow();
+
+			if ((sampleInfoWindow != null) && !sampleInfoWindow.IsDisposed)
+				sampleInfoWindow.RefreshWindow();
 		}
 
 

@@ -7,8 +7,10 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Exceptions;
@@ -582,6 +584,71 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 			}
 
 			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns all the samples available in the module. If none, null
+		/// is returned
+		/// </summary>
+		/********************************************************************/
+		public override SampleInfo[] Samples
+		{
+			get
+			{
+				List<SampleInfo> result = new List<SampleInfo>();
+
+				foreach (InstInfo instInfo in instTable)
+				{
+					SampleInfo sampleInfo = new SampleInfo
+					{
+						Name = EncoderCollection.Amiga.GetString(instInfo.Name),
+						BitSize = 8,
+						MiddleC = 8287,
+						Volume = 256,
+						Panning = -1
+					};
+
+					if ((instInfo.Flags & 2) != 0)
+					{
+						// AM sample
+						sampleInfo.Type = SampleInfo.SampleType.Synth;
+						sampleInfo.Flags = SampleInfo.SampleFlags.None;
+						sampleInfo.Sample = null;
+						sampleInfo.Length = 0;
+						sampleInfo.LoopStart = 0;
+						sampleInfo.LoopLength = 0;
+					}
+					else
+					{
+						// Normal sample
+						sampleInfo.Type = SampleInfo.SampleType.Sample;
+						sampleInfo.Sample = instInfo.Address;
+						sampleInfo.Length = (int)instInfo.Size;
+
+						if ((instInfo.Flags & 1) != 0)
+						{
+							// Sample loops
+							sampleInfo.Flags = SampleInfo.SampleFlags.Loop;
+							sampleInfo.LoopStart = 0;
+							sampleInfo.LoopLength = (int)instInfo.Size;
+						}
+						else
+						{
+							// No loop
+							sampleInfo.Flags = SampleInfo.SampleFlags.None;
+							sampleInfo.LoopStart = 0;
+							sampleInfo.LoopLength = 0;
+						}
+					}
+
+					result.Add(sampleInfo);
+				}
+
+				return result.ToArray();
+			}
 		}
 		#endregion
 

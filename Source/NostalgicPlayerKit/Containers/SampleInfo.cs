@@ -6,186 +6,186 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Containers;
+using System;
 
-namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
+namespace Polycode.NostalgicPlayer.Kit.Containers
 {
 	/// <summary>
-	/// This class holds all static information about the player
+	/// This class holds information about a single sample in a module
 	/// </summary>
-	public class ModuleInfoStatic
+	public class SampleInfo
 	{
-		private readonly ModulePlayerSupportFlag supportFlag;
+		/// <summary>
+		/// The different flags that can be set for the sample
+		/// </summary>
+		[Flags]
+		public enum SampleFlags
+		{
+			/// <summary>
+			/// Nothing
+			/// </summary>
+			None = 0x00,
+
+			/// <summary>
+			/// The sample is looping
+			/// </summary>
+			Loop = 0x01,
+
+			/// <summary>
+			/// The sample has ping-pong loop (set this together with Loop)
+			/// </summary>
+			PingPong = 0x02
+		}
+
+		/// <summary>
+		/// The different types a sample can be
+		/// </summary>
+		public enum SampleType
+		{
+			/// <summary>
+			/// A normal sample
+			/// </summary>
+			Sample,
+
+			/// <summary>
+			/// Synth generated sample
+			/// </summary>
+			Synth,
+
+			/// <summary>
+			/// ???
+			/// </summary>
+			Hybrid//XX
+		}
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructor
+		/// Holds the name of the sample
 		/// </summary>
 		/********************************************************************/
-		public ModuleInfoStatic()
+		public string Name
 		{
-			ModuleName = string.Empty;
-			Author = string.Empty;
-			ModuleFormat = string.Empty;
-			PlayerName = string.Empty;
-			Channels = 0;
-			ModuleSize = 0;
+			get; set;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructor
+		/// Holds the different flags
 		/// </summary>
 		/********************************************************************/
-		private ModuleInfoStatic(string moduleName, string author, string moduleFormat, string playerName, int channels, long moduleSize)
+		public SampleFlags Flags
 		{
-			ModuleName = moduleName;
-			Author = author;
-			ModuleFormat = moduleFormat;
-			PlayerName = playerName;
-			Channels = channels;
-			ModuleSize = moduleSize;
+			get; set;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructor
+		/// Holds the type of the sample
 		/// </summary>
 		/********************************************************************/
-		internal ModuleInfoStatic(string moduleName, string author, string moduleFormat, string playerName, int channels, long moduleSize, ModulePlayerSupportFlag supportFlag, int maxSongNumber, InstrumentInfo[] instruments, SampleInfo[] samples) : this(moduleName, author, moduleFormat, playerName, channels, moduleSize)
+		public SampleType Type
 		{
-			this.supportFlag = supportFlag;
-			MaxSongNumber = maxSongNumber;
-			Instruments = instruments;
-			Samples = samples;
-		}
-
-		#region Common properties
-		/********************************************************************/
-		/// <summary>
-		/// Returns the name of the module
-		/// </summary>
-		/********************************************************************/
-		public string ModuleName
-		{
-			get;
+			get; set;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns the name of the author
+		/// Holds the number of bits per sample used (only 8 and 16 supported)
 		/// </summary>
 		/********************************************************************/
-		public string Author
+		public int BitSize
 		{
-			get;
+			get; set;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the format of the module
+		/// Holds the frequency of the middle C (C-4)
 		/// </summary>
 		/********************************************************************/
-
-		public string ModuleFormat
+		public int MiddleC
 		{
-			get;
+			get; set;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the name of the player
+		/// Holds the volume of the sample (0-256)
 		/// </summary>
 		/********************************************************************/
-		public string PlayerName
+		public int Volume
 		{
-			get;
+			get; set;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the number of channels the module use
+		/// Holds the panning value (0-255). -1 means no panning
 		/// </summary>
 		/********************************************************************/
-		public int Channels
+		public int Panning
 		{
-			get;
+			get; set;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the size of the module
+		/// Holds the sample itself
 		/// </summary>
 		/********************************************************************/
-		public long ModuleSize
+		public sbyte[] Sample
 		{
-			get;
-		}
-		#endregion
-
-		#region Module specific properties
-		/********************************************************************/
-		/// <summary>
-		/// Return the maximum number of songs in the current module
-		/// </summary>
-		/********************************************************************/
-		public int MaxSongNumber
-		{
-			get;
+			get; set;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Tells whether it is possible to change the position
+		/// Holds the length of the sample in samples
 		/// </summary>
 		/********************************************************************/
-		public bool CanChangePosition
+		public int Length
 		{
-			get
-			{
-				return (supportFlag & ModulePlayerSupportFlag.SetPosition) != 0;
-			}
+			get; set;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return all the instruments in the module
+		/// Holds the start offset to the loop point in samples
 		/// </summary>
 		/********************************************************************/
-		public InstrumentInfo[] Instruments
+		public int LoopStart
 		{
-			get;
+			get; set;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return all the samples in the module
+		/// Holds the loop length in samples
 		/// </summary>
 		/********************************************************************/
-		public SampleInfo[] Samples
+		public int LoopLength
 		{
-			get;
+			get; set;
 		}
-		#endregion
 	}
 }

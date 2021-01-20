@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						currentPlayer.EndReached += Player_EndReached;
 
 						// Initialize module information
-						StaticModuleInformation = new ModuleInfoStatic(currentPlayer.ModuleName.Trim(), FindAuthor(), loader.ModuleFormat, loader.PlayerName, currentPlayer.ModuleChannelCount, loader.ModuleSize + currentPlayer.ExtraFilesSizes, currentPlayer.SupportFlags, currentPlayer.SubSongs.Number);
+						StaticModuleInformation = new ModuleInfoStatic(currentPlayer.ModuleName.Trim(), FindAuthor(), loader.ModuleFormat, loader.PlayerName, currentPlayer.ModuleChannelCount, loader.ModuleSize + currentPlayer.ExtraFilesSizes, currentPlayer.SupportFlags, currentPlayer.SubSongs.Number, currentPlayer.Instruments, currentPlayer.Samples);
 
 						// Fill out the sample list
 						GetSamples();

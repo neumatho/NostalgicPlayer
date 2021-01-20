@@ -210,6 +210,38 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Returns all the instruments available in the module. If none,
+		/// null is returned
+		/// </summary>
+		/********************************************************************/
+		public virtual InstrumentInfo[] Instruments
+		{
+			get
+			{
+				return null;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns all the samples available in the module. If none, null
+		/// is returned
+		/// </summary>
+		/********************************************************************/
+		public virtual SampleInfo[] Samples
+		{
+			get
+			{
+				return null;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the total size of all the extra files loaded
 		/// </summary>
 		/********************************************************************/

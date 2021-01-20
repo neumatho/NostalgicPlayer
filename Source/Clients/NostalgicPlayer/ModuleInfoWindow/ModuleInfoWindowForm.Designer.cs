@@ -75,7 +75,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			// 
 			this.listGroup.Panel.Controls.Add(this.moduleInfoDataGridView);
 			this.listGroup.Size = new System.Drawing.Size(284, 184);
-			this.listGroup.TabIndex = 1;
+			this.listGroup.TabIndex = 0;
 			// 
 			// ModuleInfoWindowForm
 			// 

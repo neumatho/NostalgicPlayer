@@ -8,7 +8,6 @@
 /******************************************************************************/
 using System;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 using Krypton.Toolkit;
@@ -45,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			moduleInfoDataGridView.StateCommon.HeaderColumn.Border.DrawBorders = PaletteDrawBorders.BottomRight;
 			moduleInfoDataGridView.StateCommon.DataCell.Border.DrawBorders = PaletteDrawBorders.None;
 
-			// Remember the handler
+			// Remember the arguments
 			this.moduleHandler = moduleHandler;
 			this.mainWindow = mainWindow;
 

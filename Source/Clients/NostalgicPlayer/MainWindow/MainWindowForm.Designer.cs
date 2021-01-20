@@ -51,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.totalLabel = new Krypton.Toolkit.KryptonLabel();
 			this.timeLabel = new Krypton.Toolkit.KryptonLabel();
 			this.positionTrackBar = new Krypton.Toolkit.KryptonTrackBar();
-			this.controlGroup = new Krypton.Toolkit.KryptonGroup();
+			this.tapedeckGroup = new Krypton.Toolkit.KryptonGroup();
 			this.pauseCheckButton = new Krypton.Toolkit.KryptonCheckButton();
 			this.ejectButton = new Krypton.Toolkit.KryptonButton();
 			this.nextModuleButton = new Krypton.Toolkit.KryptonButton();
@@ -63,7 +63,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.previousModuleButton = new Krypton.Toolkit.KryptonButton();
 			this.loopSampleGroup = new Krypton.Toolkit.KryptonGroup();
 			this.loopCheckButton = new Krypton.Toolkit.KryptonCheckButton();
-			this.showSamplesButton = new Krypton.Toolkit.KryptonButton();
+			this.sampleInfoButton = new Krypton.Toolkit.KryptonButton();
 			this.muteCheckButton = new Krypton.Toolkit.KryptonCheckButton();
 			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.clockTimer = new System.Windows.Forms.Timer(this.components);
@@ -81,9 +81,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			((System.ComponentModel.ISupportInitialize)(this.listInfoGroup)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.listInfoGroup.Panel)).BeginInit();
 			this.listInfoGroup.Panel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.controlGroup)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.controlGroup.Panel)).BeginInit();
-			this.controlGroup.Panel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.tapedeckGroup)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.tapedeckGroup.Panel)).BeginInit();
+			this.tapedeckGroup.Panel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.loopSampleGroup)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.loopSampleGroup.Panel)).BeginInit();
 			this.loopSampleGroup.Panel.SuspendLayout();
@@ -104,7 +104,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.infoLabel.Name = "infoLabel";
 			this.infoLabel.Size = new System.Drawing.Size(6, 2);
 			this.infoLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.infoLabel.TabIndex = 4;
+			this.infoLabel.TabIndex = 0;
 			this.infoLabel.Values.Text = "";
 			// 
 			// infoGroup
@@ -119,7 +119,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.infoGroup.Panel.Controls.Add(this.infoLabel);
 			this.infoGroup.Size = new System.Drawing.Size(348, 24);
 			this.infoGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
-			this.infoGroup.TabIndex = 6;
+			this.infoGroup.TabIndex = 1;
 			// 
 			// moduleInfoButton
 			// 
@@ -127,7 +127,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.moduleInfoButton.Location = new System.Drawing.Point(356, 28);
 			this.moduleInfoButton.Name = "moduleInfoButton";
 			this.moduleInfoButton.Size = new System.Drawing.Size(24, 24);
-			this.moduleInfoButton.TabIndex = 7;
+			this.moduleInfoButton.TabIndex = 2;
 			this.moduleInfoButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("moduleInfoButton.Values.Image")));
 			this.moduleInfoButton.Values.Text = "";
 			// 
@@ -141,7 +141,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.masterVolumeTrackBar.Name = "masterVolumeTrackBar";
 			this.masterVolumeTrackBar.Orientation = System.Windows.Forms.Orientation.Vertical;
 			this.masterVolumeTrackBar.Size = new System.Drawing.Size(27, 88);
-			this.masterVolumeTrackBar.TabIndex = 9;
+			this.masterVolumeTrackBar.TabIndex = 4;
 			this.masterVolumeTrackBar.TickFrequency = 8;
 			this.masterVolumeTrackBar.VolumeControl = true;
 			// 
@@ -157,7 +157,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.moduleListBox.Size = new System.Drawing.Size(345, 116);
 			this.moduleListBox.StateCommon.Item.Content.LongText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.moduleListBox.StateCommon.Item.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.moduleListBox.TabIndex = 10;
+			this.moduleListBox.TabIndex = 5;
 			// 
 			// listButtonsGroup
 			// 
@@ -177,7 +177,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.listButtonsGroup.Panel.Controls.Add(this.addModuleButton);
 			this.listButtonsGroup.Size = new System.Drawing.Size(230, 34);
 			this.listButtonsGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
-			this.listButtonsGroup.TabIndex = 11;
+			this.listButtonsGroup.TabIndex = 6;
 			// 
 			// diskButton
 			// 
@@ -265,7 +265,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.listInfoGroup.Panel.Controls.Add(this.timeLabel);
 			this.listInfoGroup.Size = new System.Drawing.Size(142, 34);
 			this.listInfoGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
-			this.listInfoGroup.TabIndex = 12;
+			this.listInfoGroup.TabIndex = 7;
 			// 
 			// totalLabel
 			// 
@@ -274,7 +274,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.totalLabel.Name = "totalLabel";
 			this.totalLabel.Size = new System.Drawing.Size(29, 18);
 			this.totalLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.totalLabel.TabIndex = 5;
+			this.totalLabel.TabIndex = 1;
 			this.totalLabel.Values.Text = "0/0";
 			// 
 			// timeLabel
@@ -283,7 +283,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.timeLabel.Name = "timeLabel";
 			this.timeLabel.Size = new System.Drawing.Size(64, 18);
 			this.timeLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.timeLabel.TabIndex = 4;
+			this.timeLabel.TabIndex = 0;
 			this.timeLabel.Values.Text = "0:00/0:00";
 			// 
 			// positionTrackBar
@@ -295,29 +295,29 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.positionTrackBar.Maximum = 100;
 			this.positionTrackBar.Name = "positionTrackBar";
 			this.positionTrackBar.Size = new System.Drawing.Size(376, 21);
-			this.positionTrackBar.TabIndex = 13;
+			this.positionTrackBar.TabIndex = 8;
 			this.positionTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
 			// 
-			// controlGroup
+			// tapedeckGroup
 			// 
-			this.controlGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.controlGroup.Location = new System.Drawing.Point(4, 243);
-			this.controlGroup.Name = "controlGroup";
+			this.tapedeckGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.tapedeckGroup.Location = new System.Drawing.Point(4, 243);
+			this.tapedeckGroup.Name = "tapedeckGroup";
 			// 
 			// 
 			// 
-			this.controlGroup.Panel.Controls.Add(this.pauseCheckButton);
-			this.controlGroup.Panel.Controls.Add(this.ejectButton);
-			this.controlGroup.Panel.Controls.Add(this.nextModuleButton);
-			this.controlGroup.Panel.Controls.Add(this.nextSongButton);
-			this.controlGroup.Panel.Controls.Add(this.fastForwardButton);
-			this.controlGroup.Panel.Controls.Add(this.playButton);
-			this.controlGroup.Panel.Controls.Add(this.rewindButton);
-			this.controlGroup.Panel.Controls.Add(this.previousSongButton);
-			this.controlGroup.Panel.Controls.Add(this.previousModuleButton);
-			this.controlGroup.Size = new System.Drawing.Size(258, 34);
-			this.controlGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
-			this.controlGroup.TabIndex = 14;
+			this.tapedeckGroup.Panel.Controls.Add(this.pauseCheckButton);
+			this.tapedeckGroup.Panel.Controls.Add(this.ejectButton);
+			this.tapedeckGroup.Panel.Controls.Add(this.nextModuleButton);
+			this.tapedeckGroup.Panel.Controls.Add(this.nextSongButton);
+			this.tapedeckGroup.Panel.Controls.Add(this.fastForwardButton);
+			this.tapedeckGroup.Panel.Controls.Add(this.playButton);
+			this.tapedeckGroup.Panel.Controls.Add(this.rewindButton);
+			this.tapedeckGroup.Panel.Controls.Add(this.previousSongButton);
+			this.tapedeckGroup.Panel.Controls.Add(this.previousModuleButton);
+			this.tapedeckGroup.Size = new System.Drawing.Size(258, 34);
+			this.tapedeckGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
+			this.tapedeckGroup.TabIndex = 9;
 			// 
 			// pauseCheckButton
 			// 
@@ -409,29 +409,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// 
 			this.loopSampleGroup.Panel.Controls.Add(this.loopCheckButton);
-			this.loopSampleGroup.Panel.Controls.Add(this.showSamplesButton);
+			this.loopSampleGroup.Panel.Controls.Add(this.sampleInfoButton);
 			this.loopSampleGroup.Size = new System.Drawing.Size(62, 34);
 			this.loopSampleGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
-			this.loopSampleGroup.TabIndex = 15;
+			this.loopSampleGroup.TabIndex = 10;
 			// 
 			// loopCheckButton
 			// 
 			this.loopCheckButton.Location = new System.Drawing.Point(4, 4);
 			this.loopCheckButton.Name = "loopCheckButton";
 			this.loopCheckButton.Size = new System.Drawing.Size(24, 24);
-			this.loopCheckButton.TabIndex = 8;
+			this.loopCheckButton.TabIndex = 0;
 			this.loopCheckButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("loopCheckButton.Values.Image")));
 			this.loopCheckButton.Values.Text = "";
 			// 
-			// showSamplesButton
+			// sampleInfoButton
 			// 
-			this.showSamplesButton.Enabled = false;
-			this.showSamplesButton.Location = new System.Drawing.Point(32, 4);
-			this.showSamplesButton.Name = "showSamplesButton";
-			this.showSamplesButton.Size = new System.Drawing.Size(24, 24);
-			this.showSamplesButton.TabIndex = 1;
-			this.showSamplesButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("showSamplesButton.Values.Image")));
-			this.showSamplesButton.Values.Text = "";
+			this.sampleInfoButton.Location = new System.Drawing.Point(32, 4);
+			this.sampleInfoButton.Name = "sampleInfoButton";
+			this.sampleInfoButton.Size = new System.Drawing.Size(24, 24);
+			this.sampleInfoButton.TabIndex = 1;
+			this.sampleInfoButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("sampleInfoButton.Values.Image")));
+			this.sampleInfoButton.Values.Text = "";
 			// 
 			// muteCheckButton
 			// 
@@ -439,7 +438,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.muteCheckButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.muteCheckButton.Name = "muteCheckButton";
 			this.muteCheckButton.Size = new System.Drawing.Size(27, 24);
-			this.muteCheckButton.TabIndex = 16;
+			this.muteCheckButton.TabIndex = 3;
 			this.muteCheckButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("muteCheckButton.Values.Image")));
 			this.muteCheckButton.Values.Text = "";
 			// 
@@ -457,7 +456,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.ClientSize = new System.Drawing.Size(384, 281);
 			this.Controls.Add(this.muteCheckButton);
 			this.Controls.Add(this.loopSampleGroup);
-			this.Controls.Add(this.controlGroup);
+			this.Controls.Add(this.tapedeckGroup);
 			this.Controls.Add(this.positionTrackBar);
 			this.Controls.Add(this.listInfoGroup);
 			this.Controls.Add(this.listButtonsGroup);
@@ -483,9 +482,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.listInfoGroup.Panel.ResumeLayout(false);
 			this.listInfoGroup.Panel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.listInfoGroup)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.controlGroup.Panel)).EndInit();
-			this.controlGroup.Panel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.controlGroup)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.tapedeckGroup.Panel)).EndInit();
+			this.tapedeckGroup.Panel.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.tapedeckGroup)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.loopSampleGroup.Panel)).EndInit();
 			this.loopSampleGroup.Panel.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.loopSampleGroup)).EndInit();
@@ -515,7 +514,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private KryptonLabel totalLabel;
 		private KryptonLabel timeLabel;
 		private KryptonTrackBar positionTrackBar;
-		private KryptonGroup controlGroup;
+		private KryptonGroup tapedeckGroup;
 		private KryptonButton ejectButton;
 		private KryptonButton nextModuleButton;
 		private KryptonButton nextSongButton;
@@ -527,7 +526,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private KryptonCheckButton pauseCheckButton;
 		private KryptonGroup loopSampleGroup;
 		private KryptonCheckButton loopCheckButton;
-		private KryptonButton showSamplesButton;
+		private KryptonButton sampleInfoButton;
 		private KryptonCheckButton muteCheckButton;
 		private System.Windows.Forms.ToolTip toolTip;
 		private System.Windows.Forms.Timer clockTimer;

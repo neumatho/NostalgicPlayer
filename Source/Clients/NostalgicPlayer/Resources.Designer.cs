@@ -283,6 +283,26 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap IDB_SAMPLE_LOOP {
+            get {
+                object obj = ResourceManager.GetObject("IDB_SAMPLE_LOOP", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IDB_SAMPLE_PINGPONG {
+            get {
+                object obj = ResourceManager.GetObject("IDB_SAMPLE_PINGPONG", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap IDB_SAMPLES {
             get {
                 object obj = ResourceManager.GetObject("IDB_SAMPLES", resourceCulture);
@@ -712,7 +732,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Module name/file name:.
+        ///   Looks up a localized string similar to Module name / file name:.
         /// </summary>
         internal static string IDS_MODULE_INFO_ITEM_MODULENAME {
             get {
@@ -816,6 +836,168 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_POSITION {
             get {
                 return ResourceManager.GetString("IDS_POSITION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_INST_COLUMN_NAME {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_INST_COLUMN_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Number of samples.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_INST_COLUMN_SAMPLENUM {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_INST_COLUMN_SAMPLENUM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bits.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_COLUMN_BITSIZE {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_COLUMN_BITSIZE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Info.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_COLUMN_INFO {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_COLUMN_INFO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Length.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_COLUMN_LENGTH {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_COLUMN_LENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LLength.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_COLUMN_LOOPLENGTH {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_COLUMN_LOOPLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LStart.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_COLUMN_LOOPSTART {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_COLUMN_LOOPSTART", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Middle C.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_COLUMN_MIDDLEC {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_COLUMN_MIDDLEC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_COLUMN_NAME {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_COLUMN_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pan.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_COLUMN_PANNING {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_COLUMN_PANNING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_COLUMN_TYPE {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_COLUMN_TYPE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vol.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_COLUMN_VOLUME {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_COLUMN_VOLUME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hybrid.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_TYPE_HYBRID {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_TYPE_HYBRID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sample.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_TYPE_SAMPLE {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_TYPE_SAMPLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Synth.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_TYPE_SYNTH {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_TYPE_SYNTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Instruments.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_TAB_INSTRUMENT {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_TAB_INSTRUMENT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Samples.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_TAB_SAMPLE {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_TAB_SAMPLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Instrument / sample information.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_TITLE {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_TITLE", resourceCulture);
             }
         }
         

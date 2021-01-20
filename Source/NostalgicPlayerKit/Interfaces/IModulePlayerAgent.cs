@@ -84,6 +84,18 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		bool GetInformationString(int line, out string description, out string value);
 
 		/// <summary>
+		/// Returns all the instruments available in the module. If none,
+		/// null is returned
+		/// </summary>
+		InstrumentInfo[] Instruments { get; }
+
+		/// <summary>
+		/// Returns all the samples available in the module. If none, null
+		/// is returned
+		/// </summary>
+		SampleInfo[] Samples { get; }
+
+		/// <summary>
 		/// Return the total size of all the extra files loaded
 		/// </summary>
 		long ExtraFilesSizes { get; }
