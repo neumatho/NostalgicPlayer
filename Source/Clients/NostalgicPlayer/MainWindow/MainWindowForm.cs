@@ -270,6 +270,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private void SetupHandlers()
 		{
 			// Form
+			Resize += MainWindowForm_Resize;
 			FormClosed += MainWindowForm_FormClosed;
 
 			// Module information
@@ -461,6 +462,42 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		#region Form events
 		/********************************************************************/
 		/// <summary>
+		/// Is called when the window is resize. Used to detect if minimized
+		/// </summary>
+		/********************************************************************/
+		private void MainWindowForm_Resize(object sender, EventArgs e)
+		{
+			if (WindowState == FormWindowState.Minimized)
+			{
+				if (IsAboutWindowOpen())
+					aboutWindow.Close();
+
+				if (IsModuleInfoWindowOpen())
+				{
+					moduleInfoWindow.UpdateWindowSettings();
+					moduleInfoWindow.WindowState = FormWindowState.Minimized;
+				}
+
+				if (IsSampleInfoWindowOpen())
+				{
+					sampleInfoWindow.UpdateWindowSettings();
+					sampleInfoWindow.WindowState = FormWindowState.Minimized;
+				}
+			}
+			else if (WindowState == FormWindowState.Normal)
+			{
+				if (IsModuleInfoWindowOpen())
+					moduleInfoWindow.WindowState = FormWindowState.Normal;
+
+				if (IsSampleInfoWindowOpen())
+					sampleInfoWindow.WindowState = FormWindowState.Normal;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Is called when the window is closed
 		/// </summary>
 		/********************************************************************/
@@ -515,13 +552,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void Menu_Help_About_Click(object sender, EventArgs e)
 		{
-			if ((aboutWindow == null) || aboutWindow.IsDisposed)
+			if (IsAboutWindowOpen())
+				aboutWindow.Activate();
+			else
 			{
 				aboutWindow = new AboutWindowForm(agentManager);
 				aboutWindow.Show();
 			}
-			else
-				aboutWindow.Activate();
 		}
 		#endregion
 
@@ -554,13 +591,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void ModuleInfoButton_Click(object sender, EventArgs e)
 		{
-			if ((moduleInfoWindow == null) || moduleInfoWindow.IsDisposed)
+			if (IsModuleInfoWindowOpen())
+				moduleInfoWindow.Activate();
+			else
 			{
 				moduleInfoWindow = new ModuleInfoWindowForm(moduleHandler, this);
 				moduleInfoWindow.Show();
 			}
-			else
-				moduleInfoWindow.Activate();
 		}
 
 
@@ -1812,13 +1849,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void SampleInfoButton_Click(object sender, EventArgs e)
 		{
-			if ((sampleInfoWindow == null) || sampleInfoWindow.IsDisposed)
+			if (IsSampleInfoWindowOpen())
+				sampleInfoWindow.Activate();
+			else
 			{
 				sampleInfoWindow = new SampleInfoWindowForm(moduleHandler);
 				sampleInfoWindow.Show();
 			}
-			else
-				sampleInfoWindow.Activate();
 		}
 		#endregion
 
@@ -2153,13 +2190,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			mainWindowSettings.MasterVolume = masterVolumeTrackBar.Value;
 
 			// Close the about window
-			if ((aboutWindow != null) && !aboutWindow.IsDisposed)
+			if (IsAboutWindowOpen())
 				aboutWindow.Close();
 
 			aboutWindow = null;
 
 			// Close the module information window
-			bool openAgain = (moduleInfoWindow != null) && !moduleInfoWindow.IsDisposed;
+			bool openAgain = IsModuleInfoWindowOpen();
 			if (openAgain)
 				moduleInfoWindow.Close();
 
@@ -2167,7 +2204,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			mainWindowSettings.OpenModuleInformationWindow = openAgain;
 
 			// Close the sample information window
-			openAgain = (sampleInfoWindow != null) && !sampleInfoWindow.IsDisposed;
+			openAgain = IsSampleInfoWindowOpen();
 			if (openAgain)
 				sampleInfoWindow.Close();
 
@@ -2184,11 +2221,47 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void RefreshWindows()
 		{
-			if ((moduleInfoWindow != null) && !moduleInfoWindow.IsDisposed)
+			if (IsModuleInfoWindowOpen())
 				moduleInfoWindow.RefreshWindow();
 
-			if ((sampleInfoWindow != null) && !sampleInfoWindow.IsDisposed)
+			if (IsSampleInfoWindowOpen())
 				sampleInfoWindow.RefreshWindow();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check if the about window is open
+		/// </summary>
+		/********************************************************************/
+		private bool IsAboutWindowOpen()
+		{
+			return (aboutWindow != null) && !aboutWindow.IsDisposed;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check if the module information window is open
+		/// </summary>
+		/********************************************************************/
+		private bool IsModuleInfoWindowOpen()
+		{
+			return (moduleInfoWindow != null) && !moduleInfoWindow.IsDisposed;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check if the sample information window is open
+		/// </summary>
+		/********************************************************************/
+		private bool IsSampleInfoWindowOpen()
+		{
+			return (sampleInfoWindow != null) && !sampleInfoWindow.IsDisposed;
 		}
 
 

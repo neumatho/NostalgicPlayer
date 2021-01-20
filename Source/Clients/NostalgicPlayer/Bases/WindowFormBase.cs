@@ -80,13 +80,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 
 			if (windowSettings != null)
 			{
-				// Update the settings with the window position
-				windowSettings.Location = Location;
-
-				if (FormBorderStyle == FormBorderStyle.Sizable)
-					windowSettings.Size = Size;
-
-				windowSettings.Geometry = ScreensGeometry();
+				if (WindowState == FormWindowState.Normal)
+					UpdateWindowSettings();
 
 				// Save the window settings
 				allWindowSettings.SaveSettings();
@@ -123,6 +118,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 			}
 
 			return base.ProcessCmdKey(ref msg, keyData);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the window settings
+		/// </summary>
+		/********************************************************************/
+		public void UpdateWindowSettings()
+		{
+			// Update the settings with the window position
+			windowSettings.Location = Location;
+
+			if (FormBorderStyle == FormBorderStyle.Sizable)
+				windowSettings.Size = Size;
+
+			windowSettings.Geometry = ScreensGeometry();
 		}
 
 
