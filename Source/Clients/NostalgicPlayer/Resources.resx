@@ -163,6 +163,9 @@
   <data name="IDB_NEXT_SONG" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\NextSong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="IDB_OPEN" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="IDB_PAUSE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Pause.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -480,6 +483,36 @@ Formats supported:
   </data>
   <data name="IDS_SELECTMENU_NONE" xml:space="preserve">
     <value>Deselect all</value>
+  </data>
+  <data name="IDS_SETTINGS_APPLY" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="IDS_SETTINGS_CANCEL" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="IDS_SETTINGS_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="IDS_SETTINGS_PATHS_LISTPATH" xml:space="preserve">
+    <value>List path</value>
+  </data>
+  <data name="IDS_SETTINGS_PATHS_MODULEPATH" xml:space="preserve">
+    <value>Module path</value>
+  </data>
+  <data name="IDS_SETTINGS_PATHS_STARTSCANPATH" xml:space="preserve">
+    <value>Start scan path</value>
+  </data>
+  <data name="IDS_SETTINGS_TAB_AGENTS" xml:space="preserve">
+    <value>Agents</value>
+  </data>
+  <data name="IDS_SETTINGS_TAB_MIXER" xml:space="preserve">
+    <value>Mixer</value>
+  </data>
+  <data name="IDS_SETTINGS_TAB_PATHS" xml:space="preserve">
+    <value>Paths</value>
+  </data>
+  <data name="IDS_SETTINGS_TITLE" xml:space="preserve">
+    <value>Settings</value>
   </data>
   <data name="IDS_SORTMENU_SHUFFLE" xml:space="preserve">
     <value>Shuffle</value>

@@ -6,7 +6,6 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-
 using System;
 using System.Windows.Forms;
 
@@ -15,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 	/// <summary>
 	/// This class holds all the sample information window settings
 	/// </summary>
-	public class SampleInfoSettings
+	public class SampleInfoWindowSettings
 	{
 		private readonly Kit.Utility.Settings settings;
 
@@ -24,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SampleInfoSettings(Kit.Utility.Settings windowSettings)
+		public SampleInfoWindowSettings(Kit.Utility.Settings windowSettings)
 		{
 			settings = windowSettings;
 		}

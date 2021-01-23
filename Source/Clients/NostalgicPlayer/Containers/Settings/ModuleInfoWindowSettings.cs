@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 	/// <summary>
 	/// This class holds all the module information window settings
 	/// </summary>
-	public class ModuleInfoSettings
+	public class ModuleInfoWindowSettings
 	{
 		private readonly Kit.Utility.Settings settings;
 
@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModuleInfoSettings(Kit.Utility.Settings windowSettings)
+		public ModuleInfoWindowSettings(Kit.Utility.Settings windowSettings)
 		{
 			settings = windowSettings;
 		}

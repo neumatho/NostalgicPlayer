@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using Krypton.Navigator;
 using Krypton.Toolkit;
@@ -29,9 +28,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 	{
 		private ModuleHandler moduleHandler;
 
-		private readonly SampleInfoSettings settings;
+		private readonly SampleInfoWindowSettings settings;
 
-		private Dictionary<int, Bitmap> combinedImages = new Dictionary<int, Bitmap>();
+		private readonly Dictionary<int, Bitmap> combinedImages = new Dictionary<int, Bitmap>();
 
 		/********************************************************************/
 		/// <summary>
@@ -61,7 +60,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			{
 				// Load window settings
 				LoadWindowSettings("SampleInfoWindow");
-				settings = new SampleInfoSettings(allWindowSettings);
+				settings = new SampleInfoWindowSettings(allWindowSettings);
 
 				// Set the title of the window
 				Text = Resources.IDS_SAMPLE_INFO_TITLE;

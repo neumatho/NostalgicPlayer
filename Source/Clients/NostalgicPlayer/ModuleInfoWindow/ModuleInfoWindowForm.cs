@@ -28,7 +28,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		private ModuleHandler moduleHandler;
 		private MainWindowForm mainWindow;
 
-		private readonly ModuleInfoSettings settings;
+		private readonly ModuleInfoWindowSettings settings;
 
 		/********************************************************************/
 		/// <summary>
@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			{
 				// Load window settings
 				LoadWindowSettings("ModuleInfoWindow");
-				settings = new ModuleInfoSettings(allWindowSettings);
+				settings = new ModuleInfoWindowSettings(allWindowSettings);
 
 				// Set the title of the window
 				Text = Resources.IDS_MODULE_INFO_TITLE;

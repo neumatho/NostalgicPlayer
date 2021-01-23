@@ -13,6 +13,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow;
@@ -25,6 +26,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
@@ -91,6 +93,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		// Other windows
 		private AboutWindowForm aboutWindow = null;
+		private SettingsWindowForm settingsWindow = null;
 		private ModuleInfoWindowForm moduleInfoWindow = null;
 		private SampleInfoWindowForm sampleInfoWindow = null;
 
@@ -270,6 +273,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private void SetupHandlers()
 		{
 			// Form
+			Load += MainWindowForm_Load;
 			Resize += MainWindowForm_Resize;
 			FormClosed += MainWindowForm_FormClosed;
 
@@ -462,6 +466,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		#region Form events
 		/********************************************************************/
 		/// <summary>
+		/// Is called when the form has been loaded
+		/// </summary>
+		/********************************************************************/
+		private void MainWindowForm_Load(object sender, EventArgs e)
+		{
+			RetrieveStartupFiles();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Is called when the window is resize. Used to detect if minimized
 		/// </summary>
 		/********************************************************************/
@@ -519,6 +535,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		#endregion
 
 		#region Menu events
+
+		#region Window menu
+		/********************************************************************/
+		/// <summary>
+		/// User selected the settings menu item
+		/// </summary>
+		/********************************************************************/
+		private void Menu_Window_Settings_Click(object sender, EventArgs e)
+		{
+			if (IsSettingsWindowOpen())
+				settingsWindow.Activate();
+			else
+			{
+				settingsWindow = new SettingsWindowForm(agentManager, userSettings);
+				settingsWindow.Show();
+			}
+		}
+		#endregion
 
 		#region Help menu
 		/********************************************************************/
@@ -1864,12 +1898,83 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
+		/// Check to see if NostalgicPlayer has started normally or not
+		/// </summary>
+		/********************************************************************/
+		private bool StartedNormally()//XX
+		{
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Initialize the sub-songs variables
 		/// </summary>
 		/********************************************************************/
 		private void InitSubSongs()
 		{
 			//XXsubSongMultiply = 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will check to see if any files needed to be added to the module
+		/// list when starting up
+		/// </summary>
+		/********************************************************************/
+		private void RetrieveStartupFiles()//XX
+		{
+			// First check if we started normally or not.
+			// A non-normal start is when the user clicked on a module
+			// in the File Explorer when NostalgicPlayer is not running
+			if (StartedNormally())
+			{
+				// Call Invoke, so the main window is showing before
+				// start to scan
+				BeginInvoke(new Action(() =>
+				{
+					using (new SleepCursor())
+					{
+						// Get the start scan path
+						string path = pathSettings.StartScan;
+
+						// Add the files in the module list if there is any path
+						if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
+						{
+							// Add all the files in the directory
+							List<ModuleListItem> itemList = new List<ModuleListItem>();
+							AddDirectoryToList(path, itemList, false);
+
+							if (itemList.Count > 0)
+							{
+								// Add the items to the list
+								moduleListBox.BeginUpdate();
+
+								try
+								{
+									moduleListBox.Items.AddRange(itemList.ToArray());
+								}
+								finally
+								{
+									moduleListBox.EndUpdate();
+								}
+
+								// Update the window
+								UpdateListCount();
+								UpdateTimes();
+								UpdateTapeDeck();
+
+								// Load and play the first module
+								LoadAndPlayModule(0);
+							}
+						}
+					}
+				}));
+			}
 		}
 
 		#region Settings
@@ -1977,10 +2082,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			ToolStripMenuItem windowMenuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW);
 
 			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_SETTINGS);
-			menuItem.Enabled = false;
+			menuItem.Click += Menu_Window_Settings_Click;
 			windowMenuItem.DropDownItems.Add(menuItem);
 
-			windowMenuItem.DropDownItems.Add(new ToolStripSeparator());
+//XX			windowMenuItem.DropDownItems.Add(new ToolStripSeparator());
 
 			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_PLAYERS);
 			menuItem.Visible = false;
@@ -2195,6 +2300,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			aboutWindow = null;
 
+			// Close the settings window
+			if (IsSettingsWindowOpen())
+				settingsWindow.Close();
+
+			settingsWindow = null;
+
 			// Close the module information window
 			bool openAgain = IsModuleInfoWindowOpen();
 			if (openAgain)
@@ -2226,6 +2337,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			if (IsSampleInfoWindowOpen())
 				sampleInfoWindow.RefreshWindow();
+
+			if (IsSettingsWindowOpen())
+				settingsWindow.RefreshWindow();
 		}
 
 
@@ -2238,6 +2352,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private bool IsAboutWindowOpen()
 		{
 			return (aboutWindow != null) && !aboutWindow.IsDisposed;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check if the settings window is open
+		/// </summary>
+		/********************************************************************/
+		private bool IsSettingsWindowOpen()
+		{
+			return (settingsWindow != null) && !settingsWindow.IsDisposed;
 		}
 
 
@@ -2903,7 +3029,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				moduleFileDialog.Multiselect = true;
 			}
 
-			return moduleFileDialog.ShowDialog();
+			DialogResult result = moduleFileDialog.ShowDialog();
+			if (result == DialogResult.OK)
+				moduleFileDialog.InitialDirectory = null;	// Clear so it won't start in the initial directory again, but in current directory next time it is opened
+
+			return result;
 		}
 
 
@@ -2925,7 +3055,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				loadListFileDialog.Filter = "List files|*.npml";
 			}
 
-			return loadListFileDialog.ShowDialog();
+			DialogResult result = loadListFileDialog.ShowDialog();
+			if (result == DialogResult.OK)
+				loadListFileDialog.InitialDirectory = null;	// Clear so it won't start in the initial directory again, but in current directory next time it is opened
+
+			return result;
 		}
 
 
@@ -2947,7 +3081,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				saveListFileDialog.Filter = "List files|*.npml";
 			}
 
-			return saveListFileDialog.ShowDialog();
+			DialogResult result = saveListFileDialog.ShowDialog();
+			if (result == DialogResult.OK)
+				saveListFileDialog.InitialDirectory = null;	// Clear so it won't start in the initial directory again, but in current directory next time it is opened
+
+			return result;
 		}
 
 

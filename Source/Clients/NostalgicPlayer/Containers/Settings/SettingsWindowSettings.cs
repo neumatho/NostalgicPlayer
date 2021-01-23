@@ -9,9 +9,9 @@
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 {
 	/// <summary>
-	/// This class holds all the path settings
+	/// This class holds all the settings window settings
 	/// </summary>
-	public class PathSettings
+	public class SettingsWindowSettings
 	{
 		private readonly Kit.Utility.Settings settings;
 
@@ -20,51 +20,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public PathSettings(Kit.Utility.Settings userSettings)
+		public SettingsWindowSettings(Kit.Utility.Settings windowSettings)
 		{
-			settings = userSettings;
+			settings = windowSettings;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Start scanning path
+		/// Active tab
 		/// </summary>
 		/********************************************************************/
-		public string StartScan
+		public int ActiveTab
 		{
-			get => settings.GetStringEntry("Path", "StartScan");
+			get => settings.GetIntEntry("Window", "ActiveTab", 0);
 
-			set => settings.SetStringEntry("Path", "StartScan", value);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Module start path
-		/// </summary>
-		/********************************************************************/
-		public string Modules
-		{
-			get => settings.GetStringEntry("Path", "Modules");
-
-			set => settings.SetStringEntry("Path", "Modules", value);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Module list start path
-		/// </summary>
-		/********************************************************************/
-		public string ModuleList
-		{
-			get => settings.GetStringEntry("Path", "List");
-
-			set => settings.SetStringEntry("Path", "List", value);
+			set => settings.SetIntEntry("Window", "ActiveTab", value);
 		}
 	}
 }

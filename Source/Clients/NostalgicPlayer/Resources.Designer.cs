@@ -213,6 +213,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap IDB_OPEN {
+            get {
+                object obj = ResourceManager.GetObject("IDB_OPEN", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap IDB_PAUSE {
             get {
                 object obj = ResourceManager.GetObject("IDB_PAUSE", resourceCulture);
@@ -1016,6 +1026,96 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_SELECTMENU_NONE {
             get {
                 return ResourceManager.GetString("IDS_SELECTMENU_NONE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Apply.
+        /// </summary>
+        internal static string IDS_SETTINGS_APPLY {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_APPLY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        internal static string IDS_SETTINGS_CANCEL {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_CANCEL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OK.
+        /// </summary>
+        internal static string IDS_SETTINGS_OK {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to List path.
+        /// </summary>
+        internal static string IDS_SETTINGS_PATHS_LISTPATH {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_PATHS_LISTPATH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Module path.
+        /// </summary>
+        internal static string IDS_SETTINGS_PATHS_MODULEPATH {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_PATHS_MODULEPATH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start scan path.
+        /// </summary>
+        internal static string IDS_SETTINGS_PATHS_STARTSCANPATH {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_PATHS_STARTSCANPATH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Agents.
+        /// </summary>
+        internal static string IDS_SETTINGS_TAB_AGENTS {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_TAB_AGENTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mixer.
+        /// </summary>
+        internal static string IDS_SETTINGS_TAB_MIXER {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_TAB_MIXER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Paths.
+        /// </summary>
+        internal static string IDS_SETTINGS_TAB_PATHS {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_TAB_PATHS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        internal static string IDS_SETTINGS_TITLE {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_TITLE", resourceCulture);
             }
         }
         
