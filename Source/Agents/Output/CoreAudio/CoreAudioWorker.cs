@@ -123,7 +123,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 			{
 				Shutdown();
 
-				errorMessage = string.Format(Resources.IDS_ERR_INITIALIZE, ex.HResult, ex.Message);
+				errorMessage = string.Format(Resources.IDS_ERR_INITIALIZE, ex.HResult.ToString("X8"), ex.Message);
 				return AgentResult.Error;
 			}
 		}
@@ -143,8 +143,11 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 			// Stop feeding the render thread
 			if (audioClient != null)
 			{
-				audioClient.Stop();
-				audioClient.Reset();
+				if ((playbackState == PlaybackState.Playing) || (playbackState == PlaybackState.Stopped))
+				{
+					audioClient.Stop();
+					audioClient.Reset();
+				}
 			}
 
 			// Wait for the render thread to exit
@@ -380,8 +383,21 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		private void TerminateStreamSwitch()
 		{
 			// Unregister change notifications
-			audioSessionControl?.UnRegisterEventClient(this);
-			deviceEnumerator?.UnregisterEndpointNotificationCallback(this);
+			try
+			{
+				audioSessionControl?.UnRegisterEventClient(this);
+			}
+			catch(Exception)
+			{
+			}
+
+			try
+			{
+				deviceEnumerator?.UnregisterEndpointNotificationCallback(this);
+			}
+			catch(Exception)
+			{
+			}
 
 			streamSwitchCompletedEvent?.Dispose();
 			streamSwitchCompletedEvent = null;

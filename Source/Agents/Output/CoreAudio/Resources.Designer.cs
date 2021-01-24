@@ -93,7 +93,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CoreAudio.
+        ///   Looks up a localized string similar to Core Audio.
         /// </summary>
         internal static string IDS_NAME {
             get {
