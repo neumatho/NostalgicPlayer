@@ -490,6 +490,42 @@ Formats supported:
   <data name="IDS_SETTINGS_CANCEL" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="IDS_SETTINGS_MIXER_CHANNELS" xml:space="preserve">
+    <value>Channels</value>
+  </data>
+  <data name="IDS_SETTINGS_MIXER_CHANNELS_0_15" xml:space="preserve">
+    <value>0 - 15</value>
+  </data>
+  <data name="IDS_SETTINGS_MIXER_CHANNELS_16_31" xml:space="preserve">
+    <value>16 - 31</value>
+  </data>
+  <data name="IDS_SETTINGS_MIXER_CHANNELS_32_47" xml:space="preserve">
+    <value>32 - 47</value>
+  </data>
+  <data name="IDS_SETTINGS_MIXER_CHANNELS_48_63" xml:space="preserve">
+    <value>48 - 63</value>
+  </data>
+  <data name="IDS_SETTINGS_MIXER_GENERAL" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="IDS_SETTINGS_MIXER_GENERAL_AMIGALED" xml:space="preserve">
+    <value>Emulate Amiga LED filter</value>
+  </data>
+  <data name="IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION" xml:space="preserve">
+    <value>Interpolation</value>
+  </data>
+  <data name="IDS_SETTINGS_MIXER_GENERAL_STEREOSEPARATION" xml:space="preserve">
+    <value>Stereo separation</value>
+  </data>
+  <data name="IDS_SETTINGS_MIXER_OUPUT" xml:space="preserve">
+    <value>Mixer output</value>
+  </data>
+  <data name="IDS_SETTINGS_MIXER_OUPUT_AGENT" xml:space="preserve">
+    <value>Output agent</value>
+  </data>
+  <data name="IDS_SETTINGS_MIXER_OUPUT_SETTINGS" xml:space="preserve">
+    <value>Settings</value>
+  </data>
   <data name="IDS_SETTINGS_OK" xml:space="preserve">
     <value>OK</value>
   </data>

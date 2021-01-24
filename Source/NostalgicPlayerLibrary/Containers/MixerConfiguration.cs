@@ -13,17 +13,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 	/// </summary>
 	public class MixerConfiguration
 	{
-		/********************************************************************/
 		/// <summary>
-		/// Indicate if Amiga filter should be emulated
+		/// The maximum number of channels supported
 		/// </summary>
-		/********************************************************************/
-		public bool EnableAmigaFilter
-		{
-			get; set;
-		} = false;
-
-
+		public const int MaxNumberOfChannels = 64;
 
 		/********************************************************************/
 		/// <summary>
@@ -34,5 +27,42 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		{
 			get; set;
 		} = 100;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Indicate if interpolation is enabled
+		/// </summary>
+		/********************************************************************/
+		public bool EnableInterpolation
+		{
+			get; set;
+		} = false;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Indicate if Amiga filter should be emulated
+		/// </summary>
+		/********************************************************************/
+		public bool EnableAmigaFilter
+		{
+			get; set;
+		} = true;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds an array telling which channels to enable/disable. If null,
+		/// all channels are enabled
+		/// </summary>
+		/********************************************************************/
+		public bool[] ChannelsEnabled
+		{
+			get; set;
+		} = null;
 	}
 }

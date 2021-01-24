@@ -52,6 +52,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		void SetMasterVolume(int volume);
 
 		/// <summary>
+		/// Will change the mixer settings that can be change real-time
+		/// </summary>
+		void ChangeMixerSettings(MixerConfiguration mixerConfiguration);
+
+		/// <summary>
 		/// Return all the static information about the module
 		/// </summary>
 		ModuleInfoStatic StaticModuleInformation { get; }

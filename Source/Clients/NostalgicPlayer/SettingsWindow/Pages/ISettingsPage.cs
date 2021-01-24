@@ -6,6 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 
@@ -24,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// <summary>
 		/// Will read the settings and set all the controls
 		/// </summary>
-		void InitSettings(Manager agentManager, Settings userSettings);
+		void InitSettings(Manager agentManager, ModuleHandler moduleHandler, Settings userSettings);
 
 		/// <summary>
 		/// Will read the window settings

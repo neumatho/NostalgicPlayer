@@ -32,10 +32,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private int bufferSize;				// The maximum number of samples a buffer can be
 		private int ticksLeft;				// Number of ticks left to call the player
 
-//XX		private int filterPrevLeft;			// The previous value for the left channel
-//XX		private int filterPrevRight;		// The previous value for the right channel
+		private int filterPrevLeft;			// The previous value for the left channel
+		private int filterPrevRight;		// The previous value for the right channel
 
 		private bool emulateFilter;
+
+		private bool[] channelsEnabled;
 
 		/********************************************************************/
 		/// <summary>
@@ -68,8 +70,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			moduleChannelNumber = currentPlayer.VirtualChannelCount;
 
 			// Initialize other member variables
-			//XXfilterPrevLeft = 0;
-			//XXfilterPrevRight = 0;
+			filterPrevLeft = 0;
+			filterPrevRight = 0;
 
 			// Set flag for different mixer modes
 			mixerMode = MixerMode.None;
@@ -96,7 +98,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			{
 				CleanupMixer();
 
-				errorMessage = string.Format(Resources.IDS_ERR_MIXER_INIT, ex.HResult, ex.Message);
+				errorMessage = string.Format(Resources.IDS_ERR_MIXER_INIT, ex.HResult.ToString("X8"), ex.Message);
 				retVal = false;
 			}
 
@@ -202,8 +204,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/********************************************************************/
 		public void ChangeConfiguration(MixerConfiguration mixerConfiguration)
 		{
-			emulateFilter = mixerConfiguration.EnableAmigaFilter;
 			currentMixer?.SetStereoSeparation(mixerConfiguration.StereoSeparator);
+
+			if (mixerConfiguration.EnableInterpolation)
+				mixerMode |= MixerMode.Interpolation;
+			else
+				mixerMode &= ~MixerMode.Interpolation;
+
+			emulateFilter = mixerConfiguration.EnableAmigaFilter;
+
+			channelsEnabled = mixerConfiguration.ChannelsEnabled;
 		}
 
 
@@ -285,6 +295,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				ticksLeft -= left;
 				todo -= left;
 				total += (currentMode & MixerMode.Stereo) != 0 ? left << 1 : left;
+
+				// Check all the channels to see if they are still active and
+				// enable/disable the channels depending on the user settings
+				for (int t = 0; t < moduleChannelNumber; t++)
+				{
+					((ChannelParser)currentPlayer.Channels[t]).Active(currentMixer.IsActive(t));
+					currentMixer.EnableChannel(t, (channelsEnabled == null) || channelsEnabled[t]);
+				}
 			}
 
 			return total;
@@ -304,8 +322,25 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			// Find the size of the buffer
 			int bufSize = Math.Min(bufferSize, todo);
 
+			// Add Amiga low-pass filter if enabled
+			AddAmigaFilter(mixBuffer, bufSize);
+
 			// Now convert the mixed data to our output format
 			currentMixer.ConvertMixedData(buf, offset, mixBuffer, bufSize);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Adds the Amiga LED filter if enabled
+		/// </summary>
+		/********************************************************************/
+		private void AddAmigaFilter(int[] dest, int todo)
+		{
+			// Should we emulate the filter at all
+			if (emulateFilter && currentPlayer.AmigaFilter)
+				currentMixer.AddAmigaFilter((currentMode & MixerMode.Stereo) != 0, dest, todo, ref filterPrevLeft, ref filterPrevRight);
 		}
 		#endregion
 	}

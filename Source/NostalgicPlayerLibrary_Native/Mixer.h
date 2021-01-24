@@ -13,9 +13,14 @@
 
 extern "C"
 {
-	EXPORTAPI(INT32, Mix8MonoNormal(INT8* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel));
-	EXPORTAPI(INT32, Mix8StereoNormal(INT8* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel));
+	EXPORTAPI(INT32, Mix8MonoNormal(const INT8* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel));
+	EXPORTAPI(INT32, Mix8StereoNormal(const INT8* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel));
 
-	EXPORTAPI(void, ConvertTo16(INT16* dest, INT32 offset, INT32* source, INT32 count));
-	EXPORTAPI(void, ConvertTo32(INT32* dest, INT32 offset, INT32* source, INT32 count));
+	EXPORTAPI(INT32, Mix8MonoInterp(const INT8* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 oldLVol, INT32* rampVol));
+	EXPORTAPI(INT32, Mix8StereoInterp(const INT8* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel, INT32 oldLVol, INT32 oldRVol, INT32 *rampVol));
+
+	EXPORTAPI(void, AddAmigaFilter(bool stereo, INT32* dest, INT32 todo, INT32* filterPrevLeft, INT32* filterPrevRight));
+
+	EXPORTAPI(void, ConvertTo16(INT16* dest, INT32 offset, const INT32* source, INT32 count));
+	EXPORTAPI(void, ConvertTo32(INT32* dest, INT32 offset, const INT32* source, INT32 count));
 }

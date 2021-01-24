@@ -219,6 +219,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 		/********************************************************************/
 		/// <summary>
+		/// Will change the mixer settings that can be change real-time
+		/// </summary>
+		/********************************************************************/
+		public void ChangeMixerSettings(MixerConfiguration mixerConfiguration)
+		{
+			soundStream?.ChangeConfiguration(mixerConfiguration);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return all the static information about the module
 		/// </summary>
 		/********************************************************************/

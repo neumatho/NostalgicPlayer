@@ -9,7 +9,6 @@
 using System;
 using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
@@ -40,6 +39,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		private volatile bool isPlaying = false;
 		private int currentMasterVolume;
 		private bool isMuted = false;
+		private MixerConfiguration mixerConfiguration;
 
 		/********************************************************************/
 		/// <summary>
@@ -64,14 +64,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/// Initialize and start the module handler thread
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(MainWindowForm mainWindow, Manager manager, SoundSettings soundSettings, int startVolume)
+		public void Initialize(MainWindowForm mainWindow, Manager manager, SoundSettings sndSettings, int startVolume)
 		{
 			// Remember the arguments
 			mainWindowForm = mainWindow;
 			agentManager = manager;
-			this.soundSettings = soundSettings;
+			soundSettings = sndSettings;
 
 			currentMasterVolume = startVolume;
+
+			mixerConfiguration = new MixerConfiguration//XX
+			{
+				StereoSeparator = sndSettings.StereoSeparation,
+				EnableInterpolation = sndSettings.Interpolation,
+				EnableAmigaFilter = sndSettings.AmigaFilter,
+				ChannelsEnabled = new bool[MixerConfiguration.MaxNumberOfChannels]
+			};
+
+			// Initialize the channels enable array
+			Array.Fill(mixerConfiguration.ChannelsEnabled, true);
 
 			// Initialize the loader
 			loadedFiles = new List<ModuleItem>();
@@ -260,7 +271,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					modulePlayer.SelectSong(newSong);
 
 				// And start playing again
-				player.StartPlaying();
+				player.StartPlaying(mixerConfiguration);
 			}
 		}
 
@@ -316,6 +327,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 		/********************************************************************/
 		/// <summary>
+		/// Will change the mixer settings that can be change real-time
+		/// </summary>
+		/********************************************************************/
+		public void ChangeMixerSettings(MixerConfiguration newMixerConfiguration)
+		{
+			mixerConfiguration = newMixerConfiguration;
+
+			IPlayer player = GetActivePlayer();
+
+			if (player != null)
+				player.ChangeMixerSettings(newMixerConfiguration);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will pause the player
 		/// </summary>
 		/********************************************************************/
@@ -359,6 +387,36 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		{
 			TimeSpan[] positionTimes = PlayingModuleInformation.PositionTimes;
 			return positionTimes == null ? new TimeSpan(0) : positionTimes[position];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the enable status for all channels
+		/// </summary>
+		/********************************************************************/
+		public bool[] GetEnabledChannels()
+		{
+			return mixerConfiguration.ChannelsEnabled;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the enable status for a given range of channels
+		/// </summary>
+		/********************************************************************/
+		public void EnableChannels(bool enabled, int startChannel, int stopChannel = -1)
+		{
+			if (stopChannel == -1)
+				mixerConfiguration.ChannelsEnabled[startChannel] = enabled;
+			else
+			{
+				for (int i = startChannel; i <= stopChannel; i++)
+					mixerConfiguration.ChannelsEnabled[i] = enabled;
+			}
 		}
 		#endregion
 
@@ -481,13 +539,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					return false;
 				}
 
-				// Setup mixer settings
-				MixerConfiguration mixerConfig = new MixerConfiguration();
-				mixerConfig.EnableAmigaFilter = true;
-				mixerConfig.StereoSeparator = 100;
-
 				// Setup player settings
-				PlayerConfiguration playerConfig = new PlayerConfiguration(outputAgent, item.Loader, mixerConfig);
+				PlayerConfiguration playerConfig = new PlayerConfiguration(outputAgent, item.Loader, mixerConfiguration);
 
 				// Initialize the module
 				if (!item.Loader.Player.InitPlayer(playerConfig, out errorMessage))
@@ -555,7 +608,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				IsPlaying = true;
 
 				// Start playing the song
-				player.StartPlaying();
+				player.StartPlaying(mixerConfiguration);
 			}
 		}
 

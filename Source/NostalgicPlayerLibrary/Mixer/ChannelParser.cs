@@ -186,5 +186,20 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 			return retFlags & ~Flags.Active;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will set the channel to active or inactive
+		/// </summary>
+		/********************************************************************/
+		public void Active(bool active)
+		{
+			if (active)
+				flags |= Flags.Active;
+			else
+				flags &= ~Flags.Active;
+		}
 	}
 }

@@ -55,5 +55,47 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 			set => settings.SetStringEntry("Sound", "OutputAgent", value.ToString("D"));
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Stereo separation
+		/// </summary>
+		/********************************************************************/
+		public int StereoSeparation
+		{
+			get => settings.GetIntEntry("Sound", "StereoSep", 100);
+
+			set => settings.SetIntEntry("Sound", "StereoSep", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Interpolation
+		/// </summary>
+		/********************************************************************/
+		public bool Interpolation
+		{
+			get => settings.GetBoolEntry("Sound", "Interpolation", false);
+
+			set => settings.SetBoolEntry("Sound", "Interpolation", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Emulate Amiga LED filter
+		/// </summary>
+		/********************************************************************/
+		public bool AmigaFilter
+		{
+			get => settings.GetBoolEntry("Sound", "AmigaFilter", true);
+
+			set => settings.SetBoolEntry("Sound", "AmigaFilter", value);
+		}
 	}
 }

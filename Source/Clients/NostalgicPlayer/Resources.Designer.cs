@@ -1048,6 +1048,114 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Channels.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_CHANNELS {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_CHANNELS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 0 - 15.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_CHANNELS_0_15 {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_CHANNELS_0_15", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 16 - 31.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_CHANNELS_16_31 {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_CHANNELS_16_31", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 32 - 47.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_CHANNELS_32_47 {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_CHANNELS_32_47", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 48 - 63.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_CHANNELS_48_63 {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_CHANNELS_48_63", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to General.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_GENERAL {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_GENERAL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Emulate Amiga LED filter.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_GENERAL_AMIGALED {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_GENERAL_AMIGALED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Interpolation.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stereo separation.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_GENERAL_STEREOSEPARATION {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_GENERAL_STEREOSEPARATION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mixer output.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_OUPUT {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_OUPUT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Output agent.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_OUPUT_AGENT {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_OUPUT_AGENT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_OUPUT_SETTINGS {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_OUPUT_SETTINGS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to OK.
         /// </summary>
         internal static string IDS_SETTINGS_OK {

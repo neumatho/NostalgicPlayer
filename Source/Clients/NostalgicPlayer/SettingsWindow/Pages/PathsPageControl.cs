@@ -9,6 +9,7 @@
 using System;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 
@@ -48,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will read the settings and set all the controls
 		/// </summary>
 		/********************************************************************/
-		public void InitSettings(Manager agentManager, Settings userSettings)
+		public void InitSettings(Manager agentManager, ModuleHandler moduleHandler, Settings userSettings)
 		{
 			pathSettings = new PathSettings(userSettings);
 

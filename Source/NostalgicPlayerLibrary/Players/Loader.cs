@@ -122,7 +122,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			catch (Exception ex)
 			{
 				// Build an error message
-				errorMessage = string.Format(Resources.IDS_ERR_FILE, fileInfo.FileName, ex.HResult, ex.Message);
+				errorMessage = string.Format(Resources.IDS_ERR_FILE, fileInfo.FileName, ex.HResult.ToString("X8"), ex.Message);
 				result = false;
 			}
 

@@ -111,6 +111,11 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		float PlayingFrequency { get; }
 
 		/// <summary>
+		/// Return the current state of the Amiga filter
+		/// </summary>
+		bool AmigaFilter { get; }
+
+		/// <summary>
 		/// Event called when the player change position
 		/// </summary>
 		event EventHandler PositionChanged;

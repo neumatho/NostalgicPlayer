@@ -281,6 +281,18 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Return the current state of the Amiga filter
+		/// </summary>
+		/********************************************************************/
+		public bool AmigaFilter
+		{
+			get; protected set;
+		} = false;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Event called when the player change position
 		/// </summary>
 		/********************************************************************/

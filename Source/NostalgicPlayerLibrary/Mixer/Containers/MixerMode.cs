@@ -29,6 +29,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers
 		/// <summary>
 		/// Surround is enabled
 		/// </summary>
-		Surround = 0x0100
+		Surround = 0x0100,
+
+		/// <summary>
+		/// Interpolation is enabled
+		/// </summary>
+		Interpolation = 0x200
 	}
 }

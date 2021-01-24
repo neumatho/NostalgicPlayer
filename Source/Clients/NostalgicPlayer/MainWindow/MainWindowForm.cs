@@ -13,7 +13,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow;
@@ -523,11 +522,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Stop any playing modules
 			StopAndFreeModule();
 
-			// Stop the module handler
-			CleanupModuleHandler();
-
 			// Close all windows
 			CloseWindows();
+
+			// Stop the module handler
+			CleanupModuleHandler();
 
 			// Save and cleanup the settings
 			CleanupSettings();
@@ -548,7 +547,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				settingsWindow.Activate();
 			else
 			{
-				settingsWindow = new SettingsWindowForm(agentManager, userSettings);
+				settingsWindow = new SettingsWindowForm(agentManager, moduleHandler, userSettings);
+				settingsWindow.Disposed += (o, args) => { settingsWindow = null; };
 				settingsWindow.Show();
 			}
 		}
@@ -591,6 +591,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			else
 			{
 				aboutWindow = new AboutWindowForm(agentManager);
+				aboutWindow.Disposed += (o, args) => { aboutWindow = null; };
 				aboutWindow.Show();
 			}
 		}
@@ -630,6 +631,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			else
 			{
 				moduleInfoWindow = new ModuleInfoWindowForm(moduleHandler, this);
+				moduleInfoWindow.Disposed += (o, args) => { moduleInfoWindow = null; };
 				moduleInfoWindow.Show();
 			}
 		}
@@ -1888,6 +1890,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			else
 			{
 				sampleInfoWindow = new SampleInfoWindowForm(moduleHandler);
+				sampleInfoWindow.Disposed += (o, args) => { sampleInfoWindow = null; };
 				sampleInfoWindow.Show();
 			}
 		}

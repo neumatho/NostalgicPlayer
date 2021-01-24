@@ -7,8 +7,6 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers;
 
@@ -28,65 +26,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private long idxLoopPos;		// The loop start position in fixed point
 		private long idxLoopEnd;		// The loop end position in fixed point
 		private long idxReleaseEnd;		// The release end position in fixed point
-
-		[DllImport("kernel32.dll")]
-		private static extern IntPtr LoadLibrary(string dllToLoad);
-
-		[DllImport("kernel32.dll")]
-		private static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
-
-		[DllImport("kernel32.dll")]
-		private static extern bool FreeLibrary(IntPtr hModule);
-
-		private static IntPtr dllPtr = IntPtr.Zero;
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
-		static MixerNormal()
-		{
-			AppDomain.CurrentDomain.ProcessExit += MixerNormal_Dtor;
-
-			string oldPath = Environment.CurrentDirectory;
-
-			try
-			{
-				Assembly ass = Assembly.GetEntryAssembly();
-				string path = Path.GetDirectoryName(ass.Location);
-
-				// Load the dll file
-				Environment.CurrentDirectory = path;
-
-				if (Environment.Is64BitProcess)
-					dllPtr = LoadLibrary(@"NostalgicPlayerLibrary_Native-x64.dll");
-				else
-					dllPtr = LoadLibrary(@"NostalgicPlayerLibrary_Native-x86.dll");
-			}
-			finally
-			{
-				Environment.CurrentDirectory = oldPath;
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Destructor
-		/// </summary>
-		/********************************************************************/
-		private static void MixerNormal_Dtor(object sender, EventArgs e)
-		{
-			if (dllPtr != IntPtr.Zero)
-			{
-				FreeLibrary(dllPtr);
-				dllPtr = IntPtr.Zero;
-			}
-		}
-
-
 
 		/********************************************************************/
 		/// <summary>
@@ -374,8 +313,34 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 							// Use 32 bit mixers
 							//
 							// Check to see if we need to make interpolation on the mixing
-							if (false)
+							if ((mode & MixerMode.Interpolation) != 0)
 							{
+								if ((vnf.Flags & SampleFlags._16Bits) != 0)
+								{
+									// 16 bit input sample to be mixed
+									if ((mode & MixerMode.Stereo) != 0)
+									{
+										if ((vnf.Panning == (int)Panning.Surround) && ((mode & MixerMode.Surround) != 0))
+											vnf.Current = Mix16SurroundInterp(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
+										else
+											vnf.Current = Mix16StereoInterp(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
+									}
+									else
+										vnf.Current = Mix16MonoInterp(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected);
+								}
+								else
+								{
+									// 8 bit input sample to be mixed
+									if ((mode & MixerMode.Stereo) != 0)
+									{
+										if ((vnf.Panning == (int)Panning.Surround) && ((mode & MixerMode.Surround) != 0))
+											vnf.Current = Mix8SurroundInterp(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
+										else
+											vnf.Current = Mix8StereoInterp(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
+									}
+									else
+										vnf.Current = Mix8MonoInterp(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.OldLeftVolume, ref vnf.RampVolume);
+								}
 							}
 							else
 							{
@@ -413,8 +378,34 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 							// Use 64 bit mixers
 							//
 							// Check to see if we need to make interpolation on the mixing
-							if (false)
+							if ((mode & MixerMode.Interpolation) != 0)
 							{
+								if ((vnf.Flags & SampleFlags._16Bits) != 0)
+								{
+									// 16 bit input sample to be mixed
+									if ((mode & MixerMode.Stereo) != 0)
+									{
+										if ((vnf.Panning == (int)Panning.Surround) && ((mode & MixerMode.Surround) != 0))
+											vnf.Current = Mix16SurroundInterp64(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
+										else
+											vnf.Current = Mix16StereoInterp64(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
+									}
+									else
+										vnf.Current = Mix16MonoInterp64(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.OldLeftVolume, ref vnf.RampVolume);
+								}
+								else
+								{
+									// 8 bit input sample to be mixed
+									if ((mode & MixerMode.Stereo) != 0)
+									{
+										if ((vnf.Panning == (int)Panning.Surround) && ((mode & MixerMode.Surround) != 0))
+											vnf.Current = Mix8SurroundInterp64(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
+										else
+											vnf.Current = Mix8StereoInterp64(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
+									}
+									else
+										vnf.Current = Mix8MonoInterp64(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.OldLeftVolume, ref vnf.RampVolume);
+								}
 							}
 							else
 							{
@@ -504,6 +495,45 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		/********************************************************************/
 		/// <summary>
+		/// Mixes a 16 bit sample into a mono output buffer with
+		/// interpolation
+		/// </summary>
+		/********************************************************************/
+		private int Mix16MonoInterp(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel)
+		{
+			return index;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Mixes a 16 bit sample into a stereo output buffer with
+		/// interpolation
+		/// </summary>
+		/********************************************************************/
+		private int Mix16StereoInterp(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel)
+		{
+			return index;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Mixes a 16 bit surround sample into a stereo output buffer with
+		/// interpolation
+		/// </summary>
+		/********************************************************************/
+		private int Mix16SurroundInterp(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel)
+		{
+			return index;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Mixes a 8 bit sample into a mono output buffer
 		/// </summary>
 		/********************************************************************/
@@ -574,6 +604,78 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		/********************************************************************/
 		/// <summary>
+		/// Mixes a 8 bit sample into a mono output buffer with interpolation
+		/// </summary>
+		/********************************************************************/
+		private delegate int del_Mix8MonoInterp(IntPtr source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int oldLVol, ref int rampVol);
+		private int Mix8MonoInterp(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int oldLVol, ref int rampVol)
+		{
+			if (_Mix8MonoInterp == null)
+			{
+				IntPtr f = Environment.Is64BitProcess ? GetProcAddress(dllPtr, "Mix8MonoInterp") : GetProcAddress(dllPtr, "_Mix8MonoInterp@36");
+				_Mix8MonoInterp = (del_Mix8MonoInterp)Marshal.GetDelegateForFunctionPointer(f, typeof(del_Mix8MonoInterp));
+			}
+
+			GCHandle pinnedBuf = GCHandle.Alloc(source, GCHandleType.Pinned);
+
+			try
+			{
+				return _Mix8MonoInterp(pinnedBuf.AddrOfPinnedObject(), dest, offset, index, increment, todo, lVolSel, oldLVol, ref rampVol);
+			}
+			finally
+			{
+				pinnedBuf.Free();
+			}
+		}
+		private static del_Mix8MonoInterp _Mix8MonoInterp = null;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Mixes a 8 bit sample into a stereo output buffer with
+		/// interpolation
+		/// </summary>
+		/********************************************************************/
+		private delegate int del_Mix8StereoInterp(IntPtr source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol);
+		private int Mix8StereoInterp(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
+		{
+			if (_Mix8StereoInterp == null)
+			{
+				IntPtr f = Environment.Is64BitProcess ? GetProcAddress(dllPtr, "Mix8StereoInterp") : GetProcAddress(dllPtr, "_Mix8StereoInterp@44");
+				_Mix8StereoInterp = (del_Mix8StereoInterp)Marshal.GetDelegateForFunctionPointer(f, typeof(del_Mix8StereoInterp));
+			}
+
+			GCHandle pinnedBuf = GCHandle.Alloc(source, GCHandleType.Pinned);
+
+			try
+			{
+				return _Mix8StereoInterp(pinnedBuf.AddrOfPinnedObject(), dest, offset, index, increment, todo, lVolSel, rVolSel, oldLVol, oldRVol, ref rampVol);
+			}
+			finally
+			{
+				pinnedBuf.Free();
+			}
+		}
+		private static del_Mix8StereoInterp _Mix8StereoInterp = null;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Mixes a 8 bit surround sample into a stereo output buffer with
+		/// interpolation
+		/// </summary>
+		/********************************************************************/
+		private int Mix8SurroundInterp(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
+		{
+			return index;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Mixes a 16 bit sample into a mono output buffer
 		/// </summary>
 		/********************************************************************/
@@ -610,6 +712,45 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		/********************************************************************/
 		/// <summary>
+		/// Mixes a 16 bit sample into a mono output buffer with
+		/// interpolation
+		/// </summary>
+		/********************************************************************/
+		private int Mix16MonoInterp64(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int oldLVol, ref int rampVol)
+		{
+			return index;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Mixes a 16 bit sample into a stereo output buffer with
+		/// interpolation
+		/// </summary>
+		/********************************************************************/
+		private int Mix16StereoInterp64(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
+		{
+			return index;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Mixes a 16 bit surround sample into a stereo output buffer with
+		/// interpolation
+		/// </summary>
+		/********************************************************************/
+		private int Mix16SurroundInterp64(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
+		{
+			return index;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Mixes a 8 bit sample into a mono output buffer
 		/// </summary>
 		/********************************************************************/
@@ -638,6 +779,44 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// </summary>
 		/********************************************************************/
 		private int Mix8SurroundNormal64(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel)
+		{
+			return index;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Mixes a 8 bit sample into a mono output buffer with interpolation
+		/// </summary>
+		/********************************************************************/
+		private int Mix8MonoInterp64(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int oldLVol, ref int rampVol)
+		{
+			return index;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Mixes a 8 bit sample into a stereo output buffer with
+		/// interpolation
+		/// </summary>
+		/********************************************************************/
+		private int Mix8StereoInterp64(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
+		{
+			return index;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Mixes a 8 bit surround sample into a stereo output buffer with
+		/// interpolation
+		/// </summary>
+		/********************************************************************/
+		private int Mix8SurroundInterp64(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
 		{
 			return index;
 		}

@@ -6,6 +6,10 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers;
 
@@ -24,6 +28,64 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private int bytesPerSample;			// How many bytes each sample uses in the output buffer
 
 		protected VoiceInfo[] voiceInfo;
+		[DllImport("kernel32.dll")]
+		private static extern IntPtr LoadLibrary(string dllToLoad);
+
+		[DllImport("kernel32.dll")]
+		protected static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
+
+		[DllImport("kernel32.dll")]
+		private static extern bool FreeLibrary(IntPtr hModule);
+
+		protected static IntPtr dllPtr = IntPtr.Zero;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		static MixerBase()
+		{
+			AppDomain.CurrentDomain.ProcessExit += MixerBase_Dtor;
+
+			string oldPath = Environment.CurrentDirectory;
+
+			try
+			{
+				Assembly ass = Assembly.GetEntryAssembly();
+				string path = Path.GetDirectoryName(ass.Location);
+
+				// Load the dll file
+				Environment.CurrentDirectory = path;
+
+				if (Environment.Is64BitProcess)
+					dllPtr = LoadLibrary(@"NostalgicPlayerLibrary_Native-x64.dll");
+				else
+					dllPtr = LoadLibrary(@"NostalgicPlayerLibrary_Native-x86.dll");
+			}
+			finally
+			{
+				Environment.CurrentDirectory = oldPath;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Destructor
+		/// </summary>
+		/********************************************************************/
+		private static void MixerBase_Dtor(object sender, EventArgs e)
+		{
+			if (dllPtr != IntPtr.Zero)
+			{
+				FreeLibrary(dllPtr);
+				dllPtr = IntPtr.Zero;
+			}
+		}
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -164,6 +226,59 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		{
 			return voiceInfo;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check to see if the given channel is active or not
+		/// </summary>
+		/********************************************************************/
+		public bool IsActive(int channel)
+		{
+			return voiceInfo[channel].Active;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Enable or disable a channel
+		/// </summary>
+		/********************************************************************/
+		public void EnableChannel(int channel, bool enable)
+		{
+			voiceInfo[channel].Enabled = enable;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Adds the Amiga LED filter
+		/// </summary>
+		/********************************************************************/
+		private delegate int del_AddAmigaFilter(bool stereo, IntPtr dest, int todo, ref int filterPrevLeft, ref int filterPrevRight);
+		public void AddAmigaFilter(bool stereo, int[] dest, int todo, ref int filterPrevLeft, ref int filterPrevRight)
+		{
+			if (_AddAmigaFilter == null)
+			{
+				IntPtr f = Environment.Is64BitProcess ? GetProcAddress(dllPtr, "AddAmigaFilter") : GetProcAddress(dllPtr, "_AddAmigaFilter@20");
+				_AddAmigaFilter = (del_AddAmigaFilter)Marshal.GetDelegateForFunctionPointer(f, typeof(del_AddAmigaFilter));
+			}
+
+			GCHandle pinnedBuf = GCHandle.Alloc(dest, GCHandleType.Pinned);
+
+			try
+			{
+				_AddAmigaFilter(stereo, pinnedBuf.AddrOfPinnedObject(), todo, ref filterPrevLeft, ref filterPrevRight);
+			}
+			finally
+			{
+				pinnedBuf.Free();
+			}
+		}
+		private static del_AddAmigaFilter _AddAmigaFilter = null;
 
 
 
