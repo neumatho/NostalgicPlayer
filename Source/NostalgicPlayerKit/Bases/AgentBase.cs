@@ -21,6 +21,22 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 	{
 		/********************************************************************/
 		/// <summary>
+		/// Tells which version of NostalgicPlayer this agent is compiled
+		/// against
+		/// </summary>
+		/********************************************************************/
+		public int NostalgicPlayerVersion
+		{
+			get
+			{
+				return IAgent.NostalgicPlayer_Current_Version;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Returns an unique ID for this agent
 		/// </summary>
 		/********************************************************************/

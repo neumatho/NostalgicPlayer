@@ -94,6 +94,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 							{
 								IAgent agent = (IAgent)Activator.CreateInstance(t);
 
+								// Check the NostalgicPlayer version the agent is compiled against
+								if (agent.NostalgicPlayerVersion != IAgent.NostalgicPlayer_Current_Version)
+								{
+									Console.WriteLine($"Agent {file} is not compiled against the current version of NostalgicPlayer and is therefore skipped");
+									continue;
+								}
+
 								List<AgentInfo> typesInAgent = new List<AgentInfo>();
 
 								AgentSupportInfo[] supportInfo = agent.AgentInformation;

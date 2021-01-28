@@ -13,7 +13,6 @@ using System.Linq;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Exceptions;
 using Polycode.NostalgicPlayer.Kit.Mixer;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
@@ -213,7 +212,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		public override AgentResult Load(PlayerFileInfo fileInfo, out string errorMessage)
 		{
 			errorMessage = string.Empty;
-			AgentResult agentResult = AgentResult.Error;
 
 			try
 			{
@@ -270,7 +268,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				if (stream.EndOfStream)
 				{
 					errorMessage = Resources.IDS_JAM_ERR_LOADING_HEADER;
-					throw new StopException();
+					Cleanup();
+
+					return AgentResult.Error;
 				}
 
 				// Get the pattern data
@@ -300,7 +300,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 					if (stream.EndOfStream)
 					{
 						errorMessage = Resources.IDS_JAM_ERR_LOADING_PATTERNS;
-						throw new StopException();
+						Cleanup();
+
+						return AgentResult.Error;
 					}
 				}
 
@@ -318,17 +320,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 						if (stream.EndOfStream && (i != samplesNum - 1))
 						{
 							errorMessage = Resources.IDS_JAM_ERR_LOADING_SAMPLES;
-							throw new StopException();
+							Cleanup();
+
+							return AgentResult.Error;
 						}
 					}
 				}
-
-				// Ok, we're done
-				agentResult = AgentResult.Ok;
-			}
-			catch (StopException)
-			{
-				Cleanup();
 			}
 			catch (Exception)
 			{
@@ -336,7 +333,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				throw;
 			}
 
-			return agentResult;
+			// Ok, we're done
+			return AgentResult.Ok;
 		}
 
 

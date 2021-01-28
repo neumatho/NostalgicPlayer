@@ -17,6 +17,16 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	public interface IAgent
 	{
 		/// <summary>
+		/// 1.0.0
+		/// </summary>
+		public const int NostalgicPlayer_Current_Version = (1 << 16) + (0 << 8) + 0;
+
+		/// <summary>
+		/// Return the NostalgicPlayer_Current_Version constant defined above
+		/// </summary>
+		int NostalgicPlayerVersion { get; }
+
+		/// <summary>
 		/// Returns an unique ID for this agent
 		/// </summary>
 		Guid AgentId { get; }
