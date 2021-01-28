@@ -15,8 +15,8 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
+using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 {
@@ -168,18 +168,31 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 		/********************************************************************/
 		private void FindAgents(Manager agentManager)
 		{
+			supportedFormats = FindAgentTypes(agentManager, Manager.AgentType.Players);
+			outputAgents = FindAgentTypes(agentManager, Manager.AgentType.Output);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a list with all the types available for the given agent
+		/// type
+		/// </summary>
+		/********************************************************************/
+		private string[] FindAgentTypes(Manager agentManager, Manager.AgentType agentType)
+		{
 			List<string> names = new List<string>();
 
 			// Find all supported formats from the players
-			foreach (IAgent agent in agentManager.GetAllAgents(Manager.AgentType.Players))
+			foreach (AgentInfo agentInfo in agentManager.GetAllAgents(agentType))
 			{
 				try
 				{
-					string name = agent.Name;
-
-					IPlayerAgent playerAgent = agent.CreateInstance() as IPlayerAgent;
-					if (playerAgent != null)
-						names.AddRange(playerAgent.FormatsSupported.Select(f => f == name ? f : $"{f} ({name})"));
+					if (agentInfo.TypeName == agentInfo.AgentName)
+						names.Add(agentInfo.TypeName);
+					else
+						names.Add($"{agentInfo.TypeName} ({agentInfo.AgentName})");
 				}
 				catch (Exception)
 				{
@@ -187,23 +200,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 				}
 			}
 
-			supportedFormats = names.OrderBy(n => n).ToArray();
-			names.Clear();
-
-			// Find output agents
-			foreach (IAgent agent in agentManager.GetAllAgents(Manager.AgentType.Output))
-			{
-				try
-				{
-					names.Add(agent.Name);
-				}
-				catch (Exception)
-				{
-					// Ignore exception
-				}
-			}
-
-			outputAgents = names.OrderBy(n => n).ToArray();
+			return names.OrderBy(n => n).ToArray();
 		}
 
 

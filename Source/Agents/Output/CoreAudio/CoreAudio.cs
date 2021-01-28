@@ -6,12 +6,14 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Bases;
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 // This is needed to uniquely identify this agent
-[assembly: Guid("b9cef7e4-c74c-4af0-b01d-802f0d1b4cc7")]
+[assembly: Guid("12F3ABBD-79A3-40EA-97FC-BC8DD4248136")]
 
 namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 {
@@ -38,14 +40,17 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns a description of this agent
+		/// Returns all the formats/types this agent supports
 		/// </summary>
 		/********************************************************************/
-		public override string Description
+		public override AgentSupportInfo[] AgentInformation
 		{
 			get
 			{
-				return Resources.IDS_DESCRIPTION;
+				return new AgentSupportInfo[]
+				{
+					new AgentSupportInfo(Resources.IDS_NAME, Resources.IDS_DESCRIPTION, Guid.Parse("B9CEF7E4-C74C-4AF0-B01D-802F0D1B4CC7"))
+				};
 			}
 		}
 
@@ -56,7 +61,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/// Creates a new worker instance
 		/// </summary>
 		/********************************************************************/
-		public override IAgentWorker CreateInstance()
+		public override IAgentWorker CreateInstance(Guid typeId)
 		{
 			return new CoreAudioWorker();
 		}

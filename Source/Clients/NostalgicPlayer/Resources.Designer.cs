@@ -93,6 +93,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap IDB_CHECKMARK {
+            get {
+                object obj = ResourceManager.GetObject("IDB_CHECKMARK", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap IDB_DISK {
             get {
                 object obj = ResourceManager.GetObject("IDB_DISK", resourceCulture);
@@ -1026,6 +1036,69 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_SELECTMENU_NONE {
             get {
                 return ResourceManager.GetString("IDS_SELECTMENU_NONE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        internal static string IDS_SETTINGS_AGENTS_AGENTS_COLUMN_NAME {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_AGENTS_AGENTS_COLUMN_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Version.
+        /// </summary>
+        internal static string IDS_SETTINGS_AGENTS_AGENTS_COLUMN_VERSION {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_AGENTS_AGENTS_COLUMN_VERSION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        internal static string IDS_SETTINGS_AGENTS_DESCRIPTION_COLUMN_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_AGENTS_DESCRIPTION_COLUMN_DESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display.
+        /// </summary>
+        internal static string IDS_SETTINGS_AGENTS_DISPLAY {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_AGENTS_DISPLAY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        internal static string IDS_SETTINGS_AGENTS_SETTINGS {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_AGENTS_SETTINGS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Output.
+        /// </summary>
+        internal static string IDS_SETTINGS_AGENTS_TAB_OUTPUT {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_AGENTS_TAB_OUTPUT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Players.
+        /// </summary>
+        internal static string IDS_SETTINGS_AGENTS_TAB_PLAYERS {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_AGENTS_TAB_PLAYERS", resourceCulture);
             }
         }
         

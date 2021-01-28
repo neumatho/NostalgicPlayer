@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Containers;
 
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
@@ -18,12 +19,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Returns an unique ID for this agent
 		/// </summary>
-		Guid Id { get; }
-
-		/// <summary>
-		/// Returns the version of this agent
-		/// </summary>
-		Version Version { get; }
+		Guid AgentId { get; }
 
 		/// <summary>
 		/// Returns the name of this agent
@@ -31,13 +27,18 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		string Name { get; }
 
 		/// <summary>
-		/// Returns a description of this agent
+		/// Returns the version of this agent
 		/// </summary>
-		string Description { get; }
+		Version Version { get; }
+
+		/// <summary>
+		/// Returns all the formats/types this agent supports
+		/// </summary>
+		AgentSupportInfo[] AgentInformation { get; }
 
 		/// <summary>
 		/// Creates a new worker instance
 		/// </summary>
-		IAgentWorker CreateInstance();
+		IAgentWorker CreateInstance(Guid typeId);
 	}
 }

@@ -7,64 +7,60 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using System.Runtime.InteropServices;
-using Polycode.NostalgicPlayer.Kit.Bases;
-using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
 
-// This is needed to uniquely identify this agent
-[assembly: Guid("490BCA2E-89E9-44DA-AC33-4BF09609346D")]
-
-namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
+namespace Polycode.NostalgicPlayer.Kit.Containers
 {
 	/// <summary>
-	/// NostalgicPlayer agent interface implementation
+	/// Holds information about a single format/type supported by an agent
 	/// </summary>
-	public class JamCracker : AgentBase
+	public class AgentSupportInfo
 	{
-		#region IAgent implementation
 		/********************************************************************/
 		/// <summary>
-		/// Returns the name of this agent
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public override string Name
+		public AgentSupportInfo(string name, string description, Guid typeId)
 		{
-			get
-			{
-				return Resources.IDS_NAME;
-			}
+			Name = name;
+			Description = description;
+			TypeId = typeId;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns all the formats/types this agent supports
+		/// Holds the name of the format/type
 		/// </summary>
 		/********************************************************************/
-		public override AgentSupportInfo[] AgentInformation
+		public string Name
 		{
-			get
-			{
-				return new AgentSupportInfo[]
-				{
-					new AgentSupportInfo(Resources.IDS_NAME, Resources.IDS_DESCRIPTION, Guid.Parse("68CFC1DF-F171-4A2A-AC43-D5173C3EE5A3"))
-				};
-			}
+			get;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Creates a new worker instance
+		/// Holds the description of the format/type
 		/// </summary>
 		/********************************************************************/
-		public override IAgentWorker CreateInstance(Guid typeId)
+		public string Description
 		{
-			return new JamCrackerWorker();
+			get;
 		}
-		#endregion
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the ID of the format/type
+		/// </summary>
+		/********************************************************************/
+		public Guid TypeId
+		{
+			get;
+		}
 	}
 }

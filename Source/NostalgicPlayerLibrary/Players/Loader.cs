@@ -13,6 +13,7 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
+using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 {
@@ -23,7 +24,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 	{
 		private readonly Manager agentManager;
 
-		private IAgent agent;
+		private AgentInfo playerAgentInfo;
 		private IPlayerAgent playerAgent;
 
 		private IPlayer player;
@@ -43,7 +44,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		{
 			this.agentManager = agentManager;
 
-			agent = null;
+			playerAgentInfo = null;
 			playerAgent = null;
 			stream = null;
 		}
@@ -97,9 +98,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 							// Well, something went wrong when loading the file
 							//
 							// Build the error string
-							errorMessage = string.Format(Resources.IDS_ERR_LOAD_MODULE, fileInfo.FileName, agent.Name, playerError);
+							errorMessage = string.Format(Resources.IDS_ERR_LOAD_MODULE, fileInfo.FileName, playerAgentInfo.AgentName, playerError);
 
-							agent = null;
+							playerAgentInfo = null;
 							playerAgent = null;
 
 							result = false;
@@ -107,9 +108,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						else
 						{
 							// Get module information
-							playerName = agent.Name;
+							playerName = playerAgentInfo.AgentName;//XX
 
-							moduleFormat = agent.Name;
+							moduleFormat = playerAgentInfo.AgentName;
 						}
 					}
 				}
@@ -153,7 +154,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			stream?.Dispose();
 			stream = null;
 
-			agent = null;
+			playerAgentInfo = null;
 			playerAgent = null;
 
 			player = null;
@@ -175,6 +176,21 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			get
 			{
 				return player;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return information about the player agent
+		/// </summary>
+		/********************************************************************/
+		public AgentInfo PlayerAgentInfo
+		{
+			get
+			{
+				return playerAgentInfo;
 			}
 		}
 
@@ -240,34 +256,38 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			int index = fileName.IndexOf('.');
 			string postExtension = index == lastIndex ? string.Empty : fileName.Substring(0, index).ToLower();
 
-			foreach (IAgent a in agentManager.GetAllAgents(Manager.AgentType.Players))
+			foreach (AgentInfo agentInfo in agentManager.GetAllAgents(Manager.AgentType.Players))
 			{
-				// Create an instance of the player
-				if (a.CreateInstance() is IPlayerAgent player)
+				// Check if the player is enabled
+				if (agentInfo.Enabled)
 				{
-					// Get the player type
-					string[] playerTypes = player.FileExtensions;
-
-					// Did we get a match
-					if (playerTypes.Contains(fileExtension) || (!string.IsNullOrEmpty(postExtension) && playerTypes.Contains(postExtension)))
+					// Create an instance of the player
+					if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IPlayerAgent player)
 					{
-						// Found the file type in a player. Now call the
-						// players check routine, just to make sure it's
-						// the right player
-						AgentResult agentResult = player.Identify(fileInfo);
-						if (agentResult == AgentResult.Ok)
-						{
-							// We found a player
-							agent = a;
-							playerAgent = player;
+						// Get the player type
+						string[] playerTypes = player.FileExtensions;
 
-							return true;
-						}
-
-						if (agentResult != AgentResult.Unknown)
+						// Did we get a match
+						if (playerTypes.Contains(fileExtension) || (!string.IsNullOrEmpty(postExtension) && playerTypes.Contains(postExtension)))
 						{
-							// Some error occurred
-							throw new Exception();
+							// Found the file type in a player. Now call the
+							// players check routine, just to make sure it's
+							// the right player
+							AgentResult agentResult = player.Identify(fileInfo);
+							if (agentResult == AgentResult.Ok)
+							{
+								// We found a player
+								playerAgentInfo = agentInfo;
+								playerAgent = player;
+
+								return true;
+							}
+
+							if (agentResult != AgentResult.Unknown)
+							{
+								// Some error occurred
+								throw new Exception();
+							}
 						}
 					}
 				}
@@ -287,26 +307,30 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		private bool FindPlayer(PlayerFileInfo fileInfo)
 		{
-			foreach (IAgent a in agentManager.GetAllAgents(Manager.AgentType.Players))
+			foreach (AgentInfo agentInfo in agentManager.GetAllAgents(Manager.AgentType.Players))
 			{
-				// Create an instance of the player
-				if (a.CreateInstance() is IPlayerAgent player)
+				// Is the player enabled?
+				if (agentInfo.Enabled)
 				{
-					// Check the file
-					AgentResult agentResult = player.Identify(fileInfo);
-					if (agentResult == AgentResult.Ok)
+					// Create an instance of the player
+					if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IPlayerAgent player)
 					{
-						// We found the right player
-						agent = a;
-						playerAgent = player;
+						// Check the file
+						AgentResult agentResult = player.Identify(fileInfo);
+						if (agentResult == AgentResult.Ok)
+						{
+							// We found the right player
+							playerAgentInfo = agentInfo;
+							playerAgent = player;
 
-						return true;
-					}
+							return true;
+						}
 
-					if (agentResult != AgentResult.Unknown)
-					{
-						// Some error occurred
-						throw new Exception();
+						if (agentResult != AgentResult.Unknown)
+						{
+							// Some error occurred
+							throw new Exception();
+						}
 					}
 				}
 			}

@@ -77,7 +77,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						Name = "#",
 						Resizable = DataGridViewTriState.True,
 						SortMode = DataGridViewColumnSortMode.Automatic,
-						DefaultCellStyle = new DataGridViewCellStyle() { Alignment = DataGridViewContentAlignment.MiddleRight },
+						DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
 						Width = settings.InstColumn1Width,
 						DisplayIndex = settings.InstColumn1Pos
 					});
@@ -96,7 +96,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						Name = Resources.IDS_SAMPLE_INFO_INST_COLUMN_SAMPLENUM,
 						Resizable = DataGridViewTriState.True,
 						SortMode = DataGridViewColumnSortMode.Automatic,
-						DefaultCellStyle = new DataGridViewCellStyle() { Alignment = DataGridViewContentAlignment.MiddleRight },
+						DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
 						Width = settings.InstColumn3Width,
 						DisplayIndex = settings.InstColumn3Pos
 					});
@@ -109,7 +109,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						Name = "#",
 						Resizable = DataGridViewTriState.True,
 						SortMode = DataGridViewColumnSortMode.Automatic,
-						DefaultCellStyle = new DataGridViewCellStyle() { Alignment = DataGridViewContentAlignment.MiddleRight },
+						DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
 						Width = settings.SampColumn1Width,
 						DisplayIndex = settings.SampColumn1Pos
 					});
@@ -128,7 +128,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						Name = Resources.IDS_SAMPLE_INFO_SAMP_COLUMN_LENGTH,
 						Resizable = DataGridViewTriState.True,
 						SortMode = DataGridViewColumnSortMode.Automatic,
-						DefaultCellStyle = new DataGridViewCellStyle() { Alignment = DataGridViewContentAlignment.MiddleRight },
+						DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
 						Width = settings.SampColumn3Width,
 						DisplayIndex = settings.SampColumn3Pos
 					});
@@ -138,7 +138,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						Name = Resources.IDS_SAMPLE_INFO_SAMP_COLUMN_LOOPSTART,
 						Resizable = DataGridViewTriState.True,
 						SortMode = DataGridViewColumnSortMode.Automatic,
-						DefaultCellStyle = new DataGridViewCellStyle() { Alignment = DataGridViewContentAlignment.MiddleRight },
+						DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
 						Width = settings.SampColumn4Width,
 						DisplayIndex = settings.SampColumn4Pos
 					});
@@ -148,7 +148,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						Name = Resources.IDS_SAMPLE_INFO_SAMP_COLUMN_LOOPLENGTH,
 						Resizable = DataGridViewTriState.True,
 						SortMode = DataGridViewColumnSortMode.Automatic,
-						DefaultCellStyle = new DataGridViewCellStyle() { Alignment = DataGridViewContentAlignment.MiddleRight },
+						DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
 						Width = settings.SampColumn5Width,
 						DisplayIndex = settings.SampColumn5Pos
 					});
@@ -158,7 +158,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						Name = Resources.IDS_SAMPLE_INFO_SAMP_COLUMN_BITSIZE,
 						Resizable = DataGridViewTriState.True,
 						SortMode = DataGridViewColumnSortMode.Automatic,
-						DefaultCellStyle = new DataGridViewCellStyle() { Alignment = DataGridViewContentAlignment.MiddleRight },
+						DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
 						Width = settings.SampColumn6Width,
 						DisplayIndex = settings.SampColumn6Pos
 					});
@@ -168,7 +168,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						Name = Resources.IDS_SAMPLE_INFO_SAMP_COLUMN_VOLUME,
 						Resizable = DataGridViewTriState.True,
 						SortMode = DataGridViewColumnSortMode.Automatic,
-						DefaultCellStyle = new DataGridViewCellStyle() { Alignment = DataGridViewContentAlignment.MiddleRight },
+						DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
 						Width = settings.SampColumn7Width,
 						DisplayIndex = settings.SampColumn7Pos
 					});
@@ -178,7 +178,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						Name = Resources.IDS_SAMPLE_INFO_SAMP_COLUMN_PANNING,
 						Resizable = DataGridViewTriState.True,
 						SortMode = DataGridViewColumnSortMode.Automatic,
-						DefaultCellStyle = new DataGridViewCellStyle() { Alignment = DataGridViewContentAlignment.MiddleRight },
+						DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
 						Width = settings.SampColumn8Width,
 						DisplayIndex = settings.SampColumn8Pos
 					});
@@ -188,7 +188,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						Name = Resources.IDS_SAMPLE_INFO_SAMP_COLUMN_MIDDLEC,
 						Resizable = DataGridViewTriState.True,
 						SortMode = DataGridViewColumnSortMode.Automatic,
-						DefaultCellStyle = new DataGridViewCellStyle() { Alignment = DataGridViewContentAlignment.MiddleRight },
+						DefaultCellStyle = new DataGridViewCellStyle { Alignment = DataGridViewContentAlignment.MiddleRight },
 						Width = settings.SampColumn9Width,
 						DisplayIndex = settings.SampColumn9Pos
 					});
@@ -198,7 +198,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						Name = Resources.IDS_SAMPLE_INFO_SAMP_COLUMN_INFO,
 						Resizable = DataGridViewTriState.True,
 						SortMode = DataGridViewColumnSortMode.NotSortable,
-						DefaultCellStyle = new DataGridViewCellStyle() { NullValue = null },
+						DefaultCellStyle = new DataGridViewCellStyle { NullValue = null },
 						Width = settings.SampColumn10Width,
 						DisplayIndex = settings.SampColumn10Pos
 					});

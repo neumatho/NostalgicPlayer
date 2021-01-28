@@ -39,8 +39,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		private ModuleInfoStatic(string moduleName, string author, string moduleFormat, string playerName, int channels, long moduleSize)
+		private ModuleInfoStatic(AgentInfo playerAgentInfo, string moduleName, string author, string moduleFormat, string playerName, int channels, long moduleSize)
 		{
+			PlayerAgentInfo = playerAgentInfo;
 			ModuleName = moduleName;
 			Author = author;
 			ModuleFormat = moduleFormat;
@@ -56,7 +57,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		internal ModuleInfoStatic(string moduleName, string author, string moduleFormat, string playerName, int channels, long moduleSize, ModulePlayerSupportFlag supportFlag, int maxSongNumber, InstrumentInfo[] instruments, SampleInfo[] samples) : this(moduleName, author, moduleFormat, playerName, channels, moduleSize)
+		internal ModuleInfoStatic(AgentInfo playerAgentInfo, string moduleName, string author, string moduleFormat, string playerName, int channels, long moduleSize, ModulePlayerSupportFlag supportFlag, int maxSongNumber, InstrumentInfo[] instruments, SampleInfo[] samples) : this(playerAgentInfo, moduleName, author, moduleFormat, playerName, channels, moduleSize)
 		{
 			this.supportFlag = supportFlag;
 			MaxSongNumber = maxSongNumber;
@@ -65,6 +66,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		}
 
 		#region Common properties
+		/********************************************************************/
+		/// <summary>
+		/// Returns agent information about the player in use
+		/// </summary>
+		/********************************************************************/
+		public AgentInfo PlayerAgentInfo
+		{
+			get;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Returns the name of the module

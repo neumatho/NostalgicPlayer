@@ -6,6 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
@@ -18,6 +19,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 	public interface ISettingsPage
 	{
 		/// <summary>
+		/// Will prepare to handle the settings
+		/// </summary>
+		void InitSettings(Manager agentManager, ModuleHandler moduleHandler, MainWindowForm mainWindow, Settings userSettings, Settings windowSettings);
+
+		/// <summary>
 		/// Will make a backup of settings that can be changed in real-time
 		/// </summary>
 		void MakeBackup();
@@ -25,23 +31,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// <summary>
 		/// Will read the settings and set all the controls
 		/// </summary>
-		void InitSettings(Manager agentManager, ModuleHandler moduleHandler, Settings userSettings);
+		void ReadSettings();
 
 		/// <summary>
 		/// Will read the window settings
 		/// </summary>
-		void InitWindowSettings(Settings windowSettings);
+		void ReadWindowSettings();
 
 		/// <summary>
 		/// Will read the data from the controls and store them in the
 		/// settings
 		/// </summary>
-		void RememberSettings();
+		void WriteSettings();
 
 		/// <summary>
 		/// Will store window specific settings
 		/// </summary>
-		void RememberWindowSettings();
+		void WriteWindowSettings();
 
 		/// <summary>
 		/// Will restore real-time values

@@ -168,11 +168,11 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 		/********************************************************************/
 		private static IOutputAgent FindOutputAgent(Manager agentManager)
 		{
-			IAgent agent = agentManager.GetAgent(Manager.AgentType.Output, new Guid("b9cef7e4-c74c-4af0-b01d-802f0d1b4cc7"));
-			if (agent == null)
+			AgentInfo agentInfo = agentManager.GetAgent(Manager.AgentType.Output, new Guid("b9cef7e4-c74c-4af0-b01d-802f0d1b4cc7"));
+			if (agentInfo == null)
 				return null;
 
-			return (IOutputAgent)agent.CreateInstance();
+			return (IOutputAgent)agentInfo.Agent.CreateInstance(agentInfo.TypeId);
 		}
 	}
 }

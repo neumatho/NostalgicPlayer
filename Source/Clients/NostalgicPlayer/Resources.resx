@@ -127,6 +127,9 @@
   <data name="IDB_AZ" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\AZ.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="IDB_CHECKMARK" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\CheckMark.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="IDB_DISK" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Disk.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -483,6 +486,27 @@ Formats supported:
   </data>
   <data name="IDS_SELECTMENU_NONE" xml:space="preserve">
     <value>Deselect all</value>
+  </data>
+  <data name="IDS_SETTINGS_AGENTS_AGENTS_COLUMN_NAME" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="IDS_SETTINGS_AGENTS_AGENTS_COLUMN_VERSION" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="IDS_SETTINGS_AGENTS_DESCRIPTION_COLUMN_DESCRIPTION" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="IDS_SETTINGS_AGENTS_DISPLAY" xml:space="preserve">
+    <value>Display</value>
+  </data>
+  <data name="IDS_SETTINGS_AGENTS_SETTINGS" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="IDS_SETTINGS_AGENTS_TAB_OUTPUT" xml:space="preserve">
+    <value>Output</value>
+  </data>
+  <data name="IDS_SETTINGS_AGENTS_TAB_PLAYERS" xml:space="preserve">
+    <value>Players</value>
   </data>
   <data name="IDS_SETTINGS_APPLY" xml:space="preserve">
     <value>Apply</value>

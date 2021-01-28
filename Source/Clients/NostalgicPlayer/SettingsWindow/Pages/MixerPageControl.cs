@@ -11,8 +11,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
@@ -26,6 +26,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 	{
 		private const int MaxNumberOfChannels = 64;
 
+		private Manager manager;
 		private ModuleHandler moduleHandler;
 
 		private SoundSettings soundSettings;
@@ -92,6 +93,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		#region ISettingsPage implementation
 		/********************************************************************/
 		/// <summary>
+		/// Will prepare to handle the settings
+		/// </summary>
+		/********************************************************************/
+		public void InitSettings(Manager agentManager, ModuleHandler modHandler, MainWindowForm mainWindow, Settings userSettings, Settings windowSettings)
+		{
+			manager = agentManager;
+			moduleHandler = modHandler;
+
+			soundSettings = new SoundSettings(userSettings);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will make a backup of settings that can be changed in real-time
 		/// </summary>
 		/********************************************************************/
@@ -106,19 +122,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will read the settings and set all the controls
 		/// </summary>
 		/********************************************************************/
-		public void InitSettings(Manager agentManager, ModuleHandler modHandler, Settings userSettings)
+		public void ReadSettings()
 		{
-			moduleHandler = modHandler;
-
-			soundSettings = new SoundSettings(userSettings);
-
 			// Fill the combobox with available agents
 			outputAgentComboBox.Items.Clear();
 
-			foreach (IAgent agent in agentManager.GetAllAgents(Manager.AgentType.Output))
+			foreach (AgentInfo agentInfo in manager.GetAllAgents(Manager.AgentType.Output))
 			{
-				KryptonListItem listItem = new KryptonListItem(agent.Name);
-				listItem.Tag = agent.Id;
+				KryptonListItem listItem = new KryptonListItem(agentInfo.TypeName);
+				listItem.Tag = agentInfo.TypeId;
 
 				outputAgentComboBox.Items.Add(listItem);
 			}
@@ -162,7 +174,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will read the window settings
 		/// </summary>
 		/********************************************************************/
-		public void InitWindowSettings(Settings windowSettings)
+		public void ReadWindowSettings()
 		{
 		}
 
@@ -174,7 +186,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// settings
 		/// </summary>
 		/********************************************************************/
-		public void RememberSettings()
+		public void WriteSettings()
 		{
 			soundSettings.StereoSeparation = stereoSeparationTrackBar.Value;
 			soundSettings.Interpolation = interpolationCheckBox.Checked;
@@ -190,7 +202,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will store window specific settings
 		/// </summary>
 		/********************************************************************/
-		public void RememberWindowSettings()
+		public void WriteWindowSettings()
 		{
 		}
 
@@ -341,7 +353,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		private void SetMixerSettings()
 		{
-			moduleHandler.ChangeMixerSettings(new MixerConfiguration//XX
+			moduleHandler.ChangeMixerSettings(new MixerConfiguration
 			{
 				StereoSeparator = soundSettings.StereoSeparation,
 				EnableInterpolation = soundSettings.Interpolation,

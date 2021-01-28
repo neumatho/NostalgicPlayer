@@ -44,6 +44,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			Insert
 		}
 
+		private class AgentEntry
+		{
+			public Guid TypeId;
+			public bool Enabled;
+		}
+
 		private Manager agentManager;
 		private ModuleHandler moduleHandler;
 
@@ -261,6 +267,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		public MultiFileInfo GetFileInfo()
 		{
 			return playItem == null ? null : ListItemConverter.Convert(playItem);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will stop the current playing module and free it
+		/// </summary>
+		/********************************************************************/
+		public void StopModule()
+		{
+			StopAndFreeModule();
 		}
 
 		#region Event handlers
@@ -547,7 +565,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				settingsWindow.Activate();
 			else
 			{
-				settingsWindow = new SettingsWindowForm(agentManager, moduleHandler, userSettings);
+				settingsWindow = new SettingsWindowForm(agentManager, moduleHandler, this, userSettings);
 				settingsWindow.Disposed += (o, args) => { settingsWindow = null; };
 				settingsWindow.Show();
 			}
@@ -2816,6 +2834,125 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			agentManager = new Manager();
 			agentManager.LoadAllAgents();
+
+			// Fix agent settings
+			FixAgentSettings(Manager.AgentType.Players);
+			FixAgentSettings(Manager.AgentType.Output);
+
+			// And finally, save the settings to disk
+			userSettings.SaveSettings();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Fix agent settings (removed non-exiting ones and add unknown)
+		/// plus tell the manager about which agents that are disabled
+		/// </summary>
+		/********************************************************************/
+		private void FixAgentSettings(Manager.AgentType agentType)
+		{
+			string section = agentType + " Agents";
+
+			// Build lookup list
+			Dictionary<Guid, AgentInfo> allAgents = agentManager.GetAllAgents(agentType).ToDictionary(agentInfo => agentInfo.TypeId, agentInfo => agentInfo);
+
+			// First comes the delete loop. It will scan the section and see
+			// if the agent has been loaded and if it hasn't, the entry will
+			// be removed from the section
+			List<Guid> toRemove = new List<Guid>();
+			foreach (AgentEntry agentEntry in ReadAgentEntry(section))
+			{
+				// Do we have the entry in the collection
+				if (!allAgents.ContainsKey(agentEntry.TypeId))
+				{
+					// It doesn't, so remove the entry
+					toRemove.Add(agentEntry.TypeId);
+				}
+			}
+
+			// Remove all entries marked to be so
+			foreach (Guid typeId in toRemove)
+				userSettings.RemoveEntry(section, typeId.ToString("D"));
+
+			// Now take all the loaded agents and add those which does not
+			// exists in the settings file
+			//
+			// This dictionary holds how many types that are enabled for each agent
+			Dictionary<Guid, int> enableCount = allAgents.Values.Select(a => a.AgentId).Distinct().ToDictionary(id => id, id => 0);
+
+			foreach (AgentInfo agentInfo in allAgents.Values)
+			{
+				// Does the agent already exists in the settings file?
+				bool enabled = false;
+
+				bool found = false;
+				foreach (AgentEntry agentEntry in ReadAgentEntry(section))
+				{
+					if (agentInfo.TypeId == agentEntry.TypeId)
+					{
+						enabled = agentEntry.Enabled;
+
+						found = true;
+						break;
+					}
+				}
+
+				if (!found)
+				{
+					// The agent isn't in the settings file
+					enabled = true;
+
+					// Add a new entry in the settings file
+					userSettings.SetBoolEntry(section, agentInfo.TypeId.ToString("D"), true);
+				}
+
+				if (enabled)
+					enableCount[agentInfo.AgentId] = ++enableCount[agentInfo.AgentId];
+			}
+
+			// Flush all agents that is disabled
+			foreach (Guid agentId in enableCount.Where(pair => pair.Value == 0).Select(pair => pair.Key))
+				agentManager.UnloadAgent(agentId);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will read and parse a single agent entry in the section given
+		/// </summary>
+		/********************************************************************/
+		private IEnumerable<AgentEntry> ReadAgentEntry(string section)
+		{
+			for (int i = 0; ; i++)
+			{
+				Guid typeId = Guid.Empty;
+				bool enabled = false;
+
+				try
+				{
+					// Try to read the entry
+					string value = userSettings.GetStringEntry(section, i, out string id);
+					if (string.IsNullOrEmpty(value))
+						break;
+
+					// Parse the entry value
+					if (!bool.TryParse(value, out enabled))
+						enabled = true;
+
+					typeId = Guid.Parse(id);
+				}
+				catch (Exception)
+				{
+					// Ignore exception
+					;
+				}
+
+				if (typeId != Guid.Empty)
+					yield return new AgentEntry { TypeId = typeId, Enabled = enabled };
+			}
 		}
 
 

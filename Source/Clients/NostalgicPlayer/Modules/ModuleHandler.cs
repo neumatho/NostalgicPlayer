@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 			currentMasterVolume = startVolume;
 
-			mixerConfiguration = new MixerConfiguration//XX
+			mixerConfiguration = new MixerConfiguration
 			{
 				StereoSeparator = sndSettings.StereoSeparation,
 				EnableInterpolation = sndSettings.Interpolation,
@@ -86,9 +86,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 			// Initialize the loader
 			loadedFiles = new List<ModuleItem>();
-
-			// Find the output agent to use
-			FindOutputAgent();
 		}
 
 
@@ -103,12 +100,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 			isPlaying = false;
 			loadedFiles = null;
 
-			// Close down the output agent
-			outputAgent?.Shutdown();
-			outputAgent = null;
+			CloseOutputAgent();
 
 			soundSettings = null;
 			agentManager = null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Close the currently active output agent
+		/// </summary>
+		/********************************************************************/
+		public void CloseOutputAgent()
+		{
+			outputAgent?.Shutdown();
+			outputAgent = null;
+			OutputAgentInfo = null;
 		}
 
 		#region Properties
@@ -128,6 +137,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 			{
 				isPlaying = value;
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the output agent in use if playing
+		/// </summary>
+		/********************************************************************/
+		public AgentInfo OutputAgentInfo
+		{
+			get; private set;
 		}
 
 
@@ -484,28 +505,43 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/// Will find the configured or default output agent and initialize it
 		/// </summary>
 		/********************************************************************/
-		private void FindOutputAgent()
+		private bool FindOutputAgent(bool showError)
 		{
-			Guid agentId = soundSettings.OutputAgent;
-
-			IAgent agent = agentManager.GetAgent(Manager.AgentType.Output, agentId);
-			if (agent == null)
+			if (outputAgent == null)
 			{
-				// Selected output agent could not be loaded, try with the default one if not already that one
-				if (agentId != soundSettings.DefaultOutputAgent)
+				Guid typeId = soundSettings.OutputAgent;
+
+				AgentInfo agentInfo = agentManager.GetAgent(Manager.AgentType.Output, typeId);
+				if ((agentInfo == null) || !agentInfo.Enabled)
 				{
-					agent = agentManager.GetAgent(Manager.AgentType.Output, soundSettings.DefaultOutputAgent);
-					if (agent == null)
+					// Selected output agent could not be loaded, try with the default one if not already that one
+					if (typeId != soundSettings.DefaultOutputAgent)
+						agentInfo = agentManager.GetAgent(Manager.AgentType.Output, soundSettings.DefaultOutputAgent);
+				}
+
+				if ((agentInfo?.Agent != null) && agentInfo.Enabled)
+				{
+					OutputAgentInfo = agentInfo;
+					outputAgent = (IOutputAgent)agentInfo.Agent.CreateInstance(agentInfo.TypeId);
+
+					if (outputAgent.Initialize(out string errorMessage) == AgentResult.Error)
+					{
+						if (showError)
+							ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_INITOUTPUTAGENT, errorMessage));
+
+						return false;
+					}
+				}
+				else
+				{
+					if (showError)
 						ShowSimpleErrorMessage(Resources.IDS_ERR_NOOUTPUTAGENT);
+
+					return false;
 				}
 			}
 
-			if (agent != null)
-			{
-				outputAgent = (IOutputAgent)agent.CreateInstance();
-				if (outputAgent.Initialize(out string errorMessage) == AgentResult.Error)
-					ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_INITOUTPUTAGENT, errorMessage));
-			}
+			return true;
 		}
 
 
@@ -536,6 +572,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					if (showError)
 						ShowErrorMessage(string.Format(Resources.IDS_ERR_LOAD_FILE, errorMessage), listItem);
 
+					return false;
+				}
+
+				// Find the output agent to use
+				if (!FindOutputAgent(showError))
+				{
+					item.Loader.Unload();
 					return false;
 				}
 

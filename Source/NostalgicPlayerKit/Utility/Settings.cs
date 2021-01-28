@@ -262,6 +262,48 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 		/********************************************************************/
 		/// <summary>
+		/// Will try to read the entry with a specific index in the settings.
+		/// If it couldn't be read, the default value is returned
+		/// </summary>
+		/********************************************************************/
+		public string GetStringEntry(string section, int entryNum, out string entryName, string defaultValue = "")
+		{
+			// Start to lock the list
+			listLock.EnterReadLock();
+
+			try
+			{
+				string value = defaultValue;
+				entryName = string.Empty;
+
+				// Now find the section
+				int index = FindSection(section);
+				if (index != -1)
+				{
+					// Found it, now find the entry
+					index = FindEntryByNumber(index + 1, entryNum, out int insertPos);
+					if (index != -1)
+					{
+						// Got it, now extract the value
+						LineInfo lineInfo = lineList[index];
+						int valPos = lineInfo.Line.IndexOf('=');
+						entryName = lineInfo.Line.Substring(0, valPos);
+						value = lineInfo.Line.Substring(valPos + 1);
+					}
+				}
+
+				return value;
+			}
+			finally
+			{
+				listLock.ExitReadLock();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will try to find the entry in the settings. If it couldn't be
 		/// found, the default value is returned
 		/// </summary>
@@ -378,6 +420,55 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 			SetStringEntry(section, entry, value.ToString(CultureInfo.InvariantCulture));
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will remove an entry from the section given. If the entry
+		/// couldn't be found, nothing is done
+		/// </summary>
+		/********************************************************************/
+		public bool RemoveEntry(string section, string entry)
+		{
+			bool result = false;
+
+			// Start to lock the list
+			listLock.EnterWriteLock();
+
+			try
+			{
+				// Now find the section
+				int sectionIndex = FindSection(section);
+				if (sectionIndex != -1)
+				{
+					// Found the section. Now see if the entry exists in the section
+					int entryIndex = FindEntry(sectionIndex + 1, entry, out int insertPos);
+					if (entryIndex != -1)
+					{
+						// Got it, now remove it
+						lineList.RemoveAt(entryIndex);
+						result = true;
+
+						// Was it the last entry in the section?
+						if (((sectionIndex + 1) == lineList.Count) || ((sectionIndex + 1) == entryIndex) && (lineList[entryIndex].Type == LineType.Section))
+						{
+							// Yes, remove the section
+							lineList.RemoveAt(sectionIndex);
+						}
+
+						// Settings has been changed
+						changed = true;
+					}
+				}
+			}
+			finally
+			{
+				listLock.ExitWriteLock();
+			}
+
+			return result;
+		}
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
@@ -424,7 +515,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/********************************************************************/
 		/// <summary>
 		/// Will search from the index given after the entry. If found, the
-		/// list index where the section is stored is returned, else -1 will
+		/// list index where the entry is stored is returned, else -1 will
 		/// be returned
 		/// </summary>
 		/********************************************************************/
@@ -459,6 +550,59 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 			// The section could not be found
 			insertPos = count;
 			return -1;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will search from the index given after the entry. If found, the
+		/// list index where the entry is stored is returned, else -1 will
+		/// be returned
+		/// </summary>
+		/********************************************************************/
+		private int FindEntryByNumber(int startIndex, int entryNum, out int insertPos)
+		{
+			int i;
+			int count = lineList.Count;
+
+			for (i = 0; i < entryNum; i++)
+			{
+				// Did we reach the end of the file
+				if ((startIndex + i) >= count)
+				{
+					insertPos = count;
+					return -1;
+				}
+
+				LineInfo lineInfo = lineList[i];
+
+				if (lineInfo.Type == LineType.Section)
+				{
+					// A new section is found, which mean the entry is not
+					// stored in the previous section
+					insertPos = startIndex + i;
+					return -1;
+				}
+
+				if (lineInfo.Type == LineType.Comment)
+				{
+					// Skip comments
+					entryNum++;
+				}
+			}
+
+			// Entry found or end of file reached
+			if ((startIndex + i) >= count)
+			{
+				// EOF reached
+				insertPos = count;
+				return -1;
+			}
+
+			insertPos = startIndex + i;
+
+			return insertPos;
 		}
 		#endregion
 	}

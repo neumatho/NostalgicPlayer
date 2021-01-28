@@ -9,6 +9,7 @@
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Kit.Bases
@@ -23,12 +24,24 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Returns an unique ID for this agent
 		/// </summary>
 		/********************************************************************/
-		public virtual Guid Id
+		public virtual Guid AgentId
 		{
 			get
 			{
 				return new Guid(Assembly.GetAssembly(GetType()).GetCustomAttribute<GuidAttribute>().Value);
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the name of this agent
+		/// </summary>
+		/********************************************************************/
+		public abstract string Name
+		{
+			get;
 		}
 
 
@@ -50,22 +63,10 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns the name of this agent
+		/// Returns all the formats/types this agent supports
 		/// </summary>
 		/********************************************************************/
-		public abstract string Name
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns a description of this agent
-		/// </summary>
-		/********************************************************************/
-		public abstract string Description
+		public abstract AgentSupportInfo[] AgentInformation
 		{
 			get;
 		}
@@ -77,6 +78,6 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Creates a new worker instance
 		/// </summary>
 		/********************************************************************/
-		public abstract IAgentWorker CreateInstance();
+		public abstract IAgentWorker CreateInstance(Guid typeId);
 	}
 }

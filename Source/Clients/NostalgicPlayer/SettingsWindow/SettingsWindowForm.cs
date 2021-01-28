@@ -12,6 +12,7 @@ using Krypton.Navigator;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
@@ -25,6 +26,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 	{
 		private Manager agentManager;
 		private ModuleHandler moduleHandler;
+		private MainWindowForm mainWindow;
 
 		private readonly Settings userSettings;
 		private readonly SettingsWindowSettings windowSettings;
@@ -34,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SettingsWindowForm(Manager agentManager, ModuleHandler moduleHandler, Settings userSettings)
+		public SettingsWindowForm(Manager agentManager, ModuleHandler moduleHandler, MainWindowForm mainWindow, Settings userSettings)
 		{
 			InitializeComponent();
 
@@ -47,6 +49,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			// Remember the arguments
 			this.agentManager = agentManager;
 			this.moduleHandler = moduleHandler;
+			this.mainWindow = mainWindow;
 			this.userSettings = userSettings;
 
 			if (!DesignMode)
@@ -79,6 +82,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		{
 			pathsPageControl.RefreshWindow();
 			mixerPageControl.RefreshWindow();
+			agentsPageControl.RefreshWindow();
 		}
 
 		#region Event handlers
@@ -97,11 +101,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			// Save any specific window settings
 			windowSettings.ActiveTab = navigator.SelectedIndex;
 
-			pathsPageControl.RememberWindowSettings();
-			mixerPageControl.RememberWindowSettings();
+			pathsPageControl.WriteWindowSettings();
+			mixerPageControl.WriteWindowSettings();
+			agentsPageControl.WriteWindowSettings();
 
 			// Cleanup
 			agentManager = null;
+			moduleHandler = null;
+			mainWindow = null;
 		}
 		#endregion
 
@@ -156,16 +163,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		/********************************************************************/
 		private void InitSettings()
 		{
+			// Initialize the tab pages
+			pathsPageControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, allWindowSettings);
+			mixerPageControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, allWindowSettings);
+			agentsPageControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, allWindowSettings);
+
 			// Make a backup of the settings. This is used for real-time
 			// settings, that can be restored back when clicking cancel
-			MakeBackup();
+			pathsPageControl.MakeBackup();
+			mixerPageControl.MakeBackup();
+			agentsPageControl.MakeBackup();
 
-			// Initialize the tab pages
-			pathsPageControl.InitSettings(agentManager, moduleHandler, userSettings);
-			mixerPageControl.InitSettings(agentManager, moduleHandler, userSettings);
-
-			pathsPageControl.InitWindowSettings(allWindowSettings);
-			mixerPageControl.InitWindowSettings(allWindowSettings);
+			// Then load all the settings
+			LoadSettings();
 
 			// Refresh the pages
 			RefreshWindow();
@@ -178,14 +188,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Will make a backup of the settings
+		/// Load all the settings
 		/// </summary>
 		/********************************************************************/
-		private void MakeBackup()
+		private void LoadSettings()
 		{
-			// Let the tab pages make a backup
-			pathsPageControl.MakeBackup();
-			mixerPageControl.MakeBackup();
+			// Load all the window settings
+			pathsPageControl.ReadWindowSettings();
+			mixerPageControl.ReadWindowSettings();
+			agentsPageControl.ReadWindowSettings();
+
+			// Load all the settings
+			pathsPageControl.ReadSettings();
+			mixerPageControl.ReadSettings();
+			agentsPageControl.ReadSettings();
 		}
 
 
@@ -198,8 +214,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		private void SaveSettings()
 		{
 			// Save all the settings
-			pathsPageControl.RememberSettings();
-			mixerPageControl.RememberSettings();
+			pathsPageControl.WriteSettings();
+			mixerPageControl.WriteSettings();
+			agentsPageControl.WriteSettings();
 
 			// Save the settings to disk
 			userSettings.SaveSettings();
@@ -217,6 +234,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			// Cancel all the settings
 			pathsPageControl.CancelSettings();
 			mixerPageControl.CancelSettings();
+			agentsPageControl.CancelSettings();
 		}
 		#endregion
 	}

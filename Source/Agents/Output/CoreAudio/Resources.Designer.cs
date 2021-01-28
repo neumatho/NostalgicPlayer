@@ -65,7 +65,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio {
         ///Written by Thomas Neumann.
         ///Based on some of the code from NAudio by Mark Heath.
         ///
-        ///This agent plays the sound using the Windows Core Audio API.
+        ///This agent plays the sound using the Windows Core Audio API..
         /// </summary>
         internal static string IDS_DESCRIPTION {
             get {

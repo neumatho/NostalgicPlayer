@@ -7,22 +7,52 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Kit.Bases
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 {
 	/// <summary>
-	/// Base class that can be used for player agents
+	/// Holds information about a single format/type in an agent
 	/// </summary>
-	public abstract class PlayerAgentBase : IPlayerAgent
+	public class AgentInfo
 	{
 		/********************************************************************/
 		/// <summary>
-		/// Returns the file extensions that identify this player
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public abstract string[] FileExtensions
+		internal AgentInfo(IAgent agent, string agentName, string typeName, string description, Version version, Guid typeId)
+		{
+			Agent = agent;
+			AgentId = agent.AgentId;
+
+			AgentName = agentName;
+			TypeName = typeName;
+			Description = description;
+			Version = version;
+			TypeId = typeId;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the agent instance
+		/// </summary>
+		/********************************************************************/
+		public IAgent Agent
+		{
+			get; internal set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the ID of the agent
+		/// </summary>
+		/********************************************************************/
+		public Guid AgentId
 		{
 			get;
 		}
@@ -31,70 +61,72 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
-		/// Test the file to see if it could be identified
+		/// Holds the name of the agent
 		/// </summary>
 		/********************************************************************/
-		public abstract AgentResult Identify(PlayerFileInfo fileInfo);
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the module
-		/// </summary>
-		/********************************************************************/
-		public virtual string ModuleName
+		public string AgentName
 		{
-			get
-			{
-				return string.Empty;
-			}
+			get;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the name of the author
+		/// Holds the name of the format/type
 		/// </summary>
 		/********************************************************************/
-		public virtual string Author
+		public string TypeName
 		{
-			get
-			{
-				return string.Empty;
-			}
+			get;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// This is the main player method
+		/// Holds the description of the format/type
 		/// </summary>
 		/********************************************************************/
-		public abstract void Play();
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Event called when the player reached the end
-		/// </summary>
-		/********************************************************************/
-		public event EventHandler EndReached;
-
-		#region Helper methods
-		/********************************************************************/
-		/// <summary>
-		/// Call this when your player has reached the end of the module
-		/// </summary>
-		/********************************************************************/
-		protected void OnEndReached()
+		public string Description
 		{
-			if (EndReached != null)
-				EndReached(this, EventArgs.Empty);
+			get;
 		}
-		#endregion
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the version of the agent
+		/// </summary>
+		/********************************************************************/
+		public Version Version
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the ID of the format/type
+		/// </summary>
+		/********************************************************************/
+		public Guid TypeId
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Indicate if this type is enabled or disabled
+		/// </summary>
+		/********************************************************************/
+		public bool Enabled
+		{
+			get; set;
+		} = true;
 	}
 }
