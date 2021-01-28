@@ -252,3 +252,11 @@ body {
 .usage2table td:nth-child(1) {
 	width: 140px;
 }
+
+.usage2table a {
+	color: #2222c2;
+}
+
+.usage2table a:hover {
+	color: #c222c2;
+}

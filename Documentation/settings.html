@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>NostalgicPlayer manual</title>
+	<link rel="stylesheet" href="css/docstyles.css">
+</head>
+<body>
+<table class="bgtable">
+	<tr>
+		<td>
+			<table class="menutable">
+				<tr><th><div class="tableheader"><h2>Menu</h2></div></th></tr>
+				<tr><td><a href="features.html">Features</a></td></tr>
+				<tr><td><a href="howtouse.html"><b>How to use</b></a></td></tr>
+				<tr><td><a href="moduletypes.html">Module types</a></td></tr>
+				<tr><td><a href="requirements.html">Requirements</a></td></tr>
+				<tr><td><a href="thanks.html">Thanks</a></td></tr>
+				<tr><td><a href="history.html">Version history</a></td></tr>
+			</table>
+		</td>
+		<td>
+			<table class="contenttable">
+				<tr><th><div class="tableheader"><h3>Settings</h3></div></th></tr>
+				<tr><td>
+					<span>
+						<p>The settings window can be used to change and test the many options NostalgicPlayer provides. Some settings takes effect immediately, specially the mixer settings. Others need to be applied or saved first. If you press cancel, only non-saved options with be reverted back as they were when you entered the settings window.</p>
+						<p>Click on the controls in below picture to get more information.</p>
+						<br>
+					</span>
+					<map name="tabs">
+						<area shape="rect" coords="4,4,46,26" href="#paths">
+						<area shape="rect" coords="48,4,90,26" href="#mixer">
+						<area shape="rect" coords="92,4,142,26" href="#agents">
+					</map>
+					<img src="images/settingstabs.png" alt="Settings tabs" usemap="#tabs"/>
+					<span>
+						<a name="paths"><h3>Paths</h3></a>
+						<img src="images/settingspaths.png" alt="path settings"/>
+						<br>
+						<table class="usage2table">
+							<tr>
+								<td>Start scan path</td>
+								<td>Defines a directory which NostalgicPlayer will recursively scan through and add all present files to the playlist when NostalgicPlayer is started.</td>
+							</tr>
+							<tr>
+								<td>Module path</td>
+								<td>Default path for the file browser to use when you press the play button, the plus button or open command in menus.</td>
+							</tr>
+							<tr>
+								<td>List path</td>
+								<td>Tells NostalgicPlayer where you keep your playlist files.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="mixer"><h3>Mixer</h3></a>
+						<img src="images/settingsmixer.png" alt="mixer settings"/>
+						<br>
+						<h4>General</h4>
+						<table class="usage2table">
+							<tr>
+								<td>Stereo separation</td>
+								<td>100% is total stereo separation ie. left is left and rigth is right. 0% is mono, which forces NostalgicPlayer to play all sounds in both channels. This can be useful for listening to modules in headphones, where a stereo-separation of 50% will make them sound much better.</td>
+							</tr>
+							<tr>
+								<td>Interpolation</td>
+								<td>Helps the sound to be less "rough" and make lesser clicks'n'pops. This pretty much resembles the effect of the filter on the Amiga. Interpolation consumes about 25% more cpu-power than usual.</td>
+							</tr>
+							<tr>
+								<td>Emulate Amiga led filter</td>
+								<td>Sets on Amiga led filter emulation which is basically a low bass filter. Only few mod trackers support this feature.</td>
+							</tr>
+						</table>
+						<br>
+						<h4>Mixer output</h4>
+						<table class="usage2table">
+							<tr>
+								<td>Output agent</td>
+								<td>You select the agent you wish to use for outputting the sound. If the agent (e.g. the disk saver agent) has any settings, you can click on the settings button to the right to see and change them.</td>
+							</tr>
+						</table>
+						<br>
+						<h4>Channels</h4>
+						<span>
+							<p>Most [read: all] modules uses more than one channel, and sometimes you would want to disable certain channels (e.g. the annoying hihat in channel xx). You have the choice between finding the given channel by trying every button one after one, or you can use the buttons to the left which change the state of all the given channels. Try it out!</p>
+						</span>
+					</span>
+					<span>
+						<a name="agents"><h3>Agents</h3></a>
+						<img src="images/settingsagentsplayers.png" alt="player agent settings"/>
+						<br>
+						<img src="images/settingsagentsoutput.png" alt="output agent settings"/>
+						<br>
+						<span>
+							<p>All players, visuals, sound output etc. are considered as agents, hence this common description of their setting-windows. To the left you can see a list of the available agents with their name and version.</p>
+							<p>If agent name is in blue color, it means that it is in use and is used when playing modules, so it is easy to see which player and output agent is used to play that module.</p>
+							<p>Like in the other windows, columns can be sorted and moved around as you like. To the right the description of the currently selected agent is shown.</p>
+							<p>To disable (prevent it from being loaded) you can double-click any agent.</p>
+							<p>Some agents have special settings and to set those, you select the agent and press Settings.</p>
+							<p>Some agents have something to display while the music is being played and it can showed by using the Display button.</p>
+						</span>
+					</span>
+				</td></tr>
+			</table>
+		</td>
+	</tr>
+</table>
+</body>
+</html>
