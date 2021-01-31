@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.amigaFilterCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.interpolationCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.outputGroupBox = new Krypton.Toolkit.KryptonGroupBox();
-			this.outputAgentButton = new Krypton.Toolkit.KryptonButton();
+			this.outputAgentSettingsButton = new Krypton.Toolkit.KryptonButton();
 			this.outputAgentComboBox = new Krypton.Toolkit.KryptonComboBox();
 			this.outputAgentLabel = new Krypton.Toolkit.KryptonLabel();
 			this.channelsGroupBox = new Krypton.Toolkit.KryptonGroupBox();
@@ -148,7 +148,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			// 
 			// 
-			this.outputGroupBox.Panel.Controls.Add(this.outputAgentButton);
+			this.outputGroupBox.Panel.Controls.Add(this.outputAgentSettingsButton);
 			this.outputGroupBox.Panel.Controls.Add(this.outputAgentComboBox);
 			this.outputGroupBox.Panel.Controls.Add(this.outputAgentLabel);
 			this.controlResource.SetResourceKey(this.outputGroupBox, "IDS_SETTINGS_MIXER_OUPUT");
@@ -157,16 +157,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.outputGroupBox.TabIndex = 1;
 			this.outputGroupBox.Values.Heading = "Mixer output";
 			// 
-			// outputAgentButton
+			// outputAgentSettingsButton
 			// 
-			this.outputAgentButton.Enabled = false;
-			this.outputAgentButton.Location = new System.Drawing.Point(230, 0);
-			this.outputAgentButton.Name = "outputAgentButton";
-			this.controlResource.SetResourceKey(this.outputAgentButton, "IDS_SETTINGS_MIXER_OUPUT_SETTINGS");
-			this.outputAgentButton.Size = new System.Drawing.Size(60, 22);
-			this.outputAgentButton.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.outputAgentButton.TabIndex = 2;
-			this.outputAgentButton.Values.Text = "Settings";
+			this.outputAgentSettingsButton.Enabled = false;
+			this.outputAgentSettingsButton.Location = new System.Drawing.Point(230, 0);
+			this.outputAgentSettingsButton.Name = "outputAgentSettingsButton";
+			this.controlResource.SetResourceKey(this.outputAgentSettingsButton, "IDS_SETTINGS_MIXER_OUPUT_SETTINGS");
+			this.outputAgentSettingsButton.Size = new System.Drawing.Size(60, 22);
+			this.outputAgentSettingsButton.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.outputAgentSettingsButton.TabIndex = 2;
+			this.outputAgentSettingsButton.Values.Text = "Settings";
+			this.outputAgentSettingsButton.Click += new System.EventHandler(this.OutputAgentSettingsButton_Click);
 			// 
 			// outputAgentComboBox
 			// 
@@ -183,6 +184,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.outputAgentComboBox.StateCommon.ComboBox.Content.TextH = Krypton.Toolkit.PaletteRelativeAlign.Near;
 			this.outputAgentComboBox.StateCommon.Item.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.outputAgentComboBox.TabIndex = 1;
+			this.outputAgentComboBox.SelectedIndexChanged += new System.EventHandler(this.OutputAgentComboBox_SelectedIndexChanged);
 			// 
 			// outputAgentLabel
 			// 
@@ -297,7 +299,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Krypton.Toolkit.KryptonGroupBox outputGroupBox;
 		private Krypton.Toolkit.KryptonLabel outputAgentLabel;
 		private Krypton.Toolkit.KryptonComboBox outputAgentComboBox;
-		private Krypton.Toolkit.KryptonButton outputAgentButton;
+		private Krypton.Toolkit.KryptonButton outputAgentSettingsButton;
 		private Krypton.Toolkit.KryptonGroupBox channelsGroupBox;
 		private Krypton.Toolkit.KryptonButton channels16_31Button;
 		private Krypton.Toolkit.KryptonButton channels0_15Button;

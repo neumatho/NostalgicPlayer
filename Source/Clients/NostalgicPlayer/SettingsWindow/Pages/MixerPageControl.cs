@@ -29,6 +29,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 
 		private Manager manager;
 		private ModuleHandler moduleHandler;
+		private MainWindowForm mainWin;
 
 		private SoundSettings soundSettings;
 
@@ -101,6 +102,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		{
 			manager = agentManager;
 			moduleHandler = modHandler;
+			mainWin = mainWindow;
 
 			soundSettings = new SoundSettings(userSettings);
 		}
@@ -131,7 +133,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			foreach (AgentInfo agentInfo in manager.GetAllAgents(Manager.AgentType.Output))
 			{
 				KryptonListItem listItem = new KryptonListItem(agentInfo.TypeName);
-				listItem.Tag = agentInfo.TypeId;
+				listItem.Tag = agentInfo;
 
 				outputAgentComboBox.Items.Add(listItem);
 			}
@@ -141,7 +143,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 
 			for (int i = outputAgentComboBox.Items.Count - 1; i >= 0; i--)
 			{
-				if ((Guid)((KryptonListItem)outputAgentComboBox.Items[i]).Tag == outputAgent)
+				if (((AgentInfo)((KryptonListItem)outputAgentComboBox.Items[i]).Tag).TypeId == outputAgent)
 				{
 					outputAgentComboBox.SelectedIndex = i;
 					break;
@@ -193,7 +195,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			soundSettings.Interpolation = interpolationCheckBox.Checked;
 			soundSettings.AmigaFilter = amigaFilterCheckBox.Checked;
 
-			soundSettings.OutputAgent = (Guid)((KryptonListItem)outputAgentComboBox.SelectedItem).Tag;
+			soundSettings.OutputAgent = ((AgentInfo)((KryptonListItem)outputAgentComboBox.SelectedItem).Tag).TypeId;
 		}
 
 
@@ -276,6 +278,31 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			soundSettings.AmigaFilter = amigaFilterCheckBox.Checked;
 
 			SetMixerSettings();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user change the output agent
+		/// </summary>
+		/********************************************************************/
+		private void OutputAgentComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			AgentInfo agentInfo = (AgentInfo)((KryptonListItem)outputAgentComboBox.SelectedItem).Tag;
+			outputAgentSettingsButton.Enabled = agentInfo.HasSettings;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user click the settings button
+		/// </summary>
+		/********************************************************************/
+		private void OutputAgentSettingsButton_Click(object sender, EventArgs e)
+		{
+			mainWin.OpenAgentSettingsWindow((AgentInfo)((KryptonListItem)outputAgentComboBox.SelectedItem).Tag);
 		}
 
 
