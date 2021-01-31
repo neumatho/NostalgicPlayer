@@ -106,6 +106,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 			this.Name = "AgentSettingsWindowForm";
 			this.controlResource.SetResourceKey(this, null);
 			this.ShowInTaskbar = false;
+			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.AgentSettingsWindowForm_FormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.settingsGroup.Panel)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.settingsGroup)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).EndInit();

@@ -290,7 +290,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private void OutputAgentComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			AgentInfo agentInfo = (AgentInfo)((KryptonListItem)outputAgentComboBox.SelectedItem).Tag;
-			outputAgentSettingsButton.Enabled = agentInfo.HasSettings;
+			outputAgentSettingsButton.Enabled = agentInfo.HasSettings && agentInfo.Enabled;
 		}
 
 
@@ -302,7 +302,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		private void OutputAgentSettingsButton_Click(object sender, EventArgs e)
 		{
-			mainWin.OpenAgentSettingsWindow((AgentInfo)((KryptonListItem)outputAgentComboBox.SelectedItem).Tag);
+			AgentInfo agentInfo = (AgentInfo)((KryptonListItem)outputAgentComboBox.SelectedItem).Tag;
+
+			if (!agentInfo.Enabled)
+				mainWin.ShowSimpleErrorMessage(Resources.IDS_ERR_AGENT_DISABLED);
+			else
+				mainWin.OpenAgentSettingsWindow(agentInfo);
 		}
 
 

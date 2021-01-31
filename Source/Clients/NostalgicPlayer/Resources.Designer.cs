@@ -502,6 +502,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Agent is disabled..
+        /// </summary>
+        internal static string IDS_ERR_AGENT_DISABLED {
+            get {
+                return ResourceManager.GetString("IDS_ERR_AGENT_DISABLED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An exception has been thrown in the program. The program will exit. Error message is:
         ///{0}.
         /// </summary>
