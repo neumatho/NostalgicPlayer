@@ -22,6 +22,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 	/// </summary>
 	public class JamCracker : AgentBase
 	{
+		private static readonly Guid agent1Id = Guid.Parse("68CFC1DF-F171-4A2A-AC43-D5173C3EE5A3");
+
 		#region IAgent implementation
 		/********************************************************************/
 		/// <summary>
@@ -49,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_NAME, Resources.IDS_DESCRIPTION, Guid.Parse("68CFC1DF-F171-4A2A-AC43-D5173C3EE5A3"))
+					new AgentSupportInfo(Resources.IDS_NAME, Resources.IDS_DESCRIPTION, agent1Id)
 				};
 			}
 		}

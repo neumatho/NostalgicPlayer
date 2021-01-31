@@ -43,13 +43,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return the name of the module
 		/// </summary>
 		/********************************************************************/
-		public virtual string ModuleName
-		{
-			get
-			{
-				return string.Empty;
-			}
-		}
+		public virtual string ModuleName => string.Empty;
 
 
 
@@ -58,13 +52,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return the name of the author
 		/// </summary>
 		/********************************************************************/
-		public virtual string Author
-		{
-			get
-			{
-				return string.Empty;
-			}
-		}
+		public virtual string Author => string.Empty;
 
 
 
@@ -74,6 +62,18 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// </summary>
 		/********************************************************************/
 		public abstract void Play();
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// This flag is set to true, when end is reached
+		/// </summary>
+		/********************************************************************/
+		public bool HasEndReached
+		{
+			get; set;
+		}
 
 
 
@@ -92,6 +92,10 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		protected void OnEndReached()
 		{
+			// Set flag
+			HasEndReached = true;
+
+			// Call events
 			if (EndReached != null)
 				EndReached(this, EventArgs.Empty);
 		}

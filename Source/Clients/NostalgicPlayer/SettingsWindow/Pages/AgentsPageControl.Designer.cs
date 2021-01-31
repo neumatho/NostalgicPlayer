@@ -36,11 +36,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.playersListControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentsListUserControl();
 			this.navigatorOutputPage = new Krypton.Navigator.KryptonPage();
 			this.outputListControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentsListUserControl();
+			this.navigatorSampleConvertersPage = new Krypton.Navigator.KryptonPage();
+			this.sampleConvertersListControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentsListUserControl();
 			((System.ComponentModel.ISupportInitialize)(this.navigator)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.navigatorPlayersPage)).BeginInit();
 			this.navigatorPlayersPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.navigatorOutputPage)).BeginInit();
 			this.navigatorOutputPage.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.navigatorSampleConvertersPage)).BeginInit();
+			this.navigatorSampleConvertersPage.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// navigator
@@ -54,7 +58,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.navigator.Name = "navigator";
 			this.navigator.Pages.AddRange(new Krypton.Navigator.KryptonPage[] {
             this.navigatorPlayersPage,
-            this.navigatorOutputPage});
+            this.navigatorOutputPage,
+            this.navigatorSampleConvertersPage});
 			this.navigator.SelectedIndex = 0;
 			this.navigator.Size = new System.Drawing.Size(592, 332);
 			this.navigator.StateCommon.Tab.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -80,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.playersListControl.Location = new System.Drawing.Point(0, 0);
 			this.playersListControl.Name = "playersListControl";
 			this.playersListControl.Size = new System.Drawing.Size(590, 307);
-			this.playersListControl.TabIndex = 1;
+			this.playersListControl.TabIndex = 0;
 			// 
 			// navigatorOutputPage
 			// 
@@ -102,7 +107,29 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.outputListControl.Location = new System.Drawing.Point(0, 0);
 			this.outputListControl.Name = "outputListControl";
 			this.outputListControl.Size = new System.Drawing.Size(100, 100);
-			this.outputListControl.TabIndex = 2;
+			this.outputListControl.TabIndex = 0;
+			// 
+			// navigatorSampleConvertersPage
+			// 
+			this.navigatorSampleConvertersPage.AutoHiddenSlideSize = new System.Drawing.Size(200, 200);
+			this.navigatorSampleConvertersPage.Controls.Add(this.sampleConvertersListControl);
+			this.navigatorSampleConvertersPage.Flags = 65534;
+			this.navigatorSampleConvertersPage.LastVisibleSet = true;
+			this.navigatorSampleConvertersPage.MinimumSize = new System.Drawing.Size(50, 50);
+			this.navigatorSampleConvertersPage.Name = "navigatorSampleConvertersPage";
+			this.navigatorSampleConvertersPage.Size = new System.Drawing.Size(100, 100);
+			this.navigatorSampleConvertersPage.Text = "";
+			this.navigatorSampleConvertersPage.ToolTipTitle = "Page ToolTip";
+			this.navigatorSampleConvertersPage.UniqueName = "2d2e33220f4349f8b63cdee8e9fe571f";
+			// 
+			// sampleConvertersListControl
+			// 
+			this.sampleConvertersListControl.BackColor = System.Drawing.Color.Transparent;
+			this.sampleConvertersListControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.sampleConvertersListControl.Location = new System.Drawing.Point(0, 0);
+			this.sampleConvertersListControl.Name = "sampleConvertersListControl";
+			this.sampleConvertersListControl.Size = new System.Drawing.Size(100, 100);
+			this.sampleConvertersListControl.TabIndex = 0;
 			// 
 			// AgentsPageControl
 			// 
@@ -116,6 +143,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.navigatorPlayersPage.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.navigatorOutputPage)).EndInit();
 			this.navigatorOutputPage.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.navigatorSampleConvertersPage)).EndInit();
+			this.navigatorSampleConvertersPage.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -128,5 +157,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private AgentsListUserControl outputListControl;
 		private Krypton.Navigator.KryptonPage navigatorPlayersPage;
 		private Krypton.Navigator.KryptonPage navigatorOutputPage;
+		private Krypton.Navigator.KryptonPage navigatorSampleConvertersPage;
+		private AgentsListUserControl sampleConvertersListControl;
 	}
 }

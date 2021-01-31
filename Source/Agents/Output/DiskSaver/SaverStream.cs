@@ -6,112 +6,105 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Resources;
-using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Streams;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Designer
+namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 {
 	/// <summary>
-	/// This component makes it possible to use resources directly in the designer
+	/// Used as middle-man between the pass-through output agent and the mixer
 	/// </summary>
-	[ProvideProperty("ResourceKey", typeof(Control))]
-	public class ControlResource : Component, IExtenderProvider, ISupportInitialize
+	internal class SaverStream : SoundStream
 	{
-		private readonly Dictionary<Control, string> controls;
+		private readonly DiskSaverWorker worker;
+		private readonly SoundStream wrapperStream;
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructor
+		/// Initialize the stream
 		/// </summary>
 		/********************************************************************/
-		public ControlResource()
+		public SaverStream(DiskSaverWorker worker, SoundStream wrapper)
 		{
-			controls = new Dictionary<Control, string>();
+			this.worker = worker;
+			wrapperStream = wrapper;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Full namespace to the resource class
+		/// Holds the pass-through output agent output info
 		/// </summary>
 		/********************************************************************/
-		[Description("Full name of resource class, like YourAppNamespace.Resource1")]
-		public string ResourceClassName
+		public OutputInfo OutputInfo
 		{
-			get; set;
+			get; private set;
+		}
+
+		#region SoundStream implementation
+		/********************************************************************/
+		/// <summary>
+		/// Set the output format
+		/// </summary>
+		/********************************************************************/
+		public override void SetOutputFormat(OutputInfo outputInfo)
+		{
+			OutputInfo = outputInfo;
+
+			wrapperStream.SetOutputFormat(outputInfo);
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the resource key
+		/// Will set the master volume
 		/// </summary>
 		/********************************************************************/
-		public string GetResourceKey(Control control)
+		public override void SetMasterVolume(int volume)
 		{
-			if (controls.TryGetValue(control, out string value))
-				return value;
-
-			return null;
+			wrapperStream.SetMasterVolume(volume);
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Sets the resource key
+		/// Start the playing
 		/// </summary>
 		/********************************************************************/
-		public void SetResourceKey(Control control, string key)
+		public override void Start()
 		{
-			if (string.IsNullOrEmpty(key))
-				controls.Remove(control);
-			else
-				controls[control] = key;
-		}
-
-		#region IExtenderProvider implementation
-		/********************************************************************/
-		/// <summary>
-		/// Tells which object this class can extend
-		/// </summary>
-		/********************************************************************/
-		public bool CanExtend(object extendee)
-		{
-			return extendee is Control;
-		}
-		#endregion
-
-		#region ISupportInitialize implementation
-		/********************************************************************/
-		/// <summary>
-		/// Is called when initialization begins
-		/// </summary>
-		/********************************************************************/
-		public void BeginInit()
-		{
+			wrapperStream.Start();
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Is called when initialization is done
+		/// Stop the playing
 		/// </summary>
 		/********************************************************************/
-		public void EndInit()
+		public override void Stop()
 		{
-//			if (!DesignMode)
-			{
-				ResourceManager manager = new ResourceManager(ResourceClassName, GetType().Assembly);
+			wrapperStream.Stop();
+		}
 
-				foreach (KeyValuePair<Control, string> pair in controls)
-					pair.Key.Text = manager.GetString(pair.Value);
-			}
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read mixed data
+		/// </summary>
+		/********************************************************************/
+		public override int Read(byte[] buffer, int offset, int count)
+		{
+			int read = wrapperStream.Read(buffer, offset, count);
+			if (read > 0)
+				worker.SaveSampleBuffer(buffer, read);
+
+			return read;
 		}
 		#endregion
 	}

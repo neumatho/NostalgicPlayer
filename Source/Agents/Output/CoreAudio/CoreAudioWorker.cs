@@ -12,8 +12,8 @@ using System.Threading;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using NAudio.Wave;
+using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class CoreAudioWorker : IOutputAgent, IAudioSessionEventsHandler, IMMNotificationClient
+	internal class CoreAudioWorker : OutputAgentBase, IAudioSessionEventsHandler, IMMNotificationClient
 	{
 		/// <summary>
 		/// Playback State
@@ -82,7 +82,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/// Will initialize the output driver
 		/// </summary>
 		/********************************************************************/
-		public AgentResult Initialize(out string errorMessage)
+		public override AgentResult Initialize(out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
@@ -135,7 +135,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/// Will shutdown the output driver
 		/// </summary>
 		/********************************************************************/
-		public void Shutdown()
+		public override void Shutdown()
 		{
 			// Tell the render thread to exit
 			shutdownEvent?.Set();
@@ -192,7 +192,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/// Tell the engine to begin playing
 		/// </summary>
 		/********************************************************************/
-		public void Play()
+		public override void Play()
 		{
 			lock (playingLock)
 			{
@@ -228,7 +228,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/// Tell the engine to stop playing
 		/// </summary>
 		/********************************************************************/
-		public void Stop()
+		public override void Stop()
 		{
 			if ((playbackState == PlaybackState.Playing) || (playbackState == PlaybackState.Stopped))
 			{
@@ -253,7 +253,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/// Tell the engine to pause playing
 		/// </summary>
 		/********************************************************************/
-		public void Pause()
+		public override void Pause()
 		{
 			if (playbackState == PlaybackState.Playing)
 			{
@@ -276,7 +276,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/// interrupting the sound
 		/// </summary>
 		/********************************************************************/
-		public void SwitchStream(SoundStream soundStream)
+		public override AgentResult SwitchStream(SoundStream soundStream, string fileName, string moduleName, string author)
 		{
 			lock (streamLock)
 			{
@@ -286,6 +286,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 				soundStream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, (outputFormat.AverageBytesPerSecond / bytesPerSample) * LatencyMilliseconds / 1000, bytesPerSample));
 				stream = soundStream;
 			}
+
+			return AgentResult.Ok;
 		}
 		#endregion
 

@@ -17,6 +17,11 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	public interface IOutputAgent : IAgentWorker
 	{
 		/// <summary>
+		/// Return some flags telling what the output agent supports
+		/// </summary>
+		OutputSupportFlag SupportFlags { get; }
+
+		/// <summary>
 		/// Will initialize the output driver
 		/// </summary>
 		AgentResult Initialize(out string errorMessage);
@@ -45,6 +50,6 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Will switch the stream to read the sound data from without
 		/// interrupting the sound
 		/// </summary>
-		void SwitchStream(SoundStream soundStream);
+		AgentResult SwitchStream(SoundStream soundStream, string fileName, string moduleName, string author);
 	}
 }

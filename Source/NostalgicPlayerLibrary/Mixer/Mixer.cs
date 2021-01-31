@@ -224,10 +224,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// from the MixerStream to read the next bunch of data
 		/// </summary>
 		/********************************************************************/
-		public int Mixing(byte[] buffer, int offset, int count)
+		public int Mixing(byte[] buffer, int offset, int count, out bool hasEndReached)
 		{
-			int retVal = DoMixing1(count);
-			DoMixing2(buffer, offset, count);
+			int retVal = DoMixing1(count, out hasEndReached);
+			DoMixing2(buffer, offset, retVal);
 
 			return retVal;
 		}
@@ -239,8 +239,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// and mix the main module samples
 		/// </summary>
 		/********************************************************************/
-		private int DoMixing1(int todo)
+		private int DoMixing1(int todo, out bool hasEndReached)
 		{
+			hasEndReached = false;
+
 			int total = 0;
 
 			// Remember the mixing mode. The reason to hold this in another
@@ -277,6 +279,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						// Calculate the number of sample pair to mix before the
 						// player need to be called again
 						ticksLeft = (int)(mixerFrequency / currentPlayer.PlayingFrequency);
+
+						if (currentPlayer.HasEndReached)
+						{
+							currentPlayer.HasEndReached = false;
+							hasEndReached = true;
+
+							// Break out of the loop
+							break;
+						}
 					}
 
 					// If ticksLeft is still 0, the player doesn't play

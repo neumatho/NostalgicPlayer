@@ -29,7 +29,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// <summary>
 		/// Will start playing the music
 		/// </summary>
-		void StartPlaying(MixerConfiguration newMixerConfiguration = null);
+		bool StartPlaying(string fileName, MixerConfiguration newMixerConfiguration = null);
 
 		/// <summary>
 		/// Will stop the playing

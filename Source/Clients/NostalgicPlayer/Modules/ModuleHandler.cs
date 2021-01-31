@@ -242,6 +242,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 					// Remove the file from our list
 					loadedFiles.RemoveAt(0);
+
+					// Flush the output agent if required
+					if ((outputAgent.SupportFlags & OutputSupportFlag.FlushMe) != 0)
+					{
+						outputAgent.Shutdown();
+
+						outputAgent = null;
+						OutputAgentInfo = null;
+					}
 				}
 			}
 		}
@@ -291,8 +300,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				if (player is IModulePlayer modulePlayer)
 					modulePlayer.SelectSong(newSong);
 
-				// And start playing again
-				player.StartPlaying(mixerConfiguration);
+				lock (loadedFiles)
+				{
+					// Did we have any modules loaded at all?
+					if (loadedFiles.Count > 0)
+					{
+						// And start playing again
+						player.StartPlaying(loadedFiles[0].Loader.FileName, mixerConfiguration);
+					}
+				}
 			}
 		}
 
@@ -507,6 +523,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/********************************************************************/
 		private bool FindOutputAgent(bool showError)
 		{
+			if (outputAgent != null)
+			{
+				// Check if the current allocated is the same as in the settings
+				if (!OutputAgentInfo.Enabled || (OutputAgentInfo.TypeId != soundSettings.OutputAgent))
+				{
+					// They are different, so stop the current output agent
+					CloseOutputAgent();
+				}
+			}
+
 			if (outputAgent == null)
 			{
 				Guid typeId = soundSettings.OutputAgent;
@@ -521,16 +547,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 				if ((agentInfo?.Agent != null) && agentInfo.Enabled)
 				{
-					OutputAgentInfo = agentInfo;
-					outputAgent = (IOutputAgent)agentInfo.Agent.CreateInstance(agentInfo.TypeId);
+					IOutputAgent agent = (IOutputAgent)agentInfo.Agent.CreateInstance(agentInfo.TypeId);
 
-					if (outputAgent.Initialize(out string errorMessage) == AgentResult.Error)
+					if (agent.Initialize(out string errorMessage) == AgentResult.Error)
 					{
 						if (showError)
 							ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_INITOUTPUTAGENT, errorMessage));
 
 						return false;
 					}
+
+					OutputAgentInfo = agentInfo;
+					outputAgent = agent;
 				}
 				else
 				{
@@ -609,7 +637,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					startPos = -1;
 
 				// Start to play the module
-				StartPlaying(subSong.Value, startPos.Value);
+				if (!StartPlaying(subSong.Value, startPos.Value))
+					return false;
 			}
 
 			return true;
@@ -622,7 +651,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/// Will start to play the song number given
 		/// </summary>
 		/********************************************************************/
-		private void StartPlaying(int subSong, int startPos)
+		private bool StartPlaying(int subSong, int startPos)
 		{
 			IPlayer player = GetActivePlayer();
 
@@ -647,12 +676,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				// Subscribe to end notifications
 				player.EndReached += Player_EndReached;
 
+				lock (loadedFiles)
+				{
+					// Did we have any modules loaded at all?
+					if (loadedFiles.Count > 0)
+					{
+						// Start playing the song
+						if (!player.StartPlaying(loadedFiles[0].Loader.FileName, mixerConfiguration))
+							return false;
+					}
+				}
+
 				// The module is playing
 				IsPlaying = true;
 
-				// Start playing the song
-				player.StartPlaying(mixerConfiguration);
+				return true;
 			}
+
+			return false;
 		}
 
 

@@ -7,126 +7,123 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
+using System.Resources;
+using System.Windows.Forms;
 
-namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
+namespace Polycode.NostalgicPlayer.GuiKit.Designer
 {
 	/// <summary>
-	/// Holds information about a single format/type in an agent
+	/// This component makes it possible to use resources directly in the designer
 	/// </summary>
-	public class AgentInfo
+	[ProvideProperty("ResourceKey", typeof(Control))]
+	public class ControlResource : Component, IExtenderProvider, ISupportInitialize
 	{
+		private readonly Dictionary<Control, string> controls;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		internal AgentInfo(IAgent agent, string agentName, string typeName, string description, Version version, Guid typeId)
+		public ControlResource()
 		{
-			Agent = agent;
-			AgentId = agent.AgentId;
-
-			AgentName = agentName;
-			TypeName = typeName;
-			Description = description;
-			Version = version;
-			TypeId = typeId;
+			controls = new Dictionary<Control, string>();
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the agent instance
+		/// Full namespace to the resource class
 		/// </summary>
 		/********************************************************************/
-		public IAgent Agent
-		{
-			get; internal set;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Holds the ID of the agent
-		/// </summary>
-		/********************************************************************/
-		public Guid AgentId
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Holds the name of the agent
-		/// </summary>
-		/********************************************************************/
-		public string AgentName
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Holds the name of the format/type
-		/// </summary>
-		/********************************************************************/
-		public string TypeName
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Holds the description of the format/type
-		/// </summary>
-		/********************************************************************/
-		public string Description
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Holds the version of the agent
-		/// </summary>
-		/********************************************************************/
-		public Version Version
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Holds the ID of the format/type
-		/// </summary>
-		/********************************************************************/
-		public Guid TypeId
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Indicate if this type is enabled or disabled
-		/// </summary>
-		/********************************************************************/
-		public bool Enabled
+		[Description("Full name of resource class, like YourAppNamespace.Resource1")]
+		public string ResourceClassName
 		{
 			get; set;
-		} = true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the resource key
+		/// </summary>
+		/********************************************************************/
+		public string GetResourceKey(Control control)
+		{
+			if (controls.TryGetValue(control, out string value))
+				return value;
+
+			return null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Sets the resource key
+		/// </summary>
+		/********************************************************************/
+		public void SetResourceKey(Control control, string key)
+		{
+			if (string.IsNullOrEmpty(key))
+				controls.Remove(control);
+			else
+				controls[control] = key;
+		}
+
+		#region IExtenderProvider implementation
+		/********************************************************************/
+		/// <summary>
+		/// Tells which object this class can extend
+		/// </summary>
+		/********************************************************************/
+		public bool CanExtend(object extendee)
+		{
+			return extendee is Control;
+		}
+		#endregion
+
+		#region ISupportInitialize implementation
+		/********************************************************************/
+		/// <summary>
+		/// Is called when initialization begins
+		/// </summary>
+		/********************************************************************/
+		public void BeginInit()
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when initialization is done
+		/// </summary>
+		/********************************************************************/
+		public void EndInit()
+		{
+//			if (!DesignMode)
+			{
+				if (controls.Count > 0)
+				{
+					// Find assembly where the resource exists
+					Assembly assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetType(ResourceClassName) != null);
+					if (assembly != null)
+					{
+						ResourceManager manager = new ResourceManager(ResourceClassName, assembly);
+
+						foreach (KeyValuePair<Control, string> pair in controls)
+							pair.Key.Text = manager.GetString(pair.Value);
+					}
+				}
+			}
+		}
+		#endregion
 	}
 }

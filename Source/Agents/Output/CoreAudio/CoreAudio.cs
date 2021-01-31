@@ -22,6 +22,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 	/// </summary>
 	public class CoreAudio : AgentBase
 	{
+		private static readonly Guid agent1Id = Guid.Parse("B9CEF7E4-C74C-4AF0-B01D-802F0D1B4CC7");
+
 		#region IAgent implementation
 		/********************************************************************/
 		/// <summary>
@@ -49,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_NAME, Resources.IDS_DESCRIPTION, Guid.Parse("B9CEF7E4-C74C-4AF0-B01D-802F0D1B4CC7"))
+					new AgentSupportInfo(Resources.IDS_NAME, Resources.IDS_DESCRIPTION, agent1Id)
 				};
 			}
 		}

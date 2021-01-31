@@ -31,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		{
 			this.components = new System.ComponentModel.Container();
 			this.kryptonManager = new Krypton.Toolkit.KryptonManager(this.components);
-			this.controlResource = new Polycode.NostalgicPlayer.Client.GuiPlayer.Designer.ControlResource();
+			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
 			this.agentsDataGridView = new Krypton.Toolkit.KryptonDataGridView();
 			this.descriptionDataGridView = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.DescriptionListControl();
 			this.settingsButton = new Krypton.Toolkit.KryptonButton();
@@ -114,6 +114,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.settingsButton.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.settingsButton.TabIndex = 2;
 			this.settingsButton.Values.Text = "Settings";
+			this.settingsButton.Click += new System.EventHandler(this.SettingsButton_Click);
 			// 
 			// displayButton
 			// 
@@ -178,7 +179,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		#endregion
 
 		private Krypton.Toolkit.KryptonManager kryptonManager;
-		private Designer.ControlResource controlResource;
+		private Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonDataGridView agentsDataGridView;
 		private DescriptionListControl descriptionDataGridView;
 		private Krypton.Toolkit.KryptonButton settingsButton;

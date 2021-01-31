@@ -25,13 +25,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// against
 		/// </summary>
 		/********************************************************************/
-		public int NostalgicPlayerVersion
-		{
-			get
-			{
-				return IAgent.NostalgicPlayer_Current_Version;
-			}
-		}
+		public int NostalgicPlayerVersion => IAgent.NostalgicPlayer_Current_Version;
 
 
 
@@ -40,13 +34,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Returns an unique ID for this agent
 		/// </summary>
 		/********************************************************************/
-		public virtual Guid AgentId
-		{
-			get
-			{
-				return new Guid(Assembly.GetAssembly(GetType()).GetCustomAttribute<GuidAttribute>().Value);
-			}
-		}
+		public virtual Guid AgentId => new Guid(Assembly.GetAssembly(GetType()).GetCustomAttribute<GuidAttribute>().Value);
 
 
 
@@ -67,13 +55,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Returns the version of this agent
 		/// </summary>
 		/********************************************************************/
-		public virtual Version Version
-		{
-			get
-			{
-				return Assembly.GetAssembly(GetType()).GetName().Version;
-			}
-		}
+		public virtual Version Version => Assembly.GetAssembly(GetType()).GetName().Version;
 
 
 

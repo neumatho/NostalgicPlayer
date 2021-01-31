@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PathsPageControl));
 			this.kryptonManager = new Krypton.Toolkit.KryptonManager(this.components);
-			this.controlResource = new Polycode.NostalgicPlayer.Client.GuiPlayer.Designer.ControlResource();
+			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
 			this.group = new Krypton.Toolkit.KryptonGroup();
 			this.startScanButton = new Krypton.Toolkit.KryptonButton();
 			this.startScanTextBox = new Krypton.Toolkit.KryptonTextBox();
@@ -198,7 +198,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		#endregion
 
 		private Krypton.Toolkit.KryptonManager kryptonManager;
-		private Designer.ControlResource controlResource;
+		private Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonGroup group;
 		private Krypton.Toolkit.KryptonLabel startScanLabel;
 		private Krypton.Toolkit.KryptonTextBox startScanTextBox;

@@ -45,8 +45,7 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 
 				// Load needed agents
 				Manager agentManager = new Manager();
-				agentManager.LoadSpecificAgents(Manager.AgentType.Output);
-				agentManager.LoadSpecificAgents(Manager.AgentType.Players);
+				agentManager.LoadAllAgents();
 
 				// First make sure that the file exists
 				if (!File.Exists(fileName))
@@ -103,7 +102,7 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 							if (player is IModulePlayer modulePlayer)
 								modulePlayer.SelectSong(0);
 
-							player.StartPlaying();
+							player.StartPlaying(loader.FileName);
 
 							try
 							{

@@ -7,7 +7,6 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -17,9 +16,9 @@ using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
-using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 {
@@ -276,6 +275,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private void AgentsDataGridView_SelectionChanged(object sender, EventArgs e)
 		{
 			ShowDescription();
+
+			bool enableSettings = false;
+
+			DataGridViewSelectedRowCollection selectedRows = agentsDataGridView.SelectedRows;
+			if (selectedRows.Count > 0)
+			{
+				AgentInfo agentInfo = ((AgentInfo)selectedRows[0].Tag);
+				if (agentInfo != null)
+					enableSettings = agentInfo.HasSettings;
+			}
+
+			settingsButton.Enabled = enableSettings;
 		}
 
 
@@ -318,6 +329,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private void DescriptionDataGridView_ColumnWidthChanged(object sender, DataGridViewColumnEventArgs e)
 		{
 			ShowDescription();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user click on the settings button
+		/// </summary>
+		/********************************************************************/
+		private void SettingsButton_Click(object sender, EventArgs e)
+		{
+			AgentInfo agentInfo = (AgentInfo)agentsDataGridView.SelectedRows[0].Tag;
+
+			mainWin.OpenAgentSettingsWindow(agentInfo);
 		}
 		#endregion
 

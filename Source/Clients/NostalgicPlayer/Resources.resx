@@ -279,6 +279,9 @@ Formats supported:
   <data name="IDS_ABOUT_TITLE" xml:space="preserve">
     <value>About NostalgicPlayer</value>
   </data>
+  <data name="IDS_AGENTSETTINGS_TITLE" xml:space="preserve">
+    <value>Settings for {0}</value>
+  </data>
   <data name="IDS_BUT_OK" xml:space="preserve">
     <value>Ok</value>
   </data>
@@ -507,6 +510,9 @@ Formats supported:
   </data>
   <data name="IDS_SETTINGS_AGENTS_TAB_PLAYERS" xml:space="preserve">
     <value>Players</value>
+  </data>
+  <data name="IDS_SETTINGS_AGENTS_TAB_SAMPLECONVERTERS" xml:space="preserve">
+    <value>Sample converters</value>
   </data>
   <data name="IDS_SETTINGS_APPLY" xml:space="preserve">
     <value>Apply</value>

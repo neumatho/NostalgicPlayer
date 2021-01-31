@@ -143,15 +143,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Will start playing the music
 		/// </summary>
 		/********************************************************************/
-		public void StartPlaying(MixerConfiguration newMixerConfiguration)
+		public bool StartPlaying(string fileName, MixerConfiguration newMixerConfiguration)
 		{
 			if (newMixerConfiguration != null)
 				soundStream.ChangeConfiguration(newMixerConfiguration);
 
 			soundStream.Start();
 
-			outputAgent.SwitchStream(soundStream);
+			if (outputAgent.SwitchStream(soundStream, fileName, StaticModuleInformation.ModuleName, StaticModuleInformation.Author) == AgentResult.Error)
+				return false;
+
 			outputAgent.Play();
+
+			return true;
 		}
 
 

@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
@@ -26,6 +27,8 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow;
+using Polycode.NostalgicPlayer.GuiKit.Controls;
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
@@ -102,6 +105,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private ModuleInfoWindowForm moduleInfoWindow = null;
 		private SampleInfoWindowForm sampleInfoWindow = null;
 
+		private Dictionary<Guid, AgentSettingsWindowForm> openAgentSettings;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -127,6 +132,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			rnd = new Random();
 			randomList = new List<int>();
+
+			openAgentSettings = new Dictionary<Guid, AgentSettingsWindowForm>();
 
 			if (!DesignMode)
 			{
@@ -158,9 +165,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		public void ShowSimpleErrorMessage(string message)
 		{
-			CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error);
-			dialog.AddButton(Resources.IDS_BUT_OK, 'O');
-			dialog.ShowDialog();
+			using (CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error))
+			{
+				dialog.AddButton(Resources.IDS_BUT_OK, 'O');
+				dialog.ShowDialog();
+			}
 		}
 
 
@@ -172,87 +181,89 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		public void ShowErrorMessage(string message, ModuleListItem listItem)
 		{
-			CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error);
-			dialog.AddButton(Resources.IDS_BUT_SKIP, '1');
-			dialog.AddButton(Resources.IDS_BUT_SKIPREMOVE, '2');
-			dialog.AddButton(Resources.IDS_BUT_STOP, '3');
-			dialog.ShowDialog();
-			char response = dialog.GetButtonResult();
-
-			switch (response)
+			using (CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error))
 			{
-				// Skip
-				case '1':
+				dialog.AddButton(Resources.IDS_BUT_SKIP, '1');
+				dialog.AddButton(Resources.IDS_BUT_SKIPREMOVE, '2');
+				dialog.AddButton(Resources.IDS_BUT_STOP, '3');
+				dialog.ShowDialog();
+				char response = dialog.GetButtonResult();
+
+				switch (response)
 				{
-					// Get the index of the module that couldn't be loaded + 1
-					int index = moduleListBox.Items.IndexOf(listItem) + 1;
-
-					// Get the number of items in the list
-					int count = moduleListBox.Items.Count;
-
-					// Deselect the playing flag
-					ChangePlayItem(null);
-
-					// Do there exist a "next" module
-					if (index < count)
+					// Skip
+					case '1':
 					{
-						// Yes, load it
-						LoadAndPlayModule(index);
-					}
-					else
-					{
-						// No
-						if (count != 1)
+						// Get the index of the module that couldn't be loaded + 1
+						int index = moduleListBox.Items.IndexOf(listItem) + 1;
+
+						// Get the number of items in the list
+						int count = moduleListBox.Items.Count;
+
+						// Deselect the playing flag
+						ChangePlayItem(null);
+
+						// Do there exist a "next" module
+						if (index < count)
 						{
-							// Load the first module, but only if it's valid
-							// or haven't been loaded before
-							ModuleListItem item = (ModuleListItem)moduleListBox.Items[0];
-							if (!item.HaveTime || (item.HaveTime && item.Time.TotalMilliseconds != 0))
-								LoadAndPlayModule(item);
+							// Yes, load it
+							LoadAndPlayModule(index);
 						}
-					}
-					break;
-				}
-
-				// Skip and remove
-				case '2':
-				{
-					// Get the index of the module that couldn't be loaded
-					int index = moduleListBox.Items.IndexOf(listItem);
-
-					// Get the number of items in the list - 1
-					int count = moduleListBox.Items.Count - 1;
-
-					// Deselect the playing flag
-					ChangePlayItem(null);
-
-					// Remove the module from the list
-					moduleListBox.Items.RemoveAt(index);
-
-					// Do there exist a "next" module
-					if (index < count)
-					{
-						// Yes, load it
-						LoadAndPlayModule(index);
-					}
-					else
-					{
-						// No
-						if (count >= 1)
+						else
 						{
-							// Load the first module
-							LoadAndPlayModule(0);
+							// No
+							if (count != 1)
+							{
+								// Load the first module, but only if it's valid
+								// or haven't been loaded before
+								ModuleListItem item = (ModuleListItem)moduleListBox.Items[0];
+								if (!item.HaveTime || (item.HaveTime && item.Time.TotalMilliseconds != 0))
+									LoadAndPlayModule(item);
+							}
 						}
+						break;
 					}
-					break;
-				}
 
-				// Stop playing
-				case '3':
-				{
-					// Deselect the playing flag
-					ChangePlayItem(null);
-					break;
+					// Skip and remove
+					case '2':
+					{
+						// Get the index of the module that couldn't be loaded
+						int index = moduleListBox.Items.IndexOf(listItem);
+
+						// Get the number of items in the list - 1
+						int count = moduleListBox.Items.Count - 1;
+
+						// Deselect the playing flag
+						ChangePlayItem(null);
+
+						// Remove the module from the list
+						moduleListBox.Items.RemoveAt(index);
+
+						// Do there exist a "next" module
+						if (index < count)
+						{
+							// Yes, load it
+							LoadAndPlayModule(index);
+						}
+						else
+						{
+							// No
+							if (count >= 1)
+							{
+								// Load the first module
+								LoadAndPlayModule(0);
+							}
+						}
+						break;
+					}
+
+					// Stop playing
+					case '3':
+					{
+						// Deselect the playing flag
+						ChangePlayItem(null);
+						break;
+					}
 				}
 			}
 		}
@@ -280,6 +291,32 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			StopAndFreeModule();
 		}
+
+		#region Agent settings window handling
+		/********************************************************************/
+		/// <summary>
+		/// Will open/activate a settings window for the given agent
+		/// </summary>
+		/********************************************************************/
+		public void OpenAgentSettingsWindow(AgentInfo agentInfo)
+		{
+			if (openAgentSettings.TryGetValue(agentInfo.TypeId, out AgentSettingsWindowForm agentSettingsWindow))
+			{
+				if (agentSettingsWindow.WindowState == FormWindowState.Minimized)
+					agentSettingsWindow.WindowState = FormWindowState.Normal;
+
+				agentSettingsWindow.Activate();
+			}
+			else
+			{
+				agentSettingsWindow = new AgentSettingsWindowForm(agentInfo);
+				agentSettingsWindow.Disposed += (o, args) => { openAgentSettings.Remove(agentInfo.TypeId); };
+				agentSettingsWindow.Show();
+
+				openAgentSettings[agentInfo.TypeId] = agentSettingsWindow;
+			}
+		}
+		#endregion
 
 		#region Event handlers
 		/********************************************************************/
@@ -516,6 +553,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					sampleInfoWindow.UpdateWindowSettings();
 					sampleInfoWindow.WindowState = FormWindowState.Minimized;
 				}
+
+				if (IsSettingsWindowOpen())
+				{
+					settingsWindow.UpdateWindowSettings();
+					settingsWindow.WindowState = FormWindowState.Minimized;
+				}
+
+				// Minimize all agent settings windows
+				foreach (AgentSettingsWindowForm agentSettingsWindow in openAgentSettings.Values)
+				{
+					agentSettingsWindow.UpdateWindowSettings();
+					agentSettingsWindow.WindowState = FormWindowState.Minimized;
+				}
 			}
 			else if (WindowState == FormWindowState.Normal)
 			{
@@ -524,6 +574,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				if (IsSampleInfoWindowOpen())
 					sampleInfoWindow.WindowState = FormWindowState.Normal;
+
+				if (IsSettingsWindowOpen())
+					settingsWindow.WindowState = FormWindowState.Normal;
+
+				// Show all agent settings windows
+				foreach (AgentSettingsWindowForm agentSettingsWindow in openAgentSettings.Values)
+					agentSettingsWindow.WindowState = FormWindowState.Normal;
 			}
 		}
 
@@ -645,7 +702,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private void ModuleInfoButton_Click(object sender, EventArgs e)
 		{
 			if (IsModuleInfoWindowOpen())
+			{
+				if (moduleInfoWindow.WindowState == FormWindowState.Minimized)
+					moduleInfoWindow.WindowState = FormWindowState.Normal;
+
 				moduleInfoWindow.Activate();
+			}
 			else
 			{
 				moduleInfoWindow = new ModuleInfoWindowForm(moduleHandler, this);
@@ -718,18 +780,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					// Get the index of the current playing module
 					int curPlay = moduleListBox.Items.IndexOf(playItem);
 
+					// Free the module
+					StopAndFreeModule();
+
 					// The next module to load
 					int newPlay = curPlay + 1;
 
 					// Test to see if we is at the end of the list
-					if (newPlay == count)
-						newPlay = 0;
-
-					// Free the module
-					StopAndFreeModule();
-
-					// Load the module
-					LoadAndPlayModule(newPlay);
+					if (newPlay < count)
+					{
+						// Load the module
+						LoadAndPlayModule(newPlay);
+					}
 				}
 			}));
 		}
@@ -1904,7 +1966,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private void SampleInfoButton_Click(object sender, EventArgs e)
 		{
 			if (IsSampleInfoWindowOpen())
+			{
+				if (sampleInfoWindow.WindowState == FormWindowState.Minimized)
+					sampleInfoWindow.WindowState = FormWindowState.Normal;
+
 				sampleInfoWindow.Activate();
+			}
 			else
 			{
 				sampleInfoWindow = new SampleInfoWindowForm(moduleHandler);
@@ -2314,6 +2381,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Remember settings from main window
 			mainWindowSettings.Time = timeFormat;
 			mainWindowSettings.MasterVolume = masterVolumeTrackBar.Value;
+
+			// Close agent settings windows
+			foreach (AgentSettingsWindowForm agentSettingsWindow in openAgentSettings.Values)
+				agentSettingsWindow.Close();
+
+			openAgentSettings.Clear();
 
 			// Close the about window
 			if (IsAboutWindowOpen())
@@ -3011,16 +3084,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			{
 				// Initialize other stuff in the window
 				InitSubSongs();
+
+				// Mark the item in the list
+				ChangePlayItem(listItem);
+
+				// Initialize controls
+				InitControls();
+
+				// And refresh other windows
+				RefreshWindows();
 			}
-
-			// Mark the item in the list
-			ChangePlayItem(ok ? listItem : null);
-
-			// Initialize controls
-			InitControls();
-
-			// And refresh other windows
-			RefreshWindows();
+			else
+			{
+				// Free loaded module
+				StopAndFreeModule();
+			}
 		}
 
 

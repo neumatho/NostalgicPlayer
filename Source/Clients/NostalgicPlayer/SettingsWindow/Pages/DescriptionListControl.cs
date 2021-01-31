@@ -6,10 +6,6 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-
-using System;
-using System.Drawing;
-using System.Windows.Forms;
 using Krypton.Toolkit;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
@@ -20,24 +16,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 	/// </summary>
 	public class DescriptionListControl : KryptonDataGridView
 	{
-		public DescriptionListControl()
-		{
-			VerticalScrollBar.Visible = true;
-			VerticalScrollBar.VisibleChanged += VerticalScrollBar_VisibleChanged;
-//			this.VerticalScrollBar.SetBounds(this.VerticalScrollBar.Location.X, this.VerticalScrollBar.Location.Y, this.VerticalScrollBar.Width, this.Height);
-		}
-
-		private void VerticalScrollBar_VisibleChanged(object? sender, EventArgs e)
-		{
-			if (!VerticalScrollBar.Visible)
-			{
-				int width = VerticalScrollBar.Width;
-				VerticalScrollBar.Location = new Point(ClientRectangle.Width - width - 2, 21);
-				VerticalScrollBar.Size = new Size(width, ClientRectangle.Height - 21 - 2);
-				VerticalScrollBar.Show();
-			}
-		}
-
 		/********************************************************************/
 		/// <summary>
 		/// This is overridden and do not call the base method, which means

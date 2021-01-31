@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			this.mixerPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.MixerPageControl();
 			this.navigatorAgentsPage = new Krypton.Navigator.KryptonPage();
 			this.agentsPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentsPageControl();
-			this.controlResource = new Polycode.NostalgicPlayer.Client.GuiPlayer.Designer.ControlResource();
+			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
 			this.applyButton = new Krypton.Toolkit.KryptonButton();
 			this.cancelButton = new Krypton.Toolkit.KryptonButton();
 			this.okButton = new Krypton.Toolkit.KryptonButton();
@@ -223,7 +223,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		private Krypton.Navigator.KryptonPage navigatorPathsPage;
 		private Krypton.Navigator.KryptonPage navigatorMixerPage;
 		private Krypton.Navigator.KryptonPage navigatorAgentsPage;
-		private Designer.ControlResource controlResource;
+		private Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonButton applyButton;
 		private Krypton.Toolkit.KryptonButton cancelButton;
 		private Krypton.Toolkit.KryptonButton okButton;

@@ -50,6 +50,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		/********************************************************************/
 		/// <summary>
+		/// Will change the mixer configuration
+		/// </summary>
+		/********************************************************************/
+		public void ChangeConfiguration(MixerConfiguration mixerConfiguration)
+		{
+			mixer.ChangeConfiguration(mixerConfiguration);
+		}
+
+		#region SoundStream implementation
+		/********************************************************************/
+		/// <summary>
 		/// Set the output format
 		/// </summary>
 		/********************************************************************/
@@ -70,18 +81,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		public override void SetMasterVolume(int volume)
 		{
 			mixer.SetMasterVolume(volume);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will change the mixer configuration
-		/// </summary>
-		/********************************************************************/
-		public void ChangeConfiguration(MixerConfiguration mixerConfiguration)
-		{
-			mixer.ChangeConfiguration(mixerConfiguration);
 		}
 
 
@@ -120,7 +119,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		{
 			try
 			{
-				int samplesMixed = mixer.Mixing(buffer, offset, count / bytesPerSampling);
+				int samplesMixed = mixer.Mixing(buffer, offset, count / bytesPerSampling, out bool hasEndReached);
+				HasEndReached = hasEndReached;
+
 				return samplesMixed * bytesPerSampling;
 			}
 			catch(Exception)
@@ -128,5 +129,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				return 0;
 			}
 		}
+		#endregion
 	}
 }

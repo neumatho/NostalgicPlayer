@@ -44,6 +44,11 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		void Play();
 
 		/// <summary>
+		/// This flag is set to true, when end is reached
+		/// </summary>
+		bool HasEndReached { get; set; }
+
+		/// <summary>
 		/// Event called when the player has reached the end
 		/// </summary>
 		event EventHandler EndReached;

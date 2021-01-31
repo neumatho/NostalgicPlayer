@@ -179,5 +179,17 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// </summary>
 		/********************************************************************/
 		public abstract void Stop();
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tells if the end has been reached
+		/// </summary>
+		/********************************************************************/
+		public bool HasEndReached
+		{
+			get; protected set;
+		}
 	}
 }

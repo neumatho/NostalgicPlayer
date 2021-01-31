@@ -430,6 +430,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Settings for {0}.
+        /// </summary>
+        internal static string IDS_AGENTSETTINGS_TITLE {
+            get {
+                return ResourceManager.GetString("IDS_AGENTSETTINGS_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ok.
         /// </summary>
         internal static string IDS_BUT_OK {
@@ -1099,6 +1108,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_SETTINGS_AGENTS_TAB_PLAYERS {
             get {
                 return ResourceManager.GetString("IDS_SETTINGS_AGENTS_TAB_PLAYERS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sample converters.
+        /// </summary>
+        internal static string IDS_SETTINGS_AGENTS_TAB_SAMPLECONVERTERS {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_AGENTS_TAB_SAMPLECONVERTERS", resourceCulture);
             }
         }
         

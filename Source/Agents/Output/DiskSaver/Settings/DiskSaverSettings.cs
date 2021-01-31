@@ -7,153 +7,158 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using System.Drawing;
-using System.Windows.Forms;
-using Krypton.Toolkit;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Controls
+namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 {
 	/// <summary>
-	/// Show a message box with customized buttons
+	/// This class holds all the settings
 	/// </summary>
-	public partial class CustomMessageBox : KryptonForm
+	internal class DiskSaverSettings
 	{
-		/// <summary></summary>
-		public enum IconType
+		/// <summary>
+		/// The different output types
+		/// </summary>
+		public enum OutType
 		{
-			/// <summary></summary>
-			Information,
-			/// <summary></summary>
-			Question,
-			/// <summary></summary>
-			Warning,
-			/// <summary></summary>
-			Error
+			/// <summary>
+			/// Mono
+			/// </summary>
+			Mono,
+
+			/// <summary>
+			/// Stereo
+			/// </summary>
+			Stereo
 		}
 
-		private int buttonNumber = 1;
-		private char result;
+		private readonly Kit.Utility.Settings settings;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public CustomMessageBox()
+		public DiskSaverSettings()
 		{
-			InitializeComponent();
+			settings = new Kit.Utility.Settings("DiskSaver");
+			settings.LoadSettings();
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructor
+		/// Return the main settings object
 		/// </summary>
 		/********************************************************************/
-		public CustomMessageBox(string message, string title, IconType icon) : this()
-		{
-			SetMessage(message);
-			SetTitle(title);
-			SetIcon(icon);
-		}
-
+		public Kit.Utility.Settings Settings => settings;
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Change the title text
+		/// Where to store the output
 		/// </summary>
 		/********************************************************************/
-		public void SetTitle(string title)
+		public string DiskPath
 		{
-			Text = title;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Change the icon
-		/// </summary>
-		/********************************************************************/
-		public void SetIcon(IconType iconType)
-		{
-			pictureBox.Image = imageList.Images[(int)iconType];
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Change the message text
-		/// </summary>
-		/********************************************************************/
-		public void SetMessage(string message)
-		{
-			messageLabel.Text = message;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will add an extra button
-		/// </summary>
-		/********************************************************************/
-		public void AddButton(string label, char result)
-		{
-			KryptonButton button = new KryptonButton();
-			button.Name = $"button_{buttonNumber}";
-			button.TabIndex = buttonNumber;
-			button.Text = label;
-			button.Tag = result;
-			button.AutoSize = true;
-			button.DialogResult = DialogResult.Cancel;
-			button.Click += Button_Click;
-
-			if (buttonNumber == 1)
-				button.Location = new Point(0, 0);
-			else
+			get
 			{
-				KryptonButton previousButton = (KryptonButton)buttonPanel.Controls[buttonNumber - 2];
-				button.Location = new Point(previousButton.Location.X + previousButton.Size.Width + 5, 0);
+				string path = settings.GetStringEntry("General", "DiskPath");
+				if (string.IsNullOrEmpty(path))
+					path = Environment.GetFolderPath(Environment.SpecialFolder.CommonMusic);
+
+				return path;
 			}
 
-			if (char.IsUpper(result))
+			set => settings.SetStringEntry("General", "DiskPath", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Output size
+		/// </summary>
+		/********************************************************************/
+		public int OutputSize
+		{
+			get => settings.GetIntEntry("General", "OutputSize", 16);
+
+			set => settings.SetIntEntry("General", "OutputSize", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Output type
+		/// </summary>
+		/********************************************************************/
+		public OutType OutputType
+		{
+			get
 			{
-				AcceptButton = button;
-				button.DialogResult = DialogResult.OK;
-				button.TabIndex = 0;
+				if (Enum.TryParse(settings.GetStringEntry("General", "OutputType"), out OutType type))
+					return type;
+
+				return OutType.Stereo;
 			}
 
-			buttonPanel.Controls.Add(button);
-
-			buttonNumber++;
+			set => settings.SetStringEntry("General", "OutputType", value.ToString());
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Will get the button clicked
+		/// Output frequency
 		/// </summary>
 		/********************************************************************/
-		public char GetButtonResult()
+		public int OutputFrequency
 		{
-			return result;
+			get => settings.GetIntEntry("General", "OutputFrequency", 44100);
+
+			set => settings.SetIntEntry("General", "OutputFrequency", value);
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Is called when a button is clicked
+		/// Output format
 		/// </summary>
 		/********************************************************************/
-		private void Button_Click(object sender, EventArgs e)
+		public Guid OutputFormat
 		{
-			result = (char)((KryptonButton)sender).Tag;
+			get
+			{
+				if (Guid.TryParse(settings.GetStringEntry("General", "OutputFormat"), out Guid g))
+					return g;
+
+				return Guid.Empty;
+			}
+
+			set => settings.SetStringEntry("General", "OutputFormat", value.ToString("D"));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Output agent
+		/// </summary>
+		/********************************************************************/
+		public Guid OutputAgent
+		{
+			get
+			{
+				if (Guid.TryParse(settings.GetStringEntry("General", "OutputAgent"), out Guid g))
+					return g;
+
+				return Guid.Empty;
+			}
+
+			set => settings.SetStringEntry("General", "OutputAgent", value.ToString("D"));
 		}
 	}
 }

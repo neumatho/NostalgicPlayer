@@ -42,13 +42,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return some flags telling what the player supports
 		/// </summary>
 		/********************************************************************/
-		public virtual ModulePlayerSupportFlag SupportFlags
-		{
-			get
-			{
-				return ModulePlayerSupportFlag.None;
-			}
-		}
+		public virtual ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.None;
 
 
 
@@ -111,13 +105,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return the number of channels the module want to reserve
 		/// </summary>
 		/********************************************************************/
-		public virtual int VirtualChannelCount
-		{
-			get
-			{
-				return ModuleChannelCount;
-			}
-		}
+		public virtual int VirtualChannelCount => ModuleChannelCount;
 
 
 
@@ -126,13 +114,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return the number of channels the module use
 		/// </summary>
 		/********************************************************************/
-		public virtual int ModuleChannelCount
-		{
-			get
-			{
-				return 4;
-			}
-		}
+		public virtual int ModuleChannelCount => 4;
 
 
 
@@ -141,13 +123,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return information about sub-songs
 		/// </summary>
 		/********************************************************************/
-		public virtual SubSongInfo SubSongs
-		{
-			get
-			{
-				return subSongInfo;
-			}
-		}
+		public virtual SubSongInfo SubSongs => subSongInfo;
 
 
 
@@ -156,13 +132,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return the length of the current song
 		/// </summary>
 		/********************************************************************/
-		public virtual int SongLength
-		{
-			get
-			{
-				return 0;
-			}
-		}
+		public virtual int SongLength => 0;
 
 
 
@@ -214,13 +184,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// null is returned
 		/// </summary>
 		/********************************************************************/
-		public virtual InstrumentInfo[] Instruments
-		{
-			get
-			{
-				return null;
-			}
-		}
+		public virtual InstrumentInfo[] Instruments => null;
 
 
 
@@ -230,13 +194,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// is returned
 		/// </summary>
 		/********************************************************************/
-		public virtual SampleInfo[] Samples
-		{
-			get
-			{
-				return null;
-			}
-		}
+		public virtual SampleInfo[] Samples => null;
 
 
 
@@ -245,13 +203,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return the total size of all the extra files loaded
 		/// </summary>
 		/********************************************************************/
-		public virtual long ExtraFilesSizes
-		{
-			get
-			{
-				return totalSize;
-			}
-		}
+		public virtual long ExtraFilesSizes => totalSize;
 
 
 

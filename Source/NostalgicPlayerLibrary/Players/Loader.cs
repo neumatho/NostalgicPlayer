@@ -32,6 +32,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		private long fileLength;
 		private string moduleFormat;
 		private string playerName;
+		private string fileName;
 
 		private ModuleStream stream;
 
@@ -108,6 +109,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						else
 						{
 							// Get module information
+							fileName = fileInfo.FileName;
+
 							playerName = playerAgentInfo.AgentName;//XX
 
 							moduleFormat = playerAgentInfo.AgentName;
@@ -208,6 +211,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				return playerAgent;
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the file name of the module loaded
+		/// </summary>
+		/********************************************************************/
+		public string FileName => fileName;
 
 
 
