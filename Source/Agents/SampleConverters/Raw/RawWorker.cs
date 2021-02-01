@@ -6,7 +6,6 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-
 using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -98,12 +97,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Raw
 				if ((saveBuffer == null) || (length > saveBuffer.Length))
 				{
 					// Allocate a new save buffer
-					if (format.Bits == 8)
-						saveBuffer = new byte[length];
-					else if (format.Bits == 16)
-						saveBuffer = new byte[length * 2];
-					else
-						saveBuffer = new byte[length * 4];
+					saveBuffer = new byte[length * (format.Bits / 8)];
 				}
 
 				int toWrite = 0;

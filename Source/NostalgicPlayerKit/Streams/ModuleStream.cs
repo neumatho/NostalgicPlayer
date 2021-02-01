@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			get
 			{
-				return wrapperStream.CanWrite;
+				return false;
 			}
 		}
 
