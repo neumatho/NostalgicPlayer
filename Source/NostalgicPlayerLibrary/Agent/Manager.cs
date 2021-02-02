@@ -92,6 +92,25 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 
 		/********************************************************************/
 		/// <summary>
+		/// Return all agents loaded
+		/// </summary>
+		/********************************************************************/
+		public IEnumerable<AgentInfo> GetAllAgents()
+		{
+			lock (loadListLock)
+			{
+				foreach (AgentInfo[] agentList in loadedAgentsByAgentType.Values)
+				{
+					foreach (AgentInfo agentInfo in agentList)
+						yield return agentInfo;
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return all agents of the given type
 		/// </summary>
 		/********************************************************************/

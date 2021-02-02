@@ -482,6 +482,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 				manager.LoadAgent(agentInfo.AgentId);
 			}
 
+			// Add any menu items
+			mainWin.AddAgentToMenu(agentInfo);
+
 			// And enable the agent
 			agentInfo.Enabled = true;
 		}
@@ -503,6 +506,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 				if (agentType == Manager.AgentType.Output)
 					moduleHandler.CloseOutputAgent();
 			}
+
+			// Close any opened windows
+			mainWin.CloseAgentSettingsWindow(agentInfo);
+
+			// Remove any menu items
+			mainWin.RemoveAgentFromMenu(agentInfo);
 
 			// Change the enable status
 			agentInfo.Enabled = false;

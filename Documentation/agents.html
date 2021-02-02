@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>NostalgicPlayer manual</title>
+	<link rel="stylesheet" href="css/docstyles.css">
+</head>
+<body>
+<table class="bgtable">
+	<tr>
+		<td>
+			<table class="menutable">
+				<tr><th><div class="tableheader"><h2>Menu</h2></div></th></tr>
+				<tr><td><a href="features.html">Features</a></td></tr>
+				<tr><td><a href="howtouse.html"><b>How to use</b></a></td></tr>
+				<tr><td><a href="moduletypes.html">Module types</a></td></tr>
+				<tr><td><a href="requirements.html">Requirements</a></td></tr>
+				<tr><td><a href="thanks.html">Thanks</a></td></tr>
+				<tr><td><a href="history.html">Version history</a></td></tr>
+			</table>
+		</td>
+		<td>
+			<table class="contenttable">
+				<tr><th><div class="tableheader"><h3>Agents</h3></div></th></tr>
+				<tr><td>
+					<span>
+						<p>Here is a description of all the different agent types.</p>
+					</span>
+					<span>
+						<a name="players"><h3>Players</h3></a>
+						<img src="images/settingsagentsplayers.png" alt="players"/>
+						<br>
+						<p>A player is capable of detecting a module format and play it. There exists two kinds of players. Module players and sample players.</p>
+						<p>A module player plays notes in upto 64 different channels. A mixer will then mix all the channels into a 2 channel stereo output.</p>
+						<p>A sample player will read one bit of the file at the time and play it. There is no mixing involved when playing samples.</p>
+						<p>I won't describe each player here. You can read about them under the <a href="moduletypes.html">module type</a> section.</p>
+					</span>
+					<span>
+						<a name="output"><h3>Output</h3></a>
+						<img src="images/settingsagentsoutput.png" alt="output agents"/>
+						<br>
+						<p>An output agents job is to take the output from either the mixer or a sample player and play it.</p>
+						<br>
+						<table class="usage2table">
+							<tr>
+								<td>Core Audio</td>
+								<td>This agent uses the Windows Core Audio API to play the sound, so the user can listen to it.</td>
+							</tr>
+							<tr>
+								<td>Disk saver</td>
+								<td>This agent will take the output and store it into a file on disk. In the <a href="agentsettings.html#disksaver">settings</a>, you can select which format you want the file in.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="sampleconverters"><h3>Sample converters</h3></a>
+						<img src="images/settingsagentssampleconverters.png" alt="sample converter agent settings"/>
+						<br>
+						<span>
+							<p>A sample converter can read a specific sample format. This is used by the sample player to play samples in different formats.</p>
+							<p>Some converters can also save samples in their format. This is used by e.g. the Disk Saver output agent to save the sample generated.</p>
+						</span>
+					</span>
+				</td></tr>
+			</table>
+		</td>
+	</tr>
+</table>
+</body>
+</html>

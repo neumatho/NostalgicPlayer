@@ -66,6 +66,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private OpenFileDialog loadListFileDialog;
 		private SaveFileDialog saveListFileDialog;
 
+		// Menus
+		private ToolStripSeparator agentSettingsSeparatorMenuItem;
+		private ToolStripMenuItem agentSettingsMenuItem;
+		private ToolStripMenuItem agentShowMenuItem;
+
 		// Timer variables
 		private MainWindowSettings.TimeFormat timeFormat;
 		private DateTime timeStart;
@@ -154,6 +159,71 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 
 			SetupHandlers();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Add a single agent to the menu if needed
+		/// </summary>
+		/********************************************************************/
+		public void AddAgentToMenu(AgentInfo agentInfo)
+		{
+			if (agentInfo.HasSettings)
+			{
+				// Create the menu item
+				ToolStripMenuItem newMenuItem = new ToolStripMenuItem(agentInfo.TypeName);
+				newMenuItem.Tag = agentInfo;
+				newMenuItem.Click += Menu_Window_AgentSettings_Click;
+
+				// Find the right place in the menu to insert the agent
+				int insertPos = 0;
+
+				foreach (ToolStripMenuItem menuItem in agentSettingsMenuItem.DropDownItems)
+				{
+					if (agentInfo.TypeName.CompareTo(menuItem.Name) > 0)
+						break;
+
+					insertPos++;
+				}
+
+				agentSettingsMenuItem.DropDownItems.Insert(insertPos, newMenuItem);
+			}
+
+			// Hide/show different menu items
+			agentSettingsMenuItem.Visible = agentSettingsMenuItem.DropDownItems.Count > 0;
+			agentShowMenuItem.Visible = agentShowMenuItem.DropDownItems.Count > 0;
+			agentSettingsSeparatorMenuItem.Visible = agentSettingsMenuItem.DropDownItems.Count > 0 || agentShowMenuItem.DropDownItems.Count > 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Remove a single agent from the menu if needed
+		/// </summary>
+		/********************************************************************/
+		public void RemoveAgentFromMenu(AgentInfo agentInfo)
+		{
+			if (agentInfo.HasSettings)
+			{
+				// Find the agent menu
+				for (int i = agentSettingsMenuItem.DropDownItems.Count - 1; i >= 0; i--)
+				{
+					if (((AgentInfo)agentSettingsMenuItem.DropDownItems[i].Tag).TypeId == agentInfo.TypeId)
+					{
+						// Found it, so remove it
+						agentSettingsMenuItem.DropDownItems.RemoveAt(i);
+						break;
+					}
+				}
+			}
+
+			// Hide/show different menu items
+			agentSettingsMenuItem.Visible = agentSettingsMenuItem.DropDownItems.Count > 0;
+			agentShowMenuItem.Visible = agentShowMenuItem.DropDownItems.Count > 0;
+			agentSettingsSeparatorMenuItem.Visible = agentSettingsMenuItem.DropDownItems.Count > 0 || agentShowMenuItem.DropDownItems.Count > 0;
 		}
 
 
@@ -314,6 +384,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				agentSettingsWindow.Show();
 
 				openAgentSettings[agentInfo.TypeId] = agentSettingsWindow;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will close a settings window for the given agent
+		/// </summary>
+		/********************************************************************/
+		public void CloseAgentSettingsWindow(AgentInfo agentInfo)
+		{
+			if (openAgentSettings.TryGetValue(agentInfo.TypeId, out AgentSettingsWindowForm agentSettingsWindow))
+			{
+				agentSettingsWindow.Close();
+
+				openAgentSettings.Remove(agentInfo.TypeId);
 			}
 		}
 		#endregion
@@ -626,6 +713,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				settingsWindow.Disposed += (o, args) => { settingsWindow = null; };
 				settingsWindow.Show();
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// User selected one of the agent settings menu items
+		/// </summary>
+		/********************************************************************/
+		private void Menu_Window_AgentSettings_Click(object sender, EventArgs e)
+		{
+			AgentInfo agentInfo = (AgentInfo)((ToolStripMenuItem)sender).Tag;
+			OpenAgentSettingsWindow(agentInfo);
 		}
 		#endregion
 
@@ -2173,15 +2273,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			menuItem.Click += Menu_Window_Settings_Click;
 			windowMenuItem.DropDownItems.Add(menuItem);
 
-//XX			windowMenuItem.DropDownItems.Add(new ToolStripSeparator());
+			agentSettingsSeparatorMenuItem = new ToolStripSeparator();
+			agentSettingsSeparatorMenuItem.Visible = false;
+			windowMenuItem.DropDownItems.Add(agentSettingsSeparatorMenuItem);
 
-			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_PLAYERS);
-			menuItem.Visible = false;
-			windowMenuItem.DropDownItems.Add(menuItem);
+			agentSettingsMenuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_AGENT_SETTINGS);
+			agentSettingsMenuItem.Visible = false;
+			windowMenuItem.DropDownItems.Add(agentSettingsMenuItem);
 
-			menuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_AGENTS);
-			menuItem.Visible = false;
-			windowMenuItem.DropDownItems.Add(menuItem);
+			agentShowMenuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_AGENT_SHOW);
+			agentShowMenuItem.Visible = false;
+			windowMenuItem.DropDownItems.Add(agentShowMenuItem);
 
 			menuStrip.Items.Add(windowMenuItem);
 
@@ -2200,6 +2302,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			helpMenuItem.DropDownItems.Add(menuItem);
 
 			menuStrip.Items.Add(helpMenuItem);
+
+			// Add all agent windows to the menu which have settings or show windows
+			foreach (AgentInfo agentInfo in agentManager.GetAllAgents())
+				AddAgentToMenu(agentInfo);
 		}
 
 

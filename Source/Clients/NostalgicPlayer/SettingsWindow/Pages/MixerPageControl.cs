@@ -191,9 +191,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		public void WriteSettings()
 		{
-			soundSettings.StereoSeparation = stereoSeparationTrackBar.Value;
-			soundSettings.Interpolation = interpolationCheckBox.Checked;
-			soundSettings.AmigaFilter = amigaFilterCheckBox.Checked;
+			originalStereoSeparation = soundSettings.StereoSeparation = stereoSeparationTrackBar.Value;
+			originalInterpolation = soundSettings.Interpolation = interpolationCheckBox.Checked;
+			originalAmigaFilter = soundSettings.AmigaFilter = amigaFilterCheckBox.Checked;
 
 			soundSettings.OutputAgent = ((AgentInfo)((KryptonListItem)outputAgentComboBox.SelectedItem).Tag).TypeId;
 		}

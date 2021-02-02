@@ -680,20 +680,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Agents.
+        ///   Looks up a localized string similar to Agent settings.
         /// </summary>
-        internal static string IDS_MENU_WINDOW_AGENTS {
+        internal static string IDS_MENU_WINDOW_AGENT_SETTINGS {
             get {
-                return ResourceManager.GetString("IDS_MENU_WINDOW_AGENTS", resourceCulture);
+                return ResourceManager.GetString("IDS_MENU_WINDOW_AGENT_SETTINGS", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Players.
+        ///   Looks up a localized string similar to Show.
         /// </summary>
-        internal static string IDS_MENU_WINDOW_PLAYERS {
+        internal static string IDS_MENU_WINDOW_AGENT_SHOW {
             get {
-                return ResourceManager.GetString("IDS_MENU_WINDOW_PLAYERS", resourceCulture);
+                return ResourceManager.GetString("IDS_MENU_WINDOW_AGENT_SHOW", resourceCulture);
             }
         }
         

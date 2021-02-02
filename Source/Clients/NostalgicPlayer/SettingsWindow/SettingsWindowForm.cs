@@ -134,8 +134,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		/********************************************************************/
 		private void CancelButton_Click(object sender, EventArgs e)
 		{
-			// Cancel the settings and close
-			CancelSettings();
+			// Just close the window, which will also do a cancel
 			Close();
 		}
 
