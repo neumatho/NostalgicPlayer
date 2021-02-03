@@ -57,6 +57,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 
 		private string[] supportedFormats;
 		private string[] outputAgents;
+		private string[] sampleConverters;
 
 		private string[] agentsToShow;
 		private int agentIndex;
@@ -170,6 +171,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 		{
 			supportedFormats = FindAgentTypes(agentManager, Manager.AgentType.Players);
 			outputAgents = FindAgentTypes(agentManager, Manager.AgentType.Output);
+			sampleConverters = FindAgentTypes(agentManager, Manager.AgentType.SampleConverters);
 		}
 
 
@@ -443,6 +445,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 													str = str.Substring(2);
 
 													agentsToShow = outputAgents;
+													agentIndex = 0;
+
+													showMode = Mode.Agents;
+													moreCommands = false;
+													break;
+												}
+
+												// Show sample converters
+												case 'S':
+												{
+													str = str.Substring(2);
+
+													agentsToShow = sampleConverters;
 													agentIndex = 0;
 
 													showMode = Mode.Agents;

@@ -21,8 +21,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 	/// <summary>
 	/// Main worker class
 	///
-	/// Original player by M. Gemmel.
-	/// Converted to C# by Thomas Neumann.
+	/// Original player by M. Gemmel
+	/// Converted to C# by Thomas Neumann
 	/// </summary>
 	internal class JamCrackerWorker : ModulePlayerAgentBase
 	{
