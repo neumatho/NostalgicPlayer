@@ -42,8 +42,9 @@
 			// 
 			// messageLabel
 			// 
-			this.messageLabel.LabelStyle = Krypton.Toolkit.LabelStyle.NormalPanel;
+			this.messageLabel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.messageLabel.Location = new System.Drawing.Point(0, 0);
+			this.messageLabel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.messageLabel.Name = "messageLabel";
 			this.messageLabel.Size = new System.Drawing.Size(43, 20);
 			this.messageLabel.TabIndex = 0;
@@ -51,36 +52,41 @@
 			// 
 			// pictureBox
 			// 
-			this.pictureBox.Location = new System.Drawing.Point(13, 13);
+			this.pictureBox.Location = new System.Drawing.Point(15, 15);
+			this.pictureBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.pictureBox.Name = "pictureBox";
-			this.pictureBox.Size = new System.Drawing.Size(32, 32);
+			this.pictureBox.Size = new System.Drawing.Size(37, 37);
 			this.pictureBox.TabIndex = 2;
 			this.pictureBox.TabStop = false;
 			// 
 			// messagePanel
 			// 
+			this.messagePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.messagePanel.AutoSize = true;
 			this.messagePanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.messagePanel.Controls.Add(this.messageLabel);
-			this.messagePanel.Location = new System.Drawing.Point(48, 13);
+			this.messagePanel.Location = new System.Drawing.Point(56, 15);
 			this.messagePanel.Margin = new System.Windows.Forms.Padding(0);
 			this.messagePanel.Name = "messagePanel";
-			this.messagePanel.Size = new System.Drawing.Size(46, 23);
+			this.messagePanel.Size = new System.Drawing.Size(43, 20);
 			this.messagePanel.TabIndex = 3;
 			// 
 			// buttonPanel
 			// 
-			this.buttonPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.buttonPanel.AutoSize = true;
 			this.buttonPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.buttonPanel.Location = new System.Drawing.Point(234, 57);
-			this.buttonPanel.Margin = new System.Windows.Forms.Padding(0, 10, 0, 5);
+			this.buttonPanel.Location = new System.Drawing.Point(273, 56);
+			this.buttonPanel.Margin = new System.Windows.Forms.Padding(0, 12, 0, 6);
 			this.buttonPanel.Name = "buttonPanel";
 			this.buttonPanel.Size = new System.Drawing.Size(0, 0);
 			this.buttonPanel.TabIndex = 4;
 			// 
 			// imageList
 			// 
+			this.imageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
 			this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
 			this.imageList.TransparentColor = System.Drawing.Color.Transparent;
 			this.imageList.Images.SetKeyName(0, "Information.png");
@@ -90,20 +96,21 @@
 			// 
 			// CustomMessageBox
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;
 			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.ClientSize = new System.Drawing.Size(243, 93);
+			this.ClientSize = new System.Drawing.Size(284, 62);
 			this.ControlBox = false;
 			this.Controls.Add(this.buttonPanel);
 			this.Controls.Add(this.messagePanel);
 			this.Controls.Add(this.pictureBox);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.MaximizeBox = false;
-			this.MaximumSize = new System.Drawing.Size(500, 300);
+			this.MaximumSize = new System.Drawing.Size(581, 340);
 			this.MinimizeBox = false;
-			this.MinimumSize = new System.Drawing.Size(100, 50);
+			this.MinimumSize = new System.Drawing.Size(114, 52);
 			this.Name = "CustomMessageBox";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;

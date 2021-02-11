@@ -290,13 +290,13 @@ Formats supported:
     <value>Ok</value>
   </data>
   <data name="IDS_BUT_SKIP" xml:space="preserve">
-    <value>Skip</value>
+    <value>&amp;Skip</value>
   </data>
   <data name="IDS_BUT_SKIPREMOVE" xml:space="preserve">
-    <value>Skip and remove</value>
+    <value>Skip and &amp;remove</value>
   </data>
   <data name="IDS_BUT_STOP" xml:space="preserve">
-    <value>Stop playing</value>
+    <value>Sto&amp;p playing</value>
   </data>
   <data name="IDS_DISKMENU_APPEND" xml:space="preserve">
     <value>Append list</value>

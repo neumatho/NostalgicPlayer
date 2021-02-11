@@ -253,16 +253,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			using (CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error))
 			{
-				dialog.AddButton(Resources.IDS_BUT_SKIP, '1');
-				dialog.AddButton(Resources.IDS_BUT_SKIPREMOVE, '2');
-				dialog.AddButton(Resources.IDS_BUT_STOP, '3');
+				dialog.AddButton(Resources.IDS_BUT_SKIP, 'S');
+				dialog.AddButton(Resources.IDS_BUT_SKIPREMOVE, 'r');
+				dialog.AddButton(Resources.IDS_BUT_STOP, 'p');
 				dialog.ShowDialog();
 				char response = dialog.GetButtonResult();
 
 				switch (response)
 				{
 					// Skip
-					case '1':
+					case 'S':
 					{
 						// Get the index of the module that couldn't be loaded + 1
 						int index = moduleListBox.Items.IndexOf(listItem) + 1;
@@ -295,7 +295,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					}
 
 					// Skip and remove
-					case '2':
+					case 'r':
 					{
 						// Get the index of the module that couldn't be loaded
 						int index = moduleListBox.Items.IndexOf(listItem);
@@ -328,7 +328,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					}
 
 					// Stop playing
-					case '3':
+					case 'p':
 					{
 						// Deselect the playing flag
 						ChangePlayItem(null);
@@ -2647,13 +2647,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				int itemIndex = moduleListBox.Items.IndexOf(playItem);
 				Rectangle listRect = moduleListBox.Bounds;
 				Rectangle itemRect = moduleListBox.GetItemRectangle(itemIndex);
-				itemRect.X += listRect.X;
-				itemRect.Y += listRect.Y;
-
-				if (!listRect.Contains(itemRect))
+				if (itemRect == Rectangle.Empty)
 				{
-					// Make sure the item can be seen
+					// Sometimes the rectangle returned is empty.
+					// If that's the case, scroll to the playing item
 					moduleListBox.TopIndex = itemIndex;
+				}
+				else
+				{
+					itemRect.X += listRect.X;
+					itemRect.Y += listRect.Y;
+
+					if (!listRect.Contains(itemRect))
+					{
+						// Make sure the item can be seen
+						moduleListBox.TopIndex = itemIndex;
+					}
 				}
 
 				// Add the new index to the random list

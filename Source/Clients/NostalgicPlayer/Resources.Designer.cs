@@ -448,7 +448,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Skip.
+        ///   Looks up a localized string similar to &amp;Skip.
         /// </summary>
         internal static string IDS_BUT_SKIP {
             get {
@@ -457,7 +457,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Skip and remove.
+        ///   Looks up a localized string similar to Skip and &amp;remove.
         /// </summary>
         internal static string IDS_BUT_SKIPREMOVE {
             get {
@@ -466,7 +466,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Stop playing.
+        ///   Looks up a localized string similar to Sto&amp;p playing.
         /// </summary>
         internal static string IDS_BUT_STOP {
             get {
