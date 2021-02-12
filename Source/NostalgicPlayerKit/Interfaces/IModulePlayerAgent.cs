@@ -103,7 +103,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Holds all the virtual channel instances used to play the samples
 		/// </summary>
-		Channel[] Channels { get; set; }
+		Channel[] VirtualChannels { get; set; }
 
 		/// <summary>
 		/// Return the current playing frequency

@@ -112,7 +112,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 							playerName = playerAgentInfo.AgentName;//XX
 
-							moduleFormat = playerAgentInfo.AgentName;
+							moduleFormat = playerAgentInfo.TypeName;
 						}
 					}
 				}

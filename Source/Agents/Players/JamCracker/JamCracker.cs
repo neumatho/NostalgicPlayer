@@ -34,7 +34,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		{
 			get
 			{
-				return Resources.IDS_NAME;
+				return Resources.IDS_JAM_NAME;
 			}
 		}
 
@@ -51,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_NAME, Resources.IDS_DESCRIPTION, agent1Id)
+					new AgentSupportInfo(Resources.IDS_JAM_NAME, Resources.IDS_JAM_DESCRIPTION, agent1Id)
 				};
 			}
 		}

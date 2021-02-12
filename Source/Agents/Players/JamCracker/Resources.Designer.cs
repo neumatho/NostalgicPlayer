@@ -66,9 +66,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker {
         ///
         ///The player came from the Amiga, but it&apos;s not the most used format. There are some nice tunes available by Dr. Awesome (Bjørn Lynne)..
         /// </summary>
-        internal static string IDS_DESCRIPTION {
+        internal static string IDS_JAM_DESCRIPTION {
             get {
-                return ResourceManager.GetString("IDS_DESCRIPTION", resourceCulture);
+                return ResourceManager.GetString("IDS_JAM_DESCRIPTION", resourceCulture);
             }
         }
         
@@ -100,7 +100,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Song length.
+        ///   Looks up a localized string similar to Song length:.
         /// </summary>
         internal static string IDS_JAM_INFODESCLINE0 {
             get {
@@ -109,7 +109,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Used patterns.
+        ///   Looks up a localized string similar to Used patterns:.
         /// </summary>
         internal static string IDS_JAM_INFODESCLINE1 {
             get {
@@ -118,7 +118,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Used instruments.
+        ///   Looks up a localized string similar to Used instruments:.
         /// </summary>
         internal static string IDS_JAM_INFODESCLINE2 {
             get {
@@ -129,9 +129,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker {
         /// <summary>
         ///   Looks up a localized string similar to JamCracker.
         /// </summary>
-        internal static string IDS_NAME {
+        internal static string IDS_JAM_NAME {
             get {
-                return ResourceManager.GetString("IDS_NAME", resourceCulture);
+                return ResourceManager.GetString("IDS_JAM_NAME", resourceCulture);
             }
         }
     }

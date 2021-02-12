@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				for (int i = 0; i < moduleChannelNumber; i++)
 					channels[i] = new ChannelParser();
 
-				currentPlayer.Channels = channels;
+				currentPlayer.VirtualChannels = channels;
 
 				// Initialize the mixers
 				ChangeConfiguration(playerConfiguration.MixerConfiguration);
@@ -123,7 +123,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 			// Deallocate channel objects
 			if (currentPlayer != null)
-				currentPlayer.Channels = null;
+				currentPlayer.VirtualChannels = null;
 
 			// Cleanup member variables
 			currentPlayer = null;
@@ -274,7 +274,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						int click = currentMixer.GetClickConstant();
 
 						for (int t = 0; t < moduleChannelNumber; t++)
-							((ChannelParser)currentPlayer.Channels[t]).ParseInfo(ref voiceInfo[t], click);
+							((ChannelParser)currentPlayer.VirtualChannels[t]).ParseInfo(ref voiceInfo[t], click);
 
 						// Calculate the number of sample pair to mix before the
 						// player need to be called again
@@ -311,7 +311,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				// enable/disable the channels depending on the user settings
 				for (int t = 0; t < moduleChannelNumber; t++)
 				{
-					((ChannelParser)currentPlayer.Channels[t]).Active(currentMixer.IsActive(t));
+					((ChannelParser)currentPlayer.VirtualChannels[t]).Active(currentMixer.IsActive(t));
 					currentMixer.EnableChannel(t, (channelsEnabled == null) || channelsEnabled[t]);
 				}
 			}

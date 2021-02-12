@@ -29,7 +29,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		protected ModulePlayerAgentBase()
 		{
-			Channels = null;
+			VirtualChannels = null;
 			PlayingFrequency = 50.0f;
 
 			totalSize = 0;
@@ -212,7 +212,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Holds all the virtual channel instances used to play the samples
 		/// </summary>
 		/********************************************************************/
-		public virtual Channel[] Channels
+		public virtual Channel[] VirtualChannels
 		{
 			get; set;
 		}
