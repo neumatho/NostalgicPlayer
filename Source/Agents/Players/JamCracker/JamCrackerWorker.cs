@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Polycode.NostalgicPlayer.Agent.Player.JamCracker.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -20,84 +21,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 {
 	/// <summary>
 	/// Main worker class
-	///
-	/// Original player by M. Gemmel
-	/// Converted to C# by Thomas Neumann
 	/// </summary>
 	internal class JamCrackerWorker : ModulePlayerAgentBase
 	{
-		#region Structures
-
-		#region Note info structure
-		private class NoteInfo
-		{
-			public byte Period;
-			public sbyte Instr;
-			public byte Speed;
-			public byte Arpeggio;
-			public byte Vibrato;
-			public byte Phase;
-			public byte Volume;
-			public byte Porta;
-		}
-		#endregion
-
-		#region Instrument info structure
-		private class InstInfo
-		{
-			public byte[] Name = new byte[32];
-			public byte Flags;
-			public uint Size;
-			public sbyte[] Address;
-		}
-		#endregion
-
-		#region Pattern info structure
-		private class PattInfo
-		{
-			public ushort Size;
-			public NoteInfo[] Address;
-		}
-		#endregion
-
-		#region Voice info structure
-		private class VoiceInfo
-		{
-			public ushort WaveOffset = 0;
-			public ushort Dmacon;
-			public Channel Channel;
-			public ushort InsLen;
-			public sbyte[] InsAddress;
-			public sbyte[] RealInsAddress;
-			public sbyte[] WaveBuffer = new sbyte[0x40];
-			public int PerIndex;
-			public ushort[] Pers = new ushort[3];
-			public short Por;
-			public short DeltaPor;
-			public short PorLevel;
-			public short Vib;
-			public short DeltaVib;
-			public short Vol;
-			public short DeltaVol;
-			public ushort VolLevel;
-			public ushort Phase;
-			public short DeltaPhase;
-			public byte VibCnt;
-			public byte VibMax;
-			public byte Flags;
-		}
-		#endregion
-
-		#region Position info structure
-		private class PosInfo
-		{
-			public byte Speed;
-			public TimeSpan Time;
-		}
-		#endregion
-
-		#endregion
-
 		private static readonly ushort[] periods =
 		{
 			1019, 962, 908, 857, 809, 763, 720, 680, 642, 606, 572, 540, 509,
@@ -434,7 +360,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 				voiceInfo.WaveOffset = waveOff;
 				voiceInfo.Dmacon = (ushort)(1 << i);
-				voiceInfo.Channel = Channels[i];
+				voiceInfo.Channel = VirtualChannels[i];
 				voiceInfo.InsLen = 0;
 				voiceInfo.InsAddress = null;
 				voiceInfo.RealInsAddress = null;
