@@ -469,6 +469,38 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 			return result;
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will remove a whole section in the settings. If the section
+		/// couldn't be found, nothing is done
+		/// </summary>
+		/********************************************************************/
+		public void RemoveSection(string section)
+		{
+			// Start to lock the list
+			listLock.EnterWriteLock();
+
+			try
+			{
+				// Now find the section
+				int sectionIndex = FindSection(section);
+				if (sectionIndex != -1)
+				{
+					// Found it, now remove it and all the entries
+					lineList.RemoveAt(sectionIndex);
+
+					while ((sectionIndex < lineList.Count) && (lineList[sectionIndex].Type != LineType.Section))
+						lineList.RemoveAt(sectionIndex);
+				}
+			}
+			finally
+			{
+				listLock.ExitWriteLock();
+			}
+		}
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>

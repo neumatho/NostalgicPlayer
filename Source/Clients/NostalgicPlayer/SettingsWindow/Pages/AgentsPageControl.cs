@@ -43,6 +43,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			navigator.Pages[0].Text = Resources.IDS_SETTINGS_AGENTS_TAB_PLAYERS;
 			navigator.Pages[1].Text = Resources.IDS_SETTINGS_AGENTS_TAB_OUTPUT;
 			navigator.Pages[2].Text = Resources.IDS_SETTINGS_AGENTS_TAB_SAMPLECONVERTERS;
+			navigator.Pages[3].Text = Resources.IDS_SETTINGS_AGENTS_TAB_VISUALS;
 		}
 
 		#region ISettingsPage implementation
@@ -58,6 +59,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			playersListControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, Manager.AgentType.Players);
 			outputListControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, Manager.AgentType.Output);
 			sampleConvertersListControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, Manager.AgentType.SampleConverters);
+			visualsListControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, Manager.AgentType.Visuals);
 		}
 
 
@@ -72,6 +74,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			playersListControl.MakeBackup();
 			outputListControl.MakeBackup();
 			sampleConvertersListControl.MakeBackup();
+			visualsListControl.MakeBackup();
 		}
 
 
@@ -86,6 +89,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			playersListControl.ReadSettings();
 			outputListControl.ReadSettings();
 			sampleConvertersListControl.ReadSettings();
+			visualsListControl.ReadSettings();
 		}
 
 
@@ -102,6 +106,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			playersListControl.ReadWindowSettings();
 			outputListControl.ReadWindowSettings();
 			sampleConvertersListControl.ReadWindowSettings();
+			visualsListControl.ReadWindowSettings();
 		}
 
 
@@ -117,6 +122,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			playersListControl.WriteSettings();
 			outputListControl.WriteSettings();
 			sampleConvertersListControl.WriteSettings();
+			visualsListControl.WriteSettings();
 		}
 
 
@@ -133,6 +139,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			playersListControl.WriteWindowSettings();
 			outputListControl.WriteWindowSettings();
 			sampleConvertersListControl.WriteWindowSettings();
+			visualsListControl.WriteWindowSettings();
 		}
 
 
@@ -147,6 +154,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			playersListControl.CancelSettings();
 			outputListControl.CancelSettings();
 			sampleConvertersListControl.CancelSettings();
+			visualsListControl.CancelSettings();
 		}
 
 
@@ -161,6 +169,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			playersListControl.RefreshWindow();
 			outputListControl.RefreshWindow();
 			sampleConvertersListControl.RefreshWindow();
+			visualsListControl.RefreshWindow();
 		}
 		#endregion
 	}

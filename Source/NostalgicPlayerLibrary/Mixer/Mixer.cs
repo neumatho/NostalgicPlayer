@@ -9,6 +9,8 @@
 using System;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Mixer;
+using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers;
 
@@ -22,6 +24,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private IModulePlayerAgent currentPlayer;
 
 		private MixerBase currentMixer;
+		private MixerVisualize currentVisualizer;
 
 		private MixerMode mixerMode;		// Which modes the mixer has to work in
 		private MixerMode currentMode;		// Is the current mode the mixer uses
@@ -58,7 +61,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Initialize the mixing routines
 		/// </summary>
 		/********************************************************************/
-		public bool InitMixer(PlayerConfiguration playerConfiguration, out string errorMessage)
+		public bool InitMixer(Manager agentManager, PlayerConfiguration playerConfiguration, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 			bool retVal = true;
@@ -76,6 +79,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			// Set flag for different mixer modes
 			mixerMode = MixerMode.None;
 
+			// Allocate the visual component
+			currentVisualizer = new MixerVisualize();
+
 			try
 			{
 				// Allocate mixer to use
@@ -90,6 +96,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					channels[i] = new ChannelParser();
 
 				currentPlayer.VirtualChannels = channels;
+
+				// Initialize the visualizer
+				currentVisualizer.Initialize(agentManager, moduleChannelNumber, channels);
 
 				// Initialize the mixers
 				ChangeConfiguration(playerConfiguration.MixerConfiguration);
@@ -117,6 +126,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			// Deallocate mixer
 			currentMixer?.Cleanup();
 			currentMixer = null;
+
+			// Deallocate the visualizer
+			currentVisualizer?.Cleanup();
+			currentVisualizer = null;
 
 			// Deallocate mixer buffer
 			mixBuffer = null;
@@ -229,6 +242,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			int retVal = DoMixing1(count, out hasEndReached);
 			DoMixing2(buffer, offset, retVal);
 
+			// Tell visual agents about the mixed data
+			currentVisualizer.TellAgentsAboutMixedData(buffer, offset, retVal);
+
 			return retVal;
 		}
 
@@ -273,8 +289,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						VoiceInfo[] voiceInfo = currentMixer.GetMixerChannels();
 						int click = currentMixer.GetClickConstant();
 
+						Channel.Flags[] flagArray = currentVisualizer.GetFlagsArray();
+						Channel.Flags chanFlags = Channel.Flags.None;
+
 						for (int t = 0; t < moduleChannelNumber; t++)
-							((ChannelParser)currentPlayer.VirtualChannels[t]).ParseInfo(ref voiceInfo[t], click);
+						{
+							flagArray[t] = ((ChannelParser)currentPlayer.VirtualChannels[t]).ParseInfo(ref voiceInfo[t], click);
+							chanFlags |= flagArray[t];
+						}
+
+						// If at least one channel has changed its information,
+						// tell visual agents about it
+						if (chanFlags != Channel.Flags.None)
+							currentVisualizer.TellAgentsAboutChannelChange();
 
 						// Calculate the number of sample pair to mix before the
 						// player need to be called again

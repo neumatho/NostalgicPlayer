@@ -23,3 +23,11 @@ for /r "%~2Agents\Players" %%f in (*.pdb) do (
 for /r "%~2Agents\Players" %%f in (*.dll) do (
   (echo "%%f" | find /I "\obj\" 1>NUL) || (echo "%%f" | find /I "\ref\" 1>NUL) || (echo "%%f" | find /I "\NostalgicPlayerGuiKit.dll" 1>NUL) || (copy "%%f" "%~1Agents\Players")
 )
+
+mkdir "%~1Agents\Visuals"
+for /r "%~2Agents\Visuals" %%f in (*.pdb) do (
+  (echo "%%f" | find /I "\NostalgicPlayerGuiKit.pdb" 1>NUL) || (copy "%%f" "%~1Agents\Visuals")
+)
+for /r "%~2Agents\Visuals" %%f in (*.dll) do (
+  (echo "%%f" | find /I "\obj\" 1>NUL) || (echo "%%f" | find /I "\ref\" 1>NUL) || (echo "%%f" | find /I "\NostalgicPlayerGuiKit.dll" 1>NUL) || (copy "%%f" "%~1Agents\Visuals")
+)

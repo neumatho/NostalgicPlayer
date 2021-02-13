@@ -430,6 +430,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}.
+        /// </summary>
+        internal static string IDS_AGENTDISPLAY_TITLE {
+            get {
+                return ResourceManager.GetString("IDS_AGENTDISPLAY_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Settings for {0}.
         /// </summary>
         internal static string IDS_AGENTSETTINGS_TITLE {
@@ -1126,6 +1135,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_SETTINGS_AGENTS_TAB_SAMPLECONVERTERS {
             get {
                 return ResourceManager.GetString("IDS_SETTINGS_AGENTS_TAB_SAMPLECONVERTERS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Visuals.
+        /// </summary>
+        internal static string IDS_SETTINGS_AGENTS_TAB_VISUALS {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_AGENTS_TAB_VISUALS", resourceCulture);
             }
         }
         

@@ -303,5 +303,29 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		{
 			flags |= Flags.MuteIt;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the current volume on the channel
+		/// </summary>
+		/********************************************************************/
+		public ushort GetVolume()
+		{
+			return volume;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the current frequency on the channel
+		/// </summary>
+		/********************************************************************/
+		public uint GetFrequency()
+		{
+			return frequency;
+		}
 	}
 }

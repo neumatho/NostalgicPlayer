@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 {
@@ -99,6 +100,51 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 			get => settings.GetBoolEntry("Window", "SampleOpenWindow");
 
 			set => settings.SetBoolEntry("Window", "SampleOpenWindow", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Open agent windows
+		/// </summary>
+		/********************************************************************/
+		public Guid[] OpenAgentWindows
+		{
+			get
+			{
+				List<Guid> result = new List<Guid>();
+
+				for (int i = 0; ; i++)
+				{
+					try
+					{
+						// Try to read the entry
+						string value = settings.GetStringEntry("Agent Window", i, out string id);
+						if (string.IsNullOrEmpty(value))
+							break;
+
+						// Parse the entry value
+						if (bool.TryParse(value, out bool open) && open)
+							result.Add(Guid.Parse(id));
+					}
+					catch (Exception)
+					{
+						// Ignore exception
+						;
+					}
+				}
+
+				return result.ToArray();
+			}
+
+			set
+			{
+				settings.RemoveSection("Agent Window");
+
+				foreach (Guid id in value)
+					settings.SetBoolEntry("Agent Window", id.ToString("D"), true);
+			}
 		}
 	}
 }

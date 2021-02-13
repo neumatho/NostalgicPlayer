@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AgentInfo(IAgent agent, string agentName, string typeName, string description, Version version, Guid typeId, bool hasSettings)
+		public AgentInfo(IAgent agent, string agentName, string typeName, string description, Version version, Guid typeId, bool hasSettings, bool hasDisplay)
 		{
 			Agent = agent;
 			AgentId = agent.AgentId;
@@ -33,6 +33,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 			TypeId = typeId;
 
 			HasSettings = hasSettings;
+			HasDisplay = hasDisplay;
 		}
 
 
@@ -127,6 +128,18 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// </summary>
 		/********************************************************************/
 		public bool HasSettings
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Indicate if the agent has some display window
+		/// </summary>
+		/********************************************************************/
+		public bool HasDisplay
 		{
 			get;
 		}

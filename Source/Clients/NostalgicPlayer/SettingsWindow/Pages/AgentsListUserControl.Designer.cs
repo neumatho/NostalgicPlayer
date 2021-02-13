@@ -126,6 +126,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.displayButton.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.displayButton.TabIndex = 3;
 			this.displayButton.Values.Text = "Display";
+			this.displayButton.Click += new System.EventHandler(this.DisplayButton_Click);
 			// 
 			// agentsGroup
 			// 

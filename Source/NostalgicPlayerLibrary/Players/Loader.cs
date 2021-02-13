@@ -139,7 +139,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			}
 
 			if (result)
-				player = playerAgent is IModulePlayerAgent ? new ModulePlayer() : null;
+				player = playerAgent is IModulePlayerAgent ? new ModulePlayer(agentManager) : null;
 
 			return result;
 		}

@@ -277,16 +277,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			ShowDescription();
 
 			bool enableSettings = false;
+			bool enableDisplay = false;
 
 			DataGridViewSelectedRowCollection selectedRows = agentsDataGridView.SelectedRows;
 			if (selectedRows.Count > 0)
 			{
 				AgentInfo agentInfo = ((AgentInfo)selectedRows[0].Tag);
 				if (agentInfo != null)
+				{
 					enableSettings = agentInfo.HasSettings;
+					enableDisplay = agentInfo.HasDisplay;
+				}
 			}
 
 			settingsButton.Enabled = enableSettings;
+			displayButton.Enabled = enableDisplay;
 		}
 
 
@@ -343,6 +348,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			AgentInfo agentInfo = (AgentInfo)agentsDataGridView.SelectedRows[0].Tag;
 
 			mainWin.OpenAgentSettingsWindow(agentInfo);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user click on the display button
+		/// </summary>
+		/********************************************************************/
+		private void DisplayButton_Click(object sender, EventArgs e)
+		{
+			AgentInfo agentInfo = (AgentInfo)agentsDataGridView.SelectedRows[0].Tag;
+
+			mainWin.OpenAgentDisplayWindow(agentInfo);
 		}
 		#endregion
 
@@ -509,6 +528,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 
 			// Close any opened windows
 			mainWin.CloseAgentSettingsWindow(agentInfo);
+			mainWin.CloseAgentDisplayWindow(agentInfo);
 
 			// Remove any menu items
 			mainWin.RemoveAgentFromMenu(agentInfo);

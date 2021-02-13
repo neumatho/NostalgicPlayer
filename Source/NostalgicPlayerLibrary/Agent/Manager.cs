@@ -40,7 +40,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 			/// <summary>
 			/// Converters that can read and/or write samples
 			/// </summary>
-			SampleConverters
+			SampleConverters,
+
+			/// <summary>
+			/// Show what is playing in a window
+			/// </summary>
+			Visuals
 		}
 
 		private class AgentLoadInfo
@@ -53,6 +58,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 		private readonly object loadListLock = new object();
 		private readonly Dictionary<Guid, AgentLoadInfo> loadedAgentsByAgentId = new Dictionary<Guid, AgentLoadInfo>();
 		private readonly Dictionary<AgentType, AgentInfo[]> loadedAgentsByAgentType = new Dictionary<AgentType, AgentInfo[]>();
+
+		private readonly List<IVisualAgent> registeredVisualAgents = new List<IVisualAgent>();
 
 		/********************************************************************/
 		/// <summary>
@@ -202,6 +209,53 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 			}
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Register the visual so the rest of the system is aware that it
+		/// is open and need updates
+		/// </summary>
+		/********************************************************************/
+		public void RegisterVisualAgent(IVisualAgent visualAgent)
+		{
+			lock (registeredVisualAgents)
+			{
+				registeredVisualAgents.Add(visualAgent);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Unregister the visual, so it wont get updates anymore
+		/// </summary>
+		/********************************************************************/
+		public void UnregisterVisualAgent(IVisualAgent visualAgent)
+		{
+			lock (registeredVisualAgents)
+			{
+				registeredVisualAgents.Remove(visualAgent);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return all registered visual agents
+		/// </summary>
+		/********************************************************************/
+		public IEnumerable<IVisualAgent> GetRegisteredVisualAgent()
+		{
+			lock (registeredVisualAgents)
+			{
+				foreach (IVisualAgent visualAgent in registeredVisualAgents)
+					yield return visualAgent;
+			}
+		}
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
@@ -252,7 +306,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 										{
 											IAgentWorker worker = agent.CreateInstance(info.TypeId);
 
-											typesInAgent.Add(new AgentInfo(agent, agent.Name, info.Name, info.Description, agent.Version, info.TypeId, worker is IAgentSettings));
+											typesInAgent.Add(new AgentInfo(agent, agent.Name, info.Name, info.Description, agent.Version, info.TypeId, worker is IAgentSettings, worker is IAgentDisplay));
 										}
 									}
 

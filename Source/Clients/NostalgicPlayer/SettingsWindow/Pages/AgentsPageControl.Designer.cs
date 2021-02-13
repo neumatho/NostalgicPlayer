@@ -38,6 +38,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.outputListControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentsListUserControl();
 			this.navigatorSampleConvertersPage = new Krypton.Navigator.KryptonPage();
 			this.sampleConvertersListControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentsListUserControl();
+			this.navigatorVisualsPage = new Krypton.Navigator.KryptonPage();
+			this.visualsListControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentsListUserControl();
 			((System.ComponentModel.ISupportInitialize)(this.navigator)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.navigatorPlayersPage)).BeginInit();
 			this.navigatorPlayersPage.SuspendLayout();
@@ -45,6 +47,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.navigatorOutputPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.navigatorSampleConvertersPage)).BeginInit();
 			this.navigatorSampleConvertersPage.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.navigatorVisualsPage)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// navigator
@@ -59,7 +62,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.navigator.Pages.AddRange(new Krypton.Navigator.KryptonPage[] {
             this.navigatorPlayersPage,
             this.navigatorOutputPage,
-            this.navigatorSampleConvertersPage});
+            this.navigatorSampleConvertersPage,
+            this.navigatorVisualsPage});
 			this.navigator.SelectedIndex = 0;
 			this.navigator.Size = new System.Drawing.Size(592, 332);
 			this.navigator.StateCommon.Tab.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -131,6 +135,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.sampleConvertersListControl.Size = new System.Drawing.Size(100, 100);
 			this.sampleConvertersListControl.TabIndex = 0;
 			// 
+			// navigatorVisualsPage
+			// 
+			this.navigatorVisualsPage.AutoHiddenSlideSize = new System.Drawing.Size(200, 200);
+			this.navigatorVisualsPage.Controls.Add(this.visualsListControl);
+			this.navigatorVisualsPage.Flags = 65534;
+			this.navigatorVisualsPage.LastVisibleSet = true;
+			this.navigatorVisualsPage.MinimumSize = new System.Drawing.Size(50, 50);
+			this.navigatorVisualsPage.Name = "navigatorVisualsPage";
+			this.navigatorVisualsPage.Size = new System.Drawing.Size(100, 100);
+			this.navigatorVisualsPage.Text = "";
+			this.navigatorVisualsPage.ToolTipTitle = "Page ToolTip";
+			this.navigatorVisualsPage.UniqueName = "bdf89da9d454418ca56b12f0cefd7e3d";
+			// 
+			// visualsListControl
+			// 
+			this.visualsListControl.BackColor = System.Drawing.Color.Transparent;
+			this.visualsListControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.visualsListControl.Location = new System.Drawing.Point(0, 0);
+			this.visualsListControl.Name = "visualsListControl";
+			this.visualsListControl.Size = new System.Drawing.Size(100, 100);
+			this.visualsListControl.TabIndex = 0;
+			// 
 			// AgentsPageControl
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -145,6 +171,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.navigatorOutputPage.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.navigatorSampleConvertersPage)).EndInit();
 			this.navigatorSampleConvertersPage.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.navigatorVisualsPage)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -159,5 +186,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Krypton.Navigator.KryptonPage navigatorOutputPage;
 		private Krypton.Navigator.KryptonPage navigatorSampleConvertersPage;
 		private AgentsListUserControl sampleConvertersListControl;
+		private Krypton.Navigator.KryptonPage navigatorVisualsPage;
+		private AgentsListUserControl visualsListControl;
 	}
 }

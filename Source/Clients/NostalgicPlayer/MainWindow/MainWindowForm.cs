@@ -110,7 +110,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private ModuleInfoWindowForm moduleInfoWindow = null;
 		private SampleInfoWindowForm sampleInfoWindow = null;
 
-		private Dictionary<Guid, AgentSettingsWindowForm> openAgentSettings;
+		private readonly Dictionary<Guid, AgentSettingsWindowForm> openAgentSettings;
+		private readonly Dictionary<Guid, AgentDisplayWindowForm> openAgentDisplays;
 
 		/********************************************************************/
 		/// <summary>
@@ -139,6 +140,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			randomList = new List<int>();
 
 			openAgentSettings = new Dictionary<Guid, AgentSettingsWindowForm>();
+			openAgentDisplays = new Dictionary<Guid, AgentDisplayWindowForm>();
 
 			if (!DesignMode)
 			{
@@ -191,6 +193,27 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				agentSettingsMenuItem.DropDownItems.Insert(insertPos, newMenuItem);
 			}
 
+			if (agentInfo.HasDisplay)
+			{
+				// Create the menu item
+				ToolStripMenuItem newMenuItem = new ToolStripMenuItem(agentInfo.TypeName);
+				newMenuItem.Tag = agentInfo;
+				newMenuItem.Click += Menu_Window_AgentDisplay_Click;
+
+				// Find the right place in the menu to insert the agent
+				int insertPos = 0;
+
+				foreach (ToolStripMenuItem menuItem in agentShowMenuItem.DropDownItems)
+				{
+					if (agentInfo.TypeName.CompareTo(menuItem.Name) > 0)
+						break;
+
+					insertPos++;
+				}
+
+				agentShowMenuItem.DropDownItems.Insert(insertPos, newMenuItem);
+			}
+
 			// Hide/show different menu items
 			agentSettingsMenuItem.Visible = agentSettingsMenuItem.DropDownItems.Count > 0;
 			agentShowMenuItem.Visible = agentShowMenuItem.DropDownItems.Count > 0;
@@ -215,6 +238,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					{
 						// Found it, so remove it
 						agentSettingsMenuItem.DropDownItems.RemoveAt(i);
+						break;
+					}
+				}
+			}
+
+			if (agentInfo.HasDisplay)
+			{
+				// Find the agent menu
+				for (int i = agentShowMenuItem.DropDownItems.Count - 1; i >= 0; i--)
+				{
+					if (((AgentInfo)agentShowMenuItem.DropDownItems[i].Tag).TypeId == agentInfo.TypeId)
+					{
+						// Found it, so remove it
+						agentShowMenuItem.DropDownItems.RemoveAt(i);
 						break;
 					}
 				}
@@ -362,7 +399,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			StopAndFreeModule();
 		}
 
-		#region Agent settings window handling
+		#region Agent window handling
 		/********************************************************************/
 		/// <summary>
 		/// Will open/activate a settings window for the given agent
@@ -370,20 +407,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		public void OpenAgentSettingsWindow(AgentInfo agentInfo)
 		{
-			if (openAgentSettings.TryGetValue(agentInfo.TypeId, out AgentSettingsWindowForm agentSettingsWindow))
+			lock (openAgentSettings)
 			{
-				if (agentSettingsWindow.WindowState == FormWindowState.Minimized)
-					agentSettingsWindow.WindowState = FormWindowState.Normal;
+				if (openAgentSettings.TryGetValue(agentInfo.TypeId, out AgentSettingsWindowForm agentSettingsWindow))
+				{
+					if (agentSettingsWindow.WindowState == FormWindowState.Minimized)
+						agentSettingsWindow.WindowState = FormWindowState.Normal;
 
-				agentSettingsWindow.Activate();
-			}
-			else
-			{
-				agentSettingsWindow = new AgentSettingsWindowForm(agentInfo);
-				agentSettingsWindow.Disposed += (o, args) => { openAgentSettings.Remove(agentInfo.TypeId); };
-				agentSettingsWindow.Show();
+					agentSettingsWindow.Activate();
+				}
+				else
+				{
+					agentSettingsWindow = new AgentSettingsWindowForm(agentInfo);
+					agentSettingsWindow.Disposed += (o, args) => { openAgentSettings.Remove(agentInfo.TypeId); };
+					agentSettingsWindow.Show();
 
-				openAgentSettings[agentInfo.TypeId] = agentSettingsWindow;
+					openAgentSettings[agentInfo.TypeId] = agentSettingsWindow;
+				}
 			}
 		}
 
@@ -396,11 +436,79 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		public void CloseAgentSettingsWindow(AgentInfo agentInfo)
 		{
-			if (openAgentSettings.TryGetValue(agentInfo.TypeId, out AgentSettingsWindowForm agentSettingsWindow))
+			lock (openAgentSettings)
 			{
-				agentSettingsWindow.Close();
+				if (openAgentSettings.TryGetValue(agentInfo.TypeId, out AgentSettingsWindowForm agentSettingsWindow))
+				{
+					agentSettingsWindow.Close();
 
-				openAgentSettings.Remove(agentInfo.TypeId);
+					openAgentSettings.Remove(agentInfo.TypeId);
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will open/activate a display window for the given agent
+		/// </summary>
+		/********************************************************************/
+		public void OpenAgentDisplayWindow(AgentInfo agentInfo)
+		{
+			lock (openAgentDisplays)
+			{
+				if (openAgentDisplays.TryGetValue(agentInfo.TypeId, out AgentDisplayWindowForm agentDisplayWindow))
+				{
+					if (agentDisplayWindow.WindowState == FormWindowState.Minimized)
+						agentDisplayWindow.WindowState = FormWindowState.Normal;
+
+					agentDisplayWindow.Activate();
+				}
+				else
+				{
+					agentDisplayWindow = new AgentDisplayWindowForm(agentManager, agentInfo, moduleHandler);
+					agentDisplayWindow.Disposed += (o, args) => { openAgentDisplays.Remove(agentInfo.TypeId); };
+					agentDisplayWindow.Show();
+
+					openAgentDisplays[agentInfo.TypeId] = agentDisplayWindow;
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will close a display window for the given agent
+		/// </summary>
+		/********************************************************************/
+		public void CloseAgentDisplayWindow(AgentInfo agentInfo)
+		{
+			lock (openAgentDisplays)
+			{
+				if (openAgentDisplays.TryGetValue(agentInfo.TypeId, out AgentDisplayWindowForm agentDisplayWindow))
+				{
+					agentDisplayWindow.Close();
+
+					openAgentDisplays.Remove(agentInfo.TypeId);
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Get all opened visuals
+		/// </summary>
+		/********************************************************************/
+		public IEnumerable<AgentDisplayWindowForm> GetAllOpenedVisuals()
+		{
+			lock (openAgentDisplays)
+			{
+				foreach (AgentDisplayWindowForm agentDisplayWindow in openAgentDisplays.Values)
+					yield return  agentDisplayWindow;
 			}
 		}
 		#endregion
@@ -648,10 +756,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				}
 
 				// Minimize all agent settings windows
-				foreach (AgentSettingsWindowForm agentSettingsWindow in openAgentSettings.Values)
+				lock (openAgentSettings)
 				{
-					agentSettingsWindow.UpdateWindowSettings();
-					agentSettingsWindow.WindowState = FormWindowState.Minimized;
+					foreach (AgentSettingsWindowForm agentSettingsWindow in openAgentSettings.Values)
+					{
+						agentSettingsWindow.UpdateWindowSettings();
+						agentSettingsWindow.WindowState = FormWindowState.Minimized;
+					}
+				}
+
+				// Minimize all agent display windows
+				lock (openAgentDisplays)
+				{
+					foreach (AgentDisplayWindowForm agentDisplayWindow in openAgentDisplays.Values)
+					{
+						agentDisplayWindow.UpdateWindowSettings();
+						agentDisplayWindow.WindowState = FormWindowState.Minimized;
+					}
 				}
 			}
 			else if (WindowState == FormWindowState.Normal)
@@ -666,8 +787,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					settingsWindow.WindowState = FormWindowState.Normal;
 
 				// Show all agent settings windows
-				foreach (AgentSettingsWindowForm agentSettingsWindow in openAgentSettings.Values)
-					agentSettingsWindow.WindowState = FormWindowState.Normal;
+				lock (openAgentSettings)
+				{
+					foreach (AgentSettingsWindowForm agentSettingsWindow in openAgentSettings.Values)
+						agentSettingsWindow.WindowState = FormWindowState.Normal;
+				}
+
+				// Show all agent display windows
+				lock (openAgentDisplays)
+				{
+					foreach (AgentDisplayWindowForm agentDisplayWindow in openAgentDisplays.Values)
+						agentDisplayWindow.WindowState = FormWindowState.Normal;
+				}
 			}
 		}
 
@@ -726,6 +857,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			AgentInfo agentInfo = (AgentInfo)((ToolStripMenuItem)sender).Tag;
 			OpenAgentSettingsWindow(agentInfo);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// User selected one of the agent display menu items
+		/// </summary>
+		/********************************************************************/
+		private void Menu_Window_AgentDisplay_Click(object sender, EventArgs e)
+		{
+			AgentInfo agentInfo = (AgentInfo)((ToolStripMenuItem)sender).Tag;
+			OpenAgentDisplayWindow(agentInfo);
 		}
 		#endregion
 
@@ -2277,13 +2421,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			agentSettingsSeparatorMenuItem.Visible = false;
 			windowMenuItem.DropDownItems.Add(agentSettingsSeparatorMenuItem);
 
-			agentSettingsMenuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_AGENT_SETTINGS);
-			agentSettingsMenuItem.Visible = false;
-			windowMenuItem.DropDownItems.Add(agentSettingsMenuItem);
-
 			agentShowMenuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_AGENT_SHOW);
 			agentShowMenuItem.Visible = false;
 			windowMenuItem.DropDownItems.Add(agentShowMenuItem);
+
+			agentSettingsMenuItem = new ToolStripMenuItem(Resources.IDS_MENU_WINDOW_AGENT_SETTINGS);
+			agentSettingsMenuItem.Visible = false;
+			windowMenuItem.DropDownItems.Add(agentSettingsMenuItem);
 
 			menuStrip.Items.Add(windowMenuItem);
 
@@ -2451,6 +2595,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				sampleInfoWindow = new SampleInfoWindowForm(moduleHandler);
 				sampleInfoWindow.Show();
 			}
+
+			foreach (Guid typeId in mainWindowSettings.OpenAgentWindows)
+			{
+				AgentInfo agentInfo = agentManager.GetAllAgents().FirstOrDefault(a => a.TypeId == typeId);
+				if (agentInfo != null)
+					OpenAgentDisplayWindow(agentInfo);
+			}
 		}
 
 
@@ -2489,10 +2640,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			mainWindowSettings.MasterVolume = masterVolumeTrackBar.Value;
 
 			// Close agent settings windows
-			foreach (AgentSettingsWindowForm agentSettingsWindow in openAgentSettings.Values)
-				agentSettingsWindow.Close();
+			lock (openAgentSettings)
+			{
+				foreach (AgentSettingsWindowForm agentSettingsWindow in openAgentSettings.Values)
+					agentSettingsWindow.Close();
 
-			openAgentSettings.Clear();
+				openAgentSettings.Clear();
+			}
+
+			// Close agent display windows
+			lock (openAgentDisplays)
+			{
+				mainWindowSettings.OpenAgentWindows = openAgentDisplays.Keys.ToArray();
+
+				foreach (AgentDisplayWindowForm agentDisplayWindow in openAgentDisplays.Values)
+					agentDisplayWindow.Close();
+
+				openAgentDisplays.Clear();
+			}
 
 			// Close the about window
 			if (IsAboutWindowOpen())

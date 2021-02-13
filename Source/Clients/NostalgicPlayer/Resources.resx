@@ -263,6 +263,10 @@ Formats supported:
 
 ¤U¤S
 
+¤BVisuals installed:
+
+¤U¤I
+
 ¤B¤CThank you for using NostalgicPlayer!
 
 
@@ -282,6 +286,9 @@ Formats supported:
   </data>
   <data name="IDS_ABOUT_TITLE" xml:space="preserve">
     <value>About NostalgicPlayer</value>
+  </data>
+  <data name="IDS_AGENTDISPLAY_TITLE" xml:space="preserve">
+    <value>{0}</value>
   </data>
   <data name="IDS_AGENTSETTINGS_TITLE" xml:space="preserve">
     <value>Settings for {0}</value>
@@ -520,6 +527,9 @@ Formats supported:
   </data>
   <data name="IDS_SETTINGS_AGENTS_TAB_SAMPLECONVERTERS" xml:space="preserve">
     <value>Sample converters</value>
+  </data>
+  <data name="IDS_SETTINGS_AGENTS_TAB_VISUALS" xml:space="preserve">
+    <value>Visuals</value>
   </data>
   <data name="IDS_SETTINGS_APPLY" xml:space="preserve">
     <value>Apply</value>

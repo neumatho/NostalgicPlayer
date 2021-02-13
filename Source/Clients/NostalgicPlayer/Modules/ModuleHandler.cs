@@ -237,6 +237,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					// Cleanup the player
 					player.CleanupPlayer();
 
+					// Tell all visuals to stop
+					foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
+						visualAgent.CleanupVisual();
+
 					// Unload the module
 					item.Loader.Unload();
 
@@ -675,6 +679,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 				// Subscribe to end notifications
 				player.EndReached += Player_EndReached;
+
+				// Tell all visuals to start
+				foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
+					visualAgent.InitVisual(StaticModuleInformation.Channels);
 
 				lock (loadedFiles)
 				{

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Mixer;
 
@@ -20,6 +21,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 	/// </summary>
 	internal class ModulePlayer : IModulePlayer
 	{
+		private readonly Manager agentManager;
+
 		private IModulePlayerAgent currentPlayer;
 
 		private IOutputAgent outputAgent;
@@ -30,8 +33,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModulePlayer()
+		public ModulePlayer(Manager manager)
 		{
+			agentManager = manager;
+
 			// Initialize member variables
 			StaticModuleInformation = new ModuleInfoStatic();
 			PlayingModuleInformation = new ModuleInfoFloating();
@@ -78,7 +83,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 						// Initialize the mixer
 						soundStream = new MixerStream();
-						initOk = soundStream.Initialize(playerConfiguration, out errorMessage);
+						initOk = soundStream.Initialize(agentManager, playerConfiguration, out errorMessage);
 
 						if (!initOk)
 							CleanupPlayer();

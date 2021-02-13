@@ -9,6 +9,7 @@
 using System;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
@@ -27,10 +28,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Initialize the stream
 		/// </summary>
 		/********************************************************************/
-		public bool Initialize(PlayerConfiguration playerConfiguration, out string errorMessage)
+		public bool Initialize(Manager agentManager, PlayerConfiguration playerConfiguration, out string errorMessage)
 		{
 			mixer = new Mixer();
-			return mixer.InitMixer(playerConfiguration, out errorMessage);
+			return mixer.InitMixer(agentManager, playerConfiguration, out errorMessage);
 		}
 
 

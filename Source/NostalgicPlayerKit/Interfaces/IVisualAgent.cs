@@ -6,39 +6,29 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Kit.Containers;
 
-namespace Polycode.NostalgicPlayer.GuiKit.Interfaces
+namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
 	/// <summary>
-	/// Implement this interface on your user control showing your settings
+	/// Agents of this type can act as a visual, which can show what is played.
+	/// You also need to implement the IAgentGuiDisplay interface
 	/// </summary>
-	public interface ISettingsControl
+	public interface IVisualAgent : IAgentWorker
 	{
 		/// <summary>
-		/// Return the user control holding the settings
+		/// Initializes the visual
 		/// </summary>
-		UserControl GetUserControl();
+		void InitVisual(int channels);
 
 		/// <summary>
-		/// Will make a backup of settings that can be changed in real-time
+		/// Cleanup the visual
 		/// </summary>
-		void MakeBackup();
+		void CleanupVisual();
 
 		/// <summary>
-		/// Will read the settings and set all the controls
+		/// Tell the visual about a channel change
 		/// </summary>
-		void ReadSettings();
-
-		/// <summary>
-		/// Will read the data from the controls and store them in the
-		/// settings
-		/// </summary>
-		void WriteSettings();
-
-		/// <summary>
-		/// Will restore real-time values
-		/// </summary>
-		void CancelSettings();
+		void ChannelChange(ChannelChanged channelChanged);
 	}
 }
