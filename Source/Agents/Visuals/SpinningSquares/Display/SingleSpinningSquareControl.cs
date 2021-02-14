@@ -28,6 +28,9 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 		private ushort oldVolume;
 		private uint oldFrequency;
 
+		private Color color;
+		private readonly int colorSpeed;
+
 		private bool animate;
 
 		/********************************************************************/
@@ -55,6 +58,9 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 			speed = 0.5;
 			oldVolume = 0;
 			oldFrequency = 0;
+
+			color = Color.FromArgb(0x1e, 0x90, 0xff);
+			colorSpeed = 15;
 
 			animate = false;
 		}
@@ -96,6 +102,25 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 
 					while (angle < 0)
 						angle += 360;
+
+					// Fade color
+					int r = color.R;
+					int g = color.G;
+					int b = color.B;
+
+					r -= colorSpeed;
+					if (r < 0x1e)
+						r = 0x1e;
+
+					g -= colorSpeed;
+					if (g < 0x90)
+						g = 0x90;
+
+					b += colorSpeed;
+					if (b > 0xff)
+						b = 0xff;
+
+					color = Color.FromArgb(r, g, b);
 				}
 			}
 		}
@@ -179,10 +204,12 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 					}
 				}
 
-				if (cachedSpeed == speed)
+				if ((flags & Channel.Flags.TrigIt) != 0)
 				{
-					if ((flags & Channel.Flags.TrigIt) != 0)
+					if (cachedSpeed == speed)
 						speed = -speed;
+
+					color = Color.FromArgb(0x66, 0xff, 0x7a);
 				}
 			}
 		}
@@ -213,7 +240,10 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 				g.FillRectangle(Brushes.White, 0, 0, Width, Height);
 
 				// Draw the box
-				g.FillPolygon(Brushes.DodgerBlue, drawCoords);
+				using (Brush brush = new SolidBrush(color))
+				{
+					g.FillPolygon(brush, drawCoords);
+				}
 			}
 		}
 		#endregion
