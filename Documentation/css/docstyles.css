@@ -105,7 +105,6 @@ body {
      transition: all .3s ease-in-out;
 }
  img {
-     max-width: 100%;
      height: auto;
 }
  :focus {
@@ -197,6 +196,7 @@ body {
 .modtypetable td {
 	height: 100%;
 	vertical-align: top;
+	border-bottom: 1px solid #666;
 }
 
 .modtypetable td p:nth-child(1) {
