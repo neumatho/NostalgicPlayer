@@ -486,6 +486,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 					break;
 				}
 
+				// Current speed
+				case 3:
+				{
+					description = Resources.IDS_JAM_INFODESCLINE3;
+					value = wait.ToString();
+					break;
+				}
+
 				default:
 				{
 					description = null;
@@ -697,7 +705,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 			}
 
 			if ((adr.Speed & 15) != 0)
+			{
 				wait = (byte)(adr.Speed & 15);
+
+				// Change the module info
+				OnModuleInfoChanged(3, wait.ToString());
+			}
 
 			// Do arpeggio
 			perIndex = voice.PerIndex;

@@ -127,6 +127,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Current speed:.
+        /// </summary>
+        internal static string IDS_JAM_INFODESCLINE3 {
+            get {
+                return ResourceManager.GetString("IDS_JAM_INFODESCLINE3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to JamCracker.
         /// </summary>
         internal static string IDS_JAM_NAME {

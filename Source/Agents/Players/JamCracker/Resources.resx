@@ -144,4 +144,7 @@ The player came from the Amiga, but it's not the most used format. There are som
   <data name="IDS_JAM_INFODESCLINE2" xml:space="preserve">
     <value>Used instruments:</value>
   </data>
+  <data name="IDS_JAM_INFODESCLINE3" xml:space="preserve">
+    <value>Current speed:</value>
+  </data>
 </root>
