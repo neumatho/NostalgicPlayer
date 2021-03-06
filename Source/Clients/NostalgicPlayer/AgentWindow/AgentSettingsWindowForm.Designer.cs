@@ -102,6 +102,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 			this.Controls.Add(this.okButton);
 			this.Controls.Add(this.settingsGroup);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(318, 150);
 			this.Name = "AgentSettingsWindowForm";
 			this.controlResource.SetResourceKey(this, null);

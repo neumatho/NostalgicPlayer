@@ -39,6 +39,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(256, 61);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(50, 50);
 			this.Name = "AgentDisplayWindowForm";
 			this.ShowInTaskbar = false;

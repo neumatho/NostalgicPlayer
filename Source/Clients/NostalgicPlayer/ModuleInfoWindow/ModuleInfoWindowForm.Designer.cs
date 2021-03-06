@@ -57,6 +57,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			this.moduleInfoDataGridView.ShowRowErrors = false;
 			this.moduleInfoDataGridView.Size = new System.Drawing.Size(282, 182);
 			this.moduleInfoDataGridView.StateCommon.Background.Color1 = System.Drawing.Color.White;
+			this.moduleInfoDataGridView.StateCommon.BackStyle = Krypton.Toolkit.PaletteBackStyle.GridBackgroundList;
 			this.moduleInfoDataGridView.StateCommon.DataCell.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.moduleInfoDataGridView.StateCommon.DataCell.Content.Padding = new System.Windows.Forms.Padding(0);
 			this.moduleInfoDataGridView.StateCommon.HeaderColumn.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -83,6 +84,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			this.ClientSize = new System.Drawing.Size(300, 200);
 			this.Controls.Add(this.listGroup);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(316, 239);
 			this.Name = "ModuleInfoWindowForm";
 			this.ShowInTaskbar = false;
