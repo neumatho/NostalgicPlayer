@@ -102,7 +102,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 		{
 			int read = wrapperStream.Read(buffer, offset, count);
 			if (read > 0)
-				worker.SaveSampleBuffer(buffer, read);
+				worker.SaveSampleBuffer(buffer, read, OutputInfo.BytesPerSample * 8);
 
 			return read;
 		}

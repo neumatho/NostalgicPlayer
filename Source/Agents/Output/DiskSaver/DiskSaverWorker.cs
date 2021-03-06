@@ -336,24 +336,38 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 		/// Save the given buffer to disk
 		/// </summary>
 		/********************************************************************/
-		public void SaveSampleBuffer(byte[] buffer, int length)
+		public void SaveSampleBuffer(byte[] buffer, int length, int bitsPerSample)
 		{
 			if (length > 0)
 			{
-				if ((converterBuffer == null) || (converterBuffer.Length < length))
+				int numberOfSamples = length / (bitsPerSample / 8);
+
+				if ((converterBuffer == null) || (converterBuffer.Length < numberOfSamples))
 				{
 					// Allocate converter buffer
-					converterBuffer = new int[length / 4];
+					converterBuffer = new int[numberOfSamples];
 				}
 
-				// Convert 32-bit byte array to an int array
-				for (int i = 0, j = 0; i < length; i += 4, j++)
+				if (bitsPerSample == 32)
 				{
-					int sample = BitConverter.ToInt32(buffer, i);
-					converterBuffer[j] = sample;
+					// Convert 32-bit byte array to an int array
+					for (int i = 0, j = 0; i < length; i += 4, j++)
+					{
+						int sample = BitConverter.ToInt32(buffer, i);
+						converterBuffer[j] = sample;
+					}
+				}
+				else if (bitsPerSample == 16)
+				{
+					// Convert 16-bit byte array to an int array
+					for (int i = 0, j = 0; i < length; i += 2, j++)
+					{
+						int sample = BitConverter.ToInt16(buffer, i) << 16;
+						converterBuffer[j] = sample;
+					}
 				}
 
-				converterInUse.SaveData(fileStream, converterBuffer, length / 4);
+				converterInUse.SaveData(fileStream, converterBuffer, numberOfSamples);
 			}
 
 			if (stream.HasEndReached)
@@ -417,7 +431,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 				if (stream != null)
 				{
 					int read = stream.Read(mixerBuffer, 0, mixerBuffer.Length);
-					SaveSampleBuffer(mixerBuffer, read);
+					SaveSampleBuffer(mixerBuffer, read, 32);
 				}
 			}
 		}
