@@ -84,6 +84,15 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		public event EventHandler EndReached;
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Event called when the player update some module information
+		/// </summary>
+		/********************************************************************/
+		public event ModuleInfoChangedEventHandler ModuleInfoChanged;
+
 		#region Helper methods
 		/********************************************************************/
 		/// <summary>
@@ -98,6 +107,20 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 			// Call events
 			if (EndReached != null)
 				EndReached(this, EventArgs.Empty);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Call this every time your player change some information shown
+		/// in the module information window
+		/// </summary>
+		/********************************************************************/
+		protected void OnModuleInfoChanged(int line, string newValue)
+		{
+			if (ModuleInfoChanged != null)
+				ModuleInfoChanged(this, new ModuleInfoChangedEventArgs(line, newValue));
 		}
 		#endregion
 	}

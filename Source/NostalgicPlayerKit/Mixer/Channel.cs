@@ -219,10 +219,10 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/********************************************************************/
 		public void SetLoop(uint startOffset, uint length, LoopType type = LoopType.Normal)
 		{
-			if (startOffset > sampLength)
+			if (startOffset > (sampStart + sampLength))
 				throw new ArgumentException("Start offset is bigger than previous set length of sample", nameof(startOffset));
 
-			if (startOffset + length > sampLength)
+			if ((startOffset + length) > (sampStart + sampLength))
 				throw new ArgumentException("Loop length is bigger than previous set length of sample", nameof(length));
 
 			SetLoop(sampAddress, startOffset, length, type);
@@ -276,6 +276,23 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 			volume = vol;
 			flags |= Flags.Volume;
 			flags &= ~Flags.SpeakerVolume;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will change the panning
+		/// </summary>
+		/// <param name="pan">is the new panning</param>
+		/********************************************************************/
+		public void SetPanning(ushort pan)
+		{
+			if ((pan > 256) && (pan != (ushort)Panning.Surround))
+				throw new ArgumentException("Panning should be between 0 and 256 or 512 (Surround)", nameof(pan));
+
+			panning = pan;
+			flags |= Flags.Panning;
 		}
 
 

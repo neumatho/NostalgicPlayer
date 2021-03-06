@@ -584,6 +584,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Module handler
 			moduleHandler.PositionChanged += ModuleHandler_PositionChanged;
 			moduleHandler.EndReached += ModuleHandler_EndReached;
+			moduleHandler.ModuleInfoChanged += ModuleHandler_ModuleInfoChanged;
 		}
 
 		#region Keyboard shortcuts
@@ -1037,6 +1038,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						LoadAndPlayModule(newPlay);
 					}
 				}
+			}));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the player change some of the module information
+		/// </summary>
+		/********************************************************************/
+		private void ModuleHandler_ModuleInfoChanged(object sender, ModuleInfoChangedEventArgs e)
+		{
+			BeginInvoke(new Action(() =>
+			{
+				if (IsModuleInfoWindowOpen())
+					moduleInfoWindow.UpdateWindow(e.Line, e.Value);
 			}));
 		}
 		#endregion

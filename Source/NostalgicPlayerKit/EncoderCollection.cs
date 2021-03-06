@@ -25,5 +25,18 @@ namespace Polycode.NostalgicPlayer.Kit
 		{
 			get;
 		} = new Amiga();
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the encoder to decode code page 850 (Western Europe (DOS))
+		/// characters
+		/// </summary>
+		/********************************************************************/
+		public static Encoding Ibm850
+		{
+			get;
+		} = new Ibm850();
 	}
 }

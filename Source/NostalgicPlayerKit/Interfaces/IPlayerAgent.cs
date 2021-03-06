@@ -52,5 +52,10 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Event called when the player has reached the end
 		/// </summary>
 		event EventHandler EndReached;
+
+		/// <summary>
+		/// Event called when the player update some module information
+		/// </summary>
+		event ModuleInfoChangedEventHandler ModuleInfoChanged;
 	}
 }

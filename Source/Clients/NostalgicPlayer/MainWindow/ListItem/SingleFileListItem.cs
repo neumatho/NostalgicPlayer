@@ -7,7 +7,8 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System.IO;
-using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.PlayerLibrary.Players;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 {
@@ -46,18 +47,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 
 		/********************************************************************/
 		/// <summary>
-		/// Opens a stream containing the file data
+		/// Return the loader which can open the files needed
 		/// </summary>
 		/********************************************************************/
-		public ModuleStream OpenStream()
+		public ILoader GetLoader()
 		{
-			return new ModuleStream(new FileStream(FileName, FileMode.Open, FileAccess.Read));
+			return new NormalFileLoader(FileName);
 		}
 		#endregion
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the file name to the file
+		/// Return the full path to the file
 		/// </summary>
 		/********************************************************************/
 		public string FileName

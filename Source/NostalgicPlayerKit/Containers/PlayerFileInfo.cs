@@ -6,6 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Kit.Containers
@@ -20,10 +21,11 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public PlayerFileInfo(string fileName, ModuleStream moduleStream)
+		public PlayerFileInfo(string fileName, ModuleStream moduleStream, ILoader loader)
 		{
 			FileName = fileName;
 			ModuleStream = moduleStream;
+			Loader = loader;
 		}
 
 
@@ -46,6 +48,18 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// </summary>
 		/********************************************************************/
 		public ModuleStream ModuleStream
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds an implementation of a loader
+		/// </summary>
+		/********************************************************************/
+		public ILoader Loader
 		{
 			get;
 		}

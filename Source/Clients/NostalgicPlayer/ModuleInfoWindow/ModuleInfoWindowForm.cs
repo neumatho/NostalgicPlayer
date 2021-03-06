@@ -25,6 +25,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 	/// </summary>
 	public partial class ModuleInfoWindowForm : WindowFormBase
 	{
+		private const int FirstCustomLine = 9;
+
 		private ModuleHandler moduleHandler;
 		private MainWindowForm mainWindow;
 
@@ -93,6 +95,26 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 
 			// Add the items
 			AddItems();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will be called every time a new value has changed
+		/// </summary>
+		/********************************************************************/
+		public void UpdateWindow(int line, string newValue)
+		{
+			// Check to see if there are any module playing at the moment
+			if (moduleHandler.IsPlaying)
+			{
+				if ((FirstCustomLine + line) < moduleInfoDataGridView.RowCount)
+				{
+					moduleInfoDataGridView.Rows[FirstCustomLine + line].Cells[1].Value = newValue;
+					moduleInfoDataGridView.InvalidateRow(FirstCustomLine + line);
+				}
+			}
 		}
 
 		#region Event handlers

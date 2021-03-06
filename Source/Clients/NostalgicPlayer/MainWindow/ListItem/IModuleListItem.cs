@@ -6,7 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 {
@@ -21,8 +21,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 		string DisplayName { get; }
 
 		/// <summary>
-		/// Opens a stream containing the file data
+		/// Return the loader which can open the files needed
 		/// </summary>
-		ModuleStream OpenStream();
+		ILoader GetLoader();
 	}
 }

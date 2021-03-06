@@ -257,12 +257,13 @@ extern "C"
 	/// </summary>
 	/********************************************************************/
 	#define BITSHIFT_32					7
-	#define EXTRACT_SAMPLE_32(var)		var = *source++ << BITSHIFT_32
-	#define PUT_SAMPLE_32(var)			*dest++ = var
+	#define EXTRACT_SAMPLE_32(var)		var = ((INT64)(*source++)) << BITSHIFT_32
+	#define CHECK_SAMPLE_32(var, bound)	var = (var >= bound) ? bound - 1 : (var < -bound) ? -bound : var
+	#define PUT_SAMPLE_32(var)			*dest++ = (INT32)var
 
 	EXPORTAPI(void, ConvertTo32(INT32* dest, INT32 offset, const INT32* source, INT32 count))
 	{
-		INT32 x1, x2, x3, x4;
+		INT64 x1, x2, x3, x4;
 
 		dest += offset;
 		INT32 remain = count & 3;
@@ -274,6 +275,11 @@ extern "C"
 			EXTRACT_SAMPLE_32(x3);
 			EXTRACT_SAMPLE_32(x4);
 
+			CHECK_SAMPLE_32(x1, 2147483647);
+			CHECK_SAMPLE_32(x2, 2147483647);
+			CHECK_SAMPLE_32(x3, 2147483647);
+			CHECK_SAMPLE_32(x4, 2147483647);
+
 			PUT_SAMPLE_32(x1);
 			PUT_SAMPLE_32(x2);
 			PUT_SAMPLE_32(x3);
@@ -283,6 +289,7 @@ extern "C"
 		while (remain--)
 		{
 			EXTRACT_SAMPLE_32(x1);
+			CHECK_SAMPLE_32(x1, 2147483647);
 			PUT_SAMPLE_32(x1);
 		}
 	}

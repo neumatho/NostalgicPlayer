@@ -23,16 +23,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 	{
 		private readonly Manager agentManager;
 
-		private AgentInfo playerAgentInfo;
-		private IPlayerAgent playerAgent;
-
-		private IPlayer player;
-
-		private long fileLength;
-		private string moduleFormat;
-		private string playerName;
-		private string fileName;
-
 		private ModuleStream stream;
 
 		/********************************************************************/
@@ -44,8 +34,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		{
 			this.agentManager = agentManager;
 
-			playerAgentInfo = null;
-			playerAgent = null;
+			PlayerAgentInfo = null;
+			PlayerAgent = null;
 			stream = null;
 		}
 
@@ -60,13 +50,150 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// when needed, even if no player could be found
 		/// </summary>
 		/********************************************************************/
-		public bool Load(PlayerFileInfo fileInfo, out string errorMessage)
+		public bool Load(string fileName, ILoader loader, out string errorMessage)
+		{
+			return Load(new PlayerFileInfo(fileName, OpenFile(loader), loader), out errorMessage);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will try to find a player that understand the data in the stream
+		/// given and then load it into memory.
+		///
+		/// This method takes ownership of the stream, so it will be closed
+		/// when needed, even if no player could be found
+		/// </summary>
+		/********************************************************************/
+		public bool Load(Stream stream, out string errorMessage)
+		{
+			return Load(new PlayerFileInfo(string.Empty, new ModuleStream(stream), null), out errorMessage);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will unload the loaded file and free it from memory
+		/// </summary>
+		/********************************************************************/
+		public void Unload()
+		{
+			stream?.Dispose();
+			stream = null;
+
+			PlayerAgentInfo = null;
+			PlayerAgent = null;
+
+			Player = null;
+
+			ModuleSize = 0;
+			ModuleFormat = string.Empty;
+			PlayerName = string.Empty;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the player instance
+		/// </summary>
+		/********************************************************************/
+		public IPlayer Player
+		{
+			get; private set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return information about the player agent
+		/// </summary>
+		/********************************************************************/
+		public AgentInfo PlayerAgentInfo
+		{
+			get; private set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the agent player instance
+		/// </summary>
+		/********************************************************************/
+		internal IPlayerAgent PlayerAgent
+		{
+			get; private set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the file name of the module loaded
+		/// </summary>
+		/********************************************************************/
+		public string FileName
+		{
+			get; private set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the module format of the module loaded
+		/// </summary>
+		/********************************************************************/
+		internal string ModuleFormat
+		{
+			get; private set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the name of the player
+		/// </summary>
+		/********************************************************************/
+		internal string PlayerName
+		{
+			get; private set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the size of the module loaded
+		/// </summary>
+		/********************************************************************/
+		internal long ModuleSize
+		{
+			get; private set;
+		}
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Will try to find a player that understand the data in the stream
+		/// given and then load it into memory.
+		///
+		/// This method takes ownership of the stream, so it will be closed
+		/// when needed, even if no player could be found
+		/// </summary>
+		/********************************************************************/
+		private bool Load(PlayerFileInfo fileInfo, out string errorMessage)
 		{
 			bool result = false;
 			errorMessage = string.Empty;
 
 			// Get the original length of the file
-			fileLength = fileInfo.ModuleStream.Length;
+			ModuleSize = fileInfo.ModuleStream.Length;
 
 			try
 			{
@@ -89,7 +216,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					// Yes, load the module if the player is a module player
 					fileInfo.ModuleStream.Seek(0, SeekOrigin.Begin);
 
-					if (playerAgent is IModulePlayerAgent modulePlayerAgent)
+					if (PlayerAgent is IModulePlayerAgent modulePlayerAgent)
 					{
 						AgentResult agentResult = modulePlayerAgent.Load(fileInfo, out string playerError);
 
@@ -98,21 +225,21 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 							// Well, something went wrong when loading the file
 							//
 							// Build the error string
-							errorMessage = string.Format(Resources.IDS_ERR_LOAD_MODULE, fileInfo.FileName, playerAgentInfo.AgentName, playerError);
+							errorMessage = string.Format(Resources.IDS_ERR_LOAD_MODULE, fileInfo.FileName, PlayerAgentInfo.AgentName, playerError);
 
-							playerAgentInfo = null;
-							playerAgent = null;
+							PlayerAgentInfo = null;
+							PlayerAgent = null;
 
 							result = false;
 						}
 						else
 						{
 							// Get module information
-							fileName = fileInfo.FileName;
+							FileName = fileInfo.FileName;
 
-							playerName = playerAgentInfo.AgentName;//XX
+							PlayerName = PlayerAgentInfo.AgentName;//XX
 
-							moduleFormat = playerAgentInfo.TypeName;
+							ModuleFormat = PlayerAgentInfo.TypeName;
 						}
 					}
 				}
@@ -130,7 +257,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			}
 
 			// Close the files again if needed
-			if (!result || playerAgent is IModulePlayerAgent)
+			if (!result || PlayerAgent is IModulePlayerAgent)
 				fileInfo.ModuleStream.Dispose();
 			else
 			{
@@ -139,7 +266,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			}
 
 			if (result)
-				player = playerAgent is IModulePlayerAgent ? new ModulePlayer(agentManager) : null;
+				Player = PlayerAgent is IModulePlayerAgent ? new ModulePlayer(agentManager) : null;
 
 			return result;
 		}
@@ -148,106 +275,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 		/********************************************************************/
 		/// <summary>
-		/// Will unload the loaded file and free it from memory
+		/// Will try to open the file given
 		/// </summary>
 		/********************************************************************/
-		public void Unload()
+		private ModuleStream OpenFile(ILoader loader)
 		{
-			stream?.Dispose();
-			stream = null;
-
-			playerAgentInfo = null;
-			playerAgent = null;
-
-			player = null;
-
-			fileLength = 0;
-			moduleFormat = string.Empty;
-			playerName = string.Empty;
+			return loader.OpenFile();
 		}
 
 
 
-		/********************************************************************/
-		/// <summary>
-		/// Return the player instance
-		/// </summary>
-		/********************************************************************/
-		public IPlayer Player
-		{
-			get
-			{
-				return player;
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return information about the player agent
-		/// </summary>
-		/********************************************************************/
-		public AgentInfo PlayerAgentInfo
-		{
-			get
-			{
-				return playerAgentInfo;
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the agent player instance
-		/// </summary>
-		/********************************************************************/
-		internal IPlayerAgent AgentPlayer
-		{
-			get
-			{
-				return playerAgent;
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the file name of the module loaded
-		/// </summary>
-		/********************************************************************/
-		public string FileName => fileName;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the module format of the module loaded
-		/// </summary>
-		/********************************************************************/
-		internal string ModuleFormat => moduleFormat;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the name of the player
-		/// </summary>
-		/********************************************************************/
-		internal string PlayerName => playerName;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the size of the module loaded
-		/// </summary>
-		/********************************************************************/
-		internal long ModuleSize => fileLength;
-
-		#region Private methods
 		/********************************************************************/
 		/// <summary>
 		/// Will get the file type and try to find a player that is
@@ -288,8 +325,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 							if (agentResult == AgentResult.Ok)
 							{
 								// We found a player
-								playerAgentInfo = agentInfo;
-								playerAgent = player;
+								PlayerAgentInfo = agentInfo;
+								PlayerAgent = player;
 
 								return true;
 							}
@@ -331,8 +368,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						if (agentResult == AgentResult.Ok)
 						{
 							// We found the right player
-							playerAgentInfo = agentInfo;
-							playerAgent = player;
+							PlayerAgentInfo = agentInfo;
+							PlayerAgent = player;
 
 							return true;
 						}

@@ -61,6 +61,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 		/********************************************************************/
 		/// <summary>
+		/// Event called when the player change some of the module information
+		/// </summary>
+		/********************************************************************/
+		public event ModuleInfoChangedEventHandler ModuleInfoChanged;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Initialize and start the module handler thread
 		/// </summary>
 		/********************************************************************/
@@ -228,8 +237,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 							modulePlayer.PositionChanged -= Player_PositionChanged;
 						}
 
-						// Unsubscribe to end notifications
+						// Unsubscribe to event notifications
 						player.EndReached -= Player_EndReached;
+						player.ModuleInfoChanged -= Player_ModuleInfoChanged;
 
 						IsPlaying = false;
 					}
@@ -487,6 +497,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 			if (EndReached != null)
 				EndReached(sender, e);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the player change some of the module information
+		/// </summary>
+		/********************************************************************/
+		private void Player_ModuleInfoChanged(object sender, ModuleInfoChangedEventArgs e)
+		{
+			// Just call the next event handler
+			if (ModuleInfoChanged != null)
+				ModuleInfoChanged(sender, e);
+		}
 		#endregion
 
 		#region Private methods
@@ -588,49 +612,57 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 			// Should we load a module?
 			if (listItem != null)
 			{
-				string errorMessage;
+				try
+				{
+					ModuleItem item = new ModuleItem();
 
-				ModuleItem item = new ModuleItem();
+					// Get the file name
+					string fileName = listItem.ShortText;
 
-				// Get the file name
-				string fileName = listItem.ShortText;
+					// Create new loader
+					item.Loader = new Loader(agentManager);
 
-				// Create new loader
-				item.Loader = new Loader(agentManager);
+					// Load the module
+					if (!item.Loader.Load(fileName, listItem.GetLoader(), out string errorMessage))
+					{
+						if (showError)
+							ShowErrorMessage(string.Format(Resources.IDS_ERR_LOAD_FILE, errorMessage), listItem);
 
-				// Load the module
-				if (!item.Loader.Load(new PlayerFileInfo(fileName, listItem.OpenFile()), out errorMessage))
+						return false;
+					}
+
+					// Find the output agent to use
+					if (!FindOutputAgent(showError))
+					{
+						item.Loader.Unload();
+						return false;
+					}
+
+					// Setup player settings
+					PlayerConfiguration playerConfig = new PlayerConfiguration(outputAgent, item.Loader, mixerConfiguration);
+
+					// Initialize the module
+					if (!item.Loader.Player.InitPlayer(playerConfig, out errorMessage))
+					{
+						if (showError)
+							ShowErrorMessage(string.Format(Resources.IDS_ERR_INIT_PLAYER, errorMessage), listItem);
+
+						item.Loader.Unload();
+						return false;
+					}
+
+					lock (loadedFiles)
+					{
+						// Add the new module to the list
+						loadedFiles.Add(item);
+					}
+				}
+				catch (Exception ex)
 				{
 					if (showError)
-						ShowErrorMessage(string.Format(Resources.IDS_ERR_LOAD_FILE, errorMessage), listItem);
+						ShowErrorMessage(string.Format(Resources.IDS_ERR_LOAD_FILE, ex.Message), listItem);
 
 					return false;
-				}
-
-				// Find the output agent to use
-				if (!FindOutputAgent(showError))
-				{
-					item.Loader.Unload();
-					return false;
-				}
-
-				// Setup player settings
-				PlayerConfiguration playerConfig = new PlayerConfiguration(outputAgent, item.Loader, mixerConfiguration);
-
-				// Initialize the module
-				if (!item.Loader.Player.InitPlayer(playerConfig, out errorMessage))
-				{
-					if (showError)
-						ShowErrorMessage(string.Format(Resources.IDS_ERR_INIT_PLAYER, errorMessage), listItem);
-
-					item.Loader.Unload();
-					return false;
-				}
-
-				lock (loadedFiles)
-				{
-					// Add the new module to the list
-					loadedFiles.Add(item);
 				}
 			}
 
@@ -677,8 +709,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					modulePlayer.PositionChanged += Player_PositionChanged;
 				}
 
-				// Subscribe to end notifications
+				// Subscribe to event notifications
 				player.EndReached += Player_EndReached;
+				player.ModuleInfoChanged += Player_ModuleInfoChanged;
 
 				// Tell all visuals to start
 				foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())

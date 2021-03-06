@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
@@ -71,5 +72,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Event called when the player reached the end
 		/// </summary>
 		event EventHandler EndReached;
+
+		/// <summary>
+		/// Event called when the player change some of the module information
+		/// </summary>
+		event ModuleInfoChangedEventHandler ModuleInfoChanged;
 	}
 }

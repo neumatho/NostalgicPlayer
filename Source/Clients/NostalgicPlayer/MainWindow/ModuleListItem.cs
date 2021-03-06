@@ -10,7 +10,7 @@ using System;
 using System.Drawing;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
-using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 {
@@ -79,12 +79,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Open the file
+		/// Return the loader which can open the files needed
 		/// </summary>
 		/********************************************************************/
-		public ModuleStream OpenFile()
+		public ILoader GetLoader()
 		{
-			return ListItem.OpenStream();
+			return ListItem.GetLoader();
 		}
 
 

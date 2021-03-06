@@ -8,6 +8,7 @@
 /******************************************************************************/
 using System;
 using System.Runtime.InteropServices;
+using Polycode.NostalgicPlayer.Kit.Mixer;
 using Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer

@@ -6,8 +6,6 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System;
-
 namespace Polycode.NostalgicPlayer.Kit.Encoders
 {
 	/// <summary>
@@ -32,144 +30,19 @@ namespace Polycode.NostalgicPlayer.Kit.Encoders
 
 		/********************************************************************/
 		/// <summary>
-		/// Single byte encoding
+		/// Return the lookup table
 		/// </summary>
 		/********************************************************************/
-		public override bool IsSingleByte
-		{
-			get
-			{
-				return true;
-			}
-		}
+		protected override ushort[] GetLookupTable() => lookupTable;
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the number of bytes needed to encode the given characters
+		/// Return the high byte index table
 		/// </summary>
 		/********************************************************************/
-		public override int GetByteCount(char[] chars, int index, int count)
-		{
-			ValidateArguments(chars, index, count);
-
-			return count;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Encode the given characters into the given buffer
-		/// </summary>
-		/********************************************************************/
-		public override int GetBytes(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex)
-		{
-			ValidateArguments(chars, charIndex, charCount);
-			ValidateArguments(bytes, byteIndex, 0);
-
-			if ((charCount + byteIndex) < bytes.Length)
-				throw new ArgumentException("Resulting byte array is too short");
-
-			for (; charIndex < charCount; charIndex++, byteIndex++)
-				bytes[byteIndex] = GetByteFromMultiTable(chars[charIndex], highByteIndexTable);
-
-			return charCount;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the number of characters needed to decode the given bytes
-		/// </summary>
-		/********************************************************************/
-		public override int GetCharCount(byte[] bytes, int index, int count)
-		{
-			ValidateArguments(bytes, index, count);
-
-			int needed = 0;
-			while ((count > 0) && (bytes[index] != 0x00))
-			{
-				index++;
-				count--;
-				needed++;
-			}
-
-			return needed;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Decode the given bytes into the given buffer
-		/// </summary>
-		/********************************************************************/
-		public override int GetChars(byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex)
-		{
-			ValidateArguments(bytes, byteIndex, byteCount);
-			ValidateArguments(chars, charIndex, 0);
-
-			int taken = 0;
-			for (; byteIndex < byteCount; byteIndex++, charIndex++, taken++)
-			{
-				// Stop with null terminator
-				if (bytes[byteIndex] == 0x00)
-					break;
-
-				chars[charIndex] = (char)lookupTable[bytes[byteIndex]];
-			}
-
-			return taken;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the max number of bytes needed
-		/// </summary>
-		/********************************************************************/
-		public override int GetMaxByteCount(int charCount)
-		{
-			return charCount;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the max number of characters needed
-		/// </summary>
-		/********************************************************************/
-		public override int GetMaxCharCount(int byteCount)
-		{
-			return byteCount;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Validates the arguments
-		/// </summary>
-		/********************************************************************/
-		private void ValidateArguments(Array array, int index, int count)
-		{
-			if (array == null)
-				throw new ArgumentNullException(nameof(array));
-
-			if (index < 0)
-				throw new ArgumentException("Negative index", nameof(index));
-
-			if (count < 0)
-				throw new ArgumentException("Negative index", nameof(count));
-
-			if ((index + count) > array.Length)
-				throw new ArgumentException("Index + count bigger than character array");
-		}
+		protected override byte[][] GetHighByteIndexTable() => highByteIndexTable;
 
 		#region Lookup tables
 		/********************************************************************/

@@ -6,16 +6,28 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers
+namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 {
 	/// <summary>
-	/// This enum only holds some points in the panning
+	/// The different effects
 	/// </summary>
-	internal enum Panning
+	internal enum Effect : byte
 	{
-		Left = 0,
-		Center = 128,
-		Right = 256,
-		Surround = 512		// Panning value for Dolby Surround
+		Arpeggio = 0x00,			// 0x00
+		SlideUp,					// 0x01
+		SlideDown,					// 0x02
+		TonePortamento,				// 0x03
+		Vibrato,					// 0x04
+		TonePort_VolSlide,			// 0x05
+		Vibrato_VolSlide,			// 0x06
+		Tremolo,					// 0x07
+		SetPanning,					// 0x08		// Only for FastTracker and up
+		SampleOffset = 0x09,		// 0x09
+		VolumeSlide,				// 0x0a
+		PosJump,					// 0x0b
+		SetVolume,					// 0x0c
+		PatternBreak,				// 0x0d
+		ExtraEffect,				// 0x0e
+		SetSpeed					// 0x0f
 	}
 }

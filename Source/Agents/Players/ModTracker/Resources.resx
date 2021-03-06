@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="IDS_MOD_DESCRIPTION_AGENT1" xml:space="preserve">
+    <value>Original player by Karsten Obarski.
+Converted to C# by Thomas Neumann.
+
+This is one of the first trackers created on the Amiga. It was created by Karsten Obarski to make music for games. The file format has later been used and extended in other trackers. This format only supports 15 samples and two effects.</value>
+  </data>
+  <data name="IDS_MOD_DESCRIPTION_AGENT10" xml:space="preserve">
+    <value>Original player by Bjorn Wesen (Exolon).
+Converted to C# by Thomas Neumann.
+
+This is the same as the original StarTrekker, except it uses 8 voices.</value>
+  </data>
+  <data name="IDS_MOD_DESCRIPTION_AGENT11" xml:space="preserve">
+    <value>Original player by Tom "Outland" Bech and Ivar "Heatseeker" J. Olsen.
+Based on original player by Lars Hamre.
+Converted to C# by Thomas Neumann.
+
+This was a very popular tracker on the demo scene. When it came out, almost everybody started using it. It has a lot of extra effects than NoiseTracker and introduced the BPM tempo (almost like Ultimate SoundTracker 1.8).
+
+This player can handle modules in both 64 and 100 patterns format.</value>
+  </data>
+  <data name="IDS_MOD_DESCRIPTION_AGENT12" xml:space="preserve">
+    <value>Original player by Fredrik Muss (FastTracker).
+TakeTracker player by Anders B. Ervik and Oyvind Neuman.
+Converted to C# by Thomas Neumann.
+
+This tracker is from the PC, but uses the same file format as the other mod trackers. It supports up to 32 channels. TakeTracker only up to 16 channels. The modules use the same ID mark, so thats why they are under one format.</value>
+  </data>
+  <data name="IDS_MOD_DESCRIPTION_AGENT13" xml:space="preserve">
+    <value>Original player by Daniel Goldstein.
+Converted to C# by Thomas Neumann.
+
+This tracker from the PC, was the first one to have 32 channels and supports GUS soundcards. It introduced the mtm file format, which I will say is the successor to the mod format. In this format, a pattern contains indivual tracks, which can be combined as will.</value>
+  </data>
+  <data name="IDS_MOD_DESCRIPTION_AGENT2" xml:space="preserve">
+    <value>Original player by Karsten Obarski.
+Converted to C# by Thomas Neumann.
+
+This is one of the first trackers created on the Amiga. It was created by Karsten Obarski to make music for games. The file format has later been used and extended in other trackers. This format only supports 15 samples and two effects. This version introduced variable tempo and multiple sample disks.</value>
+  </data>
+  <data name="IDS_MOD_DESCRIPTION_AGENT3" xml:space="preserve">
+    <value>Original player by Michael Kleps (Unknown of D.O.C.)
+Converted to C# by Thomas Neumann.
+
+A lot of new effects has been added since the previous Ultimate SoundTracker. Most of them uses the Amiga hardware to do modulation etc. Those effects are not supported. Besides that, other added effects have the order that is known today.
+
+Modules using this player, could also have been made in The Exterminator SoundTracker 2.0.</value>
+  </data>
+  <data name="IDS_MOD_DESCRIPTION_AGENT4" xml:space="preserve">
+    <value>Original player by Michael Kleps (Unknown of D.O.C.)
+Converted to C# by Thomas Neumann.
+
+This player has the same effects as D.O.C. SoundTracker II, but the speed effect has been added. Most of the effects uses the Amiga hardware to do modulation etc. Those effects are not supported. Besides that, other effects have the order that is known today.
+
+Modules using this player, could also have been made in Defjam SoundTracker III, Alpha Flight SoundTracker IV or D.O.C. SoundTracker IV.</value>
+  </data>
+  <data name="IDS_MOD_DESCRIPTION_AGENT5" xml:space="preserve">
+    <value>Original player by Michael Kleps (Unknown of D.O.C.)
+Converted to C# by Thomas Neumann.
+
+This tracker was the first one, which introduced the effect order used by all subsequently trackers. The previous versions have some other effects using the Amiga hardware to do modulation etc., but they didn't made it in subsequently trackers.</value>
+  </data>
+  <data name="IDS_MOD_DESCRIPTION_AGENT6" xml:space="preserve">
+    <value>Original player by Tip / The New Masters.
+Converted to C# by Thomas Neumann.
+
+This tracker introduced bigger samples (up to 32 KB), but have the same effects as SoundTracker IX.</value>
+  </data>
+  <data name="IDS_MOD_DESCRIPTION_AGENT7" xml:space="preserve">
+    <value>Original player by Michael Kleps (Unknown of D.O.C.)
+Converted to C# by Thomas Neumann.
+
+More effects was added to this tracker (position jump and pattern break). It was also the last tracker with only 15 samples. All subsequently trackers have 31 samples.
+
+Modules using this player, could have been made in any SoundTracker from 2.0 to 2.2 (not the same as SoundTracker II).</value>
+  </data>
+  <data name="IDS_MOD_DESCRIPTION_AGENT8" xml:space="preserve">
+    <value>Original player by Mahoney &amp; Kaktus.
+Converted to C# by Thomas Neumann.
+
+Before ProTracker, this format was the most used. Many people think, that the M.K. mark found in the module file, stands for Mahoney &amp; Kaktus, but that is wrong. In fact, it stands for Michael Kleps, who created a lot of the previous SoundTracker editors. It is also him who introduced 31 samples and there the mark was introduced.
+
+Modules using this player, could have been made in any SoundTracker from 2.3 to 2.6, NoiseTracker 1.x and NoiseTracker 2.x.</value>
+  </data>
+  <data name="IDS_MOD_DESCRIPTION_AGENT9" xml:space="preserve">
+    <value>Original player by Bjorn Wesen (Exolon).
+Converted to C# by Thomas Neumann.
+
+This is a NoiseTracker clone, but improved by the possibility to have synth samples, which are stored in an external file with the extension .nt. NostalgicPlayer supports playing synth sound, if the file is found.</value>
+  </data>
+  <data name="IDS_MOD_ERR_LOADING_HEADER" xml:space="preserve">
+    <value>Can't read the module header</value>
+  </data>
+  <data name="IDS_MOD_ERR_LOADING_PATTERNS" xml:space="preserve">
+    <value>Can't read the module patterns</value>
+  </data>
+  <data name="IDS_MOD_ERR_LOADING_SAMPLEINFO" xml:space="preserve">
+    <value>Can't read the module sample information</value>
+  </data>
+  <data name="IDS_MOD_ERR_LOADING_SAMPLES" xml:space="preserve">
+    <value>Can't read the module samples</value>
+  </data>
+  <data name="IDS_MOD_INFODESCLINE0" xml:space="preserve">
+    <value>Song length:</value>
+  </data>
+  <data name="IDS_MOD_INFODESCLINE1" xml:space="preserve">
+    <value>Used patterns:</value>
+  </data>
+  <data name="IDS_MOD_INFODESCLINE2" xml:space="preserve">
+    <value>Supported / used samples:</value>
+  </data>
+  <data name="IDS_MOD_INFODESCLINE3" xml:space="preserve">
+    <value>Current speed:</value>
+  </data>
+  <data name="IDS_MOD_INFODESCLINE4" xml:space="preserve">
+    <value>BPM:</value>
+  </data>
+  <data name="IDS_MOD_NAME_AGENT1" xml:space="preserve">
+    <value>Ultimate SoundTracker 1.0 - 1.21</value>
+  </data>
+  <data name="IDS_MOD_NAME_AGENT10" xml:space="preserve">
+    <value>StarTrekker 8 voices</value>
+  </data>
+  <data name="IDS_MOD_NAME_AGENT11" xml:space="preserve">
+    <value>ProTracker</value>
+  </data>
+  <data name="IDS_MOD_NAME_AGENT12" xml:space="preserve">
+    <value>Fast/TakeTracker</value>
+  </data>
+  <data name="IDS_MOD_NAME_AGENT13" xml:space="preserve">
+    <value>MultiTracker</value>
+  </data>
+  <data name="IDS_MOD_NAME_AGENT2" xml:space="preserve">
+    <value>Ultimate SoundTracker 1.8 - 2.0</value>
+  </data>
+  <data name="IDS_MOD_NAME_AGENT3" xml:space="preserve">
+    <value>D.O.C. SoundTracker II</value>
+  </data>
+  <data name="IDS_MOD_NAME_AGENT4" xml:space="preserve">
+    <value>D.O.C. SoundTracker VI</value>
+  </data>
+  <data name="IDS_MOD_NAME_AGENT5" xml:space="preserve">
+    <value>D.O.C. SoundTracker IX</value>
+  </data>
+  <data name="IDS_MOD_NAME_AGENT6" xml:space="preserve">
+    <value>Master SoundTracker 1.0</value>
+  </data>
+  <data name="IDS_MOD_NAME_AGENT7" xml:space="preserve">
+    <value>SoundTracker 2.2</value>
+  </data>
+  <data name="IDS_MOD_NAME_AGENT8" xml:space="preserve">
+    <value>NoiseTracker</value>
+  </data>
+  <data name="IDS_MOD_NAME_AGENT9" xml:space="preserve">
+    <value>StarTrekker</value>
+  </data>
+  <data name="IDS_NAME" xml:space="preserve">
+    <value>ModTracker</value>
+  </data>
+</root>

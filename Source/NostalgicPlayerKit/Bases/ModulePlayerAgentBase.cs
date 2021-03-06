@@ -20,8 +20,6 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 	{
 		private static readonly SubSongInfo subSongInfo = new SubSongInfo(1, 0); 
 
-		private long totalSize;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -31,8 +29,6 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		{
 			VirtualChannels = null;
 			PlayingFrequency = 50.0f;
-
-			totalSize = 0;
 		}
 
 
@@ -203,8 +199,10 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return the total size of all the extra files loaded
 		/// </summary>
 		/********************************************************************/
-		public virtual long ExtraFilesSizes => totalSize;
-
+		public virtual long ExtraFilesSizes
+		{
+			get; protected set;
+		} = 0;
 
 
 		/********************************************************************/
@@ -260,6 +258,19 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		{
 			if (PositionChanged != null)
 				PositionChanged(this, EventArgs.Empty);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Calculates the frequency to the BPM you give and change the
+		/// playing speed
+		/// </summary>
+		/********************************************************************/
+		protected void SetBpmTempo(ushort bpm)
+		{
+			PlayingFrequency = bpm / 2.5f;
 		}
 		#endregion
 	}

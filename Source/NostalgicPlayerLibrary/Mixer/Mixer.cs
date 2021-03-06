@@ -67,7 +67,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			bool retVal = true;
 
 			// Get the player instance
-			currentPlayer = (IModulePlayerAgent)playerConfiguration.Loader.AgentPlayer;
+			currentPlayer = (IModulePlayerAgent)playerConfiguration.Loader.PlayerAgent;
 
 			// Get player information
 			moduleChannelNumber = currentPlayer.VirtualChannelCount;
