@@ -154,6 +154,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			this.sampleDataGridView.AllowUserToOrderColumns = true;
 			this.sampleDataGridView.AllowUserToResizeRows = false;
 			this.sampleDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.sampleDataGridView.GridStyles.StyleDataCells = Krypton.Toolkit.GridStyle.Sheet;
 			this.sampleDataGridView.Location = new System.Drawing.Point(0, 0);
 			this.sampleDataGridView.Name = "sampleDataGridView";
 			this.sampleDataGridView.ReadOnly = true;

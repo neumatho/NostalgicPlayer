@@ -1272,6 +1272,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				Point clientPoint = moduleListBox.PointToClient(new Point(e.X, e.Y));
 				int index = moduleListBox.IndexFromPoint(clientPoint);
 
+				// Hotfix, because of a bug in IndexFromPoint()
+				if (index == 65535)
+					index = -1;
+
 				// Because Krypton ListBox control uses OwnerDrawVariable when
 				// drawing the control, the above IndexFromPoint will always
 				// return the last item, even if the mouse is over the empty area.
@@ -1983,7 +1987,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			int newSongPos = val == 100 ? songLength - 1 : val * songLength / 100;
 
 			// Set the new song position
+			allowPosSliderUpdate = false;
 			SetPosition(newSongPos);
+			allowPosSliderUpdate = true;
 		}
 
 
@@ -3812,6 +3818,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			try
 			{
+				// Remember which item to select, after removing is done
+				int indexToSelect = moduleListBox.SelectedIndices[moduleListBox.SelectedIndices.Count - 1] - moduleListBox.SelectedIndices.Count + 1;
+
 				// Remove all the selected module items
 				foreach (int index in moduleListBox.SelectedIndices.Cast<int>().Reverse())	// Take the items in reverse order, which is done via a copy of the selected items
 				{
@@ -3830,6 +3839,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					RemoveItemTimeFromList(listItem);
 
 					moduleListBox.Items.Remove(listItem);
+				}
+
+				if (moduleListBox.Items.Count > 0)
+				{
+					if (indexToSelect >= moduleListBox.Items.Count)
+						indexToSelect = moduleListBox.Items.Count - 1;
+
+					moduleListBox.SelectedIndex = indexToSelect;
 				}
 			}
 			finally

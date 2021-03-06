@@ -60,6 +60,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.agentsDataGridView.AllowUserToOrderColumns = true;
 			this.agentsDataGridView.AllowUserToResizeRows = false;
 			this.agentsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.agentsDataGridView.GridStyles.StyleDataCells = Krypton.Toolkit.GridStyle.Sheet;
 			this.agentsDataGridView.Location = new System.Drawing.Point(0, 0);
 			this.agentsDataGridView.MultiSelect = false;
 			this.agentsDataGridView.Name = "agentsDataGridView";
@@ -74,6 +75,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.agentsDataGridView.ShowRowErrors = false;
 			this.agentsDataGridView.Size = new System.Drawing.Size(285, 256);
 			this.agentsDataGridView.StateCommon.Background.Color1 = System.Drawing.Color.White;
+			this.agentsDataGridView.StateCommon.BackStyle = Krypton.Toolkit.PaletteBackStyle.GridBackgroundList;
 			this.agentsDataGridView.StateCommon.DataCell.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.agentsDataGridView.StateCommon.HeaderColumn.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.agentsDataGridView.TabIndex = 0;
@@ -99,6 +101,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.descriptionDataGridView.ShowRowErrors = false;
 			this.descriptionDataGridView.Size = new System.Drawing.Size(285, 289);
 			this.descriptionDataGridView.StateCommon.Background.Color1 = System.Drawing.Color.White;
+			this.descriptionDataGridView.StateCommon.BackStyle = Krypton.Toolkit.PaletteBackStyle.GridBackgroundList;
 			this.descriptionDataGridView.StateCommon.DataCell.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.descriptionDataGridView.StateCommon.HeaderColumn.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.descriptionDataGridView.TabIndex = 0;

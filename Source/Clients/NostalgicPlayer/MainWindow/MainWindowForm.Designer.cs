@@ -100,9 +100,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// infoLabel
 			// 
+			this.infoLabel.AutoSize = false;
 			this.infoLabel.Location = new System.Drawing.Point(3, 3);
 			this.infoLabel.Name = "infoLabel";
-			this.infoLabel.Size = new System.Drawing.Size(6, 2);
+			this.infoLabel.Size = new System.Drawing.Size(340, 16);
 			this.infoLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.infoLabel.TabIndex = 0;
 			this.infoLabel.Values.Text = "";
@@ -473,7 +474,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.Name = "MainWindowForm";
 			((System.ComponentModel.ISupportInitialize)(this.infoGroup.Panel)).EndInit();
 			this.infoGroup.Panel.ResumeLayout(false);
-			this.infoGroup.Panel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.infoGroup)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.listButtonsGroup.Panel)).EndInit();
 			this.listButtonsGroup.Panel.ResumeLayout(false);
