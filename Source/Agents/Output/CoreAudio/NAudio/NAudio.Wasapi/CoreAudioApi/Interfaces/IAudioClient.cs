@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using NAudio.Wave;
+#pragma warning disable 1591
 
 namespace NAudio.CoreAudioApi.Interfaces
 {

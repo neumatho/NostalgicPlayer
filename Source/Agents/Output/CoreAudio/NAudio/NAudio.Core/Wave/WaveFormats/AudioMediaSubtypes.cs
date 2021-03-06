@@ -1,5 +1,6 @@
 ﻿using System;
 // ReSharper disable InconsistentNaming
+#pragma warning disable 1591
 
 namespace NAudio.Dmo
 {

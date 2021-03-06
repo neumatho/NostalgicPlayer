@@ -19,6 +19,10 @@ namespace NAudio.CoreAudioApi
         private AudioClientShareMode shareMode;
 		private AudioSessionControl audioSessionControl;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="audioClientInterface"></param>
         public AudioClient(IAudioClient audioClientInterface)
         {
             this.audioClientInterface = audioClientInterface;

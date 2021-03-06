@@ -422,53 +422,61 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 			try
 			{
-				// Step 1: Stop rendering
-				audioClient.Stop();
+				lock (playingLock)
+				{
+					PlaybackState oldState = playbackState;
 
-				// Step 2: Release our resources
-				audioSessionControl.UnRegisterEventClient(this);
-				audioSessionControl.Dispose();
-				audioSessionControl = null;
+					// Step 1: Stop rendering
+					audioClient.Stop();
 
-				audioRenderClient.Dispose();
-				audioRenderClient = null;
+					// Step 2: Release our resources
+					audioSessionControl.UnRegisterEventClient(this);
+					audioSessionControl.Dispose();
+					audioSessionControl = null;
 
-				audioClient.Dispose();
-				audioClient = null;
+					audioRenderClient.Dispose();
+					audioRenderClient = null;
 
-				endpoint.Dispose();
-				endpoint = null;
+					audioClient.Dispose();
+					audioClient = null;
 
-				// Step 3: Wait for the default device to change.
-				//
-				// There is a race between the session disconnect arriving and the new default device
-				// arriving (if applicable). Wait the shorter of 500 milliseconds or the arrival of the
-				// new default device, then attempt to switch to the default device. In the case of a
-				// format change (i.e. the default device does not change), we artificially generate a
-				// new default device notification so the code will not needlessly wait 500ms before
-				// re-opening on the new format
-				if (!streamSwitchCompletedEvent.WaitOne(500))
-					return false;
+					endpoint.Dispose();
+					endpoint = null;
 
-				// Step 4: If we can't get the new endpoint, we need to abort the stream switch.
-				//         If there IS a new device, we should be able to retrieve it
-				endpoint = deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console);
+					// Step 3: Wait for the default device to change.
+					//
+					// There is a race between the session disconnect arriving and the new default device
+					// arriving (if applicable). Wait the shorter of 500 milliseconds or the arrival of the
+					// new default device, then attempt to switch to the default device. In the case of a
+					// format change (i.e. the default device does not change), we artificially generate a
+					// new default device notification so the code will not needlessly wait 500ms before
+					// re-opening on the new format
+					if (!streamSwitchCompletedEvent.WaitOne(500))
+						return false;
 
-				// Step 5: Re-instantiate the audio client on the new endpoint
-				audioClient = endpoint.AudioClient;
+					// Step 4: If we can't get the new endpoint, we need to abort the stream switch.
+					//         If there IS a new device, we should be able to retrieve it
+					endpoint = deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console);
 
-				// Step 6: Re-initialize the audio client
-				InitializeAudioEngine();
+					// Step 5: Re-instantiate the audio client on the new endpoint
+					audioClient = endpoint.AudioClient;
 
-				// Step 7: Re-register for session disconnect notifications
-				audioSessionControl = audioClient.AudioSessionControl;
-				audioSessionControl.RegisterEventClient(this);
+					// Step 6: Re-initialize the audio client
+					InitializeAudioEngine();
 
-				// Step 8: Reset the stream switch completed event because it's a manual reset event
-				streamSwitchCompletedEvent.Reset();
+					// Step 7: Re-register for session disconnect notifications
+					audioSessionControl = audioClient.AudioSessionControl;
+					audioSessionControl.RegisterEventClient(this);
 
-				// And we're done. Start rendering again
-				audioClient.Start();
+					// Step 8: Reset the stream switch completed event because it's a manual reset event
+					streamSwitchCompletedEvent.Reset();
+
+					// And we're done. Start rendering again if needed
+					if (oldState == PlaybackState.Playing)
+						audioClient.Start();
+
+					playbackState = oldState;
+				}
 
 				return true;
 			}
