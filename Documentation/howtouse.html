@@ -48,18 +48,16 @@
 						<area shape="rect" coords="331,204,387,238" href="#modulecount">
 						<area shape="rect" coords="12,244,387,263" href="#position">
 						<area shape="rect" coords="17,279,40,302" href="#previousmod">
+						<area shape="rect" coords="45,279,68,302" href="#previoussub">
 						<area shape="rect" coords="73,279,96,302" href="#rewind">
 						<area shape="rect" coords="101,279,124,302" href="#play">
 						<area shape="rect" coords="128,279,152,302" href="#forward">
+						<area shape="rect" coords="157,279,180,302" href="#nextsub">
 						<area shape="rect" coords="185,279,208,302" href="#nextmod">
 						<area shape="rect" coords="213,279,236,302" href="#eject">
 						<area shape="rect" coords="241,279,264,302" href="#pause">
 						<area shape="rect" coords="331,279,354,302" href="#repeat">
 						<area shape="rect" coords="359,279,382,302" href="sampinfo.html">
-<!--
-<AREA SHAPE="rect" COORDS="38,217,56,234" HREF="howtouse.html#previoussub">
-<AREA SHAPE="rect" COORDS="131,217,149,234" HREF="howtouse.html#nextsub">
--->
 					</map>
 					<img src="images/mainwindow.png" alt="Main window" usemap="#mainwindow"/>
 					<span>
@@ -115,6 +113,14 @@
 								<td><b>Shift + cursor right</b></td>
 								<td>Load the next module in the list.</td>
 							</tr>
+							<tr>
+								<td><b>0 - 9</b></td>
+								<td>Select sub-songs (if current module has sub-songs).</td>
+							</tr>
+							<tr>
+								<td><b>+ / -</b></td>
+								<td>Increment / decrement sub-song selector by 10 if module has more than 10 sub-songs.</td>
+							</tr>
 						</table>
 					</span>
 					<span>
@@ -144,6 +150,7 @@
 						<p>It is possible to move the modules around in the playlist to reorder them. This is done by first selecting the module you want to move. Then press left mouse button on one of the selected modules and keep it down while moving the mouse. A line appear where the modules will be inserted.</p>
 						<p>You can also drag'n'drop modules from File Explorer into playlist. Playlist will be cleared before new files are added.</p>
 						<p>You can also use control keys to change drag & drop behaviour:</p>
+						<p></p>
 						<table class="usage2table">
 							<tr>
 								<td><b>CTRL + dragging</b></td>
@@ -247,7 +254,7 @@
 						<table class="usage2table">
 							<tr>
 								<td>Load list</td>
-								<td>Loads new playlist. Clears playlist before adding new modules. The following playlist types are supported:<ul><li><i>NostalgicPlayer</i></li></ul>It's also possible to drag'n'drop playlist directly into the NostalgicPlayer main window.</td>
+								<td>Loads new playlist. Clears playlist before adding new modules. The following playlist types are supported:<ul><p></p><li><i>NostalgicPlayer</i></li><p></p></ul>It's also possible to drag'n'drop playlist directly into the NostalgicPlayer main window.</td>
 							</tr>
 							<tr>
 								<td>Append list</td>
@@ -283,6 +290,15 @@
 						</table>
 					</span>
 					<span>
+						<a name="previoussub"><h3>Start previous sub-song</h3></a>
+						<table class="usagetable">
+							<tr>
+								<td><img src="images/previoussub.png" alt="previous sub-song"/></td>
+								<td>This button starts previous sub-song. It is enabled only if current module has sub-songs.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
 						<a name="rewind"><h3>Rewind</h3></a>
 						<table class="usagetable">
 							<tr>
@@ -306,6 +322,15 @@
 							<tr>
 								<td><img src="images/forward.png" alt="fast forward"/></td>
 								<td>This button works like fast forward in CD-players.</td>
+							</tr>
+						</table>
+					</span>
+					<span>
+						<a name="nextsub"><h3>Start next sub-song</h3></a>
+						<table class="usagetable">
+							<tr>
+								<td><img src="images/nextsub.png" alt="next sub-song"/></td>
+								<td>This button starts next sub-song. It is enabled only if current module has sub-songs.</td>
 							</tr>
 						</table>
 					</span>
