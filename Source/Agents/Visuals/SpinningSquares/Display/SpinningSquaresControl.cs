@@ -126,7 +126,9 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 		/********************************************************************/
 		private void CreateChannelPanels()
 		{
-			int panelsToCreate = ((channelsInUse + 1) / 2) * 2;
+			var rowCols = FindRowsAndColumns();
+
+			int panelsToCreate = rowCols.Rows * rowCols.Columns;
 
 			// First create all the panels
 			for (int i = 0; i < panelsToCreate; i++)
@@ -138,7 +140,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 				Control ctrl;
 
 				if (i < channelsInUse)
-					ctrl = new SingleSpinningSquareControl();
+					ctrl = new SingleSpinningSquareControl(i + 1);
 				else
 				{
 					ctrl = new Panel();
@@ -179,23 +181,39 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 		/********************************************************************/
 		private void LayoutPanels()
 		{
-			int colNum = (channelsInUse + 1) / 2;
+			var rowCols = FindRowsAndColumns();
 
 			Size clientArea = ParentForm.ClientSize;
 
-			int panelWidth = (clientArea.Width - PanelMargin * 2) / colNum;
-			int panelHeight = (clientArea.Height - PanelMargin * 2) / 2;
+			int panelWidth = (clientArea.Width - PanelMargin * 2) / rowCols.Columns;
+			int panelHeight = (clientArea.Height - PanelMargin * 2) / rowCols.Rows;
 
-			for (int i = 0; i < colNum; i++)
+			for (int i = 0; i < rowCols.Rows; i++)
 			{
-				for (int j = 0; j < 2; j++)
+				for (int j = 0; j < rowCols.Columns; j++)
 				{
-					Panel panel = (Panel)squaresPanel.Controls[i * 2 + j];
+					Panel panel = (Panel)squaresPanel.Controls[i * rowCols.Columns + j];
 
 					panel.Size = new Size(panelWidth - PanelMargin * 2, panelHeight - PanelMargin * 2);
-					panel.Location = new Point(PanelMargin * 2 + i * panelWidth, PanelMargin * 2 + j * panelHeight);
+					panel.Location = new Point(PanelMargin * 2 + j * panelWidth, PanelMargin * 2 + i * panelHeight);
 				}
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Calculate the number of rows and columns to use
+		/// </summary>
+		/********************************************************************/
+		private (int Rows, int Columns) FindRowsAndColumns()
+		{
+			int calcChannels = channelsInUse % 2 == 0 ? channelsInUse : channelsInUse + 1;
+			int rows = (int)Math.Round(Math.Sqrt(calcChannels), MidpointRounding.AwayFromZero);
+			int cols = (int)Math.Round((double)calcChannels / rows, MidpointRounding.AwayFromZero);
+
+			return (Rows: rows, Columns: cols);
 		}
 		#endregion
 	}

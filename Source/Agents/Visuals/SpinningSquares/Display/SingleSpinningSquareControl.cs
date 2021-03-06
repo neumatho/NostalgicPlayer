@@ -20,6 +20,8 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 	{
 		private const double BoxAreaSize = 92;
 
+		private readonly string channel;
+
 		private readonly Point[] boxCoords = new Point[4];		// A coordinate for each corner in the box
 		private readonly Point[] drawCoords = new Point[4];		// Rotated and scaled coordinates
 
@@ -38,11 +40,13 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SingleSpinningSquareControl()
+		public SingleSpinningSquareControl(int channelNum)
 		{
 			InitializeComponent();
 
 			SetStyle(ControlStyles.UserPaint, true);
+
+			channel = channelNum.ToString();
 
 			boxCoords[0] = new Point(0, 0);
 			boxCoords[1] = new Point(0, 0);
@@ -133,60 +137,77 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 		/// in the channel structure
 		/// </summary>
 		/********************************************************************/
-		public void ChannelChange(Channel.Flags flags, Channel channel)
+		public void ChannelChange(Channel.Flags flags, Channel chan)
 		{
 			lock (this)
 			{
 				// Begin to rotate the box
 				animate = true;
 
-				// Has the volume changed?
-				if ((flags & Channel.Flags.Volume) != 0)
-				{
-					ushort newVol = channel.GetVolume();
-					if (newVol != oldVolume)
-					{
-						oldVolume = newVol;
-						newVol /= 8;
-
-						boxCoords[0].Y = newVol;
-						boxCoords[1].Y = newVol;
-						boxCoords[2].Y = -newVol;
-						boxCoords[3].Y = -newVol;
-					}
-				}
-
-				// Has the frequency changed?
 				int cachedFreq = (int)oldFrequency;
+				double cachedSpeed = speed;
 
-				if ((flags & Channel.Flags.Frequency) != 0)
+				// Is the channel muted?
+				if ((flags & Channel.Flags.MuteIt) != 0)
 				{
-					int newFreq = (int)channel.GetFrequency();
-					if (newFreq != oldFrequency)
+					oldVolume = 0;
+					oldFrequency = 0;
+
+					boxCoords[0].X = 0;
+					boxCoords[0].Y = 0;
+					boxCoords[1].X = 0;
+					boxCoords[1].Y = 0;
+					boxCoords[2].X = 0;
+					boxCoords[2].Y = 0;
+					boxCoords[3].X = 0;
+					boxCoords[3].Y = 0;
+				}
+				else
+				{
+					// Has the volume changed?
+					if ((flags & Channel.Flags.Volume) != 0)
 					{
-						oldFrequency = (uint)newFreq;
-
-						if (newFreq < 3547)
-							newFreq = 3547;
-						else
+						ushort newVol = chan.GetVolume();
+						if (newVol != oldVolume)
 						{
-							if (newFreq > 34104)
-								newFreq = 34104;
+							oldVolume = newVol;
+							newVol /= 8;
+
+							boxCoords[0].Y = newVol;
+							boxCoords[1].Y = newVol;
+							boxCoords[2].Y = -newVol;
+							boxCoords[3].Y = -newVol;
 						}
+					}
 
-						newFreq -= (34104 + 3547);
-						newFreq = -newFreq / 1066;
+					// Has the frequency changed?
+					if (((flags & Channel.Flags.Frequency) != 0) && ((oldFrequency != 0) || ((flags & Channel.Flags.TrigIt) != 0)))
+					{
+						int newFreq = (int)chan.GetFrequency();
+						if (newFreq != oldFrequency)
+						{
+							oldFrequency = (uint)newFreq;
 
-						boxCoords[0].X = -newFreq;
-						boxCoords[1].X = newFreq;
-						boxCoords[2].X = newFreq;
-						boxCoords[3].X = -newFreq;
+							if (newFreq < 3547)
+								newFreq = 3547;
+							else
+							{
+								if (newFreq > 34104)
+									newFreq = 34104;
+							}
+
+							newFreq -= (34104 + 3547);
+							newFreq = -newFreq / 1066;
+
+							boxCoords[0].X = -newFreq;
+							boxCoords[1].X = newFreq;
+							boxCoords[2].X = newFreq;
+							boxCoords[3].X = -newFreq;
+						}
 					}
 				}
 
 				// Calculate the rotation speed and direction
-				double cachedSpeed = speed;
-
 				if (oldVolume != 0)
 				{
 					double newSpeed = (double)cachedFreq / oldVolume / 8;
@@ -244,6 +265,9 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 				{
 					g.FillPolygon(brush, drawCoords);
 				}
+
+				// Draw the channel number
+				g.DrawString(channel, Font, Brushes.Black, 4, 4);
 			}
 		}
 		#endregion
