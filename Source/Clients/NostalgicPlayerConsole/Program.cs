@@ -122,7 +122,7 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 								foreach (string info in moduleInfoFloating.ModuleInformation)
 								{
 									string[] parts = info.Split('\t');
-									Console.WriteLine(parts[0] + ": " + parts[1]);
+									Console.WriteLine(parts[0] + " " + parts[1]);
 								}
 
 								Console.WriteLine();
