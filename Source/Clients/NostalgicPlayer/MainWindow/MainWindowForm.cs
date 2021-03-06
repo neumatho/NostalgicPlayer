@@ -79,7 +79,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		// Module variables
 		private ModuleListItem playItem;
 		private TimeSpan songTotalTime;
-		//XXprivate int subSongMultiply;
+		private int subSongMultiply;
 
 		// Information variables
 		private int prevSongPosition;
@@ -575,6 +575,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			rewindButton.Click += RewindButton_Click;
 			fastForwardButton.Click += FastForwardButton_Click;
 
+			previousSongButton.Click += PreviousSongButton_Click;
+			nextSongButton.Click += NextSongButton_Click;
+
 			previousModuleButton.Click += PreviousModuleButton_Click;
 			nextModuleButton.Click += NextModuleButton_Click;
 
@@ -673,6 +676,116 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					case Keys.Back:
 					{
 						loopCheckButton.PerformClick();
+						return true;
+					}
+
+					// Sub-song 1
+					case Keys.D1:
+					case Keys.NumPad1:
+					{
+						SwitchSubSong(0);
+						return true;
+					}
+
+					// Sub-song 2
+					case Keys.D2:
+					case Keys.NumPad2:
+					{
+						SwitchSubSong(1);
+						return true;
+					}
+
+					// Sub-song 3
+					case Keys.D3:
+					case Keys.NumPad3:
+					{
+						SwitchSubSong(2);
+						return true;
+					}
+
+					// Sub-song 4
+					case Keys.D4:
+					case Keys.NumPad4:
+					{
+						SwitchSubSong(3);
+						return true;
+					}
+
+					// Sub-song 5
+					case Keys.D5:
+					case Keys.NumPad5:
+					{
+						SwitchSubSong(4);
+						return true;
+					}
+
+					// Sub-song 6
+					case Keys.D6:
+					case Keys.NumPad6:
+					{
+						SwitchSubSong(5);
+						return true;
+					}
+
+					// Sub-song 7
+					case Keys.D7:
+					case Keys.NumPad7:
+					{
+						SwitchSubSong(6);
+						return true;
+					}
+
+					// Sub-song 8
+					case Keys.D8:
+					case Keys.NumPad8:
+					{
+						SwitchSubSong(7);
+						return true;
+					}
+
+					// Sub-song 9
+					case Keys.D9:
+					case Keys.NumPad9:
+					{
+						SwitchSubSong(8);
+						return true;
+					}
+
+					// Sub-song 10
+					case Keys.D0:
+					case Keys.NumPad0:
+					{
+						SwitchSubSong(9);
+						return true;
+					}
+
+					// Add 10 to the sub-song selector
+					case Keys.Oemplus:
+					case Keys.Add:
+					{
+						if (playItem != null)
+						{
+							int maxSong = moduleHandler.StaticModuleInformation.MaxSongNumber;
+
+							// Check for out of bounds
+							if ((subSongMultiply + 10) < maxSong)
+								subSongMultiply += 10;
+						}
+
+						return true;
+					}
+
+					// Subtract 10 from the sub-song selector
+					case Keys.OemMinus:
+					case Keys.Subtract:
+					{
+						if (playItem != null)
+						{
+							// Check for out of bounds
+							if (subSongMultiply != 0)
+								subSongMultiply -= 10;
+						}
+
 						return true;
 					}
 				}
@@ -2156,6 +2269,38 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// The user clicked on the previous song button
+		/// </summary>
+		/********************************************************************/
+		private void PreviousSongButton_Click(object sender, EventArgs e)
+		{
+			// Get current playing song
+			int curSong = moduleHandler.PlayingModuleInformation.CurrentSong;
+
+			// Start new song
+			StartSong(curSong - 1);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The user clicked on the next song button
+		/// </summary>
+		/********************************************************************/
+		private void NextSongButton_Click(object sender, EventArgs e)
+		{
+			// Get current playing song
+			int curSong = moduleHandler.PlayingModuleInformation.CurrentSong;
+
+			// Start new song
+			StartSong(curSong + 1);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// The user clicked on the previous module button
 		/// </summary>
 		/********************************************************************/
@@ -2270,7 +2415,32 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void InitSubSongs()
 		{
-			//XXsubSongMultiply = 0;
+			subSongMultiply = 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will switch to another sub-song
+		/// </summary>
+		/********************************************************************/
+		private void SwitchSubSong(int song)
+		{
+			if (playItem != null)
+			{
+				song += subSongMultiply;
+
+				// Get the maximum song number available
+				int maxSong = moduleHandler.StaticModuleInformation.MaxSongNumber;
+
+				// Can we play the sub-song selected?
+				if (song < maxSong)
+				{
+					// Yes, play the new sub-song
+					StartSong(song);
+				}
+			}
 		}
 
 

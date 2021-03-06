@@ -302,7 +302,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					int songLength = currentPlayer.SongLength;
 
 					// Get the position times for the current song
-					TimeSpan totalTime = currentPlayer.GetPositionTimeTable(subSongs.DefaultStartSong, out TimeSpan[] positionTimes);
+					TimeSpan totalTime = currentPlayer.GetPositionTimeTable(songNum, out TimeSpan[] positionTimes);
 
 					// Get module information
 					List<string> moduleInfo = new List<string>();
@@ -317,7 +317,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					}
 
 					// Initialize the module information
-					PlayingModuleInformation = new ModuleInfoFloating(songNum, totalTime, songLength, positionTimes, moduleInfo.ToArray());
+					PlayingModuleInformation = new ModuleInfoFloating(songNum, totalTime, currentPlayer.SongPosition, songLength, positionTimes, moduleInfo.ToArray());
 				}
 			}
 		}
