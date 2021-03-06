@@ -1111,20 +1111,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Formats / players.
+        /// </summary>
+        internal static string IDS_SETTINGS_AGENTS_TAB_FORMATS {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_AGENTS_TAB_FORMATS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Output.
         /// </summary>
         internal static string IDS_SETTINGS_AGENTS_TAB_OUTPUT {
             get {
                 return ResourceManager.GetString("IDS_SETTINGS_AGENTS_TAB_OUTPUT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Players.
-        /// </summary>
-        internal static string IDS_SETTINGS_AGENTS_TAB_PLAYERS {
-            get {
-                return ResourceManager.GetString("IDS_SETTINGS_AGENTS_TAB_PLAYERS", resourceCulture);
             }
         }
         

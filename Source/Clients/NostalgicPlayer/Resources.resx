@@ -520,11 +520,11 @@ Formats supported:
   <data name="IDS_SETTINGS_AGENTS_SETTINGS" xml:space="preserve">
     <value>Settings</value>
   </data>
+  <data name="IDS_SETTINGS_AGENTS_TAB_FORMATS" xml:space="preserve">
+    <value>Formats / players</value>
+  </data>
   <data name="IDS_SETTINGS_AGENTS_TAB_OUTPUT" xml:space="preserve">
     <value>Output</value>
-  </data>
-  <data name="IDS_SETTINGS_AGENTS_TAB_PLAYERS" xml:space="preserve">
-    <value>Players</value>
   </data>
   <data name="IDS_SETTINGS_AGENTS_TAB_SAMPLECONVERTERS" xml:space="preserve">
     <value>Sample converters</value>

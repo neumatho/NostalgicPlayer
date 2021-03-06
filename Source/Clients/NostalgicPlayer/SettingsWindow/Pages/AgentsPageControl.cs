@@ -40,7 +40,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			navigator.Button.ContextButtonDisplay = ButtonDisplay.Hide;
 
 			// Set the string resources on each string per tab
-			navigator.Pages[0].Text = Resources.IDS_SETTINGS_AGENTS_TAB_PLAYERS;
+			navigator.Pages[0].Text = Resources.IDS_SETTINGS_AGENTS_TAB_FORMATS;
 			navigator.Pages[1].Text = Resources.IDS_SETTINGS_AGENTS_TAB_OUTPUT;
 			navigator.Pages[2].Text = Resources.IDS_SETTINGS_AGENTS_TAB_SAMPLECONVERTERS;
 			navigator.Pages[3].Text = Resources.IDS_SETTINGS_AGENTS_TAB_VISUALS;
