@@ -114,7 +114,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			this.instrumentDataGridView.ShowRowErrors = false;
 			this.instrumentDataGridView.Size = new System.Drawing.Size(262, 127);
 			this.instrumentDataGridView.StateCommon.Background.Color1 = System.Drawing.Color.White;
-			this.instrumentDataGridView.StateCommon.DataCell.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.instrumentDataGridView.StateCommon.DataCell.Content.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.instrumentDataGridView.StateCommon.DataCell.Content.Padding = new System.Windows.Forms.Padding(0);
 			this.instrumentDataGridView.StateCommon.HeaderColumn.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.instrumentDataGridView.TabIndex = 0;
@@ -164,7 +164,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			this.sampleDataGridView.ShowRowErrors = false;
 			this.sampleDataGridView.Size = new System.Drawing.Size(662, 127);
 			this.sampleDataGridView.StateCommon.Background.Color1 = System.Drawing.Color.White;
-			this.sampleDataGridView.StateCommon.DataCell.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.sampleDataGridView.StateCommon.DataCell.Content.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.sampleDataGridView.StateCommon.DataCell.Content.Padding = new System.Windows.Forms.Padding(0);
 			this.sampleDataGridView.StateCommon.HeaderColumn.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.sampleDataGridView.TabIndex = 0;

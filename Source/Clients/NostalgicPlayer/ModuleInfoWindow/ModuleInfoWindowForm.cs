@@ -207,7 +207,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				if (floatingInfo.ModuleInformation != null)
 				{
 					// Add an empty line
-					moduleInfoDataGridView.Rows.Add(string.Empty);
+					DataGridViewRow emptyRow = new DataGridViewRow();
+					emptyRow.Cells.AddRange(new DataGridViewCell[]
+					{
+						new KryptonDataGridViewTextBoxCell { Value = string.Empty, ToolTipText = string.Empty },
+						new KryptonDataGridViewTextBoxCell { Value = string.Empty, ToolTipText = string.Empty }
+					});
+
+					moduleInfoDataGridView.Rows.Add(emptyRow);
 
 					foreach (string info in floatingInfo.ModuleInformation)
 					{

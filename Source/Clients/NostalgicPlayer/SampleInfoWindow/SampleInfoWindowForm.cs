@@ -327,7 +327,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						}
 					}
 
-					instrumentDataGridView.Rows.Add(i, instrument.Name, sampleUsed.Count);
+					DataGridViewRow row = new DataGridViewRow();
+					row.Cells.AddRange(new DataGridViewCell[]
+					{
+						new KryptonDataGridViewTextBoxCell { Value = i + 1 },
+						new KryptonDataGridViewTextBoxCell { Value = instrument.Name, ToolTipText = instrument.Name },
+						new KryptonDataGridViewTextBoxCell { Value = sampleUsed.Count }
+					});
+
+					instrumentDataGridView.Rows.Add(row);
 				}
 
 				// Sort the items
@@ -375,7 +383,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 					if ((sample.Flags & SampleInfo.SampleFlags.PingPong) != 0)
 						bitmap = AppendBitmap(i, bitmap, Resources.IDB_SAMPLE_PINGPONG);
 
-					sampleDataGridView.Rows.Add(i, sample.Name, sample.Length, sample.LoopStart, sample.LoopLength, sample.BitSize, sample.Volume, sample.Panning == -1 ? "-" : sample.Panning, sample.MiddleC, bitmap, GetTypeString(sample.Type));
+					DataGridViewRow row = new DataGridViewRow();
+					row.Cells.AddRange(new DataGridViewCell[]
+					{
+						new KryptonDataGridViewTextBoxCell { Value = i + 1 },
+						new KryptonDataGridViewTextBoxCell { Value = sample.Name, ToolTipText = sample.Name },
+						new KryptonDataGridViewTextBoxCell { Value = sample.Length },
+						new KryptonDataGridViewTextBoxCell { Value = sample.LoopStart },
+						new KryptonDataGridViewTextBoxCell { Value = sample.LoopLength },
+						new KryptonDataGridViewTextBoxCell { Value = sample.BitSize },
+						new KryptonDataGridViewTextBoxCell { Value = sample.Volume },
+						new KryptonDataGridViewTextBoxCell { Value = sample.Panning == -1 ? "-" : sample.Panning },
+						new KryptonDataGridViewTextBoxCell { Value = sample.MiddleC },
+						new DataGridViewImageCell { Value =  bitmap },
+						new KryptonDataGridViewTextBoxCell { Value = GetTypeString(sample.Type) }
+					});
+
+					sampleDataGridView.Rows.Add(row);
 				}
 
 				// Sort the items
