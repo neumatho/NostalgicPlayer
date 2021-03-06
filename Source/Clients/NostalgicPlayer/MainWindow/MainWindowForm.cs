@@ -2955,17 +2955,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			int count = moduleListBox.Items.Count;
 
 			// Get playing flag
-			bool isPlaying = moduleHandler.IsPlaying;
+			bool isLoaded = moduleHandler.IsModuleLoaded;
 
 			// If the module list is empty, disable the eject button
 			ejectButton.Enabled = count > 0;
 
-			// If no module is playing, disable the pause button
-			pauseCheckButton.Enabled = isPlaying;
+			// If no module is loaded, disable the pause button
+			pauseCheckButton.Enabled = isLoaded;
 
-			// If only one item is in the list or none is playing, disable
+			// If only one item is in the list or none is loaded, disable
 			// the previous and next module buttons
-			if (isPlaying && (count > 1))
+			if (isLoaded && (count > 1))
 			{
 				previousModuleButton.Enabled = true;
 				nextModuleButton.Enabled = true;
@@ -2986,9 +2986,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// If playing the last sub-song, disable the next song button
 			nextSongButton.Enabled = curSong < staticModuleInfo.MaxSongNumber - 1;
 
-			// If no module is playing or the player doesn't support position change,
+			// If no module is loaded or the player doesn't support position change,
 			// disable the rewind and forward buttons + the position slider
-			if (isPlaying && staticModuleInfo.CanChangePosition)
+			if (isLoaded && staticModuleInfo.CanChangePosition)
 			{
 				rewindButton.Enabled = true;
 				fastForwardButton.Enabled = true;
@@ -3106,7 +3106,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			string posStr, subStr, timeStr;
 
-			if (moduleHandler.IsPlaying)
+			if (moduleHandler.IsModuleLoaded)
 			{
 				ModuleInfoStatic staticModuleInfo = moduleHandler.StaticModuleInformation;
 				ModuleInfoFloating playingModuleInfo = moduleHandler.PlayingModuleInformation;

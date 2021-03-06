@@ -405,7 +405,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private void SetChannels()
 		{
 			// Get the number of channels in use right now
-			channelsUsed = moduleHandler.IsPlaying ? moduleHandler.StaticModuleInformation.Channels : 0;
+			channelsUsed = moduleHandler.IsModuleLoaded ? moduleHandler.StaticModuleInformation.Channels : 0;
 
 			// First enable the used channels
 			for (int i = 0; i < channelsUsed; i++)

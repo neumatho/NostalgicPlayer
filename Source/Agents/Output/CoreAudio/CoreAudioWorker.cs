@@ -240,10 +240,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 					// Set state
 					playbackState = PlaybackState.Stopped;
 				}
-
-				// Tell the render thread to flush buffers
-				flushBufferEvent.Set();
 			}
+
+			// Tell the render thread to flush buffers
+			flushBufferEvent.Set();
 		}
 
 

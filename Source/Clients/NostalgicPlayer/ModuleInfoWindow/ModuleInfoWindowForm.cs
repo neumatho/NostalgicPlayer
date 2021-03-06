@@ -106,8 +106,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/********************************************************************/
 		public void UpdateWindow(int line, string newValue)
 		{
-			// Check to see if there are any module playing at the moment
-			if (moduleHandler.IsPlaying)
+			// Check to see if there are any module loaded at the moment
+			if (moduleHandler.IsModuleLoaded)
 			{
 				if ((FirstCustomLine + line) < moduleInfoDataGridView.RowCount)
 				{
@@ -160,8 +160,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/********************************************************************/
 		private void AddItems()
 		{
-			// Check to see if there are any module playing at the moment
-			if (moduleHandler.IsPlaying)
+			// Check to see if there are any module loaded at the moment
+			if (moduleHandler.IsModuleLoaded)
 			{
 				// Module in memory, add items
 				ModuleInfoStatic staticInfo = moduleHandler.StaticModuleInformation;

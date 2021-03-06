@@ -240,8 +240,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		{
 			if ((agentType == Manager.AgentType.Players) || (agentType == Manager.AgentType.Output))
 			{
-				Color itemColor = moduleHandler.IsPlaying ? Color.Blue : Color.Black;
-				Guid typeId = moduleHandler.IsPlaying ? agentType == Manager.AgentType.Players ? moduleHandler.StaticModuleInformation.PlayerAgentInfo.TypeId : moduleHandler.OutputAgentInfo.TypeId : inUseAgent;
+				Color itemColor = moduleHandler.IsModuleLoaded ? Color.Blue : Color.Black;
+				Guid typeId = moduleHandler.IsModuleLoaded ? agentType == Manager.AgentType.Players ? moduleHandler.StaticModuleInformation.PlayerAgentInfo.TypeId : moduleHandler.OutputAgentInfo.TypeId : inUseAgent;
 
 				if (typeId != Guid.Empty)
 				{
@@ -261,7 +261,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 					}
 				}
 
-				if (!moduleHandler.IsPlaying)
+				if (!moduleHandler.IsModuleLoaded)
 					inUseAgent = Guid.Empty;
 			}
 		}

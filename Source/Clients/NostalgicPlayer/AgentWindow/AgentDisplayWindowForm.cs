@@ -69,7 +69,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 				{
 					agentManager.RegisterVisualAgent(visualAgent);
 
-					if (moduleHandler.IsPlaying)
+					if (moduleHandler.IsModuleLoaded)
 						visualAgent.InitVisual(moduleHandler.StaticModuleInformation.Channels);
 				}
 

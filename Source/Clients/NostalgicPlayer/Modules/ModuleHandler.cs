@@ -132,6 +132,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		#region Properties
 		/********************************************************************/
 		/// <summary>
+		/// Tells if the module has been loaded or not
+		/// </summary>
+		/********************************************************************/
+		public bool IsModuleLoaded
+		{
+			get
+			{
+				lock (loadedFiles)
+				{
+					return loadedFiles.Count > 0;
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Tells if the module is playing or not at the moment
 		/// </summary>
 		/********************************************************************/
@@ -219,30 +237,27 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 			lock (loadedFiles)
 			{
 				// Did we have any modules loaded at all?
-				if (loadedFiles.Count > 0)
+				if (IsModuleLoaded)
 				{
 					// Get the first one
 					ModuleItem item = loadedFiles[0];
 
 					IPlayer player = item.Loader.Player;
 
-					if (IsPlaying)
+					// Stop the playing
+					player.StopPlaying();
+
+					if (player is IModulePlayer modulePlayer)
 					{
-						// Stop the playing
-						player.StopPlaying();
-
-						if (player is IModulePlayer modulePlayer)
-						{
-							// Unsubscribe to position changes
-							modulePlayer.PositionChanged -= Player_PositionChanged;
-						}
-
-						// Unsubscribe to event notifications
-						player.EndReached -= Player_EndReached;
-						player.ModuleInfoChanged -= Player_ModuleInfoChanged;
-
-						IsPlaying = false;
+						// Unsubscribe to position changes
+						modulePlayer.PositionChanged -= Player_PositionChanged;
 					}
+
+					// Unsubscribe to event notifications
+					player.EndReached -= Player_EndReached;
+					player.ModuleInfoChanged -= Player_ModuleInfoChanged;
+
+					IsPlaying = false;
 
 					// Cleanup the player
 					player.CleanupPlayer();
@@ -317,7 +332,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				lock (loadedFiles)
 				{
 					// Did we have any modules loaded at all?
-					if (loadedFiles.Count > 0)
+					if (IsModuleLoaded)
 					{
 						// And start playing again
 						player.StartPlaying(loadedFiles[0].Loader.FileName, mixerConfiguration);
@@ -720,7 +735,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				lock (loadedFiles)
 				{
 					// Did we have any modules loaded at all?
-					if (loadedFiles.Count > 0)
+					if (IsModuleLoaded)
 					{
 						// Start playing the song
 						if (!player.StartPlaying(loadedFiles[0].Loader.FileName, mixerConfiguration))
@@ -748,7 +763,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		{
 			lock (loadedFiles)
 			{
-				return loadedFiles.Count > 0 ? loadedFiles[0].Loader.Player : null;
+				return IsModuleLoaded ? loadedFiles[0].Loader.Player : null;
 			}
 		}
 		#endregion
