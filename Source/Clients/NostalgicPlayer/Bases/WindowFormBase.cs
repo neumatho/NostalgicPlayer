@@ -64,6 +64,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 
 				if ((windowSize.Width != 0) && (windowSize.Height != 0))
 					Size = new Size(windowSize.Width, windowSize.Height);
+
+				WindowState = windowSettings.Maximized ? FormWindowState.Maximized : FormWindowState.Normal;
 			}
 		}
 
@@ -80,8 +82,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 
 			if (windowSettings != null)
 			{
-				if (WindowState == FormWindowState.Normal)
-					UpdateWindowSettings();
+				UpdateWindowSettings();
 
 				// Save the window settings
 				allWindowSettings.SaveSettings();
@@ -129,13 +130,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 		/********************************************************************/
 		public void UpdateWindowSettings()
 		{
-			// Update the settings with the window position
-			windowSettings.Location = Location;
+			if (WindowState == FormWindowState.Normal)
+			{
+				// Update the settings with the window position
+				windowSettings.Location = Location;
 
-			if (FormBorderStyle == FormBorderStyle.Sizable)
-				windowSettings.Size = Size;
+				if (FormBorderStyle == FormBorderStyle.Sizable)
+					windowSettings.Size = Size;
 
-			windowSettings.Geometry = ScreensGeometry();
+				windowSettings.Geometry = ScreensGeometry();
+			}
+
+			windowSettings.Maximized = WindowState == FormWindowState.Maximized;
 		}
 
 

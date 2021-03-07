@@ -82,5 +82,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 				settings.SetIntEntry("Window", "Height", value.Height);
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tells if the window is maximized
+		/// </summary>
+		/********************************************************************/
+		public bool Maximized
+		{
+			get
+			{
+				return settings.GetBoolEntry("Window", "Maximized");
+			}
+
+			set
+			{
+				settings.SetBoolEntry("Window", "Maximized", value);
+			}
+		}
 	}
 }
