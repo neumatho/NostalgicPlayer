@@ -26,7 +26,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="krypton.toolkit.lite" Version="5.550.2101" />
+    <PackageReference Include="krypton.toolkit.lite" Version="5.550.2103" />
   </ItemGroup>
 
   <ItemGroup>
