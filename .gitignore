@@ -5,3 +5,6 @@ Win32
 x64
 *.user
 *.aps
+*.pfx
+AppPackages
+BundleArtifacts

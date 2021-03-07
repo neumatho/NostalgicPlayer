@@ -11,14 +11,28 @@
     <Copyright>Copyright © 2021</Copyright>
     <ApplicationIcon>App.ico</ApplicationIcon>
     <Version>1.0.0</Version>
+    <Platforms>x64;x86</Platforms>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <OutputPath>bin</OutputPath>
     <DocumentationFile>bin\NostalgicPlayer.xml</DocumentationFile>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutputPath>bin</OutputPath>
+    <DocumentationFile>bin\NostalgicPlayer.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+    <OutputPath>bin</OutputPath>
+    <DocumentationFile>bin\NostalgicPlayer.xml</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutputPath>bin</OutputPath>
     <DocumentationFile>bin\NostalgicPlayer.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>

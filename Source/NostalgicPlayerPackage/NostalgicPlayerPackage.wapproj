@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '15.0'">
+    <VisualStudioVersion>15.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x86">
+      <Configuration>Debug</Configuration>
+      <Platform>x86</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x86">
+      <Configuration>Release</Configuration>
+      <Platform>x86</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Configuration">
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <WapProjPath Condition="'$(WapProjPath)'==''">$(MSBuildExtensionsPath)\Microsoft\DesktopBridge\</WapProjPath>
+  </PropertyGroup>
+  <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.props" />
+  <PropertyGroup>
+    <ProjectGuid>5d16772e-5a1e-4204-99d1-d52fb28ecf3c</ProjectGuid>
+    <TargetPlatformVersion>10.0.18362.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+    <EntryPointProjectUniqueName>..\Clients\NostalgicPlayer\NostalgicPlayer.csproj</EntryPointProjectUniqueName>
+    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <PackageCertificateThumbprint>F091810F04E830DED61DE09D25FA8392D19E34BA</PackageCertificateThumbprint>
+    <AppxPackageSigningTimestampDigestAlgorithm>SHA512</AppxPackageSigningTimestampDigestAlgorithm>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <GenerateTestArtifacts>True</GenerateTestArtifacts>
+    <AppxBundlePlatforms>x86|x64</AppxBundlePlatforms>
+    <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+    <AppxBundle>Always</AppxBundle>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <AppxBundle>Always</AppxBundle>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <AppxBundle>Always</AppxBundle>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <AppxBundle>Always</AppxBundle>
+  </PropertyGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\Clients\NostalgicPlayer\bin\net5.0-windows\NostalgicPlayerLibrary_Native-$(platform).dll">
+      <Link>NostalgicPlayer\NostalgicPlayerLibrary_Native-$(platform).dll</Link>
+    </Content>
+    <Content Include="..\Clients\NostalgicPlayer\bin\net5.0-windows\Agents\Output\*.dll">
+      <Link>NostalgicPlayer\Agents\Output\%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include="..\Clients\NostalgicPlayer\bin\net5.0-windows\Agents\Players\*.dll">
+      <Link>NostalgicPlayer\Agents\Players\%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include="..\Clients\NostalgicPlayer\bin\net5.0-windows\Agents\SampleConverters\*.dll">
+      <Link>NostalgicPlayer\Agents\SampleConverters\%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include="..\Clients\NostalgicPlayer\bin\net5.0-windows\Agents\Visuals\*.dll">
+      <Link>NostalgicPlayer\Agents\Visuals\%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include="..\..\Documentation\**">
+      <Link>NostalgicPlayer\Documentation\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Content>
+    <Content Include="Images\LargeTile.scale-100.png" />
+    <Content Include="Images\LargeTile.scale-125.png" />
+    <Content Include="Images\LargeTile.scale-150.png" />
+    <Content Include="Images\LargeTile.scale-200.png" />
+    <Content Include="Images\LargeTile.scale-400.png" />
+    <Content Include="Images\SmallTile.scale-100.png" />
+    <Content Include="Images\SmallTile.scale-125.png" />
+    <Content Include="Images\SmallTile.scale-150.png" />
+    <Content Include="Images\SmallTile.scale-200.png" />
+    <Content Include="Images\SmallTile.scale-400.png" />
+    <Content Include="Images\SplashScreen.scale-100.png" />
+    <Content Include="Images\SplashScreen.scale-125.png" />
+    <Content Include="Images\SplashScreen.scale-150.png" />
+    <Content Include="Images\SplashScreen.scale-200.png" />
+    <Content Include="Images\LockScreenLogo.scale-200.png" />
+    <Content Include="Images\SplashScreen.scale-400.png" />
+    <Content Include="Images\Square150x150Logo.scale-100.png" />
+    <Content Include="Images\Square150x150Logo.scale-125.png" />
+    <Content Include="Images\Square150x150Logo.scale-150.png" />
+    <Content Include="Images\Square150x150Logo.scale-200.png" />
+    <Content Include="Images\Square150x150Logo.scale-400.png" />
+    <Content Include="Images\Square44x44Logo.altform-lightunplated_targetsize-16.png" />
+    <Content Include="Images\Square44x44Logo.altform-lightunplated_targetsize-24.png" />
+    <Content Include="Images\Square44x44Logo.altform-lightunplated_targetsize-256.png" />
+    <Content Include="Images\Square44x44Logo.altform-lightunplated_targetsize-32.png" />
+    <Content Include="Images\Square44x44Logo.altform-lightunplated_targetsize-48.png" />
+    <Content Include="Images\Square44x44Logo.altform-unplated_targetsize-16.png" />
+    <Content Include="Images\Square44x44Logo.altform-unplated_targetsize-256.png" />
+    <Content Include="Images\Square44x44Logo.altform-unplated_targetsize-32.png" />
+    <Content Include="Images\Square44x44Logo.altform-unplated_targetsize-48.png" />
+    <Content Include="Images\Square44x44Logo.scale-100.png" />
+    <Content Include="Images\Square44x44Logo.scale-125.png" />
+    <Content Include="Images\Square44x44Logo.scale-150.png" />
+    <Content Include="Images\Square44x44Logo.scale-200.png" />
+    <Content Include="Images\Square44x44Logo.scale-400.png" />
+    <Content Include="Images\Square44x44Logo.targetsize-16.png" />
+    <Content Include="Images\Square44x44Logo.targetsize-24.png" />
+    <Content Include="Images\Square44x44Logo.targetsize-24_altform-unplated.png" />
+    <Content Include="Images\Square44x44Logo.targetsize-256.png" />
+    <Content Include="Images\Square44x44Logo.targetsize-32.png" />
+    <Content Include="Images\Square44x44Logo.targetsize-48.png" />
+    <Content Include="Images\StoreLogo.scale-100.png" />
+    <Content Include="Images\StoreLogo.scale-125.png" />
+    <Content Include="Images\StoreLogo.scale-150.png" />
+    <Content Include="Images\StoreLogo.scale-200.png" />
+    <Content Include="Images\StoreLogo.scale-400.png" />
+    <Content Include="Images\Wide310x150Logo.scale-100.png" />
+    <Content Include="Images\Wide310x150Logo.scale-125.png" />
+    <Content Include="Images\Wide310x150Logo.scale-150.png" />
+    <Content Include="Images\Wide310x150Logo.scale-200.png" />
+    <Content Include="Images\Wide310x150Logo.scale-400.png" />
+    <None Include="NostalgicPlayerPackage_TemporaryKey.pfx" />
+  </ItemGroup>
+  <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.19041.8" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Clients\NostalgicPlayer\NostalgicPlayer.csproj">
+      <SkipGetTargetFrameworkProperties>True</SkipGetTargetFrameworkProperties>
+    </ProjectReference>
+  </ItemGroup>
+</Project>
