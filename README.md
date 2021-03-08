@@ -5,6 +5,14 @@ NostalgicPlayer is a program that can play these modules. NostalgicPlayer is a W
 
 Please enjoy this program, and support the development by giving any feedback (bug reports and flattering comments :-))
 
+# Structure
+
+The player is structured, so it is easy to create your own user interface around the logic. All the main logic is in the *NostalgicPlayerLibrary* and *NostalgicPlayerKit*. The later is used by the agents to communicate with the player.
+
+Agents can be anything, e.g. players, converters, visuals etc. You only need to include the agents you want to use, if you write your own player around the library. Just remember the credits. All agents are loaded dynamic.
+
+In the Clients folder, you can find two different clients that use the player. *NostalgicPlayerConsole* is a simple player that loads a single module and play it. It will then write some information to the console. *NostalgicPlayer* is a full blown player using Windows Forms and is the one that is released to the public.
+
 # Formats supported
 
 | Format | Extension | Converter | Player | Description |
