@@ -341,10 +341,6 @@ Formats supported:
   <data name="IDS_ERR_NOOUTPUTAGENT" xml:space="preserve">
     <value>There doesn't exist any output agent, so NostalgicPlayer can't play anything</value>
   </data>
-  <data name="IDS_ERR_OPEN_HELP" xml:space="preserve">
-    <value>Could not open the help documentation. Failed with:
-{0}</value>
-  </data>
   <data name="IDS_ERR_SAVE_LIST" xml:space="preserve">
     <value>Failed to save the module list. Failed with error:
 {0}</value>
@@ -354,6 +350,16 @@ Formats supported:
   </data>
   <data name="IDS_ERR_UNKNOWN_LIST_VERSION" xml:space="preserve">
     <value>Unknown version ({0}) of a NPML list.</value>
+  </data>
+  <data name="IDS_HELP_MESSAGE" xml:space="preserve">
+    <value>To read the documentation, open a browser and
+navigate to the official webpage which is:</value>
+  </data>
+  <data name="IDS_HELP_TITLE" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="IDS_HELP_URL" xml:space="preserve">
+    <value>https://www.nostalgicplayer.dk</value>
   </data>
   <data name="IDS_MAIN_TITLE" xml:space="preserve">
     <value>NostalgicPlayer</value>

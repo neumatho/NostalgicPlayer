@@ -8,11 +8,9 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow;
@@ -21,6 +19,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
@@ -995,18 +994,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void Menu_Help_Help_Click(object sender, EventArgs e)
 		{
-			try
+			using (HelpWindowForm dialog = new HelpWindowForm())
 			{
-#if DEBUG
-				string docFile = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"..\..\..\..\..\Documentation\index.html");
-#else
-				string docFile = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), @"Documentation\index.html");
-#endif
-				Process.Start("cmd.exe",@$"/C ""{docFile}""");
-			}
-			catch (Exception ex)
-			{
-				ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_OPEN_HELP, ex.Message));
+				dialog.ShowDialog();
 			}
 		}
 
