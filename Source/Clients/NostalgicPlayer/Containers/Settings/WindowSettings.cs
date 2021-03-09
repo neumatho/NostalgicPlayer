@@ -6,6 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System;
 using System.Drawing;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
@@ -90,16 +91,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/// Tells if the window is maximized
 		/// </summary>
 		/********************************************************************/
-		public bool Maximized
+		public bool? Maximized
 		{
 			get
 			{
-				return settings.GetBoolEntry("Window", "Maximized");
+				if (settings.ContainsEntry("Window", "Maximized"))
+					return settings.GetBoolEntry("Window", "Maximized");
+
+				return null;
 			}
 
 			set
 			{
-				settings.SetBoolEntry("Window", "Maximized", value);
+				if (!value.HasValue)
+					throw new ArgumentNullException(nameof(value));
+
+				settings.SetBoolEntry("Window", "Maximized", value.Value);
 			}
 		}
 	}

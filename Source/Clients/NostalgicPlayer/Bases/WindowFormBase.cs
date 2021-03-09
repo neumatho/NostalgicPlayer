@@ -65,7 +65,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 				if ((windowSize.Width != 0) && (windowSize.Height != 0))
 					Size = new Size(windowSize.Width, windowSize.Height);
 
-				WindowState = windowSettings.Maximized ? FormWindowState.Maximized : FormWindowState.Normal;
+				bool? maximized = windowSettings.Maximized;
+				if (maximized.HasValue)
+					WindowState = maximized.Value ? FormWindowState.Maximized : FormWindowState.Normal;
 			}
 		}
 

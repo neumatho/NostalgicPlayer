@@ -424,6 +424,38 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 		/********************************************************************/
 		/// <summary>
+		/// Will check to see if the entry exists
+		/// </summary>
+		/********************************************************************/
+		public bool ContainsEntry(string section, string entry)
+		{
+			// Start to lock the list
+			listLock.EnterReadLock();
+
+			try
+			{
+				// Start to find the section
+				int index = FindSection(section);
+				if (index != -1)
+				{
+					// Found the section, now find the entry
+					index = FindEntry(index + 1, entry, out int _);
+					if (index != -1)
+						return true;
+				}
+			}
+			finally
+			{
+				listLock.ExitReadLock();
+			}
+
+			return false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will remove an entry from the section given. If the entry
 		/// couldn't be found, nothing is done
 		/// </summary>
