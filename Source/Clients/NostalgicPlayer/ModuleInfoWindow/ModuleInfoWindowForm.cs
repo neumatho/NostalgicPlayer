@@ -143,11 +143,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/********************************************************************/
 		private void ModuleInfoDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
 		{
-			// Check if the file name has been clicked
-			if ((e.RowIndex == 7) && (e.ColumnIndex == 1))
+			if (!Env.IsWindows10S)
 			{
-				// Start File Explorer and select the file
-				Process.Start("explorer.exe", $"/select,\"{moduleInfoDataGridView[e.ColumnIndex, e.RowIndex].Value}\"");
+				// Check if the file name has been clicked
+				if ((e.RowIndex == 7) && (e.ColumnIndex == 1))
+				{
+					// Start File Explorer and select the file
+					Process.Start("explorer.exe", $"/select,\"{moduleInfoDataGridView[e.ColumnIndex, e.RowIndex].Value}\"");
+				}
 			}
 		}
 		#endregion
@@ -200,8 +203,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 
 				moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE, $"{staticInfo.ModuleSize:n0}");
 
-				int row = moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, fileInfo.FileName);
-				moduleInfoDataGridView.Rows[row].Cells[1] = new KryptonDataGridViewLinkCell { Value = moduleInfoDataGridView.Rows[row].Cells[1].Value, TrackVisitedState = false };
+				if (Env.IsWindows10S)
+					moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, fileInfo.FileName);
+				else
+				{
+					int row = moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, fileInfo.FileName);
+					moduleInfoDataGridView.Rows[row].Cells[1] = new KryptonDataGridViewLinkCell { Value = moduleInfoDataGridView.Rows[row].Cells[1].Value, TrackVisitedState = false };
+				}
 
 				// Add player specific items
 				if (floatingInfo.ModuleInformation != null)
