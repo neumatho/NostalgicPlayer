@@ -3809,6 +3809,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						{
 							moduleListBox.EndUpdate();
 						}
+
+						// Update the controls
+						UpdateListCount();
+						UpdateTimes();
+						UpdateTapeDeck();
 					}
 				}
 			}
