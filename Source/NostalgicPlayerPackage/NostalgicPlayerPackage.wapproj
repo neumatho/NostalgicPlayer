@@ -68,16 +68,16 @@
     <Content Include="..\Clients\NostalgicPlayer\bin\$(Platform)\$(Configuration)\net5.0-windows\NostalgicPlayerLibrary_Native-$(Platform).dll">
       <Link>NostalgicPlayer\NostalgicPlayerLibrary_Native-$(Platform).dll</Link>
     </Content>
-    <Content Include="..\Clients\NostalgicPlayer\bin\net5.0-windows\Agents\Output\*.dll">
+    <Content Include="..\Clients\NostalgicPlayer\bin\$(Platform)\$(Configuration)\net5.0-windows\Agents\Output\*.dll">
       <Link>NostalgicPlayer\Agents\Output\%(Filename)%(Extension)</Link>
     </Content>
-    <Content Include="..\Clients\NostalgicPlayer\bin\net5.0-windows\Agents\Players\*.dll">
+    <Content Include="..\Clients\NostalgicPlayer\bin\$(Platform)\$(Configuration)\net5.0-windows\Agents\Players\*.dll">
       <Link>NostalgicPlayer\Agents\Players\%(Filename)%(Extension)</Link>
     </Content>
-    <Content Include="..\Clients\NostalgicPlayer\bin\net5.0-windows\Agents\SampleConverters\*.dll">
+    <Content Include="..\Clients\NostalgicPlayer\bin\$(Platform)\$(Configuration)\net5.0-windows\Agents\SampleConverters\*.dll">
       <Link>NostalgicPlayer\Agents\SampleConverters\%(Filename)%(Extension)</Link>
     </Content>
-    <Content Include="..\Clients\NostalgicPlayer\bin\net5.0-windows\Agents\Visuals\*.dll">
+    <Content Include="..\Clients\NostalgicPlayer\bin\$(Platform)\$(Configuration)\net5.0-windows\Agents\Visuals\*.dll">
       <Link>NostalgicPlayer\Agents\Visuals\%(Filename)%(Extension)</Link>
     </Content>
     <Content Include="Images\LargeTile.scale-100.png" />
