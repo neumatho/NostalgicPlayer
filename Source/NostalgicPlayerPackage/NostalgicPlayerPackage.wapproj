@@ -65,8 +65,8 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\Clients\NostalgicPlayer\bin\net5.0-windows\NostalgicPlayerLibrary_Native-$(platform).dll">
-      <Link>NostalgicPlayer\NostalgicPlayerLibrary_Native-$(platform).dll</Link>
+    <Content Include="..\Clients\NostalgicPlayer\bin\$(Platform)\$(Configuration)\net5.0-windows\NostalgicPlayerLibrary_Native-$(Platform).dll">
+      <Link>NostalgicPlayer\NostalgicPlayerLibrary_Native-$(Platform).dll</Link>
     </Content>
     <Content Include="..\Clients\NostalgicPlayer\bin\net5.0-windows\Agents\Output\*.dll">
       <Link>NostalgicPlayer\Agents\Output\%(Filename)%(Extension)</Link>

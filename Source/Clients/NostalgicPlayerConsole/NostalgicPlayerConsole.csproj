@@ -13,7 +13,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>bin\NostalgicPlayerConsole.xml</DocumentationFile>
-    <OutputPath>bin</OutputPath>
+    <OutputPath></OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -21,7 +21,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
-    <OutputPath>bin</OutputPath>
+    <OutputPath></OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,7 +33,7 @@
   </Target>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /Y $(SolutionDir)NostalgicPlayerLibrary_Native\bin\ $(TargetDir)&#xD;&#xA;$(SolutionDir)Clients\CopyAgents.bat &quot;$(TargetDir)&quot; &quot;$(SolutionDir)" />
+    <Exec Command="xcopy /Y $(SolutionDir)NostalgicPlayerLibrary_Native\bin\ $(TargetDir)&#xD;&#xA;$(SolutionDir)Clients\CopyAgents.bat &quot;$(TargetDir)&quot; &quot;$(SolutionDir)&quot; $(ConfigurationName)" />
   </Target>
 
 </Project>
