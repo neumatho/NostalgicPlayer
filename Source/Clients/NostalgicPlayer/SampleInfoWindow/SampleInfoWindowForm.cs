@@ -213,6 +213,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 					});
 
 				sampleDataGridView.Sort(sampleDataGridView.Columns[settings.SampSortKey], Enum.Parse<ListSortDirection>(settings.SampSortOrder.ToString()));
+
+				// Make sure that the content is up-to date
+				RefreshWindow();
 			}
 		}
 

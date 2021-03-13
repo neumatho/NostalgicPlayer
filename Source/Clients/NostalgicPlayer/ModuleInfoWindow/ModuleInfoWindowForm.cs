@@ -76,8 +76,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 						Width = settings.Column2Width
 					});
 
-				// Add the items in the list
-				AddItems();
+				// Make sure that the content is up-to date
+				RefreshWindow();
 			}
 		}
 
