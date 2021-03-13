@@ -5,6 +5,8 @@ NostalgicPlayer is a program that can play these modules. NostalgicPlayer is a W
 
 Please enjoy this program, and support the development by giving any feedback (bug reports and flattering comments :-))
 
+You can find an installation package on Microsoft Store, just search after NostalgicPlayer.
+
 # Structure
 
 The player is structured, so it is easy to create your own user interface around the logic. All the main logic is in the *NostalgicPlayerLibrary* and *NostalgicPlayerKit*. The later is used by the agents to communicate with the player.
