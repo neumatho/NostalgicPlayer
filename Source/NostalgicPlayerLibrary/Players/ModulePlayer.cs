@@ -93,6 +93,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			}
 			catch (Exception)
 			{
+				CleanupPlayer();
+
 				errorMessage = Resources.IDS_ERR_PLAYER_INIT;
 				initOk = false;
 			}
@@ -123,6 +125,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 					// Unsubscribe the events
 					currentPlayer.PositionChanged -= Player_PositionChanged;
+					currentPlayer.EndReached -= Player_EndReached;
+					currentPlayer.ModuleInfoChanged -= Player_ModuleInfoChanged;
 
 					currentPlayer = null;
 
@@ -465,7 +469,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				pos = itemStr.IndexOf('#');
 				if (pos != -1)
 				{
-					if ((itemStr.Length < (pos + 5)) || ((itemStr.Length >= (pos + 5)) && (itemStr.Substring(pos + 1, 4).ToLower() != "from")))
+					if ((itemStr.Length >= (pos + 5)) && (itemStr.Substring(pos + 1, 4).ToLower() == "from"))
+						startPos = pos + 5;
+					else
 					{
 						startPos = pos + 1;
 
