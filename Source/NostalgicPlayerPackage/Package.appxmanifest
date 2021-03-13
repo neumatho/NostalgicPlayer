@@ -46,6 +46,26 @@
         </uap:DefaultTile >
         <uap:SplashScreen Image="Images\SplashScreen.png"/>
       </uap:VisualElements>
+      <Extensions>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="modulefile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-jam">.jam</uap:FileType>
+              <uap:FileType ContentType="audio/x-mod">.mod</uap:FileType>
+              <uap:FileType ContentType="audio/x-mtm">.mtm</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Audio file</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="listfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="text/x-npml">.npml</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>NostalgicPlayer list file</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+      </Extensions>
     </Application>
   </Applications>
 

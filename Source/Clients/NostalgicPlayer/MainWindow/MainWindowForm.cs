@@ -52,6 +52,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			public bool Enabled;
 		}
 
+		private static MainWindowForm self;
+
 		private Manager agentManager;
 		private ModuleHandler moduleHandler;
 
@@ -121,6 +123,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			InitializeComponent();
 
+			// Remember my self
+			self = this;
+
 			// Some controls need to be initialized here, since the
 			// designer remove the properties
 			positionTrackBar.BackStyle = PaletteBackStyle.SeparatorLowProfile;
@@ -154,12 +159,29 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				// Initialize main window
 				SetupControls();
-
-				// Create other windows
-				CreateWindows();
 			}
 
 			SetupHandlers();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is call if a second instance of the application is started. This
+		/// method is called from the first instance and will get the
+		/// arguments from the second instance
+		/// </summary>
+		/********************************************************************/
+		public static void StartupHandler(string[] arguments)
+		{
+			if (arguments.Length > 0)
+			{
+				self.AddFilesToList(arguments, checkForList: true);
+
+				if (!self.moduleHandler.IsModuleLoaded)
+					self.LoadAndPlayModule(0);
+			}
 		}
 
 
@@ -521,7 +543,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private void SetupHandlers()
 		{
 			// Form
-			Load += MainWindowForm_Load;
 			Shown += MainWindowForm_Shown;
 			Resize += MainWindowForm_Resize;
 			FormClosed += MainWindowForm_FormClosed;
@@ -829,23 +850,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		#region Form events
 		/********************************************************************/
 		/// <summary>
-		/// Is called when the form has been loaded
-		/// </summary>
-		/********************************************************************/
-		private void MainWindowForm_Load(object sender, EventArgs e)
-		{
-			RetrieveStartupFiles();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Is called when the form is shown for the first time
 		/// </summary>
 		/********************************************************************/
 		private void MainWindowForm_Shown(object sender, EventArgs e)
 		{
+			// Create other windows
+			CreateWindows();
+
 			// Check if this is a new version of the application
 			string directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Polycode\NostalgicPlayer");
 			string versionFile = Path.Combine(directory, "CurrentVersion.txt");
@@ -861,6 +873,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				File.WriteAllText(versionFile, currentVersion);
 			}
+
+			RetrieveStartupFiles();
 		}
 
 
@@ -2415,18 +2429,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
-		/// Check to see if NostalgicPlayer has started normally or not
-		/// </summary>
-		/********************************************************************/
-		private bool StartedNormally()//XX
-		{
-			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Initialize the sub-songs variables
 		/// </summary>
 		/********************************************************************/
@@ -2468,54 +2470,45 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// list when starting up
 		/// </summary>
 		/********************************************************************/
-		private void RetrieveStartupFiles()//XX
+		private void RetrieveStartupFiles()
 		{
-			// First check if we started normally or not.
-			// A non-normal start is when the user clicked on a module
-			// in the File Explorer when NostalgicPlayer is not running
-			if (StartedNormally())
+			using (new SleepCursor())
 			{
-				// Call Invoke, so the main window is showing before
-				// start to scan
-				BeginInvoke(new Action(() =>
+				// Get the start scan path
+				string path = pathSettings.StartScan;
+
+				// Add the files in the module list if there is any path
+				if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
 				{
-					using (new SleepCursor())
+					// Add all the files in the directory
+					List<ModuleListItem> itemList = new List<ModuleListItem>();
+					AddDirectoryToList(path, itemList, false);
+
+					if (itemList.Count > 0)
 					{
-						// Get the start scan path
-						string path = pathSettings.StartScan;
+						// Add the items to the list
+						moduleListBox.BeginUpdate();
 
-						// Add the files in the module list if there is any path
-						if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
+						try
 						{
-							// Add all the files in the directory
-							List<ModuleListItem> itemList = new List<ModuleListItem>();
-							AddDirectoryToList(path, itemList, false);
-
-							if (itemList.Count > 0)
-							{
-								// Add the items to the list
-								moduleListBox.BeginUpdate();
-
-								try
-								{
-									moduleListBox.Items.AddRange(itemList.ToArray());
-								}
-								finally
-								{
-									moduleListBox.EndUpdate();
-								}
-
-								// Update the window
-								UpdateListCount();
-								UpdateTimes();
-								UpdateTapeDeck();
-
-								// Load and play the first module
-								LoadAndPlayModule(0);
-							}
+							moduleListBox.Items.AddRange(itemList.ToArray());
 						}
+						finally
+						{
+							moduleListBox.EndUpdate();
+						}
+
+						// Update the window
+						UpdateListCount();
+						UpdateTimes();
+						UpdateTapeDeck();
+
+						// Load and play the first module
+						LoadAndPlayModule(0);
 					}
-				}));
+				}
+
+				StartupHandler(Environment.GetCommandLineArgs().Skip(1).ToArray());
 			}
 		}
 
