@@ -274,7 +274,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			using (CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error))
 			{
 				dialog.AddButton(Resources.IDS_BUT_OK, 'O');
-				dialog.ShowDialog();
+				dialog.ShowDialog(this);
 			}
 		}
 
@@ -292,7 +292,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				dialog.AddButton(Resources.IDS_BUT_SKIP, 'S');
 				dialog.AddButton(Resources.IDS_BUT_SKIPREMOVE, 'r');
 				dialog.AddButton(Resources.IDS_BUT_STOP, 'p');
-				dialog.ShowDialog();
+				dialog.ShowDialog(this);
 				char response = dialog.GetButtonResult();
 
 				switch (response)
