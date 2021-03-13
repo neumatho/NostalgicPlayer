@@ -1,7 +1,7 @@
 ﻿
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 {
-	partial class HelpWindowForm
+	partial class NewVersionWindowForm
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -30,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HelpWindowForm));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NewVersionWindowForm));
 			this.kryptonManager = new Krypton.Toolkit.KryptonManager(this.components);
 			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
 			this.label = new Krypton.Toolkit.KryptonLabel();
@@ -47,20 +47,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 			// 
 			this.label.Location = new System.Drawing.Point(8, 8);
 			this.label.Name = "label";
-			this.controlResource.SetResourceKey(this.label, "IDS_HELP_MESSAGE");
-			this.label.Size = new System.Drawing.Size(275, 33);
+			this.controlResource.SetResourceKey(this.label, "IDS_NEWVERSION_MESSAGE");
+			this.label.Size = new System.Drawing.Size(351, 47);
 			this.label.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.label.TabIndex = 0;
-			this.label.Values.Text = "To read the documentation, open a browser and\r\nnavigate to the official webpage w" +
-    "hich is:";
+			this.label.Values.Text = "Congratulations! A new version of NostalgicPlayer has been\r\ninstalled. Copy the U" +
+    "RL below and insert into a browser to see\r\nwhat is new.";
 			// 
 			// urlTextBox
 			// 
-			this.urlTextBox.Location = new System.Drawing.Point(25, 47);
+			this.urlTextBox.Location = new System.Drawing.Point(12, 67);
 			this.urlTextBox.Name = "urlTextBox";
 			this.urlTextBox.ReadOnly = true;
-			this.controlResource.SetResourceKey(this.urlTextBox, "IDS_HELP_URL");
-			this.urlTextBox.Size = new System.Drawing.Size(221, 16);
+			this.controlResource.SetResourceKey(this.urlTextBox, null);
+			this.urlTextBox.Size = new System.Drawing.Size(360, 16);
 			this.urlTextBox.StateCommon.Back.Color1 = System.Drawing.SystemColors.Control;
 			this.urlTextBox.StateCommon.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
 			this.urlTextBox.StateCommon.Content.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -71,17 +71,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 			// kryptonButton1
 			// 
 			this.kryptonButton1.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.kryptonButton1.Location = new System.Drawing.Point(182, 85);
+			this.kryptonButton1.Location = new System.Drawing.Point(282, 105);
 			this.kryptonButton1.Name = "kryptonButton1";
 			this.controlResource.SetResourceKey(this.kryptonButton1, "IDS_BUT_OK");
 			this.kryptonButton1.Size = new System.Drawing.Size(90, 25);
 			this.kryptonButton1.TabIndex = 2;
 			this.kryptonButton1.Values.Text = "Ok";
 			// 
-			// HelpWindowForm
+			// NewVersionWindowForm
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(284, 122);
+			this.ClientSize = new System.Drawing.Size(384, 142);
 			this.Controls.Add(this.kryptonButton1);
 			this.Controls.Add(this.urlTextBox);
 			this.Controls.Add(this.label);
@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
-			this.Name = "HelpWindowForm";
+			this.Name = "NewVersionWindowForm";
 			this.controlResource.SetResourceKey(this, null);
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

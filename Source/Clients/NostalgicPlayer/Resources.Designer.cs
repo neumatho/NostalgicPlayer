@@ -850,6 +850,35 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Congratulations! A new version of NostalgicPlayer has been
+        ///installed. Copy the URL below and insert into a browser to see
+        ///what is new..
+        /// </summary>
+        internal static string IDS_NEWVERSION_MESSAGE {
+            get {
+                return ResourceManager.GetString("IDS_NEWVERSION_MESSAGE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New version.
+        /// </summary>
+        internal static string IDS_NEWVERSION_TITLE {
+            get {
+                return ResourceManager.GetString("IDS_NEWVERSION_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://www.nostalgicplayer.dk/history.html#{0}.
+        /// </summary>
+        internal static string IDS_NEWVERSION_URL {
+            get {
+                return ResourceManager.GetString("IDS_NEWVERSION_URL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to None installed.
         /// </summary>
         internal static string IDS_NO_AGENTS {

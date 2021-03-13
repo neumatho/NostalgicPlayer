@@ -13,21 +13,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 	/// <summary>
 	/// This shows the help documentation
 	/// </summary>
-	public partial class HelpWindowForm : KryptonForm
+	public partial class NewVersionWindowForm : KryptonForm
 	{
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public HelpWindowForm()
+		public NewVersionWindowForm()
 		{
 			InitializeComponent();
 
 			if (!DesignMode)
 			{
 				// Set the title of the window
-				Text = Resources.IDS_HELP_TITLE;
+				Text = Resources.IDS_NEWVERSION_TITLE;
+				urlTextBox.Text = string.Format(Resources.IDS_NEWVERSION_URL, Env.CurrentVersion);
 			}
 		}
 	}

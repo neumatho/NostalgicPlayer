@@ -6,6 +6,8 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System;
+using System.Reflection;
 using Microsoft.Win32;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer
@@ -34,5 +36,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 			}
 		}
 		private static bool? windows10S = null;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return current version of the player
+		/// </summary>
+		/********************************************************************/
+		public static string CurrentVersion
+		{
+			get
+			{
+				Version ver = Assembly.GetExecutingAssembly().GetName().Version;
+				return $"{ver.Major}.{ver.Minor}.{ver.Build}";
+			}
+		}
 	}
 }

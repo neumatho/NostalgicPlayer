@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
@@ -423,8 +422,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 												// Append NostalgicPlayer version number
 												case 'V':
 												{
-													Version ver = Assembly.GetExecutingAssembly().GetName().Version;
-													str = str.Substring(2) + $" {ver.Major}.{ver.Minor}.{ver.Build}";
+													str = str.Substring(2) + " " + Env.CurrentVersion;
 													break;
 												}
 

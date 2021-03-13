@@ -522,6 +522,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			// Form
 			Load += MainWindowForm_Load;
+			Shown += MainWindowForm_Shown;
 			Resize += MainWindowForm_Resize;
 			FormClosed += MainWindowForm_FormClosed;
 
@@ -834,6 +835,32 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private void MainWindowForm_Load(object sender, EventArgs e)
 		{
 			RetrieveStartupFiles();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the form is shown for the first time
+		/// </summary>
+		/********************************************************************/
+		private void MainWindowForm_Shown(object sender, EventArgs e)
+		{
+			// Check if this is a new version of the application
+			string directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Polycode\NostalgicPlayer");
+			string versionFile = Path.Combine(directory, "CurrentVersion.txt");
+
+			string currentVersion = Env.CurrentVersion;
+
+			if (!File.Exists(versionFile) || (File.ReadAllText(versionFile) != currentVersion))
+			{
+				using (NewVersionWindowForm dialog = new NewVersionWindowForm())
+				{
+					dialog.ShowDialog();
+				}
+
+				File.WriteAllText(versionFile, currentVersion);
+			}
 		}
 
 
