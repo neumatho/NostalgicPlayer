@@ -179,35 +179,54 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 				// Well, we do only need to save if the settings has been changed
 				if (changed)
 				{
-					// Open the file
-					using (StreamWriter sw = new StreamWriter(fullPath, false, Encoding.UTF8))
+					bool tryAgain;
+
+					do
 					{
-						bool firstSection = true;
+						tryAgain = false;
 
-						foreach (LineInfo lineInfo in lineList)
+						try
 						{
-							// If the type is a section, we need to write an empty
-							// line before it, except if it is the first section
-							if (lineInfo.Type == LineType.Section)
+							// Open the file
+							using (StreamWriter sw = new StreamWriter(fullPath, false, Encoding.UTF8))
 							{
-								if (!firstSection)
-								{
-									// Write an empty line
-									sw.WriteLine();
-								}
-								else
-									firstSection = false;
+								bool firstSection = true;
 
-								// Write the section name
-								sw.WriteLine($"[{lineInfo.Line}]");
+								foreach (LineInfo lineInfo in lineList)
+								{
+									// If the type is a section, we need to write an empty
+									// line before it, except if it is the first section
+									if (lineInfo.Type == LineType.Section)
+									{
+										if (!firstSection)
+										{
+											// Write an empty line
+											sw.WriteLine();
+										}
+										else
+											firstSection = false;
+
+										// Write the section name
+										sw.WriteLine($"[{lineInfo.Line}]");
+									}
+									else
+									{
+										// Write the line itself
+										sw.WriteLine(lineInfo.Line);
+									}
+								}
 							}
-							else
+						}
+						catch (IOException ex)
+						{
+							if ((ex.HResult & 0xffff) == 0x0020)        // ERROR_SHARING_VIOLATION
 							{
-								// Write the line itself
-								sw.WriteLine(lineInfo.Line);
+								Thread.Sleep(100);
+								tryAgain = true;
 							}
 						}
 					}
+					while (tryAgain);
 
 					// The settings has been saved, reset the change variable
 					changed = false;
