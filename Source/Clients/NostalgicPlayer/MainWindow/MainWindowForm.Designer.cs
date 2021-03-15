@@ -37,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.infoGroup = new Krypton.Toolkit.KryptonGroup();
 			this.moduleInfoButton = new Krypton.Toolkit.KryptonButton();
 			this.masterVolumeTrackBar = new Krypton.Toolkit.KryptonTrackBar();
-			this.moduleListBox = new Krypton.Toolkit.KryptonListBox();
+			this.moduleListBox = new ModuleListControl();
 			this.listButtonsGroup = new Krypton.Toolkit.KryptonGroup();
 			this.diskButton = new Krypton.Toolkit.KryptonButton();
 			this.listButton = new Krypton.Toolkit.KryptonButton();
@@ -291,6 +291,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			this.positionTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.positionTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.SeparatorLowProfile;
 			this.positionTrackBar.DrawBackground = true;
 			this.positionTrackBar.Location = new System.Drawing.Point(4, 216);
 			this.positionTrackBar.Maximum = 100;
@@ -500,7 +501,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private Krypton.Toolkit.KryptonGroup infoGroup;
 		private KryptonButton moduleInfoButton;
 		private KryptonTrackBar masterVolumeTrackBar;
-		private KryptonListBox moduleListBox;
+		private ModuleListControl moduleListBox;
 		private KryptonGroup listButtonsGroup;
 		private KryptonButton addModuleButton;
 		private KryptonButton removeModuleButton;

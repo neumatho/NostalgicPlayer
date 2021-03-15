@@ -68,6 +68,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.generalGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.generalGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			this.generalGroupBox.Location = new System.Drawing.Point(8, 4);
 			this.generalGroupBox.Name = "generalGroupBox";
 			// 
@@ -96,6 +97,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			// stereoSeparationTrackBar
 			// 
+			this.stereoSeparationTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.InputControlStandalone;
 			this.stereoSeparationTrackBar.DrawBackground = true;
 			this.stereoSeparationTrackBar.Location = new System.Drawing.Point(106, 0);
 			this.stereoSeparationTrackBar.Maximum = 100;
@@ -143,6 +145,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.outputGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.outputGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			this.outputGroupBox.Location = new System.Drawing.Point(8, 87);
 			this.outputGroupBox.Name = "outputGroupBox";
 			// 
@@ -200,6 +203,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.channelsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.channelsGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			this.channelsGroupBox.Location = new System.Drawing.Point(8, 199);
 			this.channelsGroupBox.Name = "channelsGroupBox";
 			// 

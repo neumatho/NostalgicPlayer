@@ -52,17 +52,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			public bool Enabled;
 		}
 
-		private static MainWindowForm self;
+		public static MainWindowForm self;//XX
 
 		private Manager agentManager;
 		private ModuleHandler moduleHandler;
 
+		// Settings
 		private Settings userSettings;
+		private OptionSettings optionSettings;
 		private PathSettings pathSettings;
 		private SoundSettings soundSettings;
 
 		private MainWindowSettings mainWindowSettings;
 
+		// File dialogs
 		private OpenFileDialog moduleFileDialog;
 		private OpenFileDialog loadListFileDialog;
 		private SaveFileDialog saveListFileDialog;
@@ -105,6 +108,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private readonly Random rnd;
 		private readonly List<int> randomList;
 
+		private long lastAddedTimeFromExplorer = 0;
+
 		// Other windows
 		private AboutWindowForm aboutWindow = null;
 		private SettingsWindowForm settingsWindow = null;
@@ -125,10 +130,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			// Remember my self
 			self = this;
-
-			// Some controls need to be initialized here, since the
-			// designer remove the properties
-			positionTrackBar.BackStyle = PaletteBackStyle.SeparatorLowProfile;
 
 			// Enable drag'n'drop
 			moduleListBox.ListBox.AllowDrop = true;
@@ -176,14 +177,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		public static void StartupHandler(string[] arguments)
 		{
 			if (arguments.Length > 0)
-			{
-				self.AddFilesToList(arguments, checkForList: true);
-
-				if (!self.moduleHandler.IsModuleLoaded)
-					self.LoadAndPlayModule(0);
-			}
+				self.AddFilesFromStartupHandler(arguments);
 		}
 
+
+		public KryptonListBox xx()//XX
+		{
+			return moduleListBox;
+		}
 
 
 		/********************************************************************/
@@ -418,6 +419,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		public void StopModule()
 		{
 			StopAndFreeModule();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Enable/disable user interface settings
+		/// </summary>
+		/********************************************************************/
+		public void EnableUserInterfaceSettings()
+		{
+			using (new SleepCursor())
+			{
+				toolTip.Active = optionSettings.ToolTips;
+
+				SetTitle();
+				moduleListBox.EnableListNumber(optionSettings.ShowListNumber);
+			}
 		}
 
 		#region Agent window handling
@@ -859,8 +878,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			CreateWindows();
 
 			// Check if this is a new version of the application
-			string directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Polycode\NostalgicPlayer");
-			string versionFile = Path.Combine(directory, "CurrentVersion.txt");
+			string versionFile = Path.Combine(Settings.SettingsDirectory, "CurrentVersion.txt");
 
 			string currentVersion = Env.CurrentVersion;
 
@@ -966,17 +984,39 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		private void MainWindowForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
-			// Stop any playing modules
-			StopAndFreeModule();
+			using (new SleepCursor())
+			{
+				// Remember list/module properties
+				int rememberSelected, rememberPosition, rememberSong;
 
-			// Close all windows
-			CloseWindows();
+				if (moduleHandler.IsModuleLoaded)
+				{
+					rememberSelected = moduleListBox.Items.IndexOf(playItem);
+					rememberPosition = moduleHandler.PlayingModuleInformation.SongPosition;
+					rememberSong = moduleHandler.PlayingModuleInformation.CurrentSong;
+				}
+				else
+				{
+					rememberSelected = -1;
+					rememberPosition = -1;
+					rememberSong = -1;
+				}
 
-			// Stop the module handler
-			CleanupModuleHandler();
+				// Stop any playing modules
+				StopAndFreeModule();
 
-			// Save and cleanup the settings
-			CleanupSettings();
+				// Close all windows
+				CloseWindows();
+
+				// Stop the module handler
+				CleanupModuleHandler();
+
+				// Remember the module list
+				RememberModuleList(rememberSelected, rememberPosition, rememberSong);
+
+				// Save and cleanup the settings
+				CleanupSettings();
+			}
 		}
 		#endregion
 
@@ -1505,6 +1545,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				}
 				else if (e.Data.GetDataPresent(DataFormats.FileDrop))
 				{
+					int jumpNumber = -1;
+
 					// File or directory dragged from File Explorer
 					string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
@@ -1512,6 +1554,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					{
 						case FileDropType.Append:
 						{
+							jumpNumber = moduleListBox.Items.Count;
+
 							AddFilesToList(files, checkForList: true);
 							break;
 						}
@@ -1529,9 +1573,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 						case FileDropType.Insert:
 						{
+							jumpNumber = indexOfItemUnderMouseToDrop == -1 ? 0 : indexOfItemUnderMouseToDrop;
 							AddFilesToList(files, indexOfItemUnderMouseToDrop, true);
 							break;
 						}
+					}
+
+					if ((jumpNumber != -1) && optionSettings.AddJump)
+					{
+						// Stop playing any modules and load the first added one
+						StopAndFreeModule();
+						LoadAndPlayModule(jumpNumber);
 					}
 				}
 			}
@@ -1733,20 +1785,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			{
 				using (new SleepCursor())
 				{
-//XX				int jumpNumber;
+					int jumpNumber;
 
 					// Get the selected item
 					int selected = moduleListBox.SelectedIndex;
 					if (selected < 0)
 					{
 						selected = -1;
-	//XX					jumpNumber = moduleListBox.Items.Count;
+						jumpNumber = moduleListBox.Items.Count;
 					}
-	//XX				else
-	//XX					jumpNumber = selected;
+					else
+						jumpNumber = selected;
 
 					// Add all the files in the module list
 					AddFilesToList(moduleFileDialog.FileNames, selected);
+
+					// Should we load the first added module?
+					if (optionSettings.AddJump)
+					{
+						// Stop playing any modules and load the first added one
+						StopAndFreeModule();
+						LoadAndPlayModule(jumpNumber);
+					}
 				}
 			}
 		}
@@ -1904,7 +1964,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				try
 				{
-					ModuleListItem[] newList = moduleListBox.Items.Cast<ModuleListItem>().OrderBy(i => i.ShortText).ToArray();
+					ModuleListItem[] newList = moduleListBox.Items.Cast<ModuleListItem>().OrderBy(i => i).ToArray();
 
 					moduleListBox.Items.Clear();
 					moduleListBox.Items.AddRange(newList);
@@ -1931,7 +1991,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				try
 				{
-					ModuleListItem[] newList = moduleListBox.Items.Cast<ModuleListItem>().OrderByDescending(i => i.ShortText).ToArray();
+					ModuleListItem[] newList = moduleListBox.Items.Cast<ModuleListItem>().OrderByDescending(i => i).ToArray();
 
 					moduleListBox.Items.Clear();
 					moduleListBox.Items.AddRange(newList);
@@ -2050,20 +2110,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			{
 				using (new SleepCursor())
 				{
-//XX				int jumpNumber;
+					int jumpNumber;
 
 					// Get the selected item
 					int selected = moduleListBox.SelectedIndex;
 					if (selected < 0)
 					{
 						selected = -1;
-	//XX					jumpNumber = moduleListBox.Items.Count;
+						jumpNumber = moduleListBox.Items.Count;
 					}
-	//XX				else
-	//XX					jumpNumber = selected;
+					else
+						jumpNumber = selected;
 
 					// Load the file into the module list
 					LoadModuleList(loadListFileDialog.FileName, selected);
+
+					// Should we load the first added module?
+					if (optionSettings.AddJump)
+					{
+						// Stop playing any modules and load the first added one
+						StopAndFreeModule();
+						LoadAndPlayModule(jumpNumber);
+					}
 				}
 			}
 		}
@@ -2474,42 +2542,115 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			using (new SleepCursor())
 			{
+				bool loadList = false;
+
 				// Get the start scan path
 				string path = pathSettings.StartScan;
 
-				// Add the files in the module list if there is any path
-				if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
+				if (optionSettings.RememberList)
 				{
-					// Add all the files in the directory
-					List<ModuleListItem> itemList = new List<ModuleListItem>();
-					AddDirectoryToList(path, itemList, false);
+					string fileName = Path.Combine(Settings.SettingsDirectory, "___RememberList.npml");
 
-					if (itemList.Count > 0)
+					if (File.Exists(fileName))
 					{
-						// Add the items to the list
-						moduleListBox.BeginUpdate();
+						loadList = true;
 
-						try
+						// Load the list
+						LoadModuleList(fileName);
+
+						// Get the remember information
+						RememberListSettings infoSettings = new RememberListSettings();
+
+						// Load the module if anyone was selected
+						if (infoSettings.ListPosition != -1)
 						{
-							moduleListBox.Items.AddRange(itemList.ToArray());
+							// Load module into memory
+							LoadAndPlayModule(infoSettings.ListPosition, infoSettings.SubSong, infoSettings.ModulePosition);
 						}
-						finally
+					}
+				}
+
+				// If we haven't loaded any remembered module list, then check
+				// to see if the user have a "start path"
+				if (!loadList)
+				{
+					// Add the files in the module list if there is any path
+					if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
+					{
+						// Add all the files in the directory
+						List<ModuleListItem> itemList = new List<ModuleListItem>();
+						AddDirectoryToList(path, itemList, false);
+
+						if (itemList.Count > 0)
 						{
-							moduleListBox.EndUpdate();
+							// Add the items to the list
+							moduleListBox.BeginUpdate();
+
+							try
+							{
+								moduleListBox.Items.AddRange(itemList.ToArray());
+							}
+							finally
+							{
+								moduleListBox.EndUpdate();
+							}
+
+							// Update the window
+							UpdateListCount();
+							UpdateTimes();
+							UpdateTapeDeck();
+
+							// Load and play the first module
+							LoadAndPlayModule(0);
 						}
-
-						// Update the window
-						UpdateListCount();
-						UpdateTimes();
-						UpdateTapeDeck();
-
-						// Load and play the first module
-						LoadAndPlayModule(0);
 					}
 				}
 
 				StartupHandler(Environment.GetCommandLineArgs().Skip(1).ToArray());
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Add given files from Explorer to the list
+		/// </summary>
+		/********************************************************************/
+		private void AddFilesFromStartupHandler(string[] arguments)
+		{
+			// Because Explorer calls the application for each file selected
+			// when multiple files are opened, we have a timeout for 1 second
+			// before we consider it as a new bunch
+			bool continuing = (DateTime.Now.Ticks - lastAddedTimeFromExplorer) < TimeSpan.TicksPerSecond;
+
+			// Get the previous number of items in the list
+			int listCount;
+
+			using (new SleepCursor())
+			{
+				// Check the "add to list" option
+				if (!optionSettings.AddToList && !continuing)
+				{
+					// Stop playing module if any
+					StopAndFreeModule();
+
+					// Clear the module list
+					EmptyList();
+				}
+
+				// Get the previous number of items in the list
+				listCount = moduleListBox.Items.Count;
+
+				// Add all the files to the module list
+				AddFilesToList(arguments, checkForList: true);
+			}
+
+			// Check if the added module should be loaded
+			if ((listCount == 0) || (optionSettings.AddJump && !continuing))
+				LoadAndPlayModule(listCount);
+
+			lastAddedTimeFromExplorer = DateTime.Now.Ticks;
 		}
 
 		#region Settings
@@ -2525,6 +2666,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			userSettings.LoadSettings();
 
 			// Setup setting wrappers
+			optionSettings = new OptionSettings(userSettings);
 			pathSettings = new PathSettings(userSettings);
 			soundSettings = new SoundSettings(userSettings);
 
@@ -2553,6 +2695,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			soundSettings = null;
 			pathSettings = null;
+			optionSettings = null;
 		}
 		#endregion
 
@@ -2564,9 +2707,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void SetupControls()
 		{
-			// Set the window title
-			SetNormalTitle();
-
 			// Create the menu
 			CreateMainMenu();
 
@@ -2586,6 +2726,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			// Print the module information
 			PrintInfo();
+
+			// Enable/disable user interface stuff
+			EnableUserInterfaceSettings();
 		}
 
 
@@ -2962,12 +3105,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Will set the window title to normal
+		/// Will set the window title
 		/// </summary>
 		/********************************************************************/
-		private void SetNormalTitle()
+		private void SetTitle()
 		{
-			Text = Resources.IDS_MAIN_TITLE;
+			string title = Resources.IDS_MAIN_TITLE;
+
+			// Show we change the title
+			if (optionSettings.ShowNameInTitle && moduleHandler.IsModuleLoaded)
+			{
+				string moduleName = moduleHandler.StaticModuleInformation.ModuleName;
+
+				if (string.IsNullOrEmpty(moduleName))
+					moduleName = Path.GetFileName(GetFileInfo().FileName);
+
+				title += " / " + moduleName;
+			}
+
+			Text = title;
 		}
 		#endregion
 
@@ -3005,6 +3161,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			// Print the module information
 			PrintInfo();
+
+			// Change the window title
+			SetTitle();
 
 			// Update the list item
 			SetTimeOnItem(playItem, songTotalTime);
@@ -3548,9 +3707,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Will load and play the given module
 		/// </summary>
 		/********************************************************************/
-		private void LoadAndPlayModule(int index)
+		private void LoadAndPlayModule(int index, int subSong = -1, int startPos = -1)
 		{
-			LoadAndPlayModule((ModuleListItem)moduleListBox.Items[index]);
+			LoadAndPlayModule((ModuleListItem)moduleListBox.Items[index], subSong, startPos);
 		}
 
 
@@ -3560,9 +3719,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Will load and play the given module
 		/// </summary>
 		/********************************************************************/
-		private void LoadAndPlayModule(ModuleListItem listItem)
+		private void LoadAndPlayModule(ModuleListItem listItem, int subSong = -1, int startPos = -1)
 		{
-			bool ok = moduleHandler.LoadAndPlayModule(listItem);
+			bool ok = moduleHandler.LoadAndPlayModule(listItem, subSong, startPos);
 			if (ok)
 			{
 				// Initialize other stuff in the window
@@ -3609,7 +3768,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			InitControls();
 
 			// Set the window title back to normal
-			SetNormalTitle();
+			SetTitle();
 
 			// Update the other windows
 			RefreshWindows();
@@ -3979,11 +4138,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			// And update the window
 			UpdateTimes();
-
-			// Update the "number of files" label
-			totalLabel.Text = "0/0";
-
-			// Update the tape deck
+			UpdateListCount();
 			UpdateTapeDeck();
 
 			// Clear the random list
@@ -4246,6 +4401,52 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			// Keep selection
 			moduleListBox.SetSelected(to, true);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will save the whole module list as a remember list
+		/// </summary>
+		/********************************************************************/
+		private void RememberModuleList(int selected, int position, int song)
+		{
+			try
+			{
+				string fileName = Path.Combine(Settings.SettingsDirectory, "___RememberList.npml");
+				RememberListSettings infoSettings = new RememberListSettings();
+
+				// Delete the file if it exists
+				if (File.Exists(fileName))
+					File.Delete(fileName);
+
+				infoSettings.DeleteSettings();
+
+				// Check if we should write the module list
+				if (optionSettings.RememberList && (moduleListBox.Items.Count > 0))
+				{
+					// Save the module list
+					SaveModuleList(fileName);
+
+					if (optionSettings.RememberListPosition)
+					{
+						infoSettings.ListPosition = selected;
+
+						if (optionSettings.RememberModulePosition)
+						{
+							infoSettings.ModulePosition = position;
+							infoSettings.SubSong = song;
+						}
+
+						infoSettings.SaveSettings();
+					}
+				}
+			}
+			catch (Exception)
+			{
+				// Ignore any kind of exception
+			}
 		}
 		#endregion
 

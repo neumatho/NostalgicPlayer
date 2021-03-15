@@ -216,7 +216,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/// Will load and play the module at the index given
 		/// </summary>
 		/********************************************************************/
-		public bool LoadAndPlayModule(ModuleListItem listItem, int subSong = -1, int startPos = -1)
+		public bool LoadAndPlayModule(ModuleListItem listItem, int subSong, int startPos)
 		{
 			// Start to free all loaded modules
 			FreeAllModules();

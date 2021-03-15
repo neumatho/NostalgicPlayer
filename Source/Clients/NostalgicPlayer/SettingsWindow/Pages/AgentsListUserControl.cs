@@ -51,14 +51,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		{
 			InitializeComponent();
 
-			// Some controls need to be initialized here, since the
-			// designer remove the properties
-			agentsDataGridView.StateCommon.HeaderColumn.Border.DrawBorders = PaletteDrawBorders.BottomRight;
-			agentsDataGridView.StateCommon.DataCell.Border.DrawBorders = PaletteDrawBorders.None;
-
-			descriptionDataGridView.StateCommon.HeaderColumn.Border.DrawBorders = PaletteDrawBorders.BottomRight;
-			descriptionDataGridView.StateCommon.DataCell.Border.DrawBorders = PaletteDrawBorders.None;
-
 			if (!DesignMode)
 			{
 				// Add the columns to the agent grid

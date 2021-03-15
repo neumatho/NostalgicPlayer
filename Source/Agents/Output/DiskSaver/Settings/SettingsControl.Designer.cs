@@ -254,6 +254,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			// 
 			// frequencyTrackBar
 			// 
+			this.frequencyTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.InputControlStandalone;
 			this.frequencyTrackBar.DrawBackground = true;
 			this.frequencyTrackBar.Location = new System.Drawing.Point(91, 0);
 			this.frequencyTrackBar.Maximum = 5;

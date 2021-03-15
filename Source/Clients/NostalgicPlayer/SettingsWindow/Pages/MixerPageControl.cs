@@ -51,15 +51,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		{
 			InitializeComponent();
 
-			// Some controls need to be initialized here, since the
-			// designer remove the properties
-			generalGroupBox.GroupBackStyle = PaletteBackStyle.TabLowProfile;
-			stereoSeparationTrackBar.BackStyle = PaletteBackStyle.InputControlStandalone;
-
-			outputGroupBox.GroupBackStyle = PaletteBackStyle.TabLowProfile;
-
-			channelsGroupBox.GroupBackStyle = PaletteBackStyle.TabLowProfile;
-
 			// Create channel checkboxes
 			channelCheckBoxes = new KryptonCheckBox[MaxNumberOfChannels];
 

@@ -43,6 +43,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			this.applyButton = new Krypton.Toolkit.KryptonButton();
 			this.cancelButton = new Krypton.Toolkit.KryptonButton();
 			this.okButton = new Krypton.Toolkit.KryptonButton();
+			this.navigatorOptionsPage = new Krypton.Navigator.KryptonPage();
+			this.optionsPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.OptionsPageControl();
 			((System.ComponentModel.ISupportInitialize)(this.navigator)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.navigatorPathsPage)).BeginInit();
 			this.navigatorPathsPage.SuspendLayout();
@@ -51,6 +53,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			((System.ComponentModel.ISupportInitialize)(this.navigatorAgentsPage)).BeginInit();
 			this.navigatorAgentsPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.navigatorOptionsPage)).BeginInit();
+			this.navigatorOptionsPage.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// navigator
@@ -61,6 +65,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			this.navigator.Location = new System.Drawing.Point(8, 8);
 			this.navigator.Name = "navigator";
 			this.navigator.Pages.AddRange(new Krypton.Navigator.KryptonPage[] {
+            this.navigatorOptionsPage,
             this.navigatorPathsPage,
             this.navigatorMixerPage,
             this.navigatorAgentsPage});
@@ -120,7 +125,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			this.mixerPageControl.Name = "mixerPageControl";
 			this.controlResource.SetResourceKey(this.mixerPageControl, null);
 			this.mixerPageControl.Size = new System.Drawing.Size(608, 348);
-			this.mixerPageControl.TabIndex = 4;
+			this.mixerPageControl.TabIndex = 0;
 			// 
 			// navigatorAgentsPage
 			// 
@@ -146,7 +151,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			this.agentsPageControl.Name = "agentsPageControl";
 			this.controlResource.SetResourceKey(this.agentsPageControl, null);
 			this.agentsPageControl.Size = new System.Drawing.Size(608, 348);
-			this.agentsPageControl.TabIndex = 4;
+			this.agentsPageControl.TabIndex = 0;
 			// 
 			// controlResource
 			// 
@@ -188,6 +193,32 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			this.okButton.Values.Text = "OK";
 			this.okButton.Click += new System.EventHandler(this.OkButton_Click);
 			// 
+			// navigatorOptionsPage
+			// 
+			this.navigatorOptionsPage.AutoHiddenSlideSize = new System.Drawing.Size(200, 200);
+			this.navigatorOptionsPage.Controls.Add(this.optionsPageControl);
+			this.navigatorOptionsPage.Flags = 65534;
+			this.navigatorOptionsPage.LastVisibleSet = true;
+			this.navigatorOptionsPage.MinimumSize = new System.Drawing.Size(50, 50);
+			this.navigatorOptionsPage.Name = "navigatorOptionsPage";
+			this.controlResource.SetResourceKey(this.navigatorOptionsPage, null);
+			this.navigatorOptionsPage.Size = new System.Drawing.Size(608, 348);
+			this.navigatorOptionsPage.Text = "";
+			this.navigatorOptionsPage.ToolTipTitle = "Page ToolTip";
+			this.navigatorOptionsPage.UniqueName = "d6822b271a6149e5ae2f577bfe34d8d6";
+			// 
+			// optionsPageControl
+			// 
+			this.optionsPageControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.optionsPageControl.BackColor = System.Drawing.Color.Transparent;
+			this.optionsPageControl.Location = new System.Drawing.Point(0, 0);
+			this.optionsPageControl.Name = "optionsPageControl";
+			this.controlResource.SetResourceKey(this.optionsPageControl, null);
+			this.optionsPageControl.Size = new System.Drawing.Size(608, 348);
+			this.optionsPageControl.TabIndex = 0;
+			// 
 			// SettingsWindowForm
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -212,6 +243,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			((System.ComponentModel.ISupportInitialize)(this.navigatorAgentsPage)).EndInit();
 			this.navigatorAgentsPage.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.navigatorOptionsPage)).EndInit();
+			this.navigatorOptionsPage.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -230,5 +263,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		private Pages.PathsPageControl pathsPageControl;
 		private Pages.MixerPageControl mixerPageControl;
 		private Pages.AgentsPageControl agentsPageControl;
+		private Krypton.Navigator.KryptonPage navigatorOptionsPage;
+		private Pages.OptionsPageControl optionsPageControl;
 	}
 }

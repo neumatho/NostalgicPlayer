@@ -33,10 +33,6 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 		{
 			InitializeComponent();
 
-			// Some controls need to be initialized here, since the
-			// designer remove the properties
-			frequencyTrackBar.BackStyle = PaletteBackStyle.InputControlStandalone;
-
 			// Add "None" to pass through
 			passThroughComboBox.Items.Add(new KryptonListItem(Resources.IDS_SETTINGS_PASSTHROUGH_NONE));
 

@@ -41,11 +41,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		{
 			InitializeComponent();
 
-			// Some controls need to be initialized here, since the
-			// designer remove the properties
-			moduleInfoDataGridView.StateCommon.HeaderColumn.Border.DrawBorders = PaletteDrawBorders.BottomRight;
-			moduleInfoDataGridView.StateCommon.DataCell.Border.DrawBorders = PaletteDrawBorders.None;
-
 			// Remember the arguments
 			this.moduleHandler = moduleHandler;
 			this.mainWindow = mainWindow;

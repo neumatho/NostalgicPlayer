@@ -75,6 +75,21 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 		/********************************************************************/
 		/// <summary>
+		/// Return the directory where settings are stored
+		/// </summary>
+		/********************************************************************/
+		public static string SettingsDirectory
+		{
+			get
+			{
+				return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Polycode\NostalgicPlayer");
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will load the setting file into memory
 		/// </summary>
 		/********************************************************************/
@@ -235,6 +250,35 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 			finally
 			{
 				listLock.ExitReadLock();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will delete the settings file if it exists
+		/// </summary>
+		/********************************************************************/
+		public void DeleteSettings()
+		{
+			// Lock the settings
+			listLock.EnterWriteLock();
+
+			try
+			{
+				// Find the settings file
+				string fullPath = SettingsFileName;
+
+				if (File.Exists(fullPath))
+					File.Delete(fullPath);
+
+				// Clear all data
+				lineList.Clear();
+			}
+			finally
+			{
+				listLock.ExitWriteLock();
 			}
 		}
 
@@ -562,8 +606,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		{
 			get
 			{
-				string directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), @"Polycode\NostalgicPlayer");
-				return Path.Combine(directory, component + ".ini");
+				return Path.Combine(SettingsDirectory, component + ".ini");
 			}
 		}
 

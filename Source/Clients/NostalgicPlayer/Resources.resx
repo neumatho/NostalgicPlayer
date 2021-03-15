@@ -594,6 +594,33 @@ what is new.</value>
   <data name="IDS_SETTINGS_OK" xml:space="preserve">
     <value>OK</value>
   </data>
+  <data name="IDS_SETTINGS_OPTIONS_ADDJUMP" xml:space="preserve">
+    <value>Jump to added module</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_ADDTOLIST" xml:space="preserve">
+    <value>Add to list as default</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_GENERAL" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_REMEMBERLIST" xml:space="preserve">
+    <value>Remember list on exit</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_REMEMBERLISTPOSITION" xml:space="preserve">
+    <value>Remember playing module</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_REMEMBERMODULEPOSITION" xml:space="preserve">
+    <value>Remember module position</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_SHOWLISTNUMBER" xml:space="preserve">
+    <value>Show item number in list</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_SHOWNAME" xml:space="preserve">
+    <value>Show module name in titlebar</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_TOOLTIPS" xml:space="preserve">
+    <value>Button tool tips</value>
+  </data>
   <data name="IDS_SETTINGS_PATHS_LISTPATH" xml:space="preserve">
     <value>List path</value>
   </data>
@@ -608,6 +635,9 @@ what is new.</value>
   </data>
   <data name="IDS_SETTINGS_TAB_MIXER" xml:space="preserve">
     <value>Mixer</value>
+  </data>
+  <data name="IDS_SETTINGS_TAB_OPTIONS" xml:space="preserve">
+    <value>Options</value>
   </data>
   <data name="IDS_SETTINGS_TAB_PATHS" xml:space="preserve">
     <value>Paths</value>

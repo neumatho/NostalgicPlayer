@@ -1329,6 +1329,87 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Jump to added module.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_ADDJUMP {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_ADDJUMP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add to list as default.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_ADDTOLIST {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_ADDTOLIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to General.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_GENERAL {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_GENERAL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remember list on exit.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_REMEMBERLIST {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_REMEMBERLIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remember playing module.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_REMEMBERLISTPOSITION {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_REMEMBERLISTPOSITION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remember module position.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_REMEMBERMODULEPOSITION {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_REMEMBERMODULEPOSITION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show item number in list.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_SHOWLISTNUMBER {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_SHOWLISTNUMBER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show module name in titlebar.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_SHOWNAME {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_SHOWNAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Button tool tips.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_TOOLTIPS {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_TOOLTIPS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to List path.
         /// </summary>
         internal static string IDS_SETTINGS_PATHS_LISTPATH {
@@ -1370,6 +1451,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_SETTINGS_TAB_MIXER {
             get {
                 return ResourceManager.GetString("IDS_SETTINGS_TAB_MIXER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Options.
+        /// </summary>
+        internal static string IDS_SETTINGS_TAB_OPTIONS {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_TAB_OPTIONS", resourceCulture);
             }
         }
         
