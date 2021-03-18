@@ -1383,6 +1383,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Scan added files.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_SCANFILES {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_SCANFILES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show item number in list.
         /// </summary>
         internal static string IDS_SETTINGS_OPTIONS_SHOWLISTNUMBER {
@@ -1406,6 +1415,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_SETTINGS_OPTIONS_TOOLTIPS {
             get {
                 return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_TOOLTIPS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use database to store module
+        ///information.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_USEDATABASE {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_USEDATABASE", resourceCulture);
             }
         }
         

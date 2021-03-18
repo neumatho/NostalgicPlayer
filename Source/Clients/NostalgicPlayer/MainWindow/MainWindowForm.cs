@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			public bool Enabled;
 		}
 
-		public static MainWindowForm self;//XX
+		private static MainWindowForm self;
 
 		private Manager agentManager;
 		private ModuleHandler moduleHandler;
@@ -103,6 +103,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		private bool restoreSelection = false;
 		private int[] savedSelection = new int[0];
+
+		// Different helper classes
+		private ModuleDatabase database;
+		private FileScanner fileScanner;
 
 		// Misc.
 		private readonly Random rnd;
@@ -160,6 +164,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				// Initialize main window
 				SetupControls();
+
+				// Initialize helper classes
+				database = new ModuleDatabase();
+
+				if ((new DateTime(optionSettings.LastCleanupTime).AddDays(7) < DateTime.Now))
+				{
+					database.StartCleanup();
+					optionSettings.LastCleanupTime = DateTime.Now.Ticks;
+				}
+
+				fileScanner = new FileScanner(moduleListBox, optionSettings, agentManager, database, this);
+				fileScanner.Start();
 			}
 
 			SetupHandlers();
@@ -180,11 +196,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				self.AddFilesFromStartupHandler(arguments);
 		}
 
-
-		public KryptonListBox xx()//XX
-		{
-			return moduleListBox;
-		}
 
 
 		/********************************************************************/
@@ -436,6 +447,47 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				SetTitle();
 				moduleListBox.EnableListNumber(optionSettings.ShowListNumber);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will change the time on the item given
+		/// </summary>
+		/********************************************************************/
+		public void SetTimeOnItem(ModuleListItem listItem, TimeSpan time)
+		{
+			if (listItem != null)
+			{
+				// Get the previous item time
+				TimeSpan prevTime = listItem.Time;
+
+				// Change the time on the item
+				listItem.Time = time;
+
+				// And update it in the list
+				moduleListBox.BeginUpdate();
+
+				try
+				{
+					moduleListBox.Invalidate(moduleListBox.GetItemRectangle(moduleListBox.Items.IndexOf(listItem)));
+				}
+				finally
+				{
+					moduleListBox.EndUpdate();
+				}
+
+				// Now calculate the new list time
+				listTime = listTime - prevTime + time;
+
+				// And show it
+				UpdateTimes();
+
+				// Update database if enabled
+				if (optionSettings.UseDatabase)
+					database.StoreInformation(listItem.ListItem.FullPath, new ModuleDatabaseInfo(time));
 			}
 		}
 
@@ -1008,11 +1060,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				// Close all windows
 				CloseWindows();
 
+				// Stop file scanner
+				fileScanner.Stop();
+				fileScanner = null;
+
 				// Stop the module handler
 				CleanupModuleHandler();
 
 				// Remember the module list
 				RememberModuleList(rememberSelected, rememberPosition, rememberSong);
+
+				// Save database
+				SaveDatabase();
 
 				// Save and cleanup the settings
 				CleanupSettings();
@@ -1825,9 +1884,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				RemoveSelectedItems();
 
 				// Update the controls
-				UpdateListCount();
-				UpdateTimes();
-				UpdateTapeDeck();
+				UpdateControls();
 			}
 		}
 
@@ -2596,9 +2653,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							}
 
 							// Update the window
-							UpdateListCount();
-							UpdateTimes();
-							UpdateTapeDeck();
+							UpdateControls();
 
 							// Load and play the first module
 							LoadAndPlayModule(0);
@@ -2608,6 +2663,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				StartupHandler(Environment.GetCommandLineArgs().Skip(1).ToArray());
 			}
+
+			// Tell the file scanner to scan the new items
+			fileScanner.ScanItems(0, moduleListBox.Items.Count);
 		}
 
 
@@ -2651,6 +2709,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				LoadAndPlayModule(listCount);
 
 			lastAddedTimeFromExplorer = DateTime.Now.Ticks;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Save the database to disk
+		/// </summary>
+		/********************************************************************/
+		private void SaveDatabase()
+		{
+			if (optionSettings.UseDatabase)
+				database.SaveDatabase();
+			else
+				database.DeleteDatabase();
 		}
 
 		#region Settings
@@ -3240,43 +3313,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Will change the time on the item given
-		/// </summary>
-		/********************************************************************/
-		private void SetTimeOnItem(ModuleListItem listItem, TimeSpan time)
-		{
-			if (listItem != null)
-			{
-				// Get the previous item time
-				TimeSpan prevTime = listItem.Time;
-
-				// Change the time on the item
-				listItem.Time = time;
-
-				// And update it in the list
-				moduleListBox.BeginUpdate();
-
-				try
-				{
-					moduleListBox.Invalidate(moduleListBox.GetItemRectangle(moduleListBox.Items.IndexOf(listItem)));
-				}
-				finally
-				{
-					moduleListBox.EndUpdate();
-				}
-
-				// Now calculate the new list time
-				listTime = listTime - prevTime + time;
-
-				// And show it
-				UpdateTimes();
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Will subtract the time from the item given from the list time
 		/// </summary>
 		/********************************************************************/
@@ -3285,6 +3321,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Subtract the item time
 			if (listItem.HaveTime)
 				listTime -= listItem.Time;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Update all user controls
+		/// </summary>
+		/********************************************************************/
+		private void UpdateControls()
+		{
+			UpdateListCount();
+			UpdateTimes();
+			UpdateTapeDeck();
 		}
 
 
@@ -3971,6 +4021,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs))
 							tempList.Add(ListItemConverter.Convert(info));
 
+						int currentCount = moduleListBox.Items.Count;
+
 						moduleListBox.BeginUpdate();
 
 						try
@@ -3981,7 +4033,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							{
 								for (int i = tempList.Count - 1; i >= 0; i--)
 									moduleListBox.Items.Insert(index, tempList[i]);
-
 							}
 						}
 						finally
@@ -3990,9 +4041,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						}
 
 						// Update the controls
-						UpdateListCount();
-						UpdateTimes();
-						UpdateTapeDeck();
+						UpdateControls();
+
+						// Tell the file scanner to scan the new items
+						fileScanner.ScanItems(index == -1 ? currentCount : index, tempList.Count);
 					}
 				}
 			}
@@ -4096,6 +4148,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				}
 			}
 
+			int currentCount = moduleListBox.Items.Count;
+
 			// Add the items to the list
 			moduleListBox.BeginUpdate();
 
@@ -4115,9 +4169,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 
 			// Update the controls
-			UpdateListCount();
-			UpdateTimes();
-			UpdateTapeDeck();
+			UpdateControls();
+
+			// Tell the file scanner to scan the new items
+			fileScanner.ScanItems(startIndex == -1 ? currentCount : startIndex, itemList.Count);
 		}
 
 
@@ -4137,9 +4192,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			selectedTime = new TimeSpan(0);
 
 			// And update the window
-			UpdateTimes();
-			UpdateListCount();
-			UpdateTapeDeck();
+			UpdateControls();
 
 			// Clear the random list
 			randomList.Clear();

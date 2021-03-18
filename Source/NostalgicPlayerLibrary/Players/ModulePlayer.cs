@@ -121,6 +121,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					soundStream = null;
 
 					// Shutdown the player
+					currentPlayer.CleanupSound();
 					currentPlayer.CleanupPlayer();
 
 					// Unsubscribe the events

@@ -90,6 +90,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 		/********************************************************************/
 		/// <summary>
+		/// Return the full path to the file
+		/// </summary>
+		/********************************************************************/
+		public virtual string FullPath => fileName;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will try to open the file given
 		/// </summary>
 		/********************************************************************/

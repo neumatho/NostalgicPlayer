@@ -42,6 +42,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.tooltipsCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.showNameInTitleCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.showListNumberCheckBox = new Krypton.Toolkit.KryptonCheckBox();
+			this.scanFilesCheckBox = new Krypton.Toolkit.KryptonCheckBox();
+			this.useDatabaseCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.generalGroupBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.generalGroupBox.Panel)).BeginInit();
@@ -70,6 +72,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.generalGroupBox.Panel.Controls.Add(this.tooltipsCheckBox);
 			this.generalGroupBox.Panel.Controls.Add(this.showNameInTitleCheckBox);
 			this.generalGroupBox.Panel.Controls.Add(this.showListNumberCheckBox);
+			this.generalGroupBox.Panel.Controls.Add(this.scanFilesCheckBox);
+			this.generalGroupBox.Panel.Controls.Add(this.useDatabaseCheckBox);
 			this.controlResource.SetResourceKey(this.generalGroupBox, "IDS_SETTINGS_OPTIONS_GENERAL");
 			this.generalGroupBox.Size = new System.Drawing.Size(592, 133);
 			this.generalGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -170,6 +174,26 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.showListNumberCheckBox.TabIndex = 6;
 			this.showListNumberCheckBox.Values.Text = "Show item number in list";
 			// 
+			// scanFilesCheckBox
+			// 
+			this.scanFilesCheckBox.Location = new System.Drawing.Point(400, 5);
+			this.scanFilesCheckBox.Name = "scanFilesCheckBox";
+			this.controlResource.SetResourceKey(this.scanFilesCheckBox, "IDS_SETTINGS_OPTIONS_SCANFILES");
+			this.scanFilesCheckBox.Size = new System.Drawing.Size(105, 17);
+			this.scanFilesCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.scanFilesCheckBox.TabIndex = 7;
+			this.scanFilesCheckBox.Values.Text = "Scan added files";
+			// 
+			// useDatabaseCheckBox
+			// 
+			this.useDatabaseCheckBox.Location = new System.Drawing.Point(400, 26);
+			this.useDatabaseCheckBox.Name = "useDatabaseCheckBox";
+			this.controlResource.SetResourceKey(this.useDatabaseCheckBox, "IDS_SETTINGS_OPTIONS_USEDATABASE");
+			this.useDatabaseCheckBox.Size = new System.Drawing.Size(173, 30);
+			this.useDatabaseCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.useDatabaseCheckBox.TabIndex = 1;
+			this.useDatabaseCheckBox.Values.Text = "Use database to store module\r\ninformation";
+			// 
 			// OptionsPageControl
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -203,5 +227,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Krypton.Toolkit.KryptonCheckBox tooltipsCheckBox;
 		private Krypton.Toolkit.KryptonCheckBox showNameInTitleCheckBox;
 		private Krypton.Toolkit.KryptonCheckBox showListNumberCheckBox;
+		private Krypton.Toolkit.KryptonCheckBox scanFilesCheckBox;
+		private Krypton.Toolkit.KryptonCheckBox useDatabaseCheckBox;
 	}
 }

@@ -30,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 				return new MultiFileInfo
 				{
 					Type = MultiFileInfo.FileType.Plain,
-					FileName = singleFile.FileName,
+					FileName = singleFile.FullPath,
 					PlayTime = listItem.HaveTime ? listItem.Time : null
 				};
 			}

@@ -76,6 +76,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			tooltipsCheckBox.Checked = optionSettings.ToolTips;
 			showNameInTitleCheckBox.Checked = optionSettings.ShowNameInTitle;
 			showListNumberCheckBox.Checked = optionSettings.ShowListNumber;
+
+			scanFilesCheckBox.Checked = optionSettings.ScanFiles;
+			useDatabaseCheckBox.Checked = optionSettings.UseDatabase;
 		}
 
 
@@ -108,6 +111,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			optionSettings.ToolTips = tooltipsCheckBox.Checked;
 			optionSettings.ShowNameInTitle = showNameInTitleCheckBox.Checked;
 			optionSettings.ShowListNumber = showListNumberCheckBox.Checked;
+
+			optionSettings.ScanFiles = scanFilesCheckBox.Checked;
+			optionSettings.UseDatabase = useDatabaseCheckBox.Checked;
 
 			mainWin.EnableUserInterfaceSettings();
 		}

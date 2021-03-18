@@ -612,6 +612,9 @@ what is new.</value>
   <data name="IDS_SETTINGS_OPTIONS_REMEMBERMODULEPOSITION" xml:space="preserve">
     <value>Remember module position</value>
   </data>
+  <data name="IDS_SETTINGS_OPTIONS_SCANFILES" xml:space="preserve">
+    <value>Scan added files</value>
+  </data>
   <data name="IDS_SETTINGS_OPTIONS_SHOWLISTNUMBER" xml:space="preserve">
     <value>Show item number in list</value>
   </data>
@@ -620,6 +623,10 @@ what is new.</value>
   </data>
   <data name="IDS_SETTINGS_OPTIONS_TOOLTIPS" xml:space="preserve">
     <value>Button tool tips</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_USEDATABASE" xml:space="preserve">
+    <value>Use database to store module
+information</value>
   </data>
   <data name="IDS_SETTINGS_PATHS_LISTPATH" xml:space="preserve">
     <value>List path</value>

@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 		/********************************************************************/
 		public SingleFileListItem(string fullFileName)
 		{
-			FileName = fullFileName;
+			FullPath = fullFileName;
 		}
 
 
@@ -39,8 +39,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 		{
 			get
 			{
-				return Path.GetFileName(FileName);
+				return Path.GetFileName(FullPath);
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the full path to the file
+		/// </summary>
+		/********************************************************************/
+		public string FullPath
+		{
+			get;
 		}
 
 
@@ -52,18 +64,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 		/********************************************************************/
 		public ILoader GetLoader()
 		{
-			return new NormalFileLoader(FileName);
+			return new NormalFileLoader(FullPath);
 		}
 		#endregion
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the full path to the file
-		/// </summary>
-		/********************************************************************/
-		public string FileName
-		{
-			get;
-		}
 	}
 }

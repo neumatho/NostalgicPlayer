@@ -21,6 +21,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 		string DisplayName { get; }
 
 		/// <summary>
+		/// Return the full path to the file
+		/// </summary>
+		string FullPath { get; }
+
+		/// <summary>
 		/// Return the loader which can open the files needed
 		/// </summary>
 		ILoader GetLoader();

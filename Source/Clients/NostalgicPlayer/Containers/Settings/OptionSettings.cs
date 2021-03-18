@@ -136,5 +136,47 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 			set => settings.SetBoolEntry("Options", "ShowListNumber", value);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Scan added files
+		/// </summary>
+		/********************************************************************/
+		public bool ScanFiles
+		{
+			get => settings.GetBoolEntry("Options", "ScanFiles", false);
+
+			set => settings.SetBoolEntry("Options", "ScanFiles", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Use database to store module information
+		/// </summary>
+		/********************************************************************/
+		public bool UseDatabase
+		{
+			get => settings.GetBoolEntry("Options", "UseDatabase", false);
+
+			set => settings.SetBoolEntry("Options", "UseDatabase", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Last cleanup time
+		/// </summary>
+		/********************************************************************/
+		public long LastCleanupTime
+		{
+			get => settings.GetLongEntry("Options", "LastCleanupTime", 0);
+
+			set => settings.SetLongEntry("Options", "LastCleanupTime", value);
+		}
 	}
 }

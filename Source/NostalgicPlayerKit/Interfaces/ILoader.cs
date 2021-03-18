@@ -27,5 +27,10 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// when done
 		/// </summary>
 		ModuleStream OpenExtraFile(string newExtension);
+
+		/// <summary>
+		/// Return the full path to the file
+		/// </summary>
+		string FullPath { get; }
 	}
 }

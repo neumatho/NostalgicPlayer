@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System.IO;
+using System.Text;
 
 namespace Polycode.NostalgicPlayer.Kit.Streams
 {
@@ -28,7 +29,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			this.wrapperStream = wrapperStream;
 
-			saveBuffer = new byte[4];
+			saveBuffer = new byte[8];
 		}
 
 		#region Stream implementation
@@ -234,6 +235,27 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Write a 64 bit integer in little endian format to the stream
+		/// </summary>
+		/********************************************************************/
+		public void Write_L_UINT64(ulong data)
+		{
+			saveBuffer[0] = (byte)(data & 0xff);
+			saveBuffer[1] = (byte)(data >> 8);
+			saveBuffer[2] = (byte)(data >> 16);
+			saveBuffer[3] = (byte)(data >> 24);
+			saveBuffer[4] = (byte)(data >> 32);
+			saveBuffer[5] = (byte)(data >> 40);
+			saveBuffer[6] = (byte)(data >> 48);
+			saveBuffer[7] = (byte)(data >> 56);
+
+			Write(saveBuffer, 0, 8);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Write a 16 bit integer in big endian format to the stream
 		/// </summary>
 		/********************************************************************/
@@ -260,6 +282,43 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 			saveBuffer[3] = (byte)(data & 0xff);
 
 			Write(saveBuffer, 0, 4);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Write a 64 bit integer in big endian format to the stream
+		/// </summary>
+		/********************************************************************/
+		public void Write_B_UINT64(ulong data)
+		{
+			saveBuffer[0] = (byte)(data >> 56);
+			saveBuffer[1] = (byte)(data >> 48);
+			saveBuffer[2] = (byte)(data >> 40);
+			saveBuffer[3] = (byte)(data >> 32);
+			saveBuffer[4] = (byte)(data >> 24);
+			saveBuffer[5] = (byte)(data >> 16);
+			saveBuffer[6] = (byte)(data >> 8);
+			saveBuffer[7] = (byte)(data & 0xff);
+
+			Write(saveBuffer, 0, 8);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Write a string in UTF-8 format
+		/// </summary>
+		/********************************************************************/
+		public void WriteString(string str)
+		{
+			byte[] bytes = Encoding.UTF8.GetBytes(str);
+			Write_B_UINT16((ushort)bytes.Length);
+
+			if (bytes.Length > 0)
+				Write(bytes, 0, bytes.Length);
 		}
 		#endregion
 	}
