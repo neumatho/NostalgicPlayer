@@ -150,6 +150,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 		/********************************************************************/
 		/// <summary>
+		/// Tells if the double buffering module has been loaded or not
+		/// </summary>
+		/********************************************************************/
+		public bool IsDoubleBufferingModuleLoaded
+		{
+			get
+			{
+				lock (loadedFiles)
+				{
+					return loadedFiles.Count > 1;
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Tells if the module is playing or not at the moment
 		/// </summary>
 		/********************************************************************/
@@ -229,6 +247,131 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 		/********************************************************************/
 		/// <summary>
+		/// Load and/or initialize module
+		/// </summary>
+		/********************************************************************/
+		public bool LoadAndInitModule(ModuleListItem listItem, int? subSong = null, int? startPos = null, bool showError = true)
+		{
+			// Should we load a module?
+			if (listItem != null)
+			{
+				try
+				{
+					ModuleItem item = new ModuleItem();
+
+					// Get the file name
+					string fileName = listItem.ShortText;
+
+					// Create new loader
+					item.Loader = new Loader(agentManager);
+
+					// Load the module
+					if (!item.Loader.Load(fileName, listItem.GetLoader(), out string errorMessage))
+					{
+						if (showError)
+							ShowErrorMessage(string.Format(Resources.IDS_ERR_LOAD_FILE, errorMessage), listItem);
+
+						return false;
+					}
+
+					// Find the output agent to use
+					if (!FindOutputAgent(showError))
+					{
+						item.Loader.Unload();
+						return false;
+					}
+
+					// Setup player settings
+					PlayerConfiguration playerConfig = new PlayerConfiguration(outputAgent, item.Loader, mixerConfiguration);
+
+					// Initialize the module
+					if (!item.Loader.Player.InitPlayer(playerConfig, out errorMessage))
+					{
+						if (showError)
+							ShowErrorMessage(string.Format(Resources.IDS_ERR_INIT_PLAYER, errorMessage), listItem);
+
+						item.Loader.Unload();
+						return false;
+					}
+
+					lock (loadedFiles)
+					{
+						// Add the new module to the list
+						loadedFiles.Add(item);
+					}
+				}
+				catch (Exception ex)
+				{
+					if (showError)
+						ShowErrorMessage(string.Format(Resources.IDS_ERR_LOAD_FILE, ex.Message), listItem);
+
+					return false;
+				}
+			}
+
+			// Should we start playing the module?
+			if (subSong.HasValue)
+			{
+				if (!startPos.HasValue)
+					startPos = -1;
+
+				// Start to play the module
+				if (!StartPlaying(subSong.Value, startPos.Value))
+					return false;
+			}
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will start playing the given module
+		/// </summary>
+		/********************************************************************/
+		public void PlayModule()
+		{
+			lock (loadedFiles)
+			{
+				// Did we have any modules loaded at all?
+				if (IsDoubleBufferingModuleLoaded)
+				{
+					// Remember the current playing module item
+					ModuleItem item = loadedFiles[0];
+					loadedFiles.RemoveAt(0);
+
+					// Start playing the new module
+					StartPlaying(-1, -1);
+
+					// Free the previous module
+					IPlayer player = item.Loader.Player;
+
+					player.StopPlaying(false);
+
+					if (player is IModulePlayer modulePlayer)
+					{
+						// Unsubscribe to position changes
+						modulePlayer.PositionChanged -= Player_PositionChanged;
+					}
+
+					// Unsubscribe to event notifications
+					player.EndReached -= Player_EndReached;
+					player.ModuleInfoChanged -= Player_ModuleInfoChanged;
+
+					// Cleanup the player
+					player.CleanupPlayer();
+
+					// Unload the module
+					item.Loader.Unload();
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will stop and free the playing module if any
 		/// </summary>
 		/********************************************************************/
@@ -280,6 +423,34 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 						outputAgent = null;
 						OutputAgentInfo = null;
 					}
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Free all extra loaded modules (from double buffering)
+		/// </summary>
+		/********************************************************************/
+		public void FreeExtraModules()
+		{
+			lock (loadedFiles)
+			{
+				while (loadedFiles.Count > 1)
+				{
+					// Get the item
+					ModuleItem item = loadedFiles[1];
+
+					// Cleanup the player
+					item.Loader.Player.CleanupPlayer();
+
+					// Unload the module
+					item.Loader.Unload();
+
+					// Remove the item
+					loadedFiles.RemoveAt(1);
 				}
 			}
 		}
@@ -610,86 +781,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 					return false;
 				}
-			}
-
-			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Load and/or initialize module
-		/// </summary>
-		/********************************************************************/
-		private bool LoadAndInitModule(ModuleListItem listItem, int? subSong = null, int? startPos = null, bool showError = true)
-		{
-			// Should we load a module?
-			if (listItem != null)
-			{
-				try
-				{
-					ModuleItem item = new ModuleItem();
-
-					// Get the file name
-					string fileName = listItem.ShortText;
-
-					// Create new loader
-					item.Loader = new Loader(agentManager);
-
-					// Load the module
-					if (!item.Loader.Load(fileName, listItem.GetLoader(), out string errorMessage))
-					{
-						if (showError)
-							ShowErrorMessage(string.Format(Resources.IDS_ERR_LOAD_FILE, errorMessage), listItem);
-
-						return false;
-					}
-
-					// Find the output agent to use
-					if (!FindOutputAgent(showError))
-					{
-						item.Loader.Unload();
-						return false;
-					}
-
-					// Setup player settings
-					PlayerConfiguration playerConfig = new PlayerConfiguration(outputAgent, item.Loader, mixerConfiguration);
-
-					// Initialize the module
-					if (!item.Loader.Player.InitPlayer(playerConfig, out errorMessage))
-					{
-						if (showError)
-							ShowErrorMessage(string.Format(Resources.IDS_ERR_INIT_PLAYER, errorMessage), listItem);
-
-						item.Loader.Unload();
-						return false;
-					}
-
-					lock (loadedFiles)
-					{
-						// Add the new module to the list
-						loadedFiles.Add(item);
-					}
-				}
-				catch (Exception ex)
-				{
-					if (showError)
-						ShowErrorMessage(string.Format(Resources.IDS_ERR_LOAD_FILE, ex.Message), listItem);
-
-					return false;
-				}
-			}
-
-			// Should we start playing the module?
-			if (subSong.HasValue)
-			{
-				if (!startPos.HasValue)
-					startPos = -1;
-
-				// Start to play the module
-				if (!StartPlaying(subSong.Value, startPos.Value))
-					return false;
 			}
 
 			return true;

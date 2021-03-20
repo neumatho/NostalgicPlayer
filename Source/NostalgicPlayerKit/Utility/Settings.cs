@@ -430,6 +430,27 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 		/********************************************************************/
 		/// <summary>
+		/// Will try to find the entry in the settings. If it couldn't be
+		/// found, the default value is returned
+		/// </summary>
+		/********************************************************************/
+		public T GetEnumEntry<T>(string section, string entry, T defaultValue) where T : struct, Enum
+		{
+			// Use the string read function
+			string value = GetStringEntry(section, entry);
+			if (string.IsNullOrEmpty(value))
+				return defaultValue;
+
+			if (Enum.TryParse(value, out T e))
+				return e;
+
+			return defaultValue;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will store the entry in the settings. If it already exists, it
 		/// will be overwritten
 		/// </summary>
@@ -514,8 +535,22 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/********************************************************************/
 		public void SetBoolEntry(string section, string entry, bool value)
 		{
-			// Use the string write function to write the number
+			// Use the string write function to write the bool
 			SetStringEntry(section, entry, value.ToString(CultureInfo.InvariantCulture));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will store the entry in the settings. If it already exists, it
+		/// will be overwritten
+		/// </summary>
+		/********************************************************************/
+		public void SetEnumEntry<T>(string section, string entry, T value) where T : struct, Enum
+		{
+			// Use the string write function to write the enum
+			SetStringEntry(section, entry, value.ToString());
 		}
 
 

@@ -1329,24 +1329,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Jump to added module.
-        /// </summary>
-        internal static string IDS_SETTINGS_OPTIONS_ADDJUMP {
-            get {
-                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_ADDJUMP", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add to list as default.
-        /// </summary>
-        internal static string IDS_SETTINGS_OPTIONS_ADDTOLIST {
-            get {
-                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_ADDTOLIST", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to General.
         /// </summary>
         internal static string IDS_SETTINGS_OPTIONS_GENERAL {
@@ -1356,65 +1338,83 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Jump to added module.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_GENERAL_ADDJUMP {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_GENERAL_ADDJUMP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add to list as default.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_GENERAL_ADDTOLIST {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_GENERAL_ADDTOLIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remember list on exit.
         /// </summary>
-        internal static string IDS_SETTINGS_OPTIONS_REMEMBERLIST {
+        internal static string IDS_SETTINGS_OPTIONS_GENERAL_REMEMBERLIST {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_REMEMBERLIST", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_GENERAL_REMEMBERLIST", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Remember playing module.
         /// </summary>
-        internal static string IDS_SETTINGS_OPTIONS_REMEMBERLISTPOSITION {
+        internal static string IDS_SETTINGS_OPTIONS_GENERAL_REMEMBERLISTPOSITION {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_REMEMBERLISTPOSITION", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_GENERAL_REMEMBERLISTPOSITION", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Remember module position.
         /// </summary>
-        internal static string IDS_SETTINGS_OPTIONS_REMEMBERMODULEPOSITION {
+        internal static string IDS_SETTINGS_OPTIONS_GENERAL_REMEMBERMODULEPOSITION {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_REMEMBERMODULEPOSITION", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_GENERAL_REMEMBERMODULEPOSITION", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Scan added files.
         /// </summary>
-        internal static string IDS_SETTINGS_OPTIONS_SCANFILES {
+        internal static string IDS_SETTINGS_OPTIONS_GENERAL_SCANFILES {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_SCANFILES", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_GENERAL_SCANFILES", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Show item number in list.
         /// </summary>
-        internal static string IDS_SETTINGS_OPTIONS_SHOWLISTNUMBER {
+        internal static string IDS_SETTINGS_OPTIONS_GENERAL_SHOWLISTNUMBER {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_SHOWLISTNUMBER", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_GENERAL_SHOWLISTNUMBER", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Show module name in titlebar.
         /// </summary>
-        internal static string IDS_SETTINGS_OPTIONS_SHOWNAME {
+        internal static string IDS_SETTINGS_OPTIONS_GENERAL_SHOWNAME {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_SHOWNAME", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_GENERAL_SHOWNAME", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Button tool tips.
         /// </summary>
-        internal static string IDS_SETTINGS_OPTIONS_TOOLTIPS {
+        internal static string IDS_SETTINGS_OPTIONS_GENERAL_TOOLTIPS {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_TOOLTIPS", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_GENERAL_TOOLTIPS", resourceCulture);
             }
         }
         
@@ -1422,9 +1422,126 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         ///   Looks up a localized string similar to Use database to store module
         ///information.
         /// </summary>
-        internal static string IDS_SETTINGS_OPTIONS_USEDATABASE {
+        internal static string IDS_SETTINGS_OPTIONS_GENERAL_USEDATABASE {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_USEDATABASE", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_GENERAL_USEDATABASE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_LOADING {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_LOADING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Double buffering.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_LOADING_DOUBLEBUFFERING {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_LOADING_DOUBLEBUFFERING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Early load.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_LOADING_EARLYLOAD {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_LOADING_EARLYLOAD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When a module error is reached.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show error dialog.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR_SHOW {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR_SHOW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Skip file.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR_SKIP {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR_SKIP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Skip file and remove from list.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR_SKIPREMOVE {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR_SKIPREMOVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop playing.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR_STOP {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR_STOP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Playing.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_PLAYING {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_PLAYING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to At end of module list.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Eject module.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND_EJECT {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND_EJECT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Jump to start.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND_JUMPTOSTART {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND_JUMPTOSTART", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loop module.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND_LOOP {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND_LOOP", resourceCulture);
             }
         }
         

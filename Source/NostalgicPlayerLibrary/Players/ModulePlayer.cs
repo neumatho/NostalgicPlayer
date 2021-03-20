@@ -172,12 +172,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Will stop the playing
 		/// </summary>
 		/********************************************************************/
-		public void StopPlaying()
+		public void StopPlaying(bool stopOutputAgent)
 		{
 			if (currentPlayer != null)
 			{
 				// Stop the mixer
-				outputAgent.Stop();
+				if (stopOutputAgent)
+					outputAgent.Stop();
+
 				soundStream.Stop();
 
 				// Cleanup the player

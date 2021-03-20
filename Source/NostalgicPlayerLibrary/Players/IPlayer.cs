@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// <summary>
 		/// Will stop the playing
 		/// </summary>
-		void StopPlaying();
+		void StopPlaying(bool stopOutputAgent = true);
 
 		/// <summary>
 		/// Will pause the playing

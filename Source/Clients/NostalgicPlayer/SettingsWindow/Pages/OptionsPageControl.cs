@@ -6,6 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
@@ -32,6 +33,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		public OptionsPageControl()
 		{
 			InitializeComponent();
+
+			// Add items to the combo controls
+			moduleErrorComboBox.Items.AddRange(new object[]
+			{
+				Resources.IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR_SHOW,
+				Resources.IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR_SKIP,
+				Resources.IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR_SKIPREMOVE,
+				Resources.IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR_STOP
+			});
+
+			moduleListEndComboBox.Items.AddRange(new object[]
+			{
+				Resources.IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND_EJECT,
+				Resources.IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND_JUMPTOSTART,
+				Resources.IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND_LOOP
+			});
 		}
 
 		#region ISettingsPage implementation
@@ -67,6 +84,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		public void ReadSettings()
 		{
+			// General
 			addJumpCheckBox.Checked = optionSettings.AddJump;
 			addToListCheckBox.Checked = optionSettings.AddToList;
 			rememberListCheckBox.Checked = optionSettings.RememberList;
@@ -79,6 +97,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 
 			scanFilesCheckBox.Checked = optionSettings.ScanFiles;
 			useDatabaseCheckBox.Checked = optionSettings.UseDatabase;
+
+			// Loading
+			doubleBufferingCheckBox.Checked = optionSettings.DoubleBuffering;
+			doubleBufferingTrackBar.Value = optionSettings.DoubleBufferingEarlyLoad;
+
+			moduleErrorComboBox.SelectedIndex = (int)optionSettings.ModuleError;
+
+			// Playing
+			moduleListEndComboBox.SelectedIndex = (int)optionSettings.ModuleListEnd;
 		}
 
 
@@ -102,6 +129,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		public void WriteSettings()
 		{
+			// General
 			optionSettings.AddJump = addJumpCheckBox.Checked;
 			optionSettings.AddToList = addToListCheckBox.Checked;
 			optionSettings.RememberList = rememberListCheckBox.Checked;
@@ -114,6 +142,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 
 			optionSettings.ScanFiles = scanFilesCheckBox.Checked;
 			optionSettings.UseDatabase = useDatabaseCheckBox.Checked;
+
+			// Loading
+			optionSettings.DoubleBuffering = doubleBufferingCheckBox.Checked;
+			optionSettings.DoubleBufferingEarlyLoad = doubleBufferingTrackBar.Value;
+
+			optionSettings.ModuleError = (OptionSettings.ModuleErrorAction)moduleErrorComboBox.SelectedIndex;
+
+			// Playing
+			optionSettings.ModuleListEnd = (OptionSettings.ModuleListEndAction)moduleListEndComboBox.SelectedIndex;
 
 			mainWin.EnableUserInterfaceSettings();
 		}
@@ -158,7 +195,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Is called when the user change the remember list
 		/// </summary>
 		/********************************************************************/
-		private void RememberListCheckBox_CheckedChanged(object sender, System.EventArgs e)
+		private void RememberListCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			rememberListPanel.Enabled = rememberListCheckBox.Checked;
 		}
@@ -170,9 +207,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Is called when the user change the remember module
 		/// </summary>
 		/********************************************************************/
-		private void RememberListPositionCheckBox_CheckedChanged(object sender, System.EventArgs e)
+		private void RememberListPositionCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			rememberModulePositionCheckBox.Enabled = rememberListPositionCheckBox.Checked;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user change the double buffering
+		/// </summary>
+		/********************************************************************/
+		private void DoubleBufferingCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			doubleBufferingPanel.Enabled = doubleBufferingCheckBox.Checked;
 		}
 		#endregion
 	}

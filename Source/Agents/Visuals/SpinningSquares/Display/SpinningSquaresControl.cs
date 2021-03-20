@@ -41,12 +41,16 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 		/********************************************************************/
 		public void InitVisual(int channels)
 		{
-			channelsInUse = Math.Min(channels, 16);
+			lock (this)
+			{
+				channelsInUse = Math.Min(channels, 16);
 
-			CreateChannelPanels();
+				DestroyChannelPanels();
+				CreateChannelPanels();
 
-			hashPanel.Visible = false;
-			squaresPanel.Visible = true;
+				hashPanel.Visible = false;
+				squaresPanel.Visible = true;
+			}
 
 			pulseTimer.Start();
 		}
@@ -62,12 +66,15 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 		{
 			pulseTimer.Stop();
 
-			channelsInUse = 0;
+			lock (this)
+			{
+				channelsInUse = 0;
 
-			squaresPanel.Visible = false;
-			hashPanel.Visible = true;
+				squaresPanel.Visible = false;
+				hashPanel.Visible = true;
 
-			DestroyChannelPanels();
+				DestroyChannelPanels();
+			}
 		}
 
 
@@ -79,10 +86,13 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 		/********************************************************************/
 		public void ChannelChange(ChannelChanged channelChanged)
 		{
-			for (int i = 0; i < channelsInUse; i++)
+			lock (this)
 			{
-				if (squaresPanel.Controls[i].Controls[0] is SingleSpinningSquareControl singleSpinningSquare)
-					singleSpinningSquare.ChannelChange(channelChanged.Flags[i], channelChanged.VirtualChannels[i]);
+				for (int i = 0; i < channelsInUse; i++)
+				{
+					if (squaresPanel.Controls[i].Controls[0] is SingleSpinningSquareControl singleSpinningSquare)
+						singleSpinningSquare.ChannelChange(channelChanged.Flags[i], channelChanged.VirtualChannels[i]);
+				}
 			}
 		}
 

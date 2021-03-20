@@ -63,7 +63,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		private readonly Dictionary<string, DatabaseValue> root;
 
 		// Used for the cleanup job
-		private object threadLock = new object();
+		private readonly object threadLock = new object();
 		private ManualResetEvent shutdownEvent;
 		private Thread cleanupThread;
 

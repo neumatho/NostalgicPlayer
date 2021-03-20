@@ -37,6 +37,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 			catch (Exception ex)
 			{
 				MessageBox.Show(string.Format(Resources.IDS_ERR_EXCEPTION, ex.Message), Resources.IDS_MAIN_TITLE, MessageBoxButtons.OK, MessageBoxIcon.Error);
+				Application.Exit();
 			}
 		}
 

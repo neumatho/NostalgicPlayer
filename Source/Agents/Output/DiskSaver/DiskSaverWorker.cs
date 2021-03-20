@@ -256,7 +256,12 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 			lock (streamLock)
 			{
 				// Close old file
-				fileStream?.Dispose();
+				if (fileStream != null)
+				{
+					converterInUse.SaveTail(fileStream);
+					fileStream.Dispose();
+				}
+
 				stream?.Dispose();
 
 				// Build file name and check if it already exists

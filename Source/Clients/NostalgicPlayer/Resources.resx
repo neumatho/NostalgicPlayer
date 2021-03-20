@@ -594,39 +594,78 @@ what is new.</value>
   <data name="IDS_SETTINGS_OK" xml:space="preserve">
     <value>OK</value>
   </data>
-  <data name="IDS_SETTINGS_OPTIONS_ADDJUMP" xml:space="preserve">
-    <value>Jump to added module</value>
-  </data>
-  <data name="IDS_SETTINGS_OPTIONS_ADDTOLIST" xml:space="preserve">
-    <value>Add to list as default</value>
-  </data>
   <data name="IDS_SETTINGS_OPTIONS_GENERAL" xml:space="preserve">
     <value>General</value>
   </data>
-  <data name="IDS_SETTINGS_OPTIONS_REMEMBERLIST" xml:space="preserve">
+  <data name="IDS_SETTINGS_OPTIONS_GENERAL_ADDJUMP" xml:space="preserve">
+    <value>Jump to added module</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_GENERAL_ADDTOLIST" xml:space="preserve">
+    <value>Add to list as default</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_GENERAL_REMEMBERLIST" xml:space="preserve">
     <value>Remember list on exit</value>
   </data>
-  <data name="IDS_SETTINGS_OPTIONS_REMEMBERLISTPOSITION" xml:space="preserve">
+  <data name="IDS_SETTINGS_OPTIONS_GENERAL_REMEMBERLISTPOSITION" xml:space="preserve">
     <value>Remember playing module</value>
   </data>
-  <data name="IDS_SETTINGS_OPTIONS_REMEMBERMODULEPOSITION" xml:space="preserve">
+  <data name="IDS_SETTINGS_OPTIONS_GENERAL_REMEMBERMODULEPOSITION" xml:space="preserve">
     <value>Remember module position</value>
   </data>
-  <data name="IDS_SETTINGS_OPTIONS_SCANFILES" xml:space="preserve">
+  <data name="IDS_SETTINGS_OPTIONS_GENERAL_SCANFILES" xml:space="preserve">
     <value>Scan added files</value>
   </data>
-  <data name="IDS_SETTINGS_OPTIONS_SHOWLISTNUMBER" xml:space="preserve">
+  <data name="IDS_SETTINGS_OPTIONS_GENERAL_SHOWLISTNUMBER" xml:space="preserve">
     <value>Show item number in list</value>
   </data>
-  <data name="IDS_SETTINGS_OPTIONS_SHOWNAME" xml:space="preserve">
+  <data name="IDS_SETTINGS_OPTIONS_GENERAL_SHOWNAME" xml:space="preserve">
     <value>Show module name in titlebar</value>
   </data>
-  <data name="IDS_SETTINGS_OPTIONS_TOOLTIPS" xml:space="preserve">
+  <data name="IDS_SETTINGS_OPTIONS_GENERAL_TOOLTIPS" xml:space="preserve">
     <value>Button tool tips</value>
   </data>
-  <data name="IDS_SETTINGS_OPTIONS_USEDATABASE" xml:space="preserve">
+  <data name="IDS_SETTINGS_OPTIONS_GENERAL_USEDATABASE" xml:space="preserve">
     <value>Use database to store module
 information</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_LOADING" xml:space="preserve">
+    <value>Loading</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_LOADING_DOUBLEBUFFERING" xml:space="preserve">
+    <value>Double buffering</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_LOADING_EARLYLOAD" xml:space="preserve">
+    <value>Early load</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR" xml:space="preserve">
+    <value>When a module error is reached</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR_SHOW" xml:space="preserve">
+    <value>Show error dialog</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR_SKIP" xml:space="preserve">
+    <value>Skip file</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR_SKIPREMOVE" xml:space="preserve">
+    <value>Skip file and remove from list</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR_STOP" xml:space="preserve">
+    <value>Stop playing</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_PLAYING" xml:space="preserve">
+    <value>Playing</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND" xml:space="preserve">
+    <value>At end of module list</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND_EJECT" xml:space="preserve">
+    <value>Eject module</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND_JUMPTOSTART" xml:space="preserve">
+    <value>Jump to start</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND_LOOP" xml:space="preserve">
+    <value>Loop module</value>
   </data>
   <data name="IDS_SETTINGS_PATHS_LISTPATH" xml:space="preserve">
     <value>List path</value>

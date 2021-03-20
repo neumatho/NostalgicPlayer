@@ -321,89 +321,120 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		public void ShowErrorMessage(string message, ModuleListItem listItem)
 		{
-			using (CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error))
+			char response;
+
+			switch (optionSettings.ModuleError)
 			{
-				dialog.AddButton(Resources.IDS_BUT_SKIP, 'S');
-				dialog.AddButton(Resources.IDS_BUT_SKIPREMOVE, 'r');
-				dialog.AddButton(Resources.IDS_BUT_STOP, 'p');
-				dialog.ShowDialog(this);
-				char response = dialog.GetButtonResult();
-
-				switch (response)
+				case OptionSettings.ModuleErrorAction.ShowError:
 				{
-					// Skip
-					case 'S':
+					using (CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error))
 					{
-						// Get the index of the module that couldn't be loaded + 1
-						int index = moduleListBox.Items.IndexOf(listItem) + 1;
-
-						// Get the number of items in the list
-						int count = moduleListBox.Items.Count;
-
-						// Deselect the playing flag
-						ChangePlayItem(null);
-
-						// Do there exist a "next" module
-						if (index < count)
-						{
-							// Yes, load it
-							LoadAndPlayModule(index);
-						}
-						else
-						{
-							// No
-							if (count != 1)
-							{
-								// Load the first module, but only if it's valid
-								// or haven't been loaded before
-								ModuleListItem item = (ModuleListItem)moduleListBox.Items[0];
-								if (!item.HaveTime || (item.HaveTime && item.Time.TotalMilliseconds != 0))
-									LoadAndPlayModule(item);
-							}
-						}
-						break;
+						dialog.AddButton(Resources.IDS_BUT_SKIP, 'S');
+						dialog.AddButton(Resources.IDS_BUT_SKIPREMOVE, 'r');
+						dialog.AddButton(Resources.IDS_BUT_STOP, 'p');
+						dialog.ShowDialog(this);
+						response = dialog.GetButtonResult();
 					}
+					break;
+				}
 
-					// Skip and remove
-					case 'r':
+				case OptionSettings.ModuleErrorAction.SkipFile:
+				default:
+				{
+					response = 'S';
+					break;
+				}
+
+				case OptionSettings.ModuleErrorAction.SkipFileAndRemoveFromList:
+				{
+					response = 'r';
+					break;
+				}
+
+				case OptionSettings.ModuleErrorAction.StopPlaying:
+				{
+					response = 'p';
+					break;
+				}
+			}
+
+			switch (response)
+			{
+				// Skip
+				case 'S':
+				{
+					// Get the index of the module that couldn't be loaded + 1
+					int index = moduleListBox.Items.IndexOf(listItem) + 1;
+
+					// Get the number of items in the list
+					int count = moduleListBox.Items.Count;
+
+					// Deselect the playing flag
+					ChangePlayItem(null);
+
+					// Do there exist a "next" module
+					if (index < count)
 					{
-						// Get the index of the module that couldn't be loaded
-						int index = moduleListBox.Items.IndexOf(listItem);
-
-						// Get the number of items in the list - 1
-						int count = moduleListBox.Items.Count - 1;
-
-						// Deselect the playing flag
-						ChangePlayItem(null);
-
-						// Remove the module from the list
-						moduleListBox.Items.RemoveAt(index);
-
-						// Do there exist a "next" module
-						if (index < count)
-						{
-							// Yes, load it
-							LoadAndPlayModule(index);
-						}
-						else
-						{
-							// No
-							if (count >= 1)
-							{
-								// Load the first module
-								LoadAndPlayModule(0);
-							}
-						}
-						break;
+						// Yes, load it
+						LoadAndPlayModule(index);
 					}
-
-					// Stop playing
-					case 'p':
+					else
 					{
-						// Deselect the playing flag
-						ChangePlayItem(null);
-						break;
+						// No
+						if ((count != 1) && (optionSettings.ModuleListEnd == OptionSettings.ModuleListEndAction.JumpToStart))
+						{
+							// Load the first module, but only if it's valid
+							// or haven't been loaded before
+							ModuleListItem item = (ModuleListItem)moduleListBox.Items[0];
+							if (!item.HaveTime || (item.HaveTime && item.Time.TotalMilliseconds != 0))
+								LoadAndPlayModule(item);
+						}
 					}
+					break;
+				}
+
+				// Skip and remove
+				case 'r':
+				{
+					// Get the index of the module that couldn't be loaded
+					int index = moduleListBox.Items.IndexOf(listItem);
+
+					// Get the number of items in the list - 1
+					int count = moduleListBox.Items.Count - 1;
+
+					// Deselect the playing flag
+					ChangePlayItem(null);
+
+					// Remove the module from the list
+					moduleListBox.Items.RemoveAt(index);
+
+					// Do there exist a "next" module
+					if (index < count)
+					{
+						// Yes, load it
+						LoadAndPlayModule(index);
+					}
+					else
+					{
+						// No
+						if ((count != 1) && (optionSettings.ModuleListEnd == OptionSettings.ModuleListEndAction.JumpToStart))
+						{
+							// Load the first module, but only if it's valid
+							// or haven't been loaded before
+							ModuleListItem item = (ModuleListItem)moduleListBox.Items[0];
+							if (!item.HaveTime || (item.HaveTime && item.Time.TotalMilliseconds != 0))
+								LoadAndPlayModule(item);
+						}
+					}
+					break;
+				}
+
+				// Stop playing
+				case 'p':
+				{
+					// Deselect the playing flag
+					ChangePlayItem(null);
+					break;
 				}
 			}
 		}
@@ -1245,6 +1276,53 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				// Print the information
 				PrintInfo();
+
+				// If module loop is off and double buffering is enabled,
+				// check if it's time to load the next module in the list
+				if (!loopCheckButton.Checked && optionSettings.DoubleBuffering)
+				{
+					// Is the file already loaded?
+					if (!moduleHandler.IsDoubleBufferingModuleLoaded)
+					{
+						// Everything is enabled, check if it's time to load
+						int songLength = moduleHandler.PlayingModuleInformation.SongLength;
+						int earlyLoad = optionSettings.DoubleBufferingEarlyLoad;
+						OptionSettings.ModuleListEndAction listEnd = optionSettings.ModuleListEnd;
+
+						if (newPos >= (songLength - earlyLoad))
+						{
+							// Check to see if we have to load the module
+							int curPlay = moduleListBox.Items.IndexOf(playItem);
+							int count = moduleListBox.Items.Count;
+
+							// Are we at the end of the list?
+							bool load = true;
+							int newPlay = 0;
+
+							if ((curPlay + 1) == count)
+							{
+								if ((count == 1) || (listEnd != OptionSettings.ModuleListEndAction.JumpToStart))
+									load = false;
+							}
+							else
+							{
+								// Just go to the next module
+								newPlay = curPlay + 1;
+							}
+
+							// Load next module
+							if (load)
+							{
+								using (new SleepCursor())
+								{
+									// If output agent has changed, do not load the module
+									if (moduleHandler.OutputAgentInfo.Enabled && (moduleHandler.OutputAgentInfo.TypeId == soundSettings.OutputAgent))
+										moduleHandler.LoadAndInitModule((ModuleListItem)moduleListBox.Items[newPlay], showError: false);
+								}
+							}
+						}
+					}
+				}
 			}));
 		}
 
@@ -1262,23 +1340,55 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				// Check to see if there is module loop on
 				if (!loopCheckButton.Checked)
 				{
+					bool loadNext = true;
+
 					// Get the number of modules in the list
 					int count = moduleListBox.Items.Count;
 
 					// Get the index of the current playing module
 					int curPlay = moduleListBox.Items.IndexOf(playItem);
 
-					// Free the module
-					StopAndFreeModule();
-
 					// The next module to load
 					int newPlay = curPlay + 1;
 
 					// Test to see if we is at the end of the list
-					if (newPlay < count)
+					if (newPlay == count)
 					{
-						// Load the module
-						LoadAndPlayModule(newPlay);
+						// We are, now check what we has to do
+						OptionSettings.ModuleListEndAction listEnd = optionSettings.ModuleListEnd;
+
+						if (listEnd == OptionSettings.ModuleListEndAction.Eject)
+						{
+							// Eject the module
+							StopAndFreeModule();
+							loadNext = false;
+						}
+						else
+						{
+							if ((count == 1) || (listEnd == OptionSettings.ModuleListEndAction.Loop))
+								loadNext = false;
+							else
+								newPlay = 0;
+						}
+					}
+
+					// Should we load the next module?
+					if (loadNext)
+					{
+						if (optionSettings.DoubleBuffering && moduleHandler.IsDoubleBufferingModuleLoaded)
+						{
+							// Double buffering is on and the next module has already been loaded, so just
+							// start to play it
+							PlayNextModule(newPlay);
+						}
+						else
+						{
+							// Free the module
+							StopAndFreeModule();
+
+							// Load the module
+							LoadAndPlayModule(newPlay);
+						}
 					}
 				}
 			}));
@@ -1601,6 +1711,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 								moduleListBox.Items.RemoveAt(index + 1);
 						}
 					}
+
+					// Free any extra loaded modules
+					moduleHandler.FreeExtraModules();
 				}
 				else if (e.Data.GetDataPresent(DataFormats.FileDrop))
 				{
@@ -1634,6 +1747,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						{
 							jumpNumber = indexOfItemUnderMouseToDrop == -1 ? 0 : indexOfItemUnderMouseToDrop;
 							AddFilesToList(files, indexOfItemUnderMouseToDrop, true);
+
+							// Free any extra loaded modules
+							moduleHandler.FreeExtraModules();
 							break;
 						}
 					}
@@ -1859,6 +1975,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					// Add all the files in the module list
 					AddFilesToList(moduleFileDialog.FileNames, selected);
 
+					// Free any extra loaded modules
+					moduleHandler.FreeExtraModules();
+
 					// Should we load the first added module?
 					if (optionSettings.AddJump)
 					{
@@ -1885,6 +2004,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				// Update the controls
 				UpdateControls();
+
+				// Free any extra loaded modules
+				moduleHandler.FreeExtraModules();
 			}
 		}
 
@@ -1922,6 +2044,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			{
 				moduleListBox.EndUpdate();
 			}
+
+			// Free any extra loaded modules
+			moduleHandler.FreeExtraModules();
 		}
 
 
@@ -1956,6 +2081,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					MoveSelectedItemsToTop();
 				else
 					MoveSelectedItemsUp();
+
+				// Free any extra loaded modules
+				moduleHandler.FreeExtraModules();
 			}
 		}
 
@@ -1978,6 +2106,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					MoveSelectedItemsToBottom();
 				else
 					MoveSelectedItemsDown();
+
+				// Free any extra loaded modules
+				moduleHandler.FreeExtraModules();
 			}
 		}
 
@@ -2030,6 +2161,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				{
 					moduleListBox.EndUpdate();
 				}
+
+				// Free any extra loaded modules
+				moduleHandler.FreeExtraModules();
 			}
 		}
 
@@ -2057,6 +2191,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				{
 					moduleListBox.EndUpdate();
 				}
+
+				// Free any extra loaded modules
+				moduleHandler.FreeExtraModules();
 			}
 		}
 
@@ -2076,6 +2213,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				// If no module is playing, load the first one
 				if (playItem == null)
 					LoadAndPlayModule(0);
+				else
+					moduleHandler.FreeExtraModules();
 			}
 		}
 		#endregion
@@ -2181,6 +2320,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 					// Load the file into the module list
 					LoadModuleList(loadListFileDialog.FileName, selected);
+
+					// Free any extra loaded modules
+					moduleHandler.FreeExtraModules();
 
 					// Should we load the first added module?
 					if (optionSettings.AddJump)
@@ -3790,7 +3932,36 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			{
 				// Free loaded module
 				StopAndFreeModule();
+
+				// Set a zero time on the item, to mark it as "taken"
+				listItem.Time = new TimeSpan(0);
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will play the module already loaded
+		/// </summary>
+		/********************************************************************/
+		private void PlayNextModule(int index)
+		{
+			ModuleListItem listItem = (ModuleListItem)moduleListBox.Items[index];
+
+			moduleHandler.PlayModule();
+
+			// Initialize other stuff in the window
+			InitSubSongs();
+
+			// Mark the item in the list
+			ChangePlayItem(listItem);
+
+			// Initialize controls
+			InitControls();
+
+			// And refresh other windows
+			RefreshWindows();
 		}
 
 
