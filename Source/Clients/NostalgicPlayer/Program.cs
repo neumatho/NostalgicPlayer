@@ -29,7 +29,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 		{
 			try
 			{
-				Application.SetHighDpiMode(HighDpiMode.SystemAware);
+				Application.SetHighDpiMode(HighDpiMode.DpiUnaware);
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
 				SingleInstanceApplication.Run(new MainWindowForm(), NewInstanceHandler);
