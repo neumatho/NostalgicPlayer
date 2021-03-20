@@ -93,7 +93,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to initialize the player and mixer..
+        ///   Looks up a localized string similar to Failed to initialize the player and mixer.
+        ///{0}..
         /// </summary>
         internal static string IDS_ERR_PLAYER_INIT {
             get {

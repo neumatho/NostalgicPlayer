@@ -91,11 +91,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						CleanupPlayer();
 				}
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 				CleanupPlayer();
 
-				errorMessage = Resources.IDS_ERR_PLAYER_INIT;
+				errorMessage = string.Format(Resources.IDS_ERR_PLAYER_INIT, ex.Message);
 				initOk = false;
 			}
 
