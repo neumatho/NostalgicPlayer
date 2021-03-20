@@ -38,6 +38,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.stereoSeparationLabel = new Krypton.Toolkit.KryptonLabel();
 			this.amigaFilterCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.interpolationCheckBox = new Krypton.Toolkit.KryptonCheckBox();
+			this.swapSpeakersCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.outputGroupBox = new Krypton.Toolkit.KryptonGroupBox();
 			this.outputAgentSettingsButton = new Krypton.Toolkit.KryptonButton();
 			this.outputAgentComboBox = new Krypton.Toolkit.KryptonComboBox();
@@ -79,8 +80,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.generalGroupBox.Panel.Controls.Add(this.stereoSeparationLabel);
 			this.generalGroupBox.Panel.Controls.Add(this.amigaFilterCheckBox);
 			this.generalGroupBox.Panel.Controls.Add(this.interpolationCheckBox);
+			this.generalGroupBox.Panel.Controls.Add(this.swapSpeakersCheckBox);
 			this.controlResource.SetResourceKey(this.generalGroupBox, "IDS_SETTINGS_MIXER_GENERAL");
-			this.generalGroupBox.Size = new System.Drawing.Size(592, 79);
+			this.generalGroupBox.Size = new System.Drawing.Size(592, 100);
 			this.generalGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.generalGroupBox.TabIndex = 0;
 			this.generalGroupBox.Values.Heading = "General";
@@ -141,12 +143,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.interpolationCheckBox.Values.Text = "Interpolation";
 			this.interpolationCheckBox.CheckedChanged += new System.EventHandler(this.InterpolationCheckBox_CheckedChanged);
 			// 
+			// swapSpeakersCheckBox
+			// 
+			this.swapSpeakersCheckBox.Location = new System.Drawing.Point(4, 56);
+			this.swapSpeakersCheckBox.Name = "swapSpeakersCheckBox";
+			this.controlResource.SetResourceKey(this.swapSpeakersCheckBox, "IDS_SETTINGS_MIXER_GENERAL_SWAPSPEAKERS");
+			this.swapSpeakersCheckBox.Size = new System.Drawing.Size(166, 17);
+			this.swapSpeakersCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.swapSpeakersCheckBox.TabIndex = 3;
+			this.swapSpeakersCheckBox.Values.Text = "Swap left and right speakers";
+			this.swapSpeakersCheckBox.CheckedChanged += new System.EventHandler(this.SwapSpeakersCheckBox_CheckedChanged);
+			// 
 			// outputGroupBox
 			// 
 			this.outputGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.outputGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
-			this.outputGroupBox.Location = new System.Drawing.Point(8, 87);
+			this.outputGroupBox.Location = new System.Drawing.Point(8, 108);
 			this.outputGroupBox.Name = "outputGroupBox";
 			// 
 			// 
@@ -309,5 +322,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Krypton.Toolkit.KryptonButton channels0_15Button;
 		private Krypton.Toolkit.KryptonButton channels32_47Button;
 		private Krypton.Toolkit.KryptonButton channels48_63Button;
+		private Krypton.Toolkit.KryptonCheckBox swapSpeakersCheckBox;
 	}
 }

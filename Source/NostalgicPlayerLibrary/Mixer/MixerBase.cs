@@ -289,12 +289,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// in the supplied buffer
 		/// </summary>
 		/********************************************************************/
-		public void ConvertMixedData(byte[] dest, int offset, int[] source, int todo)
+		public void ConvertMixedData(byte[] dest, int offset, int[] source, int todo, bool swapSpeakers)
 		{
 			if (bytesPerSample == 2)
-				ConvertTo16(dest, offset / 2, source, todo);
+				ConvertTo16(dest, offset / 2, source, todo, swapSpeakers);
 			else if (bytesPerSample == 4)
-				ConvertTo32(dest, offset / 4, source, todo);
+				ConvertTo32(dest, offset / 4, source, todo, swapSpeakers);
 		}
 
 
@@ -340,7 +340,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Converts the mixed data to a 16 bit sample buffer
 		/// </summary>
 		/********************************************************************/
-		protected abstract void ConvertTo16(byte[] dest, int offset, int[] source, int todo);
+		protected abstract void ConvertTo16(byte[] dest, int offset, int[] source, int todo, bool swapSpeakers);
 
 
 
@@ -349,6 +349,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Converts the mixed data to a 32 bit sample buffer
 		/// </summary>
 		/********************************************************************/
-		protected abstract void ConvertTo32(byte[] dest, int offset, int[] source, int todo);
+		protected abstract void ConvertTo32(byte[] dest, int offset, int[] source, int todo, bool swapSpeakers);
 	}
 }

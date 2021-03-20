@@ -88,6 +88,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
+		/// Swap left and right speakers
+		/// </summary>
+		/********************************************************************/
+		public bool SwapSpeakers
+		{
+			get => settings.GetBoolEntry("Sound", "SwapSpeakers", false);
+
+			set => settings.SetBoolEntry("Sound", "SwapSpeakers", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Emulate Amiga LED filter
 		/// </summary>
 		/********************************************************************/

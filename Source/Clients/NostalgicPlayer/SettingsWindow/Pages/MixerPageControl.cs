@@ -35,6 +35,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 
 		private int originalStereoSeparation;
 		private bool originalInterpolation;
+		private bool originalSwapSpeakers;
 		private bool originalAmigaFilter;
 
 		private int channelsUsed;
@@ -144,6 +145,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// Setup the rest of the settings
 			originalStereoSeparation = stereoSeparationTrackBar.Value = soundSettings.StereoSeparation;
 			originalInterpolation = interpolationCheckBox.Checked = soundSettings.Interpolation;
+			originalSwapSpeakers = swapSpeakersCheckBox.Checked = soundSettings.SwapSpeakers;
 			originalAmigaFilter = amigaFilterCheckBox.Checked = soundSettings.AmigaFilter;
 
 			// Setup channels
@@ -184,6 +186,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		{
 			originalStereoSeparation = soundSettings.StereoSeparation = stereoSeparationTrackBar.Value;
 			originalInterpolation = soundSettings.Interpolation = interpolationCheckBox.Checked;
+			originalSwapSpeakers = soundSettings.SwapSpeakers = swapSpeakersCheckBox.Checked;
 			originalAmigaFilter = soundSettings.AmigaFilter = amigaFilterCheckBox.Checked;
 
 			soundSettings.OutputAgent = ((AgentInfo)((KryptonListItem)outputAgentComboBox.SelectedItem).Tag).TypeId;
@@ -211,6 +214,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		{
 			soundSettings.StereoSeparation = originalStereoSeparation;
 			soundSettings.Interpolation = originalInterpolation;
+			soundSettings.SwapSpeakers = originalSwapSpeakers;
 			soundSettings.AmigaFilter = originalAmigaFilter;
 
 			SetMixerSettings();
@@ -253,6 +257,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private void InterpolationCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			soundSettings.Interpolation = interpolationCheckBox.Checked;
+
+			SetMixerSettings();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user swap speakers
+		/// </summary>
+		/********************************************************************/
+		private void SwapSpeakersCheckBox_CheckedChanged(object sender, EventArgs e)
+		{
+			soundSettings.SwapSpeakers = swapSpeakersCheckBox.Checked;
 
 			SetMixerSettings();
 		}
@@ -381,6 +399,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			{
 				StereoSeparator = soundSettings.StereoSeparation,
 				EnableInterpolation = soundSettings.Interpolation,
+				SwapSpeakers = soundSettings.SwapSpeakers,
 				EnableAmigaFilter = soundSettings.AmigaFilter,
 				ChannelsEnabled = moduleHandler.GetEnabledChannels()
 			});

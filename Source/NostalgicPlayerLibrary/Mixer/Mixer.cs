@@ -38,6 +38,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private int filterPrevLeft;			// The previous value for the left channel
 		private int filterPrevRight;		// The previous value for the right channel
 
+		private bool swapSpeakers;
 		private bool emulateFilter;
 
 		private bool[] channelsEnabled;
@@ -51,6 +52,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		{
 			// Initialize member variables
 			mixerMode = MixerMode.None;
+
+			swapSpeakers = false;
 			emulateFilter = false;
 		}
 
@@ -224,6 +227,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			else
 				mixerMode &= ~MixerMode.Interpolation;
 
+			swapSpeakers = mixerConfiguration.SwapSpeakers;
 			emulateFilter = mixerConfiguration.EnableAmigaFilter;
 
 			channelsEnabled = mixerConfiguration.ChannelsEnabled;
@@ -364,7 +368,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			AddAmigaFilter(mixBuffer, bufSize);
 
 			// Now convert the mixed data to our output format
-			currentMixer.ConvertMixedData(buf, offset, mixBuffer, bufSize);
+			currentMixer.ConvertMixedData(buf, offset, mixBuffer, bufSize, (currentMode & MixerMode.Stereo) != 0 ? swapSpeakers : false);
 		}
 
 

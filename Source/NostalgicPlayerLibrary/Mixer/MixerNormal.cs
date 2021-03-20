@@ -829,12 +829,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Converts the mixed data to a 16 bit sample buffer
 		/// </summary>
 		/********************************************************************/
-		private delegate void del_ConvertTo16(IntPtr dest, int offset, IntPtr source, int count);
-		protected override void ConvertTo16(byte[] dest, int offset, int[] source, int count)
+		private delegate void del_ConvertTo16(IntPtr dest, int offset, IntPtr source, int count, bool swapSpeakers);
+		protected override void ConvertTo16(byte[] dest, int offset, int[] source, int count, bool swapSpeakers)
 		{
 			if (_ConvertTo16 == null)
 			{
-				IntPtr f = Environment.Is64BitProcess ? GetProcAddress(dllPtr, "ConvertTo16") : GetProcAddress(dllPtr, "_ConvertTo16@16");
+				IntPtr f = Environment.Is64BitProcess ? GetProcAddress(dllPtr, "ConvertTo16") : GetProcAddress(dllPtr, "_ConvertTo16@20");
 				_ConvertTo16 = (del_ConvertTo16)Marshal.GetDelegateForFunctionPointer(f, typeof(del_ConvertTo16));
 			}
 
@@ -846,7 +846,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 				try
 				{
-					_ConvertTo16(destBuf.AddrOfPinnedObject(), offset, sourceBuf.AddrOfPinnedObject(), count);
+					_ConvertTo16(destBuf.AddrOfPinnedObject(), offset, sourceBuf.AddrOfPinnedObject(), count, swapSpeakers);
 				}
 				finally
 				{
@@ -867,12 +867,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Converts the mixed data to a 32 bit sample buffer
 		/// </summary>
 		/********************************************************************/
-		private delegate void del_ConvertTo32(IntPtr dest, int offset, IntPtr source, int count);
-		protected override void ConvertTo32(byte[] dest, int offset, int[] source, int count)
+		private delegate void del_ConvertTo32(IntPtr dest, int offset, IntPtr source, int count, bool swapSpeakers);
+		protected override void ConvertTo32(byte[] dest, int offset, int[] source, int count, bool swapSpeakers)
 		{
 			if (_ConvertTo32 == null)
 			{
-				IntPtr f = Environment.Is64BitProcess ? GetProcAddress(dllPtr, "ConvertTo32") : GetProcAddress(dllPtr, "_ConvertTo32@16");
+				IntPtr f = Environment.Is64BitProcess ? GetProcAddress(dllPtr, "ConvertTo32") : GetProcAddress(dllPtr, "_ConvertTo32@20");
 				_ConvertTo32 = (del_ConvertTo32)Marshal.GetDelegateForFunctionPointer(f, typeof(del_ConvertTo32));
 			}
 
@@ -884,7 +884,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 				try
 				{
-					_ConvertTo32(destBuf.AddrOfPinnedObject(), offset, sourceBuf.AddrOfPinnedObject(), count);
+					_ConvertTo32(destBuf.AddrOfPinnedObject(), offset, sourceBuf.AddrOfPinnedObject(), count, swapSpeakers);
 				}
 				finally
 				{

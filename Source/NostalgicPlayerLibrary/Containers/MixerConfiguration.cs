@@ -44,6 +44,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 
 		/********************************************************************/
 		/// <summary>
+		/// Swap left and right speakers
+		/// </summary>
+		/********************************************************************/
+		public bool SwapSpeakers
+		{
+			get; set;
+		} = false;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Indicate if Amiga filter should be emulated
 		/// </summary>
 		/********************************************************************/

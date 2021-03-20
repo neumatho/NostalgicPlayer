@@ -216,36 +216,74 @@ extern "C"
 	#define CHECK_SAMPLE_16(var, bound)	var = (var >= bound) ? bound - 1 : (var < -bound) ? -bound : var
 	#define PUT_SAMPLE_16(var)			*dest++ = (INT16)var
 
-	EXPORTAPI(void, ConvertTo16(INT16* dest, INT32 offset, const INT32* source, INT32 count))
+	EXPORTAPI(void, ConvertTo16(INT16* dest, INT32 offset, const INT32* source, INT32 count, BOOL swapSpeakers))
 	{
 		INT32 x1, x2, x3, x4;
 
 		dest += offset;
 		INT32 remain = count & 3;
 
-		for (count >>= 2; count; count--)
+		if (swapSpeakers)
 		{
-			EXTRACT_SAMPLE_16(x1);
-			EXTRACT_SAMPLE_16(x2);
-			EXTRACT_SAMPLE_16(x3);
-			EXTRACT_SAMPLE_16(x4);
+			for (count >>= 2; count; count--)
+			{
+				EXTRACT_SAMPLE_16(x1);
+				EXTRACT_SAMPLE_16(x2);
+				EXTRACT_SAMPLE_16(x3);
+				EXTRACT_SAMPLE_16(x4);
 
-			CHECK_SAMPLE_16(x1, 32767);
-			CHECK_SAMPLE_16(x2, 32767);
-			CHECK_SAMPLE_16(x3, 32767);
-			CHECK_SAMPLE_16(x4, 32767);
+				CHECK_SAMPLE_16(x1, 32767);
+				CHECK_SAMPLE_16(x2, 32767);
+				CHECK_SAMPLE_16(x3, 32767);
+				CHECK_SAMPLE_16(x4, 32767);
 
-			PUT_SAMPLE_16(x1);
-			PUT_SAMPLE_16(x2);
-			PUT_SAMPLE_16(x3);
-			PUT_SAMPLE_16(x4);
+				PUT_SAMPLE_16(x2);
+				PUT_SAMPLE_16(x1);
+				PUT_SAMPLE_16(x4);
+				PUT_SAMPLE_16(x3);
+			}
+
+			// We know it is always stereo samples when coming here
+			while (remain > 0)
+			{
+				EXTRACT_SAMPLE_16(x1);
+				EXTRACT_SAMPLE_16(x2);
+
+				CHECK_SAMPLE_16(x1, 32767);
+				CHECK_SAMPLE_16(x2, 32767);
+
+				PUT_SAMPLE_16(x2);
+				PUT_SAMPLE_16(x1);
+
+				remain -= 2;
+			}
 		}
-
-		while (remain--)
+		else
 		{
-			EXTRACT_SAMPLE_16(x1);
-			CHECK_SAMPLE_16(x1, 32767);
-			PUT_SAMPLE_16(x1);
+			for (count >>= 2; count; count--)
+			{
+				EXTRACT_SAMPLE_16(x1);
+				EXTRACT_SAMPLE_16(x2);
+				EXTRACT_SAMPLE_16(x3);
+				EXTRACT_SAMPLE_16(x4);
+
+				CHECK_SAMPLE_16(x1, 32767);
+				CHECK_SAMPLE_16(x2, 32767);
+				CHECK_SAMPLE_16(x3, 32767);
+				CHECK_SAMPLE_16(x4, 32767);
+
+				PUT_SAMPLE_16(x1);
+				PUT_SAMPLE_16(x2);
+				PUT_SAMPLE_16(x3);
+				PUT_SAMPLE_16(x4);
+			}
+
+			while (remain--)
+			{
+				EXTRACT_SAMPLE_16(x1);
+				CHECK_SAMPLE_16(x1, 32767);
+				PUT_SAMPLE_16(x1);
+			}
 		}
 	}
 
@@ -261,36 +299,74 @@ extern "C"
 	#define CHECK_SAMPLE_32(var, bound)	var = (var >= bound) ? bound - 1 : (var < -bound) ? -bound : var
 	#define PUT_SAMPLE_32(var)			*dest++ = (INT32)var
 
-	EXPORTAPI(void, ConvertTo32(INT32* dest, INT32 offset, const INT32* source, INT32 count))
+	EXPORTAPI(void, ConvertTo32(INT32* dest, INT32 offset, const INT32* source, INT32 count, BOOL swapSpeakers))
 	{
 		INT64 x1, x2, x3, x4;
 
 		dest += offset;
 		INT32 remain = count & 3;
 
-		for (count >>= 2; count; count--)
+		if (swapSpeakers)
 		{
-			EXTRACT_SAMPLE_32(x1);
-			EXTRACT_SAMPLE_32(x2);
-			EXTRACT_SAMPLE_32(x3);
-			EXTRACT_SAMPLE_32(x4);
+			for (count >>= 2; count; count--)
+			{
+				EXTRACT_SAMPLE_32(x1);
+				EXTRACT_SAMPLE_32(x2);
+				EXTRACT_SAMPLE_32(x3);
+				EXTRACT_SAMPLE_32(x4);
 
-			CHECK_SAMPLE_32(x1, 2147483647);
-			CHECK_SAMPLE_32(x2, 2147483647);
-			CHECK_SAMPLE_32(x3, 2147483647);
-			CHECK_SAMPLE_32(x4, 2147483647);
+				CHECK_SAMPLE_32(x1, 2147483647);
+				CHECK_SAMPLE_32(x2, 2147483647);
+				CHECK_SAMPLE_32(x3, 2147483647);
+				CHECK_SAMPLE_32(x4, 2147483647);
 
-			PUT_SAMPLE_32(x1);
-			PUT_SAMPLE_32(x2);
-			PUT_SAMPLE_32(x3);
-			PUT_SAMPLE_32(x4);
+				PUT_SAMPLE_32(x2);
+				PUT_SAMPLE_32(x1);
+				PUT_SAMPLE_32(x4);
+				PUT_SAMPLE_32(x3);
+			}
+
+			// We know it is always stereo samples when coming here
+			while (remain > 0)
+			{
+				EXTRACT_SAMPLE_32(x1);
+				EXTRACT_SAMPLE_32(x2);
+
+				CHECK_SAMPLE_32(x1, 2147483647);
+				CHECK_SAMPLE_32(x2, 2147483647);
+
+				PUT_SAMPLE_32(x2);
+				PUT_SAMPLE_32(x1);
+
+				remain -= 2;
+			}
 		}
-
-		while (remain--)
+		else
 		{
-			EXTRACT_SAMPLE_32(x1);
-			CHECK_SAMPLE_32(x1, 2147483647);
-			PUT_SAMPLE_32(x1);
+			for (count >>= 2; count; count--)
+			{
+				EXTRACT_SAMPLE_32(x1);
+				EXTRACT_SAMPLE_32(x2);
+				EXTRACT_SAMPLE_32(x3);
+				EXTRACT_SAMPLE_32(x4);
+
+				CHECK_SAMPLE_32(x1, 2147483647);
+				CHECK_SAMPLE_32(x2, 2147483647);
+				CHECK_SAMPLE_32(x3, 2147483647);
+				CHECK_SAMPLE_32(x4, 2147483647);
+
+				PUT_SAMPLE_32(x1);
+				PUT_SAMPLE_32(x2);
+				PUT_SAMPLE_32(x3);
+				PUT_SAMPLE_32(x4);
+			}
+
+			while (remain--)
+			{
+				EXTRACT_SAMPLE_32(x1);
+				CHECK_SAMPLE_32(x1, 2147483647);
+				PUT_SAMPLE_32(x1);
+			}
 		}
 	}
 }

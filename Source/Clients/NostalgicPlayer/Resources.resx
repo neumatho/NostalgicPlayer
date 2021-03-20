@@ -582,6 +582,9 @@ what is new.</value>
   <data name="IDS_SETTINGS_MIXER_GENERAL_STEREOSEPARATION" xml:space="preserve">
     <value>Stereo separation</value>
   </data>
+  <data name="IDS_SETTINGS_MIXER_GENERAL_SWAPSPEAKERS" xml:space="preserve">
+    <value>Swap left and right speakers</value>
+  </data>
   <data name="IDS_SETTINGS_MIXER_OUPUT" xml:space="preserve">
     <value>Mixer output</value>
   </data>
