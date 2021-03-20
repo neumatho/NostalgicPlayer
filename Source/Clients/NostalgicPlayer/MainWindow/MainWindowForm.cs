@@ -965,15 +965,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			string currentVersion = Env.CurrentVersion;
 
-			if (!File.Exists(versionFile) || (File.ReadAllText(versionFile) != currentVersion))
+			if (File.Exists(versionFile))
 			{
-				using (NewVersionWindowForm dialog = new NewVersionWindowForm())
+				if (File.ReadAllText(versionFile) != currentVersion)
 				{
-					dialog.ShowDialog();
-				}
+					using (NewVersionWindowForm dialog = new NewVersionWindowForm())
+					{
+						dialog.ShowDialog(this);
+					}
 
-				File.WriteAllText(versionFile, currentVersion);
+					File.WriteAllText(versionFile, currentVersion);
+				}
 			}
+			else
+				File.WriteAllText(versionFile, currentVersion);
 
 			RetrieveStartupFiles();
 		}
@@ -1167,7 +1172,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			using (HelpWindowForm dialog = new HelpWindowForm())
 			{
-				dialog.ShowDialog();
+				dialog.ShowDialog(this);
 			}
 		}
 
