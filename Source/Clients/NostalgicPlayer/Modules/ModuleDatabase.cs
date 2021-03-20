@@ -120,7 +120,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		{
 			lock (threadLock)
 			{
-				if (!queueBeingParsed)
+				if (!queueBeingParsed && (queue != null))
 				{
 					queue.Enqueue(new QueueInfo { FullPath = fullPath, Info = info });
 					return;

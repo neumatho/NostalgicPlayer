@@ -712,6 +712,9 @@ information</value>
   <data name="IDS_TIMEFORMAT" xml:space="preserve">
     <value>hh\:mm\:ss</value>
   </data>
+  <data name="IDS_TIMEFORMAT_BIG" xml:space="preserve">
+    <value>d\:hh\:mm\:ss</value>
+  </data>
   <data name="IDS_TIMEFORMAT_SMALL" xml:space="preserve">
     <value>m\:ss</value>
   </data>

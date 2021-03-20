@@ -3566,14 +3566,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			string selStr, listStr;
 
 			TimeSpan tempTime = new TimeSpan((((long)selectedTime.TotalMilliseconds + 500) / 1000 * 1000) * TimeSpan.TicksPerMillisecond);
-			if ((int)tempTime.TotalHours > 0)
+			if ((int)tempTime.TotalDays > 0)
+				selStr = tempTime.ToString(Resources.IDS_TIMEFORMAT_BIG);
+			else if ((int)tempTime.TotalHours > 0)
 				selStr = tempTime.ToString(Resources.IDS_TIMEFORMAT);
 			else
 				selStr = tempTime.ToString(Resources.IDS_TIMEFORMAT_SMALL);
 
 			// And build the list time string
 			tempTime = new TimeSpan((((long)listTime.TotalMilliseconds + 500) / 1000 * 1000) * TimeSpan.TicksPerMillisecond);
-			if ((int)tempTime.TotalHours > 0)
+			if ((int)tempTime.TotalDays > 0)
+				listStr = tempTime.ToString(Resources.IDS_TIMEFORMAT_BIG);
+			else if ((int)tempTime.TotalHours > 0)
 				listStr = tempTime.ToString(Resources.IDS_TIMEFORMAT);
 			else
 				listStr = tempTime.ToString(Resources.IDS_TIMEFORMAT_SMALL);

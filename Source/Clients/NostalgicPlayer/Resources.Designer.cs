@@ -1681,6 +1681,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to d\:hh\:mm\:ss.
+        /// </summary>
+        internal static string IDS_TIMEFORMAT_BIG {
+            get {
+                return ResourceManager.GetString("IDS_TIMEFORMAT_BIG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to m\:ss.
         /// </summary>
         internal static string IDS_TIMEFORMAT_SMALL {
