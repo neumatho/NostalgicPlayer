@@ -381,7 +381,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					else
 					{
 						// No
-						if ((count != 1) && (optionSettings.ModuleListEnd == OptionSettings.ModuleListEndAction.JumpToStart))
+						if ((count > 1) && (optionSettings.ModuleListEnd == OptionSettings.ModuleListEndAction.JumpToStart))
 						{
 							// Load the first module, but only if it's valid
 							// or haven't been loaded before
@@ -417,7 +417,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					else
 					{
 						// No
-						if ((count != 1) && (optionSettings.ModuleListEnd == OptionSettings.ModuleListEndAction.JumpToStart))
+						if ((count > 1) && (optionSettings.ModuleListEnd == OptionSettings.ModuleListEndAction.JumpToStart))
 						{
 							// Load the first module, but only if it's valid
 							// or haven't been loaded before
