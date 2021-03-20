@@ -28,11 +28,112 @@
 						<br>
 					</span>
 					<map name="tabs">
-						<area shape="rect" coords="4,4,46,26" href="#paths">
-						<area shape="rect" coords="48,4,90,26" href="#mixer">
-						<area shape="rect" coords="92,4,142,26" href="#agents">
+						<area shape="rect" coords="3,2,58,24" href="#options">
+						<area shape="rect" coords="60,2,102,24" href="#paths">
+						<area shape="rect" coords="104,2,146,24" href="#mixer">
+						<area shape="rect" coords="148,2,198,24" href="#agents">
 					</map>
 					<img src="images/settingstabs.png" alt="Settings tabs" usemap="#tabs"/>
+					<span>
+						<a name="options"><h3>Options</h3></a>
+						<img src="images/settingsoptions.png" alt="path settings"/>
+						<br>
+						<h4>General</h4>
+						<table class="usage2table">
+							<tr>
+								<td>Jump to added module</td>
+								<td>Automatically start playing an newly added module.</td>
+							</tr>
+							<tr>
+								<td>Add to list as default</td>
+								<td>Set playlist clearing off / on when a module is added by double-clicking the file.</td>
+							</tr>
+							<tr>
+								<td>Remember list on exit</td>
+								<td>Save a playlist when NostalgicPlayer quits and load it when NostalgicPlayer starts again.</td>
+							</tr>
+							<tr>
+								<td>Remember playing module</td>
+								<td>Save playing module info when NostalgicPlayer quits and start playing it when NostalgicPlayer starts again.</td>
+							</tr>
+							<tr>
+								<td>Remember module position</td>
+								<td>Save playing module position info when NostalgicPlayer quits and start playing the module at the same position when NostalgicPlayer starts again.</td>
+							</tr>
+							<tr>
+								<td>Button tooltips</td>
+								<td>NostalgicPlayer shows small hints regarding the button under the mouse-pointer, whenever the mouse rests for more than 1 second.</td>
+							</tr>
+							<tr>
+								<td>Show module name in titlebar</td>
+								<td>Show the name of the playing module in the main window titlebar.</td>
+							</tr>
+							<tr>
+								<td>Show item number in list</td>
+								<td>Shows item number before filename in playlist.</td>
+							</tr>
+							<tr>
+								<td>Scan added files</td>
+								<td>NostalgicPlayer tries to find and add module playing time to playlist. This scans newly added modules with missing playing time in the background.</td>
+							</tr>
+							<tr>
+								<td>Use database to store module information</td>
+								<td>Use a local database to store information about the modules, e.g. the playing time. This database is then used first to retrieve the information and if not available, NostalgicPlayer will calculate the information. This work best together with the <i>Scan added files</i> option above.</td>
+							</tr>
+						</table>
+						<br>
+						<h4>Loading</h4>
+						<table class="usage2table">
+							<tr>
+								<td>Double buffering</td>
+								<td>NostalgicPlayer loads next module in the list while the actual module is playing. Early load tells NostalgicPlayer how far (positions) from the ending of the current module NostalgicPlayer will start loading the next one. Enabling this feature will make the small pause between module switch very short. It can be used if you e.g. play a MP3 album where each song is merged into each other.</td>
+							</tr>
+							<tr>
+								<td>When a module error is reached</td>
+								<td>Tells what NostalgicPlayer should do when module loading fails. Possible choices are:
+								<table class="usage2table">
+									<tr>
+										<td>Show error dialog</td>
+										<td>Asks user what to do.</td>
+									</tr>
+									<tr>
+										<td>Skip file</td>
+										<td>Skips file and starts playing next one in playlist.</td>
+									</tr>
+									<tr>
+										<td>Skip file and remove from list</td>
+										<td>Removes file from playlist and starts playing next one in playlist.</td>
+									</tr>
+									<tr>
+										<td>Stop playing</td>
+										<td>Stops playing.</td>
+									</tr>
+								</table></td>
+							</tr>
+						</table>
+						<br>
+						<h4>Playing</h4>
+						<table class="usage2table">
+							<tr>
+								<td>At end of module list</td>
+								<td>Tells what NostalgicPlayer should do when it has played last module in playlist. Possible choices are:
+								<table class="usage2table">
+									<tr>
+										<td>Eject module</td>
+										<td>Eject module and stops playing.</td>
+									</tr>
+									<tr>
+										<td>Jump to start</td>
+										<td>Starts playing first module in playlist.</td>
+									</tr>
+									<tr>
+										<td>Loop module</td>
+										<td>Plays last module forever.</td>
+									</tr>
+								</table></td>
+							</tr>
+						</table>
+					</span>
 					<span>
 						<a name="paths"><h3>Paths</h3></a>
 						<img src="images/settingspaths.png" alt="path settings"/>
@@ -67,8 +168,12 @@
 								<td>Helps the sound to be less "rough" and make lesser clicks'n'pops. This pretty much resembles the effect of the filter on the Amiga. Interpolation consumes about 25% more cpu-power than usual.</td>
 							</tr>
 							<tr>
-								<td>Emulate Amiga led filter</td>
-								<td>Sets on Amiga led filter emulation which is basically a low bass filter. Only few mod trackers support this feature.</td>
+								<td>Swap left and right speakers</td>
+								<td>Some headphones swaps the left and right speakers. You can then enable this option to swap them back to normal again.</td>
+							</tr>
+							<tr>
+								<td>Emulate Amiga LED filter</td>
+								<td>Sets on Amiga LED filter emulation which is basically a low bass filter. Only few mod trackers support this feature.</td>
 							</tr>
 						</table>
 						<br>

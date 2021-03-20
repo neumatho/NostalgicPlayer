@@ -251,6 +251,7 @@ body {
 
 .usage2table td:nth-child(1) {
 	width: 140px;
+	padding-right: 8px;
 }
 
 .usage2table a {
