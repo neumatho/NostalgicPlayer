@@ -9,19 +9,21 @@
     <Authors>Thomas Neumann</Authors>
     <Copyright>Copyright © 2021</Copyright>
     <Product>NostalgicPlayer</Product>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DocumentationFile>bin\NostalgicPlayerConsole.xml</DocumentationFile>
-    <OutputPath></OutputPath>
+    <OutputPath />
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DocumentationFile>bin\NostalgicPlayerConsole.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
-    <OutputPath></OutputPath>
+    <OutputPath />
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,7 +35,7 @@
   </Target>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /Y $(SolutionDir)NostalgicPlayerLibrary_Native\bin\ $(TargetDir)&#xD;&#xA;$(SolutionDir)Clients\CopyAgents.bat &quot;$(TargetDir)&quot; &quot;$(SolutionDir)&quot; $(ConfigurationName)" />
+    <Exec Command="xcopy /Y $(SolutionDir)NostalgicPlayerLibrary_Native\bin\$(PlatformName)\$(ConfigurationName) $(TargetDir)&#xD;&#xA;$(SolutionDir)Clients\CopyAgents.bat &quot;$(TargetDir)&quot; &quot;$(SolutionDir)&quot; $(ConfigurationName)" />
   </Target>
 
 </Project>
