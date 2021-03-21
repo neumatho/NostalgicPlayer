@@ -17,6 +17,8 @@ In the Clients folder, you can find two different clients that use the player. *
 
 # Formats supported
 
+Modules in all supported formats can be found on my homepage at https://www.nostalgicplayer.dk.
+
 | Format | Extension | Converter | Player | Description |
 | ------ | -------------- | --------- | ------ | ----------- |
 | D.O.C. SoundTracker II | .mod | | ModTracker | A lot of new effects has been added since the previous Ultimate SoundTracker. Most of them uses the Amiga hardware to do modulation etc. Those effects are not supported. Besides that, other added effects have the order that is known today.<br/><br/>Modules using this player, could also have been made in The Exterminator SoundTracker 2.0. |
