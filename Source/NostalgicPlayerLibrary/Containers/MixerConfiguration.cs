@@ -6,6 +6,8 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.PlayerLibrary.Interfaces;
+
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 {
 	/// <summary>
@@ -73,6 +75,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// </summary>
 		/********************************************************************/
 		public bool[] ChannelsEnabled
+		{
+			get; set;
+		} = null;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// An instance that implements extra channels to the mixer
+		/// </summary>
+		/********************************************************************/
+		public IExtraChannels ExtraChannels
 		{
 			get; set;
 		} = null;

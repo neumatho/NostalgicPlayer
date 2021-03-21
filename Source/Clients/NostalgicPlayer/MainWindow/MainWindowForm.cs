@@ -28,16 +28,18 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow;
 using Polycode.NostalgicPlayer.GuiKit.Controls;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Mixer;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
+using Polycode.NostalgicPlayer.PlayerLibrary.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 {
 	/// <summary>
 	/// This is the main window
 	/// </summary>
-	public partial class MainWindowForm : WindowFormBase
+	public partial class MainWindowForm : WindowFormBase, IExtraChannels
 	{
 		private enum FileDropType
 		{
@@ -107,6 +109,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		// Different helper classes
 		private ModuleDatabase database;
 		private FileScanner fileScanner;
+
+		// Play samples from sample info window info
+		private int playSamplesChannelNumber;
+		private bool playSamples;
 
 		// Misc.
 		private readonly Random rnd;
@@ -634,6 +640,117 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					yield return  agentDisplayWindow;
 			}
 		}
+		#endregion
+
+		#region IExtraChannels implementation
+		/********************************************************************/
+		/// <summary>
+		/// Do any needed initialization
+		/// </summary>
+		/********************************************************************/
+		public void Initialize()
+		{
+			playSamplesChannelNumber = 0;
+			playSamples = false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Cleanup
+		/// </summary>
+		/********************************************************************/
+		public void Cleanup()
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Play the extra channels
+		/// </summary>
+		/********************************************************************/
+		public bool PlayChannels(Channel[] channels)
+		{
+			// Get the sample to play
+			if (IsSampleInfoWindowOpen())
+			{
+				PlaySampleInfo playInfo = sampleInfoWindow.GetNextSampleFromQueue();
+				if (playInfo != null)
+				{
+					if (playInfo.Frequency == 0)
+					{
+						// Mute all the channels
+						for (int i = 0; i < SampleInfoWindowForm.PolyphonyChannels; i++)
+							channels[i].Mute();
+
+						playSamples = false;
+					}
+					else
+					{
+						int playChannel;
+
+						// Find the next channel to play in
+						if (sampleInfoWindow.IsPolyphonyEnabled)
+						{
+							playChannel = playSamplesChannelNumber;
+
+							playSamplesChannelNumber++;
+							if (playSamplesChannelNumber == SampleInfoWindowForm.PolyphonyChannels)
+								playSamplesChannelNumber = 0;
+						}
+						else
+						{
+							playChannel = 0;
+
+							// Mute the other channels
+							for (int i = 1; i < SampleInfoWindowForm.PolyphonyChannels; i++)
+								channels[i].Mute();
+						}
+
+						SampleInfo sampleInfo = playInfo.SampleInfo;
+						Channel channel = channels[playChannel];
+
+						// Check the item to see if it's a legal sample
+						if ((sampleInfo.Sample != null) && (sampleInfo.Length > 0))
+						{
+							// Play it
+							channel.PlaySample(sampleInfo.Sample, 0, (uint)sampleInfo.Length, (byte)sampleInfo.BitSize);
+							channel.SetFrequency((uint)playInfo.Frequency);
+
+							ushort vol = (ushort)sampleInfo.Volume;
+							channel.SetVolume(vol == 0 ? (ushort)256 : vol);
+
+							int pan = sampleInfo.Panning;
+							channel.SetPanning(pan == -1 ? (ushort)Panning.Center : (ushort)pan);
+
+							if ((sampleInfo.Flags & SampleInfo.SampleFlags.Loop) != 0)
+								channel.SetLoop((uint)sampleInfo.LoopStart, (uint)sampleInfo.LoopLength, (sampleInfo.Flags & SampleInfo.SampleFlags.PingPong) != 0 ? Channel.LoopType.PingPong : Channel.LoopType.Normal);
+						}
+						else
+						{
+							// Mute the channel
+							channel.Mute();
+						}
+
+						playSamples = true;
+					}
+				}
+			}
+
+			return playSamples;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the number of extra channels
+		/// </summary>
+		/********************************************************************/
+		public int ExtraChannels => SampleInfoWindowForm.PolyphonyChannels;
 		#endregion
 
 		#region Event handlers

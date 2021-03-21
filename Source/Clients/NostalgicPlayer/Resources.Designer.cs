@@ -1041,6 +1041,42 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Octave: {0}-{1}.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_OCTAVE {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_OCTAVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Off.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_OFF {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_OFF", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to On.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_ON {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_ON", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Polyphony: {0}.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_POLYPHONY {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_POLYPHONY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hybrid.
         /// </summary>
         internal static string IDS_SAMPLE_INFO_SAMP_TYPE_HYBRID {

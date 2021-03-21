@@ -48,7 +48,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 			Sample,
 
 			/// <summary>
-			/// Synth generated sample
+			/// Synthesis generated sample
 			/// </summary>
 			Synth,
 

@@ -255,7 +255,9 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/********************************************************************/
 		public override void Pause()
 		{
-			if (playbackState == PlaybackState.Playing)
+			// Uncommented, because the audio client should not be stopped,
+			// else sample playing won't work when a module is paused
+/*			if (playbackState == PlaybackState.Playing)
 			{
 				// Stop the audio
 				audioClient.Stop();
@@ -266,7 +268,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 					playbackState = PlaybackState.Paused;
 				}
 			}
-		}
+*/		}
 
 
 

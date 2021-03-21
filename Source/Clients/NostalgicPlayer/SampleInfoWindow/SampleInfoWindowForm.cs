@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using Krypton.Navigator;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -31,6 +32,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 		private readonly SampleInfoWindowSettings settings;
 
 		private readonly Dictionary<int, Bitmap> combinedImages = new Dictionary<int, Bitmap>();
+
+		/// <summary></summary>
+		public const int PolyphonyChannels = 3;
+
+		private int samplePlayOctave;
+		private bool samplePlayPolyEnabled;
+		private bool samplePlayLoops;
+		private int samplePlayKeyCount;
+		private readonly Keys[] samplePlayKeys;
+
+		private readonly Queue<PlaySampleInfo> samplePlayQueue;
+
+		private static readonly int[] keyTab =
+		{
+			-1, -1, -1, 13, 15, -1, 18, 20, 22, -1, 25, 27, -1, 30, -1, -1,
+			12, 14, 16, 17, 19, 21, 23, 24, 26, 28, 29, 31, -1, -1, -1,  1,
+			 3, -1,  6,  8, 10, -1, 13, 15, -1, -1, -1, -1,  0,  2,  4,  5,
+			 7,  9, 11, 12, 14, 16
+		};
 
 		/********************************************************************/
 		/// <summary>
@@ -55,6 +75,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 
 			// Remember the arguments
 			this.moduleHandler = moduleHandler;
+
+			// Initialize sample play
+			samplePlayOctave = 48;
+			samplePlayPolyEnabled = false;
+			samplePlayKeyCount = 1;
+			samplePlayKeys = new Keys[PolyphonyChannels];
+			Array.Fill(samplePlayKeys, Keys.None);
+
+			samplePlayQueue = new Queue<PlaySampleInfo>();
 
 			if (!DesignMode)
 			{
@@ -215,6 +244,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 				sampleDataGridView.Sort(sampleDataGridView.Columns[settings.SampSortKey], Enum.Parse<ListSortDirection>(settings.SampSortOrder.ToString()));
 
 				// Make sure that the content is up-to date
+				ChangeOctave(samplePlayOctave / 12);
+				IsPolyphonyEnabled = false;
+
 				RefreshWindow();
 			}
 		}
@@ -236,6 +268,69 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			AddInstrumentItems();
 			AddSampleItems();
 		}
+
+		#region Sample playing
+		/********************************************************************/
+		/// <summary>
+		/// Processes the raw scan code to find the note to play
+		/// </summary>
+		/********************************************************************/
+		public bool ProcessKey(int scanCode, Keys key)
+		{
+			if (samplePlayKeyCount > 0)
+				return PlaySample(scanCode, key);
+
+			return false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Checks the queue to see if there is any samples waiting to be
+		/// played and if so, removes it from the queue and return it
+		/// </summary>
+		/********************************************************************/
+		public PlaySampleInfo GetNextSampleFromQueue()
+		{
+			PlaySampleInfo playInfo = null;
+
+			lock (samplePlayQueue)
+			{
+				// Check to see if there is any items in the list
+				if (samplePlayQueue.Count > 0)
+				{
+					// Get the item and remove it
+					playInfo = samplePlayQueue.Dequeue();
+				}
+			}
+
+			return playInfo;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tells whether polyphony is enabled or not
+		/// </summary>
+		/********************************************************************/
+		public bool IsPolyphonyEnabled
+		{
+			get
+			{
+				return samplePlayPolyEnabled;
+			}
+
+			private set
+			{
+				samplePlayPolyEnabled = value;
+				samplePlayKeyCount = value ? PolyphonyChannels : 1;
+
+				polyphonyLabel.Text = string.Format(Resources.IDS_SAMPLE_INFO_SAMP_POLYPHONY, value ? Resources.IDS_SAMPLE_INFO_SAMP_ON : Resources.IDS_SAMPLE_INFO_SAMP_OFF);
+			}
+		}
+		#endregion
 
 		#region Event handlers
 		/********************************************************************/
@@ -298,6 +393,155 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 
 			// Cleanup
 			moduleHandler = null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when a key is hold down in the sample list
+		/// </summary>
+		/********************************************************************/
+		private void SamplesDataGridView_KeyDown(object sender, KeyEventArgs e)
+		{
+			// Check for different keyboard shortcuts
+			Keys modifiers = e.Modifiers & Keys.Modifiers;
+			Keys key = e.KeyData & Keys.KeyCode;
+
+			if (modifiers == Keys.None)
+			{
+				switch (key)
+				{
+					// Delete - Turn on/off polyphony
+					case Keys.Delete:
+					{
+						IsPolyphonyEnabled = !IsPolyphonyEnabled;
+						e.Handled = true;
+						break;
+					}
+
+					// Space - Panic button. Mute all samples
+					case Keys.Space:
+					{
+						// Add an empty sample
+						AddSampleToQueue(null, 0);
+
+						// Clear up the key variables
+						if (IsPolyphonyEnabled)
+						{
+							samplePlayKeyCount = PolyphonyChannels;
+							for (int i = 0; i < PolyphonyChannels; i++)
+								samplePlayKeys[i] = Keys.None;
+						}
+						else
+							samplePlayKeyCount = 1;
+
+						e.Handled = true;
+						break;
+					}
+
+					// F1 - Switch octave
+					case Keys.F1:
+					{
+						samplePlayOctave = 0;
+						ChangeOctave(0);
+						e.Handled = true;
+						break;
+					}
+
+					// F2 - Switch octave
+					case Keys.F2:
+					{
+						samplePlayOctave = 12;
+						ChangeOctave(1);
+						e.Handled = true;
+						break;
+					}
+
+					// F3 - Switch octave
+					case Keys.F3:
+					{
+						samplePlayOctave = 24;
+						ChangeOctave(2);
+						e.Handled = true;
+						break;
+					}
+
+					// F4 - Switch octave
+					case Keys.F4:
+					{
+						samplePlayOctave = 36;
+						ChangeOctave(3);
+						e.Handled = true;
+						break;
+					}
+
+					// F5 - Switch octave
+					case Keys.F5:
+					{
+						samplePlayOctave = 48;
+						ChangeOctave(4);
+						e.Handled = true;
+						break;
+					}
+
+					// F6 - Switch octave
+					case Keys.F6:
+					{
+						samplePlayOctave = 60;
+						ChangeOctave(5);
+						e.Handled = true;
+						break;
+					}
+
+					// F7 - Switch octave
+					case Keys.F7:
+					{
+						samplePlayOctave = 72;
+						ChangeOctave(6);
+						e.Handled = true;
+						break;
+					}
+
+					// F8 - Switch octave
+					case Keys.F8:
+					{
+						samplePlayOctave = 84;
+						ChangeOctave(7);
+						e.Handled = true;
+						break;
+					}
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when a key is released in the sample list
+		/// </summary>
+		/********************************************************************/
+		private void SamplesDataGridView_KeyUp(object sender, KeyEventArgs e)
+		{
+			Keys key = e.KeyCode & Keys.KeyCode;
+
+			// Try to find the key in the key array
+			for (int i = 0; i < PolyphonyChannels; i++)
+			{
+				if (samplePlayKeys[i] == key)
+				{
+					// One more key can be pressed
+					samplePlayKeys[i] = Keys.None;
+					samplePlayKeyCount++;
+
+					// Add an empty sample if the sample loops
+					if (samplePlayLoops)
+						AddSampleToQueue(null, 0);
+
+					break;
+				}
+			}
 		}
 		#endregion
 
@@ -402,6 +646,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						new KryptonDataGridViewTextBoxCell { Value = GetTypeString(sample.Type) }
 					});
 
+					row.Tag = sample;
+
 					sampleDataGridView.Rows.Add(row);
 				}
 
@@ -486,6 +732,132 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			combinedImages[index] = newBitmap;
 
 			return newBitmap;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Change the current octave
+		/// </summary>
+		/********************************************************************/
+		private void ChangeOctave(int octave)
+		{
+			octaveLabel.Text = string.Format(Resources.IDS_SAMPLE_INFO_SAMP_OCTAVE, octave, octave + 1);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Play the selected sample
+		/// </summary>
+		/********************************************************************/
+		private bool PlaySample(int scanCode, Keys key)
+		{
+			DataGridViewSelectedRowCollection selectedRows = sampleDataGridView.SelectedRows;
+			if (selectedRows.Count > 0)
+			{
+				if (selectedRows[0].Tag is SampleInfo sampleInfo)
+				{
+					// Check if the pressed key is already registered and if so, ignore it (repeated keys)
+					for (int i = 0; i < PolyphonyChannels; i++)
+					{
+						if (samplePlayKeys[i] == key)
+							return false;
+					}
+
+					// Set the loop flag
+					samplePlayLoops = (sampleInfo.Flags & SampleInfo.SampleFlags.Loop) != 0;
+
+					// Count down number of simulated keys
+					samplePlayKeyCount--;
+
+					// Find an empty space in the key array
+					for (int i = 0; i < PolyphonyChannels; i++)
+					{
+						if (samplePlayKeys[i] == Keys.None)
+						{
+							samplePlayKeys[i] = key;
+							break;
+						}
+					}
+
+					// Find the note out from the pressed key
+					int note = FindNoteFromScanCode(scanCode);
+					if (note != -1)
+					{
+						// Calculate the frequency
+						double hertz = sampleInfo.MiddleC;
+
+						if (note < 48)
+						{
+							for (int i = note; i < 48; i++)
+								hertz /= 1.059463094359;
+						}
+						else
+						{
+							for (int i = 48; i < note; i++)
+								hertz *= 1.059463094359;
+						}
+
+						// Add the sample info to the queue
+						AddSampleToQueue(sampleInfo, hertz);
+
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tries to find the scan code given in the key map and then return
+		/// the corresponding note number
+		/// </summary>
+		/********************************************************************/
+		private int FindNoteFromScanCode(int scanCode)
+		{
+			if (scanCode > 0x35)
+				return -1;
+
+			// Lookup the key in the table
+			int note = keyTab[scanCode];
+			if (note != -1)
+				note += samplePlayOctave;
+
+			return note;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Adds the sample information to the play queue. The sample will
+		/// then be played later on
+		/// </summary>
+		/********************************************************************/
+		private void AddSampleToQueue(SampleInfo sampleInfo, double frequency)
+		{
+			// Only add the sample if the type is sample.
+			// Null means to stop the current playing sample
+			if ((sampleInfo == null) || (sampleInfo.Type == SampleInfo.SampleType.Sample) || (sampleInfo.Type == SampleInfo.SampleType.Hybrid))
+			{
+				PlaySampleInfo playInfo = new PlaySampleInfo
+				{
+					SampleInfo = sampleInfo,
+					Frequency = frequency
+				};
+
+				lock (samplePlayQueue)
+				{
+					samplePlayQueue.Enqueue(playInfo);
+				}
+			}
 		}
 		#endregion
 	}

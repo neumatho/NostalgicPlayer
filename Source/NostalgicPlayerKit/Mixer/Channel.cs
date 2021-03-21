@@ -299,6 +299,20 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 
 		/********************************************************************/
 		/// <summary>
+		/// Will change the frequency
+		/// </summary>
+		/// <param name="freq">is the new frequency</param>
+		/********************************************************************/
+		public void SetFrequency(uint freq)
+		{
+			frequency = freq;
+			flags |= Flags.Frequency;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will calculate the period given to a frequency and set it
 		/// </summary>
 		/// <param name="period">is the new frequency as an Amiga period</param>

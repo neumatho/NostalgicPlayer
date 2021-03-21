@@ -200,7 +200,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		public void PausePlaying()
 		{
 			if (currentPlayer != null)
+			{
 				outputAgent.Pause();
+				soundStream.Pause();
+			}
 		}
 
 
@@ -213,7 +216,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		public void ResumePlaying()
 		{
 			if (currentPlayer != null)
+			{
+				soundStream.Resume();
 				outputAgent.Play();
+			}
 		}
 
 

@@ -498,6 +498,18 @@ what is new.</value>
   <data name="IDS_SAMPLE_INFO_SAMP_COLUMN_VOLUME" xml:space="preserve">
     <value>Vol</value>
   </data>
+  <data name="IDS_SAMPLE_INFO_SAMP_OCTAVE" xml:space="preserve">
+    <value>Octave: {0}-{1}</value>
+  </data>
+  <data name="IDS_SAMPLE_INFO_SAMP_OFF" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="IDS_SAMPLE_INFO_SAMP_ON" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="IDS_SAMPLE_INFO_SAMP_POLYPHONY" xml:space="preserve">
+    <value>Polyphony: {0}</value>
+  </data>
   <data name="IDS_SAMPLE_INFO_SAMP_TYPE_HYBRID" xml:space="preserve">
     <value>Hybrid</value>
   </data>

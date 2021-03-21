@@ -88,7 +88,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				EnableInterpolation = sndSettings.Interpolation,
 				SwapSpeakers = sndSettings.SwapSpeakers,
 				EnableAmigaFilter = sndSettings.AmigaFilter,
-				ChannelsEnabled = new bool[MixerConfiguration.MaxNumberOfChannels]
+				ChannelsEnabled = new bool[MixerConfiguration.MaxNumberOfChannels],
+				ExtraChannels = mainWindow
 			};
 
 			// Initialize the channels enable array
@@ -571,6 +572,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		public void ChangeMixerSettings(MixerConfiguration newMixerConfiguration)
 		{
 			mixerConfiguration = newMixerConfiguration;
+			mixerConfiguration.ExtraChannels = mainWindowForm;
 
 			IPlayer player = GetActivePlayer();
 
