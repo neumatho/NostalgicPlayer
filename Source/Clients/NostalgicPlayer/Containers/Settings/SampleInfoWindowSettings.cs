@@ -501,5 +501,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 			set => settings.SetStringEntry("List", "SampSortOrder", value.ToString());
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Sample save format
+		/// </summary>
+		/********************************************************************/
+		public Guid SampleSaveFormat
+		{
+			get
+			{
+				if (Guid.TryParse(settings.GetStringEntry("Sample", "SaveFormat"), out Guid g))
+					return g;
+
+				return Guid.Empty;
+			}
+
+			set => settings.SetStringEntry("Sample", "SaveFormat", value.ToString("D"));
+		}
 	}
 }

@@ -578,6 +578,34 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to save the sample.
+        ///{0}.
+        /// </summary>
+        internal static string IDS_ERR_SAMPLE_INFO_SAMP_ERRORSAVING {
+            get {
+                return ResourceManager.GetString("IDS_ERR_SAMPLE_INFO_SAMP_ERRORSAVING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can&apos;t save a sample with no length..
+        /// </summary>
+        internal static string IDS_ERR_SAMPLE_INFO_SAMP_NOLENGTH {
+            get {
+                return ResourceManager.GetString("IDS_ERR_SAMPLE_INFO_SAMP_NOLENGTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Only samples can be saved..
+        /// </summary>
+        internal static string IDS_ERR_SAMPLE_INFO_SAMP_NOTASAMPLE {
+            get {
+                return ResourceManager.GetString("IDS_ERR_SAMPLE_INFO_SAMP_NOTASAMPLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to save the module list. Failed with error:
         ///{0}.
         /// </summary>
@@ -1073,6 +1101,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_SAMPLE_INFO_SAMP_POLYPHONY {
             get {
                 return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_POLYPHONY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_SAVE {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_SAVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save format.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_SAVEFORMAT {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_SAVEFORMAT", resourceCulture);
             }
         }
         

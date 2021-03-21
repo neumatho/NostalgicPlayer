@@ -10,14 +10,19 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using Krypton.Navigator;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
+using Polycode.NostalgicPlayer.GuiKit.Controls;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
@@ -44,6 +49,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 
 		private readonly Queue<PlaySampleInfo> samplePlayQueue;
 
+		private SaveFileDialog sampleFileDialog;
+
 		private static readonly int[] keyTab =
 		{
 			-1, -1, -1, 13, 15, -1, 18, 20, 22, -1, 25, 27, -1, 30, -1, -1,
@@ -57,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SampleInfoWindowForm(ModuleHandler moduleHandler)
+		public SampleInfoWindowForm(Manager agentManager, ModuleHandler moduleHandler)
 		{
 			InitializeComponent();
 
@@ -243,6 +250,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 
 				sampleDataGridView.Sort(sampleDataGridView.Columns[settings.SampSortKey], Enum.Parse<ListSortDirection>(settings.SampSortOrder.ToString()));
 
+				// Add the sample converters to the format list
+				Guid saveFormat = settings.SampleSaveFormat;
+
+				foreach (AgentInfo agentInfo in agentManager.GetAllAgents(Manager.AgentType.SampleConverters))
+				{
+					KryptonListItem listItem = new KryptonListItem(agentInfo.TypeName);
+					listItem.Tag = agentInfo;
+
+					int index = saveFormatComboBox.Items.Add(listItem);
+
+					if (agentInfo.TypeId == saveFormat)
+						saveFormatComboBox.SelectedIndex = index;
+				}
+
 				// Make sure that the content is up-to date
 				ChangeOctave(samplePlayOctave / 12);
 				IsPolyphonyEnabled = false;
@@ -331,6 +352,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			}
 		}
 		#endregion
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the form is closed
+		/// </summary>
+		/********************************************************************/
+		protected override void OnFormClosed(FormClosedEventArgs e)
+		{
+			sampleFileDialog?.Dispose();
+			sampleFileDialog = null;
+
+			base.OnFormClosed(e);
+		}
 
 		#region Event handlers
 		/********************************************************************/
@@ -543,9 +579,90 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 				}
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when a sample has been selected
+		/// </summary>
+		/********************************************************************/
+		private void SampleDataGridView_SelectionChanged(object sender, EventArgs e)
+		{
+			EnableSaveButton();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when a save format has changed
+		/// </summary>
+		/********************************************************************/
+		private void SaveFormatComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			EnableSaveButton();
+
+			settings.SampleSaveFormat = ((AgentInfo)((KryptonListItem)saveFormatComboBox.SelectedItem).Tag).TypeId;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the save button is clicked
+		/// </summary>
+		/********************************************************************/
+		private void SaveButton_Click(object sender, EventArgs e)
+		{
+			DataGridViewSelectedRowCollection selectedRows = sampleDataGridView.SelectedRows;
+			if (selectedRows.Count > 0)
+			{
+				if (selectedRows[0].Tag is SampleInfo sampleInfo)
+				{
+					if (sampleInfo.Length == 0)
+					{
+						ShowSimpleErrorMessage(Resources.IDS_ERR_SAMPLE_INFO_SAMP_NOLENGTH);
+						return;
+					}
+
+					if (sampleInfo.Type != SampleInfo.SampleType.Sample)
+					{
+						ShowSimpleErrorMessage(Resources.IDS_ERR_SAMPLE_INFO_SAMP_NOTASAMPLE);
+						return;
+					}
+
+					// Create the dialog if not already created
+					if (sampleFileDialog == null)
+						sampleFileDialog = new SaveFileDialog();
+
+					sampleFileDialog.FileName = sampleInfo.Name.Trim();
+
+					DialogResult result = sampleFileDialog.ShowDialog();
+					if (result == DialogResult.OK)
+						SaveSample(sampleInfo, sampleFileDialog.FileName);
+				}
+			}
+		}
 		#endregion
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Will show an error message to the user
+		/// </summary>
+		/********************************************************************/
+		public void ShowSimpleErrorMessage(string message)
+		{
+			using (CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error))
+			{
+				dialog.AddButton(Resources.IDS_BUT_OK, 'O');
+				dialog.ShowDialog(this);
+			}
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Retrieve all the instruments from the player
@@ -856,6 +973,84 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 				lock (samplePlayQueue)
 				{
 					samplePlayQueue.Enqueue(playInfo);
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Enable/disable the save button
+		/// </summary>
+		/********************************************************************/
+		private void EnableSaveButton()
+		{
+			saveButton.Enabled = (sampleDataGridView.SelectedRows.Count > 0) && (saveFormatComboBox.SelectedIndex != -1);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Save the given sample
+		/// </summary>
+		/********************************************************************/
+		private void SaveSample(SampleInfo sampleInfo, string fileName)
+		{
+			// Create an instance of the sample saver agent to use
+			AgentInfo agentInfo = ((KryptonListItem)saveFormatComboBox.SelectedItem).Tag as AgentInfo;
+			if (agentInfo != null)
+			{
+				ISampleSaverAgent converterAgent = (ISampleSaverAgent)agentInfo.Agent.CreateInstance(agentInfo.TypeId);
+
+				// Create the file name
+				fileName = Path.ChangeExtension(fileName, converterAgent.FileExtension);
+
+				// Initialize the converter
+				SaveSampleFormatInfo formatInfo = new SaveSampleFormatInfo(sampleInfo.BitSize, 1, sampleInfo.MiddleC);
+				if (!converterAgent.InitSaver(formatInfo, out string errorMessage))
+				{
+					ShowSimpleErrorMessage(errorMessage);
+					return;
+				}
+
+				try
+				{
+					// Open file to store the sound
+					using (FileStream fs = new FileStream(fileName, FileMode.Create))
+					{
+						// Write the header
+						converterAgent.SaveHeader(fs);
+
+						// Convert sample to 32-bit
+						int[] buffer = new int[sampleInfo.Length];
+
+						if (sampleInfo.BitSize == 8)
+						{
+							for (int i = 0, cnt = sampleInfo.Length; i < cnt; i++)
+								buffer[i] = sampleInfo.Sample[i] << 24;
+						}
+						else
+						{
+							for (int i = 0, cnt = sampleInfo.Length; i < cnt; i++)
+								buffer[i] = sampleInfo.Sample[i] << 16;
+						}
+
+						// Save the data
+						converterAgent.SaveData(fs, buffer, buffer.Length);
+
+						// Save any left overs
+						converterAgent.SaveTail(fs);
+					}
+				}
+				catch (Exception ex)
+				{
+					ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_SAMPLE_INFO_SAMP_ERRORSAVING, ex.Message));
+				}
+				finally
+				{
+					converterAgent.CleanupSaver();
 				}
 			}
 		}

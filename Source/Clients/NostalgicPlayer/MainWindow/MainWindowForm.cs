@@ -2806,7 +2806,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 			else
 			{
-				sampleInfoWindow = new SampleInfoWindowForm(moduleHandler);
+				sampleInfoWindow = new SampleInfoWindowForm(agentManager, moduleHandler);
 				sampleInfoWindow.Disposed += (o, args) => { sampleInfoWindow = null; };
 				sampleInfoWindow.Show();
 			}
@@ -3275,7 +3275,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			if (mainWindowSettings.OpenSampleInformationWindow)
 			{
-				sampleInfoWindow = new SampleInfoWindowForm(moduleHandler);
+				sampleInfoWindow = new SampleInfoWindowForm(agentManager, moduleHandler);
 				sampleInfoWindow.Show();
 			}
 

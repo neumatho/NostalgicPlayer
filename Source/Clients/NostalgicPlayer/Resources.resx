@@ -341,6 +341,16 @@ Formats supported:
   <data name="IDS_ERR_NOOUTPUTAGENT" xml:space="preserve">
     <value>There doesn't exist any output agent, so NostalgicPlayer can't play anything</value>
   </data>
+  <data name="IDS_ERR_SAMPLE_INFO_SAMP_ERRORSAVING" xml:space="preserve">
+    <value>Failed to save the sample.
+{0}</value>
+  </data>
+  <data name="IDS_ERR_SAMPLE_INFO_SAMP_NOLENGTH" xml:space="preserve">
+    <value>You can't save a sample with no length.</value>
+  </data>
+  <data name="IDS_ERR_SAMPLE_INFO_SAMP_NOTASAMPLE" xml:space="preserve">
+    <value>Only samples can be saved.</value>
+  </data>
   <data name="IDS_ERR_SAVE_LIST" xml:space="preserve">
     <value>Failed to save the module list. Failed with error:
 {0}</value>
@@ -509,6 +519,12 @@ what is new.</value>
   </data>
   <data name="IDS_SAMPLE_INFO_SAMP_POLYPHONY" xml:space="preserve">
     <value>Polyphony: {0}</value>
+  </data>
+  <data name="IDS_SAMPLE_INFO_SAMP_SAVE" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="IDS_SAMPLE_INFO_SAMP_SAVEFORMAT" xml:space="preserve">
+    <value>Save format</value>
   </data>
   <data name="IDS_SAMPLE_INFO_SAMP_TYPE_HYBRID" xml:space="preserve">
     <value>Hybrid</value>
