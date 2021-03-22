@@ -6,6 +6,8 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System;
+
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
 	/// <summary>
@@ -14,5 +16,14 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	/// </summary>
 	public interface IAgentSettings
 	{
+		/// <summary>
+		/// Return the NostalgicPlayer_Current_Version constant defined above
+		/// </summary>
+		int NostalgicPlayerVersion { get; }
+
+		/// <summary>
+		/// Returns an unique ID for this setting agent
+		/// </summary>
+		Guid SettingAgentId { get; }
 	}
 }

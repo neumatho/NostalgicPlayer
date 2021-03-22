@@ -9,10 +9,11 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings;
 using Polycode.NostalgicPlayer.GuiKit.Controls;
-using Polycode.NostalgicPlayer.GuiKit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
@@ -23,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class DiskSaverWorker : OutputAgentBase, IAgentGuiSettings
+	internal class DiskSaverWorker : OutputAgentBase, IAgentSettingsRegistrar
 	{
 		private const int MixerBufferSize = 65536;
 
@@ -324,15 +325,15 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 		}
 		#endregion
 
-		#region IAgentGuiSettings implementation
+		#region IAgentSettingsRegistrar implementation
 		/********************************************************************/
 		/// <summary>
-		/// Return a new instance of the settings control
+		/// Return the agent ID for the agent showing the settings
 		/// </summary>
 		/********************************************************************/
-		public ISettingsControl GetSettingsControl()
+		public Guid GetSettingsAgentId()
 		{
-			return new SettingsControl(outputAgents, sampleConverterAgents);
+			return new Guid(Assembly.GetAssembly(GetType()).GetCustomAttribute<GuidAttribute>().Value);
 		}
 		#endregion
 

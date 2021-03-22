@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 	/// </summary>
 	public class DiskSaver : AgentBase, IWantOutputAgents, IWantSampleConverterAgents
 	{
-		private static readonly Guid agent1Id = Guid.Parse("53BE1DF8-83E1-4616-81DE-2ED537CF7D5A");
+		internal static readonly Guid Agent1Id = Guid.Parse("53BE1DF8-83E1-4616-81DE-2ED537CF7D5A");
 
 		private AgentInfo[] loadedOutputAgents;
 		private AgentInfo[] loadedSampleConverterAgents;
@@ -55,7 +55,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_NAME, Resources.IDS_DESCRIPTION, agent1Id)
+					new AgentSupportInfo(Resources.IDS_NAME, Resources.IDS_DESCRIPTION, Agent1Id)
 				};
 			}
 		}
@@ -81,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 		/********************************************************************/
 		public void SetOutputInfo(AgentInfo[] agents)
 		{
-			loadedOutputAgents = agents.Where(a => a.TypeId != agent1Id).ToArray();
+			loadedOutputAgents = agents.Where(a => a.TypeId != Agent1Id).ToArray();
 		}
 		#endregion
 

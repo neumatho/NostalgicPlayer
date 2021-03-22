@@ -12,6 +12,8 @@ using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.GuiKit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 {
@@ -29,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AgentSettingsWindowForm(AgentInfo agentInfo)
+		public AgentSettingsWindowForm(Manager agentManager, AgentInfo agentInfo)
 		{
 			InitializeComponent();
 
@@ -42,25 +44,30 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 				Text = string.Format(Resources.IDS_AGENTSETTINGS_TITLE, agentInfo.TypeName);
 
 				// Create an instance of the agent type and settings window
-				if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IAgentGuiSettings guiSettings)
+				if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IAgentSettingsRegistrar settingsRegistrar)
 				{
-					settingsControl = guiSettings.GetSettingsControl();
+					// Find the settings agent
+					IAgentGuiSettings guiSettings = agentManager.GetSettingAgent(settingsRegistrar.GetSettingsAgentId()) as IAgentGuiSettings;
+					if (guiSettings != null)
+					{
+						settingsControl = guiSettings.GetSettingsControl();
 
-					// Add it in the group control
-					UserControl userControl = settingsControl.GetUserControl();
-					userControl.Dock = DockStyle.Fill;
+						// Add it in the group control
+						UserControl userControl = settingsControl.GetUserControl();
+						userControl.Dock = DockStyle.Fill;
 
-					settingsGroup.Panel.Controls.Add(userControl);
+						settingsGroup.Panel.Controls.Add(userControl);
 
-					// Calculate the minimum size of the window
-					Size minSize = userControl.MinimumSize;
-					Size groupSize = settingsGroup.Size;
+						// Calculate the minimum size of the window
+						Size minSize = userControl.MinimumSize;
+						Size groupSize = settingsGroup.Size;
 
-					int width = Math.Max(Width, Width - groupSize.Width + minSize.Width);
-					int height = Math.Max(Height, Height - groupSize.Height + minSize.Height);
+						int width = Math.Max(Width, Width - groupSize.Width + minSize.Width);
+						int height = Math.Max(Height, Height - groupSize.Height + minSize.Height);
 
-					Size = new Size(width, height);
-					MinimumSize = new Size(width, height);
+						Size = new Size(width, height);
+						MinimumSize = new Size(width, height);
+					}
 				}
 
 				// Initialize settings

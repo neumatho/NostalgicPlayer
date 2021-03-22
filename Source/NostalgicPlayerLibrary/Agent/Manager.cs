@@ -59,6 +59,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 		private readonly Dictionary<Guid, AgentLoadInfo> loadedAgentsByAgentId = new Dictionary<Guid, AgentLoadInfo>();
 		private readonly Dictionary<AgentType, AgentInfo[]> loadedAgentsByAgentType = new Dictionary<AgentType, AgentInfo[]>();
 
+		private readonly Dictionary<Guid, IAgentSettings> settingAgents = new Dictionary<Guid, IAgentSettings>();
+
 		private readonly List<IVisualAgent> registeredVisualAgents = new List<IVisualAgent>();
 
 		/********************************************************************/
@@ -148,6 +150,24 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 			}
 
 			return new AgentInfo[0];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Get the setting agent with the ID given
+		/// </summary>
+		/********************************************************************/
+		public IAgentSettings GetSettingAgent(Guid settingAgentId)
+		{
+			lock (loadListLock)
+			{
+				if (settingAgents.TryGetValue(settingAgentId, out IAgentSettings agentSettings))
+					return agentSettings;
+			}
+
+			return null;
 		}
 
 
@@ -284,6 +304,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 							AssemblyLoadContext loadContext = new AssemblyLoadContext(null, true);
 							Assembly agentAssembly = loadContext.LoadFromAssemblyPath(file);
 
+							// Find all agent implementations
 							foreach (Type t in agentAssembly.GetTypes().Where(t => typeof(IAgent).IsAssignableFrom(t)))
 							{
 								try
@@ -306,12 +327,34 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 										{
 											IAgentWorker worker = agent.CreateInstance(info.TypeId);
 
-											typesInAgent.Add(new AgentInfo(agent, agent.Name, info.Name, info.Description, agent.Version, info.TypeId, worker is IAgentSettings, worker is IAgentDisplay));
+											typesInAgent.Add(new AgentInfo(agent, agent.Name, info.Name, info.Description, agent.Version, info.TypeId, worker is IAgentSettingsRegistrar, worker is IAgentDisplay));
 										}
 									}
 
 									loadedAgentsByAgentId[agent.AgentId] = new AgentLoadInfo { LoadContext = loadContext, FileName = file, AgentInfo = typesInAgent.ToArray() };
 									loadedAgents.AddRange(typesInAgent);
+								}
+								catch (Exception)
+								{
+									// If an exception is thrown, just ignore it and skip the file
+								}
+							}
+
+							// Find all settings
+							foreach (Type t in agentAssembly.GetTypes().Where(t => typeof(IAgentSettings).IsAssignableFrom(t)))
+							{
+								try
+								{
+									IAgentSettings agentSettings = (IAgentSettings)Activator.CreateInstance(t);
+
+									// Check the NostalgicPlayer version the agent is compiled against
+									if (agentSettings.NostalgicPlayerVersion != IAgent.NostalgicPlayer_Current_Version)
+									{
+										Console.WriteLine($"Agent {file} is not compiled against the current version of NostalgicPlayer and is therefore skipped");
+										continue;
+									}
+
+									settingAgents[agentSettings.SettingAgentId] = agentSettings;
 								}
 								catch (Exception)
 								{
@@ -352,6 +395,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 						if (agentInfo.Agent is IWantSampleConverterAgents wantSampleConverterAgents)
 							wantSampleConverterAgents.SetSampleConverterInfo(loadedAgentsByAgentType[AgentType.SampleConverters]);
 					}
+				}
+
+				foreach (IAgentSettings agentSettings in settingAgents.Values)
+				{
+					if (agentSettings is IWantOutputAgents wantOutputAgents)
+						wantOutputAgents.SetOutputInfo(loadedAgentsByAgentType[AgentType.Output]);
+
+					if (agentSettings is IWantSampleConverterAgents wantSampleConverterAgents)
+						wantSampleConverterAgents.SetSampleConverterInfo(loadedAgentsByAgentType[AgentType.SampleConverters]);
 				}
 			}
 		}
