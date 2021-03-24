@@ -54,6 +54,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 		public Kit.Utility.Settings Settings => settings;
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Where to store the output

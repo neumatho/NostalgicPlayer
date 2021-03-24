@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using NAudio.CoreAudioApi;
@@ -14,6 +15,7 @@ using NAudio.CoreAudioApi.Interfaces;
 using NAudio.Wave;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
@@ -21,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class CoreAudioWorker : OutputAgentBase, IAudioSessionEventsHandler, IMMNotificationClient
+	internal class CoreAudioWorker : OutputAgentBase, IAgentSettingsRegistrar, IAudioSessionEventsHandler, IMMNotificationClient
 	{
 		/// <summary>
 		/// Playback State
@@ -53,7 +55,6 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 		private MMDevice endpoint;
 		private AudioClient audioClient;
-		private MMDeviceEnumerator deviceEnumerator;
 
 		private WaveFormat outputFormat;
 
@@ -76,6 +77,9 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		private volatile PlaybackState playbackState;
 		private bool inStreamSwitch;
 
+		private CoreAudioSettings settings;
+		private string currentEndpointId;
+
 		#region IOutputAgent implementation
 		/********************************************************************/
 		/// <summary>
@@ -88,10 +92,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 			try
 			{
+				settings = new CoreAudioSettings();
+
 				stream = null;
 				streamLock = new object();
-
-				deviceEnumerator = new MMDeviceEnumerator();
 
 				endpoint = FindEndpointToUse();
 				audioClient = endpoint.AudioClient;
@@ -173,9 +177,6 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 			endpoint?.Dispose();
 			endpoint = null;
-
-			deviceEnumerator?.Dispose();
-			deviceEnumerator = null;
 
 			flushBufferEvent?.Dispose();
 			flushBufferEvent = null;
@@ -293,6 +294,18 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		}
 		#endregion
 
+		#region IAgentSettingsRegistrar implementation
+		/********************************************************************/
+		/// <summary>
+		/// Return the agent ID for the agent showing the settings
+		/// </summary>
+		/********************************************************************/
+		public Guid GetSettingsAgentId()
+		{
+			return new Guid("EE538BB1-9CE3-472D-B030-D46B321A405A");
+		}
+		#endregion
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
@@ -301,7 +314,18 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/********************************************************************/
 		private MMDevice FindEndpointToUse()
 		{
-			return deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console);
+			string device = settings.OutputDevice;
+
+			using (MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator())
+			{
+				MMDevice foundEndpoint = deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active).FirstOrDefault(d => d.ID == device);
+				if (foundEndpoint == null)
+					foundEndpoint = deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+
+				currentEndpointId = foundEndpoint.ID;
+
+				return foundEndpoint;
+			}
 		}
 
 
@@ -374,7 +398,11 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 			// Register for session and endpoint change notifications
 			audioSessionControl.RegisterEventClient(this);
-			deviceEnumerator.RegisterEndpointNotificationCallback(this);
+
+			using (MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator())
+			{
+				deviceEnumerator.RegisterEndpointNotificationCallback(this);
+			}
 		}
 
 
@@ -397,7 +425,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 			try
 			{
-				deviceEnumerator?.UnregisterEndpointNotificationCallback(this);
+				using (MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator())
+				{
+					deviceEnumerator?.UnregisterEndpointNotificationCallback(this);
+				}
 			}
 			catch(Exception)
 			{
@@ -458,7 +489,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 					// Step 4: If we can't get the new endpoint, we need to abort the stream switch.
 					//         If there IS a new device, we should be able to retrieve it
-					endpoint = deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Console);
+					endpoint = FindEndpointToUse();
 
 					// Step 5: Re-instantiate the audio client on the new endpoint
 					audioClient = endpoint.AudioClient;
@@ -496,6 +527,28 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 		/********************************************************************/
 		/// <summary>
+		/// Will trigger a switch of the output device
+		/// </summary>
+		/********************************************************************/
+		private void TriggerSwitch()
+		{
+			// If we're not in a stream switch already, we want to initiate a
+			// stream switch event. We also want to set the default switch
+			// completed event. That will signal the render thread that it's
+			// ok to re-initialize the audio renderer
+			if (!inStreamSwitch)
+			{
+				inStreamSwitch = true;
+				streamSwitchEvent.Set();
+			}
+
+			streamSwitchCompletedEvent.Set();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Background thread that feeds to output device
 		/// </summary>
 		/********************************************************************/
@@ -503,55 +556,73 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		{
 			try
 			{
-				bool stillPlaying = true;
-				WaitHandle[] waitArray = { shutdownEvent, streamSwitchEvent, audioSamplesReadyEvent, flushBufferEvent };
-
-				while (stillPlaying)
+				// Create a shared event that will be triggered if the settings has changed
+				using (EventWaitHandle settingsChangedEvent = new EventWaitHandle(false, EventResetMode.ManualReset, "NostalgicPlayer_CoreAudio"))
 				{
-					int waitResult = WaitHandle.WaitAny(waitArray);
-					switch (waitResult)
+					bool stillPlaying = true;
+					WaitHandle[] waitArray = { shutdownEvent, streamSwitchEvent, audioSamplesReadyEvent, flushBufferEvent, settingsChangedEvent };
+
+					while (stillPlaying)
 					{
-						// ShutdownEvent
-						case 0:
+						int waitResult = WaitHandle.WaitAny(waitArray);
+						switch (waitResult)
 						{
-							stillPlaying = false;
-							break;
-						}
-
-						// StreamSwitchEvent
-						case 1:
-						{
-							// We have received a stream switch request.
-							//
-							// We need to stop the renderer, tear down the audio client and render client objects
-							// and recreate them on the new endpoint if possible. If this fails, abort the thread
-							if (!HandleSwitchEvent())
-								stillPlaying = false;
-
-							break;
-						}
-
-						// AudioSamplesReadyEvent
-						case 2:
-						{
-							lock (playingLock)
+							// ShutdownEvent
+							case 0:
 							{
-								if (playbackState == PlaybackState.Playing)
-								{
-									int numFramesPadding = audioClient.CurrentPadding;
-									int numFramesAvailable = bufferFrameCount - numFramesPadding;
-									if (numFramesAvailable > 0)
-										FillBuffer(numFramesAvailable);
-								}
+								stillPlaying = false;
+								break;
 							}
-							break;
-						}
 
-						// FlushBufferEvent
-						case 3:
-						{
-							audioClient.Reset();
-							break;
+							// StreamSwitchEvent
+							case 1:
+							{
+								// We have received a stream switch request.
+								//
+								// We need to stop the renderer, tear down the audio client and render client objects
+								// and recreate them on the new endpoint if possible. If this fails, abort the thread
+								if (!HandleSwitchEvent())
+									stillPlaying = false;
+
+								break;
+							}
+
+							// AudioSamplesReadyEvent
+							case 2:
+							{
+								lock (playingLock)
+								{
+									if (playbackState == PlaybackState.Playing)
+									{
+										int numFramesPadding = audioClient.CurrentPadding;
+										int numFramesAvailable = bufferFrameCount - numFramesPadding;
+										if (numFramesAvailable > 0)
+											FillBuffer(numFramesAvailable);
+									}
+								}
+								break;
+							}
+
+							// FlushBufferEvent
+							case 3:
+							{
+								audioClient.Reset();
+								break;
+							}
+
+							// SettingsChangedEvent
+							case 4:
+							{
+								// We have received a setting update
+								settingsChangedEvent.Reset();
+
+								// Reload the settings
+								settings = new CoreAudioSettings();
+
+								// Switch the endpoint if needed
+								TriggerSwitch();
+								break;
+							}
 						}
 					}
 				}
@@ -691,11 +762,22 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		#region IMMNotificationClient implementation
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Called when the state changes, e.g. if a device is removed
 		/// </summary>
 		/********************************************************************/
 		public void OnDeviceStateChanged(string deviceId, DeviceState newState)
 		{
+			if (newState == DeviceState.Active)
+			{
+				// Check if the new device is the one in the settings
+				if (deviceId == settings.OutputDevice)
+					TriggerSwitch();
+			}
+			else
+			{
+				if (deviceId == currentEndpointId)
+					TriggerSwitch();
+			}
 		}
 
 
@@ -731,21 +813,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		{
 			// We just want to set an event which lets the stream switch logic
 			// know that it's ok to continue with the stream switch
-			if ((flow == DataFlow.Render) && (role == Role.Console))
+			if ((flow == DataFlow.Render) && (role == Role.Multimedia))
 			{
 				// The default render device for our configured role was changed.
-				//
-				// If we're not in a stream switch already, we want to initiate a
-				// stream switch event. We also want to set the default switch
-				// completed event. That will signal the render thread that it's
-				// ok to re-initialize the audio renderer
-				if (!inStreamSwitch)
-				{
-					inStreamSwitch = true;
-					streamSwitchEvent.Set();
-				}
-
-				streamSwitchCompletedEvent.Set();
+				TriggerSwitch();
 			}
 		}
 

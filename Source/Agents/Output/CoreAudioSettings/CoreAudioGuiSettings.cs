@@ -7,23 +7,21 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.GuiKit.Interfaces;
-using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
+// This is needed to uniquely identify this agent
+[assembly: Guid("EE538BB1-9CE3-472D-B030-D46B321A405A")]
+
+namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 {
 	/// <summary>
 	/// NostalgicPlayer GUI settings interface implementation
 	/// </summary>
-	public class DiskSaverGuiSettings : IAgentGuiSettings, IWantOutputAgents, IWantSampleConverterAgents
+	public class CoreAudioGuiSettings : IAgentGuiSettings
 	{
-		private AgentInfo[] loadedOutputAgents;
-		private AgentInfo[] loadedSampleConverterAgents;
-
 		#region IAgentGuiSettings implementation
 		/********************************************************************/
 		/// <summary>
@@ -51,31 +49,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 		/********************************************************************/
 		public ISettingsControl GetSettingsControl()
 		{
-			return new SettingsControl(loadedOutputAgents, loadedSampleConverterAgents);
-		}
-		#endregion
-
-		#region IWantOutputAgents implementation
-		/********************************************************************/
-		/// <summary>
-		/// Gives a list with all loaded output agents
-		/// </summary>
-		/********************************************************************/
-		public void SetOutputInfo(AgentInfo[] agents)
-		{
-			loadedOutputAgents = agents.Where(a => a.TypeId != DiskSaver.Agent1Id).ToArray();
-		}
-		#endregion
-
-		#region IWantSampleConverterAgents implementation
-		/********************************************************************/
-		/// <summary>
-		/// Gives a list with all loaded sample converter agents
-		/// </summary>
-		/********************************************************************/
-		public void SetSampleConverterInfo(AgentInfo[] agents)
-		{
-			loadedSampleConverterAgents = agents.Where(a => a.Agent.CreateInstance(a.TypeId) is ISampleSaverAgent).ToArray();
+			return new SettingsControl();
 		}
 		#endregion
 	}

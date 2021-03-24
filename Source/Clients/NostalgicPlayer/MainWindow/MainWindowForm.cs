@@ -223,7 +223,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				foreach (ToolStripMenuItem menuItem in agentSettingsMenuItem.DropDownItems)
 				{
-					if (agentInfo.TypeName.CompareTo(menuItem.Name) > 0)
+					if (agentInfo.TypeName.CompareTo(menuItem.Text) < 0)
 						break;
 
 					insertPos++;
@@ -244,7 +244,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				foreach (ToolStripMenuItem menuItem in agentShowMenuItem.DropDownItems)
 				{
-					if (agentInfo.TypeName.CompareTo(menuItem.Name) > 0)
+					if (agentInfo.TypeName.CompareTo(menuItem.Text) < 0)
 						break;
 
 					insertPos++;

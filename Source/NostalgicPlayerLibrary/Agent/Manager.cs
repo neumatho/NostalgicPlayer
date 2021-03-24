@@ -55,11 +55,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 			public AgentInfo[] AgentInfo;
 		}
 
+		private class AgentSettingsLoadInfo
+		{
+			public AssemblyLoadContext LoadContext;
+			public string FileName;
+			public IAgentSettings Settings;
+		}
+
 		private readonly object loadListLock = new object();
 		private readonly Dictionary<Guid, AgentLoadInfo> loadedAgentsByAgentId = new Dictionary<Guid, AgentLoadInfo>();
 		private readonly Dictionary<AgentType, AgentInfo[]> loadedAgentsByAgentType = new Dictionary<AgentType, AgentInfo[]>();
 
-		private readonly Dictionary<Guid, IAgentSettings> settingAgents = new Dictionary<Guid, IAgentSettings>();
+		private readonly Dictionary<Guid, AgentSettingsLoadInfo> settingAgents = new Dictionary<Guid, AgentSettingsLoadInfo>();
 
 		private readonly List<IVisualAgent> registeredVisualAgents = new List<IVisualAgent>();
 
@@ -163,8 +170,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 		{
 			lock (loadListLock)
 			{
-				if (settingAgents.TryGetValue(settingAgentId, out IAgentSettings agentSettings))
-					return agentSettings;
+				if (settingAgents.TryGetValue(settingAgentId, out AgentSettingsLoadInfo loadInfo))
+					return loadInfo.Settings;
 			}
 
 			return null;
@@ -304,6 +311,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 							AssemblyLoadContext loadContext = new AssemblyLoadContext(null, true);
 							Assembly agentAssembly = loadContext.LoadFromAssemblyPath(file);
 
+							loadContext.Resolving += LoadContext_Resolving;
+
 							// Find all agent implementations
 							foreach (Type t in agentAssembly.GetTypes().Where(t => typeof(IAgent).IsAssignableFrom(t)))
 							{
@@ -354,7 +363,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 										continue;
 									}
 
-									settingAgents[agentSettings.SettingAgentId] = agentSettings;
+									settingAgents[agentSettings.SettingAgentId] = new AgentSettingsLoadInfo { LoadContext = loadContext, FileName = file, Settings = agentSettings };
 								}
 								catch (Exception)
 								{
@@ -397,15 +406,40 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 					}
 				}
 
-				foreach (IAgentSettings agentSettings in settingAgents.Values)
+				foreach (AgentSettingsLoadInfo loadInfo in settingAgents.Values)
 				{
-					if (agentSettings is IWantOutputAgents wantOutputAgents)
+					if (loadInfo.Settings is IWantOutputAgents wantOutputAgents)
 						wantOutputAgents.SetOutputInfo(loadedAgentsByAgentType[AgentType.Output]);
 
-					if (agentSettings is IWantSampleConverterAgents wantSampleConverterAgents)
+					if (loadInfo.Settings is IWantSampleConverterAgents wantSampleConverterAgents)
 						wantSampleConverterAgents.SetSampleConverterInfo(loadedAgentsByAgentType[AgentType.SampleConverters]);
 				}
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called every time an agent want to load an external assembly.
+		/// 
+		/// This method will try to look at the agents local folder to find
+		/// the needed assembly
+		/// </summary>
+		/********************************************************************/
+		private Assembly LoadContext_Resolving(AssemblyLoadContext arg1, AssemblyName arg2)
+		{
+			Assembly ass = arg1.Assemblies.FirstOrDefault();
+			if (ass != null)
+			{
+				string localPath = Path.GetDirectoryName(ass.Location);
+				string assemblyPath = Path.Combine(localPath, arg2.Name + ".dll");
+
+				if (File.Exists(assemblyPath))
+					return arg1.LoadFromAssemblyPath(assemblyPath);
+			}
+
+			return null;
 		}
 		#endregion
 	}

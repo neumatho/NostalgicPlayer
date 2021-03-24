@@ -137,20 +137,22 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 				}
 			}
 
+			Guid searchFor = settings.OutputFormat;
 			for (int i = 0, cnt = formatComboBox.Items.Count; i < cnt; i++)
 			{
 				KryptonListItem listItem = (KryptonListItem)formatComboBox.Items[i];
-				if ((listItem.Tag is AgentInfo agentInfo) && (agentInfo.TypeId == settings.OutputFormat))
+				if ((listItem.Tag is AgentInfo agentInfo) && (agentInfo.TypeId == searchFor))
 				{
 					formatComboBox.SelectedIndex = i;
 					break;
 				}
 			}
 
+			searchFor = settings.OutputAgent;
 			for (int i = 0, cnt = passThroughComboBox.Items.Count; i < cnt; i++)
 			{
 				KryptonListItem listItem = (KryptonListItem)passThroughComboBox.Items[i];
-				if ((listItem.Tag is AgentInfo agentInfo) && (agentInfo.TypeId == settings.OutputAgent))
+				if ((listItem.Tag is AgentInfo agentInfo) && (agentInfo.TypeId == searchFor))
 				{
 					passThroughComboBox.SelectedIndex = i;
 					break;
