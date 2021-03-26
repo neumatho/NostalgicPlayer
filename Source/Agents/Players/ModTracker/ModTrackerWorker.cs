@@ -300,14 +300,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			// Allocate temporary arrays used in the E6x effect calculations
 			byte[] loopCount = new byte[channelNum];
 			byte[] loopPos = new byte[channelNum];
-			bool[] loopFlag = new bool[channelNum];
 
 			// Initialize other structures
 			channels = new ModChannel[channelNum];
 			songTimeList = new List<SongTime>();
 
-			short posCount;
-			short startPos = 0, startRow = 0;
+			short pos, prevPos;
+			short startPos = 0;
 
 			do
 			{
@@ -321,45 +320,49 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				byte curSpeed = 6;
 				byte curTempo = initTempo;
 				float total = 0.0f;
-				bool fullStop = false;
 
 				// Initialize loop arrays
 				Array.Fill(loopCount, (byte)0);
 				Array.Fill(loopPos, (byte)0);
-				Array.Fill(loopFlag, false);
+
+				byte patDelTime = 0;
+				byte patDelTime2 = 0;
+				short _breakPos = 0;
+				bool _gotJump = false;
+				bool _gotBreak = false;
+				bool _breakFlag = false;
+				bool _posJumpFlag = false;
+				bool songEnded = false;
 
 				// Calculate the position times
-				short pos;
-				for (pos = startPos, posCount = startPos; pos < songLength; pos++, posCount++)
+				pos = startPos;
+				prevPos = -1;
+				short row = 0;
+
+				while (!songEnded)
 				{
-					// Add the position information to the list
-					PosInfo posInfo = new PosInfo
+					if (prevPos < pos)
 					{
-						Speed = curSpeed,
-						Tempo = curTempo,
-						Time = new TimeSpan((long)(total * TimeSpan.TicksPerMillisecond))
-					};
+						prevPos = pos;
 
-					// Need to make a while, in case there is a position jump
-					// that jumps forward, then we're missing some items in the list
-					while ((pos - startPos) >= songTime.PosInfoList.Count)
-						songTime.PosInfoList.Add(posInfo);
+						// Add the position information to the list
+						PosInfo posInfo = new PosInfo
+						{
+							Speed = curSpeed,
+							Tempo = curTempo,
+							Time = new TimeSpan((long)(total * TimeSpan.TicksPerMillisecond))
+						};
 
-					// Get index to next sequence
-					int seqIndex = positions[pos] * 32;
+						// Need to make a while, in case there is a position jump
+						// that jumps forward, then we're missing some items in the list
+						while ((pos - startPos) >= songTime.PosInfoList.Count)
+							songTime.PosInfoList.Add(posInfo);
+					}
 
-					// Clear some flags
-					bool pattBreak = false;
-					bool posBreak = false;
-					bool getOut = false;
-
-					for (short row = startRow; row < patternLength; row++)
+					if (patDelTime2 == 0)
 					{
-						// Reset the start row
-						startRow = 0;
-						short newPos = -1;
-						short newRow = -2;
-						byte frameDelay = 1;
+						// Get index to next sequence
+						int seqIndex = positions[pos] * 32;
 
 						for (short chan = 0; chan < channelNum; chan++)
 						{
@@ -373,8 +376,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 								if (IsSoundTracker())
 								{
 									newSpeed &= 0x0f;
-
-									curSpeed = newSpeed;
+									if (newSpeed != 0)
+										curSpeed = newSpeed;
 								}
 								else if (IsNoiseTracker())
 								{
@@ -388,14 +391,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 								else
 								{
 									// New trackers
-									if (newSpeed == 0)
-									{
-										curSpeed = 6;
-										curTempo = initTempo;
-										getOut = true;
-										fullStop = true;
-									}
-									else
+									if (newSpeed != 0)
 									{
 										if ((newSpeed == 255) && !IsPcTracker())	// To fix Going Away.mod
 											newSpeed &= 0x0f;
@@ -413,30 +409,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 								// Should we break the current pattern
 								if (trackData.Effect == Effect.PatternBreak)
 								{
-									startRow = (short)(((trackData.EffectArg >> 4) & 0x0f) * 10 + (trackData.EffectArg & 0x0f));
-									if (startRow > 63)
-										startRow = 0;
+									_breakPos = (short)(((trackData.EffectArg >> 4) & 0x0f) * 10 + (trackData.EffectArg & 0x0f));
+									if (_breakPos > 63)
+										_breakPos = 0;
 
-									pattBreak = true;
-									getOut = true;
+									_posJumpFlag = true;
+									_gotBreak = true;
 								}
 
 								// Should we change the position
 								if (trackData.Effect == Effect.PosJump)
 								{
 									// Do we jump to a lower position
-									if (trackData.EffectArg < pos)
-										fullStop = true;
-									else
-									{
-										if ((trackData.EffectArg == pos) || (trackData.EffectArg > songLength))
-											fullStop = true;
+									if ((trackData.EffectArg < pos) || (trackData.EffectArg > songLength))
+										songEnded = true;
 
-										newPos = (short)(trackData.EffectArg - 1);
-										posBreak = true;
-									}
+									if (trackData.EffectArg == pos)
+										_gotJump = true;		// Module jump to the same position, maybe end
 
-									getOut = true;
+									pos = (short)(trackData.EffectArg - 1);
+									_breakPos = 0;
+									_posJumpFlag = true;
 								}
 							}
 
@@ -450,72 +443,91 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 									if (arg != 0)
 									{
-										// Ignore the effect if it hasn't been set
-//										if (loopFlag[chan])		// Uncommented because of Breathless - Level 5
-										{
-											// Jump to the loop currently set
-											if (loopCount[chan] == 0)
-												loopCount[chan] = arg;
-											else
-												loopCount[chan]--;
+										// Jump to the loop currently set
+										if (loopCount[chan] == 0)
+											loopCount[chan] = arg;
+										else
+											loopCount[chan]--;
 
-											if (loopCount[chan] != 0)
-											{
-												// Set new row
-												newRow = (short)(loopPos[chan] - 1);
-											}
-											else
-												loopFlag[chan] = false;
+										if (loopCount[chan] != 0)
+										{
+											_breakPos = loopPos[chan];
+											_breakFlag = true;
 										}
 									}
 									else
 									{
 										// Set the loop start point
 										loopPos[chan] = (byte)row;
-										loopFlag[chan] = true;
 									}
 								}
 
 								// Did we reach a pattern delay command
 								if ((trackData.Effect == Effect.ExtraEffect) && ((ExtraEffect)(trackData.EffectArg & 0xf0) == ExtraEffect.PatternDelay))
 								{
-									// Get the delay count
-									frameDelay = (byte)((trackData.EffectArg & 0x0f) + 1);
+									if (patDelTime2 == 0)
+									{
+										// Get the delay count
+										patDelTime = (byte)((trackData.EffectArg & 0x0f) + 1);
+									}
 								}
 							}
 						}
-
-						// Change the position
-						if (newPos != -1)
-						{
-							if ((newPos >= pos) && (newPos < songLength))
-								posCount = newPos;
-
-							pos = newPos;
-						}
-
-						// If we both have a pattern break and position jump command
-						// on the same line, ignore the full stop
-						if (pattBreak && posBreak)
-							fullStop = false;
-
-						// Should the current line be calculated into the total time?
-						if (!fullStop)
-						{
-							// Add the row time
-							total += (frameDelay * 1000.0f * curSpeed / (curTempo / 2.5f));
-						}
-
-						if (getOut)
-							break;
-
-						// Should we jump to a new row?
-						if (newRow != -2)
-							row = newRow;
 					}
 
-					if (fullStop)
-						break;
+					// Next pattern line
+					row++;
+					if (patDelTime != 0)    // New pattern delay time
+					{
+						// Activate the pattern delay
+						patDelTime2 = patDelTime;
+						patDelTime = 0;
+					}
+
+					// Pattern delay routine, jump one line back again
+					if (patDelTime2 != 0)
+					{
+						if (--patDelTime2 != 0)
+							row--;
+					}
+
+					// Has the module ended?
+					if (_gotJump)
+					{
+						// If we got both a Bxx and Dxx command
+						// on the same line, don't end the module
+						if (!_gotBreak)
+							songEnded = true;
+
+						_gotJump = false;
+					}
+
+					// Make sure that the break flag is always cleared
+					_gotBreak = false;
+
+					// Pattern break
+					if (_breakFlag)
+					{
+						// Calculate new position in the next pattern
+						_breakFlag = false;
+						row = _breakPos;
+						_breakPos = 0;
+					}
+
+					// Have we played the whole pattern?
+					if (_posJumpFlag || (row >= patternLength))
+					{
+						row = _breakPos;
+						_breakPos = 0;
+						_posJumpFlag = false;
+						pos++;
+
+						if (pos >= songLength)
+							songEnded = true;
+					}
+
+					// Add the row time
+					total += 1000.0f * curSpeed / (curTempo / 2.5f);
 				}
 
 				// Set the total time
@@ -525,9 +537,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				songTimeList.Add(songTime);
 
 				// Initialize the start position, in case we have more sub songs
-				startPos = (short)(posCount + 1);
+				startPos = (short)(prevPos + 1);
 			}
-			while (posCount < (songLength - 1));
+			while (prevPos < (songLength - 1));
 
 			return true;
 		}
@@ -3533,12 +3545,14 @@ stopLoop:
 			if (IsSoundTracker())
 			{
 				newSpeed &= 0x0f;
+				if (newSpeed != 0)
+				{
+					// Set the new speed
+					speed = newSpeed;
 
-				// Set the new speed
-				speed = newSpeed;
-
-				// Change the module info
-				OnModuleInfoChanged(3, speed.ToString());
+					// Change the module info
+					OnModuleInfoChanged(3, speed.ToString());
+				}
 			}
 			else if (IsNoiseTracker())
 			{
@@ -3556,23 +3570,7 @@ stopLoop:
 			else
 			{
 				// New trackers
-				if (newSpeed == 0)
-				{
-					// Reset the speed and other position variables
-					speed = 6;
-					counter = 0;
-					breakPos = 0;
-					songPos = (ushort)(restartPos - 1);
-					posJumpFlag = true;
-					ChangeTempo(initTempo);
-
-					// Change the module info
-					OnModuleInfoChanged(3, speed.ToString());
-
-					// Module has stopped
-					endReached = true;
-				}
-				else
+				if (newSpeed > 0)
 				{
 					if ((newSpeed == 255) && !IsPcTracker())
 					{
