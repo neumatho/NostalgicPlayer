@@ -6,7 +6,6 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-
 using System.Threading;
 using System.Windows.Forms;
 using Krypton.Toolkit;

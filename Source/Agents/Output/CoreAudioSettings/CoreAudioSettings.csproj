@@ -4,7 +4,7 @@
     <TargetFramework>net5.0-windows</TargetFramework>
 		<UseWindowsForms>true</UseWindowsForms>
 		<RootNamespace>Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings</RootNamespace>
-    <PackageId>CoreAudio</PackageId>
+    <PackageId>CoreAudioSettings</PackageId>
     <Authors>Thomas Neumann</Authors>
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
