@@ -211,12 +211,343 @@ extern "C"
 	/// Converts the mixed data to a 16 bit sample buffer
 	/// </summary>
 	/********************************************************************/
-	#define BITSHIFT_16					9
+	#define MIX_BITSHIFT_16					9
+	#define MIX_EXTRACT_SAMPLE_16(var)		var = *source++ >> MIX_BITSHIFT_16
+	#define MIX_CHECK_SAMPLE_16(var, bound)	var = (var >= bound) ? bound - 1 : (var < -bound) ? -bound : var
+	#define MIX_PUT_SAMPLE_16(var)			*dest++ = (INT16)var
+
+	EXPORTAPI(void, MixConvertTo16(INT16* dest, INT32 offset, const INT32* source, INT32 count, BOOL swapSpeakers))
+	{
+		INT32 x1, x2, x3, x4;
+
+		dest += offset;
+		INT32 remain = count & 3;
+
+		if (swapSpeakers)
+		{
+			for (count >>= 2; count; count--)
+			{
+				MIX_EXTRACT_SAMPLE_16(x1);
+				MIX_EXTRACT_SAMPLE_16(x2);
+				MIX_EXTRACT_SAMPLE_16(x3);
+				MIX_EXTRACT_SAMPLE_16(x4);
+
+				MIX_CHECK_SAMPLE_16(x1, 32767);
+				MIX_CHECK_SAMPLE_16(x2, 32767);
+				MIX_CHECK_SAMPLE_16(x3, 32767);
+				MIX_CHECK_SAMPLE_16(x4, 32767);
+
+				MIX_PUT_SAMPLE_16(x2);
+				MIX_PUT_SAMPLE_16(x1);
+				MIX_PUT_SAMPLE_16(x4);
+				MIX_PUT_SAMPLE_16(x3);
+			}
+
+			// We know it is always stereo samples when coming here
+			while (remain > 0)
+			{
+				MIX_EXTRACT_SAMPLE_16(x1);
+				MIX_EXTRACT_SAMPLE_16(x2);
+
+				MIX_CHECK_SAMPLE_16(x1, 32767);
+				MIX_CHECK_SAMPLE_16(x2, 32767);
+
+				MIX_PUT_SAMPLE_16(x2);
+				MIX_PUT_SAMPLE_16(x1);
+
+				remain -= 2;
+			}
+		}
+		else
+		{
+			for (count >>= 2; count; count--)
+			{
+				MIX_EXTRACT_SAMPLE_16(x1);
+				MIX_EXTRACT_SAMPLE_16(x2);
+				MIX_EXTRACT_SAMPLE_16(x3);
+				MIX_EXTRACT_SAMPLE_16(x4);
+
+				MIX_CHECK_SAMPLE_16(x1, 32767);
+				MIX_CHECK_SAMPLE_16(x2, 32767);
+				MIX_CHECK_SAMPLE_16(x3, 32767);
+				MIX_CHECK_SAMPLE_16(x4, 32767);
+
+				MIX_PUT_SAMPLE_16(x1);
+				MIX_PUT_SAMPLE_16(x2);
+				MIX_PUT_SAMPLE_16(x3);
+				MIX_PUT_SAMPLE_16(x4);
+			}
+
+			while (remain--)
+			{
+				MIX_EXTRACT_SAMPLE_16(x1);
+				MIX_CHECK_SAMPLE_16(x1, 32767);
+				MIX_PUT_SAMPLE_16(x1);
+			}
+		}
+	}
+
+
+
+	/********************************************************************/
+	/// <summary>
+	/// Converts the mixed data to a 32 bit sample buffer
+	/// </summary>
+	/********************************************************************/
+	#define MIX_BITSHIFT_32					7
+	#define MIX_EXTRACT_SAMPLE_32(var)		var = ((INT64)(*source++)) << MIX_BITSHIFT_32
+	#define MIX_CHECK_SAMPLE_32(var, bound)	var = (var >= bound) ? bound - 1 : (var < -bound) ? -bound : var
+	#define MIX_PUT_SAMPLE_32(var)			*dest++ = (INT32)var
+
+	EXPORTAPI(void, MixConvertTo32(INT32* dest, INT32 offset, const INT32* source, INT32 count, BOOL swapSpeakers))
+	{
+		INT64 x1, x2, x3, x4;
+
+		dest += offset;
+		INT32 remain = count & 3;
+
+		if (swapSpeakers)
+		{
+			for (count >>= 2; count; count--)
+			{
+				MIX_EXTRACT_SAMPLE_32(x1);
+				MIX_EXTRACT_SAMPLE_32(x2);
+				MIX_EXTRACT_SAMPLE_32(x3);
+				MIX_EXTRACT_SAMPLE_32(x4);
+
+				MIX_CHECK_SAMPLE_32(x1, 2147483647);
+				MIX_CHECK_SAMPLE_32(x2, 2147483647);
+				MIX_CHECK_SAMPLE_32(x3, 2147483647);
+				MIX_CHECK_SAMPLE_32(x4, 2147483647);
+
+				MIX_PUT_SAMPLE_32(x2);
+				MIX_PUT_SAMPLE_32(x1);
+				MIX_PUT_SAMPLE_32(x4);
+				MIX_PUT_SAMPLE_32(x3);
+			}
+
+			// We know it is always stereo samples when coming here
+			while (remain > 0)
+			{
+				MIX_EXTRACT_SAMPLE_32(x1);
+				MIX_EXTRACT_SAMPLE_32(x2);
+
+				MIX_CHECK_SAMPLE_32(x1, 2147483647);
+				MIX_CHECK_SAMPLE_32(x2, 2147483647);
+
+				MIX_PUT_SAMPLE_32(x2);
+				MIX_PUT_SAMPLE_32(x1);
+
+				remain -= 2;
+			}
+		}
+		else
+		{
+			for (count >>= 2; count; count--)
+			{
+				MIX_EXTRACT_SAMPLE_32(x1);
+				MIX_EXTRACT_SAMPLE_32(x2);
+				MIX_EXTRACT_SAMPLE_32(x3);
+				MIX_EXTRACT_SAMPLE_32(x4);
+
+				MIX_CHECK_SAMPLE_32(x1, 2147483647);
+				MIX_CHECK_SAMPLE_32(x2, 2147483647);
+				MIX_CHECK_SAMPLE_32(x3, 2147483647);
+				MIX_CHECK_SAMPLE_32(x4, 2147483647);
+
+				MIX_PUT_SAMPLE_32(x1);
+				MIX_PUT_SAMPLE_32(x2);
+				MIX_PUT_SAMPLE_32(x3);
+				MIX_PUT_SAMPLE_32(x4);
+			}
+
+			while (remain--)
+			{
+				MIX_EXTRACT_SAMPLE_32(x1);
+				MIX_CHECK_SAMPLE_32(x1, 2147483647);
+				MIX_PUT_SAMPLE_32(x1);
+			}
+		}
+	}
+
+
+
+	/********************************************************************/
+	/// <summary>
+	/// Resample a mono sample into a mono output buffer
+	/// </summary>
+	/********************************************************************/
+	EXPORTAPI(INT32, ResampleMonoToMonoNormal(const INT32* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 volSel))
+	{
+		INT32 sample;
+
+		dest += offset;
+
+		if (volSel == 256)
+		{
+			while (todo--)
+			{
+				sample = source[index >> FRACBITS];
+				index += increment;
+
+				*dest++ = sample;
+			}
+		}
+		else
+		{
+			const float volDiv = 256.0f / static_cast<float>(volSel);
+
+			while (todo--)
+			{
+				sample = source[index >> FRACBITS] / volDiv;
+				index += increment;
+
+				*dest++ = sample;
+			}
+		}
+
+		return index;
+	}
+
+
+
+	/********************************************************************/
+	/// <summary>
+	/// Resample a mono sample into a stereo output buffer
+	/// </summary>
+	/********************************************************************/
+	EXPORTAPI(INT32, ResampleMonoToStereoNormal(const INT32* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 volSel))
+	{
+		INT32 sample;
+
+		dest += offset;
+
+		if (volSel == 256)
+		{
+			while (todo--)
+			{
+				sample = source[index >> FRACBITS];
+				index += increment;
+
+				*dest++ = sample;
+				*dest++ = sample;
+			}
+		}
+		else
+		{
+			const float volDiv = 256.0f / static_cast<float>(volSel);
+
+			while (todo--)
+			{
+				sample = source[index >> FRACBITS] / volDiv;
+				index += increment;
+
+				*dest++ = sample;
+				*dest++ = sample;
+			}
+		}
+
+		return index;
+	}
+
+
+
+	/********************************************************************/
+	/// <summary>
+	/// Resample a stereo sample into a mono output buffer
+	/// </summary>
+	/********************************************************************/
+	EXPORTAPI(INT32, ResampleStereoToMonoNormal(const INT32* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel))
+	{
+		INT64 sample1, sample2;
+
+		dest += offset;
+
+		if ((lVolSel == 256) && (rVolSel == 256))
+		{
+			while (todo--)
+			{
+				sample1 = source[(index >> FRACBITS) * 2];
+				sample2 = source[(index >> FRACBITS) * 2 + 1];
+				index += increment;
+
+				*dest++ = (sample1 + sample2) / 2;
+			}
+		}
+		else
+		{
+			const float lVolDiv = lVolSel == 0 ? 0 : 256.0f / static_cast<float>(lVolSel);
+			const float rVolDiv = rVolSel == 0 ? 0 : 256.0f / static_cast<float>(rVolSel);
+
+			while (todo--)
+			{
+				sample1 = lVolSel == 0 ? 0 : source[(index >> FRACBITS) * 2] / lVolDiv;
+				sample2 = rVolSel == 0 ? 0 : source[(index >> FRACBITS) * 2 + 1] / rVolDiv;
+				index += increment;
+
+				*dest++ = (sample1 + sample2) / 2;
+			}
+		}
+
+		return index;
+	}
+
+
+
+	/********************************************************************/
+	/// <summary>
+	/// Resample a stereo sample into a stereo output buffer
+	/// </summary>
+	/********************************************************************/
+	EXPORTAPI(INT32, ResampleStereoToStereoNormal(const INT32* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel))
+	{
+		INT32 sample1, sample2;
+
+		dest += offset;
+
+		if ((lVolSel == 256) && (rVolSel == 256))
+		{
+			while (todo--)
+			{
+				sample1 = source[(index >> FRACBITS) * 2];
+				sample2 = source[(index >> FRACBITS) * 2 + 1];
+				index += increment;
+
+				*dest++ = sample1;
+				*dest++ = sample2;
+			}
+		}
+		else
+		{
+			const float lVolDiv = lVolSel == 0 ? 0 : 256.0f / static_cast<float>(lVolSel);
+			const float rVolDiv = rVolSel == 0 ? 0 : 256.0f / static_cast<float>(rVolSel);
+
+			while (todo--)
+			{
+				sample1 = lVolSel == 0 ? 0 : source[(index >> FRACBITS) * 2] / lVolDiv;
+				sample2 = rVolSel == 0 ? 0 : source[(index >> FRACBITS) * 2 + 1] / rVolDiv;
+				index += increment;
+
+				*dest++ = sample1;
+				*dest++ = sample2;
+			}
+		}
+
+		return index;
+	}
+
+
+
+	/********************************************************************/
+	/// <summary>
+	/// Converts the resampled data to a 16 bit sample buffer
+	/// </summary>
+	/********************************************************************/
+	#define BITSHIFT_16					16
 	#define EXTRACT_SAMPLE_16(var)		var = *source++ >> BITSHIFT_16
-	#define CHECK_SAMPLE_16(var, bound)	var = (var >= bound) ? bound - 1 : (var < -bound) ? -bound : var
 	#define PUT_SAMPLE_16(var)			*dest++ = (INT16)var
 
-	EXPORTAPI(void, ConvertTo16(INT16* dest, INT32 offset, const INT32* source, INT32 count, BOOL swapSpeakers))
+	EXPORTAPI(void, ResampleConvertTo16(INT16* dest, INT32 offset, const INT32* source, INT32 count, BOOL swapSpeakers))
 	{
 		INT32 x1, x2, x3, x4;
 
@@ -232,11 +563,6 @@ extern "C"
 				EXTRACT_SAMPLE_16(x3);
 				EXTRACT_SAMPLE_16(x4);
 
-				CHECK_SAMPLE_16(x1, 32767);
-				CHECK_SAMPLE_16(x2, 32767);
-				CHECK_SAMPLE_16(x3, 32767);
-				CHECK_SAMPLE_16(x4, 32767);
-
 				PUT_SAMPLE_16(x2);
 				PUT_SAMPLE_16(x1);
 				PUT_SAMPLE_16(x4);
@@ -248,9 +574,6 @@ extern "C"
 			{
 				EXTRACT_SAMPLE_16(x1);
 				EXTRACT_SAMPLE_16(x2);
-
-				CHECK_SAMPLE_16(x1, 32767);
-				CHECK_SAMPLE_16(x2, 32767);
 
 				PUT_SAMPLE_16(x2);
 				PUT_SAMPLE_16(x1);
@@ -267,11 +590,6 @@ extern "C"
 				EXTRACT_SAMPLE_16(x3);
 				EXTRACT_SAMPLE_16(x4);
 
-				CHECK_SAMPLE_16(x1, 32767);
-				CHECK_SAMPLE_16(x2, 32767);
-				CHECK_SAMPLE_16(x3, 32767);
-				CHECK_SAMPLE_16(x4, 32767);
-
 				PUT_SAMPLE_16(x1);
 				PUT_SAMPLE_16(x2);
 				PUT_SAMPLE_16(x3);
@@ -281,7 +599,6 @@ extern "C"
 			while (remain--)
 			{
 				EXTRACT_SAMPLE_16(x1);
-				CHECK_SAMPLE_16(x1, 32767);
 				PUT_SAMPLE_16(x1);
 			}
 		}
@@ -291,17 +608,15 @@ extern "C"
 
 	/********************************************************************/
 	/// <summary>
-	/// Converts the mixed data to a 32 bit sample buffer
+	/// Converts the resampled data to a 32 bit sample buffer
 	/// </summary>
 	/********************************************************************/
-	#define BITSHIFT_32					7
-	#define EXTRACT_SAMPLE_32(var)		var = ((INT64)(*source++)) << BITSHIFT_32
-	#define CHECK_SAMPLE_32(var, bound)	var = (var >= bound) ? bound - 1 : (var < -bound) ? -bound : var
+	#define EXTRACT_SAMPLE_32(var)		var = *source++
 	#define PUT_SAMPLE_32(var)			*dest++ = (INT32)var
 
-	EXPORTAPI(void, ConvertTo32(INT32* dest, INT32 offset, const INT32* source, INT32 count, BOOL swapSpeakers))
+	EXPORTAPI(void, ResampleConvertTo32(INT32* dest, INT32 offset, const INT32* source, INT32 count, BOOL swapSpeakers))
 	{
-		INT64 x1, x2, x3, x4;
+		INT32 x1, x2, x3, x4;
 
 		dest += offset;
 		INT32 remain = count & 3;
@@ -315,11 +630,6 @@ extern "C"
 				EXTRACT_SAMPLE_32(x3);
 				EXTRACT_SAMPLE_32(x4);
 
-				CHECK_SAMPLE_32(x1, 2147483647);
-				CHECK_SAMPLE_32(x2, 2147483647);
-				CHECK_SAMPLE_32(x3, 2147483647);
-				CHECK_SAMPLE_32(x4, 2147483647);
-
 				PUT_SAMPLE_32(x2);
 				PUT_SAMPLE_32(x1);
 				PUT_SAMPLE_32(x4);
@@ -331,9 +641,6 @@ extern "C"
 			{
 				EXTRACT_SAMPLE_32(x1);
 				EXTRACT_SAMPLE_32(x2);
-
-				CHECK_SAMPLE_32(x1, 2147483647);
-				CHECK_SAMPLE_32(x2, 2147483647);
 
 				PUT_SAMPLE_32(x2);
 				PUT_SAMPLE_32(x1);
@@ -350,11 +657,6 @@ extern "C"
 				EXTRACT_SAMPLE_32(x3);
 				EXTRACT_SAMPLE_32(x4);
 
-				CHECK_SAMPLE_32(x1, 2147483647);
-				CHECK_SAMPLE_32(x2, 2147483647);
-				CHECK_SAMPLE_32(x3, 2147483647);
-				CHECK_SAMPLE_32(x4, 2147483647);
-
 				PUT_SAMPLE_32(x1);
 				PUT_SAMPLE_32(x2);
 				PUT_SAMPLE_32(x3);
@@ -364,7 +666,6 @@ extern "C"
 			while (remain--)
 			{
 				EXTRACT_SAMPLE_32(x1);
-				CHECK_SAMPLE_32(x1, 2147483647);
 				PUT_SAMPLE_32(x1);
 			}
 		}

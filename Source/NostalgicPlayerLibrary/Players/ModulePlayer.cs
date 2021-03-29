@@ -150,14 +150,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Will start playing the music
 		/// </summary>
 		/********************************************************************/
-		public bool StartPlaying(string fileName, MixerConfiguration newMixerConfiguration)
+		public bool StartPlaying(Loader loader, MixerConfiguration newMixerConfiguration)
 		{
 			if (newMixerConfiguration != null)
 				soundStream.ChangeConfiguration(newMixerConfiguration);
 
 			soundStream.Start();
 
-			if (outputAgent.SwitchStream(soundStream, fileName, StaticModuleInformation.ModuleName, StaticModuleInformation.Author) == AgentResult.Error)
+			if (outputAgent.SwitchStream(soundStream, loader.FileName, StaticModuleInformation.ModuleName, StaticModuleInformation.Author) == AgentResult.Error)
 				return false;
 
 			outputAgent.Play();
@@ -317,20 +317,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					// Get the position times for the current song
 					TimeSpan totalTime = currentPlayer.GetPositionTimeTable(songNum, out TimeSpan[] positionTimes);
 
-					// Get module information
-					List<string> moduleInfo = new List<string>();
-					for (int i = 0; currentPlayer.GetInformationString(i, out string description, out string value); i++)
-					{
-						// Make sure we don't have any invalid characters
-						description = description.Replace("\t", " ").Replace("\n", " ").Replace("\r", string.Empty);
-						value = value.Replace("\t", " ").Replace("\n", " ").Replace("\r", string.Empty);
-
-						// Build the information in the list
-						moduleInfo.Add($"{description}\t{value}");
-					}
-
 					// Initialize the module information
-					PlayingModuleInformation = new ModuleInfoFloating(songNum, totalTime, currentPlayer.SongPosition, songLength, positionTimes, moduleInfo.ToArray());
+					PlayingModuleInformation = new ModuleInfoFloating(songNum, totalTime, currentPlayer.SongPosition, songLength, positionTimes, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
 				}
 			}
 		}

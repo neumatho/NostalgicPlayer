@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class SpinningSquaresWorker : IVisualAgent, IAgentGuiDisplay
+	internal class SpinningSquaresWorker : IChannelChangeVisualAgent, IAgentGuiDisplay
 	{
 		private SpinningSquaresControl userControl;
 
@@ -56,9 +56,9 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares
 		{
 			userControl.CleanupVisual();
 		}
+		#endregion
 
-
-
+		#region IChannelChangeVisualAgent implementation
 		/********************************************************************/
 		/// <summary>
 		/// Tell the visual about a channel change

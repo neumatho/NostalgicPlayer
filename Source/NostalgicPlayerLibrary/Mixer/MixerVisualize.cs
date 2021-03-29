@@ -153,8 +153,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						ChannelChanged channelChanged = new ChannelChanged(channelInfo, channelFlags);
 
 						foreach (IVisualAgent visualAgent in manager.GetRegisteredVisualAgent())
-							visualAgent.ChannelChange(channelChanged);
-
+						{
+							if (visualAgent is IChannelChangeVisualAgent channelChangeVisualAgent)
+								channelChangeVisualAgent.ChannelChange(channelChanged);
+						}
 						break;
 					}
 				}

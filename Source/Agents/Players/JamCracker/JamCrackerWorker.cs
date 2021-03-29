@@ -99,21 +99,57 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 		/********************************************************************/
 		/// <summary>
-		/// This is the main player method
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
 		/// </summary>
 		/********************************************************************/
-		public override void Play()
+		public override bool GetInformationString(int line, out string description, out string value)
 		{
-			if (--waitCnt == 0)
+			// Find out which line to take
+			switch (line)
 			{
-				NewNote();
-				waitCnt = wait;
+				// Song length
+				case 0:
+				{
+					description = Resources.IDS_JAM_INFODESCLINE0;
+					value = songLen.ToString();
+					break;
+				}
+
+				// Used patterns
+				case 1:
+				{
+					description = Resources.IDS_JAM_INFODESCLINE1;
+					value = patternNum.ToString();
+					break;
+				}
+
+				// Used instruments
+				case 2:
+				{
+					description = Resources.IDS_JAM_INFODESCLINE2;
+					value = samplesNum.ToString();
+					break;
+				}
+
+				// Current speed
+				case 3:
+				{
+					description = Resources.IDS_JAM_INFODESCLINE3;
+					value = wait.ToString();
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
 			}
 
-			SetChannel(variables[0]);
-			SetChannel(variables[1]);
-			SetChannel(variables[2]);
-			SetChannel(variables[3]);
+			return true;
 		}
 		#endregion
 
@@ -392,6 +428,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 		/********************************************************************/
 		/// <summary>
+		/// This is the main player method
+		/// </summary>
+		/********************************************************************/
+		public override void Play()
+		{
+			if (--waitCnt == 0)
+			{
+				NewNote();
+				waitCnt = wait;
+			}
+
+			SetChannel(variables[0]);
+			SetChannel(variables[1]);
+			SetChannel(variables[2]);
+			SetChannel(variables[3]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the length of the current song
 		/// </summary>
 		/********************************************************************/
@@ -447,63 +504,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 			positionTimes = posInfoList.Select(pi => pi.Time).ToArray();
 
 			return totalTime;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public override bool GetInformationString(int line, out string description, out string value)
-		{
-			// Find out which line to take
-			switch (line)
-			{
-				// Song length
-				case 0:
-				{
-					description = Resources.IDS_JAM_INFODESCLINE0;
-					value = songLen.ToString();
-					break;
-				}
-
-				// Used patterns
-				case 1:
-				{
-					description = Resources.IDS_JAM_INFODESCLINE1;
-					value = patternNum.ToString();
-					break;
-				}
-
-				// Used instruments
-				case 2:
-				{
-					description = Resources.IDS_JAM_INFODESCLINE2;
-					value = samplesNum.ToString();
-					break;
-				}
-
-				// Current speed
-				case 3:
-				{
-					description = Resources.IDS_JAM_INFODESCLINE3;
-					value = wait.ToString();
-					break;
-				}
-
-				default:
-				{
-					description = null;
-					value = null;
-
-					return false;
-				}
-			}
-
-			return true;
 		}
 
 

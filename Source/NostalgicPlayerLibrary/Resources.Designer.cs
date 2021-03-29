@@ -103,6 +103,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to initialize the resampler with error 0x{0}.
+        ///{1}..
+        /// </summary>
+        internal static string IDS_ERR_RESAMPLER_INIT {
+            get {
+                return ResourceManager.GetString("IDS_ERR_RESAMPLER_INIT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown module format in file ({0})..
         /// </summary>
         internal static string IDS_ERR_UNKNOWN_MODULE {

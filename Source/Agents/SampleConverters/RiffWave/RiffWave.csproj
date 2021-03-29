@@ -8,6 +8,7 @@
     <Description>Can load and save RIFF-WAVE samples</Description>
     <Copyright>Copyright © 2021</Copyright>
     <RootNamespace>Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave</RootNamespace>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

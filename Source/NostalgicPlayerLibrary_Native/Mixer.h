@@ -21,6 +21,15 @@ extern "C"
 
 	EXPORTAPI(void, AddAmigaFilter(bool stereo, INT32* dest, INT32 todo, INT32* filterPrevLeft, INT32* filterPrevRight));
 
-	EXPORTAPI(void, ConvertTo16(INT16* dest, INT32 offset, const INT32* source, INT32 count, BOOL swapSpeakers));
-	EXPORTAPI(void, ConvertTo32(INT32* dest, INT32 offset, const INT32* source, INT32 count, BOOL swapSpeakers));
+	EXPORTAPI(void, MixConvertTo16(INT16* dest, INT32 offset, const INT32* source, INT32 count, BOOL swapSpeakers));
+	EXPORTAPI(void, MixConvertTo32(INT32* dest, INT32 offset, const INT32* source, INT32 count, BOOL swapSpeakers));
+
+	EXPORTAPI(INT32, ResampleMonoToMonoNormal(const INT32* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 volSel));
+	EXPORTAPI(INT32, ResampleMonoToStereoNormal(const INT32* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 volSel));
+
+	EXPORTAPI(INT32, ResampleStereoToMonoNormal(const INT32* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel));
+	EXPORTAPI(INT32, ResampleStereoToStereoNormal(const INT32* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel));
+
+	EXPORTAPI(void, ResampleConvertTo16(INT16* dest, INT32 offset, const INT32* source, INT32 count, BOOL swapSpeakers));
+	EXPORTAPI(void, ResampleConvertTo32(INT32* dest, INT32 offset, const INT32* source, INT32 count, BOOL swapSpeakers));
 }

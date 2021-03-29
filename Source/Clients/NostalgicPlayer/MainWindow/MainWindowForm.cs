@@ -1404,7 +1404,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				if (!loopCheckButton.Checked && optionSettings.DoubleBuffering)
 				{
 					// Is the file already loaded?
-					if (!moduleHandler.IsDoubleBufferingModuleLoaded)
+					if (!moduleHandler.IsDoubleBufferingModuleLoaded && (playItem != null))
 					{
 						// Everything is enabled, check if it's time to load
 						int songLength = moduleHandler.PlayingModuleInformation.SongLength;
@@ -3801,31 +3801,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				int maxSong = staticModuleInfo.MaxSongNumber;
 
 				if (maxSong == 0)
-				{
 					subStr = Resources.IDS_NOSUBSONGS;
-					timeStr = timeFormat == MainWindowSettings.TimeFormat.Elapsed ? Resources.IDS_NOTIME : Resources.IDS_NONEGATIVETIME;
-				}
 				else
-				{
 					subStr = string.Format(Resources.IDS_SUBSONGS, currentSong, maxSong);
 
-					// Format the time string
-					if (timeFormat == MainWindowSettings.TimeFormat.Elapsed)
-					{
-						timeStr = string.Format("{0} {1}", Resources.IDS_TIME, timeOccurred.ToString(Resources.IDS_TIMEFORMAT));
-					}
-					else
-					{
-						// Calculate the remaining time
-						TimeSpan tempSpan = songTotalTime - timeOccurred;
+				// Format the time string
+				if (timeFormat == MainWindowSettings.TimeFormat.Elapsed)
+					timeStr = string.Format("{0} {1}", Resources.IDS_TIME, timeOccurred.ToString(Resources.IDS_TIMEFORMAT));
+				else
+				{
+					// Calculate the remaining time
+					TimeSpan tempSpan = songTotalTime - timeOccurred;
 
-						// Check to see if we got a negative number
-						if (tempSpan.TotalMilliseconds < 0)
-							tempSpan = new TimeSpan(0);
+					// Check to see if we got a negative number
+					if (tempSpan.TotalMilliseconds < 0)
+						tempSpan = new TimeSpan(0);
 
-						// Format the string
-						timeStr = string.Format("{0} -{1}", Resources.IDS_TIME, tempSpan.ToString(Resources.IDS_TIMEFORMAT));
-					}
+					// Format the string
+					timeStr = string.Format("{0} -{1}", Resources.IDS_TIME, tempSpan.ToString(Resources.IDS_TIMEFORMAT));
 				}
 			}
 			else

@@ -75,7 +75,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT10, Resources.IDS_MOD_DESCRIPTION_AGENT10, Agent10Id),
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT11, Resources.IDS_MOD_DESCRIPTION_AGENT11, Agent11Id),
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT12, Resources.IDS_MOD_DESCRIPTION_AGENT12, Agent12Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT13, Resources.IDS_MOD_DESCRIPTION_AGENT13, Agent13Id)
+					new AgentSupportInfo(Resources.IDS_MTM_NAME_AGENT13, Resources.IDS_MTM_DESCRIPTION_AGENT13, Agent13Id)
 				};
 			}
 		}

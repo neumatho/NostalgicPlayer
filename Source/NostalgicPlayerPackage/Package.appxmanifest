@@ -53,6 +53,7 @@
               <uap:FileType ContentType="audio/x-jam">.jam</uap:FileType>
               <uap:FileType ContentType="audio/x-mod">.mod</uap:FileType>
               <uap:FileType ContentType="audio/x-mtm">.mtm</uap:FileType>
+              <uap:FileType ContentType="audio/wav">.wav</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Audio file</uap:DisplayName>
           </uap:FileTypeAssociation>

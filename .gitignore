@@ -8,3 +8,4 @@ x64
 *.pfx
 AppPackages
 BundleArtifacts
+launchSettings.json

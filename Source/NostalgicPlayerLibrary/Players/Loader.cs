@@ -177,6 +177,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			get; private set;
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the stream to use when reading samples
+		/// </summary>
+		/********************************************************************/
+		internal ModuleStream Stream => stream;
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
@@ -213,34 +222,43 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				// Did we found a player?
 				if (result)
 				{
-					// Yes, load the module if the player is a module player
+					// Yes
 					fileInfo.ModuleStream.Seek(0, SeekOrigin.Begin);
+
+					AgentResult agentResult = AgentResult.Unknown;
+					string playerError = string.Empty;
 
 					if (PlayerAgent is IModulePlayerAgent modulePlayerAgent)
 					{
-						AgentResult agentResult = modulePlayerAgent.Load(fileInfo, out string playerError);
+						// Load the module if the player is a module player
+						agentResult = modulePlayerAgent.Load(fileInfo, out playerError);
+					}
+					else if (PlayerAgent is ISamplePlayerAgent samplePlayerAgent)
+					{
+						// Load header information if sample player
+						agentResult = samplePlayerAgent.LoadHeaderInfo(fileInfo.ModuleStream, out playerError);
+					}
 
-						if (agentResult != AgentResult.Ok)
-						{
-							// Well, something went wrong when loading the file
-							//
-							// Build the error string
-							errorMessage = string.Format(Resources.IDS_ERR_LOAD_MODULE, fileInfo.FileName, PlayerAgentInfo.AgentName, playerError);
+					if (agentResult != AgentResult.Ok)
+					{
+						// Well, something went wrong when loading the file
+						//
+						// Build the error string
+						errorMessage = string.Format(Resources.IDS_ERR_LOAD_MODULE, fileInfo.FileName, PlayerAgentInfo.AgentName, playerError);
 
-							PlayerAgentInfo = null;
-							PlayerAgent = null;
+						PlayerAgentInfo = null;
+						PlayerAgent = null;
 
-							result = false;
-						}
-						else
-						{
-							// Get module information
-							FileName = fileInfo.FileName;
+						result = false;
+					}
+					else
+					{
+						// Get module information
+						FileName = fileInfo.FileName;
 
-							PlayerName = PlayerAgentInfo.AgentName;//XX
+						PlayerName = PlayerAgentInfo.AgentName;//XX
 
-							ModuleFormat = PlayerAgentInfo.TypeName;
-						}
+						ModuleFormat = PlayerAgentInfo.TypeName;
 					}
 				}
 				else
@@ -266,7 +284,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			}
 
 			if (result)
-				Player = PlayerAgent is IModulePlayerAgent ? new ModulePlayer(agentManager) : null;
+				Player = PlayerAgent is IModulePlayerAgent ? new ModulePlayer(agentManager) : PlayerAgent is ISamplePlayerAgent ? new SamplePlayer() : null;
 
 			return result;
 		}

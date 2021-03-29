@@ -508,7 +508,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					if (IsModuleLoaded)
 					{
 						// And start playing again
-						player.StartPlaying(loadedFiles[0].Loader.FileName, mixerConfiguration);
+						player.StartPlaying(loadedFiles[0].Loader, mixerConfiguration);
 					}
 				}
 			}
@@ -529,6 +529,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 			{
 				if (player is IModulePlayer modulePlayer)
 					modulePlayer.SetSongPosition(newPosition);
+				else if (player is ISamplePlayer samplePlayer)
+					samplePlayer.SetSongPosition(newPosition);
 			}
 		}
 
@@ -824,7 +826,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 				// Tell all visuals to start
 				foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
+				{
+					if ((visualAgent is IChannelChangeVisualAgent) && (player is ISamplePlayer))
+						continue;
+
 					visualAgent.InitVisual(StaticModuleInformation.Channels);
+				}
 
 				lock (loadedFiles)
 				{
@@ -832,7 +839,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					if (IsModuleLoaded)
 					{
 						// Start playing the song
-						if (!player.StartPlaying(loadedFiles[0].Loader.FileName, mixerConfiguration))
+						if (!player.StartPlaying(loadedFiles[0].Loader, mixerConfiguration))
 							return false;
 					}
 				}

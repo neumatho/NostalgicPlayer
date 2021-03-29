@@ -61,19 +61,6 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Created by Thomas Neumann.
-        ///
-        ///This format is also known as Microsoft wav files (.wav). These files can be in different formats, indicated by an ID number in the .wav file.
-        ///
-        ///This one supports Microsoft PCM (ID: 0x0001) format..
-        /// </summary>
-        internal static string IDS_DESCRIPTION_PCM {
-            get {
-                return ResourceManager.GetString("IDS_DESCRIPTION_PCM", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to RIFF-WAVE.
         /// </summary>
         internal static string IDS_NAME {
@@ -83,11 +70,69 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Created by Thomas Neumann.
+        ///
+        ///This format is also known as Microsoft wav files (.wav). These files can be in different formats, indicated by an ID number in the .wav file.
+        ///
+        ///{0}.
+        /// </summary>
+        internal static string IDS_RIFFWAVE_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("IDS_RIFFWAVE_DESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This one supports Microsoft PCM (ID: 0x0001) format, which is plain sample files without any compression or encoding..
+        /// </summary>
+        internal static string IDS_RIFFWAVE_DESCRIPTION_PCM {
+            get {
+                return ResourceManager.GetString("IDS_RIFFWAVE_DESCRIPTION_PCM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This loader only support mono and stereo samples. You tried to play a sample that uses {0} channels..
+        /// </summary>
+        internal static string IDS_RIFFWAVE_ERR_ILLEGALCHANNEL {
+            get {
+                return ResourceManager.GetString("IDS_RIFFWAVE_ERR_ILLEGALCHANNEL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There isn&apos;t any sound data chunk (data chunk) in the file.
+        /// </summary>
+        internal static string IDS_RIFFWAVE_ERR_NODATA {
+            get {
+                return ResourceManager.GetString("IDS_RIFFWAVE_ERR_NODATA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There isn&apos;t any extra sound information (fact chunk) in the file.
+        /// </summary>
+        internal static string IDS_RIFFWAVE_ERR_NOFACT {
+            get {
+                return ResourceManager.GetString("IDS_RIFFWAVE_ERR_NOFACT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There isn&apos;t any sound information (fmt chunk) in the file.
+        /// </summary>
+        internal static string IDS_RIFFWAVE_ERR_NOFMT {
+            get {
+                return ResourceManager.GetString("IDS_RIFFWAVE_ERR_NOFMT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to RIFF-WAVE (PCM).
         /// </summary>
-        internal static string IDS_NAME_PCM {
+        internal static string IDS_RIFFWAVE_NAME_PCM {
             get {
-                return ResourceManager.GetString("IDS_NAME_PCM", resourceCulture);
+                return ResourceManager.GetString("IDS_RIFFWAVE_NAME_PCM", resourceCulture);
             }
         }
     }

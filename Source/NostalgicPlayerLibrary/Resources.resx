@@ -138,4 +138,8 @@ Player {1} returned the following error:
     <value>Failed to initialize the mixer with error 0x{0}.
 {1}.</value>
   </data>
+  <data name="IDS_ERR_RESAMPLER_INIT" xml:space="preserve">
+    <value>Failed to initialize the resampler with error 0x{0}.
+{1}.</value>
+  </data>
 </root>

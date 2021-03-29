@@ -58,10 +58,17 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
-		/// This is the main player method
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
 		/// </summary>
 		/********************************************************************/
-		public abstract void Play();
+		public virtual bool GetInformationString(int line, out string description, out string value)
+		{
+			description = null;
+			value = null;
+
+			return false;
+		}
 
 
 

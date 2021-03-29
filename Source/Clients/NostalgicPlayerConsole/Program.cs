@@ -99,7 +99,7 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 							if (player is IModulePlayer modulePlayer)
 								modulePlayer.SelectSong(0);
 
-							player.StartPlaying(loader.FileName);
+							player.StartPlaying(loader);
 
 							try
 							{
@@ -119,10 +119,13 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 								Console.WriteLine();
 
 								// Output extra information
-								foreach (string info in moduleInfoFloating.ModuleInformation)
+								if (moduleInfoFloating.ModuleInformation != null)
 								{
-									string[] parts = info.Split('\t');
-									Console.WriteLine(parts[0] + " " + parts[1]);
+									foreach (string info in moduleInfoFloating.ModuleInformation)
+									{
+										string[] parts = info.Split('\t');
+										Console.WriteLine(parts[0] + " " + parts[1]);
+									}
 								}
 
 								Console.WriteLine();

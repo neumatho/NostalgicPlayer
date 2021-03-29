@@ -57,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_NAME_PCM, Resources.IDS_DESCRIPTION_PCM, supportedFormats[WaveFormat.WAVE_FORMAT_PCM])
+					new AgentSupportInfo(Resources.IDS_RIFFWAVE_NAME_PCM, string.Format(Resources.IDS_RIFFWAVE_DESCRIPTION, Resources.IDS_RIFFWAVE_DESCRIPTION_PCM), supportedFormats[WaveFormat.WAVE_FORMAT_PCM])
 				};
 			}
 		}

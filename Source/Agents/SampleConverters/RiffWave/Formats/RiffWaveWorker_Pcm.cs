@@ -17,14 +17,10 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats
 	/// </summary>
 	internal class RiffWaveWorker_Pcm : RiffWaveSaverWorkerBase
 	{
-		#region ISampleSaverAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Return some flags telling what the saver supports
-		/// </summary>
-		/********************************************************************/
-		public override SampleSaverSupportFlag SaverSupportFlags => SampleSaverSupportFlag.Support8Bit | SampleSaverSupportFlag.Support16Bit | SampleSaverSupportFlag.Support32Bit | SampleSaverSupportFlag.SupportMono | SampleSaverSupportFlag.SupportStereo;
-		#endregion
+		private long fileSize;
+
+		private byte[] decodeBuffer;
+		private int sourceOffset;
 
 		#region RiffWaveWorkerBase implementation
 		/********************************************************************/
@@ -33,6 +29,175 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats
 		/// </summary>
 		/********************************************************************/
 		protected override WaveFormat FormatId => WaveFormat.WAVE_FORMAT_PCM;
+		#endregion
+
+		#region ISampleLoaderAgent implementation
+		/********************************************************************/
+		/// <summary>
+		/// Calculates how many samples that will be returned
+		/// </summary>
+		/********************************************************************/
+		public override long GetTotalSampleLength(LoadSampleFormatInfo formatInfo)
+		{
+			return fileSize / ((formatInfo.Bits + 7) / 8);
+		}
+		#endregion
+
+		#region RiffWaveLoaderWorkerBase implementation
+		/********************************************************************/
+		/// <summary>
+		/// Tells whether the fact chunk is required or not
+		/// </summary>
+		/********************************************************************/
+		protected override bool NeedFact => false;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the loader
+		/// </summary>
+		/********************************************************************/
+		protected override void LoaderInitialize(long dataStart, long dataLength, long totalFileSize, LoadSampleFormatInfo formatInfo)
+		{
+			// Allocate buffer to hold the loaded data
+			int sampleSize = (formatInfo.Bits + 7) / 8;
+			decodeBuffer = new byte[DecodeBufferSize * sampleSize];
+
+			// Initialize member variables
+			fileSize = Math.Min(dataLength, totalFileSize - dataStart);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Cleanup the loader
+		/// </summary>
+		/********************************************************************/
+		protected override void LoaderCleanup()
+		{
+			decodeBuffer = null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Load and decode a block of sample data
+		/// </summary>
+		/********************************************************************/
+		protected override int DecodeSampleData(ModuleStream stream, int[] buffer, int length, LoadSampleFormatInfo formatInfo)
+		{
+			// Calculate the number of bytes used for each sample
+			int sampleSize = (formatInfo.Bits + 7) / 8;
+			int shift = sampleSize * 8 - formatInfo.Bits;
+			int filled = 0;
+
+			while (length > 0)
+			{
+				// Do we need to load some data from the stream?
+				if (samplesLeft == 0)
+				{
+					// Yes, do it
+					samplesLeft = GetFileData(stream, decodeBuffer, decodeBuffer.Length);
+					sourceOffset = 0;
+
+					if (samplesLeft == 0)
+						break;			// End of file, stop filling
+				}
+
+				// Find the number of samples to return
+				int todo = Math.Min(length, samplesLeft / sampleSize);
+
+				// Copy the sample data
+				switch (sampleSize)
+				{
+					// 1-8 bits samples
+					case 1:
+					{
+						for (int i = 0; i < todo; i++)
+							buffer[filled + i] = ((decodeBuffer[sourceOffset++] >> shift) - 128) << 24;
+
+						break;
+					}
+
+					// 9-16 bits samples
+					case 2:
+					{
+						for (int i = 0; i < todo; i++)
+						{
+							buffer[filled + i] = ((((decodeBuffer[sourceOffset + 1] & 0xff) << 8) | (decodeBuffer[sourceOffset] & 0xff)) >> shift) << 16;
+							sourceOffset += 2;
+						}
+						break;
+					}
+
+					// 17-24 bits samples
+					case 3:
+					{
+						for (int i = 0; i < todo; i++)
+						{
+							buffer[filled + i] = ((((decodeBuffer[sourceOffset + 2] & 0xff) << 16) | ((decodeBuffer[sourceOffset + 1] & 0xff) << 8) | (decodeBuffer[sourceOffset] & 0xff)) >> shift) << 8;
+							sourceOffset += 3;
+						}
+						break;
+					}
+
+					// 25-32 bits samples
+					case 4:
+					{
+						for (int i = 0; i < todo; i++)
+						{
+							buffer[filled + i] = (((decodeBuffer[sourceOffset + 3] & 0xff) << 24) | ((decodeBuffer[sourceOffset + 2] & 0xff) << 16) | ((decodeBuffer[sourceOffset + 1] & 0xff) << 8) | (decodeBuffer[sourceOffset] & 0xff)) >> shift;
+							sourceOffset += 4;
+						}
+						break;
+					}
+				}
+
+				// Update the counter variables
+				length -= todo;
+				filled += todo;
+				samplesLeft -= (todo * sampleSize);
+			}
+
+			return filled;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Calculates the number of bytes to go into the file to reach the
+		/// position given
+		/// </summary>
+		/********************************************************************/
+		protected override long CalcFilePosition(long position, LoadSampleFormatInfo formatInfo)
+		{
+			return position * ((formatInfo.Bits + 7) / 8);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Calculates the number of samples from the byte position given
+		/// </summary>
+		/********************************************************************/
+		protected override long CalcSamplePosition(long position, LoadSampleFormatInfo formatInfo)
+		{
+			return position / ((formatInfo.Bits + 7) / 8);
+		}
+		#endregion
+
+		#region ISampleSaverAgent implementation
+		/********************************************************************/
+		/// <summary>
+		/// Return some flags telling what the saver supports
+		/// </summary>
+		/********************************************************************/
+		public override SampleSaverSupportFlag SaverSupportFlags => SampleSaverSupportFlag.Support8Bit | SampleSaverSupportFlag.Support16Bit | SampleSaverSupportFlag.Support32Bit | SampleSaverSupportFlag.SupportMono | SampleSaverSupportFlag.SupportStereo;
 		#endregion
 
 		#region RiffWaveSaverWorkerBase implementation

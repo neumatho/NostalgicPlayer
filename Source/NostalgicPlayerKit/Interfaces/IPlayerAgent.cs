@@ -39,9 +39,10 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		string Author { get; }
 
 		/// <summary>
-		/// This is the main player method
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
 		/// </summary>
-		void Play();
+		bool GetInformationString(int line, out string description, out string value);
 
 		/// <summary>
 		/// This flag is set to true, when end is reached

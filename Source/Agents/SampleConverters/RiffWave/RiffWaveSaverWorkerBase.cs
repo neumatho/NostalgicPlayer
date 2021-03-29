@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 	/// <summary>
 	/// Derive from this class, if your format supports saving
 	/// </summary>
-	internal abstract class RiffWaveSaverWorkerBase : RiffWaveWorkerBase, ISampleSaverAgent
+	internal abstract class RiffWaveSaverWorkerBase : RiffWaveLoaderWorkerBase, ISampleSaverAgent
 	{
 		protected SaveSampleFormatInfo format;
 

@@ -53,6 +53,23 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 
 		/********************************************************************/
 		/// <summary>
+		/// Constructor (for sample players)
+		/// </summary>
+		/********************************************************************/
+		internal ModuleInfoFloating(TimeSpan totalTime, int songPosition, int songLength, TimeSpan[] positionTimes, string[] moduleInfo)
+		{
+			CurrentSong = 0;
+			TotalTime = totalTime;
+			this.songPosition = songPosition;
+			SongLength = songLength;
+			PositionTimes = positionTimes;
+			ModuleInformation = moduleInfo;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Hold the current song playing
 		/// </summary>
 		/********************************************************************/

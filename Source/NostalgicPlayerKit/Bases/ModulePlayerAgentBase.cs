@@ -14,7 +14,7 @@ using Polycode.NostalgicPlayer.Kit.Mixer;
 namespace Polycode.NostalgicPlayer.Kit.Bases
 {
 	/// <summary>
-	/// Base class that can be used for player agents
+	/// Base class that can be used for module player agents
 	/// </summary>
 	public abstract class ModulePlayerAgentBase : PlayerAgentBase, IModulePlayerAgent
 	{
@@ -98,6 +98,15 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// This is the main player method
+		/// </summary>
+		/********************************************************************/
+		public abstract void Play();
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the number of channels the module want to reserve
 		/// </summary>
 		/********************************************************************/
@@ -154,22 +163,6 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 			positionTimes = null;
 
 			return new TimeSpan(0);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public virtual bool GetInformationString(int line, out string description, out string value)
-		{
-			description = null;
-			value = null;
-
-			return false;
 		}
 
 

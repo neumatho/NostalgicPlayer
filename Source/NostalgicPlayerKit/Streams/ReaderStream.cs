@@ -31,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			this.wrapperStream = wrapperStream;
 
-			loadBuffer = new byte[8];
+			loadBuffer = new byte[16];
 			isLittleEndian = BitConverter.IsLittleEndian;
 		}
 
@@ -233,6 +233,22 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			int bytesRead = Read(buffer, 0, maxLen);
 			buffer[bytesRead] = 0x00;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Reads a GUID from the stream
+		/// </summary>
+		/********************************************************************/
+		public Guid ReadGuid()
+		{
+			int bytesRead = Read(loadBuffer, 0, 16);
+			if (bytesRead < 16)
+				return Guid.Empty;
+
+			return new Guid(loadBuffer);
 		}
 
 

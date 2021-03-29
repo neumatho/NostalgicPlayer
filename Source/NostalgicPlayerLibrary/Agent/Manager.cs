@@ -77,13 +77,20 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 		/********************************************************************/
 		public void LoadAllAgents()
 		{
+			Dictionary<AgentType, List<IAgent>> agentsNotInitializedYet = new Dictionary<AgentType, List<IAgent>>();
+
 			// First load all the agents
 			foreach (AgentType agentType in Enum.GetValues(typeof(AgentType)))
-				LoadSpecificAgents(agentType);
+			{
+				List<IAgent> notInitializedYet = new List<IAgent>();
+				LoadSpecificAgents(agentType, notInitializedYet);
+
+				agentsNotInitializedYet[agentType] = notInitializedYet;
+			}
 
 			// Now check to see if any of the agents need to know which other
 			// agents that has been loaded
-			TellAgentInfo();
+			TellAgentInfo(agentsNotInitializedYet);
 		}
 
 
@@ -289,7 +296,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 		/// Will load all available agents of the specific type into memory
 		/// </summary>
 		/********************************************************************/
-		private void LoadSpecificAgents(AgentType agentType)
+		private void LoadSpecificAgents(AgentType agentType, List<IAgent> agentsNotInitializedYet)
 		{
 			// Build the search directory
 			string searchDirectory = Path.Combine(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Agents"), agentType.ToString());
@@ -333,11 +340,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 									if (supportInfo != null)
 									{
 										foreach (AgentSupportInfo info in supportInfo)
-										{
-											IAgentWorker worker = agent.CreateInstance(info.TypeId);
-
-											typesInAgent.Add(new AgentInfo(agent, agent.Name, info.Name, info.Description, agent.Version, info.TypeId, worker is IAgentSettingsRegistrar, worker is IAgentDisplay));
-										}
+											typesInAgent.Add(BuildAgentInfo(agent, info));
+									}
+									else
+									{
+										// If null is returned, it means it is not possible to tell about the types yet. This is used
+										// e.g. by the sample player, because it need to know which sample converters are available first
+										agentsNotInitializedYet.Add(agent);
 									}
 
 									loadedAgentsByAgentId[agent.AgentId] = new AgentLoadInfo { LoadContext = loadContext, FileName = file, AgentInfo = typesInAgent.ToArray() };
@@ -386,23 +395,75 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 
 		/********************************************************************/
 		/// <summary>
+		/// Build agent information structure
+		/// </summary>
+		/********************************************************************/
+		private AgentInfo BuildAgentInfo(IAgent agent, AgentSupportInfo info)
+		{
+			IAgentWorker worker = agent.CreateInstance(info.TypeId);
+
+			return new AgentInfo(agent, agent.Name, info.Name, info.Description, agent.Version, info.TypeId, worker is IAgentSettingsRegistrar, worker is IAgentDisplay);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Check to see if any of the agents need to know which other agents
 		/// that has been loaded
 		/// </summary>
 		/********************************************************************/
-		private void TellAgentInfo()
+		private void TellAgentInfo(Dictionary<AgentType, List<IAgent>> agentsNotInitializedYet)
 		{
 			lock (loadListLock)
 			{
-				foreach (AgentInfo[] agents in loadedAgentsByAgentType.Values)
+				// First take any missing agents first
+				foreach (KeyValuePair<AgentType, List<IAgent>> pair in agentsNotInitializedYet)
 				{
-					foreach (AgentInfo agentInfo in agents)
+					List<AgentInfo> loadedAgents = new List<AgentInfo>();
+
+					for (int i = pair.Value.Count - 1; i >= 0; i--)
 					{
-						if (agentInfo.Agent is IWantOutputAgents wantOutputAgents)
+						IAgent agent = pair.Value[i];
+
+						if (agent is IWantOutputAgents wantOutputAgents)
 							wantOutputAgents.SetOutputInfo(loadedAgentsByAgentType[AgentType.Output]);
 
-						if (agentInfo.Agent is IWantSampleConverterAgents wantSampleConverterAgents)
+						if (agent is IWantSampleConverterAgents wantSampleConverterAgents)
 							wantSampleConverterAgents.SetSampleConverterInfo(loadedAgentsByAgentType[AgentType.SampleConverters]);
+
+						List<AgentInfo> typesInAgent = new List<AgentInfo>();
+
+						AgentSupportInfo[] supportInfo = agent.AgentInformation;
+						if (supportInfo != null)
+						{
+							foreach (AgentSupportInfo info in supportInfo)
+								typesInAgent.Add(BuildAgentInfo(agent, info));
+						}
+
+						loadedAgentsByAgentId[agent.AgentId].AgentInfo = typesInAgent.ToArray();
+						loadedAgents.AddRange(typesInAgent);
+					}
+
+					if (loadedAgents.Count > 0)
+						loadedAgentsByAgentType[pair.Key] = loadedAgentsByAgentType[pair.Key].Concat(loadedAgents).ToArray();
+				}
+
+				foreach (KeyValuePair<AgentType, AgentInfo[]> pair in loadedAgentsByAgentType)
+				{
+					List<IAgent> takenAgents = agentsNotInitializedYet[pair.Key];
+
+					foreach (AgentInfo agentInfo in pair.Value)
+					{
+						// Check if we have already taken this agent in the above loop
+						if (!takenAgents.Contains(agentInfo.Agent))
+						{
+							if (agentInfo.Agent is IWantOutputAgents wantOutputAgents)
+								wantOutputAgents.SetOutputInfo(loadedAgentsByAgentType[AgentType.Output]);
+
+							if (agentInfo.Agent is IWantSampleConverterAgents wantSampleConverterAgents)
+								wantSampleConverterAgents.SetSampleConverterInfo(loadedAgentsByAgentType[AgentType.SampleConverters]);
+						}
 					}
 				}
 

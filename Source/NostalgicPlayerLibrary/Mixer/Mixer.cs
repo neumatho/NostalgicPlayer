@@ -515,7 +515,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		{
 			// Should we emulate the filter at all
 			if (emulateFilter && currentPlayer.AmigaFilter)
-				currentMixer.AddAmigaFilter((currentMode & MixerMode.Stereo) != 0, dest, todo, ref filterPrevLeft, ref filterPrevRight);
+				Native.AddAmigaFilter((currentMode & MixerMode.Stereo) != 0, dest, todo, ref filterPrevLeft, ref filterPrevRight);
 		}
 		#endregion
 	}

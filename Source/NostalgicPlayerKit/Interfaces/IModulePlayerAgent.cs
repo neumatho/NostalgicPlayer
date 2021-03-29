@@ -48,6 +48,11 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		void CleanupSound();
 
 		/// <summary>
+		/// This is the main player method
+		/// </summary>
+		void Play();
+
+		/// <summary>
 		/// Return the number of channels the module want to reserve
 		/// </summary>
 		int VirtualChannelCount { get; }
@@ -76,12 +81,6 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Calculates the position time for each position
 		/// </summary>
 		TimeSpan GetPositionTimeTable(int songNumber, out TimeSpan[] positionTimes);
-
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		bool GetInformationString(int line, out string description, out string value);
 
 		/// <summary>
 		/// Returns all the instruments available in the module. If none,

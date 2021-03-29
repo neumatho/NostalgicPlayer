@@ -153,103 +153,65 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 		/********************************************************************/
 		/// <summary>
-		/// This is the main player method
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
 		/// </summary>
 		/********************************************************************/
-		public override void Play()
+		public override bool GetInformationString(int line, out string description, out string value)
 		{
-			if (speed != 0)				// Only play if speed <> 0
+			// Find out which line to take
+			switch (line)
 			{
-				counter++;				// Count speed counter
-				if (counter >= speed)   // Do we have to change pattern line?
+				// Song length
+				case 0:
 				{
-					counter = 0;
-
-					if (pattDelayTime2 != 0)	// Pattern delay active
-						NoNewAllChannels();
-					else
-						GetNewNote();
-
-					// Get next pattern line
-					patternPos++;
-					if (pattDelayTime != 0)   // New pattern delay time
-					{
-						// Activate the pattern delay
-						pattDelayTime2 = pattDelayTime;
-						pattDelayTime = 0;
-					}
-
-					// Pattern delay routine, jump one line back again
-					if (pattDelayTime2 != 0)
-					{
-						if (--pattDelayTime2 != 0)
-							patternPos--;
-					}
-
-					// Has the module ended?
-					if (gotJump)
-					{
-						// If we got both a Bxx and Dxx command
-						// on the same line, don't end the module
-						if (!gotBreak)
-							endReached = true;
-
-						gotJump = false;
-					}
-
-					// Make sure that the break flag is always cleared
-					gotBreak = false;
-
-					// Pattern break
-					if (breakFlag)
-					{
-						// Calculate new position in the next pattern
-						breakFlag = false;
-						patternPos = breakPos;
-						breakPos = 0;
-					}
-
-					// Have we played the whole pattern?
-					if (patternPos >= patternLength)
-						NextPosition();
-				}
-				else
-					NoNewAllChannels();
-
-				if (posJumpFlag)
-					NextPosition();
-			}
-			else
-			{
-				NoNewAllChannels();
-
-				if (posJumpFlag)
-					NextPosition();
-			}
-
-			if (currentModuleType == ModuleType.StarTrekker)
-				AmHandler();
-
-			// If we have reached the end of the module, reset speed and tempo
-			if (endReached)
-			{
-				SongTime songTime = songTimeList[currentSong];
-
-				if ((songPos < songTime.StartPos) || (songPos >= songTime.PosInfoList.Count))
-				{
-					speed = 6;
-					ChangeTempo(initTempo);
-				}
-				else
-				{
-					PosInfo posInfo = songTime.PosInfoList[songPos - songTime.StartPos];
-					speed = posInfo.Speed;
-					ChangeTempo(posInfo.Tempo);
+					description = Resources.IDS_MOD_INFODESCLINE0;
+					value = songLength.ToString();
+					break;
 				}
 
-				OnEndReached();
-				endReached = false;
+				// Used patterns
+				case 1:
+				{
+					description = Resources.IDS_MOD_INFODESCLINE1;
+					value = maxPattern.ToString();
+					break;
+				}
+
+				// Supported / used samples
+				case 2:
+				{
+					description = Resources.IDS_MOD_INFODESCLINE2;
+					value = sampleNum.ToString();
+					break;
+				}
+
+				// Actual speed
+				case 3:
+				{
+					description = Resources.IDS_MOD_INFODESCLINE3;
+					value = speed.ToString();
+					break;
+				}
+
+				// Actual speed (BPM)
+				case 4:
+				{
+					description = Resources.IDS_MOD_INFODESCLINE4;
+					value = tempo.ToString();
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
 			}
+
+			return true;
 		}
 		#endregion
 
@@ -646,6 +608,109 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 		/********************************************************************/
 		/// <summary>
+		/// This is the main player method
+		/// </summary>
+		/********************************************************************/
+		public override void Play()
+		{
+			if (speed != 0)				// Only play if speed <> 0
+			{
+				counter++;				// Count speed counter
+				if (counter >= speed)   // Do we have to change pattern line?
+				{
+					counter = 0;
+
+					if (pattDelayTime2 != 0)	// Pattern delay active
+						NoNewAllChannels();
+					else
+						GetNewNote();
+
+					// Get next pattern line
+					patternPos++;
+					if (pattDelayTime != 0)   // New pattern delay time
+					{
+						// Activate the pattern delay
+						pattDelayTime2 = pattDelayTime;
+						pattDelayTime = 0;
+					}
+
+					// Pattern delay routine, jump one line back again
+					if (pattDelayTime2 != 0)
+					{
+						if (--pattDelayTime2 != 0)
+							patternPos--;
+					}
+
+					// Has the module ended?
+					if (gotJump)
+					{
+						// If we got both a Bxx and Dxx command
+						// on the same line, don't end the module
+						if (!gotBreak)
+							endReached = true;
+
+						gotJump = false;
+					}
+
+					// Make sure that the break flag is always cleared
+					gotBreak = false;
+
+					// Pattern break
+					if (breakFlag)
+					{
+						// Calculate new position in the next pattern
+						breakFlag = false;
+						patternPos = breakPos;
+						breakPos = 0;
+					}
+
+					// Have we played the whole pattern?
+					if (patternPos >= patternLength)
+						NextPosition();
+				}
+				else
+					NoNewAllChannels();
+
+				if (posJumpFlag)
+					NextPosition();
+			}
+			else
+			{
+				NoNewAllChannels();
+
+				if (posJumpFlag)
+					NextPosition();
+			}
+
+			if (currentModuleType == ModuleType.StarTrekker)
+				AmHandler();
+
+			// If we have reached the end of the module, reset speed and tempo
+			if (endReached)
+			{
+				SongTime songTime = songTimeList[currentSong];
+
+				if ((songPos < songTime.StartPos) || (songPos >= songTime.PosInfoList.Count))
+				{
+					speed = 6;
+					ChangeTempo(initTempo);
+				}
+				else
+				{
+					PosInfo posInfo = songTime.PosInfoList[songPos - songTime.StartPos];
+					speed = posInfo.Speed;
+					ChangeTempo(posInfo.Tempo);
+				}
+
+				OnEndReached();
+				endReached = false;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the number of channels the module use
 		/// </summary>
 		/********************************************************************/
@@ -747,71 +812,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				positionTimes[i] = songTime.TotalTime;
 
 			return songTime.TotalTime;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the description and value on the line given. If the line
-		/// is out of range, false is returned
-		/// </summary>
-		/********************************************************************/
-		public override bool GetInformationString(int line, out string description, out string value)
-		{
-			// Find out which line to take
-			switch (line)
-			{
-				// Song length
-				case 0:
-				{
-					description = Resources.IDS_MOD_INFODESCLINE0;
-					value = songLength.ToString();
-					break;
-				}
-
-				// Used patterns
-				case 1:
-				{
-					description = Resources.IDS_MOD_INFODESCLINE1;
-					value = maxPattern.ToString();
-					break;
-				}
-
-				// Supported / used samples
-				case 2:
-				{
-					description = Resources.IDS_MOD_INFODESCLINE2;
-					value = sampleNum.ToString();
-					break;
-				}
-
-				// Actual speed
-				case 3:
-				{
-					description = Resources.IDS_MOD_INFODESCLINE3;
-					value = speed.ToString();
-					break;
-				}
-
-				// Actual speed (BPM)
-				case 4:
-				{
-					description = Resources.IDS_MOD_INFODESCLINE4;
-					value = tempo.ToString();
-					break;
-				}
-
-				default:
-				{
-					description = null;
-					value = null;
-
-					return false;
-				}
-			}
-
-			return true;
 		}
 
 

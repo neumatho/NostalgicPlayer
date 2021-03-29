@@ -15,7 +15,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 	/// </summary>
 	public class ModuleInfoStatic
 	{
-		private readonly ModulePlayerSupportFlag supportFlag;
+		private readonly ModulePlayerSupportFlag moduleSupportFlag;
+		private readonly SamplePlayerSupportFlag sampleSupportFlag;
 
 		/********************************************************************/
 		/// <summary>
@@ -30,6 +31,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 			PlayerName = string.Empty;
 			Channels = 0;
 			ModuleSize = 0;
+
+			moduleSupportFlag = ModulePlayerSupportFlag.None;
+			sampleSupportFlag = SamplePlayerSupportFlag.None;
 		}
 
 
@@ -54,15 +58,32 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructor
+		/// Constructor (for module players)
 		/// </summary>
 		/********************************************************************/
 		internal ModuleInfoStatic(AgentInfo playerAgentInfo, string moduleName, string author, string moduleFormat, string playerName, int channels, long moduleSize, ModulePlayerSupportFlag supportFlag, int maxSongNumber, InstrumentInfo[] instruments, SampleInfo[] samples) : this(playerAgentInfo, moduleName, author, moduleFormat, playerName, channels, moduleSize)
 		{
-			this.supportFlag = supportFlag;
+			moduleSupportFlag = supportFlag;
+			sampleSupportFlag = SamplePlayerSupportFlag.None;
+
 			MaxSongNumber = maxSongNumber;
 			Instruments = instruments;
 			Samples = samples;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor (for sample players)
+		/// </summary>
+		/********************************************************************/
+		internal ModuleInfoStatic(AgentInfo playerAgentInfo, string moduleName, string author, string moduleFormat, string playerName, int channels, long moduleSize, SamplePlayerSupportFlag supportFlag, int frequency) : this(playerAgentInfo, moduleName, author, moduleFormat, playerName, channels, moduleSize)
+		{
+			sampleSupportFlag = supportFlag;
+			moduleSupportFlag = ModulePlayerSupportFlag.None;
+
+			Frequency = frequency;
 		}
 
 		#region Common properties
@@ -172,7 +193,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		{
 			get
 			{
-				return (supportFlag & ModulePlayerSupportFlag.SetPosition) != 0;
+				return ((moduleSupportFlag & ModulePlayerSupportFlag.SetPosition) != 0) || ((sampleSupportFlag & SamplePlayerSupportFlag.SetPosition) != 0);
 			}
 		}
 
@@ -196,6 +217,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// </summary>
 		/********************************************************************/
 		public SampleInfo[] Samples
+		{
+			get;
+		}
+		#endregion
+
+		#region Sample specific properties
+		/********************************************************************/
+		/// <summary>
+		/// Return the frequency the sample is stored as
+		/// </summary>
+		/********************************************************************/
+		public int Frequency
 		{
 			get;
 		}

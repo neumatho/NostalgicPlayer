@@ -6,13 +6,14 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Containers;
-
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
 	/// <summary>
 	/// Agents of this type can act as a visual, which can show what is played.
 	/// You also need to implement the IAgentGuiDisplay interface
+	///
+	/// Do not derive directly from this interface, but use either ChannelChange
+	/// or SampleData interface instead
 	/// </summary>
 	public interface IVisualAgent : IAgentWorker
 	{
@@ -25,10 +26,5 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Cleanup the visual
 		/// </summary>
 		void CleanupVisual();
-
-		/// <summary>
-		/// Tell the visual about a channel change
-		/// </summary>
-		void ChannelChange(ChannelChanged channelChanged);
 	}
 }

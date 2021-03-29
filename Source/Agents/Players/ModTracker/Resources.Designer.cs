@@ -113,18 +113,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Original player by Daniel Goldstein.
-        ///Converted to C# by Thomas Neumann.
-        ///
-        ///This tracker from the PC, was the first one to have 32 channels and supports GUS soundcards. It introduced the mtm file format, which I will say is the successor to the mod format. In this format, a pattern contains indivual tracks, which can be combined as will..
-        /// </summary>
-        internal static string IDS_MOD_DESCRIPTION_AGENT13 {
-            get {
-                return ResourceManager.GetString("IDS_MOD_DESCRIPTION_AGENT13", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Original player by Karsten Obarski.
         ///Converted to C# by Thomas Neumann.
         ///
@@ -346,15 +334,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MultiTracker.
-        /// </summary>
-        internal static string IDS_MOD_NAME_AGENT13 {
-            get {
-                return ResourceManager.GetString("IDS_MOD_NAME_AGENT13", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Ultimate SoundTracker 1.8 - 2.0.
         /// </summary>
         internal static string IDS_MOD_NAME_AGENT2 {
@@ -423,6 +402,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         internal static string IDS_MOD_NAME_AGENT9 {
             get {
                 return ResourceManager.GetString("IDS_MOD_NAME_AGENT9", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Original player by Daniel Goldstein.
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///This tracker from the PC, was the first one to have 32 channels and supports GUS soundcards. It introduced the mtm file format, which I will say is the successor to the mod format. In this format, a pattern contains indivual tracks, which can be combined as will..
+        /// </summary>
+        internal static string IDS_MTM_DESCRIPTION_AGENT13 {
+            get {
+                return ResourceManager.GetString("IDS_MTM_DESCRIPTION_AGENT13", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MultiTracker.
+        /// </summary>
+        internal static string IDS_MTM_NAME_AGENT13 {
+            get {
+                return ResourceManager.GetString("IDS_MTM_NAME_AGENT13", resourceCulture);
             }
         }
         

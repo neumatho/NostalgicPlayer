@@ -6,10 +6,6 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System;
-using System.IO;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Mixer;
 using Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers;
@@ -29,64 +25,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private int bytesPerSample;			// How many bytes each sample uses in the output buffer
 
 		protected VoiceInfo[] voiceInfo;
-		[DllImport("kernel32.dll")]
-		private static extern IntPtr LoadLibrary(string dllToLoad);
-
-		[DllImport("kernel32.dll")]
-		protected static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
-
-		[DllImport("kernel32.dll")]
-		private static extern bool FreeLibrary(IntPtr hModule);
-
-		protected static IntPtr dllPtr = IntPtr.Zero;
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
-		static MixerBase()
-		{
-			AppDomain.CurrentDomain.ProcessExit += MixerBase_Dtor;
-
-			string oldPath = Environment.CurrentDirectory;
-
-			try
-			{
-				Assembly ass = Assembly.GetEntryAssembly();
-				string path = Path.GetDirectoryName(ass.Location);
-
-				// Load the dll file
-				Environment.CurrentDirectory = path;
-
-				if (Environment.Is64BitProcess)
-					dllPtr = LoadLibrary(@"NostalgicPlayerLibrary_Native-x64.dll");
-				else
-					dllPtr = LoadLibrary(@"NostalgicPlayerLibrary_Native-x86.dll");
-			}
-			finally
-			{
-				Environment.CurrentDirectory = oldPath;
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Destructor
-		/// </summary>
-		/********************************************************************/
-		private static void MixerBase_Dtor(object sender, EventArgs e)
-		{
-			if (dllPtr != IntPtr.Zero)
-			{
-				FreeLibrary(dllPtr);
-				dllPtr = IntPtr.Zero;
-			}
-		}
-
-
 
 		/********************************************************************/
 		/// <summary>
@@ -256,35 +194,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		/********************************************************************/
 		/// <summary>
-		/// Adds the Amiga LED filter
-		/// </summary>
-		/********************************************************************/
-		private delegate int del_AddAmigaFilter(bool stereo, IntPtr dest, int todo, ref int filterPrevLeft, ref int filterPrevRight);
-		public void AddAmigaFilter(bool stereo, int[] dest, int todo, ref int filterPrevLeft, ref int filterPrevRight)
-		{
-			if (_AddAmigaFilter == null)
-			{
-				IntPtr f = Environment.Is64BitProcess ? GetProcAddress(dllPtr, "AddAmigaFilter") : GetProcAddress(dllPtr, "_AddAmigaFilter@20");
-				_AddAmigaFilter = (del_AddAmigaFilter)Marshal.GetDelegateForFunctionPointer(f, typeof(del_AddAmigaFilter));
-			}
-
-			GCHandle pinnedBuf = GCHandle.Alloc(dest, GCHandleType.Pinned);
-
-			try
-			{
-				_AddAmigaFilter(stereo, pinnedBuf.AddrOfPinnedObject(), todo, ref filterPrevLeft, ref filterPrevRight);
-			}
-			finally
-			{
-				pinnedBuf.Free();
-			}
-		}
-		private static del_AddAmigaFilter _AddAmigaFilter = null;
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Convert the mix buffer to the output format and store the result
 		/// in the supplied buffer
 		/// </summary>
@@ -292,9 +201,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		public void ConvertMixedData(byte[] dest, int offset, int[] source, int todo, bool swapSpeakers)
 		{
 			if (bytesPerSample == 2)
-				ConvertTo16(dest, offset / 2, source, todo, swapSpeakers);
+				Native.MixConvertTo16(dest, offset / 2, source, todo, swapSpeakers);
 			else if (bytesPerSample == 4)
-				ConvertTo32(dest, offset / 4, source, todo, swapSpeakers);
+				Native.MixConvertTo32(dest, offset / 4, source, todo, swapSpeakers);
 		}
 
 
@@ -332,23 +241,5 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// </summary>
 		/********************************************************************/
 		protected abstract void CleanupMixer();
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Converts the mixed data to a 16 bit sample buffer
-		/// </summary>
-		/********************************************************************/
-		protected abstract void ConvertTo16(byte[] dest, int offset, int[] source, int todo, bool swapSpeakers);
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Converts the mixed data to a 32 bit sample buffer
-		/// </summary>
-		/********************************************************************/
-		protected abstract void ConvertTo32(byte[] dest, int offset, int[] source, int todo, bool swapSpeakers);
 	}
 }

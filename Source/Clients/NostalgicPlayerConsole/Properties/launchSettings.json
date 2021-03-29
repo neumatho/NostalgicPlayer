@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "NostalgicPlayerConsole": {
-      "commandName": "Project",
-      "commandLineArgs": "\"M:\\Modules\\JamCracker\\Around The Twice.jam\""
-    }
-  }
-}
