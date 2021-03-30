@@ -771,7 +771,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 					return -1;
 				}
 
-				LineInfo lineInfo = lineList[i];
+				LineInfo lineInfo = lineList[startIndex + i];
 
 				if (lineInfo.Type == LineType.Section)
 				{

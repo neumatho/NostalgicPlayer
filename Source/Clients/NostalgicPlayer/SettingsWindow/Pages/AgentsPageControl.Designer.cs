@@ -48,6 +48,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			((System.ComponentModel.ISupportInitialize)(this.navigatorSampleConvertersPage)).BeginInit();
 			this.navigatorSampleConvertersPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.navigatorVisualsPage)).BeginInit();
+			this.navigatorVisualsPage.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// navigator
@@ -130,6 +131,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.sampleConvertersListControl.BackColor = System.Drawing.Color.Transparent;
 			this.sampleConvertersListControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.sampleConvertersListControl.EnableCheckColumn = false;
 			this.sampleConvertersListControl.Location = new System.Drawing.Point(0, 0);
 			this.sampleConvertersListControl.Name = "sampleConvertersListControl";
 			this.sampleConvertersListControl.Size = new System.Drawing.Size(100, 100);
@@ -172,6 +174,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			((System.ComponentModel.ISupportInitialize)(this.navigatorSampleConvertersPage)).EndInit();
 			this.navigatorSampleConvertersPage.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.navigatorVisualsPage)).EndInit();
+			this.navigatorVisualsPage.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}

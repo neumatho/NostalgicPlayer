@@ -92,6 +92,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 
 		/********************************************************************/
 		/// <summary>
+		/// Indicate if the check mark column should be shown or not
+		/// </summary>
+		/********************************************************************/
+		[Category("Layout")]
+		[DefaultValue(true)]
+		public bool EnableCheckColumn
+		{
+			get
+			{
+				return agentsDataGridView.Columns[0].Visible;
+			}
+
+			set
+			{
+				agentsDataGridView.Columns[0].Visible = value;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will prepare to handle the settings
 		/// </summary>
 		/********************************************************************/
@@ -168,8 +190,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		public void WriteSettings()
 		{
-			foreach (KeyValuePair<Guid, bool> pair in changedEnableStates)
-				settings.SetBoolEntry(agentType + " Agents", pair.Key.ToString("D"), pair.Value);
+			if (EnableCheckColumn)
+			{
+				foreach (KeyValuePair<Guid, bool> pair in changedEnableStates)
+					settings.SetBoolEntry(agentType + " Agents", pair.Key.ToString("D"), pair.Value);
+			}
+
+			changedEnableStates.Clear();
+			backupEnableStates.Clear();
+			MakeBackup();
 		}
 
 
@@ -295,25 +324,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		private void AgentsDataGridView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
 		{
-			// Get the agent information
-			AgentInfo agentInfo = (AgentInfo)agentsDataGridView.Rows[e.RowIndex].Tag;
-
-			if (agentInfo.Enabled)
+			if (EnableCheckColumn)
 			{
-				DisableAgent(agentInfo);
-				agentsDataGridView.Rows[e.RowIndex].Cells[0].Value = null;
-			}
-			else
-			{
-				EnableAgent(agentInfo);
-				agentsDataGridView.Rows[e.RowIndex].Cells[0].Value = Resources.IDB_CHECKMARK;
-			}
+				// Get the agent information
+				AgentInfo agentInfo = (AgentInfo)agentsDataGridView.Rows[e.RowIndex].Tag;
 
-			// Remember the change
-			changedEnableStates[agentInfo.TypeId] = agentInfo.Enabled;
+				if (agentInfo.Enabled)
+				{
+					DisableAgent(agentInfo);
+					agentsDataGridView.Rows[e.RowIndex].Cells[0].Value = null;
+				}
+				else
+				{
+					EnableAgent(agentInfo);
+					agentsDataGridView.Rows[e.RowIndex].Cells[0].Value = Resources.IDB_CHECKMARK;
+				}
 
-			// Update the grid
-			agentsDataGridView.InvalidateRow(e.RowIndex);
+				// Remember the change
+				changedEnableStates[agentInfo.TypeId] = agentInfo.Enabled;
+
+				// Update the grid
+				agentsDataGridView.InvalidateRow(e.RowIndex);
+			}
 		}
 
 

@@ -3132,7 +3132,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			// Add all agent windows to the menu which have settings or show windows
 			foreach (AgentInfo agentInfo in agentManager.GetAllAgents())
-				AddAgentToMenu(agentInfo);
+			{
+				if (agentInfo.Enabled)
+					AddAgentToMenu(agentInfo);
+			}
 		}
 
 
@@ -3864,6 +3867,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Fix agent settings
 			FixAgentSettings(Manager.AgentType.Players);
 			FixAgentSettings(Manager.AgentType.Output);
+			FixAgentSettings(Manager.AgentType.Visuals);
 
 			// And finally, save the settings to disk
 			userSettings.SaveSettings();
