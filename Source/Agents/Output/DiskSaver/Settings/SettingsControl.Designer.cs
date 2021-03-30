@@ -81,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			this.pathTextBox.Location = new System.Drawing.Point(41, 8);
 			this.pathTextBox.Name = "pathTextBox";
 			this.controlResource.SetResourceKey(this.pathTextBox, null);
-			this.pathTextBox.Size = new System.Drawing.Size(421, 21);
+			this.pathTextBox.Size = new System.Drawing.Size(461, 21);
 			this.pathTextBox.StateCommon.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.pathTextBox.StateCommon.Content.TextH = Krypton.Toolkit.PaletteRelativeAlign.Inherit;
 			this.pathTextBox.TabIndex = 1;
@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			// pathButton
 			// 
 			this.pathButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.pathButton.Location = new System.Drawing.Point(466, 8);
+			this.pathButton.Location = new System.Drawing.Point(506, 8);
 			this.pathButton.Name = "pathButton";
 			this.controlResource.SetResourceKey(this.pathButton, null);
 			this.pathButton.Size = new System.Drawing.Size(22, 22);
@@ -184,7 +184,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			// 
 			// formatComboBox
 			// 
-			this.formatComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.formatComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.formatComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
 			this.formatComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.formatComboBox.DropDownWidth = 120;
@@ -192,7 +193,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			this.formatComboBox.Location = new System.Drawing.Point(175, 54);
 			this.formatComboBox.Name = "formatComboBox";
 			this.controlResource.SetResourceKey(this.formatComboBox, null);
-			this.formatComboBox.Size = new System.Drawing.Size(120, 20);
+			this.formatComboBox.Size = new System.Drawing.Size(160, 20);
 			this.formatComboBox.Sorted = true;
 			this.formatComboBox.StateCommon.ComboBox.Content.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.formatComboBox.StateCommon.ComboBox.Content.Padding = new System.Windows.Forms.Padding(-1, 2, -1, 2);
@@ -203,9 +204,9 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			// 
 			// formatSettingsButton
 			// 
-			this.formatSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.formatSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.formatSettingsButton.Enabled = false;
-			this.formatSettingsButton.Location = new System.Drawing.Point(299, 53);
+			this.formatSettingsButton.Location = new System.Drawing.Point(339, 53);
 			this.formatSettingsButton.Name = "formatSettingsButton";
 			this.controlResource.SetResourceKey(this.formatSettingsButton, null);
 			this.formatSettingsButton.Size = new System.Drawing.Size(22, 22);
@@ -216,7 +217,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			// passThroughLabel
 			// 
 			this.passThroughLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.passThroughLabel.Location = new System.Drawing.Point(329, 38);
+			this.passThroughLabel.Location = new System.Drawing.Point(369, 38);
 			this.passThroughLabel.Name = "passThroughLabel";
 			this.controlResource.SetResourceKey(this.passThroughLabel, "IDS_SETTINGS_PASSTHROUGH");
 			this.passThroughLabel.Size = new System.Drawing.Size(143, 17);
@@ -231,7 +232,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			this.passThroughComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.passThroughComboBox.DropDownWidth = 154;
 			this.passThroughComboBox.IntegralHeight = false;
-			this.passThroughComboBox.Location = new System.Drawing.Point(334, 54);
+			this.passThroughComboBox.Location = new System.Drawing.Point(374, 54);
 			this.passThroughComboBox.Name = "passThroughComboBox";
 			this.controlResource.SetResourceKey(this.passThroughComboBox, null);
 			this.passThroughComboBox.Size = new System.Drawing.Size(154, 20);
@@ -254,19 +255,22 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			// 
 			// frequencyTrackBar
 			// 
+			this.frequencyTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.frequencyTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.InputControlStandalone;
 			this.frequencyTrackBar.DrawBackground = true;
 			this.frequencyTrackBar.Location = new System.Drawing.Point(91, 0);
 			this.frequencyTrackBar.Maximum = 5;
 			this.frequencyTrackBar.Name = "frequencyTrackBar";
 			this.controlResource.SetResourceKey(this.frequencyTrackBar, null);
-			this.frequencyTrackBar.Size = new System.Drawing.Size(359, 27);
+			this.frequencyTrackBar.Size = new System.Drawing.Size(399, 27);
 			this.frequencyTrackBar.TabIndex = 1;
 			this.frequencyTrackBar.ValueChanged += new System.EventHandler(this.FrequencyTrackBar_ValueChanged);
 			// 
 			// frequencyValueLabel
 			// 
-			this.frequencyValueLabel.Location = new System.Drawing.Point(454, 5);
+			this.frequencyValueLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.frequencyValueLabel.Location = new System.Drawing.Point(494, 5);
 			this.frequencyValueLabel.Name = "frequencyValueLabel";
 			this.controlResource.SetResourceKey(this.frequencyValueLabel, null);
 			this.frequencyValueLabel.Size = new System.Drawing.Size(41, 17);
@@ -276,13 +280,15 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			// 
 			// frequencyPanel
 			// 
+			this.frequencyPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.frequencyPanel.Controls.Add(this.frequencyValueLabel);
 			this.frequencyPanel.Controls.Add(this.frequencyTrackBar);
 			this.frequencyPanel.Controls.Add(this.frequencyLabel);
 			this.frequencyPanel.Location = new System.Drawing.Point(0, 97);
 			this.frequencyPanel.Name = "frequencyPanel";
 			this.controlResource.SetResourceKey(this.frequencyPanel, null);
-			this.frequencyPanel.Size = new System.Drawing.Size(498, 27);
+			this.frequencyPanel.Size = new System.Drawing.Size(538, 27);
 			this.frequencyPanel.TabIndex = 10;
 			// 
 			// SettingsControl
@@ -300,10 +306,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			this.Controls.Add(this.pathButton);
 			this.Controls.Add(this.pathTextBox);
 			this.Controls.Add(this.pathLabel);
-			this.MinimumSize = new System.Drawing.Size(498, 132);
+			this.MinimumSize = new System.Drawing.Size(538, 132);
 			this.Name = "SettingsControl";
 			this.controlResource.SetResourceKey(this, null);
-			this.Size = new System.Drawing.Size(498, 132);
+			this.Size = new System.Drawing.Size(538, 132);
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).EndInit();
 			this.bitPanel.ResumeLayout(false);
 			this.bitPanel.PerformLayout();

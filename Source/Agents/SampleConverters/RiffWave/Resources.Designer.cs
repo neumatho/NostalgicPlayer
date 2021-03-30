@@ -83,6 +83,15 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This one supports Microsoft IEEE Float (ID: 0x0003) format, which is plain sample files where each sample are stored as IEEE-754 floating points..
+        /// </summary>
+        internal static string IDS_RIFFWAVE_DESCRIPTION_IEEE_FLOAT {
+            get {
+                return ResourceManager.GetString("IDS_RIFFWAVE_DESCRIPTION_IEEE_FLOAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This one supports Microsoft PCM (ID: 0x0001) format, which is plain sample files without any compression or encoding..
         /// </summary>
         internal static string IDS_RIFFWAVE_DESCRIPTION_PCM {
@@ -124,6 +133,15 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave {
         internal static string IDS_RIFFWAVE_ERR_NOFMT {
             get {
                 return ResourceManager.GetString("IDS_RIFFWAVE_ERR_NOFMT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RIFF-WAVE (IEEE Float).
+        /// </summary>
+        internal static string IDS_RIFFWAVE_NAME_IEEE_FLOAT {
+            get {
+                return ResourceManager.GetString("IDS_RIFFWAVE_NAME_IEEE_FLOAT", resourceCulture);
             }
         }
         

@@ -227,18 +227,6 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats
 
 		/********************************************************************/
 		/// <summary>
-		/// Writes any extra information into the fmt chunk
-		/// </summary>
-		/********************************************************************/
-		protected override void WriteExtraFmtInfo(WriterStream writerStream)
-		{
-			writerStream.Write_L_UINT16(GetSampleSize(format.Bits));		// Sample size
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Writes a block of data
 		/// </summary>
 		/********************************************************************/

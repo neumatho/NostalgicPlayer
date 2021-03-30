@@ -30,6 +30,7 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | MultiTracker | .mtm | | ModTracker |
 | NoiseTracker | .mod | | ModTracker |
 | ProTracker | .mod | | ModTracker |
+| RIFF-WAVE (IEEE Float) | .wav | | Sample |
 | RIFF-WAVE (PCM) | .wav | | Sample |
 | SoundTracker 2.2 | .mod | | ModTracker |
 | StarTrekker | .mod | | ModTracker |

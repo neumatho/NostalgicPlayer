@@ -154,7 +154,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			// saveFormatLabel
 			// 
 			this.saveFormatLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.saveFormatLabel.Location = new System.Drawing.Point(161, 123);
+			this.saveFormatLabel.Location = new System.Drawing.Point(121, 123);
 			this.saveFormatLabel.Name = "saveFormatLabel";
 			this.controlResource.SetResourceKey(this.saveFormatLabel, "IDS_SAMPLE_INFO_SAMP_SAVEFORMAT");
 			this.saveFormatLabel.Size = new System.Drawing.Size(71, 17);
@@ -169,10 +169,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			this.saveFormatComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.saveFormatComboBox.DropDownWidth = 120;
 			this.saveFormatComboBox.IntegralHeight = false;
-			this.saveFormatComboBox.Location = new System.Drawing.Point(238, 121);
+			this.saveFormatComboBox.Location = new System.Drawing.Point(198, 121);
 			this.saveFormatComboBox.Name = "saveFormatComboBox";
 			this.controlResource.SetResourceKey(this.saveFormatComboBox, null);
-			this.saveFormatComboBox.Size = new System.Drawing.Size(120, 19);
+			this.saveFormatComboBox.Size = new System.Drawing.Size(160, 19);
 			this.saveFormatComboBox.StateCommon.ComboBox.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.saveFormatComboBox.StateCommon.ComboBox.Content.TextH = Krypton.Toolkit.PaletteRelativeAlign.Near;
 			this.saveFormatComboBox.StateCommon.Item.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);

@@ -27,7 +27,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 	{
 		private static readonly Dictionary<WaveFormat, Guid> supportedFormats = new Dictionary<WaveFormat, Guid>
 		{
-			{ WaveFormat.WAVE_FORMAT_PCM, Guid.Parse("8E1352D0-863E-4E7F-8F43-DADC01F6558F") }
+			{ WaveFormat.WAVE_FORMAT_PCM, Guid.Parse("8E1352D0-863E-4E7F-8F43-DADC01F6558F") },
+			{ WaveFormat.WAVE_FORMAT_IEEE_FLOAT, Guid.Parse("1F3B71B5-E86C-4DBC-A504-3CADB817E704") }
 		};
 
 		#region IAgent implementation
@@ -57,7 +58,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_RIFFWAVE_NAME_PCM, string.Format(Resources.IDS_RIFFWAVE_DESCRIPTION, Resources.IDS_RIFFWAVE_DESCRIPTION_PCM), supportedFormats[WaveFormat.WAVE_FORMAT_PCM])
+					new AgentSupportInfo(Resources.IDS_RIFFWAVE_NAME_PCM, string.Format(Resources.IDS_RIFFWAVE_DESCRIPTION, Resources.IDS_RIFFWAVE_DESCRIPTION_PCM), supportedFormats[WaveFormat.WAVE_FORMAT_PCM]),
+					new AgentSupportInfo(Resources.IDS_RIFFWAVE_NAME_IEEE_FLOAT, string.Format(Resources.IDS_RIFFWAVE_DESCRIPTION, Resources.IDS_RIFFWAVE_DESCRIPTION_IEEE_FLOAT), supportedFormats[WaveFormat.WAVE_FORMAT_IEEE_FLOAT])
 				};
 			}
 		}
@@ -77,6 +79,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 			{
 				case WaveFormat.WAVE_FORMAT_PCM:
 					return new RiffWaveWorker_Pcm();
+
+				case WaveFormat.WAVE_FORMAT_IEEE_FLOAT:
+					return new RiffWaveWorker_Ieee_Float();
 			}
 
 			return null;

@@ -81,16 +81,18 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 						{
 							// Got it, check the format
 							WaveFormat format = (WaveFormat)stream.Read_L_UINT16();
-							if (format == FormatId)
-								return AgentResult.Ok;
-
-							// Check for extended format
 							if (format == WaveFormat.WAVE_FORMAT_EXTENSIBLE)
 							{
+								// Check for extended format
 								stream.Seek(22, SeekOrigin.Current);
 
 								Guid formatGuid = stream.ReadGuid();
 								if (formatGuid == new Guid((int)FormatId, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71))
+									return AgentResult.Ok;
+							}
+							else
+							{
+								if (format == FormatId)
 									return AgentResult.Ok;
 							}
 

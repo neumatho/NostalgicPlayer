@@ -103,6 +103,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 				writerStream.Write_L_UINT32((uint)format.Frequency);				// Sampling rate
 				writerStream.Write_L_UINT32(GetAverageBytesPerSecond());		// Average bytes per second
 				writerStream.Write_L_UINT16(GetBlockAlign());					// Block align
+				writerStream.Write_L_UINT16(GetSampleSize(format.Bits));		// Sample size
 
 				// Write extra fmt chunk information
 				WriteExtraFmtInfo(writerStream);
@@ -139,7 +140,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 				if ((saveBuffer == null) || (length > saveBuffer.Length))
 				{
 					// Allocate new buffer to store the converted samples into
-					saveBuffer = new byte[length * (format.Bits / 8)];
+					saveBuffer = new byte[length * (GetSampleSize(format.Bits) / 8)];
 				}
 
 				int bytesWritten = WriteData(buffer, length, saveBuffer);
