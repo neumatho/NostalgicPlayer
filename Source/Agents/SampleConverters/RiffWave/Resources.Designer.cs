@@ -83,6 +83,17 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This one supports Microsoft ADPCM (ID: 0x0002) format. ADPCM stands for Adaptive Differential Pulse-Code Modulation and is a variant of the Differential Pulse-Code Modulation (DPCM). Each audio data is compressed into 4-bit samples.
+        ///
+        ///The code is based on SoX (Sound eXchange)..
+        /// </summary>
+        internal static string IDS_RIFFWAVE_DESCRIPTION_ADPCM {
+            get {
+                return ResourceManager.GetString("IDS_RIFFWAVE_DESCRIPTION_ADPCM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This one supports Microsoft IEEE Float (ID: 0x0003) format, which is plain sample files where each sample are stored as IEEE-754 floating points..
         /// </summary>
         internal static string IDS_RIFFWAVE_DESCRIPTION_IEEE_FLOAT {
@@ -101,11 +112,29 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The length of extra header information ({0} bytes) does not match with the length the format require.
+        /// </summary>
+        internal static string IDS_RIFFWAVE_ERR_EXTRAHEADER {
+            get {
+                return ResourceManager.GetString("IDS_RIFFWAVE_ERR_EXTRAHEADER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This loader only support mono and stereo samples. You tried to play a sample that uses {0} channels..
         /// </summary>
         internal static string IDS_RIFFWAVE_ERR_ILLEGALCHANNEL {
             get {
                 return ResourceManager.GetString("IDS_RIFFWAVE_ERR_ILLEGALCHANNEL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The number of bits ({0}) in the sample is not supported.
+        /// </summary>
+        internal static string IDS_RIFFWAVE_ERR_INVALIDBITSIZE {
+            get {
+                return ResourceManager.GetString("IDS_RIFFWAVE_ERR_INVALIDBITSIZE", resourceCulture);
             }
         }
         
@@ -133,6 +162,15 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave {
         internal static string IDS_RIFFWAVE_ERR_NOFMT {
             get {
                 return ResourceManager.GetString("IDS_RIFFWAVE_ERR_NOFMT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RIFF-WAVE (ADPCM).
+        /// </summary>
+        internal static string IDS_RIFFWAVE_NAME_ADPCM {
+            get {
+                return ResourceManager.GetString("IDS_RIFFWAVE_NAME_ADPCM", resourceCulture);
             }
         }
         

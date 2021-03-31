@@ -187,7 +187,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 						InitBasicLoader();
 
 						// Read extra header information
-						int extraData = LoadExtraHeaderInfo(stream, formatInfo);
+						int extraData = LoadExtraHeaderInfo(stream, formatInfo, out errorMessage);
+						if (!string.IsNullOrEmpty(errorMessage))
+							return false;
 
 						// Skip any extra data
 						stream.Seek((chunkSize - 16 - extraData + 1) & 0xfffffffe, SeekOrigin.Current);
@@ -356,8 +358,10 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/// Loads any extra header information from the 'fmt ' chunk
 		/// </summary>
 		/********************************************************************/
-		protected virtual int LoadExtraHeaderInfo(ModuleStream stream, LoadSampleFormatInfo formatInfo)
+		protected virtual int LoadExtraHeaderInfo(ModuleStream stream, LoadSampleFormatInfo formatInfo, out string errorMessage)
 		{
+			errorMessage = string.Empty;
+
 			return 0;
 		}
 

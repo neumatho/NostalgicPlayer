@@ -124,7 +124,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 			bufferSize = outputInformation.BufferSizeInSamples;
 
 			// Allocate the buffers
-			dataBuffer = new int[inputFrequency / 2 * inputChannels];		// Around half second buffer size
+			int len = inputFrequency / 2 * inputChannels;		// Around half second buffer size
+			if ((len % 2) != 0)
+				len++;		// Need to make it even
+
+			dataBuffer = new int[len];
 			sampleBuffer = new int[bufferSize];
 		}
 

@@ -18,10 +18,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 	/// </summary>
 	internal abstract class RiffWaveSaverWorkerBase : RiffWaveLoaderWorkerBase, ISampleSaverAgent
 	{
-		protected SaveSampleFormatInfo format;
+		protected SaveSampleFormatInfo saveFormat;
 
 		private uint dataPosition;
-		private byte[] saveBuffer;
 
 		private int total;
 
@@ -57,10 +56,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 			errorMessage = string.Empty;
 
 			// Remember arguments
-			format = formatInfo;
+			saveFormat = formatInfo;
 
 			// Initialize variables
-			saveBuffer = null;
 			total = 0;
 
 			return true;
@@ -75,8 +73,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/********************************************************************/
 		public virtual void CleanupSaver()
 		{
-			saveBuffer = null;
-			format = null;
+			saveFormat = null;
 		}
 
 
@@ -99,11 +96,11 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 				writerStream.Write_B_UINT32(0x666d7420);						// fmt
 				writerStream.Write_L_UINT32(0);									// Chunk size
 				writerStream.Write_L_UINT16((ushort)FormatId);						// Format ID
-				writerStream.Write_L_UINT16((ushort)format.Channels);				// Number of channels
-				writerStream.Write_L_UINT32((uint)format.Frequency);				// Sampling rate
+				writerStream.Write_L_UINT16((ushort)saveFormat.Channels);			// Number of channels
+				writerStream.Write_L_UINT32((uint)saveFormat.Frequency);			// Sampling rate
 				writerStream.Write_L_UINT32(GetAverageBytesPerSecond());		// Average bytes per second
 				writerStream.Write_L_UINT16(GetBlockAlign());					// Block align
-				writerStream.Write_L_UINT16(GetSampleSize(format.Bits));		// Sample size
+				writerStream.Write_L_UINT16(GetSampleSize(saveFormat.Bits));	// Sample size
 
 				// Write extra fmt chunk information
 				WriteExtraFmtInfo(writerStream);
@@ -136,18 +133,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		{
 			if (length > 0)
 			{
-				// Do we need to reallocate the buffer?
-				if ((saveBuffer == null) || (length > saveBuffer.Length))
+				using (WriterStream writerStream = new WriterStream(stream))
 				{
-					// Allocate new buffer to store the converted samples into
-					saveBuffer = new byte[length * (GetSampleSize(format.Bits) / 8)];
-				}
-
-				int bytesWritten = WriteData(buffer, length, saveBuffer);
-				if (bytesWritten > 0)
-				{
-					stream.Write(saveBuffer, 0, bytesWritten);
-					total += bytesWritten;
+					total += WriteData(writerStream, buffer, length);
 				}
 			}
 		}
@@ -164,12 +152,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 			using (WriterStream writerStream = new WriterStream(stream))
 			{
 				// Write anything left
-				int bytesWritten = WriteTail(saveBuffer);
-				if (bytesWritten > 0)
-				{
-					writerStream.Write(saveBuffer, 0, bytesWritten);
-					total += bytesWritten;
-				}
+				total += WriteTail(writerStream);
 
 				// Change the data chunk size
 				writerStream.Seek(dataPosition + 4, SeekOrigin.Begin);
@@ -217,7 +200,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/// Writes any extra information into the fmt chunk
 		/// </summary>
 		/********************************************************************/
-		protected virtual void WriteExtraFmtInfo(WriterStream writerStream)
+		protected virtual void WriteExtraFmtInfo(WriterStream stream)
 		{
 		}
 
@@ -228,7 +211,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/// Writes the fact chunk
 		/// </summary>
 		/********************************************************************/
-		protected virtual void WriteFactChunk(WriterStream writerStream)
+		protected virtual void WriteFactChunk(WriterStream stream)
 		{
 		}
 
@@ -239,7 +222,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/// Writes a block of data
 		/// </summary>
 		/********************************************************************/
-		protected abstract int WriteData(int[] buffer, int length, byte[] outputBuffer);
+		protected abstract int WriteData(WriterStream stream, int[] buffer, int length);
 
 
 
@@ -248,7 +231,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/// Write the last data or fixing up chunks
 		/// </summary>
 		/********************************************************************/
-		protected virtual int WriteTail(byte[] outputBuffer)
+		protected virtual int WriteTail(WriterStream stream)
 		{
 			return 0;
 		}

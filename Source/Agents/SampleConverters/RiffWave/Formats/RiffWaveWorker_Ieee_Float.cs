@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using System.IO;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
@@ -22,6 +23,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats
 		private byte[] decodeBuffer;
 		private int sourceOffset;
 
+		private byte[] saveBuffer;
 		private float normalize;
 
 		#region RiffWaveWorkerBase implementation
@@ -195,12 +197,26 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats
 		#region RiffWaveSaverWorkerBase implementation
 		/********************************************************************/
 		/// <summary>
+		/// Cleanup the saver
+		/// </summary>
+		/********************************************************************/
+		public override void CleanupSaver()
+		{
+			saveBuffer = null;
+
+			base.CleanupSaver();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Returns the average bytes per second
 		/// </summary>
 		/********************************************************************/
 		protected override uint GetAverageBytesPerSecond()
 		{
-			return (uint)((format.Channels * 32 * format.Frequency + 7) / 8);
+			return (uint)((saveFormat.Channels * 32 * saveFormat.Frequency + 7) / 8);
 		}
 
 
@@ -212,7 +228,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats
 		/********************************************************************/
 		protected override ushort GetBlockAlign()
 		{
-			return (ushort)((format.Channels * 32 + 7) / 8);
+			return (ushort)((saveFormat.Channels * 32 + 7) / 8);
 		}
 
 
@@ -234,19 +250,29 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats
 		/// Writes a block of data
 		/// </summary>
 		/********************************************************************/
-		protected override int WriteData(int[] buffer, int length, byte[] outputBuffer)
+		protected override int WriteData(WriterStream stream, int[] buffer, int length)
 		{
+			// Do we need to reallocate the buffer?
+			if ((saveBuffer == null) || (length > saveBuffer.Length))
+			{
+				// Allocate new buffer to store the converted samples into
+				saveBuffer = new byte[length * (GetSampleSize(saveFormat.Bits) / 8)];
+			}
+
 			// Convert to 32-bit float
 			for (int i = 0, j = 0; i < length; i++, j += 4)
 			{
 				float sample = buffer[i] / 2147483647.0f;
 				byte[] floatArray = BitConverter.GetBytes(sample);
 
-				outputBuffer[j] = floatArray[0];
-				outputBuffer[j + 1] = floatArray[1];
-				outputBuffer[j + 2] = floatArray[2];
-				outputBuffer[j + 3] = floatArray[3];
+				saveBuffer[j] = floatArray[0];
+				saveBuffer[j + 1] = floatArray[1];
+				saveBuffer[j + 2] = floatArray[2];
+				saveBuffer[j + 3] = floatArray[3];
 			}
+
+			// Write the data
+			stream.Write(saveBuffer, 0, length * 4);
 
 			return length * 4;
 		}
