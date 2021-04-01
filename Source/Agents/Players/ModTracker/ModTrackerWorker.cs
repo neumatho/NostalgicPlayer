@@ -963,6 +963,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/********************************************************************/
 		private ModuleType Check15SamplesModule(ModuleStream stream)
 		{
+			// Check for some other formats, that has been recognized wrongly as 15 samples modules
+			stream.Seek(0, SeekOrigin.Begin);
+			uint mark = stream.Read_B_UINT32();
+
+			if ((mark == 0x52494646) || (mark == 0x464f524d))
+				return ModuleType.Unknown;
+
 			ModuleType minimumVersion = ModuleType.UltimateSoundTracker10;
 
 			byte[] buf = new byte[22];
@@ -979,6 +986,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				//
 				// Some modules have non-ascii (invalid) characters in their sample
 				// names, so to be able to play those, this check has been disabled
+				// (which will increase the possibility for faulty recognitions)
 /*				for (int j = 0; j < 22; j++)
 				{
 					if (buf[j] != 0x00)
