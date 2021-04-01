@@ -115,7 +115,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 				WriteFactChunk(writerStream);
 
 				// Write the data chunk
-				dataPosition = (uint)writerStream.Position;		// Remember the position of the data chunk
+				dataPosition = (uint)writerStream.Position;							// Remember the position of the data chunk
 
 				writerStream.Write_B_UINT32(0x64617461);						// data
 				writerStream.Write_L_UINT32(0);									// Chunk size

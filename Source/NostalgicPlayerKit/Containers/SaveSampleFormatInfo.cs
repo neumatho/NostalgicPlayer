@@ -18,11 +18,15 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SaveSampleFormatInfo(int bits, int channels, int frequency)
+		public SaveSampleFormatInfo(int bits, int channels, int frequency, long loopStart, long loopLength, string name, string author)
 		{
 			Bits = bits;
 			Channels = channels;
 			Frequency = frequency;
+			LoopStart = loopStart;
+			LoopLength = loopLength;
+			Name = name;
+			Author = author;
 		}
 
 
@@ -58,6 +62,54 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// </summary>
 		/********************************************************************/
 		public int Frequency
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the start offset to the loop point in samples
+		/// </summary>
+		/********************************************************************/
+		public long LoopStart
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the length of the loop in samples
+		/// </summary>
+		/********************************************************************/
+		public long LoopLength
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the name of the sample
+		/// </summary>
+		/********************************************************************/
+		public string Name
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the author of the sample
+		/// </summary>
+		/********************************************************************/
+		public string Author
 		{
 			get;
 		}

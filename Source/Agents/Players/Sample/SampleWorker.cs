@@ -86,6 +86,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		/********************************************************************/
 		public override bool GetInformationString(int line, out string description, out string value)
 		{
+			if (line >= 3)
+				return loaderAgent.GetInformationString(line - 3, out description, out value);
+
 			// Find out which line to take
 			switch (line)
 			{

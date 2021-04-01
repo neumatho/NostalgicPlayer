@@ -17,7 +17,8 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 	/// </summary>
 	public class ReaderStream : Stream
 	{
-		private readonly Stream wrapperStream;
+		/// <summary></summary>
+		protected readonly Stream wrapperStream;
 
 		private readonly byte[] loadBuffer;
 		private readonly bool isLittleEndian;

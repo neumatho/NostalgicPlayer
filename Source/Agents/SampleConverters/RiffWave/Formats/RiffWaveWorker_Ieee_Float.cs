@@ -7,7 +7,6 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using System.IO;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
@@ -18,11 +17,13 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats
 	/// </summary>
 	internal class RiffWaveWorker_Ieee_Float : RiffWaveSaverWorkerBase
 	{
+		// Loader variables
 		private long fileSize;
 
 		private byte[] decodeBuffer;
 		private int sourceOffset;
 
+		// Saver variables
 		private byte[] saveBuffer;
 		private float normalize;
 

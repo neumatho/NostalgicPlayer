@@ -30,6 +30,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats
 			768, 614, 512, 409, 307, 230, 230, 230
 		};
 
+		// Loader variables
 		private long fileSize;
 
 		private byte[] decodeBuffer;
@@ -44,6 +45,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats
 		private short[] sample1;
 		private short[] sample2;
 
+		// Saver variables
 		private long factPos;
 
 		private short[] encodedBuffer;

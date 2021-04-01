@@ -6,7 +6,6 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-
 using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -113,6 +112,22 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 
 		/********************************************************************/
 		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public bool GetInformationString(int line, out string description, out string value)
+		{
+			description = null;
+			value = null;
+
+			return false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Initialize the loader
 		/// </summary>
 		/********************************************************************/
@@ -133,8 +148,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		public virtual void CleanupLoader()
 		{
 			// Call cleanup methods
-			CleanupBasicLoader();
 			LoaderCleanup();
+			CleanupBasicLoader();
 		}
 
 

@@ -1008,7 +1008,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 				fileName = Path.ChangeExtension(fileName, converterAgent.FileExtension);
 
 				// Initialize the converter
-				SaveSampleFormatInfo formatInfo = new SaveSampleFormatInfo(sampleInfo.BitSize, 1, sampleInfo.MiddleC);
+				SaveSampleFormatInfo formatInfo = new SaveSampleFormatInfo(sampleInfo.BitSize, 1, sampleInfo.MiddleC, sampleInfo.LoopStart, sampleInfo.LoopLength, sampleInfo.Name, string.Empty);
 				if (!converterAgent.InitSaver(formatInfo, out string errorMessage))
 				{
 					ShowSimpleErrorMessage(errorMessage);

@@ -29,6 +29,12 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		AgentResult Identify(ModuleStream stream);
 
 		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		bool GetInformationString(int line, out string description, out string value);
+
+		/// <summary>
 		/// Initialize the loader
 		/// </summary>
 		bool InitLoader(out string errorMessage);
