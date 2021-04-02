@@ -21,6 +21,7 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 
 | Format | Extension | Converter | Player |
 | ------ | -------------- | --------- | ------ |
+| AudioIFF | .aiff | | Sample |
 | D.O.C. SoundTracker II | .mod | | ModTracker |
 | D.O.C. SoundTracker VI | .mod | | ModTracker |
 | D.O.C. SoundTracker IX | .mod | | ModTracker |

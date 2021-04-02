@@ -20,7 +20,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 	internal class ResamplerStream : SoundStream
 	{
 		private int bytesPerSampling;
-		private int frequency;
 
 		private bool playing;
 
@@ -28,7 +27,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 
 		private int maxBufferSize;
 		private int silenceCount;
-		private bool triggerEnd;
 
 		/********************************************************************/
 		/// <summary>
@@ -41,7 +39,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 
 			maxBufferSize = 0;
 			silenceCount = 0;
-			triggerEnd = false;
 
 			resampler = new Resampler();
 			return resampler.InitResampler(playerConfiguration, out errorMessage);
@@ -81,7 +78,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		public override void SetOutputFormat(OutputInfo outputInformation)
 		{
 			bytesPerSampling = outputInformation.BytesPerSample;
-			frequency = outputInformation.Frequency;
 
 			resampler.SetOutputFormat(outputInformation);
 		}
@@ -175,15 +171,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 
 						silenceCount -= todo;
 						if (silenceCount == 0)
-							triggerEnd = true;
+							OnEndReached(this, EventArgs.Empty);
 
 						return todo;
-					}
-
-					if (triggerEnd)
-					{
-						triggerEnd = false;
-						OnEndReached(this, EventArgs.Empty);
 					}
 
 					int samplesTaken = resampler.Resampling(buffer, offset, count / bytesPerSampling, out bool hasEndReached);

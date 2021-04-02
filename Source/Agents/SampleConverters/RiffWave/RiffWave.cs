@@ -42,7 +42,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		{
 			get
 			{
-				return Resources.IDS_NAME;
+				return Resources.IDS_RIFFWAVE_NAME;
 			}
 		}
 

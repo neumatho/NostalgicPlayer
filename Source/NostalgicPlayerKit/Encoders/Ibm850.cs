@@ -6,12 +6,6 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Polycode.NostalgicPlayer.Kit.Encoders
 {
 	/// <summary>
@@ -60,7 +54,7 @@ namespace Polycode.NostalgicPlayer.Kit.Encoders
 		/// <summary>
 		/// Character values for each byte
 		///
-		/// Undefined values: 0x80 - 0x9f
+		/// Undefined values: None
 		/// </summary>
 		/********************************************************************/
 		private static readonly ushort[] lookupTable =

@@ -117,12 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="IDS_DESCRIPTION" xml:space="preserve">
+  <data name="IDS_RAW_DESCRIPTION" xml:space="preserve">
     <value>Created by Thomas Neumann
 
 Can save audio in raw format.</value>
   </data>
-  <data name="IDS_NAME" xml:space="preserve">
+  <data name="IDS_RAW_NAME" xml:space="preserve">
     <value>Raw</value>
   </data>
 </root>

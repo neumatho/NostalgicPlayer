@@ -146,10 +146,10 @@
   <data name="IDS_IFF16SV_NA" xml:space="preserve">
     <value>n/a</value>
   </data>
+  <data name="IDS_IFF16SV_NAME" xml:space="preserve">
+    <value>IFF-16SV</value>
+  </data>
   <data name="IDS_IFF16SV_NAME_PCM" xml:space="preserve">
     <value>IFF-16SV (PCM)</value>
-  </data>
-  <data name="IDS_NAME" xml:space="preserve">
-    <value>IFF-16SV</value>
   </data>
 </root>

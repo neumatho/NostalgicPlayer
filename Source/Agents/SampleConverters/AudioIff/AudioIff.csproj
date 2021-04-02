@@ -2,23 +2,25 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx</RootNamespace>
+    <RootNamespace>Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff</RootNamespace>
     <Authors>Thomas Neumann</Authors>
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
-    <Description>Can load and save IFF-8SVX samples</Description>
+    <Description>Can load and save Audio IFF (AIFF) samples</Description>
     <Copyright>Copyright © 2021</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Iff8Svx.xml</DocumentationFile>
+    <DocumentationFile>bin\AudioIff.xml</DocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Iff8Svx.xml</DocumentationFile>
+    <DocumentationFile>bin\AudioIff.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,6 +42,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="C.math\" />
   </ItemGroup>
 
 </Project>

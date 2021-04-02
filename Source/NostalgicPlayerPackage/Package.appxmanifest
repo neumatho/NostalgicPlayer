@@ -57,6 +57,8 @@
               <uap:FileType ContentType="audio/x-8svx">.8svx</uap:FileType>
               <uap:FileType ContentType="audio/x-8svx">.iff</uap:FileType>
               <uap:FileType ContentType="audio/x-16sv">.16sv</uap:FileType>
+              <uap:FileType ContentType="audio/aiff">.aiff</uap:FileType>
+              <uap:FileType ContentType="audio/aiff">.aif</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Audio file</uap:DisplayName>
           </uap:FileTypeAssociation>

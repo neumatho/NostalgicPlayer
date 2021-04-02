@@ -117,47 +117,26 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="IDS_IFF8SVX_ANNO" xml:space="preserve">
+  <data name="IDS_AUDIOIFF_ANNO" xml:space="preserve">
     <value>NostalgicPlayer sample saver</value>
   </data>
-  <data name="IDS_IFF8SVX_DESCRIPTION" xml:space="preserve">
-    <value>Created by Thomas Neumann.
+  <data name="IDS_AUDIOIFF_DESCRIPTION" xml:space="preserve">
+    <value>Player by Thomas Neumann.
 
-This format is the primary sample format on the Amiga. It contains 8-bit samples and can hold different compression formats.
+This is the primary sample file format used on the Machintosh. It's built on the Electronic Arts IFF file format standard. The samples can contain samples from 1 to 32 bits sample range and as many channels you want.
 
-{0}</value>
+This player can play those files (.aiff). It can play samples in any bitrate and frequency, but only mono and stereo samples.</value>
   </data>
-  <data name="IDS_IFF8SVX_DESCRIPTION_FIBONACCI" xml:space="preserve">
-    <value>This one supports compressed samples using the Fibonacci delta encoding algorithm.</value>
+  <data name="IDS_AUDIOIFF_ERR_ILLEGALCHANNEL" xml:space="preserve">
+    <value>This loader only support mono and stereo samples. You tried to play a sample that uses {0} channels</value>
   </data>
-  <data name="IDS_IFF8SVX_DESCRIPTION_PCM" xml:space="preserve">
-    <value>This one supports plain PCM files, which means no compression at all.</value>
+  <data name="IDS_AUDIOIFF_ERR_NOCOMM" xml:space="preserve">
+    <value>There isn't any sound information (COMM chunk) in the file</value>
   </data>
-  <data name="IDS_IFF8SVX_ERR_NOBODY" xml:space="preserve">
-    <value>There isn't any sound data chunk (BODY chunk) in the file</value>
+  <data name="IDS_AUDIOIFF_ERR_NOSSND" xml:space="preserve">
+    <value>There isn't any sound data chunk (SSND chunk) in the file</value>
   </data>
-  <data name="IDS_IFF8SVX_ERR_NOVHDR" xml:space="preserve">
-    <value>There isn't any sound information (VHDR chunk) in the file</value>
-  </data>
-  <data name="IDS_IFF8SVX_INFODESCLINE0" xml:space="preserve">
-    <value>Octaves:</value>
-  </data>
-  <data name="IDS_IFF8SVX_INFODESCLINE1" xml:space="preserve">
-    <value>Copyright:</value>
-  </data>
-  <data name="IDS_IFF8SVX_INFODESCLINE2" xml:space="preserve">
-    <value>Annotation:</value>
-  </data>
-  <data name="IDS_IFF8SVX_NA" xml:space="preserve">
-    <value>n/a</value>
-  </data>
-  <data name="IDS_IFF8SVX_NAME" xml:space="preserve">
-    <value>IFF-8SVX</value>
-  </data>
-  <data name="IDS_IFF8SVX_NAME_FIBONACCI" xml:space="preserve">
-    <value>IFF-8SVX (Fibonacci)</value>
-  </data>
-  <data name="IDS_IFF8SVX_NAME_PCM" xml:space="preserve">
-    <value>IFF-8SVX (PCM)</value>
+  <data name="IDS_AUDIOIFF_NAME" xml:space="preserve">
+    <value>AudioIFF</value>
   </data>
 </root>

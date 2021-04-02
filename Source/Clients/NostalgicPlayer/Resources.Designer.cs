@@ -405,13 +405,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         ///¤CDave Gandy
         ///¤CThe MikMod team, specially Miodrag Vallat
         ///¤CAdrien Destugues
+        ///¤CRobert Baron
         ///¤CAnd to all you users out there :-)
         ///
         ///
         ///
         ///Features in NostalgicPlayer:
-        ///
-        ///¤1¤CSupports ¤¤ [rest of string was truncated]&quot;;.
+        ///        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string IDS_ABOUT_TEXT {
             get {

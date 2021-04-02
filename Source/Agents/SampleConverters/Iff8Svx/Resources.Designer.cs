@@ -155,6 +155,15 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to IFF-8SVX.
+        /// </summary>
+        internal static string IDS_IFF8SVX_NAME {
+            get {
+                return ResourceManager.GetString("IDS_IFF8SVX_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to IFF-8SVX (Fibonacci).
         /// </summary>
         internal static string IDS_IFF8SVX_NAME_FIBONACCI {
@@ -169,15 +178,6 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx {
         internal static string IDS_IFF8SVX_NAME_PCM {
             get {
                 return ResourceManager.GetString("IDS_IFF8SVX_NAME_PCM", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to IFF-8SVX.
-        /// </summary>
-        internal static string IDS_NAME {
-            get {
-                return ResourceManager.GetString("IDS_NAME", resourceCulture);
             }
         }
     }

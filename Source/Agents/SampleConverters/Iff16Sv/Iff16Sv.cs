@@ -40,7 +40,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff16Sv
 		{
 			get
 			{
-				return Resources.IDS_NAME;
+				return Resources.IDS_IFF16SV_NAME;
 			}
 		}
 

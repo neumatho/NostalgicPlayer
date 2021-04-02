@@ -34,8 +34,6 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx.Formats
 		private sbyte startVal2;
 
 		// Saver variables
-		private byte[] saveBuffer;
-
 		private bool saveFirstBuffer;
 		private sbyte lastVal1;
 		private sbyte lastVal2;
@@ -295,20 +293,6 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx.Formats
 			saveFirstBuffer = true;
 
 			return base.InitSaver(formatInfo, out errorMessage);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Cleanup the saver
-		/// </summary>
-		/********************************************************************/
-		public override void CleanupSaver()
-		{
-			saveBuffer = null;
-
-			base.CleanupSaver();
 		}
 
 

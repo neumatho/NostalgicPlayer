@@ -65,18 +65,18 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Raw {
         ///
         ///Can save audio in raw format..
         /// </summary>
-        internal static string IDS_DESCRIPTION {
+        internal static string IDS_RAW_DESCRIPTION {
             get {
-                return ResourceManager.GetString("IDS_DESCRIPTION", resourceCulture);
+                return ResourceManager.GetString("IDS_RAW_DESCRIPTION", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Raw.
         /// </summary>
-        internal static string IDS_NAME {
+        internal static string IDS_RAW_NAME {
             get {
-                return ResourceManager.GetString("IDS_NAME", resourceCulture);
+                return ResourceManager.GetString("IDS_RAW_NAME", resourceCulture);
             }
         }
     }

@@ -38,5 +38,17 @@ namespace Polycode.NostalgicPlayer.Kit
 		{
 			get;
 		} = new Ibm850();
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the encoder to decode Macintosh Roman characters
+		/// </summary>
+		/********************************************************************/
+		public static Encoding MacintoshRoman
+		{
+			get;
+		} = new MacintoshRoman();
 	}
 }

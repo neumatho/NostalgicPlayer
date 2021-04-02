@@ -61,15 +61,6 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to RIFF-WAVE.
-        /// </summary>
-        internal static string IDS_NAME {
-            get {
-                return ResourceManager.GetString("IDS_NAME", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Created by Thomas Neumann.
         ///
         ///This format is also known as Microsoft wav files (.wav). These files can be in different formats, indicated by an ID number in the .wav file.
@@ -162,6 +153,15 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave {
         internal static string IDS_RIFFWAVE_ERR_NOFMT {
             get {
                 return ResourceManager.GetString("IDS_RIFFWAVE_ERR_NOFMT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to RIFF-WAVE.
+        /// </summary>
+        internal static string IDS_RIFFWAVE_NAME {
+            get {
+                return ResourceManager.GetString("IDS_RIFFWAVE_NAME", resourceCulture);
             }
         }
         

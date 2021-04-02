@@ -144,20 +144,20 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff16Sv {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to IFF-16SV.
+        /// </summary>
+        internal static string IDS_IFF16SV_NAME {
+            get {
+                return ResourceManager.GetString("IDS_IFF16SV_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to IFF-16SV (PCM).
         /// </summary>
         internal static string IDS_IFF16SV_NAME_PCM {
             get {
                 return ResourceManager.GetString("IDS_IFF16SV_NAME_PCM", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to IFF-16SV.
-        /// </summary>
-        internal static string IDS_NAME {
-            get {
-                return ResourceManager.GetString("IDS_NAME", resourceCulture);
             }
         }
     }

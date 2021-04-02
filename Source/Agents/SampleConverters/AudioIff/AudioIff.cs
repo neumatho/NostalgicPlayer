@@ -7,29 +7,22 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx.Formats;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 // This is needed to uniquely identify this agent
-[assembly: Guid("4FC34553-033E-4AB7-B2BE-93DDFF028CF6")]
+[assembly: Guid("A9A18A8E-C160-47EF-AD79-A903921C01E1")]
 
-namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
+namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 {
 	/// <summary>
 	/// NostalgicPlayer agent interface implementation
 	/// </summary>
-	public class Iff8Svx : AgentBase
+	public class AudioIff : AgentBase
 	{
-		private static readonly Dictionary<Format, Guid> supportedFormats = new Dictionary<Format, Guid>
-		{
-			{ Format.Pcm, Guid.Parse("7B0F6B4E-D2A1-4798-BA39-1EA2B16ED64A") },
-			{ Format.Fibonacci, Guid.Parse("F5B00E87-1154-4E50-A2C9-BE8B83D0D3EF") }
-		};
+		private static readonly Guid agent1Id = Guid.Parse("BBAABC5F-AE88-42D1-8717-EAEC041AFE7D");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -41,7 +34,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 		{
 			get
 			{
-				return Resources.IDS_IFF8SVX_NAME;
+				return Resources.IDS_AUDIOIFF_NAME;
 			}
 		}
 
@@ -58,8 +51,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_IFF8SVX_NAME_PCM, string.Format(Resources.IDS_IFF8SVX_DESCRIPTION, Resources.IDS_IFF8SVX_DESCRIPTION_PCM), supportedFormats[Format.Pcm]),
-					new AgentSupportInfo(Resources.IDS_IFF8SVX_NAME_FIBONACCI, string.Format(Resources.IDS_IFF8SVX_DESCRIPTION, Resources.IDS_IFF8SVX_DESCRIPTION_FIBONACCI), supportedFormats[Format.Fibonacci])
+					new AgentSupportInfo(Resources.IDS_AUDIOIFF_NAME, Resources.IDS_AUDIOIFF_DESCRIPTION, agent1Id)
 				};
 			}
 		}
@@ -73,18 +65,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 		/********************************************************************/
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
-			Format format = supportedFormats.Where(pair => pair.Value == typeId).Select(pair => pair.Key).FirstOrDefault();
-
-			switch (format)
-			{
-				case Format.Pcm:
-					return new Iff8SvxWorker_Pcm();
-
-				case Format.Fibonacci:
-					return new Iff8SvxWorker_Fibonacci();
-			}
-
-			return null;
+			return new AudioIffWorker();
 		}
 		#endregion
 	}

@@ -34,7 +34,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Raw
 		{
 			get
 			{
-				return Resources.IDS_NAME;
+				return Resources.IDS_RAW_NAME;
 			}
 		}
 
@@ -51,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Raw
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_NAME, Resources.IDS_DESCRIPTION, agent1Id)
+					new AgentSupportInfo(Resources.IDS_RAW_NAME, Resources.IDS_RAW_DESCRIPTION, agent1Id)
 				};
 			}
 		}
