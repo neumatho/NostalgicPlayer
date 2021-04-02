@@ -209,5 +209,28 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			get; protected set;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Event called when the player has reached the end
+		/// </summary>
+		/********************************************************************/
+		public event EventHandler EndReached;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the player has reached the end
+		/// </summary>
+		/********************************************************************/
+		protected void OnEndReached(object sender, EventArgs e)
+		{
+			// Just call the next event handler
+			if (EndReached != null)
+				EndReached(sender, e);
+		}
 	}
 }

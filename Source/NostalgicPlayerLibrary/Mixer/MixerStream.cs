@@ -147,6 +147,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				int samplesMixed = mixer.Mixing(buffer, offset, count / bytesPerSampling, out bool hasEndReached);
 				HasEndReached = hasEndReached;
 
+				if (hasEndReached)
+					OnEndReached(this, EventArgs.Empty);
+
 				return samplesMixed * bytesPerSampling;
 			}
 			catch(Exception)

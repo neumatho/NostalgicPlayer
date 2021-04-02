@@ -20,10 +20,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 	internal class ResamplerStream : SoundStream
 	{
 		private int bytesPerSampling;
+		private int frequency;
 
 		private bool playing;
 
 		private Resampler resampler;
+
+		private int maxBufferSize;
+		private int silenceCount;
+		private bool triggerEnd;
 
 		/********************************************************************/
 		/// <summary>
@@ -33,6 +38,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		public bool Initialize(PlayerConfiguration playerConfiguration, out string errorMessage)
 		{
 			playing = false;
+
+			maxBufferSize = 0;
+			silenceCount = 0;
+			triggerEnd = false;
 
 			resampler = new Resampler();
 			return resampler.InitResampler(playerConfiguration, out errorMessage);
@@ -72,6 +81,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		public override void SetOutputFormat(OutputInfo outputInformation)
 		{
 			bytesPerSampling = outputInformation.BytesPerSample;
+			frequency = outputInformation.Frequency;
 
 			resampler.SetOutputFormat(outputInformation);
 		}
@@ -151,8 +161,36 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 			{
 				if (playing)
 				{
+					// To be sure that the whole sample has being played before trigger the EndReached
+					// event, we want to play a full buffer of silence when the sample has ended
+					//
+					// We need to keep track of the maximum size the buffer could be
+					maxBufferSize = Math.Max(maxBufferSize, count);
+
+					// Check if we need to do the silence
+					if (silenceCount > 0)
+					{
+						int todo = Math.Min(silenceCount, count);
+						Array.Clear(buffer, offset, todo);
+
+						silenceCount -= todo;
+						if (silenceCount == 0)
+							triggerEnd = true;
+
+						return todo;
+					}
+
+					if (triggerEnd)
+					{
+						triggerEnd = false;
+						OnEndReached(this, EventArgs.Empty);
+					}
+
 					int samplesTaken = resampler.Resampling(buffer, offset, count / bytesPerSampling, out bool hasEndReached);
 					HasEndReached = hasEndReached;
+
+					if (hasEndReached)
+						silenceCount = maxBufferSize;		// Set the silence count to a whole buffer
 
 					return samplesTaken * bytesPerSampling;
 				}

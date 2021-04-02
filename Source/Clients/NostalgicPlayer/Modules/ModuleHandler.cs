@@ -356,6 +356,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 						// Unsubscribe to position changes
 						modulePlayer.PositionChanged -= Player_PositionChanged;
 					}
+					else if (player is ISamplePlayer samplePlayer)
+					{
+						// Unsubscribe to position changes
+						samplePlayer.PositionChanged -= Player_PositionChanged;
+					}
 
 					// Unsubscribe to event notifications
 					player.EndReached -= Player_EndReached;
@@ -396,6 +401,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					{
 						// Unsubscribe to position changes
 						modulePlayer.PositionChanged -= Player_PositionChanged;
+					}
+					else if (player is ISamplePlayer samplePlayer)
+					{
+						// Unsubscribe to position changes
+						samplePlayer.PositionChanged -= Player_PositionChanged;
 					}
 
 					// Unsubscribe to event notifications
@@ -818,6 +828,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 					// Subscribe to position changes
 					modulePlayer.PositionChanged += Player_PositionChanged;
+				}
+				else if (player is ISamplePlayer samplePlayer)
+				{
+					// Unsubscribe to position changes
+					samplePlayer.PositionChanged += Player_PositionChanged;
 				}
 
 				// Subscribe to event notifications

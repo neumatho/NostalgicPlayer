@@ -6,7 +6,6 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
@@ -86,15 +85,6 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
-		/// Event called when the player reached the end
-		/// </summary>
-		/********************************************************************/
-		public event EventHandler EndReached;
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Event called when the player update some module information
 		/// </summary>
 		/********************************************************************/
@@ -110,10 +100,6 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		{
 			// Set flag
 			HasEndReached = true;
-
-			// Call events
-			if (EndReached != null)
-				EndReached(this, EventArgs.Empty);
 		}
 
 

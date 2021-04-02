@@ -74,7 +74,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					{
 						// Subscribe the events
 						currentPlayer.PositionChanged += Player_PositionChanged;
-						currentPlayer.EndReached += Player_EndReached;
 						currentPlayer.ModuleInfoChanged += Player_ModuleInfoChanged;
 
 						// Initialize module information
@@ -82,6 +81,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 						// Initialize the mixer
 						soundStream = new MixerStream();
+						soundStream.EndReached += Stream_EndReached;
+
 						initOk = soundStream.Initialize(agentManager, playerConfiguration, out errorMessage);
 
 						if (!initOk)
@@ -116,9 +117,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				if (currentPlayer != null)
 				{
 					// End the mixer
-					soundStream?.Cleanup();
-					soundStream?.Dispose();
-					soundStream = null;
+					if (soundStream != null)
+					{
+						soundStream.EndReached -= Stream_EndReached;
+
+						soundStream.Cleanup();
+						soundStream.Dispose();
+						soundStream = null;
+					}
 
 					// Shutdown the player
 					currentPlayer.CleanupSound();
@@ -126,7 +132,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 					// Unsubscribe the events
 					currentPlayer.PositionChanged -= Player_PositionChanged;
-					currentPlayer.EndReached -= Player_EndReached;
 					currentPlayer.ModuleInfoChanged -= Player_ModuleInfoChanged;
 
 					currentPlayer = null;
@@ -379,23 +384,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 		/********************************************************************/
 		/// <summary>
-		/// Is called when the player has reached the end
-		/// </summary>
-		/********************************************************************/
-		private void Player_EndReached(object sender, EventArgs e)
-		{
-			if (currentPlayer != null)
-			{
-				// Just call the next event handler
-				if (EndReached != null)
-					EndReached(sender, e);
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Is called when the player change some of the module information
 		/// </summary>
 		/********************************************************************/
@@ -406,6 +394,23 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				// Just call the next event handler
 				if (ModuleInfoChanged != null)
 					ModuleInfoChanged(sender, e);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the player has reached the end
+		/// </summary>
+		/********************************************************************/
+		private void Stream_EndReached(object sender, EventArgs e)
+		{
+			if (currentPlayer != null)
+			{
+				// Just call the next event handler
+				if (EndReached != null)
+					EndReached(sender, e);
 			}
 		}
 		#endregion

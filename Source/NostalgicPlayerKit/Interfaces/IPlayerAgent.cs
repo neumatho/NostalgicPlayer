@@ -6,7 +6,6 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System;
 using Polycode.NostalgicPlayer.Kit.Containers;
 
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
@@ -48,11 +47,6 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// This flag is set to true, when end is reached
 		/// </summary>
 		bool HasEndReached { get; set; }
-
-		/// <summary>
-		/// Event called when the player has reached the end
-		/// </summary>
-		event EventHandler EndReached;
 
 		/// <summary>
 		/// Event called when the player update some module information
