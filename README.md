@@ -25,6 +25,7 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | D.O.C. SoundTracker VI | .mod | | ModTracker |
 | D.O.C. SoundTracker IX | .mod | | ModTracker |
 | Fast/TakeTracker | .mod | | ModTracker |
+| IFF-16SV (PCM) | .16sv | | Sample |
 | IFF-8SVX (Fibonacci) | .8svx | | Sample |
 | IFF-8SVX (PCM) | .8svx | | Sample |
 | JamCracker | .jam | | JamCracker |
