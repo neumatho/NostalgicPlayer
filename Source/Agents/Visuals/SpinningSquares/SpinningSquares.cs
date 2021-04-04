@@ -51,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_SPIN_NAME, Resources.IDS_SPIN_DESCRIPTION, agent1Id)
+					new AgentSupportInfo(Resources.IDS_SPIN_NAME_AGENT1, Resources.IDS_SPIN_DESCRIPTION_AGENT1, agent1Id)
 				};
 			}
 		}

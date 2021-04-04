@@ -124,16 +124,16 @@ This format is also known as Microsoft wav files (.wav). These files can be in d
 
 {0}</value>
   </data>
-  <data name="IDS_RIFFWAVE_DESCRIPTION_ADPCM" xml:space="preserve">
+  <data name="IDS_RIFFWAVE_DESCRIPTION_AGENT1" xml:space="preserve">
+    <value>This one supports Microsoft PCM (ID: 0x0001) format, which is plain sample files without any compression or encoding.</value>
+  </data>
+  <data name="IDS_RIFFWAVE_DESCRIPTION_AGENT2" xml:space="preserve">
+    <value>This one supports Microsoft IEEE Float (ID: 0x0003) format, which is plain sample files where each sample are stored as IEEE-754 floating points.</value>
+  </data>
+  <data name="IDS_RIFFWAVE_DESCRIPTION_AGENT3" xml:space="preserve">
     <value>This one supports Microsoft ADPCM (ID: 0x0002) format. ADPCM stands for Adaptive Differential Pulse-Code Modulation and is a variant of the Differential Pulse-Code Modulation (DPCM). Each audio data is compressed into 4-bit samples.
 
 The code is based on SoX (Sound eXchange).</value>
-  </data>
-  <data name="IDS_RIFFWAVE_DESCRIPTION_IEEE_FLOAT" xml:space="preserve">
-    <value>This one supports Microsoft IEEE Float (ID: 0x0003) format, which is plain sample files where each sample are stored as IEEE-754 floating points.</value>
-  </data>
-  <data name="IDS_RIFFWAVE_DESCRIPTION_PCM" xml:space="preserve">
-    <value>This one supports Microsoft PCM (ID: 0x0001) format, which is plain sample files without any compression or encoding.</value>
   </data>
   <data name="IDS_RIFFWAVE_ERR_EXTRAHEADER" xml:space="preserve">
     <value>The length of extra header information ({0} bytes) does not match with the length the format require</value>
@@ -156,13 +156,13 @@ The code is based on SoX (Sound eXchange).</value>
   <data name="IDS_RIFFWAVE_NAME" xml:space="preserve">
     <value>RIFF-WAVE</value>
   </data>
-  <data name="IDS_RIFFWAVE_NAME_ADPCM" xml:space="preserve">
-    <value>RIFF-WAVE (ADPCM)</value>
+  <data name="IDS_RIFFWAVE_NAME_AGENT1" xml:space="preserve">
+    <value>RIFF-WAVE (PCM)</value>
   </data>
-  <data name="IDS_RIFFWAVE_NAME_IEEE_FLOAT" xml:space="preserve">
+  <data name="IDS_RIFFWAVE_NAME_AGENT2" xml:space="preserve">
     <value>RIFF-WAVE (IEEE Float)</value>
   </data>
-  <data name="IDS_RIFFWAVE_NAME_PCM" xml:space="preserve">
-    <value>RIFF-WAVE (PCM)</value>
+  <data name="IDS_RIFFWAVE_NAME_AGENT3" xml:space="preserve">
+    <value>RIFF-WAVE (ADPCM)</value>
   </data>
 </root>

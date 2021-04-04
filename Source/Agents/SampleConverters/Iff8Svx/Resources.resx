@@ -127,11 +127,11 @@ This format is the primary sample format on the Amiga. It contains 8-bit samples
 
 {0}</value>
   </data>
-  <data name="IDS_IFF8SVX_DESCRIPTION_FIBONACCI" xml:space="preserve">
-    <value>This one supports compressed samples using the Fibonacci delta encoding algorithm.</value>
-  </data>
-  <data name="IDS_IFF8SVX_DESCRIPTION_PCM" xml:space="preserve">
+  <data name="IDS_IFF8SVX_DESCRIPTION_AGENT1" xml:space="preserve">
     <value>This one supports plain PCM files, which means no compression at all.</value>
+  </data>
+  <data name="IDS_IFF8SVX_DESCRIPTION_AGENT2" xml:space="preserve">
+    <value>This one supports compressed samples using the Fibonacci delta encoding algorithm.</value>
   </data>
   <data name="IDS_IFF8SVX_ERR_NOBODY" xml:space="preserve">
     <value>There isn't any sound data chunk (BODY chunk) in the file</value>
@@ -154,10 +154,10 @@ This format is the primary sample format on the Amiga. It contains 8-bit samples
   <data name="IDS_IFF8SVX_NAME" xml:space="preserve">
     <value>IFF-8SVX</value>
   </data>
-  <data name="IDS_IFF8SVX_NAME_FIBONACCI" xml:space="preserve">
-    <value>IFF-8SVX (Fibonacci)</value>
-  </data>
-  <data name="IDS_IFF8SVX_NAME_PCM" xml:space="preserve">
+  <data name="IDS_IFF8SVX_NAME_AGENT1" xml:space="preserve">
     <value>IFF-8SVX (PCM)</value>
+  </data>
+  <data name="IDS_IFF8SVX_NAME_AGENT2" xml:space="preserve">
+    <value>IFF-8SVX (Fibonacci)</value>
   </data>
 </root>

@@ -83,9 +83,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff16Sv {
         /// <summary>
         ///   Looks up a localized string similar to This one supports plain PCM files, which means no compression at all..
         /// </summary>
-        internal static string IDS_IFF16SV_DESCRIPTION_PCM {
+        internal static string IDS_IFF16SV_DESCRIPTION_AGENT1 {
             get {
-                return ResourceManager.GetString("IDS_IFF16SV_DESCRIPTION_PCM", resourceCulture);
+                return ResourceManager.GetString("IDS_IFF16SV_DESCRIPTION_AGENT1", resourceCulture);
             }
         }
         
@@ -155,9 +155,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff16Sv {
         /// <summary>
         ///   Looks up a localized string similar to IFF-16SV (PCM).
         /// </summary>
-        internal static string IDS_IFF16SV_NAME_PCM {
+        internal static string IDS_IFF16SV_NAME_AGENT1 {
             get {
-                return ResourceManager.GetString("IDS_IFF16SV_NAME_PCM", resourceCulture);
+                return ResourceManager.GetString("IDS_IFF16SV_NAME_AGENT1", resourceCulture);
             }
         }
     }

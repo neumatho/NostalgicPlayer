@@ -57,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff16Sv
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_IFF16SV_NAME_PCM, string.Format(Resources.IDS_IFF16SV_DESCRIPTION, Resources.IDS_IFF16SV_DESCRIPTION_PCM), supportedFormats[Format.Pcm])
+					new AgentSupportInfo(Resources.IDS_IFF16SV_NAME_AGENT1, string.Format(Resources.IDS_IFF16SV_DESCRIPTION, Resources.IDS_IFF16SV_DESCRIPTION_AGENT1), supportedFormats[Format.Pcm])
 				};
 			}
 		}

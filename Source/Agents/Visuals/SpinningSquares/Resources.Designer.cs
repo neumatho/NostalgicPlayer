@@ -78,9 +78,9 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares {
         ///
         ///Note that this visual will not work for all kind of modules, only those where the player tells NostalgicPlayer what to play instead of giving the sample data directly..
         /// </summary>
-        internal static string IDS_SPIN_DESCRIPTION {
+        internal static string IDS_SPIN_DESCRIPTION_AGENT1 {
             get {
-                return ResourceManager.GetString("IDS_SPIN_DESCRIPTION", resourceCulture);
+                return ResourceManager.GetString("IDS_SPIN_DESCRIPTION_AGENT1", resourceCulture);
             }
         }
         
@@ -90,6 +90,15 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares {
         internal static string IDS_SPIN_NAME {
             get {
                 return ResourceManager.GetString("IDS_SPIN_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Spinning Squares.
+        /// </summary>
+        internal static string IDS_SPIN_NAME_AGENT1 {
+            get {
+                return ResourceManager.GetString("IDS_SPIN_NAME_AGENT1", resourceCulture);
             }
         }
     }

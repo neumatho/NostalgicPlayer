@@ -120,7 +120,7 @@
   <data name="IDS_AUDIOIFF_ANNO" xml:space="preserve">
     <value>NostalgicPlayer sample saver</value>
   </data>
-  <data name="IDS_AUDIOIFF_DESCRIPTION" xml:space="preserve">
+  <data name="IDS_AUDIOIFF_DESCRIPTION_AGENT1" xml:space="preserve">
     <value>Player by Thomas Neumann.
 
 This is the primary sample file format used on the Machintosh. It's built on the Electronic Arts IFF file format standard. The samples can contain samples from 1 to 32 bits sample range and as many channels you want.
@@ -137,6 +137,9 @@ This player can play those files (.aiff). It can play samples in any bitrate and
     <value>There isn't any sound data chunk (SSND chunk) in the file</value>
   </data>
   <data name="IDS_AUDIOIFF_NAME" xml:space="preserve">
+    <value>AudioIFF</value>
+  </data>
+  <data name="IDS_AUDIOIFF_NAME_AGENT1" xml:space="preserve">
     <value>AudioIFF</value>
   </data>
 </root>

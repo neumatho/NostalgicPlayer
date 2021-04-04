@@ -113,9 +113,9 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver {
         ///
         ///This agent will write the sound output as a sample file on your harddisk. The format to save in can be selected between the available converters..
         /// </summary>
-        internal static string IDS_DESCRIPTION {
+        internal static string IDS_DESCRIPTION_AGENT1 {
             get {
-                return ResourceManager.GetString("IDS_DESCRIPTION", resourceCulture);
+                return ResourceManager.GetString("IDS_DESCRIPTION_AGENT1", resourceCulture);
             }
         }
         
@@ -170,6 +170,15 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver {
         internal static string IDS_NAME {
             get {
                 return ResourceManager.GetString("IDS_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disk Saver.
+        /// </summary>
+        internal static string IDS_NAME_AGENT1 {
+            get {
+                return ResourceManager.GetString("IDS_NAME_AGENT1", resourceCulture);
             }
         }
         

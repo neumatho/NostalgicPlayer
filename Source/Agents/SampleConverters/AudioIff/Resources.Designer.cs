@@ -76,9 +76,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff {
         ///
         ///This player can play those files (.aiff). It can play samples in any bitrate and frequency, but only mono and stereo samples..
         /// </summary>
-        internal static string IDS_AUDIOIFF_DESCRIPTION {
+        internal static string IDS_AUDIOIFF_DESCRIPTION_AGENT1 {
             get {
-                return ResourceManager.GetString("IDS_AUDIOIFF_DESCRIPTION", resourceCulture);
+                return ResourceManager.GetString("IDS_AUDIOIFF_DESCRIPTION_AGENT1", resourceCulture);
             }
         }
         
@@ -115,6 +115,15 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff {
         internal static string IDS_AUDIOIFF_NAME {
             get {
                 return ResourceManager.GetString("IDS_AUDIOIFF_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to AudioIFF.
+        /// </summary>
+        internal static string IDS_AUDIOIFF_NAME_AGENT1 {
+            get {
+                return ResourceManager.GetString("IDS_AUDIOIFF_NAME_AGENT1", resourceCulture);
             }
         }
     }

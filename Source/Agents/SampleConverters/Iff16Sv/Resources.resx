@@ -125,7 +125,7 @@
 
 {0}</value>
   </data>
-  <data name="IDS_IFF16SV_DESCRIPTION_PCM" xml:space="preserve">
+  <data name="IDS_IFF16SV_DESCRIPTION_AGENT1" xml:space="preserve">
     <value>This one supports plain PCM files, which means no compression at all.</value>
   </data>
   <data name="IDS_IFF16SV_ERR_NOBODY" xml:space="preserve">
@@ -149,7 +149,7 @@
   <data name="IDS_IFF16SV_NAME" xml:space="preserve">
     <value>IFF-16SV</value>
   </data>
-  <data name="IDS_IFF16SV_NAME_PCM" xml:space="preserve">
+  <data name="IDS_IFF16SV_NAME_AGENT1" xml:space="preserve">
     <value>IFF-16SV (PCM)</value>
   </data>
 </root>

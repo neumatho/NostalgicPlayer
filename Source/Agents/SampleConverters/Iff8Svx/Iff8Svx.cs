@@ -58,8 +58,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_IFF8SVX_NAME_PCM, string.Format(Resources.IDS_IFF8SVX_DESCRIPTION, Resources.IDS_IFF8SVX_DESCRIPTION_PCM), supportedFormats[Format.Pcm]),
-					new AgentSupportInfo(Resources.IDS_IFF8SVX_NAME_FIBONACCI, string.Format(Resources.IDS_IFF8SVX_DESCRIPTION, Resources.IDS_IFF8SVX_DESCRIPTION_FIBONACCI), supportedFormats[Format.Fibonacci])
+					new AgentSupportInfo(Resources.IDS_IFF8SVX_NAME_AGENT1, string.Format(Resources.IDS_IFF8SVX_DESCRIPTION, Resources.IDS_IFF8SVX_DESCRIPTION_AGENT1), supportedFormats[Format.Pcm]),
+					new AgentSupportInfo(Resources.IDS_IFF8SVX_NAME_AGENT2, string.Format(Resources.IDS_IFF8SVX_DESCRIPTION, Resources.IDS_IFF8SVX_DESCRIPTION_AGENT2), supportedFormats[Format.Fibonacci])
 				};
 			}
 		}

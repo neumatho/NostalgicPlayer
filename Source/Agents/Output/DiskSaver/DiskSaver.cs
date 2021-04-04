@@ -55,7 +55,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_NAME, Resources.IDS_DESCRIPTION, Agent1Id)
+					new AgentSupportInfo(Resources.IDS_NAME_AGENT1, Resources.IDS_DESCRIPTION_AGENT1, Agent1Id)
 				};
 			}
 		}

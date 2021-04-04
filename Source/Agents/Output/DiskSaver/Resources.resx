@@ -133,7 +133,7 @@
   <data name="IDS_BUT_YES" xml:space="preserve">
     <value>Yes</value>
   </data>
-  <data name="IDS_DESCRIPTION" xml:space="preserve">
+  <data name="IDS_DESCRIPTION_AGENT1" xml:space="preserve">
     <value>Sound output agent which stores the output to disk.
 Written by Thomas Neumann.
 
@@ -155,6 +155,9 @@ This agent will write the sound output as a sample file on your harddisk. The fo
     <value>The file ({0}) already exists. Do you want to overwrite it?</value>
   </data>
   <data name="IDS_NAME" xml:space="preserve">
+    <value>Disk Saver</value>
+  </data>
+  <data name="IDS_NAME_AGENT1" xml:space="preserve">
     <value>Disk Saver</value>
   </data>
   <data name="IDS_SETTINGS_16BIT" xml:space="preserve">

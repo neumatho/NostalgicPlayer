@@ -57,6 +57,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		private byte wait;
 		private byte waitCnt;
 
+		private const int InfoSpeedLine = 3;
+
 		#region IPlayerAgent implementation
 		/********************************************************************/
 		/// <summary>
@@ -159,13 +161,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/// Will load the file into memory
 		/// </summary>
 		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags
-		{
-			get
-			{
-				return ModulePlayerSupportFlag.SetPosition;
-			}
-		}
+		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.SetPosition;
 
 
 
@@ -709,7 +705,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				wait = (byte)(adr.Speed & 15);
 
 				// Change the module info
-				OnModuleInfoChanged(3, wait.ToString());
+				OnModuleInfoChanged(InfoSpeedLine, wait.ToString());
 			}
 
 			// Do arpeggio

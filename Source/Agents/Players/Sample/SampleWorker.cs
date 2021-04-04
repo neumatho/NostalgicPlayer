@@ -135,13 +135,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		/// Will load the file into memory
 		/// </summary>
 		/********************************************************************/
-		public override SamplePlayerSupportFlag SupportFlags
-		{
-			get
-			{
-				return SamplePlayerSupportFlag.SetPosition;
-			}
-		}
+		public override SamplePlayerSupportFlag SupportFlags => SamplePlayerSupportFlag.SetPosition;
 
 
 

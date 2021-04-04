@@ -59,9 +59,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_RIFFWAVE_NAME_PCM, string.Format(Resources.IDS_RIFFWAVE_DESCRIPTION, Resources.IDS_RIFFWAVE_DESCRIPTION_PCM), supportedFormats[WaveFormat.WAVE_FORMAT_PCM]),
-					new AgentSupportInfo(Resources.IDS_RIFFWAVE_NAME_IEEE_FLOAT, string.Format(Resources.IDS_RIFFWAVE_DESCRIPTION, Resources.IDS_RIFFWAVE_DESCRIPTION_IEEE_FLOAT), supportedFormats[WaveFormat.WAVE_FORMAT_IEEE_FLOAT]),
-					new AgentSupportInfo(Resources.IDS_RIFFWAVE_NAME_ADPCM, string.Format(Resources.IDS_RIFFWAVE_DESCRIPTION, Resources.IDS_RIFFWAVE_DESCRIPTION_ADPCM), supportedFormats[WaveFormat.WAVE_FORMAT_ADPCM])
+					new AgentSupportInfo(Resources.IDS_RIFFWAVE_NAME_AGENT1, string.Format(Resources.IDS_RIFFWAVE_DESCRIPTION, Resources.IDS_RIFFWAVE_DESCRIPTION_AGENT1), supportedFormats[WaveFormat.WAVE_FORMAT_PCM]),
+					new AgentSupportInfo(Resources.IDS_RIFFWAVE_NAME_AGENT2, string.Format(Resources.IDS_RIFFWAVE_DESCRIPTION, Resources.IDS_RIFFWAVE_DESCRIPTION_AGENT2), supportedFormats[WaveFormat.WAVE_FORMAT_IEEE_FLOAT]),
+					new AgentSupportInfo(Resources.IDS_RIFFWAVE_NAME_AGENT3, string.Format(Resources.IDS_RIFFWAVE_DESCRIPTION, Resources.IDS_RIFFWAVE_DESCRIPTION_AGENT3), supportedFormats[WaveFormat.WAVE_FORMAT_ADPCM])
 				};
 			}
 		}

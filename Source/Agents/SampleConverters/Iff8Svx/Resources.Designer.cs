@@ -83,20 +83,20 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This one supports compressed samples using the Fibonacci delta encoding algorithm..
+        ///   Looks up a localized string similar to This one supports plain PCM files, which means no compression at all..
         /// </summary>
-        internal static string IDS_IFF8SVX_DESCRIPTION_FIBONACCI {
+        internal static string IDS_IFF8SVX_DESCRIPTION_AGENT1 {
             get {
-                return ResourceManager.GetString("IDS_IFF8SVX_DESCRIPTION_FIBONACCI", resourceCulture);
+                return ResourceManager.GetString("IDS_IFF8SVX_DESCRIPTION_AGENT1", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This one supports plain PCM files, which means no compression at all..
+        ///   Looks up a localized string similar to This one supports compressed samples using the Fibonacci delta encoding algorithm..
         /// </summary>
-        internal static string IDS_IFF8SVX_DESCRIPTION_PCM {
+        internal static string IDS_IFF8SVX_DESCRIPTION_AGENT2 {
             get {
-                return ResourceManager.GetString("IDS_IFF8SVX_DESCRIPTION_PCM", resourceCulture);
+                return ResourceManager.GetString("IDS_IFF8SVX_DESCRIPTION_AGENT2", resourceCulture);
             }
         }
         
@@ -164,20 +164,20 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to IFF-8SVX (Fibonacci).
+        ///   Looks up a localized string similar to IFF-8SVX (PCM).
         /// </summary>
-        internal static string IDS_IFF8SVX_NAME_FIBONACCI {
+        internal static string IDS_IFF8SVX_NAME_AGENT1 {
             get {
-                return ResourceManager.GetString("IDS_IFF8SVX_NAME_FIBONACCI", resourceCulture);
+                return ResourceManager.GetString("IDS_IFF8SVX_NAME_AGENT1", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to IFF-8SVX (PCM).
+        ///   Looks up a localized string similar to IFF-8SVX (Fibonacci).
         /// </summary>
-        internal static string IDS_IFF8SVX_NAME_PCM {
+        internal static string IDS_IFF8SVX_NAME_AGENT2 {
             get {
-                return ResourceManager.GetString("IDS_IFF8SVX_NAME_PCM", resourceCulture);
+                return ResourceManager.GetString("IDS_IFF8SVX_NAME_AGENT2", resourceCulture);
             }
         }
     }

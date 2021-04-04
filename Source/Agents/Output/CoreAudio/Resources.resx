@@ -120,7 +120,7 @@
   <data name="IDS_NAME" xml:space="preserve">
     <value>Core Audio</value>
   </data>
-  <data name="IDS_DESCRIPTION" xml:space="preserve">
+  <data name="IDS_DESCRIPTION_AGENT1" xml:space="preserve">
     <value>Output agent which uses Core Audio.
 Written by Thomas Neumann.
 Based on some of the code from NAudio by Mark Heath.
@@ -133,5 +133,8 @@ This agent plays the sound using the Windows Core Audio API.</value>
   </data>
   <data name="IDS_ERR_NO_OUTPUT_DEVICE_FOUND" xml:space="preserve">
     <value>No endpoint device could be found</value>
+  </data>
+  <data name="IDS_NAME_AGENT1" xml:space="preserve">
+    <value>Core Audio</value>
   </data>
 </root>

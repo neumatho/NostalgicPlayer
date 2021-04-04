@@ -66,9 +66,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker {
         ///
         ///The player came from the Amiga, but it&apos;s not the most used format. There are some nice tunes available by Dr. Awesome (Bjørn Lynne)..
         /// </summary>
-        internal static string IDS_JAM_DESCRIPTION {
+        internal static string IDS_JAM_DESCRIPTION_AGENT1 {
             get {
-                return ResourceManager.GetString("IDS_JAM_DESCRIPTION", resourceCulture);
+                return ResourceManager.GetString("IDS_JAM_DESCRIPTION_AGENT1", resourceCulture);
             }
         }
         
@@ -141,6 +141,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker {
         internal static string IDS_JAM_NAME {
             get {
                 return ResourceManager.GetString("IDS_JAM_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to JamCracker.
+        /// </summary>
+        internal static string IDS_JAM_NAME_AGENT1 {
+            get {
+                return ResourceManager.GetString("IDS_JAM_NAME_AGENT1", resourceCulture);
             }
         }
     }

@@ -74,31 +74,31 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This one supports Microsoft ADPCM (ID: 0x0002) format. ADPCM stands for Adaptive Differential Pulse-Code Modulation and is a variant of the Differential Pulse-Code Modulation (DPCM). Each audio data is compressed into 4-bit samples.
-        ///
-        ///The code is based on SoX (Sound eXchange)..
+        ///   Looks up a localized string similar to This one supports Microsoft PCM (ID: 0x0001) format, which is plain sample files without any compression or encoding..
         /// </summary>
-        internal static string IDS_RIFFWAVE_DESCRIPTION_ADPCM {
+        internal static string IDS_RIFFWAVE_DESCRIPTION_AGENT1 {
             get {
-                return ResourceManager.GetString("IDS_RIFFWAVE_DESCRIPTION_ADPCM", resourceCulture);
+                return ResourceManager.GetString("IDS_RIFFWAVE_DESCRIPTION_AGENT1", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to This one supports Microsoft IEEE Float (ID: 0x0003) format, which is plain sample files where each sample are stored as IEEE-754 floating points..
         /// </summary>
-        internal static string IDS_RIFFWAVE_DESCRIPTION_IEEE_FLOAT {
+        internal static string IDS_RIFFWAVE_DESCRIPTION_AGENT2 {
             get {
-                return ResourceManager.GetString("IDS_RIFFWAVE_DESCRIPTION_IEEE_FLOAT", resourceCulture);
+                return ResourceManager.GetString("IDS_RIFFWAVE_DESCRIPTION_AGENT2", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This one supports Microsoft PCM (ID: 0x0001) format, which is plain sample files without any compression or encoding..
+        ///   Looks up a localized string similar to This one supports Microsoft ADPCM (ID: 0x0002) format. ADPCM stands for Adaptive Differential Pulse-Code Modulation and is a variant of the Differential Pulse-Code Modulation (DPCM). Each audio data is compressed into 4-bit samples.
+        ///
+        ///The code is based on SoX (Sound eXchange)..
         /// </summary>
-        internal static string IDS_RIFFWAVE_DESCRIPTION_PCM {
+        internal static string IDS_RIFFWAVE_DESCRIPTION_AGENT3 {
             get {
-                return ResourceManager.GetString("IDS_RIFFWAVE_DESCRIPTION_PCM", resourceCulture);
+                return ResourceManager.GetString("IDS_RIFFWAVE_DESCRIPTION_AGENT3", resourceCulture);
             }
         }
         
@@ -166,29 +166,29 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to RIFF-WAVE (ADPCM).
+        ///   Looks up a localized string similar to RIFF-WAVE (PCM).
         /// </summary>
-        internal static string IDS_RIFFWAVE_NAME_ADPCM {
+        internal static string IDS_RIFFWAVE_NAME_AGENT1 {
             get {
-                return ResourceManager.GetString("IDS_RIFFWAVE_NAME_ADPCM", resourceCulture);
+                return ResourceManager.GetString("IDS_RIFFWAVE_NAME_AGENT1", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to RIFF-WAVE (IEEE Float).
         /// </summary>
-        internal static string IDS_RIFFWAVE_NAME_IEEE_FLOAT {
+        internal static string IDS_RIFFWAVE_NAME_AGENT2 {
             get {
-                return ResourceManager.GetString("IDS_RIFFWAVE_NAME_IEEE_FLOAT", resourceCulture);
+                return ResourceManager.GetString("IDS_RIFFWAVE_NAME_AGENT2", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to RIFF-WAVE (PCM).
+        ///   Looks up a localized string similar to RIFF-WAVE (ADPCM).
         /// </summary>
-        internal static string IDS_RIFFWAVE_NAME_PCM {
+        internal static string IDS_RIFFWAVE_NAME_AGENT3 {
             get {
-                return ResourceManager.GetString("IDS_RIFFWAVE_NAME_PCM", resourceCulture);
+                return ResourceManager.GetString("IDS_RIFFWAVE_NAME_AGENT3", resourceCulture);
             }
         }
     }

@@ -96,6 +96,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 		private readonly Random rnd;
 
+		private const int InfoSpeedLine = 3;
+		private const int InfoTempoLine = 4;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -221,13 +224,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// Will load the file into memory
 		/// </summary>
 		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags
-		{
-			get
-			{
-				return ModulePlayerSupportFlag.SetPosition;
-			}
-		}
+		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.SetPosition;
 
 
 
@@ -779,7 +776,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				}
 
 				// Change the module info
-				OnModuleInfoChanged(3, speed.ToString());
+				OnModuleInfoChanged(InfoSpeedLine, speed.ToString());
 			}
 		}
 
@@ -2881,7 +2878,7 @@ stopLoop:
 				SetBpmTempo(newTempo);
 
 				// Change the module info
-				OnModuleInfoChanged(4, newTempo.ToString());
+				OnModuleInfoChanged(InfoTempoLine, newTempo.ToString());
 
 				// Remember the tempo
 				tempo = newTempo;
@@ -3559,7 +3556,7 @@ stopLoop:
 					speed = newSpeed;
 
 					// Change the module info
-					OnModuleInfoChanged(3, speed.ToString());
+					OnModuleInfoChanged(InfoSpeedLine, speed.ToString());
 				}
 			}
 			else if (IsNoiseTracker())
@@ -3573,7 +3570,7 @@ stopLoop:
 				speed = newSpeed;
 
 				// Change the module info
-				OnModuleInfoChanged(3, speed.ToString());
+				OnModuleInfoChanged(InfoSpeedLine, speed.ToString());
 			}
 			else
 			{
@@ -3598,7 +3595,7 @@ stopLoop:
 						counter = 0;
 
 						// Change the module info
-						OnModuleInfoChanged(3, speed.ToString());
+						OnModuleInfoChanged(InfoSpeedLine, speed.ToString());
 					}
 				}
 			}

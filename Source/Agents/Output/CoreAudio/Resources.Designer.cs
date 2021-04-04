@@ -67,9 +67,9 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio {
         ///
         ///This agent plays the sound using the Windows Core Audio API..
         /// </summary>
-        internal static string IDS_DESCRIPTION {
+        internal static string IDS_DESCRIPTION_AGENT1 {
             get {
-                return ResourceManager.GetString("IDS_DESCRIPTION", resourceCulture);
+                return ResourceManager.GetString("IDS_DESCRIPTION_AGENT1", resourceCulture);
             }
         }
         
@@ -98,6 +98,15 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio {
         internal static string IDS_NAME {
             get {
                 return ResourceManager.GetString("IDS_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Core Audio.
+        /// </summary>
+        internal static string IDS_NAME_AGENT1 {
+            get {
+                return ResourceManager.GetString("IDS_NAME_AGENT1", resourceCulture);
             }
         }
     }

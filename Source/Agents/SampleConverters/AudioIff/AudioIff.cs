@@ -51,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_AUDIOIFF_NAME, Resources.IDS_AUDIOIFF_DESCRIPTION, agent1Id)
+					new AgentSupportInfo(Resources.IDS_AUDIOIFF_NAME_AGENT1, Resources.IDS_AUDIOIFF_DESCRIPTION_AGENT1, agent1Id)
 				};
 			}
 		}

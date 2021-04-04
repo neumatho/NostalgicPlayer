@@ -51,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_NAME, Resources.IDS_DESCRIPTION, agent1Id)
+					new AgentSupportInfo(Resources.IDS_NAME_AGENT1, Resources.IDS_DESCRIPTION_AGENT1, agent1Id)
 				};
 			}
 		}
