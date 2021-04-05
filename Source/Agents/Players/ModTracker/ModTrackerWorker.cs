@@ -974,28 +974,31 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			bool hasBigSamples = false;
 
 			// Check all sample names
-			for (int i = 0; i < 15; i++)
+			//
+			// Some modules have non-ascii (invalid) characters in their sample
+			// names, so to be able to play those, we only partly check the
+			// sample names. Before it has been disabled, but that made some
+			// other files to be recognized as SoundTracker modules. That's why
+			// I has introduced it again
+			for (int i = 0; i < 7; i++)
 			{
 				stream.Seek(20 + i * 30, SeekOrigin.Begin);
 				stream.Read(buf, 0, 22);
 
 				// Now check the name
 				//
-				// Some modules have non-ascii (invalid) characters in their sample
-				// names, so to be able to play those, this check has been disabled
-				// (which will increase the possibility for faulty recognitions)
-/*				for (int j = 0; j < 22; j++)
+				for (int j = 2; j < 10; j++)
 				{
-					if (buf[j] != 0x00)
+					if (buf[j] == 0x00)
+						break;
+
+					if ((buf[j] < 32) || (buf[j] > 127))
 					{
-						if ((buf[j] < 32) || (buf[j] > 127))
-						{
-							// Invalid sample name, so not a SoundTracker module
-							return ModuleType.Unknown;
-						}
+						// Invalid sample name, so not a SoundTracker module
+						return ModuleType.Unknown;
 					}
 				}
-*/
+
 				// Check for disk prefix
 				if (((buf[0] == 'S') || (buf[0] == 's')) && ((buf[1] == 'T') || (buf[1] == 't')) && (buf[2] == '-') && (buf[5] == ':'))
 				{
