@@ -1,0 +1,1393 @@
+﻿/******************************************************************************/
+/* This source, or parts thereof, may be used in any software as long the     */
+/* license of NostalgicPlayer is keep. See the LICENSE file for more          */
+/* information.                                                               */
+/*                                                                            */
+/* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
+/* All rights reserved.                                                       */
+/******************************************************************************/
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers;
+using Polycode.NostalgicPlayer.Kit.Bases;
+using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Streams;
+
+namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
+{
+	/// <summary>
+	/// Main worker class
+	/// </summary>
+	internal class FutureComposerWorker : ModulePlayerAgentBase
+	{
+		private static readonly byte[] silent =
+		{
+			0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xe1
+		};
+
+		private static readonly ushort[] periods =
+		{
+			1712, 1616, 1524, 1440, 1356, 1280, 1208, 1140, 1076, 1016,  960,  906,
+			 856,  808,  762,  720,  678,  640,  604,  570,  538,  508,  480,  453,
+			 428,  404,  381,  360,  339,  320,  302,  285,  269,  254,  240,  226,
+			 214,  202,  190,  180,  170,  160,  151,  143,  135,  127,  120,  113,
+			 113,  113,  113,  113,  113,  113,  113,  113,  113,  113,  113,  113,
+			3424, 3232, 3048, 2880, 2712, 2560, 2416, 2280, 2152, 2032, 1920, 1812,
+			1712, 1616, 1524, 1440, 1356, 1280, 1208, 1140, 1076, 1016,  960,  906,
+			 856,  808,  762,  720,  678,  640,  604,  570,  538,  508,  480,  453,
+			 428,  404,  381,  360,  339,  320,  302,  285,  269,  254,  240,  226,
+			 214,  202,  190,  180,  170,  160,  151,  143,  135,  127,  120,  113,
+			 113,  113,  113,  113,  113,  113,  113,  113,  113,  113,  113,  113
+		};
+
+		private Sample[] sampInfo;
+
+		private Sequence[] sequences;
+		private Pattern[] patterns;
+		private byte[] frqSequences;
+		private VolSequence[] volSequences;
+
+		private short seqNum;
+		private short patNum;
+		private short volNum;
+		private short wavNum;
+		private short sampNum;
+
+		private ushort reSpCnt;
+		private ushort repSpd;
+		private ushort spdTemp;
+
+		private TimeSpan totalTime;
+		private PosInfo[] posInfoList;
+
+		private bool[] audTemp;
+		private VoiceInfo[] voiceData;
+
+		private const int InfoSpeedLine = 4;
+
+		#region IPlayerAgent implementation
+		/********************************************************************/
+		/// <summary>
+		/// Returns the file extensions that identify this player
+		/// </summary>
+		/********************************************************************/
+		public override string[] FileExtensions
+		{
+			get
+			{
+				return new [] { "fc", "fc14" };
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test the file to see if it could be identified
+		/// </summary>
+		/********************************************************************/
+		public override AgentResult Identify(PlayerFileInfo fileInfo)
+		{
+			ModuleStream stream = fileInfo.ModuleStream;
+
+			// Check the module size
+			long fileSize = stream.Length;
+			if (fileSize < 180)
+				return AgentResult.Unknown;
+
+			// Check the mark
+			stream.Seek(0, SeekOrigin.Begin);
+
+			if (stream.Read_B_UINT32() != 0x46433134)	// FC14
+				return AgentResult.Unknown;
+
+			// Skip the song length
+			stream.Seek(4, SeekOrigin.Current);
+
+			// Check the offset pointers
+			for (int i = 0; i < 8; i++)
+			{
+				if (stream.Read_B_UINT32() > fileSize)
+					return AgentResult.Unknown;
+			}
+
+			return AgentResult.Ok;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the description and value on the line given. If the line
+		/// is out of range, false is returned
+		/// </summary>
+		/********************************************************************/
+		public override bool GetInformationString(int line, out string description, out string value)
+		{
+			// Find out which line to take
+			switch (line)
+			{
+				// Song length
+				case 0:
+				{
+					description = Resources.IDS_FC_INFODESCLINE0;
+					value = seqNum.ToString();
+					break;
+				}
+
+				// Used patterns
+				case 1:
+				{
+					description = Resources.IDS_FC_INFODESCLINE1;
+					value = patNum.ToString();
+					break;
+				}
+
+				// Supported / used samples
+				case 2:
+				{
+					description = Resources.IDS_FC_INFODESCLINE2;
+					value = sampNum.ToString();
+					break;
+				}
+
+				// Used wave tables
+				case 3:
+				{
+					description = Resources.IDS_FC_INFODESCLINE3;
+					value = wavNum.ToString();
+					break;
+				}
+
+				// Current speed
+				case 4:
+				{
+					description = Resources.IDS_FC_INFODESCLINE4;
+					value = repSpd.ToString();
+					break;
+				}
+
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
+				}
+			}
+
+			return true;
+		}
+		#endregion
+
+		#region IModulePlayerAgent implementation
+		/********************************************************************/
+		/// <summary>
+		/// Will load the file into memory
+		/// </summary>
+		/********************************************************************/
+		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.SetPosition;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will load the file into memory
+		/// </summary>
+		/********************************************************************/
+		public override AgentResult Load(PlayerFileInfo fileInfo, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			try
+			{
+				ModuleStream stream = fileInfo.ModuleStream;
+
+				// Skip the module mark
+				stream.Read_B_UINT32();
+
+				// Get the length of the sequences
+				int seqLength = (int)stream.Read_B_UINT32();
+
+				// Get the offsets into the file
+				int patOffset = (int)stream.Read_B_UINT32();
+				int patLength = (int)stream.Read_B_UINT32();
+
+				int frqOffset = (int)stream.Read_B_UINT32();
+				int frqLength = (int)stream.Read_B_UINT32();
+
+				int volOffset = (int)stream.Read_B_UINT32();
+				int volLength = (int)stream.Read_B_UINT32();
+
+				int smpOffset = (int)stream.Read_B_UINT32();
+				int wavOffset = (int)stream.Read_B_UINT32();
+
+				if (stream.EndOfStream)
+				{
+					errorMessage = Resources.IDS_FC_ERR_LOADING_HEADER;
+					Cleanup();
+
+					return AgentResult.Error;
+				}
+
+				// Read the sample information
+				sampInfo = new Sample[10 + 80];
+				sampNum = 10;
+
+				int i;
+				for (i = 0; i < 10; i++)
+				{
+					Sample samp = new Sample();
+
+					samp.Address = null;
+					samp.Length = (ushort)(stream.Read_B_UINT16() * 2);
+					samp.LoopStart = stream.Read_B_UINT16();
+					samp.LoopLength = (ushort)(stream.Read_B_UINT16() * 2);
+					samp.Multi = null;
+
+					sampInfo[i] = samp;
+				}
+
+				// Read the wave table lengths
+				for (i = 10; i < (10 + 80); i++)
+				{
+					Sample samp = new Sample();
+
+					samp.Address = null;
+					samp.Length = (ushort)(stream.Read_UINT8() * 2);
+					samp.LoopStart = 0;
+					samp.LoopLength = samp.Length;
+					samp.Multi = null;
+
+					sampInfo[i] = samp;
+				}
+
+				if (stream.EndOfStream)
+				{
+					errorMessage = Resources.IDS_FC_ERR_LOADING_SAMPLEINFO;
+					Cleanup();
+
+					return AgentResult.Error;
+				}
+
+				// Find out how many wave tables that are used
+				for (i = 89; i >= 10; i--)
+				{
+					if (sampInfo[i].Length != 0)
+						break;
+				}
+
+				wavNum = (short)(i - 9);
+
+				// Allocate memory to hold the sequences
+				seqNum = (short)(seqLength / 13);
+				sequences = new Sequence[seqNum];
+
+				// Read the sequences
+				for (i = 0; i < seqNum; i++)
+				{
+					Sequence seq = new Sequence();
+
+					seq.VoiceSeq[0] = new VoiceSeq();
+					seq.VoiceSeq[0].Pattern = stream.Read_UINT8();
+					seq.VoiceSeq[0].Transpose = (sbyte)stream.Read_UINT8();
+					seq.VoiceSeq[0].SoundTranspose = (sbyte)stream.Read_UINT8();
+
+					seq.VoiceSeq[1] = new VoiceSeq();
+					seq.VoiceSeq[1].Pattern = stream.Read_UINT8();
+					seq.VoiceSeq[1].Transpose = (sbyte)stream.Read_UINT8();
+					seq.VoiceSeq[1].SoundTranspose = (sbyte)stream.Read_UINT8();
+
+					seq.VoiceSeq[2] = new VoiceSeq();
+					seq.VoiceSeq[2].Pattern = stream.Read_UINT8();
+					seq.VoiceSeq[2].Transpose = (sbyte)stream.Read_UINT8();
+					seq.VoiceSeq[2].SoundTranspose = (sbyte)stream.Read_UINT8();
+
+					seq.VoiceSeq[3] = new VoiceSeq();
+					seq.VoiceSeq[3].Pattern = stream.Read_UINT8();
+					seq.VoiceSeq[3].Transpose = (sbyte)stream.Read_UINT8();
+					seq.VoiceSeq[3].SoundTranspose = (sbyte)stream.Read_UINT8();
+
+					seq.Speed = stream.Read_UINT8();
+
+					sequences[i] = seq;
+				}
+
+				// Allocate memory to hold the patterns
+				patNum = (short)(patLength / 64);
+				patterns = new Pattern[patNum];
+
+				// Read the patterns
+				stream.Seek(patOffset, SeekOrigin.Begin);
+
+				for (i = 0; i < patNum; i++)
+				{
+					Pattern patt = new Pattern();
+
+					for (int j = 0; j < 32; j++)
+					{
+						PatternRow row = new PatternRow();
+
+						row.Note = stream.Read_UINT8();
+						row.Info = stream.Read_UINT8();
+
+						patt.PatternRows[j] = row;
+					}
+
+					patterns[i] = patt;
+				}
+
+				if (stream.EndOfStream)
+				{
+					errorMessage = Resources.IDS_FC_ERR_LOADING_PATTERNS;
+					Cleanup();
+
+					return AgentResult.Error;
+				}
+
+				// Allocate memory to hold the frequency sequences
+				frqSequences = new byte[silent.Length + frqLength + 1];
+
+				// Copy silent sequence to the first block
+				Array.Copy(silent, 0, frqSequences, 0, silent.Length);
+
+				// Read the frequency sequences
+				stream.Seek(frqOffset, SeekOrigin.Begin);
+				stream.Read(frqSequences, silent.Length, frqLength);
+
+				// Set "end of sequence" mark
+				frqSequences[frqSequences.Length - 1] = 0xe1;
+
+				// Allocate memory to hold the volume sequences
+				volNum = (short)(volLength / 64);
+				volSequences = new VolSequence[1 + volNum];
+
+				volSequences[0] = new VolSequence
+				{
+					Speed = silent[0],
+					FrqNumber = silent[1],
+					VibSpeed = (sbyte)silent[2],
+					VibDepth = (sbyte)silent[3],
+					VibDelay = silent[4]
+				};
+
+				Array.Copy(silent, 4, volSequences[0].Values, 0, silent.Length - 4);
+
+				// Read the volume sequences
+				stream.Seek(volOffset, SeekOrigin.Begin);
+
+				for (i = 1; i <= volNum; i++)
+				{
+					VolSequence volSeq = new VolSequence();
+
+					volSeq.Speed = stream.Read_UINT8();
+					volSeq.FrqNumber = stream.Read_UINT8();
+					volSeq.VibSpeed = (sbyte)stream.Read_UINT8();
+					volSeq.VibDepth = (sbyte)stream.Read_UINT8();
+					volSeq.VibDelay = stream.Read_UINT8();
+
+					stream.Read(volSeq.Values, 0, 59);
+
+					volSequences[i] = volSeq;
+				}
+
+				if (stream.EndOfStream)
+				{
+					errorMessage = Resources.IDS_FC_ERR_LOADING_PATTERNS;
+					Cleanup();
+
+					return AgentResult.Error;
+				}
+
+				// Load the samples
+				stream.Seek(smpOffset, SeekOrigin.Begin);
+
+				for (i = 0; i < 10; i++)
+				{
+					if (sampInfo[i].Length != 0)
+					{
+						// Read the first 4 bytes to see if it's a multi sample
+						if (stream.Read_B_UINT32() == 0x53534d50)           // SSMP
+						{
+							// It is, so allocate the multi sample structure
+							// and fill in the information
+							MultiSample multiSample = new MultiSample();
+							uint[] multiOffsets = new uint[20];
+
+							// Read the sample information
+							for (int j = 0; j < 20; j++)
+							{
+								multiOffsets[j] = stream.Read_B_UINT32();
+
+								Sample samp = new Sample();
+
+								samp.Length = (ushort)(stream.Read_B_UINT16() * 2);
+								samp.LoopStart = stream.Read_B_UINT16();
+								samp.LoopLength = (ushort)(stream.Read_B_UINT16() * 2);
+
+								multiSample.Sample[j] = samp;
+
+								// Skip pad bytes
+								stream.Seek(6, SeekOrigin.Current);
+							}
+
+							// The sample structure holding the multi samples should not be included
+							// as a sample, so decrement the count
+							sampNum--;
+
+							// Read the sample data
+							long sampStartOffset = stream.Position;
+
+							for (int j = 0; j < 20; j++)
+							{
+								if (multiSample.Sample[j].Length != 0)
+								{
+									sampNum++;
+
+									// Allocate sample
+									multiSample.Sample[j].Address = new sbyte[multiSample.Sample[j].Length];
+
+									// Read the sample data
+									stream.Seek(sampStartOffset + multiOffsets[j], SeekOrigin.Begin);
+									stream.ReadSigned(multiSample.Sample[j].Address, 0, (int)multiSample.Sample[j].Length);
+
+									// Skip pad bytes
+									stream.Read_B_UINT16();
+
+									if (stream.EndOfStream)
+									{
+										errorMessage = Resources.IDS_FC_ERR_LOADING_SAMPLES;
+										Cleanup();
+
+										return AgentResult.Error;
+									}
+								}
+							}
+
+							// Done, remember the pointer
+							sampInfo[i].Multi = multiSample;
+						}
+						else
+						{
+							// It's just a normal sample, so seek back to the
+							// start of the sample
+							stream.Seek(-4, SeekOrigin.Current);
+
+							// Allocate memory to the sample
+							sampInfo[i].Address = new sbyte[sampInfo[i].Length];
+
+							// Read the sample data
+							stream.ReadSigned(sampInfo[i].Address, 0, (int)sampInfo[i].Length);
+						}
+					}
+
+					// Skip pad bytes
+					stream.Read_B_UINT16();
+
+					if (stream.EndOfStream)
+					{
+						errorMessage = Resources.IDS_FC_ERR_LOADING_SAMPLES;
+						Cleanup();
+
+						return AgentResult.Error;
+					}
+				}
+
+				// Load the wave tables
+				stream.Seek(wavOffset, SeekOrigin.Begin);
+
+				for (i = 10; i < (10 + 80); i++)
+				{
+					if (sampInfo[i].Length != 0)
+					{
+						// Allocate memory to hold the wave table data
+						sampInfo[i].Address = new sbyte[sampInfo[i].Length];
+
+						// Read the wave table
+						stream.ReadSigned(sampInfo[i].Address, 0, (int)sampInfo[i].Length);
+
+						if (stream.EndOfStream)
+						{
+							errorMessage = Resources.IDS_FC_ERR_LOADING_SAMPLES;
+							Cleanup();
+
+							return AgentResult.Error;
+						}
+					}
+				}
+			}
+			catch (Exception)
+			{
+				Cleanup();
+				throw;
+			}
+
+			// Ok, we're done
+			return AgentResult.Ok;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initializes the player
+		/// </summary>
+		/********************************************************************/
+		public override bool InitPlayer()
+		{
+			byte curSpeed = 3;
+			float total = 0.0f;
+			bool pattBreak = false;
+
+			// Calculate the position times
+			posInfoList = new PosInfo[seqNum];
+
+			for (int i = 0; i < seqNum; i++)
+			{
+				// Add the position information to the list
+				PosInfo posInfo = new PosInfo();
+
+				posInfo.Speed = curSpeed;
+				posInfo.Time = new TimeSpan((long)(total * TimeSpan.TicksPerMillisecond));
+
+				posInfoList[i] = posInfo;
+
+				// Get pointer to next sequence
+				Sequence seq = sequences[i];
+
+				// Change the speed?
+				if (seq.Speed != 0)
+					curSpeed = seq.Speed;
+
+				for (int j = 0; j < 32; j++)
+				{
+					for (int k = 0; k < 4; k++)
+					{
+						uint pattNum = seq.VoiceSeq[k].Pattern;
+						if (pattNum >= patterns.Length)
+							pattNum = 0;
+
+						// Do we have a pattern break
+						if (patterns[pattNum].PatternRows[j].Note == 0x49)
+							pattBreak = true;
+					}
+
+					// Add the row time
+					total += 1000.0f * curSpeed / 50.0f;
+
+					if (pattBreak)
+					{
+						pattBreak = false;
+						break;
+					}
+				}
+			}
+
+			// Set the total time
+			totalTime = new TimeSpan((long)(total * TimeSpan.TicksPerMillisecond));
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Cleanup the player
+		/// </summary>
+		/********************************************************************/
+		public override void CleanupPlayer()
+		{
+			Cleanup();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initializes the current song
+		/// </summary>
+		/********************************************************************/
+		public override void InitSound(int songNumber)
+		{
+			// Initialize speed
+			ushort spd = sequences[0].Speed;
+			if (spd == 0)
+				spd = 3;
+
+			reSpCnt = spd;
+			repSpd = spd;
+			spdTemp = 1;
+
+			// Initialize other variables
+			audTemp = new bool[4];
+			audTemp[0] = false;
+			audTemp[1] = false;
+			audTemp[2] = false;
+			audTemp[3] = false;
+			
+			// Initialize channel variables
+			voiceData = new VoiceInfo[4];
+
+			for (int i = 0; i < 4; i++)
+			{
+				VoiceInfo voiceInfo = new VoiceInfo();
+
+				voiceInfo.PitchBendSpeed = 0;
+				voiceInfo.PitchBendTime = 0;
+				voiceInfo.SongPos = 0;
+				voiceInfo.CurNote = 0;
+				voiceInfo.VolumeSeq = volSequences[0].Values;
+				voiceInfo.VolumeBendSpeed = 0;
+				voiceInfo.VolumeBendTime = 0;
+				voiceInfo.VolumeSeqPos = 0;
+				voiceInfo.VolumeCounter = 1;
+				voiceInfo.VolumeSpeed = 1;
+				voiceInfo.VolSusCounter = 0;
+				voiceInfo.SusCounter = 0;
+				voiceInfo.VibSpeed = 0;
+				voiceInfo.VibDepth = 0;
+				voiceInfo.VibValue = 0;
+				voiceInfo.VibDelay = 0;
+				voiceInfo.VolBendFlag = false;
+				voiceInfo.PortFlag = false;
+				voiceInfo.PatternPos = 0;
+				voiceInfo.PitchBendFlag = false;
+				voiceInfo.PattTranspose = 0;
+				voiceInfo.Volume = 0;
+				voiceInfo.VibFlag = 0;
+				voiceInfo.Portamento = 0;
+				voiceInfo.FrequencySeqStartOffset = 0;
+				voiceInfo.FrequencySeqPos = 0;
+				voiceInfo.Pitch = 0;
+				voiceInfo.Channel = VirtualChannels[i];
+				voiceInfo.CurPattern = patterns[sequences[0].VoiceSeq[i].Pattern];
+				voiceInfo.Transpose = sequences[0].VoiceSeq[i].Transpose;
+				voiceInfo.SoundTranspose = sequences[0].VoiceSeq[i].SoundTranspose;
+
+				voiceData[i] = voiceInfo;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// This is the main player method
+		/// </summary>
+		/********************************************************************/
+		public override void Play()
+		{
+			// Decrease replay speed counter
+			reSpCnt--;
+			if (reSpCnt == 0)
+			{
+				// Restore replay speed counter
+				reSpCnt = repSpd;
+
+				// Get new note for each channel
+				NewNote(0);
+				NewNote(1);
+				NewNote(2);
+				NewNote(3);
+			}
+
+			// Calculate effects for each channel
+			Effect(0);
+			Effect(1);
+			Effect(2);
+			Effect(3);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the length of the current song
+		/// </summary>
+		/********************************************************************/
+		public override int SongLength => seqNum;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the current position of the song
+		/// </summary>
+		/********************************************************************/
+		public override int SongPosition
+		{
+			get
+			{
+				return (int)voiceData[0].SongPos;
+			}
+
+			set
+			{
+				// Change the position
+				voiceData[0].SongPos = (ushort)value;
+				voiceData[0].PatternPos = 0;
+				voiceData[0].Transpose = sequences[value].VoiceSeq[0].Transpose;
+				voiceData[0].SoundTranspose = sequences[value].VoiceSeq[0].SoundTranspose;
+				voiceData[0].CurPattern = patterns[sequences[value].VoiceSeq[0].Pattern];
+
+				voiceData[1].SongPos = (ushort)value;
+				voiceData[1].PatternPos = 0;
+				voiceData[1].Transpose = sequences[value].VoiceSeq[1].Transpose;
+				voiceData[1].SoundTranspose = sequences[value].VoiceSeq[1].SoundTranspose;
+				voiceData[1].CurPattern = patterns[sequences[value].VoiceSeq[1].Pattern];
+
+				voiceData[2].SongPos = (ushort)value;
+				voiceData[2].PatternPos = 0;
+				voiceData[2].Transpose = sequences[value].VoiceSeq[2].Transpose;
+				voiceData[2].SoundTranspose = sequences[value].VoiceSeq[2].SoundTranspose;
+				voiceData[2].CurPattern = patterns[sequences[value].VoiceSeq[2].Pattern];
+
+				voiceData[3].SongPos = (ushort)value;
+				voiceData[3].PatternPos = 0;
+				voiceData[3].Transpose = sequences[value].VoiceSeq[3].Transpose;
+				voiceData[3].SoundTranspose = sequences[value].VoiceSeq[3].SoundTranspose;
+				voiceData[3].CurPattern = patterns[sequences[value].VoiceSeq[3].Pattern];
+
+				// Set the speed
+				reSpCnt = posInfoList[value].Speed;
+				repSpd = reSpCnt;
+				spdTemp = 1;
+
+				OnModuleInfoChanged(InfoSpeedLine, repSpd.ToString());
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Calculates the position time for each position
+		/// </summary>
+		/********************************************************************/
+		public override TimeSpan GetPositionTimeTable(int songNumber, out TimeSpan[] positionTimes)
+		{
+			positionTimes = posInfoList.Select(pi => pi.Time).ToArray();
+
+			return totalTime;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns all the samples available in the module. If none, null
+		/// is returned
+		/// </summary>
+		/********************************************************************/
+		public override SampleInfo[] Samples
+		{
+			get
+			{
+				List<SampleInfo> result = new List<SampleInfo>();
+
+				for (int i = 0; i < 10; i++)
+				{
+					Sample sample = sampInfo[i];
+
+					if (sample.Multi != null)
+					{
+						for (int j = 0; j < 20; j++)
+						{
+							if (sample.Multi.Sample[j].Length != 0)
+								result.Add(CreateSampleInfo(sample.Multi.Sample[j]));
+						}
+					}
+					else
+						result.Add(CreateSampleInfo(sample));
+				}
+
+				return result.ToArray();
+			}
+		}
+		#endregion
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Frees all the memory the player have allocated
+		/// </summary>
+		/********************************************************************/
+		private void Cleanup()
+		{
+			volSequences = null;
+			frqSequences = null;
+			patterns = null;
+			sequences = null;
+			sampInfo = null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a sample info structure from the given sample
+		/// </summary>
+		/********************************************************************/
+		private SampleInfo CreateSampleInfo(Sample sample)
+		{
+			SampleInfo sampleInfo = new SampleInfo
+			{
+				Name = string.Empty,
+				Type = SampleInfo.SampleType.Sample,
+				BitSize = 8,
+				MiddleC = 8287,
+				Volume = 256,
+				Panning = -1
+			};
+
+			// Fill out the rest of the information
+			sampleInfo.Sample = sample.Address;
+			sampleInfo.Length = (int)sample.Length;
+
+			if (sampleInfo.LoopLength > 2)
+			{
+				sampleInfo.LoopStart = (int)sample.LoopStart;
+				sampleInfo.LoopLength = (int)sample.LoopLength;
+				sampleInfo.Flags = SampleInfo.SampleFlags.Loop;
+			}
+			else
+			{
+				sampleInfo.LoopStart = 0;
+				sampleInfo.LoopLength = 0;
+				sampleInfo.Flags = SampleInfo.SampleFlags.None;
+			}
+
+			return sampleInfo;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will play the next row
+		/// </summary>
+		/********************************************************************/
+		private void NewNote(uint chan)
+		{
+			// Get the voice data
+			VoiceInfo voiData = voiceData[chan];
+
+			// Check for end of pattern or "END" mark in pattern
+			if ((voiData.PatternPos == 32) || (voiData.CurPattern.PatternRows[voiData.PatternPos].Note == 0x49))
+			{
+				// New position
+				voiData.SongPos++;
+				voiData.PatternPos = 0;
+
+				// Have we reached the end of the module
+				if (voiData.SongPos == seqNum)
+				{
+					// We have, wrap around the module
+					voiData.SongPos = 0;
+
+					// Tell NostalgicPlayer the module have ended
+					OnEndReached();
+				}
+
+				// Count the speed counter
+				spdTemp++;
+				if (spdTemp == 5)
+				{
+					spdTemp = 1;
+
+					// Get new replay speed
+					if (sequences[voiData.SongPos].Speed != 0)
+					{
+						reSpCnt = sequences[voiData.SongPos].Speed;
+						repSpd = reSpCnt;
+
+						// Tell NostalgicPlayer about the speed change
+						OnModuleInfoChanged(InfoSpeedLine, repSpd.ToString());
+					}
+
+					// Tell NostalgicPlayer we have changed position
+					OnPositionChanged();
+				}
+
+				// Get pattern information
+				voiData.Transpose = sequences[voiData.SongPos].VoiceSeq[chan].Transpose;
+				voiData.SoundTranspose = sequences[voiData.SongPos].VoiceSeq[chan].SoundTranspose;
+
+				byte pattNum = sequences[voiData.SongPos].VoiceSeq[chan].Pattern;
+				if (pattNum >= patterns.Length)
+					pattNum = 0;
+
+				voiData.CurPattern = patterns[pattNum];
+			}
+
+			// Get the pattern row
+			byte note = voiData.CurPattern.PatternRows[voiData.PatternPos].Note;
+			byte info = voiData.CurPattern.PatternRows[voiData.PatternPos].Info;
+
+			// Check to see if we need to make portamento
+			//
+			// Info = Portamento/Instrument info
+			//        Bit 7   = Portamento on
+			//        Bit 6   = Portamento off
+			//        Bit 5-0 = Instrument number
+			//
+			// Info in the next row = Portamento value
+			//        Bit 7-5 = Always zero
+			//        Bit 4   = Up/down
+			//        Bit 3-0 = Value
+			if ((note != 0) || ((info & 0xc0) != 0))
+			{
+				if (note != 0)
+					voiData.Pitch = 0;
+
+				if ((info & 0x80) != 0)
+					voiData.Portamento = voiData.PatternPos < 31 ? voiData.CurPattern.PatternRows[voiData.PatternPos + 1].Info : (byte)0;
+				else
+					voiData.Portamento = 0;
+			}
+
+			// Got any note
+			note &= 0x7f;
+			if (note != 0)
+			{
+				voiData.CurNote = (sbyte)note;
+
+				// Mute the channel
+				audTemp[chan] = false;
+				voiData.Channel.Mute();
+
+				// Find the volume sequence
+				byte inst = (byte)((info & 0x3f) + voiData.SoundTranspose);
+				if (inst >= volNum)
+					inst = 0;
+				else
+					inst++;
+
+				voiData.VolumeSeqPos = 0;
+				voiData.VolumeCounter = volSequences[inst].Speed;
+				voiData.VolumeSpeed = volSequences[inst].Speed;
+				voiData.VolSusCounter = 0;
+
+				voiData.VibSpeed = volSequences[inst].VibSpeed;
+				voiData.VibFlag = 0x40;
+				voiData.VibDepth = volSequences[inst].VibDepth;
+				voiData.VibValue = volSequences[inst].VibDepth;
+				voiData.VibDelay = (sbyte)volSequences[inst].VibDelay;
+				voiData.VolumeSeq = volSequences[inst].Values;
+
+				// Find the frequency sequence
+				voiData.FrequencySeqStartOffset = (ushort)(silent.Length + volSequences[inst].FrqNumber * 64);
+				voiData.FrequencySeqPos = 0;
+				voiData.SusCounter = 0;
+			}
+
+			// Go to the next pattern row
+			voiData.PatternPos++;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will calculate the effects for one channel and play them
+		/// </summary>
+		/********************************************************************/
+		private void Effect(uint chan)
+		{
+			// Get the voice data
+			VoiceInfo voiData = voiceData[chan];
+
+			// Parse the frequency sequence commands
+			bool oneMore;
+			do
+			{
+				// Only loop one time, except if this flag is set later on
+				oneMore = false;
+
+				if (voiData.SusCounter != 0)
+				{
+					voiData.SusCounter--;
+					break;
+				}
+
+				// Sustain counter is zero, run the next part of the sequence
+				ushort seqPoi = (ushort)(voiData.FrequencySeqStartOffset + voiData.FrequencySeqPos);
+				if (seqPoi >= frqSequences.Length)
+					break;
+
+				bool parseEffect;
+				do
+				{
+					byte dat;
+
+					// Only loop one time, except if this flag is set later on
+					parseEffect = false;
+
+					// Get the next command in the sequence
+					byte cmd = frqSequences[seqPoi++];
+
+					// Check for end of sequence
+					if (cmd == 0xe1)
+						break;
+
+					// Check for "loop to other part of sequence" command
+					if (cmd == 0xe0)
+					{
+						dat = (byte)(frqSequences[seqPoi] & 0x3f);
+
+						voiData.FrequencySeqPos = dat;
+						seqPoi = (ushort)(voiData.FrequencySeqStartOffset + dat);
+
+						cmd = frqSequences[seqPoi++];
+					}
+
+					// Check for all the effects
+					switch (cmd)
+					{
+						// Set wave form
+						case 0xe2:
+						{
+							// Get instrument number
+							dat = frqSequences[seqPoi++];
+
+							if (dat < 90)
+							{
+								if (sampInfo[dat].Address != null)
+								{
+									voiData.Channel.PlaySample(sampInfo[dat].Address, 0, sampInfo[dat].Length);
+									if (sampInfo[dat].LoopLength > 2)
+									{
+										if ((sampInfo[dat].LoopStart + sampInfo[dat].LoopLength) > sampInfo[dat].Length)
+											voiData.Channel.SetLoop(sampInfo[dat].LoopStart, (uint)(sampInfo[dat].Length - sampInfo[dat].LoopStart));
+										else
+											voiData.Channel.SetLoop(sampInfo[dat].LoopStart, sampInfo[dat].LoopLength);
+									}
+								}
+							}
+
+							voiData.VolumeSeqPos = 0;
+							voiData.VolumeCounter = 1;
+							voiData.FrequencySeqPos += 2;
+							audTemp[chan] = true;
+							break;
+						}
+
+						// Set loop
+						case 0xe4:
+						{
+							// Check to see if the channel is active
+							if (audTemp[chan])
+							{
+								// Get instrument number
+								dat = frqSequences[seqPoi++];
+
+								if (dat < 90)
+									voiData.Channel.SetLoop(sampInfo[dat].Address, sampInfo[dat].LoopStart, sampInfo[dat].LoopLength);
+
+								voiData.FrequencySeqPos += 2;
+							}
+							break;
+						}
+
+						// Set sample
+						case 0xe9:
+						{
+							audTemp[chan] = true;
+
+							// Get instrument number
+							dat = frqSequences[seqPoi++];
+
+							if ((dat < 90) && (sampInfo[dat].Multi != null))
+							{
+								MultiSample mulSamp = sampInfo[dat].Multi;
+
+								// Get multi sample number
+								dat = frqSequences[seqPoi++];
+
+								if (dat < 20)
+								{
+									if (mulSamp.Sample[dat].Address != null)
+									{
+										voiData.Channel.PlaySample(mulSamp.Sample[dat].Address, 0, mulSamp.Sample[dat].Length);
+										if (mulSamp.Sample[dat].LoopLength > 2)
+										{
+											if ((mulSamp.Sample[dat].LoopStart + mulSamp.Sample[dat].LoopLength) > mulSamp.Sample[dat].Length)
+												voiData.Channel.SetLoop(mulSamp.Sample[dat].LoopStart, (uint)(mulSamp.Sample[dat].Length - mulSamp.Sample[dat].LoopStart));
+											else
+												voiData.Channel.SetLoop(mulSamp.Sample[dat].LoopStart, mulSamp.Sample[dat].LoopLength);
+										}
+									}
+								}
+
+								voiData.VolumeSeqPos = 0;
+								voiData.VolumeCounter = 1;
+							}
+
+							voiData.FrequencySeqPos += 3;
+							break;
+						}
+
+						// Pattern jump
+						case 0xe7:
+						{
+							parseEffect = true;
+
+							// Get new position
+							dat = frqSequences[seqPoi];
+
+							seqPoi = (ushort)(silent.Length + dat * 64);
+							if (seqPoi >= frqSequences.Length)
+								seqPoi = 0;
+
+							voiData.FrequencySeqStartOffset = seqPoi;
+							voiData.FrequencySeqPos = 0;
+							break;
+						}
+
+						// Pitch bend
+						case 0xea:
+						{
+							voiData.PitchBendSpeed = (sbyte)frqSequences[seqPoi++];
+							voiData.PitchBendTime = frqSequences[seqPoi++];
+							voiData.FrequencySeqPos += 3;
+							break;
+						}
+
+						// New sustain
+						case 0xe8:
+						{
+							voiData.SusCounter = frqSequences[seqPoi++];
+							voiData.FrequencySeqPos += 2;
+
+							oneMore = true;
+							break;
+						}
+
+						// New vibrato
+						case 0xe3:
+						{
+							voiData.VibSpeed = (sbyte)frqSequences[seqPoi++];
+							voiData.VibDepth = (sbyte)frqSequences[seqPoi++];
+							voiData.FrequencySeqPos += 3;
+							break;
+						}
+					}
+
+					if (!parseEffect && !oneMore)
+					{
+						// Get transpose value
+						seqPoi = (ushort)(voiData.FrequencySeqStartOffset + voiData.FrequencySeqPos);
+						voiData.PattTranspose = (sbyte)frqSequences[seqPoi];
+						voiData.FrequencySeqPos++;
+					}
+				}
+				while (parseEffect);
+			}
+			while (oneMore);
+
+			// Parse the volume sequence commands
+			if (voiData.VolSusCounter != 0)
+				voiData.VolSusCounter--;
+			else
+			{
+				if (voiData.VolumeBendTime != 0)
+					DoVolBend(voiData);
+				else
+				{
+					voiData.VolumeCounter--;
+					if (voiData.VolumeCounter == 0)
+					{
+						voiData.VolumeCounter = voiData.VolumeSpeed;
+
+						bool parseEffect;
+						do
+						{
+							// Only loop one time, except if this flag is set later on
+							parseEffect = false;
+
+							// Check for end of sequence
+							if ((voiData.VolumeSeqPos >= voiData.VolumeSeq.Length) || (voiData.VolumeSeq[voiData.VolumeSeqPos] == 0xe1))
+								break;
+
+							// Check for all the effects
+							switch (voiData.VolumeSeq[voiData.VolumeSeqPos])
+							{
+								// Volume bend
+								case 0xea:
+								{
+									voiData.VolumeBendSpeed = voiData.VolumeSeq[voiData.VolumeSeqPos + 1];
+									voiData.VolumeBendTime = voiData.VolumeSeq[voiData.VolumeSeqPos + 2];
+									voiData.VolumeSeqPos += 3;
+
+									DoVolBend(voiData);
+									break;
+								}
+
+								// New volume sustain
+								case 0xe8:
+								{
+									voiData.VolSusCounter = voiData.VolumeSeq[voiData.VolumeSeqPos + 1];
+									voiData.VolumeSeqPos += 2;
+									break;
+								}
+
+								// Set new position
+								case 0xe0:
+								{
+									voiData.VolumeSeqPos = (ushort)((voiData.VolumeSeq[voiData.VolumeSeqPos + 1] & 0x3f) - 5);
+
+									parseEffect = true;
+									break;
+								}
+
+								// Set volume
+								default:
+								{
+									voiData.Volume = (sbyte)voiData.VolumeSeq[voiData.VolumeSeqPos];
+									voiData.VolumeSeqPos++;
+									break;
+								}
+							}
+						}
+						while (parseEffect);
+					}
+				}
+			}
+
+			// Calculate the period
+			sbyte note = voiData.PattTranspose;
+			if (note >= 0)
+				note += (sbyte)(voiData.CurNote + voiData.Transpose);
+
+			note &= 0x7f;
+
+			// Get the period
+			ushort period = periods[note];
+			byte vibFlag = voiData.VibFlag;
+
+			// Shall we vibrate?
+			if (voiData.VibDelay != 0)
+				voiData.VibDelay--;
+			else
+			{
+				sbyte vibBase = (sbyte)(note * 2);
+				sbyte vibDep = (sbyte)(voiData.VibDepth * 2);
+				sbyte vibVal = voiData.VibValue;
+
+				if (((vibFlag & 0x80) == 0) || ((vibFlag & 0x01) == 0))
+				{
+					if ((vibFlag & 0x20) != 0)
+					{
+						vibVal += voiData.VibSpeed;
+						if (vibVal >= vibDep)
+						{
+							vibFlag &= 0b11011111;	// ~0x20
+							vibVal = vibDep;
+						}
+					}
+					else
+					{
+						vibVal -= voiData.VibSpeed;
+						if (vibVal < 0)
+						{
+							vibFlag |= 0x20;
+							vibVal = 0;
+						}
+					}
+
+					voiData.VibValue = vibVal;
+				}
+
+				vibDep /= 2;
+				vibVal -= vibDep;
+				vibBase -= 96;
+
+				while (vibBase >= 0)
+				{
+					vibVal *= 2;
+					vibBase += 24;
+				}
+
+				period += (ushort)vibVal;
+			}
+
+			voiData.VibFlag = (byte)(vibFlag ^ 0x01);
+
+			// Do the portamento thing
+			voiData.PortFlag = !voiData.PortFlag;
+			if (voiData.PortFlag && (voiData.Portamento != 0))
+			{
+				if (voiData.Portamento <= 31)
+					voiData.Pitch -= voiData.Portamento;
+				else
+					voiData.Pitch += (ushort)(voiData.Portamento & 0x1f);
+			}
+
+			// Pitch bend
+			voiData.PitchBendFlag = !voiData.PitchBendFlag;
+			if (voiData.PitchBendFlag && (voiData.PitchBendTime != 0))
+			{
+				voiData.PitchBendTime--;
+				voiData.Pitch -= (ushort)voiData.PitchBendSpeed;
+			}
+
+			period += voiData.Pitch;
+
+			// Check for bounds
+			if (period < 113)
+				period = 113;
+			else
+			{
+				if (period > 3424)
+					period = 3424;
+			}
+
+			if (voiData.Volume < 0)
+				voiData.Volume = 0;
+			else
+			{
+				if (voiData.Volume > 64)
+					voiData.Volume = 64;
+			}
+
+			// Play the period
+			voiData.Channel.SetAmigaPeriod(period);
+			voiData.Channel.SetVolume((ushort)(voiData.Volume * 4));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will make a volume bend
+		/// </summary>
+		/********************************************************************/
+		private void DoVolBend(VoiceInfo voiData)
+		{
+			voiData.VolBendFlag = !voiData.VolBendFlag;
+			if (voiData.VolBendFlag)
+			{
+				voiData.VolumeBendTime--;
+				voiData.Volume += (sbyte)voiData.VolumeBendSpeed;
+
+				if (voiData.Volume > 64)
+				{
+					voiData.Volume = 64;
+					voiData.VolumeBendTime = 0;
+				}
+				else
+				{
+					if (voiData.Volume < 0)
+					{
+						voiData.Volume = 0;
+						voiData.VolumeBendTime = 0;
+					}
+				}
+			}
+		}
+		#endregion
+	}
+}
