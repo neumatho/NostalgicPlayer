@@ -3886,7 +3886,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			string section = agentType + " Agents";
 
 			// Build lookup list
-			Dictionary<Guid, AgentInfo> allAgents = agentManager.GetAllAgents(agentType).ToDictionary(agentInfo => agentInfo.TypeId, agentInfo => agentInfo);
+			Dictionary<Guid, AgentInfo> allAgents = agentManager.GetAllAgents(agentType).Union(agentType == Manager.AgentType.Players ? agentManager.GetAllAgents(Manager.AgentType.ModuleConverters) : new AgentInfo[0]).ToDictionary(agentInfo => agentInfo.TypeId, agentInfo => agentInfo);
 
 			// First comes the delete loop. It will scan the section and see
 			// if the agent has been loaded and if it hasn't, the entry will

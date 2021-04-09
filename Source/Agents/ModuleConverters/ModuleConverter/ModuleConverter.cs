@@ -8,22 +8,22 @@
 /******************************************************************************/
 using System;
 using System.Runtime.InteropServices;
+using Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 // This is needed to uniquely identify this agent
-[assembly: Guid("A9A18A8E-C160-47EF-AD79-A903921C01E1")]
+[assembly: Guid("8574CAD5-2892-499F-8B26-50D16EA70C09")]
 
-namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
+namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 {
 	/// <summary>
 	/// NostalgicPlayer agent interface implementation
 	/// </summary>
-	[CLSCompliant(false)]
-	public class AudioIff : AgentBase
+	public class ModuleConverter : AgentBase
 	{
-		private static readonly Guid agent1Id = Guid.Parse("BBAABC5F-AE88-42D1-8717-EAEC041AFE7D");
+		private static readonly Guid agent1Id = Guid.Parse("99F6809B-0FA7-4814-895E-A5A4632EFE96");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 		{
 			get
 			{
-				return Resources.IDS_AUDIOIFF_NAME;
+				return Resources.IDS_MODCONV_NAME;
 			}
 		}
 
@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_AUDIOIFF_NAME_AGENT1, Resources.IDS_AUDIOIFF_DESCRIPTION_AGENT1, agent1Id)
+					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT1, Resources.IDS_MODCONV_DESCRIPTION_AGENT1, agent1Id)
 				};
 			}
 		}
@@ -66,7 +66,10 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 		/********************************************************************/
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
-			return new AudioIffWorker();
+			if (typeId == agent1Id)
+				return new ModuleConverterWorker_FutureComposer13();
+
+			return null;
 		}
 		#endregion
 	}

@@ -64,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer {
         ///   Looks up a localized string similar to Original player by SuperSero.
         ///Converted to C# by Thomas Neumann.
         ///
-        ///This is an old format from the Amiga. It was developed by Jochen Hippel and he used it to compose some of his game music, such as &quot;Rings of Medusa&quot; and &quot;Shaolin&quot;. A lot of cracker intros used this format in the early days, so you can find a lot of modules in this format on the internet..
+        ///This is the same as Future Composer 1.0 - 1.3, except that it has been improved by having its own wave tables instead of static tables..
         /// </summary>
         internal static string IDS_FC_DESCRIPTION_AGENT1 {
             get {

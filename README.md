@@ -26,6 +26,7 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | D.O.C. SoundTracker VI | .mod | | ModTracker |
 | D.O.C. SoundTracker IX | .mod | | ModTracker |
 | Fast/TakeTracker | .mod | | ModTracker |
+| Future Composer 1.0 - 1.3 | .fc / .fc13 / .smod | Module Converter | Future Composer |
 | Future Composer 1.4 | .fc / .fc14 | | Future Composer |
 | IFF-16SV (PCM) | .16sv | | Sample |
 | IFF-8SVX (Fibonacci) | .8svx | | Sample |

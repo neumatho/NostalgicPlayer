@@ -100,7 +100,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 			// Check the mark
 			stream.Seek(0, SeekOrigin.Begin);
 
-			if (stream.Read_B_UINT32() != 0x46433134)	// FC14
+			uint mark = stream.Read_B_UINT32();
+			if (mark != 0x46433134)					// FC14
 				return AgentResult.Unknown;
 
 			// Skip the song length
@@ -205,8 +206,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 			{
 				ModuleStream stream = fileInfo.ModuleStream;
 
-				// Skip the module mark
-				stream.Read_B_UINT32();
+				// Skip mark
+				stream.Seek(4, SeekOrigin.Begin);
 
 				// Get the length of the sequences
 				int seqLength = (int)stream.Read_B_UINT32();
@@ -731,25 +732,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				voiceData[0].PatternPos = 0;
 				voiceData[0].Transpose = sequences[value].VoiceSeq[0].Transpose;
 				voiceData[0].SoundTranspose = sequences[value].VoiceSeq[0].SoundTranspose;
-				voiceData[0].CurPattern = patterns[sequences[value].VoiceSeq[0].Pattern];
+				byte pattNum = sequences[value].VoiceSeq[0].Pattern;
+				voiceData[0].CurPattern = patterns[pattNum >= patterns.Length ? 0 : pattNum];
 
 				voiceData[1].SongPos = (ushort)value;
 				voiceData[1].PatternPos = 0;
 				voiceData[1].Transpose = sequences[value].VoiceSeq[1].Transpose;
 				voiceData[1].SoundTranspose = sequences[value].VoiceSeq[1].SoundTranspose;
-				voiceData[1].CurPattern = patterns[sequences[value].VoiceSeq[1].Pattern];
+				pattNum = sequences[value].VoiceSeq[1].Pattern;
+				voiceData[0].CurPattern = patterns[pattNum >= patterns.Length ? 0 : pattNum];
 
 				voiceData[2].SongPos = (ushort)value;
 				voiceData[2].PatternPos = 0;
 				voiceData[2].Transpose = sequences[value].VoiceSeq[2].Transpose;
 				voiceData[2].SoundTranspose = sequences[value].VoiceSeq[2].SoundTranspose;
-				voiceData[2].CurPattern = patterns[sequences[value].VoiceSeq[2].Pattern];
+				pattNum = sequences[value].VoiceSeq[2].Pattern;
+				voiceData[0].CurPattern = patterns[pattNum >= patterns.Length ? 0 : pattNum];
 
 				voiceData[3].SongPos = (ushort)value;
 				voiceData[3].PatternPos = 0;
 				voiceData[3].Transpose = sequences[value].VoiceSeq[3].Transpose;
 				voiceData[3].SoundTranspose = sequences[value].VoiceSeq[3].SoundTranspose;
-				voiceData[3].CurPattern = patterns[sequences[value].VoiceSeq[3].Pattern];
+				pattNum = sequences[value].VoiceSeq[3].Pattern;
+				voiceData[0].CurPattern = patterns[pattNum >= patterns.Length ? 0 : pattNum];
 
 				// Set the speed
 				reSpCnt = posInfoList[value].Speed;
@@ -1246,7 +1251,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 								// Set volume
 								default:
 								{
-									voiData.Volume = (sbyte)voiData.VolumeSeq[voiData.VolumeSeqPos];
+									voiData.Volume = (sbyte)(voiData.VolumeSeq[voiData.VolumeSeqPos] & 0x7f);		// Revenge of Fracula plays a sample in the beginning with a volume of 0xff
 									voiData.VolumeSeqPos++;
 									break;
 								}
@@ -1265,7 +1270,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 			note &= 0x7f;
 
 			// Get the period
-			ushort period = periods[note];
+			ushort period = note < periods.Length ? periods[note] : (ushort)0;
 			byte vibFlag = voiData.VibFlag;
 
 			// Shall we vibrate?
@@ -1273,7 +1278,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				voiData.VibDelay--;
 			else
 			{
-				sbyte vibBase = (sbyte)(note * 2);
+				ushort vibBase = (ushort)(note * 2);
 				sbyte vibDep = (sbyte)(voiData.VibDepth * 2);
 				sbyte vibVal = voiData.VibValue;
 
@@ -1303,9 +1308,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 
 				vibDep /= 2;
 				vibVal -= vibDep;
-				vibBase -= 96;
+				vibBase += 160;
 
-				while (vibBase >= 0)
+				while (vibBase < 256)
 				{
 					vibVal *= 2;
 					vibBase += 24;

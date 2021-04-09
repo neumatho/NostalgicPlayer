@@ -43,6 +43,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 			SampleConverters,
 
 			/// <summary>
+			/// Converters that can convert from one module format to another
+			/// </summary>
+			ModuleConverters,
+
+			/// <summary>
 			/// Show what is playing in a window
 			/// </summary>
 			Visuals

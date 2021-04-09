@@ -61,6 +61,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to load and convert the file ({0}).
+        ///
+        ///Converter {1} returned the following error:
+        ///{2}..
+        /// </summary>
+        internal static string IDS_ERR_CONVERT_MODULE {
+            get {
+                return ResourceManager.GetString("IDS_ERR_CONVERT_MODULE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A file error occurred on file ({0}) with error 0x{1}.
         ///{2}..
         /// </summary>

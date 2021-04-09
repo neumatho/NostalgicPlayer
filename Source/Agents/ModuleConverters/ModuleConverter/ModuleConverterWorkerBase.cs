@@ -6,67 +6,67 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+
 using System;
-using System.Runtime.InteropServices;
-using Polycode.NostalgicPlayer.Kit.Bases;
+using System.IO;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Streams;
 
-// This is needed to uniquely identify this agent
-[assembly: Guid("A9A18A8E-C160-47EF-AD79-A903921C01E1")]
-
-namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
+namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 {
 	/// <summary>
-	/// NostalgicPlayer agent interface implementation
+	/// Base class for all the formats
 	/// </summary>
-	[CLSCompliant(false)]
-	public class AudioIff : AgentBase
+	internal abstract class ModuleConverterWorkerBase : IModuleConverter
 	{
-		private static readonly Guid agent1Id = Guid.Parse("BBAABC5F-AE88-42D1-8717-EAEC041AFE7D");
-
-		#region IAgent implementation
+		#region IModuleConverter implementation
 		/********************************************************************/
 		/// <summary>
-		/// Returns the name of this agent
+		/// Test the file to see if it could be identified
 		/// </summary>
 		/********************************************************************/
-		public override string Name
+		public abstract AgentResult Identify(PlayerFileInfo fileInfo);
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert the module and store the result in the stream given
+		/// </summary>
+		/********************************************************************/
+		public abstract AgentResult Convert(PlayerFileInfo fileInfo, WriterStream writerStream, out string errorMessage);
+		#endregion
+
+		#region Helper methods
+		/********************************************************************/
+		/// <summary>
+		/// Copy length bytes from one stream to another
+		/// </summary>
+		/********************************************************************/
+		protected void CopyData(Stream source, Stream destination, uint length)
 		{
-			get
+			byte[] buf = new byte[1024];
+
+			while (length >= 1024)
 			{
-				return Resources.IDS_AUDIOIFF_NAME;
+				int len = source.Read(buf, 0, 1024);
+				if (len < 1024)
+					Array.Clear(buf, len, 1024 - len);
+
+				destination.Write(buf, 0, 1024);
+
+				length -= 1024;
 			}
-		}
 
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns all the formats/types this agent supports
-		/// </summary>
-		/********************************************************************/
-		public override AgentSupportInfo[] AgentInformation
-		{
-			get
+			if (length > 0)
 			{
-				return new AgentSupportInfo[]
-				{
-					new AgentSupportInfo(Resources.IDS_AUDIOIFF_NAME_AGENT1, Resources.IDS_AUDIOIFF_DESCRIPTION_AGENT1, agent1Id)
-				};
+				int len = source.Read(buf, 0, (int)length);
+				if (len < 1024)
+					Array.Clear(buf, len, 1024 - len);
+
+				destination.Write(buf, 0, (int)length);
 			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Creates a new worker instance
-		/// </summary>
-		/********************************************************************/
-		public override IAgentWorker CreateInstance(Guid typeId)
-		{
-			return new AudioIffWorker();
 		}
 		#endregion
 	}

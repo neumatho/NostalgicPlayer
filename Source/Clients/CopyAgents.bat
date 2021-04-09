@@ -8,6 +8,14 @@ for /r "%~2Agents\SampleConverters" %%f in (*.dll) do (
   (echo "%%f" | find /I "\obj\" 1>NUL) || (echo "%%f" | find /I "\ref\" 1>NUL) || (echo "%%f" | find /I /V "\%~3\" 1>NUL) || (echo "%%f" | find /I "\NostalgicPlayerGuiKit.dll" 1>NUL) || (copy "%%f" "%~1Agents\SampleConverters")
 )
 
+mkdir "%~1Agents\ModuleConverters"
+for /r "%~2Agents\ModuleConverters" %%f in (*.pdb) do (
+  (echo "%%f" | find /I "\NostalgicPlayerGuiKit.pdb" 1>NUL) || (echo "%%f" | find /I /V "\%~3\" 1>NUL) || (copy "%%f" "%~1Agents\ModuleConverters")
+)
+for /r "%~2Agents\ModuleConverters" %%f in (*.dll) do (
+  (echo "%%f" | find /I "\obj\" 1>NUL) || (echo "%%f" | find /I "\ref\" 1>NUL) || (echo "%%f" | find /I /V "\%~3\" 1>NUL) || (echo "%%f" | find /I "\NostalgicPlayerGuiKit.dll" 1>NUL) || (copy "%%f" "%~1Agents\ModuleConverters")
+)
+
 mkdir "%~1Agents\Output"
 for /r "%~2Agents\Output" %%f in (*.pdb) do (
   (echo "%%f" | find /I "\NostalgicPlayerGuiKit.pdb" 1>NUL) || (echo "%%f" | find /I /V "\%~3\" 1>NUL) || (copy "%%f" "%~1Agents\Output")

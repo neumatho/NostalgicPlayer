@@ -31,6 +31,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 
 		private Manager manager;
 		private Manager.AgentType agentType;
+		private Manager.AgentType[] extraAgentTypes;
 
 		private ModuleHandler moduleHandler;
 
@@ -117,12 +118,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will prepare to handle the settings
 		/// </summary>
 		/********************************************************************/
-		public void InitSettings(Manager agentManager, ModuleHandler modHandler, MainWindowForm mainWindow, Settings userSettings, Settings windowSettings, Manager.AgentType type)
+		public void InitSettings(Manager agentManager, ModuleHandler modHandler, MainWindowForm mainWindow, Settings userSettings, Settings windowSettings, Manager.AgentType type, params Manager.AgentType[] extraTypes)
 		{
 			mainWin = mainWindow;
 
 			manager = agentManager;
 			agentType = type;
+			extraAgentTypes = extraTypes;
 
 			moduleHandler = modHandler;
 
@@ -143,7 +145,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		public void MakeBackup()
 		{
 			// Make a backup of the enable state for all the agents
-			foreach (AgentInfo agentInfo in manager.GetAllAgents(agentType))
+			foreach (AgentInfo agentInfo in GetAllAgents())
 				backupEnableStates[agentInfo.TypeId] = agentInfo.Enabled;
 		}
 
@@ -240,12 +242,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			{
 				if (backupEnableStates[pair.Key] != pair.Value)
 				{
-					AgentInfo agentInfo = manager.GetAgent(agentType, pair.Key);
-
-					if (pair.Value)
-						DisableAgent(agentInfo);
-					else
-						EnableAgent(agentInfo);
+					AgentInfo agentInfo = GetAllAgents().FirstOrDefault(a => a.TypeId == pair.Key);
+					if (agentInfo != null)
+					{
+						if (pair.Value)
+							DisableAgent(agentInfo);
+						else
+							EnableAgent(agentInfo);
+					}
 				}
 			}
 		}
@@ -262,7 +266,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			if ((agentType == Manager.AgentType.Players) || (agentType == Manager.AgentType.Output))
 			{
 				Color itemColor = moduleHandler.IsModuleLoaded ? Color.Blue : Color.Black;
-				Guid typeId = moduleHandler.IsModuleLoaded ? agentType == Manager.AgentType.Players ? moduleHandler.StaticModuleInformation.PlayerAgentInfo.TypeId : moduleHandler.OutputAgentInfo.TypeId : inUseAgent;
+				Guid typeId = moduleHandler.IsModuleLoaded ? agentType == Manager.AgentType.Players ? moduleHandler.StaticModuleInformation.ConverterAgentInfo != null ? moduleHandler.StaticModuleInformation.ConverterAgentInfo.TypeId : moduleHandler.StaticModuleInformation.PlayerAgentInfo.TypeId : moduleHandler.OutputAgentInfo.TypeId : inUseAgent;
 
 				if (typeId != Guid.Empty)
 				{
@@ -392,12 +396,34 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
+		/// Will return all agents of the main and extra types
+		/// </summary>
+		/********************************************************************/
+		private IEnumerable<AgentInfo> GetAllAgents()
+		{
+			foreach (AgentInfo agentInfo in manager.GetAllAgents(agentType))
+				yield return agentInfo;
+
+			if (extraAgentTypes != null)
+			{
+				foreach (Manager.AgentType type in extraAgentTypes)
+				{
+					foreach (AgentInfo agentInfo in manager.GetAllAgents(type))
+						yield return agentInfo;
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will add all the items in the list
 		/// </summary>
 		/********************************************************************/
 		private void AddItems()
 		{
-			foreach (AgentInfo agentInfo in manager.GetAllAgents(agentType))
+			foreach (AgentInfo agentInfo in GetAllAgents())
 			{
 				DataGridViewRow row = new DataGridViewRow { Tag = agentInfo };
 				row.Cells.AddRange(new DataGridViewCell[]

@@ -36,6 +36,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 			PlayerAgentInfo = null;
 			PlayerAgent = null;
+			ConverterAgentInfo = null;
 			stream = null;
 		}
 
@@ -86,6 +87,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			PlayerAgentInfo = null;
 			PlayerAgent = null;
 
+			ConverterAgentInfo = null;
+
 			Player = null;
 
 			ModuleSize = 0;
@@ -125,6 +128,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// </summary>
 		/********************************************************************/
 		internal IPlayerAgent PlayerAgent
+		{
+			get; private set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return information about the converter agent
+		/// </summary>
+		/********************************************************************/
+		public AgentInfo ConverterAgentInfo
 		{
 			get; private set;
 		}
@@ -206,15 +221,28 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 			try
 			{
+				AgentInfo converterAgent = null;
+
 				// Check to see if we can find a player via the file type
 				if (!FindPlayerViaFileType(fileInfo))
 				{
 					// No player could be found via the file type
-
-					// Try all the players to see if we can find one
-					// that understand the file format
-					if (FindPlayer(fileInfo))
-						result = true;
+					// Now try to convert the module
+					converterAgent = ConvertModule(fileInfo, out string converterError);
+					if (!string.IsNullOrEmpty(converterError))
+					{
+						// Something went wrong when converting the module
+						//
+						// Build the error string
+						errorMessage = string.Format(Resources.IDS_ERR_CONVERT_MODULE, fileInfo.FileName, converterAgent.TypeName, converterError);
+					}
+					else
+					{
+						// Try all the players to see if we can find one
+						// that understand the file format
+						if (FindPlayer(fileInfo))
+							result = true;
+					}
 				}
 				else
 					result = true;
@@ -244,7 +272,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						// Well, something went wrong when loading the file
 						//
 						// Build the error string
-						errorMessage = string.Format(Resources.IDS_ERR_LOAD_MODULE, fileInfo.FileName, PlayerAgentInfo.AgentName, playerError);
+						errorMessage = string.Format(Resources.IDS_ERR_LOAD_MODULE, fileInfo.FileName, PlayerAgentInfo.TypeName, playerError);
 
 						PlayerAgentInfo = null;
 						PlayerAgent = null;
@@ -256,15 +284,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						// Get module information
 						FileName = fileInfo.FileName;
 
-						PlayerName = PlayerAgentInfo.AgentName;//XX
+						PlayerName = PlayerAgentInfo.AgentName;
+						ModuleFormat = converterAgent != null ? converterAgent.TypeName : PlayerAgentInfo.TypeName;
 
-						ModuleFormat = PlayerAgentInfo.TypeName;
+						ConverterAgentInfo = converterAgent;
 					}
 				}
 				else
 				{
-					// No, send an error back
-					errorMessage = string.Format(Resources.IDS_ERR_UNKNOWN_MODULE, fileInfo.FileName);
+					if (string.IsNullOrEmpty(errorMessage))
+					{
+						// No, send an error back
+						errorMessage = string.Format(Resources.IDS_ERR_UNKNOWN_MODULE, fileInfo.FileName);
+					}
 				}
 			}
 			catch (Exception ex)
@@ -352,7 +384,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 							if (agentResult != AgentResult.Unknown)
 							{
 								// Some error occurred
-								throw new Exception();
+								throw new Exception($"Identify() on player {agentInfo.TypeName} returned an error");
 							}
 						}
 					}
@@ -395,7 +427,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						if (agentResult != AgentResult.Unknown)
 						{
 							// Some error occurred
-							throw new Exception();
+							throw new Exception($"Identify() on player {agentInfo.TypeName} returned an error");
 						}
 					}
 				}
@@ -403,6 +435,78 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 			// No player was found
 			return false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will try to convert the module to another format
+		/// </summary>
+		/********************************************************************/
+		private AgentInfo ConvertModule(PlayerFileInfo fileInfo, out string errorMessage)
+		{
+			AgentInfo result = null;
+			bool takeAnotherRound;
+
+			do
+			{
+				takeAnotherRound = false;
+
+				foreach (AgentInfo agentInfo in agentManager.GetAllAgents(Manager.AgentType.ModuleConverters))
+				{
+					// Is the player enabled?
+					if (agentInfo.Enabled)
+					{
+						// Create an instance of the converter
+						if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IModuleConverter converter)
+						{
+							// Check the file
+							AgentResult agentResult = converter.Identify(fileInfo);
+							if (agentResult == AgentResult.Ok)
+							{
+								// We found the right converter, so now convert it
+								MemoryStream ms = new MemoryStream();
+								fileInfo.ModuleStream.Seek(0, SeekOrigin.Begin);
+
+								using (WriterStream ws = new WriterStream(ms))
+								{
+									agentResult = converter.Convert(fileInfo, ws, out errorMessage);
+									if (agentResult == AgentResult.Ok)
+									{
+										// Replace the module stream with the converted stream
+										fileInfo.ModuleStream.Dispose();
+										fileInfo.ModuleStream = new ModuleStream(ms);
+
+										if (result == null)
+											result = agentInfo;
+
+										// The module may need to be converted multiple times, so
+										// we make a new check with the converted module
+										takeAnotherRound = true;
+										break;
+									}
+
+									// An error occurred, so return immediately. The error
+									// is stored in the errorMessage out argument
+									return agentInfo;
+								}
+							}
+
+							if (agentResult != AgentResult.Unknown)
+							{
+								// Some error occurred
+								throw new Exception($"Identify() on module converter {agentInfo.TypeName} returned an error");
+							}
+						}
+					}
+				}
+			}
+			while (takeAnotherRound);
+
+			errorMessage = string.Empty;
+
+			return result;
 		}
 		#endregion
 	}

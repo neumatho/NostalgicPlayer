@@ -117,43 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="IDS_FC_DESCRIPTION_AGENT1" xml:space="preserve">
+  <data name="IDS_FC13_ERR_LOADING_HEADER" xml:space="preserve">
+    <value>Can't read the module header</value>
+  </data>
+  <data name="IDS_FC13_ERR_LOADING_PATTERNS" xml:space="preserve">
+    <value>Can't read the pattern information</value>
+  </data>
+  <data name="IDS_FC13_ERR_LOADING_SAMPLES" xml:space="preserve">
+    <value>Can't read the sample data</value>
+  </data>
+  <data name="IDS_MODCONV_DESCRIPTION_AGENT1" xml:space="preserve">
     <value>Original player by SuperSero.
 Converted to C# by Thomas Neumann.
 
-This is the same as Future Composer 1.0 - 1.3, except that it has been improved by having its own wave tables instead of static tables.</value>
+This is an old format from the Amiga. It was developed by Jochen Hippel and he used it to compose some of his game music, such as "Rings of Medusa" and "Shaolin". A lot of cracker intros used this format in the early days, so you can find a lot of modules in this format on the internet.</value>
   </data>
-  <data name="IDS_FC_ERR_LOADING_HEADER" xml:space="preserve">
-    <value>Can't read the module header</value>
+  <data name="IDS_MODCONV_NAME" xml:space="preserve">
+    <value>Module Converter</value>
   </data>
-  <data name="IDS_FC_ERR_LOADING_PATTERNS" xml:space="preserve">
-    <value>Can't read the module patterns</value>
-  </data>
-  <data name="IDS_FC_ERR_LOADING_SAMPLEINFO" xml:space="preserve">
-    <value>Can't read the sample information</value>
-  </data>
-  <data name="IDS_FC_ERR_LOADING_SAMPLES" xml:space="preserve">
-    <value>Can't read the module samples</value>
-  </data>
-  <data name="IDS_FC_INFODESCLINE0" xml:space="preserve">
-    <value>Song length:</value>
-  </data>
-  <data name="IDS_FC_INFODESCLINE1" xml:space="preserve">
-    <value>Used patterns:</value>
-  </data>
-  <data name="IDS_FC_INFODESCLINE2" xml:space="preserve">
-    <value>Supported / used samples:</value>
-  </data>
-  <data name="IDS_FC_INFODESCLINE3" xml:space="preserve">
-    <value>Used wave tables:</value>
-  </data>
-  <data name="IDS_FC_INFODESCLINE4" xml:space="preserve">
-    <value>Current speed:</value>
-  </data>
-  <data name="IDS_FC_NAME" xml:space="preserve">
-    <value>Future Composer</value>
-  </data>
-  <data name="IDS_FC_NAME_AGENT1" xml:space="preserve">
-    <value>Future Composer 1.4</value>
+  <data name="IDS_MODCONV_NAME_AGENT1" xml:space="preserve">
+    <value>Future Composer 1.0 - 1.3</value>
   </data>
 </root>

@@ -57,6 +57,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 		private string[] supportedFormats;
 		private string[] outputAgents;
 		private string[] sampleConverters;
+		private string[] moduleConverters;
 		private string[] visualAgents;
 
 		private string[] agentsToShow;
@@ -169,9 +170,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 		/********************************************************************/
 		private void FindAgents(Manager agentManager)
 		{
-			supportedFormats = FindAgentTypes(agentManager, Manager.AgentType.Players);
+			supportedFormats = FindAgentTypes(agentManager, Manager.AgentType.Players, Manager.AgentType.ModuleConverters);
 			outputAgents = FindAgentTypes(agentManager, Manager.AgentType.Output);
-			sampleConverters = FindAgentTypes(agentManager, Manager.AgentType.SampleConverters);
+			sampleConverters = FindAgents(agentManager, Manager.AgentType.SampleConverters);
+			moduleConverters = FindAgents(agentManager, Manager.AgentType.ModuleConverters);
 			visualAgents = FindAgentTypes(agentManager, Manager.AgentType.Visuals);
 		}
 
@@ -183,23 +185,57 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 		/// type
 		/// </summary>
 		/********************************************************************/
-		private string[] FindAgentTypes(Manager agentManager, Manager.AgentType agentType)
+		private string[] FindAgentTypes(Manager agentManager, params Manager.AgentType[] agentTypes)
 		{
 			List<string> names = new List<string>();
 
-			// Find all supported formats from the players
-			foreach (AgentInfo agentInfo in agentManager.GetAllAgents(agentType))
+			foreach (Manager.AgentType type in agentTypes)
 			{
-				try
+				// Find all supported formats from the players
+				foreach (AgentInfo agentInfo in agentManager.GetAllAgents(type))
 				{
-					if (agentInfo.TypeName == agentInfo.AgentName)
-						names.Add(agentInfo.TypeName);
-					else
-						names.Add($"{agentInfo.TypeName} ({agentInfo.AgentName})");
+					try
+					{
+						if (agentInfo.TypeName == agentInfo.AgentName)
+							names.Add(agentInfo.TypeName);
+						else
+							names.Add($"{agentInfo.TypeName} ({agentInfo.AgentName})");
+					}
+					catch (Exception)
+					{
+						// Ignore exception
+					}
 				}
-				catch (Exception)
+			}
+
+			return names.OrderBy(n => n).ToArray();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a list with all the agents available for the given agent
+		/// type
+		/// </summary>
+		/********************************************************************/
+		private string[] FindAgents(Manager agentManager, params Manager.AgentType[] agentTypes)
+		{
+			HashSet<string> names = new HashSet<string>();
+
+			foreach (Manager.AgentType type in agentTypes)
+			{
+				// Find all supported formats from the players
+				foreach (AgentInfo agentInfo in agentManager.GetAllAgents(type))
 				{
-					// Ignore exception
+					try
+					{
+						names.Add(agentInfo.AgentName);
+					}
+					catch (Exception)
+					{
+						// Ignore exception
+					}
 				}
 			}
 
@@ -458,6 +494,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 													str = str.Substring(2);
 
 													agentsToShow = sampleConverters;
+													agentIndex = 0;
+
+													showMode = Mode.Agents;
+													moreCommands = false;
+													break;
+												}
+
+												// Show module converters
+												case 'M':
+												{
+													str = str.Substring(2);
+
+													agentsToShow = moduleConverters;
 													agentIndex = 0;
 
 													showMode = Mode.Agents;

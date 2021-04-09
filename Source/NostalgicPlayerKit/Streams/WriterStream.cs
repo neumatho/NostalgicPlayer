@@ -256,6 +256,34 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Write an array of 16 bit integers in little endian format to the
+		/// stream
+		/// </summary>
+		/********************************************************************/
+		public void WriteArray_L_UINT16s(ushort[] buffer, int count)
+		{
+			for (int i = 0; i < count; i++)
+				Write_L_UINT16(buffer[i]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Write an array of 32 bit integers in little endian format to the
+		/// stream
+		/// </summary>
+		/********************************************************************/
+		public void WriteArray_L_UINT32s(uint[] buffer, int count)
+		{
+			for (int i = 0; i < count; i++)
+				Write_L_UINT32(buffer[i]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Write a 16 bit integer in big endian format to the stream
 		/// </summary>
 		/********************************************************************/
@@ -303,6 +331,34 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 			saveBuffer[7] = (byte)(data & 0xff);
 
 			Write(saveBuffer, 0, 8);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Write an array of 16 bit integers in big endian format to the
+		/// stream
+		/// </summary>
+		/********************************************************************/
+		public void WriteArray_B_UINT16s(ushort[] buffer, int count)
+		{
+			for (int i = 0; i < count; i++)
+				Write_B_UINT16(buffer[i]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Write an array of 32 bit integers in big endian format to the
+		/// stream
+		/// </summary>
+		/********************************************************************/
+		public void WriteArray_B_UINT32s(uint[] buffer, int count)
+		{
+			for (int i = 0; i < count; i++)
+				Write_B_UINT32(buffer[i]);
 		}
 
 

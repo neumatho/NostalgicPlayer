@@ -61,10 +61,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor (for module players)
 		/// </summary>
 		/********************************************************************/
-		internal ModuleInfoStatic(AgentInfo playerAgentInfo, string moduleName, string author, string moduleFormat, string playerName, int channels, long moduleSize, ModulePlayerSupportFlag supportFlag, int maxSongNumber, InstrumentInfo[] instruments, SampleInfo[] samples) : this(playerAgentInfo, moduleName, author, moduleFormat, playerName, channels, moduleSize)
+		internal ModuleInfoStatic(AgentInfo playerAgentInfo, AgentInfo converterAgentInfo, string moduleName, string author, string moduleFormat, string playerName, int channels, long moduleSize, ModulePlayerSupportFlag supportFlag, int maxSongNumber, InstrumentInfo[] instruments, SampleInfo[] samples) : this(playerAgentInfo, moduleName, author, moduleFormat, playerName, channels, moduleSize)
 		{
 			moduleSupportFlag = supportFlag;
 			sampleSupportFlag = SamplePlayerSupportFlag.None;
+
+			ConverterAgentInfo = converterAgentInfo;
 
 			MaxSongNumber = maxSongNumber;
 			Instruments = instruments;
@@ -172,6 +174,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		#endregion
 
 		#region Module specific properties
+		/********************************************************************/
+		/// <summary>
+		/// Returns agent information about the converted that has been used
+		/// </summary>
+		/********************************************************************/
+		public AgentInfo ConverterAgentInfo
+		{
+			get;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Return the maximum number of songs in the current module

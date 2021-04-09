@@ -56,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		{
 			winSettings = new SettingsAgentsWindowSettings(windowSettings, null);
 
-			playersListControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, Manager.AgentType.Players);
+			playersListControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, Manager.AgentType.Players, Manager.AgentType.ModuleConverters);
 			outputListControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, Manager.AgentType.Output);
 			sampleConvertersListControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, Manager.AgentType.SampleConverters);
 			visualsListControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, Manager.AgentType.Visuals);

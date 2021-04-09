@@ -379,7 +379,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 			if (stream.HasEndReached)
 			{
 				// Take a little break, so the client has time to free the module if needed
-				Thread.Sleep(100);
+				Thread.Sleep(400);
 			}
 		}
 
