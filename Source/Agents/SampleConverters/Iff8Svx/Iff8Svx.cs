@@ -37,13 +37,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 		/// Returns the name of this agent
 		/// </summary>
 		/********************************************************************/
-		public override string Name
-		{
-			get
-			{
-				return Resources.IDS_IFF8SVX_NAME;
-			}
-		}
+		public override string Name => Resources.IDS_IFF8SVX_NAME;
 
 
 

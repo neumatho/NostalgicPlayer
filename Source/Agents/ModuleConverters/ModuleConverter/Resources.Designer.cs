@@ -88,6 +88,21 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Written by Thomas Neumann.
+        ///
+        ///Converts different module formats (mostly Amiga formats) to another format NostalgicPlayer understands.
+        ///
+        ///Current version can convert these formats:
+        ///
+        ///Future Composer 1.0 - 1.3 -&gt; Future Composer 1.4.
+        /// </summary>
+        internal static string IDS_MODCONV_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("IDS_MODCONV_DESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Original player by SuperSero.
         ///Converted to C# by Thomas Neumann.
         ///

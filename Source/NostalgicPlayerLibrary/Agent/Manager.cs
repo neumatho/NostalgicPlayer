@@ -205,19 +205,44 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 					loadInfo.LoadContext = new AssemblyLoadContext(null, true);
 					Assembly agentAssembly = loadInfo.LoadContext.LoadFromAssemblyPath(loadInfo.FileName);
 
-					int i = 0;
-					foreach (Type t in agentAssembly.GetTypes().Where(t => typeof(IAgent).IsAssignableFrom(t)))
+					loadInfo.LoadContext.Resolving += LoadContext_Resolving;
+
+					Type type = agentAssembly.GetTypes().FirstOrDefault(t => typeof(IAgent).IsAssignableFrom(t));
+					if (type != null)
 					{
 						try
 						{
-							loadInfo.AgentInfo[i].Agent = (IAgent)Activator.CreateInstance(t);
+							IAgent agent = (IAgent)Activator.CreateInstance(type);
+
+							foreach (AgentInfo agentInfo in loadInfo.AgentInfo)
+								agentInfo.Agent = agent;
+
+							TellAgent(agent);
 						}
 						catch (Exception)
 						{
 							// If an exception is thrown, just ignore it and skip the file
 						}
+					}
 
-						i++;
+					foreach (Type t in agentAssembly.GetTypes().Where(t => typeof(IAgentSettings).IsAssignableFrom(t)))
+					{
+						try
+						{
+							IAgentSettings agentSettings = (IAgentSettings)Activator.CreateInstance(t);
+
+							if (settingAgents.TryGetValue(agentSettings.SettingAgentId, out AgentSettingsLoadInfo settingsLoadInfo))
+							{
+								settingsLoadInfo.LoadContext = loadInfo.LoadContext;
+								settingsLoadInfo.Settings = agentSettings;
+
+								TellSettingsAgent(settingsLoadInfo);
+							}
+						}
+						catch (Exception)
+						{
+							// If an exception is thrown, just ignore it and skip the file
+						}
 					}
 				}
 			}
@@ -234,6 +259,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 		{
 			lock (loadListLock)
 			{
+				if (settingAgents.TryGetValue(agentId, out AgentSettingsLoadInfo settingsLoadInfo))
+				{
+					settingsLoadInfo.LoadContext = null;
+					settingsLoadInfo.Settings = null;
+				}
+
 				if (loadedAgentsByAgentId.TryGetValue(agentId, out AgentLoadInfo loadInfo))
 				{
 					foreach (AgentInfo agentInfo in loadInfo.AgentInfo)
@@ -326,11 +357,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 							loadContext.Resolving += LoadContext_Resolving;
 
 							// Find all agent implementations
-							foreach (Type t in agentAssembly.GetTypes().Where(t => typeof(IAgent).IsAssignableFrom(t)))
+							Type type = agentAssembly.GetTypes().FirstOrDefault(t => typeof(IAgent).IsAssignableFrom(t));
+							if (type != null)
 							{
 								try
 								{
-									IAgent agent = (IAgent)Activator.CreateInstance(t);
+									IAgent agent = (IAgent)Activator.CreateInstance(type);
 
 									// Check the NostalgicPlayer version the agent is compiled against
 									if (agent.NostalgicPlayerVersion != IAgent.NostalgicPlayer_Current_Version)
@@ -407,7 +439,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 		{
 			IAgentWorker worker = agent.CreateInstance(info.TypeId);
 
-			return new AgentInfo(agent, agent.Name, info.Name, info.Description, agent.Version, info.TypeId, worker is IAgentSettingsRegistrar, worker is IAgentDisplay);
+			return new AgentInfo(agent, info.Name, info.Description, agent.Version, info.TypeId, worker is IAgentSettingsRegistrar, worker is IAgentDisplay);
 		}
 
 
@@ -431,11 +463,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 					{
 						IAgent agent = pair.Value[i];
 
-						if (agent is IWantOutputAgents wantOutputAgents)
-							wantOutputAgents.SetOutputInfo(loadedAgentsByAgentType[AgentType.Output]);
-
-						if (agent is IWantSampleConverterAgents wantSampleConverterAgents)
-							wantSampleConverterAgents.SetSampleConverterInfo(loadedAgentsByAgentType[AgentType.SampleConverters]);
+						TellAgent(agent);
 
 						List<AgentInfo> typesInAgent = new List<AgentInfo>();
 
@@ -462,25 +490,45 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 					{
 						// Check if we have already taken this agent in the above loop
 						if (!takenAgents.Contains(agentInfo.Agent))
-						{
-							if (agentInfo.Agent is IWantOutputAgents wantOutputAgents)
-								wantOutputAgents.SetOutputInfo(loadedAgentsByAgentType[AgentType.Output]);
-
-							if (agentInfo.Agent is IWantSampleConverterAgents wantSampleConverterAgents)
-								wantSampleConverterAgents.SetSampleConverterInfo(loadedAgentsByAgentType[AgentType.SampleConverters]);
-						}
+							TellAgent(agentInfo.Agent);
 					}
 				}
 
 				foreach (AgentSettingsLoadInfo loadInfo in settingAgents.Values)
-				{
-					if (loadInfo.Settings is IWantOutputAgents wantOutputAgents)
-						wantOutputAgents.SetOutputInfo(loadedAgentsByAgentType[AgentType.Output]);
-
-					if (loadInfo.Settings is IWantSampleConverterAgents wantSampleConverterAgents)
-						wantSampleConverterAgents.SetSampleConverterInfo(loadedAgentsByAgentType[AgentType.SampleConverters]);
-				}
+					TellSettingsAgent(loadInfo);
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tell agent about other agents
+		/// </summary>
+		/********************************************************************/
+		private void TellAgent(IAgent agent)
+		{
+			if (agent is IWantOutputAgents wantOutputAgents)
+				wantOutputAgents.SetOutputInfo(loadedAgentsByAgentType[AgentType.Output]);
+
+			if (agent is IWantSampleConverterAgents wantSampleConverterAgents)
+				wantSampleConverterAgents.SetSampleConverterInfo(loadedAgentsByAgentType[AgentType.SampleConverters]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tell settings agent about other agents
+		/// </summary>
+		/********************************************************************/
+		private void TellSettingsAgent(AgentSettingsLoadInfo loadInfo)
+		{
+			if (loadInfo.Settings is IWantOutputAgents wantOutputAgents)
+				wantOutputAgents.SetOutputInfo(loadedAgentsByAgentType[AgentType.Output]);
+
+			if (loadInfo.Settings is IWantSampleConverterAgents wantSampleConverterAgents)
+				wantSampleConverterAgents.SetSampleConverterInfo(loadedAgentsByAgentType[AgentType.SampleConverters]);
 		}
 
 

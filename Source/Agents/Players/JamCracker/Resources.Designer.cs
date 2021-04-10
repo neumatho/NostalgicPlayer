@@ -61,6 +61,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Written by Thomas Neumann.
+        ///
+        ///This is a C# version of the original assembly player by M. Gemmel and can play modules in the JamCracker format..
+        /// </summary>
+        internal static string IDS_JAM_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("IDS_JAM_DESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to JamCracker Original player by M. Gemmel.
         ///Converted to C# by Thomas Neumann.
         ///

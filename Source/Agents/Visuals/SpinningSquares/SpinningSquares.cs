@@ -30,13 +30,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares
 		/// Returns the name of this agent
 		/// </summary>
 		/********************************************************************/
-		public override string Name
-		{
-			get
-			{
-				return Resources.IDS_SPIN_NAME;
-			}
-		}
+		public override string Name => Resources.IDS_SPIN_NAME;
 
 
 

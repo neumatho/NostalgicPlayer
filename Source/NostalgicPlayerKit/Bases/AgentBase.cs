@@ -52,6 +52,16 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Returns a description of this agent. Only needed for players
+		/// and module converters
+		/// </summary>
+		/********************************************************************/
+		public virtual string Description => string.Empty;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Returns the version of this agent
 		/// </summary>
 		/********************************************************************/
@@ -74,6 +84,8 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		/// <summary>
 		/// Creates a new worker instance
+		///
+		/// May only return workers of same type
 		/// </summary>
 		/********************************************************************/
 		public abstract IAgentWorker CreateInstance(Guid typeId);

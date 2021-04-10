@@ -7,61 +7,51 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using System.Runtime.InteropServices;
-using Polycode.NostalgicPlayer.Kit.Bases;
+using System.Collections.Generic;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 
-// This is needed to uniquely identify this agent
-[assembly: Guid("A9A18A8E-C160-47EF-AD79-A903921C01E1")]
-
-namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLists
 {
 	/// <summary>
-	/// NostalgicPlayer agent interface implementation
+	/// Handle the output tab
 	/// </summary>
-	[CLSCompliant(false)]
-	public class AudioIff : AgentBase
+	public class OutputListUserControl : AgentsListUserControl
 	{
-		private static readonly Guid agent1Id = Guid.Parse("BBAABC5F-AE88-42D1-8717-EAEC041AFE7D");
-
-		#region IAgent implementation
 		/********************************************************************/
 		/// <summary>
-		/// Returns the name of this agent
+		/// Will return all agents of the main and extra types
 		/// </summary>
 		/********************************************************************/
-		public override string Name => Resources.IDS_AUDIOIFF_NAME;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns all the formats/types this agent supports
-		/// </summary>
-		/********************************************************************/
-		public override AgentSupportInfo[] AgentInformation
+		protected override IEnumerable<AgentListInfo> GetAllAgents()
 		{
-			get
-			{
-				return new AgentSupportInfo[]
-				{
-					new AgentSupportInfo(Resources.IDS_AUDIOIFF_NAME_AGENT1, Resources.IDS_AUDIOIFF_DESCRIPTION_AGENT1, agent1Id)
-				};
-			}
+			foreach (AgentInfo agentInfo in manager.GetAllAgents(Manager.AgentType.Output))
+				yield return new AgentListInfo { Id = agentInfo.TypeId, Name = agentInfo.TypeName, Description = agentInfo.TypeDescription, AgentInfo = agentInfo };
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Creates a new worker instance
+		/// Return the IDs of the agents in use if any
 		/// </summary>
 		/********************************************************************/
-		public override IAgentWorker CreateInstance(Guid typeId)
+		protected override Guid[] GetAgentIdsInUse(ModuleHandler handler)
 		{
-			return new AudioIffWorker();
+			return new [] { handler.OutputAgentInfo.TypeId };
 		}
-		#endregion
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will make some extra closing, if an agent is disabled
+		/// </summary>
+		/********************************************************************/
+		protected override void CloseAgent(ModuleHandler handler)
+		{
+			handler.CloseOutputAgent();
+		}
 	}
 }

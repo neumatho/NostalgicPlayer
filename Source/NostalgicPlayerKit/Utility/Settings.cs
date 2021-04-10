@@ -658,6 +658,9 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 					while ((sectionIndex < lineList.Count) && (lineList[sectionIndex].Type != LineType.Section))
 						lineList.RemoveAt(sectionIndex);
+
+					// Settings has been changed
+					changed = true;
 				}
 			}
 			finally

@@ -38,13 +38,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/// Returns the name of this agent
 		/// </summary>
 		/********************************************************************/
-		public override string Name
-		{
-			get
-			{
-				return Resources.IDS_RIFFWAVE_NAME;
-			}
-		}
+		public override string Name => Resources.IDS_RIFFWAVE_NAME;
 
 
 

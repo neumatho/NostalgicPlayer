@@ -37,6 +37,12 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		string Name { get; }
 
 		/// <summary>
+		/// Returns a description of this agent. Only needed for players
+		/// and module converters
+		/// </summary>
+		string Description { get; }
+
+		/// <summary>
 		/// Returns the version of this agent
 		/// </summary>
 		Version Version { get; }

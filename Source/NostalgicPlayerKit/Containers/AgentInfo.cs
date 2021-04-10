@@ -21,14 +21,16 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AgentInfo(IAgent agent, string agentName, string typeName, string description, Version version, Guid typeId, bool hasSettings, bool hasDisplay)
+		public AgentInfo(IAgent agent, string typeName, string typeDescription, Version version, Guid typeId, bool hasSettings, bool hasDisplay)
 		{
 			Agent = agent;
-			AgentId = agent.AgentId;
 
-			AgentName = agentName;
+			AgentId = agent.AgentId;
+			AgentName = agent.Name;
+			AgentDescription = agent.Description;
+
 			TypeName = typeName;
-			Description = description;
+			TypeDescription = typeDescription;
 			Version = version;
 			TypeId = typeId;
 
@@ -76,6 +78,18 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
+		/// Holds the description of the agent
+		/// </summary>
+		/********************************************************************/
+		public string AgentDescription
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Holds the name of the format/type
 		/// </summary>
 		/********************************************************************/
@@ -91,7 +105,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Holds the description of the format/type
 		/// </summary>
 		/********************************************************************/
-		public string Description
+		public string TypeDescription
 		{
 			get;
 		}

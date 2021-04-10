@@ -8,7 +8,7 @@
     <Authors>Thomas Neumann</Authors>
     <Product>NostalgicPlayer</Product>
     <Copyright>Copyright © 2021</Copyright>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -61,6 +61,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Written by Thomas Neumann.
+        ///
+        ///This player can play sample files in different formats. The formats supported are taken from all the available sample converters, so in fact, it just wrap the sample converters into a player..
+        /// </summary>
+        internal static string IDS_SAMPLE_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_DESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bit size:.
         /// </summary>
         internal static string IDS_SAMPLE_INFODESCLINE0 {

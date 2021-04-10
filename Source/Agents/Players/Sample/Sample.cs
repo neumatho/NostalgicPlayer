@@ -31,13 +31,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		/// Returns the name of this agent
 		/// </summary>
 		/********************************************************************/
-		public override string Name
-		{
-			get
-			{
-				return Resources.IDS_SAMPLE_NAME;
-			}
-		}
+		public override string Name => Resources.IDS_SAMPLE_NAME;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns a description of this agent
+		/// </summary>
+		/********************************************************************/
+		public override string Description => Resources.IDS_SAMPLE_DESCRIPTION;
 
 
 
@@ -53,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 				if (loadedSampleConverterAgents == null)
 					return null;
 
-				return loadedSampleConverterAgents.Select(agentInfo => new AgentSupportInfo(agentInfo.TypeName, agentInfo.Description, agentInfo.TypeId)).ToArray();
+				return loadedSampleConverterAgents.Select(agentInfo => new AgentSupportInfo(agentInfo.TypeName, agentInfo.TypeDescription, agentInfo.TypeId)).ToArray();
 			}
 		}
 

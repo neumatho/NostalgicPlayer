@@ -61,6 +61,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Written by Thomas Neumann.
+        ///
+        ///This player can only play Future Composer 1.4 modules, but it is also used to play the 1.0 - 1.3 modules, but not directly. The old formats are converted to 1.4 format and then this player is used.
+        ///
+        ///It is based on the original assembly player from the Amiga, but it contains a lot of bug fixes. Hopefully it can play the modules correctly..
+        /// </summary>
+        internal static string IDS_FC_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("IDS_FC_DESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Original player by SuperSero.
         ///Converted to C# by Thomas Neumann.
         ///

@@ -31,13 +31,16 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 		/// Returns the name of this agent
 		/// </summary>
 		/********************************************************************/
-		public override string Name
-		{
-			get
-			{
-				return Resources.IDS_MODCONV_NAME;
-			}
-		}
+		public override string Name => Resources.IDS_MODCONV_NAME;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns a description of this agent
+		/// </summary>
+		/********************************************************************/
+		public override string Description => Resources.IDS_MODCONV_DESCRIPTION;
 
 
 

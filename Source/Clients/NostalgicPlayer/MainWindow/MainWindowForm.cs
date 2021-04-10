@@ -3865,9 +3865,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			agentManager.LoadAllAgents();
 
 			// Fix agent settings
-			FixAgentSettings(Manager.AgentType.Players);
-			FixAgentSettings(Manager.AgentType.Output);
-			FixAgentSettings(Manager.AgentType.Visuals);
+			userSettings.RemoveSection("Players Agents");		// Not used anymore
+
+			FixAgentSettings("Formats", agentManager.GetAllAgents(Manager.AgentType.Players).Union(agentManager.GetAllAgents(Manager.AgentType.ModuleConverters)));
+			FixAgentSettings("Output", agentManager.GetAllAgents(Manager.AgentType.Output));
+			FixAgentSettings("Visuals", agentManager.GetAllAgents(Manager.AgentType.Visuals));
 
 			// And finally, save the settings to disk
 			userSettings.SaveSettings();
@@ -3881,12 +3883,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// plus tell the manager about which agents that are disabled
 		/// </summary>
 		/********************************************************************/
-		private void FixAgentSettings(Manager.AgentType agentType)
+		private void FixAgentSettings(string prefix, IEnumerable<AgentInfo> agents)
 		{
-			string section = agentType + " Agents";
+			string section = prefix + " Agents";
 
 			// Build lookup list
-			Dictionary<Guid, AgentInfo> allAgents = agentManager.GetAllAgents(agentType).Union(agentType == Manager.AgentType.Players ? agentManager.GetAllAgents(Manager.AgentType.ModuleConverters) : new AgentInfo[0]).ToDictionary(agentInfo => agentInfo.TypeId, agentInfo => agentInfo);
+			Dictionary<Guid, AgentInfo> allAgents = agents.ToDictionary(agentInfo => agentInfo.TypeId, agentInfo => agentInfo);
 
 			// First comes the delete loop. It will scan the section and see
 			// if the agent has been loaded and if it hasn't, the entry will

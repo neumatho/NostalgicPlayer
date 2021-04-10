@@ -30,13 +30,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Raw
 		/// Returns the name of this agent
 		/// </summary>
 		/********************************************************************/
-		public override string Name
-		{
-			get
-			{
-				return Resources.IDS_RAW_NAME;
-			}
-		}
+		public override string Name => Resources.IDS_RAW_NAME;
 
 
 

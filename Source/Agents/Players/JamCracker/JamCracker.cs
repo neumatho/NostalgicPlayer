@@ -30,13 +30,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/// Returns the name of this agent
 		/// </summary>
 		/********************************************************************/
-		public override string Name
-		{
-			get
-			{
-				return Resources.IDS_JAM_NAME;
-			}
-		}
+		public override string Name => Resources.IDS_JAM_NAME;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns a description of this agent
+		/// </summary>
+		/********************************************************************/
+		public override string Description => Resources.IDS_JAM_DESCRIPTION;
 
 
 

@@ -1240,7 +1240,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Formats / players.
+        ///   Looks up a localized string similar to Formats.
         /// </summary>
         internal static string IDS_SETTINGS_AGENTS_TAB_FORMATS {
             get {
@@ -1254,6 +1254,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_SETTINGS_AGENTS_TAB_OUTPUT {
             get {
                 return ResourceManager.GetString("IDS_SETTINGS_AGENTS_TAB_OUTPUT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Players / converters.
+        /// </summary>
+        internal static string IDS_SETTINGS_AGENTS_TAB_PLAYERS {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_AGENTS_TAB_PLAYERS", resourceCulture);
             }
         }
         

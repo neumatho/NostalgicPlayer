@@ -30,13 +30,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/// Returns the name of this agent
 		/// </summary>
 		/********************************************************************/
-		public override string Name
-		{
-			get
-			{
-				return Resources.IDS_NAME;
-			}
-		}
+		public override string Name => Resources.IDS_NAME;
 
 
 

@@ -8,7 +8,6 @@
 /******************************************************************************/
 using System;
 using System.Windows.Forms;
-using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 {
@@ -25,10 +24,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SettingsAgentsWindowSettings(Kit.Utility.Settings windowSettings, Manager.AgentType? agentType)
+		public SettingsAgentsWindowSettings(Kit.Utility.Settings windowSettings, string prefix)
 		{
 			settings = windowSettings;
-			type = agentType.HasValue ? agentType.ToString() : string.Empty;
+			type = string.IsNullOrEmpty(prefix) ? string.Empty : prefix;
 		}
 
 

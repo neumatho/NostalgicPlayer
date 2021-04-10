@@ -574,10 +574,13 @@ what is new.</value>
     <value>Settings</value>
   </data>
   <data name="IDS_SETTINGS_AGENTS_TAB_FORMATS" xml:space="preserve">
-    <value>Formats / players</value>
+    <value>Formats</value>
   </data>
   <data name="IDS_SETTINGS_AGENTS_TAB_OUTPUT" xml:space="preserve">
     <value>Output</value>
+  </data>
+  <data name="IDS_SETTINGS_AGENTS_TAB_PLAYERS" xml:space="preserve">
+    <value>Players / converters</value>
   </data>
   <data name="IDS_SETTINGS_AGENTS_TAB_SAMPLECONVERTERS" xml:space="preserve">
     <value>Sample converters</value>

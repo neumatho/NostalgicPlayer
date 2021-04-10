@@ -6,6 +6,8 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Krypton.Navigator;
 using Krypton.Toolkit;
@@ -24,6 +26,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 	{
 		private SettingsAgentsWindowSettings winSettings;
 
+		private HashSet<Guid> changedEnableStates;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -41,9 +45,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 
 			// Set the string resources on each string per tab
 			navigator.Pages[0].Text = Resources.IDS_SETTINGS_AGENTS_TAB_FORMATS;
-			navigator.Pages[1].Text = Resources.IDS_SETTINGS_AGENTS_TAB_OUTPUT;
-			navigator.Pages[2].Text = Resources.IDS_SETTINGS_AGENTS_TAB_SAMPLECONVERTERS;
-			navigator.Pages[3].Text = Resources.IDS_SETTINGS_AGENTS_TAB_VISUALS;
+			navigator.Pages[1].Text = Resources.IDS_SETTINGS_AGENTS_TAB_PLAYERS;
+			navigator.Pages[2].Text = Resources.IDS_SETTINGS_AGENTS_TAB_OUTPUT;
+			navigator.Pages[3].Text = Resources.IDS_SETTINGS_AGENTS_TAB_SAMPLECONVERTERS;
+			navigator.Pages[4].Text = Resources.IDS_SETTINGS_AGENTS_TAB_VISUALS;
 		}
 
 		#region ISettingsPage implementation
@@ -54,12 +59,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		public void InitSettings(Manager agentManager, ModuleHandler moduleHandler, MainWindowForm mainWindow, Settings userSettings, Settings windowSettings)
 		{
+			changedEnableStates = new HashSet<Guid>();
+
 			winSettings = new SettingsAgentsWindowSettings(windowSettings, null);
 
-			playersListControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, Manager.AgentType.Players, Manager.AgentType.ModuleConverters);
-			outputListControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, Manager.AgentType.Output);
-			sampleConvertersListControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, Manager.AgentType.SampleConverters);
-			visualsListControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, Manager.AgentType.Visuals);
+			formatsListControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, "Formats", changedEnableStates, playersListControl);
+			playersListControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, "Players", changedEnableStates, formatsListControl);
+			outputListControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, "Output", changedEnableStates);
+			sampleConvertersListControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, "SampleConverters", changedEnableStates);
+			visualsListControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, "Visuals", changedEnableStates);
 		}
 
 
@@ -71,10 +79,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		public void MakeBackup()
 		{
-			playersListControl.MakeBackup();
-			outputListControl.MakeBackup();
-			sampleConvertersListControl.MakeBackup();
-			visualsListControl.MakeBackup();
 		}
 
 
@@ -86,6 +90,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		public void ReadSettings()
 		{
+			formatsListControl.ReadSettings();
 			playersListControl.ReadSettings();
 			outputListControl.ReadSettings();
 			sampleConvertersListControl.ReadSettings();
@@ -103,6 +108,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		{
 			navigator.SelectedIndex = winSettings.ActiveTab;
 
+			formatsListControl.ReadWindowSettings();
 			playersListControl.ReadWindowSettings();
 			outputListControl.ReadWindowSettings();
 			sampleConvertersListControl.ReadWindowSettings();
@@ -119,6 +125,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		public void WriteSettings()
 		{
+			formatsListControl.WriteSettings();
 			playersListControl.WriteSettings();
 			outputListControl.WriteSettings();
 			sampleConvertersListControl.WriteSettings();
@@ -136,6 +143,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		{
 			winSettings.ActiveTab = navigator.SelectedIndex;
 
+			formatsListControl.WriteWindowSettings();
 			playersListControl.WriteWindowSettings();
 			outputListControl.WriteWindowSettings();
 			sampleConvertersListControl.WriteWindowSettings();
@@ -151,6 +159,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		public void CancelSettings()
 		{
+			formatsListControl.CancelSettings();
 			playersListControl.CancelSettings();
 			outputListControl.CancelSettings();
 			sampleConvertersListControl.CancelSettings();
@@ -166,6 +175,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		public void RefreshWindow()
 		{
+			formatsListControl.RefreshWindow();
 			playersListControl.RefreshWindow();
 			outputListControl.RefreshWindow();
 			sampleConvertersListControl.RefreshWindow();

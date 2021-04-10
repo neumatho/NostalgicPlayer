@@ -27,28 +27,54 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 	/// </summary>
 	public partial class AgentsListUserControl : UserControl
 	{
+		/// <summary>
+		/// Holds the needed information for each agent
+		/// </summary>
+		protected class AgentListInfo
+		{
+			/// <summary>
+			/// The ID to use that make the agent unique
+			/// </summary>
+			public Guid Id;
+
+			/// <summary>
+			/// The name of the agent
+			/// </summary>
+			public string Name;
+
+			/// <summary>
+			/// Some description of the agent
+			/// </summary>
+			public string Description;
+
+			/// <summary>
+			/// Extra agent information
+			/// </summary>
+			public AgentInfo AgentInfo;
+		}
+
 		private MainWindowForm mainWin;
 
-		private Manager manager;
-		private Manager.AgentType agentType;
-		private Manager.AgentType[] extraAgentTypes;
+		/// <summary></summary>
+		protected Manager manager;
 
 		private ModuleHandler moduleHandler;
 
 		private SettingsAgentsWindowSettings winSettings;
 		private Settings settings;
+		private string settingsPrefix;
 
-		private Dictionary<Guid, bool> backupEnableStates;
-		private Dictionary<Guid, bool> changedEnableStates;
+		private AgentsListUserControl[] reloadControls;
+		private HashSet<Guid> changedEnableStates;
 
-		private Guid inUseAgent = Guid.Empty;
+		private Guid[] inUseAgents = null;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AgentsListUserControl()
+		protected AgentsListUserControl()
 		{
 			InitializeComponent();
 
@@ -100,15 +126,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		[DefaultValue(true)]
 		public bool EnableCheckColumn
 		{
-			get
-			{
-				return agentsDataGridView.Columns[0].Visible;
-			}
+			get => agentsDataGridView.Columns[0].Visible;
 
-			set
-			{
-				agentsDataGridView.Columns[0].Visible = value;
-			}
+			set => agentsDataGridView.Columns[0].Visible = value;
 		}
 
 
@@ -118,35 +138,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will prepare to handle the settings
 		/// </summary>
 		/********************************************************************/
-		public void InitSettings(Manager agentManager, ModuleHandler modHandler, MainWindowForm mainWindow, Settings userSettings, Settings windowSettings, Manager.AgentType type, params Manager.AgentType[] extraTypes)
+		public void InitSettings(Manager agentManager, ModuleHandler modHandler, MainWindowForm mainWindow, Settings userSettings, Settings windowSettings, string prefix, HashSet<Guid> changedStates, params AgentsListUserControl[] controlsToReload)
 		{
 			mainWin = mainWindow;
 
 			manager = agentManager;
-			agentType = type;
-			extraAgentTypes = extraTypes;
 
 			moduleHandler = modHandler;
 
-			winSettings = new SettingsAgentsWindowSettings(windowSettings, agentType);
+			winSettings = new SettingsAgentsWindowSettings(windowSettings, prefix);
 			settings = userSettings;
+			settingsPrefix = prefix;
 
-			backupEnableStates = new Dictionary<Guid, bool>();
-			changedEnableStates = new Dictionary<Guid, bool>();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will make a backup of settings that can be changed in real-time
-		/// </summary>
-		/********************************************************************/
-		public void MakeBackup()
-		{
-			// Make a backup of the enable state for all the agents
-			foreach (AgentInfo agentInfo in GetAllAgents())
-				backupEnableStates[agentInfo.TypeId] = agentInfo.Enabled;
+			reloadControls = controlsToReload;
+			changedEnableStates = changedStates;
 		}
 
 
@@ -194,13 +199,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		{
 			if (EnableCheckColumn)
 			{
-				foreach (KeyValuePair<Guid, bool> pair in changedEnableStates)
-					settings.SetBoolEntry(agentType + " Agents", pair.Key.ToString("D"), pair.Value);
+				foreach (AgentListInfo agentListInfo in GetAllAgents().Where(agentListInfo => changedEnableStates.Contains(agentListInfo.AgentInfo.TypeId)))
+				{
+					settings.SetBoolEntry(settingsPrefix + " Agents", agentListInfo.AgentInfo.TypeId.ToString("D"), agentListInfo.AgentInfo.Enabled);
+					changedEnableStates.Remove(agentListInfo.AgentInfo.TypeId);
+				}
 			}
-
-			changedEnableStates.Clear();
-			backupEnableStates.Clear();
-			MakeBackup();
 		}
 
 
@@ -238,19 +242,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		{
 			// Look at the changed states and see if they are different from
 			// the backed up
-			foreach (KeyValuePair<Guid, bool> pair in changedEnableStates)
+			foreach (AgentListInfo agentListInfo in GetAllAgents().Where(agentListInfo => changedEnableStates.Contains(agentListInfo.AgentInfo.TypeId)))
 			{
-				if (backupEnableStates[pair.Key] != pair.Value)
-				{
-					AgentInfo agentInfo = GetAllAgents().FirstOrDefault(a => a.TypeId == pair.Key);
-					if (agentInfo != null)
-					{
-						if (pair.Value)
-							DisableAgent(agentInfo);
-						else
-							EnableAgent(agentInfo);
-					}
-				}
+				if (agentListInfo.AgentInfo.Enabled)
+					DisableAgent(agentListInfo);
+				else
+					EnableAgent(agentListInfo);
 			}
 		}
 
@@ -263,15 +260,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		public void RefreshWindow()
 		{
-			if ((agentType == Manager.AgentType.Players) || (agentType == Manager.AgentType.Output))
+			Guid[] agentIds = moduleHandler.IsModuleLoaded ? GetAgentIdsInUse(moduleHandler) : inUseAgents;
+
+			if (agentIds != null)
 			{
 				Color itemColor = moduleHandler.IsModuleLoaded ? Color.Blue : Color.Black;
-				Guid typeId = moduleHandler.IsModuleLoaded ? agentType == Manager.AgentType.Players ? moduleHandler.StaticModuleInformation.ConverterAgentInfo != null ? moduleHandler.StaticModuleInformation.ConverterAgentInfo.TypeId : moduleHandler.StaticModuleInformation.PlayerAgentInfo.TypeId : moduleHandler.OutputAgentInfo.TypeId : inUseAgent;
 
-				if (typeId != Guid.Empty)
+				foreach (Guid id in agentIds)
 				{
 					// Find the right row
-					DataGridViewRow row = agentsDataGridView.Rows.Cast<DataGridViewRow>().FirstOrDefault(r => ((AgentInfo)r.Tag)?.TypeId == typeId);
+					DataGridViewRow row = agentsDataGridView.Rows.Cast<DataGridViewRow>().FirstOrDefault(r => ((AgentListInfo)r.Tag)?.Id == id);
 					if (row != null)
 					{
 						DataGridViewCellStyle style = row.Cells[1].Style;
@@ -281,14 +279,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 						style = row.Cells[2].Style;
 						style.ForeColor = itemColor;
 						style.SelectionForeColor = itemColor;
-
-						inUseAgent = typeId;
 					}
 				}
 
-				if (!moduleHandler.IsModuleLoaded)
-					inUseAgent = Guid.Empty;
+				inUseAgents = agentIds;
 			}
+
+			if (!moduleHandler.IsModuleLoaded)
+				inUseAgents = null;
 		}
 
 		#region Event handlers
@@ -307,8 +305,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			DataGridViewSelectedRowCollection selectedRows = agentsDataGridView.SelectedRows;
 			if (selectedRows.Count > 0)
 			{
-				AgentInfo agentInfo = ((AgentInfo)selectedRows[0].Tag);
-				if (agentInfo != null)
+				AgentInfo agentInfo = ((AgentListInfo)selectedRows[0].Tag)?.AgentInfo;
+				if ((agentInfo != null) && agentInfo.Enabled)
 				{
 					enableSettings = agentInfo.HasSettings;
 					enableDisplay = agentInfo.HasDisplay;
@@ -331,24 +329,34 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			if (EnableCheckColumn)
 			{
 				// Get the agent information
-				AgentInfo agentInfo = (AgentInfo)agentsDataGridView.Rows[e.RowIndex].Tag;
-
-				if (agentInfo.Enabled)
+				AgentListInfo agentListInfo = (AgentListInfo)agentsDataGridView.Rows[e.RowIndex].Tag;
+				if (agentListInfo != null)
 				{
-					DisableAgent(agentInfo);
-					agentsDataGridView.Rows[e.RowIndex].Cells[0].Value = null;
-				}
-				else
-				{
-					EnableAgent(agentInfo);
-					agentsDataGridView.Rows[e.RowIndex].Cells[0].Value = Resources.IDB_CHECKMARK;
-				}
+					if (agentListInfo.AgentInfo.Enabled)
+					{
+						DisableAgent(agentListInfo);
+						agentsDataGridView.Rows[e.RowIndex].Cells[0].Value = null;
+					}
+					else
+					{
+						EnableAgent(agentListInfo);
+						agentsDataGridView.Rows[e.RowIndex].Cells[0].Value = Resources.IDB_CHECKMARK;
+					}
 
-				// Remember the change
-				changedEnableStates[agentInfo.TypeId] = agentInfo.Enabled;
+					// Update the grid
+					agentsDataGridView.InvalidateRow(e.RowIndex);
 
-				// Update the grid
-				agentsDataGridView.InvalidateRow(e.RowIndex);
+					// Update other lists if needed
+					if (reloadControls != null)
+					{
+						foreach (AgentsListUserControl listControl in reloadControls)
+							listControl.ReloadItems();
+					}
+
+					// Update the buttons
+					settingsButton.Enabled = agentListInfo.AgentInfo.Enabled && agentListInfo.AgentInfo.HasSettings;
+					displayButton.Enabled = agentListInfo.AgentInfo.Enabled && agentListInfo.AgentInfo.HasDisplay;
+				}
 			}
 		}
 
@@ -373,9 +381,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		private void SettingsButton_Click(object sender, EventArgs e)
 		{
-			AgentInfo agentInfo = (AgentInfo)agentsDataGridView.SelectedRows[0].Tag;
-
-			mainWin.OpenAgentSettingsWindow(agentInfo);
+			AgentInfo agentInfo = ((AgentListInfo)agentsDataGridView.SelectedRows[0].Tag)?.AgentInfo;
+			if (agentInfo != null)
+				mainWin.OpenAgentSettingsWindow(agentInfo);
 		}
 
 
@@ -387,31 +395,68 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		private void DisplayButton_Click(object sender, EventArgs e)
 		{
-			AgentInfo agentInfo = (AgentInfo)agentsDataGridView.SelectedRows[0].Tag;
+			AgentInfo agentInfo = ((AgentListInfo)agentsDataGridView.SelectedRows[0].Tag)?.AgentInfo;
+			if (agentInfo != null)
+				mainWin.OpenAgentDisplayWindow(agentInfo);
+		}
+		#endregion
 
-			mainWin.OpenAgentDisplayWindow(agentInfo);
+		#region Overridden methods
+		/********************************************************************/
+		/// <summary>
+		/// Will return all agents of the main and extra types
+		/// </summary>
+		/********************************************************************/
+		protected virtual IEnumerable<AgentListInfo> GetAllAgents()
+		{
+			yield break;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the IDs of the agents in use if any
+		/// </summary>
+		/********************************************************************/
+		protected virtual Guid[] GetAgentIdsInUse(ModuleHandler handler)
+		{
+			return null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the agents to enable/disable for the given agent
+		/// </summary>
+		/********************************************************************/
+		protected virtual IEnumerable<AgentInfo> GetAgentCollection(AgentListInfo agentListInfo)
+		{
+			yield return agentListInfo.AgentInfo;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will make some extra closing, if an agent is disabled
+		/// </summary>
+		/********************************************************************/
+		protected virtual void CloseAgent(ModuleHandler handler)
+		{
 		}
 		#endregion
 
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
-		/// Will return all agents of the main and extra types
+		/// Will reload all the items in the list
 		/// </summary>
 		/********************************************************************/
-		private IEnumerable<AgentInfo> GetAllAgents()
+		private void ReloadItems()
 		{
-			foreach (AgentInfo agentInfo in manager.GetAllAgents(agentType))
-				yield return agentInfo;
-
-			if (extraAgentTypes != null)
-			{
-				foreach (Manager.AgentType type in extraAgentTypes)
-				{
-					foreach (AgentInfo agentInfo in manager.GetAllAgents(type))
-						yield return agentInfo;
-				}
-			}
+			AddItems();
 		}
 
 
@@ -423,14 +468,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		private void AddItems()
 		{
-			foreach (AgentInfo agentInfo in GetAllAgents())
+			agentsDataGridView.Rows.Clear();
+
+			foreach (AgentListInfo agentListInfo in GetAllAgents())
 			{
-				DataGridViewRow row = new DataGridViewRow { Tag = agentInfo };
+				DataGridViewRow row = new DataGridViewRow { Tag = agentListInfo };
 				row.Cells.AddRange(new DataGridViewCell[]
 				{
-					new DataGridViewImageCell { Value = agentInfo.Enabled ? Resources.IDB_CHECKMARK : null },
-					new KryptonDataGridViewTextBoxCell { Value = agentInfo.TypeName },
-					new KryptonDataGridViewTextBoxCell { Value = agentInfo.Version.ToString(3) }
+					new DataGridViewImageCell { Value = GetAgentCollection(agentListInfo).FirstOrDefault(agentInfo => agentInfo.Enabled) != null ? Resources.IDB_CHECKMARK : null },
+					new KryptonDataGridViewTextBoxCell { Value = agentListInfo.Name },
+					new KryptonDataGridViewTextBoxCell { Value = agentListInfo.AgentInfo.Version.ToString(3) }
 				});
 
 				agentsDataGridView.Rows.Add(row);
@@ -458,7 +505,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			DataGridViewSelectedRowCollection selectedRows = agentsDataGridView.SelectedRows;
 			if (selectedRows.Count > 0)
 			{
-				string description = ((AgentInfo)selectedRows[0].Tag)?.Description;
+				string description = ((AgentListInfo)selectedRows[0].Tag)?.Description;
 
 				int listWidth = descriptionDataGridView.Columns[0].Width;
 
@@ -540,22 +587,34 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will enable the agent
 		/// </summary>
 		/********************************************************************/
-		private void EnableAgent(AgentInfo agentInfo)
+		private void EnableAgent(AgentListInfo agentListInfo)
 		{
 			// First check to see if we need to load the agent.
 			// This is checked to see if other types is enabled or not
 			// supported by this agent
-			if (manager.GetAllTypes(agentInfo.AgentId).FirstOrDefault(a => (a.TypeId != agentInfo.TypeId) && a.Enabled) == null)
+			if (manager.GetAllTypes(agentListInfo.AgentInfo.AgentId).FirstOrDefault(a => (a.TypeId != agentListInfo.AgentInfo.TypeId) && a.Enabled) == null)
 			{
 				// Need to load the agent
-				manager.LoadAgent(agentInfo.AgentId);
+				manager.LoadAgent(agentListInfo.AgentInfo.AgentId);
 			}
 
-			// Add any menu items
-			mainWin.AddAgentToMenu(agentInfo);
+			foreach (AgentInfo agentInfo in GetAgentCollection(agentListInfo))
+			{
+				if (!agentInfo.Enabled)
+				{
+					// Add any menu items
+					mainWin.AddAgentToMenu(agentInfo);
 
-			// And enable the agent
-			agentInfo.Enabled = true;
+					// And enable the agent
+					agentInfo.Enabled = true;
+
+					// Remember the change
+					if (changedEnableStates.Contains(agentInfo.TypeId))
+						changedEnableStates.Remove(agentInfo.TypeId);
+					else
+						changedEnableStates.Add(agentInfo.TypeId);
+				}
+			}
 		}
 
 
@@ -565,37 +624,40 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will disable the agent
 		/// </summary>
 		/********************************************************************/
-		private void DisableAgent(AgentInfo agentInfo)
+		private void DisableAgent(AgentListInfo agentListInfo)
 		{
 			// If the agent is in use, free the playing module
-			if (agentInfo.TypeId == inUseAgent)
+			if ((inUseAgents != null) && inUseAgents.Contains(agentListInfo.Id))
 			{
 				mainWin.StopModule();
-
-				if (agentType == Manager.AgentType.Output)
-					moduleHandler.CloseOutputAgent();
+				CloseAgent(moduleHandler);
 			}
 
-			// Close any opened windows
-			mainWin.CloseAgentSettingsWindow(agentInfo);
-			mainWin.CloseAgentDisplayWindow(agentInfo);
+			foreach (AgentInfo agentInfo in GetAgentCollection(agentListInfo))
+			{
+				// Close any opened windows
+				mainWin.CloseAgentSettingsWindow(agentInfo);
+				mainWin.CloseAgentDisplayWindow(agentInfo);
 
-			// Remove any menu items
-			mainWin.RemoveAgentFromMenu(agentInfo);
+				// Remove any menu items
+				mainWin.RemoveAgentFromMenu(agentInfo);
 
-			// Change the enable status
-			agentInfo.Enabled = false;
+				// Change the enable status
+				agentInfo.Enabled = false;
+
+				// Remember the change
+				if (changedEnableStates.Contains(agentInfo.TypeId))
+					changedEnableStates.Remove(agentInfo.TypeId);
+				else
+					changedEnableStates.Add(agentInfo.TypeId);
+			}
 
 			// Check to see if we need to unload the agent
-			if (manager.GetAllTypes(agentInfo.AgentId).FirstOrDefault(a => a.Enabled) == null)
+			if (manager.GetAllTypes(agentListInfo.AgentInfo.AgentId).FirstOrDefault(a => a.Enabled) == null)
 			{
 				// Unload the agent
-				manager.UnloadAgent(agentInfo.AgentId);
+				manager.UnloadAgent(agentListInfo.AgentInfo.AgentId);
 			}
-
-			// Update the buttons
-			settingsButton.Enabled = false;
-			displayButton.Enabled = false;
 		}
 		#endregion
 	}

@@ -126,6 +126,15 @@
   <data name="IDS_FC13_ERR_LOADING_SAMPLES" xml:space="preserve">
     <value>Can't read the sample data</value>
   </data>
+  <data name="IDS_MODCONV_DESCRIPTION" xml:space="preserve">
+    <value>Written by Thomas Neumann.
+
+Converts different module formats (mostly Amiga formats) to another format NostalgicPlayer understands.
+
+Current version can convert these formats:
+
+Future Composer 1.0 - 1.3 -&gt; Future Composer 1.4</value>
+  </data>
   <data name="IDS_MODCONV_DESCRIPTION_AGENT1" xml:space="preserve">
     <value>Original player by SuperSero.
 Converted to C# by Thomas Neumann.

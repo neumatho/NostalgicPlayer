@@ -61,6 +61,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Written by Thomas Neumann.
+        ///
+        ///This player can play all kinds of module formats. It only have one player, but different parts are turned on or off depending on the format detected..
+        /// </summary>
+        internal static string IDS_DESCRIPTION {
+            get {
+                return ResourceManager.GetString("IDS_DESCRIPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Original player by Karsten Obarski.
         ///Converted to C# by Thomas Neumann.
         ///
