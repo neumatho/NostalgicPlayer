@@ -74,6 +74,9 @@
     <Content Include="..\Clients\NostalgicPlayer\bin\$(Platform)\$(Configuration)\net5.0-windows\Agents\Players\*.dll">
       <Link>NostalgicPlayer\Agents\Players\%(Filename)%(Extension)</Link>
     </Content>
+    <Content Include="..\Clients\NostalgicPlayer\bin\$(Platform)\$(Configuration)\net5.0-windows\Agents\ModuleConverters\*.dll">
+      <Link>NostalgicPlayer\Agents\ModuleConverters\%(Filename)%(Extension)</Link>
+    </Content>
     <Content Include="..\Clients\NostalgicPlayer\bin\$(Platform)\$(Configuration)\net5.0-windows\Agents\SampleConverters\*.dll">
       <Link>NostalgicPlayer\Agents\SampleConverters\%(Filename)%(Extension)</Link>
     </Content>
