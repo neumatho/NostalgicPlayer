@@ -26,7 +26,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		private Resampler resampler;
 
 		private int maxBufferSize;
-		private int silenceCount;
+		private int delayCount;
 
 		/********************************************************************/
 		/// <summary>
@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 			playing = false;
 
 			maxBufferSize = 0;
-			silenceCount = 0;
+			delayCount = 0;
 
 			resampler = new Resampler();
 			return resampler.InitResampler(playerConfiguration, out errorMessage);
@@ -163,24 +163,26 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 					// We need to keep track of the maximum size the buffer could be
 					maxBufferSize = Math.Max(maxBufferSize, count);
 
-					// Check if we need to do the silence
-					if (silenceCount > 0)
+					// Check if we need to delay the filling (wait for the latency buffer to be played)
+					if (delayCount > 0)
 					{
-						int todo = Math.Min(silenceCount, count);
-						Array.Clear(buffer, offset, todo);
+						int todo = Math.Min(delayCount, count);
 
-						silenceCount -= todo;
-						if (silenceCount == 0)
+						delayCount -= todo;
+						if (delayCount == 0)
+						{
+							// Now we're sure that the whole sampling has been played, so tell the client
 							OnEndReached(this, EventArgs.Empty);
+						}
 
-						return todo;
+						return 0;
 					}
 
 					int samplesTaken = resampler.Resampling(buffer, offset, count / bytesPerSampling, out bool hasEndReached);
 					HasEndReached = hasEndReached;
 
 					if (hasEndReached)
-						silenceCount = maxBufferSize;		// Set the silence count to a whole buffer
+						delayCount = maxBufferSize;		// Set the delay count to a whole buffer
 
 					return samplesTaken * bytesPerSampling;
 				}
