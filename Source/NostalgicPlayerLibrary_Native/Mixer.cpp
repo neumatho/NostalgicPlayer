@@ -15,12 +15,17 @@ extern "C"
 
 	#define CLICK_SHIFT		6
 
+	#pragma region Mixers
+	
+	#pragma region 32 bit mixers (only used on 32-bit platforms)
+
+	#ifdef MIX32
 	/********************************************************************/
 	/// <summary>
 	/// Mixes a 8 bit sample into a mono output buffer
 	/// </summary>
 	/********************************************************************/
-	EXPORTAPI(INT32, Mix8MonoNormal(const INT8* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel))
+	EXPORTAPI(INT32, Mix8MonoNormal32(const INT8* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel))
 	{
 		dest += offset;
 
@@ -42,7 +47,7 @@ extern "C"
 	/// Mixes a 8 bit sample into a stereo output buffer
 	/// </summary>
 	/********************************************************************/
-	EXPORTAPI(INT32, Mix8StereoNormal(const INT8* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel))
+	EXPORTAPI(INT32, Mix8StereoNormal32(const INT8* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel))
 	{
 		dest += offset;
 
@@ -65,7 +70,7 @@ extern "C"
 	/// Mixes a 8 bit sample into a mono output buffer with interpolation
 	/// </summary>
 	/********************************************************************/
-	EXPORTAPI(INT32, Mix8MonoInterp(const INT8* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 oldLVol, INT32 *rampVol))
+	EXPORTAPI(INT32, Mix8MonoInterp32(const INT8* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 oldLVol, INT32 *rampVol))
 	{
 		dest += offset;
 
@@ -119,7 +124,7 @@ extern "C"
 	/// interpolation
 	/// </summary>
 	/********************************************************************/
-	EXPORTAPI(INT32, Mix8StereoInterp(const INT8* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel, INT32 oldLVol, INT32 oldRVol, INT32* rampVol))
+	EXPORTAPI(INT32, Mix8StereoInterp32(const INT8* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel, INT32 oldLVol, INT32 oldRVol, INT32* rampVol))
 	{
 		dest += offset;
 
@@ -167,8 +172,164 @@ extern "C"
 
 		return index;
 	}
+	#endif
+
+	#pragma endregion
+
+	#pragma region 64 bit mixers (used on both platforms)
+	/********************************************************************/
+	/// <summary>
+	/// Mixes a 8 bit sample into a mono output buffer
+	/// </summary>
+	/********************************************************************/
+	EXPORTAPI(INT64, Mix8MonoNormal64(const INT8* source, INT32* dest, INT32 offset, INT64 index, INT64 increment, INT32 todo, INT32 lVolSel))
+	{
+		dest += offset;
+
+		while (todo--)
+		{
+			INT16 sample = (static_cast<INT16>(source[index >> FRACBITS])) << 7;
+			index += increment;
+
+			*dest++ += lVolSel * sample;
+		}
+
+		return index;
+	}
 
 
+
+	/********************************************************************/
+	/// <summary>
+	/// Mixes a 8 bit sample into a stereo output buffer
+	/// </summary>
+	/********************************************************************/
+	EXPORTAPI(INT64, Mix8StereoNormal64(const INT8* source, INT32* dest, INT32 offset, INT64 index, INT64 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel))
+	{
+		dest += offset;
+
+		while (todo--)
+		{
+			INT16 sample = (static_cast<INT16>(source[index >> FRACBITS])) << 8;
+			index += increment;
+
+			*dest++ += lVolSel * sample;
+			*dest++ += rVolSel * sample;
+		}
+
+		return index;
+	}
+
+
+
+	/********************************************************************/
+	/// <summary>
+	/// Mixes a 8 bit sample into a mono output buffer with interpolation
+	/// </summary>
+	/********************************************************************/
+	EXPORTAPI(INT64, Mix8MonoInterp64(const INT8* source, INT32* dest, INT32 offset, INT64 index, INT64 increment, INT32 todo, INT32 lVolSel, INT32 oldLVol, INT32* rampVol))
+	{
+		dest += offset;
+
+		INT32 ramVol = *rampVol;
+		INT32 sample;
+
+		if (ramVol != 0)
+		{
+			oldLVol -= lVolSel;
+
+			while (todo--)
+			{
+				sample = static_cast<INT32>((static_cast<INT64>(source[index >> FRACBITS]) << 7) +
+					(((static_cast<INT64>(source[(index >> FRACBITS) + 1]) << 7) -
+						(static_cast<INT64>(source[index >> FRACBITS]) << 7)) *
+						(index & FRACMASK) >> FRACBITS));
+
+				index += increment;
+
+				*dest++ += ((lVolSel << CLICK_SHIFT) + oldLVol * ramVol) * sample >> CLICK_SHIFT;
+
+				if (--ramVol == 0)
+					break;
+			}
+
+			*rampVol = ramVol;
+			if (todo < 0)
+				return index;
+		}
+
+		while (todo--)
+		{
+			sample = static_cast<INT32>((static_cast<INT64>(source[index >> FRACBITS]) << 7) +
+				(((static_cast<INT64>(source[(index >> FRACBITS) + 1]) << 7) -
+					(static_cast<INT64>(source[index >> FRACBITS]) << 7)) *
+					(index & FRACMASK) >> FRACBITS));
+
+			index += increment;
+
+			*dest++ += lVolSel * sample;
+		}
+
+		return index;
+	}
+
+
+
+	/********************************************************************/
+	/// <summary>
+	/// Mixes a 8 bit sample into a stereo output buffer with
+	/// interpolation
+	/// </summary>
+	/********************************************************************/
+	EXPORTAPI(INT64, Mix8StereoInterp64(const INT8* source, INT32* dest, INT32 offset, INT64 index, INT64 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel, INT32 oldLVol, INT32 oldRVol, INT32* rampVol))
+	{
+		dest += offset;
+
+		INT32 ramVol = *rampVol;
+		INT32 sample;
+
+		if (ramVol != 0)
+		{
+			oldLVol -= lVolSel;
+			oldRVol -= rVolSel;
+
+			while (todo--)
+			{
+				sample = static_cast<INT32>((static_cast<INT64>(source[index >> FRACBITS]) << 8) +
+					(((static_cast<INT64>(source[(index >> FRACBITS) + 1]) << 8) -
+						(static_cast<INT64>(source[index >> FRACBITS]) << 8)) *
+						(index & FRACMASK) >> FRACBITS));
+
+				index += increment;
+
+				*dest++ += ((lVolSel << CLICK_SHIFT) + oldLVol * ramVol) * sample >> CLICK_SHIFT;
+				*dest++ += ((rVolSel << CLICK_SHIFT) + oldRVol * ramVol) * sample >> CLICK_SHIFT;
+
+				if (--ramVol == 0)
+					break;
+			}
+
+			*rampVol = ramVol;
+			if (todo < 0)
+				return index;
+		}
+
+		while (todo--)
+		{
+			sample = static_cast<INT32>((static_cast<INT64>(source[index >> FRACBITS]) << 8) +
+				(((static_cast<INT64>(source[(index >> FRACBITS) + 1]) << 8) -
+					(static_cast<INT64>(source[index >> FRACBITS]) << 8)) *
+					(index & FRACMASK) >> FRACBITS));
+
+			index += increment;
+
+			*dest++ += lVolSel * sample;
+			*dest++ += rVolSel * sample;
+		}
+
+		return index;
+	}
+	#pragma endregion
 
 	/********************************************************************/
 	/// <summary>
@@ -369,9 +530,9 @@ extern "C"
 			}
 		}
 	}
+	#pragma endregion
 
-
-
+	#pragma region Resampler
 	/********************************************************************/
 	/// <summary>
 	/// Resample a mono sample into a mono output buffer
@@ -670,4 +831,5 @@ extern "C"
 			}
 		}
 	}
+	#pragma endregion
 }
