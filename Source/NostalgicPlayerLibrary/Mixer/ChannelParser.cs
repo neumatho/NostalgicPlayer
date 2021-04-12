@@ -44,7 +44,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			Flags newFlags = flags;
 			Flags retFlags = flags;
 			Flags privFlags = privateFlags;
-			SampleFlags infoFlags = SampleFlags.None;
+			SampleFlag infoFlags = SampleFlag.None;
 
 			if ((newFlags & Flags.TrigIt) != 0)
 			{
@@ -90,7 +90,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 				newFlags &= ~(Flags.SpeakerVolume | Flags.Volume | Flags.Panning);
 				retFlags &= ~(Flags.SpeakerVolume | Flags.Volume | Flags.Panning);
-				infoFlags |= SampleFlags.Speaker;
+				infoFlags |= SampleFlag.Speaker;
 			}
 
 			// Change the volume?
@@ -158,10 +158,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						voiceInfo.LoopAddress = loopAddress;
 						voiceInfo.RepeatPosition = loopStart;
 						voiceInfo.RepeatEnd = loopStart + loopLength;
-						infoFlags |= SampleFlags.Loop;
+						infoFlags |= SampleFlag.Loop;
 
 						if ((newFlags & Flags.PingPong) != 0)
-							infoFlags |= SampleFlags.Bidi;
+							infoFlags |= SampleFlag.Bidi;
 					}
 
 					// Special release command. Used in Octalyzer player
@@ -173,7 +173,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					}
 
 					if ((newFlags & Flags._16Bit) != 0)
-						infoFlags |= SampleFlags._16Bits;
+						infoFlags |= SampleFlag._16Bits;
 				}
 			}
 

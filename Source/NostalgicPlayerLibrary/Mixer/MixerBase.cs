@@ -92,7 +92,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				info.Enabled = true;
 				info.Kick = false;
 				info.Active = false;
-				info.Flags = SampleFlags.None;
+				info.Flags = SampleFlag.None;
 				info.Address = null;
 				info.LoopAddress = null;
 				info.Start = 0;

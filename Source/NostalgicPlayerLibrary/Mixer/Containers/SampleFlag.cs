@@ -14,7 +14,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers
 	/// Different flags used when playing a sample
 	/// </summary>
 	[Flags]
-	internal enum SampleFlags
+	internal enum SampleFlag
 	{
 		None = 0,
 

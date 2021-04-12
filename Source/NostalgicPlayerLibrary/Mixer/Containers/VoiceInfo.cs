@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers
 		public bool Enabled;				// True -> the channel is enabled
 		public bool Kick;					// True -> sample has to be restarted
 		public bool Active;					// True -> sample is playing
-		public SampleFlags Flags;			// 16/8 bits, looping/one-shot etc.
+		public SampleFlag Flags;			// 16/8 bits, looping/one-shot etc.
 		public sbyte[] Address;				// Address to the sample
 		public sbyte[] LoopAddress;			// Address to the loop point (mostly the same as Address above)
 		public uint Start;					// Start index

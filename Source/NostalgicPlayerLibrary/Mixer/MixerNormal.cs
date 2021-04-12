@@ -83,7 +83,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				{
 					vnf.Increment = ((long)vnf.Frequency << Native.FRACBITS) / mixerFrequency;
 
-					if ((vnf.Flags & SampleFlags.Reverse) != 0)
+					if ((vnf.Flags & SampleFlag.Reverse) != 0)
 						vnf.Increment = -vnf.Increment;
 
 					int lVol, rVol;
@@ -104,7 +104,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 					if ((mode & MixerMode.Stereo) != 0)
 					{
-						if ((vnf.Flags & SampleFlags.Speaker) != 0)
+						if ((vnf.Flags & SampleFlag.Speaker) != 0)
 						{
 							vnf.LeftVolumeSelected = lVol;
 							vnf.RightVolumeSelected = rVol;
@@ -164,19 +164,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			// stops playing if it reached the end of the sample
 			while (todo > 0)
 			{
-				if ((vnf.Flags & SampleFlags.Reverse) != 0)
+				if ((vnf.Flags & SampleFlag.Reverse) != 0)
 				{
 					// The sampling is playing in reverse
-					if (((vnf.Flags & SampleFlags.Loop) != 0) && (vnf.Current < idxLoopPos))
+					if (((vnf.Flags & SampleFlag.Loop) != 0) && (vnf.Current < idxLoopPos))
 					{
 						// The sample is looping, and has reached the loop start index
-						if ((vnf.Flags & SampleFlags.Bidi) != 0)
+						if ((vnf.Flags & SampleFlag.Bidi) != 0)
 						{
 							// Sample is doing bidirectional loops, so 'bounce'
 							// the current index against the idxLoopPos
 							vnf.Current = idxLoopPos + (idxLoopPos - vnf.Current);
 							vnf.Increment = -vnf.Increment;
-							vnf.Flags &= ~SampleFlags.Reverse;
+							vnf.Flags &= ~SampleFlag.Reverse;
 						}
 						else
 						{
@@ -200,7 +200,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				else
 				{
 					// The sample is playing forward
-					if ((vnf.Flags & SampleFlags.Loop) != 0)
+					if ((vnf.Flags & SampleFlag.Loop) != 0)
 					{
 						if (vnf.Current >= idxLoopEnd)
 						{
@@ -220,19 +220,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 							{
 								// Yes, so set the current position
 								vnf.Current = vnf.Current - idxLoopEnd;
-								vnf.Flags |= SampleFlags.Release;
-								vnf.Flags &= ~SampleFlags.Loop;
+								vnf.Flags |= SampleFlag.Release;
+								vnf.Flags &= ~SampleFlag.Loop;
 							}
 							else
 							{
 								// The sample is looping, so check if it reached the loopEnd index
-								if ((vnf.Flags & SampleFlags.Bidi) != 0)
+								if ((vnf.Flags & SampleFlag.Bidi) != 0)
 								{
 									// Sample is doing bidirectional loops, so 'bounce'
 									// the current index against the idxLoopEnd
 									vnf.Current = idxLoopEnd - (vnf.Current - idxLoopEnd);
 									vnf.Increment = -vnf.Increment;
-									vnf.Flags |= SampleFlags.Reverse;
+									vnf.Flags |= SampleFlag.Reverse;
 								}
 								else
 								{
@@ -246,7 +246,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					else
 					{
 						// Sample is not looping, so check if it reached the last position
-						if ((vnf.Flags & SampleFlags.Release) != 0)
+						if ((vnf.Flags & SampleFlag.Release) != 0)
 						{
 							// We play the release part
 							if (vnf.Current >= idxReleaseEnd)
@@ -270,10 +270,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					}
 				}
 
-				long end = (vnf.Flags & SampleFlags.Reverse) != 0 ?
-							(vnf.Flags & SampleFlags.Loop) != 0 ? idxLoopPos : 0 :
-							(vnf.Flags & SampleFlags.Loop) != 0 ? idxLoopEnd :
-							(vnf.Flags & SampleFlags.Release) != 0 ? idxReleaseEnd : idxSize;
+				long end = (vnf.Flags & SampleFlag.Reverse) != 0 ?
+							(vnf.Flags & SampleFlag.Loop) != 0 ? idxLoopPos : 0 :
+							(vnf.Flags & SampleFlag.Loop) != 0 ? idxLoopEnd :
+							(vnf.Flags & SampleFlag.Release) != 0 ? idxReleaseEnd : idxSize;
 
 				// If the sample is not blocked
 				int done;
@@ -315,7 +315,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 								// Check to see if we need to make interpolation on the mixing
 								if ((mode & MixerMode.Interpolation) != 0)
 								{
-									if ((vnf.Flags & SampleFlags._16Bits) != 0)
+									if ((vnf.Flags & SampleFlag._16Bits) != 0)
 									{
 										// 16 bit input sample to be mixed
 										if ((mode & MixerMode.Stereo) != 0)
@@ -345,7 +345,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 								else
 								{
 									// No interpolation
-									if ((vnf.Flags & SampleFlags._16Bits) != 0)
+									if ((vnf.Flags & SampleFlag._16Bits) != 0)
 									{
 										// 16 bit input sample to be mixed
 										if ((mode & MixerMode.Stereo) != 0)
@@ -382,7 +382,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 							// Check to see if we need to make interpolation on the mixing
 							if ((mode & MixerMode.Interpolation) != 0)
 							{
-								if ((vnf.Flags & SampleFlags._16Bits) != 0)
+								if ((vnf.Flags & SampleFlag._16Bits) != 0)
 								{
 									// 16 bit input sample to be mixed
 									if ((mode & MixerMode.Stereo) != 0)
@@ -412,7 +412,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 							else
 							{
 								// No interpolation
-								if ((vnf.Flags & SampleFlags._16Bits) != 0)
+								if ((vnf.Flags & SampleFlag._16Bits) != 0)
 								{
 									// 16 bit input sample to be mixed
 									if ((mode & MixerMode.Stereo) != 0)
