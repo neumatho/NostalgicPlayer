@@ -118,13 +118,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions
-		{
-			get
-			{
-				return new [] { "mod" };
-			}
-		}
+		public override string[] FileExtensions => new [] { "mod" };
 
 
 
