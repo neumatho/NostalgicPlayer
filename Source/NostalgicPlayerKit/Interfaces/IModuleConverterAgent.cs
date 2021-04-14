@@ -14,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	/// <summary>
 	/// Agents of this type, can convert one module format to another
 	/// </summary>
-	public interface IModuleConverter : IAgentWorker
+	public interface IModuleConverterAgent : IAgentWorker
 	{
 		/// <summary>
 		/// Test the file to see if it could be identified

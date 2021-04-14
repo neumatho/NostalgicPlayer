@@ -27,6 +27,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Agents\ModuleConverters\ModuleConverter\ModuleConverter.csproj" />
+    <ProjectReference Include="..\..\Agents\Output\CoreAudio\CoreAudio.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\FutureComposer\FutureComposer.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\JamCracker\JamCracker.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\ModTracker\ModTracker.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\Sample\Sample.csproj" />
+    <ProjectReference Include="..\..\Agents\SampleConverters\AudioIff\AudioIff.csproj" />
+    <ProjectReference Include="..\..\Agents\SampleConverters\Iff16Sv\Iff16Sv.csproj" />
+    <ProjectReference Include="..\..\Agents\SampleConverters\Iff8Svx\Iff8Svx.csproj" />
+    <ProjectReference Include="..\..\Agents\SampleConverters\RiffWave\RiffWave.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayerLibrary\NostalgicPlayerLibrary.csproj" />
   </ItemGroup>
@@ -35,7 +45,7 @@
   </Target>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /Y $(SolutionDir)NostalgicPlayerLibrary_Native\bin\$(PlatformName)\$(ConfigurationName) $(TargetDir)&#xD;&#xA;$(SolutionDir)Clients\CopyAgents.bat &quot;$(TargetDir)&quot; &quot;$(SolutionDir)&quot; $(ConfigurationName)" />
+    <Exec Command="xcopy /Y $(SolutionDir)NostalgicPlayerLibrary_Native\bin\$(PlatformName)\$(ConfigurationName) $(TargetDir)&#xD;&#xA;" />
   </Target>
 
 </Project>

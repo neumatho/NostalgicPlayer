@@ -6,7 +6,6 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-
 using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -18,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 	/// <summary>
 	/// Base class for all the formats
 	/// </summary>
-	internal abstract class ModuleConverterWorkerBase : IModuleConverter
+	internal abstract class ModuleConverterWorkerBase : IModuleConverterAgent
 	{
 		#region IModuleConverter implementation
 		/********************************************************************/

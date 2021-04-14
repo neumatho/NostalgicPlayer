@@ -67,9 +67,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 			public IAgentSettings Settings;
 		}
 
-		private readonly object loadListLock = new object();
-		private readonly Dictionary<Guid, AgentLoadInfo> loadedAgentsByAgentId = new Dictionary<Guid, AgentLoadInfo>();
-		private readonly Dictionary<AgentType, AgentInfo[]> loadedAgentsByAgentType = new Dictionary<AgentType, AgentInfo[]>();
+		private readonly object listLock = new object();
+		private readonly Dictionary<Guid, AgentLoadInfo> agentsByAgentId = new Dictionary<Guid, AgentLoadInfo>();
+		private readonly Dictionary<AgentType, List<AgentInfo>> agentsByAgentType = new Dictionary<AgentType, List<AgentInfo>>();
 
 		private readonly Dictionary<Guid, AgentSettingsLoadInfo> settingAgents = new Dictionary<Guid, AgentSettingsLoadInfo>();
 
@@ -82,16 +82,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 		/********************************************************************/
 		public void LoadAllAgents()
 		{
-			Dictionary<AgentType, List<IAgent>> agentsNotInitializedYet = new Dictionary<AgentType, List<IAgent>>();
+			// Initialize the agent type dictionary
+			foreach (AgentType agentType in Enum.GetValues(typeof(AgentType)))
+				agentsByAgentType[agentType] = new List<AgentInfo>();
 
 			// First load all the agents
-			foreach (AgentType agentType in Enum.GetValues(typeof(AgentType)))
-			{
-				List<IAgent> notInitializedYet = new List<IAgent>();
-				LoadSpecificAgents(agentType, notInitializedYet);
-
-				agentsNotInitializedYet[agentType] = notInitializedYet;
-			}
+			List<IAgent> agentsNotInitializedYet = new List<IAgent>();
+			LoadAllAgents(agentsNotInitializedYet);
 
 			// Now check to see if any of the agents need to know which other
 			// agents that has been loaded
@@ -107,13 +104,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 		/********************************************************************/
 		public AgentInfo GetAgent(AgentType agentType, Guid typeId)
 		{
-			lock (loadListLock)
+			lock (listLock)
 			{
-				if (loadedAgentsByAgentType.TryGetValue(agentType, out AgentInfo[] list))
-					return list.FirstOrDefault(a => a.TypeId == typeId);
+				return agentsByAgentType[agentType].FirstOrDefault(a => a.TypeId == typeId);
 			}
-
-			return null;
 		}
 
 
@@ -125,9 +119,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 		/********************************************************************/
 		public IEnumerable<AgentInfo> GetAllAgents()
 		{
-			lock (loadListLock)
+			lock (listLock)
 			{
-				foreach (AgentInfo[] agentList in loadedAgentsByAgentType.Values)
+				foreach (List<AgentInfo> agentList in agentsByAgentType.Values)
 				{
 					foreach (AgentInfo agentInfo in agentList)
 						yield return agentInfo;
@@ -144,13 +138,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 		/********************************************************************/
 		public AgentInfo[] GetAllAgents(AgentType agentType)
 		{
-			lock (loadListLock)
+			lock (listLock)
 			{
-				if (loadedAgentsByAgentType.TryGetValue(agentType, out AgentInfo[] list))
-					return list;
+				return agentsByAgentType[agentType].ToArray();
 			}
-
-			return new AgentInfo[0];
 		}
 
 
@@ -162,9 +153,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 		/********************************************************************/
 		public AgentInfo[] GetAllTypes(Guid agentId)
 		{
-			lock (loadListLock)
+			lock (listLock)
 			{
-				if (loadedAgentsByAgentId.TryGetValue(agentId, out AgentLoadInfo loadInfo))
+				if (agentsByAgentId.TryGetValue(agentId, out AgentLoadInfo loadInfo))
 					return loadInfo.AgentInfo;
 			}
 
@@ -180,7 +171,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 		/********************************************************************/
 		public IAgentSettings GetSettingAgent(Guid settingAgentId)
 		{
-			lock (loadListLock)
+			lock (listLock)
 			{
 				if (settingAgents.TryGetValue(settingAgentId, out AgentSettingsLoadInfo loadInfo))
 					return loadInfo.Settings;
@@ -198,14 +189,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 		/********************************************************************/
 		public void LoadAgent(Guid agentId)
 		{
-			lock (loadListLock)
+			lock (listLock)
 			{
-				if (loadedAgentsByAgentId.TryGetValue(agentId, out AgentLoadInfo loadInfo))
+				if (agentsByAgentId.TryGetValue(agentId, out AgentLoadInfo loadInfo))
 				{
 					loadInfo.LoadContext = new AssemblyLoadContext(null, true);
 					Assembly agentAssembly = loadInfo.LoadContext.LoadFromAssemblyPath(loadInfo.FileName);
-
-					loadInfo.LoadContext.Resolving += LoadContext_Resolving;
 
 					Type type = agentAssembly.GetTypes().FirstOrDefault(t => typeof(IAgent).IsAssignableFrom(t));
 					if (type != null)
@@ -257,7 +246,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 		/********************************************************************/
 		public void UnloadAgent(Guid agentId)
 		{
-			lock (loadListLock)
+			lock (listLock)
 			{
 				if (settingAgents.TryGetValue(agentId, out AgentSettingsLoadInfo settingsLoadInfo))
 				{
@@ -265,7 +254,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 					settingsLoadInfo.Settings = null;
 				}
 
-				if (loadedAgentsByAgentId.TryGetValue(agentId, out AgentLoadInfo loadInfo))
+				if (agentsByAgentId.TryGetValue(agentId, out AgentLoadInfo loadInfo))
 				{
 					foreach (AgentInfo agentInfo in loadInfo.AgentInfo)
 					{
@@ -329,103 +318,149 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
-		/// Will load all available agents of the specific type into memory
+		/// Will load all available agents
 		/// </summary>
 		/********************************************************************/
-		private void LoadSpecificAgents(AgentType agentType, List<IAgent> agentsNotInitializedYet)
+		private void LoadAllAgents(List<IAgent> agentsNotInitializedYet)
 		{
 			// Build the search directory
-			string searchDirectory = Path.Combine(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Agents"), agentType.ToString());
+			string searchDirectory = Path.Combine(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)));
 
 			if (Directory.Exists(searchDirectory))
 			{
 				// Load the agents
-				lock (loadListLock)
+				lock (listLock)
 				{
-					List<AgentInfo> loadedAgents = new List<AgentInfo>();
-
 					// Try to load all library files in the search directory and
 					// find the agent interfaces
 					foreach (string file in Directory.GetFiles(searchDirectory, "*.dll"))
 					{
-						try
+						if (!file.StartsWith("System.") && !file.StartsWith("Microsoft.") && !file.StartsWith("api-ms-"))
 						{
-							// Load the assembly into memory in its own context
-							AssemblyLoadContext loadContext = new AssemblyLoadContext(null, true);
-							Assembly agentAssembly = loadContext.LoadFromAssemblyPath(file);
-
-							loadContext.Resolving += LoadContext_Resolving;
-
-							// Find all agent implementations
-							Type type = agentAssembly.GetTypes().FirstOrDefault(t => typeof(IAgent).IsAssignableFrom(t));
-							if (type != null)
+							try
 							{
-								try
+								// Load the assembly into memory in its own context
+								AssemblyLoadContext loadContext = new AssemblyLoadContext(null, true);
+								Assembly agentAssembly = loadContext.LoadFromAssemblyPath(file);
+
+								bool foundAnything = false;
+
+								// Find all agent implementations
+								Type type = agentAssembly.GetTypes().FirstOrDefault(t => typeof(IAgent).IsAssignableFrom(t));
+								if (type != null)
 								{
-									IAgent agent = (IAgent)Activator.CreateInstance(type);
-
-									// Check the NostalgicPlayer version the agent is compiled against
-									if (agent.NostalgicPlayerVersion != IAgent.NostalgicPlayer_Current_Version)
+									try
 									{
-										Console.WriteLine($"Agent {file} is not compiled against the current version of NostalgicPlayer and is therefore skipped");
-										continue;
+										IAgent agent = (IAgent)Activator.CreateInstance(type);
+
+										// Check the NostalgicPlayer version the agent is compiled against
+										if (agent.NostalgicPlayerVersion != IAgent.NostalgicPlayer_Current_Version)
+										{
+											Console.WriteLine($"Agent {file} is not compiled against the current version of NostalgicPlayer and is therefore skipped");
+											continue;
+										}
+
+										List<AgentInfo> typesInAgent = new List<AgentInfo>();
+
+										AgentSupportInfo[] supportInfo = agent.AgentInformation;
+										if (supportInfo != null)
+										{
+											foreach (AgentSupportInfo info in supportInfo)
+											{
+												IAgentWorker worker = agent.CreateInstance(info.TypeId);
+
+												// Find the type of agent and put it in the right list
+												AgentType? agentType = FindAgentType(worker);
+												if (agentType.HasValue)
+												{
+													List<AgentInfo> typesList = agentsByAgentType[agentType.Value];
+
+													AgentInfo agentInfo = BuildAgentInfo(agent, worker, info);
+													typesList.Add(agentInfo);
+													typesInAgent.Add(agentInfo);
+												}
+											}
+										}
+										else
+										{
+											// If null is returned, it means it is not possible to tell about the types yet. This is used
+											// e.g. by the sample player, because it need to know which sample converters are available first
+											agentsNotInitializedYet.Add(agent);
+										}
+
+										agentsByAgentId[agent.AgentId] = new AgentLoadInfo { LoadContext = loadContext, FileName = file, AgentInfo = typesInAgent.ToArray() };
+										foundAnything = true;
 									}
-
-									List<AgentInfo> typesInAgent = new List<AgentInfo>();
-
-									AgentSupportInfo[] supportInfo = agent.AgentInformation;
-									if (supportInfo != null)
+									catch (Exception)
 									{
-										foreach (AgentSupportInfo info in supportInfo)
-											typesInAgent.Add(BuildAgentInfo(agent, info));
+										// If an exception is thrown, just ignore it and skip the file
 									}
-									else
-									{
-										// If null is returned, it means it is not possible to tell about the types yet. This is used
-										// e.g. by the sample player, because it need to know which sample converters are available first
-										agentsNotInitializedYet.Add(agent);
-									}
-
-									loadedAgentsByAgentId[agent.AgentId] = new AgentLoadInfo { LoadContext = loadContext, FileName = file, AgentInfo = typesInAgent.ToArray() };
-									loadedAgents.AddRange(typesInAgent);
 								}
-								catch (Exception)
+
+								// Find all settings
+								foreach (Type t in agentAssembly.GetTypes().Where(t => typeof(IAgentSettings).IsAssignableFrom(t)))
 								{
-									// If an exception is thrown, just ignore it and skip the file
+									try
+									{
+										IAgentSettings agentSettings = (IAgentSettings)Activator.CreateInstance(t);
+
+										// Check the NostalgicPlayer version the agent is compiled against
+										if (agentSettings.NostalgicPlayerVersion != IAgent.NostalgicPlayer_Current_Version)
+										{
+											Console.WriteLine($"Agent {file} is not compiled against the current version of NostalgicPlayer and is therefore skipped");
+											continue;
+										}
+
+										settingAgents[agentSettings.SettingAgentId] = new AgentSettingsLoadInfo { LoadContext = loadContext, FileName = file, Settings = agentSettings };
+										foundAnything = true;
+									}
+									catch (Exception)
+									{
+										// If an exception is thrown, just ignore it and skip the file
+									}
+								}
+
+								if (!foundAnything)
+								{
+									// Unload the assembly again
+									loadContext.Unload();
 								}
 							}
-
-							// Find all settings
-							foreach (Type t in agentAssembly.GetTypes().Where(t => typeof(IAgentSettings).IsAssignableFrom(t)))
+							catch (Exception)
 							{
-								try
-								{
-									IAgentSettings agentSettings = (IAgentSettings)Activator.CreateInstance(t);
-
-									// Check the NostalgicPlayer version the agent is compiled against
-									if (agentSettings.NostalgicPlayerVersion != IAgent.NostalgicPlayer_Current_Version)
-									{
-										Console.WriteLine($"Agent {file} is not compiled against the current version of NostalgicPlayer and is therefore skipped");
-										continue;
-									}
-
-									settingAgents[agentSettings.SettingAgentId] = new AgentSettingsLoadInfo { LoadContext = loadContext, FileName = file, Settings = agentSettings };
-								}
-								catch (Exception)
-								{
-									// If an exception is thrown, just ignore it and skip the file
-								}
+								// If an exception is thrown, just ignore it and skip the file
 							}
-						}
-						catch (Exception)
-						{
-							// If an exception is thrown, just ignore it and skip the file
 						}
 					}
-
-					loadedAgentsByAgentType[agentType] = loadedAgents.ToArray();
 				}
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the agent type of the worker or null if not recognized
+		/// </summary>
+		/********************************************************************/
+		private AgentType? FindAgentType(IAgentWorker worker)
+		{
+			if (worker is IOutputAgent)
+				return AgentType.Output;
+
+			if (worker is IPlayerAgent)
+				return AgentType.Players;
+
+			if (worker is ISampleSaverAgent)
+				return AgentType.SampleConverters;
+
+			if (worker is IModuleConverterAgent)
+				return AgentType.ModuleConverters;
+
+			if (worker is IVisualAgent)
+				return AgentType.Visuals;
+
+			return null;
 		}
 
 
@@ -435,10 +470,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 		/// Build agent information structure
 		/// </summary>
 		/********************************************************************/
-		private AgentInfo BuildAgentInfo(IAgent agent, AgentSupportInfo info)
+		private AgentInfo BuildAgentInfo(IAgent agent, IAgentWorker worker, AgentSupportInfo info)
 		{
-			IAgentWorker worker = agent.CreateInstance(info.TypeId);
-
 			return new AgentInfo(agent, info.Name, info.Description, agent.Version, info.TypeId, worker is IAgentSettingsRegistrar, worker is IAgentDisplay);
 		}
 
@@ -450,48 +483,47 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 		/// that has been loaded
 		/// </summary>
 		/********************************************************************/
-		private void TellAgentInfo(Dictionary<AgentType, List<IAgent>> agentsNotInitializedYet)
+		private void TellAgentInfo(List<IAgent> agentsNotInitializedYet)
 		{
-			lock (loadListLock)
+			lock (listLock)
 			{
 				// First take any missing agents first
-				foreach (KeyValuePair<AgentType, List<IAgent>> pair in agentsNotInitializedYet)
+				foreach (IAgent agent in agentsNotInitializedYet)
 				{
-					List<AgentInfo> loadedAgents = new List<AgentInfo>();
+					TellAgent(agent);
 
-					for (int i = pair.Value.Count - 1; i >= 0; i--)
+					List<AgentInfo> typesInAgent = new List<AgentInfo>();
+
+					AgentSupportInfo[] supportInfo = agent.AgentInformation;
+					if (supportInfo != null)
 					{
-						IAgent agent = pair.Value[i];
-
-						TellAgent(agent);
-
-						List<AgentInfo> typesInAgent = new List<AgentInfo>();
-
-						AgentSupportInfo[] supportInfo = agent.AgentInformation;
-						if (supportInfo != null)
+						foreach (AgentSupportInfo info in supportInfo)
 						{
-							foreach (AgentSupportInfo info in supportInfo)
-								typesInAgent.Add(BuildAgentInfo(agent, info));
-						}
+							IAgentWorker worker = agent.CreateInstance(info.TypeId);
 
-						loadedAgentsByAgentId[agent.AgentId].AgentInfo = typesInAgent.ToArray();
-						loadedAgents.AddRange(typesInAgent);
+							// Find the type of agent and put it in the right list
+							AgentType? agentType = FindAgentType(worker);
+							if (agentType.HasValue)
+							{
+								List<AgentInfo> typesList = agentsByAgentType[agentType.Value];
+
+								AgentInfo agentInfo = BuildAgentInfo(agent, worker, info);
+								typesList.Add(agentInfo);
+								typesInAgent.Add(agentInfo);
+							}
+						}
 					}
 
-					if (loadedAgents.Count > 0)
-						loadedAgentsByAgentType[pair.Key] = loadedAgentsByAgentType[pair.Key].Concat(loadedAgents).ToArray();
+					agentsByAgentId[agent.AgentId].AgentInfo = typesInAgent.ToArray();
 				}
 
-				foreach (KeyValuePair<AgentType, AgentInfo[]> pair in loadedAgentsByAgentType)
+				// Take all loaded agents and see if they need information for
+				// any of the agents not initialized yet
+				foreach (AgentInfo agentInfo in agentsByAgentId.Values.SelectMany(loadInfo => loadInfo.AgentInfo))
 				{
-					List<IAgent> takenAgents = agentsNotInitializedYet[pair.Key];
-
-					foreach (AgentInfo agentInfo in pair.Value)
-					{
-						// Check if we have already taken this agent in the above loop
-						if (!takenAgents.Contains(agentInfo.Agent))
-							TellAgent(agentInfo.Agent);
-					}
+					// Check if we have already taken this agent in the above loop
+					if (!agentsNotInitializedYet.Contains(agentInfo.Agent))
+						TellAgent(agentInfo.Agent);
 				}
 
 				foreach (AgentSettingsLoadInfo loadInfo in settingAgents.Values)
@@ -509,10 +541,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 		private void TellAgent(IAgent agent)
 		{
 			if (agent is IWantOutputAgents wantOutputAgents)
-				wantOutputAgents.SetOutputInfo(loadedAgentsByAgentType[AgentType.Output]);
+				wantOutputAgents.SetOutputInfo(agentsByAgentType[AgentType.Output].ToArray());
 
 			if (agent is IWantSampleConverterAgents wantSampleConverterAgents)
-				wantSampleConverterAgents.SetSampleConverterInfo(loadedAgentsByAgentType[AgentType.SampleConverters]);
+				wantSampleConverterAgents.SetSampleConverterInfo(agentsByAgentType[AgentType.SampleConverters].ToArray());
 		}
 
 
@@ -525,35 +557,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 		private void TellSettingsAgent(AgentSettingsLoadInfo loadInfo)
 		{
 			if (loadInfo.Settings is IWantOutputAgents wantOutputAgents)
-				wantOutputAgents.SetOutputInfo(loadedAgentsByAgentType[AgentType.Output]);
+				wantOutputAgents.SetOutputInfo(agentsByAgentType[AgentType.Output].ToArray());
 
 			if (loadInfo.Settings is IWantSampleConverterAgents wantSampleConverterAgents)
-				wantSampleConverterAgents.SetSampleConverterInfo(loadedAgentsByAgentType[AgentType.SampleConverters]);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called every time an agent want to load an external assembly.
-		/// 
-		/// This method will try to look at the agents local folder to find
-		/// the needed assembly
-		/// </summary>
-		/********************************************************************/
-		private Assembly LoadContext_Resolving(AssemblyLoadContext arg1, AssemblyName arg2)
-		{
-			Assembly ass = arg1.Assemblies.FirstOrDefault();
-			if (ass != null)
-			{
-				string localPath = Path.GetDirectoryName(ass.Location);
-				string assemblyPath = Path.Combine(localPath, arg2.Name + ".dll");
-
-				if (File.Exists(assemblyPath))
-					return arg1.LoadFromAssemblyPath(assemblyPath);
-			}
-
-			return null;
+				wantSampleConverterAgents.SetSampleConverterInfo(agentsByAgentType[AgentType.SampleConverters].ToArray());
 		}
 		#endregion
 	}

@@ -459,7 +459,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					if (agentInfo.Enabled)
 					{
 						// Create an instance of the converter
-						if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IModuleConverter converter)
+						if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IModuleConverterAgent converter)
 						{
 							// Check the file
 							AgentResult agentResult = converter.Identify(fileInfo);
