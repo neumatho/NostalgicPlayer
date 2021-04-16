@@ -714,13 +714,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// Return information about sub-songs
 		/// </summary>
 		/********************************************************************/
-		public override SubSongInfo SubSongs
-		{
-			get
-			{
-				return new SubSongInfo(songTimeList.Count, 0);
-			}
-		}
+		public override SubSongInfo SubSongs => new SubSongInfo(songTimeList.Count, 0);
 
 
 
@@ -825,9 +819,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 					SampleInfo sampleInfo = new SampleInfo
 					{
-						Type = (amData?[i] != null) && (amData[i].Mark == 0x414d) ? SampleInfo.SampleType.Synth : SampleInfo.SampleType.Sample,
 						Name = sample.SampleName,
 						Flags = sample.LoopLength <= 1 ? SampleInfo.SampleFlags.None : SampleInfo.SampleFlags.Loop,
+						Type = (amData?[i] != null) && (amData[i].Mark == 0x414d) ? SampleInfo.SampleType.Synth : SampleInfo.SampleType.Sample,
 						BitSize = 8,
 						MiddleC = (int)(7093789.2 / (Tables.Periods[sample.FineTune, 3 * 12] * 2)),
 						Volume = sample.Volume * 4,
@@ -974,22 +968,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			// sample names. Before it has been disabled, but that made some
 			// other files to be recognized as SoundTracker modules. That's why
 			// I has introduced it again
-			for (int i = 0; i < 7; i++)
+			for (int i = 0; i < 15; i++)
 			{
 				stream.Seek(20 + i * 30, SeekOrigin.Begin);
 				stream.Read(buf, 0, 22);
 
-				// Now check the name
-				//
-				for (int j = 2; j < 10; j++)
+				// Now check the name (but only for the first 7)
+				if (i < 7)
 				{
-					if (buf[j] == 0x00)
-						break;
-
-					if ((buf[j] < 32) || (buf[j] > 127))
+					for (int j = 2; j < 10; j++)
 					{
-						// Invalid sample name, so not a SoundTracker module
-						return ModuleType.Unknown;
+						if (buf[j] == 0x00)
+							break;
+
+						if ((buf[j] < 32) || (buf[j] > 127))
+						{
+							// Invalid sample name, so not a SoundTracker module
+							return ModuleType.Unknown;
+						}
 					}
 				}
 
