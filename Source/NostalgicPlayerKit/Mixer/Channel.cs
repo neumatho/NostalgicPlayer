@@ -327,6 +327,15 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 
 		/********************************************************************/
 		/// <summary>
+		/// Returns true or false depending on the channel is in use
+		/// </summary>
+		/********************************************************************/
+		public bool IsActive => (flags & Flags.Active) != 0;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Mute the channel
 		/// </summary>
 		/********************************************************************/

@@ -8,6 +8,7 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
@@ -26,10 +27,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLi
 		/********************************************************************/
 		protected override IEnumerable<AgentListInfo> GetAllAgents()
 		{
-			foreach (AgentInfo agentInfo in manager.GetAllAgents(Manager.AgentType.Players))
+			foreach (AgentInfo agentInfo in manager.GetAllAgents(Manager.AgentType.Players).Where(agentInfo => !string.IsNullOrEmpty(agentInfo.TypeName)))
 				yield return new AgentListInfo { Id = agentInfo.TypeId, Name = agentInfo.TypeName, Description = agentInfo.TypeDescription, AgentInfo = agentInfo };
 
-			foreach (AgentInfo agentInfo in manager.GetAllAgents(Manager.AgentType.ModuleConverters))
+			foreach (AgentInfo agentInfo in manager.GetAllAgents(Manager.AgentType.ModuleConverters).Where(agentInfo => !string.IsNullOrEmpty(agentInfo.TypeName)))
 				yield return new AgentListInfo { Id = agentInfo.TypeId, Name = agentInfo.TypeName, Description = agentInfo.TypeDescription, AgentInfo = agentInfo };
 		}
 

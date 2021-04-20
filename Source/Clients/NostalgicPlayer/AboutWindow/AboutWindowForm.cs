@@ -192,7 +192,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 			foreach (Manager.AgentType type in agentTypes)
 			{
 				// Find all supported formats from the players
-				foreach (AgentInfo agentInfo in agentManager.GetAllAgents(type))
+				foreach (AgentInfo agentInfo in agentManager.GetAllAgents(type).Where(agentInfo => !string.IsNullOrEmpty(agentInfo.TypeName)))
 				{
 					try
 					{

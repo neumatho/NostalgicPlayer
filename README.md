@@ -7,6 +7,10 @@ Please enjoy this program, and support the development by giving any feedback (b
 
 You can find an installation package on Microsoft Store, just search after NostalgicPlayer.
 
+# License
+
+NostalgicPlayer is licensed under the <a href="https://github.com/neumatho/NostalgicPlayer/blob/main/LICENSE">Apache-2.0 License</a>. The MikMod player and converter are licensed under <a href="http://www.gnu.org/licenses/lgpl-3.0.html">GNU Lesser General Public License</a>.
+
 # Structure
 
 The player is structured, so it is easy to create your own user interface around the logic. All the main logic is in the *NostalgicPlayerLibrary* and *NostalgicPlayerKit*. The later is used by the agents to communicate with the player.

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>Polycode.NostalgicPlayer.Agent.Shared.MikMod</RootNamespace>
+    <Authors>Thomas Neumann</Authors>
+    <Company>Polycode</Company>
+    <Product>NostalgicPlayer</Product>
+    <Description>Shared components between the player and converter</Description>
+    <Copyright>Copyright © 2021</Copyright>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\MikModShared.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DocumentationFile>bin\MikModShared.xml</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+</Project>
