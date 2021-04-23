@@ -232,10 +232,27 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// Mixes a 16 bit sample into a mono output buffer
 		/// </summary>
 		/********************************************************************/
+		private delegate int del_Mix16MonoNormal32(IntPtr source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel);
 		public static int Mix16MonoNormal32(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel)
 		{
-			return index;
+			if (_Mix16MonoNormal32 == null)
+			{
+				IntPtr f = GetProcAddress(dllPtr, "_Mix16MonoNormal32@28");
+				_Mix16MonoNormal32 = (del_Mix16MonoNormal32)Marshal.GetDelegateForFunctionPointer(f, typeof(del_Mix16MonoNormal32));
+			}
+
+			GCHandle pinnedBuf = GCHandle.Alloc(source, GCHandleType.Pinned);
+
+			try
+			{
+				return _Mix16MonoNormal32(pinnedBuf.AddrOfPinnedObject(), dest, offset, index, increment, todo, lVolSel);
+			}
+			finally
+			{
+				pinnedBuf.Free();
+			}
 		}
+		private static del_Mix16MonoNormal32 _Mix16MonoNormal32 = null;
 
 
 
@@ -244,10 +261,27 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// Mixes a 16 bit sample into a stereo output buffer
 		/// </summary>
 		/********************************************************************/
+		private delegate int del_Mix16StereoNormal32(IntPtr source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel);
 		public static int Mix16StereoNormal32(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel)
 		{
-			return index;
+			if (_Mix16StereoNormal32 == null)
+			{
+				IntPtr f = GetProcAddress(dllPtr, "_Mix16StereoNormal32@32");
+				_Mix16StereoNormal32 = (del_Mix16StereoNormal32)Marshal.GetDelegateForFunctionPointer(f, typeof(del_Mix16StereoNormal32));
+			}
+
+			GCHandle pinnedBuf = GCHandle.Alloc(source, GCHandleType.Pinned);
+
+			try
+			{
+				return _Mix16StereoNormal32(pinnedBuf.AddrOfPinnedObject(), dest, offset, index, increment, todo, lVolSel, rVolSel);
+			}
+			finally
+			{
+				pinnedBuf.Free();
+			}
 		}
+		private static del_Mix16StereoNormal32 _Mix16StereoNormal32 = null;
 
 
 
@@ -269,10 +303,27 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// interpolation
 		/// </summary>
 		/********************************************************************/
-		public static int Mix16MonoInterp32(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel)
+		private delegate int del_Mix16MonoInterp32(IntPtr source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int oldLVol, ref int rampVol);
+		public static int Mix16MonoInterp32(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int oldLVol, ref int rampVol)
 		{
-			return index;
+			if (_Mix16MonoInterp32 == null)
+			{
+				IntPtr f = GetProcAddress(dllPtr, "_Mix16MonoInterp32@36");
+				_Mix16MonoInterp32 = (del_Mix16MonoInterp32)Marshal.GetDelegateForFunctionPointer(f, typeof(del_Mix16MonoInterp32));
+			}
+
+			GCHandle pinnedBuf = GCHandle.Alloc(source, GCHandleType.Pinned);
+
+			try
+			{
+				return _Mix16MonoInterp32(pinnedBuf.AddrOfPinnedObject(), dest, offset, index, increment, todo, lVolSel, oldLVol, ref rampVol);
+			}
+			finally
+			{
+				pinnedBuf.Free();
+			}
 		}
+		private static del_Mix16MonoInterp32 _Mix16MonoInterp32 = null;
 
 
 
@@ -282,10 +333,27 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// interpolation
 		/// </summary>
 		/********************************************************************/
-		public static int Mix16StereoInterp32(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel)
+		private delegate int del_Mix16StereoInterp32(IntPtr source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol);
+		public static int Mix16StereoInterp32(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
 		{
-			return index;
+			if (_Mix16StereoInterp32 == null)
+			{
+				IntPtr f = GetProcAddress(dllPtr, "_Mix16StereoInterp32@44");
+				_Mix16StereoInterp32 = (del_Mix16StereoInterp32)Marshal.GetDelegateForFunctionPointer(f, typeof(del_Mix16StereoInterp32));
+			}
+
+			GCHandle pinnedBuf = GCHandle.Alloc(source, GCHandleType.Pinned);
+
+			try
+			{
+				return _Mix16StereoInterp32(pinnedBuf.AddrOfPinnedObject(), dest, offset, index, increment, todo, lVolSel, rVolSel, oldLVol, oldRVol, ref rampVol);
+			}
+			finally
+			{
+				pinnedBuf.Free();
+			}
 		}
+		private static del_Mix16StereoInterp32 _Mix16StereoInterp32 = null;
 
 
 
@@ -453,10 +521,27 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// Mixes a 16 bit sample into a mono output buffer
 		/// </summary>
 		/********************************************************************/
+		private delegate long del_Mix16MonoNormal64(IntPtr source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel);
 		public static long Mix16MonoNormal64(sbyte[] source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel)
 		{
-			return index;
+			if (_Mix16MonoNormal64 == null)
+			{
+				IntPtr f = Environment.Is64BitProcess ? GetProcAddress(dllPtr, "Mix16MonoNormal64") : GetProcAddress(dllPtr, "_Mix16MonoNormal64@36");
+				_Mix16MonoNormal64 = (del_Mix16MonoNormal64)Marshal.GetDelegateForFunctionPointer(f, typeof(del_Mix16MonoNormal64));
+			}
+
+			GCHandle pinnedBuf = GCHandle.Alloc(source, GCHandleType.Pinned);
+
+			try
+			{
+				return _Mix16MonoNormal64(pinnedBuf.AddrOfPinnedObject(), dest, offset, index, increment, todo, lVolSel);
+			}
+			finally
+			{
+				pinnedBuf.Free();
+			}
 		}
+		private static del_Mix16MonoNormal64 _Mix16MonoNormal64 = null;
 
 
 
@@ -465,10 +550,27 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// Mixes a 16 bit sample into a stereo output buffer
 		/// </summary>
 		/********************************************************************/
+		private delegate long del_Mix16StereoNormal64(IntPtr source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel);
 		public static long Mix16StereoNormal64(sbyte[] source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel)
 		{
-			return index;
+			if (_Mix16StereoNormal64 == null)
+			{
+				IntPtr f = Environment.Is64BitProcess ? GetProcAddress(dllPtr, "Mix16StereoNormal64") : GetProcAddress(dllPtr, "_Mix16StereoNormal64@40");
+				_Mix16StereoNormal64 = (del_Mix16StereoNormal64)Marshal.GetDelegateForFunctionPointer(f, typeof(del_Mix16StereoNormal64));
+			}
+
+			GCHandle pinnedBuf = GCHandle.Alloc(source, GCHandleType.Pinned);
+
+			try
+			{
+				return _Mix16StereoNormal64(pinnedBuf.AddrOfPinnedObject(), dest, offset, index, increment, todo, lVolSel, rVolSel);
+			}
+			finally
+			{
+				pinnedBuf.Free();
+			}
 		}
+		private static del_Mix16StereoNormal64 _Mix16StereoNormal64 = null;
 
 
 
@@ -490,10 +592,27 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// interpolation
 		/// </summary>
 		/********************************************************************/
+		private delegate long del_Mix16MonoInterp64(IntPtr source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int oldLVol, ref int rampVol);
 		public static long Mix16MonoInterp64(sbyte[] source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int oldLVol, ref int rampVol)
 		{
-			return index;
+			if (_Mix16MonoInterp64 == null)
+			{
+				IntPtr f = Environment.Is64BitProcess ? GetProcAddress(dllPtr, "Mix16MonoInterp64") : GetProcAddress(dllPtr, "_Mix16MonoInterp64@44");
+				_Mix16MonoInterp64 = (del_Mix16MonoInterp64)Marshal.GetDelegateForFunctionPointer(f, typeof(del_Mix16MonoInterp64));
+			}
+
+			GCHandle pinnedBuf = GCHandle.Alloc(source, GCHandleType.Pinned);
+
+			try
+			{
+				return _Mix16MonoInterp64(pinnedBuf.AddrOfPinnedObject(), dest, offset, index, increment, todo, lVolSel, oldLVol, ref rampVol);
+			}
+			finally
+			{
+				pinnedBuf.Free();
+			}
 		}
+		private static del_Mix16MonoInterp64 _Mix16MonoInterp64 = null;
 
 
 
@@ -503,10 +622,27 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// interpolation
 		/// </summary>
 		/********************************************************************/
+		private delegate long del_Mix16StereoInterp64(IntPtr source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol);
 		public static long Mix16StereoInterp64(sbyte[] source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
 		{
-			return index;
+			if (_Mix16StereoInterp64 == null)
+			{
+				IntPtr f = Environment.Is64BitProcess ? GetProcAddress(dllPtr, "Mix16StereoInterp64") : GetProcAddress(dllPtr, "_Mix16StereoInterp64@52");
+				_Mix16StereoInterp64 = (del_Mix16StereoInterp64)Marshal.GetDelegateForFunctionPointer(f, typeof(del_Mix16StereoInterp64));
+			}
+
+			GCHandle pinnedBuf = GCHandle.Alloc(source, GCHandleType.Pinned);
+
+			try
+			{
+				return _Mix16StereoInterp64(pinnedBuf.AddrOfPinnedObject(), dest, offset, index, increment, todo, lVolSel, rVolSel, oldLVol, oldRVol, ref rampVol);
+			}
+			finally
+			{
+				pinnedBuf.Free();
+			}
 		}
+		private static del_Mix16StereoInterp64 _Mix16StereoInterp64 = null;
 
 
 

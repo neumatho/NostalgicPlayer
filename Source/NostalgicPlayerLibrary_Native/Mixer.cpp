@@ -172,6 +172,161 @@ extern "C"
 
 		return index;
 	}
+
+
+
+	/********************************************************************/
+	/// <summary>
+	/// Mixes a 16 bit sample into a mono output buffer
+	/// </summary>
+	/********************************************************************/
+	EXPORTAPI(INT32, Mix16MonoNormal32(const INT16* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel))
+	{
+		dest += offset;
+
+		while (todo--)
+		{
+			INT16 sample = source[index >> FRACBITS];
+			index += increment;
+
+			*dest++ += lVolSel * sample;
+		}
+
+		return index;
+	}
+
+
+
+	/********************************************************************/
+	/// <summary>
+	/// Mixes a 16 bit sample into a stereo output buffer
+	/// </summary>
+	/********************************************************************/
+	EXPORTAPI(INT32, Mix16StereoNormal32(const INT16* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel))
+	{
+		dest += offset;
+
+		while (todo--)
+		{
+			INT16 sample = source[index >> FRACBITS];
+			index += increment;
+
+			*dest++ += lVolSel * sample;
+			*dest++ += rVolSel * sample;
+		}
+
+		return index;
+	}
+
+
+
+	/********************************************************************/
+	/// <summary>
+	/// Mixes a 16 bit sample into a mono output buffer with interpolation
+	/// </summary>
+	/********************************************************************/
+	EXPORTAPI(INT32, Mix16MonoInterp32(const INT16* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 oldLVol, INT32* rampVol))
+	{
+		dest += offset;
+
+		INT32 ramVol = *rampVol;
+		INT32 sample;
+
+		if (ramVol != 0)
+		{
+			oldLVol -= lVolSel;
+
+			while (todo--)
+			{
+				sample = static_cast<INT32>(source[index >> FRACBITS]) +
+					((static_cast<INT32>(source[(index >> FRACBITS) + 1]) -
+						static_cast<INT32>(source[index >> FRACBITS])) *
+						(index & FRACMASK) >> FRACBITS);
+
+				index += increment;
+
+				*dest++ += ((lVolSel << CLICK_SHIFT) + oldLVol * ramVol) * sample >> CLICK_SHIFT;
+
+				if (--ramVol == 0)
+					break;
+			}
+
+			*rampVol = ramVol;
+			if (todo < 0)
+				return index;
+		}
+
+		while (todo--)
+		{
+			sample = static_cast<INT32>(source[index >> FRACBITS]) +
+				((static_cast<INT32>(source[(index >> FRACBITS) + 1]) -
+					static_cast<INT32>(source[index >> FRACBITS])) *
+					(index & FRACMASK) >> FRACBITS);
+
+			index += increment;
+
+			*dest++ += lVolSel * sample;
+		}
+
+		return index;
+	}
+
+
+
+	/********************************************************************/
+	/// <summary>
+	/// Mixes a 16 bit sample into a stereo output buffer with
+	/// interpolation
+	/// </summary>
+	/********************************************************************/
+	EXPORTAPI(INT32, Mix16StereoInterp32(const INT16* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel, INT32 oldLVol, INT32 oldRVol, INT32* rampVol))
+	{
+		dest += offset;
+
+		INT32 ramVol = *rampVol;
+		INT32 sample;
+
+		if (ramVol != 0)
+		{
+			oldLVol -= lVolSel;
+			oldRVol -= rVolSel;
+
+			while (todo--)
+			{
+				sample = static_cast<INT32>(source[index >> FRACBITS]) +
+					((static_cast<INT32>(source[(index >> FRACBITS) + 1]) -
+						static_cast<INT32>(source[index >> FRACBITS])) *
+						(index & FRACMASK) >> FRACBITS);
+
+				index += increment;
+
+				*dest++ += ((lVolSel << CLICK_SHIFT) + oldLVol * ramVol) * sample >> CLICK_SHIFT;
+				*dest++ += ((rVolSel << CLICK_SHIFT) + oldRVol * ramVol) * sample >> CLICK_SHIFT;
+
+				if (--ramVol == 0)
+					break;
+			}
+
+			*rampVol = ramVol;
+			if (todo < 0)
+				return index;
+		}
+
+		while (todo--)
+		{
+			sample = static_cast<INT32>(source[index >> FRACBITS]) +
+				((static_cast<INT32>(source[(index >> FRACBITS) + 1]) -
+					static_cast<INT32>(source[index >> FRACBITS])) *
+					(index & FRACMASK) >> FRACBITS);
+
+			index += increment;
+
+			*dest++ += lVolSel * sample;
+			*dest++ += rVolSel * sample;
+		}
+
+		return index;
+	}
 	#endif
 
 	#pragma endregion
@@ -319,6 +474,161 @@ extern "C"
 			sample = static_cast<INT32>((static_cast<INT64>(source[index >> FRACBITS]) << 8) +
 				(((static_cast<INT64>(source[(index >> FRACBITS) + 1]) << 8) -
 					(static_cast<INT64>(source[index >> FRACBITS]) << 8)) *
+					(index & FRACMASK) >> FRACBITS));
+
+			index += increment;
+
+			*dest++ += lVolSel * sample;
+			*dest++ += rVolSel * sample;
+		}
+
+		return index;
+	}
+
+
+
+	/********************************************************************/
+	/// <summary>
+	/// Mixes a 16 bit sample into a mono output buffer
+	/// </summary>
+	/********************************************************************/
+	EXPORTAPI(INT64, Mix16MonoNormal64(const INT16* source, INT32* dest, INT32 offset, INT64 index, INT64 increment, INT32 todo, INT32 lVolSel))
+	{
+		dest += offset;
+
+		while (todo--)
+		{
+			INT16 sample = source[index >> FRACBITS];
+			index += increment;
+
+			*dest++ += lVolSel * sample;
+		}
+
+		return index;
+	}
+
+
+
+	/********************************************************************/
+	/// <summary>
+	/// Mixes a 16 bit sample into a stereo output buffer
+	/// </summary>
+	/********************************************************************/
+	EXPORTAPI(INT64, Mix16StereoNormal64(const INT16* source, INT32* dest, INT32 offset, INT64 index, INT64 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel))
+	{
+		dest += offset;
+
+		while (todo--)
+		{
+			INT16 sample = source[index >> FRACBITS];
+			index += increment;
+
+			*dest++ += lVolSel * sample;
+			*dest++ += rVolSel * sample;
+		}
+
+		return index;
+	}
+
+
+
+	/********************************************************************/
+	/// <summary>
+	/// Mixes a 16 bit sample into a mono output buffer with interpolation
+	/// </summary>
+	/********************************************************************/
+	EXPORTAPI(INT64, Mix16MonoInterp64(const INT16* source, INT32* dest, INT32 offset, INT64 index, INT64 increment, INT32 todo, INT32 lVolSel, INT32 oldLVol, INT32* rampVol))
+	{
+		dest += offset;
+
+		INT32 ramVol = *rampVol;
+		INT32 sample;
+
+		if (ramVol != 0)
+		{
+			oldLVol -= lVolSel;
+
+			while (todo--)
+			{
+				sample = static_cast<INT32>(static_cast<INT64>(source[index >> FRACBITS]) +
+					((static_cast<INT64>(source[(index >> FRACBITS) + 1]) -
+						static_cast<INT64>(source[index >> FRACBITS])) *
+						(index & FRACMASK) >> FRACBITS));
+
+				index += increment;
+
+				*dest++ += ((lVolSel << CLICK_SHIFT) + oldLVol * ramVol) * sample >> CLICK_SHIFT;
+
+				if (--ramVol == 0)
+					break;
+			}
+
+			*rampVol = ramVol;
+			if (todo < 0)
+				return index;
+		}
+
+		while (todo--)
+		{
+			sample = static_cast<INT32>(static_cast<INT64>(source[index >> FRACBITS]) +
+				((static_cast<INT64>(source[(index >> FRACBITS) + 1]) -
+					static_cast<INT64>(source[index >> FRACBITS])) *
+					(index & FRACMASK) >> FRACBITS));
+
+			index += increment;
+
+			*dest++ += lVolSel * sample;
+		}
+
+		return index;
+	}
+
+
+
+	/********************************************************************/
+	/// <summary>
+	/// Mixes a 16 bit sample into a stereo output buffer with
+	/// interpolation
+	/// </summary>
+	/********************************************************************/
+	EXPORTAPI(INT64, Mix16StereoInterp64(const INT16* source, INT32* dest, INT32 offset, INT64 index, INT64 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel, INT32 oldLVol, INT32 oldRVol, INT32* rampVol))
+	{
+		dest += offset;
+
+		INT32 ramVol = *rampVol;
+		INT32 sample;
+
+		if (ramVol != 0)
+		{
+			oldLVol -= lVolSel;
+			oldRVol -= rVolSel;
+
+			while (todo--)
+			{
+				sample = static_cast<INT32>(static_cast<INT64>(source[index >> FRACBITS]) +
+					((static_cast<INT64>(source[(index >> FRACBITS) + 1]) -
+						static_cast<INT64>(source[index >> FRACBITS])) *
+						(index & FRACMASK) >> FRACBITS));
+
+				index += increment;
+
+				*dest++ += ((lVolSel << CLICK_SHIFT) + oldLVol * ramVol) * sample >> CLICK_SHIFT;
+				*dest++ += ((rVolSel << CLICK_SHIFT) + oldRVol * ramVol) * sample >> CLICK_SHIFT;
+
+				if (--ramVol == 0)
+					break;
+			}
+
+			*rampVol = ramVol;
+			if (todo < 0)
+				return index;
+		}
+
+		while (todo--)
+		{
+			sample = static_cast<INT32>(static_cast<INT64>(source[index >> FRACBITS]) +
+				((static_cast<INT64>(source[(index >> FRACBITS) + 1]) -
+					static_cast<INT64>(source[index >> FRACBITS])) *
 					(index & FRACMASK) >> FRACBITS));
 
 			index += increment;
