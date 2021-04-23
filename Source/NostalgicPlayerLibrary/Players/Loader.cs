@@ -322,7 +322,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			}
 
 			if (result)
-				Player = PlayerAgent is IModulePlayerAgent ? new ModulePlayer(agentManager) : PlayerAgent is ISamplePlayerAgent ? new SamplePlayer() : null;
+				Player = PlayerAgent is IModulePlayerAgent ? new ModulePlayer(agentManager) : PlayerAgent is ISamplePlayerAgent ? new SamplePlayer(agentManager) : null;
 
 			return result;
 		}

@@ -10,6 +10,7 @@ using System;
 using System.Linq;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Resampler;
 
@@ -20,6 +21,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 	/// </summary>
 	internal class SamplePlayer : ISamplePlayer
 	{
+		private readonly Manager agentManager;
+
 		private ISamplePlayerAgent currentPlayer;
 
 		private IOutputAgent outputAgent;
@@ -30,8 +33,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SamplePlayer()
+		public SamplePlayer(Manager manager)
 		{
+			agentManager = manager;
+
 			// Initialize member variables
 			StaticModuleInformation = new ModuleInfoStatic();
 			PlayingModuleInformation = new ModuleInfoFloating();
@@ -173,6 +178,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			if (outputAgent.SwitchStream(soundStream, loader.FileName, StaticModuleInformation.ModuleName, StaticModuleInformation.Author) == AgentResult.Error)
 				return false;
 
+			// Tell all visuals to start
+			foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
+			{
+				if (visualAgent is IChannelChangeVisualAgent)
+					continue;
+
+				visualAgent.InitVisual(StaticModuleInformation.Channels);
+			}
+
 			outputAgent.Play();
 
 			return true;
@@ -200,6 +214,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				{
 					currentPlayer.CleanupSound();
 				}
+			}
+
+			if (stopOutputAgent)
+			{
+				// Tell all visuals to stop
+				foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
+					visualAgent.CleanupVisual();
 			}
 		}
 

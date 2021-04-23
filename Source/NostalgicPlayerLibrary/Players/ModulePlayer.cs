@@ -165,6 +165,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			if (outputAgent.SwitchStream(soundStream, loader.FileName, StaticModuleInformation.ModuleName, StaticModuleInformation.Author) == AgentResult.Error)
 				return false;
 
+			// Tell all visuals to start
+			foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
+				visualAgent.InitVisual(StaticModuleInformation.Channels);
+
 			outputAgent.Play();
 
 			return true;
@@ -192,6 +196,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				{
 					currentPlayer.CleanupSound();
 				}
+			}
+
+			if (stopOutputAgent)
+			{
+				// Tell all visuals to stop
+				foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
+					visualAgent.CleanupVisual();
 			}
 		}
 
