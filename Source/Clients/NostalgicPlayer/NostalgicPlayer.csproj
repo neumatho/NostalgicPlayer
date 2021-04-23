@@ -50,6 +50,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Agents\ModuleConverters\MikModConverter\MikModConverter.csproj" />
     <ProjectReference Include="..\..\Agents\ModuleConverters\ModuleConverter\ModuleConverter.csproj" />
     <ProjectReference Include="..\..\Agents\Output\CoreAudioSettings\CoreAudioSettings.csproj" />
     <ProjectReference Include="..\..\Agents\Output\CoreAudio\CoreAudio.csproj" />

@@ -24,9 +24,9 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 		/// <summary></summary>
 		_16Bits = 0x0001,
 		/// <summary></summary>
-		Stereo = 0x0004,
+		Stereo = 0x0002,
 		/// <summary></summary>
-		Signed = 0x0002,		//XX skal byttes rundt
+		Signed = 0x0004,
 		/// <summary></summary>
 		BigEndian = 0x0008,
 		/// <summary></summary>

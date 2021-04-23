@@ -7,29 +7,40 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
-namespace Polycode.NostalgicPlayer.Kit.Interfaces
+namespace Polycode.NostalgicPlayer.Kit.Bases
 {
 	/// <summary>
-	/// Agents of this type, can convert one module format to another
+	/// Base class that can be used for module converter agents
 	/// </summary>
-	public interface IModuleConverterAgent : IAgentWorker
+	public abstract class ModuleConverterAgentBase : IModuleConverterAgent
 	{
+		/********************************************************************/
 		/// <summary>
 		/// Test the file to see if it could be identified
 		/// </summary>
-		AgentResult Identify(PlayerFileInfo fileInfo);
+		/********************************************************************/
+		public abstract AgentResult Identify(PlayerFileInfo fileInfo);
 
+
+
+		/********************************************************************/
 		/// <summary>
 		/// Convert the module and store the result in the stream given
 		/// </summary>
-		AgentResult Convert(PlayerFileInfo fileInfo, WriterStream writerStream, out string errorMessage);
+		/********************************************************************/
+		public abstract AgentResult Convert(PlayerFileInfo fileInfo, WriterStream writerStream, out string errorMessage);
 
+
+
+		/********************************************************************/
 		/// <summary>
 		/// Return the original format. If it returns null or an empty
 		/// string, the agent name will be used
 		/// </summary>
-		string OriginalFormat { get; }
+		/********************************************************************/
+		public virtual string OriginalFormat => null;
 	}
 }

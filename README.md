@@ -48,3 +48,4 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | StarTrekker 8 voices | .mod | | ModTracker |
 | Ultimate SoundTracker 1.0 - 1.21 | .mod | | ModTracker |
 | Ultimate SoundTracker 1.8 - 2.0 | .mod | | ModTracker |
+| UniMod | .uni | MikMod Converter | MikMod |

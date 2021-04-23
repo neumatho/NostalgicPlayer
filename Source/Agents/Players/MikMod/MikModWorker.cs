@@ -175,7 +175,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		/********************************************************************/
 		public override AgentResult Load(PlayerFileInfo fileInfo, out string errorMessage)
 		{
-			// Initialize the UNIMOD structure
+			// Initialize the UniMod structure
 			of = new Module();
 
 			// Parse the uni module and create structures to use
@@ -254,7 +254,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 
 					// Get the pattern number to play
 					ushort pattNum = of.Positions[pos];
-					if (pattNum == Constant.Last_Pattern)
+					if (pattNum == SharedConstant.Last_Pattern)
 					{
 						// End of song
 						break;
@@ -763,7 +763,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 						BitSize = (sample.Flags & SampleFlag._16Bits) != 0 ? 16 : 8,
 						MiddleC = (int)Math.Ceiling((double)player.GetFrequency(of.Flags, player.GetPeriod(of.Flags, 96, sample.Speed))),
 						Volume = sample.Volume * 4,
-						Panning = sample.Panning == Constant.Pan_Surround ? (int)Panning.Surround : sample.Panning,
+						Panning = sample.Panning == SharedConstant.Pan_Surround ? (int)Panning.Surround : sample.Panning,
 						Sample = sample.Handle,
 						Length = (int)sample.Length,
 						LoopStart = (int)sample.LoopStart,
@@ -877,7 +877,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 			if ((voice < 0) || (voice >= mdNumChn))
 				return;
 
-			if (pan == Constant.Pan_Surround)
+			if (pan == SharedConstant.Pan_Surround)
 				pan = (int)Panning.Surround;
 
 			VirtualChannels[voice].SetPanning((ushort)pan);

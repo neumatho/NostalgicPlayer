@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 {
 #pragma warning disable 1591
 	/// <summary>
-	/// UNIMOD structure
+	/// UniMod structure
 	/// </summary>
 	public class Module
 	{

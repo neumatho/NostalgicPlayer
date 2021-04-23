@@ -6,11 +6,6 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers;
 
 namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod
@@ -20,12 +15,17 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod
 	/// </summary>
 	public class MUniTrk
 	{
+		private const int BufPage = 128;			// Smallest uni buffer size
+
 		private byte[] track;						// The whole track
 		private int rowStart;						// Offset to the row
 		private int rowEnd;							// End offset of a row (exclusive)
-		private int rowPc;							// Current unimod(tm) program counter
+		private int rowPc;							// Current UniMod(tm) program counter
 
 		private byte lastByte;						// For UniSkipOpcode()
+
+		private ushort uniMax;						// Maximum number of bytes to be written to this buffer
+		private byte[] uniBuf;						// Pointer to the temporary UniTrk buffer
 
 		/********************************************************************/
 		/// <summary>
@@ -114,6 +114,58 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod
 				while (t-- != 0)
 					UniGetByte();
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the uni stream
+		/// </summary>
+		/********************************************************************/
+		public bool UniInit()
+		{
+			uniMax = BufPage;
+
+			uniBuf = new byte[uniMax];
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Frees the unitrk stream
+		/// </summary>
+		/********************************************************************/
+		public void UniCleanup()
+		{
+			uniBuf = null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Determines the length (in rows) of a unitrk stream
+		/// </summary>
+		/********************************************************************/
+		public ushort UniTrkLen(byte[] t)
+		{
+			ushort len = 0;
+			int offset = 0;
+			byte c;
+
+			while ((c = (byte)(t[offset] & 0x1f)) != 0)
+			{
+				len += c;
+				offset += c;
+			}
+
+			len++;
+
+			return len;
 		}
 	}
 }

@@ -538,6 +538,24 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 			return Encoding.UTF8.GetString(bytes, 0, len);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read a string in the encoding given
+		/// </summary>
+		/********************************************************************/
+		public string ReadString(Encoding encoder, int len)
+		{
+			if (len == 0)
+				return string.Empty;
+
+			byte[] bytes = new byte[len];
+			Read(bytes, 0, len);
+
+			return encoder.GetString(bytes, 0, len);
+		}
 		#endregion
 	}
 }

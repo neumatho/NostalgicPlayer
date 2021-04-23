@@ -21,6 +21,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 	/// </summary>
 	public class Loader
 	{
+		private class ConvertInfo
+		{
+			public AgentInfo Agent;
+			public string OriginalFormat;
+		}
+
 		private readonly Manager agentManager;
 
 		private ModuleStream stream;
@@ -221,20 +227,20 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 			try
 			{
-				AgentInfo converterAgent = null;
+				ConvertInfo convertInfo = null;
 
 				// Check to see if we can find a player via the file type
 				if (!FindPlayerViaFileType(fileInfo))
 				{
 					// No player could be found via the file type
 					// Now try to convert the module
-					converterAgent = ConvertModule(fileInfo, out string converterError);
+					convertInfo = ConvertModule(fileInfo, out string converterError);
 					if (!string.IsNullOrEmpty(converterError))
 					{
 						// Something went wrong when converting the module
 						//
 						// Build the error string
-						errorMessage = string.Format(Resources.IDS_ERR_CONVERT_MODULE, fileInfo.FileName, converterAgent.TypeName, converterError);
+						errorMessage = string.Format(Resources.IDS_ERR_CONVERT_MODULE, fileInfo.FileName, convertInfo.Agent.TypeName, converterError);
 					}
 					else
 					{
@@ -285,9 +291,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						FileName = fileInfo.FileName;
 
 						PlayerName = PlayerAgentInfo.AgentName;
-						ModuleFormat = converterAgent != null ? converterAgent.TypeName : PlayerAgentInfo.TypeName;
+						ModuleFormat = convertInfo != null ? string.IsNullOrEmpty(convertInfo.OriginalFormat) ? convertInfo.Agent.TypeName : convertInfo.OriginalFormat : PlayerAgentInfo.TypeName;
 
-						ConverterAgentInfo = converterAgent;
+						ConverterAgentInfo = convertInfo?.Agent;
 					}
 				}
 				else
@@ -444,9 +450,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Will try to convert the module to another format
 		/// </summary>
 		/********************************************************************/
-		private AgentInfo ConvertModule(PlayerFileInfo fileInfo, out string errorMessage)
+		private ConvertInfo ConvertModule(PlayerFileInfo fileInfo, out string errorMessage)
 		{
-			AgentInfo result = null;
+			ConvertInfo result = null;
 			bool takeAnotherRound;
 
 			do
@@ -466,8 +472,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 							if (agentResult == AgentResult.Ok)
 							{
 								// We found the right converter, so now convert it
-								MemoryStream ms = new MemoryStream();
 								fileInfo.ModuleStream.Seek(0, SeekOrigin.Begin);
+
+								// Create new memory stream to store the converted module in.
+								// We initialize it with the same size as the original file,
+								// so it won't be reallocated a lot
+								MemoryStream ms = new MemoryStream((int)fileInfo.ModuleStream.Length);
 
 								using (WriterStream ws = new WriterStream(ms))
 								{
@@ -479,7 +489,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 										fileInfo.ModuleStream = new ModuleStream(ms);
 
 										if (result == null)
-											result = agentInfo;
+											result = new ConvertInfo { Agent = agentInfo, OriginalFormat = converter.OriginalFormat };
 
 										// The module may need to be converted multiple times, so
 										// we make a new check with the converted module
@@ -489,7 +499,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 									// An error occurred, so return immediately. The error
 									// is stored in the errorMessage out argument
-									return agentInfo;
+									return new ConvertInfo { Agent = agentInfo };
 								}
 							}
 

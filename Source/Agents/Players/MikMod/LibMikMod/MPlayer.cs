@@ -222,7 +222,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 					// Handle the "---" (end of song) pattern since it can occur
 					// *inside* the module in some formats
-					if ((pf.SngPos >= pf.NumPos) || (pf.Positions[pf.SngPos] == Constant.Last_Pattern))
+					if ((pf.SngPos >= pf.NumPos) || (pf.Positions[pf.SngPos] == SharedConstant.Last_Pattern))
 					{
 						if (!pf.Wrap)
 							return;
@@ -252,7 +252,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			// Fade global volume if enabled and we're playing the last pattern
 			int maxVolume;
 
-			if (((pf.SngPos == (pf.NumPos - 1)) || (pf.Positions[pf.SngPos + 1] == Constant.Last_Pattern)) && pf.FadeOut)
+			if (((pf.SngPos == (pf.NumPos - 1)) || (pf.Positions[pf.SngPos + 1] == SharedConstant.Last_Pattern)) && pf.FadeOut)
 				maxVolume = pf.NumRow != 0 ? ((pf.NumRow - pf.PatPos) * 128) / pf.NumRow : 0;
 			else
 				maxVolume = 128;
@@ -485,16 +485,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 					if (i != null)
 					{
-						if (mod.PanFlag && ((i.Flags & InstrumentFlag.PitchPan) != 0) && (a.Main.Panning != Constant.Pan_Surround))
+						if (mod.PanFlag && ((i.Flags & InstrumentFlag.PitchPan) != 0) && (a.Main.Panning != SharedConstant.Pan_Surround))
 						{
 							a.Main.Panning += (short)(((a.ANote - i.PitPanCenter) * i.PitPanSep) / 8);
 
-							if (a.Main.Panning < Constant.Pan_Left)
-								a.Main.Panning = Constant.Pan_Left;
+							if (a.Main.Panning < SharedConstant.Pan_Left)
+								a.Main.Panning = SharedConstant.Pan_Left;
 							else
 							{
-								if (a.Main.Panning > Constant.Pan_Right)
-									a.Main.Panning = Constant.Pan_Right;
+								if (a.Main.Panning > SharedConstant.Pan_Right)
+									a.Main.Panning = SharedConstant.Pan_Right;
 							}
 						}
 
@@ -533,16 +533,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 								}
 							}
 
-							if (mod.PanFlag && (a.Main.Panning != Constant.Pan_Surround))
+							if (mod.PanFlag && (a.Main.Panning != SharedConstant.Pan_Surround))
 							{
 								a.Main.Panning += (short)((a.Main.Panning * (i.RPanVar * GetRandom(512))) / 25600);
 
-								if (a.Main.Panning < Constant.Pan_Left)
-									a.Main.Panning = Constant.Pan_Left;
+								if (a.Main.Panning < SharedConstant.Pan_Left)
+									a.Main.Panning = SharedConstant.Pan_Left;
 								else
 								{
-									if (a.Main.Panning > Constant.Pan_Right)
-										a.Main.Panning = Constant.Pan_Right;
+									if (a.Main.Panning > SharedConstant.Pan_Right)
+										a.Main.Panning = SharedConstant.Pan_Right;
 								}
 							}
 						}
@@ -591,7 +591,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				}
 
 				short envVol = 256;
-				short envPan = Constant.Pan_Center;
+				short envPan = SharedConstant.Pan_Center;
 				short envPit = 32;
 
 				if ((i != null) && ((aOut.Main.Kick == Kick.Note) || (aOut.Main.Kick == Kick.Env)))
@@ -614,7 +614,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 						envVol = ProcessEnvelope(aOut, ref aOut.VEnv, 256);
 
 					if ((aOut.Main.PanFlg & EnvelopeFlag.On) != 0)
-						envPan = ProcessEnvelope(aOut, ref aOut.PEnv, Constant.Pan_Center);
+						envPan = ProcessEnvelope(aOut, ref aOut.PEnv, SharedConstant.Pan_Center);
 
 					if ((aOut.Main.PitFlg & EnvelopeFlag.On) != 0)
 						envPit = ProcessEnvelope(aOut, ref aOut.CEnv, 32);
@@ -654,8 +654,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 					mod.TotalChn++;
 				}
 
-				if (aOut.Main.Panning == Constant.Pan_Surround)
-					driver.VoiceSetPanningInternal((sbyte)channel, Constant.Pan_Surround);
+				if (aOut.Main.Panning == SharedConstant.Pan_Surround)
+					driver.VoiceSetPanningInternal((sbyte)channel, SharedConstant.Pan_Surround);
 				else
 				{
 					if (mod.PanFlag && ((aOut.PEnv.Flg & EnvelopeFlag.On) != 0))
@@ -1212,9 +1212,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		/********************************************************************/
 		private short DoPan(short envPan, short pan)
 		{
-			int newPan = pan + (((envPan - Constant.Pan_Center) * (128 - Math.Abs(pan - Constant.Pan_Center))) / 128);
+			int newPan = pan + (((envPan - SharedConstant.Pan_Center) * (128 - Math.Abs(pan - SharedConstant.Pan_Center))) / 128);
 
-			return (short)(newPan < Constant.Pan_Left ? Constant.Pan_Left : (newPan > Constant.Pan_Right ? Constant.Pan_Right : newPan));
+			return (short)(newPan < SharedConstant.Pan_Left ? SharedConstant.Pan_Left : (newPan > SharedConstant.Pan_Right ? SharedConstant.Pan_Right : newPan));
 		}
 
 
@@ -2865,7 +2865,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			if ((tick != 0) || (mod.PatDly2 != 0))
 				return 0;
 
-			if ((mod.Positions[mod.SngPos] != Constant.Last_Pattern) && (dat > mod.PattRows[mod.Positions[mod.SngPos]]))
+			if ((mod.Positions[mod.SngPos] != SharedConstant.Last_Pattern) && (dat > mod.PattRows[mod.Positions[mod.SngPos]]))
 				dat = (byte)mod.PattRows[mod.Positions[mod.SngPos]];
 
 			mod.PatBrk = dat;
@@ -3595,8 +3595,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				if (hi != 0)
 					lo = 0;
 
-				short pan = (short)(((a.Main.Panning == Constant.Pan_Surround) ? Constant.Pan_Center : a.Main.Panning) + hi - lo);
-				a.Main.Panning = (short)((pan < Constant.Pan_Left) ? Constant.Pan_Left : (pan > Constant.Pan_Right ? Constant.Pan_Right : pan));
+				short pan = (short)(((a.Main.Panning == SharedConstant.Pan_Surround) ? SharedConstant.Pan_Center : a.Main.Panning) + hi - lo);
+				a.Main.Panning = (short)((pan < SharedConstant.Pan_Left) ? SharedConstant.Pan_Left : (pan > SharedConstant.Pan_Right ? SharedConstant.Pan_Right : pan));
 			}
 
 			return 0;
@@ -3817,7 +3817,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			byte lo = (byte)(inf & 0xf);
 			byte hi = (byte)(inf >> 4);
 
-			short pan = (a.Main.Panning == Constant.Pan_Surround) ? (short)Constant.Pan_Center : a.Main.Panning;
+			short pan = (a.Main.Panning == SharedConstant.Pan_Surround) ? (short)SharedConstant.Pan_Center : a.Main.Panning;
 
 			if (hi == 0)
 				pan += (short)(lo << 2);
@@ -3843,7 +3843,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				}
 			}
 
-			a.Main.Panning = (short)((pan < Constant.Pan_Left) ? Constant.Pan_Left : (pan > Constant.Pan_Right ? Constant.Pan_Right : pan));
+			a.Main.Panning = (short)((pan < SharedConstant.Pan_Left) ? SharedConstant.Pan_Left : (pan > SharedConstant.Pan_Right ? SharedConstant.Pan_Right : pan));
 
 			return 0;
 		}
@@ -3939,8 +3939,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				{
 					if (mod.PanFlag)
 					{
-						a.Main.Panning = Constant.Pan_Surround;
-						mod.Panning[channel] = Constant.Pan_Surround;
+						a.Main.Panning = SharedConstant.Pan_Surround;
+						mod.Panning[channel] = SharedConstant.Pan_Surround;
 					}
 					break;
 				}
@@ -4219,7 +4219,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				temp *= a.PanbDepth;
 				temp = (short)((temp / 8) + mod.Panning[channel]);
 
-				a.Main.Panning = (short)((temp < Constant.Pan_Left) ? Constant.Pan_Left : (temp > Constant.Pan_Right) ? Constant.Pan_Right : temp);
+				a.Main.Panning = (short)((temp < SharedConstant.Pan_Left) ? SharedConstant.Pan_Left : (temp > SharedConstant.Pan_Right) ? SharedConstant.Pan_Right : temp);
 				a.PanbPos += (byte)a.PanbSpd;
 			}
 

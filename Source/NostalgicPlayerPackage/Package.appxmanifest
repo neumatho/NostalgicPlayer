@@ -63,6 +63,7 @@
               <uap:FileType ContentType="audio/x-fc">.fc14</uap:FileType>
               <uap:FileType ContentType="audio/x-fc">.fc13</uap:FileType>
               <uap:FileType ContentType="audio/x-fc">.smod</uap:FileType>
+              <uap:FileType ContentType="audio/x-uni">.uni</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Audio file</uap:DisplayName>
           </uap:FileTypeAssociation>

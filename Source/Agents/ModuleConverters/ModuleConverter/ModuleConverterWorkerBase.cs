@@ -8,35 +8,15 @@
 /******************************************************************************/
 using System;
 using System.IO;
-using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Bases;
 
 namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 {
 	/// <summary>
 	/// Base class for all the formats
 	/// </summary>
-	internal abstract class ModuleConverterWorkerBase : IModuleConverterAgent
+	internal abstract class ModuleConverterWorkerBase : ModuleConverterAgentBase
 	{
-		#region IModuleConverter implementation
-		/********************************************************************/
-		/// <summary>
-		/// Test the file to see if it could be identified
-		/// </summary>
-		/********************************************************************/
-		public abstract AgentResult Identify(PlayerFileInfo fileInfo);
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Convert the module and store the result in the stream given
-		/// </summary>
-		/********************************************************************/
-		public abstract AgentResult Convert(PlayerFileInfo fileInfo, WriterStream writerStream, out string errorMessage);
-		#endregion
-
 		#region Helper methods
 		/********************************************************************/
 		/// <summary>

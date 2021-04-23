@@ -6,15 +6,14 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Agent.Player.MikMod.Containers;
 using Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers;
 
-namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
+namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod
 {
 	/// <summary>
 	/// Helper methods to allocate and free different structures
 	/// </summary>
-	internal static class MLoader
+	public static class MLoader
 	{
 		/********************************************************************/
 		/// <summary>

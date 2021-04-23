@@ -205,7 +205,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 		};
 		#endregion
 
-		#region IModuleConverter implementation
+		#region IModuleConverterAgent implementation
 		/********************************************************************/
 		/// <summary>
 		/// Test the file to see if it could be identified
