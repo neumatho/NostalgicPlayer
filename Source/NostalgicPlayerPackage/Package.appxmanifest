@@ -48,22 +48,14 @@
       </uap:VisualElements>
       <Extensions>
         <uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation Name="modulefile">
+          <uap:FileTypeAssociation Name="samplefile">
             <uap:SupportedFileTypes>
-              <uap:FileType ContentType="audio/x-jam">.jam</uap:FileType>
-              <uap:FileType ContentType="audio/x-mod">.mod</uap:FileType>
-              <uap:FileType ContentType="audio/x-mtm">.mtm</uap:FileType>
               <uap:FileType ContentType="audio/wav">.wav</uap:FileType>
               <uap:FileType ContentType="audio/x-8svx">.8svx</uap:FileType>
               <uap:FileType ContentType="audio/x-8svx">.iff</uap:FileType>
               <uap:FileType ContentType="audio/x-16sv">.16sv</uap:FileType>
               <uap:FileType ContentType="audio/aiff">.aiff</uap:FileType>
               <uap:FileType ContentType="audio/aiff">.aif</uap:FileType>
-              <uap:FileType ContentType="audio/x-fc">.fc</uap:FileType>
-              <uap:FileType ContentType="audio/x-fc">.fc14</uap:FileType>
-              <uap:FileType ContentType="audio/x-fc">.fc13</uap:FileType>
-              <uap:FileType ContentType="audio/x-fc">.smod</uap:FileType>
-              <uap:FileType ContentType="audio/x-uni">.uni</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Audio file</uap:DisplayName>
           </uap:FileTypeAssociation>
@@ -74,6 +66,49 @@
               <uap:FileType ContentType="text/x-npml">.npml</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>NostalgicPlayer list file</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="modfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-mod">.mod</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Sound/Noise/ProTracker</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="mtmfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-mtm">.mtm</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>MultiTracker</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="jamfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-jam">.jam</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>JamCracker</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="fcfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-fc">.fc</uap:FileType>
+              <uap:FileType ContentType="audio/x-fc">.fc14</uap:FileType>
+              <uap:FileType ContentType="audio/x-fc">.fc13</uap:FileType>
+              <uap:FileType ContentType="audio/x-fc">.smod</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Future Composer</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="unifile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-uni">.uni</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>MikMod UniMod</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
       </Extensions>
