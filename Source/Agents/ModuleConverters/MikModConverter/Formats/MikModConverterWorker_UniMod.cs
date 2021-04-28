@@ -77,18 +77,18 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		/********************************************************************/
 		public override AgentResult Identify(PlayerFileInfo fileInfo)
 		{
-			ModuleStream stream = fileInfo.ModuleStream;
+			ModuleStream moduleStream = fileInfo.ModuleStream;
 
 			// First check the length
-			long fileSize = stream.Length;
+			long fileSize = moduleStream.Length;
 			if (fileSize < 313)								// Size of UniHeader
 				return AgentResult.Unknown;
 
 			// Now check the signature
-			stream.Seek(0, SeekOrigin.Begin);
+			moduleStream.Seek(0, SeekOrigin.Begin);
 
 			byte[] id = new byte[6];
-			stream.Read(id, 0, 6);
+			moduleStream.Read(id, 0, 6);
 
 			// UniMod created by MikCvt
 			if ((id[0] == 'U') && (id[1] == 'N') && (id[2] == '0'))
@@ -118,183 +118,206 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		{
 			errorMessage = string.Empty;
 
-			Encoding encoder = EncoderCollection.Ibm850;
-
-			UniHeader mh = new UniHeader();
-
-			// Clear the buffer pointers
-			wh = null;
-
-			// Read module header
-			moduleStream.Read(mh.Id, 0, 4);
-			if (mh.Id[3] != 'N')
-				uniVersion = (ushort)(mh.Id[3] - '0');
-			else
-				uniVersion = 0x100;
-
-			if (uniVersion >= 6)
+			try
 			{
-				if (uniVersion == 6)
-					moduleStream.Seek(1, SeekOrigin.Current);
+				Encoding encoder = EncoderCollection.Ibm850;
+
+				UniHeader mh = new UniHeader();
+
+				// Clear the buffer pointers
+				wh = null;
+
+				// Read module header
+				moduleStream.Read(mh.Id, 0, 4);
+				if (mh.Id[3] != 'N')
+					uniVersion = (ushort)(mh.Id[3] - '0');
 				else
-					uniVersion = moduleStream.Read_B_UINT16();
+					uniVersion = 0x100;
 
-				mh.Flags = (ModuleFlag)moduleStream.Read_B_UINT16();
-				mh.NumChn = moduleStream.Read_UINT8();
-				mh.NumVoices = moduleStream.Read_UINT8();
-				mh.NumPos = moduleStream.Read_B_UINT16();
-				mh.NumPat = moduleStream.Read_B_UINT16();
-				mh.NumTrk = moduleStream.Read_B_UINT16();
-				mh.NumIns = moduleStream.Read_B_UINT16();
-				mh.NumSmp = moduleStream.Read_B_UINT16();
-				mh.RepPos = moduleStream.Read_B_UINT16();
-				mh.InitSpeed = moduleStream.Read_UINT8();
-				mh.InitTempo = moduleStream.Read_UINT8();
-				mh.InitVolume = moduleStream.Read_UINT8();
+				if (uniVersion >= 6)
+				{
+					if (uniVersion == 6)
+						moduleStream.Seek(1, SeekOrigin.Current);
+					else
+						uniVersion = moduleStream.Read_B_UINT16();
 
-				if (uniVersion >= 0x106)
-					mh.BpmLimit = moduleStream.Read_B_UINT16();
-				else
-					mh.BpmLimit = 32;
+					mh.Flags = (ModuleFlag)moduleStream.Read_B_UINT16();
+					mh.NumChn = moduleStream.Read_UINT8();
+					mh.NumVoices = moduleStream.Read_UINT8();
+					mh.NumPos = moduleStream.Read_B_UINT16();
+					mh.NumPat = moduleStream.Read_B_UINT16();
+					mh.NumTrk = moduleStream.Read_B_UINT16();
+					mh.NumIns = moduleStream.Read_B_UINT16();
+					mh.NumSmp = moduleStream.Read_B_UINT16();
+					mh.RepPos = moduleStream.Read_B_UINT16();
+					mh.InitSpeed = moduleStream.Read_UINT8();
+					mh.InitTempo = moduleStream.Read_UINT8();
+					mh.InitVolume = moduleStream.Read_UINT8();
 
-				mh.Flags &= ModuleFlag.XmPeriods | ModuleFlag.Linear | ModuleFlag.Inst | ModuleFlag.Nna;
-				mh.Flags |= ModuleFlag.Panning;
-			}
-			else
-			{
-				mh.NumChn = moduleStream.Read_UINT8();
-				mh.NumPos = moduleStream.Read_L_UINT16();
-				mh.RepPos = (uniVersion == 5) ? moduleStream.Read_L_UINT16() : (ushort)0;
-				mh.NumPat = moduleStream.Read_L_UINT16();
-				mh.NumTrk = moduleStream.Read_L_UINT16();
-				mh.NumIns = moduleStream.Read_L_UINT16();
-				mh.InitSpeed = moduleStream.Read_UINT8();
-				mh.InitTempo = moduleStream.Read_UINT8();
+					if (uniVersion >= 0x106)
+						mh.BpmLimit = moduleStream.Read_B_UINT16();
+					else
+						mh.BpmLimit = 32;
 
-				moduleStream.Read(mh.Positions, 0, 256);
-				moduleStream.Read(mh.Panning, 0, 32);
-
-				mh.Flags = (ModuleFlag)moduleStream.Read_UINT8();
-				mh.BpmLimit = 32;
-
-				mh.Flags &= ModuleFlag.XmPeriods | ModuleFlag.Linear;
-				mh.Flags |= ModuleFlag.Inst | ModuleFlag.NoWrap | ModuleFlag.Panning;
-			}
-
-			// Set module parameters
-			of.Flags = mh.Flags;
-			of.NumChn = mh.NumChn;
-			of.NumPos = mh.NumPos;
-			of.NumPat = mh.NumPat;
-			of.NumTrk = mh.NumTrk;
-			of.NumIns = mh.NumIns;
-			of.RepPos = mh.RepPos;
-			of.InitSpeed = mh.InitSpeed;
-			of.InitTempo = mh.InitTempo;
-
-			if (mh.BpmLimit != 0)
-				of.BpmLimit = mh.BpmLimit;
-			else
-			{
-				// Be bug-compatible with older releases
-				of.BpmLimit = 32;
-			}
-
-			ushort len = moduleStream.Read_L_UINT16();
-			of.SongName = moduleStream.ReadString(encoder, len);
-
-			string oldType = null;
-
-			if (uniVersion < 0x102)
-			{
-				// Read tracker used
-				len = moduleStream.Read_L_UINT16();
-				oldType = moduleStream.ReadString(encoder, len);
-			}
-
-			if (!string.IsNullOrEmpty(oldType))
-				originalFormat = string.Format("{0} (was {1})", (uniVersion >= 0x100) ? "APlayer" : "MikCvt2", oldType);
-			else
-				originalFormat = (uniVersion >= 0x100) ? "APlayer" : "MikCvt3";
-
-			len = moduleStream.Read_L_UINT16();
-			of.Comment = moduleStream.ReadString(encoder, len);
-
-			if (uniVersion >= 6)
-			{
-				of.NumVoices = mh.NumVoices;
-				of.InitVolume = mh.InitVolume;
-			}
-
-			if (moduleStream.EndOfStream)
-			{
-				errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_HEADER;
-				return false;
-			}
-
-			// Positions
-			if (!MLoader.AllocPositions(of, of.NumPos))
-			{
-				errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_HEADER;
-				return false;
-			}
-
-			if (uniVersion >= 6)
-			{
-				if (uniVersion >= 0x100)
-					moduleStream.ReadArray_B_UINT16s(of.Positions, of.NumPos);
+					mh.Flags &= ModuleFlag.XmPeriods | ModuleFlag.Linear | ModuleFlag.Inst | ModuleFlag.Nna;
+					mh.Flags |= ModuleFlag.Panning;
+				}
 				else
 				{
-					for (int t = 0; t < of.NumPos; t++)
-						of.Positions[t] = moduleStream.Read_UINT8();
+					mh.NumChn = moduleStream.Read_UINT8();
+					mh.NumPos = moduleStream.Read_L_UINT16();
+					mh.RepPos = (uniVersion == 5) ? moduleStream.Read_L_UINT16() : (ushort)0;
+					mh.NumPat = moduleStream.Read_L_UINT16();
+					mh.NumTrk = moduleStream.Read_L_UINT16();
+					mh.NumIns = moduleStream.Read_L_UINT16();
+					mh.InitSpeed = moduleStream.Read_UINT8();
+					mh.InitTempo = moduleStream.Read_UINT8();
+
+					moduleStream.Read(mh.Positions, 0, 256);
+					moduleStream.Read(mh.Panning, 0, 32);
+
+					mh.Flags = (ModuleFlag)moduleStream.Read_UINT8();
+					mh.BpmLimit = 32;
+
+					mh.Flags &= ModuleFlag.XmPeriods | ModuleFlag.Linear;
+					mh.Flags |= ModuleFlag.Inst | ModuleFlag.NoWrap | ModuleFlag.Panning;
 				}
 
-				moduleStream.ReadArray_B_UINT16s(of.Panning, of.NumChn);
-				moduleStream.Read(of.ChanVol, 0, of.NumChn);
-			}
-			else
-			{
-				if ((mh.NumPos > 256) || (mh.NumChn > 32))
+				// Set module parameters
+				of.Flags = mh.Flags;
+				of.NumChn = mh.NumChn;
+				of.NumPos = mh.NumPos;
+				of.NumPat = mh.NumPat;
+				of.NumTrk = mh.NumTrk;
+				of.NumIns = mh.NumIns;
+				of.RepPos = mh.RepPos;
+				of.InitSpeed = mh.InitSpeed;
+				of.InitTempo = mh.InitTempo;
+
+				if (mh.BpmLimit != 0)
+					of.BpmLimit = mh.BpmLimit;
+				else
+				{
+					// Be bug-compatible with older releases
+					of.BpmLimit = 32;
+				}
+
+				ushort len = moduleStream.Read_L_UINT16();
+				of.SongName = moduleStream.ReadString(encoder, len);
+
+				string oldType = null;
+
+				if (uniVersion < 0x102)
+				{
+					// Read tracker used
+					len = moduleStream.Read_L_UINT16();
+					oldType = moduleStream.ReadString(encoder, len);
+				}
+
+				if (!string.IsNullOrEmpty(oldType))
+					originalFormat = string.Format(Resources.IDS_MIKCONV_NAME_UNI, (uniVersion >= 0x100) ? "APlayer" : "MikCvt2", oldType);
+				else
+					originalFormat = (uniVersion >= 0x100) ? "APlayer" : "MikCvt3";
+
+				len = moduleStream.Read_L_UINT16();
+				of.Comment = moduleStream.ReadString(encoder, len);
+
+				if (uniVersion >= 6)
+				{
+					of.NumVoices = mh.NumVoices;
+					of.InitVolume = mh.InitVolume;
+				}
+
+				if (moduleStream.EndOfStream)
 				{
 					errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_HEADER;
 					return false;
 				}
 
-				for (int t = 0; t < of.NumPos; t++)
-					of.Positions[t] = mh.Positions[t];
+				// Positions
+				if (!MLoader.AllocPositions(of, of.NumPos))
+				{
+					errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_HEADER;
+					return false;
+				}
 
-				for (int t = 0; t < of.NumChn; t++)
-					of.Panning[t] = mh.Panning[t];
-			}
+				if (uniVersion >= 6)
+				{
+					if (uniVersion >= 0x100)
+						moduleStream.ReadArray_B_UINT16s(of.Positions, of.NumPos);
+					else
+					{
+						for (int t = 0; t < of.NumPos; t++)
+							of.Positions[t] = moduleStream.Read_UINT8();
+					}
 
-			// Convert the 'end of song' pattern code if necessary
-			if (uniVersion < 0x106)
-			{
+					moduleStream.ReadArray_B_UINT16s(of.Panning, of.NumChn);
+					moduleStream.Read(of.ChanVol, 0, of.NumChn);
+				}
+				else
+				{
+					if ((mh.NumPos > 256) || (mh.NumChn > 32))
+					{
+						errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_HEADER;
+						return false;
+					}
+
+					for (int t = 0; t < of.NumPos; t++)
+						of.Positions[t] = mh.Positions[t];
+
+					for (int t = 0; t < of.NumChn; t++)
+						of.Panning[t] = mh.Panning[t];
+				}
+
+				// Convert the 'end of song' pattern code if necessary
 				for (int t = 0; t < of.NumPos; t++)
 				{
-					if (of.Positions[t] == 255)
+					if ((uniVersion < 0x106) && (of.Positions[t] == 255))
 						of.Positions[t] = SharedConstant.Last_Pattern;
+					else
+					{
+						// Sanity check
+						if (of.Positions[t] > of.NumPat)
+						{
+							errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_HEADER;
+							return false;
+						}
+					}
 				}
-			}
 
-			// Instruments and samples
-			if (uniVersion >= 6)
-			{
-				of.NumSmp = mh.NumSmp;
-
-				if (!MLoader.AllocSamples(of))
+				// Instruments and samples
+				if (uniVersion >= 6)
 				{
-					errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_SAMPLES;
-					return false;
-				}
+					of.NumSmp = mh.NumSmp;
 
-				if (!LoadSmp6(moduleStream))
-				{
-					errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_SAMPLES;
-					return false;
-				}
+					if (!MLoader.AllocSamples(of))
+					{
+						errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_SAMPLES;
+						return false;
+					}
 
-				if ((of.Flags & ModuleFlag.Inst) != 0)
+					if (!LoadSmp6(moduleStream))
+					{
+						errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_SAMPLES;
+						return false;
+					}
+
+					if ((of.Flags & ModuleFlag.Inst) != 0)
+					{
+						if (!MLoader.AllocInstruments(of))
+						{
+							errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_INSTRUMENTS;
+							return false;
+						}
+
+						if (!LoadInstr6(moduleStream))
+						{
+							errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_INSTRUMENTS;
+							return false;
+						}
+					}
+				}
+				else
 				{
 					if (!MLoader.AllocInstruments(of))
 					{
@@ -302,107 +325,95 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 						return false;
 					}
 
-					if (!LoadInstr6(moduleStream))
+					if (!LoadInstr5(moduleStream))
 					{
 						errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_INSTRUMENTS;
 						return false;
 					}
-				}
-			}
-			else
-			{
-				if (!MLoader.AllocInstruments(of))
-				{
-					errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_INSTRUMENTS;
-					return false;
-				}
 
-				if (!LoadInstr5(moduleStream))
-				{
-					errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_INSTRUMENTS;
-					return false;
-				}
-
-				if (!MLoader.AllocSamples(of))
-				{
-					errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_SAMPLES;
-					return false;
-				}
-
-				LoadSmp5();
-
-				// Check if the original file has no instruments
-				if (of.NumSmp == of.NumIns)
-				{
-					int t;
-					for (t = 0; t < of.NumIns; t++)
+					if (!MLoader.AllocSamples(of))
 					{
-						Instrument d = of.Instruments[t];
+						errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_SAMPLES;
+						return false;
+					}
 
-						if ((d.VolPts != 0) || (d.PanPts != 0) || (d.GlobVol != 64))
-							break;
+					LoadSmp5();
 
-						int u;
-						for (u = 0; u < 96; u++)
+					// Check if the original file has no instruments
+					if (of.NumSmp == of.NumIns)
+					{
+						int t;
+						for (t = 0; t < of.NumIns; t++)
 						{
-							if ((d.SampleNumber[u] != t) || (d.SampleNote[u] != u))
+							Instrument d = of.Instruments[t];
+
+							if ((d.VolPts != 0) || (d.PanPts != 0) || (d.GlobVol != 64))
+								break;
+
+							int u;
+							for (u = 0; u < 96; u++)
+							{
+								if ((d.SampleNumber[u] != t) || (d.SampleNote[u] != u))
+									break;
+							}
+
+							if (u != 96)
 								break;
 						}
 
-						if (u != 96)
-							break;
-					}
-
-					if (t == of.NumIns)
-					{
-						of.Flags &= ~ModuleFlag.Inst;
-						of.Flags &= ~ModuleFlag.NoWrap;
-
-						for (t = 0; t < of.NumIns; t++)
+						if (t == of.NumIns)
 						{
-							of.Samples[t].SampleName = of.Instruments[t].InsName;
-							of.Instruments[t].InsName = string.Empty;
+							of.Flags &= ~ModuleFlag.Inst;
+							of.Flags &= ~ModuleFlag.NoWrap;
+
+							for (t = 0; t < of.NumIns; t++)
+							{
+								of.Samples[t].SampleName = of.Instruments[t].InsName;
+								of.Instruments[t].InsName = string.Empty;
+							}
 						}
 					}
 				}
-			}
 
-			// Patterns
-			if (!MLoader.AllocPatterns(of))
-			{
-				errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_PATTERNS;
-				return false;
-			}
+				// Patterns
+				if (!MLoader.AllocPatterns(of))
+				{
+					errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_PATTERNS;
+					return false;
+				}
 
-			if (uniVersion >= 6)
-			{
-				moduleStream.ReadArray_B_UINT16s(of.PattRows, of.NumPat);
-				moduleStream.ReadArray_B_UINT16s(of.Patterns, of.NumPat * of.NumChn);
-			}
-			else
-			{
-				moduleStream.ReadArray_L_UINT16s(of.PattRows, of.NumPat);
-				moduleStream.ReadArray_L_UINT16s(of.Patterns, of.NumPat * of.NumChn);
-			}
+				if (uniVersion >= 6)
+				{
+					moduleStream.ReadArray_B_UINT16s(of.PattRows, of.NumPat);
+					moduleStream.ReadArray_B_UINT16s(of.Patterns, of.NumPat * of.NumChn);
+				}
+				else
+				{
+					moduleStream.ReadArray_L_UINT16s(of.PattRows, of.NumPat);
+					moduleStream.ReadArray_L_UINT16s(of.Patterns, of.NumPat * of.NumChn);
+				}
 
-			// Tracks
-			if (!MLoader.AllocTracks(of))
-			{
-				errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_TRACKS;
-				return false;
-			}
-
-			for (int t = 0; t < of.NumTrk; t++)
-			{
-				if ((of.Tracks[t] = ReadTrack(moduleStream)) == null)
+				// Tracks
+				if (!MLoader.AllocTracks(of))
 				{
 					errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_TRACKS;
 					return false;
 				}
-			}
 
-			// Clean up again
-			wh = null;
+				for (int t = 0; t < of.NumTrk; t++)
+				{
+					if ((of.Tracks[t] = ReadTrack(moduleStream)) == null)
+					{
+						errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_TRACKS;
+						return false;
+					}
+				}
+			}
+			finally
+			{
+				// Clean up again
+				wh = null;
+			}
 
 			return true;
 		}

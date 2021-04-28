@@ -6,6 +6,8 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers;
+
 namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.Containers
 {
 	/// <summary>
@@ -19,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.Containers
 			7895, 7941, 7985, 8046, 8107, 8169, 8232, 8280
 		};
 
-		public static readonly ushort[] OldPeriods = new ushort[Constant.Octave * 2]
+		public static readonly ushort[] OldPeriods = new ushort[SharedConstant.Octave * 2]
 		{
 			0x6b00, 0x6800, 0x6500, 0x6220, 0x5f50, 0x5c80,
 			0x5a00, 0x5740, 0x54d0, 0x5260, 0x5010, 0x4dc0,

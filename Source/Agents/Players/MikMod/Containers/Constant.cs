@@ -14,7 +14,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.Containers
 	internal static class Constant
 	{
 		public const int HighOctave = 2;			// Number of above-range octaves
-		public const int Octave = 12;				// Number of notes in an octave
 
 		public const int LogFac = 2 * 16;
 

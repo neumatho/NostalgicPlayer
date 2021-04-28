@@ -13,6 +13,11 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 	/// </summary>
 	public static class SharedConstant
 	{
+		/// <summary>
+		/// Number of notes in an octave
+		/// </summary>
+		public const int Octave = 12;
+
 		/// <summary></summary>
 		public const int InstNotes = 120;
 		/// <summary></summary>

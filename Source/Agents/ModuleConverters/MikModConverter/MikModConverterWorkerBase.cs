@@ -84,50 +84,55 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 				return false;
 			}
 
-			originalFormat = null;
-
-			// Initialize the UniMod structure
-			of = new Module();
-
-			of.BpmLimit = 33;
-			of.InitVolume = 128;
-
-			// Init volume and panning array
-			for (int t = 0; t < SharedConstant.UF_MaxChan; t++)
+			try
 			{
-				of.ChanVol[t] = 64;
-				of.Panning[t] = (ushort)(((t + 1) & 2) != 0 ? SharedConstant.Pan_Right : SharedConstant.Pan_Left);
+				originalFormat = null;
+
+				// Initialize the UniMod structure
+				of = new Module();
+
+				of.BpmLimit = 33;
+				of.InitVolume = 128;
+
+				// Init volume and panning array
+				for (int t = 0; t < SharedConstant.UF_MaxChan; t++)
+				{
+					of.ChanVol[t] = 64;
+					of.Panning[t] = (ushort)(((t + 1) & 2) != 0 ? SharedConstant.Pan_Right : SharedConstant.Pan_Left);
+				}
+
+				if (!LoadModule(moduleStream, uniTrk, out errorMessage))
+					return false;
+
+				// If the module doesn't have any specific panning, create a
+				// MOD-like panning, with the channels half-separated
+				if ((of.Flags & ModuleFlag.Panning) == 0)
+				{
+					for (int t = 0; t < of.NumChn; t++)
+						of.Panning[t] = (ushort)(((t + 1) & 2) != 0 ? SharedConstant.Pan_HalfRight : SharedConstant.Pan_HalfLeft);
+				}
+
+				// Find number of channels to use
+				byte maxChan = SharedConstant.UF_MaxChan;
+
+				if (((of.Flags & ModuleFlag.Nna) == 0) && (of.NumChn < maxChan))
+					maxChan = of.NumChn;
+				else
+				{
+					if ((of.NumVoices != 0) && (of.NumVoices < maxChan))
+						maxChan = of.NumVoices;
+				}
+
+				if (maxChan < of.NumChn)
+					of.Flags |= ModuleFlag.Nna;
+
+				of.NumVoices = maxChan;
 			}
-
-			if (!LoadModule(moduleStream, uniTrk, out errorMessage))
-				return false;
-
-			// If the module doesn't have any specific panning, create a
-			// MOD-like panning, with the channels half-separated
-			if ((of.Flags & ModuleFlag.Panning) == 0)
+			finally
 			{
-				for (int t = 0; t < of.NumChn; t++)
-					of.Panning[t] = (ushort)(((t + 1) & 2) != 0 ? SharedConstant.Pan_HalfRight : SharedConstant.Pan_HalfLeft);
+				// Clean up
+				uniTrk.UniCleanup();
 			}
-
-			// Find number of channels to use
-			byte maxChan = SharedConstant.UF_MaxChan;
-
-			if (((of.Flags & ModuleFlag.Nna) == 0) && (of.NumChn < maxChan))
-				maxChan = of.NumChn;
-			else
-			{
-				if ((of.NumVoices != 0) && (of.NumVoices < maxChan))
-					maxChan = of.NumVoices;
-			}
-
-			if (maxChan < of.NumChn)
-				of.Flags |= ModuleFlag.Nna;
-
-			of.NumVoices = maxChan;
-
-			// Clean up
-			uniTrk.UniCleanup();
 
 			return true;
 		}
@@ -147,7 +152,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 
 			// Fill in the UniMod header
 			writerStream.Write_B_UINT32(0x4e50554e);			// Mark (NPUN)
-			writerStream.Write_B_UINT16(0x100);					// Version
+			writerStream.Write_B_UINT16(0x0100);				// Version
 			writerStream.Write_B_UINT16((ushort)of.Flags);
 			writerStream.Write_UINT8(of.NumChn);
 			writerStream.Write_UINT8(of.NumVoices);

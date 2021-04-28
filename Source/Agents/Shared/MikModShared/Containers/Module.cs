@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 		// General module information
 		public string SongName;					// Name of the song
 //		public string ModType;					// String type of module loaded
-		public string Comment;					// Module comments
+		public string Comment = string.Empty;	// Module comments
 
 		public ModuleFlag Flags;				// Module flags
 		public byte NumChn;						// Number of module channels

@@ -120,14 +120,22 @@
   <data name="IDS_MIKCONV_DESCRIPTION" xml:space="preserve">
     <value>Converts all supported MikMod formats to NostalgicPlayer UniMod format.
 This format is almost like the original MikMod UniMod format except for a few changes.
-Written by Thomas Neumann based on MikMod 3.3.11.1 + some fixes by myself.
+Written by Thomas Neumann based on MikMod 3.3.11.1 + what has been added to 3.3.12 so far.
 
 This version can convert these formats:
 
+FastTracker II (XM)
 UniMod (UNI)</value>
   </data>
   <data name="IDS_MIKCONV_DESCRIPTION_AGENT14" xml:space="preserve">
     <value>This loader recognizes “UniMod” modules. This is the internal format used by MikMod. If you find any modules in this format, it probably won't be played correct, because not all effects were supported at the time those modules were used.</value>
+  </data>
+  <data name="IDS_MIKCONV_DESCRIPTION_AGENT15" xml:space="preserve">
+    <value>This loader recognizes “FastTracker 2” modules. This format was designed from scratch, instead of creating yet another ProTracker variation. It was the first format using instruments as well as samples, and envelopes for finer effects.
+FastTracker 2 was written by Fredrik Huss and Magnus Hogdahl, and released in 1994.</value>
+  </data>
+  <data name="IDS_MIKCONV_ERR_BAD_HEADER" xml:space="preserve">
+    <value>Module header have some bad values</value>
   </data>
   <data name="IDS_MIKCONV_ERR_INITIALIZE" xml:space="preserve">
     <value>Can't initialize converter</value>
@@ -152,5 +160,17 @@ UniMod (UNI)</value>
   </data>
   <data name="IDS_MIKCONV_NAME_AGENT14" xml:space="preserve">
     <value>UniMod</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_AGENT15" xml:space="preserve">
+    <value>FastTracker II</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_UNI" xml:space="preserve">
+    <value>{0} (was {1})</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_XM" xml:space="preserve">
+    <value>{0} (XM format {1}.{2:D2})</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_XM_UNKNOWN" xml:space="preserve">
+    <value>Unknown tracker</value>
   </data>
 </root>

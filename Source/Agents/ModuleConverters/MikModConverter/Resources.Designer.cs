@@ -63,10 +63,11 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         /// <summary>
         ///   Looks up a localized string similar to Converts all supported MikMod formats to NostalgicPlayer UniMod format.
         ///This format is almost like the original MikMod UniMod format except for a few changes.
-        ///Written by Thomas Neumann based on MikMod 3.3.11.1 + some fixes by myself.
+        ///Written by Thomas Neumann based on MikMod 3.3.11.1 + what has been added to 3.3.12 so far.
         ///
         ///This version can convert these formats:
         ///
+        ///FastTracker II (XM)
         ///UniMod (UNI).
         /// </summary>
         internal static string IDS_MIKCONV_DESCRIPTION {
@@ -81,6 +82,25 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         internal static string IDS_MIKCONV_DESCRIPTION_AGENT14 {
             get {
                 return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT14", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This loader recognizes “FastTracker 2” modules. This format was designed from scratch, instead of creating yet another ProTracker variation. It was the first format using instruments as well as samples, and envelopes for finer effects.
+        ///FastTracker 2 was written by Fredrik Huss and Magnus Hogdahl, and released in 1994..
+        /// </summary>
+        internal static string IDS_MIKCONV_DESCRIPTION_AGENT15 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT15", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Module header have some bad values.
+        /// </summary>
+        internal static string IDS_MIKCONV_ERR_BAD_HEADER {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_ERR_BAD_HEADER", resourceCulture);
             }
         }
         
@@ -153,6 +173,42 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         internal static string IDS_MIKCONV_NAME_AGENT14 {
             get {
                 return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT14", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FastTracker II.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_AGENT15 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT15", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (was {1}).
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_UNI {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_UNI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (XM format {1}.{2:D2}).
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_XM {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_XM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown tracker.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_XM_UNKNOWN {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_XM_UNKNOWN", resourceCulture);
             }
         }
     }

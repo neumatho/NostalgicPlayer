@@ -21,4 +21,10 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+  </ItemGroup>
+
 </Project>

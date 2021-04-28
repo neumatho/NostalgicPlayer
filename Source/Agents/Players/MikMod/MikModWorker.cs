@@ -349,6 +349,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 									{
 										startRow = uniTrk.UniGetByte();
 
+										if ((startRow != 0) && (startRow >= of.NumRow))		// Crafted file?
+											startRow = 0;
+
 										if ((pos == of.NumPos - 2) && (startRow == 0) && posBreak)
 											posBreak = false;
 
@@ -369,6 +372,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 									{
 										// Get the new position
 										effArg = uniTrk.UniGetByte();
+
+										if (effArg > of.NumPos)		// Crafted file?
+											effArg = (byte)(of.NumPos - 1);
 
 										// Do we jump to a lower position
 										if (effArg < pos)
@@ -630,11 +636,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 				if (pos >= of.NumPos)
 					pos = of.NumPos;
 
-				of.PosJmp = 2;
-				of.PatBrk = 0;
-				of.SngPos = (short)pos;
-				of.VbTick = 0;
-
 				// Change the speed
 				if ((pos < songTime.StartPos) || (pos >= songTime.PosInfoList.Count))
 				{
@@ -649,7 +650,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 					SetTempo(of.Bpm);
 				}
 
-				for (sbyte t = 0; t < of.NumVoices; t++)
+				of.PosJmp = 2;
+				of.PatBrk = 0;
+				of.SngPos = (short)pos;
+				of.VbTick = of.SngSpd;
+
+				for (sbyte t = 0; t < player.NumVoices(of); t++)
 				{
 					VoiceStopInternal(t);
 					of.Voice[t].Main.I = null;
@@ -727,7 +733,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 					for (int j = 0, s = 0; j < InstrumentInfo.Octaves; j++)
 					{
 						for (int k = 0; k < InstrumentInfo.NotesPerOctave; k++)
-							instInfo.Notes[j, k] = inst.SampleNumber[s++];
+							instInfo.Notes[j, k] = (short)inst.SampleNumber[s++];
 					}
 
 					result.Add(instInfo);

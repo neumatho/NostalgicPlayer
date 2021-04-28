@@ -238,10 +238,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 								pf.SngSpd = 6;
 
 							pf.Bpm = pf.InitTempo < 32 ? (ushort)32 : pf.InitTempo;
-
-							// Tell NostalgicPlayer we has restarted
-							endReached = true;
 						}
+
+						// Tell NostalgicPlayer we has restarted
+						endReached = true;
 					}
 				}
 
@@ -309,6 +309,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			}
 			else
 				return (uint)((8363L * 1712L) / (period != 0 ? period : 1));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// NUMVOICES macro made as an inline method
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public byte NumVoices(Module mod)
+		{
+			return mdSngChn < mod.NumVoices ? mdSngChn : mod.NumVoices;
 		}
 
 		#region Private methods
@@ -584,7 +597,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 				if ((aOut.Main.Kick == Kick.Note) || (aOut.Main.Kick == Kick.KeyOff))
 				{
-					driver.VoicePlayInternal((sbyte)channel, s, (aOut.Main.Start == -1) ? (((s.Flags & SampleFlag.Loop) != 0) ? s.LoopStart : 0) : (uint)aOut.Main.Start);
+					driver.VoicePlayInternal((sbyte)channel, s, (aOut.Main.Start == -1) ? (((s.Flags & SampleFlag.UstLoop) != 0) ? s.LoopStart : 0) : (uint)aOut.Main.Start);
 
 					aOut.Main.FadeVol = 32768;
 					aOut.ASwpPos = 0;
@@ -1102,19 +1115,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 		/********************************************************************/
 		/// <summary>
-		/// NUMVOICES macro made as an inline method
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private byte NumVoices(Module mod)
-		{
-			return mdSngChn < mod.NumVoices ? mdSngChn : mod.NumVoices;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Returns a random value between 0 and ceil - 1, ceil must be a
 		/// power of two
 		/// </summary>
@@ -1137,8 +1137,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			if (speed == 0)
 				return 4242;		// Prevent divide overflow.. (42 hehe)
 
-			ushort n = (ushort)(note % (2 * Constant.Octave));
-			ushort o = (ushort)(note / (2 * Constant.Octave));
+			ushort n = (ushort)(note % (2 * SharedConstant.Octave));
+			ushort o = (ushort)(note / (2 * SharedConstant.Octave));
 
 			return (ushort)(((8363L * LookupTables.OldPeriods[n]) >> o) / speed);
 		}
@@ -1152,7 +1152,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		/********************************************************************/
 		private ushort GetLinearPeriod(ushort note, uint fine)
 		{
-			ushort t = (ushort)(((20L + 2 * Constant.HighOctave) * Constant.Octave + 2 - note) * 32L - (fine >> 1));
+			ushort t = (ushort)(((20L + 2 * Constant.HighOctave) * SharedConstant.Octave + 2 - note) * 32L - (fine >> 1));
 
 			return t;
 		}
@@ -1166,8 +1166,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		/********************************************************************/
 		private ushort GetLogPeriod(ushort note, uint fine)
 		{
-			ushort n = (ushort)(note % (2 * Constant.Octave));
-			ushort o = (ushort)(note / (2 * Constant.Octave));
+			ushort n = (ushort)(note % (2 * SharedConstant.Octave));
+			ushort o = (ushort)(note / (2 * SharedConstant.Octave));
 			uint i = (uint)(n << 2) + (fine >> 4);		// n * 8 + fine / 16
 
 			ushort p1 = LookupTables.LogTab[i];
@@ -1237,6 +1237,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			t.A = 0;
 			t.B = (((t.Flg & EnvelopeFlag.Sustain) != 0) && ((keyOff & KeyFlag.Off) == 0)) ? (ushort)0 : (ushort)1;
 
+			if (t.Pts == 0)			// FIXME: bad/crafted file. better/more general solution?
+			{
+				t.B = 0;
+				return t.Env[0].Val;
+			}
+
 			// Imago Orpheus sometimes stores an extra initial point in the envelope
 			if ((t.Pts >= 2) && (t.Env[0].Pos == t.Env[1].Pos))
 			{
@@ -1285,6 +1291,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		{
 			if ((t.Flg & EnvelopeFlag.On) != 0)
 			{
+				if (t.Pts == 0)			// FIXME: bad/crafted file. better/more general solution?
+				{
+					t.B = 0;
+					return t.Env[0].Val;
+				}
+
 				byte a, b;				// Actual points in the envelope
 				ushort p;				// The 'tick counter' - real point being played
 
@@ -1584,10 +1596,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				// Retrig note
 				case 0x9:
 				{
-					// Do not retrigger on tick 0, until we are emulating FT2 and
-					// effect data is zero
-					if ((tick == 0) && !(((flags & ModuleFlag.Ft2Quirks) != 0) && (nib == 0)))
-						break;
+					// ProTracker: Retriggers on tick 0 first, does nothing when nib=0.
+					// FastTracker 2: Retriggers on tick nib first, including nib=0
+					if (tick == 0)
+					{
+						if ((flags & ModuleFlag.Ft2Quirks) != 0)
+							a.Retrig = (sbyte)nib;
+						else if (nib != 0)
+							a.Retrig = 0;
+						else
+							break;
+					}
 
 					// Only retrigger if data nibble > 0, or if tick 0 (FT2 compat)
 					if ((nib != 0) || (tick == 0))
@@ -2056,6 +2075,42 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		}
 		#endregion
 
+		#region FastTracker II effect helpers
+		/********************************************************************/
+		/// <summary>
+		/// Set the envelope tick to the position given
+		/// </summary>
+		/********************************************************************/
+		private void SetEnvelopePosition(ref EnvPr t, EnvPt[] p, short pos)
+		{
+			if (t.Pts > 0)
+			{
+				bool found = false;
+
+				for (ushort i = 0; i < t.Pts - 1; i++)
+				{
+					if ((pos >= p[i].Pos) && (pos < p[i + 1].Pos))
+					{
+						t.A = i;
+						t.B = (ushort)(i + 1);
+						t.P = pos;
+						found = true;
+						break;
+					}
+				}
+
+				// If position is after the last envelope point, just set
+				// it to the last one
+				if (!found)
+				{
+					t.A = (ushort)(t.Pts - 1);
+					t.B = t.Pts;
+					t.P = p[t.A].Pos;
+				}
+			}
+		}
+		#endregion
+
 		#region ImpulseTracker effect helpers
 		/********************************************************************/
 		/// <summary>
@@ -2505,7 +2560,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 			if (a.Main.Period != 0)
 			{
-				if (tick == 0)
+				if (tick != 0)
 					a.TmpPeriod -= a.SlideSpeed;
 			}
 
@@ -2528,7 +2583,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 			if (a.Main.Period != 0)
 			{
-				if (tick == 0)
+				if (tick != 0)
 					a.TmpPeriod += a.SlideSpeed;
 			}
 
@@ -2595,7 +2650,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			if (a.Main.Period != 0)
 				DoToneSlide(tick, a);
 
-			if (tick == 0)
+			if (tick != 0)
 				DoVolSlide(a, dat);
 
 			return 0;
@@ -2763,7 +2818,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		{
 			byte dat = uniTrk.UniGetByte();
 
-			if (tick == 0)
+			if (tick != 0)
 				DoVolSlide(a, dat);
 
 			return 0;
@@ -2782,6 +2837,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 			if ((tick != 0) || (mod.PatDly2 != 0))
 				return 0;
+
+			if (dat >= mod.NumPos)		// Crafted file?
+				dat = (byte)(mod.NumPos - 1);
 
 			// Vincent Voois uses a nasty trick in "Universal Bolero"
 			if ((dat == mod.SngPos) && (mod.PatBrk == mod.PatPos))
@@ -2835,7 +2893,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		{
 			byte dat = uniTrk.UniGetByte();
 
-			if (tick == 0)
+			if (tick != 0)
 				return 0;
 
 			if (dat == 0xff)
@@ -2864,6 +2922,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 			if ((tick != 0) || (mod.PatDly2 != 0))
 				return 0;
+
+			if ((dat != 0) && (dat >= mod.NumRow))		// Crafted file?
+				dat = 0;
 
 			if ((mod.Positions[mod.SngPos] != SharedConstant.Last_Pattern) && (dat > mod.PattRows[mod.Positions[mod.SngPos]]))
 				dat = (byte)mod.PattRows[mod.Positions[mod.SngPos]];
@@ -3443,12 +3504,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			{
 				if (dat != 0)
 					a.FSlideUpSpd = dat;
+
+				a.TmpVolume += a.FSlideUpSpd;
+
+				if (a.TmpVolume > 64)
+					a.TmpVolume = 64;
 			}
-
-			a.TmpVolume += a.FSlideUpSpd;
-
-			if (a.TmpVolume > 64)
-				a.TmpVolume = 64;
 
 			return 0;
 		}
@@ -3468,12 +3529,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			{
 				if (dat != 0)
 					a.FSlideDnSpd = dat;
+
+				a.TmpVolume -= a.FSlideDnSpd;
+
+				if (a.TmpVolume < 0)
+					a.TmpVolume = 0;
 			}
-
-			a.TmpVolume -= a.FSlideDnSpd;
-
-			if (a.TmpVolume < 0)
-				a.TmpVolume = 0;
 
 			return 0;
 		}
@@ -3548,18 +3609,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				Mp_Voice aOut;
 				if ((aOut = a.Slave) != null)
 				{
-					ushort points;
-
 					if (aOut.VEnv.Env != null)
-					{
-						points = (ushort)i.VolEnv[i.VolPts - 1].Pos;
-						aOut.VEnv.P = aOut.VEnv.Env[(dat > points) ? points : dat].Pos;
-					}
+						SetEnvelopePosition(ref aOut.VEnv, i.VolEnv, dat);
 
 					if (aOut.PEnv.Env != null)
 					{
-						points = (ushort)i.PanEnv[i.PanPts - 1].Pos;
-						aOut.PEnv.P = aOut.PEnv.Env[(dat > points) ? points : dat].Pos;
+						// Because of a bug in FastTracker II, only the panning envelope
+						// position is set if the volume sustain flag is set. Other players
+						// may set the panning all the time
+						if (((mod.Flags & ModuleFlag.Ft2Quirks) == 0) || ((i.VolFlg & EnvelopeFlag.Sustain) != 0))
+							SetEnvelopePosition(ref aOut.PEnv, i.PanEnv, dat);
 					}
 				}
 			}

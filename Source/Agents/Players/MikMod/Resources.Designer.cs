@@ -66,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod {
         ///
         ///This player can only play NostalgicPlayer UniMod 3.x like modules (only an internal format), but if you have the MikMod converter installed, you will be able to play a lot of different module formats.
         ///
-        ///The player is based on MikMod 3.3.11..
+        ///The player is based on MikMod 3.3.11 + what has been added to 3.3.12 so far..
         /// </summary>
         internal static string IDS_MIK_DESCRIPTION {
             get {

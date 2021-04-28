@@ -111,6 +111,14 @@
             <uap:DisplayName>MikMod UniMod</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="xmfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-xm">.xm</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>FastTracker 2</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
