@@ -391,7 +391,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		{
 			inStreamSwitch = false;
 
-			audioSessionControl = audioClient.AudioSessionControl;
+			audioSessionControl = endpoint.AudioSessionManager.AudioSessionControl;
 
 			// Create the stream complete event
 			streamSwitchCompletedEvent = new ManualResetEvent(false);
@@ -498,7 +498,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 					InitializeAudioEngine();
 
 					// Step 7: Re-register for session disconnect notifications
-					audioSessionControl = audioClient.AudioSessionControl;
+					audioSessionControl = endpoint.AudioSessionManager.AudioSessionControl;
 					audioSessionControl.RegisterEventClient(this);
 
 					// Step 8: Reset the stream switch completed event because it's a manual reset event
