@@ -209,6 +209,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 
 			short startPos = 0;
 			ushort startRow = 0;
+			short e60BugStartRow = -1;
 			short posCount;
 
 			songTimeList = new List<SongTime>();
@@ -277,6 +278,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 
 					// Get number of rows in the current track
 					ushort rowNum = of.PattRows[pattNum];
+
+					if (e60BugStartRow != -1)
+					{
+						startRow = (ushort)e60BugStartRow;
+						e60BugStartRow = -1;
+					}
 
 					for (ushort row = startRow; row < rowNum; row++)
 					{
@@ -349,7 +356,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 									{
 										startRow = uniTrk.UniGetByte();
 
-										if ((startRow != 0) && (startRow >= of.NumRow))		// Crafted file?
+										if ((startRow != 0) && (startRow >= rowNum))		// Crafted file?
 											startRow = 0;
 
 										if ((pos == of.NumPos - 2) && (startRow == 0) && posBreak)
@@ -393,6 +400,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 											posBreak = true;
 										}
 
+										if ((of.Flags & ModuleFlag.Ft2Quirks) != 0)
+											e60BugStartRow = -1;
+
 										getOut = true;
 										break;
 									}
@@ -426,6 +436,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 											{
 												// Set the loop start point
 												loopPos[chan] = (byte)row;
+
+												// This will make sure that the time for roadblas.xm is correctly
+												if ((of.Flags & ModuleFlag.Ft2Quirks) != 0)
+													e60BugStartRow = (short)row;
 											}
 											break;
 										}
