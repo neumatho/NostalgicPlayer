@@ -1514,6 +1514,10 @@ stopLoop:
 				// Read more header information
 				songLength = stream.Read_UINT8();
 
+				// Make beatwave.mod to work
+				if (songLength > 128)
+					songLength = 128;
+
 				if ((currentModuleType == ModuleType.NoiseTracker) || (currentModuleType == ModuleType.StarTrekker) || (currentModuleType == ModuleType.StarTrekker8) || (currentModuleType == ModuleType.FastTracker))
 				{
 					initTempo = 125;
