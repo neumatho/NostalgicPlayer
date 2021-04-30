@@ -93,7 +93,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				DoKeyOff,			// UNI_KEYOFF
 				DoKeyFade,			// UNI_KEYFADE
 				DoVolEffects,		// UNI_VOLEFFECTS
-				DoPtEffect4,		// UNI_XMEFFECT4
+				DoPtEffect4Fix,		// UNI_XMEFFECT4
 				DoXmEffect6,		// UNI_XMEFFECT6
 				DoXmEffectA,		// UNI_XMEFFECTA
 				DoXmEffectE1,		// UNI_XMEFFECTE1
@@ -123,7 +123,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				DoMedEffectF1,		// UNI_MEDEFFECTF1
 				DoMedEffectF2,		// UNI_MEDEFFECTF2
 				DoMedEffectF3,		// UNI_MEDEFFECTF3
-				DoOktArp			// UNI_OKTARP
+				DoOktArp,			// UNI_OKTARP
+				DoNothing,			// Unused
+				DoPtEffect4Fix,		// UNI_S3MEFFECTH
+				DoItEffectH_Old,	// UNI_ITEFFECTH_OLD
+				DoItEffectU_Old,	// UNI_ITEFFECTU_OLD
+				DoPtEffect4Fix,		// UNI_GDMEFFECT4
+				DoPtEffect7Fix,		// UNI_GDMEFFECT7
+				DoS3MEffectU,		// UNI_GDMEFFECT14
+				DoMedEffectVib,		// UNI_MEDEFFECT_VIB
+				DoMedEffectFD,		// UNI_MEDEFFECT_FD
+				DoMedEffect16,		// UNI_MEDEFFECT_16
+				DoMedEffect18,		// UNI_MEDEFFECT_18
+				DoMedEffect1E,		// UNI_MEDEFFECT_1E
+				DoMedEffect1F		// UNI_MEDEFFECT_1F
 			};
 		}
 
@@ -420,15 +433,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 							a.Sliding = 0;
 
 							// Retrig tremolo and vibrato waves?
-							if ((a.WaveControl & 0x80) == 0)
+							if ((a.WaveControl & 0x40) == 0)
 								a.TrmPos = 0;
 
-							if ((a.WaveControl & 0x08) == 0)
+							if ((a.WaveControl & 0x04) == 0)
 								a.VibPos = 0;
 
-							if (a.PanbWave == 0)
-								a.PanbPos = 0;
-
+							a.PanbPos = 0;
 							break;
 						}
 
@@ -681,37 +692,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 				if ((aOut.Main.Period != 0) && (s.VibDepth != 0))
 				{
-					switch (s.VibType)
+					if ((s.VibFlags & VibratoFlag.It) != 0)
 					{
-						case 0:
-						{
-							vibVal = LookupTables.AVibTab[s.AVibPos & 127];
-							if ((aOut.AVibPos & 0x80) != 0)
-								vibVal = -vibVal;
-
-							break;
-						}
-
-						case 1:
-						{
-							vibVal = 64;
-							if ((aOut.AVibPos & 0x80) != 0)
-								vibVal = -vibVal;
-
-							break;
-						}
-
-						case 2:
-						{
-							vibVal = 63 - (((aOut.AVibPos + 128) & 255) >> 1);
-							break;
-						}
-
-						default:
-						{
-							vibVal = (((aOut.AVibPos + 128) & 255) >> 1) - 64;
-							break;
-						}
+						// IT auto-vibrato uses regular waveforms
+						vibVal = LfoVibratoIt((sbyte)aOut.AVibPos, s.VibType);
+					}
+					else
+					{
+						// XM auto-vibrato uses its own set of waveforms.
+						// Also, uses LFO amplitudes on [-63,63], possibly to compensate
+						// for depth being multiplied by 4 in the loader(?)
+						vibVal = LfoAutoVibratoXm((sbyte)aOut.AVibPos, s.VibType) >> 2;
 					}
 				}
 				else
@@ -733,7 +724,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 					if (aOut.MFlag)
 					{
-						if ((mod.Flags & ModuleFlag.Linear) == 0)
+						// This vibrato value is the correct value in fine linear slide
+						// steps, but MikMod linear periods are halved, so the final
+						// value also needs to be halved in linear mode
+						if ((mod.Flags & ModuleFlag.Linear) != 0)
 							vibVal >>= 1;
 
 						aOut.Main.Period -= (ushort)vibVal;
@@ -1457,6 +1451,149 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			return explicitSlides;
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Calculate vibrato value based on given waveform
+		/// </summary>
+		/********************************************************************/
+		private short LfoVibrato(sbyte position, byte waveform)
+		{
+			switch (waveform)
+			{
+				// Sine
+				case 0:
+				{
+					short amp = LookupTables.VibratoTable[position & 0x7f];
+					return (short)((position >= 0) ? amp : -amp);
+				}
+
+				// Ramp down - ramps up because MOD/S3M apply these to period
+				case 1:
+					return (short)(((byte)position << 1) - 255);
+
+				// Square wave
+				case 2:
+					return (short)((position >= 0) ? 255 : -255);
+
+				// Random wave
+				case 3:
+					return (short)(GetRandom(512) - 256);
+			}
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Calculate tremolo value based on given waveform
+		/// </summary>
+		/********************************************************************/
+		private short LfoTremolo(sbyte position, byte waveform)
+		{
+			switch (waveform)
+			{
+				// Ramp down - tremolo ramp down actually ramps down
+				case 1:
+					return (short)(255 - ((byte)position << 1));
+			}
+
+			return LfoVibrato(position, waveform);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Calculate vibrato value based on given waveform for IT modules
+		/// </summary>
+		/********************************************************************/
+		private short LfoVibratoIt(sbyte position, byte waveform)
+		{
+			switch (waveform)
+			{
+				// Ramp down - IT ramp down actually ramps down
+				case 1:
+					return (short)(255 - ((byte)position << 1));
+
+				// Square wave - IT square wave oscillates between 0 and 255
+				case 2:
+					return (short)((position >= 0) ? 255 : 0);
+			}
+
+			return LfoVibrato(position, waveform);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Calculate panbrello value based on given waveform
+		/// </summary>
+		/********************************************************************/
+		private short LfoPanbrello(sbyte position, byte waveform)
+		{
+			switch (waveform)
+			{
+				// Sine
+				case 0:
+					return LookupTables.PanbrelloTable[position];
+
+				// Ramp down
+				case 1:
+					return (short)(64 - ((byte)position >> 1));
+
+				// Square wave
+				case 2:
+					return (short)((position >= 0) ? 64 : 0);
+
+				// Random
+				case 3:
+					return (short)(GetRandom(128) - 64);
+			}
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Calculate auto vibrato value based on given waveform for XM
+		/// modules
+		/// </summary>
+		/********************************************************************/
+		private short LfoAutoVibratoXm(sbyte position, byte waveform)
+		{
+			// XM auto vibrato uses a different set of waveforms than vibrato/tremolo
+			switch (waveform)
+			{
+				// Sine
+				case 0:
+				{
+					short amp = LookupTables.VibratoTable[position & 0x7f];
+					return (short)((position >= 0) ? amp : -amp);
+				}
+
+				// Square wave
+				case 1:
+					return (short)((position >= 0) ? 255 : -255);
+
+				// Ramp down
+				case 2:
+					return (short)-(position << 1);
+
+				// Ramp up
+				case 3:
+					return (short)(position << 1);
+			}
+
+			return 0;
+		}
+
 		#region ProTracker effect helpers
 		/********************************************************************/
 		/// <summary>
@@ -1528,44 +1665,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				// Set pattern loop
 				case 0x6:
 				{
-					if (tick != 0)
-						break;
-
-					if (nib != 0)					// Set RepPos or RepCnt?
-					{
-						// Set RepCnt, so check if RepCnt already is set,
-						// which means we are already looping
-						if (a.Pat_RepCnt != 0)
-							a.Pat_RepCnt--;			// Already looping, decrease counter
-						else
-							a.Pat_RepCnt = nib;		// Not yet looping, so set RepCnt
-
-						if (a.Pat_RepCnt != 0)		// Jump to RepPos if RepCnt > 0
-						{
-							if (a.Pat_RepPos == Constant.Pos_None)
-								a.Pat_RepPos = (short)(mod.PatPos - 1);
-
-							if (a.Pat_RepPos == -1)
-							{
-								mod.Pat_RepCrazy = true;
-								mod.PatPos = 0;
-							}
-							else
-								mod.PatPos = (ushort)a.Pat_RepPos;
-						}
-						else
-							a.Pat_RepPos = Constant.Pos_None;
-					}
-					else
-					{
-						a.Pat_RepPos = (short)(mod.PatPos - 1);	// Set RepPos - can be (-1)
-
-						// Emulate the FT2 pattern loop (E60) bug:
-						// http://milkytracker.org/docs/MilkyTracker.html#fxE6x
-						// roadblas.xm plays correctly with this
-						if ((flags & ModuleFlag.Ft2Quirks) != 0)
-							mod.PatBrk = mod.PatPos;
-					}
+					DoLoop(tick, flags, a, mod, nib);
 					break;
 				}
 
@@ -1857,64 +1957,53 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		/// Vibrato helper method
 		/// </summary>
 		/********************************************************************/
-		private void DoVibrato(ushort tick, Mp_Control a)
+		private void DoVibrato(ushort tick, Mp_Control a, VibratoFlags flags)
 		{
-			ushort temp = 0;			// Silence warning
-
-			if (tick == 0)
+			if ((tick == 0) && ((flags & VibratoFlags.PtBugs) != 0))
 				return;
 
-			byte q = (byte)((a.VibPos >> 2) & 0x1f);
-
-			switch (a.WaveControl & 3)
-			{
-				// Sine
-				case 0:
-				{
-					temp = LookupTables.VibratoTable[q];
-					break;
-				}
-
-				// Ramp down
-				case 1:
-				{
-					q <<= 3;
-
-					if (a.VibPos < 0)
-						q = (byte)(255 - q);
-
-					temp = q;
-					break;
-				}
-
-				// Square wave
-				case 2:
-				{
-					temp = 255;
-					break;
-				}
-
-				// Random wave
-				case 3:
-				{
-					temp = (ushort)GetRandom(256);
-					break;
-				}
-			}
+			short temp = LfoVibrato(a.VibPos, (byte)(a.WaveControl & 3));
 
 			temp *= a.VibDepth;
 			temp >>= 7;
 			temp <<= 2;
 
-			if (a.VibPos >= 0)
-				a.Main.Period = (ushort)(a.TmpPeriod + temp);
-			else
-				a.Main.Period = (ushort)(a.TmpPeriod - temp);
-
+			a.Main.Period = (ushort)(a.TmpPeriod + temp);
 			a.OwnPer = true;
 
-			if (tick != 0)
+			if ((tick != 0) || ((flags & VibratoFlags.Tick0) != 0))
 				a.VibPos += (sbyte)a.VibSpd;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tremolo helper method
+		/// </summary>
+		/********************************************************************/
+		private void DoTremolo(ushort tick, Mp_Control a, VibratoFlags flags)
+		{
+			if ((tick == 0) && ((flags & VibratoFlags.PtBugs) != 0))
+				return;
+
+			short temp = LfoTremolo(a.TrmPos, (byte)((a.WaveControl >> 4) & 3));
+
+			temp *= a.TrmDepth;
+			temp >>= 6;
+
+			a.Volume = (short)(a.TmpVolume + temp);
+
+			if (a.Volume > 64)
+				a.Volume = 64;
+
+			if (a.Volume < 0)
+				a.Volume = 0;
+
+			a.OwnVol = true;
+
+			if ((tick != 0) || ((flags & VibratoFlags.Tick0) != 0))
+				a.TrmPos += (sbyte)a.TrmSpd;
 		}
 
 
@@ -1939,6 +2028,55 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 				if (a.TmpVolume > 64)
 					a.TmpVolume = 64;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handle pattern loop
+		/// </summary>
+		/********************************************************************/
+		private void DoLoop(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, byte param)
+		{
+			if (tick != 0)
+				return;
+
+			if (param != 0)		// Set RepPos or RepCnt?
+			{
+				// Set RepCnt, so check if RepCnt already is set, which means we
+				// are already looping
+				if (a.Pat_RepCnt != 0)
+					a.Pat_RepCnt--;			// Already looping, decrease counter
+				else
+					a.Pat_RepCnt = param;	// Not yet looping, so set RepCnt
+
+				if (a.Pat_RepCnt != 0)		// Jump to RepPos if RepCnt > 0
+				{
+					if (a.Pat_RepPos == Constant.Pos_None)
+						a.Pat_RepPos = (short)(mod.PatPos - 1);
+
+					if (a.Pat_RepPos == 1)
+					{
+						mod.Pat_RepCrazy = true;
+						mod.PatPos = 0;
+					}
+					else
+						mod.PatPos = (ushort)a.Pat_RepPos;
+				}
+				else
+					a.Pat_RepPos = Constant.Pos_None;
+			}
+			else
+			{
+				a.Pat_RepPos = (short)(mod.PatPos - 1);	// Set reppos - can be (-1)
+
+				// Emulate the FT2 pattern loop (E60) bug:
+				// http://milkytracker.org/docs/MilkyTracker.html#fxE6x
+				// roadblas.xm plays correctly with this
+				if ((flags & ModuleFlag.Ft2Quirks) != 0)
+					mod.PatBrk = mod.PatPos;
 			}
 		}
 		#endregion
@@ -2174,7 +2312,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		/// Vibrato helper method
 		/// </summary>
 		/********************************************************************/
-		private void DoItVibrato(ushort tick, Mp_Control a, byte dat)
+		private void DoItVibrato(ushort tick, Mp_Control a, byte dat, ItVibratoFlags flags)
 		{
 			if (tick == 0)
 			{
@@ -2188,56 +2326,37 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			if (a.Main.Period == 0)
 				return;
 
-			ushort temp = 0;
-
-			byte q = (byte)((a.VibPos >> 2) & 0x1f);
-
-			switch (a.WaveControl & 3)
-			{
-				// Sine
-				case 0:
-				{
-					temp = LookupTables.VibratoTable[q];
-					break;
-				}
-
-				// Square wave
-				case 1:
-				{
-					temp = 255;
-					break;
-				}
-
-				// Ramp down
-				case 2:
-				{
-					q <<= 3;
-
-					if (a.VibPos < 0)
-						q = (byte)(255 - q);
-
-					temp = q;
-					break;
-				}
-
-				// Random wave
-				case 3:
-				{
-					temp = (ushort)GetRandom(256);
-					break;
-				}
-			}
+			short temp = LfoVibratoIt(a.VibPos, (byte)(a.WaveControl & 3));
 
 			temp *= a.VibDepth;
-			temp >>= 8;
-			temp <<= 2;
 
-			if (a.VibPos >= 0)
-				a.Main.Period = (ushort)(a.TmpPeriod + temp);
-			else
+			if ((flags & ItVibratoFlags.Old) == 0)
+			{
+				temp >>= 8;
+
+				if ((flags & ItVibratoFlags.Fine) == 0)
+					temp <<= 2;
+
+				// Subtract vibrato from period so positive vibrato translates to increase in pitch
 				a.Main.Period = (ushort)(a.TmpPeriod - temp);
+				a.OwnPer = true;
+			}
+			else
+			{
+				// Old IT vibrato is twice as deep
+				temp >>= 7;
 
-			a.OwnPer = true;
+				if ((flags & ItVibratoFlags.Fine) == 0)
+					temp <<= 2;
+
+				// Old IT vibrato uses the same waveforms but they are applied reversed
+				a.Main.Period = (ushort)(a.TmpPeriod + temp);
+				a.OwnPer = true;
+
+				// Old IT vibrato does not update on the first tick
+				if (tick == 0)
+					return;
+			}
 
 			a.VibPos += (sbyte)a.VibSpd;
 		}
@@ -2510,7 +2629,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 					case VolEffect.Vibrato:
 					{
-						DoItVibrato(tick, a, inf);
+						DoItVibrato(tick, a, inf, ItVibratoFlags.None);
 						break;
 					}
 				}
@@ -2631,7 +2750,34 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			}
 
 			if (a.Main.Period != 0)
-				DoVibrato(tick, a);
+				DoVibrato(tick, a, VibratoFlags.PtBugs);
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Effect 4: Vibrato (fix)
+		/// </summary>
+		/********************************************************************/
+		private int DoPtEffect4Fix(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
+		{
+			// PT equivalent vibrato but without the tick 0 bug
+			byte dat = uniTrk.UniGetByte();
+
+			if (tick == 0)
+			{
+				if ((dat & 0x0f) != 0)
+					a.VibDepth = (byte)(dat & 0x0f);
+
+				if ((dat & 0xf0) != 0)
+					a.VibSpd = (byte)((dat & 0xf0) >> 2);
+			}
+
+			if (a.Main.Period != 0)
+				DoVibrato(tick, a, VibratoFlags.None);
 
 			return 0;
 		}
@@ -2666,7 +2812,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		private int DoPtEffect6(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
 		{
 			if (a.Main.Period != 0)
-				DoVibrato(tick, a);
+				DoVibrato(tick, a, VibratoFlags.PtBugs);
 
 			DoPtEffectA(tick, flags, a, mod, channel);
 
@@ -2693,71 +2839,37 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 					a.TrmSpd = (byte)((dat & 0xf0) >> 2);
 			}
 
+			// TODO: PT should have the same tick 0 bug here that vibrato does. Several other
+			// formats use this effect and rely on it not being broken, so don't right now
 			if (a.Main.Period != 0)
+				DoTremolo(tick, a, VibratoFlags.None);
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Effect 7: Tremolo (fix)
+		/// </summary>
+		/********************************************************************/
+		private int DoPtEffect7Fix(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
+		{
+			// PT equivalent vibrato but without the tick 0 bug
+			byte dat = uniTrk.UniGetByte();
+
+			if (tick == 0)
 			{
-				ushort temp = 0;			// Silence warning
+				if ((dat & 0x0f) != 0)
+					a.TrmDepth = (byte)(dat & 0x0f);
 
-				byte q = (byte)((a.TrmPos >> 2) & 0x1f);
-
-				switch ((a.WaveControl >> 4) & 3)
-				{
-					// Sine
-					case 0:
-					{
-						temp = LookupTables.VibratoTable[q];
-						break;
-					}
-
-					// Ramp down
-					case 1:
-					{
-						q <<= 3;
-
-						if (a.TrmPos < 0)
-							q = (byte)(255 - q);
-
-						temp = q;
-						break;
-					}
-
-					// Square wave
-					case 2:
-					{
-						temp = 255;
-						break;
-					}
-
-					// Random wave
-					case 3:
-					{
-						temp = (ushort)GetRandom(256);
-						break;
-					}
-				}
-
-				temp *= a.TrmDepth;
-				temp >>= 6;
-
-				if (a.TrmPos >= 0)
-				{
-					a.Volume = (short)(a.TmpVolume + temp);
-
-					if (a.Volume > 64)
-						a.Volume = 64;
-				}
-				else
-				{
-					a.Volume = (short)(a.TmpVolume - temp);
-
-					if (a.Volume < 0)
-						a.Volume = 0;
-				}
-
-				a.OwnPer = true;
-
-				if (tick != 0)
-					a.TrmPos += (sbyte)a.TrmSpd;
+				if ((dat & 0xf0) != 0)
+					a.TrmSpd = (byte)((dat & 0xf0) >> 2);
 			}
+
+			if (a.Main.Period != 0)
+				DoTremolo(tick, a, VibratoFlags.None);
 
 			return 0;
 		}
@@ -3223,65 +3335,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 					a.TrmSpd = (byte)((dat & 0xf0) >> 2);
 			}
 
-			ushort temp = 0;			// Silence warning
-
-			byte q = (byte)((a.TrmPos >> 2) & 0x1f);
-
-			switch ((a.WaveControl >> 4) & 3)
-			{
-				// Sine
-				case 0:
-				{
-					temp = LookupTables.VibratoTable[q];
-					break;
-				}
-
-				// Ramp down
-				case 1:
-				{
-					q <<= 3;
-
-					if (a.TrmPos < 0)
-						q = (byte)(255 - q);
-
-					temp = q;
-					break;
-				}
-
-				// Square wave
-				case 2:
-				{
-					temp = 255;
-					break;
-				}
-
-				// Random wave
-				case 3:
-				{
-					temp = (ushort)GetRandom(256);
-					break;
-				}
-			}
+			short temp = LfoTremolo(a.TrmPos, (byte)((a.WaveControl >> 4) & 3));
 
 			temp *= a.TrmDepth;
 			temp >>= 7;
 
-			if (a.TrmPos >= 0)
-			{
-				a.Volume = (short)(a.TmpVolume + temp);
+			a.Volume = (short)(a.TmpVolume + temp);
 
-				if (a.Volume > 64)
-					a.Volume = 64;
-			}
-			else
-			{
-				a.Volume = (short)(a.TmpVolume - temp);
+			if (a.Volume > 64)
+				a.Volume = 64;
 
-				if (a.Volume < 0)
-					a.Volume = 0;
-			}
+			if (a.Volume < 0)
+				a.Volume = 0;
 
-			a.OwnPer = true;
+			a.OwnVol = true;
 
 			if (tick != 0)
 				a.TrmPos += (sbyte)a.TrmSpd;
@@ -3327,62 +3394,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				if ((dat & 0xf0) != 0)
 					a.VibSpd = (byte)((dat & 0xf0) >> 2);
 			}
-			else
+
+			if (a.Main.Period != 0)
 			{
-				if (a.Main.Period != 0)
-				{
-					ushort temp = 0;			// Silence warning
+				short temp = LfoVibrato(a.VibPos, (byte)(a.WaveControl & 3));
 
-					byte q = (byte)((a.VibPos >> 2) & 0x1f);
+				temp *= a.VibDepth;
+				temp >>= 7;
 
-					switch (a.WaveControl & 3)
-					{
-						// Sine
-						case 0:
-						{
-							temp = LookupTables.VibratoTable[q];
-							break;
-						}
+				a.Main.Period = (ushort)(a.TmpPeriod + temp);
+				a.OwnPer = true;
 
-						// Ramp down
-						case 1:
-						{
-							q <<= 3;
-
-							if (a.VibPos < 0)
-								q = (byte)(255 - q);
-
-							temp = q;
-							break;
-						}
-
-						// Square wave
-						case 2:
-						{
-							temp = 255;
-							break;
-						}
-
-						// Random wave
-						case 3:
-						{
-							temp = (ushort)GetRandom(256);
-							break;
-						}
-					}
-
-					temp *= a.VibDepth;
-					temp >>= 8;
-
-					if (a.VibPos >= 0)
-						a.Main.Period = (ushort)(a.TmpPeriod + temp);
-					else
-						a.Main.Period = (ushort)(a.TmpPeriod - temp);
-
-					a.OwnPer = true;
-
+				if (tick != 0)
 					a.VibPos += (sbyte)a.VibSpd;
-				}
 			}
 
 			return 0;
@@ -3398,7 +3422,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		private int DoXmEffect6(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
 		{
 			if (a.Main.Period != 0)
-				DoVibrato(tick, a);
+				DoVibrato(tick, a, VibratoFlags.None);
 
 			return DoXmEffectA(tick, flags, a, mod, channel);
 		}
@@ -3742,7 +3766,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		/********************************************************************/
 		private int DoItEffectH(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
 		{
-			DoItVibrato(tick, a, uniTrk.UniGetByte());
+			DoItVibrato(tick, a, uniTrk.UniGetByte(), ItVibratoFlags.None);
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Effect H: Vibrato (old version)
+		/// </summary>
+		/********************************************************************/
+		private int DoItEffectH_Old(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
+		{
+			DoItVibrato(tick, a, uniTrk.UniGetByte(), ItVibratoFlags.Old);
 
 			return 0;
 		}
@@ -4088,71 +4126,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		/********************************************************************/
 		private int DoItEffectU(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
 		{
-			byte dat = uniTrk.UniGetByte();
+			DoItVibrato(tick, a, uniTrk.UniGetByte(), ItVibratoFlags.Fine);
 
-			if (tick == 0)
-			{
-				if ((dat & 0x0f) != 0)
-					a.VibDepth = (byte)(dat & 0x0f);
+			return 0;
+		}
 
-				if ((dat & 0xf0) != 0)
-					a.VibSpd = (byte)((dat & 0xf0) >> 2);
-			}
 
-			if (a.Main.Period != 0)
-			{
-				ushort temp = 0;			// Silence warning
 
-				byte q = (byte)((a.VibPos >> 2) & 0x1f);
-
-				switch (a.WaveControl & 3)
-				{
-					// Sine
-					case 0:
-					{
-						temp = LookupTables.VibratoTable[q];
-						break;
-					}
-
-					// Square wave
-					case 1:
-					{
-						temp = 255;
-						break;
-					}
-
-					// Ramp down
-					case 2:
-					{
-						q <<= 3;
-
-						if (a.VibPos < 0)
-							q = (byte)(255 - q);
-
-						temp = q;
-						break;
-					}
-
-					// Random wave
-					case 3:
-					{
-						temp = (ushort)GetRandom(256);
-						break;
-					}
-				}
-
-				temp *= a.VibDepth;
-				temp >>= 8;
-
-				if (a.VibPos >= 0)
-					a.Main.Period = (ushort)(a.TmpPeriod + temp);
-				else
-					a.Main.Period = (ushort)(a.TmpPeriod - temp);
-
-				a.OwnPer = true;
-
-				a.VibPos += (sbyte)a.VibSpd;
-			}
+		/********************************************************************/
+		/// <summary>
+		/// Effect U: Fine vibrato (old version)
+		/// </summary>
+		/********************************************************************/
+		private int DoItEffectU_Old(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
+		{
+			DoItVibrato(tick, a, uniTrk.UniGetByte(), ItVibratoFlags.Fine | ItVibratoFlags.Old);
 
 			return 0;
 		}
@@ -4239,41 +4227,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 			if (mod.PanFlag)
 			{
-				short temp = 0;			// Silence warning
-
-				byte q = a.PanbPos;
-
-				switch (a.PanbWave)
-				{
-					// Sine
-					case 0:
-					{
-						temp = LookupTables.PanbrelloTable[q];
-						break;
-					}
-
-					// Square wave
-					case 1:
-					{
-						temp = (short)((q < 0x80) ? 64 : 0);
-						break;
-					}
-
-					// Ramp down
-					case 2:
-					{
-						q <<= 3;
-						temp = q;
-						break;
-					}
-
-					// Random wave
-					case 3:
-					{
-						temp = (short)GetRandom(256);
-						break;
-					}
-				}
+				// TODO: When wave is random, each random value persists for a number of
+				// ticks equal to the speed nibble. This behaviour is unique to panbrello
+				short temp = LfoPanbrello((sbyte)a.PanbPos, a.PanbWave);
 
 				temp *= a.PanbDepth;
 				temp = (short)((temp / 8) + mod.Panning[channel]);
@@ -4327,12 +4283,43 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 		/********************************************************************/
 		/// <summary>
+		/// Vibrato effect
+		/// </summary>
+		/********************************************************************/
+		private int DoMedEffectVib(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
+		{
+			// MED vibrato (larger speed/depth range than PT vibrato)
+			byte rate = uniTrk.UniGetByte();
+			byte depth = uniTrk.UniGetByte();
+
+			if (tick == 0)
+			{
+				a.VibSpd = rate;
+				a.VibDepth = depth;
+			}
+
+			if (a.Main.Period != 0)
+				DoVibrato(tick, a, VibratoFlags.Tick0);
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Effect F1: Play note twice
 		/// </summary>
 		/********************************************************************/
 		private int DoMedEffectF1(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
 		{
-			DoEEffects(tick, flags, a, mod, channel, (byte)(0x90 | (mod.SngSpd / 2)));
+			// "Play twice". Despite the documentation, this only retriggers exactly one time
+			// on the third tick (i.e. it is not equivalent to PT E93)
+			if (tick == 3)
+			{
+				if (a.Main.Period != 0)
+					a.Main.Kick = Kick.Note;
+			}
 
 			return 0;
 		}
@@ -4346,7 +4333,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		/********************************************************************/
 		private int DoMedEffectF2(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
 		{
-			DoEEffects(tick, flags, a, mod, channel, (byte)(0xd0 | (mod.SngSpd / 2)));
+			// Delay for 3 ticks before playing
+			DoEEffects(tick, flags, a, mod, channel, 0xd3);
 
 			return 0;
 		}
@@ -4360,7 +4348,137 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		/********************************************************************/
 		private int DoMedEffectF3(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
 		{
-			DoEEffects(tick, flags, a, mod, channel, (byte)(0x90 | (mod.SngSpd / 3)));
+			// "Play three times". Actually, it's just a regular retrigger every 2 ticks,
+			// starting from tick 2
+			if (tick == 0)
+				a.Retrig = 2;
+
+			if (a.Retrig == 0)
+			{
+				if (a.Main.Period != 0)
+					a.Main.Kick = Kick.Note;
+
+				a.Retrig = 2;
+			}
+
+			a.Retrig--;
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Effect FD: Set pitch
+		/// </summary>
+		/********************************************************************/
+		private int DoMedEffectFD(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
+		{
+			// Set pitch without triggering a new note
+			a.Main.Kick = Kick.Absent;
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Effect 16: Pattern loop
+		/// </summary>
+		/********************************************************************/
+		private int DoMedEffect16(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
+		{
+			// Loop (similar to PT E6x but with an extended range).
+			// TODO: Currently doesn't support the loop point persisting between patterns.
+			// It's not clear if anything actually relies on that
+			byte param = uniTrk.UniGetByte();
+
+			DoLoop(tick, flags, a, mod, param);
+
+			// OctaMED repeat position is global so set it for every channel...
+			// This fixes a playback bug found in "(brooker) #1.med", which sets
+			// the jump position in track 2 but jumps in track 1
+			int repPos = a.Pat_RepPos;
+
+			for (int i = 0; i < pf.NumChn; i++)
+				pf.Control[i].Pat_RepPos = (short)repPos;
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Effect 18: Cut note
+		/// </summary>
+		/********************************************************************/
+		private int DoMedEffect18(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
+		{
+			// Cut note (same as PT ECx but with an extended range)
+			byte param = uniTrk.UniGetByte();
+			if (tick >= param)
+				a.TmpVolume = 0;
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Effect 1E: Pattern delay
+		/// </summary>
+		/********************************************************************/
+		private int DoMedEffect1E(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
+		{
+			// Pattern delay (same as PT EEx but with an extended range)
+			byte param = uniTrk.UniGetByte();
+			if ((tick == 0) && (mod.PatDly2 == 0))
+				mod.PatDly = (byte)((param < 255) ? param + 1 : 255);
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Effect 1F: Note delay + retrigger
+		/// </summary>
+		/********************************************************************/
+		private int DoMedEffect1F(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
+		{
+			// Combined note delay and retrigger (same as PT E9x and EDx but can be combinded)
+			// The high nibble is delay and the low nibble is retrigger
+			byte param = uniTrk.UniGetByte();
+			byte retrig = (byte)(param & 0xf);
+
+			if (tick == 0)
+			{
+				a.Main.NoteDelay = (byte)((param & 0xf0) >> 4);
+				a.Retrig = (sbyte)retrig;
+			}
+			else
+			{
+				if (a.Main.NoteDelay != 0)
+					a.Main.NoteDelay--;
+			}
+
+			if (a.Main.NoteDelay == 0)
+			{
+				if ((retrig != 0) && (a.Retrig == 0))
+				{
+					if (a.Main.Period != 0)
+						a.Main.Kick = Kick.Note;
+
+					a.Retrig = (sbyte)retrig;
+				}
+
+				a.Retrig--;
+			}
 
 			return 0;
 		}

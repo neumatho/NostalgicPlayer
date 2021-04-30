@@ -79,7 +79,20 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 			0,			// UniMedEffectF1
 			0,			// UniMedEffectF2
 			0,			// UniMedEffectF3
-			2			// UniOktArp
+			2,			// UniOktArp
+			0,			// Not used
+			1,			// UniS3MEffectH
+			1,			// UniItEffectH_Old
+			1,			// UniItEffectU_Old
+			1,			// UniGdmEffect4
+			1,			// UniGdmEffect7
+			1,			// UniGdmEffect14
+			2,			// UniMedEffectVib
+			0,			// UniMedEffectFD
+			1,			// UniMedEffect16
+			1,			// UniMedEffect18
+			1,			// UniMedEffect1E
+			1			// UniMedEffect1F
 		};
 	}
 }

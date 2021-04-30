@@ -123,7 +123,7 @@ Ported to NostalgicPlayer by Thomas Neumann.
 
 This player can only play NostalgicPlayer UniMod 3.x like modules (only an internal format), but if you have the MikMod converter installed, you will be able to play a lot of different module formats.
 
-The player is based on MikMod 3.3.11 + what has been added to 3.3.12 so far.</value>
+The player is based on MikMod 3.3.11 + what has been added to 3.3.12 so far and my own fixes.</value>
   </data>
   <data name="IDS_MIK_ERR_ITPACKING" xml:space="preserve">
     <value>IT compressed data is corrupt</value>

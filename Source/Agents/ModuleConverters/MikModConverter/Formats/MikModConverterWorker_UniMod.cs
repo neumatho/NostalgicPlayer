@@ -512,7 +512,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 							opcode++;
 					}
 
-					if ((opcode == 0) || (opcode >= (int)Command.UniLast))
+					if ((opcode == 0) || (opcode >= (int)Command.UniFormatLast))
 						return null;
 
 					t[cur] = (byte)opcode;

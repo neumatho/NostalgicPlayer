@@ -93,6 +93,29 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 		// Oktalyzer effects
 		UniOktArp,					// Arpeggio
 
+		// Last effect supported by old modules in the UNI format
+		UniFormatLast,
+
+		// Scream Tracker effects
+		UniS3MEffectH,				// Vibrato
+
+		// Impulse Tracker effects
+		UniItEffectH_Old,			// Vibrato (old)
+		UniItEffectU_Old,			// Fine vibrato (old)
+
+		// GDM effects
+		UniGdmEffect4,				// Vibrato
+		UniGdmEffect7,				// Tremolo
+		UniGdmEffect14,				// Fine vibrato
+
+		// OctaMED effects
+		UniMedEffectVib,			// MED vibrato
+		UniMedEffeftFD,				// Set pitch
+		UniMedEffect16,				// Loop
+		UniMedEffect18,				// Stop note
+		UniMedEffect1E,				// Pattern delay
+		UniMedEffect1F,				// Note delay and retrigger
+
 		UniLast
 	}
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
