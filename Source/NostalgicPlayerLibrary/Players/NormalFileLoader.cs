@@ -34,9 +34,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		protected override ModuleStream OpenFile(string fileName)
 		{
-			if (!File.Exists(fileName))
-				return null;
-
 			return new ModuleStream(new FileStream(fileName, FileMode.Open, FileAccess.Read));
 		}
 	}
