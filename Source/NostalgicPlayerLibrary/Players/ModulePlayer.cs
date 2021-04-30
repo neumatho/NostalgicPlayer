@@ -507,8 +507,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					// Find the author
 					name = ClipOutAuthor(itemStr, startPos);
 
-					// If the found name starts with a digit, ignore it
-					if (string.IsNullOrEmpty(name) || (char.IsDigit(name[0]) && !name.StartsWith("4-mat")))
+					// If the found name starts with a digit, ignore it.
+					// Also ignore other common names, we know is not the author
+					if (string.IsNullOrEmpty(name) || (char.IsDigit(name[0]) && !name.StartsWith("4-mat")) || name.ToLower().StartsWith("trax"))
 					{
 						startPos = -1;
 						name = string.Empty;
