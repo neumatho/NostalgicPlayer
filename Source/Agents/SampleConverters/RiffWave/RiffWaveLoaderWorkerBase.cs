@@ -54,38 +54,38 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/// Test the file to see if it could be identified
 		/// </summary>
 		/********************************************************************/
-		public AgentResult Identify(ModuleStream stream)
+		public AgentResult Identify(ModuleStream moduleStream)
 		{
 			// Seek to the start of the file
-			stream.Seek(0, SeekOrigin.Begin);
+			moduleStream.Seek(0, SeekOrigin.Begin);
 
 			// Check the chunk names
-			if (stream.Read_B_UINT32() == 0x52494646)       // RIFF
+			if (moduleStream.Read_B_UINT32() == 0x52494646)			// RIFF
 			{
-				stream.Seek(4, SeekOrigin.Current);	// Skip length
-				if (stream.Read_B_UINT32() == 0x57415645)   // WAVE
+				moduleStream.Seek(4, SeekOrigin.Current);		// Skip length
+				if (moduleStream.Read_B_UINT32() == 0x57415645)		// WAVE
 				{
 					// See if we can find the 'fmt ' chunk
 					for (;;)
 					{
 						// Read the chunk name and size
-						uint chunkName = stream.Read_B_UINT32();
-						uint chunkSize = stream.Read_L_UINT32();
+						uint chunkName = moduleStream.Read_B_UINT32();
+						uint chunkSize = moduleStream.Read_L_UINT32();
 
 						// Check if we reached the end of the file
-						if (stream.EndOfStream)
+						if (moduleStream.EndOfStream)
 							return AgentResult.Unknown;
 
-						if (chunkName == 0x666d7420)        // fmt 
+						if (chunkName == 0x666d7420)				// fmt 
 						{
 							// Got it, check the format
-							WaveFormat format = (WaveFormat)stream.Read_L_UINT16();
+							WaveFormat format = (WaveFormat)moduleStream.Read_L_UINT16();
 							if (format == WaveFormat.WAVE_FORMAT_EXTENSIBLE)
 							{
 								// Check for extended format
-								stream.Seek(22, SeekOrigin.Current);
+								moduleStream.Seek(22, SeekOrigin.Current);
 
-								Guid formatGuid = stream.ReadGuid();
+								Guid formatGuid = moduleStream.ReadGuid();
 								if (formatGuid == new Guid((int)FormatId, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71))
 									return AgentResult.Ok;
 							}
@@ -100,7 +100,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 						}
 
 						// Skip the chunk
-						stream.Seek((chunkSize + 1) & 0xfffffffe, SeekOrigin.Current);
+						moduleStream.Seek((chunkSize + 1) & 0xfffffffe, SeekOrigin.Current);
 					}
 				}
 			}
@@ -159,7 +159,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/// Load the sample header
 		/// </summary>
 		/********************************************************************/
-		public bool LoadHeader(ModuleStream stream, out LoadSampleFormatInfo formatInfo, out string errorMessage)
+		public bool LoadHeader(ModuleStream moduleStream, out LoadSampleFormatInfo formatInfo, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
@@ -167,7 +167,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 			formatInfo = new LoadSampleFormatInfo();
 
 			// Skip the header
-			stream.Seek(12, SeekOrigin.Begin);
+			moduleStream.Seek(12, SeekOrigin.Begin);
 
 			// Set some flags
 			bool gotFmt = false;
@@ -177,11 +177,11 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 			for (;;)
 			{
 				// Read the chunk name and size
-				uint chunkName = stream.Read_B_UINT32();
-				uint chunkSize = stream.Read_L_UINT32();
+				uint chunkName = moduleStream.Read_B_UINT32();
+				uint chunkSize = moduleStream.Read_L_UINT32();
 
 				// Check if we reached the end of the file
-				if (stream.EndOfStream)
+				if (moduleStream.EndOfStream)
 					break;
 
 				// Interpret the known chunks
@@ -191,23 +191,23 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 					case 0x666d7420:
 					{
 						// Begin to read the chunk data
-						stream.Seek(2, SeekOrigin.Current);			// Skip sample format (we know what it is)
-						formatInfo.Channels = stream.Read_L_UINT16();		// Number of channels
-						formatInfo.Frequency = (int)stream.Read_L_UINT32();	// Sample rate
-						bytesPerSecond = stream.Read_L_UINT32();			// Average bytes per second
-						blockAlign = stream.Read_L_UINT16();				// Block align
-						formatInfo.Bits = stream.Read_L_UINT16();			// Sample size
+						moduleStream.Seek(2, SeekOrigin.Current);				// Skip sample format (we know what it is)
+						formatInfo.Channels = moduleStream.Read_L_UINT16();			// Number of channels
+						formatInfo.Frequency = (int)moduleStream.Read_L_UINT32();	// Sample rate
+						bytesPerSecond = moduleStream.Read_L_UINT32();				// Average bytes per second
+						blockAlign = moduleStream.Read_L_UINT16();					// Block align
+						formatInfo.Bits = moduleStream.Read_L_UINT16();				// Sample size
 
 						// Initialize the loader
 						InitBasicLoader();
 
 						// Read extra header information
-						int extraData = LoadExtraHeaderInfo(stream, formatInfo, out errorMessage);
+						int extraData = LoadExtraHeaderInfo(moduleStream, formatInfo, out errorMessage);
 						if (!string.IsNullOrEmpty(errorMessage))
 							return false;
 
 						// Skip any extra data
-						stream.Seek((chunkSize - 16 - extraData + 1) & 0xfffffffe, SeekOrigin.Current);
+						moduleStream.Seek((chunkSize - 16 - extraData + 1) & 0xfffffffe, SeekOrigin.Current);
 
 						gotFmt = true;
 						break;
@@ -217,10 +217,10 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 					case 0x66616374:
 					{
 						// Load the fact chunk
-						int factSize = LoadFactChunk(stream);
+						int factSize = LoadFactChunk(moduleStream);
 
 						// Skip any extra data
-						stream.Seek((chunkSize - factSize + 1) & 0xfffffffe, SeekOrigin.Current);
+						moduleStream.Seek((chunkSize - factSize + 1) & 0xfffffffe, SeekOrigin.Current);
 
 						gotFact = true;
 						break;
@@ -230,13 +230,13 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 					case 0x64617461:
 					{
 						// Remember the position where the data starts
-						dataStarts = stream.Position;
+						dataStarts = moduleStream.Position;
 
 						// Initialize the loader
-						LoaderInitialize(dataStarts, chunkSize, stream.Length, formatInfo);
+						LoaderInitialize(dataStarts, chunkSize, moduleStream.Length, formatInfo);
 
 						// Skip any extra data
-						stream.Seek((chunkSize + 1) & 0xfffffffe, SeekOrigin.Current);
+						moduleStream.Seek((chunkSize + 1) & 0xfffffffe, SeekOrigin.Current);
 
 						gotData = true;
 						break;
@@ -259,9 +259,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 						}
 
 						if (ok)
-							stream.Seek((chunkSize + 1) & 0xfffffffe, SeekOrigin.Current);
+							moduleStream.Seek((chunkSize + 1) & 0xfffffffe, SeekOrigin.Current);
 						else
-							stream.Seek(0, SeekOrigin.End);
+							moduleStream.Seek(0, SeekOrigin.End);
 
 						break;
 					}
@@ -304,9 +304,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/// Load some part of the sample data
 		/// </summary>
 		/********************************************************************/
-		public int LoadData(ModuleStream stream, int[] buffer, int length, LoadSampleFormatInfo formatInfo)
+		public int LoadData(ModuleStream moduleStream, int[] buffer, int length, LoadSampleFormatInfo formatInfo)
 		{
-			return DecodeSampleData(stream, buffer, length, formatInfo);
+			return DecodeSampleData(moduleStream, buffer, length, formatInfo);
 		}
 
 
@@ -325,7 +325,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/// Sets the file position to the sample position given
 		/// </summary>
 		/********************************************************************/
-		public long SetSamplePosition(ModuleStream stream, long position, LoadSampleFormatInfo formatInfo)
+		public long SetSamplePosition(ModuleStream moduleStream, long position, LoadSampleFormatInfo formatInfo)
 		{
 			// Reset the loader
 			ResetBasicLoader();
@@ -335,7 +335,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 			long samplePosition = CalcSamplePosition(position, formatInfo);
 
 			// Seek to the right position in the data chunk
-			stream.Seek(dataStarts + position, SeekOrigin.Begin);
+			moduleStream.Seek(dataStarts + position, SeekOrigin.Begin);
 
 			return samplePosition;
 		}
@@ -373,7 +373,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/// Loads any extra header information from the 'fmt ' chunk
 		/// </summary>
 		/********************************************************************/
-		protected virtual int LoadExtraHeaderInfo(ModuleStream stream, LoadSampleFormatInfo formatInfo, out string errorMessage)
+		protected virtual int LoadExtraHeaderInfo(ModuleStream moduleStream, LoadSampleFormatInfo formatInfo, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
@@ -387,7 +387,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/// Loads the 'fact' chunk
 		/// </summary>
 		/********************************************************************/
-		protected virtual int LoadFactChunk(ModuleStream stream)
+		protected virtual int LoadFactChunk(ModuleStream moduleStream)
 		{
 			return 0;
 		}
@@ -399,7 +399,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/// Load and decode a block of sample data
 		/// </summary>
 		/********************************************************************/
-		protected abstract int DecodeSampleData(ModuleStream stream, int[] buffer, int length, LoadSampleFormatInfo formatInfo);
+		protected abstract int DecodeSampleData(ModuleStream moduleStream, int[] buffer, int length, LoadSampleFormatInfo formatInfo);
 
 
 
@@ -427,7 +427,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/// them
 		/// </summary>
 		/********************************************************************/
-		protected int GetFileData(ModuleStream stream, byte[] buffer, int length)
+		protected int GetFileData(ModuleStream moduleStream, byte[] buffer, int length)
 		{
 			int total = 0;
 
@@ -438,7 +438,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 				if (loadBufferOffset == loadBufferFillCount)
 				{
 					// Load the data
-					loadBufferFillCount = stream.Read(loadBuffer, 0, loadBuffer.Length);
+					loadBufferFillCount = moduleStream.Read(loadBuffer, 0, loadBuffer.Length);
 					loadBufferOffset = 0;
 
 					// Well, there isn't any data left to read

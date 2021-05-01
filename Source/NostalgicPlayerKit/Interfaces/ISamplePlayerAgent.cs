@@ -25,12 +25,12 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Will load the header information from the file
 		/// </summary>
-		AgentResult LoadHeaderInfo(ModuleStream stream, out string errorMessage);
+		AgentResult LoadHeaderInfo(ModuleStream moduleStream, out string errorMessage);
 
 		/// <summary>
 		/// Initializes the player
 		/// </summary>
-		bool InitPlayer(ModuleStream stream);
+		bool InitPlayer(ModuleStream moduleStream);
 
 		/// <summary>
 		/// Cleanup the player

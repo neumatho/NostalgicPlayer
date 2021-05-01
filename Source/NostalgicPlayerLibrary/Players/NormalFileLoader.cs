@@ -7,7 +7,6 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System.IO;
-using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 {
@@ -32,9 +31,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Will try to open the file given
 		/// </summary>
 		/********************************************************************/
-		protected override ModuleStream OpenFile(string fileName)
+		protected override Stream OpenFile(string fileName)
 		{
-			return new ModuleStream(new FileStream(fileName, FileMode.Open, FileAccess.Read));
+			return new FileStream(fileName, FileMode.Open, FileAccess.Read);
 		}
 	}
 }

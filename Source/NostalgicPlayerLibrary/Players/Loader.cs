@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -25,11 +26,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		{
 			public AgentInfo Agent;
 			public string OriginalFormat;
+			public MemoryStream ConvertedStream;
 		}
 
 		private readonly Manager agentManager;
-
-		private ModuleStream stream;
 
 		/********************************************************************/
 		/// <summary>
@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			PlayerAgentInfo = null;
 			PlayerAgent = null;
 			ConverterAgentInfo = null;
-			stream = null;
+			Stream = null;
 		}
 
 
@@ -59,7 +59,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		public bool Load(string fileName, ILoader loader, out string errorMessage)
 		{
-			return Load(new PlayerFileInfo(fileName, OpenFile(loader), loader), out errorMessage);
+			return Load(OpenFile(loader), loader, fileName, out errorMessage);
 		}
 
 
@@ -75,7 +75,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		public bool Load(Stream stream, out string errorMessage)
 		{
-			return Load(new PlayerFileInfo(string.Empty, new ModuleStream(stream), null), out errorMessage);
+			return Load(stream, null, string.Empty, out errorMessage);
 		}
 
 
@@ -87,8 +87,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		public void Unload()
 		{
-			stream?.Dispose();
-			stream = null;
+			Stream?.Dispose();
+			Stream = null;
 
 			PlayerAgentInfo = null;
 			PlayerAgent = null;
@@ -202,10 +202,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the stream to use when reading samples
+		/// Return the stream to use when reading sample files
 		/// </summary>
 		/********************************************************************/
-		internal ModuleStream Stream => stream;
+		internal ModuleStream Stream
+		{
+			get; private set;
+		}
 
 		#region Private methods
 		/********************************************************************/
@@ -214,40 +217,60 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// given and then load it into memory.
 		///
 		/// This method takes ownership of the stream, so it will be closed
-		/// when needed, even if no player could be found
+		/// when needed, even if no player could be found.
+		///
+		/// The loading is implemented in a way, so if the module needs to be
+		/// converted, the sample data is not copied over to the new stream,
+		/// but is marked instead. When the player then loads the module, it
+		/// will read the module structure from the converted stream and
+		/// sample data from the original stream given as argument to this
+		/// method
 		/// </summary>
 		/********************************************************************/
-		private bool Load(PlayerFileInfo fileInfo, out string errorMessage)
+		private bool Load(Stream stream, ILoader loader, string fileName, out string errorMessage)
 		{
 			bool result = false;
 			errorMessage = string.Empty;
 
+			ConvertInfo convertInfo = null;
+
 			// Get the original length of the file
-			ModuleSize = fileInfo.ModuleStream.Length;
+			ModuleSize = stream.Length;
 
 			try
 			{
-				ConvertInfo convertInfo = null;
-
-				// Check to see if we can find a player via the file type
-				if (!FindPlayerViaFileType(fileInfo))
+				bool foundPlayer;
+				using (ModuleStream moduleStream = new ModuleStream(stream, true))
 				{
-					// No player could be found via the file type
+					PlayerFileInfo fileInfo = new PlayerFileInfo(fileName, moduleStream, loader);
+
+					// Check to see if we can find a player via the file type
+					foundPlayer = FindPlayerViaFileType(fileInfo);
+				}
+
+				if (!foundPlayer)
+				{
+					// No player could be found via the file type.
 					// Now try to convert the module
-					convertInfo = ConvertModule(fileInfo, out string converterError);
+					convertInfo = ConvertModule(stream, loader, fileName, out string converterError);
 					if (!string.IsNullOrEmpty(converterError))
 					{
 						// Something went wrong when converting the module
 						//
 						// Build the error string
-						errorMessage = string.Format(Resources.IDS_ERR_CONVERT_MODULE, fileInfo.FileName, convertInfo.Agent.TypeName, converterError);
+						errorMessage = string.Format(Resources.IDS_ERR_CONVERT_MODULE, fileName, convertInfo.Agent.TypeName, converterError);
 					}
 					else
 					{
 						// Try all the players to see if we can find one
 						// that understand the file format
-						if (FindPlayer(fileInfo))
-							result = true;
+						using (ModuleStream moduleStream = new ModuleStream(convertInfo != null ? convertInfo.ConvertedStream : stream, true))
+						{
+							PlayerFileInfo fileInfo = new PlayerFileInfo(fileName, moduleStream, loader);
+
+							if (FindPlayer(fileInfo))
+								result = true;
+						}
 					}
 				}
 				else
@@ -256,44 +279,50 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				// Did we found a player?
 				if (result)
 				{
-					// Yes
-					fileInfo.ModuleStream.Seek(0, SeekOrigin.Begin);
-
-					AgentResult agentResult = AgentResult.Unknown;
-					string playerError = string.Empty;
-
-					if (PlayerAgent is IModulePlayerAgent modulePlayerAgent)
+					// Yes, initialize the module stream with the right information
+					using (ModuleStream moduleStream = convertInfo != null ? new ModuleStream(convertInfo.ConvertedStream, stream) : new ModuleStream(stream, true))
 					{
-						// Load the module if the player is a module player
-						agentResult = modulePlayerAgent.Load(fileInfo, out playerError);
-					}
-					else if (PlayerAgent is ISamplePlayerAgent samplePlayerAgent)
-					{
-						// Load header information if sample player
-						agentResult = samplePlayerAgent.LoadHeaderInfo(fileInfo.ModuleStream, out playerError);
-					}
+						PlayerFileInfo fileInfo = new PlayerFileInfo(fileName, moduleStream, loader);
 
-					if (agentResult != AgentResult.Ok)
-					{
-						// Well, something went wrong when loading the file
-						//
-						// Build the error string
-						errorMessage = string.Format(Resources.IDS_ERR_LOAD_MODULE, fileInfo.FileName, PlayerAgentInfo.TypeName, playerError);
+						// Most players will start reading the structure from the beginning, so start there
+						moduleStream.Seek(0, SeekOrigin.Begin);
 
-						PlayerAgentInfo = null;
-						PlayerAgent = null;
+						AgentResult agentResult = AgentResult.Unknown;
+						string playerError = string.Empty;
 
-						result = false;
-					}
-					else
-					{
-						// Get module information
-						FileName = fileInfo.FileName;
+						if (PlayerAgent is IModulePlayerAgent modulePlayerAgent)
+						{
+							// Load the module if the player is a module player
+							agentResult = modulePlayerAgent.Load(fileInfo, out playerError);
+						}
+						else if (PlayerAgent is ISamplePlayerAgent samplePlayerAgent)
+						{
+							// Load header information if sample player
+							agentResult = samplePlayerAgent.LoadHeaderInfo(fileInfo.ModuleStream, out playerError);
+						}
 
-						PlayerName = PlayerAgentInfo.AgentName;
-						ModuleFormat = convertInfo != null ? string.IsNullOrEmpty(convertInfo.OriginalFormat) ? convertInfo.Agent.TypeName : convertInfo.OriginalFormat : PlayerAgentInfo.TypeName;
+						if (agentResult != AgentResult.Ok)
+						{
+							// Well, something went wrong when loading the file
+							//
+							// Build the error string
+							errorMessage = string.Format(Resources.IDS_ERR_LOAD_MODULE, fileInfo.FileName, PlayerAgentInfo.TypeName, playerError);
 
-						ConverterAgentInfo = convertInfo?.Agent;
+							PlayerAgentInfo = null;
+							PlayerAgent = null;
+
+							result = false;
+						}
+						else
+						{
+							// Get module information
+							FileName = fileInfo.FileName;
+
+							PlayerName = PlayerAgentInfo.AgentName;
+							ModuleFormat = convertInfo != null ? string.IsNullOrEmpty(convertInfo.OriginalFormat) ? convertInfo.Agent.TypeName : convertInfo.OriginalFormat : PlayerAgentInfo.TypeName;
+
+							ConverterAgentInfo = convertInfo?.Agent;
+						}
 					}
 				}
 				else
@@ -301,24 +330,27 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					if (string.IsNullOrEmpty(errorMessage))
 					{
 						// No, send an error back
-						errorMessage = string.Format(Resources.IDS_ERR_UNKNOWN_MODULE, fileInfo.FileName);
+						errorMessage = string.Format(Resources.IDS_ERR_UNKNOWN_MODULE, fileName);
 					}
 				}
 			}
 			catch (Exception ex)
 			{
 				// Build an error message
-				errorMessage = string.Format(Resources.IDS_ERR_FILE, fileInfo.FileName, ex.HResult.ToString("X8"), ex.Message);
+				errorMessage = string.Format(Resources.IDS_ERR_FILE, fileName, ex.HResult.ToString("X8"), ex.Message);
 				result = false;
 			}
 
+			// If a module has been converted, we don't need to converted stream anymore
+			convertInfo?.ConvertedStream?.Dispose();
+
 			// Close the files again if needed
 			if (!result || PlayerAgent is IModulePlayerAgent)
-				fileInfo.ModuleStream.Dispose();
+				stream.Dispose();
 			else
 			{
 				// Remember the stream, so it can be closed later on
-				stream = fileInfo.ModuleStream;
+				Stream = new ModuleStream(stream, false);
 			}
 
 			if (result)
@@ -334,7 +366,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Will try to open the file given
 		/// </summary>
 		/********************************************************************/
-		private ModuleStream OpenFile(ILoader loader)
+		private Stream OpenFile(ILoader loader)
 		{
 			return loader.OpenFile();
 		}
@@ -450,63 +482,75 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Will try to convert the module to another format
 		/// </summary>
 		/********************************************************************/
-		private ConvertInfo ConvertModule(PlayerFileInfo fileInfo, out string errorMessage)
+		private ConvertInfo ConvertModule(Stream stream, ILoader loader, string fileName, out string errorMessage)
 		{
 			ConvertInfo result = null;
 			bool takeAnotherRound;
+
+			// This list is used to hold sample information needed
+			Dictionary<int, ConvertSampleInfo> sampleInfo = new Dictionary<int, ConvertSampleInfo>();
 
 			do
 			{
 				takeAnotherRound = false;
 
-				foreach (AgentInfo agentInfo in agentManager.GetAllAgents(Manager.AgentType.ModuleConverters))
+				using (ModuleStream moduleStream = new ModuleStream(stream, sampleInfo))
 				{
-					// Is the player enabled?
-					if (agentInfo.Enabled)
+					PlayerFileInfo fileInfo = new PlayerFileInfo(fileName, moduleStream, loader);
+
+					foreach (AgentInfo agentInfo in agentManager.GetAllAgents(Manager.AgentType.ModuleConverters))
 					{
-						// Create an instance of the converter
-						if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IModuleConverterAgent converter)
+						// Is the player enabled?
+						if (agentInfo.Enabled)
 						{
-							// Check the file
-							AgentResult agentResult = converter.Identify(fileInfo);
-							if (agentResult == AgentResult.Ok)
+							// Create an instance of the converter
+							if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IModuleConverterAgent converter)
 							{
-								// We found the right converter, so now convert it
-								fileInfo.ModuleStream.Seek(0, SeekOrigin.Begin);
-
-								// Create new memory stream to store the converted module in.
-								// We initialize it with the same size as the original file,
-								// so it won't be reallocated a lot
-								MemoryStream ms = new MemoryStream((int)fileInfo.ModuleStream.Length);
-
-								using (WriterStream ws = new WriterStream(ms))
+								// Check the file
+								AgentResult agentResult = converter.Identify(fileInfo);
+								if (agentResult == AgentResult.Ok)
 								{
-									agentResult = converter.Convert(fileInfo, ws, out errorMessage);
-									if (agentResult == AgentResult.Ok)
+									// We found the right converter, so now convert it
+									moduleStream.Seek(0, SeekOrigin.Begin);
+
+									// Create new memory stream to store the converted module in.
+									// We initialize it with an ok buffer size, but not bigger than
+									// the original file, so it won't be reallocated a lot
+									MemoryStream ms = new MemoryStream(Math.Min(64 * 1024, (int)moduleStream.Length));
+
+									using (ConverterStream cs = new ConverterStream(ms, sampleInfo))
 									{
-										// Replace the module stream with the converted stream
-										fileInfo.ModuleStream.Dispose();
-										fileInfo.ModuleStream = new ModuleStream(ms);
+										agentResult = converter.Convert(fileInfo, cs, out errorMessage);
+										if (agentResult == AgentResult.Ok)
+										{
+											// Replace the module stream with the converted stream
+											stream = ms;
 
-										if (result == null)
-											result = new ConvertInfo { Agent = agentInfo, OriginalFormat = converter.OriginalFormat };
+											if (result == null)
+												result = new ConvertInfo { Agent = agentInfo, OriginalFormat = converter.OriginalFormat };
 
-										// The module may need to be converted multiple times, so
-										// we make a new check with the converted module
-										takeAnotherRound = true;
-										break;
+											if (result.ConvertedStream != null)
+												result.ConvertedStream.Dispose();
+
+											result.ConvertedStream = ms;
+
+											// The module may need to be converted multiple times, so
+											// we make a new check with the converted module
+											takeAnotherRound = true;
+											break;
+										}
+
+										// An error occurred, so return immediately. The error
+										// is stored in the errorMessage out argument
+										return new ConvertInfo { Agent = agentInfo };
 									}
-
-									// An error occurred, so return immediately. The error
-									// is stored in the errorMessage out argument
-									return new ConvertInfo { Agent = agentInfo };
 								}
-							}
 
-							if (agentResult != AgentResult.Unknown)
-							{
-								// Some error occurred
-								throw new Exception($"Identify() on module converter {agentInfo.TypeName} returned an error");
+								if (agentResult != AgentResult.Unknown)
+								{
+									// Some error occurred
+									throw new Exception($"Identify() on module converter {agentInfo.TypeName} returned an error");
+								}
 							}
 						}
 					}

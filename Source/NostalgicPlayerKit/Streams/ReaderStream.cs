@@ -19,6 +19,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 	{
 		/// <summary></summary>
 		protected readonly Stream wrapperStream;
+		private readonly bool leaveStreamOpen;
 
 		private readonly byte[] loadBuffer;
 		private readonly bool isLittleEndian;
@@ -28,9 +29,21 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ReaderStream(Stream wrapperStream)
+		public ReaderStream(Stream wrapperStream) : this(wrapperStream, false)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public ReaderStream(Stream wrapperStream, bool leaveOpen)
 		{
 			this.wrapperStream = wrapperStream;
+			leaveStreamOpen = leaveOpen;
 
 			loadBuffer = new byte[16];
 			isLittleEndian = BitConverter.IsLittleEndian;
@@ -47,7 +60,8 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			base.Dispose(disposing);
 
-			wrapperStream.Dispose();
+			if (!leaveStreamOpen)
+				wrapperStream.Dispose();
 		}
 
 		#region Stream implementation
@@ -219,7 +233,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public bool EndOfStream
 		{
-			get; private set;
+			get; protected set;
 		} = false;
 
 

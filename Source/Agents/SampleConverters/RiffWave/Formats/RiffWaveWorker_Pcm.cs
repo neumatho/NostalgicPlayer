@@ -91,7 +91,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats
 		/// Load and decode a block of sample data
 		/// </summary>
 		/********************************************************************/
-		protected override int DecodeSampleData(ModuleStream stream, int[] buffer, int length, LoadSampleFormatInfo formatInfo)
+		protected override int DecodeSampleData(ModuleStream moduleStream, int[] buffer, int length, LoadSampleFormatInfo formatInfo)
 		{
 			// Calculate the number of bytes used for each sample
 			int sampleSize = (formatInfo.Bits + 7) / 8;
@@ -104,7 +104,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats
 				if (samplesLeft == 0)
 				{
 					// Yes, do it
-					samplesLeft = GetFileData(stream, decodeBuffer, decodeBuffer.Length);
+					samplesLeft = GetFileData(moduleStream, decodeBuffer, decodeBuffer.Length);
 					sourceOffset = 0;
 
 					if (samplesLeft == 0)

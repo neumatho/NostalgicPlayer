@@ -213,26 +213,26 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 		/********************************************************************/
 		public override AgentResult Identify(PlayerFileInfo fileInfo)
 		{
-			ModuleStream stream = fileInfo.ModuleStream;
+			ModuleStream moduleStream = fileInfo.ModuleStream;
 
 			// Check the module size
-			long fileSize = stream.Length;
+			long fileSize = moduleStream.Length;
 			if (fileSize < 100)
 				return AgentResult.Unknown;
 
 			// Check the mark
-			stream.Seek(0, SeekOrigin.Begin);
+			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			if (stream.Read_B_UINT32() != 0x534d4f44)		// SMOD
+			if (moduleStream.Read_B_UINT32() != 0x534d4f44)		// SMOD
 				return AgentResult.Unknown;
 
 			// Skip the song length
-			stream.Seek(4, SeekOrigin.Current);
+			moduleStream.Seek(4, SeekOrigin.Current);
 
 			// Check the offset pointers
 			for (int i = 0; i < 8; i++)
 			{
-				if (stream.Read_B_UINT32() > fileSize)
+				if (moduleStream.Read_B_UINT32() > fileSize)
 					return AgentResult.Unknown;
 			}
 
@@ -246,59 +246,59 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 		/// Convert the module and store the result in the stream given
 		/// </summary>
 		/********************************************************************/
-		public override AgentResult Convert(PlayerFileInfo fileInfo, WriterStream writerStream, out string errorMessage)
+		public override AgentResult Convert(PlayerFileInfo fileInfo, ConverterStream converterStream, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
-			ModuleStream stream = fileInfo.ModuleStream;
+			ModuleStream moduleStream = fileInfo.ModuleStream;
 
 			uint[] offsetsAndLength = new uint[8];
 			uint[] newOffsetsAndLength = new uint[8];
 
 			// Start to write the ID mark
-			writerStream.Write_B_UINT32(0x46433134);			// FC14
-			stream.Seek(4, SeekOrigin.Begin);
+			converterStream.Write_B_UINT32(0x46433134);			// FC14
+			moduleStream.Seek(4, SeekOrigin.Begin);
 
 			// Copy the sequence length and make it even
-			uint seqLength = stream.Read_B_UINT32();
+			uint seqLength = moduleStream.Read_B_UINT32();
 			if ((seqLength % 2) != 0)
-				writerStream.Write_B_UINT32(seqLength + 1);
+				converterStream.Write_B_UINT32(seqLength + 1);
 			else
-				writerStream.Write_B_UINT32(seqLength);
+				converterStream.Write_B_UINT32(seqLength);
 
 			// Read the offsets
-			stream.ReadArray_B_UINT32s(offsetsAndLength, 8);
-			writerStream.Seek(8 * 4, SeekOrigin.Current);
+			moduleStream.ReadArray_B_UINT32s(offsetsAndLength, 8);
+			converterStream.Seek(8 * 4, SeekOrigin.Current);
 
 			// Copy the sample information
 			ushort[] sampleLengths = new ushort[10];
 			for (int i = 0; i < 10; i++)
 			{
-				sampleLengths[i] = stream.Read_B_UINT16();
-				writerStream.Write_B_UINT16(sampleLengths[i]);
-				writerStream.Write_B_UINT16(stream.Read_B_UINT16());
-				writerStream.Write_B_UINT16(stream.Read_B_UINT16());
+				sampleLengths[i] = moduleStream.Read_B_UINT16();
+				converterStream.Write_B_UINT16(sampleLengths[i]);
+				converterStream.Write_B_UINT16(moduleStream.Read_B_UINT16());
+				converterStream.Write_B_UINT16(moduleStream.Read_B_UINT16());
 			}
 
-			if (stream.EndOfStream)
+			if (moduleStream.EndOfStream)
 			{
 				errorMessage = Resources.IDS_FC13_ERR_LOADING_HEADER;
 				return AgentResult.Error;
 			}
 
 			// Write the wave table lengths
-			writerStream.Write(waveLength, 0, 80);
+			converterStream.Write(waveLength, 0, 80);
 
 			// Copy the sequences
-			CopyData(stream, writerStream, seqLength);
+			CopyData(moduleStream, converterStream, seqLength);
 
 			// Copy the patterns
-			newOffsetsAndLength[0] = (uint)writerStream.Position;
+			newOffsetsAndLength[0] = (uint)converterStream.Position;
 			if ((newOffsetsAndLength[0] % 2) != 0)
 			{
 				// Odd offset, make it even
 				newOffsetsAndLength[0]++;
-				writerStream.Write_UINT8(0);
+				converterStream.Write_UINT8(0);
 			}
 
 			newOffsetsAndLength[1] = offsetsAndLength[1];
@@ -307,8 +307,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			byte[] pattBuf = new byte[offsetsAndLength[1]];
 
 			// Load the pattern data into the buffer
-			stream.Seek(offsetsAndLength[0], SeekOrigin.Begin);
-			stream.Read(pattBuf, 0, (int)offsetsAndLength[1]);
+			moduleStream.Seek(offsetsAndLength[0], SeekOrigin.Begin);
+			moduleStream.Read(pattBuf, 0, (int)offsetsAndLength[1]);
 
 			// Scan the pattern data after the portamento flags
 			// and double it's data
@@ -319,31 +319,31 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			}
 
 			// Write the patterns
-			writerStream.Write(pattBuf, 0, (int)offsetsAndLength[1]);
+			converterStream.Write(pattBuf, 0, (int)offsetsAndLength[1]);
 
 			// Copy the frequency sequences
-			newOffsetsAndLength[2] = (uint)writerStream.Position;
+			newOffsetsAndLength[2] = (uint)converterStream.Position;
 			newOffsetsAndLength[3] = offsetsAndLength[3];
 
-			stream.Seek(offsetsAndLength[2], SeekOrigin.Begin);
-			CopyData(stream, writerStream, offsetsAndLength[3]);
+			moduleStream.Seek(offsetsAndLength[2], SeekOrigin.Begin);
+			CopyData(moduleStream, converterStream, offsetsAndLength[3]);
 
 			// Copy the volume sequences
-			newOffsetsAndLength[4] = (uint)writerStream.Position;
+			newOffsetsAndLength[4] = (uint)converterStream.Position;
 			newOffsetsAndLength[5] = offsetsAndLength[5];
 
-			stream.Seek(offsetsAndLength[4], SeekOrigin.Begin);
-			CopyData(stream, writerStream, offsetsAndLength[5]);
+			moduleStream.Seek(offsetsAndLength[4], SeekOrigin.Begin);
+			CopyData(moduleStream, converterStream, offsetsAndLength[5]);
 
-			if (stream.EndOfStream)
+			if (moduleStream.EndOfStream)
 			{
 				errorMessage = Resources.IDS_FC13_ERR_LOADING_PATTERNS;
 				return AgentResult.Error;
 			}
 
 			// Copy the sample data
-			newOffsetsAndLength[6] = (uint)writerStream.Position;
-			stream.Seek(offsetsAndLength[6], SeekOrigin.Begin);
+			newOffsetsAndLength[6] = (uint)converterStream.Position;
+			moduleStream.Seek(offsetsAndLength[6], SeekOrigin.Begin);
 
 			for (int i = 0; i < 10; i++)
 			{
@@ -352,26 +352,27 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 				if (length != 0)
 				{
 					// Check to see if we miss too much from the last sample
-					if (stream.Length - stream.Position < (length - 256))
+					if (moduleStream.Length - moduleStream.Position < (length - 256))
 					{
 						errorMessage = Resources.IDS_FC13_ERR_LOADING_SAMPLES;
 						return AgentResult.Error;
 					}
 
-					CopyData(stream, writerStream, (uint)length);
+					moduleStream.SetSampleDataInfo(i, length);
+					converterStream.WriteSampleDataMarker(i, length);
 				}
 
 				// Write pad bytes
-				writerStream.Write_B_UINT16(0);
+				converterStream.Write_B_UINT16(0);
 			}
 
 			// Write the wave tables
-			newOffsetsAndLength[7] = (uint)writerStream.Position;
-			writerStream.Write(waveTables, 0, waveTables.Length);
+			newOffsetsAndLength[7] = (uint)converterStream.Position;
+			converterStream.Write(waveTables, 0, waveTables.Length);
 
 			// Seek back and write the offsets and lengths
-			writerStream.Seek(8, SeekOrigin.Begin);
-			writerStream.WriteArray_B_UINT32s(newOffsetsAndLength, 8);
+			converterStream.Seek(8, SeekOrigin.Begin);
+			converterStream.WriteArray_B_UINT32s(newOffsetsAndLength, 8);
 
 			return AgentResult.Ok;
 		}

@@ -81,11 +81,11 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx.Formats
 		/// Load and decode a block of sample data
 		/// </summary>
 		/********************************************************************/
-		protected override int DecodeSampleData(ModuleStream stream, ModuleStream stream2, int[] buffer, int length)
+		protected override int DecodeSampleData(ModuleStream moduleStream, ModuleStream moduleStream2, int[] buffer, int length)
 		{
 			int filled = 0;
 
-			int bufSize = stream2 == null ? decodeBuffer.Length : decodeBuffer.Length / 2;
+			int bufSize = moduleStream2 == null ? decodeBuffer.Length : decodeBuffer.Length / 2;
 
 			while (length > 0)
 			{
@@ -93,18 +93,18 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx.Formats
 				if (samplesLeft == 0)
 				{
 					// Yes, do it
-					if (stream2 != null)
+					if (moduleStream2 != null)
 					{
-						samplesLeft = GetFileData2(stream2, decodeBuffer, bufSize, bufSize);
+						samplesLeft = GetFileData2(moduleStream2, decodeBuffer, bufSize, bufSize);
 
 						if (samplesLeft == 0)
 							break;			// End of file, stop filling
 
-						samplesLeft += GetFileData1(stream, decodeBuffer, 0, samplesLeft);
+						samplesLeft += GetFileData1(moduleStream, decodeBuffer, 0, samplesLeft);
 					}
 					else
 					{
-						samplesLeft = GetFileData1(stream, decodeBuffer, 0, bufSize);
+						samplesLeft = GetFileData1(moduleStream, decodeBuffer, 0, bufSize);
 
 						if (samplesLeft == 0)
 							break;			// End of file, stop filling
@@ -116,7 +116,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx.Formats
 				// Copy the sample data
 				int todo;
 
-				if (stream2 == null)
+				if (moduleStream2 == null)
 				{
 					// Mono sample
 					//

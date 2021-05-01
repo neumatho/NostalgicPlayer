@@ -28,7 +28,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 			public int LoadBufferOffset;
 		}
 
-		private ModuleStream stream2;
+		private ModuleStream moduleStream2;
 
 		private long dataStarts1;
 		private long dataStarts2;
@@ -62,33 +62,33 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 		/// Test the file to see if it could be identified
 		/// </summary>
 		/********************************************************************/
-		public AgentResult Identify(ModuleStream stream)
+		public AgentResult Identify(ModuleStream moduleStream)
 		{
 			// Seek to the start of the file
-			stream.Seek(0, SeekOrigin.Begin);
+			moduleStream.Seek(0, SeekOrigin.Begin);
 
 			// Check the chunk names
-			if (stream.Read_B_UINT32() == 0x464f524d)       // FORM
+			if (moduleStream.Read_B_UINT32() == 0x464f524d)			// FORM
 			{
-				stream.Seek(4, SeekOrigin.Current);	// Skip length
-				if (stream.Read_B_UINT32() == 0x38535658)   // 8SVX
+				moduleStream.Seek(4, SeekOrigin.Current);		// Skip length
+				if (moduleStream.Read_B_UINT32() == 0x38535658)		// 8SVX
 				{
 					// See if we can find the 'VHDR' chunk
 					for (;;)
 					{
 						// Read the chunk name and size
-						uint chunkName = stream.Read_B_UINT32();
-						uint chunkSize = stream.Read_B_UINT32();
+						uint chunkName = moduleStream.Read_B_UINT32();
+						uint chunkSize = moduleStream.Read_B_UINT32();
 
 						// Check if we reached the end of the file
-						if (stream.EndOfStream)
+						if (moduleStream.EndOfStream)
 							return AgentResult.Unknown;
 
-						if (chunkName == 0x56484452)        // VHDR
+						if (chunkName == 0x56484452)				// VHDR
 						{
 							// Got it, check the format
-							stream.Seek(15, SeekOrigin.Current);
-							Format format = (Format)stream.Read_UINT8();
+							moduleStream.Seek(15, SeekOrigin.Current);
+							Format format = (Format)moduleStream.Read_UINT8();
 							if (format == FormatId)
 								return AgentResult.Ok;
 
@@ -97,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 						}
 
 						// Skip the chunk
-						stream.Seek((chunkSize + 1) & 0xfffffffe, SeekOrigin.Current);
+						moduleStream.Seek((chunkSize + 1) & 0xfffffffe, SeekOrigin.Current);
 					}
 				}
 			}
@@ -165,7 +165,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 		{
 			errorMessage = string.Empty;
 
-			stream2 = null;
+			moduleStream2 = null;
 
 			return true;
 		}
@@ -184,8 +184,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 			CleanupBasicLoader();
 
 			// Delete other file handle if any
-			stream2?.Dispose();
-			stream2 = null;
+			moduleStream2?.Dispose();
+			moduleStream2 = null;
 		}
 
 
@@ -195,7 +195,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 		/// Load the sample header
 		/// </summary>
 		/********************************************************************/
-		public bool LoadHeader(ModuleStream stream, out LoadSampleFormatInfo formatInfo, out string errorMessage)
+		public bool LoadHeader(ModuleStream moduleStream, out LoadSampleFormatInfo formatInfo, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
@@ -209,7 +209,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 			};
 
 			// Skip the header
-			stream.Seek(12, SeekOrigin.Begin);
+			moduleStream.Seek(12, SeekOrigin.Begin);
 
 			// Set some flags
 			bool gotVhdr = false;
@@ -218,11 +218,11 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 			for (;;)
 			{
 				// Read the chunk name and size
-				uint chunkName = stream.Read_B_UINT32();
-				uint chunkSize = stream.Read_B_UINT32();
+				uint chunkName = moduleStream.Read_B_UINT32();
+				uint chunkSize = moduleStream.Read_B_UINT32();
 
 				// Check if we reached the end of the file
-				if (stream.EndOfStream)
+				if (moduleStream.EndOfStream)
 					break;
 
 				// Interpret the known chunks
@@ -233,13 +233,13 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 					{
 						// Read the string
 						byte[] strBuf = new byte[chunkSize + 1];
-						stream.ReadString(strBuf, (int)chunkSize);
+						moduleStream.ReadString(strBuf, (int)chunkSize);
 
 						formatInfo.Name = encoder.GetString(strBuf);
 
 						// Skip any pad bytes
 						if ((chunkSize % 2) != 0)
-							stream.Seek(1, SeekOrigin.Current);
+							moduleStream.Seek(1, SeekOrigin.Current);
 
 						break;
 					}
@@ -249,13 +249,13 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 					{
 						// Read the string
 						byte[] strBuf = new byte[chunkSize + 1];
-						stream.ReadString(strBuf, (int)chunkSize);
+						moduleStream.ReadString(strBuf, (int)chunkSize);
 
 						formatInfo.Author = encoder.GetString(strBuf);
 
 						// Skip any pad bytes
 						if ((chunkSize % 2) != 0)
-							stream.Seek(1, SeekOrigin.Current);
+							moduleStream.Seek(1, SeekOrigin.Current);
 
 						break;
 					}
@@ -265,13 +265,13 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 					{
 						// Read the string
 						byte[] strBuf = new byte[chunkSize + 1];
-						stream.ReadString(strBuf, (int)chunkSize);
+						moduleStream.ReadString(strBuf, (int)chunkSize);
 
 						copyright = encoder.GetString(strBuf);
 
 						// Skip any pad bytes
 						if ((chunkSize % 2) != 0)
-							stream.Seek(1, SeekOrigin.Current);
+							moduleStream.Seek(1, SeekOrigin.Current);
 
 						break;
 					}
@@ -281,13 +281,13 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 					{
 						// Read the string
 						byte[] strBuf = new byte[chunkSize + 1];
-						stream.ReadString(strBuf, (int)chunkSize);
+						moduleStream.ReadString(strBuf, (int)chunkSize);
 
 						annotation = encoder.GetString(strBuf);
 
 						// Skip any pad bytes
 						if ((chunkSize % 2) != 0)
-							stream.Seek(1, SeekOrigin.Current);
+							moduleStream.Seek(1, SeekOrigin.Current);
 
 						break;
 					}
@@ -295,7 +295,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 					// 'CHAN': Channel chunk
 					case 0x4348414e:
 					{
-						uint chanVal = stream.Read_B_UINT32();
+						uint chanVal = moduleStream.Read_B_UINT32();
 
 						// 2 = Left channel
 						// 4 = Right channel
@@ -307,7 +307,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 							formatInfo.Channels = 2;
 
 						// Skip any extra data
-						stream.Seek((chunkSize - 4 + 1) & 0xfffffffe, SeekOrigin.Current);
+						moduleStream.Seek((chunkSize - 4 + 1) & 0xfffffffe, SeekOrigin.Current);
 						break;
 					}
 
@@ -315,12 +315,12 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 					case 0x56484452:
 					{
 						// Begin to read the chunk data
-						uint oneShotLength = stream.Read_B_UINT32();		// Number of samples in the one-shot part
-						uint repeatLength = stream.Read_B_UINT32();			// Number of samples in the repeat part
-						stream.Seek(4, SeekOrigin.Current);			// Skip the samples in high octave
-						formatInfo.Frequency = stream.Read_B_UINT16();		// Sample frequency
-						octaves = stream.Read_UINT8();						// Number of octaves in the file
-						stream.Seek(1 + 4, SeekOrigin.Current);		// Skip compression (we know what it is already) and the volume
+						uint oneShotLength = moduleStream.Read_B_UINT32();		// Number of samples in the one-shot part
+						uint repeatLength = moduleStream.Read_B_UINT32();		// Number of samples in the repeat part
+						moduleStream.Seek(4, SeekOrigin.Current);			// Skip the samples in high octave
+						formatInfo.Frequency = moduleStream.Read_B_UINT16();	// Sample frequency
+						octaves = moduleStream.Read_UINT8();					// Number of octaves in the file
+						moduleStream.Seek(1 + 4, SeekOrigin.Current);		// Skip compression (we know what it is already) and the volume
 
 						if (octaves == 1)
 						{
@@ -351,7 +351,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 						InitBasicLoader();
 
 						// Skip any extra data
-						stream.Seek((chunkSize - 20 + 1) & 0xfffffffe, SeekOrigin.Current);
+						moduleStream.Seek((chunkSize - 20 + 1) & 0xfffffffe, SeekOrigin.Current);
 
 						gotVhdr = true;
 						break;
@@ -365,13 +365,13 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 							totalLength *= 2;
 
 						// Remember the position where the data starts
-						dataStarts1 = stream.Position;
+						dataStarts1 = moduleStream.Position;
 
 						// Initialize the loader
 						LoaderInitialize(totalLength);
 
 						// Skip any extra data
-						stream.Seek((chunkSize + 1) & 0xfffffffe, SeekOrigin.Current);
+						moduleStream.Seek((chunkSize + 1) & 0xfffffffe, SeekOrigin.Current);
 
 						gotBody = true;
 						break;
@@ -394,9 +394,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 						}
 
 						if (ok)
-							stream.Seek((chunkSize + 1) & 0xfffffffe, SeekOrigin.Current);
+							moduleStream.Seek((chunkSize + 1) & 0xfffffffe, SeekOrigin.Current);
 						else
-							stream.Seek(0, SeekOrigin.End);
+							moduleStream.Seek(0, SeekOrigin.End);
 
 						break;
 					}
@@ -422,7 +422,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 			// the left channel and then the right channel
 			if (formatInfo.Channels == 2)
 			{
-				stream2 = stream.Duplicate();
+				moduleStream2 = moduleStream.Duplicate();
 				dataStarts2 = dataStarts1 + GetRightChannelPosition(totalLength);
 			}
 
@@ -436,9 +436,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 		/// Load some part of the sample data
 		/// </summary>
 		/********************************************************************/
-		public int LoadData(ModuleStream stream, int[] buffer, int length, LoadSampleFormatInfo formatInfo)
+		public int LoadData(ModuleStream moduleStream, int[] buffer, int length, LoadSampleFormatInfo formatInfo)
 		{
-			return DecodeSampleData(stream, stream2, buffer, length);
+			return DecodeSampleData(moduleStream, moduleStream2, buffer, length);
 		}
 
 
@@ -457,7 +457,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 		/// Sets the file position to the sample position given
 		/// </summary>
 		/********************************************************************/
-		public long SetSamplePosition(ModuleStream stream, long position, LoadSampleFormatInfo formatInfo)
+		public long SetSamplePosition(ModuleStream moduleStream, long position, LoadSampleFormatInfo formatInfo)
 		{
 			// Reset the loader
 			ResetBasicLoader();
@@ -468,8 +468,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 			long samplePosition = CalcSamplePosition(position, formatInfo);
 
 			// Seek to the right position in the data chunk
-			stream.Seek(dataStarts1 + filePosition, SeekOrigin.Begin);
-			stream2?.Seek(dataStarts2 + filePosition, SeekOrigin.Begin);
+			moduleStream.Seek(dataStarts1 + filePosition, SeekOrigin.Begin);
+			moduleStream2?.Seek(dataStarts2 + filePosition, SeekOrigin.Begin);
 
 			return samplePosition;
 		}
@@ -509,7 +509,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 		/// Load and decode a block of sample data
 		/// </summary>
 		/********************************************************************/
-		protected abstract int DecodeSampleData(ModuleStream stream, ModuleStream stream2, int[] buffer, int length);
+		protected abstract int DecodeSampleData(ModuleStream moduleStream, ModuleStream moduleStream2, int[] buffer, int length);
 
 
 
@@ -547,9 +547,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 		/// them
 		/// </summary>
 		/********************************************************************/
-		protected int GetFileData1(ModuleStream stream, byte[] buffer, int offset, int length)
+		protected int GetFileData1(ModuleStream moduleStream, byte[] buffer, int offset, int length)
 		{
-			return GetFileData(stream, buffer, offset, length, loadInfo1);
+			return GetFileData(moduleStream, buffer, offset, length, loadInfo1);
 		}
 
 
@@ -560,9 +560,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 		/// them
 		/// </summary>
 		/********************************************************************/
-		protected int GetFileData2(ModuleStream stream, byte[] buffer, int offset, int length)
+		protected int GetFileData2(ModuleStream moduleStream, byte[] buffer, int offset, int length)
 		{
-			return GetFileData(stream, buffer, offset, length, loadInfo2);
+			return GetFileData(moduleStream, buffer, offset, length, loadInfo2);
 		}
 		#endregion
 
@@ -627,7 +627,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 		/// them
 		/// </summary>
 		/********************************************************************/
-		private int GetFileData(ModuleStream stream, byte[] buffer, int offset, int length, LoadInfo loadInfo)
+		private int GetFileData(ModuleStream moduleStream, byte[] buffer, int offset, int length, LoadInfo loadInfo)
 		{
 			int total = 0;
 
@@ -638,7 +638,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 				if (loadInfo.LoadBufferOffset == loadInfo.LoadBufferFillCount)
 				{
 					// Load the data
-					loadInfo.LoadBufferFillCount = stream.Read(loadInfo.LoadBuffer, 0, loadInfo1.LoadBuffer.Length);
+					loadInfo.LoadBufferFillCount = moduleStream.Read(loadInfo.LoadBuffer, 0, loadInfo1.LoadBuffer.Length);
 					loadInfo.LoadBufferOffset = 0;
 
 					// Well, there isn't any data left to read

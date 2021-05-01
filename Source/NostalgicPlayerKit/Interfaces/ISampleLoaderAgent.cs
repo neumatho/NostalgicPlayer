@@ -26,7 +26,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Test the file to see if it could be identified
 		/// </summary>
-		AgentResult Identify(ModuleStream stream);
+		AgentResult Identify(ModuleStream moduleStream);
 
 		/// <summary>
 		/// Returns the description and value on the line given. If the line
@@ -47,12 +47,12 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Load the sample header
 		/// </summary>
-		bool LoadHeader(ModuleStream stream, out LoadSampleFormatInfo formatInfo, out string errorMessage);
+		bool LoadHeader(ModuleStream moduleStream, out LoadSampleFormatInfo formatInfo, out string errorMessage);
 
 		/// <summary>
 		/// Load some part of the sample data
 		/// </summary>
-		int LoadData(ModuleStream stream, int[] buffer, int length, LoadSampleFormatInfo formatInfo);
+		int LoadData(ModuleStream moduleStream, int[] buffer, int length, LoadSampleFormatInfo formatInfo);
 
 		/// <summary>
 		/// Calculates how many samples that will be returned
@@ -62,6 +62,6 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Sets the file position to the sample position given
 		/// </summary>
-		long SetSamplePosition(ModuleStream stream, long position, LoadSampleFormatInfo formatInfo);
+		long SetSamplePosition(ModuleStream moduleStream, long position, LoadSampleFormatInfo formatInfo);
 	}
 }

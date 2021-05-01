@@ -6,6 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System.IO;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
@@ -18,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Will try to open the main file
 		/// </summary>
-		ModuleStream OpenFile();
+		Stream OpenFile();
 
 		/// <summary>
 		/// Will try to open a file with the same name as the current module,

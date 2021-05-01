@@ -38,9 +38,9 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Initializes the player
 		/// </summary>
 		/********************************************************************/
-		public virtual bool InitPlayer(ModuleStream stream)
+		public virtual bool InitPlayer(ModuleStream moduleStream)
 		{
-			moduleStream = stream;
+			this.moduleStream = moduleStream;
 
 			return true;
 		}
@@ -87,7 +87,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Will load the header information from the file
 		/// </summary>
 		/********************************************************************/
-		public abstract AgentResult LoadHeaderInfo(ModuleStream stream, out string errorMessage);
+		public abstract AgentResult LoadHeaderInfo(ModuleStream moduleStream, out string errorMessage);
 
 
 

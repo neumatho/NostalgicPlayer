@@ -54,16 +54,16 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 		/// Test the file to see if it could be identified
 		/// </summary>
 		/********************************************************************/
-		public AgentResult Identify(ModuleStream stream)
+		public AgentResult Identify(ModuleStream moduleStream)
 		{
 			// Seek to the start of the file
-			stream.Seek(0, SeekOrigin.Begin);
+			moduleStream.Seek(0, SeekOrigin.Begin);
 
 			// Check the chunk names
-			if (stream.Read_B_UINT32() == 0x464f524d)       // FORM
+			if (moduleStream.Read_B_UINT32() == 0x464f524d)			// FORM
 			{
-				stream.Seek(4, SeekOrigin.Current);	// Skip length
-				if (stream.Read_B_UINT32() == 0x41494646)   // AIFF
+				moduleStream.Seek(4, SeekOrigin.Current);		// Skip length
+				if (moduleStream.Read_B_UINT32() == 0x41494646)		// AIFF
 					return AgentResult.Ok;
 			}
 
@@ -122,7 +122,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 		/// Load the sample header
 		/// </summary>
 		/********************************************************************/
-		public bool LoadHeader(ModuleStream stream, out LoadSampleFormatInfo formatInfo, out string errorMessage)
+		public bool LoadHeader(ModuleStream moduleStream, out LoadSampleFormatInfo formatInfo, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
@@ -130,7 +130,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 			formatInfo = new LoadSampleFormatInfo();
 
 			// Skip the header
-			stream.Seek(12, SeekOrigin.Begin);
+			moduleStream.Seek(12, SeekOrigin.Begin);
 
 			// Set some flags
 			bool gotComm = false;
@@ -139,11 +139,11 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 			for (;;)
 			{
 				// Read the chunk name and size
-				uint chunkName = stream.Read_B_UINT32();
-				uint chunkSize = stream.Read_B_UINT32();
+				uint chunkName = moduleStream.Read_B_UINT32();
+				uint chunkSize = moduleStream.Read_B_UINT32();
 
 				// Check if we reached the end of the file
-				if (stream.EndOfStream)
+				if (moduleStream.EndOfStream)
 					break;
 
 				// Interpret the known chunks
@@ -155,15 +155,15 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 						byte[] freq = new byte[10];
 
 						// Begin to read the chunk data
-						formatInfo.Channels = stream.Read_B_UINT16();		// Number of channels
-						stream.Seek(4, SeekOrigin.Current);			// Skip sample frames
-						formatInfo.Bits = stream.Read_B_UINT16();			// Sample size
+						formatInfo.Channels = moduleStream.Read_B_UINT16();		// Number of channels
+						moduleStream.Seek(4, SeekOrigin.Current);			// Skip sample frames
+						formatInfo.Bits = moduleStream.Read_B_UINT16();			// Sample size
 
-						stream.Read(freq, 0, 10);					// Extended sample rate
+						moduleStream.Read(freq, 0, 10);				// Extended sample rate
 						formatInfo.Frequency = (int)IeeeExtended.ConvertFromIeeeExtended(freq);
 
 						// Skip any extra data
-						stream.Seek((chunkSize - 18 + 1) & 0xfffffffe, SeekOrigin.Current);
+						moduleStream.Seek((chunkSize - 18 + 1) & 0xfffffffe, SeekOrigin.Current);
 
 						gotComm = true;
 						break;
@@ -173,10 +173,10 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 					case 0x53534e44:
 					{
 						ssndLength = chunkSize;
-						ssndStart = stream.Position + 8;
+						ssndStart = moduleStream.Position + 8;
 
 						// Skip any extra data
-						stream.Seek((chunkSize + 1) & 0xfffffffe, SeekOrigin.Current);
+						moduleStream.Seek((chunkSize + 1) & 0xfffffffe, SeekOrigin.Current);
 
 						gotSsnd = true;
 						break;
@@ -199,9 +199,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 						}
 
 						if (ok)
-							stream.Seek((chunkSize + 1) & 0xfffffffe, SeekOrigin.Current);
+							moduleStream.Seek((chunkSize + 1) & 0xfffffffe, SeekOrigin.Current);
 						else
-							stream.Seek(0, SeekOrigin.End);
+							moduleStream.Seek(0, SeekOrigin.End);
 
 						break;
 					}
@@ -238,7 +238,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 		/// Load some part of the sample data
 		/// </summary>
 		/********************************************************************/
-		public int LoadData(ModuleStream stream, int[] buffer, int length, LoadSampleFormatInfo formatInfo)
+		public int LoadData(ModuleStream moduleStream, int[] buffer, int length, LoadSampleFormatInfo formatInfo)
 		{
 			// Calculate the number of bytes used for each sample
 			int sampleSize = (formatInfo.Bits + 7) / 8;
@@ -251,7 +251,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 				if (samplesLeft == 0)
 				{
 					// Yes, do it
-					samplesLeft = stream.Read(loadBuffer, 0, loadBuffer.Length);
+					samplesLeft = moduleStream.Read(loadBuffer, 0, loadBuffer.Length);
 					sourceOffset = 0;
 
 					if (samplesLeft == 0)
@@ -335,13 +335,13 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 		/// Sets the file position to the sample position given
 		/// </summary>
 		/********************************************************************/
-		public long SetSamplePosition(ModuleStream stream, long position, LoadSampleFormatInfo formatInfo)
+		public long SetSamplePosition(ModuleStream moduleStream, long position, LoadSampleFormatInfo formatInfo)
 		{
 			// Calculate the position in bytes
 			long newPosition = position * ((formatInfo.Bits + 7) / 8);
 
 			// Seek to the right position in the SSND chunk
-			stream.Seek(ssndStart + newPosition, SeekOrigin.Begin);
+			moduleStream.Seek(ssndStart + newPosition, SeekOrigin.Begin);
 
 			return position;
 		}

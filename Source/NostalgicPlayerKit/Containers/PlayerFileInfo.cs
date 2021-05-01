@@ -49,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/********************************************************************/
 		public ModuleStream ModuleStream
 		{
-			get; set;
+			get;
 		}
 
 

@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Will try to open the file given
 		/// </summary>
 		/********************************************************************/
-		public ModuleStream OpenFile()
+		public Stream OpenFile()
 		{
 			return OpenFile(fileName);
 		}
@@ -58,32 +58,30 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 			// First change the extension
 			string newFileName = Path.ChangeExtension(fileName, newExtension);
-			ModuleStream moduleStream = OpenFile(newFileName);
-			if (moduleStream != null)
-				return moduleStream;
-
-			// Now try to append the extension
-			newFileName = fileName + $".{newExtension}";
-			moduleStream = OpenFile(newFileName);
-			if (moduleStream != null)
-				return moduleStream;
-
-			// Try with prefix
-			string directory = Path.GetDirectoryName(fileName);
-			string name = Path.GetFileName(fileName);
-
-			int index = name.IndexOf('.');
-			if (index != -1)
+			Stream stream = OpenFile(newFileName);
+			if (stream == null)
 			{
-				name = name.Substring(index + 1);
+				// Now try to append the extension
+				newFileName = fileName + $".{newExtension}";
+				stream = OpenFile(newFileName);
+				if (stream == null)
+				{
+					// Try with prefix
+					string directory = Path.GetDirectoryName(fileName);
+					string name = Path.GetFileName(fileName);
 
-				newFileName = Path.Combine(directory, $"{newExtension}.{name}");
-				moduleStream = OpenFile(newFileName);
-				if (moduleStream != null)
-					return moduleStream;
+					int index = name.IndexOf('.');
+					if (index != -1)
+					{
+						name = name.Substring(index + 1);
+
+						newFileName = Path.Combine(directory, $"{newExtension}.{name}");
+						stream = OpenFile(newFileName);
+					}
+				}
 			}
 
-			return null;
+			return stream != null ? new ModuleStream(stream, false) : null;
 		}
 
 
@@ -102,6 +100,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Will try to open the file given
 		/// </summary>
 		/********************************************************************/
-		protected abstract ModuleStream OpenFile(string fileName);
+		protected abstract Stream OpenFile(string fileName);
 	}
 }

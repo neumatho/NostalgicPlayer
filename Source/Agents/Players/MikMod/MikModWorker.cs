@@ -56,18 +56,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		/********************************************************************/
 		public override AgentResult Identify(PlayerFileInfo fileInfo)
 		{
-			ModuleStream stream = fileInfo.ModuleStream;
+			ModuleStream moduleStream = fileInfo.ModuleStream;
 
 			// Check the module size
-			long fileSize = stream.Length;
+			long fileSize = moduleStream.Length;
 			if (fileSize < 25)
 				return AgentResult.Unknown;
 
 			// Check the mark
-			stream.Seek(0, SeekOrigin.Begin);
+			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			uint mark = stream.Read_B_UINT32();
-			ushort version = stream.Read_B_UINT16();
+			uint mark = moduleStream.Read_B_UINT32();
+			ushort version = moduleStream.Read_B_UINT16();
 
 			if ((mark != 0x4e50554e) || (version != 0x0100))		// NPUN
 				return AgentResult.Unknown;
@@ -925,36 +925,36 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		/// Will create all the structs needed to play the module
 		/// </summary>
 		/********************************************************************/
-		private AgentResult CreateUniStructs(ModuleStream stream, out string errorMessage)
+		private AgentResult CreateUniStructs(ModuleStream moduleStream, out string errorMessage)
 		{
 			// Skip mark and version
-			stream.Seek(6, SeekOrigin.Begin);
+			moduleStream.Seek(6, SeekOrigin.Begin);
 
 			// Read the header
-			of.Flags = (ModuleFlag)stream.Read_B_UINT16();
-			of.NumChn = stream.Read_UINT8();
-			of.NumVoices = stream.Read_UINT8();
-			of.NumPos = stream.Read_B_UINT16();
-			of.NumPat = stream.Read_B_UINT16();
-			of.NumTrk = stream.Read_B_UINT16();
-			of.NumIns = stream.Read_B_UINT16();
-			of.NumSmp = stream.Read_B_UINT16();
-			of.RepPos = stream.Read_B_UINT16();
-			of.InitSpeed = stream.Read_UINT8();
-			of.InitTempo = stream.Read_UINT8();
-			of.InitVolume = stream.Read_UINT8();
-			of.BpmLimit = stream.Read_B_UINT16();
+			of.Flags = (ModuleFlag)moduleStream.Read_B_UINT16();
+			of.NumChn = moduleStream.Read_UINT8();
+			of.NumVoices = moduleStream.Read_UINT8();
+			of.NumPos = moduleStream.Read_B_UINT16();
+			of.NumPat = moduleStream.Read_B_UINT16();
+			of.NumTrk = moduleStream.Read_B_UINT16();
+			of.NumIns = moduleStream.Read_B_UINT16();
+			of.NumSmp = moduleStream.Read_B_UINT16();
+			of.RepPos = moduleStream.Read_B_UINT16();
+			of.InitSpeed = moduleStream.Read_UINT8();
+			of.InitTempo = moduleStream.Read_UINT8();
+			of.InitVolume = moduleStream.Read_UINT8();
+			of.BpmLimit = moduleStream.Read_B_UINT16();
 
-			if (stream.EndOfStream)
+			if (moduleStream.EndOfStream)
 			{
 				errorMessage = Resources.IDS_MIK_ERR_LOADING_HEADER;
 				return AgentResult.Error;
 			}
 
-			of.SongName = stream.ReadString();
-			of.Comment = stream.ReadString();
+			of.SongName = moduleStream.ReadString();
+			of.Comment = moduleStream.ReadString();
 
-			if (stream.EndOfStream)
+			if (moduleStream.EndOfStream)
 			{
 				errorMessage = Resources.IDS_MIK_ERR_LOADING_HEADER;
 				return AgentResult.Error;
@@ -986,11 +986,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 			}
 
 			// Read arrays
-			stream.ReadArray_B_UINT16s(of.Positions, of.NumPos);
-			stream.ReadArray_B_UINT16s(of.Panning, of.NumChn);
-			stream.Read(of.ChanVol, 0, of.NumChn);
+			moduleStream.ReadArray_B_UINT16s(of.Positions, of.NumPos);
+			moduleStream.ReadArray_B_UINT16s(of.Panning, of.NumChn);
+			moduleStream.Read(of.ChanVol, 0, of.NumChn);
 
-			if (stream.EndOfStream)
+			if (moduleStream.EndOfStream)
 			{
 				errorMessage = Resources.IDS_MIK_ERR_LOADING_HEADER;
 				return AgentResult.Error;
@@ -1001,23 +1001,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 			{
 				Sample s = of.Samples[v];
 
-				s.Flags = (SampleFlag)stream.Read_B_UINT16();
-				s.Speed = stream.Read_B_UINT32();
-				s.Volume = stream.Read_UINT8();
-				s.Panning = (short)stream.Read_B_UINT16();
-				s.Length = stream.Read_B_UINT32();
-				s.LoopStart = stream.Read_B_UINT32();
-				s.LoopEnd = stream.Read_B_UINT32();
-				s.SusBegin = stream.Read_B_UINT32();
-				s.SusEnd = stream.Read_B_UINT32();
+				s.Flags = (SampleFlag)moduleStream.Read_B_UINT16();
+				s.Speed = moduleStream.Read_B_UINT32();
+				s.Volume = moduleStream.Read_UINT8();
+				s.Panning = (short)moduleStream.Read_B_UINT16();
+				s.Length = moduleStream.Read_B_UINT32();
+				s.LoopStart = moduleStream.Read_B_UINT32();
+				s.LoopEnd = moduleStream.Read_B_UINT32();
+				s.SusBegin = moduleStream.Read_B_UINT32();
+				s.SusEnd = moduleStream.Read_B_UINT32();
 
-				s.GlobVol = stream.Read_UINT8();
-				s.VibFlags = (VibratoFlag)stream.Read_UINT8();
-				s.VibType = stream.Read_UINT8();
-				s.VibSweep = stream.Read_UINT8();
-				s.VibDepth = stream.Read_UINT8();
-				s.VibRate = stream.Read_UINT8();
-				s.SampleName = stream.ReadString();
+				s.GlobVol = moduleStream.Read_UINT8();
+				s.VibFlags = (VibratoFlag)moduleStream.Read_UINT8();
+				s.VibType = moduleStream.Read_UINT8();
+				s.VibSweep = moduleStream.Read_UINT8();
+				s.VibDepth = moduleStream.Read_UINT8();
+				s.VibRate = moduleStream.Read_UINT8();
+				s.SampleName = moduleStream.ReadString();
 
 				// Reality check for loop settings
 				if (s.LoopEnd > s.Length)
@@ -1026,7 +1026,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 				if (s.LoopStart >= s.LoopEnd)
 					s.Flags &= ~SampleFlag.Loop;
 
-				if (stream.EndOfStream)
+				if (moduleStream.EndOfStream)
 				{
 					errorMessage = Resources.IDS_MIK_ERR_LOADING_SAMPLEINFO;
 					return AgentResult.Error;
@@ -1046,64 +1046,64 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 				{
 					Instrument i = of.Instruments[v];
 
-					i.Flags = (InstrumentFlag)stream.Read_UINT8();
-					i.NnaType = (Nna)stream.Read_UINT8();
-					i.Dca = (Dca)stream.Read_UINT8();
-					i.Dct = (Dct)stream.Read_UINT8();
-					i.GlobVol = stream.Read_UINT8();
-					i.Panning = (short)stream.Read_B_UINT16();
-					i.PitPanSep = stream.Read_UINT8();
-					i.PitPanCenter = stream.Read_UINT8();
-					i.RVolVar = stream.Read_UINT8();
-					i.RPanVar = stream.Read_UINT8();
+					i.Flags = (InstrumentFlag)moduleStream.Read_UINT8();
+					i.NnaType = (Nna)moduleStream.Read_UINT8();
+					i.Dca = (Dca)moduleStream.Read_UINT8();
+					i.Dct = (Dct)moduleStream.Read_UINT8();
+					i.GlobVol = moduleStream.Read_UINT8();
+					i.Panning = (short)moduleStream.Read_B_UINT16();
+					i.PitPanSep = moduleStream.Read_UINT8();
+					i.PitPanCenter = moduleStream.Read_UINT8();
+					i.RVolVar = moduleStream.Read_UINT8();
+					i.RPanVar = moduleStream.Read_UINT8();
 
-					i.VolFade = stream.Read_B_UINT16();
+					i.VolFade = moduleStream.Read_B_UINT16();
 
-					i.VolFlg = (EnvelopeFlag)stream.Read_UINT8();
-					i.VolPts = stream.Read_UINT8();
-					i.VolSusBeg = stream.Read_UINT8();
-					i.VolSusEnd = stream.Read_UINT8();
-					i.VolBeg = stream.Read_UINT8();
-					i.VolEnd = stream.Read_UINT8();
-
-					for (int w = 0; w < SharedConstant.EnvPoints; w++)
-					{
-						i.VolEnv[w].Pos = (short)stream.Read_B_UINT16();
-						i.VolEnv[w].Val = (short)stream.Read_B_UINT16();
-					}
-
-					i.PanFlg = (EnvelopeFlag)stream.Read_UINT8();
-					i.PanPts = stream.Read_UINT8();
-					i.PanSusBeg = stream.Read_UINT8();
-					i.PanSusEnd = stream.Read_UINT8();
-					i.PanBeg = stream.Read_UINT8();
-					i.PanEnd = stream.Read_UINT8();
+					i.VolFlg = (EnvelopeFlag)moduleStream.Read_UINT8();
+					i.VolPts = moduleStream.Read_UINT8();
+					i.VolSusBeg = moduleStream.Read_UINT8();
+					i.VolSusEnd = moduleStream.Read_UINT8();
+					i.VolBeg = moduleStream.Read_UINT8();
+					i.VolEnd = moduleStream.Read_UINT8();
 
 					for (int w = 0; w < SharedConstant.EnvPoints; w++)
 					{
-						i.PanEnv[w].Pos = (short)stream.Read_B_UINT16();
-						i.PanEnv[w].Val = (short)stream.Read_B_UINT16();
+						i.VolEnv[w].Pos = (short)moduleStream.Read_B_UINT16();
+						i.VolEnv[w].Val = (short)moduleStream.Read_B_UINT16();
 					}
 
-					i.PitFlg = (EnvelopeFlag)stream.Read_UINT8();
-					i.PitPts = stream.Read_UINT8();
-					i.PitSusBeg = stream.Read_UINT8();
-					i.PitSusEnd = stream.Read_UINT8();
-					i.PitBeg = stream.Read_UINT8();
-					i.PitEnd = stream.Read_UINT8();
+					i.PanFlg = (EnvelopeFlag)moduleStream.Read_UINT8();
+					i.PanPts = moduleStream.Read_UINT8();
+					i.PanSusBeg = moduleStream.Read_UINT8();
+					i.PanSusEnd = moduleStream.Read_UINT8();
+					i.PanBeg = moduleStream.Read_UINT8();
+					i.PanEnd = moduleStream.Read_UINT8();
 
 					for (int w = 0; w < SharedConstant.EnvPoints; w++)
 					{
-						i.PitEnv[w].Pos = (short)stream.Read_B_UINT16();
-						i.PitEnv[w].Val = (short)stream.Read_B_UINT16();
+						i.PanEnv[w].Pos = (short)moduleStream.Read_B_UINT16();
+						i.PanEnv[w].Val = (short)moduleStream.Read_B_UINT16();
 					}
 
-					stream.ReadArray_B_UINT16s(i.SampleNumber, SharedConstant.InstNotes);
-					stream.Read(i.SampleNote, 0, SharedConstant.InstNotes);
+					i.PitFlg = (EnvelopeFlag)moduleStream.Read_UINT8();
+					i.PitPts = moduleStream.Read_UINT8();
+					i.PitSusBeg = moduleStream.Read_UINT8();
+					i.PitSusEnd = moduleStream.Read_UINT8();
+					i.PitBeg = moduleStream.Read_UINT8();
+					i.PitEnd = moduleStream.Read_UINT8();
 
-					i.InsName = stream.ReadString();
+					for (int w = 0; w < SharedConstant.EnvPoints; w++)
+					{
+						i.PitEnv[w].Pos = (short)moduleStream.Read_B_UINT16();
+						i.PitEnv[w].Val = (short)moduleStream.Read_B_UINT16();
+					}
 
-					if (stream.EndOfStream)
+					moduleStream.ReadArray_B_UINT16s(i.SampleNumber, SharedConstant.InstNotes);
+					moduleStream.Read(i.SampleNote, 0, SharedConstant.InstNotes);
+
+					i.InsName = moduleStream.ReadString();
+
+					if (moduleStream.EndOfStream)
 					{
 						errorMessage = Resources.IDS_MIK_ERR_LOADING_INSTRUMENTINFO;
 						return AgentResult.Error;
@@ -1112,21 +1112,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 			}
 
 			// Read patterns
-			stream.ReadArray_B_UINT16s(of.PattRows, of.NumPat);
-			stream.ReadArray_B_UINT16s(of.Patterns, of.NumPat * of.NumChn);
+			moduleStream.ReadArray_B_UINT16s(of.PattRows, of.NumPat);
+			moduleStream.ReadArray_B_UINT16s(of.Patterns, of.NumPat * of.NumChn);
 
 			// Read tracks
 			for (int v = 0; v < of.NumTrk; v++)
-				of.Tracks[v] = TrkRead(stream);
+				of.Tracks[v] = TrkRead(moduleStream);
 
-			if (stream.EndOfStream)
+			if (moduleStream.EndOfStream)
 			{
 				errorMessage = Resources.IDS_MIK_ERR_LOADING_TRACKS;
 				return AgentResult.Error;
 			}
 
 			// Calculate the sample addresses and fix the samples
-			return FindSamples(stream, out errorMessage);
+			return FindSamples(moduleStream, out errorMessage);
 		}
 
 
@@ -1136,12 +1136,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		/// Allocates and read one track
 		/// </summary>
 		/********************************************************************/
-		private byte[] TrkRead(ModuleStream stream)
+		private byte[] TrkRead(ModuleStream moduleStream)
 		{
-			ushort len = stream.Read_B_UINT16();
+			ushort len = moduleStream.Read_B_UINT16();
 			byte[] t = new byte[len];
 
-			stream.Read(t, 0, len);
+			moduleStream.Read(t, 0, len);
 
 			return t;
 		}
@@ -1154,7 +1154,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		/// signed and unpacked
 		/// </summary>
 		/********************************************************************/
-		private AgentResult FindSamples(ModuleStream stream, out string errorMessage)
+		private AgentResult FindSamples(ModuleStream moduleStream, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
@@ -1174,7 +1174,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 					// Allocate memory to hold the sample
 					s.Handle = new sbyte[length];
 
-					if (!SLoader.Load(stream, s.Handle, s.Flags, s.Length, out errorMessage))
+					if (!SLoader.Load(moduleStream, v, s.Handle, s.Flags, s.Length, out errorMessage))
 						return AgentResult.Error;
 				}
 			}

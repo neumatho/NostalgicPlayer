@@ -38,13 +38,13 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 		/// Convert the module and store the result in the stream given
 		/// </summary>
 		/********************************************************************/
-		public AgentResult Convert(PlayerFileInfo fileInfo, WriterStream writerStream, out string errorMessage)
+		public AgentResult Convert(PlayerFileInfo fileInfo, ConverterStream converterStream, out string errorMessage)
 		{
 			// Load and convert the module into internal structures
 			if (!ConvertModule(fileInfo.ModuleStream, out errorMessage))
 				return AgentResult.Error;
 
-			if (!ConvertToUniMod(fileInfo.ModuleStream, writerStream, out errorMessage))
+			if (!ConvertToUniMod(fileInfo.ModuleStream, converterStream, out errorMessage))
 				return AgentResult.Error;
 
 			return AgentResult.Ok;
@@ -144,63 +144,63 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 		/// Will convert the UniMod structures to a real module
 		/// </summary>
 		/********************************************************************/
-		private bool ConvertToUniMod(ModuleStream moduleStream, WriterStream writerStream, out string errorMessage)
+		private bool ConvertToUniMod(ModuleStream moduleStream, ConverterStream converterStream, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
 			MUniTrk uniTrk = new MUniTrk();
 
 			// Fill in the UniMod header
-			writerStream.Write_B_UINT32(0x4e50554e);			// Mark (NPUN)
-			writerStream.Write_B_UINT16(0x0100);				// Version
-			writerStream.Write_B_UINT16((ushort)of.Flags);
-			writerStream.Write_UINT8(of.NumChn);
-			writerStream.Write_UINT8(of.NumVoices);
-			writerStream.Write_B_UINT16(of.NumPos);
-			writerStream.Write_B_UINT16(of.NumPat);
-			writerStream.Write_B_UINT16(of.NumTrk);
-			writerStream.Write_B_UINT16(of.NumIns);
-			writerStream.Write_B_UINT16(of.NumSmp);
-			writerStream.Write_B_UINT16(of.RepPos);
-			writerStream.Write_UINT8(of.InitSpeed);
-			writerStream.Write_UINT8((byte)of.InitTempo);
-			writerStream.Write_UINT8(of.InitVolume);
-			writerStream.Write_B_UINT16(of.BpmLimit);
+			converterStream.Write_B_UINT32(0x4e50554e);			// Mark (NPUN)
+			converterStream.Write_B_UINT16(0x0100);				// Version
+			converterStream.Write_B_UINT16((ushort)of.Flags);
+			converterStream.Write_UINT8(of.NumChn);
+			converterStream.Write_UINT8(of.NumVoices);
+			converterStream.Write_B_UINT16(of.NumPos);
+			converterStream.Write_B_UINT16(of.NumPat);
+			converterStream.Write_B_UINT16(of.NumTrk);
+			converterStream.Write_B_UINT16(of.NumIns);
+			converterStream.Write_B_UINT16(of.NumSmp);
+			converterStream.Write_B_UINT16(of.RepPos);
+			converterStream.Write_UINT8(of.InitSpeed);
+			converterStream.Write_UINT8((byte)of.InitTempo);
+			converterStream.Write_UINT8(of.InitVolume);
+			converterStream.Write_B_UINT16(of.BpmLimit);
 
 			// Fill in the strings
-			writerStream.WriteString(of.SongName);
-			writerStream.WriteString(of.Comment);
+			converterStream.WriteString(of.SongName);
+			converterStream.WriteString(of.Comment);
 
 			// Copy pattern positions
-			writerStream.WriteArray_B_UINT16s(of.Positions, of.NumPos);
+			converterStream.WriteArray_B_UINT16s(of.Positions, of.NumPos);
 
 			// Copy panning positions
-			writerStream.WriteArray_B_UINT16s(of.Panning, of.NumChn);
+			converterStream.WriteArray_B_UINT16s(of.Panning, of.NumChn);
 
 			// Copy the channel volumes
-			writerStream.Write(of.ChanVol, 0, of.NumChn);
+			converterStream.Write(of.ChanVol, 0, of.NumChn);
 
 			// Copy the sample information
 			for (int i = 0; i < of.NumSmp; i++)
 			{
 				Sample samp = of.Samples[i];
 
-				writerStream.Write_B_UINT16((ushort)samp.Flags);
-				writerStream.Write_B_UINT32(samp.Speed);
-				writerStream.Write_UINT8(samp.Volume);
-				writerStream.Write_B_UINT16((ushort)samp.Panning);
-				writerStream.Write_B_UINT32(samp.Length);
-				writerStream.Write_B_UINT32(samp.LoopStart);
-				writerStream.Write_B_UINT32(samp.LoopEnd);
-				writerStream.Write_B_UINT32(samp.SusBegin);
-				writerStream.Write_B_UINT32(samp.SusEnd);
-				writerStream.Write_UINT8(samp.GlobVol);
-				writerStream.Write_UINT8((byte)samp.VibFlags);
-				writerStream.Write_UINT8(samp.VibType);
-				writerStream.Write_UINT8(samp.VibSweep);
-				writerStream.Write_UINT8(samp.VibDepth);
-				writerStream.Write_UINT8(samp.VibRate);
-				writerStream.WriteString(samp.SampleName);
+				converterStream.Write_B_UINT16((ushort)samp.Flags);
+				converterStream.Write_B_UINT32(samp.Speed);
+				converterStream.Write_UINT8(samp.Volume);
+				converterStream.Write_B_UINT16((ushort)samp.Panning);
+				converterStream.Write_B_UINT32(samp.Length);
+				converterStream.Write_B_UINT32(samp.LoopStart);
+				converterStream.Write_B_UINT32(samp.LoopEnd);
+				converterStream.Write_B_UINT32(samp.SusBegin);
+				converterStream.Write_B_UINT32(samp.SusEnd);
+				converterStream.Write_UINT8(samp.GlobVol);
+				converterStream.Write_UINT8((byte)samp.VibFlags);
+				converterStream.Write_UINT8(samp.VibType);
+				converterStream.Write_UINT8(samp.VibSweep);
+				converterStream.Write_UINT8(samp.VibDepth);
+				converterStream.Write_UINT8(samp.VibRate);
+				converterStream.WriteString(samp.SampleName);
 			}
 
 			// Copy the instrument information
@@ -210,69 +210,69 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 				{
 					Instrument inst = of.Instruments[i];
 
-					writerStream.Write_UINT8((byte)inst.Flags);
-					writerStream.Write_UINT8((byte)inst.NnaType);
-					writerStream.Write_UINT8((byte)inst.Dca);
-					writerStream.Write_UINT8((byte)inst.Dct);
-					writerStream.Write_UINT8(inst.GlobVol);
-					writerStream.Write_B_UINT16((ushort)inst.Panning);
-					writerStream.Write_UINT8(inst.PitPanSep);
-					writerStream.Write_UINT8(inst.PitPanCenter);
-					writerStream.Write_UINT8(inst.RVolVar);
-					writerStream.Write_UINT8(inst.RPanVar);
-					writerStream.Write_B_UINT16(inst.VolFade);
+					converterStream.Write_UINT8((byte)inst.Flags);
+					converterStream.Write_UINT8((byte)inst.NnaType);
+					converterStream.Write_UINT8((byte)inst.Dca);
+					converterStream.Write_UINT8((byte)inst.Dct);
+					converterStream.Write_UINT8(inst.GlobVol);
+					converterStream.Write_B_UINT16((ushort)inst.Panning);
+					converterStream.Write_UINT8(inst.PitPanSep);
+					converterStream.Write_UINT8(inst.PitPanCenter);
+					converterStream.Write_UINT8(inst.RVolVar);
+					converterStream.Write_UINT8(inst.RPanVar);
+					converterStream.Write_B_UINT16(inst.VolFade);
 
-					writerStream.Write_UINT8((byte)inst.VolFlg);
-					writerStream.Write_UINT8(inst.VolPts);
-					writerStream.Write_UINT8(inst.VolSusBeg);
-					writerStream.Write_UINT8(inst.VolSusEnd);
-					writerStream.Write_UINT8(inst.VolBeg);
-					writerStream.Write_UINT8(inst.VolEnd);
-
-					for (int j = 0; j < SharedConstant.EnvPoints; j++)
-					{
-						writerStream.Write_B_UINT16((ushort)inst.VolEnv[j].Pos);
-						writerStream.Write_B_UINT16((ushort)inst.VolEnv[j].Val);
-					}
-
-					writerStream.Write_UINT8((byte)inst.PanFlg);
-					writerStream.Write_UINT8(inst.PanPts);
-					writerStream.Write_UINT8(inst.PanSusBeg);
-					writerStream.Write_UINT8(inst.PanSusEnd);
-					writerStream.Write_UINT8(inst.PanBeg);
-					writerStream.Write_UINT8(inst.PanEnd);
+					converterStream.Write_UINT8((byte)inst.VolFlg);
+					converterStream.Write_UINT8(inst.VolPts);
+					converterStream.Write_UINT8(inst.VolSusBeg);
+					converterStream.Write_UINT8(inst.VolSusEnd);
+					converterStream.Write_UINT8(inst.VolBeg);
+					converterStream.Write_UINT8(inst.VolEnd);
 
 					for (int j = 0; j < SharedConstant.EnvPoints; j++)
 					{
-						writerStream.Write_B_UINT16((ushort)inst.PanEnv[j].Pos);
-						writerStream.Write_B_UINT16((ushort)inst.PanEnv[j].Val);
+						converterStream.Write_B_UINT16((ushort)inst.VolEnv[j].Pos);
+						converterStream.Write_B_UINT16((ushort)inst.VolEnv[j].Val);
 					}
 
-					writerStream.Write_UINT8((byte)inst.PitFlg);
-					writerStream.Write_UINT8(inst.PitPts);
-					writerStream.Write_UINT8(inst.PitSusBeg);
-					writerStream.Write_UINT8(inst.PitSusEnd);
-					writerStream.Write_UINT8(inst.PitBeg);
-					writerStream.Write_UINT8(inst.PitEnd);
+					converterStream.Write_UINT8((byte)inst.PanFlg);
+					converterStream.Write_UINT8(inst.PanPts);
+					converterStream.Write_UINT8(inst.PanSusBeg);
+					converterStream.Write_UINT8(inst.PanSusEnd);
+					converterStream.Write_UINT8(inst.PanBeg);
+					converterStream.Write_UINT8(inst.PanEnd);
 
 					for (int j = 0; j < SharedConstant.EnvPoints; j++)
 					{
-						writerStream.Write_B_UINT16((ushort)inst.PitEnv[j].Pos);
-						writerStream.Write_B_UINT16((ushort)inst.PitEnv[j].Val);
+						converterStream.Write_B_UINT16((ushort)inst.PanEnv[j].Pos);
+						converterStream.Write_B_UINT16((ushort)inst.PanEnv[j].Val);
 					}
 
-					writerStream.WriteArray_B_UINT16s(inst.SampleNumber, SharedConstant.InstNotes);
-					writerStream.Write(inst.SampleNote, 0, SharedConstant.InstNotes);
+					converterStream.Write_UINT8((byte)inst.PitFlg);
+					converterStream.Write_UINT8(inst.PitPts);
+					converterStream.Write_UINT8(inst.PitSusBeg);
+					converterStream.Write_UINT8(inst.PitSusEnd);
+					converterStream.Write_UINT8(inst.PitBeg);
+					converterStream.Write_UINT8(inst.PitEnd);
 
-					writerStream.WriteString(inst.InsName);
+					for (int j = 0; j < SharedConstant.EnvPoints; j++)
+					{
+						converterStream.Write_B_UINT16((ushort)inst.PitEnv[j].Pos);
+						converterStream.Write_B_UINT16((ushort)inst.PitEnv[j].Val);
+					}
+
+					converterStream.WriteArray_B_UINT16s(inst.SampleNumber, SharedConstant.InstNotes);
+					converterStream.Write(inst.SampleNote, 0, SharedConstant.InstNotes);
+
+					converterStream.WriteString(inst.InsName);
 				}
 			}
 
 			// Copy number of rows in each pattern
-			writerStream.WriteArray_B_UINT16s(of.PattRows, of.NumPat);
+			converterStream.WriteArray_B_UINT16s(of.PattRows, of.NumPat);
 
 			// Copy indexes to the tracks
-			writerStream.WriteArray_B_UINT16s(of.Patterns, of.NumPat * of.NumChn);
+			converterStream.WriteArray_B_UINT16s(of.Patterns, of.NumPat * of.NumChn);
 
 			// Copy the tracks
 			for (int i = 0; i < of.NumTrk; i++)
@@ -282,11 +282,11 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 					// Store the length
 					ushort temp = uniTrk.UniTrkLen(of.Tracks[i]);
 
-					writerStream.Write_B_UINT16(temp);
-					writerStream.Write(of.Tracks[i], 0, temp);
+					converterStream.Write_B_UINT16(temp);
+					converterStream.Write(of.Tracks[i], 0, temp);
 				}
 				else
-					writerStream.Write_B_UINT16(0);
+					converterStream.Write_B_UINT16(0);
 			}
 
 			// Copy the samples
@@ -304,32 +304,27 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 					{
 						int endOffset = (int)((i == of.NumSmp - 1) ? moduleStream.Length : of.Samples[i + 1].SeekPos);
 
+						// Set marker in converted stream
+						long curPos = moduleStream.Position;
+						moduleStream.SetSampleDataInfo(i, (int)temp);
+						converterStream.WriteSampleDataMarker(i, (int)temp);
+						moduleStream.Position = curPos;
+
 						while (moduleStream.Position < endOffset)
 						{
 							// Copy the packed length
 							ushort packLen = moduleStream.Read_L_UINT16();
-							writerStream.Write_L_UINT16(packLen);
+							converterStream.Write_L_UINT16(packLen);
 
-							// Copy the sample
-							byte[] tempBuffer = new byte[packLen];
-
-							moduleStream.Read(tempBuffer, 0, packLen);
-							writerStream.Write(tempBuffer, 0, packLen);
+							// Skip the data
+							moduleStream.Seek(packLen, SeekOrigin.Current);
 						}
 					}
 					else
 					{
-						if ((samp.Flags & SampleFlag.Stereo) != 0)
-							temp *= 2;
-
-						if ((samp.Flags & SampleFlag._16Bits) != 0)
-							temp *= 2;
-
-						// Copy the samples
-						byte[] tempBuffer = new byte[temp];
-
-						moduleStream.Read(tempBuffer, 0, (int)temp);
-						writerStream.Write(tempBuffer, 0, (int)temp);
+						// Mark the sample data
+						moduleStream.SetSampleDataInfo(i, (int)temp);
+						converterStream.WriteSampleDataMarker(i, (int)temp);
 					}
 				}
 			}

@@ -84,27 +84,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 		/********************************************************************/
 		public override AgentResult Identify(PlayerFileInfo fileInfo)
 		{
-			ModuleStream stream = fileInfo.ModuleStream;
+			ModuleStream moduleStream = fileInfo.ModuleStream;
 
 			// Check the module size
-			long fileSize = stream.Length;
+			long fileSize = moduleStream.Length;
 			if (fileSize < 180)
 				return AgentResult.Unknown;
 
 			// Check the mark
-			stream.Seek(0, SeekOrigin.Begin);
+			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			uint mark = stream.Read_B_UINT32();
+			uint mark = moduleStream.Read_B_UINT32();
 			if (mark != 0x46433134)					// FC14
 				return AgentResult.Unknown;
 
 			// Skip the song length
-			stream.Seek(4, SeekOrigin.Current);
+			moduleStream.Seek(4, SeekOrigin.Current);
 
 			// Check the offset pointers
 			for (int i = 0; i < 8; i++)
 			{
-				if (stream.Read_B_UINT32() > fileSize)
+				if (moduleStream.Read_B_UINT32() > fileSize)
 					return AgentResult.Unknown;
 			}
 
@@ -198,28 +198,28 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 
 			try
 			{
-				ModuleStream stream = fileInfo.ModuleStream;
+				ModuleStream moduleStream = fileInfo.ModuleStream;
 
 				// Skip mark
-				stream.Seek(4, SeekOrigin.Begin);
+				moduleStream.Seek(4, SeekOrigin.Begin);
 
 				// Get the length of the sequences
-				int seqLength = (int)stream.Read_B_UINT32();
+				int seqLength = (int)moduleStream.Read_B_UINT32();
 
 				// Get the offsets into the file
-				int patOffset = (int)stream.Read_B_UINT32();
-				int patLength = (int)stream.Read_B_UINT32();
+				int patOffset = (int)moduleStream.Read_B_UINT32();
+				int patLength = (int)moduleStream.Read_B_UINT32();
 
-				int frqOffset = (int)stream.Read_B_UINT32();
-				int frqLength = (int)stream.Read_B_UINT32();
+				int frqOffset = (int)moduleStream.Read_B_UINT32();
+				int frqLength = (int)moduleStream.Read_B_UINT32();
 
-				int volOffset = (int)stream.Read_B_UINT32();
-				int volLength = (int)stream.Read_B_UINT32();
+				int volOffset = (int)moduleStream.Read_B_UINT32();
+				int volLength = (int)moduleStream.Read_B_UINT32();
 
-				int smpOffset = (int)stream.Read_B_UINT32();
-				int wavOffset = (int)stream.Read_B_UINT32();
+				int smpOffset = (int)moduleStream.Read_B_UINT32();
+				int wavOffset = (int)moduleStream.Read_B_UINT32();
 
-				if (stream.EndOfStream)
+				if (moduleStream.EndOfStream)
 				{
 					errorMessage = Resources.IDS_FC_ERR_LOADING_HEADER;
 					Cleanup();
@@ -237,9 +237,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 					Sample samp = new Sample();
 
 					samp.Address = null;
-					samp.Length = (ushort)(stream.Read_B_UINT16() * 2);
-					samp.LoopStart = stream.Read_B_UINT16();
-					samp.LoopLength = (ushort)(stream.Read_B_UINT16() * 2);
+					samp.Length = (ushort)(moduleStream.Read_B_UINT16() * 2);
+					samp.LoopStart = moduleStream.Read_B_UINT16();
+					samp.LoopLength = (ushort)(moduleStream.Read_B_UINT16() * 2);
 					samp.Multi = null;
 
 					sampInfo[i] = samp;
@@ -251,7 +251,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 					Sample samp = new Sample();
 
 					samp.Address = null;
-					samp.Length = (ushort)(stream.Read_UINT8() * 2);
+					samp.Length = (ushort)(moduleStream.Read_UINT8() * 2);
 					samp.LoopStart = 0;
 					samp.LoopLength = samp.Length;
 					samp.Multi = null;
@@ -259,7 +259,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 					sampInfo[i] = samp;
 				}
 
-				if (stream.EndOfStream)
+				if (moduleStream.EndOfStream)
 				{
 					errorMessage = Resources.IDS_FC_ERR_LOADING_SAMPLEINFO;
 					Cleanup();
@@ -286,26 +286,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 					Sequence seq = new Sequence();
 
 					seq.VoiceSeq[0] = new VoiceSeq();
-					seq.VoiceSeq[0].Pattern = stream.Read_UINT8();
-					seq.VoiceSeq[0].Transpose = (sbyte)stream.Read_UINT8();
-					seq.VoiceSeq[0].SoundTranspose = (sbyte)stream.Read_UINT8();
+					seq.VoiceSeq[0].Pattern = moduleStream.Read_UINT8();
+					seq.VoiceSeq[0].Transpose = (sbyte)moduleStream.Read_UINT8();
+					seq.VoiceSeq[0].SoundTranspose = (sbyte)moduleStream.Read_UINT8();
 
 					seq.VoiceSeq[1] = new VoiceSeq();
-					seq.VoiceSeq[1].Pattern = stream.Read_UINT8();
-					seq.VoiceSeq[1].Transpose = (sbyte)stream.Read_UINT8();
-					seq.VoiceSeq[1].SoundTranspose = (sbyte)stream.Read_UINT8();
+					seq.VoiceSeq[1].Pattern = moduleStream.Read_UINT8();
+					seq.VoiceSeq[1].Transpose = (sbyte)moduleStream.Read_UINT8();
+					seq.VoiceSeq[1].SoundTranspose = (sbyte)moduleStream.Read_UINT8();
 
 					seq.VoiceSeq[2] = new VoiceSeq();
-					seq.VoiceSeq[2].Pattern = stream.Read_UINT8();
-					seq.VoiceSeq[2].Transpose = (sbyte)stream.Read_UINT8();
-					seq.VoiceSeq[2].SoundTranspose = (sbyte)stream.Read_UINT8();
+					seq.VoiceSeq[2].Pattern = moduleStream.Read_UINT8();
+					seq.VoiceSeq[2].Transpose = (sbyte)moduleStream.Read_UINT8();
+					seq.VoiceSeq[2].SoundTranspose = (sbyte)moduleStream.Read_UINT8();
 
 					seq.VoiceSeq[3] = new VoiceSeq();
-					seq.VoiceSeq[3].Pattern = stream.Read_UINT8();
-					seq.VoiceSeq[3].Transpose = (sbyte)stream.Read_UINT8();
-					seq.VoiceSeq[3].SoundTranspose = (sbyte)stream.Read_UINT8();
+					seq.VoiceSeq[3].Pattern = moduleStream.Read_UINT8();
+					seq.VoiceSeq[3].Transpose = (sbyte)moduleStream.Read_UINT8();
+					seq.VoiceSeq[3].SoundTranspose = (sbyte)moduleStream.Read_UINT8();
 
-					seq.Speed = stream.Read_UINT8();
+					seq.Speed = moduleStream.Read_UINT8();
 
 					sequences[i] = seq;
 				}
@@ -315,7 +315,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				patterns = new Pattern[patNum];
 
 				// Read the patterns
-				stream.Seek(patOffset, SeekOrigin.Begin);
+				moduleStream.Seek(patOffset, SeekOrigin.Begin);
 
 				for (i = 0; i < patNum; i++)
 				{
@@ -325,8 +325,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 					{
 						PatternRow row = new PatternRow();
 
-						row.Note = stream.Read_UINT8();
-						row.Info = stream.Read_UINT8();
+						row.Note = moduleStream.Read_UINT8();
+						row.Info = moduleStream.Read_UINT8();
 
 						patt.PatternRows[j] = row;
 					}
@@ -334,7 +334,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 					patterns[i] = patt;
 				}
 
-				if (stream.EndOfStream)
+				if (moduleStream.EndOfStream)
 				{
 					errorMessage = Resources.IDS_FC_ERR_LOADING_PATTERNS;
 					Cleanup();
@@ -349,8 +349,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				Array.Copy(silent, 0, frqSequences, 0, silent.Length);
 
 				// Read the frequency sequences
-				stream.Seek(frqOffset, SeekOrigin.Begin);
-				stream.Read(frqSequences, silent.Length, frqLength);
+				moduleStream.Seek(frqOffset, SeekOrigin.Begin);
+				moduleStream.Read(frqSequences, silent.Length, frqLength);
 
 				// Set "end of sequence" mark
 				frqSequences[frqSequences.Length - 1] = 0xe1;
@@ -371,24 +371,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				Array.Copy(silent, 4, volSequences[0].Values, 0, silent.Length - 4);
 
 				// Read the volume sequences
-				stream.Seek(volOffset, SeekOrigin.Begin);
+				moduleStream.Seek(volOffset, SeekOrigin.Begin);
 
 				for (i = 1; i <= volNum; i++)
 				{
 					VolSequence volSeq = new VolSequence();
 
-					volSeq.Speed = stream.Read_UINT8();
-					volSeq.FrqNumber = stream.Read_UINT8();
-					volSeq.VibSpeed = (sbyte)stream.Read_UINT8();
-					volSeq.VibDepth = (sbyte)stream.Read_UINT8();
-					volSeq.VibDelay = stream.Read_UINT8();
+					volSeq.Speed = moduleStream.Read_UINT8();
+					volSeq.FrqNumber = moduleStream.Read_UINT8();
+					volSeq.VibSpeed = (sbyte)moduleStream.Read_UINT8();
+					volSeq.VibDepth = (sbyte)moduleStream.Read_UINT8();
+					volSeq.VibDelay = moduleStream.Read_UINT8();
 
-					stream.Read(volSeq.Values, 0, 59);
+					moduleStream.Read(volSeq.Values, 0, 59);
 
 					volSequences[i] = volSeq;
 				}
 
-				if (stream.EndOfStream)
+				if (moduleStream.EndOfStream)
 				{
 					errorMessage = Resources.IDS_FC_ERR_LOADING_PATTERNS;
 					Cleanup();
@@ -397,14 +397,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				}
 
 				// Load the samples
-				stream.Seek(smpOffset, SeekOrigin.Begin);
+				moduleStream.Seek(smpOffset, SeekOrigin.Begin);
 
 				for (i = 0; i < 10; i++)
 				{
 					if (sampInfo[i].Length != 0)
 					{
 						// Read the first 4 bytes to see if it's a multi sample
-						if (stream.Read_B_UINT32() == 0x53534d50)           // SSMP
+						if (moduleStream.Read_B_UINT32() == 0x53534d50)           // SSMP
 						{
 							// It is, so allocate the multi sample structure
 							// and fill in the information
@@ -414,18 +414,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 							// Read the sample information
 							for (int j = 0; j < 20; j++)
 							{
-								multiOffsets[j] = stream.Read_B_UINT32();
+								multiOffsets[j] = moduleStream.Read_B_UINT32();
 
 								Sample samp = new Sample();
 
-								samp.Length = (ushort)(stream.Read_B_UINT16() * 2);
-								samp.LoopStart = stream.Read_B_UINT16();
-								samp.LoopLength = (ushort)(stream.Read_B_UINT16() * 2);
+								samp.Length = (ushort)(moduleStream.Read_B_UINT16() * 2);
+								samp.LoopStart = moduleStream.Read_B_UINT16();
+								samp.LoopLength = (ushort)(moduleStream.Read_B_UINT16() * 2);
 
 								multiSample.Sample[j] = samp;
 
 								// Skip pad bytes
-								stream.Seek(6, SeekOrigin.Current);
+								moduleStream.Seek(6, SeekOrigin.Current);
 							}
 
 							// The sample structure holding the multi samples should not be included
@@ -433,7 +433,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 							sampNum--;
 
 							// Read the sample data
-							long sampStartOffset = stream.Position;
+							long sampStartOffset = moduleStream.Position;
 
 							for (int j = 0; j < 20; j++)
 							{
@@ -441,17 +441,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 								{
 									sampNum++;
 
-									// Allocate sample
-									multiSample.Sample[j].Address = new sbyte[multiSample.Sample[j].Length];
-
 									// Read the sample data
-									stream.Seek(sampStartOffset + multiOffsets[j], SeekOrigin.Begin);
-									stream.ReadSigned(multiSample.Sample[j].Address, 0, (int)multiSample.Sample[j].Length);
+									moduleStream.Seek(sampStartOffset + multiOffsets[j], SeekOrigin.Begin);
+									multiSample.Sample[j].Address = moduleStream.ReadSampleData(10 + j, multiSample.Sample[j].Length);
 
 									// Skip pad bytes
-									stream.Read_B_UINT16();
+									moduleStream.Read_B_UINT16();
 
-									if (stream.EndOfStream)
+									if (moduleStream.EndOfStream)
 									{
 										errorMessage = Resources.IDS_FC_ERR_LOADING_SAMPLES;
 										Cleanup();
@@ -468,20 +465,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 						{
 							// It's just a normal sample, so seek back to the
 							// start of the sample
-							stream.Seek(-4, SeekOrigin.Current);
-
-							// Allocate memory to the sample
-							sampInfo[i].Address = new sbyte[sampInfo[i].Length];
+							moduleStream.Seek(-4, SeekOrigin.Current);
 
 							// Read the sample data
-							stream.ReadSigned(sampInfo[i].Address, 0, (int)sampInfo[i].Length);
+							sampInfo[i].Address = moduleStream.ReadSampleData(i, sampInfo[i].Length);
 						}
 					}
 
 					// Skip pad bytes
-					stream.Read_B_UINT16();
+					moduleStream.Read_B_UINT16();
 
-					if (stream.EndOfStream)
+					if (moduleStream.EndOfStream)
 					{
 						errorMessage = Resources.IDS_FC_ERR_LOADING_SAMPLES;
 						Cleanup();
@@ -491,7 +485,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				}
 
 				// Load the wave tables
-				stream.Seek(wavOffset, SeekOrigin.Begin);
+				moduleStream.Seek(wavOffset, SeekOrigin.Begin);
 
 				for (i = 10; i < (10 + 80); i++)
 				{
@@ -501,9 +495,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 						sampInfo[i].Address = new sbyte[sampInfo[i].Length];
 
 						// Read the wave table
-						stream.ReadSigned(sampInfo[i].Address, 0, (int)sampInfo[i].Length);
+						moduleStream.ReadSigned(sampInfo[i].Address, 0, (int)sampInfo[i].Length);
 
-						if (stream.EndOfStream)
+						if (moduleStream.EndOfStream)
 						{
 							errorMessage = Resources.IDS_FC_ERR_LOADING_SAMPLES;
 							Cleanup();

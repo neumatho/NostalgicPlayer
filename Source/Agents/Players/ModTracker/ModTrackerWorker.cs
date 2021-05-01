@@ -118,7 +118,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "mod" };
+		public override string[] FileExtensions => new [] { "mod", "mtm" };
 
 
 
@@ -885,28 +885,28 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/********************************************************************/
 		private ModuleType TestModule(PlayerFileInfo fileInfo)
 		{
-			ModuleStream stream = fileInfo.ModuleStream;
+			ModuleStream moduleStream = fileInfo.ModuleStream;
 
 			// First check to see if it's a MultiTracker module
-			if (stream.Length < 36)
+			if (moduleStream.Length < 36)
 				return ModuleType.Unknown;
 
 			byte[] buf = new byte[22];
 
 			// Check the signature
-			stream.Seek(0, SeekOrigin.Begin);
-			stream.Read(buf, 0, 4);
+			moduleStream.Seek(0, SeekOrigin.Begin);
+			moduleStream.Read(buf, 0, 4);
 
 			if ((buf[0] == 'M') && (buf[1] == 'T') && (buf[2] == 'M') && (buf[3] == 0x10))
 				return ModuleType.MultiTracker;
 
 			// Now check to see if it's a Noise- or ProTracker module
-			if (stream.Length < 1084)
+			if (moduleStream.Length < 1084)
 				return ModuleType.Unknown;
 
 			// Check mark
-			stream.Seek(1080, SeekOrigin.Begin);
-			uint mark = stream.Read_B_UINT32();
+			moduleStream.Seek(1080, SeekOrigin.Begin);
+			uint mark = moduleStream.Read_B_UINT32();
 
 			// Check the mark for valid characters
 			bool nonValid = false;
@@ -926,9 +926,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			ModuleType retVal;
 
 			if (nonValid)
-				retVal = Check15SamplesModule(stream);
+				retVal = Check15SamplesModule(moduleStream);
 			else
-				retVal = Check31SamplesModule(stream, mark);
+				retVal = Check31SamplesModule(moduleStream, mark);
 
 			return retVal;
 		}
@@ -946,11 +946,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// https://source.openmpt.org/svn/openmpt/tags/libopenmpt-0.2.3746-beta3/soundlib/Load_mod.cpp
 		/// </summary>
 		/********************************************************************/
-		private ModuleType Check15SamplesModule(ModuleStream stream)
+		private ModuleType Check15SamplesModule(ModuleStream moduleStream)
 		{
 			// Check for some other formats, that has been recognized wrongly as 15 samples modules
-			stream.Seek(0, SeekOrigin.Begin);
-			uint mark = stream.Read_B_UINT32();
+			moduleStream.Seek(0, SeekOrigin.Begin);
+			uint mark = moduleStream.Read_B_UINT32();
 
 			if ((mark == 0x52494646) || (mark == 0x464f524d))
 				return ModuleType.Unknown;
@@ -970,8 +970,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			// I has introduced it again
 			for (int i = 0; i < 15; i++)
 			{
-				stream.Seek(20 + i * 30, SeekOrigin.Begin);
-				stream.Read(buf, 0, 22);
+				moduleStream.Seek(20 + i * 30, SeekOrigin.Begin);
+				moduleStream.Read(buf, 0, 22);
 
 				// Now check the name (but only for the first 7)
 				if (i < 7)
@@ -997,7 +997,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				}
 
 				// Check the sample length
-				ushort len = stream.Read_B_UINT16();
+				ushort len = moduleStream.Read_B_UINT16();
 				if ((len * 2) > 9999)
 				{
 					// 32 KB samples was introduced in Master SoundTracker
@@ -1010,15 +1010,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				minimumVersion = GetMinimumVersion(minimumVersion, diskPrefixCount == 15 ? ModuleType.UltimateSoundTracker18 : ModuleType.SoundTrackerII);
 
 			// Read the global song speed
-			stream.Seek(470, SeekOrigin.Begin);
-			byte songLen = stream.Read_UINT8();
-			byte temp = stream.Read_UINT8();
+			moduleStream.Seek(470, SeekOrigin.Begin);
+			byte songLen = moduleStream.Read_UINT8();
+			byte temp = moduleStream.Read_UINT8();
 
 			if ((songLen == 0) || (songLen > 128))
 				return ModuleType.Unknown;
 
 			// Find the patterns used
-			byte[] usedPatterns = FindUsedPatterns(stream, songLen);
+			byte[] usedPatterns = FindUsedPatterns(moduleStream, songLen);
 			if (usedPatterns.FirstOrDefault(p => p > 64) != 0)
 				return ModuleType.Unknown;
 
@@ -1039,10 +1039,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 					for (int j = 0; j < 4 * 64; j++)
 					{
-						byte a = stream.Read_UINT8();
-						byte b = stream.Read_UINT8();
-						byte c = stream.Read_UINT8();
-						byte d = stream.Read_UINT8();
+						byte a = moduleStream.Read_UINT8();
+						byte b = moduleStream.Read_UINT8();
+						byte c = moduleStream.Read_UINT8();
+						byte d = moduleStream.Read_UINT8();
 
 						byte effect = (byte)(c & 0x0f);
 
@@ -1229,7 +1229,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				else
 				{
 					// Skip the pattern
-					stream.Seek(1024, SeekOrigin.Current);
+					moduleStream.Seek(1024, SeekOrigin.Current);
 				}
 			}
 
@@ -1265,7 +1265,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// Checks the module to see if it's a 31 samples module
 		/// </summary>
 		/********************************************************************/
-		private ModuleType Check31SamplesModule(ModuleStream stream, uint mark)
+		private ModuleType Check31SamplesModule(ModuleStream moduleStream, uint mark)
 		{
 			ModuleType retVal = ModuleType.Unknown;
 
@@ -1276,11 +1276,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				retVal = ModuleType.NoiseTracker;
 
 				// Get the length byte
-				stream.Seek(950, SeekOrigin.Begin);
-				byte songLen = stream.Read_UINT8();
+				moduleStream.Seek(950, SeekOrigin.Begin);
+				byte songLen = moduleStream.Read_UINT8();
 
 				// Check restart byte
-				if (stream.Read_UINT8() > 126)
+				if (moduleStream.Read_UINT8() > 126)
 					retVal = ModuleType.ProTracker;
 
 				// Check the patterns for any BPM speed effects or ExtraEffect effects
@@ -1290,10 +1290,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				// recognize it
 				//
 				// Find the patterns used
-				byte[] usedPatterns = FindUsedPatterns(stream, songLen);
+				byte[] usedPatterns = FindUsedPatterns(moduleStream, songLen);
 
 				// Skip mark
-				stream.Seek(4, SeekOrigin.Current);
+				moduleStream.Seek(4, SeekOrigin.Current);
 
 				for (int i = 0, p = 0; i < usedPatterns.Length; p++)
 				{
@@ -1301,10 +1301,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					{
 						for (int j = 0; j < 4 * 64; j++)
 						{
-							byte a = stream.Read_UINT8();
-							byte b = stream.Read_UINT8();
-							byte c = stream.Read_UINT8();
-							byte d = stream.Read_UINT8();
+							byte a = moduleStream.Read_UINT8();
+							byte b = moduleStream.Read_UINT8();
+							byte c = moduleStream.Read_UINT8();
+							byte d = moduleStream.Read_UINT8();
 
 							// Check the data to see if it's not a UNIC Tracker module
 							//
@@ -1370,18 +1370,18 @@ stopLoop:
 					// Well, now we want to be really really sure it's
 					// not a NoiseTracker module, so we check the sample
 					// information to see if some samples has a fine tune
-					stream.Seek(44, SeekOrigin.Begin);
+					moduleStream.Seek(44, SeekOrigin.Begin);
 
 					for (int i = 0; i < 31; i++)
 					{
-						if ((stream.Read_UINT8() & 0x0f) != 0)
+						if ((moduleStream.Read_UINT8() & 0x0f) != 0)
 						{
 							retVal = ModuleType.ProTracker;
 							break;
 						}
 
 						// Seek to next sample
-						stream.Seek(30 - 1, SeekOrigin.Current);
+						moduleStream.Seek(30 - 1, SeekOrigin.Current);
 					}
 				}
 			}
@@ -1418,10 +1418,10 @@ stopLoop:
 		/// actual played
 		/// </summary>
 		/********************************************************************/
-		private byte[] FindUsedPatterns(ModuleStream stream, byte songLen)
+		private byte[] FindUsedPatterns(ModuleStream moduleStream, byte songLen)
 		{
 			byte[] pos = new byte[128];
-			stream.Read(pos, 0, 128);
+			moduleStream.Read(pos, 0, 128);
 
 			return pos.Take(songLen).Distinct().OrderBy(b => b).ToArray();
 		}
@@ -1439,7 +1439,7 @@ stopLoop:
 			{
 				byte[] buf = new byte[23];
 
-				ModuleStream stream = fileInfo.ModuleStream;
+				ModuleStream moduleStream = fileInfo.ModuleStream;
 				Encoding encoder = IsPcTracker() ? EncoderCollection.Ibm850 : EncoderCollection.Amiga;
 
 				// Find out the number of samples
@@ -1447,7 +1447,7 @@ stopLoop:
 
 				// Read the song name
 				buf[20] = 0x00;
-				stream.Read(buf, 0, 20);
+				moduleStream.Read(buf, 0, 20);
 
 				songName = encoder.GetString(buf);
 
@@ -1461,13 +1461,13 @@ stopLoop:
 
 					// Read the sample info
 					buf[22] = 0x00;
-					stream.Read(buf, 0, 22);					// Name of the sample
+					moduleStream.Read(buf, 0, 22);				// Name of the sample
 
-					ushort length = stream.Read_B_UINT16();				// Length in words
-					byte fineTune = stream.Read_UINT8();				// Only the low nibble is used (mask it out and extend the sign)
-					byte volume = stream.Read_UINT8();					// The volume
-					ushort repeatStart = stream.Read_B_UINT16();		// Number of words from the beginning where the loop starts
-					ushort repeatLength = stream.Read_B_UINT16();		// The loop length in words
+					ushort length = moduleStream.Read_B_UINT16();			// Length in words
+					byte fineTune = moduleStream.Read_UINT8();				// Only the low nibble is used (mask it out and extend the sign)
+					byte volume = moduleStream.Read_UINT8();				// The volume
+					ushort repeatStart = moduleStream.Read_B_UINT16();		// Number of words from the beginning where the loop starts
+					ushort repeatLength = moduleStream.Read_B_UINT16();		// The loop length in words
 
 					if (sampleNum == 15)
 					{
@@ -1493,7 +1493,7 @@ stopLoop:
 					if (IsSoundTracker() || IsNoiseTracker())
 						fineTune = 0;
 
-					if (stream.EndOfStream)
+					if (moduleStream.EndOfStream)
 					{
 						errorMessage = Resources.IDS_MOD_ERR_LOADING_SAMPLEINFO;
 						Cleanup();
@@ -1512,7 +1512,7 @@ stopLoop:
 				}
 
 				// Read more header information
-				songLength = stream.Read_UINT8();
+				songLength = moduleStream.Read_UINT8();
 
 				// Make beatwave.mod to work
 				if (songLength > 128)
@@ -1521,7 +1521,7 @@ stopLoop:
 				if ((currentModuleType == ModuleType.NoiseTracker) || (currentModuleType == ModuleType.StarTrekker) || (currentModuleType == ModuleType.StarTrekker8) || (currentModuleType == ModuleType.FastTracker))
 				{
 					initTempo = 125;
-					restartPos = (ushort)(stream.Read_UINT8() & 0x7f);
+					restartPos = (ushort)(moduleStream.Read_UINT8() & 0x7f);
 
 					if (restartPos >= songLength)
 						restartPos = 0;
@@ -1531,7 +1531,7 @@ stopLoop:
 					if (sampleNum == 15)
 					{
 						restartPos = 0;
-						byte temp = stream.Read_UINT8();
+						byte temp = moduleStream.Read_UINT8();
 
 						if (temp < 100)			// 100 is just a guess. Starwars.Remix is playing too slow if used the tempo in the module
 							initTempo = 125;
@@ -1564,19 +1564,19 @@ stopLoop:
 					}
 					else
 					{
-						stream.Read_UINT8();
+						moduleStream.Read_UINT8();
 						initTempo = 125;
 						restartPos = 0;
 					}
 				}
 
 				positions = new byte[128];
-				stream.Read(positions, 0, 128);
+				moduleStream.Read(positions, 0, 128);
 
 				// All 31 samples modules have a mark
-				uint mark = sampleNum == 31 ? stream.Read_B_UINT32() : 0;
+				uint mark = sampleNum == 31 ? moduleStream.Read_B_UINT32() : 0;
 
-				if (stream.EndOfStream)
+				if (moduleStream.EndOfStream)
 				{
 					errorMessage = Resources.IDS_MOD_ERR_LOADING_HEADER;
 					Cleanup();
@@ -1654,13 +1654,13 @@ stopLoop:
 
 					if (currentModuleType == ModuleType.StarTrekker8)
 					{
-						LoadModTracks(stream, line, 0, 4);
-						LoadModTracks(stream, line, 4, 4);
+						LoadModTracks(moduleStream, line, 0, 4);
+						LoadModTracks(moduleStream, line, 4, 4);
 					}
 					else
-						LoadModTracks(stream, line, 0, channelNum);
+						LoadModTracks(moduleStream, line, 0, channelNum);
 
-					if (stream.EndOfStream)
+					if (moduleStream.EndOfStream)
 					{
 						errorMessage = Resources.IDS_MOD_ERR_LOADING_PATTERNS;
 						Cleanup();
@@ -1686,11 +1686,8 @@ stopLoop:
 					int length = samples[i].Length * 2;
 					if (length != 0)
 					{
-						sbyte[] sampleData = new sbyte[length];
-						samples[i].Data = sampleData;
-
 						// Check to see if we miss too much from the last sample
-						if (stream.Length - stream.Position < (length - 512))
+						if (moduleStream.Length - moduleStream.Position < (length - 512))
 						{
 							errorMessage = Resources.IDS_MOD_ERR_LOADING_SAMPLES;
 							Cleanup();
@@ -1699,7 +1696,7 @@ stopLoop:
 						}
 
 						// Read the sample
-						stream.ReadSigned(sampleData, 0, length);
+						samples[i].Data = moduleStream.ReadSampleData(i, length);
 					}
 				}
 
@@ -1730,31 +1727,31 @@ stopLoop:
 			{
 				byte[] buf = new byte[23];
 
-				ModuleStream stream = fileInfo.ModuleStream;
+				ModuleStream moduleStream = fileInfo.ModuleStream;
 				Encoding encoder = EncoderCollection.Ibm850;
 
 				// Read the header
-				stream.Seek(3, SeekOrigin.Begin);
+				moduleStream.Seek(3, SeekOrigin.Begin);
 
-				stream.Read_UINT8();									// File version
+				moduleStream.Read_UINT8();									// File version
 
 				buf[20] = 0x00;
-				stream.Read(buf, 0, 20);						// Name of the module
+				moduleStream.Read(buf, 0, 20);					// Name of the module
 				songName = encoder.GetString(buf);
 
-				trackNum = (ushort)(stream.Read_L_UINT16() + 1);		// Number of tracks. Add one because track 0 is not written but considered empty
-				maxPattern = (ushort)(stream.Read_UINT8() + 1);			// Number of patterns
-				songLength = (ushort)(stream.Read_UINT8() + 1);			// Length of the song
-				ushort commentLength = stream.Read_L_UINT16();			// Length of the comment field
-				sampleNum = stream.Read_UINT8();						// Number of samples
-				stream.Read_UINT8();									// Attributes -> not used yet
-				patternLength = stream.Read_UINT8();					// Number of lines in each pattern
-				channelNum = stream.Read_UINT8();						// Number of channels
+				trackNum = (ushort)(moduleStream.Read_L_UINT16() + 1);		// Number of tracks. Add one because track 0 is not written but considered empty
+				maxPattern = (ushort)(moduleStream.Read_UINT8() + 1);		// Number of patterns
+				songLength = (ushort)(moduleStream.Read_UINT8() + 1);		// Length of the song
+				ushort commentLength = moduleStream.Read_L_UINT16();		// Length of the comment field
+				sampleNum = moduleStream.Read_UINT8();						// Number of samples
+				moduleStream.Read_UINT8();									// Attributes -> not used yet
+				patternLength = moduleStream.Read_UINT8();					// Number of lines in each pattern
+				channelNum = moduleStream.Read_UINT8();						// Number of channels
 
 				panning = new byte[32];
-				stream.Read(panning, 0, 32);					// Panning table
+				moduleStream.Read(panning, 0, 32);				// Panning table
 
-				if (stream.EndOfStream)
+				if (moduleStream.EndOfStream)
 				{
 					errorMessage = Resources.IDS_MOD_ERR_LOADING_HEADER;
 					Cleanup();
@@ -1771,16 +1768,16 @@ stopLoop:
 
 					// Read the sample info
 					buf[22] = 0x00;
-					stream.Read(buf, 0, 22);					// Name of the sample
+					moduleStream.Read(buf, 0, 22);				// Name of the sample
 
-					uint length = stream.Read_L_UINT32();				// Length in bytes
-					uint repeatStart = stream.Read_L_UINT32();			// Number of bytes from the beginning where the loop starts
-					uint repeatEnd = stream.Read_L_UINT32();			// Number of bytes from the beginning where the loop ends
-					byte fineTune = stream.Read_UINT8();				// Only the low nibble is used (mask it out and extend the sign)
-					byte volume = stream.Read_UINT8();					// The volume (0-64)
-					stream.Read_UINT8();								// Attributes -> not used
+					uint length = moduleStream.Read_L_UINT32();				// Length in bytes
+					uint repeatStart = moduleStream.Read_L_UINT32();		// Number of bytes from the beginning where the loop starts
+					uint repeatEnd = moduleStream.Read_L_UINT32();			// Number of bytes from the beginning where the loop ends
+					byte fineTune = moduleStream.Read_UINT8();				// Only the low nibble is used (mask it out and extend the sign)
+					byte volume = moduleStream.Read_UINT8();				// The volume (0-64)
+					moduleStream.Read_UINT8();								// Attributes -> not used
 
-					if (stream.EndOfStream)
+					if (moduleStream.EndOfStream)
 					{
 						errorMessage = Resources.IDS_MOD_ERR_LOADING_SAMPLEINFO;
 						Cleanup();
@@ -1800,7 +1797,7 @@ stopLoop:
 
 				// Read the positions
 				positions = new byte[128];
-				stream.Read(positions, 0, 128);
+				moduleStream.Read(positions, 0, 128);
 
 				// Allocate memory to hold all the tracks
 				tracks = new TrackLine[trackNum][];
@@ -1821,9 +1818,9 @@ stopLoop:
 					{
 						TrackLine workLine = line[j] = new TrackLine();
 
-						byte a = stream.Read_UINT8();
-						byte b = stream.Read_UINT8();
-						byte c = stream.Read_UINT8();
+						byte a = moduleStream.Read_UINT8();
+						byte b = moduleStream.Read_UINT8();
+						byte c = moduleStream.Read_UINT8();
 
 						workLine.Note = (byte)(a >> 2);
 						if (workLine.Note != 0)
@@ -1834,7 +1831,7 @@ stopLoop:
 						workLine.EffectArg = c;
 					}
 
-					if (stream.EndOfStream)
+					if (moduleStream.EndOfStream)
 					{
 						errorMessage = Resources.IDS_MOD_ERR_LOADING_PATTERNS;
 						Cleanup();
@@ -1847,12 +1844,12 @@ stopLoop:
 				sequences = new ushort[32 * maxPattern];
 
 				// Read the sequence data
-				stream.ReadArray_L_UINT16s(sequences, sequences.Length);
+				moduleStream.ReadArray_L_UINT16s(sequences, sequences.Length);
 
 				// Skip the comment field
-				stream.Seek(commentLength, SeekOrigin.Current);
+				moduleStream.Seek(commentLength, SeekOrigin.Current);
 
-				if (stream.EndOfStream)
+				if (moduleStream.EndOfStream)
 				{
 					errorMessage = Resources.IDS_MOD_ERR_LOADING_PATTERNS;
 					Cleanup();
@@ -1867,13 +1864,10 @@ stopLoop:
 					int length = samples[i].Length * 2;
 					if (length != 0)
 					{
-						sbyte[] sampleData = new sbyte[length];
-						samples[i].Data = sampleData;
-
 						// Read the sample
-						stream.ReadSigned(sampleData, 0, length);
+						samples[i].Data = moduleStream.ReadSampleData(i, length);
 
-						if (stream.EndOfStream)
+						if (moduleStream.EndOfStream)
 						{
 							errorMessage = Resources.IDS_MOD_ERR_LOADING_SAMPLES;
 							Cleanup();
@@ -1882,6 +1876,7 @@ stopLoop:
 						}
 
 						// Convert the sample to signed
+						sbyte[] sampleData = samples[i].Data;
 						for (int j = 0; j < length; j++)
 							sampleData[j] = (sbyte)((byte)sampleData[j] + 0x80);
 					}
@@ -1911,7 +1906,7 @@ stopLoop:
 		/// Will load x number of tracks in MOD format
 		/// </summary>
 		/********************************************************************/
-		private void LoadModTracks(ModuleStream stream, TrackLine[][] tracks, int offset, int channels)
+		private void LoadModTracks(ModuleStream moduleStream, TrackLine[][] tracks, int offset, int channels)
 		{
 			for (int i = 0; i < patternLength; i++)
 			{
@@ -1919,10 +1914,10 @@ stopLoop:
 				{
 					TrackLine workLine = tracks[offset + j][i] = new TrackLine();
 
-					byte a = stream.Read_UINT8();
-					byte b = stream.Read_UINT8();
-					byte c = stream.Read_UINT8();
-					byte d = stream.Read_UINT8();
+					byte a = moduleStream.Read_UINT8();
+					byte b = moduleStream.Read_UINT8();
+					byte c = moduleStream.Read_UINT8();
+					byte d = moduleStream.Read_UINT8();
 
 					ushort note = (ushort)(((a & 0x0f) << 8) | b);
 
@@ -1957,51 +1952,51 @@ stopLoop:
 		/********************************************************************/
 		private void LoadSynthSamples(PlayerFileInfo fileInfo)
 		{
-			using (ModuleStream ms = fileInfo.Loader?.OpenExtraFile("nt"))
+			using (ModuleStream moduleStream = fileInfo.Loader?.OpenExtraFile("nt"))
 			{
 				// Did we get any file at all
-				if (ms != null)
+				if (moduleStream != null)
 				{
 					byte[] id = new byte[16];
-					if ((ms.Read(id, 0, 16) == 16) && (id.SequenceEqual(synthId1) || id.SequenceEqual(synthId2) || id.SequenceEqual(synthId3)))
+					if ((moduleStream.Read(id, 0, 16) == 16) && (id.SequenceEqual(synthId1) || id.SequenceEqual(synthId2) || id.SequenceEqual(synthId3)))
 					{
 						amData = new AmSample[31];
 
 						// Skip header
-						ms.Seek(144, SeekOrigin.Begin);
+						moduleStream.Seek(144, SeekOrigin.Begin);
 
 						// Load the AM data
 						for (int i = 0; i < 31; i++)
 						{
 							AmSample amSample = new AmSample();
 
-							amSample.Mark = ms.Read_B_UINT16();
-							ms.Seek(4, SeekOrigin.Current);
-							amSample.StartAmp = ms.Read_B_UINT16();
-							amSample.Attack1Level = ms.Read_B_UINT16();
-							amSample.Attack1Speed = ms.Read_B_UINT16();
-							amSample.Attack2Level = ms.Read_B_UINT16();
-							amSample.Attack2Speed = ms.Read_B_UINT16();
-							amSample.SustainLevel = ms.Read_B_UINT16();
-							amSample.DecaySpeed = ms.Read_B_UINT16();
-							amSample.SustainTime = ms.Read_B_UINT16();
-							ms.Seek(2, SeekOrigin.Current);
-							amSample.ReleaseSpeed = ms.Read_B_UINT16();
-							amSample.Waveform = ms.Read_B_UINT16();
-							amSample.PitchFall = ms.Read_B_UINT16();
-							amSample.VibAmp = (short)ms.Read_B_UINT16();
-							amSample.VibSpeed = ms.Read_B_UINT16();
-							amSample.baseFreq = ms.Read_B_UINT16();
+							amSample.Mark = moduleStream.Read_B_UINT16();
+							moduleStream.Seek(4, SeekOrigin.Current);
+							amSample.StartAmp = moduleStream.Read_B_UINT16();
+							amSample.Attack1Level = moduleStream.Read_B_UINT16();
+							amSample.Attack1Speed = moduleStream.Read_B_UINT16();
+							amSample.Attack2Level = moduleStream.Read_B_UINT16();
+							amSample.Attack2Speed = moduleStream.Read_B_UINT16();
+							amSample.SustainLevel = moduleStream.Read_B_UINT16();
+							amSample.DecaySpeed = moduleStream.Read_B_UINT16();
+							amSample.SustainTime = moduleStream.Read_B_UINT16();
+							moduleStream.Seek(2, SeekOrigin.Current);
+							amSample.ReleaseSpeed = moduleStream.Read_B_UINT16();
+							amSample.Waveform = moduleStream.Read_B_UINT16();
+							amSample.PitchFall = moduleStream.Read_B_UINT16();
+							amSample.VibAmp = (short)moduleStream.Read_B_UINT16();
+							amSample.VibSpeed = moduleStream.Read_B_UINT16();
+							amSample.baseFreq = moduleStream.Read_B_UINT16();
 
-							ms.Seek(84, SeekOrigin.Current);
+							moduleStream.Seek(84, SeekOrigin.Current);
 
 							amData[i] = amSample;
 
-							if (ms.EndOfStream)
+							if (moduleStream.EndOfStream)
 								break;
 						}
 
-						ExtraFilesSizes += ms.Length;
+						ExtraFilesSizes += moduleStream.Length;
 					}
 				}
 			}

@@ -6,41 +6,47 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System;
+using System.Collections.Generic;
+using System.IO;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.Kit.Streams;
 
-namespace Polycode.NostalgicPlayer.Kit.Bases
+namespace Polycode.NostalgicPlayer.Kit.Streams
 {
 	/// <summary>
-	/// Base class that can be used for module converter agents
+	/// This stream is used by module converters
 	/// </summary>
-	public abstract class ModuleConverterAgentBase : IModuleConverterAgent
+	public class ConverterStream : WriterStream
 	{
-		/********************************************************************/
-		/// <summary>
-		/// Test the file to see if it could be identified
-		/// </summary>
-		/********************************************************************/
-		public abstract AgentResult Identify(PlayerFileInfo fileInfo);
-
-
+		private readonly Dictionary<int, ConvertSampleInfo> sampleInfo;
 
 		/********************************************************************/
 		/// <summary>
-		/// Convert the module and store the result in the stream given
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public abstract AgentResult Convert(PlayerFileInfo fileInfo, ConverterStream converterStream, out string errorMessage);
+		public ConverterStream(Stream wrapperStream, Dictionary<int, ConvertSampleInfo> sampleInfo) : base(wrapperStream)
+		{
+			this.sampleInfo = sampleInfo;
+		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the original format. If it returns null or an empty
-		/// string, the agent name will be used
+		/// Write a marker about the sample, but not the data itself
 		/// </summary>
 		/********************************************************************/
-		public virtual string OriginalFormat => null;
+		public void WriteSampleDataMarker(int sampleNumber, int length)
+		{
+			if (!sampleInfo.TryGetValue(sampleNumber, out ConvertSampleInfo convertInfo))
+				throw new Exception($"Sample number {sampleNumber} has not been read before write");
+
+			if (convertInfo.Length != length)
+				throw new Exception($"Something is wrong when writing sample data. The given sample length {length} does not match the one stored in the converted data {convertInfo.Length} for sample number {sampleNumber}");
+
+			Write_B_UINT32(convertInfo.Position);
+			Write_B_UINT32((uint)convertInfo.Length);
+		}
 	}
 }

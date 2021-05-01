@@ -76,16 +76,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/********************************************************************/
 		public override AgentResult Identify(PlayerFileInfo fileInfo)
 		{
-			ModuleStream stream = fileInfo.ModuleStream;
+			ModuleStream moduleStream = fileInfo.ModuleStream;
 
 			// Check the module size
-			if (stream.Length < 6)
+			if (moduleStream.Length < 6)
 				return AgentResult.Unknown;
 
 			// Check the mark
-			stream.Seek(0, SeekOrigin.Begin);
+			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			if (stream.Read_B_UINT32() == 0x42654570)	// BeEp
+			if (moduleStream.Read_B_UINT32() == 0x42654570)	// BeEp
 				return AgentResult.Ok;
 
 			return AgentResult.Unknown;
@@ -170,13 +170,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 			try
 			{
-				ModuleStream stream = fileInfo.ModuleStream;
+				ModuleStream moduleStream = fileInfo.ModuleStream;
 
 				// Skip the module mark
-				stream.Read_B_UINT32();
+				moduleStream.Read_B_UINT32();
 
 				// Get the number of instruments
-				samplesNum = stream.Read_B_UINT16();
+				samplesNum = moduleStream.Read_B_UINT16();
 
 				// Allocate the instrument structures
 				instTable = new InstInfo[samplesNum];
@@ -186,17 +186,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				{
 					InstInfo instInfo = new InstInfo();
 
-					stream.ReadString(instInfo.Name, 31);
+					moduleStream.ReadString(instInfo.Name, 31);
 
-					instInfo.Flags = stream.Read_UINT8();
-					instInfo.Size = stream.Read_B_UINT32();
-					stream.Read_B_UINT32();		// Skip the address
+					instInfo.Flags = moduleStream.Read_UINT8();
+					instInfo.Size = moduleStream.Read_B_UINT32();
+					moduleStream.Read_B_UINT32();		// Skip the address
 
 					instTable[i] = instInfo;
 				}
 
 				// Get the number of patterns
-				patternNum = stream.Read_B_UINT16();
+				patternNum = moduleStream.Read_B_UINT16();
 
 				// Allocate pattern structures
 				pattTable = new PattInfo[patternNum];
@@ -206,21 +206,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				{
 					PattInfo pattInfo = new PattInfo();
 
-					pattInfo.Size = stream.Read_B_UINT16();
-					stream.Read_B_UINT32();		// Skip the address
+					pattInfo.Size = moduleStream.Read_B_UINT16();
+					moduleStream.Read_B_UINT32();		// Skip the address
 
 					pattTable[i] = pattInfo;
 				}
 
 				// Get the song length
-				songLen = stream.Read_B_UINT16();
+				songLen = moduleStream.Read_B_UINT16();
 
 				// Allocate and read the position array
 				songTable = new ushort[songLen];
 
-				stream.ReadArray_B_UINT16s(songTable, songLen);
+				moduleStream.ReadArray_B_UINT16s(songTable, songLen);
 
-				if (stream.EndOfStream)
+				if (moduleStream.EndOfStream)
 				{
 					errorMessage = Resources.IDS_JAM_ERR_LOADING_HEADER;
 					Cleanup();
@@ -240,19 +240,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 					{
 						NoteInfo noteInfo = new NoteInfo();
 
-						noteInfo.Period = stream.Read_UINT8();
-						noteInfo.Instr = stream.Read_INT8();
-						noteInfo.Speed = stream.Read_UINT8();
-						noteInfo.Arpeggio = stream.Read_UINT8();
-						noteInfo.Vibrato = stream.Read_UINT8();
-						noteInfo.Phase = stream.Read_UINT8();
-						noteInfo.Volume = stream.Read_UINT8();
-						noteInfo.Porta = stream.Read_UINT8();
+						noteInfo.Period = moduleStream.Read_UINT8();
+						noteInfo.Instr = moduleStream.Read_INT8();
+						noteInfo.Speed = moduleStream.Read_UINT8();
+						noteInfo.Arpeggio = moduleStream.Read_UINT8();
+						noteInfo.Vibrato = moduleStream.Read_UINT8();
+						noteInfo.Phase = moduleStream.Read_UINT8();
+						noteInfo.Volume = moduleStream.Read_UINT8();
+						noteInfo.Porta = moduleStream.Read_UINT8();
 
 						note[j] = noteInfo;
 					}
 
-					if (stream.EndOfStream)
+					if (moduleStream.EndOfStream)
 					{
 						errorMessage = Resources.IDS_JAM_ERR_LOADING_PATTERNS;
 						Cleanup();
@@ -268,11 +268,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 					if (instInfo.Size != 0)
 					{
-						instInfo.Address = new sbyte[instInfo.Size];
+						instInfo.Address = moduleStream.ReadSampleData(i, (int)instInfo.Size);
 
-						stream.ReadSigned(instInfo.Address, 0, (int)instInfo.Size);
-
-						if (stream.EndOfStream && (i != samplesNum - 1))
+						if (moduleStream.EndOfStream && (i != samplesNum - 1))
 						{
 							errorMessage = Resources.IDS_JAM_ERR_LOADING_SAMPLES;
 							Cleanup();

@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Convert the module and store the result in the stream given
 		/// </summary>
-		AgentResult Convert(PlayerFileInfo fileInfo, WriterStream writerStream, out string errorMessage);
+		AgentResult Convert(PlayerFileInfo fileInfo, ConverterStream converterStream, out string errorMessage);
 
 		/// <summary>
 		/// Return the original format. If it returns null or an empty

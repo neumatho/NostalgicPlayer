@@ -144,14 +144,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		/// Will load the header information from the file
 		/// </summary>
 		/********************************************************************/
-		public override AgentResult LoadHeaderInfo(ModuleStream stream, out string errorMessage)
+		public override AgentResult LoadHeaderInfo(ModuleStream moduleStream, out string errorMessage)
 		{
 			// Start to initialize the converter
 			if (!loaderAgent.InitLoader(out errorMessage))
 				return AgentResult.Error;
 
 			// Load the header
-			if (!loaderAgent.LoadHeader(stream, out formatInfo, out errorMessage))
+			if (!loaderAgent.LoadHeader(moduleStream, out formatInfo, out errorMessage))
 				return AgentResult.Error;
 
 			return AgentResult.Ok;
@@ -164,12 +164,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		/// Initializes the player
 		/// </summary>
 		/********************************************************************/
-		public override bool InitPlayer(ModuleStream stream)
+		public override bool InitPlayer(ModuleStream moduleStream)
 		{
 			// Get number of samples of the file
 			totalLength = loaderAgent.GetTotalSampleLength(formatInfo);
 
-			return base.InitPlayer(stream);
+			return base.InitPlayer(moduleStream);
 		}
 
 

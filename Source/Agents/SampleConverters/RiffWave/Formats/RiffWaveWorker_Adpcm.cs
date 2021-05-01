@@ -126,7 +126,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats
 		/// Loads any extra header information from the 'fmt ' chunk
 		/// </summary>
 		/********************************************************************/
-		protected override int LoadExtraHeaderInfo(ModuleStream stream, LoadSampleFormatInfo formatInfo, out string errorMessage)
+		protected override int LoadExtraHeaderInfo(ModuleStream moduleStream, LoadSampleFormatInfo formatInfo, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
@@ -138,11 +138,11 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats
 			}
 
 			// Get the length of the extra information
-			ushort extraLen = stream.Read_L_UINT16();
+			ushort extraLen = moduleStream.Read_L_UINT16();
 
 			// Read the header
-			samplesPerBlock = stream.Read_L_UINT16();		// Number of samples per block
-			coefNum = stream.Read_L_UINT16();				// Number of coef's
+			samplesPerBlock = moduleStream.Read_L_UINT16();		// Number of samples per block
+			coefNum = moduleStream.Read_L_UINT16();				// Number of coef's
 
 			// Is the header big enough
 			if ((2 + 2 + 4 * coefNum) != extraLen)
@@ -157,8 +157,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats
 			// Read the coef's
 			for (int i = 0; i < coefNum; i++)
 			{
-				coefSets[i].coef1 = (short)stream.Read_L_UINT16();
-				coefSets[i].coef2 = (short)stream.Read_L_UINT16();
+				coefSets[i].coef1 = (short)moduleStream.Read_L_UINT16();
+				coefSets[i].coef2 = (short)moduleStream.Read_L_UINT16();
 			}
 
 			return 2 * 3 + 4 * coefNum;
@@ -171,7 +171,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats
 		/// Load and decode a block of sample data
 		/// </summary>
 		/********************************************************************/
-		protected override int DecodeSampleData(ModuleStream stream, int[] buffer, int length, LoadSampleFormatInfo formatInfo)
+		protected override int DecodeSampleData(ModuleStream moduleStream, int[] buffer, int length, LoadSampleFormatInfo formatInfo)
 		{
 			int filled = 0;
 
@@ -181,7 +181,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats
 				if (samplesLeft == 0)
 				{
 					// Yes, read the block data
-					int samplesThisBlock = GetFileData(stream, decodeBuffer, blockAlign);
+					int samplesThisBlock = GetFileData(moduleStream, decodeBuffer, blockAlign);
 					if (samplesThisBlock == 0)
 						break;			// End of file, stop filling
 
