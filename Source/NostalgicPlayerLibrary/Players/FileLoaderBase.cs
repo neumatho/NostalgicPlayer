@@ -6,6 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
@@ -58,12 +59,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 			// First change the extension
 			string newFileName = Path.ChangeExtension(fileName, newExtension);
-			Stream stream = OpenFile(newFileName);
+			Stream stream = TryOpenFile(newFileName);
 			if (stream == null)
 			{
 				// Now try to append the extension
 				newFileName = fileName + $".{newExtension}";
-				stream = OpenFile(newFileName);
+				stream = TryOpenFile(newFileName);
 				if (stream == null)
 				{
 					// Try with prefix
@@ -76,7 +77,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						name = name.Substring(index + 1);
 
 						newFileName = Path.Combine(directory, $"{newExtension}.{name}");
-						stream = OpenFile(newFileName);
+						stream = TryOpenFile(newFileName);
 					}
 				}
 			}
@@ -101,5 +102,25 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// </summary>
 		/********************************************************************/
 		protected abstract Stream OpenFile(string fileName);
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Will try to open the file given and return null if it could not
+		/// be opened
+		/// </summary>
+		/********************************************************************/
+		private Stream TryOpenFile(string fileName)
+		{
+			try
+			{
+				return OpenFile(fileName);
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+		}
+		#endregion
 	}
 }
