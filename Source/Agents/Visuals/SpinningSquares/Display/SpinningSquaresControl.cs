@@ -223,6 +223,9 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 			int rows = (int)Math.Round(Math.Sqrt(calcChannels), MidpointRounding.AwayFromZero);
 			int cols = (int)Math.Round((double)calcChannels / rows, MidpointRounding.AwayFromZero);
 
+			if ((rows * cols) < calcChannels)
+				rows++;
+
 			return (Rows: rows, Columns: cols);
 		}
 		#endregion
