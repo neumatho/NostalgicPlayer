@@ -9,6 +9,7 @@
 using System;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
@@ -33,7 +34,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		/// Initialize the stream
 		/// </summary>
 		/********************************************************************/
-		public bool Initialize(PlayerConfiguration playerConfiguration, out string errorMessage)
+		public bool Initialize(Manager agentManager, PlayerConfiguration playerConfiguration, out string errorMessage)
 		{
 			playing = false;
 
@@ -41,7 +42,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 			delayCount = 0;
 
 			resampler = new Resampler();
-			return resampler.InitResampler(playerConfiguration, out errorMessage);
+			return resampler.InitResampler(agentManager, playerConfiguration, out errorMessage);
 		}
 
 

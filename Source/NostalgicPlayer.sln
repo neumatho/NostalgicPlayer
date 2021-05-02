@@ -68,7 +68,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{B4FBB3
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MikModShared", "Agents\Shared\MikModShared\MikModShared.csproj", "{D66E4C90-F37B-4860-9083-65042BA94E8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MikModConverter", "Agents\ModuleConverters\MikModConverter\MikModConverter.csproj", "{A6548A2F-EBD1-4E02-8778-D5009442551A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MikModConverter", "Agents\ModuleConverters\MikModConverter\MikModConverter.csproj", "{A6548A2F-EBD1-4E02-8778-D5009442551A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oscilloscope", "Agents\Visuals\Oscilloscope\Oscilloscope.csproj", "{8EC0C70B-47ED-439A-B3AA-FBE5D14222FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -361,6 +363,18 @@ Global
 		{A6548A2F-EBD1-4E02-8778-D5009442551A}.Release|x64.Build.0 = Release|Any CPU
 		{A6548A2F-EBD1-4E02-8778-D5009442551A}.Release|x86.ActiveCfg = Release|Any CPU
 		{A6548A2F-EBD1-4E02-8778-D5009442551A}.Release|x86.Build.0 = Release|Any CPU
+		{8EC0C70B-47ED-439A-B3AA-FBE5D14222FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EC0C70B-47ED-439A-B3AA-FBE5D14222FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EC0C70B-47ED-439A-B3AA-FBE5D14222FD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8EC0C70B-47ED-439A-B3AA-FBE5D14222FD}.Debug|x64.Build.0 = Debug|Any CPU
+		{8EC0C70B-47ED-439A-B3AA-FBE5D14222FD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8EC0C70B-47ED-439A-B3AA-FBE5D14222FD}.Debug|x86.Build.0 = Debug|Any CPU
+		{8EC0C70B-47ED-439A-B3AA-FBE5D14222FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EC0C70B-47ED-439A-B3AA-FBE5D14222FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EC0C70B-47ED-439A-B3AA-FBE5D14222FD}.Release|x64.ActiveCfg = Release|Any CPU
+		{8EC0C70B-47ED-439A-B3AA-FBE5D14222FD}.Release|x64.Build.0 = Release|Any CPU
+		{8EC0C70B-47ED-439A-B3AA-FBE5D14222FD}.Release|x86.ActiveCfg = Release|Any CPU
+		{8EC0C70B-47ED-439A-B3AA-FBE5D14222FD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -391,6 +405,7 @@ Global
 		{B4FBB367-2703-4848-B5B1-7F93AE6C9A07} = {7A2DC6DD-42D2-4C78-9EDC-39327A5B8082}
 		{D66E4C90-F37B-4860-9083-65042BA94E8B} = {B4FBB367-2703-4848-B5B1-7F93AE6C9A07}
 		{A6548A2F-EBD1-4E02-8778-D5009442551A} = {13CCC2C2-8C77-45DF-8A9B-249434467C53}
+		{8EC0C70B-47ED-439A-B3AA-FBE5D14222FD} = {8FD08CFB-4C51-4C0B-8594-971118BF99E9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EA2EFEF5-9B3B-46F2-BE4B-077ED6CADA79}

@@ -6,6 +6,8 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Containers;
+
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
 	/// <summary>
@@ -14,5 +16,9 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	/// </summary>
 	public interface ISampleDataVisualAgent : IVisualAgent
 	{
+		/// <summary>
+		/// Tell the visual about new sample data
+		/// </summary>
+		void SampleData(NewSampleData sampleData);
 	}
 }

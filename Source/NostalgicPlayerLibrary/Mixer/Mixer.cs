@@ -41,6 +41,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private int filterPrevLeft;			// The previous value for the left channel
 		private int filterPrevRight;		// The previous value for the right channel
 
+		private int bytesPerSample;			// How many bytes each sample uses in the output buffer
+
 		private bool swapSpeakers;
 		private bool emulateFilter;
 
@@ -230,6 +232,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		public void SetOutputFormat(OutputInfo outputInformation)
 		{
 			mixerFrequency = outputInformation.Frequency;
+			bytesPerSample = outputInformation.BytesPerSample;
 
 			// Get the maximum number of samples the given destination
 			// buffer from the output agent can be
@@ -297,7 +300,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			int total = Math.Max(total1, total2);
 
 			// Tell visual agents about the mixed data
-			currentVisualizer.TellAgentsAboutMixedData(buffer, offset, total);
+			currentVisualizer.TellAgentsAboutMixedData(buffer, total, bytesPerSample, (currentMode & MixerMode.Stereo) != 0, swapSpeakers);
 
 			return total;
 		}

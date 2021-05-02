@@ -82,7 +82,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						soundStream = new ResamplerStream();
 						soundStream.EndReached += Stream_EndReached;
 
-						initOk = soundStream.Initialize(playerConfiguration, out errorMessage);
+						initOk = soundStream.Initialize(agentManager, playerConfiguration, out errorMessage);
 
 						if (!initOk)
 							CleanupPlayer();

@@ -10,7 +10,9 @@ using System;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
+using Polycode.NostalgicPlayer.PlayerLibrary.Mixer;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 {
@@ -20,6 +22,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 	internal class Resampler
 	{
 		private ISamplePlayerAgent currentPlayer;
+
+		private MixerVisualize currentVisualizer;
 
 		private int inputFrequency;
 		private int inputChannels;
@@ -62,7 +66,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		/// Initialize the resampler routines
 		/// </summary>
 		/********************************************************************/
-		public bool InitResampler(PlayerConfiguration playerConfiguration, out string errorMessage)
+		public bool InitResampler(Manager agentManager, PlayerConfiguration playerConfiguration, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 			bool retVal = true;
@@ -74,6 +78,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 
 				inputFrequency = currentPlayer.Frequency;
 				inputChannels = currentPlayer.ChannelCount;
+
+				// Allocate the visual component
+				currentVisualizer = new MixerVisualize();
+
+				// Initialize the visualizer
+				currentVisualizer.Initialize(agentManager, 0, null);
 
 				// Initialize the resampler
 				ChangeConfiguration(playerConfiguration.MixerConfiguration);
@@ -98,6 +108,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		/********************************************************************/
 		public void CleanupResampler()
 		{
+			// Deallocate the visualizer
+			currentVisualizer?.Cleanup();
+			currentVisualizer = null;
 		}
 
 
@@ -174,6 +187,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 				Native.ResampleConvertTo16(buffer, offset / 2, sampleBuffer, total, outputChannels == 2 ? swapSpeakers : false);
 			else if (outputBits == 32)
 				Native.ResampleConvertTo32(buffer, offset / 4, sampleBuffer, total, outputChannels == 2 ? swapSpeakers : false);
+
+			// Tell visual agents about the mixed data
+			currentVisualizer.TellAgentsAboutMixedData(buffer, total, outputBits / 8, outputChannels == 2, swapSpeakers);
 
 			return total;
 		}
