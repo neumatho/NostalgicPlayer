@@ -18,11 +18,10 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public NewSampleData(int[] buffer, bool stereo, bool swapSpeakers)
+		public NewSampleData(int[] buffer, bool stereo)
 		{
 			SampleData = buffer;
 			Stereo = stereo;
-			SwapSpeakers = swapSpeakers;
 		}
 
 
@@ -45,18 +44,6 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// </summary>
 		/********************************************************************/
 		public bool Stereo
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Tells if you need to swap the left and right speaker
-		/// </summary>
-		/********************************************************************/
-		public bool SwapSpeakers
 		{
 			get;
 		}

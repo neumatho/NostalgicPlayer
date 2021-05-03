@@ -218,7 +218,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 											buffer[i] = BitConverter.ToInt16(info.Buffer, i * 2) << 16;
 									}
 
-									sampleData = new NewSampleData(buffer, info.Stereo, info.SwapSpeakers);
+									sampleData = new NewSampleData(buffer, info.Stereo);
 								}
 
 								sampleDataVisualAgent.SampleData(sampleData);

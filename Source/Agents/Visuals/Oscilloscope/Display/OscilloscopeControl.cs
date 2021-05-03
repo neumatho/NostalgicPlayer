@@ -73,16 +73,8 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
 			{
 				if (sampleData.Stereo)
 				{
-					if (sampleData.SwapSpeakers)
-					{
-						leftSpeakerOscilloscopeControl.DrawSample(sampleData.SampleData, 1, 2);
-						rightSpeakerOscilloscopeControl.DrawSample(sampleData.SampleData, 0, 2);
-					}
-					else
-					{
-						leftSpeakerOscilloscopeControl.DrawSample(sampleData.SampleData, 0, 2);
-						rightSpeakerOscilloscopeControl.DrawSample(sampleData.SampleData, 1, 2);
-					}
+					leftSpeakerOscilloscopeControl.DrawSample(sampleData.SampleData, 0, 2);
+					rightSpeakerOscilloscopeControl.DrawSample(sampleData.SampleData, 1, 2);
 				}
 				else
 				{
