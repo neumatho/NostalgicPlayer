@@ -68,18 +68,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 		{
 			InitializeComponent();
 
-			// Some controls need to be initialized here, since the
-			// designer remove the properties
-			navigator.Panel.PanelBackStyle = PaletteBackStyle.TabLowProfile;
-			navigator.Button.CloseButtonDisplay = ButtonDisplay.Hide;
-			navigator.Button.ContextButtonDisplay = ButtonDisplay.Hide;
-
-			instrumentDataGridView.StateCommon.HeaderColumn.Border.DrawBorders = PaletteDrawBorders.BottomRight;
-			instrumentDataGridView.StateCommon.DataCell.Border.DrawBorders = PaletteDrawBorders.None;
-
-			sampleDataGridView.StateCommon.HeaderColumn.Border.DrawBorders = PaletteDrawBorders.BottomRight;
-			sampleDataGridView.StateCommon.DataCell.Border.DrawBorders = PaletteDrawBorders.None;
-
 			// Remember the arguments
 			this.moduleHandler = moduleHandler;
 

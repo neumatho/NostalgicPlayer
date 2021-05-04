@@ -52,5 +52,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 			set => settings.SetIntEntry("List", "Col2Width", value);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Comment auto selection
+		/// </summary>
+		/********************************************************************/
+		public bool CommentAutoSelect
+		{
+			get => settings.GetBoolEntry("Comment", "AutoSelect");
+
+			set => settings.SetBoolEntry("Comment", "AutoSelect", value);
+		}
 	}
 }

@@ -67,11 +67,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			this.navigator.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.navigator.Button.CloseButtonDisplay = Krypton.Navigator.ButtonDisplay.Hide;
+			this.navigator.Button.ContextButtonDisplay = Krypton.Navigator.ButtonDisplay.Hide;
 			this.navigator.Location = new System.Drawing.Point(8, 8);
 			this.navigator.Name = "navigator";
 			this.navigator.Pages.AddRange(new Krypton.Navigator.KryptonPage[] {
             this.navigatorInstrumentPage,
             this.navigatorSamplePage});
+			this.navigator.Panel.PanelBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			this.controlResource.SetResourceKey(this.navigator, null);
 			this.navigator.SelectedIndex = 0;
 			this.navigator.Size = new System.Drawing.Size(432, 172);
@@ -127,8 +130,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			this.instrumentDataGridView.Size = new System.Drawing.Size(412, 127);
 			this.instrumentDataGridView.StateCommon.Background.Color1 = System.Drawing.Color.White;
 			this.instrumentDataGridView.StateCommon.BackStyle = Krypton.Toolkit.PaletteBackStyle.GridBackgroundList;
+			this.instrumentDataGridView.StateCommon.DataCell.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
 			this.instrumentDataGridView.StateCommon.DataCell.Content.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.instrumentDataGridView.StateCommon.DataCell.Content.Padding = new System.Windows.Forms.Padding(0);
+			this.instrumentDataGridView.StateCommon.HeaderColumn.Border.DrawBorders = ((Krypton.Toolkit.PaletteDrawBorders)((Krypton.Toolkit.PaletteDrawBorders.Bottom | Krypton.Toolkit.PaletteDrawBorders.Right)));
 			this.instrumentDataGridView.StateCommon.HeaderColumn.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.instrumentDataGridView.TabIndex = 0;
 			// 
@@ -239,8 +244,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			this.sampleDataGridView.Size = new System.Drawing.Size(412, 105);
 			this.sampleDataGridView.StateCommon.Background.Color1 = System.Drawing.Color.White;
 			this.sampleDataGridView.StateCommon.BackStyle = Krypton.Toolkit.PaletteBackStyle.GridBackgroundList;
+			this.sampleDataGridView.StateCommon.DataCell.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
 			this.sampleDataGridView.StateCommon.DataCell.Content.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.sampleDataGridView.StateCommon.DataCell.Content.Padding = new System.Windows.Forms.Padding(0);
+			this.sampleDataGridView.StateCommon.HeaderColumn.Border.DrawBorders = ((Krypton.Toolkit.PaletteDrawBorders)((Krypton.Toolkit.PaletteDrawBorders.Bottom | Krypton.Toolkit.PaletteDrawBorders.Right)));
 			this.sampleDataGridView.StateCommon.HeaderColumn.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.sampleDataGridView.TabIndex = 0;
 			this.sampleDataGridView.SelectionChanged += new System.EventHandler(this.SampleDataGridView_SelectionChanged);

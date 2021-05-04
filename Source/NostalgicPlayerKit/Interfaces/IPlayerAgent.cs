@@ -38,6 +38,11 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		string Author { get; }
 
 		/// <summary>
+		/// Return the comment separated in lines
+		/// </summary>
+		string[] Comment { get; }
+
+		/// <summary>
 		/// Returns the description and value on the line given. If the line
 		/// is out of range, false is returned
 		/// </summary>

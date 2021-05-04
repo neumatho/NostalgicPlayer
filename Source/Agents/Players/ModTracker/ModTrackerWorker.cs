@@ -57,6 +57,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		private bool endReached;
 
 		private string songName;
+		private string[] comment;
 		private ushort maxPattern;
 		private ushort channelNum;
 		private ushort sampleNum;
@@ -145,6 +146,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// </summary>
 		/********************************************************************/
 		public override string ModuleName => songName;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the comment separated in lines
+		/// </summary>
+		/********************************************************************/
+		public override string[] Comment => comment;
 
 
 
@@ -1450,6 +1460,7 @@ stopLoop:
 				moduleStream.Read(buf, 0, 20);
 
 				songName = encoder.GetString(buf);
+				comment = new string[0];
 
 				// Allocate space to the samples
 				samples = new Sample[sampleNum];
@@ -1846,8 +1857,8 @@ stopLoop:
 				// Read the sequence data
 				moduleStream.ReadArray_L_UINT16s(sequences, sequences.Length);
 
-				// Skip the comment field
-				moduleStream.Seek(commentLength, SeekOrigin.Current);
+				// Read the comment field
+				comment = moduleStream.ReadCommentBlock(commentLength, 40, encoder);
 
 				if (moduleStream.EndOfStream)
 				{

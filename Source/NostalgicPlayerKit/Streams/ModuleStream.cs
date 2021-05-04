@@ -9,6 +9,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 using Polycode.NostalgicPlayer.Kit.Containers;
 
 namespace Polycode.NostalgicPlayer.Kit.Streams
@@ -53,6 +55,43 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		public ModuleStream(Stream wrapperStream, Stream sampleDataStream) : base(wrapperStream, true)
 		{
 			sampleStream = sampleDataStream;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will read a comment field which is stored as a block of lines
+		/// and return them
+		/// </summary>
+		/********************************************************************/
+		public string[] ReadCommentBlock(int blockSize, int lineLength, Encoding encoder)
+		{
+			if (blockSize == 0)
+				return new string[0];
+
+			int numberOfLines = (blockSize + lineLength - 1) / lineLength;
+			string[] lines = new string[numberOfLines];
+
+			byte[] lineBuffer = new byte[lineLength + 1];
+			lineBuffer[lineLength] = 0x00;			// Null terminator, just in case
+
+			// Store the lines in reverse order in the array.
+			// This helps to skip empty lines in the each later on
+			for (int i = numberOfLines - 1; blockSize > 0; i--)
+			{
+				int todo = Math.Min(lineLength, blockSize);
+				Read(lineBuffer, 0, todo);
+
+				string singleLine = encoder.GetString(lineBuffer, 0, lineLength);
+				singleLine = singleLine.Replace('\r', ' ').Replace('\n', ' ');
+
+				lines[i] = singleLine;
+
+				blockSize -= todo;
+			}
+
+			return lines.SkipWhile(string.IsNullOrWhiteSpace).Reverse().ToArray();
 		}
 
 

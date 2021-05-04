@@ -762,6 +762,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Comment.
+        /// </summary>
+        internal static string IDS_MODULE_INFO_COLUMN_COMMENT {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_COLUMN_COMMENT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Description.
         /// </summary>
         internal static string IDS_MODULE_INFO_COLUMN_DESCRIPTION {
@@ -857,6 +866,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_MODULE_INFO_ITEM_TIME {
             get {
                 return ResourceManager.GetString("IDS_MODULE_INFO_ITEM_TIME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Comment.
+        /// </summary>
+        internal static string IDS_MODULE_INFO_TAB_COMMENT {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_TAB_COMMENT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Info.
+        /// </summary>
+        internal static string IDS_MODULE_INFO_TAB_INFO {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_TAB_INFO", resourceCulture);
             }
         }
         

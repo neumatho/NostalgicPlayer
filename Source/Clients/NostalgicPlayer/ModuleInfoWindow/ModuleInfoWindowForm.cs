@@ -30,6 +30,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		private ModuleHandler moduleHandler;
 		private MainWindowForm mainWindow;
 
+		private bool doNotUpdateCommentSelection;
+
 		private readonly ModuleInfoWindowSettings settings;
 
 		/********************************************************************/
@@ -54,8 +56,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				// Set the title of the window
 				Text = Resources.IDS_MODULE_INFO_TITLE;
 
-				// Add the columns to the control
-				moduleInfoDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+				// Set the tab titles
+				navigator.Pages[0].Text = Resources.IDS_MODULE_INFO_TAB_INFO;
+				navigator.Pages[1].Text = Resources.IDS_MODULE_INFO_TAB_COMMENT;
+
+				// Add the columns to the controls
+				moduleInfoInfoDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
 					{
 						Name = Resources.IDS_MODULE_INFO_COLUMN_DESCRIPTION,
 						Resizable = DataGridViewTriState.True,
@@ -63,12 +69,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 						Width = settings.Column1Width
 					});
 
-				moduleInfoDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+				moduleInfoInfoDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
 					{
 						Name = Resources.IDS_MODULE_INFO_COLUMN_VALUE,
 						Resizable = DataGridViewTriState.True,
 						SortMode = DataGridViewColumnSortMode.NotSortable,
 						Width = settings.Column2Width
+					});
+
+				moduleInfoCommentDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
+					{
+						Name = Resources.IDS_MODULE_INFO_COLUMN_COMMENT,
+						Resizable = DataGridViewTriState.True,
+						SortMode = DataGridViewColumnSortMode.NotSortable
 					});
 
 				// Make sure that the content is up-to date
@@ -86,7 +99,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		public void RefreshWindow()
 		{
 			// Remove all the items
-			moduleInfoDataGridView.Rows.Clear();
+			moduleInfoInfoDataGridView.Rows.Clear();
+			moduleInfoCommentDataGridView.Rows.Clear();
 
 			// Add the items
 			AddItems();
@@ -104,10 +118,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			// Check to see if there are any module loaded at the moment
 			if (moduleHandler.IsModuleLoaded)
 			{
-				if ((FirstCustomLine + line) < moduleInfoDataGridView.RowCount)
+				if ((FirstCustomLine + line) < moduleInfoInfoDataGridView.RowCount)
 				{
-					moduleInfoDataGridView.Rows[FirstCustomLine + line].Cells[1].Value = newValue;
-					moduleInfoDataGridView.InvalidateRow(FirstCustomLine + line);
+					moduleInfoInfoDataGridView.Rows[FirstCustomLine + line].Cells[1].Value = newValue;
+					moduleInfoInfoDataGridView.InvalidateRow(FirstCustomLine + line);
 				}
 			}
 		}
@@ -121,8 +135,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		private void ModuleInfoWindowForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
 			// Save the settings
-			settings.Column1Width = moduleInfoDataGridView.Columns[0].Width;
-			settings.Column2Width = moduleInfoDataGridView.Columns[1].Width;
+			settings.Column1Width = moduleInfoInfoDataGridView.Columns[0].Width;
+			settings.Column2Width = moduleInfoInfoDataGridView.Columns[1].Width;
 
 			// Cleanup
 			mainWindow = null;
@@ -133,10 +147,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// Is called when a tab is selected
+		/// </summary>
+		/********************************************************************/
+		private void Navigator_SelectedPageChanged(object sender, EventArgs e)
+		{
+			if (!doNotUpdateCommentSelection)
+				settings.CommentAutoSelect = navigator.SelectedIndex == 1;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Is called when the user clicks in a cell in the data grid
 		/// </summary>
 		/********************************************************************/
-		private void ModuleInfoDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+		private void ModuleInfoInfoDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
 		{
 			if (!Env.IsWindows10S)
 			{
@@ -144,7 +171,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				if ((e.RowIndex == 7) && (e.ColumnIndex == 1))
 				{
 					// Start File Explorer and select the file
-					Process.Start("explorer.exe", $"/select,\"{moduleInfoDataGridView[e.ColumnIndex, e.RowIndex].Value}\"");
+					Process.Start("explorer.exe", $"/select,\"{moduleInfoInfoDataGridView[e.ColumnIndex, e.RowIndex].Value}\"");
 				}
 			}
 		}
@@ -170,17 +197,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				if (string.IsNullOrEmpty(val))
 					val = Path.GetFileName(fileInfo.FileName);
 
-				moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULENAME, val);
+				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULENAME, val);
 
 				val = staticInfo.Author;
 				if (string.IsNullOrEmpty(val))
 					val = Resources.IDS_MODULE_INFO_UNKNOWN;
 
-				moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_AUTHOR, val);
+				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_AUTHOR, val);
 
-				moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULEFORMAT, staticInfo.ModuleFormat);
-				moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_ACTIVEPLAYER, staticInfo.PlayerName);
-				moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_CHANNELS, staticInfo.Channels);
+				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULEFORMAT, staticInfo.ModuleFormat);
+				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_ACTIVEPLAYER, staticInfo.PlayerName);
+				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_CHANNELS, staticInfo.Channels);
 
 				TimeSpan time = floatingInfo.TotalTime;
 				if (time.TotalMilliseconds == 0)
@@ -194,16 +221,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 						val = time.ToString(Resources.IDS_TIMEFORMAT_SMALL);
 				}
 
-				moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_TIME, val);
+				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_TIME, val);
 
-				moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE, $"{staticInfo.ModuleSize:n0}");
+				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE, $"{staticInfo.ModuleSize:n0}");
 
 				if (Env.IsWindows10S)
-					moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, fileInfo.FileName);
+					moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, fileInfo.FileName);
 				else
 				{
-					int row = moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, fileInfo.FileName);
-					moduleInfoDataGridView.Rows[row].Cells[1] = new KryptonDataGridViewLinkCell { Value = moduleInfoDataGridView.Rows[row].Cells[1].Value, TrackVisitedState = false };
+					int row = moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, fileInfo.FileName);
+					moduleInfoInfoDataGridView.Rows[row].Cells[1] = new KryptonDataGridViewLinkCell { Value = moduleInfoInfoDataGridView.Rows[row].Cells[1].Value, TrackVisitedState = false };
 				}
 
 				// Add player specific items
@@ -217,13 +244,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 						new KryptonDataGridViewTextBoxCell { Value = string.Empty, ToolTipText = string.Empty }
 					});
 
-					moduleInfoDataGridView.Rows.Add(emptyRow);
+					moduleInfoInfoDataGridView.Rows.Add(emptyRow);
 
 					foreach (string info in floatingInfo.ModuleInformation)
 					{
 						string[] splittedInfo = info.Split('\t');
-						moduleInfoDataGridView.Rows.Add(splittedInfo[0], splittedInfo[1]);
+						moduleInfoInfoDataGridView.Rows.Add(splittedInfo[0], splittedInfo[1]);
 					}
+				}
+
+				// Add comment
+				if (staticInfo.Comment.Length > 0)
+				{
+					navigator.Pages[1].Visible = true;
+
+					if (settings.CommentAutoSelect)
+						navigator.SelectedIndex = 1;
+
+					foreach (string line in staticInfo.Comment)
+						moduleInfoCommentDataGridView.Rows.Add(line);
 				}
 			}
 			else
@@ -231,18 +270,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				// No module in memory
 				string na = Resources.IDS_MODULE_INFO_ITEM_NA;
 
-				moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULENAME, na);
-				moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_AUTHOR, na);
-				moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULEFORMAT, na);
-				moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_ACTIVEPLAYER, na);
-				moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_CHANNELS, na);
-				moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_TIME, na);
-				moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE, na);
-				moduleInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, na);
+				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULENAME, na);
+				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_AUTHOR, na);
+				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULEFORMAT, na);
+				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_ACTIVEPLAYER, na);
+				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_CHANNELS, na);
+				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_TIME, na);
+				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE, na);
+				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, na);
+
+				doNotUpdateCommentSelection = true;
+				navigator.Pages[1].Visible = false;
+				doNotUpdateCommentSelection = false;
 			}
 
 			// Resize the rows, so the lines are compacted
-			moduleInfoDataGridView.AutoResizeRows();
+			moduleInfoInfoDataGridView.AutoResizeRows();
+			moduleInfoCommentDataGridView.AutoResizeRows();
 		}
 		#endregion
 	}

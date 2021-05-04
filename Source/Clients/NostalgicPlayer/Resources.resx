@@ -412,6 +412,9 @@ navigate to the official webpage which is:</value>
   <data name="IDS_MENU_WINDOW_SETTINGS" xml:space="preserve">
     <value>Settings…</value>
   </data>
+  <data name="IDS_MODULE_INFO_COLUMN_COMMENT" xml:space="preserve">
+    <value>Comment</value>
+  </data>
   <data name="IDS_MODULE_INFO_COLUMN_DESCRIPTION" xml:space="preserve">
     <value>Description</value>
   </data>
@@ -444,6 +447,12 @@ navigate to the official webpage which is:</value>
   </data>
   <data name="IDS_MODULE_INFO_ITEM_TIME" xml:space="preserve">
     <value>Total time:</value>
+  </data>
+  <data name="IDS_MODULE_INFO_TAB_COMMENT" xml:space="preserve">
+    <value>Comment</value>
+  </data>
+  <data name="IDS_MODULE_INFO_TAB_INFO" xml:space="preserve">
+    <value>Info</value>
   </data>
   <data name="IDS_MODULE_INFO_TITLE" xml:space="preserve">
     <value>Module Information</value>

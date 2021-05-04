@@ -57,6 +57,15 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Return the comment separated in lines
+		/// </summary>
+		/********************************************************************/
+		public virtual string[] Comment => new string[0];
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Returns the description and value on the line given. If the line
 		/// is out of range, false is returned
 		/// </summary>
