@@ -25,14 +25,14 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		#region S69Header class
 		private class S69Header
 		{
-			public byte[] Marker = new byte[2];
-			public byte[] Message = new byte[109];
+			public readonly byte[] Marker = new byte[2];
+			public readonly byte[] Message = new byte[109];
 			public byte Nos;
 			public byte Nop;
 			public byte LoopOrder;
-			public byte[] Orders = new byte[0x80];
-			public byte[] Tempos = new byte[0x80];
-			public byte[] Breaks = new byte[0x80];
+			public readonly byte[] Orders = new byte[0x80];
+			public readonly byte[] Tempos = new byte[0x80];
+			public readonly byte[] Breaks = new byte[0x80];
 		}
 		#endregion
 
@@ -42,7 +42,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		/// </summary>
 		private class S69Sample
 		{
-			public byte[] FileName = new byte[14];
+			public readonly byte[] FileName = new byte[14];
 			public int Length;
 			public int LoopBeg;
 			public int LoopEnd;

@@ -19,37 +19,37 @@ using Polycode.NostalgicPlayer.Kit.Utility;
 namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 {
 	/// <summary>
-	/// MikMod loader for FastTracker 2 format
+	/// MikMod loader for XM format
 	/// </summary>
 	internal class MikModConverterWorker_Xm : MikModConverterWorkerBase
 	{
 		#region XmHeader class
 		private class XmHeader
 		{
-			public byte[] Id = new byte[18];				// ID text: 'Extended Module: '
-			public byte[] SongName = new byte[21];			// Module name, padded with zeros
-			public byte[] TrackerName = new byte[21];		// Tracker name
-			public ushort Version;							// Version number
-			public uint HeaderSize;							// Header size
-			public ushort SongLength;						// Song length (in pattern order table)
-			public ushort Restart;							// Restart position
-			public ushort NumChn;							// Number of channels (2, 4, 6, 8, 10, ..., 32)
-			public ushort NumPat;							// Number of patterns (max 256)
-			public ushort NumIns;							// Number of instruments (max 128)
+			public readonly byte[] Id = new byte[18];				// ID text: 'Extended Module: '
+			public readonly byte[] SongName = new byte[21];			// Module name, padded with zeros
+			public readonly byte[] TrackerName = new byte[21];		// Tracker name
+			public ushort Version;									// Version number
+			public uint HeaderSize;									// Header size
+			public ushort SongLength;								// Song length (in pattern order table)
+			public ushort Restart;									// Restart position
+			public ushort NumChn;									// Number of channels (2, 4, 6, 8, 10, ..., 32)
+			public ushort NumPat;									// Number of patterns (max 256)
+			public ushort NumIns;									// Number of instruments (max 128)
 			public ushort Flags;
-			public ushort Tempo;							// Default tempo
-			public ushort Bpm;								// Default BPM
-			public byte[] Orders = new byte[256];			// Pattern order table
+			public ushort Tempo;									// Default tempo
+			public ushort Bpm;										// Default BPM
+			public readonly byte[] Orders = new byte[256];			// Pattern order table
 		}
 		#endregion
 
 		#region XmInstHeader class
 		private class XmInstHeader
 		{
-			public uint Size;								// Instrument size
-			public byte[] Name = new byte[23];				// Instrument name
-			public byte Type;								// Instrument type (always 0)
-			public ushort NumSmp;							// Number of samples in instrument
+			public uint Size;										// Instrument size
+			public readonly byte[] Name = new byte[23];				// Instrument name
+			public byte Type;										// Instrument type (always 0)
+			public ushort NumSmp;									// Number of samples in instrument
 			public uint SSize;
 		}
 		#endregion
@@ -57,54 +57,54 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		#region XmPatchHeader
 		private class XmPatchHeader
 		{
-			public byte[] What = new byte[XmNoteCnt];		// Sample number for all notes
-			public ushort[] VolEnv = new ushort[XmEnvCnt];	// Points for volume envelope
-			public ushort[] PanEnv = new ushort[XmEnvCnt];	// Points for panning envelope
-			public byte VolPts;								// Number of volume points
-			public byte PanPts;								// Number of panning points
-			public byte VolSus;								// Volume sustain point
-			public byte VolBeg;								// Volume loop start point
-			public byte VolEnd;								// Volume loop end point
-			public byte PanSus;								// Panning sustain point
-			public byte PanBeg;								// Panning loop start point
-			public byte PanEnd;								// Panning loop end point
-			public byte VolFlg;								// Volume type: Bit 0: On, 1: Sustain, 2: Loop
-			public byte PanFlg;								// Panning type: Bit 0: On, 1: Sustain, 2: Loop
-			public byte VibFlg;								// Vibrato type
-			public byte VibSweep;							// Vibrato sweep
-			public byte VibDepth;							// Vibrato depth
-			public byte VibRate;							// Vibrato rate
-			public ushort VolFade;							// Volume fadeout
+			public readonly byte[] What = new byte[XmNoteCnt];		// Sample number for all notes
+			public readonly ushort[] VolEnv = new ushort[XmEnvCnt];	// Points for volume envelope
+			public readonly ushort[] PanEnv = new ushort[XmEnvCnt];	// Points for panning envelope
+			public byte VolPts;										// Number of volume points
+			public byte PanPts;										// Number of panning points
+			public byte VolSus;										// Volume sustain point
+			public byte VolBeg;										// Volume loop start point
+			public byte VolEnd;										// Volume loop end point
+			public byte PanSus;										// Panning sustain point
+			public byte PanBeg;										// Panning loop start point
+			public byte PanEnd;										// Panning loop end point
+			public byte VolFlg;										// Volume type: Bit 0: On, 1: Sustain, 2: Loop
+			public byte PanFlg;										// Panning type: Bit 0: On, 1: Sustain, 2: Loop
+			public byte VibFlg;										// Vibrato type
+			public byte VibSweep;									// Vibrato sweep
+			public byte VibDepth;									// Vibrato depth
+			public byte VibRate;									// Vibrato rate
+			public ushort VolFade;									// Volume fadeout
 		}
 		#endregion
 
 		#region XmWavHeader class
 		private class XmWavHeader
 		{
-			public uint Length;								// Sample length
-			public uint LoopStart;							// Sample loop start
-			public uint LoopLength;							// Sample loop length;
-			public byte Volume;								// Volume
-			public sbyte FineTune;							// Fine tune (signed byte -128..+127)
-			public byte Type;								// Loop type
-			public byte Panning;							// Panning (0-255)
-			public sbyte RelNote;							// Relative note number (signed byte)
+			public uint Length;										// Sample length
+			public uint LoopStart;									// Sample loop start
+			public uint LoopLength;									// Sample loop length;
+			public byte Volume;										// Volume
+			public sbyte FineTune;									// Fine tune (signed byte -128..+127)
+			public byte Type;										// Loop type
+			public byte Panning;									// Panning (0-255)
+			public sbyte RelNote;									// Relative note number (signed byte)
 			public byte Reserved;
-			public byte[] SampleName = new byte[23];		// Sample name
-			public byte VibType;							// Vibrato type
-			public byte VibSweep;							// Vibrato sweep
-			public byte VibDepth;							// Vibrato depth
-			public byte VibRate;							// Vibrato rate
+			public readonly byte[] SampleName = new byte[23];		// Sample name
+			public byte VibType;									// Vibrato type
+			public byte VibSweep;									// Vibrato sweep
+			public byte VibDepth;									// Vibrato depth
+			public byte VibRate;									// Vibrato rate
 		}
 		#endregion
 
 		#region XmPatHeader class
 		private class XmPatHeader
 		{
-			public uint Size;								// Pattern header length
-			public byte Packing;							// Packing type (always 0)
-			public ushort NumRows;							// Number of rows in pattern (1..256)
-			public short PackSize;							// Packed pattern data size
+			public uint Size;										// Pattern header length
+			public byte Packing;									// Packing type (always 0)
+			public ushort NumRows;									// Number of rows in pattern (1..256)
+			public short PackSize;									// Packed pattern data size
 		}
 		#endregion
 

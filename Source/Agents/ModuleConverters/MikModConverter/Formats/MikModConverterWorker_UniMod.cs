@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		#region UniHeader class
 		private class UniHeader
 		{
-			public byte[] Id = new byte[4];
+			public readonly byte[] Id = new byte[4];
 			public byte NumChn;
 			public ushort NumPos;
 			public ushort RepPos;
@@ -40,8 +40,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			public byte NumVoices;
 			public ushort BpmLimit;
 
-			public byte[] Positions = new byte[256];
-			public byte[] Panning = new byte[32];
+			public readonly byte[] Positions = new byte[256];
+			public readonly byte[] Panning = new byte[32];
 		}
 		#endregion
 
