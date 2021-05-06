@@ -97,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Kit.Encoders
 			ushort[] lookupTable = GetLookupTable();
 
 			int taken = 0;
-			for (; byteIndex < byteCount; byteIndex++, charIndex++, taken++)
+			for (; taken < byteCount; byteIndex++, charIndex++, taken++)
 			{
 				// Stop with null terminator
 				if (bytes[byteIndex] == 0x00)

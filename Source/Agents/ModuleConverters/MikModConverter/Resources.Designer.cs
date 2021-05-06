@@ -67,6 +67,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         ///
         ///This version can convert these formats:
         ///
+        ///Composer 669 and Unis 669 (669)
         ///FastTracker II (XM)
         ///UniMod (UNI).
         /// </summary>
@@ -77,11 +78,22 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This loader recognizes “Composer 669” modules. The 669 format were among the first PC module formats. They do not have a wide range of effects and support 8 channels.
+        ///
+        ///“Composer 669” was written by Tran of Renaissance, a.k.a. Tomasz Pytel and released in 1992..
+        /// </summary>
+        internal static string IDS_MIKCONV_DESCRIPTION_AGENT1 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This loader recognizes “UniMod” modules. This is the internal format used by MikMod. If you find any modules in this format, it probably won&apos;t be played correct, because not all effects were supported at the time those modules were used..
         /// </summary>
-        internal static string IDS_MIKCONV_DESCRIPTION_AGENT14 {
+        internal static string IDS_MIKCONV_DESCRIPTION_AGENT15 {
             get {
-                return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT14", resourceCulture);
+                return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT15", resourceCulture);
             }
         }
         
@@ -89,9 +101,20 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         ///   Looks up a localized string similar to This loader recognizes “FastTracker 2” modules. This format was designed from scratch, instead of creating yet another ProTracker variation. It was the first format using instruments as well as samples, and envelopes for finer effects.
         ///FastTracker 2 was written by Fredrik Huss and Magnus Hogdahl, and released in 1994..
         /// </summary>
-        internal static string IDS_MIKCONV_DESCRIPTION_AGENT15 {
+        internal static string IDS_MIKCONV_DESCRIPTION_AGENT16 {
             get {
-                return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT15", resourceCulture);
+                return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT16", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This loader recognizes “Unis 669” modules. This format is the successor of the &quot;Composer 669&quot; and introduces some new effects like the super fast tempo and stereo balance. Support 8 channels.
+        ///
+        ///“Unis 669 Composer” was written by Jason Nunn and released in 1994..
+        /// </summary>
+        internal static string IDS_MIKCONV_DESCRIPTION_AGENT2 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT2", resourceCulture);
             }
         }
         
@@ -168,20 +191,38 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Composer 669.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_AGENT1 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to UniMod.
         /// </summary>
-        internal static string IDS_MIKCONV_NAME_AGENT14 {
+        internal static string IDS_MIKCONV_NAME_AGENT15 {
             get {
-                return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT14", resourceCulture);
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT15", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to FastTracker II.
         /// </summary>
-        internal static string IDS_MIKCONV_NAME_AGENT15 {
+        internal static string IDS_MIKCONV_NAME_AGENT16 {
             get {
-                return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT15", resourceCulture);
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT16", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unis 669.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_AGENT2 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT2", resourceCulture);
             }
         }
         

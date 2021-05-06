@@ -26,6 +26,7 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | Format | Extension | Converter | Player |
 | ------ | -------------- | --------- | ------ |
 | AudioIFF | .aiff / .aif | | Sample |
+| Composer 669 | .669 | MikMod Converter | MikMod |
 | D.O.C. SoundTracker II | .mod | | ModTracker |
 | D.O.C. SoundTracker VI | .mod | | ModTracker |
 | D.O.C. SoundTracker IX | .mod | | ModTracker |
@@ -50,3 +51,4 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | Ultimate SoundTracker 1.0 - 1.21 | .mod | | ModTracker |
 | Ultimate SoundTracker 1.8 - 2.0 | .mod | | ModTracker |
 | UniMod | .uni | MikMod Converter | MikMod |
+| Unis 669 | .669 | MikMod Converter | MikMod |

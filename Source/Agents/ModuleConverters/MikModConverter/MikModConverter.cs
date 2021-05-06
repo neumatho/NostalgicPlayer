@@ -23,8 +23,10 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 	/// </summary>
 	public class MikModConverter : AgentBase
 	{
-		private static readonly Guid agent14Id = Guid.Parse("E37DF813-DCBD-4A32-AA07-5EF1AF6DD037");
-		private static readonly Guid agent15Id = Guid.Parse("1574A876-5F9D-4BAE-81AF-7DB01370ADDD");
+		private static readonly Guid agent1Id = Guid.Parse("DA884858-983E-45DB-B4FF-470DBB927239");
+		private static readonly Guid agent2Id = Guid.Parse("216FCDE9-3E12-474A-A27D-28914C8C894D");
+		private static readonly Guid agent15Id = Guid.Parse("E37DF813-DCBD-4A32-AA07-5EF1AF6DD037");
+		private static readonly Guid agent16Id = Guid.Parse("1574A876-5F9D-4BAE-81AF-7DB01370ADDD");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -56,8 +58,10 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT14, Resources.IDS_MIKCONV_DESCRIPTION_AGENT14, agent14Id),
-					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT15, Resources.IDS_MIKCONV_DESCRIPTION_AGENT15, agent15Id)
+					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT1, Resources.IDS_MIKCONV_DESCRIPTION_AGENT1, agent1Id),
+					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT2, Resources.IDS_MIKCONV_DESCRIPTION_AGENT2, agent2Id),
+					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT15, Resources.IDS_MIKCONV_DESCRIPTION_AGENT15, agent15Id),
+					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT16, Resources.IDS_MIKCONV_DESCRIPTION_AGENT16, agent16Id)
 				};
 			}
 		}
@@ -71,10 +75,16 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 		/********************************************************************/
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
-			if (typeId == agent14Id)
-				return new MikModConverterWorker_UniMod();
+			if (typeId == agent1Id)
+				return new MikModConverterWorker_669(0x69, 0x66);
+
+			if (typeId == agent2Id)
+				return new MikModConverterWorker_669(0x4a, 0x4e);
 
 			if (typeId == agent15Id)
+				return new MikModConverterWorker_UniMod();
+
+			if (typeId == agent16Id)
 				return new MikModConverterWorker_Xm();
 
 			return null;
