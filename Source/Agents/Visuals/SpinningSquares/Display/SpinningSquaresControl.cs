@@ -219,11 +219,10 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 		/********************************************************************/
 		private (int Rows, int Columns) FindRowsAndColumns()
 		{
-			int calcChannels = channelsInUse % 2 == 0 ? channelsInUse : channelsInUse + 1;
-			int rows = (int)Math.Round(Math.Sqrt(calcChannels), MidpointRounding.AwayFromZero);
-			int cols = (int)Math.Round((double)calcChannels / rows, MidpointRounding.AwayFromZero);
+			int rows = (int)Math.Round(Math.Sqrt(channelsInUse), MidpointRounding.AwayFromZero);
+			int cols = (int)Math.Round((double)channelsInUse / rows, MidpointRounding.AwayFromZero);
 
-			if ((rows * cols) < calcChannels)
+			if ((rows * cols) < channelsInUse)
 				rows++;
 
 			return (Rows: rows, Columns: cols);
