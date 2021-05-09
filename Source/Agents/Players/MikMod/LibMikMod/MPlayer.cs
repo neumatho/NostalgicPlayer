@@ -3124,7 +3124,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			if ((tick != 0) || (mod.PatDly2 != 0))
 				return 0;
 
-			if (speed > 128)
+			if (speed >= 128)
 				speed -= 128;
 
 			if (speed != 0)

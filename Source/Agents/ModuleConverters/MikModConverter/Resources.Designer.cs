@@ -68,6 +68,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         ///This version can convert these formats:
         ///
         ///Composer 669 and Unis 669 (669)
+        ///Digital Sound and Music Interface (AMF)
         ///FastTracker II (XM)
         ///UniMod (UNI).
         /// </summary>
@@ -119,6 +120,19 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This loader recognizes the “Advanced Module Format”, which is the internal module format of the “Digital Sound and Music Interface” (DSMI) library.
+        ///
+        ///This format has the same limitations as the S3M format. The most famous DSMI application was DMP, the Dual Module Player.
+        ///
+        ///DMP and the DSMI library were written by Otto Chrons. DSMI was first released in 1993..
+        /// </summary>
+        internal static string IDS_MIKCONV_DESCRIPTION_AGENT3 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Module header have some bad values.
         /// </summary>
         internal static string IDS_MIKCONV_ERR_BAD_HEADER {
@@ -166,9 +180,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the sample information.
         /// </summary>
-        internal static string IDS_MIKCONV_ERR_LOADING_SAMPLES {
+        internal static string IDS_MIKCONV_ERR_LOADING_SAMPLEINFO {
             get {
-                return ResourceManager.GetString("IDS_MIKCONV_ERR_LOADING_SAMPLES", resourceCulture);
+                return ResourceManager.GetString("IDS_MIKCONV_ERR_LOADING_SAMPLEINFO", resourceCulture);
             }
         }
         
@@ -223,6 +237,24 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         internal static string IDS_MIKCONV_NAME_AGENT2 {
             get {
                 return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Digital Sound and Music Interface.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_AGENT3 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Digital Sound and Music Interface module format {0}.{1}.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_DSMI {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_DSMI", resourceCulture);
             }
         }
         

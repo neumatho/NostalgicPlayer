@@ -348,7 +348,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 										// Get the speed
 										effArg = uniTrk.UniGetByte();
 
-										if (effArg > 128)
+										if (effArg >= 128)
 											effArg -= 128;
 
 										if (effArg != 0)
@@ -1001,8 +1001,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 			}
 
 			// Read arrays
-			moduleStream.ReadArray_B_UINT16s(of.Positions, of.NumPos);
-			moduleStream.ReadArray_B_UINT16s(of.Panning, of.NumChn);
+			moduleStream.ReadArray_B_UINT16s(of.Positions, 0, of.NumPos);
+			moduleStream.ReadArray_B_UINT16s(of.Panning, 0, of.NumChn);
 			moduleStream.Read(of.ChanVol, 0, of.NumChn);
 
 			if (moduleStream.EndOfStream)
@@ -1113,7 +1113,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 						i.PitEnv[w].Val = (short)moduleStream.Read_B_UINT16();
 					}
 
-					moduleStream.ReadArray_B_UINT16s(i.SampleNumber, SharedConstant.InstNotes);
+					moduleStream.ReadArray_B_UINT16s(i.SampleNumber, 0, SharedConstant.InstNotes);
 					moduleStream.Read(i.SampleNote, 0, SharedConstant.InstNotes);
 
 					i.InsName = moduleStream.ReadString();
@@ -1127,8 +1127,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 			}
 
 			// Read patterns
-			moduleStream.ReadArray_B_UINT16s(of.PattRows, of.NumPat);
-			moduleStream.ReadArray_B_UINT16s(of.Patterns, of.NumPat * of.NumChn);
+			moduleStream.ReadArray_B_UINT16s(of.PattRows, 0, of.NumPat);
+			moduleStream.ReadArray_B_UINT16s(of.Patterns, 0, of.NumPat * of.NumChn);
 
 			// Read tracks
 			for (int v = 0; v < of.NumTrk; v++)

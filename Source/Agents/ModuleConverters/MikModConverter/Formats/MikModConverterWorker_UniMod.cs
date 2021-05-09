@@ -244,14 +244,14 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 				if (uniVersion >= 6)
 				{
 					if (uniVersion >= 0x100)
-						moduleStream.ReadArray_B_UINT16s(of.Positions, of.NumPos);
+						moduleStream.ReadArray_B_UINT16s(of.Positions, 0, of.NumPos);
 					else
 					{
 						for (int t = 0; t < of.NumPos; t++)
 							of.Positions[t] = moduleStream.Read_UINT8();
 					}
 
-					moduleStream.ReadArray_B_UINT16s(of.Panning, of.NumChn);
+					moduleStream.ReadArray_B_UINT16s(of.Panning, 0, of.NumChn);
 					moduleStream.Read(of.ChanVol, 0, of.NumChn);
 				}
 				else
@@ -292,13 +292,13 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 					if (!MLoader.AllocSamples(of))
 					{
-						errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_SAMPLES;
+						errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_SAMPLEINFO;
 						return false;
 					}
 
 					if (!LoadSmp6(moduleStream))
 					{
-						errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_SAMPLES;
+						errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_SAMPLEINFO;
 						return false;
 					}
 
@@ -333,7 +333,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 					if (!MLoader.AllocSamples(of))
 					{
-						errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_SAMPLES;
+						errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_SAMPLEINFO;
 						return false;
 					}
 
@@ -384,13 +384,13 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 				if (uniVersion >= 6)
 				{
-					moduleStream.ReadArray_B_UINT16s(of.PattRows, of.NumPat);
-					moduleStream.ReadArray_B_UINT16s(of.Patterns, of.NumPat * of.NumChn);
+					moduleStream.ReadArray_B_UINT16s(of.PattRows, 0, of.NumPat);
+					moduleStream.ReadArray_B_UINT16s(of.Patterns, 0, of.NumPat * of.NumChn);
 				}
 				else
 				{
-					moduleStream.ReadArray_L_UINT16s(of.PattRows, of.NumPat);
-					moduleStream.ReadArray_L_UINT16s(of.Patterns, of.NumPat * of.NumChn);
+					moduleStream.ReadArray_L_UINT16s(of.PattRows, 0, of.NumPat);
+					moduleStream.ReadArray_L_UINT16s(of.Patterns, 0, of.NumPat * of.NumChn);
 				}
 
 				// Tracks
@@ -733,7 +733,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 				}
 
 				if (uniVersion >= 0x103)
-					moduleStream.ReadArray_B_UINT16s(i.SampleNumber, 120);
+					moduleStream.ReadArray_B_UINT16s(i.SampleNumber, 0, 120);
 				else
 				{
 					for (int w = 0; w < 120; w++)

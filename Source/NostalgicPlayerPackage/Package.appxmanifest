@@ -127,6 +127,14 @@
             <uap:DisplayName>Composer/Unis 669</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="amffile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-amf">.amf</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>DSMI</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

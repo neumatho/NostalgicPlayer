@@ -396,10 +396,10 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// the stream and convert the integers to the native host format
 		/// </summary>
 		/********************************************************************/
-		public void ReadArray_L_UINT16s(ushort[] buffer, int count)
+		public void ReadArray_L_UINT16s(ushort[] buffer, int offset, int count)
 		{
 			for (int i = 0; i < count; i++)
-				buffer[i] = Read_L_UINT16();
+				buffer[offset + i] = Read_L_UINT16();
 		}
 
 
@@ -410,10 +410,10 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// the stream and convert the integers to the native host format
 		/// </summary>
 		/********************************************************************/
-		public void ReadArray_L_UINT32s(uint[] buffer, int count)
+		public void ReadArray_L_UINT32s(uint[] buffer, int offset, int count)
 		{
 			for (int i = 0; i < count; i++)
-				buffer[i] = Read_L_UINT32();
+				buffer[offset + i] = Read_L_UINT32();
 		}
 
 
@@ -514,10 +514,10 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// the stream and convert the integers to the native host format
 		/// </summary>
 		/********************************************************************/
-		public void ReadArray_B_UINT16s(ushort[] buffer, int count)
+		public void ReadArray_B_UINT16s(ushort[] buffer, int offset, int count)
 		{
 			for (int i = 0; i < count; i++)
-				buffer[i] = Read_B_UINT16();
+				buffer[offset + i] = Read_B_UINT16();
 		}
 
 
@@ -528,10 +528,10 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// the stream and convert the integers to the native host format
 		/// </summary>
 		/********************************************************************/
-		public void ReadArray_B_UINT32s(uint[] buffer, int count)
+		public void ReadArray_B_UINT32s(uint[] buffer, int offset, int count)
 		{
 			for (int i = 0; i < count; i++)
-				buffer[i] = Read_B_UINT32();
+				buffer[offset + i] = Read_B_UINT32();
 		}
 
 

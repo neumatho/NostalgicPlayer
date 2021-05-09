@@ -125,6 +125,7 @@ Written by Thomas Neumann based on MikMod 3.3.11.1 + what has been added to 3.3.
 This version can convert these formats:
 
 Composer 669 and Unis 669 (669)
+Digital Sound and Music Interface (AMF)
 FastTracker II (XM)
 UniMod (UNI)</value>
   </data>
@@ -145,6 +146,13 @@ FastTracker 2 was written by Fredrik Huss and Magnus Hogdahl, and released in 19
 
 “Unis 669 Composer” was written by Jason Nunn and released in 1994.</value>
   </data>
+  <data name="IDS_MIKCONV_DESCRIPTION_AGENT3" xml:space="preserve">
+    <value>This loader recognizes the “Advanced Module Format”, which is the internal module format of the “Digital Sound and Music Interface” (DSMI) library.
+
+This format has the same limitations as the S3M format. The most famous DSMI application was DMP, the Dual Module Player.
+
+DMP and the DSMI library were written by Otto Chrons. DSMI was first released in 1993.</value>
+  </data>
   <data name="IDS_MIKCONV_ERR_BAD_HEADER" xml:space="preserve">
     <value>Module header have some bad values</value>
   </data>
@@ -160,7 +168,7 @@ FastTracker 2 was written by Fredrik Huss and Magnus Hogdahl, and released in 19
   <data name="IDS_MIKCONV_ERR_LOADING_PATTERNS" xml:space="preserve">
     <value>Can't read the pattern information</value>
   </data>
-  <data name="IDS_MIKCONV_ERR_LOADING_SAMPLES" xml:space="preserve">
+  <data name="IDS_MIKCONV_ERR_LOADING_SAMPLEINFO" xml:space="preserve">
     <value>Can't read the sample information</value>
   </data>
   <data name="IDS_MIKCONV_ERR_LOADING_TRACKS" xml:space="preserve">
@@ -180,6 +188,12 @@ FastTracker 2 was written by Fredrik Huss and Magnus Hogdahl, and released in 19
   </data>
   <data name="IDS_MIKCONV_NAME_AGENT2" xml:space="preserve">
     <value>Unis 669</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_AGENT3" xml:space="preserve">
+    <value>Digital Sound and Music Interface</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_DSMI" xml:space="preserve">
+    <value>Digital Sound and Music Interface module format {0}.{1}</value>
   </data>
   <data name="IDS_MIKCONV_NAME_UNI" xml:space="preserve">
     <value>{0} (was {1})</value>

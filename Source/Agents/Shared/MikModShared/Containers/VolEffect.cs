@@ -14,6 +14,8 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 	public enum VolEffect : byte
 	{
 		/// <summary></summary>
+		None,
+		/// <summary></summary>
 		Volume = 1,
 		/// <summary></summary>
 		Panning,

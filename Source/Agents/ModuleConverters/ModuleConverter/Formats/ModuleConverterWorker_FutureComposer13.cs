@@ -267,7 +267,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 				converterStream.Write_B_UINT32(seqLength);
 
 			// Read the offsets
-			moduleStream.ReadArray_B_UINT32s(offsetsAndLength, 8);
+			moduleStream.ReadArray_B_UINT32s(offsetsAndLength, 0, 8);
 			converterStream.Seek(8 * 4, SeekOrigin.Current);
 
 			// Copy the sample information

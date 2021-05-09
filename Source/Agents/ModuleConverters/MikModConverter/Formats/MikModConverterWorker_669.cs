@@ -199,7 +199,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 				{
 					if ((mh.Orders[i] >= 0x80) && (mh.Orders[i] != 0xff))
 					{
-						errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_HEADER;
+						errorMessage = Resources.IDS_MIKCONV_ERR_BAD_HEADER;
 						return false;
 					}
 				}
@@ -215,7 +215,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 				{
 					if ((mh.Tempos[i] == 0x00) || (mh.Tempos[i] > 32))
 					{
-						errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_HEADER;
+						errorMessage = Resources.IDS_MIKCONV_ERR_BAD_HEADER;
 						return false;
 					}
 				}
@@ -231,7 +231,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 				{
 					if (mh.Breaks[i] > 0x3f)
 					{
-						errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_HEADER;
+						errorMessage = Resources.IDS_MIKCONV_ERR_BAD_HEADER;
 						return false;
 					}
 				}
@@ -287,7 +287,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 				if (!MLoader.AllocSamples(of))
 				{
-					errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_SAMPLES;
+					errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_SAMPLEINFO;
 					return false;
 				}
 
@@ -304,12 +304,12 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 					sample.LoopBeg = (int)moduleStream.Read_L_UINT32();
 					sample.LoopEnd = (int)moduleStream.Read_L_UINT32();
 
-					if ((sample.LoopEnd == 0xfffff) || (sample.LoopEnd == 0xf0ffff))	// No loop or special value used in Lost in Germany
+					if (sample.LoopEnd >= 0xfffff)			// No loop value or higher, which is used in Lost in Germany
 						sample.LoopEnd = 0;
 
 					if ((sample.Length < 0) || (sample.LoopBeg < -1) || (sample.LoopEnd < -1))
 					{
-						errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_SAMPLES;
+						errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_SAMPLEINFO;
 						return false;
 					}
 
@@ -324,7 +324,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 					if (moduleStream.EndOfStream)
 					{
-						errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_SAMPLES;
+						errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_SAMPLEINFO;
 						return false;
 					}
 				}

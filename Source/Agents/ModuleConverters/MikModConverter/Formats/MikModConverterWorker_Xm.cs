@@ -325,7 +325,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 				if (!MLoader.AllocSamples(of))
 				{
-					errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_SAMPLES;
+					errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_SAMPLEINFO;
 					return false;
 				}
 
@@ -934,8 +934,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 						XmPatchHeader pth = new XmPatchHeader();
 
 						moduleStream.Read(pth.What, 0, XmNoteCnt);
-						moduleStream.ReadArray_L_UINT16s(pth.VolEnv, XmEnvCnt);
-						moduleStream.ReadArray_L_UINT16s(pth.PanEnv, XmEnvCnt);
+						moduleStream.ReadArray_L_UINT16s(pth.VolEnv, 0, XmEnvCnt);
+						moduleStream.ReadArray_L_UINT16s(pth.PanEnv, 0, XmEnvCnt);
 
 						pth.VolPts = moduleStream.Read_UINT8();
 						pth.PanPts = moduleStream.Read_UINT8();

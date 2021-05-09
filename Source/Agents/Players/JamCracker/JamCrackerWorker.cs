@@ -218,7 +218,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				// Allocate and read the position array
 				songTable = new ushort[songLen];
 
-				moduleStream.ReadArray_B_UINT16s(songTable, songLen);
+				moduleStream.ReadArray_B_UINT16s(songTable, 0, songLen);
 
 				if (moduleStream.EndOfStream)
 				{

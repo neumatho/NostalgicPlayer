@@ -1855,7 +1855,7 @@ stopLoop:
 				sequences = new ushort[32 * maxPattern];
 
 				// Read the sequence data
-				moduleStream.ReadArray_L_UINT16s(sequences, sequences.Length);
+				moduleStream.ReadArray_L_UINT16s(sequences, 0, sequences.Length);
 
 				// Read the comment field
 				comment = moduleStream.ReadCommentBlock(commentLength, 40, encoder);

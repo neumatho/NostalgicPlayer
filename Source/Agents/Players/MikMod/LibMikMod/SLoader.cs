@@ -84,9 +84,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 						if ((inFmt & SampleFlag._16Bits) != 0)
 						{
 							if ((inFmt & SampleFlag.BigEndian) != 0)
-								sampleDataStream.ReadArray_B_UINT16s(sl_buffer16, sTodo);
+								sampleDataStream.ReadArray_B_UINT16s(sl_buffer16, 0, sTodo);
 							else
-								sampleDataStream.ReadArray_L_UINT16s(sl_buffer16, sTodo);
+								sampleDataStream.ReadArray_L_UINT16s(sl_buffer16, 0, sTodo);
 						}
 						else
 							sampleDataStream.Read(sl_buffer8, 0, sTodo);

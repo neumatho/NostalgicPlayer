@@ -15,6 +15,31 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod
 {
 	/// <summary>
 	/// Helper class to read and write UniMod files
+	///
+	/// Sparse description of the internal module format
+	/// ------------------------------------------------
+	///
+	/// A UNITRK stream is an array of bytes representing a single track of a pattern.
+	/// It's made up of 'repeat/length' bytes, opcodes and operands (sort of a assembly
+	/// language):
+	///
+	/// rrrlllll
+	/// [REP/LEN][OPCODE][OPERAND][OPCODE][OPERAND] [REP/LEN][OPCODE][OPERAND]..
+	/// ^                                         ^ ^
+	/// |-------ROWS 0 - 0+REP of a track---------| |-------ROWS xx - xx+REP of a track...
+	///
+	/// The rep/len byte contains the number of bytes in the current row, _including_
+	/// the length byte itself (So the LENGTH byte of row 0 in the previous example
+	/// would have a value of 5). This makes it easy to search through a stream for a
+	/// particular row. A track is concluded by a 0-value length byte.
+	///
+	/// The upper 3 bits of the rep/len byte contain the number of times -1 this row
+	/// is repeated for this track. (so a value of 7 means this row is repeated 8 times)
+	///
+	/// Opcodes can range from 1 to 255 but currently only opcodes 1 to 62 are being
+	/// used. Each opcode can have a different number of operands. You can find the
+	/// number of operands to a particular opcode by using the opcode as an index into
+	/// the 'unioperands' table.
 	/// </summary>
 	public class MUniTrk
 	{
@@ -336,6 +361,24 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod
 		public void UniInstrument(ushort ins)
 		{
 			UniEffect(Command.UniInstrument, ins);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Appends UNI_VOLEFFECT + effect/dat to unistream
+		/// </summary>
+		/********************************************************************/
+		public void UniVolEffect(VolEffect eff, byte dat)
+		{
+			// Don't write empty effect
+			if ((eff != VolEffect.None) || (dat != 0))
+			{
+				UniWriteByte((byte)Command.UniVolEffects);
+				UniWriteByte((byte)eff);
+				UniWriteByte(dat);
+			}
 		}
 
 		#region Private methods
