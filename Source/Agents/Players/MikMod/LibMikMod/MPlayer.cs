@@ -1655,7 +1655,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 						if ((flags & ModuleFlag.XmPeriods) != 0)
 							a.Speed = (uint)(nib + 128);
 						else
-							a.Speed = LookupTables.FineTune[nib];
+							a.Speed = SharedLookupTables.FineTune[nib];
 
 						a.TmpPeriod = GetPeriod(flags, (ushort)(a.Main.Note << 1), a.Speed);
 					}

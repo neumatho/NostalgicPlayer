@@ -68,6 +68,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         ///This version can convert these formats:
         ///
         ///Composer 669 and Unis 669 (669)
+        ///Asylum
         ///Digital Sound and Music Interface (AMF)
         ///FastTracker II (XM)
         ///UniMod (UNI).
@@ -129,6 +130,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         internal static string IDS_MIKCONV_DESCRIPTION_AGENT3 {
             get {
                 return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This loader recognize the “ASYLUM Music Format”, which was used in Crusader series of games by Origin. This format uses the .amf extension, but is very similar to a 8 Channel Mod file..
+        /// </summary>
+        internal static string IDS_MIKCONV_DESCRIPTION_AGENT4 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT4", resourceCulture);
             }
         }
         
@@ -246,6 +256,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         internal static string IDS_MIKCONV_NAME_AGENT3 {
             get {
                 return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Asylum.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_AGENT4 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT4", resourceCulture);
             }
         }
         

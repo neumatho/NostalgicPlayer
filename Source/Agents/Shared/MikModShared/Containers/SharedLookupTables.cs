@@ -13,6 +13,12 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 	/// </summary>
 	public static class SharedLookupTables
 	{
+		public static readonly ushort[] FineTune = new ushort[16]
+		{
+			8363, 8413, 8463, 8529, 8581, 8651, 8723, 8757,
+			7895, 7941, 7985, 8046, 8107, 8169, 8232, 8280
+		};
+
 		/// <summary>
 		/// Is an array over how many bytes each operand use
 		/// </summary>

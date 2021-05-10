@@ -19,7 +19,7 @@ using Polycode.NostalgicPlayer.Kit.Utility;
 namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 {
 	/// <summary>
-	/// MikMod loader for AMF format
+	/// MikMod loader for AMF (DSMI) format
 	/// </summary>
 	internal class MikModConverterWorker_Amf : MikModConverterWorkerBase
 	{

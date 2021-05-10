@@ -132,7 +132,7 @@
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="audio/x-amf">.amf</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>DSMI</uap:DisplayName>
+            <uap:DisplayName>DSMI / Asylum</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
       </Extensions>

@@ -25,6 +25,7 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 
 | Format | Extension | Converter | Player |
 | ------ | -------------- | --------- | ------ |
+| Asylum | .amf | MikMod Converter | MikMod |
 | AudioIFF | .aiff / .aif | | Sample |
 | Composer 669 | .669 | MikMod Converter | MikMod |
 | Digital Sound and Music Interface | .amf | MikMod Converter | MikMod |

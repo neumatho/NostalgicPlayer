@@ -15,12 +15,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.Containers
 	/// </summary>
 	internal static class LookupTables
 	{
-		public static readonly ushort[] FineTune = new ushort[16]
-		{
-			8363, 8413, 8463, 8529, 8581, 8651, 8723, 8757,
-			7895, 7941, 7985, 8046, 8107, 8169, 8232, 8280
-		};
-
 		public static readonly ushort[] OldPeriods = new ushort[SharedConstant.Octave * 2]
 		{
 			0x6b00, 0x6800, 0x6500, 0x6220, 0x5f50, 0x5c80,

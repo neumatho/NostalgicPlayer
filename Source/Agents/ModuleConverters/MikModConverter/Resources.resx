@@ -125,6 +125,7 @@ Written by Thomas Neumann based on MikMod 3.3.11.1 + what has been added to 3.3.
 This version can convert these formats:
 
 Composer 669 and Unis 669 (669)
+Asylum
 Digital Sound and Music Interface (AMF)
 FastTracker II (XM)
 UniMod (UNI)</value>
@@ -152,6 +153,9 @@ FastTracker 2 was written by Fredrik Huss and Magnus Hogdahl, and released in 19
 This format has the same limitations as the S3M format. The most famous DSMI application was DMP, the Dual Module Player.
 
 DMP and the DSMI library were written by Otto Chrons. DSMI was first released in 1993.</value>
+  </data>
+  <data name="IDS_MIKCONV_DESCRIPTION_AGENT4" xml:space="preserve">
+    <value>This loader recognize the “ASYLUM Music Format”, which was used in Crusader series of games by Origin. This format uses the .amf extension, but is very similar to a 8 Channel Mod file.</value>
   </data>
   <data name="IDS_MIKCONV_ERR_BAD_HEADER" xml:space="preserve">
     <value>Module header have some bad values</value>
@@ -191,6 +195,9 @@ DMP and the DSMI library were written by Otto Chrons. DSMI was first released in
   </data>
   <data name="IDS_MIKCONV_NAME_AGENT3" xml:space="preserve">
     <value>Digital Sound and Music Interface</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_AGENT4" xml:space="preserve">
+    <value>Asylum</value>
   </data>
   <data name="IDS_MIKCONV_NAME_DSMI" xml:space="preserve">
     <value>Digital Sound and Music Interface module format {0}.{1}</value>
