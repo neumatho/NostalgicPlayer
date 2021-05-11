@@ -135,6 +135,14 @@
             <uap:DisplayName>DSMI / Asylum</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="dsmfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-dsm">.dsm</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>DSIK</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

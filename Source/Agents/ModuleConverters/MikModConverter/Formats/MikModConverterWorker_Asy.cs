@@ -50,8 +50,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		private class ModType
 		{
 			public readonly byte[] Id = new byte[5];
-			public byte Channels;
-			public string Name;
+//			public byte Channels;
+//			public string Name;
 		}
 		#endregion
 

@@ -127,6 +127,7 @@ This version can convert these formats:
 Composer 669 and Unis 669 (669)
 Asylum
 Digital Sound and Music Interface (AMF)
+Digital Sound Interface Kit
 FastTracker II (XM)
 UniMod (UNI)</value>
   </data>
@@ -156,6 +157,11 @@ DMP and the DSMI library were written by Otto Chrons. DSMI was first released in
   </data>
   <data name="IDS_MIKCONV_DESCRIPTION_AGENT4" xml:space="preserve">
     <value>This loader recognize the “ASYLUM Music Format”, which was used in Crusader series of games by Origin. This format uses the .amf extension, but is very similar to a 8 Channel Mod file.</value>
+  </data>
+  <data name="IDS_MIKCONV_DESCRIPTION_AGENT5" xml:space="preserve">
+    <value>This loader recognizes the DSIK format, which is the internal module format of the “Digital Sound Interface Kit” (DSIK) library, the ancester of the SEAL library. This format has the same limitations as the S3M format.
+
+The DSIK library was written by Carlos Hasan and released in 1994.</value>
   </data>
   <data name="IDS_MIKCONV_ERR_BAD_HEADER" xml:space="preserve">
     <value>Module header have some bad values</value>
@@ -198,6 +204,9 @@ DMP and the DSMI library were written by Otto Chrons. DSMI was first released in
   </data>
   <data name="IDS_MIKCONV_NAME_AGENT4" xml:space="preserve">
     <value>Asylum</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_AGENT5" xml:space="preserve">
+    <value>Digital Sound Interface Kit</value>
   </data>
   <data name="IDS_MIKCONV_NAME_DSMI" xml:space="preserve">
     <value>Digital Sound and Music Interface module format {0}.{1}</value>

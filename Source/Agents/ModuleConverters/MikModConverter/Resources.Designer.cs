@@ -70,6 +70,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         ///Composer 669 and Unis 669 (669)
         ///Asylum
         ///Digital Sound and Music Interface (AMF)
+        ///Digital Sound Interface Kit
         ///FastTracker II (XM)
         ///UniMod (UNI).
         /// </summary>
@@ -139,6 +140,17 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         internal static string IDS_MIKCONV_DESCRIPTION_AGENT4 {
             get {
                 return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This loader recognizes the DSIK format, which is the internal module format of the “Digital Sound Interface Kit” (DSIK) library, the ancester of the SEAL library. This format has the same limitations as the S3M format.
+        ///
+        ///The DSIK library was written by Carlos Hasan and released in 1994..
+        /// </summary>
+        internal static string IDS_MIKCONV_DESCRIPTION_AGENT5 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT5", resourceCulture);
             }
         }
         
@@ -265,6 +277,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         internal static string IDS_MIKCONV_NAME_AGENT4 {
             get {
                 return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Digital Sound Interface Kit.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_AGENT5 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT5", resourceCulture);
             }
         }
         
