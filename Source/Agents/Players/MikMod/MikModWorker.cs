@@ -239,13 +239,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 
 				// Initialize calculation variables
 				byte curSpeed;
+				ushort curTempo;
 
-				if (of.InitSpeed != 0)
-					curSpeed = of.InitSpeed < 32 ? of.InitSpeed : (byte)32;
+				if ((of.Flags & ModuleFlag.FarTempo) != 0)
+				{
+					of.FarCurTempo = of.InitSpeed;
+					of.FarTempoBend = 0;
+					player.SetFarTempo(of);
+
+					curSpeed = (byte)of.SngSpd;
+					curTempo = of.Bpm;
+				}
 				else
-					curSpeed = 6;
+				{
+					if (of.InitSpeed != 0)
+						curSpeed = of.InitSpeed < 32 ? of.InitSpeed : (byte)32;
+					else
+						curSpeed = 6;
 
-				ushort curTempo = of.InitTempo < 32 ? (ushort)32 : of.InitTempo;
+					curTempo = of.InitTempo < 32 ? (ushort)32 : of.InitTempo;
+				}
+
 				float total = 0.0f;
 				bool fullStop = false;
 
@@ -262,6 +276,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 					{
 						Speed = curSpeed,
 						Tempo = curTempo,
+						FarCurTempo = of.FarCurTempo,
+						FarTempoBend = of.FarTempoBend,
 						Time = new TimeSpan((long)(total * TimeSpan.TicksPerMillisecond))
 					};
 
@@ -300,206 +316,299 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 						e60BugStartRow = -1;
 					}
 
-					for (ushort row = startRow; row < rowNum; row++)
+					int tick = curSpeed;
+					byte frameDelay = 1;
+
+					for (ushort row = startRow; row <= rowNum; row++)
 					{
 						// Reset the start row
 						startRow = 0;
 						short newRow = -2;
-						byte frameDelay = 1;
 						short newPos = -1;
 
-						for (int chan = 0; chan < of.NumChn; chan++)
+						while (tick < curSpeed)
 						{
-							// Did we have a valid track number?
-							if (tracks[chan] == null)
-								continue;
-
-							// Set the row pointer
-							uniTrk.UniSetRow(tracks[chan], uniTrk.UniFindRow(tracks[chan], row));
-
-							// Read and parse the opcodes for the entire row
-							byte opcode, effArg;
-
-							while ((opcode = uniTrk.UniGetByte()) != 0)
+							for (int chan = 0; chan < of.NumChn; chan++)
 							{
-								// Parse some of the opcodes
-								switch ((Command)opcode)
+								// Did we have a valid track number?
+								if ((tracks[chan] == null) || (tracks[chan].Length == 0))
+									continue;
+
+								// Set the row pointer
+								uniTrk.UniSetRow(tracks[chan], uniTrk.UniFindRow(tracks[chan], (ushort)(row - 1)));
+
+								// Read and parse the opcodes for the entire row
+								byte opcode, effArg;
+
+								while ((opcode = uniTrk.UniGetByte()) != 0)
 								{
-									// ProTracker set speed
-									case Command.UniPtEffectF:
+									// Parse some of the opcodes
+									switch ((Command)opcode)
 									{
-										// Get the speed
-										effArg = uniTrk.UniGetByte();
-
-										// Parse it
-										if (effArg >= of.BpmLimit)
-											curTempo = effArg;
-										else
+										// Farandole fine tempo down
+										case Command.UniFarEffectD:
 										{
-											if (effArg != 0)
-												curSpeed = (effArg >= of.BpmLimit) ? (byte)(of.BpmLimit - 1) : effArg;
-										}
-										break;
-									}
-
-									// ScreamTracker set speed
-									case Command.UniS3MEffectA:
-									{
-										// Get the speed
-										effArg = uniTrk.UniGetByte();
-
-										if (effArg >= 128)
-											effArg -= 128;
-
-										if (effArg != 0)
-											curSpeed = effArg;
-
-										break;
-									}
-
-									// ScreamTracker set tempo
-									case Command.UniS3MEffectT:
-									{
-										// Get the tempo
-										effArg = uniTrk.UniGetByte();
-										curTempo = (effArg < 32) ? (ushort)32 : effArg;
-										break;
-									}
-
-									// ProTracker pattern break
-									case Command.UniPtEffectD:
-									{
-										startRow = uniTrk.UniGetByte();
-
-										if ((startRow != 0) && (startRow >= rowNum))		// Crafted file?
-											startRow = 0;
-
-										if ((pos == of.NumPos - 2) && (startRow == 0) && posBreak)
-											posBreak = false;
-
-										if (!posBreak)
-										{
-											if (newPos == -1)
-												fullStop = false;
-
-											pattBreak = true;
-										}
-
-										getOut = true;
-										break;
-									}
-
-									// ProTracker pattern jump
-									case Command.UniPtEffectB:
-									{
-										// Get the new position
-										effArg = uniTrk.UniGetByte();
-
-										if (effArg > of.NumPos)		// Crafted file?
-											effArg = (byte)(of.NumPos - 1);
-
-										// Do we jump to a lower position
-										if (effArg < pos)
-										{
-											newPos = (short)(effArg - 1);
-											fullStop = true;
-										}
-										else
-										{
-											if (effArg == pos)
-												fullStop = true;
-											else
-												fullStop = false;
-
-											newPos = (short)(effArg - 1);
-											posBreak = true;
-										}
-
-										if ((of.Flags & ModuleFlag.Ft2Quirks) != 0)
-											e60BugStartRow = -1;
-
-										getOut = true;
-										break;
-									}
-
-									// ProTracker extra effects
-									case Command.UniPtEffectE:
-									{
-										// Get the effect
-										effArg = uniTrk.UniGetByte();
-
-										// Pattern loop?
-										if ((effArg & 0xf0) == 0x60)
-										{
-											effArg &= 0x0f;
-
+											effArg = uniTrk.UniGetByte();
 											if (effArg != 0)
 											{
-												// Jump to the loop currently set
-												if (loopCount[chan] == 0)
-													loopCount[chan] = effArg;
-												else
-													loopCount[chan]--;
+												of.FarTempoBend -= effArg;
 
-												if (loopCount[chan] != 0)
-												{
-													// Set new row
-													newRow = (short)(loopPos[chan] - 1);
-												}
+												if ((of.FarTempoBend + player.GetFarTempoFactor(of)) <= 0)
+													of.FarTempoBend = 0;
 											}
 											else
-											{
-												// Set the loop start point
-												loopPos[chan] = (byte)row;
+												of.FarTempoBend = 0;
 
-												// This will make sure that the time for roadblas.xm is correctly
-												if ((of.Flags & ModuleFlag.Ft2Quirks) != 0)
-													e60BugStartRow = (short)row;
+											player.SetFarTempo(of);
+
+											curSpeed = (byte)of.SngSpd;
+											curTempo = of.Bpm;
+											break;
+										}
+
+										// Farandole fine tempo down
+										case Command.UniFarEffectE:
+										{
+											effArg = uniTrk.UniGetByte();
+											if (effArg != 0)
+											{
+												of.FarTempoBend += effArg;
+
+												if ((of.FarTempoBend + player.GetFarTempoFactor(of)) >= 100)
+													of.FarTempoBend = 100;
+											}
+											else
+												of.FarTempoBend = 0;
+
+											player.SetFarTempo(of);
+
+											curSpeed = (byte)of.SngSpd;
+											curTempo = of.Bpm;
+											break;
+										}
+
+										default:
+										{
+											// Just skip the opcode
+											uniTrk.UniSkipOpcode();
+											break;
+										}
+									}
+								}
+							}
+
+							// Add the tick time
+							total += (frameDelay * 1000.0f / (curTempo / 2.5f));
+
+							frameDelay = 1;
+							tick++;
+						}
+
+						// New row
+						tick = 0;
+
+						if (row < rowNum)
+						{
+							for (int chan = 0; chan < of.NumChn; chan++)
+							{
+								// Did we have a valid track number?
+								if ((tracks[chan] == null) || (tracks[chan].Length == 0))
+									continue;
+
+								// Set the row pointer
+								uniTrk.UniSetRow(tracks[chan], uniTrk.UniFindRow(tracks[chan], row));
+
+								// Read and parse the opcodes for the entire row
+								byte opcode, effArg;
+
+								while ((opcode = uniTrk.UniGetByte()) != 0)
+								{
+									// Parse some of the opcodes
+									switch ((Command)opcode)
+									{
+										// ProTracker set speed
+										case Command.UniPtEffectF:
+										{
+											// Get the speed
+											effArg = uniTrk.UniGetByte();
+
+											// Parse it
+											if (effArg >= of.BpmLimit)
+												curTempo = effArg;
+											else
+											{
+												if (effArg != 0)
+													curSpeed = (effArg >= of.BpmLimit) ? (byte)(of.BpmLimit - 1) : effArg;
 											}
 											break;
 										}
 
-										// Pattern delay?
-										if ((effArg & 0xf0) == 0xe0)
+										// ScreamTracker set speed
+										case Command.UniS3MEffectA:
 										{
-											// Get the delay count
-											frameDelay = (byte)((effArg & 0x0f) + 1);
-										}
-										break;
-									}
+											// Get the speed
+											effArg = uniTrk.UniGetByte();
 
-									default:
-									{
-										// Just skip the opcode
-										uniTrk.UniSkipOpcode();
-										break;
+											if (effArg >= 128)
+												effArg -= 128;
+
+											if (effArg != 0)
+												curSpeed = effArg;
+
+											break;
+										}
+
+										// ScreamTracker set tempo
+										case Command.UniS3MEffectT:
+										{
+											// Get the tempo
+											effArg = uniTrk.UniGetByte();
+											curTempo = (effArg < 32) ? (ushort)32 : effArg;
+											break;
+										}
+
+										// ProTracker pattern break
+										case Command.UniPtEffectD:
+										{
+											startRow = uniTrk.UniGetByte();
+
+											if ((startRow != 0) && (startRow >= rowNum))		// Crafted file?
+												startRow = 0;
+
+											if ((pos == of.NumPos - 2) && (startRow == 0) && posBreak)
+												posBreak = false;
+
+											if (!posBreak)
+											{
+												if (newPos == -1)
+													fullStop = false;
+
+												pattBreak = true;
+											}
+
+											getOut = true;
+											break;
+										}
+
+										// ProTracker pattern jump
+										case Command.UniPtEffectB:
+										{
+											// Get the new position
+											effArg = uniTrk.UniGetByte();
+
+											if (effArg > of.NumPos)		// Crafted file?
+												effArg = (byte)(of.NumPos - 1);
+
+											// Do we jump to a lower position
+											if (effArg < pos)
+											{
+												newPos = (short)(effArg - 1);
+												fullStop = true;
+											}
+											else
+											{
+												if (effArg == pos)
+													fullStop = true;
+												else
+													fullStop = false;
+
+												newPos = (short)(effArg - 1);
+												posBreak = true;
+											}
+
+											if ((of.Flags & ModuleFlag.Ft2Quirks) != 0)
+												e60BugStartRow = -1;
+
+											getOut = true;
+											break;
+										}
+
+										// ProTracker extra effects
+										case Command.UniPtEffectE:
+										{
+											// Get the effect
+											effArg = uniTrk.UniGetByte();
+
+											// Pattern loop?
+											if ((effArg & 0xf0) == 0x60)
+											{
+												effArg &= 0x0f;
+
+												if (effArg != 0)
+												{
+													// Jump to the loop currently set
+													if (loopCount[chan] == 0)
+														loopCount[chan] = effArg;
+													else
+														loopCount[chan]--;
+
+													if (loopCount[chan] != 0)
+													{
+														// Set new row
+														newRow = (short)(loopPos[chan] - 1);
+													}
+												}
+												else
+												{
+													// Set the loop start point
+													loopPos[chan] = (byte)row;
+
+													// This will make sure that the time for roadblas.xm is correctly
+													if ((of.Flags & ModuleFlag.Ft2Quirks) != 0)
+														e60BugStartRow = (short)row;
+												}
+												break;
+											}
+
+											// Pattern delay?
+											if ((effArg & 0xf0) == 0xe0)
+											{
+												// Get the delay count
+												frameDelay = (byte)((effArg & 0x0f) + 1);
+											}
+											break;
+										}
+
+										// Farandole set speed
+										case Command.UniFarEffectF:
+										{
+											// Get the speed
+											effArg = uniTrk.UniGetByte();
+
+											of.FarCurTempo = effArg;
+											player.SetFarTempo(of);
+
+											curSpeed = (byte)of.SngSpd;
+											curTempo = of.Bpm;
+											break;
+										}
+
+										default:
+										{
+											// Just skip the opcode
+											uniTrk.UniSkipOpcode();
+											break;
+										}
 									}
 								}
 							}
+
+							// Change the position
+							if (newPos != -1)
+								pos = newPos;
+
+							// If we both have a pattern break and position jump command
+							// on the same line, ignore the full stop
+							if (pattBreak && posBreak)
+								fullStop = false;
+
+							if (getOut)
+								break;
+
+							// Should we jump to a new row?
+							if (newRow != -2)
+								row = (ushort)newRow;
 						}
-
-						// Change the position
-						if (newPos != -1)
-							pos = newPos;
-
-						// If we both have a pattern break and position jump command
-						// on the same line, ignore the full stop
-						if (pattBreak && posBreak)
-							fullStop = false;
-
-						// Should the current line be calculated into the total time?
-						if (!fullStop)
-						{
-							// Add the row time
-							total += (frameDelay * 1000.0f * curSpeed / (curTempo / 2.5f));
-						}
-
-						if (getOut)
-							break;
-
-						// Should we jump to a new row?
-						if (newRow != -2)
-							row = (ushort)newRow;
 					}
 
 					if (fullStop)
@@ -670,13 +779,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 				{
 					of.SngSpd = (ushort)(of.InitSpeed != 0 ? (of.InitSpeed < 32 ? of.InitSpeed : 32) : 6);
 					of.Bpm = (ushort)(of.InitTempo < 32 ? 32 : of.InitTempo);
+					of.RelSpd = 0;
 				}
 				else
 				{
 					PosInfo posInfo = songTime.PosInfoList[pos - songTime.StartPos];
 					of.SngSpd = posInfo.Speed;
 					of.Bpm = posInfo.Tempo;
-					SetTempo(of.Bpm);
+					of.FarCurTempo = posInfo.FarCurTempo;
+					of.FarTempoBend = posInfo.FarTempoBend;
+					SetTempo((ushort)(of.Bpm + of.RelSpd));
 				}
 
 				of.PosJmp = 2;

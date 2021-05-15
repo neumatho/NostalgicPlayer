@@ -74,7 +74,6 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 			string[] lines = new string[numberOfLines];
 
 			byte[] lineBuffer = new byte[lineLength + 1];
-			lineBuffer[lineLength] = 0x00;			// Null terminator, just in case
 
 			// Store the lines in reverse order in the array.
 			// This helps to skip empty lines in the each later on
@@ -82,9 +81,10 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 			{
 				int todo = Math.Min(lineLength, blockSize);
 				Read(lineBuffer, 0, todo);
+				lineBuffer[todo] = 0x00;			// Null terminator, just in case
 
 				string singleLine = encoder.GetString(lineBuffer, 0, lineLength);
-				singleLine = singleLine.Replace('\r', ' ').Replace('\n', ' ');
+				singleLine = singleLine.Replace('\r', ' ').Replace('\n', ' ').TrimEnd();
 
 				lines[i] = singleLine;
 

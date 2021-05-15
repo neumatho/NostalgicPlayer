@@ -52,6 +52,9 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 		public short SngPos;					// Current song position
 		public uint SngTime;					// Current song time in 2^-10 seconds
 
+		public byte FarCurTempo;				// Farandole current speed
+		public short FarTempoBend;				// Used by the Farandole fine tempo effects and store the current bend value
+
 		public short RelSpd;					// Relative speed factor
 
 		// Internal module representation

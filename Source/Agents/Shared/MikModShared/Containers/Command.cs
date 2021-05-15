@@ -116,6 +116,16 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 		UniMedEffect1E,				// Pattern delay
 		UniMedEffect1F,				// Note delay and retrigger
 
+		// Farandole effects
+		UniFarEffect1,				// Porta up
+		UniFarEffect2,				// Porta down
+		UniFarEffect3,				// Porta to note
+		UniFarEffect4,				// Retrigger
+		UniFarEffect6,				// Vibrato
+		UniFarEffectD,				// Fine tempo down
+		UniFarEffectE,				// Fine tempo up
+		UniFarEffectF,				// Set tempo
+
 		UniLast
 	}
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

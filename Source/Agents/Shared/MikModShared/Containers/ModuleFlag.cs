@@ -72,6 +72,11 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 		/// <summary>
 		/// Module uses panning effects or have non-tracker default initial panning
 		/// </summary>
-		Panning = 0x0400
+		Panning = 0x0400,
+
+		/// <summary>
+		/// Module uses Farandole tempo calculations
+		/// </summary>
+		FarTempo = 0x0800
 	}
 }

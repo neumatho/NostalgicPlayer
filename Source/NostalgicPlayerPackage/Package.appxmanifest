@@ -143,6 +143,14 @@
             <uap:DisplayName>DSIK</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="farfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-far">.far</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Farandole Composer</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

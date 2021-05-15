@@ -13,6 +13,8 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 	/// </summary>
 	public static class SharedLookupTables
 	{
+		/// <summary>
+		/// </summary>
 		public static readonly ushort[] FineTune = new ushort[16]
 		{
 			8363, 8413, 8463, 8529, 8581, 8651, 8723, 8757,
@@ -98,7 +100,15 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 			1,			// UniMedEffect16
 			1,			// UniMedEffect18
 			1,			// UniMedEffect1E
-			1			// UniMedEffect1F
+			1,			// UniMedEffect1F
+			1,			// UniFarEffect1
+			1,			// UniFarEffect2
+			1,			// UniFarEffect3
+			1,			// UniFarEffect4
+			1,			// UniFarEffect6
+			1,			// UniFarEffectD
+			1,			// UniFarEffectE
+			1			// UniFarEffectF
 		};
 	}
 }

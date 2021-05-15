@@ -136,7 +136,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				DoMedEffect16,		// UNI_MEDEFFECT_16
 				DoMedEffect18,		// UNI_MEDEFFECT_18
 				DoMedEffect1E,		// UNI_MEDEFFECT_1E
-				DoMedEffect1F		// UNI_MEDEFFECT_1F
+				DoMedEffect1F,		// UNI_MEDEFFECT_1F
+				DoFarEffect1,		// UNI_FAREFFECT1
+				DoFarEffect2,		// UNI_FAREFFECT2
+				DoFarEffect3,		// UNI_FAREFFECT3
+				DoFarEffect4,		// UNI_FAREFFECT4
+				DoFarEffect6,		// UNI_FAREFFECT6
+				DoFarEffectD,		// UNI_FAREFFECTD
+				DoFarEffectE,		// UNI_FAREFFECTE
+				DoFarEffectF		// UNI_FAREFFECTF
 			};
 		}
 
@@ -163,7 +171,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 			mod.NumVoices = mdSngChn;
 
-			InitInternals(mod, startPos);
+			InitInternal(mod, startPos);
 		}
 
 
@@ -215,7 +223,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 				// Do we have to get a new pattern pointer? (when pf.PatPos reaches the
 				// pattern size, or when a pattern break is active)
-				if (((pf.PatPos >= pf.NumRow) && (pf.NumRow > 0)) && (pf.PosJmp == 0))
+				if ((pf.PatPos >= pf.NumRow) && (pf.PosJmp == 0))
 					pf.PosJmp = 3;
 
 				if (pf.PosJmp != 0)
@@ -245,12 +253,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 						{
 							pf.Volume = pf.InitVolume > 128 ? (short)128 : pf.InitVolume;
 
-							if (pf.InitSpeed != 0)
-								pf.SngSpd = pf.InitSpeed < 32 ? pf.InitSpeed : (ushort)32;
+							if ((pf.Flags & ModuleFlag.FarTempo) != 0)
+							{
+								pf.FarCurTempo = pf.InitSpeed;
+								pf.FarTempoBend = 0;
+								SetFarTempo(pf);
+							}
 							else
-								pf.SngSpd = 6;
+							{
+								if (pf.InitSpeed != 0)
+									pf.SngSpd = pf.InitSpeed < pf.BpmLimit ? pf.InitSpeed : pf.BpmLimit;
+								else
+									pf.SngSpd = 6;
 
-							pf.Bpm = pf.InitTempo < 32 ? (ushort)32 : pf.InitTempo;
+								pf.Bpm = pf.InitTempo < pf.BpmLimit ? pf.BpmLimit : pf.InitTempo;
+							}
 						}
 
 						// Tell NostalgicPlayer we has restarted
@@ -343,7 +360,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		/// More initializing of the player
 		/// </summary>
 		/********************************************************************/
-		private void InitInternals(Module mod, short startPos)
+		private void InitInternal(Module mod, short startPos)
 		{
 			for (int t = 0; t < mod.NumChn; t++)
 			{
@@ -357,17 +374,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			mod.Pat_RepCrazy = false;
 			mod.SngPos = startPos;
 
-			if (mod.InitSpeed != 0)
-				mod.SngSpd = (ushort)(mod.InitSpeed < 32 ? mod.InitSpeed : 32);
+			if ((mod.Flags & ModuleFlag.FarTempo) != 0)
+			{
+				mod.FarCurTempo = mod.InitSpeed;
+				mod.FarTempoBend = 0;
+				SetFarTempo(mod);
+			}
 			else
-				mod.SngSpd = 6;
+			{
+				if (mod.InitSpeed != 0)
+					mod.SngSpd = mod.InitSpeed < mod.BpmLimit ? mod.InitSpeed : mod.BpmLimit;
+				else
+					mod.SngSpd = 6;
+
+				mod.Bpm = mod.InitTempo < mod.BpmLimit ? mod.BpmLimit : mod.InitTempo;
+			}
 
 			mod.Volume = (short)(mod.InitVolume > 128 ? 128 : mod.InitVolume);
 
 			mod.VbTick = mod.SngSpd;
 			mod.PatDly = 0;
 			mod.PatDly2 = 0;
-			mod.Bpm = (ushort)(mod.InitTempo < 32 ? 32 : mod.InitTempo);
 			mod.RealChn = 0;
 
 			mod.PatPos = 0;
@@ -411,7 +438,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				if (mod.VbTick == 0)
 					a.Main.NoteDelay = 0;
 
-				if (a.Row == null)
+				if ((a.Row == null) || (mod.NumRow == 0))
 					continue;
 
 				uniTrk.UniSetRow(a.Row, a.RowOffset);
@@ -431,6 +458,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 							a.Main.Kick = Kick.Note;
 							a.Main.Start = -1;
 							a.Sliding = 0;
+							a.FarTonePortaRunning = false;
 
 							// Retrig tremolo and vibrato waves?
 							if ((a.WaveControl & 0x40) == 0)
@@ -821,8 +849,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			}
 
 			mdBpm = (ushort)(mod.Bpm + mod.RelSpd);
-			if (mdBpm < 32)
-				mdBpm = 32;
+			if (mdBpm < mod.BpmLimit)
+				mdBpm = mod.BpmLimit;
 			else
 			{
 				if (((mod.Flags & ModuleFlag.HighBpm) == 0) && (mdBpm > 255))
@@ -1047,6 +1075,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 							a.Sliding = (sbyte)explicitSlides;
 					}
 				}
+
+				// Keep running Farandole tone porta
+				if (a.FarTonePortaRunning)
+					DoFarTonePorta(a);
 
 				if (!a.OwnPer)
 					a.Main.Period = a.TmpPeriod;
@@ -2495,6 +2527,130 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 					break;
 				}
 			}
+		}
+		#endregion
+
+		#region Farandole effect helpers
+		/********************************************************************/
+		/// <summary>
+		/// Tone portamento helper method
+		/// </summary>
+		/********************************************************************/
+		private void DoFarTonePorta(Mp_Control a)
+		{
+			if (a.Main.FadeVol == 0)
+				a.Main.Kick = (a.Main.Kick == Kick.Note) ? Kick.Note : Kick.KeyOff;
+			else
+				a.Main.Kick = (a.Main.Kick == Kick.Note) ? Kick.Env : Kick.Absent;
+
+			a.FarCurrentValue += a.FarTonePortaSpeed;
+
+			// Have we reached our note
+			bool reachedNote = (a.FarTonePortaSpeed > 0) ? a.FarCurrentValue >= a.WantedPeriod : a.FarCurrentValue <= a.WantedPeriod;
+			if (reachedNote)
+			{
+				// Stop the porta and set the periods to the reached note
+				a.TmpPeriod = a.Main.Period = a.WantedPeriod;
+				a.FarTonePortaRunning = false;
+			}
+			else
+			{
+				// Do the porta
+				a.TmpPeriod = a.Main.Period = (ushort)a.FarCurrentValue;
+			}
+
+			a.OwnPer = true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Find tempo factor
+		/// </summary>
+		/********************************************************************/
+		internal int GetFarTempoFactor(Module mod)
+		{
+			return mod.FarCurTempo == 0 ? 256 : (128 / mod.FarCurTempo);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the right speed and BPM for Farandole modules
+		/// </summary>
+		/********************************************************************/
+		internal void SetFarTempo(Module mod)
+		{
+			/* According to the Farandole document, the tempo of the song is 32/tempo notes per second.
+			   So if we set tempo to 1, we will get 32 notes per second. We then need to translate this
+			   to BPM, since this is what we're using as tempo.
+
+			   We know 125 BPM is at 50 hz speed (see https://modarchive.org/forums/index.php?topic=2709.0
+			   for more information). So the factor is 125/50 = 2.5. So we take the 32 notes per second
+			   above and multiply with 2.5: 32 * 2.5 = 80 BPM.
+
+			   So we now know, at speed 1, we need to run at 80 BPM and number of ticks (speed counter) is 1.
+
+			   Farandole however, uses another approach to calculate the tempo. It takes the speed
+			   argument and calculate a ticks per second as 128/arg. It also set the tick counter to 3 most
+			   of the times. It calculate a value (I guess it is how often GUS need to call the player) by
+			   1197255 / (128 / arg). So if we set speed to 1, we will get 1197255 / 128 = 9353.
+
+			   Ok, we know if we set the speed counter to 1, we need to run at 80 BPM, but now Farandole
+			   set the tick counter to 3, so we need to calculate the BPM to use for the difference. This
+			   is easy enough, just say 80 * 3 = 240 BPM.
+
+			   So with all this information, we will try to calculate the right BPM for the speed set.
+
+			   For argument 1:
+
+			   tps = 128 / 1 = 128
+			   gus = 1197255 / tps = 1197255 / 128 = 9353
+			   counter = 3
+			   factor = gus / 9353 = 9353 / 9353 = 1
+			   bpm = (80 * counter) / factor = (80 * 3) / 1 = 240
+
+			   For argument 4, which is the default speed
+
+			   tps = 128 / 4 = 32
+			   gus = 1197255 / tps = 1197255 / 32 = 37414
+			   counter = 3
+			   factor = gus / 9353 = 37414 / 9353 = 4
+			   bpm = (80 * counter) / factor = (80 * 3) / 4 = 60
+
+			   For argument 15, which is the slowest speed
+
+			   tps = 128 / 15 = 8
+			   gus = 1197255 / tps = 1197255 / 8 = 149656
+			   counter = 6 (see code below for why)
+			   factor = gus / 9353 = 149656 / 9353 = 16
+			   bpm = (80 * counter) / factor = (80 * 6) / 16 = 30
+
+			   You can make yourself a little exercise to prove that the above is correct :-) */
+
+			short realTempo = (short)(mod.FarTempoBend + GetFarTempoFactor(mod));
+
+			int gus = 1197255 / realTempo;
+
+			int eax = gus;
+			byte cx = 0, di = 0;
+
+			while (eax > 0xffff)
+			{
+				eax >>= 1;
+				di++;
+				cx++;
+			}
+
+			if (cx >= 2)
+				di++;
+
+			mod.SngSpd = (byte)(di + 3);
+
+			int factor = (int)Math.Round(gus / 9353.0f, MidpointRounding.AwayFromZero);
+			mod.Bpm = (ushort)((80 * mod.SngSpd) / factor);
 		}
 		#endregion
 
@@ -4505,6 +4661,230 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 			if (a.Main.Period != 0)
 				DoArpeggio(tick, flags, a, dat2);
+
+			return 0;
+		}
+		#endregion
+
+		#region Farandole specific effects
+		/********************************************************************/
+		/// <summary>
+		/// Effect 1: Portamento up
+		/// </summary>
+		/********************************************************************/
+		private int DoFarEffect1(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
+		{
+			byte dat = uniTrk.UniGetByte();
+
+			if (tick == 0)
+			{
+				a.SlideSpeed = (ushort)(dat << 2);
+
+				if (a.Main.Period != 0)
+					a.TmpPeriod -= a.SlideSpeed;
+
+				a.FarTonePortaRunning = false;
+			}
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Effect 2: Portamento down
+		/// </summary>
+		/********************************************************************/
+		private int DoFarEffect2(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
+		{
+			byte dat = uniTrk.UniGetByte();
+
+			if (tick == 0)
+			{
+				a.SlideSpeed = (ushort)(dat << 2);
+
+				if (a.Main.Period != 0)
+					a.TmpPeriod += a.SlideSpeed;
+
+				a.FarTonePortaRunning = false;
+			}
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Effect 3: Porta to note
+		/// </summary>
+		/********************************************************************/
+		private int DoFarEffect3(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
+		{
+			byte dat = uniTrk.UniGetByte();
+
+			if (tick == 0)
+			{
+				// We have to slide a.Main.Period toward a.WantedPeriod,
+				// compute the difference between those two values
+				float dist = a.WantedPeriod - a.Main.Period;
+
+				// Adjust effect argument
+				if (dat == 0)
+					dat = 1;
+
+				// Unlike other players, the data is how many rows the port
+				// should take and not a speed
+				a.FarTonePortaSpeed = dist / (mod.SngSpd * dat);
+				a.FarCurrentValue = a.Main.Period;
+				a.FarTonePortaRunning = true;
+			}
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Effect 4: Retrigger
+		/// </summary>
+		/********************************************************************/
+		private int DoFarEffect4(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
+		{
+			byte dat = uniTrk.UniGetByte();
+
+			// Here the argument is the number of retrigs to play evenly
+			// spaced in the current row
+			if (tick == 0)
+			{
+				if (dat != 0)
+				{
+					a.FarRetrigCount = dat;
+					a.Retrig = 0;
+				}
+			}
+
+			if (dat != 0)
+			{
+				if (a.Retrig == 0)
+				{
+					if (a.FarRetrigCount > 0)
+					{
+						// When retrig counter reaches 0,
+						// reset counter and restart the sample
+						if (a.Main.Period != 0)
+							a.Main.Kick = Kick.Note;
+
+						a.FarRetrigCount--;
+						if (a.FarRetrigCount > 0)
+							a.Retrig = (sbyte)(((mod.FarTempoBend + GetFarTempoFactor(mod)) / dat / 8) - 1);
+					}
+				}
+				else
+					a.Retrig--;
+			}
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Effect 6: Vibrato
+		/// </summary>
+		/********************************************************************/
+		private int DoFarEffect6(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
+		{
+			byte dat = uniTrk.UniGetByte();
+
+			if (tick == 0)
+			{
+				if ((dat & 0x0f) != 0)
+					a.VibDepth = (byte)(dat & 0x0f);
+
+				if ((dat & 0xf0) != 0)
+					a.VibSpd = (byte)((dat & 0xf0) * 6);
+			}
+
+			if (a.Main.Period != 0)
+				DoVibrato(tick, a, VibratoFlags.Tick0);
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Effect D: Fine tempo down
+		/// </summary>
+		/********************************************************************/
+		private int DoFarEffectD(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
+		{
+			byte dat = uniTrk.UniGetByte();
+
+			if (dat != 0)
+			{
+				mod.FarTempoBend -= dat;
+
+				if ((mod.FarTempoBend + GetFarTempoFactor(mod)) <= 0)
+					mod.FarTempoBend = 0;
+			}
+			else
+				mod.FarTempoBend = 0;
+
+			SetFarTempo(mod);
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Effect E: Fine tempo up
+		/// </summary>
+		/********************************************************************/
+		private int DoFarEffectE(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
+		{
+			byte dat = uniTrk.UniGetByte();
+
+			if (dat != 0)
+			{
+				mod.FarTempoBend += dat;
+
+				if ((mod.FarTempoBend + GetFarTempoFactor(mod)) >= 100)
+					mod.FarTempoBend = 100;
+			}
+			else
+				mod.FarTempoBend = 0;
+
+			SetFarTempo(mod);
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Effect F: Set tempo
+		/// </summary>
+		/********************************************************************/
+		private int DoFarEffectF(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
+		{
+			byte dat = uniTrk.UniGetByte();
+
+			if (tick == 0)
+			{
+				mod.FarCurTempo = dat;
+				mod.VbTick = 0;
+
+				SetFarTempo(mod);
+			}
 
 			return 0;
 		}

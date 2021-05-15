@@ -69,7 +69,7 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod
 		{
 			int offset = -1;
 
-			if (t != null)
+			if ((t != null) && (t.Length > 0))
 			{
 				offset = 0;
 

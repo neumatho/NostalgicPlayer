@@ -68,9 +68,10 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         ///This version can convert these formats:
         ///
         ///Composer 669 and Unis 669 (669)
-        ///Asylum
+        ///Asylum (AMF)
         ///Digital Sound and Music Interface (AMF)
-        ///Digital Sound Interface Kit
+        ///Digital Sound Interface Kit (DSM)
+        ///Farandole Composer (FAR)
         ///FastTracker II (XM)
         ///UniMod (UNI).
         /// </summary>
@@ -151,6 +152,17 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         internal static string IDS_MIKCONV_DESCRIPTION_AGENT5 {
             get {
                 return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This loader recognizes “Farandole” modules. These modules can be up to 16 channels and have Protracker comparable effects.
+        ///
+        ///The Farandole composer was written by Daniel Potter and released in 1994..
+        /// </summary>
+        internal static string IDS_MIKCONV_DESCRIPTION_AGENT6 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT6", resourceCulture);
             }
         }
         
@@ -286,6 +298,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         internal static string IDS_MIKCONV_NAME_AGENT5 {
             get {
                 return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Farandole Composer.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_AGENT6 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT6", resourceCulture);
             }
         }
         

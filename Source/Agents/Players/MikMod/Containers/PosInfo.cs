@@ -17,6 +17,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.Containers
 	{
 		public byte Speed;
 		public ushort Tempo;
+		public byte FarCurTempo;
+		public short FarTempoBend;
 		public TimeSpan Time;
 	}
 }
