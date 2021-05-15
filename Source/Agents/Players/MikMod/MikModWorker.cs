@@ -243,8 +243,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 
 				if ((of.Flags & ModuleFlag.FarTempo) != 0)
 				{
-					of.FarCurTempo = of.InitSpeed;
-					of.FarTempoBend = 0;
+					player.farCurTempo = of.InitSpeed;
+					player.farTempoBend = 0;
 					player.SetFarTempo(of);
 
 					curSpeed = (byte)of.SngSpd;
@@ -276,8 +276,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 					{
 						Speed = curSpeed,
 						Tempo = curTempo,
-						FarCurTempo = of.FarCurTempo,
-						FarTempoBend = of.FarTempoBend,
+						FarCurTempo = player.farCurTempo,
+						FarTempoBend = player.farTempoBend,
 						Time = new TimeSpan((long)(total * TimeSpan.TicksPerMillisecond))
 					};
 
@@ -351,13 +351,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 											effArg = uniTrk.UniGetByte();
 											if (effArg != 0)
 											{
-												of.FarTempoBend -= effArg;
+												player.farTempoBend -= effArg;
 
-												if ((of.FarTempoBend + player.GetFarTempoFactor(of)) <= 0)
-													of.FarTempoBend = 0;
+												if ((player.farTempoBend + player.GetFarTempoFactor()) <= 0)
+													player.farTempoBend = 0;
 											}
 											else
-												of.FarTempoBend = 0;
+												player.farTempoBend = 0;
 
 											player.SetFarTempo(of);
 
@@ -372,13 +372,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 											effArg = uniTrk.UniGetByte();
 											if (effArg != 0)
 											{
-												of.FarTempoBend += effArg;
+												player.farTempoBend += effArg;
 
-												if ((of.FarTempoBend + player.GetFarTempoFactor(of)) >= 100)
-													of.FarTempoBend = 100;
+												if ((player.farTempoBend + player.GetFarTempoFactor()) >= 100)
+													player.farTempoBend = 100;
 											}
 											else
-												of.FarTempoBend = 0;
+												player.farTempoBend = 0;
 
 											player.SetFarTempo(of);
 
@@ -575,7 +575,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 											// Get the speed
 											effArg = uniTrk.UniGetByte();
 
-											of.FarCurTempo = effArg;
+											player.farCurTempo = effArg;
 											player.SetFarTempo(of);
 
 											curSpeed = (byte)of.SngSpd;
@@ -786,8 +786,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 					PosInfo posInfo = songTime.PosInfoList[pos - songTime.StartPos];
 					of.SngSpd = posInfo.Speed;
 					of.Bpm = posInfo.Tempo;
-					of.FarCurTempo = posInfo.FarCurTempo;
-					of.FarTempoBend = posInfo.FarTempoBend;
+					player.farCurTempo = posInfo.FarCurTempo;
+					player.farTempoBend = posInfo.FarTempoBend;
 					SetTempo((ushort)(of.Bpm + of.RelSpd));
 				}
 

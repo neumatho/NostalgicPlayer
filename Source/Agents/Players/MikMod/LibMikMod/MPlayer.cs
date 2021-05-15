@@ -27,6 +27,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 		private readonly Random rnd;
 
+		/// <summary>
+		/// Farandole current speed
+		/// </summary>
+		public byte farCurTempo;
+
+		/// <summary>
+		/// Used by the Farandole fine tempo effects and store the current bend value
+		/// </summary>
+		public short farTempoBend;
+
 		/// <summary></summary>
 		public readonly byte mdSngChn;
 
@@ -255,8 +265,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 							if ((pf.Flags & ModuleFlag.FarTempo) != 0)
 							{
-								pf.FarCurTempo = pf.InitSpeed;
-								pf.FarTempoBend = 0;
+								farCurTempo = pf.InitSpeed;
+								farTempoBend = 0;
 								SetFarTempo(pf);
 							}
 							else
@@ -376,8 +386,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 			if ((mod.Flags & ModuleFlag.FarTempo) != 0)
 			{
-				mod.FarCurTempo = mod.InitSpeed;
-				mod.FarTempoBend = 0;
+				farCurTempo = mod.InitSpeed;
+				farTempoBend = 0;
 				SetFarTempo(mod);
 			}
 			else
@@ -2569,9 +2579,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		/// Find tempo factor
 		/// </summary>
 		/********************************************************************/
-		internal int GetFarTempoFactor(Module mod)
+		internal int GetFarTempoFactor()
 		{
-			return mod.FarCurTempo == 0 ? 256 : (128 / mod.FarCurTempo);
+			return farCurTempo == 0 ? 256 : (128 / farCurTempo);
 		}
 
 
@@ -2630,7 +2640,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 			   You can make yourself a little exercise to prove that the above is correct :-) */
 
-			short realTempo = (short)(mod.FarTempoBend + GetFarTempoFactor(mod));
+			short realTempo = (short)(farTempoBend + GetFarTempoFactor());
 
 			int gus = 1197255 / realTempo;
 
@@ -4779,7 +4789,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 						a.FarRetrigCount--;
 						if (a.FarRetrigCount > 0)
-							a.Retrig = (sbyte)(((mod.FarTempoBend + GetFarTempoFactor(mod)) / dat / 8) - 1);
+							a.Retrig = (sbyte)(((farTempoBend + GetFarTempoFactor()) / dat / 8) - 1);
 					}
 				}
 				else
@@ -4828,13 +4838,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 			if (dat != 0)
 			{
-				mod.FarTempoBend -= dat;
+				farTempoBend -= dat;
 
-				if ((mod.FarTempoBend + GetFarTempoFactor(mod)) <= 0)
-					mod.FarTempoBend = 0;
+				if ((farTempoBend + GetFarTempoFactor()) <= 0)
+					farTempoBend = 0;
 			}
 			else
-				mod.FarTempoBend = 0;
+				farTempoBend = 0;
 
 			SetFarTempo(mod);
 
@@ -4854,13 +4864,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 			if (dat != 0)
 			{
-				mod.FarTempoBend += dat;
+				farTempoBend += dat;
 
-				if ((mod.FarTempoBend + GetFarTempoFactor(mod)) >= 100)
-					mod.FarTempoBend = 100;
+				if ((farTempoBend + GetFarTempoFactor()) >= 100)
+					farTempoBend = 100;
 			}
 			else
-				mod.FarTempoBend = 0;
+				farTempoBend = 0;
 
 			SetFarTempo(mod);
 
@@ -4880,7 +4890,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 			if (tick == 0)
 			{
-				mod.FarCurTempo = dat;
+				farCurTempo = dat;
 				mod.VbTick = 0;
 
 				SetFarTempo(mod);
