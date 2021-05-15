@@ -253,11 +253,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 				else
 				{
 					if (of.InitSpeed != 0)
-						curSpeed = of.InitSpeed < 32 ? of.InitSpeed : (byte)32;
+						curSpeed = of.InitSpeed < of.BpmLimit ? of.InitSpeed : (byte)of.BpmLimit;
 					else
 						curSpeed = 6;
 
-					curTempo = of.InitTempo < 32 ? (ushort)32 : of.InitTempo;
+					curTempo = of.InitTempo < of.BpmLimit ? of.BpmLimit : of.InitTempo;
 				}
 
 				float total = 0.0f;
@@ -777,8 +777,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 				// Change the speed
 				if ((pos < songTime.StartPos) || (pos >= songTime.PosInfoList.Count))
 				{
-					of.SngSpd = (ushort)(of.InitSpeed != 0 ? (of.InitSpeed < 32 ? of.InitSpeed : 32) : 6);
-					of.Bpm = (ushort)(of.InitTempo < 32 ? 32 : of.InitTempo);
+					of.SngSpd = (ushort)(of.InitSpeed != 0 ? (of.InitSpeed < of.BpmLimit ? of.InitSpeed : of.BpmLimit) : 6);
+					of.Bpm = of.InitTempo < of.BpmLimit ? of.BpmLimit : of.InitTempo;
 					of.RelSpd = 0;
 				}
 				else

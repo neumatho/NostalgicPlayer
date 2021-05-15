@@ -129,6 +129,7 @@ Asylum (AMF)
 Digital Sound and Music Interface (AMF)
 Digital Sound Interface Kit (DSM)
 Farandole Composer (FAR)
+General DigiMusic (GDM)
 FastTracker II (XM)
 UniMod (UNI)</value>
   </data>
@@ -168,6 +169,11 @@ The DSIK library was written by Carlos Hasan and released in 1994.</value>
     <value>This loader recognizes “Farandole” modules. These modules can be up to 16 channels and have Protracker comparable effects.
 
 The Farandole composer was written by Daniel Potter and released in 1994.</value>
+  </data>
+  <data name="IDS_MIKCONV_DESCRIPTION_AGENT7" xml:space="preserve">
+    <value>This loader recognizes the “General DigiMusic” format, which is the internal format of the “Bells, Whistles and Sound Boards” library. This format has the same limitations as the S3M format.
+
+The BWSB library was written by Edward Schlunder and first released in 1993.</value>
   </data>
   <data name="IDS_MIKCONV_ERR_BAD_HEADER" xml:space="preserve">
     <value>Module header have some bad values</value>
@@ -216,6 +222,9 @@ The Farandole composer was written by Daniel Potter and released in 1994.</value
   </data>
   <data name="IDS_MIKCONV_NAME_AGENT6" xml:space="preserve">
     <value>Farandole Composer</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_AGENT7" xml:space="preserve">
+    <value>General DigiMusic</value>
   </data>
   <data name="IDS_MIKCONV_NAME_DSMI" xml:space="preserve">
     <value>Digital Sound and Music Interface module format {0}.{1}</value>

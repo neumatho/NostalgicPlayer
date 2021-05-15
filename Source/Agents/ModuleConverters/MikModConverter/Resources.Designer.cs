@@ -72,6 +72,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         ///Digital Sound and Music Interface (AMF)
         ///Digital Sound Interface Kit (DSM)
         ///Farandole Composer (FAR)
+        ///General DigiMusic (GDM)
         ///FastTracker II (XM)
         ///UniMod (UNI).
         /// </summary>
@@ -163,6 +164,17 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         internal static string IDS_MIKCONV_DESCRIPTION_AGENT6 {
             get {
                 return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This loader recognizes the “General DigiMusic” format, which is the internal format of the “Bells, Whistles and Sound Boards” library. This format has the same limitations as the S3M format.
+        ///
+        ///The BWSB library was written by Edward Schlunder and first released in 1993..
+        /// </summary>
+        internal static string IDS_MIKCONV_DESCRIPTION_AGENT7 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT7", resourceCulture);
             }
         }
         
@@ -307,6 +319,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         internal static string IDS_MIKCONV_NAME_AGENT6 {
             get {
                 return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to General DigiMusic.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_AGENT7 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT7", resourceCulture);
             }
         }
         

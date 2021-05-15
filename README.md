@@ -38,6 +38,7 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | FastTracker II | .xm | MikMod Converter | MikMod |
 | Future Composer 1.0 - 1.3 | .fc / .fc13 / .smod | Module Converter | Future Composer |
 | Future Composer 1.4 | .fc / .fc14 | | Future Composer |
+| General DigiMusic | .gdm | MikMod Converter | MikMod |
 | IFF-16SV (PCM) | .16sv | | Sample |
 | IFF-8SVX (Fibonacci) | .8svx | | Sample |
 | IFF-8SVX (PCM) | .8svx | | Sample |

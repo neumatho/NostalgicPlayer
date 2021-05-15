@@ -151,6 +151,14 @@
             <uap:DisplayName>Farandole Composer</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="gdmfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-gdm">.gdm</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>General DigiMusic</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
