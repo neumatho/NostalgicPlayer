@@ -179,11 +179,6 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 				mh.GraphicLoc = moduleStream.Read_L_UINT32();
 				mh.GraphicLen = moduleStream.Read_L_UINT16();
 
-				if (mh.MessageLen != 0 || encoder.GetString(mh.Author) != "Unknown")
-				{
-					int a = 6;
-				}
-
 				// Have we ended abruptly?
 				if (moduleStream.EndOfStream)
 				{
