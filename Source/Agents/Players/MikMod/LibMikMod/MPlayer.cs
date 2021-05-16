@@ -321,34 +321,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			if ((flags & ModuleFlag.XmPeriods) != 0)
 			{
 				if ((flags & ModuleFlag.Linear) != 0)
-					return GetLinearPeriod(note, speed);
+					return MlUtil.GetLinearPeriod(note, speed);
 				else
 					return GetLogPeriod(note, speed);
 			}
 			else
 				return GetOldPeriod(note, speed);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// XM linear period to frequency conversion
-		/// </summary>
-		/********************************************************************/
-		public uint GetFrequency(ModuleFlag flags, uint period)
-		{
-			if ((flags & ModuleFlag.Linear) != 0)
-			{
-				int shift = ((int)period / 768) - Constant.HighOctave;
-
-				if (shift >= 0)
-					return LookupTables.LinTab[period % 768] >> shift;
-				else
-					return LookupTables.LinTab[period % 768] << (-shift);
-			}
-			else
-				return (uint)((8363L * 1712L) / (period != 0 ? period : 1));
 		}
 
 
@@ -845,7 +823,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				}
 				else
 				{
-					driver.VoiceSetFrequencyInternal((sbyte)channel, GetFrequency(mod.Flags, playPeriod));
+					driver.VoiceSetFrequencyInternal((sbyte)channel, MlUtil.GetFrequency(mod.Flags, playPeriod));
 
 					// If keyFade, start subtracting FadeOutSpeed from fadeVol:
 					if ((i != null) && ((aOut.Main.KeyOff & KeyFlag.Fade) != 0))
@@ -1177,20 +1155,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			ushort o = (ushort)(note / (2 * SharedConstant.Octave));
 
 			return (ushort)(((8363L * LookupTables.OldPeriods[n]) >> o) / speed);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculates the note period and return it
-		/// </summary>
-		/********************************************************************/
-		private ushort GetLinearPeriod(ushort note, uint fine)
-		{
-			ushort t = (ushort)(((20L + 2 * Constant.HighOctave) * SharedConstant.Octave + 2 - note) * 32L - (fine >> 1));
-
-			return t;
 		}
 
 
@@ -4148,8 +4112,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 					break;
 				}
 
-				// S2x: Set finetune
-				case SsCommand.Finetune:
+				// S2x: Set fine tune
+				case SsCommand.FineTune:
 				{
 					DoEEffects(tick, flags, a, mod, channel, (byte)(0x50 | inf));
 					break;

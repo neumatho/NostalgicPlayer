@@ -130,6 +130,7 @@ Digital Sound and Music Interface (AMF)
 Digital Sound Interface Kit (DSM)
 Farandole Composer (FAR)
 General DigiMusic (GDM)
+Imago Orpheus (IMF)
 FastTracker II (XM)
 UniMod (UNI)</value>
   </data>
@@ -174,6 +175,11 @@ The Farandole composer was written by Daniel Potter and released in 1994.</value
     <value>This loader recognizes the “General DigiMusic” format, which is the internal format of the “Bells, Whistles and Sound Boards” library. This format has the same limitations as the S3M format.
 
 The BWSB library was written by Edward Schlunder and first released in 1993.</value>
+  </data>
+  <data name="IDS_MIKCONV_DESCRIPTION_AGENT8" xml:space="preserve">
+    <value>This loader recognizes “Imago Orpheus” modules. This format is roughly equivalent to the XM format, but with two effects columns instead of a volume column and an effect column.
+
+Imago Orpheus was written by Lutz Roeder and released in 1994.</value>
   </data>
   <data name="IDS_MIKCONV_ERR_BAD_HEADER" xml:space="preserve">
     <value>Module header have some bad values</value>
@@ -225,6 +231,9 @@ The BWSB library was written by Edward Schlunder and first released in 1993.</va
   </data>
   <data name="IDS_MIKCONV_NAME_AGENT7" xml:space="preserve">
     <value>General DigiMusic</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_AGENT8" xml:space="preserve">
+    <value>Imago Orpheus</value>
   </data>
   <data name="IDS_MIKCONV_NAME_DSMI" xml:space="preserve">
     <value>Digital Sound and Music Interface module format {0}.{1}</value>

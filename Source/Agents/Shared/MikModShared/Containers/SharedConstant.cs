@@ -18,6 +18,11 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 		/// </summary>
 		public const int Octave = 12;
 
+		/// <summary>
+		/// Number of above-range octaves
+		/// </summary>
+		public const int HighOctave = 2;
+
 		/// <summary></summary>
 		public const int InstNotes = 120;
 		/// <summary></summary>

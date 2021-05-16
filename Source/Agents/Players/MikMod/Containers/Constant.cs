@@ -13,8 +13,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.Containers
 	/// </summary>
 	internal static class Constant
 	{
-		public const int HighOctave = 2;			// Number of above-range octaves
-
 		public const int LogFac = 2 * 16;
 
 		public const int SlBufSize = 2048;			// Size of the loader buffer in words

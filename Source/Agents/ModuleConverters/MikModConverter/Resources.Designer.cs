@@ -73,8 +73,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         ///Digital Sound Interface Kit (DSM)
         ///Farandole Composer (FAR)
         ///General DigiMusic (GDM)
-        ///FastTracker II (XM)
-        ///UniMod (UNI).
+        ///Imago Orpheus (IMF)
+        ///FastTracker II (XM) [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string IDS_MIKCONV_DESCRIPTION {
             get {
@@ -175,6 +175,17 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         internal static string IDS_MIKCONV_DESCRIPTION_AGENT7 {
             get {
                 return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This loader recognizes “Imago Orpheus” modules. This format is roughly equivalent to the XM format, but with two effects columns instead of a volume column and an effect column.
+        ///
+        ///Imago Orpheus was written by Lutz Roeder and released in 1994..
+        /// </summary>
+        internal static string IDS_MIKCONV_DESCRIPTION_AGENT8 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT8", resourceCulture);
             }
         }
         
@@ -328,6 +339,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         internal static string IDS_MIKCONV_NAME_AGENT7 {
             get {
                 return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Imago Orpheus.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_AGENT8 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT8", resourceCulture);
             }
         }
         

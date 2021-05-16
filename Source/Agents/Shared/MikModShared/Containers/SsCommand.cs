@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 		/// <summary></summary>
 		Glissando = 1,
 		/// <summary></summary>
-		Finetune,
+		FineTune,
 		/// <summary></summary>
 		VibWave,
 		/// <summary></summary>

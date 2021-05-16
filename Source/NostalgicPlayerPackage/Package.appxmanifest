@@ -159,6 +159,14 @@
             <uap:DisplayName>General DigiMusic</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="imffile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-imf">.imf</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Imago Orpheus</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

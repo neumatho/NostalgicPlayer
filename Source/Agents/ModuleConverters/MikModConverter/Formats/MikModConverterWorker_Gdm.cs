@@ -35,25 +35,25 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		{
 			public byte Note;
 			public byte Samp;
-			public GdmEffect[] Effect = new GdmEffect[4];
+			public readonly GdmEffect[] Effect = new GdmEffect[4];
 		}
 		#endregion
 
 		#region GdmHeader class
 		private class GdmHeader
 		{
-			public byte[] Id1 = new byte[4];
-			public byte[] SongName = new byte[33];
-			public byte[] Author = new byte[33];
-			public byte[] EofMarker = new byte[3];
-			public byte[] Id2 = new byte[4];
+			public readonly byte[] Id1 = new byte[4];
+			public readonly byte[] SongName = new byte[33];
+			public readonly byte[] Author = new byte[33];
+			public readonly byte[] EofMarker = new byte[3];
+			public readonly byte[] Id2 = new byte[4];
 
 			public byte MajorVer;
 			public byte MinorVer;
 			public ushort TrackerId;
 			public byte T_MajorVer;
 			public byte T_MinorVer;
-			public byte[] PanTable = new byte[32];
+			public readonly byte[] PanTable = new byte[32];
 			public byte MasterVol;
 			public byte MasterTempo;
 			public byte MasterBpm;
@@ -78,8 +78,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		#region GdmSample class
 		private class GdmSample
 		{
-			public byte[] SampName = new byte[33];
-			public byte[] FileName = new byte[13];
+			public readonly byte[] SampName = new byte[33];
+			public readonly byte[] FileName = new byte[13];
 			public byte Ems;
 			public uint Length;
 			public uint LoopBeg;

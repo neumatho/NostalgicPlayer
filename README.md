@@ -42,6 +42,7 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | IFF-16SV (PCM) | .16sv | | Sample |
 | IFF-8SVX (Fibonacci) | .8svx | | Sample |
 | IFF-8SVX (PCM) | .8svx | | Sample |
+| Imago Orpheus | .imf | MikMod Converter | MikMod |
 | JamCracker | .jam | | JamCracker |
 | Master SoundTracker 1.0 | .mod | | ModTracker |
 | MultiTracker | .mtm | | ModTracker |

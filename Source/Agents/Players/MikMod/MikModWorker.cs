@@ -908,7 +908,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 						Flags = SampleInfo.SampleFlags.None,
 						Type = SampleInfo.SampleType.Sample,
 						BitSize = (sample.Flags & SampleFlag._16Bits) != 0 ? 16 : 8,
-						MiddleC = (int)Math.Ceiling((double)player.GetFrequency(of.Flags, player.GetPeriod(of.Flags, 96, sample.Speed))),
+						MiddleC = (int)Math.Ceiling((double)MlUtil.GetFrequency(of.Flags, player.GetPeriod(of.Flags, 96, sample.Speed))),
 						Volume = sample.Volume * 4,
 						Panning = sample.Panning == SharedConstant.Pan_Surround ? (int)Panning.Surround : sample.Panning,
 						Sample = sample.Handle,
