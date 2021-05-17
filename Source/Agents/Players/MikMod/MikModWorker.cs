@@ -319,12 +319,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 					int tick = curSpeed;
 					byte frameDelay = 1;
 
+					short newRow = -2;
+					short newPos = -1;
+
 					for (ushort row = startRow; row <= rowNum; row++)
 					{
 						// Reset the start row
 						startRow = 0;
-						short newRow = -2;
-						short newPos = -1;
 
 						while (tick < curSpeed)
 						{
@@ -404,7 +405,25 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 							tick++;
 						}
 
+						// Change the position
+						if (newPos != -1)
+							pos = newPos;
+
+						// If we both have a pattern break and position jump command
+						// on the same line, ignore the full stop
+						if (pattBreak && posBreak)
+							fullStop = false;
+
+						if (getOut)
+							break;
+
+						// Should we jump to a new row?
+						if (newRow != -2)
+							row = (ushort)newRow;
+
 						// New row
+						newRow = -2;
+						newPos = -1;
 						tick = 0;
 
 						if (row < rowNum)
@@ -592,22 +611,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 									}
 								}
 							}
-
-							// Change the position
-							if (newPos != -1)
-								pos = newPos;
-
-							// If we both have a pattern break and position jump command
-							// on the same line, ignore the full stop
-							if (pattBreak && posBreak)
-								fullStop = false;
-
-							if (getOut)
-								break;
-
-							// Should we jump to a new row?
-							if (newRow != -2)
-								row = (ushort)newRow;
 						}
 					}
 
