@@ -167,6 +167,14 @@
             <uap:DisplayName>Imago Orpheus</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="stmfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-stm">.stm</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ScreamTracker 2</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

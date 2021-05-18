@@ -67,14 +67,14 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         ///
         ///This version can convert these formats:
         ///
-        ///Composer 669 and Unis 669 (669)
         ///Asylum (AMF)
+        ///Composer 669 and Unis 669 (669)
         ///Digital Sound and Music Interface (AMF)
         ///Digital Sound Interface Kit (DSM)
         ///Farandole Composer (FAR)
+        ///FastTracker II (XM)
         ///General DigiMusic (GDM)
-        ///Imago Orpheus (IMF)
-        ///FastTracker II (XM) [rest of string was truncated]&quot;;.
+        ///Imago Orpheus (IMF) [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string IDS_MIKCONV_DESCRIPTION {
             get {
@@ -90,6 +90,17 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         internal static string IDS_MIKCONV_DESCRIPTION_AGENT1 {
             get {
                 return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This loader recognizes “ScreamTracker” modules. “ScreamTracker” was the first PC tracker, as well as the first PC module format. Loosely inspired by the “SoundTracker” format, it does not have as many effects as Protracker, although it supports 31 instruments and 4 channels.
+        ///
+        ///“ScreamTracker” was written by PSI of Future Crew, a.k.a. Sami Tammilehto..
+        /// </summary>
+        internal static string IDS_MIKCONV_DESCRIPTION_AGENT10 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT10", resourceCulture);
             }
         }
         
@@ -271,6 +282,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ScreamTracker 2.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_AGENT10 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT10", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to UniMod.
         /// </summary>
         internal static string IDS_MIKCONV_NAME_AGENT15 {
@@ -357,6 +377,33 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         internal static string IDS_MIKCONV_NAME_DSMI {
             get {
                 return ResourceManager.GetString("IDS_MIKCONV_NAME_DSMI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ScreamTracker 2{0}.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_STM {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_STM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  (Converted by MOD2STM).
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_STM_MOD2STM {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_STM_MOD2STM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  (Wuzamod).
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_STM_WUZAMOD {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_STM_WUZAMOD", resourceCulture);
             }
         }
         

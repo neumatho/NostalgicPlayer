@@ -21,7 +21,7 @@ In the Clients folder, you can find two different clients that use the player. *
 
 # Formats supported
 
-Modules in all supported formats can be found on my homepage at https://www.nostalgicplayer.dk. For a description of the module formats, see the documentation.
+Modules in all supported formats can be found on my homepage at https://www.nostalgicplayer.dk. Note that the modules on my homepage will first appear, after an official release of the player that can handle them. For a description of the module formats, see the documentation.
 
 | Format | Extension | Converter | Player |
 | ------ | -------------- | --------- | ------ |
@@ -51,6 +51,7 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | RIFF-WAVE (ADPCM) | .wav | | Sample |
 | RIFF-WAVE (IEEE Float) | .wav | | Sample |
 | RIFF-WAVE (PCM) | .wav | | Sample |
+| ScreamTracker 2 | .stm | MikMod Converter | MikMod |
 | SoundTracker 2.2 | .mod | | ModTracker |
 | StarTrekker | .mod | | ModTracker |
 | StarTrekker 8 voices | .mod | | ModTracker |
