@@ -18,7 +18,7 @@ using Polycode.NostalgicPlayer.Kit.Utility;
 namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 {
 	/// <summary>
-	/// MikMod loader for STM (StreamTracker 2.x) format
+	/// MikMod loader for STM (StreamTracker 2) format
 	/// </summary>
 	internal class MikModConverterWorker_Stm : MikModConverterWorkerBase
 	{

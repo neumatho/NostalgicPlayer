@@ -284,10 +284,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				byte curTempo = initTempo;
 				float total = 0.0f;
 
-				// Initialize loop arrays
-				Array.Fill(loopCount, (byte)0);
-				Array.Fill(loopPos, (byte)0);
-
 				byte patDelTime = 0;
 				byte patDelTime2 = 0;
 				short _breakPos = 0;
@@ -296,6 +292,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				bool _breakFlag = false;
 				bool _posJumpFlag = false;
 				bool songEnded = false;
+
+				// Initialize loop arrays
+				Array.Clear(loopCount, 0, channelNum);
+				Array.Clear(loopPos, 0, channelNum);
 
 				// Calculate the position times
 				pos = startPos;
