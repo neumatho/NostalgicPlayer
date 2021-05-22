@@ -304,7 +304,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 					sample.LoopBeg = (int)moduleStream.Read_L_UINT32();
 					sample.LoopEnd = (int)moduleStream.Read_L_UINT32();
 
-					if (sample.LoopEnd >= 0xfffff)			// No loop value or higher, which is used in Lost in Germany
+					// Note: 'Lost in Germany' has 0xf0ffff as marker
+					if (sample.LoopEnd >= 0xfffff)
 						sample.LoopEnd = 0;
 
 					if ((sample.Length < 0) || (sample.LoopBeg < -1) || (sample.LoopEnd < -1))
