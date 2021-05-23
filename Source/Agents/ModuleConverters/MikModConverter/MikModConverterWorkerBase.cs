@@ -23,6 +23,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 		protected Module of;
 		protected string originalFormat;
 
+		protected readonly bool curious = false;
+
 		#region IModuleConverterAgent implementation
 		/********************************************************************/
 		/// <summary>

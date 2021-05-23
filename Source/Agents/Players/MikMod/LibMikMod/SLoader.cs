@@ -80,6 +80,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 					}
 					else
 					{
+						if (sampleDataStream.EndOfStream)
+						{
+							errorMessage = Resources.IDS_MIK_ERR_LOADING_SAMPLES;
+							return false;
+						}
+
 						// Read the sample into the memory
 						if ((inFmt & SampleFlag._16Bits) != 0)
 						{
@@ -90,12 +96,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 						}
 						else
 							sampleDataStream.Read(sl_buffer8, 0, sTodo);
-					}
-
-					if (sampleDataStream.EndOfStream)
-					{
-						errorMessage = Resources.IDS_MIK_ERR_LOADING_SAMPLES;
-						return false;
 					}
 
 					// Dedelta the sample

@@ -175,6 +175,14 @@
             <uap:DisplayName>ScreamTracker 2</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="s3mfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-s3m">.s3m</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ScreamTracker 3</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

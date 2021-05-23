@@ -105,6 +105,17 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This loader recognizes “ScreamTracker 3” modules. This version was a huge improvement over the original “ScreamTracker”. It supported 32 channels, up to 99 instruments, and a large choice of effects.
+        ///
+        ///“ScreamTracker 3” was written by PSI of Future Crew, a.k.a. Sami Tammilehto, and released in 1994..
+        /// </summary>
+        internal static string IDS_MIKCONV_DESCRIPTION_AGENT11 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT11", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This loader recognizes “UniMod” modules. This is the internal format used by MikMod. If you find any modules in this format, it probably won&apos;t be played correct, because not all effects were supported at the time those modules were used..
         /// </summary>
         internal static string IDS_MIKCONV_DESCRIPTION_AGENT15 {
@@ -291,6 +302,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ScreamTracker 3.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_AGENT11 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT11", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to UniMod.
         /// </summary>
         internal static string IDS_MIKCONV_NAME_AGENT15 {
@@ -377,6 +397,60 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         internal static string IDS_MIKCONV_NAME_DSMI {
             get {
                 return ResourceManager.GetString("IDS_MIKCONV_NAME_DSMI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ScreamTracker {0}.{1:D2}.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_S3M {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_S3M", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Imago Orpheus {0}.{1:D2} (S3M format).
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_S3M_IMAGO {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_S3M_IMAGO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Impulse Tracker {0}.{1:D2} (S3M format).
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_S3M_IT {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_S3M_IT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Impulse Tracker 2.14p3 (S3M format).
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_S3M_IT_214P3 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_S3M_IT_214P3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Impulse Tracker 2.14p4 (S3M format).
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_S3M_IT_214P4 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_S3M_IT_214P4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown Tracker {0}.{1:D2} (S3M format).
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_S3M_UNKNOWN {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_S3M_UNKNOWN", resourceCulture);
             }
         }
         

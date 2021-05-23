@@ -46,6 +46,12 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 		/// <summary></summary>
 		public const int UF_MaxChan = 64;
 
+		/// <summary></summary>
+		public const int UF_MaxMacro = 0x10;
+
+		/// <summary></summary>
+		public const int UF_MaxFilter = 0x100;
+
 		/// <summary>
 		/// Special 'end of song' pattern
 		/// </summary>
