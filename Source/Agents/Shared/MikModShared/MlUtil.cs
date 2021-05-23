@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod
 		public bool filters;
 
 		/// <summary>
-		/// Active midi macro number for Sxx,xx<80h
+		/// Active midi macro number for Sxx,xx&lt;80h
 		/// </summary>
 		public byte activeMacro;
 

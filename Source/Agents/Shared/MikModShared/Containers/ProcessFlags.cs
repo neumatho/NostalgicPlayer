@@ -16,8 +16,19 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 	[Flags]
 	public enum ProcessFlags
 	{
-		OldStyle = 1,		// Behave as old scream tracker
-		It,					// Behave ad impulse tracker
-		Scream				// Enforce scream tracker specific limits
+		/// <summary>
+		/// Behave as old scream tracker
+		/// </summary>
+		OldStyle = 1,
+
+		/// <summary>
+		/// Behave as impulse tracker
+		/// </summary>
+		It,
+
+		/// <summary>
+		/// Enforce scream tracker specific limits
+		/// </summary>
+		Scream
 	}
 }
