@@ -116,6 +116,17 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This loader recognizes “STMIK 0.2” modules. “STMIK” (the Scream Tracker Music Interface Kit) was a module playing library distributed by Future Crew to play Scream Tracker module in games and demos. It uses an intermediate format between STM and S3M and comes with a tool converting STM modules to STX.
+        ///
+        ///“STMIK” was written by PSI of Future Crew, a.k.a. Sami Tammilehto..
+        /// </summary>
+        internal static string IDS_MIKCONV_DESCRIPTION_AGENT12 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT12", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This loader recognizes “UniMod” modules. This is the internal format used by MikMod. If you find any modules in this format, it probably won&apos;t be played correct, because not all effects were supported at the time those modules were used..
         /// </summary>
         internal static string IDS_MIKCONV_DESCRIPTION_AGENT15 {
@@ -311,6 +322,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Scream Tracker Music Interface Kit.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_AGENT12 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT12", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to UniMod.
         /// </summary>
         internal static string IDS_MIKCONV_NAME_AGENT15 {
@@ -478,6 +498,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         internal static string IDS_MIKCONV_NAME_STM_WUZAMOD {
             get {
                 return ResourceManager.GetString("IDS_MIKCONV_NAME_STM_WUZAMOD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scream Tracker Music Interface Kit (STM2STX 1.{0}).
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_STX {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_STX", resourceCulture);
             }
         }
         

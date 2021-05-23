@@ -183,6 +183,14 @@
             <uap:DisplayName>ScreamTracker 3</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="stxfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-stx">.stx</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>STMIK</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

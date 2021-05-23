@@ -51,6 +51,7 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | RIFF-WAVE (ADPCM) | .wav | | Sample |
 | RIFF-WAVE (IEEE Float) | .wav | | Sample |
 | RIFF-WAVE (PCM) | .wav | | Sample |
+| Scream Tracker Music Interface Kit | .stx | MikMod Converter | MikMod |
 | ScreamTracker 2 | .stm | MikMod Converter | MikMod |
 | ScreamTracker 3 | .s3m | MikMod Converter | MikMod |
 | SoundTracker 2.2 | .mod | | ModTracker |
