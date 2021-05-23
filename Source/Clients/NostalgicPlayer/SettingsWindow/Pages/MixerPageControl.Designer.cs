@@ -39,6 +39,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.amigaFilterCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.interpolationCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.swapSpeakersCheckBox = new Krypton.Toolkit.KryptonCheckBox();
+			this.surroundCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.outputGroupBox = new Krypton.Toolkit.KryptonGroupBox();
 			this.outputAgentSettingsButton = new Krypton.Toolkit.KryptonButton();
 			this.outputAgentComboBox = new Krypton.Toolkit.KryptonComboBox();
@@ -81,6 +82,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.generalGroupBox.Panel.Controls.Add(this.amigaFilterCheckBox);
 			this.generalGroupBox.Panel.Controls.Add(this.interpolationCheckBox);
 			this.generalGroupBox.Panel.Controls.Add(this.swapSpeakersCheckBox);
+			this.generalGroupBox.Panel.Controls.Add(this.surroundCheckBox);
 			this.controlResource.SetResourceKey(this.generalGroupBox, "IDS_SETTINGS_MIXER_GENERAL");
 			this.generalGroupBox.Size = new System.Drawing.Size(592, 100);
 			this.generalGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -128,7 +130,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.controlResource.SetResourceKey(this.amigaFilterCheckBox, "IDS_SETTINGS_MIXER_GENERAL_AMIGALED");
 			this.amigaFilterCheckBox.Size = new System.Drawing.Size(148, 17);
 			this.amigaFilterCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.amigaFilterCheckBox.TabIndex = 4;
+			this.amigaFilterCheckBox.TabIndex = 6;
 			this.amigaFilterCheckBox.Values.Text = "Emulate Amiga LED filter";
 			this.amigaFilterCheckBox.CheckedChanged += new System.EventHandler(this.AmigaFilterCheckBox_CheckedChanged);
 			// 
@@ -150,9 +152,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.controlResource.SetResourceKey(this.swapSpeakersCheckBox, "IDS_SETTINGS_MIXER_GENERAL_SWAPSPEAKERS");
 			this.swapSpeakersCheckBox.Size = new System.Drawing.Size(166, 17);
 			this.swapSpeakersCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.swapSpeakersCheckBox.TabIndex = 3;
+			this.swapSpeakersCheckBox.TabIndex = 4;
 			this.swapSpeakersCheckBox.Values.Text = "Swap left and right speakers";
 			this.swapSpeakersCheckBox.CheckedChanged += new System.EventHandler(this.SwapSpeakersCheckBox_CheckedChanged);
+			// 
+			// surroundCheckBox
+			// 
+			this.surroundCheckBox.Location = new System.Drawing.Point(200, 35);
+			this.surroundCheckBox.Name = "surroundCheckBox";
+			this.controlResource.SetResourceKey(this.surroundCheckBox, "IDS_SETTINGS_MIXER_GENERAL_SURROUND");
+			this.surroundCheckBox.Size = new System.Drawing.Size(146, 17);
+			this.surroundCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.surroundCheckBox.TabIndex = 5;
+			this.surroundCheckBox.Values.Text = "Dolby Prologic  surround";
+			this.surroundCheckBox.CheckedChanged += new System.EventHandler(this.SurroundCheckBox_CheckedChanged);
 			// 
 			// outputGroupBox
 			// 
@@ -323,5 +336,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Krypton.Toolkit.KryptonButton channels32_47Button;
 		private Krypton.Toolkit.KryptonButton channels48_63Button;
 		private Krypton.Toolkit.KryptonCheckBox swapSpeakersCheckBox;
+		private Krypton.Toolkit.KryptonCheckBox surroundCheckBox;
 	}
 }

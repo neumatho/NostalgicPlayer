@@ -16,28 +16,36 @@ extern "C"
 	#ifdef MIX32
 	EXPORTAPI(INT32, Mix8MonoNormal32(const INT8* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel));
 	EXPORTAPI(INT32, Mix8StereoNormal32(const INT8* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel));
+	EXPORTAPI(INT32, Mix8SurroundNormal32(const INT8* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel));
 
 	EXPORTAPI(INT32, Mix8MonoInterp32(const INT8* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 oldLVol, INT32* rampVol));
 	EXPORTAPI(INT32, Mix8StereoInterp32(const INT8* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel, INT32 oldLVol, INT32 oldRVol, INT32 *rampVol));
+	EXPORTAPI(INT32, Mix8SurroundInterp32(const INT8* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel, INT32 oldLVol, INT32 oldRVol, INT32* rampVol));
 
 	EXPORTAPI(INT32, Mix16MonoNormal32(const INT16* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel));
 	EXPORTAPI(INT32, Mix16StereoNormal32(const INT16* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel));
+	EXPORTAPI(INT32, Mix16SurroundNormal32(const INT16* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel));
 
 	EXPORTAPI(INT32, Mix16MonoInterp32(const INT16* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 oldLVol, INT32* rampVol));
 	EXPORTAPI(INT32, Mix16StereoInterp32(const INT16* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel, INT32 oldLVol, INT32 oldRVol, INT32 *rampVol));
-	#endif
+	EXPORTAPI(INT32, Mix16SurroundInterp32(const INT16* source, INT32* dest, INT32 offset, INT32 index, INT32 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel, INT32 oldLVol, INT32 oldRVol, INT32* rampVol));
+#endif
 
 	EXPORTAPI(INT64, Mix8MonoNormal64(const INT8* source, INT32* dest, INT32 offset, INT64 index, INT64 increment, INT32 todo, INT32 lVolSel));
 	EXPORTAPI(INT64, Mix8StereoNormal64(const INT8* source, INT32* dest, INT32 offset, INT64 index, INT64 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel));
+	EXPORTAPI(INT64, Mix8SurroundNormal64(const INT8* source, INT32* dest, INT32 offset, INT64 index, INT64 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel));
 
 	EXPORTAPI(INT64, Mix8MonoInterp64(const INT8* source, INT32* dest, INT32 offset, INT64 index, INT64 increment, INT32 todo, INT32 lVolSel, INT32 oldLVol, INT32* rampVol));
 	EXPORTAPI(INT64, Mix8StereoInterp64(const INT8* source, INT32* dest, INT32 offset, INT64 index, INT64 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel, INT32 oldLVol, INT32 oldRVol, INT32* rampVol));
+	EXPORTAPI(INT64, Mix8SurroundInterp64(const INT8* source, INT32* dest, INT32 offset, INT64 index, INT64 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel, INT32 oldLVol, INT32 oldRVol, INT32* rampVol));
 
 	EXPORTAPI(INT64, Mix16MonoNormal64(const INT16* source, INT32* dest, INT32 offset, INT64 index, INT64 increment, INT32 todo, INT32 lVolSel));
 	EXPORTAPI(INT64, Mix16StereoNormal64(const INT16* source, INT32* dest, INT32 offset, INT64 index, INT64 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel));
+	EXPORTAPI(INT64, Mix16SurroundNormal64(const INT16* source, INT32* dest, INT32 offset, INT64 index, INT64 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel));
 
 	EXPORTAPI(INT64, Mix16MonoInterp64(const INT16* source, INT32* dest, INT32 offset, INT64 index, INT64 increment, INT32 todo, INT32 lVolSel, INT32 oldLVol, INT32* rampVol));
 	EXPORTAPI(INT64, Mix16StereoInterp64(const INT16* source, INT32* dest, INT32 offset, INT64 index, INT64 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel, INT32 oldLVol, INT32 oldRVol, INT32* rampVol));
+	EXPORTAPI(INT64, Mix16SurroundInterp64(const INT16* source, INT32* dest, INT32 offset, INT64 index, INT64 increment, INT32 todo, INT32 lVolSel, INT32 rVolSel, INT32 oldLVol, INT32 oldRVol, INT32* rampVol));
 
 	EXPORTAPI(void, AddAmigaFilter(bool stereo, INT32* dest, INT32 todo, INT32* filterPrevLeft, INT32* filterPrevRight));
 

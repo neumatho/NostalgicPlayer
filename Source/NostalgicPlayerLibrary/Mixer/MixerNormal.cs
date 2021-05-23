@@ -321,7 +321,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 										if ((mode & MixerMode.Stereo) != 0)
 										{
 											if ((vnf.Panning == (int)Panning.Surround) && ((mode & MixerMode.Surround) != 0))
-												vnf.Current = Native.Mix16SurroundInterp32(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
+												vnf.Current = Native.Mix16SurroundInterp32(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
 											else
 												vnf.Current = Native.Mix16StereoInterp32(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
 										}

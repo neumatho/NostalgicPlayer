@@ -630,6 +630,9 @@ what is new.</value>
   <data name="IDS_SETTINGS_MIXER_GENERAL_STEREOSEPARATION" xml:space="preserve">
     <value>Stereo separation</value>
   </data>
+  <data name="IDS_SETTINGS_MIXER_GENERAL_SURROUND" xml:space="preserve">
+    <value>Dolby Prologic  surround</value>
+  </data>
   <data name="IDS_SETTINGS_MIXER_GENERAL_SWAPSPEAKERS" xml:space="preserve">
     <value>Swap left and right speakers</value>
   </data>

@@ -279,9 +279,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			else
 				mixerMode &= ~MixerMode.Interpolation;
 
-#if DEBUG
-			mixerMode |= MixerMode.Surround;
-#endif
+			if (mixerConfiguration.EnableSurround)
+				mixerMode |= MixerMode.Surround;
+			else
+				mixerMode &= ~MixerMode.Surround;
 
 			swapSpeakers = mixerConfiguration.SwapSpeakers;
 			emulateFilter = mixerConfiguration.EnableAmigaFilter;

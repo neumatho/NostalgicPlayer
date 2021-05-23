@@ -102,6 +102,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
+		/// Dolby Prologic surround
+		/// </summary>
+		/********************************************************************/
+		public bool Surround
+		{
+			get => settings.GetBoolEntry("Sound", "Surround", false);
+
+			set => settings.SetBoolEntry("Sound", "Surround", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Emulate Amiga LED filter
 		/// </summary>
 		/********************************************************************/
