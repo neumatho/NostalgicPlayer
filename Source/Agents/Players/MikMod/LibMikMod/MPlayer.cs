@@ -278,6 +278,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 								pf.Bpm = pf.InitTempo < pf.BpmLimit ? pf.BpmLimit : pf.InitTempo;
 							}
+
+							// Re-initialize all channels
+							for (int t = 0; t < pf.NumChn; t++)
+							{
+								pf.Control[t] = new Mp_Control();
+
+								pf.Control[t].Main.ChanVol = pf.ChanVol[t];
+								pf.Control[t].Main.Panning = (short)pf.Panning[t];
+
+								driver.VoiceStopInternal((sbyte)t);
+							}
 						}
 
 						// Tell NostalgicPlayer we has restarted
