@@ -127,6 +127,17 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This loader recognizes “UltraTracker” modules. They are mostly similar to Protracker modules, but support two effects per channel.
+        ///
+        ///“UltraTracker” was written by MAS of Prophecy, a.k.a. Marc Andre Schallehn, and released in 1993..
+        /// </summary>
+        internal static string IDS_MIKCONV_DESCRIPTION_AGENT13 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT13", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This loader recognizes “UniMod” modules. This is the internal format used by MikMod. If you find any modules in this format, it probably won&apos;t be played correct, because not all effects were supported at the time those modules were used..
         /// </summary>
         internal static string IDS_MIKCONV_DESCRIPTION_AGENT15 {
@@ -331,6 +342,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to UltraTracker.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_AGENT13 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT13", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to UniMod.
         /// </summary>
         internal static string IDS_MIKCONV_NAME_AGENT15 {
@@ -507,6 +527,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         internal static string IDS_MIKCONV_NAME_STX {
             get {
                 return ResourceManager.GetString("IDS_MIKCONV_NAME_STX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to UltraTracker 1.{0}.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_ULT {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_ULT", resourceCulture);
             }
         }
         

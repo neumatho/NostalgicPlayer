@@ -858,8 +858,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 					SetTempo((ushort)(of.Bpm + of.RelSpd));
 				}
 
+				player.mdBpm = of.Bpm;
+
 				of.PosJmp = 2;
 				of.PatBrk = 0;
+				of.PatPos = 0;
+				of.Pat_RepCrazy = false;
+				of.PatDly = 0;
+				of.PatDly2 = 0;
 				of.SngPos = (short)pos;
 				of.VbTick = of.SngSpd;
 

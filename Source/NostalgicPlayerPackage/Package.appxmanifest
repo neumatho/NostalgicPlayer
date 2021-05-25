@@ -191,6 +191,14 @@
             <uap:DisplayName>STMIK</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="ultfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-ult">.ult</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>UltraTracker</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

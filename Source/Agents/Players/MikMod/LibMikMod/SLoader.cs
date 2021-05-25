@@ -28,7 +28,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			errorMessage = string.Empty;
 
 			// Find the stream with the sample data and use that
-			using (ModuleStream sampleDataStream = moduleStream.GetSampleDataStream(sampleNumber, (int)length))
+			using (ModuleStream sampleDataStream = moduleStream.GetSampleDataStream(sampleNumber, (int)((inFmt & SampleFlag._16Bits) != 0 ? length * 2 : length)))
 			{
 				short sl_old = 0;
 				ushort[] sl_buffer16 = (inFmt & SampleFlag._16Bits) != 0 ? new ushort[Constant.SlBufSize] : null;

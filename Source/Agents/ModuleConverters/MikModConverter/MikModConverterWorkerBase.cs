@@ -299,6 +299,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 
 				if (temp != 0)
 				{
+					if ((samp.Flags & SampleFlag._16Bits) != 0)
+						temp *= 2;
+
 					if (samp.SeekPos != 0)
 						moduleStream.Seek(samp.SeekPos, SeekOrigin.Begin);
 
