@@ -246,13 +246,12 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
 		/********************************************************************/
 		private void DrawLines(Graphics g, Pen pen, float midPos, float multiply, float step)
 		{
-			float pos = 0.0f;
-
 			// Initialize start point
 			float endX = 0.0f;
-			float endY = midPos;
+			float endY = (sampleData[sampleOffset] >> 16) * multiply + midPos;
 
-			for (int i = 0, cnt = Width; i < cnt; i++, pos += step)
+			float pos = step;
+			for (int i = 1, cnt = Width - 1; i < cnt; i++, pos += step)
 			{
 				// Find the position in the view where the sample is
 				float y = (sampleData[sampleOffset + (int)pos * sampleIncrement] >> 16) * multiply + midPos;
