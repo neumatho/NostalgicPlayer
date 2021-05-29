@@ -265,6 +265,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 				byte patDly = 0;
 				byte patDly2 = 0;
 
+				ushort curPatPos = 0;
 				ushort patPos = 0;
 				short posJmp = 2;				// Make sure the player fetches the first note
 				ushort numRow = 0xffff;
@@ -372,6 +373,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 									else
 										tracks[chan] = null;
 								}
+
+								curPatPos = patPos;
 							}
 						}
 					}
@@ -385,7 +388,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 								continue;
 
 							// Set the row pointer
-							uniTrk.UniSetRow(tracks[chan], uniTrk.UniFindRow(tracks[chan], patPos));
+							uniTrk.UniSetRow(tracks[chan], uniTrk.UniFindRow(tracks[chan], curPatPos));
 
 							// Read and parse the opcodes for the entire row
 							byte opcode, effArg;
