@@ -37,6 +37,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 
 		private readonly Dictionary<int, Bitmap> combinedImages = new Dictionary<int, Bitmap>();
 
+		private bool doNotUpdateAutoSelection;
+
 		/// <summary></summary>
 		public const int PolyphonyChannels = 3;
 
@@ -57,6 +59,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			 3, -1,  6,  8, 10, -1, 13, 15, -1, -1, -1, -1,  0,  2,  4,  5,
 			 7,  9, 11, 12, 14, 16
 		};
+
+		private const int Page_Instruments = 0;
+		private const int Page_Samples = 1;
 
 		/********************************************************************/
 		/// <summary>
@@ -91,10 +96,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 				Text = Resources.IDS_SAMPLE_INFO_TITLE;
 
 				// Set the tab titles
-				navigator.Pages[0].Text = Resources.IDS_SAMPLE_INFO_TAB_INSTRUMENT;
-				navigator.Pages[1].Text = Resources.IDS_SAMPLE_INFO_TAB_SAMPLE;
-
-				navigator.SelectedIndex = settings.ActiveTab;
+				navigator.Pages[Page_Instruments].Text = Resources.IDS_SAMPLE_INFO_TAB_INSTRUMENT;
+				navigator.Pages[Page_Samples].Text = Resources.IDS_SAMPLE_INFO_TAB_SAMPLE;
 
 				// Add the columns to the instrument grid
 				instrumentDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
@@ -277,8 +280,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 				RemoveSampleItems();
 
 				// Now add the items
+				doNotUpdateAutoSelection = true;
+
 				AddInstrumentItems();
 				AddSampleItems();
+
+				doNotUpdateAutoSelection = false;
 			}
 		}
 
@@ -371,8 +378,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			if (moduleHandler != null)
 			{
 				// Save the settings
-				settings.ActiveTab = navigator.SelectedIndex;
-
 				settings.InstColumn1Width = instrumentDataGridView.Columns[0].Width;
 				settings.InstColumn1Pos = instrumentDataGridView.Columns[0].DisplayIndex;
 
@@ -424,6 +429,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 				// Cleanup
 				moduleHandler = null;
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when a tab is selected
+		/// </summary>
+		/********************************************************************/
+		private void Navigator_SelectedPageChanged(object sender, EventArgs e)
+		{
+			if (!doNotUpdateAutoSelection)
+				settings.AutoSelectTab = navigator.SelectedIndex;
 		}
 
 
@@ -647,7 +665,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 		/// Will show an error message to the user
 		/// </summary>
 		/********************************************************************/
-		public void ShowSimpleErrorMessage(string message)
+		private void ShowSimpleErrorMessage(string message)
 		{
 			using (CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error))
 			{
@@ -702,7 +720,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 
 				// Resize the rows, so the lines are compacted
 				instrumentDataGridView.AutoResizeRows();
+
+				// Show tab if auto-selected
+				navigator.Pages[Page_Instruments].Visible = true;
+
+				if (settings.AutoSelectTab == Page_Instruments)
+					navigator.SelectedIndex = Page_Instruments;
 			}
+			else
+				navigator.Pages[Page_Instruments].Visible = false;
 		}
 
 

@@ -29,6 +29,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
+		/// The tab to auto select when new module is loaded
+		/// </summary>
+		/********************************************************************/
+		public int AutoSelectTab
+		{
+			get => settings.GetIntEntry("Window", "AutoSelectTab", 0);
+
+			set => settings.SetIntEntry("Window", "AutoSelectTab", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Column 1 width
 		/// </summary>
 		/********************************************************************/
@@ -51,20 +65,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 			get => settings.GetIntEntry("List", "Col2Width", 141);
 
 			set => settings.SetIntEntry("List", "Col2Width", value);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Comment auto selection
-		/// </summary>
-		/********************************************************************/
-		public bool CommentAutoSelect
-		{
-			get => settings.GetBoolEntry("Comment", "AutoSelect");
-
-			set => settings.SetBoolEntry("Comment", "AutoSelect", value);
 		}
 	}
 }

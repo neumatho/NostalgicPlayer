@@ -30,9 +30,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		private ModuleHandler moduleHandler;
 		private MainWindowForm mainWindow;
 
-		private bool doNotUpdateCommentSelection;
+		private bool doNotUpdateAutoSelection;
 
 		private readonly ModuleInfoWindowSettings settings;
+
+		private const int Page_ModuleInfo = 0;
+		private const int Page_Comments = 1;
 
 		/********************************************************************/
 		/// <summary>
@@ -59,8 +62,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				Text = Resources.IDS_MODULE_INFO_TITLE;
 
 				// Set the tab titles
-				navigator.Pages[0].Text = Resources.IDS_MODULE_INFO_TAB_INFO;
-				navigator.Pages[1].Text = Resources.IDS_MODULE_INFO_TAB_COMMENT;
+				navigator.Pages[Page_ModuleInfo].Text = Resources.IDS_MODULE_INFO_TAB_INFO;
+				navigator.Pages[Page_Comments].Text = Resources.IDS_MODULE_INFO_TAB_COMMENT;
 
 				// Add the columns to the controls
 				moduleInfoInfoDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
@@ -107,7 +110,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				moduleInfoCommentDataGridView.Rows.Clear();
 
 				// Add the items
+				doNotUpdateAutoSelection = true;
+
 				AddItems();
+
+				doNotUpdateAutoSelection = false;
 			}
 		}
 
@@ -163,8 +170,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/********************************************************************/
 		private void Navigator_SelectedPageChanged(object sender, EventArgs e)
 		{
-			if (!doNotUpdateCommentSelection)
-				settings.CommentAutoSelect = navigator.SelectedIndex == 1;
+			if (!doNotUpdateAutoSelection)
+				settings.AutoSelectTab = navigator.SelectedIndex;
 		}
 
 
@@ -267,14 +274,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				// Add comment
 				if (staticInfo.Comment.Length > 0)
 				{
-					navigator.Pages[1].Visible = true;
+					navigator.Pages[Page_Comments].Visible = true;
 
-					if (settings.CommentAutoSelect)
-						navigator.SelectedIndex = 1;
+					if (settings.AutoSelectTab == Page_Comments)
+						navigator.SelectedIndex = Page_Comments;
 
 					foreach (string line in staticInfo.Comment)
 						moduleInfoCommentDataGridView.Rows.Add(line);
 				}
+				else
+					navigator.Pages[Page_Comments].Visible = false;
 			}
 			else
 			{
@@ -290,9 +299,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE, na);
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, na);
 
-				doNotUpdateCommentSelection = true;
-				navigator.Pages[1].Visible = false;
-				doNotUpdateCommentSelection = false;
+				navigator.Pages[Page_Comments].Visible = false;
 			}
 
 			// Resize the rows, so the lines are compacted

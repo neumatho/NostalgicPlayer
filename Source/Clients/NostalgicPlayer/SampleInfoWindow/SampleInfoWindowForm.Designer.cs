@@ -80,6 +80,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			this.navigator.Size = new System.Drawing.Size(432, 172);
 			this.navigator.StateCommon.Tab.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.navigator.TabIndex = 0;
+			this.navigator.SelectedPageChanged += new System.EventHandler(this.Navigator_SelectedPageChanged);
 			// 
 			// navigatorInstrumentPage
 			// 
