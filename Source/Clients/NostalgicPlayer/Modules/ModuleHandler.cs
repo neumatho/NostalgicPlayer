@@ -87,6 +87,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				StereoSeparator = sndSettings.StereoSeparation,
 				EnableInterpolation = sndSettings.Interpolation,
 				SwapSpeakers = sndSettings.SwapSpeakers,
+				EnableSurround = sndSettings.Surround,
 				EnableAmigaFilter = sndSettings.AmigaFilter,
 				ChannelsEnabled = new bool[MixerConfiguration.MaxNumberOfChannels],
 				ExtraChannels = mainWindow

@@ -172,7 +172,7 @@
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="audio/x-stm">.stm</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>ScreamTracker 2</uap:DisplayName>
+            <uap:DisplayName>Scream Tracker 2</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
@@ -180,7 +180,7 @@
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="audio/x-s3m">.s3m</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>ScreamTracker 3</uap:DisplayName>
+            <uap:DisplayName>Scream Tracker 3</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
@@ -197,6 +197,14 @@
               <uap:FileType ContentType="audio/x-ult">.ult</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>UltraTracker</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="itfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-it">.it</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Impulse Tracker</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
       </Extensions>

@@ -17,6 +17,11 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 	public enum ProcessFlags
 	{
 		/// <summary>
+		/// No flag set
+		/// </summary>
+		None = 0,
+
+		/// <summary>
 		/// Behave as old scream tracker
 		/// </summary>
 		OldStyle = 1,

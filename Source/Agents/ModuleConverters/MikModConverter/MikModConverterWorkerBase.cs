@@ -115,7 +115,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 				}
 
 				// Find number of channels to use
-				byte maxChan = SharedConstant.UF_MaxChan;
+				byte maxChan = 120;		// The maximum number of channels to use (including NNA)
 
 				if (((of.Flags & ModuleFlag.Nna) == 0) && (of.NumChn < maxChan))
 					maxChan = of.NumChn;

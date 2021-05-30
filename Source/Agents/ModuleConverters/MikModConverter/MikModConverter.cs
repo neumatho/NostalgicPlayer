@@ -31,6 +31,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 		private static readonly Guid agent6Id = Guid.Parse("E2C8619A-6957-43C9-A518-71002E37408B");
 		private static readonly Guid agent7Id = Guid.Parse("6118D229-7AEC-4FF6-8A0C-F4F5BCCE2564");
 		private static readonly Guid agent8Id = Guid.Parse("F0906D97-B9B3-451E-870D-A97529D38480");
+		private static readonly Guid agent9Id = Guid.Parse("6D40CCCF-45AE-4F5C-BF6B-2ABCD31B80AC");
 		private static readonly Guid agent10Id = Guid.Parse("557C8681-93CF-4BB8-A3DD-632C55DD840A");
 		private static readonly Guid agent11Id = Guid.Parse("EB0B4765-CA32-43A3-AC3A-93ED4907498B");
 		private static readonly Guid agent12Id = Guid.Parse("BFFB2A7C-52D5-4492-9241-3AC2FD705D80");
@@ -76,6 +77,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT6, Resources.IDS_MIKCONV_DESCRIPTION_AGENT6, agent6Id),
 					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT7, Resources.IDS_MIKCONV_DESCRIPTION_AGENT7, agent7Id),
 					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT8, Resources.IDS_MIKCONV_DESCRIPTION_AGENT8, agent8Id),
+					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT9, Resources.IDS_MIKCONV_DESCRIPTION_AGENT9, agent9Id),
 					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT10, Resources.IDS_MIKCONV_DESCRIPTION_AGENT10, agent10Id),
 					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT11, Resources.IDS_MIKCONV_DESCRIPTION_AGENT11, agent11Id),
 					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT12, Resources.IDS_MIKCONV_DESCRIPTION_AGENT12, agent12Id),
@@ -119,6 +121,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 			if (typeId == agent8Id)
 				return new MikModConverterWorker_Imf();
 
+			if (typeId == agent9Id)
+				return new MikModConverterWorker_It();
+
 			if (typeId == agent10Id)
 				return new MikModConverterWorker_Stm();
 
@@ -132,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 				return new MikModConverterWorker_Ult();
 
 			if (typeId == agent15Id)
-				return new MikModConverterWorker_UniMod();
+				return new MikModConverterWorker_Uni();
 
 			if (typeId == agent16Id)
 				return new MikModConverterWorker_Xm();

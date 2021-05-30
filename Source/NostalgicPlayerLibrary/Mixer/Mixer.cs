@@ -452,7 +452,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 					// Check all the channels to see if they are still active and
 					// enable/disable the channels depending on the user settings
-					for (int t = 0; t < moduleChannelNumber; t++)
+					for (int t = 0, cnt = Math.Min(moduleChannelNumber, channelsEnabled.Length); t < cnt; t++)
 					{
 						((ChannelParser)currentPlayer.VirtualChannels[t]).Active(currentMixer.IsActive(t));
 						currentMixer.EnableChannel(t, (channelsEnabled == null) || channelsEnabled[t]);

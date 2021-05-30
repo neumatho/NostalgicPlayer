@@ -18,7 +18,7 @@ using Polycode.NostalgicPlayer.Kit.Streams;
 namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 {
 	/// <summary>
-	/// MikMod loader for ULT format
+	/// MikMod loader for ULT (UltraTracker) format
 	/// </summary>
 	internal class MikModConverterWorker_Ult : MikModConverterWorkerBase
 	{

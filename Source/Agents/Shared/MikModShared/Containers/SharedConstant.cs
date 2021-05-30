@@ -52,6 +52,12 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 		/// <summary></summary>
 		public const int UF_MaxFilter = 0x100;
 
+		/// <summary></summary>
+		public const byte Filt_Cut = 0x80;
+
+		/// <summary></summary>
+		public const byte Filt_Resonant = 0x81;
+
 		/// <summary>
 		/// Special 'end of song' pattern
 		/// </summary>

@@ -503,7 +503,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 												}
 												else
 												{
-													if (effArg <= sngPos)
+													if ((effArg <= sngPos) || ((effArg == (of.NumPos - 1)) && (patPos == patBrk)))
 														songEnded = true;
 													else
 													{

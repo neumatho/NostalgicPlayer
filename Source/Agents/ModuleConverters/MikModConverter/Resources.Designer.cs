@@ -94,9 +94,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This loader recognizes “ScreamTracker” modules. “ScreamTracker” was the first PC tracker, as well as the first PC module format. Loosely inspired by the “SoundTracker” format, it does not have as many effects as Protracker, although it supports 31 instruments and 4 channels.
+        ///   Looks up a localized string similar to This loader recognizes “Scream Tracker” modules. “Scream Tracker” was the first PC tracker, as well as the first PC module format. Loosely inspired by the “SoundTracker” format, it does not have as many effects as Protracker, although it supports 31 instruments and 4 channels.
         ///
-        ///“ScreamTracker” was written by PSI of Future Crew, a.k.a. Sami Tammilehto..
+        ///“Scream Tracker” was written by PSI of Future Crew, a.k.a. Sami Tammilehto..
         /// </summary>
         internal static string IDS_MIKCONV_DESCRIPTION_AGENT10 {
             get {
@@ -105,9 +105,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This loader recognizes “ScreamTracker 3” modules. This version was a huge improvement over the original “ScreamTracker”. It supported 32 channels, up to 99 instruments, and a large choice of effects.
+        ///   Looks up a localized string similar to This loader recognizes “Scream Tracker 3” modules. This version was a huge improvement over the original “Scream Tracker”. It supported 32 channels, up to 99 instruments, and a large choice of effects.
         ///
-        ///“ScreamTracker 3” was written by PSI of Future Crew, a.k.a. Sami Tammilehto, and released in 1994..
+        ///“Scream Tracker 3” was written by PSI of Future Crew, a.k.a. Sami Tammilehto, and released in 1994..
         /// </summary>
         internal static string IDS_MIKCONV_DESCRIPTION_AGENT11 {
             get {
@@ -234,6 +234,17 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This loader recognizes “Impulse Tracker” modules, currently the most powerful format. These modules support up to 64 real channels, and up to 256 virtual channels with the “New Note Action” feature. Besides, it has the widest range of effects, and supports 16 bit samples as well as surround sound.
+        ///
+        ///“Impulse Tracker” was written by Jeffrey Lim and released in 1996..
+        /// </summary>
+        internal static string IDS_MIKCONV_DESCRIPTION_AGENT9 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT9", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Module header have some bad values.
         /// </summary>
         internal static string IDS_MIKCONV_ERR_BAD_HEADER {
@@ -315,7 +326,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ScreamTracker 2.
+        ///   Looks up a localized string similar to Scream Tracker 2.
         /// </summary>
         internal static string IDS_MIKCONV_NAME_AGENT10 {
             get {
@@ -324,7 +335,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ScreamTracker 3.
+        ///   Looks up a localized string similar to Scream Tracker 3.
         /// </summary>
         internal static string IDS_MIKCONV_NAME_AGENT11 {
             get {
@@ -432,6 +443,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Impulse Tracker.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_AGENT9 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT9", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Digital Sound and Music Interface module format {0}.{1}.
         /// </summary>
         internal static string IDS_MIKCONV_NAME_DSMI {
@@ -441,7 +461,61 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ScreamTracker {0}.{1:D2}.
+        ///   Looks up a localized string similar to Impulse Tracker {0}.{1:D2}.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_IT {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_IT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Impulse Tracker 2.14p3.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_IT_214P3 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_IT_214P3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Compressed Impulse Tracker 2.14p3.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_IT_214P3_COMPRESSED {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_IT_214P3_COMPRESSED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Impulse Tracker 2.14p4.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_IT_214P4 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_IT_214P4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Compressed Impulse Tracker 2.14p4.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_IT_214P4_COMPRESSED {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_IT_214P4_COMPRESSED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Compressed Impulse Tracker {0}.{1:D2}.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_IT_COMPRESSED {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_IT_COMPRESSED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scream Tracker {0}.{1:D2}.
         /// </summary>
         internal static string IDS_MIKCONV_NAME_S3M {
             get {
@@ -495,7 +569,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ScreamTracker 2{0}.
+        ///   Looks up a localized string similar to Scream Tracker 2{0}.
         /// </summary>
         internal static string IDS_MIKCONV_NAME_STM {
             get {

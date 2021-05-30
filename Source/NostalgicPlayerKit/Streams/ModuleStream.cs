@@ -61,6 +61,29 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Will read a comment
+		/// </summary>
+		/********************************************************************/
+		public string ReadComment(int len, Encoding encoder)
+		{
+			if (len == 0)
+				return string.Empty;
+
+			byte[] buffer = new byte[len + 1];
+			ReadString(buffer, len);
+
+			string comment = encoder.GetString(buffer);
+
+			// Translate linefeeds
+			comment = comment.Replace('\u266a', '\n');
+
+			return comment;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will read a comment field which is stored as a block of lines
 		/// and return them
 		/// </summary>

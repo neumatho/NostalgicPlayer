@@ -1557,7 +1557,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			{
 				// Sine
 				case 0:
-					return LookupTables.PanbrelloTable[position];
+					return LookupTables.PanbrelloTable[(byte)position];
 
 				// Ramp down
 				case 1:
@@ -3110,7 +3110,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				if (mod.SngPos == (mod.NumPos - 1))
 					mod.Volume = mod.InitVolume > 128 ? (short)128 : mod.InitVolume;
 
-				if (dat <= mod.SngPos)
+				if ((dat <= mod.SngPos) || ((dat == (mod.NumPos - 1)) && (mod.PatPos == mod.PatBrk)))
 				{
 					// Tell NostalgicPlayer the module has ended
 					endReached = true;

@@ -370,7 +370,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public void WriteString(string str)
 		{
-			byte[] bytes = Encoding.UTF8.GetBytes(str);
+			byte[] bytes = Encoding.UTF8.GetBytes(str ?? string.Empty);
 			Write_B_UINT16((ushort)bytes.Length);
 
 			if (bytes.Length > 0)

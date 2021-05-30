@@ -19,7 +19,7 @@ using Polycode.NostalgicPlayer.Kit.Utility;
 namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 {
 	/// <summary>
-	/// MikMod loader for S3M (StreamTracker 3) format
+	/// MikMod loader for S3M (Stream Tracker 3) format
 	/// </summary>
 	internal class MikModConverterWorker_S3M : MikModConverterWorkerBase
 	{

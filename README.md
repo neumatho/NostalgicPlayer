@@ -43,6 +43,7 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | IFF-8SVX (Fibonacci) | .8svx | | Sample |
 | IFF-8SVX (PCM) | .8svx | | Sample |
 | Imago Orpheus | .imf | MikMod Converter | MikMod |
+| Impulse Tracker | .it | MikMod Converter | MikMod |
 | JamCracker | .jam | | JamCracker |
 | Master SoundTracker 1.0 | .mod | | ModTracker |
 | MultiTracker | .mtm | | ModTracker |
@@ -51,9 +52,9 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | RIFF-WAVE (ADPCM) | .wav | | Sample |
 | RIFF-WAVE (IEEE Float) | .wav | | Sample |
 | RIFF-WAVE (PCM) | .wav | | Sample |
+| Scream Tracker 2 | .stm | MikMod Converter | MikMod |
+| Scream Tracker 3 | .s3m | MikMod Converter | MikMod |
 | Scream Tracker Music Interface Kit | .stx | MikMod Converter | MikMod |
-| ScreamTracker 2 | .stm | MikMod Converter | MikMod |
-| ScreamTracker 3 | .s3m | MikMod Converter | MikMod |
 | SoundTracker 2.2 | .mod | | ModTracker |
 | StarTrekker | .mod | | ModTracker |
 | StarTrekker 8 voices | .mod | | ModTracker |

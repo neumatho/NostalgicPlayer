@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using System.IO;
 using Polycode.NostalgicPlayer.Agent.Player.MikMod.Containers;
 using Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
@@ -55,6 +56,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 							// Read the compressed length
 							inCnt = moduleStream.Read_L_UINT16();
+							sampleDataStream.Seek(2, SeekOrigin.Current);
 
 							cBlock = (inFmt & SampleFlag._16Bits) != 0 ? 0x4000 : 0x8000;
 
@@ -174,7 +176,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 			while (dest < end)
 			{
-				ushort needBits = (ushort)(newCount != 0 ? 3 : 0);
+				ushort needBits = (ushort)(newCount != 0 ? 3 : bits);
 				ushort x = 0;
 				ushort haveBits = 0;
 
@@ -278,7 +280,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 			while (dest < end)
 			{
-				int needBits = newCount != 0 ? 4 : 0;
+				int needBits = newCount != 0 ? 4 : bits;
 				int x = 0;
 				int haveBits = 0;
 

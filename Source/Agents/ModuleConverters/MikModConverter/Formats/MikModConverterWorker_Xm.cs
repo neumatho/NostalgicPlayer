@@ -19,7 +19,7 @@ using Polycode.NostalgicPlayer.Kit.Utility;
 namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 {
 	/// <summary>
-	/// MikMod loader for XM format
+	/// MikMod loader for XM (FastTracker II) format
 	/// </summary>
 	internal class MikModConverterWorker_Xm : MikModConverterWorkerBase
 	{

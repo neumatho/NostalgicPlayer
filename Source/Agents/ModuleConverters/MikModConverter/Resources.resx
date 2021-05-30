@@ -132,9 +132,10 @@ Farandole Composer (FAR)
 FastTracker II (XM)
 General DigiMusic (GDM)
 Imago Orpheus (IMF)
+Impulse Tracker (IT)
 Scream Tracker Music Interface Kit (STX)
-StreamTracker 2 (STM)
-StreamTracker 3 (S3M)
+Stream Tracker 2 (STM)
+Stream Tracker 3 (S3M)
 UltraTracker (ULT)
 UniMod (UNI)</value>
   </data>
@@ -144,14 +145,14 @@ UniMod (UNI)</value>
 “Composer 669” was written by Tran of Renaissance, a.k.a. Tomasz Pytel and released in 1992.</value>
   </data>
   <data name="IDS_MIKCONV_DESCRIPTION_AGENT10" xml:space="preserve">
-    <value>This loader recognizes “ScreamTracker” modules. “ScreamTracker” was the first PC tracker, as well as the first PC module format. Loosely inspired by the “SoundTracker” format, it does not have as many effects as Protracker, although it supports 31 instruments and 4 channels.
+    <value>This loader recognizes “Scream Tracker” modules. “Scream Tracker” was the first PC tracker, as well as the first PC module format. Loosely inspired by the “SoundTracker” format, it does not have as many effects as Protracker, although it supports 31 instruments and 4 channels.
 
-“ScreamTracker” was written by PSI of Future Crew, a.k.a. Sami Tammilehto.</value>
+“Scream Tracker” was written by PSI of Future Crew, a.k.a. Sami Tammilehto.</value>
   </data>
   <data name="IDS_MIKCONV_DESCRIPTION_AGENT11" xml:space="preserve">
-    <value>This loader recognizes “ScreamTracker 3” modules. This version was a huge improvement over the original “ScreamTracker”. It supported 32 channels, up to 99 instruments, and a large choice of effects.
+    <value>This loader recognizes “Scream Tracker 3” modules. This version was a huge improvement over the original “Scream Tracker”. It supported 32 channels, up to 99 instruments, and a large choice of effects.
 
-“ScreamTracker 3” was written by PSI of Future Crew, a.k.a. Sami Tammilehto, and released in 1994.</value>
+“Scream Tracker 3” was written by PSI of Future Crew, a.k.a. Sami Tammilehto, and released in 1994.</value>
   </data>
   <data name="IDS_MIKCONV_DESCRIPTION_AGENT12" xml:space="preserve">
     <value>This loader recognizes “STMIK 0.2” modules. “STMIK” (the Scream Tracker Music Interface Kit) was a module playing library distributed by Future Crew to play Scream Tracker module in games and demos. It uses an intermediate format between STM and S3M and comes with a tool converting STM modules to STX.
@@ -205,6 +206,11 @@ The BWSB library was written by Edward Schlunder and first released in 1993.</va
 
 Imago Orpheus was written by Lutz Roeder and released in 1994.</value>
   </data>
+  <data name="IDS_MIKCONV_DESCRIPTION_AGENT9" xml:space="preserve">
+    <value>This loader recognizes “Impulse Tracker” modules, currently the most powerful format. These modules support up to 64 real channels, and up to 256 virtual channels with the “New Note Action” feature. Besides, it has the widest range of effects, and supports 16 bit samples as well as surround sound.
+
+“Impulse Tracker” was written by Jeffrey Lim and released in 1996.</value>
+  </data>
   <data name="IDS_MIKCONV_ERR_BAD_HEADER" xml:space="preserve">
     <value>Module header have some bad values</value>
   </data>
@@ -233,10 +239,10 @@ Imago Orpheus was written by Lutz Roeder and released in 1994.</value>
     <value>Composer 669</value>
   </data>
   <data name="IDS_MIKCONV_NAME_AGENT10" xml:space="preserve">
-    <value>ScreamTracker 2</value>
+    <value>Scream Tracker 2</value>
   </data>
   <data name="IDS_MIKCONV_NAME_AGENT11" xml:space="preserve">
-    <value>ScreamTracker 3</value>
+    <value>Scream Tracker 3</value>
   </data>
   <data name="IDS_MIKCONV_NAME_AGENT12" xml:space="preserve">
     <value>Scream Tracker Music Interface Kit</value>
@@ -271,11 +277,32 @@ Imago Orpheus was written by Lutz Roeder and released in 1994.</value>
   <data name="IDS_MIKCONV_NAME_AGENT8" xml:space="preserve">
     <value>Imago Orpheus</value>
   </data>
+  <data name="IDS_MIKCONV_NAME_AGENT9" xml:space="preserve">
+    <value>Impulse Tracker</value>
+  </data>
   <data name="IDS_MIKCONV_NAME_DSMI" xml:space="preserve">
     <value>Digital Sound and Music Interface module format {0}.{1}</value>
   </data>
+  <data name="IDS_MIKCONV_NAME_IT" xml:space="preserve">
+    <value>Impulse Tracker {0}.{1:D2}</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_IT_214P3" xml:space="preserve">
+    <value>Impulse Tracker 2.14p3</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_IT_214P3_COMPRESSED" xml:space="preserve">
+    <value>Compressed Impulse Tracker 2.14p3</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_IT_214P4" xml:space="preserve">
+    <value>Impulse Tracker 2.14p4</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_IT_214P4_COMPRESSED" xml:space="preserve">
+    <value>Compressed Impulse Tracker 2.14p4</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_IT_COMPRESSED" xml:space="preserve">
+    <value>Compressed Impulse Tracker {0}.{1:D2}</value>
+  </data>
   <data name="IDS_MIKCONV_NAME_S3M" xml:space="preserve">
-    <value>ScreamTracker {0}.{1:D2}</value>
+    <value>Scream Tracker {0}.{1:D2}</value>
   </data>
   <data name="IDS_MIKCONV_NAME_S3M_IMAGO" xml:space="preserve">
     <value>Imago Orpheus {0}.{1:D2} (S3M format)</value>
@@ -293,7 +320,7 @@ Imago Orpheus was written by Lutz Roeder and released in 1994.</value>
     <value>Unknown Tracker {0}.{1:D2} (S3M format)</value>
   </data>
   <data name="IDS_MIKCONV_NAME_STM" xml:space="preserve">
-    <value>ScreamTracker 2{0}</value>
+    <value>Scream Tracker 2{0}</value>
   </data>
   <data name="IDS_MIKCONV_NAME_STM_MOD2STM" xml:space="preserve">
     <value> (Converted by MOD2STM)</value>

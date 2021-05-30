@@ -18,9 +18,9 @@ using Polycode.NostalgicPlayer.Kit.Streams;
 namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 {
 	/// <summary>
-	/// MikMod loader for UniMod format
+	/// MikMod loader for UNI (UniMod) format
 	/// </summary>
-	internal class MikModConverterWorker_UniMod : MikModConverterWorkerBase
+	internal class MikModConverterWorker_Uni : MikModConverterWorkerBase
 	{
 		#region UniHeader class
 		private class UniHeader
