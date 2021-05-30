@@ -42,7 +42,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 		{
 			// Set how the window should act in the task bar and task switcher
 			if (!optionSettings.SeparateWindows)
+			{
 				Owner = mainWindow;
+				ShowInTaskbar = false;
+			}
 			else
 				ShowInTaskbar = optionSettings.ShowWindowsInTaskBar;
 		}
