@@ -279,7 +279,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			this.MinimumSize = new System.Drawing.Size(464, 227);
 			this.Name = "SampleInfoWindowForm";
 			this.controlResource.SetResourceKey(this, null);
-			this.ShowInTaskbar = false;
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.SampleInfoWindowForm_FormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.navigator)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.navigatorInstrumentPage)).EndInit();

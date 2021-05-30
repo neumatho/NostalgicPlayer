@@ -189,7 +189,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(316, 239);
 			this.Name = "ModuleInfoWindowForm";
-			this.ShowInTaskbar = false;
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ModuleInfoWindowForm_FormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.moduleInfoInfoDataGridView)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.infoGroup.Panel)).EndInit();

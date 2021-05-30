@@ -14,6 +14,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 
@@ -68,12 +70,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AboutWindowForm(Manager agentManager)
+		public AboutWindowForm(Manager agentManager, MainWindowForm mainWindow, OptionSettings optionSettings)
 		{
 			InitializeComponent();
 
 			if (!DesignMode)
 			{
+				InitializeWindow(mainWindow, optionSettings);
+
 				// Load window settings
 				LoadWindowSettings("AboutWindow");
 
@@ -138,12 +142,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 		{
 			base.OnFormClosed(e);
 
-			// Do some cleanup
-			bitmap.Dispose();
-			bitmap = null;
+			if (bitmap != null)
+			{
+				// Do some cleanup
+				bitmap.Dispose();
+				bitmap = null;
 
-			logoBitmap.Dispose();
-			logoBitmap = null;
+				logoBitmap.Dispose();
+				logoBitmap = null;
+			}
 		}
 
 

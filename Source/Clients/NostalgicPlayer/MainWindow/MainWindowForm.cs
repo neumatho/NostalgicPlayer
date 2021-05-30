@@ -547,7 +547,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				}
 				else
 				{
-					agentSettingsWindow = new AgentSettingsWindowForm(agentManager, agentInfo);
+					agentSettingsWindow = new AgentSettingsWindowForm(agentManager, agentInfo, this, optionSettings);
 					agentSettingsWindow.Disposed += (o, args) => { openAgentSettings.Remove(agentInfo.TypeId); };
 					agentSettingsWindow.Show();
 
@@ -596,7 +596,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				}
 				else
 				{
-					agentDisplayWindow = new AgentDisplayWindowForm(agentManager, agentInfo, moduleHandler);
+					agentDisplayWindow = new AgentDisplayWindowForm(agentManager, agentInfo, moduleHandler, this, optionSettings);
 					agentDisplayWindow.Disposed += (o, args) => { openAgentDisplays.Remove(agentInfo.TypeId); };
 					agentDisplayWindow.Show();
 
@@ -1114,68 +1114,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				if (IsAboutWindowOpen())
 					aboutWindow.Close();
 
-				if (IsModuleInfoWindowOpen())
+				// Minimize all windows
+				foreach (WindowFormBase window in GetAllOpenedWindows())
 				{
-					moduleInfoWindow.UpdateWindowSettings();
-					moduleInfoWindow.WindowState = FormWindowState.Minimized;
-				}
-
-				if (IsSampleInfoWindowOpen())
-				{
-					sampleInfoWindow.UpdateWindowSettings();
-					sampleInfoWindow.WindowState = FormWindowState.Minimized;
-				}
-
-				if (IsSettingsWindowOpen())
-				{
-					settingsWindow.UpdateWindowSettings();
-					settingsWindow.WindowState = FormWindowState.Minimized;
-				}
-
-				// Minimize all agent settings windows
-				lock (openAgentSettings)
-				{
-					foreach (AgentSettingsWindowForm agentSettingsWindow in openAgentSettings.Values)
-					{
-						agentSettingsWindow.UpdateWindowSettings();
-						agentSettingsWindow.WindowState = FormWindowState.Minimized;
-					}
-				}
-
-				// Minimize all agent display windows
-				lock (openAgentDisplays)
-				{
-					foreach (AgentDisplayWindowForm agentDisplayWindow in openAgentDisplays.Values)
-					{
-						agentDisplayWindow.UpdateWindowSettings();
-						agentDisplayWindow.WindowState = FormWindowState.Minimized;
-					}
+					window.UpdateWindowSettings();
+					window.WindowState = FormWindowState.Minimized;
 				}
 			}
 			else if (WindowState == FormWindowState.Normal)
 			{
-				if (IsModuleInfoWindowOpen())
-					moduleInfoWindow.WindowState = FormWindowState.Normal;
-
-				if (IsSampleInfoWindowOpen())
-					sampleInfoWindow.WindowState = FormWindowState.Normal;
-
-				if (IsSettingsWindowOpen())
-					settingsWindow.WindowState = FormWindowState.Normal;
-
-				// Show all agent settings windows
-				lock (openAgentSettings)
-				{
-					foreach (AgentSettingsWindowForm agentSettingsWindow in openAgentSettings.Values)
-						agentSettingsWindow.WindowState = FormWindowState.Normal;
-				}
-
-				// Show all agent display windows
-				lock (openAgentDisplays)
-				{
-					foreach (AgentDisplayWindowForm agentDisplayWindow in openAgentDisplays.Values)
-						agentDisplayWindow.WindowState = FormWindowState.Normal;
-				}
+				// Open all windows
+				foreach (WindowFormBase window in GetAllOpenedWindows())
+					window.WindowState = FormWindowState.Normal;
 			}
 		}
 
@@ -1186,7 +1136,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Is called when the window is closed
 		/// </summary>
 		/********************************************************************/
-
 		private void MainWindowForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
 			using (new SleepCursor())
@@ -1246,7 +1195,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				settingsWindow.Activate();
 			else
 			{
-				settingsWindow = new SettingsWindowForm(agentManager, moduleHandler, this, userSettings);
+				settingsWindow = new SettingsWindowForm(agentManager, moduleHandler, this, optionSettings, userSettings);
 				settingsWindow.Disposed += (o, args) => { settingsWindow = null; };
 				settingsWindow.Show();
 			}
@@ -1306,7 +1255,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				aboutWindow.Activate();
 			else
 			{
-				aboutWindow = new AboutWindowForm(agentManager);
+				aboutWindow = new AboutWindowForm(agentManager, this, optionSettings);
 				aboutWindow.Disposed += (o, args) => { aboutWindow = null; };
 				aboutWindow.Show();
 			}
@@ -1351,7 +1300,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 			else
 			{
-				moduleInfoWindow = new ModuleInfoWindowForm(moduleHandler, this);
+				moduleInfoWindow = new ModuleInfoWindowForm(moduleHandler, this, optionSettings);
 				moduleInfoWindow.Disposed += (o, args) => { moduleInfoWindow = null; };
 				moduleInfoWindow.Show();
 			}
@@ -2484,7 +2433,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// The user hold down the mouse button on the slider
 		/// </summary>
 		/********************************************************************/
-
 		private void PositionTrackBar_MouseDown(object sender, MouseEventArgs e)
 		{
 			// Prevent slider updates when printing information
@@ -2498,7 +2446,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// The user released the mouse button on the slider
 		/// </summary>
 		/********************************************************************/
-
 		private void PositionTrackBar_MouseUp(object sender, MouseEventArgs e)
 		{
 			allowPosSliderUpdate = true;
@@ -2806,7 +2753,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 			else
 			{
-				sampleInfoWindow = new SampleInfoWindowForm(agentManager, moduleHandler);
+				sampleInfoWindow = new SampleInfoWindowForm(agentManager, moduleHandler, this, optionSettings);
 				sampleInfoWindow.Disposed += (o, args) => { sampleInfoWindow = null; };
 				sampleInfoWindow.Show();
 			}
@@ -3272,13 +3219,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			if (mainWindowSettings.OpenModuleInformationWindow)
 			{
-				moduleInfoWindow = new ModuleInfoWindowForm(moduleHandler, this);
+				moduleInfoWindow = new ModuleInfoWindowForm(moduleHandler, this, optionSettings);
 				moduleInfoWindow.Show();
 			}
 
 			if (mainWindowSettings.OpenSampleInformationWindow)
 			{
-				sampleInfoWindow = new SampleInfoWindowForm(agentManager, moduleHandler);
+				sampleInfoWindow = new SampleInfoWindowForm(agentManager, moduleHandler, this, optionSettings);
 				sampleInfoWindow.Show();
 			}
 
@@ -3372,6 +3319,39 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			sampleInfoWindow = null;
 			mainWindowSettings.OpenSampleInformationWindow = openAgain;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Get all opened windows
+		/// </summary>
+		/********************************************************************/
+		private IEnumerable<WindowFormBase> GetAllOpenedWindows()
+		{
+			if (IsModuleInfoWindowOpen())
+				yield return moduleInfoWindow;
+
+			if (IsSampleInfoWindowOpen())
+				yield return sampleInfoWindow;
+
+			if (IsSettingsWindowOpen())
+				yield return settingsWindow;
+
+			// All agent settings windows
+			lock (openAgentSettings)
+			{
+				foreach (AgentSettingsWindowForm agentSettingsWindow in openAgentSettings.Values)
+					yield return agentSettingsWindow;
+			}
+
+			// All agent display windows
+			lock (openAgentDisplays)
+			{
+				foreach (AgentDisplayWindowForm agentDisplayWindow in openAgentDisplays.Values)
+					yield return agentDisplayWindow;
+			}
 		}
 
 

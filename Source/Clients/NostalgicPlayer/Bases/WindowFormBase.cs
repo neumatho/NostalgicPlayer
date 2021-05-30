@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
@@ -31,6 +32,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 		protected bool disableEscapeKey = false;
 
 		private WindowSettings windowSettings;
+
+		/********************************************************************/
+		/// <summary>
+		/// Call this to initialize the window with basis settings
+		/// </summary>
+		/********************************************************************/
+		protected void InitializeWindow(MainWindowForm mainWindow, OptionSettings optionSettings)
+		{
+			// Set how the window should act in the task bar and task switcher
+			if (!optionSettings.SeparateWindows)
+				Owner = mainWindow;
+			else
+				ShowInTaskbar = optionSettings.ShowWindowsInTaskBar;
+		}
+
+
 
 		/********************************************************************/
 		/// <summary>

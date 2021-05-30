@@ -12,7 +12,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using Krypton.Navigator;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
@@ -64,7 +63,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SampleInfoWindowForm(Manager agentManager, ModuleHandler moduleHandler)
+		public SampleInfoWindowForm(Manager agentManager, ModuleHandler moduleHandler, MainWindowForm mainWindow, OptionSettings optionSettings)
 		{
 			InitializeComponent();
 
@@ -82,6 +81,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 
 			if (!DesignMode)
 			{
+				InitializeWindow(mainWindow, optionSettings);
+
 				// Load window settings
 				LoadWindowSettings("SampleInfoWindow");
 				settings = new SampleInfoWindowSettings(allWindowSettings);
@@ -269,13 +270,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 		/********************************************************************/
 		public void RefreshWindow()
 		{
-			// Remove all the items from the lists
-			RemoveInstrumentItems();
-			RemoveSampleItems();
+			if (moduleHandler != null)
+			{
+				// Remove all the items from the lists
+				RemoveInstrumentItems();
+				RemoveSampleItems();
 
-			// Now add the items
-			AddInstrumentItems();
-			AddSampleItems();
+				// Now add the items
+				AddInstrumentItems();
+				AddSampleItems();
+			}
 		}
 
 		#region Sample playing
@@ -364,59 +368,62 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 		/********************************************************************/
 		private void SampleInfoWindowForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
-			// Save the settings
-			settings.ActiveTab = navigator.SelectedIndex;
+			if (moduleHandler != null)
+			{
+				// Save the settings
+				settings.ActiveTab = navigator.SelectedIndex;
 
-			settings.InstColumn1Width = instrumentDataGridView.Columns[0].Width;
-			settings.InstColumn1Pos = instrumentDataGridView.Columns[0].DisplayIndex;
+				settings.InstColumn1Width = instrumentDataGridView.Columns[0].Width;
+				settings.InstColumn1Pos = instrumentDataGridView.Columns[0].DisplayIndex;
 
-			settings.InstColumn2Width = instrumentDataGridView.Columns[1].Width;
-			settings.InstColumn2Pos = instrumentDataGridView.Columns[1].DisplayIndex;
+				settings.InstColumn2Width = instrumentDataGridView.Columns[1].Width;
+				settings.InstColumn2Pos = instrumentDataGridView.Columns[1].DisplayIndex;
 
-			settings.InstColumn3Width = instrumentDataGridView.Columns[2].Width;
-			settings.InstColumn3Pos = instrumentDataGridView.Columns[2].DisplayIndex;
+				settings.InstColumn3Width = instrumentDataGridView.Columns[2].Width;
+				settings.InstColumn3Pos = instrumentDataGridView.Columns[2].DisplayIndex;
 
-			settings.InstSortKey = instrumentDataGridView.SortedColumn.Index;
-			settings.InstSortOrder = instrumentDataGridView.SortOrder;
+				settings.InstSortKey = instrumentDataGridView.SortedColumn.Index;
+				settings.InstSortOrder = instrumentDataGridView.SortOrder;
 
-			settings.SampColumn1Width = sampleDataGridView.Columns[0].Width;
-			settings.SampColumn1Pos = sampleDataGridView.Columns[0].DisplayIndex;
+				settings.SampColumn1Width = sampleDataGridView.Columns[0].Width;
+				settings.SampColumn1Pos = sampleDataGridView.Columns[0].DisplayIndex;
 
-			settings.SampColumn2Width = sampleDataGridView.Columns[1].Width;
-			settings.SampColumn2Pos = sampleDataGridView.Columns[1].DisplayIndex;
+				settings.SampColumn2Width = sampleDataGridView.Columns[1].Width;
+				settings.SampColumn2Pos = sampleDataGridView.Columns[1].DisplayIndex;
 
-			settings.SampColumn3Width = sampleDataGridView.Columns[2].Width;
-			settings.SampColumn3Pos = sampleDataGridView.Columns[2].DisplayIndex;
+				settings.SampColumn3Width = sampleDataGridView.Columns[2].Width;
+				settings.SampColumn3Pos = sampleDataGridView.Columns[2].DisplayIndex;
 
-			settings.SampColumn4Width = sampleDataGridView.Columns[3].Width;
-			settings.SampColumn4Pos = sampleDataGridView.Columns[3].DisplayIndex;
+				settings.SampColumn4Width = sampleDataGridView.Columns[3].Width;
+				settings.SampColumn4Pos = sampleDataGridView.Columns[3].DisplayIndex;
 
-			settings.SampColumn5Width = sampleDataGridView.Columns[4].Width;
-			settings.SampColumn5Pos = sampleDataGridView.Columns[4].DisplayIndex;
+				settings.SampColumn5Width = sampleDataGridView.Columns[4].Width;
+				settings.SampColumn5Pos = sampleDataGridView.Columns[4].DisplayIndex;
 
-			settings.SampColumn6Width = sampleDataGridView.Columns[5].Width;
-			settings.SampColumn6Pos = sampleDataGridView.Columns[5].DisplayIndex;
+				settings.SampColumn6Width = sampleDataGridView.Columns[5].Width;
+				settings.SampColumn6Pos = sampleDataGridView.Columns[5].DisplayIndex;
 
-			settings.SampColumn7Width = sampleDataGridView.Columns[6].Width;
-			settings.SampColumn7Pos = sampleDataGridView.Columns[6].DisplayIndex;
+				settings.SampColumn7Width = sampleDataGridView.Columns[6].Width;
+				settings.SampColumn7Pos = sampleDataGridView.Columns[6].DisplayIndex;
 
-			settings.SampColumn8Width = sampleDataGridView.Columns[7].Width;
-			settings.SampColumn8Pos = sampleDataGridView.Columns[7].DisplayIndex;
+				settings.SampColumn8Width = sampleDataGridView.Columns[7].Width;
+				settings.SampColumn8Pos = sampleDataGridView.Columns[7].DisplayIndex;
 
-			settings.SampColumn9Width = sampleDataGridView.Columns[8].Width;
-			settings.SampColumn9Pos = sampleDataGridView.Columns[8].DisplayIndex;
+				settings.SampColumn9Width = sampleDataGridView.Columns[8].Width;
+				settings.SampColumn9Pos = sampleDataGridView.Columns[8].DisplayIndex;
 
-			settings.SampColumn10Width = sampleDataGridView.Columns[9].Width;
-			settings.SampColumn10Pos = sampleDataGridView.Columns[9].DisplayIndex;
+				settings.SampColumn10Width = sampleDataGridView.Columns[9].Width;
+				settings.SampColumn10Pos = sampleDataGridView.Columns[9].DisplayIndex;
 
-			settings.SampColumn11Width = sampleDataGridView.Columns[10].Width;
-			settings.SampColumn11Pos = sampleDataGridView.Columns[10].DisplayIndex;
+				settings.SampColumn11Width = sampleDataGridView.Columns[10].Width;
+				settings.SampColumn11Pos = sampleDataGridView.Columns[10].DisplayIndex;
 
-			settings.SampSortKey = sampleDataGridView.SortedColumn.Index;
-			settings.SampSortOrder = sampleDataGridView.SortOrder;
+				settings.SampSortKey = sampleDataGridView.SortedColumn.Index;
+				settings.SampSortOrder = sampleDataGridView.SortOrder;
 
-			// Cleanup
-			moduleHandler = null;
+				// Cleanup
+				moduleHandler = null;
+			}
 		}
 
 

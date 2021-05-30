@@ -127,6 +127,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
+		/// Show item number in list
+		/// </summary>
+		/********************************************************************/
+		public bool ShowListNumber
+		{
+			get => settings.GetBoolEntry("Options", "ShowListNumber", false);
+
+			set => settings.SetBoolEntry("Options", "ShowListNumber", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Tool tips
 		/// </summary>
 		/********************************************************************/
@@ -155,14 +169,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
-		/// Show item number in list
+		/// Separate all windows
 		/// </summary>
 		/********************************************************************/
-		public bool ShowListNumber
+		public bool SeparateWindows
 		{
-			get => settings.GetBoolEntry("Options", "ShowListNumber", false);
+			get => settings.GetBoolEntry("Options", "SeparateWindows", true);
 
-			set => settings.SetBoolEntry("Options", "ShowListNumber", value);
+			set => settings.SetBoolEntry("Options", "SeparateWindows", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Show windows in task bar
+		/// </summary>
+		/********************************************************************/
+		public bool ShowWindowsInTaskBar
+		{
+			get => settings.GetBoolEntry("Options", "ShowWindowsInTaskBar", false);
+
+			set => settings.SetBoolEntry("Options", "ShowWindowsInTaskBar", value);
 		}
 
 

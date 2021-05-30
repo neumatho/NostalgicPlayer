@@ -90,10 +90,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			rememberListCheckBox.Checked = optionSettings.RememberList;
 			rememberListPositionCheckBox.Checked = optionSettings.RememberListPosition;
 			rememberModulePositionCheckBox.Checked = optionSettings.RememberModulePosition;
+			showListNumberCheckBox.Checked = optionSettings.ShowListNumber;
 
 			tooltipsCheckBox.Checked = optionSettings.ToolTips;
 			showNameInTitleCheckBox.Checked = optionSettings.ShowNameInTitle;
-			showListNumberCheckBox.Checked = optionSettings.ShowListNumber;
+			separateWindowsCheckBox.Checked = optionSettings.SeparateWindows;
+			showWindowsInTaskBarCheckBox.Checked = optionSettings.ShowWindowsInTaskBar;
 
 			scanFilesCheckBox.Checked = optionSettings.ScanFiles;
 			useDatabaseCheckBox.Checked = optionSettings.UseDatabase;
@@ -135,10 +137,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			optionSettings.RememberList = rememberListCheckBox.Checked;
 			optionSettings.RememberListPosition = rememberListPositionCheckBox.Checked;
 			optionSettings.RememberModulePosition = rememberModulePositionCheckBox.Checked;
+			optionSettings.ShowListNumber = showListNumberCheckBox.Checked;
 
 			optionSettings.ToolTips = tooltipsCheckBox.Checked;
 			optionSettings.ShowNameInTitle = showNameInTitleCheckBox.Checked;
-			optionSettings.ShowListNumber = showListNumberCheckBox.Checked;
+			optionSettings.SeparateWindows = separateWindowsCheckBox.Checked;
+			optionSettings.ShowWindowsInTaskBar = showWindowsInTaskBarCheckBox.Checked;
 
 			optionSettings.ScanFiles = scanFilesCheckBox.Checked;
 			optionSettings.UseDatabase = useDatabaseCheckBox.Checked;
@@ -210,6 +214,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private void RememberListPositionCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			rememberModulePositionCheckBox.Enabled = rememberListPositionCheckBox.Checked;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user change the separate windows
+		/// </summary>
+		/********************************************************************/
+		private void SeparateWindows_CheckedChanged(object sender, EventArgs e)
+		{
+			windowPanel.Enabled = separateWindowsCheckBox.Checked;
 		}
 
 

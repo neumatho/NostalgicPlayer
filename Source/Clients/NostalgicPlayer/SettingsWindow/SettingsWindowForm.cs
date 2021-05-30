@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SettingsWindowForm(Manager agentManager, ModuleHandler moduleHandler, MainWindowForm mainWindow, Settings userSettings)
+		public SettingsWindowForm(Manager agentManager, ModuleHandler moduleHandler, MainWindowForm mainWindow, OptionSettings optionSettings, Settings userSettings)
 		{
 			InitializeComponent();
 
@@ -54,6 +54,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 
 			if (!DesignMode)
 			{
+				InitializeWindow(mainWindow, optionSettings);
+
 				// Load window settings
 				LoadWindowSettings("SettingsWindow");
 				windowSettings = new SettingsWindowSettings(allWindowSettings);
@@ -81,10 +83,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		/********************************************************************/
 		public void RefreshWindow()
 		{
-			optionsPageControl.RefreshWindow();
-			pathsPageControl.RefreshWindow();
-			mixerPageControl.RefreshWindow();
-			agentsPageControl.RefreshWindow();
+			if (mainWindow != null)
+			{
+				optionsPageControl.RefreshWindow();
+				pathsPageControl.RefreshWindow();
+				mixerPageControl.RefreshWindow();
+				agentsPageControl.RefreshWindow();
+			}
 		}
 
 		#region Event handlers
@@ -97,21 +102,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		/********************************************************************/
 		private void SettingsWindowForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
-			// Cancel the settings
-			CancelSettings();
+			if (mainWindow != null)
+			{
+				// Cancel the settings
+				CancelSettings();
 
-			// Save any specific window settings
-			windowSettings.ActiveTab = navigator.SelectedIndex;
+				// Save any specific window settings
+				windowSettings.ActiveTab = navigator.SelectedIndex;
 
-			optionsPageControl.WriteWindowSettings();
-			pathsPageControl.WriteWindowSettings();
-			mixerPageControl.WriteWindowSettings();
-			agentsPageControl.WriteWindowSettings();
+				optionsPageControl.WriteWindowSettings();
+				pathsPageControl.WriteWindowSettings();
+				mixerPageControl.WriteWindowSettings();
+				agentsPageControl.WriteWindowSettings();
 
-			// Cleanup
-			agentManager = null;
-			moduleHandler = null;
-			mainWindow = null;
+				// Cleanup
+				agentManager = null;
+				moduleHandler = null;
+				mainWindow = null;
+			}
 		}
 		#endregion
 

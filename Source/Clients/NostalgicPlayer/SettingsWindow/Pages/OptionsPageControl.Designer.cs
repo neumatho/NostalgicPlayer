@@ -42,6 +42,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.tooltipsCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.showNameInTitleCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.showListNumberCheckBox = new Krypton.Toolkit.KryptonCheckBox();
+			this.separateWindowsCheckBox = new Krypton.Toolkit.KryptonCheckBox();
+			this.windowPanel = new System.Windows.Forms.Panel();
+			this.showWindowsInTaskBarCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.scanFilesCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.useDatabaseCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.loadingGroupBox = new Krypton.Toolkit.KryptonGroupBox();
@@ -59,6 +62,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			((System.ComponentModel.ISupportInitialize)(this.generalGroupBox.Panel)).BeginInit();
 			this.generalGroupBox.Panel.SuspendLayout();
 			this.rememberListPanel.SuspendLayout();
+			this.windowPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.loadingGroupBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.loadingGroupBox.Panel)).BeginInit();
 			this.loadingGroupBox.Panel.SuspendLayout();
@@ -91,10 +95,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.generalGroupBox.Panel.Controls.Add(this.tooltipsCheckBox);
 			this.generalGroupBox.Panel.Controls.Add(this.showNameInTitleCheckBox);
 			this.generalGroupBox.Panel.Controls.Add(this.showListNumberCheckBox);
+			this.generalGroupBox.Panel.Controls.Add(this.separateWindowsCheckBox);
+			this.generalGroupBox.Panel.Controls.Add(this.windowPanel);
 			this.generalGroupBox.Panel.Controls.Add(this.scanFilesCheckBox);
 			this.generalGroupBox.Panel.Controls.Add(this.useDatabaseCheckBox);
 			this.controlResource.SetResourceKey(this.generalGroupBox, "IDS_SETTINGS_OPTIONS_GENERAL");
-			this.generalGroupBox.Size = new System.Drawing.Size(592, 133);
+			this.generalGroupBox.Size = new System.Drawing.Size(592, 154);
 			this.generalGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.generalGroupBox.TabIndex = 0;
 			this.generalGroupBox.Values.Heading = "General";
@@ -170,7 +176,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.controlResource.SetResourceKey(this.tooltipsCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_TOOLTIPS");
 			this.tooltipsCheckBox.Size = new System.Drawing.Size(100, 17);
 			this.tooltipsCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.tooltipsCheckBox.TabIndex = 4;
+			this.tooltipsCheckBox.TabIndex = 5;
 			this.tooltipsCheckBox.Values.Text = "Button tool tips";
 			// 
 			// showNameInTitleCheckBox
@@ -180,18 +186,50 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.controlResource.SetResourceKey(this.showNameInTitleCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SHOWNAME");
 			this.showNameInTitleCheckBox.Size = new System.Drawing.Size(173, 17);
 			this.showNameInTitleCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.showNameInTitleCheckBox.TabIndex = 5;
+			this.showNameInTitleCheckBox.TabIndex = 6;
 			this.showNameInTitleCheckBox.Values.Text = "Show module name in titlebar";
 			// 
 			// showListNumberCheckBox
 			// 
-			this.showListNumberCheckBox.Location = new System.Drawing.Point(200, 47);
+			this.showListNumberCheckBox.Location = new System.Drawing.Point(4, 110);
 			this.showListNumberCheckBox.Name = "showListNumberCheckBox";
 			this.controlResource.SetResourceKey(this.showListNumberCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SHOWLISTNUMBER");
 			this.showListNumberCheckBox.Size = new System.Drawing.Size(148, 17);
 			this.showListNumberCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.showListNumberCheckBox.TabIndex = 6;
+			this.showListNumberCheckBox.TabIndex = 4;
 			this.showListNumberCheckBox.Values.Text = "Show item number in list";
+			// 
+			// separateWindowsCheckBox
+			// 
+			this.separateWindowsCheckBox.Location = new System.Drawing.Point(200, 47);
+			this.separateWindowsCheckBox.Name = "separateWindowsCheckBox";
+			this.controlResource.SetResourceKey(this.separateWindowsCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SEPARATEWINDOWS");
+			this.separateWindowsCheckBox.Size = new System.Drawing.Size(173, 30);
+			this.separateWindowsCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.separateWindowsCheckBox.TabIndex = 7;
+			this.separateWindowsCheckBox.Values.Text = "Separate each window in task\r\nswitcher";
+			this.separateWindowsCheckBox.CheckedChanged += new System.EventHandler(this.SeparateWindows_CheckedChanged);
+			// 
+			// windowPanel
+			// 
+			this.windowPanel.BackColor = System.Drawing.Color.Transparent;
+			this.windowPanel.Controls.Add(this.showWindowsInTaskBarCheckBox);
+			this.windowPanel.Enabled = false;
+			this.windowPanel.Location = new System.Drawing.Point(208, 81);
+			this.windowPanel.Name = "windowPanel";
+			this.controlResource.SetResourceKey(this.windowPanel, null);
+			this.windowPanel.Size = new System.Drawing.Size(186, 17);
+			this.windowPanel.TabIndex = 8;
+			// 
+			// showWindowsInTaskBarCheckBox
+			// 
+			this.showWindowsInTaskBarCheckBox.Location = new System.Drawing.Point(0, 0);
+			this.showWindowsInTaskBarCheckBox.Name = "showWindowsInTaskBarCheckBox";
+			this.controlResource.SetResourceKey(this.showWindowsInTaskBarCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SHOWWINDOWSINTASKBAR");
+			this.showWindowsInTaskBarCheckBox.Size = new System.Drawing.Size(168, 17);
+			this.showWindowsInTaskBarCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.showWindowsInTaskBarCheckBox.TabIndex = 0;
+			this.showWindowsInTaskBarCheckBox.Values.Text = "Show all windows in task bar";
 			// 
 			// scanFilesCheckBox
 			// 
@@ -200,7 +238,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.controlResource.SetResourceKey(this.scanFilesCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SCANFILES");
 			this.scanFilesCheckBox.Size = new System.Drawing.Size(105, 17);
 			this.scanFilesCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.scanFilesCheckBox.TabIndex = 7;
+			this.scanFilesCheckBox.TabIndex = 9;
 			this.scanFilesCheckBox.Values.Text = "Scan added files";
 			// 
 			// useDatabaseCheckBox
@@ -210,13 +248,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.controlResource.SetResourceKey(this.useDatabaseCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_USEDATABASE");
 			this.useDatabaseCheckBox.Size = new System.Drawing.Size(173, 30);
 			this.useDatabaseCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.useDatabaseCheckBox.TabIndex = 8;
+			this.useDatabaseCheckBox.TabIndex = 10;
 			this.useDatabaseCheckBox.Values.Text = "Use database to store module\r\ninformation";
 			// 
 			// loadingGroupBox
 			// 
 			this.loadingGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
-			this.loadingGroupBox.Location = new System.Drawing.Point(8, 160);
+			this.loadingGroupBox.Location = new System.Drawing.Point(8, 168);
 			this.loadingGroupBox.Name = "loadingGroupBox";
 			// 
 			// 
@@ -226,7 +264,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.loadingGroupBox.Panel.Controls.Add(this.moduleErrorLabel);
 			this.loadingGroupBox.Panel.Controls.Add(this.moduleErrorComboBox);
 			this.controlResource.SetResourceKey(this.loadingGroupBox, "IDS_SETTINGS_OPTIONS_LOADING");
-			this.loadingGroupBox.Size = new System.Drawing.Size(592, 106);
+			this.loadingGroupBox.Size = new System.Drawing.Size(592, 108);
 			this.loadingGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.loadingGroupBox.TabIndex = 1;
 			this.loadingGroupBox.Values.Heading = "Loading";
@@ -303,7 +341,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// playingGroupBox
 			// 
 			this.playingGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
-			this.playingGroupBox.Location = new System.Drawing.Point(8, 289);
+			this.playingGroupBox.Location = new System.Drawing.Point(8, 287);
 			this.playingGroupBox.Name = "playingGroupBox";
 			// 
 			// 
@@ -311,7 +349,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.playingGroupBox.Panel.Controls.Add(this.moduleListEndComboBox);
 			this.playingGroupBox.Panel.Controls.Add(this.moduleListEndLabel);
 			this.controlResource.SetResourceKey(this.playingGroupBox, "IDS_SETTINGS_OPTIONS_PLAYING");
-			this.playingGroupBox.Size = new System.Drawing.Size(592, 51);
+			this.playingGroupBox.Size = new System.Drawing.Size(592, 53);
 			this.playingGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.playingGroupBox.TabIndex = 2;
 			this.playingGroupBox.Values.Heading = "Playing";
@@ -358,6 +396,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			((System.ComponentModel.ISupportInitialize)(this.generalGroupBox)).EndInit();
 			this.rememberListPanel.ResumeLayout(false);
 			this.rememberListPanel.PerformLayout();
+			this.windowPanel.ResumeLayout(false);
+			this.windowPanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.loadingGroupBox.Panel)).EndInit();
 			this.loadingGroupBox.Panel.ResumeLayout(false);
 			this.loadingGroupBox.Panel.PerformLayout();
@@ -400,5 +440,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Krypton.Toolkit.KryptonGroupBox playingGroupBox;
 		private Krypton.Toolkit.KryptonLabel moduleListEndLabel;
 		private Krypton.Toolkit.KryptonComboBox moduleListEndComboBox;
+		private Krypton.Toolkit.KryptonCheckBox separateWindowsCheckBox;
+		private Krypton.Toolkit.KryptonCheckBox showWindowsInTaskBarCheckBox;
+		private System.Windows.Forms.Panel windowPanel;
 	}
 }

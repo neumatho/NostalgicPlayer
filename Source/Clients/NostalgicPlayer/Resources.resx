@@ -669,11 +669,18 @@ what is new.</value>
   <data name="IDS_SETTINGS_OPTIONS_GENERAL_SCANFILES" xml:space="preserve">
     <value>Scan added files</value>
   </data>
+  <data name="IDS_SETTINGS_OPTIONS_GENERAL_SEPARATEWINDOWS" xml:space="preserve">
+    <value>Separate each window in task
+switcher</value>
+  </data>
   <data name="IDS_SETTINGS_OPTIONS_GENERAL_SHOWLISTNUMBER" xml:space="preserve">
     <value>Show item number in list</value>
   </data>
   <data name="IDS_SETTINGS_OPTIONS_GENERAL_SHOWNAME" xml:space="preserve">
     <value>Show module name in titlebar</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_GENERAL_SHOWWINDOWSINTASKBAR" xml:space="preserve">
+    <value>Show all windows in task bar</value>
   </data>
   <data name="IDS_SETTINGS_OPTIONS_GENERAL_TOOLTIPS" xml:space="preserve">
     <value>Button tool tips</value>

@@ -9,3 +9,4 @@ x64
 AppPackages
 BundleArtifacts
 launchSettings.json
+*.cache

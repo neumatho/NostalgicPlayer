@@ -42,7 +42,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(50, 50);
 			this.Name = "AgentDisplayWindowForm";
-			this.ShowInTaskbar = false;
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.AgentDisplayWindowForm_FormClosed);
 			this.ResumeLayout(false);
 

@@ -234,7 +234,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			this.MinimizeBox = false;
 			this.Name = "SettingsWindowForm";
 			this.controlResource.SetResourceKey(this, null);
-			this.ShowInTaskbar = false;
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.SettingsWindowForm_FormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.navigator)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.navigatorOptionsPage)).EndInit();

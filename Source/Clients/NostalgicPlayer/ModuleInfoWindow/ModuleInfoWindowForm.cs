@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModuleInfoWindowForm(ModuleHandler moduleHandler, MainWindowForm mainWindow)
+		public ModuleInfoWindowForm(ModuleHandler moduleHandler, MainWindowForm mainWindow, OptionSettings optionSettings)
 		{
 			InitializeComponent();
 
@@ -49,6 +49,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 
 			if (!DesignMode)
 			{
+				InitializeWindow(mainWindow, optionSettings);
+
 				// Load window settings
 				LoadWindowSettings("ModuleInfoWindow");
 				settings = new ModuleInfoWindowSettings(allWindowSettings);
@@ -98,12 +100,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/********************************************************************/
 		public void RefreshWindow()
 		{
-			// Remove all the items
-			moduleInfoInfoDataGridView.Rows.Clear();
-			moduleInfoCommentDataGridView.Rows.Clear();
+			if (moduleHandler != null)
+			{
+				// Remove all the items
+				moduleInfoInfoDataGridView.Rows.Clear();
+				moduleInfoCommentDataGridView.Rows.Clear();
 
-			// Add the items
-			AddItems();
+				// Add the items
+				AddItems();
+			}
 		}
 
 
@@ -115,13 +120,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/********************************************************************/
 		public void UpdateWindow(int line, string newValue)
 		{
-			// Check to see if there are any module loaded at the moment
-			if (moduleHandler.IsModuleLoaded)
+			if (moduleHandler != null)
 			{
-				if ((FirstCustomLine + line) < moduleInfoInfoDataGridView.RowCount)
+				// Check to see if there are any module loaded at the moment
+				if (moduleHandler.IsModuleLoaded)
 				{
-					moduleInfoInfoDataGridView.Rows[FirstCustomLine + line].Cells[1].Value = newValue;
-					moduleInfoInfoDataGridView.InvalidateRow(FirstCustomLine + line);
+					if ((FirstCustomLine + line) < moduleInfoInfoDataGridView.RowCount)
+					{
+						moduleInfoInfoDataGridView.Rows[FirstCustomLine + line].Cells[1].Value = newValue;
+						moduleInfoInfoDataGridView.InvalidateRow(FirstCustomLine + line);
+					}
 				}
 			}
 		}
@@ -134,13 +142,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/********************************************************************/
 		private void ModuleInfoWindowForm_FormClosed(object sender, FormClosedEventArgs e)
 		{
-			// Save the settings
-			settings.Column1Width = moduleInfoInfoDataGridView.Columns[0].Width;
-			settings.Column2Width = moduleInfoInfoDataGridView.Columns[1].Width;
+			if (mainWindow != null)		// Main window is null, if the window has already been closed (because Owner has been set)
+			{
+				// Save the settings
+				settings.Column1Width = moduleInfoInfoDataGridView.Columns[0].Width;
+				settings.Column2Width = moduleInfoInfoDataGridView.Columns[1].Width;
 
-			// Cleanup
-			mainWindow = null;
-			moduleHandler = null;
+				// Cleanup
+				mainWindow = null;
+				moduleHandler = null;
+			}
 		}
 
 

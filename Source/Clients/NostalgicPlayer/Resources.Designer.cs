@@ -1529,6 +1529,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Separate each window in task
+        ///switcher.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_GENERAL_SEPARATEWINDOWS {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_GENERAL_SEPARATEWINDOWS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show item number in list.
         /// </summary>
         internal static string IDS_SETTINGS_OPTIONS_GENERAL_SHOWLISTNUMBER {
@@ -1543,6 +1553,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_SETTINGS_OPTIONS_GENERAL_SHOWNAME {
             get {
                 return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_GENERAL_SHOWNAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show all windows in task bar.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_GENERAL_SHOWWINDOWSINTASKBAR {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_GENERAL_SHOWWINDOWSINTASKBAR", resourceCulture);
             }
         }
         
