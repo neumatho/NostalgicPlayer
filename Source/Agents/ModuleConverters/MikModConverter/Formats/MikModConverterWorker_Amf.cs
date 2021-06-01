@@ -512,15 +512,10 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			{
 				uint trackSize = moduleStream.Read_L_UINT16();
 
-				// The original code in DSMI library read the byte, but it is not used.
-				// Normally, it is zero, but Avoid.amf (version 8) have a track where its not.
-				// This track is garbage, so check the value and skip the track
+				// The original code in DSMI library read the byte,
+				// but it is not used, so we won't either
 //				trackSize += ((uint)moduleStream.Read_UINT8()) << 16;
-				if (moduleStream.Read_UINT8() != 0)
-				{
-					moduleStream.Seek(trackSize * 3, SeekOrigin.Current);
-					return true;
-				}
+				moduleStream.Read_UINT8();
 
 				if (trackSize != 0)
 				{
@@ -544,7 +539,10 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 						// Invalid row (probably unexpected end of row)
 						if (row >= 64)
-							return false;
+						{
+							moduleStream.Seek(trackSize * 3, SeekOrigin.Current);
+							return true;
+						}
 
 						if (cmd < 0x7f)
 						{
