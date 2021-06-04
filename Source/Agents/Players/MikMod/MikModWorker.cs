@@ -426,7 +426,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 
 										if ((vbTick == 0) && (patDly2 == 0))
 										{
-											if (effArg >= 128)
+											if (effArg > 128)
 												effArg -= 128;
 
 											if (effArg != 0)
