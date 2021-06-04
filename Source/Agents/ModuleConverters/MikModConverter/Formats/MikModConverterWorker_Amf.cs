@@ -319,6 +319,10 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 					return false;
 				}
 
+				bool noLoopEnd = false;
+				if (mh.Version == 10)
+					noLoopEnd = ScanV10Instruments(moduleStream, of.NumIns);
+
 				for (int t = 0; t < of.NumIns; t++)
 				{
 					Sample q = of.Samples[t];
@@ -347,10 +351,25 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 					// "the tribal zone.amf" and "the way its gonna b.amf" by Maelcum
 					// are the only version 10 files I can find, and they have 32 bit
 					// reppos and repend, not 16
-					if (mh.Version >= 10)	// was 11
+					if (mh.Version >= 10 && !noLoopEnd)	// was 11
 					{
 						s.RepPos = moduleStream.Read_L_UINT32();
 						s.RepEnd = moduleStream.Read_L_UINT32();
+					}
+					else if (mh.Version == 10)
+					{
+						// Early AMF 1.0 modules have the upper two bytes of
+						// the loop start and the entire loop end truncated.
+						// libxmp cites "sweetdrm.amf" and "facing_n.amf", but
+						// these are currently missing. M2AMF 1.3 (from DMP 2.32)
+						// has been confirmed to output these, however
+						s.RepPos = moduleStream.Read_L_UINT16();
+						s.RepEnd = s.Length;
+
+						// There's not really a correct way to handle the loop
+						// end, but this makes unlooped samples work at least
+						if (s.RepPos == 0)
+							s.RepEnd = 0;
 					}
 					else
 					{
@@ -515,7 +534,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 				// The original code in DSMI library read the byte,
 				// but it is not used, so we won't either
 //				trackSize += ((uint)moduleStream.Read_UINT8()) << 16;
-				moduleStream.Read_UINT8();
+				moduleStream.Seek(1, SeekOrigin.Current);
 
 				if (trackSize != 0)
 				{
@@ -547,6 +566,10 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 						if (cmd < 0x7f)
 						{
 							// Note, vol
+							//
+							// Note that 0xff values mean this note was not originally
+							// accompanied by a volume event. The +1 here causes it to
+							// overflow to 0, which will then (correctly) be ignored later
 							track[row].Note = cmd;
 							track[row].Volume = (byte)((byte)arg + 1);
 						}
@@ -554,9 +577,10 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 						{
 							if (cmd == 0x7f)
 							{
-								// Duplicate row
-								if ((arg < 0) && (row + arg >= 0))
-									track[row + arg].Copy(track[row]);
+								// AMF.TXT claims this should be duplicate the previous row, but
+								// this is a lie. This note value is used to communicate to
+								// DSMI that the current playing note should be updated when
+								// an instrument is used with no note. This can be ignored
 							}
 							else
 							{
@@ -591,7 +615,6 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 													// Instead of failing, we just ignore unknown effects.
 													// This will load the "escape from dulce base" module
 													continue;
-//													return false;
 												}
 
 												track[row].Effect[track[row].FxCnt] = (byte)(cmd & 0x7f);
@@ -871,6 +894,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 						// Panning
 						case 0x17:
 						{
+							// S3M pan, except offset by -64
 							if (inf > 64)
 							{
 								// Surround
@@ -892,6 +916,51 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			}
 
 			return uniTrk.UniDup();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Some older version 1.0 AMFs contain an anomaly where the sample
+		/// length is a DWORD, the loop start is a WORD, and the loop end is
+		/// missing. Later AMF 1.0 modules and up contain all three as DWORDs,
+		/// and earlier versions have all three as WORDs. This function tries
+		/// to detect this edge case in the instrument table. This should
+		/// only be called on 1.0 AMFs
+		/// </summary>
+		/********************************************************************/
+		private bool ScanV10Instruments(ModuleStream moduleStream, uint numIns)
+		{
+			long resetPos = moduleStream.Position;
+			if (resetPos < 0)
+				return false;
+
+			byte[] str = new byte[33];
+			bool res = false;
+
+			for (uint i = 0; i < numIns; i++)
+			{
+				byte type = moduleStream.Read_UINT8();			// Type should be 0 or 1
+				moduleStream.ReadString(str, 32);			// Name
+				moduleStream.ReadString(str, 13);			// File name
+				uint idx = moduleStream.Read_L_UINT32();		// Index (should be <= numIns)
+				uint len = moduleStream.Read_L_UINT32();
+				ushort c2Spd = moduleStream.Read_L_UINT16();	// Should be > 0
+				byte vol = moduleStream.Read_UINT8();			// Should be [0,0x40]
+				uint start = moduleStream.Read_L_UINT32();		// Should be <= len
+				uint end = moduleStream.Read_L_UINT32();		// Should be <= len
+
+				if (((type != 0) && (type != 1)) || (idx > numIns) || (c2Spd == 0) || (vol > 0x40) || (start > len) || (end > len))
+				{
+					res = true;
+					break;
+				}
+			}
+
+			moduleStream.Position = resetPos;
+
+			return res;
 		}
 		#endregion
 	}
