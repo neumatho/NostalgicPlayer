@@ -140,6 +140,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         /// <summary>
         ///   Looks up a localized string similar to This loader recognizes “UniMod” modules. This is the internal format used by MikMod. If you find any modules in this format, it probably won&apos;t be played correct, because not all effects were supported at the time those modules were used..
         /// </summary>
+        internal static string IDS_MIKCONV_DESCRIPTION_AGENT14 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT14", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This loader recognizes the modules in “umx” files from games like “Unreal”, “DeusEx”, etc. To NostalgicPlayer, UMX is just a container and the real music format may be one of “ScreamTracker 3”, “Impulse Tracker”, “FastTracker 2”, or possibly a “Protracker” compatible one..
+        /// </summary>
         internal static string IDS_MIKCONV_DESCRIPTION_AGENT15 {
             get {
                 return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT15", resourceCulture);
@@ -363,6 +372,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         
         /// <summary>
         ///   Looks up a localized string similar to UniMod.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_AGENT14 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT14", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unreal Music File.
         /// </summary>
         internal static string IDS_MIKCONV_NAME_AGENT15 {
             get {
@@ -610,6 +628,78 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         internal static string IDS_MIKCONV_NAME_ULT {
             get {
                 return ResourceManager.GetString("IDS_MIKCONV_NAME_ULT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unreal Music File ({0} - {1}).
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_UMX {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_UMX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1998.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_UMX_1998 {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_UMX_1998", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unreal Beta.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_UMX_BETA {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_UMX_BETA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mobile Forces.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_UMX_MOBILE {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_UMX_MOBILE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Return to Na Pali.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_UMX_NAPALI {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_UMX_NAPALI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tactical Ops.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_UMX_TACTICAL {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_UMX_TACTICAL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unreal Tournament.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_UMX_TOURNAMENT {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_UMX_TOURNAMENT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unreal.
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_UMX_UNREAL {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_UMX_UNREAL", resourceCulture);
             }
         }
         

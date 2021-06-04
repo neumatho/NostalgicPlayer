@@ -137,7 +137,8 @@ Scream Tracker Music Interface Kit (STX)
 Stream Tracker 2 (STM)
 Stream Tracker 3 (S3M)
 UltraTracker (ULT)
-UniMod (UNI)</value>
+UniMod (UNI)
+Unreal Music File (UMX)</value>
   </data>
   <data name="IDS_MIKCONV_DESCRIPTION_AGENT1" xml:space="preserve">
     <value>This loader recognizes “Composer 669” modules. The 669 format were among the first PC module formats. They do not have a wide range of effects and support 8 channels.
@@ -164,8 +165,11 @@ UniMod (UNI)</value>
 
 “UltraTracker” was written by MAS of Prophecy, a.k.a. Marc Andre Schallehn, and released in 1993.</value>
   </data>
-  <data name="IDS_MIKCONV_DESCRIPTION_AGENT15" xml:space="preserve">
+  <data name="IDS_MIKCONV_DESCRIPTION_AGENT14" xml:space="preserve">
     <value>This loader recognizes “UniMod” modules. This is the internal format used by MikMod. If you find any modules in this format, it probably won't be played correct, because not all effects were supported at the time those modules were used.</value>
+  </data>
+  <data name="IDS_MIKCONV_DESCRIPTION_AGENT15" xml:space="preserve">
+    <value>This loader recognizes the modules in “umx” files from games like “Unreal”, “DeusEx”, etc. To NostalgicPlayer, UMX is just a container and the real music format may be one of “ScreamTracker 3”, “Impulse Tracker”, “FastTracker 2”, or possibly a “Protracker” compatible one.</value>
   </data>
   <data name="IDS_MIKCONV_DESCRIPTION_AGENT16" xml:space="preserve">
     <value>This loader recognizes “FastTracker 2” modules. This format was designed from scratch, instead of creating yet another ProTracker variation. It was the first format using instruments as well as samples, and envelopes for finer effects.
@@ -250,8 +254,11 @@ Imago Orpheus was written by Lutz Roeder and released in 1994.</value>
   <data name="IDS_MIKCONV_NAME_AGENT13" xml:space="preserve">
     <value>UltraTracker</value>
   </data>
-  <data name="IDS_MIKCONV_NAME_AGENT15" xml:space="preserve">
+  <data name="IDS_MIKCONV_NAME_AGENT14" xml:space="preserve">
     <value>UniMod</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_AGENT15" xml:space="preserve">
+    <value>Unreal Music File</value>
   </data>
   <data name="IDS_MIKCONV_NAME_AGENT16" xml:space="preserve">
     <value>FastTracker II</value>
@@ -333,6 +340,30 @@ Imago Orpheus was written by Lutz Roeder and released in 1994.</value>
   </data>
   <data name="IDS_MIKCONV_NAME_ULT" xml:space="preserve">
     <value>UltraTracker 1.{0}</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_UMX" xml:space="preserve">
+    <value>Unreal Music File ({0} - {1})</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_UMX_1998" xml:space="preserve">
+    <value>1998</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_UMX_BETA" xml:space="preserve">
+    <value>Unreal Beta</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_UMX_MOBILE" xml:space="preserve">
+    <value>Mobile Forces</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_UMX_NAPALI" xml:space="preserve">
+    <value>Return to Na Pali</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_UMX_TACTICAL" xml:space="preserve">
+    <value>Tactical Ops</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_UMX_TOURNAMENT" xml:space="preserve">
+    <value>Unreal Tournament</value>
+  </data>
+  <data name="IDS_MIKCONV_NAME_UMX_UNREAL" xml:space="preserve">
+    <value>Unreal</value>
   </data>
   <data name="IDS_MIKCONV_NAME_UNI" xml:space="preserve">
     <value>{0} (was {1})</value>

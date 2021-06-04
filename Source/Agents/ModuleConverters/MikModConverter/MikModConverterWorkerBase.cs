@@ -6,11 +6,12 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Agent.Shared.MikMod;
 using Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers;
+using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
@@ -18,36 +19,36 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 	/// <summary>
 	/// Base class for all the formats
 	/// </summary>
-	internal abstract class MikModConverterWorkerBase : IModuleConverterAgent
+	internal abstract class MikModConverterWorkerBase : ModuleConverterAgentBase
 	{
 		protected Module of;
 		protected string originalFormat;
 
 		protected readonly bool curious = false;
 
-		#region IModuleConverterAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Test the file to see if it could be identified
-		/// </summary>
-		/********************************************************************/
-		public abstract AgentResult Identify(PlayerFileInfo fileInfo);
-
-
-
+		#region ModuleConverterAgentBase implementation
 		/********************************************************************/
 		/// <summary>
 		/// Convert the module and store the result in the stream given
 		/// </summary>
 		/********************************************************************/
-		public AgentResult Convert(PlayerFileInfo fileInfo, ConverterStream converterStream, out string errorMessage)
+		public override AgentResult Convert(PlayerFileInfo fileInfo, ConverterStream converterStream, out string errorMessage)
 		{
 			// Load and convert the module into internal structures
-			if (!ConvertModule(fileInfo.ModuleStream, out errorMessage))
-				return AgentResult.Error;
+			if (ConvertModuleData)
+			{
+				if (!ConvertModule(fileInfo.ModuleStream, out errorMessage))
+					return AgentResult.Error;
 
-			if (!ConvertToUniMod(fileInfo.ModuleStream, converterStream, out errorMessage))
-				return AgentResult.Error;
+				if (!ConvertToUniMod(fileInfo.ModuleStream, converterStream, out errorMessage))
+					return AgentResult.Error;
+			}
+			else
+			{
+				// This converter extract the data from some kind of container
+				if (!ExtractModule(fileInfo.ModuleStream, converterStream, out errorMessage))
+					return AgentResult.Error;
+			}
 
 			return AgentResult.Ok;
 		}
@@ -60,15 +61,40 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 		/// string, the agent name will be used
 		/// </summary>
 		/********************************************************************/
-		public string OriginalFormat => originalFormat;
+		public override string OriginalFormat => originalFormat;
 		#endregion
+
+		/********************************************************************/
+		/// <summary>
+		/// Tells if the converter loads data into the Module (of) or not
+		/// </summary>
+		/********************************************************************/
+		protected virtual bool ConvertModuleData => true;
+
+
 
 		/********************************************************************/
 		/// <summary>
 		/// Load the module into internal structures
 		/// </summary>
 		/********************************************************************/
-		protected abstract bool LoadModule(ModuleStream moduleStream, MUniTrk uniTrk, out string errorMessage);
+		protected virtual bool LoadModule(ModuleStream moduleStream, MUniTrk uniTrk, out string errorMessage)
+		{
+			throw new NotImplementedException();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Extract a module from a container and store it in the converter
+		/// stream
+		/// </summary>
+		/********************************************************************/
+		protected virtual bool ExtractModule(ModuleStream moduleStream, ConverterStream converterStream, out string errorMessage)
+		{
+			throw new NotImplementedException();
+		}
 
 		#region Private methods
 		/********************************************************************/

@@ -207,6 +207,14 @@
             <uap:DisplayName>Impulse Tracker</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="umxfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-umx">.umx</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Unreal Music File</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System.IO;
+using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
@@ -15,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 	/// <summary>
 	/// Can convert Future Composer 1.0 - 1.3 to Future Composer 1.4 format
 	/// </summary>
-	internal class ModuleConverterWorker_FutureComposer13 : ModuleConverterWorkerBase
+	internal class ModuleConverterWorker_FutureComposer13 : ModuleConverterAgentBase
 	{
 		#region Tables
 		// Wave table lengths

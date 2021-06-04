@@ -28,6 +28,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		public ConverterStream(Stream wrapperStream, Dictionary<int, ConvertSampleInfo> sampleInfo) : base(wrapperStream)
 		{
 			this.sampleInfo = sampleInfo;
+			HasSampleDataMarkers = false;
 		}
 
 
@@ -47,6 +48,20 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 			Write_B_UINT32(convertInfo.Position);
 			Write_B_UINT32((uint)convertInfo.Length);
+
+			HasSampleDataMarkers = true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tells whether any sample markings has been written
+		/// </summary>
+		/********************************************************************/
+		public bool HasSampleDataMarkers
+		{
+			get; private set;
 		}
 	}
 }

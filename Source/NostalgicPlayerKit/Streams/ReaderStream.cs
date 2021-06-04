@@ -178,8 +178,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		public override int Read(byte[] buffer, int offset, int count)
 		{
 			int read = wrapperStream.Read(buffer, offset, count);
-			if (read < count)
-				EndOfStream = true;
+			EndOfStream = read < count;
 
 			return read;
 		}
@@ -194,8 +193,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		public int ReadSigned(sbyte[] buffer, int offset, int count)
 		{
 			int read = wrapperStream.Read((byte[])(Array)buffer, offset, count);
-			if (read < count)
-				EndOfStream = true;
+			EndOfStream = read < count;
 
 			return read;
 		}

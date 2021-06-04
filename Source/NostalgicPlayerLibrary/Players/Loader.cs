@@ -26,6 +26,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		{
 			public AgentInfo Agent;
 			public string OriginalFormat;
+			public Stream SampleDataStream;
 			public MemoryStream ConvertedStream;
 		}
 
@@ -280,7 +281,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				if (result)
 				{
 					// Yes, initialize the module stream with the right information
-					using (ModuleStream moduleStream = convertInfo != null ? new ModuleStream(convertInfo.ConvertedStream, stream) : new ModuleStream(stream, true))
+					using (ModuleStream moduleStream = convertInfo != null ? new ModuleStream(convertInfo.ConvertedStream, convertInfo.SampleDataStream ?? stream) : new ModuleStream(stream, true))
 					{
 						PlayerFileInfo fileInfo = new PlayerFileInfo(fileName, moduleStream, loader);
 
@@ -343,6 +344,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 			// If a module has been converted, we don't need to converted stream anymore
 			convertInfo?.ConvertedStream?.Dispose();
+			convertInfo?.SampleDataStream?.Dispose();
 
 			// Close the files again if needed
 			if (!result || PlayerAgent is IModulePlayerAgent)
@@ -528,6 +530,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 											if (result == null)
 												result = new ConvertInfo { Agent = agentInfo, OriginalFormat = converter.OriginalFormat };
+
+											if (!cs.HasSampleDataMarkers && (result.SampleDataStream == null))		// If we need to support multiple markings, it could be implemented by using a stack
+												result.SampleDataStream = new MemoryStream(ms.GetBuffer());
 
 											if (result.ConvertedStream != null)
 												result.ConvertedStream.Dispose();
