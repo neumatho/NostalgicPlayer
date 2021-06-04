@@ -61,6 +61,6 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | Ultimate SoundTracker 1.0 - 1.21 | .mod | | ModTracker |
 | Ultimate SoundTracker 1.8 - 2.0 | .mod | | ModTracker |
 | UltraTracker | .ult | MikMod Converter | MikMod |
-| Unreal Music File | .umx | MikMod Converter | MikMod |
 | UniMod | .uni | MikMod Converter | MikMod |
 | Unis 669 | .669 | MikMod Converter | MikMod |
+| Unreal Music File | .umx | MikMod Converter | MikMod |
