@@ -39,11 +39,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 			// 
 			// pictureBox
 			// 
+			this.pictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.pictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.pictureBox.Location = new System.Drawing.Point(8, 8);
 			this.pictureBox.Margin = new System.Windows.Forms.Padding(0);
 			this.pictureBox.Name = "pictureBox";
-			this.pictureBox.Size = new System.Drawing.Size(302, 172);
+			this.pictureBox.Size = new System.Drawing.Size(342, 172);
 			this.pictureBox.TabIndex = 0;
 			this.pictureBox.TabStop = false;
 			// 
@@ -54,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 			// AboutWindowForm
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(318, 188);
+			this.ClientSize = new System.Drawing.Size(358, 188);
 			this.Controls.Add(this.pictureBox);
 			this.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;

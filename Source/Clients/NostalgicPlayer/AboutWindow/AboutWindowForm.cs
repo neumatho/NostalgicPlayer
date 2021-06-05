@@ -29,7 +29,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 		[DllImport("kernel32.dll", EntryPoint = "RtlMoveMemory", SetLastError = true)]
 		private static extern void CopyMemory(IntPtr dest, IntPtr src, uint count);
 
-		private const int AreaWidth = 300;
+		private const int AreaWidth = 340;
 		private const int AreaHeight = 170;
 
 		private enum Mode
