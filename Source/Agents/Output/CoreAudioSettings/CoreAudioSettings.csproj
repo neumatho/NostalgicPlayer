@@ -24,7 +24,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Krypton.Toolkit.Lite" Version="5.550.2103" />
+    <PackageReference Include="Krypton.Toolkit.Lite" Version="5.550.2106.1" />
     <PackageReference Include="NAudio.Wasapi" Version="2.0.0" />
   </ItemGroup>
 

@@ -36,7 +36,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Krypton.Toolkit.Lite" Version="5.550.2103" />
+	  <PackageReference Include="Krypton.Toolkit.Lite" Version="5.550.2106.1" />
 	</ItemGroup>
 
 </Project>
