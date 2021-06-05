@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
 	{
 		private const int PanelMargin = 8;
 
-		private OscilloscopeSettings settings;
+		private readonly OscilloscopeSettings settings;
 
 		/********************************************************************/
 		/// <summary>
@@ -73,8 +73,16 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
 			{
 				if (sampleData.Stereo)
 				{
-					leftSpeakerOscilloscopeControl.DrawSample(sampleData.SampleData, 0, 2);
-					rightSpeakerOscilloscopeControl.DrawSample(sampleData.SampleData, 1, 2);
+					if (sampleData.SwapSpeakers)
+					{
+						leftSpeakerOscilloscopeControl.DrawSample(sampleData.SampleData, 1, 2);
+						rightSpeakerOscilloscopeControl.DrawSample(sampleData.SampleData, 0, 2);
+					}
+					else
+					{
+						leftSpeakerOscilloscopeControl.DrawSample(sampleData.SampleData, 0, 2);
+						rightSpeakerOscilloscopeControl.DrawSample(sampleData.SampleData, 1, 2);
+					}
 				}
 				else
 				{
