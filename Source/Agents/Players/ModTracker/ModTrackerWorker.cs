@@ -962,7 +962,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			moduleStream.Seek(0, SeekOrigin.Begin);
 			uint mark = moduleStream.Read_B_UINT32();
 
-			if ((mark == 0x52494646) || (mark == 0x464f524d))
+			if ((mark == 0x52494646) || (mark == 0x464f524d) || (mark == 0x44444d46))
 				return ModuleType.Unknown;
 
 			ModuleType minimumVersion = ModuleType.UltimateSoundTracker10;
