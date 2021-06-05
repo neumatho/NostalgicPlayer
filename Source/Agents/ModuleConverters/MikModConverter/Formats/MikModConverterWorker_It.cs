@@ -213,7 +213,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 			try
 			{
-				Encoding encoder = EncoderCollection.Ibm850;
+				Encoding encoder = EncoderCollection.Dos;
 
 				numTrk = 0;
 				util.filters = false;

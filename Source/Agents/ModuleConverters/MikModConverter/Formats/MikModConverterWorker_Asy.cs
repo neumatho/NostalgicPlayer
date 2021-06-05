@@ -133,7 +133,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 			try
 			{
-				Encoding encoder = EncoderCollection.Ibm850;
+				Encoding encoder = EncoderCollection.Dos;
 
 				// No title in Asylum amf files :(
 				mh.SongName[0] = 0x00;

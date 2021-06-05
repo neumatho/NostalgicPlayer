@@ -302,7 +302,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			int i;
 			for (i = 0; musType[i] != null; i++)
 			{
-				if (EncoderCollection.Ibm850.GetString(buf).ToUpper() == musType[i])
+				if (EncoderCollection.Dos.GetString(buf).ToUpper() == musType[i])
 				{
 					t = i;
 					break;
@@ -505,7 +505,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 				}
 				else
 				{
-					l += EncoderCollection.Ibm850.GetString(buf).Length;
+					l += EncoderCollection.Dos.GetString(buf).Length;
 					l += 5;								// 1 for terminator, 4 for int32_t name_flags
 				}
 			}

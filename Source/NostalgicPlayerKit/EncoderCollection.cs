@@ -30,23 +30,22 @@ namespace Polycode.NostalgicPlayer.Kit
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the encoder to decode code page 850 (Western Europe (DOS))
-		/// characters
+		/// Return the encoder to decode PC DOS characters
 		/// </summary>
 		/********************************************************************/
-		public static Encoding Ibm850
+		public static Encoding Dos
 		{
 			get;
-		} = new Ibm850();
+		} = new Ibm865();
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the encoder to decode Macintosh Roman characters
+		/// Return the encoder to decode Macintosh characters
 		/// </summary>
 		/********************************************************************/
-		public static Encoding MacintoshRoman
+		public static Encoding Macintosh
 		{
 			get;
 		} = new MacintoshRoman();

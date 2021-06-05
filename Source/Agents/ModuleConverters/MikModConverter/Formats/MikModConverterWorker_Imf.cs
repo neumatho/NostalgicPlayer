@@ -199,7 +199,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 			try
 			{
-				Encoding encoder = EncoderCollection.Ibm850;
+				Encoding encoder = EncoderCollection.Dos;
 
 				// Try to read the module header
 				moduleStream.ReadString(mh.SongName, 32);

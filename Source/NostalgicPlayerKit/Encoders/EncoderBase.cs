@@ -14,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Kit.Encoders
 	/// <summary>
 	/// Base class for all encoders
 	/// </summary>
-	internal abstract class EncoderBase : Encoding
+	public abstract class EncoderBase : Encoding
 	{
 		/********************************************************************/
 		/// <summary>

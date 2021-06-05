@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Kit.Encoders
 	/// <summary>
 	/// This class can decode the Amiga character set
 	/// </summary>
-	internal class Amiga : EncoderBase
+	public class Amiga : EncoderBase
 	{
 		/********************************************************************/
 		/// <summary>

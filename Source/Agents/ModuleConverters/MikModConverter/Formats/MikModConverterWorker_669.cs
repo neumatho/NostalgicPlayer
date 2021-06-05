@@ -178,7 +178,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			{
 				int i;
 
-				Encoding encoder = EncoderCollection.Ibm850;
+				Encoding encoder = EncoderCollection.Dos;
 
 				// Read the module header
 				moduleStream.Read(mh.Marker, 0, 2);

@@ -143,7 +143,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 			try
 			{
-				Encoding encoder = EncoderCollection.Ibm850;
+				Encoding encoder = EncoderCollection.Dos;
 
 				// Read the header
 				moduleStream.Read(mh.Id1, 0, 4);

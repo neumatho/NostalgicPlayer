@@ -120,7 +120,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 			try
 			{
-				Encoding encoder = EncoderCollection.Ibm850;
+				Encoding encoder = EncoderCollection.Dos;
 
 				UniHeader mh = new UniHeader();
 
@@ -537,7 +537,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		/********************************************************************/
 		private bool LoadSmp6(ModuleStream moduleStream)
 		{
-			Encoding encoder = EncoderCollection.Ibm850;
+			Encoding encoder = EncoderCollection.Dos;
 
 			for (int t = 0; t < of.NumSmp; t++)
 			{
@@ -675,7 +675,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		/********************************************************************/
 		private bool LoadInstr6(ModuleStream moduleStream)
 		{
-			Encoding encoder = EncoderCollection.Ibm850;
+			Encoding encoder = EncoderCollection.Dos;
 
 			for (int t = 0; t < of.NumIns; t++)
 			{
@@ -761,7 +761,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		/********************************************************************/
 		private bool LoadInstr5(ModuleStream moduleStream)
 		{
-			Encoding encoder = EncoderCollection.Ibm850;
+			Encoding encoder = EncoderCollection.Dos;
 
 			ushort wavCnt = 0;
 			int sIndex = 0;

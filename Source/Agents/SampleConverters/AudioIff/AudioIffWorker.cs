@@ -407,7 +407,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 		{
 			using (WriterStream writerStream = new WriterStream(stream))
 			{
-				Encoding encoder = EncoderCollection.MacintoshRoman;
+				Encoding encoder = EncoderCollection.Macintosh;
 
 				// Write the IFF header
 				writerStream.Write_B_UINT32(0x464f524d);						// FORM

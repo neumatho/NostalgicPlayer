@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Kit.Encoders
 	/// <summary>
 	/// This class can decode the IBM 850 character set, which was used in DOS on the PC
 	/// </summary>
-	internal class Ibm850 : EncoderBase
+	public class Ibm850 : EncoderBase
 	{
 		/********************************************************************/
 		/// <summary>

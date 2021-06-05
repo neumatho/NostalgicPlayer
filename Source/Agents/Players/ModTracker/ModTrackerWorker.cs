@@ -1450,7 +1450,7 @@ stopLoop:
 				byte[] buf = new byte[23];
 
 				ModuleStream moduleStream = fileInfo.ModuleStream;
-				Encoding encoder = IsPcTracker() ? EncoderCollection.Ibm850 : EncoderCollection.Amiga;
+				Encoding encoder = IsPcTracker() ? EncoderCollection.Dos : EncoderCollection.Amiga;
 
 				// Find out the number of samples
 				sampleNum = (ushort)((currentModuleType <= ModuleType.SoundTracker2x) ? 15 : 31);
@@ -1739,7 +1739,7 @@ stopLoop:
 				byte[] buf = new byte[23];
 
 				ModuleStream moduleStream = fileInfo.ModuleStream;
-				Encoding encoder = EncoderCollection.Ibm850;
+				Encoding encoder = EncoderCollection.Dos;
 
 				// Read the header
 				moduleStream.Seek(3, SeekOrigin.Begin);

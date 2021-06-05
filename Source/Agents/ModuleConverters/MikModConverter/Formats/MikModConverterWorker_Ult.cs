@@ -111,7 +111,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 			UltHeader mh = new UltHeader();
 
-			Encoding encoder = EncoderCollection.Ibm850;
+			Encoding encoder = EncoderCollection.Dos;
 
 			// Try to read the module header
 			moduleStream.ReadString(mh.Id, 15);
