@@ -17,11 +17,15 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <OutputPath></OutputPath>
     <DocumentationFile>bin\NostalgicPlayer.xml</DocumentationFile>
+    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutputPath></OutputPath>
     <DocumentationFile>bin\NostalgicPlayer.xml</DocumentationFile>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
@@ -30,6 +34,8 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
+    <RuntimeIdentifier>win-x86</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -38,6 +44,8 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
