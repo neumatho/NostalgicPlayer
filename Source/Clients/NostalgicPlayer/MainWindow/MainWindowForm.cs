@@ -1084,9 +1084,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			if (File.Exists(versionFile))
 			{
-				if (File.ReadAllText(versionFile) != currentVersion)
+				string previousVersion = File.ReadAllText(versionFile);
+				if (previousVersion != currentVersion)
 				{
-					using (NewVersionWindowForm dialog = new NewVersionWindowForm())
+					using (NewVersionWindowForm dialog = new NewVersionWindowForm(previousVersion, currentVersion))
 					{
 						dialog.ShowDialog(this);
 					}

@@ -904,9 +904,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Congratulations! A new version of NostalgicPlayer has been
-        ///installed. Copy the URL below and insert into a browser to see
-        ///what is new..
+        ///   Looks up a localized string similar to Congratulations! A new version of NostalgicPlayer has been installed. See below
+        ///what has changed since your previous version..
         /// </summary>
         internal static string IDS_NEWVERSION_MESSAGE {
             get {
@@ -920,15 +919,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_NEWVERSION_TITLE {
             get {
                 return ResourceManager.GetString("IDS_NEWVERSION_TITLE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to https://www.nostalgicplayer.dk/history.html#{0}.
-        /// </summary>
-        internal static string IDS_NEWVERSION_URL {
-            get {
-                return ResourceManager.GetString("IDS_NEWVERSION_URL", resourceCulture);
             }
         }
         

@@ -34,8 +34,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 			this.kryptonManager = new Krypton.Toolkit.KryptonManager(this.components);
 			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
 			this.label = new Krypton.Toolkit.KryptonLabel();
-			this.urlTextBox = new Krypton.Toolkit.KryptonTextBox();
 			this.kryptonButton1 = new Krypton.Toolkit.KryptonButton();
+			this.historyRichTextBox = new Krypton.Toolkit.KryptonRichTextBox();
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -48,42 +48,39 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 			this.label.Location = new System.Drawing.Point(8, 8);
 			this.label.Name = "label";
 			this.controlResource.SetResourceKey(this.label, "IDS_NEWVERSION_MESSAGE");
-			this.label.Size = new System.Drawing.Size(351, 47);
+			this.label.Size = new System.Drawing.Size(447, 33);
 			this.label.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.label.TabIndex = 0;
-			this.label.Values.Text = "Congratulations! A new version of NostalgicPlayer has been\r\ninstalled. Copy the U" +
-    "RL below and insert into a browser to see\r\nwhat is new.";
-			// 
-			// urlTextBox
-			// 
-			this.urlTextBox.Location = new System.Drawing.Point(12, 67);
-			this.urlTextBox.Name = "urlTextBox";
-			this.urlTextBox.ReadOnly = true;
-			this.controlResource.SetResourceKey(this.urlTextBox, null);
-			this.urlTextBox.Size = new System.Drawing.Size(360, 16);
-			this.urlTextBox.StateCommon.Back.Color1 = System.Drawing.SystemColors.Control;
-			this.urlTextBox.StateCommon.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
-			this.urlTextBox.StateCommon.Content.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.urlTextBox.StateCommon.Content.TextH = Krypton.Toolkit.PaletteRelativeAlign.Inherit;
-			this.urlTextBox.TabIndex = 1;
-			this.urlTextBox.Text = "https://www.nostalgicplayer.dk";
+			this.label.Values.Text = "Congratulations! A new version of NostalgicPlayer has been installed. See below\r\n" +
+    "what has changed since your previous version.";
 			// 
 			// kryptonButton1
 			// 
 			this.kryptonButton1.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.kryptonButton1.Location = new System.Drawing.Point(282, 105);
+			this.kryptonButton1.Location = new System.Drawing.Point(369, 255);
 			this.kryptonButton1.Name = "kryptonButton1";
 			this.controlResource.SetResourceKey(this.kryptonButton1, "IDS_BUT_OK");
 			this.kryptonButton1.Size = new System.Drawing.Size(90, 25);
 			this.kryptonButton1.TabIndex = 2;
 			this.kryptonButton1.Values.Text = "Ok";
 			// 
+			// historyRichTextBox
+			// 
+			this.historyRichTextBox.DetectUrls = false;
+			this.historyRichTextBox.Location = new System.Drawing.Point(8, 47);
+			this.historyRichTextBox.Name = "historyRichTextBox";
+			this.historyRichTextBox.ReadOnly = true;
+			this.controlResource.SetResourceKey(this.historyRichTextBox, null);
+			this.historyRichTextBox.Size = new System.Drawing.Size(451, 200);
+			this.historyRichTextBox.TabIndex = 3;
+			this.historyRichTextBox.Text = "";
+			// 
 			// NewVersionWindowForm
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(384, 142);
+			this.ClientSize = new System.Drawing.Size(467, 288);
+			this.Controls.Add(this.historyRichTextBox);
 			this.Controls.Add(this.kryptonButton1);
-			this.Controls.Add(this.urlTextBox);
 			this.Controls.Add(this.label);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -104,7 +101,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 		private Krypton.Toolkit.KryptonManager kryptonManager;
 		private GuiKit.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonLabel label;
-		private Krypton.Toolkit.KryptonTextBox urlTextBox;
 		private Krypton.Toolkit.KryptonButton kryptonButton1;
+		private Krypton.Toolkit.KryptonRichTextBox historyRichTextBox;
 	}
 }
