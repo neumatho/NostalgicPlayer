@@ -121,6 +121,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private long lastAddedTimeFromExplorer = 0;
 
 		// Other windows
+		private HelpWindowForm helpWindow = null;
 		private AboutWindowForm aboutWindow = null;
 		private SettingsWindowForm settingsWindow = null;
 		private ModuleInfoWindowForm moduleInfoWindow = null;
@@ -1237,9 +1238,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void Menu_Help_Help_Click(object sender, EventArgs e)
 		{
-			using (HelpWindowForm dialog = new HelpWindowForm())
+			if (IsHelpWindowOpen())
+				helpWindow.Activate();
+			else
 			{
-				dialog.ShowDialog(this);
+				helpWindow = new HelpWindowForm(this, optionSettings);
+				helpWindow.Disposed += (o, args) => { helpWindow = null; };
+				helpWindow.Show();
 			}
 		}
 
@@ -3293,6 +3298,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				openAgentDisplays.Clear();
 			}
 
+			// Close the help window
+			if (IsHelpWindowOpen())
+				helpWindow.Close();
+
+			helpWindow = null;
+
 			// Close the about window
 			if (IsAboutWindowOpen())
 				aboutWindow.Close();
@@ -3331,6 +3342,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private IEnumerable<WindowFormBase> GetAllOpenedWindows()
 		{
+			if (IsHelpWindowOpen())
+				yield return helpWindow;
+
 			if (IsModuleInfoWindowOpen())
 				yield return moduleInfoWindow;
 
@@ -3372,6 +3386,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			if (IsSettingsWindowOpen())
 				settingsWindow.RefreshWindow();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check if the help window is open
+		/// </summary>
+		/********************************************************************/
+		private bool IsHelpWindowOpen()
+		{
+			return (helpWindow != null) && !helpWindow.IsDisposed;
 		}
 
 

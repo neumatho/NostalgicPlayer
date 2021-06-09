@@ -633,30 +633,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to To read the documentation, open a browser and
-        ///navigate to the official webpage which is:.
-        /// </summary>
-        internal static string IDS_HELP_MESSAGE {
-            get {
-                return ResourceManager.GetString("IDS_HELP_MESSAGE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Help.
         /// </summary>
         internal static string IDS_HELP_TITLE {
             get {
                 return ResourceManager.GetString("IDS_HELP_TITLE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to https://www.nostalgicplayer.dk.
-        /// </summary>
-        internal static string IDS_HELP_URL {
-            get {
-                return ResourceManager.GetString("IDS_HELP_URL", resourceCulture);
             }
         }
         

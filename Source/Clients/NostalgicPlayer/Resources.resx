@@ -369,15 +369,8 @@ Formats supported:
   <data name="IDS_ERR_UNKNOWN_LIST_VERSION" xml:space="preserve">
     <value>Unknown version ({0}) of a NPML list.</value>
   </data>
-  <data name="IDS_HELP_MESSAGE" xml:space="preserve">
-    <value>To read the documentation, open a browser and
-navigate to the official webpage which is:</value>
-  </data>
   <data name="IDS_HELP_TITLE" xml:space="preserve">
     <value>Help</value>
-  </data>
-  <data name="IDS_HELP_URL" xml:space="preserve">
-    <value>https://www.nostalgicplayer.dk</value>
   </data>
   <data name="IDS_MAIN_TITLE" xml:space="preserve">
     <value>NostalgicPlayer</value>
