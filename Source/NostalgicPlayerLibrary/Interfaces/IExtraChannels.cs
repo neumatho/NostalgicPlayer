@@ -6,7 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Mixer;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Interfaces
 {
@@ -28,7 +28,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Interfaces
 		/// <summary>
 		/// Play the extra channels
 		/// </summary>
-		bool PlayChannels(Channel[] channels);
+		bool PlayChannels(IChannel[] channels);
 
 		/// <summary>
 		/// Return the number of extra channels

@@ -113,7 +113,7 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 								Console.WriteLine("Module format: " + moduleInfoStatic.ModuleFormat);
 								Console.WriteLine("Active player: " + moduleInfoStatic.PlayerName);
 								Console.WriteLine("Used channels: " + moduleInfoStatic.Channels);
-								Console.WriteLine("Total time: " + moduleInfoFloating.TotalTime.ToString(@"m\:ss"));
+								Console.WriteLine("Total time: " + (moduleInfoFloating.DurationInfo == null ? "Unknown" : moduleInfoFloating.DurationInfo.TotalTime.ToString(@"m\:ss")));
 								Console.WriteLine("Module size: " + moduleInfoStatic.ModuleSize);
 								Console.WriteLine("File name: " + fileName);
 								Console.WriteLine();

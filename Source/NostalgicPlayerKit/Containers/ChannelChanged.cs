@@ -6,7 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Mixer;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Kit.Containers
 {
@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ChannelChanged(Channel[] virtualChannels, Channel.Flags[] flags)
+		public ChannelChanged(IChannel[] virtualChannels, ChannelFlags[] flags)
 		{
 			VirtualChannels = virtualChannels;
 			Flags = flags;
@@ -33,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// An array with a channel structure for each channel
 		/// </summary>
 		/********************************************************************/
-		public Channel[] VirtualChannels
+		public IChannel[] VirtualChannels
 		{
 			get;
 		}
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// cleared
 		/// </summary>
 		/********************************************************************/
-		public Channel.Flags[] Flags
+		public ChannelFlags[] Flags
 		{
 			get;
 		}

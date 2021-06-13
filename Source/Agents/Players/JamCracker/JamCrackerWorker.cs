@@ -9,12 +9,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Polycode.NostalgicPlayer.Agent.Player.JamCracker.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Mixer;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
@@ -31,9 +30,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 			 227, 214, 202, 190, 180, 170, 160, 151, 143, 135, 135, 135, 135,
 			 135, 135, 135, 135, 135, 135, 135, 135, 135, 135, 135, 135
 		};
-
-		private TimeSpan totalTime;
-		private PosInfo[] posInfoList;
 
 		private ushort samplesNum;
 		private ushort patternNum;
@@ -294,56 +290,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 		/********************************************************************/
 		/// <summary>
-		/// Initializes the player
-		/// </summary>
-		/********************************************************************/
-		public override bool InitPlayer()
-		{
-			byte curSpeed = 6;
-			float total = 0.0f;
-
-			// Calculate the position times
-			posInfoList = new PosInfo[songLen];
-
-			for (int i = 0; i < songLen; i++)
-			{
-				// Add the position information to the list
-				PosInfo posInfo = new PosInfo();
-
-				posInfo.Speed = curSpeed;
-				posInfo.Time = new TimeSpan((long)(total * TimeSpan.TicksPerMillisecond));
-
-				posInfoList[i] = posInfo;
-
-				// Get next pattern
-				PattInfo pattInfo = pattTable[songTable[i]];
-				ushort noteCount = pattInfo.Size;
-				NoteInfo[] noteInfo = pattInfo.Address;
-
-				for (int j = 0; j < noteCount; j++)
-				{
-					for (int k = 0; k < 4; k++)
-					{
-						// Should the speed be changed
-						if ((noteInfo[j + k].Speed & 15) != 0)
-							curSpeed = (byte)(noteInfo[j + k].Speed & 15);
-					}
-
-					// Add the row time
-					total += 1000.0f * curSpeed / 50.0f;
-				}
-			}
-
-			// Set the total time
-			totalTime = new TimeSpan((long)(total * TimeSpan.TicksPerMillisecond));
-
-			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Cleanup the player
 		/// </summary>
 		/********************************************************************/
@@ -359,7 +305,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override void InitSound(int songNumber)
+		public override void InitSound(int songNumber, DurationInfo durationInfo)
 		{
 			// Initialize other variables
 			songPos = 0;
@@ -416,6 +362,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 		/********************************************************************/
 		/// <summary>
+		/// Calculate the duration for all sub-songs
+		/// </summary>
+		/********************************************************************/
+		public override DurationInfo[] CalculateDuration()
+		{
+			return CalculateDurationBySongPosition();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// This is the main player method
 		/// </summary>
 		/********************************************************************/
@@ -452,46 +410,36 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the current position of the song
+		/// Return the current position of the song
 		/// </summary>
 		/********************************************************************/
-		public override int SongPosition
+		public override int GetSongPosition()
 		{
-			get
-			{
-				return songLen - songCnt;
-			}
-
-			set
-			{
-				// Change the position
-				songCnt = (ushort)(songLen - value);
-				songPos = (ushort)value;
-
-				PattInfo pattInfo = pattTable[songTable[songPos]];
-				noteCnt = pattInfo.Size;
-				address = pattInfo.Address;
-
-				addressIndex = 0;
-
-				// Change the speed
-				waitCnt = 1;
-				wait = posInfoList[value].Speed;
-			}
+			return songLen - songCnt;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Calculates the position time for each position
+		/// Set a new position of the song
 		/// </summary>
 		/********************************************************************/
-		public override TimeSpan GetPositionTimeTable(int songNumber, out TimeSpan[] positionTimes)
+		public override void SetSongPosition(int position, PositionInfo positionInfo)
 		{
-			positionTimes = posInfoList.Select(pi => pi.Time).ToArray();
+			// Change the position
+			songCnt = (ushort)(songLen - position);
+			songPos = (ushort)position;
 
-			return totalTime;
+			PattInfo pattInfo = pattTable[songTable[songPos]];
+			noteCnt = pattInfo.Size;
+			address = pattInfo.Address;
+
+			addressIndex = 0;
+
+			// Change the speed
+			waitCnt = 1;
+			wait = positionInfo.Speed;
 		}
 
 
@@ -560,6 +508,31 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		}
 		#endregion
 
+		#region Duration calculation methods
+		/********************************************************************/
+		/// <summary>
+		/// Initialize all internal structures when beginning duration
+		/// calculation on a new sub-song
+		/// </summary>
+		/********************************************************************/
+		protected override void InitDurationCalculation(int startPosition)
+		{
+			InitSound(0, null);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the current speed
+		/// </summary>
+		/********************************************************************/
+		protected override byte GetCurrentSpeed()
+		{
+			return wait;
+		}
+		#endregion
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
@@ -568,8 +541,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/********************************************************************/
 		private void Cleanup()
 		{
-			posInfoList = null;
-
 			songTable = null;
 			pattTable = null;
 			instTable = null;
@@ -830,7 +801,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		{
 			if ((tmpDmacon & voice.Dmacon) != 0)
 			{
-				Channel chan = voice.Channel;
+				IChannel chan = voice.Channel;
 
 				// Setup the start sample
 				if (voice.InsAddress == null)
@@ -864,7 +835,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/********************************************************************/
 		private void SetChannel(VoiceInfo voice)
 		{
-			Channel chan = voice.Channel;
+			IChannel chan = voice.Channel;
 
 			while (voice.Pers[0] == 0)
 				RotatePeriods(voice);

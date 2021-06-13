@@ -8,7 +8,7 @@
 /******************************************************************************/
 using System;
 using System.Runtime.InteropServices;
-using Polycode.NostalgicPlayer.Kit.Mixer;
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
@@ -111,12 +111,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						}
 						else
 						{
-							if (vnf.Panning != (int)Panning.Surround)
+							if (vnf.Panning != (int)ChannelPanning.Surround)
 							{
 								// Stereo, calculate the volume with panning
 								int pan = (((vnf.Panning - 128) * stereoSeparation) / 128) + 128;
 
-								vnf.LeftVolumeSelected = (lVol * ((int)Panning.Right - pan)) >> 8;
+								vnf.LeftVolumeSelected = (lVol * ((int)ChannelPanning.Right - pan)) >> 8;
 								vnf.RightVolumeSelected = (lVol * pan) >> 8;
 							}
 							else
@@ -320,7 +320,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 										// 16 bit input sample to be mixed
 										if ((mode & MixerMode.Stereo) != 0)
 										{
-											if ((vnf.Panning == (int)Panning.Surround) && ((mode & MixerMode.Surround) != 0))
+											if ((vnf.Panning == (int)ChannelPanning.Surround) && ((mode & MixerMode.Surround) != 0))
 												vnf.Current = Native.Mix16SurroundInterp32(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
 											else
 												vnf.Current = Native.Mix16StereoInterp32(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
@@ -333,7 +333,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 										// 8 bit input sample to be mixed
 										if ((mode & MixerMode.Stereo) != 0)
 										{
-											if ((vnf.Panning == (int)Panning.Surround) && ((mode & MixerMode.Surround) != 0))
+											if ((vnf.Panning == (int)ChannelPanning.Surround) && ((mode & MixerMode.Surround) != 0))
 												vnf.Current = Native.Mix8SurroundInterp32(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
 											else
 												vnf.Current = Native.Mix8StereoInterp32(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
@@ -350,7 +350,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 										// 16 bit input sample to be mixed
 										if ((mode & MixerMode.Stereo) != 0)
 										{
-											if ((vnf.Panning == (int)Panning.Surround) && ((mode & MixerMode.Surround) != 0))
+											if ((vnf.Panning == (int)ChannelPanning.Surround) && ((mode & MixerMode.Surround) != 0))
 												vnf.Current = Native.Mix16SurroundNormal32(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
 											else
 												vnf.Current = Native.Mix16StereoNormal32(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
@@ -363,7 +363,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 										// 8 bit input sample to be mixed
 										if ((mode & MixerMode.Stereo) != 0)
 										{
-											if ((vnf.Panning == (int)Panning.Surround) && ((mode & MixerMode.Surround) != 0))
+											if ((vnf.Panning == (int)ChannelPanning.Surround) && ((mode & MixerMode.Surround) != 0))
 												vnf.Current = Native.Mix8SurroundNormal32(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
 											else
 												vnf.Current = Native.Mix8StereoNormal32(s, bufAddr, offset, (int)vnf.Current, (int)vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
@@ -387,7 +387,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 									// 16 bit input sample to be mixed
 									if ((mode & MixerMode.Stereo) != 0)
 									{
-										if ((vnf.Panning == (int)Panning.Surround) && ((mode & MixerMode.Surround) != 0))
+										if ((vnf.Panning == (int)ChannelPanning.Surround) && ((mode & MixerMode.Surround) != 0))
 											vnf.Current = Native.Mix16SurroundInterp64(s, bufAddr, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
 										else
 											vnf.Current = Native.Mix16StereoInterp64(s, bufAddr, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
@@ -400,7 +400,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 									// 8 bit input sample to be mixed
 									if ((mode & MixerMode.Stereo) != 0)
 									{
-										if ((vnf.Panning == (int)Panning.Surround) && ((mode & MixerMode.Surround) != 0))
+										if ((vnf.Panning == (int)ChannelPanning.Surround) && ((mode & MixerMode.Surround) != 0))
 											vnf.Current = Native.Mix8SurroundInterp64(s, bufAddr, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
 										else
 											vnf.Current = Native.Mix8StereoInterp64(s, bufAddr, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
@@ -417,7 +417,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 									// 16 bit input sample to be mixed
 									if ((mode & MixerMode.Stereo) != 0)
 									{
-										if ((vnf.Panning == (int)Panning.Surround) && ((mode & MixerMode.Surround) != 0))
+										if ((vnf.Panning == (int)ChannelPanning.Surround) && ((mode & MixerMode.Surround) != 0))
 											vnf.Current = Native.Mix16SurroundNormal64(s, bufAddr, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
 										else
 											vnf.Current = Native.Mix16StereoNormal64(s, bufAddr, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
@@ -430,7 +430,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 									// 8 bit input sample to be mixed
 									if ((mode & MixerMode.Stereo) != 0)
 									{
-										if ((vnf.Panning == (int)Panning.Surround) && ((mode & MixerMode.Surround) != 0))
+										if ((vnf.Panning == (int)ChannelPanning.Surround) && ((mode & MixerMode.Surround) != 0))
 											vnf.Current = Native.Mix8SurroundNormal64(s, bufAddr, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
 										else
 											vnf.Current = Native.Mix8StereoNormal64(s, bufAddr, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);

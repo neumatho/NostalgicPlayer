@@ -24,6 +24,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		private readonly Manager agentManager;
 
 		private ISamplePlayerAgent currentPlayer;
+		private DurationInfo durationInfo;
 
 		private IOutputAgent outputAgent;
 		private ResamplerStream soundStream;
@@ -71,6 +72,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 					if (initOk)
 					{
+						// Calculate the duration of the sample
+						durationInfo = currentPlayer.CalculateDuration();
+
 						// Subscribe the events
 						currentPlayer.PositionChanged += Player_PositionChanged;
 						currentPlayer.ModuleInfoChanged += Player_ModuleInfoChanged;
@@ -133,6 +137,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					currentPlayer.PositionChanged -= Player_PositionChanged;
 					currentPlayer.ModuleInfoChanged -= Player_ModuleInfoChanged;
 
+					durationInfo = null;
 					currentPlayer = null;
 
 					// Clear player information
@@ -161,16 +166,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 			lock (currentPlayer)
 			{
-				currentPlayer.InitSound();
+				currentPlayer.InitSound(durationInfo);
 
 				// Find the length of the song
 				int songLength = currentPlayer.SongLength;
 
-				// Get the position times for the current song
-				TimeSpan totalTime = currentPlayer.GetPositionTimeTable(out TimeSpan[] positionTimes);
-
 				// Initialize the module information
-				PlayingModuleInformation = new ModuleInfoFloating(totalTime, currentPlayer.SongPosition, songLength, positionTimes, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
+				PlayingModuleInformation = new ModuleInfoFloating(durationInfo, currentPlayer.GetSongPosition(), songLength, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
 			}
 
 			soundStream.Start();
@@ -336,7 +338,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			{
 				lock (currentPlayer)
 				{
-					currentPlayer.SongPosition = position;
+					currentPlayer.SetSongPosition(position, PlayingModuleInformation.DurationInfo?.PositionInfo[position]);
 				}
 
 				PlayingModuleInformation.SongPosition = position;
@@ -366,7 +368,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				lock (currentPlayer)
 				{
 					// Update the position
-					PlayingModuleInformation.SongPosition = currentPlayer.SongPosition;
+					PlayingModuleInformation.SongPosition = currentPlayer.GetSongPosition();
 				}
 
 				// Call the next event handler

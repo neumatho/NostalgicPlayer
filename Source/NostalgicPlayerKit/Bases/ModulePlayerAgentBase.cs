@@ -7,9 +7,9 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.Kit.Mixer;
 
 namespace Polycode.NostalgicPlayer.Kit.Bases
 {
@@ -79,7 +79,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public virtual void InitSound(int songNumber)
+		public virtual void InitSound(int songNumber, DurationInfo durationInfo)
 		{
 		}
 
@@ -92,6 +92,18 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		public virtual void CleanupSound()
 		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Calculate the duration for all sub-songs
+		/// </summary>
+		/********************************************************************/
+		public virtual DurationInfo[] CalculateDuration()
+		{
+			return null;
 		}
 
 
@@ -143,26 +155,23 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the current position of the song
+		/// Return the current position of the song
 		/// </summary>
 		/********************************************************************/
-		public virtual int SongPosition
+		public virtual int GetSongPosition()
 		{
-			get; set;
+			return 0;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Calculates the position time for each position
+		/// Set a new position of the song
 		/// </summary>
 		/********************************************************************/
-		public virtual TimeSpan GetPositionTimeTable(int songNumber, out TimeSpan[] positionTimes)
+		public virtual void SetSongPosition(int position, PositionInfo positionInfo)
 		{
-			positionTimes = null;
-
-			return new TimeSpan(0);
 		}
 
 
@@ -198,12 +207,13 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		} = 0;
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Holds all the virtual channel instances used to play the samples
 		/// </summary>
 		/********************************************************************/
-		public virtual Channel[] VirtualChannels
+		public virtual IChannel[] VirtualChannels
 		{
 			get; set;
 		}
@@ -264,6 +274,141 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		protected void SetBpmTempo(ushort bpm)
 		{
 			PlayingFrequency = bpm / 2.5f;
+		}
+		#endregion
+
+		#region Duration calculation helpers
+		/********************************************************************/
+		/// <summary>
+		/// Calculate the duration of each sub-song. The sub-songs are found
+		/// by using the same position array for all songs
+		/// </summary>
+		/********************************************************************/
+		protected DurationInfo[] CalculateDurationBySongPosition()
+		{
+			List<DurationInfo> result = new List<DurationInfo>();
+
+			int songStartPos = 0;
+
+			do
+			{
+				InitDurationCalculation(songStartPos);
+
+				int prevPos = -1;
+				float total = 0.0f;
+
+				byte currentSpeed = GetCurrentSpeed();
+				ushort currentBpm = GetCurrentBpm();
+				object extraInfo = GetExtraPositionInfo();
+
+				List<PositionInfo> positionTimes = new List<PositionInfo>();
+
+				// Well, fill the position time list with empty times until
+				// we reach the sub-song position
+				for (int i = 0; i < songStartPos; i++)
+					positionTimes.Add(new PositionInfo(currentSpeed, currentBpm, new TimeSpan(0), extraInfo));
+
+				HasEndReached = false;
+
+				for (;;)
+				{
+					if (prevPos < GetSongPosition())
+					{
+						prevPos = GetSongPosition();
+
+						// Add position information to the list
+						PositionInfo posInfo = new PositionInfo(currentSpeed, currentBpm, new TimeSpan((long)total * TimeSpan.TicksPerMillisecond), extraInfo);
+
+						// Need to make a while, in case there is a position jump
+						// that jumps forward, then we're missing some items in the list
+						while (prevPos >= positionTimes.Count)
+							positionTimes.Add(posInfo);
+					}
+
+					// "Play" a single tick
+					Play();
+
+					// Update information
+					currentSpeed = GetCurrentSpeed();
+					currentBpm = GetCurrentBpm();
+					extraInfo = GetExtraPositionInfo();
+
+					if (HasEndReached)
+						break;
+
+					// Add the tick time
+					total += (1000.0f / (currentBpm / 2.5f));
+				}
+
+				// Calculate the total time of the song
+				TimeSpan totalTime = new TimeSpan((long)total * TimeSpan.TicksPerMillisecond);
+
+				// Find new start position
+				int newStartPosition = positionTimes.Count;
+
+				// Fill the rest of the list with total time
+				for (int i = positionTimes.Count; i < SongLength; i++)
+					positionTimes.Add(new PositionInfo(currentSpeed, currentBpm, totalTime, extraInfo));
+
+				// Remember the song
+				result.Add(new DurationInfo(totalTime, positionTimes.ToArray(), songStartPos));
+
+				songStartPos = newStartPosition;
+			}
+			while (songStartPos < SongLength - 1);
+
+			// Clear the "end" flag again, so the module don't stop playing immediately
+			HasEndReached = false;
+
+			return result.ToArray();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize all internal structures when beginning duration
+		/// calculation on a new sub-song
+		/// </summary>
+		/********************************************************************/
+		protected virtual void InitDurationCalculation(int startPosition)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the current speed
+		/// </summary>
+		/********************************************************************/
+		protected virtual byte GetCurrentSpeed()
+		{
+			return 6;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the current BPM
+		/// </summary>
+		/********************************************************************/
+		protected virtual ushort GetCurrentBpm()
+		{
+			return 125;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return extra information for the current position
+		/// </summary>
+		/********************************************************************/
+		protected virtual object GetExtraPositionInfo()
+		{
+			return null;
 		}
 		#endregion
 	}

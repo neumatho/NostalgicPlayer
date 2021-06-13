@@ -277,25 +277,32 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private TimeSpan GetPlayerTime(string fileName, ILoader itemLoader)
 		{
-			Loader loader = new Loader(manager);
-			if (loader.Load(fileName, itemLoader, out string _))
+			try
 			{
-				IPlayer player = loader.Player;
-
-				if (player.InitPlayer(new PlayerConfiguration(null, loader, new MixerConfiguration()), out string _))
+				Loader loader = new Loader(manager);
+				if (loader.Load(fileName, itemLoader, out string _))
 				{
-					try
-					{
-						if (player is IModulePlayer modulePlayer)
-							modulePlayer.SelectSong(-1);
+					IPlayer player = loader.Player;
 
-						return player.PlayingModuleInformation.TotalTime;
-					}
-					finally
+					if (player.InitPlayer(new PlayerConfiguration(null, loader, new MixerConfiguration()), out string _))
 					{
-						player.CleanupPlayer();
+						try
+						{
+							if (player is IModulePlayer modulePlayer)
+								modulePlayer.SelectSong(-1);
+
+							return player.PlayingModuleInformation.DurationInfo?.TotalTime ?? new TimeSpan(0);
+						}
+						finally
+						{
+							player.CleanupPlayer();
+						}
 					}
 				}
+			}
+			catch (Exception)
+			{
+				// Ignore exception
 			}
 
 			return new TimeSpan(0);

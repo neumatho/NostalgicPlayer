@@ -64,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Initializes the player to start the sample from start
 		/// </summary>
 		/********************************************************************/
-		public virtual void InitSound()
+		public virtual void InitSound(DurationInfo durationInfo)
 		{
 			moduleStream.Seek(0, SeekOrigin.Begin);
 		}
@@ -78,6 +78,18 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		public virtual void CleanupSound()
 		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Calculate the duration for all sub-songs
+		/// </summary>
+		/********************************************************************/
+		public virtual DurationInfo CalculateDuration()
+		{
+			return null;
 		}
 
 
@@ -130,26 +142,23 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the current position of the song
+		/// Return the current position of the song
 		/// </summary>
 		/********************************************************************/
-		public virtual int SongPosition
+		public virtual int GetSongPosition()
 		{
-			get; set;
+			return 0;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Calculates the position time for each position
+		/// Set a new position of the song
 		/// </summary>
 		/********************************************************************/
-		public virtual TimeSpan GetPositionTimeTable(out TimeSpan[] positionTimes)
+		public virtual void SetSongPosition(int position, PositionInfo positionInfo)
 		{
-			positionTimes = null;
-
-			return new TimeSpan(0);
 		}
 
 

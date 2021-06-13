@@ -103,7 +103,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				info.Frequency = 10000;
 				info.LeftVolume = 0;
 				info.RightVolume = 0;
-				info.Panning = (int)((((i & 3) == 0) || ((i & 3) == 3)) ? Panning.Left : Panning.Right);
+				info.Panning = (int)((((i & 3) == 0) || ((i & 3) == 3)) ? ChannelPanning.Left : ChannelPanning.Right);
 				info.RampVolume = 0;
 				info.LeftVolumeSelected = 0;
 				info.RightVolumeSelected = 0;

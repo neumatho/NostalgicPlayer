@@ -25,6 +25,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		private readonly Manager agentManager;
 
 		private IModulePlayerAgent currentPlayer;
+		private DurationInfo[] allSongsInfo;
 
 		private IOutputAgent outputAgent;
 		private MixerStream soundStream;
@@ -72,6 +73,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 					if (initOk)
 					{
+						// Calculate the duration of all sub-songs
+						CalculateDuration();
+
 						// Subscribe the events
 						currentPlayer.PositionChanged += Player_PositionChanged;
 						currentPlayer.ModuleInfoChanged += Player_ModuleInfoChanged;
@@ -134,6 +138,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					currentPlayer.PositionChanged -= Player_PositionChanged;
 					currentPlayer.ModuleInfoChanged -= Player_ModuleInfoChanged;
 
+					allSongsInfo = null;
 					currentPlayer = null;
 
 					// Clear player information
@@ -324,17 +329,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					// Find the right song number
 					int songNum = songNumber == -1 ? subSongs.DefaultStartSong : songNumber;
 
+					// Get the position times for the current song
+					DurationInfo durationInfo = allSongsInfo?[songNum];
+
 					// Initialize the player with the new song
-					currentPlayer.InitSound(songNum);
+					currentPlayer.InitSound(songNum, durationInfo);
 
 					// Find the length of the song
 					int songLength = currentPlayer.SongLength;
 
-					// Get the position times for the current song
-					TimeSpan totalTime = currentPlayer.GetPositionTimeTable(songNum, out TimeSpan[] positionTimes);
-
 					// Initialize the module information
-					PlayingModuleInformation = new ModuleInfoFloating(songNum, totalTime, currentPlayer.SongPosition, songLength, positionTimes, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
+					PlayingModuleInformation = new ModuleInfoFloating(songNum, durationInfo, currentPlayer.GetSongPosition(), songLength, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
 				}
 			}
 		}
@@ -352,7 +357,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			{
 				lock (currentPlayer)
 				{
-					currentPlayer.SongPosition = position;
+					currentPlayer.SetSongPosition(position, PlayingModuleInformation.DurationInfo?.PositionInfo[position]);
 				}
 
 				PlayingModuleInformation.SongPosition = position;
@@ -382,7 +387,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				lock (currentPlayer)
 				{
 					// Update the position
-					PlayingModuleInformation.SongPosition = currentPlayer.SongPosition;
+					PlayingModuleInformation.SongPosition = currentPlayer.GetSongPosition();
 				}
 
 				// Call the next event handler
@@ -427,6 +432,23 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		#endregion
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Calculates the duration of all sub-songs
+		/// </summary>
+		/********************************************************************/
+		private void CalculateDuration()
+		{
+			currentPlayer.VirtualChannels = new IChannel[currentPlayer.VirtualChannelCount];
+
+			for (int i = 0; i < currentPlayer.VirtualChannels.Length; i++)
+				currentPlayer.VirtualChannels[i] = new DummyChannel();
+
+			allSongsInfo = currentPlayer.CalculateDuration();
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Return the author of the module

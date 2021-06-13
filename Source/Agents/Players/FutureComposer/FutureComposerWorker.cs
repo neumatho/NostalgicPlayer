@@ -9,7 +9,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -58,9 +57,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 		private ushort reSpCnt;
 		private ushort repSpd;
 		private ushort spdTemp;
-
-		private TimeSpan totalTime;
-		private PosInfo[] posInfoList;
 
 		private bool[] audTemp;
 		private VoiceInfo[] voiceData;
@@ -521,69 +517,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 
 		/********************************************************************/
 		/// <summary>
-		/// Initializes the player
-		/// </summary>
-		/********************************************************************/
-		public override bool InitPlayer()
-		{
-			byte curSpeed = 3;
-			float total = 0.0f;
-			bool pattBreak = false;
-
-			// Calculate the position times
-			posInfoList = new PosInfo[seqNum];
-
-			for (int i = 0; i < seqNum; i++)
-			{
-				// Add the position information to the list
-				PosInfo posInfo = new PosInfo();
-
-				posInfo.Speed = curSpeed;
-				posInfo.Time = new TimeSpan((long)(total * TimeSpan.TicksPerMillisecond));
-
-				posInfoList[i] = posInfo;
-
-				// Get pointer to next sequence
-				Sequence seq = sequences[i];
-
-				// Change the speed?
-				if (seq.Speed != 0)
-					curSpeed = seq.Speed;
-
-				for (int j = 0; j < 32; j++)
-				{
-					for (int k = 0; k < 4; k++)
-					{
-						uint pattNum = seq.VoiceSeq[k].Pattern;
-						if (pattNum >= patterns.Length)
-							pattNum = 0;
-
-						// Do we have a pattern break
-						if (patterns[pattNum].PatternRows[j].Note == 0x49)
-							pattBreak = true;
-					}
-
-					// Add the row time
-					total += 1000.0f * curSpeed / 50.0f;
-
-					if (pattBreak)
-					{
-						pattBreak = false;
-						break;
-					}
-				}
-			}
-
-			// Set the total time
-			totalTime = new TimeSpan((long)(total * TimeSpan.TicksPerMillisecond));
-
-			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Cleanup the player
 		/// </summary>
 		/********************************************************************/
@@ -599,7 +532,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override void InitSound(int songNumber)
+		public override void InitSound(int songNumber, DurationInfo durationInfo)
 		{
 			// Initialize speed
 			ushort spd = sequences[0].Speed;
@@ -664,6 +597,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 
 		/********************************************************************/
 		/// <summary>
+		/// Calculate the duration for all sub-songs
+		/// </summary>
+		/********************************************************************/
+		public override DurationInfo[] CalculateDuration()
+		{
+			return CalculateDurationBySongPosition();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// This is the main player method
 		/// </summary>
 		/********************************************************************/
@@ -703,68 +648,58 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the current position of the song
+		/// Return the current position of the song
 		/// </summary>
 		/********************************************************************/
-		public override int SongPosition
+		public override int GetSongPosition()
 		{
-			get
-			{
-				return (int)voiceData[0].SongPos;
-			}
-
-			set
-			{
-				// Change the position
-				voiceData[0].SongPos = (ushort)value;
-				voiceData[0].PatternPos = 0;
-				voiceData[0].Transpose = sequences[value].VoiceSeq[0].Transpose;
-				voiceData[0].SoundTranspose = sequences[value].VoiceSeq[0].SoundTranspose;
-				byte pattNum = sequences[value].VoiceSeq[0].Pattern;
-				voiceData[0].CurPattern = patterns[pattNum >= patterns.Length ? 0 : pattNum];
-
-				voiceData[1].SongPos = (ushort)value;
-				voiceData[1].PatternPos = 0;
-				voiceData[1].Transpose = sequences[value].VoiceSeq[1].Transpose;
-				voiceData[1].SoundTranspose = sequences[value].VoiceSeq[1].SoundTranspose;
-				pattNum = sequences[value].VoiceSeq[1].Pattern;
-				voiceData[0].CurPattern = patterns[pattNum >= patterns.Length ? 0 : pattNum];
-
-				voiceData[2].SongPos = (ushort)value;
-				voiceData[2].PatternPos = 0;
-				voiceData[2].Transpose = sequences[value].VoiceSeq[2].Transpose;
-				voiceData[2].SoundTranspose = sequences[value].VoiceSeq[2].SoundTranspose;
-				pattNum = sequences[value].VoiceSeq[2].Pattern;
-				voiceData[0].CurPattern = patterns[pattNum >= patterns.Length ? 0 : pattNum];
-
-				voiceData[3].SongPos = (ushort)value;
-				voiceData[3].PatternPos = 0;
-				voiceData[3].Transpose = sequences[value].VoiceSeq[3].Transpose;
-				voiceData[3].SoundTranspose = sequences[value].VoiceSeq[3].SoundTranspose;
-				pattNum = sequences[value].VoiceSeq[3].Pattern;
-				voiceData[0].CurPattern = patterns[pattNum >= patterns.Length ? 0 : pattNum];
-
-				// Set the speed
-				reSpCnt = posInfoList[value].Speed;
-				repSpd = reSpCnt;
-				spdTemp = 1;
-
-				OnModuleInfoChanged(InfoSpeedLine, repSpd.ToString());
-			}
+			return voiceData[0].SongPos;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Calculates the position time for each position
+		/// Set a new position of the song
 		/// </summary>
 		/********************************************************************/
-		public override TimeSpan GetPositionTimeTable(int songNumber, out TimeSpan[] positionTimes)
+		public override void SetSongPosition(int position, PositionInfo positionInfo)
 		{
-			positionTimes = posInfoList.Select(pi => pi.Time).ToArray();
+			// Change the position
+			voiceData[0].SongPos = (ushort)position;
+			voiceData[0].PatternPos = 0;
+			voiceData[0].Transpose = sequences[position].VoiceSeq[0].Transpose;
+			voiceData[0].SoundTranspose = sequences[position].VoiceSeq[0].SoundTranspose;
+			byte pattNum = sequences[position].VoiceSeq[0].Pattern;
+			voiceData[0].CurPattern = patterns[pattNum >= patterns.Length ? 0 : pattNum];
 
-			return totalTime;
+			voiceData[1].SongPos = (ushort)position;
+			voiceData[1].PatternPos = 0;
+			voiceData[1].Transpose = sequences[position].VoiceSeq[1].Transpose;
+			voiceData[1].SoundTranspose = sequences[position].VoiceSeq[1].SoundTranspose;
+			pattNum = sequences[position].VoiceSeq[1].Pattern;
+			voiceData[0].CurPattern = patterns[pattNum >= patterns.Length ? 0 : pattNum];
+
+			voiceData[2].SongPos = (ushort)position;
+			voiceData[2].PatternPos = 0;
+			voiceData[2].Transpose = sequences[position].VoiceSeq[2].Transpose;
+			voiceData[2].SoundTranspose = sequences[position].VoiceSeq[2].SoundTranspose;
+			pattNum = sequences[position].VoiceSeq[2].Pattern;
+			voiceData[0].CurPattern = patterns[pattNum >= patterns.Length ? 0 : pattNum];
+
+			voiceData[3].SongPos = (ushort)position;
+			voiceData[3].PatternPos = 0;
+			voiceData[3].Transpose = sequences[position].VoiceSeq[3].Transpose;
+			voiceData[3].SoundTranspose = sequences[position].VoiceSeq[3].SoundTranspose;
+			pattNum = sequences[position].VoiceSeq[3].Pattern;
+			voiceData[0].CurPattern = patterns[pattNum >= patterns.Length ? 0 : pattNum];
+
+			// Set the speed
+			reSpCnt = positionInfo.Speed;
+			repSpd = reSpCnt;
+			spdTemp = 1;
+
+			OnModuleInfoChanged(InfoSpeedLine, repSpd.ToString());
 		}
 
 
@@ -799,6 +734,31 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 
 				return result.ToArray();
 			}
+		}
+		#endregion
+
+		#region Duration calculation methods
+		/********************************************************************/
+		/// <summary>
+		/// Initialize all internal structures when beginning duration
+		/// calculation on a new sub-song
+		/// </summary>
+		/********************************************************************/
+		protected override void InitDurationCalculation(int startPosition)
+		{
+			InitSound(0, null);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the current speed
+		/// </summary>
+		/********************************************************************/
+		protected override byte GetCurrentSpeed()
+		{
+			return (byte)repSpd;
 		}
 		#endregion
 

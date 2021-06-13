@@ -40,12 +40,17 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Initializes the player to start the sample from start
 		/// </summary>
-		void InitSound();
+		void InitSound(DurationInfo durationInfo);
 
 		/// <summary>
 		/// Cleanup the current song
 		/// </summary>
 		void CleanupSound();
+
+		/// <summary>
+		/// Calculate the duration of the sample
+		/// </summary>
+		DurationInfo CalculateDuration();
 
 		/// <summary>
 		/// Will load and decode a data block and store it in the buffer
@@ -69,14 +74,14 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		int SongLength { get; }
 
 		/// <summary>
-		/// Holds the current position of the song
+		/// Return the current position of the song
 		/// </summary>
-		int SongPosition { get; set; }
+		int GetSongPosition();
 
 		/// <summary>
-		/// Calculates the position time for each position
+		/// Set a new position of the song
 		/// </summary>
-		TimeSpan GetPositionTimeTable(out TimeSpan[] positionTimes);
+		void SetSongPosition(int position, PositionInfo positionInfo);
 
 		/// <summary>
 		/// Event called when the player change position

@@ -6,16 +6,22 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System;
-
-namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker.Containers
+namespace Polycode.NostalgicPlayer.Kit.Containers
 {
 	/// <summary>
-	/// Position info structure
+	/// This enum only holds some points in the panning
 	/// </summary>
-	internal class PosInfo
+	public enum ChannelPanning
 	{
-		public byte Speed;
-		public TimeSpan Time;
+		/// <summary></summary>
+		Left = 0,
+		/// <summary></summary>
+		Center = 128,
+		/// <summary></summary>
+		Right = 256,
+		/// <summary>
+		/// Panning value for Dolby Surround
+		/// </summary>
+		Surround = 512
 	}
 }

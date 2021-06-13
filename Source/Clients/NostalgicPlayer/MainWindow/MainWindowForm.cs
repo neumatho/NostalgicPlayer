@@ -28,7 +28,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow;
 using Polycode.NostalgicPlayer.GuiKit.Controls;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Mixer;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
@@ -673,7 +673,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Play the extra channels
 		/// </summary>
 		/********************************************************************/
-		public bool PlayChannels(Channel[] channels)
+		public bool PlayChannels(IChannel[] channels)
 		{
 			// Get the sample to play
 			if (IsSampleInfoWindowOpen())
@@ -712,7 +712,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						}
 
 						SampleInfo sampleInfo = playInfo.SampleInfo;
-						Channel channel = channels[playChannel];
+						IChannel channel = channels[playChannel];
 
 						// Check the item to see if it's a legal sample
 						if ((sampleInfo.Sample != null) && (sampleInfo.Length > 0))
@@ -725,10 +725,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							channel.SetVolume(vol == 0 ? (ushort)256 : vol);
 
 							int pan = sampleInfo.Panning;
-							channel.SetPanning(pan == -1 ? (ushort)Panning.Center : (ushort)pan);
+							channel.SetPanning(pan == -1 ? (ushort)ChannelPanning.Center : (ushort)pan);
 
 							if ((sampleInfo.Flags & SampleInfo.SampleFlags.Loop) != 0)
-								channel.SetLoop((uint)sampleInfo.LoopStart, (uint)sampleInfo.LoopLength, (sampleInfo.Flags & SampleInfo.SampleFlags.PingPong) != 0 ? Channel.LoopType.PingPong : Channel.LoopType.Normal);
+								channel.SetLoop((uint)sampleInfo.LoopStart, (uint)sampleInfo.LoopLength, (sampleInfo.Flags & SampleInfo.SampleFlags.PingPong) != 0 ? ChannelLoopType.PingPong : ChannelLoopType.Normal);
 						}
 						else
 						{
@@ -3501,7 +3501,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			ModuleInfoFloating playingModuleInfo = moduleHandler.PlayingModuleInformation;
 
 			// Get the total time of the playing song
-			songTotalTime = playingModuleInfo.TotalTime;
+			songTotalTime = playingModuleInfo.DurationInfo?.TotalTime ?? new TimeSpan(0);
 
 			// Change the time to the position time
 			SetPositionTime(playingModuleInfo.SongPosition);

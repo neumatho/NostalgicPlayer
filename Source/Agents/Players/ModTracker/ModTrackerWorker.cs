@@ -16,7 +16,7 @@ using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Extensions;
-using Polycode.NostalgicPlayer.Kit.Mixer;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
@@ -51,9 +51,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 		private readonly ModuleType currentModuleType;
 
-		private List<SongTime> songTimeList;
+		private DurationInfo durInfo;
 
-		private ushort currentSong;
+		private ushort subSongCount;
 		private bool endReached;
 
 		private string songName;
@@ -260,249 +260,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/********************************************************************/
 		public override bool InitPlayer()
 		{
-			// Allocate temporary arrays used in the E6x effect calculations
-			byte[] loopCount = new byte[channelNum];
-			byte[] loopPos = new byte[channelNum];
-
-			// Initialize other structures
+			// Initialize structures
 			channels = new ModChannel[channelNum];
-			songTimeList = new List<SongTime>();
-
-			short pos, prevPos;
-			short startPos = 0;
-
-			do
-			{
-				// Allocate a new sub song structure
-				SongTime songTime = new SongTime();
-
-				// Set the start position
-				songTime.StartPos = (ushort)startPos;
-
-				// Initialize calculation variables
-				byte curSpeed = 6;
-				byte curTempo = initTempo;
-				float total = 0.0f;
-
-				byte patDelTime = 0;
-				byte patDelTime2 = 0;
-				short _breakPos = 0;
-				bool _gotJump = false;
-				bool _gotBreak = false;
-				bool _breakFlag = false;
-				bool _posJumpFlag = false;
-				bool songEnded = false;
-
-				// Initialize loop arrays
-				Array.Clear(loopCount, 0, channelNum);
-				Array.Clear(loopPos, 0, channelNum);
-
-				// Calculate the position times
-				pos = startPos;
-				prevPos = -1;
-				short row = 0;
-
-				while (!songEnded)
-				{
-					if (prevPos < pos)
-					{
-						prevPos = pos;
-
-						// Add the position information to the list
-						PosInfo posInfo = new PosInfo
-						{
-							Speed = curSpeed,
-							Tempo = curTempo,
-							Time = new TimeSpan((long)(total * TimeSpan.TicksPerMillisecond))
-						};
-
-						// Need to make a while, in case there is a position jump
-						// that jumps forward, then we're missing some items in the list
-						while ((pos - startPos) >= songTime.PosInfoList.Count)
-							songTime.PosInfoList.Add(posInfo);
-					}
-
-					if (patDelTime2 == 0)
-					{
-						// Get index to next sequence
-						int seqIndex = positions[pos] * 32;
-
-						for (short chan = 0; chan < channelNum; chan++)
-						{
-							TrackLine trackData = tracks[sequences[seqIndex + chan]][row];
-
-							// Should the speed/tempo be changed
-							if (trackData.Effect == Effect.SetSpeed)
-							{
-								byte newSpeed = trackData.EffectArg;
-
-								if (IsSoundTracker())
-								{
-									newSpeed &= 0x0f;
-									if (newSpeed != 0)
-										curSpeed = newSpeed;
-								}
-								else if (IsNoiseTracker())
-								{
-									if (newSpeed > 31)
-										newSpeed = 31;
-									else if (newSpeed == 0)
-										newSpeed = 1;
-
-									curSpeed = newSpeed;
-								}
-								else
-								{
-									// New trackers
-									if (newSpeed != 0)
-									{
-										if ((newSpeed == 255) && !IsPcTracker())	// To fix Going Away.mod
-											newSpeed &= 0x0f;
-
-										if (newSpeed >= 32)
-											curTempo = newSpeed;
-										else
-											curSpeed = newSpeed;
-									}
-								}
-							}
-
-							if (currentModuleType >= ModuleType.SoundTracker2x)
-							{
-								// Should we break the current pattern
-								if (trackData.Effect == Effect.PatternBreak)
-								{
-									_breakPos = (short)(((trackData.EffectArg >> 4) & 0x0f) * 10 + (trackData.EffectArg & 0x0f));
-									if (_breakPos > 63)
-										_breakPos = 0;
-
-									_posJumpFlag = true;
-									_gotBreak = true;
-								}
-
-								// Should we change the position
-								if (trackData.Effect == Effect.PosJump)
-								{
-									// Do we jump to a lower position
-									if ((trackData.EffectArg < pos) || (trackData.EffectArg > songLength))
-										songEnded = true;
-
-									if (trackData.EffectArg == pos)
-										_gotJump = true;		// Module jump to the same position, maybe end
-
-									pos = (short)(trackData.EffectArg - 1);
-									_breakPos = 0;
-									_posJumpFlag = true;
-								}
-							}
-
-							// Check for ProTracker commands
-							if ((currentModuleType == ModuleType.ProTracker) || IsPcTracker())
-							{
-								// Did we reach a pattern loop command
-								if ((trackData.Effect == Effect.ExtraEffect) && ((ExtraEffect)(trackData.EffectArg & 0xf0) == ExtraEffect.JumpToLoop))
-								{
-									byte arg = (byte)(trackData.EffectArg & 0x0f);
-
-									if (arg != 0)
-									{
-										// Jump to the loop currently set
-										if (loopCount[chan] == 0)
-											loopCount[chan] = arg;
-										else
-											loopCount[chan]--;
-
-										if (loopCount[chan] != 0)
-										{
-											_breakPos = loopPos[chan];
-											_breakFlag = true;
-										}
-									}
-									else
-									{
-										// Set the loop start point
-										loopPos[chan] = (byte)row;
-									}
-								}
-
-								// Did we reach a pattern delay command
-								if ((trackData.Effect == Effect.ExtraEffect) && ((ExtraEffect)(trackData.EffectArg & 0xf0) == ExtraEffect.PatternDelay))
-								{
-									if (patDelTime2 == 0)
-									{
-										// Get the delay count
-										patDelTime = (byte)((trackData.EffectArg & 0x0f) + 1);
-									}
-								}
-							}
-						}
-					}
-
-					// Next pattern line
-					row++;
-					if (patDelTime != 0)    // New pattern delay time
-					{
-						// Activate the pattern delay
-						patDelTime2 = patDelTime;
-						patDelTime = 0;
-					}
-
-					// Pattern delay routine, jump one line back again
-					if (patDelTime2 != 0)
-					{
-						if (--patDelTime2 != 0)
-							row--;
-					}
-
-					// Has the module ended?
-					if (_gotJump)
-					{
-						// If we got both a Bxx and Dxx command
-						// on the same line, don't end the module
-						if (!_gotBreak)
-							songEnded = true;
-
-						_gotJump = false;
-					}
-
-					// Make sure that the break flag is always cleared
-					_gotBreak = false;
-
-					// Pattern break
-					if (_breakFlag)
-					{
-						// Calculate new position in the next pattern
-						_breakFlag = false;
-						row = _breakPos;
-						_breakPos = 0;
-					}
-
-					// Have we played the whole pattern?
-					if (_posJumpFlag || (row >= patternLength))
-					{
-						row = _breakPos;
-						_breakPos = 0;
-						_posJumpFlag = false;
-						pos++;
-
-						if (pos >= songLength)
-							songEnded = true;
-					}
-
-					// Add the row time
-					total += 1000.0f * curSpeed / (curTempo / 2.5f);
-				}
-
-				// Set the total time
-				songTime.TotalTime = new TimeSpan((long)(total * TimeSpan.TicksPerMillisecond));
-
-				// And add the song time in the list
-				songTimeList.Add(songTime);
-
-				// Initialize the start position, in case we have more sub songs
-				startPos = (short)(prevPos + 1);
-			}
-			while (prevPos < (songLength - 1));
 
 			return true;
 		}
@@ -526,83 +285,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override void InitSound(int songNumber)
+		public override void InitSound(int songNumber, DurationInfo durationInfo)
 		{
-			// Get the song time structure
-			SongTime songTime = songTimeList[songNumber];
+			durInfo = durationInfo;
 
-			// Initialize all the variables
-			currentSong = (ushort)songNumber;
-			endReached = false;
+			InitializeSound(durationInfo.StartPosition);
+		}
 
-			speed = 6;
-			tempo = initTempo;
-			patternPos = 0;
-			counter = 0;
-			songPos = songTime.StartPos;
-			breakPos = 0;
-			posJumpFlag = false;
-			breakFlag = false;
-			gotJump = false;
-			gotBreak = false;
-			lowMask = 0xff;
-			pattDelayTime = 0;
-			pattDelayTime2 = 0;
 
-			for (int i = 0; i < channelNum; i++)
-			{
-				ModChannel modChan = channels[i] = new ModChannel();
 
-				modChan.TrackLine.Note = 0;
-				modChan.TrackLine.Sample = 0;
-				modChan.TrackLine.Effect = 0;
-				modChan.TrackLine.EffectArg = 0;
-				modChan.SampleData = null;
-				modChan.Offset = 0;
-				modChan.Length = 0;
-				modChan.LoopStart = 0;
-				modChan.LoopLength = 0;
-				modChan.StartOffset = 0;
-				modChan.Period = 0;
-				modChan.FineTune = 0;
-				modChan.Volume = 0;
-				modChan.TonePortDirec = 0;
-				modChan.TonePortSpeed = 0;
-				modChan.WantedPeriod = 0;
-				modChan.VibratoCmd = 0;
-				modChan.VibratoPos = 0;
-				modChan.TremoloCmd = 0;
-				modChan.TremoloPos = 0;
-				modChan.WaveControl = 0;
-				modChan.GlissFunk = 0;
-				modChan.SampleOffset = 0;
-				modChan.PattPos = 0;
-				modChan.LoopCount = 0;
-				modChan.FunkOffset = 0;
-				modChan.WaveStart = 0;
-				modChan.RealLength = 0;
-				modChan.Pick = 0;
-				modChan.AutoSlide = false;
-				modChan.AutoSlideArg = 0;
-				modChan.AmSample = false;
-				modChan.AmToDo = AmToDo.None;
-				modChan.SampleNum = 0;
-				modChan.CurLevel = 0;
-				modChan.VibDegree = 0;
-				modChan.SustainCounter = 0;
+		/********************************************************************/
+		/// <summary>
+		/// Calculate the duration for all sub-songs
+		/// </summary>
+		/********************************************************************/
+		public override DurationInfo[] CalculateDuration()
+		{
+			DurationInfo[] durations = CalculateDurationBySongPosition();
 
-				if (IsPcTracker())
-				{
-					if (currentModuleType == ModuleType.MultiTracker)
-						modChan.Panning = (ushort)(panning[i] * 16);
-					else
-						modChan.Panning = (ushort)((((i & 3) == 0) || ((i & 3) == 3)) ? Panning.Left : Panning.Right);
-				}
-				else
-					modChan.Panning = 0;
-			}
+			subSongCount = (ushort)durations.Length;
 
-			SetBpmTempo(initTempo);
+			return durations;
 		}
 
 
@@ -689,18 +392,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			// If we have reached the end of the module, reset speed and tempo
 			if (endReached)
 			{
-				SongTime songTime = songTimeList[currentSong];
-
-				if ((songPos < songTime.StartPos) || (songPos >= songTime.PosInfoList.Count))
+				if ((durInfo == null) || (songPos < durInfo.StartPosition) || (songPos >= durInfo.PositionInfo.Length))
 				{
 					speed = 6;
 					ChangeTempo(initTempo);
 				}
 				else
 				{
-					PosInfo posInfo = songTime.PosInfoList[songPos - songTime.StartPos];
+					PositionInfo posInfo = durInfo.PositionInfo[songPos - durInfo.StartPosition];
 					speed = posInfo.Speed;
-					ChangeTempo(posInfo.Tempo);
+					ChangeTempo((byte)posInfo.Bpm);
 				}
 
 				OnEndReached();
@@ -724,7 +425,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// Return information about sub-songs
 		/// </summary>
 		/********************************************************************/
-		public override SubSongInfo SubSongs => new SubSongInfo(songTimeList.Count, 0);
+		public override SubSongInfo SubSongs => new SubSongInfo(subSongCount, 0);
 
 
 
@@ -739,74 +440,35 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the current position of the song
+		/// Return the current position of the song
 		/// </summary>
 		/********************************************************************/
-		public override int SongPosition
+		public override int GetSongPosition()
 		{
-			get
-			{
-				return songPos;
-			}
-
-			set
-			{
-				// Get the song time structure
-				SongTime songTime = songTimeList[currentSong];
-
-				// Change the position
-				songPos = (ushort)value;
-				patternPos = 0;
-				pattDelayTime = 0;
-				pattDelayTime2 = 0;
-
-				// Change the speed
-				if ((songPos < songTime.StartPos) || (songPos >= songTime.PosInfoList.Count))
-				{
-					speed = 6;
-					ChangeTempo(initTempo);
-				}
-				else
-				{
-					PosInfo posInfo = songTime.PosInfoList[songPos - songTime.StartPos];
-					speed = posInfo.Speed;
-					ChangeTempo(posInfo.Tempo);
-				}
-
-				// Change the module info
-				OnModuleInfoChanged(InfoSpeedLine, speed.ToString());
-			}
+			return songPos;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Calculates the position time for each position
+		/// Set a new position of the song
 		/// </summary>
 		/********************************************************************/
-		public override TimeSpan GetPositionTimeTable(int songNumber, out TimeSpan[] positionTimes)
+		public override void SetSongPosition(int position, PositionInfo positionInfo)
 		{
-			positionTimes = new TimeSpan[songLength];
+			// Change the position
+			songPos = (ushort)position;
+			patternPos = 0;
+			pattDelayTime = 0;
+			pattDelayTime2 = 0;
 
-			// Get the song time structure
-			SongTime songTime = songTimeList[songNumber];
+			// Change the speed
+			speed = positionInfo.Speed;
+			ChangeTempo((byte)positionInfo.Bpm);
 
-			// Well, fill the position time list with empty times until
-			// we reach the subsong position
-			int i;
-			for (i = 0; i < songTime.StartPos; i++)
-				positionTimes[i] = new TimeSpan(0);
-
-			// Copy the position times
-			for (int j = 0, cnt = songTime.PosInfoList.Count; j < cnt; j++, i++)
-				positionTimes[i] = songTime.PosInfoList[j].Time;
-
-			// And then fill the rest of the list with total time
-			for (; i < songLength; i++)
-				positionTimes[i] = songTime.TotalTime;
-
-			return songTime.TotalTime;
+			// Change the module info
+			OnModuleInfoChanged(InfoSpeedLine, speed.ToString());
 		}
 
 
@@ -847,6 +509,43 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 				return result.ToArray();
 			}
+		}
+		#endregion
+
+		#region Duration calculation methods
+		/********************************************************************/
+		/// <summary>
+		/// Initialize all internal structures when beginning duration
+		/// calculation on a new sub-song
+		/// </summary>
+		/********************************************************************/
+		protected override void InitDurationCalculation(int startPosition)
+		{
+			InitializeSound(startPosition);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the current speed
+		/// </summary>
+		/********************************************************************/
+		protected override byte GetCurrentSpeed()
+		{
+			return speed;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the current BPM
+		/// </summary>
+		/********************************************************************/
+		protected override ushort GetCurrentBpm()
+		{
+			return tempo;
 		}
 		#endregion
 
@@ -2017,6 +1716,88 @@ stopLoop:
 
 		/********************************************************************/
 		/// <summary>
+		/// Initialize sound structures
+		/// </summary>
+		/********************************************************************/
+		private void InitializeSound(int startPosition)
+		{
+			// Initialize all the variables
+			endReached = false;
+
+			speed = 6;
+			tempo = initTempo;
+			patternPos = 0;
+			counter = 0;
+			songPos = (ushort)startPosition;
+			breakPos = 0;
+			posJumpFlag = false;
+			breakFlag = false;
+			gotJump = false;
+			gotBreak = false;
+			lowMask = 0xff;
+			pattDelayTime = 0;
+			pattDelayTime2 = 0;
+
+			for (int i = 0; i < channelNum; i++)
+			{
+				ModChannel modChan = channels[i] = new ModChannel();
+
+				modChan.TrackLine.Note = 0;
+				modChan.TrackLine.Sample = 0;
+				modChan.TrackLine.Effect = 0;
+				modChan.TrackLine.EffectArg = 0;
+				modChan.SampleData = null;
+				modChan.Offset = 0;
+				modChan.Length = 0;
+				modChan.LoopStart = 0;
+				modChan.LoopLength = 0;
+				modChan.StartOffset = 0;
+				modChan.Period = 0;
+				modChan.FineTune = 0;
+				modChan.Volume = 0;
+				modChan.TonePortDirec = 0;
+				modChan.TonePortSpeed = 0;
+				modChan.WantedPeriod = 0;
+				modChan.VibratoCmd = 0;
+				modChan.VibratoPos = 0;
+				modChan.TremoloCmd = 0;
+				modChan.TremoloPos = 0;
+				modChan.WaveControl = 0;
+				modChan.GlissFunk = 0;
+				modChan.SampleOffset = 0;
+				modChan.PattPos = 0;
+				modChan.LoopCount = 0;
+				modChan.FunkOffset = 0;
+				modChan.WaveStart = 0;
+				modChan.RealLength = 0;
+				modChan.Pick = 0;
+				modChan.AutoSlide = false;
+				modChan.AutoSlideArg = 0;
+				modChan.AmSample = false;
+				modChan.AmToDo = AmToDo.None;
+				modChan.SampleNum = 0;
+				modChan.CurLevel = 0;
+				modChan.VibDegree = 0;
+				modChan.SustainCounter = 0;
+
+				if (IsPcTracker())
+				{
+					if (currentModuleType == ModuleType.MultiTracker)
+						modChan.Panning = (ushort)(panning[i] * 16);
+					else
+						modChan.Panning = (ushort)((((i & 3) == 0) || ((i & 3) == 3)) ? ChannelPanning.Left : ChannelPanning.Right);
+				}
+				else
+					modChan.Panning = 0;
+			}
+
+			SetBpmTempo(initTempo);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Frees all the memory the player have allocated
 		/// </summary>
 		/********************************************************************/
@@ -2029,8 +1810,6 @@ stopLoop:
 			tracks = null;
 			sequences = null;
 			channels = null;
-
-			songTimeList = null;
 		}
 
 
@@ -2108,7 +1887,7 @@ stopLoop:
 				ushort trkNum = sequences[positions[curSongPos] * 32 + i];
 				TrackLine trackData = tracks[trkNum][curPattPos];
 
-				Channel chan = VirtualChannels[i];
+				IChannel chan = VirtualChannels[i];
 				ModChannel modChan = channels[i];
 
 				PlayVoice(trackData, chan, modChan);
@@ -2126,7 +1905,7 @@ stopLoop:
 		/// Parses one pattern line for one channel
 		/// </summary>
 		/********************************************************************/
-		private void PlayVoice(TrackLine trackData, Channel chan, ModChannel modChan)
+		private void PlayVoice(TrackLine trackData, IChannel chan, ModChannel modChan)
 		{
 			// Check for any note or effect running
 			if ((modChan.TrackLine.Note == 0) && (modChan.TrackLine.Sample == 0) && (modChan.TrackLine.Effect == 0) && (modChan.TrackLine.EffectArg == 0))
@@ -2315,7 +2094,7 @@ stopLoop:
 		/// Check one channel to see if there are some commands to run
 		/// </summary>
 		/********************************************************************/
-		private void CheckEffects(Channel chan, ModChannel modChan)
+		private void CheckEffects(IChannel chan, ModChannel modChan)
 		{
 			UpdateFunk(modChan);
 
@@ -2463,7 +2242,7 @@ stopLoop:
 		/// Check one channel to see if there are some commands to run
 		/// </summary>
 		/********************************************************************/
-		private void CheckMoreEffects(Channel chan, ModChannel modChan)
+		private void CheckMoreEffects(IChannel chan, ModChannel modChan)
 		{
 			switch (currentModuleType)
 			{
@@ -2678,7 +2457,7 @@ stopLoop:
 		/// to run
 		/// </summary>
 		/********************************************************************/
-		private void ECommands(Channel chan, ModChannel modChan)
+		private void ECommands(IChannel chan, ModChannel modChan)
 		{
 			if (currentModuleType >= ModuleType.SoundTrackerIX)
 			{
@@ -2906,7 +2685,7 @@ stopLoop:
 					AmSample amSamp = amData?[modChan.SampleNum - 1];
 					if (amSamp != null)
 					{
-						Channel chan = VirtualChannels[i];
+						IChannel chan = VirtualChannels[i];
 
 						switch (modChan.AmToDo)
 						{
@@ -3069,7 +2848,7 @@ stopLoop:
 		/// 0x01 for Ultimate SoundTracker
 		/// </summary>
 		/********************************************************************/
-		private void Arpeggio(Channel chan, ModChannel modChan)
+		private void Arpeggio(IChannel chan, ModChannel modChan)
 		{
 			ushort period;
 
@@ -3126,7 +2905,7 @@ stopLoop:
 		/// 0x01 - Slides the frequency up or down (Ultimate SoundTracker)
 		/// </summary>
 		/********************************************************************/
-		private void PitchBend(Channel chan, ModChannel modChan)
+		private void PitchBend(IChannel chan, ModChannel modChan)
 		{
 			if ((modChan.TrackLine.EffectArg & 0xf0) == 0)
 			{
@@ -3151,7 +2930,7 @@ stopLoop:
 		/// 0x01 - Slides the frequency up
 		/// </summary>
 		/********************************************************************/
-		private void PortaUp(Channel chan, ModChannel modChan)
+		private void PortaUp(IChannel chan, ModChannel modChan)
 		{
 			modChan.Period -= (ushort)(modChan.TrackLine.EffectArg & lowMask);
 			if (modChan.Period < minPeriod)
@@ -3169,7 +2948,7 @@ stopLoop:
 		/// 0x02 - Slides the frequency down
 		/// </summary>
 		/********************************************************************/
-		private void PortaDown(Channel chan, ModChannel modChan)
+		private void PortaDown(IChannel chan, ModChannel modChan)
 		{
 			modChan.Period += (ushort)(modChan.TrackLine.EffectArg & lowMask);
 			if (modChan.Period > maxPeriod)
@@ -3187,7 +2966,7 @@ stopLoop:
 		/// 0x03 - Slides the frequency to the current note
 		/// </summary>
 		/********************************************************************/
-		private void TonePortamento(Channel chan, ModChannel modChan, bool skip = false)
+		private void TonePortamento(IChannel chan, ModChannel modChan, bool skip = false)
 		{
 			if (!skip)
 			{
@@ -3258,7 +3037,7 @@ stopLoop:
 		/// 0x04 - Vibrates the frequency
 		/// </summary>
 		/********************************************************************/
-		private void Vibrato(Channel chan, ModChannel modChan, bool skip = false)
+		private void Vibrato(IChannel chan, ModChannel modChan, bool skip = false)
 		{
 			// Get the effect argument
 			byte effArg = modChan.TrackLine.EffectArg;
@@ -3324,7 +3103,7 @@ stopLoop:
 		/// 0x05 - Is both effect 0x03 and 0x0a
 		/// </summary>
 		/********************************************************************/
-		private void TonePlusVolSlide(Channel chan, ModChannel modChan)
+		private void TonePlusVolSlide(IChannel chan, ModChannel modChan)
 		{
 			TonePortamento(chan, modChan, true);
 			VolumeSlide(modChan, modChan.TrackLine.EffectArg);
@@ -3337,7 +3116,7 @@ stopLoop:
 		/// 0x06 - Is both effect 0x04 and 0x0a
 		/// </summary>
 		/********************************************************************/
-		private void VibratoPlusVolSlide(Channel chan, ModChannel modChan)
+		private void VibratoPlusVolSlide(IChannel chan, ModChannel modChan)
 		{
 			Vibrato(chan, modChan, true);
 			VolumeSlide(modChan, modChan.TrackLine.EffectArg);
@@ -3350,7 +3129,7 @@ stopLoop:
 		/// 0x07 - Makes vibrato on the volume
 		/// </summary>
 		/********************************************************************/
-		private void Tremolo(Channel chan, ModChannel modChan)
+		private void Tremolo(IChannel chan, ModChannel modChan)
 		{
 			// Get the effect argument
 			byte effArg = modChan.TrackLine.EffectArg;
@@ -3424,7 +3203,7 @@ stopLoop:
 		/// 0x08 - Set a new panning
 		/// </summary>
 		/********************************************************************/
-		private void SetPanning(Channel chan, ModChannel modChan, ushort pan)
+		private void SetPanning(IChannel chan, ModChannel modChan, ushort pan)
 		{
 			modChan.Panning = pan;
 			chan.SetPanning(pan);
@@ -3623,7 +3402,7 @@ stopLoop:
 		/// 0xE1 - Fine slide the frequency up
 		/// </summary>
 		/********************************************************************/
-		private void FinePortaUp(Channel chan, ModChannel modChan)
+		private void FinePortaUp(IChannel chan, ModChannel modChan)
 		{
 			if (counter == 0)
 			{
@@ -3639,7 +3418,7 @@ stopLoop:
 		/// 0xE2 - Fine slide the frequency down
 		/// </summary>
 		/********************************************************************/
-		private void FinePortaDown(Channel chan, ModChannel modChan)
+		private void FinePortaDown(IChannel chan, ModChannel modChan)
 		{
 			if (counter == 0)
 			{
@@ -3761,7 +3540,7 @@ stopLoop:
 		/// 0xE9 - Retrigs the current note
 		/// </summary>
 		/********************************************************************/
-		private void RetrigNote(Channel chan, ModChannel modChan)
+		private void RetrigNote(IChannel chan, ModChannel modChan)
 		{
 			byte arg = (byte)(modChan.TrackLine.EffectArg & 0x0f);
 
@@ -3842,7 +3621,7 @@ stopLoop:
 		/// 0xED - Waits a little while before playing
 		/// </summary>
 		/********************************************************************/
-		private void NoteDelay(Channel chan, ModChannel modChan)
+		private void NoteDelay(IChannel chan, ModChannel modChan)
 		{
 			if (((modChan.TrackLine.EffectArg & 0x0f) == counter) && (modChan.TrackLine.Note != 0))
 			{

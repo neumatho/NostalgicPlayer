@@ -6,16 +6,14 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System;
-
-namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers
+namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.Containers
 {
 	/// <summary>
-	/// Position info structure
+	/// Extra information for duration calculation
 	/// </summary>
-	internal class PosInfo
+	internal class DurationExtraInfo
 	{
-		public byte Speed;
-		public TimeSpan Time;
+		public byte FarCurTempo;
+		public short FarTempoBend;
 	}
 }

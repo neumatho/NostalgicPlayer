@@ -227,12 +227,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_ACTIVEPLAYER, staticInfo.PlayerName);
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_CHANNELS, staticInfo.Channels);
 
-				TimeSpan time = floatingInfo.TotalTime;
-				if (time.TotalMilliseconds == 0)
+				if (floatingInfo.DurationInfo == null)
 					val = Resources.IDS_MODULE_INFO_UNKNOWN;
 				else
 				{
-					time = new TimeSpan((((long)time.TotalMilliseconds + 500) / 1000 * 1000) * TimeSpan.TicksPerMillisecond);
+					TimeSpan time = new TimeSpan((((long)floatingInfo.DurationInfo.TotalTime.TotalMilliseconds + 500) / 1000 * 1000) * TimeSpan.TicksPerMillisecond);
 					if ((int)time.TotalHours > 0)
 						val = time.ToString(Resources.IDS_TIMEFORMAT);
 					else

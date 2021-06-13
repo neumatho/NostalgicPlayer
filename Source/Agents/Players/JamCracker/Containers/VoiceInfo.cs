@@ -6,7 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Mixer;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker.Containers
 {
@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker.Containers
 	{
 		public ushort WaveOffset = 0;
 		public ushort Dmacon;
-		public Channel Channel;
+		public IChannel Channel;
 		public ushort InsLen;
 		public sbyte[] InsAddress;
 		public sbyte[] RealInsAddress;

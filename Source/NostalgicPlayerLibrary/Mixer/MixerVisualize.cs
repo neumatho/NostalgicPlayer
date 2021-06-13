@@ -31,8 +31,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		private Manager manager;
 
-		private Channel[] channelInfo;
-		private Channel.Flags[] channelFlags;
+		private IChannel[] channelInfo;
+		private ChannelFlags[] channelFlags;
 
 		private volatile SampleDataInfo sampleDataInfo;
 
@@ -47,15 +47,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Will initialize itself
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(Manager agentManager, int numberOfChannels, Channel[] channels)
+		public void Initialize(Manager agentManager, int numberOfChannels, IChannel[] channels)
 		{
 			manager = agentManager;
 
 			channelInfo = channels;
-			channelFlags = new Channel.Flags[numberOfChannels];
+			channelFlags = new ChannelFlags[numberOfChannels];
 
 			for (int i = 0; i < numberOfChannels; i++)
-				channelFlags[i] = Channel.Flags.None;
+				channelFlags[i] = ChannelFlags.None;
 
 			// Create the trigger events
 			channelChangedEvent = new AutoResetEvent(false);
@@ -105,7 +105,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Will return the array holding all the channel flags
 		/// </summary>
 		/********************************************************************/
-		public Channel.Flags[] GetFlagsArray()
+		public ChannelFlags[] GetFlagsArray()
 		{
 			return channelFlags;
 		}

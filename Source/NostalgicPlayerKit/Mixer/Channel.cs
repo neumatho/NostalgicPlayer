@@ -7,116 +7,25 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Kit.Mixer
 {
 	/// <summary>
 	/// This class is used to trigger samples when playing modules
 	/// </summary>
-	public class Channel
+	public class Channel : IChannel
 	{
-		/// <summary>
-		/// The different kind of loops supported
-		/// </summary>
-		public enum LoopType
-		{
-			/// <summary>
-			/// Just a normal loop
-			/// </summary>
-			Normal,
-
-			/// <summary>
-			/// Ping-pong loop
-			/// </summary>
-			PingPong,
-
-			/// <summary>
-			/// Set this to trigger the sample
-			/// </summary>
-			Trigger
-		}
-
-		/// <summary>
-		/// Channel flags
-		/// </summary>
-		[Flags]
-		public enum Flags : uint
-		{
-			/// <summary>
-			/// No flags
-			/// </summary>
-			None = 0,
-
-			/// <summary>
-			/// Mute the channel
-			/// </summary>
-			MuteIt = 0x00000001,
-
-			/// <summary>
-			/// Trig the sample (start over)
-			/// </summary>
-			TrigIt = 0x00000002,
-
-			/// <summary>
-			/// Set this if the sample is 16 bit
-			/// </summary>
-			_16Bit = 0x00000004,
-
-			/// <summary>
-			/// The sample loops
-			/// </summary>
-			Loop = 0x00000008,
-
-			/// <summary>
-			/// Set this together with the Loop flag for ping-pong loop
-			/// </summary>
-			PingPong = 0x00000010,
-
-			/// <summary>
-			/// Set this to trigger the sample when setting looping information
-			/// </summary>
-			TrigLoop = 0x00000020,
-
-			/// <summary>
-			/// Speaker volume changed. Overrules Volume and Panning
-			/// </summary>
-			SpeakerVolume = 0x00000100,
-
-			/// <summary>
-			/// Volume changed
-			/// </summary>
-			Volume = 0x00000200,
-
-			/// <summary>
-			/// Panning changed
-			/// </summary>
-			Panning = 0x00000400,
-
-			/// <summary>
-			/// New frequency
-			/// </summary>
-			Frequency = 0x0001000,
-
-			/// <summary>
-			/// Release the sample
-			/// </summary>
-			Release = 0x00002000,
-
-			/// <summary>
-			/// This is a read-only bit. When a sample is playing in the channel, it's set
-			/// </summary>
-			Active = 0x80000000
-		}
-
 		/// <summary>
 		/// Indicate what has been set/changed
 		/// </summary>
-		protected Flags flags;
+		protected ChannelFlags flags;
 
 		/// <summary>
 		/// Start address of the sample
 		/// </summary>
-		protected sbyte[] sampAddress;
+		protected sbyte[] sampleAddress;
 
 		/// <summary>
 		/// Start address of the loop/release sample
@@ -126,12 +35,12 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/// <summary>
 		/// Start offset in the sample in samples, not bytes
 		/// </summary>
-		protected uint sampStart;
+		protected uint sampleStart;
 
 		/// <summary>
 		/// Length of the sample in samples, not bytes
 		/// </summary>
-		protected uint sampLength;
+		protected uint sampleLength;
 
 		/// <summary>
 		/// Loop offset in the sample in samples, not bytes
@@ -173,6 +82,7 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/// </summary>
 		protected uint panning;
 
+		#region IChannel implementation
 		/********************************************************************/
 		/// <summary>
 		/// Will start to play the sample in the channel
@@ -182,7 +92,7 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/// <param name="length">is the length in samples of the sample</param>
 		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
 		/********************************************************************/
-		public void PlaySample(sbyte[] adr, uint startOffset, uint length, byte bit = 8)
+		public void PlaySample(sbyte[] adr, uint startOffset, uint length, byte bit)
 		{
 			if (adr == null)
 				throw new ArgumentNullException(nameof(adr));
@@ -196,15 +106,15 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 			if ((bit != 8) && (bit != 16))
 				throw new ArgumentException("Number of bits may only be 8 or 16", nameof(bit));
 
-			sampAddress = adr;
-			sampStart = startOffset;
-			sampLength = length;
-			flags |= Flags.TrigIt;
+			sampleAddress = adr;
+			sampleStart = startOffset;
+			sampleLength = length;
+			flags |= ChannelFlags.TrigIt;
 
 			if (bit == 16)
-				flags |= Flags._16Bit;
+				flags |= ChannelFlags._16Bit;
 
-			flags &= ~Flags.MuteIt;
+			flags &= ~ChannelFlags.MuteIt;
 		}
 
 
@@ -217,15 +127,15 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/// <param name="length">is the length in samples to loop</param>
 		/// <param name="type">is the type of the loop</param>
 		/********************************************************************/
-		public void SetLoop(uint startOffset, uint length, LoopType type = LoopType.Normal)
+		public void SetLoop(uint startOffset, uint length, ChannelLoopType type)
 		{
-			if (startOffset > (sampStart + sampLength))
+			if (startOffset > (sampleStart + sampleLength))
 				throw new ArgumentException("Start offset is bigger than previous set length of sample", nameof(startOffset));
 
-			if ((startOffset + length) > (sampStart + sampLength))
+			if ((startOffset + length) > (sampleStart + sampleLength))
 				throw new ArgumentException("Loop length is bigger than previous set length of sample", nameof(length));
 
-			SetLoop(sampAddress, startOffset, length, type);
+			SetLoop(sampleAddress, startOffset, length, type);
 		}
 
 
@@ -239,7 +149,7 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/// <param name="length">is the length in samples to loop</param>
 		/// <param name="type">is the type of the loop</param>
 		/********************************************************************/
-		public void SetLoop(sbyte[] adr, uint startOffset, uint length, LoopType type = LoopType.Normal)
+		public void SetLoop(sbyte[] adr, uint startOffset, uint length, ChannelLoopType type)
 		{
 			if (adr == null)
 				throw new ArgumentNullException(nameof(adr));
@@ -250,14 +160,14 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 			loopAddress = adr;
 			loopStart = startOffset;
 			loopLength = length;
-			flags |= Flags.Loop;
+			flags |= ChannelFlags.Loop;
 
-			if (type == LoopType.PingPong)
-				flags |= Flags.PingPong;
-			else if (type == LoopType.Trigger)
-				flags |= Flags.TrigLoop;
+			if (type == ChannelLoopType.PingPong)
+				flags |= ChannelFlags.PingPong;
+			else if (type == ChannelLoopType.Trigger)
+				flags |= ChannelFlags.TrigLoop;
 
-			flags &= ~Flags.MuteIt;
+			flags &= ~ChannelFlags.MuteIt;
 		}
 
 
@@ -274,8 +184,8 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 				throw new ArgumentException("Volume should be between 0 and 256", nameof(vol));
 
 			volume = vol;
-			flags |= Flags.Volume;
-			flags &= ~Flags.SpeakerVolume;
+			flags |= ChannelFlags.Volume;
+			flags &= ~ChannelFlags.SpeakerVolume;
 		}
 
 
@@ -288,11 +198,11 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/********************************************************************/
 		public void SetPanning(ushort pan)
 		{
-			if ((pan > 256) && (pan != (ushort)Panning.Surround))
+			if ((pan > 256) && (pan != (ushort)ChannelPanning.Surround))
 				throw new ArgumentException("Panning should be between 0 and 256 or 512 (Surround)", nameof(pan));
 
 			panning = pan;
-			flags |= Flags.Panning;
+			flags |= ChannelFlags.Panning;
 		}
 
 
@@ -306,7 +216,7 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		public void SetFrequency(uint freq)
 		{
 			frequency = freq;
-			flags |= Flags.Frequency;
+			flags |= ChannelFlags.Frequency;
 		}
 
 
@@ -320,7 +230,7 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		public void SetAmigaPeriod(uint period)
 		{
 			frequency = period != 0 ? 3546895 / period : 0;
-			flags |= Flags.Frequency;
+			flags |= ChannelFlags.Frequency;
 		}
 
 
@@ -330,7 +240,7 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/// Returns true or false depending on the channel is in use
 		/// </summary>
 		/********************************************************************/
-		public bool IsActive => (flags & Flags.Active) != 0;
+		public bool IsActive => (flags & ChannelFlags.Active) != 0;
 
 
 
@@ -341,7 +251,7 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/********************************************************************/
 		public void Mute()
 		{
-			flags |= Flags.MuteIt;
+			flags |= ChannelFlags.MuteIt;
 		}
 
 
@@ -367,5 +277,6 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		{
 			return frequency;
 		}
+		#endregion
 	}
 }

@@ -40,12 +40,17 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Initializes the current song
 		/// </summary>
-		void InitSound(int songNumber);
+		void InitSound(int songNumber, DurationInfo durationInfo);
 
 		/// <summary>
 		/// Cleanup the current song
 		/// </summary>
 		void CleanupSound();
+
+		/// <summary>
+		/// Calculate the duration for all sub-songs
+		/// </summary>
+		DurationInfo[] CalculateDuration();
 
 		/// <summary>
 		/// This is the main player method
@@ -73,14 +78,14 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		int SongLength { get; }
 
 		/// <summary>
-		/// Holds the current position of the song
+		/// Return the current position of the song
 		/// </summary>
-		int SongPosition { get; set; }
+		int GetSongPosition();
 
 		/// <summary>
-		/// Calculates the position time for each position
+		/// Set a new position of the song
 		/// </summary>
-		TimeSpan GetPositionTimeTable(int songNumber, out TimeSpan[] positionTimes);
+		void SetSongPosition(int position, PositionInfo positionInfo);
 
 		/// <summary>
 		/// Returns all the instruments available in the module. If none,
@@ -102,7 +107,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Holds all the virtual channel instances used to play the samples
 		/// </summary>
-		Channel[] VirtualChannels { get; set; }
+		IChannel[] VirtualChannels { get; set; }
 
 		/// <summary>
 		/// Return the current playing frequency

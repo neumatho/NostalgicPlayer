@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Containers;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 {
@@ -25,10 +26,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		public ModuleInfoFloating()
 		{
 			CurrentSong = 0;
-			TotalTime = new TimeSpan(0);
+			DurationInfo = null;
 			songPosition = 0;
 			SongLength = 0;
-			PositionTimes = null;
 			ModuleInformation = null;
 		}
 
@@ -39,13 +39,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor (for module players)
 		/// </summary>
 		/********************************************************************/
-		internal ModuleInfoFloating(int songNumber, TimeSpan totalTime, int songPosition, int songLength, TimeSpan[] positionTimes, string[] moduleInfo)
+		internal ModuleInfoFloating(int songNumber, DurationInfo durationInfo, int songPosition, int songLength, string[] moduleInfo)
 		{
 			CurrentSong = songNumber;
-			TotalTime = totalTime;
+			DurationInfo = durationInfo;
 			this.songPosition = songPosition;
 			SongLength = songLength;
-			PositionTimes = positionTimes;
 			ModuleInformation = moduleInfo;
 		}
 
@@ -56,13 +55,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor (for sample players)
 		/// </summary>
 		/********************************************************************/
-		internal ModuleInfoFloating(TimeSpan totalTime, int songPosition, int songLength, TimeSpan[] positionTimes, string[] moduleInfo)
+		internal ModuleInfoFloating(DurationInfo durationInfo, int songPosition, int songLength, string[] moduleInfo)
 		{
 			CurrentSong = 0;
-			TotalTime = totalTime;
+			DurationInfo = durationInfo;
 			this.songPosition = songPosition;
 			SongLength = songLength;
-			PositionTimes = positionTimes;
 			ModuleInformation = moduleInfo;
 		}
 
@@ -82,10 +80,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Hold the total time of the current song
+		/// Hold duration information about the current song
 		/// </summary>
 		/********************************************************************/
-		public TimeSpan TotalTime
+		public DurationInfo DurationInfo
 		{
 			get;
 		}
@@ -124,18 +122,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// </summary>
 		/********************************************************************/
 		public int SongLength
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the position time table for the current song
-		/// </summary>
-		/********************************************************************/
-		public TimeSpan[] PositionTimes
 		{
 			get;
 		}

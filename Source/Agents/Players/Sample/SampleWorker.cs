@@ -193,13 +193,31 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		/// Initializes the player to start the sample from start
 		/// </summary>
 		/********************************************************************/
-		public override void InitSound()
+		public override void InitSound(DurationInfo durationInfo)
 		{
 			// Reset the sample position
 			loaderAgent.SetSamplePosition(moduleStream, 0, formatInfo);
 
 			samplesRead = 0;
 			oldPosition = 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Calculate the duration for all sub-songs
+		/// </summary>
+		/********************************************************************/
+		public override DurationInfo CalculateDuration()
+		{
+			// Calculate the total time
+			long totalTime = totalLength * 1000 / formatInfo.Frequency / formatInfo.Channels;
+
+			// Now build the list
+			PositionInfo[] positionInfo = Enumerable.Range(0, 100).Select(i => new PositionInfo(new TimeSpan(i * (totalTime / 100) * TimeSpan.TicksPerMillisecond), null)).ToArray();
+
+			return new DurationInfo(new TimeSpan(totalTime * TimeSpan.TicksPerMillisecond), positionInfo);
 		}
 
 
@@ -234,7 +252,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 			}
 
 			// Check if we have changed position
-			int pos = SongPosition;
+			int pos = GetSongPosition();
 			if (pos != oldPosition)
 			{
 				oldPosition = pos;
@@ -266,43 +284,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the current position of the song
+		/// Return the current position of the song
 		/// </summary>
 		/********************************************************************/
-		public override int SongPosition
+		public override int GetSongPosition()
 		{
-			get
-			{
-				int pos = (int)(samplesRead * 100 / totalLength);
-				if (pos >= 100)
-					pos = 99;
+			int pos = (int)(samplesRead * 100 / totalLength);
+			if (pos >= 100)
+				pos = 99;
 
-				return pos;
-			}
-
-			set
-			{
-				long newPos = value * totalLength / 100;
-				samplesRead = loaderAgent.SetSamplePosition(moduleStream, newPos, formatInfo);
-			}
+			return pos;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Calculates the position time for each position
+		/// Set a new position of the song
 		/// </summary>
 		/********************************************************************/
-		public override TimeSpan GetPositionTimeTable(out TimeSpan[] positionTimes)
+		public override void SetSongPosition(int position, PositionInfo positionInfo)
 		{
-			// Calculate the total time
-			long totalTime = totalLength * 1000 / formatInfo.Frequency / formatInfo.Channels;
-
-			// Now build the list
-			positionTimes = Enumerable.Range(0, 100).Select(i => new TimeSpan(i * (totalTime / 100) * TimeSpan.TicksPerMillisecond)).ToArray();
-
-			return new TimeSpan(totalTime * TimeSpan.TicksPerMillisecond);
+			long newPos = position * totalLength / 100;
+			samplesRead = loaderAgent.SetSamplePosition(moduleStream, newPos, formatInfo);
 		}
 		#endregion
 	}

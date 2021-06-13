@@ -9,7 +9,6 @@
 using System;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.Kit.Mixer;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Interfaces;
@@ -52,7 +51,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private IExtraChannels extraChannelsInstance;
 		private int extraChannelsNumber;
 		private MixerBase extraChannelsMixer;
-		private Channel[] extraChannelsChannels;
+		private IChannel[] extraChannelsChannels;
 
 		/********************************************************************/
 		/// <summary>
@@ -110,7 +109,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				currentMixer.Initialize(moduleChannelNumber);
 
 				// Allocate channel objects
-				ChannelParser[] channels = new ChannelParser[moduleChannelNumber];
+				IChannel[] channels = new IChannel[moduleChannelNumber];
 				for (int i = 0; i < moduleChannelNumber; i++)
 					channels[i] = new ChannelParser();
 
@@ -332,7 +331,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					extraChannelsMixer.Initialize(extraChannelsNumber);
 
 					// Allocate channel objects
-					extraChannelsChannels = new ChannelParser[extraChannelsNumber];
+					extraChannelsChannels = new IChannel[extraChannelsNumber];
 					for (int i = 0; i < extraChannelsNumber; i++)
 						extraChannelsChannels[i] = new ChannelParser();
 				}
@@ -405,8 +404,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 							VoiceInfo[] voiceInfo = currentMixer.GetMixerChannels();
 							int click = currentMixer.GetClickConstant();
 
-							Channel.Flags[] flagArray = currentVisualizer.GetFlagsArray();
-							Channel.Flags chanFlags = Channel.Flags.None;
+							ChannelFlags[] flagArray = currentVisualizer.GetFlagsArray();
+							ChannelFlags chanFlags = ChannelFlags.None;
 
 							for (int t = 0; t < moduleChannelNumber; t++)
 							{
@@ -416,7 +415,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 							// If at least one channel has changed its information,
 							// tell visual agents about it
-							if (chanFlags != Channel.Flags.None)
+							if (chanFlags != ChannelFlags.None)
 								currentVisualizer.TellAgentsAboutChannelChange();
 
 							// Calculate the number of sample pair to mix before the
@@ -452,7 +451,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 					// Check all the channels to see if they are still active and
 					// enable/disable the channels depending on the user settings
-					for (int t = 0, cnt = Math.Min(moduleChannelNumber, channelsEnabled.Length); t < cnt; t++)
+					for (int t = 0, cnt = channelsEnabled == null ? moduleChannelNumber : Math.Min(moduleChannelNumber, channelsEnabled.Length); t < cnt; t++)
 					{
 						((ChannelParser)currentPlayer.VirtualChannels[t]).Active(currentMixer.IsActive(t));
 						currentMixer.EnableChannel(t, (channelsEnabled == null) || channelsEnabled[t]);

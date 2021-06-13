@@ -6,19 +6,26 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System;
-
-namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.Containers
+namespace Polycode.NostalgicPlayer.Kit.Containers
 {
 	/// <summary>
-	/// Position info structure
+	/// The different kind of loops supported
 	/// </summary>
-	internal class PosInfo
+	public enum ChannelLoopType
 	{
-		public byte Speed;
-		public ushort Tempo;
-		public byte FarCurTempo;
-		public short FarTempoBend;
-		public TimeSpan Time;
+		/// <summary>
+		/// Just a normal loop
+		/// </summary>
+		Normal,
+
+		/// <summary>
+		/// Ping-pong loop
+		/// </summary>
+		PingPong,
+
+		/// <summary>
+		/// Set this to trigger the sample
+		/// </summary>
+		Trigger
 	}
 }

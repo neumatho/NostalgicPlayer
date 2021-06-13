@@ -634,8 +634,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/********************************************************************/
 		public TimeSpan GetPositionTime(int position)
 		{
-			TimeSpan[] positionTimes = PlayingModuleInformation.PositionTimes;
-			return positionTimes == null ? new TimeSpan(0) : positionTimes[position];
+			if ((PlayingModuleInformation.DurationInfo == null) || (position < 0) || (position >= PlayingModuleInformation.DurationInfo.PositionInfo.Length))
+				return new TimeSpan(0);
+
+			return PlayingModuleInformation.DurationInfo.PositionInfo[position].Time;
 		}
 
 
