@@ -40,7 +40,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			{ ModTracker.Agent10Id, ModuleType.StarTrekker8 },
 			{ ModTracker.Agent11Id, ModuleType.ProTracker },
 			{ ModTracker.Agent12Id, ModuleType.FastTracker },
-			{ ModTracker.Agent13Id, ModuleType.MultiTracker }
+			{ ModTracker.Agent13Id, ModuleType.MultiTracker },
+			{ ModTracker.Agent14Id, ModuleType.Octalyser }
 		};
 
 		private const int NumberOfNotes = 7 * 12;
@@ -92,6 +93,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		private byte lowMask;
 		private byte pattDelayTime;
 		private byte pattDelayTime2;
+		private bool patternLoopHandled;	// Indicate if an E6x effect has been handled on the same line. Only used for Atari Octalyser modules
 
 		private AmSample[] amData;
 
@@ -317,6 +319,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/********************************************************************/
 		public override void Play()
 		{
+			patternLoopHandled = false;
+
 			if (speed != 0)				// Only play if speed <> 0
 			{
 				counter++;				// Count speed counter
@@ -582,7 +586,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/********************************************************************/
 		private bool IsPcTracker()
 		{
-			return (currentModuleType >= ModuleType.FastTracker);
+			return (currentModuleType >= ModuleType.FastTracker) && (currentModuleType <= ModuleType.MultiTracker);
 		}
 
 
@@ -1100,6 +1104,8 @@ stopLoop:
 					retVal = ModuleType.StarTrekker;
 				else if (mark == 0x464c5438)								// FLT8
 					retVal = ModuleType.StarTrekker8;
+				else if ((mark == 0x43443831) || (mark == 0x43443631))		// CD81 || CD61
+					retVal = ModuleType.Octalyser;
 				else if (((mark & 0x00ffffff) == 0x0043484e) || ((mark & 0x0000ffff) == 0x00004348) || ((mark & 0xffffff00) == 0x54445a00))		// \0CHN || \0\0CH || TDZ\0 (this is TakeTracker only)
 					retVal = ModuleType.FastTracker;
 			}
@@ -1149,7 +1155,7 @@ stopLoop:
 				byte[] buf = new byte[23];
 
 				ModuleStream moduleStream = fileInfo.ModuleStream;
-				Encoding encoder = IsPcTracker() ? EncoderCollection.Dos : EncoderCollection.Amiga;
+				Encoding encoder = IsPcTracker() ? EncoderCollection.Dos : currentModuleType == ModuleType.Octalyser ? EncoderCollection.Atari : EncoderCollection.Amiga;
 
 				// Find out the number of samples
 				sampleNum = (ushort)((currentModuleType <= ModuleType.SoundTracker2x) ? 15 : 31);
@@ -1228,7 +1234,7 @@ stopLoop:
 				if (songLength > 128)
 					songLength = 128;
 
-				if ((currentModuleType == ModuleType.NoiseTracker) || (currentModuleType == ModuleType.StarTrekker) || (currentModuleType == ModuleType.StarTrekker8) || (currentModuleType == ModuleType.FastTracker))
+				if ((currentModuleType == ModuleType.NoiseTracker) || (currentModuleType == ModuleType.StarTrekker) || (currentModuleType == ModuleType.StarTrekker8) || (currentModuleType == ModuleType.FastTracker) || (currentModuleType == ModuleType.Octalyser))
 				{
 					initTempo = 125;
 					restartPos = (ushort)(moduleStream.Read_UINT8() & 0x7f);
@@ -1302,18 +1308,23 @@ stopLoop:
 					channelNum = 8;
 				else
 				{
-					if ((mark & 0x00ffffff) == 0x0043484e)			// \0CHN
-						channelNum = (ushort)(((mark & 0xff000000) >> 24) - 0x30);
+					if ((mark & 0xffff00ff) == 0x43440031)			// CD\01
+						channelNum = (ushort)(((mark & 0x0000ff00) >> 8) - 0x30);
 					else
 					{
-						if ((mark & 0x0000ffff) == 0x00004348)		// \0\0CH
-							channelNum = (ushort)((((mark & 0xff000000) >> 24) - 0x30) * 10 + ((mark & 0x00ff0000) >> 16) - 0x30);
+						if ((mark & 0x00ffffff) == 0x0043484e)			// \0CHN
+							channelNum = (ushort)(((mark & 0xff000000) >> 24) - 0x30);
 						else
 						{
-							if ((mark & 0xffffff00) == 0x54445a00)	// TDZ\0
-								channelNum = (ushort)((mark & 0x000000ff) - 0x30);
+							if ((mark & 0x0000ffff) == 0x00004348)		// \0\0CH
+								channelNum = (ushort)((((mark & 0xff000000) >> 24) - 0x30) * 10 + ((mark & 0x00ff0000) >> 16) - 0x30);
 							else
-								channelNum = 4;
+							{
+								if ((mark & 0xffffff00) == 0x54445a00)	// TDZ\0
+									channelNum = (ushort)((mark & 0x000000ff) - 0x30);
+								else
+									channelNum = 4;
+							}
 						}
 					}
 				}
@@ -2469,7 +2480,7 @@ stopLoop:
 					{
 						case ExtraEffect.SetFilter:
 						{
-							if (!IsPcTracker())
+							if (!IsPcTracker() && (currentModuleType != ModuleType.Octalyser))
 								FilterOnOff(modChan);
 
 							break;
@@ -2519,11 +2530,13 @@ stopLoop:
 
 						case ExtraEffect.KarplusStrong:
 						{
-							if (IsPcTracker())
-								SetPanning(chan, modChan, (ushort)((modChan.TrackLine.EffectArg & 0x0f) << 4));
-							else
-								KarplusStrong(modChan);
-
+							if (currentModuleType != ModuleType.Octalyser)
+							{
+								if (IsPcTracker())
+									SetPanning(chan, modChan, (ushort)((modChan.TrackLine.EffectArg & 0x0f) << 4));
+								else
+									KarplusStrong(modChan);
+							}
 							break;
 						}
 
@@ -3478,13 +3491,35 @@ stopLoop:
 			{
 				byte arg = (byte)(modChan.TrackLine.EffectArg & 0x0f);
 
+				// Atari Octalyser seems to have the loop arguments as global instead
+				// of channel separated. At least what I can see from 8er-mod.
+				//
+				// The replay sources that I got my hand on, does not support E6x, so
+				// I can not verify it. However, Dammed Illusion have the same E6x on
+				// multiple channels, so that's why the "patternLoopHandled" has been
+				// introduced
+				if (currentModuleType == ModuleType.Octalyser)
+					modChan = channels[0];
+
 				if (arg != 0)
 				{
 					// Jump to the loop currently set
 					if (modChan.LoopCount == 0)
-						modChan.LoopCount = arg;
+					{
+						if (!patternLoopHandled)
+						{
+							modChan.LoopCount = arg;
+							patternLoopHandled = true;
+						}
+					}
 					else
-						modChan.LoopCount--;
+					{
+						if ((currentModuleType != ModuleType.Octalyser) || !patternLoopHandled)
+						{
+							modChan.LoopCount--;
+							patternLoopHandled = true;
+						}
+					}
 
 					if (modChan.LoopCount != 0)
 					{

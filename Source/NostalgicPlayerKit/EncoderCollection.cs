@@ -49,5 +49,17 @@ namespace Polycode.NostalgicPlayer.Kit
 		{
 			get;
 		} = new MacintoshRoman();
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the encoder to decode Atari characters
+		/// </summary>
+		/********************************************************************/
+		public static Encoding Atari
+		{
+			get;
+		} = new Atascii();
 	}
 }

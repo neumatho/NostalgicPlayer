@@ -26,6 +26,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		StarTrekker8,
 		ProTracker,
 		FastTracker,
-		MultiTracker
+		MultiTracker,
+		Octalyser
 	}
 }
