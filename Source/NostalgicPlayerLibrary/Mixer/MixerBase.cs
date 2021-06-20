@@ -101,8 +101,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				info.RepeatEnd = 0;
 				info.ReleaseLength = 0;
 				info.Frequency = 10000;
-				info.LeftVolume = 0;
-				info.RightVolume = 0;
+				info.Volume = 0;
 				info.Panning = (int)((((i & 3) == 0) || ((i & 3) == 3)) ? ChannelPanning.Left : ChannelPanning.Right);
 				info.RampVolume = 0;
 				info.LeftVolumeSelected = 0;
@@ -222,7 +221,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// This is the main mixer method
 		/// </summary>
 		/********************************************************************/
-		public abstract void Mixing(int[] dest, int offset, int todo, MixerMode mode);
+		public abstract int Mixing(int[] dest, int offset, int todo, MixerMode mode);
 
 
 

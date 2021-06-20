@@ -25,12 +25,12 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/// <summary>
 		/// Start address of the sample
 		/// </summary>
-		protected sbyte[] sampleAddress;
+		protected Array sampleAddress;
 
 		/// <summary>
 		/// Start address of the loop/release sample
 		/// </summary>
-		protected sbyte[] loopAddress;
+		protected Array loopAddress;
 
 		/// <summary>
 		/// Start offset in the sample in samples, not bytes
@@ -85,17 +85,21 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		#region IChannel implementation
 		/********************************************************************/
 		/// <summary>
-		/// Will start to play the sample in the channel
+		/// Will start to play the sample in the channel. If your player is
+		/// running in buffer mode, use this method to set the buffer
 		/// </summary>
 		/// <param name="adr">is a pointer to the sample in memory</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
 		/// <param name="length">is the length in samples of the sample</param>
 		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
 		/********************************************************************/
-		public void PlaySample(sbyte[] adr, uint startOffset, uint length, byte bit)
+		public void PlaySample(Array adr, uint startOffset, uint length, byte bit)
 		{
 			if (adr == null)
 				throw new ArgumentNullException(nameof(adr));
+
+			if ((adr.GetType() != typeof(sbyte[])) && (adr.GetType() != typeof(short[])))
+				throw new ArgumentException("Type of array must be either sbyte[] or short[]", nameof(adr));
 
 			if (length == 0)
 				throw new ArgumentException("Length may not be zero", nameof(length));
@@ -149,10 +153,13 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/// <param name="length">is the length in samples to loop</param>
 		/// <param name="type">is the type of the loop</param>
 		/********************************************************************/
-		public void SetLoop(sbyte[] adr, uint startOffset, uint length, ChannelLoopType type)
+		public void SetLoop(Array adr, uint startOffset, uint length, ChannelLoopType type)
 		{
 			if (adr == null)
 				throw new ArgumentNullException(nameof(adr));
+
+			if ((adr.GetType() != typeof(sbyte[])) && (adr.GetType() != typeof(short[])))
+				throw new ArgumentException("Type of array must be either sbyte[] or short[]", nameof(adr));
 
 			if (length == 0)
 				throw new ArgumentException("Length may not be zero", nameof(length));
@@ -185,7 +192,6 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 
 			volume = vol;
 			flags |= ChannelFlags.Volume;
-			flags &= ~ChannelFlags.SpeakerVolume;
 		}
 
 

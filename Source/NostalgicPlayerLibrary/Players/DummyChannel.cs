@@ -6,6 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
@@ -23,7 +24,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Will start to play the sample in the channel
 		/// </summary>
 		/********************************************************************/
-		public void PlaySample(sbyte[] adr, uint startOffset, uint length, byte bit = 8)
+		public void PlaySample(Array adr, uint startOffset, uint length, byte bit = 8)
 		{
 		}
 
@@ -45,7 +46,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Will set the loop point and change the sample
 		/// </summary>
 		/********************************************************************/
-		public void SetLoop(sbyte[] adr, uint startOffset, uint length, ChannelLoopType type = ChannelLoopType.Normal)
+		public void SetLoop(Array adr, uint startOffset, uint length, ChannelLoopType type = ChannelLoopType.Normal)
 		{
 		}
 

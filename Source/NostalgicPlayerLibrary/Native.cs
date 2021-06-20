@@ -91,7 +91,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate int del_Mix8MonoNormal32(IntPtr source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel);
-		public static int Mix8MonoNormal32(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel)
+		public static int Mix8MonoNormal32(Array source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel)
 		{
 			if (_Mix8MonoNormal32 == null)
 			{
@@ -120,7 +120,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate int del_Mix8StereoNormal32(IntPtr source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel);
-		public static int Mix8StereoNormal32(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel)
+		public static int Mix8StereoNormal32(Array source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel)
 		{
 			if (_Mix8StereoNormal32 == null)
 			{
@@ -149,7 +149,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate int del_Mix8SurroundNormal32(IntPtr source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel);
-		public static int Mix8SurroundNormal32(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel)
+		public static int Mix8SurroundNormal32(Array source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel)
 		{
 			if (_Mix8SurroundNormal32 == null)
 			{
@@ -178,7 +178,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate int del_Mix8MonoInterp32(IntPtr source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int oldLVol, ref int rampVol);
-		public static int Mix8MonoInterp32(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int oldLVol, ref int rampVol)
+		public static int Mix8MonoInterp32(Array source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int oldLVol, ref int rampVol)
 		{
 			if (_Mix8MonoInterp32 == null)
 			{
@@ -208,7 +208,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate int del_Mix8StereoInterp32(IntPtr source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol);
-		public static int Mix8StereoInterp32(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
+		public static int Mix8StereoInterp32(Array source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
 		{
 			if (_Mix8StereoInterp32 == null)
 			{
@@ -238,7 +238,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate int del_Mix8SurroundInterp32(IntPtr source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol);
-		public static int Mix8SurroundInterp32(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
+		public static int Mix8SurroundInterp32(Array source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
 		{
 			if (_Mix8SurroundInterp32 == null)
 			{
@@ -267,7 +267,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate int del_Mix16MonoNormal32(IntPtr source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel);
-		public static int Mix16MonoNormal32(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel)
+		public static int Mix16MonoNormal32(Array source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel)
 		{
 			if (_Mix16MonoNormal32 == null)
 			{
@@ -296,7 +296,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate int del_Mix16StereoNormal32(IntPtr source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel);
-		public static int Mix16StereoNormal32(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel)
+		public static int Mix16StereoNormal32(Array source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel)
 		{
 			if (_Mix16StereoNormal32 == null)
 			{
@@ -325,7 +325,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate int del_Mix16SurroundNormal32(IntPtr source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel);
-		public static int Mix16SurroundNormal32(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel)
+		public static int Mix16SurroundNormal32(Array source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel)
 		{
 			if (_Mix16SurroundNormal32 == null)
 			{
@@ -355,7 +355,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate int del_Mix16MonoInterp32(IntPtr source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int oldLVol, ref int rampVol);
-		public static int Mix16MonoInterp32(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int oldLVol, ref int rampVol)
+		public static int Mix16MonoInterp32(Array source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int oldLVol, ref int rampVol)
 		{
 			if (_Mix16MonoInterp32 == null)
 			{
@@ -385,7 +385,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate int del_Mix16StereoInterp32(IntPtr source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol);
-		public static int Mix16StereoInterp32(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
+		public static int Mix16StereoInterp32(Array source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
 		{
 			if (_Mix16StereoInterp32 == null)
 			{
@@ -415,7 +415,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate int del_Mix16SurroundInterp32(IntPtr source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol);
-		public static int Mix16SurroundInterp32(sbyte[] source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
+		public static int Mix16SurroundInterp32(Array source, IntPtr dest, int offset, int index, int increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
 		{
 			if (_Mix16SurroundInterp32 == null)
 			{
@@ -448,7 +448,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate long del_Mix8MonoNormal64(IntPtr source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel);
-		public static long Mix8MonoNormal64(sbyte[] source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel)
+		public static long Mix8MonoNormal64(Array source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel)
 		{
 			if (_Mix8MonoNormal64 == null)
 			{
@@ -477,7 +477,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate long del_Mix8StereoNormal64(IntPtr source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel);
-		public static long Mix8StereoNormal64(sbyte[] source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel)
+		public static long Mix8StereoNormal64(Array source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel)
 		{
 			if (_Mix8StereoNormal64 == null)
 			{
@@ -506,7 +506,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate long del_Mix8SurroundNormal64(IntPtr source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel);
-		public static long Mix8SurroundNormal64(sbyte[] source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel)
+		public static long Mix8SurroundNormal64(Array source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel)
 		{
 			if (_Mix8SurroundNormal64 == null)
 			{
@@ -535,7 +535,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate long del_Mix8MonoInterp64(IntPtr source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int oldLVol, ref int rampVol);
-		public static long Mix8MonoInterp64(sbyte[] source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int oldLVol, ref int rampVol)
+		public static long Mix8MonoInterp64(Array source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int oldLVol, ref int rampVol)
 		{
 			if (_Mix8MonoInterp64 == null)
 			{
@@ -565,7 +565,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate long del_Mix8StereoInterp64(IntPtr source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol);
-		public static long Mix8StereoInterp64(sbyte[] source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
+		public static long Mix8StereoInterp64(Array source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
 		{
 			if (_Mix8StereoInterp64 == null)
 			{
@@ -595,7 +595,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate long del_Mix8SurroundInterp64(IntPtr source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol);
-		public static long Mix8SurroundInterp64(sbyte[] source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
+		public static long Mix8SurroundInterp64(Array source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
 		{
 			if (_Mix8SurroundInterp64 == null)
 			{
@@ -624,7 +624,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate long del_Mix16MonoNormal64(IntPtr source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel);
-		public static long Mix16MonoNormal64(sbyte[] source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel)
+		public static long Mix16MonoNormal64(Array source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel)
 		{
 			if (_Mix16MonoNormal64 == null)
 			{
@@ -653,7 +653,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate long del_Mix16StereoNormal64(IntPtr source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel);
-		public static long Mix16StereoNormal64(sbyte[] source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel)
+		public static long Mix16StereoNormal64(Array source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel)
 		{
 			if (_Mix16StereoNormal64 == null)
 			{
@@ -682,7 +682,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate long del_Mix16SurroundNormal64(IntPtr source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel);
-		public static long Mix16SurroundNormal64(sbyte[] source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel)
+		public static long Mix16SurroundNormal64(Array source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel)
 		{
 			if (_Mix16SurroundNormal64 == null)
 			{
@@ -712,7 +712,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate long del_Mix16MonoInterp64(IntPtr source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int oldLVol, ref int rampVol);
-		public static long Mix16MonoInterp64(sbyte[] source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int oldLVol, ref int rampVol)
+		public static long Mix16MonoInterp64(Array source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int oldLVol, ref int rampVol)
 		{
 			if (_Mix16MonoInterp64 == null)
 			{
@@ -742,7 +742,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate long del_Mix16StereoInterp64(IntPtr source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol);
-		public static long Mix16StereoInterp64(sbyte[] source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
+		public static long Mix16StereoInterp64(Array source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
 		{
 			if (_Mix16StereoInterp64 == null)
 			{
@@ -772,7 +772,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary
 		/// </summary>
 		/********************************************************************/
 		private delegate long del_Mix16SurroundInterp64(IntPtr source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol);
-		public static long Mix16SurroundInterp64(sbyte[] source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
+		public static long Mix16SurroundInterp64(Array source, IntPtr dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
 		{
 			if (_Mix16SurroundInterp64 == null)
 			{

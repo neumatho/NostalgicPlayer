@@ -215,6 +215,14 @@
             <uap:DisplayName>Unreal Music File</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="stfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-sawteeth">.st</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Sawteeth</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

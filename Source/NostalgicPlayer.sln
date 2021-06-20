@@ -74,6 +74,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Oscilloscope", "Agents\Visu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NostalgicPlayerLibrary", "NostalgicPlayerLibrary", "{7EFEC704-0CA9-4F8F-A688-462E3AF20EDD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sawteeth", "Agents\Players\Sawteeth\Sawteeth.csproj", "{84187EBF-4E88-48E8-8266-E8151C842F31}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -283,6 +285,14 @@ Global
 		{8EC0C70B-47ED-439A-B3AA-FBE5D14222FD}.Release|x64.Build.0 = Release|Any CPU
 		{8EC0C70B-47ED-439A-B3AA-FBE5D14222FD}.Release|x86.ActiveCfg = Release|Any CPU
 		{8EC0C70B-47ED-439A-B3AA-FBE5D14222FD}.Release|x86.Build.0 = Release|Any CPU
+		{84187EBF-4E88-48E8-8266-E8151C842F31}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{84187EBF-4E88-48E8-8266-E8151C842F31}.Debug|x64.Build.0 = Debug|Any CPU
+		{84187EBF-4E88-48E8-8266-E8151C842F31}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{84187EBF-4E88-48E8-8266-E8151C842F31}.Debug|x86.Build.0 = Debug|Any CPU
+		{84187EBF-4E88-48E8-8266-E8151C842F31}.Release|x64.ActiveCfg = Release|Any CPU
+		{84187EBF-4E88-48E8-8266-E8151C842F31}.Release|x64.Build.0 = Release|Any CPU
+		{84187EBF-4E88-48E8-8266-E8151C842F31}.Release|x86.ActiveCfg = Release|Any CPU
+		{84187EBF-4E88-48E8-8266-E8151C842F31}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -316,6 +326,7 @@ Global
 		{D66E4C90-F37B-4860-9083-65042BA94E8B} = {B4FBB367-2703-4848-B5B1-7F93AE6C9A07}
 		{A6548A2F-EBD1-4E02-8778-D5009442551A} = {13CCC2C2-8C77-45DF-8A9B-249434467C53}
 		{8EC0C70B-47ED-439A-B3AA-FBE5D14222FD} = {8FD08CFB-4C51-4C0B-8594-971118BF99E9}
+		{84187EBF-4E88-48E8-8266-E8151C842F31} = {76C2DEA4-D72F-4931-9ACA-B2DDC33BDE98}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EA2EFEF5-9B3B-46F2-BE4B-077ED6CADA79}

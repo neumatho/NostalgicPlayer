@@ -26,8 +26,5 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers
 		Bidi = 0x0200,
 		Reverse = 0x0400,
 		Release = 0x1000,
-
-		// NostalgicPlayer specific flags
-		Speaker = 0x8000
 	}
 }

@@ -6,6 +6,8 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System;
+
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers
 {
 	/// <summary>
@@ -17,16 +19,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers
 		public bool Kick;					// True -> sample has to be restarted
 		public bool Active;					// True -> sample is playing
 		public SampleFlag Flags;			// 16/8 bits, looping/one-shot etc.
-		public sbyte[] Address;				// Address to the sample
-		public sbyte[] LoopAddress;			// Address to the loop point (mostly the same as Address above)
+		public Array Address;				// Address to the sample
+		public Array LoopAddress;			// Address to the loop point (mostly the same as Address above)
 		public uint Start;					// Start index
 		public uint Size;					// Sample size
 		public uint RepeatPosition;			// Loop start
 		public uint RepeatEnd;				// Loop end
 		public uint ReleaseLength;			// Release length
 		public uint Frequency;				// Current frequency
-		public int LeftVolume;				// Current volume in left speaker
-		public int RightVolume;				// Current volume in right speaker
+		public int Volume;					// Current volume
 		public int Panning;					// Current panning position
 		public int RampVolume;
 		public int LeftVolumeSelected;		// Volume factor in range 0-255

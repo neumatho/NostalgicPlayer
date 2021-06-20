@@ -52,29 +52,24 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		TrigLoop = 0x00000020,
 
 		/// <summary>
-		/// Speaker volume changed. Overrules Volume and Panning
-		/// </summary>
-		SpeakerVolume = 0x00000100,
-
-		/// <summary>
 		/// Volume changed
 		/// </summary>
-		Volume = 0x00000200,
+		Volume = 0x00000100,
 
 		/// <summary>
 		/// Panning changed
 		/// </summary>
-		Panning = 0x00000400,
+		Panning = 0x00000200,
 
 		/// <summary>
 		/// New frequency
 		/// </summary>
-		Frequency = 0x0001000,
+		Frequency = 0x0000400,
 
 		/// <summary>
 		/// Release the sample
 		/// </summary>
-		Release = 0x00002000,
+		Release = 0x00000800,
 
 		/// <summary>
 		/// This is a read-only bit. When a sample is playing in the channel, it's set

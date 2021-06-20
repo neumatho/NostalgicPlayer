@@ -22,6 +22,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 	internal class Mixer
 	{
 		private IModulePlayerAgent currentPlayer;
+		private bool bufferMode;
 
 		private bool playing;
 
@@ -86,6 +87,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 			// Get the player instance
 			currentPlayer = (IModulePlayerAgent)playerConfiguration.Loader.PlayerAgent;
+			bufferMode = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferMode) != 0;
 
 			// Get player information
 			moduleChannelNumber = currentPlayer.VirtualChannelCount;
@@ -413,14 +415,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 								chanFlags |= flagArray[t];
 							}
 
-							// If at least one channel has changed its information,
-							// tell visual agents about it
-							if (chanFlags != ChannelFlags.None)
-								currentVisualizer.TellAgentsAboutChannelChange();
+							if (bufferMode)
+								ticksLeft = todo;
+							else
+							{
+								// If at least one channel has changed its information,
+								// tell visual agents about it
+								if (chanFlags != ChannelFlags.None)
+									currentVisualizer.TellAgentsAboutChannelChange();
 
-							// Calculate the number of sample pair to mix before the
-							// player need to be called again
-							ticksLeft = (int)(mixerFrequency / currentPlayer.PlayingFrequency);
+								// Calculate the number of sample pair to mix before the
+								// player need to be called again
+								ticksLeft = (int)(mixerFrequency / currentPlayer.PlayingFrequency);
+							}
 
 							if (currentPlayer.HasEndReached)
 							{
@@ -442,9 +449,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					int left = Math.Min(ticksLeft, todo);
 
 					// And mix it
-					currentMixer.Mixing(mixBuffer, total, left, currentMode);
+					int leftInBuffer = currentMixer.Mixing(mixBuffer, total, left, currentMode);
 
 					// Calculate new values for the counter variables
+					if (bufferMode)
+					{
+						left = left - leftInBuffer;
+						ticksLeft = left;
+					}
+
 					ticksLeft -= left;
 					todo -= left;
 					total += (currentMode & MixerMode.Stereo) != 0 ? left << 1 : left;

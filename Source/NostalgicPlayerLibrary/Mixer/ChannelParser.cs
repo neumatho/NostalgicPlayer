@@ -79,30 +79,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				}
 			}
 
-			// Speaker volume set?
-			if ((newFlags & ChannelFlags.SpeakerVolume) != 0)
-			{
-				// Protect against clicks if volume variation is too high
-				if (Math.Abs(voiceInfo.LeftVolume - leftVolume) > 32)
-					voiceInfo.RampVolume = clickBuffer;
-
-				voiceInfo.LeftVolume = leftVolume;
-				voiceInfo.RightVolume = rightVolume;
-
-				newFlags &= ~(ChannelFlags.SpeakerVolume | ChannelFlags.Volume | ChannelFlags.Panning);
-				retFlags &= ~(ChannelFlags.SpeakerVolume | ChannelFlags.Volume | ChannelFlags.Panning);
-				infoFlags |= SampleFlag.Speaker;
-			}
-
 			// Change the volume?
 			if ((newFlags & ChannelFlags.Volume) != 0)
 			{
 				// Protect against clicks if volume variation is too high
-				if (Math.Abs(voiceInfo.LeftVolume - volume) > 32)
+				if (Math.Abs(voiceInfo.Volume - volume) > 32)
 					voiceInfo.RampVolume = clickBuffer;
 
-				voiceInfo.LeftVolume = volume;
-				voiceInfo.RightVolume = volume;
+				voiceInfo.Volume = volume;
 
 				newFlags &= ~ChannelFlags.Volume;
 			}

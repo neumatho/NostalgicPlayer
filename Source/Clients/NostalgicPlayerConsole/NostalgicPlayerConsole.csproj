@@ -35,6 +35,7 @@
     <ProjectReference Include="..\..\Agents\Players\MikMod\MikMod.csproj" />
     <ProjectReference Include="..\..\Agents\Players\ModTracker\ModTracker.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Sample\Sample.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\Sawteeth\Sawteeth.csproj" />
     <ProjectReference Include="..\..\Agents\SampleConverters\AudioIff\AudioIff.csproj" />
     <ProjectReference Include="..\..\Agents\SampleConverters\Iff16Sv\Iff16Sv.csproj" />
     <ProjectReference Include="..\..\Agents\SampleConverters\Iff8Svx\Iff8Svx.csproj" />

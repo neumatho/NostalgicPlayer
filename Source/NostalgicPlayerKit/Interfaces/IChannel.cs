@@ -6,6 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System;
 using Polycode.NostalgicPlayer.Kit.Containers;
 
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
@@ -16,13 +17,14 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	public interface IChannel
 	{
 		/// <summary>
-		/// Will start to play the sample in the channel
+		/// Will start to play the sample in the channel. If your player is
+		/// running in buffer mode, use this method to set the buffer
 		/// </summary>
 		/// <param name="adr">is a pointer to the sample in memory</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
 		/// <param name="length">is the length in samples of the sample</param>
 		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
-		void PlaySample(sbyte[] adr, uint startOffset, uint length, byte bit = 8);
+		void PlaySample(Array adr, uint startOffset, uint length, byte bit = 8);
 
 		/// <summary>
 		/// Will set the loop point in the sample
@@ -39,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
 		/// <param name="length">is the length in samples to loop</param>
 		/// <param name="type">is the type of the loop</param>
-		void SetLoop(sbyte[] adr, uint startOffset, uint length, ChannelLoopType type = ChannelLoopType.Normal);
+		void SetLoop(Array adr, uint startOffset, uint length, ChannelLoopType type = ChannelLoopType.Normal);
 
 		/// <summary>
 		/// Will change the volume

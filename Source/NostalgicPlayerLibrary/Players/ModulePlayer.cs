@@ -171,8 +171,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				return false;
 
 			// Tell all visuals to start
+			bool bufferMode = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferMode) != 0;
+
 			foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
+			{
+				if (bufferMode && (visualAgent is IChannelChangeVisualAgent))
+					continue;
+
 				visualAgent.InitVisual(StaticModuleInformation.Channels);
+			}
 
 			outputAgent.Play();
 

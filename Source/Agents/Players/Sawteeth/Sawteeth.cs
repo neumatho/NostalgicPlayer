@@ -7,86 +7,69 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using System.Runtime.InteropServices;
+using Polycode.NostalgicPlayer.Kit.Bases;
+using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Kit.Containers
+// This is needed to uniquely identify this agent
+[assembly: Guid("7A1D8541-C7AE-4A4B-85B1-66132CD5149F")]
+
+namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 {
 	/// <summary>
-	/// Holds information about a single position
+	/// NostalgicPlayer agent interface implementation
 	/// </summary>
-	public class PositionInfo
+	public class Sawteeth : AgentBase
 	{
+		private static readonly Guid agent1Id = Guid.Parse("8D072BAB-D67C-434D-AFCA-BCDB1ED1817A");
+
+		#region IAgent implementation
 		/********************************************************************/
 		/// <summary>
-		/// Constructor (used by module players)
+		/// Returns the name of this agent
 		/// </summary>
 		/********************************************************************/
-		public PositionInfo(byte speed, ushort bpm, TimeSpan time, object extra = null)
+		public override string Name => Resources.IDS_SAW_NAME;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns a description of this agent
+		/// </summary>
+		/********************************************************************/
+		public override string Description => Resources.IDS_SAW_DESCRIPTION;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns all the formats/types this agent supports
+		/// </summary>
+		/********************************************************************/
+		public override AgentSupportInfo[] AgentInformation
 		{
-			Speed = speed;
-			Bpm = bpm;
-			Time = time;
-			ExtraInfo = extra;
+			get
+			{
+				return new AgentSupportInfo[]
+				{
+					new AgentSupportInfo(Resources.IDS_SAW_NAME_AGENT1, Resources.IDS_SAW_DESCRIPTION_AGENT1, agent1Id)
+				};
+			}
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructor (used by sample players)
+		/// Creates a new worker instance
 		/// </summary>
 		/********************************************************************/
-		public PositionInfo(TimeSpan time, object extra = null)
+		public override IAgentWorker CreateInstance(Guid typeId)
 		{
-			Time = time;
-			ExtraInfo = extra;
+			return new SawteethWorker();
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Holds the speed at the current position
-		/// </summary>
-		/********************************************************************/
-		public byte Speed
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Holds the BPM at the current position
-		/// </summary>
-		/********************************************************************/
-		public ushort Bpm
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Holds the time at the current position
-		/// </summary>
-		/********************************************************************/
-		public TimeSpan Time
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Holds some extra information if needed
-		/// </summary>
-		/********************************************************************/
-		public object ExtraInfo
-		{
-			get;
-		}
+		#endregion
 	}
 }

@@ -24,6 +24,13 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// <summary>
 		/// Set this if your player can change to a certain position
 		/// </summary>
-		SetPosition = 0x0001
+		SetPosition = 0x0001,
+
+		/// <summary>
+		/// If this flag is set, the player is switched to buffer mode,
+		/// which means your Play() method will only be called, when a
+		/// new buffer needs to be set
+		/// </summary>
+		BufferMode = 0x1000
 	}
 }

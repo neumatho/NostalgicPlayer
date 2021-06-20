@@ -62,8 +62,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// This is the main mixer method
 		/// </summary>
 		/********************************************************************/
-		public override void Mixing(int[] dest, int offset, int todo, MixerMode mode)
+		public override int Mixing(int[] dest, int offset, int todo, MixerMode mode)
 		{
+			int left = todo;
+
 			// Loop through all the channels and mix the samples into the buffer
 			for (int t = 0; t < channelNumber; t++)
 			{
@@ -86,50 +88,36 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					if ((vnf.Flags & SampleFlag.Reverse) != 0)
 						vnf.Increment = -vnf.Increment;
 
-					int lVol, rVol;
+					int vol;
 
 					if (vnf.Enabled)
-					{
-						lVol = vnf.LeftVolume * masterVolume / 256;
-						rVol = vnf.RightVolume * masterVolume / 256;
-					}
+						vol = vnf.Volume * masterVolume / 256;
 					else
-					{
-						lVol = 0;
-						rVol = 0;
-					}
+						vol = 0;
 
 					vnf.OldLeftVolume = vnf.LeftVolumeSelected;
 					vnf.OldRightVolume = vnf.RightVolumeSelected;
 
 					if ((mode & MixerMode.Stereo) != 0)
 					{
-						if ((vnf.Flags & SampleFlag.Speaker) != 0)
+						if (vnf.Panning != (int)ChannelPanning.Surround)
 						{
-							vnf.LeftVolumeSelected = lVol;
-							vnf.RightVolumeSelected = rVol;
+							// Stereo, calculate the volume with panning
+							int pan = (((vnf.Panning - 128) * stereoSeparation) / 128) + 128;
+
+							vnf.LeftVolumeSelected = (vol * ((int)ChannelPanning.Right - pan)) >> 8;
+							vnf.RightVolumeSelected = (vol * pan) >> 8;
 						}
 						else
 						{
-							if (vnf.Panning != (int)ChannelPanning.Surround)
-							{
-								// Stereo, calculate the volume with panning
-								int pan = (((vnf.Panning - 128) * stereoSeparation) / 128) + 128;
-
-								vnf.LeftVolumeSelected = (lVol * ((int)ChannelPanning.Right - pan)) >> 8;
-								vnf.RightVolumeSelected = (lVol * pan) >> 8;
-							}
-							else
-							{
-								// Dolby Surround
-								vnf.LeftVolumeSelected = vnf.RightVolumeSelected = lVol / 2;
-							}
+							// Dolby Surround
+							vnf.LeftVolumeSelected = vnf.RightVolumeSelected = vol / 2;
 						}
 					}
 					else
 					{
 						// Well, just mono
-						vnf.LeftVolumeSelected = lVol;
+						vnf.LeftVolumeSelected = vol;
 					}
 
 					idxSize = vnf.Size != 0 ? ((long)vnf.Size << Native.FRACBITS) - 1 : 0;
@@ -137,9 +125,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					idxLoopPos = (long)vnf.RepeatPosition << Native.FRACBITS;
 					idxReleaseEnd = vnf.ReleaseLength != 0 ? ((long)vnf.ReleaseLength << Native.FRACBITS) - 1 : 0;
 
-					AddChannel(ref vnf, dest, offset, todo, mode);
+					left = AddChannel(ref vnf, dest, offset, todo, mode);
 				}
 			}
+
+			return left;
 		}
 
 
@@ -149,15 +139,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Mix a channel into the buffer
 		/// </summary>
 		/********************************************************************/
-		private void AddChannel(ref VoiceInfo vnf, int[] buf, int offset, int todo, MixerMode mode)
+		private int AddChannel(ref VoiceInfo vnf, int[] buf, int offset, int todo, MixerMode mode)
 		{
-			sbyte[] s;
+			Array s;
 
 			if ((s = vnf.Address) == null)
 			{
 				vnf.Current = 0;
 				vnf.Active = false;
-				return;
+				return todo;
 			}
 
 			// Update the 'current' index so the sample loops, or
@@ -295,7 +285,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 				long endPos = vnf.Current + done * vnf.Increment;
 
-				if ((vnf.LeftVolume != 0) || (vnf.RightVolume != 0))
+				if (vnf.Volume != 0)
 				{
 					GCHandle pinnedBuf = GCHandle.Alloc(buf, GCHandleType.Pinned);
 
@@ -455,6 +445,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				todo -= done;
 				offset += (mode & MixerMode.Stereo) != 0 ? done << 1 : done;
 			}
+
+			return todo;
 		}
 	}
 }

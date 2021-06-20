@@ -215,7 +215,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 			long totalTime = totalLength * 1000 / formatInfo.Frequency / formatInfo.Channels;
 
 			// Now build the list
-			PositionInfo[] positionInfo = Enumerable.Range(0, 100).Select(i => new PositionInfo(new TimeSpan(i * (totalTime / 100) * TimeSpan.TicksPerMillisecond), null)).ToArray();
+			PositionInfo[] positionInfo = Enumerable.Range(0, 100).Select(i => new PositionInfo(new TimeSpan(i * (totalTime / 100) * TimeSpan.TicksPerMillisecond))).ToArray();
 
 			return new DurationInfo(new TimeSpan(totalTime * TimeSpan.TicksPerMillisecond), positionInfo);
 		}
