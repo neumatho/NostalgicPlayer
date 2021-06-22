@@ -49,6 +49,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			navigator.Pages[2].Text = Resources.IDS_SETTINGS_AGENTS_TAB_OUTPUT;
 			navigator.Pages[3].Text = Resources.IDS_SETTINGS_AGENTS_TAB_SAMPLECONVERTERS;
 			navigator.Pages[4].Text = Resources.IDS_SETTINGS_AGENTS_TAB_VISUALS;
+			navigator.Pages[5].Text = Resources.IDS_SETTINGS_AGENTS_TAB_DECRUNCHERS;
 		}
 
 		#region ISettingsPage implementation
@@ -68,6 +69,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			outputListControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, "Output", changedEnableStates);
 			sampleConvertersListControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, "SampleConverters", changedEnableStates);
 			visualsListControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, "Visuals", changedEnableStates);
+			decrunchersListUserControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, windowSettings, "Decrunchers", changedEnableStates);
 		}
 
 
@@ -95,6 +97,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			outputListControl.ReadSettings();
 			sampleConvertersListControl.ReadSettings();
 			visualsListControl.ReadSettings();
+			decrunchersListUserControl.ReadSettings();
 		}
 
 
@@ -113,6 +116,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			outputListControl.ReadWindowSettings();
 			sampleConvertersListControl.ReadWindowSettings();
 			visualsListControl.ReadWindowSettings();
+			decrunchersListUserControl.ReadWindowSettings();
 		}
 
 
@@ -130,6 +134,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			outputListControl.WriteSettings();
 			sampleConvertersListControl.WriteSettings();
 			visualsListControl.WriteSettings();
+			decrunchersListUserControl.WriteSettings();
 		}
 
 
@@ -148,6 +153,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			outputListControl.WriteWindowSettings();
 			sampleConvertersListControl.WriteWindowSettings();
 			visualsListControl.WriteWindowSettings();
+			decrunchersListUserControl.WriteWindowSettings();
 		}
 
 
@@ -164,6 +170,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			outputListControl.CancelSettings();
 			sampleConvertersListControl.CancelSettings();
 			visualsListControl.CancelSettings();
+			decrunchersListUserControl.CancelSettings();
 		}
 
 
@@ -180,6 +187,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			outputListControl.RefreshWindow();
 			sampleConvertersListControl.RefreshWindow();
 			visualsListControl.RefreshWindow();
+			decrunchersListUserControl.RefreshWindow();
 		}
 		#endregion
 	}

@@ -73,6 +73,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to load and depack the file ({0}).
+        ///
+        ///Depacker {1} returned the following error:
+        ///{2}..
+        /// </summary>
+        internal static string IDS_ERR_DEPACK_MODULE {
+            get {
+                return ResourceManager.GetString("IDS_ERR_DEPACK_MODULE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A file error occurred on file ({0}) with error 0x{1}.
         ///{2}..
         /// </summary>

@@ -50,7 +50,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 			/// <summary>
 			/// Show what is playing in a window
 			/// </summary>
-			Visuals
+			Visuals,
+
+			/// <summary>
+			/// Can depack a single file
+			/// </summary>
+			FileDecrunchers
 		}
 
 		private class AgentLoadInfo
@@ -459,6 +464,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 
 			if (worker is IVisualAgent)
 				return AgentType.Visuals;
+
+			if (worker is IFileDecruncherAgent)
+				return AgentType.FileDecrunchers;
 
 			return null;
 		}

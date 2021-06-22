@@ -1,0 +1,50 @@
+﻿/******************************************************************************/
+/* This source, or parts thereof, may be used in any software as long the     */
+/* license of NostalgicPlayer is keep. See the LICENSE file for more          */
+/* information.                                                               */
+/*                                                                            */
+/* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
+/* All rights reserved.                                                       */
+/******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Streams;
+
+namespace Polycode.NostalgicPlayer.Kit.Bases
+{
+	/// <summary>
+	/// Base class that can be used for file decruncher agents
+	/// </summary>
+	public abstract class FileDecruncherAgentBase : IFileDecruncherAgent
+	{
+		#region IFileDecruncherAgent implementation
+		/********************************************************************/
+		/// <summary>
+		/// Test the file to see if it could be identified
+		/// </summary>
+		/********************************************************************/
+		public abstract AgentResult Identify(ModuleStream moduleStream);
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the size of the depacked data
+		/// </summary>
+		/********************************************************************/
+		public virtual int GetDepackedLength(ModuleStream moduleStream)
+		{
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Depack the file and store the result in the buffer given
+		/// </summary>
+		/********************************************************************/
+		public abstract AgentResult Depack(byte[] source, byte[] destination, int safetySize, out string errorMessage);
+		#endregion
+	}
+}

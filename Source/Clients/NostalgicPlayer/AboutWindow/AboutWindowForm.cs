@@ -61,6 +61,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 		private string[] sampleConverters;
 		private string[] moduleConverters;
 		private string[] visualAgents;
+		private string[] decruncherAgents;
 
 		private string[] agentsToShow;
 		private int agentIndex;
@@ -182,6 +183,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 			sampleConverters = FindAgents(agentManager, Manager.AgentType.SampleConverters);
 			moduleConverters = FindAgents(agentManager, Manager.AgentType.ModuleConverters);
 			visualAgents = FindAgentTypes(agentManager, Manager.AgentType.Visuals);
+			decruncherAgents = FindAgentTypes(agentManager, Manager.AgentType.FileDecrunchers);
 		}
 
 
@@ -527,6 +529,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 													str = str.Substring(2);
 
 													agentsToShow = visualAgents;
+													agentIndex = 0;
+
+													showMode = Mode.Agents;
+													moreCommands = false;
+													break;
+												}
+
+												// Show decrunchers
+												case 'D':
+												{
+													str = str.Substring(2);
+
+													agentsToShow = decruncherAgents;
 													agentIndex = 0;
 
 													showMode = Mode.Agents;

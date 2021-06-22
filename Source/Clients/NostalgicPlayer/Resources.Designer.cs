@@ -1237,6 +1237,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Decrunchers.
+        /// </summary>
+        internal static string IDS_SETTINGS_AGENTS_TAB_DECRUNCHERS {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_AGENTS_TAB_DECRUNCHERS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Formats.
         /// </summary>
         internal static string IDS_SETTINGS_AGENTS_TAB_FORMATS {

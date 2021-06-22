@@ -42,6 +42,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.sampleConvertersListControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLists.SampleConvertersListUserControl();
 			this.navigatorVisualsPage = new Krypton.Navigator.KryptonPage();
 			this.visualsListControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLists.VisualsListUserControl();
+			this.navigatorDecrunchersPage = new Krypton.Navigator.KryptonPage();
+			this.decrunchersListUserControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLists.DecrunchersListUserControl();
 			((System.ComponentModel.ISupportInitialize)(this.navigator)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.navigatorFormatsPage)).BeginInit();
 			this.navigatorFormatsPage.SuspendLayout();
@@ -53,6 +55,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.navigatorSampleConvertersPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.navigatorVisualsPage)).BeginInit();
 			this.navigatorVisualsPage.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.navigatorDecrunchersPage)).BeginInit();
+			this.navigatorDecrunchersPage.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// navigator
@@ -70,7 +74,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
             this.navigatorPlayersPage,
             this.navigatorOutputPage,
             this.navigatorSampleConvertersPage,
-            this.navigatorVisualsPage});
+            this.navigatorVisualsPage,
+            this.navigatorDecrunchersPage});
 			this.navigator.SelectedIndex = 0;
 			this.navigator.Size = new System.Drawing.Size(592, 332);
 			this.navigator.StateCommon.Tab.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -186,6 +191,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.visualsListControl.Size = new System.Drawing.Size(100, 100);
 			this.visualsListControl.TabIndex = 0;
 			// 
+			// navigatorDecrunchersPage
+			// 
+			this.navigatorDecrunchersPage.AutoHiddenSlideSize = new System.Drawing.Size(200, 200);
+			this.navigatorDecrunchersPage.Controls.Add(this.decrunchersListUserControl);
+			this.navigatorDecrunchersPage.Flags = 65534;
+			this.navigatorDecrunchersPage.LastVisibleSet = true;
+			this.navigatorDecrunchersPage.MinimumSize = new System.Drawing.Size(50, 50);
+			this.navigatorDecrunchersPage.Name = "navigatorDecrunchersPage";
+			this.navigatorDecrunchersPage.Size = new System.Drawing.Size(590, 307);
+			this.navigatorDecrunchersPage.Text = "";
+			this.navigatorDecrunchersPage.ToolTipTitle = "Page ToolTip";
+			this.navigatorDecrunchersPage.UniqueName = "2fb9a7d48cd04dbc8acae36b8f5f1a08";
+			// 
+			// decrunchersListUserControl
+			// 
+			this.decrunchersListUserControl.BackColor = System.Drawing.Color.Transparent;
+			this.decrunchersListUserControl.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.decrunchersListUserControl.Location = new System.Drawing.Point(0, 0);
+			this.decrunchersListUserControl.Name = "decrunchersListUserControl";
+			this.decrunchersListUserControl.Size = new System.Drawing.Size(590, 307);
+			this.decrunchersListUserControl.TabIndex = 0;
+			// 
 			// AgentsPageControl
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -204,6 +231,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.navigatorSampleConvertersPage.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.navigatorVisualsPage)).EndInit();
 			this.navigatorVisualsPage.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.navigatorDecrunchersPage)).EndInit();
+			this.navigatorDecrunchersPage.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -222,5 +251,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLists.VisualsListUserControl visualsListControl;
 		private Krypton.Navigator.KryptonPage navigatorFormatsPage;
 		private Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLists.FormatsListUserControl formatsListControl;
+		private Krypton.Navigator.KryptonPage navigatorDecrunchersPage;
+		private AgentLists.DecrunchersListUserControl decrunchersListUserControl;
 	}
 }

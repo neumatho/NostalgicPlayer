@@ -276,6 +276,10 @@ Formats supported:
 
 ¤U¤I
 
+¤BDecrunchers installed:
+
+¤U¤D
+
 ¤B¤CThank you for using NostalgicPlayer!
 
 
@@ -570,6 +574,9 @@ what has changed since your previous version.</value>
   </data>
   <data name="IDS_SETTINGS_AGENTS_SETTINGS" xml:space="preserve">
     <value>Settings</value>
+  </data>
+  <data name="IDS_SETTINGS_AGENTS_TAB_DECRUNCHERS" xml:space="preserve">
+    <value>Decrunchers</value>
   </data>
   <data name="IDS_SETTINGS_AGENTS_TAB_FORMATS" xml:space="preserve">
     <value>Formats</value>
