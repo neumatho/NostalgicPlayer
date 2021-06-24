@@ -310,6 +310,8 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 				HasEndReached = false;
 
+				DateTime startTime = DateTime.Now;
+
 				for (;;)
 				{
 					if (prevPos < GetSongPosition())
@@ -338,6 +340,10 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 					// Add the tick time
 					total += (1000.0f / (currentBpm / 2.5f));
+
+					// Check for time out
+					if ((DateTime.Now - startTime).Seconds >= 5)
+						throw new Exception(Resources.IDS_ERR_DURATION_TIMEOUT);
 				}
 
 				// Calculate the total time of the song
