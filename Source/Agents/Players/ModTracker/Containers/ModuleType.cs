@@ -21,6 +21,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		SoundTrackerIX,
 		MasterSoundTracker10,
 		SoundTracker2x,
+		ModsGrave,
 		NoiseTracker,
 		StarTrekker,
 		StarTrekker8,

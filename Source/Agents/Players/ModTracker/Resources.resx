@@ -155,6 +155,13 @@ This tracker is from the PC, but uses the same file format as the other mod trac
 
 This player plays module from the Atari Octalyser. It is a 6 and 8 channel ProTracker clone and using the same file format.</value>
   </data>
+  <data name="IDS_MOD_DESCRIPTION_AGENT15" xml:space="preserve">
+    <value>This format is very rare. The format is created by the Mod's Grave tool, which convert 669 modules to a 8 channel mod file with the M.K. signature. This make it very hard to detect properly.
+
+The converter is not that good and some modules simply sounds bad, because some effects are not converted properly. Even some modules stop too early, because of added position jump and pattern break effects.
+
+The detection routine is created by Alice Lachesis for the MikMod player, but I have copied it into this player instead. A big thanks for all the research you have made for this.</value>
+  </data>
   <data name="IDS_MOD_DESCRIPTION_AGENT2" xml:space="preserve">
     <value>Original player by Karsten Obarski.
 Converted to C# by Thomas Neumann.
@@ -252,6 +259,9 @@ This is a NoiseTracker clone, but improved by the possibility to have synth samp
   </data>
   <data name="IDS_MOD_NAME_AGENT14" xml:space="preserve">
     <value>Atari Octalyser</value>
+  </data>
+  <data name="IDS_MOD_NAME_AGENT15" xml:space="preserve">
+    <value>Mod's Grave</value>
   </data>
   <data name="IDS_MOD_NAME_AGENT2" xml:space="preserve">
     <value>Ultimate SoundTracker 1.8 - 2.0</value>

@@ -135,6 +135,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This format is very rare. The format is created by the Mod&apos;s Grave tool, which convert 669 modules to a 8 channel mod file with the M.K. signature. This make it very hard to detect properly.
+        ///
+        ///The converter is not that good and some modules simply sounds bad, because some effects are not converted properly. Even some modules stop too early, because of added position jump and pattern break effects.
+        ///
+        ///The detection routine is created by Alice Lachesis for the MikMod player, but I have copied it into this pl [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string IDS_MOD_DESCRIPTION_AGENT15 {
+            get {
+                return ResourceManager.GetString("IDS_MOD_DESCRIPTION_AGENT15", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Original player by Karsten Obarski.
         ///Converted to C# by Thomas Neumann.
         ///
@@ -361,6 +374,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         internal static string IDS_MOD_NAME_AGENT14 {
             get {
                 return ResourceManager.GetString("IDS_MOD_NAME_AGENT14", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mod&apos;s Grave.
+        /// </summary>
+        internal static string IDS_MOD_NAME_AGENT15 {
+            get {
+                return ResourceManager.GetString("IDS_MOD_NAME_AGENT15", resourceCulture);
             }
         }
         

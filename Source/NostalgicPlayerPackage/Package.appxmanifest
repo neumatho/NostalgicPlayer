@@ -223,6 +223,14 @@
             <uap:DisplayName>Sawteeth</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="wowfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-wow">.wow</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Mod&apos;s Grave</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

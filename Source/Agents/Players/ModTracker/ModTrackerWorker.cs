@@ -41,7 +41,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			{ ModTracker.Agent11Id, ModuleType.ProTracker },
 			{ ModTracker.Agent12Id, ModuleType.FastTracker },
 			{ ModTracker.Agent13Id, ModuleType.MultiTracker },
-			{ ModTracker.Agent14Id, ModuleType.Octalyser }
+			{ ModTracker.Agent14Id, ModuleType.Octalyser },
+			{ ModTracker.Agent15Id, ModuleType.ModsGrave }
 		};
 
 		private const int NumberOfNotes = 7 * 12;
@@ -121,7 +122,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "mod", "mtm" };
+		public override string[] FileExtensions => new [] { "mod", "mtm", "wow" };
 
 
 
@@ -354,7 +355,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					{
 						// If we got both a Bxx and Dxx command
 						// on the same line, don't end the module
-						if (!gotBreak)
+						if (!gotBreak || (breakPos == 0))
 							endReached = true;
 
 						gotJump = false;
@@ -731,7 +732,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				return ModuleType.Unknown;
 
 			// Find the patterns used
-			byte[] usedPatterns = FindUsedPatterns(moduleStream, songLen);
+			byte[] pos = new byte[128];
+			moduleStream.Read(pos, 0, 128);
+
+			byte[] usedPatterns = FindUsedPatterns(pos, songLen);
 			if (usedPatterns.FirstOrDefault(p => p > 64) != 0)
 				return ModuleType.Unknown;
 
@@ -984,6 +988,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 			if ((mark == 0x4d2e4b2e) || (mark == 0x4d214b21) || (mark == 0x4d264b21))       // M.K. || M!K! || M&K!
 			{
+				bool maybeWow = true;
+				uint totalSampleLength = 0;
+
 				// Now we know it's either a Noise- or ProTracker module, but we
 				// need to know exactly which type it is
 				retVal = ModuleType.NoiseTracker;
@@ -993,108 +1000,157 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				byte songLen = moduleStream.Read_UINT8();
 
 				// Check restart byte
-				if (moduleStream.Read_UINT8() > 126)
-					retVal = ModuleType.ProTracker;
-
-				// Check the patterns for any BPM speed effects or ExtraEffect effects
-				// just to be sure it's not a NoiseTracker module.
-				//
-				// Also check to see if it's a UNIC Tracker module. If so, don't
-				// recognize it
-				//
-				// Find the patterns used
-				byte[] usedPatterns = FindUsedPatterns(moduleStream, songLen);
-
-				// Skip mark
-				moduleStream.Seek(4, SeekOrigin.Current);
-
-				for (int i = 0, p = 0; i < usedPatterns.Length; p++)
+				byte restartByte = moduleStream.Read_UINT8();
+				if (restartByte != 0)
 				{
-					if (p == usedPatterns[i])
+					// Mod's Grave .WOW files always use 0x00 for the "restart" byte
+					maybeWow = false;
+
+					if (restartByte > 126)
+						retVal = ModuleType.ProTracker;
+				}
+
+				// Find the patterns used
+				byte[] pos = new byte[128];
+				moduleStream.Read(pos, 0, 128);
+
+				if (maybeWow)
+				{
+					// Check the sample lengths and accumulate them
+					for (int i = 0; i < 31; i++)
 					{
-						for (int j = 0; j < 4 * 64; j++)
+						moduleStream.Seek(20 + i * 30 + 22, SeekOrigin.Begin);
+
+						ushort sampleLength = moduleStream.Read_B_UINT16();
+						ushort fineTuneVolume = moduleStream.Read_B_UINT16();
+
+						totalSampleLength += (uint)sampleLength << 1;
+						if ((sampleLength != 0) && (fineTuneVolume != 0x0040))
 						{
-							byte a = moduleStream.Read_UINT8();
-							byte b = moduleStream.Read_UINT8();
-							byte c = moduleStream.Read_UINT8();
-							byte d = moduleStream.Read_UINT8();
-
-							// Check the data to see if it's not a UNIC Tracker module
-							//
-							// Is sample > 31
-							byte s = (byte)((a & 0xf0) | ((c & 0xf0) >> 4));
-							if (s > 31)
-							{
-								retVal = ModuleType.Unknown;
-								goto stopLoop;
-							}
-
-							// Is pitch between 28 and 856 (increased to 1750, because of Oh Yeah.mod)
-							uint temp = (((uint)a & 0x0f) << 8) | b;
-							if ((temp != 0) && ((temp < 28) || (temp > 1750)))
-							{
-								retVal = ModuleType.Unknown;
-								goto stopLoop;
-							}
-
-							Effect effect = (Effect)(c & 0x0f);
-
-							switch (effect)
-							{
-								case Effect.Tremolo:
-								case Effect.SampleOffset:
-								{
-									retVal = ModuleType.ProTracker;
-									goto stopLoop;
-								}
-
-								// This check has been uncommented, because it is not very
-								// secure way, e.g. Klisje Paa Klisje was wrongly detected
-								// as ProTracker, which it isn't
-/*								case Effect.SetSpeed:
-								{
-									if (d > 31)
-									{
-										retVal = ModuleType.ProTracker;
-										goto stopLoop;
-									}
-									break;
-								}
-*/
-								case Effect.ExtraEffect:
-								{
-									if (d >= 16)
-									{
-										retVal = ModuleType.ProTracker;
-										goto stopLoop;
-									}
-									break;
-								}
-							}
+							// Mod's Grave .WOW files are converted from .669 and thus
+							// do not have sample fine tune or volume
+							maybeWow = false;
+							break;
 						}
-
-						i++;
 					}
 				}
 
-stopLoop:
-				if ((retVal != ModuleType.Unknown) && (retVal != ModuleType.ProTracker))
+				// Mod's Grave .WOW files have an M.K. signature but they're actually 8 channel.
+				// The only way to distinguish them from a 4-channel M.K. file is to check the
+				// length of the .MOD against the expected length of a .WOW file with the same
+				// number of patterns as this file. To make things harder, Mod's Grave occasionally
+				// adds an extra byte to .WOW files and sometimes .MOD authors pad their files.
+				// Prior checks for WOW behavior should help eliminate false positives here.
+				//
+				// Also note the length check relies on counting samples with a length word=1 to work.
+				if (maybeWow)
 				{
-					// Well, now we want to be really really sure it's
-					// not a NoiseTracker module, so we check the sample
-					// information to see if some samples has a fine tune
-					moduleStream.Seek(44, SeekOrigin.Begin);
+					int maxPat = pos.Max() + 1;
 
-					for (int i = 0; i < 31; i++)
+					uint wowLength = (uint)(1084 + totalSampleLength + (maxPat * 64 * 4 * 8));
+					if ((moduleStream.Length & ~1) == wowLength)
+						retVal = ModuleType.ModsGrave;
+				}
+
+				if (retVal != ModuleType.ModsGrave)
+				{
+					// Check the patterns for any BPM speed effects or ExtraEffect effects
+					// just to be sure it's not a NoiseTracker module.
+					//
+					// Also check to see if it's a UNIC Tracker module. If so, don't
+					// recognize it
+					moduleStream.Seek(1084, SeekOrigin.Begin);
+
+					byte[] usedPatterns = FindUsedPatterns(pos, songLen);
+
+					for (int i = 0, p = 0; i < usedPatterns.Length; p++)
 					{
-						if ((moduleStream.Read_UINT8() & 0x0f) != 0)
+						if (p == usedPatterns[i])
 						{
-							retVal = ModuleType.ProTracker;
-							break;
-						}
+							for (int j = 0; j < 4 * 64; j++)
+							{
+								byte a = moduleStream.Read_UINT8();
+								byte b = moduleStream.Read_UINT8();
+								byte c = moduleStream.Read_UINT8();
+								byte d = moduleStream.Read_UINT8();
 
-						// Seek to next sample
-						moduleStream.Seek(30 - 1, SeekOrigin.Current);
+								// Check the data to see if it's not a UNIC Tracker module
+								//
+								// Is sample > 31
+								byte s = (byte)((a & 0xf0) | ((c & 0xf0) >> 4));
+								if (s > 31)
+								{
+									retVal = ModuleType.Unknown;
+									goto stopLoop;
+								}
+
+								// Is pitch between 28 and 856 (increased to 1750, because of Oh Yeah.mod)
+								uint temp = (((uint)a & 0x0f) << 8) | b;
+								if ((temp != 0) && ((temp < 28) || (temp > 1750)))
+								{
+									retVal = ModuleType.Unknown;
+									goto stopLoop;
+								}
+
+								Effect effect = (Effect)(c & 0x0f);
+
+								switch (effect)
+								{
+									case Effect.Tremolo:
+									case Effect.SampleOffset:
+									{
+										retVal = ModuleType.ProTracker;
+										goto stopLoop;
+									}
+
+									// This check has been uncommented, because it is not very
+									// secure way, e.g. Klisje Paa Klisje was wrongly detected
+									// as ProTracker, which it isn't
+/*									case Effect.SetSpeed:
+									{
+										if (d > 31)
+										{
+											retVal = ModuleType.ProTracker;
+											goto stopLoop;
+										}
+										break;
+									}
+*/
+									case Effect.ExtraEffect:
+									{
+										if (d >= 16)
+										{
+											retVal = ModuleType.ProTracker;
+											goto stopLoop;
+										}
+										break;
+									}
+								}
+							}
+
+							i++;
+						}
+					}
+
+stopLoop:
+					if ((retVal != ModuleType.Unknown) && (retVal != ModuleType.ProTracker))
+					{
+						// Well, now we want to be really really sure it's
+						// not a NoiseTracker module, so we check the sample
+						// information to see if some samples has a fine tune
+						moduleStream.Seek(44, SeekOrigin.Begin);
+
+						for (int i = 0; i < 31; i++)
+						{
+							if ((moduleStream.Read_UINT8() & 0x0f) != 0)
+							{
+								retVal = ModuleType.ProTracker;
+								break;
+							}
+
+							// Seek to next sample
+							moduleStream.Seek(30 - 1, SeekOrigin.Current);
+						}
 					}
 				}
 			}
@@ -1133,11 +1189,8 @@ stopLoop:
 		/// actual played
 		/// </summary>
 		/********************************************************************/
-		private byte[] FindUsedPatterns(ModuleStream moduleStream, byte songLen)
+		private byte[] FindUsedPatterns(byte[] pos, byte songLen)
 		{
-			byte[] pos = new byte[128];
-			moduleStream.Read(pos, 0, 128);
-
 			return pos.Take(songLen).Distinct().OrderBy(b => b).ToArray();
 		}
 
@@ -1155,7 +1208,7 @@ stopLoop:
 				byte[] buf = new byte[23];
 
 				ModuleStream moduleStream = fileInfo.ModuleStream;
-				Encoding encoder = IsPcTracker() ? EncoderCollection.Dos : currentModuleType == ModuleType.Octalyser ? EncoderCollection.Atari : EncoderCollection.Amiga;
+				Encoding encoder = IsPcTracker() || (currentModuleType == ModuleType.ModsGrave) ? EncoderCollection.Dos : currentModuleType == ModuleType.Octalyser ? EncoderCollection.Atari : EncoderCollection.Amiga;
 
 				// Find out the number of samples
 				sampleNum = (ushort)((currentModuleType <= ModuleType.SoundTracker2x) ? 15 : 31);
@@ -1206,7 +1259,7 @@ stopLoop:
 						repeatLength = (ushort)(length - repeatStart);
 
 					// Do the recognized format support fine tune?
-					if (IsSoundTracker() || IsNoiseTracker())
+					if (IsSoundTracker() || IsNoiseTracker() || (currentModuleType == ModuleType.ModsGrave))
 						fineTune = 0;
 
 					if (moduleStream.EndOfStream)
@@ -1304,7 +1357,7 @@ stopLoop:
 				patternLength = 64;
 
 				// Find the number of channels used
-				if (currentModuleType == ModuleType.StarTrekker8)
+				if ((currentModuleType == ModuleType.StarTrekker8) || (currentModuleType == ModuleType.ModsGrave))
 					channelNum = 8;
 				else
 				{
@@ -2480,7 +2533,7 @@ stopLoop:
 					{
 						case ExtraEffect.SetFilter:
 						{
-							if (!IsPcTracker() && (currentModuleType != ModuleType.Octalyser))
+							if (!IsPcTracker() && (currentModuleType != ModuleType.Octalyser) && (currentModuleType != ModuleType.ModsGrave))
 								FilterOnOff(modChan);
 
 							break;
@@ -2530,7 +2583,7 @@ stopLoop:
 
 						case ExtraEffect.KarplusStrong:
 						{
-							if (currentModuleType != ModuleType.Octalyser)
+							if ((currentModuleType != ModuleType.Octalyser) && (currentModuleType != ModuleType.ModsGrave))
 							{
 								if (IsPcTracker())
 									SetPanning(chan, modChan, (ushort)((modChan.TrackLine.EffectArg & 0x0f) << 4));
@@ -3372,15 +3425,6 @@ stopLoop:
 				// New trackers
 				if (newSpeed > 0)
 				{
-					if ((newSpeed == 255) && !IsPcTracker())
-					{
-						// Going Away.mod sets the tempo to 255, but I think that is a typo,
-						// because the modules run too fast. If that's the case, I set the
-						// speed to 15 instead. I do not think that there are so many
-						// modules that use tempo 255
-						newSpeed &= 0x0f;
-					}
-
 					if (newSpeed >= 32)
 						ChangeTempo(newSpeed);
 					else
