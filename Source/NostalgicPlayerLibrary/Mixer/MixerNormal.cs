@@ -123,7 +123,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					idxSize = vnf.Size != 0 ? ((long)vnf.Size << Native.FRACBITS) - 1 : 0;
 					idxLoopEnd = vnf.RepeatEnd != 0 ? ((long)vnf.RepeatEnd << Native.FRACBITS) - 1 : 0;
 					idxLoopPos = (long)vnf.RepeatPosition << Native.FRACBITS;
-					idxReleaseEnd = vnf.ReleaseLength != 0 ? ((long)vnf.ReleaseLength << Native.FRACBITS) - 1 : 0;
+					idxReleaseEnd = vnf.ReleaseEnd != 0 ? ((long)vnf.ReleaseEnd << Native.FRACBITS) - 1 : 0;
 
 					left = AddChannel(ref vnf, dest, offset, todo, mode);
 				}
@@ -206,10 +206,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 							s = vnf.Address = vnf.LoopAddress;
 
 							// Should we release the sample?
-							if (vnf.ReleaseLength != 0)
+							if (vnf.ReleaseEnd != 0)
 							{
 								// Yes, so set the current position
-								vnf.Current = vnf.Current - idxLoopEnd;
+								vnf.Current = idxLoopPos + (vnf.Current - idxLoopEnd);
 								vnf.Flags |= SampleFlag.Release;
 								vnf.Flags &= ~SampleFlag.Loop;
 							}

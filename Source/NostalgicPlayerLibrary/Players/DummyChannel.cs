@@ -54,6 +54,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 		/********************************************************************/
 		/// <summary>
+		/// Will start to play the release part of the sample
+		/// </summary>
+		/********************************************************************/
+		public void PlayReleasePart(uint startOffset, uint length)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will change the volume
 		/// </summary>
 		/********************************************************************/

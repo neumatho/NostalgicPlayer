@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers
 		public uint Size;					// Sample size
 		public uint RepeatPosition;			// Loop start
 		public uint RepeatEnd;				// Loop end
-		public uint ReleaseLength;			// Release length
+		public uint ReleaseEnd;				// Release end
 		public uint Frequency;				// Current frequency
 		public int Volume;					// Current volume
 		public int Panning;					// Current panning position

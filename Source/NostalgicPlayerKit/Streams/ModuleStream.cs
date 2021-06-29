@@ -161,13 +161,29 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// player
 		/// </summary>
 		/********************************************************************/
-		public sbyte[] ReadSampleData(int sampleNumber, int length)
+		public sbyte[] ReadSampleData(int sampleNumber, int length, out int readBytes)
+		{
+			// Allocate buffer to hold the sample data
+			sbyte[] sampleData = new sbyte[length];
+
+			readBytes = ReadSampleData(sampleNumber, sampleData, length);
+
+			return sampleData;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read sample data. If called from a module converter, no data is
+		/// returned, but the position and size are stored to use for the
+		/// player. Else the sample data are stored in the given buffer
+		/// </summary>
+		/********************************************************************/
+		public int ReadSampleData(int sampleNumber, sbyte[] sampleData, int length)
 		{
 			if (sampleInfo != null)
 				throw new Exception("ReadSampleData() may not be called from module converter");
-
-			// Allocate buffer to hold the sample data
-			sbyte[] data = new sbyte[length];
 
 			if (sampleStream != null)
 			{
@@ -183,15 +199,11 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 				// Seek to the right position in the original file and read the data there
 				sampleStream.Seek(pos, SeekOrigin.Begin);
 
-				sampleStream.Read((byte[])(Array)data, 0, length);
-
-				return data;
+				return sampleStream.Read((byte[])(Array)sampleData, 0, length);
 			}
 
 			// Not converted module or anything, just a plain file, so read the data
-			ReadSigned(data, 0, length);
-
-			return data;
+			return ReadSigned(sampleData, 0, length);
 		}
 
 

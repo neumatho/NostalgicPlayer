@@ -133,7 +133,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						voiceInfo.Size = sampleLength;
 						voiceInfo.RepeatPosition = 0;
 						voiceInfo.RepeatEnd = 0;
-						voiceInfo.ReleaseLength = 0;
+						voiceInfo.ReleaseEnd = 0;
 						voiceInfo.Kick = true;
 					}
 
@@ -149,11 +149,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 							infoFlags |= SampleFlag.Bidi;
 					}
 
-					// Special release command. Used in Octalyzer player
+					// Special release command. Used in Oktalyzer player
 					if ((newFlags & ChannelFlags.Release) != 0)
 					{
 						voiceInfo.LoopAddress = loopAddress;
-						voiceInfo.ReleaseLength = releaseLength;
+						voiceInfo.RepeatPosition = loopStart;
+						voiceInfo.ReleaseEnd = loopStart + releaseLength;
 						newFlags &= ~ChannelFlags.Release;
 					}
 

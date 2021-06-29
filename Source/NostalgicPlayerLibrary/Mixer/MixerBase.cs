@@ -99,7 +99,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				info.Size = 0;
 				info.RepeatPosition = 0;
 				info.RepeatEnd = 0;
-				info.ReleaseLength = 0;
+				info.ReleaseEnd = 0;
 				info.Frequency = 10000;
 				info.Volume = 0;
 				info.Panning = (int)((((i & 3) == 0) || ((i & 3) == 3)) ? ChannelPanning.Left : ChannelPanning.Right);

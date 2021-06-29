@@ -181,6 +181,28 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 
 		/********************************************************************/
 		/// <summary>
+		/// Will start to play the release part of the sample
+		/// </summary>
+		/// <param name="startOffset">is the number of samples in the sample to start</param>
+		/// <param name="length">is the length in samples to play</param>
+		/********************************************************************/
+		public void PlayReleasePart(uint startOffset, uint length)
+		{
+			if (length == 0)
+				throw new ArgumentException("Length may not be zero", nameof(length));
+
+			loopAddress = sampleAddress;
+			loopStart = startOffset;
+			releaseLength = length;
+			flags |= ChannelFlags.Release;
+
+			flags &= ~ChannelFlags.MuteIt;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will change the volume
 		/// </summary>
 		/// <param name="vol">is the new volume</param>

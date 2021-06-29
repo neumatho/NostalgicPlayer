@@ -50,6 +50,7 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | Mod's Grave | .wow | | ModTracker |
 | MultiTracker | .mtm | | ModTracker |
 | NoiseTracker | .mod | | ModTracker |
+| Oktalyzer | .okt / .okta | | Oktalyzer |
 | ProTracker | .mod | | ModTracker |
 | RIFF-WAVE (ADPCM) | .wav | | Sample |
 | RIFF-WAVE (IEEE Float) | .wav | | Sample |

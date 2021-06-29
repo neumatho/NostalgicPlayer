@@ -44,6 +44,13 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		void SetLoop(Array adr, uint startOffset, uint length, ChannelLoopType type = ChannelLoopType.Normal);
 
 		/// <summary>
+		/// Will start to play the release part of the sample
+		/// </summary>
+		/// <param name="startOffset">is the number of samples in the sample to start</param>
+		/// <param name="length">is the length in samples to play</param>
+		void PlayReleasePart(uint startOffset, uint length);
+
+		/// <summary>
 		/// Will change the volume
 		/// </summary>
 		/// <param name="vol">is the new volume</param>

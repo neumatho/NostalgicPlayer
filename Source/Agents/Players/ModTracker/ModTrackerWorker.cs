@@ -1470,7 +1470,7 @@ stopLoop:
 						}
 
 						// Read the sample
-						samples[i].Data = moduleStream.ReadSampleData(i, length);
+						samples[i].Data = moduleStream.ReadSampleData(i, length, out _);
 					}
 				}
 
@@ -1639,7 +1639,7 @@ stopLoop:
 					if (length != 0)
 					{
 						// Read the sample
-						samples[i].Data = moduleStream.ReadSampleData(i, length);
+						samples[i].Data = moduleStream.ReadSampleData(i, length, out _);
 
 						if (moduleStream.EndOfStream)
 						{

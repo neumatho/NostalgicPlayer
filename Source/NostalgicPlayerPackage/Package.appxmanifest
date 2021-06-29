@@ -231,6 +231,15 @@
             <uap:DisplayName>Mod&apos;s Grave</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="oktfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-okt">.okt</uap:FileType>
+              <uap:FileType ContentType="audio/x-okt">.okta</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Oktalyzer</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
