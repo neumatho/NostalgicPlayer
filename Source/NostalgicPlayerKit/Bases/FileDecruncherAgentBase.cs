@@ -6,6 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System.IO;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
@@ -23,28 +24,16 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Test the file to see if it could be identified
 		/// </summary>
 		/********************************************************************/
-		public abstract AgentResult Identify(ModuleStream moduleStream);
+		public abstract AgentResult Identify(Stream packedDataStream);
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the size of the depacked data
+		/// Return a stream holding the depacked data
 		/// </summary>
 		/********************************************************************/
-		public virtual int GetDepackedLength(ModuleStream moduleStream)
-		{
-			return 0;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Depack the file and store the result in the buffer given
-		/// </summary>
-		/********************************************************************/
-		public abstract AgentResult Depack(byte[] source, byte[] destination, int safetySize, out string errorMessage);
+		public abstract DepackerStream OpenStream(Stream packedDataStream);
 		#endregion
 	}
 }

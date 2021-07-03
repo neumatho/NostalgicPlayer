@@ -13,6 +13,7 @@ using System.Text;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 {
@@ -178,7 +179,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 			// In MikMod, it will call the right loader depending on the type.
 			// We won't do that. We will just copy all the data
-			CopyData(moduleStream, converterStream, (uint)umxData.Size);
+			Helpers.CopyData(moduleStream, converterStream, umxData.Size);
 
 			// Set the module type
 			originalFormat = string.Format(Resources.IDS_MIKCONV_NAME_UMX, versions[umxData.FileVersion], musType[(int)umxData.Type]);

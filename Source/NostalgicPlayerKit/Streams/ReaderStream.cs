@@ -70,13 +70,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Indicate if the stream supports reading
 		/// </summary>
 		/********************************************************************/
-		public override bool CanRead
-		{
-			get
-			{
-				return wrapperStream.CanRead;
-			}
-		}
+		public override bool CanRead => wrapperStream.CanRead;
 
 
 
@@ -85,13 +79,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Indicate if the stream supports writing
 		/// </summary>
 		/********************************************************************/
-		public override bool CanWrite
-		{
-			get
-			{
-				return false;
-			}
-		}
+		public override bool CanWrite => false;
 
 
 
@@ -100,14 +88,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Indicate if the stream supports seeking
 		/// </summary>
 		/********************************************************************/
-		public override bool CanSeek
-		{
-			get
-			{
-				return wrapperStream.CanSeek;
-			}
-		}
-
+		public override bool CanSeek => wrapperStream.CanSeek;
 
 
 
@@ -116,13 +97,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Return the length of the data
 		/// </summary>
 		/********************************************************************/
-		public override long Length
-		{
-			get
-			{
-				return wrapperStream.Length;
-			}
-		}
+		public override long Length => wrapperStream.Length;
 
 
 
@@ -133,15 +108,9 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public override long Position
 		{
-			get
-			{
-				return wrapperStream.Position;
-			}
+			get => wrapperStream.Position;
 
-			set
-			{
-				wrapperStream.Position = value;
-			}
+			set => wrapperStream.Position = value;
 		}
 
 
@@ -165,7 +134,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public override void SetLength(long value)
 		{
-			wrapperStream.SetLength(value);
+			throw new NotSupportedException("SetLength not supported");
 		}
 
 
@@ -207,7 +176,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public override void Write(byte[] buffer, int offset, int count)
 		{
-			wrapperStream.Write(buffer, offset, count);
+			throw new NotSupportedException("Write not supported");
 		}
 
 
@@ -219,7 +188,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public override void Flush()
 		{
-			wrapperStream.Flush();
+			throw new NotSupportedException("Flush not supported");
 		}
 		#endregion
 

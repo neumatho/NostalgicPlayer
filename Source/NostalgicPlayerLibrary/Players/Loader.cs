@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Exceptions;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
@@ -22,12 +23,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 	/// </summary>
 	public class Loader
 	{
-		private class DepackInfo
-		{
-			public AgentInfo Agent;
-			public MemoryStream DepackedStream;
-		}
-
 		private class ConvertInfo
 		{
 			public AgentInfo Agent;
@@ -236,7 +231,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			bool result = false;
 			errorMessage = string.Empty;
 
-			DepackInfo depackInfo = null;
 			ConvertInfo convertInfo = null;
 
 			// Get the original length of the file
@@ -245,116 +239,110 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			try
 			{
 				// First try to depack the file if needed
-				depackInfo = DepackFile(stream, out string depackError);
-				if (!string.IsNullOrEmpty(depackError))
+				stream = DepackFileMultipleLevels(stream);
+
+				bool foundPlayer;
+				using (ModuleStream moduleStream = new ModuleStream(stream, true))
 				{
-					// Something went wrong when depacking the module
-					//
-					// Build the error string
-					errorMessage = string.Format(Resources.IDS_ERR_DEPACK_MODULE, fileName, depackInfo.Agent.TypeName, depackError);
+					PlayerFileInfo fileInfo = new PlayerFileInfo(fileName, moduleStream, loader);
+
+					// Check to see if we can find a player via the file type
+					foundPlayer = FindPlayerViaFileType(fileInfo);
 				}
-				else
+
+				if (!foundPlayer)
 				{
-					if (depackInfo != null)
-						stream = depackInfo.DepackedStream;
-
-					bool foundPlayer;
-					using (ModuleStream moduleStream = new ModuleStream(stream, true))
+					// No player could be found via the file type.
+					// Now try to convert the module
+					convertInfo = ConvertModule(stream, loader, fileName, out string converterError);
+					if (!string.IsNullOrEmpty(converterError))
 					{
-						PlayerFileInfo fileInfo = new PlayerFileInfo(fileName, moduleStream, loader);
-
-						// Check to see if we can find a player via the file type
-						foundPlayer = FindPlayerViaFileType(fileInfo);
-					}
-
-					if (!foundPlayer)
-					{
-						// No player could be found via the file type.
-						// Now try to convert the module
-						convertInfo = ConvertModule(stream, loader, fileName, out string converterError);
-						if (!string.IsNullOrEmpty(converterError))
-						{
-							// Something went wrong when converting the module
-							//
-							// Build the error string
-							errorMessage = string.Format(Resources.IDS_ERR_CONVERT_MODULE, fileName, convertInfo.Agent.TypeName, converterError);
-						}
-						else
-						{
-							// Try all the players to see if we can find one
-							// that understand the file format
-							using (ModuleStream moduleStream = new ModuleStream(convertInfo != null ? convertInfo.ConvertedStream : stream, true))
-							{
-								PlayerFileInfo fileInfo = new PlayerFileInfo(fileName, moduleStream, loader);
-
-								if (FindPlayer(fileInfo))
-									result = true;
-							}
-						}
+						// Something went wrong when converting the module
+						//
+						// Build the error string
+						errorMessage = string.Format(Resources.IDS_ERR_CONVERT_MODULE, fileName, convertInfo.Agent.TypeName, converterError);
 					}
 					else
-						result = true;
-
-					// Did we found a player?
-					if (result)
 					{
-						// Yes, initialize the module stream with the right information
-						using (ModuleStream moduleStream = convertInfo != null ? new ModuleStream(convertInfo.ConvertedStream, convertInfo.SampleDataStream ?? stream) : new ModuleStream(stream, true))
+						// Try all the players to see if we can find one
+						// that understand the file format
+						using (ModuleStream moduleStream = new ModuleStream(convertInfo != null ? convertInfo.ConvertedStream : stream, true))
 						{
 							PlayerFileInfo fileInfo = new PlayerFileInfo(fileName, moduleStream, loader);
 
-							// Most players will start reading the structure from the beginning, so start there
-							moduleStream.Seek(0, SeekOrigin.Begin);
-
-							AgentResult agentResult = AgentResult.Unknown;
-							string playerError = string.Empty;
-
-							if (PlayerAgent is IModulePlayerAgent modulePlayerAgent)
-							{
-								// Load the module if the player is a module player
-								agentResult = modulePlayerAgent.Load(fileInfo, out playerError);
-							}
-							else if (PlayerAgent is ISamplePlayerAgent samplePlayerAgent)
-							{
-								// Load header information if sample player
-								agentResult = samplePlayerAgent.LoadHeaderInfo(fileInfo.ModuleStream, out playerError);
-							}
-
-							if (agentResult != AgentResult.Ok)
-							{
-								// Well, something went wrong when loading the file
-								//
-								// Build the error string
-								errorMessage = string.Format(Resources.IDS_ERR_LOAD_MODULE, fileInfo.FileName, PlayerAgentInfo.TypeName, playerError);
-
-								PlayerAgentInfo = null;
-								PlayerAgent = null;
-
-								result = false;
-							}
-							else
-							{
-								// Get module information
-								FileName = fileInfo.FileName;
-
-								PlayerName = PlayerAgentInfo.AgentName;
-								ModuleFormat = convertInfo != null ? string.IsNullOrEmpty(convertInfo.OriginalFormat) ? convertInfo.Agent.TypeName : convertInfo.OriginalFormat : PlayerAgentInfo.TypeName;
-
-								ConverterAgentInfo = convertInfo?.Agent;
-							}
-						}
-					}
-					else
-					{
-						if (string.IsNullOrEmpty(errorMessage))
-						{
-							// No, send an error back
-							errorMessage = string.Format(Resources.IDS_ERR_UNKNOWN_MODULE, fileName);
+							if (FindPlayer(fileInfo))
+								result = true;
 						}
 					}
 				}
+				else
+					result = true;
+
+				// Did we found a player?
+				if (result)
+				{
+					// Yes, initialize the module stream with the right information
+					using (ModuleStream moduleStream = convertInfo != null ? new ModuleStream(convertInfo.ConvertedStream, convertInfo.SampleDataStream ?? stream) : new ModuleStream(stream, true))
+					{
+						PlayerFileInfo fileInfo = new PlayerFileInfo(fileName, moduleStream, loader);
+
+						// Most players will start reading the structure from the beginning, so start there
+						moduleStream.Seek(0, SeekOrigin.Begin);
+
+						AgentResult agentResult = AgentResult.Unknown;
+						string playerError = string.Empty;
+
+						if (PlayerAgent is IModulePlayerAgent modulePlayerAgent)
+						{
+							// Load the module if the player is a module player
+							agentResult = modulePlayerAgent.Load(fileInfo, out playerError);
+						}
+						else if (PlayerAgent is ISamplePlayerAgent samplePlayerAgent)
+						{
+							// Load header information if sample player
+							agentResult = samplePlayerAgent.LoadHeaderInfo(fileInfo.ModuleStream, out playerError);
+						}
+
+						if (agentResult != AgentResult.Ok)
+						{
+							// Well, something went wrong when loading the file
+							//
+							// Build the error string
+							errorMessage = string.Format(Resources.IDS_ERR_LOAD_MODULE, fileInfo.FileName, PlayerAgentInfo.TypeName, playerError);
+
+							PlayerAgentInfo = null;
+							PlayerAgent = null;
+
+							result = false;
+						}
+						else
+						{
+							// Get module information
+							FileName = fileInfo.FileName;
+
+							PlayerName = PlayerAgentInfo.AgentName;
+							ModuleFormat = convertInfo != null ? string.IsNullOrEmpty(convertInfo.OriginalFormat) ? convertInfo.Agent.TypeName : convertInfo.OriginalFormat : PlayerAgentInfo.TypeName;
+
+							ConverterAgentInfo = convertInfo?.Agent;
+						}
+					}
+				}
+				else
+				{
+					if (string.IsNullOrEmpty(errorMessage))
+					{
+						// No, send an error back
+						errorMessage = string.Format(Resources.IDS_ERR_UNKNOWN_MODULE, fileName);
+					}
+				}
 			}
-			catch (Exception ex)
+			catch(DepackerException ex)
+			{
+				// Build the error string
+				errorMessage = string.Format(Resources.IDS_ERR_DEPACK_MODULE, fileName, ex.AgentName, errorMessage);
+				result = false;
+			}
+			catch(Exception ex)
 			{
 				// Build an error message
 				errorMessage = string.Format(Resources.IDS_ERR_FILE, fileName, ex.HResult.ToString("X8"), ex.Message);
@@ -500,88 +488,57 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 		/********************************************************************/
 		/// <summary>
+		/// Will try to depack the file if needed. Will also check if the
+		/// file has been packed multiple times
+		/// </summary>
+		/********************************************************************/
+		private Stream DepackFileMultipleLevels(Stream stream)
+		{
+			for (;;)
+			{
+				DepackerStream depackerStream = DepackFile(stream);
+				if (depackerStream == null)
+					return stream;
+
+				if (depackerStream.CanSeek)
+					stream = depackerStream;
+				else
+					stream = new SeekableStream(depackerStream);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will try to depack the file if needed
 		/// </summary>
 		/********************************************************************/
-		private DepackInfo DepackFile(Stream stream, out string errorMessage)
+		private DepackerStream DepackFile(Stream packedDataStream)
 		{
-			DepackInfo result = null;
-			bool takeAnotherRound;
-
-			do
+			foreach (AgentInfo agentInfo in agentManager.GetAllAgents(Manager.AgentType.FileDecrunchers))
 			{
-				takeAnotherRound = false;
-
-				using (ModuleStream moduleStream = new ModuleStream(stream, true))
+				// Is the depacker enabled?
+				if (agentInfo.Enabled)
 				{
-					foreach (AgentInfo agentInfo in agentManager.GetAllAgents(Manager.AgentType.FileDecrunchers))
+					// Create an instance of the depacker
+					if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IFileDecruncherAgent decruncher)
 					{
-						// Is the depacker enabled?
-						if (agentInfo.Enabled)
+						// Check the file
+						AgentResult agentResult = decruncher.Identify(packedDataStream);
+						if (agentResult == AgentResult.Ok)
+							return decruncher.OpenStream(packedDataStream);
+
+						if (agentResult != AgentResult.Unknown)
 						{
-							// Create an instance of the depacker
-							if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IFileDecruncherAgent decruncher)
-							{
-								// Check the file
-								AgentResult agentResult = decruncher.Identify(moduleStream);
-								if (agentResult == AgentResult.Ok)
-								{
-									// The file is packed, so depack it
-									//
-									// Allocate buffer and read the whole file into it
-									byte[] source = new byte[moduleStream.Length];
-
-									moduleStream.Seek(0, SeekOrigin.Begin);
-									moduleStream.Read(source, 0, source.Length);
-
-									// Allocate buffer to hold the depacked data
-									//
-									// Find the length of the depacked data
-									int depackedLength = decruncher.GetDepackedLength(moduleStream);
-
-									byte[] destination = new byte[depackedLength + 1024];	// Add safety buffer
-
-									agentResult = decruncher.Depack(source, destination, 1024, out errorMessage);
-									if (agentResult == AgentResult.Ok)
-									{
-										// Replace the file stream with the depacked stream
-										stream.Dispose();
-										stream = new MemoryStream(destination, 0, depackedLength, false, true);
-
-										if (result == null)
-											result = new DepackInfo { Agent = agentInfo };
-
-										if (result.DepackedStream != null)
-											result.DepackedStream.Dispose();
-
-										result.DepackedStream = (MemoryStream)stream;
-
-										// The module may need to be depacked multiple times, so
-										// we make a new check with the depacked file
-										takeAnotherRound = true;
-										break;
-									}
-
-									// An error occurred, so return immediately. The error
-									// is stored in the errorMessage out argument
-									return new DepackInfo { Agent = agentInfo };
-								}
-
-								if (agentResult != AgentResult.Unknown)
-								{
-									// Some error occurred
-									throw new Exception($"Identify() on depacker {agentInfo.TypeName} returned an error");
-								}
-							}
+							// Some error occurred
+							throw new DepackerException(agentInfo.TypeName, "Identify() returned an error");
 						}
 					}
 				}
 			}
-			while (takeAnotherRound);
 
-			errorMessage = string.Empty;
-
-			return result;
+			return null;
 		}
 
 

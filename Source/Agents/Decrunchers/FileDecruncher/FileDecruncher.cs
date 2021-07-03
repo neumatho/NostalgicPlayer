@@ -63,10 +63,10 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
 			if (typeId == agent1Id)
-				return new FileDecruncherWorker_PowerPacker();
+				return new FileDecruncherWorker_PowerPacker(Resources.IDS_FILEDECR_NAME_AGENT1);
 
 			if (typeId == agent2Id)
-				return new FileDecruncherWorker_Xpk_Sqsh();
+				return new FileDecruncherWorker_Xpk_Sqsh(Resources.IDS_FILEDECR_NAME_AGENT2);
 
 			return null;
 		}

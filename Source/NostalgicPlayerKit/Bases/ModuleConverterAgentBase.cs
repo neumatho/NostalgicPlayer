@@ -6,8 +6,6 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System;
-using System.IO;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
@@ -45,38 +43,6 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// </summary>
 		/********************************************************************/
 		public virtual string OriginalFormat => null;
-		#endregion
-
-		#region Helper methods
-		/********************************************************************/
-		/// <summary>
-		/// Copy length bytes from one stream to another
-		/// </summary>
-		/********************************************************************/
-		protected void CopyData(Stream source, Stream destination, uint length)
-		{
-			byte[] buf = new byte[1024];
-
-			while (length >= 1024)
-			{
-				int len = source.Read(buf, 0, 1024);
-				if (len < 1024)
-					Array.Clear(buf, len, 1024 - len);
-
-				destination.Write(buf, 0, 1024);
-
-				length -= 1024;
-			}
-
-			if (length > 0)
-			{
-				int len = source.Read(buf, 0, (int)length);
-				if (len < 1024)
-					Array.Clear(buf, len, 1024 - len);
-
-				destination.Write(buf, 0, (int)length);
-			}
-		}
 		#endregion
 	}
 }

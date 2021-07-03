@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using System.IO;
 
 namespace Polycode.NostalgicPlayer.Kit.Utility
 {
@@ -56,6 +57,38 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 			}
 
 			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Copy length bytes from one stream to another
+		/// </summary>
+		/********************************************************************/
+		public static void CopyData(Stream source, Stream destination, int length)
+		{
+			byte[] buf = new byte[1024];
+
+			while (length >= 1024)
+			{
+				int len = source.Read(buf, 0, 1024);
+				if (len < 1024)
+					Array.Clear(buf, len, 1024 - len);
+
+				destination.Write(buf, 0, 1024);
+
+				length -= 1024;
+			}
+
+			if (length > 0)
+			{
+				int len = source.Read(buf, 0, length);
+				if (len < length)
+					Array.Clear(buf, len, length - len);
+
+				destination.Write(buf, 0, length);
+			}
 		}
 	}
 }
