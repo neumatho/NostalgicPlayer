@@ -61,42 +61,6 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Packed data is corrupt.
-        /// </summary>
-        internal static string IDS_ERR_CORRUPT_DATA {
-            get {
-                return ResourceManager.GetString("IDS_ERR_CORRUPT_DATA", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unknown chunk type.
-        /// </summary>
-        internal static string IDS_ERR_UNKNOWN_CHUNK_TYPE {
-            get {
-                return ResourceManager.GetString("IDS_ERR_UNKNOWN_CHUNK_TYPE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Chunk data checksum mismatch.
-        /// </summary>
-        internal static string IDS_ERR_WRONG_CHUNK_DATA_CHECKSUM {
-            get {
-                return ResourceManager.GetString("IDS_ERR_WRONG_CHUNK_DATA_CHECKSUM", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Header checksum mismatch.
-        /// </summary>
-        internal static string IDS_ERR_WRONG_HEADER_CHECKSUM {
-            get {
-                return ResourceManager.GetString("IDS_ERR_WRONG_HEADER_CHECKSUM", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Written by Thomas Neumann based on code by Mark Espie.
         ///
         ///PowerPacker was written by Nico Francois and was very popular on the Amiga. One of its strength, is that it is very fast for both packing and depacking..
@@ -115,6 +79,42 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher {
         internal static string IDS_FILEDECR_DESCRIPTION_AGENT2 {
             get {
                 return ResourceManager.GetString("IDS_FILEDECR_DESCRIPTION_AGENT2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Packed data is corrupt.
+        /// </summary>
+        internal static string IDS_FILEDECR_ERR_CORRUPT_DATA {
+            get {
+                return ResourceManager.GetString("IDS_FILEDECR_ERR_CORRUPT_DATA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown chunk type.
+        /// </summary>
+        internal static string IDS_FILEDECR_ERR_UNKNOWN_CHUNK_TYPE {
+            get {
+                return ResourceManager.GetString("IDS_FILEDECR_ERR_UNKNOWN_CHUNK_TYPE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Chunk data checksum mismatch.
+        /// </summary>
+        internal static string IDS_FILEDECR_ERR_WRONG_CHUNK_DATA_CHECKSUM {
+            get {
+                return ResourceManager.GetString("IDS_FILEDECR_ERR_WRONG_CHUNK_DATA_CHECKSUM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Header checksum mismatch.
+        /// </summary>
+        internal static string IDS_FILEDECR_ERR_WRONG_HEADER_CHECKSUM {
+            get {
+                return ResourceManager.GetString("IDS_FILEDECR_ERR_WRONG_HEADER_CHECKSUM", resourceCulture);
             }
         }
         

@@ -117,35 +117,50 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="IDS_FILEDECR_DESCRIPTION_AGENT1" xml:space="preserve">
-    <value>Written by Thomas Neumann based on code by Mark Espie.
+  <data name="IDS_SCOM_DESCRIPTION_AGENT1" xml:space="preserve">
+    <value>Created by Thomas Neumann.
+Uses SharpCompress by Adam Hathcock.
 
-PowerPacker was written by Nico Francois and was very popular on the Amiga. One of its strength, is that it is very fast for both packing and depacking.</value>
+BZip2 can only compress a single file, but is normally used together with the tar archive format. It is developed by Julian Seward and maintained by Federico Mena.</value>
   </data>
-  <data name="IDS_FILEDECR_DESCRIPTION_AGENT2" xml:space="preserve">
-    <value>Written by Thomas Neumann based on code by Jah.
+  <data name="IDS_SCOM_DESCRIPTION_AGENT2" xml:space="preserve">
+    <value>Created by Thomas Neumann.
+Uses SharpCompress by Adam Hathcock.
 
-The SQSH is a packer library for the XPK packer. The algorithm is designed to pack samples by using a delta compression algorithm together with LZ based compression.</value>
+GZip can only compress a single file, but is normally used together with the tar archive format. It is developed by Jean-loup Gailly and Mark Adler as a free software replacement for the compress program used in early Unix systems.</value>
   </data>
-  <data name="IDS_FILEDECR_ERR_CORRUPT_DATA" xml:space="preserve">
-    <value>Packed data is corrupt</value>
+  <data name="IDS_SCOM_DESCRIPTION_AGENT3" xml:space="preserve">
+    <value>Created by Thomas Neumann.
+Uses SharpCompress by Adam Hathcock.
+
+LZip can only compress a single file, but is normally used together with the tar archive format. LZip is a lossless data compressor with a user interface similar to the one of gzip or bzip2.
+
+The lzip file format is designed for data sharing and long-term archiving, taking into account both data integrity and decoder availability.</value>
   </data>
-  <data name="IDS_FILEDECR_ERR_UNKNOWN_CHUNK_TYPE" xml:space="preserve">
-    <value>Unknown chunk type</value>
+  <data name="IDS_SCOM_DESCRIPTION_AGENT4" xml:space="preserve">
+    <value>Created by Thomas Neumann.
+Uses SharpCompress by Adam Hathcock.
+
+Xz can only compress a single file, but is normally used together with the tar archive format.
+
+In most cases, xz achieves higher compression rates than alternatives like gzip and bzip2. Decompression speed is faster than bzip2, but slower than gzip. Compression can be much slower than gzip, and is slower than bzip2 for high levels of compression, and is most useful when a compressed file will be used many times.</value>
   </data>
-  <data name="IDS_FILEDECR_ERR_WRONG_CHUNK_DATA_CHECKSUM" xml:space="preserve">
-    <value>Chunk data checksum mismatch</value>
+  <data name="IDS_SCOM_ERR_LOADING_DATA" xml:space="preserve">
+    <value>Failed while loading packed data.</value>
   </data>
-  <data name="IDS_FILEDECR_ERR_WRONG_HEADER_CHECKSUM" xml:space="preserve">
-    <value>Header checksum mismatch</value>
+  <data name="IDS_SCOM_NAME" xml:space="preserve">
+    <value>SharpCompress Decruncher</value>
   </data>
-  <data name="IDS_FILEDECR_NAME" xml:space="preserve">
-    <value>File Decruncher</value>
+  <data name="IDS_SCOM_NAME_AGENT1" xml:space="preserve">
+    <value>BZip2</value>
   </data>
-  <data name="IDS_FILEDECR_NAME_AGENT1" xml:space="preserve">
-    <value>PowerPacker</value>
+  <data name="IDS_SCOM_NAME_AGENT2" xml:space="preserve">
+    <value>GZip</value>
   </data>
-  <data name="IDS_FILEDECR_NAME_AGENT2" xml:space="preserve">
-    <value>XPK-SQSH</value>
+  <data name="IDS_SCOM_NAME_AGENT3" xml:space="preserve">
+    <value>LZip</value>
+  </data>
+  <data name="IDS_SCOM_NAME_AGENT4" xml:space="preserve">
+    <value>Xz</value>
   </data>
 </root>

@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Agents\Decrunchers\FileDecruncher\FileDecruncher.csproj" />
+    <ProjectReference Include="..\..\Agents\Decrunchers\SharpCompressDecruncher\SharpCompressDecruncher.csproj" />
     <ProjectReference Include="..\..\Agents\ModuleConverters\MikModConverter\MikModConverter.csproj" />
     <ProjectReference Include="..\..\Agents\ModuleConverters\ModuleConverter\ModuleConverter.csproj" />
     <ProjectReference Include="..\..\Agents\Output\CoreAudio\CoreAudio.csproj" />

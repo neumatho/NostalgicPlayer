@@ -21,6 +21,18 @@ namespace Polycode.NostalgicPlayer.Kit.Exceptions
 
 		/********************************************************************/
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public DepackerException(string agentName, string message, Exception ex) : base(message, ex)
+		{
+			AgentName = agentName;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Holds the name of the agent that failed
 		/// </summary>
 		/********************************************************************/

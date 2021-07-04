@@ -87,7 +87,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 				if (len < length)
 					Array.Clear(buf, len, length - len);
 
-				destination.Write(buf, 0, length);
+				destination.Write(buf, 0, len);
 			}
 		}
 	}

@@ -65,7 +65,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher.Formats.Strea
 						return taken;
 
 					if (bytesRead != 8)
-						throw new DepackerException(agentName, Resources.IDS_ERR_CORRUPT_DATA);
+						throw new DepackerException(agentName, Resources.IDS_FILEDECR_ERR_CORRUPT_DATA);
 
 					byte type = header[0];				// Type of chunk
 					byte hchk = header[1];				// Chunk header checksum
@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher.Formats.Strea
 					hchk ^= (byte)(cu ^ (cu >> 8));
 
 					if (hchk != 0)
-						throw new DepackerException(agentName, Resources.IDS_ERR_WRONG_HEADER_CHECKSUM);
+						throw new DepackerException(agentName, Resources.IDS_FILEDECR_ERR_WRONG_HEADER_CHECKSUM);
 
 					// Make packed length size long aligned
 					cp = (ushort)((cp + 3) & 0xfffc);
@@ -98,7 +98,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher.Formats.Strea
 					byte[] packedData = new byte[cp + SafetySize];
 					bytesRead = wrapperStream.Read(packedData, 0, cp);
 					if (bytesRead != cp)
-						throw new DepackerException(agentName, Resources.IDS_ERR_CORRUPT_DATA);
+						throw new DepackerException(agentName, Resources.IDS_FILEDECR_ERR_CORRUPT_DATA);
 
 					// Check chunk data checksum
 					uint l = 0;
@@ -112,7 +112,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher.Formats.Strea
 					chk ^= (ushort)(l >> 16);
 
 					if (chk != 0)
-						throw new DepackerException(agentName, Resources.IDS_ERR_WRONG_CHUNK_DATA_CHECKSUM);
+						throw new DepackerException(agentName, Resources.IDS_FILEDECR_ERR_WRONG_CHUNK_DATA_CHECKSUM);
 
 					// Allocate buffer for the depacked data
 					depackedData = new byte[cu + SafetySize];
@@ -137,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher.Formats.Strea
 
 						// Unknown
 						default:
-							throw new DepackerException(agentName, Resources.IDS_ERR_UNKNOWN_CHUNK_TYPE);
+							throw new DepackerException(agentName, Resources.IDS_FILEDECR_ERR_UNKNOWN_CHUNK_TYPE);
 					}
 				}
 

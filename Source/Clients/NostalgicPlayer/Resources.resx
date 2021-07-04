@@ -235,9 +235,11 @@ Special thanks to these people:
 ¤CPhil Wright
 ¤CPeter William Wagner, Simon Coghlan
 ¤Cand Thomas Bolon
+¤CMark Heath
 ¤CDave Gandy
 ¤COzkan Sezer, Alice Lachesis
 ¤Cand Miodrag Vallat
+¤CAdam Hathcock
 ¤CAdrien Destugues
 ¤CRobert Baron
 ¤CAnd to all you users out there :-)
@@ -441,6 +443,9 @@ Formats supported:
   </data>
   <data name="IDS_MODULE_INFO_ITEM_NA" xml:space="preserve">
     <value>n/a</value>
+  </data>
+  <data name="IDS_MODULE_INFO_ITEM_PACKEDSIZE" xml:space="preserve">
+    <value> (packed: {0:n0})</value>
   </data>
   <data name="IDS_MODULE_INFO_ITEM_TIME" xml:space="preserve">
     <value>Total time:</value>

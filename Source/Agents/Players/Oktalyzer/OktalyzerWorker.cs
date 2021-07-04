@@ -192,9 +192,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				// Skip the mark
 				moduleStream.Seek(8, SeekOrigin.Begin);
 
-				// Get the file size
-				long fileSize = moduleStream.Length;
-
 				// Initialize variables
 				sampNum = 0;
 				pattNum = 0;

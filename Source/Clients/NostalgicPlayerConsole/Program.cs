@@ -114,7 +114,7 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 								Console.WriteLine("Active player: " + moduleInfoStatic.PlayerName);
 								Console.WriteLine("Used channels: " + moduleInfoStatic.Channels);
 								Console.WriteLine("Total time: " + (moduleInfoFloating.DurationInfo == null ? "Unknown" : moduleInfoFloating.DurationInfo.TotalTime.ToString(@"m\:ss")));
-								Console.WriteLine("Module size: " + moduleInfoStatic.ModuleSize);
+								Console.WriteLine("Module size: " + moduleInfoStatic.ModuleSize + (moduleInfoStatic.PackedSize != 0 ? $" (packed: {moduleInfoStatic.PackedSize})" : string.Empty));
 								Console.WriteLine("File name: " + fileName);
 								Console.WriteLine();
 

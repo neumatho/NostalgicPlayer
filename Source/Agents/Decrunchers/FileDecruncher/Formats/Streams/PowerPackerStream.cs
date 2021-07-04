@@ -149,7 +149,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher.Formats.Strea
 			byte[] source = new byte[wrapperStream.Length];
 			int readBytes = wrapperStream.Read(source, 0, source.Length);
 			if (readBytes != source.Length)
-				throw new DepackerException(agentName, Resources.IDS_ERR_CORRUPT_DATA);
+				throw new DepackerException(agentName, Resources.IDS_FILEDECR_ERR_CORRUPT_DATA);
 
 			// Find the length of unpacked data
 			int offset = source.Length - 4;
@@ -217,7 +217,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher.Formats.Strea
 					// Decode what to copy from the destination file
 					uint idx = GetBits(2);
 					if (idx > 3)
-						throw new DepackerException(agentName, Resources.IDS_ERR_CORRUPT_DATA);
+						throw new DepackerException(agentName, Resources.IDS_FILEDECR_ERR_CORRUPT_DATA);
 
 					byte numBits = offsetSizes[idx];
 
@@ -256,7 +256,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher.Formats.Strea
 
 				// Check to see if the file is corrupt
 				if (destinationIndex < SafetySize)
-					throw new DepackerException(agentName, Resources.IDS_ERR_CORRUPT_DATA);
+					throw new DepackerException(agentName, Resources.IDS_FILEDECR_ERR_CORRUPT_DATA);
 			}
 			finally
 			{

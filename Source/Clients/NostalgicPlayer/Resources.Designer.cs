@@ -401,16 +401,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         ///¤CPhil Wright
         ///¤CPeter William Wagner, Simon Coghlan
         ///¤Cand Thomas Bolon
+        ///¤CMark Heath
         ///¤CDave Gandy
         ///¤COzkan Sezer, Alice Lachesis
         ///¤Cand Miodrag Vallat
+        ///¤CAdam Hathcock
         ///¤CAdrien Destugues
         ///¤CRobert Baron
-        ///¤CAnd to all you users out there :-)
-        ///
-        ///
-        ///
-        ///Features in Nostalgic [rest of string was truncated]&quot;;.
+        ///¤CAnd to all you users out there : [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string IDS_ABOUT_TEXT {
             get {
@@ -836,6 +834,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_MODULE_INFO_ITEM_NA {
             get {
                 return ResourceManager.GetString("IDS_MODULE_INFO_ITEM_NA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  (packed: {0:n0}).
+        /// </summary>
+        internal static string IDS_MODULE_INFO_ITEM_PACKEDSIZE {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_ITEM_PACKEDSIZE", resourceCulture);
             }
         }
         

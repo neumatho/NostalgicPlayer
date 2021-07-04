@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		private ModuleInfoStatic(AgentInfo playerAgentInfo, string moduleName, string author, string[] comment, string moduleFormat, string playerName, int channels, long moduleSize)
+		private ModuleInfoStatic(AgentInfo playerAgentInfo, string moduleName, string author, string[] comment, string moduleFormat, string playerName, int channels, long packedSize, long moduleSize)
 		{
 			PlayerAgentInfo = playerAgentInfo;
 			ModuleName = moduleName;
@@ -52,6 +52,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 			ModuleFormat = moduleFormat;
 			PlayerName = playerName;
 			Channels = channels;
+			PackedSize = packedSize;
 			ModuleSize = moduleSize;
 		}
 
@@ -62,7 +63,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor (for module players)
 		/// </summary>
 		/********************************************************************/
-		internal ModuleInfoStatic(AgentInfo playerAgentInfo, AgentInfo converterAgentInfo, string moduleName, string author, string[] comment, string moduleFormat, string playerName, int channels, long moduleSize, ModulePlayerSupportFlag supportFlag, int maxSongNumber, InstrumentInfo[] instruments, SampleInfo[] samples) : this(playerAgentInfo, moduleName, author, comment, moduleFormat, playerName, channels, moduleSize)
+		internal ModuleInfoStatic(AgentInfo playerAgentInfo, AgentInfo converterAgentInfo, string moduleName, string author, string[] comment, string moduleFormat, string playerName, int channels, long packedSize, long moduleSize, ModulePlayerSupportFlag supportFlag, int maxSongNumber, InstrumentInfo[] instruments, SampleInfo[] samples) : this(playerAgentInfo, moduleName, author, comment, moduleFormat, playerName, channels, packedSize, moduleSize)
 		{
 			moduleSupportFlag = supportFlag;
 			sampleSupportFlag = SamplePlayerSupportFlag.None;
@@ -81,7 +82,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor (for sample players)
 		/// </summary>
 		/********************************************************************/
-		internal ModuleInfoStatic(AgentInfo playerAgentInfo, string moduleName, string author, string[] comment, string moduleFormat, string playerName, int channels, long moduleSize, SamplePlayerSupportFlag supportFlag, int frequency) : this(playerAgentInfo, moduleName, author, comment, moduleFormat, playerName, channels, moduleSize)
+		internal ModuleInfoStatic(AgentInfo playerAgentInfo, string moduleName, string author, string[] comment, string moduleFormat, string playerName, int channels, long packedSize, long moduleSize, SamplePlayerSupportFlag supportFlag, int frequency) : this(playerAgentInfo, moduleName, author, comment, moduleFormat, playerName, channels, packedSize, moduleSize)
 		{
 			sampleSupportFlag = supportFlag;
 			moduleSupportFlag = ModulePlayerSupportFlag.None;
@@ -169,6 +170,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// </summary>
 		/********************************************************************/
 		public int Channels
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the packed size of the module. Is zero, if not packed
+		/// </summary>
+		/********************************************************************/
+		public long PackedSize
 		{
 			get;
 		}

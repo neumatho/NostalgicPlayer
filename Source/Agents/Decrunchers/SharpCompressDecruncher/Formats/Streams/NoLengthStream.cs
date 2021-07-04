@@ -8,31 +8,30 @@
 /******************************************************************************/
 using System;
 using System.IO;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.Kit.Exceptions;
+using Polycode.NostalgicPlayer.Kit.Streams;
 
-namespace Polycode.NostalgicPlayer.Kit.Streams
+namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.Streams
 {
 	/// <summary>
-	/// This stream wraps another stream to make it seekable
+	/// Base class that decompressor streams which cannot detect the
+	/// length of the decompressed data can derive from, so it is
+	/// possible to get the length
 	/// </summary>
-	public class SeekableStream : Stream
+	internal abstract class NoLengthStream : DepackerStream
 	{
-		private readonly Stream wrapperStream;
-
 		private readonly MemoryStream bufferStream;
-		private int bufferIndex;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SeekableStream(Stream wrapperStream)
+		protected NoLengthStream(string agentName, Stream wrapperStream) : base(wrapperStream)
 		{
-			this.wrapperStream = wrapperStream;
-
 			bufferStream = new MemoryStream();
-			bufferIndex = 0;
+
+			ReadAndUnpack(agentName);
 		}
 
 
@@ -46,7 +45,6 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			base.Dispose(disposing);
 
-			wrapperStream.Dispose();
 			bufferStream.Dispose();
 		}
 
@@ -56,16 +54,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Indicate if the stream supports reading
 		/// </summary>
 		/********************************************************************/
-		public override bool CanRead => wrapperStream.CanRead;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Indicate if the stream supports writing
-		/// </summary>
-		/********************************************************************/
-		public override bool CanWrite => false;
+		public override bool CanRead => true;
 
 
 
@@ -80,23 +69,14 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the length of the data
-		/// </summary>
-		/********************************************************************/
-		public override long Length => wrapperStream.Length;
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Return the current position
 		/// </summary>
 		/********************************************************************/
 		public override long Position
 		{
-			get => bufferIndex;
+			get => bufferStream.Position;
 
-			set => Seek(value, SeekOrigin.Begin);
+			set => bufferStream.Position = value;
 		}
 
 
@@ -108,45 +88,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public override long Seek(long offset, SeekOrigin origin)
 		{
-			switch (origin)
-			{
-				case SeekOrigin.Begin:
-				{
-					bufferIndex = (int)offset;
-					break;
-				}
-
-				case SeekOrigin.Current:
-				{
-					bufferIndex += (int)offset;
-					break;
-				}
-
-				case SeekOrigin.End:
-				{
-					bufferIndex = (int)(Length + offset);
-					break;
-				}
-			}
-
-			if (bufferIndex < 0)
-				bufferIndex = 0;
-			else if (bufferIndex > Length)
-				bufferIndex = (int)Length;
-
-			return bufferIndex;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set new length
-		/// </summary>
-		/********************************************************************/
-		public override void SetLength(long value)
-		{
-			throw new NotSupportedException("SetLength not supported");
+			return bufferStream.Seek(offset, origin);
 		}
 
 
@@ -158,50 +100,54 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public override int Read(byte[] buffer, int offset, int count)
 		{
-			if ((bufferIndex + count) > bufferStream.Length)
+			return bufferStream.Read(buffer, offset, count);
+		}
+		#endregion
+
+		#region DepackerStream overrides
+		/********************************************************************/
+		/// <summary>
+		/// Return the size of the depacked data
+		/// </summary>
+		/********************************************************************/
+		protected override int GetDepackedLength()
+		{
+			return (int)bufferStream.Length;
+		}
+		#endregion
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the stream holding the packed data
+		/// </summary>
+		/********************************************************************/
+		protected abstract Stream OpenPackedDataStream();
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Read and unpack data
+		/// </summary>
+		/********************************************************************/
+		private void ReadAndUnpack(string agentName)
+		{
+			try
 			{
-				// Time to read some more data into the buffer
-				int toRead = (int)(bufferIndex - bufferStream.Length + count);
+				// Because the depacked length is not stored anywhere, we need
+				// to depack the whole file into a buffer and use that to read from
+				wrapperStream.Seek(0, SeekOrigin.Begin);
 
-				bufferStream.Seek(0, SeekOrigin.End);
-				Helpers.CopyData(wrapperStream, bufferStream, toRead);
+				using (Stream decruncherStream = OpenPackedDataStream())
+				{
+					decruncherStream.CopyTo(bufferStream);
+				}
 
-				if (bufferIndex >= bufferStream.Length)
-					return 0;
+				bufferStream.Seek(0, SeekOrigin.Begin);
 			}
-
-			int todo = Math.Min(count, (int)bufferStream.Length - bufferIndex);
-
-			bufferStream.Seek(bufferIndex, SeekOrigin.Begin);
-			bufferStream.Read(buffer, offset, todo);
-
-			bufferIndex += todo;
-
-			return todo;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Write data to the stream
-		/// </summary>
-		/********************************************************************/
-		public override void Write(byte[] buffer, int offset, int count)
-		{
-			throw new NotSupportedException("Write not supported");
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Flush buffers
-		/// </summary>
-		/********************************************************************/
-		public override void Flush()
-		{
-			throw new NotSupportedException("Flush not supported");
+			catch(Exception ex)
+			{
+				throw new DepackerException(agentName, Resources.IDS_SCOM_ERR_LOADING_DATA, ex);
+			}
 		}
 		#endregion
 	}

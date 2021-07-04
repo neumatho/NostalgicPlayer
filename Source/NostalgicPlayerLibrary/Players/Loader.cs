@@ -201,6 +201,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 		/********************************************************************/
 		/// <summary>
+		/// Return the size of the module packed. Is zero if not packed
+		/// </summary>
+		/********************************************************************/
+		internal long PackedSize
+		{
+			get; private set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the stream to use when reading sample files
 		/// </summary>
 		/********************************************************************/
@@ -234,12 +246,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			ConvertInfo convertInfo = null;
 
 			// Get the original length of the file
-			ModuleSize = stream.Length;
+			PackedSize = stream.Length;
 
 			try
 			{
 				// First try to depack the file if needed
 				stream = DepackFileMultipleLevels(stream);
+
+				// Update sizes
+				ModuleSize = stream.Length;
+				if (ModuleSize == PackedSize)
+					PackedSize = 0;
 
 				bool foundPlayer;
 				using (ModuleStream moduleStream = new ModuleStream(stream, true))

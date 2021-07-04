@@ -240,7 +240,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_TIME, val);
 
-				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE, $"{staticInfo.ModuleSize:n0}");
+				val = $"{staticInfo.ModuleSize:n0}";
+				if (staticInfo.PackedSize != 0)
+					val += string.Format(Resources.IDS_MODULE_INFO_ITEM_PACKEDSIZE, staticInfo.PackedSize);
+
+				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE, val);
 
 				if (Env.IsWindows10S)
 					moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, fileInfo.FileName);
