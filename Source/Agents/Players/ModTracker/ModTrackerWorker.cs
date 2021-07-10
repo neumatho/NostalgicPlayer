@@ -240,7 +240,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// Will load the file into memory
 		/// </summary>
 		/********************************************************************/
-
 		public override AgentResult Load(PlayerFileInfo fileInfo, out string errorMessage)
 		{
 			AgentResult retVal;
@@ -1769,8 +1768,6 @@ stopLoop:
 							if (moduleStream.EndOfStream)
 								break;
 						}
-
-						ExtraFilesSizes += moduleStream.Length;
 					}
 				}
 			}

@@ -7,8 +7,9 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System.IO;
+using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 
-namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 {
 	/// <summary>
 	/// This loader can open just standard files in a file system
@@ -20,7 +21,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public NormalFileLoader(string fileName) : base(fileName)
+		public NormalFileLoader(string fileName, Manager agentManager) : base(fileName, agentManager)
 		{
 		}
 

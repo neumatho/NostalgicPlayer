@@ -100,11 +100,6 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		SampleInfo[] Samples { get; }
 
 		/// <summary>
-		/// Return the total size of all the extra files loaded
-		/// </summary>
-		long ExtraFilesSizes { get; }
-
-		/// <summary>
 		/// Holds all the virtual channel instances used to play the samples
 		/// </summary>
 		IChannel[] VirtualChannels { get; set; }

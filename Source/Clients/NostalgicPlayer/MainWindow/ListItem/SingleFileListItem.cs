@@ -8,7 +8,8 @@
 /******************************************************************************/
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.PlayerLibrary.Players;
+using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
+using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 {
@@ -17,15 +18,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 	/// </summary>
 	public class SingleFileListItem : IModuleListItem
 	{
+		private readonly Manager manager;
+
 		#region IModuleListItem implementation
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SingleFileListItem(string fullFileName)
+		public SingleFileListItem(string fullFileName, Manager agentManager)
 		{
 			FullPath = fullFileName;
+			manager = agentManager;
 		}
 
 
@@ -64,7 +68,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 		/********************************************************************/
 		public ILoader GetLoader()
 		{
-			return new NormalFileLoader(FullPath);
+			return new NormalFileLoader(FullPath, manager);
 		}
 		#endregion
 	}

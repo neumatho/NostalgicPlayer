@@ -12,6 +12,7 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
+using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
 using Polycode.NostalgicPlayer.PlayerLibrary.Resampler;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Players

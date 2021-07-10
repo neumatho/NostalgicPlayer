@@ -13,6 +13,7 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
+using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
 using Polycode.NostalgicPlayer.PlayerLibrary.Mixer;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
@@ -81,7 +82,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						currentPlayer.ModuleInfoChanged += Player_ModuleInfoChanged;
 
 						// Initialize module information
-						StaticModuleInformation = new ModuleInfoStatic(loader.PlayerAgentInfo, loader.ConverterAgentInfo, currentPlayer.ModuleName.Trim(), FindAuthor(), currentPlayer.Comment, loader.ModuleFormat, loader.PlayerName, currentPlayer.ModuleChannelCount, loader.PackedSize, loader.ModuleSize + currentPlayer.ExtraFilesSizes, currentPlayer.SupportFlags, currentPlayer.SubSongs.Number, currentPlayer.Instruments, currentPlayer.Samples);
+						StaticModuleInformation = new ModuleInfoStatic(loader.PlayerAgentInfo, loader.ConverterAgentInfo, currentPlayer.ModuleName.Trim(), FindAuthor(), currentPlayer.Comment, loader.ModuleFormat, loader.PlayerName, currentPlayer.ModuleChannelCount, loader.PackedSize, loader.ModuleSize, currentPlayer.SupportFlags, currentPlayer.SubSongs.Number, currentPlayer.Instruments, currentPlayer.Samples);
 
 						// Initialize the mixer
 						soundStream = new MixerStream();

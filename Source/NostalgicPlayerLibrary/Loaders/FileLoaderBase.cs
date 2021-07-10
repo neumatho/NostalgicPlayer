@@ -10,8 +10,9 @@ using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 
-namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 {
 	/// <summary>
 	/// Helper class for loader implementations
@@ -19,15 +20,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 	public abstract class FileLoaderBase : ILoader
 	{
 		private readonly string fileName;
+		private readonly Manager manager;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		protected FileLoaderBase(string fileName)
+		protected FileLoaderBase(string fileName, Manager agentManager)
 		{
 			this.fileName = fileName;
+			manager = agentManager;
 		}
 
 
@@ -39,7 +42,21 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		public Stream OpenFile()
 		{
-			return OpenFile(fileName);
+			Stream stream = OpenFile(fileName);
+
+			// Get the original length of the file
+			PackedSize = stream.Length;
+
+			// First try to depack the file if needed
+			SingleFileDepacker depacker = new SingleFileDepacker(manager);
+			stream = depacker.DepackFileMultipleLevels(stream);
+
+			// Update sizes
+			ModuleSize = stream.Length;
+			if (ModuleSize == PackedSize)
+				PackedSize = 0;
+
+			return stream;
 		}
 
 
@@ -82,7 +99,37 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				}
 			}
 
-			return stream != null ? new ModuleStream(stream, false) : null;
+			// If a file is opened, depack it if needed
+			if (stream != null)
+			{
+				long fileSize = stream.Length;
+
+				SingleFileDepacker depacker = new SingleFileDepacker(manager);
+				stream = depacker.DepackFileMultipleLevels(stream);
+
+				long newFileSize = stream.Length;
+				if (newFileSize == fileSize)
+				{
+					// Not packed
+					ModuleSize += fileSize;
+					if (PackedSize != 0)
+						PackedSize += fileSize;
+				}
+				else
+				{
+					// Packed
+					if (PackedSize != 0)
+						PackedSize += fileSize;
+					else
+						PackedSize = ModuleSize + fileSize;
+
+					ModuleSize += newFileSize;
+				}
+
+				return new ModuleStream(stream, false);
+			}
+
+			return null;
 		}
 
 
@@ -93,6 +140,30 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// </summary>
 		/********************************************************************/
 		public virtual string FullPath => fileName;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the size of the module loaded
+		/// </summary>
+		/********************************************************************/
+		public long ModuleSize
+		{
+			get; protected set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the size of the module packed. Is zero if not packed
+		/// </summary>
+		/********************************************************************/
+		public long PackedSize
+		{
+			get; protected set;
+		}
 
 
 

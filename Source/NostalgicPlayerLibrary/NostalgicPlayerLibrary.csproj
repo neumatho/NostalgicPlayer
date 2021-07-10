@@ -39,12 +39,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="NewFolder\**" />
-    <EmbeddedResource Remove="NewFolder\**" />
-    <None Remove="NewFolder\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\NostalgicPlayerKit\NostalgicPlayerKit.csproj">
       <Private>false</Private>
     </ProjectReference>

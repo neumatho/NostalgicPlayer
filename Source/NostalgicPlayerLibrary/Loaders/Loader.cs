@@ -15,8 +15,9 @@ using Polycode.NostalgicPlayer.Kit.Exceptions;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
+using Polycode.NostalgicPlayer.PlayerLibrary.Players;
 
-namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 {
 	/// <summary>
 	/// Loader class that helps load a module
@@ -58,7 +59,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		public bool Load(string fileName, ILoader loader, out string errorMessage)
 		{
-			return Load(OpenFile(loader), loader, fileName, out errorMessage);
+			try
+			{
+				return Load(OpenFile(loader), loader, fileName, out errorMessage);
+			}
+			catch(DepackerException ex)
+			{
+				// Build the error string
+				errorMessage = string.Format(Resources.IDS_ERR_DEPACK_MODULE, fileName, ex.AgentName, ex.Message);
+				return false;
+			}
 		}
 
 
@@ -245,19 +255,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 			ConvertInfo convertInfo = null;
 
-			// Get the original length of the file
-			PackedSize = stream.Length;
-
 			try
 			{
-				// First try to depack the file if needed
-				stream = DepackFileMultipleLevels(stream);
-
-				// Update sizes
-				ModuleSize = stream.Length;
-				if (ModuleSize == PackedSize)
-					PackedSize = 0;
-
 				bool foundPlayer;
 				using (ModuleStream moduleStream = new ModuleStream(stream, true))
 				{
@@ -353,12 +352,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					}
 				}
 			}
-			catch(DepackerException ex)
-			{
-				// Build the error string
-				errorMessage = string.Format(Resources.IDS_ERR_DEPACK_MODULE, fileName, ex.AgentName, errorMessage);
-				result = false;
-			}
 			catch(Exception ex)
 			{
 				// Build an error message
@@ -380,7 +373,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			}
 
 			if (result)
+			{
 				Player = PlayerAgent is IModulePlayerAgent ? new ModulePlayer(agentManager) : PlayerAgent is ISamplePlayerAgent ? new SamplePlayer(agentManager) : null;
+
+				ModuleSize = loader.ModuleSize;
+				PackedSize = loader.PackedSize;
+			}
 
 			return result;
 		}
@@ -499,63 +497,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 			// No player was found
 			return false;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will try to depack the file if needed. Will also check if the
-		/// file has been packed multiple times
-		/// </summary>
-		/********************************************************************/
-		private Stream DepackFileMultipleLevels(Stream stream)
-		{
-			for (;;)
-			{
-				DepackerStream depackerStream = DepackFile(stream);
-				if (depackerStream == null)
-					return stream;
-
-				if (depackerStream.CanSeek)
-					stream = depackerStream;
-				else
-					stream = new SeekableStream(depackerStream);
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will try to depack the file if needed
-		/// </summary>
-		/********************************************************************/
-		private DepackerStream DepackFile(Stream packedDataStream)
-		{
-			foreach (AgentInfo agentInfo in agentManager.GetAllAgents(Manager.AgentType.FileDecrunchers))
-			{
-				// Is the depacker enabled?
-				if (agentInfo.Enabled)
-				{
-					// Create an instance of the depacker
-					if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IFileDecruncherAgent decruncher)
-					{
-						// Check the file
-						AgentResult agentResult = decruncher.Identify(packedDataStream);
-						if (agentResult == AgentResult.Ok)
-							return decruncher.OpenStream(packedDataStream);
-
-						if (agentResult != AgentResult.Unknown)
-						{
-							// Some error occurred
-							throw new DepackerException(agentInfo.TypeName, "Identify() returned an error");
-						}
-					}
-				}
-			}
-
-			return null;
 		}
 
 

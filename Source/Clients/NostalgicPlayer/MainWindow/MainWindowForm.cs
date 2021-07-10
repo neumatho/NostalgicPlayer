@@ -4191,7 +4191,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					if (loader != null)
 					{
 						foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs))
-							list.Add(ListItemConverter.Convert(info));
+							list.Add(ListItemConverter.Convert(info, agentManager));
 					}
 				}
 			}
@@ -4201,7 +4201,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			if (loader == null)
 			{
 				// Just a plain file
-				list.Add(new ModuleListItem(new SingleFileListItem(fileName)));
+				list.Add(new ModuleListItem(new SingleFileListItem(fileName, agentManager)));
 			}
 		}
 
@@ -4322,7 +4322,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						List<ModuleListItem> tempList = new List<ModuleListItem>();
 
 						foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs))
-							tempList.Add(ListItemConverter.Convert(info));
+							tempList.Add(ListItemConverter.Convert(info, agentManager));
 
 						int currentCount = moduleListBox.Items.Count;
 

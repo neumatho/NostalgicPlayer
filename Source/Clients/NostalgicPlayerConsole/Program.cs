@@ -12,6 +12,7 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
+using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
 using Polycode.NostalgicPlayer.PlayerLibrary.Players;
 
 namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
@@ -53,7 +54,7 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 
 				// Load the file
 				Loader loader = new Loader(agentManager);
-				if (!loader.Load(fileName, new NormalFileLoader(fileName), out string errorMessage))
+				if (!loader.Load(fileName, new NormalFileLoader(fileName, agentManager), out string errorMessage))
 				{
 					Console.WriteLine("Could not load the module. Failed with error:");
 					Console.WriteLine(errorMessage);

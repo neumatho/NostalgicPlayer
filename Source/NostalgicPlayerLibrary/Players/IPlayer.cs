@@ -9,6 +9,7 @@
 using System;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
+using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 {

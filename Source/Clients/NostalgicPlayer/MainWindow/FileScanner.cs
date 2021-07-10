@@ -16,6 +16,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
+using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
 using Polycode.NostalgicPlayer.PlayerLibrary.Players;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow

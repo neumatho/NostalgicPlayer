@@ -198,18 +198,6 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the total size of all the extra files loaded
-		/// </summary>
-		/********************************************************************/
-		public virtual long ExtraFilesSizes
-		{
-			get; protected set;
-		} = 0;
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Holds all the virtual channel instances used to play the samples
 		/// </summary>
 		/********************************************************************/

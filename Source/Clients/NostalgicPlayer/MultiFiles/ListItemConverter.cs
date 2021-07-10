@@ -10,6 +10,7 @@ using System;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
+using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 {
@@ -45,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 		/// Convert a list info to a list item
 		/// </summary>
 		/********************************************************************/
-		public static ModuleListItem Convert(MultiFileInfo fileInfo)
+		public static ModuleListItem Convert(MultiFileInfo fileInfo, Manager agentManager)
 		{
 			IModuleListItem item;
 
@@ -53,7 +54,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 			{
 				case MultiFileInfo.FileType.Plain:
 				{
-					item = new SingleFileListItem(fileInfo.FileName);
+					item = new SingleFileListItem(fileInfo.FileName, agentManager);
 					break;
 				}
 

@@ -33,5 +33,15 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Return the full path to the file
 		/// </summary>
 		string FullPath { get; }
+
+		/// <summary>
+		/// Return the size of the module loaded
+		/// </summary>
+		long ModuleSize { get; }
+
+		/// <summary>
+		/// Return the size of the module packed. Is zero if not packed
+		/// </summary>
+		long PackedSize { get; }
 	}
 }
