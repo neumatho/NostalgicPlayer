@@ -665,7 +665,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			moduleStream.Seek(0, SeekOrigin.Begin);
 			uint mark = moduleStream.Read_B_UINT32();
 
-			if ((mark == 0x52494646) || (mark == 0x464f524d) || (mark == 0x44444d46))
+			if ((mark == 0x52494646) || (mark == 0x464f524d) || (mark == 0x44444d46) || (mark == 0x54464d58))
 				return ModuleType.Unknown;
 
 			ModuleType minimumVersion = ModuleType.UltimateSoundTracker10;
@@ -759,10 +759,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 						byte b = moduleStream.Read_UINT8();
 						byte c = moduleStream.Read_UINT8();
 						byte d = moduleStream.Read_UINT8();
-
-						ushort note = (ushort)(((a & 0xf) << 8) | b);
-						if ((note < 113) || (note > 856))
-							return ModuleType.Unknown;
 
 						byte effect = (byte)(c & 0x0f);
 
