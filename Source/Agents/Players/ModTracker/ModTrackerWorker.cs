@@ -760,6 +760,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 						byte c = moduleStream.Read_UINT8();
 						byte d = moduleStream.Read_UINT8();
 
+						ushort note = (ushort)(((a & 0xf) << 8) | b);
+						if ((note < 113) || (note > 856))
+							return ModuleType.Unknown;
+
 						byte effect = (byte)(c & 0x0f);
 
 						if ((j % 4) == effectDChannel)
