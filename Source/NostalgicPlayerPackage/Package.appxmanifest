@@ -240,6 +240,16 @@
             <uap:DisplayName>Oktalyzer</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="tfmxfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-tfmx">.tfx</uap:FileType>
+              <uap:FileType ContentType="audio/x-tfmx">.mdat</uap:FileType>
+              <uap:FileType ContentType="audio/x-tfmx">.tfm</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>TFMX</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

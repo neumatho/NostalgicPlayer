@@ -2,23 +2,21 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>Polycode.NostalgicPlayer.Agent.Player.Sawteeth</RootNamespace>
-    <Authors>Arvid Norberg and Thomas Neumann</Authors>
+    <RootNamespace>Polycode.NostalgicPlayer.Agent.Player.Tfmx</RootNamespace>
+    <PackageId>TFMX</PackageId>
+    <Authors>Thomas Neumann</Authors>
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
-    <Description>Player to the Sawteeth module format.</Description>
+    <Description>Player to the TFMX module format.</Description>
     <Copyright>Copyright © 2021</Copyright>
-    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Sawteeth.xml</DocumentationFile>
+    <DocumentationFile>bin\Tfmx.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Sawteeth.xml</DocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
+    <DocumentationFile>bin\Tfmx.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

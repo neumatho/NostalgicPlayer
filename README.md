@@ -62,6 +62,9 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | SoundTracker 2.2 | .mod | | ModTracker |
 | StarTrekker | .mod | | ModTracker |
 | StarTrekker 8 voices | .mod | | ModTracker |
+| TFMX 1.5 | .tfx / mdat. / .tfm | | TFMX |
+| TFMX Professional | .tfx / mdat. / .tfm | | TFMX |
+| TFMX 7 voices | .tfx / mdat. / .tfm | | TFMX |
 | Ultimate SoundTracker 1.0 - 1.21 | .mod | | ModTracker |
 | Ultimate SoundTracker 1.8 - 2.0 | .mod | | ModTracker |
 | UltraTracker | .ult | MikMod Converter | MikMod |

@@ -681,23 +681,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 			// Get the buffer for each channel and create the output
 			for (int c = 0; c < channelCount; c++)
 			{
-				// Check if the current channel is ready to have a new buffer
-				if (!VirtualChannels[c].IsActive)
-				{
-					if (p[c].NextBuffer())
-						MemMulMove(outBuffers[c], p[c].Buffer, spsPal, 255.0f * channelMul);
-					else
-						Array.Clear(outBuffers[c], 0, spsPal);
+				if (p[c].NextBuffer())
+					MemMulMove(outBuffers[c], p[c].Buffer, spsPal, 255.0f * channelMul);
+				else
+					Array.Clear(outBuffers[c], 0, spsPal);
 
-					// Calculate panning value
-					ushort pan = (ushort)((((256 - chan[c].Left) * 256) + (256 * chan[c].Right)) / 512);
+				// Calculate panning value
+				ushort pan = (ushort)((((256 - chan[c].Left) * 256) + (256 * chan[c].Right)) / 512);
 
-					// Tell NostalgicPlayer what to play in this channel
-					VirtualChannels[c].PlaySample(outBuffers[c], 0, spsPal, 16);
-					VirtualChannels[c].SetFrequency(44100);
-					VirtualChannels[c].SetVolume(256);
-					VirtualChannels[c].SetPanning(pan);
-				}
+				// Tell NostalgicPlayer what to play in this channel
+				VirtualChannels[c].PlaySample(outBuffers[c], 0, spsPal, 16);
+				VirtualChannels[c].SetFrequency(44100);
+				VirtualChannels[c].SetVolume(256);
+				VirtualChannels[c].SetPanning(pan);
 			}
 
 			// PAL looping

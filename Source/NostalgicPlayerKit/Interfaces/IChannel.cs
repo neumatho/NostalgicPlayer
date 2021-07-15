@@ -18,7 +18,8 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	{
 		/// <summary>
 		/// Will start to play the sample in the channel. If your player is
-		/// running in buffer mode, use this method to set the buffer
+		/// running in buffer mode, use this method to set the buffer. Note
+		/// that the length then have to be the same for each channel
 		/// </summary>
 		/// <param name="adr">is a pointer to the sample in memory</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>

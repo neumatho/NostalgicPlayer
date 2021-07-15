@@ -62,7 +62,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// This is the main mixer method
 		/// </summary>
 		/********************************************************************/
-		public override int Mixing(int[] dest, int offset, int todo, MixerMode mode)
+		public override void Mixing(int[] dest, int offset, int todo, MixerMode mode)
 		{
 			int left = todo;
 
@@ -125,11 +125,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					idxLoopPos = (long)vnf.RepeatPosition << Native.FRACBITS;
 					idxReleaseEnd = vnf.ReleaseEnd != 0 ? ((long)vnf.ReleaseEnd << Native.FRACBITS) - 1 : 0;
 
-					left = AddChannel(ref vnf, dest, offset, todo, mode);
+					AddChannel(ref vnf, dest, offset, todo, mode);
 				}
 			}
-
-			return left;
 		}
 
 
@@ -139,7 +137,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Mix a channel into the buffer
 		/// </summary>
 		/********************************************************************/
-		private int AddChannel(ref VoiceInfo vnf, int[] buf, int offset, int todo, MixerMode mode)
+		private void AddChannel(ref VoiceInfo vnf, int[] buf, int offset, int todo, MixerMode mode)
 		{
 			Array s;
 
@@ -147,7 +145,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			{
 				vnf.Current = 0;
 				vnf.Active = false;
-				return todo;
+				return;
 			}
 
 			// Update the 'current' index so the sample loops, or
@@ -445,8 +443,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				todo -= done;
 				offset += (mode & MixerMode.Stereo) != 0 ? done << 1 : done;
 			}
-
-			return todo;
 		}
 	}
 }

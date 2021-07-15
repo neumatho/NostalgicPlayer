@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// given
 		/// </summary>
 		/********************************************************************/
-		public ChannelFlags ParseInfo(ref VoiceInfo voiceInfo, int clickBuffer)
+		public ChannelFlags ParseInfo(ref VoiceInfo voiceInfo, int clickBuffer, bool bufferMode)
 		{
 			// Get the channel flags
 			ChannelFlags newFlags = flags;
@@ -53,28 +53,31 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				privFlags &= ~ChannelFlags.Loop;
 			}
 
-			if ((newFlags & ChannelFlags.Loop) != 0)
-				privFlags |= ChannelFlags.Loop;
-
-			if ((newFlags & ChannelFlags.TrigLoop) != 0)
+			if (!bufferMode)
 			{
-				newFlags &= ~ChannelFlags.TrigLoop;
-				retFlags &= ~ChannelFlags.TrigLoop;
+				if ((newFlags & ChannelFlags.Loop) != 0)
+					privFlags |= ChannelFlags.Loop;
 
-				if ((newFlags & ChannelFlags.Active) == 0)     // Only trigger if the channel is not already playing
+				if ((newFlags & ChannelFlags.TrigLoop) != 0)
 				{
-					newFlags |= (ChannelFlags.TrigIt | ChannelFlags.Loop);
-					retFlags |= (ChannelFlags.TrigIt | ChannelFlags.Loop);
+					newFlags &= ~ChannelFlags.TrigLoop;
+					retFlags &= ~ChannelFlags.TrigLoop;
 
-					// Did we trigger the sound with a normal "play" command?
-					if ((flags & ChannelFlags.TrigIt) == 0)
+					if ((newFlags & ChannelFlags.Active) == 0)     // Only trigger if the channel is not already playing
 					{
-						// No, then trigger it
-						privFlags |= ChannelFlags.TrigIt;
+						newFlags |= (ChannelFlags.TrigIt | ChannelFlags.Loop);
+						retFlags |= (ChannelFlags.TrigIt | ChannelFlags.Loop);
 
-						sampleAddress = loopAddress;
-						sampleStart = loopStart;
-						sampleLength = loopLength;
+						// Did we trigger the sound with a normal "play" command?
+						if ((flags & ChannelFlags.TrigIt) == 0)
+						{
+							// No, then trigger it
+							privFlags |= ChannelFlags.TrigIt;
+
+							sampleAddress = loopAddress;
+							sampleStart = loopStart;
+							sampleLength = loopLength;
+						}
 					}
 				}
 			}
@@ -137,25 +140,28 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						voiceInfo.Kick = true;
 					}
 
-					// Does the sample loop?
-					if (((newFlags & ChannelFlags.Loop) != 0) && (loopLength > 4))
+					if (!bufferMode)
 					{
-						voiceInfo.LoopAddress = loopAddress;
-						voiceInfo.RepeatPosition = loopStart;
-						voiceInfo.RepeatEnd = loopStart + loopLength;
-						infoFlags |= SampleFlag.Loop;
+						// Does the sample loop?
+						if (((newFlags & ChannelFlags.Loop) != 0) && (loopLength > 4))
+						{
+							voiceInfo.LoopAddress = loopAddress;
+							voiceInfo.RepeatPosition = loopStart;
+							voiceInfo.RepeatEnd = loopStart + loopLength;
+							infoFlags |= SampleFlag.Loop;
 
-						if ((newFlags & ChannelFlags.PingPong) != 0)
-							infoFlags |= SampleFlag.Bidi;
-					}
+							if ((newFlags & ChannelFlags.PingPong) != 0)
+								infoFlags |= SampleFlag.Bidi;
+						}
 
-					// Special release command. Used in Oktalyzer player
-					if ((newFlags & ChannelFlags.Release) != 0)
-					{
-						voiceInfo.LoopAddress = loopAddress;
-						voiceInfo.RepeatPosition = loopStart;
-						voiceInfo.ReleaseEnd = loopStart + releaseLength;
-						newFlags &= ~ChannelFlags.Release;
+						// Special release command. Used in Oktalyzer player
+						if ((newFlags & ChannelFlags.Release) != 0)
+						{
+							voiceInfo.LoopAddress = loopAddress;
+							voiceInfo.RepeatPosition = loopStart;
+							voiceInfo.ReleaseEnd = loopStart + releaseLength;
+							newFlags &= ~ChannelFlags.Release;
+						}
 					}
 
 					if ((newFlags & ChannelFlags._16Bit) != 0)

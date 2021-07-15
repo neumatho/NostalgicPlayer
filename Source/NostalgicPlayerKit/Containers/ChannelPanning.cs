@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 	/// <summary>
 	/// This enum only holds some points in the panning
 	/// </summary>
-	public enum ChannelPanning
+	public enum ChannelPanning : ushort
 	{
 		/// <summary></summary>
 		Left = 0,

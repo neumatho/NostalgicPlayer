@@ -411,12 +411,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 							for (int t = 0; t < moduleChannelNumber; t++)
 							{
-								flagArray[t] = ((ChannelParser)currentPlayer.VirtualChannels[t]).ParseInfo(ref voiceInfo[t], click);
+								flagArray[t] = ((ChannelParser)currentPlayer.VirtualChannels[t]).ParseInfo(ref voiceInfo[t], click, bufferMode);
 								chanFlags |= flagArray[t];
 							}
 
 							if (bufferMode)
-								ticksLeft = todo;
+								ticksLeft = (int)(mixerFrequency * voiceInfo[0].Size / voiceInfo[0].Frequency);
 							else
 							{
 								// If at least one channel has changed its information,
@@ -449,15 +449,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					int left = Math.Min(ticksLeft, todo);
 
 					// And mix it
-					int leftInBuffer = currentMixer.Mixing(mixBuffer, total, left, currentMode);
+					currentMixer.Mixing(mixBuffer, total, left, currentMode);
 
 					// Calculate new values for the counter variables
-					if (bufferMode)
-					{
-						left = left - leftInBuffer;
-						ticksLeft = left;
-					}
-
 					ticksLeft -= left;
 					todo -= left;
 					total += (currentMode & MixerMode.Stereo) != 0 ? left << 1 : left;
@@ -502,7 +496,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 					// Parse the channels
 					for (int t = 0; t < extraChannelsNumber; t++)
-						((ChannelParser)extraChannelsChannels[t]).ParseInfo(ref voiceInfo[t], click);
+						((ChannelParser)extraChannelsChannels[t]).ParseInfo(ref voiceInfo[t], click, bufferMode);
 
 					// Mix the data
 					extraChannelsMixer.Mixing(mixBuffer, offset, (currentMode & MixerMode.Stereo) != 0 ? bufSize >> 1 : bufSize, currentMode);

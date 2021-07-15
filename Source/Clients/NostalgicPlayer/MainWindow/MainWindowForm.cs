@@ -119,6 +119,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private readonly List<int> randomList;
 
 		private long lastAddedTimeFromExplorer = 0;
+		private bool processingEndReached = false;
 
 		// Other windows
 		private HelpWindowForm helpWindow = null;
@@ -1412,63 +1413,75 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void ModuleHandler_EndReached(object sender, EventArgs e)
 		{
-			BeginInvoke(new Action(() =>
+			if (!processingEndReached)
 			{
-				// Check to see if there is module loop on
-				if (!loopCheckButton.Checked)
+				processingEndReached = true;
+
+				BeginInvoke(new Action(() =>
 				{
-					bool loadNext = true;
-
-					// Get the number of modules in the list
-					int count = moduleListBox.Items.Count;
-
-					// Get the index of the current playing module
-					int curPlay = moduleListBox.Items.IndexOf(playItem);
-
-					// The next module to load
-					int newPlay = curPlay + 1;
-
-					// Test to see if we is at the end of the list
-					if (newPlay == count)
+					try
 					{
-						// We are, now check what we has to do
-						OptionSettings.ModuleListEndAction listEnd = optionSettings.ModuleListEnd;
+						// Check to see if there is module loop on
+						if (!loopCheckButton.Checked && (playItem != null))
+						{
+							bool loadNext = true;
 
-						if (listEnd == OptionSettings.ModuleListEndAction.Eject)
-						{
-							// Eject the module
-							StopAndFreeModule();
-							loadNext = false;
-						}
-						else
-						{
-							if ((count == 1) || (listEnd == OptionSettings.ModuleListEndAction.Loop))
-								loadNext = false;
-							else
-								newPlay = 0;
+							// Get the number of modules in the list
+							int count = moduleListBox.Items.Count;
+
+							// Get the index of the current playing module
+							int curPlay = moduleListBox.Items.IndexOf(playItem);
+
+							// The next module to load
+							int newPlay = curPlay + 1;
+
+							// Test to see if we is at the end of the list
+							if (newPlay == count)
+							{
+								// We are, now check what we has to do
+								OptionSettings.ModuleListEndAction listEnd = optionSettings.ModuleListEnd;
+
+								if (listEnd == OptionSettings.ModuleListEndAction.Eject)
+								{
+									// Eject the module
+									StopAndFreeModule();
+									loadNext = false;
+								}
+								else
+								{
+									if ((count == 1) || (listEnd == OptionSettings.ModuleListEndAction.Loop))
+										loadNext = false;
+									else
+										newPlay = 0;
+								}
+							}
+
+							// Should we load the next module?
+							if (loadNext)
+							{
+								if (optionSettings.DoubleBuffering && moduleHandler.IsDoubleBufferingModuleLoaded)
+								{
+									// Double buffering is on and the next module has already been loaded, so just
+									// start to play it
+									PlayNextModule(newPlay);
+								}
+								else
+								{
+									// Free the module
+									StopAndFreeModule();
+
+									// Load the module
+									LoadAndPlayModule(newPlay);
+								}
+							}
 						}
 					}
-
-					// Should we load the next module?
-					if (loadNext)
+					finally
 					{
-						if (optionSettings.DoubleBuffering && moduleHandler.IsDoubleBufferingModuleLoaded)
-						{
-							// Double buffering is on and the next module has already been loaded, so just
-							// start to play it
-							PlayNextModule(newPlay);
-						}
-						else
-						{
-							// Free the module
-							StopAndFreeModule();
-
-							// Load the module
-							LoadAndPlayModule(newPlay);
-						}
+						processingEndReached = false;
 					}
-				}
-			}));
+				}));
+			}
 		}
 
 
@@ -3792,6 +3805,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				{
 					// We got a length, so we can create the position string
 					int percent = songPos * 100 / songLength;
+					if (percent > 100)
+						percent = 100;
+
 					posStr = string.Format(Resources.IDS_POSITION, songPos, songLength, percent);
 
 					// Set the position slider

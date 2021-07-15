@@ -46,7 +46,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			{
 				DepackerStream depackerStream = DepackFile(stream);
 				if (depackerStream == null)
+				{
+					// Make sure that the stream is at the beginning
+					stream.Seek(0, SeekOrigin.Begin);
+
 					return stream;
+				}
 
 				if (depackerStream.CanSeek)
 					stream = depackerStream;

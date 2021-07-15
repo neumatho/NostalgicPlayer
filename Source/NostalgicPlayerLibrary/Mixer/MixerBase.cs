@@ -221,7 +221,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// This is the main mixer method
 		/// </summary>
 		/********************************************************************/
-		public abstract int Mixing(int[] dest, int offset, int todo, MixerMode mode);
+		public abstract void Mixing(int[] dest, int offset, int todo, MixerMode mode);
 
 
 
