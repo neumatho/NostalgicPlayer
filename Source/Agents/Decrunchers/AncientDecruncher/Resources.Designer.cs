@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher {
+namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,87 +61,107 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Written by Thomas Neumann based on code by Mark Espie.
+        ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library).
+        ///Converted to C# by Thomas Neumann.
         ///
         ///PowerPacker was written by Nico Francois and was very popular on the Amiga. One of its strength, is that it is very fast for both packing and depacking..
         /// </summary>
-        internal static string IDS_FILEDECR_DESCRIPTION_AGENT1 {
+        internal static string IDS_ANC_DESCRIPTION_AGENT1 {
             get {
-                return ResourceManager.GetString("IDS_FILEDECR_DESCRIPTION_AGENT1", resourceCulture);
+                return ResourceManager.GetString("IDS_ANC_DESCRIPTION_AGENT1", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Written by Thomas Neumann based on code by Jah.
+        ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library).
+        ///Converted to C# by Thomas Neumann.
         ///
         ///The SQSH is a packer library for the XPK packer. The algorithm is designed to pack samples by using a delta compression algorithm together with LZ based compression..
         /// </summary>
-        internal static string IDS_FILEDECR_DESCRIPTION_AGENT2 {
+        internal static string IDS_ANC_DESCRIPTION_AGENT2 {
             get {
-                return ResourceManager.GetString("IDS_FILEDECR_DESCRIPTION_AGENT2", resourceCulture);
+                return ResourceManager.GetString("IDS_ANC_DESCRIPTION_AGENT2", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Packed data is corrupt.
         /// </summary>
-        internal static string IDS_FILEDECR_ERR_CORRUPT_DATA {
+        internal static string IDS_ANC_ERR_CORRUPT_DATA {
             get {
-                return ResourceManager.GetString("IDS_FILEDECR_ERR_CORRUPT_DATA", resourceCulture);
+                return ResourceManager.GetString("IDS_ANC_ERR_CORRUPT_DATA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Encryption is not supported.
+        /// </summary>
+        internal static string IDS_ANC_ERR_NO_ENCRYPTION {
+            get {
+                return ResourceManager.GetString("IDS_ANC_ERR_NO_ENCRYPTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ran out of packed data.
+        /// </summary>
+        internal static string IDS_ANC_ERR_OUT_OF_DATA {
+            get {
+                return ResourceManager.GetString("IDS_ANC_ERR_OUT_OF_DATA", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Unknown chunk type.
         /// </summary>
-        internal static string IDS_FILEDECR_ERR_UNKNOWN_CHUNK_TYPE {
+        internal static string IDS_ANC_ERR_UNKNOWN_CHUNK_TYPE {
             get {
-                return ResourceManager.GetString("IDS_FILEDECR_ERR_UNKNOWN_CHUNK_TYPE", resourceCulture);
+                return ResourceManager.GetString("IDS_ANC_ERR_UNKNOWN_CHUNK_TYPE", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Chunk data checksum mismatch.
         /// </summary>
-        internal static string IDS_FILEDECR_ERR_WRONG_CHUNK_DATA_CHECKSUM {
+        internal static string IDS_ANC_ERR_WRONG_CHUNK_CHECKSUM {
             get {
-                return ResourceManager.GetString("IDS_FILEDECR_ERR_WRONG_CHUNK_DATA_CHECKSUM", resourceCulture);
+                return ResourceManager.GetString("IDS_ANC_ERR_WRONG_CHUNK_CHECKSUM", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Header checksum mismatch.
         /// </summary>
-        internal static string IDS_FILEDECR_ERR_WRONG_HEADER_CHECKSUM {
+        internal static string IDS_ANC_ERR_WRONG_HEADER_CHECKSUM {
             get {
-                return ResourceManager.GetString("IDS_FILEDECR_ERR_WRONG_HEADER_CHECKSUM", resourceCulture);
+                return ResourceManager.GetString("IDS_ANC_ERR_WRONG_HEADER_CHECKSUM", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File Decruncher.
+        ///   Looks up a localized string similar to Ancient Decruncher.
         /// </summary>
-        internal static string IDS_FILEDECR_NAME {
+        internal static string IDS_ANC_NAME {
             get {
-                return ResourceManager.GetString("IDS_FILEDECR_NAME", resourceCulture);
+                return ResourceManager.GetString("IDS_ANC_NAME", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to PowerPacker.
         /// </summary>
-        internal static string IDS_FILEDECR_NAME_AGENT1 {
+        internal static string IDS_ANC_NAME_AGENT1 {
             get {
-                return ResourceManager.GetString("IDS_FILEDECR_NAME_AGENT1", resourceCulture);
+                return ResourceManager.GetString("IDS_ANC_NAME_AGENT1", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to XPK-SQSH.
+        ///   Looks up a localized string similar to XPK (SQSH).
         /// </summary>
-        internal static string IDS_FILEDECR_NAME_AGENT2 {
+        internal static string IDS_ANC_NAME_AGENT2 {
             get {
-                return ResourceManager.GetString("IDS_FILEDECR_NAME_AGENT2", resourceCulture);
+                return ResourceManager.GetString("IDS_ANC_NAME_AGENT2", resourceCulture);
             }
         }
     }

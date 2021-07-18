@@ -8,23 +8,24 @@
 /******************************************************************************/
 using System;
 using System.Runtime.InteropServices;
-using Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher.Formats;
+using Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats;
+using Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.Xpk;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 // This is needed to uniquely identify this agent
-[assembly: Guid("48DC4EA4-ABAB-4FDB-AADC-9137BBAAFC1E")]
+[assembly: Guid("AFDBEE3F-E5A6-4255-8A68-89D876BCE943")]
 
-namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher
+namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher
 {
 	/// <summary>
 	/// NostalgicPlayer agent interface implementation
 	/// </summary>
-	public class FileDecruncher : AgentBase
+	public class AncientDecruncher : AgentBase
 	{
-		private static readonly Guid agent1Id = Guid.Parse("615D0B1C-E86C-40D3-ACF8-5C4D1A88EEC6");
-		private static readonly Guid agent2Id = Guid.Parse("CAC6F4B3-E037-4EC2-954F-08A44469EF1E");
+		private static readonly Guid agent1Id = Guid.Parse("C7165383-9774-4297-8168-9FACE978EFA3");
+		private static readonly Guid agent2Id = Guid.Parse("15166B32-0EFF-49F3-93CC-DCB8F6D9C23C");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -32,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher
 		/// Returns the name of this agent
 		/// </summary>
 		/********************************************************************/
-		public override string Name => Resources.IDS_FILEDECR_NAME;
+		public override string Name => Resources.IDS_ANC_NAME;
 
 
 
@@ -47,8 +48,8 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_FILEDECR_NAME_AGENT1, Resources.IDS_FILEDECR_DESCRIPTION_AGENT1, agent1Id),
-					new AgentSupportInfo(Resources.IDS_FILEDECR_NAME_AGENT2, Resources.IDS_FILEDECR_DESCRIPTION_AGENT2, agent2Id)
+					new AgentSupportInfo(Resources.IDS_ANC_NAME_AGENT1, Resources.IDS_ANC_DESCRIPTION_AGENT1, agent1Id),
+					new AgentSupportInfo(Resources.IDS_ANC_NAME_AGENT2, Resources.IDS_ANC_DESCRIPTION_AGENT2, agent2Id)
 				};
 			}
 		}
@@ -63,10 +64,10 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
 			if (typeId == agent1Id)
-				return new FileDecruncherWorker_PowerPacker(Resources.IDS_FILEDECR_NAME_AGENT1);
+				return new AncientDecruncherWorker_PowerPacker(Resources.IDS_ANC_NAME_AGENT1);
 
 			if (typeId == agent2Id)
-				return new FileDecruncherWorker_Xpk_Sqsh(Resources.IDS_FILEDECR_NAME_AGENT2);
+				return new AncientDecruncherWorker_Xpk_Sqsh(Resources.IDS_ANC_NAME_AGENT2);
 
 			return null;
 		}

@@ -2,22 +2,20 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher</RootNamespace>
+    <RootNamespace>Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher</RootNamespace>
     <Authors>Thomas Neumann</Authors>
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
-    <Description>Can depack single files</Description>
+    <Description>Decrunchers based on Ancient by Teemu Suutari</Description>
     <Copyright>Copyright © 2021</Copyright>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
-    <DocumentationFile>bin\FileDecruncher.xml</DocumentationFile>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\AncientDecruncher.xml</DocumentationFile>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\FileDecruncher.xml</DocumentationFile>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\AncientDecruncher.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

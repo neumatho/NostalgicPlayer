@@ -7,17 +7,17 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System.IO;
-using Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher.Formats.Streams;
+using Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.Streams;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
-namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher.Formats
+namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats
 {
 	/// <summary>
-	/// Can depack XPK-SQSH files
+	/// Can depack PowerPacker data files
 	/// </summary>
-	internal class FileDecruncherWorker_Xpk_Sqsh : FileDecruncherAgentBase
+	internal class AncientDecruncherWorker_PowerPacker : FileDecruncherAgentBase
 	{
 		private readonly string agentName;
 
@@ -26,7 +26,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher.Formats
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public FileDecruncherWorker_Xpk_Sqsh(string agentName)
+		public AncientDecruncherWorker_PowerPacker(string agentName)
 		{
 			this.agentName = agentName;
 		}
@@ -40,7 +40,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher.Formats
 		public override AgentResult Identify(Stream packedDataStream)
 		{
 			// Check the file size
-			if (packedDataStream.Length < 46)
+			if (packedDataStream.Length < 16)
 				return AgentResult.Unknown;
 
 			using (ReaderStream readerStream = new ReaderStream(packedDataStream, true))
@@ -48,11 +48,12 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher.Formats
 				// Check the mark
 				readerStream.Seek(0, SeekOrigin.Begin);
 
-				if (readerStream.Read_B_UINT32() != 0x58504b46)		// XPKF
+				if (readerStream.Read_B_UINT32() != 0x50503230)		// PP20
 					return AgentResult.Unknown;
 
-				readerStream.Seek(4, SeekOrigin.Current);
-				if (readerStream.Read_B_UINT32() != 0x53515348)		// SQSH
+				// Check mode
+				uint mode = readerStream.Read_B_UINT32();
+				if ((mode != 0x09090909) && (mode != 0x090a0a0a) && (mode != 0x090a0b0b) && (mode != 0x090a0c0c) && (mode != 0x090a0c0d))
 					return AgentResult.Unknown;
 			}
 
@@ -68,7 +69,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.FileDecruncher.Formats
 		/********************************************************************/
 		public override DepackerStream OpenStream(Stream packedDataStream)
 		{
-			return new Xpk_SqshStream(agentName, packedDataStream);
+			return new PowerPackerStream(agentName, packedDataStream);
 		}
 		#endregion
 	}
