@@ -237,7 +237,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			if (hdr.Tag != UPkgHdrTag)
 				return false;
 
-			if ((hdr.NameCount < 0) || (hdr.NameOffset < 0) || (hdr.ExportCount < 0) || (hdr.ExportOffset < 0) || (hdr.ImportCount < 0) || (hdr.ImportOffset < 0))
+			if ((hdr.NameCount < 0) || (hdr.ExportCount < 0) || (hdr.ImportCount < 0) || (hdr.NameOffset < 36) || (hdr.ExportOffset < 36) || (hdr.ImportOffset < 36))
 				return false;
 
 			if (versions.ContainsKey(hdr.FileVersion))
@@ -260,6 +260,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 			ofs = -1;
 			objSize = -1;
+
+			if ((hdr.NameOffset >= fSiz) || (hdr.ExportOffset >= fSiz) || (hdr.ImportOffset >= fSiz))
+				return -1;
 
 			// Find the offset and size of the first IT, S3M or XM
 			// by parsing the exports table. The umx files should
@@ -297,7 +300,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			if ((s <= 0) || (s > fSiz - pos))
 				return -1;
 
-			if (!ReadTypeName(moduleStream, hdr, t, buf))
+			if (!ReadTypeName(moduleStream, hdr, t, buf, fSiz))
 				return -1;
 
 			int i;
@@ -483,7 +486,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		/// Read type name
 		/// </summary>
 		/********************************************************************/
-		private bool ReadTypeName(ModuleStream moduleStream, UPkgHdr hdr, int idx, byte[] outBuf)
+		private bool ReadTypeName(ModuleStream moduleStream, UPkgHdr hdr, int idx, byte[] outBuf, long end)
 		{
 			if (idx >= hdr.NameCount)
 				return false;
@@ -493,13 +496,16 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			long l = 0;
 			for (int i = 0; i <= idx; i++)
 			{
+				if (hdr.NameOffset + l >= end)
+					return false;
+
 				moduleStream.Seek(hdr.NameOffset + l, SeekOrigin.Begin);
 				moduleStream.Read(buf, 0, 63);
 
 				if (hdr.FileVersion >= 64)
 				{
 					sbyte s = (sbyte)buf[0];			// numchars *including* terminator
-					if ((s <= 0) || (s > 64))
+					if (s <= 0)
 						return false;
 
 					l += s + 5;							// 1 for buf[0], 4 for int32_t name_flags

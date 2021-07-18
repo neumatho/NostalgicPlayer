@@ -337,8 +337,6 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		/********************************************************************/
 		private bool ConvertNote(ModNote n, MUniTrk uniTrk)
 		{
-			byte lastNote = 0;
-
 			byte instrument = (byte)(n.B & 0x1f);
 			byte effect = n.C;
 			byte effDat = n.D;
@@ -389,10 +387,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 							// which forces a new note to be
 							// played
 							if ((effect != 0) || (effDat != 0))
-							{
 								uniTrk.UniInstrument((ushort)(instrument - 1));
-								note = lastNote;
-							}
 							else
 								uniTrk.UniPtEffect(0xc, (byte)(mh.Samples[instrument - 1].Volume & 0x7f), of.Flags);
 						}
@@ -401,17 +396,12 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 					{
 						// Fasttracker handling
 						uniTrk.UniInstrument((ushort)(instrument - 1));
-						if (note == 0)
-							note = lastNote;
 					}
 				}
 			}
 
 			if (note != 0)
-			{
 				uniTrk.UniNote((ushort)(note + 2 * SharedConstant.Octave - 1));
-				lastNote = note;
-			}
 
 			// Convert pattern jump from Dec to Hex
 			if (effect == 0xd)

@@ -248,7 +248,7 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod
 			}
 			else
 			{
-				if (UniExpand(uniTt - uniPc))
+				if (UniExpand(len))
 				{
 					// Current and previous row aren't equal... update the pointers
 					uniBuf[uniTt] = (byte)len;

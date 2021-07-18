@@ -1289,14 +1289,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		/********************************************************************/
 		private short ProcessEnvelope(Mp_Voice aOut, ref EnvPr t, short v)
 		{
+			if (t.Pts == 0)				// Happens with e.g. Vikings In The Hood!.xm
+				return v;
+
 			if ((t.Flg & EnvelopeFlag.On) != 0)
 			{
-				if (t.Pts == 0)			// FIXME: bad/crafted file. better/more general solution?
-				{
-					t.B = 0;
-					return t.Env[0].Val;
-				}
-
 				byte a, b;				// Actual points in the envelope
 				ushort p;				// The 'tick counter' - real point being played
 
