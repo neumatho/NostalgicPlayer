@@ -36,13 +36,13 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats
 		/// Test the file to see if it could be identified
 		/// </summary>
 		/********************************************************************/
-		public override AgentResult Identify(Stream packedDataStream)
+		public override AgentResult Identify(Stream crunchedDataStream)
 		{
 			// Check the file size
-			if (packedDataStream.Length < 44)
+			if (crunchedDataStream.Length < 44)
 				return AgentResult.Unknown;
 
-			using (ReaderStream readerStream = new ReaderStream(packedDataStream, true))
+			using (ReaderStream readerStream = new ReaderStream(crunchedDataStream, true))
 			{
 				// Check the mark
 				readerStream.Seek(0, SeekOrigin.Begin);
@@ -51,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats
 					return AgentResult.Unknown;
 
 				readerStream.Seek(4, SeekOrigin.Current);
-				if (readerStream.Read_B_UINT32() != PackerId)
+				if (readerStream.Read_B_UINT32() != CruncherId)
 					return AgentResult.Unknown;
 			}
 
@@ -61,9 +61,9 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the packer ID
+		/// Return the cruncher ID
 		/// </summary>
 		/********************************************************************/
-		protected abstract uint PackerId { get; }
+		protected abstract uint CruncherId { get; }
 	}
 }

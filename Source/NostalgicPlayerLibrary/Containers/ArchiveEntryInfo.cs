@@ -6,75 +6,62 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System;
 using System.IO;
 
-namespace Polycode.NostalgicPlayer.Kit.Streams
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 {
 	/// <summary>
-	/// This class is used for the depacker agent interfaces
+	/// Hold information about an opened entry
 	/// </summary>
-	public abstract class DepackerStream : ReaderStream
+	internal class ArchiveEntryInfo
 	{
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public DepackerStream(Stream wrapperStream) : base(wrapperStream)
+		public ArchiveEntryInfo(Stream entryStream, int crunchedSize, int decrunchedSize)
 		{
-		}
-
-		#region Stream implementation
-		/********************************************************************/
-		/// <summary>
-		/// Indicate if the stream supports seeking
-		/// </summary>
-		/********************************************************************/
-		public override bool CanSeek => false;
-
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the length of the data
-		/// </summary>
-		/********************************************************************/
-		public override long Length => GetDepackedLength();
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position
-		/// </summary>
-		/********************************************************************/
-		public override long Position
-		{
-			get => wrapperStream.Position;
-
-			set => throw new NotSupportedException("Set position not supported");
+			EntryStream = entryStream;
+			CrunchedSize = crunchedSize;
+			DecrunchedSize = decrunchedSize;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Seek to a new position
+		/// The stream to the entry
 		/// </summary>
 		/********************************************************************/
-		public override long Seek(long offset, SeekOrigin origin)
+		public Stream EntryStream
 		{
-			throw new NotSupportedException("Seek not supported");
+			get;
 		}
-		#endregion
+
+
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the size of the depacked data
+		/// The length of the crunched data. If -1, it means the crunched
+		/// length is unknown
 		/// </summary>
 		/********************************************************************/
-		protected abstract int GetDepackedLength();
+		public int CrunchedSize
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The length of the decrunched data
+		/// </summary>
+		/********************************************************************/
+		public int DecrunchedSize
+		{
+			get;
+		}
 	}
 }

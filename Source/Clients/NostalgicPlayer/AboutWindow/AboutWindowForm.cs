@@ -183,7 +183,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 			sampleConverters = FindAgents(agentManager, Manager.AgentType.SampleConverters);
 			moduleConverters = FindAgents(agentManager, Manager.AgentType.ModuleConverters);
 			visualAgents = FindAgentTypes(agentManager, Manager.AgentType.Visuals);
-			decruncherAgents = FindAgentTypes(agentManager, Manager.AgentType.FileDecrunchers);
+			decruncherAgents = FindAgentTypes(agentManager, Manager.AgentType.FileDecrunchers, Manager.AgentType.ArchiveDecrunchers);
 		}
 
 

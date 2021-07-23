@@ -73,14 +73,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to load and depack the file ({0}).
+        ///   Looks up a localized string similar to Failed to load and decrunch the file ({0}).
         ///
-        ///Depacker {1} returned the following error:
+        ///Decruncher {1} returned the following error:
         ///{2}..
         /// </summary>
-        internal static string IDS_ERR_DEPACK_MODULE {
+        internal static string IDS_ERR_DECRUNCH_MODULE {
             get {
-                return ResourceManager.GetString("IDS_ERR_DEPACK_MODULE", resourceCulture);
+                return ResourceManager.GetString("IDS_ERR_DECRUNCH_MODULE", resourceCulture);
             }
         }
         
@@ -142,6 +142,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary {
         internal static string IDS_ERR_UNKNOWN_MODULE {
             get {
                 return ResourceManager.GetString("IDS_ERR_UNKNOWN_MODULE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not find any archive decrunchers.
+        /// </summary>
+        internal static string IDS_LOADERR_NO_ARCHIVE_DECRUNCHER {
+            get {
+                return ResourceManager.GetString("IDS_LOADERR_NO_ARCHIVE_DECRUNCHER", resourceCulture);
             }
         }
     }

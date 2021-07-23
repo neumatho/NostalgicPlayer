@@ -16,11 +16,11 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 	/// <summary>
 	/// Base class to all XPK streams
 	/// </summary>
-	internal abstract class XpkStream : DepackerStream
+	internal abstract class XpkStream : DecruncherStream
 	{
 		protected readonly string agentName;
 
-		private readonly uint packedSize;
+		private readonly uint decrunchedSize;
 		private readonly uint rawSize;
 
 		private readonly uint headerSize;
@@ -38,32 +38,32 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		protected XpkStream(string agentName, Stream wrapperStream) : base(wrapperStream)
+		protected XpkStream(string agentName, Stream wrapperStream) : base(wrapperStream, false)
 		{
 			this.agentName = agentName;
 
 			using (ReaderStream readerStream = new ReaderStream(wrapperStream, true))
 			{
 				readerStream.Seek(4, SeekOrigin.Begin);
-				packedSize = readerStream.Read_B_UINT32();
+				decrunchedSize = readerStream.Read_B_UINT32();
 
 				// Skip type
 				readerStream.Seek(4, SeekOrigin.Current);
 
 				rawSize = readerStream.Read_B_UINT32();
 
-				if ((rawSize == 0) || (packedSize == 0))
-					throw new DepackerException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
+				if ((rawSize == 0) || (decrunchedSize == 0))
+					throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 
-				if ((rawSize > 0x1000000) || (packedSize > 0x1000000))
-					throw new DepackerException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
+				if ((rawSize > 0x1000000) || (decrunchedSize > 0x1000000))
+					throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 
 				readerStream.Seek(32, SeekOrigin.Begin);
 				byte flags = readerStream.Read_UINT8();
 				longHeaders = (flags & 1) != 0;
 
 				if ((flags & 2) != 0)		// Needs password. We do not support that
-					throw new DepackerException(agentName, Resources.IDS_ANC_ERR_NO_ENCRYPTION);
+					throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_NO_ENCRYPTION);
 
 				if ((flags & 4) != 0)
 				{
@@ -73,8 +73,8 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 				else
 					headerSize = 36;
 
-				if (packedSize + 8 > readerStream.Length)
-					throw new DepackerException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
+				if (decrunchedSize + 8 > readerStream.Length)
+					throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 			}
 		}
 
@@ -144,13 +144,13 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 							ReadDualValue(4, 4, out uint tmp);
 							tmp = (uint)((tmp + 3) & ~3);
 
-							if (tmp + currentOffset + checkHeaderLen > packedSize)
-								throw new DepackerException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
+							if (tmp + currentOffset + checkHeaderLen > decrunchedSize)
+								throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 
 							currentOffset += checkHeaderLen + tmp;
 						}
 
-						ReadDualValue(4, 4, out uint packedChunkSize);
+						ReadDualValue(4, 4, out uint decrunchedChunkSize);
 						ReadDualValue(6, 8, out uint rawChunkSize);
 
 						byte[] hdr = new byte[checkHeaderLen];
@@ -158,15 +158,15 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 						readerStream.Read(hdr, 0, (int)checkHeaderLen);
 
 						if (!HeaderChecksum(hdr, 0, (uint)hdr.Length))
-							throw new DepackerException(agentName, Resources.IDS_ANC_ERR_WRONG_HEADER_CHECKSUM);
+							throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_WRONG_HEADER_CHECKSUM);
 
-						byte[] chunk = new byte[packedChunkSize];
+						byte[] chunk = new byte[decrunchedChunkSize];
 						readerStream.Seek(currentOffset + checkHeaderLen, SeekOrigin.Begin);
-						readerStream.Read(chunk, 0, (int)packedChunkSize);
+						readerStream.Read(chunk, 0, (int)decrunchedChunkSize);
 
 						ushort hdrCheck = (ushort)((hdr[2] << 8) | hdr[3]);
 						if ((chunk.Length != 0) && !ChunkChecksum(chunk, 0, (uint)chunk.Length, hdrCheck))
-							throw new DepackerException(agentName, Resources.IDS_ANC_ERR_WRONG_CHUNK_CHECKSUM);
+							throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_WRONG_CHUNK_CHECKSUM);
 
 						byte type = hdr[0];
 						Decompress(chunk, rawChunkSize, type);
@@ -197,13 +197,13 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 		}
 		#endregion
 
-		#region DepackerStream overrides
+		#region DecruncherStream overrides
 		/********************************************************************/
 		/// <summary>
-		/// Return the size of the depacked data
+		/// Return the size of the decrunched data
 		/// </summary>
 		/********************************************************************/
-		protected override int GetDepackedLength()
+		protected override int GetDecrunchedLength()
 		{
 			return (int)rawSize;
 		}
@@ -225,24 +225,24 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 		private void Decompress(byte[] chunk, uint rawChunkSize, byte chunkType)
 		{
 			if (destOffset + rawChunkSize > rawSize)
-				throw new DepackerException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
+				throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 
 			if (rawChunkSize == 0)
 				return;
 
 			switch (chunkType)
 			{
-				// Raw chunk (unpacked)
+				// Raw chunk (not crunched)
 				case 0:
 				{
 					if (rawChunkSize != chunk.Length)
-						throw new DepackerException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
+						throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 
 					rawData = chunk;
 					break;
 				}
 
-				// Packed
+				// Crunched
 				case 1:
 				{
 					rawData = new byte[rawChunkSize];
@@ -255,7 +255,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 					break;
 
 				default:
-					throw new DepackerException(agentName, Resources.IDS_ANC_ERR_UNKNOWN_CHUNK_TYPE);
+					throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_UNKNOWN_CHUNK_TYPE);
 			}
 
 			destOffset += rawChunkSize;

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
+using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 {
@@ -37,6 +38,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 
 				// Write all the items to the file
 				string oldPath = string.Empty;
+				string line;
 
 				foreach (MultiFileInfo listInfo in list)
 				{
@@ -62,6 +64,35 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 								// Remember the new path
 								oldPath = path;
 							}
+
+							// Get the file name
+							line = Path.GetFileName(listInfo.FileName);
+							break;
+						}
+
+						// Archive file
+						case MultiFileInfo.FileType.Archive:
+						{
+							// Check to see if the archive is the same as the previous one
+							string path = ArchiveDetector.GetArchiveName(listInfo.FileName);
+
+							if (path != oldPath)
+							{
+								// Write archive switch
+								sw.WriteLine();
+								sw.WriteLine("@*Archive*@");
+								sw.WriteLine(path);
+
+								// Write name command
+								sw.WriteLine();
+								sw.WriteLine("@*Names*@");
+
+								// Remember the new archive
+								oldPath = path;
+							}
+
+							// Get the archive entry
+							line = ArchiveDetector.GetEntryPath(listInfo.FileName);
 							break;
 						}
 
@@ -69,8 +100,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 							throw new NotImplementedException($"File type {listInfo.Type} not implemented");
 					}
 
-					// Build the line to write
-					string line = Path.GetFileName(listInfo.FileName);
+					// Append time if available
 					if (listInfo.PlayTime.HasValue)
 						line += ":" + listInfo.PlayTime.Value.Ticks;
 
@@ -103,6 +133,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 					throw new Exception(string.Format(Resources.IDS_ERR_UNKNOWN_LIST_VERSION, version));
 
 				string path = null;
+				bool archiveMode = false;
 
 				while (!sr.EndOfStream)
 				{
@@ -110,17 +141,33 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 
 					if (!string.IsNullOrEmpty(line))
 					{
-						// "Path" command
-						if (line == "@*Path*@")
-							path = sr.ReadLine();
-						else
+						switch (line)
 						{
-							// If not the "Names" command, it's a file name
-							if (line != "@*Names*@")
+							// "Path" command
+							case "@*Path*@":
 							{
+								path = sr.ReadLine();
+								archiveMode = false;
+								break;
+							}
+
+							// "Archive" command
+							case "@*Archive*@":
+							{
+								path = sr.ReadLine();
+								archiveMode = true;
+								break;
+							}
+
+							case "@*Names*@":
+								break;
+
+							default:
+							{
+								// If not a command, it's a file name or archive name
 								MultiFileInfo fileInfo = new MultiFileInfo
 								{
-									Type = MultiFileInfo.FileType.Plain
+									Type = archiveMode ? MultiFileInfo.FileType.Archive : MultiFileInfo.FileType.Plain
 								};
 
 								// See if there is stored a module time
@@ -135,16 +182,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 								// Check to see if there is loaded any path
 								if (string.IsNullOrEmpty(path))
 								{
+									if (archiveMode)
+										continue;		// Skip the entry, if no archive has been set
+
 									// Set the file name using the load path
 									fileInfo.FileName = Path.Combine(directory, line);
 								}
 								else
 								{
 									// Set the file name
-									fileInfo.FileName = Path.Combine(path, line);
+									if (archiveMode)
+										fileInfo.FileName = ArchiveDetector.CombinePathParts(path, line);
+									else
+										fileInfo.FileName = Path.Combine(path, line);
 								}
 
 								yield return fileInfo;
+								break;
 							}
 						}
 					}

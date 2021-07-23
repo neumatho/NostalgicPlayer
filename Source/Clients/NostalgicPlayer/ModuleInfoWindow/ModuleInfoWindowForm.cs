@@ -17,6 +17,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
+using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 {
@@ -188,8 +189,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				// Check if the file name has been clicked
 				if ((e.RowIndex == 7) && (e.ColumnIndex == 1))
 				{
+					string fileName = moduleInfoInfoDataGridView[e.ColumnIndex, e.RowIndex].Value.ToString();
+					if (ArchiveDetector.IsArchivePath(fileName))
+						fileName = ArchiveDetector.GetArchiveName(fileName);
+
 					// Start File Explorer and select the file
-					Process.Start("explorer.exe", $"/select,\"{moduleInfoInfoDataGridView[e.ColumnIndex, e.RowIndex].Value}\"");
+					Process.Start("explorer.exe", $"/select,\"{fileName}\"");
 				}
 			}
 		}
@@ -213,7 +218,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 
 				string val = staticInfo.ModuleName;
 				if (string.IsNullOrEmpty(val))
-					val = Path.GetFileName(fileInfo.FileName);
+					val = ArchiveDetector.IsArchivePath(fileInfo.FileName) ? ArchiveDetector.GetEntryName(fileInfo.FileName) : Path.GetFileName(fileInfo.FileName);
 
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULENAME, val);
 
@@ -241,8 +246,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_TIME, val);
 
 				val = $"{staticInfo.ModuleSize:n0}";
-				if (staticInfo.PackedSize != 0)
-					val += string.Format(Resources.IDS_MODULE_INFO_ITEM_PACKEDSIZE, staticInfo.PackedSize);
+				if (staticInfo.CrunchedSize != 0)
+					val += string.Format(Resources.IDS_MODULE_INFO_ITEM_PACKEDSIZE, staticInfo.CrunchedSize == -1 ? Resources.IDS_MODULE_INFO_UNKNOWN.ToLower() : staticInfo.CrunchedSize.ToString("N0"));
 
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE, val);
 

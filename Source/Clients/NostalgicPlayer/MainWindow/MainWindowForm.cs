@@ -33,6 +33,7 @@ using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Interfaces;
+using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 {
@@ -3478,7 +3479,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				string moduleName = moduleHandler.StaticModuleInformation.ModuleName;
 
 				if (string.IsNullOrEmpty(moduleName))
-					moduleName = Path.GetFileName(GetFileInfo().FileName);
+				{
+					MultiFileInfo fileInfo = GetFileInfo();
+					moduleName = ArchiveDetector.IsArchivePath(fileInfo.FileName) ? ArchiveDetector.GetEntryName(fileInfo.FileName) : Path.GetFileName(fileInfo.FileName);
+				}
 
 				title += " / " + moduleName;
 			}
@@ -4207,17 +4211,27 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					if (loader != null)
 					{
 						foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs))
-							list.Add(ListItemConverter.Convert(info, agentManager));
+							list.Add(ListItemConverter.Convert(info));
 					}
 				}
 			}
 
-			//XX TODO: Add archive support here
-
 			if (loader == null)
 			{
-				// Just a plain file
-				list.Add(new ModuleListItem(new SingleFileListItem(fileName, agentManager)));
+				// Check if the file is an archive
+				ArchiveDetector detector = new ArchiveDetector(agentManager);
+
+				bool isArchive = detector.IsArchive(fileName);
+				if (isArchive)
+				{
+					foreach (string archiveFileName in detector.GetEntries(fileName))
+						list.Add(new ModuleListItem(new ArchiveFileListItem(archiveFileName)));
+				}
+				else
+				{
+					// Just a plain file
+					list.Add(new ModuleListItem(new SingleFileListItem(fileName)));
+				}
 			}
 		}
 
@@ -4338,7 +4352,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						List<ModuleListItem> tempList = new List<ModuleListItem>();
 
 						foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs))
-							tempList.Add(ListItemConverter.Convert(info, agentManager));
+							tempList.Add(ListItemConverter.Convert(info));
 
 						int currentCount = moduleListBox.Items.Count;
 

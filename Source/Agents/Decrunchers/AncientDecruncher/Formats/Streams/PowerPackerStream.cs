@@ -15,13 +15,13 @@ using Polycode.NostalgicPlayer.Kit.Streams;
 namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.Streams
 {
 	/// <summary>
-	/// This stream read data packed with PowerPacker
+	/// This stream read data crunched with PowerPacker
 	/// </summary>
-	internal class PowerPackerStream : DepackerStream
+	internal class PowerPackerStream : DecruncherStream
 	{
 		private readonly string agentName;
 
-		private byte[] depackedData;
+		private byte[] decrunchedData;
 		private int bufferIndex;
 
 		private uint dataStart;
@@ -35,11 +35,11 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public PowerPackerStream(string agentName, Stream wrapperStream) : base(wrapperStream)
+		public PowerPackerStream(string agentName, Stream wrapperStream) : base(wrapperStream, false)
 		{
 			this.agentName = agentName;
 
-			ReadAndUnpack();
+			ReadAndDecrunch();
 		}
 
 		#region Stream implementation
@@ -89,15 +89,15 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 
 				case SeekOrigin.End:
 				{
-					bufferIndex = depackedData.Length + (int)offset;
+					bufferIndex = decrunchedData.Length + (int)offset;
 					break;
 				}
 			}
 
 			if (bufferIndex < 0)
 				bufferIndex = 0;
-			else if (bufferIndex > depackedData.Length)
-				bufferIndex = depackedData.Length;
+			else if (bufferIndex > decrunchedData.Length)
+				bufferIndex = decrunchedData.Length;
 
 			return bufferIndex;
 		}
@@ -111,10 +111,10 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 		/********************************************************************/
 		public override int Read(byte[] buffer, int offset, int count)
 		{
-			int todo = Math.Min(count, depackedData.Length - bufferIndex);
+			int todo = Math.Min(count, decrunchedData.Length - bufferIndex);
 			if (todo > 0)
 			{
-				Array.Copy(depackedData, bufferIndex, buffer, offset, todo);
+				Array.Copy(decrunchedData, bufferIndex, buffer, offset, todo);
 				bufferIndex += todo;
 			}
 
@@ -122,25 +122,25 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 		}
 		#endregion
 
-		#region DepackerStream overrides
+		#region DecruncherStream overrides
 		/********************************************************************/
 		/// <summary>
-		/// Return the size of the depacked data
+		/// Return the size of the decrunched data
 		/// </summary>
 		/********************************************************************/
-		protected override int GetDepackedLength()
+		protected override int GetDecrunchedLength()
 		{
-			return depackedData.Length;
+			return decrunchedData.Length;
 		}
 		#endregion
 
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
-		/// Read and unpack data
+		/// Read and decrunch data
 		/// </summary>
 		/********************************************************************/
-		private void ReadAndUnpack()
+		private void ReadAndDecrunch()
 		{
 			dataStart = (uint)(wrapperStream.Length - 4);
 
@@ -162,12 +162,12 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 				startShift = (byte)(tmp & 0xff);
 
 				if ((rawSize == 0) || (startShift >= 0x20) || (rawSize > 0x1000000U))
-					throw new DepackerException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
+					throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 			}
 
-			depackedData = new byte[rawSize];
+			decrunchedData = new byte[rawSize];
 
-			Decompress(depackedData);
+			Decompress(decrunchedData);
 		}
 
 
@@ -180,7 +180,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 		private void Decompress(byte[] rawData)
 		{
 			if (rawData.Length < rawSize)
-				throw new DepackerException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
+				throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 
 			BackwardInputStream inputStream = new BackwardInputStream(agentName, wrapperStream, 8, dataStart);
 			LsbBitReader bitReader = new LsbBitReader(inputStream);

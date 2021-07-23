@@ -28,6 +28,11 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher
 		private static readonly Guid agent3Id = Guid.Parse("71D5E132-FEBA-41D7-8B4A-36C0801644DC");
 		private static readonly Guid agent4Id = Guid.Parse("E863B01C-E3E3-4524-BB93-EB5F7453EF11");
 
+		private static readonly Guid agent5Id = Guid.Parse("8E477E82-7CB8-448B-8DF6-F1F540858EBA");
+		private static readonly Guid agent6Id = Guid.Parse("675E3CE2-84D9-4640-B6D4-648C742C1855");
+		private static readonly Guid agent7Id = Guid.Parse("67D15ECE-6725-4EE8-88E0-44D000691C0C");
+		private static readonly Guid agent8Id = Guid.Parse("67156766-FA54-4C79-A545-DF91DC588FB7");
+
 		#region IAgent implementation
 		/********************************************************************/
 		/// <summary>
@@ -49,10 +54,17 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher
 			{
 				return new AgentSupportInfo[]
 				{
+					// File decrunchers
 					new AgentSupportInfo(Resources.IDS_SCOM_NAME_AGENT1, Resources.IDS_SCOM_DESCRIPTION_AGENT1, agent1Id),
 					new AgentSupportInfo(Resources.IDS_SCOM_NAME_AGENT2, Resources.IDS_SCOM_DESCRIPTION_AGENT2, agent2Id),
 					new AgentSupportInfo(Resources.IDS_SCOM_NAME_AGENT3, Resources.IDS_SCOM_DESCRIPTION_AGENT3, agent3Id),
-					new AgentSupportInfo(Resources.IDS_SCOM_NAME_AGENT4, Resources.IDS_SCOM_DESCRIPTION_AGENT4, agent4Id)
+					new AgentSupportInfo(Resources.IDS_SCOM_NAME_AGENT4, Resources.IDS_SCOM_DESCRIPTION_AGENT4, agent4Id),
+
+					// Archive decrunchers
+					new AgentSupportInfo(Resources.IDS_SCOM_NAME_AGENT5, Resources.IDS_SCOM_DESCRIPTION_AGENT5, agent5Id),
+					new AgentSupportInfo(Resources.IDS_SCOM_NAME_AGENT6, Resources.IDS_SCOM_DESCRIPTION_AGENT6, agent6Id),
+					new AgentSupportInfo(Resources.IDS_SCOM_NAME_AGENT7, Resources.IDS_SCOM_DESCRIPTION_AGENT7, agent7Id),
+					new AgentSupportInfo(Resources.IDS_SCOM_NAME_AGENT8, Resources.IDS_SCOM_DESCRIPTION_AGENT8, agent8Id)
 				};
 			}
 		}
@@ -77,6 +89,18 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher
 
 			if (typeId == agent4Id)
 				return new SharpCompressDecruncher_Xz(Resources.IDS_SCOM_NAME_AGENT4);
+
+			if (typeId == agent5Id)
+				return new SharpCompressDecruncher_Zip(Resources.IDS_SCOM_NAME_AGENT5);
+
+			if (typeId == agent6Id)
+				return new SharpCompressDecruncher_Tar(Resources.IDS_SCOM_NAME_AGENT6);
+
+			if (typeId == agent7Id)
+				return new SharpCompressDecruncher_7Zip(Resources.IDS_SCOM_NAME_AGENT7);
+
+			if (typeId == agent8Id)
+				return new SharpCompressDecruncher_Rar(Resources.IDS_SCOM_NAME_AGENT8);
 
 			return null;
 		}

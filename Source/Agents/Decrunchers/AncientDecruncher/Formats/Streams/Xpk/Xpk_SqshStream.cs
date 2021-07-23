@@ -14,7 +14,7 @@ using Polycode.NostalgicPlayer.Kit.Exceptions;
 namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.Streams.Xpk
 {
 	/// <summary>
-	/// This stream read data packed with XPK (SQSH)
+	/// This stream read data crunched with XPK (SQSH)
 	/// </summary>
 	internal class Xpk_SqshStream : XpkStream
 	{
@@ -56,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 			ushort rawSize = (ushort)((chunk[0] << 8) | chunk[1]);
 
 			if (rawData.Length != rawSize)
-				throw new DepackerException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
+				throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 
 			using (MemoryStream chunkStream = new MemoryStream(chunk, false))
 			{
@@ -137,11 +137,11 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 						void HandleTable(uint newBits)
 						{
 							if ((prevBits < 2) || (newBits == 0))
-								throw new DepackerException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
+								throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 
 							bits = bitLengthTable[prevBits - 2, newBits - 1];
 							if (bits == 0)
-								throw new DepackerException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
+								throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 
 							HandleCondCase();
 						}
@@ -191,7 +191,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 							}
 
 							default:
-								throw new DepackerException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
+								throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 						}
 					}
 					else

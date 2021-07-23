@@ -11,7 +11,6 @@ using System.ComponentModel;
 using System.Drawing;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 {
@@ -95,18 +94,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				image.Dispose();
 				image = isPlaying ? Resources.IDB_PLAYING_ITEM : new Bitmap(ImageSize, ImageSize);
 			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the loader which can open the files needed
-		/// </summary>
-		/********************************************************************/
-		public ILoader GetLoader()
-		{
-			return ListItem.GetLoader();
 		}
 
 

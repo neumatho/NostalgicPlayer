@@ -17,29 +17,29 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 	/// <summary>
 	/// Wrapper class to the SharpCompress GZipStream
 	/// </summary>
-	internal class GZipStream : DepackerStream
+	internal class GZipStream : DecruncherStream
 	{
 		private readonly string agentName;
 
 		private readonly SharpCompress.Compressors.Deflate.GZipStream decruncherStream;
-		private readonly int unpackedLength;
+		private readonly int decrunchedLength;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public GZipStream(string agentName, Stream wrapperStream) : base(wrapperStream)
+		public GZipStream(string agentName, Stream wrapperStream) : base(wrapperStream, true)
 		{
 			this.agentName = agentName;
 
-			// Find the length of unpacked data
+			// Find the length of decrunched data
 			byte[] buf = new byte[4];
 
 			wrapperStream.Seek(-4, SeekOrigin.End);
 			wrapperStream.Read(buf, 0, 4);
 
-			unpackedLength = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
+			decrunchedLength = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
 
 			wrapperStream.Seek(0, SeekOrigin.Begin);
 			decruncherStream = new SharpCompress.Compressors.Deflate.GZipStream(wrapperStream, CompressionMode.Decompress);
@@ -54,6 +54,17 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		/********************************************************************/
 		protected override void Dispose(bool disposing)
 		{
+			// Because of a bug in the GZipStream, the whole file need to be
+			// loaded before we dispose the stream
+			byte[] tempBuf = new byte[16384];
+			int bytesRead;
+
+			do
+			{
+				bytesRead = decruncherStream.Read(tempBuf, 0, tempBuf.Length);
+			}
+			while (bytesRead > 0);
+
 			base.Dispose(disposing);
 
 			decruncherStream.Dispose();
@@ -73,20 +84,20 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 			}
 			catch(Exception ex)
 			{
-				throw new DepackerException(agentName, Resources.IDS_SCOM_ERR_LOADING_DATA, ex);
+				throw new DecruncherException(agentName, Resources.IDS_SCOM_ERR_LOADING_DATA, ex);
 			}
 		}
 		#endregion
 
-		#region DepackerStream overrides
+		#region DecruncherStream overrides
 		/********************************************************************/
 		/// <summary>
-		/// Return the size of the depacked data
+		/// Return the size of the decrunched data
 		/// </summary>
 		/********************************************************************/
-		protected override int GetDepackedLength()
+		protected override int GetDecrunchedLength()
 		{
-			return unpackedLength;
+			return decrunchedLength;
 		}
 		#endregion
 	}

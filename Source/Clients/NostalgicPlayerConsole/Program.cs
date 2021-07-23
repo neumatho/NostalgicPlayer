@@ -45,16 +45,9 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 				Manager agentManager = new Manager();
 				agentManager.LoadAllAgents();
 
-				// First make sure that the file exists
-				if (!File.Exists(fileName))
-				{
-					Console.WriteLine("File does not exists");
-					return;
-				}
-
 				// Load the file
 				Loader loader = new Loader(agentManager);
-				if (!loader.Load(fileName, new NormalFileLoader(fileName, agentManager), out string errorMessage))
+				if (!loader.Load(fileName, out string errorMessage))
 				{
 					Console.WriteLine("Could not load the module. Failed with error:");
 					Console.WriteLine(errorMessage);
@@ -106,6 +99,7 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 							{
 								ModuleInfoStatic moduleInfoStatic = player.StaticModuleInformation;
 								ModuleInfoFloating moduleInfoFloating = player.PlayingModuleInformation;
+								string packedLength = moduleInfoStatic.CrunchedSize == -1 ? "unknown" : moduleInfoStatic.CrunchedSize.ToString("N0");
 
 								Console.WriteLine("Playing module");
 								Console.WriteLine();
@@ -115,7 +109,7 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 								Console.WriteLine("Active player: " + moduleInfoStatic.PlayerName);
 								Console.WriteLine("Used channels: " + moduleInfoStatic.Channels);
 								Console.WriteLine("Total time: " + (moduleInfoFloating.DurationInfo == null ? "Unknown" : moduleInfoFloating.DurationInfo.TotalTime.ToString(@"m\:ss")));
-								Console.WriteLine("Module size: " + moduleInfoStatic.ModuleSize + (moduleInfoStatic.PackedSize != 0 ? $" (packed: {moduleInfoStatic.PackedSize})" : string.Empty));
+								Console.WriteLine("Module size: " + moduleInfoStatic.ModuleSize + (moduleInfoStatic.CrunchedSize != 0 ? $@" (packed: {packedLength})" : string.Empty));
 								Console.WriteLine("File name: " + fileName);
 								Console.WriteLine();
 

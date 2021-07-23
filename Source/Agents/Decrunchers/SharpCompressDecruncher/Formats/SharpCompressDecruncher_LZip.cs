@@ -15,7 +15,7 @@ using Polycode.NostalgicPlayer.Kit.Streams;
 namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats
 {
 	/// <summary>
-	/// Can depack LZip files
+	/// Can decrunch LZip files
 	/// </summary>
 	internal class SharpCompressDecruncher_LZip : FileDecruncherAgentBase
 	{
@@ -37,11 +37,11 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		/// Test the file to see if it could be identified
 		/// </summary>
 		/********************************************************************/
-		public override AgentResult Identify(Stream packedDataStream)
+		public override AgentResult Identify(Stream crunchedDataStream)
 		{
-			packedDataStream.Seek(0, SeekOrigin.Begin);
+			crunchedDataStream.Seek(0, SeekOrigin.Begin);
 
-			if (SharpCompress.Compressors.LZMA.LZipStream.IsLZipFile(packedDataStream))
+			if (SharpCompress.Compressors.LZMA.LZipStream.IsLZipFile(crunchedDataStream))
 				return AgentResult.Ok;
 
 			return AgentResult.Unknown;
@@ -51,12 +51,12 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a stream holding the depacked data
+		/// Return a stream holding the decrunched data
 		/// </summary>
 		/********************************************************************/
-		public override DepackerStream OpenStream(Stream packedDataStream)
+		public override DecruncherStream OpenStream(Stream crunchedDataStream)
 		{
-			return new LZipStream(agentName, packedDataStream);
+			return new LZipStream(agentName, crunchedDataStream);
 		}
 		#endregion
 	}

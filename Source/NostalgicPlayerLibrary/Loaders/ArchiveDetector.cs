@@ -1,0 +1,265 @@
+﻿/******************************************************************************/
+/* This source, or parts thereof, may be used in any software as long the     */
+/* license of NostalgicPlayer is keep. See the LICENSE file for more          */
+/* information.                                                               */
+/*                                                                            */
+/* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
+/* All rights reserved.                                                       */
+/******************************************************************************/
+using System;
+using System.Collections.Generic;
+using System.IO;
+using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Exceptions;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
+
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
+{
+	/// <summary>
+	/// Helper class to detect archive files and extract entries
+	/// </summary>
+	public class ArchiveDetector
+	{
+		/// <summary></summary>
+		protected Manager manager;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public ArchiveDetector(Manager agentManager)
+		{
+			manager = agentManager;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will check the given path, if it is an archive path or not
+		/// </summary>
+		/********************************************************************/
+		public static bool IsArchivePath(string fullPath)
+		{
+			return fullPath.Contains('|');
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the path to the archive only
+		/// </summary>
+		/********************************************************************/
+		public static string GetArchiveName(string fullArchivePath)
+		{
+			int index = fullArchivePath.IndexOf('|');
+			if (index != -1)
+				return fullArchivePath.Substring(0, index);
+
+			return string.Empty;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the path to the entry
+		/// </summary>
+		/********************************************************************/
+		public static string GetEntryPath(string fullArchivePath)
+		{
+			int index = fullArchivePath.IndexOf('|');
+			if (index != -1)
+				return fullArchivePath.Substring(index + 1);
+
+			return string.Empty;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the file name only of the path given
+		/// </summary>
+		/********************************************************************/
+		public static string GetEntryName(string fullArchivePath)
+		{
+			int index = fullArchivePath.LastIndexOf('|');
+			if (index != -1)
+				return fullArchivePath.Substring(index + 1);
+
+			return string.Empty;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Combine two path parts
+		/// </summary>
+		/********************************************************************/
+		public static string CombinePathParts(string path, string entryPath)
+		{
+			return $"{path}|{entryPath}";
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will check if the given file is an archive
+		/// </summary>
+		/********************************************************************/
+		public bool IsArchive(string fullPath)
+		{
+			try
+			{
+				// Try to open the file
+				using (FileStream fs = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
+				{
+					IArchiveDecruncherAgent decruncherAgent = FindArchiveAgent(fs, out Stream newStream);
+					newStream.Dispose();
+
+					return decruncherAgent != null;
+				}
+			}
+			catch(Exception)
+			{
+				return false;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will return a collection with all the entries in the given
+		/// archive file
+		/// </summary>
+		/********************************************************************/
+		public IEnumerable<string> GetEntries(string fullPath)
+		{
+			// Try to open the file
+			using (FileStream fs = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
+			{
+				foreach (string entry in GetAllEntries(fullPath, fs))
+					yield return entry;
+			}
+		}
+
+		#region Helper methods
+		/********************************************************************/
+		/// <summary>
+		/// Will try to find the archive agent that can be used on the
+		/// given stream and then open the archive and return a new stream
+		/// </summary>
+		/********************************************************************/
+		protected IArchive OpenArchive(Stream stream, out Stream newStream)
+		{
+			IArchiveDecruncherAgent archiveDecruncher = FindArchiveAgent(stream, out newStream);
+			if (archiveDecruncher == null)
+				throw new Exception(Resources.IDS_LOADERR_NO_ARCHIVE_DECRUNCHER);
+
+			// Seek back to the beginning of the stream
+			newStream.Seek(0, SeekOrigin.Begin);
+
+			return archiveDecruncher.OpenArchive(newStream);
+		}
+		#endregion
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Will try to find the archive agent that can be used on the
+		/// given stream
+		/// </summary>
+		/********************************************************************/
+		private IArchiveDecruncherAgent FindArchiveAgent(Stream stream, out Stream newStream)
+		{
+			SingleFileDecruncher decruncher = new SingleFileDecruncher(manager);
+
+			// The archive file itself can be crunched, e.g. Bzip2, so decrunch it
+			newStream = decruncher.DecrunchFileMultipleLevels(stream);
+
+			foreach (AgentInfo agentInfo in manager.GetAllAgents(Manager.AgentType.ArchiveDecrunchers))
+			{
+				// Is the decruncher enabled?
+				if (agentInfo.Enabled)
+				{
+					// Create an instance of the decruncher
+					if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IArchiveDecruncherAgent archiveDecruncher)
+					{
+						// Check the file
+						AgentResult agentResult = archiveDecruncher.Identify(newStream);
+						if (agentResult == AgentResult.Ok)
+							return archiveDecruncher;
+
+						if (agentResult != AgentResult.Unknown)
+						{
+							// Some error occurred
+							throw new DecruncherException(agentInfo.TypeName, "Identify() returned an error");
+						}
+					}
+				}
+			}
+
+			return null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will try to find the archive agent that can be used on the
+		/// given stream and then open the archive and return a new stream
+		/// </summary>
+		/********************************************************************/
+		private IEnumerable<string> GetAllEntries(string fullPath, Stream archiveStream)
+		{
+			IArchive archive = OpenArchive(archiveStream, out Stream newStream);
+
+			try
+			{
+				foreach (string entry in archive.GetEntries())
+				{
+					Stream entryStream = archive.OpenEntry(entry);
+
+					try
+					{
+						if (!entryStream.CanSeek)
+							entryStream = new SeekableStream(entryStream);
+
+						IArchiveDecruncherAgent decruncherAgent = FindArchiveAgent(entryStream, out Stream newEntryStream);
+						if (decruncherAgent != null)
+						{
+							try
+							{
+								foreach (string resultEntry in GetAllEntries($"{fullPath}|{entry}", newEntryStream))
+									yield return resultEntry;
+							}
+							finally
+							{
+								newEntryStream.Dispose();
+							}
+						}
+						else
+							yield return $"{fullPath}|{entry}";
+					}
+					finally
+					{
+						entryStream.Dispose();
+					}
+				}
+			}
+			finally
+			{
+				newStream.Dispose();
+			}
+		}
+		#endregion
+	}
+}

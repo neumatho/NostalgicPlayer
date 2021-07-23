@@ -17,29 +17,29 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 	/// <summary>
 	/// Wrapper class to the SharpCompress LZipStream
 	/// </summary>
-	internal class LZipStream : DepackerStream
+	internal class LZipStream : DecruncherStream
 	{
 		private readonly string agentName;
 
 		private readonly SharpCompress.Compressors.LZMA.LZipStream decruncherStream;
-		private readonly int unpackedLength;
+		private readonly int decrunchedLength;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public LZipStream(string agentName, Stream wrapperStream) : base(wrapperStream)
+		public LZipStream(string agentName, Stream wrapperStream) : base(wrapperStream, true)
 		{
 			this.agentName = agentName;
 
-			// Find the length of unpacked data
+			// Find the length of decrunched data
 			byte[] buf = new byte[4];
 
 			wrapperStream.Seek(-16, SeekOrigin.End);
 			wrapperStream.Read(buf, 0, 4);
 
-			unpackedLength = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
+			decrunchedLength = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
 
 			wrapperStream.Seek(0, SeekOrigin.Begin);
 			decruncherStream = new SharpCompress.Compressors.LZMA.LZipStream(wrapperStream, CompressionMode.Decompress);
@@ -73,20 +73,20 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 			}
 			catch(Exception ex)
 			{
-				throw new DepackerException(agentName, Resources.IDS_SCOM_ERR_LOADING_DATA, ex);
+				throw new DecruncherException(agentName, Resources.IDS_SCOM_ERR_LOADING_DATA, ex);
 			}
 		}
 		#endregion
 
-		#region DepackerStream overrides
+		#region DecruncherStream overrides
 		/********************************************************************/
 		/// <summary>
-		/// Return the size of the depacked data
+		/// Return the size of the decrunched data
 		/// </summary>
 		/********************************************************************/
-		protected override int GetDepackedLength()
+		protected override int GetDecrunchedLength()
 		{
-			return unpackedLength;
+			return decrunchedLength;
 		}
 		#endregion
 	}

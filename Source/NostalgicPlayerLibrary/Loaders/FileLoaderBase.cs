@@ -6,7 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System;
+using System.Collections.Generic;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
@@ -20,7 +20,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 	public abstract class FileLoaderBase : ILoader
 	{
 		private readonly string fileName;
-		private readonly Manager manager;
+
+		/// <summary></summary>
+		protected Manager manager;
 
 		/********************************************************************/
 		/// <summary>
@@ -37,27 +39,23 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 
 		/********************************************************************/
 		/// <summary>
-		/// Will try to open the file given
+		/// Free allocated stuff
 		/// </summary>
 		/********************************************************************/
-		public Stream OpenFile()
+		public virtual void Dispose()
 		{
-			Stream stream = OpenFile(fileName);
-
-			// Get the original length of the file
-			PackedSize = stream.Length;
-
-			// First try to depack the file if needed
-			SingleFileDepacker depacker = new SingleFileDepacker(manager);
-			stream = depacker.DepackFileMultipleLevels(stream);
-
-			// Update sizes
-			ModuleSize = stream.Length;
-			if (ModuleSize == PackedSize)
-				PackedSize = 0;
-
-			return stream;
+			manager = null;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will try to open the main file. You need to dispose the returned
+		/// stream when done
+		/// </summary>
+		/********************************************************************/
+		public abstract Stream OpenFile();
 
 
 
@@ -69,68 +67,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/// when done
 		/// </summary>
 		/********************************************************************/
-		public ModuleStream OpenExtraFile(string newExtension)
-		{
-			if (string.IsNullOrEmpty(newExtension))
-				return null;
-
-			// First change the extension
-			string newFileName = Path.ChangeExtension(fileName, newExtension);
-			Stream stream = TryOpenFile(newFileName);
-			if (stream == null)
-			{
-				// Now try to append the extension
-				newFileName = fileName + $".{newExtension}";
-				stream = TryOpenFile(newFileName);
-				if (stream == null)
-				{
-					// Try with prefix
-					string directory = Path.GetDirectoryName(fileName);
-					string name = Path.GetFileName(fileName);
-
-					int index = name.IndexOf('.');
-					if (index != -1)
-					{
-						name = name.Substring(index + 1);
-
-						newFileName = Path.Combine(directory, $"{newExtension}.{name}");
-						stream = TryOpenFile(newFileName);
-					}
-				}
-			}
-
-			// If a file is opened, depack it if needed
-			if (stream != null)
-			{
-				long fileSize = stream.Length;
-
-				SingleFileDepacker depacker = new SingleFileDepacker(manager);
-				stream = depacker.DepackFileMultipleLevels(stream);
-
-				long newFileSize = stream.Length;
-				if (newFileSize == fileSize)
-				{
-					// Not packed
-					ModuleSize += fileSize;
-					if (PackedSize != 0)
-						PackedSize += fileSize;
-				}
-				else
-				{
-					// Packed
-					if (PackedSize != 0)
-						PackedSize += fileSize;
-					else
-						PackedSize = ModuleSize + fileSize;
-
-					ModuleSize += newFileSize;
-				}
-
-				return new ModuleStream(stream, false);
-			}
-
-			return null;
-		}
+		public abstract ModuleStream OpenExtraFile(string newExtension);
 
 
 
@@ -139,7 +76,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/// Return the full path to the file
 		/// </summary>
 		/********************************************************************/
-		public virtual string FullPath => fileName;
+		public string FullPath => fileName;
 
 
 
@@ -157,39 +94,73 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the size of the module packed. Is zero if not packed
+		/// Return the size of the module crunched. Is zero if not crunched.
+		/// If -1, it means the crunched length is unknown
 		/// </summary>
 		/********************************************************************/
-		public long PackedSize
+		public long CrunchedSize
 		{
 			get; protected set;
+		}
+
+		#region Helper methods
+		/********************************************************************/
+		/// <summary>
+		/// Return a collection of file names to try when opening extra files
+		/// </summary>
+		/********************************************************************/
+		protected IEnumerable<string> GetExtraFileNames(string newExtension)
+		{
+			if (string.IsNullOrEmpty(newExtension))
+				yield break;
+
+			// First change the extension
+			string newFileName = Path.ChangeExtension(fileName, newExtension);
+			yield return newFileName;
+
+			// Now try to append the extension
+			newFileName = fileName + $".{newExtension}";
+			yield return newFileName;
+
+			// Try with prefix
+			string directory = Path.GetDirectoryName(fileName);
+			string name = Path.GetFileName(fileName);
+
+			int index = name.IndexOf('.');
+			if (index != -1)
+			{
+				name = name.Substring(index + 1);
+
+				newFileName = Path.Combine(directory, $"{newExtension}.{name}");
+				yield return newFileName;
+			}
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Will try to open the file given
+		/// Will add the sizes to the size properties
 		/// </summary>
 		/********************************************************************/
-		protected abstract Stream OpenFile(string fileName);
-
-		#region Private methods
-		/********************************************************************/
-		/// <summary>
-		/// Will try to open the file given and return null if it could not
-		/// be opened
-		/// </summary>
-		/********************************************************************/
-		private Stream TryOpenFile(string fileName)
+		protected void AddSizes(long crunchedSize, long decrunchedSize)
 		{
-			try
+			if (crunchedSize == decrunchedSize)
 			{
-				return OpenFile(fileName);
+				// Not crunched
+				ModuleSize += crunchedSize;
+				if (CrunchedSize > 0)
+					CrunchedSize += crunchedSize;
 			}
-			catch (Exception)
+			else
 			{
-				return null;
+				// Crunched
+				if (CrunchedSize > 0)
+					CrunchedSize += crunchedSize;
+				else
+					CrunchedSize = ModuleSize + crunchedSize;
+
+				ModuleSize += decrunchedSize;
 			}
 		}
 		#endregion

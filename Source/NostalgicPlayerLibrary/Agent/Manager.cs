@@ -53,9 +53,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 			Visuals,
 
 			/// <summary>
-			/// Can depack a single file
+			/// Can decrunch a single file
 			/// </summary>
-			FileDecrunchers
+			FileDecrunchers,
+
+			/// <summary>
+			/// Can decrunch archive files
+			/// </summary>
+			ArchiveDecrunchers
 		}
 
 		private class AgentLoadInfo
@@ -467,6 +472,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 
 			if (worker is IFileDecruncherAgent)
 				return AgentType.FileDecrunchers;
+
+			if (worker is IArchiveDecruncherAgent)
+				return AgentType.ArchiveDecrunchers;
 
 			return null;
 		}

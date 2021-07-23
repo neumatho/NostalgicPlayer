@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 	/// length of the decompressed data can derive from, so it is
 	/// possible to get the length
 	/// </summary>
-	internal abstract class NoLengthStream : DepackerStream
+	internal abstract class NoLengthStream : DecruncherStream
 	{
 		private readonly MemoryStream bufferStream;
 
@@ -27,11 +27,11 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		protected NoLengthStream(string agentName, Stream wrapperStream) : base(wrapperStream)
+		protected NoLengthStream(string agentName, Stream wrapperStream, bool leaveOpen) : base(wrapperStream, leaveOpen)
 		{
 			bufferStream = new MemoryStream();
 
-			ReadAndUnpack(agentName);
+			ReadAndDecrunch(agentName);
 		}
 
 
@@ -104,13 +104,13 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		}
 		#endregion
 
-		#region DepackerStream overrides
+		#region DecruncherStream overrides
 		/********************************************************************/
 		/// <summary>
-		/// Return the size of the depacked data
+		/// Return the size of the decrunched data
 		/// </summary>
 		/********************************************************************/
-		protected override int GetDepackedLength()
+		protected override int GetDecrunchedLength()
 		{
 			return (int)bufferStream.Length;
 		}
@@ -118,26 +118,26 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the stream holding the packed data
+		/// Return the stream holding the crunched data
 		/// </summary>
 		/********************************************************************/
-		protected abstract Stream OpenPackedDataStream();
+		protected abstract Stream OpenCrunchedDataStream();
 
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
-		/// Read and unpack data
+		/// Read and decrunch data
 		/// </summary>
 		/********************************************************************/
-		private void ReadAndUnpack(string agentName)
+		private void ReadAndDecrunch(string agentName)
 		{
 			try
 			{
-				// Because the depacked length is not stored anywhere, we need
-				// to depack the whole file into a buffer and use that to read from
+				// Because the decrunched length is not stored anywhere, we need
+				// to decrunch the whole file into a buffer and use that to read from
 				wrapperStream.Seek(0, SeekOrigin.Begin);
 
-				using (Stream decruncherStream = OpenPackedDataStream())
+				using (Stream decruncherStream = OpenCrunchedDataStream())
 				{
 					decruncherStream.CopyTo(bufferStream);
 				}
@@ -146,7 +146,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 			}
 			catch(Exception ex)
 			{
-				throw new DepackerException(agentName, Resources.IDS_SCOM_ERR_LOADING_DATA, ex);
+				throw new DecruncherException(agentName, Resources.IDS_SCOM_ERR_LOADING_DATA, ex);
 			}
 		}
 		#endregion

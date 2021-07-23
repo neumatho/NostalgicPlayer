@@ -6,6 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
@@ -14,10 +15,11 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	/// <summary>
 	/// This interface helps loading extra files needed for a module
 	/// </summary>
-	public interface ILoader
+	public interface ILoader : IDisposable
 	{
 		/// <summary>
-		/// Will try to open the main file
+		/// Will try to open the main file. You need to dispose the returned
+		/// stream when done
 		/// </summary>
 		Stream OpenFile();
 
@@ -40,8 +42,8 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		long ModuleSize { get; }
 
 		/// <summary>
-		/// Return the size of the module packed. Is zero if not packed
+		/// Return the size of the module crunched. Is zero if not crunched
 		/// </summary>
-		long PackedSize { get; }
+		long CrunchedSize { get; }
 	}
 }

@@ -187,7 +187,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					// Get needed information via the main thread
 					string fileName = null;
 					bool haveTime = true;
-					ILoader loader = null;
 
 					listBox.Invoke(new Action<int>((idx) =>
 					{
@@ -197,7 +196,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 							fileName = listItem.ListItem.FullPath;
 							haveTime = listItem.HaveTime;
-							loader = listItem.GetLoader();
 						}
 					}), index);
 
@@ -212,7 +210,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					if (totalTime.Ticks == 0)
 					{
 						// No, try to load the file and let the player return the total time
-						totalTime = GetPlayerTime(fileName, loader);
+						totalTime = GetPlayerTime(fileName);
 					}
 
 					// Update the list item
@@ -276,12 +274,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Will try to load the given module and find the time
 		/// </summary>
 		/********************************************************************/
-		private TimeSpan GetPlayerTime(string fileName, ILoader itemLoader)
+		private TimeSpan GetPlayerTime(string fileName)
 		{
 			try
 			{
 				Loader loader = new Loader(manager);
-				if (loader.Load(fileName, itemLoader, out string _))
+				if (loader.Load(fileName, out string _))
 				{
 					IPlayer player = loader.Player;
 

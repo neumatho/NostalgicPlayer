@@ -838,7 +838,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  (packed: {0:n0}).
+        ///   Looks up a localized string similar to  (packed: {0}).
         /// </summary>
         internal static string IDS_MODULE_INFO_ITEM_PACKEDSIZE {
             get {

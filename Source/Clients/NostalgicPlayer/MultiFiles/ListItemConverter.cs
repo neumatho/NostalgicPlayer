@@ -10,7 +10,6 @@ using System;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
-using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 {
@@ -36,6 +35,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 				};
 			}
 
+			if (listItem.ListItem is ArchiveFileListItem archiveFile)
+			{
+				return new MultiFileInfo
+				{
+					Type = MultiFileInfo.FileType.Archive,
+					FileName = archiveFile.FullPath,
+					PlayTime = listItem.HaveTime ? listItem.Time : null
+				};
+			}
+
 			throw new NotImplementedException("Unknown module list implementation");
 		}
 
@@ -46,7 +55,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 		/// Convert a list info to a list item
 		/// </summary>
 		/********************************************************************/
-		public static ModuleListItem Convert(MultiFileInfo fileInfo, Manager agentManager)
+		public static ModuleListItem Convert(MultiFileInfo fileInfo)
 		{
 			IModuleListItem item;
 
@@ -54,7 +63,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 			{
 				case MultiFileInfo.FileType.Plain:
 				{
-					item = new SingleFileListItem(fileInfo.FileName, agentManager);
+					item = new SingleFileListItem(fileInfo.FileName);
+					break;
+				}
+
+				case MultiFileInfo.FileType.Archive:
+				{
+					item = new ArchiveFileListItem(fileInfo.FileName);
 					break;
 				}
 

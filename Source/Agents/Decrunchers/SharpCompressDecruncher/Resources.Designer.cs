@@ -113,7 +113,64 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed while loading packed data..
+        ///   Looks up a localized string similar to Created by Thomas Neumann.
+        ///Uses SharpCompress by Adam Hathcock.
+        ///
+        ///ZIP is an archive file format that supports lossless data compression. A ZIP file may contain one or more files or directories that may have been compressed. The ZIP file format permits a number of compression algorithms, though DEFLATE is the most common. This format was originally created in 1989 and was first implemented in PKWARE, Inc.&apos;s PKZIP utility, as a replacement for the previous ARC compression format by Thom Henderson. The ZIP f [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string IDS_SCOM_DESCRIPTION_AGENT5 {
+            get {
+                return ResourceManager.GetString("IDS_SCOM_DESCRIPTION_AGENT5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Created by Thomas Neumann.
+        ///Uses SharpCompress by Adam Hathcock.
+        ///
+        ///Tar is an archive format to store multiple files. The format itself does not make any compressing, just collect the files. It is normally used together with GZip or BZip2 to compress the tar file..
+        /// </summary>
+        internal static string IDS_SCOM_DESCRIPTION_AGENT6 {
+            get {
+                return ResourceManager.GetString("IDS_SCOM_DESCRIPTION_AGENT6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Created by Thomas Neumann.
+        ///Uses SharpCompress by Adam Hathcock.
+        ///
+        ///7-Zip is developed by Igor Pavlov and was first released in 1999. 7-Zip uses its own 7z archive format. The core 7z compression uses a variety of algorithms, the most common of which are BZip2, PPMd, LZMA2, and LZMA. Developed by Pavlov, LZMA is a relatively new system, making its debut as part of the 7z format. LZMA uses an LZ-based sliding dictionary of up to 4 GB in size, backed by a range coder..
+        /// </summary>
+        internal static string IDS_SCOM_DESCRIPTION_AGENT7 {
+            get {
+                return ResourceManager.GetString("IDS_SCOM_DESCRIPTION_AGENT7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Created by Thomas Neumann.
+        ///Uses SharpCompress by Adam Hathcock.
+        ///
+        ///RAR compression applications and libraries (including GUI based WinRAR application for Windows, console rar utility for different OSes and others) are proprietary software, to which Alexander L. Roshal, the elder brother of Eugene Roshal, owns the copyright. Version 3 of RAR is based on Lempel-Ziv (LZSS) and prediction by partial matching (PPM) compression, specifically the PPMd implementation of PPMII by Dmitry Shkarin..
+        /// </summary>
+        internal static string IDS_SCOM_DESCRIPTION_AGENT8 {
+            get {
+                return ResourceManager.GetString("IDS_SCOM_DESCRIPTION_AGENT8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not find archive entry ({0})..
+        /// </summary>
+        internal static string IDS_SCOM_ERR_ENTRY_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("IDS_SCOM_ERR_ENTRY_NOT_FOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed while loading crunched data..
         /// </summary>
         internal static string IDS_SCOM_ERR_LOADING_DATA {
             get {
@@ -163,6 +220,42 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher {
         internal static string IDS_SCOM_NAME_AGENT4 {
             get {
                 return ResourceManager.GetString("IDS_SCOM_NAME_AGENT4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zip.
+        /// </summary>
+        internal static string IDS_SCOM_NAME_AGENT5 {
+            get {
+                return ResourceManager.GetString("IDS_SCOM_NAME_AGENT5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tar.
+        /// </summary>
+        internal static string IDS_SCOM_NAME_AGENT6 {
+            get {
+                return ResourceManager.GetString("IDS_SCOM_NAME_AGENT6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 7-Zip.
+        /// </summary>
+        internal static string IDS_SCOM_NAME_AGENT7 {
+            get {
+                return ResourceManager.GetString("IDS_SCOM_NAME_AGENT7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rar.
+        /// </summary>
+        internal static string IDS_SCOM_NAME_AGENT8 {
+            get {
+                return ResourceManager.GetString("IDS_SCOM_NAME_AGENT8", resourceCulture);
             }
         }
     }

@@ -175,18 +175,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/// Tells if the module is playing or not at the moment
 		/// </summary>
 		/********************************************************************/
-		public bool IsPlaying
-		{
-			get
-			{
-				return isPlaying;
-			}
-
-			set
-			{
-				isPlaying = value;
-			}
-		}
+		public bool IsPlaying => isPlaying;
 
 
 
@@ -207,14 +196,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/// Return all the static module information
 		/// </summary>
 		/********************************************************************/
-		public ModuleInfoStatic StaticModuleInformation
-		{
-			get
-			{
-				return GetActivePlayer()?.StaticModuleInformation ?? new ModuleInfoStatic();
-			}
-		}
-
+		public ModuleInfoStatic StaticModuleInformation => GetActivePlayer()?.StaticModuleInformation ?? new ModuleInfoStatic();
 
 
 		/********************************************************************/
@@ -223,13 +205,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/// playing
 		/// </summary>
 		/********************************************************************/
-		public ModuleInfoFloating PlayingModuleInformation
-		{
-			get
-			{
-				return GetActivePlayer()?.PlayingModuleInformation ?? new ModuleInfoFloating();
-			}
-		}
+		public ModuleInfoFloating PlayingModuleInformation => GetActivePlayer()?.PlayingModuleInformation ?? new ModuleInfoFloating();
 		#endregion
 
 		#region Public methods
@@ -264,13 +240,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					ModuleItem item = new ModuleItem();
 
 					// Get the file name
-					string fileName = listItem.ShortText;
+					string fileName = listItem.ListItem.FullPath;
 
 					// Create new loader
 					item.Loader = new Loader(agentManager);
 
 					// Load the module
-					if (!item.Loader.Load(fileName, listItem.GetLoader(), out string errorMessage))
+					if (!item.Loader.Load(fileName, out string errorMessage))
 					{
 						if (showError)
 							ShowErrorMessage(string.Format(Resources.IDS_ERR_LOAD_FILE, errorMessage), listItem);
@@ -414,7 +390,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					player.EndReached -= Player_EndReached;
 					player.ModuleInfoChanged -= Player_ModuleInfoChanged;
 
-					IsPlaying = false;
+					isPlaying = false;
 
 					// Cleanup the player
 					player.CleanupPlayer();
@@ -604,7 +580,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 			if (player != null)
 			{
 				player.PausePlaying();
-				IsPlaying = false;
+				isPlaying = false;
 			}
 		}
 
@@ -622,7 +598,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 			if (player != null)
 			{
 				player.ResumePlaying();
-				IsPlaying = true;
+				isPlaying = true;
 			}
 		}
 
@@ -851,7 +827,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				}
 
 				// The module is playing
-				IsPlaying = true;
+				isPlaying = true;
 
 				return true;
 			}

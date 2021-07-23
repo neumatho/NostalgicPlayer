@@ -64,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library).
         ///Converted to C# by Thomas Neumann.
         ///
-        ///PowerPacker was written by Nico Francois and was very popular on the Amiga. One of its strength, is that it is very fast for both packing and depacking..
+        ///PowerPacker was written by Nico Francois and was very popular on the Amiga. One of its strength, is that it is very fast for both crunching and decrunching..
         /// </summary>
         internal static string IDS_ANC_DESCRIPTION_AGENT1 {
             get {
@@ -76,7 +76,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library).
         ///Converted to C# by Thomas Neumann.
         ///
-        ///The SQSH is a packer library for the XPK packer. The algorithm is designed to pack samples by using a delta compression algorithm together with LZ based compression..
+        ///The SQSH is a cruncher library for the XPK cruncher. The algorithm is designed to crunch samples by using a delta compression algorithm together with LZ based compression..
         /// </summary>
         internal static string IDS_ANC_DESCRIPTION_AGENT2 {
             get {
@@ -85,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Packed data is corrupt.
+        ///   Looks up a localized string similar to Crunched data is corrupt.
         /// </summary>
         internal static string IDS_ANC_ERR_CORRUPT_DATA {
             get {
@@ -103,7 +103,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ran out of packed data.
+        ///   Looks up a localized string similar to Ran out of crunched data.
         /// </summary>
         internal static string IDS_ANC_ERR_OUT_OF_DATA {
             get {

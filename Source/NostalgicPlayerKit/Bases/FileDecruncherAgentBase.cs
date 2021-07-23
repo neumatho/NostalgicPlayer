@@ -24,16 +24,16 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Test the file to see if it could be identified
 		/// </summary>
 		/********************************************************************/
-		public abstract AgentResult Identify(Stream packedDataStream);
+		public abstract AgentResult Identify(Stream crunchedDataStream);
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a stream holding the depacked data
+		/// Return a stream holding the decrunched data
 		/// </summary>
 		/********************************************************************/
-		public abstract DepackerStream OpenStream(Stream packedDataStream);
+		public abstract DecruncherStream OpenStream(Stream crunchedDataStream);
 		#endregion
 	}
 }

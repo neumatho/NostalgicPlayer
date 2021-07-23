@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 		public void WriteByte(uint value)
 		{
 			if (currentOffset <= startOffset)
-				throw new DepackerException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
+				throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 
 			buf[--currentOffset] = (byte)value;
 		}

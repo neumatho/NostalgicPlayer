@@ -16,9 +16,9 @@ using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 {
 	/// <summary>
-	/// Helper class to depack a file using single file depackers
+	/// Helper class to decrunch a file using single file decrunchers
 	/// </summary>
-	public class SingleFileDepacker
+	internal class SingleFileDecruncher
 	{
 		private readonly Manager manager;
 
@@ -27,7 +27,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SingleFileDepacker(Manager agentManager)
+		public SingleFileDecruncher(Manager agentManager)
 		{
 			manager = agentManager;
 		}
@@ -36,16 +36,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 
 		/********************************************************************/
 		/// <summary>
-		/// Will try to depack the file if needed. Will also check if the
-		/// file has been packed multiple times
+		/// Will try to decrunch the file if needed. Will also check if the
+		/// file has been crunched multiple times
 		/// </summary>
 		/********************************************************************/
-		public Stream DepackFileMultipleLevels(Stream stream)
+		public Stream DecrunchFileMultipleLevels(Stream stream)
 		{
 			for (;;)
 			{
-				DepackerStream depackerStream = DepackFile(stream);
-				if (depackerStream == null)
+				DecruncherStream decruncherStream = DecrunchFile(stream);
+				if (decruncherStream == null)
 				{
 					// Make sure that the stream is at the beginning
 					stream.Seek(0, SeekOrigin.Begin);
@@ -53,38 +53,38 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 					return stream;
 				}
 
-				if (depackerStream.CanSeek)
-					stream = depackerStream;
+				if (decruncherStream.CanSeek)
+					stream = decruncherStream;
 				else
-					stream = new SeekableStream(depackerStream);
+					stream = new SeekableStream(decruncherStream);
 			}
 		}
 
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
-		/// Will try to depack the file if needed
+		/// Will try to decrunch the file if needed
 		/// </summary>
 		/********************************************************************/
-		private DepackerStream DepackFile(Stream packedDataStream)
+		private DecruncherStream DecrunchFile(Stream crunchedDataStream)
 		{
 			foreach (AgentInfo agentInfo in manager.GetAllAgents(Manager.AgentType.FileDecrunchers))
 			{
-				// Is the depacker enabled?
+				// Is the decruncher enabled?
 				if (agentInfo.Enabled)
 				{
-					// Create an instance of the depacker
+					// Create an instance of the decruncher
 					if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IFileDecruncherAgent decruncher)
 					{
 						// Check the file
-						AgentResult agentResult = decruncher.Identify(packedDataStream);
+						AgentResult agentResult = decruncher.Identify(crunchedDataStream);
 						if (agentResult == AgentResult.Ok)
-							return decruncher.OpenStream(packedDataStream);
+							return decruncher.OpenStream(crunchedDataStream);
 
 						if (agentResult != AgentResult.Unknown)
 						{
 							// Some error occurred
-							throw new DepackerException(agentInfo.TypeName, "Identify() returned an error");
+							throw new DecruncherException(agentInfo.TypeName, "Identify() returned an error");
 						}
 					}
 				}

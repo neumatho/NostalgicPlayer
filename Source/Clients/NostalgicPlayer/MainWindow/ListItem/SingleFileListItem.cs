@@ -7,9 +7,6 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System.IO;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
-using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 {
@@ -18,34 +15,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 	/// </summary>
 	public class SingleFileListItem : IModuleListItem
 	{
-		private readonly Manager manager;
-
-		#region IModuleListItem implementation
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SingleFileListItem(string fullFileName, Manager agentManager)
+		public SingleFileListItem(string fullFileName)
 		{
 			FullPath = fullFileName;
-			manager = agentManager;
 		}
 
-
-
+		#region IModuleListItem implementation
 		/********************************************************************/
 		/// <summary>
 		/// Return the name which is shown in the list
 		/// </summary>
 		/********************************************************************/
-		public string DisplayName
-		{
-			get
-			{
-				return Path.GetFileName(FullPath);
-			}
-		}
+		public string DisplayName => Path.GetFileName(FullPath);
 
 
 
@@ -57,18 +43,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 		public string FullPath
 		{
 			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the loader which can open the files needed
-		/// </summary>
-		/********************************************************************/
-		public ILoader GetLoader()
-		{
-			return new NormalFileLoader(FullPath, manager);
 		}
 		#endregion
 	}

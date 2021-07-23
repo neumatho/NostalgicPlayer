@@ -145,8 +145,35 @@ Xz can only compress a single file, but is normally used together with the tar a
 
 In most cases, xz achieves higher compression rates than alternatives like gzip and bzip2. Decompression speed is faster than bzip2, but slower than gzip. Compression can be much slower than gzip, and is slower than bzip2 for high levels of compression, and is most useful when a compressed file will be used many times.</value>
   </data>
+  <data name="IDS_SCOM_DESCRIPTION_AGENT5" xml:space="preserve">
+    <value>Created by Thomas Neumann.
+Uses SharpCompress by Adam Hathcock.
+
+ZIP is an archive file format that supports lossless data compression. A ZIP file may contain one or more files or directories that may have been compressed. The ZIP file format permits a number of compression algorithms, though DEFLATE is the most common. This format was originally created in 1989 and was first implemented in PKWARE, Inc.'s PKZIP utility, as a replacement for the previous ARC compression format by Thom Henderson. The ZIP format was then quickly supported by many software utilities other than PKZIP.</value>
+  </data>
+  <data name="IDS_SCOM_DESCRIPTION_AGENT6" xml:space="preserve">
+    <value>Created by Thomas Neumann.
+Uses SharpCompress by Adam Hathcock.
+
+Tar is an archive format to store multiple files. The format itself does not make any compressing, just collect the files. It is normally used together with GZip or BZip2 to compress the tar file.</value>
+  </data>
+  <data name="IDS_SCOM_DESCRIPTION_AGENT7" xml:space="preserve">
+    <value>Created by Thomas Neumann.
+Uses SharpCompress by Adam Hathcock.
+
+7-Zip is developed by Igor Pavlov and was first released in 1999. 7-Zip uses its own 7z archive format. The core 7z compression uses a variety of algorithms, the most common of which are BZip2, PPMd, LZMA2, and LZMA. Developed by Pavlov, LZMA is a relatively new system, making its debut as part of the 7z format. LZMA uses an LZ-based sliding dictionary of up to 4 GB in size, backed by a range coder.</value>
+  </data>
+  <data name="IDS_SCOM_DESCRIPTION_AGENT8" xml:space="preserve">
+    <value>Created by Thomas Neumann.
+Uses SharpCompress by Adam Hathcock.
+
+RAR compression applications and libraries (including GUI based WinRAR application for Windows, console rar utility for different OSes and others) are proprietary software, to which Alexander L. Roshal, the elder brother of Eugene Roshal, owns the copyright. Version 3 of RAR is based on Lempel-Ziv (LZSS) and prediction by partial matching (PPM) compression, specifically the PPMd implementation of PPMII by Dmitry Shkarin.</value>
+  </data>
+  <data name="IDS_SCOM_ERR_ENTRY_NOT_FOUND" xml:space="preserve">
+    <value>Could not find archive entry ({0}).</value>
+  </data>
   <data name="IDS_SCOM_ERR_LOADING_DATA" xml:space="preserve">
-    <value>Failed while loading packed data.</value>
+    <value>Failed while loading crunched data.</value>
   </data>
   <data name="IDS_SCOM_NAME" xml:space="preserve">
     <value>SharpCompress Decruncher</value>
@@ -162,5 +189,17 @@ In most cases, xz achieves higher compression rates than alternatives like gzip 
   </data>
   <data name="IDS_SCOM_NAME_AGENT4" xml:space="preserve">
     <value>Xz</value>
+  </data>
+  <data name="IDS_SCOM_NAME_AGENT5" xml:space="preserve">
+    <value>Zip</value>
+  </data>
+  <data name="IDS_SCOM_NAME_AGENT6" xml:space="preserve">
+    <value>Tar</value>
+  </data>
+  <data name="IDS_SCOM_NAME_AGENT7" xml:space="preserve">
+    <value>7-Zip</value>
+  </data>
+  <data name="IDS_SCOM_NAME_AGENT8" xml:space="preserve">
+    <value>Rar</value>
   </data>
 </root>

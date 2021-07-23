@@ -256,6 +256,20 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 			if (wrapperStream is FileStream fs)
 				newStream = new ModuleStream(new FileStream(fs.Name, FileMode.Open, FileAccess.Read), false);
 
+			if ((wrapperStream is DecruncherStream) || (wrapperStream is SeekableStream))
+			{
+				// Need to decrunch the whole file into memory
+				long position = wrapperStream.Position;
+
+				MemoryStream ms = new MemoryStream((int)wrapperStream.Length);
+				wrapperStream.Seek(0, SeekOrigin.Begin);
+				wrapperStream.CopyTo(ms);
+
+				wrapperStream.Seek(position, SeekOrigin.Begin);
+
+				newStream = new ModuleStream(ms, false);
+			}
+
 			if (newStream == null)
 				throw new NotSupportedException($"Stream of type {wrapperStream.GetType()} cannot be duplicated");
 

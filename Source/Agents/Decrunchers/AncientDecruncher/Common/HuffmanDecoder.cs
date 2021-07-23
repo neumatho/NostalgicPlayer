@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 		public T Decode(Func<uint> bitReader)
 		{
 			if (table.Count == 0)
-				throw new DepackerException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
+				throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 
 			int i = 0;
 
@@ -79,7 +79,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 			{
 				i = table[i].Sub[bitReader() != 0 ? 1 : 0];
 				if (i == 0)
-					throw new DepackerException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
+					throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 			}
 
 			return table[i].Value;
@@ -103,7 +103,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 				if (i != length)
 				{
 					if ((currentBit == 0) || ((table[i].Sub[0] == 0) && (table[i].Sub[1] == 0)))
-						throw new DepackerException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
+						throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 
 					ref int tmp = ref table[i].Sub[codeBit];
 					if (tmp == 0)

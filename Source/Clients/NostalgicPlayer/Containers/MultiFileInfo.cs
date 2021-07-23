@@ -23,7 +23,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers
 			/// <summary>
 			/// Just a plain file
 			/// </summary>
-			Plain
+			Plain,
+
+			/// <summary>
+			/// File is stored inside an archive
+			/// </summary>
+			Archive
 		}
 
 		/********************************************************************/

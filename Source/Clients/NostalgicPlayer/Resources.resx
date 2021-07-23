@@ -282,6 +282,7 @@ Formats supported:
 
 ¤U¤D
 
+
 ¤B¤CThank you for using NostalgicPlayer!
 
 
@@ -445,7 +446,7 @@ Formats supported:
     <value>n/a</value>
   </data>
   <data name="IDS_MODULE_INFO_ITEM_PACKEDSIZE" xml:space="preserve">
-    <value> (packed: {0:n0})</value>
+    <value> (packed: {0})</value>
   </data>
   <data name="IDS_MODULE_INFO_ITEM_TIME" xml:space="preserve">
     <value>Total time:</value>

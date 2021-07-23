@@ -13,18 +13,18 @@ using Polycode.NostalgicPlayer.Kit.Streams;
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
 	/// <summary>
-	/// Agents of this type, can depack a single format
+	/// Agents of this type, can decrunch a single format
 	/// </summary>
 	public interface IFileDecruncherAgent : IAgentWorker
 	{
 		/// <summary>
 		/// Test the file to see if it could be identified
 		/// </summary>
-		AgentResult Identify(Stream packedDataStream);
+		AgentResult Identify(Stream crunchedDataStream);
 
 		/// <summary>
-		/// Return a stream holding the depacked data
+		/// Return a stream holding the decrunched data
 		/// </summary>
-		DepackerStream OpenStream(Stream packedDataStream);
+		DecruncherStream OpenStream(Stream crunchedDataStream);
 	}
 }

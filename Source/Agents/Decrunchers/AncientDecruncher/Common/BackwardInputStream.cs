@@ -58,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 					return 0;
 				}
 
-				throw new DepackerException(agentName, Resources.IDS_ANC_ERR_OUT_OF_DATA);
+				throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_OUT_OF_DATA);
 			}
 
 			--currentOffset;
@@ -99,7 +99,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 					return buffer;
 				}
 
-				throw new DepackerException(agentName, Resources.IDS_ANC_ERR_OUT_OF_DATA);
+				throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_OUT_OF_DATA);
 			}
 
 			currentOffset -= bytes;

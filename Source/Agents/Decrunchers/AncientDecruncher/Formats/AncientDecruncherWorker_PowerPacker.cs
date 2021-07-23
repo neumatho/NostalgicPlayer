@@ -15,7 +15,7 @@ using Polycode.NostalgicPlayer.Kit.Streams;
 namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats
 {
 	/// <summary>
-	/// Can depack PowerPacker data files
+	/// Can decrunch PowerPacker data files
 	/// </summary>
 	internal class AncientDecruncherWorker_PowerPacker : FileDecruncherAgentBase
 	{
@@ -37,13 +37,13 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats
 		/// Test the file to see if it could be identified
 		/// </summary>
 		/********************************************************************/
-		public override AgentResult Identify(Stream packedDataStream)
+		public override AgentResult Identify(Stream crunchedDataStream)
 		{
 			// Check the file size
-			if (packedDataStream.Length < 16)
+			if (crunchedDataStream.Length < 16)
 				return AgentResult.Unknown;
 
-			using (ReaderStream readerStream = new ReaderStream(packedDataStream, true))
+			using (ReaderStream readerStream = new ReaderStream(crunchedDataStream, true))
 			{
 				// Check the mark
 				readerStream.Seek(0, SeekOrigin.Begin);
@@ -64,12 +64,12 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a stream holding the depacked data
+		/// Return a stream holding the decrunched data
 		/// </summary>
 		/********************************************************************/
-		public override DepackerStream OpenStream(Stream packedDataStream)
+		public override DecruncherStream OpenStream(Stream crunchedDataStream)
 		{
-			return new PowerPackerStream(agentName, packedDataStream);
+			return new PowerPackerStream(agentName, crunchedDataStream);
 		}
 		#endregion
 	}

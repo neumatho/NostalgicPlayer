@@ -21,17 +21,17 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public BZip2Stream(string agentName, Stream wrapperStream) : base(agentName, wrapperStream)
+		public BZip2Stream(string agentName, Stream wrapperStream) : base(agentName, wrapperStream, false)
 		{
 		}
 
 		#region NoLengthStream overrides
 		/********************************************************************/
 		/// <summary>
-		/// Return the stream holding the packed data
+		/// Return the stream holding the crunched data
 		/// </summary>
 		/********************************************************************/
-		protected override Stream OpenPackedDataStream()
+		protected override Stream OpenCrunchedDataStream()
 		{
 			return new SharpCompress.Compressors.BZip2.BZip2Stream(wrapperStream, CompressionMode.Decompress, false);
 		}

@@ -3,16 +3,16 @@
 namespace Polycode.NostalgicPlayer.Kit.Exceptions
 {
 	/// <summary>
-	/// Throw this exception, if something went wrong while depacking
+	/// Throw this exception, if something went wrong while decrunching
 	/// </summary>
-	public class DepackerException : Exception
+	public class DecruncherException : Exception
 	{
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public DepackerException(string agentName, string message) : base(message)
+		public DecruncherException(string agentName, string message) : base(message)
 		{
 			AgentName = agentName;
 		}
@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Kit.Exceptions
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public DepackerException(string agentName, string message, Exception ex) : base(message, ex)
+		public DecruncherException(string agentName, string message, Exception ex) : base(message, ex)
 		{
 			AgentName = agentName;
 		}
@@ -33,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Kit.Exceptions
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the name of the agent that failed
+		/// Holds the name of the agent that failed decrunching
 		/// </summary>
 		/********************************************************************/
 		public string AgentName

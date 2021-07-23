@@ -15,7 +15,7 @@ using Polycode.NostalgicPlayer.Kit.Streams;
 namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats
 {
 	/// <summary>
-	/// Can depack BZip2 files
+	/// Can decrunch BZip2 files
 	/// </summary>
 	internal class SharpCompressDecruncher_BZip2 : FileDecruncherAgentBase
 	{
@@ -37,13 +37,13 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		/// Test the file to see if it could be identified
 		/// </summary>
 		/********************************************************************/
-		public override AgentResult Identify(Stream packedDataStream)
+		public override AgentResult Identify(Stream crunchedDataStream)
 		{
 			// Check the file size
-			if (packedDataStream.Length < 10)
+			if (crunchedDataStream.Length < 10)
 				return AgentResult.Unknown;
 
-			using (ReaderStream readerStream = new ReaderStream(packedDataStream, true))
+			using (ReaderStream readerStream = new ReaderStream(crunchedDataStream, true))
 			{
 				// Check the mark
 				readerStream.Seek(0, SeekOrigin.Begin);
@@ -73,12 +73,12 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a stream holding the depacked data
+		/// Return a stream holding the decrunched data
 		/// </summary>
 		/********************************************************************/
-		public override DepackerStream OpenStream(Stream packedDataStream)
+		public override DecruncherStream OpenStream(Stream crunchedDataStream)
 		{
-			return new BZip2Stream(agentName, packedDataStream);
+			return new BZip2Stream(agentName, crunchedDataStream);
 		}
 		#endregion
 	}

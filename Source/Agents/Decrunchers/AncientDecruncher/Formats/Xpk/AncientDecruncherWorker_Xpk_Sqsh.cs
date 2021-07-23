@@ -13,7 +13,7 @@ using Polycode.NostalgicPlayer.Kit.Streams;
 namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.Xpk
 {
 	/// <summary>
-	/// Can decrunch XPK (SQSH) packed files
+	/// Can decrunch XPK (SQSH) crunched files
 	/// </summary>
 	internal class AncientDecruncherWorker_Xpk_Sqsh : AncientDecruncherWorker_Xpk
 	{
@@ -30,21 +30,21 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.Xp
 
 		/********************************************************************/
 		/// <summary>
-		/// Return a stream holding the depacked data
+		/// Return a stream holding the decrunched data
 		/// </summary>
 		/********************************************************************/
-		public override DepackerStream OpenStream(Stream packedDataStream)
+		public override DecruncherStream OpenStream(Stream crunchedDataStream)
 		{
-			return new Xpk_SqshStream(agentName, packedDataStream);
+			return new Xpk_SqshStream(agentName, crunchedDataStream);
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the packer ID
+		/// Return the cruncher ID
 		/// </summary>
 		/********************************************************************/
-		protected override uint PackerId => 0x53515348;		// SQSH
+		protected override uint CruncherId => 0x53515348;		// SQSH
 	}
 }
