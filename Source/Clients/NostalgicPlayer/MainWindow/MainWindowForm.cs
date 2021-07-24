@@ -417,6 +417,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					// Remove the module from the list
 					moduleListBox.Items.RemoveAt(index);
 
+					// Update the window
+					UpdateControls();
+
 					// Do there exist a "next" module
 					if (index < count)
 					{
