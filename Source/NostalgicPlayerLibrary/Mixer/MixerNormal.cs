@@ -64,8 +64,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/********************************************************************/
 		public override void Mixing(int[] dest, int offset, int todo, MixerMode mode)
 		{
-			int left = todo;
-
 			// Loop through all the channels and mix the samples into the buffer
 			for (int t = 0; t < channelNumber; t++)
 			{

@@ -211,6 +211,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 			// And convert the number of samples to number of samples pair
 			count = outputChannels == 2 ? bufSize >> 1 : bufSize;
 
+			int leftVolume = (channelsEnabled == null) || channelsEnabled[0] ? masterVolume : 0;
+			int rightVolume = (inputChannels == 2) && ((channelsEnabled == null) || channelsEnabled[1]) ? masterVolume : 0;
+
 			int total = 0;
 
 			while ((count > 0) && !hasEndReached)
@@ -247,16 +250,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 							if (inputChannels == 1)
 							{
 								if (outputChannels == 1)
-									currentIndex = Native.ResampleMonoToMonoNormal(dataBuffer, bufAddr, total, currentIndex, increment, todo, (channelsEnabled == null) || channelsEnabled[0] ? masterVolume : 0);
+									currentIndex = Native.ResampleMonoToMonoNormal(dataBuffer, bufAddr, total, currentIndex, increment, todo, leftVolume);
 								else
-									currentIndex = Native.ResampleMonoToStereoNormal(dataBuffer, bufAddr, total, currentIndex, increment, todo, (channelsEnabled == null) || channelsEnabled[0] ? masterVolume : 0);
+									currentIndex = Native.ResampleMonoToStereoNormal(dataBuffer, bufAddr, total, currentIndex, increment, todo, leftVolume);
 							}
 							else if (inputChannels == 2)
 							{
 								if (outputChannels == 1)
-									currentIndex = Native.ResampleStereoToMonoNormal(dataBuffer, bufAddr, total, currentIndex, increment, todo, (channelsEnabled == null) || channelsEnabled[0] ? masterVolume : 0, (channelsEnabled == null) || channelsEnabled[1] ? masterVolume : 0);
+									currentIndex = Native.ResampleStereoToMonoNormal(dataBuffer, bufAddr, total, currentIndex, increment, todo, leftVolume, rightVolume);
 								else
-									currentIndex = Native.ResampleStereoToStereoNormal(dataBuffer, bufAddr, total, currentIndex, increment, todo, (channelsEnabled == null) || channelsEnabled[0] ? masterVolume : 0, (channelsEnabled == null) || channelsEnabled[1] ? masterVolume : 0);
+									currentIndex = Native.ResampleStereoToStereoNormal(dataBuffer, bufAddr, total, currentIndex, increment, todo, leftVolume, rightVolume);
 							}
 						}
 						finally
