@@ -99,6 +99,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 				navigator.Pages[Page_Instruments].Text = Resources.IDS_SAMPLE_INFO_TAB_INSTRUMENT;
 				navigator.Pages[Page_Samples].Text = Resources.IDS_SAMPLE_INFO_TAB_SAMPLE;
 
+				// Select the last used tab
+				navigator.SelectedIndex = settings.AutoSelectTab;
+
 				// Add the columns to the instrument grid
 				instrumentDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
 					{
@@ -351,8 +354,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			}
 		}
 		#endregion
-
-
 
 		/********************************************************************/
 		/// <summary>
