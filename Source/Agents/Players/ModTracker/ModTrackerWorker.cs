@@ -3544,28 +3544,31 @@ stopLoop:
 
 				if (arg != 0)
 				{
-					// Jump to the loop currently set
-					if (modChan.LoopCount == 0)
+					if (pattDelayTime2 == 0)
 					{
-						if (!patternLoopHandled)
+						// Jump to the loop currently set
+						if (modChan.LoopCount == 0)
 						{
-							modChan.LoopCount = arg;
-							patternLoopHandled = true;
+							if (!patternLoopHandled)
+							{
+								modChan.LoopCount = arg;
+								patternLoopHandled = true;
+							}
 						}
-					}
-					else
-					{
-						if ((currentModuleType != ModuleType.Octalyser) || !patternLoopHandled)
+						else
 						{
-							modChan.LoopCount--;
-							patternLoopHandled = true;
+							if ((currentModuleType != ModuleType.Octalyser) || !patternLoopHandled)
+							{
+								modChan.LoopCount--;
+								patternLoopHandled = true;
+							}
 						}
-					}
 
-					if (modChan.LoopCount != 0)
-					{
-						breakPos = modChan.PattPos;
-						breakFlag = true;
+						if (modChan.LoopCount != 0)
+						{
+							breakPos = modChan.PattPos;
+							breakFlag = true;
+						}
 					}
 				}
 				else
