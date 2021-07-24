@@ -16,8 +16,8 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
-using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 {
@@ -190,8 +190,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				if ((e.RowIndex == 7) && (e.ColumnIndex == 1))
 				{
 					string fileName = moduleInfoInfoDataGridView[e.ColumnIndex, e.RowIndex].Value.ToString();
-					if (ArchiveDetector.IsArchivePath(fileName))
-						fileName = ArchiveDetector.GetArchiveName(fileName);
+					if (ArchivePath.IsArchivePath(fileName))
+						fileName = ArchivePath.GetArchiveName(fileName);
 
 					// Start File Explorer and select the file
 					Process.Start("explorer.exe", $"/select,\"{fileName}\"");
@@ -218,7 +218,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 
 				string val = staticInfo.ModuleName;
 				if (string.IsNullOrEmpty(val))
-					val = ArchiveDetector.IsArchivePath(fileInfo.FileName) ? ArchiveDetector.GetEntryName(fileInfo.FileName) : Path.GetFileName(fileInfo.FileName);
+					val = ArchivePath.IsArchivePath(fileInfo.FileName) ? ArchivePath.GetEntryName(fileInfo.FileName) : Path.GetFileName(fileInfo.FileName);
 
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULENAME, val);
 

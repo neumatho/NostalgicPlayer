@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
-using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 {
@@ -74,7 +74,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 						case MultiFileInfo.FileType.Archive:
 						{
 							// Check to see if the archive is the same as the previous one
-							string path = ArchiveDetector.GetArchiveName(listInfo.FileName);
+							string path = ArchivePath.GetArchiveName(listInfo.FileName);
 
 							if (path != oldPath)
 							{
@@ -92,7 +92,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 							}
 
 							// Get the archive entry
-							line = ArchiveDetector.GetEntryPath(listInfo.FileName);
+							line = ArchivePath.GetEntryPath(listInfo.FileName);
 							break;
 						}
 
@@ -192,7 +192,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 								{
 									// Set the file name
 									if (archiveMode)
-										fileInfo.FileName = ArchiveDetector.CombinePathParts(path, line);
+										fileInfo.FileName = ArchivePath.CombinePathParts(path, line);
 									else
 										fileInfo.FileName = Path.Combine(path, line);
 								}

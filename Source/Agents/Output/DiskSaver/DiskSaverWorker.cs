@@ -18,6 +18,7 @@ using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 {
@@ -266,7 +267,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 				stream?.Dispose();
 
 				// Build file name and check if it already exists
-				fileName = Path.Combine(settings.DiskPath, Path.ChangeExtension(fileName, converterInUse.FileExtension));
+				if (ArchivePath.IsArchivePath(fileName))
+					fileName = ArchivePath.GetEntryName(fileName);
+
+				fileName = Path.Combine(settings.DiskPath, Path.ChangeExtension(Path.GetFileName(fileName), converterInUse.FileExtension));
 				if (File.Exists(fileName))
 				{
 					using (CustomMessageBox dialog = new CustomMessageBox(string.Format(Resources.IDS_MSG_OVERWRITE_FILE, fileName), Resources.IDS_NAME, CustomMessageBox.IconType.Question))

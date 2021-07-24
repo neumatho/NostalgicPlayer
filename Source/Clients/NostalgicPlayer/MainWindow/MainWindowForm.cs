@@ -3481,7 +3481,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				if (string.IsNullOrEmpty(moduleName))
 				{
 					MultiFileInfo fileInfo = GetFileInfo();
-					moduleName = ArchiveDetector.IsArchivePath(fileInfo.FileName) ? ArchiveDetector.GetEntryName(fileInfo.FileName) : Path.GetFileName(fileInfo.FileName);
+					moduleName = ArchivePath.IsArchivePath(fileInfo.FileName) ? ArchivePath.GetEntryName(fileInfo.FileName) : Path.GetFileName(fileInfo.FileName);
 				}
 
 				title += " / " + moduleName;

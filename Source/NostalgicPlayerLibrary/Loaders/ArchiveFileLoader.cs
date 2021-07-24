@@ -9,6 +9,7 @@
 using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 
@@ -57,7 +58,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		{
 			archiveFileDecruncher = new ArchiveFileDecruncher(FullPath, manager);
 
-			ArchiveEntryInfo entryInfo = archiveFileDecruncher.OpenArchiveEntry(ArchiveDetector.GetEntryName(FullPath));
+			ArchiveEntryInfo entryInfo = archiveFileDecruncher.OpenArchiveEntry(ArchivePath.GetEntryName(FullPath));
 
 			CrunchedSize = entryInfo.CrunchedSize;
 			ModuleSize = entryInfo.DecrunchedSize;
@@ -117,7 +118,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		{
 			try
 			{
-				return archiveFileDecruncher.OpenArchiveEntry(ArchiveDetector.GetEntryName(newFileName));
+				return archiveFileDecruncher.OpenArchiveEntry(ArchivePath.GetEntryName(newFileName));
 			}
 			catch (Exception)
 			{

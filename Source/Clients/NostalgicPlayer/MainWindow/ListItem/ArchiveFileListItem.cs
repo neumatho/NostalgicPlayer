@@ -7,7 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System.IO;
-using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 {
@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem
 		/// Return the name which is shown in the list
 		/// </summary>
 		/********************************************************************/
-		public string DisplayName => Path.GetFileName(ArchiveDetector.GetEntryName(FullPath));
+		public string DisplayName => Path.GetFileName(ArchivePath.GetEntryName(FullPath));
 
 
 

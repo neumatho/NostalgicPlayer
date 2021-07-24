@@ -14,6 +14,7 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Exceptions;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Players;
 
@@ -380,7 +381,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/********************************************************************/
 		private ILoader FindLoader(string fileName)
 		{
-			if (ArchiveDetector.IsArchivePath(fileName))
+			if (ArchivePath.IsArchivePath(fileName))
 				return new ArchiveFileLoader(fileName, agentManager);
 
 			return new NormalFileLoader(fileName, agentManager);
