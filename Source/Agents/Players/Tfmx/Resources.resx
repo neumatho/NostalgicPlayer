@@ -167,7 +167,7 @@ This player can play the TFMX modules using 7 voices, both in one and two file f
     <value>Used macros:</value>
   </data>
   <data name="IDS_TFMX_INFODESCLINE3" xml:space="preserve">
-    <value>Actual speed:</value>
+    <value>Current speed:</value>
   </data>
   <data name="IDS_TFMX_INFODESCLINE4" xml:space="preserve">
     <value>BPM:</value>

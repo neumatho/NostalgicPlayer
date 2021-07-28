@@ -140,7 +140,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 					break;
 				}
 
-				// Actual speed
+				// Current speed
 				case 4:
 				{
 					description = Resources.IDS_MIK_INFODESCLINE4;
@@ -148,7 +148,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 					break;
 				}
 
-				// Actual speed (BPM)
+				// BPM
 				case 5:
 				{
 					description = Resources.IDS_MIK_INFODESCLINE5;

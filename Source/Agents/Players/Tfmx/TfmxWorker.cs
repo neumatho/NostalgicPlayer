@@ -213,7 +213,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 					break;
 				}
 
-				// Actual speed
+				// Current speed
 				case 3:
 				{
 					description = Resources.IDS_TFMX_INFODESCLINE3;
@@ -221,7 +221,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 					break;
 				}
 
-				// Actual speed (BPM)
+				// BPM
 				case 4:
 				{
 					description = Resources.IDS_TFMX_INFODESCLINE4;

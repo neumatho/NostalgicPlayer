@@ -196,7 +196,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					break;
 				}
 
-				// Actual speed
+				// Current speed
 				case 3:
 				{
 					description = Resources.IDS_MOD_INFODESCLINE3;
@@ -204,7 +204,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					break;
 				}
 
-				// Actual speed (BPM)
+				// BPM
 				case 4:
 				{
 					description = Resources.IDS_MOD_INFODESCLINE4;

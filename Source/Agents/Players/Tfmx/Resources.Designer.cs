@@ -162,7 +162,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Actual speed:.
+        ///   Looks up a localized string similar to Current speed:.
         /// </summary>
         internal static string IDS_TFMX_INFODESCLINE3 {
             get {
