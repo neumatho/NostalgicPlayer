@@ -277,6 +277,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 			List<DurationInfo> result = new List<DurationInfo>();
 
 			int songStartPos = 0;
+			DateTime startTime = DateTime.Now;
 
 			do
 			{
@@ -297,8 +298,6 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 					positionTimes.Add(new PositionInfo(currentSpeed, currentBpm, new TimeSpan(0), extraInfo));
 
 				HasEndReached = false;
-
-				DateTime startTime = DateTime.Now;
 
 				for (;;)
 				{
@@ -348,6 +347,8 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 				result.Add(new DurationInfo(totalTime, positionTimes.ToArray(), songStartPos));
 
 				songStartPos = newStartPosition;
+
+				CleanupDurationCalculation();
 			}
 			while (songStartPos < SongLength - 1);
 
@@ -366,6 +367,17 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// </summary>
 		/********************************************************************/
 		protected virtual void InitDurationCalculation(int startPosition)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Cleanup needed stuff after a sub-song calculation
+		/// </summary>
+		/********************************************************************/
+		protected virtual void CleanupDurationCalculation()
 		{
 		}
 

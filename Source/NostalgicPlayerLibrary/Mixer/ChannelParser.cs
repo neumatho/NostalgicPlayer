@@ -143,7 +143,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					if (!bufferMode)
 					{
 						// Does the sample loop?
-						if (((newFlags & ChannelFlags.Loop) != 0) && (loopLength > 4))
+						if (((newFlags & ChannelFlags.Loop) != 0) && (loopLength > 2))
 						{
 							voiceInfo.LoopAddress = loopAddress;
 							voiceInfo.RepeatPosition = loopStart;

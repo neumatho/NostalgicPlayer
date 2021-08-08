@@ -532,8 +532,9 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 			if (len == 0)
 				return string.Empty;
 
-			byte[] bytes = new byte[len];
+			byte[] bytes = new byte[len + 1];
 			Read(bytes, 0, len);
+			bytes[len] = 0x00;
 
 			return encoder.GetString(bytes, 0, len);
 		}

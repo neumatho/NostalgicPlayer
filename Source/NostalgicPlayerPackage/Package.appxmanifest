@@ -250,6 +250,16 @@
             <uap:DisplayName>TFMX</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="bpfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-bp">.bp</uap:FileType>
+              <uap:FileType ContentType="audio/x-bp">.bp2</uap:FileType>
+              <uap:FileType ContentType="audio/x-bp">.bp3</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>SoundMon</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

@@ -59,6 +59,8 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | Scream Tracker 2 | .stm | MikMod Converter | MikMod |
 | Scream Tracker 3 | .s3m | MikMod Converter | MikMod |
 | Scream Tracker Music Interface Kit | .stx | MikMod Converter | MikMod |
+| SoundMon 1.1 | .bp / .bp2 | | SoundMon |
+| SoundMon 2.2 | .bp / .bp3 | | SoundMon |
 | SoundTracker 2.2 | .mod | | ModTracker |
 | StarTrekker | .mod | | ModTracker |
 | StarTrekker 8 voices | .mod | | ModTracker |
