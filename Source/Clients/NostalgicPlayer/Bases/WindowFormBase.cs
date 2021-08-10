@@ -35,6 +35,29 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Will update the window settings
+		/// </summary>
+		/********************************************************************/
+		public void UpdateWindowSettings()
+		{
+			if (WindowState == FormWindowState.Normal)
+			{
+				// Update the settings with the window position
+				windowSettings.Location = Location;
+
+				if (FormBorderStyle == FormBorderStyle.Sizable)
+					windowSettings.Size = Size;
+
+				windowSettings.Geometry = ScreensGeometry();
+			}
+
+			windowSettings.Maximized = WindowState == FormWindowState.Maximized;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Call this to initialize the window with basis settings
 		/// </summary>
 		/********************************************************************/
@@ -141,29 +164,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 			}
 
 			return base.ProcessCmdKey(ref msg, keyData);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will update the window settings
-		/// </summary>
-		/********************************************************************/
-		public void UpdateWindowSettings()
-		{
-			if (WindowState == FormWindowState.Normal)
-			{
-				// Update the settings with the window position
-				windowSettings.Location = Location;
-
-				if (FormBorderStyle == FormBorderStyle.Sizable)
-					windowSettings.Size = Size;
-
-				windowSettings.Geometry = ScreensGeometry();
-			}
-
-			windowSettings.Maximized = WindowState == FormWindowState.Maximized;
 		}
 
 

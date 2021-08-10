@@ -26,6 +26,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 	public partial class AgentDisplayWindowForm : WindowFormBase
 	{
 		private Manager agentManager;
+		private ModuleHandler moduleHandler;
 
 		private IVisualAgent visualAgent;
 
@@ -40,6 +41,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 
 			// Remember the arguments
 			this.agentManager = agentManager;
+			this.moduleHandler = moduleHandler;
 
 			if (!DesignMode)
 			{
@@ -64,8 +66,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 					int width = Math.Max(Width, minSize.Width);
 					int height = Math.Max(Height, minSize.Height);
 
+					MinimumSize = new Size(minSize.Width + RealWindowBorders.Size.Width, minSize.Height + RealWindowBorders.Size.Height);
 					Size = new Size(width, height);
-					MinimumSize = new Size(width, height);
 				}
 
 				visualAgent = worker as IVisualAgent;
@@ -96,9 +98,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 			if (visualAgent != null)
 			{
 				agentManager.UnregisterVisualAgent(visualAgent);
+
+				if (moduleHandler.IsModuleLoaded)
+					visualAgent.CleanupVisual();
+
 				visualAgent = null;
 			}
 
+			moduleHandler = null;
 			agentManager = null;
 		}
 		#endregion

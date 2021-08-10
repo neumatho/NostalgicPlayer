@@ -69,8 +69,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 						int width = Math.Max(Width, Width - groupSize.Width + minSize.Width);
 						int height = Math.Max(Height, Height - groupSize.Height + minSize.Height);
 
+						MinimumSize = new Size(minSize.Width + RealWindowBorders.Size.Width, minSize.Height + RealWindowBorders.Size.Height);
 						Size = new Size(width, height);
-						MinimumSize = new Size(width, height);
 					}
 				}
 
