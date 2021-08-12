@@ -184,6 +184,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			// Tell all visuals to start
 			foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
 			{
+				visualAgent.CleanupVisual();
+
 				if (visualAgent is IChannelChangeVisualAgent)
 					continue;
 

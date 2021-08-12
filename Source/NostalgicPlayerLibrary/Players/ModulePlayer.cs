@@ -176,6 +176,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 			foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
 			{
+				visualAgent.CleanupVisual();
+
 				if (bufferMode && (visualAgent is IChannelChangeVisualAgent))
 					continue;
 
