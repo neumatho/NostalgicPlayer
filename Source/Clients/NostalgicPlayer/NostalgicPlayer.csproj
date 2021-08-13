@@ -80,6 +80,7 @@
     <ProjectReference Include="..\..\Agents\SampleConverters\Raw\Raw.csproj" />
     <ProjectReference Include="..\..\Agents\SampleConverters\RiffWave\RiffWave.csproj" />
     <ProjectReference Include="..\..\Agents\Visuals\Oscilloscope\Oscilloscope.csproj" />
+    <ProjectReference Include="..\..\Agents\Visuals\SpectrumAnalyzer\SpectrumAnalyzer.csproj" />
     <ProjectReference Include="..\..\Agents\Visuals\SpinningSquares\SpinningSquares.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayerGuiKit\NostalgicPlayerGuiKit.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />

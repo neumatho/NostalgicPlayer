@@ -21,6 +21,11 @@ updates:
       interval: "weekly"
 
   - package-ecosystem: "nuget"
+    directory: "/Source/Agents/Visuals/SpectrumAnalyzer"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "nuget"
     directory: "/Source/Clients/NostalgicPlayer"
     schedule:
       interval: "weekly"
