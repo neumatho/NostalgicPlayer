@@ -1830,8 +1830,6 @@ stopLoop:
 				modChan.LoopCount = 0;
 				modChan.FunkOffset = 0;
 				modChan.WaveStart = 0;
-				modChan.RealLength = 0;
-				modChan.Pick = 0;
 				modChan.AutoSlide = false;
 				modChan.AutoSlideArg = 0;
 				modChan.AmSample = false;
@@ -2003,7 +2001,6 @@ stopLoop:
 				modChan.SampleData = sample.Data;
 				modChan.Offset = 0;
 				modChan.Length = sample.Length;
-				modChan.RealLength = modChan.Length;
 				modChan.StartOffset = 0;
 				modChan.FineTune = sample.FineTune;
 

@@ -38,8 +38,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		public byte LoopCount;
 		public byte FunkOffset;
 		public ushort WaveStart;
-		public ushort RealLength;
-		public short Pick;
 		public bool AutoSlide;
 		public byte AutoSlideArg;
 		public bool AmSample;			// True if AM sample, false if normal
