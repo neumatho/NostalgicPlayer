@@ -2517,7 +2517,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			a.FarCurrentValue += a.FarTonePortaSpeed;
 
 			// Have we reached our note
-			bool reachedNote = (a.FarTonePortaSpeed > 0) ? a.FarCurrentValue >= a.WantedPeriod : a.FarCurrentValue <= a.WantedPeriod;
+			bool reachedNote = (a.FarTonePortaSpeed > 0) ? (a.FarCurrentValue >> 16) >= a.WantedPeriod : (a.FarCurrentValue >> 16) <= a.WantedPeriod;
 			if (reachedNote)
 			{
 				// Stop the porta and set the periods to the reached note
@@ -2527,7 +2527,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			else
 			{
 				// Do the porta
-				a.TmpPeriod = a.Main.Period = (ushort)a.FarCurrentValue;
+				a.TmpPeriod = a.Main.Period = (ushort)(a.FarCurrentValue >> 16);
 			}
 
 			a.OwnPer = true;
@@ -2540,7 +2540,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		/// Find tempo factor
 		/// </summary>
 		/********************************************************************/
-		internal int GetFarTempoFactor()
+		private int GetFarTempoFactor()
 		{
 			return farCurTempo == 0 ? 256 : (128 / farCurTempo);
 		}
@@ -2552,7 +2552,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		/// Set the right speed and BPM for Farandole modules
 		/// </summary>
 		/********************************************************************/
-		internal void SetFarTempo(Module mod)
+		private void SetFarTempo(Module mod)
 		{
 			/* According to the Farandole document, the tempo of the song is 32/tempo notes per second.
 			   So if we set tempo to 1, we will get 32 notes per second. We then need to translate this
@@ -2620,7 +2620,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 			mod.SngSpd = (byte)(di + 3);
 
-			int factor = (int)Math.Round(gus / 9353.0f, MidpointRounding.AwayFromZero);
+			// Calculate the factor using fixed point and round it
+			int factor = (int)((((long)gus << 32) / (9353 << 16)) + 0x8000) >> 16;
 			mod.Bpm = (ushort)((80 * mod.SngSpd) / factor);
 		}
 		#endregion
@@ -4709,7 +4710,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			{
 				// We have to slide a.Main.Period toward a.WantedPeriod,
 				// compute the difference between those two values
-				float dist = a.WantedPeriod - a.Main.Period;
+				int dist = a.WantedPeriod - a.Main.Period;
 
 				// Adjust effect argument
 				if (dat == 0)
@@ -4717,8 +4718,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 				// Unlike other players, the data is how many rows the port
 				// should take and not a speed
-				a.FarTonePortaSpeed = dist / (mod.SngSpd * dat);
-				a.FarCurrentValue = a.Main.Period;
+				a.FarTonePortaSpeed = (dist << 16) / (mod.SngSpd * dat);
+				a.FarCurrentValue = a.Main.Period << 16;
 				a.FarTonePortaRunning = true;
 			}
 

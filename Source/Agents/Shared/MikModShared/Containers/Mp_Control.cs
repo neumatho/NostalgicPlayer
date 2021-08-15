@@ -50,8 +50,8 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 		public byte S3MRtgSlide;				// Last used retrig slide
 
 		public bool FarTonePortaRunning;		// FAR tone porta (effect 3) is a little bit different than other effects. It should keep running when the effect has first started, even if it is not given on subsequently rows
-		public float FarTonePortaSpeed;			// FAR tone porta increment value
-		public float FarCurrentValue;			// Because we're using floats as speed and the current period is an integer, we need to store the current value here for next round
+		public int FarTonePortaSpeed;			// FAR tone porta increment value
+		public int FarCurrentValue;				// Because we're using fixing points as speed and the current period is an integer, we need to store the current value here for next round
 		public byte FarRetrigCount;				// Number of retrigs to do
 
 		public byte Glissando;					// Glissando (0 means off)
