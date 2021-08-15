@@ -21,6 +21,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 	/// </summary>
 	internal class Resampler
 	{
+		private const int FracBits = 11;
+		private const int BitShift16 = 16;
+
 		private ISamplePlayerAgent currentPlayer;
 
 		private MixerVisualize currentVisualizer;
@@ -130,7 +133,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 			samplesRead = 0;
 
 			currentIndex = 0;
-			increment = (inputFrequency << Native.FRACBITS) / outputFrequency;
+			increment = (inputFrequency << FracBits) / outputFrequency;
 
 			// Get the maximum number of samples the given destination
 			// buffer from the output agent can be
@@ -184,9 +187,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 
 			// And then convert the resampled sample to the output format
 			if (outputBits == 16)
-				Native.ResampleConvertTo16(buffer, offset / 2, sampleBuffer, total, outputChannels == 2 ? swapSpeakers : false);
+				ResampleConvertTo16(MemoryMarshal.Cast<byte, short>(buffer), offset / 2, sampleBuffer, total, outputChannels == 2 ? swapSpeakers : false);
 			else if (outputBits == 32)
-				Native.ResampleConvertTo32(buffer, offset / 4, sampleBuffer, total, outputChannels == 2 ? swapSpeakers : false);
+				ResampleConvertTo32(MemoryMarshal.Cast<byte, int>(buffer), offset / 4, sampleBuffer, total, outputChannels == 2 ? swapSpeakers : false);
 
 			// Tell visual agents about the mixed data
 			currentVisualizer.TellAgentsAboutMixedData(buffer, total, outputBits / 8, outputChannels == 2, swapSpeakers);
@@ -232,7 +235,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 					}
 
 					currentIndex = 0;
-					dataSize = samplesRead == 0 ? 0 : ((samplesRead / inputChannels) << Native.FRACBITS) - 1;
+					dataSize = samplesRead == 0 ? 0 : ((samplesRead / inputChannels) << FracBits) - 1;
 				}
 
 				int todo = Math.Min((dataSize - currentIndex) / increment + 1, Math.Min(samplesRead, count));
@@ -240,31 +243,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 				{
 					if (masterVolume > 0)
 					{
-						// Resample the input sample
-						GCHandle pinnedBuf = GCHandle.Alloc(sampleBuffer, GCHandleType.Pinned);
-
-						try
+						if (inputChannels == 1)
 						{
-							IntPtr bufAddr = pinnedBuf.AddrOfPinnedObject();
-
-							if (inputChannels == 1)
-							{
-								if (outputChannels == 1)
-									currentIndex = Native.ResampleMonoToMonoNormal(dataBuffer, bufAddr, total, currentIndex, increment, todo, leftVolume);
-								else
-									currentIndex = Native.ResampleMonoToStereoNormal(dataBuffer, bufAddr, total, currentIndex, increment, todo, leftVolume);
-							}
-							else if (inputChannels == 2)
-							{
-								if (outputChannels == 1)
-									currentIndex = Native.ResampleStereoToMonoNormal(dataBuffer, bufAddr, total, currentIndex, increment, todo, leftVolume, rightVolume);
-								else
-									currentIndex = Native.ResampleStereoToStereoNormal(dataBuffer, bufAddr, total, currentIndex, increment, todo, leftVolume, rightVolume);
-							}
+							if (outputChannels == 1)
+								currentIndex = ResampleMonoToMonoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume);
+							else
+								currentIndex = ResampleMonoToStereoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume);
 						}
-						finally
+						else if (inputChannels == 2)
 						{
-							pinnedBuf.Free();
+							if (outputChannels == 1)
+								currentIndex = ResampleStereoToMonoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, rightVolume);
+							else
+								currentIndex = ResampleStereoToStereoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, rightVolume);
 						}
 					}
 					else
@@ -279,6 +270,284 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 			}
 
 			return total;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Resample a mono sample into a mono output buffer
+		/// </summary>
+		/********************************************************************/
+		private int ResampleMonoToMonoNormal(int[] source, int[] dest, int offset, int index, int incr, int todo, int volSel)
+		{
+			if (volSel == 256)
+			{
+				while (todo-- != 0)
+				{
+					int sample = source[index >> FracBits];
+					index += incr;
+
+					dest[offset++] = sample;
+				}
+			}
+			else
+			{
+				float volDiv = 256.0f / volSel;
+
+				while (todo-- != 0)
+				{
+					int sample = (int)(source[index >> FracBits] / volDiv);
+					index += incr;
+
+					dest[offset++] = sample;
+				}
+			}
+
+			return index;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Resample a mono sample into a stereo output buffer
+		/// </summary>
+		/********************************************************************/
+		private int ResampleMonoToStereoNormal(int[] source, int[] dest, int offset, int index, int incr, int todo, int volSel)
+		{
+			if (volSel == 256)
+			{
+				while (todo-- != 0)
+				{
+					int sample = source[index >> FracBits];
+					index += incr;
+
+					dest[offset++] = sample;
+					dest[offset++] = sample;
+				}
+			}
+			else
+			{
+				float volDiv = 256.0f / volSel;
+
+				while (todo-- != 0)
+				{
+					int sample = (int)(source[index >> FracBits] / volDiv);
+					index += incr;
+
+					dest[offset++] = sample;
+					dest[offset++] = sample;
+				}
+			}
+
+			return index;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Resample a stereo sample into a mono output buffer
+		/// </summary>
+		/********************************************************************/
+		private int ResampleStereoToMonoNormal(int[] source, int[] dest, int offset, int index, int incr, int todo, int lVolSel, int rVolSel)
+		{
+			if ((lVolSel == 256) && (rVolSel == 256))
+			{
+				while (todo-- != 0)
+				{
+					long sample1 = source[(index >> FracBits) * 2];
+					long sample2 = source[(index >> FracBits) * 2 + 1];
+					index += incr;
+
+					dest[offset++] = (int)((sample1 + sample2) / 2);
+				}
+			}
+			else
+			{
+				float lVolDiv = lVolSel == 0 ? 0f : 256.0f / lVolSel;
+				float rVolDiv = lVolSel == 0 ? 0f : 256.0f / rVolSel;
+
+				while (todo-- != 0)
+				{
+					long sample1 = lVolSel == 0 ? 0 : (int)(source[(index >> FracBits) * 2] / lVolDiv);
+					long sample2 = rVolSel == 0 ? 0 : (int)(source[(index >> FracBits) * 2 + 1] / rVolDiv);
+					index += incr;
+
+					dest[offset++] = (int)((sample1 + sample2) / 2);
+				}
+			}
+
+			return index;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Resample a stereo sample into a stereo output buffer
+		/// </summary>
+		/********************************************************************/
+		private int ResampleStereoToStereoNormal(int[] source, int[] dest, int offset, int index, int incr, int todo, int lVolSel, int rVolSel)
+		{
+			if ((lVolSel == 256) && (rVolSel == 256))
+			{
+				while (todo-- != 0)
+				{
+					int sample1 = source[(index >> FracBits) * 2];
+					int sample2 = source[(index >> FracBits) * 2 + 1];
+					index += incr;
+
+					dest[offset++] = sample1;
+					dest[offset++] = sample2;
+				}
+			}
+			else
+			{
+				float lVolDiv = lVolSel == 0 ? 0f : 256.0f / lVolSel;
+				float rVolDiv = lVolSel == 0 ? 0f : 256.0f / rVolSel;
+
+				while (todo-- != 0)
+				{
+					int sample1 = lVolSel == 0 ? 0 : (int)(source[(index >> FracBits) * 2] / lVolDiv);
+					int sample2 = rVolSel == 0 ? 0 : (int)(source[(index >> FracBits) * 2 + 1] / rVolDiv);
+					index += incr;
+
+					dest[offset++] = sample1;
+					dest[offset++] = sample2;
+				}
+			}
+
+			return index;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Converts the resampled data to a 16 bit sample buffer
+		/// </summary>
+		/********************************************************************/
+		private void ResampleConvertTo16(Span<short> dest, int offset, int[] source, int count, bool swapSpeakers)
+		{
+			int x1, x2, x3, x4;
+
+			int remain = count & 3;
+			int sourceOffset = 0;
+
+			if (swapSpeakers)
+			{
+				for (count >>= 2; count != 0; count--)
+				{
+					x1 = source[sourceOffset++] >> BitShift16;
+					x2 = source[sourceOffset++] >> BitShift16;
+					x3 = source[sourceOffset++] >> BitShift16;
+					x4 = source[sourceOffset++] >> BitShift16;
+
+					dest[offset++] = (short)x2;
+					dest[offset++] = (short)x1;
+					dest[offset++] = (short)x4;
+					dest[offset++] = (short)x3;
+				}
+
+				// We know it is always stereo samples when coming here
+				while (remain > 0)
+				{
+					x1 = source[sourceOffset++] >> BitShift16;
+					x2 = source[sourceOffset++] >> BitShift16;
+
+					dest[offset++] = (short)x2;
+					dest[offset++] = (short)x1;
+
+					remain -= 2;
+				}
+			}
+			else
+			{
+				for (count >>= 2; count != 0; count--)
+				{
+					x1 = source[sourceOffset++] >> BitShift16;
+					x2 = source[sourceOffset++] >> BitShift16;
+					x3 = source[sourceOffset++] >> BitShift16;
+					x4 = source[sourceOffset++] >> BitShift16;
+
+					dest[offset++] = (short)x1;
+					dest[offset++] = (short)x2;
+					dest[offset++] = (short)x3;
+					dest[offset++] = (short)x4;
+				}
+
+				while (remain-- != 0)
+				{
+					x1 = source[sourceOffset++] >> BitShift16;
+					dest[offset++] = (short)x1;
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Converts the resampled data to a 32 bit sample buffer
+		/// </summary>
+		/********************************************************************/
+		private void ResampleConvertTo32(Span<int> dest, int offset, int[] source, int count, bool swapSpeakers)
+		{
+			int x1, x2, x3, x4;
+
+			int remain = count & 3;
+			int sourceOffset = 0;
+
+			if (swapSpeakers)
+			{
+				for (count >>= 2; count != 0; count--)
+				{
+					x1 = source[sourceOffset++];
+					x2 = source[sourceOffset++];
+					x3 = source[sourceOffset++];
+					x4 = source[sourceOffset++];
+
+					dest[offset++] = x2;
+					dest[offset++] = x1;
+					dest[offset++] = x4;
+					dest[offset++] = x3;
+				}
+
+				// We know it is always stereo samples when coming here
+				while (remain > 0)
+				{
+					x1 = source[sourceOffset++];
+					x2 = source[sourceOffset++];
+
+					dest[offset++] = x2;
+					dest[offset++] = x1;
+
+					remain -= 2;
+				}
+			}
+			else
+			{
+				for (count >>= 2; count != 0; count--)
+				{
+					x1 = source[sourceOffset++];
+					x2 = source[sourceOffset++];
+					x3 = source[sourceOffset++];
+					x4 = source[sourceOffset++];
+
+					dest[offset++] = x1;
+					dest[offset++] = x2;
+					dest[offset++] = x3;
+					dest[offset++] = x4;
+				}
+
+				while (remain-- != 0)
+				{
+					x1 = source[sourceOffset++];
+					dest[offset++] = x1;
+				}
+			}
 		}
 		#endregion
 	}

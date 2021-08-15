@@ -529,7 +529,33 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		{
 			// Should we emulate the filter at all
 			if (emulateFilter && currentPlayer.AmigaFilter)
-				Native.AddAmigaFilter((currentMode & MixerMode.Stereo) != 0, dest, todo, ref filterPrevLeft, ref filterPrevRight);
+			{
+				int offset = 0;
+
+				if ((currentMode & MixerMode.Stereo) != 0)
+				{
+					// Stereo buffer
+					todo /= 2;
+
+					while (todo-- != 0)
+					{
+						filterPrevLeft = (dest[offset] + filterPrevLeft * 3) >> 2;
+						dest[offset++] = filterPrevLeft;
+
+						filterPrevRight = (dest[offset] + filterPrevRight * 3) >> 2;
+						dest[offset++] = filterPrevRight;
+					}
+				}
+				else
+				{
+					// Mono buffer
+					while (todo-- != 0)
+					{
+						filterPrevLeft = (dest[offset] + filterPrevLeft * 3) >> 2;
+						dest[offset++] = filterPrevLeft;
+					}
+				}
+			}
 		}
 		#endregion
 	}

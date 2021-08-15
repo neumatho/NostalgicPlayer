@@ -49,7 +49,6 @@
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /Y $(SolutionDir)NostalgicPlayerLibrary_Native\bin\$(PlatformName)\$(ConfigurationName) $(TargetDir)&#xD;&#xA;" />
   </Target>
 
   <ItemGroup>
