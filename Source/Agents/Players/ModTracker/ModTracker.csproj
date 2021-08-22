@@ -22,6 +22,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <WarningsAsErrors />
   </PropertyGroup>
 
   <ItemGroup>

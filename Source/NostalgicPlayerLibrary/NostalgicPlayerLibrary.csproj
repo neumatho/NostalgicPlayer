@@ -23,6 +23,7 @@
     <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
     <OutputPath />
+    <WarningsAsErrors />
   </PropertyGroup>
 
   <ItemGroup>

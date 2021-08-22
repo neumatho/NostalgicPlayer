@@ -24,6 +24,7 @@
     <DebugSymbols>true</DebugSymbols>
     <NoWarn>1701;1702;CA1416</NoWarn>
     <OutputPath></OutputPath>
+    <WarningsAsErrors />
   </PropertyGroup>
 
   <ItemGroup>

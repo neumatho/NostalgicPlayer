@@ -21,6 +21,7 @@
     <DocumentationFile>bin\CoreAudioSettings.xml</DocumentationFile>
     <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <WarningsAsErrors />
   </PropertyGroup>
 
   <ItemGroup>

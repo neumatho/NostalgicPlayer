@@ -46,6 +46,7 @@
     <DebugSymbols>true</DebugSymbols>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SelfContained>true</SelfContained>
+    <WarningsAsErrors />
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

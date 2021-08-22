@@ -20,6 +20,7 @@
     <DocumentationFile>bin\Sample.xml</DocumentationFile>
     <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <WarningsAsErrors />
   </PropertyGroup>
 
   <ItemGroup>
