@@ -37,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.infoGroup = new Krypton.Toolkit.KryptonGroup();
 			this.moduleInfoButton = new Krypton.Toolkit.KryptonButton();
 			this.masterVolumeTrackBar = new Krypton.Toolkit.KryptonTrackBar();
-			this.moduleListBox = new ModuleListControl();
+			this.moduleListBox = new Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ModuleListControl();
 			this.listButtonsGroup = new Krypton.Toolkit.KryptonGroup();
 			this.diskButton = new Krypton.Toolkit.KryptonButton();
 			this.listButton = new Krypton.Toolkit.KryptonButton();
@@ -447,6 +447,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// clockTimer
 			// 
 			this.clockTimer.Interval = 995;
+			// 
+			// kryptonManager
+			// 
+			this.kryptonManager.GlobalPaletteMode = Krypton.Toolkit.PaletteModeManager.Office2010Blue;
 			// 
 			// scrollTimer
 			// 

@@ -38,6 +38,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 			((System.ComponentModel.ISupportInitialize)(this.deviceComboBox)).BeginInit();
 			this.SuspendLayout();
 			// 
+			// kryptonManager
+			// 
+			this.kryptonManager.GlobalPaletteMode = Krypton.Toolkit.PaletteModeManager.Office2010Blue;
+			// 
 			// deviceLabel
 			// 
 			this.deviceLabel.Location = new System.Drawing.Point(0, 22);

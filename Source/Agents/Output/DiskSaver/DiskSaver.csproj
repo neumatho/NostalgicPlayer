@@ -27,7 +27,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="krypton.toolkit.lite" Version="5.550.2106.1" />
+    <PackageReference Include="Krypton.Toolkit.Canary.Lite" Version="6.0.2108.1" />
   </ItemGroup>
 
   <ItemGroup>

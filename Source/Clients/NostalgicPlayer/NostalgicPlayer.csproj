@@ -53,8 +53,8 @@
   </Target>
 
   <ItemGroup>
-    <PackageReference Include="Krypton.Navigator.Lite" Version="5.550.2106.1" />
-    <PackageReference Include="Krypton.Toolkit.Lite" Version="5.550.2106.1" />
+    <PackageReference Include="Krypton.Navigator.Canary.Lite" Version="6.0.2108.1" />
+    <PackageReference Include="Krypton.Toolkit.Canary.Lite" Version="6.0.2108.1" />
   </ItemGroup>
 
   <ItemGroup>

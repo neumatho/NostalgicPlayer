@@ -94,6 +94,10 @@
 			this.imageList.Images.SetKeyName(2, "Warning.png");
 			this.imageList.Images.SetKeyName(3, "Error.png");
 			// 
+			// kryptonManager
+			// 
+			this.kryptonManager.GlobalPaletteMode = Krypton.Toolkit.PaletteModeManager.Office2010Blue;
+			// 
 			// CustomMessageBox
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);

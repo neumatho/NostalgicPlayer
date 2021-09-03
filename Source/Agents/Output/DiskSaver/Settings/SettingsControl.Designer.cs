@@ -60,6 +60,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			this.frequencyPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// kryptonManager
+			// 
+			this.kryptonManager.GlobalPaletteMode = Krypton.Toolkit.PaletteModeManager.Office2010Blue;
+			// 
 			// controlResource
 			// 
 			this.controlResource.ResourceClassName = "Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Resources";
@@ -83,7 +87,6 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			this.controlResource.SetResourceKey(this.pathTextBox, null);
 			this.pathTextBox.Size = new System.Drawing.Size(461, 21);
 			this.pathTextBox.StateCommon.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.pathTextBox.StateCommon.Content.TextH = Krypton.Toolkit.PaletteRelativeAlign.Inherit;
 			this.pathTextBox.TabIndex = 1;
 			// 
 			// pathButton
