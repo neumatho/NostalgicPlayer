@@ -199,6 +199,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		public ModuleInfoStatic StaticModuleInformation => GetActivePlayer()?.StaticModuleInformation ?? new ModuleInfoStatic();
 
 
+
 		/********************************************************************/
 		/// <summary>
 		/// Return all the information about the module which changes while

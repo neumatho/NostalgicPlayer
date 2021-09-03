@@ -209,7 +209,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		private void AddItems()
 		{
 			// Check to see if there are any module loaded at the moment
-			if (moduleHandler.IsModuleLoaded)
+			if (moduleHandler.IsPlaying)
 			{
 				// Module in memory, add items
 				ModuleInfoStatic staticInfo = moduleHandler.StaticModuleInformation;
