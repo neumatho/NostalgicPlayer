@@ -327,31 +327,45 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Will select the song you want to play
 		/// </summary>
 		/********************************************************************/
-		public void SelectSong(int songNumber)
+		public bool SelectSong(int songNumber, out string errorMessage)
 		{
+			errorMessage = string.Empty;
+
 			if (currentPlayer != null)
 			{
 				lock (currentPlayer)
 				{
-					// Get sub-song information
-					SubSongInfo subSongs = currentPlayer.SubSongs;
+					try
+					{
+						// Get sub-song information
+						SubSongInfo subSongs = currentPlayer.SubSongs;
 
-					// Find the right song number
-					int songNum = songNumber == -1 ? subSongs.DefaultStartSong : songNumber;
+						// Find the right song number
+						int songNum = songNumber == -1 ? subSongs.DefaultStartSong : songNumber;
 
-					// Get the position times for the current song
-					DurationInfo durationInfo = allSongsInfo?[songNum];
+						// Get the position times for the current song
+						DurationInfo durationInfo = allSongsInfo?[songNum];
 
-					// Initialize the player with the new song
-					currentPlayer.InitSound(songNum, durationInfo);
+						// Initialize the player with the new song
+						currentPlayer.InitSound(songNum, durationInfo);
 
-					// Find the length of the song
-					int songLength = currentPlayer.SongLength;
+						// Find the length of the song
+						int songLength = currentPlayer.SongLength;
 
-					// Initialize the module information
-					PlayingModuleInformation = new ModuleInfoFloating(songNum, durationInfo, currentPlayer.GetSongPosition(), songLength, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
+						// Initialize the module information
+						PlayingModuleInformation = new ModuleInfoFloating(songNum, durationInfo, currentPlayer.GetSongPosition(), songLength, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
+					}
+					catch (Exception ex)
+					{
+						CleanupPlayer();
+
+						errorMessage = string.Format(Resources.IDS_ERR_PLAYER_SELECTSONG, ex.Message);
+						return false;
+					}
 				}
 			}
+
+			return true;
 		}
 
 

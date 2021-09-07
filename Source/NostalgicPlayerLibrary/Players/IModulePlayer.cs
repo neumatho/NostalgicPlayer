@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// <summary>
 		/// Will select the song you want to play
 		/// </summary>
-		void SelectSong(int songNumber);
+		bool SelectSong(int songNumber, out string errorMessage);
 
 		/// <summary>
 		/// Will set a new song position

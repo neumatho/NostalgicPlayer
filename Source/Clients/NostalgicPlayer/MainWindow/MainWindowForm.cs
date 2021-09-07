@@ -4104,7 +4104,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			ModuleListItem listItem = (ModuleListItem)moduleListBox.Items[index];
 
-			moduleHandler.PlayModule();
+			moduleHandler.PlayModule(listItem);
 
 			// Initialize other stuff in the window
 			InitSubSongs();
@@ -4163,10 +4163,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			StopTimers();
 
 			// Now tell the module handler to switch song
-			moduleHandler.StartSong(newSong);
-
-			// Initialize all the controls
-			InitControls();
+			if (moduleHandler.StartSong(playItem, newSong))
+			{
+				// Initialize all the controls
+				InitControls();
+			}
 		}
 
 

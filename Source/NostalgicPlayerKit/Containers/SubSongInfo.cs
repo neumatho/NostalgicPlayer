@@ -40,7 +40,8 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the default song number to start playing
+		/// Holds the default song number to start playing where the first
+		/// song is 0
 		/// </summary>
 		/********************************************************************/
 		public int DefaultStartSong

@@ -13,7 +13,6 @@ using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
@@ -288,7 +287,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						try
 						{
 							if (player is IModulePlayer modulePlayer)
-								modulePlayer.SelectSong(-1);
+							{
+								if (!modulePlayer.SelectSong(-1, out _))
+									return new TimeSpan(0);
+							}
 
 							return player.PlayingModuleInformation.DurationInfo?.TotalTime ?? new TimeSpan(0);
 						}

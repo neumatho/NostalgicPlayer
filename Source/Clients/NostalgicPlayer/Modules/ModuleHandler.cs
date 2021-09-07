@@ -297,7 +297,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					startPos = -1;
 
 				// Start to play the module
-				if (!StartPlaying(subSong.Value, startPos.Value))
+				if (!StartPlaying(listItem, subSong.Value, startPos.Value, showError))
 					return false;
 			}
 
@@ -311,7 +311,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/// Will start playing the given module
 		/// </summary>
 		/********************************************************************/
-		public void PlayModule()
+		public void PlayModule(ModuleListItem listItem)
 		{
 			lock (loadedFiles)
 			{
@@ -323,7 +323,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					loadedFiles.RemoveAt(0);
 
 					// Start playing the new module
-					StartPlaying(-1, -1);
+					StartPlaying(listItem, -1, -1);
 
 					// Free the previous module
 					IPlayer player = item.Loader.Player;
@@ -474,7 +474,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/// Will start to play the song given
 		/// </summary>
 		/********************************************************************/
-		public void StartSong(int newSong)
+		public bool StartSong(ModuleListItem listItem, int newSong)
 		{
 			IPlayer player = GetActivePlayer();
 
@@ -485,7 +485,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 				// Switch song if possible
 				if (player is IModulePlayer modulePlayer)
-					modulePlayer.SelectSong(newSong);
+				{
+					if (!modulePlayer.SelectSong(newSong, out string errorMessage))
+					{
+						ShowErrorMessage(string.Format(Resources.IDS_ERR_INIT_PLAYER, errorMessage), listItem);
+						return false;
+					}
+				}
 
 				lock (loadedFiles)
 				{
@@ -497,6 +503,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					}
 				}
 			}
+
+			return true;
 		}
 
 
@@ -785,7 +793,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/// Will start to play the song number given
 		/// </summary>
 		/********************************************************************/
-		private bool StartPlaying(int subSong, int startPos)
+		private bool StartPlaying(ModuleListItem listItem, int subSong, int startPos, bool showError = true)
 		{
 			IPlayer player = GetActivePlayer();
 
@@ -798,7 +806,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				// Initialize the module
 				if (player is IModulePlayer modulePlayer)
 				{
-					modulePlayer.SelectSong(subSong);
+					if (!modulePlayer.SelectSong(subSong, out string errorMessage))
+					{
+						if (showError)
+							ShowErrorMessage(errorMessage, listItem);
+
+						return false;
+					}
 
 					if (startPos != -1)
 						modulePlayer.SetSongPosition(startPos);

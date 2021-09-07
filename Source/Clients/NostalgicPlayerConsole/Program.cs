@@ -91,7 +91,14 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 						{
 							// Start to play the music
 							if (player is IModulePlayer modulePlayer)
-								modulePlayer.SelectSong(0);
+							{
+								if (!modulePlayer.SelectSong(0, out errorMessage))
+								{
+									Console.WriteLine("Cannot initialize player.");
+									Console.WriteLine(errorMessage);
+									return;
+								}
+							}
 
 							player.StartPlaying(loader);
 

@@ -127,6 +127,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to initialize player with selected song.
+        ///{0}..
+        /// </summary>
+        internal static string IDS_ERR_PLAYER_SELECTSONG {
+            get {
+                return ResourceManager.GetString("IDS_ERR_PLAYER_SELECTSONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to initialize the resampler with error 0x{0}.
         ///{1}..
         /// </summary>
