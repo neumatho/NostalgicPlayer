@@ -1,0 +1,266 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="IDS_SID_DESCRIPTION" xml:space="preserve">
+    <value>Original player by Simon White.
+SID emulator (reSID) by Dag Lem.
+Ported to NostalgicPlayer by Thomas Neumann.
+
+This player emulates the Commodore 64 CPU (6510) and soundchip (6581/8580) so it is able to play the good old music from the games etc. The player has been ported to C# and is based on SidPlay2.</value>
+  </data>
+  <data name="IDS_SID_DESCRIPTION_AGENT1" xml:space="preserve">
+    <value>Original player by Simon White.
+SID emulator (reSID) by Dag Lem.
+Ported to NostalgicPlayer by Thomas Neumann.
+
+SID modules contains tunes and sound effects from the good old Commodore 64. This player is based on the SidPlay2 program by Michael Schwendt and Simon White. The behaviour of the SID player can be changed with the SID settings. If you want more technical information about the format and player, see the documentation.</value>
+  </data>
+  <data name="IDS_SID_ENV_BS" xml:space="preserve">
+    <value>Bank switching</value>
+  </data>
+  <data name="IDS_SID_ENV_PS" xml:space="preserve">
+    <value>PlaySID-specific rips</value>
+  </data>
+  <data name="IDS_SID_ENV_R" xml:space="preserve">
+    <value>Real C64</value>
+  </data>
+  <data name="IDS_SID_ENV_TP" xml:space="preserve">
+    <value>Transparent ROM</value>
+  </data>
+  <data name="IDS_SID_ENV_TR" xml:space="preserve">
+    <value>Sidusage Tracker Mode</value>
+  </data>
+  <data name="IDS_SID_ERR_BAD_ADDR" xml:space="preserve">
+    <value>Bad address data</value>
+  </data>
+  <data name="IDS_SID_ERR_BAD_RELOC" xml:space="preserve">
+    <value>Bad reloc data</value>
+  </data>
+  <data name="IDS_SID_ERR_CONF_WHILST_ACTIVE" xml:space="preserve">
+    <value>Trying to configure player whilst active</value>
+  </data>
+  <data name="IDS_SID_ERR_CORRUPT" xml:space="preserve">
+    <value>File is incomplete or corrupt</value>
+  </data>
+  <data name="IDS_SID_ERR_DATA_TOO_LONG" xml:space="preserve">
+    <value>Size of music data exceeds C64 memory</value>
+  </data>
+  <data name="IDS_SID_ERR_EMPTY" xml:space="preserve">
+    <value>No data to load</value>
+  </data>
+  <data name="IDS_SID_ERR_FILTER_DEFINITION" xml:space="preserve">
+    <value>Filter definition is not valid</value>
+  </data>
+  <data name="IDS_SID_ERR_LOADING_HEADER" xml:space="preserve">
+    <value>Invalid module header</value>
+  </data>
+  <data name="IDS_SID_ERR_NO_SIDS" xml:space="preserve">
+    <value>No available SIDs to lock</value>
+  </data>
+  <data name="IDS_SID_ERR_NO_SPACE" xml:space="preserve">
+    <value>No space to install PSID driver in C64 ram</value>
+  </data>
+  <data name="IDS_SID_ERR_RELOC" xml:space="preserve">
+    <value>Failed whilst relocating PSID driver</value>
+  </data>
+  <data name="IDS_SID_ERR_TOO_BIG" xml:space="preserve">
+    <value>Size of music data exceeds C64 memory</value>
+  </data>
+  <data name="IDS_SID_ERR_UNSUPPORTED_FREQ" xml:space="preserve">
+    <value>Unsupported sampling frequency</value>
+  </data>
+  <data name="IDS_SID_ERR_UNSUPPORTED_PRECISION" xml:space="preserve">
+    <value>Unsupported sample precision</value>
+  </data>
+  <data name="IDS_SID_FORMAT_PSID" xml:space="preserve">
+    <value>PlaySID one-file format (PSID)</value>
+  </data>
+  <data name="IDS_SID_FORMAT_RSID" xml:space="preserve">
+    <value>Real C64 one-file format (RSID)</value>
+  </data>
+  <data name="IDS_SID_INFODESCLINE0" xml:space="preserve">
+    <value>Released:</value>
+  </data>
+  <data name="IDS_SID_INFODESCLINE1" xml:space="preserve">
+    <value>File format:</value>
+  </data>
+  <data name="IDS_SID_INFODESCLINE2" xml:space="preserve">
+    <value>Load range:</value>
+  </data>
+  <data name="IDS_SID_INFODESCLINE3" xml:space="preserve">
+    <value>Init address:</value>
+  </data>
+  <data name="IDS_SID_INFODESCLINE4" xml:space="preserve">
+    <value>Play address:</value>
+  </data>
+  <data name="IDS_SID_INFODESCLINE5" xml:space="preserve">
+    <value>Reloc region:</value>
+  </data>
+  <data name="IDS_SID_INFODESCLINE6" xml:space="preserve">
+    <value>Driver region:</value>
+  </data>
+  <data name="IDS_SID_INFODESCLINE7" xml:space="preserve">
+    <value>SID model:</value>
+  </data>
+  <data name="IDS_SID_INFODESCLINE8" xml:space="preserve">
+    <value>Clock speed:</value>
+  </data>
+  <data name="IDS_SID_INFODESCLINE9" xml:space="preserve">
+    <value>Environment:</value>
+  </data>
+  <data name="IDS_SID_NA" xml:space="preserve">
+    <value>n/a</value>
+  </data>
+  <data name="IDS_SID_NAME" xml:space="preserve">
+    <value>SidPlay</value>
+  </data>
+  <data name="IDS_SID_NAME_AGENT1" xml:space="preserve">
+    <value>SidPlay</value>
+  </data>
+  <data name="IDS_SID_NOT_PRESENT" xml:space="preserve">
+    <value>Not present</value>
+  </data>
+  <data name="IDS_SID_SPEED_CIA" xml:space="preserve">
+    <value>CIA 1 Timer A</value>
+  </data>
+  <data name="IDS_SID_SPEED_NTSC_CIA" xml:space="preserve">
+    <value>CIA (NTSC)</value>
+  </data>
+  <data name="IDS_SID_SPEED_NTSC_VBI" xml:space="preserve">
+    <value>60 Hz VBI (NTSC)</value>
+  </data>
+  <data name="IDS_SID_SPEED_NTSC_VBI_FIXED" xml:space="preserve">
+    <value>50 Hz VBI (NTSC FIXED)</value>
+  </data>
+  <data name="IDS_SID_SPEED_PAL_CIA" xml:space="preserve">
+    <value>CIA (PAL)</value>
+  </data>
+  <data name="IDS_SID_SPEED_PAL_VBI" xml:space="preserve">
+    <value>50 Hz VBI (PAL)</value>
+  </data>
+  <data name="IDS_SID_SPEED_PAL_VBI_FIXED" xml:space="preserve">
+    <value>60 Hz VBI (PAL FIXED)</value>
+  </data>
+  <data name="IDS_SID_SPEED_VBI" xml:space="preserve">
+    <value>VBI</value>
+  </data>
+  <data name="IDS_SID_UNKNOWN_INFO" xml:space="preserve">
+    <value>&lt;?&gt;</value>
+  </data>
+</root>

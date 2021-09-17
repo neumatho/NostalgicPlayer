@@ -40,6 +40,7 @@
     <ProjectReference Include="..\..\Agents\Players\Oktalyzer\Oktalyzer.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Sample\Sample.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Sawteeth\Sawteeth.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\SidPlay\SidPlay.csproj" />
     <ProjectReference Include="..\..\Agents\Players\SoundMon\SoundMon.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Tfmx\Tfmx.csproj" />
     <ProjectReference Include="..\..\Agents\SampleConverters\AudioIff\AudioIff.csproj" />
