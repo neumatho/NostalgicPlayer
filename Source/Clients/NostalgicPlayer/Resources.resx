@@ -730,6 +730,12 @@ information</value>
   <data name="IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND_LOOP" xml:space="preserve">
     <value>Loop module</value>
   </data>
+  <data name="IDS_SETTINGS_OPTIONS_PLAYING_NEVERENDING" xml:space="preserve">
+    <value>Never ending module timeout</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_PLAYING_NEVERENDING_SECONDS" xml:space="preserve">
+    <value>seconds</value>
+  </data>
   <data name="IDS_SETTINGS_PATHS_LISTPATH" xml:space="preserve">
     <value>List path</value>
   </data>

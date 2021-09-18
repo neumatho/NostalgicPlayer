@@ -55,6 +55,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.moduleErrorLabel = new Krypton.Toolkit.KryptonLabel();
 			this.moduleErrorComboBox = new Krypton.Toolkit.KryptonComboBox();
 			this.playingGroupBox = new Krypton.Toolkit.KryptonGroupBox();
+			this.neverEndingCheckBox = new Krypton.Toolkit.KryptonCheckBox();
+			this.neverEndingNumberTextBox = new Polycode.NostalgicPlayer.Client.GuiPlayer.Controls.NumberTextBox();
+			this.neverEndingLabel = new Krypton.Toolkit.KryptonLabel();
 			this.moduleListEndComboBox = new Krypton.Toolkit.KryptonComboBox();
 			this.moduleListEndLabel = new Krypton.Toolkit.KryptonLabel();
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
@@ -254,7 +257,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// loadingGroupBox
 			// 
 			this.loadingGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
-			this.loadingGroupBox.Location = new System.Drawing.Point(8, 168);
+			this.loadingGroupBox.Location = new System.Drawing.Point(8, 162);
 			this.loadingGroupBox.Name = "loadingGroupBox";
 			// 
 			// 
@@ -341,18 +344,53 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// playingGroupBox
 			// 
 			this.playingGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
-			this.playingGroupBox.Location = new System.Drawing.Point(8, 287);
+			this.playingGroupBox.Location = new System.Drawing.Point(8, 274);
 			this.playingGroupBox.Name = "playingGroupBox";
 			// 
 			// 
 			// 
+			this.playingGroupBox.Panel.Controls.Add(this.neverEndingCheckBox);
+			this.playingGroupBox.Panel.Controls.Add(this.neverEndingNumberTextBox);
+			this.playingGroupBox.Panel.Controls.Add(this.neverEndingLabel);
 			this.playingGroupBox.Panel.Controls.Add(this.moduleListEndComboBox);
 			this.playingGroupBox.Panel.Controls.Add(this.moduleListEndLabel);
 			this.controlResource.SetResourceKey(this.playingGroupBox, "IDS_SETTINGS_OPTIONS_PLAYING");
-			this.playingGroupBox.Size = new System.Drawing.Size(592, 53);
+			this.playingGroupBox.Size = new System.Drawing.Size(592, 76);
 			this.playingGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.playingGroupBox.TabIndex = 2;
 			this.playingGroupBox.Values.Heading = "Playing";
+			// 
+			// neverEndingCheckBox
+			// 
+			this.neverEndingCheckBox.Location = new System.Drawing.Point(4, 5);
+			this.neverEndingCheckBox.Name = "neverEndingCheckBox";
+			this.controlResource.SetResourceKey(this.neverEndingCheckBox, "IDS_SETTINGS_OPTIONS_PLAYING_NEVERENDING");
+			this.neverEndingCheckBox.Size = new System.Drawing.Size(172, 17);
+			this.neverEndingCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.neverEndingCheckBox.TabIndex = 0;
+			this.neverEndingCheckBox.Values.Text = "Never ending module timeout";
+			this.neverEndingCheckBox.CheckedChanged += new System.EventHandler(this.NeverEnding_CheckedChanged);
+			// 
+			// neverEndingNumberTextBox
+			// 
+			this.neverEndingNumberTextBox.Enabled = false;
+			this.neverEndingNumberTextBox.Location = new System.Drawing.Point(180, 3);
+			this.neverEndingNumberTextBox.MaxLength = 3;
+			this.neverEndingNumberTextBox.Name = "neverEndingNumberTextBox";
+			this.controlResource.SetResourceKey(this.neverEndingNumberTextBox, null);
+			this.neverEndingNumberTextBox.Size = new System.Drawing.Size(32, 21);
+			this.neverEndingNumberTextBox.StateCommon.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.neverEndingNumberTextBox.TabIndex = 1;
+			// 
+			// neverEndingLabel
+			// 
+			this.neverEndingLabel.Location = new System.Drawing.Point(216, 5);
+			this.neverEndingLabel.Name = "neverEndingLabel";
+			this.controlResource.SetResourceKey(this.neverEndingLabel, "IDS_SETTINGS_OPTIONS_PLAYING_NEVERENDING_SECONDS");
+			this.neverEndingLabel.Size = new System.Drawing.Size(50, 17);
+			this.neverEndingLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.neverEndingLabel.TabIndex = 2;
+			this.neverEndingLabel.Values.Text = "seconds";
 			// 
 			// moduleListEndComboBox
 			// 
@@ -360,23 +398,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.moduleListEndComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.moduleListEndComboBox.DropDownWidth = 121;
 			this.moduleListEndComboBox.IntegralHeight = false;
-			this.moduleListEndComboBox.Location = new System.Drawing.Point(124, 5);
+			this.moduleListEndComboBox.Location = new System.Drawing.Point(124, 28);
 			this.moduleListEndComboBox.Name = "moduleListEndComboBox";
 			this.controlResource.SetResourceKey(this.moduleListEndComboBox, null);
 			this.moduleListEndComboBox.Size = new System.Drawing.Size(100, 19);
 			this.moduleListEndComboBox.StateCommon.ComboBox.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.moduleListEndComboBox.StateCommon.ComboBox.Content.TextH = Krypton.Toolkit.PaletteRelativeAlign.Near;
 			this.moduleListEndComboBox.StateCommon.Item.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.moduleListEndComboBox.TabIndex = 1;
+			this.moduleListEndComboBox.TabIndex = 4;
 			// 
 			// moduleListEndLabel
 			// 
-			this.moduleListEndLabel.Location = new System.Drawing.Point(4, 7);
+			this.moduleListEndLabel.Location = new System.Drawing.Point(4, 30);
 			this.moduleListEndLabel.Name = "moduleListEndLabel";
 			this.controlResource.SetResourceKey(this.moduleListEndLabel, "IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND");
 			this.moduleListEndLabel.Size = new System.Drawing.Size(114, 17);
 			this.moduleListEndLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.moduleListEndLabel.TabIndex = 0;
+			this.moduleListEndLabel.TabIndex = 3;
 			this.moduleListEndLabel.Values.Text = "At end of module list";
 			// 
 			// OptionsPageControl
@@ -388,7 +426,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.Controls.Add(this.generalGroupBox);
 			this.Name = "OptionsPageControl";
 			this.controlResource.SetResourceKey(this, null);
-			this.Size = new System.Drawing.Size(608, 348);
+			this.Size = new System.Drawing.Size(608, 356);
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.generalGroupBox.Panel)).EndInit();
 			this.generalGroupBox.Panel.ResumeLayout(false);
@@ -443,5 +481,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Krypton.Toolkit.KryptonCheckBox separateWindowsCheckBox;
 		private Krypton.Toolkit.KryptonCheckBox showWindowsInTaskBarCheckBox;
 		private System.Windows.Forms.Panel windowPanel;
+		private Krypton.Toolkit.KryptonCheckBox neverEndingCheckBox;
+		private Polycode.NostalgicPlayer.Client.GuiPlayer.Controls.NumberTextBox neverEndingNumberTextBox;
+		private Krypton.Toolkit.KryptonLabel neverEndingLabel;
 	}
 }

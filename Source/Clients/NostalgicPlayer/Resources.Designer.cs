@@ -1687,6 +1687,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Never ending module timeout.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_PLAYING_NEVERENDING {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_PLAYING_NEVERENDING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to seconds.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_PLAYING_NEVERENDING_SECONDS {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_PLAYING_NEVERENDING_SECONDS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to List path.
         /// </summary>
         internal static string IDS_SETTINGS_PATHS_LISTPATH {

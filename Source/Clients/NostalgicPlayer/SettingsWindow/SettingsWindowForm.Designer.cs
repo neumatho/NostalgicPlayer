@@ -72,7 +72,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
             this.navigatorAgentsPage});
 			this.controlResource.SetResourceKey(this.navigator, null);
 			this.navigator.SelectedIndex = 0;
-			this.navigator.Size = new System.Drawing.Size(610, 375);
+			this.navigator.Size = new System.Drawing.Size(610, 383);
 			this.navigator.StateCommon.Tab.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.navigator.TabIndex = 0;
 			// 
@@ -85,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			this.navigatorOptionsPage.MinimumSize = new System.Drawing.Size(50, 50);
 			this.navigatorOptionsPage.Name = "navigatorOptionsPage";
 			this.controlResource.SetResourceKey(this.navigatorOptionsPage, null);
-			this.navigatorOptionsPage.Size = new System.Drawing.Size(608, 348);
+			this.navigatorOptionsPage.Size = new System.Drawing.Size(608, 356);
 			this.navigatorOptionsPage.Text = "";
 			this.navigatorOptionsPage.ToolTipTitle = "Page ToolTip";
 			this.navigatorOptionsPage.UniqueName = "d6822b271a6149e5ae2f577bfe34d8d6";
@@ -99,7 +99,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			this.optionsPageControl.Location = new System.Drawing.Point(0, 0);
 			this.optionsPageControl.Name = "optionsPageControl";
 			this.controlResource.SetResourceKey(this.optionsPageControl, null);
-			this.optionsPageControl.Size = new System.Drawing.Size(608, 348);
+			this.optionsPageControl.Size = new System.Drawing.Size(608, 356);
 			this.optionsPageControl.TabIndex = 0;
 			// 
 			// navigatorPathsPage
@@ -187,7 +187,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			// applyButton
 			// 
 			this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.applyButton.Location = new System.Drawing.Point(528, 391);
+			this.applyButton.Location = new System.Drawing.Point(528, 399);
 			this.applyButton.Name = "applyButton";
 			this.controlResource.SetResourceKey(this.applyButton, "IDS_SETTINGS_APPLY");
 			this.applyButton.Size = new System.Drawing.Size(90, 25);
@@ -199,7 +199,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			// cancelButton
 			// 
 			this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.cancelButton.Location = new System.Drawing.Point(430, 391);
+			this.cancelButton.Location = new System.Drawing.Point(430, 399);
 			this.cancelButton.Name = "cancelButton";
 			this.controlResource.SetResourceKey(this.cancelButton, "IDS_SETTINGS_CANCEL");
 			this.cancelButton.Size = new System.Drawing.Size(90, 25);
@@ -211,7 +211,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			// okButton
 			// 
 			this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.okButton.Location = new System.Drawing.Point(332, 391);
+			this.okButton.Location = new System.Drawing.Point(332, 399);
 			this.okButton.Name = "okButton";
 			this.controlResource.SetResourceKey(this.okButton, "IDS_SETTINGS_OK");
 			this.okButton.Size = new System.Drawing.Size(90, 25);
@@ -223,7 +223,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			// SettingsWindowForm
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(626, 424);
+			this.ClientSize = new System.Drawing.Size(626, 432);
 			this.Controls.Add(this.okButton);
 			this.Controls.Add(this.cancelButton);
 			this.Controls.Add(this.applyButton);

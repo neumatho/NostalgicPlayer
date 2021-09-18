@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.group.Panel.Controls.Add(this.listTextBox);
 			this.group.Panel.Controls.Add(this.listLabel);
 			this.controlResource.SetResourceKey(this.group, null);
-			this.group.Size = new System.Drawing.Size(592, 332);
+			this.group.Size = new System.Drawing.Size(592, 340);
 			this.group.TabIndex = 0;
 			// 
 			// startScanButton
@@ -97,7 +97,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.controlResource.SetResourceKey(this.startScanTextBox, null);
 			this.startScanTextBox.Size = new System.Drawing.Size(454, 21);
 			this.startScanTextBox.StateCommon.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.startScanTextBox.StateCommon.Content.TextH = Krypton.Toolkit.PaletteRelativeAlign.Inherit;
 			this.startScanTextBox.TabIndex = 1;
 			// 
 			// startScanLabel
@@ -131,7 +130,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.controlResource.SetResourceKey(this.moduleTextBox, null);
 			this.moduleTextBox.Size = new System.Drawing.Size(454, 21);
 			this.moduleTextBox.StateCommon.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.moduleTextBox.StateCommon.Content.TextH = Krypton.Toolkit.PaletteRelativeAlign.Inherit;
 			this.moduleTextBox.TabIndex = 4;
 			// 
 			// moduleLabel
@@ -165,7 +163,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.controlResource.SetResourceKey(this.listTextBox, null);
 			this.listTextBox.Size = new System.Drawing.Size(454, 21);
 			this.listTextBox.StateCommon.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.listTextBox.StateCommon.Content.TextH = Krypton.Toolkit.PaletteRelativeAlign.Inherit;
 			this.listTextBox.TabIndex = 7;
 			// 
 			// listLabel
@@ -185,7 +182,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.Controls.Add(this.group);
 			this.Name = "PathsPageControl";
 			this.controlResource.SetResourceKey(this, null);
-			this.Size = new System.Drawing.Size(608, 348);
+			this.Size = new System.Drawing.Size(608, 356);
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.group.Panel)).EndInit();
 			this.group.Panel.ResumeLayout(false);

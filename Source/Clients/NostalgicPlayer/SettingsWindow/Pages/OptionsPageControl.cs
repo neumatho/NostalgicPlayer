@@ -107,6 +107,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			moduleErrorComboBox.SelectedIndex = (int)optionSettings.ModuleError;
 
 			// Playing
+			neverEndingCheckBox.Checked = optionSettings.NeverEnding;
+			neverEndingNumberTextBox.Text = optionSettings.NeverEndingTimeout.ToString();
+
 			moduleListEndComboBox.SelectedIndex = (int)optionSettings.ModuleListEnd;
 		}
 
@@ -154,6 +157,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			optionSettings.ModuleError = (OptionSettings.ModuleErrorAction)moduleErrorComboBox.SelectedIndex;
 
 			// Playing
+			optionSettings.NeverEnding = neverEndingCheckBox.Checked;
+			optionSettings.NeverEndingTimeout = int.Parse(neverEndingNumberTextBox.Text);
+
 			optionSettings.ModuleListEnd = (OptionSettings.ModuleListEndAction)moduleListEndComboBox.SelectedIndex;
 
 			mainWin.EnableUserInterfaceSettings();
@@ -238,6 +244,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private void DoubleBufferingCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			doubleBufferingPanel.Enabled = doubleBufferingCheckBox.Checked;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user change the never ending
+		/// </summary>
+		/********************************************************************/
+		private void NeverEnding_CheckedChanged(object sender, EventArgs e)
+		{
+			neverEndingNumberTextBox.Enabled = neverEndingCheckBox.Checked;
 		}
 		#endregion
 	}

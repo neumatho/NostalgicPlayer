@@ -281,6 +281,34 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
+		/// Never ending
+		/// </summary>
+		/********************************************************************/
+		public bool NeverEnding
+		{
+			get => settings.GetBoolEntry("Options", "NeverEnding", false);
+
+			set => settings.SetBoolEntry("Options", "NeverEnding", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Never ending timeout
+		/// </summary>
+		/********************************************************************/
+		public int NeverEndingTimeout
+		{
+			get => settings.GetIntEntry("Options", "NeverEndingTimeout", 180);
+
+			set => settings.SetIntEntry("Options", "NeverEndingTimeout", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Module list end reached
 		/// </summary>
 		/********************************************************************/

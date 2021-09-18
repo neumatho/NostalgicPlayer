@@ -230,7 +230,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.channelsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.channelsGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
-			this.channelsGroupBox.Location = new System.Drawing.Point(8, 199);
+			this.channelsGroupBox.Location = new System.Drawing.Point(8, 207);
 			this.channelsGroupBox.Name = "channelsGroupBox";
 			// 
 			// 
@@ -298,7 +298,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.Controls.Add(this.generalGroupBox);
 			this.Name = "MixerPageControl";
 			this.controlResource.SetResourceKey(this, null);
-			this.Size = new System.Drawing.Size(608, 348);
+			this.Size = new System.Drawing.Size(608, 356);
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.generalGroupBox.Panel)).EndInit();
 			this.generalGroupBox.Panel.ResumeLayout(false);

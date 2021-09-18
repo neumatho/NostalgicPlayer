@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.agentsDataGridView.ShowCellToolTips = false;
 			this.agentsDataGridView.ShowEditingIcon = false;
 			this.agentsDataGridView.ShowRowErrors = false;
-			this.agentsDataGridView.Size = new System.Drawing.Size(285, 256);
+			this.agentsDataGridView.Size = new System.Drawing.Size(285, 264);
 			this.agentsDataGridView.StateCommon.Background.Color1 = System.Drawing.Color.White;
 			this.agentsDataGridView.StateCommon.BackStyle = Krypton.Toolkit.PaletteBackStyle.GridBackgroundList;
 			this.agentsDataGridView.StateCommon.DataCell.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
@@ -101,7 +101,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.descriptionDataGridView.ShowCellToolTips = false;
 			this.descriptionDataGridView.ShowEditingIcon = false;
 			this.descriptionDataGridView.ShowRowErrors = false;
-			this.descriptionDataGridView.Size = new System.Drawing.Size(285, 289);
+			this.descriptionDataGridView.Size = new System.Drawing.Size(285, 297);
 			this.descriptionDataGridView.StateCommon.Background.Color1 = System.Drawing.Color.White;
 			this.descriptionDataGridView.StateCommon.BackStyle = Krypton.Toolkit.PaletteBackStyle.GridBackgroundList;
 			this.descriptionDataGridView.StateCommon.DataCell.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
@@ -114,7 +114,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// settingsButton
 			// 
 			this.settingsButton.Enabled = false;
-			this.settingsButton.Location = new System.Drawing.Point(4, 274);
+			this.settingsButton.Location = new System.Drawing.Point(4, 282);
 			this.settingsButton.Name = "settingsButton";
 			this.controlResource.SetResourceKey(this.settingsButton, "IDS_SETTINGS_AGENTS_SETTINGS");
 			this.settingsButton.Size = new System.Drawing.Size(138, 25);
@@ -126,7 +126,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// displayButton
 			// 
 			this.displayButton.Enabled = false;
-			this.displayButton.Location = new System.Drawing.Point(153, 274);
+			this.displayButton.Location = new System.Drawing.Point(153, 282);
 			this.displayButton.Name = "displayButton";
 			this.controlResource.SetResourceKey(this.displayButton, "IDS_SETTINGS_AGENTS_DISPLAY");
 			this.displayButton.Size = new System.Drawing.Size(138, 25);
@@ -144,7 +144,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.agentsGroup.Panel.Controls.Add(this.agentsDataGridView);
 			this.controlResource.SetResourceKey(this.agentsGroup, null);
-			this.agentsGroup.Size = new System.Drawing.Size(287, 258);
+			this.agentsGroup.Size = new System.Drawing.Size(287, 266);
 			this.agentsGroup.TabIndex = 0;
 			// 
 			// descriptionGroup
@@ -156,7 +156,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.descriptionGroup.Panel.Controls.Add(this.descriptionDataGridView);
 			this.controlResource.SetResourceKey(this.descriptionGroup, null);
-			this.descriptionGroup.Size = new System.Drawing.Size(287, 291);
+			this.descriptionGroup.Size = new System.Drawing.Size(287, 299);
 			this.descriptionGroup.TabIndex = 1;
 			// 
 			// AgentsListUserControl
@@ -170,7 +170,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.Controls.Add(this.settingsButton);
 			this.Name = "AgentsListUserControl";
 			this.controlResource.SetResourceKey(this, null);
-			this.Size = new System.Drawing.Size(590, 307);
+			this.Size = new System.Drawing.Size(590, 315);
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.agentsDataGridView)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.descriptionDataGridView)).EndInit();

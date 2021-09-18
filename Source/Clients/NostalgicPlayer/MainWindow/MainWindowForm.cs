@@ -82,6 +82,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private MainWindowSettings.TimeFormat timeFormat;
 		private DateTime timeStart;
 		private TimeSpan timeOccurred;
+		private TimeSpan neverEndingTimeout;
+		private bool neverEndingStarted;
 
 		// Module variables
 		private ModuleListItem playItem;
@@ -108,7 +110,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private int[] savedSelection = new int[0];
 
 		// Different helper classes
-		private ModuleDatabase database;
+		private readonly ModuleDatabase database;
 		private FileScanner fileScanner;
 
 		// Play samples from sample info window info
@@ -830,6 +832,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Loop/sample group
 			sampleInfoButton.Click += SampleInfoButton_Click;
 
+			// Never ending
+			neverEndingTimer.Tick += NeverEndingTimer_Tick;
+
 			// Module handler
 			moduleHandler.PositionChanged += ModuleHandler_PositionChanged;
 			moduleHandler.EndReached += ModuleHandler_EndReached;
@@ -1417,75 +1422,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void ModuleHandler_EndReached(object sender, EventArgs e)
 		{
-			if (!processingEndReached)
-			{
-				processingEndReached = true;
-
-				BeginInvoke(new Action(() =>
-				{
-					try
-					{
-						// Check to see if there is module loop on
-						if (!loopCheckButton.Checked && (playItem != null))
-						{
-							bool loadNext = true;
-
-							// Get the number of modules in the list
-							int count = moduleListBox.Items.Count;
-
-							// Get the index of the current playing module
-							int curPlay = moduleListBox.Items.IndexOf(playItem);
-
-							// The next module to load
-							int newPlay = curPlay + 1;
-
-							// Test to see if we is at the end of the list
-							if (newPlay == count)
-							{
-								// We are, now check what we has to do
-								OptionSettings.ModuleListEndAction listEnd = optionSettings.ModuleListEnd;
-
-								if (listEnd == OptionSettings.ModuleListEndAction.Eject)
-								{
-									// Eject the module
-									StopAndFreeModule();
-									loadNext = false;
-								}
-								else
-								{
-									if ((count == 1) || (listEnd == OptionSettings.ModuleListEndAction.Loop))
-										loadNext = false;
-									else
-										newPlay = 0;
-								}
-							}
-
-							// Should we load the next module?
-							if (loadNext)
-							{
-								if (optionSettings.DoubleBuffering && moduleHandler.IsDoubleBufferingModuleLoaded)
-								{
-									// Double buffering is on and the next module has already been loaded, so just
-									// start to play it
-									PlayNextModule(newPlay);
-								}
-								else
-								{
-									// Free the module
-									StopAndFreeModule();
-
-									// Load the module
-									LoadAndPlayModule(newPlay);
-								}
-							}
-						}
-					}
-					finally
-					{
-						processingEndReached = false;
-					}
-				}));
-			}
+			HandleEndReached();
 		}
 
 
@@ -2783,6 +2720,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		}
 		#endregion
 
+		#region Never ending events
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the never ending timeout has been reached
+		/// </summary>
+		/********************************************************************/
+		private void NeverEndingTimer_Tick(object sender, EventArgs e)
+		{
+			HandleEndReached();
+		}
+		#endregion
+
 		#endregion
 
 		#region Private methods
@@ -3826,7 +3775,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					// Set the position string to n/a
 					posStr = Resources.IDS_NOPOSITION;
 
-					//XX Never ending update
+					// If never ending timeout is on, we need to update the position slider
+					if (neverEndingStarted)
+					{
+						// Calculate the percent
+						int percent = Math.Min((int)(timeOccurred.TotalMilliseconds * 100 / neverEndingTimeout.TotalMilliseconds), 100);
+
+						// Set the position slider
+						if (allowPosSliderUpdate && (positionTrackBar.Value != percent))
+							positionTrackBar.Value = percent;
+					}
 				}
 
 				// Create sub-song string
@@ -4195,6 +4153,86 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				}
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handle end reached event
+		/// </summary>
+		/********************************************************************/
+		private void HandleEndReached()
+		{
+			if (!processingEndReached)
+			{
+				processingEndReached = true;
+
+				BeginInvoke(new Action(() =>
+				{
+					try
+					{
+						// Check to see if there is module loop on
+						if (!loopCheckButton.Checked && (playItem != null))
+						{
+							bool loadNext = true;
+
+							// Get the number of modules in the list
+							int count = moduleListBox.Items.Count;
+
+							// Get the index of the current playing module
+							int curPlay = moduleListBox.Items.IndexOf(playItem);
+
+							// The next module to load
+							int newPlay = curPlay + 1;
+
+							// Test to see if we is at the end of the list
+							if (newPlay == count)
+							{
+								// We are, now check what we has to do
+								OptionSettings.ModuleListEndAction listEnd = optionSettings.ModuleListEnd;
+
+								if (listEnd == OptionSettings.ModuleListEndAction.Eject)
+								{
+									// Eject the module
+									StopAndFreeModule();
+									loadNext = false;
+								}
+								else
+								{
+									if ((count == 1) || (listEnd == OptionSettings.ModuleListEndAction.Loop))
+										loadNext = false;
+									else
+										newPlay = 0;
+								}
+							}
+
+							// Should we load the next module?
+							if (loadNext)
+							{
+								if (optionSettings.DoubleBuffering && moduleHandler.IsDoubleBufferingModuleLoaded)
+								{
+									// Double buffering is on and the next module has already been loaded, so just
+									// start to play it
+									PlayNextModule(newPlay);
+								}
+								else
+								{
+									// Free the module
+									StopAndFreeModule();
+
+									// Load the module
+									LoadAndPlayModule(newPlay);
+								}
+							}
+						}
+					}
+					finally
+					{
+						processingEndReached = false;
+					}
+				}));
+			}
+		}
 		#endregion
 
 		#region File handling
@@ -4439,11 +4477,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			{
 				timeStart = DateTime.Now;
 				timeOccurred = new TimeSpan(0);
+
+				if ((moduleHandler.PlayingModuleInformation.DurationInfo == null) && optionSettings.NeverEnding)
+				{
+					neverEndingTimeout = new TimeSpan(optionSettings.NeverEndingTimeout * TimeSpan.TicksPerSecond);
+					neverEndingStarted = true;
+				}
+				else
+					neverEndingStarted = false;
 			}
 
 			clockTimer.Start();
 
-			//XX Start the never ending timer if needed
+			// Start the never ending timer if needed
+			if (neverEndingStarted)
+			{
+				neverEndingTimer.Interval = (int)(neverEndingTimeout - timeOccurred).TotalMilliseconds;
+				neverEndingTimer.Start();
+			}
 		}
 
 
@@ -4456,8 +4507,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private void StopTimers()
 		{
 			clockTimer.Stop();
-
-			//XX Never ending timer
+			neverEndingTimer.Stop();
 		}
 		#endregion
 

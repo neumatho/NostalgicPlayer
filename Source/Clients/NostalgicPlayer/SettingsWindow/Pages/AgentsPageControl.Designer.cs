@@ -77,7 +77,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
             this.navigatorVisualsPage,
             this.navigatorDecrunchersPage});
 			this.navigator.SelectedIndex = 0;
-			this.navigator.Size = new System.Drawing.Size(592, 332);
+			this.navigator.Size = new System.Drawing.Size(592, 340);
 			this.navigator.StateCommon.Tab.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.navigator.TabIndex = 0;
 			// 
@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.navigatorFormatsPage.LastVisibleSet = true;
 			this.navigatorFormatsPage.MinimumSize = new System.Drawing.Size(50, 50);
 			this.navigatorFormatsPage.Name = "navigatorFormatsPage";
-			this.navigatorFormatsPage.Size = new System.Drawing.Size(590, 307);
+			this.navigatorFormatsPage.Size = new System.Drawing.Size(590, 315);
 			this.navigatorFormatsPage.Text = "";
 			this.navigatorFormatsPage.ToolTipTitle = "Page ToolTip";
 			this.navigatorFormatsPage.UniqueName = "347f870bce2446e39084856a59b61717";
@@ -99,7 +99,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.formatsListControl.BackColor = System.Drawing.Color.Transparent;
 			this.formatsListControl.Location = new System.Drawing.Point(0, 0);
 			this.formatsListControl.Name = "formatsListControl";
-			this.formatsListControl.Size = new System.Drawing.Size(590, 307);
+			this.formatsListControl.Size = new System.Drawing.Size(590, 315);
 			this.formatsListControl.TabIndex = 0;
 			// 
 			// navigatorPlayersPage
@@ -219,7 +219,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.BackColor = System.Drawing.Color.Transparent;
 			this.Controls.Add(this.navigator);
 			this.Name = "AgentsPageControl";
-			this.Size = new System.Drawing.Size(608, 348);
+			this.Size = new System.Drawing.Size(608, 356);
 			((System.ComponentModel.ISupportInitialize)(this.navigator)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.navigatorFormatsPage)).EndInit();
 			this.navigatorFormatsPage.ResumeLayout(false);
