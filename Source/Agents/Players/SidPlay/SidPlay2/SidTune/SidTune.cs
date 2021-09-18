@@ -10,7 +10,6 @@ using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.SidTune
 {
@@ -105,6 +104,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.SidTune
 		public SidTuneInfo GetInfo()
 		{
 			return info;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the buffer holding the loaded file
+		/// </summary>
+		/********************************************************************/
+		public byte[] GetLoadedFile()
+		{
+			return cache;
 		}
 
 

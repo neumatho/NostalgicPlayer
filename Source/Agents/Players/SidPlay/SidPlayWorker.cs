@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSid;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.Builder;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.Containers;
+using Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.Event;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.Interfaces;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.SidTune;
 using Polycode.NostalgicPlayer.Kit.Bases;
@@ -24,12 +25,80 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 	/// </summary>
 	internal class SidPlayWorker : ModulePlayerAgentBase, IAgentSettingsRegistrar
 	{
+		#region DurationHandler class
+		/// <summary>
+		/// This class is used to handle position change
+		/// when a duration is known for the current module
+		/// </summary>
+		private class DurationHandler : Event
+		{
+			private readonly SidPlayWorker parent;
+
+			private readonly SidIPtr<ISidTimer> engineTimer;
+			private readonly IEventContext ctx;
+
+			private readonly int totalSeconds;
+			private uint startTime;
+			private int previousPercent;
+
+			/********************************************************************/
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/********************************************************************/
+			public DurationHandler(SidPlayWorker parent, TimeSpan totalTime) : base("DurationHandler")
+			{
+				this.parent = parent;
+
+				engineTimer = new SidIPtr<ISidTimer>(parent.engine);
+				ctx = parent.engine.Obj.GetInfo().EventContext;
+
+				totalSeconds = (int)totalTime.TotalSeconds;
+				startTime = 0;
+				previousPercent = 0;
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// This is called for every second and will tell NostalgicPlayer
+			/// to update the position when needed
+			/// </summary>
+			/********************************************************************/
+			public override void DoEvent()
+			{
+				int seconds = (int)((engineTimer.Obj.Time() - startTime) / engineTimer.Obj.TimeBase());
+
+				// Calculate the percent of how long that has been heard so far
+				int percent = seconds * 100 / totalSeconds;
+				if (percent != previousPercent)
+				{
+					if (percent >= 100)
+					{
+						percent = 0;
+						startTime = engineTimer.Obj.Time();
+
+						parent.OnEndReached();
+					}
+
+					previousPercent = percent;
+					parent.songPosition = percent;
+
+					parent.OnPositionChanged();
+				}
+
+				// Units in C64 clock cycles
+				ctx.Schedule(this, 900000, EventPhase.ClockPhi1);
+			}
+		}
+		#endregion
+
 		private const int BufferSize = 2048;
 
 		private SidTune sidTune;
 
 		private SidIPtr<ISidPlay2> engine;
-		private SidIPtr<ISidTimer> engineTimer;
 		private SidLazyIPtr<ISidUnknown> sidBuilder;
 
 		private Sid2Config engineConfig;
@@ -39,8 +108,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 
 		private bool firstTime;
 
+		private bool haveDuration;
+		private int songPosition;
+		private DurationHandler durationHandler;
+
 		private SidPlaySettings settings;
 		private static readonly SidStil sidStil = new SidStil();
+		private static readonly SidSongLength sidSongLength = new SidSongLength();
 
 		private List<string> comments;
 
@@ -314,35 +388,47 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				comments = new List<string>();
 				settings = new SidPlaySettings();
 
-				if ((settings.StilEnabled || settings.BugListEnabled) && !string.IsNullOrWhiteSpace(settings.HvscPath.Trim()))
+				if (!string.IsNullOrWhiteSpace(settings.HvscPath.Trim()))
 				{
-					lock (sidStil)
+					if (settings.StilEnabled || settings.BugListEnabled)
 					{
-						// Load the STIL if changed
-						bool stilOk = sidStil.SetBaseDir(settings.HvscPath, settings.StilEnabled, settings.BugListEnabled);
-						if (stilOk)
+						lock (sidStil)
 						{
-							IEnumerable<string> entries = sidStil.GetGlobalComment(fileInfo.FileName);
-							if (entries != null)
-								comments.AddRange(entries);
-
-							entries = sidStil.GetFileComment(fileInfo.FileName);
-							if (entries != null)
+							// Load the STIL if changed
+							bool stilOk = sidStil.SetBaseDir(settings.HvscPath, settings.StilEnabled, settings.BugListEnabled);
+							if (stilOk)
 							{
-								if (comments.Count > 0)
-									comments.Add(string.Empty);
+								IEnumerable<string> entries = sidStil.GetGlobalComment(fileInfo.FileName);
+								if (entries != null)
+									comments.AddRange(entries);
 
-								comments.AddRange(entries);
+								entries = sidStil.GetFileComment(fileInfo.FileName);
+								if (entries != null)
+								{
+									if (comments.Count > 0)
+										comments.Add(string.Empty);
+
+									comments.AddRange(entries);
+								}
+
+								entries = sidStil.GetBugComment(fileInfo.FileName);
+								if (entries != null)
+								{
+									if (comments.Count > 0)
+										comments.Add(string.Empty);
+
+									comments.AddRange(entries);
+								}
 							}
+						}
+					}
 
-							entries = sidStil.GetBugComment(fileInfo.FileName);
-							if (entries != null)
-							{
-								if (comments.Count > 0)
-									comments.Add(string.Empty);
-
-								comments.AddRange(entries);
-							}
+					if (settings.SongLengthEnabled)
+					{
+						lock (sidSongLength)
+						{
+							// Load the database if changed
+							sidSongLength.SetBaseDir(settings.HvscPath);
 						}
 					}
 				}
@@ -367,7 +453,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		public override bool InitPlayer()
 		{
 			engine = new SidIPtr<ISidPlay2>(SidPlay2.Player.Create());
-			engineTimer = new SidIPtr<ISidTimer>(engine);
 
 			// Set configuration
 			engineConfig = engine.Obj.Configuration;
@@ -480,6 +565,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			engine.Obj.Configuration = engineConfig;
 
 			firstTime = true;
+			songPosition = 0;
+
+			// Create duration handler if needed
+			if (haveDuration)
+			{
+				durationHandler = new DurationHandler(this, durationInfo.TotalTime);
+
+				// Start a schedule
+				durationHandler.DoEvent();
+			}
 		}
 
 
@@ -493,6 +588,32 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		{
 			if (engine != null)
 				engine.Obj.Stop();
+
+			durationHandler = null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Calculate the duration for all sub-songs
+		/// </summary>
+		/********************************************************************/
+		public override DurationInfo[] CalculateDuration()
+		{
+			haveDuration = false;
+
+			List<TimeSpan> songLengths = sidSongLength.GetSongLengths(sidTune.GetLoadedFile());
+			if (songLengths == null)
+				return null;
+
+			DurationInfo[] result = new DurationInfo[songLengths.Count];
+			for (int i = songLengths.Count - 1; i >= 0; i--)
+				result[i] = new DurationInfo(songLengths[i], Array.Empty<PositionInfo>());
+
+			haveDuration = true;
+
+			return result;
 		}
 
 
@@ -538,7 +659,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Return the number of channels the module use
 		/// </summary>
 		/********************************************************************/
-		public override int ModuleChannelCount => engineConfig.PlayBack == Sid2PlayBack.Stereo ? 2 : 1;
+		public override int ModuleChannelCount => 2;
 
 
 
@@ -556,6 +677,33 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				return new SubSongInfo(info.Songs, info.StartSong - 1);
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the length of the current song
+		/// </summary>
+		/********************************************************************/
+		public override int SongLength
+		{
+			get
+			{
+				return haveDuration ? 100 : 0;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the current position of the song
+		/// </summary>
+		/********************************************************************/
+		public override int GetSongPosition()
+		{
+			return songPosition;
+		}
 		#endregion
 
 		#region Private methods
@@ -572,7 +720,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			rightOutputBuffer = null;
 
 			sidBuilder = null;
-			engineTimer = null;
 			engine = null;
 			sidTune = null;
 

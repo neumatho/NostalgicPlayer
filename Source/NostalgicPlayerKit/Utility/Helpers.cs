@@ -125,5 +125,28 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 				destination.Write(buf, 0, len);
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert a byte array to a hexadecimal string
+		/// </summary>
+		/********************************************************************/
+		public static string ToHex(byte[] data)
+		{
+			char[] result = new char[data.Length * 2];
+
+			for (int y = 0, x = 0; y < data.Length; y++)
+			{
+				byte b = (byte)(data[y] >> 4);
+				result[x++] = (char)(b > 9 ? b + 0x37 : b + 0x30);
+
+				b = (byte)(data[y] & 0x0f);
+				result[x++] = (char)(b > 9 ? b + 0x37 : b + 0x30);
+			}
+
+			return new string(result);
+		}
 	}
 }
