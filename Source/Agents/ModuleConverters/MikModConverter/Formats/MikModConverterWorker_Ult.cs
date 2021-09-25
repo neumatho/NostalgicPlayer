@@ -179,21 +179,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 				q.SampleName = encoder.GetString(s.SampleName).TrimEnd();
 
-				// The correct formula for the coefficient would be
-				// pow(2,(double)s.finetune/OCTAVE/32768), but to avoid floating point
-				// here, we'll use a first order approximation here.
+				// The correct formula would be
+				// s.speed * pow(2, (double)s.finetune / (OCTAVE * 32768))
+				// but to avoid libm, we'll use a first order approximation
 				// 1/567290 == Ln(2)/OCTAVE/32768
-				//
-				// Thomas Neumann: Uncommented the original code and use the
-				// right formula. Today computer are fast enough to calculate a
-				// little bit floating point :-)
-				//
-				// The reason to uncomment, is because the module "Break the beat.ult" have
-				// a fine tune value of -169, so the original code calculates the speed
-				// to -8363 and set it on an usigned variable, so we got a really high value.
-				// By using the original formula, we get a speed of 8360
-//				q.Speed = (uint)(s.Speed + s.Speed * ((s.Speed * s.FineTune) / 567290));
-				q.Speed = (uint)(s.Speed * Math.Pow(2, (double)s.FineTune / (SharedConstant.Octave * 32768)));
+				if (s.FineTune == 0)
+					q.Speed = s.Speed;
+				else
+					q.Speed = (uint)(s.Speed * ((double)s.FineTune / 567290.0f + 1.0f));
+
 				q.Length = (uint)(s.SizeEnd - s.SizeStart);
 				q.Volume = (byte)(s.Volume >> 2);
 				q.LoopStart = (uint)s.LoopStart;

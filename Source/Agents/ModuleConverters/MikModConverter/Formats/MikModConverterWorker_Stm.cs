@@ -231,15 +231,34 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 				}
 
 				// 99 terminates the PatOrder list
-				while ((mh.PatOrder[t] <= 99) && (mh.PatOrder[t] < mh.NumPat))
+				bool blankPattern = false;
+
+				while (mh.PatOrder[t] < 99)
 				{
 					of.Positions[t] = mh.PatOrder[t];
+
+					// ScreamTracker 2 treaks patterns >= numPat as blank patterns.
+					// Example modules: jimmy.stm, Rauno/dogs.stm, Skaven/hevijanis istu maas.stm
+					//
+					// Patterns >= 64 have unpredictable behaviour in ScreamTracker 2,
+					// but nothing seems to rely on them, so they're OK to blank too
+					if (of.Positions[t] >= mh.NumPat)
+					{
+						of.Positions[t] = mh.NumPat;
+						blankPattern = true;
+					}
+
 					if (++t == 0x80)
 					{
 						errorMessage = Resources.IDS_MIKCONV_ERR_BAD_HEADER;
 						return false;
 					}
 				}
+
+				// Allocate an extra blank pattern if the module references one
+				int patToLoad = of.NumPat;
+				if (blankPattern)
+					of.NumPat++;
 
 				of.NumPos = (ushort)t;
 				of.NumTrk = (ushort)(of.NumPat * of.NumChn);
@@ -251,7 +270,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 					return false;
 				}
 
-				if (!LoadPatterns(moduleStream, uniTrk))
+				if (!LoadPatterns(moduleStream, uniTrk, patToLoad))
 				{
 					errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_PATTERNS;
 					return false;
@@ -327,7 +346,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		/// Read all the patterns
 		/// </summary>
 		/********************************************************************/
-		private bool LoadPatterns(ModuleStream moduleStream, MUniTrk uniTrk)
+		private bool LoadPatterns(ModuleStream moduleStream, MUniTrk uniTrk, int patToLoad)
 		{
 			if (!MLoader.AllocPatterns(of))
 				return false;
@@ -338,7 +357,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			// Allocate temporary buffer for loading and converting the patterns
 			int tracks = 0;
 
-			for (int t = 0; t < of.NumPat; t++)
+			for (int t = 0; t < patToLoad; t++)
 			{
 				for (int s = 0; s < (64 * of.NumChn); s++)
 				{
