@@ -8,6 +8,7 @@
 /******************************************************************************/
 using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Krypton.Toolkit;
@@ -37,6 +38,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 
 		private const int Page_ModuleInfo = 0;
 		private const int Page_Comments = 1;
+		private const int Page_Lyrics = 2;
 
 		/********************************************************************/
 		/// <summary>
@@ -65,6 +67,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				// Set the tab titles
 				navigator.Pages[Page_ModuleInfo].Text = Resources.IDS_MODULE_INFO_TAB_INFO;
 				navigator.Pages[Page_Comments].Text = Resources.IDS_MODULE_INFO_TAB_COMMENT;
+				navigator.Pages[Page_Lyrics].Text = Resources.IDS_MODULE_INFO_TAB_LYRICS;
 
 				// Add the columns to the controls
 				moduleInfoInfoDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
@@ -81,13 +84,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 						Resizable = DataGridViewTriState.True,
 						SortMode = DataGridViewColumnSortMode.NotSortable,
 						Width = settings.Column2Width
-					});
-
-				moduleInfoCommentDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
-					{
-						Name = Resources.IDS_MODULE_INFO_COLUMN_COMMENT,
-						Resizable = DataGridViewTriState.True,
-						SortMode = DataGridViewColumnSortMode.NotSortable
 					});
 
 				// Make sure that the content is up-to date
@@ -108,7 +104,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			{
 				// Remove all the items
 				moduleInfoInfoDataGridView.Rows.Clear();
-				moduleInfoCommentDataGridView.Rows.Clear();
+				moduleInfoCommentReadOnlyRichTextBox.Clear();
+				moduleInfoLyricsReadOnlyRichTextBox.Clear();
 
 				// Add the items
 				doNotUpdateAutoSelection = true;
@@ -287,11 +284,31 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 					if (settings.AutoSelectTab == Page_Comments)
 						navigator.SelectedIndex = Page_Comments;
 
-					foreach (string line in staticInfo.Comment)
-						moduleInfoCommentDataGridView.Rows.Add(line);
+					// Switch font
+					moduleInfoCommentReadOnlyRichTextBox.SetFont(staticInfo.CommentFont ?? new Font("Lucida Console", 8.25F, FontStyle.Regular, GraphicsUnit.Point));
+
+					// Set text
+					moduleInfoCommentReadOnlyRichTextBox.Lines = staticInfo.Comment;
 				}
 				else
 					navigator.Pages[Page_Comments].Visible = false;
+
+				// Add lyrics
+				if (staticInfo.Lyrics.Length > 0)
+				{
+					navigator.Pages[Page_Lyrics].Visible = true;
+
+					if (settings.AutoSelectTab == Page_Lyrics)
+						navigator.SelectedIndex = Page_Lyrics;
+
+					// Switch font
+					moduleInfoLyricsReadOnlyRichTextBox.SetFont(staticInfo.LyricsFont ?? new Font("Lucida Console", 8.25F, FontStyle.Regular, GraphicsUnit.Point));
+
+					// Set text
+					moduleInfoLyricsReadOnlyRichTextBox.Lines = staticInfo.Lyrics;
+				}
+				else
+					navigator.Pages[Page_Lyrics].Visible = false;
 			}
 			else
 			{
@@ -308,11 +325,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, na);
 
 				navigator.Pages[Page_Comments].Visible = false;
+				navigator.Pages[Page_Lyrics].Visible = false;
 			}
 
 			// Resize the rows, so the lines are compacted
 			moduleInfoInfoDataGridView.AutoResizeRows();
-			moduleInfoCommentDataGridView.AutoResizeRows();
 		}
 		#endregion
 	}

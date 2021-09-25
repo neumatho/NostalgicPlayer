@@ -162,6 +162,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.Builder
 			optimization = 0;
 
 			status = true;
+			errorMessage = string.Empty;
 			locked = false;
 
 			Reset(0);

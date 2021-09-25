@@ -406,9 +406,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         ///¤COzkan Sezer, Alice Lachesis
         ///¤Cand Miodrag Vallat
         ///¤CAdam Hathcock
+        ///¤CJens-Christian Huus
         ///¤CAdrien Destugues
         ///¤CRobert Baron
-        ///¤CAnd to all you users out there : [rest of string was truncated]&quot;;.
+        ///¤CAnd to al [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string IDS_ABOUT_TEXT {
             get {
@@ -739,15 +740,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Comment.
-        /// </summary>
-        internal static string IDS_MODULE_INFO_COLUMN_COMMENT {
-            get {
-                return ResourceManager.GetString("IDS_MODULE_INFO_COLUMN_COMMENT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Description.
         /// </summary>
         internal static string IDS_MODULE_INFO_COLUMN_DESCRIPTION {
@@ -870,6 +862,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_MODULE_INFO_TAB_INFO {
             get {
                 return ResourceManager.GetString("IDS_MODULE_INFO_TAB_INFO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lyrics.
+        /// </summary>
+        internal static string IDS_MODULE_INFO_TAB_LYRICS {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_TAB_LYRICS", resourceCulture);
             }
         }
         

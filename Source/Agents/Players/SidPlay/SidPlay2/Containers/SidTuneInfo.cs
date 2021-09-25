@@ -6,6 +6,8 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System.Collections.Generic;
+
 namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.Containers
 {
 	/// <summary>
@@ -16,6 +18,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.Containers
 	{
 		public string FormatString;				// The name of the identified file format
 		public string SpeedString;				// Describing the speed a song is running at
+
+		public List<string> Comment;			// Information from MUS files
+		public List<string> Lyrics;
 
 		public ushort LoadAddr;
 		public ushort InitAddr;

@@ -9,7 +9,7 @@ You can find an installation package on Microsoft Store, just search after Nosta
 
 # License
 
-NostalgicPlayer is licensed under the <a href="https://github.com/neumatho/NostalgicPlayer/blob/main/LICENSE">Apache-2.0 License</a>. The MikMod player and converter are licensed under <a href="http://www.gnu.org/licenses/lgpl-3.0.html">GNU Lesser General Public License</a>.
+NostalgicPlayer is licensed under the <a href="https://github.com/neumatho/NostalgicPlayer/blob/main/LICENSE">Apache-2.0 License</a>. SidPlay, ReSID, MikMod player and converter are licensed under <a href="http://www.gnu.org/licenses/lgpl-3.0.html">GNU Lesser General Public License</a>.
 
 # Structure
 
@@ -59,6 +59,7 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | Scream Tracker 2 | .stm | MikMod Converter | MikMod |
 | Scream Tracker 3 | .s3m | MikMod Converter | MikMod |
 | Scream Tracker Music Interface Kit | .stx | MikMod Converter | MikMod |
+| SidPlay | .sid / .c64 / .info / .mus / .str | | SidPlay |
 | SoundMon 1.1 | .bp / .bp2 | | SoundMon |
 | SoundMon 2.2 | .bp / .bp3 | | SoundMon |
 | SoundTracker 2.2 | .mod | | ModTracker |

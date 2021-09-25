@@ -29,8 +29,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			this.kryptonManager = new Krypton.Toolkit.KryptonManager(this.components);
 			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
 			this.generalGroupBox = new Krypton.Toolkit.KryptonGroupBox();
 			this.addJumpCheckBox = new Krypton.Toolkit.KryptonCheckBox();
@@ -453,8 +451,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		}
 
 		#endregion
-
-		private Krypton.Toolkit.KryptonManager kryptonManager;
 		private GuiKit.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonGroupBox generalGroupBox;
 		private Krypton.Toolkit.KryptonCheckBox addJumpCheckBox;

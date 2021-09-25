@@ -140,7 +140,7 @@ namespace Polycode.NostalgicPlayer.Kit.Encoders
 		/// Validates the arguments
 		/// </summary>
 		/********************************************************************/
-		private void ValidateArguments(Array array, int index, int count)
+		protected void ValidateArguments(Array array, int index, int count)
 		{
 			if (array == null)
 				throw new ArgumentNullException(nameof(array));

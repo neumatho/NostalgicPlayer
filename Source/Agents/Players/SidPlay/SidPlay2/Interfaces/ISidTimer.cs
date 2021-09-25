@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.Interfaces
 		/// <summary>
 		/// Return an unique ID for this implementation
 		/// </summary>
-		static IId IId()
+		new static IId IId()
 		{
 			return iid;
 		}

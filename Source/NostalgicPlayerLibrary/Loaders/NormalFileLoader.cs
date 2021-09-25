@@ -54,43 +54,74 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			return stream;
 		}
 
-
-
+		#region FileLoaderBase implementation
 		/********************************************************************/
 		/// <summary>
-		/// Will try to open a file with the same name as the current module,
-		/// but with a different extension. It will also try to use the
-		/// extension as a prefix. You need to dispose the returned stream
-		/// when done
+		/// Will try to open the extra file and return the stream and some
+		/// info about the before and after lengths
 		/// </summary>
 		/********************************************************************/
-		public override ModuleStream OpenExtraFile(string newExtension)
+		protected override ModuleStream OpenStream(string newExtension, out StreamInfo streamInfo)
 		{
+			streamInfo = new StreamInfo();
+
 			Stream stream = null;
 
 			foreach (string newFileName in GetExtraFileNames(newExtension))
 			{
 				stream = TryOpenFile(newFileName);
 				if (stream != null)
+				{
+					streamInfo.NewFileName = newFileName;
 					break;
+				}
 			}
 
 			// If a file is opened, decrunch it if needed
 			if (stream != null)
 			{
-				long fileSize = stream.Length;
+				streamInfo.CrunchedSize = stream.Length;
 
 				SingleFileDecruncher decruncher = new SingleFileDecruncher(manager);
 				stream = decruncher.DecrunchFileMultipleLevels(stream);
 
-				long newFileSize = stream.Length;
-				AddSizes(fileSize, newFileSize);
+				streamInfo.DecrunchedSize = stream.Length;
 
 				return new ModuleStream(stream, false);
 			}
 
 			return null;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will try to open the extra file and return the stream and some
+		/// info about the before and after lengths
+		/// </summary>
+		/********************************************************************/
+		protected override ModuleStream OpenStreamWithName(string fullFileName, out StreamInfo streamInfo)
+		{
+			streamInfo = new StreamInfo();
+
+			Stream stream = TryOpenFile(fullFileName);
+			if (stream == null)
+				return null;
+
+			streamInfo.NewFileName = fullFileName;
+
+			// Decrunch it if needed
+			streamInfo.CrunchedSize = stream.Length;
+
+			SingleFileDecruncher decruncher = new SingleFileDecruncher(manager);
+			stream = decruncher.DecrunchFileMultipleLevels(stream);
+
+			streamInfo.DecrunchedSize = stream.Length;
+
+			return new ModuleStream(stream, false);
+		}
+		#endregion
 
 		#region Private methods
 		/********************************************************************/

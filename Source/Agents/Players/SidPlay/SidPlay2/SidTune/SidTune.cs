@@ -10,6 +10,7 @@ using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.SidTune
 {
@@ -28,6 +29,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.SidTune
 		// For files with header: offset to real data
 		private uint fileOffset;
 
+		// For two-file formats: holds the full path to the second file
+		private string secondFileName;
+
+		// The two files need to be swapped
+		private bool swapFileData;
+
 		// Needed for MUS/STR player installation
 		private uint musDataLen;
 
@@ -40,6 +47,40 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.SidTune
 		private Speed[] songSpeed;
 		private Clock[] clockSpeed;
 
+		private static readonly string[] fileNameExtensions =
+		{
+			// Preferred default file extension for single-file sid tunes
+			// or sid tune description files in SIDPLAY INFOFILE format
+			"sid",
+
+			// Common file extension for single-file sid tunes due to SIDPLAY/DOS
+			// displaying files *.DAT in its file selector by default.
+			// Originally this was intended to be the extension of the raw data file
+			// of two-file sid tunes in SIDPLAY INFOFILE format
+			"dat",
+
+			// Extension of Amiga Workbench tool type icon info files, which
+			// have been cut to MS-DOS file name length (8.3)
+			"inf",
+
+			// No extension for the raw data file of two-file sid tunes in
+			// PlaySID Amiga Workbench tool type icon info format
+			string.Empty,
+
+			// File extensions used (and created) by various C64 emulators and
+			// related utilities. These extensions are recommended to be used as
+			// a replacement for ".dat" in conjunction with two-file sid tunes
+			"c64", "prg", "p00",
+
+			// Uncut extensions from Amiga
+			"info", "data",
+
+			// Stereo Sidplayer (.mus ought not be included because
+			// these must be loaded first; it sometimes contains the first
+			// credit lines of a mus/str pair)
+			"str", "mus"
+		};
+
 		/********************************************************************/
 		/// <summary>
 		/// Will test the file to see if it's one of the known formats
@@ -48,9 +89,122 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.SidTune
 		public bool Test(PlayerFileInfo fileInfo)
 		{
 			// Check for single file formats
-			bool result = TestPSid(fileInfo.ModuleStream);
+			if (TestPSid(fileInfo.ModuleStream))
+				return true;
 
-			return result;
+			// ----- Support for multiple-files format
+
+			// We cannot simply try to load additional files, if a description file
+			// was specified. It would work, but is error-prone. Imagine a filename
+			// mismatch or more than one description file (in another) format.
+			// Any other file with an appropriate file name can be the C64 data file
+
+			// First we see if the file could be a raw data file. In that case, we
+			// have to find the corresponding description file
+
+			// Right now, we do not have a second file. This will not hurt the file
+			// support procedures
+
+			// Make sure that the file does not contain a description file
+			if (!TestSid(fileInfo.ModuleStream) && !TestInfo(fileInfo.ModuleStream))
+			{
+				// Assuming the file is the raw data file, we will now
+				// try with different extensions to check for a description file
+				foreach (string extension in fileNameExtensions)
+				{
+					using (ModuleStream moduleStream = fileInfo.Loader.OpenExtraFileForTest(extension, out string newFileName))
+					{
+						if (moduleStream != null)
+						{
+							// Skip check, if opened file is the same as the current one
+							if (fileInfo.FileName != newFileName)
+							{
+								if (TestSid(moduleStream) || TestInfo(moduleStream))
+								{
+									secondFileName = newFileName;
+									swapFileData = false;
+
+									return true;
+								}
+							}
+						}
+					}
+				}
+
+				// Could not find a description file, try some native C64 file formats
+				if (TestMus(fileInfo.ModuleStream))
+				{
+					sidType = SidType.Mus;
+
+					// Try to find second file
+					foreach (string extension in fileNameExtensions)
+					{
+						using (ModuleStream moduleStream = fileInfo.Loader.OpenExtraFileForTest(extension, out string newFileName))
+						{
+							if (moduleStream != null)
+							{
+								// Skip check, if opened file is the same as the current one
+								if (fileInfo.FileName != newFileName)
+								{
+									// Check if tunes in wrong order and therefore swap them
+									if (extension == "mus")
+									{
+										if (TestMus(moduleStream))
+										{
+											secondFileName = newFileName;
+											swapFileData = true;
+
+											return true;
+										}
+									}
+									else
+									{
+										if (TestMus(moduleStream))
+										{
+											secondFileName = newFileName;
+											swapFileData = false;
+
+											return true;
+										}
+									}
+
+									// The first tune loaded ok, so ignore errors on the
+									// second tune, may find an ok one later
+								}
+							}
+						}
+					}
+
+					// No (suitable) second file, but that's ok
+					return true;
+				}
+			}
+			else
+			{
+				// Seems like the description file has been selected to be loaded, so now
+				// try to find the data file
+				foreach (string extension in fileNameExtensions)
+				{
+					using (ModuleStream moduleStream = fileInfo.Loader.OpenExtraFileForTest(extension, out string newFileName))
+					{
+						if (moduleStream != null)
+						{
+							// Skip check, if opened file is the same as the current one
+							if (fileInfo.FileName != newFileName)
+							{
+								// Found a data file, so we assume it is ok, but indicate that
+								// the files need to be swapped in the loader
+								secondFileName = newFileName;
+								swapFileData = true;
+
+								return true;
+							}
+						}
+					}
+				}
+			}
+
+			return false;
 		}
 
 
@@ -65,11 +219,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.SidTune
 			Init();
 
 			// Load the whole file into memory
-			byte[] fileBuf1 = new byte[fileInfo.ModuleStream.Length];
-
-			fileInfo.ModuleStream.Seek(0, SeekOrigin.Begin);
-			int bytesRead = fileInfo.ModuleStream.Read(fileBuf1, 0, fileBuf1.Length);
-			if (bytesRead != fileBuf1.Length)
+			byte[] fileBuf1 = LoadFile(fileInfo.ModuleStream);
+			if (fileBuf1 == null)
 			{
 				status = false;
 				errorMessage = Resources.IDS_SID_ERR_CORRUPT;
@@ -82,10 +233,71 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.SidTune
 				case SidType.PSid:
 				case SidType.RSid:
 				{
-					LoadPSid(fileBuf1, out errorMessage);
-					if (string.IsNullOrEmpty(errorMessage))
+					status = LoadPSid(fileBuf1, out errorMessage);
+					if (status)
 						status = AcceptSidTune(fileBuf1, out errorMessage);
 
+					break;
+				}
+
+				case SidType.SidInfo:
+				case SidType.IconInfo:
+				{
+					byte[] fileBuf2 = LoadSecondFile(fileInfo);
+					if (fileBuf2 == null)
+					{
+						status = false;
+						errorMessage = string.Format(Resources.IDS_SID_ERR_CANNOT_OPEN_EXTRA_FILE, secondFileName);
+						return;
+					}
+
+					if (swapFileData)
+						(fileBuf1, fileBuf2) = (fileBuf2, fileBuf1);
+
+					if (sidType == SidType.SidInfo)
+						status = LoadSid(fileBuf2, out errorMessage);
+					else
+						status = LoadInfo(fileBuf2, out errorMessage);
+
+					if (status)
+						status = AcceptSidTune(fileBuf1, out errorMessage);
+
+					break;
+				}
+
+				case SidType.Mus:
+				{
+					byte[] fileBuf2 = null;
+					byte[] fileBuf3 = null;
+
+					if (!string.IsNullOrEmpty(secondFileName))
+					{
+						fileBuf2 = LoadSecondFile(fileInfo);
+						if (fileBuf2 == null)
+						{
+							status = false;
+							errorMessage = string.Format(Resources.IDS_SID_ERR_CANNOT_OPEN_EXTRA_FILE, secondFileName);
+							return;
+						}
+
+						if (swapFileData)
+							(fileBuf1, fileBuf2) = (fileBuf2, fileBuf1);
+					}
+
+					// Check if lyrics exists, then load them
+					using (ModuleStream moduleStream = fileInfo.Loader.OpenExtraFile("wds"))
+					{
+						if (moduleStream != null)
+							fileBuf3 = LoadFile(moduleStream);
+					}
+
+					status = LoadMus(fileBuf1, fileBuf2, fileBuf3, out errorMessage);
+					if (status)
+					{
+						status = MergeParts(fileBuf1, fileBuf2, out byte[] newBuf, out errorMessage);
+						if (status)
+							status = AcceptSidTune(newBuf, out errorMessage);
+					}
 					break;
 				}
 
@@ -211,8 +423,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.SidTune
 					Array.Copy(cache, fileOffset, c64Buf, info.LoadAddr, info.C64DataLen - (endPos - MaxMemory));
 				}
 
-//XX				if (info.MusPlayer)
-//					MusInstallPlayer(c64Buf);
+				if (info.MusPlayer)
+					InstallMusPlayer(c64Buf);
 
 				return true;
 			}
@@ -270,13 +482,48 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.SidTune
 
 		/********************************************************************/
 		/// <summary>
+		/// Load the whole file into memory
+		/// </summary>
+		/********************************************************************/
+		private byte[] LoadFile(ModuleStream moduleStream)
+		{
+			byte[] fileBuf = new byte[moduleStream.Length];
+
+			moduleStream.Seek(0, SeekOrigin.Begin);
+			int bytesRead = moduleStream.Read(fileBuf, 0, fileBuf.Length);
+			if (bytesRead != fileBuf.Length)
+				return null;
+
+			return fileBuf;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Load the whole second file into memory
+		/// </summary>
+		/********************************************************************/
+		private byte[] LoadSecondFile(PlayerFileInfo fileInfo)
+		{
+			using (ModuleStream moduleStream = fileInfo.Loader.OpenExtraFileWithName(secondFileName))
+			{
+				if (moduleStream == null)
+					return null;
+
+				return LoadFile(moduleStream);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Accept the loaded tune and do the last fixups
 		/// </summary>
 		/********************************************************************/
 		private bool AcceptSidTune(byte[] buf, out string errorMessage)
 		{
-			errorMessage = string.Empty;
-
 			// Add <?> (HVSC standard) to missing title, author and release fields
 			if (string.IsNullOrEmpty(info.Title))
 				info.Title = Resources.IDS_SID_UNKNOWN_INFO;
@@ -298,8 +545,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.SidTune
 			else if (info.StartSong == 0)
 				info.StartSong++;
 
-//XX			if (info.MusPlayer)
-//				SetMusPlayerAddress();
+			if (info.MusPlayer)
+				SetPlayerAddress();
 
 			info.C64DataLen = (uint)(buf.Length - fileOffset);
 
@@ -524,6 +771,63 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.SidTune
 				if (s < 31)
 					speed >>= 1;
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will read a hex number from the string and return it
+		/// </summary>
+		/********************************************************************/
+		private uint ReadHex(string line, ref int nextPos)
+		{
+			uint result = 0;
+
+			while (nextPos < line.Length)
+			{
+				char c = line[nextPos++];
+
+				if ((c == ',') || (c == ':'))
+					break;
+
+				int b = c & 0xdf;
+				if (b < 0x3a)
+					b &= 0x0f;
+				else
+					b -= (0x41 - 0x0a);
+
+				result <<= 4;
+				result |= (uint)b;
+			}
+
+			return result;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will read a decimal number from the string and return it
+		/// </summary>
+		/********************************************************************/
+		private uint ReadDec(string line, ref int nextPos)
+		{
+			uint result = 0;
+
+			while (nextPos < line.Length)
+			{
+				char c = line[nextPos++];
+
+				if ((c == ',') || (c == ':'))
+					break;
+
+				int b = c & 0x0f;
+				result *= 10;
+				result += (uint)b;
+			}
+
+			return result;
 		}
 		#endregion
 	}

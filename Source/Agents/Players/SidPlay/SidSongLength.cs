@@ -12,8 +12,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
+using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
@@ -117,7 +116,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		{
 			try
 			{
-				using (StreamReader sr = new StreamReader(fileName, Encoding.GetEncoding(1252)))
+				using (StreamReader sr = new StreamReader(fileName, EncoderCollection.Win1252))
 				{
 					string line = sr.ReadLine();
 					if (line != "[Database]")

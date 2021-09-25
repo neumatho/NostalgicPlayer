@@ -29,18 +29,12 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			this.kryptonManager = new Krypton.Toolkit.KryptonManager(this.components);
 			this.deviceLabel = new Krypton.Toolkit.KryptonLabel();
 			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
 			this.deviceComboBox = new Krypton.Toolkit.KryptonComboBox();
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.deviceComboBox)).BeginInit();
 			this.SuspendLayout();
-			// 
-			// kryptonManager
-			// 
-			this.kryptonManager.GlobalPaletteMode = Krypton.Toolkit.PaletteModeManager.Office2010Blue;
 			// 
 			// deviceLabel
 			// 
@@ -89,8 +83,6 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 		}
 
 		#endregion
-
-		private Krypton.Toolkit.KryptonManager kryptonManager;
 		private Krypton.Toolkit.KryptonLabel deviceLabel;
 		private GuiKit.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonComboBox deviceComboBox;

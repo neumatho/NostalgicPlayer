@@ -133,7 +133,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static ushort EndianBig16(byte[] ptr, uint offset)
+		public static ushort EndianBig16(byte[] ptr, int offset)
 		{
 			return Endian16(ptr[offset], ptr[offset + 1]);
 		}

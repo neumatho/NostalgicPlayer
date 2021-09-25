@@ -117,9 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="C64_Pro_Mono_STYLE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\C64_Pro_Mono-STYLE.ttf;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="IDS_SID_DESCRIPTION" xml:space="preserve">
     <value>Original player by Simon White.
 SID emulator (reSID) by Dag Lem.
+C64 font by Style.
 Ported to NostalgicPlayer by Thomas Neumann.
 
 This player emulates the Commodore 64 CPU (6510) and soundchip (6581/8580) so it is able to play the good old music from the games etc. The player has been ported to C# and is based on SidPlay2.</value>
@@ -127,9 +132,10 @@ This player emulates the Commodore 64 CPU (6510) and soundchip (6581/8580) so it
   <data name="IDS_SID_DESCRIPTION_AGENT1" xml:space="preserve">
     <value>Original player by Simon White.
 SID emulator (reSID) by Dag Lem.
+C64 font by Style.
 Ported to NostalgicPlayer by Thomas Neumann.
 
-SID modules contains tunes and sound effects from the good old Commodore 64. This player is based on the SidPlay2 program by Michael Schwendt and Simon White. The behaviour of the SID player can be changed with the SID settings. If you want more technical information about the format and player, see the documentation.</value>
+SID modules contains tunes and sound effects from the good old Commodore 64. This player is based on the SidPlay2 program by Michael Schwendt and Simon White. The behaviour of the SID player can be changed with the SID settings.</value>
   </data>
   <data name="IDS_SID_ENV_BS" xml:space="preserve">
     <value>Bank switching</value>
@@ -152,6 +158,9 @@ SID modules contains tunes and sound effects from the good old Commodore 64. Thi
   <data name="IDS_SID_ERR_BAD_RELOC" xml:space="preserve">
     <value>Bad reloc data</value>
   </data>
+  <data name="IDS_SID_ERR_CANNOT_OPEN_EXTRA_FILE" xml:space="preserve">
+    <value>Cannot open extra file with name: {0}</value>
+  </data>
   <data name="IDS_SID_ERR_CONF_WHILST_ACTIVE" xml:space="preserve">
     <value>Trying to configure player whilst active</value>
   </data>
@@ -167,6 +176,9 @@ SID modules contains tunes and sound effects from the good old Commodore 64. Thi
   <data name="IDS_SID_ERR_FILTER_DEFINITION" xml:space="preserve">
     <value>Filter definition is not valid</value>
   </data>
+  <data name="IDS_SID_ERR_INVALID_DATA" xml:space="preserve">
+    <value>File contains invalid data</value>
+  </data>
   <data name="IDS_SID_ERR_LOADING_HEADER" xml:space="preserve">
     <value>Invalid module header</value>
   </data>
@@ -176,11 +188,23 @@ SID modules contains tunes and sound effects from the good old Commodore 64. Thi
   <data name="IDS_SID_ERR_NO_SPACE" xml:space="preserve">
     <value>No space to install PSID driver in C64 ram</value>
   </data>
+  <data name="IDS_SID_ERR_NO_STRINGS" xml:space="preserve">
+    <value>Info file does not contain required strings</value>
+  </data>
+  <data name="IDS_SID_ERR_PSID_MUS" xml:space="preserve">
+    <value>Compute!'s Sidplayer MUS data is not supported yet</value>
+  </data>
   <data name="IDS_SID_ERR_RELOC" xml:space="preserve">
     <value>Failed whilst relocating PSID driver</value>
   </data>
+  <data name="IDS_SID_ERR_SIZE_EXCEEDED" xml:space="preserve">
+    <value>Total file size too large</value>
+  </data>
   <data name="IDS_SID_ERR_TOO_BIG" xml:space="preserve">
     <value>Size of music data exceeds C64 memory</value>
+  </data>
+  <data name="IDS_SID_ERR_TRUNCATED" xml:space="preserve">
+    <value>SID file is truncated</value>
   </data>
   <data name="IDS_SID_ERR_UNSUPPORTED_FREQ" xml:space="preserve">
     <value>Unsupported sampling frequency</value>
@@ -188,11 +212,23 @@ SID modules contains tunes and sound effects from the good old Commodore 64. Thi
   <data name="IDS_SID_ERR_UNSUPPORTED_PRECISION" xml:space="preserve">
     <value>Unsupported sample precision</value>
   </data>
+  <data name="IDS_SID_FORMAT_INFO" xml:space="preserve">
+    <value>Raw plus PlaySID icon tool type file (INFO)</value>
+  </data>
+  <data name="IDS_SID_FORMAT_MUS" xml:space="preserve">
+    <value>C64 Sidplayer format (MUS)</value>
+  </data>
   <data name="IDS_SID_FORMAT_PSID" xml:space="preserve">
     <value>PlaySID one-file format (PSID)</value>
   </data>
   <data name="IDS_SID_FORMAT_RSID" xml:space="preserve">
     <value>Real C64 one-file format (RSID)</value>
+  </data>
+  <data name="IDS_SID_FORMAT_SID" xml:space="preserve">
+    <value>Raw plus SIDPLAY ASCII text file (SID)</value>
+  </data>
+  <data name="IDS_SID_FORMAT_STR" xml:space="preserve">
+    <value>C64 stereo Sidplayer format (MUS+STR)</value>
   </data>
   <data name="IDS_SID_INFODESCLINE0" xml:space="preserve">
     <value>Released:</value>

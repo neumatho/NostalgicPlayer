@@ -6,7 +6,6 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.Event;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.Containers
@@ -36,6 +35,5 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.Containers
 		public Sid2Sample SampleFormat;
 		public ushort PowerOnDelay;
 		public uint Sid2CrcCount;				// Max SID writes to form CRC
-		public IEvent SidFirstAccess;
 	}
 }

@@ -29,8 +29,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			this.kryptonManager = new Krypton.Toolkit.KryptonManager(this.components);
 			this.navigator = new Krypton.Navigator.KryptonNavigator();
 			this.navigatorFormatsPage = new Krypton.Navigator.KryptonPage();
 			this.formatsListControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLists.FormatsListUserControl();
@@ -238,8 +236,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		}
 
 		#endregion
-
-		private Krypton.Toolkit.KryptonManager kryptonManager;
 		private Krypton.Navigator.KryptonNavigator navigator;
 		private Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLists.PlayersListUserControl playersListControl;
 		private Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLists.OutputListUserControl outputListControl;

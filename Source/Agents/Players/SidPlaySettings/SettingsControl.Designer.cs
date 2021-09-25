@@ -29,8 +29,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			this.kryptonManager = new Krypton.Toolkit.KryptonManager(this.components);
 			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
 			this.memoryGroupBox = new Krypton.Toolkit.KryptonGroupBox();
 			this.transparentRadioButton = new Krypton.Toolkit.KryptonRadioButton();
@@ -91,10 +89,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			this.filterPanel.SuspendLayout();
 			this.filterAdjustmentPanel.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// kryptonManager
-			// 
-			this.kryptonManager.GlobalPaletteMode = Krypton.Toolkit.PaletteModeManager.Office2010Blue;
 			// 
 			// controlResource
 			// 
@@ -614,8 +608,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 		}
 
 		#endregion
-
-		private Krypton.Toolkit.KryptonManager kryptonManager;
 		private GuiKit.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonGroupBox memoryGroupBox;
 		private Krypton.Toolkit.KryptonRadioButton realC64RadioButton;

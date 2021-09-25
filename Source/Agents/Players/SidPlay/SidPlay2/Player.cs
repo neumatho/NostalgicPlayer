@@ -311,7 +311,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2
 			private readonly IEventContext eventContext;
 			private uint seconds;
 			private uint period;
-			private uint clk;
+			private new uint clk;
 
 			/********************************************************************/
 			/// <summary>

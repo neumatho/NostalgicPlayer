@@ -6,6 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System.Drawing;
 using Polycode.NostalgicPlayer.Kit.Containers;
 
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
@@ -41,6 +42,21 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Return the comment separated in lines
 		/// </summary>
 		string[] Comment { get; }
+
+		/// <summary>
+		/// Return a specific font to be used for the comments
+		/// </summary>
+		Font CommentFont { get; }
+
+		/// <summary>
+		/// Return the lyrics separated in lines
+		/// </summary>
+		string[] Lyrics { get; }
+
+		/// <summary>
+		/// Return a specific font to be used for the lyrics
+		/// </summary>
+		Font LyricsFont { get; }
 
 		/// <summary>
 		/// Returns the description and value on the line given. If the line

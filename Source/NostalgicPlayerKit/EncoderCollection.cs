@@ -61,5 +61,18 @@ namespace Polycode.NostalgicPlayer.Kit
 		{
 			get;
 		} = new Atascii();
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the encoder to decode Microsoft Windows code page 1252
+		/// characters
+		/// </summary>
+		/********************************************************************/
+		public static Encoding Win1252
+		{
+			get;
+		} = new Win1252();
 	}
 }

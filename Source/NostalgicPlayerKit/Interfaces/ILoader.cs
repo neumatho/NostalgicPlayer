@@ -26,10 +26,27 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Will try to open a file with the same name as the current module,
 		/// but with a different extension. It will also try to use the
-		/// extension as a prefix. You need to dispose the returned stream
+		/// extension as a prefix. Use this if you need to check extra files
+		/// in the Identify() method. You need to dispose the returned stream
 		/// when done
 		/// </summary>
+		ModuleStream OpenExtraFileForTest(string newExtension, out string newFileName);
+
+		/// <summary>
+		/// Will try to open a file with the same name as the current module,
+		/// but with a different extension. It will also try to use the
+		/// extension as a prefix. Will add the file sizes to one or both of
+		/// ModuleSize and CrunchedSize. You need to dispose the returned
+		/// stream when done
+		/// </summary>
 		ModuleStream OpenExtraFile(string newExtension);
+
+		/// <summary>
+		/// Will try to open a file with the name given as extra file. Will
+		/// add the file sizes to one or both of ModuleSize and CrunchedSize.
+		/// You need to dispose the returned stream when done
+		/// </summary>
+		ModuleStream OpenExtraFileWithName(string fullFileName);
 
 		/// <summary>
 		/// Return the full path to the file

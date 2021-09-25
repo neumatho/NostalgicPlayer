@@ -814,7 +814,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 						return false;
 					}
 
-					if (startPos != -1)
+					if ((startPos != -1) && (modulePlayer.StaticModuleInformation.CanChangePosition))
 						modulePlayer.SetSongPosition(startPos);
 
 					// Subscribe to position changes

@@ -19,11 +19,8 @@
     <DocumentationFile>bin\SidPlay.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors />
+    <NoWarn>1701;1702;0660;0661;0414</NoWarn>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="System.Text.Encoding" Version="4.3.0" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />

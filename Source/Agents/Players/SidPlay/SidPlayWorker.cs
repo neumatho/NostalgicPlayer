@@ -8,6 +8,8 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Text;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSid;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.Builder;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.Containers;
@@ -117,8 +119,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		private static readonly SidSongLength sidSongLength = new SidSongLength();
 
 		private List<string> comments;
+		private List<string> lyrics;
 
 		private const int InfoClockSpeedLine = 8;
+
+		[System.Runtime.InteropServices.DllImport("gdi32.dll")]
+		private static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont, IntPtr pdv, [System.Runtime.InteropServices.In] ref uint pcFonts);
+
+		private readonly PrivateFontCollection fonts = new PrivateFontCollection();
+		private Font commentFont;
 
 		#region IAgentSettingsRegistrar implementation
 		/********************************************************************/
@@ -138,7 +147,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "sid" };
+		public override string[] FileExtensions => new [] { "sid", "c64", "info", "mus", "str" };
 
 
 
@@ -188,7 +197,59 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Return the comment separated in lines
 		/// </summary>
 		/********************************************************************/
-		public override string[] Comment => comments?.ToArray();
+		public override string[] Comment => comments.ToArray();
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a specific font to be used for the comments
+		/// </summary>
+		/********************************************************************/
+		public override Font CommentFont
+		{
+			get
+			{
+				if (!sidTune.GetInfo().MusPlayer)
+					return null;
+
+				if (commentFont == null)
+				{
+					// Load the font from the resources
+					byte[] fontData = Resources.C64_Pro_Mono_STYLE;
+					IntPtr fontPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(fontData.Length);
+					System.Runtime.InteropServices.Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
+
+					uint dummy = 0;
+					fonts.AddMemoryFont(fontPtr, Resources.C64_Pro_Mono_STYLE.Length);
+					AddFontMemResourceEx(fontPtr, (uint)Resources.C64_Pro_Mono_STYLE.Length, IntPtr.Zero, ref dummy);
+
+					System.Runtime.InteropServices.Marshal.FreeCoTaskMem(fontPtr);
+
+					commentFont = new Font(fonts.Families[0], 6);
+				}
+
+				return commentFont;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the lyrics separated in lines
+		/// </summary>
+		/********************************************************************/
+		public override string[] Lyrics => lyrics.ToArray();
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a specific font to be used for the lyrics
+		/// </summary>
+		/********************************************************************/
+		public override Font LyricsFont => CommentFont;
 
 
 
@@ -203,21 +264,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			SidTuneInfo info = sidTune.GetInfo();
 			Sid2Info emulationInfo = engine.Obj.GetInfo();
 
-			int maxLine = 9;
-
-			// Calculate the maximum number of lines
-			if (info.MusPlayer)
-				maxLine += 5;
-
-			// Is the line number out of range?
-			if (line > maxLine)
-			{
-				description = null;
-				value = null;
-
-				return false;
-			}
-
 			// Find out which line to take
 			switch (line)
 			{
@@ -226,7 +272,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				{
 					description = Resources.IDS_SID_INFODESCLINE0;
 					value = info.Released;
-					return true;
+					break;
 				}
 
 				// File format
@@ -234,7 +280,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				{
 					description = Resources.IDS_SID_INFODESCLINE1;
 					value = info.FormatString;
-					return true;
+					break;
 				}
 
 				// Load range
@@ -242,7 +288,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				{
 					description = Resources.IDS_SID_INFODESCLINE2;
 					value = string.Format("${0:X4} - ${1:X4}", info.LoadAddr, info.LoadAddr + info.C64DataLen - 1);
-					return true;
+					break;
 				}
 
 				// Init address
@@ -250,7 +296,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				{
 					description = Resources.IDS_SID_INFODESCLINE3;
 					value = "0x" + info.InitAddr.ToString("X4");
-					return true;
+					break;
 				}
 
 				// Play address
@@ -258,7 +304,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				{
 					description = Resources.IDS_SID_INFODESCLINE4;
 					value = "0x" + info.PlayAddr.ToString("X4");
-					return true;
+					break;
 				}
 
 				// Reloc region
@@ -271,7 +317,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 					else
 						value = string.Format("${0:X2}00 - ${1:X2}FF", info.RelocStartPage, info.RelocStartPage + info.RelocPages - 1);
 
-					return true;
+					break;
 				}
 
 				// Driver region
@@ -284,7 +330,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 					else
 						value = string.Format("${0:X4} - ${1:X4}", emulationInfo.DriverAddr, emulationInfo.DriverAddr + emulationInfo.DriverLength - 1);
 
-					return true;
+					break;
 				}
 
 				// SID model
@@ -292,7 +338,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				{
 					description = Resources.IDS_SID_INFODESCLINE7;
 					value = info.SidModel1 == SidModel._8580 ? "8580" : "6581";
-					return true;
+					break;
 				}
 
 				// Clock speed
@@ -300,7 +346,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				{
 					description = Resources.IDS_SID_INFODESCLINE8;
 					value = info.SpeedString;
-					return true;
+					break;
 				}
 
 				// Environment
@@ -341,21 +387,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 							break;
 						}
 					}
+					break;
+				}
 
-					return true;
+				default:
+				{
+					description = null;
+					value = null;
+
+					return false;
 				}
 			}
-
-			line -= 10;
-
-			if (info.MusPlayer)
-			{
-				//XX
-			}
-
-			//XX
-			description = null;
-			value = null;
 
 			return true;
 		}
@@ -383,46 +425,57 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			try
 			{
 				sidTune.Load(fileInfo, out errorMessage);
+				if (!string.IsNullOrEmpty(errorMessage))
+					return AgentResult.Error;
 
-				// Load STIL info if enabled
-				comments = new List<string>();
 				settings = new SidPlaySettings();
 
-				if (!string.IsNullOrWhiteSpace(settings.HvscPath.Trim()))
+				comments = sidTune.GetInfo().Comment;
+				if (comments == null)
 				{
-					if (settings.StilEnabled || settings.BugListEnabled)
+					// Load STIL info if enabled
+					comments = new List<string>();
+
+					if (!string.IsNullOrWhiteSpace(settings.HvscPath.Trim()))
 					{
-						lock (sidStil)
+						if (settings.StilEnabled || settings.BugListEnabled)
 						{
-							// Load the STIL if changed
-							bool stilOk = sidStil.SetBaseDir(settings.HvscPath, settings.StilEnabled, settings.BugListEnabled);
-							if (stilOk)
+							lock (sidStil)
 							{
-								IEnumerable<string> entries = sidStil.GetGlobalComment(fileInfo.FileName);
-								if (entries != null)
-									comments.AddRange(entries);
-
-								entries = sidStil.GetFileComment(fileInfo.FileName);
-								if (entries != null)
+								// Load the STIL if changed
+								bool stilOk = sidStil.SetBaseDir(settings.HvscPath, settings.StilEnabled, settings.BugListEnabled);
+								if (stilOk)
 								{
-									if (comments.Count > 0)
-										comments.Add(string.Empty);
+									IEnumerable<string> entries = sidStil.GetGlobalComment(fileInfo.FileName);
+									if (entries != null)
+										comments.AddRange(entries);
 
-									comments.AddRange(entries);
-								}
+									entries = sidStil.GetFileComment(fileInfo.FileName);
+									if (entries != null)
+									{
+										if (comments.Count > 0)
+											comments.Add(string.Empty);
 
-								entries = sidStil.GetBugComment(fileInfo.FileName);
-								if (entries != null)
-								{
-									if (comments.Count > 0)
-										comments.Add(string.Empty);
+										comments.AddRange(entries);
+									}
 
-									comments.AddRange(entries);
+									entries = sidStil.GetBugComment(fileInfo.FileName);
+									if (entries != null)
+									{
+										if (comments.Count > 0)
+											comments.Add(string.Empty);
+
+										comments.AddRange(entries);
+									}
 								}
 							}
 						}
 					}
+				}
 
+				// Load song length
+				if (!string.IsNullOrWhiteSpace(settings.HvscPath.Trim()))
+				{
 					if (settings.SongLengthEnabled)
 					{
 						lock (sidSongLength)
@@ -432,6 +485,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 						}
 					}
 				}
+
+				// Set lyrics
+				lyrics = sidTune.GetInfo().Lyrics;
+				if (lyrics == null)
+					lyrics = new List<string>();
 			}
 			catch (Exception)
 			{

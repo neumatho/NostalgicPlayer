@@ -19,6 +19,27 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 	/// </summary>
 	public abstract class FileLoaderBase : ILoader
 	{
+		/// <summary>
+		/// Holds information about the opened extra file
+		/// </summary>
+		protected struct StreamInfo
+		{
+			/// <summary>
+			/// The new file name which is opened
+			/// </summary>
+			public string NewFileName;
+
+			/// <summary>
+			/// The crunched or original file size
+			/// </summary>
+			public long CrunchedSize;
+
+			/// <summary>
+			/// The size after decrunching or original file size
+			/// </summary>
+			public long DecrunchedSize;
+		}
+
 		private readonly string fileName;
 
 		/// <summary></summary>
@@ -63,11 +84,56 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/// <summary>
 		/// Will try to open a file with the same name as the current module,
 		/// but with a different extension. It will also try to use the
-		/// extension as a prefix. You need to dispose the returned stream
+		/// extension as a prefix. Use this if you need to check extra files
+		/// in the Identify() method. You need to dispose the returned stream
 		/// when done
 		/// </summary>
 		/********************************************************************/
-		public abstract ModuleStream OpenExtraFile(string newExtension);
+		public virtual ModuleStream OpenExtraFileForTest(string newExtension, out string newFileName)
+		{
+			ModuleStream moduleStream = OpenStream(newExtension, out StreamInfo streamInfo);
+			newFileName = moduleStream != null ? streamInfo.NewFileName : null;
+
+			return moduleStream;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will try to open a file with the same name as the current module,
+		/// but with a different extension. It will also try to use the
+		/// extension as a prefix. Will add the file sizes to one or both of
+		/// ModuleSize and CrunchedSize. You need to dispose the returned
+		/// stream when done
+		/// </summary>
+		/********************************************************************/
+		public virtual ModuleStream OpenExtraFile(string newExtension)
+		{
+			ModuleStream moduleStream = OpenStream(newExtension, out StreamInfo streamInfo);
+			if (moduleStream != null)
+				AddSizes(streamInfo.CrunchedSize, streamInfo.DecrunchedSize);
+
+			return moduleStream;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will try to open a file with the name given as extra file. Will
+		/// add the file sizes to one or both of ModuleSize and CrunchedSize.
+		/// You need to dispose the returned stream when done
+		/// </summary>
+		/********************************************************************/
+		public virtual ModuleStream OpenExtraFileWithName(string fullFileName)
+		{
+			ModuleStream moduleStream = OpenStreamWithName(fullFileName, out StreamInfo streamInfo);
+			if (moduleStream != null)
+				AddSizes(streamInfo.CrunchedSize, streamInfo.DecrunchedSize);
+
+			return moduleStream;
+		}
 
 
 
@@ -103,6 +169,26 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			get; protected set;
 		}
 
+		#region Overrides
+		/********************************************************************/
+		/// <summary>
+		/// Will try to open the extra file and return the stream and some
+		/// info about the before and after lengths
+		/// </summary>
+		/********************************************************************/
+		protected abstract ModuleStream OpenStream(string newExtension, out StreamInfo streamInfo);
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will try to open the extra file and return the stream and some
+		/// info about the before and after lengths
+		/// </summary>
+		/********************************************************************/
+		protected abstract ModuleStream OpenStreamWithName(string fullFileName, out StreamInfo streamInfo);
+		#endregion
+
 		#region Helper methods
 		/********************************************************************/
 		/// <summary>
@@ -111,28 +197,38 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/********************************************************************/
 		protected IEnumerable<string> GetExtraFileNames(string newExtension)
 		{
+			string newFileName;
+
 			if (string.IsNullOrEmpty(newExtension))
-				yield break;
-
-			// First change the extension
-			string newFileName = Path.ChangeExtension(fileName, newExtension);
-			yield return newFileName;
-
-			// Now try to append the extension
-			newFileName = fileName + $".{newExtension}";
-			yield return newFileName;
-
-			// Try with prefix
-			string directory = Path.GetDirectoryName(fileName);
-			string name = Path.GetFileName(fileName);
-
-			int index = name.IndexOf('.');
-			if (index != -1)
 			{
-				name = name.Substring(index + 1);
+				newFileName = Path.ChangeExtension(fileName, newExtension);
+				if (newFileName.EndsWith('.'))
+					newFileName = newFileName[0..^1];
 
-				newFileName = Path.Combine(directory, $"{newExtension}.{name}");
 				yield return newFileName;
+			}
+			else
+			{
+				// First change the extension
+				newFileName = Path.ChangeExtension(fileName, newExtension);
+				yield return newFileName;
+
+				// Now try to append the extension
+				newFileName = fileName + $".{newExtension}";
+				yield return newFileName;
+
+				// Try with prefix
+				string directory = Path.GetDirectoryName(fileName);
+				string name = Path.GetFileName(fileName);
+
+				int index = name.IndexOf('.');
+				if (index != -1)
+				{
+					name = name.Substring(index + 1);
+
+					newFileName = Path.Combine(directory, $"{newExtension}.{name}");
+					yield return newFileName;
+				}
 			}
 		}
 

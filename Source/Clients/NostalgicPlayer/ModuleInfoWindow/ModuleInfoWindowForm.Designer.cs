@@ -38,7 +38,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			this.navigatorInfoPage = new Krypton.Navigator.KryptonPage();
 			this.navigatorCommentPage = new Krypton.Navigator.KryptonPage();
 			this.commentGroup = new Krypton.Toolkit.KryptonGroup();
-			this.moduleInfoCommentDataGridView = new Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow.ModuleInfoListControl();
+			this.moduleInfoCommentReadOnlyRichTextBox = new Polycode.NostalgicPlayer.Client.GuiPlayer.Controls.ReadOnlyRichTextBox();
+			this.navigatorLyricsPage = new Krypton.Navigator.KryptonPage();
+			this.lyricsGroup = new Krypton.Toolkit.KryptonGroup();
+			this.moduleInfoLyricsReadOnlyRichTextBox = new Polycode.NostalgicPlayer.Client.GuiPlayer.Controls.ReadOnlyRichTextBox();
 			((System.ComponentModel.ISupportInitialize)(this.moduleInfoInfoDataGridView)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.infoGroup)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.infoGroup.Panel)).BeginInit();
@@ -51,7 +54,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			((System.ComponentModel.ISupportInitialize)(this.commentGroup)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.commentGroup.Panel)).BeginInit();
 			this.commentGroup.Panel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.moduleInfoCommentDataGridView)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.navigatorLyricsPage)).BeginInit();
+			this.navigatorLyricsPage.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.lyricsGroup)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.lyricsGroup.Panel)).BeginInit();
+			this.lyricsGroup.Panel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// moduleInfoInfoDataGridView
@@ -106,7 +113,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			this.navigator.Name = "navigator";
 			this.navigator.Pages.AddRange(new Krypton.Navigator.KryptonPage[] {
             this.navigatorInfoPage,
-            this.navigatorCommentPage});
+            this.navigatorCommentPage,
+            this.navigatorLyricsPage});
 			this.navigator.Panel.PanelBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			this.navigator.SelectedIndex = 0;
 			this.navigator.Size = new System.Drawing.Size(284, 184);
@@ -150,35 +158,56 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			// 
 			// 
 			// 
-			this.commentGroup.Panel.Controls.Add(this.moduleInfoCommentDataGridView);
+			this.commentGroup.Panel.Controls.Add(this.moduleInfoCommentReadOnlyRichTextBox);
 			this.commentGroup.Size = new System.Drawing.Size(266, 141);
+			this.commentGroup.StateCommon.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
 			this.commentGroup.TabIndex = 0;
 			// 
-			// moduleInfoCommentDataGridView
+			// moduleInfoCommentReadOnlyRichTextBox
 			// 
-			this.moduleInfoCommentDataGridView.AllowUserToAddRows = false;
-			this.moduleInfoCommentDataGridView.AllowUserToDeleteRows = false;
-			this.moduleInfoCommentDataGridView.AllowUserToResizeRows = false;
-			this.moduleInfoCommentDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-			this.moduleInfoCommentDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.moduleInfoCommentDataGridView.Location = new System.Drawing.Point(0, 0);
-			this.moduleInfoCommentDataGridView.Name = "moduleInfoCommentDataGridView";
-			this.moduleInfoCommentDataGridView.ReadOnly = true;
-			this.moduleInfoCommentDataGridView.RowHeadersVisible = false;
-			this.moduleInfoCommentDataGridView.RowTemplate.Height = 25;
-			this.moduleInfoCommentDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.moduleInfoCommentDataGridView.ShowCellErrors = false;
-			this.moduleInfoCommentDataGridView.ShowEditingIcon = false;
-			this.moduleInfoCommentDataGridView.ShowRowErrors = false;
-			this.moduleInfoCommentDataGridView.Size = new System.Drawing.Size(264, 139);
-			this.moduleInfoCommentDataGridView.StateCommon.Background.Color1 = System.Drawing.Color.White;
-			this.moduleInfoCommentDataGridView.StateCommon.BackStyle = Krypton.Toolkit.PaletteBackStyle.GridBackgroundList;
-			this.moduleInfoCommentDataGridView.StateCommon.DataCell.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
-			this.moduleInfoCommentDataGridView.StateCommon.DataCell.Content.Font = new System.Drawing.Font("Lucida Console", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.moduleInfoCommentDataGridView.StateCommon.DataCell.Content.Padding = new System.Windows.Forms.Padding(0);
-			this.moduleInfoCommentDataGridView.StateCommon.HeaderColumn.Border.DrawBorders = ((Krypton.Toolkit.PaletteDrawBorders)((Krypton.Toolkit.PaletteDrawBorders.Bottom | Krypton.Toolkit.PaletteDrawBorders.Right)));
-			this.moduleInfoCommentDataGridView.StateCommon.HeaderColumn.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.moduleInfoCommentDataGridView.TabIndex = 0;
+			this.moduleInfoCommentReadOnlyRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.moduleInfoCommentReadOnlyRichTextBox.Lines = new string[0];
+			this.moduleInfoCommentReadOnlyRichTextBox.Location = new System.Drawing.Point(0, 0);
+			this.moduleInfoCommentReadOnlyRichTextBox.Name = "moduleInfoCommentReadOnlyRichTextBox";
+			this.moduleInfoCommentReadOnlyRichTextBox.Size = new System.Drawing.Size(266, 141);
+			this.moduleInfoCommentReadOnlyRichTextBox.TabIndex = 0;
+			// 
+			// navigatorLyricsPage
+			// 
+			this.navigatorLyricsPage.AutoHiddenSlideSize = new System.Drawing.Size(200, 200);
+			this.navigatorLyricsPage.Controls.Add(this.lyricsGroup);
+			this.navigatorLyricsPage.Flags = 65534;
+			this.navigatorLyricsPage.LastVisibleSet = true;
+			this.navigatorLyricsPage.MinimumSize = new System.Drawing.Size(50, 50);
+			this.navigatorLyricsPage.Name = "navigatorLyricsPage";
+			this.navigatorLyricsPage.Size = new System.Drawing.Size(282, 157);
+			this.navigatorLyricsPage.Text = "";
+			this.navigatorLyricsPage.ToolTipTitle = "Page ToolTip";
+			this.navigatorLyricsPage.UniqueName = "c12067c426fe41ada484078b6b2d957f";
+			// 
+			// lyricsGroup
+			// 
+			this.lyricsGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.lyricsGroup.Location = new System.Drawing.Point(8, 8);
+			this.lyricsGroup.Name = "lyricsGroup";
+			// 
+			// 
+			// 
+			this.lyricsGroup.Panel.Controls.Add(this.moduleInfoLyricsReadOnlyRichTextBox);
+			this.lyricsGroup.Size = new System.Drawing.Size(266, 141);
+			this.lyricsGroup.StateCommon.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
+			this.lyricsGroup.TabIndex = 0;
+			// 
+			// moduleInfoLyricsReadOnlyRichTextBox
+			// 
+			this.moduleInfoLyricsReadOnlyRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.moduleInfoLyricsReadOnlyRichTextBox.Lines = new string[0];
+			this.moduleInfoLyricsReadOnlyRichTextBox.Location = new System.Drawing.Point(0, 0);
+			this.moduleInfoLyricsReadOnlyRichTextBox.Name = "moduleInfoLyricsReadOnlyRichTextBox";
+			this.moduleInfoLyricsReadOnlyRichTextBox.Size = new System.Drawing.Size(266, 141);
+			this.moduleInfoLyricsReadOnlyRichTextBox.TabIndex = 0;
 			// 
 			// ModuleInfoWindowForm
 			// 
@@ -202,7 +231,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			((System.ComponentModel.ISupportInitialize)(this.commentGroup.Panel)).EndInit();
 			this.commentGroup.Panel.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.commentGroup)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.moduleInfoCommentDataGridView)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.navigatorLyricsPage)).EndInit();
+			this.navigatorLyricsPage.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.lyricsGroup.Panel)).EndInit();
+			this.lyricsGroup.Panel.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.lyricsGroup)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -216,6 +249,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		private Krypton.Navigator.KryptonPage navigatorInfoPage;
 		private Krypton.Navigator.KryptonPage navigatorCommentPage;
 		private Krypton.Toolkit.KryptonGroup commentGroup;
-		private ModuleInfoListControl moduleInfoCommentDataGridView;
+		private Controls.ReadOnlyRichTextBox moduleInfoCommentReadOnlyRichTextBox;
+		private Krypton.Navigator.KryptonPage navigatorLyricsPage;
+		private Controls.ReadOnlyRichTextBox moduleInfoLyricsReadOnlyRichTextBox;
+		private Krypton.Toolkit.KryptonGroup lyricsGroup;
 	}
 }

@@ -6,6 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System.Drawing;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
@@ -61,6 +62,33 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// </summary>
 		/********************************************************************/
 		public virtual string[] Comment => new string[0];
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a specific font to be used for the comments
+		/// </summary>
+		/********************************************************************/
+		public virtual Font CommentFont => null;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the lyrics separated in lines
+		/// </summary>
+		/********************************************************************/
+		public virtual string[] Lyrics => new string[0];
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a specific font to be used for the lyrics
+		/// </summary>
+		/********************************************************************/
+		public virtual Font LyricsFont => null;
 
 
 

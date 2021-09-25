@@ -61,8 +61,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] C64_Pro_Mono_STYLE {
+            get {
+                object obj = ResourceManager.GetObject("C64_Pro_Mono_STYLE", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Original player by Simon White.
         ///SID emulator (reSID) by Dag Lem.
+        ///C64 font by Style.
         ///Ported to NostalgicPlayer by Thomas Neumann.
         ///
         ///This player emulates the Commodore 64 CPU (6510) and soundchip (6581/8580) so it is able to play the good old music from the games etc. The player has been ported to C# and is based on SidPlay2..
@@ -76,9 +87,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         /// <summary>
         ///   Looks up a localized string similar to Original player by Simon White.
         ///SID emulator (reSID) by Dag Lem.
+        ///C64 font by Style.
         ///Ported to NostalgicPlayer by Thomas Neumann.
         ///
-        ///SID modules contains tunes and sound effects from the good old Commodore 64. This player is based on the SidPlay2 program by Michael Schwendt and Simon White. The behaviour of the SID player can be changed with the SID settings. If you want more technical information about the format and player, see the documentation..
+        ///SID modules contains tunes and sound effects from the good old Commodore 64. This player is based on the SidPlay2 program by Michael Schwendt and Simon White. The behaviour of the SID player can be changed with the SID settings..
         /// </summary>
         internal static string IDS_SID_DESCRIPTION_AGENT1 {
             get {
@@ -150,6 +162,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot open extra file with name: {0}.
+        /// </summary>
+        internal static string IDS_SID_ERR_CANNOT_OPEN_EXTRA_FILE {
+            get {
+                return ResourceManager.GetString("IDS_SID_ERR_CANNOT_OPEN_EXTRA_FILE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Trying to configure player whilst active.
         /// </summary>
         internal static string IDS_SID_ERR_CONF_WHILST_ACTIVE {
@@ -195,6 +216,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File contains invalid data.
+        /// </summary>
+        internal static string IDS_SID_ERR_INVALID_DATA {
+            get {
+                return ResourceManager.GetString("IDS_SID_ERR_INVALID_DATA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid module header.
         /// </summary>
         internal static string IDS_SID_ERR_LOADING_HEADER {
@@ -222,6 +252,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Info file does not contain required strings.
+        /// </summary>
+        internal static string IDS_SID_ERR_NO_STRINGS {
+            get {
+                return ResourceManager.GetString("IDS_SID_ERR_NO_STRINGS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Compute!&apos;s Sidplayer MUS data is not supported yet.
+        /// </summary>
+        internal static string IDS_SID_ERR_PSID_MUS {
+            get {
+                return ResourceManager.GetString("IDS_SID_ERR_PSID_MUS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed whilst relocating PSID driver.
         /// </summary>
         internal static string IDS_SID_ERR_RELOC {
@@ -231,11 +279,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Total file size too large.
+        /// </summary>
+        internal static string IDS_SID_ERR_SIZE_EXCEEDED {
+            get {
+                return ResourceManager.GetString("IDS_SID_ERR_SIZE_EXCEEDED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Size of music data exceeds C64 memory.
         /// </summary>
         internal static string IDS_SID_ERR_TOO_BIG {
             get {
                 return ResourceManager.GetString("IDS_SID_ERR_TOO_BIG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SID file is truncated.
+        /// </summary>
+        internal static string IDS_SID_ERR_TRUNCATED {
+            get {
+                return ResourceManager.GetString("IDS_SID_ERR_TRUNCATED", resourceCulture);
             }
         }
         
@@ -258,6 +324,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Raw plus PlaySID icon tool type file (INFO).
+        /// </summary>
+        internal static string IDS_SID_FORMAT_INFO {
+            get {
+                return ResourceManager.GetString("IDS_SID_FORMAT_INFO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to C64 Sidplayer format (MUS).
+        /// </summary>
+        internal static string IDS_SID_FORMAT_MUS {
+            get {
+                return ResourceManager.GetString("IDS_SID_FORMAT_MUS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to PlaySID one-file format (PSID).
         /// </summary>
         internal static string IDS_SID_FORMAT_PSID {
@@ -272,6 +356,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         internal static string IDS_SID_FORMAT_RSID {
             get {
                 return ResourceManager.GetString("IDS_SID_FORMAT_RSID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Raw plus SIDPLAY ASCII text file (SID).
+        /// </summary>
+        internal static string IDS_SID_FORMAT_SID {
+            get {
+                return ResourceManager.GetString("IDS_SID_FORMAT_SID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to C64 stereo Sidplayer format (MUS+STR).
+        /// </summary>
+        internal static string IDS_SID_FORMAT_STR {
+            get {
+                return ResourceManager.GetString("IDS_SID_FORMAT_STR", resourceCulture);
             }
         }
         

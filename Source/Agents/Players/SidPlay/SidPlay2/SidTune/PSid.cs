@@ -129,7 +129,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.SidTune
 		/// Will load the file as a PSID file
 		/// </summary>
 		/********************************************************************/
-		private void LoadPSid(byte[] dataBuf, out string errorMessage)
+		private bool LoadPSid(byte[] dataBuf, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
@@ -251,7 +251,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.SidTune
 				if ((info.LoadAddr != 0) || (info.PlayAddr != 0) || (speed != 0))
 				{
 					errorMessage = Resources.IDS_SID_ERR_LOADING_HEADER;
-					return;
+					return false;
 				}
 
 				// Real C64 tunes appear as CIA
@@ -266,8 +266,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.SidTune
 			info.Author = encoder.GetString(dataBuf, PSidHeader.Author, 32);
 			info.Released = encoder.GetString(dataBuf, PSidHeader.Released, 32);
 
-			if (info.MusPlayer)//XX
-				throw new NotImplementedException();
+			if (info.MusPlayer)
+			{
+				errorMessage = Resources.IDS_SID_ERR_PSID_MUS;
+				return false;
+			}
+
+			return true;
 		}
 		#endregion
 	}

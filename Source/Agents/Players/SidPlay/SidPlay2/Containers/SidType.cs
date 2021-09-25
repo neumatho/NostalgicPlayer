@@ -14,6 +14,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.Containers
 	internal enum SidType
 	{
 		PSid,
-		RSid
+		RSid,
+		SidInfo,
+		IconInfo,
+		Mus
 	}
 }

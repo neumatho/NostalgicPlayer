@@ -260,6 +260,18 @@
             <uap:DisplayName>SoundMon</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="sidfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-sid">.sid</uap:FileType>
+              <uap:FileType ContentType="audio/x-sid">.c64</uap:FileType>
+              <uap:FileType ContentType="audio/x-sid">.info</uap:FileType>
+              <uap:FileType ContentType="audio/x-sid">.mus</uap:FileType>
+              <uap:FileType ContentType="audio/x-sid">.str</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>SidPlay</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

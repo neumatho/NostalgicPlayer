@@ -6,6 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System.Drawing;
 using Polycode.NostalgicPlayer.Kit.Containers;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
@@ -43,12 +44,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		private ModuleInfoStatic(AgentInfo playerAgentInfo, string moduleName, string author, string[] comment, string moduleFormat, string playerName, int channels, long crunchedSize, long moduleSize)
+		private ModuleInfoStatic(AgentInfo playerAgentInfo, string moduleName, string author, string[] comment, Font commentFont, string[] lyrics, Font lyricsFont, string moduleFormat, string playerName, int channels, long crunchedSize, long moduleSize)
 		{
 			PlayerAgentInfo = playerAgentInfo;
 			ModuleName = moduleName;
 			Author = author;
 			Comment = comment;
+			CommentFont = commentFont;
+			Lyrics = lyrics;
+			LyricsFont = lyricsFont;
 			ModuleFormat = moduleFormat;
 			PlayerName = playerName;
 			Channels = channels;
@@ -63,7 +67,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor (for module players)
 		/// </summary>
 		/********************************************************************/
-		internal ModuleInfoStatic(AgentInfo playerAgentInfo, AgentInfo converterAgentInfo, string moduleName, string author, string[] comment, string moduleFormat, string playerName, int channels, long crunchedSize, long moduleSize, ModulePlayerSupportFlag supportFlag, int maxSongNumber, InstrumentInfo[] instruments, SampleInfo[] samples) : this(playerAgentInfo, moduleName, author, comment, moduleFormat, playerName, channels, crunchedSize, moduleSize)
+		internal ModuleInfoStatic(AgentInfo playerAgentInfo, AgentInfo converterAgentInfo, string moduleName, string author, string[] comment, Font commentFont, string[] lyrics, Font lyricsFont, string moduleFormat, string playerName, int channels, long crunchedSize, long moduleSize, ModulePlayerSupportFlag supportFlag, int maxSongNumber, InstrumentInfo[] instruments, SampleInfo[] samples) : this(playerAgentInfo, moduleName, author, comment, commentFont, lyrics, lyricsFont, moduleFormat, playerName, channels, crunchedSize, moduleSize)
 		{
 			moduleSupportFlag = supportFlag;
 			sampleSupportFlag = SamplePlayerSupportFlag.None;
@@ -82,7 +86,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor (for sample players)
 		/// </summary>
 		/********************************************************************/
-		internal ModuleInfoStatic(AgentInfo playerAgentInfo, string moduleName, string author, string[] comment, string moduleFormat, string playerName, int channels, long crunchedSize, long moduleSize, SamplePlayerSupportFlag supportFlag, int frequency) : this(playerAgentInfo, moduleName, author, comment, moduleFormat, playerName, channels, crunchedSize, moduleSize)
+		internal ModuleInfoStatic(AgentInfo playerAgentInfo, string moduleName, string author, string[] comment, Font commentFont, string[] lyrics, Font lyricsFont, string moduleFormat, string playerName, int channels, long crunchedSize, long moduleSize, SamplePlayerSupportFlag supportFlag, int frequency) : this(playerAgentInfo, moduleName, author, comment, commentFont, lyrics, lyricsFont, moduleFormat, playerName, channels, crunchedSize, moduleSize)
 		{
 			sampleSupportFlag = supportFlag;
 			moduleSupportFlag = ModulePlayerSupportFlag.None;
@@ -133,6 +137,42 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// </summary>
 		/********************************************************************/
 		public string[] Comment
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the font to be used for comments or null
+		/// </summary>
+		/********************************************************************/
+		public Font CommentFont
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the lyrics separated into lines
+		/// </summary>
+		/********************************************************************/
+		public string[] Lyrics
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the font to be used for lyrics or null
+		/// </summary>
+		/********************************************************************/
+		public Font LyricsFont
 		{
 			get;
 		}

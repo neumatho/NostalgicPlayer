@@ -9,7 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using Polycode.NostalgicPlayer.Kit;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 {
@@ -185,7 +185,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		{
 			try
 			{
-				using (StreamReader sr = new StreamReader(fileName, Encoding.GetEncoding(1252)))
+				using (StreamReader sr = new StreamReader(fileName, EncoderCollection.Win1252))
 				{
 					List<string> directoryEntries = null;
 
