@@ -272,6 +272,15 @@
             <uap:DisplayName>SidPlay</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="sfxfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-sfx">.sfx</uap:FileType>
+              <uap:FileType ContentType="audio/x-sid">.sfx2</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>SoundFX</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
