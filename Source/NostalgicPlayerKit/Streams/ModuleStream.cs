@@ -22,6 +22,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 	{
 		private readonly Dictionary<int, ConvertSampleInfo> sampleInfo;
 		private readonly Stream sampleStream;
+		private readonly long convertedLength;
 
 		/********************************************************************/
 		/// <summary>
@@ -52,12 +53,29 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Constructor - used by player loader
 		/// </summary>
 		/********************************************************************/
-		public ModuleStream(Stream wrapperStream, Stream sampleDataStream) : base(wrapperStream, true)
+		public ModuleStream(Stream wrapperStream, Stream sampleDataStream, long totalLength) : base(wrapperStream, true)
 		{
 			sampleStream = sampleDataStream;
+			convertedLength = totalLength;
 		}
 
+		#region Overrides
+		/********************************************************************/
+		/// <summary>
+		/// Return the length of the data
+		/// </summary>
+		/********************************************************************/
+		public override long Length
+		{
+			get
+			{
+				if (sampleStream != null)
+					return convertedLength;
 
+				return base.Length;
+			}
+		}
+		#endregion
 
 		/********************************************************************/
 		/// <summary>

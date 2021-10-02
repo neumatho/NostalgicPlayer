@@ -60,6 +60,7 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | Scream Tracker 3 | .s3m | MikMod Converter | MikMod |
 | Scream Tracker Music Interface Kit | .stx | MikMod Converter | MikMod |
 | SidPlay | .sid / .c64 / .info / .mus / .str | | SidPlay |
+| SoundFX 1.x | .sfx | Module Converter | SoundFX |
 | SoundFX 2.0 | .sfx / .sfx2 | | SoundFX |
 | SoundMon 1.1 | .bp / .bp2 | | SoundMon |
 | SoundMon 2.2 | .bp / .bp3 | | SoundMon |

@@ -403,13 +403,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         ///¤Cand Thomas Bolon
         ///¤CMark Heath
         ///¤CDave Gandy
-        ///¤COzkan Sezer, Alice Lachesis
+        ///¤COzkan Sezer, Alice Rowan
         ///¤Cand Miodrag Vallat
         ///¤CAdam Hathcock
         ///¤CJens-Christian Huus
         ///¤CAdrien Destugues
         ///¤CRobert Baron
-        ///¤CAnd to al [rest of string was truncated]&quot;;.
+        ///¤CAnd to all y [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string IDS_ABOUT_TEXT {
             get {

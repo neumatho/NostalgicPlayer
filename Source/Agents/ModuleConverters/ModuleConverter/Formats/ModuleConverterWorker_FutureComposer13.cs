@@ -284,7 +284,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 			if (moduleStream.EndOfStream)
 			{
-				errorMessage = Resources.IDS_FC13_ERR_LOADING_HEADER;
+				errorMessage = Resources.IDS_ERR_LOADING_HEADER;
 				return AgentResult.Error;
 			}
 
@@ -339,7 +339,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 			if (moduleStream.EndOfStream)
 			{
-				errorMessage = Resources.IDS_FC13_ERR_LOADING_PATTERNS;
+				errorMessage = Resources.IDS_ERR_LOADING_PATTERNS;
 				return AgentResult.Error;
 			}
 
@@ -356,7 +356,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 					// Check to see if we miss too much from the last sample
 					if (moduleStream.Length - moduleStream.Position < (length - 256))
 					{
-						errorMessage = Resources.IDS_FC13_ERR_LOADING_SAMPLES;
+						errorMessage = Resources.IDS_ERR_LOADING_SAMPLES;
 						return AgentResult.Error;
 					}
 

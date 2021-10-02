@@ -63,27 +63,36 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the module header.
         /// </summary>
-        internal static string IDS_FC13_ERR_LOADING_HEADER {
+        internal static string IDS_ERR_LOADING_HEADER {
             get {
-                return ResourceManager.GetString("IDS_FC13_ERR_LOADING_HEADER", resourceCulture);
+                return ResourceManager.GetString("IDS_ERR_LOADING_HEADER", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the pattern information.
         /// </summary>
-        internal static string IDS_FC13_ERR_LOADING_PATTERNS {
+        internal static string IDS_ERR_LOADING_PATTERNS {
             get {
-                return ResourceManager.GetString("IDS_FC13_ERR_LOADING_PATTERNS", resourceCulture);
+                return ResourceManager.GetString("IDS_ERR_LOADING_PATTERNS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t read the sample information.
+        /// </summary>
+        internal static string IDS_ERR_LOADING_SAMPLEINFO {
+            get {
+                return ResourceManager.GetString("IDS_ERR_LOADING_SAMPLEINFO", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the sample data.
         /// </summary>
-        internal static string IDS_FC13_ERR_LOADING_SAMPLES {
+        internal static string IDS_ERR_LOADING_SAMPLES {
             get {
-                return ResourceManager.GetString("IDS_FC13_ERR_LOADING_SAMPLES", resourceCulture);
+                return ResourceManager.GetString("IDS_ERR_LOADING_SAMPLES", resourceCulture);
             }
         }
         
@@ -115,6 +124,18 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Original player by Linel Software.
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///The SoundFX file format is like SoundTracker. It only have a few effects, but it also have some special pattern commands, which SoundTracker doesn&apos;t have..
+        /// </summary>
+        internal static string IDS_MODCONV_DESCRIPTION_AGENT2 {
+            get {
+                return ResourceManager.GetString("IDS_MODCONV_DESCRIPTION_AGENT2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Module Converter.
         /// </summary>
         internal static string IDS_MODCONV_NAME {
@@ -129,6 +150,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         internal static string IDS_MODCONV_NAME_AGENT1 {
             get {
                 return ResourceManager.GetString("IDS_MODCONV_NAME_AGENT1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SoundFX 1.x.
+        /// </summary>
+        internal static string IDS_MODCONV_NAME_AGENT2 {
+            get {
+                return ResourceManager.GetString("IDS_MODCONV_NAME_AGENT2", resourceCulture);
             }
         }
     }

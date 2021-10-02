@@ -29,9 +29,22 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			this.sampleInfo = sampleInfo;
 			HasSampleDataMarkers = false;
+			ConvertedLength = 0;
 		}
 
+		#region Overrides
+		/********************************************************************/
+		/// <summary>
+		/// Write data to the stream
+		/// </summary>
+		/********************************************************************/
+		public override void Write(byte[] buffer, int offset, int count)
+		{
+			ConvertedLength += count;
 
+			base.Write(buffer, offset, count);
+		}
+		#endregion
 
 		/********************************************************************/
 		/// <summary>
@@ -50,6 +63,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 			Write_B_UINT32((uint)convertInfo.Length);
 
 			HasSampleDataMarkers = true;
+			ConvertedLength += convertInfo.Length;
 		}
 
 
@@ -60,6 +74,18 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// </summary>
 		/********************************************************************/
 		public bool HasSampleDataMarkers
+		{
+			get; private set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the converted length including sample data
+		/// </summary>
+		/********************************************************************/
+		public long ConvertedLength
 		{
 			get; private set;
 		}

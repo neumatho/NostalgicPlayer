@@ -23,5 +23,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx.Containers
 		public short StepValue;
 		public ushort StepNote;
 		public ushort StepEndNote;
+		public ushort SlideControl;
+		public bool SlideDirection;
+		public ushort SlideParam;
+		public ushort SlidePeriod;
+		public ushort SlideSpeed;
 	}
 }

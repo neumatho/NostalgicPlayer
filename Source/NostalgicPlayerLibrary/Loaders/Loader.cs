@@ -31,6 +31,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			public string OriginalFormat;
 			public Stream SampleDataStream;
 			public MemoryStream ConvertedStream;
+			public long TotalLength;
 		}
 
 		private readonly Manager agentManager;
@@ -120,7 +121,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 					{
 						// Try all the players to see if we can find one
 						// that understand the file format
-						using (ModuleStream moduleStream = new ModuleStream(convertInfo != null ? convertInfo.ConvertedStream : stream, true))
+						using (ModuleStream moduleStream = OpenModuleStream(convertInfo, stream))
 						{
 							PlayerFileInfo fileInfo = new PlayerFileInfo(loader.FullPath, moduleStream, loader);
 
@@ -136,7 +137,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 				if (result)
 				{
 					// Yes, initialize the module stream with the right information
-					using (ModuleStream moduleStream = convertInfo != null ? new ModuleStream(convertInfo.ConvertedStream, convertInfo.SampleDataStream ?? stream) : new ModuleStream(stream, true))
+					using (ModuleStream moduleStream = OpenModuleStream(convertInfo, stream))
 					{
 						PlayerFileInfo fileInfo = new PlayerFileInfo(loader.FullPath, moduleStream, loader);
 
@@ -375,6 +376,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
+		/// Will open a ModuleStream based on the arguments given
+		/// opened file. This method can open archive files
+		/// </summary>
+		/********************************************************************/
+		private ModuleStream OpenModuleStream(ConvertInfo convertInfo, Stream stream)
+		{
+			return convertInfo != null ? new ModuleStream(convertInfo.ConvertedStream, convertInfo.SampleDataStream ?? stream, convertInfo.TotalLength) : new ModuleStream(stream, true);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will parse the file name path and return the loader with the
 		/// opened file. This method can open archive files
 		/// </summary>
@@ -552,6 +566,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 												result.ConvertedStream.Dispose();
 
 											result.ConvertedStream = ms;
+											result.TotalLength = converterStream.ConvertedLength;
 
 											// The module may need to be converted multiple times, so
 											// we make a new check with the converted module

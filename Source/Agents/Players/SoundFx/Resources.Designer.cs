@@ -64,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx {
         ///   Looks up a localized string similar to Original player by Linel Software.
         ///Converted to C# by Thomas Neumann.
         ///
-        ///This player can only play SoundFX 2.0 modules, but it is also used to play the 1.0 - 1.3 modules, but not directly. The old formats are converted to 2.0 format and then this player is used.
+        ///This player can only play SoundFX 2.0 modules, but it is also used to play the 1.x modules, but not directly. The old formats are converted to 2.0 format and then this player is used.
         ///
         ///It is based on the original assembly player from the Amiga..
         /// </summary>
@@ -78,7 +78,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx {
         ///   Looks up a localized string similar to Original player by Linel Software.
         ///Converted to C# by Thomas Neumann.
         ///
-        ///The SoundFX file format is like SoundTracker. It only have a few effects, but it also have some special pattern commands, which SoundTracker doesn&apos;t have..
+        ///The SoundFX file format is like SoundTracker. It only have a few effects, but it also have some special pattern commands, which SoundTracker doesn&apos;t have. This version now supports 31 samples, where the previous versions only have 15..
         /// </summary>
         internal static string IDS_SFX_DESCRIPTION_AGENT1 {
             get {

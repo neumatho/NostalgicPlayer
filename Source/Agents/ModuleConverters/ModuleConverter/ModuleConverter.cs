@@ -24,6 +24,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 	public class ModuleConverter : AgentBase
 	{
 		private static readonly Guid agent1Id = Guid.Parse("99F6809B-0FA7-4814-895E-A5A4632EFE96");
+		private static readonly Guid agent2Id = Guid.Parse("0C8D0CEE-EA9D-4132-95ED-DFE72D5D8FB6");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -55,7 +56,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT1, Resources.IDS_MODCONV_DESCRIPTION_AGENT1, agent1Id)
+					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT1, Resources.IDS_MODCONV_DESCRIPTION_AGENT1, agent1Id),
+					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT2, Resources.IDS_MODCONV_DESCRIPTION_AGENT2, agent2Id)
 				};
 			}
 		}
@@ -71,6 +73,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 		{
 			if (typeId == agent1Id)
 				return new ModuleConverterWorker_FutureComposer13();
+
+			if (typeId == agent2Id)
+				return new ModuleConverterWorker_SoundFx1x();
 
 			return null;
 		}

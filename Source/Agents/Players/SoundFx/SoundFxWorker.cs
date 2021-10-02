@@ -217,6 +217,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 					if (sample.Length > 2)
 						sample.Length = Math.Max(sample.Length, sample.LoopStart + sample.LoopLength);
 
+					// September by Allister Brimble uses a sample with 0 length, but contains some data. So check for that
+					if ((sample.Length == 0 && sampleSizes[i] != 0))
+						sample.Length = sampleSizes[i];
+
 					// Volume fix
 					if (sample.Volume > 64)
 						sample.Volume = 64;
@@ -627,7 +631,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 			if ((patternData & 0xffff0000) == 0)
 				return;
 
-			// Stop stepping
+			// Stop sliding and stepping
+			channel.SlideSpeed = 0;
 			channel.StepValue = 0;
 
 			// Get the period
@@ -707,6 +712,41 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 			}
 			else
 			{
+				if (channel.SlideSpeed != 0)
+				{
+					ushort value = (ushort)(channel.SlideParam & 0x0f);
+
+					if (value != 0)
+					{
+						if (++channel.SlideControl == value)
+						{
+							channel.SlideControl = 0;
+							value = (ushort)((channel.SlideParam << 4) << 3);
+
+							if (!channel.SlideDirection)
+							{
+								channel.SlidePeriod += 8;
+								value += channel.SlideSpeed;
+
+								if (value == channel.SlidePeriod)
+									channel.SlideDirection = true;
+							}
+							else
+							{
+								channel.SlidePeriod -= 8;
+								value -= channel.SlideSpeed;
+
+								if (value == channel.SlidePeriod)
+									channel.SlideDirection = false;
+							}
+
+							// Set the new period on the channel
+							channel.CurrentNote = channel.SlidePeriod;
+							virtChannel.SetAmigaPeriod(channel.SlidePeriod);
+						}
+					}
+				}
+
 				// Well, do we have any effects we need to run
 				switch ((channel.PatternData & 0x00000f00) >> 8)
 				{
@@ -745,8 +785,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 					// LedOn (filter off!)
 					//
 					// There is a little bug in the original player. They has
-					// exchanged the on/off, so the effect names isn't
-					// the right ones :)
+					// exchanged the on/off, so the effect names does not
+					// match what they actually do :)
 					case 3:
 					{
 						AmigaFilter = false;
@@ -774,8 +814,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 						break;
 					}
 
+					// Auto slide
+					//
+					// There is none of the official player sources that implement this
+					// effect, but "Alcatrash" by Kerni uses it. Found a implementation
+					// of it in Flod 4.1, which this is based on
 					case 9:
 					{
+						channel.SlideSpeed = channel.SlidePeriod = channel.CurrentNote;
+						channel.SlideParam = (ushort)(channel.PatternData & 0x000000ff);
+						channel.SlideDirection = false;
+						channel.SlideControl = 0;
 						break;
 					}
 				}
