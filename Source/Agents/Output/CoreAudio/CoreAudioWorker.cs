@@ -508,6 +508,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 					if (oldState == PlaybackState.Playing)
 						audioClient.Start();
 
+					// Tell the mixer about new sample rates etc.
+					int bytesPerSample = outputFormat.BitsPerSample / 8;
+					stream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, (outputFormat.AverageBytesPerSecond / bytesPerSample) * LatencyMilliseconds / 1000, bytesPerSample));
+
 					playbackState = oldState;
 				}
 

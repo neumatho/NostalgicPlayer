@@ -22,6 +22,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private int bytesPerSampling;
 
 		private Mixer mixer;
+		private object mixerLock;
 
 		/********************************************************************/
 		/// <summary>
@@ -31,6 +32,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		public bool Initialize(Manager agentManager, PlayerConfiguration playerConfiguration, out string errorMessage)
 		{
 			mixer = new Mixer();
+			mixerLock = new object();
+
 			return mixer.InitMixer(agentManager, playerConfiguration, out errorMessage);
 		}
 
@@ -45,6 +48,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		{
 			mixer?.CleanupMixer();
 			mixer = null;
+			mixerLock = null;
 		}
 
 
@@ -56,7 +60,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/********************************************************************/
 		public void ChangeConfiguration(MixerConfiguration mixerConfiguration)
 		{
-			mixer.ChangeConfiguration(mixerConfiguration);
+			lock (mixerLock)
+			{
+				mixer.ChangeConfiguration(mixerConfiguration);
+			}
 		}
 
 		#region SoundStream implementation
@@ -67,9 +74,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/********************************************************************/
 		public override void SetOutputFormat(OutputInfo outputInformation)
 		{
-			bytesPerSampling = outputInformation.BytesPerSample;
+			lock (mixerLock)
+			{
+				bytesPerSampling = outputInformation.BytesPerSample;
 
-			mixer.SetOutputFormat(outputInformation);
+				mixer.SetOutputFormat(outputInformation);
+			}
 		}
 
 
@@ -81,7 +91,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/********************************************************************/
 		public override void SetMasterVolume(int volume)
 		{
-			mixer.SetMasterVolume(volume);
+			lock (mixerLock)
+			{
+				mixer.SetMasterVolume(volume);
+			}
 		}
 
 
@@ -93,7 +106,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/********************************************************************/
 		public override void Start()
 		{
-			mixer.StartMixer();
+			lock (mixerLock)
+			{
+				mixer.StartMixer();
+			}
 		}
 
 
@@ -105,7 +121,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/********************************************************************/
 		public override void Stop()
 		{
-			mixer.StopMixer();
+			lock (mixerLock)
+			{
+				mixer.StopMixer();
+			}
 		}
 
 
@@ -117,7 +136,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/********************************************************************/
 		public override void Pause()
 		{
-			mixer.PauseMixer();
+			lock (mixerLock)
+			{
+				mixer.PauseMixer();
+			}
 		}
 
 
@@ -129,7 +151,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/********************************************************************/
 		public override void Resume()
 		{
-			mixer.ResumeMixer();
+			lock (mixerLock)
+			{
+				mixer.ResumeMixer();
+			}
 		}
 
 
@@ -144,13 +169,20 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		{
 			try
 			{
-				int samplesMixed = mixer.Mixing(buffer, offset, count / bytesPerSampling, out bool hasEndReached);
-				HasEndReached = hasEndReached;
+				int mixedSamples;
 
-				if (hasEndReached)
+				lock (mixerLock)
+				{
+					int samplesMixed = mixer.Mixing(buffer, offset, count / bytesPerSampling, out bool hasEndReached);
+					HasEndReached = hasEndReached;
+
+					mixedSamples = samplesMixed * bytesPerSampling;
+				}
+
+				if (HasEndReached)
 					OnEndReached(this, EventArgs.Empty);
 
-				return samplesMixed * bytesPerSampling;
+				return mixedSamples;
 			}
 			catch(Exception)
 			{
