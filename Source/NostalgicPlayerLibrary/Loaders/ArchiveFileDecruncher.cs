@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 
@@ -78,14 +79,24 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/********************************************************************/
 		public ArchiveEntryInfo OpenArchiveEntry(string entryName)
 		{
-			ArchiveStream entryStream = archive.OpenEntry(entryName);
-			Stream stream = entryStream.CanSeek ? entryStream : new SeekableStream(entryStream);
+			using (ArchiveStream entryStream = archive.OpenEntry(entryName))
+			{
+				// Because an entry stream use the parent archive stream to seek around,
+				// we cannot open multiple entry streams at the same time. SidPlay e.g.
+				// will do that when trying to identify extra files.
+				//
+				// Because of this, we will copy the entry stream into a memory stream
+				// and return that instead. It will use more memory to do so, but modules
+				// are relative small anyway, so it should not matter that much
+				Stream stream = new MemoryStream((int)entryStream.Length);
+				Helpers.CopyData(entryStream, stream, (int)entryStream.Length);
 
-			// The entry may be crunched, so decrunch it
-			SingleFileDecruncher decruncher = new SingleFileDecruncher(manager);
-			stream = decruncher.DecrunchFileMultipleLevels(stream);
+				// The entry may be crunched, so decrunch it
+				SingleFileDecruncher decruncher = new SingleFileDecruncher(manager);
+				stream = decruncher.DecrunchFileMultipleLevels(stream);
 
-			return new ArchiveEntryInfo(stream, entryStream.GetCrunchedLength(), (int)stream.Length);
+				return new ArchiveEntryInfo(stream, entryStream.GetCrunchedLength(), (int)stream.Length);
+			}
 		}
 
 		#region Private methods
