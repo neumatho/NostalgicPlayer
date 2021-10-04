@@ -21,7 +21,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SharpCompress" Version="0.29.0" />
+    <PackageReference Include="SharpCompress" Version="0.30.0" />
   </ItemGroup>
 
   <ItemGroup>
