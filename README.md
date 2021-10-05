@@ -47,6 +47,7 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | Impulse Tracker | .it | MikMod Converter | MikMod |
 | JamCracker | .jam | | JamCracker |
 | Master SoundTracker 1.0 | .mod | | ModTracker |
+| MOD Plugin Packed | .xm | MikMod Converter | MikMod |
 | Mod's Grave | .wow | | ModTracker |
 | MultiTracker | .mtm | | ModTracker |
 | NoiseTracker | .mod | | ModTracker |

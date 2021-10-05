@@ -128,6 +128,18 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		private XmWavHeader[] wh;
 		private long[] nextWav;
 
+		private bool modPluginMode;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public MikModConverterWorker_Xm(bool modPlugin)
+		{
+			modPluginMode = modPlugin;
+		}
+
 		#region MikModConverterWorkerBase implementation
 		/********************************************************************/
 		/// <summary>
@@ -146,8 +158,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			// Now check the signature
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			byte[] buf = new byte[38];
-			moduleStream.Read(buf, 0, 38);
+			byte[] buf = new byte[58];
+			moduleStream.Read(buf, 0, 58);
 
 			if (Encoding.ASCII.GetString(buf, 0, 17) != "Extended Module: ")
 				return AgentResult.Unknown;
@@ -155,8 +167,11 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			if (buf[37] != 0x1a)
 				return AgentResult.Unknown;
 
+			// Check tracker name
+			if ((Encoding.ASCII.GetString(buf, 38, 20) == "MOD Plugin packed   ") && !modPluginMode)
+				return AgentResult.Unknown;
+
 			// Check the version
-			moduleStream.Seek(58, SeekOrigin.Begin);
 			ushort ver = moduleStream.Read_L_UINT16();
 
 			if ((ver < 0x102) || (ver > 0x104))
@@ -364,6 +379,12 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 					if ((s.Type & 0x10) != 0)
 						q.Flags |= SampleFlag._16Bits;
+
+					if (IsSamplePacked(s))
+					{
+						q.Flags &= ~SampleFlag.Delta;
+						q.Flags |= SampleFlag.Adpcm4;
+					}
 				}
 
 				for (int u = 0; u < of.NumIns; u++)
@@ -885,6 +906,18 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 		/********************************************************************/
 		/// <summary>
+		/// Check for MOD plugin packed samples
+		/// </summary>
+		/********************************************************************/
+		private bool IsSamplePacked(XmWavHeader s)
+		{
+			return (s.Reserved == 0xad) && ((s.Type & 0x30) == 0);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Load all the instruments
 		/// </summary>
 		/********************************************************************/
@@ -1094,7 +1127,11 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 							moduleStream.ReadString(s.SampleName, 22);
 
 							nextWav[of.NumSmp + u] = next;
-							next += s.Length;
+
+							if (IsSamplePacked(s))
+								next += ((s.Length + 1) >> 1) + 16;
+							else
+								next += s.Length;
 
 							if (moduleStream.EndOfStream)
 								return false;

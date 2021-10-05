@@ -39,6 +39,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 		private static readonly Guid agent14Id = Guid.Parse("E37DF813-DCBD-4A32-AA07-5EF1AF6DD037");
 		private static readonly Guid agent15Id = Guid.Parse("E03F718C-8FA9-4843-9EBE-6D69EC3A421D");
 		private static readonly Guid agent16Id = Guid.Parse("1574A876-5F9D-4BAE-81AF-7DB01370ADDD");
+		private static readonly Guid agent17Id = Guid.Parse("204AC626-90CE-4BE5-A6C4-F4C02ACDEB4A");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -85,7 +86,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT13, Resources.IDS_MIKCONV_DESCRIPTION_AGENT13, agent13Id),
 					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT14, Resources.IDS_MIKCONV_DESCRIPTION_AGENT14, agent14Id),
 					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT15, Resources.IDS_MIKCONV_DESCRIPTION_AGENT15, agent15Id),
-					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT16, Resources.IDS_MIKCONV_DESCRIPTION_AGENT16, agent16Id)
+					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT16, Resources.IDS_MIKCONV_DESCRIPTION_AGENT16, agent16Id),
+					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT17, Resources.IDS_MIKCONV_DESCRIPTION_AGENT17, agent17Id)
 				};
 			}
 		}
@@ -145,7 +147,10 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 				return new MikModConverterWorker_Umx();
 
 			if (typeId == agent16Id)
-				return new MikModConverterWorker_Xm();
+				return new MikModConverterWorker_Xm(false);
+
+			if (typeId == agent17Id)
+				return new MikModConverterWorker_Xm(true);
 
 			return null;
 		}

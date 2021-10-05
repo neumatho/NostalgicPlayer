@@ -33,9 +33,11 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 		Delta = 0x0010,
 		/// <summary></summary>
 		ItPacked = 0x0020,
+		/// <summary></summary>
+		Adpcm4 = 0x0040,
 
 		/// <summary></summary>
-		FormatMask = 0x003f,
+		FormatMask = 0x007f,
 
 		// General playback flags
 
