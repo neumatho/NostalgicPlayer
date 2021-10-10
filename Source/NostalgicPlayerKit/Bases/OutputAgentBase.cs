@@ -84,6 +84,6 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// interrupting the sound
 		/// </summary>
 		/********************************************************************/
-		public abstract AgentResult SwitchStream(SoundStream soundStream, string fileName, string moduleName, string author);
+		public abstract AgentResult SwitchStream(SoundStream soundStream, string fileName, string moduleName, string author, out string errorMessage);
 	}
 }

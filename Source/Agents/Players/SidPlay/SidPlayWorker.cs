@@ -508,7 +508,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Initializes the player
 		/// </summary>
 		/********************************************************************/
-		public override bool InitPlayer()
+		public override bool InitPlayer(out string errorMessage)
 		{
 			engine = new SidIPtr<ISidPlay2>(SidPlay2.Player.Create());
 
@@ -589,7 +589,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			leftOutputBuffer = new sbyte[BufferSize];
 			rightOutputBuffer = new sbyte[BufferSize];
 
-			return true;
+			return base.InitPlayer(out errorMessage);
 		}
 
 
@@ -611,7 +611,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override void InitSound(int songNumber, DurationInfo durationInfo)
+		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
 			sidTune.SelectSong((ushort)(songNumber + 1));
 
@@ -633,6 +633,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				// Start a schedule
 				durationHandler.DoEvent();
 			}
+
+			return base.InitSound(songNumber, durationInfo, out errorMessage);
 		}
 
 

@@ -31,7 +31,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// <summary>
 		/// Will start playing the music
 		/// </summary>
-		bool StartPlaying(Loader loader, MixerConfiguration newMixerConfiguration = null);
+		bool StartPlaying(Loader loader, out string errorMessage, MixerConfiguration newMixerConfiguration = null);
 
 		/// <summary>
 		/// Will stop the playing

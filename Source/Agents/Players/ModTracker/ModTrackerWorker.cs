@@ -260,12 +260,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// Initializes the player
 		/// </summary>
 		/********************************************************************/
-		public override bool InitPlayer()
+		public override bool InitPlayer(out string errorMessage)
 		{
 			// Initialize structures
 			channels = new ModChannel[channelNum];
 
-			return true;
+			return base.InitPlayer(out errorMessage);
 		}
 
 
@@ -287,11 +287,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override void InitSound(int songNumber, DurationInfo durationInfo)
+		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
 			durInfo = durationInfo;
 
 			InitializeSound(durationInfo.StartPosition);
+
+			return base.InitSound(songNumber, durationInfo, out errorMessage);
 		}
 
 

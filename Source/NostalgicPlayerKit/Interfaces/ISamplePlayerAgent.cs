@@ -30,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Initializes the player
 		/// </summary>
-		bool InitPlayer(ModuleStream moduleStream);
+		bool InitPlayer(ModuleStream moduleStream, out string errorMessage);
 
 		/// <summary>
 		/// Cleanup the player
@@ -40,7 +40,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Initializes the player to start the sample from start
 		/// </summary>
-		void InitSound(DurationInfo durationInfo);
+		bool InitSound(DurationInfo durationInfo, out string errorMessage);
 
 		/// <summary>
 		/// Cleanup the current song

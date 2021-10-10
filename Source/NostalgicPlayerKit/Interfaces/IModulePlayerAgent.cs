@@ -8,7 +8,6 @@
 /******************************************************************************/
 using System;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Mixer;
 
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
@@ -30,7 +29,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Initializes the player
 		/// </summary>
-		bool InitPlayer();
+		bool InitPlayer(out string errorMessage);
 
 		/// <summary>
 		/// Cleanup the player
@@ -40,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Initializes the current song
 		/// </summary>
-		void InitSound(int songNumber, DurationInfo durationInfo);
+		bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage);
 
 		/// <summary>
 		/// Cleanup the current song

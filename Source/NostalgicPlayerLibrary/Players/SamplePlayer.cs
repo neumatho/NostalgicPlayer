@@ -69,7 +69,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				lock (currentPlayer)
 				{
 					// Initialize the player
-					initOk = currentPlayer.InitPlayer(loader.Stream);
+					initOk = currentPlayer.InitPlayer(loader.Stream, out errorMessage);
 
 					if (initOk)
 					{
@@ -160,14 +160,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Will start playing the music
 		/// </summary>
 		/********************************************************************/
-		public bool StartPlaying(Loader loader, MixerConfiguration newMixerConfiguration)
+		public bool StartPlaying(Loader loader, out string errorMessage, MixerConfiguration newMixerConfiguration)
 		{
 			if (newMixerConfiguration != null)
 				soundStream.ChangeConfiguration(newMixerConfiguration);
 
 			lock (currentPlayer)
 			{
-				currentPlayer.InitSound(durationInfo);
+				if (!currentPlayer.InitSound(durationInfo, out errorMessage))
+					return false;
 
 				// Find the length of the song
 				int songLength = currentPlayer.SongLength;
@@ -178,7 +179,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 			soundStream.Start();
 
-			if (outputAgent.SwitchStream(soundStream, loader.FileName, StaticModuleInformation.ModuleName, StaticModuleInformation.Author) == AgentResult.Error)
+			if (outputAgent.SwitchStream(soundStream, loader.FileName, StaticModuleInformation.ModuleName, StaticModuleInformation.Author, out errorMessage) == AgentResult.Error)
 				return false;
 
 			// Tell all visuals to start

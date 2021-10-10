@@ -56,8 +56,10 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Initializes the player
 		/// </summary>
 		/********************************************************************/
-		public virtual bool InitPlayer()
+		public virtual bool InitPlayer(out string errorMessage)
 		{
+			errorMessage = string.Empty;
+
 			return true;
 		}
 
@@ -79,8 +81,11 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public virtual void InitSound(int songNumber, DurationInfo durationInfo)
+		public virtual bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
+			errorMessage = string.Empty;
+
+			return true;
 		}
 
 

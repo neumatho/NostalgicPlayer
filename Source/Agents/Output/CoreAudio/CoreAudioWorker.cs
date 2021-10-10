@@ -279,8 +279,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/// interrupting the sound
 		/// </summary>
 		/********************************************************************/
-		public override AgentResult SwitchStream(SoundStream soundStream, string fileName, string moduleName, string author)
+		public override AgentResult SwitchStream(SoundStream soundStream, string fileName, string moduleName, string author, out string errorMessage)
 		{
+			errorMessage = string.Empty;
+
 			lock (streamLock)
 			{
 				stream?.Dispose();

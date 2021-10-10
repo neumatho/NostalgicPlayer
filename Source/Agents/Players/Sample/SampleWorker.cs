@@ -164,12 +164,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		/// Initializes the player
 		/// </summary>
 		/********************************************************************/
-		public override bool InitPlayer(ModuleStream moduleStream)
+		public override bool InitPlayer(ModuleStream moduleStream, out string errorMessage)
 		{
 			// Get number of samples of the file
 			totalLength = loaderAgent.GetTotalSampleLength(formatInfo);
 
-			return base.InitPlayer(moduleStream);
+			return base.InitPlayer(moduleStream, out errorMessage);
 		}
 
 
@@ -193,13 +193,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		/// Initializes the player to start the sample from start
 		/// </summary>
 		/********************************************************************/
-		public override void InitSound(DurationInfo durationInfo)
+		public override bool InitSound(DurationInfo durationInfo, out string errorMessage)
 		{
+			errorMessage = string.Empty;
+
 			// Reset the sample position
-			loaderAgent.SetSamplePosition(moduleStream, 0, formatInfo);
+			loaderAgent.SetSamplePosition(modStream, 0, formatInfo);
 
 			samplesRead = 0;
 			oldPosition = 0;
+
+			return true;
 		}
 
 
@@ -231,7 +235,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		public override int LoadDataBlock(int[] outputBuffer, int count)
 		{
 			// Load the next block of data
-			int filled = loaderAgent.LoadData(moduleStream, outputBuffer, count, formatInfo);
+			int filled = loaderAgent.LoadData(modStream, outputBuffer, count, formatInfo);
 			samplesRead += filled;
 
 			if (filled == 0)
@@ -241,12 +245,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 				// Loop the sample
 				if ((formatInfo.Flags & LoadSampleFormatInfo.SampleFlags.Loop) != 0)
 				{
-					loaderAgent.SetSamplePosition(moduleStream, formatInfo.LoopStart, formatInfo);
+					loaderAgent.SetSamplePosition(modStream, formatInfo.LoopStart, formatInfo);
 					samplesRead = formatInfo.LoopStart;
 				}
 				else
 				{
-					loaderAgent.SetSamplePosition(moduleStream, 0, formatInfo);
+					loaderAgent.SetSamplePosition(modStream, 0, formatInfo);
 					samplesRead = 0;
 				}
 			}
@@ -306,7 +310,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		public override void SetSongPosition(int position, PositionInfo positionInfo)
 		{
 			long newPos = position * totalLength / 100;
-			samplesRead = loaderAgent.SetSamplePosition(moduleStream, newPos, formatInfo);
+			samplesRead = loaderAgent.SetSamplePosition(modStream, newPos, formatInfo);
 		}
 		#endregion
 	}

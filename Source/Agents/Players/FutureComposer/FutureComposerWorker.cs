@@ -532,7 +532,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override void InitSound(int songNumber, DurationInfo durationInfo)
+		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
 			// Initialize speed
 			ushort spd = sequences[0].Speed;
@@ -591,6 +591,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 
 				voiceData[i] = voiceInfo;
 			}
+
+			return base.InitSound(songNumber, durationInfo, out errorMessage);
 		}
 
 
@@ -746,7 +748,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 		/********************************************************************/
 		protected override void InitDurationCalculation(int startPosition)
 		{
-			InitSound(0, null);
+			InitSound(0, null, out _);
 		}
 
 

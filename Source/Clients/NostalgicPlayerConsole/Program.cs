@@ -100,7 +100,12 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 								}
 							}
 
-							player.StartPlaying(loader);
+							if (!player.StartPlaying(loader, out errorMessage))
+							{
+								Console.WriteLine("Cannot start playing.");
+								Console.WriteLine(errorMessage);
+								return;
+							}
 
 							try
 							{

@@ -50,6 +50,6 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Will switch the stream to read the sound data from without
 		/// interrupting the sound
 		/// </summary>
-		AgentResult SwitchStream(SoundStream soundStream, string fileName, string moduleName, string author);
+		AgentResult SwitchStream(SoundStream soundStream, string fileName, string moduleName, string author, out string errorMessage);
 	}
 }

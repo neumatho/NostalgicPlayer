@@ -343,8 +343,8 @@ Formats supported:
 {0}</value>
   </data>
   <data name="IDS_ERR_INIT_PLAYER" xml:space="preserve">
-    <value>Failed to initialize player.
-{0}</value>
+    <value>Failed to initialize player {0}.
+{1}</value>
   </data>
   <data name="IDS_ERR_LOAD_FILE" xml:space="preserve">
     <value>Failed to load module.

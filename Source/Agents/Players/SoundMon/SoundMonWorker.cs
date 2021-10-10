@@ -470,9 +470,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override void InitSound(int songNumber, DurationInfo durationInfo)
+		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
 			InitializeSound(durationInfo.StartPosition);
+
+			return base.InitSound(songNumber, durationInfo, out errorMessage);
 		}
 
 

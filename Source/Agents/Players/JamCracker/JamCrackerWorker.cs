@@ -305,7 +305,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override void InitSound(int songNumber, DurationInfo durationInfo)
+		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
 			// Initialize other variables
 			songPos = 0;
@@ -356,6 +356,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 				waveOff += 0x40;
 			}
+
+			return base.InitSound(songNumber, durationInfo, out errorMessage);
 		}
 
 
@@ -517,7 +519,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/********************************************************************/
 		protected override void InitDurationCalculation(int startPosition)
 		{
-			InitSound(0, null);
+			InitSound(0, null, out _);
 		}
 
 

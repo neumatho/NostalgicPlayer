@@ -527,8 +527,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to initialize player.
-        ///{0}.
+        ///   Looks up a localized string similar to Failed to initialize player {0}.
+        ///{1}.
         /// </summary>
         internal static string IDS_ERR_INIT_PLAYER {
             get {

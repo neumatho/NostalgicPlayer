@@ -342,7 +342,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override void InitSound(int songNumber, DurationInfo durationInfo)
+		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
 			// Initialize the variables
 			chanInfo = Helpers.InitializeArray<ChannelInfo>(8);
@@ -369,6 +369,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				if (!channelFlags[panNum / 2])
 					panNum++;
 			}
+
+			return base.InitSound(songNumber, durationInfo, out errorMessage);
 		}
 
 
@@ -532,7 +534,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		/********************************************************************/
 		protected override void InitDurationCalculation(int startPosition)
 		{
-			InitSound(0, null);
+			InitSound(0, null, out _);
 		}
 
 

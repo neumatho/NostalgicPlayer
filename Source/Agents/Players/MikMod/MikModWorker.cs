@@ -204,13 +204,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		/// Initializes the player
 		/// </summary>
 		/********************************************************************/
-		public override bool InitPlayer()
+		public override bool InitPlayer(out string errorMessage)
 		{
 			player = new MPlayer(of, this);
 
 			mdNumChn = player.mdSngChn;
 
-			return true;
+			return base.InitPlayer(out errorMessage);
 		}
 
 
@@ -235,7 +235,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override void InitSound(int songNumber, DurationInfo durationInfo)
+		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
 			player.Init(of, (short)durationInfo.StartPosition);
 
@@ -245,6 +245,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 			// Tell NostalgicPlayer about the initial BPM tempo
 			SetTempo(of.Bpm);
 			player.mdBpm = of.Bpm;
+
+			return base.InitSound(songNumber, durationInfo, out errorMessage);
 		}
 
 

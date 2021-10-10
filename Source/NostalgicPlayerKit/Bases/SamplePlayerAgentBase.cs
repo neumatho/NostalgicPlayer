@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// <summary>
 		/// Holds the stream with the sample to play
 		/// </summary>
-		protected ModuleStream moduleStream;
+		protected ModuleStream modStream;
 
 		/********************************************************************/
 		/// <summary>
@@ -38,9 +38,11 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Initializes the player
 		/// </summary>
 		/********************************************************************/
-		public virtual bool InitPlayer(ModuleStream moduleStream)
+		public virtual bool InitPlayer(ModuleStream moduleStream, out string errorMessage)
 		{
-			this.moduleStream = moduleStream;
+			errorMessage = string.Empty;
+
+			modStream = moduleStream;
 
 			return true;
 		}
@@ -54,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		public virtual void CleanupPlayer()
 		{
-			moduleStream = null;
+			modStream = null;
 		}
 
 
@@ -64,9 +66,13 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Initializes the player to start the sample from start
 		/// </summary>
 		/********************************************************************/
-		public virtual void InitSound(DurationInfo durationInfo)
+		public virtual bool InitSound(DurationInfo durationInfo, out string errorMessage)
 		{
-			moduleStream.Seek(0, SeekOrigin.Begin);
+			errorMessage = string.Empty;
+
+			modStream.Seek(0, SeekOrigin.Begin);
+
+			return true;
 		}
 
 

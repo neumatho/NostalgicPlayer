@@ -325,7 +325,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override void InitSound(int songNumber, DurationInfo durationInfo)
+		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
 			channelInfo = Helpers.InitializeArray<Channel>(4);
 
@@ -336,6 +336,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 
 			// Calculate the frequency to play with
 			PlayingFrequency = 1773447.0f / delay / 2.5f;
+
+			return base.InitSound(songNumber, durationInfo, out errorMessage);
 		}
 
 
@@ -484,7 +486,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 		/********************************************************************/
 		protected override void InitDurationCalculation(int startPosition)
 		{
-			InitSound(0, null);
+			InitSound(0, null, out _);
 		}
 
 

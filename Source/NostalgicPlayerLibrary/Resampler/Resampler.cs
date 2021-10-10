@@ -226,6 +226,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 					lock (currentPlayer)
 					{
 						samplesRead = currentPlayer.LoadDataBlock(dataBuffer, dataBuffer.Length);
+						if (samplesRead == 0)
+						{
+							// To prevent the reader to be called again and again quickly
+							// and lock up the computer, we will play silence if nothing has
+							// been read
+							Array.Clear(dataBuffer, 0, dataBuffer.Length);
+							samplesRead = dataBuffer.Length;
+						}
 
 						if (currentPlayer.HasEndReached)
 						{

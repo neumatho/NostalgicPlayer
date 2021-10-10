@@ -448,7 +448,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/// Initializes the player
 		/// </summary>
 		/********************************************************************/
-		public override bool InitPlayer()
+		public override bool InitPlayer(out string errorMessage)
 		{
 			hdb = Helpers.InitializeArray<Hdb>(8);
 			mdb = new Mdb();
@@ -487,7 +487,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			numBytes = 0;
 			bytesDone = 0;
 
-			return true;
+			return base.InitPlayer(out errorMessage);
 		}
 
 
@@ -518,7 +518,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override void InitSound(int songNumber, DurationInfo durationInfo)
+		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
 			// Initialize member variables
 			currentSong = songNumber;
@@ -533,6 +533,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			// Initialize the player
 			TfmxInit();
 			StartSong(songNumber, 0);
+
+			return base.InitSound(songNumber, durationInfo, out errorMessage);
 		}
 
 

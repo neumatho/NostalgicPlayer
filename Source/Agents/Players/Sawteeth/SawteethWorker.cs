@@ -572,7 +572,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 		/// Initializes the player
 		/// </summary>
 		/********************************************************************/
-		public override bool InitPlayer()
+		public override bool InitPlayer(out string errorMessage)
 		{
 			// Create player objects
 			p = new Player[channelCount];
@@ -602,7 +602,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 
 			songLen++;
 
-			return true;
+			return base.InitPlayer(out errorMessage);
 		}
 
 
@@ -631,12 +631,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override void InitSound(int songNumber, DurationInfo durationInfo)
+		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
 			for (int c = 0; c < channelCount; c++)
 				p[c].Init();
 
 			InitSong();
+
+			return base.InitSound(songNumber, durationInfo, out errorMessage);
 		}
 
 

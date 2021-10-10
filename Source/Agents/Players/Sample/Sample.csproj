@@ -8,7 +8,7 @@
     <Description>Wrapper against the sample converters and make them as playable.</Description>
     <Copyright>Copyright © 2021</Copyright>
     <RootNamespace>Polycode.NostalgicPlayer.Agent.Player.Sample</RootNamespace>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -253,7 +253,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 		/// interrupting the sound
 		/// </summary>
 		/********************************************************************/
-		public override AgentResult SwitchStream(SoundStream soundStream, string fileName, string moduleName, string author)
+		public override AgentResult SwitchStream(SoundStream soundStream, string fileName, string moduleName, string author, out string errorMessage)
 		{
 			lock (streamLock)
 			{
@@ -280,7 +280,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 						dialog.ShowDialog();
 
 						if (dialog.GetButtonResult() == 'N')
+						{
+							errorMessage = string.Empty;
 							return AgentResult.Error;
+						}
 					}
 				}
 
@@ -298,7 +301,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 					SaverStream saverStream = new SaverStream(this, soundStream);
 					soundStream = saverStream;
 
-					if (outputAgentInUse.SwitchStream(soundStream, fileName, moduleName, author) == AgentResult.Error)
+					if (outputAgentInUse.SwitchStream(soundStream, fileName, moduleName, author, out errorMessage) == AgentResult.Error)
 						return AgentResult.Error;
 
 					formatInfo = new SaveSampleFormatInfo(saverStream.OutputInfo.BytesPerSample * 8, saverStream.OutputInfo.Channels, saverStream.OutputInfo.Frequency, 0, 0, moduleName, author);
@@ -307,16 +310,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 				stream = soundStream;
 
 				// Initialize the saver
-				if (!converterInUse.InitSaver(formatInfo, out string errorMessage))
-				{
-					using (CustomMessageBox dialog = new CustomMessageBox(errorMessage, Resources.IDS_NAME, CustomMessageBox.IconType.Error))
-					{
-						dialog.AddButton(Resources.IDS_BUT_OK, 'O');
-						dialog.ShowDialog();
-					}
-
+				if (!converterInUse.InitSaver(formatInfo, out errorMessage))
 					return AgentResult.Error;
-				}
 
 				// Open file to store the sound
 				fileStream = new FileStream(fileName, FileMode.Create);
