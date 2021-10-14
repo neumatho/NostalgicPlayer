@@ -281,6 +281,18 @@
             <uap:DisplayName>SoundFX</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="mpegfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/mpeg">.mp1</uap:FileType>
+              <uap:FileType ContentType="audio/mpeg">.mp2</uap:FileType>
+              <uap:FileType ContentType="audio/mpeg">.mp3</uap:FileType>
+              <uap:FileType ContentType="audio/mpeg">.m2a</uap:FileType>
+              <uap:FileType ContentType="audio/mpeg">.mpg</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>MPEG Audio</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

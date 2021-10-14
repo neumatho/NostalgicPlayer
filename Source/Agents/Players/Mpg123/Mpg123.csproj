@@ -1,0 +1,70 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>Polycode.NostalgicPlayer.Agent.Player.Mpg123</RootNamespace>
+    <Authors>Thomas Neumann</Authors>
+    <Company>Polycode</Company>
+    <Product>NostalgicPlayer</Product>
+    <Description>Plays audio mpeg files with layer 1/2/3 using Mpg123 library</Description>
+    <Copyright>Copyright © 2021</Copyright>
+    <Platforms>x86;x64</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <DocumentationFile>bin\Mpg123.xml</DocumentationFile>
+    <DefineConstants>TRACE;X64</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <DocumentationFile>bin\Mpg123.xml</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+    <DocumentationFile>bin\Mpg123.xml</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <DocumentationFile>bin\Mpg123.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(Platform)'=='x64'">
+    <None Include="..\..\..\3rdParty\Mpg123\libmpg123-x64.dll" Link="libs\libmpg123-x64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+	<ItemGroup Condition="'$(Platform)'=='x86'">
+		<None Include="..\..\..\3rdParty\Mpg123\libmpg123-x86.dll" Link="lib\libmpg123-x86.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+    <ProjectReference Include="..\..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="libs\" />
+  </ItemGroup>
+
+</Project>
