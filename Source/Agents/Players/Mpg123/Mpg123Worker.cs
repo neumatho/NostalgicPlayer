@@ -91,10 +91,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 
 
 		/********************************************************************/
-			/// <summary>
-			/// Test the file to see if it could be identified
-			/// </summary>
-			/********************************************************************/
+		/// <summary>
+		/// Test the file to see if it could be identified
+		/// </summary>
+		/********************************************************************/
 		public override AgentResult Identify(PlayerFileInfo fileInfo)
 		{
 			// Check the module
@@ -673,6 +673,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 			{
 				// Read one block
 				int bytesRead = moduleStream.Read(chkBuf, 0, CheckBufSize);
+				if (bytesRead == 0)
+					return ModuleType.Unknown;
 
 				// Check the read block to see if it only contains zeros
 				for (int i = 0; i < bytesRead; i++)
