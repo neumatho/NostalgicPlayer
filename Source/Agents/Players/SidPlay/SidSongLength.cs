@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
+using Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidPlayFp;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
@@ -89,15 +89,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// with song lengths or null if not found
 		/// </summary>
 		/********************************************************************/
-		public List<TimeSpan> GetSongLengths(byte[] data)
+		public List<TimeSpan> GetSongLengths(SidTune sidTune)
 		{
 			// Check if database is loaded
 			if (lookupList == null)
 				return null;
 
-			// First calculate the MD5 hash
-			MD5 md5 = MD5.Create();
-			string hash = Helpers.ToHex(md5.ComputeHash(data));
+			// Calculate the MD5 hash
+			byte[] md5 = sidTune.CreateMD5New();
+			if (md5 == null)
+				return null;
+
+			string hash = Helpers.ToHex(md5);
 
 			if (lookupList.TryGetValue(hash, out List<TimeSpan> lengths))
 				return lengths;

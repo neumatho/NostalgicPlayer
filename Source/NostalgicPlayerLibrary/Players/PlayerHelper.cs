@@ -26,8 +26,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			for (int i = 0; playerAgent.GetInformationString(i, out string description, out string value); i++)
 			{
 				// Make sure we don't have any invalid characters
-				description = description.Replace("\t", " ").Replace("\n", " ").Replace("\r", string.Empty);
-				value = value.Replace("\t", " ").Replace("\n", " ").Replace("\r", string.Empty);
+				description = string.IsNullOrEmpty(description) ? string.Empty : description.Replace("\t", " ").Replace("\n", " ").Replace("\r", string.Empty);
+				value = string.IsNullOrEmpty(value) ? string.Empty : value.Replace("\t", " ").Replace("\n", " ").Replace("\r", string.Empty);
 
 				// Build the information in the list
 				yield return $"{description}\t{value}";

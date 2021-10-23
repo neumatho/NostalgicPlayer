@@ -71,12 +71,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Original player by Simon White.
+        ///   Looks up a localized string similar to Original player by
+        ///2000-2001 Simon White.
+        ///2007-2010 Antti Lankila.
+        ///2010-2021 Leandro Nini.
         ///SID emulator (reSID) by Dag Lem.
         ///C64 font by Style.
-        ///Ported to NostalgicPlayer by Thomas Neumann.
+        ///Ported to C# by Thomas Neumann.
         ///
-        ///This player emulates the Commodore 64 CPU (6510) and soundchip (6581/8580) so it is able to play the good old music from the games etc. The player has been ported to C# and is based on SidPlay2..
+        ///This player emulates the Commodore 64 components, including the CPU (6510), CIA, VIC II and sound chip (6581/8580), so it is able to play the good old music from the games etc.
+        ///
+        ///The player has been ported to C# and is based on the libsidplayfp library started by Michael Schwendt and continued by Simon White. Later on, the co [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string IDS_SID_DESCRIPTION {
             get {
@@ -85,12 +90,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Original player by Simon White.
+        ///   Looks up a localized string similar to Original player by
+        ///2000-2001 Simon White.
+        ///2007-2010 Antti Lankila.
+        ///2010-2021 Leandro Nini.
         ///SID emulator (reSID) by Dag Lem.
         ///C64 font by Style.
-        ///Ported to NostalgicPlayer by Thomas Neumann.
+        ///Ported to C# by Thomas Neumann.
         ///
-        ///SID modules contains tunes and sound effects from the good old Commodore 64. This player is based on the SidPlay2 program by Michael Schwendt and Simon White. The behaviour of the SID player can be changed with the SID settings..
+        ///SID modules contains tunes and sound effects from the good old Commodore 64.  The behaviour of the SID player can be changed with the SID settings..
         /// </summary>
         internal static string IDS_SID_DESCRIPTION_AGENT1 {
             get {
@@ -99,47 +107,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Bank switching.
+        ///   Looks up a localized string similar to 2nd file contains invalid data.
         /// </summary>
-        internal static string IDS_SID_ENV_BS {
+        internal static string IDS_SID_ERR_2ND_INVALID {
             get {
-                return ResourceManager.GetString("IDS_SID_ENV_BS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to PlaySID-specific rips.
-        /// </summary>
-        internal static string IDS_SID_ENV_PS {
-            get {
-                return ResourceManager.GetString("IDS_SID_ENV_PS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Real C64.
-        /// </summary>
-        internal static string IDS_SID_ENV_R {
-            get {
-                return ResourceManager.GetString("IDS_SID_ENV_R", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Transparent ROM.
-        /// </summary>
-        internal static string IDS_SID_ENV_TP {
-            get {
-                return ResourceManager.GetString("IDS_SID_ENV_TP", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sidusage Tracker Mode.
-        /// </summary>
-        internal static string IDS_SID_ENV_TR {
-            get {
-                return ResourceManager.GetString("IDS_SID_ENV_TR", resourceCulture);
+                return ResourceManager.GetString("IDS_SID_ERR_2ND_INVALID", resourceCulture);
             }
         }
         
@@ -162,20 +134,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot open extra file with name: {0}.
+        ///   Looks up a localized string similar to Could not load input file.
         /// </summary>
-        internal static string IDS_SID_ERR_CANNOT_OPEN_EXTRA_FILE {
+        internal static string IDS_SID_ERR_CANT_LOAD_FILE {
             get {
-                return ResourceManager.GetString("IDS_SID_ERR_CANNOT_OPEN_EXTRA_FILE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Trying to configure player whilst active.
-        /// </summary>
-        internal static string IDS_SID_ERR_CONF_WHILST_ACTIVE {
-            get {
-                return ResourceManager.GetString("IDS_SID_ERR_CONF_WHILST_ACTIVE", resourceCulture);
+                return ResourceManager.GetString("IDS_SID_ERR_CANT_LOAD_FILE", resourceCulture);
             }
         }
         
@@ -185,6 +148,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         internal static string IDS_SID_ERR_CORRUPT {
             get {
                 return ResourceManager.GetString("IDS_SID_ERR_CORRUPT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: Unable to create emulator.
+        /// </summary>
+        internal static string IDS_SID_ERR_CREATE_OBJECT {
+            get {
+                return ResourceManager.GetString("IDS_SID_ERR_CREATE_OBJECT", resourceCulture);
             }
         }
         
@@ -216,25 +188,52 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Illegal instruction executed.
+        /// </summary>
+        internal static string IDS_SID_ERR_ILLEGAL_INST {
+            get {
+                return ResourceManager.GetString("IDS_SID_ERR_ILLEGAL_INST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to File contains invalid data.
         /// </summary>
-        internal static string IDS_SID_ERR_INVALID_DATA {
+        internal static string IDS_SID_ERR_INVALID {
             get {
-                return ResourceManager.GetString("IDS_SID_ERR_INVALID_DATA", resourceCulture);
+                return ResourceManager.GetString("IDS_SID_ERR_INVALID", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid module header.
+        ///   Looks up a localized string similar to Invalid chip model.
         /// </summary>
-        internal static string IDS_SID_ERR_LOADING_HEADER {
+        internal static string IDS_SID_ERR_INVALID_CHIP {
             get {
-                return ResourceManager.GetString("IDS_SID_ERR_LOADING_HEADER", resourceCulture);
+                return ResourceManager.GetString("IDS_SID_ERR_INVALID_CHIP", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No available SIDs to lock.
+        ///   Looks up a localized string similar to Invalid sampling method.
+        /// </summary>
+        internal static string IDS_SID_ERR_INVALID_SAMPLING {
+            get {
+                return ResourceManager.GetString("IDS_SID_ERR_INVALID_SAMPLING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No errors.
+        /// </summary>
+        internal static string IDS_SID_ERR_NO_ERRORS {
+            get {
+                return ResourceManager.GetString("IDS_SID_ERR_NO_ERRORS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}: No available SIDs to lock.
         /// </summary>
         internal static string IDS_SID_ERR_NO_SIDS {
             get {
@@ -254,9 +253,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         /// <summary>
         ///   Looks up a localized string similar to Info file does not contain required strings.
         /// </summary>
-        internal static string IDS_SID_ERR_NO_STRINGS {
+        internal static string IDS_SID_ERR_NO_STRINGS1 {
             get {
-                return ResourceManager.GetString("IDS_SID_ERR_NO_STRINGS", resourceCulture);
+                return ResourceManager.GetString("IDS_SID_ERR_NO_STRINGS1", resourceCulture);
             }
         }
         
@@ -290,18 +289,36 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         /// <summary>
         ///   Looks up a localized string similar to Size of music data exceeds C64 memory.
         /// </summary>
-        internal static string IDS_SID_ERR_TOO_BIG {
+        internal static string IDS_SID_ERR_TOO_BIG1 {
             get {
-                return ResourceManager.GetString("IDS_SID_ERR_TOO_BIG", resourceCulture);
+                return ResourceManager.GetString("IDS_SID_ERR_TOO_BIG1", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to SID file is truncated.
+        ///   Looks up a localized string similar to File is most likely truncated.
         /// </summary>
         internal static string IDS_SID_ERR_TRUNCATED {
             get {
                 return ResourceManager.GetString("IDS_SID_ERR_TRUNCATED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported PSID version.
+        /// </summary>
+        internal static string IDS_SID_ERR_UNKNOWN_PSID {
+            get {
+                return ResourceManager.GetString("IDS_SID_ERR_UNKNOWN_PSID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unsupported RSID version.
+        /// </summary>
+        internal static string IDS_SID_ERR_UNKNOWN_RSID {
+            get {
+                return ResourceManager.GetString("IDS_SID_ERR_UNKNOWN_RSID", resourceCulture);
             }
         }
         
@@ -315,20 +332,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unsupported sample precision.
+        ///   Looks up a localized string similar to Unable to set desired output frequency.
         /// </summary>
-        internal static string IDS_SID_ERR_UNSUPPORTED_PRECISION {
+        internal static string IDS_SID_ERR_UNSUPPORTED_OUTPUT_FREQ {
             get {
-                return ResourceManager.GetString("IDS_SID_ERR_UNSUPPORTED_PRECISION", resourceCulture);
+                return ResourceManager.GetString("IDS_SID_ERR_UNSUPPORTED_OUTPUT_FREQ", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Raw plus PlaySID icon tool type file (INFO).
+        ///   Looks up a localized string similar to Unsupported SID address.
         /// </summary>
-        internal static string IDS_SID_FORMAT_INFO {
+        internal static string IDS_SID_ERR_UNSUPPORTED_SID_ADDR {
             get {
-                return ResourceManager.GetString("IDS_SID_FORMAT_INFO", resourceCulture);
+                return ResourceManager.GetString("IDS_SID_ERR_UNSUPPORTED_SID_ADDR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Size of music data exceeds C64 memory.
+        /// </summary>
+        internal static string IDS_SID_ERR_UNSUPPORTED_SIZE {
+            get {
+                return ResourceManager.GetString("IDS_SID_ERR_UNSUPPORTED_SIZE", resourceCulture);
             }
         }
         
@@ -356,15 +382,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         internal static string IDS_SID_FORMAT_RSID {
             get {
                 return ResourceManager.GetString("IDS_SID_FORMAT_RSID", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Raw plus SIDPLAY ASCII text file (SID).
-        /// </summary>
-        internal static string IDS_SID_FORMAT_SID {
-            get {
-                return ResourceManager.GetString("IDS_SID_FORMAT_SID", resourceCulture);
             }
         }
         
@@ -455,15 +472,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         internal static string IDS_SID_INFODESCLINE8 {
             get {
                 return ResourceManager.GetString("IDS_SID_INFODESCLINE8", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Environment:.
-        /// </summary>
-        internal static string IDS_SID_INFODESCLINE9 {
-            get {
-                return ResourceManager.GetString("IDS_SID_INFODESCLINE9", resourceCulture);
             }
         }
         
@@ -572,15 +580,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         internal static string IDS_SID_SPEED_VBI {
             get {
                 return ResourceManager.GetString("IDS_SID_SPEED_VBI", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;?&gt;.
-        /// </summary>
-        internal static string IDS_SID_UNKNOWN_INFO {
-            get {
-                return ResourceManager.GetString("IDS_SID_UNKNOWN_INFO", resourceCulture);
             }
         }
     }

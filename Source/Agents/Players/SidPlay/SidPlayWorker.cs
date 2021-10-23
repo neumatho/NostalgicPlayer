@@ -10,12 +10,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
+using System.Threading;
+using Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.Builders;
+using Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidPlayFp;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSid;
-using Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.Builder;
-using Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.Containers;
-using Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.Event;
-using Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.Interfaces;
-using Polycode.NostalgicPlayer.Agent.Player.SidPlay.SidPlay2.SidTune;
+using Polycode.NostalgicPlayer.Agent.Player.SidPlay.Roms;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
@@ -27,92 +26,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 	/// </summary>
 	internal class SidPlayWorker : ModulePlayerAgentBase, IAgentSettingsRegistrar
 	{
-		#region DurationHandler class
-		/// <summary>
-		/// This class is used to handle position change
-		/// when a duration is known for the current module
-		/// </summary>
-		private class DurationHandler : Event
-		{
-			private readonly SidPlayWorker parent;
-
-			private readonly SidIPtr<ISidTimer> engineTimer;
-			private readonly IEventContext ctx;
-
-			private readonly int totalSeconds;
-			private uint startTime;
-			private int previousPercent;
-
-			/********************************************************************/
-			/// <summary>
-			/// Constructor
-			/// </summary>
-			/********************************************************************/
-			public DurationHandler(SidPlayWorker parent, TimeSpan totalTime) : base("DurationHandler")
-			{
-				this.parent = parent;
-
-				engineTimer = new SidIPtr<ISidTimer>(parent.engine);
-				ctx = parent.engine.Obj.GetInfo().EventContext;
-
-				totalSeconds = (int)totalTime.TotalSeconds;
-				startTime = 0;
-				previousPercent = 0;
-			}
-
-
-
-			/********************************************************************/
-			/// <summary>
-			/// This is called for every second and will tell NostalgicPlayer
-			/// to update the position when needed
-			/// </summary>
-			/********************************************************************/
-			public override void DoEvent()
-			{
-				int seconds = (int)((engineTimer.Obj.Time() - startTime) / engineTimer.Obj.TimeBase());
-
-				// Calculate the percent of how long that has been heard so far
-				int percent = seconds * 100 / totalSeconds;
-				if (percent != previousPercent)
-				{
-					if (percent >= 100)
-					{
-						percent = 0;
-						startTime = engineTimer.Obj.Time();
-
-						parent.OnEndReached();
-					}
-
-					previousPercent = percent;
-					parent.songPosition = percent;
-
-					parent.OnPositionChanged();
-				}
-
-				// Units in C64 clock cycles
-				ctx.Schedule(this, 900000, EventPhase.ClockPhi1);
-			}
-		}
-		#endregion
-
 		private const int BufferSize = 2048;
 
 		private SidTune sidTune;
 
-		private SidIPtr<ISidPlay2> engine;
-		private SidLazyIPtr<ISidUnknown> sidBuilder;
+		private SidPlayFp engine;
 
-		private Sid2Config engineConfig;
+		private SidConfig engineConfig;
 
-		private sbyte[] leftOutputBuffer;
-		private sbyte[] rightOutputBuffer;
+		private short[] leftOutputBuffer;
+		private short[] rightOutputBuffer;
 
 		private bool firstTime;
 
 		private bool haveDuration;
 		private int songPosition;
-		private DurationHandler durationHandler;
+		private Timer durationTimer;
+		private uint_least32_t startTime;
+		private int previousPercent;
 
 		private SidPlaySettings settings;
 		private static readonly SidStil sidStil = new SidStil();
@@ -126,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		[System.Runtime.InteropServices.DllImport("gdi32.dll")]
 		private static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont, IntPtr pdv, [System.Runtime.InteropServices.In] ref uint pcFonts);
 
-		private readonly PrivateFontCollection fonts = new PrivateFontCollection();
+		private PrivateFontCollection fonts;
 		private Font commentFont;
 
 		#region IAgentSettingsRegistrar implementation
@@ -147,7 +78,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "sid", "c64", "info", "mus", "str" };
+		public override string[] FileExtensions => new [] { "sid", "c64", "mus", "str" };
 
 
 
@@ -158,18 +89,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/********************************************************************/
 		public override AgentResult Identify(PlayerFileInfo fileInfo)
 		{
-			// Check the module
-			SidTune temp = new SidTune();
+			// Load the tune
+			SidTune temp = new SidTune(fileInfo);
 
-			if (temp.Test(fileInfo))
-			{
-				// Found a known format, remember the SidTune for loading
-				sidTune = temp;
+			// Check if the tune is valid
+			if (temp.GetStatus() == SidTune.Status.Unrecognized)
+				return AgentResult.Unknown;
 
-				return AgentResult.Ok;
-			}
+			// Found a known format, remember the SidTune.
+			//
+			// Note that there could be load errors here, but
+			// that will be caught in the Load() method
+			sidTune = temp;
 
-			return AgentResult.Unknown;
+			return AgentResult.Ok;
 		}
 
 
@@ -179,7 +112,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Return the name of the module
 		/// </summary>
 		/********************************************************************/
-		public override string ModuleName => sidTune.GetInfo().Title;
+		public override string ModuleName => sidTune.GetInfo().InfoString(0);
 
 
 
@@ -188,7 +121,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Return the name of the author
 		/// </summary>
 		/********************************************************************/
-		public override string Author => sidTune.GetInfo().Author;
+		public override string Author => sidTune.GetInfo().InfoString(1);
 
 
 
@@ -210,7 +143,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		{
 			get
 			{
-				if (!sidTune.GetInfo().MusPlayer)
+				if (!sidTune.GetInfo().IsMusFormat())
 					return null;
 
 				if (commentFont == null)
@@ -221,6 +154,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 					System.Runtime.InteropServices.Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
 
 					uint dummy = 0;
+					fonts = new PrivateFontCollection();
 					fonts.AddMemoryFont(fontPtr, Resources.C64_Pro_Mono_STYLE.Length);
 					AddFontMemResourceEx(fontPtr, (uint)Resources.C64_Pro_Mono_STYLE.Length, IntPtr.Zero, ref dummy);
 
@@ -261,8 +195,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/********************************************************************/
 		public override bool GetInformationString(int line, out string description, out string value)
 		{
-			SidTuneInfo info = sidTune.GetInfo();
-			Sid2Info emulationInfo = engine.Obj.GetInfo();
+			SidTuneInfo tuneInfo = sidTune.GetInfo();
+			SidInfo engineInfo = engine.Info();
 
 			// Find out which line to take
 			switch (line)
@@ -271,7 +205,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				case 0:
 				{
 					description = Resources.IDS_SID_INFODESCLINE0;
-					value = info.Released;
+					value = tuneInfo.InfoString(2);
 					break;
 				}
 
@@ -279,7 +213,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				case 1:
 				{
 					description = Resources.IDS_SID_INFODESCLINE1;
-					value = info.FormatString;
+					value = tuneInfo.FormatString();
 					break;
 				}
 
@@ -287,7 +221,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				case 2:
 				{
 					description = Resources.IDS_SID_INFODESCLINE2;
-					value = string.Format("${0:X4} - ${1:X4}", info.LoadAddr, info.LoadAddr + info.C64DataLen - 1);
+					value = string.Format("${0:X4} - ${1:X4}", tuneInfo.LoadAddr(), tuneInfo.LoadAddr() + tuneInfo.C64DataLen() - 1);
 					break;
 				}
 
@@ -295,7 +229,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				case 3:
 				{
 					description = Resources.IDS_SID_INFODESCLINE3;
-					value = "0x" + info.InitAddr.ToString("X4");
+					value = "0x" + tuneInfo.InitAddr().ToString("X4");
 					break;
 				}
 
@@ -303,7 +237,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				case 4:
 				{
 					description = Resources.IDS_SID_INFODESCLINE4;
-					value = "0x" + info.PlayAddr.ToString("X4");
+					value = "0x" + tuneInfo.PlayAddr().ToString("X4");
 					break;
 				}
 
@@ -312,10 +246,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				{
 					description = Resources.IDS_SID_INFODESCLINE5;
 
-					if (info.RelocStartPage == 0)
+					if (tuneInfo.RelocStartPage() == 0)
 						value = Resources.IDS_SID_NOT_PRESENT;
 					else
-						value = string.Format("${0:X2}00 - ${1:X2}FF", info.RelocStartPage, info.RelocStartPage + info.RelocPages - 1);
+						value = string.Format("${0:X2}00 - ${1:X2}FF", tuneInfo.RelocStartPage(), tuneInfo.RelocStartPage() + tuneInfo.RelocPages() - 1);
 
 					break;
 				}
@@ -325,10 +259,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				{
 					description = Resources.IDS_SID_INFODESCLINE6;
 
-					if (emulationInfo.DriverAddr == 0)
+					if (engineInfo.DriverAddr() == 0)
 						value = Resources.IDS_SID_NOT_PRESENT;
 					else
-						value = string.Format("${0:X4} - ${1:X4}", emulationInfo.DriverAddr, emulationInfo.DriverAddr + emulationInfo.DriverLength - 1);
+						value = string.Format("${0:X4} - ${1:X4}", engineInfo.DriverAddr(), engineInfo.DriverAddr() + engineInfo.DriverLength() - 1);
 
 					break;
 				}
@@ -337,7 +271,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				case 7:
 				{
 					description = Resources.IDS_SID_INFODESCLINE7;
-					value = info.SidModel1 == SidModel._8580 ? "8580" : "6581";
+					value = engineInfo.SidModel() == SidConfig.sid_model_t.MOS8580 ? "8580" : "6581";
 					break;
 				}
 
@@ -345,48 +279,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				case 8:
 				{
 					description = Resources.IDS_SID_INFODESCLINE8;
-					value = info.SpeedString;
-					break;
-				}
-
-				// Environment
-				case 9:
-				{
-					description = Resources.IDS_SID_INFODESCLINE9;
-
-					switch (emulationInfo.Environment)
-					{
-						case Sid2Env.EnvPs:
-						{
-							value = Resources.IDS_SID_ENV_PS;
-							break;
-						}
-
-						case Sid2Env.EnvTp:
-						{
-							value = Resources.IDS_SID_ENV_TP;
-							break;
-						}
-
-						case Sid2Env.EnvBs:
-						{
-							value = Resources.IDS_SID_ENV_BS;
-							break;
-						}
-
-						case Sid2Env.EnvR:
-						{
-							value = Resources.IDS_SID_ENV_R;
-							break;
-						}
-
-						case Sid2Env.EnvTr:
-						default:
-						{
-							value = Resources.IDS_SID_ENV_TR;
-							break;
-						}
-					}
+					value = engineInfo.SpeedString();
 					break;
 				}
 
@@ -420,22 +313,34 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/********************************************************************/
 		public override AgentResult Load(PlayerFileInfo fileInfo, out string errorMessage)
 		{
+			// Because the module is loaded in the Identify() method, we check
+			// here if it failed and return the error if so
+			if (sidTune.GetStatus() == SidTune.Status.Error)
+			{
+				errorMessage = sidTune.StatusString();
+				return AgentResult.Error;
+			}
+
 			errorMessage = string.Empty;
 
 			try
 			{
-				sidTune.Load(fileInfo, out errorMessage);
-				if (!string.IsNullOrEmpty(errorMessage))
-					return AgentResult.Error;
-
 				settings = new SidPlaySettings();
 
-				comments = sidTune.GetInfo().Comment;
-				if (comments == null)
+				SidTuneInfo tuneInfo = sidTune.GetInfo();
+
+				comments = new List<string>();
+
+				uint commentCount = tuneInfo.NumberOfCommentStrings();
+				if (commentCount > 0)
+				{
+					// Tune have it's own comments, so use those
+					for (uint i = 0; i < commentCount; i++)
+						comments.Add(tuneInfo.CommentString(i));
+				}
+				else
 				{
 					// Load STIL info if enabled
-					comments = new List<string>();
-
 					if (!string.IsNullOrWhiteSpace(settings.HvscPath.Trim()))
 					{
 						if (settings.StilEnabled || settings.BugListEnabled)
@@ -487,9 +392,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				}
 
 				// Set lyrics
-				lyrics = sidTune.GetInfo().Lyrics;
-				if (lyrics == null)
-					lyrics = new List<string>();
+				lyrics = new List<string>();
+
+				uint lyricsCount = tuneInfo.NumberOfLyricsStrings();
+				if (lyricsCount > 0)
+				{
+					// Retrieve the lyrics
+					for (uint i = 0; i < lyricsCount; i++)
+						lyrics.Add(tuneInfo.LyricsString(i));
+				}
 			}
 			catch (Exception)
 			{
@@ -510,84 +421,63 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/********************************************************************/
 		public override bool InitPlayer(out string errorMessage)
 		{
-			engine = new SidIPtr<ISidPlay2>(SidPlay2.Player.Create());
+			engine = new SidPlayFp();
 
-			// Set configuration
-			engineConfig = engine.Obj.Configuration;
+			// Add ROMs
+			engine.SetRoms(Kernal.Data, Basic.Data, Character.Data);
 
-			engineConfig.SampleFormat = Sid2Sample.LittleSigned;
-			engineConfig.Precision = 16;
-			engineConfig.PlayBack = Sid2PlayBack.Stereo;
+			// Get default configuration
+			engineConfig = new SidConfig();
 
-			switch (settings.MemoryModel)
-			{
-				case SidPlaySettings.Environment.PlaySid:
-				{
-					engineConfig.Environment = Sid2Env.EnvPs;
-					break;
-				}
+			// Set sampling method
+			engineConfig.samplingMethod = SidConfig.sampling_method_t.INTERPOLATE;
+			engineConfig.fastSampling = true;
+			engineConfig.playback = SidConfig.playback_t.STEREO;
 
-				case SidPlaySettings.Environment.Transparent:
-				{
-					engineConfig.Environment = Sid2Env.EnvTp;
-					break;
-				}
-
-				case SidPlaySettings.Environment.FullBank:
-				{
-					engineConfig.Environment = Sid2Env.EnvBs;
-					break;
-				}
-
-				case SidPlaySettings.Environment.Real:
-				{
-					engineConfig.Environment = Sid2Env.EnvR;
-					break;
-				}
-			}
-
+			// Setup our configuration
 			switch (settings.ClockSpeed)
 			{
 				case SidPlaySettings.Clock.Pal:
 				{
-					engineConfig.ClockDefault = Sid2Clock.Pal;
+					engineConfig.defaultC64Model = SidConfig.c64_model_t.PAL;
 					break;
 				}
 
 				case SidPlaySettings.Clock.Ntsc:
 				{
-					engineConfig.ClockDefault = Sid2Clock.Ntsc;
+					engineConfig.defaultC64Model = SidConfig.c64_model_t.NTSC;
 					break;
 				}
 			}
 
 			if (settings.ClockSpeedOption == SidPlaySettings.ClockOption.Always)
-			{
-				engineConfig.ClockSpeed = engineConfig.ClockDefault;
-				engineConfig.ClockForced = true;
-			}
+				engineConfig.forceC64Model = true;
+			else
+				engineConfig.forceC64Model = false;
 
 			switch (settings.SidModel)
 			{
 				case SidPlaySettings.Model.Mos6581:
 				{
-					engineConfig.SidDefault = Sid2Model.Mos6581;
+					engineConfig.defaultSidModel = SidConfig.sid_model_t.MOS6581;
 					break;
 				}
 
 				case SidPlaySettings.Model.Mos8580:
 				{
-					engineConfig.SidDefault = Sid2Model.Mos8580;
+					engineConfig.defaultSidModel = SidConfig.sid_model_t.MOS8580;
 					break;
 				}
 			}
 
 			if (settings.SidModelOption == SidPlaySettings.ModelOption.Always)
-				engineConfig.SidModel = engineConfig.SidDefault;
+				engineConfig.forceSidModel = true;
+			else
+				engineConfig.forceSidModel = false;
 
 			// Allocate output buffer
-			leftOutputBuffer = new sbyte[BufferSize];
-			rightOutputBuffer = new sbyte[BufferSize];
+			leftOutputBuffer = new short[BufferSize];
+			rightOutputBuffer = new short[BufferSize];
 
 			return base.InitPlayer(out errorMessage);
 		}
@@ -613,14 +503,25 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/********************************************************************/
 		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
+			// Select sub-song to play
 			sidTune.SelectSong((ushort)(songNumber + 1));
 
-			engine.Obj.Load(sidTune);
-
-			CreateSidEmulation();
+			if (!CreateSidEmulation(out errorMessage))
+				return false;
 
 			// Configure engine with settings
-			engine.Obj.Configuration = engineConfig;
+			if (!engine.Config(engineConfig))
+			{
+				errorMessage = engine.Error();
+				return false;
+			}
+
+			// Load tune into engine
+			if (!engine.Load(sidTune))
+			{
+				errorMessage = engine.Error();
+				return false;
+			}
 
 			firstTime = true;
 			songPosition = 0;
@@ -628,10 +529,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			// Create duration handler if needed
 			if (haveDuration)
 			{
-				durationHandler = new DurationHandler(this, durationInfo.TotalTime);
+				startTime = 0;
+				previousPercent = 0;
 
-				// Start a schedule
-				durationHandler.DoEvent();
+				durationTimer = new Timer(DurationTimerHandler, durationInfo.TotalTime, 0, 900);
 			}
 
 			return base.InitSound(songNumber, durationInfo, out errorMessage);
@@ -646,10 +547,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/********************************************************************/
 		public override void CleanupSound()
 		{
-			if (engine != null)
-				engine.Obj.Stop();
+			if (durationTimer != null)
+			{
+				durationTimer.Dispose();
+				durationTimer = null;
+			}
 
-			durationHandler = null;
+			if (engine != null)
+				engine.Stop();
 		}
 
 
@@ -663,7 +568,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		{
 			haveDuration = false;
 
-			List<TimeSpan> songLengths = sidSongLength.GetSongLengths(sidTune.GetLoadedFile());
+			List<TimeSpan> songLengths = sidSongLength.GetSongLengths(sidTune);
 			if (songLengths == null)
 				return null;
 
@@ -688,26 +593,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			if (firstTime)
 			{
 				// Change the module info
-				OnModuleInfoChanged(InfoClockSpeedLine, sidTune.GetInfo().SpeedString);
+				OnModuleInfoChanged(InfoClockSpeedLine, engine.Info().SpeedString());
 
 				firstTime = false;
 			}
 
 			// Run the emulators and fill out the output buffer
-			engine.Obj.Play(leftOutputBuffer, rightOutputBuffer, BufferSize);
+			engine.Play(leftOutputBuffer, rightOutputBuffer, BufferSize);
 
 			// Setup the NostalgicPlayer channel
 			IChannel channel = VirtualChannels[0];
 
-			channel.PlaySample(leftOutputBuffer, 0, BufferSize / 2, 16);
-			channel.SetFrequency(engineConfig.Frequency);
+			channel.PlaySample(leftOutputBuffer, 0, BufferSize, 16);
+			channel.SetFrequency(engineConfig.frequency);
 			channel.SetVolume(256);
 			channel.SetPanning((ushort)ChannelPanning.Left);
 
 			channel = VirtualChannels[1];
 
-			channel.PlaySample(rightOutputBuffer, 0, BufferSize / 2, 16);
-			channel.SetFrequency(engineConfig.Frequency);
+			channel.PlaySample(rightOutputBuffer, 0, BufferSize, 16);
+			channel.SetFrequency(engineConfig.frequency);
 			channel.SetVolume(256);
 			channel.SetPanning((ushort)ChannelPanning.Right);
 		}
@@ -734,7 +639,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			{
 				SidTuneInfo info = sidTune.GetInfo();
 
-				return new SubSongInfo(info.Songs, info.StartSong - 1);
+				return new SubSongInfo((int)info.Songs(), (int)info.StartSong() - 1);
 			}
 		}
 
@@ -779,10 +684,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			leftOutputBuffer = null;
 			rightOutputBuffer = null;
 
-			sidBuilder = null;
 			engine = null;
 			sidTune = null;
 
+			engineConfig = null;
 			settings = null;
 		}
 
@@ -793,47 +698,67 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Creates and initialize the SID emulation
 		/// </summary>
 		/********************************************************************/
-		private void CreateSidEmulation()
+		private bool CreateSidEmulation(out string errorMessage)
 		{
-			if (sidBuilder != null)
-			{
-				// Remove old emulation
-				engineConfig.SidEmulation = null;
-				engine.Obj.Configuration = engineConfig;
+			// Set up a SID builder
+			SidBuilder sidBuilder = new ReSidBuilder();
 
-				sidBuilder = null;
+			// Check if the builder is ok
+			if (!sidBuilder.GetStatus())
+			{
+				errorMessage = sidBuilder.Error();
+				return false;
 			}
 
-			sidBuilder = new SidLazyIPtr<ISidUnknown>(CoReSidBuilder.Create(string.Empty));
-			SidLazyIPtr<IReSidBuilder> rs = new SidLazyIPtr<IReSidBuilder>(sidBuilder);
+			// Get the number of SIDs supported by the engine
+			uint maxSids = engine.Info().MaxSids();
 
-			if ((rs.Obj != null) && rs.Obj.IsOk)
+			// Create the SID emulators
+			sidBuilder.Create(maxSids);
+
+			// Check if the builder is ok
+			if (!sidBuilder.GetStatus())
 			{
-				ISidUnknown emulation = rs.Obj.IUnknown();
+				errorMessage = sidBuilder.Error();
+				return false;
+			}
 
-				// Setup the emulation
-				rs.Obj.Create(engine.Obj.GetInfo().MaxSids);
-				if (!rs.Obj.IsOk)
-					throw new Exception(rs.Obj.Error);
+			if (!SetEmulationSettings(sidBuilder, out errorMessage))
+				return false;
 
-				rs.Obj.Filter(settings.FilterEnabled);
-				if (!rs.Obj.IsOk)
-					throw new Exception(rs.Obj.Error);
+			engineConfig.sidEmulation = sidBuilder;
 
-				rs.Obj.Sampling(engineConfig.Frequency);
-				if (!rs.Obj.IsOk)
-					throw new Exception(rs.Obj.Error);
+			return true;
+		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set specific emulator settings
+		/// </summary>
+		/********************************************************************/
+		private bool SetEmulationSettings(SidBuilder sidBuilder, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			// Setup filter
+			sidBuilder.Filter(settings.FilterEnabled);
+
+			if (sidBuilder is ReSidBuilder reSidBuilder)
+			{
 				// Setup filter definition
 				if (settings.FilterEnabled && (settings.Filter == SidPlaySettings.FilterOption.Custom))
 				{
-					rs.Obj.Filter(ProvideFilter(settings.FilterFs, settings.FilterFm, settings.FilterFt));
-					if (!rs.Obj.IsOk)
-						throw new Exception(rs.Obj.Error);
+					if (!reSidBuilder.Filter(ProvideFilter(settings.FilterFs, settings.FilterFm, settings.FilterFt)))
+					{
+						errorMessage = Resources.IDS_SID_ERR_FILTER_DEFINITION;
+						return false;
+					}
 				}
-
-				engineConfig.SidEmulation = emulation;
 			}
+
+			return true;
 		}
 
 
@@ -869,6 +794,36 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			}
 
 			return cutoff;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called every second to check if the song has reached the end
+		/// </summary>
+		/********************************************************************/
+		private void DurationTimerHandler(object stateInfo)
+		{
+			uint_least32_t seconds = engine.Time() - startTime;
+
+			// Calculate the percent of how long that has been heard so far
+			int percent = (int)(seconds * 100 / ((TimeSpan)stateInfo).TotalSeconds);
+			if (percent != previousPercent)
+			{
+				if (percent >= 100)
+				{
+					percent = 0;
+					startTime = seconds;
+
+					OnEndReached();
+				}
+
+				previousPercent = percent;
+				songPosition = percent;
+
+				OnPositionChanged();
+			}
 		}
 		#endregion
 	}

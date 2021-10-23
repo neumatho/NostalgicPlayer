@@ -46,6 +46,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSid
 
 		// Fixpoint constants (16.6 bits)
 		private const int FixpShift = 16;
+		private const int FixpMask = 0xffff;
 
 		// Sampling variables
 		private SamplingMethod sampling;
@@ -417,6 +418,59 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSid
 
 		/********************************************************************/
 		/// <summary>
+		/// SID clocking with audio sampling.
+		/// Fixpoint arithmetics is used.
+		///
+		/// The example below shows how to clock the SID a specified amount
+		/// of cycles while producing audio output:
+		///
+		/// while (delta_t) {
+		///   bufindex += sid.clock(delta_t, buf + bufindex, buflength - bufindex);
+		///   write(dsp, buf, bufindex*2);
+		///   bufindex = 0;
+		/// }
+		/// </summary>
+		/********************************************************************/
+		public int Clock(int delta, short[] buf, int offset, int n, int interleave = 1)
+		{
+			switch (sampling)
+			{
+				default:
+				case SamplingMethod.Fast:
+					return ClockFast(delta, buf, offset, n, interleave);
+
+/*				case SamplingMethod.Interpolate:
+					return ClockInterpolate(delta, buf, offset, n, interleave);
+
+				case SamplingMethod.ResampleInterpolate:
+					return ClockResampleInterpolate(delta, buf, offset, n, interleave);
+
+				case SamplingMethod.ResampleFast:
+					return ClockResampleFast(delta, buf, offset, n, interleave);
+*/			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Write 16-bit sample to audio input.
+		/// NB! The caller is responsible for keeping the value within 16
+		/// bits. Note that to mix in an external audio signal, the signal
+		/// should be resampled to 1MHz first to avoid sampling noise
+		/// </summary>
+		/********************************************************************/
+		public void Input(int sample)
+		{
+			// Voice outputs are 20 bits. Scale up to match three voices in order
+			// to facilitate simulation of the MOS8580 "digi boost" hardware hack
+			extIn = (sample << 4) * 3;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Read sample from audio output
 		/// </summary>
 		/********************************************************************/
@@ -673,6 +727,42 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSid
 			while (u >= I0e * sum);
 
 			return sum;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// SID clocking with audio sampling - delta clocking picking nearest
+		/// sample
+		/// </summary>
+		/********************************************************************/
+		private int ClockFast(int delta, short[] buf, int offset, int n, int interleave)
+		{
+			int s = 0;
+
+			for (;;)
+			{
+				int nextSampleOffset = sampleOffset + cyclesPerSample + (1 << (FixpShift - 1));
+				int deltaSample = nextSampleOffset >> FixpShift;
+
+				if (deltaSample > delta)
+					break;
+
+				if (s >= n)
+					return s;
+
+				Clock(deltaSample);
+				delta -= deltaSample;
+				sampleOffset = (nextSampleOffset & FixpMask) - (1 << (FixpShift - 1));
+				buf[offset + s++ * interleave] = (short)Output(16);
+			}
+
+			Clock(delta);
+			sampleOffset -= delta << FixpShift;
+			delta = 0;
+
+			return s;
 		}
 		#endregion
 	}

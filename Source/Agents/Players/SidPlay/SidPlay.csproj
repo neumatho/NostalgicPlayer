@@ -2,13 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+		<LangVersion>preview</LangVersion>
     <RootNamespace>Polycode.NostalgicPlayer.Agent.Player.SidPlay</RootNamespace>
     <Authors>Thomas Neumann</Authors>
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Emulates the C64 CPU and soundchip to play C64 modules</Description>
     <Copyright>Copyright © 2021</Copyright>
-    <Version>1.0.1</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

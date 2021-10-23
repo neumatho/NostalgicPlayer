@@ -46,8 +46,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			base.Dispose();
 		}
 
-
-
+		#region FileLoaderBase implementation
 		/********************************************************************/
 		/// <summary>
 		/// Will try to open the main file. You need to dispose the returned
@@ -69,45 +68,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			return entryInfo.EntryStream;
 		}
 
-		#region FileLoaderBase implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will try to open the extra file and return the stream and some
-		/// info about the before and after lengths
-		/// </summary>
-		/********************************************************************/
-		protected override ModuleStream OpenStream(string newExtension, out StreamInfo streamInfo)
-		{
-			streamInfo = new StreamInfo();
-
-			ArchiveEntryInfo entryInfo = null;
-
-			foreach (string newFileName in GetExtraFileNames(newExtension))
-			{
-				entryInfo = TryOpenFile(newFileName);
-				if (entryInfo != null)
-				{
-					streamInfo.NewFileName = newFileName;
-					break;
-				}
-			}
-
-			// If a file is opened, decrunch it if needed
-			if (entryInfo != null)
-			{
-				streamInfo.CrunchedSize = entryInfo.CrunchedSize;
-
-				SingleFileDecruncher decruncher = new SingleFileDecruncher(manager);
-				Stream stream = decruncher.DecrunchFileMultipleLevels(entryInfo.EntryStream);
-
-				streamInfo.DecrunchedSize = stream.Length;
-
-				return new ModuleStream(stream, false);
-			}
-
-			return null;
-		}
-
 
 
 		/********************************************************************/
@@ -116,15 +76,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/// info about the before and after lengths
 		/// </summary>
 		/********************************************************************/
-		protected override ModuleStream OpenStreamWithName(string fullFileName, out StreamInfo streamInfo)
+		protected override ModuleStream OpenStream(string fullFileName, out StreamInfo streamInfo)
 		{
 			streamInfo = new StreamInfo();
 
 			ArchiveEntryInfo entryInfo = TryOpenFile(fullFileName);
 			if (entryInfo == null)
 				return null;
-
-			streamInfo.NewFileName = fullFileName;
 
 			// Decrunch it if needed
 			streamInfo.CrunchedSize = entryInfo.CrunchedSize;
