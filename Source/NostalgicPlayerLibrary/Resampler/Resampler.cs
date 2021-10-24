@@ -132,6 +132,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 			// Initialize variables
 			samplesRead = 0;
 
+			dataSize = 0;
 			currentIndex = 0;
 			increment = (inputFrequency << FracBits) / outputFrequency;
 
