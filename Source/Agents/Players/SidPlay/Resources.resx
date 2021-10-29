@@ -211,11 +211,17 @@ SID modules contains tunes and sound effects from the good old Commodore 64.  Th
   <data name="IDS_SID_ERR_TRUNCATED" xml:space="preserve">
     <value>File is most likely truncated</value>
   </data>
+  <data name="IDS_SID_ERR_UNKNOWN_CHIP" xml:space="preserve">
+    <value>Unknown chip model</value>
+  </data>
   <data name="IDS_SID_ERR_UNKNOWN_PSID" xml:space="preserve">
     <value>Unsupported PSID version</value>
   </data>
   <data name="IDS_SID_ERR_UNKNOWN_RSID" xml:space="preserve">
     <value>Unsupported RSID version</value>
+  </data>
+  <data name="IDS_SID_ERR_UNKNOWN_SAMPLING_METHOD" xml:space="preserve">
+    <value>Unknown sampling method</value>
   </data>
   <data name="IDS_SID_ERR_UNSUPPORTED_FREQ" xml:space="preserve">
     <value>Unsupported sampling frequency</value>

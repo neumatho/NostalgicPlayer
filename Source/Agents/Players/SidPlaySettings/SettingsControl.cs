@@ -61,57 +61,69 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 		/********************************************************************/
 		public void ReadSettings()
 		{
-			switch (settings.MemoryModel)
+			switch (settings.CiaModel)
 			{
-				case SidPlay.SidPlaySettings.Environment.PlaySid:
+				case SidPlay.SidPlaySettings.CiaModelType.Mos6526:
 				{
-					playSidRadioButton.Checked = true;
+					model6526RadioButton.Checked = true;
 					break;
 				}
 
-				case SidPlay.SidPlaySettings.Environment.Transparent:
+				case SidPlay.SidPlaySettings.CiaModelType.Mos8521:
 				{
-					transparentRadioButton.Checked = true;
+					model8521RadioButton.Checked = true;
 					break;
 				}
 
-				case SidPlay.SidPlaySettings.Environment.FullBank:
+				case SidPlay.SidPlaySettings.CiaModelType.Mos6526_W4485:
 				{
-					fullBankRadioButton.Checked = true;
-					break;
-				}
-
-				case SidPlay.SidPlaySettings.Environment.Real:
-				{
-					realC64RadioButton.Checked = true;
+					model6526w4485RadioButton.Checked = true;
 					break;
 				}
 			}
 
 			switch (settings.ClockSpeed)
 			{
-				case SidPlay.SidPlaySettings.Clock.Pal:
+				case SidPlay.SidPlaySettings.ClockType.Pal:
 				{
 					palRadioButton.Checked = true;
 					break;
 				}
 
-				case SidPlay.SidPlaySettings.Clock.Ntsc:
+				case SidPlay.SidPlaySettings.ClockType.Ntsc:
 				{
 					ntscRadioButton.Checked = true;
+					break;
+				}
+
+				case SidPlay.SidPlaySettings.ClockType.NtscOld:
+				{
+					ntscOldRadioButton.Checked = true;
+					break;
+				}
+
+				case SidPlay.SidPlaySettings.ClockType.Drean:
+				{
+					dreanRadioButton.Checked = true;
+					break;
+				}
+
+				case SidPlay.SidPlaySettings.ClockType.PalM:
+				{
+					palmRadioButton.Checked = true;
 					break;
 				}
 			}
 
 			switch (settings.ClockSpeedOption)
 			{
-				case SidPlay.SidPlaySettings.ClockOption.NotKnown:
+				case SidPlay.SidPlaySettings.ClockOptionType.NotKnown:
 				{
 					clockNotKnownRadioButton.Checked = true;
 					break;
 				}
 
-				case SidPlay.SidPlaySettings.ClockOption.Always:
+				case SidPlay.SidPlaySettings.ClockOptionType.Always:
 				{
 					clockAlwaysRadioButton.Checked = true;
 					break;
@@ -120,52 +132,36 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 
 			switch (settings.SidModel)
 			{
-				case SidPlay.SidPlaySettings.Model.Mos6581:
+				case SidPlay.SidPlaySettings.SidModelType.Mos6581:
 				{
-					model6581RadioButton.Checked = true;
+					sid6581RadioButton.Checked = true;
 					break;
 				}
 
-				case SidPlay.SidPlaySettings.Model.Mos8580:
+				case SidPlay.SidPlaySettings.SidModelType.Mos8580:
 				{
-					model8580RadioButton.Checked = true;
+					sid8580RadioButton.Checked = true;
 					break;
 				}
 			}
 
 			switch (settings.SidModelOption)
 			{
-				case SidPlay.SidPlaySettings.ModelOption.NotKnown:
+				case SidPlay.SidPlaySettings.SidModelOptionType.NotKnown:
 				{
-					modelNotKnownRadioButton.Checked = true;
+					sidNotKnownRadioButton.Checked = true;
 					break;
 				}
 
-				case SidPlay.SidPlaySettings.ModelOption.Always:
+				case SidPlay.SidPlaySettings.SidModelOptionType.Always:
 				{
-					modelAlwaysRadioButton.Checked = true;
+					sidAlwaysRadioButton.Checked = true;
 					break;
 				}
 			}
 
 			enableFilterCheckBox.Checked = settings.FilterEnabled;
-
-			switch (settings.Filter)
-			{
-				case SidPlay.SidPlaySettings.FilterOption.ModelSpecific:
-				{
-					filterModelRadioButton.Checked = true;
-					break;
-				}
-
-				case SidPlay.SidPlaySettings.FilterOption.Custom:
-				{
-					filterCustomRadioButton.Checked = true;
-					break;
-				}
-			}
-
-			SetFilterValues(settings.FilterFs, settings.FilterFm, settings.FilterFt);
+			digiboostCheckBox.Checked = settings.DigiBoostEnabled;
 
 			hvscvPathTextBox.Text = settings.HvscPath;
 			stilCheckBox.Checked = settings.StilEnabled;
@@ -183,46 +179,41 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 		/********************************************************************/
 		public void WriteSettings()
 		{
-			if (playSidRadioButton.Checked)
-				settings.MemoryModel = SidPlay.SidPlaySettings.Environment.PlaySid;
-			else if (transparentRadioButton.Checked)
-				settings.MemoryModel = SidPlay.SidPlaySettings.Environment.Transparent;
-			else if (fullBankRadioButton.Checked)
-				settings.MemoryModel = SidPlay.SidPlaySettings.Environment.FullBank;
-			else if (realC64RadioButton.Checked)
-				settings.MemoryModel = SidPlay.SidPlaySettings.Environment.Real;
+			if (model6526RadioButton.Checked)
+				settings.CiaModel = SidPlay.SidPlaySettings.CiaModelType.Mos6526;
+			else if (model8521RadioButton.Checked)
+				settings.CiaModel = SidPlay.SidPlaySettings.CiaModelType.Mos8521;
+			else if (model6526w4485RadioButton.Checked)
+				settings.CiaModel = SidPlay.SidPlaySettings.CiaModelType.Mos6526_W4485;
 
 			if (palRadioButton.Checked)
-				settings.ClockSpeed = SidPlay.SidPlaySettings.Clock.Pal;
+				settings.ClockSpeed = SidPlay.SidPlaySettings.ClockType.Pal;
 			else if (ntscRadioButton.Checked)
-				settings.ClockSpeed = SidPlay.SidPlaySettings.Clock.Ntsc;
+				settings.ClockSpeed = SidPlay.SidPlaySettings.ClockType.Ntsc;
+			else if (ntscOldRadioButton.Checked)
+				settings.ClockSpeed = SidPlay.SidPlaySettings.ClockType.NtscOld;
+			else if (dreanRadioButton.Checked)
+				settings.ClockSpeed = SidPlay.SidPlaySettings.ClockType.Drean;
+			else if (palmRadioButton.Checked)
+				settings.ClockSpeed = SidPlay.SidPlaySettings.ClockType.PalM;
 
 			if (clockNotKnownRadioButton.Checked)
-				settings.ClockSpeedOption = SidPlay.SidPlaySettings.ClockOption.NotKnown;
+				settings.ClockSpeedOption = SidPlay.SidPlaySettings.ClockOptionType.NotKnown;
 			else if (clockAlwaysRadioButton.Checked)
-				settings.ClockSpeedOption = SidPlay.SidPlaySettings.ClockOption.Always;
+				settings.ClockSpeedOption = SidPlay.SidPlaySettings.ClockOptionType.Always;
 
-			if (model6581RadioButton.Checked)
-				settings.SidModel = SidPlay.SidPlaySettings.Model.Mos6581;
-			else if (model8580RadioButton.Checked)
-				settings.SidModel = SidPlay.SidPlaySettings.Model.Mos8580;
+			if (sid6581RadioButton.Checked)
+				settings.SidModel = SidPlay.SidPlaySettings.SidModelType.Mos6581;
+			else if (sid8580RadioButton.Checked)
+				settings.SidModel = SidPlay.SidPlaySettings.SidModelType.Mos8580;
 
-			if (modelNotKnownRadioButton.Checked)
-				settings.SidModelOption = SidPlay.SidPlaySettings.ModelOption.NotKnown;
-			else if (modelAlwaysRadioButton.Checked)
-				settings.SidModelOption = SidPlay.SidPlaySettings.ModelOption.Always;
+			if (sidNotKnownRadioButton.Checked)
+				settings.SidModelOption = SidPlay.SidPlaySettings.SidModelOptionType.NotKnown;
+			else if (sidAlwaysRadioButton.Checked)
+				settings.SidModelOption = SidPlay.SidPlaySettings.SidModelOptionType.Always;
 
 			settings.FilterEnabled = enableFilterCheckBox.Checked;
-
-			if (filterModelRadioButton.Checked)
-				settings.Filter = SidPlay.SidPlaySettings.FilterOption.ModelSpecific;
-			else if (filterCustomRadioButton.Checked)
-				settings.Filter = SidPlay.SidPlaySettings.FilterOption.Custom;
-
-			GetFilterValues(out float fs, out float fm, out float ft);
-			settings.FilterFs = fs;
-			settings.FilterFm = fm;
-			settings.FilterFt = ft;
+			settings.DigiBoostEnabled = digiboostCheckBox.Checked;
 
 			settings.HvscPath = hvscvPathTextBox.Text;
 			settings.StilEnabled = stilCheckBox.Checked;
@@ -248,91 +239,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 		#region Event handlers
 		/********************************************************************/
 		/// <summary>
-		/// Is called when the filter emulation is enabled/disabled
-		/// </summary>
-		/********************************************************************/
-		private void EnableFilterCheckBox_CheckedChanged(object sender, System.EventArgs e)
-		{
-			filterPanel.Enabled = enableFilterCheckBox.Checked;
-			EnableFilterAdjustmentPanel();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called when the model radio button is changed
-		/// </summary>
-		/********************************************************************/
-		private void FilterModelRadioButton_CheckedChanged(object sender, System.EventArgs e)
-		{
-			EnableFilterAdjustmentPanel();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called when the custom radio button is changed
-		/// </summary>
-		/********************************************************************/
-		private void FilterCustomRadioButton_CheckedChanged(object sender, System.EventArgs e)
-		{
-			EnableFilterAdjustmentPanel();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called when the FS filter parameter is changed
-		/// </summary>
-		/********************************************************************/
-		private void FilterFsTrackBar_ValueChanged(object sender, System.EventArgs e)
-		{
-			UpdateCurve();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called when the FM filter parameter is changed
-		/// </summary>
-		/********************************************************************/
-		private void FilterFmTrackBar_ValueChanged(object sender, System.EventArgs e)
-		{
-			UpdateCurve();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called when the FT filter parameter is changed
-		/// </summary>
-		/********************************************************************/
-		private void FilterFtTrackBar_ValueChanged(object sender, System.EventArgs e)
-		{
-			UpdateCurve();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called when the user want to reset the filter
-		/// </summary>
-		/********************************************************************/
-		private void FilterResetButton_Click(object sender, System.EventArgs e)
-		{
-			SetFilterValues(SidPlay.SidPlaySettings.DefaultFs, SidPlay.SidPlaySettings.DefaultFm, SidPlay.SidPlaySettings.DefaultFt);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Is called when the user click the directory button
 		/// </summary>
 		/********************************************************************/
@@ -345,59 +251,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 		#endregion
 
 		#region Private methods
-		/********************************************************************/
-		/// <summary>
-		/// Enable/disable the adjustment panel
-		/// </summary>
-		/********************************************************************/
-		private void EnableFilterAdjustmentPanel()
-		{
-			filterAdjustmentPanel.Enabled = enableFilterCheckBox.Checked && filterCustomRadioButton.Checked;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set the given parameters in the controls
-		/// </summary>
-		/********************************************************************/
-		private void SetFilterValues(float fs, float fm, float ft)
-		{
-			filterFsTrackBar.Value = (int)(filterFsTrackBar.Maximum - fs + filterFsTrackBar.Minimum);
-			filterFmTrackBar.Value = (int)fm;
-			filterFtTrackBar.Value = (int)(filterFtTrackBar.Maximum - (ft * 100) + filterFtTrackBar.Minimum);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Retrieve the filter parameters
-		/// </summary>
-		/********************************************************************/
-		private void GetFilterValues(out float fs, out float fm, out float ft)
-		{
-			fs = filterFsTrackBar.Maximum - filterFsTrackBar.Value + filterFsTrackBar.Minimum;
-			fm = filterFmTrackBar.Value;
-			ft = (filterFtTrackBar.Maximum - filterFtTrackBar.Value + filterFtTrackBar.Minimum) / 100.0f;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Redraw the curve
-		/// </summary>
-		/********************************************************************/
-		private void UpdateCurve()
-		{
-			GetFilterValues(out float fs, out float fm, out float ft);
-			filterControl.Update(fs, fm, ft);
-		}
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Show a directory chooser and return the path. Null if no path

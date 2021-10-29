@@ -7,28 +7,27 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidPlayFp;
-using Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSid;
-using Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSid.Containers;
+using Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp;
+using Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp.Containers;
+using Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp.Exceptions;
 
-namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.Builders
+namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.Builders.ReSidFpBuilder
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	internal sealed class ReSid : SidEmu
+	internal sealed class ReSidFp : SidEmu
 	{
 		private readonly Sid sid;
-		private uint8_t voiceMask;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ReSid(SidBuilder builder) : base(builder)
+		public ReSidFp(SidBuilder builder) : base(builder)
 		{
 			sid = new Sid();
-			voiceMask = 0x07;
 
 			buffer = new short[OUTPUTBUFFERSIZE];
 			Reset(0);
@@ -46,31 +45,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.Builders
 			sid.EnableFilter(enable);
 		}
 
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return array of default spline interpolation points to map FC to
-		/// filter cutoff frequency
-		/// </summary>
-		/********************************************************************/
-		public void FcDefault(Spline.FCPoint[] points, out int count)
-		{
-			sid.FcDefault(points, out count);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return FC spline plotter object
-		/// </summary>
-		/********************************************************************/
-		public Spline.PointPlotter FcPlotter()
-		{
-			return sid.FcPlotter();
-		}
-
 		#region SidEmu overrides
 		/********************************************************************/
 		/// <summary>
@@ -81,7 +55,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.Builders
 		{
 			event_clock_t cycles = eventScheduler.GetTime(EventScheduler.event_phase_t.EVENT_CLOCK_PHI1) - accessClk;
 			accessClk += cycles;
-			bufferPos += sid.Clock((int)cycles, buffer, bufferPos, OUTPUTBUFFERSIZE - bufferPos, 1);
+			bufferPos += sid.Clock((uint)cycles, buffer, bufferPos);
 		}
 
 
@@ -99,13 +73,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.Builders
 			{
 				case SidConfig.sampling_method_t.INTERPOLATE:
 				{
-					samplingMethod = fast ? SamplingMethod.Fast : SamplingMethod.Interpolate;
+					samplingMethod = SamplingMethod.DECIMATE;
 					break;
 				}
 
 				case SidConfig.sampling_method_t.RESAMPLE_INTERPOLATE:
 				{
-					samplingMethod = fast ? SamplingMethod.ResampleFast : SamplingMethod.ResampleInterpolate;
+					samplingMethod = SamplingMethod.RESAMPLE;
 					break;
 				}
 
@@ -117,7 +91,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.Builders
 				}
 			}
 
-			if (!sid.SetSamplingParameters(systemClock, samplingMethod, freq))
+			try
+			{
+				int halfFreq = (freq > 44000) ? 20000 : 9 * (int)freq / 20;
+				sid.SetSamplingParameters(systemClock, samplingMethod, freq, halfFreq);
+			}
+			catch (SidErrorException)
 			{
 				status = false;
 				error = Resources.IDS_SID_ERR_UNSUPPORTED_OUTPUT_FREQ;
@@ -137,25 +116,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.Builders
 		public override void Model(SidConfig.sid_model_t model, bool digiBoost)
 		{
 			ChipModel chipModel;
-			short sample = 0;
-			voiceMask &= 0x07;
 
 			switch (model)
 			{
 				case SidConfig.sid_model_t.MOS6581:
 				{
-					chipModel = ChipModel.Mos6581;
+					chipModel = ChipModel.MOS6581;
 					break;
 				}
 
 				case SidConfig.sid_model_t.MOS8580:
 				{
-					chipModel = ChipModel.Mos8580;
+					chipModel = ChipModel.MOS8580;
 					if (digiBoost)
-					{
-						voiceMask |= 0x08;
-						sample = -32768;
-					}
+						sid.Input(-32768);
+
 					break;
 				}
 
@@ -168,9 +143,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.Builders
 			}
 
 			sid.SetChipModel(chipModel);
-//			sid.SetVoiceMask(voiceMask);
-			sid.Input(sample);
-
 			status = true;
 		}
 		#endregion
@@ -198,7 +170,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.Builders
 		protected override uint8_t Read(uint_least8_t addr)
 		{
 			Clock();
-			return (uint8_t)sid.Read(addr);
+			return sid.Read(addr);
 		}
 
 

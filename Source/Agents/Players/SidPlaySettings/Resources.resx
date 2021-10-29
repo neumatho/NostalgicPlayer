@@ -121,11 +121,26 @@
   <data name="IDB_OPEN" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Open.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="IDS_SETTINGS_CIA" xml:space="preserve">
+    <value>CIA model</value>
+  </data>
+  <data name="IDS_SETTINGS_CIA_6526" xml:space="preserve">
+    <value>MOS-6526</value>
+  </data>
+  <data name="IDS_SETTINGS_CIA_6526_W4485" xml:space="preserve">
+    <value>MOS-6526 from week 44/1985</value>
+  </data>
+  <data name="IDS_SETTINGS_CIA_8521" xml:space="preserve">
+    <value>MOS-8521</value>
+  </data>
   <data name="IDS_SETTINGS_CLOCK" xml:space="preserve">
     <value>Clock speed</value>
   </data>
   <data name="IDS_SETTINGS_CLOCK_ALWAYS" xml:space="preserve">
     <value>Always play at this speed</value>
+  </data>
+  <data name="IDS_SETTINGS_CLOCK_DREAN" xml:space="preserve">
+    <value>Drean</value>
   </data>
   <data name="IDS_SETTINGS_CLOCK_NOT_KNOWN" xml:space="preserve">
     <value>Only when speed is not known</value>
@@ -133,38 +148,14 @@
   <data name="IDS_SETTINGS_CLOCK_NTSC" xml:space="preserve">
     <value>NTSC</value>
   </data>
+  <data name="IDS_SETTINGS_CLOCK_NTSC_OLD" xml:space="preserve">
+    <value>Old NTSC</value>
+  </data>
   <data name="IDS_SETTINGS_CLOCK_PAL" xml:space="preserve">
     <value>PAL</value>
   </data>
-  <data name="IDS_SETTINGS_FILTER" xml:space="preserve">
-    <value>Filter adjustment</value>
-  </data>
-  <data name="IDS_SETTINGS_FILTER_CUSTOM" xml:space="preserve">
-    <value>Custom</value>
-  </data>
-  <data name="IDS_SETTINGS_FILTER_ENABLE" xml:space="preserve">
-    <value>Enable filter</value>
-  </data>
-  <data name="IDS_SETTINGS_FILTER_FM" xml:space="preserve">
-    <value>FM parameter</value>
-  </data>
-  <data name="IDS_SETTINGS_FILTER_FS" xml:space="preserve">
-    <value>FS parameter</value>
-  </data>
-  <data name="IDS_SETTINGS_FILTER_FT" xml:space="preserve">
-    <value>FT parameter</value>
-  </data>
-  <data name="IDS_SETTINGS_FILTER_MODEL" xml:space="preserve">
-    <value>Model specific</value>
-  </data>
-  <data name="IDS_SETTINGS_FILTER_RESET" xml:space="preserve">
-    <value>Reset</value>
-  </data>
-  <data name="IDS_SETTINGS_FILTER_XAXIS" xml:space="preserve">
-    <value>cutoff frequency</value>
-  </data>
-  <data name="IDS_SETTINGS_FILTER_YAXIS" xml:space="preserve">
-    <value>filter strength</value>
+  <data name="IDS_SETTINGS_CLOCK_PALM" xml:space="preserve">
+    <value>PAL-M</value>
   </data>
   <data name="IDS_SETTINGS_HVSC" xml:space="preserve">
     <value>HVSC</value>
@@ -181,34 +172,28 @@
   <data name="IDS_SETTINGS_HVSC_STIL" xml:space="preserve">
     <value>Enable STIL</value>
   </data>
-  <data name="IDS_SETTINGS_MEMORY" xml:space="preserve">
-    <value>Memory model</value>
+  <data name="IDS_SETTINGS_OPTIONS" xml:space="preserve">
+    <value>Options</value>
   </data>
-  <data name="IDS_SETTINGS_MEMORY_FULL_BANK" xml:space="preserve">
-    <value>Full bank-switching</value>
+  <data name="IDS_SETTINGS_OPTIONS_DIGIBOOST" xml:space="preserve">
+    <value>Boost digisounds on MOS-8580</value>
   </data>
-  <data name="IDS_SETTINGS_MEMORY_PLAYSID" xml:space="preserve">
-    <value>PlaySID environment</value>
+  <data name="IDS_SETTINGS_OPTIONS_FILTER_ENABLE" xml:space="preserve">
+    <value>Enable filter</value>
   </data>
-  <data name="IDS_SETTINGS_MEMORY_REAL_C64" xml:space="preserve">
-    <value>Real C64 environment</value>
-  </data>
-  <data name="IDS_SETTINGS_MEMORY_TRANSPARENT" xml:space="preserve">
-    <value>Transparent ROM</value>
-  </data>
-  <data name="IDS_SETTINGS_MODEL" xml:space="preserve">
+  <data name="IDS_SETTINGS_SID" xml:space="preserve">
     <value>SID model</value>
   </data>
-  <data name="IDS_SETTINGS_MODEL_6581" xml:space="preserve">
+  <data name="IDS_SETTINGS_SID_6581" xml:space="preserve">
     <value>MOS-6581</value>
   </data>
-  <data name="IDS_SETTINGS_MODEL_8580" xml:space="preserve">
+  <data name="IDS_SETTINGS_SID_8580" xml:space="preserve">
     <value>MOS-8580</value>
   </data>
-  <data name="IDS_SETTINGS_MODEL_ALWAYS" xml:space="preserve">
+  <data name="IDS_SETTINGS_SID_ALWAYS" xml:space="preserve">
     <value>Always use this model</value>
   </data>
-  <data name="IDS_SETTINGS_MODEL_NOT_KNOWN" xml:space="preserve">
+  <data name="IDS_SETTINGS_SID_NOT_KNOWN" xml:space="preserve">
     <value>Only when model is not known</value>
   </data>
 </root>

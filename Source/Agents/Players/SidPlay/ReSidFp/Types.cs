@@ -6,16 +6,4 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSid.Containers
-{
-	/// <summary>
-	/// Different methods to generate the samples
-	/// </summary>
-	internal enum SamplingMethod
-	{
-		Fast,
-		Interpolate,
-		ResampleInterpolate,
-		ResampleFast
-	}
-}
+global using matrix_t = Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp.Array.Matrix<short>;

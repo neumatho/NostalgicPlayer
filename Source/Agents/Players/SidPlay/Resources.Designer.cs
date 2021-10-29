@@ -305,6 +305,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unknown chip model.
+        /// </summary>
+        internal static string IDS_SID_ERR_UNKNOWN_CHIP {
+            get {
+                return ResourceManager.GetString("IDS_SID_ERR_UNKNOWN_CHIP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unsupported PSID version.
         /// </summary>
         internal static string IDS_SID_ERR_UNKNOWN_PSID {
@@ -319,6 +328,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         internal static string IDS_SID_ERR_UNKNOWN_RSID {
             get {
                 return ResourceManager.GetString("IDS_SID_ERR_UNKNOWN_RSID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown sampling method.
+        /// </summary>
+        internal static string IDS_SID_ERR_UNKNOWN_SAMPLING_METHOD {
+            get {
+                return ResourceManager.GetString("IDS_SID_ERR_UNKNOWN_SAMPLING_METHOD", resourceCulture);
             }
         }
         

@@ -30,23 +30,25 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 		private void InitializeComponent()
 		{
 			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
-			this.memoryGroupBox = new Krypton.Toolkit.KryptonGroupBox();
-			this.transparentRadioButton = new Krypton.Toolkit.KryptonRadioButton();
-			this.fullBankRadioButton = new Krypton.Toolkit.KryptonRadioButton();
-			this.playSidRadioButton = new Krypton.Toolkit.KryptonRadioButton();
-			this.realC64RadioButton = new Krypton.Toolkit.KryptonRadioButton();
+			this.ciaGroupBox = new Krypton.Toolkit.KryptonGroupBox();
+			this.model8521RadioButton = new Krypton.Toolkit.KryptonRadioButton();
+			this.model6526w4485RadioButton = new Krypton.Toolkit.KryptonRadioButton();
+			this.model6526RadioButton = new Krypton.Toolkit.KryptonRadioButton();
 			this.clockGroupBox = new Krypton.Toolkit.KryptonGroupBox();
+			this.palmRadioButton = new Krypton.Toolkit.KryptonRadioButton();
+			this.dreanRadioButton = new Krypton.Toolkit.KryptonRadioButton();
+			this.ntscOldRadioButton = new Krypton.Toolkit.KryptonRadioButton();
 			this.ntscRadioButton = new Krypton.Toolkit.KryptonRadioButton();
 			this.palRadioButton = new Krypton.Toolkit.KryptonRadioButton();
 			this.clockPanel = new System.Windows.Forms.Panel();
 			this.clockAlwaysRadioButton = new Krypton.Toolkit.KryptonRadioButton();
 			this.clockNotKnownRadioButton = new Krypton.Toolkit.KryptonRadioButton();
-			this.modelGroupBox = new Krypton.Toolkit.KryptonGroupBox();
-			this.model8580RadioButton = new Krypton.Toolkit.KryptonRadioButton();
-			this.model6581RadioButton = new Krypton.Toolkit.KryptonRadioButton();
-			this.modelPanel = new System.Windows.Forms.Panel();
-			this.modelAlwaysRadioButton = new Krypton.Toolkit.KryptonRadioButton();
-			this.modelNotKnownRadioButton = new Krypton.Toolkit.KryptonRadioButton();
+			this.sidGroupBox = new Krypton.Toolkit.KryptonGroupBox();
+			this.sid8580RadioButton = new Krypton.Toolkit.KryptonRadioButton();
+			this.sid6581RadioButton = new Krypton.Toolkit.KryptonRadioButton();
+			this.sidPanel = new System.Windows.Forms.Panel();
+			this.sidAlwaysRadioButton = new Krypton.Toolkit.KryptonRadioButton();
+			this.sidNotKnownRadioButton = new Krypton.Toolkit.KryptonRadioButton();
 			this.hvscGroupBox = new Krypton.Toolkit.KryptonGroupBox();
 			this.hvscLabel = new Krypton.Toolkit.KryptonLabel();
 			this.hvscvPathTextBox = new Krypton.Toolkit.KryptonTextBox();
@@ -54,122 +56,130 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			this.songLengthCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.stilCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.bugListCheckBox = new Krypton.Toolkit.KryptonCheckBox();
-			this.filterGroupBox = new Krypton.Toolkit.KryptonGroupBox();
+			this.optionsGroupBox = new Krypton.Toolkit.KryptonGroupBox();
+			this.digiboostCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.enableFilterCheckBox = new Krypton.Toolkit.KryptonCheckBox();
-			this.filterPanel = new System.Windows.Forms.Panel();
-			this.filterModelRadioButton = new Krypton.Toolkit.KryptonRadioButton();
-			this.filterCustomRadioButton = new Krypton.Toolkit.KryptonRadioButton();
-			this.filterAdjustmentPanel = new System.Windows.Forms.Panel();
-			this.filterResetButton = new Krypton.Toolkit.KryptonButton();
-			this.filterFtLabel = new Krypton.Toolkit.KryptonLabel();
-			this.filterFmLabel = new Krypton.Toolkit.KryptonLabel();
-			this.filterFtTrackBar = new Krypton.Toolkit.KryptonTrackBar();
-			this.filterFmTrackBar = new Krypton.Toolkit.KryptonTrackBar();
-			this.filterControl = new Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings.FilterControl();
-			this.filterFsLabel = new Krypton.Toolkit.KryptonLabel();
-			this.filterFsTrackBar = new Krypton.Toolkit.KryptonTrackBar();
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.memoryGroupBox)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.memoryGroupBox.Panel)).BeginInit();
-			this.memoryGroupBox.Panel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.ciaGroupBox)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.ciaGroupBox.Panel)).BeginInit();
+			this.ciaGroupBox.Panel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.clockGroupBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.clockGroupBox.Panel)).BeginInit();
 			this.clockGroupBox.Panel.SuspendLayout();
 			this.clockPanel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.modelGroupBox)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.modelGroupBox.Panel)).BeginInit();
-			this.modelGroupBox.Panel.SuspendLayout();
-			this.modelPanel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.sidGroupBox)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.sidGroupBox.Panel)).BeginInit();
+			this.sidGroupBox.Panel.SuspendLayout();
+			this.sidPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.hvscGroupBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.hvscGroupBox.Panel)).BeginInit();
 			this.hvscGroupBox.Panel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.filterGroupBox)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.filterGroupBox.Panel)).BeginInit();
-			this.filterGroupBox.Panel.SuspendLayout();
-			this.filterPanel.SuspendLayout();
-			this.filterAdjustmentPanel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.optionsGroupBox)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.optionsGroupBox.Panel)).BeginInit();
+			this.optionsGroupBox.Panel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// controlResource
 			// 
 			this.controlResource.ResourceClassName = "Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings.Resources";
 			// 
-			// memoryGroupBox
+			// ciaGroupBox
 			// 
-			this.memoryGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
-			this.memoryGroupBox.Location = new System.Drawing.Point(8, 4);
-			this.memoryGroupBox.Name = "memoryGroupBox";
+			this.ciaGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
+			this.ciaGroupBox.Location = new System.Drawing.Point(8, 4);
+			this.ciaGroupBox.Name = "ciaGroupBox";
 			// 
 			// 
 			// 
-			this.memoryGroupBox.Panel.Controls.Add(this.transparentRadioButton);
-			this.memoryGroupBox.Panel.Controls.Add(this.fullBankRadioButton);
-			this.memoryGroupBox.Panel.Controls.Add(this.playSidRadioButton);
-			this.memoryGroupBox.Panel.Controls.Add(this.realC64RadioButton);
-			this.controlResource.SetResourceKey(this.memoryGroupBox, "IDS_SETTINGS_MEMORY");
-			this.memoryGroupBox.Size = new System.Drawing.Size(192, 112);
-			this.memoryGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.memoryGroupBox.TabIndex = 0;
-			this.memoryGroupBox.Values.Heading = "Memory model";
+			this.ciaGroupBox.Panel.Controls.Add(this.model8521RadioButton);
+			this.ciaGroupBox.Panel.Controls.Add(this.model6526w4485RadioButton);
+			this.ciaGroupBox.Panel.Controls.Add(this.model6526RadioButton);
+			this.controlResource.SetResourceKey(this.ciaGroupBox, "IDS_SETTINGS_CIA");
+			this.ciaGroupBox.Size = new System.Drawing.Size(294, 92);
+			this.ciaGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.ciaGroupBox.TabIndex = 0;
+			this.ciaGroupBox.Values.Heading = "CIA model";
 			// 
-			// transparentRadioButton
+			// model8521RadioButton
 			// 
-			this.transparentRadioButton.Location = new System.Drawing.Point(4, 26);
-			this.transparentRadioButton.Name = "transparentRadioButton";
-			this.controlResource.SetResourceKey(this.transparentRadioButton, "IDS_SETTINGS_MEMORY_TRANSPARENT");
-			this.transparentRadioButton.Size = new System.Drawing.Size(110, 17);
-			this.transparentRadioButton.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.transparentRadioButton.TabIndex = 1;
-			this.transparentRadioButton.Values.Text = "Transparent ROM";
+			this.model8521RadioButton.Location = new System.Drawing.Point(4, 26);
+			this.model8521RadioButton.Name = "model8521RadioButton";
+			this.controlResource.SetResourceKey(this.model8521RadioButton, "IDS_SETTINGS_CIA_8521");
+			this.model8521RadioButton.Size = new System.Drawing.Size(74, 17);
+			this.model8521RadioButton.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.model8521RadioButton.TabIndex = 1;
+			this.model8521RadioButton.Values.Text = "MOS-8521";
 			// 
-			// fullBankRadioButton
+			// model6526w4485RadioButton
 			// 
-			this.fullBankRadioButton.Location = new System.Drawing.Point(4, 47);
-			this.fullBankRadioButton.Name = "fullBankRadioButton";
-			this.controlResource.SetResourceKey(this.fullBankRadioButton, "IDS_SETTINGS_MEMORY_FULL_BANK");
-			this.fullBankRadioButton.Size = new System.Drawing.Size(118, 17);
-			this.fullBankRadioButton.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.fullBankRadioButton.TabIndex = 2;
-			this.fullBankRadioButton.Values.Text = "Full bank-switching";
+			this.model6526w4485RadioButton.Location = new System.Drawing.Point(4, 47);
+			this.model6526w4485RadioButton.Name = "model6526w4485RadioButton";
+			this.controlResource.SetResourceKey(this.model6526w4485RadioButton, "IDS_SETTINGS_CIA_6526_W4485");
+			this.model6526w4485RadioButton.Size = new System.Drawing.Size(175, 17);
+			this.model6526w4485RadioButton.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.model6526w4485RadioButton.TabIndex = 2;
+			this.model6526w4485RadioButton.Values.Text = "MOS-6526 from week 44/1985";
 			// 
-			// playSidRadioButton
+			// model6526RadioButton
 			// 
-			this.playSidRadioButton.Location = new System.Drawing.Point(4, 5);
-			this.playSidRadioButton.Name = "playSidRadioButton";
-			this.controlResource.SetResourceKey(this.playSidRadioButton, "IDS_SETTINGS_MEMORY_PLAYSID");
-			this.playSidRadioButton.Size = new System.Drawing.Size(127, 17);
-			this.playSidRadioButton.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.playSidRadioButton.TabIndex = 0;
-			this.playSidRadioButton.Values.Text = "PlaySID environment";
-			// 
-			// realC64RadioButton
-			// 
-			this.realC64RadioButton.Location = new System.Drawing.Point(4, 68);
-			this.realC64RadioButton.Name = "realC64RadioButton";
-			this.controlResource.SetResourceKey(this.realC64RadioButton, "IDS_SETTINGS_MEMORY_REAL_C64");
-			this.realC64RadioButton.Size = new System.Drawing.Size(133, 17);
-			this.realC64RadioButton.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.realC64RadioButton.TabIndex = 3;
-			this.realC64RadioButton.Values.Text = "Real C64 environment";
+			this.model6526RadioButton.Location = new System.Drawing.Point(4, 5);
+			this.model6526RadioButton.Name = "model6526RadioButton";
+			this.controlResource.SetResourceKey(this.model6526RadioButton, "IDS_SETTINGS_CIA_6526");
+			this.model6526RadioButton.Size = new System.Drawing.Size(74, 17);
+			this.model6526RadioButton.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.model6526RadioButton.TabIndex = 0;
+			this.model6526RadioButton.Values.Text = "MOS-6526";
 			// 
 			// clockGroupBox
 			// 
-			this.clockGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.clockGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.clockGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
-			this.clockGroupBox.Location = new System.Drawing.Point(208, 4);
+			this.clockGroupBox.Location = new System.Drawing.Point(310, 4);
 			this.clockGroupBox.Name = "clockGroupBox";
 			// 
 			// 
 			// 
+			this.clockGroupBox.Panel.Controls.Add(this.palmRadioButton);
+			this.clockGroupBox.Panel.Controls.Add(this.dreanRadioButton);
+			this.clockGroupBox.Panel.Controls.Add(this.ntscOldRadioButton);
 			this.clockGroupBox.Panel.Controls.Add(this.ntscRadioButton);
 			this.clockGroupBox.Panel.Controls.Add(this.palRadioButton);
 			this.clockGroupBox.Panel.Controls.Add(this.clockPanel);
 			this.controlResource.SetResourceKey(this.clockGroupBox, "IDS_SETTINGS_CLOCK");
-			this.clockGroupBox.Size = new System.Drawing.Size(192, 112);
+			this.clockGroupBox.Size = new System.Drawing.Size(294, 92);
 			this.clockGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.clockGroupBox.TabIndex = 1;
 			this.clockGroupBox.Values.Heading = "Clock speed";
+			// 
+			// palmRadioButton
+			// 
+			this.palmRadioButton.Location = new System.Drawing.Point(236, 5);
+			this.palmRadioButton.Name = "palmRadioButton";
+			this.controlResource.SetResourceKey(this.palmRadioButton, "IDS_SETTINGS_CLOCK_PALM");
+			this.palmRadioButton.Size = new System.Drawing.Size(54, 17);
+			this.palmRadioButton.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.palmRadioButton.TabIndex = 4;
+			this.palmRadioButton.Values.Text = "PAL-M";
+			// 
+			// dreanRadioButton
+			// 
+			this.dreanRadioButton.Location = new System.Drawing.Point(179, 5);
+			this.dreanRadioButton.Name = "dreanRadioButton";
+			this.controlResource.SetResourceKey(this.dreanRadioButton, "IDS_SETTINGS_CLOCK_DREAN");
+			this.dreanRadioButton.Size = new System.Drawing.Size(52, 17);
+			this.dreanRadioButton.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.dreanRadioButton.TabIndex = 3;
+			this.dreanRadioButton.Values.Text = "Drean";
+			// 
+			// ntscOldRadioButton
+			// 
+			this.ntscOldRadioButton.Location = new System.Drawing.Point(104, 5);
+			this.ntscOldRadioButton.Name = "ntscOldRadioButton";
+			this.controlResource.SetResourceKey(this.ntscOldRadioButton, "IDS_SETTINGS_CLOCK_NTSC_OLD");
+			this.ntscOldRadioButton.Size = new System.Drawing.Size(70, 17);
+			this.ntscOldRadioButton.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.ntscOldRadioButton.TabIndex = 2;
+			this.ntscOldRadioButton.Values.Text = "Old NTSC";
 			// 
 			// ntscRadioButton
 			// 
@@ -199,7 +209,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			this.clockPanel.Name = "clockPanel";
 			this.controlResource.SetResourceKey(this.clockPanel, null);
 			this.clockPanel.Size = new System.Drawing.Size(178, 37);
-			this.clockPanel.TabIndex = 2;
+			this.clockPanel.TabIndex = 5;
 			// 
 			// clockAlwaysRadioButton
 			// 
@@ -221,80 +231,80 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			this.clockNotKnownRadioButton.TabIndex = 0;
 			this.clockNotKnownRadioButton.Values.Text = "Only when speed is not known";
 			// 
-			// modelGroupBox
+			// sidGroupBox
 			// 
-			this.modelGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.modelGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
-			this.modelGroupBox.Location = new System.Drawing.Point(408, 4);
-			this.modelGroupBox.Name = "modelGroupBox";
+			this.sidGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.sidGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
+			this.sidGroupBox.Location = new System.Drawing.Point(8, 100);
+			this.sidGroupBox.Name = "sidGroupBox";
 			// 
 			// 
 			// 
-			this.modelGroupBox.Panel.Controls.Add(this.model8580RadioButton);
-			this.modelGroupBox.Panel.Controls.Add(this.model6581RadioButton);
-			this.modelGroupBox.Panel.Controls.Add(this.modelPanel);
-			this.controlResource.SetResourceKey(this.modelGroupBox, "IDS_SETTINGS_MODEL");
-			this.modelGroupBox.Size = new System.Drawing.Size(192, 112);
-			this.modelGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.modelGroupBox.TabIndex = 2;
-			this.modelGroupBox.Values.Heading = "SID model";
+			this.sidGroupBox.Panel.Controls.Add(this.sid8580RadioButton);
+			this.sidGroupBox.Panel.Controls.Add(this.sid6581RadioButton);
+			this.sidGroupBox.Panel.Controls.Add(this.sidPanel);
+			this.controlResource.SetResourceKey(this.sidGroupBox, "IDS_SETTINGS_SID");
+			this.sidGroupBox.Size = new System.Drawing.Size(294, 92);
+			this.sidGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.sidGroupBox.TabIndex = 2;
+			this.sidGroupBox.Values.Heading = "SID model";
 			// 
-			// model8580RadioButton
+			// sid8580RadioButton
 			// 
-			this.model8580RadioButton.Location = new System.Drawing.Point(80, 5);
-			this.model8580RadioButton.Name = "model8580RadioButton";
-			this.controlResource.SetResourceKey(this.model8580RadioButton, "IDS_SETTINGS_MODEL_8580");
-			this.model8580RadioButton.Size = new System.Drawing.Size(74, 17);
-			this.model8580RadioButton.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.model8580RadioButton.TabIndex = 1;
-			this.model8580RadioButton.Values.Text = "MOS-8580";
+			this.sid8580RadioButton.Location = new System.Drawing.Point(80, 5);
+			this.sid8580RadioButton.Name = "sid8580RadioButton";
+			this.controlResource.SetResourceKey(this.sid8580RadioButton, "IDS_SETTINGS_SID_8580");
+			this.sid8580RadioButton.Size = new System.Drawing.Size(74, 17);
+			this.sid8580RadioButton.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.sid8580RadioButton.TabIndex = 1;
+			this.sid8580RadioButton.Values.Text = "MOS-8580";
 			// 
-			// model6581RadioButton
+			// sid6581RadioButton
 			// 
-			this.model6581RadioButton.Location = new System.Drawing.Point(4, 5);
-			this.model6581RadioButton.Name = "model6581RadioButton";
-			this.controlResource.SetResourceKey(this.model6581RadioButton, "IDS_SETTINGS_MODEL_6581");
-			this.model6581RadioButton.Size = new System.Drawing.Size(74, 17);
-			this.model6581RadioButton.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.model6581RadioButton.TabIndex = 0;
-			this.model6581RadioButton.Values.Text = "MOS-6581";
+			this.sid6581RadioButton.Location = new System.Drawing.Point(4, 5);
+			this.sid6581RadioButton.Name = "sid6581RadioButton";
+			this.controlResource.SetResourceKey(this.sid6581RadioButton, "IDS_SETTINGS_SID_6581");
+			this.sid6581RadioButton.Size = new System.Drawing.Size(74, 17);
+			this.sid6581RadioButton.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.sid6581RadioButton.TabIndex = 0;
+			this.sid6581RadioButton.Values.Text = "MOS-6581";
 			// 
-			// modelPanel
+			// sidPanel
 			// 
-			this.modelPanel.Controls.Add(this.modelAlwaysRadioButton);
-			this.modelPanel.Controls.Add(this.modelNotKnownRadioButton);
-			this.modelPanel.Location = new System.Drawing.Point(12, 26);
-			this.modelPanel.Name = "modelPanel";
-			this.controlResource.SetResourceKey(this.modelPanel, null);
-			this.modelPanel.Size = new System.Drawing.Size(178, 37);
-			this.modelPanel.TabIndex = 3;
+			this.sidPanel.Controls.Add(this.sidAlwaysRadioButton);
+			this.sidPanel.Controls.Add(this.sidNotKnownRadioButton);
+			this.sidPanel.Location = new System.Drawing.Point(12, 26);
+			this.sidPanel.Name = "sidPanel";
+			this.controlResource.SetResourceKey(this.sidPanel, null);
+			this.sidPanel.Size = new System.Drawing.Size(178, 37);
+			this.sidPanel.TabIndex = 2;
 			// 
-			// modelAlwaysRadioButton
+			// sidAlwaysRadioButton
 			// 
-			this.modelAlwaysRadioButton.Location = new System.Drawing.Point(0, 21);
-			this.modelAlwaysRadioButton.Name = "modelAlwaysRadioButton";
-			this.controlResource.SetResourceKey(this.modelAlwaysRadioButton, "IDS_SETTINGS_MODEL_ALWAYS");
-			this.modelAlwaysRadioButton.Size = new System.Drawing.Size(133, 17);
-			this.modelAlwaysRadioButton.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.modelAlwaysRadioButton.TabIndex = 1;
-			this.modelAlwaysRadioButton.Values.Text = "Always use this model";
+			this.sidAlwaysRadioButton.Location = new System.Drawing.Point(0, 21);
+			this.sidAlwaysRadioButton.Name = "sidAlwaysRadioButton";
+			this.controlResource.SetResourceKey(this.sidAlwaysRadioButton, "IDS_SETTINGS_SID_ALWAYS");
+			this.sidAlwaysRadioButton.Size = new System.Drawing.Size(133, 17);
+			this.sidAlwaysRadioButton.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.sidAlwaysRadioButton.TabIndex = 1;
+			this.sidAlwaysRadioButton.Values.Text = "Always use this model";
 			// 
-			// modelNotKnownRadioButton
+			// sidNotKnownRadioButton
 			// 
-			this.modelNotKnownRadioButton.Location = new System.Drawing.Point(0, 0);
-			this.modelNotKnownRadioButton.Name = "modelNotKnownRadioButton";
-			this.controlResource.SetResourceKey(this.modelNotKnownRadioButton, "IDS_SETTINGS_MODEL_NOT_KNOWN");
-			this.modelNotKnownRadioButton.Size = new System.Drawing.Size(177, 17);
-			this.modelNotKnownRadioButton.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.modelNotKnownRadioButton.TabIndex = 0;
-			this.modelNotKnownRadioButton.Values.Text = "Only when model is not known";
+			this.sidNotKnownRadioButton.Location = new System.Drawing.Point(0, 0);
+			this.sidNotKnownRadioButton.Name = "sidNotKnownRadioButton";
+			this.controlResource.SetResourceKey(this.sidNotKnownRadioButton, "IDS_SETTINGS_SID_NOT_KNOWN");
+			this.sidNotKnownRadioButton.Size = new System.Drawing.Size(177, 17);
+			this.sidNotKnownRadioButton.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.sidNotKnownRadioButton.TabIndex = 0;
+			this.sidNotKnownRadioButton.Values.Text = "Only when model is not known";
 			// 
 			// hvscGroupBox
 			// 
 			this.hvscGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.hvscGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
-			this.hvscGroupBox.Location = new System.Drawing.Point(8, 314);
+			this.hvscGroupBox.Location = new System.Drawing.Point(8, 196);
 			this.hvscGroupBox.Name = "hvscGroupBox";
 			// 
 			// 
@@ -306,7 +316,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			this.hvscGroupBox.Panel.Controls.Add(this.stilCheckBox);
 			this.hvscGroupBox.Panel.Controls.Add(this.bugListCheckBox);
 			this.controlResource.SetResourceKey(this.hvscGroupBox, "IDS_SETTINGS_HVSC");
-			this.hvscGroupBox.Size = new System.Drawing.Size(592, 73);
+			this.hvscGroupBox.Size = new System.Drawing.Size(596, 73);
 			this.hvscGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.hvscGroupBox.TabIndex = 4;
 			this.hvscGroupBox.Values.Heading = "HVSC";
@@ -328,14 +338,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			this.hvscvPathTextBox.Location = new System.Drawing.Point(140, 3);
 			this.hvscvPathTextBox.Name = "hvscvPathTextBox";
 			this.controlResource.SetResourceKey(this.hvscvPathTextBox, null);
-			this.hvscvPathTextBox.Size = new System.Drawing.Size(418, 21);
+			this.hvscvPathTextBox.Size = new System.Drawing.Size(422, 21);
 			this.hvscvPathTextBox.StateCommon.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.hvscvPathTextBox.TabIndex = 1;
 			// 
 			// hvscPathButton
 			// 
 			this.hvscPathButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.hvscPathButton.Location = new System.Drawing.Point(562, 2);
+			this.hvscPathButton.Location = new System.Drawing.Point(566, 2);
 			this.hvscPathButton.Name = "hvscPathButton";
 			this.controlResource.SetResourceKey(this.hvscPathButton, null);
 			this.hvscPathButton.Size = new System.Drawing.Size(22, 22);
@@ -374,278 +384,114 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			this.bugListCheckBox.TabIndex = 4;
 			this.bugListCheckBox.Values.Text = "Enable bug list";
 			// 
-			// filterGroupBox
+			// optionsGroupBox
 			// 
-			this.filterGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.filterGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
-			this.filterGroupBox.Location = new System.Drawing.Point(8, 120);
-			this.filterGroupBox.Name = "filterGroupBox";
+			this.optionsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.optionsGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
+			this.optionsGroupBox.Location = new System.Drawing.Point(310, 100);
+			this.optionsGroupBox.Name = "optionsGroupBox";
 			// 
 			// 
 			// 
-			this.filterGroupBox.Panel.Controls.Add(this.enableFilterCheckBox);
-			this.filterGroupBox.Panel.Controls.Add(this.filterPanel);
-			this.filterGroupBox.Panel.Controls.Add(this.filterAdjustmentPanel);
-			this.controlResource.SetResourceKey(this.filterGroupBox, "IDS_SETTINGS_FILTER");
-			this.filterGroupBox.Size = new System.Drawing.Size(592, 190);
-			this.filterGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.filterGroupBox.TabIndex = 3;
-			this.filterGroupBox.Values.Heading = "Filter adjustment";
+			this.optionsGroupBox.Panel.Controls.Add(this.digiboostCheckBox);
+			this.optionsGroupBox.Panel.Controls.Add(this.enableFilterCheckBox);
+			this.controlResource.SetResourceKey(this.optionsGroupBox, "IDS_SETTINGS_OPTIONS");
+			this.optionsGroupBox.Size = new System.Drawing.Size(294, 92);
+			this.optionsGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.optionsGroupBox.TabIndex = 3;
+			this.optionsGroupBox.Values.Heading = "Options";
+			// 
+			// digiboostCheckBox
+			// 
+			this.digiboostCheckBox.Location = new System.Drawing.Point(4, 26);
+			this.digiboostCheckBox.Name = "digiboostCheckBox";
+			this.controlResource.SetResourceKey(this.digiboostCheckBox, "IDS_SETTINGS_OPTIONS_DIGIBOOST");
+			this.digiboostCheckBox.Size = new System.Drawing.Size(197, 20);
+			this.digiboostCheckBox.TabIndex = 1;
+			this.digiboostCheckBox.Values.Text = "Boost digisounds on MOS-8580";
 			// 
 			// enableFilterCheckBox
 			// 
 			this.enableFilterCheckBox.Location = new System.Drawing.Point(4, 5);
 			this.enableFilterCheckBox.Name = "enableFilterCheckBox";
-			this.controlResource.SetResourceKey(this.enableFilterCheckBox, "IDS_SETTINGS_FILTER_ENABLE");
+			this.controlResource.SetResourceKey(this.enableFilterCheckBox, "IDS_SETTINGS_OPTIONS_FILTER_ENABLE");
 			this.enableFilterCheckBox.Size = new System.Drawing.Size(83, 17);
 			this.enableFilterCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.enableFilterCheckBox.TabIndex = 0;
 			this.enableFilterCheckBox.Values.Text = "Enable filter";
-			this.enableFilterCheckBox.CheckedChanged += new System.EventHandler(this.EnableFilterCheckBox_CheckedChanged);
-			// 
-			// filterPanel
-			// 
-			this.filterPanel.Controls.Add(this.filterModelRadioButton);
-			this.filterPanel.Controls.Add(this.filterCustomRadioButton);
-			this.filterPanel.Location = new System.Drawing.Point(100, 5);
-			this.filterPanel.Name = "filterPanel";
-			this.controlResource.SetResourceKey(this.filterPanel, null);
-			this.filterPanel.Size = new System.Drawing.Size(484, 18);
-			this.filterPanel.TabIndex = 1;
-			// 
-			// filterModelRadioButton
-			// 
-			this.filterModelRadioButton.Location = new System.Drawing.Point(0, 0);
-			this.filterModelRadioButton.Name = "filterModelRadioButton";
-			this.controlResource.SetResourceKey(this.filterModelRadioButton, "IDS_SETTINGS_FILTER_MODEL");
-			this.filterModelRadioButton.Size = new System.Drawing.Size(92, 17);
-			this.filterModelRadioButton.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.filterModelRadioButton.TabIndex = 0;
-			this.filterModelRadioButton.Values.Text = "Model specific";
-			this.filterModelRadioButton.CheckedChanged += new System.EventHandler(this.FilterModelRadioButton_CheckedChanged);
-			// 
-			// filterCustomRadioButton
-			// 
-			this.filterCustomRadioButton.Location = new System.Drawing.Point(105, 0);
-			this.filterCustomRadioButton.Name = "filterCustomRadioButton";
-			this.controlResource.SetResourceKey(this.filterCustomRadioButton, "IDS_SETTINGS_FILTER_CUSTOM");
-			this.filterCustomRadioButton.Size = new System.Drawing.Size(60, 17);
-			this.filterCustomRadioButton.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.filterCustomRadioButton.TabIndex = 1;
-			this.filterCustomRadioButton.Values.Text = "Custom";
-			this.filterCustomRadioButton.CheckedChanged += new System.EventHandler(this.FilterCustomRadioButton_CheckedChanged);
-			// 
-			// filterAdjustmentPanel
-			// 
-			this.filterAdjustmentPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.filterAdjustmentPanel.Controls.Add(this.filterResetButton);
-			this.filterAdjustmentPanel.Controls.Add(this.filterFtLabel);
-			this.filterAdjustmentPanel.Controls.Add(this.filterFmLabel);
-			this.filterAdjustmentPanel.Controls.Add(this.filterFtTrackBar);
-			this.filterAdjustmentPanel.Controls.Add(this.filterFmTrackBar);
-			this.filterAdjustmentPanel.Controls.Add(this.filterControl);
-			this.filterAdjustmentPanel.Controls.Add(this.filterFsLabel);
-			this.filterAdjustmentPanel.Controls.Add(this.filterFsTrackBar);
-			this.filterAdjustmentPanel.Location = new System.Drawing.Point(4, 30);
-			this.filterAdjustmentPanel.Name = "filterAdjustmentPanel";
-			this.controlResource.SetResourceKey(this.filterAdjustmentPanel, null);
-			this.filterAdjustmentPanel.Size = new System.Drawing.Size(584, 136);
-			this.filterAdjustmentPanel.TabIndex = 2;
-			// 
-			// filterResetButton
-			// 
-			this.filterResetButton.Location = new System.Drawing.Point(0, 100);
-			this.filterResetButton.Name = "filterResetButton";
-			this.controlResource.SetResourceKey(this.filterResetButton, "IDS_SETTINGS_FILTER_RESET");
-			this.filterResetButton.Size = new System.Drawing.Size(90, 25);
-			this.filterResetButton.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.filterResetButton.TabIndex = 7;
-			this.filterResetButton.Values.Text = "Reset";
-			this.filterResetButton.Click += new System.EventHandler(this.FilterResetButton_Click);
-			// 
-			// filterFtLabel
-			// 
-			this.filterFtLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.filterFtLabel.Location = new System.Drawing.Point(364, 67);
-			this.filterFtLabel.Name = "filterFtLabel";
-			this.controlResource.SetResourceKey(this.filterFtLabel, "IDS_SETTINGS_FILTER_FT");
-			this.filterFtLabel.Size = new System.Drawing.Size(78, 17);
-			this.filterFtLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.filterFtLabel.TabIndex = 5;
-			this.filterFtLabel.Values.Text = "FT parameter";
-			// 
-			// filterFmLabel
-			// 
-			this.filterFmLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.filterFmLabel.Location = new System.Drawing.Point(364, 36);
-			this.filterFmLabel.Name = "filterFmLabel";
-			this.controlResource.SetResourceKey(this.filterFmLabel, "IDS_SETTINGS_FILTER_FM");
-			this.filterFmLabel.Size = new System.Drawing.Size(80, 17);
-			this.filterFmLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.filterFmLabel.TabIndex = 3;
-			this.filterFmLabel.Values.Text = "FM parameter";
-			// 
-			// filterFtTrackBar
-			// 
-			this.filterFtTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.filterFtTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.InputControlStandalone;
-			this.filterFtTrackBar.DrawBackground = true;
-			this.filterFtTrackBar.Location = new System.Drawing.Point(0, 62);
-			this.filterFtTrackBar.Maximum = 50;
-			this.filterFtTrackBar.Name = "filterFtTrackBar";
-			this.controlResource.SetResourceKey(this.filterFtTrackBar, null);
-			this.filterFtTrackBar.Size = new System.Drawing.Size(360, 27);
-			this.filterFtTrackBar.TabIndex = 4;
-			this.filterFtTrackBar.TickFrequency = 5;
-			this.filterFtTrackBar.Value = 10;
-			this.filterFtTrackBar.ValueChanged += new System.EventHandler(this.FilterFtTrackBar_ValueChanged);
-			// 
-			// filterFmTrackBar
-			// 
-			this.filterFmTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.filterFmTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.InputControlStandalone;
-			this.filterFmTrackBar.DrawBackground = true;
-			this.filterFmTrackBar.Location = new System.Drawing.Point(0, 31);
-			this.filterFmTrackBar.Maximum = 120;
-			this.filterFmTrackBar.Minimum = 2;
-			this.filterFmTrackBar.Name = "filterFmTrackBar";
-			this.controlResource.SetResourceKey(this.filterFmTrackBar, null);
-			this.filterFmTrackBar.Size = new System.Drawing.Size(360, 27);
-			this.filterFmTrackBar.TabIndex = 2;
-			this.filterFmTrackBar.TickFrequency = 13;
-			this.filterFmTrackBar.Value = 10;
-			this.filterFmTrackBar.ValueChanged += new System.EventHandler(this.FilterFmTrackBar_ValueChanged);
-			// 
-			// filterControl
-			// 
-			this.filterControl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.filterControl.BackColor = System.Drawing.Color.White;
-			this.filterControl.Font = new System.Drawing.Font("Tahoma", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.filterControl.Location = new System.Drawing.Point(453, 4);
-			this.filterControl.Name = "filterControl";
-			this.controlResource.SetResourceKey(this.filterControl, null);
-			this.filterControl.Size = new System.Drawing.Size(128, 128);
-			this.filterControl.TabIndex = 6;
-			// 
-			// filterFsLabel
-			// 
-			this.filterFsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.filterFsLabel.Location = new System.Drawing.Point(364, 5);
-			this.filterFsLabel.Name = "filterFsLabel";
-			this.controlResource.SetResourceKey(this.filterFsLabel, "IDS_SETTINGS_FILTER_FS");
-			this.filterFsLabel.Size = new System.Drawing.Size(77, 17);
-			this.filterFsLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.filterFsLabel.TabIndex = 1;
-			this.filterFsLabel.Values.Text = "FS parameter";
-			// 
-			// filterFsTrackBar
-			// 
-			this.filterFsTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.filterFsTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.InputControlStandalone;
-			this.filterFsTrackBar.DrawBackground = true;
-			this.filterFsTrackBar.Location = new System.Drawing.Point(0, 0);
-			this.filterFsTrackBar.Maximum = 700;
-			this.filterFsTrackBar.Minimum = 10;
-			this.filterFsTrackBar.Name = "filterFsTrackBar";
-			this.controlResource.SetResourceKey(this.filterFsTrackBar, null);
-			this.filterFsTrackBar.Size = new System.Drawing.Size(360, 27);
-			this.filterFsTrackBar.TabIndex = 0;
-			this.filterFsTrackBar.TickFrequency = 75;
-			this.filterFsTrackBar.Value = 10;
-			this.filterFsTrackBar.ValueChanged += new System.EventHandler(this.FilterFsTrackBar_ValueChanged);
 			// 
 			// SettingsControl
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.Transparent;
-			this.Controls.Add(this.filterGroupBox);
+			this.Controls.Add(this.optionsGroupBox);
 			this.Controls.Add(this.hvscGroupBox);
-			this.Controls.Add(this.modelGroupBox);
+			this.Controls.Add(this.sidGroupBox);
 			this.Controls.Add(this.clockGroupBox);
-			this.Controls.Add(this.memoryGroupBox);
-			this.MinimumSize = new System.Drawing.Size(608, 395);
+			this.Controls.Add(this.ciaGroupBox);
+			this.MinimumSize = new System.Drawing.Size(612, 277);
 			this.Name = "SettingsControl";
 			this.controlResource.SetResourceKey(this, null);
-			this.Size = new System.Drawing.Size(608, 395);
+			this.Size = new System.Drawing.Size(612, 277);
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.memoryGroupBox.Panel)).EndInit();
-			this.memoryGroupBox.Panel.ResumeLayout(false);
-			this.memoryGroupBox.Panel.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.memoryGroupBox)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.ciaGroupBox.Panel)).EndInit();
+			this.ciaGroupBox.Panel.ResumeLayout(false);
+			this.ciaGroupBox.Panel.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.ciaGroupBox)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.clockGroupBox.Panel)).EndInit();
 			this.clockGroupBox.Panel.ResumeLayout(false);
 			this.clockGroupBox.Panel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.clockGroupBox)).EndInit();
 			this.clockPanel.ResumeLayout(false);
 			this.clockPanel.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.modelGroupBox.Panel)).EndInit();
-			this.modelGroupBox.Panel.ResumeLayout(false);
-			this.modelGroupBox.Panel.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.modelGroupBox)).EndInit();
-			this.modelPanel.ResumeLayout(false);
-			this.modelPanel.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.sidGroupBox.Panel)).EndInit();
+			this.sidGroupBox.Panel.ResumeLayout(false);
+			this.sidGroupBox.Panel.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.sidGroupBox)).EndInit();
+			this.sidPanel.ResumeLayout(false);
+			this.sidPanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.hvscGroupBox.Panel)).EndInit();
 			this.hvscGroupBox.Panel.ResumeLayout(false);
 			this.hvscGroupBox.Panel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.hvscGroupBox)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.filterGroupBox.Panel)).EndInit();
-			this.filterGroupBox.Panel.ResumeLayout(false);
-			this.filterGroupBox.Panel.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.filterGroupBox)).EndInit();
-			this.filterPanel.ResumeLayout(false);
-			this.filterPanel.PerformLayout();
-			this.filterAdjustmentPanel.ResumeLayout(false);
-			this.filterAdjustmentPanel.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.optionsGroupBox.Panel)).EndInit();
+			this.optionsGroupBox.Panel.ResumeLayout(false);
+			this.optionsGroupBox.Panel.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.optionsGroupBox)).EndInit();
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
 		private GuiKit.Designer.ControlResource controlResource;
-		private Krypton.Toolkit.KryptonGroupBox memoryGroupBox;
-		private Krypton.Toolkit.KryptonRadioButton realC64RadioButton;
-		private Krypton.Toolkit.KryptonRadioButton fullBankRadioButton;
-		private Krypton.Toolkit.KryptonRadioButton transparentRadioButton;
-		private Krypton.Toolkit.KryptonRadioButton playSidRadioButton;
+		private Krypton.Toolkit.KryptonGroupBox ciaGroupBox;
+		private Krypton.Toolkit.KryptonRadioButton model6526w4485RadioButton;
+		private Krypton.Toolkit.KryptonRadioButton model8521RadioButton;
+		private Krypton.Toolkit.KryptonRadioButton model6526RadioButton;
 		private Krypton.Toolkit.KryptonGroupBox clockGroupBox;
 		private Krypton.Toolkit.KryptonRadioButton palRadioButton;
 		private Krypton.Toolkit.KryptonRadioButton ntscRadioButton;
 		private System.Windows.Forms.Panel clockPanel;
 		private Krypton.Toolkit.KryptonRadioButton clockNotKnownRadioButton;
 		private Krypton.Toolkit.KryptonRadioButton clockAlwaysRadioButton;
-		private Krypton.Toolkit.KryptonGroupBox modelGroupBox;
-		private Krypton.Toolkit.KryptonRadioButton model6581RadioButton;
-		private Krypton.Toolkit.KryptonRadioButton model8580RadioButton;
-		private System.Windows.Forms.Panel modelPanel;
-		private Krypton.Toolkit.KryptonRadioButton modelAlwaysRadioButton;
-		private Krypton.Toolkit.KryptonRadioButton modelNotKnownRadioButton;
+		private Krypton.Toolkit.KryptonGroupBox sidGroupBox;
+		private Krypton.Toolkit.KryptonRadioButton sid6581RadioButton;
+		private Krypton.Toolkit.KryptonRadioButton sid8580RadioButton;
+		private System.Windows.Forms.Panel sidPanel;
+		private Krypton.Toolkit.KryptonRadioButton sidAlwaysRadioButton;
+		private Krypton.Toolkit.KryptonRadioButton sidNotKnownRadioButton;
 		private Krypton.Toolkit.KryptonGroupBox hvscGroupBox;
 		private Krypton.Toolkit.KryptonLabel hvscLabel;
-		private Krypton.Toolkit.KryptonGroupBox filterGroupBox;
+		private Krypton.Toolkit.KryptonGroupBox optionsGroupBox;
 		private Krypton.Toolkit.KryptonTextBox hvscvPathTextBox;
 		private Krypton.Toolkit.KryptonButton hvscPathButton;
 		private Krypton.Toolkit.KryptonCheckBox stilCheckBox;
 		private Krypton.Toolkit.KryptonCheckBox songLengthCheckBox;
 		private Krypton.Toolkit.KryptonCheckBox enableFilterCheckBox;
-		private Krypton.Toolkit.KryptonRadioButton filterModelRadioButton;
-		private Krypton.Toolkit.KryptonRadioButton filterCustomRadioButton;
-		private System.Windows.Forms.Panel filterPanel;
-		private System.Windows.Forms.Panel filterAdjustmentPanel;
-		private Krypton.Toolkit.KryptonTrackBar filterFsTrackBar;
-		private Krypton.Toolkit.KryptonLabel filterFsLabel;
-		private FilterControl filterControl;
-		private Krypton.Toolkit.KryptonLabel filterFtLabel;
-		private Krypton.Toolkit.KryptonLabel filterFmLabel;
-		private Krypton.Toolkit.KryptonTrackBar filterFtTrackBar;
-		private Krypton.Toolkit.KryptonTrackBar filterFmTrackBar;
-		private Krypton.Toolkit.KryptonButton filterResetButton;
 		private Krypton.Toolkit.KryptonCheckBox bugListCheckBox;
+		private Krypton.Toolkit.KryptonRadioButton ntscOldRadioButton;
+		private Krypton.Toolkit.KryptonRadioButton dreanRadioButton;
+		private Krypton.Toolkit.KryptonRadioButton palmRadioButton;
+		private Krypton.Toolkit.KryptonCheckBox digiboostCheckBox;
 	}
 }

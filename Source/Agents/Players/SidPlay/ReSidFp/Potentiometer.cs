@@ -6,14 +6,23 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSid.Containers
+namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 {
 	/// <summary>
-	/// Supported SID chips
+	/// Potentiometer representation.
+	///
+	/// This class will probably never be implemented in any real way
 	/// </summary>
-	internal enum ChipModel
+	internal class Potentiometer
 	{
-		Mos6581,
-		Mos8580
+		/********************************************************************/
+		/// <summary>
+		/// Read paddle value. Not modeled
+		/// </summary>
+		/********************************************************************/
+		public byte ReadPot()
+		{
+			return 0xff;
+		}
 	}
 }

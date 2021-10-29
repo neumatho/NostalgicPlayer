@@ -71,6 +71,42 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CIA model.
+        /// </summary>
+        internal static string IDS_SETTINGS_CIA {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_CIA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MOS-6526.
+        /// </summary>
+        internal static string IDS_SETTINGS_CIA_6526 {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_CIA_6526", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MOS-6526 from week 44/1985.
+        /// </summary>
+        internal static string IDS_SETTINGS_CIA_6526_W4485 {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_CIA_6526_W4485", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MOS-8521.
+        /// </summary>
+        internal static string IDS_SETTINGS_CIA_8521 {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_CIA_8521", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Clock speed.
         /// </summary>
         internal static string IDS_SETTINGS_CLOCK {
@@ -85,6 +121,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings {
         internal static string IDS_SETTINGS_CLOCK_ALWAYS {
             get {
                 return ResourceManager.GetString("IDS_SETTINGS_CLOCK_ALWAYS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Drean.
+        /// </summary>
+        internal static string IDS_SETTINGS_CLOCK_DREAN {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_CLOCK_DREAN", resourceCulture);
             }
         }
         
@@ -107,6 +152,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Old NTSC.
+        /// </summary>
+        internal static string IDS_SETTINGS_CLOCK_NTSC_OLD {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_CLOCK_NTSC_OLD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to PAL.
         /// </summary>
         internal static string IDS_SETTINGS_CLOCK_PAL {
@@ -116,92 +170,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Filter adjustment.
+        ///   Looks up a localized string similar to PAL-M.
         /// </summary>
-        internal static string IDS_SETTINGS_FILTER {
+        internal static string IDS_SETTINGS_CLOCK_PALM {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_FILTER", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Custom.
-        /// </summary>
-        internal static string IDS_SETTINGS_FILTER_CUSTOM {
-            get {
-                return ResourceManager.GetString("IDS_SETTINGS_FILTER_CUSTOM", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enable filter.
-        /// </summary>
-        internal static string IDS_SETTINGS_FILTER_ENABLE {
-            get {
-                return ResourceManager.GetString("IDS_SETTINGS_FILTER_ENABLE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to FM parameter.
-        /// </summary>
-        internal static string IDS_SETTINGS_FILTER_FM {
-            get {
-                return ResourceManager.GetString("IDS_SETTINGS_FILTER_FM", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to FS parameter.
-        /// </summary>
-        internal static string IDS_SETTINGS_FILTER_FS {
-            get {
-                return ResourceManager.GetString("IDS_SETTINGS_FILTER_FS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to FT parameter.
-        /// </summary>
-        internal static string IDS_SETTINGS_FILTER_FT {
-            get {
-                return ResourceManager.GetString("IDS_SETTINGS_FILTER_FT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Model specific.
-        /// </summary>
-        internal static string IDS_SETTINGS_FILTER_MODEL {
-            get {
-                return ResourceManager.GetString("IDS_SETTINGS_FILTER_MODEL", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Reset.
-        /// </summary>
-        internal static string IDS_SETTINGS_FILTER_RESET {
-            get {
-                return ResourceManager.GetString("IDS_SETTINGS_FILTER_RESET", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to cutoff frequency.
-        /// </summary>
-        internal static string IDS_SETTINGS_FILTER_XAXIS {
-            get {
-                return ResourceManager.GetString("IDS_SETTINGS_FILTER_XAXIS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to filter strength.
-        /// </summary>
-        internal static string IDS_SETTINGS_FILTER_YAXIS {
-            get {
-                return ResourceManager.GetString("IDS_SETTINGS_FILTER_YAXIS", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_CLOCK_PALM", resourceCulture);
             }
         }
         
@@ -251,92 +224,74 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Memory model.
+        ///   Looks up a localized string similar to Options.
         /// </summary>
-        internal static string IDS_SETTINGS_MEMORY {
+        internal static string IDS_SETTINGS_OPTIONS {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_MEMORY", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Full bank-switching.
+        ///   Looks up a localized string similar to Boost digisounds on MOS-8580.
         /// </summary>
-        internal static string IDS_SETTINGS_MEMORY_FULL_BANK {
+        internal static string IDS_SETTINGS_OPTIONS_DIGIBOOST {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_MEMORY_FULL_BANK", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_DIGIBOOST", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PlaySID environment.
+        ///   Looks up a localized string similar to Enable filter.
         /// </summary>
-        internal static string IDS_SETTINGS_MEMORY_PLAYSID {
+        internal static string IDS_SETTINGS_OPTIONS_FILTER_ENABLE {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_MEMORY_PLAYSID", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Real C64 environment.
-        /// </summary>
-        internal static string IDS_SETTINGS_MEMORY_REAL_C64 {
-            get {
-                return ResourceManager.GetString("IDS_SETTINGS_MEMORY_REAL_C64", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Transparent ROM.
-        /// </summary>
-        internal static string IDS_SETTINGS_MEMORY_TRANSPARENT {
-            get {
-                return ResourceManager.GetString("IDS_SETTINGS_MEMORY_TRANSPARENT", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_FILTER_ENABLE", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to SID model.
         /// </summary>
-        internal static string IDS_SETTINGS_MODEL {
+        internal static string IDS_SETTINGS_SID {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_MODEL", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_SID", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to MOS-6581.
         /// </summary>
-        internal static string IDS_SETTINGS_MODEL_6581 {
+        internal static string IDS_SETTINGS_SID_6581 {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_MODEL_6581", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_SID_6581", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to MOS-8580.
         /// </summary>
-        internal static string IDS_SETTINGS_MODEL_8580 {
+        internal static string IDS_SETTINGS_SID_8580 {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_MODEL_8580", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_SID_8580", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Always use this model.
         /// </summary>
-        internal static string IDS_SETTINGS_MODEL_ALWAYS {
+        internal static string IDS_SETTINGS_SID_ALWAYS {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_MODEL_ALWAYS", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_SID_ALWAYS", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Only when model is not known.
         /// </summary>
-        internal static string IDS_SETTINGS_MODEL_NOT_KNOWN {
+        internal static string IDS_SETTINGS_SID_NOT_KNOWN {
             get {
-                return ResourceManager.GetString("IDS_SETTINGS_MODEL_NOT_KNOWN", resourceCulture);
+                return ResourceManager.GetString("IDS_SETTINGS_SID_NOT_KNOWN", resourceCulture);
             }
         }
     }

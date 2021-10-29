@@ -23,35 +23,39 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		public const float DefaultFt = 0.05f;
 
 		/// <summary>
-		/// Different environment options
+		/// Different CIA models
 		/// </summary>
-		public enum Environment
+		public enum CiaModelType
 		{
 			/// <summary></summary>
-			PlaySid,
+			Mos6526,
 			/// <summary></summary>
-			Transparent,
+			Mos8521,
 			/// <summary></summary>
-			FullBank,
-			/// <summary></summary>
-			Real
+			Mos6526_W4485
 		}
 
 		/// <summary>
 		/// Different clock speeds
 		/// </summary>
-		public enum Clock
+		public enum ClockType
 		{
 			/// <summary></summary>
 			Pal,
 			/// <summary></summary>
-			Ntsc
+			Ntsc,
+			/// <summary></summary>
+			NtscOld,
+			/// <summary></summary>
+			Drean,
+			/// <summary></summary>
+			PalM
 		}
 
 		/// <summary>
 		/// Different options for the clock speed
 		/// </summary>
-		public enum ClockOption
+		public enum ClockOptionType
 		{
 			/// <summary></summary>
 			NotKnown,
@@ -62,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// <summary>
 		/// Different SID models
 		/// </summary>
-		public enum Model
+		public enum SidModelType
 		{
 			/// <summary></summary>
 			Mos6581,
@@ -73,23 +77,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// <summary>
 		/// Different options for the SID model
 		/// </summary>
-		public enum ModelOption
+		public enum SidModelOptionType
 		{
 			/// <summary></summary>
 			NotKnown,
 			/// <summary></summary>
 			Always
-		}
-
-		/// <summary>
-		/// Different filter options
-		/// </summary>
-		public enum FilterOption
-		{
-			/// <summary></summary>
-			ModelSpecific,
-			/// <summary></summary>
-			Custom
 		}
 
 		private readonly Kit.Utility.Settings settings;
@@ -103,6 +96,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		{
 			settings = new Kit.Utility.Settings("SidPlay");
 			settings.LoadSettings();
+
+			// Remove obsolete settings
+			settings.RemoveEntry("Emulator", "MemoryModel");
+			settings.RemoveEntry("Filter", "FilterOption");
+			settings.RemoveEntry("Filter", "FilterFs");
+			settings.RemoveEntry("Filter", "FilterFm");
+			settings.RemoveEntry("Filter", "FilterFt");
+
+			if (settings.ContainsEntry("Filter", "Enabled"))
+			{
+				FilterEnabled = settings.GetBoolEntry("Filter", "Enabled");
+				settings.RemoveEntry("Filter", "Enabled");
+			}
 		}
 
 
@@ -118,14 +124,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 
 		/********************************************************************/
 		/// <summary>
-		/// Which memory model to use
+		/// Which CIA model to use
 		/// </summary>
 		/********************************************************************/
-		public Environment MemoryModel
+		public CiaModelType CiaModel
 		{
-			get => Enum.Parse<Environment>(settings.GetStringEntry("Emulator", "MemoryModel", Environment.Real.ToString()));
+			get => Enum.Parse<CiaModelType>(settings.GetStringEntry("Emulator", "CiaModel", CiaModelType.Mos6526.ToString()));
 
-			set => settings.SetStringEntry("Emulator", "MemoryModel", value.ToString());
+			set => settings.SetStringEntry("Emulator", "CiaModel", value.ToString());
 		}
 
 
@@ -135,9 +141,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Which clock speed to use
 		/// </summary>
 		/********************************************************************/
-		public Clock ClockSpeed
+		public ClockType ClockSpeed
 		{
-			get => Enum.Parse<Clock>(settings.GetStringEntry("Emulator", "ClockSpeed", Clock.Pal.ToString()));
+			get => Enum.Parse<ClockType>(settings.GetStringEntry("Emulator", "ClockSpeed", ClockType.Pal.ToString()));
 
 			set => settings.SetStringEntry("Emulator", "ClockSpeed", value.ToString());
 		}
@@ -149,9 +155,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Which clock speed option to use
 		/// </summary>
 		/********************************************************************/
-		public ClockOption ClockSpeedOption
+		public ClockOptionType ClockSpeedOption
 		{
-			get => Enum.Parse<ClockOption>(settings.GetStringEntry("Emulator", "ClockSpeedOption", ClockOption.NotKnown.ToString()));
+			get => Enum.Parse<ClockOptionType>(settings.GetStringEntry("Emulator", "ClockSpeedOption", ClockOptionType.NotKnown.ToString()));
 
 			set => settings.SetStringEntry("Emulator", "ClockSpeedOption", value.ToString());
 		}
@@ -163,9 +169,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Which SID model to use
 		/// </summary>
 		/********************************************************************/
-		public Model SidModel
+		public SidModelType SidModel
 		{
-			get => Enum.Parse<Model>(settings.GetStringEntry("Emulator", "SidModel", Model.Mos6581.ToString()));
+			get => Enum.Parse<SidModelType>(settings.GetStringEntry("Emulator", "SidModel", SidModelType.Mos6581.ToString()));
 
 			set => settings.SetStringEntry("Emulator", "SidModel", value.ToString());
 		}
@@ -177,9 +183,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Which SID model option to use
 		/// </summary>
 		/********************************************************************/
-		public ModelOption SidModelOption
+		public SidModelOptionType SidModelOption
 		{
-			get => Enum.Parse<ModelOption>(settings.GetStringEntry("Emulator", "SidModelOption", ModelOption.NotKnown.ToString()));
+			get => Enum.Parse<SidModelOptionType>(settings.GetStringEntry("Emulator", "SidModelOption", SidModelOptionType.NotKnown.ToString()));
 
 			set => settings.SetStringEntry("Emulator", "SidModelOption", value.ToString());
 		}
@@ -193,65 +199,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/********************************************************************/
 		public bool FilterEnabled
 		{
-			get => settings.GetBoolEntry("Filter", "Enabled", true);
+			get => settings.GetBoolEntry("Options", "Filter", true);
 
-			set => settings.SetBoolEntry("Filter", "Enabled", value);
+			set => settings.SetBoolEntry("Options", "Filter", value);
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Which filter option to use
+		/// Tells if digiboost is enabled or not
 		/// </summary>
 		/********************************************************************/
-		public FilterOption Filter
+		public bool DigiBoostEnabled
 		{
-			get => Enum.Parse<FilterOption>(settings.GetStringEntry("Filter", "FilterOption", FilterOption.ModelSpecific.ToString()));
+			get => settings.GetBoolEntry("Options", "DigiBoost", false);
 
-			set => settings.SetStringEntry("Filter", "FilterOption", value.ToString());
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Tells filter parameter 1
-		/// </summary>
-		/********************************************************************/
-		public float FilterFs
-		{
-			get => settings.GetFloatEntry("Filter", "FilterFs", DefaultFs);
-
-			set => settings.SetFloatEntry("Filter", "FilterFs", value);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Tells filter parameter 2
-		/// </summary>
-		/********************************************************************/
-		public float FilterFm
-		{
-			get => settings.GetFloatEntry("Filter", "FilterFm", DefaultFm);
-
-			set => settings.SetFloatEntry("Filter", "FilterFm", value);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Tells filter parameter 1
-		/// </summary>
-		/********************************************************************/
-		public float FilterFt
-		{
-			get => settings.GetFloatEntry("Filter", "FilterFt", DefaultFt);
-
-			set => settings.SetFloatEntry("Filter", "FilterFt", value);
+			set => settings.SetBoolEntry("Options", "DigiBoost", value);
 		}
 
 

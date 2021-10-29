@@ -11,9 +11,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Threading;
-using Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.Builders;
+using Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.Builders.ReSidFpBuilder;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidPlayFp;
-using Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSid;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.Roms;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -431,49 +430,89 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 
 			// Set sampling method
 			engineConfig.samplingMethod = SidConfig.sampling_method_t.INTERPOLATE;
-			engineConfig.fastSampling = true;
 			engineConfig.playback = SidConfig.playback_t.STEREO;
 
 			// Setup our configuration
+			switch (settings.CiaModel)
+			{
+				case SidPlaySettings.CiaModelType.Mos6526:
+				{
+					engineConfig.ciaModel = SidConfig.cia_model_t.MOS6526;
+					break;
+				}
+
+				case SidPlaySettings.CiaModelType.Mos8521:
+				{
+					engineConfig.ciaModel = SidConfig.cia_model_t.MOS8521;
+					break;
+				}
+
+				case SidPlaySettings.CiaModelType.Mos6526_W4485:
+				{
+					engineConfig.ciaModel = SidConfig.cia_model_t.MOS6526W4485;
+					break;
+				}
+			}
+
 			switch (settings.ClockSpeed)
 			{
-				case SidPlaySettings.Clock.Pal:
+				case SidPlaySettings.ClockType.Pal:
 				{
 					engineConfig.defaultC64Model = SidConfig.c64_model_t.PAL;
 					break;
 				}
 
-				case SidPlaySettings.Clock.Ntsc:
+				case SidPlaySettings.ClockType.Ntsc:
 				{
 					engineConfig.defaultC64Model = SidConfig.c64_model_t.NTSC;
 					break;
 				}
+
+				case SidPlaySettings.ClockType.NtscOld:
+				{
+					engineConfig.defaultC64Model = SidConfig.c64_model_t.OLD_NTSC;
+					break;
+				}
+
+				case SidPlaySettings.ClockType.Drean:
+				{
+					engineConfig.defaultC64Model = SidConfig.c64_model_t.DREAN;
+					break;
+				}
+
+				case SidPlaySettings.ClockType.PalM:
+				{
+					engineConfig.defaultC64Model = SidConfig.c64_model_t.PAL_M;
+					break;
+				}
 			}
 
-			if (settings.ClockSpeedOption == SidPlaySettings.ClockOption.Always)
+			if (settings.ClockSpeedOption == SidPlaySettings.ClockOptionType.Always)
 				engineConfig.forceC64Model = true;
 			else
 				engineConfig.forceC64Model = false;
 
 			switch (settings.SidModel)
 			{
-				case SidPlaySettings.Model.Mos6581:
+				case SidPlaySettings.SidModelType.Mos6581:
 				{
 					engineConfig.defaultSidModel = SidConfig.sid_model_t.MOS6581;
 					break;
 				}
 
-				case SidPlaySettings.Model.Mos8580:
+				case SidPlaySettings.SidModelType.Mos8580:
 				{
 					engineConfig.defaultSidModel = SidConfig.sid_model_t.MOS8580;
 					break;
 				}
 			}
 
-			if (settings.SidModelOption == SidPlaySettings.ModelOption.Always)
+			if (settings.SidModelOption == SidPlaySettings.SidModelOptionType.Always)
 				engineConfig.forceSidModel = true;
 			else
 				engineConfig.forceSidModel = false;
+
+			engineConfig.digiBoost = settings.DigiBoostEnabled;
 
 			// Allocate output buffer
 			leftOutputBuffer = new short[BufferSize];
@@ -700,8 +739,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/********************************************************************/
 		private bool CreateSidEmulation(out string errorMessage)
 		{
+			errorMessage = string.Empty;
+
 			// Set up a SID builder
-			SidBuilder sidBuilder = new ReSidBuilder();
+			SidBuilder sidBuilder = new ReSidFpBuilder();
 
 			// Check if the builder is ok
 			if (!sidBuilder.GetStatus())
@@ -723,77 +764,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				return false;
 			}
 
-			if (!SetEmulationSettings(sidBuilder, out errorMessage))
-				return false;
+			// Setup filter
+			sidBuilder.Filter(settings.FilterEnabled);
 
 			engineConfig.sidEmulation = sidBuilder;
 
 			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set specific emulator settings
-		/// </summary>
-		/********************************************************************/
-		private bool SetEmulationSettings(SidBuilder sidBuilder, out string errorMessage)
-		{
-			errorMessage = string.Empty;
-
-			// Setup filter
-			sidBuilder.Filter(settings.FilterEnabled);
-
-			if (sidBuilder is ReSidBuilder reSidBuilder)
-			{
-				// Setup filter definition
-				if (settings.FilterEnabled && (settings.Filter == SidPlaySettings.FilterOption.Custom))
-				{
-					if (!reSidBuilder.Filter(ProvideFilter(settings.FilterFs, settings.FilterFm, settings.FilterFt)))
-					{
-						errorMessage = Resources.IDS_SID_ERR_FILTER_DEFINITION;
-						return false;
-					}
-				}
-			}
-
-			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate a SidPlay 1 compatible filter
-		/// </summary>
-		/********************************************************************/
-		private Spline.FCPoint[] ProvideFilter(float fs, float fm, float ft)
-		{
-			double fcMax = 1.0f;
-			double fcMin = 0.01f;
-
-			// Definition from ReSID
-			Spline.FCPoint[] cutoff = new Spline.FCPoint[0x100];
-
-			// Create filter
-			for (uint i = 0; i < 0x100; i++)
-			{
-				uint rk = i << 3;
-				cutoff[i].X = (int)rk;
-
-				double fc = Math.Exp((double)rk / 0x800 * Math.Log(fs)) / fm + ft;
-
-				if (fc < fcMin)
-					fc = fcMin;
-
-				if (fc > fcMax)
-					fc = fcMax;
-
-				cutoff[i].Y = (int)(fc * 4100);
-			}
-
-			return cutoff;
 		}
 
 

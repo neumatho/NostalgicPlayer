@@ -6,22 +6,39 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSid
+namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp.Array
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class Potentiometer
+	internal class Matrix<T>
 	{
+		private readonly T[][] data;
+		private readonly uint x, y;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public Matrix(uint x, uint y)
+		{
+			data = new T[x][];
+
+			for (uint i = 0; i < x; i++)
+				data[i] = new T[y];
+
+			this.x = x;
+			this.y = y;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public uint ReadPot()
-		{
-			// NB! Not modeled
-			return 0xff;
-		}
+		public T[] this[uint a] => data[a];
 	}
 }

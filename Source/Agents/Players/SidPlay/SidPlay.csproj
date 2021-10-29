@@ -25,6 +25,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="LibSidPlayFp\Builders\ReSidBuilder\**" />
+    <EmbeddedResource Remove="LibSidPlayFp\Builders\ReSidBuilder\**" />
+    <None Remove="LibSidPlayFp\Builders\ReSidBuilder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
   </ItemGroup>
 
