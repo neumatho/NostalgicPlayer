@@ -26,6 +26,7 @@ body {
 	font-family: 'poppins', sans-serif;
 	line-height: 1.80857;
 	font-weight: normal;
+	overflow-y: scroll;
 }
 
  a {
@@ -262,4 +263,48 @@ body {
 
 .usage2table a:hover {
 	color: #c222c2;
+}
+
+.letters {
+	margin-top: 15px;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.letterbutton, .allbutton {
+	padding: 0;
+	border: 1px solid #666;
+	background-color: #ddd;
+	color: #222;
+     -webkit-transition: all .3s ease-in-out;
+     -moz-transition: all .3s ease-in-out;
+     -ms-transition: all .3s ease-in-out;
+     -o-transition: all .3s ease-in-out;
+     transition: all .3s ease-in-out;
+}
+
+.letterbutton {
+	width: 20px;
+}
+
+.allbutton {
+	padding-left: 6px;
+	padding-right: 6px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	margin-left: 8px;
+}
+
+.letterbutton + .letterbutton {
+	margin-left: 4px;
+}
+
+.letterbutton:hover, .allbutton:hover {
+	background-color: #777676;
+	color: #fff;
+}
+
+.letterbutton.lettertoggle, .allbutton.lettertoggle {
+	background-color: #36304a;
+	color: #fff;
 }
