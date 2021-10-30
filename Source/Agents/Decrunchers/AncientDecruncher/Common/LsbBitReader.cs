@@ -33,6 +33,22 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 
 		/********************************************************************/
 		/// <summary>
+		/// Read the number of bits given as argument and return the number
+		/// </summary>
+		/********************************************************************/
+		public uint ReadBits8(uint count)
+		{
+			return ReadBitsInternal(count, () =>
+			{
+				bufContent = inputStream.ReadByte();
+				bufLength = 8;
+			});
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Read count number of bits in big endian format
 		/// </summary>
 		/********************************************************************/

@@ -163,7 +163,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 							// Well, something went wrong when loading the file
 							//
 							// Build the error string
-							errorMessage = string.Format(Resources.IDS_ERR_LOAD_MODULE, fileInfo.FileName, PlayerAgentInfo.TypeName, playerError);
+							errorMessage = string.Format(Resources.IDS_ERR_LOAD_MODULE, fileInfo.FileName, string.IsNullOrEmpty(PlayerAgentInfo.TypeName) ? PlayerAgentInfo.AgentName : PlayerAgentInfo.TypeName, playerError);
 
 							PlayerAgentInfo = null;
 							PlayerAgent = null;
@@ -176,7 +176,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 							FileName = fileInfo.FileName;
 
 							PlayerName = PlayerAgentInfo.AgentName;
-							ModuleFormat = convertInfo != null ? string.IsNullOrEmpty(convertInfo.OriginalFormat) ? convertInfo.Agent.TypeName : convertInfo.OriginalFormat : PlayerAgentInfo.TypeName;
+							ModuleFormat = convertInfo != null ? string.IsNullOrEmpty(convertInfo.OriginalFormat) ? convertInfo.Agent.TypeName : convertInfo.OriginalFormat : string.IsNullOrEmpty(PlayerAgentInfo.TypeName) ? PlayerAgentInfo.AgentName : PlayerAgentInfo.TypeName;
 
 							ConverterAgentInfo = convertInfo?.Agent;
 						}

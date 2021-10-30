@@ -129,6 +129,12 @@ Converted to C# by Thomas Neumann.
 
 The SQSH is a cruncher library for the XPK cruncher. The algorithm is designed to crunch samples by using a delta compression algorithm together with LZ based compression.</value>
   </data>
+  <data name="IDS_ANC_DESCRIPTION_AGENT3" xml:space="preserve">
+    <value>Written by Teemu Suutari (Ancient library).
+Converted to C# by Thomas Neumann.
+
+The MMCMP packer is written by Zirconia a.k.a Emmanuel Giasson. The packer can detect different module formats (S3M/IT/XM/MOD), so it knows where the samples are stored. It then pack thoose with a special designed algorithm.</value>
+  </data>
   <data name="IDS_ANC_ERR_CORRUPT_DATA" xml:space="preserve">
     <value>Crunched data is corrupt</value>
   </data>
@@ -140,6 +146,9 @@ The SQSH is a cruncher library for the XPK cruncher. The algorithm is designed t
   </data>
   <data name="IDS_ANC_ERR_UNKNOWN_CHUNK_TYPE" xml:space="preserve">
     <value>Unknown chunk type</value>
+  </data>
+  <data name="IDS_ANC_ERR_WRONG_BLOCK_CHECKSUM" xml:space="preserve">
+    <value>Block data checksum mismatch</value>
   </data>
   <data name="IDS_ANC_ERR_WRONG_CHUNK_CHECKSUM" xml:space="preserve">
     <value>Chunk data checksum mismatch</value>
@@ -155,5 +164,8 @@ The SQSH is a cruncher library for the XPK cruncher. The algorithm is designed t
   </data>
   <data name="IDS_ANC_NAME_AGENT2" xml:space="preserve">
     <value>XPK (SQSH)</value>
+  </data>
+  <data name="IDS_ANC_NAME_AGENT3" xml:space="preserve">
+    <value>Music Module Compressor (MMCMP)</value>
   </data>
 </root>

@@ -85,6 +85,18 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library).
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///The MMCMP packer is written by Zirconia a.k.a Emmanuel Giasson. The packer can detect different module formats (S3M/IT/XM/MOD), so it knows where the samples are stored. It then pack thoose with a special designed algorithm..
+        /// </summary>
+        internal static string IDS_ANC_DESCRIPTION_AGENT3 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_DESCRIPTION_AGENT3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Crunched data is corrupt.
         /// </summary>
         internal static string IDS_ANC_ERR_CORRUPT_DATA {
@@ -117,6 +129,15 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         internal static string IDS_ANC_ERR_UNKNOWN_CHUNK_TYPE {
             get {
                 return ResourceManager.GetString("IDS_ANC_ERR_UNKNOWN_CHUNK_TYPE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Block data checksum mismatch.
+        /// </summary>
+        internal static string IDS_ANC_ERR_WRONG_BLOCK_CHECKSUM {
+            get {
+                return ResourceManager.GetString("IDS_ANC_ERR_WRONG_BLOCK_CHECKSUM", resourceCulture);
             }
         }
         
@@ -162,6 +183,15 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         internal static string IDS_ANC_NAME_AGENT2 {
             get {
                 return ResourceManager.GetString("IDS_ANC_NAME_AGENT2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Music Module Compressor (MMCMP).
+        /// </summary>
+        internal static string IDS_ANC_NAME_AGENT3 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_NAME_AGENT3", resourceCulture);
             }
         }
     }

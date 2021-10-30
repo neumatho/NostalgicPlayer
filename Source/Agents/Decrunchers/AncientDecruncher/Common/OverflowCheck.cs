@@ -11,64 +11,40 @@ using System;
 namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 {
 	/// <summary>
+	/// 
 	/// </summary>
-	internal class MsbBitReader
+	internal static class OverflowCheck
 	{
-		private readonly IInputStream inputStream;
-
-		private uint bufContent = 0;
-		private byte bufLength = 0;
-
 		/********************************************************************/
 		/// <summary>
-		/// Constructor
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public MsbBitReader(IInputStream inputStream)
+		public static uint Sum(uint a, uint b)
 		{
-			this.inputStream = inputStream;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Read the number of bits given as argument and return the number
-		/// </summary>
-		/********************************************************************/
-		public uint ReadBits8(uint count)
-		{
-			return ReadBitsInternal(count, () =>
-			{
-				bufContent = inputStream.ReadByte();
-				bufLength = 8;
-			});
-		}
-
-		#region Private methods
-		/********************************************************************/
-		/// <summary>
-		/// Read count number of bits by calling the function given
-		/// </summary>
-		/********************************************************************/
-		private uint ReadBitsInternal(uint count, Action readWord)
-		{
-			uint ret = 0;
-
-			while (count != 0)
-			{
-				if (bufLength == 0)
-					readWord();
-
-				byte maxCount = Math.Min((byte)count, bufLength);
-				bufLength -= maxCount;
-
-				ret = (uint)((ret << maxCount) | ((bufContent >> bufLength) & ((1 << maxCount) - 1)));
-				count -= maxCount;
-			}
+			// TODO: Add type traits to handle signed integers
+			uint ret = a + b;
+			if (ret < a)
+				throw new OverflowException();
 
 			return ret;
 		}
-		#endregion
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public static uint Sum(uint a, uint b, params uint[] args)
+		{
+			uint ret = Sum(a, b);
+
+			foreach (uint v in args)
+				ret = Sum(ret, v);
+
+			return ret;
+		}
 	}
 }
