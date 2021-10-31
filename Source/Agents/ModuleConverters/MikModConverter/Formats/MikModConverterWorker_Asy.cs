@@ -39,8 +39,12 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		private class ModuleHeader
 		{
 			public readonly byte[] SongName = new byte[22];
+			public byte InitSpeed;
+			public byte InitTempo;
+			public byte NumSamples;
 			public byte NumPatterns;									// Number of patterns used
 			public byte NumOrders;
+			public byte RepPos;
 			public byte[] Positions = new byte[256];					// Which pattern to play at pos
 			public readonly MSampInfo[] Samples = Helpers.InitializeArray<MSampInfo>(64);	// All sample info
 		}
@@ -138,17 +142,24 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 				// No title in Asylum amf files :(
 				mh.SongName[0] = 0x00;
 
-				moduleStream.Seek(0x23, SeekOrigin.Begin);
+				moduleStream.Seek(0x20, SeekOrigin.Begin);
+				mh.InitSpeed = moduleStream.Read_UINT8();
+				mh.InitTempo = moduleStream.Read_UINT8();
+				mh.NumSamples = moduleStream.Read_UINT8();
 				mh.NumPatterns = moduleStream.Read_UINT8();
 				mh.NumOrders = moduleStream.Read_UINT8();
-
-				// Skip unknown byte
-				moduleStream.Seek(1, SeekOrigin.Current);
+				mh.RepPos = moduleStream.Read_UINT8();
 
 				moduleStream.Read(mh.Positions, 0, 256);
 
+				if ((mh.InitSpeed == 0) || (mh.InitTempo == 0) || (mh.NumSamples > 64))
+				{
+					errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_HEADER;
+					return false;
+				}
+
 				// Read sample headers
-				for (int t = 0; t < 64; t++)
+				for (int t = 0; t < mh.NumSamples; t++)
 				{
 					MSampInfo s = mh.Samples[t];
 
@@ -173,16 +184,18 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 					return false;
 				}
 
+				moduleStream.Seek(37 * (64 - mh.NumSamples), SeekOrigin.Current);
+
 				// Set module variables
-				of.InitSpeed = 6;
-				of.InitTempo = 125;
+				of.InitSpeed = mh.InitSpeed;
+				of.InitTempo = mh.InitTempo;
 				of.NumChn = 8;
 
 				modType = 0;
 
 				of.SongName = encoder.GetString(mh.SongName);
 				of.NumPos = mh.NumOrders;
-				of.RepPos = 0;
+				of.RepPos = mh.RepPos;
 				of.NumPat = mh.NumPatterns;
 				of.NumTrk = (ushort)(of.NumPat * of.NumChn);
 
@@ -206,8 +219,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 				}
 
 				// Finally, init the sample info structures
-				of.NumIns = 31;
-				of.NumSmp = 31;
+				of.NumIns = mh.NumSamples;
+				of.NumSmp = mh.NumSamples;
 
 				if (!MLoader.AllocSamples(of))
 				{
@@ -367,7 +380,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			if (instrument != 0)
 			{
 				// If instrument does not exists, note cut
-				if ((instrument > 31) || (mh.Samples[instrument - 1].Length == 0))
+				if ((instrument > mh.NumSamples) || (mh.Samples[instrument - 1].Length == 0))
 				{
 					uniTrk.UniPtEffect(0xc, 0, of.Flags);
 					if (effect == 0xc)
