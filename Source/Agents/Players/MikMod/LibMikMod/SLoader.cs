@@ -39,8 +39,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				ItPack status = new ItPack();
 				ushort inCnt = 0;
 
-				sbyte[] compressionTable = null;
+				sbyte[] compressionTable = new sbyte[16];
 				sbyte adpcmDelta = 0;
+				bool hasTable = false;
 
 				int outIndex = 0;
 
@@ -85,11 +86,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 					}
 					else if ((inFmt & SampleFlag.Adpcm4) != 0)
 					{
-						if (compressionTable == null)
+						if (!hasTable)
 						{
 							// Read compression table
-							compressionTable = new sbyte[16];
 							sampleDataStream.ReadSigned(compressionTable, 0, 16);
+							hasTable = true;
 						}
 
 						// 4-bit ADPCM data, used by MOD plugin
@@ -97,9 +98,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 						{
 							byte b = sampleDataStream.Read_UINT8();
 
-							adpcmDelta = (sbyte)(adpcmDelta + compressionTable[b & 0x0f]);
+							adpcmDelta += compressionTable[b & 0x0f];
 							sl_buffer8[t] = (byte)adpcmDelta;
-							adpcmDelta = (sbyte)(adpcmDelta + compressionTable[(b >> 4) & 0x0f]);
+							adpcmDelta += compressionTable[(b >> 4) & 0x0f];
 							sl_buffer8[t + 1] = (byte)adpcmDelta;
 						}
 					}

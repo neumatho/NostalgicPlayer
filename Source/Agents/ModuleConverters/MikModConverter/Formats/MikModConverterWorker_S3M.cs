@@ -278,6 +278,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 					return false;
 				}
 
+				bool modPlugin = false;
 				for (int t = 0; t < of.NumIns; t++)
 				{
 					S3MSample s = new S3MSample();
@@ -333,10 +334,19 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 					if (mh.FileFormat == 1)
 						q.Flags |= SampleFlag.Signed;
 
+					if (s.Pack == 4)
+					{
+						q.Flags |= SampleFlag.Adpcm4 | SampleFlag.Signed;	// MODPlugin ADPCM4
+						modPlugin = true;
+					}
+
 					// Don't load sample if it doesn't have the SCRS tag
 					if ((s.Scrs[0] != 'S') || (s.Scrs[1] != 'C') || (s.Scrs[2] != 'R') || (s.Scrs[3] != 'S'))
 						q.Length = 0;
 				}
+
+				if (modPlugin)
+					originalFormat = string.Format(Resources.IDS_MIKCONV_NAME_MODPLUGIN, originalFormat);
 
 				// Determine the number of channels actually used
 				of.NumChn = 0;

@@ -404,6 +404,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 				}
 
 				// Load all the samples
+				bool modPlugin = false;
 				for (int t = 0; t < mh.SmpNum; t++)
 				{
 					ItSample s = new ItSample();
@@ -488,7 +489,12 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 					if ((s.Flag & 64) != 0)
 						q.Flags |= SampleFlag.Bidi;
 
-					if (mh.Cwt >= 0x200)
+					if (s.Convert == 0xff)
+					{
+						q.Flags |= SampleFlag.Adpcm4 | SampleFlag.Signed;	// MODPlugin ADPCM
+						modPlugin = true;
+					}
+					else if (mh.Cwt >= 0x200)
 					{
 						if ((s.Convert & 1) != 0)
 							q.Flags |= SampleFlag.Signed;
@@ -497,6 +503,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 							q.Flags |= SampleFlag.Delta;
 					}
 				}
+
+				if (modPlugin)
+					originalFormat = string.Format(Resources.IDS_MIKCONV_NAME_MODPLUGIN, originalFormat);
 
 				// Load instrument if instrument mode flag enabled
 				if ((mh.Flags & 4) != 0)

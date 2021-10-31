@@ -315,6 +315,9 @@ Imago Orpheus was written by Lutz Roeder and released in 1994.</value>
   <data name="IDS_MIKCONV_NAME_IT_COMPRESSED" xml:space="preserve">
     <value>Compressed Impulse Tracker {0}.{1:D2}</value>
   </data>
+  <data name="IDS_MIKCONV_NAME_MODPLUGIN" xml:space="preserve">
+    <value>MOD Plugin Packed ({0})</value>
+  </data>
   <data name="IDS_MIKCONV_NAME_S3M" xml:space="preserve">
     <value>Scream Tracker {0}.{1:D2}</value>
   </data>

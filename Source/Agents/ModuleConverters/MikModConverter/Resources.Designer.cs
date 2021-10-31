@@ -551,6 +551,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to MOD Plugin Packed ({0}).
+        /// </summary>
+        internal static string IDS_MIKCONV_NAME_MODPLUGIN {
+            get {
+                return ResourceManager.GetString("IDS_MIKCONV_NAME_MODPLUGIN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Scream Tracker {0}.{1:D2}.
         /// </summary>
         internal static string IDS_MIKCONV_NAME_S3M {
