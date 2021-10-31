@@ -3433,6 +3433,11 @@ stopLoop:
 						OnModuleInfoChanged(InfoSpeedLine, speed.ToString());
 					}
 				}
+				else
+				{
+					// If speed is 0, we assume the module has ended (this will fix Kenmare River.mod)
+					endReached = true;
+				}
 			}
 		}
 		#endregion
