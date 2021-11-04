@@ -8,7 +8,7 @@
     <Product>NostalgicPlayer</Product>
     <Description>Player based on MikMod</Description>
     <Copyright>Copyright © 2021</Copyright>
-    <Version>1.1.4</Version>
+    <Version>1.1.5</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

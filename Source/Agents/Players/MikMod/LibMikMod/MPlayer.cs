@@ -464,7 +464,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 							byte inst = uniTrk.UniGetByte();
 
 							if (inst >= mod.NumIns)
+							{
+								a.Main.I = null;
+								a.Main.S = null;
+								a.Main.Sample = -1;
 								break;					// Safety valve
+							}
 
 							funky |= 2;
 
@@ -472,7 +477,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 							a.Retrig = 0;
 							a.S3MTremor = 0;
 							a.UltOffset = 0;
-							a.Main.Sample = inst;
+							a.Main.Sample = (sbyte)inst;
 							break;
 						}
 
@@ -499,6 +504,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 					}
 					else
 					{
+						if (a.Main.Sample < 0)
+							continue;
+
 						a.Main.Note = a.ANote;
 						s = mod.Samples[a.Main.Sample];
 					}
@@ -637,27 +645,45 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				if ((i != null) && ((aOut.Main.Kick == Kick.Note) || (aOut.Main.Kick == Kick.Env)))
 				{
 					if ((aOut.Main.VolFlg & EnvelopeFlag.On) != 0)
-						envVol = StartEnvelope(ref aOut.VEnv, aOut.Main.VolFlg, i.VolPts, i.VolSusBeg, i.VolSusEnd, i.VolBeg, i.VolEnd, i.VolEnv, aOut.Main.KeyOff);
+					{
+						StartEnvelope(ref aOut.VEnv, aOut.Main.VolFlg, i.VolPts, i.VolSusBeg, i.VolSusEnd, i.VolBeg, i.VolEnd, i.VolEnv, aOut.Main.KeyOff, 256);
+						if (aOut.EnvStartPos != 0)
+							SetEnvelopePosition(ref aOut.VEnv, i.VolEnv, aOut.EnvStartPos);
+
+						envVol = aOut.VEnv.LastValue;
+					}
 
 					if ((aOut.Main.PanFlg & EnvelopeFlag.On) != 0)
-						envPan = StartEnvelope(ref aOut.PEnv, aOut.Main.PanFlg, i.PanPts, i.PanSusBeg, i.PanSusEnd, i.PanBeg, i.PanEnd, i.PanEnv, aOut.Main.KeyOff);
+					{
+						StartEnvelope(ref aOut.PEnv, aOut.Main.PanFlg, i.PanPts, i.PanSusBeg, i.PanSusEnd, i.PanBeg, i.PanEnd, i.PanEnv, aOut.Main.KeyOff, SharedConstant.Pan_Center);
+
+						if (aOut.EnvStartPos != 0)
+							SetPanningEnvelopePosition(mod, i, ref aOut.PEnv, i.PanEnv, aOut.EnvStartPos);
+
+						envPan = aOut.PEnv.LastValue;
+					}
 
 					if ((aOut.Main.PitFlg & EnvelopeFlag.On) != 0)
-						envPit = StartEnvelope(ref aOut.CEnv, aOut.Main.PitFlg, i.PitPts, i.PitSusBeg, i.PitSusEnd, i.PitBeg, i.PitEnd, i.PitEnv, aOut.Main.KeyOff);
+					{
+						StartEnvelope(ref aOut.CEnv, aOut.Main.PitFlg, i.PitPts, i.PitSusBeg, i.PitSusEnd, i.PitBeg, i.PitEnd, i.PitEnv, aOut.Main.KeyOff, 32);
+						envPit = aOut.CEnv.LastValue;
+					}
 
 					if ((aOut.CEnv.Flg & EnvelopeFlag.On) != 0)
 						aOut.MasterPeriod = GetPeriod(mod.Flags, (ushort)(aOut.Main.Note << 1), aOut.Master.Speed);
+
+					aOut.EnvStartPos = 0;
 				}
 				else
 				{
 					if ((aOut.Main.VolFlg & EnvelopeFlag.On) != 0)
-						envVol = ProcessEnvelope(aOut, ref aOut.VEnv, 256);
+						envVol = ProcessEnvelope(aOut, ref aOut.VEnv);
 
 					if ((aOut.Main.PanFlg & EnvelopeFlag.On) != 0)
-						envPan = ProcessEnvelope(aOut, ref aOut.PEnv, SharedConstant.Pan_Center);
+						envPan = ProcessEnvelope(aOut, ref aOut.PEnv);
 
 					if ((aOut.Main.PitFlg & EnvelopeFlag.On) != 0)
-						envPit = ProcessEnvelope(aOut, ref aOut.CEnv, 32);
+						envPit = ProcessEnvelope(aOut, ref aOut.CEnv);
 				}
 
 				if (aOut.Main.Kick == Kick.Note)
@@ -1224,40 +1250,89 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		/// Initialize and start the envelope
 		/// </summary>
 		/********************************************************************/
-		private short StartEnvelope(ref EnvPr t, EnvelopeFlag flg, byte pts, byte susBeg, byte susEnd, byte beg, byte end, EnvPt[] p, KeyFlag keyOff)
+		private void StartEnvelope(ref EnvPr t, EnvelopeFlag flg, byte pts, byte susBeg, byte susEnd, byte beg, byte end, EnvPt[] p, KeyFlag keyOff, short defaultValue)
 		{
 			t.Flg = flg;
 			t.Pts = pts;
 			t.SusBeg = susBeg;
 			t.SusEnd = susEnd;
+			t.SusActive = false;
 			t.Beg = beg;
 			t.End = end;
 			t.Env = p;
 			t.P = 0;
-			t.A = 0;
-			t.B = (((t.Flg & EnvelopeFlag.Sustain) != 0) && ((keyOff & KeyFlag.Off) == 0)) ? (ushort)0 : (ushort)1;
+			t.Index = 1;
 
 			if (t.Pts == 0)			// FIXME: bad/crafted file. better/more general solution?
 			{
-				t.B = 0;
-				return t.Env[0].Val;
+				t.Index = 0;
+				t.LastValue = defaultValue;
 			}
-
-			// Imago Orpheus sometimes stores an extra initial point in the envelope
-			if ((t.Pts >= 2) && (t.Env[0].Pos == t.Env[1].Pos))
+			else
 			{
-				t.A++;
-				t.B++;
+				// Imago Orpheus sometimes stores an extra initial point in the envelope
+				if ((t.Pts >= 2) && (t.Env[0].Pos == t.Env[1].Pos))
+					t.Index++;
+
+				// Fit in the envelope, still
+				if (t.Index >= t.Pts)
+					t.Index = t.Pts;
+
+				t.LastValue = t.Env[t.Index - 1].Val;
 			}
+		}
 
-			// Fit in the envelope, still
-			if (t.A >= t.Pts)
-				t.A = (ushort)(t.Pts - 1);
 
-			if (t.B >= t.Pts)
-				t.B = (ushort)(t.Pts - 1);
 
-			return t.Env[t.A].Val;
+		/********************************************************************/
+		/// <summary>
+		/// Set the envelope tick to the position given
+		/// </summary>
+		/********************************************************************/
+		private void SetEnvelopePosition(ref EnvPr t, EnvPt[] p, short pos)
+		{
+			if (t.Pts > 0)
+			{
+				bool found = false;
+
+				for (ushort i = 0; i < t.Pts - 1; i++)
+				{
+					if ((pos >= p[i].Pos) && (pos < p[i + 1].Pos))
+					{
+						t.Index = (ushort)(i + 1);
+						t.P = pos;
+
+						found = true;
+						break;
+					}
+				}
+
+				// If position is after the last envelope point, just set
+				// it to the last one
+				if (!found)
+				{
+					t.Index = t.Pts;
+					t.P = p[t.Index - 1].Pos;
+				}
+
+				t.LastValue = InterpolateEnv(t.P, ref t.Env[t.Index - 1], ref t.Env[t.Index]);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the panning envelope tick to the position given
+		/// </summary>
+		/********************************************************************/
+		private void SetPanningEnvelopePosition(Module mod, Instrument i, ref EnvPr t, EnvPt[] p, short pos)
+		{
+			// Because of a bug in FastTracker II, only the panning envelope
+			// position is set if the volume sustain flag is set. Other players
+			// may set the panning all the time
+			if (((mod.Flags & ModuleFlag.Ft2Quirks) == 0) || ((i.VolFlg & EnvelopeFlag.Sustain) != 0))
+				SetEnvelopePosition(ref t, p, pos);
 		}
 
 
@@ -1287,89 +1362,106 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		///     so does the current fadeout.
 		/// </summary>
 		/********************************************************************/
-		private short ProcessEnvelope(Mp_Voice aOut, ref EnvPr t, short v)
+		private short ProcessEnvelope(Mp_Voice aOut, ref EnvPr t)
 		{
-			if (t.Pts == 0)				// Happens with e.g. Vikings In The Hood!.xm
-				return v;
-
-			if ((t.Flg & EnvelopeFlag.On) != 0)
+			if (t.Pts > 0)				// e.g. Vikings In The Hood!.xm have 0 points here
 			{
-				byte a, b;				// Actual points in the envelope
-				ushort p;				// The 'tick counter' - real point being played
-
-				a = (byte)t.A;
-				b = (byte)t.B;
-				p = (ushort)t.P;
-
-				// Sustain loop on one point (XM type).
-				// Not processed if KEYOFF.
-				// Don't move and don't interpolate when the point is reached
-				if (((t.Flg & EnvelopeFlag.Sustain) != 0) && (t.SusBeg == t.SusEnd) && (((aOut.Main.KeyOff & KeyFlag.Off) == 0) && (p == t.Env[t.SusBeg].Pos)))
-					v = t.Env[t.SusBeg].Val;
-				else
+				if ((t.Flg & EnvelopeFlag.On) != 0)
 				{
-					// All following situations will require interpolation between
-					// two envelope points
-					//
-					// Sustain loop between two points (IT type).
-					// Not processed if KEYOFF.
-					//
-					// If we were on a loop point, loop now
-					if (((t.Flg & EnvelopeFlag.Sustain) != 0) && ((aOut.Main.KeyOff & KeyFlag.Off) == 0) && (a >= t.SusEnd))
+					ushort idx = t.Index;	// Actual points in the envelope
+					ushort p = (ushort)t.P;	// The 'tick counter' - real point being played
+
+					if (idx < t.Pts)
 					{
-						a = t.SusBeg;
-						b = (t.SusBeg == t.SusEnd) ? a : (byte)(a + 1);
-						p = (ushort)t.Env[a].Pos;
-						v = t.Env[a].Val;
-					}
-					else
-					{
-						// Regular loop
-						// Be sure to correctly handle single point loops
-						if (((t.Flg & EnvelopeFlag.Loop) != 0) && (a >= t.End))
+						// Move position and check if we reached the end of the current envelope point
+						p++;
+
+						if (p >= t.Env[idx].Pos)
 						{
-							a = t.Beg;
-							b = (t.Beg == t.End) ? a : (byte)(a + 1);
-							p = (ushort)t.Env[a].Pos;
-							v = t.Env[a].Val;
+							short v = t.Env[idx].Val;		// New calculated value
+
+							// Shift to next point
+							idx++;
+
+							// Sustain loop on one point (XM type).
+							// Not processed if KEYOFF.
+							// Don't move and don't interpolate when the point is reached
+							if (((t.Flg & EnvelopeFlag.Sustain) != 0) && (t.SusBeg == t.SusEnd) && (((aOut.Main.KeyOff & KeyFlag.Off) == 0) && (p == t.Env[t.SusBeg].Pos)))
+							{
+								t.LastValue = t.Env[t.SusBeg].Val;
+								t.SusActive = true;
+							}
+							else
+							{
+								// All following situations will require interpolation between
+								// two envelope points
+								//
+								// Sustain loop between two points (IT type).
+								// Not processed if KEYOFF.
+								//
+								// If we were on a loop point, loop now
+								if (((t.Flg & EnvelopeFlag.Sustain) != 0) && ((aOut.Main.KeyOff & KeyFlag.Off) == 0) && (idx > t.SusEnd))
+								{
+									idx = (ushort)(t.SusBeg + 1);
+									p = (ushort)t.Env[t.SusBeg].Pos;
+									v = t.Env[t.SusBeg].Val;
+									t.SusActive = true;
+								}
+								else
+								{
+									t.SusActive = false;
+
+									// Regular loop
+									// Be sure to correctly handle single point loops
+									if (((t.Flg & EnvelopeFlag.Loop) != 0) && ((idx - 1) == t.End))		// FastTracker II does only have equal here, so using Lxx to a point after the loop, no loop is made at all. See Ebony Owl Netsuke.xml for an example
+									{
+										idx = (ushort)(t.Beg + 1);
+										p = (ushort)t.Env[t.Beg].Pos;
+										v = t.Env[t.Beg].Val;
+									}
+									else
+									{
+										// Non looping situations
+										if (idx < t.Pts)
+											v = InterpolateEnv((short)p, ref t.Env[idx - 1], ref t.Env[idx]);
+										else
+											v = t.Env[idx - 1].Val;
+									}
+								}
+
+								// Start to fade if the volume envelope is finished
+								if (p >= t.Env[t.Pts - 1].Pos)
+								{
+									if ((t.Flg & EnvelopeFlag.VolEnv) != 0)
+									{
+										aOut.Main.KeyOff |= KeyFlag.Fade;
+
+										if (v == 0)
+											aOut.Main.FadeVol = 0;
+									}
+								}
+
+								t.LastValue = v;
+							}
+
+							if (idx < t.Pts)
+								t.Index = idx;
+							else
+								t.Index = t.Pts;
 						}
 						else
 						{
-							// Non looping situations
-							if (a != b)
-								v = InterpolateEnv((short)p, ref t.Env[a], ref t.Env[b]);
-							else
-								v = t.Env[a].Val;
+							// Only interpolate if not in sustain mode
+							if (!t.SusActive && (t.Index < t.Pts))
+								t.LastValue = InterpolateEnv((short)p, ref t.Env[idx - 1], ref t.Env[idx]);
 						}
+
+						t.P = (short)p;
 					}
-
-					// Start to fade if the volume envelope is finished
-					if (p >= t.Env[t.Pts - 1].Pos)
-					{
-						if ((t.Flg & EnvelopeFlag.VolEnv) != 0)
-						{
-							aOut.Main.KeyOff |= KeyFlag.Fade;
-
-							if (v == 0)
-								aOut.Main.FadeVol = 0;
-						}
-					}
-					else
-					{
-						p++;
-
-						// Did pointer reach point b?
-						if (p >= t.Env[b].Pos)
-							a = b++;			// Shift points a and b
-					}
-
-					t.A = a;
-					t.B = b;
-					t.P = (short)p;
 				}
 			}
 
-			return v;
+			return t.LastValue;
 		}
 
 
@@ -2211,42 +2303,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				{
 					if (tick != 0)
 						a.TmpPeriod -= (ushort)(inf << 2);
-				}
-			}
-		}
-		#endregion
-
-		#region FastTracker II effect helpers
-		/********************************************************************/
-		/// <summary>
-		/// Set the envelope tick to the position given
-		/// </summary>
-		/********************************************************************/
-		private void SetEnvelopePosition(ref EnvPr t, EnvPt[] p, short pos)
-		{
-			if (t.Pts > 0)
-			{
-				bool found = false;
-
-				for (ushort i = 0; i < t.Pts - 1; i++)
-				{
-					if ((pos >= p[i].Pos) && (pos < p[i + 1].Pos))
-					{
-						t.A = i;
-						t.B = (ushort)(i + 1);
-						t.P = pos;
-						found = true;
-						break;
-					}
-				}
-
-				// If position is after the last envelope point, just set
-				// it to the last one
-				if (!found)
-				{
-					t.A = (ushort)(t.Pts - 1);
-					t.B = t.Pts;
-					t.P = p[t.A].Pos;
 				}
 			}
 		}
@@ -3767,22 +3823,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			if ((tick == 0) && (a.Main.I != null))
 			{
 				Instrument i = a.Main.I;
+				Mp_Voice aOut = mod.Voice[channel];
 
-				Mp_Voice aOut;
-				if ((aOut = a.Slave) != null)
-				{
-					if (aOut.VEnv.Env != null)
-						SetEnvelopePosition(ref aOut.VEnv, i.VolEnv, dat);
+				// We need to set this, in case if a note is played on
+				// the same row, the calculated envelope position will
+				// be overwritten in StartEnvelope()
+				aOut.EnvStartPos = dat;
 
-					if (aOut.PEnv.Env != null)
-					{
-						// Because of a bug in FastTracker II, only the panning envelope
-						// position is set if the volume sustain flag is set. Other players
-						// may set the panning all the time
-						if (((mod.Flags & ModuleFlag.Ft2Quirks) == 0) || ((i.VolFlg & EnvelopeFlag.Sustain) != 0))
-							SetEnvelopePosition(ref aOut.PEnv, i.PanEnv, dat);
-					}
-				}
+				if (aOut.VEnv.Env != null)
+					SetEnvelopePosition(ref aOut.VEnv, i.VolEnv, dat);
+
+				if (aOut.PEnv.Env != null)
+					SetPanningEnvelopePosition(mod, i, ref aOut.PEnv, i.PanEnv, dat);
 			}
 
 			return 0;

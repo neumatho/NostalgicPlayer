@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 	{
 		public Instrument I;
 		public Sample S;
-		public byte Sample;						// Which sample number
+		public sbyte Sample;					// Which sample number, -1 if illegal instrument has been set
 		public byte Note;						// The audible note (as heard, direct rep of period)
 		public short OutVolume;					// Output volume (Vol + SampVol + InstVol)
 		public byte ChanVol;					// Channel's "global" volume

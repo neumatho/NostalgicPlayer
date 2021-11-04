@@ -23,6 +23,8 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 		public EnvPr PEnv;
 		public EnvPr CEnv;
 
+		public short EnvStartPos;				// Start position for envelopes set by XM effect L
+
 		public ushort AVibPos;					// Auto vibrato pos
 		public ushort ASwpPos;					// Auto vibrato sweep pos
 
