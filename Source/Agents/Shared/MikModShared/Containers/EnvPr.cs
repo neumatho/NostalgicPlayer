@@ -18,11 +18,11 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 		public byte Pts;						// Number of envelope points
 		public byte SusBeg;						// Envelope sustain index begin
 		public byte SusEnd;						// Envelope sustain index end
-		public bool SusActive;					// Indicate if sustain is active (no interpolation)
-		public byte Beg;						// Envelope loop begin
-		public byte End;						// Envelope loop end
-		public short P;							// Current envelope counter
+		public byte LoopBeg;					// Envelope loop begin
+		public byte LoopEnd;					// Envelope loop end
+		public short Tick;						// Current envelope counter
 		public ushort Index;					// Envelope index for the point after the current one
+		public bool Interpolate;				// Indicate if interpolation should be done
 		public short LastValue;					// The last calculated value
 		public EnvPt[] Env;						// Envelope points
 	}

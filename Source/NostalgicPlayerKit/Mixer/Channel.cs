@@ -281,6 +281,7 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		public void Mute()
 		{
 			flags |= ChannelFlags.MuteIt;
+			flags &= ~ChannelFlags.Active;
 		}
 
 

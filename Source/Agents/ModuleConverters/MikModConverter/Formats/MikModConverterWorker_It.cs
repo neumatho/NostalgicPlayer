@@ -647,7 +647,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 							return false;
 						}
 
-						d.VolFlg |= EnvelopeFlag.VolEnv;
+						d.VolFlg |= (EnvelopeFlag.VolEnv | EnvelopeFlag.ItMode);
+						d.PanFlg |= EnvelopeFlag.ItMode;
+						d.PitFlg |= EnvelopeFlag.ItMode;
 						d.InsName = encoder.GetString(ih.Name);
 						d.NnaType = (Nna)ih.Nna & Nna.Mask;
 

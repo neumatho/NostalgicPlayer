@@ -646,45 +646,35 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				{
 					if ((aOut.Main.VolFlg & EnvelopeFlag.On) != 0)
 					{
-						StartEnvelope(ref aOut.VEnv, aOut.Main.VolFlg, i.VolPts, i.VolSusBeg, i.VolSusEnd, i.VolBeg, i.VolEnd, i.VolEnv, aOut.Main.KeyOff, 256);
+						StartEnvelope(ref aOut.VEnv, aOut.Main.VolFlg, i.VolPts, i.VolSusBeg, i.VolSusEnd, i.VolBeg, i.VolEnd, i.VolEnv, 256);
 						if (aOut.EnvStartPos != 0)
 							SetEnvelopePosition(ref aOut.VEnv, i.VolEnv, aOut.EnvStartPos);
-
-						envVol = aOut.VEnv.LastValue;
 					}
 
 					if ((aOut.Main.PanFlg & EnvelopeFlag.On) != 0)
 					{
-						StartEnvelope(ref aOut.PEnv, aOut.Main.PanFlg, i.PanPts, i.PanSusBeg, i.PanSusEnd, i.PanBeg, i.PanEnd, i.PanEnv, aOut.Main.KeyOff, SharedConstant.Pan_Center);
-
+						StartEnvelope(ref aOut.PEnv, aOut.Main.PanFlg, i.PanPts, i.PanSusBeg, i.PanSusEnd, i.PanBeg, i.PanEnd, i.PanEnv, SharedConstant.Pan_Center);
 						if (aOut.EnvStartPos != 0)
 							SetPanningEnvelopePosition(mod, i, ref aOut.PEnv, i.PanEnv, aOut.EnvStartPos);
-
-						envPan = aOut.PEnv.LastValue;
 					}
 
 					if ((aOut.Main.PitFlg & EnvelopeFlag.On) != 0)
-					{
-						StartEnvelope(ref aOut.CEnv, aOut.Main.PitFlg, i.PitPts, i.PitSusBeg, i.PitSusEnd, i.PitBeg, i.PitEnd, i.PitEnv, aOut.Main.KeyOff, 32);
-						envPit = aOut.CEnv.LastValue;
-					}
+						StartEnvelope(ref aOut.CEnv, aOut.Main.PitFlg, i.PitPts, i.PitSusBeg, i.PitSusEnd, i.PitBeg, i.PitEnd, i.PitEnv, 32);
 
 					if ((aOut.CEnv.Flg & EnvelopeFlag.On) != 0)
 						aOut.MasterPeriod = GetPeriod(mod.Flags, (ushort)(aOut.Main.Note << 1), aOut.Master.Speed);
 
 					aOut.EnvStartPos = 0;
 				}
-				else
-				{
-					if ((aOut.Main.VolFlg & EnvelopeFlag.On) != 0)
-						envVol = ProcessEnvelope(aOut, ref aOut.VEnv);
 
-					if ((aOut.Main.PanFlg & EnvelopeFlag.On) != 0)
-						envPan = ProcessEnvelope(aOut, ref aOut.PEnv);
+				if ((aOut.Main.VolFlg & EnvelopeFlag.On) != 0)
+					envVol = ProcessEnvelope(aOut, ref aOut.VEnv);
 
-					if ((aOut.Main.PitFlg & EnvelopeFlag.On) != 0)
-						envPit = ProcessEnvelope(aOut, ref aOut.CEnv);
-				}
+				if ((aOut.Main.PanFlg & EnvelopeFlag.On) != 0)
+					envPan = ProcessEnvelope(aOut, ref aOut.PEnv);
+
+				if ((aOut.Main.PitFlg & EnvelopeFlag.On) != 0)
+					envPit = ProcessEnvelope(aOut, ref aOut.CEnv);
 
 				if (aOut.Main.Kick == Kick.Note)
 					aOut.Main.Kick_Flag = true;
@@ -1250,18 +1240,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		/// Initialize and start the envelope
 		/// </summary>
 		/********************************************************************/
-		private void StartEnvelope(ref EnvPr t, EnvelopeFlag flg, byte pts, byte susBeg, byte susEnd, byte beg, byte end, EnvPt[] p, KeyFlag keyOff, short defaultValue)
+		private void StartEnvelope(ref EnvPr t, EnvelopeFlag flg, byte pts, byte susBeg, byte susEnd, byte loopBeg, byte loopEnd, EnvPt[] p, short defaultValue)
 		{
 			t.Flg = flg;
 			t.Pts = pts;
 			t.SusBeg = susBeg;
 			t.SusEnd = susEnd;
-			t.SusActive = false;
-			t.Beg = beg;
-			t.End = end;
+			t.LoopBeg = loopBeg;
+			t.LoopEnd = loopEnd;
 			t.Env = p;
-			t.P = 0;
-			t.Index = 1;
+			t.Tick = -1;
+			t.Index = 0;
 
 			if (t.Pts == 0)			// FIXME: bad/crafted file. better/more general solution?
 			{
@@ -1277,8 +1266,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				// Fit in the envelope, still
 				if (t.Index >= t.Pts)
 					t.Index = t.Pts;
-
-				t.LastValue = t.Env[t.Index - 1].Val;
 			}
 		}
 
@@ -1291,31 +1278,65 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		/********************************************************************/
 		private void SetEnvelopePosition(ref EnvPr t, EnvPt[] p, short pos)
 		{
-			if (t.Pts > 0)
+			if ((t.Flg & EnvelopeFlag.On) != 0)
 			{
-				bool found = false;
+				t.Tick = (short)(pos - 1);
 
-				for (ushort i = 0; i < t.Pts - 1; i++)
+				short idx = 0;
+				bool envUpdate = true;
+				short tick = pos;
+
+				if (t.Pts > 1)
 				{
-					if ((pos >= p[i].Pos) && (pos < p[i + 1].Pos))
-					{
-						t.Index = (ushort)(i + 1);
-						t.P = pos;
+					idx++;
 
-						found = true;
-						break;
+					for (ushort i = 0; i < t.Pts - 1; i++)
+					{
+						if (tick < p[idx].Pos)
+						{
+							idx--;
+
+							tick -= p[idx].Pos;
+							if (tick == 0)
+							{
+								envUpdate = false;
+								break;
+							}
+
+							if (p[idx + 1].Pos <= p[idx].Pos)
+								break;
+
+							t.LastValue = InterpolateEnv(tick, ref t.Env[idx], ref t.Env[idx + 1]);
+							t.Interpolate = true;
+
+							idx++;
+							envUpdate = false;
+							break;
+						}
+
+						idx++;
 					}
+
+					if (envUpdate)
+						idx--;
+				}
+
+				if (envUpdate)
+				{
+					t.Interpolate = false;
+					t.LastValue = p[idx].Val;
 				}
 
 				// If position is after the last envelope point, just set
 				// it to the last one
-				if (!found)
+				if (idx >= t.Pts)
 				{
-					t.Index = t.Pts;
-					t.P = p[t.Index - 1].Pos;
+					idx = (short)(t.Pts - 1);
+					if (idx < 0)
+						idx = 0;
 				}
 
-				t.LastValue = InterpolateEnv(t.P, ref t.Env[t.Index - 1], ref t.Env[t.Index]);
+				t.Index = (ushort)idx;
 			}
 		}
 
@@ -1333,6 +1354,168 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			// may set the panning all the time
 			if (((mod.Flags & ModuleFlag.Ft2Quirks) == 0) || ((i.VolFlg & EnvelopeFlag.Sustain) != 0))
 				SetEnvelopePosition(ref t, p, pos);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Calculates the next envelope value the XM way, based on the
+		/// implementation from ft2-clone
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void ProcessEnvelopeXm(Mp_Voice aOut, ref EnvPr t)
+		{
+			ushort idx = t.Index;
+			bool keyOff = (aOut.Main.KeyOff & KeyFlag.Off) != 0;
+
+			if (keyOff)
+			{
+				if (t.Tick >= t.Env[idx].Pos)
+					t.Tick = (short)(t.Env[idx].Pos - 1);
+			}
+
+			// Move position and check if we reached the end of the current envelope point
+			t.Tick++;
+
+			if (t.Tick == t.Env[idx].Pos)
+			{
+				t.LastValue = t.Env[idx].Val;
+
+				// Shift to next point
+				idx++;
+
+				// Is loop enabled, check if we need to do the looping
+				if ((t.Flg & EnvelopeFlag.Loop) != 0)
+				{
+					// If the Lxx effect has been used to set to a point after the loop, no loop is made at all. See Ebony Owl Netsuke.xml for an example
+					if ((idx - 1) == t.LoopEnd)
+					{
+						// Only one sustain point in XM, so SusBeg and SusEnd have the same value
+						if (((t.Flg & EnvelopeFlag.Sustain) == 0) || ((idx - 1) != t.SusEnd) || !keyOff)
+						{
+							idx = t.LoopBeg;
+							t.Tick = t.Env[idx].Pos;
+							t.LastValue = t.Env[idx].Val;
+							idx++;
+						}
+					}
+				}
+
+				if (idx < t.Pts)
+				{
+					bool interpolateFlag = true;
+					if (((t.Flg & EnvelopeFlag.Sustain) != 0) && !keyOff)
+					{
+						if ((idx - 1) == t.SusEnd)
+						{
+							t.Interpolate = false;
+							interpolateFlag = false;
+						}
+					}
+
+					if (interpolateFlag)
+					{
+						t.Index = idx;
+						t.Interpolate = false;
+
+						if (t.Env[idx].Pos > t.Env[idx - 1].Pos)
+							t.Interpolate = true;
+					}
+				}
+				else
+					t.Interpolate = false;
+			}
+
+			if (t.Interpolate)
+				t.LastValue = InterpolateEnv(t.Tick, ref t.Env[idx - 1], ref t.Env[idx]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Calculates the next envelope value the IT way, based on the
+		/// implementation from Schismtracker
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void ProcessEnvelopeIt(Mp_Voice aOut, ref EnvPr t)
+		{
+			t.Tick++;
+
+			short start, end;
+			bool keyOff = (aOut.Main.KeyOff & KeyFlag.Off) != 0;
+			bool fadeFlag = false;
+
+			if (((t.Flg & EnvelopeFlag.Sustain) != 0) && !keyOff)
+			{
+				start = t.Env[t.SusBeg].Pos;
+				end = (short)(t.Env[t.SusEnd].Pos + 1);
+			}
+			else if ((t.Flg & EnvelopeFlag.Loop) != 0)
+			{
+				start = t.Env[t.LoopBeg].Pos;
+				end = (short)(t.Env[t.LoopEnd].Pos + 1);
+			}
+			else
+			{
+				// End of envelope
+				start = end = t.Env[t.Pts - 1].Pos;
+				fadeFlag = true;
+			}
+
+			if (t.Tick >= end)
+			{
+				if (fadeFlag && ((t.Flg & EnvelopeFlag.VolEnv) != 0))
+				{
+					aOut.Main.KeyOff |= KeyFlag.Fade;
+
+					if (t.Env[t.Pts - 1].Val == 0)
+						aOut.Main.FadeVol = 0;
+				}
+
+				t.Tick = start;
+			}
+
+			short tick = t.Tick;
+			ushort idx = (ushort)(t.Pts - 1);
+
+			// Find the right point to use
+			for (ushort i = 0; i < t.Pts - 1; i++)
+			{
+				if (tick <= t.Env[i].Pos)
+				{
+					idx = i;
+					break;
+				}
+			}
+
+			short pointPos = t.Env[idx].Pos;
+			short newPos;
+
+			if (tick >= pointPos)
+			{
+				t.LastValue = t.Env[idx].Val;
+				newPos = pointPos;
+			}
+			else if (idx != 0)
+			{
+				t.LastValue = t.Env[idx - 1].Val;
+				newPos = t.Env[idx - 1].Pos;
+			}
+			else
+			{
+				t.LastValue = 0;
+				newPos = 0;
+			}
+
+			if (tick > pointPos)
+				tick = pointPos;
+
+			if ((pointPos > newPos) && (tick > newPos))
+				t.LastValue += (short)(((tick - newPos) * (t.Env[idx].Val - t.LastValue)) / (pointPos - newPos));
 		}
 
 
@@ -1368,96 +1551,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			{
 				if ((t.Flg & EnvelopeFlag.On) != 0)
 				{
-					ushort idx = t.Index;	// Actual points in the envelope
-					ushort p = (ushort)t.P;	// The 'tick counter' - real point being played
-
-					if (idx < t.Pts)
-					{
-						// Move position and check if we reached the end of the current envelope point
-						p++;
-
-						if (p >= t.Env[idx].Pos)
-						{
-							short v = t.Env[idx].Val;		// New calculated value
-
-							// Shift to next point
-							idx++;
-
-							// Sustain loop on one point (XM type).
-							// Not processed if KEYOFF.
-							// Don't move and don't interpolate when the point is reached
-							if (((t.Flg & EnvelopeFlag.Sustain) != 0) && (t.SusBeg == t.SusEnd) && (((aOut.Main.KeyOff & KeyFlag.Off) == 0) && (p == t.Env[t.SusBeg].Pos)))
-							{
-								t.LastValue = t.Env[t.SusBeg].Val;
-								t.SusActive = true;
-							}
-							else
-							{
-								// All following situations will require interpolation between
-								// two envelope points
-								//
-								// Sustain loop between two points (IT type).
-								// Not processed if KEYOFF.
-								//
-								// If we were on a loop point, loop now
-								if (((t.Flg & EnvelopeFlag.Sustain) != 0) && ((aOut.Main.KeyOff & KeyFlag.Off) == 0) && (idx > t.SusEnd))
-								{
-									idx = (ushort)(t.SusBeg + 1);
-									p = (ushort)t.Env[t.SusBeg].Pos;
-									v = t.Env[t.SusBeg].Val;
-									t.SusActive = true;
-								}
-								else
-								{
-									t.SusActive = false;
-
-									// Regular loop
-									// Be sure to correctly handle single point loops
-									if (((t.Flg & EnvelopeFlag.Loop) != 0) && ((idx - 1) == t.End))		// FastTracker II does only have equal here, so using Lxx to a point after the loop, no loop is made at all. See Ebony Owl Netsuke.xml for an example
-									{
-										idx = (ushort)(t.Beg + 1);
-										p = (ushort)t.Env[t.Beg].Pos;
-										v = t.Env[t.Beg].Val;
-									}
-									else
-									{
-										// Non looping situations
-										if (idx < t.Pts)
-											v = InterpolateEnv((short)p, ref t.Env[idx - 1], ref t.Env[idx]);
-										else
-											v = t.Env[idx - 1].Val;
-									}
-								}
-
-								// Start to fade if the volume envelope is finished
-								if (p >= t.Env[t.Pts - 1].Pos)
-								{
-									if ((t.Flg & EnvelopeFlag.VolEnv) != 0)
-									{
-										aOut.Main.KeyOff |= KeyFlag.Fade;
-
-										if (v == 0)
-											aOut.Main.FadeVol = 0;
-									}
-								}
-
-								t.LastValue = v;
-							}
-
-							if (idx < t.Pts)
-								t.Index = idx;
-							else
-								t.Index = t.Pts;
-						}
-						else
-						{
-							// Only interpolate if not in sustain mode
-							if (!t.SusActive && (t.Index < t.Pts))
-								t.LastValue = InterpolateEnv((short)p, ref t.Env[idx - 1], ref t.Env[idx]);
-						}
-
-						t.P = (short)p;
-					}
+					// FastTracker II will first check for loop/sustain loops after a
+					// point has been processed, while Impulse Tracker will check on
+					// each tick + some other small differences
+					if ((t.Flg & EnvelopeFlag.ItMode) != 0)
+						ProcessEnvelopeIt(aOut, ref t);
+					else
+						ProcessEnvelopeXm(aOut, ref t);
 				}
 			}
 

@@ -26,6 +26,8 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 		/// <summary></summary>
 		Loop = 4,
 		/// <summary></summary>
-		VolEnv = 8
+		VolEnv = 8,
+		/// <summary></summary>
+		ItMode = 16
 	}
 }
