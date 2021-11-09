@@ -374,8 +374,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 			// Change the speed
 			of.SngSpd = positionInfo.Speed;
 			of.Bpm = positionInfo.Bpm;
-			player.farCurTempo = extraInfo.FarCurTempo;
-			player.farTempoBend = extraInfo.FarTempoBend;
+			of.Control[0].FarCurTempo = extraInfo.FarCurTempo;
+			of.Control[0].FarTempoBend = extraInfo.FarTempoBend;
 			SetTempo((ushort)(of.Bpm + of.RelSpd));
 
 			player.mdBpm = of.Bpm;
@@ -657,8 +657,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		{
 			return new DurationExtraInfo
 			{
-				FarCurTempo = player.farCurTempo,
-				FarTempoBend = player.farTempoBend
+				FarCurTempo = of.Control[0].FarCurTempo,
+				FarTempoBend = of.Control[0].FarTempoBend
 			};
 		}
 		#endregion

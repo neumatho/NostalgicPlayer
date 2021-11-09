@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Agent.Player.MikMod.Containers;
 using Polycode.NostalgicPlayer.Agent.Shared.MikMod;
@@ -26,16 +27,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		private readonly MUniTrk uniTrk;
 
 		private readonly Random rnd;
-
-		/// <summary>
-		/// Farandole current speed
-		/// </summary>
-		public byte farCurTempo;
-
-		/// <summary>
-		/// Used by the Farandole fine tempo effects and store the current bend value
-		/// </summary>
-		public short farTempoBend;
 
 		/// <summary></summary>
 		public readonly byte mdSngChn;
@@ -265,8 +256,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 							if ((pf.Flags & ModuleFlag.FarTempo) != 0)
 							{
-								farCurTempo = pf.InitSpeed;
-								farTempoBend = 0;
+								pf.Control[0].FarCurTempo = pf.InitSpeed;
+								pf.Control[0].FarTempoBend = 0;
 								SetFarTempo(pf);
 							}
 							else
@@ -364,8 +355,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 			if ((mod.Flags & ModuleFlag.FarTempo) != 0)
 			{
-				farCurTempo = mod.InitSpeed;
-				farTempoBend = 0;
+				mod.Control[0].FarCurTempo = mod.InitSpeed;
+				mod.Control[0].FarTempoBend = 0;
 				SetFarTempo(mod);
 			}
 			else
@@ -2696,9 +2687,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		/// Find tempo factor
 		/// </summary>
 		/********************************************************************/
-		private int GetFarTempoFactor()
+		private int GetFarTempoFactor(Mp_Control a)
 		{
-			return farCurTempo == 0 ? 256 : (128 / farCurTempo);
+			return a.FarCurTempo == 0 ? 256 : (128 / a.FarCurTempo);
 		}
 
 
@@ -2757,7 +2748,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 			   You can make yourself a little exercise to prove that the above is correct :-) */
 
-			short realTempo = (short)(farTempoBend + GetFarTempoFactor());
+			short realTempo = (short)(mod.Control[0].FarTempoBend + GetFarTempoFactor(mod.Control[0]));
 
 			int gus = 1197255 / realTempo;
 
@@ -4913,7 +4904,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 						a.FarRetrigCount--;
 						if (a.FarRetrigCount > 0)
-							a.Retrig = (sbyte)(((farTempoBend + GetFarTempoFactor()) / dat / 8) - 1);
+							a.Retrig = (sbyte)(((mod.Control[0].FarTempoBend + GetFarTempoFactor(mod.Control[0])) / dat / 8) - 1);
 					}
 				}
 				else
@@ -4959,16 +4950,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		private int DoFarEffectD(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
 		{
 			byte dat = uniTrk.UniGetByte();
+			Mp_Control firstControl = mod.Control[0];
 
 			if (dat != 0)
 			{
-				farTempoBend -= dat;
+				firstControl.FarTempoBend -= dat;
 
-				if ((farTempoBend + GetFarTempoFactor()) <= 0)
-					farTempoBend = 0;
+				if ((firstControl.FarTempoBend + GetFarTempoFactor(firstControl)) <= 0)
+					firstControl.FarTempoBend = 0;
 			}
 			else
-				farTempoBend = 0;
+				firstControl.FarTempoBend = 0;
 
 			SetFarTempo(mod);
 
@@ -4985,16 +4977,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		private int DoFarEffectE(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
 		{
 			byte dat = uniTrk.UniGetByte();
+			Mp_Control firstControl = mod.Control[0];
 
 			if (dat != 0)
 			{
-				farTempoBend += dat;
+				firstControl.FarTempoBend += dat;
 
-				if ((farTempoBend + GetFarTempoFactor()) >= 100)
-					farTempoBend = 100;
+				if ((firstControl.FarTempoBend + GetFarTempoFactor(firstControl)) >= 100)
+					firstControl.FarTempoBend = 100;
 			}
 			else
-				farTempoBend = 0;
+				firstControl.FarTempoBend = 0;
 
 			SetFarTempo(mod);
 
@@ -5014,8 +5007,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 			if (tick == 0)
 			{
-				farCurTempo = dat;
+				Mp_Control firstControl = mod.Control[0];
+
+				firstControl.FarCurTempo = dat;
 				mod.VbTick = 0;
+
+				if ((firstControl.FarTempoBend + GetFarTempoFactor(firstControl)) <= 0)
+					firstControl.FarTempoBend = 0;
+				else if ((firstControl.FarTempoBend + GetFarTempoFactor(firstControl)) >= 100)
+					firstControl.FarTempoBend = 100;
 
 				SetFarTempo(mod);
 			}
