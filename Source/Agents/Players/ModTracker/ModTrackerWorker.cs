@@ -356,7 +356,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					{
 						// If we got both a Bxx and Dxx command
 						// on the same line, don't end the module
-						if (!gotBreak || (breakPos == 0))
+						if (!gotBreak)
 							endReached = true;
 
 						gotJump = false;
