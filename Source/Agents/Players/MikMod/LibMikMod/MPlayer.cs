@@ -2749,6 +2749,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			   You can make yourself a little exercise to prove that the above is correct :-) */
 
 			short realTempo = (short)(mod.Control[0].FarTempoBend + GetFarTempoFactor(mod.Control[0]));
+			if (realTempo == 0)
+				return;
 
 			int gus = 1197255 / realTempo;
 
