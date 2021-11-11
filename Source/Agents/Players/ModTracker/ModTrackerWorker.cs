@@ -351,13 +351,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 							patternPos--;
 					}
 
-					// Has the module ended?
+					// Has the module ended (from a Bxx effect on same position)?
 					if (gotJump)
 					{
 						// If we got both a Bxx and Dxx command
 						// on the same line, don't end the module
-						if (!gotBreak)
-							endReached = true;
+						// (unless we jump to position 0)
+						endReached = !gotBreak || ((songPos == 0xffff) && (breakPos == 0));
 
 						gotJump = false;
 					}
