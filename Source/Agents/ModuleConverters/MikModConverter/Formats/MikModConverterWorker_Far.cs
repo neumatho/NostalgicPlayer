@@ -357,7 +357,12 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 						q.Volume = (byte)(s.Volume << 2);
 
 						if ((s.Type & 1) != 0)
+						{
 							q.Flags |= SampleFlag._16Bits;
+							q.Length >>= 1;
+							q.LoopStart >>= 1;
+							q.LoopEnd >>= 1;
+						}
 
 						// It is not always the case that this bit is set, e.g. "Budda on a bicycle" has not.
 						// So we check the loop start and end instead
@@ -366,7 +371,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 							q.Flags |= SampleFlag.Loop;
 
 						q.SeekPos = (uint)moduleStream.Position;
-						moduleStream.Seek(q.Length, SeekOrigin.Current);
+						moduleStream.Seek(s.Length, SeekOrigin.Current);
 					}
 					else
 						q.SampleName = string.Empty;

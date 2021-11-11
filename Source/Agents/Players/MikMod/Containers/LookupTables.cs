@@ -84,5 +84,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.Containers
 			-45, -44, -43, -42, -41, -39, -38, -37, -36, -34, -33, -32, -30, -29, -27, -26,
 			-24, -23, -22, -20, -19, -17, -16, -14, -12, -11, - 9, - 8, - 6, - 5, - 3, - 2
 		};
+
+		// tempo[0] = 256; tempo[i] = floor(128 /i)
+		public static readonly int[] FarTempos = new int[16]
+		{
+			256, 128, 64, 42, 32, 25, 21, 18, 16, 14, 12, 11, 10, 9, 9, 8
+		};
 	}
 }

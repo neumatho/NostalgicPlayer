@@ -2684,18 +2684,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 		/********************************************************************/
 		/// <summary>
-		/// Find tempo factor
-		/// </summary>
-		/********************************************************************/
-		private int GetFarTempoFactor(Mp_Control a)
-		{
-			return a.FarCurTempo == 0 ? 256 : (128 / a.FarCurTempo);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Set the right speed and BPM for Farandole modules
 		/// </summary>
 		/********************************************************************/
@@ -2720,58 +2708,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			   set the tick counter to 3, so we need to calculate the BPM to use for the difference. This
 			   is easy enough, just say 80 * 3 = 240 BPM.
 
-			   So with all this information, we will try to calculate the right BPM for the speed set.
+			   So with all this information, we will try to calculate the right BPM for the speed set. */
 
-			   For argument 1:
-
-			   tps = 128 / 1 = 128
-			   gus = 1197255 / tps = 1197255 / 128 = 9353
-			   counter = 3
-			   factor = gus / 9353 = 9353 / 9353 = 1
-			   bpm = (80 * counter) / factor = (80 * 3) / 1 = 240
-
-			   For argument 4, which is the default speed
-
-			   tps = 128 / 4 = 32
-			   gus = 1197255 / tps = 1197255 / 32 = 37414
-			   counter = 3
-			   factor = gus / 9353 = 37414 / 9353 = 4
-			   bpm = (80 * counter) / factor = (80 * 3) / 4 = 60
-
-			   For argument 15, which is the slowest speed
-
-			   tps = 128 / 15 = 8
-			   gus = 1197255 / tps = 1197255 / 8 = 149656
-			   counter = 6 (see code below for why)
-			   factor = gus / 9353 = 149656 / 9353 = 16
-			   bpm = (80 * counter) / factor = (80 * 6) / 16 = 30
-
-			   You can make yourself a little exercise to prove that the above is correct :-) */
-
-			short realTempo = (short)(mod.Control[0].FarTempoBend + GetFarTempoFactor(mod.Control[0]));
-			if (realTempo == 0)
+			short bpm = (short)(mod.Control[0].FarTempoBend + LookupTables.FarTempos[mod.Control[0].FarCurTempo]);
+			if (bpm == 0)
 				return;
 
-			int gus = 1197255 / realTempo;
+			int speed = 0;
+			uint divisor = (uint)(1197255 / bpm);
 
-			int eax = gus;
-			byte cx = 0, di = 0;
-
-			while (eax > 0xffff)
+			while (divisor > 0xffff)
 			{
-				eax >>= 1;
-				di++;
-				cx++;
+				divisor >>= 1;
+				bpm <<= 1;
+				speed++;
 			}
 
-			if (cx >= 2)
-				di++;
+			if (speed >= 2)
+				speed++;
 
-			mod.SngSpd = (byte)(di + 3);
-
-			// Calculate the factor using fixed point and round it
-			int factor = (int)((((long)gus << 32) / (9353 << 16)) + 0x8000) >> 16;
-			mod.Bpm = (ushort)((80 * mod.SngSpd) / factor);
+			mod.SngSpd = (byte)(speed + 4);
+			mod.Bpm = (ushort)(bpm * 2.5);
 		}
 		#endregion
 
@@ -4906,7 +4863,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 						a.FarRetrigCount--;
 						if (a.FarRetrigCount > 0)
-							a.Retrig = (sbyte)(((mod.Control[0].FarTempoBend + GetFarTempoFactor(mod.Control[0])) / dat / 8) - 1);
+							a.Retrig = (sbyte)(((mod.Control[0].FarTempoBend + LookupTables.FarTempos[mod.Control[0].FarCurTempo]) / dat / 8) - 1);
 					}
 				}
 				else
@@ -4952,19 +4909,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		private int DoFarEffectD(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
 		{
 			byte dat = uniTrk.UniGetByte();
-			Mp_Control firstControl = mod.Control[0];
 
-			if (dat != 0)
+			if (tick == 0)
 			{
-				firstControl.FarTempoBend -= dat;
+				Mp_Control firstControl = mod.Control[0];
 
-				if ((firstControl.FarTempoBend + GetFarTempoFactor(firstControl)) <= 0)
+				if (dat != 0)
+				{
+					firstControl.FarTempoBend -= dat;
+
+					if ((firstControl.FarTempoBend + LookupTables.FarTempos[firstControl.FarCurTempo]) <= 0)
+						firstControl.FarTempoBend = 0;
+				}
+				else
 					firstControl.FarTempoBend = 0;
-			}
-			else
-				firstControl.FarTempoBend = 0;
 
-			SetFarTempo(mod);
+				SetFarTempo(mod);
+			}
 
 			return 0;
 		}
@@ -4979,19 +4940,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		private int DoFarEffectE(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
 		{
 			byte dat = uniTrk.UniGetByte();
-			Mp_Control firstControl = mod.Control[0];
 
-			if (dat != 0)
+			if (tick == 0)
 			{
-				firstControl.FarTempoBend += dat;
+				Mp_Control firstControl = mod.Control[0];
 
-				if ((firstControl.FarTempoBend + GetFarTempoFactor(firstControl)) >= 100)
-					firstControl.FarTempoBend = 100;
+				if (dat != 0)
+				{
+					firstControl.FarTempoBend += dat;
+
+					if ((firstControl.FarTempoBend + LookupTables.FarTempos[firstControl.FarCurTempo]) >= 100)
+						firstControl.FarTempoBend = 100;
+				}
+				else
+					firstControl.FarTempoBend = 0;
+
+				SetFarTempo(mod);
 			}
-			else
-				firstControl.FarTempoBend = 0;
-
-			SetFarTempo(mod);
 
 			return 0;
 		}
@@ -5013,11 +4978,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 				firstControl.FarCurTempo = dat;
 				mod.VbTick = 0;
-
-				if ((firstControl.FarTempoBend + GetFarTempoFactor(firstControl)) <= 0)
-					firstControl.FarTempoBend = 0;
-				else if ((firstControl.FarTempoBend + GetFarTempoFactor(firstControl)) >= 100)
-					firstControl.FarTempoBend = 100;
 
 				SetFarTempo(mod);
 			}
