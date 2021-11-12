@@ -374,12 +374,6 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 
 				converterInUse.SaveData(fileStream, converterBuffer, numberOfSamples);
 			}
-
-			if (stream.HasEndReached)
-			{
-				// Take a little break, so the client has time to free the module if needed
-				Thread.Sleep(400);
-			}
 		}
 
 		#region Private methods
@@ -437,6 +431,12 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 				{
 					int read = stream.Read(mixerBuffer, 0, mixerBuffer.Length);
 					SaveSampleBuffer(mixerBuffer, read, 32);
+
+					if (stream.HasEndReached)
+					{
+						// Pause the playing
+						pauseEvent.Reset();
+					}
 				}
 			}
 		}
