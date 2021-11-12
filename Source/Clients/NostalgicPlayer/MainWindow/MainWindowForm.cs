@@ -122,7 +122,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private readonly List<int> randomList;
 
 		private long lastAddedTimeFromExplorer = 0;
-		private bool processingEndReached = false;
+		private object processingEndReached = new object();
 
 		// Other windows
 		private HelpWindowForm helpWindow = null;
@@ -4163,75 +4163,66 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void HandleEndReached()
 		{
-			if (!processingEndReached)
+			BeginInvoke(new Action(() =>
 			{
-				processingEndReached = true;
-
-				BeginInvoke(new Action(() =>
+				lock (processingEndReached)
 				{
-					try
+					// Check to see if there is module loop on
+					if (!loopCheckButton.Checked && (playItem != null))
 					{
-						// Check to see if there is module loop on
-						if (!loopCheckButton.Checked && (playItem != null))
+						bool loadNext = true;
+
+						// Get the number of modules in the list
+						int count = moduleListBox.Items.Count;
+
+						// Get the index of the current playing module
+						int curPlay = moduleListBox.Items.IndexOf(playItem);
+
+						// The next module to load
+						int newPlay = curPlay + 1;
+
+						// Test to see if we is at the end of the list
+						if (newPlay == count)
 						{
-							bool loadNext = true;
+							// We are, now check what we has to do
+							OptionSettings.ModuleListEndAction listEnd = optionSettings.ModuleListEnd;
 
-							// Get the number of modules in the list
-							int count = moduleListBox.Items.Count;
-
-							// Get the index of the current playing module
-							int curPlay = moduleListBox.Items.IndexOf(playItem);
-
-							// The next module to load
-							int newPlay = curPlay + 1;
-
-							// Test to see if we is at the end of the list
-							if (newPlay == count)
+							if (listEnd == OptionSettings.ModuleListEndAction.Eject)
 							{
-								// We are, now check what we has to do
-								OptionSettings.ModuleListEndAction listEnd = optionSettings.ModuleListEnd;
-
-								if (listEnd == OptionSettings.ModuleListEndAction.Eject)
-								{
-									// Eject the module
-									StopAndFreeModule();
-									loadNext = false;
-								}
-								else
-								{
-									if ((count == 1) || (listEnd == OptionSettings.ModuleListEndAction.Loop))
-										loadNext = false;
-									else
-										newPlay = 0;
-								}
+								// Eject the module
+								StopAndFreeModule();
+								loadNext = false;
 							}
-
-							// Should we load the next module?
-							if (loadNext)
+							else
 							{
-								if (optionSettings.DoubleBuffering && moduleHandler.IsDoubleBufferingModuleLoaded)
-								{
-									// Double buffering is on and the next module has already been loaded, so just
-									// start to play it
-									PlayNextModule(newPlay);
-								}
+								if ((count == 1) || (listEnd == OptionSettings.ModuleListEndAction.Loop))
+									loadNext = false;
 								else
-								{
-									// Free the module
-									StopAndFreeModule();
+									newPlay = 0;
+							}
+						}
 
-									// Load the module
-									LoadAndPlayModule(newPlay);
-								}
+						// Should we load the next module?
+						if (loadNext)
+						{
+							if (optionSettings.DoubleBuffering && moduleHandler.IsDoubleBufferingModuleLoaded)
+							{
+								// Double buffering is on and the next module has already been loaded, so just
+								// start to play it
+								PlayNextModule(newPlay);
+							}
+							else
+							{
+								// Free the module
+								StopAndFreeModule();
+
+								// Load the module
+								LoadAndPlayModule(newPlay);
 							}
 						}
 					}
-					finally
-					{
-						processingEndReached = false;
-					}
-				}));
-			}
+				}
+			}));
 		}
 		#endregion
 

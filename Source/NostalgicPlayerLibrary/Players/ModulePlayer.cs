@@ -25,6 +25,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 	{
 		private readonly Manager agentManager;
 
+		private object playerLock = new object();
 		private IModulePlayerAgent currentPlayer;
 		private DurationInfo[] allSongsInfo;
 
@@ -60,41 +61,44 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 			try
 			{
-				outputAgent = playerConfiguration.OutputAgent;
-
-				Loader loader = playerConfiguration.Loader;
-
-				// Remember the player
-				currentPlayer = (IModulePlayerAgent)loader.PlayerAgent;
-
-				lock (currentPlayer)
+				lock (playerLock)
 				{
-					// Initialize the player
-					initOk = currentPlayer.InitPlayer(out errorMessage);
+					outputAgent = playerConfiguration.OutputAgent;
 
-					if (initOk)
+					Loader loader = playerConfiguration.Loader;
+
+					// Remember the player
+					currentPlayer = (IModulePlayerAgent)loader.PlayerAgent;
+
+					lock (currentPlayer)
 					{
-						// Calculate the duration of all sub-songs
-						CalculateDuration();
+						// Initialize the player
+						initOk = currentPlayer.InitPlayer(out errorMessage);
 
-						// Subscribe the events
-						currentPlayer.PositionChanged += Player_PositionChanged;
-						currentPlayer.ModuleInfoChanged += Player_ModuleInfoChanged;
+						if (initOk)
+						{
+							// Calculate the duration of all sub-songs
+							CalculateDuration();
 
-						// Initialize module information
-						StaticModuleInformation = new ModuleInfoStatic(loader.PlayerAgentInfo, loader.ConverterAgentInfo, currentPlayer.ModuleName.Trim(), FindAuthor(), currentPlayer.Comment, currentPlayer.CommentFont, currentPlayer.Lyrics, currentPlayer.LyricsFont, loader.ModuleFormat, loader.PlayerName, currentPlayer.ModuleChannelCount, loader.CrunchedSize, loader.ModuleSize, currentPlayer.SupportFlags, currentPlayer.SubSongs.Number, currentPlayer.Instruments, currentPlayer.Samples);
+							// Subscribe the events
+							currentPlayer.PositionChanged += Player_PositionChanged;
+							currentPlayer.ModuleInfoChanged += Player_ModuleInfoChanged;
 
-						// Initialize the mixer
-						soundStream = new MixerStream();
-						soundStream.EndReached += Stream_EndReached;
+							// Initialize module information
+							StaticModuleInformation = new ModuleInfoStatic(loader.PlayerAgentInfo, loader.ConverterAgentInfo, currentPlayer.ModuleName.Trim(), FindAuthor(), currentPlayer.Comment, currentPlayer.CommentFont, currentPlayer.Lyrics, currentPlayer.LyricsFont, loader.ModuleFormat, loader.PlayerName, currentPlayer.ModuleChannelCount, loader.CrunchedSize, loader.ModuleSize, currentPlayer.SupportFlags, currentPlayer.SubSongs.Number, currentPlayer.Instruments, currentPlayer.Samples);
 
-						initOk = soundStream.Initialize(agentManager, playerConfiguration, out errorMessage);
+							// Initialize the mixer
+							soundStream = new MixerStream();
+							soundStream.EndReached += Stream_EndReached;
 
-						if (!initOk)
+							initOk = soundStream.Initialize(agentManager, playerConfiguration, out errorMessage);
+
+							if (!initOk)
+								CleanupPlayer();
+						}
+						else
 							CleanupPlayer();
 					}
-					else
-						CleanupPlayer();
 				}
 			}
 			catch (Exception ex)
@@ -119,32 +123,35 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		{
 			try
 			{
-				if (currentPlayer != null)
+				lock (playerLock)
 				{
-					// End the mixer
-					if (soundStream != null)
+					if (currentPlayer != null)
 					{
-						soundStream.EndReached -= Stream_EndReached;
+						// End the mixer
+						if (soundStream != null)
+						{
+							soundStream.EndReached -= Stream_EndReached;
 
-						soundStream.Cleanup();
-						soundStream.Dispose();
-						soundStream = null;
+							soundStream.Cleanup();
+							soundStream.Dispose();
+							soundStream = null;
+						}
+
+						// Shutdown the player
+						currentPlayer.CleanupSound();
+						currentPlayer.CleanupPlayer();
+
+						// Unsubscribe the events
+						currentPlayer.PositionChanged -= Player_PositionChanged;
+						currentPlayer.ModuleInfoChanged -= Player_ModuleInfoChanged;
+
+						allSongsInfo = null;
+						currentPlayer = null;
+
+						// Clear player information
+						StaticModuleInformation = new ModuleInfoStatic();
+						PlayingModuleInformation = new ModuleInfoFloating();
 					}
-
-					// Shutdown the player
-					currentPlayer.CleanupSound();
-					currentPlayer.CleanupPlayer();
-
-					// Unsubscribe the events
-					currentPlayer.PositionChanged -= Player_PositionChanged;
-					currentPlayer.ModuleInfoChanged -= Player_ModuleInfoChanged;
-
-					allSongsInfo = null;
-					currentPlayer = null;
-
-					// Clear player information
-					StaticModuleInformation = new ModuleInfoStatic();
-					PlayingModuleInformation = new ModuleInfoFloating();
 				}
 			}
 			catch (Exception)
@@ -163,30 +170,33 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		public bool StartPlaying(Loader loader, out string errorMessage, MixerConfiguration newMixerConfiguration)
 		{
-			if (newMixerConfiguration != null)
-				soundStream.ChangeConfiguration(newMixerConfiguration);
-
-			soundStream.Start();
-
-			if (outputAgent.SwitchStream(soundStream, loader.FileName, StaticModuleInformation.ModuleName, StaticModuleInformation.Author, out errorMessage) == AgentResult.Error)
-				return false;
-
-			// Tell all visuals to start
-			bool bufferMode = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferMode) != 0;
-
-			foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
+			lock (playerLock)
 			{
-				visualAgent.CleanupVisual();
+				if (newMixerConfiguration != null)
+					soundStream.ChangeConfiguration(newMixerConfiguration);
 
-				if (bufferMode && (visualAgent is IChannelChangeVisualAgent))
-					continue;
+				soundStream.Start();
 
-				visualAgent.InitVisual(StaticModuleInformation.Channels);
+				if (outputAgent.SwitchStream(soundStream, loader.FileName, StaticModuleInformation.ModuleName, StaticModuleInformation.Author, out errorMessage) == AgentResult.Error)
+					return false;
+
+				// Tell all visuals to start
+				bool bufferMode = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferMode) != 0;
+
+				foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
+				{
+					visualAgent.CleanupVisual();
+
+					if (bufferMode && (visualAgent is IChannelChangeVisualAgent))
+						continue;
+
+					visualAgent.InitVisual(StaticModuleInformation.Channels);
+				}
+
+				outputAgent.Play();
+
+				return true;
 			}
-
-			outputAgent.Play();
-
-			return true;
 		}
 
 
@@ -198,26 +208,29 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		public void StopPlaying(bool stopOutputAgent)
 		{
-			if (currentPlayer != null)
+			lock (playerLock)
 			{
-				// Stop the mixer
-				if (stopOutputAgent)
-					outputAgent.Stop();
-
-				soundStream.Stop();
-
-				// Cleanup the player
-				lock (currentPlayer)
+				if (currentPlayer != null)
 				{
-					currentPlayer.CleanupSound();
-				}
-			}
+					// Stop the mixer
+					if (stopOutputAgent)
+						outputAgent.Stop();
 
-			if (stopOutputAgent)
-			{
-				// Tell all visuals to stop
-				foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
-					visualAgent.CleanupVisual();
+					soundStream.Stop();
+
+					// Cleanup the player
+					lock (currentPlayer)
+					{
+						currentPlayer.CleanupSound();
+					}
+				}
+
+				if (stopOutputAgent)
+				{
+					// Tell all visuals to stop
+					foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
+						visualAgent.CleanupVisual();
+				}
 			}
 		}
 
@@ -230,10 +243,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		public void PausePlaying()
 		{
-			if (currentPlayer != null)
+			lock (playerLock)
 			{
-				outputAgent.Pause();
-				soundStream.Pause();
+				if (currentPlayer != null)
+				{
+					outputAgent.Pause();
+					soundStream.Pause();
+				}
 			}
 		}
 
@@ -246,10 +262,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		public void ResumePlaying()
 		{
-			if (currentPlayer != null)
+			lock (playerLock)
 			{
-				soundStream.Resume();
-				outputAgent.Play();
+				if (currentPlayer != null)
+				{
+					soundStream.Resume();
+					outputAgent.Play();
+				}
 			}
 		}
 
@@ -331,45 +350,48 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		{
 			errorMessage = string.Empty;
 
-			if (currentPlayer != null)
+			lock (playerLock)
 			{
-				lock (currentPlayer)
+				if (currentPlayer != null)
 				{
-					try
+					lock (currentPlayer)
 					{
-						// Get sub-song information
-						SubSongInfo subSongs = currentPlayer.SubSongs;
+						try
+						{
+							// Get sub-song information
+							SubSongInfo subSongs = currentPlayer.SubSongs;
 
-						// Find the right song number
-						int songNum = songNumber == -1 ? subSongs.DefaultStartSong : songNumber;
+							// Find the right song number
+							int songNum = songNumber == -1 ? subSongs.DefaultStartSong : songNumber;
 
-						// Get the position times for the current song
-						DurationInfo durationInfo = allSongsInfo?[songNum];
+							// Get the position times for the current song
+							DurationInfo durationInfo = allSongsInfo?[songNum];
 
-						// Initialize the player with the new song
-						if (!currentPlayer.InitSound(songNum, durationInfo, out errorMessage))
+							// Initialize the player with the new song
+							if (!currentPlayer.InitSound(songNum, durationInfo, out errorMessage))
+							{
+								CleanupPlayer();
+								return false;
+							}
+
+							// Find the length of the song
+							int songLength = currentPlayer.SongLength;
+
+							// Initialize the module information
+							PlayingModuleInformation = new ModuleInfoFloating(songNum, durationInfo, currentPlayer.GetSongPosition(), songLength, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
+						}
+						catch (Exception ex)
 						{
 							CleanupPlayer();
+
+							errorMessage = string.Format(Resources.IDS_ERR_PLAYER_SELECTSONG, ex.Message);
 							return false;
 						}
-
-						// Find the length of the song
-						int songLength = currentPlayer.SongLength;
-
-						// Initialize the module information
-						PlayingModuleInformation = new ModuleInfoFloating(songNum, durationInfo, currentPlayer.GetSongPosition(), songLength, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
-					}
-					catch (Exception ex)
-					{
-						CleanupPlayer();
-
-						errorMessage = string.Format(Resources.IDS_ERR_PLAYER_SELECTSONG, ex.Message);
-						return false;
 					}
 				}
-			}
 
-			return true;
+				return true;
+			}
 		}
 
 
@@ -381,14 +403,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		public void SetSongPosition(int position)
 		{
-			if (currentPlayer != null)
+			lock (playerLock)
 			{
-				lock (currentPlayer)
+				if (currentPlayer != null)
 				{
-					currentPlayer.SetSongPosition(position, PlayingModuleInformation.DurationInfo?.PositionInfo[position]);
-				}
+					lock (currentPlayer)
+					{
+						currentPlayer.SetSongPosition(position, PlayingModuleInformation.DurationInfo?.PositionInfo[position]);
+					}
 
-				PlayingModuleInformation.SongPosition = position;
+					PlayingModuleInformation.SongPosition = position;
+				}
 			}
 		}
 
@@ -410,17 +435,20 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		private void Player_PositionChanged(object sender, EventArgs e)
 		{
-			if (currentPlayer != null)
+			lock (playerLock)
 			{
-				lock (currentPlayer)
+				if (currentPlayer != null)
 				{
-					// Update the position
-					PlayingModuleInformation.SongPosition = currentPlayer.GetSongPosition();
-				}
+					lock (currentPlayer)
+					{
+						// Update the position
+						PlayingModuleInformation.SongPosition = currentPlayer.GetSongPosition();
+					}
 
-				// Call the next event handler
-				if (PositionChanged != null)
-					PositionChanged(sender, e);
+					// Call the next event handler
+					if (PositionChanged != null)
+						PositionChanged(sender, e);
+				}
 			}
 		}
 
@@ -433,11 +461,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		private void Player_ModuleInfoChanged(object sender, ModuleInfoChangedEventArgs e)
 		{
-			if (currentPlayer != null)
+			lock (playerLock)
 			{
-				// Just call the next event handler
-				if (ModuleInfoChanged != null)
-					ModuleInfoChanged(sender, e);
+				if (currentPlayer != null)
+				{
+					// Just call the next event handler
+					if (ModuleInfoChanged != null)
+						ModuleInfoChanged(sender, e);
+				}
 			}
 		}
 
@@ -450,11 +481,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		private void Stream_EndReached(object sender, EventArgs e)
 		{
-			if (currentPlayer != null)
+			lock (playerLock)
 			{
-				// Just call the next event handler
-				if (EndReached != null)
-					EndReached(sender, e);
+				if (currentPlayer != null)
+				{
+					// Just call the next event handler
+					if (EndReached != null)
+						EndReached(sender, e);
+				}
 			}
 		}
 		#endregion
