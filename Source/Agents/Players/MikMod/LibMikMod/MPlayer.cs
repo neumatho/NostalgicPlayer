@@ -7,7 +7,6 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Agent.Player.MikMod.Containers;
 using Polycode.NostalgicPlayer.Agent.Shared.MikMod;

@@ -149,7 +149,6 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 				of.NumChn = 16;
 				of.InitSpeed = mh1.Speed != 0 ? mh1.Speed : (byte)4;
 				of.BpmLimit = 5;
-				of.RepPos = 0;
 				of.Flags |= ModuleFlag.Panning | ModuleFlag.FarTempo | ModuleFlag.HighBpm;
 
 				for (int t = 0; t < 16; t++)
@@ -181,6 +180,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 				}
 
 				of.NumPos = mh2.SngLen;
+				of.RepPos = mh2.LoopTo;
 
 				if (!MLoader.AllocPositions(of, of.NumPos))
 				{
@@ -240,15 +240,13 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 				for (int t = 0; t < of.NumPat; t++)
 				{
-					ushort rows = 0;
-
 					Array.Clear(pat, 0, 256 * 16 * 4);
 
 					if (mh2.PatSiz[t] != 0)
 					{
 						// Break position byte is always 1 less than the final row index,
 						// i.e. it is 2 less than the total row count
-						rows = (ushort)(moduleStream.Read_UINT8() + 2);
+						ushort rows = (ushort)(moduleStream.Read_UINT8() + 2);
 						moduleStream.Read_UINT8();		// Tempo
 
 						int cRowIndex = 0;
@@ -291,8 +289,18 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 					}
 					else
 					{
-						tracks += 16;
-						of.PattRows[t] = 0;
+						// Faradole Composer normally use a 64 rows blank track for patterns with 0 rows
+						for (int u = 0; u < 16; u++)
+						{
+							uniTrk.UniReset();
+
+							for (int r = 0; r < 64; r++)
+								uniTrk.UniNewLine();
+
+							of.Tracks[tracks++] = uniTrk.UniDup();
+						}
+
+						of.PattRows[t] = 64;
 					}
 				}
 
@@ -364,10 +372,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 							q.LoopEnd >>= 1;
 						}
 
-						// It is not always the case that this bit is set, e.g. "Budda on a bicycle" has not.
-						// So we check the loop start and end instead
-//						if ((s.Type & 8) != 0)
-						if (((q.LoopStart > 0) || (q.LoopEnd > 0)) && (q.LoopStart < q.LoopEnd))
+						if ((s.Loop & 8) != 0)
 							q.Flags |= SampleFlag.Loop;
 
 						q.SeekPos = (uint)moduleStream.Position;
