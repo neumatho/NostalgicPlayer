@@ -25,7 +25,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Krypton.Toolkit.Canary.Lite" Version="6.0.2108.1" />
     <PackageReference Include="NAudio.Wasapi" Version="2.0.0" />
   </ItemGroup>
 

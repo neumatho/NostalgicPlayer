@@ -27,10 +27,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Krypton.Toolkit.Canary.Lite" Version="6.0.2108.1" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\NostalgicPlayerGuiKit\NostalgicPlayerGuiKit.csproj">
       <Private>true</Private>
     </ProjectReference>
