@@ -48,6 +48,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 		private ManualResetEvent pauseEvent;
 		private Thread saverThread;
 
+		private bool sampleDelay;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -429,14 +431,31 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 			{
 				if (stream != null)
 				{
+					// Differences between when playing modules and samples when end-detection is triggered.
+					//
+					// When playing a module, the HasEndReached is set to true and the client has been notified
+					// immediately. So in this case, we could just stop saving.
+					//
+					// But when playing samplings, an extra buffer if filled with zeros, so when playing the
+					// sample through real audio output, it will make sure that the last part is actually played
+					// before stopping. To take care of this, we delay the stopping after one more read, so we're
+					// sure that the client has been notified before stopping. Notice that we will not save this
+					// extra buffer.
+					//
+					// Since we do not know if we're playing a module or sampling, we always do the logic described
+					// above, but it does not matter if we do it for modules too, since nothing extra is saved
 					int read = stream.Read(mixerBuffer, 0, mixerBuffer.Length);
-					SaveSampleBuffer(mixerBuffer, read, 32);
 
-					if (stream.HasEndReached)
+					if (!sampleDelay)
+						SaveSampleBuffer(mixerBuffer, read, 32);
+					else
 					{
 						// Pause the playing
 						pauseEvent.Reset();
 					}
+
+					if (stream.HasEndReached)
+						sampleDelay = true;
 				}
 			}
 		}

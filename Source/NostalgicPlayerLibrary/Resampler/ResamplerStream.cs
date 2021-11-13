@@ -176,7 +176,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 							OnEndReached(this, EventArgs.Empty);
 						}
 
-						return 0;
+						Array.Clear(buffer, offset, todo);
+						return todo;
 					}
 
 					int samplesTaken = resampler.Resampling(buffer, offset, count / bytesPerSampling, out bool hasEndReached);
