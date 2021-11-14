@@ -33,6 +33,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 			{ Mpg123.Agent3Id, ModuleType.Mpeg25 }
 		};
 
+		private static readonly double[] bs = { 0.0, 384.0, 1152.0, 1152.0 };
+
 		private const int CheckBufSize = 8 * 1024;
 		private const int CheckFrames = 10;
 
@@ -44,8 +46,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		private long firstFramePosition;
 		private Frame firstFrame;
 
+		private long calculatedFileLength;
 		private long totalLengthInSamples;
-		private long totalLengthInFrames;
+		private int numberOfFrames;
+
+		private bool isVbr;
+		private int vbrFrames;
+		private int vbrTotalBytes;
+		private int vbrScale;
+		private byte[] vbrToc;
+
 		private long samplesRead;
 		private int frequency;
 		private int bitRateMode;
@@ -212,7 +222,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 				case 9:
 				{
 					description = Resources.IDS_MPG_INFODESCLINE09;
-					value = totalLengthInFrames == 0 ? Resources.IDS_MPG_INFO_UNKNOWN : totalLengthInFrames.ToString();
+					value = numberOfFrames == 0 ? Resources.IDS_MPG_INFO_UNKNOWN : numberOfFrames.ToString();
 					break;
 				}
 
@@ -461,12 +471,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 			}
 
 			// Tell Mpg123 about the total file size
-			result = Native.mpg123_set_filesize(mpg123Handle, (int)(modStream.Length - firstFramePosition));
+			result = Native.mpg123_set_filesize(mpg123Handle, (int)calculatedFileLength);
 			if (result != Native.mpg123_errors.MPG123_OK)
 			{
 				errorMessage = Native.GetErrorString(mpg123Handle, result);
 				return false;
 			}
+
+			// Calculate the number of frames
+			numberOfFrames = isVbr ? vbrFrames : (int)(calculatedFileLength / (firstFrame.FrameSize + 4));
 
 			// Initialize some variables
 			samplesRead = 0;
@@ -498,39 +511,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		/********************************************************************/
 		public override DurationInfo CalculateDuration()
 		{
-			InitSound(null, out _);
+			double totalTime;
 
-			try
-			{
-				// Feed Mpg123 with some data, so we can calculate the song length
-				FeedWithData();
+			if (isVbr)
+				totalTime = bs[firstFrame.Lay] / LookupTables.Freqs[firstFrame.SamplingFrequency] * vbrFrames;
+			else
+				totalTime = (double)calculatedFileLength / ((LookupTables.TabSel123[firstFrame.Lsf, firstFrame.Lay - 1, firstFrame.BitRateIndex] / 8) * 1000);
 
-				// Get the total number of frames
-				totalLengthInFrames = Native.mpg123_framelength(mpg123Handle);
-				if (totalLengthInFrames < 0)
-					totalLengthInFrames = 0;
+			totalLengthInSamples = (long)(totalTime * LookupTables.Freqs[firstFrame.SamplingFrequency]);
 
-				totalLengthInSamples = Native.mpg123_length(mpg123Handle);
-				if (totalLengthInSamples > 0)
-				{
-					// Calculate the total time
-					long totalTime = totalLengthInSamples * 1000 / frequency;
+			// Now build the list
+			PositionInfo[] positionInfo = Enumerable.Range(0, 100).Select(i => new PositionInfo(new TimeSpan((long)(i * (totalTime / 100) * TimeSpan.TicksPerSecond)))).ToArray();
 
-					// Now build the list
-					PositionInfo[] positionInfo = Enumerable.Range(0, 100).Select(i => new PositionInfo(new TimeSpan(i * (totalTime / 100) * TimeSpan.TicksPerMillisecond))).ToArray();
-
-					return new DurationInfo(new TimeSpan(totalTime * TimeSpan.TicksPerMillisecond), positionInfo);
-				}
-
-				// Could not find the length, so set it to unknown
-				totalLengthInSamples = 0;
-
-				return null;
-			}
-			finally
-			{
-				CleanupSound();
-			}
+			return new DurationInfo(new TimeSpan((long)(totalTime * TimeSpan.TicksPerSecond)), positionInfo);
 		}
 
 
@@ -718,36 +711,42 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 				if (!found)
 					return ModuleType.Unknown;
 
-				// Ok, it seems we found a header, but it could be anything.
-				// We will then try to find some more headers with the right
-				// space between them
 				Frame frame = new Frame();
 
-				for (int i = 0; i < CheckFrames; i++)
+				// Decode the header
+				DecodeHeader(frame, header);
+
+				// Ok, it seems we found a header. Check if it is a Xing header (VBR from LAME)
+				if (!DecodeVbrHeader(moduleStream, frame))
 				{
-					// Decode the header
-					DecodeHeader(frame, header);
-
-					// Seek to the next frame header
-					moduleStream.Seek(frame.FrameSize, SeekOrigin.Current);
-
-					// Read the header
-					header = moduleStream.Read_B_UINT32();
-					if (moduleStream.EndOfStream)
-						return ModuleType.Unknown;
-
-					// Check the new header
-					if (!HeadCheck(header))
+					// It is not. We will then try to find some more headers with the right
+					// space between them
+					for (int i = 0; i < CheckFrames; i++)
 					{
-						found = false;
+						// Seek to the next frame header
+						moduleStream.Seek(frame.FrameSize, SeekOrigin.Current);
 
-						// Set the file position back
-						moduleStream.Seek(firstFramePosition + pos - 3, SeekOrigin.Begin);
-
-						// Make sure we don't make a double check
+						// Read the header
 						header = moduleStream.Read_B_UINT32();
-						pos++;
-						break;
+						if (moduleStream.EndOfStream)
+							return ModuleType.Unknown;
+
+						// Check the new header
+						if (!HeadCheck(header))
+						{
+							found = false;
+
+							// Set the file position back
+							moduleStream.Seek(firstFramePosition + pos - 3, SeekOrigin.Begin);
+
+							// Make sure we don't make a double check
+							header = moduleStream.Read_B_UINT32();
+							pos++;
+							break;
+						}
+
+						// Decode the header
+						DecodeHeader(frame, header);
 					}
 				}
 
@@ -755,6 +754,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 				{
 					firstFramePosition += (pos - 4);
 					firstFrame = frame;
+
+					// Calculate the file length
+					calculatedFileLength = moduleStream.Length - firstFramePosition;
+					if (HasId3V1Tags(moduleStream))
+						calculatedFileLength -= 128;
 
 					// Yeah, we found a mpeg file, now find out which kind
 					if (frame.Mpeg25)
@@ -884,16 +888,105 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 
 		/********************************************************************/
 		/// <summary>
-		/// Checks the file for ID3v1 tags and if available, read it
+		/// Checks the given frame for a VBR frame and if so, decode it
 		/// </summary>
 		/********************************************************************/
-		private void GetId3V1Tags(ModuleStream moduleStream)
+		private bool DecodeVbrHeader(ModuleStream moduleStream, Frame frame)
+		{
+			// First of all, we don't know if we have a VBR file yet
+			isVbr = false;
+			vbrFrames = 0;
+			vbrTotalBytes = 0;
+			vbrScale = -1;
+			vbrToc = null;
+
+			// Only layer 3 have VBR support
+			if (frame.Lay == 3)
+			{
+				// Get the start offset of the VBR info
+				int offset;
+
+				if (frame.Lsf != 0)
+					offset = frame.Stereo == 1 ? 9 : 17;
+				else
+					offset = frame.Stereo == 1 ? 17 : 32;
+
+				// Is the frame a VBR frame?
+				long filePos = moduleStream.Position;
+
+				try
+				{
+					moduleStream.Seek(offset, SeekOrigin.Current);
+
+					if (moduleStream.Read_B_UINT32() != 0x58696e67)		// Xing
+						return false;
+
+					// Okay, the frame is a VBR frame, so start decode it
+					isVbr = true;
+
+					// Get the flags
+					uint flags = moduleStream.Read_B_UINT32();
+
+					// Any frames?
+					if ((flags & 1) != 0)
+						vbrFrames = (int)moduleStream.Read_B_UINT32();
+
+					// Any bytes?
+					if ((flags & 2) != 0)
+						vbrTotalBytes = (int)moduleStream.Read_B_UINT32();
+
+					// Any TOC?
+					if ((flags & 4) != 0)
+					{
+						vbrToc = new byte[100];
+						moduleStream.Read(vbrToc, 0, 100);
+					}
+
+					// Any scale?
+					if ((flags & 8) != 0)
+						vbrScale = (int)moduleStream.Read_B_UINT32();
+
+					return true;
+				}
+				finally
+				{
+					moduleStream.Seek(filePos, SeekOrigin.Begin);
+				}
+			}
+
+			return false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Checks the file for ID3v1 tags
+		/// </summary>
+		/********************************************************************/
+		private bool HasId3V1Tags(ModuleStream moduleStream)
 		{
 			// Seek to the end of the file - 128 bytes
 			moduleStream.Seek(-128, SeekOrigin.End);
 
 			// Do the file have the MP3 tag?
 			if ((moduleStream.Read_UINT8() == 0x54) && (moduleStream.Read_UINT8() == 0x41) && (moduleStream.Read_UINT8() == 0x47))		// TAG
+				return true;
+
+			return false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Checks the file for ID3v1 tags and if available, read it
+		/// </summary>
+		/********************************************************************/
+		private void GetId3V1Tags(ModuleStream moduleStream)
+		{
+			// Do the file have the MP3 tag?
+			if (HasId3V1Tags(moduleStream))
 			{
 				// Yes, read it
 				Encoding encoder = EncoderCollection.Win1252;

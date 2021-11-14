@@ -1493,7 +1493,7 @@ stopLoop:
 							// Check for Mod Plugin packed samples
 							sampleDataStream.Read(buf, 0, 5);
 
-							if ((buf[0] == 0x41) && (buf[1] == 0x44) && (buf[2] == 0x50) && (buf[3] == 0x43) && (buf[4] == 0x4d))
+							if ((buf[0] == 0x41) && (buf[1] == 0x44) && (buf[2] == 0x50) && (buf[3] == 0x43) && (buf[4] == 0x4d))	// ADPCM
 							{
 								// It is, so read and depack it
 								packed = true;
