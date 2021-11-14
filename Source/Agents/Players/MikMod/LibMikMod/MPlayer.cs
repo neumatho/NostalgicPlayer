@@ -342,7 +342,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		{
 			for (int t = 0; t < mod.NumChn; t++)
 			{
-				mod.Control[t].Main.ChanVol = mod.ChanVol[t];
+				mod.Control[t].Main.ChanVol = (sbyte)mod.ChanVol[t];
 				mod.Control[t].Main.Panning = (short)mod.Panning[t];
 			}
 
@@ -672,7 +672,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				aOut.Main.Kick = Kick.Absent;
 
 				uint tmpVol = aOut.Main.FadeVol;			// Max 32768
-				tmpVol *= aOut.Main.ChanVol;				// * max 64
+				tmpVol *= (byte)aOut.Main.ChanVol;			// * max 64
 				tmpVol *= (uint)aOut.Main.OutVolume;		// * max 256
 				tmpVol /= (256 * 64);						// tmpVol is max 32768 again
 
@@ -4064,7 +4064,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		/********************************************************************/
 		private int DoItEffectM(ushort tick, ModuleFlag flags, Mp_Control a, Module mod, short channel)
 		{
-			a.Main.ChanVol = uniTrk.UniGetByte();
+			a.Main.ChanVol = (sbyte)uniTrk.UniGetByte();
 
 			if (a.Main.ChanVol > 64)
 				a.Main.ChanVol = 64;
@@ -4093,8 +4093,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			else
 				inf = a.ChanVolSlide;
 
-			byte lo = (byte)(inf & 0xf);
-			byte hi = (byte)(inf >> 4);
+			sbyte lo = (sbyte)(inf & 0xf);
+			sbyte hi = (sbyte)(inf >> 4);
 
 			if (hi == 0)
 				a.Main.ChanVol -= lo;
