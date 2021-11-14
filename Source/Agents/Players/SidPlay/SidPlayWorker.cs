@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
+using System.Runtime.Versioning;
 using System.Threading;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.Builders.ReSidFpBuilder;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidPlayFp;
@@ -138,6 +139,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Return a specific font to be used for the comments
 		/// </summary>
 		/********************************************************************/
+		[SupportedOSPlatform("windows")]
 		public override Font CommentFont
 		{
 			get
@@ -182,6 +184,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Return a specific font to be used for the lyrics
 		/// </summary>
 		/********************************************************************/
+		[SupportedOSPlatform("windows")]
 		public override Font LyricsFont => CommentFont;
 
 
