@@ -1351,66 +1351,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void ModuleHandler_PositionChanged(object sender, EventArgs e)
 		{
-			BeginInvoke(new Action(() =>
-			{
-				int newPos = moduleHandler.PlayingModuleInformation.SongPosition;
-
-				// Change the time to the position time
-				if (newPos < prevSongPosition)
-					SetPositionTime(newPos);
-
-				prevSongPosition = newPos;
-
-				// Print the information
-				PrintInfo();
-
-				// If module loop is off and double buffering is enabled,
-				// check if it's time to load the next module in the list
-				if (!loopCheckButton.Checked && optionSettings.DoubleBuffering)
-				{
-					// Is the file already loaded?
-					if (!moduleHandler.IsDoubleBufferingModuleLoaded && (playItem != null))
-					{
-						// Everything is enabled, check if it's time to load
-						int songLength = moduleHandler.PlayingModuleInformation.SongLength;
-						int earlyLoad = optionSettings.DoubleBufferingEarlyLoad;
-						OptionSettings.ModuleListEndAction listEnd = optionSettings.ModuleListEnd;
-
-						if (newPos >= (songLength - earlyLoad))
-						{
-							// Check to see if we have to load the module
-							int curPlay = moduleListBox.Items.IndexOf(playItem);
-							int count = moduleListBox.Items.Count;
-
-							// Are we at the end of the list?
-							bool load = true;
-							int newPlay = 0;
-
-							if ((curPlay + 1) == count)
-							{
-								if ((count == 1) || (listEnd != OptionSettings.ModuleListEndAction.JumpToStart))
-									load = false;
-							}
-							else
-							{
-								// Just go to the next module
-								newPlay = curPlay + 1;
-							}
-
-							// Load next module
-							if (load)
-							{
-								using (new SleepCursor())
-								{
-									// If output agent has changed, do not load the module
-									if (moduleHandler.OutputAgentInfo.Enabled && (moduleHandler.OutputAgentInfo.TypeId == soundSettings.OutputAgent))
-										moduleHandler.LoadAndInitModule((ModuleListItem)moduleListBox.Items[newPlay], showError: false);
-								}
-							}
-						}
-					}
-				}
-			}));
+			HandlePositionChanged();
 		}
 
 
@@ -4158,6 +4099,77 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// Handle position changed event
+		/// </summary>
+		/********************************************************************/
+		private void HandlePositionChanged()
+		{
+			BeginInvoke(new Action(() =>
+			{
+				int newPos = moduleHandler.PlayingModuleInformation.SongPosition;
+
+				// Change the time to the position time
+				if (newPos < prevSongPosition)
+					SetPositionTime(newPos);
+
+				prevSongPosition = newPos;
+
+				// Print the information
+				PrintInfo();
+
+				// If module loop is off and double buffering is enabled,
+				// check if it's time to load the next module in the list
+				if (!loopCheckButton.Checked && optionSettings.DoubleBuffering)
+				{
+					// Is the file already loaded?
+					if (!moduleHandler.IsDoubleBufferingModuleLoaded && (playItem != null))
+					{
+						// Everything is enabled, check if it's time to load
+						int songLength = moduleHandler.PlayingModuleInformation.SongLength;
+						int earlyLoad = optionSettings.DoubleBufferingEarlyLoad;
+						OptionSettings.ModuleListEndAction listEnd = optionSettings.ModuleListEnd;
+
+						if (newPos >= (songLength - earlyLoad))
+						{
+							// Check to see if we have to load the module
+							int curPlay = moduleListBox.Items.IndexOf(playItem);
+							int count = moduleListBox.Items.Count;
+
+							// Are we at the end of the list?
+							bool load = true;
+							int newPlay = 0;
+
+							if ((curPlay + 1) == count)
+							{
+								if ((count == 1) || (listEnd != OptionSettings.ModuleListEndAction.JumpToStart))
+									load = false;
+							}
+							else
+							{
+								// Just go to the next module
+								newPlay = curPlay + 1;
+							}
+
+							// Load next module
+							if (load)
+							{
+								using (new SleepCursor())
+								{
+									// If output agent has changed, do not load the module
+									if (moduleHandler.OutputAgentInfo.Enabled && (moduleHandler.OutputAgentInfo.TypeId == soundSettings.OutputAgent))
+										moduleHandler.LoadAndInitModule((ModuleListItem)moduleListBox.Items[newPlay], showError: false);
+								}
+							}
+						}
+					}
+				}
+			}));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Handle end reached event
 		/// </summary>
 		/********************************************************************/
@@ -4167,57 +4179,66 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			{
 				lock (processingEndReached)
 				{
-					// Check to see if there is module loop on
-					if (!loopCheckButton.Checked && (playItem != null))
+					if (playItem != null)
 					{
-						bool loadNext = true;
-
-						// Get the number of modules in the list
-						int count = moduleListBox.Items.Count;
-
-						// Get the index of the current playing module
-						int curPlay = moduleListBox.Items.IndexOf(playItem);
-
-						// The next module to load
-						int newPlay = curPlay + 1;
-
-						// Test to see if we is at the end of the list
-						if (newPlay == count)
+						// Check to see if there is module loop on
+						if (loopCheckButton.Checked)
 						{
-							// We are, now check what we has to do
-							OptionSettings.ModuleListEndAction listEnd = optionSettings.ModuleListEnd;
-
-							if (listEnd == OptionSettings.ModuleListEndAction.Eject)
-							{
-								// Eject the module
-								StopAndFreeModule();
-								loadNext = false;
-							}
-							else
-							{
-								if ((count == 1) || (listEnd == OptionSettings.ModuleListEndAction.Loop))
-									loadNext = false;
-								else
-									newPlay = 0;
-							}
+							// It is, so update the position as well so it starts over
+							prevSongPosition = int.MaxValue;
+							HandlePositionChanged();
 						}
-
-						// Should we load the next module?
-						if (loadNext)
+						else
 						{
-							if (optionSettings.DoubleBuffering && moduleHandler.IsDoubleBufferingModuleLoaded)
-							{
-								// Double buffering is on and the next module has already been loaded, so just
-								// start to play it
-								PlayNextModule(newPlay);
-							}
-							else
-							{
-								// Free the module
-								StopAndFreeModule();
+							bool loadNext = true;
 
-								// Load the module
-								LoadAndPlayModule(newPlay);
+							// Get the number of modules in the list
+							int count = moduleListBox.Items.Count;
+
+							// Get the index of the current playing module
+							int curPlay = moduleListBox.Items.IndexOf(playItem);
+
+							// The next module to load
+							int newPlay = curPlay + 1;
+
+							// Test to see if we is at the end of the list
+							if (newPlay == count)
+							{
+								// We are, now check what we has to do
+								OptionSettings.ModuleListEndAction listEnd = optionSettings.ModuleListEnd;
+
+								if (listEnd == OptionSettings.ModuleListEndAction.Eject)
+								{
+									// Eject the module
+									StopAndFreeModule();
+									loadNext = false;
+								}
+								else
+								{
+									if ((count == 1) || (listEnd == OptionSettings.ModuleListEndAction.Loop))
+										loadNext = false;
+									else
+										newPlay = 0;
+								}
+							}
+
+							// Should we load the next module?
+							if (loadNext)
+							{
+								if (optionSettings.DoubleBuffering && moduleHandler.IsDoubleBufferingModuleLoaded)
+								{
+									// Double buffering is on and the next module has already been loaded, so just
+									// start to play it
+									PlayNextModule(newPlay);
+								}
+								else
+								{
+									// Free the module
+									StopAndFreeModule();
+
+									// Load the module
+									LoadAndPlayModule(newPlay);
+								}
 							}
 						}
 					}
