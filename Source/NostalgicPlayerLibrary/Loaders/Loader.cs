@@ -177,6 +177,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 
 							PlayerName = PlayerAgentInfo.AgentName;
 							ModuleFormat = convertInfo != null ? string.IsNullOrEmpty(convertInfo.OriginalFormat) ? convertInfo.Agent.TypeName : convertInfo.OriginalFormat : string.IsNullOrEmpty(PlayerAgentInfo.TypeName) ? PlayerAgentInfo.AgentName : PlayerAgentInfo.TypeName;
+							if (!string.IsNullOrEmpty(PlayerAgent.ExtraFormatInfo))
+								ModuleFormat += $" ({PlayerAgent.ExtraFormatInfo})";
 
 							ConverterAgentInfo = convertInfo?.Agent;
 						}

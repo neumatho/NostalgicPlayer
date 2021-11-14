@@ -459,6 +459,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to MOD Plugin Packed.
+        /// </summary>
+        internal static string IDS_MOD_PACKED {
+            get {
+                return ResourceManager.GetString("IDS_MOD_PACKED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Original player by Daniel Goldstein.
         ///Converted to C# by Thomas Neumann.
         ///

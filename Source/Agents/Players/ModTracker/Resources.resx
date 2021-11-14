@@ -287,6 +287,9 @@ This is a NoiseTracker clone, but improved by the possibility to have synth samp
   <data name="IDS_MOD_NAME_AGENT9" xml:space="preserve">
     <value>StarTrekker</value>
   </data>
+  <data name="IDS_MOD_PACKED" xml:space="preserve">
+    <value>MOD Plugin Packed</value>
+  </data>
   <data name="IDS_MTM_DESCRIPTION_AGENT13" xml:space="preserve">
     <value>Original player by Daniel Goldstein.
 Converted to C# by Thomas Neumann.

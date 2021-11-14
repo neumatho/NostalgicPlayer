@@ -40,6 +40,16 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Return some extra information about the format. If it returns
+		/// null or an empty string, nothing extra is shown
+		/// </summary>
+		/********************************************************************/
+		public virtual string ExtraFormatInfo => null;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the name of the module
 		/// </summary>
 		/********************************************************************/

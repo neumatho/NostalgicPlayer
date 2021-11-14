@@ -29,6 +29,12 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		AgentResult Identify(PlayerFileInfo fileInfo);
 
 		/// <summary>
+		/// Return some extra information about the format. If it returns
+		/// null or an empty string, nothing extra is shown
+		/// </summary>
+		string ExtraFormatInfo { get; }
+
+		/// <summary>
 		/// Return the name of the module
 		/// </summary>
 		string ModuleName { get; }

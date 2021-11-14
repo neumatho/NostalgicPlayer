@@ -52,6 +52,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		private static readonly byte[] synthId3 = { 0x41, 0x75, 0x64, 0x69, 0x6f, 0x53, 0x63, 0x75, 0x6c, 0x70, 0x74, 0x75, 0x72, 0x65, 0x31, 0x30 };		// AudioSculpture10
 
 		private readonly ModuleType currentModuleType;
+		private bool packed;
 
 		private DurationInfo durInfo;
 
@@ -139,6 +140,25 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				return AgentResult.Ok;
 
 			return AgentResult.Unknown;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return some extra information about the format. If it returns
+		/// null or an empty string, nothing extra is shown
+		/// </summary>
+		/********************************************************************/
+		public override string ExtraFormatInfo
+		{
+			get
+			{
+				if (!packed)
+					return null;
+
+				return Resources.IDS_MOD_PACKED;
+			}
 		}
 
 
@@ -245,6 +265,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			AgentResult retVal;
 
 			// Load the module
+			packed = false;
+
 			if (currentModuleType == ModuleType.MultiTracker)
 				retVal = LoadMultiTracker(fileInfo, out errorMessage);
 			else
@@ -1454,6 +1476,8 @@ stopLoop:
 						sequences[i * 32 + j] = (ushort)(i * channelNum + j);
 				}
 
+				byte[] decodeTable = null;
+
 				// Read the samples
 				for (int i = 0; i < sampleNum; i++)
 				{
@@ -1461,17 +1485,74 @@ stopLoop:
 					int length = samples[i].Length * 2;
 					if (length != 0)
 					{
-						// Check to see if we miss too much from the last sample
-						if (moduleStream.Length - moduleStream.Position < (length - 512))
+						sbyte[] sampleBuffer = new sbyte[length];
+						samples[i].Data = sampleBuffer;
+
+						using (ModuleStream sampleDataStream = moduleStream.GetSampleDataStream(i, length))
 						{
-							errorMessage = Resources.IDS_MOD_ERR_LOADING_SAMPLES;
-							Cleanup();
+							// Check for Mod Plugin packed samples
+							sampleDataStream.Read(buf, 0, 5);
 
-							return AgentResult.Error;
+							if ((buf[0] == 0x41) && (buf[1] == 0x44) && (buf[2] == 0x50) && (buf[3] == 0x43) && (buf[4] == 0x4d))
+							{
+								// It is, so read and depack it
+								packed = true;
+
+								// Read a 16 byte buffer with delta values
+								sbyte[] compressionTable = new sbyte[16];
+								sampleDataStream.ReadSigned(compressionTable, 0, 16);
+
+								if (decodeTable == null)
+									decodeTable = new byte[8192];
+
+								sbyte adpcmDelta = 0;
+								int offset = 0;
+								length /= 2;
+
+								while (length > 0)
+								{
+									int todo = Math.Min(decodeTable.Length, length);
+									int read = sampleDataStream.Read(decodeTable, 0, todo);
+									if (read != todo)
+									{
+										errorMessage = Resources.IDS_MOD_ERR_LOADING_SAMPLES;
+										Cleanup();
+
+										return AgentResult.Error;
+									}
+
+									for (int j = 0; j < todo; j++)
+									{
+										byte b = decodeTable[j];
+
+										adpcmDelta += compressionTable[b & 0x0f];
+										sampleBuffer[offset++] = adpcmDelta;
+										adpcmDelta += compressionTable[(b >> 4) & 0x0f];
+										sampleBuffer[offset++] = adpcmDelta;
+									}
+
+									length -= todo;
+								}
+
+								// Continue with next sample
+								continue;
+							}
+
+							// It is not, so seek back and read the sample
+							sampleDataStream.Seek(-5, SeekOrigin.Current);
+
+							// Check to see if we miss too much from the last sample
+							if (sampleDataStream.Length - sampleDataStream.Position < (length - 512))
+							{
+								errorMessage = Resources.IDS_MOD_ERR_LOADING_SAMPLES;
+								Cleanup();
+
+								return AgentResult.Error;
+							}
+
+							// Read the sample
+							sampleDataStream.ReadSigned(sampleBuffer, 0, length);
 						}
-
-						// Read the sample
-						samples[i].Data = moduleStream.ReadSampleData(i, length, out _);
 					}
 				}
 
