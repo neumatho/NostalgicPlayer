@@ -176,9 +176,6 @@ Unreal Music File (UMX)</value>
     <value>This loader recognizes “FastTracker 2” modules. This format was designed from scratch, instead of creating yet another ProTracker variation. It was the first format using instruments as well as samples, and envelopes for finer effects.
 FastTracker 2 was written by Fredrik Huss and Magnus Hogdahl, and released in 1994.</value>
   </data>
-  <data name="IDS_MIKCONV_DESCRIPTION_AGENT17" xml:space="preserve">
-    <value>This loader is the same as the FastTracker 2 (XM) loader, but can depack the samples used in the module. The samples are 4-bit ADPCM packed.</value>
-  </data>
   <data name="IDS_MIKCONV_DESCRIPTION_AGENT2" xml:space="preserve">
     <value>This loader recognizes “Unis 669” modules. This format is the successor of the "Composer 669" and introduces some new effects like the super fast tempo and stereo balance. Support 8 channels.
 
@@ -266,9 +263,6 @@ Imago Orpheus was written by Lutz Roeder and released in 1994.</value>
   </data>
   <data name="IDS_MIKCONV_NAME_AGENT16" xml:space="preserve">
     <value>FastTracker II</value>
-  </data>
-  <data name="IDS_MIKCONV_NAME_AGENT17" xml:space="preserve">
-    <value>MOD Plugin Packed</value>
   </data>
   <data name="IDS_MIKCONV_NAME_AGENT2" xml:space="preserve">
     <value>Unis 669</value>
@@ -379,7 +373,7 @@ Imago Orpheus was written by Lutz Roeder and released in 1994.</value>
     <value>{0} (was {1})</value>
   </data>
   <data name="IDS_MIKCONV_NAME_XM" xml:space="preserve">
-    <value>{0} (XM format {1}.{2:D2})</value>
+    <value>FastTracker II ({0}) (XM format {1}.{2:D2})</value>
   </data>
   <data name="IDS_MIKCONV_NAME_XM_UNKNOWN" xml:space="preserve">
     <value>Unknown tracker</value>

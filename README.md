@@ -47,7 +47,6 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | Impulse Tracker | .it | MikMod Converter | MikMod |
 | JamCracker | .jam | | JamCracker |
 | Master SoundTracker 1.0 | .mod | | ModTracker |
-| MOD Plugin Packed | .xm | MikMod Converter | MikMod |
 | Mod's Grave | .wow | | ModTracker |
 | MPEG 1.0 | .mp1 / .mp2 / .mp3 / .m2a / .mpg | | Mpg123 |
 | MPEG 2.0 | .mp1 / .mp2 / .mp3 / .m2a / .mpg | | Mpg123 |

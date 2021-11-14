@@ -128,18 +128,6 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		private XmWavHeader[] wh;
 		private long[] nextWav;
 
-		private bool modPluginMode;
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
-		public MikModConverterWorker_Xm(bool modPlugin)
-		{
-			modPluginMode = modPlugin;
-		}
-
 		#region MikModConverterWorkerBase implementation
 		/********************************************************************/
 		/// <summary>
@@ -165,10 +153,6 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 				return AgentResult.Unknown;
 
 			if (buf[37] != 0x1a)
-				return AgentResult.Unknown;
-
-			// Check tracker name
-			if ((Encoding.ASCII.GetString(buf, 38, 20) == "MOD Plugin packed   ") && !modPluginMode)
 				return AgentResult.Unknown;
 
 			// Check the version

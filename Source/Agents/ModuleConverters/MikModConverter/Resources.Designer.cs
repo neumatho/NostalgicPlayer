@@ -166,15 +166,6 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This loader is the same as the FastTracker 2 (XM) loader, but can depack the samples used in the module. The samples are 4-bit ADPCM packed..
-        /// </summary>
-        internal static string IDS_MIKCONV_DESCRIPTION_AGENT17 {
-            get {
-                return ResourceManager.GetString("IDS_MIKCONV_DESCRIPTION_AGENT17", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to This loader recognizes “Unis 669” modules. This format is the successor of the &quot;Composer 669&quot; and introduces some new effects like the super fast tempo and stereo balance. Support 8 channels.
         ///
         ///“Unis 669 Composer” was written by Jason Nunn and released in 1994..
@@ -403,15 +394,6 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         internal static string IDS_MIKCONV_NAME_AGENT16 {
             get {
                 return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT16", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to MOD Plugin Packed.
-        /// </summary>
-        internal static string IDS_MIKCONV_NAME_AGENT17 {
-            get {
-                return ResourceManager.GetString("IDS_MIKCONV_NAME_AGENT17", resourceCulture);
             }
         }
         
@@ -740,7 +722,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} (XM format {1}.{2:D2}).
+        ///   Looks up a localized string similar to FastTracker II ({0}) (XM format {1}.{2:D2}).
         /// </summary>
         internal static string IDS_MIKCONV_NAME_XM {
             get {
