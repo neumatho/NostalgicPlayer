@@ -42,7 +42,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			{ ModTracker.Agent12Id, ModuleType.FastTracker },
 			{ ModTracker.Agent13Id, ModuleType.MultiTracker },
 			{ ModTracker.Agent14Id, ModuleType.Octalyser },
-			{ ModTracker.Agent15Id, ModuleType.ModsGrave }
+			{ ModTracker.Agent15Id, ModuleType.ModsGrave },
+			{ ModTracker.Agent16Id, ModuleType.DigitalTracker }
 		};
 
 		private const int NumberOfNotes = 7 * 12;
@@ -617,6 +618,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 		/********************************************************************/
 		/// <summary>
+		/// Tests the current module to see if it's one of the Atari trackers
+		/// </summary>
+		/********************************************************************/
+		private bool IsAtariTracker()
+		{
+			return (currentModuleType >= ModuleType.Octalyser) && (currentModuleType <= ModuleType.DigitalTracker);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Tests the module to see which type of module it is
 		/// </summary>
 		/********************************************************************/
@@ -1009,7 +1022,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		{
 			ModuleType retVal = ModuleType.Unknown;
 
-			if ((mark == 0x4d2e4b2e) || (mark == 0x4d214b21) || (mark == 0x4d264b21))       // M.K. || M!K! || M&K!
+			if ((mark == 0x4d2e4b2e) || (mark == 0x4d214b21) ||		// M.K. || M!K!
+				(mark == 0x4d264b21) ||								// M&K! (Echobea3.mod)
+				(mark == 0x4c415244) ||								// LARD (judgement_day_gvine.mod)
+				(mark == 0x4e534d53))								// NSMS (kingdomofpleasure.mod)
 			{
 				bool maybeWow = true;
 				uint totalSampleLength = 0;
@@ -1187,6 +1203,8 @@ stopLoop:
 					retVal = ModuleType.Octalyser;
 				else if (((mark & 0x00ffffff) == 0x0043484e) || ((mark & 0x0000ffff) == 0x00004348) || ((mark & 0xffffff00) == 0x54445a00))		// \0CHN || \0\0CH || TDZ\0 (this is TakeTracker only)
 					retVal = ModuleType.FastTracker;
+				else if ((mark == 0x46413034) || (mark == 0x46413036) || (mark == 0x46413038))	// FA04 || FA06 || FA08
+					retVal = ModuleType.DigitalTracker;
 			}
 
 			return retVal;
@@ -1231,7 +1249,7 @@ stopLoop:
 				byte[] buf = new byte[23];
 
 				ModuleStream moduleStream = fileInfo.ModuleStream;
-				Encoding encoder = IsPcTracker() || (currentModuleType == ModuleType.ModsGrave) ? EncoderCollection.Dos : currentModuleType == ModuleType.Octalyser ? EncoderCollection.Atari : EncoderCollection.Amiga;
+				Encoding encoder = IsPcTracker() || (currentModuleType == ModuleType.ModsGrave) ? EncoderCollection.Dos : IsAtariTracker() ? EncoderCollection.Atari : EncoderCollection.Amiga;
 
 				// Find out the number of samples
 				sampleNum = (ushort)((currentModuleType <= ModuleType.SoundTracker2x) ? 15 : 31);
@@ -1368,6 +1386,10 @@ stopLoop:
 				// All 31 samples modules have a mark
 				uint mark = sampleNum == 31 ? moduleStream.Read_B_UINT32() : 0;
 
+				// Digital Tracker have extra 4 bytes, which can safely be ignored
+				if (currentModuleType == ModuleType.DigitalTracker)
+					moduleStream.Seek(4, SeekOrigin.Current);
+
 				if (moduleStream.EndOfStream)
 				{
 					errorMessage = Resources.IDS_MOD_ERR_LOADING_HEADER;
@@ -1384,25 +1406,18 @@ stopLoop:
 					channelNum = 8;
 				else
 				{
-					if ((mark & 0xffff00ff) == 0x43440031)			// CD\01
+					if ((mark & 0xffff00ff) == 0x43440031)				// CD\01
 						channelNum = (ushort)(((mark & 0x0000ff00) >> 8) - 0x30);
+					else if ((mark & 0x00ffffff) == 0x0043484e)			// \0CHN
+						channelNum = (ushort)(((mark & 0xff000000) >> 24) - 0x30);
+					else if ((mark & 0x0000ffff) == 0x00004348)			// \0\0CH
+						channelNum = (ushort)((((mark & 0xff000000) >> 24) - 0x30) * 10 + ((mark & 0x00ff0000) >> 16) - 0x30);
+					else if ((mark & 0xffffff00) == 0x54445a00)			// TDZ\0
+						channelNum = (ushort)((mark & 0x000000ff) - 0x30);
+					else if ((mark & 0xffffff00) == 0x46413000)			// FA0\0
+						channelNum = (ushort)((mark & 0x000000ff) - 0x30);
 					else
-					{
-						if ((mark & 0x00ffffff) == 0x0043484e)			// \0CHN
-							channelNum = (ushort)(((mark & 0xff000000) >> 24) - 0x30);
-						else
-						{
-							if ((mark & 0x0000ffff) == 0x00004348)		// \0\0CH
-								channelNum = (ushort)((((mark & 0xff000000) >> 24) - 0x30) * 10 + ((mark & 0x00ff0000) >> 16) - 0x30);
-							else
-							{
-								if ((mark & 0xffffff00) == 0x54445a00)	// TDZ\0
-									channelNum = (ushort)((mark & 0x000000ff) - 0x30);
-								else
-									channelNum = 4;
-							}
-						}
-					}
+						channelNum = 4;
 				}
 
 				// If we load a StarTrekker 8-voices module, divide all the
@@ -2610,7 +2625,7 @@ stopLoop:
 					{
 						case ExtraEffect.SetFilter:
 						{
-							if (!IsPcTracker() && (currentModuleType != ModuleType.Octalyser) && (currentModuleType != ModuleType.ModsGrave))
+							if (!IsPcTracker() && !IsAtariTracker() && (currentModuleType != ModuleType.ModsGrave))
 								FilterOnOff(modChan);
 
 							break;
@@ -2660,7 +2675,7 @@ stopLoop:
 
 						case ExtraEffect.KarplusStrong:
 						{
-							if ((currentModuleType != ModuleType.Octalyser) && (currentModuleType != ModuleType.ModsGrave))
+							if (!IsAtariTracker() && (currentModuleType != ModuleType.ModsGrave))
 							{
 								if (IsPcTracker())
 									SetPanning(chan, modChan, (ushort)((modChan.TrackLine.EffectArg & 0x0f) << 4));

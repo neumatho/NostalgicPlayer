@@ -139,11 +139,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         ///
         ///The converter is not that good and some modules simply sounds bad, because some effects are not converted properly. Even some modules stop too early, because of added position jump and pattern break effects.
         ///
-        ///The detection routine is created by Alice Lachesis for the MikMod player, but I have copied it into this pl [rest of string was truncated]&quot;;.
+        ///The detection routine is created by Alice Rowan for the MikMod player, but I have copied it into this playe [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string IDS_MOD_DESCRIPTION_AGENT15 {
             get {
                 return ResourceManager.GetString("IDS_MOD_DESCRIPTION_AGENT15", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This editor was written for the Atari by Softjee. It is the little brother to Digital Home Studio.
+        ///
+        ///Normally, modules saved with this tracker have their own format, but it is possible to save the modules in MOD format. This player can play the MOD format modules..
+        /// </summary>
+        internal static string IDS_MOD_DESCRIPTION_AGENT16 {
+            get {
+                return ResourceManager.GetString("IDS_MOD_DESCRIPTION_AGENT16", resourceCulture);
             }
         }
         
@@ -383,6 +394,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         internal static string IDS_MOD_NAME_AGENT15 {
             get {
                 return ResourceManager.GetString("IDS_MOD_NAME_AGENT15", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Digital Tracker MOD.
+        /// </summary>
+        internal static string IDS_MOD_NAME_AGENT16 {
+            get {
+                return ResourceManager.GetString("IDS_MOD_NAME_AGENT16", resourceCulture);
             }
         }
         

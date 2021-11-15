@@ -107,7 +107,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private FileDropType dropType;
 
 		private bool restoreSelection = false;
-		private int[] savedSelection = new int[0];
+		private int[] savedSelection = Array.Empty<int>();
 
 		// Different helper classes
 		private readonly ModuleDatabase database;
@@ -122,7 +122,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private readonly List<int> randomList;
 
 		private long lastAddedTimeFromExplorer = 0;
-		private object processingEndReached = new object();
+		private readonly object processingEndReached = new object();
 
 		// Other windows
 		private HelpWindowForm helpWindow = null;

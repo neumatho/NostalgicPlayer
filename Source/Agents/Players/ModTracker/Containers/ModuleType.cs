@@ -14,6 +14,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 	internal enum ModuleType
 	{
 		Unknown = 0,
+
+		// Old SoundTracker compatibilities of different kinds
 		UltimateSoundTracker10,
 		UltimateSoundTracker18,
 		SoundTrackerII,
@@ -21,13 +23,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		SoundTrackerIX,
 		MasterSoundTracker10,
 		SoundTracker2x,
-		ModsGrave,
+
+		// NoiseTracker compatibility
 		NoiseTracker,
 		StarTrekker,
 		StarTrekker8,
-		ProTracker,
+
+		// PC trackers
 		FastTracker,
 		MultiTracker,
-		Octalyser
+
+		// Atari trackers
+		Octalyser,
+		DigitalTracker,
+
+		// Out of category in checks
+		ProTracker,
+		ModsGrave,
 	}
 }

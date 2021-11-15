@@ -160,7 +160,12 @@ This player plays module from the Atari Octalyser. It is a 6 and 8 channel ProTr
 
 The converter is not that good and some modules simply sounds bad, because some effects are not converted properly. Even some modules stop too early, because of added position jump and pattern break effects.
 
-The detection routine is created by Alice Lachesis for the MikMod player, but I have copied it into this player instead. A big thanks for all the research you have made for this.</value>
+The detection routine is created by Alice Rowan for the MikMod player, but I have copied it into this player instead. A big thanks for all the research you have made for this.</value>
+  </data>
+  <data name="IDS_MOD_DESCRIPTION_AGENT16" xml:space="preserve">
+    <value>This editor was written for the Atari by Softjee. It is the little brother to Digital Home Studio.
+
+Normally, modules saved with this tracker have their own format, but it is possible to save the modules in MOD format. This player can play the MOD format modules.</value>
   </data>
   <data name="IDS_MOD_DESCRIPTION_AGENT2" xml:space="preserve">
     <value>Original player by Karsten Obarski.
@@ -262,6 +267,9 @@ This is a NoiseTracker clone, but improved by the possibility to have synth samp
   </data>
   <data name="IDS_MOD_NAME_AGENT15" xml:space="preserve">
     <value>Mod's Grave</value>
+  </data>
+  <data name="IDS_MOD_NAME_AGENT16" xml:space="preserve">
+    <value>Digital Tracker MOD</value>
   </data>
   <data name="IDS_MOD_NAME_AGENT2" xml:space="preserve">
     <value>Ultimate SoundTracker 1.8 - 2.0</value>

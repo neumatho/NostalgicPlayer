@@ -31,6 +31,7 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | Composer 669 | .669 | MikMod Converter | MikMod |
 | Digital Sound and Music Interface | .amf | MikMod Converter | MikMod |
 | Digital Sound Interface Kit | .dsm | MikMod Converter | MikMod |
+| Digital Tracker MOD | .mod | | ModTracker |
 | D.O.C. SoundTracker II | .mod | | ModTracker |
 | D.O.C. SoundTracker VI | .mod | | ModTracker |
 | D.O.C. SoundTracker IX | .mod | | ModTracker |
