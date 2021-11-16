@@ -89,7 +89,8 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 		public sbyte PanbSpd;					// "" speed
 		public byte PanbDepth;					// "" depth
 
-		public ushort NewSamp;					// Set to 1 upon sample / inst change
+		public byte NewNote;					// Set to 1 if the current row contains a note
+		public byte NewSamp;					// Set to 1 upon sample / inst change
 		public VolEffect VolEffect;				// Volume Column Effect Memory as used by IT
 		public byte VolData;					// Volume Column Data Memory
 

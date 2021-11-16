@@ -422,6 +422,29 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 				{
 					switch (n.Eff >> 4)
 					{
+						// Global effects
+						case 0x0:
+						{
+							switch (n.Eff & 0xf)
+							{
+								// Fulfill loop
+								case 0x3:
+								{
+									uniTrk.UniEffect(Command.UniKeyFade, 0);
+									break;
+								}
+
+								// Old tempo mode
+								case 0x4:
+									break;
+
+								// New tempo mode
+								case 0x5:
+									break;
+							}
+							break;
+						}
+
 						// Pitch adjust up
 						case 0x1:
 						{
@@ -478,7 +501,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 							break;
 						}
 
-						// Vibrato sustain
+						// Sustained vibrato
 						case 0x9:
 							break;
 

@@ -411,6 +411,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				if (a.Row != null)
 					a.RowOffset = uniTrk.UniFindRow(a.Row, mod.PatPos);
 
+				a.NewNote = 0;
 				a.NewSamp = 0;
 
 				if (mod.VbTick == 0)
@@ -436,6 +437,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 							a.Main.Kick = Kick.Note;
 							a.Main.Start = -1;
 							a.Sliding = 0;
+							a.NewNote = 1;
 							a.FarTonePortaRunning = false;
 
 							// Retrig tremolo and vibrato waves?
@@ -504,7 +506,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 					if (a.Main.S != s)
 					{
 						a.Main.S = s;
-						a.NewSamp = a.Main.Period;
+						a.NewSamp = (byte)a.Main.Period;
 					}
 
 					// Channel or instrument determined panning?
@@ -2655,6 +2657,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		/********************************************************************/
 		private void DoFarTonePorta(Mp_Control a)
 		{
+			bool reachedNote;
+
 			if (a.Main.FadeVol == 0)
 				a.Main.Kick = (a.Main.Kick == Kick.Note) ? Kick.Note : Kick.KeyOff;
 			else
@@ -2663,7 +2667,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			a.FarCurrentValue += a.FarTonePortaSpeed;
 
 			// Have we reached our note
-			bool reachedNote = (a.FarTonePortaSpeed > 0) ? (a.FarCurrentValue >> 16) >= a.WantedPeriod : (a.FarCurrentValue >> 16) <= a.WantedPeriod;
+			if (a.FarTonePortaSpeed > 0)
+				reachedNote = (a.FarCurrentValue >> 16) >= a.WantedPeriod;
+			else
+				reachedNote = (a.FarCurrentValue >> 16) <= a.WantedPeriod;
+
 			if (reachedNote)
 			{
 				// Stop the porta and set the periods to the reached note
@@ -2683,33 +2691,57 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 		/********************************************************************/
 		/// <summary>
+		/// Calculate the Farandole tempo
+		/// </summary>
+		/********************************************************************/
+		private short GetFarTempo(Module mod)
+		{
+			return (short)(mod.Control[0].FarTempoBend + LookupTables.FarTempos[mod.Control[0].FarCurTempo]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Set the right speed and BPM for Farandole modules
 		/// </summary>
 		/********************************************************************/
 		private void SetFarTempo(Module mod)
 		{
-			/* According to the Farandole document, the tempo of the song is 32/tempo notes per second.
-			   So if we set tempo to 1, we will get 32 notes per second. We then need to translate this
-			   to BPM, since this is what we're using as tempo.
+			/* According to the Farandole document, the tempo of the song is
+			   32/tempo notes per second. Internally, it tracks time using
+			   (128/tempo + fine_tempo) ticks per second, and (usually) four ticks
+			   per row. Since almost everything else uses Amiga-style BPM instead,
+			   this needs to be converted to BPM.
 
-			   We know 125 BPM is at 50 hz speed (see https://modarchive.org/forums/index.php?topic=2709.0
-			   for more information). So the factor is 125/50 = 2.5. So we take the 32 notes per second
-			   above and multiply with 2.5: 32 * 2.5 = 80 BPM.
+			   Amiga-style BPM converts a value of 125 BPM to 50 Hz (ticks/second)
+			   (see https://modarchive.org/forums/index.php?topic=2709.0), so
+			   the factor is 125/50 = 2.5. To get an Amiga-compatible BPM from
+			   Farandole Composer ticks per second,: BPM/Hz = 2.5 -> BPM = 2.5 * Hz.
 
-			   So we now know, at speed 1, we need to run at 80 BPM and number of ticks (speed counter) is 1.
+			   Example: at tempo 4, Hz = 128/4 + 0 = 32, so use BPM = 2.5*32 = 80.
 
-			   Farandole however, uses another approach to calculate the tempo. It takes the speed
-			   argument and calculate a ticks per second as 128/arg. It also set the tick counter to 3 most
-			   of the times. It calculate a value (I guess it is how often GUS need to call the player) by
-			   1197255 / (128 / arg). So if we set speed to 1, we will get 1197255 / 128 = 9353.
+			   This is further complicated by the bizarre timing system it uses for
+			   slower tempos. Farandole Composer uses the programmable interval timer
+			   to determine when to execute the player interrupt, which requires
+			   calculating a divisor from the original Hz. The PIT only supports
+			   divisors up to 0x10000, which corresponds to 18.2Hz.
 
-			   Ok, we know if we set the speed counter to 1, we need to run at 80 BPM, but now Farandole
-			   set the tick counter to 3, so we need to calculate the BPM to use for the difference. This
-			   is easy enough, just say 80 * 3 = 240 BPM.
+			   When the computed divisor is > 0xffff, Farandole iteratively divides
+			   the divisor by 2 (effectively doubling Hz) and increments the number
+			   of ticks/second by 1. It also adds 1 to the number of ticks/second if
+			   two or more of these divisions occur. Further strange behavior can
+			   occur with negative ticks/second, which overflows to very slow tempos.
 
-			   So with all this information, we will try to calculate the right BPM for the speed set. */
+			   Note: to compute the divisor it uses 1197255 Hz instead of the rate
+			   of the programmable interval timer (1193182 Hz). This results in a
+			   slightly slower speed than computed, but it's not worth supporting.
 
-			short bpm = (short)(mod.Control[0].FarTempoBend + LookupTables.FarTempos[mod.Control[0].FarCurTempo]);
+			   Note: Farandole Composer also has an "old tempo mode" that uses 33
+			   ticks/second and only executes every 8th tick. Nothing uses it and
+			   it's not supported here. */
+
+			short bpm = GetFarTempo(mod);
 			if (bpm == 0)
 				return;
 
@@ -2723,11 +2755,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				speed++;
 			}
 
+			// Negative tempos can result in low BPMs, so clamp them to 18Hz
+			if (bpm <= 18)
+				bpm = 18;
+
 			if (speed >= 2)
 				speed++;
 
 			mod.SngSpd = (byte)(speed + 4);
-			mod.Bpm = (ushort)(bpm * 2.5);
+			mod.Bpm = (ushort)((bpm * 5) >> 1);
 		}
 		#endregion
 
@@ -4849,7 +4885,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				}
 			}
 
-			if (dat != 0)
+			if ((dat != 0) && (a.NewNote != 0))
 			{
 				if (a.Retrig == 0)
 				{
@@ -4862,11 +4898,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 						a.FarRetrigCount--;
 						if (a.FarRetrigCount > 0)
-							a.Retrig = (sbyte)(((mod.Control[0].FarTempoBend + LookupTables.FarTempos[mod.Control[0].FarCurTempo]) / dat / 8) - 1);
+						{
+							short delay = (short)(GetFarTempo(mod) / dat);
+
+							// Effect divides by 4, timer increments
+							// by 2 (round up)
+							a.Retrig = (sbyte)(((delay >> 2) + 1) >> 1);
+							if (a.Retrig <= 0)
+								a.Retrig = 1;
+						}
 					}
 				}
-				else
-					a.Retrig--;
+
+				a.Retrig--;
 			}
 
 			return 0;
@@ -4917,7 +4961,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				{
 					firstControl.FarTempoBend -= dat;
 
-					if ((firstControl.FarTempoBend + LookupTables.FarTempos[firstControl.FarCurTempo]) <= 0)
+					if (GetFarTempo(mod) <= 0)
 						firstControl.FarTempoBend = 0;
 				}
 				else
@@ -4948,7 +4992,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				{
 					firstControl.FarTempoBend += dat;
 
-					if ((firstControl.FarTempoBend + LookupTables.FarTempos[firstControl.FarCurTempo]) >= 100)
+					if (GetFarTempo(mod) >= 100)
 						firstControl.FarTempoBend = 100;
 				}
 				else
