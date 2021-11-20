@@ -4848,14 +4848,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				// We have to slide a.Main.Period toward a.WantedPeriod,
 				// compute the difference between those two values
 				int dist = a.WantedPeriod - a.Main.Period;
+				short tempo = GetFarTempo(mod);
 
 				// Adjust effect argument
 				if (dat == 0)
 					dat = 1;
 
-				// Unlike other players, the data is how many rows the port
-				// should take and not a speed
-				a.FarTonePortaSpeed = (dist << 16) / (mod.SngSpd * dat);
+				// This cause crashes and other weird behaviour in Farandole Composer
+				if (tempo <= 0)
+					tempo = 1;
+
+				// The data is supposed to be the number of rows until completion of
+				// the slide, but because it's Farandole Composer, it isn't. While
+				// that claim holds for tempo 4, for tempo 2 it takes param*2 rows,
+				// for tempo 1 it takes param*4 rows, etc. This calculation is based
+				// on the final tempo/interrupts per second count
+				a.FarTonePortaSpeed = (dist << 16) * 8 / (tempo * dat);
 				a.FarCurrentValue = a.Main.Period << 16;
 				a.FarTonePortaRunning = true;
 			}
