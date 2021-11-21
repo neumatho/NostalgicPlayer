@@ -59,6 +59,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Agents\Decrunchers\AncientDecruncher\AncientDecruncher.csproj" />
+    <ProjectReference Include="..\..\Agents\Decrunchers\ArchiveDecruncher\ArchiveDecruncher.csproj" />
     <ProjectReference Include="..\..\Agents\Decrunchers\SharpCompressDecruncher\SharpCompressDecruncher.csproj" />
     <ProjectReference Include="..\..\Agents\ModuleConverters\MikModConverter\MikModConverter.csproj" />
     <ProjectReference Include="..\..\Agents\ModuleConverters\ModuleConverter\ModuleConverter.csproj" />

@@ -203,7 +203,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		{
 			if (lastExtraFileInfo != null)
 			{
-				if (lastExtraFileInfo.CrunchedSize == lastExtraFileInfo.DecrunchedSize)
+				if (lastExtraFileInfo.CrunchedSize == -1)
+				{
+					// Unknown crunched
+					ModuleSize += lastExtraFileInfo.DecrunchedSize;
+				}
+				else if (lastExtraFileInfo.CrunchedSize == lastExtraFileInfo.DecrunchedSize)
 				{
 					// Not crunched
 					ModuleSize += lastExtraFileInfo.CrunchedSize;

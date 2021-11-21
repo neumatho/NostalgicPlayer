@@ -91,6 +91,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoundFx", "Agents\Players\S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mpg123", "Agents\Players\Mpg123\Mpg123.csproj", "{DCA6DF8B-2B2D-4A81-BD2B-8A983A4C7C5B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArchiveDecruncher", "Agents\Decrunchers\ArchiveDecruncher\ArchiveDecruncher.csproj", "{B539EEFE-EA2E-4E6C-83E1-27B7792119FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -380,6 +382,14 @@ Global
 		{DCA6DF8B-2B2D-4A81-BD2B-8A983A4C7C5B}.Release|x64.Build.0 = Release|x64
 		{DCA6DF8B-2B2D-4A81-BD2B-8A983A4C7C5B}.Release|x86.ActiveCfg = Release|x86
 		{DCA6DF8B-2B2D-4A81-BD2B-8A983A4C7C5B}.Release|x86.Build.0 = Release|x86
+		{B539EEFE-EA2E-4E6C-83E1-27B7792119FB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B539EEFE-EA2E-4E6C-83E1-27B7792119FB}.Debug|x64.Build.0 = Debug|Any CPU
+		{B539EEFE-EA2E-4E6C-83E1-27B7792119FB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B539EEFE-EA2E-4E6C-83E1-27B7792119FB}.Debug|x86.Build.0 = Debug|Any CPU
+		{B539EEFE-EA2E-4E6C-83E1-27B7792119FB}.Release|x64.ActiveCfg = Release|Any CPU
+		{B539EEFE-EA2E-4E6C-83E1-27B7792119FB}.Release|x64.Build.0 = Release|Any CPU
+		{B539EEFE-EA2E-4E6C-83E1-27B7792119FB}.Release|x86.ActiveCfg = Release|Any CPU
+		{B539EEFE-EA2E-4E6C-83E1-27B7792119FB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -423,6 +433,7 @@ Global
 		{83CAA570-75DC-44FD-A8DE-C5C60F204022} = {76C2DEA4-D72F-4931-9ACA-B2DDC33BDE98}
 		{EC5020F3-E696-4E4C-A7C5-39584A8BDC26} = {76C2DEA4-D72F-4931-9ACA-B2DDC33BDE98}
 		{DCA6DF8B-2B2D-4A81-BD2B-8A983A4C7C5B} = {76C2DEA4-D72F-4931-9ACA-B2DDC33BDE98}
+		{B539EEFE-EA2E-4E6C-83E1-27B7792119FB} = {CC59276C-8589-4D60-8A0D-93D854EDBCE5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EA2EFEF5-9B3B-46F2-BE4B-077ED6CADA79}
