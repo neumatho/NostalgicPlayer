@@ -161,10 +161,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public int ReadSigned(sbyte[] buffer, int offset, int count)
 		{
-			int read = wrapperStream.Read((byte[])(Array)buffer, offset, count);
-			EndOfStream = read < count;
-
-			return read;
+			return Read((byte[])(Array)buffer, offset, count);
 		}
 
 
@@ -279,11 +276,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 			if (read == 2)
 			{
 				if (!isLittleEndian)
-				{
-					byte tmp = loadBuffer[0];
-					loadBuffer[0] = loadBuffer[1];
-					loadBuffer[1] = tmp;
-				}
+					(loadBuffer[0], loadBuffer[1]) = (loadBuffer[1], loadBuffer[0]);
 
 				return BitConverter.ToUInt16(loadBuffer, 0);
 			}

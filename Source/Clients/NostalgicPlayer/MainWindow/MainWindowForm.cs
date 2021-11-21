@@ -3955,7 +3955,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void LoadAndPlayModule(int index, int subSong = -1, int startPos = -1)
 		{
-			LoadAndPlayModule((ModuleListItem)moduleListBox.Items[index], subSong, startPos);
+			if (index < moduleListBox.Items.Count)
+				LoadAndPlayModule((ModuleListItem)moduleListBox.Items[index], subSong, startPos);
 		}
 
 
@@ -4272,19 +4273,27 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			if (loader == null)
 			{
-				// Check if the file is an archive
-				ArchiveDetector detector = new ArchiveDetector(agentManager);
+				try
+				{
+					// Check if the file is an archive
+					ArchiveDetector detector = new ArchiveDetector(agentManager);
 
-				bool isArchive = detector.IsArchive(fileName);
-				if (isArchive)
-				{
-					foreach (string archiveFileName in detector.GetEntries(fileName))
-						list.Add(new ModuleListItem(new ArchiveFileListItem(archiveFileName)));
+					bool isArchive = detector.IsArchive(fileName);
+					if (isArchive)
+					{
+						foreach (string archiveFileName in detector.GetEntries(fileName))
+							list.Add(new ModuleListItem(new ArchiveFileListItem(archiveFileName)));
+					}
+					else
+					{
+						// Just a plain file
+						list.Add(new ModuleListItem(new SingleFileListItem(fileName)));
+					}
 				}
-				else
+				catch (Exception ex)
 				{
-					// Just a plain file
-					list.Add(new ModuleListItem(new SingleFileListItem(fileName)));
+					// Show error
+					ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_ADD_ITEMS, ex.Message));
 				}
 			}
 		}

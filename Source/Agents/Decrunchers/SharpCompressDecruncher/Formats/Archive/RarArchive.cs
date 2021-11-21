@@ -6,6 +6,7 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -57,14 +58,14 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 
 				while (reader.MoveToNextEntry())
 				{
-					if (!reader.Entry.IsDirectory && (reader.Entry.Key == entryName))
+					if (!reader.Entry.IsDirectory && (reader.Entry.Key.Equals(entryName, StringComparison.OrdinalIgnoreCase)))
 						return new ArchiveEntryStream(reader.Entry, reader.OpenEntryStream());
 				}
 
 				throw new DecruncherException(agentName, string.Format(Resources.IDS_SCOM_ERR_ENTRY_NOT_FOUND, entryName));
 			}
 
-			RarArchiveEntry entry = archive.Entries.FirstOrDefault(e => e.Key == entryName);
+			RarArchiveEntry entry = archive.Entries.FirstOrDefault(e => e.Key.Equals(entryName, StringComparison.OrdinalIgnoreCase));
 			if (entry == null)
 				throw new DecruncherException(agentName, string.Format(Resources.IDS_SCOM_ERR_ENTRY_NOT_FOUND, entryName));
 

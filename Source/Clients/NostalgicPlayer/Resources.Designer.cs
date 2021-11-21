@@ -508,6 +508,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to add items into the list:
+        ///{0}.
+        /// </summary>
+        internal static string IDS_ERR_ADD_ITEMS {
+            get {
+                return ResourceManager.GetString("IDS_ERR_ADD_ITEMS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Agent is disabled..
         /// </summary>
         internal static string IDS_ERR_AGENT_DISABLED {

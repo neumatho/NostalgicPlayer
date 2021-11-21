@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
@@ -108,16 +109,33 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 				yield return newFileName;
 
 				// Try with prefix
-				string directory = Path.GetDirectoryName(fileName);
-				string name = Path.GetFileName(fileName);
-
-				int index = name.IndexOf('.');
-				if (index != -1)
+				if (ArchivePath.IsArchivePath(fileName))
 				{
-					name = name.Substring(index + 1);
+					string archiveName = ArchivePath.GetArchiveName(fileName);
+					string name = ArchivePath.GetEntryName(fileName);
 
-					newFileName = Path.Combine(directory, $"{newExtension}.{name}");
-					yield return newFileName;
+					int index = name.IndexOf('.');
+					if (index != -1)
+					{
+						name = name.Substring(index + 1);
+
+						newFileName = ArchivePath.CombinePathParts(archiveName, $"{newExtension}.{name}");
+						yield return newFileName;
+					}
+				}
+				else
+				{
+					string directory = Path.GetDirectoryName(fileName);
+					string name = Path.GetFileName(fileName);
+
+					int index = name.IndexOf('.');
+					if (index != -1)
+					{
+						name = name.Substring(index + 1);
+
+						newFileName = Path.Combine(directory, $"{newExtension}.{name}");
+						yield return newFileName;
+					}
 				}
 			}
 		}
