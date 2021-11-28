@@ -435,20 +435,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		private void Player_PositionChanged(object sender, EventArgs e)
 		{
-			lock (playerLock)
+			if (currentPlayer != null)
 			{
-				if (currentPlayer != null)
+				lock (currentPlayer)
 				{
-					lock (currentPlayer)
-					{
-						// Update the position
-						PlayingModuleInformation.SongPosition = currentPlayer.GetSongPosition();
-					}
-
-					// Call the next event handler
-					if (PositionChanged != null)
-						PositionChanged(sender, e);
+					// Update the position
+					PlayingModuleInformation.SongPosition = currentPlayer.GetSongPosition();
 				}
+
+				// Call the next event handler
+				if (PositionChanged != null)
+					PositionChanged(sender, e);
 			}
 		}
 
@@ -461,14 +458,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		private void Player_ModuleInfoChanged(object sender, ModuleInfoChangedEventArgs e)
 		{
-			lock (playerLock)
+			if (currentPlayer != null)
 			{
-				if (currentPlayer != null)
-				{
-					// Just call the next event handler
-					if (ModuleInfoChanged != null)
-						ModuleInfoChanged(sender, e);
-				}
+				// Just call the next event handler
+				if (ModuleInfoChanged != null)
+					ModuleInfoChanged(sender, e);
 			}
 		}
 
@@ -481,14 +475,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		private void Stream_EndReached(object sender, EventArgs e)
 		{
-			lock (playerLock)
+			if (currentPlayer != null)
 			{
-				if (currentPlayer != null)
-				{
-					// Just call the next event handler
-					if (EndReached != null)
-						EndReached(sender, e);
-				}
+				// Just call the next event handler
+				if (EndReached != null)
+					EndReached(sender, e);
 			}
 		}
 		#endregion
