@@ -73,6 +73,27 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Created by Thomas Neumann.
+        ///Based on Lha 1.14i by Tsugio Okamoto.
+        ///
+        ///This format was created by Y. Tagawa (LHarc) on UNIX and has then been improved over time by serveral people. It was used a lot on the Amiga..
+        /// </summary>
+        internal static string IDS_ARD_DESCRIPTION_AGENT2 {
+            get {
+                return ResourceManager.GetString("IDS_ARD_DESCRIPTION_AGENT2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bad table.
+        /// </summary>
+        internal static string IDS_ARD_ERR_BAD_TABLE {
+            get {
+                return ResourceManager.GetString("IDS_ARD_ERR_BAD_TABLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot read Huffman tables.
         /// </summary>
         internal static string IDS_ARD_ERR_CANT_READ_TABLES {
@@ -109,11 +130,29 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Header is invalid.
+        /// </summary>
+        internal static string IDS_ARD_ERR_INVALID_HEADER {
+            get {
+                return ResourceManager.GetString("IDS_ARD_ERR_INVALID_HEADER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Entry is crunched with an unsupported method..
         /// </summary>
         internal static string IDS_ARD_ERR_UNKNOWN_CRUNCH_METHOD {
             get {
                 return ResourceManager.GetString("IDS_ARD_ERR_UNKNOWN_CRUNCH_METHOD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown header.
+        /// </summary>
+        internal static string IDS_ARD_ERR_UNKNOWN_HEADER {
+            get {
+                return ResourceManager.GetString("IDS_ARD_ERR_UNKNOWN_HEADER", resourceCulture);
             }
         }
         
@@ -132,6 +171,15 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher {
         internal static string IDS_ARD_NAME_AGENT1 {
             get {
                 return ResourceManager.GetString("IDS_ARD_NAME_AGENT1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lharc/Lha.
+        /// </summary>
+        internal static string IDS_ARD_NAME_AGENT2 {
+            get {
+                return ResourceManager.GetString("IDS_ARD_NAME_AGENT2", resourceCulture);
             }
         }
     }

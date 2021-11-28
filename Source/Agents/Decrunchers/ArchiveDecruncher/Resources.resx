@@ -123,6 +123,15 @@ Based on the C code (unlzx.c) by Erik Meusel.
 
 This format was created by Jonathan Forbes and Tomi Poutanen. It compress even better and is faster than Lha, which was to common compression tool on the Amiga. It is based on the LZ77 family and one of its features, was that it could take several files and treat them as one while looking for equalities. It is the same princip that Rar uses with its "Solid archive" mode.</value>
   </data>
+  <data name="IDS_ARD_DESCRIPTION_AGENT2" xml:space="preserve">
+    <value>Created by Thomas Neumann.
+Based on Lha 1.14i by Tsugio Okamoto.
+
+This format was created by Y. Tagawa (LHarc) on UNIX and has then been improved over time by serveral people. It was used a lot on the Amiga.</value>
+  </data>
+  <data name="IDS_ARD_ERR_BAD_TABLE" xml:space="preserve">
+    <value>Bad table</value>
+  </data>
   <data name="IDS_ARD_ERR_CANT_READ_TABLES" xml:space="preserve">
     <value>Cannot read Huffman tables</value>
   </data>
@@ -135,13 +144,22 @@ This format was created by Jonathan Forbes and Tomi Poutanen. It compress even b
   <data name="IDS_ARD_ERR_EOF" xml:space="preserve">
     <value>Unexpected end-of-file: {0}</value>
   </data>
+  <data name="IDS_ARD_ERR_INVALID_HEADER" xml:space="preserve">
+    <value>Header is invalid</value>
+  </data>
   <data name="IDS_ARD_ERR_UNKNOWN_CRUNCH_METHOD" xml:space="preserve">
     <value>Entry is crunched with an unsupported method.</value>
+  </data>
+  <data name="IDS_ARD_ERR_UNKNOWN_HEADER" xml:space="preserve">
+    <value>Unknown header</value>
   </data>
   <data name="IDS_ARD_NAME" xml:space="preserve">
     <value>Archive Decruncher</value>
   </data>
   <data name="IDS_ARD_NAME_AGENT1" xml:space="preserve">
     <value>Lzx</value>
+  </data>
+  <data name="IDS_ARD_NAME_AGENT2" xml:space="preserve">
+    <value>Lharc/Lha</value>
   </data>
 </root>

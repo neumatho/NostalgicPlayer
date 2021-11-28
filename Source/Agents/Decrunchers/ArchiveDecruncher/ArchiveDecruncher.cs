@@ -24,6 +24,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher
 	public class ArchiveDecruncher : AgentBase
 	{
 		private static readonly Guid agent1Id = Guid.Parse("D791B0C0-C1D0-4CFD-9B58-67166BFBBC58");
+		private static readonly Guid agent2Id = Guid.Parse("BC285D44-8412-47D9-89AC-D63ADB8EA006");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -46,7 +47,8 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_ARD_NAME_AGENT1, Resources.IDS_ARD_DESCRIPTION_AGENT1, agent1Id)
+					new AgentSupportInfo(Resources.IDS_ARD_NAME_AGENT1, Resources.IDS_ARD_DESCRIPTION_AGENT1, agent1Id),
+					new AgentSupportInfo(Resources.IDS_ARD_NAME_AGENT2, Resources.IDS_ARD_DESCRIPTION_AGENT2, agent2Id)
 				};
 			}
 		}
@@ -62,6 +64,9 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher
 		{
 			if (typeId == agent1Id)
 				return new ArchiveDecruncher_Lzx(Resources.IDS_ARD_NAME_AGENT1);
+
+			if (typeId == agent2Id)
+				return new ArchiveDecruncher_Lha(Resources.IDS_ARD_NAME_AGENT2);
 
 			return null;
 		}
