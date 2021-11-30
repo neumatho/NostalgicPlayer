@@ -54,6 +54,7 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | MPEG 2.5 | .mp1 / .mp2 / .mp3 / .m2a / .mpg | | Mpg123 |
 | MultiTracker | .mtm | | ModTracker |
 | NoiseTracker | .mod | | ModTracker |
+| Ogg Vorbis | .ogg / oga | | Ogg Vorbis |
 | Oktalyzer | .okt / .okta | | Oktalyzer |
 | ProTracker | .mod | | ModTracker |
 | RIFF-WAVE (ADPCM) | .wav | | Sample |

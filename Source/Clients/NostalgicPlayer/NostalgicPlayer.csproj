@@ -71,6 +71,7 @@
     <ProjectReference Include="..\..\Agents\Players\MikMod\MikMod.csproj" />
     <ProjectReference Include="..\..\Agents\Players\ModTracker\ModTracker.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Mpg123\Mpg123.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\OggVorbis\OggVorbis.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Oktalyzer\Oktalyzer.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Sample\Sample.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Sawteeth\Sawteeth.csproj" />

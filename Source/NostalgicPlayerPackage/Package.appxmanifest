@@ -292,6 +292,15 @@
             <uap:DisplayName>MPEG Audio</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="vorbisfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/ogg">.ogg</uap:FileType>
+              <uap:FileType ContentType="audio/ogg">.oga</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Ogg Vorbis</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
