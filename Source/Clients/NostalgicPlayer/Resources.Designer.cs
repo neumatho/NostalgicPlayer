@@ -103,6 +103,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap IDB_DIRECTORY {
+            get {
+                object obj = ResourceManager.GetObject("IDB_DIRECTORY", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap IDB_DISK {
             get {
                 object obj = ResourceManager.GetObject("IDB_DISK", resourceCulture);
@@ -126,6 +136,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static System.Drawing.Bitmap IDB_FAST_FORWARD {
             get {
                 object obj = ResourceManager.GetObject("IDB_FAST_FORWARD", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IDB_FILE {
+            get {
+                object obj = ResourceManager.GetObject("IDB_FILE", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -423,6 +443,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_ABOUT_TITLE {
             get {
                 return ResourceManager.GetString("IDS_ABOUT_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add directory.
+        /// </summary>
+        internal static string IDS_ADDMENU_DIRECTORY {
+            get {
+                return ResourceManager.GetString("IDS_ADDMENU_DIRECTORY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add file(s).
+        /// </summary>
+        internal static string IDS_ADDMENU_FILES {
+            get {
+                return ResourceManager.GetString("IDS_ADDMENU_FILES", resourceCulture);
             }
         }
         

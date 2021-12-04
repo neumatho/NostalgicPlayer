@@ -130,6 +130,9 @@
   <data name="IDB_CHECKMARK" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\CheckMark.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="IDB_DIRECTORY" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Directory.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="IDB_DISK" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Disk.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -138,6 +141,9 @@
   </data>
   <data name="IDB_FAST_FORWARD" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\FastForward.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IDB_FILE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\File.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="IDB_INFORMATION" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Information.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -303,6 +309,12 @@ Formats supported:
   </data>
   <data name="IDS_ABOUT_TITLE" xml:space="preserve">
     <value>About NostalgicPlayer</value>
+  </data>
+  <data name="IDS_ADDMENU_DIRECTORY" xml:space="preserve">
+    <value>Add directory</value>
+  </data>
+  <data name="IDS_ADDMENU_FILES" xml:space="preserve">
+    <value>Add file(s)</value>
   </data>
   <data name="IDS_AGENTDISPLAY_TITLE" xml:space="preserve">
     <value>{0}</value>

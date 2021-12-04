@@ -70,6 +70,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		// File dialogs
 		private OpenFileDialog moduleFileDialog;
+		private FolderBrowserDialog moduleDirectoryDialog;
 		private OpenFileDialog loadListFileDialog;
 		private SaveFileDialog saveListFileDialog;
 
@@ -1928,37 +1929,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void AddModuleButton_Click(object sender, EventArgs e)
 		{
-			if (ShowModuleFileDialog() == DialogResult.OK)
-			{
-				using (new SleepCursor())
-				{
-					int jumpNumber;
-
-					// Get the selected item
-					int selected = moduleListBox.SelectedIndex;
-					if (selected < 0)
-					{
-						selected = -1;
-						jumpNumber = moduleListBox.Items.Count;
-					}
-					else
-						jumpNumber = selected;
-
-					// Add all the files in the module list
-					AddFilesToList(moduleFileDialog.FileNames, selected);
-
-					// Free any extra loaded modules
-					moduleHandler.FreeExtraModules();
-
-					// Should we load the first added module?
-					if (optionSettings.AddJump)
-					{
-						// Stop playing any modules and load the first added one
-						StopAndFreeModule();
-						LoadAndPlayModule(jumpNumber);
-					}
-				}
-			}
+			// Show the menu
+			addContextMenu.Show(sender);
 		}
 
 
@@ -2109,6 +2081,90 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Show the menu
 			diskContextMenu.Show(sender);
 		}
+
+		#region Add menu events
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user selects the add files menu item
+		/// </summary>
+		/********************************************************************/
+		private void AddMenu_Files(object sender, EventArgs e)
+		{
+			if (ShowModuleFileDialog() == DialogResult.OK)
+			{
+				using (new SleepCursor())
+				{
+					int jumpNumber;
+
+					// Get the selected item
+					int selected = moduleListBox.SelectedIndex;
+					if (selected < 0)
+					{
+						selected = -1;
+						jumpNumber = moduleListBox.Items.Count;
+					}
+					else
+						jumpNumber = selected;
+
+					// Add all the files in the module list
+					AddFilesToList(moduleFileDialog.FileNames, selected);
+
+					// Free any extra loaded modules
+					moduleHandler.FreeExtraModules();
+
+					// Should we load the first added module?
+					if (optionSettings.AddJump)
+					{
+						// Stop playing any modules and load the first added one
+						StopAndFreeModule();
+						LoadAndPlayModule(jumpNumber);
+					}
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user selects the add directory menu item
+		/// </summary>
+		/********************************************************************/
+		private void AddMenu_Directory(object sender, EventArgs e)
+		{
+			if (ShowModuleDirectoryDialog() == DialogResult.OK)
+			{
+				using (new SleepCursor())
+				{
+					int jumpNumber;
+
+					// Get the selected item
+					int selected = moduleListBox.SelectedIndex;
+					if (selected < 0)
+					{
+						selected = -1;
+						jumpNumber = moduleListBox.Items.Count;
+					}
+					else
+						jumpNumber = selected;
+
+					// Add all the files in the module list
+					AddFilesToList(new [] { moduleDirectoryDialog.SelectedPath }, selected);
+
+					// Free any extra loaded modules
+					moduleHandler.FreeExtraModules();
+
+					// Should we load the first added module?
+					if (optionSettings.AddJump)
+					{
+						// Stop playing any modules and load the first added one
+						StopAndFreeModule();
+						LoadAndPlayModule(jumpNumber);
+					}
+				}
+			}
+		}
+		#endregion
 
 		#region Sort menu events
 		/********************************************************************/
@@ -2908,6 +2964,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			CreateMainMenu();
 
 			// Create button menus
+			CreateAddMenu();
 			CreateSortMenu();
 			CreateListMenu();
 			CreateDiskMenu();
@@ -2996,6 +3053,30 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				if (agentInfo.Enabled)
 					AddAgentToMenu(agentInfo);
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create the add button context menu
+		/// </summary>
+		/********************************************************************/
+		private void CreateAddMenu()
+		{
+			KryptonContextMenuItems menuItems = new KryptonContextMenuItems();
+
+			KryptonContextMenuItem item = new KryptonContextMenuItem(Resources.IDS_ADDMENU_FILES);
+			item.Image = Resources.IDB_FILE;
+			item.Click += AddMenu_Files;
+			menuItems.Items.Add(item);
+
+			item = new KryptonContextMenuItem(Resources.IDS_ADDMENU_DIRECTORY);
+			item.Image = Resources.IDB_DIRECTORY;
+			item.Click += AddMenu_Directory;
+			menuItems.Items.Add(item);
+
+			addContextMenu.Items.Add(menuItems);
 		}
 
 
@@ -3165,6 +3246,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			{
 				moduleFileDialog.Dispose();
 				moduleFileDialog = null;
+			}
+
+			// Destroy the module directory dialog
+			if (moduleDirectoryDialog != null)
+			{
+				moduleDirectoryDialog.Dispose();
+				moduleDirectoryDialog = null;
 			}
 
 			// Destroy the load list file dialog
@@ -4338,6 +4426,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			DialogResult result = moduleFileDialog.ShowDialog();
 			if (result == DialogResult.OK)
 				moduleFileDialog.InitialDirectory = null;	// Clear so it won't start in the initial directory again, but in current directory next time it is opened
+
+			return result;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will show the directory dialog where the user can select a
+		/// directory to put in the module list
+		/// </summary>
+		/********************************************************************/
+		private DialogResult ShowModuleDirectoryDialog()
+		{
+			// Create the dialog if not already created
+			if (moduleDirectoryDialog == null)
+			{
+				moduleDirectoryDialog = new FolderBrowserDialog();
+				moduleDirectoryDialog.SelectedPath = pathSettings.Modules;
+			}
+
+			DialogResult result = moduleDirectoryDialog.ShowDialog();
 
 			return result;
 		}
