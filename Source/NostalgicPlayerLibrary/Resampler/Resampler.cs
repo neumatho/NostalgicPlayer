@@ -22,6 +22,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 	internal class Resampler
 	{
 		private const int FracBits = 11;
+		private const int FracMask = ((1 << FracBits) - 1);
+
+		private const int ClickShift = 6;
+		private const int ClickBuffer = 1 << ClickShift;
+
 		private const int BitShift16 = 16;
 
 		private ISamplePlayerAgent currentPlayer;
@@ -47,6 +52,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		private int currentIndex;
 		private int increment;
 
+		private int leftVolume;
+		private int rightVolume;
+		private int rampVolume;
+
+		private bool interpolation;
 		private bool swapSpeakers;
 		private bool[] channelsEnabled;
 
@@ -136,6 +146,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 			currentIndex = 0;
 			increment = (inputFrequency << FracBits) / outputFrequency;
 
+			leftVolume = 0;
+			rightVolume = 0;
+			rampVolume = 0;
+
 			// Get the maximum number of samples the given destination
 			// buffer from the output agent can be
 			bufferSize = outputInformation.BufferSizeInSamples;
@@ -158,6 +172,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		/********************************************************************/
 		public void SetMasterVolume(int volume)
 		{
+			// Protect against click if volume variation is too high
+			if (Math.Abs(masterVolume - volume) > 32)
+				rampVolume = ClickBuffer;
+
 			masterVolume = volume;
 		}
 
@@ -170,6 +188,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		/********************************************************************/
 		public void ChangeConfiguration(MixerConfiguration mixerConfiguration)
 		{
+			interpolation = mixerConfiguration.EnableInterpolation;
 			swapSpeakers = mixerConfiguration.SwapSpeakers;
 			channelsEnabled = mixerConfiguration.ChannelsEnabled;
 		}
@@ -215,8 +234,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 			// And convert the number of samples to number of samples pair
 			count = outputChannels == 2 ? bufSize >> 1 : bufSize;
 
-			int leftVolume = (channelsEnabled == null) || channelsEnabled[0] ? masterVolume : 0;
-			int rightVolume = (inputChannels == 2) && ((channelsEnabled == null) || channelsEnabled[1]) ? masterVolume : 0;
+			// Get different parameters needed for the resampling
+			bool doInterpolation = interpolation;
+
+			int oldLeftVolume = leftVolume;
+			int oldRightVolume = rightVolume;
+
+			leftVolume = (channelsEnabled == null) || channelsEnabled[0] ? masterVolume : 0;
+			rightVolume = (inputChannels == 2) && ((channelsEnabled == null) || channelsEnabled[1]) ? masterVolume : 0;
 
 			int total = 0;
 
@@ -247,19 +272,39 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 				{
 					if (masterVolume > 0)
 					{
-						if (inputChannels == 1)
+						if (doInterpolation)
 						{
-							if (outputChannels == 1)
-								currentIndex = ResampleMonoToMonoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume);
-							else
-								currentIndex = ResampleMonoToStereoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume);
+							if (inputChannels == 1)
+							{
+								if (outputChannels == 1)
+									currentIndex = ResampleMonoToMonoInterpolation(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, oldLeftVolume, ref rampVolume);
+								else
+									currentIndex = ResampleMonoToStereoInterpolation(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, oldLeftVolume, ref rampVolume);
+							}
+							else if (inputChannels == 2)
+							{
+								if (outputChannels == 1)
+									currentIndex = ResampleStereoToMonoInterpolation(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, rightVolume, oldLeftVolume, oldRightVolume, ref rampVolume);
+								else
+									currentIndex = ResampleStereoToStereoInterpolation(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, rightVolume, oldLeftVolume, oldRightVolume, ref rampVolume);
+							}
 						}
-						else if (inputChannels == 2)
+						else
 						{
-							if (outputChannels == 1)
-								currentIndex = ResampleStereoToMonoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, rightVolume);
-							else
-								currentIndex = ResampleStereoToStereoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, rightVolume);
+							if (inputChannels == 1)
+							{
+								if (outputChannels == 1)
+									currentIndex = ResampleMonoToMonoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume);
+								else
+									currentIndex = ResampleMonoToStereoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume);
+							}
+							else if (inputChannels == 2)
+							{
+								if (outputChannels == 1)
+									currentIndex = ResampleStereoToMonoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, rightVolume);
+								else
+									currentIndex = ResampleStereoToStereoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, rightVolume);
+							}
 						}
 					}
 					else
@@ -276,8 +321,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 			return total;
 		}
 
-
-
+		#region Normal
 		/********************************************************************/
 		/// <summary>
 		/// Resample a mono sample into a mono output buffer
@@ -371,7 +415,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 			else
 			{
 				float lVolDiv = lVolSel == 0 ? 0f : 256.0f / lVolSel;
-				float rVolDiv = lVolSel == 0 ? 0f : 256.0f / rVolSel;
+				float rVolDiv = rVolSel == 0 ? 0f : 256.0f / rVolSel;
 
 				while (todo-- != 0)
 				{
@@ -410,7 +454,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 			else
 			{
 				float lVolDiv = lVolSel == 0 ? 0f : 256.0f / lVolSel;
-				float rVolDiv = lVolSel == 0 ? 0f : 256.0f / rVolSel;
+				float rVolDiv = rVolSel == 0 ? 0f : 256.0f / rVolSel;
 
 				while (todo-- != 0)
 				{
@@ -425,8 +469,273 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 
 			return index;
 		}
+		#endregion
+
+		#region Interpolation
+		/********************************************************************/
+		/// <summary>
+		/// Resample a mono sample into a mono output buffer with
+		/// interpolation
+		/// </summary>
+		/********************************************************************/
+		private int ResampleMonoToMonoInterpolation(int[] source, int[] dest, int offset, int index, int incr, int todo, int volSel, int oldVol, ref int rampVol)
+		{
+			int len = source.Length;
+
+			float volDiv = volSel == 0 ? 0f : 256.0f / volSel;
+
+			if (rampVol != 0)
+			{
+				oldVol -= volSel;
+
+				while (todo-- != 0)
+				{
+					int idx = index >> FracBits;
+					if (idx >= len)
+						break;
+
+					long a = source[idx];
+					long b = idx + 1 >= len ? a : source[idx + 1];
+
+					int sample = volSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / volDiv);
+					index += incr;
+
+					dest[offset++] = ((volSel << ClickShift) + oldVol * rampVol) * sample >> ClickShift;
+
+					if (--rampVol == 0)
+						break;
+				}
+
+				if (todo < 0)
+					return index;
+			}
+
+			while (todo-- != 0)
+			{
+				int idx = index >> FracBits;
+				if (idx >= len)
+					break;
+
+				long a = source[idx];
+				long b = idx + 1 >= len ? a : source[idx + 1];
+
+				int sample = volSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / volDiv);
+				index += incr;
+
+				dest[offset++] = sample;
+			}
+
+			return index;
+		}
 
 
+
+		/********************************************************************/
+		/// <summary>
+		/// Resample a mono sample into a stereo output buffer with
+		/// interpolation
+		/// </summary>
+		/********************************************************************/
+		private int ResampleMonoToStereoInterpolation(int[] source, int[] dest, int offset, int index, int incr, int todo, int volSel, int oldVol, ref int rampVol)
+		{
+			int len = source.Length;
+
+			float volDiv = volSel == 0 ? 0f : 256.0f / volSel;
+
+			if (rampVol != 0)
+			{
+				oldVol -= volSel;
+
+				while (todo-- != 0)
+				{
+					int idx = index >> FracBits;
+					if (idx >= len)
+						break;
+
+					long a = source[idx];
+					long b = idx + 1 >= len ? a : source[idx + 1];
+
+					int sample = volSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / volDiv);
+					index += incr;
+
+					sample = ((volSel << ClickShift) + oldVol * rampVol) * sample >> ClickShift;
+
+					dest[offset++] = sample;
+					dest[offset++] = sample;
+
+					if (--rampVol == 0)
+						break;
+				}
+
+				if (todo < 0)
+					return index;
+			}
+
+			while (todo-- != 0)
+			{
+				int idx = index >> FracBits;
+				if (idx >= len)
+					break;
+
+				long a = source[idx];
+				long b = idx + 1 >= len ? a : source[idx + 1];
+
+				int sample = volSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / volDiv);
+				index += incr;
+
+				dest[offset++] = sample;
+				dest[offset++] = sample;
+			}
+
+			return index;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Resample a stereo sample into a mono output buffer with
+		/// interpolation
+		/// </summary>
+		/********************************************************************/
+		private int ResampleStereoToMonoInterpolation(int[] source, int[] dest, int offset, int index, int incr, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
+		{
+			int len = source.Length;
+
+			float lVolDiv = lVolSel == 0 ? 0f : 256.0f / lVolSel;
+			float rVolDiv = rVolSel == 0 ? 0f : 256.0f / rVolSel;
+
+			if (rampVol != 0)
+			{
+				oldLVol -= lVolSel;
+				oldRVol -= rVolSel;
+
+				while (todo-- != 0)
+				{
+					int idx = (index >> FracBits) * 2;
+					if (idx >= len)
+						break;
+
+					long a = source[idx];
+					long b = idx + 2 >= len ? a : source[idx + 2];
+
+					int sample1 = lVolSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / lVolDiv);
+
+					a = source[idx + 1];
+					b = idx + 3 >= len ? a : source[idx + 3];
+
+					int sample2 = rVolSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / rVolDiv);
+
+					index += incr;
+
+					dest[offset++] = ((((lVolSel << ClickShift) + oldLVol * rampVol) * sample1 >> ClickShift) + (((rVolSel << ClickShift) + oldRVol * rampVol) * sample2 >> ClickShift)) / 2;
+
+					if (--rampVol == 0)
+						break;
+				}
+
+				if (todo < 0)
+					return index;
+			}
+
+			while (todo-- != 0)
+			{
+				int idx = (index >> FracBits) * 2;
+				if (idx >= len)
+					break;
+
+				long a = source[idx];
+				long b = idx + 2 >= len ? a : source[idx + 2];
+
+				int sample1 = lVolSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / lVolDiv);
+
+				a = source[idx + 1];
+				b = idx + 3 >= len ? a : source[idx + 3];
+
+				int sample2 = rVolSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / rVolDiv);
+
+				index += incr;
+
+				dest[offset++] = (sample1 + sample2) / 2;
+			}
+
+			return index;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Resample a stereo sample into a stereo output buffer with
+		/// interpolation
+		/// </summary>
+		/********************************************************************/
+		private int ResampleStereoToStereoInterpolation(int[] source, int[] dest, int offset, int index, int incr, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
+		{
+			int len = source.Length;
+
+			float lVolDiv = lVolSel == 0 ? 0f : 256.0f / lVolSel;
+			float rVolDiv = rVolSel == 0 ? 0f : 256.0f / rVolSel;
+
+			if (rampVol != 0)
+			{
+				oldLVol -= lVolSel;
+				oldRVol -= rVolSel;
+
+				while (todo-- != 0)
+				{
+					int idx = (index >> FracBits) * 2;
+					if (idx >= len)
+						break;
+
+					long a = source[idx];
+					long b = idx + 2 >= len ? a : source[idx + 2];
+
+					int sample1 = lVolSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / lVolDiv);
+
+					a = source[idx + 1];
+					b = idx + 3 >= len ? a : source[idx + 3];
+
+					int sample2 = rVolSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / rVolDiv);
+
+					index += incr;
+
+					dest[offset++] = ((lVolSel << ClickShift) + oldLVol * rampVol) * sample1 >> ClickShift;
+					dest[offset++] = ((rVolSel << ClickShift) + oldRVol * rampVol) * sample2 >> ClickShift;
+
+					if (--rampVol == 0)
+						break;
+				}
+
+				if (todo < 0)
+					return index;
+			}
+
+			while (todo-- != 0)
+			{
+				int idx = (index >> FracBits) * 2;
+				if (idx >= len)
+					break;
+
+				long a = source[idx];
+				long b = idx + 2 >= len ? a : source[idx + 2];
+
+				int sample1 = lVolSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / lVolDiv);
+
+				a = source[idx + 1];
+				b = idx + 3 >= len ? a : source[idx + 3];
+
+				int sample2 = rVolSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / rVolDiv);
+
+				index += incr;
+
+				dest[offset++] = sample1;
+				dest[offset++] = sample2;
+			}
+
+			return index;
+		}
+		#endregion
 
 		/********************************************************************/
 		/// <summary>

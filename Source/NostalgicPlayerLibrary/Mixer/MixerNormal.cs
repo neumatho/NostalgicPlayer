@@ -779,7 +779,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						break;
 
 					long a = source[idx];
-					long b = idx + 1 >= source.Length ? a : source[idx + 1];
+					long b = idx + 1 >= len ? a : source[idx + 1];
 
 					int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
 					index += increment;
@@ -801,7 +801,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					break;
 
 				long a = source[idx];
-				long b = idx + 1 >= source.Length ? a : source[idx + 1];
+				long b = idx + 1 >= len ? a : source[idx + 1];
 
 				int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
 				index += increment;
@@ -836,7 +836,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						break;
 
 					long a = source[idx];
-					long b = idx + 1 >= source.Length ? a : source[idx + 1];
+					long b = idx + 1 >= len ? a : source[idx + 1];
 
 					int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
 					index += increment;
@@ -859,7 +859,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					break;
 
 				long a = source[idx];
-				long b = idx + 1 >= source.Length ? a : source[idx + 1];
+				long b = idx + 1 >= len ? a : source[idx + 1];
 
 				int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
 				index += increment;
@@ -906,7 +906,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						break;
 
 					long a = source[idx];
-					long b = idx + 1 >= source.Length ? a : source[idx + 1];
+					long b = idx + 1 >= len ? a : source[idx + 1];
 
 					int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
 					index += increment;
@@ -930,7 +930,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					break;
 
 				long a = source[idx];
-				long b = idx + 1 >= source.Length ? a : source[idx + 1];
+				long b = idx + 1 >= len ? a : source[idx + 1];
 
 				int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
 				index += increment;

@@ -67,7 +67,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		/********************************************************************/
 		public void ChangeConfiguration(MixerConfiguration mixerConfiguration)
 		{
-			resampler.ChangeConfiguration(mixerConfiguration);
+			resampler?.ChangeConfiguration(mixerConfiguration);
 		}
 
 		#region SoundStream implementation
@@ -80,7 +80,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		{
 			bytesPerSampling = outputInformation.BytesPerSample;
 
-			resampler.SetOutputFormat(outputInformation);
+			resampler?.SetOutputFormat(outputInformation);
 		}
 
 
@@ -92,7 +92,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		/********************************************************************/
 		public override void SetMasterVolume(int volume)
 		{
-			resampler.SetMasterVolume(volume);
+			resampler?.SetMasterVolume(volume);
 		}
 
 
