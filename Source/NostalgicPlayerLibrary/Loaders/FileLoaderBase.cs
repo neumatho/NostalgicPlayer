@@ -113,19 +113,21 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 				{
 					string archiveName = ArchivePath.GetArchiveName(fileName);
 					string name = ArchivePath.GetEntryName(fileName);
+					string directoryName = Path.GetDirectoryName(name);
+					name = Path.GetFileName(name);
 
 					int index = name.IndexOf('.');
 					if (index != -1)
 					{
 						name = name.Substring(index + 1);
 
-						newFileName = ArchivePath.CombinePathParts(archiveName, $"{newExtension}.{name}");
+						newFileName = ArchivePath.CombinePathParts(archiveName, Path.Combine(directoryName, $"{newExtension}.{name}"));
 						yield return newFileName;
 					}
 				}
 				else
 				{
-					string directory = Path.GetDirectoryName(fileName);
+					string directoryName = Path.GetDirectoryName(fileName);
 					string name = Path.GetFileName(fileName);
 
 					int index = name.IndexOf('.');
@@ -133,7 +135,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 					{
 						name = name.Substring(index + 1);
 
-						newFileName = Path.Combine(directory, $"{newExtension}.{name}");
+						newFileName = Path.Combine(directoryName, $"{newExtension}.{name}");
 						yield return newFileName;
 					}
 				}

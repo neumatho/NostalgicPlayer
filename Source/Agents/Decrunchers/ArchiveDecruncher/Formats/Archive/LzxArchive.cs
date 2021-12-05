@@ -71,6 +71,8 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Ar
 		/********************************************************************/
 		public ArchiveStream OpenEntry(string entryName)
 		{
+			entryName = entryName.Replace('\\', '/');
+
 			FileEntry entry = entries.FirstOrDefault(e => e.FileName.Equals(entryName, StringComparison.OrdinalIgnoreCase));
 			if (entry == null)
 				throw new DecruncherException(agentName, string.Format(Resources.IDS_ARD_ERR_ENTRY_NOT_FOUND, entryName));
