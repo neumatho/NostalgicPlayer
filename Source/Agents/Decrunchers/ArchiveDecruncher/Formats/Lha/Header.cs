@@ -134,7 +134,10 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Lh
 					GetByte();
 
 				if (hdr.ExtendType == Constants.Extend_Unix)
+				{
+					hdr.DecodedName = EncoderCollection.Amiga.GetString(hdr.Name);
 					return true;
+				}
 			}
 			else if (hdr.HeaderLevel == 1)
 			{
