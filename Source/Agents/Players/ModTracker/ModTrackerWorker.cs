@@ -3701,15 +3701,18 @@ stopLoop:
 		/********************************************************************/
 		private void KarplusStrong(ModChannel modChan)
 		{
-			int index = modChan.LoopStart;
-
-			for (int i = modChan.LoopLength * 2 - 2; i >= 0; i--)
+			if (modChan.SampleData != null)
 			{
-				modChan.SampleData[index] = (sbyte)((modChan.SampleData[index] + modChan.SampleData[index + 1]) / 2);
-				index++;
-			}
+				int index = modChan.LoopStart;
 
-			modChan.SampleData[index] = (sbyte)((modChan.SampleData[index] + modChan.SampleData[modChan.LoopStart]) / 2);
+				for (int i = modChan.LoopLength * 2 - 2; i >= 0; i--)
+				{
+					modChan.SampleData[index] = (sbyte)((modChan.SampleData[index] + modChan.SampleData[index + 1]) / 2);
+					index++;
+				}
+
+				modChan.SampleData[index] = (sbyte)((modChan.SampleData[index] + modChan.SampleData[modChan.LoopStart]) / 2);
+			}
 		}
 
 
