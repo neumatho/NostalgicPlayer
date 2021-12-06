@@ -83,6 +83,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 		private ModChannel[] channels;
 
+		private ushort oldSongPos;
 		private ushort songPos;
 		private ushort patternPos;
 		private ushort breakPos;
@@ -378,9 +379,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					if (gotJump)
 					{
 						// If we got both a Bxx and Dxx command
-						// on the same line, don't end the module
-						// (unless we jump to position 0)
-						endReached = !gotBreak || ((songPos == 0xffff) && (breakPos == 0));
+						// on the same line, make some sanity
+						// checks to make sure if we should end
+						// the module or not (it could run backwards)
+						endReached = !gotBreak || ((breakPos == 0) && ((songPos == 0xffff) || (oldSongPos == songLength - 1)));
+						endReached = endReached || ((breakPos == patternPos - 1) && (songPos == oldSongPos - 1));
 
 						gotJump = false;
 					}
@@ -3435,6 +3438,7 @@ stopLoop:
 				gotJump = true;			// Module jump to the same position, maybe end
 
 			// Set the new position
+			oldSongPos = songPos;
 			songPos = (ushort)(pos - 1);
 			breakPos = 0;
 			posJumpFlag = true;
