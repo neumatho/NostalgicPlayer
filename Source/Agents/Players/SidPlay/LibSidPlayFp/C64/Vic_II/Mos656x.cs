@@ -1256,6 +1256,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Vic_II
 			{
 				rasterY++;
 				RasterYIrqEdgeDetector();
+
+				if ((rasterY == FIRST_DMA_LINE) && !areBadLinesEnabled)
+					areBadLinesEnabled = ReadDen();
 			}
 
 			if (EvaluateIsBadLine())

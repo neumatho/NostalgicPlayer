@@ -122,15 +122,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.Builders.Re
 				case SidConfig.sid_model_t.MOS6581:
 				{
 					chipModel = ChipModel.MOS6581;
+					sid.Input(0);
 					break;
 				}
 
 				case SidConfig.sid_model_t.MOS8580:
 				{
 					chipModel = ChipModel.MOS8580;
-					if (digiBoost)
-						sid.Input(-32768);
-
+					sid.Input(digiBoost ? -32768 : 0);
 					break;
 				}
 

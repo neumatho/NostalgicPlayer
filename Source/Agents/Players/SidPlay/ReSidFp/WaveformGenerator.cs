@@ -375,9 +375,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 
 					// Bit0 = (bit22 | test) ^ bit17 = 1 ^ bit17 = ~bit17
 					Clock_Shift_Register((~shift_register << 17) & (1 << 22));
-
-					// New noise waveform output
-					Set_Noise_Output();
 				}
 			}
 		}
