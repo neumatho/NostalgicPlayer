@@ -10,7 +10,7 @@
     <Authors>Thomas Neumann</Authors>
     <Copyright>Copyright © 2021</Copyright>
     <ApplicationIcon>App.ico</ApplicationIcon>
-    <Version>1.5.0</Version>
+    <Version>1.5.1</Version>
     <Platforms>x64;x86</Platforms>
   </PropertyGroup>
 
