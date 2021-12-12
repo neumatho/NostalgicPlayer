@@ -497,10 +497,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 					long a = source[idx];
 					long b = idx + 1 >= len ? a : source[idx + 1];
 
-					int sample = volSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / volDiv);
+					long sample = volSel == 0 ? 0 : (long)((a + ((b - a) * (index & FracMask) >> FracBits)) / volDiv);
+					if (sample < -0x7fffffff)
+						sample = -0x7fffffff;
+					else if (sample > 0x7fffffff)
+						sample = 0x7fffffff;
+
 					index += incr;
 
-					dest[offset++] = ((volSel << ClickShift) + oldVol * rampVol) * sample >> ClickShift;
+					dest[offset++] = (int)(((volSel << ClickShift) + oldVol * rampVol) * sample >> ClickShift);
 
 					if (--rampVol == 0)
 						break;
@@ -519,10 +524,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 				long a = source[idx];
 				long b = idx + 1 >= len ? a : source[idx + 1];
 
-				int sample = volSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / volDiv);
+				long sample = volSel == 0 ? 0 : (long)((a + ((b - a) * (index & FracMask) >> FracBits)) / volDiv);
+				if (sample < -0x7fffffff)
+					sample = -0x7fffffff;
+				else if (sample > 0x7fffffff)
+					sample = 0x7fffffff;
+
 				index += incr;
 
-				dest[offset++] = sample;
+				dest[offset++] = (int)sample;
 			}
 
 			return index;
@@ -555,13 +565,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 					long a = source[idx];
 					long b = idx + 1 >= len ? a : source[idx + 1];
 
-					int sample = volSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / volDiv);
+					long sample = volSel == 0 ? 0 : (long)((a + ((b - a) * (index & FracMask) >> FracBits)) / volDiv);
+					if (sample < -0x7fffffff)
+						sample = -0x7fffffff;
+					else if (sample > 0x7fffffff)
+						sample = 0x7fffffff;
+
 					index += incr;
 
 					sample = ((volSel << ClickShift) + oldVol * rampVol) * sample >> ClickShift;
 
-					dest[offset++] = sample;
-					dest[offset++] = sample;
+					dest[offset++] = (int)sample;
+					dest[offset++] = (int)sample;
 
 					if (--rampVol == 0)
 						break;
@@ -580,11 +595,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 				long a = source[idx];
 				long b = idx + 1 >= len ? a : source[idx + 1];
 
-				int sample = volSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / volDiv);
+				long sample = volSel == 0 ? 0 : (long)((a + ((b - a) * (index & FracMask) >> FracBits)) / volDiv);
+				if (sample < -0x7fffffff)
+					sample = -0x7fffffff;
+				else if (sample > 0x7fffffff)
+					sample = 0x7fffffff;
+
 				index += incr;
 
-				dest[offset++] = sample;
-				dest[offset++] = sample;
+				dest[offset++] = (int)sample;
+				dest[offset++] = (int)sample;
 			}
 
 			return index;
@@ -619,16 +639,24 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 					long a = source[idx];
 					long b = idx + 2 >= len ? a : source[idx + 2];
 
-					int sample1 = lVolSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / lVolDiv);
+					long sample1 = lVolSel == 0 ? 0 : (long)((a + ((b - a) * (index & FracMask) >> FracBits)) / lVolDiv);
+					if (sample1 < -0x7fffffff)
+						sample1 = -0x7fffffff;
+					else if (sample1 > 0x7fffffff)
+						sample1 = 0x7fffffff;
 
 					a = source[idx + 1];
 					b = idx + 3 >= len ? a : source[idx + 3];
 
-					int sample2 = rVolSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / rVolDiv);
+					long sample2 = rVolSel == 0 ? 0 : (long)((a + ((b - a) * (index & FracMask) >> FracBits)) / rVolDiv);
+					if (sample2 < -0x7fffffff)
+						sample2 = -0x7fffffff;
+					else if (sample2 > 0x7fffffff)
+						sample2 = 0x7fffffff;
 
 					index += incr;
 
-					dest[offset++] = ((((lVolSel << ClickShift) + oldLVol * rampVol) * sample1 >> ClickShift) + (((rVolSel << ClickShift) + oldRVol * rampVol) * sample2 >> ClickShift)) / 2;
+					dest[offset++] = (int)(((((lVolSel << ClickShift) + oldLVol * rampVol) * sample1 >> ClickShift) + (((rVolSel << ClickShift) + oldRVol * rampVol) * sample2 >> ClickShift)) / 2);
 
 					if (--rampVol == 0)
 						break;
@@ -647,16 +675,24 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 				long a = source[idx];
 				long b = idx + 2 >= len ? a : source[idx + 2];
 
-				int sample1 = lVolSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / lVolDiv);
+				long sample1 = lVolSel == 0 ? 0 : (long)((a + ((b - a) * (index & FracMask) >> FracBits)) / lVolDiv);
+				if (sample1 < -0x7fffffff)
+					sample1 = -0x7fffffff;
+				else if (sample1 > 0x7fffffff)
+					sample1 = 0x7fffffff;
 
 				a = source[idx + 1];
 				b = idx + 3 >= len ? a : source[idx + 3];
 
-				int sample2 = rVolSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / rVolDiv);
+				long sample2 = rVolSel == 0 ? 0 : (long)((a + ((b - a) * (index & FracMask) >> FracBits)) / rVolDiv);
+				if (sample2 < -0x7fffffff)
+					sample2 = -0x7fffffff;
+				else if (sample2 > 0x7fffffff)
+					sample2 = 0x7fffffff;
 
 				index += incr;
 
-				dest[offset++] = (sample1 + sample2) / 2;
+				dest[offset++] = (int)((sample1 + sample2) / 2);
 			}
 
 			return index;
@@ -691,17 +727,25 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 					long a = source[idx];
 					long b = idx + 2 >= len ? a : source[idx + 2];
 
-					int sample1 = lVolSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / lVolDiv);
+					long sample1 = lVolSel == 0 ? 0 : (long)((a + ((b - a) * (index & FracMask) >> FracBits)) / lVolDiv);
+					if (sample1 < -0x7fffffff)
+						sample1 = -0x7fffffff;
+					else if (sample1 > 0x7fffffff)
+						sample1 = 0x7fffffff;
 
 					a = source[idx + 1];
 					b = idx + 3 >= len ? a : source[idx + 3];
 
-					int sample2 = rVolSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / rVolDiv);
+					long sample2 = rVolSel == 0 ? 0 : (long)((a + ((b - a) * (index & FracMask) >> FracBits)) / rVolDiv);
+					if (sample2 < -0x7fffffff)
+						sample2 = -0x7fffffff;
+					else if (sample2 > 0x7fffffff)
+						sample2 = 0x7fffffff;
 
 					index += incr;
 
-					dest[offset++] = ((lVolSel << ClickShift) + oldLVol * rampVol) * sample1 >> ClickShift;
-					dest[offset++] = ((rVolSel << ClickShift) + oldRVol * rampVol) * sample2 >> ClickShift;
+					dest[offset++] = (int)(((lVolSel << ClickShift) + oldLVol * rampVol) * sample1 >> ClickShift);
+					dest[offset++] = (int)(((rVolSel << ClickShift) + oldRVol * rampVol) * sample2 >> ClickShift);
 
 					if (--rampVol == 0)
 						break;
@@ -720,17 +764,25 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 				long a = source[idx];
 				long b = idx + 2 >= len ? a : source[idx + 2];
 
-				int sample1 = lVolSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / lVolDiv);
+				long sample1 = lVolSel == 0 ? 0 : (long)((a + ((b - a) * (index & FracMask) >> FracBits)) / lVolDiv);
+				if (sample1 < -0x7fffffff)
+					sample1 = -0x7fffffff;
+				else if (sample1 > 0x7fffffff)
+					sample1 = 0x7fffffff;
 
 				a = source[idx + 1];
 				b = idx + 3 >= len ? a : source[idx + 3];
 
-				int sample2 = rVolSel == 0 ? 0 : (int)((a + ((b - a) * (index & FracMask) >> FracBits)) / rVolDiv);
+				long sample2 = rVolSel == 0 ? 0 : (long)((a + ((b - a) * (index & FracMask) >> FracBits)) / rVolDiv);
+				if (sample2 < -0x7fffffff)
+					sample2 = -0x7fffffff;
+				else if (sample2 > 0x7fffffff)
+					sample2 = 0x7fffffff;
 
 				index += incr;
 
-				dest[offset++] = sample1;
-				dest[offset++] = sample2;
+				dest[offset++] = (int)sample1;
+				dest[offset++] = (int)sample2;
 			}
 
 			return index;
