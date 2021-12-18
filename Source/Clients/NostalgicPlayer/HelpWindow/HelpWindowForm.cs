@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 				Text = Resources.IDS_HELP_TITLE;
 
 				// Load the version specific documentation
-				webBrowser.Navigate("https://www.nostalgicplayer.dk/appdoc/" + Env.CurrentVersion);
+				webBrowser.Navigate($"https://www.nostalgicplayer.dk/appdoc/{Env.CurrentVersion}/index.html");
 			}
 		}
 	}

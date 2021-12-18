@@ -92,7 +92,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 			try
 			{
 				WebClient webClient = new WebClient();
-				byte[] bytes = webClient.DownloadData("https://www.nostalgicplayer.dk/history.html");
+				byte[] bytes = webClient.DownloadData("https://www.nostalgicplayer.dk/history");
 
 				return Encoding.UTF8.GetString(bytes);
 			}
