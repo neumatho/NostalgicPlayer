@@ -41,7 +41,7 @@
   </ItemGroup>
 
 	<ItemGroup Condition="'$(Platform)'=='x86'">
-		<None Include="..\..\..\3rdParty\Mpg123\libmpg123-x86.dll" Link="lib\libmpg123-x86.dll">
+		<None Include="..\..\..\3rdParty\Mpg123\libmpg123-x86.dll" Link="libs\libmpg123-x86.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
