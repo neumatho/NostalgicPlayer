@@ -334,7 +334,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				// Now calculate a MD5 checksum on the rest of the file,
 				// just to find out if it is a special module that needs
 				// to be take special care of
-				MD5 md5 = new MD5CryptoServiceProvider();
+				MD5 md5 = MD5.Create();
 				byte[] checksum = md5.ComputeHash(musicData, 0, musicLen);
 
 				// Check the checksum

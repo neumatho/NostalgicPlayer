@@ -9,6 +9,7 @@
 using System;
 using System.Drawing;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using Krypton.Toolkit;
 
@@ -91,8 +92,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 		{
 			try
 			{
-				WebClient webClient = new WebClient();
-				byte[] bytes = webClient.DownloadData("https://www.nostalgicplayer.dk/history");
+				HttpClient httpClient = new HttpClient();
+				byte[] bytes = httpClient.GetByteArrayAsync("https://www.nostalgicplayer.dk/history").Result;
 
 				return Encoding.UTF8.GetString(bytes);
 			}

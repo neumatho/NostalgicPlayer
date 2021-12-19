@@ -19,6 +19,10 @@ Agents can be anything, e.g. players, converters, visuals etc. You only need to 
 
 In the Clients folder, you can find two different clients that use the player. *NostalgicPlayerConsole* is a simple player that loads a single module and play it. It will then write some information to the console. *NostalgicPlayer* is a full blown player using Windows Forms and is the one that is released to the public.
 
+# Visual Studio
+
+To load the solution and project files, you need to use at least Visual Studio Community 2022 (it is free) and .NET 6 framework.
+
 # Formats supported
 
 Modules in all supported formats can be found on my homepage at https://www.nostalgicplayer.dk. Note that the modules on my homepage will first appear, after an official release of the player that can handle them. For a description of the module formats, see the documentation.
