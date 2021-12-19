@@ -1118,7 +1118,7 @@ Loop:
 								{
 									gotTimeShare = true;
 									position++;
-									break;;
+									break;
 								}
 
 								// Unknown command
