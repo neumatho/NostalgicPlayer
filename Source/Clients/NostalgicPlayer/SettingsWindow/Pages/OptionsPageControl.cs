@@ -57,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will prepare to handle the settings
 		/// </summary>
 		/********************************************************************/
-		public void InitSettings(Manager agentManager, ModuleHandler moduleHandler, MainWindowForm mainWindow, Settings userSettings, Settings windowSettings)
+		public void InitSettings(Manager agentManager, ModuleHandler moduleHandler, MainWindowForm mainWindow, ISettings userSettings, ISettings windowSettings)
 		{
 			mainWin = mainWindow;
 

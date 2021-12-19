@@ -61,7 +61,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private ModuleHandler moduleHandler;
 
 		private SettingsAgentsWindowSettings winSettings;
-		private Settings settings;
+		private ISettings settings;
 		private string settingsPrefix;
 
 		private AgentsListUserControl[] reloadControls;
@@ -138,7 +138,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// Will prepare to handle the settings
 		/// </summary>
 		/********************************************************************/
-		public void InitSettings(Manager agentManager, ModuleHandler modHandler, MainWindowForm mainWindow, Settings userSettings, Settings windowSettings, string prefix, HashSet<Guid> changedStates, params AgentsListUserControl[] controlsToReload)
+		public void InitSettings(Manager agentManager, ModuleHandler modHandler, MainWindowForm mainWindow, ISettings userSettings, ISettings windowSettings, string prefix, HashSet<Guid> changedStates, params AgentsListUserControl[] controlsToReload)
 		{
 			mainWin = mainWindow;
 

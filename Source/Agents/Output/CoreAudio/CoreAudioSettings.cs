@@ -6,6 +6,10 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using Microsoft.Extensions.DependencyInjection;
+using Polycode.NostalgicPlayer.Kit;
+using Polycode.NostalgicPlayer.Kit.Utility;
+
 namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 {
 	/// <summary>
@@ -13,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 	/// </summary>
 	public class CoreAudioSettings
 	{
-		private readonly Kit.Utility.Settings settings;
+		private readonly ISettings settings;
 
 		/********************************************************************/
 		/// <summary>
@@ -22,8 +26,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/********************************************************************/
 		public CoreAudioSettings()
 		{
-			settings = new Kit.Utility.Settings("CoreAudio");
-			settings.LoadSettings();
+			settings = DependencyInjection.GetDefaultProvider().GetService<ISettings>();
+			settings.LoadSettings("CoreAudio");
 		}
 
 
@@ -33,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/// Return the main settings object
 		/// </summary>
 		/********************************************************************/
-		public Kit.Utility.Settings Settings => settings;
+		public ISettings Settings => settings;
 
 
 

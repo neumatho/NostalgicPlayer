@@ -7,6 +7,9 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using Microsoft.Extensions.DependencyInjection;
+using Polycode.NostalgicPlayer.Kit;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 {
@@ -31,7 +34,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			Stereo
 		}
 
-		private readonly Kit.Utility.Settings settings;
+		private readonly ISettings settings;
 
 		/********************************************************************/
 		/// <summary>
@@ -40,8 +43,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 		/********************************************************************/
 		public DiskSaverSettings()
 		{
-			settings = new Kit.Utility.Settings("DiskSaver");
-			settings.LoadSettings();
+			settings = DependencyInjection.GetDefaultProvider().GetService<ISettings>();
+			settings.LoadSettings("DiskSaver");
 		}
 
 
@@ -51,7 +54,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 		/// Return the main settings object
 		/// </summary>
 		/********************************************************************/
-		public Kit.Utility.Settings Settings => settings;
+		public ISettings Settings => settings;
 
 
 

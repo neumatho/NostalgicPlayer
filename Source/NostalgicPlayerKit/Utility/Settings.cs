@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 	/// <summary>
 	/// This class helps to read and write user settings
 	/// </summary>
-	public class Settings : IDisposable
+	public class Settings : ISettings
 	{
 		private enum LineType
 		{
@@ -33,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 			public string Line;
 		}
 
-		private readonly string component;
+		private string comp;
 
 		private ReaderWriterLockSlim listLock;
 		private List<LineInfo> lineList;
@@ -45,10 +45,9 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Settings(string component)
+		public Settings()
 		{
 			// Initialize member variables
-			this.component = component;
 			changed = false;
 
 			// Create synchronize and list instances
@@ -60,10 +59,10 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 		/********************************************************************/
 		/// <summary>
-		/// Cleanup
+		/// Finalizer
 		/// </summary>
 		/********************************************************************/
-		public void Dispose()
+		~Settings()
 		{
 			listLock.Dispose();
 			listLock = null;
@@ -86,15 +85,16 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 			}
 		}
 
-
-
+		#region ISettings implementation
 		/********************************************************************/
 		/// <summary>
-		/// Will load the setting file into memory
+		/// Will load the settings for the given component into memory
 		/// </summary>
 		/********************************************************************/
-		public void LoadSettings()
+		public void LoadSettings(string component)
 		{
+			comp = component;
+
 			// Find the settings file
 			string fullPath = SettingsFileName;
 
@@ -173,7 +173,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 		/********************************************************************/
 		/// <summary>
-		/// Will save the settings in memory back to the file
+		/// Will save the settings in memory back
 		/// </summary>
 		/********************************************************************/
 		public void SaveSettings()
@@ -257,7 +257,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 		/********************************************************************/
 		/// <summary>
-		/// Will delete the settings file if it exists
+		/// Will delete the settings from memory and disk
 		/// </summary>
 		/********************************************************************/
 		public void DeleteSettings()
@@ -290,7 +290,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// found, the default value is returned
 		/// </summary>
 		/********************************************************************/
-		public string GetStringEntry(string section, string entry, string defaultValue = "")
+		public string GetStringEntry(string section, string entry, string defaultValue)
 		{
 			// Start to lock the list
 			listLock.EnterReadLock();
@@ -329,7 +329,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// If it couldn't be read, the default value is returned
 		/// </summary>
 		/********************************************************************/
-		public string GetStringEntry(string section, int entryNum, out string entryName, string defaultValue = "")
+		public string GetStringEntry(string section, int entryNum, out string entryName, string defaultValue)
 		{
 			// Start to lock the list
 			listLock.EnterReadLock();
@@ -371,10 +371,10 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// found, the default value is returned
 		/// </summary>
 		/********************************************************************/
-		public int GetIntEntry(string section, string entry, int defaultValue = 0)
+		public int GetIntEntry(string section, string entry, int defaultValue)
 		{
 			// Use the string read function
-			string value = GetStringEntry(section, entry);
+			string value = GetStringEntry(section, entry, string.Empty);
 			if (string.IsNullOrEmpty(value))
 				return defaultValue;
 
@@ -392,10 +392,10 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// found, the default value is returned
 		/// </summary>
 		/********************************************************************/
-		public long GetLongEntry(string section, string entry, long defaultValue = 0)
+		public long GetLongEntry(string section, string entry, long defaultValue)
 		{
 			// Use the string read function
-			string value = GetStringEntry(section, entry);
+			string value = GetStringEntry(section, entry, string.Empty);
 			if (string.IsNullOrEmpty(value))
 				return defaultValue;
 
@@ -413,10 +413,10 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// found, the default value is returned
 		/// </summary>
 		/********************************************************************/
-		public float GetFloatEntry(string section, string entry, float defaultValue = 0.0f)
+		public float GetFloatEntry(string section, string entry, float defaultValue)
 		{
 			// Use the string read function
-			string value = GetStringEntry(section, entry);
+			string value = GetStringEntry(section, entry, string.Empty);
 			if (string.IsNullOrEmpty(value))
 				return defaultValue;
 
@@ -434,10 +434,10 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// found, the default value is returned
 		/// </summary>
 		/********************************************************************/
-		public bool GetBoolEntry(string section, string entry, bool defaultValue = false)
+		public bool GetBoolEntry(string section, string entry, bool defaultValue)
 		{
 			// Use the string read function
-			string value = GetStringEntry(section, entry);
+			string value = GetStringEntry(section, entry, string.Empty);
 			if (string.IsNullOrEmpty(value))
 				return defaultValue;
 
@@ -458,7 +458,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		public T GetEnumEntry<T>(string section, string entry, T defaultValue) where T : struct, Enum
 		{
 			// Use the string read function
-			string value = GetStringEntry(section, entry);
+			string value = GetStringEntry(section, entry, string.Empty);
 			if (string.IsNullOrEmpty(value))
 				return defaultValue;
 
@@ -703,6 +703,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 				listLock.ExitWriteLock();
 			}
 		}
+		#endregion
 
 		#region Private methods
 		/********************************************************************/
@@ -714,7 +715,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		{
 			get
 			{
-				return Path.Combine(SettingsDirectory, component + ".ini");
+				return Path.Combine(SettingsDirectory, comp + ".ini");
 			}
 		}
 

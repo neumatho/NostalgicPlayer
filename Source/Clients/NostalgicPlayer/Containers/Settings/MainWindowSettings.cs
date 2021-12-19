@@ -8,6 +8,7 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 {
@@ -27,14 +28,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 			Remaining
 		}
 
-		private readonly Kit.Utility.Settings settings;
+		private readonly ISettings settings;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public MainWindowSettings(Kit.Utility.Settings windowSettings)
+		public MainWindowSettings(ISettings windowSettings)
 		{
 			settings = windowSettings;
 		}

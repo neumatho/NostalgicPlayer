@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Krypton.Toolkit;
+using Microsoft.Extensions.DependencyInjection;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
@@ -27,6 +28,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow;
 using Polycode.NostalgicPlayer.GuiKit.Controls;
+using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -61,7 +63,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private ModuleHandler moduleHandler;
 
 		// Settings
-		private Settings userSettings;
+		private ISettings userSettings;
 		private OptionSettings optionSettings;
 		private PathSettings pathSettings;
 		private SoundSettings soundSettings;
@@ -2915,8 +2917,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private void InitSettings()
 		{
 			// Create instances of the settings
-			userSettings = new Settings("Settings");
-			userSettings.LoadSettings();
+			userSettings = DependencyInjection.GetDefaultProvider().GetService<ISettings>();
+			userSettings.LoadSettings("Settings");
 
 			// Setup setting wrappers
 			optionSettings = new OptionSettings(userSettings);
@@ -2943,7 +2945,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private void CleanupSettings()
 		{
 			userSettings.SaveSettings();
-			userSettings.Dispose();
 			userSettings = null;
 
 			soundSettings = null;

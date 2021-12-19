@@ -8,57 +8,65 @@
 /******************************************************************************/
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display;
-using Polycode.NostalgicPlayer.Kit;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Microsoft.Extensions.Hosting;
 
-namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
+namespace Polycode.NostalgicPlayer.Kit
 {
 	/// <summary>
-	/// This class holds all the settings
 	/// </summary>
-	internal class OscilloscopeSettings
+	public delegate void RegisterServiceHandler(IServiceCollection services);
+
+	/// <summary>
+	/// Helper class to use dependency injection
+	/// </summary>
+	public static class DependencyInjection
 	{
-		private readonly ISettings settings;
+		private static IServiceProvider serviceProvider;			// Used to create new scopes
+		private static IServiceProvider defaultServiceProvider;		// Is the default scope services
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructor
+		/// Build all the services
 		/// </summary>
 		/********************************************************************/
-		public OscilloscopeSettings()
+		public static void Build(RegisterServiceHandler handler)
 		{
-			settings = DependencyInjection.GetDefaultProvider().GetService<ISettings>();
-			settings.LoadSettings("Oscilloscope");
+			if (serviceProvider != null)
+				throw new Exception("Has already been initialized once");
+
+			// Register and build all the services
+			IHost host = Host.CreateDefaultBuilder().ConfigureServices((_, services) => handler(services)).Build();
+			serviceProvider = host.Services;
+
+			// Create the default service provider, which is used by the agents
+			defaultServiceProvider = CreateScope();
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the main settings object
+		/// Create a new scope holding registered objects
 		/// </summary>
 		/********************************************************************/
-		public ISettings Settings => settings;
+		public static IServiceProvider CreateScope()
+		{
+			if (serviceProvider == null)
+				throw new Exception("Has not been built yet");
+
+			return serviceProvider.CreateScope().ServiceProvider;
+		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Which output device to use
+		/// Return the default service provider
 		/// </summary>
 		/********************************************************************/
-		public SpeakerOscilloscopeControl.ScopeType ScopeType
+		public static IServiceProvider GetDefaultProvider()
 		{
-			get
-			{
-				if (Enum.TryParse(settings.GetStringEntry("General", "ScopeType"), out SpeakerOscilloscopeControl.ScopeType type))
-					return type;
-
-				return SpeakerOscilloscopeControl.ScopeType.Filled;
-			}
-
-			set => settings.SetStringEntry("General", "ScopeType", value.ToString());
+			return defaultServiceProvider;
 		}
 	}
 }

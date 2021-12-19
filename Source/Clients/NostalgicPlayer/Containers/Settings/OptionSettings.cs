@@ -6,6 +6,8 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Utility;
+
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 {
 	/// <summary>
@@ -41,14 +43,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 			Loop
 		}
 
-		private readonly Kit.Utility.Settings settings;
+		private readonly ISettings settings;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public OptionSettings(Kit.Utility.Settings userSettings)
+		public OptionSettings(ISettings userSettings)
 		{
 			settings = userSettings;
 		}

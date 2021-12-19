@@ -9,8 +9,10 @@
 using System.Drawing;
 using System.Windows.Forms;
 using Krypton.Toolkit;
+using Microsoft.Extensions.DependencyInjection;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
+using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
@@ -23,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 		/// <summary>
 		/// Holds all the settings for the form itself
 		/// </summary>
-		protected Settings allWindowSettings;
+		protected ISettings allWindowSettings;
 
 		/// <summary>
 		/// Set this to true, if you don't want the escape
@@ -83,8 +85,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 		protected void LoadWindowSettings(string windowSettingsName)
 		{
 			// Load the windows settings
-			allWindowSettings = new Settings(windowSettingsName);
-			allWindowSettings.LoadSettings();
+			allWindowSettings = DependencyInjection.GetDefaultProvider().GetService<ISettings>();
+			allWindowSettings.LoadSettings(windowSettingsName);
 
 			windowSettings = new WindowSettings(allWindowSettings);
 
@@ -131,7 +133,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 
 				// Save the window settings
 				allWindowSettings.SaveSettings();
-				allWindowSettings.Dispose();
 				allWindowSettings = null;
 
 				windowSettings = null;

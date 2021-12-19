@@ -6,6 +6,10 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using Microsoft.Extensions.DependencyInjection;
+using Polycode.NostalgicPlayer.Kit;
+using Polycode.NostalgicPlayer.Kit.Utility;
+
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 {
 	/// <summary>
@@ -13,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 	/// </summary>
 	public class RememberListSettings
 	{
-		private readonly Kit.Utility.Settings settings;
+		private readonly ISettings settings;
 
 		/********************************************************************/
 		/// <summary>
@@ -22,8 +26,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/********************************************************************/
 		public RememberListSettings()
 		{
-			settings = new Kit.Utility.Settings("__RememberList");
-			settings.LoadSettings();
+			settings = DependencyInjection.GetDefaultProvider().GetService<ISettings>();
+			settings.LoadSettings("__RememberList");
 		}
 
 

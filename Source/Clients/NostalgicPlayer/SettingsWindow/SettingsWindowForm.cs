@@ -28,7 +28,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		private ModuleHandler moduleHandler;
 		private MainWindowForm mainWindow;
 
-		private readonly Settings userSettings;
+		private readonly ISettings userSettings;
 		private readonly SettingsWindowSettings windowSettings;
 
 		/********************************************************************/
@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SettingsWindowForm(Manager agentManager, ModuleHandler moduleHandler, MainWindowForm mainWindow, OptionSettings optionSettings, Settings userSettings)
+		public SettingsWindowForm(Manager agentManager, ModuleHandler moduleHandler, MainWindowForm mainWindow, OptionSettings optionSettings, ISettings userSettings)
 		{
 			InitializeComponent();
 

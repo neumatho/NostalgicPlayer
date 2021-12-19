@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 {
@@ -15,14 +16,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 	/// </summary>
 	public class SoundSettings
 	{
-		private readonly Kit.Utility.Settings settings;
+		private readonly ISettings settings;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SoundSettings(Kit.Utility.Settings userSettings)
+		public SoundSettings(ISettings userSettings)
 		{
 			settings = userSettings;
 		}

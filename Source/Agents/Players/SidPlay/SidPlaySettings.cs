@@ -7,6 +7,9 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using Microsoft.Extensions.DependencyInjection;
+using Polycode.NostalgicPlayer.Kit;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 {
@@ -85,7 +88,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			Always
 		}
 
-		private readonly Kit.Utility.Settings settings;
+		private readonly ISettings settings;
 
 		/********************************************************************/
 		/// <summary>
@@ -94,8 +97,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/********************************************************************/
 		public SidPlaySettings()
 		{
-			settings = new Kit.Utility.Settings("SidPlay");
-			settings.LoadSettings();
+			settings = DependencyInjection.GetDefaultProvider().GetService<ISettings>();
+			settings.LoadSettings("SidPlay");
 
 			// Remove obsolete settings
 			settings.RemoveEntry("Emulator", "MemoryModel");
@@ -118,7 +121,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Return the main settings object
 		/// </summary>
 		/********************************************************************/
-		public Kit.Utility.Settings Settings => settings;
+		public ISettings Settings => settings;
 
 
 

@@ -9,8 +9,11 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualBasic.ApplicationServices;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
+using Polycode.NostalgicPlayer.Kit;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 {
@@ -29,6 +32,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 		{
 			try
 			{
+				// Some of the agents have their own settings. We use dependency injection
+				// to add an implementation that read these settings
+				DependencyInjection.Build(services =>
+					{
+						// We use the default NostalgicPlayer implementation
+						services.AddTransient<ISettings, Settings>();
+					}
+				);
+
 				Application.SetHighDpiMode(HighDpiMode.DpiUnaware);
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
