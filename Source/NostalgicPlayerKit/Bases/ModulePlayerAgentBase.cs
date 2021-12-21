@@ -18,7 +18,12 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 	/// </summary>
 	public abstract class ModulePlayerAgentBase : PlayerAgentBase, IModulePlayerAgent
 	{
-		private static readonly SubSongInfo subSongInfo = new SubSongInfo(1, 0); 
+		private static readonly SubSongInfo subSongInfo = new SubSongInfo(1, 0);
+
+		/// <summary>
+		/// Holds the mixer frequency. It is only set if BufferMode is set in the SupportFlags.
+		/// </summary>
+		protected uint mixerFreq;
 
 		/********************************************************************/
 		/// <summary>
@@ -109,6 +114,21 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		public virtual DurationInfo[] CalculateDuration()
 		{
 			return null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is only called if BufferMode is set in the SupportFlags. It tells
+		/// your player what frequency the NostalgicPlayer mixer is using.
+		/// You can use it if you want or you can use your own output
+		/// frequency
+		/// </summary>
+		/********************************************************************/
+		public virtual void SetOutputFrequency(uint mixerFrequency)
+		{
+			mixerFreq = mixerFrequency;
 		}
 
 

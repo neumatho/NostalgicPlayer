@@ -250,6 +250,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 			currentMixer.SetOutputFormat(outputInformation);
 			extraChannelsMixer?.SetOutputFormat(outputInformation);
+
+			lock (currentPlayer)
+			{
+				if ((currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferMode) != 0)
+					currentPlayer.SetOutputFrequency((uint)mixerFrequency);
+			}
 		}
 
 

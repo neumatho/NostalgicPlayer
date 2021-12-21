@@ -627,6 +627,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 
 		/********************************************************************/
 		/// <summary>
+		/// Sets the mixer output frequency
+		/// </summary>
+		/********************************************************************/
+		public override void SetOutputFrequency(uint mixerFrequency)
+		{
+			base.SetOutputFrequency(mixerFrequency);
+
+			engineConfig.frequency = mixerFrequency;
+			engine.Config(engineConfig, true);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// This is the main player method
 		/// </summary>
 		/********************************************************************/

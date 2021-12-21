@@ -52,6 +52,14 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		DurationInfo[] CalculateDuration();
 
 		/// <summary>
+		/// Is only called if BufferMode is set in the SupportFlags. It tells
+		/// your player what frequency the NostalgicPlayer mixer is using.
+		/// You can use it if you want or you can use your own output
+		/// frequency
+		/// </summary>
+		void SetOutputFrequency(uint mixerFrequency);
+
+		/// <summary>
 		/// This is the main player method
 		/// </summary>
 		void Play();

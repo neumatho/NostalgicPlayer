@@ -33,9 +33,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidPlayFp
 		/// Check Error for detailed message if something goes wrong
 		/// </summary>
 		/********************************************************************/
-		public bool Config(SidConfig cfg)
+		public bool Config(SidConfig cfg, bool force = false)
 		{
-			return sidPlayer.Config(cfg);
+			return sidPlayer.Config(cfg, force);
 		}
 
 

@@ -109,8 +109,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		private PdBlk pdb;
 		private Idb idb;
 
-		private uint outRate;
-
 		private bool gemx;
 		private bool dangerFreakHack;
 
@@ -457,7 +455,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			idb = new Idb();
 
 			// Initialize some of the member variables
-			outRate = 44100;
 			eClocks = 14318;
 
 			if (currentModuleType == ModuleType.Tfmx7V)
@@ -759,7 +756,7 @@ Loop:
 					if (currentSong >= 0)
 						DoTracks();
 
-					numBytes = (int)(eClocks * (outRate >> 1));
+					numBytes = (int)(eClocks * (mixerFreq >> 1));
 					eRem += (numBytes % 357955);
 					numBytes /= 357955;
 
@@ -2007,7 +2004,7 @@ Loop:
 			DoEffects(c);
 
 			// Has to be here because of if (efxRun = 1)
-			c.hw.Delta = c.CurPeriod != 0 ? (3579545 << 9) / (c.CurPeriod * outRate >> 5) : 0;
+			c.hw.Delta = c.CurPeriod != 0 ? (3579545 << 9) / (c.CurPeriod * mixerFreq >> 5) : 0;
 			c.hw.SampleStart = (int)c.SaveAddr;
 			c.hw.SampleLength = (ushort)(c.SaveLen != 0 ? c.SaveLen << 1 : 131072);
 
@@ -2698,7 +2695,7 @@ Loop:
 			IChannel channel = VirtualChannels[chan];
 
 			channel.PlaySample(outBuf[chan], 0, BufSize, 16);
-			channel.SetFrequency(outRate);
+			channel.SetFrequency(mixerFreq);
 			channel.SetVolume(256);
 
 			if (multiMode)
