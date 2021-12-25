@@ -372,6 +372,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				}
 			}
 
+			StopAndFreeModule();
+
 			switch (response)
 			{
 				// Skip
