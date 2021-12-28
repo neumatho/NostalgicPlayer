@@ -2,23 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <RootNamespace>Polycode.NostalgicPlayer.Agent.Player.SoundMon</RootNamespace>
-    <Authors>Thomas Neumann</Authors>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <RootNamespace>Polycode.NostalgicPlayer.Agent.Player.Ahx</RootNamespace>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <DocumentationFile>bin\Ahx.xml</DocumentationFile>
     <Company>Polycode</Company>
+    <Authors>Thomas Neumann</Authors>
     <Product>NostalgicPlayer</Product>
-    <Description>Plays modules of type SoundMon, both version 1.1 and 2.2</Description>
+    <Description>Plays modules of type AHX</Description>
     <Copyright>Copyright © 2021</Copyright>
-    <Version>1.0.2</Version>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\SoundMon.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\SoundMon.xml</DocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
   </PropertyGroup>
 
   <ItemGroup>

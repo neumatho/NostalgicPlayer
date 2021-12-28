@@ -66,6 +66,7 @@
     <ProjectReference Include="..\..\Agents\Output\CoreAudioSettings\CoreAudioSettings.csproj" />
     <ProjectReference Include="..\..\Agents\Output\CoreAudio\CoreAudio.csproj" />
     <ProjectReference Include="..\..\Agents\Output\DiskSaver\DiskSaver.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\Ahx\Ahx.csproj" />
     <ProjectReference Include="..\..\Agents\Players\FutureComposer\FutureComposer.csproj" />
     <ProjectReference Include="..\..\Agents\Players\JamCracker\JamCracker.csproj" />
     <ProjectReference Include="..\..\Agents\Players\MikMod\MikMod.csproj" />

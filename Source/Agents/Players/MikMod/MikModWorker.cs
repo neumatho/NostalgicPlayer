@@ -614,12 +614,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override void InitDurationCalculation(int startPosition)
+		protected override int InitDurationCalculation(int startPosition)
 		{
 			player.Init(of, (short)startPosition);
 
 			// We want to wrap the module
 			of.Wrap = true;
+
+			return startPosition;
 		}
 
 

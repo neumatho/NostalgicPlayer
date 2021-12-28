@@ -301,6 +301,15 @@
             <uap:DisplayName>Ogg Vorbis</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="ahxfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-ahx">.ahx</uap:FileType>
+              <uap:FileType ContentType="audio/x-ahx">.thx</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>AHX</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

@@ -29,6 +29,8 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 
 | Format | Extension | Converter | Player |
 | ------ | -------------- | --------- | ------ |
+| AHX 1.x | .ahx / .thx | | AHX |
+| AHX 2.x | .ahx / .thx | | AHX |
 | Asylum | .amf | MikMod Converter | MikMod |
 | Atari Octalyser | .mod | | ModTracker |
 | AudioIFF | .aiff / .aif | | Sample |

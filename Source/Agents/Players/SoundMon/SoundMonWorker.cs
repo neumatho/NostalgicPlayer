@@ -169,7 +169,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 					break;
 				}
 
-				// Actual speed
+				// Current speed
 				case 4:
 				{
 					description = Resources.IDS_BP_INFODESCLINE4;
@@ -655,9 +655,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override void InitDurationCalculation(int startPosition)
+		protected override int InitDurationCalculation(int startPosition)
 		{
 			InitializeSound(startPosition);
+
+			return startPosition;
 		}
 
 

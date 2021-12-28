@@ -746,9 +746,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override void InitDurationCalculation(int startPosition)
+		protected override int InitDurationCalculation(int startPosition)
 		{
 			InitSound(0, null, out _);
+
+			return startPosition;
 		}
 
 

@@ -551,9 +551,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override void InitDurationCalculation(int startPosition)
+		protected override int InitDurationCalculation(int startPosition)
 		{
 			InitializeSound(startPosition);
+
+			return startPosition;
 		}
 
 

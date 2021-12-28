@@ -297,7 +297,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// by using the same position array for all songs
 		/// </summary>
 		/********************************************************************/
-		protected DurationInfo[] CalculateDurationBySongPosition()
+		protected DurationInfo[] CalculateDurationBySongPosition(bool playerTellsWhenToStop = false)
 		{
 			List<DurationInfo> result = new List<DurationInfo>();
 
@@ -306,7 +306,9 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 			do
 			{
-				InitDurationCalculation(songStartPos);
+				songStartPos = InitDurationCalculation(songStartPos);
+				if (songStartPos < 0)
+					break;
 
 				int prevPos = -1;
 				float total = 0.0f;
@@ -375,7 +377,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 				CleanupDurationCalculation();
 			}
-			while (songStartPos < SongLength - 1);
+			while (playerTellsWhenToStop || (songStartPos < SongLength));
 
 			// Clear the "end" flag again, so the module don't stop playing immediately
 			HasEndReached = false;
@@ -391,8 +393,9 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected virtual void InitDurationCalculation(int startPosition)
+		protected virtual int InitDurationCalculation(int startPosition)
 		{
+			return startPosition;
 		}
 
 

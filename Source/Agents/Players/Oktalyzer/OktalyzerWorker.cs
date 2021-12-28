@@ -532,9 +532,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override void InitDurationCalculation(int startPosition)
+		protected override int InitDurationCalculation(int startPosition)
 		{
 			InitSound(0, null, out _);
+
+			return startPosition;
 		}
 
 

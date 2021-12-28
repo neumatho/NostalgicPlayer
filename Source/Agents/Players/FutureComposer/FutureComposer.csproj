@@ -8,7 +8,7 @@
     <Product>NostalgicPlayer</Product>
     <Description>Plays modules of type FutureComposer version 1.4</Description>
     <Copyright>Copyright © 2021</Copyright>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -79,6 +79,82 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Will read a line. The line is a character sequence4 which is
+		/// terminated by \0 or new-line characters
+		/// </summary>
+		/********************************************************************/
+		public string ReadLine(Encoding encoder)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			byte[] tempBuf = new byte[80];
+
+			// Read until we reach EOF or the line has been read
+			while (!EndOfStream)
+			{
+				int bytesRead = Read(tempBuf, 0, 80);
+				if (bytesRead != 0)
+				{
+					char[] chars = encoder.GetChars(tempBuf, 0, bytesRead);
+
+					// Check to see if any new lines or null terminator are found
+					bool found = false;
+					bool newLine = false;
+					int foundPos = chars.Length;
+
+					for (int i = 0; i < chars.Length; i++)
+					{
+						char chr = chars[i];
+
+						if (chr == '\r')
+						{
+							foundPos = i;
+							newLine = true;
+							continue;
+						}
+
+						if ((chr == '\n') || (chr == 0x00))
+						{
+							// Found it
+							if (!newLine)
+								foundPos = i;
+
+							found = true;
+							break;
+						}
+
+						if (newLine)
+						{
+							// Found it
+							found = true;
+							break;
+						}
+					}
+
+					sb.Append(chars, 0, foundPos);
+
+					int byteCount = encoder.GetByteCount(chars, 0, foundPos);
+					if (byteCount != bytesRead)
+					{
+						// Seek a little bit back
+						int nullCharLen = encoder.GetByteCount("\0");
+
+						Seek(-(bytesRead - byteCount - nullCharLen), SeekOrigin.Current);
+						break;
+					}
+
+					if (found)
+						break;
+				}
+			}
+
+			return sb.ToString();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will read a comment
 		/// </summary>
 		/********************************************************************/
