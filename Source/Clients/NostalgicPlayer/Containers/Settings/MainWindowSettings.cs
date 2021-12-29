@@ -107,6 +107,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
+		/// Open favorite song system window
+		/// </summary>
+		/********************************************************************/
+		public bool OpenFavoriteSongSystemWindow
+		{
+			get => settings.GetBoolEntry("Window", "FavoriteOpenWindow");
+
+			set => settings.SetBoolEntry("Window", "FavoriteOpenWindow", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Open agent windows
 		/// </summary>
 		/********************************************************************/

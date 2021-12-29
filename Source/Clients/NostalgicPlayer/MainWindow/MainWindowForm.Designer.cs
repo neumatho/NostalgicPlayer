@@ -61,8 +61,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.rewindButton = new Krypton.Toolkit.KryptonButton();
 			this.previousSongButton = new Krypton.Toolkit.KryptonButton();
 			this.previousModuleButton = new Krypton.Toolkit.KryptonButton();
-			this.loopSampleGroup = new Krypton.Toolkit.KryptonGroup();
+			this.functionsGroup = new Krypton.Toolkit.KryptonGroup();
 			this.loopCheckButton = new Krypton.Toolkit.KryptonCheckButton();
+			this.favoritesButton = new Krypton.Toolkit.KryptonButton();
 			this.sampleInfoButton = new Krypton.Toolkit.KryptonButton();
 			this.muteCheckButton = new Krypton.Toolkit.KryptonCheckButton();
 			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
@@ -86,9 +87,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			((System.ComponentModel.ISupportInitialize)(this.tapedeckGroup)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.tapedeckGroup.Panel)).BeginInit();
 			this.tapedeckGroup.Panel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.loopSampleGroup)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.loopSampleGroup.Panel)).BeginInit();
-			this.loopSampleGroup.Panel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.functionsGroup)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.functionsGroup.Panel)).BeginInit();
+			this.functionsGroup.Panel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// menuStrip
@@ -404,19 +405,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.previousModuleButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("previousModuleButton.Values.Image")));
 			this.previousModuleButton.Values.Text = "";
 			// 
-			// loopSampleGroup
+			// functionsGroup
 			// 
-			this.loopSampleGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.loopSampleGroup.Location = new System.Drawing.Point(318, 243);
-			this.loopSampleGroup.Name = "loopSampleGroup";
+			this.functionsGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.functionsGroup.Location = new System.Drawing.Point(290, 243);
+			this.functionsGroup.Name = "functionsGroup";
 			// 
 			// 
 			// 
-			this.loopSampleGroup.Panel.Controls.Add(this.loopCheckButton);
-			this.loopSampleGroup.Panel.Controls.Add(this.sampleInfoButton);
-			this.loopSampleGroup.Size = new System.Drawing.Size(62, 34);
-			this.loopSampleGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
-			this.loopSampleGroup.TabIndex = 10;
+			this.functionsGroup.Panel.Controls.Add(this.loopCheckButton);
+			this.functionsGroup.Panel.Controls.Add(this.favoritesButton);
+			this.functionsGroup.Panel.Controls.Add(this.sampleInfoButton);
+			this.functionsGroup.Size = new System.Drawing.Size(90, 34);
+			this.functionsGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
+			this.functionsGroup.TabIndex = 10;
 			// 
 			// loopCheckButton
 			// 
@@ -427,12 +429,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.loopCheckButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("loopCheckButton.Values.Image")));
 			this.loopCheckButton.Values.Text = "";
 			// 
+			// favoritesButton
+			// 
+			this.favoritesButton.Location = new System.Drawing.Point(32, 4);
+			this.favoritesButton.Name = "favoritesButton";
+			this.favoritesButton.Size = new System.Drawing.Size(24, 24);
+			this.favoritesButton.TabIndex = 1;
+			this.favoritesButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_FAVORITES;
+			this.favoritesButton.Values.Text = "";
+			// 
 			// sampleInfoButton
 			// 
-			this.sampleInfoButton.Location = new System.Drawing.Point(32, 4);
+			this.sampleInfoButton.Location = new System.Drawing.Point(60, 4);
 			this.sampleInfoButton.Name = "sampleInfoButton";
 			this.sampleInfoButton.Size = new System.Drawing.Size(24, 24);
-			this.sampleInfoButton.TabIndex = 1;
+			this.sampleInfoButton.TabIndex = 2;
 			this.sampleInfoButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("sampleInfoButton.Values.Image")));
 			this.sampleInfoButton.Values.Text = "";
 			// 
@@ -463,7 +474,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(384, 281);
 			this.Controls.Add(this.muteCheckButton);
-			this.Controls.Add(this.loopSampleGroup);
+			this.Controls.Add(this.functionsGroup);
 			this.Controls.Add(this.tapedeckGroup);
 			this.Controls.Add(this.positionTrackBar);
 			this.Controls.Add(this.listInfoGroup);
@@ -492,9 +503,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			((System.ComponentModel.ISupportInitialize)(this.tapedeckGroup.Panel)).EndInit();
 			this.tapedeckGroup.Panel.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.tapedeckGroup)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.loopSampleGroup.Panel)).EndInit();
-			this.loopSampleGroup.Panel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.loopSampleGroup)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.functionsGroup.Panel)).EndInit();
+			this.functionsGroup.Panel.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.functionsGroup)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -531,7 +542,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private KryptonButton previousSongButton;
 		private KryptonButton previousModuleButton;
 		private KryptonCheckButton pauseCheckButton;
-		private KryptonGroup loopSampleGroup;
+		private KryptonGroup functionsGroup;
 		private KryptonCheckButton loopCheckButton;
 		private KryptonButton sampleInfoButton;
 		private KryptonCheckButton muteCheckButton;
@@ -544,6 +555,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private System.Windows.Forms.Timer scrollTimer;
 		private System.Windows.Forms.Timer neverEndingTimer;
 		private KryptonContextMenu addContextMenu;
+		private KryptonButton favoritesButton;
 	}
 }
 

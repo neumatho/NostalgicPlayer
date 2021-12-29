@@ -20,6 +20,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Controls;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow;
@@ -90,7 +91,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		// Module variables
 		private ModuleListItem playItem;
-		private TimeSpan songTotalTime;
 		private int subSongMultiply;
 
 		// Information variables
@@ -132,6 +132,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private AboutWindowForm aboutWindow = null;
 		private SettingsWindowForm settingsWindow = null;
 		private ModuleInfoWindowForm moduleInfoWindow = null;
+		private FavoriteSongSystemForm favoriteSongSystemWindow = null;
 		private SampleInfoWindowForm sampleInfoWindow = null;
 
 		private readonly Dictionary<Guid, AgentSettingsWindowForm> openAgentSettings;
@@ -497,6 +498,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				SetTitle();
 				moduleListBox.EnableListNumber(optionSettings.ShowListNumber);
+
+				if (optionSettings.UseDatabase)
+				{
+					toolTip.SetToolTip(favoritesButton, Resources.IDS_TIP_MAIN_FAVORITES);
+					favoritesButton.Enabled = true;
+				}
+				else
+				{
+					toolTip.SetToolTip(favoritesButton, Resources.IDS_TIP_MAIN_FAVORITES_DISABLED);
+					favoritesButton.Enabled = false;
+
+					if (IsFavoriteSongSystemWindowOpen())
+						favoriteSongSystemWindow.Close();
+				}
 			}
 		}
 
@@ -534,10 +549,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				// And show it
 				UpdateTimes();
-
-				// Update database if enabled
-				if (optionSettings.UseDatabase)
-					database.StoreInformation(listItem.ListItem.FullPath, new ModuleDatabaseInfo(time));
 			}
 		}
 
@@ -834,7 +845,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			previousModuleButton.Click += PreviousModuleButton_Click;
 			nextModuleButton.Click += NextModuleButton_Click;
 
-			// Loop/sample group
+			// Functions group
+			favoritesButton.Click += FavoritesButton_Click;
 			sampleInfoButton.Click += SampleInfoButton_Click;
 
 			// Never ending
@@ -1189,8 +1201,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				// Remember the module list
 				RememberModuleList(rememberSelected, rememberPosition, rememberSong);
 
-				// Save database
-				SaveDatabase();
+				// Close down the database
+				CloseDatabase();
 
 				// Save and cleanup the settings
 				CleanupSettings();
@@ -2697,7 +2709,31 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		}
 		#endregion
 
-		#region Loop / sample events
+		#region Functions events
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user clicks on the favorite song system button
+		/// </summary>
+		/********************************************************************/
+		private void FavoritesButton_Click(object sender, EventArgs e)
+		{
+			if (IsFavoriteSongSystemWindowOpen())
+			{
+				if (favoriteSongSystemWindow.WindowState == FormWindowState.Minimized)
+					favoriteSongSystemWindow.WindowState = FormWindowState.Normal;
+
+				favoriteSongSystemWindow.Activate();
+			}
+			else
+			{
+				favoriteSongSystemWindow = new FavoriteSongSystemForm(this, database, optionSettings);
+				favoriteSongSystemWindow.Disposed += (o, args) => { favoriteSongSystemWindow = null; };
+				favoriteSongSystemWindow.Show();
+			}
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called when the user clicks on the sample information button
@@ -2899,15 +2935,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Save the database to disk
+		/// Close down the database handler
 		/// </summary>
 		/********************************************************************/
-		private void SaveDatabase()
+		private void CloseDatabase()
 		{
 			if (optionSettings.UseDatabase)
 				database.SaveDatabase();
 			else
 				database.DeleteDatabase();
+
+			database.CloseDown();
 		}
 
 		#region Settings
@@ -3220,6 +3258,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				moduleInfoWindow.Show();
 			}
 
+			if (mainWindowSettings.OpenFavoriteSongSystemWindow)
+			{
+				favoriteSongSystemWindow = new FavoriteSongSystemForm(this, database, optionSettings);
+				favoriteSongSystemWindow.Show();
+			}
+
 			if (mainWindowSettings.OpenSampleInformationWindow)
 			{
 				sampleInfoWindow = new SampleInfoWindowForm(agentManager, moduleHandler, this, optionSettings);
@@ -3322,6 +3366,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			moduleInfoWindow = null;
 			mainWindowSettings.OpenModuleInformationWindow = openAgain;
 
+			// Close the favorite song system window
+			openAgain = IsFavoriteSongSystemWindowOpen();
+			if (openAgain)
+				favoriteSongSystemWindow.Close();
+
+			favoriteSongSystemWindow = null;
+			mainWindowSettings.OpenFavoriteSongSystemWindow = openAgain;
+
 			// Close the sample information window
 			openAgain = IsSampleInfoWindowOpen();
 			if (openAgain)
@@ -3345,6 +3397,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			if (IsModuleInfoWindowOpen())
 				yield return moduleInfoWindow;
+
+			if (IsFavoriteSongSystemWindowOpen())
+				yield return favoriteSongSystemWindow;
 
 			if (IsSampleInfoWindowOpen())
 				yield return sampleInfoWindow;
@@ -3374,13 +3429,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Will make sure to refresh all the windows
 		/// </summary>
 		/********************************************************************/
-		private void RefreshWindows()
+		private void RefreshWindows(bool onLoad)
 		{
 			if (IsModuleInfoWindowOpen())
 				moduleInfoWindow.RefreshWindow();
 
 			if (IsSampleInfoWindowOpen())
 				sampleInfoWindow.RefreshWindow();
+
+			if (onLoad && IsFavoriteSongSystemWindowOpen())
+				favoriteSongSystemWindow.RefreshWindow();
 
 			if (IsSettingsWindowOpen())
 				settingsWindow.RefreshWindow();
@@ -3432,6 +3490,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private bool IsModuleInfoWindowOpen()
 		{
 			return (moduleInfoWindow != null) && !moduleInfoWindow.IsDisposed;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check if the favorite song system window is open
+		/// </summary>
+		/********************************************************************/
+		private bool IsFavoriteSongSystemWindowOpen()
+		{
+			return (favoriteSongSystemWindow != null) && !favoriteSongSystemWindow.IsDisposed;
 		}
 
 
@@ -3501,9 +3571,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Get module information
 			ModuleInfoFloating playingModuleInfo = moduleHandler.PlayingModuleInformation;
 
-			// Get the total time of the playing song
-			songTotalTime = playingModuleInfo.DurationInfo?.TotalTime ?? new TimeSpan(0);
-
 			// Change the time to the position time
 			SetPositionTime(playingModuleInfo.SongPosition);
 
@@ -3514,7 +3581,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			SetTitle();
 
 			// Update the list item
-			SetTimeOnItem(playItem, songTotalTime);
+			SetTimeOnItem(playItem, playingModuleInfo.SongTotalTime);
 
 			if (playItem != null)
 			{
@@ -3834,7 +3901,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				else
 				{
 					// Calculate the remaining time
-					TimeSpan tempSpan = songTotalTime - timeOccurred;
+					TimeSpan tempSpan = playingModuleInfo.SongTotalTime - timeOccurred;
 
 					// Check to see if we got a negative number
 					if (tempSpan.TotalMilliseconds < 0)
@@ -4071,8 +4138,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				// Initialize controls
 				InitControls();
 
+				// Update database
+				UpdateDatabase(listItem);
+
 				// And refresh other windows
-				RefreshWindows();
+				RefreshWindows(true);
 			}
 			else
 			{
@@ -4106,8 +4176,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Initialize controls
 			InitControls();
 
+			// Update database
+			UpdateDatabase(listItem);
+
 			// And refresh other windows
-			RefreshWindows();
+			RefreshWindows(true);
 		}
 
 
@@ -4138,7 +4211,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			SetTitle();
 
 			// Update the other windows
-			RefreshWindows();
+			RefreshWindows(false);
 		}
 
 
@@ -4158,6 +4231,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			{
 				// Initialize all the controls
 				InitControls();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Update the database
+		/// </summary>
+		/********************************************************************/
+		private void UpdateDatabase(ModuleListItem listItem)
+		{
+			// Update database if enabled
+			if (optionSettings.UseDatabase)
+			{
+				ModuleDatabaseInfo moduleDatabaseInfo = database.RetrieveInformation(listItem.ListItem.FullPath);
+				if (moduleDatabaseInfo != null)
+					moduleDatabaseInfo = new ModuleDatabaseInfo(moduleHandler.PlayingModuleInformation.SongTotalTime, moduleDatabaseInfo.ListenCount + 1, DateTime.Now);
+				else
+					moduleDatabaseInfo = new ModuleDatabaseInfo(moduleHandler.PlayingModuleInformation.SongTotalTime, 1, DateTime.Now);
+
+				database.StoreInformation(listItem.ListItem.FullPath, moduleDatabaseInfo);
 			}
 		}
 
@@ -4651,7 +4746,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Will add all the given files to the module list
 		/// </summary>
 		/********************************************************************/
-		private void AddFilesToList(string[] files, int startIndex = -1, bool checkForList = false)
+		public void AddFilesToList(string[] files, int startIndex = -1, bool checkForList = false)
 		{
 			List<ModuleListItem> itemList = new List<ModuleListItem>();
 

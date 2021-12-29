@@ -112,12 +112,12 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="IDB_ABOUT_LOGO" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\AboutLogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -141,6 +141,9 @@
   </data>
   <data name="IDB_FAST_FORWARD" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\FastForward.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IDB_FAVORITES" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Favorites.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="IDB_FILE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\File.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -322,6 +325,9 @@ Formats supported:
   <data name="IDS_AGENTSETTINGS_TITLE" xml:space="preserve">
     <value>Settings for {0}</value>
   </data>
+  <data name="IDS_BUT_NO" xml:space="preserve">
+    <value>No</value>
+  </data>
   <data name="IDS_BUT_OK" xml:space="preserve">
     <value>Ok</value>
   </data>
@@ -333,6 +339,9 @@ Formats supported:
   </data>
   <data name="IDS_BUT_STOP" xml:space="preserve">
     <value>Sto&amp;p playing</value>
+  </data>
+  <data name="IDS_BUT_YES" xml:space="preserve">
+    <value>Yes</value>
   </data>
   <data name="IDS_DISKMENU_APPEND" xml:space="preserve">
     <value>Append list</value>
@@ -392,6 +401,54 @@ Formats supported:
   </data>
   <data name="IDS_ERR_UNKNOWN_LIST_VERSION" xml:space="preserve">
     <value>Unknown version ({0}) of a NPML list.</value>
+  </data>
+  <data name="IDS_FAVORITE_BUTTON_ADD" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="IDS_FAVORITE_BUTTON_REMOVE" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="IDS_FAVORITE_BUTTON_RESET" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="IDS_FAVORITE_COLUMN_COUNT" xml:space="preserve">
+    <value>Times played</value>
+  </data>
+  <data name="IDS_FAVORITE_COLUMN_NAME" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="IDS_FAVORITE_LIST" xml:space="preserve">
+    <value />
+  </data>
+  <data name="IDS_FAVORITE_RESET" xml:space="preserve">
+    <value>Are you sure to want to remove all favorites?</value>
+  </data>
+  <data name="IDS_FAVORITE_SHOW_BOTTOM10" xml:space="preserve">
+    <value>Bottom 10</value>
+  </data>
+  <data name="IDS_FAVORITE_SHOW_BOTTOM100" xml:space="preserve">
+    <value>Bottom 100</value>
+  </data>
+  <data name="IDS_FAVORITE_SHOW_BOTTOM50" xml:space="preserve">
+    <value>Bottom 50</value>
+  </data>
+  <data name="IDS_FAVORITE_SHOW_BOTTOMX" xml:space="preserve">
+    <value>Bottom xxx</value>
+  </data>
+  <data name="IDS_FAVORITE_SHOW_TOP10" xml:space="preserve">
+    <value>Top 10</value>
+  </data>
+  <data name="IDS_FAVORITE_SHOW_TOP100" xml:space="preserve">
+    <value>Top 100</value>
+  </data>
+  <data name="IDS_FAVORITE_SHOW_TOP50" xml:space="preserve">
+    <value>Top 50</value>
+  </data>
+  <data name="IDS_FAVORITE_SHOW_TOPX" xml:space="preserve">
+    <value>Top xxx</value>
+  </data>
+  <data name="IDS_FAVORITE_TITLE" xml:space="preserve">
+    <value>Favorite song system</value>
   </data>
   <data name="IDS_HELP_TITLE" xml:space="preserve">
     <value>Help</value>
@@ -801,6 +858,15 @@ information</value>
   <data name="IDS_TIMEFORMAT_SMALL" xml:space="preserve">
     <value>m\:ss</value>
   </data>
+  <data name="IDS_TIP_FAVORITE_ADD" xml:space="preserve">
+    <value>Adds selected modules to the current play list</value>
+  </data>
+  <data name="IDS_TIP_FAVORITE_REMOVE" xml:space="preserve">
+    <value>Removes the selected modules from the favorite list</value>
+  </data>
+  <data name="IDS_TIP_FAVORITE_RESET" xml:space="preserve">
+    <value>Clear the whole favorite list</value>
+  </data>
   <data name="IDS_TIP_MAIN_ADD" xml:space="preserve">
     <value>Add new modules to the list.
 The modules will be added in the bottom or
@@ -817,6 +883,14 @@ all the selected modules will be moved to the bottom of the list</value>
   <data name="IDS_TIP_MAIN_EJECT" xml:space="preserve">
     <value>Pressing once, ejects the current playing module.
 Pressing twice, it will clear the module list</value>
+  </data>
+  <data name="IDS_TIP_MAIN_FAVORITES" xml:space="preserve">
+    <value>Opens the favorite song system window where you can
+see the number of times of the modules you have played</value>
+  </data>
+  <data name="IDS_TIP_MAIN_FAVORITES_DISABLED" xml:space="preserve">
+    <value>To enable this feature, you need to
+activate the database in the settings</value>
   </data>
   <data name="IDS_TIP_MAIN_FORWARD" xml:space="preserve">
     <value>Moves to the next position.

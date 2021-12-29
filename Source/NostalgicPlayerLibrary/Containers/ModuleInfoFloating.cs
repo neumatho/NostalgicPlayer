@@ -92,6 +92,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 
 		/********************************************************************/
 		/// <summary>
+		/// Return the total time of the current song
+		/// </summary>
+		/********************************************************************/
+		public TimeSpan SongTotalTime => DurationInfo?.TotalTime ?? new TimeSpan(0);
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Hold the current song position of the current module
 		/// </summary>
 		/********************************************************************/

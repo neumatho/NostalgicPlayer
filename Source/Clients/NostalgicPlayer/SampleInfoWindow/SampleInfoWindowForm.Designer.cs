@@ -62,6 +62,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
 			this.SuspendLayout();
 			// 
+			// kryptonManager
+			// 
+			this.kryptonManager.GlobalPaletteMode = Krypton.Toolkit.PaletteModeManager.Office2010Blue;
+			// 
 			// navigator
 			// 
 			this.navigator.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 

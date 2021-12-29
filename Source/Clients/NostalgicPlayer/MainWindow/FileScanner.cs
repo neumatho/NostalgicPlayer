@@ -203,13 +203,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						continue;
 
 					// Now check if the file already have a time in the database
-					TimeSpan totalTime = CheckDatabase(fileName);
+					ModuleDatabaseInfo moduleDatabaseInfo = database.RetrieveInformation(fileName);
 
 					// Did we get the total time
-					if (totalTime.Ticks == 0)
+					if (moduleDatabaseInfo == null)
 					{
 						// No, try to load the file and let the player return the total time
-						totalTime = GetPlayerTime(fileName);
+						moduleDatabaseInfo = new ModuleDatabaseInfo(GetPlayerTime(fileName), 0, DateTime.MinValue);
+
+						// Update the information in the database
+						database.StoreInformation(fileName, moduleDatabaseInfo);
 					}
 
 					// Update the list item
@@ -223,47 +226,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							if (listItem.ListItem.FullPath == fileName)
 							{
 								// Yes, set the time
-								mainWindowForm.SetTimeOnItem(listItem, totalTime);
+								mainWindowForm.SetTimeOnItem(listItem, moduleDatabaseInfo.Duration);
 							}
 						}
 					}), index);
-
-					// Update the information in the database
-					StoreInDatabase(fileName, totalTime);
 				}
 			}
 			catch (Exception)
 			{
 				// Ignore any exception
 			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Check the database to see if a duration is stored there
-		/// </summary>
-		/********************************************************************/
-		private TimeSpan CheckDatabase(string fileName)
-		{
-			ModuleDatabaseInfo databaseInfo = database.RetrieveInformation(fileName);
-			if (databaseInfo == null)
-				return new TimeSpan(0);
-
-			return databaseInfo.Duration;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Update the database with the duration
-		/// </summary>
-		/********************************************************************/
-		private void StoreInDatabase(string fileName, TimeSpan totalTime)
-		{
-			database.StoreInformation(fileName, new ModuleDatabaseInfo(totalTime));
 		}
 
 
@@ -292,7 +264,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 									return new TimeSpan(0);
 							}
 
-							return player.PlayingModuleInformation.DurationInfo?.TotalTime ?? new TimeSpan(0);
+							return player.PlayingModuleInformation.SongTotalTime;
 						}
 						finally
 						{

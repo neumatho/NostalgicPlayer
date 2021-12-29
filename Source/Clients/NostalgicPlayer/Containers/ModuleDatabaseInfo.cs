@@ -20,9 +20,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModuleDatabaseInfo(TimeSpan duration)
+		public ModuleDatabaseInfo(TimeSpan duration, int listenCount, DateTime lastLoaded)
 		{
 			Duration = duration;
+			ListenCount = listenCount;
+			LastLoaded = lastLoaded;
 		}
 
 
@@ -33,6 +35,30 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers
 		/// </summary>
 		/********************************************************************/
 		public TimeSpan Duration
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the number of times this module has been loaded
+		/// </summary>
+		/********************************************************************/
+		public int ListenCount
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the last time this module was loaded
+		/// </summary>
+		/********************************************************************/
+		public DateTime LastLoaded
 		{
 			get;
 		}

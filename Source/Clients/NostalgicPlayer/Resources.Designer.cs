@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -136,6 +136,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static System.Drawing.Bitmap IDB_FAST_FORWARD {
             get {
                 object obj = ResourceManager.GetObject("IDB_FAST_FORWARD", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IDB_FAVORITES {
+            get {
+                object obj = ResourceManager.GetObject("IDB_FAVORITES", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -483,6 +493,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        internal static string IDS_BUT_NO {
+            get {
+                return ResourceManager.GetString("IDS_BUT_NO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ok.
         /// </summary>
         internal static string IDS_BUT_OK {
@@ -515,6 +534,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_BUT_STOP {
             get {
                 return ResourceManager.GetString("IDS_BUT_STOP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        internal static string IDS_BUT_YES {
+            get {
+                return ResourceManager.GetString("IDS_BUT_YES", resourceCulture);
             }
         }
         
@@ -676,6 +704,150 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_ERR_UNKNOWN_LIST_VERSION {
             get {
                 return ResourceManager.GetString("IDS_ERR_UNKNOWN_LIST_VERSION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add.
+        /// </summary>
+        internal static string IDS_FAVORITE_BUTTON_ADD {
+            get {
+                return ResourceManager.GetString("IDS_FAVORITE_BUTTON_ADD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove.
+        /// </summary>
+        internal static string IDS_FAVORITE_BUTTON_REMOVE {
+            get {
+                return ResourceManager.GetString("IDS_FAVORITE_BUTTON_REMOVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset.
+        /// </summary>
+        internal static string IDS_FAVORITE_BUTTON_RESET {
+            get {
+                return ResourceManager.GetString("IDS_FAVORITE_BUTTON_RESET", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Times played.
+        /// </summary>
+        internal static string IDS_FAVORITE_COLUMN_COUNT {
+            get {
+                return ResourceManager.GetString("IDS_FAVORITE_COLUMN_COUNT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        internal static string IDS_FAVORITE_COLUMN_NAME {
+            get {
+                return ResourceManager.GetString("IDS_FAVORITE_COLUMN_NAME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string IDS_FAVORITE_LIST {
+            get {
+                return ResourceManager.GetString("IDS_FAVORITE_LIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure to want to remove all favorites?.
+        /// </summary>
+        internal static string IDS_FAVORITE_RESET {
+            get {
+                return ResourceManager.GetString("IDS_FAVORITE_RESET", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bottom 10.
+        /// </summary>
+        internal static string IDS_FAVORITE_SHOW_BOTTOM10 {
+            get {
+                return ResourceManager.GetString("IDS_FAVORITE_SHOW_BOTTOM10", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bottom 100.
+        /// </summary>
+        internal static string IDS_FAVORITE_SHOW_BOTTOM100 {
+            get {
+                return ResourceManager.GetString("IDS_FAVORITE_SHOW_BOTTOM100", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bottom 50.
+        /// </summary>
+        internal static string IDS_FAVORITE_SHOW_BOTTOM50 {
+            get {
+                return ResourceManager.GetString("IDS_FAVORITE_SHOW_BOTTOM50", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bottom xxx.
+        /// </summary>
+        internal static string IDS_FAVORITE_SHOW_BOTTOMX {
+            get {
+                return ResourceManager.GetString("IDS_FAVORITE_SHOW_BOTTOMX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Top 10.
+        /// </summary>
+        internal static string IDS_FAVORITE_SHOW_TOP10 {
+            get {
+                return ResourceManager.GetString("IDS_FAVORITE_SHOW_TOP10", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Top 100.
+        /// </summary>
+        internal static string IDS_FAVORITE_SHOW_TOP100 {
+            get {
+                return ResourceManager.GetString("IDS_FAVORITE_SHOW_TOP100", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Top 50.
+        /// </summary>
+        internal static string IDS_FAVORITE_SHOW_TOP50 {
+            get {
+                return ResourceManager.GetString("IDS_FAVORITE_SHOW_TOP50", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Top xxx.
+        /// </summary>
+        internal static string IDS_FAVORITE_SHOW_TOPX {
+            get {
+                return ResourceManager.GetString("IDS_FAVORITE_SHOW_TOPX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Favorite song system.
+        /// </summary>
+        internal static string IDS_FAVORITE_TITLE {
+            get {
+                return ResourceManager.GetString("IDS_FAVORITE_TITLE", resourceCulture);
             }
         }
         
@@ -1898,6 +2070,33 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Adds selected modules to the current play list.
+        /// </summary>
+        internal static string IDS_TIP_FAVORITE_ADD {
+            get {
+                return ResourceManager.GetString("IDS_TIP_FAVORITE_ADD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Removes the selected modules from the favorite list.
+        /// </summary>
+        internal static string IDS_TIP_FAVORITE_REMOVE {
+            get {
+                return ResourceManager.GetString("IDS_TIP_FAVORITE_REMOVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear the whole favorite list.
+        /// </summary>
+        internal static string IDS_TIP_FAVORITE_RESET {
+            get {
+                return ResourceManager.GetString("IDS_TIP_FAVORITE_RESET", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add new modules to the list.
         ///The modules will be added in the bottom or
         ///right before the first selected module in the list.
@@ -1935,6 +2134,26 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_TIP_MAIN_EJECT {
             get {
                 return ResourceManager.GetString("IDS_TIP_MAIN_EJECT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Opens the favorite song system window where you can
+        ///see the number of times of the modules you have played.
+        /// </summary>
+        internal static string IDS_TIP_MAIN_FAVORITES {
+            get {
+                return ResourceManager.GetString("IDS_TIP_MAIN_FAVORITES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To enable this feature, you need to
+        ///activate the database in the settings.
+        /// </summary>
+        internal static string IDS_TIP_MAIN_FAVORITES_DISABLED {
+            get {
+                return ResourceManager.GetString("IDS_TIP_MAIN_FAVORITES_DISABLED", resourceCulture);
             }
         }
         
