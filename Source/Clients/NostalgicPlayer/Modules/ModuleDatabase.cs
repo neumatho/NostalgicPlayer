@@ -464,10 +464,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 			{
 				bool stillRunning = true;
 				WaitHandle[] waitArray = { queueSemaphore, shutdownEvent, cleanupEvent };
+				DateTime lastSaved = DateTime.Now;
 
 				while (stillRunning)
 				{
-					int waitResult = WaitHandle.WaitAny(waitArray, MinutesBetweenEachSave * 60 * 1000);
+					int waitResult = WaitHandle.WaitAny(waitArray, 1 * 60 * 1000);
 
 					switch (waitResult)
 					{
@@ -504,7 +505,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 						// Save the database
 						case WaitHandle.WaitTimeout:
 						{
-							SaveDatabase();
+							// Is it time to save the database
+							if (lastSaved.AddMinutes(MinutesBetweenEachSave) <= DateTime.Now)
+							{
+								SaveDatabase();
+								lastSaved = DateTime.Now;
+							}
 							break;
 						}
 					}
