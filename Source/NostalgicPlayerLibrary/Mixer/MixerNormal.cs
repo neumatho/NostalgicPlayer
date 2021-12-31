@@ -24,11 +24,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private const int ClickShift = 6;
 		private const int ClickBuffer = 1 << ClickShift;
 
-		private long idxSize;			// The current size of the playing sample in fixed point
-		private long idxLoopPos;		// The loop start position in fixed point
-		private long idxLoopEnd;		// The loop end position in fixed point
-		private long idxReleaseEnd;		// The release end position in fixed point
-
 		/********************************************************************/
 		/// <summary>
 		/// Will initialize mixer stuff
@@ -124,11 +119,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						vnf.LeftVolumeSelected = vol;
 					}
 
-					idxSize = vnf.Size != 0 ? ((long)vnf.Size << FracBits) - 1 : 0;
-					idxLoopEnd = vnf.RepeatEnd != 0 ? ((long)vnf.RepeatEnd << FracBits) - 1 : 0;
-					idxLoopPos = (long)vnf.RepeatPosition << FracBits;
-					idxReleaseEnd = vnf.ReleaseEnd != 0 ? ((long)vnf.ReleaseEnd << FracBits) - 1 : 0;
-
 					AddChannel(ref vnf, dest, offset, todo, mode);
 				}
 			}
@@ -151,6 +141,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				vnf.Active = false;
 				return;
 			}
+
+			// The current size of the playing sample in fixed point
+			long idxSize = vnf.Size != 0 ? ((long)vnf.Size << FracBits) - 1 : 0;
+
+			// The loop start position in fixed point
+			long idxLoopPos = (long)vnf.RepeatPosition << FracBits;
+
+			// The loop end position in fixed point
+			long idxLoopEnd = vnf.RepeatEnd != 0 ? ((long)vnf.RepeatEnd << FracBits) - 1 : 0;
+
+			// The release end position in fixed point
+			long idxReleaseEnd = vnf.ReleaseEnd != 0 ? ((long)vnf.ReleaseEnd << FracBits) - 1 : 0;
 
 			// Update the 'current' index so the sample loops, or
 			// stops playing if it reached the end of the sample
@@ -197,7 +199,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						if (vnf.Current >= idxLoopEnd)
 						{
 							// Do we have a loop address?
-							if (vnf.LoopAddress == null)
+							if (vnf.NewLoopAddress == null)
 							{
 								vnf.Current = 0;
 								vnf.Active = false;
@@ -205,7 +207,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 							}
 
 							// Copy the loop address
-							s = vnf.Address = vnf.LoopAddress;
+							s = vnf.Address = vnf.LoopAddress = vnf.NewLoopAddress;
+
+							// Recalculate loop indexes
+							long idxNewLoopPos = (long)vnf.NewRepeatPosition << FracBits;
+							long idxNewLoopEnd = vnf.NewRepeatEnd != 0 ? ((long)vnf.NewRepeatEnd << FracBits) - 1 : 0;
 
 							// Should we release the sample?
 							if (vnf.ReleaseEnd != 0)
@@ -222,7 +228,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 								{
 									// Sample is doing bidirectional loops, so 'bounce'
 									// the current index against the idxLoopEnd
-									vnf.Current = idxLoopEnd - (vnf.Current - idxLoopEnd);
+									vnf.Current = idxNewLoopEnd - (vnf.Current - idxLoopEnd);
 									vnf.Increment = -vnf.Increment;
 									vnf.Flags |= SampleFlag.Reverse;
 								}
@@ -230,8 +236,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 								{
 									// Normal looping, so set the
 									// current position to loopEnd index
-									vnf.Current = idxLoopPos + (vnf.Current - idxLoopEnd);
+									vnf.Current = idxNewLoopPos + (vnf.Current - idxLoopEnd);
 								}
+
+								// Copy new loop points
+								vnf.RepeatPosition = vnf.NewRepeatPosition;
+								vnf.RepeatEnd = vnf.NewRepeatEnd;
+
+								idxLoopPos = idxNewLoopPos;
+								idxLoopEnd = idxNewLoopEnd;
 							}
 						}
 					}

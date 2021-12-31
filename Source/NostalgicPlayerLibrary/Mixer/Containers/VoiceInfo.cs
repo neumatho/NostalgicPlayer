@@ -20,11 +20,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers
 		public bool Active;					// True -> sample is playing
 		public SampleFlag Flags;			// 16/8 bits, looping/one-shot etc.
 		public Array Address;				// Address to the sample
-		public Array LoopAddress;			// Address to the loop point (mostly the same as Address above)
 		public uint Start;					// Start index
 		public uint Size;					// Sample size
+		public Array LoopAddress;			// Address to the loop point (mostly the same as Address above)
 		public uint RepeatPosition;			// Loop start
 		public uint RepeatEnd;				// Loop end
+		public Array NewLoopAddress;		// Address to loop point when loop is restarted
+		public uint NewRepeatPosition;		// New loop start when loop is restarted
+		public uint NewRepeatEnd;			// New loop end when loop is restarted
 		public uint ReleaseEnd;				// Release end
 		public uint Frequency;				// Current frequency
 		public int Volume;					// Current volume
