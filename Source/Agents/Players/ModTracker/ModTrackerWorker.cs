@@ -43,7 +43,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			{ ModTracker.Agent13Id, ModuleType.MultiTracker },
 			{ ModTracker.Agent14Id, ModuleType.Octalyser },
 			{ ModTracker.Agent15Id, ModuleType.ModsGrave },
-			{ ModTracker.Agent16Id, ModuleType.DigitalTracker }
+			{ ModTracker.Agent16Id, ModuleType.DigitalTracker },
+			{ ModTracker.Agent17Id, ModuleType.HisMastersNoise }
 		};
 
 		private const int NumberOfNotes = 7 * 12;
@@ -100,6 +101,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		private bool patternLoopHandled;	// Indicate if an E6x effect has been handled on the same line. Only used for Atari Octalyser modules
 
 		private AmSample[] amData;
+		private HmnSynthData[] hmnSynthData;
 
 		private readonly Random rnd;
 
@@ -419,7 +421,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			}
 
 			if (currentModuleType == ModuleType.StarTrekker)
-				AmHandler();
+				StarAmHandler();
+
+			// Set volume on all channels
+			for (int i = 0; i < channelNum; i++)
+			{
+				IChannel chan = VirtualChannels[i];
+				ModChannel modChan = channels[i];
+
+				chan.SetVolume((ushort)((modChan.Volume * modChan.CalculatedVolume / 64) * 4));
+			}
 
 			// If we have reached the end of the module, reset speed and tempo
 			if (endReached)
@@ -525,9 +536,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					{
 						Name = sample.SampleName,
 						Flags = sample.LoopLength <= 1 ? SampleInfo.SampleFlags.None : SampleInfo.SampleFlags.Loop,
-						Type = (amData?[i] != null) && (amData[i].Mark == 0x414d) ? SampleInfo.SampleType.Synth : SampleInfo.SampleType.Sample,
+						Type = ((amData?[i] != null) && (amData[i].Mark == 0x414d)) || ((hmnSynthData != null) && (hmnSynthData[i] != null)) ? SampleInfo.SampleType.Synth : SampleInfo.SampleType.Sample,
 						BitSize = 8,
-						MiddleC = (int)(7093789.2 / (Tables.Periods[sample.FineTune, 3 * 12] * 2)),
+						MiddleC = (int)(7093789.2 / ((currentModuleType == ModuleType.HisMastersNoise ? 428 + (428 * sample.FineTuneHmn) / 256 : Tables.Periods[sample.FineTune, 3 * 12]) * 2)),
 						Volume = sample.Volume * 4,
 						Panning = -1,
 						Sample = sample.Data,
@@ -1028,7 +1039,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			ModuleType retVal = ModuleType.Unknown;
 
 			if ((mark == 0x4d2e4b2e) || (mark == 0x4d214b21) ||		// M.K. || M!K!
-				(mark == 0x4d264b21) ||								// M&K! (Echobea3.mod)
+				(mark == 0x4d264b21) ||								// M&K! (Echobea3.mod and some His Master's Noise modules)
 				(mark == 0x4c415244) ||								// LARD (judgement_day_gvine.mod)
 				(mark == 0x4e534d53))								// NSMS (kingdomofpleasure.mod)
 			{
@@ -1096,7 +1107,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 						retVal = ModuleType.ModsGrave;
 				}
 
-				if (retVal != ModuleType.ModsGrave)
+				if ((retVal != ModuleType.ModsGrave) && (mark != 0x4d264b21))	// Skip check for most likely His Master's Noise format
 				{
 					// Check the patterns for any BPM speed effects or ExtraEffect effects
 					// just to be sure it's not a NoiseTracker module.
@@ -1186,7 +1197,18 @@ stopLoop:
 
 						for (int i = 0; i < 31; i++)
 						{
-							if ((moduleStream.Read_UINT8() & 0x0f) != 0)
+							byte fineTune = moduleStream.Read_UINT8();
+
+							// Some His Master's Noise modules uses the "M&K!" mark, so check
+							// for that (this is not the real format, which is "FEST", but I do
+							// not know why some download web pages has modules in "M&K!" format)
+							if (((fineTune & 0xf0) != 0) && (mark == 0x4d264b21))
+							{
+								retVal = ModuleType.HisMastersNoise;
+								break;
+							}
+
+							if ((fineTune & 0x0f) != 0)
 							{
 								retVal = ModuleType.ProTracker;
 								break;
@@ -1206,6 +1228,8 @@ stopLoop:
 					retVal = ModuleType.StarTrekker8;
 				else if ((mark == 0x43443831) || (mark == 0x43443631))		// CD81 || CD61
 					retVal = ModuleType.Octalyser;
+				else if (mark == 0x46455354)								// FEST
+					retVal = ModuleType.HisMastersNoise;
 				else if (((mark & 0x00ffffff) == 0x0043484e) || ((mark & 0x0000ffff) == 0x00004348) || ((mark & 0xffffff00) == 0x54445a00))		// \0CHN || \0\0CH || TDZ\0 (this is TakeTracker only)
 					retVal = ModuleType.FastTracker;
 				else if ((mark == 0x46413034) || (mark == 0x46413036) || (mark == 0x46413038))	// FA04 || FA06 || FA08
@@ -1256,6 +1280,12 @@ stopLoop:
 				ModuleStream moduleStream = fileInfo.ModuleStream;
 				Encoding encoder = IsPcTracker() || (currentModuleType == ModuleType.ModsGrave) ? EncoderCollection.Dos : IsAtariTracker() ? EncoderCollection.Atari : EncoderCollection.Amiga;
 
+				// This is only used for His Master's Noise and contains patterns
+				// that holds synth wave forms instead of real pattern data.
+				// Therefore this list holds the patterns that should not be loaded
+				// normally
+				HashSet<int> skipPatterns = new HashSet<int>();
+
 				// Find out the number of samples
 				sampleNum = (ushort)((currentModuleType <= ModuleType.SoundTracker2x) ? 15 : 31);
 
@@ -1304,9 +1334,36 @@ stopLoop:
 					if ((repeatStart + repeatLength) > length)
 						repeatLength = (ushort)(length - repeatStart);
 
-					// Do the recognized format support fine tune?
-					if (IsSoundTracker() || IsNoiseTracker() || (currentModuleType == ModuleType.ModsGrave))
-						fineTune = 0;
+					// Check for synth sounds
+					if (currentModuleType == ModuleType.HisMastersNoise)
+					{
+						// If sample name starts with 'Mupp', it is a synth sample
+						// and the name contains extra information
+						if ((buf[0] == 0x4d) && (buf[1] == 0x75) && (buf[2] == 0x70) && (buf[3] == 0x70))
+						{
+							// Make sure we have a place to store the data
+							if (hmnSynthData == null)
+								hmnSynthData = new HmnSynthData[31];
+
+							HmnSynthData synthData = hmnSynthData[i] = new HmnSynthData();
+
+							synthData.PatternNumber = buf[4];		// Wave form data are stored in a pattern
+							synthData.DataLoopStart = buf[5];
+							synthData.DataLoopEnd = buf[6];
+
+							// Clear the rest of the sample name
+							buf[4] = 0x00;
+
+							// Make the pattern to be skipped
+							skipPatterns.Add(synthData.PatternNumber);
+						}
+					}
+					else
+					{
+						// Do the recognized format support fine tune?
+						if (IsSoundTracker() || IsNoiseTracker() || (currentModuleType == ModuleType.ModsGrave))
+							fineTune = 0;
+					}
 
 					if (moduleStream.EndOfStream)
 					{
@@ -1322,8 +1379,18 @@ stopLoop:
 					sample.Length = length;
 					sample.LoopStart = repeatStart;
 					sample.LoopLength = repeatLength;
-					sample.FineTune = (byte)(fineTune & 0x0f);
 					sample.Volume = volume;
+
+					if (currentModuleType == ModuleType.HisMastersNoise)
+					{
+						sample.FineTune = 0;
+						sample.FineTuneHmn = (sbyte)fineTune;
+					}
+					else
+					{
+						sample.FineTune = (byte)(fineTune & 0x0f);
+						sample.FineTuneHmn = 0;
+					}
 				}
 
 				// Read more header information
@@ -1333,7 +1400,7 @@ stopLoop:
 				if (songLength > 128)
 					songLength = 128;
 
-				if ((currentModuleType == ModuleType.NoiseTracker) || (currentModuleType == ModuleType.StarTrekker) || (currentModuleType == ModuleType.StarTrekker8) || (currentModuleType == ModuleType.FastTracker) || (currentModuleType == ModuleType.Octalyser))
+				if (IsNoiseTracker() || (currentModuleType == ModuleType.FastTracker) || (currentModuleType == ModuleType.Octalyser))
 				{
 					initTempo = 125;
 					restartPos = (ushort)(moduleStream.Read_UINT8() & 0x7f);
@@ -1463,26 +1530,36 @@ stopLoop:
 				// Read the tracks
 				TrackLine[][] line = new TrackLine[channelNum][];
 
+				long startOfPatternData = moduleStream.Position;
+
 				for (int i = 0; i < trackNum / channelNum; i++)
 				{
-					// Allocate memory to hold the tracks
-					for (int j = 0; j < channelNum; j++)
-						line[j] = tracks[i * channelNum + j] = new TrackLine[patternLength];
-
-					if (currentModuleType == ModuleType.StarTrekker8)
+					if (!skipPatterns.Contains(i))
 					{
-						LoadModTracks(moduleStream, line, 0, 4);
-						LoadModTracks(moduleStream, line, 4, 4);
+						// Allocate memory to hold the tracks
+						for (int j = 0; j < channelNum; j++)
+							line[j] = tracks[i * channelNum + j] = new TrackLine[patternLength];
+
+						if (currentModuleType == ModuleType.StarTrekker8)
+						{
+							LoadModTracks(moduleStream, line, 0, 4);
+							LoadModTracks(moduleStream, line, 4, 4);
+						}
+						else
+							LoadModTracks(moduleStream, line, 0, channelNum);
+
+						if (moduleStream.EndOfStream)
+						{
+							errorMessage = Resources.IDS_MOD_ERR_LOADING_PATTERNS;
+							Cleanup();
+
+							return AgentResult.Error;
+						}
 					}
 					else
-						LoadModTracks(moduleStream, line, 0, channelNum);
-
-					if (moduleStream.EndOfStream)
 					{
-						errorMessage = Resources.IDS_MOD_ERR_LOADING_PATTERNS;
-						Cleanup();
-
-						return AgentResult.Error;
+						// Just skip it
+						moduleStream.Seek(4 * patternLength * channelNum, SeekOrigin.Current);
 					}
 				}
 
@@ -1572,6 +1649,30 @@ stopLoop:
 
 							// Read the sample
 							sampleDataStream.ReadSigned(sampleBuffer, 0, length);
+						}
+					}
+				}
+
+				// Read His Master's Noise synth wave forms
+				if (currentModuleType == ModuleType.HisMastersNoise)
+				{
+					if (hmnSynthData != null)
+					{
+						foreach (HmnSynthData synthData in hmnSynthData)
+						{
+							if (synthData != null)
+							{
+								// Seek to the "pattern"
+								moduleStream.Seek(startOfPatternData + synthData.PatternNumber * 4 * patternLength * channelNum, SeekOrigin.Begin);
+
+								synthData.WaveData = new sbyte[0x380];
+								synthData.Data = new byte[0x40];
+								synthData.VolumeData = new byte[0x40];
+
+								moduleStream.ReadSigned(synthData.WaveData, 0, synthData.WaveData.Length);
+								moduleStream.Read(synthData.Data, 0, synthData.Data.Length);
+								moduleStream.Read(synthData.VolumeData, 0, synthData.VolumeData.Length);
+							}
 						}
 					}
 				}
@@ -1935,10 +2036,12 @@ stopLoop:
 				modChan.WaveStart = 0;
 				modChan.AutoSlide = false;
 				modChan.AutoSlideArg = 0;
-				modChan.AmSample = false;
+
+				modChan.SynthSample = false;
+				modChan.CalculatedVolume = 0;
+
 				modChan.AmToDo = AmToDo.None;
 				modChan.SampleNum = 0;
-				modChan.CurLevel = 0;
 				modChan.VibDegree = 0;
 				modChan.SustainCounter = 0;
 
@@ -2021,13 +2124,44 @@ stopLoop:
 
 		/********************************************************************/
 		/// <summary>
+		/// Set the period in NostalgicPlayer
+		/// </summary>
+		/********************************************************************/
+		private void SetPeriod(ushort period, IChannel chan, ModChannel modChan)
+		{
+			if (currentModuleType == ModuleType.HisMastersNoise)
+			{
+				// Do special fine tuning
+				period = (ushort)(period + (period * modChan.FineTuneHmn) / 256);
+			}
+
+			chan.SetAmigaPeriod(period);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Checks all channels to see if any commands should run
 		/// </summary>
 		/********************************************************************/
 		private void NoNewAllChannels()
 		{
 			for (int i = 0; i < channelNum; i++)
-				CheckEffects(VirtualChannels[i], channels[i]);
+			{
+				IChannel chan = VirtualChannels[i];
+				ModChannel modChan = channels[i];
+
+				CheckEffects(chan, modChan);
+
+				if (currentModuleType == ModuleType.HisMastersNoise)
+				{
+					ProgHandler(modChan);
+
+					if (modChan.SynthSample)
+						chan.SetLoop(modChan.SynthData.WaveData, modChan.LoopStart, (uint)modChan.LoopLength * 2);
+				}
+			}
 		}
 
 
@@ -2054,9 +2188,8 @@ stopLoop:
 
 				PlayVoice(trackData, chan, modChan);
 
-				// Set volume
-				if (!modChan.AmSample)
-					chan.SetVolume((ushort)(modChan.Volume * 4));
+				if (currentModuleType == ModuleType.HisMastersNoise)
+					ProgHandler(modChan);
 			}
 		}
 
@@ -2073,7 +2206,7 @@ stopLoop:
 			if ((modChan.TrackLine.Note == 0) && (modChan.TrackLine.Sample == 0) && (modChan.TrackLine.Effect == 0) && (modChan.TrackLine.EffectArg == 0))
 			{
 				// Nothing runs, so set the period
-				chan.SetAmigaPeriod(modChan.Period);
+				SetPeriod(modChan.Period, chan, modChan);
 			}
 
 			// Copy pattern line to fields in our channel structure
@@ -2089,7 +2222,16 @@ stopLoop:
 				Sample sample = samples[sampNum - 1];
 
 				modChan.SampleNum = sampNum;
-				modChan.AmSample = false;
+				modChan.SynthSample = false;
+
+				modChan.SampleData = sample.Data;
+				modChan.Offset = 0;
+				modChan.Length = sample.Length;
+				modChan.StartOffset = 0;
+				modChan.FineTune = sample.FineTune;
+				modChan.FineTuneHmn = sample.FineTuneHmn;
+				modChan.Volume = (sbyte)sample.Volume;
+				modChan.CalculatedVolume = 64;
 
 				if (currentModuleType == ModuleType.StarTrekker)
 				{
@@ -2097,18 +2239,9 @@ stopLoop:
 					if ((amSamp != null) && (amSamp.Mark == 0x414d))	// AM
 					{
 						modChan.Volume = (sbyte)(amSamp.StartAmp / 4);
-						modChan.AmSample = true;
+						modChan.SynthSample = true;
 					}
 				}
-
-				modChan.SampleData = sample.Data;
-				modChan.Offset = 0;
-				modChan.Length = sample.Length;
-				modChan.StartOffset = 0;
-				modChan.FineTune = sample.FineTune;
-
-				if (!modChan.AmSample)
-					modChan.Volume = (sbyte)sample.Volume;
 
 				// Check to see if we got a loop
 				if ((sample.LoopStart != 0) && (sample.LoopLength > 1))
@@ -2140,6 +2273,24 @@ stopLoop:
 					modChan.LoopLength = sample.LoopLength;
 				}
 
+				if (currentModuleType == ModuleType.HisMastersNoise)
+				{
+					if (hmnSynthData != null)
+					{
+						HmnSynthData synthData = hmnSynthData[sampNum - 1];
+						if (synthData != null)
+						{
+							modChan.SynthSample = true;
+							modChan.SampleData = synthData.WaveData;
+							modChan.LoopStart = (ushort)(synthData.Data[0] * 32);
+							modChan.LoopLength = 16;
+							modChan.SynthData = synthData;
+
+							modChan.CalculatedVolume = (short)(synthData.VolumeData[0] & 0x7f);
+						}
+					}
+				}
+
 				// Set panning
 				if (IsPcTracker())
 					chan.SetPanning(modChan.Panning);
@@ -2151,7 +2302,7 @@ stopLoop:
 				// There is a new note to play
 				Effect cmd = modChan.TrackLine.Effect;
 
-				if (!modChan.AmSample)
+				if (!modChan.SynthSample || (currentModuleType != ModuleType.StarTrekker))
 				{
 					if ((currentModuleType == ModuleType.SoundTrackerII) || (currentModuleType == ModuleType.SoundTrackerVI))
 					{
@@ -2210,23 +2361,34 @@ stopLoop:
 					if ((modChan.WaveControl & 64) == 0)
 						modChan.TremoloPos = 0;
 
-					if (modChan.AmSample)
+					if (modChan.SynthSample)
 					{
-						// Setup AM sample
-						AmSample amSample = amData?[modChan.SampleNum - 1];
-						if (amSample != null)
+						if (currentModuleType == ModuleType.StarTrekker)
 						{
-							modChan.SampleData = Tables.AmWaveforms[amSample.Waveform];
-							modChan.Offset = 0;
-							modChan.StartOffset = 0;
-							modChan.Length = 16;
-							modChan.LoopStart = 0;
-							modChan.LoopLength = 16;
+							// Setup AM sample
+							AmSample amSample = amData?[modChan.SampleNum - 1];
+							if (amSample != null)
+							{
+								modChan.SampleData = Tables.AmWaveforms[amSample.Waveform];
+								modChan.Offset = 0;
+								modChan.StartOffset = 0;
+								modChan.Length = 16;
+								modChan.LoopStart = 0;
+								modChan.LoopLength = 16;
 
-							modChan.AmToDo = AmToDo.Attack1;
-							modChan.CurLevel = (short)amSample.StartAmp;
-							modChan.VibDegree = 0;
-							modChan.Period = (ushort)(modChan.Period << amSample.baseFreq);
+								modChan.AmToDo = AmToDo.Attack1;
+								modChan.Volume = 64;
+								modChan.CalculatedVolume = (short)amSample.StartAmp;
+								modChan.VibDegree = 0;
+								modChan.Period = (ushort)(modChan.Period << amSample.baseFreq);
+							}
+						}
+						else if (currentModuleType == ModuleType.HisMastersNoise)
+						{
+							modChan.DataCounter = 0;
+
+							modChan.StartOffset = (ushort)(modChan.LoopStart / 2);
+							modChan.Length = modChan.LoopLength;
 						}
 					}
 
@@ -2234,7 +2396,7 @@ stopLoop:
 					if (modChan.Length > 0)
 					{
 						chan.PlaySample(modChan.SampleData, (uint)(modChan.Offset + modChan.StartOffset * 2), (uint)modChan.Length * 2);
-						chan.SetAmigaPeriod(modChan.Period);
+						SetPeriod(modChan.Period, chan, modChan);
 
 						// Setup loop
 						if (modChan.LoopLength > 0)
@@ -2321,6 +2483,70 @@ stopLoop:
 						}
 					}
 				}
+				else if (currentModuleType == ModuleType.HisMastersNoise)
+				{
+					switch (cmd)
+					{
+						case Effect.Arpeggio:
+						{
+							// Arpeggio or normal note
+							Arpeggio(chan, modChan);
+							break;
+						}
+
+						case Effect.SlideUp:
+						{
+							PortaUp(chan, modChan);
+							break;
+						}
+
+						case Effect.SlideDown:
+						{
+							PortaDown(chan, modChan);
+							break;
+						}
+
+						case Effect.TonePortamento:
+						{
+							TonePortamento(chan, modChan);
+							break;
+						}
+
+						case Effect.Vibrato:
+						{
+							Vibrato(chan, modChan);
+							break;
+						}
+
+						case Effect.TonePort_VolSlide:
+						{
+							TonePlusVolSlide(chan, modChan);
+							break;
+						}
+
+						case Effect.Vibrato_VolSlide:
+						{
+							VibratoPlusVolSlide(chan, modChan);
+							break;
+						}
+
+						case Effect.MegaArp:
+						{
+							MegaArpeggio(chan, modChan);
+							break;
+						}
+
+						default:
+						{
+							SetPeriod(modChan.Period, chan, modChan);
+
+							if (cmd == Effect.VolumeSlide)
+								VolumeSlide(modChan, modChan.TrackLine.EffectArg);
+
+							break;
+						}
+					}
+				}
 				else
 				{
 					switch (cmd)
@@ -2376,10 +2602,10 @@ stopLoop:
 
 						default:
 						{
-							chan.SetAmigaPeriod(modChan.Period);
+							SetPeriod(modChan.Period, chan, modChan);
 
 							if (cmd == Effect.Tremolo)
-								Tremolo(chan, modChan);
+								Tremolo(modChan);
 							else
 							{
 								if (cmd == Effect.VolumeSlide)
@@ -2390,10 +2616,6 @@ stopLoop:
 					}
 				}
 			}
-
-			// Set volume
-			if (!modChan.AmSample)
-				chan.SetVolume((ushort)(modChan.Volume * 4));
 		}
 
 
@@ -2410,7 +2632,7 @@ stopLoop:
 				case ModuleType.UltimateSoundTracker10:
 				case ModuleType.UltimateSoundTracker18:
 				{
-					chan.SetAmigaPeriod(modChan.Period);
+					SetPeriod(modChan.Period, chan, modChan);
 					break;
 				}
 
@@ -2512,7 +2734,7 @@ stopLoop:
 
 						default:
 						{
-							chan.SetAmigaPeriod(modChan.Period);
+							SetPeriod(modChan.Period, chan, modChan);
 							break;
 						}
 					}
@@ -2544,7 +2766,7 @@ stopLoop:
 
 						default:
 						{
-							chan.SetAmigaPeriod(modChan.Period);
+							SetPeriod(modChan.Period, chan, modChan);
 							break;
 						}
 					}
@@ -2557,7 +2779,9 @@ stopLoop:
 					{
 						case Effect.SampleOffset:
 						{
-							SampleOffset(modChan);
+							if (!IsNoiseTracker() && !IsSoundTracker())
+								SampleOffset(modChan);
+
 							break;
 						}
 
@@ -2601,7 +2825,7 @@ stopLoop:
 
 						default:
 						{
-							chan.SetAmigaPeriod(modChan.Period);
+							SetPeriod(modChan.Period, chan, modChan);
 							break;
 						}
 					}
@@ -2837,13 +3061,13 @@ stopLoop:
 		/// Handles StarTrekker AM samples
 		/// </summary>
 		/********************************************************************/
-		private void AmHandler()
+		private void StarAmHandler()
 		{
 			for (int i = 0; i < channelNum; i++)
 			{
 				ModChannel modChan = channels[i];
 
-				if (modChan.AmSample)
+				if (modChan.SynthSample)
 				{
 					AmSample amSamp = amData?[modChan.SampleNum - 1];
 					if (amSamp != null)
@@ -2854,25 +3078,25 @@ stopLoop:
 						{
 							case AmToDo.Attack1:
 							{
-								if (modChan.CurLevel == amSamp.Attack1Level)
+								if (modChan.CalculatedVolume == amSamp.Attack1Level)
 									modChan.AmToDo = AmToDo.Attack2;
 								else
 								{
-									if (modChan.CurLevel < amSamp.Attack1Level)
+									if (modChan.CalculatedVolume < amSamp.Attack1Level)
 									{
-										modChan.CurLevel += (short)amSamp.Attack1Speed;
-										if (modChan.CurLevel >= amSamp.Attack1Level)
+										modChan.CalculatedVolume += (short)amSamp.Attack1Speed;
+										if (modChan.CalculatedVolume >= amSamp.Attack1Level)
 										{
-											modChan.CurLevel = (short)amSamp.Attack1Level;
+											modChan.CalculatedVolume = (short)amSamp.Attack1Level;
 											modChan.AmToDo = AmToDo.Attack2;
 										}
 									}
 									else
 									{
-										modChan.CurLevel -= (short)amSamp.Attack1Speed;
-										if (modChan.CurLevel <= amSamp.Attack1Level)
+										modChan.CalculatedVolume -= (short)amSamp.Attack1Speed;
+										if (modChan.CalculatedVolume <= amSamp.Attack1Level)
 										{
-											modChan.CurLevel = (short)amSamp.Attack1Level;
+											modChan.CalculatedVolume = (short)amSamp.Attack1Level;
 											modChan.AmToDo = AmToDo.Attack2;
 										}
 									}
@@ -2882,25 +3106,25 @@ stopLoop:
 
 							case AmToDo.Attack2:
 							{
-								if (modChan.CurLevel == amSamp.Attack2Level)
+								if (modChan.CalculatedVolume == amSamp.Attack2Level)
 									modChan.AmToDo = AmToDo.Sustain;
 								else
 								{
-									if (modChan.CurLevel < amSamp.Attack2Level)
+									if (modChan.CalculatedVolume < amSamp.Attack2Level)
 									{
-										modChan.CurLevel += (short)amSamp.Attack2Speed;
-										if (modChan.CurLevel >= amSamp.Attack2Level)
+										modChan.CalculatedVolume += (short)amSamp.Attack2Speed;
+										if (modChan.CalculatedVolume >= amSamp.Attack2Level)
 										{
-											modChan.CurLevel = (short)amSamp.Attack2Level;
+											modChan.CalculatedVolume = (short)amSamp.Attack2Level;
 											modChan.AmToDo = AmToDo.Sustain;
 										}
 									}
 									else
 									{
-										modChan.CurLevel -= (short)amSamp.Attack2Speed;
-										if (modChan.CurLevel <= amSamp.Attack2Level)
+										modChan.CalculatedVolume -= (short)amSamp.Attack2Speed;
+										if (modChan.CalculatedVolume <= amSamp.Attack2Level)
 										{
-											modChan.CurLevel = (short)amSamp.Attack2Level;
+											modChan.CalculatedVolume = (short)amSamp.Attack2Level;
 											modChan.AmToDo = AmToDo.Sustain;
 										}
 									}
@@ -2910,29 +3134,29 @@ stopLoop:
 
 							case AmToDo.Sustain:
 							{
-								if (modChan.CurLevel == amSamp.SustainLevel)
+								if (modChan.CalculatedVolume == amSamp.SustainLevel)
 								{
 									modChan.SustainCounter = (short)amSamp.SustainTime;
 									modChan.AmToDo = AmToDo.SustainDecay;
 								}
 								else
 								{
-									if (modChan.CurLevel < amSamp.SustainLevel)
+									if (modChan.CalculatedVolume < amSamp.SustainLevel)
 									{
-										modChan.CurLevel += (short)amSamp.DecaySpeed;
-										if (modChan.CurLevel >= amSamp.SustainLevel)
+										modChan.CalculatedVolume += (short)amSamp.DecaySpeed;
+										if (modChan.CalculatedVolume >= amSamp.SustainLevel)
 										{
-											modChan.CurLevel = (short)amSamp.SustainLevel;
+											modChan.CalculatedVolume = (short)amSamp.SustainLevel;
 											modChan.SustainCounter = (short)amSamp.SustainTime;
 											modChan.AmToDo = AmToDo.SustainDecay;
 										}
 									}
 									else
 									{
-										modChan.CurLevel -= (short)amSamp.DecaySpeed;
-										if (modChan.CurLevel <= amSamp.SustainLevel)
+										modChan.CalculatedVolume -= (short)amSamp.DecaySpeed;
+										if (modChan.CalculatedVolume <= amSamp.SustainLevel)
 										{
-											modChan.CurLevel = (short)amSamp.SustainLevel;
+											modChan.CalculatedVolume = (short)amSamp.SustainLevel;
 											modChan.SustainCounter = (short)amSamp.SustainTime;
 											modChan.AmToDo = AmToDo.SustainDecay;
 										}
@@ -2952,21 +3176,18 @@ stopLoop:
 
 							case AmToDo.Release:
 							{
-								modChan.CurLevel -= (short)amSamp.ReleaseSpeed;
-								if (modChan.CurLevel <= 0)
+								modChan.CalculatedVolume -= (short)amSamp.ReleaseSpeed;
+								if (modChan.CalculatedVolume <= 0)
 								{
 									modChan.AmToDo = AmToDo.None;
-									modChan.CurLevel = 0;
-									modChan.AmSample = false;
+									modChan.CalculatedVolume = 0;
+									modChan.SynthSample = false;
 
 									chan.Mute();
 								}
 								break;
 							}
 						}
-
-						// Set the volume
-						chan.SetVolume((ushort)modChan.CurLevel);
 
 						// Do the pitch fall
 						modChan.Period += amSamp.PitchFall;
@@ -2990,7 +3211,7 @@ stopLoop:
 						}
 
 						// Set new frequency
-						chan.SetAmigaPeriod((uint)(modChan.Period + vibVal));
+						SetPeriod((ushort)(modChan.Period + vibVal), chan, modChan);
 
 						modChan.VibDegree += amSamp.VibSpeed;
 						if (modChan.VibDegree >= 360)
@@ -3002,6 +3223,30 @@ stopLoop:
 			// Generate noise waveform
 			for (int i = 0; i < 32; i++)
 				Tables.AmWaveforms[3][i] = (sbyte)rnd.Next(255);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handles His Master's Noise synth samples
+		/// </summary>
+		/********************************************************************/
+		private void ProgHandler(ModChannel modChan)
+		{
+			if (modChan.SynthSample)
+			{
+				byte dataCounter = modChan.DataCounter;
+
+				modChan.CalculatedVolume = (short)(modChan.SynthData.VolumeData[dataCounter] & 0x7f);
+				modChan.LoopStart = (ushort)(modChan.SynthData.Data[dataCounter] * 32);
+
+				dataCounter++;
+				if (dataCounter > modChan.SynthData.DataLoopEnd)
+					dataCounter = modChan.SynthData.DataLoopStart;
+
+				modChan.DataCounter = dataCounter;
+			}
 		}
 
 		#region Functions to all the normal effects
@@ -3058,7 +3303,7 @@ stopLoop:
 				period = modChan.Period;
 			}
 
-			chan.SetAmigaPeriod(period);
+			SetPeriod(period, chan, modChan);
 		}
 
 
@@ -3083,7 +3328,7 @@ stopLoop:
 					modChan.Period = maxPeriod;
 			}
 
-			chan.SetAmigaPeriod(modChan.Period);
+			SetPeriod(modChan.Period, chan, modChan);
 		}
 
 
@@ -3101,7 +3346,7 @@ stopLoop:
 
 			lowMask = 0xff;
 
-			chan.SetAmigaPeriod(modChan.Period);
+			SetPeriod(modChan.Period, chan, modChan);
 		}
 
 
@@ -3119,7 +3364,7 @@ stopLoop:
 
 			lowMask = 0xff;
 
-			chan.SetAmigaPeriod(modChan.Period);
+			SetPeriod(modChan.Period, chan, modChan);
 		}
 
 
@@ -3189,7 +3434,7 @@ stopLoop:
 					period = Tables.Periods[modChan.FineTune, i - 1];
 				}
 
-				chan.SetAmigaPeriod((uint)period);
+				SetPeriod((ushort)period, chan, modChan);
 			}
 		}
 
@@ -3210,11 +3455,14 @@ stopLoop:
 			{
 				byte vibCmd = modChan.VibratoCmd;
 
-				if ((effArg & 0x0f) != 0)
-					vibCmd = (byte)((vibCmd & 0xf0) | (effArg & 0x0f));
+				if (!IsNoiseTracker())
+				{
+					if ((effArg & 0x0f) != 0)
+						vibCmd = (byte)((vibCmd & 0xf0) | (effArg & 0x0f));
 
-				if ((effArg & 0xf0) != 0)
-					vibCmd = (byte)((vibCmd & 0x0f) | (effArg & 0xf0));
+					if ((effArg & 0xf0) != 0)
+						vibCmd = (byte)((vibCmd & 0x0f) | (effArg & 0xf0));
+				}
 
 				modChan.VibratoCmd = vibCmd;
 			}
@@ -3254,7 +3502,7 @@ stopLoop:
 			else
 				period += addVal;
 
-			chan.SetAmigaPeriod(period);
+			SetPeriod(period, chan, modChan);
 
 			modChan.VibratoPos += (sbyte)((modChan.VibratoCmd / 4) & 0x3c);
 		}
@@ -3289,10 +3537,39 @@ stopLoop:
 
 		/********************************************************************/
 		/// <summary>
+		/// 0x07 - Plays mega arpeggio
+		/// </summary>
+		/********************************************************************/
+		private void MegaArpeggio(IChannel chan, ModChannel modChan)
+		{
+			sbyte vibPos = (sbyte)(modChan.VibratoPos & 0x0f);
+			modChan.VibratoPos++;
+
+			// Get the effect argument
+			byte effArg = (byte)(modChan.TrackLine.EffectArg & 0x0f);
+			byte arp = Tables.MegaArps[effArg, vibPos];
+
+			// Find the index into the period tables
+			int i;
+			for (i = 0; i < NumberOfNotes; i++)
+			{
+				if (Tables.Periods[0, i] <= modChan.Period)
+					break;
+			}
+
+			// Get the period
+			ushort period = Tables.Periods[0, i + arp >= NumberOfNotes ? NumberOfNotes - 1 : i + arp];
+			SetPeriod(period, chan, modChan);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// 0x07 - Makes vibrato on the volume
 		/// </summary>
 		/********************************************************************/
-		private void Tremolo(IChannel chan, ModChannel modChan)
+		private void Tremolo(ModChannel modChan)
 		{
 			// Get the effect argument
 			byte effArg = modChan.TrackLine.EffectArg;
@@ -3354,7 +3631,7 @@ stopLoop:
 					volume = 64;
 			}
 
-			chan.SetVolume((ushort)(volume * 4));
+			modChan.CalculatedVolume = (sbyte)volume;
 
 			modChan.TremoloPos += (sbyte)((modChan.TremoloCmd / 4) & 0x3c);
 		}
@@ -3471,7 +3748,12 @@ stopLoop:
 		/********************************************************************/
 		private void PatternBreak(ModChannel modChan)
 		{
-			byte arg = modChan.TrackLine.EffectArg;
+			byte arg;
+
+			if (IsNoiseTracker() || IsSoundTracker())
+				arg = 0;
+			else
+				arg = modChan.TrackLine.EffectArg;
 
 			breakPos = (ushort)(((arg >> 4) & 0x0f) * 10 + (arg & 0x0f));
 			if (breakPos > 63)
@@ -3746,7 +4028,7 @@ stopLoop:
 							if (modChan.LoopLength != 0)
 								chan.SetLoop(modChan.LoopStart, (uint)modChan.LoopLength * 2);
 
-							chan.SetAmigaPeriod(modChan.Period);
+							SetPeriod(modChan.Period, chan, modChan);
 						}
 						else
 							chan.Mute();
@@ -3821,7 +4103,7 @@ stopLoop:
 					if (modChan.LoopLength != 0)
 						chan.SetLoop(modChan.LoopStart, (uint)modChan.LoopLength * 2);
 
-					chan.SetAmigaPeriod(modChan.Period);
+					SetPeriod(modChan.Period, chan, modChan);
 				}
 				else
 					chan.Mute();

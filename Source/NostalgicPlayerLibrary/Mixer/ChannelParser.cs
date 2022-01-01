@@ -153,7 +153,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 							if (voiceInfo.Kick)
 							{
-								voiceInfo.LoopAddress = voiceInfo.NewLoopAddress;
 								voiceInfo.RepeatPosition = voiceInfo.NewRepeatPosition;
 								voiceInfo.RepeatEnd = voiceInfo.NewRepeatEnd;
 							}
@@ -167,7 +166,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						// Special release command. Used in Oktalyzer player
 						if ((newFlags & ChannelFlags.Release) != 0)
 						{
-							voiceInfo.NewLoopAddress = voiceInfo.LoopAddress = loopAddress;
+							voiceInfo.NewLoopAddress = loopAddress;
 							voiceInfo.NewRepeatPosition = voiceInfo.RepeatPosition = loopStart;
 							voiceInfo.ReleaseEnd = loopStart + releaseLength;
 							newFlags &= ~ChannelFlags.Release;

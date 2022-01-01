@@ -96,11 +96,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				info.Active = false;
 				info.Flags = SampleFlag.None;
 				info.Address = null;
-				info.LoopAddress = null;
 				info.Start = 0;
 				info.Size = 0;
 				info.RepeatPosition = 0;
 				info.RepeatEnd = 0;
+				info.NewLoopAddress = null;
+				info.NewRepeatPosition = 0;
+				info.NewRepeatEnd = 0;
 				info.ReleaseEnd = 0;
 				info.Frequency = 10000;
 				info.Volume = 0;

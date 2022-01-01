@@ -38,6 +38,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		internal static readonly Guid Agent14Id = Guid.Parse("E9C85D93-AA77-4A86-8B8C-3C62B79C5FBE");
 		internal static readonly Guid Agent15Id = Guid.Parse("4B17DA31-92E4-49AF-89F1-0D6CC627E78E");
 		internal static readonly Guid Agent16Id = Guid.Parse("A9B16B49-1472-4208-A300-3A73EED474AB");
+		internal static readonly Guid Agent17Id = Guid.Parse("7027B4BE-2D15-4377-8F95-D628184328AF");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -84,7 +85,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					new AgentSupportInfo(Resources.IDS_MTM_NAME_AGENT13, Resources.IDS_MTM_DESCRIPTION_AGENT13, Agent13Id),
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT14, Resources.IDS_MOD_DESCRIPTION_AGENT14, Agent14Id),
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT15, Resources.IDS_MOD_DESCRIPTION_AGENT15, Agent15Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT16, Resources.IDS_MOD_DESCRIPTION_AGENT16, Agent16Id)
+					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT16, Resources.IDS_MOD_DESCRIPTION_AGENT16, Agent16Id),
+					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT17, Resources.IDS_MOD_DESCRIPTION_AGENT17, Agent17Id)
 				};
 			}
 		}

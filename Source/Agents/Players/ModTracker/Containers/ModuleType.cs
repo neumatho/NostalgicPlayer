@@ -26,6 +26,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 
 		// NoiseTracker compatibility
 		NoiseTracker,
+		HisMastersNoise,
 		StarTrekker,
 		StarTrekker8,
 

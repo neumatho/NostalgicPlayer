@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -155,6 +155,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         internal static string IDS_MOD_DESCRIPTION_AGENT16 {
             get {
                 return ResourceManager.GetString("IDS_MOD_DESCRIPTION_AGENT16", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Original player by Mahoney.
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///This player is based on the NoiseTracker player, but extended with some special features which did not get included in the original NoiseTracker. This version of NoiseTracker was known as Gnomie by Night. The extra features includes fine tuning (not exactly the same as ProTracker), mega arpeggio effect and chip sounds.
+        ///
+        ///The editor was created by Mahoney, which want an editor with the features he like. Music created in this editor by him an [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string IDS_MOD_DESCRIPTION_AGENT17 {
+            get {
+                return ResourceManager.GetString("IDS_MOD_DESCRIPTION_AGENT17", resourceCulture);
             }
         }
         
@@ -403,6 +417,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         internal static string IDS_MOD_NAME_AGENT16 {
             get {
                 return ResourceManager.GetString("IDS_MOD_NAME_AGENT16", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to His Master&apos;s Noise (Gnomie by Night).
+        /// </summary>
+        internal static string IDS_MOD_NAME_AGENT17 {
+            get {
+                return ResourceManager.GetString("IDS_MOD_NAME_AGENT17", resourceCulture);
             }
         }
         

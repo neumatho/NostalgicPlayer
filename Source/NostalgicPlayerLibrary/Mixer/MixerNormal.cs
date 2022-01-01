@@ -207,7 +207,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 							}
 
 							// Copy the loop address
-							s = vnf.Address = vnf.LoopAddress = vnf.NewLoopAddress;
+							s = vnf.Address = vnf.NewLoopAddress;
 
 							// Recalculate loop indexes
 							long idxNewLoopPos = (long)vnf.NewRepeatPosition << FracBits;

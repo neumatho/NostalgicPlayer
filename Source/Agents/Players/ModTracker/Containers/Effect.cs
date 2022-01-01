@@ -21,7 +21,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		TonePort_VolSlide,			// 0x05
 		Vibrato_VolSlide,			// 0x06
 		Tremolo,					// 0x07
-		SetPanning,					// 0x08		// Only for FastTracker and up
+		MegaArp = 0x07,				// 0x07 (Only used in His Master's Noise)
+		SetPanning,					// 0x08 (Only for FastTracker and up)
 		SampleOffset,				// 0x09
 		VolumeSlide,				// 0x0a
 		PosJump,					// 0x0b
