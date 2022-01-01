@@ -20,6 +20,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.GuiKit.Controls;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 {
@@ -187,10 +188,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 			foreach (KeyValuePair<string, ModuleDatabaseInfo> pair in list)
 			{
 				DataGridViewRow row = new DataGridViewRow();
+
+				string fileName = Path.GetFileName(pair.Key);
+				if (ArchivePath.IsArchivePath(fileName))
+					fileName = ArchivePath.GetEntryName(fileName);
+
 				row.Cells.AddRange(new DataGridViewCell[]
 				{
 					new KryptonDataGridViewTextBoxCell { Value = pos },
-					new KryptonDataGridViewTextBoxCell { Value = Path.GetFileName(pair.Key) },
+					new KryptonDataGridViewTextBoxCell { Value = fileName },
 					new KryptonDataGridViewTextBoxCell { Value = pair.Value.ListenCount }
 				});
 

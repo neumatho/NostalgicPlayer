@@ -621,6 +621,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 						if (value.NextLevel == null)
 						{
 							// Reached a file, check if it exists
+							if (ArchivePath.IsArchivePath(fullPath))
+							{
+								// Just check if the archive file exists
+								fullPath = ArchivePath.GetArchiveName(fullPath);
+							}
+
 							if (!File.Exists(fullPath))
 								state.Level.Remove(part);
 						}
