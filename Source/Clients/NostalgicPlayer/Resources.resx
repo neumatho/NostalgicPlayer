@@ -448,7 +448,7 @@ Formats supported:
     <value>Top xxx</value>
   </data>
   <data name="IDS_FAVORITE_TITLE" xml:space="preserve">
-    <value>Favorite song system</value>
+    <value>Favorite Song System</value>
   </data>
   <data name="IDS_HELP_TITLE" xml:space="preserve">
     <value>Help</value>
@@ -632,7 +632,7 @@ what has changed since your previous version.</value>
     <value>Samples</value>
   </data>
   <data name="IDS_SAMPLE_INFO_TITLE" xml:space="preserve">
-    <value>Instrument / sample information</value>
+    <value>Instrument / Sample Information</value>
   </data>
   <data name="IDS_SELECTMENU_ALL" xml:space="preserve">
     <value>Select all</value>

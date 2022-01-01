@@ -843,7 +843,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Favorite song system.
+        ///   Looks up a localized string similar to Favorite Song System.
         /// </summary>
         internal static string IDS_FAVORITE_TITLE {
             get {
@@ -1393,7 +1393,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Instrument / sample information.
+        ///   Looks up a localized string similar to Instrument / Sample Information.
         /// </summary>
         internal static string IDS_SAMPLE_INFO_TITLE {
             get {
