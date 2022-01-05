@@ -126,13 +126,13 @@
 2000-2001 Simon White.
 2007-2010 Antti Lankila.
 2010-2021 Leandro Nini.
-SID emulator (reSID) by Dag Lem.
+SID emulator (residfp) by Dag Lem.
 C64 font by Style.
 Ported to C# by Thomas Neumann.
 
 This player emulates the Commodore 64 components, including the CPU (6510), CIA, VIC II and sound chip (6581/8580), so it is able to play the good old music from the games etc.
 
-The player has been ported to C# and is based on the libsidplayfp library started by Michael Schwendt and continued by Simon White. Later on, the code is restructured and improved by Antti Lankila and Leandro Nini. The sound chip emulator is based on the reSID library by Dag Lem.</value>
+The player has been ported to C# and is based on the libsidplayfp library started by Michael Schwendt and continued by Simon White. Later on, the code is restructured and improved by Antti Lankila and Leandro Nini. The sound chip emulator is based on the residfp library by Dag Lem and others.</value>
   </data>
   <data name="IDS_SID_DESCRIPTION_AGENT1" xml:space="preserve">
     <value>Original player by

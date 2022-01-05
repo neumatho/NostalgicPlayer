@@ -707,13 +707,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Return the length of the current song
 		/// </summary>
 		/********************************************************************/
-		public override int SongLength
-		{
-			get
-			{
-				return haveDuration ? 100 : 0;
-			}
-		}
+		public override int SongLength => haveDuration ? 100 : 0;
 
 
 

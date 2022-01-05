@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -75,13 +75,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         ///2000-2001 Simon White.
         ///2007-2010 Antti Lankila.
         ///2010-2021 Leandro Nini.
-        ///SID emulator (reSID) by Dag Lem.
+        ///SID emulator (residfp) by Dag Lem.
         ///C64 font by Style.
         ///Ported to C# by Thomas Neumann.
         ///
         ///This player emulates the Commodore 64 components, including the CPU (6510), CIA, VIC II and sound chip (6581/8580), so it is able to play the good old music from the games etc.
         ///
-        ///The player has been ported to C# and is based on the libsidplayfp library started by Michael Schwendt and continued by Simon White. Later on, the co [rest of string was truncated]&quot;;.
+        ///The player has been ported to C# and is based on the libsidplayfp library started by Michael Schwendt and continued by Simon White. Later on, the  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string IDS_SID_DESCRIPTION {
             get {
