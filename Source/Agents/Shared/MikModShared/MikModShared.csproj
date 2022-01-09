@@ -7,7 +7,7 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Shared components between the player and converter</Description>
-    <Copyright>Copyright © 2021</Copyright>
+    <Copyright>Copyright © 2021-2022</Copyright>
     <Version>1.0.4</Version>
   </PropertyGroup>
 

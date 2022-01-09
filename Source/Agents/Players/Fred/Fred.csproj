@@ -11,7 +11,7 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Plays modules of type Fred Editor</Description>
-    <Copyright>Copyright © 2021</Copyright>
+    <Copyright>Copyright © 2021-2022</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

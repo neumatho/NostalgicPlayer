@@ -3,10 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /*                                                                            */
-/* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
+/* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-
 using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Archive;

@@ -8,7 +8,7 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Show some spinning squares which moves to the music</Description>
-    <Copyright>Copyright © 2021</Copyright>
+    <Copyright>Copyright © 2021-2022</Copyright>
     <Version>1.1.0</Version>
   </PropertyGroup>
 

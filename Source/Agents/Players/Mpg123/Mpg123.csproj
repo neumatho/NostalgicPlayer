@@ -7,7 +7,7 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Plays audio mpeg files with layer 1/2/3 using Mpg123 library</Description>
-    <Copyright>Copyright © 2021</Copyright>
+    <Copyright>Copyright © 2021-2022</Copyright>
     <Platforms>x86;x64</Platforms>
     <Version>1.0.1</Version>
   </PropertyGroup>

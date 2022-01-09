@@ -8,7 +8,7 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Show an oscilloscope for the left and right channel of what is playing</Description>
-		<Copyright>Copyright © 2021</Copyright>
+		<Copyright>Copyright © 2021-2022</Copyright>
 		<Version>1.1.0</Version>
 	</PropertyGroup>
 

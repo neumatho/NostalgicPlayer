@@ -3,15 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /*                                                                            */
-/* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
+/* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Polycode.NostalgicPlayer.Kit.Encoders
 {
 	/// <summary>
@@ -24,13 +18,7 @@ namespace Polycode.NostalgicPlayer.Kit.Encoders
 		/// Return the encoder name
 		/// </summary>
 		/********************************************************************/
-		public override string EncodingName
-		{
-			get
-			{
-				return "Win1252";
-			}
-		}
+		public override string EncodingName => "Win1252";
 
 
 

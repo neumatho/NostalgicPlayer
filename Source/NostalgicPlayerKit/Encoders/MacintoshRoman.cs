@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /*                                                                            */
-/* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
+/* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
 namespace Polycode.NostalgicPlayer.Kit.Encoders
@@ -18,13 +18,7 @@ namespace Polycode.NostalgicPlayer.Kit.Encoders
 		/// Return the encoder name
 		/// </summary>
 		/********************************************************************/
-		public override string EncodingName
-		{
-			get
-			{
-				return "Macintosh Roman";
-			}
-		}
+		public override string EncodingName => "Macintosh Roman";
 
 
 

@@ -11,7 +11,7 @@
     <Authors>Thomas Neumann</Authors>
     <Product>NostalgicPlayer</Product>
     <Description>Plays modules of type AHX</Description>
-    <Copyright>Copyright © 2021</Copyright>
+    <Copyright>Copyright © 2021-2022</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
