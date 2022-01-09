@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -70,6 +70,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t read the instrument information.
+        /// </summary>
+        internal static string IDS_ERR_LOADING_INSTRUMENTS {
+            get {
+                return ResourceManager.GetString("IDS_ERR_LOADING_INSTRUMENTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the pattern information.
         /// </summary>
         internal static string IDS_ERR_LOADING_PATTERNS {
@@ -97,13 +106,24 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t read the track information.
+        /// </summary>
+        internal static string IDS_ERR_LOADING_TRACKS {
+            get {
+                return ResourceManager.GetString("IDS_ERR_LOADING_TRACKS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Written by Thomas Neumann.
         ///
         ///Converts different module formats (mostly Amiga formats) to another format NostalgicPlayer understands.
         ///
         ///Current version can convert these formats:
         ///
-        ///Future Composer 1.0 - 1.3 -&gt; Future Composer 1.4.
+        ///Fred Editor (Final) -&gt; Fred Editor
+        ///Future Composer 1.0 - 1.3 -&gt; Future Composer 1.4
+        ///SoundFX 1-x &gt; SoundFX 2.0.
         /// </summary>
         internal static string IDS_MODCONV_DESCRIPTION {
             get {
@@ -136,6 +156,20 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Original player by Frederic Hahn &amp; Julien Clermonte.
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///Previously this music format has been known as &apos;Fredmon&apos; or &apos;Fred Monitor&apos; which is wrong.
+        ///
+        ///The modules contain the player in 68000 assembler in the beginning of the files, but this player will extract the music data and only use that..
+        /// </summary>
+        internal static string IDS_MODCONV_DESCRIPTION_AGENT3 {
+            get {
+                return ResourceManager.GetString("IDS_MODCONV_DESCRIPTION_AGENT3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Module Converter.
         /// </summary>
         internal static string IDS_MODCONV_NAME {
@@ -159,6 +193,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         internal static string IDS_MODCONV_NAME_AGENT2 {
             get {
                 return ResourceManager.GetString("IDS_MODCONV_NAME_AGENT2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fred Editor (Final).
+        /// </summary>
+        internal static string IDS_MODCONV_NAME_AGENT3 {
+            get {
+                return ResourceManager.GetString("IDS_MODCONV_NAME_AGENT3", resourceCulture);
             }
         }
     }

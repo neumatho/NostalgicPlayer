@@ -4,13 +4,13 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <RootNamespace>Polycode.NostalgicPlayer.Agent.Player.Ahx</RootNamespace>
+    <RootNamespace>Polycode.NostalgicPlayer.Agent.Player.Fred</RootNamespace>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationFile>bin\Ahx.xml</DocumentationFile>
-    <Company>Polycode</Company>
+    <DocumentationFile>bin\Fred.xml</DocumentationFile>
     <Authors>Thomas Neumann</Authors>
+    <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
-    <Description>Plays modules of type AHX</Description>
+    <Description>Plays modules of type Fred Editor</Description>
     <Copyright>Copyright © 2021</Copyright>
   </PropertyGroup>
 

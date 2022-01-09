@@ -400,13 +400,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/// Return the length of the current song
 		/// </summary>
 		/********************************************************************/
-		public override int SongLength
-		{
-			get
-			{
-				return songLen;
-			}
-		}
+		public override int SongLength => songLen;
 
 
 

@@ -289,6 +289,28 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Reads a 16 bit integer in little endian format from the stream
+		/// and return it in the native host format
+		/// </summary>
+		/********************************************************************/
+		public short Read_L_INT16()
+		{
+			int read = Read(loadBuffer, 0, 2);
+			if (read == 2)
+			{
+				if (!isLittleEndian)
+					(loadBuffer[0], loadBuffer[1]) = (loadBuffer[1], loadBuffer[0]);
+
+				return BitConverter.ToInt16(loadBuffer, 0);
+			}
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Reads a 32 bit integer in little endian format from the stream
 		/// and return it in the native host format
 		/// </summary>
@@ -309,6 +331,35 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 				}
 
 				return BitConverter.ToUInt32(loadBuffer, 0);
+			}
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Reads a 32 bit integer in little endian format from the stream
+		/// and return it in the native host format
+		/// </summary>
+		/********************************************************************/
+		public int Read_L_INT32()
+		{
+			int read = Read(loadBuffer, 0, 4);
+			if (read == 4)
+			{
+				if (!isLittleEndian)
+				{
+					byte tmp1 = loadBuffer[0];
+					byte tmp2 = loadBuffer[1];
+					loadBuffer[0] = loadBuffer[3];
+					loadBuffer[1] = loadBuffer[2];
+					loadBuffer[2] = tmp2;
+					loadBuffer[3] = tmp1;
+				}
+
+				return BitConverter.ToInt32(loadBuffer, 0);
 			}
 
 			return 0;
@@ -353,6 +404,41 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Reads a 64 bit integer in big little format from the stream
+		/// and return it in the native host format
+		/// </summary>
+		/********************************************************************/
+		public long Read_L_INT64()
+		{
+			int read = Read(loadBuffer, 0, 8);
+			if (read == 8)
+			{
+				if (!isLittleEndian)
+				{
+					byte tmp1 = loadBuffer[0];
+					byte tmp2 = loadBuffer[1];
+					byte tmp3 = loadBuffer[2];
+					byte tmp4 = loadBuffer[3];
+					loadBuffer[0] = loadBuffer[7];
+					loadBuffer[1] = loadBuffer[6];
+					loadBuffer[2] = loadBuffer[5];
+					loadBuffer[3] = loadBuffer[4];
+					loadBuffer[4] = tmp4;
+					loadBuffer[5] = tmp3;
+					loadBuffer[6] = tmp2;
+					loadBuffer[7] = tmp1;
+				}
+
+				return BitConverter.ToInt64(loadBuffer, 0);
+			}
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Reads an array of 16 bit integers in little endian format from
 		/// the stream and convert the integers to the native host format
 		/// </summary>
@@ -367,6 +453,20 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Reads an array of 16 bit integers in little endian format from
+		/// the stream and convert the integers to the native host format
+		/// </summary>
+		/********************************************************************/
+		public void ReadArray_L_INT16s(short[] buffer, int offset, int count)
+		{
+			for (int i = 0; i < count; i++)
+				buffer[offset + i] = Read_L_INT16();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Reads an array of 32 bit integers in little endian format from
 		/// the stream and convert the integers to the native host format
 		/// </summary>
@@ -375,6 +475,20 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			for (int i = 0; i < count; i++)
 				buffer[offset + i] = Read_L_UINT32();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Reads an array of 32 bit integers in little endian format from
+		/// the stream and convert the integers to the native host format
+		/// </summary>
+		/********************************************************************/
+		public void ReadArray_L_INT32s(int[] buffer, int offset, int count)
+		{
+			for (int i = 0; i < count; i++)
+				buffer[offset + i] = Read_L_INT32();
 		}
 
 
@@ -407,6 +521,32 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Reads a 16 bit integer in big endian format from the stream
+		/// and return it in the native host format
+		/// </summary>
+		/********************************************************************/
+		public short Read_B_INT16()
+		{
+			int read = Read(loadBuffer, 0, 2);
+			if (read == 2)
+			{
+				if (isLittleEndian)
+				{
+					byte tmp = loadBuffer[0];
+					loadBuffer[0] = loadBuffer[1];
+					loadBuffer[1] = tmp;
+				}
+
+				return BitConverter.ToInt16(loadBuffer, 0);
+			}
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Reads a 32 bit integer in big endian format from the stream
 		/// and return it in the native host format
 		/// </summary>
@@ -427,6 +567,35 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 				}
 
 				return BitConverter.ToUInt32(loadBuffer, 0);
+			}
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Reads a 32 bit integer in big endian format from the stream
+		/// and return it in the native host format
+		/// </summary>
+		/********************************************************************/
+		public int Read_B_INT32()
+		{
+			int read = Read(loadBuffer, 0, 4);
+			if (read == 4)
+			{
+				if (isLittleEndian)
+				{
+					byte tmp1 = loadBuffer[0];
+					byte tmp2 = loadBuffer[1];
+					loadBuffer[0] = loadBuffer[3];
+					loadBuffer[1] = loadBuffer[2];
+					loadBuffer[2] = tmp2;
+					loadBuffer[3] = tmp1;
+				}
+
+				return BitConverter.ToInt32(loadBuffer, 0);
 			}
 
 			return 0;
@@ -471,6 +640,41 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Reads a 64 bit integer in big endian format from the stream
+		/// and return it in the native host format
+		/// </summary>
+		/********************************************************************/
+		public long Read_B_INT64()
+		{
+			int read = Read(loadBuffer, 0, 8);
+			if (read == 8)
+			{
+				if (isLittleEndian)
+				{
+					byte tmp1 = loadBuffer[0];
+					byte tmp2 = loadBuffer[1];
+					byte tmp3 = loadBuffer[2];
+					byte tmp4 = loadBuffer[3];
+					loadBuffer[0] = loadBuffer[7];
+					loadBuffer[1] = loadBuffer[6];
+					loadBuffer[2] = loadBuffer[5];
+					loadBuffer[3] = loadBuffer[4];
+					loadBuffer[4] = tmp4;
+					loadBuffer[5] = tmp3;
+					loadBuffer[6] = tmp2;
+					loadBuffer[7] = tmp1;
+				}
+
+				return BitConverter.ToInt64(loadBuffer, 0);
+			}
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Reads an array of 16 bit integers in big endian format from
 		/// the stream and convert the integers to the native host format
 		/// </summary>
@@ -485,6 +689,20 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Reads an array of 16 bit integers in big endian format from
+		/// the stream and convert the integers to the native host format
+		/// </summary>
+		/********************************************************************/
+		public void ReadArray_B_INT16s(short[] buffer, int offset, int count)
+		{
+			for (int i = 0; i < count; i++)
+				buffer[offset + i] = Read_B_INT16();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Reads an array of 32 bit integers in big endian format from
 		/// the stream and convert the integers to the native host format
 		/// </summary>
@@ -493,6 +711,20 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			for (int i = 0; i < count; i++)
 				buffer[offset + i] = Read_B_UINT32();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Reads an array of 32 bit integers in big endian format from
+		/// the stream and convert the integers to the native host format
+		/// </summary>
+		/********************************************************************/
+		public void ReadArray_B_INT32s(int[] buffer, int offset, int count)
+		{
+			for (int i = 0; i < count; i++)
+				buffer[offset + i] = Read_B_INT32();
 		}
 
 

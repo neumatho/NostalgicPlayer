@@ -6,26 +6,22 @@
 /* Copyright (C) 2021 by Polycode / NostalgicPlayer team.                     */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System;
 using System.Runtime.InteropServices;
-using Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 // This is needed to uniquely identify this agent
-[assembly: Guid("8574CAD5-2892-499F-8B26-50D16EA70C09")]
+[assembly: Guid("2E7F6B85-DDD2-4A9F-9F9B-ECEA75381BA0")]
 
-namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
+namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 {
 	/// <summary>
 	/// NostalgicPlayer agent interface implementation
 	/// </summary>
-	public class ModuleConverter : AgentBase
+	public class Fred : AgentBase
 	{
-		private static readonly Guid agent1Id = Guid.Parse("99F6809B-0FA7-4814-895E-A5A4632EFE96");
-		private static readonly Guid agent2Id = Guid.Parse("0C8D0CEE-EA9D-4132-95ED-DFE72D5D8FB6");
-		private static readonly Guid agent3Id = Guid.Parse("44F2292A-BBA1-42C7-B9EC-1ACED9A42BF8");
+		private static readonly Guid agent1Id = Guid.Parse("3B8704D9-4DA7-41C4-99A6-9D00BDB19831");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -33,7 +29,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 		/// Returns the name of this agent
 		/// </summary>
 		/********************************************************************/
-		public override string Name => Resources.IDS_MODCONV_NAME;
+		public override string Name => Resources.IDS_FRED_NAME;
 
 
 
@@ -42,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 		/// Returns a description of this agent
 		/// </summary>
 		/********************************************************************/
-		public override string Description => Resources.IDS_MODCONV_DESCRIPTION;
+		public override string Description => Resources.IDS_FRED_DESCRIPTION;
 
 
 
@@ -57,9 +53,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT1, Resources.IDS_MODCONV_DESCRIPTION_AGENT1, agent1Id),
-					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT2, Resources.IDS_MODCONV_DESCRIPTION_AGENT2, agent2Id),
-					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT3, Resources.IDS_MODCONV_DESCRIPTION_AGENT3, agent3Id)
+					new AgentSupportInfo(Resources.IDS_FRED_NAME_AGENT1, Resources.IDS_FRED_DESCRIPTION_AGENT1, agent1Id)
 				};
 			}
 		}
@@ -73,16 +67,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 		/********************************************************************/
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
-			if (typeId == agent1Id)
-				return new ModuleConverterWorker_FutureComposer13();
-
-			if (typeId == agent2Id)
-				return new ModuleConverterWorker_SoundFx1x();
-
-			if (typeId == agent3Id)
-				return new ModuleConverterWorker_FredEditorFinal();
-
-			return null;
+			return new FredWorker();
 		}
 		#endregion
 	}

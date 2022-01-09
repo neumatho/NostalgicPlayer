@@ -117,65 +117,45 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="IDS_ERR_LOADING_HEADER" xml:space="preserve">
-    <value>Can't read the module header</value>
-  </data>
-  <data name="IDS_ERR_LOADING_INSTRUMENTS" xml:space="preserve">
-    <value>Can't read the instrument information</value>
-  </data>
-  <data name="IDS_ERR_LOADING_PATTERNS" xml:space="preserve">
-    <value>Can't read the pattern information</value>
-  </data>
-  <data name="IDS_ERR_LOADING_SAMPLEINFO" xml:space="preserve">
-    <value>Can't read the sample information</value>
-  </data>
-  <data name="IDS_ERR_LOADING_SAMPLES" xml:space="preserve">
-    <value>Can't read the sample data</value>
-  </data>
-  <data name="IDS_ERR_LOADING_TRACKS" xml:space="preserve">
-    <value>Can't read the track information</value>
-  </data>
-  <data name="IDS_MODCONV_DESCRIPTION" xml:space="preserve">
-    <value>Written by Thomas Neumann.
-
-Converts different module formats (mostly Amiga formats) to another format NostalgicPlayer understands.
-
-Current version can convert these formats:
-
-Fred Editor (Final) -&gt; Fred Editor
-Future Composer 1.0 - 1.3 -&gt; Future Composer 1.4
-SoundFX 1-x &gt; SoundFX 2.0</value>
-  </data>
-  <data name="IDS_MODCONV_DESCRIPTION_AGENT1" xml:space="preserve">
-    <value>Original player by SuperSero.
+  <data name="IDS_FRED_DESCRIPTION" xml:space="preserve">
+    <value>Original player by Frederic Hahn &amp; Julien Clermonte.
 Converted to C# by Thomas Neumann.
 
-This is an old format from the Amiga. It was developed by Jochen Hippel and he used it to compose some of his game music, such as "Rings of Medusa" and "Shaolin". A lot of cracker intros used this format in the early days, so you can find a lot of modules in this format on the internet.</value>
+Previously this music format has been known as 'Fredmon' or 'Fred Monitor' which is wrong.</value>
   </data>
-  <data name="IDS_MODCONV_DESCRIPTION_AGENT2" xml:space="preserve">
-    <value>Original player by Linel Software.
-Converted to C# by Thomas Neumann.
-
-The SoundFX file format is like SoundTracker. It only have a few effects, but it also have some special pattern commands, which SoundTracker doesn't have.</value>
-  </data>
-  <data name="IDS_MODCONV_DESCRIPTION_AGENT3" xml:space="preserve">
+  <data name="IDS_FRED_DESCRIPTION_AGENT1" xml:space="preserve">
     <value>Original player by Frederic Hahn &amp; Julien Clermonte.
 Converted to C# by Thomas Neumann.
 
 Previously this music format has been known as 'Fredmon' or 'Fred Monitor' which is wrong.
 
-The modules contain the player in 68000 assembler in the beginning of the files, but this player will extract the music data and only use that.</value>
+The modules are stored in the 'Editor' format, which can be loaded into the editor later on. It's very different from the final form, which can't be loaded into the editor.</value>
   </data>
-  <data name="IDS_MODCONV_NAME" xml:space="preserve">
-    <value>Module Converter</value>
+  <data name="IDS_FRED_ERR_LOADING_HEADER" xml:space="preserve">
+    <value>Can't read the module header</value>
   </data>
-  <data name="IDS_MODCONV_NAME_AGENT1" xml:space="preserve">
-    <value>Future Composer 1.0 - 1.3</value>
+  <data name="IDS_FRED_ERR_LOADING_INSTRUMENTS" xml:space="preserve">
+    <value>Can't read the module instruments</value>
   </data>
-  <data name="IDS_MODCONV_NAME_AGENT2" xml:space="preserve">
-    <value>SoundFX 1.x</value>
+  <data name="IDS_FRED_ERR_LOADING_SAMPLES" xml:space="preserve">
+    <value>Can't read the module samples</value>
   </data>
-  <data name="IDS_MODCONV_NAME_AGENT3" xml:space="preserve">
-    <value>Fred Editor (Final)</value>
+  <data name="IDS_FRED_ERR_LOADING_SEQUENCES" xml:space="preserve">
+    <value>Can't read the module sequences</value>
+  </data>
+  <data name="IDS_FRED_INFODESCLINE0" xml:space="preserve">
+    <value>Song length:</value>
+  </data>
+  <data name="IDS_FRED_INFODESCLINE1" xml:space="preserve">
+    <value>Used instruments:</value>
+  </data>
+  <data name="IDS_FRED_INFODESCLINE2" xml:space="preserve">
+    <value>Current speed:</value>
+  </data>
+  <data name="IDS_FRED_NAME" xml:space="preserve">
+    <value>Fred Editor</value>
+  </data>
+  <data name="IDS_FRED_NAME_AGENT1" xml:space="preserve">
+    <value>Fred Editor</value>
   </data>
 </root>

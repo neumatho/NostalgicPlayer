@@ -188,10 +188,42 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Write a 16 bit integer in little endian format to the stream
+		/// </summary>
+		/********************************************************************/
+		public void Write_L_INT16(short data)
+		{
+			saveBuffer[0] = (byte)(data & 0xff);
+			saveBuffer[1] = (byte)(data >> 8);
+
+			Write(saveBuffer, 0, 2);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Write a 32 bit integer in little endian format to the stream
 		/// </summary>
 		/********************************************************************/
 		public void Write_L_UINT32(uint data)
+		{
+			saveBuffer[0] = (byte)(data & 0xff);
+			saveBuffer[1] = (byte)(data >> 8);
+			saveBuffer[2] = (byte)(data >> 16);
+			saveBuffer[3] = (byte)(data >> 24);
+
+			Write(saveBuffer, 0, 4);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Write a 32 bit integer in little endian format to the stream
+		/// </summary>
+		/********************************************************************/
+		public void Write_L_INT32(int data)
 		{
 			saveBuffer[0] = (byte)(data & 0xff);
 			saveBuffer[1] = (byte)(data >> 8);
@@ -226,6 +258,27 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Write a 64 bit integer in little endian format to the stream
+		/// </summary>
+		/********************************************************************/
+		public void Write_L_INT64(long data)
+		{
+			saveBuffer[0] = (byte)(data & 0xff);
+			saveBuffer[1] = (byte)(data >> 8);
+			saveBuffer[2] = (byte)(data >> 16);
+			saveBuffer[3] = (byte)(data >> 24);
+			saveBuffer[4] = (byte)(data >> 32);
+			saveBuffer[5] = (byte)(data >> 40);
+			saveBuffer[6] = (byte)(data >> 48);
+			saveBuffer[7] = (byte)(data >> 56);
+
+			Write(saveBuffer, 0, 8);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Write an array of 16 bit integers in little endian format to the
 		/// stream
 		/// </summary>
@@ -240,6 +293,20 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Write an array of 16 bit integers in little endian format to the
+		/// stream
+		/// </summary>
+		/********************************************************************/
+		public void WriteArray_L_INT16s(short[] buffer, int count)
+		{
+			for (int i = 0; i < count; i++)
+				Write_L_INT16(buffer[i]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Write an array of 32 bit integers in little endian format to the
 		/// stream
 		/// </summary>
@@ -248,6 +315,20 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			for (int i = 0; i < count; i++)
 				Write_L_UINT32(buffer[i]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Write an array of 32 bit integers in little endian format to the
+		/// stream
+		/// </summary>
+		/********************************************************************/
+		public void WriteArray_L_INT32s(int[] buffer, int count)
+		{
+			for (int i = 0; i < count; i++)
+				Write_L_INT32(buffer[i]);
 		}
 
 
@@ -269,10 +350,42 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Write a 16 bit integer in big endian format to the stream
+		/// </summary>
+		/********************************************************************/
+		public void Write_B_INT16(short data)
+		{
+			saveBuffer[0] = (byte)(data >> 8);
+			saveBuffer[1] = (byte)(data & 0xff);
+
+			Write(saveBuffer, 0, 2);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Write a 32 bit integer in big endian format to the stream
 		/// </summary>
 		/********************************************************************/
 		public void Write_B_UINT32(uint data)
+		{
+			saveBuffer[0] = (byte)(data >> 24);
+			saveBuffer[1] = (byte)(data >> 16);
+			saveBuffer[2] = (byte)(data >> 8);
+			saveBuffer[3] = (byte)(data & 0xff);
+
+			Write(saveBuffer, 0, 4);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Write a 32 bit integer in big endian format to the stream
+		/// </summary>
+		/********************************************************************/
+		public void Write_B_INT32(int data)
 		{
 			saveBuffer[0] = (byte)(data >> 24);
 			saveBuffer[1] = (byte)(data >> 16);
@@ -307,6 +420,27 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Write a 64 bit integer in big endian format to the stream
+		/// </summary>
+		/********************************************************************/
+		public void Write_B_INT64(long data)
+		{
+			saveBuffer[0] = (byte)(data >> 56);
+			saveBuffer[1] = (byte)(data >> 48);
+			saveBuffer[2] = (byte)(data >> 40);
+			saveBuffer[3] = (byte)(data >> 32);
+			saveBuffer[4] = (byte)(data >> 24);
+			saveBuffer[5] = (byte)(data >> 16);
+			saveBuffer[6] = (byte)(data >> 8);
+			saveBuffer[7] = (byte)(data & 0xff);
+
+			Write(saveBuffer, 0, 8);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Write an array of 16 bit integers in big endian format to the
 		/// stream
 		/// </summary>
@@ -321,6 +455,20 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Write an array of 16 bit integers in big endian format to the
+		/// stream
+		/// </summary>
+		/********************************************************************/
+		public void WriteArray_B_INT16s(short[] buffer, int count)
+		{
+			for (int i = 0; i < count; i++)
+				Write_B_INT16(buffer[i]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Write an array of 32 bit integers in big endian format to the
 		/// stream
 		/// </summary>
@@ -329,6 +477,20 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			for (int i = 0; i < count; i++)
 				Write_B_UINT32(buffer[i]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Write an array of 32 bit integers in big endian format to the
+		/// stream
+		/// </summary>
+		/********************************************************************/
+		public void WriteArray_B_INT32s(int[] buffer, int count)
+		{
+			for (int i = 0; i < count; i++)
+				Write_B_INT32(buffer[i]);
 		}
 
 

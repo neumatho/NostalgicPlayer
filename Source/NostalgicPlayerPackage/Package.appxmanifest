@@ -310,6 +310,15 @@
             <uap:DisplayName>AHX</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="fredfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-fred">.frd</uap:FileType>
+              <uap:FileType ContentType="audio/x-fred">.fred</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Fred Editor</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
