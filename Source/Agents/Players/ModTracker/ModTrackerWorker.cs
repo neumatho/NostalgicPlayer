@@ -429,7 +429,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				IChannel chan = VirtualChannels[i];
 				ModChannel modChan = channels[i];
 
-				chan.SetVolume((ushort)((modChan.Volume * modChan.CalculatedVolume / 64) * 4));
+				chan.SetVolume((ushort)(modChan.Volume * modChan.StarVolume * modChan.HmnVolume / 4096));
 			}
 
 			// If we have reached the end of the module, reset speed and tempo
@@ -2038,12 +2038,16 @@ stopLoop:
 				modChan.AutoSlideArg = 0;
 
 				modChan.SynthSample = false;
-				modChan.CalculatedVolume = 0;
 
 				modChan.AmToDo = AmToDo.None;
 				modChan.SampleNum = 0;
 				modChan.VibDegree = 0;
 				modChan.SustainCounter = 0;
+				modChan.StarVolume = 0;
+
+				modChan.DataCounter = 0;
+				modChan.HmnVolume = 0;
+				modChan.SynthData = null;
 
 				if (IsPcTracker())
 				{
@@ -2231,7 +2235,8 @@ stopLoop:
 				modChan.FineTune = sample.FineTune;
 				modChan.FineTuneHmn = sample.FineTuneHmn;
 				modChan.Volume = (sbyte)sample.Volume;
-				modChan.CalculatedVolume = 64;
+				modChan.HmnVolume = 64;
+				modChan.StarVolume = 256;
 
 				if (currentModuleType == ModuleType.StarTrekker)
 				{
@@ -2286,7 +2291,7 @@ stopLoop:
 							modChan.LoopLength = 16;
 							modChan.SynthData = synthData;
 
-							modChan.CalculatedVolume = (short)(synthData.VolumeData[0] & 0x7f);
+							modChan.HmnVolume = (short)(synthData.VolumeData[0] & 0x7f);
 						}
 					}
 				}
@@ -2377,8 +2382,7 @@ stopLoop:
 								modChan.LoopLength = 16;
 
 								modChan.AmToDo = AmToDo.Attack1;
-								modChan.Volume = 64;
-								modChan.CalculatedVolume = (short)amSample.StartAmp;
+								modChan.StarVolume = (short)amSample.StartAmp;
 								modChan.VibDegree = 0;
 								modChan.Period = (ushort)(modChan.Period << amSample.baseFreq);
 							}
@@ -3078,25 +3082,25 @@ stopLoop:
 						{
 							case AmToDo.Attack1:
 							{
-								if (modChan.CalculatedVolume == amSamp.Attack1Level)
+								if (modChan.StarVolume == amSamp.Attack1Level)
 									modChan.AmToDo = AmToDo.Attack2;
 								else
 								{
-									if (modChan.CalculatedVolume < amSamp.Attack1Level)
+									if (modChan.StarVolume < amSamp.Attack1Level)
 									{
-										modChan.CalculatedVolume += (short)amSamp.Attack1Speed;
-										if (modChan.CalculatedVolume >= amSamp.Attack1Level)
+										modChan.StarVolume += (short)amSamp.Attack1Speed;
+										if (modChan.StarVolume >= amSamp.Attack1Level)
 										{
-											modChan.CalculatedVolume = (short)amSamp.Attack1Level;
+											modChan.StarVolume = (short)amSamp.Attack1Level;
 											modChan.AmToDo = AmToDo.Attack2;
 										}
 									}
 									else
 									{
-										modChan.CalculatedVolume -= (short)amSamp.Attack1Speed;
-										if (modChan.CalculatedVolume <= amSamp.Attack1Level)
+										modChan.StarVolume -= (short)amSamp.Attack1Speed;
+										if (modChan.StarVolume <= amSamp.Attack1Level)
 										{
-											modChan.CalculatedVolume = (short)amSamp.Attack1Level;
+											modChan.StarVolume = (short)amSamp.Attack1Level;
 											modChan.AmToDo = AmToDo.Attack2;
 										}
 									}
@@ -3106,25 +3110,25 @@ stopLoop:
 
 							case AmToDo.Attack2:
 							{
-								if (modChan.CalculatedVolume == amSamp.Attack2Level)
+								if (modChan.StarVolume == amSamp.Attack2Level)
 									modChan.AmToDo = AmToDo.Sustain;
 								else
 								{
-									if (modChan.CalculatedVolume < amSamp.Attack2Level)
+									if (modChan.StarVolume < amSamp.Attack2Level)
 									{
-										modChan.CalculatedVolume += (short)amSamp.Attack2Speed;
-										if (modChan.CalculatedVolume >= amSamp.Attack2Level)
+										modChan.StarVolume += (short)amSamp.Attack2Speed;
+										if (modChan.StarVolume >= amSamp.Attack2Level)
 										{
-											modChan.CalculatedVolume = (short)amSamp.Attack2Level;
+											modChan.StarVolume = (short)amSamp.Attack2Level;
 											modChan.AmToDo = AmToDo.Sustain;
 										}
 									}
 									else
 									{
-										modChan.CalculatedVolume -= (short)amSamp.Attack2Speed;
-										if (modChan.CalculatedVolume <= amSamp.Attack2Level)
+										modChan.StarVolume -= (short)amSamp.Attack2Speed;
+										if (modChan.StarVolume <= amSamp.Attack2Level)
 										{
-											modChan.CalculatedVolume = (short)amSamp.Attack2Level;
+											modChan.StarVolume = (short)amSamp.Attack2Level;
 											modChan.AmToDo = AmToDo.Sustain;
 										}
 									}
@@ -3134,29 +3138,29 @@ stopLoop:
 
 							case AmToDo.Sustain:
 							{
-								if (modChan.CalculatedVolume == amSamp.SustainLevel)
+								if (modChan.StarVolume == amSamp.SustainLevel)
 								{
 									modChan.SustainCounter = (short)amSamp.SustainTime;
 									modChan.AmToDo = AmToDo.SustainDecay;
 								}
 								else
 								{
-									if (modChan.CalculatedVolume < amSamp.SustainLevel)
+									if (modChan.StarVolume < amSamp.SustainLevel)
 									{
-										modChan.CalculatedVolume += (short)amSamp.DecaySpeed;
-										if (modChan.CalculatedVolume >= amSamp.SustainLevel)
+										modChan.StarVolume += (short)amSamp.DecaySpeed;
+										if (modChan.StarVolume >= amSamp.SustainLevel)
 										{
-											modChan.CalculatedVolume = (short)amSamp.SustainLevel;
+											modChan.StarVolume = (short)amSamp.SustainLevel;
 											modChan.SustainCounter = (short)amSamp.SustainTime;
 											modChan.AmToDo = AmToDo.SustainDecay;
 										}
 									}
 									else
 									{
-										modChan.CalculatedVolume -= (short)amSamp.DecaySpeed;
-										if (modChan.CalculatedVolume <= amSamp.SustainLevel)
+										modChan.StarVolume -= (short)amSamp.DecaySpeed;
+										if (modChan.StarVolume <= amSamp.SustainLevel)
 										{
-											modChan.CalculatedVolume = (short)amSamp.SustainLevel;
+											modChan.StarVolume = (short)amSamp.SustainLevel;
 											modChan.SustainCounter = (short)amSamp.SustainTime;
 											modChan.AmToDo = AmToDo.SustainDecay;
 										}
@@ -3176,11 +3180,11 @@ stopLoop:
 
 							case AmToDo.Release:
 							{
-								modChan.CalculatedVolume -= (short)amSamp.ReleaseSpeed;
-								if (modChan.CalculatedVolume <= 0)
+								modChan.StarVolume -= (short)amSamp.ReleaseSpeed;
+								if (modChan.StarVolume <= 0)
 								{
 									modChan.AmToDo = AmToDo.None;
-									modChan.CalculatedVolume = 0;
+									modChan.StarVolume = 0;
 									modChan.SynthSample = false;
 
 									chan.Mute();
@@ -3238,7 +3242,7 @@ stopLoop:
 			{
 				byte dataCounter = modChan.DataCounter;
 
-				modChan.CalculatedVolume = (short)(modChan.SynthData.VolumeData[dataCounter] & 0x7f);
+				modChan.HmnVolume = (short)(modChan.SynthData.VolumeData[dataCounter] & 0x7f);
 				modChan.LoopStart = (ushort)(modChan.SynthData.Data[dataCounter] * 32);
 
 				dataCounter++;
@@ -3631,7 +3635,7 @@ stopLoop:
 					volume = 64;
 			}
 
-			modChan.CalculatedVolume = (sbyte)volume;
+			modChan.HmnVolume = (sbyte)volume;
 
 			modChan.TremoloPos += (sbyte)((modChan.TremoloCmd / 4) & 0x3c);
 		}

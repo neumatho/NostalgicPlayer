@@ -43,16 +43,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		public byte AutoSlideArg;
 
 		public bool SynthSample;		// True if synth sample, false if normal
-		public short CalculatedVolume;	// Calculated volume from synth samples
 
 		// For StarTrekker synths
 		public AmToDo AmToDo;			// Switch number
 		public ushort SampleNum;		// Current sample number
 		public ushort VibDegree;		// Vibrato degree
 		public short SustainCounter;	// Sustain time counter
+		public short StarVolume;		// Calculated volume from synth samples (0-256)
 
 		// For His Master's Noise synths
 		public byte DataCounter;
+		public short HmnVolume;			// Calculated volume from synth samples (0-64)
 		public HmnSynthData SynthData;
 	}
 }
