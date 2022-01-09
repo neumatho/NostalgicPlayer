@@ -532,23 +532,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				// Change the time on the item
 				listItem.Time = time;
 
-				// And update it in the list
-				moduleListBox.BeginUpdate();
-
-				try
+				// Find index of the item
+				int index = moduleListBox.Items.IndexOf(listItem);
+				if (index >= 0)
 				{
-					moduleListBox.Invalidate(moduleListBox.GetItemRectangle(moduleListBox.Items.IndexOf(listItem)));
-				}
-				finally
-				{
-					moduleListBox.EndUpdate();
-				}
+					// And update it in the list
+					moduleListBox.BeginUpdate();
 
-				// Now calculate the new list time
-				listTime = listTime - prevTime + time;
+					try
+					{
+						moduleListBox.Invalidate(moduleListBox.GetItemRectangle(index));
+					}
+					finally
+					{
+						moduleListBox.EndUpdate();
+					}
 
-				// And show it
-				UpdateTimes();
+					// Now calculate the new list time
+					listTime = listTime - prevTime + time;
+
+					// And show it
+					UpdateTimes();
+				}
 			}
 		}
 
@@ -2885,7 +2890,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 
 			// Tell the file scanner to scan the new items
-			fileScanner.ScanItems(0, moduleListBox.Items.Count);
+			fileScanner.ScanItems(moduleListBox.Items.Cast<ModuleListItem>().Take(moduleListBox.Items.Count));
 		}
 
 
@@ -4648,7 +4653,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						UpdateControls();
 
 						// Tell the file scanner to scan the new items
-						fileScanner.ScanItems(index == -1 ? currentCount : index, tempList.Count);
+						fileScanner.ScanItems(moduleListBox.Items.Cast<ModuleListItem>().Skip(index == -1 ? currentCount : index).Take(tempList.Count));
 					}
 				}
 			}
@@ -4788,7 +4793,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			UpdateControls();
 
 			// Tell the file scanner to scan the new items
-			fileScanner.ScanItems(startIndex == -1 ? currentCount : startIndex, itemList.Count);
+			fileScanner.ScanItems(moduleListBox.Items.Cast<ModuleListItem>().Skip(startIndex == -1 ? currentCount : startIndex).Take(itemList.Count));
 		}
 
 

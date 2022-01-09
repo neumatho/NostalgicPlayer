@@ -8,6 +8,7 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
@@ -27,8 +28,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 	{
 		private class QueueInfo
 		{
-			public int StartIndex;
-			public int Count;
+			public List<ModuleListItem> Items;
 		}
 
 		private readonly KryptonListBox listBox;
@@ -111,13 +111,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Will tell the scanner to scan the given range of items
 		/// </summary>
 		/********************************************************************/
-		public void ScanItems(int startIndex, int count)
+		public void ScanItems(IEnumerable<ModuleListItem> items)
 		{
 			if (settings.ScanFiles)
 			{
 				lock (queue)
 				{
-					queue.Enqueue(new QueueInfo { StartIndex = startIndex, Count = count });
+					queue.Enqueue(new QueueInfo { Items = items.ToList() });
 					queueSemaphore.Release();
 				}
 			}
@@ -181,22 +181,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			try
 			{
-				for (int index = queueInfo.StartIndex, count = queueInfo.Count; count > 0; index++, count--)
+				foreach (ModuleListItem listItem in queueInfo.Items)
 				{
 					// Get needed information via the main thread
-					string fileName = null;
-					bool haveTime = true;
-
-					listBox.Invoke(new Action<int>((idx) =>
-					{
-						if (idx < listBox.Items.Count)
-						{
-							ModuleListItem listItem = (ModuleListItem)listBox.Items[idx];
-
-							fileName = listItem.ListItem.FullPath;
-							haveTime = listItem.HaveTime;
-						}
-					}), index);
+					string fileName = listItem.ListItem.FullPath;
+					bool haveTime = listItem.HaveTime;
 
 					// If the item already have a time, skip it
 					if (haveTime || (fileName == null))
@@ -216,20 +205,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					}
 
 					// Update the list item
-					listBox.Invoke(new Action<int>((idx) =>
+					listBox.Invoke(() =>
 					{
-						if (idx < listBox.Items.Count)
-						{
-							ModuleListItem listItem = (ModuleListItem)listBox.Items[idx];
-
-							// Is the item we processed still the same in the list?
-							if (listItem.ListItem.FullPath == fileName)
-							{
-								// Yes, set the time
-								mainWindowForm.SetTimeOnItem(listItem, moduleDatabaseInfo.Duration);
-							}
-						}
-					}), index);
+						mainWindowForm.SetTimeOnItem(listItem, moduleDatabaseInfo.Duration);
+					});
 				}
 			}
 			catch (Exception)
