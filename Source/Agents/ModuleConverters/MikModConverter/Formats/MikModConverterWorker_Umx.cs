@@ -31,12 +31,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 	///
 	/// UPKG parsing partially based on Unreal Media Ripper (UMR) v0.3
 	/// by Andy Ward [wardwh@swbell.net], with additional updates
-	/// by O. Sezer - see git repo at https://github.com/sezero/umr/
-	///
-	/// The cheaper way, i.e. linear search of music object like libxmp
-	/// and libmodplug does, is possible. With this however we're using
-	/// the embedded offset, size and object type directly from the umx
-	/// file, and I feel safer with it.
+	/// by O. Sezer - see git repo at https://github.com/sezero/umr.git
 	/// </summary>
 	internal class MikModConverterWorker_Umx : MikModConverterWorkerBase
 	{
@@ -182,7 +177,10 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			Helpers.CopyData(moduleStream, converterStream, umxData.Size);
 
 			// Set the module type
-			originalFormat = string.Format(Resources.IDS_MIKCONV_NAME_UMX, versions[umxData.FileVersion], musType[(int)umxData.Type]);
+			if (!versions.TryGetValue(umxData.FileVersion, out string format))
+				format = Resources.IDS_MIKCONV_NAME_UMX_UNKNOWN;
+
+			originalFormat = string.Format(Resources.IDS_MIKCONV_NAME_UMX, format, musType[(int)umxData.Type]);
 
 			return true;
 		}
@@ -240,10 +238,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			if ((hdr.NameCount < 0) || (hdr.ExportCount < 0) || (hdr.ImportCount < 0) || (hdr.NameOffset < 36) || (hdr.ExportOffset < 36) || (hdr.ImportOffset < 36))
 				return false;
 
-			if (versions.ContainsKey(hdr.FileVersion))
-				return true;
-
-			return false;
+			return true;
 		}
 
 
