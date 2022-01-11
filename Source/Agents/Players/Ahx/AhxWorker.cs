@@ -9,6 +9,7 @@
 using System.Runtime.CompilerServices;
 using System.Text;
 using Polycode.NostalgicPlayer.Agent.Player.Ahx.Containers;
+using Polycode.NostalgicPlayer.Agent.Player.Ahx.Implementation;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;

@@ -49,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 		public Ins[] ins;
 		private BreakPoint[] breakPoints;
 
-		private Player[] p;
+		private Implementation.Player[] p;
 		private uint pals;
 
 		private bool looped;
@@ -575,10 +575,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 		public override bool InitPlayer(out string errorMessage)
 		{
 			// Create player objects
-			p = new Player[channelCount];
+			p = new Implementation.Player[channelCount];
 
 			for (byte i = 0; i < channelCount; i++)
-				p[i] = new Player(this, chan[i], i);
+				p[i] = new Implementation.Player(this, chan[i], i);
 
 			// Allocate buffers to hold the output to play
 			outBuffers = new short[channelCount][];

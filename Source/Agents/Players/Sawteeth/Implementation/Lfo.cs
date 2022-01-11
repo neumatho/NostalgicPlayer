@@ -8,7 +8,7 @@
 /******************************************************************************/
 using System;
 
-namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
+namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Implementation
 {
 	/// <summary>
 	/// Low frequency oscillation

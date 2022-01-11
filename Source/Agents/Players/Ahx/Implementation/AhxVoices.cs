@@ -8,7 +8,7 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Agent.Player.Ahx.Containers;
 
-namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
+namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Implementation
 {
 	/// <summary>
 	/// Handler of a single voice

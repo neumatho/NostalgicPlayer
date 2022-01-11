@@ -8,7 +8,7 @@
 /******************************************************************************/
 using System.Runtime.CompilerServices;
 
-namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
+namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Implementation
 {
 	/// <summary>
 	/// Handles the generation of output samples

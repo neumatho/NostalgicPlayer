@@ -6,7 +6,7 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
+namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Implementation
 {
 	/// <summary>
 	/// Holds different tables

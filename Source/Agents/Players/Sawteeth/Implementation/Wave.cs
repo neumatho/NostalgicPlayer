@@ -9,7 +9,7 @@
 using System;
 using Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Containers;
 
-namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
+namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Implementation
 {
 	/// <summary>
 	/// Wave generator

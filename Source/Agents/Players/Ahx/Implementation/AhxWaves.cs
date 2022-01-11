@@ -9,7 +9,7 @@
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
-namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
+namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Implementation
 {
 	/// <summary>
 	/// Responsible for generation of different wave forms
