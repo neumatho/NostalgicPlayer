@@ -215,7 +215,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 
 				string val = staticInfo.ModuleName;
 				if (string.IsNullOrEmpty(val))
-					val = ArchivePath.IsArchivePath(fileInfo.FileName) ? ArchivePath.GetEntryName(fileInfo.FileName) : Path.GetFileName(fileInfo.FileName);
+					val = Path.GetFileName(ArchivePath.IsArchivePath(fileInfo.FileName) ? ArchivePath.GetEntryName(fileInfo.FileName) : fileInfo.FileName);
 
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULENAME, val);
 
