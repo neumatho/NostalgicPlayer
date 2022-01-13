@@ -113,12 +113,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			set
 			{
 				time = value;
-				HaveTime = true;
 
 				if (time.Ticks == 0)
+				{
 					moduleTime = string.Empty;
+					HaveTime = false;
+				}
 				else
 				{
+					HaveTime = true;
+
 					TimeSpan tempTime = new TimeSpan((((long)value.TotalMilliseconds + 500) / 1000 * 1000) * TimeSpan.TicksPerMillisecond);
 					if ((int)tempTime.TotalHours > 0)
 						moduleTime = tempTime.ToString(Resources.IDS_TIMEFORMAT);

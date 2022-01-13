@@ -195,7 +195,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					ModuleDatabaseInfo moduleDatabaseInfo = database.RetrieveInformation(fileName);
 
 					// Did we get the total time
-					if (moduleDatabaseInfo == null)
+					if ((moduleDatabaseInfo == null) || (moduleDatabaseInfo.Duration.Ticks == 0))
 					{
 						// No, try to load the file and let the player return the total time
 						moduleDatabaseInfo = new ModuleDatabaseInfo(GetPlayerTime(fileName), 0, DateTime.MinValue);
