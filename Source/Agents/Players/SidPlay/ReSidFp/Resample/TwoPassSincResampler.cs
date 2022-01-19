@@ -6,41 +6,43 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System;
+
 namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp.Resample
 {
 	/// <summary>
-	/// Return sample with linear interpolation
+	/// Compose a more efficient SINC from chaining two other SINCs
 	/// </summary>
-	internal sealed class ZeroOrderResampler : Resampler
+	internal sealed class TwoPassSincResampler : Resampler
 	{
-		/// <summary>
-		/// Last sample
-		/// </summary>
-		private int cachedSample;
-
-		/// <summary>
-		/// Number of cycles per sample
-		/// </summary>
-		private readonly int cyclesPerSample;
-
-		private int sampleOffset;
-
-		/// <summary>
-		/// Calculated sample
-		/// </summary>
-		private int outputValue;
+		private readonly SincResampler s1;
+		private readonly SincResampler s2;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ZeroOrderResampler(double clockFrequency, double samplingFrequency)
+		private TwoPassSincResampler(double clockFrequency, double samplingFrequency, double highestAccurateFrequency, double intermediateFrequency)
 		{
-			cachedSample = 0;
-			cyclesPerSample = (int)(clockFrequency / samplingFrequency * 1024.0);
-			sampleOffset = 0;
-			outputValue = 0;
+			s1 = new SincResampler(clockFrequency, intermediateFrequency, highestAccurateFrequency);
+			s2 = new SincResampler(intermediateFrequency, samplingFrequency, highestAccurateFrequency);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Named constructor
+		/// </summary>
+		/********************************************************************/
+		public static TwoPassSincResampler Create(double clockFrequency, double samplingFrequency, double highestAccurateFrequency)
+		{
+			// Calculation according to Laurent Ganier. It evaluates to about 120 kHz at typical settings.
+			// Some testing around the chosen value seems to confirm that this does work
+			double intermediateFrequency = 2.0 * highestAccurateFrequency + Math.Sqrt(2.0 * highestAccurateFrequency * clockFrequency * (samplingFrequency - 2.0 * highestAccurateFrequency) / samplingFrequency);
+
+			return new TwoPassSincResampler(clockFrequency, samplingFrequency, highestAccurateFrequency, intermediateFrequency);
 		}
 
 		#region Overrides
@@ -51,20 +53,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp.Resample
 		/********************************************************************/
 		public override bool Input(int sample)
 		{
-			bool ready = false;
-
-			if (sampleOffset < 1024)
-			{
-				outputValue = cachedSample + (sampleOffset * (sample - cachedSample) >> 10);
-				ready = true;
-				sampleOffset += cyclesPerSample;
-			}
-
-			sampleOffset -= 1024;
-
-			cachedSample = sample;
-
-			return ready;
+			return s1.Input(sample) && s2.Input(s1.Output());
 		}
 
 
@@ -76,7 +65,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp.Resample
 		/********************************************************************/
 		public override int Output()
 		{
-			return outputValue;
+			return s2.Output();
 		}
 
 
@@ -88,8 +77,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp.Resample
 		/********************************************************************/
 		public override void Reset()
 		{
-			sampleOffset = 0;
-			cachedSample = 0;
+			s1.Reset();
+			s2.Reset();
 		}
 		#endregion
 	}

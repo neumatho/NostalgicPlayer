@@ -88,6 +88,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			Always
 		}
 
+		public enum MixerType
+		{
+			/// <summary></summary>
+			Interpolate,
+			/// <summary></summary>
+			ResampleInterpolate
+		}
+
 		private readonly ISettings settings;
 
 		/********************************************************************/
@@ -219,6 +227,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			get => settings.GetBoolEntry("Options", "DigiBoost", false);
 
 			set => settings.SetBoolEntry("Options", "DigiBoost", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Which mixer to use
+		/// </summary>
+		/********************************************************************/
+		public MixerType Mixer
+		{
+			get => Enum.Parse<MixerType>(settings.GetStringEntry("Options", "Mixer", MixerType.ResampleInterpolate.ToString()));
+
+			set => settings.SetStringEntry("Options", "Mixer", value.ToString());
 		}
 
 

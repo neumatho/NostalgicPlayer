@@ -510,15 +510,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 
 		/********************************************************************/
 		/// <summary>
-		/// Is only called if BufferMode is set in the SupportFlags. It tells
-		/// your player what frequency the NostalgicPlayer mixer is using.
-		/// You can use it if you want or you can use your own output
-		/// frequency
+		/// Set the output frequency and number of channels
 		/// </summary>
 		/********************************************************************/
-		public override void SetOutputFrequency(uint mixerFrequency)
+		public override void SetOutputFormat(uint mixerFrequency, int channels)
 		{
-			base.SetOutputFrequency(mixerFrequency);
+			base.SetOutputFormat(mixerFrequency, channels);
 
 			// Allocate channel buffers
 			sampBuffers = new short[4][];
@@ -670,7 +667,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 			}
 
 			InitSubSong(calculateSubSong);
-			SetOutputFrequency(44100);
+			SetOutputFormat(44100, 2);		// Just use some defaults while calculation the duration
 
 			return posNr;
 		}

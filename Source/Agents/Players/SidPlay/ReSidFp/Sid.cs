@@ -620,12 +620,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 					break;
 				}
 
-/*				case SamplingMethod.RESAMPLE:
+				case SamplingMethod.RESAMPLE:
 				{
 					resampler = TwoPassSincResampler.Create(clockFrequency, samplingFrequency, highestAccurateFrequency);
 					break;
 				}
-*/
+
 				default:
 					throw new SidErrorException(Resources.IDS_SID_ERR_UNKNOWN_SAMPLING_METHOD);
 			}

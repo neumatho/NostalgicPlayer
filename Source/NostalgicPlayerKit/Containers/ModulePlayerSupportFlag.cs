@@ -31,6 +31,17 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// which means your Play() method will only be called, when a
 		/// new buffer needs to be set
 		/// </summary>
-		BufferMode = 0x1000
+		BufferMode = 0x1000,
+
+		/// <summary>
+		/// If this flag is set together with BufferMode, the buffer mode
+		/// goes into direct mode.
+		///
+		/// That means, your output goes around NostalgicPlayer mixer, so the
+		/// output samples need to be in the right frequency and either in
+		/// mono or stereo. You will get that information via the SetOutputFormat()
+		/// method in your player
+		/// </summary>
+		BufferDirect = 0x2000
 	}
 }

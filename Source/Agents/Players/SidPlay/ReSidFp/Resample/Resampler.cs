@@ -52,17 +52,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp.Resample
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected abstract int Output();
+		public abstract int Output();
 		#endregion
 
-		#region Private methods
+		#region Helper methods
 		/********************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private short SoftClip(int x)
+		protected short SoftClip(int x)
 		{
 			int threshold = 28000;
 			if (x < threshold)

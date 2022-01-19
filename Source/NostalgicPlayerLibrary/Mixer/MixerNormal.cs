@@ -24,6 +24,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private const int ClickShift = 6;
 		private const int ClickBuffer = 1 << ClickShift;
 
+		#region Overrides
 		/********************************************************************/
 		/// <summary>
 		/// Will initialize mixer stuff
@@ -126,6 +127,22 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 
 
+		/********************************************************************/
+		/// <summary>
+		/// Convert the mix buffer to the output format and store the result
+		/// in the supplied buffer
+		/// </summary>
+		/********************************************************************/
+		public override void ConvertMixedData(byte[] dest, int offset, int[] source, int todo, bool swapSpeakers)
+		{
+			if (bytesPerSample == 2)
+				MixConvertTo16(MemoryMarshal.Cast<byte, short>(dest), offset / 2, source, todo, swapSpeakers);
+			else if (bytesPerSample == 4)
+				MixConvertTo32(MemoryMarshal.Cast<byte, int>(dest), offset / 4, source, todo, swapSpeakers);
+		}
+		#endregion
+
+		#region Private methods
 		/********************************************************************/
 		/// <summary>
 		/// Mix a channel into the buffer
@@ -381,6 +398,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				offset += (mode & MixerMode.Stereo) != 0 ? done << 1 : done;
 			}
 		}
+		#endregion
 
 		#region Real mixing methods
 
@@ -958,6 +976,165 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		#endregion
 
+		#endregion
+
+		#region Conversion methods
+		private const int MixBitShift16 = 9;
+		private const int MixBitShift32 = 7;
+
+		/********************************************************************/
+		/// <summary>
+		/// Converts the mixed data to a 16 bit sample buffer
+		/// </summary>
+		/********************************************************************/
+		private void MixConvertTo16(Span<short> dest, int offset, int[] source, int count, bool swapSpeakers)
+		{
+			int x1, x2, x3, x4;
+
+			int remain = count & 3;
+			int sourceOffset = 0;
+
+			if (swapSpeakers)
+			{
+				for (count >>= 2; count != 0; count--)
+				{
+					x1 = source[sourceOffset++] >> MixBitShift16;
+					x2 = source[sourceOffset++] >> MixBitShift16;
+					x3 = source[sourceOffset++] >> MixBitShift16;
+					x4 = source[sourceOffset++] >> MixBitShift16;
+
+					x1 = (x1 >= 32767) ? 32767 - 1 : (x1 < -32767) ? -32767 : x1;
+					x2 = (x2 >= 32767) ? 32767 - 1 : (x2 < -32767) ? -32767 : x2;
+					x3 = (x3 >= 32767) ? 32767 - 1 : (x3 < -32767) ? -32767 : x3;
+					x4 = (x4 >= 32767) ? 32767 - 1 : (x4 < -32767) ? -32767 : x4;
+
+					dest[offset++] = (short)x2;
+					dest[offset++] = (short)x1;
+					dest[offset++] = (short)x4;
+					dest[offset++] = (short)x3;
+				}
+
+				// We know it is always stereo samples when coming here
+				while (remain > 0)
+				{
+					x1 = source[sourceOffset++] >> MixBitShift16;
+					x2 = source[sourceOffset++] >> MixBitShift16;
+
+					x1 = (x1 >= 32767) ? 32767 - 1 : (x1 < -32767) ? -32767 : x1;
+					x2 = (x2 >= 32767) ? 32767 - 1 : (x2 < -32767) ? -32767 : x2;
+
+					dest[offset++] = (short)x2;
+					dest[offset++] = (short)x1;
+
+					remain -= 2;
+				}
+			}
+			else
+			{
+				for (count >>= 2; count != 0; count--)
+				{
+					x1 = source[sourceOffset++] >> MixBitShift16;
+					x2 = source[sourceOffset++] >> MixBitShift16;
+					x3 = source[sourceOffset++] >> MixBitShift16;
+					x4 = source[sourceOffset++] >> MixBitShift16;
+
+					x1 = (x1 >= 32767) ? 32767 - 1 : (x1 < -32767) ? -32767 : x1;
+					x2 = (x2 >= 32767) ? 32767 - 1 : (x2 < -32767) ? -32767 : x2;
+					x3 = (x3 >= 32767) ? 32767 - 1 : (x3 < -32767) ? -32767 : x3;
+					x4 = (x4 >= 32767) ? 32767 - 1 : (x4 < -32767) ? -32767 : x4;
+
+					dest[offset++] = (short)x1;
+					dest[offset++] = (short)x2;
+					dest[offset++] = (short)x3;
+					dest[offset++] = (short)x4;
+				}
+
+				while (remain-- != 0)
+				{
+					x1 = source[sourceOffset++] >> MixBitShift16;
+					x1 = (x1 >= 32767) ? 32767 - 1 : (x1 < -32767) ? -32767 : x1;
+					dest[offset++] = (short)x1;
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Converts the mixed data to a 32 bit sample buffer
+		/// </summary>
+		/********************************************************************/
+		private void MixConvertTo32(Span<int> dest, int offset, int[] source, int count, bool swapSpeakers)
+		{
+			long x1, x2, x3, x4;
+
+			int remain = count & 3;
+			int sourceOffset = 0;
+
+			if (swapSpeakers)
+			{
+				for (count >>= 2; count != 0; count--)
+				{
+					x1 = (long)source[sourceOffset++] << MixBitShift32;
+					x2 = (long)source[sourceOffset++] << MixBitShift32;
+					x3 = (long)source[sourceOffset++] << MixBitShift32;
+					x4 = (long)source[sourceOffset++] << MixBitShift32;
+
+					x1 = (x1 >= 2147483647) ? 2147483647 - 1 : (x1 < -2147483647) ? -2147483647 : x1;
+					x2 = (x2 >= 2147483647) ? 2147483647 - 1 : (x2 < -2147483647) ? -2147483647 : x2;
+					x3 = (x3 >= 2147483647) ? 2147483647 - 1 : (x3 < -2147483647) ? -2147483647 : x3;
+					x4 = (x4 >= 2147483647) ? 2147483647 - 1 : (x4 < -2147483647) ? -2147483647 : x4;
+
+					dest[offset++] = (int)x2;
+					dest[offset++] = (int)x1;
+					dest[offset++] = (int)x4;
+					dest[offset++] = (int)x3;
+				}
+
+				// We know it is always stereo samples when coming here
+				while (remain > 0)
+				{
+					x1 = (long)source[sourceOffset++] << MixBitShift32;
+					x2 = (long)source[sourceOffset++] << MixBitShift32;
+
+					x1 = (x1 >= 2147483647) ? 2147483647 - 1 : (x1 < -2147483647) ? -2147483647 : x1;
+					x2 = (x2 >= 2147483647) ? 2147483647 - 1 : (x2 < -2147483647) ? -2147483647 : x2;
+
+					dest[offset++] = (int)x2;
+					dest[offset++] = (int)x1;
+
+					remain -= 2;
+				}
+			}
+			else
+			{
+				for (count >>= 2; count != 0; count--)
+				{
+					x1 = (long)source[sourceOffset++] << MixBitShift32;
+					x2 = (long)source[sourceOffset++] << MixBitShift32;
+					x3 = (long)source[sourceOffset++] << MixBitShift32;
+					x4 = (long)source[sourceOffset++] << MixBitShift32;
+
+					x1 = (x1 >= 2147483647) ? 2147483647 - 1 : (x1 < -2147483647) ? -2147483647 : x1;
+					x2 = (x2 >= 2147483647) ? 2147483647 - 1 : (x2 < -2147483647) ? -2147483647 : x2;
+					x3 = (x3 >= 2147483647) ? 2147483647 - 1 : (x3 < -2147483647) ? -2147483647 : x3;
+					x4 = (x4 >= 2147483647) ? 2147483647 - 1 : (x4 < -2147483647) ? -2147483647 : x4;
+
+					dest[offset++] = (int)x1;
+					dest[offset++] = (int)x2;
+					dest[offset++] = (int)x3;
+					dest[offset++] = (int)x4;
+				}
+
+				while (remain-- != 0)
+				{
+					x1 = (long)source[sourceOffset++] << MixBitShift32;
+					x1 = (x1 >= 2147483647) ? 2147483647 - 1 : (x1 < -2147483647) ? -2147483647 : x1;
+					dest[offset++] = (int)x1;
+				}
+			}
+		}
 		#endregion
 	}
 }

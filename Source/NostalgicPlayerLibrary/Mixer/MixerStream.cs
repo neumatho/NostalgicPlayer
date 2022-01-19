@@ -164,7 +164,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Read mixed data
 		/// </summary>
 		/********************************************************************/
-		
 		public override int Read(byte[] buffer, int offset, int count)
 		{
 			try

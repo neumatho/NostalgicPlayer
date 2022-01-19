@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -247,6 +247,33 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings {
         internal static string IDS_SETTINGS_OPTIONS_FILTER_ENABLE {
             get {
                 return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_FILTER_ENABLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mixer.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_MIXER {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_MIXER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Interpolate.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_MIXER_INTERPOLATE {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_MIXER_INTERPOLATE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resample (interpolate).
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_MIXER_RESAMPLE {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_MIXER_RESAMPLE", resourceCulture);
             }
         }
         

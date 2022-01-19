@@ -26,6 +26,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 		public SettingsControl()
 		{
 			InitializeComponent();
+
+			// Add items in mixer combo control
+			mixerComboBox.Items.AddRange(new object[]
+			{
+				Resources.IDS_SETTINGS_OPTIONS_MIXER_INTERPOLATE,
+				Resources.IDS_SETTINGS_OPTIONS_MIXER_RESAMPLE
+			});
 		}
 
 		#region ISettingsControl implementation
@@ -162,6 +169,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 
 			enableFilterCheckBox.Checked = settings.FilterEnabled;
 			digiboostCheckBox.Checked = settings.DigiBoostEnabled;
+			mixerComboBox.SelectedIndex = (int)settings.Mixer;
 
 			hvscvPathTextBox.Text = settings.HvscPath;
 			stilCheckBox.Checked = settings.StilEnabled;
@@ -214,6 +222,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 
 			settings.FilterEnabled = enableFilterCheckBox.Checked;
 			settings.DigiBoostEnabled = digiboostCheckBox.Checked;
+			settings.Mixer = (SidPlay.SidPlaySettings.MixerType)mixerComboBox.SelectedIndex;
 
 			settings.HvscPath = hvscvPathTextBox.Text;
 			settings.StilEnabled = stilCheckBox.Checked;

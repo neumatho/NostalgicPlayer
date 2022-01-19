@@ -10,7 +10,7 @@
 		<Product>NostalgicPlayer</Product>
 		<Description>Settings for the SidPlay agent</Description>
 		<Copyright>Copyright © 2021-2022</Copyright>
-		<Version>1.1.0</Version>
+		<Version>1.2.0</Version>
 	</PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

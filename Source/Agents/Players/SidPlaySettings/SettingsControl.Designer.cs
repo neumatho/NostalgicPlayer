@@ -59,6 +59,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			this.optionsGroupBox = new Krypton.Toolkit.KryptonGroupBox();
 			this.digiboostCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.enableFilterCheckBox = new Krypton.Toolkit.KryptonCheckBox();
+			this.mixerLabel = new Krypton.Toolkit.KryptonLabel();
+			this.mixerComboBox = new Krypton.Toolkit.KryptonComboBox();
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.ciaGroupBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.ciaGroupBox.Panel)).BeginInit();
@@ -77,6 +79,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			((System.ComponentModel.ISupportInitialize)(this.optionsGroupBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.optionsGroupBox.Panel)).BeginInit();
 			this.optionsGroupBox.Panel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.mixerComboBox)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// controlResource
@@ -395,6 +398,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			// 
 			this.optionsGroupBox.Panel.Controls.Add(this.digiboostCheckBox);
 			this.optionsGroupBox.Panel.Controls.Add(this.enableFilterCheckBox);
+			this.optionsGroupBox.Panel.Controls.Add(this.mixerLabel);
+			this.optionsGroupBox.Panel.Controls.Add(this.mixerComboBox);
 			this.controlResource.SetResourceKey(this.optionsGroupBox, "IDS_SETTINGS_OPTIONS");
 			this.optionsGroupBox.Size = new System.Drawing.Size(294, 92);
 			this.optionsGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -406,7 +411,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			this.digiboostCheckBox.Location = new System.Drawing.Point(4, 26);
 			this.digiboostCheckBox.Name = "digiboostCheckBox";
 			this.controlResource.SetResourceKey(this.digiboostCheckBox, "IDS_SETTINGS_OPTIONS_DIGIBOOST");
-			this.digiboostCheckBox.Size = new System.Drawing.Size(197, 20);
+			this.digiboostCheckBox.Size = new System.Drawing.Size(179, 17);
+			this.digiboostCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.digiboostCheckBox.TabIndex = 1;
 			this.digiboostCheckBox.Values.Text = "Boost digisounds on MOS-8580";
 			// 
@@ -419,6 +425,31 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			this.enableFilterCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.enableFilterCheckBox.TabIndex = 0;
 			this.enableFilterCheckBox.Values.Text = "Enable filter";
+			// 
+			// mixerLabel
+			// 
+			this.mixerLabel.Location = new System.Drawing.Point(1, 48);
+			this.mixerLabel.Name = "mixerLabel";
+			this.controlResource.SetResourceKey(this.mixerLabel, "IDS_SETTINGS_OPTIONS_MIXER");
+			this.mixerLabel.Size = new System.Drawing.Size(37, 17);
+			this.mixerLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.mixerLabel.TabIndex = 2;
+			this.mixerLabel.Values.Text = "Mixer";
+			// 
+			// mixerComboBox
+			// 
+			this.mixerComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+			this.mixerComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.mixerComboBox.DropDownWidth = 121;
+			this.mixerComboBox.IntegralHeight = false;
+			this.mixerComboBox.Location = new System.Drawing.Point(40, 47);
+			this.mixerComboBox.Name = "mixerComboBox";
+			this.controlResource.SetResourceKey(this.mixerComboBox, null);
+			this.mixerComboBox.Size = new System.Drawing.Size(160, 19);
+			this.mixerComboBox.StateCommon.ComboBox.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.mixerComboBox.StateCommon.ComboBox.Content.TextH = Krypton.Toolkit.PaletteRelativeAlign.Near;
+			this.mixerComboBox.StateCommon.Item.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.mixerComboBox.TabIndex = 3;
 			// 
 			// SettingsControl
 			// 
@@ -458,6 +489,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 			this.optionsGroupBox.Panel.ResumeLayout(false);
 			this.optionsGroupBox.Panel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.optionsGroupBox)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.mixerComboBox)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -493,5 +525,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 		private Krypton.Toolkit.KryptonRadioButton dreanRadioButton;
 		private Krypton.Toolkit.KryptonRadioButton palmRadioButton;
 		private Krypton.Toolkit.KryptonCheckBox digiboostCheckBox;
+		private Krypton.Toolkit.KryptonComboBox mixerComboBox;
+		private Krypton.Toolkit.KryptonLabel mixerLabel;
 	}
 }

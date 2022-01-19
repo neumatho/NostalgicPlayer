@@ -55,9 +55,10 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Is only called if BufferMode is set in the SupportFlags. It tells
 		/// your player what frequency the NostalgicPlayer mixer is using.
 		/// You can use it if you want or you can use your own output
-		/// frequency
+		/// frequency, but if you also using BufferDirect, you need to use
+		/// this frequency and number of channels
 		/// </summary>
-		void SetOutputFrequency(uint mixerFrequency);
+		void SetOutputFormat(uint mixerFrequency, int channels);
 
 		/// <summary>
 		/// This is the main player method

@@ -435,11 +435,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         ///¤CDave Gandy
         ///¤COzkan Sezer, Alice Rowan
         ///¤Cand Miodrag Vallat
-        ///¤CAdam Hathcock
+        ///¤CWilfred Bos
         ///¤CJens-Christian Huus
+        ///¤CAdam Hathcock
         ///¤CAdrien Destugues
-        ///¤CRobert Baron
-        ///¤CAnd to all y [rest of string was truncated]&quot;;.
+        ///¤CRobert Baron        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string IDS_ABOUT_TEXT {
             get {

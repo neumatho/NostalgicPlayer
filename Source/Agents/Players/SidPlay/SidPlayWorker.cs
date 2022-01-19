@@ -304,7 +304,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Will load the file into memory
 		/// </summary>
 		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.BufferMode;
+		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.BufferDirect;
 
 
 
@@ -432,8 +432,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			engineConfig = new SidConfig();
 
 			// Set sampling method
-			engineConfig.samplingMethod = SidConfig.sampling_method_t.INTERPOLATE;
-			engineConfig.playback = SidConfig.playback_t.STEREO;
+			switch (settings.Mixer)
+			{
+				case SidPlaySettings.MixerType.Interpolate:
+				{
+					engineConfig.samplingMethod = SidConfig.sampling_method_t.INTERPOLATE;
+					break;
+				}
+
+				case SidPlaySettings.MixerType.ResampleInterpolate:
+				{
+					engineConfig.samplingMethod = SidConfig.sampling_method_t.RESAMPLE_INTERPOLATE;
+					break;
+				}
+			}
 
 			// Setup our configuration
 			switch (settings.CiaModel)
@@ -627,14 +639,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 
 		/********************************************************************/
 		/// <summary>
-		/// Sets the mixer output frequency
+		/// Set the output frequency and number of channels
 		/// </summary>
 		/********************************************************************/
-		public override void SetOutputFrequency(uint mixerFrequency)
+		public override void SetOutputFormat(uint mixerFrequency, int channels)
 		{
-			base.SetOutputFrequency(mixerFrequency);
+			base.SetOutputFormat(mixerFrequency, channels);
 
 			engineConfig.frequency = mixerFrequency;
+			engineConfig.playback = channels == 1 ? SidConfig.playback_t.MONO : SidConfig.playback_t.STEREO;
+
 			engine.Config(engineConfig, true);
 		}
 
@@ -660,18 +674,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 
 			// Setup the NostalgicPlayer channel
 			IChannel channel = VirtualChannels[0];
-
 			channel.PlaySample(leftOutputBuffer, 0, BufferSize, 16);
-			channel.SetFrequency(engineConfig.frequency);
-			channel.SetVolume(256);
-			channel.SetPanning((ushort)ChannelPanning.Left);
 
 			channel = VirtualChannels[1];
-
 			channel.PlaySample(rightOutputBuffer, 0, BufferSize, 16);
-			channel.SetFrequency(engineConfig.frequency);
-			channel.SetVolume(256);
-			channel.SetPanning((ushort)ChannelPanning.Right);
 		}
 
 
