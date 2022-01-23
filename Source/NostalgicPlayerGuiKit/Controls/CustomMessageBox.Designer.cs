@@ -120,6 +120,7 @@
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Dialog";
+			this.Resize += new System.EventHandler(this.CustomMessageBox_Resize);
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
 			this.messagePanel.ResumeLayout(false);
 			this.messagePanel.PerformLayout();

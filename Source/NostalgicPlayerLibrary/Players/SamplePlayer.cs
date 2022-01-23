@@ -162,38 +162,46 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		public bool StartPlaying(Loader loader, out string errorMessage, MixerConfiguration newMixerConfiguration)
 		{
-			if (newMixerConfiguration != null)
-				soundStream.ChangeConfiguration(newMixerConfiguration);
-
-			lock (currentPlayer)
+			try
 			{
-				if (!currentPlayer.InitSound(durationInfo, out errorMessage))
+				if (newMixerConfiguration != null)
+					soundStream.ChangeConfiguration(newMixerConfiguration);
+
+				lock (currentPlayer)
+				{
+					if (!currentPlayer.InitSound(durationInfo, out errorMessage))
+						return false;
+
+					// Find the length of the song
+					int songLength = currentPlayer.SongLength;
+
+					// Initialize the module information
+					PlayingModuleInformation = new ModuleInfoFloating(durationInfo, currentPlayer.GetSongPosition(), songLength, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
+				}
+
+				soundStream.Start();
+
+				if (outputAgent.SwitchStream(soundStream, loader.FileName, StaticModuleInformation.ModuleName, StaticModuleInformation.Author, out errorMessage) == AgentResult.Error)
 					return false;
 
-				// Find the length of the song
-				int songLength = currentPlayer.SongLength;
+				// Tell all visuals to start
+				foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
+				{
+					visualAgent.CleanupVisual();
 
-				// Initialize the module information
-				PlayingModuleInformation = new ModuleInfoFloating(durationInfo, currentPlayer.GetSongPosition(), songLength, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
+					if (visualAgent is IChannelChangeVisualAgent)
+						continue;
+
+					visualAgent.InitVisual(StaticModuleInformation.Channels);
+				}
+
+				outputAgent.Play();
 			}
-
-			soundStream.Start();
-
-			if (outputAgent.SwitchStream(soundStream, loader.FileName, StaticModuleInformation.ModuleName, StaticModuleInformation.Author, out errorMessage) == AgentResult.Error)
-				return false;
-
-			// Tell all visuals to start
-			foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
+			catch (Exception ex)
 			{
-				visualAgent.CleanupVisual();
-
-				if (visualAgent is IChannelChangeVisualAgent)
-					continue;
-
-				visualAgent.InitVisual(StaticModuleInformation.Channels);
+				errorMessage = ex.Message;
+				return false;
 			}
-
-			outputAgent.Play();
 
 			return true;
 		}

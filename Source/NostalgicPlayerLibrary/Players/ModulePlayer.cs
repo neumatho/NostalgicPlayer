@@ -172,28 +172,36 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		{
 			lock (playerLock)
 			{
-				if (newMixerConfiguration != null)
-					soundStream.ChangeConfiguration(newMixerConfiguration);
-
-				soundStream.Start();
-
-				if (outputAgent.SwitchStream(soundStream, loader.FileName, StaticModuleInformation.ModuleName, StaticModuleInformation.Author, out errorMessage) == AgentResult.Error)
-					return false;
-
-				// Tell all visuals to start
-				bool bufferMode = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferMode) != 0;
-
-				foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
+				try
 				{
-					visualAgent.CleanupVisual();
+					if (newMixerConfiguration != null)
+						soundStream.ChangeConfiguration(newMixerConfiguration);
 
-					if (bufferMode && (visualAgent is IChannelChangeVisualAgent))
-						continue;
+					soundStream.Start();
 
-					visualAgent.InitVisual(StaticModuleInformation.Channels);
+					if (outputAgent.SwitchStream(soundStream, loader.FileName, StaticModuleInformation.ModuleName, StaticModuleInformation.Author, out errorMessage) == AgentResult.Error)
+						return false;
+
+					// Tell all visuals to start
+					bool bufferMode = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferMode) != 0;
+
+					foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
+					{
+						visualAgent.CleanupVisual();
+
+						if (bufferMode && (visualAgent is IChannelChangeVisualAgent))
+							continue;
+
+						visualAgent.InitVisual(StaticModuleInformation.Channels);
+					}
+
+					outputAgent.Play();
 				}
-
-				outputAgent.Play();
+				catch (Exception ex)
+				{
+					errorMessage = ex.Message;
+					return false;
+				}
 
 				return true;
 			}
