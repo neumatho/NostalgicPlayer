@@ -16,6 +16,7 @@ using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
+using Polycode.NostalgicPlayer.GuiKit.Extensions;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
@@ -506,74 +507,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			if (selectedRows.Count > 0)
 			{
 				string description = ((AgentListInfo)selectedRows[0].Tag)?.Description;
-
 				int listWidth = descriptionDataGridView.Columns[0].Width;
 
-				using (Graphics g = Graphics.FromHwnd(descriptionDataGridView.Handle))
-				{
-					while (!string.IsNullOrEmpty(description))
-					{
-						string tempStr;
-
-						// See if there is any newlines
-						int index = description.IndexOf('\n');
-						if (index != -1)
-						{
-							// There is, get the line
-							tempStr = description.Substring(0, index);
-							description = description.Substring(index + 1);
-						}
-						else
-						{
-							tempStr = description;
-							description = string.Empty;
-						}
-
-						// Adjust the description line
-						tempStr = tempStr.Trim();
-
-						// Just add empty lines
-						if (string.IsNullOrEmpty(tempStr))
-							descriptionDataGridView.Rows.Add(string.Empty);
-						else
-						{
-							do
-							{
-								int lineWidth = (int)g.MeasureString(tempStr, descriptionDataGridView.StateCommon.DataCell.Content.Font).Width;
-
-								string tempStr1 = string.Empty;
-
-								while (lineWidth >= listWidth)
-								{
-									// We need to split the line
-									index = tempStr.LastIndexOf(' ');
-									if (index != -1)
-									{
-										// Found a space, check if the line can be showed now
-										tempStr1 = tempStr.Substring(index) + tempStr1;
-										tempStr = tempStr.Substring(0, index);
-
-										lineWidth = (int)g.MeasureString(tempStr, descriptionDataGridView.StateCommon.DataCell.Content.Font).Width;
-									}
-									else
-									{
-										// Well, the line can't be showed and we can't split it :-(
-										break;
-									}
-								}
-
-								// Adjust the description line
-								tempStr = tempStr.Trim();
-
-								// Add the line in the grid
-								descriptionDataGridView.Rows.Add(tempStr);
-
-								tempStr = tempStr1.Trim();
-							}
-							while (!string.IsNullOrEmpty(tempStr));
-						}
-					}
-				}
+				foreach (string line in description.SplitIntoLines(descriptionDataGridView.Handle, listWidth, descriptionDataGridView.StateCommon.DataCell.Content.Font))
+					descriptionDataGridView.Rows.Add(line);
 
 				// Resize the rows, so the lines are compacted
 				descriptionDataGridView.AutoResizeRows();
