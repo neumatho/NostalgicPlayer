@@ -185,7 +185,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				if ((new DateTime(optionSettings.LastCleanupTime).AddDays(7) < DateTime.Now))
 				{
-					database.StartCleanup();
+					database.StartCleanup(() =>
+					{
+						BeginInvoke(() =>
+						{
+							if (IsFavoriteSongSystemWindowOpen())
+								favoriteSongSystemWindow.RefreshWindow();
+						});
+					});
+
 					optionSettings.LastCleanupTime = DateTime.Now.Ticks;
 				}
 

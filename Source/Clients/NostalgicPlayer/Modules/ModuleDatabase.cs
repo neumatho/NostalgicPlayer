@@ -71,12 +71,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		private Semaphore queueSemaphore;
 
 		private ManualResetEvent cleanupEvent;
+		private CleanupDoneHandler cleanupDoneHandler;
 
 		/// <summary>
 		/// Return a new object if you want to change it or null to leave
 		/// the original in place
 		/// </summary>
 		public delegate ModuleDatabaseInfo ActionHandler(string fullPath, ModuleDatabaseInfo moduleDatabaseInfo);
+
+		/// <summary>
+		/// Is called when cleanup is done
+		/// </summary>
+		public delegate void CleanupDoneHandler();
 
 		/********************************************************************/
 		/// <summary>
@@ -213,8 +219,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/// Start the cleanup job
 		/// </summary>
 		/********************************************************************/
-		public void StartCleanup()
+		public void StartCleanup(CleanupDoneHandler handler)
 		{
+			cleanupDoneHandler = handler;
 			cleanupEvent.Set();
 		}
 
@@ -499,6 +506,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 							DoCleanup();
 
 							cleanupEvent.Reset();
+
+							if (cleanupDoneHandler != null)
+							{
+								cleanupDoneHandler();
+								cleanupDoneHandler = null;
+							}
 							break;
 						}
 
@@ -608,7 +621,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 					state = stack.Pop();
 
-					while ((state.Index < state.Level.Count) && (itemsToTake > 0))
+					while ((state.Index < state.AllKeys.Length) && (itemsToTake > 0))
 					{
 						string part = state.AllKeys[state.Index];
 						string fullPath = Path.Combine(state.Path, part);
