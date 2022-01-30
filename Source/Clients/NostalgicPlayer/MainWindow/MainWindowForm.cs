@@ -4375,11 +4375,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void HandleEndReached()
 		{
-			BeginInvoke(new Action(() =>
+			BeginInvoke(new Action<ModuleListItem>((itemToEnd) =>
 			{
 				lock (processingEndReached)
 				{
-					if (playItem != null)
+					if ((playItem != null) && (playItem == itemToEnd))
 					{
 						// Check to see if there is module loop on
 						if (loopCheckButton.Checked)
@@ -4443,7 +4443,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						}
 					}
 				}
-			}));
+			}), playItem);
 		}
 		#endregion
 
