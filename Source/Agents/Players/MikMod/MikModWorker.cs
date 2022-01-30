@@ -87,13 +87,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		/// Return the comment separated in lines
 		/// </summary>
 		/********************************************************************/
-		public override string[] Comment
-		{
-			get
-			{
-				return string.IsNullOrWhiteSpace(of.Comment) ? new string[0] : of.Comment.Split('\n');
-			}
-		}
+		public override string[] Comment => string.IsNullOrWhiteSpace(of.Comment) ? new string[0] : of.Comment.Split('\n');
 
 
 
@@ -614,7 +608,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override int InitDurationCalculation(int startPosition)
+		protected override int InitDurationCalculationByStartPos(int startPosition)
 		{
 			player.Init(of, (short)startPosition);
 

@@ -313,7 +313,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 			do
 			{
-				songStartPos = InitDurationCalculation(songStartPos);
+				songStartPos = InitDurationCalculationByStartPos(songStartPos);
 				if (songStartPos < 0)
 					break;
 
@@ -360,7 +360,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 						break;
 
 					// Add the tick time
-					total += (1000.0f / (currentBpm / 2.5f));
+					total += 1000.0f / PlayingFrequency;
 
 					// Check for time out
 					if ((DateTime.Now - startTime).Seconds >= 5)
@@ -400,7 +400,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected virtual int InitDurationCalculation(int startPosition)
+		protected virtual int InitDurationCalculationByStartPos(int startPosition)
 		{
 			return startPosition;
 		}

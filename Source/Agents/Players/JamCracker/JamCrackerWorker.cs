@@ -511,7 +511,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override int InitDurationCalculation(int startPosition)
+		protected override int InitDurationCalculationByStartPos(int startPosition)
 		{
 			InitSound(0, null, out _);
 

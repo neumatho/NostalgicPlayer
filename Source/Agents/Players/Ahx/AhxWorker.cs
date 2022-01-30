@@ -655,7 +655,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override int InitDurationCalculation(int startPosition)
+		protected override int InitDurationCalculationByStartPos(int startPosition)
 		{
 			if (startPosition == 0)
 				calculateSubSong = 0;
