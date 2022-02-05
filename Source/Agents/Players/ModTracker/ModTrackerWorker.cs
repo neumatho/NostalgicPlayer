@@ -788,7 +788,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			moduleStream.Read(pos, 0, 128);
 
 			byte[] usedPatterns = FindUsedPatterns(pos, songLen);
-			if (usedPatterns.FirstOrDefault(p => p > 64) != 0)
+			if (usedPatterns.FirstOrDefault(p => p >= 64) != 0)
 				return ModuleType.Unknown;
 
 			// Scan all patterns to be more precise which version of tracker that has been used
