@@ -53,7 +53,7 @@
   </Target>
 
   <ItemGroup>
-    <PackageReference Include="Krypton.Navigator" Version="6.2201.4" />
+    <PackageReference Include="Krypton.Navigator" Version="60.22.2.32" />
     <PackageReference Include="Krypton.Toolkit" Version="60.22.2.32" />
   </ItemGroup>
 
