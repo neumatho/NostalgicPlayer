@@ -107,7 +107,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		/// </summary>
 		private uint pw;
 
-		private uint shift_register;
+		internal uint shift_register;
 
 		/// <summary>
 		/// Emulation of pipeline causing bit 19 to clock the shift register
@@ -116,7 +116,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 
 		private uint ring_msb_mask;
 		private uint no_noise;
-		private uint noise_output;
+		internal uint noise_output;
 		private uint no_noise_or_noise_output;
 		private uint no_pulse;
 		private uint pulse_output;
@@ -124,7 +124,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		/// <summary>
 		/// The control register right-shifted 4 bits; used for output function table lookup
 		/// </summary>
-		private uint waveform;
+		internal uint waveform;
 
 		private uint waveform_output;
 
@@ -563,7 +563,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 				// In the 6581 the top bit of the accumulator may be driven low by combined waveforms
 				// when the sawtooth is selected
 				// FIXME doesn't seem to always happen
-				if (((waveform & 2) != 0) && ((waveform & 0x0d) != 0) && is6581)
+				if (((waveform & 2) != 0) && ((waveform & 0xd) != 0) && is6581)
 					accumulator &= (waveform_output << 12) | 0x7fffff;
 
 				Write_Shift_Register();
@@ -615,7 +615,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		/// the second phase
 		/// </summary>
 		/********************************************************************/
-		private void Clock_Shift_Register(uint bit0)
+		internal void Clock_Shift_Register(uint bit0)
 		{
 			shift_register = (shift_register >> 1) | bit0;
 
@@ -646,11 +646,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 				((waveform_output & (1 << 11)) >>  9) |		// Bit 11 -> bit 20
 				((waveform_output & (1 << 10)) >>  6) |		// Bit 10 -> bit 18
 				((waveform_output & (1 <<  9)) >>  1) |		// Bit  9 -> bit 14
-				((waveform_output & (1 <<  8)) >>  3) |		// Bit  8 -> bit 11
-				((waveform_output & (1 <<  7)) >>  6) |		// Bit  7 -> bit  9
-				((waveform_output & (1 <<  6)) >> 11) |		// Bit  6 -> bit  5
-				((waveform_output & (1 <<  5)) >> 15) |		// Bit  5 -> bit  2
-				((waveform_output & (1 <<  4)) >> 18);		// Bit  4 -> bit  0
+				((waveform_output & (1 <<  8)) <<  3) |		// Bit  8 -> bit 11
+				((waveform_output & (1 <<  7)) <<  6) |		// Bit  7 -> bit  9
+				((waveform_output & (1 <<  6)) << 11) |		// Bit  6 -> bit  5
+				((waveform_output & (1 <<  5)) << 15) |		// Bit  5 -> bit  2
+				((waveform_output & (1 <<  4)) << 18);		// Bit  4 -> bit  0
 		}
 
 
@@ -660,7 +660,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void Write_Shift_Register()
+		internal void Write_Shift_Register()
 		{
 			if ((waveform > 0x8) && !test && (shift_pipeline != 1))
 			{
@@ -688,17 +688,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void Set_Noise_Output()
+		internal void Set_Noise_Output()
 		{
 			noise_output =
 				((shift_register & (1 <<  2)) <<  9) |	// Bit 20 -> bit 11
 				((shift_register & (1 <<  4)) <<  6) |	// Bit 18 -> bit 10
 				((shift_register & (1 <<  8)) <<  1) |	// Bit 14 -> bit  9
-				((shift_register & (1 << 11)) <<  3) |	// Bit 11 -> bit  8
-				((shift_register & (1 << 13)) <<  6) |	// Bit  9 -> bit  7
-				((shift_register & (1 << 17)) << 11) |	// Bit  5 -> bit  6
-				((shift_register & (1 << 20)) << 15) |	// Bit  2 -> bit  5
-				((shift_register & (1 << 22)) << 18);	// Bit  0 -> bit  4
+				((shift_register & (1 << 11)) >>  3) |	// Bit 11 -> bit  8
+				((shift_register & (1 << 13)) >>  6) |	// Bit  9 -> bit  7
+				((shift_register & (1 << 17)) >> 11) |	// Bit  5 -> bit  6
+				((shift_register & (1 << 20)) >> 15) |	// Bit  2 -> bit  5
+				((shift_register & (1 << 22)) >> 18);	// Bit  0 -> bit  4
 
 			Set_No_Noise_Or_Noise_Output();
 		}

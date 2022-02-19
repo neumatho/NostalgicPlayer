@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Cpu
 		/// <summary>
 		/// Current instruction and sub-cycle within instruction
 		/// </summary>
-		private int cycleCount;
+		internal int cycleCount;
 
 		/// <summary>
 		/// When IRQ was triggered. -MAX means "during some previous instruction", MAX means "no IRQ"

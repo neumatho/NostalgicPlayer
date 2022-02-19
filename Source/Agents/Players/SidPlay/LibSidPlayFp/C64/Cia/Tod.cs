@@ -84,7 +84,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Cia
 		/// <summary>
 		/// Pointer to the MOS6526 which this Timer belongs to
 		/// </summary>
-		private Mos652x parent;
+		private readonly Mos652x parent;
 
 		private readonly uint8_t[] regs;
 
@@ -201,7 +201,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Cia
 
 					// Flip AM/PM on hour 12
 					// Flip AM/PM only when writing time, not when writing alarm
-					if (((data & 0x1f) == 0x12) && ((regs[0x0f] & 0x80) == 0))
+					if (((data & 0x1f) == 0x12) && ((regs[Mos652x.CRB] & 0x80) == 0))
 						data ^= 0x80;
 
 					break;
@@ -209,7 +209,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Cia
 			}
 
 			bool changed = false;
-			if ((regs[0x0f] & 0x80) != 0)
+			if ((regs[Mos652x.CRB] & 0x80) != 0)
 			{
 				// Set alarm
 				if (alarm[reg] != data)
@@ -276,7 +276,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Cia
 			uint8_t t3 = (uint8_t)(clock[MINUTES] & 0x0f);
 			uint8_t t4 = (uint8_t)((clock[MINUTES] >> 4) & 0x0f);
 			uint8_t t5 = (uint8_t)(clock[HOURS] & 0x0f);
-			uint8_t t6 = (uint8_t)((clock[HOURS] >> 4) & 0x0f);
+			uint8_t t6 = (uint8_t)((clock[HOURS] >> 4) & 0x01);
 			uint8_t pm = (uint8_t)(clock[HOURS] & 0x80);
 
 			// Tenth seconds (0-9)

@@ -18,19 +18,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidPlayFp
 	internal class SidTune
 	{
 		/// <summary>
-		/// Different status states
-		/// </summary>
-		public enum Status
-		{
-			/// <summary></summary>
-			Ok,
-			/// <summary></summary>
-			Unrecognized,
-			/// <summary></summary>
-			Error
-		}
-
-		/// <summary>
 		/// Default sid tune file name extensions
 		/// </summary>
 		private static readonly string[] defaultFileNameExt =
@@ -54,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidPlayFp
 
 		private SidTuneBase tune;
 
-		private Status status;
+		private bool status;
 		private string statusString;
 
 		/********************************************************************/
@@ -101,7 +88,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidPlayFp
 		/// string
 		/// </summary>
 		/********************************************************************/
-		public Status GetStatus()
+		public bool GetStatus()
 		{
 			return status;
 		}
@@ -171,13 +158,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidPlayFp
 			try
 			{
 				tune = SidTuneBase.Load(fileInfo, fileNameExtensions);
-				status = tune == null ? Status.Unrecognized : Status.Ok;
+				status = true;
 				statusString = Resources.IDS_SID_ERR_NO_ERRORS;
 			}
 			catch (LoadErrorException ex)
 			{
 				tune = null;
-				status = Status.Error;
+				status = false;
 				statusString = ex.Message;
 			}
 		}

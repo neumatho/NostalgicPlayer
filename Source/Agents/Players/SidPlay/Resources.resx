@@ -223,6 +223,9 @@ SID modules contains tunes and sound effects from the good old Commodore 64.  Th
   <data name="IDS_SID_ERR_UNKNOWN_SAMPLING_METHOD" xml:space="preserve">
     <value>Unknown sampling method</value>
   </data>
+  <data name="IDS_SID_ERR_UNRECOGNIZED_FORMAT" xml:space="preserve">
+    <value>Could not determine file format</value>
+  </data>
   <data name="IDS_SID_ERR_UNSUPPORTED_FREQ" xml:space="preserve">
     <value>Unsupported sampling frequency</value>
   </data>
@@ -237,6 +240,9 @@ SID modules contains tunes and sound effects from the good old Commodore 64.  Th
   </data>
   <data name="IDS_SID_FORMAT_MUS" xml:space="preserve">
     <value>C64 Sidplayer format (MUS)</value>
+  </data>
+  <data name="IDS_SID_FORMAT_PRG" xml:space="preserve">
+    <value>Tape image file (PRG)</value>
   </data>
   <data name="IDS_SID_FORMAT_PSID" xml:space="preserve">
     <value>PlaySID one-file format (PSID)</value>

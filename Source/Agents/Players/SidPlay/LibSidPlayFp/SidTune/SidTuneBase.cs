@@ -611,7 +611,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidTune
 			}
 
 			if (s == null)
-				return null;
+				s = Prg.Load(fileInfo.FileName, fileBuf1);
+
+			if (s == null)
+				throw new LoadErrorException(Resources.IDS_SID_ERR_UNRECOGNIZED_FORMAT);
 
 			s.AcceptSidTune(fileBuf1);
 

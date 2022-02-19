@@ -6,6 +6,8 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64;
+
 namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidPlayFp
 {
 	/// <summary>
@@ -23,6 +25,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidPlayFp
 		public SidPlayFp()
 		{
 			sidPlayer = new Player();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set hook for VICE tests
+		/// </summary>
+		/********************************************************************/
+		public void SetTestHook(C64Cpu.TestHookHandler handler)
+		{
+			sidPlayer.SetTestHook(handler);
 		}
 
 

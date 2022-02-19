@@ -341,6 +341,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not determine file format.
+        /// </summary>
+        internal static string IDS_SID_ERR_UNRECOGNIZED_FORMAT {
+            get {
+                return ResourceManager.GetString("IDS_SID_ERR_UNRECOGNIZED_FORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unsupported sampling frequency.
         /// </summary>
         internal static string IDS_SID_ERR_UNSUPPORTED_FREQ {
@@ -382,6 +391,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         internal static string IDS_SID_FORMAT_MUS {
             get {
                 return ResourceManager.GetString("IDS_SID_FORMAT_MUS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tape image file (PRG).
+        /// </summary>
+        internal static string IDS_SID_FORMAT_PRG {
+            get {
+                return ResourceManager.GetString("IDS_SID_FORMAT_PRG", resourceCulture);
             }
         }
         

@@ -96,7 +96,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		/// <summary>
 		/// Whether counter is enabled. Only switching to ATTACK can release envelope
 		/// </summary>
-		private bool counter_enabled;
+		internal bool counter_enabled;
 
 		/// <summary>
 		/// Gate bit
@@ -108,7 +108,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		/// <summary>
 		/// The current digital value of envelope output
 		/// </summary>
-		private byte envelope_counter;
+		internal byte envelope_counter;
 
 		/// <summary>
 		/// Attack register

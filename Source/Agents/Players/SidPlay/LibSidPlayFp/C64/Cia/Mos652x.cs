@@ -54,7 +54,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Cia
 		private const int ICR = 13;
 		private const int IDR = 13;
 		public const int CRA = 14;
-		private const int CRB = 15;
+		public const int CRB = 15;
 
 		/// <summary>
 		/// Event context
@@ -437,7 +437,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Cia
 						timerB.SetPbToggle(true);
 					}
 
-					timerB.SetControlRegister(data);
+					timerB.SetControlRegister((uint8_t)(data | (data & 0x40) >> 1));
 					break;
 				}
 			}

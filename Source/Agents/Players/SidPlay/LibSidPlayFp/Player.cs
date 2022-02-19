@@ -8,6 +8,7 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.Exceptions;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidPlayFp;
 
@@ -80,6 +81,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp
 			c64.GetMemInterface().SetKernal(null);
 
 			Config(cfg);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set hook for VICE tests
+		/// </summary>
+		/********************************************************************/
+		public void SetTestHook(C64Cpu.TestHookHandler handler)
+		{
+			c64.SetTestHook(handler);
 		}
 
 

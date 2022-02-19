@@ -10,3 +10,4 @@ AppPackages
 BundleArtifacts
 launchSettings.json
 *.cache
+/Source/Agents/Players/SidPlay.Test/Vice/VICE-testprogs

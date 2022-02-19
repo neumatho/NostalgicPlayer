@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -14,6 +15,9 @@ using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 // This is needed to uniquely identify this agent
 [assembly: Guid("278F5859-79FF-49D5-A376-021EADA893E0")]
+
+// Make unit test able to read internals
+[assembly: InternalsVisibleTo("SidPlay.Test")]
 
 namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 {

@@ -93,7 +93,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			SidTune temp = new SidTune(fileInfo);
 
 			// Check if the tune is valid
-			if (temp.GetStatus() != SidTune.Status.Ok)
+			if (!temp.GetStatus())
 				return AgentResult.Unknown;
 
 			// Found a known format, remember the SidTune.
@@ -317,7 +317,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		{
 			// Because the module is loaded in the Identify() method, we check
 			// here if it failed and return the error if so
-			if (sidTune.GetStatus() == SidTune.Status.Error)
+			if (!sidTune.GetStatus())
 			{
 				errorMessage = sidTune.StatusString();
 				return AgentResult.Error;

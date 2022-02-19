@@ -1,0 +1,1 @@
+Place the VICE-testprogs directory from repository https://github.com/libsidplayfp/VICE-testprogs.git into this directory.

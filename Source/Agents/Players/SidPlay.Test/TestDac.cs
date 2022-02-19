@@ -1,4 +1,4 @@
-﻿/******************************************************************************/
+/******************************************************************************/
 /* This source, or parts thereof, may be used in any software as long the     */
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
@@ -6,53 +6,29 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Cpu;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp;
+using Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp.Containers;
 
-namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64
+namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.Test
 {
 	/// <summary>
-	/// CPU emulator
+	/// 
 	/// </summary>
-	internal sealed class C64Cpu : Mos6510
+	[TestClass]
+	public class TestDac
 	{
-		public delegate void TestHookHandler(uint_least16_t addr, uint8_t data);
+		private const int DacBits = 8;
 
-		private readonly C64Env env;
-
-		private TestHookHandler testHook;
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
-		public C64Cpu(C64Env env) : base(env.Scheduler())
-		{
-			this.env = env;
-			testHook = null;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set hook for VICE tests
-		/// </summary>
-		/********************************************************************/
-		public void SetTestHook(TestHookHandler handler)
-		{
-			testHook = handler;
-		}
-
-		#region Overrides
 		/********************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected override uint8_t CpuRead(uint_least16_t addr)
+		[TestMethod]
+		public void TestDac6581()
 		{
-			return env.CpuRead(addr);
+			Assert.AreEqual(false, IsDacLinear(ChipModel.MOS6581));
 		}
 
 
@@ -62,12 +38,46 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected override void CpuWrite(uint_least16_t addr, uint8_t data)
+		[TestMethod]
+		public void TestDac8580()
 		{
-			if (testHook != null)
-				testHook(addr, data);
+			Assert.AreEqual(true, IsDacLinear(ChipModel.MOS8580));
+		}
 
-			env.CpuWrite(addr, data);
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private bool IsDacLinear(ChipModel chipModel)
+		{
+			double[] dac = new double[1 << DacBits];
+			BuildDac(dac, chipModel);
+
+			for (int i = 1; i < (1 << DacBits); i++)
+			{
+				if (dac[i] <= dac[i - 1])
+					return false;
+			}
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void BuildDac(double[] dac, ChipModel chipModel)
+		{
+			Dac dacBuilder = new Dac(DacBits);
+			dacBuilder.KinkedDac(chipModel);
+
+			for (uint i = 0; i < (1 << DacBits); i++)
+				dac[i] = dacBuilder.GetOutput(i);
 		}
 		#endregion
 	}

@@ -88,6 +88,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			Always
 		}
 
+		/// <summary>
+		/// Supported mixer types
+		/// </summary>
 		public enum MixerType
 		{
 			/// <summary></summary>

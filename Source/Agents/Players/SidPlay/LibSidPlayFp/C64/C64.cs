@@ -362,6 +362,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64
 
 		/********************************************************************/
 		/// <summary>
+		/// Set hook for VICE tests
+		/// </summary>
+		/********************************************************************/
+		public void SetTestHook(C64Cpu.TestHookHandler handler)
+		{
+			cpu.SetTestHook(handler);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Get C64 event scheduler
 		/// </summary>
 		/********************************************************************/
