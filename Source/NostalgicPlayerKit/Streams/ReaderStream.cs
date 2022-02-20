@@ -122,8 +122,10 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public override long Seek(long offset, SeekOrigin origin)
 		{
-			EndOfStream = false;
-			return wrapperStream.Seek(offset, origin);
+			long newPos = wrapperStream.Seek(offset, origin);
+			EndOfStream = newPos > Length;
+
+			return newPos;
 		}
 
 

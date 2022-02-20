@@ -4244,6 +4244,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			{
 				// Initialize all the controls
 				InitControls();
+
+				// Refresh all windows
+				RefreshWindows(false);
 			}
 		}
 

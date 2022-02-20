@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using System.Diagnostics;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
@@ -46,9 +47,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/********************************************************************/
 		public void Cleanup()
 		{
-			mixer?.CleanupMixer();
-			mixer = null;
-			mixerLock = null;
+			if (mixerLock != null)
+			{
+				lock (mixerLock)
+				{
+					mixer.CleanupMixer();
+					mixer = null;
+					mixerLock = null;
+				}
+			}
 		}
 
 
@@ -170,6 +177,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			{
 				int mixedSamples;
 
+				if (mixerLock == null)
+					return 0;
+
 				lock (mixerLock)
 				{
 					int samplesMixed = mixer.Mixing(buffer, offset, count / bytesPerSampling, out bool hasEndReached);
@@ -183,8 +193,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 				return mixedSamples;
 			}
-			catch(Exception)
+			catch(Exception ex)
 			{
+				Debug.WriteLine(ex);
 				return 0;
 			}
 		}

@@ -82,6 +82,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 						// Initialize module information
 						StaticModuleInformation = new ModuleInfoStatic(loader.PlayerAgentInfo, currentPlayer.ModuleName.Trim(), currentPlayer.Author.Trim(), currentPlayer.Comment, currentPlayer.CommentFont, currentPlayer.Lyrics, currentPlayer.LyricsFont, loader.ModuleFormat, loader.PlayerName, currentPlayer.ChannelCount, loader.CrunchedSize, loader.ModuleSize, currentPlayer.SupportFlags, currentPlayer.Frequency);
+						PlayingModuleInformation = new ModuleInfoFloating(durationInfo, 0, 0, null);
 
 						// Initialize the mixer
 						soundStream = new ResamplerStream();
