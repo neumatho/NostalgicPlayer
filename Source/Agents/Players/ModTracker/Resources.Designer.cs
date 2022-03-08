@@ -514,7 +514,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         ///   Looks up a localized string similar to Original player by Daniel Goldstein.
         ///Converted to C# by Thomas Neumann.
         ///
-        ///This tracker from the PC, was the first one to have 32 channels and supports GUS soundcards. It introduced the mtm file format, which I will say is the successor to the mod format. In this format, a pattern contains indivual tracks, which can be combined as will..
+        ///This tracker from the PC, was the first one to have 32 channels and supports GUS soundcards. It introduced the mtm file format, which I will say is the successor to the mod format. In this format, a pattern contains individual tracks, which can be combined as will..
         /// </summary>
         internal static string IDS_MTM_DESCRIPTION_AGENT13 {
             get {
