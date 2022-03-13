@@ -139,7 +139,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			this.masterVolumeTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-			this.masterVolumeTrackBar.DrawBackground = true;
 			this.masterVolumeTrackBar.Location = new System.Drawing.Point(4, 84);
 			this.masterVolumeTrackBar.Maximum = 256;
 			this.masterVolumeTrackBar.Name = "masterVolumeTrackBar";
@@ -159,8 +158,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.moduleListBox.ScrollAlwaysVisible = true;
 			this.moduleListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
 			this.moduleListBox.Size = new System.Drawing.Size(345, 116);
-			this.moduleListBox.StateCommon.Item.Content.LongText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.moduleListBox.StateCommon.Item.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.moduleListBox.StateCommon.Item.Content.LongText.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.moduleListBox.StateCommon.Item.Content.ShortText.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.moduleListBox.TabIndex = 5;
 			// 
 			// listButtonsGroup
@@ -295,7 +294,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.positionTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.positionTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.SeparatorLowProfile;
-			this.positionTrackBar.DrawBackground = true;
 			this.positionTrackBar.Location = new System.Drawing.Point(4, 216);
 			this.positionTrackBar.Maximum = 100;
 			this.positionTrackBar.Name = "positionTrackBar";
