@@ -6,21 +6,25 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Kit.Containers
+using Polycode.NostalgicPlayer.Kit;
+
+namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Sequences
 {
 	/// <summary>
-	/// The different kind of loops supported
+	/// 
 	/// </summary>
-	public enum ChannelLoopType
+	internal class PlaySeq : List<PlaySeqEntry>
 	{
-		/// <summary>
-		/// Just a normal loop
-		/// </summary>
-		Normal,
+		private string name;
 
+		/********************************************************************/
 		/// <summary>
-		/// Ping-pong loop
+		/// 
 		/// </summary>
-		PingPong
+		/********************************************************************/
+		public void SetName(byte[] newName)
+		{
+			name = EncoderCollection.Amiga.GetString(newName);
+		}
 	}
 }

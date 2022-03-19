@@ -172,8 +172,6 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 
 			if (type == ChannelLoopType.PingPong)
 				flags |= ChannelFlags.PingPong;
-			else if (type == ChannelLoopType.Trigger)
-				flags |= ChannelFlags.TrigLoop;
 
 			flags &= ~ChannelFlags.MuteIt;
 		}

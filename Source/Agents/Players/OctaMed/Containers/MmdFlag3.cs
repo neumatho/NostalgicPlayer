@@ -6,21 +6,16 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Kit.Containers
+namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers
 {
 	/// <summary>
-	/// The different kind of loops supported
+	/// Song flags
 	/// </summary>
-	public enum ChannelLoopType
+	[Flags]
+	internal enum MmdFlag3
 	{
-		/// <summary>
-		/// Just a normal loop
-		/// </summary>
-		Normal,
-
-		/// <summary>
-		/// Ping-pong loop
-		/// </summary>
-		PingPong
+		Stereo = 0x01,				// Mixing in Stereo mode
+		FreePan = 0x02,				// Free panning
+		Gm = 0x04					// Module designed for GM/XG compatibility
 	}
 }

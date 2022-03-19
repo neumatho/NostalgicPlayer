@@ -6,21 +6,10 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Kit.Containers
-{
-	/// <summary>
-	/// The different kind of loops supported
-	/// </summary>
-	public enum ChannelLoopType
-	{
-		/// <summary>
-		/// Just a normal loop
-		/// </summary>
-		Normal,
-
-		/// <summary>
-		/// Ping-pong loop
-		/// </summary>
-		PingPong
-	}
-}
+global using NoteNum = System.Byte;
+global using BlockNum = System.UInt32;
+global using LineNum = System.Int32;
+global using TrackNum = System.Int32;
+global using PageNum = System.Int32;
+global using PSeqNum = System.UInt32;
+global using InstNum = System.UInt32;

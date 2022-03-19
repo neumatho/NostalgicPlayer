@@ -6,21 +6,18 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Kit.Containers
+namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers
 {
 	/// <summary>
-	/// The different kind of loops supported
+	/// Holds the different module types
 	/// </summary>
-	public enum ChannelLoopType
+	internal enum ModuleType
 	{
-		/// <summary>
-		/// Just a normal loop
-		/// </summary>
-		Normal,
-
-		/// <summary>
-		/// Ping-pong loop
-		/// </summary>
-		PingPong
+		Unknown = 0,
+		Med,
+		OctaMed,
+		OctaMed_Professional4,
+		OctaMed_Professional6,
+		OctaMed_SoundStudio
 	}
 }

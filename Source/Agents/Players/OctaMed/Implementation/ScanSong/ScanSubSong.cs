@@ -6,21 +6,35 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Kit.Containers
+namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.ScanSong
 {
 	/// <summary>
-	/// The different kind of loops supported
+	/// 
 	/// </summary>
-	public enum ChannelLoopType
+	internal class ScanSubSong : ScanBlock
 	{
+		/********************************************************************/
 		/// <summary>
-		/// Just a normal loop
+		/// 
 		/// </summary>
-		Normal,
+		/********************************************************************/
+		public virtual void DoSubSong(SubSong ss)
+		{
+			SubSongOperation(ss);
 
+			for (BlockNum blk = 0; blk < ss.NumBlocks(); blk++)
+				DoBlock(ss.Block(blk));
+		}
+
+		#region Overrides
+		/********************************************************************/
 		/// <summary>
-		/// Ping-pong loop
+		/// 
 		/// </summary>
-		PingPong
+		/********************************************************************/
+		protected virtual void SubSongOperation(SubSong ss)
+		{
+		}
+		#endregion
 	}
 }

@@ -6,21 +6,17 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Kit.Containers
+namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers
 {
 	/// <summary>
-	/// The different kind of loops supported
+	/// MMD1 block info structure
 	/// </summary>
-	public enum ChannelLoopType
+	internal class Mmd1BlockInfo
 	{
-		/// <summary>
-		/// Just a normal loop
-		/// </summary>
-		Normal,
-
-		/// <summary>
-		/// Ping-pong loop
-		/// </summary>
-		PingPong
+		public uint HlMask;
+		public uint BlockName;
+		public uint BlockNameLen;
+		public uint PageTable;
+		public uint CmdExtTable;
 	}
 }

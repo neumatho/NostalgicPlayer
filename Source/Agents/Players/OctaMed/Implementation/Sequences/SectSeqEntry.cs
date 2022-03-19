@@ -6,21 +6,33 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Kit.Containers
+namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Sequences
 {
 	/// <summary>
-	/// The different kind of loops supported
+	/// 
 	/// </summary>
-	public enum ChannelLoopType
+	internal class SectSeqEntry
 	{
+		/********************************************************************/
 		/// <summary>
-		/// Just a normal loop
+		/// Constructor
 		/// </summary>
-		Normal,
+		/********************************************************************/
+		public SectSeqEntry(PSeqNum init)
+		{
+			Value = init;
+		}
 
+
+
+		/********************************************************************/
 		/// <summary>
-		/// Ping-pong loop
+		/// Holds the value
 		/// </summary>
-		PingPong
+		/********************************************************************/
+		public PSeqNum Value
+		{
+			get; set;
+		}
 	}
 }

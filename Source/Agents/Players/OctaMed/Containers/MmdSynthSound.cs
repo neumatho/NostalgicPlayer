@@ -6,21 +6,20 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Kit.Containers
+namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers
 {
 	/// <summary>
-	/// The different kind of loops supported
+	/// Synth sound structure
 	/// </summary>
-	public enum ChannelLoopType
+	internal class MmdSynthSound
 	{
-		/// <summary>
-		/// Just a normal loop
-		/// </summary>
-		Normal,
-
-		/// <summary>
-		/// Ping-pong loop
-		/// </summary>
-		PingPong
+		public byte Decay;			// Only used in separate instruments
+		public ushort Rpt;			// -""-
+		public ushort RptLen;		// -""-
+		public ushort VolTblLen;
+		public ushort WfTblLen;
+		public byte VolSpeed;
+		public byte WfSpeed;
+		public ushort NumWfs;		// Number of waveforms
 	}
 }

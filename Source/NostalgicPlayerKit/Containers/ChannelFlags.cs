@@ -47,11 +47,6 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		PingPong = 0x00000010,
 
 		/// <summary>
-		/// Set this to trigger the sample when setting looping information
-		/// </summary>
-		TrigLoop = 0x00000020,
-
-		/// <summary>
 		/// Volume changed
 		/// </summary>
 		Volume = 0x00000100,

@@ -6,21 +6,23 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Kit.Containers
+namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers
 {
 	/// <summary>
-	/// The different kind of loops supported
+	/// MMD0 song data structure
 	/// </summary>
-	public enum ChannelLoopType
+	internal class Mmd0SongData
 	{
-		/// <summary>
-		/// Just a normal loop
-		/// </summary>
-		Normal,
-
-		/// <summary>
-		/// Ping-pong loop
-		/// </summary>
-		PingPong
+		public ushort NumBlocks;
+		public ushort SongLen;
+		public readonly byte[] PlaySeq = new byte[256];
+		public ushort DefTempo;
+		public sbyte PlayTransp;
+		public MmdFlag Flags;
+		public MmdFlag2 Flags2;
+		public byte Tempo2;
+		public readonly byte[] TrkVol = new byte[16];
+		public byte MasterVol;
+		public byte NumSamples;
 	}
 }

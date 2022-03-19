@@ -57,29 +57,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			{
 				if ((newFlags & ChannelFlags.Loop) != 0)
 					privFlags |= ChannelFlags.Loop;
-
-				if ((newFlags & ChannelFlags.TrigLoop) != 0)
-				{
-					newFlags &= ~ChannelFlags.TrigLoop;
-					retFlags &= ~ChannelFlags.TrigLoop;
-
-					if ((newFlags & ChannelFlags.Active) == 0)     // Only trigger if the channel is not already playing
-					{
-						newFlags |= (ChannelFlags.TrigIt | ChannelFlags.Loop);
-						retFlags |= (ChannelFlags.TrigIt | ChannelFlags.Loop);
-
-						// Did we trigger the sound with a normal "play" command?
-						if ((flags & ChannelFlags.TrigIt) == 0)
-						{
-							// No, then trigger it
-							privFlags |= ChannelFlags.TrigIt;
-
-							sampleAddress = loopAddress;
-							sampleStart = loopStart;
-							sampleLength = loopLength;
-						}
-					}
-				}
 			}
 
 			// Change the volume?

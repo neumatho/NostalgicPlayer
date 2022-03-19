@@ -6,21 +6,29 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Kit.Containers
+namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers
 {
 	/// <summary>
-	/// The different kind of loops supported
+	/// Different constants
 	/// </summary>
-	public enum ChannelLoopType
+	internal static class Constants
 	{
 		/// <summary>
-		/// Just a normal loop
+		/// Max number of tracks OctaMED supports
 		/// </summary>
-		Normal,
+		public const int MaxTracks = 64;
 
 		/// <summary>
-		/// Ping-pong loop
+		/// Max number of instruments
 		/// </summary>
-		PingPong
+		public const uint MaxInstr = 64;
+
+		// Special note numbers
+		public const byte NoteStp = 0x80;
+		public const byte NoteDef = 0x81;
+		public const byte Note11k = 0x82;
+		public const byte Note22k = 0x83;
+		public const byte Note44k = 0x84;
+		public const byte NoteNum = 0x84;
 	}
 }

@@ -6,21 +6,14 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Kit.Containers
+namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Synth
 {
 	/// <summary>
-	/// The different kind of loops supported
+	/// 
 	/// </summary>
-	public enum ChannelLoopType
+	internal class SynthWf
 	{
-		/// <summary>
-		/// Just a normal loop
-		/// </summary>
-		Normal,
-
-		/// <summary>
-		/// Ping-pong loop
-		/// </summary>
-		PingPong
+		public uint SyWfLength;						// Length in WORDS, not bytes/samples
+		public sbyte[] SyWfData = new sbyte[128];
 	}
 }

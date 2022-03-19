@@ -53,9 +53,9 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 			Synth,
 
 			/// <summary>
-			/// ???
+			/// Normal sample used as waveform when generating synthesis sound
 			/// </summary>
-			Hybrid//XX
+			Hybrid
 		}
 
 		/********************************************************************/

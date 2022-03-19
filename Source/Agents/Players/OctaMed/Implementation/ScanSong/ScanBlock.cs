@@ -6,21 +6,24 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Kit.Containers
+using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Block;
+
+namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.ScanSong
 {
 	/// <summary>
-	/// The different kind of loops supported
+	/// 
 	/// </summary>
-	public enum ChannelLoopType
+	internal class ScanBlock : ScanTrack
 	{
+		/********************************************************************/
 		/// <summary>
-		/// Just a normal loop
+		/// 
 		/// </summary>
-		Normal,
-
-		/// <summary>
-		/// Ping-pong loop
-		/// </summary>
-		PingPong
+		/********************************************************************/
+		public virtual void DoBlock(MedBlock blk)
+		{
+			for (TrackNum trk = 0; trk < blk.Tracks(); trk++)
+				DoTrack(blk, trk);
+		}
 	}
 }

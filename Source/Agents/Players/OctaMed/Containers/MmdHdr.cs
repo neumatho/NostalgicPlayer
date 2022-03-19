@@ -6,21 +6,28 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Kit.Containers
+namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers
 {
 	/// <summary>
-	/// The different kind of loops supported
+	/// Module header structure
 	/// </summary>
-	public enum ChannelLoopType
+	internal class MmdHdr
 	{
-		/// <summary>
-		/// Just a normal loop
-		/// </summary>
-		Normal,
-
-		/// <summary>
-		/// Ping-pong loop
-		/// </summary>
-		PingPong
+		public uint Id;
+		public uint ModLen;
+		public uint SongOffs;
+		public ushort PSecNum;
+		public ushort PSeq;
+		public uint BlocksOffs;
+		public byte MmdFlags;
+		public uint SamplesOffs;
+		public uint ExpDataOffs;
+		public ushort PState;
+		public ushort PBlock;
+		public ushort PLine;
+		public ushort PSeqNum;
+		public short ActPlayLine;
+		public byte Counter;
+		public byte ExtraSongs;
 	}
 }
