@@ -53,6 +53,11 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		protected uint loopLength;
 
 		/// <summary>
+		/// The new sample position to set
+		/// </summary>
+		protected int samplePosition;
+
+		/// <summary>
 		/// Length of the release part of the sample
 		/// </summary>
 		protected uint releaseLength;
@@ -93,8 +98,9 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
 		/// <param name="length">is the length in samples of the sample</param>
 		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
+		/// <param name="backwards">indicate if the sample should be played backwards</param>
 		/********************************************************************/
-		public void PlaySample(Array adr, uint startOffset, uint length, byte bit)
+		public void PlaySample(Array adr, uint startOffset, uint length, byte bit, bool backwards)
 		{
 			if (adr == null)
 				throw new ArgumentNullException(nameof(adr));
@@ -118,6 +124,9 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 
 			if (bit == 16)
 				flags |= ChannelFlags._16Bit;
+
+			if (backwards)
+				flags |= ChannelFlags.Backwards;
 
 			flags &= ~ChannelFlags.MuteIt;
 		}
@@ -174,6 +183,27 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 				flags |= ChannelFlags.PingPong;
 
 			flags &= ~ChannelFlags.MuteIt;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the current playing position of the sample to the value given
+		/// </summary>
+		/// <param name="position">The new position in the sample</param>
+		/// <param name="relative">Indicate if the given position is relative to the current position or an absolute position. If true, position can be negative as well as position</param>
+		/********************************************************************/
+		public void SetPosition(int position, bool relative)
+		{
+			if (!relative && (position < 0))
+				throw new ArgumentException("Position may not be negative for absolute positions", nameof(position));
+
+			samplePosition = position;
+			flags |= ChannelFlags.ChangePosition;
+
+			if (relative)
+				flags |= ChannelFlags.Relative;
 		}
 
 

@@ -27,6 +27,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers
 		public Array NewLoopAddress;		// Address to loop point when loop is restarted (mostly the same as Address above)
 		public uint NewRepeatPosition;		// New loop start when loop is restarted
 		public uint NewRepeatEnd;			// New loop end when loop is restarted
+		public int NewPosition;				// New position to use immediately
+		public bool RelativePosition;		// Indicate if the new position is relative or absolute
 		public uint ReleaseEnd;				// Release end
 		public uint Frequency;				// Current frequency
 		public int Volume;					// Current volume

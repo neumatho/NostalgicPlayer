@@ -206,10 +206,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			if (smp.isStereo)
 				throw new NotSupportedException();
 
-			//XX skal fjernes
-			if ((flags & PlayFlag.Backwards) != 0)
-				throw new NotSupportedException();
-
 			// Fix out of range offsets
 			if (startOffs >= smp.GetLength())
 				startOffs = 0;
@@ -218,7 +214,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			if (adr != null)
 			{
 				// Okay, tell NostalgicPlayer to play the sample
-				worker.VirtualChannels[chNum].PlaySample(adr, startOffs, smp.GetLength(), (byte)(smp.Is16Bit() ? 16 : 8));
+				worker.VirtualChannels[chNum].PlaySample(adr, startOffs, smp.GetLength(), (byte)(smp.Is16Bit() ? 16 : 8), (flags & PlayFlag.Backwards) != 0);
 
 				// Set loop
 				if (((flags & PlayFlag.Loop) != 0) && (loopLen > 2))
@@ -236,7 +232,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/********************************************************************/
 		protected void ChangeSamplePosition(uint chNum, int change)
 		{
-			// Not implemented yet
+			if (chNum >= channels)
+				return;
+
+			worker.VirtualChannels[chNum].SetPosition(change, true);
 		}
 
 
@@ -248,7 +247,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/********************************************************************/
 		protected void SetSamplePosition(uint chNum, int newPos)
 		{
-			// Not implemented yet
+			if (chNum >= channels)
+				return;
+
+			worker.VirtualChannels[chNum].SetPosition(newPos, false);
 		}
 
 

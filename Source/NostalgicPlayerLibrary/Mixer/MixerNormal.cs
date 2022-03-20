@@ -88,6 +88,21 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					if ((vnf.Flags & SampleFlag.Reverse) != 0)
 						vnf.Increment = -vnf.Increment;
 
+					if ((vnf.Flags & SampleFlag.ChangePosition) != 0)
+					{
+						long newPosition;
+
+						if (vnf.RelativePosition)
+							newPosition = (vnf.Current >> FracBits) + vnf.NewPosition;
+						else
+							newPosition = vnf.NewPosition;
+
+						if ((newPosition >= 0) && (newPosition < (((vnf.Flags & SampleFlag.Loop) != 0) ? vnf.RepeatEnd : vnf.Size)))
+							vnf.Current = newPosition << FracBits;
+
+						vnf.Flags &= ~SampleFlag.ChangePosition;
+					}
+
 					int vol;
 
 					if (vnf.Enabled)
