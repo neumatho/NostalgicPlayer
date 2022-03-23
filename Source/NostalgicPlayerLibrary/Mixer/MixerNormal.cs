@@ -165,9 +165,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/********************************************************************/
 		private void AddChannel(ref VoiceInfo vnf, int[] buf, int offset, int todo, MixerMode mode)
 		{
-			Array s = vnf.Address;
+			Array left = vnf.Addresses[0];
+			Array right = vnf.Addresses[1];
 
-			if (s == null)
+			if (left == null)
 			{
 				vnf.Current = 0;
 				vnf.Active = false;
@@ -231,7 +232,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						if (vnf.Current >= idxLoopEnd)
 						{
 							// Do we have a loop address?
-							if (vnf.NewLoopAddress == null)
+							if (vnf.NewLoopAddresses[0] == null)
 							{
 								vnf.Current = 0;
 								vnf.Active = false;
@@ -239,7 +240,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 							}
 
 							// Copy the loop address
-							s = vnf.Address = vnf.NewLoopAddress;
+							left = vnf.Addresses[0] = vnf.NewLoopAddresses[0];
+							right = vnf.Addresses[1] = vnf.NewLoopAddresses[1];
 
 							// Recalculate loop indexes
 							long idxNewLoopPos = (long)vnf.NewRepeatPosition << FracBits;
@@ -334,72 +336,26 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 				if (vnf.Volume != 0)
 				{
-					// Check to see if we need to make interpolation on the mixing
-					if ((mode & MixerMode.Interpolation) != 0)
-					{
-						if ((vnf.Flags & SampleFlag._16Bits) != 0)
-						{
-							Span<short> source = s.GetType().GetElementType() == typeof(short) ? (short[])s : MemoryMarshal.Cast<sbyte, short>((sbyte[])s);
-
-							// 16 bit input sample to be mixed
-							if ((mode & MixerMode.Stereo) != 0)
-							{
-								if ((vnf.Panning == (int)ChannelPanning.Surround) && ((mode & MixerMode.Surround) != 0))
-									vnf.Current = Mix16SurroundInterpolation(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
-								else
-									vnf.Current = Mix16StereoInterpolation(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
-							}
-							else
-								vnf.Current = Mix16MonoInterpolation(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.OldLeftVolume, ref vnf.RampVolume);
-						}
-						else
-						{
-							sbyte[] source = (sbyte[])s;
-
-							// 8 bit input sample to be mixed
-							if ((mode & MixerMode.Stereo) != 0)
-							{
-								if ((vnf.Panning == (int)ChannelPanning.Surround) && ((mode & MixerMode.Surround) != 0))
-									vnf.Current = Mix8SurroundInterpolation(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
-								else
-									vnf.Current = Mix8StereoInterpolation(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
-							}
-							else
-								vnf.Current = Mix8MonoInterpolation(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.OldLeftVolume, ref vnf.RampVolume);
-						}
-					}
+					if (right == null)
+						vnf.Current = MixSample(ref vnf, left, buf, offset, done, mode);
 					else
 					{
-						// No interpolation
-						if ((vnf.Flags & SampleFlag._16Bits) != 0)
+						if (((mode & MixerMode.Stereo) != 0) && (vnf.Panning != (int)ChannelPanning.Surround))
 						{
-							Span<short> source = s.GetType().GetElementType() == typeof(short) ? (short[])s : MemoryMarshal.Cast<sbyte, short>((sbyte[])s);
+							int oldVolume = vnf.RightVolumeSelected;
+							vnf.RightVolumeSelected = 0;
+							MixSample(ref vnf, left, buf, offset, done, mode);
+							vnf.RightVolumeSelected = oldVolume;
 
-							// 16 bit input sample to be mixed
-							if ((mode & MixerMode.Stereo) != 0)
-							{
-								if ((vnf.Panning == (int)ChannelPanning.Surround) && ((mode & MixerMode.Surround) != 0))
-									vnf.Current = Mix16SurroundNormal(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
-								else
-									vnf.Current = Mix16StereoNormal(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
-							}
-							else
-								vnf.Current = Mix16MonoNormal(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected);
+							oldVolume = vnf.LeftVolumeSelected;
+							vnf.LeftVolumeSelected = 0;
+							vnf.Current = MixSample(ref vnf, right, buf, offset, done, mode);
+							vnf.LeftVolumeSelected = oldVolume;
 						}
 						else
 						{
-							sbyte[] source = (sbyte[])s;
-
-							// 8 bit input sample to be mixed
-							if ((mode & MixerMode.Stereo) != 0)
-							{
-								if ((vnf.Panning == (int)ChannelPanning.Surround) && ((mode & MixerMode.Surround) != 0))
-									vnf.Current = Mix8SurroundNormal(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
-								else
-									vnf.Current = Mix8StereoNormal(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
-							}
-							else
-								vnf.Current = Mix8MonoNormal(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected);
+							MixSample(ref vnf, left, buf, offset, done, mode);
+							vnf.Current = MixSample(ref vnf, right, buf, offset, done, mode);
 						}
 					}
 				}
@@ -416,6 +372,81 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		#endregion
 
 		#region Real mixing methods
+
+		/********************************************************************/
+		/// <summary>
+		/// Mix the given sample into the output buffers
+		/// </summary>
+		/********************************************************************/
+		private long MixSample(ref VoiceInfo vnf, Array s, int[] buf, int offset, int done, MixerMode mode)
+		{
+			// Check to see if we need to make interpolation on the mixing
+			if ((mode & MixerMode.Interpolation) != 0)
+			{
+				if ((vnf.Flags & SampleFlag._16Bits) != 0)
+				{
+					Span<short> source = s.GetType().GetElementType() == typeof(short) ? (short[])s : MemoryMarshal.Cast<sbyte, short>((sbyte[])s);
+
+					// 16 bit input sample to be mixed
+					if ((mode & MixerMode.Stereo) != 0)
+					{
+						if ((vnf.Panning == (int)ChannelPanning.Surround) && ((mode & MixerMode.Surround) != 0))
+							return Mix16SurroundInterpolation(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
+
+						return Mix16StereoInterpolation(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
+					}
+
+					return Mix16MonoInterpolation(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.OldLeftVolume, ref vnf.RampVolume);
+				}
+				else
+				{
+					sbyte[] source = (sbyte[])s;
+
+					// 8 bit input sample to be mixed
+					if ((mode & MixerMode.Stereo) != 0)
+					{
+						if ((vnf.Panning == (int)ChannelPanning.Surround) && ((mode & MixerMode.Surround) != 0))
+							return Mix8SurroundInterpolation(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
+
+						return Mix8StereoInterpolation(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
+					}
+
+					return Mix8MonoInterpolation(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.OldLeftVolume, ref vnf.RampVolume);
+				}
+			}
+
+			// No interpolation
+			if ((vnf.Flags & SampleFlag._16Bits) != 0)
+			{
+				Span<short> source = s.GetType().GetElementType() == typeof(short) ? (short[])s : MemoryMarshal.Cast<sbyte, short>((sbyte[])s);
+
+				// 16 bit input sample to be mixed
+				if ((mode & MixerMode.Stereo) != 0)
+				{
+					if ((vnf.Panning == (int)ChannelPanning.Surround) && ((mode & MixerMode.Surround) != 0))
+						return Mix16SurroundNormal(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
+
+					return Mix16StereoNormal(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
+				}
+
+				return Mix16MonoNormal(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected);
+			}
+			else
+			{
+				sbyte[] source = (sbyte[])s;
+
+				// 8 bit input sample to be mixed
+				if ((mode & MixerMode.Stereo) != 0)
+				{
+					if ((vnf.Panning == (int)ChannelPanning.Surround) && ((mode & MixerMode.Surround) != 0))
+						return Mix8SurroundNormal(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
+
+					return Mix8StereoNormal(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
+				}
+
+				return Mix8MonoNormal(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected);
+			}
+		}
 
 		#region 8 bit sample
 

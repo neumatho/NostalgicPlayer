@@ -29,6 +29,17 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		void PlaySample(Array adr, uint startOffset, uint length, byte bit = 8, bool backwards = false);
 
 		/// <summary>
+		/// Will start to play a stereo sample in the channel
+		/// </summary>
+		/// <param name="leftAdr">is a pointer to the sample in memory to be played in the left speaker</param>
+		/// <param name="rightAdr">is a pointer to the sample in memory to be played in the right speaker</param>
+		/// <param name="startOffset">is the number of samples in the sample to start</param>
+		/// <param name="length">is the length in samples of the sample</param>
+		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
+		/// <param name="backwards">indicate if the sample should be played backwards</param>
+		void PlayStereoSample(Array leftAdr, Array rightAdr, uint startOffset, uint length, byte bit = 8, bool backwards = false);
+
+		/// <summary>
 		/// Will set the loop point in the sample
 		/// </summary>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
@@ -44,6 +55,16 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <param name="length">is the length in samples to loop</param>
 		/// <param name="type">is the type of the loop</param>
 		void SetLoop(Array adr, uint startOffset, uint length, ChannelLoopType type = ChannelLoopType.Normal);
+
+		/// <summary>
+		/// Will set the loop point and change the sample
+		/// </summary>
+		/// <param name="leftAdr">is a pointer to the sample in memory to be played in the left speaker</param>
+		/// <param name="rightAdr">is a pointer to the sample in memory to be played in the right speaker</param>
+		/// <param name="startOffset">is the number of samples in the sample to start</param>
+		/// <param name="length">is the length in samples to loop</param>
+		/// <param name="type">is the type of the loop</param>
+		void SetLoop(Array leftAdr, Array rightAdr, uint startOffset, uint length, ChannelLoopType type = ChannelLoopType.Normal);
 
 		/// <summary>
 		/// Set the current playing position of the sample to the value given

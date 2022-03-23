@@ -878,14 +878,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 							return AgentResult.Error;
 						}
 
-						if (sHdr.IsStereo())
-						{
-							errorMessage = Resources.IDS_MED_ERR_HAVE_STEREO_SAMPLE;
-							Cleanup();
-
-							return AgentResult.Error;
-						}
-
 						if (sHdr.IsSample())
 						{
 							Sample dest = sHdr.AllocSample();
@@ -1186,6 +1178,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 							Volume = (int)inst.GetInitVol() * 2,
 							Panning = -1,
 							Sample = sample.GetSampleAddress(0),
+							SecondSample = sample.GetSampleAddress(1),
 							Length = (int)sample.GetLength(),
 							LoopStart = (int)inst.GetRepeat(),
 							LoopLength = (int)inst.GetRepeatLen()
@@ -1206,6 +1199,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 						sampleInfo.Flags = (inst.flags & Instr.Flag.Loop) != 0 ? SampleInfo.SampleFlags.Loop : SampleInfo.SampleFlags.None;
 						if ((inst.flags & Instr.Flag.PingPong) != 0)
 							sampleInfo.Flags |= SampleInfo.SampleFlags.PingPong;
+
+						if (sample.IsStereo())
+							sampleInfo.Flags |= SampleInfo.SampleFlags.Stereo;
 					}
 
 					sampleInfo.Name = inst.GetName();

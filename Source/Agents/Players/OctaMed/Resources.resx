@@ -157,9 +157,6 @@ This player plays 1-64 channels modules created with OctaMED Soundstudio. This i
 
 Note that this player does not support mixer effects, e.g. echo yet!</value>
   </data>
-  <data name="IDS_MED_ERR_HAVE_STEREO_SAMPLE" xml:space="preserve">
-    <value>This module contains at least one stereo sample. Playing of stereo samples are not supported yet</value>
-  </data>
   <data name="IDS_MED_ERR_LOADING_HEADER" xml:space="preserve">
     <value>Can't read the module header</value>
   </data>

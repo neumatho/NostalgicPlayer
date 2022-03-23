@@ -202,24 +202,33 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			if (chNum >= channels)
 				return;
 
-			//XX skal fjernes
-			if (smp.isStereo)
-				throw new NotSupportedException();
-
 			// Fix out of range offsets
 			if (startOffs >= smp.GetLength())
 				startOffs = 0;
 
-			sbyte[] adr = smp.GetSampleAddress(0);
-			if (adr != null)
+			if (smp.IsStereo())
 			{
-				// Okay, tell NostalgicPlayer to play the sample
-				worker.VirtualChannels[chNum].PlaySample(adr, startOffs, smp.GetLength(), (byte)(smp.Is16Bit() ? 16 : 8), (flags & PlayFlag.Backwards) != 0);
-
-				// Set loop
-				if (((flags & PlayFlag.Loop) != 0) && (loopLen > 2))
-					worker.VirtualChannels[chNum].SetLoop(loopStart, loopLen, (flags & PlayFlag.PingPongLoop) != 0 ? ChannelLoopType.PingPong : ChannelLoopType.Normal);
+				sbyte[] leftAdr = smp.GetSampleAddress(0);
+				sbyte[] rightAdr = smp.GetSampleAddress(1);
+				if ((leftAdr != null) && (rightAdr != null))
+				{
+					// Okay, tell NostalgicPlayer to play the sample
+					worker.VirtualChannels[chNum].PlayStereoSample(leftAdr, rightAdr, startOffs, smp.GetLength(), (byte)(smp.Is16Bit() ? 16 : 8), (flags & PlayFlag.Backwards) != 0);
+				}
 			}
+			else
+			{
+				sbyte[] adr = smp.GetSampleAddress(0);
+				if (adr != null)
+				{
+					// Okay, tell NostalgicPlayer to play the sample
+					worker.VirtualChannels[chNum].PlaySample(adr, startOffs, smp.GetLength(), (byte)(smp.Is16Bit() ? 16 : 8), (flags & PlayFlag.Backwards) != 0);
+				}
+			}
+
+			// Set loop
+			if (((flags & PlayFlag.Loop) != 0) && (loopLen > 2))
+				worker.VirtualChannels[chNum].SetLoop(loopStart, loopLen, (flags & PlayFlag.PingPongLoop) != 0 ? ChannelLoopType.PingPong : ChannelLoopType.Normal);
 		}
 
 

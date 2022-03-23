@@ -108,7 +108,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			if ((vnf.Flags & SampleFlag._16Bits) != 0)
 			{
 				// 16-bit
-				Span<short> source = vnf.Address.GetType().GetElementType() == typeof(short) ? (short[])vnf.Address : MemoryMarshal.Cast<sbyte, short>((sbyte[])vnf.Address);
+				Span<short> source = vnf.Addresses[0].GetType().GetElementType() == typeof(short) ? (short[])vnf.Addresses[0] : MemoryMarshal.Cast<sbyte, short>((sbyte[])vnf.Addresses[0]);
 
 				for (int i = (int)vnf.Current; i < vnf.Current + count; i++)
 				{
@@ -121,7 +121,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			else
 			{
 				// 8-bit
-				sbyte[] source = (sbyte[])vnf.Address;
+				sbyte[] source = (sbyte[])vnf.Addresses[0];
 
 				for (int i = (int)vnf.Current; i < vnf.Current + count; i++)
 				{

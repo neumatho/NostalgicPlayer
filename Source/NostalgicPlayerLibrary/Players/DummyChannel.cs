@@ -32,6 +32,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 		/********************************************************************/
 		/// <summary>
+		/// Will start to play a stereo sample in the channel
+		/// </summary>
+		/********************************************************************/
+		public void PlayStereoSample(Array leftAdr, Array rightAdr, uint startOffset, uint length, byte bit, bool backwards)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will set the loop point in the sample
 		/// </summary>
 		/********************************************************************/
@@ -47,6 +58,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// </summary>
 		/********************************************************************/
 		public void SetLoop(Array adr, uint startOffset, uint length, ChannelLoopType type)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will set the loop point and change the sample
+		/// </summary>
+		/********************************************************************/
+		public void SetLoop(Array leftAdr, Array rightAdr, uint startOffset, uint length, ChannelLoopType type)
 		{
 		}
 

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
@@ -763,6 +764,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 
 					Bitmap bitmap = null;
 
+					if ((sample.Flags & SampleInfo.SampleFlags.Stereo) != 0)
+						bitmap = AppendBitmap(i, bitmap, Resources.IDB_SAMPLE_STEREO);
+
 					if ((sample.Flags & SampleInfo.SampleFlags.Loop) != 0)
 						bitmap = AppendBitmap(i, bitmap, Resources.IDB_SAMPLE_LOOP);
 
@@ -1030,7 +1034,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 				fileName = Path.ChangeExtension(fileName, converterAgent.FileExtension);
 
 				// Initialize the converter
-				SaveSampleFormatInfo formatInfo = new SaveSampleFormatInfo(sampleInfo.BitSize, 1, sampleInfo.MiddleC, sampleInfo.LoopStart, sampleInfo.LoopLength, sampleInfo.Name, string.Empty);
+				bool stereo = ((sampleInfo.Flags & SampleInfo.SampleFlags.Stereo) != 0) && (sampleInfo.SecondSample != null);
+				int channels = stereo ? 2 : 1;
+
+				SaveSampleFormatInfo formatInfo = new SaveSampleFormatInfo(sampleInfo.BitSize, channels, sampleInfo.MiddleC, sampleInfo.LoopStart, sampleInfo.LoopLength, sampleInfo.Name, string.Empty);
 				if (!converterAgent.InitSaver(formatInfo, out string errorMessage))
 				{
 					ShowSimpleErrorMessage(errorMessage);
@@ -1046,17 +1053,43 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						converterAgent.SaveHeader(fs);
 
 						// Convert sample to 32-bit
-						int[] buffer = new int[sampleInfo.Length];
+						int[] buffer = new int[sampleInfo.Length * channels];
 
 						if (sampleInfo.BitSize == 8)
 						{
-							for (int i = 0, cnt = sampleInfo.Length; i < cnt; i++)
-								buffer[i] = sampleInfo.Sample[i] << 24;
+							if (stereo)
+							{
+								for (int i = 0, j = 0, cnt = sampleInfo.Length; i < cnt; i++, j += 2)
+								{
+									buffer[j] = sampleInfo.Sample[i] << 24;
+									buffer[j + 1] = sampleInfo.SecondSample[i] << 24;
+								}
+							}
+							else
+							{
+								for (int i = 0, cnt = sampleInfo.Length; i < cnt; i++)
+									buffer[i] = sampleInfo.Sample[i] << 24;
+							}
 						}
 						else
 						{
-							for (int i = 0, cnt = sampleInfo.Length; i < cnt; i++)
-								buffer[i] = sampleInfo.Sample[i] << 16;
+							Span<short> sourceSpan = MemoryMarshal.Cast<sbyte, short>(sampleInfo.Sample);
+
+							if (stereo)
+							{
+								Span<short> source2Span = MemoryMarshal.Cast<sbyte, short>(sampleInfo.SecondSample);
+
+								for (int i = 0, j = 0, cnt = sampleInfo.Length; i < cnt; i++, j += 2)
+								{
+									buffer[j] = sourceSpan[i] << 16;
+									buffer[j + 1] = source2Span[i] << 16;
+								}
+							}
+							else
+							{
+								for (int i = 0, cnt = sampleInfo.Length; i < cnt; i++)
+									buffer[i] = sourceSpan[i] << 16;
+							}
 						}
 
 						// Save the data

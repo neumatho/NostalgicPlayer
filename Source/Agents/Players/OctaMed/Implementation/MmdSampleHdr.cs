@@ -149,9 +149,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 				// No packing
 				case 0:
 				{
-					for (ushort chCnt = 0; chCnt < (stereo ? 2 : 1); chCnt++)
+					using (ModuleStream sampleDataStream = moduleStream.GetSampleDataStream((int)sampleNumber, (int)numBytes))
 					{
-						using (ModuleStream sampleDataStream = moduleStream.GetSampleDataStream((int)sampleNumber, (int)numBytes))
+						for (ushort chCnt = 0; chCnt < (stereo ? 2 : 1); chCnt++)
 						{
 							if (sixtBit)
 							{

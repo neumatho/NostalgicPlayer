@@ -34,7 +34,12 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 			/// <summary>
 			/// The sample has ping-pong loop (set this together with Loop)
 			/// </summary>
-			PingPong = 0x02
+			PingPong = 0x02,
+
+			/// <summary>
+			/// The sample is in stereo
+			/// </summary>
+			Stereo = 0x04
 		}
 
 		/// <summary>
@@ -156,7 +161,20 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the length of the sample in samples
+		/// If the sample is a stereo sample, this holds the right channel
+		/// sample data
+		/// </summary>
+		/********************************************************************/
+		public sbyte[] SecondSample
+		{
+			get; set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the length of the sample in samples for one channel
 		/// </summary>
 		/********************************************************************/
 		public int Length

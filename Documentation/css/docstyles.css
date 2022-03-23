@@ -265,6 +265,32 @@ body {
 	color: #c222c2;
 }
 
+.usage3table {
+	width: 100%;
+	border: none;
+	border-collapse: collapse;
+	text-align: left;
+}
+
+.usage3table td {
+	height: 100%;
+	vertical-align: top;
+	padding: 0;
+}
+
+.usage3table td:nth-child(1) {
+	width: 20px;
+	padding-right: 8px;
+}
+
+.usage3table a {
+	color: #2222c2;
+}
+
+.usage3table a:hover {
+	color: #c222c2;
+}
+
 .letters {
 	margin-top: 15px;
 	display: flex;

@@ -137,15 +137,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This module contains at least one stereo sample. Playing of stereo samples are not supported yet.
-        /// </summary>
-        internal static string IDS_MED_ERR_HAVE_STEREO_SAMPLE {
-            get {
-                return ResourceManager.GetString("IDS_MED_ERR_HAVE_STEREO_SAMPLE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the module header.
         /// </summary>
         internal static string IDS_MED_ERR_LOADING_HEADER {

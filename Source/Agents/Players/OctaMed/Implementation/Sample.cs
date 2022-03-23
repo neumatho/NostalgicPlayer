@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		private readonly sbyte[][] data = new sbyte[2][];
 		private uint dataLen;							// Length of one sample
 		private uint length;							// Sample length in samples
-		public bool isStereo;
+		private bool isStereo;
 		private bool is16Bit;
 		private ushort channels;						// 1 = Mono, 2 = Stereo, 0 = None
 
@@ -199,6 +199,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		public sbyte[] GetSampleAddress(ushort ch)
 		{
 			return data[ch];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tells if the sample is in stereo or mono
+		/// </summary>
+		/********************************************************************/
+		public bool IsStereo()
+		{
+			return isStereo;
 		}
 
 

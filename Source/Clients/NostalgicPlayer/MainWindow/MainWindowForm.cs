@@ -754,7 +754,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						if ((sampleInfo.Sample != null) && (sampleInfo.Length > 0))
 						{
 							// Play it
-							channel.PlaySample(sampleInfo.Sample, 0, (uint)sampleInfo.Length, (byte)sampleInfo.BitSize);
+							if ((sampleInfo.Flags & SampleInfo.SampleFlags.Stereo) != 0)
+								channel.PlayStereoSample(sampleInfo.Sample, sampleInfo.SecondSample, 0, (uint)sampleInfo.Length, (byte)sampleInfo.BitSize);
+							else
+								channel.PlaySample(sampleInfo.Sample, 0, (uint)sampleInfo.Length, (byte)sampleInfo.BitSize);
+
 							channel.SetFrequency((uint)playInfo.Frequency);
 
 							ushort vol = (ushort)sampleInfo.Volume;
