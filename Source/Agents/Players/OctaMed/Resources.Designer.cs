@@ -164,15 +164,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Multiple octave samples not supported yet.
-        /// </summary>
-        internal static string IDS_MED_ERR_OCTAVE_SAMPLES {
-            get {
-                return ResourceManager.GetString("IDS_MED_ERR_OCTAVE_SAMPLES", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Packed samples are not supported yet.
         /// </summary>
         internal static string IDS_MED_ERR_PACKED_SAMPLES {

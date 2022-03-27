@@ -29,10 +29,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the frequency to play with
+		/// Holds the note number to play with
 		/// </summary>
 		/********************************************************************/
-		public double Frequency
+		public int Note
 		{
 			get; set;
 		}

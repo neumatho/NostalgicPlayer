@@ -1356,7 +1356,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			if (sy.SynthType != SynthData.SyType.Synth)
 			{
 				// An ordinary sample or hybrid
-				Play((uint)trk, plrSong.GetSample(iNum), trkD.TrkSOffset, currI.GetRepeat(), currI.GetRepeatLen(),
+				Play((uint)trk, note, plrSong.GetSample(iNum), trkD.TrkSOffset, currI.GetRepeat(), currI.GetRepeatLen(),
 					(((currI.flags & Instr.Flag.Loop) != 0) ? PlayFlag.Loop : PlayFlag.None) |
 					(((trkD.TrkMiscFlags & TrackData.MiscFlag.Backwards) != 0) ? PlayFlag.Backwards : PlayFlag.None) |
 					(((currI.flags & Instr.Flag.PingPong) != 0) ? PlayFlag.PingPongLoop : PlayFlag.None));

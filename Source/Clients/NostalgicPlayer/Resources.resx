@@ -205,6 +205,9 @@
   <data name="IDB_SAMPLE_LOOP" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\SampleLoop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="IDB_SAMPLE_OCTAVES" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\SampleMultiOctaves.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="IDB_SAMPLE_PINGPONG" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\SamplePingPong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

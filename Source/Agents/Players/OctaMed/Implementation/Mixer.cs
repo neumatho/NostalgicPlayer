@@ -34,7 +34,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 
 		private uint channels;
 
-		private readonly ushort[,] freqTable = new ushort[16, 6 * 12];
+		private readonly ushort[,] freqTable = new ushort[16, Constants.Octaves * 12];
 		private readonly bool[] startSyn = new bool[Constants.MaxTracks];
 
 		/********************************************************************/
@@ -57,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 				// Freq diff between C#1 and C-1 = 62.22826... = 8 * 7.778532836
 				double calcVar = 1046.502261 + (cnt - 8) * 7.778532836;
 
-				for (uint cnt2 = 0; cnt2 < 6 * 12; cnt2++)
+				for (uint cnt2 = 0; cnt2 < Constants.Octaves * 12; cnt2++)
 				{
 					freqTable[cnt, cnt2] = (ushort)calcVar;
 					calcVar *= 1.059463094;			// 12th root of 2
@@ -127,7 +127,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 					}
 
 					if (note <= 0x7f)
-						return GetNoteFrequency((NoteNum)(note - 1), i.GetFineTune());
+					{
+						note = (NoteNum)(note + samp.GetNoteDifference((NoteNum)(note - 1)));
+
+						return GetNoteFrequency(note, i.GetFineTune());
+					}
 
 					return 0;
 				}
@@ -197,7 +201,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// Will begin to play the sample given with all the arguments
 		/// </summary>
 		/********************************************************************/
-		protected void Play(uint chNum, Sample smp, uint startOffs, uint loopStart, uint loopLen, PlayFlag flags)
+		protected void Play(uint chNum, NoteNum note, Sample smp, uint startOffs, uint loopStart, uint loopLen, PlayFlag flags)
 		{
 			if (chNum >= channels)
 				return;
@@ -206,23 +210,38 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			if (startOffs >= smp.GetLength())
 				startOffs = 0;
 
-			if (smp.IsStereo())
+			sbyte[] leftAdr = smp.GetPlayBuffer(0, note, ref loopStart, ref loopLen);
+			if (leftAdr != null)
 			{
-				sbyte[] leftAdr = smp.GetSampleAddress(0);
-				sbyte[] rightAdr = smp.GetSampleAddress(1);
-				if ((leftAdr != null) && (rightAdr != null))
+				byte bit;
+				uint len;
+
+				if (smp.Is16Bit())
 				{
-					// Okay, tell NostalgicPlayer to play the sample
-					worker.VirtualChannels[chNum].PlayStereoSample(leftAdr, rightAdr, startOffs, smp.GetLength(), (byte)(smp.Is16Bit() ? 16 : 8), (flags & PlayFlag.Backwards) != 0);
+					bit = 16;
+					len = (uint)leftAdr.Length / 2;
 				}
-			}
-			else
-			{
-				sbyte[] adr = smp.GetSampleAddress(0);
-				if (adr != null)
+				else
+				{
+					bit = 8;
+					len = (uint)leftAdr.Length;
+				}
+
+				if (smp.IsStereo())
+				{
+					uint d1 = 0, d2 = 0;
+
+					sbyte[] rightAdr = smp.GetPlayBuffer(1, note, ref d1, ref d2);
+					if (rightAdr != null)
+					{
+						// Okay, tell NostalgicPlayer to play the sample
+						worker.VirtualChannels[chNum].PlayStereoSample(leftAdr, rightAdr, startOffs, len, bit, (flags & PlayFlag.Backwards) != 0);
+					}
+				}
+				else
 				{
 					// Okay, tell NostalgicPlayer to play the sample
-					worker.VirtualChannels[chNum].PlaySample(adr, startOffs, smp.GetLength(), (byte)(smp.Is16Bit() ? 16 : 8), (flags & PlayFlag.Backwards) != 0);
+					worker.VirtualChannels[chNum].PlaySample(leftAdr, startOffs, len, bit, (flags & PlayFlag.Backwards) != 0);
 				}
 			}
 

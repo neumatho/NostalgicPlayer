@@ -6,6 +6,7 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
@@ -69,20 +70,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 
 			if (type >= 0)
 			{
-				if (((type & 0x0f) >= 1) && ((type & 0x0f) <= 6))
+				if ((type & 0x0f) > 7)
 				{
-					// Multi octave
-					errorMessage = Resources.IDS_MED_ERR_OCTAVE_SAMPLES + " - " + (type & 0x0f);
+					// Unknown sample
+					errorMessage = Resources.IDS_MED_ERR_UNKNOWN_SAMPLE;
 					return;
-				}
-				else
-				{
-					if ((type & 0x0f) > 7)
-					{
-						// Unknown sample
-						errorMessage = Resources.IDS_MED_ERR_UNKNOWN_SAMPLE;
-						return;
-					}
 				}
 
 				if ((type & Instr16Bit) != 0)
@@ -125,7 +117,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/********************************************************************/
 		public Sample AllocSample()
 		{
-			return new Sample(worker, numFrames, stereo, sixtBit);
+			return new Sample(worker);
 		}
 
 
@@ -138,7 +130,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		public void ReadSampleData(ModuleStream moduleStream, Sample dest)
 		{
 			// Make sure that the dimension for receiving data are correct
-			dest.SetProp(numFrames, stereo, sixtBit);
+			dest.SetProp(numFrames, stereo, sixtBit, type);
 
 			// Unknown compression
 			if (skipThis)
@@ -153,36 +145,51 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 					{
 						for (ushort chCnt = 0; chCnt < (stereo ? 2 : 1); chCnt++)
 						{
-							if (sixtBit)
+							for (int oct = 0; ; oct++)
 							{
-								if ((type & InstrDeltaCode) != 0)
-								{
-									short prev = sampleDataStream.Read_B_INT16();
-									dest.SetData16(0, chCnt, prev);
+								sbyte[] buf = dest.GetSampleBuffer(chCnt, oct);
+								if (buf == null)
+									break;
 
-									for (uint cnt2 = 1; cnt2 < numFrames; cnt2++)
-										dest.SetData16(cnt2, chCnt, prev += sampleDataStream.Read_B_INT16());
+								if (sixtBit)
+								{
+									Span<short> buf16 = MemoryMarshal.Cast<sbyte, short>(buf);
+
+									if ((type & InstrDeltaCode) != 0)
+									{
+										short prev = sampleDataStream.Read_B_INT16();
+										buf16[0] = prev;
+
+										for (int cnt2 = 1; cnt2 < buf16.Length; cnt2++)
+										{
+											prev += sampleDataStream.Read_B_INT16();
+											buf16[cnt2] = prev;
+										}
+									}
+									else
+									{
+										for (int cnt2 = 0; cnt2 < buf16.Length; cnt2++)
+											buf16[cnt2] = sampleDataStream.Read_B_INT16();
+									}
 								}
 								else
 								{
-									for (uint cnt2 = 0; cnt2 < numFrames; cnt2++)
-										dest.SetData16(cnt2, chCnt, sampleDataStream.Read_B_INT16());
-								}
-							}
-							else
-							{
-								if ((type & InstrDeltaCode) != 0)
-								{
-									sbyte prev = sampleDataStream.Read_INT8();
-									dest.SetData8(0, chCnt, prev);
+									if ((type & InstrDeltaCode) != 0)
+									{
+										sbyte prev = sampleDataStream.Read_INT8();
+										buf[0] = prev;
 
-									for (uint cnt2 = 1; cnt2 < numFrames; cnt2++)
-										dest.SetData8(cnt2, chCnt, prev += sampleDataStream.Read_INT8());
-								}
-								else
-								{
-									for (uint cnt2 = 0; cnt2 < numFrames; cnt2++)
-										dest.SetData8(cnt2, chCnt, sampleDataStream.Read_INT8());
+										for (int cnt2 = 1; cnt2 < buf.Length; cnt2++)
+										{
+											prev += sampleDataStream.Read_INT8();
+											buf[cnt2] = prev;
+										}
+									}
+									else
+									{
+										for (int cnt2 = 0; cnt2 < buf.Length; cnt2++)
+											buf[cnt2] = sampleDataStream.Read_INT8();
+									}
 								}
 							}
 						}
@@ -244,7 +251,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 
 		/********************************************************************/
 		/// <summary>
-		/// Check to see if the sample is a stereo sample
+		/// Return the number of bytes the sample uses
 		/// </summary>
 		/********************************************************************/
 		public uint GetNumBytes()

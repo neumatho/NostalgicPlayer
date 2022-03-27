@@ -1177,12 +1177,65 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 							MiddleC = (int)plr.GetNoteFrequency(36, inst.GetFineTune()),
 							Volume = (int)inst.GetInitVol() * 2,
 							Panning = -1,
-							Sample = sample.GetSampleAddress(0),
-							SecondSample = sample.GetSampleAddress(1),
 							Length = (int)sample.GetLength(),
 							LoopStart = (int)inst.GetRepeat(),
 							LoopLength = (int)inst.GetRepeatLen()
 						};
+
+						if (sample.IsMultiOctave())
+						{
+							int oct;
+
+							sampleInfo.MultiOctaveSamples = new SampleInfo.MultiOctaveInfo[8];
+
+							for (oct = 0; oct < 6; oct++)
+							{
+								uint repeat = (uint)sampleInfo.LoopStart;
+								uint repLen = (uint)sampleInfo.LoopLength;
+								NoteNum note = (NoteNum)(oct * 12);
+
+								sampleInfo.MultiOctaveSamples[oct + 1].Sample = new sbyte[2][];
+
+								sampleInfo.MultiOctaveSamples[oct + 1].Sample[0] = sample.GetPlayBuffer(0, note, ref repeat, ref repLen);
+								sampleInfo.MultiOctaveSamples[oct + 1].LoopStart = (int)repeat;
+								sampleInfo.MultiOctaveSamples[oct + 1].LoopLength = (int)repLen;
+								sampleInfo.MultiOctaveSamples[oct + 1].NoteAdd = sample.GetNoteDifference(note);
+
+								if (sample.IsStereo())
+									sampleInfo.MultiOctaveSamples[oct + 1].Sample[1] = sample.GetPlayBuffer(1, note, ref repeat, ref repLen);
+							}
+
+							// OctaMed only have 6 octaves, so the first the last will use the same buffer
+							sampleInfo.MultiOctaveSamples[0] = sampleInfo.MultiOctaveSamples[1];
+							sampleInfo.MultiOctaveSamples[7] = sampleInfo.MultiOctaveSamples[6];
+
+							// Remember all samples
+							sampleInfo.MultiOctaveAllSamples = new sbyte[2][][];
+
+							List<(sbyte[] left, sbyte[] right)> samples = new List<(sbyte[] left, sbyte[] right)>();
+							oct = 0;
+
+							sbyte[] leftBuf;
+							while ((leftBuf = sample.GetSampleBuffer(0, oct)) != null)
+							{
+								sbyte[] rightBuf = sample.GetSampleBuffer(1, oct);
+								samples.Add((leftBuf, rightBuf));
+
+								oct++;
+							}
+
+							sampleInfo.MultiOctaveAllSamples[0] = samples.Select(s => s.left).ToArray();
+							if (sample.IsStereo())
+								sampleInfo.MultiOctaveAllSamples[1] = samples.Select(s => s.right).ToArray();
+
+							sampleInfo.Flags = SampleInfo.SampleFlags.MultiOctave;
+						}
+						else
+						{
+							sampleInfo.Sample = sample.GetSampleBuffer(0, 0);
+							sampleInfo.SecondSample = sample.GetSampleBuffer(1, 0);
+							sampleInfo.Flags = SampleInfo.SampleFlags.None;
+						}
 
 						// Find out the type of the sample
 						if (sample.IsSynthSound())
@@ -1196,7 +1249,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 							sampleInfo.Type = SampleInfo.SampleType.Sample;
 
 						// Find out the loop information
-						sampleInfo.Flags = (inst.flags & Instr.Flag.Loop) != 0 ? SampleInfo.SampleFlags.Loop : SampleInfo.SampleFlags.None;
+						sampleInfo.Flags |= (inst.flags & Instr.Flag.Loop) != 0 ? SampleInfo.SampleFlags.Loop : SampleInfo.SampleFlags.None;
 						if ((inst.flags & Instr.Flag.PingPong) != 0)
 							sampleInfo.Flags |= SampleInfo.SampleFlags.PingPong;
 

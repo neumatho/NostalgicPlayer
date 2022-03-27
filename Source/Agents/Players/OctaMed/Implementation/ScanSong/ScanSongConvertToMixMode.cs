@@ -21,6 +21,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.ScanSong
 		private readonly bool[] transpInstr = new bool[Constants.MaxInstr + 1];
 		private readonly int[] iTrans = new int[Constants.MaxInstr + 1];
 		private readonly bool[] isMidi = new bool[Constants.MaxInstr + 1];
+		private readonly bool[] isMultiOctave = new bool[Constants.MaxInstr + 1];
 		private bool type0;
 
 		/********************************************************************/
@@ -44,10 +45,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.ScanSong
 					transpInstr[cnt] = true;
 				else
 				{
-					if (!sg.GetSample(cnt - 1).IsSynthSound() || (sg.GetSample(cnt - 1).GetLength() != 0))
+					Sample sample = sg.GetSample(cnt - 1);
+
+					if (!sample.IsSynthSound() || (sample.GetLength() != 0))
 						transpInstr[cnt] = true;
 					else
 						transpInstr[cnt] = false;
+
+					isMultiOctave[cnt] = sample.IsMultiOctave();
 				}
 
 				iTrans[cnt] = i.GetTransp();
@@ -75,8 +80,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.ScanSong
 				else
 				{
 					// Kludge for broken 4-ch modules that use x-4/x-5/x-6... as x-3
-					while (note.NoteNum + iTrans[lastINum] > 3 * 12)
-						note.NoteNum -= 12;
+					if (!isMultiOctave[lastINum])
+					{
+						while (note.NoteNum + iTrans[lastINum] > 3 * 12)
+							note.NoteNum -= 12;
+					}
 
 					// The actual transposition up
 					note.NoteNum += 24;

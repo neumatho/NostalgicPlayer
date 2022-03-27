@@ -23,6 +23,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers
 		/// </summary>
 		public const uint MaxInstr = 64;
 
+		/// <summary>
+		/// Number of octaves supported
+		/// </summary>
+		public const int Octaves = 6;
+
 		// Special note numbers
 		public const byte NoteStp = 0x80;
 		public const byte NoteDef = 0x81;
