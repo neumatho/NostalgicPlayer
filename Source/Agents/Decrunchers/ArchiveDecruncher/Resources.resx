@@ -121,7 +121,7 @@
     <value>Created by Thomas Neumann.
 Based on the C code (unlzx.c) by Erik Meusel.
 
-This format was created by Jonathan Forbes and Tomi Poutanen. It compress even better and is faster than Lha, which was to common compression tool on the Amiga. It is based on the LZ77 family and one of its features, was that it could take several files and treat them as one while looking for equalities. It is the same princip that Rar uses with its "Solid archive" mode.</value>
+This format was created by Jonathan Forbes and Tomi Poutanen. It compress even better and is faster than Lha, which was the common compression tool on the Amiga. It is based on the LZ77 family and one of its features, was that it could take several files and treat them as one while looking for equalities. It is the same princip that Rar uses with its "Solid archive" mode.</value>
   </data>
   <data name="IDS_ARD_DESCRIPTION_AGENT2" xml:space="preserve">
     <value>Created by Thomas Neumann.

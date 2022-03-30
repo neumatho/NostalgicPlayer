@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -64,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher {
         ///   Looks up a localized string similar to Created by Thomas Neumann.
         ///Based on the C code (unlzx.c) by Erik Meusel.
         ///
-        ///This format was created by Jonathan Forbes and Tomi Poutanen. It compress even better and is faster than Lha, which was to common compression tool on the Amiga. It is based on the LZ77 family and one of its features, was that it could take several files and treat them as one while looking for equalities. It is the same princip that Rar uses with its &quot;Solid archive&quot; mode..
+        ///This format was created by Jonathan Forbes and Tomi Poutanen. It compress even better and is faster than Lha, which was the common compression tool on the Amiga. It is based on the LZ77 family and one of its features, was that it could take several files and treat them as one while looking for equalities. It is the same princip that Rar uses with its &quot;Solid archive&quot; mode..
         /// </summary>
         internal static string IDS_ARD_DESCRIPTION_AGENT1 {
             get {
