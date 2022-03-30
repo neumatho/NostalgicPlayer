@@ -48,7 +48,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		private readonly bool stereo;
 		private readonly short type;
 		private readonly ushort packType;
-		private readonly ushort subType;
 		private readonly bool skipThis;
 
 		/********************************************************************/
@@ -93,10 +92,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 				if ((type & InstrPack) != 0)
 					errorMessage = Resources.IDS_MED_ERR_PACKED_SAMPLES;
 				else
-				{
 					packType = 0;
-					subType = 0;
-				}
 			}
 			else
 			{

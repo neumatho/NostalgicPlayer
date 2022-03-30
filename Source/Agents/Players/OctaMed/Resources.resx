@@ -157,11 +157,20 @@ This player plays 1-64 channels modules created with OctaMED Soundstudio. This i
 
 Note that this player does not support mixer effects, e.g. echo yet!</value>
   </data>
+  <data name="IDS_MED_DESCRIPTION_AGENT6" xml:space="preserve">
+    <value>Original player by Teijo Kinnunen.
+Converted to C# by Thomas Neumann.
+
+This player is the same as the MED (MMD0) format, but the patterns are packed. Some games uses this format.</value>
+  </data>
   <data name="IDS_MED_ERR_LOADING_HEADER" xml:space="preserve">
     <value>Can't read the module header</value>
   </data>
   <data name="IDS_MED_ERR_LOADING_INSTRUMENTS" xml:space="preserve">
     <value>Can't read the instrument information</value>
+  </data>
+  <data name="IDS_MED_ERR_LOADING_PATTERNS" xml:space="preserve">
+    <value>Can't read the module patterns</value>
   </data>
   <data name="IDS_MED_ERR_LOADING_SAMPLES" xml:space="preserve">
     <value>Can't read the module samples</value>
@@ -207,5 +216,8 @@ Note that this player does not support mixer effects, e.g. echo yet!</value>
   </data>
   <data name="IDS_MED_NAME_AGENT5" xml:space="preserve">
     <value>OctaMED Soundstudio</value>
+  </data>
+  <data name="IDS_MED_NAME_AGENT6" xml:space="preserve">
+    <value>MED Packer</value>
   </data>
 </root>

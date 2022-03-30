@@ -18,6 +18,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers
 		OctaMed,
 		OctaMed_Professional4,
 		OctaMed_Professional6,
-		OctaMed_SoundStudio
+		OctaMed_SoundStudio,
+		MedPacker
 	}
 }

@@ -137,6 +137,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Original player by Teijo Kinnunen.
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///This player is the same as the MED (MMD0) format, but the patterns are packed. Some games uses this format..
+        /// </summary>
+        internal static string IDS_MED_DESCRIPTION_AGENT6 {
+            get {
+                return ResourceManager.GetString("IDS_MED_DESCRIPTION_AGENT6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the module header.
         /// </summary>
         internal static string IDS_MED_ERR_LOADING_HEADER {
@@ -151,6 +163,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed {
         internal static string IDS_MED_ERR_LOADING_INSTRUMENTS {
             get {
                 return ResourceManager.GetString("IDS_MED_ERR_LOADING_INSTRUMENTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t read the module patterns.
+        /// </summary>
+        internal static string IDS_MED_ERR_LOADING_PATTERNS {
+            get {
+                return ResourceManager.GetString("IDS_MED_ERR_LOADING_PATTERNS", resourceCulture);
             }
         }
         
@@ -286,6 +307,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed {
         internal static string IDS_MED_NAME_AGENT5 {
             get {
                 return ResourceManager.GetString("IDS_MED_NAME_AGENT5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MED Packer.
+        /// </summary>
+        internal static string IDS_MED_NAME_AGENT6 {
+            get {
+                return ResourceManager.GetString("IDS_MED_NAME_AGENT6", resourceCulture);
             }
         }
     }

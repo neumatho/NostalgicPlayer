@@ -29,7 +29,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 			{ OctaMed.Agent2Id, ModuleType.OctaMed },
 			{ OctaMed.Agent3Id, ModuleType.OctaMed_Professional4 },
 			{ OctaMed.Agent4Id, ModuleType.OctaMed_Professional6 },
-			{ OctaMed.Agent5Id, ModuleType.OctaMed_SoundStudio }
+			{ OctaMed.Agent5Id, ModuleType.OctaMed_SoundStudio },
+			{ OctaMed.Agent6Id, ModuleType.MedPacker }
 		};
 
 		#region ExtraPosInfo class
@@ -68,7 +69,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "med", "mmd0", "mmd1", "mmd2", "mmd3", "omed", "ocss" };
+		public override string[] FileExtensions => new [] { "med", "mmd0", "mmd1", "mmd2", "mmd3", "mmdc", "omed", "ocss" };
 
 
 
@@ -258,7 +259,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 					Mmd2SongData song2 = null;
 					bool usesHexVol;
 
-					if (markVersion < '2')
+					if ((markVersion < '2') || (markVersion == 'C'))
 					{
 						// Type MMD0 or MMD1
 						song0 = new Mmd0SongData();
@@ -478,7 +479,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 
 					uint numBlocks;
 
-					if (markVersion <= '1')
+					if ((markVersion <= '1') || (markVersion == 'C'))
 					{
 						// MMD0 or MMD1
 						numBlocks = song0.NumBlocks;
@@ -494,9 +495,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 					// Read all the block pointers
 					moduleStream.ReadArray_B_UINT32s(blkArray, 0, (int)numBlocks);
 
-					if (markVersion == '0')
+					if ((markVersion == '0') || (markVersion == 'C'))
 					{
-						// MMD0
+						// MMD0 or MMDC
 						for (int cnt = 0; cnt < numBlocks; cnt++)
 						{
 							// Seek to the block data
@@ -512,12 +513,68 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 
 							sg.CurrSS().Append(blk);
 
+							// Allocate byte array holding the block data to be parsed
+							int size = tracks * lines * 3;
+							byte[] blockData = new byte[size];
+
+							if (markVersion == '0')
+							{
+								moduleStream.Read(blockData, 0, size);
+
+								if (moduleStream.EndOfStream)
+								{
+									errorMessage = Resources.IDS_MED_ERR_LOADING_PATTERNS;
+									Cleanup();
+
+									return AgentResult.Error;
+								}
+							}
+							else
+							{
+								// This code is based on libxmp by Alice
+								for (uint j = 0; j < size; )
+								{
+									uint pack = moduleStream.Read_UINT8();
+
+									if (moduleStream.EndOfStream)
+									{
+										errorMessage = Resources.IDS_MED_ERR_LOADING_PATTERNS;
+										Cleanup();
+
+										return AgentResult.Error;
+									}
+
+									if ((pack & 0x80) != 0)
+									{
+										// Run of 0
+										j += 256 - pack;
+										continue;
+									}
+
+									// Uncompressed block
+									pack++;
+									if (pack > (size - j))
+										pack = (uint)(size - j);
+
+									if (moduleStream.Read(blockData, (int)j, (int)pack) < pack)
+									{
+										errorMessage = Resources.IDS_MED_ERR_LOADING_PATTERNS;
+										Cleanup();
+
+										return AgentResult.Error;
+									}
+
+									j += pack;
+								}
+							}
+
+							// Parse the block data
+							int offset = 0;
 							for (LineNum lineCnt = 0; lineCnt < lines; lineCnt++)
 							{
 								for (TrackNum trkCnt = 0; trkCnt < tracks; trkCnt++)
 								{
-									byte[] mmd0Note = new byte[3];
-									moduleStream.Read(mmd0Note, 0, 3);
+									Span<byte> mmd0Note = new Span<byte>(blockData, offset, 3);
 
 									MedNote dn = blk.Note(lineCnt, trkCnt);
 									dn.NoteNum = (byte)(mmd0Note[0] & 0x3f);
@@ -527,6 +584,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 										blk.Cmd(lineCnt, trkCnt, 0).SetCmdData(0, 0, mmd0Note[2]);
 									else
 										blk.Cmd(lineCnt, trkCnt, 0).SetCmdData((byte)(mmd0Note[1] & 0x0f), mmd0Note[2], 0);
+
+									offset += 3;
 								}
 							}
 						}
@@ -579,6 +638,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 									byte[] mmdNote = new byte[4];
 									MedNote dn = blk.Note(lineCnt, trkCnt);
 									moduleStream.Read(mmdNote, 0, 4);
+
+									if (moduleStream.EndOfStream)
+									{
+										errorMessage = Resources.IDS_MED_ERR_LOADING_PATTERNS;
+										Cleanup();
+
+										return AgentResult.Error;
+									}
 
 									if (mmdNote[0] <= Constants.Note44k)
 										dn.NoteNum = mmdNote[0];
@@ -924,7 +991,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 				if (mixConv)
 				{
 					ScanSongConvertToMixMode cmm = new ScanSongConvertToMixMode();
-					cmm.Do(sg, markVersion == '0');
+					cmm.Do(sg, (markVersion == '0') || (markVersion == 'C'));
 				}
 
 				// And special 5-8 channel tempo conversion
@@ -1385,7 +1452,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 			// Mark out the mark and leave the version
 			byte markVersion = (byte)(mark & 0x000000ff);
 
-			if ((markVersion < '0') || (markVersion > '3'))
+			if (((markVersion < '0') || (markVersion > '3')) && (markVersion != 'C'))
 				return ModuleType.Unknown;
 
 			if (markVersion == '0')
@@ -1416,6 +1483,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 
 			if (markVersion == '3')
 				return ModuleType.OctaMed_SoundStudio;
+
+			if (markVersion == 'C')
+				return ModuleType.MedPacker;
 
 			return ModuleType.Unknown;
 		}

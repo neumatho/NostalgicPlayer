@@ -20,8 +20,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Block
 		private readonly MedNote[,] grid;
 		private MedCmd[][,] cmdPages;
 
-		private LineNum numLines;
-		private TrackNum numTracks;
+		private readonly LineNum numLines;
+		private readonly TrackNum numTracks;
 		private PageNum numCmdPages;
 
 		/********************************************************************/
