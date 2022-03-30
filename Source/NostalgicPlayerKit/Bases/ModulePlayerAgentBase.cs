@@ -151,6 +151,17 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Will add DSP effect to the mixed output
+		/// </summary>
+		/********************************************************************/
+		public virtual void DoDspEffects(int[] dest, int todo, bool stereo)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the number of channels the module want to reserve
 		/// </summary>
 		/********************************************************************/

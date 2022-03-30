@@ -357,8 +357,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 						if (song2.MixEchoType != 0)
 							throw new NotSupportedException($"Echo not supported - {song2.MixEchoType}");
 
-						if (song2.MixStereoSep != 0)
-							throw new NotSupportedException($"Stereo separation not supported - {song2.MixStereoSep}");
+						if ((song2.MixStereoSep >= -4) && (song2.MixStereoSep <= 4))
+							css.Fx().GlobalGroup.SetStereoSeparation(song2.MixStereoSep);
 
 						// Read track volumes
 						TrackNum songTracks = Math.Min((ushort)Constants.MaxTracks, song2.NumTracks);
@@ -1087,6 +1087,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		public override void Play()
 		{
 			plr.PlrCallBack();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will add DSP effect to the mixed output
+		/// </summary>
+		/********************************************************************/
+		public override void DoDspEffects(int[] dest, int todo, bool stereo)
+		{
+			plr.EffectCallBack(dest, todo, stereo);
 		}
 
 

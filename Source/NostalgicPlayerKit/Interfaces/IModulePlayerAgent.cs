@@ -66,6 +66,11 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		void Play();
 
 		/// <summary>
+		/// Will add DSP effect to the mixed output
+		/// </summary>
+		void DoDspEffects(int[] dest, int todo, bool stereo);
+
+		/// <summary>
 		/// Return the number of channels the module want to reserve
 		/// </summary>
 		int VirtualChannelCount { get; }

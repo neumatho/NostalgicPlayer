@@ -323,6 +323,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				int total2 = DoMixing2(offset, bufSize);
 				total = Math.Max(total, total2);
 
+				// Add extra effects if enabled
+				AddEffects(mixBuffer, bufSize);
+
 				// Add Amiga low-pass filter if enabled
 				AddAmigaFilter(mixBuffer, bufSize);
 			}
@@ -533,6 +536,21 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			}
 
 			return total;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Adds extra DSP effects from e.g. the current player
+		/// </summary>
+		/********************************************************************/
+		private void AddEffects(int[] dest, int todo)
+		{
+			lock (currentPlayer)
+			{
+				currentPlayer.DoDspEffects(dest, todo, (currentMode & MixerMode.Stereo) != 0);
+			}
 		}
 
 

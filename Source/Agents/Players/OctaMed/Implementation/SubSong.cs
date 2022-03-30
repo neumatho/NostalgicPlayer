@@ -48,6 +48,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		private PlayPosition position;
 		private bool filter;
 
+		private readonly EffectMaster fx;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -65,6 +67,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			volAdj.Value = 100;
 			masterVol.Value = 64;
 			filter = false;
+			fx = new EffectMaster(this);
 
 			position.SetParent(this);
 
@@ -582,6 +585,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// 
 		/// </summary>
 		/********************************************************************/
+		public bool GetStereo()
+		{
+			return (flags & SongFlags.StereoMode) != 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public bool GetSlide1st()
 		{
 			return (flags & SongFlags.StSlide) != 0;
@@ -609,6 +624,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		public string GetSongName()
 		{
 			return name ?? string.Empty;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public EffectMaster Fx()
+		{
+			return fx;
 		}
 	}
 }

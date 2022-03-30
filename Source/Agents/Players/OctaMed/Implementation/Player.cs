@@ -84,10 +84,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			public NoteNum TrkPrevNote;
 			public InstNum TrkPrevINum;
 			public byte TrkPrevVol;
-			public sbyte TrkPrevMidiCh;
 			public byte TrkPrevMidiN;		// 0 = None, 1 = 0, 2 = 1, ...
 			public MiscFlag TrkMiscFlags;
-			public uint TrkPrevMidiPort;
 			public int TrkNoteOffCnt;		// -1 = None
 			public uint TrkInitHold;
 			public uint TrkInitDecay;
@@ -206,6 +204,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			plrPos = css.Pos();							// Copy for our private use
 
 			Start((uint)plrChannels);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will add DSP effect to the mixed output
+		/// </summary>
+		/********************************************************************/
+		public void EffectCallBack(int[] dest, int todo, bool stereo)
+		{
+			plrSong.CurrSS().Fx().GlobalGroup.DoEffects(dest, todo, stereo);
 		}
 
 
@@ -613,6 +623,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 
 									break;
 								}
+
+								// Effect settings
+								case 0x2f:
+									break;
 							}
 						}
 					}
