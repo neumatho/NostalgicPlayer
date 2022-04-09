@@ -128,7 +128,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed {
         ///
         ///This player plays 1-64 channels modules created with OctaMED Soundstudio. This is the same as MMD3 files.
         ///
-        ///Note that this player does not support mixer effects, e.g. echo yet!.
+        ///This player also supports echo, cross echo and stereo separation effects, which other players lack. Only thing missing is the filter support..
         /// </summary>
         internal static string IDS_MED_DESCRIPTION_AGENT5 {
             get {

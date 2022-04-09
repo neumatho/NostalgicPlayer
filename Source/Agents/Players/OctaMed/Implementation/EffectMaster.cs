@@ -34,5 +34,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		{
 			get;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize all effect groups
+		/// </summary>
+		/********************************************************************/
+		public void Initialize()
+		{
+			GlobalGroup.Initialize();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Cleanup all effect groups
+		/// </summary>
+		/********************************************************************/
+		public void Cleanup()
+		{
+			GlobalGroup.Cleanup();
+		}
 	}
 }

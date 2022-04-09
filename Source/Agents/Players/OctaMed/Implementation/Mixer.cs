@@ -128,9 +128,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 
 					if (note <= 0x7f)
 					{
-						note = (NoteNum)(note + samp.GetNoteDifference((NoteNum)(note - 1)) - 1);
+						if (samp != null)
+							note = (NoteNum)(note + samp.GetNoteDifference((NoteNum)(note - 1)));
 
-						return GetNoteFrequency(note, i.GetFineTune());
+						return GetNoteFrequency((NoteNum)(note - 1), i.GetFineTune());
 					}
 
 					return 0;

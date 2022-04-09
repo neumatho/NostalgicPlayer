@@ -154,7 +154,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Will add DSP effect to the mixed output
 		/// </summary>
 		/********************************************************************/
-		public virtual void DoDspEffects(int[] dest, int todo, bool stereo)
+		public virtual void DoDspEffects(int[] dest, int todo, uint mixerFrequency, bool stereo)
 		{
 		}
 

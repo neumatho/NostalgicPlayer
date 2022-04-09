@@ -352,10 +352,32 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 						css.SetAmigaFilter((song2.Flags & MmdFlag.FilterOn) != 0);
 						css.SetVolAdjust((short)(song2.VolAdj != 0 ? song2.VolAdj : 100));
 
-						//XX skal fjernes
-						// We do not support echo and stereo separation
-						if (song2.MixEchoType != 0)
-							throw new NotSupportedException($"Echo not supported - {song2.MixEchoType}");
+						switch (song2.MixEchoType)
+						{
+							case 1:
+							{
+								css.Fx().GlobalGroup.SetEchoMode(EchoMode.Normal);
+								break;
+							}
+
+							case 2:
+							{
+								css.Fx().GlobalGroup.SetEchoMode(EchoMode.CrossEcho);
+								break;
+							}
+
+							default:
+							{
+								css.Fx().GlobalGroup.SetEchoMode(EchoMode.None);
+								break;
+							}
+						}
+
+						if ((song2.MixEchoDepth >= 1) && (song2.MixEchoDepth <= 6))
+							css.Fx().GlobalGroup.SetEchoDepth(song2.MixEchoDepth);
+
+						if (song2.MixEchoLen > 0)
+							css.Fx().GlobalGroup.SetEchoLength(song2.MixEchoLen);
 
 						if ((song2.MixStereoSep >= -4) && (song2.MixStereoSep <= 4))
 							css.Fx().GlobalGroup.SetStereoSeparation(song2.MixStereoSep);
@@ -1096,9 +1118,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		/// Will add DSP effect to the mixed output
 		/// </summary>
 		/********************************************************************/
-		public override void DoDspEffects(int[] dest, int todo, bool stereo)
+		public override void DoDspEffects(int[] dest, int todo, uint mixerFrequency, bool stereo)
 		{
-			plr.EffectCallBack(dest, todo, stereo);
+			plr.EffectCallBack(dest, todo, mixerFrequency, stereo);
 		}
 
 
@@ -1197,6 +1219,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 			// Now set the player position
 			plr.plrPos.PSectPos(i);
 			plr.plrPos.PSeqPos((uint)position);
+			plr.plrPos.Line(0);
 
 			seq = ss.Sect(i).Value;
 			PlaySeqEntry pse = ss.PSeq(seq)[position];
@@ -1520,6 +1543,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 			ss.SetTempo(tempo);
 			plr.SetMixTempo(tempo);
 
+			// Initialize all the effects
+			ss.Fx().Initialize();
+
 			// Initialize the player
 			plr.PlaySong(sg);
 		}
@@ -1533,6 +1559,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		/********************************************************************/
 		private void Cleanup()
 		{
+			if (sg != null)
+				sg.CurrSS().Fx().Cleanup();
+
 			plr = null;
 			sg = null;
 		}

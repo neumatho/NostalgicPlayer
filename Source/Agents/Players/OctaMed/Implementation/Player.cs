@@ -213,9 +213,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// Will add DSP effect to the mixed output
 		/// </summary>
 		/********************************************************************/
-		public void EffectCallBack(int[] dest, int todo, bool stereo)
+		public void EffectCallBack(int[] dest, int todo, uint mixerFrequency, bool stereo)
 		{
-			plrSong.CurrSS().Fx().GlobalGroup.DoEffects(dest, todo, stereo);
+			plrSong.CurrSS().Fx().GlobalGroup.DoEffects(dest, todo, mixerFrequency, stereo);
 		}
 
 
@@ -625,8 +625,34 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 								}
 
 								// Effect settings
+								//
+								// data: $Ex (x = 6 - 1) -> echo depth
+								//       $Dx (x = C - 0 - 4) -> stereo separation
 								case 0x2f:
+								{
+									byte effCmd = (byte)(data & 0xf0);
+									byte effData = (byte)(data & 0x0f);
+
+									if (effCmd == 0xe0)
+									{
+										// Echo depth
+										effData = (byte)(7 - effData);
+										if ((effData >= 1) && (effData <= 6))
+											ss.Fx().GlobalGroup.SetEchoDepth(effData);
+									}
+									else if (effCmd == 0xd0)
+									{
+										// Stereo separation
+										sbyte stereoSep = (sbyte)effData;
+
+										if (effData >= 12)
+											stereoSep = (sbyte)-(16 - effData);
+
+										if ((stereoSep >= -4) && (stereoSep <= 4))
+											ss.Fx().GlobalGroup.SetStereoSeparation(stereoSep);
+									}
 									break;
+								}
 							}
 						}
 					}

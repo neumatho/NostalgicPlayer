@@ -155,7 +155,7 @@ Converted to C# by Thomas Neumann.
 
 This player plays 1-64 channels modules created with OctaMED Soundstudio. This is the same as MMD3 files.
 
-Note that this player does not support mixer effects, e.g. echo yet!</value>
+This player also supports echo, cross echo and stereo separation effects, which other players lack. Only thing missing is the filter support.</value>
   </data>
   <data name="IDS_MED_DESCRIPTION_AGENT6" xml:space="preserve">
     <value>Original player by Teijo Kinnunen.

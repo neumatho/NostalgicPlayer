@@ -549,7 +549,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		{
 			lock (currentPlayer)
 			{
-				currentPlayer.DoDspEffects(dest, todo, (currentMode & MixerMode.Stereo) != 0);
+				currentPlayer.DoDspEffects(dest, todo, (uint)mixerFrequency, (currentMode & MixerMode.Stereo) != 0);
 			}
 		}
 
