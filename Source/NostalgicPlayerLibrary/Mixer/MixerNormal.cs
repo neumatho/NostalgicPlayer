@@ -64,7 +64,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// This is the main mixer method
 		/// </summary>
 		/********************************************************************/
-		public override void Mixing(int[] dest, int offset, int todo, MixerMode mode)
+		public override void Mixing(int[][] channelMap, int offset, int todo, MixerMode mode)
 		{
 			// Loop through all the channels and mix the samples into the buffer
 			for (int t = 0; t < channelNumber; t++)
@@ -135,7 +135,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						vnf.LeftVolumeSelected = vol;
 					}
 
-					AddChannel(ref vnf, dest, offset, todo, mode);
+					AddChannel(ref vnf, channelMap[t], offset, todo, mode);
 				}
 			}
 		}

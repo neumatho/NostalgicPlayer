@@ -10,6 +10,7 @@ using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers;
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Block;
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Sequences;
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Synth;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
@@ -210,13 +211,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 
 		/********************************************************************/
 		/// <summary>
-		/// Will add DSP effect to the mixed output
+		/// Return an effect master instance if the player adds extra mixer
+		/// effects to the output
 		/// </summary>
 		/********************************************************************/
-		public void EffectCallBack(int[] dest, int todo, uint mixerFrequency, bool stereo)
-		{
-			plrSong.CurrSS().Fx().GlobalGroup.DoEffects(dest, todo, mixerFrequency, stereo);
-		}
+		public IEffectMaster EffectMaster => plrSong.CurrSS().Fx();
 
 
 

@@ -163,6 +163,9 @@ Converted to C# by Thomas Neumann.
 
 This player is the same as the MED (MMD0) format, but the patterns are packed. Some games uses this format.</value>
   </data>
+  <data name="IDS_MED_ERR_LOADING_EXPANSION_TAGS" xml:space="preserve">
+    <value>Module contains expansion tags which can't be ignored</value>
+  </data>
   <data name="IDS_MED_ERR_LOADING_HEADER" xml:space="preserve">
     <value>Can't read the module header</value>
   </data>

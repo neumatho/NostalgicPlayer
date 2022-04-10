@@ -66,11 +66,6 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		void Play();
 
 		/// <summary>
-		/// Will add DSP effect to the mixed output
-		/// </summary>
-		void DoDspEffects(int[] dest, int todo, uint mixerFrequency, bool stereo);
-
-		/// <summary>
 		/// Return the number of channels the module want to reserve
 		/// </summary>
 		int VirtualChannelCount { get; }
@@ -116,6 +111,12 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Holds all the virtual channel instances used to play the samples
 		/// </summary>
 		IChannel[] VirtualChannels { get; set; }
+
+		/// <summary>
+		/// Return an effect master instance if the player adds extra mixer
+		/// effects to the output
+		/// </summary>
+		IEffectMaster EffectMaster { get; }
 
 		/// <summary>
 		/// Return the current playing frequency

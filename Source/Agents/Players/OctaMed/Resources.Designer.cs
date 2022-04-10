@@ -149,6 +149,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Module contains expansion tags which can&apos;t be ignored.
+        /// </summary>
+        internal static string IDS_MED_ERR_LOADING_EXPANSION_TAGS {
+            get {
+                return ResourceManager.GetString("IDS_MED_ERR_LOADING_EXPANSION_TAGS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the module header.
         /// </summary>
         internal static string IDS_MED_ERR_LOADING_HEADER {

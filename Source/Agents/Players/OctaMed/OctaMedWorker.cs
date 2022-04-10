@@ -14,6 +14,7 @@ using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.ScanSong;
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Sequences;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
@@ -233,6 +234,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 					sg++;
 					SubSong css = sg.CurrSS();
 
+					TrackNum songTracks = 0;
+
 					for (uint cnt = 0; cnt < Constants.MaxInstr - 1; cnt++)
 					{
 						// Read the sample structure
@@ -383,7 +386,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 							css.Fx().GlobalGroup.SetStereoSeparation(song2.MixStereoSep);
 
 						// Read track volumes
-						TrackNum songTracks = Math.Min((ushort)Constants.MaxTracks, song2.NumTracks);
+						songTracks = Math.Min((ushort)Constants.MaxTracks, song2.NumTracks);
 						moduleStream.Seek(song2.TrackVolsOffs, SeekOrigin.Begin);
 
 						for (int cnt = 0; cnt < songTracks; cnt++)
@@ -784,6 +787,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 						Mmd0ExpData currExp = new Mmd0ExpData();
 						ReadMmd0ExpData(moduleStream, currExp);
 
+						// Read EXP tags
+						TagsLoad<ExpansionTags.Tags> expTg = new TagsLoad<ExpansionTags.Tags>(moduleStream);
+
 						// Read InstExt
 						for (uint cnt = 0; cnt < Math.Min(currExp.InsTextEntries, Constants.MaxInstr); cnt++)
 						{
@@ -931,6 +937,151 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 								return AgentResult.Error;
 							}
 */						}
+
+						// Effect groups
+						if (expTg.TagVal(ExpansionTags.Tags.NumberOfEffectGroups, 1) > 1)
+						{
+							uint numGrps = expTg.TagVal(ExpansionTags.Tags.NumberOfEffectGroups);
+							for (uint cnt = 1; cnt < numGrps; cnt++)
+								css.Fx().AddGroup();
+						}
+
+						if (currExp.EffectInfoOffs != 0)
+						{
+							moduleStream.Seek(currExp.EffectInfoOffs, SeekOrigin.Begin);
+							int numGrps = css.Fx().GetNumGroups();
+
+							uint[] grpPos = new uint[numGrps];
+							moduleStream.ReadArray_B_UINT32s(grpPos, 0, numGrps);
+
+							if (moduleStream.EndOfStream)
+							{
+								errorMessage = Resources.IDS_MED_ERR_LOADING_HEADER;
+								Cleanup();
+
+								return AgentResult.Error;
+							}
+
+							for (int cnt = 0; cnt < numGrps; cnt++)
+							{
+								if (grpPos[cnt] != 0)
+								{
+									moduleStream.Seek(grpPos[cnt], SeekOrigin.Begin);
+									TagsLoad<ExpansionTags.EffectTags> tg = new TagsLoad<ExpansionTags.EffectTags>(moduleStream);
+
+									if (moduleStream.EndOfStream)
+									{
+										errorMessage = Resources.IDS_MED_ERR_LOADING_HEADER;
+										Cleanup();
+
+										return AgentResult.Error;
+									}
+
+									EffectGroup grp = css.Fx().GetGroup(cnt);
+
+									if (tg.TagExists(ExpansionTags.EffectTags.GroupName) && tg.TagExists(ExpansionTags.EffectTags.GroupNameLen))
+									{
+										byte[] tmpBuff = new byte[80];
+
+										tg.SeekToTag(ExpansionTags.EffectTags.GroupName);
+										moduleStream.Read(tmpBuff, 0, (int)Math.Min(tg.TagVal(ExpansionTags.EffectTags.GroupNameLen), 80));
+										tmpBuff[79] = 0;
+
+										grp.SetName(tmpBuff);
+									}
+
+									uint val = tg.TagVal(ExpansionTags.EffectTags.EchoType, 0);
+
+									switch (val)
+									{
+										case 1:
+										{
+											grp.SetEchoMode(EchoMode.Normal);
+											break;
+										}
+
+										case 2:
+										{
+											grp.SetEchoMode(EchoMode.CrossEcho);
+											break;
+										}
+
+										default:
+										{
+											grp.SetEchoMode(EchoMode.None);
+											break;
+										}
+									}
+
+									grp.SetEchoLength((ushort)tg.TagVal(ExpansionTags.EffectTags.EchoLen, 300));
+									grp.SetEchoDepth((byte)tg.TagVal(ExpansionTags.EffectTags.EchoDepth, 2));
+
+									grp.SetStereoSeparation((sbyte)tg.TagVal(ExpansionTags.EffectTags.StereoSeparation, 0));
+
+									if (tg.CheckUnused())
+									{
+										errorMessage = Resources.IDS_MED_ERR_LOADING_EXPANSION_TAGS;
+										Cleanup();
+
+										return AgentResult.Error;
+									}
+								}
+							}
+						}
+
+						if (currExp.TrackInfoOffs != 0)
+						{
+							moduleStream.Seek(currExp.TrackInfoOffs, SeekOrigin.Begin);
+
+							uint[] trkPos = new uint[songTracks];
+							moduleStream.ReadArray_B_UINT32s(trkPos, 0, songTracks);
+
+							if (moduleStream.EndOfStream)
+							{
+								errorMessage = Resources.IDS_MED_ERR_LOADING_HEADER;
+								Cleanup();
+
+								return AgentResult.Error;
+							}
+
+							for (int cnt = 0; cnt < songTracks; cnt++)
+							{
+								if (trkPos[cnt] != 0)
+								{
+									moduleStream.Seek(trkPos[cnt], SeekOrigin.Begin);
+									TagsLoad<ExpansionTags.TrackTags> tg = new TagsLoad<ExpansionTags.TrackTags>(moduleStream);
+
+									if (moduleStream.EndOfStream)
+									{
+										errorMessage = Resources.IDS_MED_ERR_LOADING_HEADER;
+										Cleanup();
+
+										return AgentResult.Error;
+									}
+
+									if (tg.TagExists(ExpansionTags.TrackTags.Name) && tg.TagExists(ExpansionTags.TrackTags.NameLen))
+									{
+										byte[] tmpBuff = new byte[82];
+
+										tg.SeekToTag(ExpansionTags.TrackTags.Name);
+										moduleStream.Read(tmpBuff, 0, (int)Math.Min(tg.TagVal(ExpansionTags.TrackTags.NameLen), 81));
+										tmpBuff[81] = 0;
+
+										css.SetTrackName(cnt, tmpBuff);
+									}
+
+									css.Fx().SetTrackGroup(cnt, (int)tg.TagVal(ExpansionTags.TrackTags.FxGroup));
+
+									if (tg.CheckUnused())
+									{
+										errorMessage = Resources.IDS_MED_ERR_LOADING_EXPANSION_TAGS;
+										Cleanup();
+
+										return AgentResult.Error;
+									}
+								}
+							}
+						}
 
 						moduleStream.Seek(currExp.NextHdr, SeekOrigin.Begin);
 						currHdr = hdrX;		// Don't overwrite the first MMD header
@@ -1109,18 +1260,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		public override void Play()
 		{
 			plr.PlrCallBack();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will add DSP effect to the mixed output
-		/// </summary>
-		/********************************************************************/
-		public override void DoDspEffects(int[] dest, int todo, uint mixerFrequency, bool stereo)
-		{
-			plr.EffectCallBack(dest, todo, mixerFrequency, stereo);
 		}
 
 
@@ -1367,6 +1506,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 				return result.ToArray();
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return an effect master instance if the player adds extra mixer
+		/// effects to the output
+		/// </summary>
+		/********************************************************************/
+		public override IEffectMaster EffectMaster => plr.EffectMaster;
 		#endregion
 
 		#region Duration calculation methods

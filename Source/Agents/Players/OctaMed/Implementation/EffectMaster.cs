@@ -6,13 +6,20 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+
 namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 {
 	/// <summary>
 	/// Handles all the effects
 	/// </summary>
-	internal class EffectMaster
+	internal class EffectMaster : IEffectMaster
 	{
+		private readonly SubSong subSong;
+
+		private readonly List<EffectGroup> groups;
+		private readonly Dictionary<int, int> trackGroups;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -20,7 +27,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/********************************************************************/
 		public EffectMaster(SubSong ss)
 		{
-			GlobalGroup = new EffectGroup(ss);
+			subSong = ss;
+			groups = new List<EffectGroup>();
+			trackGroups = new Dictionary<int, int>();
+
+			AddGroup();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the number of groups added including global group
+		/// </summary>
+		/********************************************************************/
+		public int GetNumGroups()
+		{
+			return groups.Count;
 		}
 
 
@@ -30,9 +53,33 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// Holds the global effect group
 		/// </summary>
 		/********************************************************************/
-		public EffectGroup GlobalGroup
+		public EffectGroup GlobalGroup => groups[0];
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the group at the position given
+		/// </summary>
+		/********************************************************************/
+		public EffectGroup GetGroup(int grp)
 		{
-			get;
+			if ((grp < 0) || (grp >= groups.Count))
+				return null;
+
+			return groups[grp];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Assign a track to a group
+		/// </summary>
+		/********************************************************************/
+		public void SetTrackGroup(TrackNum trk, int grp)
+		{
+			trackGroups[trk] = grp;
 		}
 
 
@@ -44,7 +91,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/********************************************************************/
 		public void Initialize()
 		{
-			GlobalGroup.Initialize();
+			// Make sure all channels are mapped to a group, if
+			// extra groups are added
+			if (groups.Count > 1)
+			{
+				for (int i = 0; i < subSong.GetNumChannels(); i++)
+				{
+					if (!trackGroups.ContainsKey(i))
+						trackGroups[i] = 0;
+				}
+			}
+
+			foreach (EffectGroup group in groups)
+				group.Initialize();
 		}
 
 
@@ -56,7 +115,66 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/********************************************************************/
 		public void Cleanup()
 		{
-			GlobalGroup.Cleanup();
+			foreach (EffectGroup group in groups)
+				group.Cleanup();
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Add a new effect group
+		/// </summary>
+		/********************************************************************/
+		public void AddGroup()
+		{
+			groups.Add(new EffectGroup(subSong));
+		}
+
+		#region IEffectMaster implementation
+		/********************************************************************/
+		/// <summary>
+		/// Return a map between a channel and a group number. All channels
+		/// in the same group will be mixed together and added the same
+		/// effects.
+		///
+		/// If a channel is not mapped to a group, no extra effects will be
+		/// added other than the global effects if any.
+		///
+		/// Returning null is the same as returning an empty list, so you
+		/// can do that, if you do not support channel groups in your player
+		/// </summary>
+		/********************************************************************/
+		public IReadOnlyDictionary<int, int> GetChannelGroups()
+		{
+			return trackGroups;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will add effects to a channel group
+		/// </summary>
+		/********************************************************************/
+		public void AddChannelGroupEffects(int group, int[] dest, int todo, uint mixerFrequency, bool stereo)
+		{
+			EffectGroup effectGroup = GetGroup(group);
+			effectGroup?.DoEffects(dest, todo, mixerFrequency, stereo);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will add effects to the final mixed output
+		/// </summary>
+		/********************************************************************/
+		public void AddGlobalEffects(int[] dest, int todo, uint mixerFrequency, bool stereo)
+		{
+			if (groups.Count == 1)
+				GlobalGroup.DoEffects(dest, todo, mixerFrequency, stereo);
+		}
+		#endregion
 	}
 }

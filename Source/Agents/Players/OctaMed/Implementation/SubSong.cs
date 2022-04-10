@@ -41,6 +41,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		private readonly LimVar<short> volAdj = new(1, 800);
 		private readonly byte[] trkVol = new byte[Constants.MaxTracks];
 		private readonly sbyte[] trkPan = new sbyte[Constants.MaxTracks];
+		private readonly string[] trkName = new string[Constants.MaxTracks];
 		private readonly LimVar<short> masterVol = new(1, 64);
 
 		private SongFlags flags;
@@ -432,6 +433,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		public void SetSongName(byte[] name)
 		{
 			this.name = EncoderCollection.Amiga.GetString(name);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the name of the track
+		/// </summary>
+		/********************************************************************/
+		public void SetTrackName(TrackNum trk, byte[] newName)
+		{
+			trkName[trk] = EncoderCollection.Amiga.GetString(newName);
 		}
 
 

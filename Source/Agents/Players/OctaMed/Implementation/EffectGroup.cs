@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers;
+using Polycode.NostalgicPlayer.Kit;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 {
@@ -18,6 +19,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		private readonly SubSong subSong;
 		private uint lastMixerFrequency;
 		private bool lastStereoMode;
+
+		private string name;
 
 		private EchoMode echoMode;
 		private byte echoDepth;
@@ -35,6 +38,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		public EffectGroup(SubSong ss)
 		{
 			subSong = ss;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the name of the group
+		/// </summary>
+		/********************************************************************/
+		public void SetName(byte[] name)
+		{
+			this.name = EncoderCollection.Amiga.GetString(name);
 		}
 
 

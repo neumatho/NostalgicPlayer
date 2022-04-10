@@ -57,16 +57,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// This is the main mixer method
 		/// </summary>
 		/********************************************************************/
-		public override void Mixing(int[] dest, int offset, int todo, MixerMode mode)
+		public override void Mixing(int[][] channelMap, int offset, int todo, MixerMode mode)
 		{
 			if ((mode & MixerMode.Stereo) != 0)
 			{
-				AddPlayerSamples(ref voiceInfo[0], dest, offset, 2, todo, masterVolume);
-				AddPlayerSamples(ref voiceInfo[1], dest, offset + 1, 2, todo, masterVolume);
+				AddPlayerSamples(ref voiceInfo[0], channelMap[0], offset, 2, todo, masterVolume);
+				AddPlayerSamples(ref voiceInfo[1], channelMap[1], offset + 1, 2, todo, masterVolume);
 			}
 			else
 			{
-				AddPlayerSamples(ref voiceInfo[0], dest, offset, 1, todo, masterVolume);
+				AddPlayerSamples(ref voiceInfo[0], channelMap[0], offset, 1, todo, masterVolume);
 			}
 		}
 
