@@ -319,6 +319,21 @@
             <uap:DisplayName>Fred Editor</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="octamedfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-octamed">.med</uap:FileType>
+              <uap:FileType ContentType="audio/x-octamed">.mmd0</uap:FileType>
+              <uap:FileType ContentType="audio/x-octamed">.mmd1</uap:FileType>
+              <uap:FileType ContentType="audio/x-octamed">.mmd2</uap:FileType>
+              <uap:FileType ContentType="audio/x-octamed">.mmd3</uap:FileType>
+              <uap:FileType ContentType="audio/x-octamed">.mmdc</uap:FileType>
+              <uap:FileType ContentType="audio/x-octamed">.omed</uap:FileType>
+              <uap:FileType ContentType="audio/x-octamed">.ocss</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>OctaMED</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
