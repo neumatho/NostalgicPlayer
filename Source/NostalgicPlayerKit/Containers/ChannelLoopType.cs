@@ -21,11 +21,6 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// <summary>
 		/// Ping-pong loop
 		/// </summary>
-		PingPong,
-
-		/// <summary>
-		/// Set this to trigger the sample
-		/// </summary>
-		Trigger
+		PingPong
 	}
 }

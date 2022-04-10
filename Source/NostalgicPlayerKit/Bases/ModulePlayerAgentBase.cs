@@ -242,6 +242,16 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Return an effect master instance if the player adds extra mixer
+		/// effects to the output
+		/// </summary>
+		/********************************************************************/
+		public virtual IEffectMaster EffectMaster => null;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the current playing frequency
 		/// </summary>
 		/********************************************************************/
@@ -396,6 +406,88 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Calculate the duration of each sub-song
+		/// </summary>
+		/********************************************************************/
+		protected DurationInfo[] CalculateDurationBySubSongs()
+		{
+			List<DurationInfo> result = new List<DurationInfo>();
+
+			int numSongs = SubSongs.Number;
+			DateTime startTime = DateTime.Now;
+
+			for (int song = 0; song < numSongs; song++)
+			{
+				InitDurationCalculationBySubSong(song);
+
+				int prevPos = -1;
+				float total = 0.0f;
+
+				byte currentSpeed = GetCurrentSpeed();
+				ushort currentBpm = GetCurrentBpm();
+				object extraInfo = GetExtraPositionInfo();
+
+				List<PositionInfo> positionTimes = new List<PositionInfo>();
+
+				HasEndReached = false;
+
+				for (;;)
+				{
+					if (prevPos < GetSongPosition())
+					{
+						prevPos = GetSongPosition();
+
+						// Add position information to the list
+						PositionInfo posInfo = new PositionInfo(currentSpeed, currentBpm, new TimeSpan((long)total * TimeSpan.TicksPerMillisecond), extraInfo);
+
+						// Need to make a while, in case there is a position jump
+						// that jumps forward, then we're missing some items in the list
+						while (prevPos >= positionTimes.Count)
+							positionTimes.Add(posInfo);
+					}
+
+					// "Play" a single tick
+					Play();
+
+					// Update information
+					currentSpeed = GetCurrentSpeed();
+					currentBpm = GetCurrentBpm();
+					extraInfo = GetExtraPositionInfo();
+
+					if (HasEndReached)
+						break;
+
+					// Add the tick time
+					total += 1000.0f / PlayingFrequency;
+
+					// Check for time out
+					if ((DateTime.Now - startTime).Seconds >= 5)
+						throw new Exception(Resources.IDS_ERR_DURATION_TIMEOUT);
+				}
+
+				// Calculate the total time of the song
+				TimeSpan totalTime = new TimeSpan((long)total * TimeSpan.TicksPerMillisecond);
+
+				// Fill the rest of the list with total time
+				for (int i = positionTimes.Count; i < SongLength; i++)
+					positionTimes.Add(new PositionInfo(currentSpeed, currentBpm, totalTime, extraInfo));
+
+				// Remember the song
+				result.Add(new DurationInfo(totalTime, positionTimes.ToArray(), 0));
+
+				CleanupDurationCalculation();
+			}
+
+			// Clear the "end" flag again, so the module don't stop playing immediately
+			HasEndReached = false;
+
+			return result.ToArray();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Initialize all internal structures when beginning duration
 		/// calculation on a new sub-song
 		/// </summary>
@@ -403,6 +495,18 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		protected virtual int InitDurationCalculationByStartPos(int startPosition)
 		{
 			return startPosition;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize all internal structures when beginning duration
+		/// calculation on a new sub-song
+		/// </summary>
+		/********************************************************************/
+		protected virtual void InitDurationCalculationBySubSong(int subSong)
+		{
 		}
 
 

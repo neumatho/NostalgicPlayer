@@ -717,7 +717,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				PlaySampleInfo playInfo = sampleInfoWindow.GetNextSampleFromQueue();
 				if (playInfo != null)
 				{
-					if (playInfo.Frequency == 0)
+					if (playInfo.Note < 0)
 					{
 						// Mute all the channels
 						for (int i = 0; i < SampleInfoWindowForm.PolyphonyChannels; i++)
@@ -751,11 +751,55 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						IChannel channel = channels[playChannel];
 
 						// Check the item to see if it's a legal sample
-						if ((sampleInfo.Sample != null) && (sampleInfo.Length > 0))
+						if (((sampleInfo.Sample != null) || (sampleInfo.MultiOctaveSamples != null)) && (sampleInfo.Length > 0))
 						{
+							sbyte[] sample = sampleInfo.Sample;
+							sbyte[] secondSample = sampleInfo.SecondSample;
+							uint length = (uint)sampleInfo.Length;
+							uint loopStart = (uint)sampleInfo.LoopStart;
+							uint loopLength = (uint)sampleInfo.LoopLength;
+
+							// Find the frequency to play with
+							int note = playInfo.Note;
+
+							if ((sampleInfo.Flags & SampleInfo.SampleFlags.MultiOctave) != 0)
+							{
+								int octave = note / 12;
+								if (octave > 7)
+									octave = 7;
+
+								SampleInfo.MultiOctaveInfo octaveInfo = sampleInfo.MultiOctaveSamples[octave];
+								note += octaveInfo.NoteAdd;
+
+								sample = octaveInfo.Sample[0];
+								secondSample = octaveInfo.Sample.Length > 1 ? octaveInfo.Sample[1] : null;
+
+								length = (uint)sample.Length;
+								loopStart = (uint)octaveInfo.LoopStart;
+								loopLength = (uint)octaveInfo.LoopLength;
+							}
+
+							// Calculate the frequency
+							double frequency = sampleInfo.MiddleC;
+
+							if (note < 48)
+							{
+								for (int i = note; i < 48; i++)
+									frequency /= 1.059463094359;
+							}
+							else
+							{
+								for (int i = 48; i < note; i++)
+									frequency *= 1.059463094359;
+							}
+
 							// Play it
-							channel.PlaySample(sampleInfo.Sample, 0, (uint)sampleInfo.Length, (byte)sampleInfo.BitSize);
-							channel.SetFrequency((uint)playInfo.Frequency);
+							if ((sampleInfo.Flags & SampleInfo.SampleFlags.Stereo) != 0)
+								channel.PlayStereoSample(sample, secondSample, 0, length, (byte)sampleInfo.BitSize);
+							else
+								channel.PlaySample(sample, 0, length, (byte)sampleInfo.BitSize);
+
+							channel.SetFrequency((uint)frequency);
 
 							ushort vol = (ushort)sampleInfo.Volume;
 							channel.SetVolume(vol == 0 ? (ushort)256 : vol);
@@ -764,7 +808,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							channel.SetPanning(pan == -1 ? (ushort)ChannelPanning.Center : (ushort)pan);
 
 							if ((sampleInfo.Flags & SampleInfo.SampleFlags.Loop) != 0)
-								channel.SetLoop((uint)sampleInfo.LoopStart, (uint)sampleInfo.LoopLength, (sampleInfo.Flags & SampleInfo.SampleFlags.PingPong) != 0 ? ChannelLoopType.PingPong : ChannelLoopType.Normal);
+								channel.SetLoop(loopStart, loopLength, (sampleInfo.Flags & SampleInfo.SampleFlags.PingPong) != 0 ? ChannelLoopType.PingPong : ChannelLoopType.Normal);
 						}
 						else
 						{

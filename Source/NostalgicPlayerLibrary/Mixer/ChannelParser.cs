@@ -19,20 +19,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 	/// </summary>
 	internal class ChannelParser : Channel
 	{
-		private ChannelFlags privateFlags;
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
-		public ChannelParser()
-		{
-			privateFlags = ChannelFlags.None;
-		}
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Will parse the channel info and store the result in the VoiceInfo
@@ -41,61 +27,20 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/********************************************************************/
 		public ChannelFlags ParseInfo(ref VoiceInfo voiceInfo, int clickBuffer, bool bufferMode)
 		{
-			// Get the channel flags
-			ChannelFlags newFlags = flags;
-			ChannelFlags retFlags = flags;
-			ChannelFlags privFlags = privateFlags;
-			SampleFlag infoFlags = SampleFlag.None;
-
-			if ((newFlags & ChannelFlags.TrigIt) != 0)
-			{
-				privFlags |= ChannelFlags.TrigIt;
-				privFlags &= ~ChannelFlags.Loop;
-			}
-
-			if (!bufferMode)
-			{
-				if ((newFlags & ChannelFlags.Loop) != 0)
-					privFlags |= ChannelFlags.Loop;
-
-				if ((newFlags & ChannelFlags.TrigLoop) != 0)
-				{
-					newFlags &= ~ChannelFlags.TrigLoop;
-					retFlags &= ~ChannelFlags.TrigLoop;
-
-					if ((newFlags & ChannelFlags.Active) == 0)     // Only trigger if the channel is not already playing
-					{
-						newFlags |= (ChannelFlags.TrigIt | ChannelFlags.Loop);
-						retFlags |= (ChannelFlags.TrigIt | ChannelFlags.Loop);
-
-						// Did we trigger the sound with a normal "play" command?
-						if ((flags & ChannelFlags.TrigIt) == 0)
-						{
-							// No, then trigger it
-							privFlags |= ChannelFlags.TrigIt;
-
-							sampleAddress = loopAddress;
-							sampleStart = loopStart;
-							sampleLength = loopLength;
-						}
-					}
-				}
-			}
+			SampleFlag infoFlags = voiceInfo.Flags;
 
 			// Change the volume?
-			if ((newFlags & ChannelFlags.Volume) != 0)
+			if ((flags & ChannelFlags.Volume) != 0)
 			{
 				// Protect against clicks if volume variation is too high
 				if (Math.Abs(voiceInfo.Volume - volume) > 32)
 					voiceInfo.RampVolume = clickBuffer;
 
 				voiceInfo.Volume = volume;
-
-				newFlags &= ~ChannelFlags.Volume;
 			}
 
 			// Change the panning?
-			if ((newFlags & ChannelFlags.Panning) != 0)
+			if ((flags & ChannelFlags.Panning) != 0)
 			{
 				if (panning == (int)ChannelPanning.Surround)
 					voiceInfo.Panning = (int)ChannelPanning.Surround;
@@ -107,32 +52,38 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 					voiceInfo.Panning = (int)panning;
 				}
-
-				newFlags &= ~ChannelFlags.Panning;
 			}
 
 			// Change the frequency?
-			if ((newFlags & ChannelFlags.Frequency) != 0)
-			{
+			if ((flags & ChannelFlags.Frequency) != 0)
 				voiceInfo.Frequency = frequency;
-				newFlags &= ~ChannelFlags.Frequency;
-			}
 
 			// Mute the channel?
-			if ((newFlags & ChannelFlags.MuteIt) != 0)
+			if ((flags & ChannelFlags.MuteIt) != 0)
 			{
 				voiceInfo.Active = false;
 				voiceInfo.Kick = false;
+				infoFlags = SampleFlag.None;
 			}
 			else
 			{
-				if (sampleAddress != null)
+				if (sampleAddresses[0] != null)
 				{
 					// Trigger the sample to play from the start?
-					if ((newFlags & ChannelFlags.TrigIt) != 0)
+					if ((flags & ChannelFlags.TrigIt) != 0)
 					{
-						voiceInfo.Address = sampleAddress;
-						voiceInfo.Start = sampleStart;
+						infoFlags = SampleFlag.None;
+
+						bool backwards = false;
+						if ((flags & ChannelFlags.Backwards) != 0)
+						{
+							backwards = true;
+							infoFlags |= SampleFlag.Reverse;
+						}
+
+						voiceInfo.Addresses[0] = sampleAddresses[0];
+						voiceInfo.Addresses[1] = sampleAddresses[1];
+						voiceInfo.Start = backwards ? sampleLength - sampleStart - 1 : sampleStart;
 						voiceInfo.Size = sampleLength;
 						voiceInfo.RepeatPosition = 0;
 						voiceInfo.RepeatEnd = 0;
@@ -142,12 +93,21 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						voiceInfo.Kick = true;
 					}
 
+					if ((flags & ChannelFlags.ChangePosition) != 0)
+					{
+						voiceInfo.NewPosition = samplePosition;
+						voiceInfo.RelativePosition = (flags & ChannelFlags.Relative) != 0;
+
+						infoFlags |= SampleFlag.ChangePosition;
+					}
+
 					if (!bufferMode)
 					{
 						// Does the sample loop?
-						if (((newFlags & ChannelFlags.Loop) != 0) && (loopLength > 2))
+						if (((flags & ChannelFlags.Loop) != 0) && (loopLength > 2))
 						{
-							voiceInfo.NewLoopAddress = loopAddress;
+							voiceInfo.NewLoopAddresses[0] = loopAddresses[0];
+							voiceInfo.NewLoopAddresses[1] = loopAddresses[1];
 							voiceInfo.NewRepeatPosition = loopStart;
 							voiceInfo.NewRepeatEnd = loopStart + loopLength;
 
@@ -159,30 +119,29 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 							infoFlags |= SampleFlag.Loop;
 
-							if ((newFlags & ChannelFlags.PingPong) != 0)
+							if ((flags & ChannelFlags.PingPong) != 0)
 								infoFlags |= SampleFlag.Bidi;
 						}
 
 						// Special release command. Used in Oktalyzer player
-						if ((newFlags & ChannelFlags.Release) != 0)
+						if ((flags & ChannelFlags.Release) != 0)
 						{
-							voiceInfo.NewLoopAddress = loopAddress;
+							voiceInfo.NewLoopAddresses[0] = loopAddresses[0];
+							voiceInfo.NewLoopAddresses[1] = loopAddresses[1];
 							voiceInfo.NewRepeatPosition = voiceInfo.RepeatPosition = loopStart;
 							voiceInfo.ReleaseEnd = loopStart + releaseLength;
-							newFlags &= ~ChannelFlags.Release;
 						}
 					}
 
-					if ((newFlags & ChannelFlags._16Bit) != 0)
+					if ((flags & ChannelFlags._16Bit) != 0)
 						infoFlags |= SampleFlag._16Bits;
 				}
 			}
 
 			// Store the flags back
-			if ((newFlags & ~ChannelFlags.Active) != 0)
-				voiceInfo.Flags = infoFlags;
+			voiceInfo.Flags = infoFlags;
 
-			privateFlags = privFlags;
+			ChannelFlags retFlags = flags;
 			flags = ChannelFlags.None;
 
 			return retFlags & ~ChannelFlags.Active;

@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 	{
 		private readonly Manager agentManager;
 
-		private object playerLock = new object();
+		private readonly object playerLock = new object();
 		private IModulePlayerAgent currentPlayer;
 		private DurationInfo[] allSongsInfo;
 

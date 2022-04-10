@@ -57,16 +57,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// This is the main mixer method
 		/// </summary>
 		/********************************************************************/
-		public override void Mixing(int[] dest, int offset, int todo, MixerMode mode)
+		public override void Mixing(int[][] channelMap, int offset, int todo, MixerMode mode)
 		{
 			if ((mode & MixerMode.Stereo) != 0)
 			{
-				AddPlayerSamples(ref voiceInfo[0], dest, offset, 2, todo, masterVolume);
-				AddPlayerSamples(ref voiceInfo[1], dest, offset + 1, 2, todo, masterVolume);
+				AddPlayerSamples(ref voiceInfo[0], channelMap[0], offset, 2, todo, masterVolume);
+				AddPlayerSamples(ref voiceInfo[1], channelMap[1], offset + 1, 2, todo, masterVolume);
 			}
 			else
 			{
-				AddPlayerSamples(ref voiceInfo[0], dest, offset, 1, todo, masterVolume);
+				AddPlayerSamples(ref voiceInfo[0], channelMap[0], offset, 1, todo, masterVolume);
 			}
 		}
 
@@ -108,7 +108,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			if ((vnf.Flags & SampleFlag._16Bits) != 0)
 			{
 				// 16-bit
-				Span<short> source = vnf.Address.GetType().GetElementType() == typeof(short) ? (short[])vnf.Address : MemoryMarshal.Cast<sbyte, short>((sbyte[])vnf.Address);
+				Span<short> source = vnf.Addresses[0].GetType().GetElementType() == typeof(short) ? (short[])vnf.Addresses[0] : MemoryMarshal.Cast<sbyte, short>((sbyte[])vnf.Addresses[0]);
 
 				for (int i = (int)vnf.Current; i < vnf.Current + count; i++)
 				{
@@ -121,7 +121,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			else
 			{
 				// 8-bit
-				sbyte[] source = (sbyte[])vnf.Address;
+				sbyte[] source = (sbyte[])vnf.Addresses[0];
 
 				for (int i = (int)vnf.Current; i < vnf.Current + count; i++)
 				{

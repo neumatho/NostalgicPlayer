@@ -23,14 +23,14 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		protected ChannelFlags flags;
 
 		/// <summary>
-		/// Start address of the sample
+		/// Start addresses of the sample
 		/// </summary>
-		protected Array sampleAddress;
+		protected Array[] sampleAddresses = new Array[2];
 
 		/// <summary>
 		/// Start address of the loop/release sample
 		/// </summary>
-		protected Array loopAddress;
+		protected Array[] loopAddresses = new Array[2];
 
 		/// <summary>
 		/// Start offset in the sample in samples, not bytes
@@ -51,6 +51,11 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/// Loop length in samples, not bytes
 		/// </summary>
 		protected uint loopLength;
+
+		/// <summary>
+		/// The new sample position to set
+		/// </summary>
+		protected int samplePosition;
 
 		/// <summary>
 		/// Length of the release part of the sample
@@ -93,8 +98,9 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
 		/// <param name="length">is the length in samples of the sample</param>
 		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
+		/// <param name="backwards">indicate if the sample should be played backwards</param>
 		/********************************************************************/
-		public void PlaySample(Array adr, uint startOffset, uint length, byte bit)
+		public void PlaySample(Array adr, uint startOffset, uint length, byte bit, bool backwards)
 		{
 			if (adr == null)
 				throw new ArgumentNullException(nameof(adr));
@@ -111,13 +117,67 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 			if ((bit != 8) && (bit != 16))
 				throw new ArgumentException("Number of bits may only be 8 or 16", nameof(bit));
 
-			sampleAddress = adr;
+			sampleAddresses[0] = adr;
+			sampleAddresses[1] = null;
+
 			sampleStart = startOffset;
 			sampleLength = length;
 			flags |= ChannelFlags.TrigIt;
 
 			if (bit == 16)
 				flags |= ChannelFlags._16Bit;
+
+			if (backwards)
+				flags |= ChannelFlags.Backwards;
+
+			flags &= ~ChannelFlags.MuteIt;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will start to play a stereo sample in the channel
+		/// </summary>
+		/********************************************************************/
+		public void PlayStereoSample(Array leftAdr, Array rightAdr, uint startOffset, uint length, byte bit, bool backwards)
+		{
+			if (leftAdr == null)
+				throw new ArgumentNullException(nameof(leftAdr));
+
+			if (rightAdr == null)
+				throw new ArgumentNullException(nameof(rightAdr));
+
+			if (leftAdr.GetType() != rightAdr.GetType())
+				throw new ArgumentException("Left and right speaker arrays must be of the same type", nameof(leftAdr));
+
+			if (leftAdr.Length != rightAdr.Length)
+				throw new ArgumentException("Left and right speaker arrays must be of equal size", nameof(leftAdr));
+
+			if ((leftAdr.GetType() != typeof(sbyte[])) && (leftAdr.GetType() != typeof(short[])))
+				throw new ArgumentException("Type of array must be either sbyte[] or short[]", nameof(leftAdr));
+
+			if (length == 0)
+				throw new ArgumentException("Length may not be zero", nameof(length));
+
+			if (startOffset > leftAdr.Length)
+				throw new ArgumentException("startOffset is bigger than length", nameof(startOffset));
+
+			if ((bit != 8) && (bit != 16))
+				throw new ArgumentException("Number of bits may only be 8 or 16", nameof(bit));
+
+			sampleAddresses[0] = leftAdr;
+			sampleAddresses[1] = rightAdr;
+
+			sampleStart = startOffset;
+			sampleLength = length;
+			flags |= ChannelFlags.TrigIt;
+
+			if (bit == 16)
+				flags |= ChannelFlags._16Bit;
+
+			if (backwards)
+				flags |= ChannelFlags.Backwards;
 
 			flags &= ~ChannelFlags.MuteIt;
 		}
@@ -140,7 +200,7 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 			if ((startOffset + length) > (sampleStart + sampleLength))
 				throw new ArgumentException("Loop length is bigger than previous set length of sample", nameof(length));
 
-			SetLoop(sampleAddress, startOffset, length, type);
+			SetLoopInfo(sampleAddresses[0], sampleAddresses[1], startOffset, length, type);
 		}
 
 
@@ -165,17 +225,66 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 			if (length == 0)
 				throw new ArgumentException("Length may not be zero", nameof(length));
 
-			loopAddress = adr;
-			loopStart = startOffset;
-			loopLength = length;
-			flags |= ChannelFlags.Loop;
+			if (sampleAddresses[1] != null)
+				throw new InvalidOperationException("Can only be used on mono samples");
 
-			if (type == ChannelLoopType.PingPong)
-				flags |= ChannelFlags.PingPong;
-			else if (type == ChannelLoopType.Trigger)
-				flags |= ChannelFlags.TrigLoop;
+			SetLoopInfo(adr, null, startOffset, length, type);
+		}
 
-			flags &= ~ChannelFlags.MuteIt;
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will set the loop point and change the sample
+		/// </summary>
+		/// <param name="leftAdr">is a pointer to the sample in memory to be played in the left speaker</param>
+		/// <param name="rightAdr">is a pointer to the sample in memory to be played in the right speaker</param>
+		/// <param name="startOffset">is the number of samples in the sample to start</param>
+		/// <param name="length">is the length in samples to loop</param>
+		/// <param name="type">is the type of the loop</param>
+		/********************************************************************/
+		public void SetLoop(Array leftAdr, Array rightAdr, uint startOffset, uint length, ChannelLoopType type)
+		{
+			if (leftAdr == null)
+				throw new ArgumentNullException(nameof(leftAdr));
+
+			if (rightAdr == null)
+				throw new ArgumentNullException(nameof(rightAdr));
+
+			if (leftAdr.GetType() != rightAdr.GetType())
+				throw new ArgumentException("Left and right speaker arrays must be of the same type", nameof(leftAdr));
+
+			if (leftAdr.Length != rightAdr.Length)
+				throw new ArgumentException("Left and right speaker arrays must be of equal size", nameof(leftAdr));
+
+			if ((leftAdr.GetType() != typeof(sbyte[])) && (leftAdr.GetType() != typeof(short[])))
+				throw new ArgumentException("Type of array must be either sbyte[] or short[]", nameof(leftAdr));
+
+			if (length == 0)
+				throw new ArgumentException("Length may not be zero", nameof(length));
+
+			SetLoopInfo(leftAdr, rightAdr, startOffset, length, type);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the current playing position of the sample to the value given
+		/// </summary>
+		/// <param name="position">The new position in the sample</param>
+		/// <param name="relative">Indicate if the given position is relative to the current position or an absolute position. If true, position can be negative as well as position</param>
+		/********************************************************************/
+		public void SetPosition(int position, bool relative)
+		{
+			if (!relative && (position < 0))
+				throw new ArgumentException("Position may not be negative for absolute positions", nameof(position));
+
+			samplePosition = position;
+			flags |= ChannelFlags.ChangePosition;
+
+			if (relative)
+				flags |= ChannelFlags.Relative;
 		}
 
 
@@ -192,7 +301,9 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 			if (length == 0)
 				throw new ArgumentException("Length may not be zero", nameof(length));
 
-			loopAddress = sampleAddress;
+			loopAddresses[0] = sampleAddresses[0];
+			loopAddresses[1] = sampleAddresses[1];
+
 			loopStart = startOffset;
 			releaseLength = length;
 			flags |= ChannelFlags.Release;
@@ -306,6 +417,28 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		public uint GetFrequency()
 		{
 			return frequency;
+		}
+		#endregion
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Set the loop information in internal variables
+		/// </summary>
+		/********************************************************************/
+		private void SetLoopInfo(Array leftAdr, Array rightAdr, uint startOffset, uint length, ChannelLoopType type)
+		{
+			loopAddresses[0] = leftAdr;
+			loopAddresses[1] = rightAdr;
+
+			loopStart = startOffset;
+			loopLength = length;
+			flags |= ChannelFlags.Loop;
+
+			if (type == ChannelLoopType.PingPong)
+				flags |= ChannelFlags.PingPong;
+
+			flags &= ~ChannelFlags.MuteIt;
 		}
 		#endregion
 	}

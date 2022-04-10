@@ -101,6 +101,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fred", "Agents\Players\Fred
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SidPlay.Test", "Agents\Players\SidPlay.Test\SidPlay.Test.csproj", "{ECC2ED47-5046-413E-B53A-E6A80B2932B2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OctaMed", "Agents\Players\OctaMed\OctaMed.csproj", "{A730F010-539A-4C2A-AAF9-C430055965EB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -428,6 +430,14 @@ Global
 		{ECC2ED47-5046-413E-B53A-E6A80B2932B2}.Debug|x86.Build.0 = Debug|Any CPU
 		{ECC2ED47-5046-413E-B53A-E6A80B2932B2}.Release|x64.ActiveCfg = Release|Any CPU
 		{ECC2ED47-5046-413E-B53A-E6A80B2932B2}.Release|x86.ActiveCfg = Release|Any CPU
+		{A730F010-539A-4C2A-AAF9-C430055965EB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A730F010-539A-4C2A-AAF9-C430055965EB}.Debug|x64.Build.0 = Debug|Any CPU
+		{A730F010-539A-4C2A-AAF9-C430055965EB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A730F010-539A-4C2A-AAF9-C430055965EB}.Debug|x86.Build.0 = Debug|Any CPU
+		{A730F010-539A-4C2A-AAF9-C430055965EB}.Release|x64.ActiveCfg = Release|Any CPU
+		{A730F010-539A-4C2A-AAF9-C430055965EB}.Release|x64.Build.0 = Release|Any CPU
+		{A730F010-539A-4C2A-AAF9-C430055965EB}.Release|x86.ActiveCfg = Release|Any CPU
+		{A730F010-539A-4C2A-AAF9-C430055965EB}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -476,6 +486,7 @@ Global
 		{634F989B-612C-4C6B-8193-E6D2C0294E9E} = {76C2DEA4-D72F-4931-9ACA-B2DDC33BDE98}
 		{AE1748DC-4130-4500-9467-9E41327E9E28} = {76C2DEA4-D72F-4931-9ACA-B2DDC33BDE98}
 		{ECC2ED47-5046-413E-B53A-E6A80B2932B2} = {76C2DEA4-D72F-4931-9ACA-B2DDC33BDE98}
+		{A730F010-539A-4C2A-AAF9-C430055965EB} = {76C2DEA4-D72F-4931-9ACA-B2DDC33BDE98}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EA2EFEF5-9B3B-46F2-BE4B-077ED6CADA79}

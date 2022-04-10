@@ -25,6 +25,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers
 		Loop = 0x0100,
 		Bidi = 0x0200,
 		Reverse = 0x0400,
-		Release = 0x1000,
+		ChangePosition = 0x1000,
+		Release = 0x2000
 	}
 }

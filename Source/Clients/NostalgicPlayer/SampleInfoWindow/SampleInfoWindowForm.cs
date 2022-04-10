@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
@@ -474,7 +476,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 					case Keys.Space:
 					{
 						// Add an empty sample
-						AddSampleToQueue(null, 0);
+						AddSampleToQueue(null, -1);
 
 						// Clear up the key variables
 						if (IsPolyphonyEnabled)
@@ -587,7 +589,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 
 					// Add an empty sample if the sample loops
 					if (samplePlayLoops)
-						AddSampleToQueue(null, 0);
+						AddSampleToQueue(null, -1);
 
 					break;
 				}
@@ -763,6 +765,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 
 					Bitmap bitmap = null;
 
+					if ((sample.Flags & SampleInfo.SampleFlags.MultiOctave) != 0)
+						bitmap = AppendBitmap(i, bitmap, Resources.IDB_SAMPLE_OCTAVES);
+
+					if ((sample.Flags & SampleInfo.SampleFlags.Stereo) != 0)
+						bitmap = AppendBitmap(i, bitmap, Resources.IDB_SAMPLE_STEREO);
+
 					if ((sample.Flags & SampleInfo.SampleFlags.Loop) != 0)
 						bitmap = AppendBitmap(i, bitmap, Resources.IDB_SAMPLE_LOOP);
 
@@ -926,22 +934,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 					int note = FindNoteFromScanCode(scanCode);
 					if (note != -1)
 					{
-						// Calculate the frequency
-						double hertz = sampleInfo.MiddleC;
-
-						if (note < 48)
-						{
-							for (int i = note; i < 48; i++)
-								hertz /= 1.059463094359;
-						}
-						else
-						{
-							for (int i = 48; i < note; i++)
-								hertz *= 1.059463094359;
-						}
-
 						// Add the sample info to the queue
-						AddSampleToQueue(sampleInfo, hertz);
+						AddSampleToQueue(sampleInfo, note);
 
 						return true;
 					}
@@ -980,7 +974,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 		/// then be played later on
 		/// </summary>
 		/********************************************************************/
-		private void AddSampleToQueue(SampleInfo sampleInfo, double frequency)
+		private void AddSampleToQueue(SampleInfo sampleInfo, int note)
 		{
 			// Only add the sample if the type is sample.
 			// Null means to stop the current playing sample
@@ -989,7 +983,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 				PlaySampleInfo playInfo = new PlaySampleInfo
 				{
 					SampleInfo = sampleInfo,
-					Frequency = frequency
+					Note = note
 				};
 
 				lock (samplePlayQueue)
@@ -1030,7 +1024,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 				fileName = Path.ChangeExtension(fileName, converterAgent.FileExtension);
 
 				// Initialize the converter
-				SaveSampleFormatInfo formatInfo = new SaveSampleFormatInfo(sampleInfo.BitSize, 1, sampleInfo.MiddleC, sampleInfo.LoopStart, sampleInfo.LoopLength, sampleInfo.Name, string.Empty);
+				bool stereo = (sampleInfo.Flags & SampleInfo.SampleFlags.Stereo) != 0;
+				int channels = stereo ? 2 : 1;
+
+				// Build list of buffers to be saved
+				sbyte[][] leftSamples, rightSamples = null;
+
+				if ((sampleInfo.Flags & SampleInfo.SampleFlags.MultiOctave) != 0)
+				{
+					leftSamples = sampleInfo.MultiOctaveAllSamples[0].OrderBy(s => s.Length).ToArray();
+
+					if (stereo)
+						rightSamples = sampleInfo.MultiOctaveAllSamples[1].OrderBy(s => s.Length).ToArray();
+				}
+				else
+				{
+					leftSamples = new[] { sampleInfo.Sample };
+
+					if (stereo)
+						rightSamples = new[] { sampleInfo.SecondSample };
+				}
+
+				SaveSampleFormatInfo formatInfo = new SaveSampleFormatInfo(sampleInfo.BitSize, channels, sampleInfo.MiddleC, sampleInfo.LoopStart, sampleInfo.LoopLength, sampleInfo.Name, string.Empty);
 				if (!converterAgent.InitSaver(formatInfo, out string errorMessage))
 				{
 					ShowSimpleErrorMessage(errorMessage);
@@ -1046,21 +1061,57 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						converterAgent.SaveHeader(fs);
 
 						// Convert sample to 32-bit
-						int[] buffer = new int[sampleInfo.Length];
+						int[] buffer = new int[leftSamples.Max(s => s.Length) * channels];
 
-						if (sampleInfo.BitSize == 8)
+						for (int b = 0; b < leftSamples.Length; b++)
 						{
-							for (int i = 0, cnt = sampleInfo.Length; i < cnt; i++)
-								buffer[i] = sampleInfo.Sample[i] << 24;
-						}
-						else
-						{
-							for (int i = 0, cnt = sampleInfo.Length; i < cnt; i++)
-								buffer[i] = sampleInfo.Sample[i] << 16;
-						}
+							if (stereo)
+							{
+								if (sampleInfo.BitSize == 8)
+								{
+									sbyte[] left = leftSamples[b];
+									sbyte[] right = rightSamples[b];
 
-						// Save the data
-						converterAgent.SaveData(fs, buffer, buffer.Length);
+									for (int i = 0, j = 0, cnt = left.Length; i < cnt; i++, j += 2)
+									{
+										buffer[j] = left[i] << 24;
+										buffer[j + 1] = right[i] << 24;
+									}
+								}
+								else
+								{
+									Span<short> left = MemoryMarshal.Cast<sbyte, short>(leftSamples[b]);
+									Span<short> right = MemoryMarshal.Cast<sbyte, short>(rightSamples[b]);
+
+									for (int i = 0, j = 0, cnt = left.Length; i < cnt; i++, j += 2)
+									{
+										buffer[j] = left[i] << 16;
+										buffer[j + 1] = right[i] << 16;
+									}
+								}
+
+								converterAgent.SaveData(fs, buffer, leftSamples[b].Length * 2);
+							}
+							else
+							{
+								if (sampleInfo.BitSize == 8)
+								{
+									sbyte[] left = leftSamples[b];
+
+									for (int i = 0, cnt = left.Length; i < cnt; i++)
+										buffer[i] = left[i] << 24;
+								}
+								else
+								{
+									Span<short> left = MemoryMarshal.Cast<sbyte, short>(leftSamples[b]);
+
+									for (int i = 0, cnt = left.Length; i < cnt; i++)
+										buffer[i] = left[i] << 16;
+								}
+
+								converterAgent.SaveData(fs, buffer, leftSamples[b].Length);
+							}
+						}
 
 						// Save any left overs
 						converterAgent.SaveTail(fs);

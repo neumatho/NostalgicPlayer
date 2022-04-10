@@ -113,6 +113,12 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		IChannel[] VirtualChannels { get; set; }
 
 		/// <summary>
+		/// Return an effect master instance if the player adds extra mixer
+		/// effects to the output
+		/// </summary>
+		IEffectMaster EffectMaster { get; }
+
+		/// <summary>
 		/// Return the current playing frequency
 		/// </summary>
 		float PlayingFrequency { get; }

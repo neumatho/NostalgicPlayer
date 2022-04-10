@@ -1,0 +1,226 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="IDS_MED_DESCRIPTION" xml:space="preserve">
+    <value>Original player by Teijo Kinnunen.
+Converted to C# by Thomas Neumann.
+
+OctaMED was chiefly used by musicians to create stand-alone works, rather than by game or demo musicians to make tunes that play in the context of a computer game or demo.
+
+Firstly, this is because the MED and OctaMED music replay routine is simply too slow to be used in a game or demo. Most trackers are optimised for speed of replay code, taking less than 3% of CPU time. MED took roughly 20% of CPU time. Secondly, and this is also one of the reasons why MED draws more CPU power, the MED format allowed a greater degree of complexity in music construction, with arbitrary length of pattern sheets, sections and blocks rather than a simple pattern-list, and a greater number of effects for the sound. This additional complexity was welcomed by music composers, who preferred more sophisticated structure to their compositions and did not see it as a simple list of timed note-presses.</value>
+  </data>
+  <data name="IDS_MED_DESCRIPTION_AGENT1" xml:space="preserve">
+    <value>Original player by Teijo Kinnunen.
+Converted to C# by Thomas Neumann.
+
+This player plays 4 channels modules created with MED v2.1 to MED v3.22. This is the same as 4 channels MMD0 files.</value>
+  </data>
+  <data name="IDS_MED_DESCRIPTION_AGENT2" xml:space="preserve">
+    <value>Original player by Teijo Kinnunen.
+Converted to C# by Thomas Neumann.
+
+This player plays 8 channels modules created with OctaMED v1.01 to OctaMED v2.00b. This is the same as 8 channels MMD0 files.</value>
+  </data>
+  <data name="IDS_MED_DESCRIPTION_AGENT3" xml:space="preserve">
+    <value>Original player by Teijo Kinnunen.
+Converted to C# by Thomas Neumann.
+
+This player plays 4-16 channels modules created with OctaMED Professional v3.00 to v4.xx. This is the same as MMD1 files.</value>
+  </data>
+  <data name="IDS_MED_DESCRIPTION_AGENT4" xml:space="preserve">
+    <value>Original player by Teijo Kinnunen.
+Converted to C# by Thomas Neumann.
+
+This player plays 1-64 channels modules created with OctaMED Professional v5.00 to v6.xx. This is the same as MMD2 files.</value>
+  </data>
+  <data name="IDS_MED_DESCRIPTION_AGENT5" xml:space="preserve">
+    <value>Original player by Teijo Kinnunen.
+Converted to C# by Thomas Neumann.
+
+This player plays 1-64 channels modules created with OctaMED Soundstudio. This is the same as MMD3 files.
+
+This player also supports echo, cross echo and stereo separation effects, which other players lack. Only thing missing is the filter support.</value>
+  </data>
+  <data name="IDS_MED_DESCRIPTION_AGENT6" xml:space="preserve">
+    <value>Original player by Teijo Kinnunen.
+Converted to C# by Thomas Neumann.
+
+This player is the same as the MED (MMD0) format, but the patterns are packed. Some games uses this format.</value>
+  </data>
+  <data name="IDS_MED_ERR_LOADING_EXPANSION_TAGS" xml:space="preserve">
+    <value>Module contains expansion tags which can't be ignored</value>
+  </data>
+  <data name="IDS_MED_ERR_LOADING_HEADER" xml:space="preserve">
+    <value>Can't read the module header</value>
+  </data>
+  <data name="IDS_MED_ERR_LOADING_INSTRUMENTS" xml:space="preserve">
+    <value>Can't read the instrument information</value>
+  </data>
+  <data name="IDS_MED_ERR_LOADING_PATTERNS" xml:space="preserve">
+    <value>Can't read the module patterns</value>
+  </data>
+  <data name="IDS_MED_ERR_LOADING_SAMPLES" xml:space="preserve">
+    <value>Can't read the module samples</value>
+  </data>
+  <data name="IDS_MED_ERR_PACKED_SAMPLES" xml:space="preserve">
+    <value>Packed samples are not supported yet</value>
+  </data>
+  <data name="IDS_MED_ERR_UNKNOWN_INSTRUMENT" xml:space="preserve">
+    <value>An instrument has an unknown type defined. Can't load the module</value>
+  </data>
+  <data name="IDS_MED_ERR_UNKNOWN_SAMPLE" xml:space="preserve">
+    <value>A sample has an unknown type defined. Can't load the module</value>
+  </data>
+  <data name="IDS_MED_INFODESCLINE0" xml:space="preserve">
+    <value>Song length:</value>
+  </data>
+  <data name="IDS_MED_INFODESCLINE1" xml:space="preserve">
+    <value>Used blocks:</value>
+  </data>
+  <data name="IDS_MED_INFODESCLINE2" xml:space="preserve">
+    <value>Used samples:</value>
+  </data>
+  <data name="IDS_MED_INFODESCLINE3" xml:space="preserve">
+    <value>Current speed:</value>
+  </data>
+  <data name="IDS_MED_INFODESCLINE4" xml:space="preserve">
+    <value>Current tempo (Hz):</value>
+  </data>
+  <data name="IDS_MED_NAME" xml:space="preserve">
+    <value>OctaMED</value>
+  </data>
+  <data name="IDS_MED_NAME_AGENT1" xml:space="preserve">
+    <value>MED</value>
+  </data>
+  <data name="IDS_MED_NAME_AGENT2" xml:space="preserve">
+    <value>OctaMED</value>
+  </data>
+  <data name="IDS_MED_NAME_AGENT3" xml:space="preserve">
+    <value>OctaMED Professional 3.00 - 4.xx</value>
+  </data>
+  <data name="IDS_MED_NAME_AGENT4" xml:space="preserve">
+    <value>OctaMED Professional 5.00 - 6.xx</value>
+  </data>
+  <data name="IDS_MED_NAME_AGENT5" xml:space="preserve">
+    <value>OctaMED Soundstudio</value>
+  </data>
+  <data name="IDS_MED_NAME_AGENT6" xml:space="preserve">
+    <value>MED Packer</value>
+  </data>
+</root>

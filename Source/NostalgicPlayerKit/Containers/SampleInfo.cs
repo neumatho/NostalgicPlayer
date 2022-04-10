@@ -34,7 +34,17 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 			/// <summary>
 			/// The sample has ping-pong loop (set this together with Loop)
 			/// </summary>
-			PingPong = 0x02
+			PingPong = 0x02,
+
+			/// <summary>
+			/// The sample is in stereo
+			/// </summary>
+			Stereo = 0x04,
+
+			/// <summary>
+			/// The sample contains multiple samples for different octaves
+			/// </summary>
+			MultiOctave = 0x08
 		}
 
 		/// <summary>
@@ -53,9 +63,37 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 			Synth,
 
 			/// <summary>
-			/// ???
+			/// Normal sample used as waveform when generating synthesis sound
 			/// </summary>
-			Hybrid//XX
+			Hybrid
+		}
+
+		/// <summary>
+		/// Information about a single octave for multiple octave samples
+		/// </summary>
+		public struct MultiOctaveInfo
+		{
+			/// <summary>
+			/// The sample itself
+			/// 
+			/// The first index is the channel number
+			/// </summary>
+			public sbyte[][] Sample;
+
+			/// <summary>
+			/// How many notes to add to the playing note
+			/// </summary>
+			public int NoteAdd;
+
+			/// <summary>
+			/// Holds the start offset to the loop point in samples
+			/// </summary>
+			public int LoopStart;
+
+			/// <summary>
+			/// Holds the loop length in samples
+			/// </summary>
+			public int LoopLength;
 		}
 
 		/********************************************************************/
@@ -156,7 +194,54 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the length of the sample in samples
+		/// If the sample is a stereo sample, this holds the right channel
+		/// sample data
+		/// </summary>
+		/********************************************************************/
+		public sbyte[] SecondSample
+		{
+			get; set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// If the sample is a multi octave sample, this property need to be
+		/// filled instead of the two above.
+		/// 
+		/// The index is the octave number (0-7). Note that all 8 indexes
+		/// need to be filled out
+		/// </summary>
+		/********************************************************************/
+		public MultiOctaveInfo[] MultiOctaveSamples
+		{
+			get; set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// If the sample is a multi octave sample, this property holds all
+		/// the octave samples for each channel. This is needed when saving
+		/// the sample, as not all octave samples may be included in the
+		/// above property.
+		///
+		/// The first index is the channel and the second index is the sample
+		/// number
+		/// </summary>
+		/********************************************************************/
+		public sbyte[][][] MultiOctaveAllSamples
+		{
+			get; set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the length of the sample in samples for one channel
 		/// </summary>
 		/********************************************************************/
 		public int Length

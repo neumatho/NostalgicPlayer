@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
@@ -21,6 +22,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 	/// </summary>
 	internal class Mixer
 	{
+		private const int MixerBufferPadSize = 32;
+
 		private IModulePlayerAgent currentPlayer;
 		private bool bufferMode;
 		private bool bufferDirect;
@@ -48,6 +51,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private bool emulateFilter;
 
 		private bool[] channelsEnabled;
+
+		private Dictionary<int, int[]> groupBuffers;
+		private int[][] channelMap;
 
 		// Extra channels variables
 		private IExtraChannels extraChannelsInstance;
@@ -165,6 +171,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 			// Deallocate mixer buffer
 			mixBuffer = null;
+			groupBuffers = null;
+			channelMap = null;
 
 			// Deallocate channel objects
 			if (currentPlayer != null)
@@ -247,7 +255,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 			// Allocate mixer buffer. This buffer is used by the mixer
 			// routines to store the mixed data
-			mixBuffer = new int[bufferSize + 32];
+			mixBuffer = new int[bufferSize + MixerBufferPadSize];
 
 			if (outputInformation.Channels == 2)
 				mixerMode |= MixerMode.Stereo;
@@ -262,6 +270,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				if ((currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferMode) != 0)
 					currentPlayer.SetOutputFormat((uint)mixerFrequency, outputInformation.Channels);
 			}
+
+			// Create pool of buffers needed for extra effects
+			groupBuffers = new Dictionary<int, int[]>();
+			channelMap = new int[moduleChannelNumber][];
+
+			// As default, map all channels to use the same output buffer
+			for (int i = 0; i < moduleChannelNumber; i++)
+				channelMap[i] = mixBuffer;
 		}
 
 
@@ -322,6 +338,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			{
 				int total2 = DoMixing2(offset, bufSize);
 				total = Math.Max(total, total2);
+			}
+
+			if (playing)
+			{
+				// Add extra effects if enabled
+				AddEffects(mixBuffer, bufSize);
 
 				// Add Amiga low-pass filter if enabled
 				AddAmigaFilter(mixBuffer, bufSize);
@@ -412,8 +434,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			// And convert the number of samples to number of samples pair
 			todo = (currentMode & MixerMode.Stereo) != 0 ? todo >> 1 : todo;
 
-			// Prepare the mixing buffer
+			// Prepare the mixing buffers
 			Array.Clear(mixBuffer, 0, mixBuffer.Length);
+
+			foreach (int[] buffer in groupBuffers.Values)
+				Array.Clear(buffer, 0, buffer.Length);
 
 			if (playing)
 			{
@@ -455,6 +480,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 								ticksLeft = (int)(mixerFrequency / currentPlayer.PlayingFrequency);
 							}
 
+							BuildChannelMap();
+
 							if (currentPlayer.HasEndReached)
 							{
 								currentPlayer.HasEndReached = false;
@@ -475,7 +502,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					int left = Math.Min(ticksLeft, todo);
 
 					// And mix it
-					currentMixer.Mixing(mixBuffer, total, left, currentMode);
+					currentMixer.Mixing(channelMap, total, left, currentMode);
 
 					// Calculate new values for the counter variables
 					ticksLeft -= left;
@@ -516,13 +543,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					// Get some mixer information we need to parse the data
 					VoiceInfo[] voiceInfo = extraChannelsMixer.GetMixerChannels();
 					int click = extraChannelsMixer.GetClickConstant();
+					int[][] chanMap = new int[extraChannelsNumber][];
 
 					// Parse the channels
 					for (int t = 0; t < extraChannelsNumber; t++)
+					{
 						((ChannelParser)extraChannelsChannels[t]).ParseInfo(ref voiceInfo[t], click, bufferMode);
+						chanMap[t] = mixBuffer;
+					}
 
 					// Mix the data
-					extraChannelsMixer.Mixing(mixBuffer, offset, (currentMode & MixerMode.Stereo) != 0 ? todo >> 1 : todo, currentMode);
+					extraChannelsMixer.Mixing(chanMap, offset, (currentMode & MixerMode.Stereo) != 0 ? todo >> 1 : todo, currentMode);
 
 					// Check all the channels to see if they are still active
 					for (int t = 0; t < extraChannelsNumber; t++)
@@ -533,6 +564,72 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			}
 
 			return total;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Build a map of output buffers for each channel
+		/// </summary>
+		/********************************************************************/
+		private void BuildChannelMap()
+		{
+			IEffectMaster effectMaster = currentPlayer.EffectMaster;
+			if (effectMaster != null)
+			{
+				IReadOnlyDictionary<int, int> groupMap = effectMaster.GetChannelGroups();
+
+				for (int i = 0; i < moduleChannelNumber; i++)
+				{
+					if ((groupMap != null) && groupMap.TryGetValue(i, out int group))
+					{
+						if (!groupBuffers.TryGetValue(group, out int[] buffer))
+						{
+							// No buffer found, allocate a new one
+							buffer = new int[bufferSize + MixerBufferPadSize];
+							groupBuffers[group] = buffer;
+						}
+
+						channelMap[i] = buffer;
+					}
+					else
+					{
+						// If channel is not mapped, use final output buffer
+						channelMap[i] = mixBuffer;
+					}
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Adds extra DSP effects from e.g. the current player
+		/// </summary>
+		/********************************************************************/
+		private void AddEffects(int[] dest, int todo)
+		{
+			// Add effect on each group and mix them together
+			lock (currentPlayer)
+			{
+				IEffectMaster effectMaster = currentPlayer.EffectMaster;
+				if (effectMaster != null)
+				{
+					bool isStereo = (currentMode & MixerMode.Stereo) != 0;
+
+					foreach (KeyValuePair<int, int[]> pair in groupBuffers)
+					{
+						effectMaster.AddChannelGroupEffects(pair.Key, pair.Value, todo, (uint)mixerFrequency, isStereo);
+
+						for (int i = 0; i < todo; i++)
+							dest[i] += pair.Value[i];
+					}
+
+					effectMaster.AddGlobalEffects(dest, todo, (uint)mixerFrequency, isStereo);
+				}
+			}
 		}
 
 

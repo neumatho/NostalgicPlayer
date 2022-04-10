@@ -24,7 +24,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Will start to play the sample in the channel
 		/// </summary>
 		/********************************************************************/
-		public void PlaySample(Array adr, uint startOffset, uint length, byte bit = 8)
+		public void PlaySample(Array adr, uint startOffset, uint length, byte bit, bool backwards)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will start to play a stereo sample in the channel
+		/// </summary>
+		/********************************************************************/
+		public void PlayStereoSample(Array leftAdr, Array rightAdr, uint startOffset, uint length, byte bit, bool backwards)
 		{
 		}
 
@@ -35,7 +46,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Will set the loop point in the sample
 		/// </summary>
 		/********************************************************************/
-		public void SetLoop(uint startOffset, uint length, ChannelLoopType type = ChannelLoopType.Normal)
+		public void SetLoop(uint startOffset, uint length, ChannelLoopType type)
 		{
 		}
 
@@ -46,7 +57,29 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Will set the loop point and change the sample
 		/// </summary>
 		/********************************************************************/
-		public void SetLoop(Array adr, uint startOffset, uint length, ChannelLoopType type = ChannelLoopType.Normal)
+		public void SetLoop(Array adr, uint startOffset, uint length, ChannelLoopType type)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will set the loop point and change the sample
+		/// </summary>
+		/********************************************************************/
+		public void SetLoop(Array leftAdr, Array rightAdr, uint startOffset, uint length, ChannelLoopType type)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the current playing position of the sample to the value given
+		/// </summary>
+		/********************************************************************/
+		public void SetPosition(int position, bool relative)
 		{
 		}
 

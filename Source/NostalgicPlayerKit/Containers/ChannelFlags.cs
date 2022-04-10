@@ -47,9 +47,20 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		PingPong = 0x00000010,
 
 		/// <summary>
-		/// Set this to trigger the sample when setting looping information
+		/// Set this to play the sample backwards
 		/// </summary>
-		TrigLoop = 0x00000020,
+		Backwards = 0x00000020,
+
+		/// <summary>
+		/// Set this to change the current sample position
+		/// </summary>
+		ChangePosition = 0x00000040,
+
+		/// <summary>
+		/// If set together with ChangePosition, it indicate that the
+		/// position is relative to the current sample position
+		/// </summary>
+		Relative = 0x00000080,
 
 		/// <summary>
 		/// Volume changed
@@ -72,7 +83,8 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		Release = 0x00000800,
 
 		/// <summary>
-		/// This is a read-only bit. When a sample is playing in the channel, it's set
+		/// This is a read-only bit. When a sample is playing in the channel,
+		/// it's set
 		/// </summary>
 		Active = 0x80000000
 	}

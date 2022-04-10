@@ -6,6 +6,7 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers;
 
@@ -92,12 +93,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				info.Kick = false;
 				info.Active = false;
 				info.Flags = SampleFlag.None;
-				info.Address = null;
+				info.Addresses = new Array[2];
 				info.Start = 0;
 				info.Size = 0;
 				info.RepeatPosition = 0;
 				info.RepeatEnd = 0;
-				info.NewLoopAddress = null;
+				info.NewLoopAddresses = new Array[2];
 				info.NewRepeatPosition = 0;
 				info.NewRepeatEnd = 0;
 				info.ReleaseEnd = 0;
@@ -224,7 +225,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// This is the main mixer method
 		/// </summary>
 		/********************************************************************/
-		public abstract void Mixing(int[] dest, int offset, int todo, MixerMode mode);
+		public abstract void Mixing(int[][] channelMap, int offset, int todo, MixerMode mode);
 
 
 
