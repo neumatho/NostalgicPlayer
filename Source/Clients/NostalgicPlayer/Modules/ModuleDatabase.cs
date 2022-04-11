@@ -27,7 +27,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 		private class DatabaseValue
 		{
-			public Dictionary<string, DatabaseValue> NextLevel = new Dictionary<string, DatabaseValue>();
+			public Dictionary<string, DatabaseValue> NextLevel = new Dictionary<string, DatabaseValue>(StringComparer.InvariantCultureIgnoreCase);
 			public ModuleDatabaseInfo Info;
 		}
 
@@ -91,7 +91,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/********************************************************************/
 		public ModuleDatabase()
 		{
-			root = new Dictionary<string, DatabaseValue>();
+			root = new Dictionary<string, DatabaseValue>(StringComparer.InvariantCultureIgnoreCase);
 			queue = new Queue<QueueInfo>();
 
 			LoadDatabase();
