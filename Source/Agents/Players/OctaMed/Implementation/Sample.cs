@@ -265,7 +265,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/********************************************************************/
 		private void SetMultiOctave(short type)
 		{
-			sampleType = type & 0x0f;
+			sampleType = type > 6 ? 0 : (type & 0x0f);
 			numberOfOctaves = multiOctaveCount[sampleType];
 
 			for (ushort chCnt = 0; chCnt < channels; chCnt++)
