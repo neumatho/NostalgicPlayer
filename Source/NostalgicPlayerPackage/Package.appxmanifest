@@ -267,6 +267,7 @@
               <uap:FileType ContentType="audio/x-sid">.c64</uap:FileType>
               <uap:FileType ContentType="audio/x-sid">.mus</uap:FileType>
               <uap:FileType ContentType="audio/x-sid">.str</uap:FileType>
+              <uap:FileType ContentType="audio/x-sid">.prg</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>C64 SID</uap:DisplayName>
           </uap:FileTypeAssociation>

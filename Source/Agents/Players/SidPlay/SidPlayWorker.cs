@@ -78,7 +78,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "sid", "c64", "mus", "str" };
+		public override string[] FileExtensions => new [] { "sid", "c64", "mus", "str", "prg" };
 
 
 
