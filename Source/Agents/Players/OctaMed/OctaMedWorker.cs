@@ -70,7 +70,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "med", "mmd0", "mmd1", "mmd2", "mmd3", "mmdc", "omed", "ocss" };
+		public override string[] FileExtensions => new [] { "med", "mmd0", "mmd1", "mmd2", "mmd3", "mmdc", "omed", "ocss", "md0", "md1", "md2", "md3" };
 
 
 
@@ -228,6 +228,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 
 					// Seek to the song structure
 					moduleStream.Seek(currHdr.SongOffs, SeekOrigin.Begin);
+					if (moduleStream.EndOfStream)
+					{
+						errorMessage = Resources.IDS_MED_ERR_LOADING_HEADER;
+						Cleanup();
+
+						return AgentResult.Error;
+					}
 
 					// New (empty) sub-song
 					sg.AppendNew(true);
@@ -388,6 +395,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 						// Read track volumes
 						songTracks = Math.Min((ushort)Constants.MaxTracks, song2.NumTracks);
 						moduleStream.Seek(song2.TrackVolsOffs, SeekOrigin.Begin);
+						if (moduleStream.EndOfStream)
+						{
+							errorMessage = Resources.IDS_MED_ERR_LOADING_HEADER;
+							Cleanup();
+
+							return AgentResult.Error;
+						}
 
 						for (int cnt = 0; cnt < songTracks; cnt++)
 							css.SetTrackVol(cnt, moduleStream.Read_UINT8());
@@ -396,18 +410,39 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 
 						// And track pans
 						moduleStream.Seek(song2.TrackPansOffs, SeekOrigin.Begin);
+						if (moduleStream.EndOfStream)
+						{
+							errorMessage = Resources.IDS_MED_ERR_LOADING_HEADER;
+							Cleanup();
+
+							return AgentResult.Error;
+						}
 
 						for (int cnt = 0; cnt < songTracks; cnt++)
 							css.SetTrackPan(cnt, moduleStream.Read_UINT8());
 
 						// Read the section table
 						moduleStream.Seek(song2.SectionTableOffs, SeekOrigin.Begin);
+						if (moduleStream.EndOfStream)
+						{
+							errorMessage = Resources.IDS_MED_ERR_LOADING_HEADER;
+							Cleanup();
+
+							return AgentResult.Error;
+						}
 
 						for (int cnt = 0; cnt < song2.NumSections; cnt++)
 							css.AppendNewSec(moduleStream.Read_B_UINT16());
 
 						// Read playing sequences
 						moduleStream.Seek(song2.PlaySeqTableOffs, SeekOrigin.Begin);
+						if (moduleStream.EndOfStream)
+						{
+							errorMessage = Resources.IDS_MED_ERR_LOADING_HEADER;
+							Cleanup();
+
+							return AgentResult.Error;
+						}
 
 						uint[] pSqTbl = new uint[song2.NumPlaySeqs];
 						byte[] name = new byte[32];
@@ -420,6 +455,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 
 							css.Append(newSeq);
 							moduleStream.Seek(pSqTbl[cnt], SeekOrigin.Begin);
+							if (moduleStream.EndOfStream)
+							{
+								errorMessage = Resources.IDS_MED_ERR_LOADING_HEADER;
+								Cleanup();
+
+								return AgentResult.Error;
+							}
 
 							// Read PlaySeq name
 							moduleStream.Read(name, 0, 32);
@@ -447,6 +489,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 							if (cmdPtr != 0)
 							{
 								moduleStream.Seek(cmdPtr, SeekOrigin.Begin);
+								if (moduleStream.EndOfStream)
+								{
+									errorMessage = Resources.IDS_MED_ERR_LOADING_HEADER;
+									Cleanup();
+
+									return AgentResult.Error;
+								}
 
 								for (;;)
 								{

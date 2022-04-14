@@ -57,7 +57,7 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | Impulse Tracker | .it | MikMod Converter | MikMod |
 | JamCracker | .jam | | JamCracker |
 | Master SoundTracker 1.0 | .mod | | ModTracker |
-| MED | .med / .mmd0 | | OctaMED |
+| MED | .med / .mmd0 / .md0 | | OctaMED |
 | MED Packer | .med / .mmdc | | OctaMED |
 | Mod's Grave | .wow | | ModTracker |
 | MPEG 1.0 | .mp1 / .mp2 / .mp3 / .m2a / .mpg | | Mpg123 |
@@ -65,10 +65,10 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | MPEG 2.5 | .mp1 / .mp2 / .mp3 / .m2a / .mpg | | Mpg123 |
 | MultiTracker | .mtm | | ModTracker |
 | NoiseTracker | .mod | | ModTracker |
-| OctaMED | .med / .mmd0 / .omed | | OctaMED |
-| OctaMED Professional 3.00 - 4.xx | .med / .mmd1 / .omed | | OctaMED |
-| OctaMED Professional 5.00 - 6.xx | .med / .mmd2 / .omed | | OctaMED |
-| OctaMED Soundstudio | .med / .mmd3 / .omed / .ocss | | OctaMED |
+| OctaMED | .med / .mmd0 / .md0 / .omed | | OctaMED |
+| OctaMED Professional 3.00 - 4.xx | .med / .mmd1 / .md1 / .omed | | OctaMED |
+| OctaMED Professional 5.00 - 6.xx | .med / .mmd2 / .md2 / .omed | | OctaMED |
+| OctaMED Soundstudio | .med / .mmd3 / .md3 / .omed / .ocss | | OctaMED |
 | Ogg Vorbis | .ogg / oga | | Ogg Vorbis |
 | Oktalyzer | .okt / .okta | | Oktalyzer |
 | ProTracker | .mod | | ModTracker |

@@ -331,6 +331,10 @@
               <uap:FileType ContentType="audio/x-octamed">.mmdc</uap:FileType>
               <uap:FileType ContentType="audio/x-octamed">.omed</uap:FileType>
               <uap:FileType ContentType="audio/x-octamed">.ocss</uap:FileType>
+              <uap:FileType ContentType="audio/x-octamed">.md0</uap:FileType>
+              <uap:FileType ContentType="audio/x-octamed">.md1</uap:FileType>
+              <uap:FileType ContentType="audio/x-octamed">.md2</uap:FileType>
+              <uap:FileType ContentType="audio/x-octamed">.md3</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>OctaMED</uap:DisplayName>
           </uap:FileTypeAssociation>
