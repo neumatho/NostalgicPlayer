@@ -210,14 +210,14 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 		/********************************************************************/
 		public override void Stop()
 		{
-			// Stop the audio
-			if (outputAgentInUse == null)
-				pauseEvent.Reset();
-			else
-				outputAgentInUse.Stop();
-
 			lock (streamLock)
 			{
+				// Stop the audio
+				if (outputAgentInUse == null)
+					pauseEvent.Reset();
+				else
+					outputAgentInUse.Stop();
+
 				// Cleanup the saver
 				if (converterInUse != null)
 				{
@@ -242,10 +242,13 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 		/********************************************************************/
 		public override void Pause()
 		{
-			if (outputAgentInUse == null)
-				pauseEvent.Reset();
-			else
-				outputAgentInUse.Pause();
+			lock (streamLock)
+			{
+				if (outputAgentInUse == null)
+					pauseEvent.Reset();
+				else
+					outputAgentInUse.Pause();
+			}
 		}
 
 
@@ -311,6 +314,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 				}
 
 				stream = soundStream;
+				sampleDelay = false;
 
 				// Initialize the saver
 				if (!converterInUse.InitSaver(formatInfo, out errorMessage))
