@@ -714,13 +714,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/********************************************************************/
 		private ModuleType Check15SamplesModule(ModuleStream moduleStream)
 		{
-			// Check for some other formats, that has been recognized wrongly as 15 samples modules
-			moduleStream.Seek(0, SeekOrigin.Begin);
-			uint mark = moduleStream.Read_B_UINT32();
-
-			if ((mark == 0x52494646) || (mark == 0x464f524d) || (mark == 0x44444d46) || (mark == 0x54464d58) || ((mark & 0xffffff00) == 0x4d4d4400))
-				return ModuleType.Unknown;
-
 			ModuleType minimumVersion = ModuleType.UltimateSoundTracker10;
 
 			byte[] buf = new byte[22];
@@ -791,6 +784,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			if (usedPatterns.FirstOrDefault(p => p >= 64) != 0)
 				return ModuleType.Unknown;
 
+			if ((usedPatterns.Max(p => p) * 1024 + moduleStream.Position) >= moduleStream.Length)
+			{
+				// If a pattern number points outside the file itself, it is invalid
+				return ModuleType.Unknown;
+			}
+
 			// Scan all patterns to be more precise which version of tracker that has been used
 			bool useOldArpeggioEffect = false;
 			bool useNewArpeggioEffect = false;
@@ -798,6 +797,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			bool haveEffectD00 = false;
 			bool useSpeed = false;
 			bool useFilter = false;
+			bool gotEmptyColumn = false;
 
 			for (int i = 0, p = 0; i < usedPatterns.Length; p++)
 			{
@@ -812,6 +812,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 						byte b = moduleStream.Read_UINT8();
 						byte c = moduleStream.Read_UINT8();
 						byte d = moduleStream.Read_UINT8();
+
+						if ((a == 0) && (b == 0) && (c == 0) && (d == 0))
+							gotEmptyColumn = true;
 
 						byte effect = (byte)(c & 0x0f);
 
@@ -1001,6 +1004,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					moduleStream.Seek(1024, SeekOrigin.Current);
 				}
 			}
+
+			if (!gotEmptyColumn)
+				return ModuleType.Unknown;
 
 			// Check the global speed
 			if ((temp != 0x78) && (temp != 0) && (diskPrefixCount == 15))

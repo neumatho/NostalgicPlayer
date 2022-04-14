@@ -747,6 +747,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 
 						// Decode the header
 						DecodeHeader(frame, header);
+
+						if (frame.FrameSize == 0)
+							i--;	// Do not count empty frames
 					}
 				}
 
@@ -783,6 +786,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		{
 			// Check sync
 			if ((head & 0xffe00000) != 0xffe00000)
+				return false;
+
+			// Check version
+			if (((head >> 19) & 3) == 1)
 				return false;
 
 			// Check layer
