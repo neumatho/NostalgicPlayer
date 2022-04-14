@@ -81,11 +81,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/********************************************************************/
 		public override void SetOutputFormat(OutputInfo outputInformation)
 		{
-			lock (mixerLock)
+			if (mixerLock != null)
 			{
-				bytesPerSampling = outputInformation.BytesPerSample;
+				lock (mixerLock)
+				{
+					bytesPerSampling = outputInformation.BytesPerSample;
 
-				mixer.SetOutputFormat(outputInformation);
+					mixer.SetOutputFormat(outputInformation);
+				}
 			}
 		}
 
