@@ -799,24 +799,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/********************************************************************/
 		private void DurationTimerHandler(object stateInfo)
 		{
-			uint_least32_t seconds = engine.Time() - startTime;
-
-			// Calculate the percent of how long that has been heard so far
-			int percent = (int)(seconds * 100 / ((TimeSpan)stateInfo).TotalSeconds);
-			if (percent != previousPercent)
+			if (engine != null)
 			{
-				if (percent >= 100)
+				uint_least32_t seconds = engine.Time() - startTime;
+
+				// Calculate the percent of how long that has been heard so far
+				int percent = (int)(seconds * 100 / ((TimeSpan)stateInfo).TotalSeconds);
+				if (percent != previousPercent)
 				{
-					percent = 0;
-					startTime = seconds;
+					if (percent >= 100)
+					{
+						percent = 0;
+						startTime = seconds;
 
-					OnEndReached();
+						OnEndReached();
+					}
+
+					previousPercent = percent;
+					songPosition = percent;
+
+					OnPositionChanged();
 				}
-
-				previousPercent = percent;
-				songPosition = percent;
-
-				OnPositionChanged();
 			}
 		}
 		#endregion
