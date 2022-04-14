@@ -122,6 +122,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 
 				// Create thread to do the saving
 				saverThread = new Thread(DoSaverThread);
+				saverThread.Name = "Disk saver";
 				saverThread.Start();
 			}
 			else

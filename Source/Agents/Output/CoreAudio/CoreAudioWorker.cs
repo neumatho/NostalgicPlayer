@@ -119,6 +119,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 				// Now create the thread which is going to drive the renderer
 				renderThread = new Thread(DoRenderThread);
+				renderThread.Name = "CoreAudio render";
 				renderThread.Start();
 
 				return AgentResult.Ok;

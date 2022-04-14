@@ -65,6 +65,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 			// Initialize the thread and start it
 			thread = new Thread(VisualizeThread);
+			thread.Name = "Visualizer distributor";
 			thread.Start();
 		}
 

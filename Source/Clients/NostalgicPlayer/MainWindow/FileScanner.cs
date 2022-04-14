@@ -75,6 +75,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			// Start the background thread
 			scannerThread = new Thread(DoScannerThread);
+			scannerThread.Name = "File scanner";
 			scannerThread.Start();
 		}
 

@@ -103,6 +103,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 			// Start the background thread
 			handlerThread = new Thread(DoTaskThread);
+			handlerThread.Name = "Module database handler";
 			handlerThread.Priority = ThreadPriority.BelowNormal;
 			handlerThread.Start();
 		}
