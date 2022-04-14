@@ -634,9 +634,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 					}
 				}
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 				// If an exception is thrown, abort the thread
+				OnPlayerFailed(ex.Message);
 			}
 		}
 
@@ -652,11 +653,20 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 			lock (streamLock)
 			{
 				IntPtr buffer = audioRenderClient.GetBuffer(frameCount);
+				int read;
 
-				int readLength = frameCount * bytesPerFrame;
-				int read = stream == null ? 0 : stream.Read(readBuffer, 0, readLength);
-				if (read > 0)
-					Marshal.Copy(readBuffer, 0, buffer, read);
+				try
+				{
+					int readLength = frameCount * bytesPerFrame;
+					read = stream == null ? 0 : stream.Read(readBuffer, 0, readLength);
+					if (read > 0)
+						Marshal.Copy(readBuffer, 0, buffer, read);
+				}
+				catch(Exception)
+				{
+					audioRenderClient.ReleaseBuffer(frameCount, AudioClientBufferFlags.None);
+					throw;
+				}
 
 				int actualFrameCount = read / bytesPerFrame;
 				audioRenderClient.ReleaseBuffer(actualFrameCount, AudioClientBufferFlags.None);

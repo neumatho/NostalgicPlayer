@@ -417,9 +417,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 					}
 				}
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
 				// If an exception is thrown, abort the thread
+				OnPlayerFailed(ex.Message);
 			}
 		}
 

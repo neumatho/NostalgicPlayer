@@ -672,6 +672,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Player {0} failed while playing the module.
+        ///{1}.
+        /// </summary>
+        internal static string IDS_ERR_PLAYER_FAILED {
+            get {
+                return ResourceManager.GetString("IDS_ERR_PLAYER_FAILED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to save the sample.
         ///{0}.
         /// </summary>

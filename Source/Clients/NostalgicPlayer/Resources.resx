@@ -389,6 +389,10 @@ Formats supported:
   <data name="IDS_ERR_NOOUTPUTAGENT" xml:space="preserve">
     <value>There doesn't exist any output agent, so NostalgicPlayer can't play anything</value>
   </data>
+  <data name="IDS_ERR_PLAYER_FAILED" xml:space="preserve">
+    <value>Player {0} failed while playing the module.
+{1}</value>
+  </data>
   <data name="IDS_ERR_SAMPLE_INFO_SAMP_ERRORSAVING" xml:space="preserve">
     <value>Failed to save the sample.
 {0}</value>

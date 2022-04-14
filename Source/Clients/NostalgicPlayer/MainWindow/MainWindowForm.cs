@@ -31,6 +31,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow;
 using Polycode.NostalgicPlayer.GuiKit.Controls;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
@@ -913,6 +914,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			moduleHandler.PositionChanged += ModuleHandler_PositionChanged;
 			moduleHandler.EndReached += ModuleHandler_EndReached;
 			moduleHandler.ModuleInfoChanged += ModuleHandler_ModuleInfoChanged;
+			moduleHandler.PlayerFailed += ModuleHandler_PlayerFailed;
 		}
 
 		#region Keyboard shortcuts
@@ -1453,6 +1455,27 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			{
 				if (IsModuleInfoWindowOpen())
 					moduleInfoWindow.UpdateWindow(e.Line, e.Value);
+			}));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called if the player fails while playing
+		/// </summary>
+		/********************************************************************/
+		private void ModuleHandler_PlayerFailed(object sender, PlayerFailedEventArgs e)
+		{
+			BeginInvoke(new Action(() =>
+			{
+				ModuleListItem listItem = playItem;
+				string playerName = moduleHandler.StaticModuleInformation.PlayerAgentInfo.AgentName;
+
+				StopAndFreeModule();
+				moduleHandler.CloseOutputAgent();
+
+				ShowErrorMessage(string.Format(Resources.IDS_ERR_PLAYER_FAILED, playerName, e.ErrorMessage), listItem);
 			}));
 		}
 		#endregion

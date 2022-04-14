@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
@@ -66,6 +67,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/// </summary>
 		/********************************************************************/
 		public event ModuleInfoChangedEventHandler ModuleInfoChanged;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Event called if the player fails while playing
+		/// </summary>
+		/********************************************************************/
+		public event PlayerFailedEventHandler PlayerFailed;
 
 
 
@@ -128,8 +138,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/********************************************************************/
 		public void CloseOutputAgent()
 		{
-			outputAgent?.Shutdown();
-			outputAgent = null;
+			if (outputAgent != null)
+			{
+				outputAgent.Shutdown();
+
+				outputAgent.PlayerFailed -= Output_PlayerFailed;
+				outputAgent = null;
+			}
+
 			OutputAgentInfo = null;
 		}
 
@@ -707,6 +723,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 			if (ModuleInfoChanged != null)
 				ModuleInfoChanged(sender, e);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called if the player fails while playing
+		/// </summary>
+		/********************************************************************/
+		private void Output_PlayerFailed(object sender, PlayerFailedEventArgs e)
+		{
+			// Just call the next event handler
+			if (PlayerFailed != null)
+				PlayerFailed(sender, e);
+		}
 		#endregion
 
 		#region Private methods
@@ -781,6 +811,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 						return false;
 					}
 
+					agent.PlayerFailed += Output_PlayerFailed;
+
 					OutputAgentInfo = agentInfo;
 					outputAgent = agent;
 				}
@@ -849,7 +881,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 						if (!player.StartPlaying(loadedFiles[0].Loader, out string errorMessage, mixerConfiguration))
 						{
 							if (showError && !string.IsNullOrEmpty(errorMessage))
-								ShowErrorMessage(errorMessage, listItem);
+								ShowErrorMessage(string.Format(Resources.IDS_ERR_INIT_PLAYER, player.StaticModuleInformation.PlayerAgentInfo.AgentName, errorMessage), listItem);
 
 							return false;
 						}

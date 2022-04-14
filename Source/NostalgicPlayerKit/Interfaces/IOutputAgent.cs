@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
@@ -51,5 +52,10 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// interrupting the sound
 		/// </summary>
 		AgentResult SwitchStream(SoundStream soundStream, string fileName, string moduleName, string author, out string errorMessage);
+
+		/// <summary>
+		/// Event called if the player fails while playing
+		/// </summary>
+		event PlayerFailedEventHandler PlayerFailed;
 	}
 }

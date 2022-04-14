@@ -196,7 +196,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			catch(Exception ex)
 			{
 				Debug.WriteLine(ex);
-				return 0;
+				throw;
 			}
 		}
 		#endregion

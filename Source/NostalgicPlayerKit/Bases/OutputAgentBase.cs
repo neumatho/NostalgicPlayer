@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
@@ -85,5 +86,27 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// </summary>
 		/********************************************************************/
 		public abstract AgentResult SwitchStream(SoundStream soundStream, string fileName, string moduleName, string author, out string errorMessage);
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Event called if the player fails while playing
+		/// </summary>
+		/********************************************************************/
+		public event PlayerFailedEventHandler PlayerFailed;
+
+		#region Helper methods
+		/********************************************************************/
+		/// <summary>
+		/// Called if the player fails while playing
+		/// </summary>
+		/********************************************************************/
+		protected void OnPlayerFailed(string errorMessage)
+		{
+			if (PlayerFailed != null)
+				PlayerFailed(this, new PlayerFailedEventArgs(errorMessage));
+		}
+		#endregion
 	}
 }
