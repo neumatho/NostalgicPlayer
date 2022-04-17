@@ -30,9 +30,10 @@
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FavoriteSongSystemForm));
-			this.kryptonManager = new Krypton.Toolkit.KryptonManager(this.components);
 			this.favoriteDataGridView = new Krypton.Toolkit.KryptonDataGridView();
+			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
 			this.addButton = new Krypton.Toolkit.KryptonButton();
+			this.bigFontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
 			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
 			this.removeButton = new Krypton.Toolkit.KryptonButton();
 			this.resetButton = new Krypton.Toolkit.KryptonButton();
@@ -48,10 +49,6 @@
 			((System.ComponentModel.ISupportInitialize)(this.showComboBox)).BeginInit();
 			this.SuspendLayout();
 			// 
-			// kryptonManager
-			// 
-			this.kryptonManager.GlobalPaletteMode = Krypton.Toolkit.PaletteModeManager.Office2010Blue;
-			// 
 			// favoriteDataGridView
 			// 
 			this.favoriteDataGridView.AllowUserToAddRows = false;
@@ -62,6 +59,8 @@
 			this.favoriteDataGridView.GridStyles.StyleDataCells = Krypton.Toolkit.GridStyle.Sheet;
 			this.favoriteDataGridView.Location = new System.Drawing.Point(0, 0);
 			this.favoriteDataGridView.Name = "favoriteDataGridView";
+			this.favoriteDataGridView.Palette = this.fontPalette;
+			this.favoriteDataGridView.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.favoriteDataGridView.ReadOnly = true;
 			this.controlResource.SetResourceKey(this.favoriteDataGridView, null);
 			this.favoriteDataGridView.RowHeadersVisible = false;
@@ -74,10 +73,7 @@
 			this.favoriteDataGridView.StateCommon.Background.Color1 = System.Drawing.Color.White;
 			this.favoriteDataGridView.StateCommon.BackStyle = Krypton.Toolkit.PaletteBackStyle.GridBackgroundList;
 			this.favoriteDataGridView.StateCommon.DataCell.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
-			this.favoriteDataGridView.StateCommon.DataCell.Content.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.favoriteDataGridView.StateCommon.DataCell.Content.Padding = new System.Windows.Forms.Padding(0);
 			this.favoriteDataGridView.StateCommon.HeaderColumn.Border.DrawBorders = ((Krypton.Toolkit.PaletteDrawBorders)((Krypton.Toolkit.PaletteDrawBorders.Bottom | Krypton.Toolkit.PaletteDrawBorders.Right)));
-			this.favoriteDataGridView.StateCommon.HeaderColumn.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.favoriteDataGridView.TabIndex = 0;
 			this.favoriteDataGridView.SelectionChanged += new System.EventHandler(this.FavoriteDataGridView_SelectionChanged);
 			this.favoriteDataGridView.DoubleClick += new System.EventHandler(this.FavoriteDataGridView_DoubleClick);
@@ -88,12 +84,17 @@
 			this.addButton.Enabled = false;
 			this.addButton.Location = new System.Drawing.Point(8, 196);
 			this.addButton.Name = "addButton";
+			this.addButton.Palette = this.bigFontPalette;
+			this.addButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.addButton, "IDS_FAVORITE_BUTTON_ADD");
 			this.addButton.Size = new System.Drawing.Size(90, 21);
-			this.addButton.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.addButton.TabIndex = 1;
 			this.addButton.Values.Text = "Add";
 			this.addButton.Click += new System.EventHandler(this.AddButton_Click);
+			// 
+			// bigFontPalette
+			// 
+			this.bigFontPalette.BaseFontSize = 9F;
 			// 
 			// controlResource
 			// 
@@ -105,9 +106,10 @@
 			this.removeButton.Enabled = false;
 			this.removeButton.Location = new System.Drawing.Point(102, 196);
 			this.removeButton.Name = "removeButton";
+			this.removeButton.Palette = this.bigFontPalette;
+			this.removeButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.removeButton, "IDS_FAVORITE_BUTTON_REMOVE");
 			this.removeButton.Size = new System.Drawing.Size(90, 21);
-			this.removeButton.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.removeButton.TabIndex = 2;
 			this.removeButton.Values.Text = "Remove";
 			this.removeButton.Click += new System.EventHandler(this.RemoveButton_Click);
@@ -117,9 +119,10 @@
 			this.resetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.resetButton.Location = new System.Drawing.Point(324, 196);
 			this.resetButton.Name = "resetButton";
+			this.resetButton.Palette = this.bigFontPalette;
+			this.resetButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.resetButton, "IDS_FAVORITE_BUTTON_RESET");
 			this.resetButton.Size = new System.Drawing.Size(90, 21);
-			this.resetButton.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.resetButton.TabIndex = 5;
 			this.resetButton.Values.Text = "Reset";
 			this.resetButton.Click += new System.EventHandler(this.ResetButton_Click);
@@ -146,13 +149,12 @@
 			this.showComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.showComboBox.DropDownWidth = 121;
 			this.showComboBox.IntegralHeight = false;
-			this.showComboBox.Location = new System.Drawing.Point(196, 197);
+			this.showComboBox.Location = new System.Drawing.Point(196, 198);
 			this.showComboBox.Name = "showComboBox";
+			this.showComboBox.Palette = this.fontPalette;
+			this.showComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.showComboBox, null);
-			this.showComboBox.Size = new System.Drawing.Size(90, 19);
-			this.showComboBox.StateCommon.ComboBox.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.showComboBox.StateCommon.ComboBox.Content.TextH = Krypton.Toolkit.PaletteRelativeAlign.Near;
-			this.showComboBox.StateCommon.Item.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.showComboBox.Size = new System.Drawing.Size(90, 18);
 			this.showComboBox.TabIndex = 3;
 			this.showComboBox.SelectedIndexChanged += new System.EventHandler(this.ShowComboBox_SelectedIndexChanged);
 			// 
@@ -160,11 +162,12 @@
 			// 
 			this.otherNumberTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.otherNumberTextBox.Enabled = false;
-			this.otherNumberTextBox.Location = new System.Drawing.Point(290, 196);
+			this.otherNumberTextBox.Location = new System.Drawing.Point(290, 197);
 			this.otherNumberTextBox.Name = "otherNumberTextBox";
+			this.otherNumberTextBox.Palette = this.fontPalette;
+			this.otherNumberTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.otherNumberTextBox, null);
-			this.otherNumberTextBox.Size = new System.Drawing.Size(30, 21);
-			this.otherNumberTextBox.StateCommon.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.otherNumberTextBox.Size = new System.Drawing.Size(30, 20);
 			this.otherNumberTextBox.TabIndex = 4;
 			this.otherNumberTextBox.TextChanged += new System.EventHandler(this.OtherNumberTextBox_TextChanged);
 			// 
@@ -182,8 +185,9 @@
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(438, 260);
 			this.Name = "FavoriteSongSystemForm";
+			this.Palette = this.fontPalette;
+			this.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this, null);
-			this.Text = "FavoriteSongSystemForm";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FavoriteSongSystemWindowForm_FormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.favoriteDataGridView)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).EndInit();
@@ -197,8 +201,6 @@
 		}
 
 		#endregion
-
-		private Krypton.Toolkit.KryptonManager kryptonManager;
 		private Krypton.Toolkit.KryptonDataGridView favoriteDataGridView;
 		private Krypton.Toolkit.KryptonButton addButton;
 		private GuiKit.Designer.ControlResource controlResource;
@@ -208,5 +210,7 @@
 		private Krypton.Toolkit.KryptonComboBox showComboBox;
 		private Polycode.NostalgicPlayer.Client.GuiPlayer.Controls.NumberTextBox otherNumberTextBox;
 		private System.Windows.Forms.ToolTip toolTip;
+		private GuiKit.Components.FontPalette fontPalette;
+		private GuiKit.Components.FontPalette bigFontPalette;
 	}
 }

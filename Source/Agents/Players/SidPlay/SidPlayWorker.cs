@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Text;
+using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Threading;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.Builders.ReSidFpBuilder;
@@ -54,8 +55,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 
 		private const int InfoClockSpeedLine = 8;
 
-		[System.Runtime.InteropServices.DllImport("gdi32.dll")]
-		private static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont, IntPtr pdv, [System.Runtime.InteropServices.In] ref uint pcFonts);
+		[DllImport("gdi32.dll")]
+		private static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont, IntPtr pdv, [In] ref uint pcFonts);
 
 		private PrivateFontCollection fonts;
 		private Font commentFont;
@@ -151,15 +152,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				{
 					// Load the font from the resources
 					byte[] fontData = Resources.C64_Pro_Mono_STYLE;
-					IntPtr fontPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(fontData.Length);
-					System.Runtime.InteropServices.Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
+					IntPtr fontPtr = Marshal.AllocCoTaskMem(fontData.Length);
+					Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
 
 					uint dummy = 0;
 					fonts = new PrivateFontCollection();
-					fonts.AddMemoryFont(fontPtr, Resources.C64_Pro_Mono_STYLE.Length);
-					AddFontMemResourceEx(fontPtr, (uint)Resources.C64_Pro_Mono_STYLE.Length, IntPtr.Zero, ref dummy);
+					fonts.AddMemoryFont(fontPtr, fontData.Length);
+					AddFontMemResourceEx(fontPtr, (uint)fontData.Length, IntPtr.Zero, ref dummy);
 
-					System.Runtime.InteropServices.Marshal.FreeCoTaskMem(fontPtr);
+					Marshal.FreeCoTaskMem(fontPtr);
 
 					commentFont = new Font(fonts.Families[0], 6);
 				}

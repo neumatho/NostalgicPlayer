@@ -34,6 +34,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindowForm));
 			this.menuStrip = new System.Windows.Forms.MenuStrip();
 			this.infoLabel = new Krypton.Toolkit.KryptonLabel();
+			this.bigFontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
+			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
 			this.infoGroup = new Krypton.Toolkit.KryptonGroup();
 			this.moduleInfoButton = new Krypton.Toolkit.KryptonButton();
 			this.masterVolumeTrackBar = new Krypton.Toolkit.KryptonTrackBar();
@@ -68,7 +70,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.muteCheckButton = new Krypton.Toolkit.KryptonCheckButton();
 			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.clockTimer = new System.Windows.Forms.Timer(this.components);
-			this.kryptonManager = new Krypton.Toolkit.KryptonManager(this.components);
 			this.sortContextMenu = new Krypton.Toolkit.KryptonContextMenu();
 			this.listContextMenu = new Krypton.Toolkit.KryptonContextMenu();
 			this.diskContextMenu = new Krypton.Toolkit.KryptonContextMenu();
@@ -103,13 +104,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// infoLabel
 			// 
+			this.infoLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.infoLabel.AutoSize = false;
 			this.infoLabel.Location = new System.Drawing.Point(3, 3);
 			this.infoLabel.Name = "infoLabel";
-			this.infoLabel.Size = new System.Drawing.Size(340, 16);
-			this.infoLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.infoLabel.Palette = this.bigFontPalette;
+			this.infoLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			this.infoLabel.Size = new System.Drawing.Size(342, 16);
 			this.infoLabel.TabIndex = 0;
 			this.infoLabel.Values.Text = "";
+			// 
+			// bigFontPalette
+			// 
+			this.bigFontPalette.BaseFontSize = 9F;
 			// 
 			// infoGroup
 			// 
@@ -155,11 +163,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.moduleListBox.Location = new System.Drawing.Point(35, 56);
 			this.moduleListBox.Name = "moduleListBox";
+			this.moduleListBox.Palette = this.fontPalette;
+			this.moduleListBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.moduleListBox.ScrollAlwaysVisible = true;
 			this.moduleListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
 			this.moduleListBox.Size = new System.Drawing.Size(345, 116);
-			this.moduleListBox.StateCommon.Item.Content.LongText.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.moduleListBox.StateCommon.Item.Content.ShortText.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.moduleListBox.TabIndex = 5;
 			// 
 			// listButtonsGroup
@@ -273,19 +281,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// totalLabel
 			// 
 			this.totalLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.totalLabel.Location = new System.Drawing.Point(106, 8);
+			this.totalLabel.Location = new System.Drawing.Point(106, 7);
 			this.totalLabel.Name = "totalLabel";
-			this.totalLabel.Size = new System.Drawing.Size(29, 18);
-			this.totalLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.totalLabel.Palette = this.bigFontPalette;
+			this.totalLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			this.totalLabel.Size = new System.Drawing.Size(28, 18);
 			this.totalLabel.TabIndex = 1;
 			this.totalLabel.Values.Text = "0/0";
 			// 
 			// timeLabel
 			// 
-			this.timeLabel.Location = new System.Drawing.Point(3, 8);
+			this.timeLabel.Location = new System.Drawing.Point(3, 7);
 			this.timeLabel.Name = "timeLabel";
-			this.timeLabel.Size = new System.Drawing.Size(64, 18);
-			this.timeLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.timeLabel.Palette = this.bigFontPalette;
+			this.timeLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			this.timeLabel.Size = new System.Drawing.Size(62, 18);
 			this.timeLabel.TabIndex = 0;
 			this.timeLabel.Values.Text = "0:00/0:00";
 			// 
@@ -459,13 +469,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			this.clockTimer.Interval = 995;
 			// 
-			// kryptonManager
+			// sortContextMenu
 			// 
-			this.kryptonManager.GlobalPaletteMode = Krypton.Toolkit.PaletteModeManager.Office2010Blue;
+			this.sortContextMenu.Palette = this.fontPalette;
+			// 
+			// listContextMenu
+			// 
+			this.listContextMenu.Palette = this.fontPalette;
+			// 
+			// diskContextMenu
+			// 
+			this.diskContextMenu.Palette = this.fontPalette;
 			// 
 			// scrollTimer
 			// 
 			this.scrollTimer.Interval = 300;
+			// 
+			// addContextMenu
+			// 
+			this.addContextMenu.Palette = this.fontPalette;
 			// 
 			// MainWindowForm
 			// 
@@ -488,6 +510,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.MinimumSize = new System.Drawing.Size(400, 320);
 			this.Name = "MainWindowForm";
+			this.Palette = this.fontPalette;
+			this.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			((System.ComponentModel.ISupportInitialize)(this.infoGroup.Panel)).EndInit();
 			this.infoGroup.Panel.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.infoGroup)).EndInit();
@@ -546,7 +570,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private KryptonCheckButton muteCheckButton;
 		private System.Windows.Forms.ToolTip toolTip;
 		private System.Windows.Forms.Timer clockTimer;
-		private KryptonManager kryptonManager;
 		private KryptonContextMenu sortContextMenu;
 		private KryptonContextMenu listContextMenu;
 		private KryptonContextMenu diskContextMenu;
@@ -554,6 +577,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private System.Windows.Forms.Timer neverEndingTimer;
 		private KryptonContextMenu addContextMenu;
 		private KryptonButton favoritesButton;
+		private GuiKit.Components.FontPalette fontPalette;
+		private GuiKit.Components.FontPalette bigFontPalette;
 	}
 }
 

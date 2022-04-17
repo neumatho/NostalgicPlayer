@@ -115,6 +115,7 @@ namespace Polycode.NostalgicPlayer.GuiKit.Controls
 			button.Tag = result;
 			button.AutoSize = true;
 			button.DialogResult = DialogResult.Cancel;
+			button.Palette = fontPalette;
 			button.Click += Button_Click;
 
 			if (buttonNumber == 1)

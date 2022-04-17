@@ -29,6 +29,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this.navigator = new Krypton.Navigator.KryptonNavigator();
 			this.navigatorFormatsPage = new Krypton.Navigator.KryptonPage();
 			this.formatsListControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLists.FormatsListUserControl();
@@ -42,6 +43,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.visualsListControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLists.VisualsListUserControl();
 			this.navigatorDecrunchersPage = new Krypton.Navigator.KryptonPage();
 			this.decrunchersListUserControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLists.DecrunchersListUserControl();
+			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.navigator)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.navigatorFormatsPage)).BeginInit();
 			this.navigatorFormatsPage.SuspendLayout();
@@ -74,9 +76,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
             this.navigatorSampleConvertersPage,
             this.navigatorVisualsPage,
             this.navigatorDecrunchersPage});
+			this.navigator.Palette = this.fontPalette;
+			this.navigator.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.navigator.SelectedIndex = 0;
 			this.navigator.Size = new System.Drawing.Size(592, 340);
-			this.navigator.StateCommon.Tab.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.navigator.TabIndex = 0;
 			// 
 			// navigatorFormatsPage
@@ -87,7 +90,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.navigatorFormatsPage.LastVisibleSet = true;
 			this.navigatorFormatsPage.MinimumSize = new System.Drawing.Size(50, 50);
 			this.navigatorFormatsPage.Name = "navigatorFormatsPage";
-			this.navigatorFormatsPage.Size = new System.Drawing.Size(590, 315);
+			this.navigatorFormatsPage.Size = new System.Drawing.Size(590, 314);
 			this.navigatorFormatsPage.Text = "";
 			this.navigatorFormatsPage.ToolTipTitle = "Page ToolTip";
 			this.navigatorFormatsPage.UniqueName = "347f870bce2446e39084856a59b61717";
@@ -249,5 +252,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentLists.FormatsListUserControl formatsListControl;
 		private Krypton.Navigator.KryptonPage navigatorDecrunchersPage;
 		private AgentLists.DecrunchersListUserControl decrunchersListUserControl;
+		private GuiKit.Components.FontPalette fontPalette;
 	}
 }

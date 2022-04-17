@@ -35,7 +35,7 @@
 			this.messagePanel = new System.Windows.Forms.Panel();
 			this.buttonPanel = new System.Windows.Forms.Panel();
 			this.imageList = new System.Windows.Forms.ImageList(this.components);
-			this.kryptonManager = new Krypton.Toolkit.KryptonManager(this.components);
+			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
 			this.messagePanel.SuspendLayout();
 			this.SuspendLayout();
@@ -46,7 +46,9 @@
 			this.messageLabel.Location = new System.Drawing.Point(0, 0);
 			this.messageLabel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.messageLabel.Name = "messageLabel";
-			this.messageLabel.Size = new System.Drawing.Size(43, 20);
+			this.messageLabel.Palette = this.fontPalette;
+			this.messageLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			this.messageLabel.Size = new System.Drawing.Size(54, 18);
 			this.messageLabel.TabIndex = 0;
 			this.messageLabel.Values.Text = "label1";
 			// 
@@ -70,7 +72,7 @@
 			this.messagePanel.Location = new System.Drawing.Point(56, 15);
 			this.messagePanel.Margin = new System.Windows.Forms.Padding(0);
 			this.messagePanel.Name = "messagePanel";
-			this.messagePanel.Size = new System.Drawing.Size(43, 20);
+			this.messagePanel.Size = new System.Drawing.Size(54, 18);
 			this.messagePanel.TabIndex = 3;
 			// 
 			// buttonPanel
@@ -93,10 +95,6 @@
 			this.imageList.Images.SetKeyName(1, "Question.png");
 			this.imageList.Images.SetKeyName(2, "Warning.png");
 			this.imageList.Images.SetKeyName(3, "Error.png");
-			// 
-			// kryptonManager
-			// 
-			this.kryptonManager.GlobalPaletteMode = Krypton.Toolkit.PaletteModeManager.Office2010Blue;
 			// 
 			// CustomMessageBox
 			// 
@@ -136,6 +134,6 @@
 		private System.Windows.Forms.Panel messagePanel;
 		private System.Windows.Forms.Panel buttonPanel;
 		private System.Windows.Forms.ImageList imageList;
-		private Krypton.Toolkit.KryptonManager kryptonManager;
+		private Components.FontPalette fontPalette;
 	}
 }

@@ -31,8 +31,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ModuleInfoWindowForm));
-			this.kryptonManager = new Krypton.Toolkit.KryptonManager(this.components);
 			this.moduleInfoInfoDataGridView = new Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow.ModuleInfoListControl();
+			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
 			this.infoGroup = new Krypton.Toolkit.KryptonGroup();
 			this.navigator = new Krypton.Navigator.KryptonNavigator();
 			this.navigatorInfoPage = new Krypton.Navigator.KryptonPage();
@@ -69,6 +69,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			this.moduleInfoInfoDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.moduleInfoInfoDataGridView.Location = new System.Drawing.Point(0, 0);
 			this.moduleInfoInfoDataGridView.Name = "moduleInfoInfoDataGridView";
+			this.moduleInfoInfoDataGridView.Palette = this.fontPalette;
+			this.moduleInfoInfoDataGridView.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.moduleInfoInfoDataGridView.ReadOnly = true;
 			this.moduleInfoInfoDataGridView.RowHeadersVisible = false;
 			this.moduleInfoInfoDataGridView.RowTemplate.Height = 25;
@@ -76,14 +78,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			this.moduleInfoInfoDataGridView.ShowCellErrors = false;
 			this.moduleInfoInfoDataGridView.ShowEditingIcon = false;
 			this.moduleInfoInfoDataGridView.ShowRowErrors = false;
-			this.moduleInfoInfoDataGridView.Size = new System.Drawing.Size(264, 139);
+			this.moduleInfoInfoDataGridView.Size = new System.Drawing.Size(264, 140);
 			this.moduleInfoInfoDataGridView.StateCommon.Background.Color1 = System.Drawing.Color.White;
 			this.moduleInfoInfoDataGridView.StateCommon.BackStyle = Krypton.Toolkit.PaletteBackStyle.GridBackgroundList;
 			this.moduleInfoInfoDataGridView.StateCommon.DataCell.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
-			this.moduleInfoInfoDataGridView.StateCommon.DataCell.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.moduleInfoInfoDataGridView.StateCommon.DataCell.Content.Padding = new System.Windows.Forms.Padding(0);
 			this.moduleInfoInfoDataGridView.StateCommon.HeaderColumn.Border.DrawBorders = ((Krypton.Toolkit.PaletteDrawBorders)((Krypton.Toolkit.PaletteDrawBorders.Bottom | Krypton.Toolkit.PaletteDrawBorders.Right)));
-			this.moduleInfoInfoDataGridView.StateCommon.HeaderColumn.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.moduleInfoInfoDataGridView.TabIndex = 0;
 			this.moduleInfoInfoDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ModuleInfoInfoDataGridView_CellContentClick);
 			// 
@@ -98,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			// 
 			// 
 			this.infoGroup.Panel.Controls.Add(this.moduleInfoInfoDataGridView);
-			this.infoGroup.Size = new System.Drawing.Size(266, 141);
+			this.infoGroup.Size = new System.Drawing.Size(266, 142);
 			this.infoGroup.TabIndex = 0;
 			// 
 			// navigator
@@ -115,10 +114,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
             this.navigatorInfoPage,
             this.navigatorCommentPage,
             this.navigatorLyricsPage});
+			this.navigator.Palette = this.fontPalette;
+			this.navigator.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.navigator.Panel.PanelBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			this.navigator.SelectedIndex = 0;
 			this.navigator.Size = new System.Drawing.Size(284, 184);
-			this.navigator.StateCommon.Tab.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.navigator.TabIndex = 1;
 			this.navigator.SelectedPageChanged += new System.EventHandler(this.Navigator_SelectedPageChanged);
 			// 
@@ -130,7 +130,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			this.navigatorInfoPage.LastVisibleSet = true;
 			this.navigatorInfoPage.MinimumSize = new System.Drawing.Size(50, 50);
 			this.navigatorInfoPage.Name = "navigatorInfoPage";
-			this.navigatorInfoPage.Size = new System.Drawing.Size(282, 157);
+			this.navigatorInfoPage.Size = new System.Drawing.Size(282, 158);
 			this.navigatorInfoPage.Text = "";
 			this.navigatorInfoPage.ToolTipTitle = "Page ToolTip";
 			this.navigatorInfoPage.UniqueName = "c99656c653d3472bb30017074959420b";
@@ -218,6 +218,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(316, 239);
 			this.Name = "ModuleInfoWindowForm";
+			this.Palette = this.fontPalette;
+			this.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ModuleInfoWindowForm_FormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.moduleInfoInfoDataGridView)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.infoGroup.Panel)).EndInit();
@@ -241,8 +243,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		}
 
 		#endregion
-
-		private Krypton.Toolkit.KryptonManager kryptonManager;
 		private ModuleInfoListControl moduleInfoInfoDataGridView;
 		private Krypton.Toolkit.KryptonGroup infoGroup;
 		private Krypton.Navigator.KryptonNavigator navigator;
@@ -253,5 +253,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		private Krypton.Navigator.KryptonPage navigatorLyricsPage;
 		private Controls.ReadOnlyRichTextBox moduleInfoLyricsReadOnlyRichTextBox;
 		private Krypton.Toolkit.KryptonGroup lyricsGroup;
+		private GuiKit.Components.FontPalette fontPalette;
 	}
 }

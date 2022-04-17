@@ -29,7 +29,9 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this.deviceLabel = new Krypton.Toolkit.KryptonLabel();
+			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
 			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
 			this.deviceComboBox = new Krypton.Toolkit.KryptonComboBox();
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
@@ -40,9 +42,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 			// 
 			this.deviceLabel.Location = new System.Drawing.Point(0, 22);
 			this.deviceLabel.Name = "deviceLabel";
+			this.deviceLabel.Palette = this.fontPalette;
+			this.deviceLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.deviceLabel, "IDS_SETTINGS_DEVICE");
-			this.deviceLabel.Size = new System.Drawing.Size(80, 17);
-			this.deviceLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.deviceLabel.Size = new System.Drawing.Size(78, 16);
 			this.deviceLabel.TabIndex = 0;
 			this.deviceLabel.Values.Text = "Output device";
 			// 
@@ -58,11 +61,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 			this.deviceComboBox.IntegralHeight = false;
 			this.deviceComboBox.Location = new System.Drawing.Point(87, 21);
 			this.deviceComboBox.Name = "deviceComboBox";
+			this.deviceComboBox.Palette = this.fontPalette;
+			this.deviceComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.deviceComboBox, null);
-			this.deviceComboBox.Size = new System.Drawing.Size(305, 19);
-			this.deviceComboBox.StateCommon.ComboBox.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.deviceComboBox.StateCommon.ComboBox.Content.TextH = Krypton.Toolkit.PaletteRelativeAlign.Near;
-			this.deviceComboBox.StateCommon.Item.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.deviceComboBox.Size = new System.Drawing.Size(305, 18);
 			this.deviceComboBox.TabIndex = 1;
 			// 
 			// SettingsControl
@@ -86,5 +88,6 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 		private Krypton.Toolkit.KryptonLabel deviceLabel;
 		private GuiKit.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonComboBox deviceComboBox;
+		private GuiKit.Components.FontPalette fontPalette;
 	}
 }

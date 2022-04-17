@@ -29,6 +29,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
 			this.agentsDataGridView = new Krypton.Toolkit.KryptonDataGridView();
 			this.descriptionDataGridView = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.DescriptionListControl();
@@ -36,6 +37,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.displayButton = new Krypton.Toolkit.KryptonButton();
 			this.agentsGroup = new Krypton.Toolkit.KryptonGroup();
 			this.descriptionGroup = new Krypton.Toolkit.KryptonGroup();
+			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
+			this.bigFontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.agentsDataGridView)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.descriptionDataGridView)).BeginInit();
@@ -62,6 +65,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.agentsDataGridView.Location = new System.Drawing.Point(0, 0);
 			this.agentsDataGridView.MultiSelect = false;
 			this.agentsDataGridView.Name = "agentsDataGridView";
+			this.agentsDataGridView.Palette = this.fontPalette;
+			this.agentsDataGridView.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.agentsDataGridView.ReadOnly = true;
 			this.controlResource.SetResourceKey(this.agentsDataGridView, null);
 			this.agentsDataGridView.RowHeadersVisible = false;
@@ -75,9 +80,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.agentsDataGridView.StateCommon.Background.Color1 = System.Drawing.Color.White;
 			this.agentsDataGridView.StateCommon.BackStyle = Krypton.Toolkit.PaletteBackStyle.GridBackgroundList;
 			this.agentsDataGridView.StateCommon.DataCell.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
-			this.agentsDataGridView.StateCommon.DataCell.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.agentsDataGridView.StateCommon.HeaderColumn.Border.DrawBorders = ((Krypton.Toolkit.PaletteDrawBorders)((Krypton.Toolkit.PaletteDrawBorders.Bottom | Krypton.Toolkit.PaletteDrawBorders.Right)));
-			this.agentsDataGridView.StateCommon.HeaderColumn.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.agentsDataGridView.TabIndex = 0;
 			this.agentsDataGridView.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.AgentsDataGridView_CellContentDoubleClick);
 			this.agentsDataGridView.SelectionChanged += new System.EventHandler(this.AgentsDataGridView_SelectionChanged);
@@ -90,6 +93,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.descriptionDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.descriptionDataGridView.Location = new System.Drawing.Point(0, 0);
 			this.descriptionDataGridView.Name = "descriptionDataGridView";
+			this.descriptionDataGridView.Palette = this.fontPalette;
+			this.descriptionDataGridView.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.descriptionDataGridView.ReadOnly = true;
 			this.controlResource.SetResourceKey(this.descriptionDataGridView, null);
 			this.descriptionDataGridView.RowHeadersVisible = false;
@@ -103,9 +108,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.descriptionDataGridView.StateCommon.Background.Color1 = System.Drawing.Color.White;
 			this.descriptionDataGridView.StateCommon.BackStyle = Krypton.Toolkit.PaletteBackStyle.GridBackgroundList;
 			this.descriptionDataGridView.StateCommon.DataCell.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
-			this.descriptionDataGridView.StateCommon.DataCell.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.descriptionDataGridView.StateCommon.HeaderColumn.Border.DrawBorders = ((Krypton.Toolkit.PaletteDrawBorders)((Krypton.Toolkit.PaletteDrawBorders.Bottom | Krypton.Toolkit.PaletteDrawBorders.Right)));
-			this.descriptionDataGridView.StateCommon.HeaderColumn.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.descriptionDataGridView.TabIndex = 0;
 			this.descriptionDataGridView.ColumnWidthChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.DescriptionDataGridView_ColumnWidthChanged);
 			// 
@@ -114,9 +117,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.settingsButton.Enabled = false;
 			this.settingsButton.Location = new System.Drawing.Point(4, 282);
 			this.settingsButton.Name = "settingsButton";
+			this.settingsButton.Palette = this.bigFontPalette;
+			this.settingsButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.settingsButton, "IDS_SETTINGS_AGENTS_SETTINGS");
 			this.settingsButton.Size = new System.Drawing.Size(138, 25);
-			this.settingsButton.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.settingsButton.TabIndex = 2;
 			this.settingsButton.Values.Text = "Settings";
 			this.settingsButton.Click += new System.EventHandler(this.SettingsButton_Click);
@@ -126,9 +130,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.displayButton.Enabled = false;
 			this.displayButton.Location = new System.Drawing.Point(153, 282);
 			this.displayButton.Name = "displayButton";
+			this.displayButton.Palette = this.bigFontPalette;
+			this.displayButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.displayButton, "IDS_SETTINGS_AGENTS_DISPLAY");
 			this.displayButton.Size = new System.Drawing.Size(138, 25);
-			this.displayButton.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.displayButton.TabIndex = 3;
 			this.displayButton.Values.Text = "Display";
 			this.displayButton.Click += new System.EventHandler(this.DisplayButton_Click);
@@ -156,6 +161,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.controlResource.SetResourceKey(this.descriptionGroup, null);
 			this.descriptionGroup.Size = new System.Drawing.Size(287, 299);
 			this.descriptionGroup.TabIndex = 1;
+			// 
+			// bigFontPalette
+			// 
+			this.bigFontPalette.BaseFontSize = 9F;
 			// 
 			// AgentsListUserControl
 			// 
@@ -190,5 +199,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Krypton.Toolkit.KryptonButton displayButton;
 		private Krypton.Toolkit.KryptonGroup agentsGroup;
 		private Krypton.Toolkit.KryptonGroup descriptionGroup;
+		private GuiKit.Components.FontPalette fontPalette;
+		private GuiKit.Components.FontPalette bigFontPalette;
 	}
 }

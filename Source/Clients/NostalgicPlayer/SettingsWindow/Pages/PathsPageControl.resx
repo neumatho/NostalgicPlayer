@@ -71,6 +71,9 @@
         AABJRU5ErkJggg==
 </value>
   </data>
+  <metadata name="fontPalette.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>157, 17</value>
+  </metadata>
   <data name="moduleButton.Values.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
@@ -84,7 +87,7 @@
   <data name="listButton.Values.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
-        DgAACw4BQL7hQQAAANhJREFUOE/N0rGOAVEUxvERRKlQK0RByxuoKJQbG4UHUBAFT6DYLUm09GrrKXRk
+        DQAACw0B7QfALAAAANhJREFUOE/N0rGOAVEUxvERRKlQK0RByxuoKJQbG4UHUBAFT6DYLUm09GrrKXRk
         KxR62W6FQvh/k5vJmEJOofAlv9xz70xO7tw73isyxRY75xdtmLNBHTWnhQsKMGXsxnC0kwUmEV/I4iEj
         N4bTgNajltgjgSB6YE0SN+T9mUu0QQbFJ9Sg6uo0ggYp6Eau0EsW//AbxDCDbkSdLYljrUINOjgipwVj
         vnFQscIZFU2MaULbL2mib+mqMKaMEz79GdGhDdAzGOLPjUH60F/3YzDHB3TobxHPuwNn+kC2nCS6FAAA

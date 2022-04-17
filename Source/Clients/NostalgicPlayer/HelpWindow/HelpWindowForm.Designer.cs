@@ -31,14 +31,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HelpWindowForm));
-			this.kryptonManager = new Krypton.Toolkit.KryptonManager(this.components);
-			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
-			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
+			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
 			this.SuspendLayout();
-			// 
-			// controlResource
-			// 
-			this.controlResource.ResourceClassName = "Polycode.NostalgicPlayer.Client.GuiPlayer.Resources";
 			// 
 			// HelpWindowForm
 			// 
@@ -48,15 +42,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(860, 855);
 			this.Name = "HelpWindowForm";
-			this.controlResource.SetResourceKey(this, null);
-			((System.ComponentModel.ISupportInitialize)(this.controlResource)).EndInit();
+			this.Palette = this.fontPalette;
+			this.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
 
-		private Krypton.Toolkit.KryptonManager kryptonManager;
-		private GuiKit.Designer.ControlResource controlResource;
+		private GuiKit.Components.FontPalette fontPalette;
 	}
 }

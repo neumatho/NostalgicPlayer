@@ -29,6 +29,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PathsPageControl));
 			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
 			this.group = new Krypton.Toolkit.KryptonGroup();
@@ -41,6 +42,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.listButton = new Krypton.Toolkit.KryptonButton();
 			this.listTextBox = new Krypton.Toolkit.KryptonTextBox();
 			this.listLabel = new Krypton.Toolkit.KryptonLabel();
+			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.group)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.group.Panel)).BeginInit();
@@ -92,18 +94,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.startScanTextBox.Location = new System.Drawing.Point(100, 38);
 			this.startScanTextBox.Name = "startScanTextBox";
+			this.startScanTextBox.Palette = this.fontPalette;
+			this.startScanTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.startScanTextBox, null);
-			this.startScanTextBox.Size = new System.Drawing.Size(454, 21);
-			this.startScanTextBox.StateCommon.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.startScanTextBox.Size = new System.Drawing.Size(454, 20);
 			this.startScanTextBox.TabIndex = 1;
 			// 
 			// startScanLabel
 			// 
 			this.startScanLabel.Location = new System.Drawing.Point(4, 40);
 			this.startScanLabel.Name = "startScanLabel";
+			this.startScanLabel.Palette = this.fontPalette;
+			this.startScanLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.startScanLabel, "IDS_SETTINGS_PATHS_STARTSCANPATH");
-			this.startScanLabel.Size = new System.Drawing.Size(86, 17);
-			this.startScanLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.startScanLabel.Size = new System.Drawing.Size(84, 16);
 			this.startScanLabel.TabIndex = 0;
 			this.startScanLabel.Values.Text = "Start scan path";
 			// 
@@ -125,18 +129,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.moduleTextBox.Location = new System.Drawing.Point(100, 70);
 			this.moduleTextBox.Name = "moduleTextBox";
+			this.moduleTextBox.Palette = this.fontPalette;
+			this.moduleTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.moduleTextBox, null);
-			this.moduleTextBox.Size = new System.Drawing.Size(454, 21);
-			this.moduleTextBox.StateCommon.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.moduleTextBox.Size = new System.Drawing.Size(454, 20);
 			this.moduleTextBox.TabIndex = 4;
 			// 
 			// moduleLabel
 			// 
 			this.moduleLabel.Location = new System.Drawing.Point(4, 72);
 			this.moduleLabel.Name = "moduleLabel";
+			this.moduleLabel.Palette = this.fontPalette;
+			this.moduleLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.moduleLabel, "IDS_SETTINGS_PATHS_MODULEPATH");
-			this.moduleLabel.Size = new System.Drawing.Size(72, 17);
-			this.moduleLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.moduleLabel.Size = new System.Drawing.Size(70, 16);
 			this.moduleLabel.TabIndex = 3;
 			this.moduleLabel.Values.Text = "Module path";
 			// 
@@ -158,18 +164,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.listTextBox.Location = new System.Drawing.Point(100, 102);
 			this.listTextBox.Name = "listTextBox";
+			this.listTextBox.Palette = this.fontPalette;
+			this.listTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.listTextBox, null);
-			this.listTextBox.Size = new System.Drawing.Size(454, 21);
-			this.listTextBox.StateCommon.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.listTextBox.Size = new System.Drawing.Size(454, 20);
 			this.listTextBox.TabIndex = 7;
 			// 
 			// listLabel
 			// 
 			this.listLabel.Location = new System.Drawing.Point(4, 104);
 			this.listLabel.Name = "listLabel";
+			this.listLabel.Palette = this.fontPalette;
+			this.listLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.listLabel, "IDS_SETTINGS_PATHS_LISTPATH");
-			this.listLabel.Size = new System.Drawing.Size(53, 17);
-			this.listLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.listLabel.Size = new System.Drawing.Size(52, 16);
 			this.listLabel.TabIndex = 6;
 			this.listLabel.Values.Text = "List path";
 			// 
@@ -202,5 +210,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Krypton.Toolkit.KryptonLabel listLabel;
 		private Krypton.Toolkit.KryptonTextBox listTextBox;
 		private Krypton.Toolkit.KryptonButton listButton;
+		private GuiKit.Components.FontPalette fontPalette;
 	}
 }

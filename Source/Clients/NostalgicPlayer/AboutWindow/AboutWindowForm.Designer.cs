@@ -31,9 +31,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutWindowForm));
-			this.kryptonManager = new Krypton.Toolkit.KryptonManager(this.components);
 			this.pictureBox = new System.Windows.Forms.PictureBox();
 			this.pulseTimer = new System.Windows.Forms.Timer(this.components);
+			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -59,21 +59,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(358, 188);
 			this.Controls.Add(this.pictureBox);
-			this.Font = new System.Drawing.Font("Verdana", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "AboutWindowForm";
+			this.Palette = this.fontPalette;
+			this.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
-
-		private Krypton.Toolkit.KryptonManager kryptonManager;
 		private System.Windows.Forms.PictureBox pictureBox;
 		private System.Windows.Forms.Timer pulseTimer;
+		private GuiKit.Components.FontPalette fontPalette;
 	}
 }

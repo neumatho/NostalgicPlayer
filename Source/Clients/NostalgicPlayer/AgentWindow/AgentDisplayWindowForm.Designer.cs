@@ -31,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AgentDisplayWindowForm));
-			this.kryptonManager = new Krypton.Toolkit.KryptonManager(this.components);
+			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
 			this.SuspendLayout();
 			// 
 			// AgentDisplayWindowForm
@@ -42,6 +42,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(50, 50);
 			this.Name = "AgentDisplayWindowForm";
+			this.Palette = this.fontPalette;
+			this.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.AgentDisplayWindowForm_FormClosed);
 			this.ResumeLayout(false);
 
@@ -49,6 +51,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 
 		#endregion
 
-		private Krypton.Toolkit.KryptonManager kryptonManager;
+		private GuiKit.Components.FontPalette fontPalette;
 	}
 }

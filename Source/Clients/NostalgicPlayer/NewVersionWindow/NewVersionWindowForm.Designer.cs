@@ -31,9 +31,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(NewVersionWindowForm));
-			this.kryptonManager = new Krypton.Toolkit.KryptonManager(this.components);
 			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
 			this.label = new Krypton.Toolkit.KryptonLabel();
+			this.bigFontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
 			this.kryptonButton1 = new Krypton.Toolkit.KryptonButton();
 			this.historyRichTextBox = new Krypton.Toolkit.KryptonRichTextBox();
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
@@ -47,18 +47,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 			// 
 			this.label.Location = new System.Drawing.Point(8, 8);
 			this.label.Name = "label";
+			this.label.Palette = this.bigFontPalette;
+			this.label.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.label, "IDS_NEWVERSION_MESSAGE");
-			this.label.Size = new System.Drawing.Size(447, 33);
-			this.label.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.label.Size = new System.Drawing.Size(451, 31);
 			this.label.TabIndex = 0;
 			this.label.Values.Text = "Congratulations! A new version of NostalgicPlayer has been installed. See below\r\n" +
     "what has changed since your previous version.";
+			// 
+			// bigFontPalette
+			// 
+			this.bigFontPalette.BaseFontSize = 9F;
 			// 
 			// kryptonButton1
 			// 
 			this.kryptonButton1.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.kryptonButton1.Location = new System.Drawing.Point(369, 255);
 			this.kryptonButton1.Name = "kryptonButton1";
+			this.kryptonButton1.Palette = this.bigFontPalette;
+			this.kryptonButton1.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.kryptonButton1, "IDS_BUT_OK");
 			this.kryptonButton1.Size = new System.Drawing.Size(90, 25);
 			this.kryptonButton1.TabIndex = 2;
@@ -87,6 +94,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "NewVersionWindowForm";
+			this.Palette = this.bigFontPalette;
+			this.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this, null);
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -97,11 +106,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 		}
 
 		#endregion
-
-		private Krypton.Toolkit.KryptonManager kryptonManager;
 		private GuiKit.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonLabel label;
 		private Krypton.Toolkit.KryptonButton kryptonButton1;
 		private Krypton.Toolkit.KryptonRichTextBox historyRichTextBox;
+		private GuiKit.Components.FontPalette bigFontPalette;
 	}
 }

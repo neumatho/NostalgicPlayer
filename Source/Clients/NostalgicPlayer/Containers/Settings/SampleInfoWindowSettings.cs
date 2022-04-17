@@ -234,7 +234,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/********************************************************************/
 		public int SampColumn3Width
 		{
-			get => settings.GetIntEntry("List", "SampCol3Width", 44);
+			get => settings.GetIntEntry("List", "SampCol3Width", 46);
 
 			set => settings.SetIntEntry("List", "SampCol3Width", value);
 		}
@@ -290,7 +290,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/********************************************************************/
 		public int SampColumn5Width
 		{
-			get => settings.GetIntEntry("List", "SampCol5Width", 52);
+			get => settings.GetIntEntry("List", "SampCol5Width", 56);
 
 			set => settings.SetIntEntry("List", "SampCol5Width", value);
 		}
@@ -402,7 +402,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		/********************************************************************/
 		public int SampColumn9Width
 		{
-			get => settings.GetIntEntry("List", "SampCol9Width", 56);
+			get => settings.GetIntEntry("List", "SampCol9Width", 60);
 
 			set => settings.SetIntEntry("List", "SampCol9Width", value);
 		}

@@ -7,10 +7,10 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using System.Drawing;
 using System.Net.Http;
 using System.Text;
 using Krypton.Toolkit;
+using Polycode.NostalgicPlayer.GuiKit.Components;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 {
@@ -134,9 +134,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 		/********************************************************************/
 		private void AddHistory(string historyHtml, string version, ref int index)
 		{
-			historyRichTextBox.SelectionFont = new Font("Tahoma", 12, GraphicsUnit.Point);
+			historyRichTextBox.SelectionFont = FontPalette.GetRegularFont(12.0f);
 			historyRichTextBox.SelectedText = version + "\n";
-			historyRichTextBox.SelectionFont = new Font("Tahoma", 9, GraphicsUnit.Point);
+			historyRichTextBox.SelectionFont = FontPalette.GetRegularFont(9.0f);
 			historyRichTextBox.SelectedText = "\n";
 
 			historyRichTextBox.SelectionBullet = true;

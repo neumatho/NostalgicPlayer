@@ -16,6 +16,7 @@ using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
+using Polycode.NostalgicPlayer.GuiKit.Components;
 using Polycode.NostalgicPlayer.GuiKit.Extensions;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -509,7 +510,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 				string description = ((AgentListInfo)selectedRows[0].Tag)?.Description;
 				int listWidth = descriptionDataGridView.Columns[0].Width;
 
-				foreach (string line in description.SplitIntoLines(descriptionDataGridView.Handle, listWidth, descriptionDataGridView.StateCommon.DataCell.Content.Font))
+				foreach (string line in description.SplitIntoLines(descriptionDataGridView.Handle, listWidth, FontPalette.GetRegularFont()))
 					descriptionDataGridView.Rows.Add(line);
 
 				// Resize the rows, so the lines are compacted

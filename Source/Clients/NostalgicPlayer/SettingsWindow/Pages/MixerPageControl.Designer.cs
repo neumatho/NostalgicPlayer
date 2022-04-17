@@ -29,6 +29,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
 			this.generalGroupBox = new Krypton.Toolkit.KryptonGroupBox();
 			this.stereoSeparationPercentLabel = new Krypton.Toolkit.KryptonLabel();
@@ -47,6 +48,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.channels32_47Button = new Krypton.Toolkit.KryptonButton();
 			this.channels0_15Button = new Krypton.Toolkit.KryptonButton();
 			this.channels16_31Button = new Krypton.Toolkit.KryptonButton();
+			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.generalGroupBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.generalGroupBox.Panel)).BeginInit();
@@ -71,6 +73,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.generalGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			this.generalGroupBox.Location = new System.Drawing.Point(8, 4);
 			this.generalGroupBox.Name = "generalGroupBox";
+			this.generalGroupBox.Palette = this.fontPalette;
+			this.generalGroupBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			// 
 			// 
 			// 
@@ -83,7 +87,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.generalGroupBox.Panel.Controls.Add(this.surroundCheckBox);
 			this.controlResource.SetResourceKey(this.generalGroupBox, "IDS_SETTINGS_MIXER_GENERAL");
 			this.generalGroupBox.Size = new System.Drawing.Size(592, 100);
-			this.generalGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.generalGroupBox.TabIndex = 0;
 			this.generalGroupBox.Values.Heading = "General";
 			// 
@@ -91,16 +94,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.stereoSeparationPercentLabel.Location = new System.Drawing.Point(544, 5);
 			this.stereoSeparationPercentLabel.Name = "stereoSeparationPercentLabel";
+			this.stereoSeparationPercentLabel.Palette = this.fontPalette;
+			this.stereoSeparationPercentLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.stereoSeparationPercentLabel, null);
-			this.stereoSeparationPercentLabel.Size = new System.Drawing.Size(40, 17);
-			this.stereoSeparationPercentLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.stereoSeparationPercentLabel.Size = new System.Drawing.Size(38, 16);
 			this.stereoSeparationPercentLabel.TabIndex = 2;
 			this.stereoSeparationPercentLabel.Values.Text = "100%";
 			// 
 			// stereoSeparationTrackBar
 			// 
 			this.stereoSeparationTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.InputControlStandalone;
-			this.stereoSeparationTrackBar.DrawBackground = true;
 			this.stereoSeparationTrackBar.Location = new System.Drawing.Point(106, 0);
 			this.stereoSeparationTrackBar.Maximum = 100;
 			this.stereoSeparationTrackBar.Name = "stereoSeparationTrackBar";
@@ -114,20 +117,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.stereoSeparationLabel.Location = new System.Drawing.Point(4, 5);
 			this.stereoSeparationLabel.Name = "stereoSeparationLabel";
+			this.stereoSeparationLabel.Palette = this.fontPalette;
+			this.stereoSeparationLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.stereoSeparationLabel, "IDS_SETTINGS_MIXER_GENERAL_STEREOSEPARATION");
-			this.stereoSeparationLabel.Size = new System.Drawing.Size(98, 17);
-			this.stereoSeparationLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.stereoSeparationLabel.Size = new System.Drawing.Size(97, 16);
 			this.stereoSeparationLabel.TabIndex = 0;
 			this.stereoSeparationLabel.Values.Text = "Stereo separation";
 			// 
 			// amigaFilterCheckBox
 			// 
 			this.amigaFilterCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.amigaFilterCheckBox.Location = new System.Drawing.Point(436, 35);
+			this.amigaFilterCheckBox.Location = new System.Drawing.Point(438, 35);
 			this.amigaFilterCheckBox.Name = "amigaFilterCheckBox";
+			this.amigaFilterCheckBox.Palette = this.fontPalette;
+			this.amigaFilterCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.amigaFilterCheckBox, "IDS_SETTINGS_MIXER_GENERAL_AMIGALED");
-			this.amigaFilterCheckBox.Size = new System.Drawing.Size(148, 17);
-			this.amigaFilterCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.amigaFilterCheckBox.Size = new System.Drawing.Size(146, 16);
 			this.amigaFilterCheckBox.TabIndex = 6;
 			this.amigaFilterCheckBox.Values.Text = "Emulate Amiga LED filter";
 			this.amigaFilterCheckBox.CheckedChanged += new System.EventHandler(this.AmigaFilterCheckBox_CheckedChanged);
@@ -136,9 +141,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.interpolationCheckBox.Location = new System.Drawing.Point(4, 35);
 			this.interpolationCheckBox.Name = "interpolationCheckBox";
+			this.interpolationCheckBox.Palette = this.fontPalette;
+			this.interpolationCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.interpolationCheckBox, "IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION");
-			this.interpolationCheckBox.Size = new System.Drawing.Size(87, 17);
-			this.interpolationCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.interpolationCheckBox.Size = new System.Drawing.Size(84, 16);
 			this.interpolationCheckBox.TabIndex = 3;
 			this.interpolationCheckBox.Values.Text = "Interpolation";
 			this.interpolationCheckBox.CheckedChanged += new System.EventHandler(this.InterpolationCheckBox_CheckedChanged);
@@ -147,9 +153,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.swapSpeakersCheckBox.Location = new System.Drawing.Point(4, 56);
 			this.swapSpeakersCheckBox.Name = "swapSpeakersCheckBox";
+			this.swapSpeakersCheckBox.Palette = this.fontPalette;
+			this.swapSpeakersCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.swapSpeakersCheckBox, "IDS_SETTINGS_MIXER_GENERAL_SWAPSPEAKERS");
-			this.swapSpeakersCheckBox.Size = new System.Drawing.Size(166, 17);
-			this.swapSpeakersCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.swapSpeakersCheckBox.Size = new System.Drawing.Size(161, 16);
 			this.swapSpeakersCheckBox.TabIndex = 4;
 			this.swapSpeakersCheckBox.Values.Text = "Swap left and right speakers";
 			this.swapSpeakersCheckBox.CheckedChanged += new System.EventHandler(this.SwapSpeakersCheckBox_CheckedChanged);
@@ -158,9 +165,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.surroundCheckBox.Location = new System.Drawing.Point(200, 35);
 			this.surroundCheckBox.Name = "surroundCheckBox";
+			this.surroundCheckBox.Palette = this.fontPalette;
+			this.surroundCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.surroundCheckBox, "IDS_SETTINGS_MIXER_GENERAL_SURROUND");
-			this.surroundCheckBox.Size = new System.Drawing.Size(146, 17);
-			this.surroundCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.surroundCheckBox.Size = new System.Drawing.Size(143, 16);
 			this.surroundCheckBox.TabIndex = 5;
 			this.surroundCheckBox.Values.Text = "Dolby Prologic  surround";
 			this.surroundCheckBox.CheckedChanged += new System.EventHandler(this.SurroundCheckBox_CheckedChanged);
@@ -172,6 +180,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.outputGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			this.outputGroupBox.Location = new System.Drawing.Point(8, 108);
 			this.outputGroupBox.Name = "outputGroupBox";
+			this.outputGroupBox.Palette = this.fontPalette;
+			this.outputGroupBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			// 
 			// 
 			// 
@@ -180,7 +190,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.outputGroupBox.Panel.Controls.Add(this.outputAgentLabel);
 			this.controlResource.SetResourceKey(this.outputGroupBox, "IDS_SETTINGS_MIXER_OUPUT");
 			this.outputGroupBox.Size = new System.Drawing.Size(592, 50);
-			this.outputGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.outputGroupBox.TabIndex = 1;
 			this.outputGroupBox.Values.Heading = "Mixer output";
 			// 
@@ -189,9 +198,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.outputAgentSettingsButton.Enabled = false;
 			this.outputAgentSettingsButton.Location = new System.Drawing.Point(230, 0);
 			this.outputAgentSettingsButton.Name = "outputAgentSettingsButton";
+			this.outputAgentSettingsButton.Palette = this.fontPalette;
+			this.outputAgentSettingsButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.outputAgentSettingsButton, "IDS_SETTINGS_MIXER_OUPUT_SETTINGS");
 			this.outputAgentSettingsButton.Size = new System.Drawing.Size(60, 22);
-			this.outputAgentSettingsButton.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.outputAgentSettingsButton.TabIndex = 2;
 			this.outputAgentSettingsButton.Values.Text = "Settings";
 			this.outputAgentSettingsButton.Click += new System.EventHandler(this.OutputAgentSettingsButton_Click);
@@ -202,14 +212,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.outputAgentComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.outputAgentComboBox.DropDownWidth = 120;
 			this.outputAgentComboBox.IntegralHeight = false;
-			this.outputAgentComboBox.Location = new System.Drawing.Point(106, 1);
+			this.outputAgentComboBox.Location = new System.Drawing.Point(106, 2);
 			this.outputAgentComboBox.Name = "outputAgentComboBox";
+			this.outputAgentComboBox.Palette = this.fontPalette;
+			this.outputAgentComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.outputAgentComboBox, null);
-			this.outputAgentComboBox.Size = new System.Drawing.Size(120, 20);
+			this.outputAgentComboBox.Size = new System.Drawing.Size(120, 18);
 			this.outputAgentComboBox.Sorted = true;
-			this.outputAgentComboBox.StateCommon.ComboBox.Content.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.outputAgentComboBox.StateCommon.ComboBox.Content.TextH = Krypton.Toolkit.PaletteRelativeAlign.Near;
-			this.outputAgentComboBox.StateCommon.Item.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.outputAgentComboBox.TabIndex = 1;
 			this.outputAgentComboBox.SelectedIndexChanged += new System.EventHandler(this.OutputAgentComboBox_SelectedIndexChanged);
 			// 
@@ -217,9 +226,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.outputAgentLabel.Location = new System.Drawing.Point(4, 3);
 			this.outputAgentLabel.Name = "outputAgentLabel";
+			this.outputAgentLabel.Palette = this.fontPalette;
+			this.outputAgentLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.outputAgentLabel, "IDS_SETTINGS_MIXER_OUPUT_AGENT");
-			this.outputAgentLabel.Size = new System.Drawing.Size(76, 17);
-			this.outputAgentLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.outputAgentLabel.Size = new System.Drawing.Size(73, 16);
 			this.outputAgentLabel.TabIndex = 0;
 			this.outputAgentLabel.Values.Text = "Output agent";
 			// 
@@ -230,6 +240,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.channelsGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			this.channelsGroupBox.Location = new System.Drawing.Point(8, 207);
 			this.channelsGroupBox.Name = "channelsGroupBox";
+			this.channelsGroupBox.Palette = this.fontPalette;
+			this.channelsGroupBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			// 
 			// 
 			// 
@@ -239,7 +251,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.channelsGroupBox.Panel.Controls.Add(this.channels16_31Button);
 			this.controlResource.SetResourceKey(this.channelsGroupBox, "IDS_SETTINGS_MIXER_CHANNELS");
 			this.channelsGroupBox.Size = new System.Drawing.Size(592, 141);
-			this.channelsGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.channelsGroupBox.TabIndex = 2;
 			this.channelsGroupBox.Values.Heading = "Channels";
 			// 
@@ -247,9 +258,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.channels48_63Button.Location = new System.Drawing.Point(8, 87);
 			this.channels48_63Button.Name = "channels48_63Button";
+			this.channels48_63Button.Palette = this.fontPalette;
+			this.channels48_63Button.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.channels48_63Button, "IDS_SETTINGS_MIXER_CHANNELS_48_63");
 			this.channels48_63Button.Size = new System.Drawing.Size(70, 25);
-			this.channels48_63Button.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.channels48_63Button.TabIndex = 3;
 			this.channels48_63Button.Values.Text = "48 - 63";
 			this.channels48_63Button.Click += new System.EventHandler(this.Channels48_63Button_Click);
@@ -258,9 +270,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.channels32_47Button.Location = new System.Drawing.Point(8, 58);
 			this.channels32_47Button.Name = "channels32_47Button";
+			this.channels32_47Button.Palette = this.fontPalette;
+			this.channels32_47Button.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.channels32_47Button, "IDS_SETTINGS_MIXER_CHANNELS_32_47");
 			this.channels32_47Button.Size = new System.Drawing.Size(70, 25);
-			this.channels32_47Button.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.channels32_47Button.TabIndex = 2;
 			this.channels32_47Button.Values.Text = "32 - 47";
 			this.channels32_47Button.Click += new System.EventHandler(this.Channels32_47Button_Click);
@@ -269,9 +282,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.channels0_15Button.Location = new System.Drawing.Point(8, 0);
 			this.channels0_15Button.Name = "channels0_15Button";
+			this.channels0_15Button.Palette = this.fontPalette;
+			this.channels0_15Button.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.channels0_15Button, "IDS_SETTINGS_MIXER_CHANNELS_0_15");
 			this.channels0_15Button.Size = new System.Drawing.Size(70, 25);
-			this.channels0_15Button.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.channels0_15Button.TabIndex = 0;
 			this.channels0_15Button.Values.Text = "0 - 15";
 			this.channels0_15Button.Click += new System.EventHandler(this.Channels0_15Button_Click);
@@ -280,9 +294,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.channels16_31Button.Location = new System.Drawing.Point(8, 29);
 			this.channels16_31Button.Name = "channels16_31Button";
+			this.channels16_31Button.Palette = this.fontPalette;
+			this.channels16_31Button.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.channels16_31Button, "IDS_SETTINGS_MIXER_CHANNELS_16_31");
 			this.channels16_31Button.Size = new System.Drawing.Size(70, 25);
-			this.channels16_31Button.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.channels16_31Button.TabIndex = 1;
 			this.channels16_31Button.Values.Text = "16 - 31";
 			this.channels16_31Button.Click += new System.EventHandler(this.Channels16_31Button_Click);
@@ -333,5 +348,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Krypton.Toolkit.KryptonButton channels48_63Button;
 		private Krypton.Toolkit.KryptonCheckBox swapSpeakersCheckBox;
 		private Krypton.Toolkit.KryptonCheckBox surroundCheckBox;
+		private GuiKit.Components.FontPalette fontPalette;
 	}
 }

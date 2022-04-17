@@ -9,6 +9,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Polycode.NostalgicPlayer.GuiKit.Components;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
@@ -44,6 +45,8 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 		public SingleSpinningSquareControl(int channelNum)
 		{
 			InitializeComponent();
+
+			Font = FontPalette.GetRegularFont();
 
 			SetStyle(ControlStyles.UserPaint, true);
 

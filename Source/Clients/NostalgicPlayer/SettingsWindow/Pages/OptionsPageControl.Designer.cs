@@ -29,8 +29,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
 			this.generalGroupBox = new Krypton.Toolkit.KryptonGroupBox();
+			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
 			this.addJumpCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.addToListCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.rememberListCheckBox = new Krypton.Toolkit.KryptonCheckBox();
@@ -86,6 +88,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.generalGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			this.generalGroupBox.Location = new System.Drawing.Point(8, 4);
 			this.generalGroupBox.Name = "generalGroupBox";
+			this.generalGroupBox.Palette = this.fontPalette;
+			this.generalGroupBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			// 
 			// 
 			// 
@@ -102,7 +106,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.generalGroupBox.Panel.Controls.Add(this.useDatabaseCheckBox);
 			this.controlResource.SetResourceKey(this.generalGroupBox, "IDS_SETTINGS_OPTIONS_GENERAL");
 			this.generalGroupBox.Size = new System.Drawing.Size(592, 154);
-			this.generalGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.generalGroupBox.TabIndex = 0;
 			this.generalGroupBox.Values.Heading = "General";
 			// 
@@ -110,9 +113,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.addJumpCheckBox.Location = new System.Drawing.Point(4, 5);
 			this.addJumpCheckBox.Name = "addJumpCheckBox";
+			this.addJumpCheckBox.Palette = this.fontPalette;
+			this.addJumpCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.addJumpCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_ADDJUMP");
-			this.addJumpCheckBox.Size = new System.Drawing.Size(138, 17);
-			this.addJumpCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.addJumpCheckBox.Size = new System.Drawing.Size(134, 16);
 			this.addJumpCheckBox.TabIndex = 0;
 			this.addJumpCheckBox.Values.Text = "Jump to added module";
 			// 
@@ -120,9 +124,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.addToListCheckBox.Location = new System.Drawing.Point(4, 26);
 			this.addToListCheckBox.Name = "addToListCheckBox";
+			this.addToListCheckBox.Palette = this.fontPalette;
+			this.addToListCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.addToListCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_ADDTOLIST");
-			this.addToListCheckBox.Size = new System.Drawing.Size(126, 17);
-			this.addToListCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.addToListCheckBox.Size = new System.Drawing.Size(122, 16);
 			this.addToListCheckBox.TabIndex = 1;
 			this.addToListCheckBox.Values.Text = "Add to list as default";
 			// 
@@ -130,9 +135,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.rememberListCheckBox.Location = new System.Drawing.Point(4, 47);
 			this.rememberListCheckBox.Name = "rememberListCheckBox";
+			this.rememberListCheckBox.Palette = this.fontPalette;
+			this.rememberListCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.rememberListCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_REMEMBERLIST");
-			this.rememberListCheckBox.Size = new System.Drawing.Size(133, 17);
-			this.rememberListCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.rememberListCheckBox.Size = new System.Drawing.Size(129, 16);
 			this.rememberListCheckBox.TabIndex = 2;
 			this.rememberListCheckBox.Values.Text = "Remember list on exit";
 			this.rememberListCheckBox.CheckedChanged += new System.EventHandler(this.RememberListCheckBox_CheckedChanged);
@@ -153,9 +159,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.rememberModulePositionCheckBox.Location = new System.Drawing.Point(0, 21);
 			this.rememberModulePositionCheckBox.Name = "rememberModulePositionCheckBox";
+			this.rememberModulePositionCheckBox.Palette = this.fontPalette;
+			this.rememberModulePositionCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.rememberModulePositionCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_REMEMBERMODULEPOSITION");
-			this.rememberModulePositionCheckBox.Size = new System.Drawing.Size(160, 17);
-			this.rememberModulePositionCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.rememberModulePositionCheckBox.Size = new System.Drawing.Size(157, 16);
 			this.rememberModulePositionCheckBox.TabIndex = 1;
 			this.rememberModulePositionCheckBox.Values.Text = "Remember module position";
 			// 
@@ -163,9 +170,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.rememberListPositionCheckBox.Location = new System.Drawing.Point(0, 0);
 			this.rememberListPositionCheckBox.Name = "rememberListPositionCheckBox";
+			this.rememberListPositionCheckBox.Palette = this.fontPalette;
+			this.rememberListPositionCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.rememberListPositionCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_REMEMBERLISTPOSITION");
-			this.rememberListPositionCheckBox.Size = new System.Drawing.Size(157, 17);
-			this.rememberListPositionCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.rememberListPositionCheckBox.Size = new System.Drawing.Size(154, 16);
 			this.rememberListPositionCheckBox.TabIndex = 0;
 			this.rememberListPositionCheckBox.Values.Text = "Remember playing module";
 			this.rememberListPositionCheckBox.CheckedChanged += new System.EventHandler(this.RememberListPositionCheckBox_CheckedChanged);
@@ -174,9 +182,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.tooltipsCheckBox.Location = new System.Drawing.Point(200, 5);
 			this.tooltipsCheckBox.Name = "tooltipsCheckBox";
+			this.tooltipsCheckBox.Palette = this.fontPalette;
+			this.tooltipsCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.tooltipsCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_TOOLTIPS");
-			this.tooltipsCheckBox.Size = new System.Drawing.Size(100, 17);
-			this.tooltipsCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.tooltipsCheckBox.Size = new System.Drawing.Size(96, 16);
 			this.tooltipsCheckBox.TabIndex = 5;
 			this.tooltipsCheckBox.Values.Text = "Button tool tips";
 			// 
@@ -184,9 +193,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.showNameInTitleCheckBox.Location = new System.Drawing.Point(200, 26);
 			this.showNameInTitleCheckBox.Name = "showNameInTitleCheckBox";
+			this.showNameInTitleCheckBox.Palette = this.fontPalette;
+			this.showNameInTitleCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.showNameInTitleCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SHOWNAME");
-			this.showNameInTitleCheckBox.Size = new System.Drawing.Size(173, 17);
-			this.showNameInTitleCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.showNameInTitleCheckBox.Size = new System.Drawing.Size(167, 16);
 			this.showNameInTitleCheckBox.TabIndex = 6;
 			this.showNameInTitleCheckBox.Values.Text = "Show module name in titlebar";
 			// 
@@ -194,9 +204,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.showListNumberCheckBox.Location = new System.Drawing.Point(4, 110);
 			this.showListNumberCheckBox.Name = "showListNumberCheckBox";
+			this.showListNumberCheckBox.Palette = this.fontPalette;
+			this.showListNumberCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.showListNumberCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SHOWLISTNUMBER");
-			this.showListNumberCheckBox.Size = new System.Drawing.Size(148, 17);
-			this.showListNumberCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.showListNumberCheckBox.Size = new System.Drawing.Size(142, 16);
 			this.showListNumberCheckBox.TabIndex = 4;
 			this.showListNumberCheckBox.Values.Text = "Show item number in list";
 			// 
@@ -204,9 +215,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.separateWindowsCheckBox.Location = new System.Drawing.Point(200, 47);
 			this.separateWindowsCheckBox.Name = "separateWindowsCheckBox";
+			this.separateWindowsCheckBox.Palette = this.fontPalette;
+			this.separateWindowsCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.separateWindowsCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SEPARATEWINDOWS");
-			this.separateWindowsCheckBox.Size = new System.Drawing.Size(173, 30);
-			this.separateWindowsCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.separateWindowsCheckBox.Size = new System.Drawing.Size(169, 28);
 			this.separateWindowsCheckBox.TabIndex = 7;
 			this.separateWindowsCheckBox.Values.Text = "Separate each window in task\r\nswitcher";
 			this.separateWindowsCheckBox.CheckedChanged += new System.EventHandler(this.SeparateWindows_CheckedChanged);
@@ -226,9 +238,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.showWindowsInTaskBarCheckBox.Location = new System.Drawing.Point(0, 0);
 			this.showWindowsInTaskBarCheckBox.Name = "showWindowsInTaskBarCheckBox";
+			this.showWindowsInTaskBarCheckBox.Palette = this.fontPalette;
+			this.showWindowsInTaskBarCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.showWindowsInTaskBarCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SHOWWINDOWSINTASKBAR");
-			this.showWindowsInTaskBarCheckBox.Size = new System.Drawing.Size(168, 17);
-			this.showWindowsInTaskBarCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.showWindowsInTaskBarCheckBox.Size = new System.Drawing.Size(163, 16);
 			this.showWindowsInTaskBarCheckBox.TabIndex = 0;
 			this.showWindowsInTaskBarCheckBox.Values.Text = "Show all windows in task bar";
 			// 
@@ -236,9 +249,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.scanFilesCheckBox.Location = new System.Drawing.Point(400, 5);
 			this.scanFilesCheckBox.Name = "scanFilesCheckBox";
+			this.scanFilesCheckBox.Palette = this.fontPalette;
+			this.scanFilesCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.scanFilesCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SCANFILES");
-			this.scanFilesCheckBox.Size = new System.Drawing.Size(105, 17);
-			this.scanFilesCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.scanFilesCheckBox.Size = new System.Drawing.Size(104, 16);
 			this.scanFilesCheckBox.TabIndex = 9;
 			this.scanFilesCheckBox.Values.Text = "Scan added files";
 			// 
@@ -246,9 +260,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.useDatabaseCheckBox.Location = new System.Drawing.Point(400, 26);
 			this.useDatabaseCheckBox.Name = "useDatabaseCheckBox";
+			this.useDatabaseCheckBox.Palette = this.fontPalette;
+			this.useDatabaseCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.useDatabaseCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_USEDATABASE");
-			this.useDatabaseCheckBox.Size = new System.Drawing.Size(173, 30);
-			this.useDatabaseCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.useDatabaseCheckBox.Size = new System.Drawing.Size(169, 28);
 			this.useDatabaseCheckBox.TabIndex = 10;
 			this.useDatabaseCheckBox.Values.Text = "Use database to store module\r\ninformation";
 			// 
@@ -257,6 +272,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.loadingGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			this.loadingGroupBox.Location = new System.Drawing.Point(8, 162);
 			this.loadingGroupBox.Name = "loadingGroupBox";
+			this.loadingGroupBox.Palette = this.fontPalette;
+			this.loadingGroupBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			// 
 			// 
 			// 
@@ -266,7 +283,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.loadingGroupBox.Panel.Controls.Add(this.moduleErrorComboBox);
 			this.controlResource.SetResourceKey(this.loadingGroupBox, "IDS_SETTINGS_OPTIONS_LOADING");
 			this.loadingGroupBox.Size = new System.Drawing.Size(592, 108);
-			this.loadingGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.loadingGroupBox.TabIndex = 1;
 			this.loadingGroupBox.Values.Heading = "Loading";
 			// 
@@ -274,9 +290,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.doubleBufferingCheckBox.Location = new System.Drawing.Point(4, 5);
 			this.doubleBufferingCheckBox.Name = "doubleBufferingCheckBox";
+			this.doubleBufferingCheckBox.Palette = this.fontPalette;
+			this.doubleBufferingCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.doubleBufferingCheckBox, "IDS_SETTINGS_OPTIONS_LOADING_DOUBLEBUFFERING");
-			this.doubleBufferingCheckBox.Size = new System.Drawing.Size(107, 17);
-			this.doubleBufferingCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.doubleBufferingCheckBox.Size = new System.Drawing.Size(104, 16);
 			this.doubleBufferingCheckBox.TabIndex = 0;
 			this.doubleBufferingCheckBox.Values.Text = "Double buffering";
 			this.doubleBufferingCheckBox.CheckedChanged += new System.EventHandler(this.DoubleBufferingCheckBox_CheckedChanged);
@@ -297,16 +314,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.earlyLoadLabel.Location = new System.Drawing.Point(494, 5);
 			this.earlyLoadLabel.Name = "earlyLoadLabel";
+			this.earlyLoadLabel.Palette = this.fontPalette;
+			this.earlyLoadLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.earlyLoadLabel, "IDS_SETTINGS_OPTIONS_LOADING_EARLYLOAD");
-			this.earlyLoadLabel.Size = new System.Drawing.Size(59, 17);
-			this.earlyLoadLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.earlyLoadLabel.Size = new System.Drawing.Size(59, 16);
 			this.earlyLoadLabel.TabIndex = 1;
 			this.earlyLoadLabel.Values.Text = "Early load";
 			// 
 			// doubleBufferingTrackBar
 			// 
 			this.doubleBufferingTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.InputControlStandalone;
-			this.doubleBufferingTrackBar.DrawBackground = true;
 			this.doubleBufferingTrackBar.Location = new System.Drawing.Point(0, 0);
 			this.doubleBufferingTrackBar.Maximum = 8;
 			this.doubleBufferingTrackBar.Name = "doubleBufferingTrackBar";
@@ -318,9 +335,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.moduleErrorLabel.Location = new System.Drawing.Point(4, 62);
 			this.moduleErrorLabel.Name = "moduleErrorLabel";
+			this.moduleErrorLabel.Palette = this.fontPalette;
+			this.moduleErrorLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.moduleErrorLabel, "IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR");
-			this.moduleErrorLabel.Size = new System.Drawing.Size(171, 17);
-			this.moduleErrorLabel.StateNormal.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.moduleErrorLabel.Size = new System.Drawing.Size(166, 16);
 			this.moduleErrorLabel.TabIndex = 2;
 			this.moduleErrorLabel.Values.Text = "When a module error is reached";
 			// 
@@ -332,11 +350,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.moduleErrorComboBox.IntegralHeight = false;
 			this.moduleErrorComboBox.Location = new System.Drawing.Point(180, 60);
 			this.moduleErrorComboBox.Name = "moduleErrorComboBox";
+			this.moduleErrorComboBox.Palette = this.fontPalette;
+			this.moduleErrorComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.moduleErrorComboBox, null);
-			this.moduleErrorComboBox.Size = new System.Drawing.Size(180, 19);
-			this.moduleErrorComboBox.StateCommon.ComboBox.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.moduleErrorComboBox.StateCommon.ComboBox.Content.TextH = Krypton.Toolkit.PaletteRelativeAlign.Near;
-			this.moduleErrorComboBox.StateCommon.Item.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.moduleErrorComboBox.Size = new System.Drawing.Size(180, 18);
 			this.moduleErrorComboBox.TabIndex = 3;
 			// 
 			// playingGroupBox
@@ -344,6 +361,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.playingGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			this.playingGroupBox.Location = new System.Drawing.Point(8, 274);
 			this.playingGroupBox.Name = "playingGroupBox";
+			this.playingGroupBox.Palette = this.fontPalette;
+			this.playingGroupBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			// 
 			// 
 			// 
@@ -354,7 +373,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.playingGroupBox.Panel.Controls.Add(this.moduleListEndLabel);
 			this.controlResource.SetResourceKey(this.playingGroupBox, "IDS_SETTINGS_OPTIONS_PLAYING");
 			this.playingGroupBox.Size = new System.Drawing.Size(592, 76);
-			this.playingGroupBox.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.playingGroupBox.TabIndex = 2;
 			this.playingGroupBox.Values.Heading = "Playing";
 			// 
@@ -362,9 +380,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.neverEndingCheckBox.Location = new System.Drawing.Point(4, 5);
 			this.neverEndingCheckBox.Name = "neverEndingCheckBox";
+			this.neverEndingCheckBox.Palette = this.fontPalette;
+			this.neverEndingCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.neverEndingCheckBox, "IDS_SETTINGS_OPTIONS_PLAYING_NEVERENDING");
-			this.neverEndingCheckBox.Size = new System.Drawing.Size(172, 17);
-			this.neverEndingCheckBox.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.neverEndingCheckBox.Size = new System.Drawing.Size(166, 16);
 			this.neverEndingCheckBox.TabIndex = 0;
 			this.neverEndingCheckBox.Values.Text = "Never ending module timeout";
 			this.neverEndingCheckBox.CheckedChanged += new System.EventHandler(this.NeverEnding_CheckedChanged);
@@ -375,18 +394,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.neverEndingNumberTextBox.Location = new System.Drawing.Point(180, 3);
 			this.neverEndingNumberTextBox.MaxLength = 3;
 			this.neverEndingNumberTextBox.Name = "neverEndingNumberTextBox";
+			this.neverEndingNumberTextBox.Palette = this.fontPalette;
+			this.neverEndingNumberTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.neverEndingNumberTextBox, null);
-			this.neverEndingNumberTextBox.Size = new System.Drawing.Size(32, 21);
-			this.neverEndingNumberTextBox.StateCommon.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.neverEndingNumberTextBox.Size = new System.Drawing.Size(32, 20);
 			this.neverEndingNumberTextBox.TabIndex = 1;
 			// 
 			// neverEndingLabel
 			// 
 			this.neverEndingLabel.Location = new System.Drawing.Point(216, 5);
 			this.neverEndingLabel.Name = "neverEndingLabel";
+			this.neverEndingLabel.Palette = this.fontPalette;
+			this.neverEndingLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.neverEndingLabel, "IDS_SETTINGS_OPTIONS_PLAYING_NEVERENDING_SECONDS");
-			this.neverEndingLabel.Size = new System.Drawing.Size(50, 17);
-			this.neverEndingLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.neverEndingLabel.Size = new System.Drawing.Size(51, 16);
 			this.neverEndingLabel.TabIndex = 2;
 			this.neverEndingLabel.Values.Text = "seconds";
 			// 
@@ -398,20 +419,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.moduleListEndComboBox.IntegralHeight = false;
 			this.moduleListEndComboBox.Location = new System.Drawing.Point(124, 28);
 			this.moduleListEndComboBox.Name = "moduleListEndComboBox";
+			this.moduleListEndComboBox.Palette = this.fontPalette;
+			this.moduleListEndComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.moduleListEndComboBox, null);
-			this.moduleListEndComboBox.Size = new System.Drawing.Size(100, 19);
-			this.moduleListEndComboBox.StateCommon.ComboBox.Content.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.moduleListEndComboBox.StateCommon.ComboBox.Content.TextH = Krypton.Toolkit.PaletteRelativeAlign.Near;
-			this.moduleListEndComboBox.StateCommon.Item.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.moduleListEndComboBox.Size = new System.Drawing.Size(100, 18);
 			this.moduleListEndComboBox.TabIndex = 4;
 			// 
 			// moduleListEndLabel
 			// 
 			this.moduleListEndLabel.Location = new System.Drawing.Point(4, 30);
 			this.moduleListEndLabel.Name = "moduleListEndLabel";
+			this.moduleListEndLabel.Palette = this.fontPalette;
+			this.moduleListEndLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.moduleListEndLabel, "IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND");
-			this.moduleListEndLabel.Size = new System.Drawing.Size(114, 17);
-			this.moduleListEndLabel.StateCommon.ShortText.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			this.moduleListEndLabel.Size = new System.Drawing.Size(109, 16);
 			this.moduleListEndLabel.TabIndex = 3;
 			this.moduleListEndLabel.Values.Text = "At end of module list";
 			// 
@@ -480,5 +501,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Krypton.Toolkit.KryptonCheckBox neverEndingCheckBox;
 		private Polycode.NostalgicPlayer.Client.GuiPlayer.Controls.NumberTextBox neverEndingNumberTextBox;
 		private Krypton.Toolkit.KryptonLabel neverEndingLabel;
+		private GuiKit.Components.FontPalette fontPalette;
 	}
 }

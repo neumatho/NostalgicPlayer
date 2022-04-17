@@ -31,7 +31,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsWindowForm));
-			this.kryptonManager = new Krypton.Toolkit.KryptonManager(this.components);
 			this.navigator = new Krypton.Navigator.KryptonNavigator();
 			this.navigatorOptionsPage = new Krypton.Navigator.KryptonPage();
 			this.optionsPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.OptionsPageControl();
@@ -41,8 +40,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			this.mixerPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.MixerPageControl();
 			this.navigatorAgentsPage = new Krypton.Navigator.KryptonPage();
 			this.agentsPageControl = new Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages.AgentsPageControl();
+			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
 			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
 			this.applyButton = new Krypton.Toolkit.KryptonButton();
+			this.bigFontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
 			this.cancelButton = new Krypton.Toolkit.KryptonButton();
 			this.okButton = new Krypton.Toolkit.KryptonButton();
 			((System.ComponentModel.ISupportInitialize)(this.navigator)).BeginInit();
@@ -70,10 +71,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
             this.navigatorPathsPage,
             this.navigatorMixerPage,
             this.navigatorAgentsPage});
+			this.navigator.Palette = this.fontPalette;
+			this.navigator.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.navigator, null);
 			this.navigator.SelectedIndex = 0;
 			this.navigator.Size = new System.Drawing.Size(610, 383);
-			this.navigator.StateCommon.Tab.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.navigator.TabIndex = 0;
 			// 
 			// navigatorOptionsPage
@@ -85,7 +87,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			this.navigatorOptionsPage.MinimumSize = new System.Drawing.Size(50, 50);
 			this.navigatorOptionsPage.Name = "navigatorOptionsPage";
 			this.controlResource.SetResourceKey(this.navigatorOptionsPage, null);
-			this.navigatorOptionsPage.Size = new System.Drawing.Size(608, 356);
+			this.navigatorOptionsPage.Size = new System.Drawing.Size(608, 357);
 			this.navigatorOptionsPage.Text = "";
 			this.navigatorOptionsPage.ToolTipTitle = "Page ToolTip";
 			this.navigatorOptionsPage.UniqueName = "d6822b271a6149e5ae2f577bfe34d8d6";
@@ -99,7 +101,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			this.optionsPageControl.Location = new System.Drawing.Point(0, 0);
 			this.optionsPageControl.Name = "optionsPageControl";
 			this.controlResource.SetResourceKey(this.optionsPageControl, null);
-			this.optionsPageControl.Size = new System.Drawing.Size(608, 356);
+			this.optionsPageControl.Size = new System.Drawing.Size(608, 357);
 			this.optionsPageControl.TabIndex = 0;
 			// 
 			// navigatorPathsPage
@@ -189,21 +191,27 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.applyButton.Location = new System.Drawing.Point(528, 399);
 			this.applyButton.Name = "applyButton";
+			this.applyButton.Palette = this.bigFontPalette;
+			this.applyButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.applyButton, "IDS_SETTINGS_APPLY");
 			this.applyButton.Size = new System.Drawing.Size(90, 25);
-			this.applyButton.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.applyButton.TabIndex = 3;
 			this.applyButton.Values.Text = "Apply";
 			this.applyButton.Click += new System.EventHandler(this.ApplyButton_Click);
+			// 
+			// bigFontPalette
+			// 
+			this.bigFontPalette.BaseFontSize = 9F;
 			// 
 			// cancelButton
 			// 
 			this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.cancelButton.Location = new System.Drawing.Point(430, 399);
 			this.cancelButton.Name = "cancelButton";
+			this.cancelButton.Palette = this.bigFontPalette;
+			this.cancelButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.cancelButton, "IDS_SETTINGS_CANCEL");
 			this.cancelButton.Size = new System.Drawing.Size(90, 25);
-			this.cancelButton.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.cancelButton.TabIndex = 2;
 			this.cancelButton.Values.Text = "Cancel";
 			this.cancelButton.Click += new System.EventHandler(this.CancelButton_Click);
@@ -213,9 +221,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.okButton.Location = new System.Drawing.Point(332, 399);
 			this.okButton.Name = "okButton";
+			this.okButton.Palette = this.bigFontPalette;
+			this.okButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.okButton, "IDS_SETTINGS_OK");
 			this.okButton.Size = new System.Drawing.Size(90, 25);
-			this.okButton.StateCommon.Content.ShortText.Font = new System.Drawing.Font("Tahoma", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.okButton.TabIndex = 1;
 			this.okButton.Values.Text = "OK";
 			this.okButton.Click += new System.EventHandler(this.OkButton_Click);
@@ -233,6 +242,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "SettingsWindowForm";
+			this.Palette = this.fontPalette;
+			this.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this, null);
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.SettingsWindowForm_FormClosed);
 			((System.ComponentModel.ISupportInitialize)(this.navigator)).EndInit();
@@ -250,8 +261,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		}
 
 		#endregion
-
-		private Krypton.Toolkit.KryptonManager kryptonManager;
 		private Krypton.Navigator.KryptonNavigator navigator;
 		private Krypton.Navigator.KryptonPage navigatorPathsPage;
 		private Krypton.Navigator.KryptonPage navigatorMixerPage;
@@ -265,5 +274,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		private Pages.AgentsPageControl agentsPageControl;
 		private Krypton.Navigator.KryptonPage navigatorOptionsPage;
 		private Pages.OptionsPageControl optionsPageControl;
+		private GuiKit.Components.FontPalette fontPalette;
+		private GuiKit.Components.FontPalette bigFontPalette;
 	}
 }

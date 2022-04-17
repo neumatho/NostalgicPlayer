@@ -17,6 +17,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
+using Polycode.NostalgicPlayer.GuiKit.Components;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 
@@ -285,7 +286,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 						navigator.SelectedIndex = Page_Comments;
 
 					// Switch font
-					moduleInfoCommentReadOnlyRichTextBox.SetFont(staticInfo.CommentFont ?? new Font("Lucida Console", 8.25F, FontStyle.Regular, GraphicsUnit.Point));
+					moduleInfoCommentReadOnlyRichTextBox.SetFont(staticInfo.CommentFont ?? FontPalette.GetMonospaceFont());
 
 					// Set text
 					moduleInfoCommentReadOnlyRichTextBox.Lines = staticInfo.Comment;
@@ -302,7 +303,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 						navigator.SelectedIndex = Page_Lyrics;
 
 					// Switch font
-					moduleInfoLyricsReadOnlyRichTextBox.SetFont(staticInfo.LyricsFont ?? new Font("Lucida Console", 8.25F, FontStyle.Regular, GraphicsUnit.Point));
+					moduleInfoLyricsReadOnlyRichTextBox.SetFont(staticInfo.LyricsFont ?? FontPalette.GetMonospaceFont());
 
 					// Set text
 					moduleInfoLyricsReadOnlyRichTextBox.Lines = staticInfo.Lyrics;

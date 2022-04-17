@@ -36,7 +36,6 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackColor = System.Drawing.Color.Transparent;
 			this.DoubleBuffered = true;
-			this.Font = new System.Drawing.Font("Tahoma", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.Name = "SingleSpinningSquareControl";
 			this.Paint += new System.Windows.Forms.PaintEventHandler(this.Control_Paint);
 			this.ResumeLayout(false);
