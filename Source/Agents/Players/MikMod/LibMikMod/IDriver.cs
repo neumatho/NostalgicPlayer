@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 {
@@ -44,5 +45,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 		/// Changes the frequency in the channel
 		/// </summary>
 		void VoiceSetFrequencyInternal(sbyte voice, uint frq);
+
+		/// <summary>
+		/// Update visual information
+		/// </summary>
+		void VoiceSetVisualInfo(sbyte voice, VisualInfo visualInfo);
 	}
 }

@@ -83,6 +83,11 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		Release = 0x00000800,
 
 		/// <summary>
+		/// Visual information set
+		/// </summary>
+		Visual = 0x40000000,
+
+		/// <summary>
 		/// This is a read-only bit. When a sample is playing in the channel,
 		/// it's set
 		/// </summary>

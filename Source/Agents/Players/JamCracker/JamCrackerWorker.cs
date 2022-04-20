@@ -351,6 +351,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				voiceInfo.VibCnt = 0;
 				voiceInfo.VibMax = 0;
 				voiceInfo.Flags = 0;
+				voiceInfo.VisualInfo = new VisualInfo();
 
 				variables[i] = voiceInfo;
 
@@ -618,8 +619,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 					voice.Pers[0] = periods[perIndex];
 					voice.Pers[1] = periods[perIndex];
 					voice.Pers[2] = periods[perIndex];
+					voice.Notes[0] = (byte)(perIndex + 12);
+					voice.Notes[1] = voice.Notes[0];
+					voice.Notes[2] = voice.Notes[0];
 
 					voice.Por = 0;
+
+					voice.VisualInfo.NoteNumber = (byte)(perIndex + 12);
 
 					if (adr.Instr > samplesNum)
 					{
@@ -656,8 +662,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 							voice.Flags = instInfo.Flags;
 							voice.Vol = (short)voice.VolLevel;
+
+							voice.VisualInfo.SampleNumber = (byte)adr.Instr;
 						}
 					}
+
+					voice.Channel.SetVisualInfo(voice.VisualInfo);
 				}
 			}
 
@@ -679,12 +689,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 					voice.Pers[0] = periods[perIndex];
 					voice.Pers[1] = periods[perIndex];
 					voice.Pers[2] = periods[perIndex];
+					voice.Notes[0] = (byte)(perIndex + 12);
+					voice.Notes[1] = voice.Notes[0];
+					voice.Notes[2] = voice.Notes[0];
 				}
 				else
 				{
-					voice.Pers[2] = periods[perIndex + adr.Arpeggio & 15];
-					voice.Pers[1] = periods[perIndex + adr.Arpeggio >> 4];
+					voice.Pers[2] = periods[perIndex + (adr.Arpeggio & 15)];
+					voice.Pers[1] = periods[perIndex + (adr.Arpeggio >> 4)];
 					voice.Pers[0] = periods[perIndex];
+					voice.Notes[2] = (byte)(perIndex + 12 + (adr.Arpeggio & 15));
+					voice.Notes[1] = (byte)(perIndex + 12 + (adr.Arpeggio >> 4));
+					voice.Notes[0] = (byte)(perIndex + 12);
 				}
 			}
 
@@ -808,6 +824,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				{
 					chan.PlaySample(voice.InsAddress, 0, (uint)(voice.InsLen * 2));
 					chan.SetAmigaPeriod(voice.Pers[0]);
+
+					voice.VisualInfo.NoteNumber = voice.Notes[0];
+					chan.SetVisualInfo(voice.VisualInfo);
 				}
 
 				// Check to see if sample loops
@@ -859,6 +878,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				per = 1019;
 
 			chan.SetAmigaPeriod((uint)per);
+			voice.VisualInfo.NoteNumber = voice.Notes[0];
+			chan.SetVisualInfo(voice.VisualInfo);
 			RotatePeriods(voice);
 
 			voice.Por += voice.DeltaPor;
@@ -917,10 +938,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/********************************************************************/
 		private void RotatePeriods(VoiceInfo voice)
 		{
-			ushort temp = voice.Pers[0];
+			ushort temp1 = voice.Pers[0];
 			voice.Pers[0] = voice.Pers[1];
 			voice.Pers[1] = voice.Pers[2];
-			voice.Pers[2] = temp;
+			voice.Pers[2] = temp1;
+
+			byte temp2 = voice.Notes[0];
+			voice.Notes[0] = voice.Notes[1];
+			voice.Notes[1] = voice.Notes[2];
+			voice.Notes[2] = temp2;
 		}
 		#endregion
 	}

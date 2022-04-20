@@ -40,7 +40,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 
 		public AhxSong song;
 
-		public AhxVoices[] voices = Helpers.InitializeArray<AhxVoices>(4);
+		public readonly AhxVoices[] voices = Helpers.InitializeArray<AhxVoices>(4);
 
 		private int stepWaitFrames;
 		private bool getNewPosition;

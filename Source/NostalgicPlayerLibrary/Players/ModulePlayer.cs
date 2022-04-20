@@ -86,7 +86,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 							currentPlayer.ModuleInfoChanged += Player_ModuleInfoChanged;
 
 							// Initialize module information
-							StaticModuleInformation = new ModuleInfoStatic(loader.PlayerAgentInfo, loader.ConverterAgentInfo, currentPlayer.ModuleName.Trim(), FindAuthor(), currentPlayer.Comment, currentPlayer.CommentFont, currentPlayer.Lyrics, currentPlayer.LyricsFont, loader.ModuleFormat, loader.PlayerName, currentPlayer.ModuleChannelCount, loader.CrunchedSize, loader.ModuleSize, currentPlayer.SupportFlags, currentPlayer.SubSongs.Number, currentPlayer.Instruments, currentPlayer.Samples);
+							StaticModuleInformation = new ModuleInfoStatic(loader.PlayerAgentInfo, loader.ConverterAgentInfo, currentPlayer.ModuleName.Trim(), FindAuthor(), currentPlayer.Comment, currentPlayer.CommentFont, currentPlayer.Lyrics, currentPlayer.LyricsFont, loader.ModuleFormat, loader.PlayerName, currentPlayer.ModuleChannelCount, currentPlayer.VirtualChannelCount, loader.CrunchedSize, loader.ModuleSize, currentPlayer.SupportFlags, currentPlayer.SubSongs.Number, currentPlayer.Instruments, currentPlayer.Samples);
 
 							// Initialize the mixer
 							soundStream = new MixerStream();
@@ -193,7 +193,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						if (bufferMode && (visualAgent is IChannelChangeVisualAgent))
 							continue;
 
-						visualAgent.InitVisual(StaticModuleInformation.Channels);
+						visualAgent.InitVisual(StaticModuleInformation.Channels, StaticModuleInformation.VirtualChannels);
 					}
 
 					outputAgent.Play();

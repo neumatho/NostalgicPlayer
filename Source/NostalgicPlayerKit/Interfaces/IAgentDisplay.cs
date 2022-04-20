@@ -6,6 +6,8 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Containers;
+
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
 	/// <summary>
@@ -14,5 +16,9 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	/// </summary>
 	public interface IAgentDisplay
 	{
+		/// <summary>
+		/// Return some flags telling how to set up the display window
+		/// </summary>
+		DisplayFlag Flags { get; }
 	}
 }

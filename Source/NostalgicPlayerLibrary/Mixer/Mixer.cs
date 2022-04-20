@@ -223,6 +223,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		public void PauseMixer()
 		{
 			playing = false;
+			currentVisualizer.TellAgentsAboutPauseState(true);
 		}
 
 
@@ -234,6 +235,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/********************************************************************/
 		public void ResumeMixer()
 		{
+			currentVisualizer.TellAgentsAboutPauseState(false);
 			playing = true;
 		}
 
@@ -473,7 +475,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 								// If at least one channel has changed its information,
 								// tell visual agents about it
 								if (chanFlags != ChannelFlags.None)
-									currentVisualizer.TellAgentsAboutChannelChange();
+									currentVisualizer.TellAgentsAboutChannelChange(channelsEnabled);
 
 								// Calculate the number of sample pair to mix before the
 								// player need to be called again

@@ -25,6 +25,15 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpectrumAnalyzer
 
 		private SpectrumAnalyzerControl userControl;
 
+		#region IAgentDisplay implementation
+		/********************************************************************/
+		/// <summary>
+		/// Return some flags telling how to set up the display window
+		/// </summary>
+		/********************************************************************/
+		public DisplayFlag Flags => DisplayFlag.None;
+		#endregion
+
 		#region IAgentGuiDisplay implementation
 		/********************************************************************/
 		/// <summary>
@@ -44,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpectrumAnalyzer
 		/// Initializes the visual
 		/// </summary>
 		/********************************************************************/
-		public void InitVisual(int channels)
+		public void InitVisual(int channels, int virtualChannels)
 		{
 			analyzer = new Analyzer(FftLength);
 			analyzer.FftCalculated += Analyzer_FftCalculated;
@@ -61,6 +70,17 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpectrumAnalyzer
 		{
 			userControl.Update(null);
 			analyzer = null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the pause state
+		/// </summary>
+		/********************************************************************/
+		public void SetPauseState(bool paused)
+		{
 		}
 		#endregion
 

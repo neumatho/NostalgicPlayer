@@ -9,7 +9,7 @@
     <Product>NostalgicPlayer</Product>
     <Description>Show an oscilloscope for the left and right channel of what is playing</Description>
 		<Copyright>Copyright © 2021-2022</Copyright>
-		<Version>1.1.0</Version>
+		<Version>1.1.1</Version>
 	</PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

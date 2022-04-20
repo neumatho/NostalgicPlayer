@@ -9,7 +9,7 @@
     <Product>NostalgicPlayer</Product>
     <Description>Show some spinning squares which moves to the music</Description>
     <Copyright>Copyright © 2021-2022</Copyright>
-    <Version>1.1.2</Version>
+    <Version>1.1.3</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

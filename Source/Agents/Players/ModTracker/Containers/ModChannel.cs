@@ -6,6 +6,9 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+
+using Polycode.NostalgicPlayer.Kit.Containers;
+
 namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 {
 	/// <summary>
@@ -55,5 +58,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		public byte DataCounter;
 		public short HmnVolume;			// Calculated volume from synth samples (0-64)
 		public HmnSynthData SynthData;
+
+		// Visual information
+		public VisualInfo VisualInfo = new VisualInfo();
 	}
 }

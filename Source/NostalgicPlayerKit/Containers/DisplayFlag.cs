@@ -6,30 +6,24 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Containers;
+using System;
 
-namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx.Containers
+namespace Polycode.NostalgicPlayer.Kit.Containers
 {
 	/// <summary>
-	/// Information about a single playing channel
+	/// Different flags indicating what the visual wants
 	/// </summary>
-	internal class Channel
+	[Flags]
+	public enum DisplayFlag
 	{
-		public uint PatternData;
-		public sbyte[] Sample;
-		public uint SampleLen;
-		public uint LoopStart;
-		public uint LoopLength;
-		public ushort CurrentNote;
-		public ushort Volume;
-		public short StepValue;
-		public ushort StepNote;
-		public ushort StepEndNote;
-		public ushort SlideControl;
-		public bool SlideDirection;
-		public ushort SlideParam;
-		public ushort SlidePeriod;
-		public ushort SlideSpeed;
-		public VisualInfo VisualInfo = new VisualInfo();
+		/// <summary>
+		/// Nothing
+		/// </summary>
+		None = 0,
+
+		/// <summary>
+		/// Indicate that the window has a static size
+		/// </summary>
+		StaticWindow = 0x0001
 	}
 }

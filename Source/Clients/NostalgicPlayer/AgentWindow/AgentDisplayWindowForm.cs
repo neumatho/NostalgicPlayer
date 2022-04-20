@@ -70,7 +70,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 					int height = Math.Max(Height, minHeight);
 
 					MinimumSize = new Size(minWidth, minHeight);
-					Size = new Size(width, height);
+
+					if ((guiDisplay.Flags & DisplayFlag.StaticWindow) != 0)
+					{
+						FormBorderStyle = FormBorderStyle.FixedDialog;
+						MaximizeBox = false;
+
+						Size = new Size(minWidth, minHeight);
+					}
+					else
+						Size = new Size(width, height);
 				}
 
 				visualAgent = worker as IVisualAgent;
@@ -79,7 +88,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 					agentManager.RegisterVisualAgent(visualAgent);
 
 					if (moduleHandler.IsModuleLoaded)
-						visualAgent.InitVisual(moduleHandler.StaticModuleInformation.Channels);
+						visualAgent.InitVisual(moduleHandler.StaticModuleInformation.Channels, moduleHandler.StaticModuleInformation.VirtualChannels);
 				}
 
 				// Load window settings

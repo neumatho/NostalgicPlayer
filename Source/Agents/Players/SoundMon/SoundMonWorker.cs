@@ -1006,6 +1006,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 						VirtualChannels[voice].SetVolume((ushort)(tmp > 256 ? 256 : tmp));
 					}
 				}
+
+				cur.VisualInfo.SampleNumber = (byte)(cur.Instrument - 1);
+				VirtualChannels[voice].SetVisualInfo(cur.VisualInfo);
 			}
 		}
 
@@ -1221,6 +1224,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 				else
 					VirtualChannels[i].SetAmigaPeriod(cur.Period);
 
+				cur.VisualInfo.NoteNumber = (byte)(cur.Note + 36 - 1);
+
 				// Arpeggio
 				if ((cur.ArpValue != 0) || (cur.AutoArp != 0))
 				{
@@ -1238,7 +1243,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 					cur.Restart = false;
 					cur.Period = periods[note + 36 - 1];
 					VirtualChannels[i].SetAmigaPeriod(cur.Period);
+
+					cur.VisualInfo.NoteNumber = (byte)(note + 36 - 1);
 				}
+
+				VirtualChannels[i].SetVisualInfo(cur.VisualInfo);
 			}
 		}
 
@@ -1538,7 +1547,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 			for (int i = 0; i < 32; i++)
 			{
-				sbyte sourceVal = waveTables[sourceOffset];
+				sbyte sourceVal = source[sourceOffset];
 				sbyte destVal = waveTables[destOffset];
 
 				if (sourceVal < destVal)
@@ -1569,7 +1578,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 			for (int i = 0; i < 32; i++)
 			{
-				sbyte sourceVal = waveTables[sourceOffset];
+				sbyte sourceVal = source[sourceOffset];
 				sbyte destVal = waveTables[destOffset];
 
 				if (sourceVal < destVal)

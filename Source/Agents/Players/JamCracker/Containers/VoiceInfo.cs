@@ -6,6 +6,7 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker.Containers
@@ -24,6 +25,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker.Containers
 		public sbyte[] WaveBuffer = new sbyte[0x40];
 		public int PerIndex;
 		public ushort[] Pers = new ushort[3];
+		public byte[] Notes = new byte[3];
 		public short Por;
 		public short DeltaPor;
 		public short PorLevel;
@@ -37,5 +39,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker.Containers
 		public byte VibCnt;
 		public byte VibMax;
 		public byte Flags;
+		public VisualInfo VisualInfo;
 	}
 }

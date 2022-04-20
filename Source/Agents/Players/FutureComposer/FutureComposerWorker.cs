@@ -588,6 +588,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				voiceInfo.CurPattern = patterns[sequences[0].VoiceSeq[i].Pattern];
 				voiceInfo.Transpose = sequences[0].VoiceSeq[i].Transpose;
 				voiceInfo.SoundTranspose = sequences[0].VoiceSeq[i].SoundTranspose;
+				voiceInfo.VisualInfo = new VisualInfo();
 
 				voiceData[i] = voiceInfo;
 			}
@@ -939,6 +940,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				voiData.FrequencySeqStartOffset = (ushort)(silent.Length + volSequences[inst].FrqNumber * 64);
 				voiData.FrequencySeqPos = 0;
 				voiData.SusCounter = 0;
+
+				voiData.VisualInfo.NoteNumber = (byte)(note < 5 * 12 ? note + 12 : note - 5 * 12);
+				voiData.Channel.SetVisualInfo(voiData.VisualInfo);
 			}
 
 			// Go to the next pattern row
@@ -1022,6 +1026,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 										else
 											voiData.Channel.SetLoop(sampInfo[dat].LoopStart, sampInfo[dat].LoopLength);
 									}
+
+									voiData.VisualInfo.SampleNumber = dat;
+									voiData.Channel.SetVisualInfo(voiData.VisualInfo);
 								}
 							}
 
@@ -1076,6 +1083,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 											else
 												voiData.Channel.SetLoop(mulSamp.Sample[dat].LoopStart, mulSamp.Sample[dat].LoopLength);
 										}
+
+										voiData.VisualInfo.SampleNumber = dat;
+										voiData.Channel.SetVisualInfo(voiData.VisualInfo);
 									}
 								}
 
@@ -1220,6 +1230,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				note += (sbyte)(voiData.CurNote + voiData.Transpose);
 
 			note &= 0x7f;
+
+			voiData.VisualInfo.NoteNumber = (byte)(note < 5 * 12 ? note + 12 : note - 5 * 12);
+			voiData.Channel.SetVisualInfo(voiData.VisualInfo);
 
 			// Get the period
 			ushort period = note < periods.Length ? periods[note] : (ushort)0;

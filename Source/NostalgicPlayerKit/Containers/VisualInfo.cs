@@ -6,30 +6,33 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Containers;
-
-namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx.Containers
+namespace Polycode.NostalgicPlayer.Kit.Containers
 {
 	/// <summary>
-	/// Information about a single playing channel
+	/// Extra information that visuals can use
 	/// </summary>
-	internal class Channel
+	public class VisualInfo
 	{
-		public uint PatternData;
-		public sbyte[] Sample;
-		public uint SampleLen;
-		public uint LoopStart;
-		public uint LoopLength;
-		public ushort CurrentNote;
-		public ushort Volume;
-		public short StepValue;
-		public ushort StepNote;
-		public ushort StepEndNote;
-		public ushort SlideControl;
-		public bool SlideDirection;
-		public ushort SlideParam;
-		public ushort SlidePeriod;
-		public ushort SlideSpeed;
-		public VisualInfo VisualInfo = new VisualInfo();
+		/********************************************************************/
+		/// <summary>
+		/// The sample number used to play the note, starting from 0
+		/// </summary>
+		/********************************************************************/
+		public ushort SampleNumber
+		{
+			get; set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The note being played from 0 to 119
+		/// </summary>
+		/********************************************************************/
+		public byte NoteNumber
+		{
+			get; set;
+		}
 	}
 }

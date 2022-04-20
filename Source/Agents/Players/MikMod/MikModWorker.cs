@@ -599,6 +599,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 
 			VirtualChannels[voice].SetFrequency(frq);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Update visual information
+		/// </summary>
+		/********************************************************************/
+		public void VoiceSetVisualInfo(sbyte voice, VisualInfo visualInfo)
+		{
+			if ((voice < 0) || (voice >= mdNumChn))
+				return;
+
+			VirtualChannels[voice].SetVisualInfo(visualInfo);
+		}
 		#endregion
 
 		#region Duration calculation methods

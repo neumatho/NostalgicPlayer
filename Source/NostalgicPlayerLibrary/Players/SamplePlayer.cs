@@ -194,7 +194,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					if (visualAgent is IChannelChangeVisualAgent)
 						continue;
 
-					visualAgent.InitVisual(StaticModuleInformation.Channels);
+					visualAgent.InitVisual(StaticModuleInformation.Channels, StaticModuleInformation.VirtualChannels);
 				}
 
 				outputAgent.Play();

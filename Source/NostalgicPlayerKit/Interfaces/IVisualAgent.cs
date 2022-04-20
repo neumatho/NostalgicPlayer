@@ -20,11 +20,16 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Initializes the visual
 		/// </summary>
-		void InitVisual(int channels);
+		void InitVisual(int channels, int virtualChannels);
 
 		/// <summary>
 		/// Cleanup the visual
 		/// </summary>
 		void CleanupVisual();
+
+		/// <summary>
+		/// Set the pause state
+		/// </summary>
+		void SetPauseState(bool paused);
 	}
 }

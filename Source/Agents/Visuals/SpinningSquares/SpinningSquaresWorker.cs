@@ -21,6 +21,15 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares
 	{
 		private SpinningSquaresControl userControl;
 
+		#region IAgentDisplay implementation
+		/********************************************************************/
+		/// <summary>
+		/// Return some flags telling how to set up the display window
+		/// </summary>
+		/********************************************************************/
+		public DisplayFlag Flags => DisplayFlag.None;
+		#endregion
+
 		#region IAgentGuiDisplay implementation
 		/********************************************************************/
 		/// <summary>
@@ -40,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares
 		/// Initializes the visual
 		/// </summary>
 		/********************************************************************/
-		public void InitVisual(int channels)
+		public void InitVisual(int channels, int virtualChannels)
 		{
 			userControl.InitVisual(channels);
 		}
@@ -55,6 +64,17 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares
 		public void CleanupVisual()
 		{
 			userControl.CleanupVisual();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the pause state
+		/// </summary>
+		/********************************************************************/
+		public void SetPauseState(bool paused)
+		{
 		}
 		#endregion
 

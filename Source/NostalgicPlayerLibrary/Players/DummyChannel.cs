@@ -142,6 +142,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 		/********************************************************************/
 		/// <summary>
+		/// These information are used by some visualizer, so your player can
+		/// help those by calling this method. Call it when you trigger a new
+		/// note
+		/// </summary>
+		/********************************************************************/
+		public void SetVisualInfo(VisualInfo visualInfo)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Returns true or false depending on the channel is in use
 		/// </summary>
 		/********************************************************************/
@@ -180,6 +193,42 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		public uint GetFrequency()
 		{
 			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the length of the sample in samples
+		/// </summary>
+		/********************************************************************/
+		public uint GetSampleLength()
+		{
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns new sample position if set
+		/// </summary>
+		/********************************************************************/
+		public int GetSamplePosition()
+		{
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the visual information on the channel
+		/// </summary>
+		/********************************************************************/
+		public VisualInfo GetVisualInfo()
+		{
+			return null;
 		}
 		#endregion
 	}

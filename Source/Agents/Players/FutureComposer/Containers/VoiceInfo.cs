@@ -6,6 +6,7 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers
@@ -46,5 +47,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers
 		public ushort FrequencySeqPos;
 		public ushort Pitch;
 		public IChannel Channel;
+		public VisualInfo VisualInfo;
 	}
 }

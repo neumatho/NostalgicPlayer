@@ -10,6 +10,7 @@ using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers;
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Block;
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Sequences;
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Synth;
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
@@ -112,6 +113,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			public ushort TrkVibOffs;
 			public bool TrkLastNoteMidi;	// True if last note was MIDI note
 			public readonly SynthData TrkSy = new SynthData();
+			public VisualInfo VisualInfo = new VisualInfo();
 		}
 		#endregion
 
@@ -841,6 +843,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 								bas += (NoteNum)(ss.GetPlayTranspose() - 1 + trkD.TrkSTransp);
 								int freq = (int)GetNoteFrequency(bas, trkD.TrkFineTune);
 								trkD.TrkArpAdjust = freq - trkD.TrkFrequency;	// Arpeggio difference
+
+								trkD.VisualInfo.NoteNumber = bas;
+								worker.VirtualChannels[trkCnt].SetVisualInfo(trkD.VisualInfo);
 							}
 							break;
 						}
@@ -1395,10 +1400,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			if (sy.SynthType != SynthData.SyType.Synth)
 			{
 				// An ordinary sample or hybrid
-				Play((uint)trk, note, plrSong.GetSample(iNum), trkD.TrkSOffset, currI.GetRepeat(), currI.GetRepeatLen(),
+				Play((uint)trk, note, iNum, plrSong.GetSample(iNum), trkD.TrkSOffset, currI.GetRepeat(), currI.GetRepeatLen(),
 					(((currI.flags & Instr.Flag.Loop) != 0) ? PlayFlag.Loop : PlayFlag.None) |
 					(((trkD.TrkMiscFlags & TrackData.MiscFlag.Backwards) != 0) ? PlayFlag.Backwards : PlayFlag.None) |
-					(((currI.flags & Instr.Flag.PingPong) != 0) ? PlayFlag.PingPongLoop : PlayFlag.None));
+					(((currI.flags & Instr.Flag.PingPong) != 0) ? PlayFlag.PingPongLoop : PlayFlag.None),
+					trkD.VisualInfo);
 			}
 
 			if (sy.SynthType != SynthData.SyType.None)
@@ -1501,7 +1507,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			if (trkD.TrkFxType != TrackData.FxType.Normal)
 				return;
 
-			SetChannelFreq((uint)trkNum, (trkD.TrkSy.SynthType == SynthData.SyType.None ? trkD.TrkFrequency : SynthHandler((uint)trkNum, trkD, plrSong.GetSynthSound(trkD.TrkPrevINum))) + trkD.TrkArpAdjust + trkD.TrkVibrAdjust);
+			SetChannelFreq((uint)trkNum, (trkD.TrkSy.SynthType == SynthData.SyType.None ? trkD.TrkFrequency : SynthHandler((uint)trkNum, trkD.TrkPrevINum, trkD, plrSong.GetSynthSound(trkD.TrkPrevINum))) + trkD.TrkArpAdjust + trkD.TrkVibrAdjust);
 
 			byte usedVolume;
 
@@ -1568,7 +1574,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// Handles all the synth sounds
 		/// </summary>
 		/********************************************************************/
-		private int SynthHandler(uint chNum, TrackData trkD, SynthSound snd)
+		private int SynthHandler(uint chNum, InstNum instNum, TrackData trkD, SynthSound snd)
 		{
 			SynthData sy = trkD.TrkSy;
 
@@ -1855,9 +1861,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 
 			int currFreq = trkD.TrkFrequency;
 
+			trkD.VisualInfo.NoteNumber = sy.NoteNumber;
+			trkD.VisualInfo.SampleNumber = (byte)instNum;
+			worker.VirtualChannels[chNum].SetVisualInfo(trkD.VisualInfo);
+
 			// Arpeggio
 			if (sy.ArpOffs != 0)
 			{
+				trkD.VisualInfo.NoteNumber = (byte)(sy.NoteNumber + snd.GetWfData(sy.ArpOffs));
+
 				currFreq = (int)GetNoteFrequency((byte)(sy.NoteNumber + snd.GetWfData(sy.ArpOffs)), trkD.TrkFineTune);
 				if (snd.GetWfData(++sy.ArpOffs) >= 0x80)
 					sy.ArpOffs = sy.ArpStart;

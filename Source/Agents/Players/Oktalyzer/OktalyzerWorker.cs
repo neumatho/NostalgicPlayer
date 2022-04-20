@@ -974,6 +974,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 			chanData.CurrPeriod = periods[note];
 
 			VirtualChannels[channelNum].SetAmigaPeriod((uint)chanData.CurrPeriod);
+
+			chanData.VisualInfo.NoteNumber = (byte)(note + 12);
+			chanData.VisualInfo.SampleNumber = pattData.SampleNum;
+			VirtualChannels[channelNum].SetVisualInfo(chanData.VisualInfo);
 		}
 
 
@@ -1322,6 +1326,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 			// Play the note
 			chanData.CurrPeriod = periods[note];
 			VirtualChannels[channelNum].SetAmigaPeriod((uint)chanData.CurrPeriod);
+
+			chanData.VisualInfo.NoteNumber = (byte)(note + 12);
+			VirtualChannels[channelNum].SetVisualInfo(chanData.VisualInfo);
 		}
 		#endregion
 	}

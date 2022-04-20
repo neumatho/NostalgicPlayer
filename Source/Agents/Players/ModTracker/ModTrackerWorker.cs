@@ -2244,6 +2244,8 @@ stopLoop:
 				modChan.HmnVolume = 64;
 				modChan.StarVolume = 256;
 
+				modChan.VisualInfo.SampleNumber = (byte)(sampNum - 1);
+
 				if (currentModuleType == ModuleType.StarTrekker)
 				{
 					AmSample amSamp = amData?[sampNum - 1];
@@ -2363,6 +2365,7 @@ stopLoop:
 
 				// Set the period
 				modChan.Period = Tables.Periods[modChan.FineTune, modChan.TrackLine.Note - 1];
+				modChan.VisualInfo.NoteNumber = (byte)(modChan.TrackLine.Note - 1 + 12);
 
 				if (!((currentModuleType >= ModuleType.ProTracker) && (cmd == Effect.ExtraEffect) && ((ExtraEffect)(modChan.TrackLine.EffectArg & 0xf0) == ExtraEffect.NoteDelay)))
 				{
@@ -2414,6 +2417,8 @@ stopLoop:
 					}
 					else
 						chan.Mute();
+
+					chan.SetVisualInfo(modChan.VisualInfo);
 				}
 			}
 
@@ -3269,6 +3274,7 @@ stopLoop:
 		private void Arpeggio(IChannel chan, ModChannel modChan)
 		{
 			ushort period;
+			int note;
 
 			if (modChan.TrackLine.EffectArg != 0)
 			{
@@ -3305,15 +3311,20 @@ stopLoop:
 				}
 
 				// Get the period
-				period = Tables.Periods[modChan.FineTune, i + arp >= NumberOfNotes ? NumberOfNotes - 1 : i + arp];
+				note = i + arp >= NumberOfNotes ? NumberOfNotes - 1 : i + arp;
+				period = Tables.Periods[modChan.FineTune, note];
 			}
 			else
 			{
 				// Normal note
 				period = modChan.Period;
+				note = modChan.TrackLine.Note;
 			}
 
 			SetPeriod(period, chan, modChan);
+
+			modChan.VisualInfo.NoteNumber = (byte)(note + 12);
+			chan.SetVisualInfo(modChan.VisualInfo);
 		}
 
 
@@ -3568,8 +3579,12 @@ stopLoop:
 			}
 
 			// Get the period
-			ushort period = Tables.Periods[0, i + arp >= NumberOfNotes ? NumberOfNotes - 1 : i + arp];
+			int note = i + arp >= NumberOfNotes ? NumberOfNotes - 1 : i + arp;
+			ushort period = Tables.Periods[0, note];
 			SetPeriod(period, chan, modChan);
+
+			modChan.VisualInfo.NoteNumber = (byte)(note + 12);
+			chan.SetVisualInfo(modChan.VisualInfo);
 		}
 
 
@@ -4042,6 +4057,8 @@ stopLoop:
 						}
 						else
 							chan.Mute();
+
+						chan.SetVisualInfo(modChan.VisualInfo);
 					}
 				}
 			}
@@ -4117,6 +4134,8 @@ stopLoop:
 				}
 				else
 					chan.Mute();
+
+				chan.SetVisualInfo(modChan.VisualInfo);
 			}
 		}
 

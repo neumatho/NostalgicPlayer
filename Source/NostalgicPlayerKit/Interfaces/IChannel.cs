@@ -105,6 +105,14 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		void SetAmigaPeriod(uint period);
 
 		/// <summary>
+		/// These information are used by some visualizer, so your player can
+		/// help those by calling this method. Call it when you trigger a new
+		/// note
+		/// </summary>
+		/// <param name="visualInfo">The extra visual information</param>
+		void SetVisualInfo(VisualInfo visualInfo);
+
+		/// <summary>
 		/// Returns true or false depending on the channel is in use
 		/// </summary>
 		bool IsActive { get; }
@@ -123,5 +131,20 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Returns the current frequency on the channel
 		/// </summary>
 		uint GetFrequency();
+
+		/// <summary>
+		/// Returns the length of the sample in samples
+		/// </summary>
+		uint GetSampleLength();
+
+		/// <summary>
+		/// Returns new sample position if set
+		/// </summary>
+		int GetSamplePosition();
+
+		/// <summary>
+		/// Returns the visual information on the channel
+		/// </summary>
+		VisualInfo GetVisualInfo();
 	}
 }

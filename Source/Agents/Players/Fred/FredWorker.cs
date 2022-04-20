@@ -428,6 +428,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 				chanInfo.BlendDelay = 0;
 				chanInfo.BlendShot = 0;
 				chanInfo.SynthSample = new sbyte[64];	// Well, it seems only 32 bytes are needed, but we allocate 64 just in case
+				chanInfo.VisualInfo = new VisualInfo();
 			}
 
 			return base.InitSound(songNumber, durationInfo, out errorMessage);
@@ -943,6 +944,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 						chanInfo.PortStartPeriod = chanInfo.TrackPeriod;
 					}
 
+					// Tell visuals
+					chanInfo.VisualInfo.NoteNumber = (byte)(chanInfo.TrackNote + 12);
+					channel.SetVisualInfo(chanInfo.VisualInfo);
+
 					// Take the next channel
 					return 0;
 				}
@@ -965,7 +970,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 							if (chanInfo.Instrument.InstType == InstrumentType.Unused)
 								chanInfo.Instrument = null;
 							else
+							{
 								instChange = true;
+								chanInfo.VisualInfo.SampleNumber = newInst;
+							}
 						}
 						break;
 					}
@@ -1153,6 +1161,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 
 			// Find the new period
 			chanInfo.TrackPeriod = (ushort)((periodTable[newNote] * inst.Period) / 1024);
+
+			chanInfo.VisualInfo.NoteNumber = newNote;
+			channel.SetVisualInfo(chanInfo.VisualInfo);
 
 			// Portamento
 			if (chanInfo.PortRunning)

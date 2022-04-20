@@ -202,7 +202,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// Will begin to play the sample given with all the arguments
 		/// </summary>
 		/********************************************************************/
-		protected void Play(uint chNum, NoteNum note, Sample smp, uint startOffs, uint loopStart, uint loopLen, PlayFlag flags)
+		protected void Play(uint chNum, NoteNum note, InstNum instNum, Sample smp, uint startOffs, uint loopStart, uint loopLen, PlayFlag flags, VisualInfo visualInfo)
 		{
 			if (chNum >= channels)
 				return;
@@ -244,6 +244,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 					// Okay, tell NostalgicPlayer to play the sample
 					worker.VirtualChannels[chNum].PlaySample(leftAdr, startOffs, len, bit, (flags & PlayFlag.Backwards) != 0);
 				}
+
+				visualInfo.NoteNumber = note;
+				visualInfo.SampleNumber = (byte)instNum;
+				worker.VirtualChannels[chNum].SetVisualInfo(visualInfo);
 			}
 
 			// Set loop

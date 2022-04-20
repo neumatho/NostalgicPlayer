@@ -592,6 +592,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 					channel.Volume = curSample.Volume;
 					channel.LoopStart = curSample.LoopStart;
 					channel.LoopLength = curSample.LoopLength;
+					channel.VisualInfo.SampleNumber = (byte)(sampleNum - 1);
 
 					// Get current volume
 					short volume = (short)channel.Volume;
@@ -672,6 +673,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 
 				if (channel.LoopLength > 2)
 					virtChannel.SetLoop(channel.LoopStart, channel.LoopLength);
+
+				channel.VisualInfo.NoteNumber = FindNote(channel.CurrentNote);
+				virtChannel.SetVisualInfo(channel.VisualInfo);
 			}
 		}
 
@@ -866,6 +870,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 				default:
 				{
 					virtChannel.SetAmigaPeriod(channel.CurrentNote);
+
+					channel.VisualInfo.NoteNumber = FindNote(channel.CurrentNote);
+					virtChannel.SetVisualInfo(channel.VisualInfo);
 					return;
 				}
 			}
@@ -888,6 +895,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 
 			// Set the period
 			virtChannel.SetAmigaPeriod((ushort)noteTable[note + index]);
+
+			channel.VisualInfo.NoteNumber = (byte)(note + index - 20 + 12);
+			virtChannel.SetVisualInfo(channel.VisualInfo);
 		}
 
 
@@ -932,6 +942,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 
 			// Get the end note
 			channel.StepEndNote = (ushort)noteTable[note + endIndex];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Find the note from a period
+		/// </summary>
+		/********************************************************************/
+		private byte FindNote(ushort period)
+		{
+			for (int i = 20; i < noteTable.Length; i++)
+			{
+				if (period >= noteTable[i])
+					return (byte)(i - 20 + 12);
+			}
+
+			return 39 + 12;
 		}
 		#endregion
 	}

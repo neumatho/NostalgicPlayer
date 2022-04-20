@@ -44,7 +44,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		private ModuleInfoStatic(AgentInfo playerAgentInfo, string moduleName, string author, string[] comment, Font commentFont, string[] lyrics, Font lyricsFont, string moduleFormat, string playerName, int channels, long crunchedSize, long moduleSize, int maxSongNumber)
+		private ModuleInfoStatic(AgentInfo playerAgentInfo, string moduleName, string author, string[] comment, Font commentFont, string[] lyrics, Font lyricsFont, string moduleFormat, string playerName, int channels, int virtualChannels, long crunchedSize, long moduleSize, int maxSongNumber)
 		{
 			PlayerAgentInfo = playerAgentInfo;
 			ModuleName = moduleName;
@@ -56,6 +56,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 			ModuleFormat = moduleFormat;
 			PlayerName = playerName;
 			Channels = channels;
+			VirtualChannels = virtualChannels;
 			CrunchedSize = crunchedSize;
 			ModuleSize = moduleSize;
 			MaxSongNumber = maxSongNumber;
@@ -68,7 +69,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor (for module players)
 		/// </summary>
 		/********************************************************************/
-		internal ModuleInfoStatic(AgentInfo playerAgentInfo, AgentInfo converterAgentInfo, string moduleName, string author, string[] comment, Font commentFont, string[] lyrics, Font lyricsFont, string moduleFormat, string playerName, int channels, long crunchedSize, long moduleSize, ModulePlayerSupportFlag supportFlag, int maxSongNumber, InstrumentInfo[] instruments, SampleInfo[] samples) : this(playerAgentInfo, moduleName, author, comment, commentFont, lyrics, lyricsFont, moduleFormat, playerName, channels, crunchedSize, moduleSize, maxSongNumber)
+		internal ModuleInfoStatic(AgentInfo playerAgentInfo, AgentInfo converterAgentInfo, string moduleName, string author, string[] comment, Font commentFont, string[] lyrics, Font lyricsFont, string moduleFormat, string playerName, int channels, int virtualChannels, long crunchedSize, long moduleSize, ModulePlayerSupportFlag supportFlag, int maxSongNumber, InstrumentInfo[] instruments, SampleInfo[] samples) : this(playerAgentInfo, moduleName, author, comment, commentFont, lyrics, lyricsFont, moduleFormat, playerName, channels, virtualChannels, crunchedSize, moduleSize, maxSongNumber)
 		{
 			moduleSupportFlag = supportFlag;
 			sampleSupportFlag = SamplePlayerSupportFlag.None;
@@ -86,7 +87,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor (for sample players)
 		/// </summary>
 		/********************************************************************/
-		internal ModuleInfoStatic(AgentInfo playerAgentInfo, string moduleName, string author, string[] comment, Font commentFont, string[] lyrics, Font lyricsFont, string moduleFormat, string playerName, int channels, long crunchedSize, long moduleSize, SamplePlayerSupportFlag supportFlag, int frequency) : this(playerAgentInfo, moduleName, author, comment, commentFont, lyrics, lyricsFont, moduleFormat, playerName, channels, crunchedSize, moduleSize, 1)
+		internal ModuleInfoStatic(AgentInfo playerAgentInfo, string moduleName, string author, string[] comment, Font commentFont, string[] lyrics, Font lyricsFont, string moduleFormat, string playerName, int channels, long crunchedSize, long moduleSize, SamplePlayerSupportFlag supportFlag, int frequency) : this(playerAgentInfo, moduleName, author, comment, commentFont, lyrics, lyricsFont, moduleFormat, playerName, channels, channels, crunchedSize, moduleSize, 1)
 		{
 			sampleSupportFlag = supportFlag;
 			moduleSupportFlag = ModulePlayerSupportFlag.None;
@@ -210,6 +211,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// </summary>
 		/********************************************************************/
 		public int Channels
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the number of channels the module has reserved
+		/// </summary>
+		/********************************************************************/
+		public int VirtualChannels
 		{
 			get;
 		}

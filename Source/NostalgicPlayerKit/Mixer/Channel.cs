@@ -25,12 +25,12 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/// <summary>
 		/// Start addresses of the sample
 		/// </summary>
-		protected Array[] sampleAddresses = new Array[2];
+		protected readonly Array[] sampleAddresses = new Array[2];
 
 		/// <summary>
 		/// Start address of the loop/release sample
 		/// </summary>
-		protected Array[] loopAddresses = new Array[2];
+		protected readonly Array[] loopAddresses = new Array[2];
 
 		/// <summary>
 		/// Start offset in the sample in samples, not bytes
@@ -86,6 +86,11 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/// The panning (0 = left; 128 = center; 255 = right; 512 = surround)
 		/// </summary>
 		protected uint panning;
+
+		/// <summary>
+		/// Visual information
+		/// </summary>
+		protected VisualInfo visualInformation;
 
 		#region IChannel implementation
 		/********************************************************************/
@@ -377,6 +382,24 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 
 		/********************************************************************/
 		/// <summary>
+		/// These information are used by some visualizer, so your player can
+		/// help those by calling this method. Call it when you trigger a new
+		/// note
+		/// </summary>
+		/********************************************************************/
+		public void SetVisualInfo(VisualInfo visualInfo)
+		{
+			if (visualInfo.NoteNumber > 119)
+				throw new ArgumentException($"Note number out of range ({visualInfo.NoteNumber}). Valid range is between 0 and 119", nameof(visualInfo.NoteNumber));
+
+			visualInformation = visualInfo;
+			flags |= ChannelFlags.Visual;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Returns true or false depending on the channel is in use
 		/// </summary>
 		/********************************************************************/
@@ -417,6 +440,42 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		public uint GetFrequency()
 		{
 			return frequency;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the length of the sample in samples
+		/// </summary>
+		/********************************************************************/
+		public uint GetSampleLength()
+		{
+			return sampleLength;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns new sample position if set
+		/// </summary>
+		/********************************************************************/
+		public int GetSamplePosition()
+		{
+			return samplePosition;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the visual information on the channel
+		/// </summary>
+		/********************************************************************/
+		public VisualInfo GetVisualInfo()
+		{
+			return visualInformation;
 		}
 		#endregion
 

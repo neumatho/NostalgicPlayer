@@ -6,6 +6,9 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+
+using Polycode.NostalgicPlayer.Kit.Containers;
+
 namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 {
 #pragma warning disable 1591
@@ -96,6 +99,8 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 
 		public short Pat_RepPos;				// PatternLoop position
 		public ushort Pat_RepCnt;				// Times to loop
+
+		public VisualInfo VisualInfo = new VisualInfo();
 	}
 #pragma warning restore 1591
 }

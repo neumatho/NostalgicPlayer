@@ -6,20 +6,19 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System.Windows.Forms;
-using Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display;
+using Polycode.NostalgicPlayer.Agent.Visual.Piano.Display;
 using Polycode.NostalgicPlayer.GuiKit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
+namespace Polycode.NostalgicPlayer.Agent.Visual.Piano
 {
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class OscilloscopeWorker : ISampleDataVisualAgent, IAgentGuiDisplay
+	internal class PianoWorker : IChannelChangeVisualAgent, IAgentGuiDisplay
 	{
-		private OscilloscopeControl userControl;
+		private PianoControl userControl;
 
 		#region IAgentDisplay implementation
 		/********************************************************************/
@@ -27,7 +26,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
 		/// Return some flags telling how to set up the display window
 		/// </summary>
 		/********************************************************************/
-		public DisplayFlag Flags => DisplayFlag.None;
+		public DisplayFlag Flags => DisplayFlag.StaticWindow;
 		#endregion
 
 		#region IAgentGuiDisplay implementation
@@ -38,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
 		/********************************************************************/
 		public UserControl GetUserControl()
 		{
-			userControl = new OscilloscopeControl();
+			userControl = new PianoControl();
 			return userControl;
 		}
 		#endregion
@@ -51,6 +50,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
 		/********************************************************************/
 		public void InitVisual(int channels, int virtualChannels)
 		{
+			userControl.InitVisual(virtualChannels);
 		}
 
 
@@ -74,18 +74,19 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
 		/********************************************************************/
 		public void SetPauseState(bool paused)
 		{
+			userControl.SetPauseState(paused);
 		}
 		#endregion
 
-		#region ISampleDataVisualAgent implementation
+		#region IChannelChangeVisualAgent implementation
 		/********************************************************************/
 		/// <summary>
-		/// Tell the visual about new sample data
+		/// Tell the visual about a channel change
 		/// </summary>
 		/********************************************************************/
-		public void SampleData(NewSampleData sampleData)
+		public void ChannelChange(ChannelChanged channelChanged)
 		{
-			userControl.SampleData(sampleData);
+			userControl.ChannelChange(channelChanged);
 		}
 		#endregion
 	}

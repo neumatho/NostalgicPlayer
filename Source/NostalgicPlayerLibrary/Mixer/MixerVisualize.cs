@@ -32,6 +32,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		private IChannel[] channelInfo;
 		private ChannelFlags[] channelFlags;
+		private bool[] channelEnablings;
 
 		private volatile SampleDataInfo sampleDataInfo;
 
@@ -114,6 +115,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		/********************************************************************/
 		/// <summary>
+		/// Will call all visual agents and tell them about new pause state
+		/// </summary>
+		/********************************************************************/
+		public void TellAgentsAboutPauseState(bool paused)
+		{
+			foreach (IVisualAgent visualAgent in manager.GetRegisteredVisualAgent())
+				visualAgent.SetPauseState(paused);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will call all visual agents and tell them about the new mixed
 		/// data
 		/// </summary>
@@ -143,8 +157,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Will call all visual agents and tell them about channel changes
 		/// </summary>
 		/********************************************************************/
-		public void TellAgentsAboutChannelChange()
+		public void TellAgentsAboutChannelChange(bool[] enabledChannels)
 		{
+			channelEnablings = enabledChannels;
+
 			// Tell the thread that a channel has changed its status
 			channelChangedEvent.Set();
 		}
@@ -181,7 +197,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					// channelChangedEvent
 					case 1:
 					{
-						ChannelChanged channelChanged = new ChannelChanged(channelInfo, channelFlags);
+						ChannelChanged channelChanged = new ChannelChanged(channelInfo, channelFlags, channelEnablings);
 
 						foreach (IVisualAgent visualAgent in manager.GetRegisteredVisualAgent())
 						{

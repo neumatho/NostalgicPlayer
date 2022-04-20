@@ -20,10 +20,11 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ChannelChanged(IChannel[] virtualChannels, ChannelFlags[] flags)
+		public ChannelChanged(IChannel[] virtualChannels, ChannelFlags[] flags, bool[] enabledChannels)
 		{
 			VirtualChannels = virtualChannels;
 			Flags = flags;
+			EnabledChannels = enabledChannels;
 		}
 
 
@@ -48,6 +49,18 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// </summary>
 		/********************************************************************/
 		public ChannelFlags[] Flags
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Indicate which channels are enabled (not muted)
+		/// </summary>
+		/********************************************************************/
+		public bool[] EnabledChannels
 		{
 			get;
 		}
