@@ -844,7 +844,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 								int freq = (int)GetNoteFrequency(bas, trkD.TrkFineTune);
 								trkD.TrkArpAdjust = freq - trkD.TrkFrequency;	// Arpeggio difference
 
-								trkD.VisualInfo.NoteNumber = bas;
+								trkD.VisualInfo.NoteNumber = bas > 71 ? (byte)71 : bas;
 								worker.VirtualChannels[trkCnt].SetVisualInfo(trkD.VisualInfo);
 							}
 							break;
