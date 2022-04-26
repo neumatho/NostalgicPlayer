@@ -216,6 +216,18 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 		/********************************************************************/
 		protected abstract void DecompressImpl(byte[] chunk, byte[] rawData);
 
+		#region Helper methods
+		/********************************************************************/
+		/// <summary>
+		/// Will read a 16-bit number from the data and offset given
+		/// </summary>
+		/********************************************************************/
+		protected ushort Read16(byte[] data, int offset)
+		{
+			return (ushort)((data[offset] << 8) | data[offset + 1]);
+		}
+		#endregion
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>

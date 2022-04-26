@@ -53,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 		/********************************************************************/
 		protected override void DecompressImpl(byte[] chunk, byte[] rawData)
 		{
-			ushort rawSize = (ushort)((chunk[0] << 8) | chunk[1]);
+			ushort rawSize = Read16(chunk, 0);
 
 			if (rawData.Length != rawSize)
 				throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);

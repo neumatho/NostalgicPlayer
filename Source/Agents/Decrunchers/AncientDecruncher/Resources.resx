@@ -141,6 +141,12 @@ Converted to C# by Thomas Neumann.
 
 The BZP2 is a cruncher library for the XPK cruncher. It uses the BZip2 algorithm to pack the data.</value>
   </data>
+  <data name="IDS_ANC_DESCRIPTION_AGENT5" xml:space="preserve">
+    <value>Written by Teemu Suutari (Ancient library).
+Converted to C# by Thomas Neumann.
+
+The BLZW is a cruncher library for the XPK cruncher. BLZW stands for "Bryan's turbo-charged LZW" and as the name says, it uses the LZW algorithm to pack the data.</value>
+  </data>
   <data name="IDS_ANC_ERR_CORRUPT_DATA" xml:space="preserve">
     <value>Crunched data is corrupt</value>
   </data>
@@ -176,5 +182,8 @@ The BZP2 is a cruncher library for the XPK cruncher. It uses the BZip2 algorithm
   </data>
   <data name="IDS_ANC_NAME_AGENT4" xml:space="preserve">
     <value>XPK (BZP2)</value>
+  </data>
+  <data name="IDS_ANC_NAME_AGENT5" xml:space="preserve">
+    <value>XPK (BLZW)</value>
   </data>
 </root>

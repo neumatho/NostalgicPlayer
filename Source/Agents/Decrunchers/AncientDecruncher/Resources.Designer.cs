@@ -109,6 +109,18 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library).
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///The BLZW is a cruncher library for the XPK cruncher. BLZW stands for &quot;Bryan&apos;s turbo-charged LZW&quot; and as the name says, it uses the LZW algorithm to pack the data..
+        /// </summary>
+        internal static string IDS_ANC_DESCRIPTION_AGENT5 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_DESCRIPTION_AGENT5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Crunched data is corrupt.
         /// </summary>
         internal static string IDS_ANC_ERR_CORRUPT_DATA {
@@ -213,6 +225,15 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         internal static string IDS_ANC_NAME_AGENT4 {
             get {
                 return ResourceManager.GetString("IDS_ANC_NAME_AGENT4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XPK (BLZW).
+        /// </summary>
+        internal static string IDS_ANC_NAME_AGENT5 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_NAME_AGENT5", resourceCulture);
             }
         }
     }
