@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 	/// Uses the Huffman algorithm to decrunch data
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	internal class HuffmanDecoder<T>
+	internal class HuffmanDecoder<T> where T : struct
 	{
 		#region Node class
 		private class Node
@@ -124,7 +124,73 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 			}
 		}
 
-		#region Private methods
-		#endregion
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create orderly Huffman table, as used by Deflate and BZip2
+		/// </summary>
+		/********************************************************************/
+		public void CreateOrderlyHuffmanTable(byte[] bitLengths, uint bitTableLength)
+		{
+			byte minDepth = 32, maxDepth = 0;
+
+			// Some optimization: more tables
+			ushort[] firstIndex = new ushort[33], lastIndex = new ushort[33];
+			ushort[] nextIndexBuffer = new ushort[bitTableLength];
+
+			for (int i = 1; i < 33; i++)
+				firstIndex[i] = 0xffff;
+
+			uint realItems = 0;
+			for (uint i = 0; i < bitTableLength; i++)
+			{
+				byte length = bitLengths[i];
+				if (length > 32)
+					throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
+
+				if (length != 0)
+				{
+					if (length < minDepth)
+						minDepth = length;
+
+					if (length > maxDepth)
+						maxDepth = length;
+
+					if (firstIndex[length] == 0xffff)
+					{
+						firstIndex[length] = (ushort)i;
+						lastIndex[length] = (ushort)i;
+					}
+					else
+					{
+						nextIndexBuffer[lastIndex[length]] = (ushort)i;
+						lastIndex[length] = (ushort)i;
+					}
+
+					realItems++;
+				}
+			}
+
+			if (maxDepth == 0)
+				throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
+
+			// Optimization, the multiple depends how sparse the tree really is. (minimum is *2)
+			// Usually it is sparse
+			table.Capacity = (int)realItems * 3;
+
+			uint code = 0;
+			for (uint depth = minDepth; depth <= maxDepth; depth++)
+			{
+				if (firstIndex[depth] != 0xffff)
+					nextIndexBuffer[lastIndex[depth]] = (ushort)bitTableLength;
+
+				for (uint i = firstIndex[depth]; i < bitTableLength; i = nextIndexBuffer[i])
+				{
+					Insert(new HuffmanCode<T>(depth, code >> (int)(maxDepth - depth), (T)(object)i));
+					code += (uint)(1 << (int)(maxDepth - depth));
+				}
+			}
+		}
 	}
 }

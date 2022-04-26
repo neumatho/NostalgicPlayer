@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -93,6 +93,18 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         internal static string IDS_ANC_DESCRIPTION_AGENT3 {
             get {
                 return ResourceManager.GetString("IDS_ANC_DESCRIPTION_AGENT3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library).
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///The BZP2 is a cruncher library for the XPK cruncher. It uses the BZip2 algorithm to pack the data..
+        /// </summary>
+        internal static string IDS_ANC_DESCRIPTION_AGENT4 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_DESCRIPTION_AGENT4", resourceCulture);
             }
         }
         
@@ -192,6 +204,15 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         internal static string IDS_ANC_NAME_AGENT3 {
             get {
                 return ResourceManager.GetString("IDS_ANC_NAME_AGENT3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XPK (BZP2).
+        /// </summary>
+        internal static string IDS_ANC_NAME_AGENT4 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_NAME_AGENT4", resourceCulture);
             }
         }
     }

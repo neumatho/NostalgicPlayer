@@ -135,6 +135,12 @@ Converted to C# by Thomas Neumann.
 
 The MMCMP packer is written by Zirconia a.k.a Emmanuel Giasson. The packer can detect different module formats (S3M/IT/XM/MOD), so it knows where the samples are stored. It then pack thoose with a special designed algorithm.</value>
   </data>
+  <data name="IDS_ANC_DESCRIPTION_AGENT4" xml:space="preserve">
+    <value>Written by Teemu Suutari (Ancient library).
+Converted to C# by Thomas Neumann.
+
+The BZP2 is a cruncher library for the XPK cruncher. It uses the BZip2 algorithm to pack the data.</value>
+  </data>
   <data name="IDS_ANC_ERR_CORRUPT_DATA" xml:space="preserve">
     <value>Crunched data is corrupt</value>
   </data>
@@ -167,5 +173,8 @@ The MMCMP packer is written by Zirconia a.k.a Emmanuel Giasson. The packer can d
   </data>
   <data name="IDS_ANC_NAME_AGENT3" xml:space="preserve">
     <value>Music Module Compressor (MMCMP)</value>
+  </data>
+  <data name="IDS_ANC_NAME_AGENT4" xml:space="preserve">
+    <value>XPK (BZP2)</value>
   </data>
 </root>
