@@ -45,6 +45,37 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 			});
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read the number of bits given as argument and return the number
+		/// </summary>
+		/********************************************************************/
+		public uint ReadBits32(uint count)
+		{
+			return ReadBitsInternal(count, () =>
+			{
+				byte[] tmp = new byte[4];
+				byte[] buf = inputStream.Consume(4, tmp);
+				bufContent = (uint)((buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | buf[3]);
+				bufLength = 32;
+			});
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Reset internal variables
+		/// </summary>
+		/********************************************************************/
+		public void Reset(uint bufContent, byte bufLength)
+		{
+			this.bufContent = bufContent;
+			this.bufLength = bufLength;
+		}
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>

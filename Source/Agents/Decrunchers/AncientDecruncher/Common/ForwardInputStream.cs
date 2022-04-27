@@ -77,7 +77,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 		/// Consume the given number of bytes
 		/// </summary>
 		/********************************************************************/
-		public byte[] Consume(uint bytes, byte[] buffer)
+		public byte[] Consume(uint bytes, byte[] buffer = null)
 		{
 			if (currentOffset + bytes > endOffset)
 			{

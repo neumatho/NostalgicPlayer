@@ -76,7 +76,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library).
         ///Converted to C# by Thomas Neumann.
         ///
-        ///The SQSH is a cruncher library for the XPK cruncher. The algorithm is designed to crunch samples by using a delta compression algorithm together with LZ based compression..
+        ///The SQSH is a cruncher library for the XPK cruncher created by John Hendrikx. The algorithm is designed to crunch samples by using a delta compression algorithm together with LZ based compression..
         /// </summary>
         internal static string IDS_ANC_DESCRIPTION_AGENT2 {
             get {
@@ -100,7 +100,9 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library).
         ///Converted to C# by Thomas Neumann.
         ///
-        ///The BZP2 is a cruncher library for the XPK cruncher. It uses the BZip2 algorithm to pack the data..
+        ///The BZP2 is a cruncher library for the XPK cruncher and created by Oliver Roberts. This is from the official package description:
+        ///
+        ///Julian Sadler&apos;s bzip2 compresses files using the Burrows-Wheeler block sorting text compression algorithm, and Huffman coding. Compression is generally considerably better than that achieved by more conventional LZ77/LZ78-based compressors, and approaches the performance of the PPM family of sta [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string IDS_ANC_DESCRIPTION_AGENT4 {
             get {
@@ -117,6 +119,20 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         internal static string IDS_ANC_DESCRIPTION_AGENT5 {
             get {
                 return ResourceManager.GetString("IDS_ANC_DESCRIPTION_AGENT5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library).
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///The RAKE is a cruncher library for the XPK cruncher created by Karsten Dageförde. This is from the official package description:
+        ///
+        ///RAKE implements a highly optimized form of the popular LZ77 compression algorithm. It uses static huffman coding for the &apos;len&apos; and a three-step coding for the &apos;offset&apos; information. The major feature of this packer is the highly optimized algorithm for tracking down redundant data..
+        /// </summary>
+        internal static string IDS_ANC_DESCRIPTION_AGENT6 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_DESCRIPTION_AGENT6", resourceCulture);
             }
         }
         
@@ -234,6 +250,15 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         internal static string IDS_ANC_NAME_AGENT5 {
             get {
                 return ResourceManager.GetString("IDS_ANC_NAME_AGENT5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XPK (RAKE).
+        /// </summary>
+        internal static string IDS_ANC_NAME_AGENT6 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_NAME_AGENT6", resourceCulture);
             }
         }
     }

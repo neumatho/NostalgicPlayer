@@ -127,7 +127,7 @@ PowerPacker was written by Nico Francois and was very popular on the Amiga. One 
     <value>Written by Teemu Suutari (Ancient library).
 Converted to C# by Thomas Neumann.
 
-The SQSH is a cruncher library for the XPK cruncher. The algorithm is designed to crunch samples by using a delta compression algorithm together with LZ based compression.</value>
+The SQSH is a cruncher library for the XPK cruncher created by John Hendrikx. The algorithm is designed to crunch samples by using a delta compression algorithm together with LZ based compression.</value>
   </data>
   <data name="IDS_ANC_DESCRIPTION_AGENT3" xml:space="preserve">
     <value>Written by Teemu Suutari (Ancient library).
@@ -139,13 +139,27 @@ The MMCMP packer is written by Zirconia a.k.a Emmanuel Giasson. The packer can d
     <value>Written by Teemu Suutari (Ancient library).
 Converted to C# by Thomas Neumann.
 
-The BZP2 is a cruncher library for the XPK cruncher. It uses the BZip2 algorithm to pack the data.</value>
+The BZP2 is a cruncher library for the XPK cruncher and created by Oliver Roberts. This is from the official package description:
+
+Julian Sadler's bzip2 compresses files using the Burrows-Wheeler block sorting text compression algorithm, and Huffman coding. Compression is generally considerably better than that achieved by more conventional LZ77/LZ78-based compressors, and approaches the performance of the PPM family of statistical compressors.
+
+BZP2 uses the same compression algorithm as bzip2, and allows you to compress files with the same high crunch factor as bzip2.
+
+In summary, BZP2 offers generally a very high compression ratio, typically around 70-90%.</value>
   </data>
   <data name="IDS_ANC_DESCRIPTION_AGENT5" xml:space="preserve">
     <value>Written by Teemu Suutari (Ancient library).
 Converted to C# by Thomas Neumann.
 
 The BLZW is a cruncher library for the XPK cruncher. BLZW stands for "Bryan's turbo-charged LZW" and as the name says, it uses the LZW algorithm to pack the data.</value>
+  </data>
+  <data name="IDS_ANC_DESCRIPTION_AGENT6" xml:space="preserve">
+    <value>Written by Teemu Suutari (Ancient library).
+Converted to C# by Thomas Neumann.
+
+The RAKE is a cruncher library for the XPK cruncher created by Karsten Dageförde. This is from the official package description:
+
+RAKE implements a highly optimized form of the popular LZ77 compression algorithm. It uses static huffman coding for the 'len' and a three-step coding for the 'offset' information. The major feature of this packer is the highly optimized algorithm for tracking down redundant data.</value>
   </data>
   <data name="IDS_ANC_ERR_CORRUPT_DATA" xml:space="preserve">
     <value>Crunched data is corrupt</value>
@@ -185,5 +199,8 @@ The BLZW is a cruncher library for the XPK cruncher. BLZW stands for "Bryan's tu
   </data>
   <data name="IDS_ANC_NAME_AGENT5" xml:space="preserve">
     <value>XPK (BLZW)</value>
+  </data>
+  <data name="IDS_ANC_NAME_AGENT6" xml:space="preserve">
+    <value>XPK (RAKE)</value>
   </data>
 </root>
