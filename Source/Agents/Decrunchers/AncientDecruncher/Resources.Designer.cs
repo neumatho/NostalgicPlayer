@@ -137,6 +137,20 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library).
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///The SMPL is a cruncher library for the XPK cruncher created by Jorma Oksanen.
+        ///
+        ///SMPL use dynamic huffman with delta precoding, so it better can pack files containing samples, like modules..
+        /// </summary>
+        internal static string IDS_ANC_DESCRIPTION_AGENT7 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_DESCRIPTION_AGENT7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Crunched data is corrupt.
         /// </summary>
         internal static string IDS_ANC_ERR_CORRUPT_DATA {
@@ -259,6 +273,15 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         internal static string IDS_ANC_NAME_AGENT6 {
             get {
                 return ResourceManager.GetString("IDS_ANC_NAME_AGENT6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XPK (SMPL).
+        /// </summary>
+        internal static string IDS_ANC_NAME_AGENT7 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_NAME_AGENT7", resourceCulture);
             }
         }
     }

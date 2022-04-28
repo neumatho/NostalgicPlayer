@@ -59,7 +59,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Xpk_RakeStream(string agentName,  Stream wrapperStream) : base(agentName,  wrapperStream)
+		public Xpk_RakeStream(string agentName, Stream wrapperStream) : base(agentName, wrapperStream)
 		{
 		}
 
@@ -70,19 +70,19 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 		/// Will decrunch a single chunk of data
 		/// </summary>
 		/********************************************************************/
-		protected override void DecompressImpl(byte[] chunk,  byte[] rawData)
+		protected override void DecompressImpl(byte[] chunk, byte[] rawData)
 		{
-			uint midStreamOffset = Read16(chunk,  2);
+			uint midStreamOffset = Read16(chunk, 2);
 			if (midStreamOffset >= chunk.Length)
-				throw new DecruncherException(agentName,  Resources.IDS_ANC_ERR_CORRUPT_DATA);
+				throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 
-			using (MemoryStream chunkStream = new MemoryStream(chunk,  false))
+			using (MemoryStream chunkStream = new MemoryStream(chunk, false))
 			{
 				// 2 streams
 				// 1st: Bit stream starting from midStreamOffset(+1) going to chunk array length
 				// 2nd: Byte stream starting from midStreamOffset going backwards to 4
-				ForwardInputStream forwardInputStream = new ForwardInputStream(agentName,  chunkStream,  midStreamOffset + (midStreamOffset & 1),  (uint)chunk.Length);
-				BackwardInputStream backwardInputStream = new BackwardInputStream(agentName,  chunkStream,  4,  midStreamOffset);
+				ForwardInputStream forwardInputStream = new ForwardInputStream(agentName, chunkStream, midStreamOffset + (midStreamOffset & 1), (uint)chunk.Length);
+				BackwardInputStream backwardInputStream = new BackwardInputStream(agentName, chunkStream, 4, midStreamOffset);
 				MsbBitReader bitReader = new MsbBitReader(forwardInputStream);
 
 				uint ReadBits(uint count) => bitReader.ReadBits32(count);
@@ -90,16 +90,16 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 				byte ReadByte() => backwardInputStream.ReadByte();
 
 				{
-					ushort tmp = Read16(chunk,  0);
+					ushort tmp = Read16(chunk, 0);
 					if (tmp > 32)
-						throw new DecruncherException(agentName,  Resources.IDS_ANC_ERR_CORRUPT_DATA);
+						throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 
 					byte[] buf = forwardInputStream.Consume(4);
 					uint content = (uint)((buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | (buf[3]));
-					bitReader.Reset(content >> tmp,  (byte)(32 - tmp));
+					bitReader.Reset(content >> tmp, (byte)(32 - tmp));
 				}
 
-				BackwardOutputStream outputStream = new BackwardOutputStream(agentName,  rawData,  0,  (uint)rawData.Length);
+				BackwardOutputStream outputStream = new BackwardOutputStream(agentName, rawData, 0, (uint)rawData.Length);
 
 				HuffmanDecoder<uint> lengthDecoder = new HuffmanDecoder<uint>(agentName);
 
