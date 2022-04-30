@@ -76,6 +76,20 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library).
         ///Converted to C# by Thomas Neumann.
         ///
+        ///The MASH is a cruncher library for the XPK cruncher created by Zdenek Kabelac. This is from the official package description:
+        ///
+        ///MASH main purpose is to decrunch fast and have an excellent crunch factor. It is using LZ77 compression and a special method to write matches..
+        /// </summary>
+        internal static string IDS_ANC_DESCRIPTION_AGENT10 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_DESCRIPTION_AGENT10", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library).
+        ///Converted to C# by Thomas Neumann.
+        ///
         ///The SQSH is a cruncher library for the XPK cruncher created by John Hendrikx. The algorithm is designed to crunch samples by using a delta compression algorithm together with LZ based compression..
         /// </summary>
         internal static string IDS_ANC_DESCRIPTION_AGENT2 {
@@ -256,6 +270,15 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         internal static string IDS_ANC_NAME_AGENT1 {
             get {
                 return ResourceManager.GetString("IDS_ANC_NAME_AGENT1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XPK (MASH).
+        /// </summary>
+        internal static string IDS_ANC_NAME_AGENT10 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_NAME_AGENT10", resourceCulture);
             }
         }
         

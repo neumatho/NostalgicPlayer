@@ -123,6 +123,14 @@ Converted to C# by Thomas Neumann.
 
 PowerPacker was written by Nico Francois and was very popular on the Amiga. One of its strength, is that it is very fast for both crunching and decrunching.</value>
   </data>
+  <data name="IDS_ANC_DESCRIPTION_AGENT10" xml:space="preserve">
+    <value>Written by Teemu Suutari (Ancient library).
+Converted to C# by Thomas Neumann.
+
+The MASH is a cruncher library for the XPK cruncher created by Zdenek Kabelac. This is from the official package description:
+
+MASH main purpose is to decrunch fast and have an excellent crunch factor. It is using LZ77 compression and a special method to write matches.</value>
+  </data>
   <data name="IDS_ANC_DESCRIPTION_AGENT2" xml:space="preserve">
     <value>Written by Teemu Suutari (Ancient library).
 Converted to C# by Thomas Neumann.
@@ -211,6 +219,9 @@ This XPK compressor uses the general purpose data compression library ZLIB by Je
   </data>
   <data name="IDS_ANC_NAME_AGENT1" xml:space="preserve">
     <value>PowerPacker</value>
+  </data>
+  <data name="IDS_ANC_NAME_AGENT10" xml:space="preserve">
+    <value>XPK (MASH)</value>
   </data>
   <data name="IDS_ANC_NAME_AGENT2" xml:space="preserve">
     <value>XPK (SQSH)</value>
