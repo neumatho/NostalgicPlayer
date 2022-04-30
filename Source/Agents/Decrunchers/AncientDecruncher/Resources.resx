@@ -141,9 +141,9 @@ Converted to C# by Thomas Neumann.
 
 The BZP2 is a cruncher library for the XPK cruncher and created by Oliver Roberts. This is from the official package description:
 
-Julian Sadler's bzip2 compresses files using the Burrows-Wheeler block sorting text compression algorithm, and Huffman coding. Compression is generally considerably better than that achieved by more conventional LZ77/LZ78-based compressors, and approaches the performance of the PPM family of statistical compressors.
+Julian Sadler's BZip2 compresses files using the Burrows-Wheeler block sorting text compression algorithm, and Huffman coding. Compression is generally considerably better than that achieved by more conventional LZ77/LZ78-based compressors, and approaches the performance of the PPM family of statistical compressors.
 
-BZP2 uses the same compression algorithm as bzip2, and allows you to compress files with the same high crunch factor as bzip2.
+BZP2 uses the same compression algorithm as bzip2, and allows you to compress files with the same high crunch factor as BZip2.
 
 In summary, BZP2 offers generally a very high compression ratio, typically around 70-90%.</value>
   </data>
@@ -168,6 +168,14 @@ Converted to C# by Thomas Neumann.
 The SMPL is a cruncher library for the XPK cruncher created by Jorma Oksanen.
 
 SMPL use dynamic huffman with delta precoding, so it better can pack files containing samples, like modules.</value>
+  </data>
+  <data name="IDS_ANC_DESCRIPTION_AGENT8" xml:space="preserve">
+    <value>Written by Teemu Suutari (Ancient library).
+Converted to C# by Thomas Neumann.
+
+The SHRI is a cruncher library for the XPK cruncher created by Matthias Meixner. This is from the official package description:
+
+SHRI implements a highly for compression rate optimized compressor, that uses offset/len encoding with adaptive arithmetic aftercoding for best compression results. Its compression rate is better than most other packers, e.g. Lha, Zoo or PowerPacker.</value>
   </data>
   <data name="IDS_ANC_ERR_CORRUPT_DATA" xml:space="preserve">
     <value>Crunched data is corrupt</value>
@@ -213,5 +221,8 @@ SMPL use dynamic huffman with delta precoding, so it better can pack files conta
   </data>
   <data name="IDS_ANC_NAME_AGENT7" xml:space="preserve">
     <value>XPK (SMPL)</value>
+  </data>
+  <data name="IDS_ANC_NAME_AGENT8" xml:space="preserve">
+    <value>XPK (SHRI)</value>
   </data>
 </root>

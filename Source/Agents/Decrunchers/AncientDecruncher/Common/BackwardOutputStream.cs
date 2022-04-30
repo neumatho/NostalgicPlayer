@@ -85,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 		/********************************************************************/
 		public byte Copy(uint distance, uint count)
 		{
-			if ((distance == 0) || (startOffset + count > currentOffset) || (currentOffset + distance > endOffset))
+			if ((distance == 0) || (OverflowCheck.Sum(startOffset, count) > currentOffset) || (OverflowCheck.Sum(currentOffset, distance) > endOffset))
 				throw new ArgumentException();
 
 			byte ret = 0;

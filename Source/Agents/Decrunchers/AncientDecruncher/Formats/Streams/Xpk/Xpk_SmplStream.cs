@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Xpk_SmplStream(string agentName,  Stream wrapperStream) : base(agentName,  wrapperStream)
+		public Xpk_SmplStream(string agentName, Stream wrapperStream) : base(agentName, wrapperStream)
 		{
 		}
 
@@ -33,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 		/// Will decrunch a single chunk of data
 		/// </summary>
 		/********************************************************************/
-		protected override void DecompressImpl(byte[] chunk,  byte[] rawData)
+		protected override void DecompressImpl(byte[] chunk, byte[] rawData)
 		{
 			if (Read16(chunk,  0) != 1)
 				throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);

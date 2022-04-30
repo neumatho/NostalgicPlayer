@@ -150,7 +150,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 							currentOffset += checkHeaderLen + tmp;
 						}
 
-						ReadDualValue(4, 4, out uint decrunchedChunkSize);
+						ReadDualValue(4, 4, out uint crunchedChunkSize);
 						ReadDualValue(6, 8, out uint rawChunkSize);
 
 						byte[] hdr = new byte[checkHeaderLen];
@@ -160,9 +160,9 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 						if (!HeaderChecksum(hdr, 0, (uint)hdr.Length))
 							throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_WRONG_HEADER_CHECKSUM);
 
-						byte[] chunk = new byte[decrunchedChunkSize];
+						byte[] chunk = new byte[crunchedChunkSize];
 						readerStream.Seek(currentOffset + checkHeaderLen, SeekOrigin.Begin);
-						readerStream.Read(chunk, 0, (int)decrunchedChunkSize);
+						readerStream.Read(chunk, 0, (int)crunchedChunkSize);
 
 						ushort hdrCheck = (ushort)((hdr[2] << 8) | hdr[3]);
 						if ((chunk.Length != 0) && !ChunkChecksum(chunk, 0, (uint)chunk.Length, hdrCheck))
@@ -225,6 +225,18 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 		protected ushort Read16(byte[] data, int offset)
 		{
 			return (ushort)((data[offset] << 8) | data[offset + 1]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will read a 32-bit number from the data and offset given
+		/// </summary>
+		/********************************************************************/
+		protected uint Read32(byte[] data, int offset)
+		{
+			return (uint)((data[offset] << 24) | (data[offset + 1] << 16) | (data[offset + 2] << 8) | data[offset + 3]);
 		}
 		#endregion
 

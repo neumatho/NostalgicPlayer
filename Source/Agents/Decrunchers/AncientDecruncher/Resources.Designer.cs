@@ -102,7 +102,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         ///
         ///The BZP2 is a cruncher library for the XPK cruncher and created by Oliver Roberts. This is from the official package description:
         ///
-        ///Julian Sadler&apos;s bzip2 compresses files using the Burrows-Wheeler block sorting text compression algorithm, and Huffman coding. Compression is generally considerably better than that achieved by more conventional LZ77/LZ78-based compressors, and approaches the performance of the PPM family of sta [rest of string was truncated]&quot;;.
+        ///Julian Sadler&apos;s BZip2 compresses files using the Burrows-Wheeler block sorting text compression algorithm, and Huffman coding. Compression is generally considerably better than that achieved by more conventional LZ77/LZ78-based compressors, and approaches the performance of the PPM family of sta [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string IDS_ANC_DESCRIPTION_AGENT4 {
             get {
@@ -147,6 +147,20 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         internal static string IDS_ANC_DESCRIPTION_AGENT7 {
             get {
                 return ResourceManager.GetString("IDS_ANC_DESCRIPTION_AGENT7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library).
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///The SHRI is a cruncher library for the XPK cruncher created by Matthias Meixner. This is from the official package description:
+        ///
+        ///SHRI implements a highly for compression rate optimized compressor, that uses offset/len encoding with adaptive arithmetic aftercoding for best compression results. Its compression rate is better than most other packers, e.g. Lha, Zoo or PowerPacker..
+        /// </summary>
+        internal static string IDS_ANC_DESCRIPTION_AGENT8 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_DESCRIPTION_AGENT8", resourceCulture);
             }
         }
         
@@ -282,6 +296,15 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         internal static string IDS_ANC_NAME_AGENT7 {
             get {
                 return ResourceManager.GetString("IDS_ANC_NAME_AGENT7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XPK (SHRI).
+        /// </summary>
+        internal static string IDS_ANC_NAME_AGENT8 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_NAME_AGENT8", resourceCulture);
             }
         }
     }
