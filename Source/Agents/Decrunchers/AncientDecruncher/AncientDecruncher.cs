@@ -32,6 +32,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher
 		private static readonly Guid agent6Id = Guid.Parse("5D917A8E-2FF5-4695-973B-6BA9C7CCA711");
 		private static readonly Guid agent7Id = Guid.Parse("BFDBDDFA-A76A-4C2C-821A-3E2E1DD46E0A");
 		private static readonly Guid agent8Id = Guid.Parse("03263F70-B384-4452-9D34-971F16DE2C6D");
+		private static readonly Guid agent9Id = Guid.Parse("61410C72-454A-428F-9EF1-9A3CDB7FA3D0");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -61,7 +62,8 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher
 					new AgentSupportInfo(Resources.IDS_ANC_NAME_AGENT5, Resources.IDS_ANC_DESCRIPTION_AGENT5, agent5Id),
 					new AgentSupportInfo(Resources.IDS_ANC_NAME_AGENT6, Resources.IDS_ANC_DESCRIPTION_AGENT6, agent6Id),
 					new AgentSupportInfo(Resources.IDS_ANC_NAME_AGENT7, Resources.IDS_ANC_DESCRIPTION_AGENT7, agent7Id),
-					new AgentSupportInfo(Resources.IDS_ANC_NAME_AGENT8, Resources.IDS_ANC_DESCRIPTION_AGENT8, agent8Id)
+					new AgentSupportInfo(Resources.IDS_ANC_NAME_AGENT8, Resources.IDS_ANC_DESCRIPTION_AGENT8, agent8Id),
+					new AgentSupportInfo(Resources.IDS_ANC_NAME_AGENT9, Resources.IDS_ANC_DESCRIPTION_AGENT9, agent9Id)
 				};
 			}
 		}
@@ -98,6 +100,9 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher
 
 			if (typeId == agent8Id)
 				return new AncientDecruncherWorker_Xpk_Shri(Resources.IDS_ANC_NAME_AGENT8);
+
+			if (typeId == agent9Id)
+				return new AncientDecruncherWorker_Xpk_Lhlb(Resources.IDS_ANC_NAME_AGENT9);
 
 			return null;
 		}

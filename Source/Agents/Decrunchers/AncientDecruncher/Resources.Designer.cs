@@ -165,6 +165,20 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library).
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///The LHLB is a cruncher library for the XPK cruncher created by Gunther Nikl. This is from the official package description:
+        ///
+        ///This XPK compressor uses the general purpose data compression library ZLIB by Jean-loup Gailly and Mark Adler. It implements the compression technique used by GZIP..
+        /// </summary>
+        internal static string IDS_ANC_DESCRIPTION_AGENT9 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_DESCRIPTION_AGENT9", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Crunched data is corrupt.
         /// </summary>
         internal static string IDS_ANC_ERR_CORRUPT_DATA {
@@ -305,6 +319,15 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         internal static string IDS_ANC_NAME_AGENT8 {
             get {
                 return ResourceManager.GetString("IDS_ANC_NAME_AGENT8", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XPK (LHLB).
+        /// </summary>
+        internal static string IDS_ANC_NAME_AGENT9 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_NAME_AGENT9", resourceCulture);
             }
         }
     }

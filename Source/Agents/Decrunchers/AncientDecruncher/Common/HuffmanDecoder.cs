@@ -15,7 +15,6 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 	/// <summary>
 	/// Uses the Huffman algorithm to decrunch data
 	/// </summary>
-	/// <typeparam name="T"></typeparam>
 	internal class HuffmanDecoder<T> where T : struct
 	{
 		#region Node class

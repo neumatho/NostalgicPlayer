@@ -177,6 +177,14 @@ The SHRI is a cruncher library for the XPK cruncher created by Matthias Meixner.
 
 SHRI implements a highly for compression rate optimized compressor, that uses offset/len encoding with adaptive arithmetic aftercoding for best compression results. Its compression rate is better than most other packers, e.g. Lha, Zoo or PowerPacker.</value>
   </data>
+  <data name="IDS_ANC_DESCRIPTION_AGENT9" xml:space="preserve">
+    <value>Written by Teemu Suutari (Ancient library).
+Converted to C# by Thomas Neumann.
+
+The LHLB is a cruncher library for the XPK cruncher created by Gunther Nikl. This is from the official package description:
+
+This XPK compressor uses the general purpose data compression library ZLIB by Jean-loup Gailly and Mark Adler. It implements the compression technique used by GZIP.</value>
+  </data>
   <data name="IDS_ANC_ERR_CORRUPT_DATA" xml:space="preserve">
     <value>Crunched data is corrupt</value>
   </data>
@@ -224,5 +232,8 @@ SHRI implements a highly for compression rate optimized compressor, that uses of
   </data>
   <data name="IDS_ANC_NAME_AGENT8" xml:space="preserve">
     <value>XPK (SHRI)</value>
+  </data>
+  <data name="IDS_ANC_NAME_AGENT9" xml:space="preserve">
+    <value>XPK (LHLB)</value>
   </data>
 </root>
