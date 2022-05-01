@@ -16,10 +16,8 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 	/// <summary>
 	/// Base class to all XPK streams
 	/// </summary>
-	internal abstract class XpkStream : DecruncherStream
+	internal abstract class XpkStream : AncientStream
 	{
-		protected readonly string agentName;
-
 		private readonly uint decrunchedSize;
 		private readonly uint rawSize;
 
@@ -38,10 +36,8 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		protected XpkStream(string agentName, Stream wrapperStream) : base(wrapperStream, false)
+		protected XpkStream(string agentName, Stream wrapperStream) : base(agentName, wrapperStream)
 		{
-			this.agentName = agentName;
-
 			using (ReaderStream readerStream = new ReaderStream(wrapperStream, true))
 			{
 				readerStream.Seek(4, SeekOrigin.Begin);

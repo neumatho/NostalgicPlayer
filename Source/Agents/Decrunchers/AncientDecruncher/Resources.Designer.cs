@@ -90,6 +90,18 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library).
         ///Converted to C# by Thomas Neumann.
         ///
+        ///Crunch-Mania was written by Thomas Schwarz on the Amiga and was well known..
+        /// </summary>
+        internal static string IDS_ANC_DESCRIPTION_AGENT11 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_DESCRIPTION_AGENT11", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Written by Teemu Suutari (Ancient library).
+        ///Converted to C# by Thomas Neumann.
+        ///
         ///The SQSH is a cruncher library for the XPK cruncher created by John Hendrikx. The algorithm is designed to crunch samples by using a delta compression algorithm together with LZ based compression..
         /// </summary>
         internal static string IDS_ANC_DESCRIPTION_AGENT2 {
@@ -279,6 +291,15 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         internal static string IDS_ANC_NAME_AGENT10 {
             get {
                 return ResourceManager.GetString("IDS_ANC_NAME_AGENT10", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Crunch-Mania.
+        /// </summary>
+        internal static string IDS_ANC_NAME_AGENT11 {
+            get {
+                return ResourceManager.GetString("IDS_ANC_NAME_AGENT11", resourceCulture);
             }
         }
         

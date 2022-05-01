@@ -64,6 +64,19 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 			});
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Reset internal variables
+		/// </summary>
+		/********************************************************************/
+		public void Reset(uint bufContent, byte bufLength)
+		{
+			this.bufContent = bufContent;
+			this.bufLength = bufLength;
+		}
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>

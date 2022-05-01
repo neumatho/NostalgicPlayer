@@ -17,10 +17,8 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 	/// <summary>
 	/// This stream read data crunched with PowerPacker
 	/// </summary>
-	internal class PowerPackerStream : DecruncherStream
+	internal class PowerPackerStream : AncientStream
 	{
-		private readonly string agentName;
-
 		private byte[] decrunchedData;
 		private int bufferIndex;
 
@@ -35,10 +33,8 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public PowerPackerStream(string agentName, Stream wrapperStream) : base(wrapperStream, false)
+		public PowerPackerStream(string agentName, Stream wrapperStream) : base(agentName, wrapperStream)
 		{
-			this.agentName = agentName;
-
 			ReadAndDecrunch();
 		}
 

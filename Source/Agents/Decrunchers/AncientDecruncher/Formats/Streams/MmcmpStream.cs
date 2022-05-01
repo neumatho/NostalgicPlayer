@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 	/// <summary>
 	/// This stream read data crunched with MMCMP
 	/// </summary>
-	internal class MmcmpStream : DecruncherStream
+	internal class MmcmpStream : AncientStream
 	{
 		private static readonly byte[] valueThresholds8 = new byte[8]
 		{
@@ -42,9 +42,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 			4, 4, 4, 4,  3, 2, 1, 0,  0, 0, 0, 0,  0, 0, 0, 0
 		};
 
-		private readonly string agentName;
-
-		private readonly uint packedSize;
+		private readonly uint crunchedSize;
 		private readonly uint rawSize;
 		private readonly uint blocksOffset;
 		private readonly uint blocks;
@@ -64,10 +62,8 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public MmcmpStream(string agentName, Stream wrapperStream) : base(wrapperStream, false)
+		public MmcmpStream(string agentName, Stream wrapperStream) : base(agentName, wrapperStream)
 		{
-			this.agentName = agentName;
-
 			using (ReaderStream readerStream = new ReaderStream(wrapperStream, true))
 			{
 				readerStream.Seek(10, SeekOrigin.Begin);
@@ -90,7 +86,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 				// Calculate the packed size and find the order of the blocks
 				SortedDictionary<uint, uint> blockOffsets = new SortedDictionary<uint, uint>();
 
-				packedSize = 0;
+				crunchedSize = 0;
 				for (uint i = 0; i < blocks; i++)
 				{
 					uint blockAddr = blockArray[i];
@@ -101,14 +97,14 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 					uint blockSize = readerStream.Read_L_UINT32();
 					readerStream.Seek(4, SeekOrigin.Current);
 					blockSize += (uint)readerStream.Read_L_UINT16() * 8 + 20;
-					packedSize = Math.Max(packedSize, OverflowCheck.Sum(blockAddr, blockSize));
+					crunchedSize = Math.Max(crunchedSize, OverflowCheck.Sum(blockAddr, blockSize));
 
 					readerStream.Seek(6, SeekOrigin.Current);
 					uint offset = readerStream.Read_L_UINT32();
 					blockOffsets[offset] = i;
 				}
 
-				if (packedSize > readerStream.Length)
+				if (crunchedSize > readerStream.Length)
 					throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 
 				blockOrder = blockOffsets.Values.ToArray();

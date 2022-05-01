@@ -131,6 +131,12 @@ The MASH is a cruncher library for the XPK cruncher created by Zdenek Kabelac. T
 
 MASH main purpose is to decrunch fast and have an excellent crunch factor. It is using LZ77 compression and a special method to write matches.</value>
   </data>
+  <data name="IDS_ANC_DESCRIPTION_AGENT11" xml:space="preserve">
+    <value>Written by Teemu Suutari (Ancient library).
+Converted to C# by Thomas Neumann.
+
+Crunch-Mania was written by Thomas Schwarz on the Amiga and was well known.</value>
+  </data>
   <data name="IDS_ANC_DESCRIPTION_AGENT2" xml:space="preserve">
     <value>Written by Teemu Suutari (Ancient library).
 Converted to C# by Thomas Neumann.
@@ -222,6 +228,9 @@ This XPK compressor uses the general purpose data compression library ZLIB by Je
   </data>
   <data name="IDS_ANC_NAME_AGENT10" xml:space="preserve">
     <value>XPK (MASH)</value>
+  </data>
+  <data name="IDS_ANC_NAME_AGENT11" xml:space="preserve">
+    <value>Crunch-Mania</value>
   </data>
   <data name="IDS_ANC_NAME_AGENT2" xml:space="preserve">
     <value>XPK (SQSH)</value>

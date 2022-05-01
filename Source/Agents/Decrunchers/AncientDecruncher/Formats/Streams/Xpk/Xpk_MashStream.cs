@@ -51,20 +51,9 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 				ForwardInputStream inputStream = new ForwardInputStream(agentName, chunkStream, 0, (uint)chunk.Length);
 				MsbBitReader bitReader = new MsbBitReader(inputStream);
 
-				uint ReadBits(uint count)
-				{
-					return bitReader.ReadBits8(count);
-				}
-
-				uint ReadBit()
-				{
-					return bitReader.ReadBits8(1);
-				}
-
-				byte ReadByte()
-				{
-					return inputStream.ReadByte();
-				}
+				uint ReadBits(uint count) => bitReader.ReadBits8(count);
+				uint ReadBit() => bitReader.ReadBits8(1);
+				byte ReadByte() => inputStream.ReadByte();
 
 				uint rawSize = (uint)rawData.Length;
 				ForwardOutputStream outputStream = new ForwardOutputStream(agentName, rawData, 0, rawSize);

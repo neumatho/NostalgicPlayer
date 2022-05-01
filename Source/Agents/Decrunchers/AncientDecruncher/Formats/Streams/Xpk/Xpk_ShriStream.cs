@@ -86,10 +86,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 			{
 				ForwardInputStream inputStream = new ForwardInputStream(agentName, chunkStream, startOffset, (uint)chunk.Length);
 
-				byte ReadByte()
-				{
-					return inputStream.ReadByte();
-				}
+				byte ReadByte() => inputStream.ReadByte();
 
 				ForwardOutputStream outputStream = new ForwardOutputStream(agentName, rawData, 0, (uint)rawData.Length);
 
@@ -338,10 +335,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.St
 					}
 					else
 					{
-						uint DistanceAddition(uint i)
-						{
-							return (uint)(((1 << (int)(i + 2)) - 1) & ~0x3);
-						}
+						uint DistanceAddition(uint i) => (uint)(((1 << (int)(i + 2)) - 1) & ~0x3);
 
 						uint count, distance;
 
