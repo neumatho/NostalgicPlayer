@@ -599,7 +599,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		/********************************************************************/
 		public override int GetSongPosition()
 		{
-			int pos = (int)(samplesRead * 100 / totalLengthInSamples);
+			int pos;
+
+			if (totalLengthInSamples > 0)
+				pos = (int)(samplesRead * 100 / totalLengthInSamples);
+			else
+				pos = (int)(modStream.Position * 100 / (calculatedFileLength - firstFramePosition));
+
 			if (pos >= 100)
 				pos = 99;
 
@@ -615,12 +621,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		/********************************************************************/
 		public override void SetSongPosition(int position, PositionInfo positionInfo)
 		{
-			int newPos = (int)(position * totalLengthInSamples / 100);
-			int result = Native.mpg123_feedseek(mpg123Handle, newPos, 0/*SEEK_SET*/, out int inputOffset);
-			if (result >= 0)
+			if (totalLengthInSamples > 0)
 			{
-				samplesRead = result;
-				modStream.Seek(firstFramePosition + inputOffset, SeekOrigin.Begin);
+				int newPos = (int)(position * totalLengthInSamples / 100);
+				int result = Native.mpg123_feedseek(mpg123Handle, newPos, 0/*SEEK_SET*/, out int inputOffset);
+				if (result >= 0)
+				{
+					samplesRead = result;
+					modStream.Seek(firstFramePosition + inputOffset, SeekOrigin.Begin);
+				}
+			}
+			else
+			{
+				int newPos = (int)(position * (calculatedFileLength - firstFramePosition) / 100);
+				samplesRead = newPos * ChannelCount;
+				modStream.Seek(firstFramePosition + newPos, SeekOrigin.Begin);
 			}
 		}
 		#endregion
