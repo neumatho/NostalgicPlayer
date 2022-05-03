@@ -36,6 +36,8 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 
 			public bool pulsing;
 			public bool direction;
+
+			public int volume0Counter;
 		}
 
 		private const int NumberOfOctaves = 10;
@@ -66,7 +68,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 			Color.FromArgb(60, 167, 156),
 			Color.FromArgb(52, 165, 81),
 			Color.FromArgb(145, 197, 63),
-			Color.FromArgb(251, 242, 26),			// 10
+			Color.FromArgb(221, 222, 26),			// 10
 			Color.FromArgb(239, 149, 42),
 			Color.FromArgb(255, 164, 182),
 			Color.FromArgb(144, 111, 72),
@@ -321,6 +323,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 					visualChannelInfo.calculatedSamplePosition = 0.0f;
 					visualChannelInfo.pulsing = false;
 					visualChannelInfo.direction = false;
+					visualChannelInfo.volume0Counter = 10;
 
 					if (visualChannelInfo.sampleLength == 0)
 						Deactivate(visualChannelInfo);
@@ -341,7 +344,12 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 					visualChannelInfo.frequency = chan.GetFrequency();
 
 				if (chan.GetVolume() == 0)
-					Deactivate(visualChannelInfo);
+				{
+					if (visualChannelInfo.volume0Counter == 0)
+						Deactivate(visualChannelInfo);
+					else
+						visualChannelInfo.volume0Counter--;
+				}
 			}
 		}
 
