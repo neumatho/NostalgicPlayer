@@ -461,7 +461,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 			if (worker is IPlayerAgent)
 				return AgentType.Players;
 
-			if (worker is ISampleSaverAgent)
+			if ((worker is ISampleLoaderAgent) || (worker is ISampleSaverAgent))
 				return AgentType.SampleConverters;
 
 			if (worker is IModuleConverterAgent)

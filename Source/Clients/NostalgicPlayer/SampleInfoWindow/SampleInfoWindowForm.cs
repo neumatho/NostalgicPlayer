@@ -250,7 +250,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 				// Add the sample converters to the format list
 				Guid saveFormat = settings.SampleSaveFormat;
 
-				foreach (AgentInfo agentInfo in agentManager.GetAllAgents(Manager.AgentType.SampleConverters))
+				foreach (AgentInfo agentInfo in agentManager.GetAllAgents(Manager.AgentType.SampleConverters).Where(a => a.Agent.CreateInstance(a.TypeId) is ISampleSaverAgent))
 				{
 					KryptonListItem listItem = new KryptonListItem(agentInfo.TypeName);
 					listItem.Tag = agentInfo;
