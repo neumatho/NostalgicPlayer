@@ -244,38 +244,41 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 		{
 			lock (this)
 			{
-				foreach (VisualChannelInfo visualChannelInfo in visualChannels)
+				if (visualChannels != null)
 				{
-					if (visualChannelInfo.active)
+					foreach (VisualChannelInfo visualChannelInfo in visualChannels)
 					{
-						if (visualChannelInfo.pulsing)
+						if (visualChannelInfo.active)
 						{
-							if (visualChannelInfo.direction)
+							if (visualChannelInfo.pulsing)
 							{
-								visualChannelInfo.alpha += 6;
-								if (visualChannelInfo.alpha >= 255)
-									visualChannelInfo.direction = false;
-							}
-							else
-							{
-								visualChannelInfo.alpha -= 6;
-								if (visualChannelInfo.alpha < 128)
-									visualChannelInfo.direction = true;
-							}
-						}
-						else
-						{
-							if (visualChannelInfo.sampleLength == 0)
-								Deactivate(visualChannelInfo);
-							else
-							{
-								visualChannelInfo.alpha = 255 - (int)((visualChannelInfo.calculatedSamplePosition * 255) / visualChannelInfo.sampleLength);
-
-								visualChannelInfo.calculatedSamplePosition += visualChannelInfo.frequency * pulseTimer.Interval / 1000.0f;
-								if (visualChannelInfo.calculatedSamplePosition > visualChannelInfo.sampleLength)
+								if (visualChannelInfo.direction)
 								{
-									visualChannelInfo.calculatedSamplePosition = visualChannelInfo.sampleLength;
+									visualChannelInfo.alpha += 6;
+									if (visualChannelInfo.alpha >= 255)
+										visualChannelInfo.direction = false;
+								}
+								else
+								{
+									visualChannelInfo.alpha -= 6;
+									if (visualChannelInfo.alpha < 128)
+										visualChannelInfo.direction = true;
+								}
+							}
+							else
+							{
+								if (visualChannelInfo.sampleLength == 0)
 									Deactivate(visualChannelInfo);
+								else
+								{
+									visualChannelInfo.alpha = 255 - (int)((visualChannelInfo.calculatedSamplePosition * 255) / visualChannelInfo.sampleLength);
+
+									visualChannelInfo.calculatedSamplePosition += visualChannelInfo.frequency * pulseTimer.Interval / 1000.0f;
+									if (visualChannelInfo.calculatedSamplePosition > visualChannelInfo.sampleLength)
+									{
+										visualChannelInfo.calculatedSamplePosition = visualChannelInfo.sampleLength;
+										Deactivate(visualChannelInfo);
+									}
 								}
 							}
 						}
