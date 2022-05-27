@@ -135,7 +135,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		/// Will load the file into memory
 		/// </summary>
 		/********************************************************************/
-		public override SamplePlayerSupportFlag SupportFlags => SamplePlayerSupportFlag.SetPosition;
+		public override SamplePlayerSupportFlag SupportFlags => totalLength > 0 ? SamplePlayerSupportFlag.SetPosition : SamplePlayerSupportFlag.None;
 
 
 
@@ -215,6 +215,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		/********************************************************************/
 		public override DurationInfo CalculateDuration()
 		{
+			if (totalLength == 0)
+				return null;
+
 			// Calculate the total time
 			long totalTime = totalLength * 1000 / formatInfo.Frequency / formatInfo.Channels;
 
@@ -288,11 +291,32 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 
 		/********************************************************************/
 		/// <summary>
+		/// Return the length of the current song
+		/// </summary>
+		/********************************************************************/
+		public override int SongLength
+		{
+			get
+			{
+				if (totalLength == 0)
+					return 0;
+
+				return 100;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the current position of the song
 		/// </summary>
 		/********************************************************************/
 		public override int GetSongPosition()
 		{
+			if (totalLength == 0)
+				return 0;
+
 			int pos = (int)(samplesRead * 100 / totalLength);
 			if (pos >= 100)
 				pos = 99;

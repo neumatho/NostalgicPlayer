@@ -339,6 +339,14 @@
             <uap:DisplayName>OctaMED</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="flacfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/flac">.flac</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>FLAC</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

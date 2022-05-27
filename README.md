@@ -44,6 +44,7 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | Farandole Composer | .far | MikMod Converter | MikMod |
 | Fast/TakeTracker | .mod | | ModTracker |
 | FastTracker II | .xm | MikMod Converter | MikMod |
+| FLAC | .flac | | Sample |
 | Fred Editor | .frd / .fred | | Fred Editor |
 | Fred Editor (Final) | .frd / .fred | Module Converter | Fred Editor |
 | Future Composer 1.0 - 1.3 | .fc / .fc13 / .smod | Module Converter | Future Composer |
