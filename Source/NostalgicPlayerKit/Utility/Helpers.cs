@@ -8,6 +8,7 @@
 /******************************************************************************/
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Polycode.NostalgicPlayer.Kit.Utility
 {
@@ -27,6 +28,57 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 			T[] array = new T[length];
 			for (int i = 0; i < length; i++)
 				array[i] = new T();
+
+			return array;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create an array of the type given and fill it will newly created
+		/// objects of same type
+		/// </summary>
+		/********************************************************************/
+		public static T[][] InitializeArray<T>(int length1, int length2) where T : new()
+		{
+			T[][] array = new T[length1][];
+			for (int i = 0; i < length1; i++)
+				array[i] = InitializeArray<T>(length2);
+
+			return array;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create an array of the type given and fill it will newly created
+		/// objects of same type
+		/// </summary>
+		/********************************************************************/
+		public static T[][] Initialize2Arrays<T>(int length1, int length2) where T : new()
+		{
+			T[][] array = new T[length1][];
+			for (int i = 0; i < length1; i++)
+				array[i] = new T[length2];
+
+			return array;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create an array of the type given and fill it will newly created
+		/// objects of same type
+		/// </summary>
+		/********************************************************************/
+		public static T[][][] InitializeArrayWithArray<T>(int length1, int length2) where T : new()
+		{
+			T[][][] array = new T[length1][][];
+			for (int i = 0; i < length1; i++)
+				array[i] = new T[length2][];
 
 			return array;
 		}
@@ -147,6 +199,38 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 			}
 
 			return new string(result);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Parse an integer from a string and ignoring any trailing garbage
+		/// </summary>
+		/********************************************************************/
+		public static int ParseInt(string s)
+		{
+			Match match = Regex.Match(s, @"^\s*[\+\-0-9][0-9]*");
+			if (match.Success)
+				return int.Parse(match.Value);
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Parse a float from a string and ignoring any trailing garbage
+		/// </summary>
+		/********************************************************************/
+		public static float ParseFloat(string s)
+		{
+			Match match = Regex.Match(s, @"^\s*[\+\-0-9e]+");
+			if (match.Success)
+				return float.Parse(match.Value);
+
+			return 0;
 		}
 	}
 }

@@ -151,7 +151,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 			}
 			else
 			{
-				double fMant = C.math.frexp(num, ref expon);
+				double fMant = C.math.frexp(num, out expon);
 				if ((expon > 16384) || !(fMant < 1.0))
 				{
 					// Infinity or NaN

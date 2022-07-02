@@ -125,11 +125,17 @@ FLAC stands for Free Lossless Audio Codec, an audio format similar to MP3, but l
 
 FLAC stands out as the fastest and most widely supported lossless audio codec, and the only one that at once is non-proprietary, is unencumbered by patents, has an open-source reference implementation, has a well documented format and API, and has several other independent implementations.</value>
   </data>
-  <data name="IDS_FLAC_ERR_INITIALIZE_FAILED" xml:space="preserve">
+  <data name="IDS_FLAC_ERR_DECODER_INITIALIZE_FAILED" xml:space="preserve">
     <value>Could not initialize the decoder</value>
   </data>
-  <data name="IDS_FLAC_ERR_READ_METADATA" xml:space="preserve">
+  <data name="IDS_FLAC_ERR_DECODER_READ_METADATA" xml:space="preserve">
     <value>Failed to read meta data</value>
+  </data>
+  <data name="IDS_FLAC_ERR_ENCODER_INITIALIZE_FAILED" xml:space="preserve">
+    <value>Could not initialize the encoder</value>
+  </data>
+  <data name="IDS_FLAC_ERR_ENCODER_WRITE_SAMPLES_FAILED" xml:space="preserve">
+    <value>Could not encode sample buffer</value>
   </data>
   <data name="IDS_FLAC_INFODESCLINE0" xml:space="preserve">
     <value>Vendor:</value>

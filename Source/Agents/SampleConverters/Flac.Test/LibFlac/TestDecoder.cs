@@ -225,342 +225,347 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Flac.Test.LibFlac
 				Assert.IsNotNull(decoder_Client_Data.File);
 			}
 
-			Flac__StreamDecoderInitStatus init_Status;
-
-			switch (layer)
+			try
 			{
-				case Layer.Stream:
+				Flac__StreamDecoderInitStatus init_Status;
+
+				switch (layer)
 				{
-					Console.WriteLine("Testing Flac__Stream_Decoder_Init_Stream()");
-					init_Status = decoder.Flac__Stream_Decoder_Init_Stream(Stream_Decoder_Read_Callback, null, null, null, null, Stream_Decoder_Write_Callback, Stream_Decoder_Metadata_Callback, Stream_Decoder_Error_Callback, decoder_Client_Data);
-					break;
+					case Layer.Stream:
+					{
+						Console.WriteLine("Testing Flac__Stream_Decoder_Init_Stream()");
+						init_Status = decoder.Flac__Stream_Decoder_Init_Stream(Stream_Decoder_Read_Callback, null, null, null, null, Stream_Decoder_Write_Callback, Stream_Decoder_Metadata_Callback, Stream_Decoder_Error_Callback, decoder_Client_Data);
+						break;
+					}
+
+					case Layer.Seekable_Stream:
+					{
+						Console.WriteLine("Testing Flac__Stream_Decoder_Init_Stream()");
+						init_Status = decoder.Flac__Stream_Decoder_Init_Stream(Stream_Decoder_Read_Callback, Stream_Decoder_Seek_Callback, Stream_Decoder_Tell_Callback, Stream_Decoder_Length_Callback, Stream_Decoder_Eof_Callback, Stream_Decoder_Write_Callback, Stream_Decoder_Metadata_Callback, Stream_Decoder_Error_Callback, decoder_Client_Data);
+						break;
+					}
+
+					case Layer.File:
+					{
+						Console.WriteLine("Testing Flac__Stream_Decoder_Init_File()");
+						init_Status = decoder.Flac__Stream_Decoder_Init_File(decoder_Client_Data.File, false, Stream_Decoder_Write_Callback, Stream_Decoder_Metadata_Callback, Stream_Decoder_Error_Callback, decoder_Client_Data);
+						break;
+					}
+
+					case Layer.FileName:
+					{
+						Console.WriteLine("Testing Flac__Stream_Decoder_Init_File()");
+						init_Status = decoder.Flac__Stream_Decoder_Init_File(FlacFileName, Stream_Decoder_Write_Callback, Stream_Decoder_Metadata_Callback, Stream_Decoder_Error_Callback, decoder_Client_Data);
+						break;
+					}
+
+					default:
+						throw new NotImplementedException();
 				}
 
-				case Layer.Seekable_Stream:
-				{
-					Console.WriteLine("Testing Flac__Stream_Decoder_Init_Stream()");
-					init_Status = decoder.Flac__Stream_Decoder_Init_Stream(Stream_Decoder_Read_Callback, Stream_Decoder_Seek_Callback, Stream_Decoder_Tell_Callback, Stream_Decoder_Length_Callback, Stream_Decoder_Eof_Callback, Stream_Decoder_Write_Callback, Stream_Decoder_Metadata_Callback, Stream_Decoder_Error_Callback, decoder_Client_Data);
-					break;
-				}
+				Assert.AreEqual(Flac__StreamDecoderInitStatus.Ok, init_Status);
 
-				case Layer.File:
-				{
-					Console.WriteLine("Testing Flac__Stream_Decoder_Init_File()");
-					init_Status = decoder.Flac__Stream_Decoder_Init_File(decoder_Client_Data.File, false, Stream_Decoder_Write_Callback, Stream_Decoder_Metadata_Callback, Stream_Decoder_Error_Callback, decoder_Client_Data);
-					break;
-				}
+				Console.WriteLine("Testing Flac__Stream_Decoder_Get_State()");
+				Assert.AreEqual(Flac__StreamDecoderState.Search_For_Metadata, decoder.Flac__Stream_Decoder_Get_State());
 
-				case Layer.FileName:
-				{
-					Console.WriteLine("Testing Flac__Stream_Decoder_Init_File()");
-					init_Status = decoder.Flac__Stream_Decoder_Init_File(FlacFileName, Stream_Decoder_Write_Callback, Stream_Decoder_Metadata_Callback, Stream_Decoder_Error_Callback, decoder_Client_Data);
-					break;
-				}
+				decoder_Client_Data.Current_Metadata_Number = 0;
+				decoder_Client_Data.Ignore_Errors = false;
+				decoder_Client_Data.Error_Occurred = false;
 
-				default:
-					throw new NotImplementedException();
-			}
+				Console.WriteLine("Testing Flac__Stream_Decoder_Get_Md5_Checking()");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Get_Md5_Checking());
 
-			Assert.AreEqual(Flac__StreamDecoderInitStatus.Ok, init_Status);
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Get_State()");
-			Assert.AreEqual(Flac__StreamDecoderState.Search_For_Metadata, decoder.Flac__Stream_Decoder_Get_State());
-
-			decoder_Client_Data.Current_Metadata_Number = 0;
-			decoder_Client_Data.Ignore_Errors = false;
-			decoder_Client_Data.Error_Occurred = false;
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Get_Md5_Checking()");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Get_Md5_Checking());
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Process_Until_End_Of_Metadata()");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Process_Until_End_Of_Metadata());
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Process_Single()");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Process_Single());
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Skip_Single_Frame()");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Skip_Single_Frame());
-
-			if ((layer == Layer.Stream) || (layer == Layer.Seekable_Stream))
-			{
-				Console.WriteLine("Testing Flac__Stream_Decoder_Flush()");
-				Assert.IsTrue(decoder.Flac__Stream_Decoder_Flush());
-
-				decoder_Client_Data.Ignore_Errors = true;
+				Console.WriteLine("Testing Flac__Stream_Decoder_Process_Until_End_Of_Metadata()");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Process_Until_End_Of_Metadata());
 
 				Console.WriteLine("Testing Flac__Stream_Decoder_Process_Single()");
 				Assert.IsTrue(decoder.Flac__Stream_Decoder_Process_Single());
 
-				decoder_Client_Data.Ignore_Errors = false;
-			}
+				Console.WriteLine("Testing Flac__Stream_Decoder_Skip_Single_Frame()");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Skip_Single_Frame());
 
-			Flac__bool expect = layer != Layer.Stream;
-			Console.WriteLine("Testing Flac__Stream_Decoder_Seek_Absolute()");
-			Assert.AreEqual(expect, decoder.Flac__Stream_Decoder_Seek_Absolute(0));
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Process_Until_End_Of_Stream()");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Process_Until_End_Of_Stream());
-
-			expect = layer != Layer.Stream;
-			Console.WriteLine("Testing Flac__Stream_Decoder_Seek_Absolute()");
-			Assert.AreEqual(expect, decoder.Flac__Stream_Decoder_Seek_Absolute(0));
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Get_Channels()");
-			Assert.AreEqual(((Flac__StreamMetadata_StreamInfo)streamInfo.Data).Channels, decoder.Flac__Stream_Decoder_Get_Channels());
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Get_Bits_Per_Sample()");
-			Assert.AreEqual(((Flac__StreamMetadata_StreamInfo)streamInfo.Data).Bits_Per_Sample, decoder.Flac__Stream_Decoder_Get_Bits_Per_Sample());
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Get_Sample_Rate()");
-			Assert.AreEqual(((Flac__StreamMetadata_StreamInfo)streamInfo.Data).Sample_Rate, decoder.Flac__Stream_Decoder_Get_Sample_Rate());
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Get_BlockSize()");
-			// Value could be anything since we're at the last block, so accept any reasonable answer
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Get_BlockSize() > 0);
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Get_Channel_Assignment()");
-			decoder.Flac__Stream_Decoder_Get_Channel_Assignment();
-
-			if ((layer == Layer.Stream) || (layer == Layer.Seekable_Stream))
-			{
-				Console.WriteLine("Testing Flac__Stream_Decoder_Reset()");
-				Assert.IsTrue(decoder.Flac__Stream_Decoder_Reset());
-
-				if (layer == Layer.Stream)
+				if ((layer == Layer.Stream) || (layer == Layer.Seekable_Stream))
 				{
-					// After a reset, we have to rewind the input ourselves
-					Console.WriteLine("Rewinding input");
-					decoder_Client_Data.File.Seek(0, SeekOrigin.Begin);
+					Console.WriteLine("Testing Flac__Stream_Decoder_Flush()");
+					Assert.IsTrue(decoder.Flac__Stream_Decoder_Flush());
+
+					decoder_Client_Data.Ignore_Errors = true;
+
+					Console.WriteLine("Testing Flac__Stream_Decoder_Process_Single()");
+					Assert.IsTrue(decoder.Flac__Stream_Decoder_Process_Single());
+
+					decoder_Client_Data.Ignore_Errors = false;
 				}
 
-				decoder_Client_Data.Current_Metadata_Number = 0;
+				Flac__bool expect = layer != Layer.Stream;
+				Console.WriteLine("Testing Flac__Stream_Decoder_Seek_Absolute()");
+				Assert.AreEqual(expect, decoder.Flac__Stream_Decoder_Seek_Absolute(0));
 
 				Console.WriteLine("Testing Flac__Stream_Decoder_Process_Until_End_Of_Stream()");
 				Assert.IsTrue(decoder.Flac__Stream_Decoder_Process_Until_End_Of_Stream());
+
+				expect = layer != Layer.Stream;
+				Console.WriteLine("Testing Flac__Stream_Decoder_Seek_Absolute()");
+				Assert.AreEqual(expect, decoder.Flac__Stream_Decoder_Seek_Absolute(0));
+
+				Console.WriteLine("Testing Flac__Stream_Decoder_Get_Channels()");
+				Assert.AreEqual(((Flac__StreamMetadata_StreamInfo)streamInfo.Data).Channels, decoder.Flac__Stream_Decoder_Get_Channels());
+
+				Console.WriteLine("Testing Flac__Stream_Decoder_Get_Bits_Per_Sample()");
+				Assert.AreEqual(((Flac__StreamMetadata_StreamInfo)streamInfo.Data).Bits_Per_Sample, decoder.Flac__Stream_Decoder_Get_Bits_Per_Sample());
+
+				Console.WriteLine("Testing Flac__Stream_Decoder_Get_Sample_Rate()");
+				Assert.AreEqual(((Flac__StreamMetadata_StreamInfo)streamInfo.Data).Sample_Rate, decoder.Flac__Stream_Decoder_Get_Sample_Rate());
+
+				Console.WriteLine("Testing Flac__Stream_Decoder_Get_BlockSize()");
+				// Value could be anything since we're at the last block, so accept any reasonable answer
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Get_BlockSize() > 0);
+
+				Console.WriteLine("Testing Flac__Stream_Decoder_Get_Channel_Assignment()");
+				decoder.Flac__Stream_Decoder_Get_Channel_Assignment();
+
+				if ((layer == Layer.Stream) || (layer == Layer.Seekable_Stream))
+				{
+					Console.WriteLine("Testing Flac__Stream_Decoder_Reset()");
+					Assert.IsTrue(decoder.Flac__Stream_Decoder_Reset());
+
+					if (layer == Layer.Stream)
+					{
+						// After a reset, we have to rewind the input ourselves
+						Console.WriteLine("Rewinding input");
+						decoder_Client_Data.File.Seek(0, SeekOrigin.Begin);
+					}
+
+					decoder_Client_Data.Current_Metadata_Number = 0;
+
+					Console.WriteLine("Testing Flac__Stream_Decoder_Process_Until_End_Of_Stream()");
+					Assert.IsTrue(decoder.Flac__Stream_Decoder_Process_Until_End_Of_Stream());
+				}
+
+				Console.WriteLine("Testing Flac__Stream_Decoder_Finish()");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Finish());
+
+				//
+				// Respond all
+				//
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond_All()");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond_All());
+
+				num_Expected = 0;
+				expected_Metadata_Sequence[num_Expected++] = streamInfo;
+				expected_Metadata_Sequence[num_Expected++] = padding;
+				expected_Metadata_Sequence[num_Expected++] = seekTable;
+				expected_Metadata_Sequence[num_Expected++] = application1;
+				expected_Metadata_Sequence[num_Expected++] = application2;
+				expected_Metadata_Sequence[num_Expected++] = vorbisComment;
+				expected_Metadata_Sequence[num_Expected++] = cueSheet;
+				expected_Metadata_Sequence[num_Expected++] = picture;
+				expected_Metadata_Sequence[num_Expected++] = unknown;
+
+				Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
+
+				//
+				// Ignore all
+				//
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore_All()");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore_All());
+
+				num_Expected = 0;
+
+				Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
+
+				//
+				// Respond all, ignore VORBIS_COMMENT
+				//
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond_All()");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond_All());
+
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore(VORBIS_COMMENT)");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore(Flac__MetadataType.Vorbis_Comment));
+
+				num_Expected = 0;
+				expected_Metadata_Sequence[num_Expected++] = streamInfo;
+				expected_Metadata_Sequence[num_Expected++] = padding;
+				expected_Metadata_Sequence[num_Expected++] = seekTable;
+				expected_Metadata_Sequence[num_Expected++] = application1;
+				expected_Metadata_Sequence[num_Expected++] = application2;
+				expected_Metadata_Sequence[num_Expected++] = cueSheet;
+				expected_Metadata_Sequence[num_Expected++] = picture;
+				expected_Metadata_Sequence[num_Expected++] = unknown;
+
+				Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
+
+				//
+				// Respond all, ignore APPLICATION
+				//
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond_All()");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond_All());
+
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore(APPLICATION)");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore(Flac__MetadataType.Application));
+
+				num_Expected = 0;
+				expected_Metadata_Sequence[num_Expected++] = streamInfo;
+				expected_Metadata_Sequence[num_Expected++] = padding;
+				expected_Metadata_Sequence[num_Expected++] = seekTable;
+				expected_Metadata_Sequence[num_Expected++] = vorbisComment;
+				expected_Metadata_Sequence[num_Expected++] = cueSheet;
+				expected_Metadata_Sequence[num_Expected++] = picture;
+				expected_Metadata_Sequence[num_Expected++] = unknown;
+
+				Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
+
+				//
+				// Respond all, ignore APPLICATION id of app#1
+				//
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond_All()");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond_All());
+
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore_Application(of app block #1)");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore_Application(((Flac__StreamMetadata_Application)application1.Data).Id));
+
+				num_Expected = 0;
+				expected_Metadata_Sequence[num_Expected++] = streamInfo;
+				expected_Metadata_Sequence[num_Expected++] = padding;
+				expected_Metadata_Sequence[num_Expected++] = seekTable;
+				expected_Metadata_Sequence[num_Expected++] = application2;
+				expected_Metadata_Sequence[num_Expected++] = vorbisComment;
+				expected_Metadata_Sequence[num_Expected++] = cueSheet;
+				expected_Metadata_Sequence[num_Expected++] = picture;
+				expected_Metadata_Sequence[num_Expected++] = unknown;
+
+				Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
+
+				//
+				// Respond all, ignore APPLICATION id of app#1 & app#2
+				//
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond_All()");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond_All());
+
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore_Application(of app block #1)");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore_Application(((Flac__StreamMetadata_Application)application1.Data).Id));
+
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore_Application(of app block #2)");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore_Application(((Flac__StreamMetadata_Application)application2.Data).Id));
+
+				num_Expected = 0;
+				expected_Metadata_Sequence[num_Expected++] = streamInfo;
+				expected_Metadata_Sequence[num_Expected++] = padding;
+				expected_Metadata_Sequence[num_Expected++] = seekTable;
+				expected_Metadata_Sequence[num_Expected++] = vorbisComment;
+				expected_Metadata_Sequence[num_Expected++] = cueSheet;
+				expected_Metadata_Sequence[num_Expected++] = picture;
+				expected_Metadata_Sequence[num_Expected++] = unknown;
+
+				Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
+
+				//
+				// Ignore all, respond VORBIS_COMMENT
+				//
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore_All()");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore_All());
+
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond(VORBIS_COMMENT)");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond(Flac__MetadataType.Vorbis_Comment));
+
+				num_Expected = 0;
+				expected_Metadata_Sequence[num_Expected++] = vorbisComment;
+
+				Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
+
+				//
+				// Ignore all, respond APPLICATION
+				//
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore_All()");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore_All());
+
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond(APPLICATION)");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond(Flac__MetadataType.Application));
+
+				num_Expected = 0;
+				expected_Metadata_Sequence[num_Expected++] = application1;
+				expected_Metadata_Sequence[num_Expected++] = application2;
+
+				Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
+
+				//
+				// Ignore all, respond APPLICATION id of app#1
+				//
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore_All()");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore_All());
+
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond_Application(of app block #1)");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond_Application(((Flac__StreamMetadata_Application)application1.Data).Id));
+
+				num_Expected = 0;
+				expected_Metadata_Sequence[num_Expected++] = application1;
+
+				Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
+
+				//
+				// Ignore all, respond APPLICATION id of app#1 & app#2
+				//
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore_All()");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore_All());
+
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond_Application(of app block #1)");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond_Application(((Flac__StreamMetadata_Application)application1.Data).Id));
+
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond_Application(of app block #2)");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond_Application(((Flac__StreamMetadata_Application)application2.Data).Id));
+
+				num_Expected = 0;
+				expected_Metadata_Sequence[num_Expected++] = application1;
+				expected_Metadata_Sequence[num_Expected++] = application2;
+
+				Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
+
+				//
+				// Respond all, ignore APPLICATION, respond APPLICATION id of app#1
+				//
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond_All()");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond_All());
+
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore(APPLICATION)");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore(Flac__MetadataType.Application));
+
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond_Application(of app block #1)");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond_Application(((Flac__StreamMetadata_Application)application1.Data).Id));
+
+				num_Expected = 0;
+				expected_Metadata_Sequence[num_Expected++] = streamInfo;
+				expected_Metadata_Sequence[num_Expected++] = padding;
+				expected_Metadata_Sequence[num_Expected++] = seekTable;
+				expected_Metadata_Sequence[num_Expected++] = application1;
+				expected_Metadata_Sequence[num_Expected++] = vorbisComment;
+				expected_Metadata_Sequence[num_Expected++] = cueSheet;
+				expected_Metadata_Sequence[num_Expected++] = picture;
+				expected_Metadata_Sequence[num_Expected++] = unknown;
+
+				Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
+
+				//
+				// Ignore all, respond APPLICATION, ignore APPLICATION id of app#1
+				//
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore_All()");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore_All());
+
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond(APPLICATION)");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond(Flac__MetadataType.Application));
+
+				Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore_Application(of app block #1)");
+				Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore_Application(((Flac__StreamMetadata_Application)application1.Data).Id));
+
+				num_Expected = 0;
+				expected_Metadata_Sequence[num_Expected++] = application2;
+
+				Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
 			}
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Finish()");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Finish());
-
-			//
-			// Respond all
-			//
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond_All()");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond_All());
-
-			num_Expected = 0;
-			expected_Metadata_Sequence[num_Expected++] = streamInfo;
-			expected_Metadata_Sequence[num_Expected++] = padding;
-			expected_Metadata_Sequence[num_Expected++] = seekTable;
-			expected_Metadata_Sequence[num_Expected++] = application1;
-			expected_Metadata_Sequence[num_Expected++] = application2;
-			expected_Metadata_Sequence[num_Expected++] = vorbisComment;
-			expected_Metadata_Sequence[num_Expected++] = cueSheet;
-			expected_Metadata_Sequence[num_Expected++] = picture;
-			expected_Metadata_Sequence[num_Expected++] = unknown;
-
-			Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
-
-			//
-			// Ignore all
-			//
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore_All()");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore_All());
-
-			num_Expected = 0;
-
-			Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
-
-			//
-			// Respond all, ignore VORBIS_COMMENT
-			//
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond_All()");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond_All());
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore(VORBIS_COMMENT)");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore(Flac__MetadataType.Vorbis_Comment));
-
-			num_Expected = 0;
-			expected_Metadata_Sequence[num_Expected++] = streamInfo;
-			expected_Metadata_Sequence[num_Expected++] = padding;
-			expected_Metadata_Sequence[num_Expected++] = seekTable;
-			expected_Metadata_Sequence[num_Expected++] = application1;
-			expected_Metadata_Sequence[num_Expected++] = application2;
-			expected_Metadata_Sequence[num_Expected++] = cueSheet;
-			expected_Metadata_Sequence[num_Expected++] = picture;
-			expected_Metadata_Sequence[num_Expected++] = unknown;
-
-			Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
-
-			//
-			// Respond all, ignore APPLICATION
-			//
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond_All()");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond_All());
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore(APPLICATION)");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore(Flac__MetadataType.Application));
-
-			num_Expected = 0;
-			expected_Metadata_Sequence[num_Expected++] = streamInfo;
-			expected_Metadata_Sequence[num_Expected++] = padding;
-			expected_Metadata_Sequence[num_Expected++] = seekTable;
-			expected_Metadata_Sequence[num_Expected++] = vorbisComment;
-			expected_Metadata_Sequence[num_Expected++] = cueSheet;
-			expected_Metadata_Sequence[num_Expected++] = picture;
-			expected_Metadata_Sequence[num_Expected++] = unknown;
-
-			Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
-
-			//
-			// Respond all, ignore APPLICATION id of app#1
-			//
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond_All()");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond_All());
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore_Application(of app block #1)");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore_Application(((Flac__StreamMetadata_Application)application1.Data).Id));
-
-			num_Expected = 0;
-			expected_Metadata_Sequence[num_Expected++] = streamInfo;
-			expected_Metadata_Sequence[num_Expected++] = padding;
-			expected_Metadata_Sequence[num_Expected++] = seekTable;
-			expected_Metadata_Sequence[num_Expected++] = application2;
-			expected_Metadata_Sequence[num_Expected++] = vorbisComment;
-			expected_Metadata_Sequence[num_Expected++] = cueSheet;
-			expected_Metadata_Sequence[num_Expected++] = picture;
-			expected_Metadata_Sequence[num_Expected++] = unknown;
-
-			Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
-
-			//
-			// Respond all, ignore APPLICATION id of app#1 & app#2
-			//
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond_All()");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond_All());
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore_Application(of app block #1)");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore_Application(((Flac__StreamMetadata_Application)application1.Data).Id));
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore_Application(of app block #2)");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore_Application(((Flac__StreamMetadata_Application)application2.Data).Id));
-
-			num_Expected = 0;
-			expected_Metadata_Sequence[num_Expected++] = streamInfo;
-			expected_Metadata_Sequence[num_Expected++] = padding;
-			expected_Metadata_Sequence[num_Expected++] = seekTable;
-			expected_Metadata_Sequence[num_Expected++] = vorbisComment;
-			expected_Metadata_Sequence[num_Expected++] = cueSheet;
-			expected_Metadata_Sequence[num_Expected++] = picture;
-			expected_Metadata_Sequence[num_Expected++] = unknown;
-
-			Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
-
-			//
-			// Ignore all, respond VORBIS_COMMENT
-			//
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore_All()");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore_All());
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond(VORBIS_COMMENT)");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond(Flac__MetadataType.Vorbis_Comment));
-
-			num_Expected = 0;
-			expected_Metadata_Sequence[num_Expected++] = vorbisComment;
-
-			Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
-
-			//
-			// Ignore all, respond APPLICATION
-			//
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore_All()");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore_All());
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond(APPLICATION)");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond(Flac__MetadataType.Application));
-
-			num_Expected = 0;
-			expected_Metadata_Sequence[num_Expected++] = application1;
-			expected_Metadata_Sequence[num_Expected++] = application2;
-
-			Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
-
-			//
-			// Ignore all, respond APPLICATION id of app#1
-			//
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore_All()");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore_All());
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond_Application(of app block #1)");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond_Application(((Flac__StreamMetadata_Application)application1.Data).Id));
-
-			num_Expected = 0;
-			expected_Metadata_Sequence[num_Expected++] = application1;
-
-			Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
-
-			//
-			// Ignore all, respond APPLICATION id of app#1 & app#2
-			//
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore_All()");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore_All());
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond_Application(of app block #1)");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond_Application(((Flac__StreamMetadata_Application)application1.Data).Id));
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond_Application(of app block #2)");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond_Application(((Flac__StreamMetadata_Application)application2.Data).Id));
-
-			num_Expected = 0;
-			expected_Metadata_Sequence[num_Expected++] = application1;
-			expected_Metadata_Sequence[num_Expected++] = application2;
-
-			Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
-
-			//
-			// Respond all, ignore APPLICATION, respond APPLICATION id of app#1
-			//
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond_All()");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond_All());
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore(APPLICATION)");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore(Flac__MetadataType.Application));
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond_Application(of app block #1)");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond_Application(((Flac__StreamMetadata_Application)application1.Data).Id));
-
-			num_Expected = 0;
-			expected_Metadata_Sequence[num_Expected++] = streamInfo;
-			expected_Metadata_Sequence[num_Expected++] = padding;
-			expected_Metadata_Sequence[num_Expected++] = seekTable;
-			expected_Metadata_Sequence[num_Expected++] = application1;
-			expected_Metadata_Sequence[num_Expected++] = vorbisComment;
-			expected_Metadata_Sequence[num_Expected++] = cueSheet;
-			expected_Metadata_Sequence[num_Expected++] = picture;
-			expected_Metadata_Sequence[num_Expected++] = unknown;
-
-			Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
-
-			//
-			// Ignore all, respond APPLICATION, ignore APPLICATION id of app#1
-			//
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore_All()");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore_All());
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Respond(APPLICATION)");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Respond(Flac__MetadataType.Application));
-
-			Console.WriteLine("Testing Flac__Stream_Decoder_Set_Metadata_Ignore_Application(of app block #1)");
-			Assert.IsTrue(decoder.Flac__Stream_Decoder_Set_Metadata_Ignore_Application(((Flac__StreamMetadata_Application)application1.Data).Id));
-
-			num_Expected = 0;
-			expected_Metadata_Sequence[num_Expected++] = application2;
-
-			Stream_Decoder_Test_Respond(decoder, decoder_Client_Data);
-
-			if ((layer == Layer.Stream) || (layer == Layer.Seekable_Stream))
-				decoder_Client_Data.File.Dispose();
+			finally
+			{
+				if ((layer == Layer.Stream) || (layer == Layer.Seekable_Stream))
+					decoder_Client_Data.File.Dispose();
+			}
 
 			Console.WriteLine("Testing Flac__Stream_Decoder_Delete()");
 			decoder.Flac__Stream_Decoder_Delete();

@@ -9,6 +9,7 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac.Containers;
 using Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Share;
 using brWord = System.UInt64;
 
@@ -19,13 +20,6 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 	/// </summary>
 	internal class BitReader
 	{
-		/// <summary></summary>
-		public const uint32_t Flac__Bytes_Per_Word = 8;
-		/// <summary></summary>
-		public const uint32_t Flac__Bits_Per_Word = 64;
-		/// <summary></summary>
-		public const uint64_t Flac__Word_All_Ones = 0xffffffffffffffff;
-
 		// This should be at least twice as large as the largest number of words
 		// required to represent any 'number' (in any encoding) you are going to
 		// read. With FLAC this is on the order of maybe a few hundred bits.
@@ -38,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 		// keeping in mind the limit from the first paragraph. The optimal size
 		// also depends on the CPU cache size and other factors; some twiddling
 		// may be necessary to squeeze out the best performance
-		private const uint32_t Flac__BitReader_Default_Capacity = 65536 / Flac__Bits_Per_Word;	// In words
+		private const uint32_t Flac__BitReader_Default_Capacity = 65536 / Constants.Flac__Bits_Per_Word;	// In words
 
 		private class Flac__BitReader
 		{
@@ -196,7 +190,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 				brWord tail = br.Buffer[br.Consumed_Words];
 
 				for (; br.Crc16_Align < br.Consumed_Bits; br.Crc16_Align += 8)
-					br.Read_Crc16 = Crc.Flac__Crc16_Update((Flac__byte)((tail >> (Flac__int32)(Flac__Bits_Per_Word - 8 - br.Crc16_Align)) & 0xff), (Flac__uint16)br.Read_Crc16);
+					br.Read_Crc16 = Crc.Flac__Crc16_Update((Flac__byte)((tail >> (Flac__int32)(Constants.Flac__Bits_Per_Word - 8 - br.Crc16_Align)) & 0xff), (Flac__uint16)br.Read_Crc16);
 			}
 
 			return (Flac__uint16)br.Read_Crc16;
@@ -238,7 +232,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public uint32_t Flac__BitReader_Get_Input_Bits_Unconsumed()
 		{
-			return (br.Words - br.Consumed_Words) * Flac__Bits_Per_Word + br.Bytes * 8 - br.Consumed_Bits;
+			return (br.Words - br.Consumed_Words) * Constants.Flac__Bits_Per_Word + br.Bytes * 8 - br.Consumed_Bits;
 		}
 		#endregion
 
@@ -254,11 +248,11 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 			Debug.Assert(br.Buffer != null);
 
 			Debug.Assert(bits <= 32);
-			Debug.Assert((br.Capacity * Flac__Bits_Per_Word) * 2 >= bits);
+			Debug.Assert((br.Capacity * Constants.Flac__Bits_Per_Word) * 2 >= bits);
 			Debug.Assert(br.Consumed_Words <= br.Words);
 
 			// WATCHOUT: Code does not work with <32bit words; we can make things much faster with this assertion
-			Debug.Assert(Flac__Bits_Per_Word >= 32);
+			Debug.Assert(Constants.Flac__Bits_Per_Word >= 32);
 
 			if (bits == 0)	// OPT: Investigate if this can ever happen, maybe change to assertion
 			{
@@ -266,7 +260,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 				return true;
 			}
 
-			while (((br.Words - br.Consumed_Words) * Flac__Bits_Per_Word + br.Bytes * 8 - br.Consumed_Bits) < bits)
+			while (((br.Words - br.Consumed_Words) * Constants.Flac__Bits_Per_Word + br.Bytes * 8 - br.Consumed_Bits) < bits)
 			{
 				if (!BitReader_Read_From_Client())
 				{
@@ -281,14 +275,14 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 				if (br.Consumed_Bits != 0)
 				{
 					// This also works when consumed_Bits==0, it's just a little slower than necessary for that case
-					uint32_t n = Flac__Bits_Per_Word - br.Consumed_Bits;
+					uint32_t n = Constants.Flac__Bits_Per_Word - br.Consumed_Bits;
 					brWord word = br.Buffer[br.Consumed_Words];
-					brWord mask = br.Consumed_Bits < Flac__Bits_Per_Word ? Flac__Word_All_Ones >> (int32_t)br.Consumed_Bits : 0;
+					brWord mask = br.Consumed_Bits < Constants.Flac__Bits_Per_Word ? Constants.Flac__Word_All_Ones >> (int32_t)br.Consumed_Bits : 0;
 
 					if (bits < n)
 					{
 						uint32_t shift = n - bits;
-						val = shift < Flac__Bits_Per_Word ? (Flac__uint32)((word & mask) >> (int32_t)shift) : 0;	// The result has <= 32 non-zero bits
+						val = shift < Constants.Flac__Bits_Per_Word ? (Flac__uint32)((word & mask) >> (int32_t)shift) : 0;	// The result has <= 32 non-zero bits
 						br.Consumed_Bits += bits;
 
 						return true;
@@ -302,9 +296,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 
 					if (bits != 0)	// If there are still bits left to read, there have to be less than 32 so they will all be in the next word
 					{
-						uint32_t shift = Flac__Bits_Per_Word - bits;
+						uint32_t shift = Constants.Flac__Bits_Per_Word - bits;
 						val = bits < 32 ? val << (int32_t)bits : 0;
-						val |= shift < Flac__Bits_Per_Word ? (Flac__uint32)(br.Buffer[br.Consumed_Words] >> (int32_t)shift) : 0;
+						val |= shift < Constants.Flac__Bits_Per_Word ? (Flac__uint32)(br.Buffer[br.Consumed_Words] >> (int32_t)shift) : 0;
 						br.Consumed_Bits = bits;
 					}
 
@@ -314,9 +308,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 				{
 					brWord word = br.Buffer[br.Consumed_Words];
 
-					if (bits < Flac__Bits_Per_Word)
+					if (bits < Constants.Flac__Bits_Per_Word)
 					{
-						val = (Flac__uint32)(word >> (int32_t)(Flac__Bits_Per_Word - bits));
+						val = (Flac__uint32)(word >> (int32_t)(Constants.Flac__Bits_Per_Word - bits));
 						br.Consumed_Bits = bits;
 
 						return true;
@@ -341,14 +335,14 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 					// This also works when consumed_Bits==0, it's just a little slower than necessary for that case
 					Debug.Assert(br.Consumed_Bits + bits <= br.Bytes * 8);
 
-					val = (Flac__uint32)((br.Buffer[br.Consumed_Words] & (Flac__Word_All_Ones >> (int32_t)br.Consumed_Bits)) >> (int32_t)(Flac__Bits_Per_Word - br.Consumed_Bits - bits));
+					val = (Flac__uint32)((br.Buffer[br.Consumed_Words] & (Constants.Flac__Word_All_Ones >> (int32_t)br.Consumed_Bits)) >> (int32_t)(Constants.Flac__Bits_Per_Word - br.Consumed_Bits - bits));
 					br.Consumed_Bits += bits;
 
 					return true;
 				}
 				else
 				{
-					val = (Flac__uint32)(br.Buffer[br.Consumed_Words] >> (int32_t)(Flac__Bits_Per_Word - bits));
+					val = (Flac__uint32)(br.Buffer[br.Consumed_Words] >> (int32_t)(Constants.Flac__Bits_Per_Word - bits));
 					br.Consumed_Bits += bits;
 
 					return true;
@@ -522,12 +516,12 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 				return true;
 
 			// Step 2: Skip whole words in chunks
-			while (nVals >= Flac__Bytes_Per_Word)
+			while (nVals >= Constants.Flac__Bytes_Per_Word)
 			{
 				if (br.Consumed_Words < br.Words)
 				{
 					br.Consumed_Words++;
-					nVals -= Flac__Bytes_Per_Word;
+					nVals -= Constants.Flac__Bytes_Per_Word;
 				}
 				else
 				{
@@ -565,7 +559,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 			{
 				while (br.Consumed_Words < br.Words)	// If we've not consumed up to a partial tail word
 				{
-					brWord b = br.Consumed_Bits < Flac__Bits_Per_Word ? br.Buffer[br.Consumed_Words] << (int32_t)br.Consumed_Bits : 0;
+					brWord b = br.Consumed_Bits < Constants.Flac__Bits_Per_Word ? br.Buffer[br.Consumed_Words] << (int32_t)br.Consumed_Bits : 0;
 
 					if (b != 0)
 					{
@@ -574,7 +568,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 						i++;
 						br.Consumed_Bits += i;
 
-						if (br.Consumed_Bits >= Flac__Bits_Per_Word)
+						if (br.Consumed_Bits >= Constants.Flac__Bits_Per_Word)
 						{
 							br.Consumed_Words++;
 							br.Consumed_Bits = 0;
@@ -584,7 +578,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 					}
 					else
 					{
-						val += Flac__Bits_Per_Word - br.Consumed_Bits;
+						val += Constants.Flac__Bits_Per_Word - br.Consumed_Bits;
 						br.Consumed_Words++;
 						br.Consumed_Bits = 0;
 
@@ -601,7 +595,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 				if ((br.Bytes * 8) > br.Consumed_Bits)
 				{
 					uint32_t end = br.Bytes * 8;
-					brWord b = (br.Buffer[br.Consumed_Words] & (Flac__Word_All_Ones << (int32_t)(Flac__Bits_Per_Word - end))) << (int32_t)br.Consumed_Bits;
+					brWord b = (br.Buffer[br.Consumed_Words] & (Constants.Flac__Word_All_Ones << (int32_t)(Constants.Flac__Bits_Per_Word - end))) << (int32_t)br.Consumed_Bits;
 
 					if (b != 0)
 					{
@@ -609,7 +603,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 						val += i;
 						i++;
 						br.Consumed_Bits += i;
-						Debug.Assert(br.Consumed_Bits < Flac__Bits_Per_Word);
+						Debug.Assert(br.Consumed_Bits < Constants.Flac__Bits_Per_Word);
 
 						return true;
 					}
@@ -617,7 +611,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 					{
 						val += end - br.Consumed_Bits;
 						br.Consumed_Bits = end;
-						Debug.Assert(br.Consumed_Bits < Flac__Bits_Per_Word);
+						Debug.Assert(br.Consumed_Bits < Constants.Flac__Bits_Per_Word);
 
 						// Didn't find stop bit yet, have to keep going
 					}
@@ -657,7 +651,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 				return true;
 
 			// Step 2: Skip whole words in chunks
-			while (nVals >= Flac__Bytes_Per_Word)
+			while (nVals >= Constants.Flac__Bytes_Per_Word)
 			{
 				if (br.Consumed_Words < br.Words)
 				{
@@ -672,8 +666,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 					val[offset + 6] = (Flac__byte)(word >> 8);
 					val[offset + 7] = (Flac__byte)word;
 
-					offset += Flac__Bytes_Per_Word;
-					nVals -= Flac__Bytes_Per_Word;
+					offset += Constants.Flac__Bytes_Per_Word;
+					nVals -= Constants.Flac__Bytes_Per_Word;
 				}
 				else
 				{
@@ -709,7 +703,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 			Debug.Assert(br.Buffer != null);
 
 			// WATCHOUT: Code does not work with <32 words; we can make things much faster with this assertion
-			Debug.Assert(Flac__Bits_Per_Word >= 32);
+			Debug.Assert(Constants.Flac__Bits_Per_Word >= 32);
 			Debug.Assert(parameter < 32);
 			// The above two asserts also guarantee that the binary part never straddles more than 2 words, so we don't have to loop to read it
 
@@ -751,7 +745,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 			}
 			else
 			{
-				ucBits = Flac__Bits_Per_Word - br.Consumed_Bits;
+				ucBits = Constants.Flac__Bits_Per_Word - br.Consumed_Bits;
 				b = br.Buffer[cWords] << (int)br.Consumed_Bits;	// Keep unconsumed bits aligned to left
 			}
 
@@ -766,7 +760,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 				// Read the unary MSBs and end bit
 				x = y = Count_Zero_Msbs2(b);
 
-				if (x == Flac__Bits_Per_Word)
+				if (x == Constants.Flac__Bits_Per_Word)
 				{
 					x = ucBits;
 
@@ -784,16 +778,16 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 						y = Count_Zero_Msbs2(b);
 						x += y;
 					}
-					while (y == Flac__Bits_Per_Word);
+					while (y == Constants.Flac__Bits_Per_Word);
 				}
 
 				b <<= (int)y;
 				b <<= 1;	// Account for stop bit
-				ucBits = (ucBits - x - 1) % Flac__Bits_Per_Word;
+				ucBits = (ucBits - x - 1) % Constants.Flac__Bits_Per_Word;
 				msbs = x;
 
 				// Read the binary LSBs
-				x = (Flac__uint32)(b >> (int)(Flac__Bits_Per_Word - parameter));	// Parameter < 32, so we can cast to 32-bit uint32_t
+				x = (Flac__uint32)(b >> (int)(Constants.Flac__Bits_Per_Word - parameter));	// Parameter < 32, so we can cast to 32-bit uint32_t
 
 				if (parameter <= ucBits)
 				{
@@ -811,9 +805,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 					}
 
 					b = br.Buffer[cWords];
-					ucBits += Flac__Bits_Per_Word - parameter;
+					ucBits += Constants.Flac__Bits_Per_Word - parameter;
 					x |= (Flac__uint32)(b >> (int)ucBits);
-					b <<= (int)(Flac__Bits_Per_Word - ucBits);
+					b <<= (int)(Constants.Flac__Bits_Per_Word - ucBits);
 				}
 
 				uint32_t lsbs = x;
@@ -865,7 +859,7 @@ Process_Tail:
 
 					cWords = br.Consumed_Words;
 					words = br.Words;
-					ucBits = Flac__Bits_Per_Word - br.Consumed_Bits;
+					ucBits = Constants.Flac__Bits_Per_Word - br.Consumed_Bits;
 					b = cWords < br.Capacity ? br.Buffer[cWords] << (int)br.Consumed_Bits : 0;
 				}
 				while ((cWords >= words) && (val < end));
@@ -875,10 +869,10 @@ Process_Tail:
 			{
 				// Don't leave the head word with no consumed bits
 				cWords++;
-				ucBits = Flac__Bits_Per_Word;
+				ucBits = Constants.Flac__Bits_Per_Word;
 			}
 
-			br.Consumed_Bits = Flac__Bits_Per_Word - ucBits;
+			br.Consumed_Bits = Constants.Flac__Bits_Per_Word - ucBits;
 			br.Consumed_Words = cWords;
 
 			return true;
@@ -1109,14 +1103,14 @@ Process_Tail:
 
 				start = br.Consumed_Words;
 				end = (uint32_t)(br.Words + (br.Bytes != 0 ? 1 : 0));
-				Buffer.BlockCopy(br.Buffer, (int)(start * Flac__Bytes_Per_Word), br.Buffer, 0, (int)(Flac__Bytes_Per_Word * (end - start)));
+				Buffer.BlockCopy(br.Buffer, (int)(start * Constants.Flac__Bytes_Per_Word), br.Buffer, 0, (int)(Constants.Flac__Bytes_Per_Word * (end - start)));
 
 				br.Words -= start;
 				br.Consumed_Words = 0;
 			}
 
 			// Set the target for reading, taking into account word alignment and endianness
-			size_t bytes = (br.Capacity - br.Words) * Flac__Bytes_Per_Word - br.Bytes;
+			size_t bytes = (br.Capacity - br.Words) * Constants.Flac__Bytes_Per_Word - br.Bytes;
 			if (bytes == 0)
 				return false;	// No space left, buffer is too small; see note for Flac__BitReader_Default_Capacity
 
@@ -1152,7 +1146,7 @@ Process_Tail:
 			// Now have to byteswap on LE machines
 			if (BitConverter.IsLittleEndian)
 			{
-				end = (br.Words * Flac__Bytes_Per_Word + br.Bytes + bytes + (Flac__Bytes_Per_Word - 1)) / Flac__Bytes_Per_Word;
+				end = (br.Words * Constants.Flac__Bytes_Per_Word + br.Bytes + bytes + (Constants.Flac__Bytes_Per_Word - 1)) / Constants.Flac__Bytes_Per_Word;
 
 				for (start = br.Words; start < end; start++)
 					br.Buffer[start] = Swap_Be_Word_To_Host(br.Buffer[start]);
@@ -1163,9 +1157,9 @@ Process_Tail:
 			//   buffer[BE]: 11 22 33 44 55 66 77 88 99 AA BB CC DD EE FF ??
 			//   buffer[LE]: 44 33 22 11 88 77 66 55 CC BB AA 99 ?? FF EE DD
 			// Finally we'll update the reader values
-			end = br.Words * Flac__Bytes_Per_Word + br.Bytes + bytes;
-			br.Words = end / Flac__Bytes_Per_Word;
-			br.Bytes = end % Flac__Bytes_Per_Word;
+			end = br.Words * Constants.Flac__Bytes_Per_Word + br.Bytes + bytes;
+			br.Words = end / Constants.Flac__Bytes_Per_Word;
+			br.Bytes = end % Constants.Flac__Bytes_Per_Word;
 
 			return true;
 		}
@@ -1182,10 +1176,10 @@ Process_Tail:
 		{
 			uint32_t crc = br.Read_Crc16;
 
-			for (; br.Crc16_Align < Flac__Bits_Per_Word; br.Crc16_Align += 8)
+			for (; br.Crc16_Align < Constants.Flac__Bits_Per_Word; br.Crc16_Align += 8)
 			{
-				uint32_t shift = Flac__Bits_Per_Word - 8 - br.Crc16_Align;
-				crc = Crc.Flac__Crc16_Update((Flac__byte)(shift < Flac__Bits_Per_Word ? (word >> (int32_t)shift) & 0xff : 0), (Flac__uint16)crc);
+				uint32_t shift = Constants.Flac__Bits_Per_Word - 8 - br.Crc16_Align;
+				crc = Crc.Flac__Crc16_Update((Flac__byte)(shift < Constants.Flac__Bits_Per_Word ? (word >> (int32_t)shift) & 0xff : 0), (Flac__uint16)crc);
 			}
 
 			br.Read_Crc16 = crc;
@@ -1208,7 +1202,7 @@ Process_Tail:
 			// Prevent OOB read due to wrap-around
 			if (br.Consumed_Words > br.Crc16_Offset)
 			{
-				Debug.Assert(Flac__Bytes_Per_Word == 8);
+				Debug.Assert(Constants.Flac__Bytes_Per_Word == 8);
 
 				br.Read_Crc16 = Crc.Flac__Crc16_Update_Words64(br.Buffer, br.Crc16_Offset, br.Consumed_Words - br.Crc16_Offset, (Flac__uint16)br.Read_Crc16);
 			}

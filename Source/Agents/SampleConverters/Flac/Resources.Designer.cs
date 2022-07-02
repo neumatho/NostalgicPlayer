@@ -77,18 +77,36 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac {
         /// <summary>
         ///   Looks up a localized string similar to Could not initialize the decoder.
         /// </summary>
-        internal static string IDS_FLAC_ERR_INITIALIZE_FAILED {
+        internal static string IDS_FLAC_ERR_DECODER_INITIALIZE_FAILED {
             get {
-                return ResourceManager.GetString("IDS_FLAC_ERR_INITIALIZE_FAILED", resourceCulture);
+                return ResourceManager.GetString("IDS_FLAC_ERR_DECODER_INITIALIZE_FAILED", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Failed to read meta data.
         /// </summary>
-        internal static string IDS_FLAC_ERR_READ_METADATA {
+        internal static string IDS_FLAC_ERR_DECODER_READ_METADATA {
             get {
-                return ResourceManager.GetString("IDS_FLAC_ERR_READ_METADATA", resourceCulture);
+                return ResourceManager.GetString("IDS_FLAC_ERR_DECODER_READ_METADATA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not initialize the encoder.
+        /// </summary>
+        internal static string IDS_FLAC_ERR_ENCODER_INITIALIZE_FAILED {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_ERR_ENCODER_INITIALIZE_FAILED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not encode sample buffer.
+        /// </summary>
+        internal static string IDS_FLAC_ERR_ENCODER_WRITE_SAMPLES_FAILED {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_ERR_ENCODER_WRITE_SAMPLES_FAILED", resourceCulture);
             }
         }
         

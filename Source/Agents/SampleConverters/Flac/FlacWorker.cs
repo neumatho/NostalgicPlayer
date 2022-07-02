@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class FlacWorker : ISampleLoaderAgent
+	internal class FlacWorker : ISampleLoaderAgent, ISampleSaverAgent
 	{
 		private Stream_Decoder flacDecoder;
 
@@ -30,6 +30,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 		private int[] decodedDataBuffer;
 		private int bufferFilled;
 		private int bufferOffset;
+
+		private Stream_Encoder flacEncoder;
 
 		#region ISampleLoaderAgent implementation
 		/********************************************************************/
@@ -193,13 +195,13 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 
 			if (flacDecoder.Flac__Stream_Decoder_Init_File(moduleStream, true, WriteCallback, MetadataCallback, ErrorCallback, null) != Flac__StreamDecoderInitStatus.Ok)
 			{
-				errorMessage = Resources.IDS_FLAC_ERR_INITIALIZE_FAILED;
+				errorMessage = Resources.IDS_FLAC_ERR_DECODER_INITIALIZE_FAILED;
 				return false;
 			}
 
 			if (!flacDecoder.Flac__Stream_Decoder_Process_Until_End_Of_Metadata())
 			{
-				errorMessage = Resources.IDS_FLAC_ERR_READ_METADATA;
+				errorMessage = Resources.IDS_FLAC_ERR_DECODER_READ_METADATA;
 				return false;
 			}
 
@@ -282,6 +284,119 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 				return position;
 
 			return 0;
+		}
+		#endregion
+
+		#region ISampleSaverAgent implementation
+		/********************************************************************/
+		/// <summary>
+		/// Return some flags telling what the saver supports
+		/// </summary>
+		/********************************************************************/
+		public SampleSaverSupportFlag SaverSupportFlags => SampleSaverSupportFlag.Support8Bit | SampleSaverSupportFlag.Support16Bit | SampleSaverSupportFlag.SupportMono | SampleSaverSupportFlag.SupportStereo;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the file extension that is used by the saver
+		/// </summary>
+		/********************************************************************/
+		public string FileExtension => "flac";
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the saver so it is prepared to save the sample
+		/// </summary>
+		/********************************************************************/
+		public virtual bool InitSaver(SaveSampleFormatInfo formatInfo, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			// Initialize variables
+			flacEncoder = Stream_Encoder.Flac__Stream_Encoder_New();
+			flacEncoder.Flac__Stream_Encoder_Set_Bits_Per_Sample((uint32_t)formatInfo.Bits);
+			flacEncoder.Flac__Stream_Encoder_Set_Channels((uint32_t)formatInfo.Channels);
+			flacEncoder.Flac__Stream_Encoder_Set_Sample_Rate((uint32_t)formatInfo.Frequency);
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Cleanup the saver
+		/// </summary>
+		/********************************************************************/
+		public virtual void CleanupSaver()
+		{
+			if (flacEncoder != null)
+			{
+				flacEncoder.Flac__Stream_Encoder_Delete();
+				flacEncoder = null;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Save the header of the sample
+		/// </summary>
+		/********************************************************************/
+		public void SaveHeader(Stream stream)
+		{
+			if (flacEncoder.Flac__Stream_Encoder_Init_File(stream, true, null, null) != Flac__StreamEncoderInitStatus.Ok)
+				throw new Exception(Resources.IDS_FLAC_ERR_ENCODER_INITIALIZE_FAILED);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Save a part of the sample
+		/// </summary>
+		/********************************************************************/
+		public void SaveData(Stream stream, int[] buffer, int length)
+		{
+			if (length > 0)
+			{
+				int[] convertedBuffer = new int[length];
+				uint32_t bits = flacEncoder.Flac__Stream_Encoder_Get_Bits_Per_Sample();
+				uint32_t channels = flacEncoder.Flac__Stream_Encoder_Get_Channels();
+
+				if (bits == 8)
+				{
+					// Convert to 8-bit
+					for (int i = 0; i < length; i++)
+						convertedBuffer[i] = buffer[i] >> 24;
+				}
+				else if (bits == 16)
+				{
+					// Convert to 16-bit
+					for (int i = 0; i < length; i++)
+						convertedBuffer[i] = buffer[i] >> 16;
+				}
+
+				if (!flacEncoder.Flac__Stream_Encoder_Process_Interleaved(convertedBuffer, (uint32_t)length / channels))
+					throw new Exception(Resources.IDS_FLAC_ERR_ENCODER_WRITE_SAMPLES_FAILED);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Save the tail of the sample
+		/// </summary>
+		/********************************************************************/
+		public void SaveTail(Stream stream)
+		{
+			if (!flacEncoder.Flac__Stream_Encoder_Finish())
+				throw new Exception(Resources.IDS_FLAC_ERR_ENCODER_WRITE_SAMPLES_FAILED);
 		}
 		#endregion
 

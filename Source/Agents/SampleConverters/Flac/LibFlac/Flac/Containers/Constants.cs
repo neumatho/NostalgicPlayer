@@ -13,15 +13,70 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac.Conta
 	/// </summary>
 	internal static class Constants
 	{
+		/// <summary></summary>
+		public const double M_LN2 = 0.69314718055994530942;
+
+		/// <summary></summary>
+		public const uint32_t Flac__Bytes_Per_Word = 8;
+
+		/// <summary></summary>
+		public const uint32_t Flac__Bits_Per_Word = 64;
+
+		/// <summary></summary>
+		public const uint64_t Flac__Word_All_Ones = 0xffffffffffffffff;
+
+		/// <summary></summary>
+		public const uint32_t Flac__Max_Extra_Residual_Bps = 4;
+
+		/// <summary></summary>
+		public const uint32_t Flac__Max_Apodization_Functions = 32;
+
 		/// <summary>
 		/// The largest legal metadata type code
 		/// </summary>
 		public const int32_t Flac__Max_Metadata_Type_Code = 126;
 
 		/// <summary>
+		/// The minimum block size, in samples, permitted by the format
+		/// </summary>
+		public const uint32_t Flac__Min_Block_Size = 16;
+
+		/// <summary>
+		/// The maximum block size, in samples, permitted by the format
+		/// </summary>
+		public const uint32_t Flac__Max_Block_Size = 65535;
+
+		/// <summary>
+		/// The maximum block size, in samples, permitted by the FLAC subset for
+		/// sample rates up to 48kHz
+		/// </summary>
+		public const uint32_t Flac__Subset_Max_Block_Size_48000Hz = 4608;
+
+		/// <summary>
 		/// The maximum number of channels permitted by the format
 		/// </summary>
 		public const uint32_t Flac__Max_Channels = 8;
+
+		/// <summary>
+		/// The minimum sample resolution permitted by the format
+		/// </summary>
+		public const uint32_t Flac__Min_Bits_Per_Sample = 4;
+
+		/// <summary>
+		/// The maximum sample resolution permitted by the format
+		/// </summary>
+		public const uint32_t Flac__Max_Bits_Per_Sample = 32;
+
+		/// <summary>
+		/// The maximum sample resolution permitted by libFLAC.
+		///
+		/// WARNING:
+		/// Flac__Max_Bits_Per_Sample is the limit of the FLAC format. However,
+		/// the reference encoder/decoder is currently limited to 24 bits because
+		/// of prevalent 32-bit math, so make sure and use this value when
+		/// appropriate
+		/// </summary>
+		public const uint32_t Flac__Reference_Codec_Max_Bits_Per_Sample = 24;
 
 		/// <summary>
 		/// The maximum sample rate permitted by the format. The value is
@@ -35,14 +90,47 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac.Conta
 		public const uint32_t Flac__Max_Lpc_Order = 32;
 
 		/// <summary>
+		/// The maximum LPC order permitted by the FLAC subset for sample rates
+		/// up to 48kHz
+		/// </summary>
+		public const uint32_t Flac__Subset_Max_Lpc_Order_48000Hz = 12;
+
+		/// <summary>
+		/// The minimum quantized linear predictor coefficient precision
+		/// permitted by the format
+		/// </summary>
+		public const uint32_t Flac__Min_Qlp_Coeff_Precision = 5;
+
+		/// <summary>
+		/// The maximum quantized linear predictor coefficient precision
+		/// permitted by the format
+		/// </summary>
+		public const uint32_t Flac__Max_Qlp_Coeff_Precision = 15;
+
+		/// <summary>
 		/// The maximum order of the fixed predictors permitted by the format
 		/// </summary>
 		public const uint32_t Flac__Max_Fixed_Order = 4;
 
 		/// <summary>
+		/// The maximum Rice partition order permitted by the format
+		/// </summary>
+		public const uint32_t Flac__Max_Rice_Partition_Order = 15;
+
+		/// <summary>
+		/// The maximum Rice partition order permitted by the FLAC Subset
+		/// </summary>
+		public const uint32_t Flac__Subset_Max_Rice_Partition_Order = 8;
+
+		/// <summary>
 		/// The total stream length of the STREAMINFO block in bytes
 		/// </summary>
 		public const uint32_t Flac__Stream_Metadata_StreamInfo_Length = 34;
+
+		/// <summary>
+		/// The total stream length of a metadata block header in bytes
+		/// </summary>
+		public const uint32_t Flac__Stream_Metadata_Header_Length = 4;
 
 		/// <summary>
 		/// The total stream length of a seek point in bytes
@@ -175,6 +263,36 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac.Conta
 		public const uint32_t Flac__Stream_Metadata_Length_Len = 24;					// Bits
 
 		/// <summary></summary>
+		public const uint32_t Flac__Frame_Header_Sync = 0x3ffe;
+
+		/// <summary></summary>
+		public const uint32_t Flac__Frame_Header_Sync_Len = 14;							// Bits
+
+		/// <summary></summary>
+		public const uint32_t Flac__Frame_Header_Reserved_Len = 1;						// Bits
+
+		/// <summary></summary>
+		public const uint32_t Flac__Frame_Header_Blocking_Strategy_Len = 1;				// Bits
+
+		/// <summary></summary>
+		public const uint32_t Flac__Frame_Header_Block_Size_Len = 4;					// Bits
+
+		/// <summary></summary>
+		public const uint32_t Flac__Frame_Header_Sample_Rate_Len = 4;					// Bits
+
+		/// <summary></summary>
+		public const uint32_t Flac__Frame_Header_Channel_Assignment_Len = 4;			// Bits
+
+		/// <summary></summary>
+		public const uint32_t Flac__Frame_Header_Bits_Per_Sample_Len = 3;				// Bits
+
+		/// <summary></summary>
+		public const uint32_t Flac__Frame_Header_Zero_Pad_Len = 1;						// Bits
+
+		/// <summary></summary>
+		public const uint32_t Flac__Frame_Header_Crc_Len = 8;							// Bits
+
+		/// <summary></summary>
 		public const uint32_t Flac__Frame_Footer_Crc_Len = 16;							// Bits
 
 		/// <summary></summary>
@@ -203,5 +321,37 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac.Conta
 
 		/// <summary></summary>
 		public const uint32_t Flac__SubFrame_Lpc_Qlp_Shift_Len = 5;						// Bits
+
+		/// <summary></summary>
+		public const uint32_t Flac__SubFrame_Zero_Pad_Len = 1;							// Bits
+
+		/// <summary></summary>
+		public const uint32_t Flac__SubFrame_Type_Len = 6;								// Bits
+
+		/// <summary></summary>
+		public const uint32_t Flac__SubFrame_Wasted_Bits_Flag_Len = 1;					// Bits
+
+		/// <summary></summary>
+		public const uint32_t Flac__SubFrame_Type_Constant_Byte_Aligned_Mask = 0x00;
+
+		/// <summary></summary>
+		public const uint32_t Flac__SubFrame_Type_Verbatim_Byte_Aligned_Mask = 0x02;
+
+		/// <summary></summary>
+		public const uint32_t Flac__SubFrame_Type_Fixed_Byte_Aligned_Mask = 0x10;
+
+		/// <summary></summary>
+		public const uint32_t Flac__SubFrame_Type_Lpc_Byte_Aligned_Mask = 0x40;
+
+		/// <summary>
+		/// The 32-bit integer big-endian representation of the beginning of
+		/// a FLAC stream
+		/// </summary>
+		public const uint32_t Flac__Stream_Sync = 0x664c6143;
+
+		/// <summary>
+		/// The length of the FLAC signature in bits
+		/// </summary>
+		public const uint32_t Flac__Stream_Sync_Len = 32;								// Bits
 	}
 }

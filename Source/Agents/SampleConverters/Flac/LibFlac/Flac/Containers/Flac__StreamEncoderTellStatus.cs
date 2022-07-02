@@ -9,28 +9,23 @@
 namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac.Containers
 {
 	/// <summary>
-	/// Fixed subframe
+	/// Return values for the Flac__StreamEncoder read callback
 	/// </summary>
-	internal class Flac__SubFrame_Fixed : ISubFrame
+	internal enum Flac__StreamEncoderTellStatus
 	{
 		/// <summary>
-		/// The residual coding method
+		/// The tell was OK and encoding can continue
 		/// </summary>
-		public Flac__EntropyCodingMethod Entropy_Coding_Method = new Flac__EntropyCodingMethod();
+		Ok,
 
 		/// <summary>
-		/// The polynomial order
+		/// An unrecoverable error occurred
 		/// </summary>
-		public uint32_t Order;
+		Error,
 
 		/// <summary>
-		/// Warmup samples to prime the predictor, length == order
+		/// Client does not support seeking
 		/// </summary>
-		public Flac__int32[] Warmup = new Flac__int32[Constants.Flac__Max_Fixed_Order];
-
-		/// <summary>
-		/// The residual signal, length == (blocksize minus order) samples
-		/// </summary>
-		public Flac__int32[] Residual;
+		Unsupported
 	}
 }

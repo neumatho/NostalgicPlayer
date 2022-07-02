@@ -24,11 +24,54 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 		public static Flac__bool Flac__Memory_Alloc_Aligned_Int32_Array(size_t elements, ref Flac__int32[] unaligned_Pointer, ref Flac__int32[] aligned_Pointer)
 		{
 			Debug.Assert(elements > 0);
-//			Debug.Assert(unaligned_Pointer != null);
-//			Debug.Assert(aligned_Pointer != null);
-//			Debug.Assert(unaligned_Pointer != aligned_Pointer);
 
 			Flac__int32[] pu = Flac__Memory_Alloc_Aligned(elements, out Flac__int32[] _);
+			if (pu == null)
+				return false;
+			else
+			{
+				unaligned_Pointer = pu;
+				aligned_Pointer = pu;
+
+				return true;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public static Flac__bool Flac__Memory_Alloc_Aligned_UInt64_Array(size_t elements, ref Flac__uint64[] unaligned_Pointer, ref Flac__uint64[] aligned_Pointer)
+		{
+			Debug.Assert(elements > 0);
+
+			Flac__uint64[] pu = Flac__Memory_Alloc_Aligned(elements, out Flac__uint64[] _);
+			if (pu == null)
+				return false;
+			else
+			{
+				unaligned_Pointer = pu;
+				aligned_Pointer = pu;
+
+				return true;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public static Flac__bool Flac__Memory_Alloc_Aligned_Real_Array(size_t elements, ref Flac__real[] unaligned_Pointer, ref Flac__real[] aligned_Pointer)
+		{
+			Debug.Assert(elements > 0);
+
+			Flac__real[] pu = Flac__Memory_Alloc_Aligned(elements, out Flac__real[] _);
 			if (pu == null)
 				return false;
 			else

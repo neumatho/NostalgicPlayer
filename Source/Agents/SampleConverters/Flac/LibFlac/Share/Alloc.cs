@@ -57,7 +57,6 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Share
 		public static T[] Safe_MAlloc_Add_2Op<T>(size_t size1, size_t size2) where T : new()
 		{
 			size2 += size1;
-
 			if (size2 < size1)
 				return null;
 
@@ -72,12 +71,40 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Share
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] Safe_MAlloc_Mul_2Op<T>(size_t size) where T : new()
+		public static T[] Safe_MAlloc_Add_4Op<T>(size_t size1, size_t size2, size_t size3, size_t size4) where T : new()
 		{
-			if (size == 0)
-				size++;
+			size2 += size1;
+			if (size2 < size1)
+				return null;
 
-			return Helpers.InitializeArray<T>((int)size);
+			size3 += size2;
+			if (size3 < size2)
+				return null;
+
+			size4 += size3;
+			if (size4 < size3)
+				return null;
+
+			return Safe_MAlloc<T>(size4);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static T[] Safe_MAlloc_Mul_2Op<T>(size_t size1, size_t size2) where T : new()
+		{
+			if ((size1 == 0) || (size2 == 0))
+				return Helpers.InitializeArray<T>(1);
+
+			if (size1 > (size_t.MaxValue / size2))
+				return null;
+
+			return Helpers.InitializeArray<T>((int)(size1 * size2));
 		}
 
 
@@ -112,6 +139,23 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Share
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static T[] Safe_Realloc_Add_2Op<T>(T[] ptr, size_t size1, size_t size2) where T : new()
+		{
+			size2 += size1;
+			if (size2 < size1)
+				return null;
+
+			return Safe_Realloc(ptr, size2);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T[] Safe_Realloc_Mul_2Op<T>(T[] ptr, size_t size1, size_t size2) where T : new()
 		{
 			if ((size1 == 0) || (size2 == 0))
@@ -131,12 +175,15 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Share
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] Safe_MAlloc_Mul_2Op_P<T>(size_t size) where T : new()
+		public static T[] Safe_MAlloc_Mul_2Op_P<T>(size_t size1, size_t size2) where T : new()
 		{
-			if (size == 0)
-				size = 1;
+			if ((size1 == 0) || (size2 == 0))
+				return Helpers.InitializeArray<T>(1);
 
-			return Helpers.InitializeArray<T>((int)size);
+			if (size1 > (size_t.MaxValue / size2))
+				return null;
+
+			return Helpers.InitializeArray<T>((int)(size1 * size2));
 		}
 	}
 }

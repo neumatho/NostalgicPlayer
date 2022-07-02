@@ -8,6 +8,7 @@
 /******************************************************************************/
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac.Containers;
 using Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.Flac.Test.LibFlac
@@ -145,8 +146,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Flac.Test.LibFlac
 			Assert.IsTrue(ok);
 
 			// We read 152 bits (=19 bytes) from the bitreader
-			words = 152 / BitReader.Flac__Bits_Per_Word;
-			bits = 152 - words * BitReader.Flac__Bits_Per_Word;
+			words = 152 / Constants.Flac__Bits_Per_Word;
+			bits = 152 - words * Constants.Flac__Bits_Per_Word;
 
 			Assert.AreEqual(words, privateBr.GetField("consumed_Words"));
 			Assert.AreEqual(bits, privateBr.GetField("consumed_Bits"));

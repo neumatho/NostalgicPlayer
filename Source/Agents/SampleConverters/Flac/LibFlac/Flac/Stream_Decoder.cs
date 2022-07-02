@@ -1493,7 +1493,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac
 				return Flac__StreamDecoderInitStatus.Invalid_Callbacks;
 
 			// First default to the non-asm routines
-			decoder.Private.Lpc = new Lpc_NoAsm();
+			decoder.Private.Lpc = new Lpc();
 
 			// Since this is a C# port, we do not have any assembler versions of the LPC decoder, so this part has been removed
 
@@ -1662,7 +1662,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac
 
 			for (uint32_t i = 0; i < channels; i++)
 			{
-				Flac__int32[] tmp = Alloc.Safe_MAlloc_Mul_2Op<Flac__int32>(size);
+				Flac__int32[] tmp = Alloc.Safe_MAlloc_Mul_2Op<Flac__int32>(size, 1);
 				if (tmp == null)
 				{
 					decoder.Protected.State = Flac__StreamDecoderState.Memory_Allocation_Error;
@@ -2297,7 +2297,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac
 
 				if (obj.Num_Comments > 0)
 				{
-					if ((obj.Comments = Alloc.Safe_MAlloc_Mul_2Op_P<Flac__StreamMetadata_VorbisComment_Entry>(obj.Num_Comments)) == null)
+					if ((obj.Comments = Alloc.Safe_MAlloc_Mul_2Op_P<Flac__StreamMetadata_VorbisComment_Entry>(obj.Num_Comments, 1)) == null)
 					{
 						obj.Num_Comments = 0;
 						decoder.Protected.State = Flac__StreamDecoderState.Memory_Allocation_Error;
@@ -3484,7 +3484,7 @@ Skip:
 				if (!decoder.Private.Input.Flac__BitReader_Read_Raw_Int32(out Flac__int32 i32, bps))
 					return false;	// Read_Callback sets the state for us
 
-				subFrame.Warnup[u] = i32;
+				subFrame.Warmup[u] = i32;
 			}
 
 			// Read entropy coding method info
@@ -3548,7 +3548,7 @@ Skip:
 			// Decode the subframe
 			if (do_Full_Decode)
 			{
-				Array.Copy(subFrame.Warnup, decoder.Private.Output[channel], order);
+				Array.Copy(subFrame.Warmup, decoder.Private.Output[channel], order);
 				Fixed.Flac__Fixed_Restore_Signal(decoder.Private.Residual[channel], decoder.Private.Frame.Header.BlockSize - order, order, decoder.Private.Output[channel], order);
 			}
 

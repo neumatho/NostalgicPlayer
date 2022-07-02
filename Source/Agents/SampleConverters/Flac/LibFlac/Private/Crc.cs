@@ -340,11 +340,11 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 		/// init = 0
 		/// </summary>
 		/********************************************************************/
-		public static Flac__uint8 Flac__Crc8(Flac__byte[] data, uint32_t len)
+		public static Flac__uint8 Flac__Crc8(Span<Flac__byte> data, uint32_t len)
 		{
 			Flac__uint8 crc = 0;
 
-			uint32_t offset = 0;
+			int32_t offset = 0;
 			while (len-- != 0)
 				crc = crc8_Table[crc ^ data[offset++]];
 
@@ -360,11 +360,11 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 		/// init = 0
 		/// </summary>
 		/********************************************************************/
-		public static Flac__uint16 Flac__Crc16(Flac__byte[] data, uint32_t len)
+		public static Flac__uint16 Flac__Crc16(Span<Flac__byte> data, uint32_t len)
 		{
 			Flac__uint16 crc = 0;
 
-			uint32_t offset = 0;
+			int32_t offset = 0;
 			while (len >= 8)
 			{
 				crc ^= (Flac__uint16)(data[offset] << 8 | data[offset + 1]);

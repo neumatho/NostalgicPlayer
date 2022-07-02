@@ -2,7 +2,7 @@
 using System;
 
 // Declare assembly as CLS compliant.
-[assembly: System.CLSCompliant(true)]
+//[assembly: System.CLSCompliant(true)]
 
 namespace C
 {
@@ -514,11 +514,11 @@ namespace C
         /// <para>
         /// </para>
         /// <para>
-        /// The function <see cref="math.frexp(double, ref int)"/>, together with its dual, <see cref="math.ldexp(double, int)"/>,
+        /// The function <see cref="math.frexp(double, out int)"/>, together with its dual, <see cref="math.ldexp(double, int)"/>,
         /// can be used to manipulate the representation of a floating-point number without direct bit manipulations.
         /// </para>
         /// <para>
-        /// The relation of <see cref="math.frexp(double, ref int)"/> to <see cref="math.logb(double)"/> and <see cref="math.scalbn(double, int)"/> is:
+        /// The relation of <see cref="math.frexp(double, out int)"/> to <see cref="math.logb(double)"/> and <see cref="math.scalbn(double, int)"/> is:
         /// </para>
         /// <para>
         /// <c><paramref name="exponent"/> = (<paramref name="number"/> == 0) ? 0 : (int)(1 + <see cref="math.logb(double)">logb</see>(<paramref name="number"/>))</c><br/>
@@ -556,7 +556,7 @@ namespace C
         /// Assert.IsTrue(exponent = -1073);
         /// </code> 
         /// </example>
-        public static double frexp(double number, ref int exponent)
+        public static double frexp(double number, out int exponent)
         {
             long bits = System.BitConverter.DoubleToInt64Bits(number);
             int exp = (int)((bits & math.DBL_EXP_MASK) >> math.DBL_MANT_BITS);
@@ -699,9 +699,9 @@ namespace C
         /// </para>
         /// <para>
         /// The value of the exponent returned by <see cref="math.ilogb(double)"/> is always <c>1</c> less than the exponent retuned by
-        /// <see cref="math.frexp(double, ref int)"/> because of the different normalization requirements:
+        /// <see cref="math.frexp(double, out int)"/> because of the different normalization requirements:
         /// for <see cref="math.ilogb(double)"/>, the normalized significand is in the interval <c>[1, 2)</c>,
-        /// but for <see cref="math.frexp(double, ref int)"/>, the normalized significand is in the interval <c>[0.5, 1)</c>.
+        /// but for <see cref="math.frexp(double, out int)"/>, the normalized significand is in the interval <c>[0.5, 1)</c>.
         /// </para>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/ilogb">ilogb</a> in the C standard documentation.
@@ -897,7 +897,7 @@ namespace C
         /// <item>If <paramref name="number"/> is NaN, <see cref="System.Double.NaN"/> is returned.</item>
         /// </list>
         /// <para>
-        /// The function <see cref="math.ldexp(double, int)"/> ("load exponent"), together with its dual, <see cref="math.frexp(double, ref int)"/>,
+        /// The function <see cref="math.ldexp(double, int)"/> ("load exponent"), together with its dual, <see cref="math.frexp(double, out int)"/>,
         /// can be used to manipulate the representation of a floating-point number without direct bit manipulations.
         /// </para>
         /// <para>
@@ -1047,9 +1047,9 @@ namespace C
         /// </para>
         /// <para>
         /// The value of the exponent returned by <see cref="math.logb(double)"/> is always <c>1</c> less than the exponent retuned by
-        /// <see cref="math.frexp(double, ref int)"/> because of the different normalization requirements:
+        /// <see cref="math.frexp(double, out int)"/> because of the different normalization requirements:
         /// for <see cref="math.logb(double)"/>, the normalized significand is in the interval <c>[1, 2)</c>,
-        /// but for <see cref="math.frexp(double, ref int)"/>, the normalized significand is in the interval <c>[0.5, 1)</c>. 
+        /// but for <see cref="math.frexp(double, out int)"/>, the normalized significand is in the interval <c>[0.5, 1)</c>. 
         /// </para>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/logb">logb</a> in the C standard documentation.

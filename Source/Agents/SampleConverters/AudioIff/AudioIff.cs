@@ -20,7 +20,6 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 	/// <summary>
 	/// NostalgicPlayer agent interface implementation
 	/// </summary>
-	[CLSCompliant(false)]
 	public class AudioIff : AgentBase
 	{
 		private static readonly Guid agent1Id = Guid.Parse("BBAABC5F-AE88-42D1-8717-EAEC041AFE7D");

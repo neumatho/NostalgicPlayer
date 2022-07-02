@@ -17,7 +17,35 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac
 	/// </summary>
 	internal static class Format
 	{
+		private class SeekPoint_Compare : IComparer<Flac__StreamMetadata_SeekPoint>
+		{
+			/********************************************************************/
+			/// <summary>
+			/// Used as the sort predicate
+			/// </summary>
+			/********************************************************************/
+			public int Compare(Flac__StreamMetadata_SeekPoint l, Flac__StreamMetadata_SeekPoint r)
+			{
+				// We don't just 'return l.sample_Number - r.sample_Number' since the result (Flac__int64) might overflow an 'int'
+				if (l.Sample_Number == r.Sample_Number)
+					return 0;
+				else if (l.Sample_Number < r.Sample_Number)
+					return -1;
+				else
+					return 1;
+			}
+		}
+
 		public static readonly Flac__byte[] Flac__Stream_Sync_String = { 0x66, 0x4c, 0x61, 0x43 };	// fLaC
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the vendor string
+		/// </summary>
+		/********************************************************************/
+		public static string Flac__Vendor_String => "NostalgicPlayer (reference libFLAC 1.3.4 20220220)";
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -27,6 +55,24 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac
 		public static Flac__bool Flac__Format_Sample_Rate_Is_Valid(uint32_t sample_Rate)
 		{
 			if ((sample_Rate == 0) || (sample_Rate > Constants.Flac__Max_Sample_Rate))
+				return false;
+			else
+				return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tests that a blocksize at the given sample rate is valid for the
+		/// FLAC subset
+		/// </summary>
+		/********************************************************************/
+		public static Flac__bool Flac__Format_BlockSize_Is_Subset(uint32_t blockSize, uint32_t sample_Rate)
+		{
+			if (blockSize > 16384)
+				return false;
+			else if ((sample_Rate <= 48000) && (blockSize > 4608))
 				return false;
 			else
 				return true;
@@ -47,6 +93,87 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac
 				return false;
 			else
 				return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check a seek table to see if it conforms to the FLAC
+		/// specification. See the format specification for limits on the
+		/// contents of the seek table
+		/// </summary>
+		/********************************************************************/
+		public static Flac__bool Flac__Format_SeekTable_Is_Legal(Flac__StreamMetadata_SeekTable seek_Table)
+		{
+			Flac__uint64 prev_Sample_Number = 0;
+			Flac__bool got_Prev = false;
+
+			Debug.Assert(seek_Table != null);
+
+			for (uint32_t i = 0; i < seek_Table.Num_Points; i++)
+			{
+				if (got_Prev)
+				{
+					if ((seek_Table.Points[i].Sample_Number != Constants.Flac__Stream_Metadata_SeekPoint_Placeholder) && (seek_Table.Points[i].Sample_Number <= prev_Sample_Number))
+						return false;
+				}
+
+				prev_Sample_Number = seek_Table.Points[i].Sample_Number;
+				got_Prev = true;
+			}
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Sort a seek table's seek points according to the format
+		/// specification. This includes a "unique-ification" step to remove
+		/// duplicates, i.e. seek points with identical sample_number values.
+		/// Duplicate seek points are converted into placeholder points and
+		/// sorted to the end of the table
+		/// </summary>
+		/********************************************************************/
+		public static uint32_t Flac__Format_SeekTable_Sort(Flac__StreamMetadata_SeekTable seek_Table)
+		{
+			Debug.Assert(seek_Table != null);
+
+			if (seek_Table.Num_Points == 0)
+				return 0;
+
+			// Sort the seekpoints
+			Array.Sort(seek_Table.Points, 0, (int)seek_Table.Num_Points, new SeekPoint_Compare());
+
+			// Uniquify the seekpoints
+			Flac__bool first = true;
+
+			uint32_t j = 0;
+			for (uint32_t i = 0; i < seek_Table.Num_Points; i++)
+			{
+				if (seek_Table.Points[i].Sample_Number != Constants.Flac__Stream_Metadata_SeekPoint_Placeholder)
+				{
+					if (!first)
+					{
+						if (seek_Table.Points[i].Sample_Number == seek_Table.Points[j - 1].Sample_Number)
+							continue;
+					}
+				}
+
+				first = false;
+				seek_Table.Points[j++] = seek_Table.Points[i];
+			}
+
+			for (uint32_t i = j; i < seek_Table.Num_Points; i++)
+			{
+				seek_Table.Points[i].Sample_Number = Constants.Flac__Stream_Metadata_SeekPoint_Placeholder;
+				seek_Table.Points[i].Stream_Offset = 0;
+				seek_Table.Points[i].Frame_Samples = 0;
+			}
+
+			return j;
 		}
 
 
@@ -157,6 +284,186 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac
 				return false;
 
 			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check a cue sheet to see if it conforms to the FLAC specification.
+		/// See the format specification for limits on the contents of the
+		/// cue sheet
+		/// </summary>
+		/********************************************************************/
+		public static Flac__bool Flac__Format_CueSheet_Is_Legal(Flac__StreamMetadata_CueSheet cue_Sheet, Flac__bool check_Cd_Da_Subset, out string violation)
+		{
+			if (check_Cd_Da_Subset)
+			{
+				if (cue_Sheet.Lead_In < 2 * 44100)
+				{
+					violation = "CD-DA cue sheet must have a lead-in length of at least 2 seconds";
+					return false;
+				}
+
+				if ((cue_Sheet.Lead_In % 588) != 0)
+				{
+					violation = "CD-DA cue sheet lead-in length must be evenly divisible by 588 samples";
+					return false;
+				}
+			}
+
+			if (cue_Sheet.Num_Tracks == 0)
+			{
+				violation = "Cue sheet must have at least one track (the lead-out)";
+				return false;
+			}
+
+			if (check_Cd_Da_Subset && (cue_Sheet.Tracks[cue_Sheet.Num_Tracks - 1].Number != 170))
+			{
+				violation = "CD-DA cue sheet must have a lead-out track number 170 (0xAA)";
+				return false;
+			}
+
+			for (uint32_t i = 0; i < cue_Sheet.Num_Tracks; i++)
+			{
+				if (cue_Sheet.Tracks[i].Number == 0)
+				{
+					violation = "Cue sheet may not have a track number 0";
+					return false;
+				}
+
+				if (check_Cd_Da_Subset)
+				{
+					if (!(((cue_Sheet.Tracks[i].Number >= 1) && (cue_Sheet.Tracks[i].Number <= 99)) || (cue_Sheet.Tracks[i].Number == 170)))
+					{
+						violation = "CD-DA cue sheet track number must be 1-99 or 170";
+						return false;
+					}
+				}
+
+				if (check_Cd_Da_Subset && ((cue_Sheet.Tracks[i].Offset % 588) != 0))
+				{
+					if (i == cue_Sheet.Num_Tracks - 1)
+						violation = "CD-DA cue sheet lead-out offset must be evenly divisible by 588 samples";
+					else
+						violation = "CD-DA cue sheet track offset must be evenly divisible by 588 samples";
+
+					return false;
+				}
+
+				if (i < cue_Sheet.Num_Tracks - 1)
+				{
+					if (cue_Sheet.Tracks[i].Num_Indices == 0)
+					{
+						violation = "Cue sheet track must have at least one index point";
+						return false;
+					}
+
+					if (cue_Sheet.Tracks[i].Indices[0].Number > 1)
+					{
+						violation = "Cue sheet track's first index number must be 0 or 1";
+						return false;
+					}
+				}
+
+				for (uint32_t j = 0; j < cue_Sheet.Tracks[i].Num_Indices; j++)
+				{
+					if (check_Cd_Da_Subset && ((cue_Sheet.Tracks[i].Indices[j].Offset % 588) != 0))
+					{
+						violation = "CD-DA cue sheet track index offset must be evenly divisible by 588 samples";
+						return false;
+					}
+
+					if (j > 0)
+					{
+						if (cue_Sheet.Tracks[i].Indices[j].Number != (cue_Sheet.Tracks[i].Indices[j - 1].Number + 1))
+						{
+							violation = "Cue sheet track index numbers must increase by 1";
+							return false;
+						}
+					}
+				}
+			}
+
+			violation = null;
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check a PICTURE block to see if it conforms to the FLAC
+		/// specification. See the format specification for limits on the
+		/// contents of the PICTURE block
+		/// </summary>
+		/********************************************************************/
+		public static Flac__bool Flac__Format_Picture_Is_Legal(Flac__StreamMetadata_Picture picture, out string violation)
+		{
+			for (int p = 0; picture.Mime_Type[p] != 0; p++)
+			{
+				if ((picture.Mime_Type[p] < 0x20) || (picture.Mime_Type[p] > 0x7e))
+				{
+					violation = "MIME type string must contain only printable ASCII characters (0x20-0x7e)";
+					return false;
+				}
+			}
+
+			for (uint32_t b = 0; picture.Description[b] != 0; )
+			{
+				uint32_t n = Utf8Len(picture.Description, b);
+				if (n == 0)
+				{
+					violation = "Description string must be valid UTF-8";
+					return false;
+				}
+
+				b += n;
+			}
+
+			violation = null;
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public static uint32_t Flac__Format_Get_Max_Rice_Partition_Order_From_BlockSize(uint32_t blockSize)
+		{
+			uint32_t max_Rice_Partition_Order = 0;
+
+			while ((blockSize & 1) == 0)
+			{
+				max_Rice_Partition_Order++;
+				blockSize >>= 1;
+			}
+
+			return Math.Min(Constants.Flac__Max_Rice_Partition_Order, max_Rice_Partition_Order);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public static uint32_t Flac__Format_Get_Max_Rice_Partition_Order_From_BlockSize_Limited_Max_And_Predictor_Order(uint32_t limit, uint32_t blockSize, uint32_t predictor_Order)
+		{
+			uint32_t max_Rice_Partition_Order = limit;
+
+			while ((max_Rice_Partition_Order > 0) && ((blockSize >> (int)max_Rice_Partition_Order) <= predictor_Order))
+				max_Rice_Partition_Order--;
+
+			Debug.Assert(((max_Rice_Partition_Order == 0) && (blockSize >= predictor_Order)) || ((max_Rice_Partition_Order > 0) && ((blockSize >> (int)max_Rice_Partition_Order) > predictor_Order)));
+
+			return max_Rice_Partition_Order;
 		}
 
 

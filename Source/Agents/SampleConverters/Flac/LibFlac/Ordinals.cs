@@ -31,3 +31,5 @@ global using Flac__uint64 = System.UInt64;
 
 global using Flac__bool = System.Boolean;
 global using Flac__byte = System.Byte;
+
+global using Flac__real = System.Single;
