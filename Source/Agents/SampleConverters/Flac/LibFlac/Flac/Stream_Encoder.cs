@@ -1853,8 +1853,6 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac
 					// "i <= blockSize" to overread 1 sample; see comment in Overread decl
 					for (i = encoder.Private.Current_Sample_Number; (i <= blockSize) && (j < samples); i++, j++)
 					{
-						try
-						{
 						encoder.Private.Integer_Signal[0][i] = mid = side = buffer[k++];
 						Flac__int32 x = buffer[k++];
 						encoder.Private.Integer_Signal[1][i] = x;
@@ -1865,12 +1863,6 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac
 
 						encoder.Private.Integer_Signal_Mid_Size[1][i] = side;
 						encoder.Private.Integer_Signal_Mid_Size[0][i] = mid;
-						}
-						catch
-						{
-							int u=6;
-							throw;
-						}
 					}
 
 					encoder.Private.Current_Sample_Number = i;
