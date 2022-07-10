@@ -75,6 +75,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
+		/// Visuals latency
+		/// </summary>
+		/********************************************************************/
+		public int VisualsLatency
+		{
+			get => settings.GetIntEntry("Sound", "VisualsLatency", 0);
+
+			set => settings.SetIntEntry("Sound", "VisualsLatency", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Interpolation
 		/// </summary>
 		/********************************************************************/

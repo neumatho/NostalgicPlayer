@@ -723,6 +723,9 @@ what has changed since your previous version.</value>
   <data name="IDS_SETTINGS_MIXER_GENERAL_SWAPSPEAKERS" xml:space="preserve">
     <value>Swap left and right speakers</value>
   </data>
+  <data name="IDS_SETTINGS_MIXER_GENERAL_VISUALSLATENCY" xml:space="preserve">
+    <value>Visuals latency</value>
+  </data>
   <data name="IDS_SETTINGS_MIXER_OUPUT" xml:space="preserve">
     <value>Mixer output</value>
   </data>

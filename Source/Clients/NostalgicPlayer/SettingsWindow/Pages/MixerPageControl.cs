@@ -34,6 +34,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private SoundSettings soundSettings;
 
 		private int originalStereoSeparation;
+		private int originalVisualsLatency;
 		private bool originalInterpolation;
 		private bool originalSwapSpeakers;
 		private bool originalSurround;
@@ -145,6 +146,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 
 			// Setup the rest of the settings
 			originalStereoSeparation = stereoSeparationTrackBar.Value = soundSettings.StereoSeparation;
+			originalVisualsLatency = visualsLatencyTrackBar.Value = soundSettings.VisualsLatency;
 			originalInterpolation = interpolationCheckBox.Checked = soundSettings.Interpolation;
 			originalSwapSpeakers = swapSpeakersCheckBox.Checked = soundSettings.SwapSpeakers;
 			originalSurround = surroundCheckBox.Checked = soundSettings.Surround;
@@ -187,6 +189,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		public void WriteSettings()
 		{
 			originalStereoSeparation = soundSettings.StereoSeparation = stereoSeparationTrackBar.Value;
+			originalVisualsLatency = soundSettings.VisualsLatency = visualsLatencyTrackBar.Value;
 			originalInterpolation = soundSettings.Interpolation = interpolationCheckBox.Checked;
 			originalSwapSpeakers = soundSettings.SwapSpeakers = swapSpeakersCheckBox.Checked;
 			originalSurround = soundSettings.Surround = surroundCheckBox.Checked;
@@ -216,6 +219,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		public void CancelSettings()
 		{
 			soundSettings.StereoSeparation = originalStereoSeparation;
+			soundSettings.VisualsLatency = originalVisualsLatency;
 			soundSettings.Interpolation = originalInterpolation;
 			soundSettings.SwapSpeakers = originalSwapSpeakers;
 			soundSettings.Surround = originalSurround;
@@ -247,6 +251,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		{
 			stereoSeparationPercentLabel.Text = stereoSeparationTrackBar.Value + "%";
 			soundSettings.StereoSeparation = stereoSeparationTrackBar.Value;
+
+			SetMixerSettings();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user change the visuals latency
+		/// </summary>
+		/********************************************************************/
+		private void VisualsLatencyTrackBar_ValueChanged(object sender, EventArgs e)
+		{
+			soundSettings.VisualsLatency = visualsLatencyTrackBar.Value * 20;
+			visualsLatencyMsLabel.Text = $"{soundSettings.VisualsLatency} ms";
 
 			SetMixerSettings();
 		}
@@ -416,6 +435,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			moduleHandler.ChangeMixerSettings(new MixerConfiguration
 			{
 				StereoSeparator = soundSettings.StereoSeparation,
+				VisualsLatency = soundSettings.VisualsLatency,
 				EnableInterpolation = soundSettings.Interpolation,
 				SwapSpeakers = soundSettings.SwapSpeakers,
 				EnableSurround = soundSettings.Surround,

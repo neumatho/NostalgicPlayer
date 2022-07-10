@@ -1666,6 +1666,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Visuals latency.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_GENERAL_VISUALSLATENCY {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_GENERAL_VISUALSLATENCY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mixer output.
         /// </summary>
         internal static string IDS_SETTINGS_MIXER_OUPUT {

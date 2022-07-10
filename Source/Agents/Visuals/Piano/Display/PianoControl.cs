@@ -8,7 +8,6 @@
 /******************************************************************************/
 using System.Drawing.Drawing2D;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
@@ -20,24 +19,24 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 	{
 		private class VisualChannelInfo
 		{
-			public bool enabled;
-			public bool active;
+			public bool Enabled;
+			public bool Active;
 
-			public Point keyPosition;
-			public Color color;
-			public int alpha;
+			public Point KeyPosition;
+			public Color Color;
+			public int Alpha;
 
-			public int reservedIndex1;
-			public int reservedIndex2;
+			public int ReservedIndex1;
+			public int ReservedIndex2;
 
-			public uint frequency;
-			public uint sampleLength;
-			public float calculatedSamplePosition;
+			public uint Frequency;
+			public uint SampleLength;
+			public float CalculatedSamplePosition;
 
-			public bool pulsing;
-			public bool direction;
+			public bool Pulsing;
+			public bool Direction;
 
-			public int volume0Counter;
+			public int Volume0Counter;
 		}
 
 		private const int NumberOfOctaves = 10;
@@ -151,14 +150,14 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 		/// Tell the visual about a channel change
 		/// </summary>
 		/********************************************************************/
-		public void ChannelChange(ChannelChanged channelChanged)
+		public void ChannelChange(ChannelChanged[] channelChanged)
 		{
 			lock (this)
 			{
 				if (visualChannels != null)
 				{
-					for (int i = 0, cnt = channelChanged.VirtualChannels.Length; i < cnt; i++)
-						UpdateChanges(channelChanged.Flags[i], channelChanged.VirtualChannels[i], i >= channelChanged.EnabledChannels.Length ? true : channelChanged.EnabledChannels[i], visualChannels[i]);
+					for (int i = 0, cnt = channelChanged.Length; i < cnt; i++)
+						UpdateChanges(channelChanged[i], visualChannels[i]);
 				}
 			}
 		}
@@ -213,17 +212,17 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 				{
 					foreach (VisualChannelInfo visualChannelInfo in visualChannels)
 					{
-						if (visualChannelInfo.active && visualChannelInfo.enabled)
+						if (visualChannelInfo.Active && visualChannelInfo.Enabled)
 						{
-							using (Brush brush = new SolidBrush(Color.FromArgb(visualChannelInfo.alpha, visualChannelInfo.color)))
+							using (Brush brush = new SolidBrush(Color.FromArgb(visualChannelInfo.Alpha, visualChannelInfo.Color)))
 							{
-								g.FillEllipse(brush, visualChannelInfo.keyPosition.X, visualChannelInfo.keyPosition.Y, 7, 7);
+								g.FillEllipse(brush, visualChannelInfo.KeyPosition.X, visualChannelInfo.KeyPosition.Y, 7, 7);
 
-								if (visualChannelInfo.keyPosition.Y <= FirstHalfNoteYPos)
+								if (visualChannelInfo.KeyPosition.Y <= FirstHalfNoteYPos)
 								{
-									using (Pen pen = new Pen(Color.FromArgb(visualChannelInfo.alpha, Color.LightGray)))
+									using (Pen pen = new Pen(Color.FromArgb(visualChannelInfo.Alpha, Color.LightGray)))
 									{
-										g.DrawEllipse(pen, visualChannelInfo.keyPosition.X, visualChannelInfo.keyPosition.Y, 8, 8);
+										g.DrawEllipse(pen, visualChannelInfo.KeyPosition.X, visualChannelInfo.KeyPosition.Y, 8, 8);
 									}
 								}
 							}
@@ -248,35 +247,35 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 				{
 					foreach (VisualChannelInfo visualChannelInfo in visualChannels)
 					{
-						if (visualChannelInfo.active)
+						if (visualChannelInfo.Active)
 						{
-							if (visualChannelInfo.pulsing)
+							if (visualChannelInfo.Pulsing)
 							{
-								if (visualChannelInfo.direction)
+								if (visualChannelInfo.Direction)
 								{
-									visualChannelInfo.alpha += 6;
-									if (visualChannelInfo.alpha >= 255)
-										visualChannelInfo.direction = false;
+									visualChannelInfo.Alpha += 6;
+									if (visualChannelInfo.Alpha >= 255)
+										visualChannelInfo.Direction = false;
 								}
 								else
 								{
-									visualChannelInfo.alpha -= 6;
-									if (visualChannelInfo.alpha < 128)
-										visualChannelInfo.direction = true;
+									visualChannelInfo.Alpha -= 6;
+									if (visualChannelInfo.Alpha < 128)
+										visualChannelInfo.Direction = true;
 								}
 							}
 							else
 							{
-								if (visualChannelInfo.sampleLength == 0)
+								if (visualChannelInfo.SampleLength == 0)
 									Deactivate(visualChannelInfo);
 								else
 								{
-									visualChannelInfo.alpha = 255 - (int)((visualChannelInfo.calculatedSamplePosition * 255) / visualChannelInfo.sampleLength);
+									visualChannelInfo.Alpha = 255 - (int)((visualChannelInfo.CalculatedSamplePosition * 255) / visualChannelInfo.SampleLength);
 
-									visualChannelInfo.calculatedSamplePosition += visualChannelInfo.frequency * pulseTimer.Interval / 1000.0f;
-									if (visualChannelInfo.calculatedSamplePosition > visualChannelInfo.sampleLength)
+									visualChannelInfo.CalculatedSamplePosition += visualChannelInfo.Frequency * pulseTimer.Interval / 1000.0f;
+									if (visualChannelInfo.CalculatedSamplePosition > visualChannelInfo.SampleLength)
 									{
-										visualChannelInfo.calculatedSamplePosition = visualChannelInfo.sampleLength;
+										visualChannelInfo.CalculatedSamplePosition = visualChannelInfo.SampleLength;
 										Deactivate(visualChannelInfo);
 									}
 								}
@@ -294,64 +293,64 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 		/// Will find out where to place dots on the piano
 		/// </summary>
 		/********************************************************************/
-		private void UpdateChanges(ChannelFlags flags, IChannel chan, bool enabled, VisualChannelInfo visualChannelInfo)
+		private void UpdateChanges(ChannelChanged channelChangedInfo, VisualChannelInfo visualChannelInfo)
 		{
-			visualChannelInfo.enabled = enabled;
+			visualChannelInfo.Enabled = channelChangedInfo.Enabled;
 
-			if ((flags & ChannelFlags.MuteIt) != 0)
+			if ((channelChangedInfo.Flags & ChannelFlags.MuteIt) != 0)
 				Deactivate(visualChannelInfo);
 			else
 			{
-				if ((flags & ChannelFlags.Visual) != 0)
+				if ((channelChangedInfo.Flags & ChannelFlags.Visual) != 0)
 				{
 					Deactivate(visualChannelInfo);
 
-					VisualInfo visualInfo = chan.GetVisualInfo();
+					VisualInfo visualInfo = channelChangedInfo.VisualInfo;
 
-					visualChannelInfo.active = true;
-					visualChannelInfo.color = FindColor(visualInfo.SampleNumber);
-					visualChannelInfo.alpha = 255;
-					visualChannelInfo.direction = false;
-					visualChannelInfo.keyPosition = FindNotePosition(visualInfo.NoteNumber, out var reservedIndexes);
-					visualChannelInfo.reservedIndex1 = reservedIndexes.index1;
-					visualChannelInfo.reservedIndex2 = reservedIndexes.index2;
+					visualChannelInfo.Active = true;
+					visualChannelInfo.Color = FindColor(visualInfo.SampleNumber);
+					visualChannelInfo.Alpha = 255;
+					visualChannelInfo.Direction = false;
+					visualChannelInfo.KeyPosition = FindNotePosition(visualInfo.NoteNumber, out var reservedIndexes);
+					visualChannelInfo.ReservedIndex1 = reservedIndexes.index1;
+					visualChannelInfo.ReservedIndex2 = reservedIndexes.index2;
 
 					if (reservedIndexes.index1 == -1)
-						visualChannelInfo.active = false;
+						visualChannelInfo.Active = false;
 				}
 
-				if ((flags & ChannelFlags.TrigIt) != 0)
+				if ((channelChangedInfo.Flags & ChannelFlags.TrigIt) != 0)
 				{
-					visualChannelInfo.sampleLength = chan.GetSampleLength();
-					visualChannelInfo.calculatedSamplePosition = 0.0f;
-					visualChannelInfo.pulsing = false;
-					visualChannelInfo.direction = false;
-					visualChannelInfo.volume0Counter = 10;
+					visualChannelInfo.SampleLength = channelChangedInfo.SampleLength;
+					visualChannelInfo.CalculatedSamplePosition = 0.0f;
+					visualChannelInfo.Pulsing = false;
+					visualChannelInfo.Direction = false;
+					visualChannelInfo.Volume0Counter = 10;
 
-					if (visualChannelInfo.sampleLength == 0)
+					if (visualChannelInfo.SampleLength == 0)
 						Deactivate(visualChannelInfo);
 				}
 
-				if ((flags & ChannelFlags.Loop) != 0)
-					visualChannelInfo.pulsing = true;
+				if ((channelChangedInfo.Flags & ChannelFlags.Loop) != 0)
+					visualChannelInfo.Pulsing = true;
 
-				if ((flags & ChannelFlags.ChangePosition) != 0)
+				if ((channelChangedInfo.Flags & ChannelFlags.ChangePosition) != 0)
 				{
-					if ((flags & ChannelFlags.Relative) != 0)
-						visualChannelInfo.calculatedSamplePosition += chan.GetSamplePosition();
+					if ((channelChangedInfo.Flags & ChannelFlags.Relative) != 0)
+						visualChannelInfo.CalculatedSamplePosition += channelChangedInfo.SamplePosition;
 					else
-						visualChannelInfo.calculatedSamplePosition = chan.GetSamplePosition();
+						visualChannelInfo.CalculatedSamplePosition = channelChangedInfo.SamplePosition;
 				}
 
-				if ((flags & ChannelFlags.Frequency) != 0)
-					visualChannelInfo.frequency = chan.GetFrequency();
+				if ((channelChangedInfo.Flags & ChannelFlags.Frequency) != 0)
+					visualChannelInfo.Frequency = channelChangedInfo.Frequency;
 
-				if (chan.GetVolume() == 0)
+				if (channelChangedInfo.Volume == 0)
 				{
-					if (visualChannelInfo.volume0Counter == 0)
+					if (visualChannelInfo.Volume0Counter == 0)
 						Deactivate(visualChannelInfo);
 					else
-						visualChannelInfo.volume0Counter--;
+						visualChannelInfo.Volume0Counter--;
 				}
 			}
 		}
@@ -407,11 +406,11 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 		/********************************************************************/
 		private void Deactivate(VisualChannelInfo visualChannelInfo)
 		{
-			if (visualChannelInfo.active)
+			if (visualChannelInfo.Active)
 			{
-				visualChannelInfo.active = false;
+				visualChannelInfo.Active = false;
 
-				allocatedKeys[visualChannelInfo.reservedIndex1, visualChannelInfo.reservedIndex2] = false;
+				allocatedKeys[visualChannelInfo.ReservedIndex1, visualChannelInfo.ReservedIndex2] = false;
 			}
 		}
 		#endregion

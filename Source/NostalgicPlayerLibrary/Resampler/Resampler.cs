@@ -96,7 +96,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 				currentVisualizer = new MixerVisualize();
 
 				// Initialize the visualizer
-				currentVisualizer.Initialize(agentManager, 0, null);
+				currentVisualizer.Initialize(agentManager, 0);
 
 				// Initialize the resampler
 				ChangeConfiguration(playerConfiguration.MixerConfiguration);
@@ -161,6 +161,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 
 			dataBuffer = new int[len];
 			sampleBuffer = new int[bufferSize];
+
+			currentVisualizer.SetOutputFormat(outputInformation);
 		}
 
 
@@ -188,6 +190,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		/********************************************************************/
 		public void ChangeConfiguration(MixerConfiguration mixerConfiguration)
 		{
+			currentVisualizer.SetVisualsLatency(mixerConfiguration.VisualsLatency);
+
 			interpolation = mixerConfiguration.EnableInterpolation;
 			swapSpeakers = mixerConfiguration.SwapSpeakers;
 			channelsEnabled = mixerConfiguration.ChannelsEnabled;
@@ -212,7 +216,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 				ResampleConvertTo32(MemoryMarshal.Cast<byte, int>(buffer), offset / 4, sampleBuffer, total, outputChannels == 2 ? swapSpeakers : false);
 
 			// Tell visual agents about the mixed data
-			currentVisualizer.TellAgentsAboutMixedData(buffer, total, outputBits / 8, outputChannels == 2, swapSpeakers);
+			currentVisualizer.TellAgentsAboutMixedData(buffer, offset, total, outputChannels == 2, swapSpeakers);
 
 			return total;
 		}

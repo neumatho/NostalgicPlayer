@@ -6,8 +6,6 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Interfaces;
-
 namespace Polycode.NostalgicPlayer.Kit.Containers
 {
 	/// <summary>
@@ -20,21 +18,25 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ChannelChanged(IChannel[] virtualChannels, ChannelFlags[] flags, bool[] enabledChannels)
+		public ChannelChanged(ChannelFlags flags, ushort volume, uint frequency, uint sampleLength, int samplePosition, VisualInfo visualInfo, bool enabled)
 		{
-			VirtualChannels = virtualChannels;
 			Flags = flags;
-			EnabledChannels = enabledChannels;
+			Volume = volume;
+			Frequency = frequency;
+			SampleLength = sampleLength;
+			SamplePosition = samplePosition;
+			VisualInfo = visualInfo;
+			Enabled = enabled;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// An array with a channel structure for each channel
+		/// Holds the channel flags. Indicate which information has changed
 		/// </summary>
 		/********************************************************************/
-		public IChannel[] VirtualChannels
+		public ChannelFlags Flags
 		{
 			get;
 		}
@@ -43,12 +45,10 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// An array with the channel flags. Use these instead of those
-		/// found in the Channel structure, because they may have been
-		/// cleared
+		/// Holds the current volume on the channel
 		/// </summary>
 		/********************************************************************/
-		public ChannelFlags[] Flags
+		public ushort Volume
 		{
 			get;
 		}
@@ -57,10 +57,58 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Indicate which channels are enabled (not muted)
+		/// Holds the current frequency on the channel
 		/// </summary>
 		/********************************************************************/
-		public bool[] EnabledChannels
+		public uint Frequency
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the length of the sample in samples
+		/// </summary>
+		/********************************************************************/
+		public uint SampleLength
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds new sample position if set
+		/// </summary>
+		/********************************************************************/
+		public int SamplePosition
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the visual information on the channel
+		/// </summary>
+		/********************************************************************/
+		public VisualInfo VisualInfo
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Indicate if the channel are enabled (not muted)
+		/// </summary>
+		/********************************************************************/
+		public bool Enabled
 		{
 			get;
 		}

@@ -84,14 +84,14 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 		/// Tell the visual about a channel change
 		/// </summary>
 		/********************************************************************/
-		public void ChannelChange(ChannelChanged channelChanged)
+		public void ChannelChange(ChannelChanged[] channelChanged)
 		{
 			lock (this)
 			{
-				for (int i = 0, cnt = Math.Min(channelChanged.VirtualChannels.Length, Math.Min(channelsInUse, squaresPanel.Controls.Count)); i < cnt; i++)
+				for (int i = 0, cnt = Math.Min(channelChanged.Length, Math.Min(channelsInUse, squaresPanel.Controls.Count)); i < cnt; i++)
 				{
 					if (squaresPanel.Controls[i].Controls[0] is SingleSpinningSquareControl singleSpinningSquare)
-						singleSpinningSquare.ChannelChange(channelChanged.Flags[i], channelChanged.VirtualChannels[i]);
+						singleSpinningSquare.ChannelChange(channelChanged[i]);
 				}
 			}
 		}

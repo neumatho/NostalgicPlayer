@@ -7,6 +7,8 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
@@ -19,21 +21,37 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 	/// </summary>
 	internal class MixerVisualize
 	{
+		private class ChannelDataInfo
+		{
+			public int SamplesLeftBeforeTriggering;
+			public ChannelInfo[] ChannelInfo;
+		}
+
+		private class ChannelInfo
+		{
+			public ChannelFlags ChannelFlags;
+			public ushort Volume;
+			public uint Frequency;
+			public uint SampleLength;
+			public int SamplePosition;
+			public VisualInfo VisualInfo;
+			public bool Enabled;
+		}
+
 		private class SampleDataInfo
 		{
-			public byte[] Buffer;
-			public int NumberOfSamples;
-			public int SampleSize;
+			public int[] Buffer;
 			public bool Stereo;
 			public bool SwapSpeakers;
 		}
 
 		private Manager manager;
 
-		private IChannel[] channelInfo;
-		private ChannelFlags[] channelFlags;
-		private bool[] channelEnablings;
+		private int channelCount;
+		private int mixerFrequency;
+		private int bytesPerSample;
 
+		private volatile ChannelInfo[] channelInfo;
 		private volatile SampleDataInfo sampleDataInfo;
 
 		private AutoResetEvent channelChangedEvent;
@@ -42,20 +60,34 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		private Thread thread;
 
+		private int[] visualBuffer;			// Holding samples that visuals should show. It contain samples for 20 milliseconds
+		private int visualBufferOffset;		// The position in the buffer above where to fill the next samples
+
+		private int minimumLatency;
+		private int currentLatency;
+
+		private Queue<ChannelDataInfo> channelLatencyQueue;
+		private int channelLatencySamplesLeft;
+
+		private Queue<SampleDataInfo> bufferLatencyQueue;
+		private int bufferLatencySamplesLeft;
+		private bool bufferLatencyUseQueue;
+
 		/********************************************************************/
 		/// <summary>
 		/// Will initialize itself
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(Manager agentManager, int numberOfChannels, IChannel[] channels)
+		public void Initialize(Manager agentManager, int numberOfChannels)
 		{
 			manager = agentManager;
 
-			channelInfo = channels;
-			channelFlags = new ChannelFlags[numberOfChannels];
+			channelCount = numberOfChannels;
 
-			for (int i = 0; i < numberOfChannels; i++)
-				channelFlags[i] = ChannelFlags.None;
+			channelLatencyQueue = new Queue<ChannelDataInfo>();
+
+			bufferLatencyQueue = new Queue<SampleDataInfo>();
+			bufferLatencyUseQueue = false;
 
 			// Create the trigger events
 			channelChangedEvent = new AutoResetEvent(false);
@@ -97,18 +129,43 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 			channelChangedEvent?.Dispose();
 			channelChangedEvent = null;
+
+			channelLatencyQueue = null;
+			bufferLatencyQueue = null;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Will return the array holding all the channel flags
+		/// Set the output format
 		/// </summary>
 		/********************************************************************/
-		public ChannelFlags[] GetFlagsArray()
+		public void SetOutputFormat(OutputInfo outputInformation)
 		{
-			return channelFlags;
+			mixerFrequency = outputInformation.Frequency;
+			bytesPerSample = outputInformation.BytesPerSample;
+
+			visualBufferOffset = 0;
+			visualBuffer = new int[(mixerFrequency / (1000 / 20)) * outputInformation.Channels];
+
+			minimumLatency = outputInformation.BufferSizeInSamples * 1000 / outputInformation.Frequency;
+
+			InitializeVisualsLatency();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the visuals latency
+		/// </summary>
+		/********************************************************************/
+		public void SetVisualsLatency(int latency)
+		{
+			currentLatency = latency;
+
+			InitializeVisualsLatency();
 		}
 
 
@@ -128,26 +185,36 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		/********************************************************************/
 		/// <summary>
-		/// Will call all visual agents and tell them about the new mixed
-		/// data
+		/// Will queue the given channel change information
 		/// </summary>
 		/********************************************************************/
-		public void TellAgentsAboutMixedData(byte[] buffer, int numberOfSamples, int sampleSize, bool stereo, bool swapSpeakers)
+		public void QueueChannelChange(ChannelFlags[] channelFlags, IChannel[] channels, bool[] enabledChannels, int samplesTakenSinceLastCall)
 		{
-			// Create local object first, before store it in the object variable
-			SampleDataInfo info = new SampleDataInfo
+			ChannelDataInfo channelDataInfo = new ChannelDataInfo
 			{
-				Buffer = buffer,
-				NumberOfSamples = numberOfSamples,
-				SampleSize = sampleSize,
-				Stereo = stereo,
-				SwapSpeakers = swapSpeakers
+				SamplesLeftBeforeTriggering = samplesTakenSinceLastCall,
+				ChannelInfo = new ChannelInfo[channels.Length]
 			};
 
-			sampleDataInfo = info;
+			ChannelInfo[] chanInfo = channelDataInfo.ChannelInfo;
 
-			// Tell the thread about new data
-			newSampleDataEvent.Set();
+			for (int i = 0; i < chanInfo.Length; i++)
+			{
+				IChannel chan = channels[i];
+
+				chanInfo[i] = new ChannelInfo
+				{
+					ChannelFlags = channelFlags[i],
+					Volume = chan.GetVolume(),
+					Frequency = chan.GetFrequency(),
+					SampleLength = chan.GetSampleLength(),
+					SamplePosition = chan.GetSamplePosition(),
+					VisualInfo = chan.GetVisualInfo(),
+					Enabled = enabledChannels[i]
+				};
+			};
+
+			channelLatencyQueue.Enqueue(channelDataInfo);
 		}
 
 
@@ -157,12 +224,127 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Will call all visual agents and tell them about channel changes
 		/// </summary>
 		/********************************************************************/
-		public void TellAgentsAboutChannelChange(bool[] enabledChannels)
+		public void TellAgentsAboutChannelChange(int samplesProcessed)
 		{
-			channelEnablings = enabledChannels;
+			channelLatencySamplesLeft -= samplesProcessed;
+			if (channelLatencySamplesLeft < 0)
+			{
+				samplesProcessed = -channelLatencySamplesLeft;
+				channelLatencySamplesLeft = 0;
+			}
 
-			// Tell the thread that a channel has changed its status
-			channelChangedEvent.Set();
+			if (channelLatencySamplesLeft == 0)
+			{
+				while ((channelLatencyQueue.Count > 0) && (samplesProcessed > 0))
+				{
+					ChannelDataInfo peekInfo = channelLatencyQueue.Peek();
+					int todo = Math.Min(samplesProcessed, peekInfo.SamplesLeftBeforeTriggering);
+
+					peekInfo.SamplesLeftBeforeTriggering -= todo;
+					if (peekInfo.SamplesLeftBeforeTriggering == 0)
+					{
+						channelInfo = channelLatencyQueue.Dequeue().ChannelInfo;
+
+						// Tell the thread that a channel has changed its status
+						channelChangedEvent.Set();
+					}
+
+					samplesProcessed -= todo;
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will call all visual agents and tell them about the new mixed
+		/// data
+		/// </summary>
+		/********************************************************************/
+		public void TellAgentsAboutMixedData(byte[] buffer, int offset, int count, bool stereo, bool swapSpeakers)
+		{
+			int[] bufferToSend = null;
+
+			while (count > 0)
+			{
+				int todo = Math.Min(count, visualBuffer.Length - visualBufferOffset);
+
+				if (bufferLatencySamplesLeft > 0)
+					todo = Math.Min(todo, bufferLatencySamplesLeft);
+
+				if (bytesPerSample == 4)
+				{
+					// Mixed output is already in 32-bit, so just copy the data
+					Buffer.BlockCopy(buffer, offset, visualBuffer, visualBufferOffset * 4, todo * 4);
+
+					visualBufferOffset += todo;
+					offset += todo * 4;
+				}
+				else
+				{
+					// Mixed output is in 16-bit, so convert it to 32-bit
+					Span<short> source = MemoryMarshal.Cast<byte, short>(buffer);
+
+					for (int i = 0, cnt = todo; i < cnt; i++)
+						visualBuffer[visualBufferOffset++] = source[offset++] << 16;
+				}
+
+				count -= todo;
+
+				if (bufferLatencySamplesLeft > 0)
+					bufferLatencySamplesLeft -= todo;
+
+				if (visualBufferOffset == visualBuffer.Length)
+				{
+					bufferToSend = visualBuffer;
+
+					visualBuffer = new int[visualBuffer.Length];
+					visualBufferOffset = 0;
+				}
+			}
+
+			if (bufferToSend != null)
+			{
+				SampleDataInfo info = new SampleDataInfo
+				{
+					Buffer = bufferToSend,
+					Stereo = stereo,
+					SwapSpeakers = swapSpeakers
+				};
+
+				bufferLatencyQueue.Enqueue(info);
+
+				if (bufferLatencySamplesLeft == 0)
+				{
+					if (bufferLatencyUseQueue && (bufferLatencyQueue.Count > 0))
+					{
+						sampleDataInfo = bufferLatencyQueue.Dequeue();
+
+						// Tell the thread about new data
+						newSampleDataEvent.Set();
+					}
+					else
+						bufferLatencyUseQueue = true;
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize the visuals latency variables
+		/// </summary>
+		/********************************************************************/
+		private void InitializeVisualsLatency()
+		{
+			channelLatencySamplesLeft = (int)(((float)mixerFrequency / 1000) * currentLatency);
+			bufferLatencySamplesLeft = (int)(((float)mixerFrequency / 1000) * (minimumLatency + currentLatency));
+
+			bufferLatencyUseQueue = false;
+			bufferLatencyQueue.Clear();
+			channelLatencyQueue.Clear();
 		}
 
 
@@ -197,12 +379,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					// channelChangedEvent
 					case 1:
 					{
-						ChannelChanged channelChanged = new ChannelChanged(channelInfo, channelFlags, channelEnablings);
+						ChannelInfo[] chanInfo = channelInfo;
+						ChannelChanged[] channelChanged = new ChannelChanged[channelCount];
+
+						for (int i = 0; i < channelCount; i++)
+						{
+							ChannelInfo info = chanInfo[i];
+							channelChanged[i] = new ChannelChanged(info.ChannelFlags, info.Volume, info.Frequency, info.SampleLength, info.SamplePosition, info.VisualInfo, info.Enabled);
+						}
 
 						foreach (IVisualAgent visualAgent in manager.GetRegisteredVisualAgent())
 						{
 							if (visualAgent is IChannelChangeVisualAgent channelChangeVisualAgent)
-								channelChangeVisualAgent.ChannelChange(channelChanged);
+								channelChangeVisualAgent.ChannelsChanged(channelChanged);
 						}
 						break;
 					}
@@ -211,34 +400,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					case 2:
 					{
 						SampleDataInfo info = sampleDataInfo;
-						NewSampleData sampleData = null;
+						NewSampleData sampleData = new NewSampleData(info.Buffer, info.Stereo, info.SwapSpeakers);
 
 						foreach (IVisualAgent visualAgent in manager.GetRegisteredVisualAgent())
 						{
 							if (visualAgent is ISampleDataVisualAgent sampleDataVisualAgent)
-							{
-								// Will first use CPU cycles to convert the buffer, if needed
-								if (sampleData == null)
-								{
-									int[] buffer = new int[info.NumberOfSamples];
-
-									if (info.SampleSize == 4)
-									{
-										// Mixed output is already in 32-bit, so just copy the data
-										Buffer.BlockCopy(info.Buffer, 0, buffer, 0, info.NumberOfSamples * 4);
-									}
-									else
-									{
-										// Mixed output is in 16-bit, so convert it to 32-bit
-										for (int i = 0, cnt = info.NumberOfSamples; i < cnt; i++)
-											buffer[i] = BitConverter.ToInt16(info.Buffer, i * 2) << 16;
-									}
-
-									sampleData = new NewSampleData(buffer, info.Stereo, info.SwapSpeakers);
-								}
-
 								sampleDataVisualAgent.SampleData(sampleData);
-							}
 						}
 						break;
 					}

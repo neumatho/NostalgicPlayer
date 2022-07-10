@@ -34,6 +34,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 
 		/********************************************************************/
 		/// <summary>
+		/// The visuals latency in milliseconds
+		/// </summary>
+		/********************************************************************/
+		public int VisualsLatency
+		{
+			get; set;
+		} = 0;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Indicate if interpolation is enabled
 		/// </summary>
 		/********************************************************************/

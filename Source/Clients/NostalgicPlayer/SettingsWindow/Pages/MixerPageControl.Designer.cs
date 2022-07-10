@@ -32,9 +32,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.components = new System.ComponentModel.Container();
 			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
 			this.generalGroupBox = new Krypton.Toolkit.KryptonGroupBox();
+			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
 			this.stereoSeparationPercentLabel = new Krypton.Toolkit.KryptonLabel();
 			this.stereoSeparationTrackBar = new Krypton.Toolkit.KryptonTrackBar();
 			this.stereoSeparationLabel = new Krypton.Toolkit.KryptonLabel();
+			this.visualsLatencyLabel = new Krypton.Toolkit.KryptonLabel();
+			this.visualsLatencyTrackBar = new Krypton.Toolkit.KryptonTrackBar();
+			this.visualsLatencyMsLabel = new Krypton.Toolkit.KryptonLabel();
 			this.amigaFilterCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.interpolationCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			this.swapSpeakersCheckBox = new Krypton.Toolkit.KryptonCheckBox();
@@ -48,7 +52,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.channels32_47Button = new Krypton.Toolkit.KryptonButton();
 			this.channels0_15Button = new Krypton.Toolkit.KryptonButton();
 			this.channels16_31Button = new Krypton.Toolkit.KryptonButton();
-			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
 			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.generalGroupBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.generalGroupBox.Panel)).BeginInit();
@@ -81,12 +84,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.generalGroupBox.Panel.Controls.Add(this.stereoSeparationPercentLabel);
 			this.generalGroupBox.Panel.Controls.Add(this.stereoSeparationTrackBar);
 			this.generalGroupBox.Panel.Controls.Add(this.stereoSeparationLabel);
+			this.generalGroupBox.Panel.Controls.Add(this.visualsLatencyLabel);
+			this.generalGroupBox.Panel.Controls.Add(this.visualsLatencyTrackBar);
+			this.generalGroupBox.Panel.Controls.Add(this.visualsLatencyMsLabel);
 			this.generalGroupBox.Panel.Controls.Add(this.amigaFilterCheckBox);
 			this.generalGroupBox.Panel.Controls.Add(this.interpolationCheckBox);
 			this.generalGroupBox.Panel.Controls.Add(this.swapSpeakersCheckBox);
 			this.generalGroupBox.Panel.Controls.Add(this.surroundCheckBox);
 			this.controlResource.SetResourceKey(this.generalGroupBox, "IDS_SETTINGS_MIXER_GENERAL");
-			this.generalGroupBox.Size = new System.Drawing.Size(592, 100);
+			this.generalGroupBox.Size = new System.Drawing.Size(592, 135);
 			this.generalGroupBox.TabIndex = 0;
 			this.generalGroupBox.Values.Heading = "General";
 			// 
@@ -124,52 +130,86 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.stereoSeparationLabel.TabIndex = 0;
 			this.stereoSeparationLabel.Values.Text = "Stereo separation";
 			// 
+			// visualsLatencyLabel
+			// 
+			this.visualsLatencyLabel.Location = new System.Drawing.Point(4, 40);
+			this.visualsLatencyLabel.Name = "visualsLatencyLabel";
+			this.visualsLatencyLabel.Palette = this.fontPalette;
+			this.visualsLatencyLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			this.controlResource.SetResourceKey(this.visualsLatencyLabel, "IDS_SETTINGS_MIXER_GENERAL_VISUALSLATENCY");
+			this.visualsLatencyLabel.Size = new System.Drawing.Size(83, 16);
+			this.visualsLatencyLabel.TabIndex = 3;
+			this.visualsLatencyLabel.Values.Text = "Visuals latency";
+			// 
+			// visualsLatencyTrackBar
+			// 
+			this.visualsLatencyTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.InputControlStandalone;
+			this.visualsLatencyTrackBar.Location = new System.Drawing.Point(106, 35);
+			this.visualsLatencyTrackBar.Maximum = 49;
+			this.visualsLatencyTrackBar.Name = "visualsLatencyTrackBar";
+			this.controlResource.SetResourceKey(this.visualsLatencyTrackBar, null);
+			this.visualsLatencyTrackBar.Size = new System.Drawing.Size(434, 27);
+			this.visualsLatencyTrackBar.TabIndex = 4;
+			this.visualsLatencyTrackBar.TickFrequency = 2;
+			this.visualsLatencyTrackBar.ValueChanged += new System.EventHandler(this.VisualsLatencyTrackBar_ValueChanged);
+			// 
+			// visualsLatencyMsLabel
+			// 
+			this.visualsLatencyMsLabel.Location = new System.Drawing.Point(544, 40);
+			this.visualsLatencyMsLabel.Name = "visualsLatencyMsLabel";
+			this.visualsLatencyMsLabel.Palette = this.fontPalette;
+			this.visualsLatencyMsLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			this.controlResource.SetResourceKey(this.visualsLatencyMsLabel, null);
+			this.visualsLatencyMsLabel.Size = new System.Drawing.Size(34, 16);
+			this.visualsLatencyMsLabel.TabIndex = 5;
+			this.visualsLatencyMsLabel.Values.Text = "0 ms";
+			// 
 			// amigaFilterCheckBox
 			// 
 			this.amigaFilterCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.amigaFilterCheckBox.Location = new System.Drawing.Point(438, 35);
+			this.amigaFilterCheckBox.Location = new System.Drawing.Point(438, 70);
 			this.amigaFilterCheckBox.Name = "amigaFilterCheckBox";
 			this.amigaFilterCheckBox.Palette = this.fontPalette;
 			this.amigaFilterCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.amigaFilterCheckBox, "IDS_SETTINGS_MIXER_GENERAL_AMIGALED");
 			this.amigaFilterCheckBox.Size = new System.Drawing.Size(146, 16);
-			this.amigaFilterCheckBox.TabIndex = 6;
+			this.amigaFilterCheckBox.TabIndex = 9;
 			this.amigaFilterCheckBox.Values.Text = "Emulate Amiga LED filter";
 			this.amigaFilterCheckBox.CheckedChanged += new System.EventHandler(this.AmigaFilterCheckBox_CheckedChanged);
 			// 
 			// interpolationCheckBox
 			// 
-			this.interpolationCheckBox.Location = new System.Drawing.Point(4, 35);
+			this.interpolationCheckBox.Location = new System.Drawing.Point(4, 70);
 			this.interpolationCheckBox.Name = "interpolationCheckBox";
 			this.interpolationCheckBox.Palette = this.fontPalette;
 			this.interpolationCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.interpolationCheckBox, "IDS_SETTINGS_MIXER_GENERAL_INTERPOLATION");
 			this.interpolationCheckBox.Size = new System.Drawing.Size(84, 16);
-			this.interpolationCheckBox.TabIndex = 3;
+			this.interpolationCheckBox.TabIndex = 6;
 			this.interpolationCheckBox.Values.Text = "Interpolation";
 			this.interpolationCheckBox.CheckedChanged += new System.EventHandler(this.InterpolationCheckBox_CheckedChanged);
 			// 
 			// swapSpeakersCheckBox
 			// 
-			this.swapSpeakersCheckBox.Location = new System.Drawing.Point(4, 56);
+			this.swapSpeakersCheckBox.Location = new System.Drawing.Point(4, 91);
 			this.swapSpeakersCheckBox.Name = "swapSpeakersCheckBox";
 			this.swapSpeakersCheckBox.Palette = this.fontPalette;
 			this.swapSpeakersCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.swapSpeakersCheckBox, "IDS_SETTINGS_MIXER_GENERAL_SWAPSPEAKERS");
 			this.swapSpeakersCheckBox.Size = new System.Drawing.Size(161, 16);
-			this.swapSpeakersCheckBox.TabIndex = 4;
+			this.swapSpeakersCheckBox.TabIndex = 7;
 			this.swapSpeakersCheckBox.Values.Text = "Swap left and right speakers";
 			this.swapSpeakersCheckBox.CheckedChanged += new System.EventHandler(this.SwapSpeakersCheckBox_CheckedChanged);
 			// 
 			// surroundCheckBox
 			// 
-			this.surroundCheckBox.Location = new System.Drawing.Point(200, 35);
+			this.surroundCheckBox.Location = new System.Drawing.Point(200, 70);
 			this.surroundCheckBox.Name = "surroundCheckBox";
 			this.surroundCheckBox.Palette = this.fontPalette;
 			this.surroundCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.surroundCheckBox, "IDS_SETTINGS_MIXER_GENERAL_SURROUND");
 			this.surroundCheckBox.Size = new System.Drawing.Size(143, 16);
-			this.surroundCheckBox.TabIndex = 5;
+			this.surroundCheckBox.TabIndex = 8;
 			this.surroundCheckBox.Values.Text = "Dolby Prologic  surround";
 			this.surroundCheckBox.CheckedChanged += new System.EventHandler(this.SurroundCheckBox_CheckedChanged);
 			// 
@@ -178,7 +218,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.outputGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.outputGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
-			this.outputGroupBox.Location = new System.Drawing.Point(8, 108);
+			this.outputGroupBox.Location = new System.Drawing.Point(8, 143);
 			this.outputGroupBox.Name = "outputGroupBox";
 			this.outputGroupBox.Palette = this.fontPalette;
 			this.outputGroupBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
@@ -349,5 +389,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Krypton.Toolkit.KryptonCheckBox swapSpeakersCheckBox;
 		private Krypton.Toolkit.KryptonCheckBox surroundCheckBox;
 		private GuiKit.Components.FontPalette fontPalette;
+		private Krypton.Toolkit.KryptonLabel visualsLatencyLabel;
+		private Krypton.Toolkit.KryptonTrackBar visualsLatencyTrackBar;
+		private Krypton.Toolkit.KryptonLabel visualsLatencyMsLabel;
 	}
 }

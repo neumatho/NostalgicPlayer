@@ -81,10 +81,10 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano
 		#region IChannelChangeVisualAgent implementation
 		/********************************************************************/
 		/// <summary>
-		/// Tell the visual about a channel change
+		/// Tell the visual about changes of the channels
 		/// </summary>
 		/********************************************************************/
-		public void ChannelChange(ChannelChanged channelChanged)
+		public void ChannelsChanged(ChannelChanged[] channelChanged)
 		{
 			userControl.ChannelChange(channelChanged);
 		}

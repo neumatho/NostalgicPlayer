@@ -17,8 +17,8 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	public interface IChannelChangeVisualAgent : IVisualAgent
 	{
 		/// <summary>
-		/// Tell the visual about a channel change
+		/// Tell the visual about changes of the channels
 		/// </summary>
-		void ChannelChange(ChannelChanged channelChanged);
+		void ChannelsChanged(ChannelChanged[] channelChanged);
 	}
 }
