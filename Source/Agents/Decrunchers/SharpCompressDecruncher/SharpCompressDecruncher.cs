@@ -79,28 +79,28 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
 			if (typeId == agent1Id)
-				return new SharpCompressDecruncher_BZip2(Resources.IDS_SCOM_NAME_AGENT1);
+				return new BZip2Format(Resources.IDS_SCOM_NAME_AGENT1);
 
 			if (typeId == agent2Id)
-				return new SharpCompressDecruncher_GZip(Resources.IDS_SCOM_NAME_AGENT2);
+				return new GZipFormat(Resources.IDS_SCOM_NAME_AGENT2);
 
 			if (typeId == agent3Id)
-				return new SharpCompressDecruncher_LZip(Resources.IDS_SCOM_NAME_AGENT3);
+				return new LZipFormat(Resources.IDS_SCOM_NAME_AGENT3);
 
 			if (typeId == agent4Id)
-				return new SharpCompressDecruncher_Xz(Resources.IDS_SCOM_NAME_AGENT4);
+				return new XzFormat(Resources.IDS_SCOM_NAME_AGENT4);
 
 			if (typeId == agent5Id)
-				return new SharpCompressDecruncher_Zip(Resources.IDS_SCOM_NAME_AGENT5);
+				return new ZipFormat(Resources.IDS_SCOM_NAME_AGENT5);
 
 			if (typeId == agent6Id)
-				return new SharpCompressDecruncher_Tar(Resources.IDS_SCOM_NAME_AGENT6);
+				return new TarFormat(Resources.IDS_SCOM_NAME_AGENT6);
 
 			if (typeId == agent7Id)
-				return new SharpCompressDecruncher_7Zip(Resources.IDS_SCOM_NAME_AGENT7);
+				return new _7ZipFormat(Resources.IDS_SCOM_NAME_AGENT7);
 
 			if (typeId == agent8Id)
-				return new SharpCompressDecruncher_Rar(Resources.IDS_SCOM_NAME_AGENT8);
+				return new RarFormat(Resources.IDS_SCOM_NAME_AGENT8);
 
 			return null;
 		}

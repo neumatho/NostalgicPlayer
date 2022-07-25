@@ -74,13 +74,13 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 			switch (format)
 			{
 				case WaveFormat.WAVE_FORMAT_PCM:
-					return new RiffWaveWorker_Pcm();
+					return new PcmFormat();
 
 				case WaveFormat.WAVE_FORMAT_IEEE_FLOAT:
-					return new RiffWaveWorker_Ieee_Float();
+					return new Ieee_FloatFormat();
 
 				case WaveFormat.WAVE_FORMAT_ADPCM:
-					return new RiffWaveWorker_Adpcm();
+					return new AdpcmFormat();
 			}
 
 			return null;

@@ -82,37 +82,37 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
 			if (typeId == agent1Id)
-				return new AncientDecruncherWorker_PowerPacker(Resources.IDS_ANC_NAME_AGENT1);
+				return new PowerPackerFormat(Resources.IDS_ANC_NAME_AGENT1);
 
 			if (typeId == agent2Id)
-				return new AncientDecruncherWorker_Xpk_Sqsh(Resources.IDS_ANC_NAME_AGENT2);
+				return new Xpk_SqshFormat(Resources.IDS_ANC_NAME_AGENT2);
 
 			if (typeId == agent3Id)
-				return new AncientDecruncherWorker_Mmcmp(Resources.IDS_ANC_NAME_AGENT3);
+				return new MmcmpFormat(Resources.IDS_ANC_NAME_AGENT3);
 
 			if (typeId == agent4Id)
-				return new AncientDecruncherWorker_Xpk_Bzp2(Resources.IDS_ANC_NAME_AGENT4);
+				return new Xpk_Bzp2Format(Resources.IDS_ANC_NAME_AGENT4);
 
 			if (typeId == agent5Id)
-				return new AncientDecruncherWorker_Xpk_Blzw(Resources.IDS_ANC_NAME_AGENT5);
+				return new Xpk_BlzwFormat(Resources.IDS_ANC_NAME_AGENT5);
 
 			if (typeId == agent6Id)
-				return new AncientDecruncherWorker_Xpk_Rake(Resources.IDS_ANC_NAME_AGENT6);
+				return new Xpk_RakeFormat(Resources.IDS_ANC_NAME_AGENT6);
 
 			if (typeId == agent7Id)
-				return new AncientDecruncherWorker_Xpk_Smpl(Resources.IDS_ANC_NAME_AGENT7);
+				return new Xpk_SmplFormat(Resources.IDS_ANC_NAME_AGENT7);
 
 			if (typeId == agent8Id)
-				return new AncientDecruncherWorker_Xpk_Shri(Resources.IDS_ANC_NAME_AGENT8);
+				return new Xpk_ShriFormat(Resources.IDS_ANC_NAME_AGENT8);
 
 			if (typeId == agent9Id)
-				return new AncientDecruncherWorker_Xpk_Lhlb(Resources.IDS_ANC_NAME_AGENT9);
+				return new Xpk_LhlbFormat(Resources.IDS_ANC_NAME_AGENT9);
 
 			if (typeId == agent10Id)
-				return new AncientDecruncherWorker_Xpk_Mash(Resources.IDS_ANC_NAME_AGENT10);
+				return new Xpk_MashFormat(Resources.IDS_ANC_NAME_AGENT10);
 
 			if (typeId == agent11Id)
-				return new AncientDecruncherWorker_CrunchMania(Resources.IDS_ANC_NAME_AGENT11);
+				return new CrunchManiaFormat(Resources.IDS_ANC_NAME_AGENT11);
 
 			return null;
 		}

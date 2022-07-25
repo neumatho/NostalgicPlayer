@@ -6,74 +6,69 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using Polycode.NostalgicPlayer.Agent.SampleConverter.Iff16Sv.Formats;
+using System.IO;
+using Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.Archive;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Streams;
 
-// This is needed to uniquely identify this agent
-[assembly: Guid("2E0527E3-2BF2-481B-9BE8-9C0862DBCAAD")]
-
-namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff16Sv
+namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats
 {
 	/// <summary>
-	/// NostalgicPlayer agent interface implementation
+	/// Can parse Tar archives
 	/// </summary>
-	public class Iff16Sv : AgentBase
+	internal class TarFormat : ArchiveDecruncherAgentBase
 	{
-		private static readonly Dictionary<Format, Guid> supportedFormats = new Dictionary<Format, Guid>
-		{
-			{ Format.Pcm, Guid.Parse("D74FECF4-A461-4858-9DF2-1FD41C6069B8") }
-		};
-
-		#region IAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Returns the name of this agent
-		/// </summary>
-		/********************************************************************/
-		public override string Name => Resources.IDS_IFF16SV_NAME;
-
-
+		private readonly string agentName;
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns all the formats/types this agent supports
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public override AgentSupportInfo[] AgentInformation
+		public TarFormat(string agentName)
 		{
-			get
+			this.agentName = agentName;
+		}
+
+		#region IFileDecruncherAgent implementation
+		/********************************************************************/
+		/// <summary>
+		/// Test the file to see if it could be identified
+		/// </summary>
+		/********************************************************************/
+		public override AgentResult Identify(Stream archiveStream)
+		{
+			archiveStream.Seek(0, SeekOrigin.Begin);
+
+			if (SharpCompress.Archives.Tar.TarArchive.IsTarFile(archiveStream))
 			{
-				return new AgentSupportInfo[]
+				// The implementation of the identify code in SharpCompress isn't
+				// good enough, we make a double check here. However, that means
+				// only new versions of tar files are supported
+				using (ReaderStream readerStream = new ReaderStream(archiveStream, true))
 				{
-					new AgentSupportInfo(Resources.IDS_IFF16SV_NAME_AGENT1, string.Format(Resources.IDS_IFF16SV_DESCRIPTION, Resources.IDS_IFF16SV_DESCRIPTION_AGENT1), supportedFormats[Format.Pcm])
-				};
+					readerStream.Seek(257, SeekOrigin.Begin);
+
+					if ((readerStream.Read_B_UINT32() == 0x75737461) && (readerStream.Read_UINT8() == 0x72))		// ustar
+						return AgentResult.Ok;
+				}
 			}
+
+			return AgentResult.Unknown;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Creates a new worker instance
+		/// Will open the archive and return it
 		/// </summary>
 		/********************************************************************/
-		public override IAgentWorker CreateInstance(Guid typeId)
+		public override IArchive OpenArchive(Stream archiveStream)
 		{
-			Format format = supportedFormats.Where(pair => pair.Value == typeId).Select(pair => pair.Key).FirstOrDefault();
-
-			switch (format)
-			{
-				case Format.Pcm:
-					return new PcmFormat();
-			}
-
-			return null;
+			return new TarArchive(agentName, archiveStream);
 		}
 		#endregion
 	}

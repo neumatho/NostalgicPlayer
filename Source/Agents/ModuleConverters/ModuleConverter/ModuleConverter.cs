@@ -74,13 +74,13 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
 			if (typeId == agent1Id)
-				return new ModuleConverterWorker_FutureComposer13();
+				return new FutureComposer13Format();
 
 			if (typeId == agent2Id)
-				return new ModuleConverterWorker_SoundFx1x();
+				return new SoundFx1xFormat();
 
 			if (typeId == agent3Id)
-				return new ModuleConverterWorker_FredEditorFinal();
+				return new FredEditorFinalFormat();
 
 			return null;
 		}

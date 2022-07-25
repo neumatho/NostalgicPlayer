@@ -72,10 +72,10 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 			switch (format)
 			{
 				case Format.Pcm:
-					return new Iff8SvxWorker_Pcm();
+					return new PcmFormat();
 
 				case Format.Fibonacci:
-					return new Iff8SvxWorker_Fibonacci();
+					return new FibonacciFormat();
 			}
 
 			return null;

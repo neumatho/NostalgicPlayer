@@ -100,52 +100,52 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
 			if (typeId == agent1Id)
-				return new MikModConverterWorker_669(0x69, 0x66);
+				return new _669Format(0x69, 0x66);
 
 			if (typeId == agent2Id)
-				return new MikModConverterWorker_669(0x4a, 0x4e);
+				return new _669Format(0x4a, 0x4e);
 
 			if (typeId == agent3Id)
-				return new MikModConverterWorker_Amf();
+				return new AmfFormat();
 
 			if (typeId == agent4Id)
-				return new MikModConverterWorker_Asy();
+				return new AsyFormat();
 
 			if (typeId == agent5Id)
-				return new MikModConverterWorker_Dsm();
+				return new DsmFormat();
 
 			if (typeId == agent6Id)
-				return new MikModConverterWorker_Far();
+				return new FarFormat();
 
 			if (typeId == agent7Id)
-				return new MikModConverterWorker_Gdm();
+				return new GdmFormat();
 
 			if (typeId == agent8Id)
-				return new MikModConverterWorker_Imf();
+				return new ImfFormat();
 
 			if (typeId == agent9Id)
-				return new MikModConverterWorker_It();
+				return new ItFormat();
 
 			if (typeId == agent10Id)
-				return new MikModConverterWorker_Stm();
+				return new StmFormat();
 
 			if (typeId == agent11Id)
-				return new MikModConverterWorker_S3M();
+				return new S3MFormat();
 
 			if (typeId == agent12Id)
-				return new MikModConverterWorker_Stx();
+				return new StxFormat();
 
 			if (typeId == agent13Id)
-				return new MikModConverterWorker_Ult();
+				return new UltFormat();
 
 			if (typeId == agent14Id)
-				return new MikModConverterWorker_Uni();
+				return new UniFormat();
 
 			if (typeId == agent15Id)
-				return new MikModConverterWorker_Umx();
+				return new UmxFormat();
 
 			if (typeId == agent16Id)
-				return new MikModConverterWorker_Xm();
+				return new XmFormat();
 
 			return null;
 		}
