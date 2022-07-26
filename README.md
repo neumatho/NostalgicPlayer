@@ -9,7 +9,7 @@ You can find an installation package on Microsoft Store, just search after Nosta
 
 # License
 
-NostalgicPlayer is licensed under the <a href="https://github.com/neumatho/NostalgicPlayer/blob/main/LICENSE">Apache-2.0 License</a>. SidPlayFp, ReSIDfp, MikMod player and converter are licensed under <a href="http://www.gnu.org/licenses/lgpl-3.0.html">GNU Lesser General Public License</a>.
+NostalgicPlayer is licensed under the <a href="https://github.com/neumatho/NostalgicPlayer/blob/main/LICENSE">Apache-2.0 License</a>. SidPlayFp, ReSIDfp, MikMod player and converter are licensed under <a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Agents/Players/MikMod/LICENSE">GNU Lesser General Public License</a>. Ancient decruncher is licensed under the <a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Agents/Decrunchers/AncientDecruncher/LICENSE">BSD 2-Clause License</a>.
 
 # Structure
 
