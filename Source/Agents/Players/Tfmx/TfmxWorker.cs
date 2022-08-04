@@ -2694,7 +2694,7 @@ Loop:
 		{
 			IChannel channel = VirtualChannels[chan];
 
-			channel.PlaySample(outBuf[chan], 0, BufSize, 16);
+			channel.PlayBuffer(outBuf[chan], 0, BufSize, 16);
 			channel.SetFrequency(mixerFreq);
 			channel.SetVolume(256);
 

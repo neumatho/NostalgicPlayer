@@ -124,11 +124,13 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod
 
 			of.Samples = new Sample[of.NumSmp];
 
-			for (int u = 0; u < of.NumSmp; u++)
+			for (short u = 0; u < of.NumSmp; u++)
 			{
 				Sample samp = new Sample();
 
 				// Initialize the structure
+				samp.SampleNumber = u;
+
 				samp.Panning = 128;				// Center
 				samp.Handle = null;
 				samp.GlobVol = 64;

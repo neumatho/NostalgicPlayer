@@ -18,14 +18,14 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ChannelChanged(ChannelFlags flags, ushort volume, uint frequency, uint sampleLength, int samplePosition, VisualInfo visualInfo, bool enabled)
+		public ChannelChanged(ChannelFlags flags, ushort volume, uint frequency, short sampleNumber, uint sampleLength, int samplePosition, bool enabled)
 		{
 			Flags = flags;
 			Volume = volume;
 			Frequency = frequency;
+			SampleNumber = sampleNumber;
 			SampleLength = sampleLength;
 			SamplePosition = samplePosition;
-			VisualInfo = visualInfo;
 			Enabled = enabled;
 		}
 
@@ -69,6 +69,18 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
+		/// Holds the current sample number being played or -1 if unknown
+		/// </summary>
+		/********************************************************************/
+		public short SampleNumber
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Holds the length of the sample in samples
 		/// </summary>
 		/********************************************************************/
@@ -85,18 +97,6 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// </summary>
 		/********************************************************************/
 		public int SamplePosition
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Holds the visual information on the channel
-		/// </summary>
-		/********************************************************************/
-		public VisualInfo VisualInfo
 		{
 			get;
 		}

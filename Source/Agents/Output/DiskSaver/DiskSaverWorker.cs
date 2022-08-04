@@ -300,7 +300,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 					int channels = settings.OutputType == DiskSaverSettings.OutType.Stereo ? 2 : 1;
 					soundStream.SetOutputFormat(new OutputInfo(channels, settings.OutputFrequency, MixerBufferSize / channels, 32 / 8));	// We want the output in 32-bit format
 
-					formatInfo = new SaveSampleFormatInfo(settings.OutputSize, settings.OutputType == DiskSaverSettings.OutType.Mono ? 1 : 2, settings.OutputFrequency, 0, 0, moduleName, author);
+					formatInfo = new SaveSampleFormatInfo((byte)settings.OutputSize, settings.OutputType == DiskSaverSettings.OutType.Mono ? 1 : 2, (uint)settings.OutputFrequency, 0, 0, moduleName, author);
 				}
 				else
 				{
@@ -310,7 +310,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 					if (outputAgentInUse.SwitchStream(soundStream, fileName, moduleName, author, out errorMessage) == AgentResult.Error)
 						return AgentResult.Error;
 
-					formatInfo = new SaveSampleFormatInfo(saverStream.OutputInfo.BytesPerSample * 8, saverStream.OutputInfo.Channels, saverStream.OutputInfo.Frequency, 0, 0, moduleName, author);
+					formatInfo = new SaveSampleFormatInfo((byte)(saverStream.OutputInfo.BytesPerSample * 8), saverStream.OutputInfo.Channels, (uint)saverStream.OutputInfo.Frequency, 0, 0, moduleName, author);
 				}
 
 				stream = soundStream;

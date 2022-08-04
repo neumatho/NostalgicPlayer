@@ -29,10 +29,12 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 			public int ReservedIndex1;
 			public int ReservedIndex2;
 
+			public short SampleNumber;
 			public uint Frequency;
 			public uint SampleLength;
 			public float CalculatedSamplePosition;
 
+			public bool Retrig;
 			public bool Pulsing;
 			public bool Direction;
 
@@ -77,6 +79,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 
 		private VisualChannelInfo[] visualChannels;
 		private bool[,] allocatedKeys;
+		private uint[][] noteFrequencies;
 
 		/********************************************************************/
 		/// <summary>
@@ -123,9 +126,25 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 			{
 				visualChannels = null;
 				allocatedKeys = null;
+				noteFrequencies = null;
 			}
 
 			Invalidate();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the frequencies for all the notes
+		/// </summary>
+		/********************************************************************/
+		public void SetNoteFrequencies(uint[][] frequencies)
+		{
+			lock (this)
+			{
+				noteFrequencies = frequencies;
+			}
 		}
 
 
@@ -249,31 +268,49 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 					{
 						if (visualChannelInfo.Active)
 						{
-							if (visualChannelInfo.Pulsing)
+							if (visualChannelInfo.SampleLength == 0)
+								Deactivate(visualChannelInfo);
+							else
 							{
-								if (visualChannelInfo.Direction)
+								if (visualChannelInfo.Retrig)
 								{
-									visualChannelInfo.Alpha += 6;
+									visualChannelInfo.Alpha += 50;
 									if (visualChannelInfo.Alpha >= 255)
 									{
 										visualChannelInfo.Alpha = 255;
-										visualChannelInfo.Direction = false;
+										visualChannelInfo.Retrig = false;
 									}
 								}
 								else
 								{
-									visualChannelInfo.Alpha -= 6;
-									if (visualChannelInfo.Alpha < 128)
-										visualChannelInfo.Direction = true;
+									if (visualChannelInfo.Pulsing)
+									{
+										if (visualChannelInfo.Direction)
+										{
+											visualChannelInfo.Alpha += 6;
+											if (visualChannelInfo.Alpha >= 255)
+											{
+												visualChannelInfo.Alpha = 255;
+												visualChannelInfo.Direction = false;
+											}
+										}
+										else
+										{
+											visualChannelInfo.Alpha -= 6;
+											if (visualChannelInfo.Alpha < 128)
+												visualChannelInfo.Direction = true;
+										}
+									}
 								}
-							}
-							else
-							{
-								if (visualChannelInfo.SampleLength == 0)
-									Deactivate(visualChannelInfo);
-								else
+
+								if (!visualChannelInfo.Pulsing)
 								{
-									visualChannelInfo.Alpha = 255 - (int)((visualChannelInfo.CalculatedSamplePosition * 255) / visualChannelInfo.SampleLength);
+									int newAlpha = 255 - (int)((visualChannelInfo.CalculatedSamplePosition * 255) / visualChannelInfo.SampleLength);
+									if (visualChannelInfo.Alpha > newAlpha)
+										visualChannelInfo.Retrig = false;
+
+									if (!visualChannelInfo.Retrig)
+										visualChannelInfo.Alpha = newAlpha;
 
 									visualChannelInfo.CalculatedSamplePosition += visualChannelInfo.Frequency * pulseTimer.Interval / 1000.0f;
 									if (visualChannelInfo.CalculatedSamplePosition > visualChannelInfo.SampleLength)
@@ -304,34 +341,27 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 				Deactivate(visualChannelInfo);
 			else
 			{
-				if ((channelChangedInfo.Flags & ChannelFlags.Visual) != 0)
+				if ((channelChangedInfo.Flags & ChannelFlags.TrigIt) != 0)
 				{
 					Deactivate(visualChannelInfo);
 
-					VisualInfo visualInfo = channelChangedInfo.VisualInfo;
+					if (channelChangedInfo.SampleNumber != -1)
+					{
+						visualChannelInfo.Active = true;
+						visualChannelInfo.SampleNumber = channelChangedInfo.SampleNumber;
+						visualChannelInfo.Color = FindColor(visualChannelInfo.SampleNumber);
+						visualChannelInfo.Alpha = 0;
+						visualChannelInfo.Retrig = true;
 
-					visualChannelInfo.Active = true;
-					visualChannelInfo.Color = FindColor(visualInfo.SampleNumber);
-					visualChannelInfo.Alpha = 255;
-					visualChannelInfo.Direction = false;
-					visualChannelInfo.KeyPosition = FindNotePosition(visualInfo.NoteNumber, out var reservedIndexes);
-					visualChannelInfo.ReservedIndex1 = reservedIndexes.index1;
-					visualChannelInfo.ReservedIndex2 = reservedIndexes.index2;
+						visualChannelInfo.SampleLength = channelChangedInfo.SampleLength;
+						visualChannelInfo.CalculatedSamplePosition = 0.0f;
+						visualChannelInfo.Pulsing = false;
+						visualChannelInfo.Direction = false;
+						visualChannelInfo.Volume0Counter = 10;
 
-					if (reservedIndexes.index1 == -1)
-						visualChannelInfo.Active = false;
-				}
-
-				if ((channelChangedInfo.Flags & ChannelFlags.TrigIt) != 0)
-				{
-					visualChannelInfo.SampleLength = channelChangedInfo.SampleLength;
-					visualChannelInfo.CalculatedSamplePosition = 0.0f;
-					visualChannelInfo.Pulsing = false;
-					visualChannelInfo.Direction = false;
-					visualChannelInfo.Volume0Counter = 10;
-
-					if (visualChannelInfo.SampleLength == 0)
-						Deactivate(visualChannelInfo);
+						if (visualChannelInfo.SampleLength == 0)
+							Deactivate(visualChannelInfo);
+					}
 				}
 
 				if ((channelChangedInfo.Flags & ChannelFlags.Loop) != 0)
@@ -346,7 +376,27 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 				}
 
 				if ((channelChangedInfo.Flags & ChannelFlags.Frequency) != 0)
+				{
 					visualChannelInfo.Frequency = channelChangedInfo.Frequency;
+
+					if ((visualChannelInfo.Frequency != 0) && (visualChannelInfo.SampleNumber != -1))
+					{
+						Deactivate(visualChannelInfo);
+
+						byte noteNumber = FindNoteNumber(visualChannelInfo.SampleNumber, channelChangedInfo.Frequency);
+						if (noteNumber != byte.MaxValue)
+						{
+							visualChannelInfo.KeyPosition = FindNotePosition(noteNumber, out var reservedIndexes);
+							visualChannelInfo.ReservedIndex1 = reservedIndexes.index1;
+							visualChannelInfo.ReservedIndex2 = reservedIndexes.index2;
+
+							if (reservedIndexes.index1 == -1)
+								visualChannelInfo.Active = false;
+							else
+								visualChannelInfo.Active = true;
+						}
+					}
+				}
 
 				if (channelChangedInfo.Volume == 0)
 				{
@@ -365,9 +415,34 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 		/// Will find the color to use based on the sample number
 		/// </summary>
 		/********************************************************************/
-		private Color FindColor(ushort sampleNumber)
+		private Color FindColor(short sampleNumber)
 		{
 			return sampleColors[sampleNumber % 16];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will convert the given frequency to a note number
+		/// </summary>
+		/********************************************************************/
+		private byte FindNoteNumber(short sampleNumber, uint frequency)
+		{
+			if ((noteFrequencies == null) || (sampleNumber >= noteFrequencies.Length))
+				return byte.MaxValue;
+
+			uint[] freqTable = noteFrequencies[sampleNumber];
+			if (freqTable != null)
+			{
+				for (int i = 1; i < freqTable.Length; i++)
+				{
+					if (frequency < freqTable[i])
+						return (byte)(i - 1);
+				}
+			}
+
+			return byte.MaxValue;
 		}
 
 
@@ -413,7 +488,8 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 			{
 				visualChannelInfo.Active = false;
 
-				allocatedKeys[visualChannelInfo.ReservedIndex1, visualChannelInfo.ReservedIndex2] = false;
+				if ((visualChannelInfo.ReservedIndex1 != -1) && (visualChannelInfo.ReservedIndex2 != -1))
+					allocatedKeys[visualChannelInfo.ReservedIndex1, visualChannelInfo.ReservedIndex2] = false;
 			}
 		}
 		#endregion

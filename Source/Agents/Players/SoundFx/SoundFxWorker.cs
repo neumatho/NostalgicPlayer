@@ -442,16 +442,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 
 				foreach (Sample sample in samples)
 				{
+					// Build frequency table
+					uint[] frequencies = new uint[10 * 12];
+
+					for (int j = 0; j < 7 * 12; j++)
+						frequencies[12 + j] = 3546895U / (ushort)noteTable[j];
+
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						Name = sample.Name,
 						Type = SampleInfo.SampleType.Sample,
 						BitSize = 8,
-						MiddleC = 8287,
-						Volume = sample.Volume * 4,
+						MiddleC = frequencies[12 + 3 * 12],
+						Volume = (byte)(sample.Volume * 4),
 						Panning = -1,
 						Sample = sample.SampleAddr,
-						Length = sample.Length > 2 ? (int)sample.Length : 0
+						Length = sample.Length > 2 ? sample.Length : 0,
+						NoteFrequencies = frequencies
 					};
 
 					if (sample.LoopLength <= 2)
@@ -465,8 +472,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 					{
 						// Sample loops
 						sampleInfo.Flags = SampleInfo.SampleFlags.Loop;
-						sampleInfo.LoopStart = (int)sample.LoopStart;
-						sampleInfo.LoopLength = (int)sample.LoopLength;
+						sampleInfo.LoopStart = sample.LoopStart;
+						sampleInfo.LoopLength = sample.LoopLength;
 					}
 
 					result.Add(sampleInfo);
@@ -587,12 +594,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 					Sample curSample = samples[sampleNum - 1];
 
 					// Get the sample information
+					channel.SampleNumber = (short)(sampleNum - 1);
 					channel.Sample = curSample.SampleAddr;
 					channel.SampleLen = curSample.Length;
 					channel.Volume = curSample.Volume;
 					channel.LoopStart = curSample.LoopStart;
 					channel.LoopLength = curSample.LoopLength;
-					channel.VisualInfo.SampleNumber = (byte)(sampleNum - 1);
 
 					// Get current volume
 					short volume = (short)channel.Volume;
@@ -668,14 +675,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 			// Play the note
 			if (channel.Sample != null)
 			{
-				virtChannel.PlaySample(channel.Sample, 0, channel.SampleLen);
+				virtChannel.PlaySample(channel.SampleNumber, channel.Sample, 0, channel.SampleLen);
 				virtChannel.SetAmigaPeriod(channel.CurrentNote);
 
 				if (channel.LoopLength > 2)
 					virtChannel.SetLoop(channel.LoopStart, channel.LoopLength);
-
-				channel.VisualInfo.NoteNumber = FindNote(channel.CurrentNote);
-				virtChannel.SetVisualInfo(channel.VisualInfo);
 			}
 		}
 
@@ -870,9 +874,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 				default:
 				{
 					virtChannel.SetAmigaPeriod(channel.CurrentNote);
-
-					channel.VisualInfo.NoteNumber = FindNote(channel.CurrentNote);
-					virtChannel.SetVisualInfo(channel.VisualInfo);
 					return;
 				}
 			}
@@ -895,9 +896,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 
 			// Set the period
 			virtChannel.SetAmigaPeriod((ushort)noteTable[note + index]);
-
-			channel.VisualInfo.NoteNumber = (byte)(note + index - 20 + 12);
-			virtChannel.SetVisualInfo(channel.VisualInfo);
 		}
 
 
@@ -942,24 +940,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 
 			// Get the end note
 			channel.StepEndNote = (ushort)noteTable[note + endIndex];
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Find the note from a period
-		/// </summary>
-		/********************************************************************/
-		private byte FindNote(ushort period)
-		{
-			for (int i = 20; i < noteTable.Length; i++)
-			{
-				if (period >= noteTable[i])
-					return (byte)(i - 20 + 12);
-			}
-
-			return 39 + 12;
 		}
 		#endregion
 	}

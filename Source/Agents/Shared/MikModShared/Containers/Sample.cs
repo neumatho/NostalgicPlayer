@@ -14,6 +14,8 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 	/// </summary>
 	public class Sample
 	{
+		public short SampleNumber;				// The assigned sample number
+
 		public short Panning;					// Panning (0-255 or PAN_SURROUND)
 		public uint Speed;						// Base playing speed/frequency of note
 		public byte Volume;						// Volume 0-64

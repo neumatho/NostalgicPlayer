@@ -183,6 +183,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					if (outputAgent.SwitchStream(soundStream, loader.FileName, StaticModuleInformation.ModuleName, StaticModuleInformation.Author, out errorMessage) == AgentResult.Error)
 						return false;
 
+					// Build note frequency table
+					uint[][] noteFrequencies = null;
+					if (StaticModuleInformation.Samples != null)
+					{
+						noteFrequencies = new uint[StaticModuleInformation.Samples.Length][];
+						for (int i = 0; i < noteFrequencies.Length; i++)
+							noteFrequencies[i] = StaticModuleInformation.Samples[i].NoteFrequencies;
+					}
+
 					// Tell all visuals to start
 					bool bufferMode = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferMode) != 0;
 
@@ -194,6 +203,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 							continue;
 
 						visualAgent.InitVisual(StaticModuleInformation.Channels, StaticModuleInformation.VirtualChannels);
+
+						if (visualAgent is IChannelChangeVisualAgent channelChangeVisualAgent)
+							channelChangeVisualAgent.SetNoteFrequencies(noteFrequencies);
 					}
 
 					outputAgent.Play();

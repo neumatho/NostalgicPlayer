@@ -692,7 +692,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 				ushort pan = (ushort)((((256 - chan[c].Left) * 256) + (256 * chan[c].Right)) / 512);
 
 				// Tell NostalgicPlayer what to play in this channel
-				VirtualChannels[c].PlaySample(outBuffers[c], 0, spsPal, 16);
+				VirtualChannels[c].PlayBuffer(outBuffers[c], 0, spsPal, 16);
 				VirtualChannels[c].SetFrequency(44100);
 				VirtualChannels[c].SetVolume(256);
 				VirtualChannels[c].SetPanning(pan);

@@ -81,6 +81,19 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano
 		#region IChannelChangeVisualAgent implementation
 		/********************************************************************/
 		/// <summary>
+		/// Is called when initializing the visual agent. The array contains
+		/// all the frequencies for each note per sample
+		/// </summary>
+		/********************************************************************/
+		public void SetNoteFrequencies(uint[][] noteFrequencies)
+		{
+			userControl.SetNoteFrequencies(noteFrequencies);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Tell the visual about changes of the channels
 		/// </summary>
 		/********************************************************************/

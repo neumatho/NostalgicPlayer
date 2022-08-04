@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SaveSampleFormatInfo(int bits, int channels, int frequency, long loopStart, long loopLength, string name, string author)
+		public SaveSampleFormatInfo(byte bits, int channels, uint frequency, long loopStart, long loopLength, string name, string author)
 		{
 			Bits = bits;
 			Channels = channels;
@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Holds the number of bits each sample is
 		/// </summary>
 		/********************************************************************/
-		public int Bits
+		public byte Bits
 		{
 			get;
 		}
@@ -61,7 +61,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Holds the sample frequency
 		/// </summary>
 		/********************************************************************/
-		public int Frequency
+		public uint Frequency
 		{
 			get;
 		}

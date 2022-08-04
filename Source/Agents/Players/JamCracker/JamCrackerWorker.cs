@@ -25,9 +25,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 	{
 		private static readonly ushort[] periods =
 		{
-			1019, 962, 908, 857, 809, 763, 720, 680, 642, 606, 572, 540, 509,
-			 481, 454, 428, 404, 381, 360, 340, 321, 303, 286, 270, 254, 240,
-			 227, 214, 202, 190, 180, 170, 160, 151, 143, 135, 135, 135, 135,
+			1019, 962, 908,
+			 857, 809, 763, 720, 680, 642, 606, 572, 540, 509, 481, 454,
+			 428, 404, 381, 360, 340, 321, 303, 286, 270, 254, 240, 227,
+			 214, 202, 190, 180, 170, 160, 151, 143, 135, 135, 135, 135,
 			 135, 135, 135, 135, 135, 135, 135, 135, 135, 135, 135, 135
 		};
 
@@ -331,6 +332,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				voiceInfo.WaveOffset = waveOff;
 				voiceInfo.Dmacon = (ushort)(1 << i);
 				voiceInfo.Channel = VirtualChannels[i];
+				voiceInfo.InsNum = -1;
 				voiceInfo.InsLen = 0;
 				voiceInfo.InsAddress = null;
 				voiceInfo.RealInsAddress = null;
@@ -351,7 +353,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				voiceInfo.VibCnt = 0;
 				voiceInfo.VibMax = 0;
 				voiceInfo.Flags = 0;
-				voiceInfo.VisualInfo = new VisualInfo();
 
 				variables[i] = voiceInfo;
 
@@ -455,13 +456,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 				foreach (InstInfo instInfo in instTable)
 				{
+					// Build frequency table
+					uint[] frequencies = new uint[10 * 12];
+
+					for (int j = 0; j < periods.Length; j++)
+						frequencies[3 * 12 - 3 + j] = 3546895U / periods[j];
+
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						Name = EncoderCollection.Amiga.GetString(instInfo.Name),
 						BitSize = 8,
-						MiddleC = 8287,
+						MiddleC = frequencies[12 + 3 * 12],
 						Volume = 256,
-						Panning = -1
+						Panning = -1,
+						NoteFrequencies = frequencies
 					};
 
 					if ((instInfo.Flags & 2) != 0)
@@ -479,14 +487,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 						// Normal sample
 						sampleInfo.Type = SampleInfo.SampleType.Sample;
 						sampleInfo.Sample = instInfo.Address;
-						sampleInfo.Length = (int)instInfo.Size;
+						sampleInfo.Length = instInfo.Size;
 
 						if ((instInfo.Flags & 1) != 0)
 						{
 							// Sample loops
 							sampleInfo.Flags = SampleInfo.SampleFlags.Loop;
 							sampleInfo.LoopStart = 0;
-							sampleInfo.LoopLength = (int)instInfo.Size;
+							sampleInfo.LoopLength = instInfo.Size;
 						}
 						else
 						{
@@ -619,19 +627,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 					voice.Pers[0] = periods[perIndex];
 					voice.Pers[1] = periods[perIndex];
 					voice.Pers[2] = periods[perIndex];
-					voice.Notes[0] = (byte)(perIndex + 12);
-					voice.Notes[1] = voice.Notes[0];
-					voice.Notes[2] = voice.Notes[0];
 
 					voice.Por = 0;
-
-					voice.VisualInfo.NoteNumber = (byte)(perIndex + 12);
 
 					if (adr.Instr > samplesNum)
 					{
 						voice.InsAddress = null;
 						voice.RealInsAddress = null;
 						voice.InsLen = 0;
+						voice.InsNum = -1;
 						voice.Flags = 0;
 					}
 					else
@@ -642,6 +646,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 							voice.InsAddress = null;
 							voice.RealInsAddress = null;
 							voice.InsLen = 0;
+							voice.InsNum = -1;
 							voice.Flags = 0;
 						}
 						else
@@ -662,12 +667,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 							voice.Flags = instInfo.Flags;
 							voice.Vol = (short)voice.VolLevel;
-
-							voice.VisualInfo.SampleNumber = (byte)adr.Instr;
+							voice.InsNum = adr.Instr;
 						}
 					}
-
-					voice.Channel.SetVisualInfo(voice.VisualInfo);
 				}
 			}
 
@@ -689,18 +691,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 					voice.Pers[0] = periods[perIndex];
 					voice.Pers[1] = periods[perIndex];
 					voice.Pers[2] = periods[perIndex];
-					voice.Notes[0] = (byte)(perIndex + 12);
-					voice.Notes[1] = voice.Notes[0];
-					voice.Notes[2] = voice.Notes[0];
 				}
 				else
 				{
 					voice.Pers[2] = periods[perIndex + (adr.Arpeggio & 15)];
 					voice.Pers[1] = periods[perIndex + (adr.Arpeggio >> 4)];
 					voice.Pers[0] = periods[perIndex];
-					voice.Notes[2] = (byte)(perIndex + 12 + (adr.Arpeggio & 15));
-					voice.Notes[1] = (byte)(perIndex + 12 + (adr.Arpeggio >> 4));
-					voice.Notes[0] = (byte)(perIndex + 12);
 				}
 			}
 
@@ -822,11 +818,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 					chan.Mute();
 				else
 				{
-					chan.PlaySample(voice.InsAddress, 0, (uint)(voice.InsLen * 2));
+					chan.PlaySample(voice.InsNum, voice.InsAddress, 0, (uint)(voice.InsLen * 2));
 					chan.SetAmigaPeriod(voice.Pers[0]);
-
-					voice.VisualInfo.NoteNumber = voice.Notes[0];
-					chan.SetVisualInfo(voice.VisualInfo);
 				}
 
 				// Check to see if sample loops
@@ -835,6 +828,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 					voice.InsAddress = null;
 					voice.RealInsAddress = null;
 					voice.InsLen = 0;
+					voice.InsNum = -1;
 				}
 
 				// Setup loop
@@ -878,8 +872,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				per = 1019;
 
 			chan.SetAmigaPeriod((uint)per);
-			voice.VisualInfo.NoteNumber = voice.Notes[0];
-			chan.SetVisualInfo(voice.VisualInfo);
 			RotatePeriods(voice);
 
 			voice.Por += voice.DeltaPor;
@@ -942,11 +934,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 			voice.Pers[0] = voice.Pers[1];
 			voice.Pers[1] = voice.Pers[2];
 			voice.Pers[2] = temp1;
-
-			byte temp2 = voice.Notes[0];
-			voice.Notes[0] = voice.Notes[1];
-			voice.Notes[1] = voice.Notes[2];
-			voice.Notes[2] = temp2;
 		}
 		#endregion
 	}

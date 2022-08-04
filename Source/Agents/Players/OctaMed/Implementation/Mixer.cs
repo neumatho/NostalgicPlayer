@@ -202,7 +202,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// Will begin to play the sample given with all the arguments
 		/// </summary>
 		/********************************************************************/
-		protected void Play(uint chNum, NoteNum note, InstNum instNum, Sample smp, uint startOffs, uint loopStart, uint loopLen, PlayFlag flags, VisualInfo visualInfo)
+		protected void Play(uint chNum, NoteNum note, InstNum instNum, Sample smp, uint startOffs, uint loopStart, uint loopLen, PlayFlag flags)
 		{
 			if (chNum >= channels)
 				return;
@@ -236,18 +236,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 					if (rightAdr != null)
 					{
 						// Okay, tell NostalgicPlayer to play the sample
-						worker.VirtualChannels[chNum].PlayStereoSample(leftAdr, rightAdr, startOffs, len, bit, (flags & PlayFlag.Backwards) != 0);
+						worker.VirtualChannels[chNum].PlayStereoSample((short)instNum, leftAdr, rightAdr, startOffs, len, bit, (flags & PlayFlag.Backwards) != 0);
 					}
 				}
 				else
 				{
 					// Okay, tell NostalgicPlayer to play the sample
-					worker.VirtualChannels[chNum].PlaySample(leftAdr, startOffs, len, bit, (flags & PlayFlag.Backwards) != 0);
+					worker.VirtualChannels[chNum].PlaySample((short)instNum, leftAdr, startOffs, len, bit, (flags & PlayFlag.Backwards) != 0);
 				}
-
-				visualInfo.NoteNumber = note;
-				visualInfo.SampleNumber = (byte)instNum;
-				worker.VirtualChannels[chNum].SetVisualInfo(visualInfo);
 			}
 
 			// Set loop
@@ -345,7 +341,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// Will play the synth sound
 		/// </summary>
 		/********************************************************************/
-		protected void SetSynthWaveform(uint chNum, sbyte[] data, uint length)
+		protected void SetSynthWaveform(uint chNum, InstNum instNum, sbyte[] data, uint length)
 		{
 			if ((chNum < channels) && (length > 0))
 			{
@@ -353,7 +349,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 				if (startSyn[chNum])
 				{
 					// Yes, do it
-					worker.VirtualChannels[chNum].PlaySample(data, 0, length);
+					worker.VirtualChannels[chNum].PlaySample((short)instNum, data, 0, length);
 					startSyn[chNum] = false;
 				}
 

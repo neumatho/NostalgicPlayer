@@ -756,9 +756,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						{
 							sbyte[] sample = sampleInfo.Sample;
 							sbyte[] secondSample = sampleInfo.SecondSample;
-							uint length = (uint)sampleInfo.Length;
-							uint loopStart = (uint)sampleInfo.LoopStart;
-							uint loopLength = (uint)sampleInfo.LoopLength;
+							uint length = sampleInfo.Length;
+							uint loopStart = sampleInfo.LoopStart;
+							uint loopLength = sampleInfo.LoopLength;
 
 							// Find the frequency to play with
 							int note = playInfo.Note;
@@ -776,8 +776,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 								secondSample = octaveInfo.Sample.Length > 1 ? octaveInfo.Sample[1] : null;
 
 								length = (uint)sample.Length;
-								loopStart = (uint)octaveInfo.LoopStart;
-								loopLength = (uint)octaveInfo.LoopLength;
+								loopStart = octaveInfo.LoopStart;
+								loopLength = octaveInfo.LoopLength;
 							}
 
 							// Calculate the frequency
@@ -796,13 +796,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 							// Play it
 							if ((sampleInfo.Flags & SampleInfo.SampleFlags.Stereo) != 0)
-								channel.PlayStereoSample(sample, secondSample, 0, length, (byte)sampleInfo.BitSize);
+								channel.PlayStereoSample(-1, sample, secondSample, 0, length, (byte)sampleInfo.BitSize);
 							else
-								channel.PlaySample(sample, 0, length, (byte)sampleInfo.BitSize);
+								channel.PlaySample(-1, sample, 0, length, (byte)sampleInfo.BitSize);
 
 							channel.SetFrequency((uint)frequency);
 
-							ushort vol = (ushort)sampleInfo.Volume;
+							ushort vol = sampleInfo.Volume;
 							channel.SetVolume(vol == 0 ? (ushort)256 : vol);
 
 							int pan = sampleInfo.Panning;

@@ -395,8 +395,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				// Load the samples
 				moduleStream.Seek(smpOffset, SeekOrigin.Begin);
 
+				short realSampleNumber = 0;
+
 				for (i = 0; i < 10; i++)
 				{
+					sampInfo[i].SampleNumber = realSampleNumber++;
+
 					if (sampInfo[i].Length != 0)
 					{
 						// Read the first 4 bytes to see if it's a multi sample
@@ -427,6 +431,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 							// The sample structure holding the multi samples should not be included
 							// as a sample, so decrement the count
 							sampNum--;
+							realSampleNumber--;
 
 							// Read the sample data
 							long sampStartOffset = moduleStream.Position;
@@ -435,8 +440,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 							{
 								if (multiSample.Sample[j].Length != 0)
 								{
-									sampNum++;
-
 									// Read the sample data
 									moduleStream.Seek(sampStartOffset + multiOffsets[j], SeekOrigin.Begin);
 									multiSample.Sample[j].Address = moduleStream.ReadSampleData(10 + j, multiSample.Sample[j].Length, out _);
@@ -451,6 +454,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 
 										return AgentResult.Error;
 									}
+
+									// Assign sample number
+									multiSample.Sample[j].SampleNumber = realSampleNumber++;
+									sampNum++;
 								}
 							}
 
@@ -491,7 +498,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 						sampInfo[i].Address = new sbyte[sampInfo[i].Length];
 
 						// Read the wave table
-						moduleStream.ReadSigned(sampInfo[i].Address, 0, (int)sampInfo[i].Length);
+						moduleStream.ReadSigned(sampInfo[i].Address, 0, sampInfo[i].Length);
 
 						if (moduleStream.EndOfStream)
 						{
@@ -500,6 +507,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 
 							return AgentResult.Error;
 						}
+
+						// Assign sample number
+						sampInfo[i].SampleNumber = realSampleNumber++;
 					}
 				}
 			}
@@ -588,7 +598,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				voiceInfo.CurPattern = patterns[sequences[0].VoiceSeq[i].Pattern];
 				voiceInfo.Transpose = sequences[0].VoiceSeq[i].Transpose;
 				voiceInfo.SoundTranspose = sequences[0].VoiceSeq[i].SoundTranspose;
-				voiceInfo.VisualInfo = new VisualInfo();
 
 				voiceData[i] = voiceInfo;
 			}
@@ -735,6 +744,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 						result.Add(CreateSampleInfo(sample));
 				}
 
+				for (int i = 0; i < wavNum; i++)
+				{
+					Sample sample = sampInfo[10 + i];
+
+					SampleInfo sampleInfo = CreateSampleInfo(sample);
+					sampleInfo.Type = SampleInfo.SampleType.Synth;
+					result.Add(sampleInfo);
+				}
+
 				return result.ToArray();
 			}
 		}
@@ -791,24 +809,31 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 		/********************************************************************/
 		private SampleInfo CreateSampleInfo(Sample sample)
 		{
+			// Build frequency table
+			uint[] frequencies = new uint[10 * 12];
+
+			for (int j = 0; j < 6 * 12; j++)
+				frequencies[12 + j] = 3546895U / periods[5 * 12 + j];
+
 			SampleInfo sampleInfo = new SampleInfo
 			{
 				Name = string.Empty,
 				Type = SampleInfo.SampleType.Sample,
 				BitSize = 8,
-				MiddleC = 8287,
+				MiddleC = frequencies[12 + 3 * 12],
 				Volume = 256,
-				Panning = -1
+				Panning = -1,
+				NoteFrequencies = frequencies
 			};
 
 			// Fill out the rest of the information
 			sampleInfo.Sample = sample.Address;
-			sampleInfo.Length = (int)sample.Length;
+			sampleInfo.Length = sample.Length;
 
 			if (sampleInfo.LoopLength > 2)
 			{
-				sampleInfo.LoopStart = (int)sample.LoopStart;
-				sampleInfo.LoopLength = (int)sample.LoopLength;
+				sampleInfo.LoopStart = sample.LoopStart;
+				sampleInfo.LoopLength = sample.LoopLength;
 				sampleInfo.Flags = SampleInfo.SampleFlags.Loop;
 			}
 			else
@@ -940,9 +965,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				voiData.FrequencySeqStartOffset = (ushort)(silent.Length + volSequences[inst].FrqNumber * 64);
 				voiData.FrequencySeqPos = 0;
 				voiData.SusCounter = 0;
-
-				voiData.VisualInfo.NoteNumber = (byte)(note < 5 * 12 ? note + 12 : note - 5 * 12);
-				voiData.Channel.SetVisualInfo(voiData.VisualInfo);
 			}
 
 			// Go to the next pattern row
@@ -1018,7 +1040,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 							{
 								if (sampInfo[dat].Address != null)
 								{
-									voiData.Channel.PlaySample(sampInfo[dat].Address, 0, sampInfo[dat].Length);
+									voiData.Channel.PlaySample(sampInfo[dat].SampleNumber, sampInfo[dat].Address, 0, sampInfo[dat].Length);
 									if (sampInfo[dat].LoopLength > 2)
 									{
 										if ((sampInfo[dat].LoopStart + sampInfo[dat].LoopLength) > sampInfo[dat].Length)
@@ -1026,9 +1048,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 										else
 											voiData.Channel.SetLoop(sampInfo[dat].LoopStart, sampInfo[dat].LoopLength);
 									}
-
-									voiData.VisualInfo.SampleNumber = dat;
-									voiData.Channel.SetVisualInfo(voiData.VisualInfo);
 								}
 							}
 
@@ -1075,7 +1094,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 								{
 									if (mulSamp.Sample[dat].Address != null)
 									{
-										voiData.Channel.PlaySample(mulSamp.Sample[dat].Address, 0, mulSamp.Sample[dat].Length);
+										voiData.Channel.PlaySample(mulSamp.Sample[dat].SampleNumber, mulSamp.Sample[dat].Address, 0, mulSamp.Sample[dat].Length);
 										if (mulSamp.Sample[dat].LoopLength > 2)
 										{
 											if ((mulSamp.Sample[dat].LoopStart + mulSamp.Sample[dat].LoopLength) > mulSamp.Sample[dat].Length)
@@ -1083,9 +1102,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 											else
 												voiData.Channel.SetLoop(mulSamp.Sample[dat].LoopStart, mulSamp.Sample[dat].LoopLength);
 										}
-
-										voiData.VisualInfo.SampleNumber = dat;
-										voiData.Channel.SetVisualInfo(voiData.VisualInfo);
 									}
 								}
 
@@ -1230,9 +1246,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				note += (sbyte)(voiData.CurNote + voiData.Transpose);
 
 			note &= 0x7f;
-
-			voiData.VisualInfo.NoteNumber = (byte)(note < 5 * 12 ? note + 12 : note - 5 * 12);
-			voiData.Channel.SetVisualInfo(voiData.VisualInfo);
 
 			// Get the period
 			ushort period = note < periods.Length ? periods[note] : (ushort)0;

@@ -21,10 +21,23 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		#region IChannel implementation
 		/********************************************************************/
 		/// <summary>
+		/// Will start to play the buffer in the channel. Only use this if
+		/// your player is running in buffer mode. Note that the length then
+		/// have to be the same for each channel
+		/// </summary>
+		/********************************************************************/
+		public void PlayBuffer(Array adr, uint startOffset, uint length, byte bit)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will start to play the sample in the channel
 		/// </summary>
 		/********************************************************************/
-		public void PlaySample(Array adr, uint startOffset, uint length, byte bit, bool backwards)
+		public void PlaySample(short sampleNumber, Array adr, uint startOffset, uint length, byte bit, bool backwards)
 		{
 		}
 
@@ -35,7 +48,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Will start to play a stereo sample in the channel
 		/// </summary>
 		/********************************************************************/
-		public void PlayStereoSample(Array leftAdr, Array rightAdr, uint startOffset, uint length, byte bit, bool backwards)
+		public void PlayStereoSample(short sampleNumber, Array leftAdr, Array rightAdr, uint startOffset, uint length, byte bit, bool backwards)
 		{
 		}
 
@@ -142,19 +155,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 		/********************************************************************/
 		/// <summary>
-		/// These information are used by some visualizer, so your player can
-		/// help those by calling this method. Call it when you trigger a new
-		/// note
-		/// </summary>
-		/********************************************************************/
-		public void SetVisualInfo(VisualInfo visualInfo)
-		{
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Returns true or false depending on the channel is in use
 		/// </summary>
 		/********************************************************************/
@@ -169,6 +169,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		public void Mute()
 		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the current sample number used on the channel
+		/// </summary>
+		/********************************************************************/
+		public short GetSampleNumber()
+		{
+			return -1;
 		}
 
 
@@ -217,18 +229,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		public int GetSamplePosition()
 		{
 			return 0;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the visual information on the channel
-		/// </summary>
-		/********************************************************************/
-		public VisualInfo GetVisualInfo()
-		{
-			return null;
 		}
 		#endregion
 	}

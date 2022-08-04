@@ -257,9 +257,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 				byte[] name = new byte[33];
 				Dictionary<uint, Instrument> instIndexMap = new Dictionary<uint, Instrument>();
 
-				for (int i = 0; i < instNum; i++)
+				for (short i = 0; i < instNum; i++)
 				{
 					Instrument inst = new Instrument();
+
+					inst.InstrumentNumber = i;
 
 					moduleStream.Read(name, 0, 32);
 					inst.Name = encoder.GetString(name);
@@ -428,7 +430,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 				chanInfo.BlendDelay = 0;
 				chanInfo.BlendShot = 0;
 				chanInfo.SynthSample = new sbyte[64];	// Well, it seems only 32 bytes are needed, but we allocate 64 just in case
-				chanInfo.VisualInfo = new VisualInfo();
 			}
 
 			return base.InitSound(songNumber, durationInfo, out errorMessage);
@@ -569,13 +570,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 
 				foreach (Instrument inst in instruments)
 				{
+					// Build frequency table
+					uint[] frequencies = new uint[10 * 12];
+
+					for (int j = 0; j < 6 * 12; j++)
+						frequencies[12 + j] = 3546895U / ((periodTable[j] * inst.Period) / 1024);
+
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						Name = inst.Name,
 						BitSize = 8,
-						MiddleC = 3464,
+						MiddleC = frequencies[12 + 3 * 12],
 						Volume = inst.EnvVol,
-						Panning = -1
+						Panning = -1,
+						NoteFrequencies = frequencies
 					};
 
 					if (inst.InstType != InstrumentType.Sample)
@@ -908,7 +916,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 						if (inst.SampleAddr != null)
 						{
 							// Play sample
-							channel.PlaySample(inst.SampleAddr, 0, inst.Length);
+							channel.PlaySample(inst.InstrumentNumber, inst.SampleAddr, 0, inst.Length);
 
 							if ((inst.RepeatLen != 0) && (inst.RepeatLen != 0xffff))
 							{
@@ -921,7 +929,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 					else
 					{
 						// Play synth sound
-						channel.PlaySample(chanInfo.SynthSample, 0, inst.Length);
+						channel.PlaySample(inst.InstrumentNumber, chanInfo.SynthSample, 0, inst.Length);
 						channel.SetLoop(0, inst.Length);
 					}
 
@@ -943,10 +951,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 						chanInfo.PortCounter = 1;
 						chanInfo.PortStartPeriod = chanInfo.TrackPeriod;
 					}
-
-					// Tell visuals
-					chanInfo.VisualInfo.NoteNumber = (byte)(chanInfo.TrackNote + 12);
-					channel.SetVisualInfo(chanInfo.VisualInfo);
 
 					// Take the next channel
 					return 0;
@@ -970,10 +974,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 							if (chanInfo.Instrument.InstType == InstrumentType.Unused)
 								chanInfo.Instrument = null;
 							else
-							{
 								instChange = true;
-								chanInfo.VisualInfo.SampleNumber = newInst;
-							}
 						}
 						break;
 					}
@@ -1161,9 +1162,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 
 			// Find the new period
 			chanInfo.TrackPeriod = (ushort)((periodTable[newNote] * inst.Period) / 1024);
-
-			chanInfo.VisualInfo.NoteNumber = newNote;
-			channel.SetVisualInfo(chanInfo.VisualInfo);
 
 			// Portamento
 			if (chanInfo.PortRunning)

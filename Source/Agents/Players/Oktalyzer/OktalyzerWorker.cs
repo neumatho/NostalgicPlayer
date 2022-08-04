@@ -490,16 +490,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 
 				foreach (Sample sample in sampleInfo)
 				{
+					// Build frequency table
+					uint[] frequencies = new uint[10 * 12];
+
+					for (int j = 0; j < 3 * 12; j++)
+						frequencies[3 * 12 + j] = 3546895U / (ushort)periods[j];
+
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						Name = sample.Name,
 						Type = SampleInfo.SampleType.Sample,
 						BitSize = 8,
-						MiddleC = 8287,
-						Volume = sample.Volume * 4,
+						MiddleC = frequencies[3 * 12 + 12],
+						Volume = (byte)(sample.Volume * 4),
 						Panning = -1,
 						Sample = sample.SampleData,
-						Length = (int)sample.Length
+						Length = sample.Length,
+						NoteFrequencies = frequencies
 					};
 
 					if (sample.RepeatLength == 0)
@@ -933,7 +940,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 					return;
 
 				// Just play the sample. Samples doesn't loop in mixed channels
-				VirtualChannels[channelNum].PlaySample(samp.SampleData, 0, samp.Length);
+				VirtualChannels[channelNum].PlaySample(pattData.SampleNum, samp.SampleData, 0, samp.Length);
 
 				chanData.ReleaseStart = 0;
 				chanData.ReleaseLength = 0;
@@ -953,7 +960,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				if (samp.RepeatLength == 0)
 				{
 					// No
-					VirtualChannels[channelNum].PlaySample(samp.SampleData, 0, samp.Length);
+					VirtualChannels[channelNum].PlaySample(pattData.SampleNum, samp.SampleData, 0, samp.Length);
 
 					chanData.ReleaseStart = 0;
 					chanData.ReleaseLength = 0;
@@ -961,7 +968,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				else
 				{
 					// Yes
-					VirtualChannels[channelNum].PlaySample(samp.SampleData, 0, (uint)samp.RepeatStart + samp.RepeatLength);
+					VirtualChannels[channelNum].PlaySample(pattData.SampleNum, samp.SampleData, 0, (uint)samp.RepeatStart + samp.RepeatLength);
 					VirtualChannels[channelNum].SetLoop(samp.RepeatStart, samp.RepeatLength);
 
 					chanData.ReleaseStart = (uint)samp.RepeatStart + samp.RepeatLength;
@@ -974,10 +981,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 			chanData.CurrPeriod = periods[note];
 
 			VirtualChannels[channelNum].SetAmigaPeriod((uint)chanData.CurrPeriod);
-
-			chanData.VisualInfo.NoteNumber = (byte)(note + 12);
-			chanData.VisualInfo.SampleNumber = pattData.SampleNum;
-			VirtualChannels[channelNum].SetVisualInfo(chanData.VisualInfo);
 		}
 
 
@@ -1326,9 +1329,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 			// Play the note
 			chanData.CurrPeriod = periods[note];
 			VirtualChannels[channelNum].SetAmigaPeriod((uint)chanData.CurrPeriod);
-
-			chanData.VisualInfo.NoteNumber = (byte)(note + 12);
-			VirtualChannels[channelNum].SetVisualInfo(chanData.VisualInfo);
 		}
 		#endregion
 	}

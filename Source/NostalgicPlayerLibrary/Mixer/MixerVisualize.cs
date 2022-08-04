@@ -32,9 +32,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			public ChannelFlags ChannelFlags;
 			public ushort Volume;
 			public uint Frequency;
+			public short SampleNumber;
 			public uint SampleLength;
 			public int SamplePosition;
-			public VisualInfo VisualInfo;
 			public bool Enabled;
 		}
 
@@ -207,9 +207,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					ChannelFlags = channelFlags[i],
 					Volume = chan.GetVolume(),
 					Frequency = chan.GetFrequency(),
+					SampleNumber = chan.GetSampleNumber(),
 					SampleLength = chan.GetSampleLength(),
 					SamplePosition = chan.GetSamplePosition(),
-					VisualInfo = chan.GetVisualInfo(),
 					Enabled = i < enabledChannels.Length ? enabledChannels[i] : true
 				};
 			};
@@ -385,7 +385,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						for (int i = 0; i < channelCount; i++)
 						{
 							ChannelInfo info = chanInfo[i];
-							channelChanged[i] = new ChannelChanged(info.ChannelFlags, info.Volume, info.Frequency, info.SampleLength, info.SamplePosition, info.VisualInfo, info.Enabled);
+							channelChanged[i] = new ChannelChanged(info.ChannelFlags, info.Volume, info.Frequency, info.SampleNumber, info.SampleLength, info.SamplePosition, info.Enabled);
 						}
 
 						foreach (IVisualAgent visualAgent in manager.GetRegisteredVisualAgent())

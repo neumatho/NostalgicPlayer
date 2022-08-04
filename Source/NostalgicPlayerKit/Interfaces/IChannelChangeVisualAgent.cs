@@ -17,6 +17,12 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	public interface IChannelChangeVisualAgent : IVisualAgent
 	{
 		/// <summary>
+		/// Is called when initializing the visual agent. The array contains
+		/// all the frequencies for each note per sample
+		/// </summary>
+		void SetNoteFrequencies(uint[][] noteFrequencies);
+
+		/// <summary>
 		/// Tell the visual about changes of the channels
 		/// </summary>
 		void ChannelsChanged(ChannelChanged[] channelChanged);

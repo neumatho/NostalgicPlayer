@@ -13,6 +13,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers
 	/// </summary>
 	internal class Sample
 	{
+		public short SampleNumber;
 		public sbyte[] Address;
 		public ushort Length;
 		public ushort LoopStart;

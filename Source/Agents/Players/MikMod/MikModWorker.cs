@@ -457,19 +457,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 				{
 					Sample sample = of.Samples[i];
 
+					// Build frequency table
+					uint[] frequencies = new uint[10 * 12];
+
+					for (int j = 0; j < 10 * 12; j++)
+						frequencies[j] = (uint)Math.Ceiling((double)MlUtil.GetFrequency(of.Flags, player.GetPeriod(of.Flags, (ushort)(j * 2), sample.Speed)));
+
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						Name = sample.SampleName,
 						Flags = SampleInfo.SampleFlags.None,
 						Type = SampleInfo.SampleType.Sample,
-						BitSize = (sample.Flags & SampleFlag._16Bits) != 0 ? 16 : 8,
-						MiddleC = (int)Math.Ceiling((double)MlUtil.GetFrequency(of.Flags, player.GetPeriod(of.Flags, 96, sample.Speed))),
-						Volume = sample.Volume * 4,
-						Panning = sample.Panning == SharedConstant.Pan_Surround ? (int)ChannelPanning.Surround : sample.Panning,
+						BitSize = (byte)((sample.Flags & SampleFlag._16Bits) != 0 ? 16 : 8),
+						MiddleC = frequencies[4 * 12],
+						Volume = (byte)(sample.Volume * 4),
+						Panning = sample.Panning == SharedConstant.Pan_Surround ? (short)ChannelPanning.Surround : sample.Panning,
 						Sample = sample.Handle,
-						Length = (int)sample.Length,
-						LoopStart = (int)sample.LoopStart,
-						LoopLength = (int)(sample.LoopEnd - sample.LoopStart)
+						Length = sample.Length,
+						LoopStart = sample.LoopStart,
+						LoopLength = (sample.LoopEnd - sample.LoopStart),
+						NoteFrequencies = frequencies
 					};
 
 					// Add extra loop flags if any
@@ -535,7 +542,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 			// Play the sample
 			byte bits = (s.Flags & SampleFlag._16Bits) != 0 ? (byte)16 : (byte)8;
 
-			VirtualChannels[voice].PlaySample(s.Handle, start, s.Length, bits);
+			VirtualChannels[voice].PlaySample(s.SampleNumber, s.Handle, start, s.Length, bits);
 
 			// Setup the loop if any
 			if (((s.Flags & SampleFlag.Loop) != 0) && (s.LoopStart < s.LoopEnd))
@@ -598,21 +605,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 				return;
 
 			VirtualChannels[voice].SetFrequency(frq);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Update visual information
-		/// </summary>
-		/********************************************************************/
-		public void VoiceSetVisualInfo(sbyte voice, VisualInfo visualInfo)
-		{
-			if ((voice < 0) || (voice >= mdNumChn))
-				return;
-
-			VirtualChannels[voice].SetVisualInfo(visualInfo);
 		}
 		#endregion
 

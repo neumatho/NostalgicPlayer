@@ -1440,6 +1440,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 				{
 					Instr inst = sg.GetInstr(i);
 					Sample sample = inst.GetSample();
+
+					int fineTune = inst.GetFineTune();
+
+					// Build frequency table
+					uint[] frequencies = new uint[10 * 12];
+
+					for (byte j = 0; j < 6 * 12; j++)
+						frequencies[12 + j] = plr.GetNoteFrequency(j, fineTune);
+
 					SampleInfo sampleInfo;
 
 					if (sample == null)
@@ -1450,26 +1459,28 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 							Flags = SampleInfo.SampleFlags.None,
 							Type = SampleInfo.SampleType.Sample,
 							BitSize = 8,
-							MiddleC = (int)plr.GetNoteFrequency(36, inst.GetFineTune()),
-							Volume = (int)inst.GetInitVol() * 2,
+							MiddleC = frequencies[12 + 3 * 12],
+							Volume = (byte)(inst.GetInitVol() * 2),
 							Panning = -1,
 							Sample = null,
 							Length = 0,
-							LoopStart = (int)inst.GetRepeat(),
-							LoopLength = (int)inst.GetRepeatLen()
+							LoopStart = inst.GetRepeat(),
+							LoopLength = inst.GetRepeatLen(),
+							NoteFrequencies = frequencies
 						};
 					}
 					else
 					{
 						sampleInfo = new SampleInfo
 						{
-							BitSize = sample.Is16Bit() ? 16 : 8,
-							MiddleC = (int)plr.GetNoteFrequency(36, inst.GetFineTune()),
-							Volume = (int)inst.GetInitVol() * 2,
+							BitSize = (byte)(sample.Is16Bit() ? 16 : 8),
+							MiddleC = frequencies[12 + 3 * 12],
+							Volume = (byte)(inst.GetInitVol() * 2),
 							Panning = -1,
-							Length = (int)sample.GetLength(),
-							LoopStart = (int)inst.GetRepeat(),
-							LoopLength = (int)inst.GetRepeatLen()
+							Length = sample.GetLength(),
+							LoopStart = inst.GetRepeat(),
+							LoopLength = inst.GetRepeatLen(),
+							NoteFrequencies = frequencies
 						};
 
 						if (sample.IsMultiOctave())
@@ -1480,15 +1491,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 
 							for (oct = 0; oct < 6; oct++)
 							{
-								uint repeat = (uint)sampleInfo.LoopStart;
-								uint repLen = (uint)sampleInfo.LoopLength;
+								uint repeat = sampleInfo.LoopStart;
+								uint repLen = sampleInfo.LoopLength;
 								NoteNum note = (NoteNum)(oct * 12);
 
 								sampleInfo.MultiOctaveSamples[oct + 1].Sample = new sbyte[2][];
 
 								sampleInfo.MultiOctaveSamples[oct + 1].Sample[0] = sample.GetPlayBuffer(0, note, ref repeat, ref repLen);
-								sampleInfo.MultiOctaveSamples[oct + 1].LoopStart = (int)repeat;
-								sampleInfo.MultiOctaveSamples[oct + 1].LoopLength = (int)repLen;
+								sampleInfo.MultiOctaveSamples[oct + 1].LoopStart = repeat;
+								sampleInfo.MultiOctaveSamples[oct + 1].LoopLength = repLen;
 								sampleInfo.MultiOctaveSamples[oct + 1].NoteAdd = sample.GetNoteDifference(note);
 
 								if (sample.IsStereo())

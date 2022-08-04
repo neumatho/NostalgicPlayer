@@ -493,8 +493,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 						s = mod.Samples[i.SampleNumber[a.ANote]];
 						a.Main.Note = i.SampleNote[a.ANote];
-
-						a.VisualInfo.SampleNumber = i.SampleNumber[a.ANote];
 					}
 					else
 					{
@@ -503,8 +501,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 						a.Main.Note = a.ANote;
 						s = mod.Samples[a.Main.Sample];
-
-						a.VisualInfo.SampleNumber = (ushort)a.Main.Sample;
 					}
 
 					if (a.Main.S != s)
@@ -594,9 +590,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 					a.WantedPeriod = a.TmpPeriod = GetPeriod(mod.Flags, (ushort)(a.Main.Note << 1), a.Speed);
 					a.Main.KeyOff = KeyFlag.Kick;
-
-					a.VisualInfo.NoteNumber = a.Main.Note;
-					driver.VoiceSetVisualInfo((sbyte)channel, a.VisualInfo);
 				}
 			}
 		}
@@ -2094,10 +2087,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 				}
 
 				a.Main.Period = GetPeriod(flags, (ushort)(note << 1), a.Speed);
-				a.VisualInfo.NoteNumber = note;
 				a.OwnPer = true;
-
-				driver.VoiceSetVisualInfo((sbyte)channel, a.VisualInfo);
 			}
 		}
 

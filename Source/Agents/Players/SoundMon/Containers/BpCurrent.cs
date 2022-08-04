@@ -6,8 +6,6 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Containers;
-
 namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon.Containers
 {
 	/// <summary>
@@ -42,6 +40,5 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon.Containers
 		public byte ModControl;
 		public byte FxControl;
 		public sbyte Vibrato;
-		public VisualInfo VisualInfo = new VisualInfo();
 	}
 }

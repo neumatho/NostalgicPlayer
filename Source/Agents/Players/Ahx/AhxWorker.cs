@@ -546,7 +546,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 			{
 				IChannel channel = VirtualChannels[i];
 
-				channel.PlaySample(sampBuffers[i], 0, bufLen, 16);
+				channel.PlayBuffer(sampBuffers[i], 0, bufLen, 16);
 				channel.SetFrequency(mixerFreq);
 				channel.SetVolume(256);
 				channel.SetPanning((ushort)(((i % 3) == 0) ? ChannelPanning.Left : ChannelPanning.Right));
@@ -632,7 +632,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 						Type = SampleInfo.SampleType.Synth,
 						BitSize = 8,
 						MiddleC = 4144,
-						Volume = inst.Volume * 4,
+						Volume = (ushort)(inst.Volume * 4),
 						Panning = -1,
 						Sample = null,
 						Length = 0,

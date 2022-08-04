@@ -13,6 +13,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred.Containers
 	/// </summary>
 	internal class Instrument
 	{
+		public short InstrumentNumber;
+
 		public string Name;
 		public ushort RepeatLen;
 		public ushort Length;

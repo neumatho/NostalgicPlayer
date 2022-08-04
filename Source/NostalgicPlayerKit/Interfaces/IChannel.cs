@@ -17,27 +17,38 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	public interface IChannel
 	{
 		/// <summary>
-		/// Will start to play the sample in the channel. If your player is
-		/// running in buffer mode, use this method to set the buffer. Note
-		/// that the length then have to be the same for each channel
+		/// Will start to play the buffer in the channel. Only use this if
+		/// your player is running in buffer mode. Note that the length then
+		/// have to be the same for each channel
 		/// </summary>
 		/// <param name="adr">is a pointer to the sample in memory</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
 		/// <param name="length">is the length in samples of the sample</param>
 		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
+		void PlayBuffer(Array adr, uint startOffset, uint length, byte bit = 8);
+
+		/// <summary>
+		/// Will start to play the sample in the channel
+		/// </summary>
+		/// <param name="sampleNumber">is the sample number being played. If unknown, set it to -1</param>
+		/// <param name="adr">is a pointer to the sample in memory</param>
+		/// <param name="startOffset">is the number of samples in the sample to start</param>
+		/// <param name="length">is the length in samples of the sample</param>
+		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
 		/// <param name="backwards">indicate if the sample should be played backwards</param>
-		void PlaySample(Array adr, uint startOffset, uint length, byte bit = 8, bool backwards = false);
+		void PlaySample(short sampleNumber, Array adr, uint startOffset, uint length, byte bit = 8, bool backwards = false);
 
 		/// <summary>
 		/// Will start to play a stereo sample in the channel
 		/// </summary>
+		/// <param name="sampleNumber">is the sample number being played. If unknown, set it to -1</param>
 		/// <param name="leftAdr">is a pointer to the sample in memory to be played in the left speaker</param>
 		/// <param name="rightAdr">is a pointer to the sample in memory to be played in the right speaker</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
 		/// <param name="length">is the length in samples of the sample</param>
 		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
 		/// <param name="backwards">indicate if the sample should be played backwards</param>
-		void PlayStereoSample(Array leftAdr, Array rightAdr, uint startOffset, uint length, byte bit = 8, bool backwards = false);
+		void PlayStereoSample(short sampleNumber, Array leftAdr, Array rightAdr, uint startOffset, uint length, byte bit = 8, bool backwards = false);
 
 		/// <summary>
 		/// Will set the loop point in the sample
@@ -105,14 +116,6 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		void SetAmigaPeriod(uint period);
 
 		/// <summary>
-		/// These information are used by some visualizer, so your player can
-		/// help those by calling this method. Call it when you trigger a new
-		/// note
-		/// </summary>
-		/// <param name="visualInfo">The extra visual information</param>
-		void SetVisualInfo(VisualInfo visualInfo);
-
-		/// <summary>
 		/// Returns true or false depending on the channel is in use
 		/// </summary>
 		bool IsActive { get; }
@@ -121,6 +124,11 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Mute the channel
 		/// </summary>
 		void Mute();
+
+		/// <summary>
+		/// Returns the current sample number used on the channel
+		/// </summary>
+		short GetSampleNumber();
 
 		/// <summary>
 		/// Returns the current volume on the channel
@@ -141,10 +149,5 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Returns new sample position if set
 		/// </summary>
 		int GetSamplePosition();
-
-		/// <summary>
-		/// Returns the visual information on the channel
-		/// </summary>
-		VisualInfo GetVisualInfo();
 	}
 }

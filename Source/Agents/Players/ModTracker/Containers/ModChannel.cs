@@ -6,9 +6,6 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-
-using Polycode.NostalgicPlayer.Kit.Containers;
-
 namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 {
 	/// <summary>
@@ -17,6 +14,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 	internal class ModChannel
 	{
 		public TrackLine TrackLine = new TrackLine();
+
+		public short SampleNumber;		// Current sample number
 		public sbyte[] SampleData;
 		public ushort Offset;
 		public ushort Length;
@@ -49,7 +48,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 
 		// For StarTrekker synths
 		public AmToDo AmToDo;			// Switch number
-		public ushort SampleNum;		// Current sample number
 		public ushort VibDegree;		// Vibrato degree
 		public short SustainCounter;	// Sustain time counter
 		public short StarVolume;		// Calculated volume from synth samples (0-256)
@@ -58,8 +56,5 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		public byte DataCounter;
 		public short HmnVolume;			// Calculated volume from synth samples (0-64)
 		public HmnSynthData SynthData;
-
-		// Visual information
-		public VisualInfo VisualInfo = new VisualInfo();
 	}
 }

@@ -532,19 +532,34 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				{
 					Sample sample = samples[i];
 
+					// Build frequency table
+					uint[] frequencies = new uint[10 * 12];
+
+					if (currentModuleType == ModuleType.HisMastersNoise)
+					{
+						for (int j = 0; j < 7 * 12; j++)
+							frequencies[12 + j] = (uint)(7093789.2 / (Tables.Periods[0, j] + (Tables.Periods[0, j] * sample.FineTuneHmn) / 256));
+					}
+					else
+					{
+						for (int j = 0; j < 7 * 12; j++)
+							frequencies[12 + j] = 3546895U / Tables.Periods[sample.FineTune, j];
+					}
+
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						Name = sample.SampleName,
 						Flags = sample.LoopLength <= 1 ? SampleInfo.SampleFlags.None : SampleInfo.SampleFlags.Loop,
 						Type = ((amData?[i] != null) && (amData[i].Mark == 0x414d)) || ((hmnSynthData != null) && (hmnSynthData[i] != null)) ? SampleInfo.SampleType.Synth : SampleInfo.SampleType.Sample,
 						BitSize = 8,
-						MiddleC = (int)(7093789.2 / ((currentModuleType == ModuleType.HisMastersNoise ? 428 + (428 * sample.FineTuneHmn) / 256 : Tables.Periods[sample.FineTune, 3 * 12]) * 2)),
-						Volume = sample.Volume * 4,
+						MiddleC = frequencies[12 + 3 * 12],
+						Volume = (byte)(sample.Volume * 4),
 						Panning = -1,
 						Sample = sample.Data,
-						Length = sample.Length * 2,
-						LoopStart = sample.LoopStart * 2,
-						LoopLength = sample.LoopLength * 2
+						Length = (uint)sample.Length * 2,
+						LoopStart = (uint)sample.LoopStart * 2,
+						LoopLength = (uint)sample.LoopLength * 2,
+						NoteFrequencies = frequencies
 					};
 
 					result.Add(sampleInfo);
@@ -2017,6 +2032,8 @@ stopLoop:
 				modChan.TrackLine.Sample = 0;
 				modChan.TrackLine.Effect = 0;
 				modChan.TrackLine.EffectArg = 0;
+
+				modChan.SampleNumber = 0;
 				modChan.SampleData = null;
 				modChan.Offset = 0;
 				modChan.Length = 0;
@@ -2046,7 +2063,6 @@ stopLoop:
 				modChan.SynthSample = false;
 
 				modChan.AmToDo = AmToDo.None;
-				modChan.SampleNum = 0;
 				modChan.VibDegree = 0;
 				modChan.SustainCounter = 0;
 				modChan.StarVolume = 0;
@@ -2231,7 +2247,7 @@ stopLoop:
 				// New sample
 				Sample sample = samples[sampNum - 1];
 
-				modChan.SampleNum = sampNum;
+				modChan.SampleNumber = (short)(sampNum - 1);
 				modChan.SynthSample = false;
 
 				modChan.SampleData = sample.Data;
@@ -2243,8 +2259,6 @@ stopLoop:
 				modChan.Volume = (sbyte)sample.Volume;
 				modChan.HmnVolume = 64;
 				modChan.StarVolume = 256;
-
-				modChan.VisualInfo.SampleNumber = (byte)(sampNum - 1);
 
 				if (currentModuleType == ModuleType.StarTrekker)
 				{
@@ -2365,7 +2379,6 @@ stopLoop:
 
 				// Set the period
 				modChan.Period = Tables.Periods[modChan.FineTune, modChan.TrackLine.Note - 1];
-				modChan.VisualInfo.NoteNumber = (byte)(modChan.TrackLine.Note - 1 + 12);
 
 				if (!((currentModuleType >= ModuleType.ProTracker) && (cmd == Effect.ExtraEffect) && ((ExtraEffect)(modChan.TrackLine.EffectArg & 0xf0) == ExtraEffect.NoteDelay)))
 				{
@@ -2380,7 +2393,7 @@ stopLoop:
 						if (currentModuleType == ModuleType.StarTrekker)
 						{
 							// Setup AM sample
-							AmSample amSample = amData?[modChan.SampleNum - 1];
+							AmSample amSample = amData?[modChan.SampleNumber];
 							if (amSample != null)
 							{
 								modChan.SampleData = Tables.AmWaveforms[amSample.Waveform];
@@ -2408,7 +2421,7 @@ stopLoop:
 					// Fill out the channel
 					if (modChan.Length > 0)
 					{
-						chan.PlaySample(modChan.SampleData, (uint)(modChan.Offset + modChan.StartOffset * 2), (uint)modChan.Length * 2);
+						chan.PlaySample(modChan.SampleNumber, modChan.SampleData, (uint)(modChan.Offset + modChan.StartOffset * 2), (uint)modChan.Length * 2);
 						SetPeriod(modChan.Period, chan, modChan);
 
 						// Setup loop
@@ -2417,8 +2430,6 @@ stopLoop:
 					}
 					else
 						chan.Mute();
-
-					chan.SetVisualInfo(modChan.VisualInfo);
 				}
 			}
 
@@ -3084,7 +3095,7 @@ stopLoop:
 
 				if (modChan.SynthSample)
 				{
-					AmSample amSamp = amData?[modChan.SampleNum - 1];
+					AmSample amSamp = amData?[modChan.SampleNumber];
 					if (amSamp != null)
 					{
 						IChannel chan = VirtualChannels[i];
@@ -3318,13 +3329,9 @@ stopLoop:
 			{
 				// Normal note
 				period = modChan.Period;
-				note = modChan.TrackLine.Note;
 			}
 
 			SetPeriod(period, chan, modChan);
-
-			modChan.VisualInfo.NoteNumber = (byte)(note + 12);
-			chan.SetVisualInfo(modChan.VisualInfo);
 		}
 
 
@@ -3582,9 +3589,6 @@ stopLoop:
 			int note = i + arp >= NumberOfNotes ? NumberOfNotes - 1 : i + arp;
 			ushort period = Tables.Periods[0, note];
 			SetPeriod(period, chan, modChan);
-
-			modChan.VisualInfo.NoteNumber = (byte)(note + 12);
-			chan.SetVisualInfo(modChan.VisualInfo);
 		}
 
 
@@ -4048,7 +4052,7 @@ stopLoop:
 						// Retrig the sample
 						if (modChan.Length != 0)
 						{
-							chan.PlaySample(modChan.SampleData, 0, (uint)modChan.Length * 2);
+							chan.PlaySample(modChan.SampleNumber, modChan.SampleData, 0, (uint)modChan.Length * 2);
 
 							if (modChan.LoopLength != 0)
 								chan.SetLoop(modChan.LoopStart, (uint)modChan.LoopLength * 2);
@@ -4057,8 +4061,6 @@ stopLoop:
 						}
 						else
 							chan.Mute();
-
-						chan.SetVisualInfo(modChan.VisualInfo);
 					}
 				}
 			}
@@ -4125,7 +4127,7 @@ stopLoop:
 				// Retrig the sample
 				if (modChan.Length != 0)
 				{
-					chan.PlaySample(modChan.SampleData, 0, (uint)modChan.Length * 2);
+					chan.PlaySample(modChan.SampleNumber, modChan.SampleData, 0, (uint)modChan.Length * 2);
 
 					if (modChan.LoopLength != 0)
 						chan.SetLoop(modChan.LoopStart, (uint)modChan.LoopLength * 2);
@@ -4134,8 +4136,6 @@ stopLoop:
 				}
 				else
 					chan.Mute();
-
-				chan.SetVisualInfo(modChan.VisualInfo);
 			}
 		}
 

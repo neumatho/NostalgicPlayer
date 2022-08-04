@@ -599,12 +599,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 				{
 					Instrument inst = instruments[i];
 
+					// Build frequency table
+					uint[] frequencies = new uint[10 * 12];
+
+					for (int j = 0; j < 7 * 12; j++)
+						frequencies[j] = 3546895U / periods[j];
+
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						BitSize = 8,
-						MiddleC = 8287,
-						Volume = inst.Volume * 4,
-						Panning = -1
+						MiddleC = frequencies[4 * 12],
+						Volume = (byte)(inst.Volume * 4),
+						Panning = -1,
+						NoteFrequencies = frequencies
 					};
 
 					if (inst is SampleInstrument sampleInst)
@@ -612,7 +619,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 						sampleInfo.Type = SampleInfo.SampleType.Sample;
 						sampleInfo.Name = sampleInst.Name;
 						sampleInfo.Sample = sampleInst.Adr;
-						sampleInfo.Length = sampleInst.Length > 2 ? sampleInst.Length : 0;
+						sampleInfo.Length = sampleInst.Length > 2 ? sampleInst.Length : 0U;
 
 						if (sampleInst.LoopLength <= 2)
 						{
@@ -953,7 +960,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 					// Play the synth sound
 					int waveOffset = synthInst.WaveTable * 64;
-					VirtualChannels[voice].PlaySample(waveTables, (uint)waveOffset, synthInst.WaveLength);
+					VirtualChannels[voice].PlaySample((short)(cur.Instrument - 1), waveTables, (uint)waveOffset, synthInst.WaveLength);
 					VirtualChannels[voice].SetLoop((uint)waveOffset, synthInst.WaveLength);
 
 					// Initialize ADSR
@@ -995,7 +1002,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 					else
 					{
 						// Play the sample
-						VirtualChannels[voice].PlaySample(sampleInst.Adr, 0, sampleInst.Length);
+						VirtualChannels[voice].PlaySample((short)(cur.Instrument - 1), sampleInst.Adr, 0, sampleInst.Length);
 
 						// Set the loop if any
 						if (sampleInst.LoopLength > 2)
@@ -1006,9 +1013,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 						VirtualChannels[voice].SetVolume((ushort)(tmp > 256 ? 256 : tmp));
 					}
 				}
-
-				cur.VisualInfo.SampleNumber = (byte)(cur.Instrument - 1);
-				VirtualChannels[voice].SetVisualInfo(cur.VisualInfo);
 			}
 		}
 
@@ -1224,8 +1228,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 				else
 					VirtualChannels[i].SetAmigaPeriod(cur.Period);
 
-				cur.VisualInfo.NoteNumber = (byte)(cur.Note + 36 - 1);
-
 				// Arpeggio
 				if ((cur.ArpValue != 0) || (cur.AutoArp != 0))
 				{
@@ -1243,11 +1245,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 					cur.Restart = false;
 					cur.Period = periods[note + 36 - 1];
 					VirtualChannels[i].SetAmigaPeriod(cur.Period);
-
-					cur.VisualInfo.NoteNumber = (byte)(note + 36 - 1);
 				}
-
-				VirtualChannels[i].SetVisualInfo(cur.VisualInfo);
 			}
 		}
 

@@ -88,12 +88,12 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 			/// <summary>
 			/// Holds the start offset to the loop point in samples
 			/// </summary>
-			public int LoopStart;
+			public uint LoopStart;
 
 			/// <summary>
 			/// Holds the loop length in samples
 			/// </summary>
-			public int LoopLength;
+			public uint LoopLength;
 		}
 
 		/********************************************************************/
@@ -137,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Holds the number of bits per sample used (only 8 and 16 supported)
 		/// </summary>
 		/********************************************************************/
-		public int BitSize
+		public byte BitSize
 		{
 			get; set;
 		}
@@ -149,7 +149,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Holds the frequency of the middle C (C-4)
 		/// </summary>
 		/********************************************************************/
-		public int MiddleC
+		public uint MiddleC
 		{
 			get; set;
 		}
@@ -161,7 +161,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Holds the volume of the sample (0-256)
 		/// </summary>
 		/********************************************************************/
-		public int Volume
+		public ushort Volume
 		{
 			get; set;
 		}
@@ -173,7 +173,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Holds the panning value (0-255). -1 means no panning
 		/// </summary>
 		/********************************************************************/
-		public int Panning
+		public short Panning
 		{
 			get; set;
 		}
@@ -244,7 +244,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Holds the length of the sample in samples for one channel
 		/// </summary>
 		/********************************************************************/
-		public int Length
+		public uint Length
 		{
 			get; set;
 		}
@@ -256,7 +256,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Holds the start offset to the loop point in samples
 		/// </summary>
 		/********************************************************************/
-		public int LoopStart
+		public uint LoopStart
 		{
 			get; set;
 		}
@@ -268,7 +268,22 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Holds the loop length in samples
 		/// </summary>
 		/********************************************************************/
-		public int LoopLength
+		public uint LoopLength
+		{
+			get; set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the frequency for each note for 10 octaves.
+		/// 
+		/// This is used by some visuals to find out, which note is playing
+		/// by the frequency set
+		/// </summary>
+		/********************************************************************/
+		public uint[] NoteFrequencies
 		{
 			get; set;
 		}

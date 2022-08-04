@@ -33,6 +33,11 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		protected readonly Array[] loopAddresses = new Array[2];
 
 		/// <summary>
+		/// The sample number being played or -1 if unknown
+		/// </summary>
+		protected short sampleNumber;
+
+		/// <summary>
 		/// Start offset in the sample in samples, not bytes
 		/// </summary>
 		protected uint sampleStart;
@@ -87,25 +92,37 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/// </summary>
 		protected uint panning;
 
-		/// <summary>
-		/// Visual information
-		/// </summary>
-		protected VisualInfo visualInformation;
-
 		#region IChannel implementation
 		/********************************************************************/
 		/// <summary>
-		/// Will start to play the sample in the channel. If your player is
-		/// running in buffer mode, use this method to set the buffer. Note
-		/// that the length then have to be the same for each channel
+		/// Will start to play the buffer in the channel. Only use this if
+		/// your player is running in buffer mode. Note that the length then
+		/// have to be the same for each channel
 		/// </summary>
+		/// <param name="adr">is a pointer to the sample in memory</param>
+		/// <param name="startOffset">is the number of samples in the sample to start</param>
+		/// <param name="length">is the length in samples of the sample</param>
+		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
+		/********************************************************************/
+		public void PlayBuffer(Array adr, uint startOffset, uint length, byte bit)
+		{
+			PlaySample(-1, adr, startOffset, length, bit, false);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will start to play the sample in the channel
+		/// </summary>
+		/// <param name="sampleNumber">is the sample number being played. If unknown, set it to -1</param>
 		/// <param name="adr">is a pointer to the sample in memory</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
 		/// <param name="length">is the length in samples of the sample</param>
 		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
 		/// <param name="backwards">indicate if the sample should be played backwards</param>
 		/********************************************************************/
-		public void PlaySample(Array adr, uint startOffset, uint length, byte bit, bool backwards)
+		public void PlaySample(short sampleNumber, Array adr, uint startOffset, uint length, byte bit, bool backwards)
 		{
 			if (adr == null)
 				throw new ArgumentNullException(nameof(adr));
@@ -121,6 +138,8 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 
 			if ((bit != 8) && (bit != 16))
 				throw new ArgumentException("Number of bits may only be 8 or 16", nameof(bit));
+
+			this.sampleNumber = sampleNumber;
 
 			sampleAddresses[0] = adr;
 			sampleAddresses[1] = null;
@@ -144,8 +163,15 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/// <summary>
 		/// Will start to play a stereo sample in the channel
 		/// </summary>
+		/// <param name="sampleNumber">is the sample number being played. If unknown, set it to -1</param>
+		/// <param name="leftAdr">is a pointer to the sample in memory to be played in the left speaker</param>
+		/// <param name="rightAdr">is a pointer to the sample in memory to be played in the right speaker</param>
+		/// <param name="startOffset">is the number of samples in the sample to start</param>
+		/// <param name="length">is the length in samples of the sample</param>
+		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
+		/// <param name="backwards">indicate if the sample should be played backwards</param>
 		/********************************************************************/
-		public void PlayStereoSample(Array leftAdr, Array rightAdr, uint startOffset, uint length, byte bit, bool backwards)
+		public void PlayStereoSample(short sampleNumber, Array leftAdr, Array rightAdr, uint startOffset, uint length, byte bit, bool backwards)
 		{
 			if (leftAdr == null)
 				throw new ArgumentNullException(nameof(leftAdr));
@@ -170,6 +196,8 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 
 			if ((bit != 8) && (bit != 16))
 				throw new ArgumentException("Number of bits may only be 8 or 16", nameof(bit));
+
+			this.sampleNumber = sampleNumber;
 
 			sampleAddresses[0] = leftAdr;
 			sampleAddresses[1] = rightAdr;
@@ -382,24 +410,6 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 
 		/********************************************************************/
 		/// <summary>
-		/// These information are used by some visualizer, so your player can
-		/// help those by calling this method. Call it when you trigger a new
-		/// note
-		/// </summary>
-		/********************************************************************/
-		public void SetVisualInfo(VisualInfo visualInfo)
-		{
-			if (visualInfo.NoteNumber > 119)
-				throw new ArgumentException($"Note number out of range ({visualInfo.NoteNumber}). Valid range is between 0 and 119", nameof(visualInfo.NoteNumber));
-
-			visualInformation = visualInfo;
-			flags |= ChannelFlags.Visual;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Returns true or false depending on the channel is in use
 		/// </summary>
 		/********************************************************************/
@@ -416,6 +426,18 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		{
 			flags |= ChannelFlags.MuteIt;
 			flags &= ~ChannelFlags.Active;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the current sample number used on the channel
+		/// </summary>
+		/********************************************************************/
+		public short GetSampleNumber()
+		{
+			return sampleNumber;
 		}
 
 
@@ -464,18 +486,6 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		public int GetSamplePosition()
 		{
 			return samplePosition;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Returns the visual information on the channel
-		/// </summary>
-		/********************************************************************/
-		public VisualInfo GetVisualInfo()
-		{
-			return visualInformation;
 		}
 		#endregion
 

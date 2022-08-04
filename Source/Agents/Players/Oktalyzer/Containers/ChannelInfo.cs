@@ -6,8 +6,6 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Containers;
-
 namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer.Containers
 {
 	/// <summary>
@@ -19,6 +17,5 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer.Containers
 		public short CurrPeriod;
 		public uint ReleaseStart;
 		public uint ReleaseLength;
-		public VisualInfo VisualInfo = new VisualInfo();
 	}
 }

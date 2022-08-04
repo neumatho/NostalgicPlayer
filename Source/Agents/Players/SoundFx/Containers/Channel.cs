@@ -6,8 +6,6 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Containers;
-
 namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx.Containers
 {
 	/// <summary>
@@ -16,6 +14,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx.Containers
 	internal class Channel
 	{
 		public uint PatternData;
+		public short SampleNumber;
 		public sbyte[] Sample;
 		public uint SampleLen;
 		public uint LoopStart;
@@ -30,6 +29,5 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx.Containers
 		public ushort SlideParam;
 		public ushort SlidePeriod;
 		public ushort SlideSpeed;
-		public VisualInfo VisualInfo = new VisualInfo();
 	}
 }
