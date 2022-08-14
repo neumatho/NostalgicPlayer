@@ -786,7 +786,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			// Read the global song speed
 			moduleStream.Seek(470, SeekOrigin.Begin);
 			byte songLen = moduleStream.Read_UINT8();
-			byte temp = moduleStream.Read_UINT8();
+			byte initTemp = moduleStream.Read_UINT8();
 
 			if ((songLen == 0) || (songLen > 128))
 				return ModuleType.Unknown;
@@ -1024,13 +1024,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				return ModuleType.Unknown;
 
 			// Check the global speed
-			if ((temp != 0x78) && (temp != 0) && (diskPrefixCount == 15))
+			if ((initTemp != 0) && (initTemp != 0x78) && (diskPrefixCount == 15))
 			{
 				// Hardcoded for specific modules, which runs too fast and therefore should not be upgraded. I know, it is not a great solution, but it works
 				//
 				// 1. jjk55
 				// 2. Cut it
-				if (((songLen != 0x4a) || (temp != 0xb3)) && ((songLen != 0x1e) || (temp != 0xa0)))
+				if (((songLen != 0x4a) || (initTemp != 0xb3)) && ((songLen != 0x1e) || (initTemp != 0xa0)))
 				{
 					if (minimumVersion > ModuleType.UltimateSoundTracker18)
 					{
@@ -1044,6 +1044,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					}
 				}
 			}
+
+			if ((initTemp != 0) && (initTemp < 100) && ((minimumVersion == ModuleType.UltimateSoundTracker10) || (minimumVersion == ModuleType.SoundTrackerII) || (minimumVersion == ModuleType.SoundTrackerVI) || (minimumVersion == ModuleType.MasterSoundTracker10) || (minimumVersion == ModuleType.SoundTracker2x)))
+				return ModuleType.Unknown;
 
 			return minimumVersion;
 		}
