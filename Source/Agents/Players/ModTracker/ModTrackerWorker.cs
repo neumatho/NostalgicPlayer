@@ -88,6 +88,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		private ushort songPos;
 		private ushort patternPos;
 		private ushort breakPos;
+		private ushort lastBreakPos;
+		private ushort lastSongPos;
 		private bool posJumpFlag;
 		private bool breakFlag;
 		private bool gotJump;
@@ -99,6 +101,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		private byte pattDelayTime;
 		private byte pattDelayTime2;
 		private bool patternLoopHandled;	// Indicate if an E6x effect has been handled on the same line. Only used for Atari Octalyser modules
+		private bool songStopped;
 
 		private AmSample[] amData;
 		private HmnSynthData[] hmnSynthData;
@@ -347,6 +350,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/********************************************************************/
 		public override void Play()
 		{
+			if (songStopped)
+				return;
+
 			patternLoopHandled = false;
 
 			if (speed != 0)				// Only play if speed <> 0
@@ -387,6 +393,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 						endReached = !gotBreak || ((breakPos == 0) && ((songPos == 0xffff) || (oldSongPos == songLength - 1)));
 						endReached = endReached || ((breakPos == patternPos - 1) && (songPos == oldSongPos - 1));
 
+						if (gotBreak && !endReached)
+							endReached = (breakPos == lastBreakPos) && (songPos == lastSongPos);
+
+						lastBreakPos = breakPos;
+						lastSongPos = songPos;
+
 						gotJump = false;
 					}
 
@@ -403,7 +415,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					}
 
 					// Have we played the whole pattern?
-					if (patternPos >= patternLength)
+					if ((patternPos >= patternLength) && !songStopped)
 						NextPosition();
 				}
 				else
@@ -2026,6 +2038,7 @@ stopLoop:
 			lowMask = 0xff;
 			pattDelayTime = 0;
 			pattDelayTime2 = 0;
+			songStopped = false;
 
 			for (int i = 0; i < channelNum; i++)
 			{
@@ -3852,6 +3865,7 @@ stopLoop:
 				else
 				{
 					// If speed is 0, we assume the module has ended (this will fix Kenmare River.mod)
+					songStopped = true;
 					endReached = true;
 				}
 			}
