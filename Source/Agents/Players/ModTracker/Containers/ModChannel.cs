@@ -37,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		public byte WaveControl;
 		public byte GlissFunk;
 		public byte SampleOffset;
-		public byte PattPos;
+		public sbyte PattPos;
 		public byte LoopCount;
 		public byte FunkOffset;
 		public ushort WaveStart;

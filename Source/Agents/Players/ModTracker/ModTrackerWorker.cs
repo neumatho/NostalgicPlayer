@@ -2069,7 +2069,7 @@ stopLoop:
 				modChan.WaveControl = 0;
 				modChan.GlissFunk = 0;
 				modChan.SampleOffset = 0;
-				modChan.PattPos = 0;
+				modChan.PattPos = -1;
 				modChan.LoopCount = 0;
 				modChan.FunkOffset = 0;
 				modChan.WaveStart = 0;
@@ -3998,17 +3998,19 @@ stopLoop:
 							}
 						}
 
-						if (modChan.LoopCount != 0)
+						if ((modChan.LoopCount != 0) && (modChan.PattPos != -1))
 						{
-							breakPos = modChan.PattPos;
+							breakPos = (byte)modChan.PattPos;
 							breakFlag = true;
 						}
+						else
+							modChan.PattPos = -1;
 					}
 				}
 				else
 				{
 					// Set the loop start point
-					modChan.PattPos = (byte)patternPos;
+					modChan.PattPos = (sbyte)patternPos;
 				}
 			}
 		}
