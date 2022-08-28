@@ -8,7 +8,6 @@
 /******************************************************************************/
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using Krypton.Toolkit;
@@ -207,12 +206,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		private void AddItems()
 		{
 			// Check to see if there are any module loaded at the moment
-			if (moduleHandler.IsPlaying)
+			MultiFileInfo fileInfo;
+
+			if (moduleHandler.IsPlaying && ((fileInfo = mainWindow.GetFileInfo()) != null))
 			{
 				// Module in memory, add items
 				ModuleInfoStatic staticInfo = moduleHandler.StaticModuleInformation;
 				ModuleInfoFloating floatingInfo = moduleHandler.PlayingModuleInformation;
-				MultiFileInfo fileInfo = mainWindow.GetFileInfo();
 
 				string val = staticInfo.ModuleName;
 				if (string.IsNullOrEmpty(val))
