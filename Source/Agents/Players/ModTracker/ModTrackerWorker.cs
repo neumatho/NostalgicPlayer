@@ -565,7 +565,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 						Type = ((amData?[i] != null) && (amData[i].Mark == 0x414d)) || ((hmnSynthData != null) && (hmnSynthData[i] != null)) ? SampleInfo.SampleType.Synth : SampleInfo.SampleType.Sample,
 						BitSize = 8,
 						MiddleC = frequencies[12 + 3 * 12],
-						Volume = (byte)(sample.Volume * 4),
+						Volume = (ushort)(sample.Volume * 4),
 						Panning = -1,
 						Sample = sample.Data,
 						Length = (uint)sample.Length * 2,
@@ -1148,7 +1148,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					// Check the patterns for any BPM speed effects or ExtraEffect effects
 					// just to be sure it's not a NoiseTracker module.
 					//
-					// Also check to see if it's a UNIC Tracker module. If so, don't
+					// Also check to see if it's a Unic Tracker module. If so, don't
 					// recognize it
 					moduleStream.Seek(1084, SeekOrigin.Begin);
 
@@ -1165,7 +1165,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 								byte c = moduleStream.Read_UINT8();
 								byte d = moduleStream.Read_UINT8();
 
-								// Check the data to see if it's not a UNIC Tracker module
+								// Check the data to see if it's not a Unic Tracker module
 								//
 								// Is sample > 31
 								byte s = (byte)((a & 0xf0) | ((c & 0xf0) >> 4));
