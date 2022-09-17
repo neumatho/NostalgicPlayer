@@ -1,0 +1,442 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="IDS_ERR_LOADING_HEADERINFO" xml:space="preserve">
+    <value>Can't read the module header</value>
+  </data>
+  <data name="IDS_ERR_LOADING_PATTERNS" xml:space="preserve">
+    <value>Can't read the pattern information</value>
+  </data>
+  <data name="IDS_ERR_LOADING_SAMPLEINFO" xml:space="preserve">
+    <value>Can't read the sample information</value>
+  </data>
+  <data name="IDS_ERR_LOADING_SAMPLES" xml:space="preserve">
+    <value>Can't read the sample data</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION" xml:space="preserve">
+    <value>Original Amiga program written by Nicolas Franck (Gryzor).
+Converted to C# and some improvements by Thomas Neumann.
+Additional formats written by Sylvain "Asle" Chipaux.
+
+Converts ProTracker clones to ProTracker format.
+
+Current version can convert these formats:
+
+{0}</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT1" xml:space="preserve">
+    <value>A module packer created by Carsten Sørensen (Slammer) of the demo group "Anarchy". It was originally used in Anarchy's 1992 demo "In the Kitchen", and has been used in a number of Commodore Amiga games.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT10" xml:space="preserve">
+    <value>A module packer created by Ivar Just Olsen (Heatseeker) of the demo group Cryptoburners.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT11" xml:space="preserve">
+    <value>A module packer created by Alain Malek (Hornet) of the demo group Alcatraz.
+
+The pattern format is almost the same as in ProRunner v1.0.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT12" xml:space="preserve">
+    <value>A tracker created by Jess D. Skov-Nielsen (Razmo) of the demo group Kefrens. It uses the old SoundTracker effects and 15 samples only.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT13" xml:space="preserve">
+    <value>Sometimes called UNIC Tracker 2, a module packer created by Anders Emil Hansen (Laxity), used in Kefrens demos.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT14" xml:space="preserve">
+    <value>A module packer created by David Counter (Matrix) of the demo group LSD.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT15" xml:space="preserve">
+    <value>A module packer created by Conny &amp; Christian Cyreus (Twins) of the demo group Phenomena. This packer was one of the most popular ones used on the demo scene.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT16" xml:space="preserve">
+    <value>A module packer created by Conny &amp; Christian Cyreus (Twins) of the demo group Phenomena. This packer was one of the most popular ones used on the demo scene.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT17" xml:space="preserve">
+    <value>A module packer created by Conny &amp; Christian Cyreus (Twins) of the demo group Phenomena. This packer was one of the most popular ones used on the demo scene.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT18" xml:space="preserve">
+    <value>A module packer created by Dierk Ohlerich (Chaos) of the demo group Sanity.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT19" xml:space="preserve">
+    <value>A module packer created by Riff Raff &amp; Antichrist of the demo group United Forces.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT2" xml:space="preserve">
+    <value>A module packer created by Alan of the demo group Impact. There are three versions of the format, with minor differences between each. It has been used in at least one Commodore Amiga game, "Fury of the Furries".</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT20" xml:space="preserve">
+    <value>A module packer created by Olof Lindroth (Azatoth) of the demo group Phenomena.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT21" xml:space="preserve">
+    <value>A module packer created by Polka Brothers.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT22" xml:space="preserve">
+    <value>A module packer created by Joakim Ögren.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT23" xml:space="preserve">
+    <value>A module packer created by Frank Hülsmann (MC68000) of the demo group Tech.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT24" xml:space="preserve">
+    <value>A module packer created by Frank Hülsmann (MC68000) of the demo group Tech.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT25" xml:space="preserve">
+    <value>A module packer created by Frank Hülsmann (MC68000) of the demo group Tech.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT26" xml:space="preserve">
+    <value>A module packer created by Frank Hülsmann (MC68000) of the demo group TRSI.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT27" xml:space="preserve">
+    <value>A module packer created by Frank Hülsmann (MC68000) of the demo group Masque.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT28" xml:space="preserve">
+    <value>A module packer created by Christian Estrup of the demo group Static Bytes.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT29" xml:space="preserve">
+    <value>A module packer created by Christian Estrup of the demo group Static Bytes.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT3" xml:space="preserve">
+    <value>A module packer created by Alan of the demo group Impact. There are three versions of the format, with minor differences between each. It has been used in at least one Commodore Amiga game, "Fury of the Furries".</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT30" xml:space="preserve">
+    <value>A module packer created by Christian Estrup of the demo group Static Bytes.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT31" xml:space="preserve">
+    <value>A module packer created by Marc Heyl (Cosmos) of the demo group Sanity.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT32" xml:space="preserve">
+    <value>A module packer created by Marc Heyl (Cosmos) of the demo group Sanity.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT33" xml:space="preserve">
+    <value>A module packer created by Jani Vaarala (Flame) of the demo group Pygmy Projects.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT34" xml:space="preserve">
+    <value>A module packer created by Mr. Bluesky of the demo group Drifters.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT35" xml:space="preserve">
+    <value>A module packer created by Jouni Karhonen (Mr. Spiv) of the demo group Cave.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT36" xml:space="preserve">
+    <value>A module packer created by Jarno Paananen (Guru) of the demo group Sahara Surfers. This packer was one of the most popular ones used on the demo scene and in games.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT37" xml:space="preserve">
+    <value>A module packer created by Jarno Paananen (Guru) of the demo group Sahara Surfers. This packer was one of the most popular ones used on the demo scene and in games.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT38" xml:space="preserve">
+    <value>A module packer created by Jarno Paananen (Guru) of the demo group Sahara Surfers. This packer was one of the most popular ones used on the demo scene and in games.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT39" xml:space="preserve">
+    <value>A module packer created by Jarno Paananen (Guru) of the demo group Sahara Surfers. This packer was one of the most popular ones used on the demo scene and in games.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT4" xml:space="preserve">
+    <value>A module packer created by Alan of the demo group Impact. There are three versions of the format, with minor differences between each. It has been used in at least one Commodore Amiga game, "Fury of the Furries".</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT40" xml:space="preserve">
+    <value>A module packer created by Jarno Paananen (Guru) of the demo group Sahara Surfers. This packer was one of the most popular ones used on the demo scene and in games.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT41" xml:space="preserve">
+    <value>A module packer created by Jarno Paananen (Guru) of the demo group Sahara Surfers. This packer was one of the most popular ones used on the demo scene and in games.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT42" xml:space="preserve">
+    <value>A module packer created by Boris Fornefeld (Crazy Crack) of the demo group MEXX.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT43" xml:space="preserve">
+    <value>A module packer created by Boris Fornefeld (Crazy Crack) of the demo group MEXX.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT44" xml:space="preserve">
+    <value>A module packer created by Boris Fornefeld (Crazy Crack) of the demo group Complex.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT45" xml:space="preserve">
+    <value>A module packer created by Anders Emil Hansen (Laxity) of the demo group Kefrens.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT46" xml:space="preserve">
+    <value>A module packer created by Wanton of the demo group Bloodsuckers.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT47" xml:space="preserve">
+    <value>A module packer created by Fabien Letouzey (Xann) of the demo group The Silents.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT48" xml:space="preserve">
+    <value>A module packer created by Mark Saarinen (Dweezil) of the demo group Stellar.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT5" xml:space="preserve">
+    <value>A module packer created by Kris of the demo group Anarchy. Also known as Kris Packer.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT6" xml:space="preserve">
+    <value>A module packer with subsong support, created by The Silents for their pinball games. Also known as GrapeTracker.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT7" xml:space="preserve">
+    <value>A module packer created by Eureka of the demo group Concept.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT8" xml:space="preserve">
+    <value>A module packer created by Charlet Franck.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT9" xml:space="preserve">
+    <value>A module packer created by Magnus Danielsson (Fuzzac) of the demo group The Silents.</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME" xml:space="preserve">
+    <value>ProWizard</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT1" xml:space="preserve">
+    <value>AC1D Packer</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT10" xml:space="preserve">
+    <value>Heatseeker mc1.0</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT11" xml:space="preserve">
+    <value>Hornet Packer</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT12" xml:space="preserve">
+    <value>Kefrens Sound Machine</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT13" xml:space="preserve">
+    <value>Laxity Tracker</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT14" xml:space="preserve">
+    <value>Module Protector</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT15" xml:space="preserve">
+    <value>NoisePacker 1</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT16" xml:space="preserve">
+    <value>NoisePacker 2</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT17" xml:space="preserve">
+    <value>NoisePacker 3</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT18" xml:space="preserve">
+    <value>NoiseRunner</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT19" xml:space="preserve">
+    <value>NoiseTracker Compressed</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT2" xml:space="preserve">
+    <value>Channel Player 1</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT20" xml:space="preserve">
+    <value>Pha Packer</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT21" xml:space="preserve">
+    <value>Polka Packer</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT22" xml:space="preserve">
+    <value>Power Music</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT23" xml:space="preserve">
+    <value>Promizer 0.1</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT24" xml:space="preserve">
+    <value>Promizer 1.0c</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT25" xml:space="preserve">
+    <value>Promizer 1.8a</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT26" xml:space="preserve">
+    <value>Promizer 2.0</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT27" xml:space="preserve">
+    <value>Promizer 4.0</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT28" xml:space="preserve">
+    <value>ProPacker 1.0</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT29" xml:space="preserve">
+    <value>ProPacker 2.1</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT3" xml:space="preserve">
+    <value>Channel Player 2</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT30" xml:space="preserve">
+    <value>ProPacker 3.0</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT31" xml:space="preserve">
+    <value>ProRunner 1</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT32" xml:space="preserve">
+    <value>ProRunner 2</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT33" xml:space="preserve">
+    <value>Pygmy Packer</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT34" xml:space="preserve">
+    <value>SKYT Packer</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT35" xml:space="preserve">
+    <value>StarTrekker Packer</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT36" xml:space="preserve">
+    <value>The Player 4.0A</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT37" xml:space="preserve">
+    <value>The Player 4.0B</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT38" xml:space="preserve">
+    <value>The Player 4.1A</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT39" xml:space="preserve">
+    <value>The Player 5.0A</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT4" xml:space="preserve">
+    <value>Channel Player 3</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT40" xml:space="preserve">
+    <value>The Player 6.0A</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT41" xml:space="preserve">
+    <value>The Player 6.1A</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT42" xml:space="preserve">
+    <value>Tracker Packer 1</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT43" xml:space="preserve">
+    <value>Tracker Packer 2</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT44" xml:space="preserve">
+    <value>Tracker Packer 3</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT45" xml:space="preserve">
+    <value>Unic Tracker</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT46" xml:space="preserve">
+    <value>Wanton Packer</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT47" xml:space="preserve">
+    <value>Xann Packer</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT48" xml:space="preserve">
+    <value>Zen Packer</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT5" xml:space="preserve">
+    <value>ChipTracker</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT6" xml:space="preserve">
+    <value>Digital Illusions</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT7" xml:space="preserve">
+    <value>Eureka Packer</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT8" xml:space="preserve">
+    <value>FC-M Packer</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT9" xml:space="preserve">
+    <value>Fuzzac Packer</value>
+  </data>
+  <data name="IDS_PROWIZ_THEPLAYER_DELTA" xml:space="preserve">
+    <value> (Delta)</value>
+  </data>
+  <data name="IDS_PROWIZ_THEPLAYER_PACKED" xml:space="preserve">
+    <value> (Compressed)</value>
+  </data>
+</root>

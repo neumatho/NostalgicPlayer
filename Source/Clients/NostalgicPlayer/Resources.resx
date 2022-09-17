@@ -248,12 +248,12 @@ Special thanks to these people:
 (See documentation for what)
 
 ¤CPhil Wright
-¤CPeter William Wagner, Simon Coghlan
-¤Cand Thomas Bolon
+¤CPeter William Wagner, Simon Coghlan and Thomas Bolon
 ¤CMark Heath
 ¤CDave Gandy
-¤COzkan Sezer, Alice Rowan
-¤Cand Miodrag Vallat
+¤COzkan Sezer, Alice Rowan and Miodrag Vallat
+¤CNicolas Franck (Gryzor)
+¤CSylvain "Asle" Chipaux
 ¤CWilfred Bos
 ¤CJens-Christian Huus
 ¤CAdam Hathcock
@@ -268,8 +268,10 @@ Features in NostalgicPlayer:
 ¤1¤CSupports ¤¤ module formats
 ¤CMost accurate player
 ¤CEdit and save your favorite lists of modules
+¤CPossible to set latency on visuals so they sync to the audio
 ¤CSee and play the module samples on the keyboard
 ¤CSave samples from modules to disk
+¤CCan load packed files, including archives
 ¤CShows the module length, no matter what type it is
 ¤CSave your favorite modules as sample files
 

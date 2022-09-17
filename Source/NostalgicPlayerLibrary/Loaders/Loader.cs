@@ -32,6 +32,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			public Stream SampleDataStream;
 			public MemoryStream ConvertedStream;
 			public long TotalLength;
+			public bool HasSampleMarkings;
 		}
 
 		private readonly Manager agentManager;
@@ -384,7 +385,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/********************************************************************/
 		private ModuleStream OpenModuleStream(ConvertInfo convertInfo, Stream stream)
 		{
-			return convertInfo != null ? new ModuleStream(convertInfo.ConvertedStream, convertInfo.SampleDataStream ?? stream, convertInfo.TotalLength) : new ModuleStream(stream, true);
+			return convertInfo != null ? new ModuleStream(convertInfo.ConvertedStream, convertInfo.SampleDataStream ?? stream, convertInfo.TotalLength, convertInfo.HasSampleMarkings) : new ModuleStream(stream, true);
 		}
 
 
@@ -546,9 +547,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 									moduleStream.Seek(0, SeekOrigin.Begin);
 
 									// Create new memory stream to store the converted module in.
-									// We initialize it with an ok buffer size, but not bigger than
-									// the original file, so it won't be reallocated a lot
-									MemoryStream ms = new MemoryStream(Math.Min(64 * 1024, (int)moduleStream.Length));
+									//
+									// First we call the converter to see if it know the size of
+									// the converted module. If not, we initialize it with an ok
+									// buffer size, but not bigger than the original file, so it
+									// won't be reallocated a lot
+									int convertedLength = converter.ConvertedModuleLength(fileInfo);
+									if (convertedLength > 0)
+										convertedLength += 512;	// Add extra space for sample meta data
+									else
+										convertedLength = Math.Min(64 * 1024, (int)moduleStream.Length);
+
+									MemoryStream ms = new MemoryStream(convertedLength);
 
 									using (ConverterStream converterStream = new ConverterStream(ms, sampleInfo))
 									{
@@ -559,7 +569,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 											stream = ms;
 
 											if (result == null)
-												result = new ConvertInfo { Agent = agentInfo, OriginalFormat = converter.OriginalFormat };
+												result = new ConvertInfo { Agent = agentInfo, OriginalFormat = converter.OriginalFormat, HasSampleMarkings = converterStream.HasSampleDataMarkers };
 
 											if (!converterStream.HasSampleDataMarkers && (result.SampleDataStream == null))		// If we need to support multiple markings, it could be implemented by using a stack
 												result.SampleDataStream = new MemoryStream(ms.GetBuffer());

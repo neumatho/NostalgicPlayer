@@ -449,17 +449,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         ///(See documentation for what)
         ///
         ///¤CPhil Wright
-        ///¤CPeter William Wagner, Simon Coghlan
-        ///¤Cand Thomas Bolon
+        ///¤CPeter William Wagner, Simon Coghlan and Thomas Bolon
         ///¤CMark Heath
         ///¤CDave Gandy
-        ///¤COzkan Sezer, Alice Rowan
-        ///¤Cand Miodrag Vallat
+        ///¤COzkan Sezer, Alice Rowan and Miodrag Vallat
+        ///¤CNicolas Franck (Gryzor)
+        ///¤CSylvain &quot;Asle&quot; Chipaux
         ///¤CWilfred Bos
         ///¤CJens-Christian Huus
-        ///¤CAdam Hathcock
-        ///¤CAdrien Destugues
-        ///¤CRobert Baron        /// [rest of string was truncated]&quot;;.
+        ///¤CAda [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string IDS_ABOUT_TEXT {
             get {

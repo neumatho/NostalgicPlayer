@@ -23,6 +23,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		private readonly Dictionary<int, ConvertSampleInfo> sampleInfo;
 		private readonly Stream sampleStream;
 		private readonly long convertedLength;
+		private readonly bool hasSampleMarkers;
 
 		/********************************************************************/
 		/// <summary>
@@ -53,10 +54,11 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Constructor - used by player loader
 		/// </summary>
 		/********************************************************************/
-		public ModuleStream(Stream wrapperStream, Stream sampleDataStream, long totalLength) : base(wrapperStream, true)
+		public ModuleStream(Stream wrapperStream, Stream sampleDataStream, long totalLength, bool hasSampleMarkers) : base(wrapperStream, true)
 		{
 			sampleStream = sampleDataStream;
 			convertedLength = totalLength;
+			this.hasSampleMarkers = hasSampleMarkers;
 		}
 
 		#region Overrides
@@ -279,7 +281,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 			if (sampleInfo != null)
 				throw new Exception("ReadSampleData() may not be called from module converter");
 
-			if (sampleStream != null)
+			if ((sampleStream != null) && hasSampleMarkers)
 			{
 				// Is called from a player with a converted module
 				//
@@ -313,7 +315,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 			if (sampleInfo != null)
 				throw new Exception("GetSampleDataStream() may not be called from a module converter");
 
-			if (sampleStream != null)
+			if ((sampleStream != null) && hasSampleMarkers)
 			{
 				// Converted module
 				//

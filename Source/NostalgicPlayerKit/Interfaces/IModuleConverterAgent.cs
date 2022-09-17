@@ -22,6 +22,12 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		AgentResult Identify(PlayerFileInfo fileInfo);
 
 		/// <summary>
+		/// Return the size of the converted module without samples if
+		/// possible. 0 means unknown
+		/// </summary>
+		int ConvertedModuleLength(PlayerFileInfo fileInfo);
+
+		/// <summary>
 		/// Convert the module and store the result in the stream given
 		/// </summary>
 		AgentResult Convert(PlayerFileInfo fileInfo, ConverterStream converterStream, out string errorMessage);

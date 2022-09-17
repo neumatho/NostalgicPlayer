@@ -29,6 +29,19 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Return the size of the converted module without samples if
+		/// possible. 0 means unknown
+		/// </summary>
+		/********************************************************************/
+		public virtual int ConvertedModuleLength(PlayerFileInfo fileInfo)
+		{
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Convert the module and store the result in the stream given
 		/// </summary>
 		/********************************************************************/

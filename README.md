@@ -29,50 +29,83 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 
 | Format | Extension | Converter | Player |
 | ------ | -------------- | --------- | ------ |
+| AC1D Packer | .ac1d / .ac1 | ProWizard | ModTracker |
 | AHX 1.x | .ahx / .thx | | AHX |
 | AHX 2.x | .ahx / .thx | | AHX |
 | Asylum | .amf | MikMod Converter | MikMod |
 | Atari Octalyser | .mod | | ModTracker |
 | AudioIFF | .aiff / .aif | | Sample |
+| Channel Player 1 | .ch1 / .chn / .chan | ProWizard | ModTracker |
+| Channel Player 2 | .ch2 / .chn / .chan | ProWizard | ModTracker |
+| Channel Player 3 | .ch3 / .chn / .chan | ProWizard | ModTracker |
+| ChipTracker | .chp / .chip / .krs / .kris | ProWizard | ModTracker |
 | Composer 669 | .669 | MikMod Converter | MikMod |
+| Digital Illusions | .di | ProWizard | ModTracker |
 | Digital Sound and Music Interface | .amf | MikMod Converter | MikMod |
 | Digital Sound Interface Kit | .dsm | MikMod Converter | MikMod |
 | Digital Tracker MOD | .mod | | ModTracker |
 | D.O.C. SoundTracker II | .mod | | ModTracker |
 | D.O.C. SoundTracker VI | .mod | | ModTracker |
 | D.O.C. SoundTracker IX | .mod | | ModTracker |
+| Eureka Packer | .eureka / .eu | ProWizard | ModTracker |
 | Farandole Composer | .far | MikMod Converter | MikMod |
 | Fast/TakeTracker | .mod | | ModTracker |
 | FastTracker II | .xm | MikMod Converter | MikMod |
+| FC-M Packer | .fc-m / .fcm | ProWizard | ModTracker |
 | FLAC | .flac | | Sample |
 | Fred Editor | .frd / .fred | | Fred Editor |
 | Fred Editor (Final) | .frd / .fred | Module Converter | Fred Editor |
 | Future Composer 1.0 - 1.3 | .fc / .fc13 / .smod | Module Converter | Future Composer |
 | Future Composer 1.4 | .fc / .fc14 | | Future Composer |
+| Fuzzac Packer | .fuzzac / .fuz | ProWizard | ModTracker |
 | General DigiMusic | .gdm | MikMod Converter | MikMod |
+| Heatseeker mc1.0 | .hmc / .crb | ProWizard | ModTracker |
 | His Master's Noise (Gnomie by Night) | .mod | | ModTracker |
+| Hornet Packer | .hrt | ProWizard | ModTracker |
 | IFF-16SV (PCM) | .16sv | | Sample |
 | IFF-8SVX (Fibonacci) | .8svx | | Sample |
 | IFF-8SVX (PCM) | .8svx | | Sample |
 | Imago Orpheus | .imf | MikMod Converter | MikMod |
 | Impulse Tracker | .it | MikMod Converter | MikMod |
 | JamCracker | .jam | | JamCracker |
+| Kefrens Sound Machine | .kms | ProWizard | ModTracker |
+| Laxity Tracker | .lax / .unic2 | ProWizard | ModTracker |
 | Master SoundTracker 1.0 | .mod | | ModTracker |
 | MED | .med / .mmd0 / .md0 | | OctaMED |
 | MED Packer | .med / .mmdc | | OctaMED |
 | Mod's Grave | .wow | | ModTracker |
+| Module Protector | .mp | ProWizard | ModTracker |
 | MPEG 1.0 | .mp1 / .mp2 / .mp3 / .m2a / .mpg | | Mpg123 |
 | MPEG 2.0 | .mp1 / .mp2 / .mp3 / .m2a / .mpg | | Mpg123 |
 | MPEG 2.5 | .mp1 / .mp2 / .mp3 / .m2a / .mpg | | Mpg123 |
 | MultiTracker | .mtm | | ModTracker |
+| NoisePacker 1 | .np1 | ProWizard | ModTracker |
+| NoisePacker 2 | .np2 | ProWizard | ModTracker |
+| NoisePacker 3 | .np3 | ProWizard | ModTracker |
+| NoiseRunner | .nru | ProWizard | ModTracker |
 | NoiseTracker | .mod | | ModTracker |
+| NoiseTracker Compressed | .ntc | ProWizard | ModTracker |
 | OctaMED | .med / .mmd0 / .md0 / .omed | | OctaMED |
 | OctaMED Professional 3.00 - 4.xx | .med / .mmd1 / .md1 / .omed | | OctaMED |
 | OctaMED Professional 5.00 - 6.xx | .med / .mmd2 / .md2 / .omed | | OctaMED |
 | OctaMED Soundstudio | .med / .mmd3 / .md3 / .omed / .ocss | | OctaMED |
 | Ogg Vorbis | .ogg / oga | | Ogg Vorbis |
 | Oktalyzer | .okt / .okta | | Oktalyzer |
+| Pha Packer | .pha | ProWizard | ModTracker |
+| Polka Packer | .ppk | ProWizard | ModTracker |
+| Power Music | .pm | ProWizard | ModTracker |
+| Promizer 0.1 | .pm0 / .pm01 | ProWizard | ModTracker |
+| Promizer 1.0c | .pm1 / .pm10 | ProWizard | ModTracker |
+| Promizer 1.8a | .pmz | ProWizard | ModTracker |
+| Promizer 2.0 | .pm2 / .pm20 | ProWizard | ModTracker |
+| Promizer 4.0 | .pm4 / .pm40 | ProWizard | ModTracker |
+| ProPacker 1.0 | .p10 / .pp10 | ProWizard | ModTracker |
+| ProPacker 2.1 | .p21 / .pp21 | ProWizard | ModTracker |
+| ProPacker 3.0 | .p30 / .pp30 | ProWizard | ModTracker |
+| ProRunner 1 | .pr1 / .pru1 | ProWizard | ModTracker |
+| ProRunner 2 | .pr2 / .pru2 | ProWizard | ModTracker |
 | ProTracker | .mod | | ModTracker |
+| Pygmy Packer | .pyg | ProWizard | ModTracker |
 | RIFF-WAVE (ADPCM) | .wav | | Sample |
 | RIFF-WAVE (IEEE Float) | .wav | | Sample |
 | RIFF-WAVE (PCM) | .wav | | Sample |
@@ -81,6 +114,7 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | Scream Tracker 3 | .s3m | MikMod Converter | MikMod |
 | Scream Tracker Music Interface Kit | .stx | MikMod Converter | MikMod |
 | SidPlay | .sid / .c64 / .mus / .str / .prg | | SidPlay |
+| SKYT Packer | .skt / .skyt | ProWizard | ModTracker |
 | SoundFX 1.x | .sfx | Module Converter | SoundFX |
 | SoundFX 2.0 | .sfx / .sfx2 | | SoundFX |
 | SoundMon 1.1 | .bp / .bp2 | | SoundMon |
@@ -88,12 +122,26 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | SoundTracker 2.2 | .mod | | ModTracker |
 | StarTrekker | .mod | | ModTracker |
 | StarTrekker 8 voices | .mod | | ModTracker |
+| StarTrekker Packer | .stp / .stpk | ProWizard | ModTracker |
 | TFMX 1.5 | .tfx / mdat. / .tfm | | TFMX |
 | TFMX Professional | .tfx / mdat. / .tfm | | TFMX |
 | TFMX 7 voices | .tfx / mdat. / .tfm | | TFMX |
+| The Player 4.0A | .p40a / .p4x | ProWizard | ModTracker |
+| The Player 4.0B | .p40b / .p4x | ProWizard | ModTracker |
+| The Player 4.1A | .p41a / .p4x | ProWizard | ModTracker |
+| The Player 5.0A | .p50a / .p50 | ProWizard | ModTracker |
+| The Player 6.0A | .p60a / .p60 / .p6x | ProWizard | ModTracker |
+| The Player 6.1A | .p61a / .p61 / .p6x | ProWizard | ModTracker |
+| Tracker Packer 1 | .tp1 | ProWizard | ModTracker |
+| Tracker Packer 2 | .tp2 | ProWizard | ModTracker |
+| Tracker Packer 3 | .tp3 | ProWizard | ModTracker |
 | Ultimate SoundTracker 1.0 - 1.21 | .mod | | ModTracker |
 | Ultimate SoundTracker 1.8 - 2.0 | .mod | | ModTracker |
 | UltraTracker | .ult | MikMod Converter | MikMod |
+| Unic Tracker | .unic | ProWizard | ModTracker |
 | UniMod | .uni | MikMod Converter | MikMod |
 | Unis 669 | .669 | MikMod Converter | MikMod |
 | Unreal Music File | .umx | MikMod Converter | MikMod |
+| Wanton Packer | .wnp | ProWizard | ModTracker |
+| Xann Packer | .xann | ProWizard | ModTracker |
+| Zen Packer | .zen | ProWizard | ModTracker |
