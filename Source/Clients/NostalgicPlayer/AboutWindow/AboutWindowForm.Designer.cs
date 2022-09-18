@@ -52,6 +52,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 			// 
 			// pulseTimer
 			// 
+			this.pulseTimer.Interval = 70;
 			this.pulseTimer.Tick += new System.EventHandler(this.Pulse_Tick);
 			// 
 			// AboutWindowForm
