@@ -101,7 +101,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		private byte pattDelayTime;
 		private byte pattDelayTime2;
 		private bool patternLoopHandled;	// Indicate if an E6x effect has been handled on the same line. Only used for Atari Octalyser modules
-		private bool songStopped;
 
 		private AmSample[] amData;
 		private HmnSynthData[] hmnSynthData;
@@ -350,9 +349,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/********************************************************************/
 		public override void Play()
 		{
-			if (songStopped)
-				return;
-
 			patternLoopHandled = false;
 
 			if (speed != 0)				// Only play if speed <> 0
@@ -415,7 +411,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					}
 
 					// Have we played the whole pattern?
-					if ((patternPos >= patternLength) && !songStopped)
+					if (patternPos >= patternLength)
 						NextPosition();
 				}
 				else
@@ -449,13 +445,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			{
 				if ((durInfo == null) || (songPos < durInfo.StartPosition) || (songPos >= durInfo.PositionInfo.Length))
 				{
-					speed = 6;
+					ChangeSpeed(6);
 					ChangeTempo(initTempo);
 				}
 				else
 				{
 					PositionInfo posInfo = durInfo.PositionInfo[songPos - durInfo.StartPosition];
-					speed = posInfo.Speed;
+					ChangeSpeed(posInfo.Speed);
 					ChangeTempo((byte)posInfo.Bpm);
 				}
 
@@ -519,11 +515,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			pattDelayTime2 = 0;
 
 			// Change the speed
-			speed = positionInfo.Speed;
+			ChangeSpeed(positionInfo.Speed);
 			ChangeTempo((byte)positionInfo.Bpm);
-
-			// Change the module info
-			OnModuleInfoChanged(InfoSpeedLine, speed.ToString());
 		}
 
 
@@ -2038,7 +2031,6 @@ stopLoop:
 			lowMask = 0xff;
 			pattDelayTime = 0;
 			pattDelayTime2 = 0;
-			songStopped = false;
 
 			for (int i = 0; i < channelNum; i++)
 			{
@@ -3078,6 +3070,25 @@ stopLoop:
 
 		/********************************************************************/
 		/// <summary>
+		/// Will change the speed on the module
+		/// </summary>
+		/********************************************************************/
+		private void ChangeSpeed(byte newSpeed)
+		{
+			if (newSpeed != speed)
+			{
+				// Change the module info
+				OnModuleInfoChanged(InfoSpeedLine, newSpeed.ToString());
+
+				// Remember the speed
+				speed = newSpeed;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will change the tempo on the module
 		/// </summary>
 		/********************************************************************/
@@ -3085,7 +3096,7 @@ stopLoop:
 		{
 			if (newTempo != tempo)
 			{
-				// BPM speed
+				// BPM tempo
 				SetBpmTempo(newTempo);
 
 				// Change the module info
@@ -3826,10 +3837,7 @@ stopLoop:
 				if (newSpeed != 0)
 				{
 					// Set the new speed
-					speed = newSpeed;
-
-					// Change the module info
-					OnModuleInfoChanged(InfoSpeedLine, speed.ToString());
+					ChangeSpeed(newSpeed);
 				}
 			}
 			else if (IsNoiseTracker())
@@ -3840,10 +3848,7 @@ stopLoop:
 					newSpeed = 1;
 
 				// Set the new speed
-				speed = newSpeed;
-
-				// Change the module info
-				OnModuleInfoChanged(InfoSpeedLine, speed.ToString());
+				ChangeSpeed(newSpeed);
 			}
 			else
 			{
@@ -3855,18 +3860,22 @@ stopLoop:
 					else
 					{
 						// Set the new speed
-						speed = newSpeed;
+						ChangeSpeed(newSpeed);
 						counter = 0;
-
-						// Change the module info
-						OnModuleInfoChanged(InfoSpeedLine, speed.ToString());
 					}
 				}
 				else
 				{
 					// If speed is 0, we assume the module has ended (this will fix Kenmare River.mod)
-					songStopped = true;
 					endReached = true;
+
+					// Make the song start over from the beginning
+					int pos = durInfo?.StartPosition ?? 0;
+
+					oldSongPos = songPos;
+					songPos = (ushort)(pos - 1);
+					breakPos = 0;
+					posJumpFlag = true;
 				}
 			}
 		}
