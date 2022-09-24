@@ -675,7 +675,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 
 			for (int i = 0; i < 4; i++)
 			{
-				posTimes[i].Add(new PositionInfo(curTempo, 125, new TimeSpan(0), new ExtraPositionInfo[]
+				posTimes[i].Add(new PositionInfo(curTempo, 125, new TimeSpan(0), songNum, new ExtraPositionInfo[]
 				{
 					new ExtraPositionInfo(0, 0, 1),
 					new ExtraPositionInfo(0, 0, 1),
@@ -814,7 +814,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 				for (int i = 0; i < 4; i++)
 				{
 					if (changePos[i])
-						posTimes[i].Add(new PositionInfo(curTempo, 125, new TimeSpan((long)chanTimes[i] * TimeSpan.TicksPerMillisecond), extraInfo));
+						posTimes[i].Add(new PositionInfo(curTempo, 125, new TimeSpan((long)chanTimes[i] * TimeSpan.TicksPerMillisecond), songNum, extraInfo));
 				}
 			}
 

@@ -14,6 +14,7 @@ using Polycode.NostalgicPlayer.Agent.Player.Oktalyzer.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
@@ -46,6 +47,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		{
 			0, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3
 		};
+
+		private DurationInfo[] allDurations;
+
+		private int currentSong;
+		private bool[] visitedPositions;
 
 		private uint sampNum;
 		private ushort pattNum;
@@ -345,6 +351,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
 			// Initialize the variables
+			currentSong = songNumber;
+
+			visitedPositions = new bool[songLength];
+			visitedPositions[0] = true;
+
 			chanInfo = Helpers.InitializeArray<ChannelInfo>(8);
 			currLine = Helpers.InitializeArray<PatternLine>(8);
 			chanVol = new sbyte[8];
@@ -397,7 +408,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		/********************************************************************/
 		public override DurationInfo[] CalculateDuration()
 		{
-			return CalculateDurationBySongPosition();
+			allDurations = CalculateDurationBySongPosition();
+
+			return allDurations;
 		}
 
 
@@ -441,6 +454,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 
 		/********************************************************************/
 		/// <summary>
+		/// Return information about sub-songs
+		/// </summary>
+		/********************************************************************/
+		public override SubSongInfo SubSongs => new SubSongInfo(allDurations.Length, 0);
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the length of the current song
 		/// </summary>
 		/********************************************************************/
@@ -472,6 +494,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 			pattPos = 0;
 			currentSpeed = positionInfo.Speed;
 			speedCounter = currentSpeed;
+
+			ChangeSubSong(positionInfo.SubSong);
 		}
 
 
@@ -567,6 +591,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		/********************************************************************/
 		private void Cleanup()
 		{
+			visitedPositions = null;
+
 			patterns = null;
 			sampleInfo = null;
 			channelFlags = null;
@@ -857,9 +883,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 
 				if (newSongPos != -1)
 				{
-					if (newSongPos < songPos)
-						OnEndReached();
-
 					songPos = newSongPos;
 					newSongPos = -1;
 				}
@@ -870,13 +893,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				{
 					songPos = 0;
 					currentSpeed = startSpeed;
-
-					// Song end
-					OnEndReached();
 				}
 
 				// Tell NostalgicPlayer we have changed the song position
 				OnPositionChanged();
+
+				if (visitedPositions[songPos])
+				{
+					// Tell NostalgicPlayer that the module has ended
+					OnEndReached();
+
+					if (allDurations != null)
+						currentSpeed = allDurations[currentSong].PositionInfo[songPos].Speed;
+				}
+
+				visitedPositions[songPos] = true;
+
+				if (allDurations != null)
+					ChangeSubSong(allDurations[currentSong].PositionInfo[songPos].SubSong);
 
 				// Find the right pattern
 				patt = patterns[patternTable[songPos]];
@@ -1329,6 +1363,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 			// Play the note
 			chanData.CurrPeriod = periods[note];
 			VirtualChannels[channelNum].SetAmigaPeriod((uint)chanData.CurrPeriod);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will change the sub-song if needed
+		/// </summary>
+		/********************************************************************/
+		private void ChangeSubSong(int subSong)
+		{
+			if (subSong != currentSong)
+			{
+				currentSong = subSong;
+				OnSubSongChanged(new SubSongChangedEventArgs(subSong, allDurations[subSong]));
+			}
 		}
 		#endregion
 	}

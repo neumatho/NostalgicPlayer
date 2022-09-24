@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Containers.Events;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 {
@@ -29,5 +30,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Event called when the player change position
 		/// </summary>
 		event EventHandler PositionChanged;
+
+		/// <summary>
+		/// Event called when the player change sub-song
+		/// </summary>
+		public event SubSongChangedEventHandler SubSongChanged;
 	}
 }

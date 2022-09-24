@@ -16,6 +16,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 	/// </summary>
 	public class ModuleInfoFloating
 	{
+		private int currentSong;
 		private int songPosition;
 
 		/********************************************************************/
@@ -25,7 +26,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/********************************************************************/
 		public ModuleInfoFloating()
 		{
-			CurrentSong = 0;
+			currentSong = 0;
 			DurationInfo = null;
 			songPosition = 0;
 			SongLength = 0;
@@ -41,7 +42,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/********************************************************************/
 		internal ModuleInfoFloating(int songNumber, DurationInfo durationInfo, int songPosition, int songLength, string[] moduleInfo)
 		{
-			CurrentSong = songNumber;
+			currentSong = songNumber;
 			DurationInfo = durationInfo;
 			this.songPosition = songPosition;
 			SongLength = songLength;
@@ -57,7 +58,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/********************************************************************/
 		internal ModuleInfoFloating(DurationInfo durationInfo, int songPosition, int songLength, string[] moduleInfo)
 		{
-			CurrentSong = 0;
+			currentSong = 0;
 			DurationInfo = durationInfo;
 			this.songPosition = songPosition;
 			SongLength = songLength;
@@ -73,7 +74,29 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/********************************************************************/
 		public int CurrentSong
 		{
-			get;
+			get
+			{
+				lock (this)
+				{
+					return currentSong;
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Change the current song
+		/// </summary>
+		/********************************************************************/
+		public void SetCurrentSong(int newSubSong, DurationInfo newDurationInfo)
+		{
+			lock (this)
+			{
+				currentSong = newSubSong;
+				DurationInfo = newDurationInfo;
+			}
 		}
 
 
@@ -85,7 +108,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/********************************************************************/
 		public DurationInfo DurationInfo
 		{
-			get;
+			get; private set;
 		}
 
 

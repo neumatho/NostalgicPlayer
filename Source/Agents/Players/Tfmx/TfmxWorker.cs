@@ -577,7 +577,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				// Now take each position
 				for (int j = startPos; j <= endPos; j++)
 				{
-					PositionInfo posInfo = new PositionInfo((byte)spd, cia, new TimeSpan((long)total * TimeSpan.TicksPerMillisecond));
+					PositionInfo posInfo = new PositionInfo((byte)spd, cia, new TimeSpan((long)total * TimeSpan.TicksPerMillisecond), i);
 
 					while ((j - startPos) >= posInfoList.Count)
 						posInfoList.Add(posInfo);

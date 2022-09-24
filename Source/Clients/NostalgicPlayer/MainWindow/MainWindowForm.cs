@@ -912,6 +912,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			// Module handler
 			moduleHandler.PositionChanged += ModuleHandler_PositionChanged;
+			moduleHandler.SubSongChanged += ModuleHandler_SubSongChanged;
 			moduleHandler.EndReached += ModuleHandler_EndReached;
 			moduleHandler.ModuleInfoChanged += ModuleHandler_ModuleInfoChanged;
 			moduleHandler.PlayerFailed += ModuleHandler_PlayerFailed;
@@ -1428,6 +1429,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private void ModuleHandler_PositionChanged(object sender, EventArgs e)
 		{
 			HandlePositionChanged();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called every time the player changed sub-song
+		/// </summary>
+		/********************************************************************/
+		private void ModuleHandler_SubSongChanged(object sender, SubSongChangedEventArgs e)
+		{
+			HandleSubSongChanged();
 		}
 
 
@@ -4376,7 +4389,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void HandlePositionChanged()
 		{
-			BeginInvoke(new Action(() =>
+			BeginInvoke(() =>
 			{
 				int newPos = moduleHandler.PlayingModuleInformation.SongPosition;
 
@@ -4435,7 +4448,27 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						}
 					}
 				}
-			}));
+			});
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handle sub-song changed event
+		/// </summary>
+		/********************************************************************/
+		private void HandleSubSongChanged()
+		{
+			BeginInvoke(() =>
+			{
+				timeOccurred = moduleHandler.GetPositionTime(moduleHandler.PlayingModuleInformation.SongPosition);
+				timeStart = DateTime.Now - timeOccurred;
+
+				SetPositionTime(moduleHandler.PlayingModuleInformation.SongPosition);
+				PrintInfo();
+				UpdateTapeDeck();
+			});
 		}
 
 
@@ -4447,7 +4480,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void HandleEndReached()
 		{
-			BeginInvoke(new Action<ModuleListItem>((itemToEnd) =>
+			BeginInvoke((ModuleListItem itemToEnd) =>
 			{
 				lock (processingEndReached)
 				{
@@ -4515,7 +4548,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						}
 					}
 				}
-			}), playItem);
+			}, playItem);
 		}
 		#endregion
 

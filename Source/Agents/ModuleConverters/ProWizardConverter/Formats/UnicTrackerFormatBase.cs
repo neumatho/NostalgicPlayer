@@ -104,6 +104,11 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 					if ((byt3 & 0x0f) == 0x0d)
 						byt4 = (byte)((byt4 / 10) * 0x10 + (byt4 % 10));
 
+					// Beast-Busters.unic uses 800 for sub-song stop marker.
+					// Convert this to F00 instead
+					if (((byt3 & 0x0f) == 0x08) && (byt4 == 0x00))
+						byt3 = (byte)((byt3 & 0xf0) | 0x0f);
+
 					// Copy the pattern data
 					pattern[j * 4] = byt1;
 					pattern[j * 4 + 1] = byt2;

@@ -84,6 +84,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 							// Subscribe the events
 							currentPlayer.PositionChanged += Player_PositionChanged;
 							currentPlayer.ModuleInfoChanged += Player_ModuleInfoChanged;
+							currentPlayer.SubSongChanged += Player_SubSongChanged;
 
 							// Initialize module information
 							StaticModuleInformation = new ModuleInfoStatic(loader.PlayerAgentInfo, loader.ConverterAgentInfo, currentPlayer.ModuleName.Trim(), FindAuthor(), currentPlayer.Comment, currentPlayer.CommentFont, currentPlayer.Lyrics, currentPlayer.LyricsFont, loader.ModuleFormat, loader.PlayerName, currentPlayer.ModuleChannelCount, currentPlayer.VirtualChannelCount, loader.CrunchedSize, loader.ModuleSize, currentPlayer.SupportFlags, currentPlayer.SubSongs.Number, currentPlayer.Instruments, currentPlayer.Samples);
@@ -145,6 +146,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						// Unsubscribe the events
 						currentPlayer.PositionChanged -= Player_PositionChanged;
 						currentPlayer.ModuleInfoChanged -= Player_ModuleInfoChanged;
+						currentPlayer.SubSongChanged -= Player_SubSongChanged;
 
 						allSongsInfo = null;
 						currentPlayer = null;
@@ -359,6 +361,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// </summary>
 		/********************************************************************/
 		public event ModuleInfoChangedEventHandler ModuleInfoChanged;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Event called when the player change sub-song
+		/// </summary>
+		/********************************************************************/
+		public event SubSongChangedEventHandler SubSongChanged;
 		#endregion
 
 		#region IModulePlayer implementation
@@ -484,6 +495,26 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				// Just call the next event handler
 				if (ModuleInfoChanged != null)
 					ModuleInfoChanged(sender, e);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the player change the sub-song
+		/// </summary>
+		/********************************************************************/
+		private void Player_SubSongChanged(object sender, SubSongChangedEventArgs e)
+		{
+			if (currentPlayer != null)
+			{
+				// Update the sub-song
+				PlayingModuleInformation.SetCurrentSong(e.SubSong, e.DurationInfo);
+
+				// Just call the next event handler
+				if (SubSongChanged != null)
+					SubSongChanged(sender, e);
 			}
 		}
 

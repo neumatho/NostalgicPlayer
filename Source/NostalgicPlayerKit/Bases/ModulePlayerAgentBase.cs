@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Kit.Bases
@@ -281,6 +282,15 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		public event EventHandler PositionChanged;
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Event called when the player change sub-song
+		/// </summary>
+		/********************************************************************/
+		public event SubSongChangedEventHandler SubSongChanged;
+
 		#region Helper methods
 		/********************************************************************/
 		/// <summary>
@@ -291,6 +301,19 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		{
 			if (PositionChanged != null)
 				PositionChanged(this, EventArgs.Empty);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Call this every time your player change the sub-song
+		/// </summary>
+		/********************************************************************/
+		protected void OnSubSongChanged(SubSongChangedEventArgs e)
+		{
+			if (SubSongChanged != null)
+				SubSongChanged(this, e);
 		}
 
 
@@ -318,7 +341,10 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		{
 			List<DurationInfo> result = new List<DurationInfo>();
 
+			PositionInfo[] positionTimes = new PositionInfo[SongLength];
+
 			int songStartPos = 0;
+			int subSong = 0;
 			DateTime startTime = DateTime.Now;
 
 			do
@@ -327,35 +353,28 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 				if (songStartPos < 0)
 					break;
 
-				int prevPos = -1;
+				int previousPos = -1;
 				float total = 0.0f;
 
 				byte currentSpeed = GetCurrentSpeed();
 				ushort currentBpm = GetCurrentBpm();
 				object extraInfo = GetExtraPositionInfo();
 
-				List<PositionInfo> positionTimes = new List<PositionInfo>();
-
-				// Well, fill the position time list with empty times until
-				// we reach the sub-song position
-				for (int i = 0; i < songStartPos; i++)
-					positionTimes.Add(new PositionInfo(currentSpeed, currentBpm, new TimeSpan(0), extraInfo));
-
 				HasEndReached = false;
 
 				for (;;)
 				{
-					if (prevPos < GetSongPosition())
+					int currentPos = GetSongPosition();
+					if (currentPos != previousPos)
 					{
-						prevPos = GetSongPosition();
+						if (!playerTellsWhenToStop && (positionTimes[currentPos] != null))	// Position has already been taken by another sub-song
+							break;
+
+						previousPos = currentPos;
 
 						// Add position information to the list
-						PositionInfo posInfo = new PositionInfo(currentSpeed, currentBpm, new TimeSpan((long)total * TimeSpan.TicksPerMillisecond), extraInfo);
-
-						// Need to make a while, in case there is a position jump
-						// that jumps forward, then we're missing some items in the list
-						while (prevPos >= positionTimes.Count)
-							positionTimes.Add(posInfo);
+						PositionInfo posInfo = new PositionInfo(currentSpeed, currentBpm, new TimeSpan((long)total * TimeSpan.TicksPerMillisecond), subSong, extraInfo);
+						positionTimes[currentPos] = posInfo;
 					}
 
 					// "Play" a single tick
@@ -380,21 +399,19 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 				// Calculate the total time of the song
 				TimeSpan totalTime = new TimeSpan((long)total * TimeSpan.TicksPerMillisecond);
 
-				// Find new start position
-				int newStartPosition = positionTimes.Count;
-
-				// Fill the rest of the list with total time
-				for (int i = positionTimes.Count; i < SongLength; i++)
-					positionTimes.Add(new PositionInfo(currentSpeed, currentBpm, totalTime, extraInfo));
-
 				// Remember the song
-				result.Add(new DurationInfo(totalTime, positionTimes.ToArray(), songStartPos));
-
-				songStartPos = newStartPosition;
+				//
+				// Note that the same positionTimes array is used for all sub-songs,
+				// so even if it's not totally updated now, it will be later
+				result.Add(new DurationInfo(totalTime, positionTimes, songStartPos));
 
 				CleanupDurationCalculation();
+				subSong++;
+
+				// Find new start position
+				songStartPos = Array.FindIndex(positionTimes, item => item == null);
 			}
-			while (playerTellsWhenToStop || (songStartPos < SongLength));
+			while (playerTellsWhenToStop || (songStartPos != -1));
 
 			// Clear the "end" flag again, so the module don't stop playing immediately
 			HasEndReached = false;
@@ -433,12 +450,13 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 				for (;;)
 				{
-					if (prevPos < GetSongPosition())
+					int currentPos = GetSongPosition();
+					if (prevPos != currentPos)
 					{
-						prevPos = GetSongPosition();
+						prevPos = currentPos;
 
 						// Add position information to the list
-						PositionInfo posInfo = new PositionInfo(currentSpeed, currentBpm, new TimeSpan((long)total * TimeSpan.TicksPerMillisecond), extraInfo);
+						PositionInfo posInfo = new PositionInfo(currentSpeed, currentBpm, new TimeSpan((long)total * TimeSpan.TicksPerMillisecond), song, extraInfo);
 
 						// Need to make a while, in case there is a position jump
 						// that jumps forward, then we're missing some items in the list
@@ -470,7 +488,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 				// Fill the rest of the list with total time
 				for (int i = positionTimes.Count; i < SongLength; i++)
-					positionTimes.Add(new PositionInfo(currentSpeed, currentBpm, totalTime, extraInfo));
+					positionTimes.Add(new PositionInfo(currentSpeed, currentBpm, totalTime, song, extraInfo));
 
 				// Remember the song
 				result.Add(new DurationInfo(totalTime, positionTimes.ToArray(), 0));

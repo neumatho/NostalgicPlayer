@@ -54,6 +54,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 		/********************************************************************/
 		/// <summary>
+		/// Event called when the player change sub-song
+		/// </summary>
+		/********************************************************************/
+		public event SubSongChangedEventHandler SubSongChanged;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Event called when the player reached the end
 		/// </summary>
 		/********************************************************************/
@@ -346,18 +355,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 					player.StopPlaying(false);
 
+					// Unsubscribe to event notifications
 					if (player is IModulePlayer modulePlayer)
 					{
-						// Unsubscribe to position changes
 						modulePlayer.PositionChanged -= Player_PositionChanged;
+						modulePlayer.SubSongChanged -= Player_SubSongChanged;
 					}
 					else if (player is ISamplePlayer samplePlayer)
 					{
-						// Unsubscribe to position changes
 						samplePlayer.PositionChanged -= Player_PositionChanged;
 					}
 
-					// Unsubscribe to event notifications
 					player.EndReached -= Player_EndReached;
 					player.ModuleInfoChanged -= Player_ModuleInfoChanged;
 
@@ -392,18 +400,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					// Stop the playing
 					player.StopPlaying();
 
+					// Unsubscribe to event notifications
 					if (player is IModulePlayer modulePlayer)
 					{
-						// Unsubscribe to position changes
 						modulePlayer.PositionChanged -= Player_PositionChanged;
+						modulePlayer.SubSongChanged -= Player_SubSongChanged;
 					}
 					else if (player is ISamplePlayer samplePlayer)
 					{
-						// Unsubscribe to position changes
 						samplePlayer.PositionChanged -= Player_PositionChanged;
 					}
 
-					// Unsubscribe to event notifications
 					player.EndReached -= Player_EndReached;
 					player.ModuleInfoChanged -= Player_ModuleInfoChanged;
 
@@ -700,6 +707,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 		/********************************************************************/
 		/// <summary>
+		/// Call this every time the player change the sub-song
+		/// </summary>
+		/********************************************************************/
+		private void Player_SubSongChanged(object sender, SubSongChangedEventArgs e)
+		{
+			// Just call the next event handler
+			if (SubSongChanged != null)
+				SubSongChanged(sender, e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Is called when the player has reached the end
 		/// </summary>
 		/********************************************************************/
@@ -859,12 +880,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					if ((startPos != -1) && (modulePlayer.StaticModuleInformation.CanChangePosition))
 						modulePlayer.SetSongPosition(startPos);
 
-					// Subscribe to position changes
+					// Subscribe to event notifications
 					modulePlayer.PositionChanged += Player_PositionChanged;
+					modulePlayer.SubSongChanged += Player_SubSongChanged;
 				}
 				else if (player is ISamplePlayer samplePlayer)
 				{
-					// Unsubscribe to position changes
+					// Subscribe to event notifications
 					samplePlayer.PositionChanged += Player_PositionChanged;
 				}
 

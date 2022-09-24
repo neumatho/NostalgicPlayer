@@ -15,6 +15,7 @@ using Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Extensions;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
@@ -56,9 +57,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		private readonly ModuleType currentModuleType;
 		private bool packed;
 
-		private DurationInfo durInfo;
+		private DurationInfo[] allDurations;
 
-		private ushort subSongCount;
+		private int currentSong;
+		private bool[] visitedPositions;
 		private bool endReached;
 
 		private string songName;
@@ -88,11 +90,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		private ushort songPos;
 		private ushort patternPos;
 		private ushort breakPos;
-		private ushort lastBreakPos;
-		private ushort lastSongPos;
 		private bool posJumpFlag;
 		private bool breakFlag;
-		private bool gotJump;
 		private bool gotBreak;
 		private byte tempo;
 		private byte speed;
@@ -317,9 +316,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/********************************************************************/
 		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
-			durInfo = durationInfo;
-
-			InitializeSound(durationInfo.StartPosition);
+			currentSong = songNumber;
+			InitializeSound(allDurations[songNumber].StartPosition);
 
 			return base.InitSound(songNumber, durationInfo, out errorMessage);
 		}
@@ -333,11 +331,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/********************************************************************/
 		public override DurationInfo[] CalculateDuration()
 		{
-			DurationInfo[] durations = CalculateDurationBySongPosition();
+			allDurations = CalculateDurationBySongPosition();
 
-			subSongCount = (ushort)durations.Length;
-
-			return durations;
+			return allDurations;
 		}
 
 
@@ -379,32 +375,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 							patternPos--;
 					}
 
-					// Has the module ended (from a Bxx effect on same position)?
-					if (gotJump)
-					{
-						// If we got both a Bxx and Dxx command
-						// on the same line, make some sanity
-						// checks to make sure if we should end
-						// the module or not (it could run backwards)
-						endReached = !gotBreak || ((breakPos == 0) && ((songPos == 0xffff) || (oldSongPos == songLength - 1)));
-						endReached = endReached || ((breakPos == patternPos - 1) && (songPos == oldSongPos - 1));
-
-						if (gotBreak && !endReached)
-							endReached = (breakPos == lastBreakPos) && (songPos == lastSongPos);
-
-						lastBreakPos = breakPos;
-						lastSongPos = songPos;
-
-						gotJump = false;
-					}
-
-					// Make sure that the break flag is always cleared
-					gotBreak = false;
-
-					// Pattern break
+					// Pattern loop?
 					if (breakFlag)
 					{
-						// Calculate new position in the next pattern
 						breakFlag = false;
 						patternPos = breakPos;
 						breakPos = 0;
@@ -443,16 +416,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			// If we have reached the end of the module, reset speed and tempo
 			if (endReached)
 			{
-				if ((durInfo == null) || (songPos < durInfo.StartPosition) || (songPos >= durInfo.PositionInfo.Length))
+				if (allDurations == null)
 				{
 					ChangeSpeed(6);
 					ChangeTempo(initTempo);
 				}
 				else
 				{
-					PositionInfo posInfo = durInfo.PositionInfo[songPos - durInfo.StartPosition];
+					PositionInfo posInfo = allDurations[currentSong].PositionInfo[songPos];
 					ChangeSpeed(posInfo.Speed);
 					ChangeTempo((byte)posInfo.Bpm);
+					ChangeSubSong(posInfo.SubSong);
 				}
 
 				OnEndReached();
@@ -476,7 +450,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// Return information about sub-songs
 		/// </summary>
 		/********************************************************************/
-		public override SubSongInfo SubSongs => new SubSongInfo(subSongCount, 0);
+		public override SubSongInfo SubSongs => new SubSongInfo(allDurations.Length, 0);
 
 
 
@@ -517,6 +491,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			// Change the speed
 			ChangeSpeed(positionInfo.Speed);
 			ChangeTempo((byte)positionInfo.Bpm);
+			ChangeSubSong(positionInfo.SubSong);
 		}
 
 
@@ -2016,6 +1991,9 @@ stopLoop:
 		private void InitializeSound(int startPosition)
 		{
 			// Initialize all the variables
+			visitedPositions = new bool[songLength];
+			visitedPositions[startPosition] = true;
+
 			endReached = false;
 
 			speed = 6;
@@ -2026,7 +2004,6 @@ stopLoop:
 			breakPos = 0;
 			posJumpFlag = false;
 			breakFlag = false;
-			gotJump = false;
 			gotBreak = false;
 			lowMask = 0xff;
 			pattDelayTime = 0;
@@ -2102,6 +2079,8 @@ stopLoop:
 		/********************************************************************/
 		private void Cleanup()
 		{
+			visitedPositions = null;
+
 			panning = null;
 			positions = null;
 
@@ -2136,10 +2115,6 @@ stopLoop:
 		/********************************************************************/
 		private void NextPosition()
 		{
-			// Initialize the position variables
-			patternPos = breakPos;
-			breakPos = 0;
-			posJumpFlag = false;
 			songPos += 1;
 
 			if (songPos >= songLength)
@@ -2149,9 +2124,28 @@ stopLoop:
 				// And the module has repeated
 				endReached = true;
 			}
+			else
+			{
+				if (visitedPositions[songPos])
+				{
+					if (!gotBreak || (songPos != oldSongPos) || (gotBreak && (breakPos == (patternPos - 1))))
+						endReached = true;
+				}
+			}
+
+			// Initialize the position variables
+			visitedPositions[songPos] = true;
+
+			patternPos = breakPos;
+			breakPos = 0;
+			posJumpFlag = false;
+			gotBreak = false;
 
 			// Position has changed
 			OnPositionChanged();
+
+			if (allDurations != null)
+				ChangeSubSong(allDurations[currentSong].PositionInfo[songPos].SubSong);
 		}
 
 
@@ -3111,6 +3105,22 @@ stopLoop:
 
 		/********************************************************************/
 		/// <summary>
+		/// Will change the sub-song if needed
+		/// </summary>
+		/********************************************************************/
+		private void ChangeSubSong(int subSong)
+		{
+			if (subSong != currentSong)
+			{
+				currentSong = subSong;
+				OnSubSongChanged(new SubSongChangedEventArgs(subSong, allDurations[subSong]));
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Handles StarTrekker AM samples
 		/// </summary>
 		/********************************************************************/
@@ -3766,11 +3776,6 @@ stopLoop:
 		private void PositionJump(ModChannel modChan)
 		{
 			byte pos = modChan.TrackLine.EffectArg;
-			if (pos < songPos)
-				endReached = true;		// Module has repeated
-
-			if (pos == songPos)
-				gotJump = true;			// Module jump to the same position, maybe end
 
 			// Set the new position
 			oldSongPos = songPos;
@@ -3870,7 +3875,7 @@ stopLoop:
 					endReached = true;
 
 					// Make the song start over from the beginning
-					int pos = durInfo?.StartPosition ?? 0;
+					int pos = allDurations?[currentSong].StartPosition ?? 0;
 
 					oldSongPos = songPos;
 					songPos = (ushort)(pos - 1);

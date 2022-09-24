@@ -14,6 +14,7 @@ using Polycode.NostalgicPlayer.Agent.Player.SoundMon.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
@@ -50,6 +51,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 		private readonly ModuleType currentModuleType;
 
+		private DurationInfo[] allDurations;
+
+		private int currentSong;
+		private bool[] visitedPositions;
+
 		private string moduleName;
 		private byte waveNum;
 		private ushort stepNum;
@@ -74,8 +80,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		private byte bpRepCount;
 		private byte newPos;
 		private bool posFlag;
-
-		private ushort subSongCount;
 
 		private const int InfoSpeedLine = 4;
 
@@ -472,6 +476,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		/********************************************************************/
 		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
+			currentSong = songNumber;
 			InitializeSound(durationInfo.StartPosition);
 
 			return base.InitSound(songNumber, durationInfo, out errorMessage);
@@ -509,11 +514,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		/********************************************************************/
 		public override DurationInfo[] CalculateDuration()
 		{
-			DurationInfo[] durations = CalculateDurationBySongPosition();
+			allDurations = CalculateDurationBySongPosition(true);
 
-			subSongCount = (ushort)durations.Length;
-
-			return durations;
+			return allDurations;
 		}
 
 
@@ -536,7 +539,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		/// Return information about sub-songs
 		/// </summary>
 		/********************************************************************/
-		public override SubSongInfo SubSongs => new SubSongInfo(subSongCount, 0);
+		public override SubSongInfo SubSongs => new SubSongInfo(allDurations.Length, 0);
 
 
 
@@ -571,6 +574,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 			// Change the position
 			bpStep = (ushort)position;
 			bpPatCount = 0;
+			bpRepCount = 0;
 			posFlag = false;
 
 			// Change the speed
@@ -579,6 +583,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 			// Change the module info
 			OnModuleInfoChanged(InfoSpeedLine, bpDelay.ToString());
+			ChangeSubSong(positionInfo.SubSong);
 		}
 
 
@@ -664,6 +669,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		/********************************************************************/
 		protected override int InitDurationCalculationByStartPos(int startPosition)
 		{
+			if ((startPosition < 0) || (startPosition >= stepNum))
+				return -1;
+
 			InitializeSound(startPosition);
 
 			return startPosition;
@@ -731,6 +739,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		/********************************************************************/
 		private void Cleanup()
 		{
+			visitedPositions = null;
+
 			instruments = null;
 			steps = null;
 			tracks = null;
@@ -747,6 +757,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		private void InitializeSound(int startPosition)
 		{
 			// Initialize member variables
+			visitedPositions = new bool[stepNum];
+			visitedPositions[startPosition] = true;
+
 			arpCount = 1;
 			bpCount = 1;
 			bpDelay = 6;
@@ -882,15 +895,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 			// Change the position
 			if (posFlag)
 			{
-				if (newPos <= bpStep)
-					OnEndReached();
-
 				posFlag = false;
 				bpPatCount = 0;
 				bpStep = newPos;
 
-				// Tell NostalgicPlayer we have changed the position
-				OnPositionChanged();
+				TellPositionChanged();
 			}
 			else
 			{
@@ -906,11 +915,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 					{
 						// Done with the module, repeat it
 						bpStep = 0;
+
+						if (allDurations != null)
+							bpDelay = allDurations[currentSong].PositionInfo[bpStep].Speed;
+
 						OnEndReached();
 					}
 
-					// Tell NostalgicPlayer we have changed the position
-					OnPositionChanged();
+					TellPositionChanged();
 				}
 			}
 		}
@@ -1118,8 +1130,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 									posFlag = true;
 
 									// Set the "end" mark, if we have to
-									// repeat the block more than 14 times
-									if (bpRepCount >= 15)
+									// repeat the block a lot
+									if ((bpRepCount == 254) || ((bpRepCount >= 15) && (newPos < bpStep)))
 										OnEndReached();
 								}
 							}
@@ -1619,6 +1631,45 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 				sourceOffset++;
 				destOffset++;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will tell NostagicPlayer the position has changed
+		/// </summary>
+		/********************************************************************/
+		private void TellPositionChanged()
+		{
+			OnPositionChanged();
+
+			if (bpRepCount == 0)
+			{
+				if (visitedPositions[bpStep])
+					OnEndReached();
+
+				visitedPositions[bpStep] = true;
+			}
+
+			if (allDurations != null)
+				ChangeSubSong(allDurations[currentSong].PositionInfo[bpStep].SubSong);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will change the sub-song if needed
+		/// </summary>
+		/********************************************************************/
+		private void ChangeSubSong(int subSong)
+		{
+			if (subSong != currentSong)
+			{
+				currentSong = subSong;
+				OnSubSongChanged(new SubSongChangedEventArgs(subSong, allDurations[subSong]));
 			}
 		}
 		#endregion

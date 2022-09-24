@@ -20,11 +20,12 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor (used by module players)
 		/// </summary>
 		/********************************************************************/
-		public PositionInfo(byte speed, ushort bpm, TimeSpan time, object extra = null)
+		public PositionInfo(byte speed, ushort bpm, TimeSpan time, int subSong, object extra = null)
 		{
 			Speed = speed;
 			Bpm = bpm;
 			Time = time;
+			SubSong = subSong;
 			ExtraInfo = extra;
 		}
 
@@ -73,6 +74,18 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// </summary>
 		/********************************************************************/
 		public TimeSpan Time
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the current sub-song
+		/// </summary>
+		/********************************************************************/
+		public int SubSong
 		{
 			get;
 		}

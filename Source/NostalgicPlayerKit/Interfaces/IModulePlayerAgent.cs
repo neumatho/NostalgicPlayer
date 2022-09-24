@@ -8,6 +8,7 @@
 /******************************************************************************/
 using System;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Events;
 
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
@@ -132,5 +133,10 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Event called when the player change position
 		/// </summary>
 		event EventHandler PositionChanged;
+
+		/// <summary>
+		/// Event called when the player change sub-song
+		/// </summary>
+		public event SubSongChangedEventHandler SubSongChanged;
 	}
 }
