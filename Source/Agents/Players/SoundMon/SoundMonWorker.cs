@@ -572,6 +572,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		public override void SetSongPosition(int position, PositionInfo positionInfo)
 		{
 			// Change the position
+			visitedPositions[bpStep] = false;
+
 			bpStep = (ushort)position;
 			bpPatCount = 0;
 			bpRepCount = 0;

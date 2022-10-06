@@ -490,6 +490,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		public override void SetSongPosition(int position, PositionInfo positionInfo)
 		{
 			// Change the position
+			visitedPositions[songPos] = false;
+
 			songPos = (short)position;
 			pattPos = 0;
 			currentSpeed = positionInfo.Speed;

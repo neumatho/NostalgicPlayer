@@ -483,6 +483,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		public override void SetSongPosition(int position, PositionInfo positionInfo)
 		{
 			// Change the position
+			visitedPositions[songPos] = false;
+
 			songPos = (ushort)position;
 			patternPos = 0;
 			pattDelayTime = 0;
