@@ -8,6 +8,7 @@
     <Product>NostalgicPlayer</Product>
     <Description>Player to the Ogg Vorbis samples.</Description>
     <Copyright>Copyright © 2021-2022</Copyright>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
