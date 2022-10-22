@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// Power Music
 	/// </summary>
-	internal class PowerMusicFormat : ProWizardConverterWorkerBase
+	internal class PowerMusicFormat : ProWizardConverterWorker31SamplesBase
 	{
 		private byte numberOfPositions;
 		private byte restartPosition;

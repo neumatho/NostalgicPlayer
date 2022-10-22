@@ -73,6 +73,28 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 		private static readonly Guid agent47Id = Guid.Parse("4E844C1F-A38F-4F2F-8A24-05D66DCDFD07");
 		private static readonly Guid agent48Id = Guid.Parse("C02965F7-B17C-46DD-8E0A-2CDB4951961B");
 
+		private static readonly Guid agent49Id = Guid.Parse("43221431-A820-4F43-A428-EAF117E2FA5C");
+		private static readonly Guid agent50Id = Guid.Parse("2A2584C8-8566-49C7-BE8A-4920FCDD7D52");
+		private static readonly Guid agent51Id = Guid.Parse("8870582C-6B1B-43F7-8946-BEFA09C98E0D");
+		private static readonly Guid agent52Id = Guid.Parse("2A9E8B08-30ED-4FE9-A2D0-748F0873013B");
+		private static readonly Guid agent53Id = Guid.Parse("596498CF-6B75-48CE-9C07-3E67A3947CF7");
+		private static readonly Guid agent54Id = Guid.Parse("98F2B102-6592-47F2-BF9A-0D4826C0CD3C");
+		private static readonly Guid agent55Id = Guid.Parse("BB892306-5E39-4048-9F07-63EAE5287706");
+		private static readonly Guid agent56Id = Guid.Parse("2EF52E59-2B59-4688-A462-9DEA44B2545F");
+		private static readonly Guid agent57Id = Guid.Parse("59BCC0C6-1D86-45A4-B3BD-DEE1DF299F09");
+		private static readonly Guid agent58Id = Guid.Parse("D892C2B1-E171-46A8-8955-5FBD7349BA13");
+		private static readonly Guid agent59Id = Guid.Parse("FED470B5-82BA-416D-8455-16EA8169C123");
+		private static readonly Guid agent60Id = Guid.Parse("09676385-57D7-43AA-A33B-E47A947F6614");
+		private static readonly Guid agent61Id = Guid.Parse("2AFDA9C3-D213-4036-90F2-6E3145AB6A4D");
+		private static readonly Guid agent62Id = Guid.Parse("A4E24245-A678-4535-89D1-A645A6A677D1");
+		private static readonly Guid agent63Id = Guid.Parse("2CC711C5-A812-4B1B-991F-772EAC5A6603");
+		private static readonly Guid agent64Id = Guid.Parse("814D9C79-5E35-4778-9476-DD353D5C47DB");
+		private static readonly Guid agent65Id = Guid.Parse("F86A3C6D-48B5-4D3A-A7C4-F9959FA15AC9");
+		private static readonly Guid agent66Id = Guid.Parse("8CC30FBE-191C-466B-997E-F6139A9AAC5F");
+		private static readonly Guid agent67Id = Guid.Parse("F591D8C0-F14D-49C5-AE95-45EA87067365");
+		private static readonly Guid agent68Id = Guid.Parse("B0F55657-43CD-416E-9CD5-CB665082F065");
+		private static readonly Guid agent69Id = Guid.Parse("615E17E3-55F7-4AEA-B7D7-2DE1BB7B6FB7");
+
 		#region IAgent implementation
 		/********************************************************************/
 		/// <summary>
@@ -157,9 +179,30 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT45, Resources.IDS_PROWIZ_DESCRIPTION_AGENT45, agent45Id),
 					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT46, Resources.IDS_PROWIZ_DESCRIPTION_AGENT46, agent46Id),
 					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT47, Resources.IDS_PROWIZ_DESCRIPTION_AGENT47, agent47Id),
-					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT48, Resources.IDS_PROWIZ_DESCRIPTION_AGENT48, agent48Id)
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT48, Resources.IDS_PROWIZ_DESCRIPTION_AGENT48, agent48Id),
 
 					// These formats are from ProWizard for PC by Sylvain "Asle" Chipaux
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT49, Resources.IDS_PROWIZ_DESCRIPTION_AGENT49, agent49Id),
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT50, Resources.IDS_PROWIZ_DESCRIPTION_AGENT50, agent50Id),
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT51, Resources.IDS_PROWIZ_DESCRIPTION_AGENT51, agent51Id),
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT52, Resources.IDS_PROWIZ_DESCRIPTION_AGENT52, agent52Id),
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT53, Resources.IDS_PROWIZ_DESCRIPTION_AGENT53, agent53Id),
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT54, Resources.IDS_PROWIZ_DESCRIPTION_AGENT54, agent54Id),
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT55, Resources.IDS_PROWIZ_DESCRIPTION_AGENT55, agent55Id),
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT56, Resources.IDS_PROWIZ_DESCRIPTION_AGENT56, agent56Id),
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT57, Resources.IDS_PROWIZ_DESCRIPTION_AGENT57, agent57Id),
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT58, Resources.IDS_PROWIZ_DESCRIPTION_AGENT58, agent58Id),
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT59, Resources.IDS_PROWIZ_DESCRIPTION_AGENT59, agent59Id),
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT60, Resources.IDS_PROWIZ_DESCRIPTION_AGENT60, agent60Id),
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT61, Resources.IDS_PROWIZ_DESCRIPTION_AGENT61, agent61Id),
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT62, Resources.IDS_PROWIZ_DESCRIPTION_AGENT62, agent62Id),
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT63, Resources.IDS_PROWIZ_DESCRIPTION_AGENT63, agent63Id),
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT64, Resources.IDS_PROWIZ_DESCRIPTION_AGENT64, agent64Id),
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT65, Resources.IDS_PROWIZ_DESCRIPTION_AGENT65, agent65Id),
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT66, Resources.IDS_PROWIZ_DESCRIPTION_AGENT66, agent66Id),
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT67, Resources.IDS_PROWIZ_DESCRIPTION_AGENT67, agent67Id),
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT68, Resources.IDS_PROWIZ_DESCRIPTION_AGENT68, agent68Id),
+					new AgentSupportInfo(Resources.IDS_PROWIZ_NAME_AGENT69, Resources.IDS_PROWIZ_DESCRIPTION_AGENT69, agent69Id)
 				};
 			}
 		}
@@ -319,6 +362,68 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 				return new ZenPackerFormat();
 
 			// These formats are from ProWizard for PC by Sylvain "Asle" Chipaux
+			if (typeId == agent49Id)
+				return new BenReplayFormat();
+
+			if (typeId == agent50Id)
+				return new BinaryPackerFormat();
+
+			if (typeId == agent51Id)
+				return new DevilsReplayFormat();
+
+			if (typeId == agent52Id)
+				return new FuchsTrackerFormat();
+
+			if (typeId == agent53Id)
+				return new GnoiPackerFormat();
+
+			if (typeId == agent54Id)
+				return new GnuPlayerFormat();
+
+			if (typeId == agent55Id)
+				return new GpmoFormat();
+
+			if (typeId == agent56Id)
+				return new HcdProtectorFormat();
+
+			if (typeId == agent57Id)
+				return new ModulePatterncompressorFormat();
+
+			if (typeId == agent58Id)
+				return new MoshFormat();
+
+			if (typeId == agent59Id)
+				return new NewtronPacker10Format();
+
+			if (typeId == agent60Id)
+				return new NewtronPacker20Format();
+
+			if (typeId == agent61Id)
+				return new NovoTradePackerFormat();
+
+			if (typeId == agent62Id)
+				return new PerfectSong1Format();
+
+			if (typeId == agent63Id)
+				return new PerfectSong2Format();
+
+			if (typeId == agent64Id)
+				return new SlamTiltFormat();
+
+			if (typeId == agent65Id)
+				return new TheDarkDemonFormat();
+
+			if (typeId == agent66Id)
+				return new ThePlayer22AFormat();
+
+			if (typeId == agent67Id)
+				return new ThePlayer30AFormat();
+
+			if (typeId == agent68Id)
+				return new TitanicsPlayerFormat();
+
+			if (typeId == agent69Id)
+				return new TmkReplayFormat();
 
 			return null;
 		}

@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// NoiseTracker Compressed
 	/// </summary>
-	internal class NoiseTrackerCompressedFormat : ProWizardConverterWorkerBase
+	internal class NoiseTrackerCompressedFormat : ProWizardConverterWorker31SamplesBase
 	{
 		private byte numberOfPositions;
 		private byte restartPosition;

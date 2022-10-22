@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// ProRunner 2
 	/// </summary>
-	internal class ProRunner2Format : ProWizardConverterWorkerBase
+	internal class ProRunner2Format : ProWizardConverterWorker31SamplesBase
 	{
 		private byte numberOfPositions;
 		private byte restartPosition;

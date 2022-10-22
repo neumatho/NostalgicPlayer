@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// Zen Packer
 	/// </summary>
-	internal class ZenPackerFormat : ProWizardConverterWorkerBase
+	internal class ZenPackerFormat : ProWizardConverterWorker31SamplesBase
 	{
 		private byte numberOfPositions;
 		private byte[] positionList;

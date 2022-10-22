@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// Xann Packer
 	/// </summary>
-	internal class XannPackerFormat : ProWizardConverterWorkerBase
+	internal class XannPackerFormat : ProWizardConverterWorker31SamplesBase
 	{
 		private uint lowPatternOffset;
 		private uint origin;

@@ -7,7 +7,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// The Player 6.1A
 	/// </summary>
-	internal class ThePlayer61AFormat : ThePlayer6xFormatBase
+	internal class ThePlayer61AFormat : ThePlayer5x_6xFormatBase
 	{
 		#region ModuleConverterAgentBase implementation
 		/********************************************************************/
@@ -42,9 +42,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 		{
 			return LoadPositionList(moduleStream, 1);
 		}
+		#endregion
 
-
-
+		#region ThePlayer5x_6xFormatBase implementation
 		/********************************************************************/
 		/// <summary>
 		/// Will convert a single track line to a ProTracker track line

@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// Digital Illusions
 	/// </summary>
-	internal class DigitalIllusionsFormat : ProWizardConverterWorkerBase
+	internal class DigitalIllusionsFormat : ProWizardConverterWorker31SamplesBase
 	{
 		private ushort numberOfSamples;
 

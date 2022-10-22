@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// Fuzzac Packer
 	/// </summary>
-	internal class FuzzacPackerFormat : ProWizardConverterWorkerBase
+	internal class FuzzacPackerFormat : ProWizardConverterWorker31SamplesBase
 	{
 		private byte numberOfPositions;
 		private ushort[,] trackOffsetTable;

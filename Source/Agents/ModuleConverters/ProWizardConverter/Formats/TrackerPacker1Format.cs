@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// Tracker Packer 1
 	/// </summary>
-	internal class TrackerPacker1Format : ProWizardConverterWorkerBase
+	internal class TrackerPacker1Format : ProWizardConverterWorker31SamplesBase
 	{
 		private uint sampleOffset;
 

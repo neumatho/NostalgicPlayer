@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// ChipTracker / Kris Packer
 	/// </summary>
-	internal class ChipTrackerFormat : ProWizardConverterWorkerBase
+	internal class ChipTrackerFormat : ProWizardConverterWorker31SamplesBase
 	{
 		// Period table with extra octaves
 		private static readonly ushort[] chipPeriods =

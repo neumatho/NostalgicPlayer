@@ -9,12 +9,12 @@
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
-namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Formats
+namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 {
 	/// <summary>
 	/// Base class used by different Cryptoburners format to make some checks
 	/// </summary>
-	internal abstract class CryptoburnersFormatBase : ProWizardConverterWorkerBase
+	internal abstract class CryptoburnersFormatBase : ProWizardConverterWorker31SamplesBase
 	{
 		/********************************************************************/
 		/// <summary>

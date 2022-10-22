@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// SKYT Packer
 	/// </summary>
-	internal class SkytPackerFormat : ProWizardConverterWorkerBase
+	internal class SkytPackerFormat : ProWizardConverterWorker31SamplesBase
 	{
 		private byte numberOfPositions;
 		private ushort[,] trackOffsetTable;

@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// AC1D Packer
 	/// </summary>
-	internal class AC1DPackerFormat : ProWizardConverterWorkerBase
+	internal class AC1DPackerFormat : ProWizardConverterWorker31SamplesBase
 	{
 		private byte numberOfPositions;
 		private byte restartPosition;

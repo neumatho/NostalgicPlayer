@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// Eureka Packer
 	/// </summary>
-	internal class EurekaPackerFormat : ProWizardConverterWorkerBase
+	internal class EurekaPackerFormat : ProWizardConverterWorker31SamplesBase
 	{
 		private byte numberOfPositions;
 		private byte restartPosition;

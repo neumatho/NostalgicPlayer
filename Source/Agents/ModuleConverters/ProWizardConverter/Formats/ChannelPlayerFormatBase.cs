@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// Channel Player base class for all versions
 	/// </summary>
-	internal abstract class ChannelPlayerFormatBase : ProWizardConverterWorkerBase
+	internal abstract class ChannelPlayerFormatBase : ProWizardConverterWorker31SamplesBase
 	{
 		protected ushort sampleInfoLength;
 		protected ushort positionListLength;

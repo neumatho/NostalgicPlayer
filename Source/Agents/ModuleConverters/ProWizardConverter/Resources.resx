@@ -271,11 +271,76 @@ The pattern format is almost the same as in ProRunner v1.0.</value>
   <data name="IDS_PROWIZ_DESCRIPTION_AGENT48" xml:space="preserve">
     <value>A module packer created by Mark Saarinen (Dweezil) of the demo group Stellar.</value>
   </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT49" xml:space="preserve">
+    <value>A module packer created by Ben of the demo group Melting Pot.</value>
+  </data>
   <data name="IDS_PROWIZ_DESCRIPTION_AGENT5" xml:space="preserve">
     <value>A module packer created by Kris of the demo group Anarchy. Also known as Kris Packer.</value>
   </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT50" xml:space="preserve">
+    <value>A module packer created by someone in the Binary demo group.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT51" xml:space="preserve">
+    <value>A module packer created by someone in the Devils demo group.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT52" xml:space="preserve">
+    <value>A module packer created by Andreas Fuchs.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT53" xml:space="preserve">
+    <value>A module packer created by Thomas Neumann (Tax) of the demo group Gnu Design. This packer was used in the Skizzo 1 and VoxPop demos.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT54" xml:space="preserve">
+    <value>A module packer created by Thomas Neumann (Tax) and Jakob ? (The White Noise) of the demo group Gnu Design. This packer was used in one module only, and that is the end song of the Skizzo 2 demo. It demostrates to play packed samples (half size) and unpack them in real time while playing.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT55" xml:space="preserve">
+    <value>A module packer created by Thomas Neumann (Tax) of the demo group Gnu Design. This packer was used in the Skizzo 2 demo.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT56" xml:space="preserve">
+    <value>A module packer created by Hardcore Design.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT57" xml:space="preserve">
+    <value>A module packer created by Dynacore of the demo group The Sirius Cybernetics Corporation.
+
+This is a group on the Atari, so the format can contains either 4 or 8 channels Octalyser modules. The format is also known as PMD3 and stands for P.acked-M.oD.ule version 3.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT58" xml:space="preserve">
+    <value>A module packer created by Mosh of the demo group Anarchy.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT59" xml:space="preserve">
+    <value>A module packer created by Newtron of the demo group Aspect.</value>
+  </data>
   <data name="IDS_PROWIZ_DESCRIPTION_AGENT6" xml:space="preserve">
     <value>A module packer with subsong support, created by The Silents for their pinball games. Also known as GrapeTracker.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT60" xml:space="preserve">
+    <value>A module packer created by Newtron of the demo group Orix.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT61" xml:space="preserve">
+    <value>A module packer created by NovoTrade.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT62" xml:space="preserve">
+    <value>A module packer created by Seg of the demo group Darkness.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT63" xml:space="preserve">
+    <value>A module packer created by Seg of the demo group Darkness.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT64" xml:space="preserve">
+    <value>A module packer used in the pinball game Slam Tilt by Liquid Dezign.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT65" xml:space="preserve">
+    <value>A module packer created by The Dark Demon.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT66" xml:space="preserve">
+    <value>A module packer created by Jarno Paananen (Guru) of the demo group Sahara Surfers.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT67" xml:space="preserve">
+    <value>A module packer created by Jarno Paananen (Guru) of the demo group Sahara Surfers.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT68" xml:space="preserve">
+    <value>A module packer created by Titanics.</value>
+  </data>
+  <data name="IDS_PROWIZ_DESCRIPTION_AGENT69" xml:space="preserve">
+    <value>A module packer created by Eremation.</value>
   </data>
   <data name="IDS_PROWIZ_DESCRIPTION_AGENT7" xml:space="preserve">
     <value>A module packer created by Eureka of the demo group Concept.</value>
@@ -418,11 +483,74 @@ The pattern format is almost the same as in ProRunner v1.0.</value>
   <data name="IDS_PROWIZ_NAME_AGENT48" xml:space="preserve">
     <value>Zen Packer</value>
   </data>
+  <data name="IDS_PROWIZ_NAME_AGENT49" xml:space="preserve">
+    <value>Ben Replay</value>
+  </data>
   <data name="IDS_PROWIZ_NAME_AGENT5" xml:space="preserve">
     <value>ChipTracker</value>
   </data>
+  <data name="IDS_PROWIZ_NAME_AGENT50" xml:space="preserve">
+    <value>Binary Packer</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT51" xml:space="preserve">
+    <value>Devils Replay</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT52" xml:space="preserve">
+    <value>Fuchs Tracker</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT53" xml:space="preserve">
+    <value>GnoiPacker</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT54" xml:space="preserve">
+    <value>GnuPlayer</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT55" xml:space="preserve">
+    <value>GPMO</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT56" xml:space="preserve">
+    <value>HCD Protector</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT57" xml:space="preserve">
+    <value>Module-Patterncompressor</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT58" xml:space="preserve">
+    <value>Mosh Player</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT59" xml:space="preserve">
+    <value>Newtron Packer 1.0</value>
+  </data>
   <data name="IDS_PROWIZ_NAME_AGENT6" xml:space="preserve">
     <value>Digital Illusions</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT60" xml:space="preserve">
+    <value>Newtron Packer 2.0</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT61" xml:space="preserve">
+    <value>NovoTrade Packer</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT62" xml:space="preserve">
+    <value>Perfect Song 1</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT63" xml:space="preserve">
+    <value>Perfect Song 2</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT64" xml:space="preserve">
+    <value>STIM (Slam Tilt)</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT65" xml:space="preserve">
+    <value>The Dark Demon</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT66" xml:space="preserve">
+    <value>The Player 2.2A</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT67" xml:space="preserve">
+    <value>The Player 3.0A</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT68" xml:space="preserve">
+    <value>Titanics Player</value>
+  </data>
+  <data name="IDS_PROWIZ_NAME_AGENT69" xml:space="preserve">
+    <value>TMK Replay</value>
   </data>
   <data name="IDS_PROWIZ_NAME_AGENT7" xml:space="preserve">
     <value>Eureka Packer</value>

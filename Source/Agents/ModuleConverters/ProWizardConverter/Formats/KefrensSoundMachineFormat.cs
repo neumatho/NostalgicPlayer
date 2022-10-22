@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// Kefrens Sound Machine
 	/// </summary>
-	internal class KefrensSoundMachineFormat : ProWizardConverterWorkerBase
+	internal class KefrensSoundMachineFormat : ProWizardConverterWorker31SamplesBase
 	{
 		private int numberOfPositions;
 		private byte[] trackTable;

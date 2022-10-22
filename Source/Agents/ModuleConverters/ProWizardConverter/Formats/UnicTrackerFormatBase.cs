@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// Base class for Unic Tracker and Laxity Tracker
 	/// </summary>
-	internal abstract class UnicTrackerFormatBase : ProWizardConverterWorkerBase
+	internal abstract class UnicTrackerFormatBase : ProWizardConverterWorker31SamplesBase
 	{
 		private byte restartPosition;
 		private ushort realNumberOfPatterns;

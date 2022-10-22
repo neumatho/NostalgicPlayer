@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// NoisePacker base class for all versions
 	/// </summary>
-	internal abstract class NoisePackerFormatBase : ProWizardConverterWorkerBase
+	internal abstract class NoisePackerFormatBase : ProWizardConverterWorker31SamplesBase
 	{
 		protected int numberOfSamples;
 		private int numberOfPositions;

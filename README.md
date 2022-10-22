@@ -35,11 +35,14 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | Asylum | .amf | MikMod Converter | MikMod |
 | Atari Octalyser | .mod | | ModTracker |
 | AudioIFF | .aiff / .aif | | Sample |
+| Ben Replay | .ben | ProWizard | ModTracker |
+| Binary Packer | .bnr | ProWizard | ModTracker |
 | Channel Player 1 | .ch1 / .chn / .chan | ProWizard | ModTracker |
 | Channel Player 2 | .ch2 / .chn / .chan | ProWizard | ModTracker |
 | Channel Player 3 | .ch3 / .chn / .chan | ProWizard | ModTracker |
 | ChipTracker | .chp / .chip / .krs / .kris | ProWizard | ModTracker |
 | Composer 669 | .669 | MikMod Converter | MikMod |
+| Devils Replay | .dev | ProWizard | ModTracker |
 | Digital Illusions | .di | ProWizard | ModTracker |
 | Digital Sound and Music Interface | .amf | MikMod Converter | MikMod |
 | Digital Sound Interface Kit | .dsm | MikMod Converter | MikMod |
@@ -55,10 +58,15 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | FLAC | .flac | | Sample |
 | Fred Editor | .frd / .fred | | Fred Editor |
 | Fred Editor (Final) | .frd / .fred | Module Converter | Fred Editor |
+| Fuchs Tracker | .ft | ProWizard | ModTracker |
 | Future Composer 1.0 - 1.3 | .fc / .fc13 / .smod | Module Converter | Future Composer |
 | Future Composer 1.4 | .fc / .fc14 | | Future Composer |
 | Fuzzac Packer | .fuzzac / .fuz | ProWizard | ModTracker |
 | General DigiMusic | .gdm | MikMod Converter | MikMod |
+| GnoiPacker | .gnoi | ProWizard | ModTracker |
+| GnuPlayer | .gnu | ProWizard | ModTracker |
+| GPMO | .gpmo | ProWizard | ModTracker |
+| HCD Protector | .hcd | ProWizard | ModTracker |
 | Heatseeker mc1.0 | .hmc / .crb | ProWizard | ModTracker |
 | His Master's Noise (Gnomie by Night) | .mod | | ModTracker |
 | Hornet Packer | .hrt | ProWizard | ModTracker |
@@ -74,23 +82,30 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | MED | .med / .mmd0 / .md0 | | OctaMED |
 | MED Packer | .med / .mmdc | | OctaMED |
 | Mod's Grave | .wow | | ModTracker |
+| Module-Patterncompressor | .pmd3 | ProWizard | ModTracker |
 | Module Protector | .mp | ProWizard | ModTracker |
+| Mosh Player | .mosh | ProWizard | ModTracker |
 | MPEG 1.0 | .mp1 / .mp2 / .mp3 / .m2a / .mpg | | Mpg123 |
 | MPEG 2.0 | .mp1 / .mp2 / .mp3 / .m2a / .mpg | | Mpg123 |
 | MPEG 2.5 | .mp1 / .mp2 / .mp3 / .m2a / .mpg | | Mpg123 |
 | MultiTracker | .mtm | | ModTracker |
+| Newtron Packer 1.0 | .nw1 | ProWizard | ModTracker |
+| Newtron Packer 2.0 | .nw2 | ProWizard | ModTracker |
 | NoisePacker 1 | .np1 | ProWizard | ModTracker |
 | NoisePacker 2 | .np2 | ProWizard | ModTracker |
 | NoisePacker 3 | .np3 | ProWizard | ModTracker |
 | NoiseRunner | .nru | ProWizard | ModTracker |
 | NoiseTracker | .mod | | ModTracker |
 | NoiseTracker Compressed | .ntc | ProWizard | ModTracker |
+| NovoTrade Packer | .ntp | ProWizard | ModTracker |
 | OctaMED | .med / .mmd0 / .md0 / .omed | | OctaMED |
 | OctaMED Professional 3.00 - 4.xx | .med / .mmd1 / .md1 / .omed | | OctaMED |
 | OctaMED Professional 5.00 - 6.xx | .med / .mmd2 / .md2 / .omed | | OctaMED |
 | OctaMED Soundstudio | .med / .mmd3 / .md3 / .omed / .ocss | | OctaMED |
 | Ogg Vorbis | .ogg / oga | | Ogg Vorbis |
 | Oktalyzer | .okt / .okta | | Oktalyzer |
+| Perfect Song 1 | .pf1 | ProWizard | ModTracker |
+| Perfect Song 2 | .pf2 | ProWizard | ModTracker |
 | Pha Packer | .pha | ProWizard | ModTracker |
 | Polka Packer | .ppk | ProWizard | ModTracker |
 | Power Music | .pm | ProWizard | ModTracker |
@@ -123,15 +138,21 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | StarTrekker | .mod | | ModTracker |
 | StarTrekker 8 voices | .mod | | ModTracker |
 | StarTrekker Packer | .stp / .stpk | ProWizard | ModTracker |
+| STIM (Slam Tilt) | .sti | ProWizard | ModTracker |
 | TFMX 1.5 | .tfx / mdat. / .tfm | | TFMX |
 | TFMX Professional | .tfx / mdat. / .tfm | | TFMX |
 | TFMX 7 voices | .tfx / mdat. / .tfm | | TFMX |
-| The Player 4.0A | .p40a / .p4x | ProWizard | ModTracker |
-| The Player 4.0B | .p40b / .p4x | ProWizard | ModTracker |
-| The Player 4.1A | .p41a / .p4x | ProWizard | ModTracker |
-| The Player 5.0A | .p50a / .p50 | ProWizard | ModTracker |
-| The Player 6.0A | .p60a / .p60 / .p6x | ProWizard | ModTracker |
-| The Player 6.1A | .p61a / .p61 / .p6x | ProWizard | ModTracker |
+| The Dark Demon | .tdd | ProWizard | ModTracker |
+| The Player 2.2A | .p22a | ProWizard | ModTracker |
+| The Player 3.0A | .p30a | ProWizard | ModTracker |
+| The Player 4.0A | .p40a | ProWizard | ModTracker |
+| The Player 4.0B | .p40b | ProWizard | ModTracker |
+| The Player 4.1A | .p41a | ProWizard | ModTracker |
+| The Player 5.0A | .p50a | ProWizard | ModTracker |
+| The Player 6.0A | .p60a | ProWizard | ModTracker |
+| The Player 6.1A | .p61a | ProWizard | ModTracker |
+| Titanics Player | .tip | ProWizard | ModTracker |
+| TMK Replay | .tmk | ProWizard | ModTracker |
 | Tracker Packer 1 | .tp1 | ProWizard | ModTracker |
 | Tracker Packer 2 | .tp2 | ProWizard | ModTracker |
 | Tracker Packer 3 | .tp3 | ProWizard | ModTracker |

@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// Promizer 0.1
 	/// </summary>
-	internal class Promizer01Format : ProWizardConverterWorkerBase
+	internal class Promizer01Format : ProWizardConverterWorker31SamplesBase
 	{
 		protected byte[] fineTunes;
 

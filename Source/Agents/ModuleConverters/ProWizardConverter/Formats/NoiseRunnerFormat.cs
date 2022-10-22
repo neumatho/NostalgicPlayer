@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// NoiseRunner
 	/// </summary>
-	internal class NoiseRunnerFormat : ProWizardConverterWorkerBase
+	internal class NoiseRunnerFormat : ProWizardConverterWorker31SamplesBase
 	{
 		private byte numberOfPositions;
 		private byte restartPosition;

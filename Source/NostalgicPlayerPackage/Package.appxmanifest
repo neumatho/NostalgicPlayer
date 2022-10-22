@@ -640,14 +640,6 @@
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation Name="p4xfile">
-            <uap:SupportedFileTypes>
-              <uap:FileType ContentType="audio/x-p4x">.p4x</uap:FileType>
-            </uap:SupportedFileTypes>
-            <uap:DisplayName>The Player 4.x</uap:DisplayName>
-          </uap:FileTypeAssociation>
-        </uap:Extension>
-        <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="p40afile">
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="audio/x-p40a">.p40a</uap:FileType>
@@ -672,27 +664,17 @@
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation Name="p50file">
+          <uap:FileTypeAssociation Name="p50afile">
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="audio/x-p50a">.p50a</uap:FileType>
-              <uap:FileType ContentType="audio/x-p50a">.p50</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>The Player 5.0A</uap:DisplayName>
-          </uap:FileTypeAssociation>
-        </uap:Extension>
-        <uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation Name="p6xfile">
-            <uap:SupportedFileTypes>
-              <uap:FileType ContentType="audio/x-p6x">.p6x</uap:FileType>
-            </uap:SupportedFileTypes>
-            <uap:DisplayName>The Player 6.x</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="p60afile">
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="audio/x-p60a">.p60a</uap:FileType>
-              <uap:FileType ContentType="audio/x-p60a">.p60</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>The Player 6.0A</uap:DisplayName>
           </uap:FileTypeAssociation>
@@ -701,7 +683,6 @@
           <uap:FileTypeAssociation Name="p61afile">
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="audio/x-p61a">.p61a</uap:FileType>
-              <uap:FileType ContentType="audio/x-p61a">.p61</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>The Player 6.1A</uap:DisplayName>
           </uap:FileTypeAssociation>
@@ -777,6 +758,174 @@
               <uap:FileType ContentType="audio/x-zen">.zen</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Zen Packer</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="bnrfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-bnr">.bnr</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Binary Packer</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="benfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-ben">.ben</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Ben Replay</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="devfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-dev">.dev</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Devils Replay</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="ftfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-ft">.ft</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Fuchs Tracker</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="gnoifile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-gnoi">.gnoi</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>GnoiPacker</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="gnufile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-gnu">.gnu</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>GnuPlayer</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="gpmofile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-gpmo">.gpmo</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>GPMO</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="hcdfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-hcd">.hcd</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>HCD Protector</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="moshfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-mosh">.mosh</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Mosh Player</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="nw1file">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-nw1">.nw1</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Newtron Packer 1.0</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="nw2file">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-nw2">.nw2</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Newtron Packer 2.0</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="ntpfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-ntp">.ntp</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>NovoTrade Packer</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="pmd3file">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-pmd3">.pmd3</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Module-Patterncompressor</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="pf1file">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-pf1">.pf1</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Perfect Song 1</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="pf2file">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-pf2">.pf2</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Perfect Song 2</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="stifile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-sti">.sti</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>STIM (Slam Tilt)</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="tddfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-tdd">.tdd</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>The Dark Demon</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="p22afile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-p22a">.p22a</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>The Player 2.2A</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="p30afile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-p30a">.p30a</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>The Player 3.0A</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="tipfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-tip">.tip</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Titanics Player</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="tmkfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-tmk">.tmk</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>TMK Replay</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
       </Extensions>

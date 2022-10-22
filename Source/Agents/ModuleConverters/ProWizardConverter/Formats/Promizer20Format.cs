@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// Promizer 2.0
 	/// </summary>
-	internal class Promizer20Format : ProWizardConverterWorkerBase
+	internal class Promizer20Format : ProWizardConverterWorker31SamplesBase
 	{
 		private byte numberOfPositions;
 		private byte[] positionList;

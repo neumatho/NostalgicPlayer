@@ -503,6 +503,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A module packer created by Ben of the demo group Melting Pot..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT49 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT49", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A module packer created by Kris of the demo group Anarchy. Also known as Kris Packer..
         /// </summary>
         internal static string IDS_PROWIZ_DESCRIPTION_AGENT5 {
@@ -512,11 +521,193 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A module packer created by someone in the Binary demo group..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT50 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT50", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A module packer created by someone in the Devils demo group..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT51 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT51", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A module packer created by Andreas Fuchs..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT52 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT52", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A module packer created by Thomas Neumann (Tax) of the demo group Gnu Design. This packer was used in the Skizzo 1 and VoxPop demos..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT53 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT53", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A module packer created by Thomas Neumann (Tax) and Jakob ? (The White Noise) of the demo group Gnu Design. This packer was used in one module only, and that is the end song of the Skizzo 2 demo. It demostrates to play packed samples (half size) and unpack them in real time while playing..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT54 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT54", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A module packer created by Thomas Neumann (Tax) of the demo group Gnu Design. This packer was used in the Skizzo 2 demo..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT55 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT55", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A module packer created by Hardcore Design..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT56 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT56", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A module packer created by Dynacore of the demo group The Sirius Cybernetics Corporation.
+        ///
+        ///This is a group on the Atari, so the format can contains either 4 or 8 channels Octalyser modules. The format is also known as PMD3 and stands for P.acked-M.oD.ule version 3..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT57 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT57", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A module packer created by Mosh of the demo group Anarchy..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT58 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT58", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A module packer created by Newtron of the demo group Aspect..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT59 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT59", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A module packer with subsong support, created by The Silents for their pinball games. Also known as GrapeTracker..
         /// </summary>
         internal static string IDS_PROWIZ_DESCRIPTION_AGENT6 {
             get {
                 return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A module packer created by Newtron of the demo group Orix..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT60 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT60", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A module packer created by NovoTrade..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT61 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT61", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A module packer created by Seg of the demo group Darkness..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT62 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT62", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A module packer created by Seg of the demo group Darkness..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT63 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT63", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A module packer used in the pinball game Slam Tilt by Liquid Dezign..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT64 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT64", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A module packer created by The Dark Demon..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT65 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT65", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A module packer created by Jarno Paananen (Guru) of the demo group Sahara Surfers..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT66 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT66", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A module packer created by Jarno Paananen (Guru) of the demo group Sahara Surfers..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT67 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT67", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A module packer created by Titanics..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT68 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT68", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A module packer created by Eremation..
+        /// </summary>
+        internal static string IDS_PROWIZ_DESCRIPTION_AGENT69 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_DESCRIPTION_AGENT69", resourceCulture);
             }
         }
         
@@ -944,6 +1135,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ben Replay.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT49 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT49", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ChipTracker.
         /// </summary>
         internal static string IDS_PROWIZ_NAME_AGENT5 {
@@ -953,11 +1153,191 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Binary Packer.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT50 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT50", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Devils Replay.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT51 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT51", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fuchs Tracker.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT52 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT52", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GnoiPacker.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT53 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT53", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GnuPlayer.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT54 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT54", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GPMO.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT55 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT55", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HCD Protector.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT56 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT56", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Module-Patterncompressor.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT57 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT57", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mosh Player.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT58 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT58", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Newtron Packer 1.0.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT59 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT59", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Digital Illusions.
         /// </summary>
         internal static string IDS_PROWIZ_NAME_AGENT6 {
             get {
                 return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Newtron Packer 2.0.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT60 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT60", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NovoTrade Packer.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT61 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT61", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Perfect Song 1.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT62 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT62", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Perfect Song 2.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT63 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT63", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to STIM (Slam Tilt).
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT64 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT64", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Dark Demon.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT65 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT65", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Player 2.2A.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT66 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT66", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Player 3.0A.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT67 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT67", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Titanics Player.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT68 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT68", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TMK Replay.
+        /// </summary>
+        internal static string IDS_PROWIZ_NAME_AGENT69 {
+            get {
+                return ResourceManager.GetString("IDS_PROWIZ_NAME_AGENT69", resourceCulture);
             }
         }
         

@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// FC-M Packer
 	/// </summary>
-	internal class FcmPackerFormat : ProWizardConverterWorkerBase
+	internal class FcmPackerFormat : ProWizardConverterWorker31SamplesBase
 	{
 		private const uint HeaderId = 0x46432d4d;			// FC-M
 		private const uint NameHeaderId = 0x4e414d45;		// NAME
@@ -70,7 +70,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 				return false;
 
 			// Find highest pattern number
-			FindHighestPatternNumber(moduleStream, (int)moduleStream.Position, positionListLength);
+			FindHighestPatternNumber(moduleStream, positionListLength);
 
 			return true;
 		}

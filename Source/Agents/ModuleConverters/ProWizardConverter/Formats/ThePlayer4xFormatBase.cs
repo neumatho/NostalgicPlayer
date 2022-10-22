@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// The Player base class for version 4.0A, 4.0B and 4.1A
 	/// </summary>
-	internal abstract class ThePlayer4xFormatBase : ProWizardConverterWorkerBase
+	internal abstract class ThePlayer4xFormatBase : ProWizardConverterWorker31SamplesBase
 	{
 		private class P4xxChannel
 		{

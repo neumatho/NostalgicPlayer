@@ -11,15 +11,23 @@ using System.Collections.Generic;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
-namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
+namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Formats
 {
 	/// <summary>
-	/// Wanton Packer
+	/// Module-Patterncompressor
 	/// </summary>
-	internal class WantonPackerFormat : ProWizardConverterWorkerBase
+	internal class ModulePatterncompressorFormat : ProWizardForPcBase
 	{
-		protected byte restartPosition;
-		protected ushort realNumberOfPatterns;
+		private bool eightChannels;
+
+		private byte numberOfPositions;
+		private byte restartPosition;
+
+		private uint[,,] patternOffsets;
+
+		private int controlStartOffset;
+		private int dataStartOffset;
+		private int sampleStartOffset;
 
 		#region ModuleConverterAgentBase implementation
 		/********************************************************************/
@@ -28,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 		/// string, the agent name will be used
 		/// </summary>
 		/********************************************************************/
-		public override string OriginalFormat => Resources.IDS_PROWIZ_NAME_AGENT46;
+		public override string OriginalFormat => Resources.IDS_PROWIZ_NAME_AGENT57;
 		#endregion
 
 		#region ProWizardConverterWorkerBase implementation
@@ -39,32 +47,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 		/********************************************************************/
 		protected override bool CheckModule(ModuleStream moduleStream)
 		{
-			if (moduleStream.Length < 0x43c)
+			if (moduleStream.Length < 1092)
 				return false;
 
-			// Start to check the ID
-			moduleStream.Seek(0x438, SeekOrigin.Begin);
+			// Start to check the mark
+			moduleStream.Seek(1080, SeekOrigin.Begin);
 
 			uint temp = moduleStream.Read_B_UINT32();
-			if ((temp & 0xffffff00) != 0x574e0000)		// WN\0
+			if ((temp != 0x504d4433) && (temp != 0x504d6433))		// PMD3 + PMd3
 				return false;
-
-			// Check number of patterns
-			numberOfPatterns = (ushort)(temp & 0x000000ff);
-			if ((numberOfPatterns == 0) || (numberOfPatterns > 64))
-				return false;
-
-			// Check some of the pattern data in first pattern
-			for (int i = 0; i < 64 * 4; i++)
-			{
-				moduleStream.Seek(1, SeekOrigin.Current);
-
-				// Check sample number
-				if (moduleStream.Read_UINT8() > 0x1f)
-					return false;
-
-				moduleStream.Seek(2, SeekOrigin.Current);
-			}
 
 			// Check sample information
 			moduleStream.Seek(20, SeekOrigin.Begin);
@@ -75,33 +66,77 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 			{
 				moduleStream.Seek(22, SeekOrigin.Current);
 
-				// Check sample size
-				ushort temp1 = moduleStream.Read_B_UINT16();
-				if (temp1 >= 0x8000)
+				ushort sampleSize = (ushort)(moduleStream.Read_B_UINT16() * 2);
+				byte fineTune = moduleStream.Read_UINT8();
+				byte volume = moduleStream.Read_UINT8();
+				ushort loopStart = (ushort)(moduleStream.Read_B_UINT16() * 2);
+				ushort loopSize = (ushort)(moduleStream.Read_B_UINT16() * 2);
+
+				if (!TestSample(sampleSize, loopStart, loopSize, volume, fineTune))
 					return false;
 
-				samplesSize += temp1 * 2U;
-
-				// Check volume and fine tune
-				if ((moduleStream.Read_UINT8() > 0x0f) || (moduleStream.Read_UINT8() > 0x40))
-					return false;
-
-				// Check loop values
-				if (temp1 != 0)
-				{
-					uint temp2 = moduleStream.Read_B_UINT16();
-					uint temp3 = moduleStream.Read_B_UINT16();
-
-					if ((temp2 + temp3) > temp1)
-						return false;
-				}
-				else
-					moduleStream.Seek(4, SeekOrigin.Current);
+				samplesSize += sampleSize;
 			}
 
-			// Check the module length
-			if ((0x43c + numberOfPatterns * 1024 + samplesSize) > (moduleStream.Length + MaxNumberOfMissingBytes))
+			// Check size of position table
+			byte temp1 = moduleStream.Read_UINT8();
+			if (temp1 > 127)
 				return false;
+
+			// Find highest pattern offset
+			if (FindHighestPatternNumber(moduleStream, 952, 128) > 127)
+				return false;
+
+			// Check module length
+			moduleStream.Seek(1084, SeekOrigin.Begin);
+
+			temp = moduleStream.Read_B_UINT32();
+			uint temp2 = moduleStream.Read_B_UINT32();
+
+			if ((1092 + temp + temp2 + samplesSize) > (moduleStream.Length + MaxNumberOfMissingBytes))
+				return false;
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Prepare conversion by initialize what is needed etc.
+		/// </summary>
+		/********************************************************************/
+		protected override bool PrepareConversion(ModuleStream moduleStream)
+		{
+			// Get number of positions and restart position
+			moduleStream.Seek(950, SeekOrigin.Begin);
+
+			numberOfPositions = moduleStream.Read_UINT8();
+			restartPosition = moduleStream.Read_UINT8();
+
+			moduleStream.Seek(1080, SeekOrigin.Begin);
+
+			uint temp = moduleStream.Read_B_UINT32();
+			eightChannels = (temp & 0x0000ff00) == 0x00006400;
+
+			uint controlLen = moduleStream.Read_B_UINT32();
+			uint dataLen = moduleStream.Read_B_UINT32();
+
+			int channelCount = eightChannels ? 8 : 4;
+			patternOffsets = new uint[numberOfPatterns, channelCount, 2];
+
+			for (int i = 0; i < numberOfPatterns; i++)
+			{
+				for (int j = 0; j < channelCount; j++)
+				{
+					patternOffsets[i, j, 0] = moduleStream.Read_B_UINT32();
+					patternOffsets[i, j, 1] = moduleStream.Read_B_UINT32();
+				}
+			}
+
+			controlStartOffset = 1092 + numberOfPatterns * channelCount * 4 * 2;
+			dataStartOffset = (int)(controlStartOffset + controlLen);
+			sampleStartOffset = (int)(dataStartOffset + dataLen);
 
 			return true;
 		}
@@ -165,18 +200,10 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 		/********************************************************************/
 		protected override Span<byte> GetPositionList(ModuleStream moduleStream)
 		{
-			byte numberOfPositions = moduleStream.Read_UINT8();
-
-			restartPosition = moduleStream.Read_UINT8();
-
 			byte[] positionList = new byte[numberOfPositions];
+
+			moduleStream.Seek(952, SeekOrigin.Begin);
 			moduleStream.Read(positionList, 0, numberOfPositions);
-
-			moduleStream.Seek(128 - numberOfPositions, SeekOrigin.Current);
-
-			// We don't want to save unused patterns
-			moduleStream.Seek(3, SeekOrigin.Current);
-			realNumberOfPatterns = moduleStream.Read_UINT8();
 
 			return positionList;
 		}
@@ -197,62 +224,68 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 
 		/********************************************************************/
 		/// <summary>
+		/// Return the ID mark
+		/// </summary>
+		/********************************************************************/
+		protected override uint GetMark()
+		{
+			return eightChannels ? 0x43443831U : 0x4d2e4b2e;		// CD81 / M.K.
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return a collection with all the patterns
 		/// </summary>
 		/********************************************************************/
 		protected override IEnumerable<byte[]> GetPatterns(ModuleStream moduleStream)
 		{
-			byte[] pattern = new byte[1024];
+			byte[] pattern = new byte[eightChannels ? 2048 : 1024];
+			int channelCount = eightChannels ? 8 : 4;
+			int writeIncrement = eightChannels ? 32 : 16;
 
 			for (int i = 0; i < numberOfPatterns; i++)
 			{
-				for (int j = 0; j < 64 * 4; j++)
+				// Clear the pattern data
+				Array.Clear(pattern);
+
+				for (int j = 0; j < channelCount; j++)
 				{
-					byte byt1, byt2;
+					uint controlOffset = patternOffsets[i, j, 0];
+					uint dataOffset = patternOffsets[i, j, 1];
 
-					// Convert note
-					byte temp = moduleStream.Read_UINT8();
-					if (temp != 0)
+					for (int k = 0, m = 0; k < 64; m++)
 					{
-						temp -= 2;
-						temp /= 2;
-						byt1 = periods[temp, 0];
-						byt2 = periods[temp, 1];
+						moduleStream.Seek(controlStartOffset + controlOffset + m, SeekOrigin.Begin);
+						byte c = moduleStream.Read_UINT8();
+
+						byte c1 = (byte)((c & 0x03) + 1);
+						byte c2 = (byte)(c & 0xfc);
+
+						moduleStream.Seek(dataStartOffset + dataOffset + c2, SeekOrigin.Begin);
+
+						byte byt1 = moduleStream.Read_UINT8();
+						byte byt2 = moduleStream.Read_UINT8();
+						byte byt3 = moduleStream.Read_UINT8();
+						byte byt4 = moduleStream.Read_UINT8();
+
+						int writeOffset = (j * 4) + (k * writeIncrement);
+
+						for (int repeat = 0; repeat < c1; repeat++, writeOffset += writeIncrement)
+						{
+							pattern[writeOffset] = byt1;
+							pattern[writeOffset + 1] = byt2;
+							pattern[writeOffset + 2] = byt3;
+							pattern[writeOffset + 3] = byt4;
+						}
+
+						k += c1;
 					}
-					else
-					{
-						byt1 = 0x00;
-						byt2 = 0x00;
-					}
-
-					// Get sample number
-					temp = moduleStream.Read_UINT8();
-
-					if (temp >= 0x10)
-					{
-						byt1 |= 0x10;
-						temp -= 0x10;
-					}
-
-					byte byt3 = (byte)(temp << 4);
-
-					// Get effect
-					byt3 |= moduleStream.Read_UINT8();
-					byte byt4 = moduleStream.Read_UINT8();
-
-					// Copy the pattern data
-					pattern[j * 4] = byt1;
-					pattern[j * 4 + 1] = byt2;
-					pattern[j * 4 + 2] = byt3;
-					pattern[j * 4 + 3] = byt4;
 				}
 
 				yield return pattern;
 			}
-
-			// If extra patterns are stored, skip them
-			if (numberOfPatterns < realNumberOfPatterns)
-				moduleStream.Seek((realNumberOfPatterns - numberOfPatterns) * 0x300, SeekOrigin.Current);
 		}
 
 
@@ -264,6 +297,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 		/********************************************************************/
 		protected override bool WriteSampleData(ModuleStream moduleStream, ConverterStream converterStream)
 		{
+			moduleStream.Seek(sampleStartOffset, SeekOrigin.Begin);
+
 			return SaveMarksForAllSamples(moduleStream, converterStream);
 		}
 		#endregion

@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// Tracker Packer base class for version 2 and 3
 	/// </summary>
-	internal abstract class TrackerPackerNewFormatBase : ProWizardConverterWorkerBase
+	internal abstract class TrackerPackerNewFormatBase : ProWizardConverterWorker31SamplesBase
 	{
 		private ushort numberOfSamples;
 

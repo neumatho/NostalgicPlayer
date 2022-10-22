@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// StarTrekker Packer
 	/// </summary>
-	internal class StarTrekkerPackerFormat : ProWizardConverterWorkerBase
+	internal class StarTrekkerPackerFormat : ProWizardConverterWorker31SamplesBase
 	{
 		private byte numberOfPositions;
 		private uint[] patternOffsetTable;

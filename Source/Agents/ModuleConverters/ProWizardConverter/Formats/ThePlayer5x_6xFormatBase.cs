@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// The Player base class for version 5.0A, 6.0A and 6.1A
 	/// </summary>
-	internal abstract class ThePlayer6xFormatBase : ProWizardConverterWorkerBase
+	internal abstract class ThePlayer5x_6xFormatBase : ProWizardConverterWorker31SamplesBase
 	{
 		private static sbyte[] packTable =
 		{

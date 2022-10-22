@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// Pygmy Packer
 	/// </summary>
-	internal class PygmyPackerFormat : ProWizardConverterWorkerBase
+	internal class PygmyPackerFormat : ProWizardConverterWorker31SamplesBase
 	{
 		#region ModuleConverterAgentBase implementation
 		/********************************************************************/

@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 	/// <summary>
 	/// PhaPacker
 	/// </summary>
-	internal class PhaPackerFormat : ProWizardConverterWorkerBase
+	internal class PhaPackerFormat : ProWizardConverterWorker31SamplesBase
 	{
 		private uint endOffset;
 
