@@ -61,12 +61,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		{
 			if ((mode & MixerMode.Stereo) != 0)
 			{
-				AddPlayerSamples(ref voiceInfo[0], channelMap[0], offset, 2, todo, masterVolume);
-				AddPlayerSamples(ref voiceInfo[1], channelMap[1], offset + 1, 2, todo, masterVolume);
+				int leftVolume = voiceInfo[0].Enabled ? MasterVolume : 0;
+				int rightVolume = voiceInfo[1].Enabled ? MasterVolume : 0;
+
+				AddPlayerSamples(ref voiceInfo[0], channelMap[0], offset, 2, todo, leftVolume);
+				AddPlayerSamples(ref voiceInfo[1], channelMap[1], offset + 1, 2, todo, rightVolume);
 			}
 			else
 			{
-				AddPlayerSamples(ref voiceInfo[0], channelMap[0], offset, 1, todo, masterVolume);
+				int volume = voiceInfo[0].Enabled ? MasterVolume : 0;
+
+				AddPlayerSamples(ref voiceInfo[0], channelMap[0], offset, 1, todo, volume);
 			}
 		}
 

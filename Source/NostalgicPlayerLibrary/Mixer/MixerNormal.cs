@@ -106,7 +106,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					int vol;
 
 					if (vnf.Enabled)
-						vol = vnf.Volume * masterVolume / 256;
+						vol = vnf.Volume;
 					else
 						vol = 0;
 

@@ -18,13 +18,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 	internal abstract class MixerBase
 	{
 		protected int mixerFrequency;		// The mixer frequency
-		protected int masterVolume;			// This is the master volume (0-256)
 		protected int channelNumber;		// Number of channels this mixer use
 		protected int stereoSeparation;		// This is the stereo separation (0-128)
 
 		protected int bytesPerSample;		// How many bytes each sample uses in the output buffer
 
 		protected VoiceInfo[] voiceInfo;
+
+		protected const int MasterVolume = 256;
 
 		/********************************************************************/
 		/// <summary>
@@ -35,7 +36,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		{
 			// Initialize mixer variables
 			voiceInfo = null;
-			masterVolume = 256;
 			stereoSeparation = 128;
 		}
 
@@ -141,18 +141,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				separation = 100;
 
 			stereoSeparation = (separation * 128) / 100;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will set the master volume
-		/// </summary>
-		/********************************************************************/
-		public void SetMasterVolume(int volume)
-		{
-			masterVolume = volume;
 		}
 
 

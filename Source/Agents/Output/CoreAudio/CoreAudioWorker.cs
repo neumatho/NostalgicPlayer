@@ -57,6 +57,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		private AudioClient audioClient;
 
 		private WaveFormat outputFormat;
+		private float currentVolume;
 
 		private AudioRenderClient audioRenderClient;
 		private int bufferFrameCount;
@@ -271,6 +272,19 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 				}
 			}
 */		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will set the master volume (0-256)
+		/// </summary>
+		/********************************************************************/
+		public override void SetMasterVolume(int volume)
+		{
+			currentVolume = volume / 256.0f;
+			SetVolume();
+		}
 
 
 
@@ -509,7 +523,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 					// And we're done. Start rendering again if needed
 					if (oldState == PlaybackState.Playing)
+					{
 						audioClient.Start();
+						SetVolume();
+					}
 
 					// Tell the mixer about new sample rates etc.
 					int bytesPerSample = outputFormat.BitsPerSample / 8;
@@ -550,6 +567,21 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 			}
 
 			streamSwitchCompletedEvent.Set();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will set the master volume
+		/// </summary>
+		/********************************************************************/
+		private void SetVolume()
+		{
+			if (outputFormat.Channels == 1)
+				audioClient.AudioStreamVolume.SetAllVolumes(new[] { currentVolume });
+			else
+				audioClient.AudioStreamVolume.SetAllVolumes(new[] { currentVolume, currentVolume });
 		}
 
 

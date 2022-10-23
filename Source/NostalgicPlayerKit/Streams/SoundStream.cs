@@ -157,15 +157,6 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
-		/// Will set the master volume
-		/// </summary>
-		/********************************************************************/
-		public abstract void SetMasterVolume(int volume);
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Start the playing
 		/// </summary>
 		/********************************************************************/

@@ -255,6 +255,18 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 
 		/********************************************************************/
 		/// <summary>
+		/// Will set the master volume (0-256)
+		/// </summary>
+		/********************************************************************/
+		public override void SetMasterVolume(int volume)
+		{
+			// We want to use full volume when saving samples, so don't do anything
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will switch the stream to read the sound data from without
 		/// interrupting the sound
 		/// </summary>

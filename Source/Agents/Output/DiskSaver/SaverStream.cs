@@ -59,18 +59,6 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 
 		/********************************************************************/
 		/// <summary>
-		/// Will set the master volume
-		/// </summary>
-		/********************************************************************/
-		public override void SetMasterVolume(int volume)
-		{
-			wrapperStream.SetMasterVolume(volume);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Start the playing
 		/// </summary>
 		/********************************************************************/

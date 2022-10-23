@@ -287,18 +287,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		/********************************************************************/
 		/// <summary>
-		/// Will set the master volume
-		/// </summary>
-		/********************************************************************/
-		public void SetMasterVolume(int volume)
-		{
-			currentMixer?.SetMasterVolume(volume);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Will change the mixer configuration
 		/// </summary>
 		/********************************************************************/

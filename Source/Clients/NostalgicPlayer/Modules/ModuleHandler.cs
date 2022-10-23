@@ -34,6 +34,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		private Manager agentManager;
 		private SoundSettings soundSettings;
 
+		private object outputAgentLock = new object();
 		private IOutputAgent outputAgent;
 
 		private List<ModuleItem> loadedFiles;
@@ -147,15 +148,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/********************************************************************/
 		public void CloseOutputAgent()
 		{
-			if (outputAgent != null)
+			lock (outputAgentLock)
 			{
-				outputAgent.Shutdown();
+				if (outputAgent != null)
+				{
+					outputAgent.Shutdown();
 
-				outputAgent.PlayerFailed -= Output_PlayerFailed;
-				outputAgent = null;
+					outputAgent.PlayerFailed -= Output_PlayerFailed;
+					outputAgent = null;
+				}
+
+				OutputAgentInfo = null;
 			}
-
-			OutputAgentInfo = null;
 		}
 
 		#region Properties
@@ -425,13 +429,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					// Remove the file from our list
 					loadedFiles.RemoveAt(0);
 
-					// Flush the output agent if required
-					if ((outputAgent.SupportFlags & OutputSupportFlag.FlushMe) != 0)
+					lock (outputAgentLock)
 					{
-						outputAgent.Shutdown();
+						// Flush the output agent if required
+						if ((outputAgent.SupportFlags & OutputSupportFlag.FlushMe) != 0)
+						{
+							outputAgent.Shutdown();
 
-						outputAgent = null;
-						OutputAgentInfo = null;
+							outputAgent = null;
+							OutputAgentInfo = null;
+						}
 					}
 				}
 			}
@@ -582,10 +589,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/********************************************************************/
 		public void SetVolume(int newVolume)
 		{
-			IPlayer player = GetActivePlayer();
-
-			if (player != null)
-				player.SetMasterVolume(isMuted ? 0 : newVolume);
+			lock (outputAgentLock)
+			{
+				outputAgent?.SetMasterVolume(isMuted ? 0 : newVolume);
+			}
 
 			currentMasterVolume = newVolume;
 		}
@@ -798,51 +805,54 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/********************************************************************/
 		private bool FindOutputAgent(bool showError)
 		{
-			if (outputAgent != null)
+			lock (outputAgentLock)
 			{
-				// Check if the current allocated is the same as in the settings
-				if (!OutputAgentInfo.Enabled || (OutputAgentInfo.TypeId != soundSettings.OutputAgent))
+				if (outputAgent != null)
 				{
-					// They are different, so stop the current output agent
-					CloseOutputAgent();
-				}
-			}
-
-			if (outputAgent == null)
-			{
-				Guid typeId = soundSettings.OutputAgent;
-
-				AgentInfo agentInfo = agentManager.GetAgent(Manager.AgentType.Output, typeId);
-				if ((agentInfo == null) || !agentInfo.Enabled)
-				{
-					// Selected output agent could not be loaded, try with the default one if not already that one
-					if (typeId != soundSettings.DefaultOutputAgent)
-						agentInfo = agentManager.GetAgent(Manager.AgentType.Output, soundSettings.DefaultOutputAgent);
+					// Check if the current allocated is the same as in the settings
+					if (!OutputAgentInfo.Enabled || (OutputAgentInfo.TypeId != soundSettings.OutputAgent))
+					{
+						// They are different, so stop the current output agent
+						CloseOutputAgent();
+					}
 				}
 
-				if ((agentInfo?.Agent != null) && agentInfo.Enabled)
+				if (outputAgent == null)
 				{
-					IOutputAgent agent = (IOutputAgent)agentInfo.Agent.CreateInstance(agentInfo.TypeId);
+					Guid typeId = soundSettings.OutputAgent;
 
-					if (agent.Initialize(out string errorMessage) == AgentResult.Error)
+					AgentInfo agentInfo = agentManager.GetAgent(Manager.AgentType.Output, typeId);
+					if ((agentInfo == null) || !agentInfo.Enabled)
+					{
+						// Selected output agent could not be loaded, try with the default one if not already that one
+						if (typeId != soundSettings.DefaultOutputAgent)
+							agentInfo = agentManager.GetAgent(Manager.AgentType.Output, soundSettings.DefaultOutputAgent);
+					}
+
+					if ((agentInfo?.Agent != null) && agentInfo.Enabled)
+					{
+						IOutputAgent agent = (IOutputAgent)agentInfo.Agent.CreateInstance(agentInfo.TypeId);
+
+						if (agent.Initialize(out string errorMessage) == AgentResult.Error)
+						{
+							if (showError)
+								ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_INITOUTPUTAGENT, errorMessage));
+
+							return false;
+						}
+
+						agent.PlayerFailed += Output_PlayerFailed;
+
+						OutputAgentInfo = agentInfo;
+						outputAgent = agent;
+					}
+					else
 					{
 						if (showError)
-							ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_INITOUTPUTAGENT, errorMessage));
+							ShowSimpleErrorMessage(Resources.IDS_ERR_NOOUTPUTAGENT);
 
 						return false;
 					}
-
-					agent.PlayerFailed += Output_PlayerFailed;
-
-					OutputAgentInfo = agentInfo;
-					outputAgent = agent;
-				}
-				else
-				{
-					if (showError)
-						ShowSimpleErrorMessage(Resources.IDS_ERR_NOOUTPUTAGENT);
-
-					return false;
 				}
 			}
 

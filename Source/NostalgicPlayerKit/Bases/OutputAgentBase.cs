@@ -81,6 +81,15 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Will set the master volume (0-256)
+		/// </summary>
+		/********************************************************************/
+		public abstract void SetMasterVolume(int volume);
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will switch the stream to read the sound data from without
 		/// interrupting the sound
 		/// </summary>

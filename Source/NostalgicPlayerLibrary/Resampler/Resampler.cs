@@ -25,9 +25,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		private const int FracMask = ((1 << FracBits) - 1);
 
 		private const int ClickShift = 6;
-		private const int ClickBuffer = 1 << ClickShift;
 
 		private const int BitShift16 = 16;
+
+		private const int MasterVolume = 256;
 
 		private ISamplePlayerAgent currentPlayer;
 
@@ -39,8 +40,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		private int outputFrequency;
 		private int outputChannels;
 		private int outputBits;
-
-		private int masterVolume;
 
 		private int[] dataBuffer;
 		private int samplesRead;
@@ -67,8 +66,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		/********************************************************************/
 		public Resampler()
 		{
-			masterVolume = 256;
-
 			swapSpeakers = false;
 		}
 
@@ -169,22 +166,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 
 		/********************************************************************/
 		/// <summary>
-		/// Will set the master volume
-		/// </summary>
-		/********************************************************************/
-		public void SetMasterVolume(int volume)
-		{
-			// Protect against click if volume variation is too high
-			if (Math.Abs(masterVolume - volume) > 32)
-				rampVolume = ClickBuffer;
-
-			masterVolume = volume;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Will change the mixer configuration
 		/// </summary>
 		/********************************************************************/
@@ -244,8 +225,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 			int oldLeftVolume = leftVolume;
 			int oldRightVolume = rightVolume;
 
-			leftVolume = (channelsEnabled == null) || channelsEnabled[0] ? masterVolume : 0;
-			rightVolume = (inputChannels == 2) && ((channelsEnabled == null) || channelsEnabled[1]) ? masterVolume : 0;
+			leftVolume = (channelsEnabled == null) || channelsEnabled[0] ? MasterVolume : 0;
+			rightVolume = (inputChannels == 2) && ((channelsEnabled == null) || channelsEnabled[1]) ? MasterVolume : 0;
 
 			int total = 0;
 
@@ -274,47 +255,39 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 				int todo = Math.Min((dataSize - currentIndex) / increment + 1, Math.Min(samplesRead, count));
 				if (todo > 0)
 				{
-					if (masterVolume > 0)
+					if (doInterpolation)
 					{
-						if (doInterpolation)
+						if (inputChannels == 1)
 						{
-							if (inputChannels == 1)
-							{
-								if (outputChannels == 1)
-									currentIndex = ResampleMonoToMonoInterpolation(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, oldLeftVolume, ref rampVolume);
-								else
-									currentIndex = ResampleMonoToStereoInterpolation(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, oldLeftVolume, ref rampVolume);
-							}
-							else if (inputChannels == 2)
-							{
-								if (outputChannels == 1)
-									currentIndex = ResampleStereoToMonoInterpolation(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, rightVolume, oldLeftVolume, oldRightVolume, ref rampVolume);
-								else
-									currentIndex = ResampleStereoToStereoInterpolation(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, rightVolume, oldLeftVolume, oldRightVolume, ref rampVolume);
-							}
+							if (outputChannels == 1)
+								currentIndex = ResampleMonoToMonoInterpolation(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, oldLeftVolume, ref rampVolume);
+							else
+								currentIndex = ResampleMonoToStereoInterpolation(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, oldLeftVolume, ref rampVolume);
 						}
-						else
+						else if (inputChannels == 2)
 						{
-							if (inputChannels == 1)
-							{
-								if (outputChannels == 1)
-									currentIndex = ResampleMonoToMonoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume);
-								else
-									currentIndex = ResampleMonoToStereoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume);
-							}
-							else if (inputChannels == 2)
-							{
-								if (outputChannels == 1)
-									currentIndex = ResampleStereoToMonoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, rightVolume);
-								else
-									currentIndex = ResampleStereoToStereoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, rightVolume);
-							}
+							if (outputChannels == 1)
+								currentIndex = ResampleStereoToMonoInterpolation(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, rightVolume, oldLeftVolume, oldRightVolume, ref rampVolume);
+							else
+								currentIndex = ResampleStereoToStereoInterpolation(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, rightVolume, oldLeftVolume, oldRightVolume, ref rampVolume);
 						}
 					}
 					else
 					{
-						Array.Clear(sampleBuffer, total, todo * outputChannels);
-						currentIndex += todo * increment;
+						if (inputChannels == 1)
+						{
+							if (outputChannels == 1)
+								currentIndex = ResampleMonoToMonoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume);
+							else
+								currentIndex = ResampleMonoToStereoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume);
+						}
+						else if (inputChannels == 2)
+						{
+							if (outputChannels == 1)
+								currentIndex = ResampleStereoToMonoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, rightVolume);
+							else
+								currentIndex = ResampleStereoToStereoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, rightVolume);
+						}
 					}
 
 					count -= todo;

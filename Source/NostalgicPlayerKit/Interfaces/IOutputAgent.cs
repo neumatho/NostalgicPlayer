@@ -48,6 +48,11 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		void Pause();
 
 		/// <summary>
+		/// Will set the master volume (0-256)
+		/// </summary>
+		void SetMasterVolume(int volume);
+
+		/// <summary>
 		/// Will switch the stream to read the sound data from without
 		/// interrupting the sound
 		/// </summary>

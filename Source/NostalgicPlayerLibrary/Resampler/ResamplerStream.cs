@@ -87,18 +87,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 
 		/********************************************************************/
 		/// <summary>
-		/// Will set the master volume
-		/// </summary>
-		/********************************************************************/
-		public override void SetMasterVolume(int volume)
-		{
-			resampler?.SetMasterVolume(volume);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Start the playing
 		/// </summary>
 		/********************************************************************/
