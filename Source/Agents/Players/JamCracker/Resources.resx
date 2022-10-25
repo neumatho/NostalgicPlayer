@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IDS_JAM_DESCRIPTION_AGENT1" xml:space="preserve">
-    <value>JamCracker Original player by M. Gemmel.
+    <value>Original player by M. Gemmel.
 Converted to C# by Thomas Neumann.
 
 The player came from the Amiga, but it's not the most used format. There are some nice tunes available by Dr. Awesome (Bjørn Lynne).</value>

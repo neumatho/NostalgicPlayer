@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -72,7 +72,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to JamCracker Original player by M. Gemmel.
+        ///   Looks up a localized string similar to Original player by M. Gemmel.
         ///Converted to C# by Thomas Neumann.
         ///
         ///The player came from the Amiga, but it&apos;s not the most used format. There are some nice tunes available by Dr. Awesome (Bjørn Lynne)..
