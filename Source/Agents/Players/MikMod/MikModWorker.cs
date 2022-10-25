@@ -470,7 +470,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 						Type = SampleInfo.SampleType.Sample,
 						BitSize = (byte)((sample.Flags & SampleFlag._16Bits) != 0 ? 16 : 8),
 						MiddleC = frequencies[4 * 12],
-						Volume = (byte)(sample.Volume * 4),
+						Volume = (ushort)(sample.Volume * 4),
 						Panning = sample.Panning == SharedConstant.Pan_Surround ? (short)ChannelPanning.Surround : sample.Panning,
 						Sample = sample.Handle,
 						Length = sample.Length,

@@ -616,7 +616,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 					{
 						BitSize = 8,
 						MiddleC = frequencies[4 * 12],
-						Volume = (byte)(inst.Volume * 4),
+						Volume = (ushort)(inst.Volume * 4),
 						Panning = -1,
 						NoteFrequencies = frequencies
 					};

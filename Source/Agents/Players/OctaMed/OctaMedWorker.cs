@@ -1460,7 +1460,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 							Type = SampleInfo.SampleType.Sample,
 							BitSize = 8,
 							MiddleC = frequencies[12 + 3 * 12],
-							Volume = (byte)(inst.GetInitVol() * 2),
+							Volume = (ushort)(inst.GetInitVol() * 2),
 							Panning = -1,
 							Sample = null,
 							Length = 0,
@@ -1475,7 +1475,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 						{
 							BitSize = (byte)(sample.Is16Bit() ? 16 : 8),
 							MiddleC = frequencies[12 + 3 * 12],
-							Volume = (byte)(inst.GetInitVol() * 2),
+							Volume = (ushort)(inst.GetInitVol() * 2),
 							Panning = -1,
 							Length = sample.GetLength(),
 							LoopStart = inst.GetRepeat(),

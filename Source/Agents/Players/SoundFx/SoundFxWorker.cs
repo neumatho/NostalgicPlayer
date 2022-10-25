@@ -454,7 +454,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 						Type = SampleInfo.SampleType.Sample,
 						BitSize = 8,
 						MiddleC = frequencies[12 + 3 * 12],
-						Volume = (byte)(sample.Volume * 4),
+						Volume = (ushort)(sample.Volume * 4),
 						Panning = -1,
 						Sample = sample.SampleAddr,
 						Length = sample.Length > 2 ? sample.Length : 0,

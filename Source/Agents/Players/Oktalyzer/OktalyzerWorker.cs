@@ -528,7 +528,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 						Type = SampleInfo.SampleType.Sample,
 						BitSize = 8,
 						MiddleC = frequencies[3 * 12 + 12],
-						Volume = (byte)(sample.Volume * 4),
+						Volume = (ushort)(sample.Volume * 4),
 						Panning = -1,
 						Sample = sample.SampleData,
 						Length = sample.Length,
