@@ -928,6 +928,14 @@
             <uap:DisplayName>TMK Replay</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="gmcfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-gmc">.gmc</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Game Music Creator</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
