@@ -533,6 +533,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 		public override void CleanupPlayer()
 		{
 			Cleanup();
+
+			base.CleanupPlayer();
 		}
 
 
@@ -544,6 +546,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 		/********************************************************************/
 		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
+			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+				return false;
+
 			// Initialize speed
 			ushort spd = sequences[0].Speed;
 			if (spd == 0)
@@ -602,7 +607,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				voiceData[i] = voiceInfo;
 			}
 
-			return base.InitSound(songNumber, durationInfo, out errorMessage);
+			return true;
 		}
 
 
@@ -712,6 +717,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 			spdTemp = 1;
 
 			OnModuleInfoChanged(InfoSpeedLine, repSpd.ToString());
+
+			base.SetSongPosition(position, positionInfo);
 		}
 
 

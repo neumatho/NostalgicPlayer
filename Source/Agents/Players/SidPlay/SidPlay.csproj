@@ -8,7 +8,7 @@
     <Product>NostalgicPlayer</Product>
     <Description>Emulates the C64 CPU and soundchip to play C64 modules</Description>
     <Copyright>Copyright © 2021-2022</Copyright>
-    <Version>1.4.3</Version>
+    <Version>1.4.4</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

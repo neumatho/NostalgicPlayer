@@ -547,6 +547,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		public override void CleanupPlayer()
 		{
 			Cleanup();
+
+			base.CleanupPlayer();
 		}
 
 
@@ -558,6 +560,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/********************************************************************/
 		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
+			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+				return false;
+
 			// Select sub-song to play
 			sidTune.SelectSong((ushort)(songNumber + 1));
 
@@ -590,7 +595,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				durationTimer = new Timer(DurationTimerHandler, durationInfo.TotalTime, 0, 900);
 			}
 
-			return base.InitSound(songNumber, durationInfo, out errorMessage);
+			return true;
 		}
 
 

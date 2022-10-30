@@ -32,6 +32,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 			 135, 135, 135, 135, 135, 135, 135, 135, 135, 135, 135, 135
 		};
 
+		private int numberOfSubSongs;
+
 		private ushort samplesNum;
 		private ushort patternNum;
 		private ushort songLen;
@@ -48,7 +50,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		private ushort tmpDmacon;
 
 		private ushort songPos;
-		private ushort songCnt;
 		private ushort noteCnt;
 
 		private byte wait;
@@ -297,6 +298,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		public override void CleanupPlayer()
 		{
 			Cleanup();
+
+			base.CleanupPlayer();
 		}
 
 
@@ -308,58 +311,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/********************************************************************/
 		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
-			// Initialize other variables
-			songPos = 0;
-			songCnt = songLen;
+			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+				return false;
 
-			PattInfo pattInfo = pattTable[songTable[0]];
-			noteCnt = pattInfo.Size;
-			address = pattInfo.Address;
+			InitializeSound(durationInfo.StartPosition);
 
-			addressIndex = 0;
-
-			wait = 6;
-			waitCnt = 1;
-
-			// Initialize channel variables
-			ushort waveOff = 0x80;
-
-			variables = new VoiceInfo[4];
-			for (int i = 0; i < 4; i++)
-			{
-				VoiceInfo voiceInfo = new VoiceInfo();
-
-				voiceInfo.WaveOffset = waveOff;
-				voiceInfo.Dmacon = (ushort)(1 << i);
-				voiceInfo.Channel = VirtualChannels[i];
-				voiceInfo.InsNum = -1;
-				voiceInfo.InsLen = 0;
-				voiceInfo.InsAddress = null;
-				voiceInfo.RealInsAddress = null;
-				voiceInfo.PerIndex = 0;
-				voiceInfo.Pers[0] = 1019;
-				voiceInfo.Pers[1] = 0;
-				voiceInfo.Pers[2] = 0;
-				voiceInfo.Por = 0;
-				voiceInfo.DeltaPor = 0;
-				voiceInfo.PorLevel = 0;
-				voiceInfo.Vib = 0;
-				voiceInfo.DeltaVib = 0;
-				voiceInfo.Vol = 0;
-				voiceInfo.DeltaVol = 0;
-				voiceInfo.VolLevel = 0x40;
-				voiceInfo.Phase = 0;
-				voiceInfo.DeltaPhase = 0;
-				voiceInfo.VibCnt = 0;
-				voiceInfo.VibMax = 0;
-				voiceInfo.Flags = 0;
-
-				variables[i] = voiceInfo;
-
-				waveOff += 0x40;
-			}
-
-			return base.InitSound(songNumber, durationInfo, out errorMessage);
+			return true;
 		}
 
 
@@ -371,7 +328,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/********************************************************************/
 		public override DurationInfo[] CalculateDuration()
 		{
-			return CalculateDurationBySongPosition();
+			DurationInfo[] durations = CalculateDurationBySongPosition();
+			numberOfSubSongs = durations.Length;
+
+			return durations;
 		}
 
 
@@ -399,6 +359,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 		/********************************************************************/
 		/// <summary>
+		/// Return information about sub-songs
+		/// </summary>
+		/********************************************************************/
+		public override SubSongInfo SubSongs => new SubSongInfo(numberOfSubSongs, 0);
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the length of the current song
 		/// </summary>
 		/********************************************************************/
@@ -413,7 +382,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/********************************************************************/
 		public override int GetSongPosition()
 		{
-			return songLen - songCnt;
+			return songPos;
 		}
 
 
@@ -426,7 +395,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		public override void SetSongPosition(int position, PositionInfo positionInfo)
 		{
 			// Change the position
-			songCnt = (ushort)(songLen - position);
 			songPos = (ushort)position;
 
 			PattInfo pattInfo = pattTable[songTable[songPos]];
@@ -438,6 +406,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 			// Change the speed
 			waitCnt = 1;
 			wait = positionInfo.Speed;
+
+			OnModuleInfoChanged(InfoSpeedLine, wait.ToString());
+
+			base.SetSongPosition(position, positionInfo);
 		}
 
 
@@ -522,7 +494,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/********************************************************************/
 		protected override int InitDurationCalculationByStartPos(int startPosition)
 		{
-			InitSound(0, null, out _);
+			InitializeSound(startPosition);
 
 			return startPosition;
 		}
@@ -541,6 +513,68 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		#endregion
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Initialize sound structures
+		/// </summary>
+		/********************************************************************/
+		private void InitializeSound(int startPosition)
+		{
+			// Initialize other variables
+			songPos = (ushort)startPosition;
+
+			PattInfo pattInfo = pattTable[songTable[songPos]];
+			noteCnt = pattInfo.Size;
+			address = pattInfo.Address;
+
+			addressIndex = 0;
+
+			wait = 6;
+			waitCnt = 1;
+
+			// Initialize channel variables
+			ushort waveOff = 0x80;
+
+			variables = new VoiceInfo[4];
+			for (int i = 0; i < 4; i++)
+			{
+				VoiceInfo voiceInfo = new VoiceInfo();
+
+				voiceInfo.WaveOffset = waveOff;
+				voiceInfo.Dmacon = (ushort)(1 << i);
+				voiceInfo.Channel = VirtualChannels[i];
+				voiceInfo.InsNum = -1;
+				voiceInfo.InsLen = 0;
+				voiceInfo.InsAddress = null;
+				voiceInfo.RealInsAddress = null;
+				voiceInfo.PerIndex = 0;
+				voiceInfo.Pers[0] = 1019;
+				voiceInfo.Pers[1] = 0;
+				voiceInfo.Pers[2] = 0;
+				voiceInfo.Por = 0;
+				voiceInfo.DeltaPor = 0;
+				voiceInfo.PorLevel = 0;
+				voiceInfo.Vib = 0;
+				voiceInfo.DeltaVib = 0;
+				voiceInfo.Vol = 0;
+				voiceInfo.DeltaVol = 0;
+				voiceInfo.VolLevel = 0x40;
+				voiceInfo.Phase = 0;
+				voiceInfo.DeltaPhase = 0;
+				voiceInfo.VibCnt = 0;
+				voiceInfo.VibMax = 0;
+				voiceInfo.Flags = 0;
+
+				variables[i] = voiceInfo;
+
+				waveOff += 0x40;
+			}
+
+			MarkPositionAsVisited(startPosition);
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Frees all the memory the player has allocated
@@ -570,10 +604,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 			if (--noteCnt == 0)
 			{
 				songPos++;
-				if (--songCnt == 0)
+				if (songPos >= songLen)
+					songPos = (ushort)(currentDurationInfo?.StartPosition ?? 0);
+
+				if (HasPositionBeenVisited(songPos))
 				{
-					songPos = 0;
-					songCnt = songLen;
+					wait = currentDurationInfo?.PositionInfo[songPos].Speed ?? 6;
 
 					// Next module
 					OnEndReached();
@@ -581,6 +617,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 				// Next position
 				OnPositionChanged();
+
+				MarkPositionAsVisited(songPos);
 
 				PattInfo pattInfo = pattTable[songTable[songPos]];
 				noteCnt = pattInfo.Size;

@@ -220,6 +220,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 
 			player = null;
 			of = null;
+
+			base.CleanupPlayer();
 		}
 
 
@@ -231,6 +233,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		/********************************************************************/
 		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
+			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+				return false;
+
 			player.Init(of, (short)durationInfo.StartPosition);
 
 			// We want to wrap the module
@@ -240,7 +245,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 			SetTempo(of.Bpm);
 			player.mdBpm = of.Bpm;
 
-			return base.InitSound(songNumber, durationInfo, out errorMessage);
+			return true;
 		}
 
 
@@ -395,6 +400,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 				of.Control[t].Main.I = null;
 				of.Control[t].Main.S = null;
 			}
+
+			OnModuleInfoChanged(InfoSpeedLine, of.SngSpd.ToString());
+
+			base.SetSongPosition(position, positionInfo);
 		}
 
 

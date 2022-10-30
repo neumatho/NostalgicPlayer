@@ -1269,6 +1269,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		public override void CleanupPlayer()
 		{
 			Cleanup();
+
+			base.CleanupPlayer();
 		}
 
 
@@ -1280,9 +1282,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		/********************************************************************/
 		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
+			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+				return false;
+
 			InitializeSound(songNumber);
 
-			return base.InitSound(songNumber, durationInfo, out errorMessage);
+			return true;
 		}
 
 
@@ -1294,9 +1299,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		/********************************************************************/
 		public override DurationInfo[] CalculateDuration()
 		{
-			DurationInfo[] durations = CalculateDurationBySubSongs();
-
-			return durations;
+			return CalculateDurationBySubSongs();
 		}
 
 
@@ -1420,6 +1423,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 			// Set instrument volumes (can be changed with Cxx effect)
 			for (i = 0; i < Constants.MaxInstr - 1; i++)
 				sg.GetInstr(i).SetVol(extraPosInfo.instVolumes[i]);
+
+			base.SetSongPosition(position, positionInfo);
 		}
 
 

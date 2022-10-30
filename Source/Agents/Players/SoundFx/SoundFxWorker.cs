@@ -29,6 +29,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 		private byte[] orders;
 		private uint[][] patterns;
 
+		private int numberOfSubSongs;
+
 		private ushort delay;
 		private ushort maxPattern;
 		private uint songLength;
@@ -316,6 +318,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 		public override void CleanupPlayer()
 		{
 			Cleanup();
+
+			base.CleanupPlayer();
 		}
 
 
@@ -327,17 +331,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 		/********************************************************************/
 		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
-			channelInfo = Helpers.InitializeArray<Channel>(4);
+			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+				return false;
 
-			timer = 0;
-			trackPos = 0;
-			posCounter = 0;
-			breakFlag = false;
+			InitializeSound(durationInfo.StartPosition);
 
-			// Calculate the frequency to play with
-			PlayingFrequency = 1773447.0f / delay / 2.5f;
-
-			return base.InitSound(songNumber, durationInfo, out errorMessage);
+			return true;
 		}
 
 
@@ -361,7 +360,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 		/********************************************************************/
 		public override DurationInfo[] CalculateDuration()
 		{
-			return CalculateDurationBySongPosition();
+			DurationInfo[] durations = CalculateDurationBySongPosition();
+			numberOfSubSongs = durations.Length;
+
+			return durations;
 		}
 
 
@@ -389,6 +391,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 				MakeEffects(channelInfo[3], VirtualChannels[3]);
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return information about sub-songs
+		/// </summary>
+		/********************************************************************/
+		public override SubSongInfo SubSongs => new SubSongInfo(numberOfSubSongs, 0);
 
 
 
@@ -424,6 +435,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 			breakFlag = false;
 			posCounter = 0;
 			trackPos = (uint)position;
+
+			base.SetSongPosition(position, positionInfo);
 		}
 
 
@@ -493,7 +506,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 		/********************************************************************/
 		protected override int InitDurationCalculationByStartPos(int startPosition)
 		{
-			InitSound(0, null, out _);
+			InitializeSound(startPosition);
 
 			return startPosition;
 		}
@@ -512,6 +525,28 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 		#endregion
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Initialize sound structures
+		/// </summary>
+		/********************************************************************/
+		private void InitializeSound(int startPosition)
+		{
+			channelInfo = Helpers.InitializeArray<Channel>(4);
+
+			timer = 0;
+			trackPos = (uint)startPosition;
+			posCounter = 0;
+			breakFlag = false;
+
+			// Calculate the frequency to play with
+			PlayingFrequency = 1773447.0f / delay / 2.5f;
+
+			MarkPositionAsVisited(startPosition);
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Frees all the memory the player has allocated
@@ -560,12 +595,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 				if (trackPos == songLength)
 				{
 					// Module is done, loop it
-					trackPos = 0;
+					trackPos = (uint)(currentDurationInfo?.StartPosition ?? 0);
+				}
+
+				if (HasPositionBeenVisited((int)trackPos))
+				{
+					// Next module
 					OnEndReached();
 				}
 
 				// Tell NostalgicPlayer we have changed the position
 				OnPositionChanged();
+
+				MarkPositionAsVisited((int)trackPos);
 			}
 		}
 

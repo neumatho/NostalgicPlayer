@@ -31,6 +31,17 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// </summary>
 		protected int mixerChannels;
 
+		/// <summary>
+		/// Holds the duration information for the current playing song
+		/// </summary>
+		protected DurationInfo currentDurationInfo;
+
+		private DurationInfo[] allDurations;
+		private List<int> positionPlayOrder;
+		private bool[] visitedPositions;
+
+		private int currentSong;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -83,6 +94,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		public virtual void CleanupPlayer()
 		{
+			visitedPositions = null;
 		}
 
 
@@ -95,6 +107,12 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		public virtual bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
 			errorMessage = string.Empty;
+
+			if (visitedPositions != null)
+				Array.Clear(visitedPositions);
+
+			currentSong = songNumber;
+			currentDurationInfo = durationInfo;
 
 			return true;
 		}
@@ -205,6 +223,21 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		public virtual void SetSongPosition(int position, PositionInfo positionInfo)
 		{
+			if (visitedPositions != null)
+			{
+				Array.Clear(visitedPositions);
+
+				for (int pos = allDurations[positionInfo.SubSong].StartPosition; ; pos++)
+				{
+					int playingIndex = positionPlayOrder[pos];
+					visitedPositions[playingIndex] = true;
+
+					if (playingIndex == position)
+						break;
+				}
+
+				ChangeSubSong(positionInfo.SubSong);
+			}
 		}
 
 
@@ -299,7 +332,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		protected void OnPositionChanged()
 		{
-			if (PositionChanged != null)
+			if (!doNotTrigEvents && (PositionChanged != null))
 				PositionChanged(this, EventArgs.Empty);
 		}
 
@@ -312,7 +345,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		protected void OnSubSongChanged(SubSongChangedEventArgs e)
 		{
-			if (SubSongChanged != null)
+			if (!doNotTrigEvents && (SubSongChanged != null))
 				SubSongChanged(this, e);
 		}
 
@@ -328,6 +361,51 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		{
 			PlayingFrequency = bpm / 2.5f;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tells if the given position has already been played
+		/// </summary>
+		/********************************************************************/
+		protected bool HasPositionBeenVisited(int position)
+		{
+			return visitedPositions[position];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Mark that the given position has been played
+		/// </summary>
+		/********************************************************************/
+		protected void MarkPositionAsVisited(int position)
+		{
+			visitedPositions[position] = true;
+
+			if (currentDurationInfo != null)
+				ChangeSubSong(currentDurationInfo.PositionInfo[position].SubSong);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will change the sub-song if needed
+		/// </summary>
+		/********************************************************************/
+		protected void ChangeSubSong(int subSong)
+		{
+			if (subSong != currentSong)
+			{
+				currentSong = subSong;
+				currentDurationInfo = allDurations[subSong];
+
+				OnSubSongChanged(new SubSongChangedEventArgs(subSong, currentDurationInfo));
+			}
+		}
 		#endregion
 
 		#region Duration calculation helpers
@@ -339,84 +417,112 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		protected DurationInfo[] CalculateDurationBySongPosition(bool playerTellsWhenToStop = false)
 		{
-			List<DurationInfo> result = new List<DurationInfo>();
+			doNotTrigEvents = true;
 
-			PositionInfo[] positionTimes = new PositionInfo[SongLength];
-
-			int songStartPos = 0;
-			int subSong = 0;
-			DateTime startTime = DateTime.Now;
-
-			do
+			try
 			{
-				songStartPos = InitDurationCalculationByStartPos(songStartPos);
-				if (songStartPos < 0)
-					break;
+				List<DurationInfo> result = new List<DurationInfo>();
 
-				int previousPos = -1;
-				float total = 0.0f;
+				PositionInfo[] positionTimes = new PositionInfo[SongLength];
+				positionPlayOrder = new List<int>(positionTimes.Length);
+				visitedPositions = new bool[positionTimes.Length];
 
-				byte currentSpeed = GetCurrentSpeed();
-				ushort currentBpm = GetCurrentBpm();
-				object extraInfo = GetExtraPositionInfo();
+				int songStartPos = 0;
+				int subSong = 0;
+				DateTime startTime = DateTime.Now;
 
-				HasEndReached = false;
-
-				for (;;)
+				do
 				{
-					int currentPos = GetSongPosition();
-					if (currentPos != previousPos)
-					{
-						if (!playerTellsWhenToStop && (positionTimes[currentPos] != null))	// Position has already been taken by another sub-song
-							break;
+					Array.Clear(visitedPositions);
 
-						previousPos = currentPos;
-
-						// Add position information to the list
-						PositionInfo posInfo = new PositionInfo(currentSpeed, currentBpm, new TimeSpan((long)total * TimeSpan.TicksPerMillisecond), subSong, extraInfo);
-						positionTimes[currentPos] = posInfo;
-					}
-
-					// "Play" a single tick
-					Play();
-
-					// Update information
-					currentSpeed = GetCurrentSpeed();
-					currentBpm = GetCurrentBpm();
-					extraInfo = GetExtraPositionInfo();
-
-					if (HasEndReached)
+					songStartPos = InitDurationCalculationByStartPos(songStartPos);
+					if (songStartPos < 0)
 						break;
 
-					// Add the tick time
-					total += 1000.0f / PlayingFrequency;
+					int previousPos = -1;
+					float total = 0.0f;
 
-					// Check for time out
-					if ((DateTime.Now - startTime).Seconds >= 5)
-						throw new Exception(Resources.IDS_ERR_DURATION_TIMEOUT);
+					byte currentSpeed = GetCurrentSpeed();
+					ushort currentBpm = GetCurrentBpm();
+					object extraInfo = GetExtraPositionInfo();
+
+					HasEndReached = false;
+
+					for (;;)
+					{
+						// Check for time out
+						if ((DateTime.Now - startTime).Seconds >= 5)
+							throw new Exception(Resources.IDS_ERR_DURATION_TIMEOUT);
+
+						int currentPos = GetSongPosition();
+						if (currentPos != previousPos)
+						{
+							if (playerTellsWhenToStop)
+							{
+								if (positionTimes[currentPos] != null)
+								{
+									if (positionTimes[currentPos].SubSong != subSong)
+										break;
+								}
+							}
+							else
+							{
+								if (positionTimes[currentPos] != null)	// Position has already been taken by another sub-song
+									break;
+							}
+
+							previousPos = currentPos;
+
+							// Add position information to the list
+							PositionInfo posInfo = new PositionInfo(currentSpeed, currentBpm, new TimeSpan((long)total * TimeSpan.TicksPerMillisecond), subSong, extraInfo);
+							positionTimes[currentPos] = posInfo;
+
+							positionPlayOrder.Add(currentPos);
+						}
+
+						// "Play" a single tick
+						Play();
+
+						// Update information
+						currentSpeed = GetCurrentSpeed();
+						currentBpm = GetCurrentBpm();
+						extraInfo = GetExtraPositionInfo();
+
+						if (HasEndReached)
+							break;
+
+						// Add the tick time
+						total += 1000.0f / PlayingFrequency;
+					}
+
+					// Calculate the total time of the song
+					TimeSpan totalTime = new TimeSpan((long)total * TimeSpan.TicksPerMillisecond);
+
+					// Remember the song
+					//
+					// Note that the same positionTimes array is used for all sub-songs,
+					// so even if it's not totally updated now, it will be later
+					result.Add(new DurationInfo(totalTime, positionTimes, songStartPos));
+
+					CleanupDurationCalculation();
+					subSong++;
+
+					// Find new start position
+					songStartPos = Array.FindIndex(positionTimes, item => item == null);
 				}
+				while (playerTellsWhenToStop || (songStartPos != -1));
 
-				// Calculate the total time of the song
-				TimeSpan totalTime = new TimeSpan((long)total * TimeSpan.TicksPerMillisecond);
+				// Clear the "end" flag again, so the module don't stop playing immediately
+				HasEndReached = false;
 
-				// Remember the song
-				//
-				// Note that the same positionTimes array is used for all sub-songs,
-				// so even if it's not totally updated now, it will be later
-				result.Add(new DurationInfo(totalTime, positionTimes, songStartPos));
+				allDurations = result.ToArray();
 
-				CleanupDurationCalculation();
-				subSong++;
-
-				// Find new start position
-				songStartPos = Array.FindIndex(positionTimes, item => item == null);
+				return allDurations;
 			}
-			while (playerTellsWhenToStop || (songStartPos != -1));
-
-			// Clear the "end" flag again, so the module don't stop playing immediately
-			HasEndReached = false;
-
-			return result.ToArray();
+			finally
+			{
+				doNotTrigEvents = false;
+			}
 		}
 
 
@@ -428,78 +534,87 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		protected DurationInfo[] CalculateDurationBySubSongs()
 		{
-			List<DurationInfo> result = new List<DurationInfo>();
+			doNotTrigEvents = true;
 
-			int numSongs = SubSongs.Number;
-			DateTime startTime = DateTime.Now;
-
-			for (int song = 0; song < numSongs; song++)
+			try
 			{
-				InitDurationCalculationBySubSong(song);
+				List<DurationInfo> result = new List<DurationInfo>();
 
-				int prevPos = -1;
-				float total = 0.0f;
+				int numSongs = SubSongs.Number;
+				DateTime startTime = DateTime.Now;
 
-				byte currentSpeed = GetCurrentSpeed();
-				ushort currentBpm = GetCurrentBpm();
-				object extraInfo = GetExtraPositionInfo();
-
-				List<PositionInfo> positionTimes = new List<PositionInfo>();
-
-				HasEndReached = false;
-
-				for (;;)
+				for (int song = 0; song < numSongs; song++)
 				{
-					int currentPos = GetSongPosition();
-					if (prevPos != currentPos)
+					InitDurationCalculationBySubSong(song);
+
+					int prevPos = -1;
+					float total = 0.0f;
+
+					byte currentSpeed = GetCurrentSpeed();
+					ushort currentBpm = GetCurrentBpm();
+					object extraInfo = GetExtraPositionInfo();
+
+					List<PositionInfo> positionTimes = new List<PositionInfo>();
+
+					HasEndReached = false;
+
+					for (;;)
 					{
-						prevPos = currentPos;
+						// Check for time out
+						if ((DateTime.Now - startTime).Seconds >= 5)
+							throw new Exception(Resources.IDS_ERR_DURATION_TIMEOUT);
 
-						// Add position information to the list
-						PositionInfo posInfo = new PositionInfo(currentSpeed, currentBpm, new TimeSpan((long)total * TimeSpan.TicksPerMillisecond), song, extraInfo);
+						int currentPos = GetSongPosition();
+						if (prevPos != currentPos)
+						{
+							prevPos = currentPos;
 
-						// Need to make a while, in case there is a position jump
-						// that jumps forward, then we're missing some items in the list
-						while (prevPos >= positionTimes.Count)
-							positionTimes.Add(posInfo);
+							// Add position information to the list
+							PositionInfo posInfo = new PositionInfo(currentSpeed, currentBpm, new TimeSpan((long)total * TimeSpan.TicksPerMillisecond), song, extraInfo);
+
+							// Need to make a while, in case there is a position jump
+							// that jumps forward, then we're missing some items in the list
+							while (prevPos >= positionTimes.Count)
+								positionTimes.Add(posInfo);
+						}
+
+						// "Play" a single tick
+						Play();
+
+						// Update information
+						currentSpeed = GetCurrentSpeed();
+						currentBpm = GetCurrentBpm();
+						extraInfo = GetExtraPositionInfo();
+
+						if (HasEndReached)
+							break;
+
+						// Add the tick time
+						total += 1000.0f / PlayingFrequency;
 					}
 
-					// "Play" a single tick
-					Play();
+					// Calculate the total time of the song
+					TimeSpan totalTime = new TimeSpan((long)total * TimeSpan.TicksPerMillisecond);
 
-					// Update information
-					currentSpeed = GetCurrentSpeed();
-					currentBpm = GetCurrentBpm();
-					extraInfo = GetExtraPositionInfo();
+					// Fill the rest of the list with total time
+					for (int i = positionTimes.Count; i < SongLength; i++)
+						positionTimes.Add(new PositionInfo(currentSpeed, currentBpm, totalTime, song, extraInfo));
 
-					if (HasEndReached)
-						break;
+					// Remember the song
+					result.Add(new DurationInfo(totalTime, positionTimes.ToArray(), 0));
 
-					// Add the tick time
-					total += 1000.0f / PlayingFrequency;
-
-					// Check for time out
-					if ((DateTime.Now - startTime).Seconds >= 5)
-						throw new Exception(Resources.IDS_ERR_DURATION_TIMEOUT);
+					CleanupDurationCalculation();
 				}
 
-				// Calculate the total time of the song
-				TimeSpan totalTime = new TimeSpan((long)total * TimeSpan.TicksPerMillisecond);
+				// Clear the "end" flag again, so the module don't stop playing immediately
+				HasEndReached = false;
 
-				// Fill the rest of the list with total time
-				for (int i = positionTimes.Count; i < SongLength; i++)
-					positionTimes.Add(new PositionInfo(currentSpeed, currentBpm, totalTime, song, extraInfo));
-
-				// Remember the song
-				result.Add(new DurationInfo(totalTime, positionTimes.ToArray(), 0));
-
-				CleanupDurationCalculation();
+				return result.ToArray();
 			}
-
-			// Clear the "end" flag again, so the module don't stop playing immediately
-			HasEndReached = false;
-
-			return result.ToArray();
+			finally
+			{
+				doNotTrigEvents = false;
+			}
 		}
 
 

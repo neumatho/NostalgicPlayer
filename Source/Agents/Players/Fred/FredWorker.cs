@@ -369,6 +369,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 		public override void CleanupPlayer()
 		{
 			Cleanup();
+
+			base.CleanupPlayer();
 		}
 
 
@@ -380,6 +382,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 		/********************************************************************/
 		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
+			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+				return false;
+
 			// Remember the song number
 			currentSong = songNumber;
 
@@ -432,7 +437,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 				chanInfo.SynthSample = new sbyte[64];	// Well, it seems only 32 bytes are needed, but we allocate 64 just in case
 			}
 
-			return base.InitSound(songNumber, durationInfo, out errorMessage);
+			return true;
 		}
 
 
@@ -550,8 +555,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 			// Change the speed
 			currentTempo = positionInfo.Speed;
 
-			// Change the module info
 			OnModuleInfoChanged(InfoSpeedLine, currentTempo.ToString());
+
+			base.SetSongPosition(position, positionInfo);
 		}
 
 

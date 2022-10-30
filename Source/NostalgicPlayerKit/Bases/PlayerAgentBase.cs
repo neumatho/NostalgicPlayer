@@ -18,6 +18,8 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 	/// </summary>
 	public abstract class PlayerAgentBase : IPlayerAgent
 	{
+		internal bool doNotTrigEvents;
+
 		/********************************************************************/
 		/// <summary>
 		/// Returns the file extensions that identify this player
@@ -160,7 +162,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		protected void OnModuleInfoChanged(int line, string newValue)
 		{
-			if (ModuleInfoChanged != null)
+			if (!doNotTrigEvents && (ModuleInfoChanged != null))
 				ModuleInfoChanged(this, new ModuleInfoChangedEventArgs(line, newValue));
 		}
 		#endregion

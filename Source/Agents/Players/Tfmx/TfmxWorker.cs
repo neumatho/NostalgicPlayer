@@ -506,6 +506,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			outBuf = null;
 
 			Cleanup();
+
+			base.CleanupPlayer();
 		}
 
 
@@ -517,6 +519,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/********************************************************************/
 		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
+			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+				return false;
+
 			// Initialize member variables
 			currentSong = songNumber;
 
@@ -531,7 +536,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			TfmxInit();
 			StartSong(songNumber, 0);
 
-			return base.InitSound(songNumber, durationInfo, out errorMessage);
+			return true;
 		}
 
 
@@ -577,7 +582,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				// Now take each position
 				for (int j = startPos; j <= endPos; j++)
 				{
-					PositionInfo posInfo = new PositionInfo((byte)spd, cia, new TimeSpan((long)total * TimeSpan.TicksPerMillisecond), i);
+					PositionInfo posInfo = new PositionInfo((byte)spd, cia, new TimeSpan((long)total * TimeSpan.TicksPerMillisecond), i, j);
 
 					while ((j - startPos) >= posInfoList.Count)
 						posInfoList.Add(posInfo);
@@ -898,9 +903,10 @@ Loop:
 
 			GetTrackStep();
 
-			// Change the module info
 			OnModuleInfoChanged(InfoSpeedLine, pdb.PreScale.ToString());
 			OnModuleInfoChanged(InfoTempoLine, (0x1b51f8 / mdb.CiaSave).ToString());
+
+			base.SetSongPosition(position, positionInfo);
 		}
 		#endregion
 

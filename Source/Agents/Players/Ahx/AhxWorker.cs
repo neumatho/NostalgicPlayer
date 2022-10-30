@@ -13,7 +13,6 @@ using Polycode.NostalgicPlayer.Agent.Player.Ahx.Implementation;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -32,9 +31,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 		};
 
 		private readonly ModuleType currentModuleType;
-
-		private DurationInfo[] allDurations;
-		private int currentSong;
 
 		private AhxWaves waves;
 		private AhxOutput output;
@@ -479,6 +475,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 		public override void CleanupPlayer()
 		{
 			Cleanup();
+
+			base.CleanupPlayer();
 		}
 
 
@@ -490,10 +488,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 		/********************************************************************/
 		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
+			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+				return false;
+
 			// Initialize the player
 			InitSubSong(songNumber);
 
-			return base.InitSound(songNumber, durationInfo, out errorMessage);
+			return true;
 		}
 
 
@@ -505,9 +506,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 		/********************************************************************/
 		public override DurationInfo[] CalculateDuration()
 		{
-			allDurations = CalculateDurationBySongPosition(true);
-
-			return allDurations;
+			return CalculateDurationBySongPosition(true);
 		}
 
 
@@ -607,9 +606,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 			// Set the tempo
 			tempo = positionInfo.Speed;
 
-			// Change the module info
 			OnModuleInfoChanged(InfoSpeedLine, tempo.ToString());
-			OnSubSongChanged(new SubSongChangedEventArgs(allDurations[currentSong].PositionInfo[position].SubSong, allDurations[currentSong]));
+
+			base.SetSongPosition(position, positionInfo);
 		}
 
 
@@ -716,8 +715,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 					// Tell NostalgicPlayer we have changed the position
 					OnPositionChanged();
 
-					if (allDurations != null)
-						ChangeSubSong(allDurations[currentSong].PositionInfo[posNr].SubSong);
+					if (currentDurationInfo != null)
+						ChangeSubSong(currentDurationInfo.PositionInfo[posNr].SubSong);
 				}
 
 				for (int i = 0; i < 4; i++)
@@ -769,8 +768,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 						OnPositionChanged();
 						OnEndReached();
 
-						if (allDurations != null)
-							ChangeSubSong(allDurations[currentSong].PositionInfo[posNr].SubSong);
+						if (currentDurationInfo != null)
+							ChangeSubSong(currentDurationInfo.PositionInfo[posNr].SubSong);
 					}
 
 					getNewPosition = true;
@@ -844,7 +843,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 			else
 				posNr = song.SubSongs[nr - 1];
 
-			currentSong = nr;
 			posJump = 0;
 			patternBreak = false;
 			mainVolume = 0x40;
@@ -856,22 +854,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 
 			for (int v = 0; v < 4; v++)
 				voices[v].Init();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will change the sub-song if needed
-		/// </summary>
-		/********************************************************************/
-		private void ChangeSubSong(int subSong)
-		{
-			if (subSong != currentSong)
-			{
-				currentSong = subSong;
-				OnSubSongChanged(new SubSongChangedEventArgs(subSong, allDurations[subSong]));
-			}
 		}
 
 

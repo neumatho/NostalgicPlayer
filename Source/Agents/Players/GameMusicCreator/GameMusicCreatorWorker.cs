@@ -13,7 +13,6 @@ using System.Linq;
 using Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator.Containers;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
@@ -31,10 +30,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 			214, 202, 190, 180, 170, 160, 151, 143, 135, 127, 120, 113
 		};
 
-		private DurationInfo[] allDurations;
-
-		private int currentSong;
-		private bool[] visitedPositions;
+		private int numberOfSubSongs;
 
 		private int numberOfPositions;
 		private byte[] positionList;
@@ -400,6 +396,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 		public override void CleanupPlayer()
 		{
 			Cleanup();
+
+			base.CleanupPlayer();
 		}
 
 
@@ -411,33 +409,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 		/********************************************************************/
 		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
-			currentSong = songNumber;
+			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+				return false;
 
-			visitedPositions = new bool[numberOfPositions];
+			InitializeSound(durationInfo.StartPosition);
 
-			// Initialize work variables
-			currentPosition = -1;
-			currentPattern = 0;
-
-			songSpeed = 0;
-			songStep = 6;
-			patternCount = 63;
-
-			// Initialize channel structure
-			channelInfo = new ChannelInfo[4];
-
-			for (int i = 0; i < 4; i++)
-			{
-				ChannelInfo chanInfo = new ChannelInfo();
-
-				chanInfo.Slide = 0;
-				chanInfo.Period = 0;
-				chanInfo.Volume = 0;
-
-				channelInfo[i] = chanInfo;
-			}
-
-			return base.InitSound(songNumber, durationInfo, out errorMessage);
+			return true;
 		}
 
 
@@ -449,9 +426,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 		/********************************************************************/
 		public override DurationInfo[] CalculateDuration()
 		{
-			allDurations = CalculateDurationBySongPosition();
+			DurationInfo[] durations = CalculateDurationBySongPosition();
+			numberOfSubSongs = durations.Length;
 
-			return allDurations;
+			return durations;
 		}
 
 
@@ -482,7 +460,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 		/// Return information about sub-songs
 		/// </summary>
 		/********************************************************************/
-		public override SubSongInfo SubSongs => new SubSongInfo(allDurations.Length, 0);
+		public override SubSongInfo SubSongs => new SubSongInfo(numberOfSubSongs, 0);
 
 
 
@@ -515,8 +493,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 		public override void SetSongPosition(int position, PositionInfo positionInfo)
 		{
 			// Change the position
-			visitedPositions[currentPosition] = false;
-
 			currentPosition = (short)position;
 
 			patternCount = 0;
@@ -526,7 +502,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 			songStep = positionInfo.Speed;
 			songSpeed = 0;
 
-			ChangeSubSong(positionInfo.SubSong);
+			OnModuleInfoChanged(InfoSpeedLine, songStep.ToString());
+
+			base.SetSongPosition(position, positionInfo);
 		}
 
 
@@ -596,7 +574,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 		/********************************************************************/
 		protected override int InitDurationCalculationByStartPos(int startPosition)
 		{
-			InitSound(0, null, out _);
+			InitializeSound(startPosition);
 
 			return startPosition;
 		}
@@ -617,13 +595,43 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
+		/// Initialize sound structures
+		/// </summary>
+		/********************************************************************/
+		private void InitializeSound(int startPosition)
+		{
+			// Initialize work variables
+			currentPosition = (short)(startPosition - 1);
+			currentPattern = 0;
+
+			songSpeed = 0;
+			songStep = 6;
+			patternCount = 63;
+
+			// Initialize channel structure
+			channelInfo = new ChannelInfo[4];
+
+			for (int i = 0; i < 4; i++)
+			{
+				ChannelInfo chanInfo = new ChannelInfo();
+
+				chanInfo.Slide = 0;
+				chanInfo.Period = 0;
+				chanInfo.Volume = 0;
+
+				channelInfo[i] = chanInfo;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Frees all the memory the player have allocated
 		/// </summary>
 		/********************************************************************/
 		private void Cleanup()
 		{
-			visitedPositions = null;
-
 			channelInfo = null;
 
 			samples = null;
@@ -645,23 +653,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 			{
 				currentPosition++;
 				if (currentPosition >= numberOfPositions)
-					currentPosition = 0;
+					currentPosition = (short)(currentDurationInfo?.StartPosition ?? 0);
 
 				OnPositionChanged();
 
-				if (visitedPositions[currentPosition])
+				if (HasPositionBeenVisited(currentPosition))
 				{
 					// Tell NostalgicPlayer that the module has ended
 					OnEndReached();
 
-					if (allDurations != null)
-						songStep = allDurations[currentSong].PositionInfo[currentPosition].Speed;
+					songStep = currentDurationInfo?.PositionInfo[currentPosition].Speed ?? 6;
 				}
 
-				visitedPositions[currentPosition] = true;
-
-				if (allDurations != null)
-					ChangeSubSong(allDurations[currentSong].PositionInfo[currentPosition].SubSong);
+				MarkPositionAsVisited(currentPosition);
 
 				patternCount = 0;
 				currentPattern = positionList[currentPosition];
@@ -809,22 +813,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 
 				channel.SetAmigaPeriod(chanInfo.Period);
 				channel.SetVolume((ushort)(chanInfo.Volume * 4));
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will change the sub-song if needed
-		/// </summary>
-		/********************************************************************/
-		private void ChangeSubSong(int subSong)
-		{
-			if (subSong != currentSong)
-			{
-				currentSong = subSong;
-				OnSubSongChanged(new SubSongChangedEventArgs(subSong, allDurations[subSong]));
 			}
 		}
 		#endregion

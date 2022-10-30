@@ -622,6 +622,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 			p = null;
 
 			Cleanup();
+
+			base.CleanupPlayer();
 		}
 
 
@@ -633,12 +635,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 		/********************************************************************/
 		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
 		{
+			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+				return false;
+
 			for (int c = 0; c < channelCount; c++)
 				p[c].Init();
 
 			InitSong();
 
-			return base.InitSound(songNumber, durationInfo, out errorMessage);
+			return true;
 		}
 
 
@@ -763,6 +768,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 
 			// Now set the position
 			SetPos(pal);
+
+			base.SetSongPosition(position, positionInfo);
 		}
 
 
