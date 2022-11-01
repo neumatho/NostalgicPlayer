@@ -30,8 +30,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 
 		private byte mdNumChn;
 
-		private int subSongCount;
-
 		private const int InfoSpeedLine = 4;
 		private const int InfoTempoLine = 5;
 
@@ -270,11 +268,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		/********************************************************************/
 		public override DurationInfo[] CalculateDuration()
 		{
-			DurationInfo[] durations = CalculateDurationBySongPosition();
-
-			subSongCount = (ushort)durations.Length;
-
-			return durations;
+			return CalculateDurationBySongPosition();
 		}
 
 
@@ -322,15 +316,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		/// </summary>
 		/********************************************************************/
 		public override int ModuleChannelCount => of.NumChn;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return information about sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override SubSongInfo SubSongs => new SubSongInfo(subSongCount, 0);
 
 
 

@@ -47,8 +47,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 			0, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3
 		};
 
-		private int numberOfSubSongs;
-
 		private uint sampNum;
 		private ushort pattNum;
 		private ushort songLength;
@@ -265,7 +263,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 						{
 							if ((readPatt < pattNum) && (patterns != null))
 							{
-								ParsePbod(moduleStream, chunkSize, out errorMessage);
+								ParsePbod(moduleStream, out errorMessage);
 								readPatt++;
 							}
 							else
@@ -380,10 +378,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		/********************************************************************/
 		public override DurationInfo[] CalculateDuration()
 		{
-			DurationInfo[] durations = CalculateDurationBySongPosition();
-			numberOfSubSongs = durations.Length;
-
-			return durations;
+			return CalculateDurationBySongPosition();
 		}
 
 
@@ -422,15 +417,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		/// </summary>
 		/********************************************************************/
 		public override int ModuleChannelCount => chanNum;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return information about sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override SubSongInfo SubSongs => new SubSongInfo(numberOfSubSongs, 0);
 
 
 
@@ -803,7 +789,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		/// Parses the PBOD chunk
 		/// </summary>
 		/********************************************************************/
-		private void ParsePbod(ModuleStream moduleStream, uint chunkSize, out string errorMessage)
+		private void ParsePbod(ModuleStream moduleStream, out string errorMessage)
 		{
 			// Allocate pattern
 			Pattern pattern = new Pattern();

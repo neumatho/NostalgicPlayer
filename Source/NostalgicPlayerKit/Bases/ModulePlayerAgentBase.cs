@@ -41,6 +41,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		private bool[] visitedPositions;
 
 		private int currentSong;
+		private SubSongInfo currentSubSongInfo;
 
 		/********************************************************************/
 		/// <summary>
@@ -94,7 +95,11 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		public virtual void CleanupPlayer()
 		{
+			allDurations = null;
+			positionPlayOrder = null;
 			visitedPositions = null;
+
+			currentSubSongInfo = null;
 		}
 
 
@@ -191,7 +196,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return information about sub-songs
 		/// </summary>
 		/********************************************************************/
-		public virtual SubSongInfo SubSongs => subSongInfo;
+		public virtual SubSongInfo SubSongs => currentSubSongInfo ?? subSongInfo;
 
 
 
@@ -516,6 +521,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 				HasEndReached = false;
 
 				allDurations = result.ToArray();
+				currentSubSongInfo = new SubSongInfo(allDurations.Length, 0);
 
 				return allDurations;
 			}

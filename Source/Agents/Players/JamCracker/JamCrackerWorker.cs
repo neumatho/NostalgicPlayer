@@ -32,8 +32,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 			 135, 135, 135, 135, 135, 135, 135, 135, 135, 135, 135, 135
 		};
 
-		private int numberOfSubSongs;
-
 		private ushort samplesNum;
 		private ushort patternNum;
 		private ushort songLen;
@@ -328,10 +326,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/********************************************************************/
 		public override DurationInfo[] CalculateDuration()
 		{
-			DurationInfo[] durations = CalculateDurationBySongPosition();
-			numberOfSubSongs = durations.Length;
-
-			return durations;
+			return CalculateDurationBySongPosition();
 		}
 
 
@@ -354,15 +349,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 			SetChannel(variables[2]);
 			SetChannel(variables[3]);
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return information about sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override SubSongInfo SubSongs => new SubSongInfo(numberOfSubSongs, 0);
 
 
 

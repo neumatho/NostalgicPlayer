@@ -30,8 +30,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 			214, 202, 190, 180, 170, 160, 151, 143, 135, 127, 120, 113
 		};
 
-		private int numberOfSubSongs;
-
 		private int numberOfPositions;
 		private byte[] positionList;
 
@@ -426,10 +424,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 		/********************************************************************/
 		public override DurationInfo[] CalculateDuration()
 		{
-			DurationInfo[] durations = CalculateDurationBySongPosition();
-			numberOfSubSongs = durations.Length;
-
-			return durations;
+			return CalculateDurationBySongPosition();
 		}
 
 
@@ -452,15 +447,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 				PlayPatternRow();
 			}
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return information about sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override SubSongInfo SubSongs => new SubSongInfo(numberOfSubSongs, 0);
 
 
 

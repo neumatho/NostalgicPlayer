@@ -50,8 +50,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 		private readonly ModuleType currentModuleType;
 
-		private int numberOfSubSongs;
-
 		private string moduleName;
 		private byte waveNum;
 		private ushort stepNum;
@@ -514,10 +512,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		/********************************************************************/
 		public override DurationInfo[] CalculateDuration()
 		{
-			DurationInfo[] durations = CalculateDurationBySongPosition(true);
-			numberOfSubSongs = durations.Length;
-
-			return durations;
+			return CalculateDurationBySongPosition(true);
 		}
 
 
@@ -532,15 +527,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 			// Call the player
 			BpPlay();
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return information about sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override SubSongInfo SubSongs => new SubSongInfo(numberOfSubSongs, 0);
 
 
 

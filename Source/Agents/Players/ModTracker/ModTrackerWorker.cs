@@ -56,8 +56,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		private readonly ModuleType currentModuleType;
 		private bool packed;
 
-		private int numberOfSubSongs;
-
 		private bool endReached;
 
 		private string songName;
@@ -332,10 +330,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/********************************************************************/
 		public override DurationInfo[] CalculateDuration()
 		{
-			DurationInfo[] durations = CalculateDurationBySongPosition();
-			numberOfSubSongs = durations.Length;
-
-			return durations;
+			return CalculateDurationBySongPosition();
 		}
 
 
@@ -445,15 +440,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// </summary>
 		/********************************************************************/
 		public override int ModuleChannelCount => channelNum;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return information about sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override SubSongInfo SubSongs => new SubSongInfo(numberOfSubSongs, 0);
 
 
 

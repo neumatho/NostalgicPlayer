@@ -29,8 +29,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 		private byte[] orders;
 		private uint[][] patterns;
 
-		private int numberOfSubSongs;
-
 		private ushort delay;
 		private ushort maxPattern;
 		private uint songLength;
@@ -360,10 +358,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 		/********************************************************************/
 		public override DurationInfo[] CalculateDuration()
 		{
-			DurationInfo[] durations = CalculateDurationBySongPosition();
-			numberOfSubSongs = durations.Length;
-
-			return durations;
+			return CalculateDurationBySongPosition();
 		}
 
 
@@ -391,15 +386,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 				MakeEffects(channelInfo[3], VirtualChannels[3]);
 			}
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return information about sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override SubSongInfo SubSongs => new SubSongInfo(numberOfSubSongs, 0);
 
 
 
