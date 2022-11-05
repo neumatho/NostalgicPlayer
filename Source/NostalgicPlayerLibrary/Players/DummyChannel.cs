@@ -122,6 +122,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 		/********************************************************************/
 		/// <summary>
+		/// Will change the volume using Amiga range
+		/// </summary>
+		/********************************************************************/
+		public void SetAmigaVolume(ushort vol)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will change the panning
 		/// </summary>
 		/********************************************************************/

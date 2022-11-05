@@ -94,8 +94,14 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Will change the volume
 		/// </summary>
-		/// <param name="vol">is the new volume</param>
+		/// <param name="vol">is the new volume (0-256)</param>
 		void SetVolume(ushort vol);
+
+		/// <summary>
+		/// Will change the volume using Amiga range
+		/// </summary>
+		/// <param name="vol">is the new volume (0-64)</param>
+		void SetAmigaVolume(ushort vol);
 
 		/// <summary>
 		/// Will change the panning

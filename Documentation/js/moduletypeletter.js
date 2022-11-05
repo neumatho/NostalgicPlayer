@@ -7,21 +7,21 @@ $(document).ready(function() {
 
 	$('.allbutton').click(function() {
 		var elem = $(this);
-		var siblings = elem.siblings();
+		var buttons = $('.letterbutton');
 
 		if (elem.hasClass('lettertoggle')) {
 			elem.removeClass('lettertoggle');
 			elem.text('All');
-			siblings.removeClass('lettertoggle');
-			siblings.each(function() {
+			buttons.removeClass('lettertoggle');
+			buttons.each(function() {
 				$('[name="' + $(this).text() + '"]').hide();
 			});
 		}
 		else {
 			elem.addClass('lettertoggle');
 			elem.text('None');
-			siblings.addClass('lettertoggle');
-			siblings.each(function() {
+			buttons.addClass('lettertoggle');
+			buttons.each(function() {
 				$('[name="' + $(this).text() + '"]').show();
 			});
 		}

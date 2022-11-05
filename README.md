@@ -122,6 +122,7 @@ Modules in all supported formats can be found on my homepage at https://www.nost
 | ProRunner 2 | .pr2 / .pru2 | ProWizard | ModTracker |
 | ProTracker | .mod | | ModTracker |
 | Pygmy Packer | .pyg | ProWizard | ModTracker |
+| Quadra Composer | .emod | | Quadra Composer |
 | RIFF-WAVE (ADPCM) | .wav | | Sample |
 | RIFF-WAVE (IEEE Float) | .wav | | Sample |
 | RIFF-WAVE (PCM) | .wav | | Sample |

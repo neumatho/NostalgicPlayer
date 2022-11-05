@@ -291,8 +291,15 @@ body {
 	color: #c222c2;
 }
 
-.letters {
+.firstRowLetters {
 	margin-top: 15px;
+}
+
+.secondRowLetters {
+	margin-top: 8px;
+}
+
+.letters {
 	display: flex;
 	flex-wrap: wrap;
 }

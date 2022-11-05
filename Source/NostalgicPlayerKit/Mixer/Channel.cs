@@ -350,7 +350,7 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/// <summary>
 		/// Will change the volume
 		/// </summary>
-		/// <param name="vol">is the new volume</param>
+		/// <param name="vol">is the new volume (0-256)</param>
 		/********************************************************************/
 		public void SetVolume(ushort vol)
 		{
@@ -358,6 +358,23 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 				throw new ArgumentException("Volume should be between 0 and 256", nameof(vol));
 
 			volume = vol;
+			flags |= ChannelFlags.Volume;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will change the volume using Amiga range
+		/// </summary>
+		/// <param name="vol">is the new volume (0-64)</param>
+		/********************************************************************/
+		public void SetAmigaVolume(ushort vol)
+		{
+			if (vol > 64)
+				throw new ArgumentException("Volume should be between 0 and 64", nameof(vol));
+
+			volume = (ushort)(vol * 4);
 			flags |= ChannelFlags.Volume;
 		}
 

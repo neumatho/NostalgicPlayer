@@ -936,6 +936,14 @@
             <uap:DisplayName>Game Music Creator</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="emodfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-emod">.emod</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Quadra Composer</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
