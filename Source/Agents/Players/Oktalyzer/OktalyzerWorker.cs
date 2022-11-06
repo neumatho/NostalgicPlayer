@@ -1027,10 +1027,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 			// Now set the volume
 			for (int i = 0, j = 0; i < 4; i++, j++)
 			{
-				VirtualChannels[j].SetVolume((ushort)(chanVol[i] * 4));
+				VirtualChannels[j].SetAmigaVolume((ushort)chanVol[i]);
 
 				if (channelFlags[i])
-					VirtualChannels[++j].SetVolume((ushort)(chanVol[i] * 4));
+					VirtualChannels[++j].SetAmigaVolume((ushort)chanVol[i]);
 			}
 		}
 

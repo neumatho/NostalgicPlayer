@@ -1345,7 +1345,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 
 			// Play the period
 			voiData.Channel.SetAmigaPeriod(period);
-			voiData.Channel.SetVolume((ushort)(voiData.Volume * 4));
+			voiData.Channel.SetAmigaVolume((ushort)voiData.Volume);
 		}
 
 

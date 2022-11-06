@@ -798,7 +798,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 				chanInfo.Period = (ushort)(chanInfo.Period + chanInfo.Slide);
 
 				channel.SetAmigaPeriod(chanInfo.Period);
-				channel.SetVolume((ushort)(chanInfo.Volume * 4));
+				channel.SetAmigaVolume(chanInfo.Volume);
 			}
 		}
 		#endregion

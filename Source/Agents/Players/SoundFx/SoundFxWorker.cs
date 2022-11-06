@@ -657,7 +657,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 					}
 
 					// Change the volume on the channel
-					virtChannel.SetVolume((ushort)(volume * 4));
+					virtChannel.SetAmigaVolume((ushort)volume);
 				}
 			}
 

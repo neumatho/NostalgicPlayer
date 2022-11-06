@@ -914,7 +914,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				}
 			}
 
-			chan.SetVolume((ushort)(voice.Vol * 4));
+			chan.SetAmigaVolume((ushort)(voice.Vol));
 
 			voice.Vol += voice.DeltaVol;
 			if (voice.Vol < 0)

@@ -1051,11 +1051,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 					cur.UseDefaultVolume = false;
 
 					if (currentModuleType == ModuleType.SoundMon11)
-						VirtualChannels[voice].SetVolume((ushort)(optionalData * 4));
+						VirtualChannels[voice].SetAmigaVolume(optionalData);
 					else
 					{
 						if (!cur.SynthMode)
-							VirtualChannels[voice].SetVolume((ushort)(optionalData * 4));
+							VirtualChannels[voice].SetAmigaVolume(optionalData);
 					}
 					break;
 				}
