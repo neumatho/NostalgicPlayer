@@ -572,7 +572,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 												result = new ConvertInfo { Agent = agentInfo, OriginalFormat = converter.OriginalFormat, HasSampleMarkings = converterStream.HasSampleDataMarkers };
 
 											if (!converterStream.HasSampleDataMarkers && (result.SampleDataStream == null))		// If we need to support multiple markings, it could be implemented by using a stack
-												result.SampleDataStream = new MemoryStream(ms.GetBuffer());
+											{
+												byte[] buffer = ms.GetBuffer();
+												result.SampleDataStream = new MemoryStream(buffer, 0, buffer.Length, false, true);
+											}
+
+											if (converterStream.HasSampleDataMarkers && (result.SampleDataStream is MemoryStream oldSampleDataStream))
+											{
+												result.SampleDataStream = new MemoryStream(oldSampleDataStream.GetBuffer());
+												oldSampleDataStream.Dispose();
+												result.HasSampleMarkings = true;
+											}
 
 											if (result.ConvertedStream != null)
 												result.ConvertedStream.Dispose();
