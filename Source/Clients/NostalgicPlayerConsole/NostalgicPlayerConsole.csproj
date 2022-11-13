@@ -51,6 +51,7 @@
     <ProjectReference Include="..\..\Agents\ModuleConverters\ProWizardConverter\ProWizardConverter.csproj" />
     <ProjectReference Include="..\..\Agents\Output\CoreAudio\CoreAudio.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Ahx\Ahx.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\DeltaMusic10\DeltaMusic10.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Fred\Fred.csproj" />
     <ProjectReference Include="..\..\Agents\Players\FutureComposer\FutureComposer.csproj" />
     <ProjectReference Include="..\..\Agents\Players\GameMusicCreator\GameMusicCreator.csproj" />
