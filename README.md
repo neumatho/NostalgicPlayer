@@ -25,7 +25,7 @@ To load the solution and project files, you need to use at least Visual Studio C
 
 # Formats supported
 
-Modules in all supported formats can be found on my homepage at https://www.nostalgicplayer.dk. Note that the modules on my homepage will first appear, after an official release of the player that can handle them. For a description of the module formats, see the documentation.
+Modules in all supported formats can be found on my homepage at https://nostalgicplayer.dk. Note that the modules on my homepage will first appear, after an official release of the player that can handle them. For a description of the module formats, see the documentation.
 
 | Format | Extension | Converter | Player |
 | ------ | -------------- | --------- | ------ |

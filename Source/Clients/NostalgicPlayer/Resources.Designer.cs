@@ -434,7 +434,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         ///   Looks up a localized string similar to ¤L
         ///¤V¤R¤CVersion
         ///
-        ///¤B¤CA polycode production (www.nostalgicplayer.dk)
+        ///¤B¤CA polycode production (nostalgicplayer.dk)
         ///
         ///Credits:
         ///
@@ -457,7 +457,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         ///¤CSylvain &quot;Asle&quot; Chipaux
         ///¤CWilfred Bos
         ///¤CJens-Christian Huus
-        ///¤CAda [rest of string was truncated]&quot;;.
+        ///¤CAdam Ha [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string IDS_ABOUT_TEXT {
             get {

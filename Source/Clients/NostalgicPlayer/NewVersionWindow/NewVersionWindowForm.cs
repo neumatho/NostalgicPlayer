@@ -93,7 +93,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 			{
 				using (HttpClient httpClient = new HttpClient())
 				{
-					byte[] bytes = httpClient.GetByteArrayAsync("https://www.nostalgicplayer.dk/history").Result;
+					byte[] bytes = httpClient.GetByteArrayAsync("https://nostalgicplayer.dk/history").Result;
 
 					return Encoding.UTF8.GetString(bytes);
 				}
