@@ -88,7 +88,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 					agentManager.RegisterVisualAgent(visualAgent);
 
 					if (moduleHandler.IsModuleLoaded)
+					{
 						visualAgent.InitVisual(moduleHandler.StaticModuleInformation.Channels, moduleHandler.StaticModuleInformation.VirtualChannels);
+
+						if (visualAgent is IChannelChangeVisualAgent channelChangeVisualAgent)
+						{
+							// Build note frequency table
+							uint[][] noteFrequencies = null;
+							if (moduleHandler.StaticModuleInformation.Samples != null)
+							{
+								noteFrequencies = new uint[moduleHandler.StaticModuleInformation.Samples.Length][];
+								for (int i = 0; i < noteFrequencies.Length; i++)
+									noteFrequencies[i] = moduleHandler.StaticModuleInformation.Samples[i].NoteFrequencies;
+							}
+
+							channelChangeVisualAgent.SetNoteFrequencies(noteFrequencies);
+						}
+					}
 				}
 
 				// Load window settings
