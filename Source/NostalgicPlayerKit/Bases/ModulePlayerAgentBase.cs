@@ -58,6 +58,24 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// This flag is set to true, when end is reached
+		/// </summary>
+		/********************************************************************/
+		public override bool HasEndReached
+		{
+			set
+			{
+				base.HasEndReached = value;
+
+				if (!value)
+					Array.Clear(visitedPositions);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return some flags telling what the player supports
 		/// </summary>
 		/********************************************************************/
@@ -438,7 +456,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 				do
 				{
-					Array.Clear(visitedPositions);
+					HasEndReached = false;
 
 					songStartPos = InitDurationCalculationByStartPos(songStartPos);
 					if (songStartPos < 0)
@@ -450,8 +468,6 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 					byte currentSpeed = GetCurrentSpeed();
 					ushort currentBpm = GetCurrentBpm();
 					object extraInfo = GetExtraPositionInfo();
-
-					HasEndReached = false;
 
 					for (;;)
 					{
@@ -551,6 +567,8 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 				for (int song = 0; song < numSongs; song++)
 				{
+					HasEndReached = false;
+
 					InitDurationCalculationBySubSong(song);
 
 					int prevPos = -1;
@@ -561,8 +579,6 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 					object extraInfo = GetExtraPositionInfo();
 
 					List<PositionInfo> positionTimes = new List<PositionInfo>();
-
-					HasEndReached = false;
 
 					for (;;)
 					{

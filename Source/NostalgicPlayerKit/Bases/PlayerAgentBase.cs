@@ -126,7 +126,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// This flag is set to true, when end is reached
 		/// </summary>
 		/********************************************************************/
-		public bool HasEndReached
+		public virtual bool HasEndReached
 		{
 			get; set;
 		}
