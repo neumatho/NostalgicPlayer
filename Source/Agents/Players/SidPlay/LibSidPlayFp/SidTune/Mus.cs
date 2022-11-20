@@ -692,7 +692,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidTune
 				throw new LoadErrorException(Resources.IDS_SID_ERR_INVALID);
 
 			// All sub-tunes should be CIA
-			for (uint_least16_t i = 0; i < info.songs; i++)
+			for (uint i = 0; i < info.songs; i++)
 			{
 				if (songSpeed[i] != SidTuneInfo.SPEED_CIA_1A)
 					throw new LoadErrorException(Resources.IDS_SID_ERR_INVALID);

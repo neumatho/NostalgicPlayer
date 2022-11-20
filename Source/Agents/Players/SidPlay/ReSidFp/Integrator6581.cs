@@ -128,47 +128,38 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		// Assuming triode mode and applying Kirchoff's current law, we get the
 		// following equation for Vg:
 		//
-		//     u*Cox/2*W/L*((Vddt - Vg)^2 - (Vddt - vi)^2 + (Vddt - Vg)^2 - (Vddt - Vw)^2) = 0
-		//     2*(Vddt - Vg)^2 - (Vddt - vi)^2 - (Vddt - Vw)^2 = 0
-		//     (Vddt - Vg) = sqrt(((Vddt - vi)^2 + (Vddt - Vw)^2)/2)
+		//     u*Cox/2*W/L*((nVddt - Vg)^2 - (nVddt - vi)^2 + (nVddt - Vg)^2 - (nVddt - Vw)^2) = 0
+		//     2*(nVddt - Vg)^2 - (nVddt - vi)^2 - (nVddt - Vw)^2 = 0
+		//     (nVddt - Vg) = sqrt(((nVddt - vi)^2 + (nVddt - Vw)^2)/2)
 		//
-		//     Vg = Vddt - sqrt(((Vddt - vi)^2 + (Vddt - Vw)^2)/2)
+		//     Vg = nVddt - sqrt(((nVddt - vi)^2 + (nVddt - Vw)^2)/2)
 
-		private readonly ushort[] vcr_vg;
-		private readonly ushort[] vcr_n_ids_term;
-		private readonly ushort[] opamp_rev;
-
-		private uint vddt_vw_2;
+		private uint nVddt_vw_2;
 		private int vx;
 		private int vc;
 
-		private readonly int n;
-
-		private readonly double n16;
-		private readonly ushort vddt;
+		private readonly ushort nVddt;
 		private readonly ushort nVt;
 		private readonly ushort nVMin;
-		private readonly ushort n_snake;
+		private readonly ushort nSnake;
+
+		private readonly FilterModelConfig6581 fmc;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Integrator6581(ushort[] vcr_vg, ushort[] vcr_n_ids_term, ushort[] opamp_rev, ushort vddt, ushort nVt, ushort nVMin, ushort n_snake, double n16)
+		public Integrator6581(FilterModelConfig6581 fmc, double wl_snake)
 		{
-			this.vcr_vg = vcr_vg;
-			this.vcr_n_ids_term = vcr_n_ids_term;
-			this.opamp_rev = opamp_rev;
-			vddt_vw_2 = 0;
+			nVddt_vw_2 = 0;
 			vx = 0;
 			vc = 0;
-			n = 1;
-			this.n16 = n16;
-			this.vddt = vddt;
-			this.nVt = nVt;
-			this.nVMin = nVMin;
-			this.n_snake = n_snake;
+			nVddt = fmc.GetNormalizedValue(fmc.GetVddt());
+			nVt = fmc.GetNormalizedValue(fmc.GetVth());
+			nVMin = fmc.GetNVMin();
+			nSnake = fmc.GetNormalizedCurrentFactor(wl_snake);
+			this.fmc = fmc;
 		}
 
 
@@ -180,7 +171,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		/********************************************************************/
 		public void SetVw(ushort vw)
 		{
-			vddt_vw_2 = (uint)(((vddt - vw) * (vddt - vw)) >> 1);
+			nVddt_vw_2 = (uint)(((nVddt - vw) * (nVddt - vw)) >> 1);
 		}
 
 
@@ -193,36 +184,35 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		public int Solve(int vi)
 		{
 			// "Snake" voltages for triode mode calculation
-			uint vgst = (uint)(vddt - vx);
-			uint vgdt = (uint)(vddt - vi);
+			uint vgst = (uint)(nVddt - vx);
+			uint vgdt = (uint)(nVddt - vi);
 
 			uint vgst_2 = vgst * vgst;
 			uint vgdt_2 = vgdt * vgdt;
 
 			// "Snake" current, scaled by (1/m)*2^13*m*2^16*m*2^16*2^-15 = m*2^30
-			int n_I_snake = n_snake * ((int)(vgst_2 - vgdt_2) >> 15);
+			int n_I_snake = nSnake * ((int)(vgst_2 - vgdt_2) >> 15);
 
 			// VCR gate voltage.		// Scaled by m*2^16
 			// Vg = Vddt - sqrt(((Vddt - vW)^2 + Vgdt^2)/2)
-			int vg = vcr_vg[(vddt_vw_2 + (vgdt_2 >> 1)) >> 16];
-			int vp = (vg - nVt) / n;	// Pinch-off-voltage
-			int kVg = vp - nVMin;
+			int nVg = fmc.GetVcr_nVg((nVddt_vw_2 + (vgdt_2 >> 1)) >> 16);
+			int kVg = (nVg - nVt) - nVMin;
 
 			// VCR voltages for EKV model table lookup
-			int vgs = (vx < kVg) ? kVg - vx : 0;
-			int vgd = (vi < kVg) ? kVg - vi : 0;
+			int kVgt_Vs = (vx < kVg) ? kVg - vx : 0;
+			int kVgt_Vd = (vi < kVg) ? kVg - vi : 0;
 
 			// VCR current, scaled by m*2^15*2^15 = m*2^30
-			uint @if = (uint)(vcr_n_ids_term[vgs]) << 15;
-			uint ir = (uint)(vcr_n_ids_term[vgd]) << 15;
-			int n_I_vcr = (int)(@if - ir) * n;
+			uint @if = (uint)(fmc.GetVcr_n_Ids_Term(kVgt_Vs)) << 15;
+			uint ir = (uint)(fmc.GetVcr_n_Ids_Term(kVgt_Vd)) << 15;
+			int n_I_vcr = (int)(@if - ir);
 
 			// Change in capacitor charge
 			vc += n_I_snake + n_I_vcr;
 
 			// vx = g(vc)
 			int tmp = (vc >> 15) + (1 << 15);
-			vx = opamp_rev[tmp];
+			vx = fmc.GetOpampRev(tmp);
 
 			// Return vo
 			return vx - (vc >> 14);

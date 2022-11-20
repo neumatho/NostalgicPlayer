@@ -292,7 +292,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 			gain_res = FilterModelConfig8580.GetInstance().GetGainRes();
 			gain_vol = FilterModelConfig8580.GetInstance().GetGainVol();
 			voiceScaleS11 = FilterModelConfig8580.GetInstance().GetVoiceScaleS11();
-			voiceDc = FilterModelConfig8580.GetInstance().GetVoiceDc();
+			voiceDc = FilterModelConfig8580.GetInstance().GetNormalizedVoiceDc();
 			cp = 0.5;
 			hpIntegrator = FilterModelConfig8580.GetInstance().BuildIntegrator();
 			bpIntegrator = FilterModelConfig8580.GetInstance().BuildIntegrator();
@@ -341,7 +341,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 					if ((fc & (1 << i)) != 0)
 						wl += dacWl;
 
-					dacWl *= 2;
+					dacWl *= 2.0;
 				}
 			}
 			else

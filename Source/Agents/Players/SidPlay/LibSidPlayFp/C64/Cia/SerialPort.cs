@@ -198,10 +198,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Cia
 				eventScheduler.Schedule(flipFakeEvent, 2);
 			}
 			else
-			{
-				eventScheduler.Cancel(flipCntEvent);
 				eventScheduler.Schedule(flipCntEvent, 2);
-			}
 		}
 
 		#region Private methods

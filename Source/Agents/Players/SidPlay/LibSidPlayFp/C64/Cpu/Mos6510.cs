@@ -1010,7 +1010,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Cpu
 			uint8_t tmp = SidEndian.Endian_16Hi8(cycle_EffectiveAddress);
 
 			// When the addressing/indexing causes a page boundary crossing
-			// the high byte of the target address is anded with the value stored
+			// the high byte of the target address is ANDed with the value stored
 			if (adl_carry)
 				SidEndian.Endian_16Hi8(ref cycle_EffectiveAddress, (uint8_t)(tmp & cycle_Data));
 			else
@@ -2240,6 +2240,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Cpu
 		/********************************************************************/
 		private void PushSr()
 		{
+			// Set the B flag, 0 for hardware interrupts
+			// and 1 for BRK and PHP. Bit 5 is always 1
+			// https://wiki.nesdev.org/w/index.php?title=Status_flags#The_B_flag
 			Push((uint8_t)(flags.Get() | (d1x1 ? 0x20 : 0x30)));
 		}
 

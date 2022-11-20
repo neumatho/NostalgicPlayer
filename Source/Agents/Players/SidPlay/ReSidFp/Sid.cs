@@ -19,6 +19,71 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 	/// </summary>
 	internal class Sid
 	{
+		// The waveform D/A converter introduces a DC offset in the signal
+		// to the envelope multiplying D/A converter. The "zero" level of
+		// the waveform D/A converter can be found as follows:
+		//
+		// Measure the "zero" voltage of voice 3 on the SID audio output
+		// pin, routing only voice 3 to the mixer ($d417 = $0b, $d418 =
+		// $0f, all other registers zeroed).
+		//
+		// Then set the sustain level for voice 3 to maximum and search for
+		// the waveform output value yielding the same voltage as found
+		// above. This is done by trying out different waveform output
+		// values until the correct value is found, e.g. with the following
+		// program:
+		//
+		//       lda #$08
+		//       sta $d412
+		//       lda #$0b
+		//       sta $d417
+		//       lda #$0f
+		//       sta $d418
+		//       lda #$f0
+		//       sta $d414
+		//       lda #$21
+		//       sta $d412
+		//       lda #$01
+		//       sta $d40e
+		//
+		//       ldx #$00
+		//       lda #$38        ; Tweak this to find the "zero" level
+		// l     cmp $d41b
+		//       bne l
+		//       stx $d40e       ; Stop frequency counter - freeze waveform output
+		//       brk
+		//
+		// The waveform output range is 0x000 to 0xfff, so the "zero"
+		// level should ideally have been 0x800. In the measured chip, the
+		// waveform output "zero" level was found to be 0x380 (i.e. $d41b
+		// = 0x38) at an audio output voltage of 5.94V.
+		//
+		// With knowledge of the mixer op-amp characteristics, further estimates
+		// of waveform voltages can be obtained by sampling the EXT IN pin.
+		// From EXT IN samples, the corresponding waveform output can be found by
+		// using the model for the mixer.
+		//
+		// Such measurements have been done on a chip marked MOS 6581R4AR
+		// 0687 14, and the following results have been obtained:
+		// * The full range of one voice is approximately 1.5V.
+		// * The "zero" level rides at approximately 5.0V.
+		//
+		//
+		// zero-x did the measuring on the 8580 (https://sourceforge.net/p/vice-emu/bugs/1036/#c5b3):
+		// When it sits on basic from powerup it's at 4.72
+		// Run 1.prg and check the output pin level.
+		// Then run 2.prg and adjust it until the output level is the same...
+		// 0x94-0xA8 gives me the same 4.72 1.prg shows.
+		// On another 8580 it's 0x90-0x9C
+		// Third chip 0x94-0xA8
+		// Fourth chip 0x90-0xA4
+		// On the 8580 that plays digis the output is 4.66 and 0x93 is the only value to reach that.
+		// To me that seems as regular 8580s have somewhat wide 0-level range,
+		// whereas that digi-compatible 8580 has it very narrow.
+		// On my 6581R4AR has 0x3A as the only value giving the same output level as 1.prg
+		private const uint OFFSET_6581 = 0x380;
+		private const uint OFFSET_8580 = 0x9c0;
+
 		private const uint ENV_DAC_BITS = 8;
 		private const uint OSC_DAC_BITS = 12;
 
@@ -208,7 +273,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 				Dac dacBuilder = new Dac(OSC_DAC_BITS);
 				dacBuilder.KinkedDac(model);
 
-				double offset = dacBuilder.GetOutput(is6581 ? (uint)0x380 : 0x9c0);
+				double offset = dacBuilder.GetOutput(is6581 ? OFFSET_6581 : OFFSET_8580);
 
 				for (uint i = 0; i < (1 << (int)OSC_DAC_BITS); i++)
 				{
@@ -220,8 +285,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 			// Set voice tables
 			for (int i = 0; i < 3; i++)
 			{
-				voice[i].Envelope().SetDac(envDac);
-				voice[i].Wave().SetDac(oscDac);
+				voice[i].SetEnvDac(envDac);
+				voice[i].SetWavDac(oscDac);
 				voice[i].Wave().SetModel(is6581);
 				voice[i].Wave().SetWaveformModels(tables);
 			}

@@ -170,7 +170,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Vic_II
 		/********************************************************************/
 		private uint8_t GetXPos(uint lineCycle)
 		{
-			// FIXME: on NTSC the xpos is not incremented at lineCycle 61
 			if (lineCycle < 13)
 				lineCycle += cyclesPerLine;
 

@@ -105,23 +105,25 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		{
 			new CombinedWaveformConfig[4]
 			{ // kevtris chip G (6581 R2)
-				new CombinedWaveformConfig(0.90251f, 0.0f,       0.0f,       1.9147f,    1.6747f,  0.62376f),	// error  1689 (280)
+				new CombinedWaveformConfig(0.90522f, 0.0f,       0.0f,       1.97506f,   1.66937f, 0.63482f),	// error  1687 (278)
 				new CombinedWaveformConfig(0.93088f, 2.4843f,    0.0f,       1.0353f,    1.1484f,  0.0f    ),	// error  6128 (130)
-				new CombinedWaveformConfig(0.90988f, 2.26303f,   1.13126f,   1.0035f,    1.13801f, 0.0f    ),	// error 14243 (632)
-				new CombinedWaveformConfig(0.91f,    1.192f,     0.0f,       1.0169f,    1.2f,     0.637f  )	// error    64   (2)
+				new CombinedWaveformConfig(0.912142f,2.32076f,   1.106015f,  0.053906f,  0.25143f, 0.0f    ),	// error 10567 (567)
+				new CombinedWaveformConfig(0.901f,   1.0845f,    0.0f,       1.056f,     1.1848f,  0.599f  )	// error    36  (12)
 			},
 			new CombinedWaveformConfig[4]
 			{ // kevtris chip V (8580 R5)
-				new CombinedWaveformConfig(0.9632f,   0.0f,      0.975f,    1.7467f,    2.36132f, 0.975395f),	// error  1380 (169)
-				new CombinedWaveformConfig(0.92886f,  1.67696f,  0.0f,      1.1014f,    1.4352f,  0.0f     ),	// error  8007 (218)
-				new CombinedWaveformConfig(0.94043f,  1.7937f,   0.981f,    1.1213f,    1.4259f,  0.0f     ),	// error 11957 (362)
-				new CombinedWaveformConfig(0.96211f,  0.98695f,  1.00387f,  1.46499f,   1.98375f, 0.77777f )	// error  2369  (89)
+				new CombinedWaveformConfig(0.94344f, 0.0f,       0.976f,     1.6347f,    2.51537f, 0.73115f),	// error  1300 (184)
+				new CombinedWaveformConfig(0.93303f, 1.7025f,    0.0f,       1.0868f,    1.43527f, 0.0f    ),	// error  7981 (204)
+				new CombinedWaveformConfig(0.95831f, 1.95269f,   0.992986f,  0.0077384f, 0.18408f, 0.0f    ),	// error  9596 (324)
+				new CombinedWaveformConfig(0.94699f, 1.09668f,   0.99586f,   0.94167f,   2.0139f,  0.5633f )	// error  2118  (54)
 			}
 		};
 
 		private static WaveformCalculator instance = null;
 
 		private readonly Dictionary<CombinedWaveformConfig[], matrix_t> cache = new Dictionary<CombinedWaveformConfig[], Matrix<short>>();
+
+		delegate float distance_t(float distance, int i);
 
 		/********************************************************************/
 		/// <summary>
@@ -156,7 +158,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		/********************************************************************/
 		public matrix_t BuildTable(ChipModel model)
 		{
-			CombinedWaveformConfig[] cfgArray = config[model == ChipModel.MOS6581 ? 0 : 1];
+			bool is8580 = model != ChipModel.MOS6581;
+
+			CombinedWaveformConfig[] cfgArray = config[is8580 ? 1 : 0];
 
 			if (cache.TryGetValue(cfgArray, out matrix_t wfTable))
 				return wfTable;
@@ -168,11 +172,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 				wfTable[0][idx] = 0xfff;
 				wfTable[1][idx] = (short)((idx & 0x800) == 0 ? idx << 1 : (idx ^ 0xfff) << 1);
 				wfTable[2][idx] = (short)idx;
-				wfTable[3][idx] = CalculateCombinedWaveform(cfgArray[0], 3, idx);
+				wfTable[3][idx] = CalculateCombinedWaveform(cfgArray[0], 3, idx, is8580);
 				wfTable[4][idx] = 0xfff;
-				wfTable[5][idx] = CalculateCombinedWaveform(cfgArray[1], 5, idx);
-				wfTable[6][idx] = CalculateCombinedWaveform(cfgArray[2], 6, idx);
-				wfTable[7][idx] = CalculateCombinedWaveform(cfgArray[3], 7, idx);
+				wfTable[5][idx] = CalculateCombinedWaveform(cfgArray[1], 5, idx, is8580);
+				wfTable[6][idx] = CalculateCombinedWaveform(cfgArray[2], 6, idx, is8580);
+				wfTable[7][idx] = CalculateCombinedWaveform(cfgArray[3], 7, idx, is8580);
 			}
 
 			cache[cfgArray] = wfTable;
@@ -180,13 +184,49 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 			return wfTable;
 		}
 
+		#region Distance methods
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private float ExponentialDistance(float distance, int i)
+		{
+			return (float)Math.Pow(distance, -i);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private float LinearDistance(float distance, int i)
+		{
+			return 1.0f / (1.0f + i * distance);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private float QuadraticDistance(float distance, int i)
+		{
+			return 1.0f / (1.0f + (i * i) * distance);
+		}
+		#endregion
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
 		/// Generate bitstate based on emulation of combined waves
 		/// </summary>
 		/********************************************************************/
-		private short CalculateCombinedWaveform(CombinedWaveformConfig config, int waveform, int accumulator)
+		private short CalculateCombinedWaveform(CombinedWaveformConfig config, int waveform, int accumulator, bool is8580)
 		{
 			float[] o = new float[12];
 
@@ -194,8 +234,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 			for (int i = 0; i < 12; i++)
 				o[i] = (accumulator & (1 << i)) != 0 ? 1.0f : 0.0f;
 
-			// Convert to Triangle
-			if ((waveform & 3) == 1)
+			// If saw is not selected the bits are XORed
+			if ((waveform & 2) == 0)
 			{
 				bool top = (accumulator & 0x800) != 0;
 
@@ -204,7 +244,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 
 				o[0] = 0.0f;
 			}
-			else if ((waveform & 3) == 3)	// or to Saw+Triangle
+			else if ((waveform & 3) == 3)	// If both Saw and Triangle are selected the bits are interconnected
 			{
 				// Bottom bit is grounded via T waveform selector
 				o[0] *= config.stMix;
@@ -226,46 +266,47 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 				o[11] *= config.topBit;
 
 			// ST, P* waveforms
-			if ((waveform == 3) || (waveform > 4))
+
+			distance_t distFunc = (waveform & 1) == 1 ? ExponentialDistance : is8580 ? QuadraticDistance : LinearDistance;
+
+			float[] distanceTable = new float[12 * 2 + 1];
+			distanceTable[12] = 1.0f;
+
+			for (int i = 12; i > 0; i--)
 			{
-				float[] distanceTable = new float[12 * 2 + 1];
-				distanceTable[12] = 1.0f;
-
-				for (int i = 12; i > 0; i--)
-				{
-					distanceTable[12 - i] = (float)(1.0f / Math.Pow(config.distance1, i));
-					distanceTable[12 + i] = (float)(1.0f / Math.Pow(config.distance2, i));
-				}
-
-				float[] tmp = new float[12];
-
-				for (int i = 0; i < 12; i++)
-				{
-					float avg = 0.0f;
-					float n = 0.0f;
-
-					for (int j = 0; j < 12; j++)
-					{
-						float weight = distanceTable[i - j + 12];
-						avg += o[j] * weight;
-						n += weight;
-					}
-
-					// Pulse control bit
-					if (waveform > 4)
-					{
-						float weight = distanceTable[i - 12 + 12];
-						avg += config.pulseStrength * weight;
-						n += weight;
-					}
-
-					tmp[i] = (o[i] + avg / n) * 0.5f;
-				}
-
-				for (int i = 0; i < 12; i++)
-					o[i] = tmp[i];
+				distanceTable[12 - i] = distFunc(config.distance1, i);
+				distanceTable[12 + i] = distFunc(config.distance2, i);
 			}
 
+			float[] tmp = new float[12];
+
+			for (int i = 0; i < 12; i++)
+			{
+				float avg = 0.0f;
+				float n = 0.0f;
+
+				for (int j = 0; j < 12; j++)
+				{
+					float weight = distanceTable[i - j + 12];
+					avg += o[j] * weight;
+					n += weight;
+				}
+
+				// Pulse control bit
+				if (waveform > 4)
+				{
+					float weight = distanceTable[i - 12 + 12];
+					avg += config.pulseStrength * weight;
+					n += weight;
+				}
+
+				tmp[i] = (o[i] + avg / n) * 0.5f;
+			}
+
+			for (int i = 0; i < 12; i++)
+				o[i] = tmp[i];
+
+			// Get the predicted value
 			short value = 0;
 
 			for (int i = 0; i < 12; i++)

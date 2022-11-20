@@ -203,7 +203,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.Test
 
 					tune.SelectSong(0);
 
-					engine.Load(tune);
+					if (!engine.Load(tune))
+						throw new Exception($"{args[0]}: {engine.Error()}");
 				}
 			}
 

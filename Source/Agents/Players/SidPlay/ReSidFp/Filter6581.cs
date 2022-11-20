@@ -298,7 +298,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 
 		private readonly ushort[][] mixer;
 		private readonly ushort[][] summer;
-		private readonly ushort[][] gain;
+		private readonly ushort[][] gain_res;
+		private readonly ushort[][] gain_vol;
 
 		private readonly int voiceScaleS11;
 		private readonly int voiceDc;
@@ -323,9 +324,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 			f0_dac = FilterModelConfig6581.GetInstance().GetDac(0.5);
 			mixer = FilterModelConfig6581.GetInstance().GetMixer();
 			summer = FilterModelConfig6581.GetInstance().GetSummer();
-			gain = FilterModelConfig6581.GetInstance().GetGain();
+			gain_res = FilterModelConfig6581.GetInstance().GetGainRes();
+			gain_vol = FilterModelConfig6581.GetInstance().GetGainVol();
 			voiceScaleS11 = FilterModelConfig6581.GetInstance().GetVoiceScaleS11();
-			voiceDc = FilterModelConfig6581.GetInstance().GetVoiceDc();
+			voiceDc = FilterModelConfig6581.GetInstance().GetNormalizedVoiceDc();
 			hpIntegrator = FilterModelConfig6581.GetInstance().BuildIntegrator();
 			bpIntegrator = FilterModelConfig6581.GetInstance().BuildIntegrator();
 
@@ -356,7 +358,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		/********************************************************************/
 		protected override void UpdateResonance(byte res)
 		{
-			currentResonance = gain[~res & 0xf];
+			currentResonance = gain_res[res];
 		}
 
 
@@ -368,7 +370,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		/********************************************************************/
 		protected override void UpdateMixing()
 		{
-			currentGain = gain[vol];
+			currentGain = gain_vol[vol];
 
 			uint ni = 0;
 			uint no = 0;

@@ -167,12 +167,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		/// </summary>
 		private bool msb_rising;
 
-		private bool is6581;	// -V730_NOINIT this is initialized in the SID constructor
-
-		/// <summary>
-		/// The DAC LUT for analog input
-		/// </summary>
-		private float[] dac;	// -V730_NOINIT this is initialized in the SID constructor
+		private bool is6581;	// This is initialized in the SID constructor
 
 		/********************************************************************/
 		/// <summary>
@@ -215,20 +210,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		public void SetWaveformModels(matrix_t models)
 		{
 			model_wave = models;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set the analog DAC emulation:
-		/// 8580 is perfectly linear while 6581 is nonlinear.
-		/// Must be called before any operation
-		/// </summary>
-		/********************************************************************/
-		public void SetDac(float[] dac)
-		{
-			this.dac = dac;
 		}
 
 
@@ -510,7 +491,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 				uint accumulator_old = accumulator;
 				accumulator = (accumulator + freq) & 0xffffff;
 
-				// Check which bit have changed
+				// Check which bit have changed from low to high
 				uint accumulator_bits_set = ~accumulator_old & accumulator;
 
 				// Check whether the MSB is set high. This is used for synchronization
@@ -535,11 +516,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 
 		/********************************************************************/
 		/// <summary>
-		/// 12-bit waveform output as an analogue float value
+		/// 12-bit waveform output
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public float Output(WaveformGenerator ringModulator)
+		public uint Output(WaveformGenerator ringModulator)
 		{
 			// Set output value
 			if (waveform != 0)
@@ -562,9 +543,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 
 				// In the 6581 the top bit of the accumulator may be driven low by combined waveforms
 				// when the sawtooth is selected
-				// FIXME doesn't seem to always happen
-				if (((waveform & 2) != 0) && ((waveform & 0xd) != 0) && is6581)
-					accumulator &= (waveform_output << 12) | 0x7fffff;
+				if (is6581 && ((waveform & 2) != 0) && ((waveform_output & 0x800) == 0))
+					accumulator &= 0x7fffff;
 
 				Write_Shift_Register();
 			}
@@ -589,9 +569,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 			// Push next pulse level into pulse level pipeline
 			pulse_output = ((accumulator >> 12) >= pw) ? (uint)0xfff : 0x000;
 
-			// DAC imperfections are emulated by using waveform_output as an index
-			// into a DAC lookup table. ReadOsc() uses waveform_output directly
-			return dac[waveform_output];
+			return waveform_output;
 		}
 
 		#region Private methods
@@ -600,7 +578,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		/// This is what happens when the lfsr is clocked:
 		///
 		/// cycle 0: bit 19 of the accumulator goes from low to high, the
-		/// noise register acts normally, the output may overwrite a bit;
+		/// noise register acts normally, the output may pulldown a bit;
 		///
 		/// cycle 1: first phase of the shift, the bits are interconnected
 		/// and the output of each bit is latched into the following. The
@@ -611,9 +589,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		/// the register returns to normal operation.
 		///
 		/// When the test or reset lines are active the first phase is
-		/// executed at every cyle until the signal is released triggering
-		/// the second phase
+		/// executed at every cycle until the signal is released triggering
+		/// the second phase.
 		/// </summary>
+		///
+		//      |       |    bit n     |   bit n+1
+		//      | bit19 | latch output | latch output
+		// -----+-------+--------------+--------------
+		// phi1 |   0   |   A <-> A    |   B <-> B
+		// phi2 |   0   |   A <-> A    |   B <-> B
+		// -----+-------+--------------+--------------
+		// phi1 |   1   |   A <-> A    |   B <-> B      <- bit19 raises
+		// phi2 |   1   |   A <-> A    |   B <-> B
+		// -----+-------+--------------+--------------
+		// phi1 |   1   |   X     A  --|-> A     B      <- shift phase 1
+		// phi2 |   1   |   X     A  --|-> A     B
+		// -----+-------+--------------+--------------
+		// phi1 |   1   |   X --> X    |   A --> A      <- shift phase 2
+		// phi2 |   1   |   X <-> X    |   A <-> A
 		/********************************************************************/
 		internal void Clock_Shift_Register(uint bit0)
 		{

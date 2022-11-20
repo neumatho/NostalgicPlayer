@@ -6,12 +6,14 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System.Collections.Generic;
+
 namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 {
 	/// <summary>
 	/// Calculate parameters for 8580 filter emulation
 	/// </summary>
-	internal class FilterModelConfig8580
+	internal sealed class FilterModelConfig8580 : FilterModelConfig
 	{
 		private const uint OPAMP_SIZE = 21;
 
@@ -90,83 +92,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 
 		private static FilterModelConfig8580 instance = null;
 
-		private readonly double voice_voltage_range;
-		private readonly double voice_dc_voltage;
-
-		/// <summary>
-		/// Capacitor value
-		/// </summary>
-		private readonly double c;
-
-		// Transistor parameters
-		private readonly double vdd;
-		private readonly double vth;			// Threshold voltage
-		private readonly double ut;				// Thermal voltage: Ut = kT/q = 8.61734315e-5*T ~ 26mV
-		private readonly double uCox;			// Transconductance coefficient: u*Cox
-		private readonly double vddt;			// Vdd - Vth;
-
-		// Derived stuff
-		private readonly double vMin, vMax;
-		private readonly double denorm, norm;
-
-		/// <summary>
-		/// Fixed point scaling for 16 bit op-amp output
-		/// </summary>
-		private readonly double n16;
-
-		// Lookup tables for gain and summer op-amps in output stage / filter
-		private readonly ushort[][] mixer = new ushort[8][];
-		private readonly ushort[][] summer = new ushort[5][];
-		private readonly ushort[][] gain_vol = new ushort[16][];
-		private readonly ushort[][] gain_res = new ushort[16][];
-
-		/// <summary>
-		/// Reverse op-amp transfer function
-		/// </summary>
-		private readonly ushort[] opamp_rev = new ushort[1 << 16];
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		private FilterModelConfig8580()
+		private FilterModelConfig8580() : base(
+			0.25,	// Voice voltage range FIXME measure
+			4.80,	// Voice DC voltage FIXME was 4.76
+			22e-9,	// Capacitor value
+			9.09,	// Vdd
+			0.80,	// Vth
+			100e-6,	// uCox
+			opamp_voltage,
+			OPAMP_SIZE)
 		{
-			voice_voltage_range = 0.25;		// FIXME measure
-			voice_dc_voltage = 4.80;		// FIXME was 4.76
-			c = 22e-9;
-			vdd = 9.09;
-			vth = 0.80;
-			ut = 26.0e-3;
-			uCox = 100e-6;
-			vddt = vdd - vth;
-			vMin = opamp_voltage[0].x;
-			vMax = vddt < opamp_voltage[0].y ? opamp_voltage[0].y : vddt;
-			denorm = vMax - vMin;
-			norm = 1.0 / denorm;
-			n16 = norm * ((1 << 16) - 1);
-
-			// Convert op-amp voltage transfer to 16 bit values
-			Spline.Point[] scaled_voltage = new Spline.Point[OPAMP_SIZE];
-
-			for (uint i = 0; i < OPAMP_SIZE; i++)
-			{
-				scaled_voltage[i].x = n16 * (opamp_voltage[i].x - opamp_voltage[i].y + denorm) / 2.0;
-				scaled_voltage[i].y = n16 * (opamp_voltage[i].x - vMin);
-			}
-
-			// Create lookup table mapping capacitor voltage to op-amp input voltage:
-			Spline s = new Spline(scaled_voltage, OPAMP_SIZE);
-
-			for (int x = 0; x < (1 << 16); x++)
-			{
-				Spline.Point @out = s.Evaluate(x);
-				double tmp = @out.x;
-				opamp_rev[x] = (ushort)(tmp + 0.5);
-			}
-
 			// Create lookup tables for gains / summers
-			OpAmp opampModel = new OpAmp(opamp_voltage, OPAMP_SIZE, vddt);
+			OpAmp opampModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt);
 
 			// The filter summer operates at n ~ 1, and has 5 fundamentally different
 			// input configurations (2 - 6 input "resistors")
@@ -187,8 +129,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 				for (int vi = 0; vi < size; vi++)
 				{
 					double vIn = vMin + vi / n16 / iDiv;	// vMin .. vMax
-					double tmp = (opampModel.Solve(n, vIn) - vMin) * n16;
-					summer[i][vi] = (ushort)(tmp + 0.5);
+					summer[i][vi] = GetNormalizedValue(opampModel.Solve(n, vIn));
 				}
 			}
 
@@ -209,8 +150,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 				for (int vi = 0; vi < size; vi++)
 				{
 					double vIn = vMin + vi / n16 / iDiv;	// vMin .. vMax
-					double tmp = (opampModel.Solve(n, vIn) - vMin) * n16;
-					mixer[i][vi] = (ushort)(tmp + 0.5);
+					mixer[i][vi] = GetNormalizedValue(opampModel.Solve(n, vIn));
 				}
 			}
 
@@ -229,8 +169,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 				for (int vi = 0; vi < size; vi++)
 				{
 					double vIn = vMin + vi / n16;			// vMin .. vMax
-					double tmp = (opampModel.Solve(n, vIn) - vMin) * n16;
-					gain_vol[n8][vi] = (ushort)(tmp + 0.5);
+					gain_vol[n8][vi] = GetNormalizedValue(opampModel.Solve(n, vIn));
 				}
 			}
 
@@ -249,8 +188,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 				for (int vi = 0; vi < size; vi++)
 				{
 					double vIn = vMin + vi / n16;			// vMin .. vMax
-					double tmp = (opampModel.Solve(resGain[n8], vIn) - vMin) * n16;
-					gain_res[n8][vi] = (ushort)(tmp + 0.5);
+					gain_res[n8][vi] = GetNormalizedValue(opampModel.Solve(resGain[n8], vIn));
 				}
 			}
 		}
@@ -274,87 +212,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 
 		/********************************************************************/
 		/// <summary>
-		/// The digital range of one voice is 20 bits; create a scaling term
-		/// for multiplication which fits in 11 bits
-		/// </summary>
-		/********************************************************************/
-		public int GetVoiceScaleS11()
-		{
-			return (int)((norm * ((1 << 11) - 1)) * voice_voltage_range);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// The "zero" output level of the voices
-		/// </summary>
-		/********************************************************************/
-		public int GetVoiceDc()
-		{
-			return (int)(n16 * (voice_dc_voltage - vMin));
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public ushort[][] GetGainVol()
-		{
-			return gain_vol;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public ushort[][] GetGainRes()
-		{
-			return gain_res;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public ushort[][] GetSummer()
-		{
-			return summer;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public ushort[][] GetMixer()
-		{
-			return mixer;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Construct an integrator solver
 		/// </summary>
 		/********************************************************************/
 		public Integrator8580 BuildIntegrator()
 		{
-			double nKp = denorm * (uCox / 2.0 * 1.0e-6 / c);
-
-			return new Integrator8580(opamp_rev, vth, nKp, vMin, n16);
+			return new Integrator8580(this);
 		}
 	}
 }

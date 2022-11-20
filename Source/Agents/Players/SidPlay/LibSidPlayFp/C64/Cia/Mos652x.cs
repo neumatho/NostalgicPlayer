@@ -219,19 +219,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Cia
 			switch (model)
 			{
 				case model_t.MOS6526W4485:
-				{
-					serialPort.SetModel4485(true);
-					goto case model_t.MOS6526;
-				}
-
 				case model_t.MOS6526:
 				{
+					serialPort.SetModel4485(model == model_t.MOS6526W4485);
 					interruptSource = new InterruptSource6526(eventScheduler, this);
 					break;
 				}
 
 				case model_t.MOS8521:
 				{
+					serialPort.SetModel4485(false);
 					interruptSource = new InterruptSource8521(eventScheduler, this);
 					break;
 				}

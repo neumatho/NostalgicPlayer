@@ -24,6 +24,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.Test
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
+		public void TestShiftRegisterInitValue()
+		{
+			WaveformGenerator generator = new WaveformGenerator();
+			generator.Reset();
+
+			Assert.AreEqual(0x3fffffU, generator.shift_register);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
 		public void TestClockShiftRegister()
 		{
 			WaveformGenerator generator = new WaveformGenerator();
@@ -107,13 +123,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.Test
 		public void TestNoiseWriteBack1()
 		{
 			matrix_t tables = WaveformCalculator.GetInstance().BuildTable(ChipModel.MOS6581);
-			float[] dac = new float[4096];
 
 			WaveformGenerator modulator = new WaveformGenerator();
 
 			WaveformGenerator generator = new WaveformGenerator();
 			generator.SetWaveformModels(tables);
-			generator.SetDac(dac);
 			generator.Reset();
 
 			generator.WriteControl_Reg(0x88);

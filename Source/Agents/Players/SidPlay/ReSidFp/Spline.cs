@@ -6,6 +6,8 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System.Collections.Generic;
+
 namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 {
 	/// <summary>
@@ -60,18 +62,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Spline(Point[] input, uint inputLength)
+		public Spline(List<Point> input)
 		{
-			@params = new Param[inputLength];
+			@params = new Param[input.Count];
 			c = 0;
 
-			uint coeffLength = inputLength - 1;
+			uint coeffLength = (uint)input.Count - 1;
 
 			double[] dxs = new double[coeffLength];
 			double[] ms = new double[coeffLength];
 
 			// Get consecutive differences and slopes
-			for (uint i = 0; i < coeffLength; i++)
+			for (int i = 0; i < coeffLength; i++)
 			{
 				double dx = input[i + 1].x - input[i].x;
 				double dy = input[i + 1].y - input[i].y;
@@ -102,7 +104,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 			@params[coeffLength].c = ms[coeffLength - 1];
 
 			// Get degree-2 and degree-3 coefficients
-			for (uint i = 0; i < coeffLength; i++)
+			for (int i = 0; i < coeffLength; i++)
 			{
 				@params[i].x1 = input[i].x;
 				@params[i].x2 = input[i + 1].x;

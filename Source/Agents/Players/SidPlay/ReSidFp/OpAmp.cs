@@ -7,6 +7,8 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 {
@@ -65,13 +67,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public OpAmp(Spline.Point[] opamp, uint opampLength, double vddt)
+		public OpAmp(List<Spline.Point> opamp, double vddt)
 		{
 			x = 0.0;
 			this.vddt = vddt;
-			vMin = opamp[0].x;
-			vMax = opamp[opampLength - 1].x;
-			this.opamp = new Spline(opamp, opampLength);
+			vMin = opamp.First().x;
+			vMax = opamp.Last().x;
+			this.opamp = new Spline(opamp);
 		}
 
 

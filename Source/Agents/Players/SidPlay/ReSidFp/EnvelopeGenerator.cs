@@ -135,11 +135,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		/// </summary>
 		private byte env3;
 
-		/// <summary>
-		/// The DAC LUT for analog input
-		/// </summary>
-		private float[] dac;	// -V730_NOINIT this is initialized in the SID constructor
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -172,29 +167,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 
 		/********************************************************************/
 		/// <summary>
-		/// Get the Envelope Generator output.
-		/// DAC imperfections are emulated by using envelope_counter as an
-		/// index into a DAC lookup table. ReadEnv() uses envelope_counter
-		/// directly
+		/// Get the Envelope Generator digital output
 		/// </summary>
 		/********************************************************************/
-		public float Output()
+		public uint Output()
 		{
-			return dac[envelope_counter];
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set the analog DAC emulation:
-		/// 8580 is perfectly linear while 6581 is nonlinear.
-		/// Must be called before any operation
-		/// </summary>
-		/********************************************************************/
-		public void SetDac(float[] dac)
-		{
-			this.dac = dac;
+			return envelope_counter;
 		}
 
 

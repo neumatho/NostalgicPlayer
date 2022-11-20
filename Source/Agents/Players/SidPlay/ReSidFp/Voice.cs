@@ -19,6 +19,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 
 		private readonly EnvelopeGenerator envelopeGenerator;
 
+		/// The DAC LUT for analog waveform output
+		private float[] wavDac;		// This is initialized in the SID constructor
+
+		/// The DAC LUT for analog envelope output
+		private float[] envDac;		// This is initialized in the SID constructor
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -34,13 +40,41 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 
 		/********************************************************************/
 		/// <summary>
+		/// Set the analog DAC emulation for waveform generator. Must be
+		/// called before any operation
+		/// </summary>
+		/********************************************************************/
+		public void SetWavDac(float[] dac)
+		{
+			wavDac = dac;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the analog DAC emulation for envelope. Must be called before
+		/// any operation
+		/// </summary>
+		/********************************************************************/
+		public void SetEnvDac(float[] dac)
+		{
+			envDac = dac;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Amplitude modulated waveform output.
 		///
-		/// The waveform DAC generates a voltage between 5 and 12 V
-		/// (4,76 - 9 V for the 8580) corresponding to oscillator state 0 .. 4095.
+		/// The waveform DAC generates a voltage between virtual ground and
+		/// Vdd (5-12 V for the 6581 and 4,75-9 V for the 8580) corresponding
+		/// to oscillator state 0 .. 4095.
 		///
-		/// The envelope DAC generates a voltage between waveform gen output and
-		/// the 5V level, corresponding to envelope state 0 .. 255.
+		/// The envelope DAC generates a voltage between waveform gen output
+		/// and the virtual ground level, corresponding to envelope state
+		/// 0 .. 255.
 		///
 		/// Ideal range [-2048*255, 2047*255]
 		/// </summary>
@@ -48,7 +82,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int Output(WaveformGenerator ringModulator)
 		{
-			return (int)(waveformGenerator.Output(ringModulator) * envelopeGenerator.Output());
+			uint wav = waveformGenerator.Output(ringModulator);
+			uint env = envelopeGenerator.Output();
+
+			// DAC imperfections are emulated by using the digital output
+			// as an index into a DAC lookup table
+			return (int)(wavDac[wav] * envDac[env]);
 		}
 
 

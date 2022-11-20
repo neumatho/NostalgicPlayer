@@ -6,6 +6,7 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp;
 
@@ -64,7 +65,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.Test
 		[TestMethod]
 		public void TestMonotonicity()
 		{
-			Spline s = new Spline(opamp_voltage, OpAmpSize);
+			Spline s = new Spline(new List<Spline.Point>(opamp_voltage));
 
 			double old = double.MaxValue;
 			for (double x = 0.0; x < 12.0; x += 0.01)
@@ -86,7 +87,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.Test
 		[TestMethod]
 		public void TestPoints()
 		{
-			Spline s = new Spline(opamp_voltage, OpAmpSize);
+			Spline s = new Spline(new List<Spline.Point>(opamp_voltage));
 
 			for (int i = 0; i < OpAmpSize; i++)
 			{
@@ -114,7 +115,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.Test
 				new ( 30, 45 )
 			};
 
-			Spline s = new Spline(values, 5);
+			Spline s = new Spline(new List<Spline.Point>(opamp_voltage));
 
 			Spline.Point o = s.Evaluate(5);
 			CheckClose(6.66667, o.x, 0.00001);
