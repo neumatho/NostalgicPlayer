@@ -629,6 +629,18 @@ what has changed since your previous version.</value>
   <data name="IDS_SAMPLE_INFO_SAMP_SAVEFORMAT" xml:space="preserve">
     <value>Save format</value>
   </data>
+  <data name="IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_LOOP" xml:space="preserve">
+    <value>Loops</value>
+  </data>
+  <data name="IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_MULTIOCTAVE" xml:space="preserve">
+    <value>Multi octaves</value>
+  </data>
+  <data name="IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_PINGPONG" xml:space="preserve">
+    <value>Ping-pong</value>
+  </data>
+  <data name="IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_STEREO" xml:space="preserve">
+    <value>Stereo</value>
+  </data>
   <data name="IDS_SAMPLE_INFO_SAMP_TYPE_HYBRID" xml:space="preserve">
     <value>Hybrid</value>
   </data>

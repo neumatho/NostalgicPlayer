@@ -764,18 +764,31 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 					SampleInfo sample = staticInfo.Samples[i];
 
 					Bitmap bitmap = null;
+					string tooltip = string.Empty;
 
 					if ((sample.Flags & SampleInfo.SampleFlags.MultiOctave) != 0)
+					{
 						bitmap = AppendBitmap(i, bitmap, Resources.IDB_SAMPLE_OCTAVES);
+						tooltip += $"+{Resources.IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_MULTIOCTAVE}";
+					}
 
 					if ((sample.Flags & SampleInfo.SampleFlags.Stereo) != 0)
+					{
 						bitmap = AppendBitmap(i, bitmap, Resources.IDB_SAMPLE_STEREO);
+						tooltip += $"+{Resources.IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_STEREO}";
+					}
 
 					if ((sample.Flags & SampleInfo.SampleFlags.Loop) != 0)
+					{
 						bitmap = AppendBitmap(i, bitmap, Resources.IDB_SAMPLE_LOOP);
+						tooltip += $"+{Resources.IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_LOOP}";
+					}
 
 					if ((sample.Flags & SampleInfo.SampleFlags.PingPong) != 0)
+					{
 						bitmap = AppendBitmap(i, bitmap, Resources.IDB_SAMPLE_PINGPONG);
+						tooltip += $"+{Resources.IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_PINGPONG}";
+					}
 
 					DataGridViewRow row = new DataGridViewRow();
 					row.Cells.AddRange(new DataGridViewCell[]
@@ -789,7 +802,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						new KryptonDataGridViewTextBoxCell { Value = sample.Volume },
 						new KryptonDataGridViewTextBoxCell { Value = sample.Panning == -1 ? "-" : sample.Panning },
 						new KryptonDataGridViewTextBoxCell { Value = sample.MiddleC },
-						new DataGridViewImageCell { Value =  bitmap },
+						new DataGridViewImageCell { Value =  bitmap, ToolTipText = tooltip.Length > 1 ? tooltip.Substring(1) : string.Empty },
 						new KryptonDataGridViewTextBoxCell { Value = GetTypeString(sample.Type) }
 					});
 

@@ -1376,6 +1376,42 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loops.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_LOOP {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_LOOP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Multi octaves.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_MULTIOCTAVE {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_MULTIOCTAVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ping-pong.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_PINGPONG {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_PINGPONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stereo.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_STEREO {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_STEREO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hybrid.
         /// </summary>
         internal static string IDS_SAMPLE_INFO_SAMP_TYPE_HYBRID {

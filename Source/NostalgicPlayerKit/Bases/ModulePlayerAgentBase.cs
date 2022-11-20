@@ -67,7 +67,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 			{
 				base.HasEndReached = value;
 
-				if (!value)
+				if (!value && (visitedPositions != null))
 					Array.Clear(visitedPositions);
 			}
 		}
