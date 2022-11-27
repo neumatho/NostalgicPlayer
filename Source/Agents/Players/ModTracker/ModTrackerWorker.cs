@@ -1055,7 +1055,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					// Mod's Grave .WOW files always use 0x00 for the "restart" byte
 					maybeWow = false;
 
-					if (restartByte > 126)
+					if (restartByte == 0x7f)
 						retVal = ModuleType.ProTracker;
 				}
 
@@ -1186,12 +1186,25 @@ stopLoop:
 					{
 						// Well, now we want to be really really sure it's
 						// not a NoiseTracker module, so we check the sample
-						// information to see if some samples has a fine tune
-						moduleStream.Seek(44, SeekOrigin.Begin);
+						// information to see if some samples has a fine tune.
+						// Also check if ST-xx: is used in any of the sample names
+						byte[] buf = new byte[30];
+						bool hasDiskPrefix = false;
+
+						moduleStream.Seek(20, SeekOrigin.Begin);
 
 						for (int i = 0; i < 31; i++)
 						{
-							byte fineTune = moduleStream.Read_UINT8();
+							moduleStream.Read(buf, 0, 30);
+
+							// Check for disk prefix
+							if (((buf[0] == 'S') || (buf[0] == 's')) && ((buf[1] == 'T') || (buf[1] == 't')) && (buf[2] == '-') && (buf[5] == ':'))
+							{
+								// ProTracker does not have ST-xx: prefixes
+								hasDiskPrefix = true;
+							}
+
+							byte fineTune = buf[24];
 
 							// Some His Master's Noise modules uses the "M&K!" mark, so check
 							// for that (this is not the real format, which is "FEST", but I do
@@ -1207,10 +1220,10 @@ stopLoop:
 								retVal = ModuleType.ProTracker;
 								break;
 							}
-
-							// Seek to next sample
-							moduleStream.Seek(30 - 1, SeekOrigin.Current);
 						}
+
+						if (!hasDiskPrefix && (restartByte >= 120))
+							retVal = ModuleType.ProTracker;
 					}
 				}
 			}
