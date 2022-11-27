@@ -70,7 +70,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10.Containers
 		public byte Portamento;
 		public bool IsSample;
 		public byte TableDelay;
-		public byte[] Arpeggio = new byte[8];
+		public readonly byte[] Arpeggio = new byte[8];
 		public ushort SampleLength;
 		public ushort RepeatStart;
 		public ushort RepeatLength;

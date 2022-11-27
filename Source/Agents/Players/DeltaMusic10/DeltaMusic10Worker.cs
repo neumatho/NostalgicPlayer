@@ -454,14 +454,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10
 						uint[] frequencies = new uint[10 * 12];
 
 						for (int j = 1; j < 7 * 12; j++)
-							frequencies[j] = 3546895U / Tables.Periods[j];
+							frequencies[j - 1] = 3546895U / Tables.Periods[j];
 
 						sampleInfo = new SampleInfo
 						{
 							Name = string.Empty,
 							BitSize = 8,
-							MiddleC = frequencies[4 * 12],
-							Volume = (ushort)(inst.Volume * 4),
+							MiddleC = frequencies[3 * 12],
+							Volume = (ushort)(inst.Volume * 3),
 							Panning = -1,
 							NoteFrequencies = frequencies
 						};
@@ -603,7 +603,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10
 					VibratoPosition = 0,
 					VibratoCompare = 0,
 					VibratoFrequency = 0,
-					OldFrequency = 0,
 					FrequencyData = 0,
 					ActualVolume = 0,
 					AttackDelay = 0,

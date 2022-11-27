@@ -30,7 +30,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10.Containers
 		public byte VibratoPosition;
 		public byte VibratoCompare;
 		public ushort VibratoFrequency;
-		public ushort OldFrequency;
 		public byte FrequencyData;
 		public byte ActualVolume;
 		public byte AttackDelay;

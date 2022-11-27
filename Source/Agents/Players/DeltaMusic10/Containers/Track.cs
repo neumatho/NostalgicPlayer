@@ -9,7 +9,7 @@
 namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10.Containers
 {
 	/// <summary>
-	/// Holds information about a single block
+	/// Holds information about a single track position
 	/// </summary>
 	internal class Track
 	{
