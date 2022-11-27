@@ -176,10 +176,13 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 		/********************************************************************/
 		private void DestroyChannelPanels()
 		{
-			foreach (Control control in squaresPanel.Controls)
-				control.Dispose();
-
-			squaresPanel.Controls.Clear();
+			while (squaresPanel.Controls.Count > 0)
+			{
+				// Since the dispose also removes the control from the
+				// collection, we just remove the first item in every
+				// iteration
+				squaresPanel.Controls[0].Dispose();
+			}
 		}
 
 
