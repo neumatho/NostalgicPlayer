@@ -394,6 +394,9 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		protected bool HasPositionBeenVisited(int position)
 		{
+			if (visitedPositions == null)
+				return false;
+
 			return visitedPositions[position];
 		}
 
@@ -406,7 +409,8 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		protected void MarkPositionAsVisited(int position)
 		{
-			visitedPositions[position] = true;
+			if (visitedPositions != null)
+				visitedPositions[position] = true;
 
 			if (currentDurationInfo != null)
 				ChangeSubSong(currentDurationInfo.PositionInfo[position].SubSong);

@@ -952,6 +952,14 @@
             <uap:DisplayName>Delta Music 1.0</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="dm2file">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-dm2">.dm2</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Delta Music 2.0</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

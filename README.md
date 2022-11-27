@@ -43,6 +43,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | ChipTracker | .chp / .chip / .krs / .kris | ProWizard | ModTracker |
 | Composer 669 | .669 | MikMod Converter | MikMod |
 | Delta Music 1.0 | .dm1 | | Delta Music 1.0 |
+| Delta Music 2.0 | .dm2 | | Delta Music 2.0 |
 | Devils Replay | .dev | ProWizard | ModTracker |
 | Digital Illusions | .di | ProWizard | ModTracker |
 | Digital Sound and Music Interface | .amf | MikMod Converter | MikMod |
