@@ -74,5 +74,17 @@ namespace Polycode.NostalgicPlayer.Kit
 		{
 			get;
 		} = new Win1252();
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the encoder to decode ISO-8859-1 characters
+		/// </summary>
+		/********************************************************************/
+		public static Encoding Iso8859_1
+		{
+			get;
+		} = new Iso8859_1();
 	}
 }
