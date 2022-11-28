@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20.Containers;
 using Polycode.NostalgicPlayer.Kit.Bases;
@@ -707,6 +708,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 
 			for (int i = 0; i < 16; i++)
 			{
+				noiseValue = BitOperations.RotateLeft(noiseValue, 7);
 				noiseValue += 0x6eca756d;
 				noiseValue ^= 0x9e59a92b;
 				waveform[i] = noiseValue;
