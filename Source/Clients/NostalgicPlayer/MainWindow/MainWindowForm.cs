@@ -754,8 +754,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						// Check the item to see if it's a legal sample
 						if (((sampleInfo.Sample != null) || (sampleInfo.MultiOctaveSamples != null)) && (sampleInfo.Length > 0))
 						{
-							sbyte[] sample = sampleInfo.Sample;
-							sbyte[] secondSample = sampleInfo.SecondSample;
+							Array sample = sampleInfo.Sample;
+							Array secondSample = sampleInfo.SecondSample;
 							uint length = sampleInfo.Length;
 							uint loopStart = sampleInfo.LoopStart;
 							uint loopLength = sampleInfo.LoopLength;

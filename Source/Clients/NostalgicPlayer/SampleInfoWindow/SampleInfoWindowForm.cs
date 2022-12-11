@@ -1041,7 +1041,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 				int channels = stereo ? 2 : 1;
 
 				// Build list of buffers to be saved
-				sbyte[][] leftSamples, rightSamples = null;
+				Array[] leftSamples, rightSamples = null;
 
 				if ((sampleInfo.Flags & SampleInfo.SampleFlags.MultiOctave) != 0)
 				{
@@ -1082,8 +1082,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 							{
 								if (sampleInfo.BitSize == 8)
 								{
-									sbyte[] left = leftSamples[b];
-									sbyte[] right = rightSamples[b];
+									sbyte[] left = (sbyte[])leftSamples[b];
+									sbyte[] right = (sbyte[])rightSamples[b];
 
 									for (int i = 0, j = 0, cnt = left.Length; i < cnt; i++, j += 2)
 									{
@@ -1093,8 +1093,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 								}
 								else
 								{
-									Span<short> left = MemoryMarshal.Cast<sbyte, short>(leftSamples[b]);
-									Span<short> right = MemoryMarshal.Cast<sbyte, short>(rightSamples[b]);
+									Span<short> left = leftSamples[b].GetType() == typeof(sbyte[]) ? MemoryMarshal.Cast<sbyte, short>((sbyte[])leftSamples[b]) : (short[])leftSamples[b];
+									Span<short> right = rightSamples[b].GetType() == typeof(sbyte[]) ? MemoryMarshal.Cast<sbyte, short>((sbyte[])rightSamples[b]) : (short[])rightSamples[b];
 
 									for (int i = 0, j = 0, cnt = left.Length; i < cnt; i++, j += 2)
 									{
@@ -1109,14 +1109,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 							{
 								if (sampleInfo.BitSize == 8)
 								{
-									sbyte[] left = leftSamples[b];
+									sbyte[] left = (sbyte[])leftSamples[b];
 
 									for (int i = 0, cnt = left.Length; i < cnt; i++)
 										buffer[i] = left[i] << 24;
 								}
 								else
 								{
-									Span<short> left = MemoryMarshal.Cast<sbyte, short>(leftSamples[b]);
+									Span<short> left = leftSamples[b].GetType() == typeof(sbyte[]) ? MemoryMarshal.Cast<sbyte, short>((sbyte[])leftSamples[b]) : (short[])leftSamples[b];
 
 									for (int i = 0, cnt = left.Length; i < cnt; i++)
 										buffer[i] = left[i] << 16;

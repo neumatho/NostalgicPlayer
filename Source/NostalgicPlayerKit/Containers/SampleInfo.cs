@@ -78,7 +78,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 			/// 
 			/// The first index is the channel number
 			/// </summary>
-			public sbyte[][] Sample;
+			public Array[] Sample;
 
 			/// <summary>
 			/// How many notes to add to the playing note
@@ -95,6 +95,11 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 			/// </summary>
 			public uint LoopLength;
 		}
+
+		private Array sample;
+		private Array secondSample;
+		private Array[][] multiOctaveAllSamples;
+		private MultiOctaveInfo[] multiOctaveSamples;
 
 		/********************************************************************/
 		/// <summary>
@@ -185,9 +190,17 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Holds the sample itself
 		/// </summary>
 		/********************************************************************/
-		public sbyte[] Sample
+		public Array Sample
 		{
-			get; set;
+			get => sample;
+
+			set
+			{
+				if ((value != null) && (value.GetType() != typeof(sbyte[])) && (value.GetType() != typeof(short[])))
+					throw new ArgumentException("Type of array must be either sbyte[] or short[]", nameof(value));
+
+				sample = value;
+			}
 		}
 
 
@@ -198,9 +211,17 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// sample data
 		/// </summary>
 		/********************************************************************/
-		public sbyte[] SecondSample
+		public Array SecondSample
 		{
-			get; set;
+			get => secondSample;
+
+			set
+			{
+				if ((value != null) && (value.GetType() != typeof(sbyte[])) && (value.GetType() != typeof(short[])))
+					throw new ArgumentException("Type of array must be either sbyte[] or short[]", nameof(value));
+
+				secondSample = value;
+			}
 		}
 
 
@@ -216,7 +237,21 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/********************************************************************/
 		public MultiOctaveInfo[] MultiOctaveSamples
 		{
-			get; set;
+			get => multiOctaveSamples;
+
+			set
+			{
+				if (value != null)
+				{
+					foreach (MultiOctaveInfo info in value)
+					{
+						if ((info.Sample.GetType() != typeof(sbyte[][])) && (info.Sample.GetType() != typeof(short[][])))
+							throw new ArgumentException("Type of array must be either sbyte[][] or short[][]", nameof(value));
+					}
+				}
+
+				multiOctaveSamples = value;
+			}
 		}
 
 
@@ -232,9 +267,17 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// number
 		/// </summary>
 		/********************************************************************/
-		public sbyte[][][] MultiOctaveAllSamples
+		public Array[][] MultiOctaveAllSamples
 		{
-			get; set;
+			get => multiOctaveAllSamples;
+
+			set
+			{
+				if ((value.GetType() != typeof(sbyte[][][])) && (value.GetType() != typeof(short[][][])))
+					throw new ArgumentException("Type of array must be either sbyte[][][] or short[][][]", nameof(value));
+
+				multiOctaveAllSamples = value;
+			}
 		}
 
 
