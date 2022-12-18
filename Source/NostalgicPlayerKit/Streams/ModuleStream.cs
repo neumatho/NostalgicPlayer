@@ -252,9 +252,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
-		/// Read sample data. If called from a module converter, no data is
-		/// returned, but the position and size are stored to use for the
-		/// player
+		/// Read sample data
 		/// </summary>
 		/********************************************************************/
 		public sbyte[] ReadSampleData(int sampleNumber, int length, out int readBytes)
@@ -271,9 +269,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
-		/// Read sample data. If called from a module converter, no data is
-		/// returned, but the position and size are stored to use for the
-		/// player. Else the sample data are stored in the given buffer
+		/// Read sample data into the given buffer
 		/// </summary>
 		/********************************************************************/
 		public int ReadSampleData(int sampleNumber, sbyte[] sampleData, int length)
@@ -281,25 +277,92 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 			if (sampleInfo != null)
 				throw new Exception("ReadSampleData() may not be called from module converter");
 
-			if ((sampleStream != null) && hasSampleMarkers)
+			using (ModuleStream moduleStream = GetSampleDataStream(sampleNumber, length))
 			{
-				// Is called from a player with a converted module
-				//
-				// Read position and length from the converted stream
-				uint pos = Read_B_UINT32();
-				int len = (int)Read_B_UINT32();
-
-				if (len != length)
-					throw new Exception($"Something is wrong when reading sample data. The given sample length {length} does not match the one stored in the converted data {len} for sample number {sampleNumber}");
-
-				// Seek to the right position in the original file and read the data there
-				sampleStream.Seek(pos, SeekOrigin.Begin);
-
-				return sampleStream.Read((byte[])(Array)sampleData, 0, length);
+				return moduleStream.ReadSigned(sampleData, 0, length);
 			}
+		}
 
-			// Not converted module or anything, just a plain file, so read the data
-			return ReadSigned(sampleData, 0, length);
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read 16-bit big endian sample data. Length is the number of
+		/// samples, not bytes
+		/// </summary>
+		/********************************************************************/
+		public short[] Read_B_16BitSampleData(int sampleNumber, int length, out int readSamples)
+		{
+			// Allocate buffer to hold the sample data
+			short[] sampleData = new short[length];
+
+			readSamples = Read_B_16BitSampleData(sampleNumber, sampleData, length);
+
+			return sampleData;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read 16-bit big endian sample data into the given buffer. Length
+		/// is the number of samples, not bytes
+		/// </summary>
+		/********************************************************************/
+		public int Read_B_16BitSampleData(int sampleNumber, short[] sampleData, int length)
+		{
+			if (sampleInfo != null)
+				throw new Exception("Read_B_SampleData() may not be called from module converter");
+
+			using (ModuleStream moduleStream = GetSampleDataStream(sampleNumber, length))
+			{
+				long position = moduleStream.Position;
+
+				moduleStream.ReadArray_B_INT16s(sampleData, 0, length);
+
+				return (int)((moduleStream.Position - position) / 2);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read 16-bit little endian sample data. Length is the number of
+		/// samples, not bytes
+		/// </summary>
+		/********************************************************************/
+		public short[] Read_L_16BitSampleData(int sampleNumber, int length, out int readSamples)
+		{
+			// Allocate buffer to hold the sample data
+			short[] sampleData = new short[length];
+
+			readSamples = Read_L_16BitSampleData(sampleNumber, sampleData, length);
+
+			return sampleData;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read 16-bit little endian sample data into the given buffer. Length
+		/// is the number of samples, not bytes
+		/// </summary>
+		/********************************************************************/
+		public int Read_L_16BitSampleData(int sampleNumber, short[] sampleData, int length)
+		{
+			if (sampleInfo != null)
+				throw new Exception("Read_L_SampleData() may not be called from module converter");
+
+			using (ModuleStream moduleStream = GetSampleDataStream(sampleNumber, length))
+			{
+				long position = moduleStream.Position;
+
+				moduleStream.ReadArray_L_INT16s(sampleData, 0, length);
+
+				return (int)((moduleStream.Position - position) / 2);
+			}
 		}
 
 
