@@ -9,6 +9,7 @@
 using Polycode.NostalgicPlayer.Agent.Visual.Piano.Display;
 using Polycode.NostalgicPlayer.GuiKit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Visual.Piano

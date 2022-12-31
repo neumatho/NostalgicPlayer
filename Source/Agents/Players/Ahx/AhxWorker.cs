@@ -13,6 +13,8 @@ using Polycode.NostalgicPlayer.Agent.Player.Ahx.Implementation;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
+using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -552,7 +554,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 				channel.PlayBuffer(sampBuffers[i], 0, bufLen, 16);
 				channel.SetFrequency(mixerFreq);
 				channel.SetVolume(256);
-				channel.SetPanning((ushort)(((i % 3) == 0) ? ChannelPanning.Left : ChannelPanning.Right));
+				channel.SetPanning((ushort)(((i % 3) == 0) ? ChannelPanningType.Left : ChannelPanningType.Right));
 			}
 		}
 

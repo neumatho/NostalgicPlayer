@@ -15,6 +15,7 @@ using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20.Containers;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20

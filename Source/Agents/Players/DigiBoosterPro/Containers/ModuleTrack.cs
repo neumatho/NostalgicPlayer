@@ -7,7 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers

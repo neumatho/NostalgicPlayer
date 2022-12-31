@@ -8,13 +8,13 @@
 /******************************************************************************/
 using System;
 
-namespace Polycode.NostalgicPlayer.Kit.Containers
+namespace Polycode.NostalgicPlayer.Kit.Containers.Flags
 {
 	/// <summary>
 	/// Channel flags
 	/// </summary>
 	[Flags]
-	public enum ChannelFlags : uint
+	public enum ChannelFlag : uint
 	{
 		/// <summary>
 		/// No flags

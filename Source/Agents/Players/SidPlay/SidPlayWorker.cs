@@ -18,6 +18,7 @@ using Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidPlayFp;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.Roms;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay

@@ -8,6 +8,7 @@
 /******************************************************************************/
 using System.Drawing.Drawing2D;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
@@ -337,11 +338,11 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 		{
 			visualChannelInfo.Enabled = channelChangedInfo.Enabled;
 
-			if ((channelChangedInfo.Flags & ChannelFlags.MuteIt) != 0)
+			if ((channelChangedInfo.Flags & ChannelFlag.MuteIt) != 0)
 				Deactivate(visualChannelInfo);
 			else
 			{
-				if ((channelChangedInfo.Flags & ChannelFlags.TrigIt) != 0)
+				if ((channelChangedInfo.Flags & ChannelFlag.TrigIt) != 0)
 				{
 					Deactivate(visualChannelInfo);
 
@@ -364,18 +365,18 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 					}
 				}
 
-				if ((channelChangedInfo.Flags & ChannelFlags.Loop) != 0)
+				if ((channelChangedInfo.Flags & ChannelFlag.Loop) != 0)
 					visualChannelInfo.Pulsing = true;
 
-				if ((channelChangedInfo.Flags & ChannelFlags.ChangePosition) != 0)
+				if ((channelChangedInfo.Flags & ChannelFlag.ChangePosition) != 0)
 				{
-					if ((channelChangedInfo.Flags & ChannelFlags.Relative) != 0)
+					if ((channelChangedInfo.Flags & ChannelFlag.Relative) != 0)
 						visualChannelInfo.CalculatedSamplePosition += channelChangedInfo.SamplePosition;
 					else
 						visualChannelInfo.CalculatedSamplePosition = channelChangedInfo.SamplePosition;
 				}
 
-				if ((channelChangedInfo.Flags & ChannelFlags.Frequency) != 0)
+				if ((channelChangedInfo.Flags & ChannelFlag.Frequency) != 0)
 				{
 					visualChannelInfo.Frequency = channelChangedInfo.Frequency;
 

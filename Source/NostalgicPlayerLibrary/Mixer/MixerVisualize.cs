@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 
@@ -29,7 +30,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		private class ChannelInfo
 		{
-			public ChannelFlags ChannelFlags;
+			public ChannelFlag ChannelFlags;
 			public ushort Volume;
 			public uint Frequency;
 			public short SampleNumber;
@@ -188,7 +189,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Will queue the given channel change information
 		/// </summary>
 		/********************************************************************/
-		public void QueueChannelChange(ChannelFlags[] channelFlags, IChannel[] channels, bool[] enabledChannels, int samplesTakenSinceLastCall)
+		public void QueueChannelChange(ChannelFlag[] channelFlags, IChannel[] channels, bool[] enabledChannels, int samplesTakenSinceLastCall)
 		{
 			ChannelDataInfo channelDataInfo = new ChannelDataInfo
 			{

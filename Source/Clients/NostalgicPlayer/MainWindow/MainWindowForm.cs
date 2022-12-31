@@ -32,6 +32,7 @@ using Polycode.NostalgicPlayer.GuiKit.Controls;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
+using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
@@ -806,7 +807,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							channel.SetVolume(vol == 0 ? (ushort)256 : vol);
 
 							int pan = sampleInfo.Panning;
-							channel.SetPanning(pan == -1 ? (ushort)ChannelPanning.Center : (ushort)pan);
+							channel.SetPanning(pan == -1 ? (ushort)ChannelPanningType.Center : (ushort)pan);
 
 							if ((sampleInfo.Flags & SampleInfo.SampleFlags.Loop) != 0)
 								channel.SetLoop(loopStart, loopLength, (sampleInfo.Flags & SampleInfo.SampleFlags.PingPong) != 0 ? ChannelLoopType.PingPong : ChannelLoopType.Normal);

@@ -7,7 +7,8 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
+using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Kit.Mixer
@@ -20,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/// <summary>
 		/// Indicate what has been set/changed
 		/// </summary>
-		protected ChannelFlags flags;
+		protected ChannelFlag flags;
 
 		/// <summary>
 		/// Start addresses of the sample
@@ -146,15 +147,15 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 
 			sampleStart = startOffset;
 			sampleLength = length;
-			flags |= ChannelFlags.TrigIt;
+			flags |= ChannelFlag.TrigIt;
 
 			if (bit == 16)
-				flags |= ChannelFlags._16Bit;
+				flags |= ChannelFlag._16Bit;
 
 			if (backwards)
-				flags |= ChannelFlags.Backwards;
+				flags |= ChannelFlag.Backwards;
 
-			flags &= ~ChannelFlags.MuteIt;
+			flags &= ~ChannelFlag.MuteIt;
 		}
 
 
@@ -204,15 +205,15 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 
 			sampleStart = startOffset;
 			sampleLength = length;
-			flags |= ChannelFlags.TrigIt;
+			flags |= ChannelFlag.TrigIt;
 
 			if (bit == 16)
-				flags |= ChannelFlags._16Bit;
+				flags |= ChannelFlag._16Bit;
 
 			if (backwards)
-				flags |= ChannelFlags.Backwards;
+				flags |= ChannelFlag.Backwards;
 
-			flags &= ~ChannelFlags.MuteIt;
+			flags &= ~ChannelFlag.MuteIt;
 		}
 
 
@@ -314,10 +315,10 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 				throw new ArgumentException("Position may not be negative for absolute positions", nameof(position));
 
 			samplePosition = position;
-			flags |= ChannelFlags.ChangePosition;
+			flags |= ChannelFlag.ChangePosition;
 
 			if (relative)
-				flags |= ChannelFlags.Relative;
+				flags |= ChannelFlag.Relative;
 		}
 
 
@@ -339,9 +340,9 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 
 			loopStart = startOffset;
 			releaseLength = length;
-			flags |= ChannelFlags.Release;
+			flags |= ChannelFlag.Release;
 
-			flags &= ~ChannelFlags.MuteIt;
+			flags &= ~ChannelFlag.MuteIt;
 		}
 
 
@@ -358,7 +359,7 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 				throw new ArgumentException("Volume should be between 0 and 256", nameof(vol));
 
 			volume = vol;
-			flags |= ChannelFlags.Volume;
+			flags |= ChannelFlag.Volume;
 		}
 
 
@@ -375,7 +376,7 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 				throw new ArgumentException("Volume should be between 0 and 64", nameof(vol));
 
 			volume = (ushort)(vol * 4);
-			flags |= ChannelFlags.Volume;
+			flags |= ChannelFlag.Volume;
 		}
 
 
@@ -388,11 +389,11 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/********************************************************************/
 		public void SetPanning(ushort pan)
 		{
-			if ((pan > 256) && (pan != (ushort)ChannelPanning.Surround))
+			if ((pan > 256) && (pan != (ushort)ChannelPanningType.Surround))
 				throw new ArgumentException("Panning should be between 0 and 256 or 512 (Surround)", nameof(pan));
 
 			panning = pan;
-			flags |= ChannelFlags.Panning;
+			flags |= ChannelFlag.Panning;
 		}
 
 
@@ -406,7 +407,7 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		public void SetFrequency(uint freq)
 		{
 			frequency = freq;
-			flags |= ChannelFlags.Frequency;
+			flags |= ChannelFlag.Frequency;
 		}
 
 
@@ -420,7 +421,7 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		public void SetAmigaPeriod(uint period)
 		{
 			frequency = period != 0 ? 3546895 / period : 0;
-			flags |= ChannelFlags.Frequency;
+			flags |= ChannelFlag.Frequency;
 		}
 
 
@@ -430,7 +431,7 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/// Returns true or false depending on the channel is in use
 		/// </summary>
 		/********************************************************************/
-		public bool IsActive => (flags & ChannelFlags.Active) != 0;
+		public bool IsActive => (flags & ChannelFlag.Active) != 0;
 
 
 
@@ -441,8 +442,8 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/********************************************************************/
 		public void Mute()
 		{
-			flags |= ChannelFlags.MuteIt;
-			flags &= ~ChannelFlags.Active;
+			flags |= ChannelFlag.MuteIt;
+			flags &= ~ChannelFlag.Active;
 		}
 
 
@@ -519,12 +520,12 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 
 			loopStart = startOffset;
 			loopLength = length;
-			flags |= ChannelFlags.Loop;
+			flags |= ChannelFlag.Loop;
 
 			if (type == ChannelLoopType.PingPong)
-				flags |= ChannelFlags.PingPong;
+				flags |= ChannelFlag.PingPong;
 
-			flags &= ~ChannelFlags.MuteIt;
+			flags &= ~ChannelFlag.MuteIt;
 		}
 		#endregion
 	}

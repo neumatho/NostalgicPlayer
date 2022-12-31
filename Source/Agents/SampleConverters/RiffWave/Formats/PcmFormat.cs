@@ -8,6 +8,7 @@
 /******************************************************************************/
 using System;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats

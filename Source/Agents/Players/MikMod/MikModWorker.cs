@@ -15,6 +15,8 @@ using Polycode.NostalgicPlayer.Agent.Shared.MikMod;
 using Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
+using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
@@ -465,7 +467,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 						BitSize = (byte)((sample.Flags & SampleFlag._16Bits) != 0 ? 16 : 8),
 						MiddleC = frequencies[4 * 12],
 						Volume = (ushort)(sample.Volume * 4),
-						Panning = sample.Panning == SharedConstant.Pan_Surround ? (short)ChannelPanning.Surround : sample.Panning,
+						Panning = sample.Panning == SharedConstant.Pan_Surround ? (short)ChannelPanningType.Surround : sample.Panning,
 						Sample = sample.Handle,
 						Length = sample.Length,
 						LoopStart = sample.LoopStart,
@@ -581,7 +583,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 				return;
 
 			if (pan == SharedConstant.Pan_Surround)
-				pan = (int)ChannelPanning.Surround;
+				pan = (int)ChannelPanningType.Surround;
 
 			VirtualChannels[voice].SetPanning((ushort)pan);
 		}

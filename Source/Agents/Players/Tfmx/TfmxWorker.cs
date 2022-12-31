@@ -16,6 +16,8 @@ using Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
+using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -48,15 +50,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			0xfc, 0x0d, 0x4d, 0xce, 0x0c, 0x1c, 0xa6, 0x79
 		};
 
-		private static readonly ChannelPanning[] pan4 =
+		private static readonly ChannelPanningType[] pan4 =
 		{
-			ChannelPanning.Left, ChannelPanning.Right, ChannelPanning.Right, ChannelPanning.Left
+			ChannelPanningType.Left, ChannelPanningType.Right, ChannelPanningType.Right, ChannelPanningType.Left
 		};
 
-		private static readonly ChannelPanning[] pan7 =
+		private static readonly ChannelPanningType[] pan7 =
 		{
-			ChannelPanning.Left, ChannelPanning.Right, ChannelPanning.Right,
-			ChannelPanning.Left, ChannelPanning.Right, ChannelPanning.Right, ChannelPanning.Left
+			ChannelPanningType.Left, ChannelPanningType.Right, ChannelPanningType.Right,
+			ChannelPanningType.Left, ChannelPanningType.Right, ChannelPanningType.Right, ChannelPanningType.Left
 		};
 
 		private static readonly int[] noteVals =

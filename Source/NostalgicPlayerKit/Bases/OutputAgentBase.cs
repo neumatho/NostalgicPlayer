@@ -8,6 +8,7 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 

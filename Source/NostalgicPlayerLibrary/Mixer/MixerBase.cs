@@ -8,6 +8,7 @@
 /******************************************************************************/
 using System;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
@@ -104,7 +105,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				info.ReleaseEnd = 0;
 				info.Frequency = 10000;
 				info.Volume = 0;
-				info.Panning = (int)((((i & 3) == 0) || ((i & 3) == 3)) ? ChannelPanning.Left : ChannelPanning.Right);
+				info.Panning = (int)((((i & 3) == 0) || ((i & 3) == 3)) ? ChannelPanningType.Left : ChannelPanningType.Right);
 				info.RampVolume = 0;
 				info.LeftVolumeSelected = 0;
 				info.RightVolumeSelected = 0;

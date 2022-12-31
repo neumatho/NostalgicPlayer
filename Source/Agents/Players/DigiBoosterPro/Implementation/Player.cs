@@ -9,7 +9,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
 

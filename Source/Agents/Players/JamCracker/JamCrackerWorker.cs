@@ -13,6 +13,7 @@ using Polycode.NostalgicPlayer.Agent.Player.JamCracker.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 

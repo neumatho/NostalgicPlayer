@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
@@ -447,8 +448,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 							VoiceInfo[] voiceInfo = currentMixer.GetMixerChannels();
 							int click = currentMixer.GetClickConstant();
 
-							ChannelFlags[] flagArray = new ChannelFlags[moduleChannelNumber];
-							ChannelFlags chanFlags = ChannelFlags.None;
+							ChannelFlag[] flagArray = new ChannelFlag[moduleChannelNumber];
+							ChannelFlag chanFlags = ChannelFlag.None;
 
 							for (int t = 0; t < moduleChannelNumber; t++)
 							{
@@ -464,7 +465,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 							{
 								// If at least one channel has changed its information,
 								// tell visual agents about it
-								if (chanFlags != ChannelFlags.None)
+								if (chanFlags != ChannelFlag.None)
 									currentVisualizer.QueueChannelChange(flagArray, currentPlayer.VirtualChannels, channelsEnabled, samplesTakenSinceLastCall);
 
 								// Calculate the number of sample pair to mix before the

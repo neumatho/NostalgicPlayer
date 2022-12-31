@@ -9,6 +9,7 @@
 using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Raw

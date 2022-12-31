@@ -6,7 +6,7 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {

@@ -15,6 +15,8 @@ using Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
+using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Extensions;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
@@ -2061,7 +2063,7 @@ stopLoop:
 					if (currentModuleType == ModuleType.MultiTracker)
 						modChan.Panning = (ushort)(panning[i] * 16);
 					else
-						modChan.Panning = (ushort)((((i & 3) == 0) || ((i & 3) == 3)) ? ChannelPanning.Left : ChannelPanning.Right);
+						modChan.Panning = (ushort)((((i & 3) == 0) || ((i & 3) == 3)) ? ChannelPanningType.Left : ChannelPanningType.Right);
 				}
 				else
 					modChan.Panning = 0;

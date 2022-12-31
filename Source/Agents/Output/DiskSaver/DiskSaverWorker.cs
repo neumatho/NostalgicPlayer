@@ -16,6 +16,7 @@ using Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings;
 using Polycode.NostalgicPlayer.GuiKit.Controls;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;

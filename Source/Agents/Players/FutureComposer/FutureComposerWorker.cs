@@ -12,6 +12,7 @@ using System.IO;
 using Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer

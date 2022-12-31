@@ -14,6 +14,8 @@ using Polycode.NostalgicPlayer.Agent.Player.Oktalyzer.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
+using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
@@ -31,10 +33,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 			214, 202, 190, 180, 170, 160, 151, 143, 135, 127, 120, 113
 		};
 
-		private static readonly ChannelPanning[] panPos =
+		private static readonly ChannelPanningType[] panPos =
 		{
-			ChannelPanning.Left, ChannelPanning.Left, ChannelPanning.Right, ChannelPanning.Right,
-			ChannelPanning.Right, ChannelPanning.Right, ChannelPanning.Left, ChannelPanning.Left
+			ChannelPanningType.Left, ChannelPanningType.Left, ChannelPanningType.Right, ChannelPanningType.Right,
+			ChannelPanningType.Right, ChannelPanningType.Right, ChannelPanningType.Left, ChannelPanningType.Left
 		};
 
 		private static readonly sbyte[] arp10 =

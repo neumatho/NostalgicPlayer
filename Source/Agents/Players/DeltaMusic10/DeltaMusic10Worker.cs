@@ -13,6 +13,7 @@ using System.Linq;
 using Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10.Containers;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10

@@ -6,21 +6,44 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Kit.Containers
+using System;
+
+namespace Polycode.NostalgicPlayer.Kit.Containers.Flags
 {
 	/// <summary>
-	/// The different kind of loops supported
+	/// Different flags indicating what a module player supports
 	/// </summary>
-	public enum ChannelLoopType
+	[Flags]
+	public enum SampleSaverSupportFlag
 	{
 		/// <summary>
-		/// Just a normal loop
+		/// Nothing
 		/// </summary>
-		Normal,
+		None = 0,
 
 		/// <summary>
-		/// Ping-pong loop
+		/// Converter can write in 8-bit
 		/// </summary>
-		PingPong
+		Support8Bit = 0x0001,
+
+		/// <summary>
+		/// Converter can write in 16-bit
+		/// </summary>
+		Support16Bit = 0x0002,
+
+		/// <summary>
+		/// Converter can write in 32-bit
+		/// </summary>
+		Support32Bit = 0x0004,
+
+		/// <summary>
+		/// Converter can write in mono
+		/// </summary>
+		SupportMono = 0x0100,
+
+		/// <summary>
+		/// Converter can write in stereo
+		/// </summary>
+		SupportStereo = 0x0200
 	}
 }

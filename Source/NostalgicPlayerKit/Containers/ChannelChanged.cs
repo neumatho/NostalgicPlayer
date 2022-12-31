@@ -6,6 +6,8 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
+
 namespace Polycode.NostalgicPlayer.Kit.Containers
 {
 	/// <summary>
@@ -18,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ChannelChanged(ChannelFlags flags, ushort volume, uint frequency, short sampleNumber, uint sampleLength, int samplePosition, bool enabled)
+		public ChannelChanged(ChannelFlag flags, ushort volume, uint frequency, short sampleNumber, uint sampleLength, int samplePosition, bool enabled)
 		{
 			Flags = flags;
 			Volume = volume;
@@ -36,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Holds the channel flags. Indicate which information has changed
 		/// </summary>
 		/********************************************************************/
-		public ChannelFlags Flags
+		public ChannelFlag Flags
 		{
 			get;
 		}

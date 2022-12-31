@@ -14,6 +14,7 @@ using Polycode.NostalgicPlayer.Agent.Player.SoundMon.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
 

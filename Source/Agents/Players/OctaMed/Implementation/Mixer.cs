@@ -7,7 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Types;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 {

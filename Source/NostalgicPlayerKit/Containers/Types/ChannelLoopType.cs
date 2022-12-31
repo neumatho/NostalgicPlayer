@@ -6,24 +6,21 @@
 /* Copyright (C) 2021-2022 by Polycode / NostalgicPlayer team.                */
 /* All rights reserved.                                                       */
 /******************************************************************************/
-using System;
-
-namespace Polycode.NostalgicPlayer.Kit.Containers
+namespace Polycode.NostalgicPlayer.Kit.Containers.Types
 {
 	/// <summary>
-	/// Different flags indicating what the visual wants
+	/// The different kind of loops supported
 	/// </summary>
-	[Flags]
-	public enum DisplayFlag
+	public enum ChannelLoopType
 	{
 		/// <summary>
-		/// Nothing
+		/// Just a normal loop
 		/// </summary>
-		None = 0,
+		Normal,
 
 		/// <summary>
-		/// Indicate that the window has a static size
+		/// Ping-pong loop
 		/// </summary>
-		StaticWindow = 0x0001
+		PingPong
 	}
 }

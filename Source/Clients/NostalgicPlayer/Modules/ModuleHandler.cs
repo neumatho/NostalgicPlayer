@@ -12,6 +12,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;

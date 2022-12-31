@@ -7,7 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Types;
 
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {

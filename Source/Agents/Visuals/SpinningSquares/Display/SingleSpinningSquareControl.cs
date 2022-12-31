@@ -11,6 +11,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.GuiKit.Components;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 
 namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 {
@@ -151,7 +152,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 				double cachedSpeed = speed;
 
 				// Is the channel muted?
-				if ((channelChangedInfo.Flags & ChannelFlags.MuteIt) != 0)
+				if ((channelChangedInfo.Flags & ChannelFlag.MuteIt) != 0)
 				{
 					oldVolume = 0;
 					oldFrequency = 0;
@@ -168,7 +169,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 				else
 				{
 					// Has the volume changed?
-					if ((channelChangedInfo.Flags & ChannelFlags.Volume) != 0)
+					if ((channelChangedInfo.Flags & ChannelFlag.Volume) != 0)
 					{
 						ushort newVol = channelChangedInfo.Volume;
 						if (newVol != oldVolume)
@@ -184,7 +185,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 					}
 
 					// Has the frequency changed?
-					if (((channelChangedInfo.Flags & ChannelFlags.Frequency) != 0) && ((oldFrequency != 0) || ((channelChangedInfo.Flags & ChannelFlags.TrigIt) != 0)))
+					if (((channelChangedInfo.Flags & ChannelFlag.Frequency) != 0) && ((oldFrequency != 0) || ((channelChangedInfo.Flags & ChannelFlag.TrigIt) != 0)))
 					{
 						int newFreq = (int)channelChangedInfo.Frequency;
 						if (newFreq != oldFrequency)
@@ -228,7 +229,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 					}
 				}
 
-				if ((channelChangedInfo.Flags & ChannelFlags.TrigIt) != 0)
+				if ((channelChangedInfo.Flags & ChannelFlag.TrigIt) != 0)
 				{
 					if (cachedSpeed == speed)
 						speed = -speed;

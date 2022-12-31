@@ -7,7 +7,8 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
+using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Mixer;
 using Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers;
 
@@ -25,12 +26,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// given
 		/// </summary>
 		/********************************************************************/
-		public ChannelFlags ParseInfo(ref VoiceInfo voiceInfo, int clickBuffer, bool bufferMode)
+		public ChannelFlag ParseInfo(ref VoiceInfo voiceInfo, int clickBuffer, bool bufferMode)
 		{
 			SampleFlag infoFlags = voiceInfo.Flags;
 
 			// Change the volume?
-			if ((flags & ChannelFlags.Volume) != 0)
+			if ((flags & ChannelFlag.Volume) != 0)
 			{
 				// Protect against clicks if volume variation is too high
 				if (Math.Abs(voiceInfo.Volume - volume) > 32)
@@ -40,10 +41,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			}
 
 			// Change the panning?
-			if ((flags & ChannelFlags.Panning) != 0)
+			if ((flags & ChannelFlag.Panning) != 0)
 			{
-				if (panning == (int)ChannelPanning.Surround)
-					voiceInfo.Panning = (int)ChannelPanning.Surround;
+				if (panning == (int)ChannelPanningType.Surround)
+					voiceInfo.Panning = (int)ChannelPanningType.Surround;
 				else
 				{
 					// Protect against clicks if panning variation is too high
@@ -55,11 +56,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			}
 
 			// Change the frequency?
-			if ((flags & ChannelFlags.Frequency) != 0)
+			if ((flags & ChannelFlag.Frequency) != 0)
 				voiceInfo.Frequency = frequency;
 
 			// Mute the channel?
-			if ((flags & ChannelFlags.MuteIt) != 0)
+			if ((flags & ChannelFlag.MuteIt) != 0)
 			{
 				voiceInfo.Active = false;
 				voiceInfo.Kick = false;
@@ -70,12 +71,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				if (sampleAddresses[0] != null)
 				{
 					// Trigger the sample to play from the start?
-					if ((flags & ChannelFlags.TrigIt) != 0)
+					if ((flags & ChannelFlag.TrigIt) != 0)
 					{
 						infoFlags = SampleFlag.None;
 
 						bool backwards = false;
-						if ((flags & ChannelFlags.Backwards) != 0)
+						if ((flags & ChannelFlag.Backwards) != 0)
 						{
 							backwards = true;
 							infoFlags |= SampleFlag.Reverse;
@@ -93,10 +94,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						voiceInfo.Kick = true;
 					}
 
-					if ((flags & ChannelFlags.ChangePosition) != 0)
+					if ((flags & ChannelFlag.ChangePosition) != 0)
 					{
 						voiceInfo.NewPosition = samplePosition;
-						voiceInfo.RelativePosition = (flags & ChannelFlags.Relative) != 0;
+						voiceInfo.RelativePosition = (flags & ChannelFlag.Relative) != 0;
 
 						infoFlags |= SampleFlag.ChangePosition;
 					}
@@ -104,7 +105,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					if (!bufferMode)
 					{
 						// Does the sample loop?
-						if (((flags & ChannelFlags.Loop) != 0) && (loopLength > 2))
+						if (((flags & ChannelFlag.Loop) != 0) && (loopLength > 2))
 						{
 							voiceInfo.NewLoopAddresses[0] = loopAddresses[0];
 							voiceInfo.NewLoopAddresses[1] = loopAddresses[1];
@@ -119,12 +120,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 							infoFlags |= SampleFlag.Loop;
 
-							if ((flags & ChannelFlags.PingPong) != 0)
+							if ((flags & ChannelFlag.PingPong) != 0)
 								infoFlags |= SampleFlag.Bidi;
 						}
 
 						// Special release command. Used in Oktalyzer player
-						if ((flags & ChannelFlags.Release) != 0)
+						if ((flags & ChannelFlag.Release) != 0)
 						{
 							voiceInfo.NewLoopAddresses[0] = loopAddresses[0];
 							voiceInfo.NewLoopAddresses[1] = loopAddresses[1];
@@ -133,7 +134,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						}
 					}
 
-					if ((flags & ChannelFlags._16Bit) != 0)
+					if ((flags & ChannelFlag._16Bit) != 0)
 						infoFlags |= SampleFlag._16Bits;
 				}
 			}
@@ -141,10 +142,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			// Store the flags back
 			voiceInfo.Flags = infoFlags;
 
-			ChannelFlags retFlags = flags;
-			flags = ChannelFlags.None;
+			ChannelFlag retFlags = flags;
+			flags = ChannelFlag.None;
 
-			return retFlags & ~ChannelFlags.Active;
+			return retFlags & ~ChannelFlag.Active;
 		}
 
 
@@ -157,9 +158,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		public void Active(bool active)
 		{
 			if (active)
-				flags |= ChannelFlags.Active;
+				flags |= ChannelFlag.Active;
 			else
-				flags &= ~ChannelFlags.Active;
+				flags &= ~ChannelFlag.Active;
 		}
 	}
 }

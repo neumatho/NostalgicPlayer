@@ -8,6 +8,7 @@
 /******************************************************************************/
 using System.Drawing;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 {
