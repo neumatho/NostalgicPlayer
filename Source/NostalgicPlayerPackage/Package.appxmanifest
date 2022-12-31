@@ -960,6 +960,14 @@
             <uap:DisplayName>Delta Music 2.0</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="dbmfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-dbm">.dbm</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>DigiBooster Pro 2.x/3.x</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

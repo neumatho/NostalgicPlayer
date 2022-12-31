@@ -45,6 +45,8 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Delta Music 1.0 | .dm1 | | Delta Music 1.0 |
 | Delta Music 2.0 | .dm2 | | Delta Music 2.0 |
 | Devils Replay | .dev | ProWizard | ModTracker |
+| DigiBooster 3.x | .dbm | | DigiBooster Pro |
+| DigiBooster Pro 2.x | .dbm | | DigiBooster Pro |
 | Digital Illusions | .di | ProWizard | ModTracker |
 | Digital Sound and Music Interface | .amf | MikMod Converter | MikMod |
 | Digital Sound Interface Kit | .dsm | MikMod Converter | MikMod |
