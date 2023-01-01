@@ -781,20 +781,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 		/// is returned
 		/// </summary>
 		/********************************************************************/
-		public override SampleInfo[] Samples
+		public override IEnumerable<SampleInfo> Samples
 		{
 			get
 			{
-				List<SampleInfo> result = new List<SampleInfo>();
-
 				foreach (Ins inst in ins)
 				{
-					SampleInfo sampleInfo = new SampleInfo
+					yield return new SampleInfo
 					{
 						Name = inst.Name,
-						Flags = SampleInfo.SampleFlags.None,
-						Type = SampleInfo.SampleType.Synth,
-						BitSize = 16,
+						Flags = SampleInfo.SampleFlag.None,
+						Type = SampleInfo.SampleType.Synthesis,
+						BitSize = SampleInfo.SampleSize._16Bit,
 						MiddleC = 0,
 						Volume = 256,
 						Panning = -1,
@@ -803,11 +801,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 						LoopStart = 0,
 						LoopLength = 0
 					};
-
-					result.Add(sampleInfo);
 				}
-
-				return result.ToArray();
 			}
 		}
 		#endregion

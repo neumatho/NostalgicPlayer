@@ -569,12 +569,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 		/// is returned
 		/// </summary>
 		/********************************************************************/
-		public override SampleInfo[] Samples
+		public override IEnumerable<SampleInfo> Samples
 		{
 			get
 			{
-				List<SampleInfo> result = new List<SampleInfo>();
-
 				foreach (Instrument inst in instruments)
 				{
 					// Build frequency table
@@ -586,7 +584,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						Name = inst.Name,
-						BitSize = 8,
+						BitSize = SampleInfo.SampleSize._8Bit,
 						MiddleC = frequencies[12 + 3 * 12],
 						Volume = inst.EnvVol,
 						Panning = -1,
@@ -595,8 +593,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 
 					if (inst.InstType != InstrumentType.Sample)
 					{
-						sampleInfo.Type = SampleInfo.SampleType.Synth;
-						sampleInfo.Flags = SampleInfo.SampleFlags.None;
+						sampleInfo.Type = SampleInfo.SampleType.Synthesis;
+						sampleInfo.Flags = SampleInfo.SampleFlag.None;
 						sampleInfo.Sample = null;
 						sampleInfo.Length = 0;
 						sampleInfo.LoopStart = 0;
@@ -611,23 +609,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 						if ((inst.RepeatLen == 0) || (inst.RepeatLen == 0xffff))
 						{
 							// No loop
-							sampleInfo.Flags = SampleInfo.SampleFlags.None;
+							sampleInfo.Flags = SampleInfo.SampleFlag.None;
 							sampleInfo.LoopStart = 0;
 							sampleInfo.LoopLength = 0;
 						}
 						else
 						{
 							// Sample loops
-							sampleInfo.Flags = SampleInfo.SampleFlags.Loop;
+							sampleInfo.Flags = SampleInfo.SampleFlag.Loop;
 							sampleInfo.LoopStart = 0;
 							sampleInfo.LoopLength = inst.RepeatLen;
 						}
 					}
 
-					result.Add(sampleInfo);
+					yield return sampleInfo;
 				}
-
-				return result.ToArray();
 			}
 		}
 		#endregion

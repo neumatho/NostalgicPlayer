@@ -329,7 +329,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 							{
 								formatInfo.LoopStart = oneShotLength;
 								formatInfo.LoopLength = repeatLength;
-								formatInfo.Flags |= LoadSampleFormatInfo.SampleFlags.Loop;
+								formatInfo.Flags |= LoadSampleFormatInfo.SampleFlag.Loop;
 							}
 
 							totalLength = oneShotLength + repeatLength;

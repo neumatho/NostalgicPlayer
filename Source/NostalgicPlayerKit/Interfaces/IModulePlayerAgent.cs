@@ -7,6 +7,7 @@
 /* All rights reserved.                                                       */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
@@ -101,13 +102,13 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Returns all the instruments available in the module. If none,
 		/// null is returned
 		/// </summary>
-		InstrumentInfo[] Instruments { get; }
+		IEnumerable<InstrumentInfo> Instruments { get; }
 
 		/// <summary>
 		/// Returns all the samples available in the module. If none, null
 		/// is returned
 		/// </summary>
-		SampleInfo[] Samples { get; }
+		IEnumerable<SampleInfo> Samples { get; }
 
 		/// <summary>
 		/// Holds all the virtual channel instances used to play the samples

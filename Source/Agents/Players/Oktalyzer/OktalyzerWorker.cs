@@ -64,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 
 		private bool[] channelFlags;
 		private byte[] patternTable;
-		private Sample[] sampleInfo;
+		private Sample[] samples;
 		private Pattern[] patterns;
 
 		private PatternLine[] currLine;
@@ -279,7 +279,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 						// Sample data (SBOD)
 						case 0x53424f44:
 						{
-							if ((readSamp < sampNum) && (sampleInfo != null))
+							if ((readSamp < sampNum) && (samples != null))
 							{
 								ParseSbod(moduleStream, chunkSize, out errorMessage);
 								readSamp++;
@@ -471,13 +471,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		/// is returned
 		/// </summary>
 		/********************************************************************/
-		public override SampleInfo[] Samples
+		public override IEnumerable<SampleInfo> Samples
 		{
 			get
 			{
-				List<SampleInfo> result = new List<SampleInfo>();
-
-				foreach (Sample sample in sampleInfo)
+				foreach (Sample sample in samples)
 				{
 					// Build frequency table
 					uint[] frequencies = new uint[10 * 12];
@@ -489,7 +487,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 					{
 						Name = sample.Name,
 						Type = SampleInfo.SampleType.Sample,
-						BitSize = 8,
+						BitSize = SampleInfo.SampleSize._8Bit,
 						MiddleC = frequencies[3 * 12 + 12],
 						Volume = (ushort)(sample.Volume * 4),
 						Panning = -1,
@@ -501,22 +499,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 					if (sample.RepeatLength == 0)
 					{
 						// No loop
-						sampleInfo.Flags = SampleInfo.SampleFlags.None;
+						sampleInfo.Flags = SampleInfo.SampleFlag.None;
 						sampleInfo.LoopStart = 0;
 						sampleInfo.LoopLength = 0;
 					}
 					else
 					{
 						// Sample loops
-						sampleInfo.Flags = SampleInfo.SampleFlags.Loop;
+						sampleInfo.Flags = SampleInfo.SampleFlag.Loop;
 						sampleInfo.LoopStart = sample.RepeatStart;
 						sampleInfo.LoopLength = sample.RepeatLength;
 					}
 
-					result.Add(sampleInfo);
+					yield return sampleInfo;
 				}
-
-				return result.ToArray();
 			}
 		}
 		#endregion
@@ -595,7 +591,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		private void Cleanup()
 		{
 			patterns = null;
-			sampleInfo = null;
+			samples = null;
 			channelFlags = null;
 		}
 
@@ -649,7 +645,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 			sampNum = chunkSize / 32;
 
 			// Allocate memory to hold the sample information
-			sampleInfo = new Sample[sampNum];
+			samples = new Sample[sampNum];
 
 			// Read the sample information
 			buffer[20] = 0x00;
@@ -686,7 +682,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				if (sample.Length != 0)
 					realUsedSampNum++;
 
-				sampleInfo[i] = sample;
+				samples[i] = sample;
 			}
 
 			errorMessage = string.Empty;
@@ -841,7 +837,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 			errorMessage = string.Empty;
 
 			// Find the next sample slot
-			while (sampleInfo[readSamp].Length == 0)
+			while (samples[readSamp].Length == 0)
 			{
 				readSamp++;
 				if (readSamp >= sampNum)
@@ -849,10 +845,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 			}
 
 			// Allocate memory to hold the sample data
-			uint allocLen = Math.Max(chunkSize, sampleInfo[readSamp].Length);
-			sampleInfo[readSamp].SampleData = new sbyte[allocLen];
+			uint allocLen = Math.Max(chunkSize, samples[readSamp].Length);
+			samples[readSamp].SampleData = new sbyte[allocLen];
 
-			int readBytes = moduleStream.ReadSampleData((int)readSamp, sampleInfo[readSamp].SampleData, (int)chunkSize);
+			int readBytes = moduleStream.ReadSampleData((int)readSamp, samples[readSamp].SampleData, (int)chunkSize);
 
 			if (moduleStream.EndOfStream)
 			{
@@ -954,7 +950,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 			byte note = (byte)(pattData.Note - 1);
 
 			// Does the instrument have a sample attached?
-			Sample samp = sampleInfo[pattData.SampleNum];
+			Sample samp = samples[pattData.SampleNum];
 			if ((samp.SampleData == null) || (samp.Length == 0))
 				return;
 

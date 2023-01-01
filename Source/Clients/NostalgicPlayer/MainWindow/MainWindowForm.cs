@@ -764,7 +764,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							// Find the frequency to play with
 							int note = playInfo.Note;
 
-							if ((sampleInfo.Flags & SampleInfo.SampleFlags.MultiOctave) != 0)
+							if ((sampleInfo.Flags & SampleInfo.SampleFlag.MultiOctave) != 0)
 							{
 								int octave = note / 12;
 								if (octave > 7)
@@ -796,7 +796,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							}
 
 							// Play it
-							if ((sampleInfo.Flags & SampleInfo.SampleFlags.Stereo) != 0)
+							if ((sampleInfo.Flags & SampleInfo.SampleFlag.Stereo) != 0)
 								channel.PlayStereoSample(-1, sample, secondSample, 0, length, (byte)sampleInfo.BitSize);
 							else
 								channel.PlaySample(-1, sample, 0, length, (byte)sampleInfo.BitSize);
@@ -809,8 +809,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							int pan = sampleInfo.Panning;
 							channel.SetPanning(pan == -1 ? (ushort)ChannelPanningType.Center : (ushort)pan);
 
-							if ((sampleInfo.Flags & SampleInfo.SampleFlags.Loop) != 0)
-								channel.SetLoop(loopStart, loopLength, (sampleInfo.Flags & SampleInfo.SampleFlags.PingPong) != 0 ? ChannelLoopType.PingPong : ChannelLoopType.Normal);
+							if ((sampleInfo.Flags & SampleInfo.SampleFlag.Loop) != 0)
+								channel.SetLoop(loopStart, loopLength, (sampleInfo.Flags & SampleInfo.SampleFlag.PingPong) != 0 ? ChannelLoopType.PingPong : ChannelLoopType.Normal);
 						}
 						else
 						{

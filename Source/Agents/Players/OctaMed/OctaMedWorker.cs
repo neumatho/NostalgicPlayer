@@ -1436,12 +1436,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		/// is returned
 		/// </summary>
 		/********************************************************************/
-		public override SampleInfo[] Samples
+		public override IEnumerable<SampleInfo> Samples
 		{
 			get
 			{
-				List<SampleInfo> result = new List<SampleInfo>();
-
 				for (uint i = 0; i < numSamples; i++)
 				{
 					Instr inst = sg.GetInstr(i);
@@ -1462,9 +1460,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 						// Well, fill out an empty sample
 						sampleInfo = new SampleInfo
 						{
-							Flags = SampleInfo.SampleFlags.None,
+							Flags = SampleInfo.SampleFlag.None,
 							Type = SampleInfo.SampleType.Sample,
-							BitSize = 8,
+							BitSize = SampleInfo.SampleSize._8Bit,
 							MiddleC = frequencies[12 + 3 * 12],
 							Volume = (ushort)(inst.GetInitVol() * 2),
 							Panning = -1,
@@ -1479,7 +1477,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 					{
 						sampleInfo = new SampleInfo
 						{
-							BitSize = (byte)(sample.Is16Bit() ? 16 : 8),
+							BitSize = sample.Is16Bit() ? SampleInfo.SampleSize._16Bit : SampleInfo.SampleSize._8Bit,
 							MiddleC = frequencies[12 + 3 * 12],
 							Volume = (ushort)(inst.GetInitVol() * 2),
 							Panning = -1,
@@ -1535,20 +1533,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 							if (sample.IsStereo())
 								sampleInfo.MultiOctaveAllSamples[1] = samples.Select(s => s.right).ToArray();
 
-							sampleInfo.Flags = SampleInfo.SampleFlags.MultiOctave;
+							sampleInfo.Flags = SampleInfo.SampleFlag.MultiOctave;
 						}
 						else
 						{
 							sampleInfo.Sample = sample.GetSampleBuffer(0, 0);
 							sampleInfo.SecondSample = sample.GetSampleBuffer(1, 0);
-							sampleInfo.Flags = SampleInfo.SampleFlags.None;
+							sampleInfo.Flags = SampleInfo.SampleFlag.None;
 						}
 
 						// Find out the type of the sample
 						if (sample.IsSynthSound())
 						{
 							if (sample.GetLength() == 0)
-								sampleInfo.Type = SampleInfo.SampleType.Synth;
+								sampleInfo.Type = SampleInfo.SampleType.Synthesis;
 							else
 								sampleInfo.Type = SampleInfo.SampleType.Hybrid;
 						}
@@ -1556,20 +1554,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 							sampleInfo.Type = SampleInfo.SampleType.Sample;
 
 						// Find out the loop information
-						sampleInfo.Flags |= (inst.flags & Instr.Flag.Loop) != 0 ? SampleInfo.SampleFlags.Loop : SampleInfo.SampleFlags.None;
+						sampleInfo.Flags |= (inst.flags & Instr.Flag.Loop) != 0 ? SampleInfo.SampleFlag.Loop : SampleInfo.SampleFlag.None;
 						if ((inst.flags & Instr.Flag.PingPong) != 0)
-							sampleInfo.Flags |= SampleInfo.SampleFlags.PingPong;
+							sampleInfo.Flags |= SampleInfo.SampleFlag.PingPong;
 
 						if (sample.IsStereo())
-							sampleInfo.Flags |= SampleInfo.SampleFlags.Stereo;
+							sampleInfo.Flags |= SampleInfo.SampleFlag.Stereo;
 					}
 
 					sampleInfo.Name = inst.GetName();
 
-					result.Add(sampleInfo);
+					yield return sampleInfo;
 				}
-
-				return result.ToArray();
 			}
 		}
 

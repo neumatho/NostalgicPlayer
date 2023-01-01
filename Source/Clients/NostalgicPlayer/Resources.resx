@@ -647,7 +647,7 @@ what has changed since your previous version.</value>
   <data name="IDS_SAMPLE_INFO_SAMP_TYPE_SAMPLE" xml:space="preserve">
     <value>Sample</value>
   </data>
-  <data name="IDS_SAMPLE_INFO_SAMP_TYPE_SYNTH" xml:space="preserve">
+  <data name="IDS_SAMPLE_INFO_SAMP_TYPE_SYNTHESIS" xml:space="preserve">
     <value>Synth</value>
   </data>
   <data name="IDS_SAMPLE_INFO_TAB_INSTRUMENT" xml:space="preserve">

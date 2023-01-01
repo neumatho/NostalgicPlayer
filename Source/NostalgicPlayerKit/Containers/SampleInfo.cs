@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// The different flags that can be set for the sample
 		/// </summary>
 		[Flags]
-		public enum SampleFlags
+		public enum SampleFlag
 		{
 			/// <summary>
 			/// Nothing
@@ -60,12 +60,24 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 			/// <summary>
 			/// Synthesis generated sample
 			/// </summary>
-			Synth,
+			Synthesis,
 
 			/// <summary>
 			/// Normal sample used as waveform when generating synthesis sound
 			/// </summary>
 			Hybrid
+		}
+
+		/// <summary>
+		/// The supported sample sizes
+		/// </summary>
+		public enum SampleSize : byte
+		{
+			/// <summary></summary>
+			_8Bit = 8,
+
+			/// <summary></summary>
+			_16Bit = 16
 		}
 
 		/// <summary>
@@ -118,7 +130,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Holds the different flags
 		/// </summary>
 		/********************************************************************/
-		public SampleFlags Flags
+		public SampleFlag Flags
 		{
 			get; set;
 		}
@@ -139,10 +151,10 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the number of bits per sample used (only 8 and 16 supported)
+		/// Holds the number of bits per sample used
 		/// </summary>
 		/********************************************************************/
-		public byte BitSize
+		public SampleSize BitSize
 		{
 			get; set;
 		}

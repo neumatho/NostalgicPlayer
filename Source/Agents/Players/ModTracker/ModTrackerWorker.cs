@@ -494,12 +494,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// is returned
 		/// </summary>
 		/********************************************************************/
-		public override SampleInfo[] Samples
+		public override IEnumerable<SampleInfo> Samples
 		{
 			get
 			{
-				List<SampleInfo> result = new List<SampleInfo>();
-
 				for (int i = 0, cnt = samples.Length; i < cnt; i++)
 				{
 					Sample sample = samples[i];
@@ -518,12 +516,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 							frequencies[12 + j] = 3546895U / Tables.Periods[sample.FineTune, j];
 					}
 
-					SampleInfo sampleInfo = new SampleInfo
+					yield return new SampleInfo
 					{
 						Name = sample.SampleName,
-						Flags = sample.LoopLength <= 1 ? SampleInfo.SampleFlags.None : SampleInfo.SampleFlags.Loop,
-						Type = ((amData?[i] != null) && (amData[i].Mark == 0x414d)) || ((hmnSynthData != null) && (hmnSynthData[i] != null)) ? SampleInfo.SampleType.Synth : SampleInfo.SampleType.Sample,
-						BitSize = 8,
+						Flags = sample.LoopLength <= 1 ? SampleInfo.SampleFlag.None : SampleInfo.SampleFlag.Loop,
+						Type = ((amData?[i] != null) && (amData[i].Mark == 0x414d)) || ((hmnSynthData != null) && (hmnSynthData[i] != null)) ? SampleInfo.SampleType.Synthesis : SampleInfo.SampleType.Sample,
+						BitSize = SampleInfo.SampleSize._8Bit,
 						MiddleC = frequencies[12 + 3 * 12],
 						Volume = (ushort)(sample.Volume * 4),
 						Panning = -1,
@@ -533,11 +531,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 						LoopLength = (uint)sample.LoopLength * 2,
 						NoteFrequencies = frequencies
 					};
-
-					result.Add(sampleInfo);
 				}
-
-				return result.ToArray();
 			}
 		}
 		#endregion

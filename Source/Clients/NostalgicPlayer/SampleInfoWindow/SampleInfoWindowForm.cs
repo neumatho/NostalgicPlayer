@@ -766,25 +766,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 					Bitmap bitmap = null;
 					string tooltip = string.Empty;
 
-					if ((sample.Flags & SampleInfo.SampleFlags.MultiOctave) != 0)
+					if ((sample.Flags & SampleInfo.SampleFlag.MultiOctave) != 0)
 					{
 						bitmap = AppendBitmap(i, bitmap, Resources.IDB_SAMPLE_OCTAVES);
 						tooltip += $"+{Resources.IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_MULTIOCTAVE}";
 					}
 
-					if ((sample.Flags & SampleInfo.SampleFlags.Stereo) != 0)
+					if ((sample.Flags & SampleInfo.SampleFlag.Stereo) != 0)
 					{
 						bitmap = AppendBitmap(i, bitmap, Resources.IDB_SAMPLE_STEREO);
 						tooltip += $"+{Resources.IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_STEREO}";
 					}
 
-					if ((sample.Flags & SampleInfo.SampleFlags.Loop) != 0)
+					if ((sample.Flags & SampleInfo.SampleFlag.Loop) != 0)
 					{
 						bitmap = AppendBitmap(i, bitmap, Resources.IDB_SAMPLE_LOOP);
 						tooltip += $"+{Resources.IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_LOOP}";
 					}
 
-					if ((sample.Flags & SampleInfo.SampleFlags.PingPong) != 0)
+					if ((sample.Flags & SampleInfo.SampleFlag.PingPong) != 0)
 					{
 						bitmap = AppendBitmap(i, bitmap, Resources.IDB_SAMPLE_PINGPONG);
 						tooltip += $"+{Resources.IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_PINGPONG}";
@@ -798,7 +798,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						new KryptonDataGridViewTextBoxCell { Value = sample.Length },
 						new KryptonDataGridViewTextBoxCell { Value = sample.LoopStart },
 						new KryptonDataGridViewTextBoxCell { Value = sample.LoopLength },
-						new KryptonDataGridViewTextBoxCell { Value = sample.BitSize },
+						new KryptonDataGridViewTextBoxCell { Value = (byte)sample.BitSize },
 						new KryptonDataGridViewTextBoxCell { Value = sample.Volume },
 						new KryptonDataGridViewTextBoxCell { Value = sample.Panning == -1 ? "-" : sample.Panning },
 						new KryptonDataGridViewTextBoxCell { Value = sample.MiddleC },
@@ -850,8 +850,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 				case SampleInfo.SampleType.Sample:
 					return Resources.IDS_SAMPLE_INFO_SAMP_TYPE_SAMPLE;
 
-				case SampleInfo.SampleType.Synth:
-					return Resources.IDS_SAMPLE_INFO_SAMP_TYPE_SYNTH;
+				case SampleInfo.SampleType.Synthesis:
+					return Resources.IDS_SAMPLE_INFO_SAMP_TYPE_SYNTHESIS;
 
 				case SampleInfo.SampleType.Hybrid:
 					return Resources.IDS_SAMPLE_INFO_SAMP_TYPE_HYBRID;
@@ -928,7 +928,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 					}
 
 					// Set the loop flag
-					samplePlayLoops = (sampleInfo.Flags & SampleInfo.SampleFlags.Loop) != 0;
+					samplePlayLoops = (sampleInfo.Flags & SampleInfo.SampleFlag.Loop) != 0;
 
 					// Count down number of simulated keys
 					samplePlayKeyCount--;
@@ -1037,13 +1037,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 				fileName = Path.ChangeExtension(fileName, converterAgent.FileExtension);
 
 				// Initialize the converter
-				bool stereo = (sampleInfo.Flags & SampleInfo.SampleFlags.Stereo) != 0;
+				bool stereo = (sampleInfo.Flags & SampleInfo.SampleFlag.Stereo) != 0;
 				int channels = stereo ? 2 : 1;
 
 				// Build list of buffers to be saved
 				Array[] leftSamples, rightSamples = null;
 
-				if ((sampleInfo.Flags & SampleInfo.SampleFlags.MultiOctave) != 0)
+				if ((sampleInfo.Flags & SampleInfo.SampleFlag.MultiOctave) != 0)
 				{
 					leftSamples = sampleInfo.MultiOctaveAllSamples[0].OrderBy(s => s.Length).ToArray();
 
@@ -1058,7 +1058,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						rightSamples = new[] { sampleInfo.SecondSample };
 				}
 
-				SaveSampleFormatInfo formatInfo = new SaveSampleFormatInfo(sampleInfo.BitSize, channels, sampleInfo.MiddleC, sampleInfo.LoopStart, sampleInfo.LoopLength, sampleInfo.Name, string.Empty);
+				SaveSampleFormatInfo formatInfo = new SaveSampleFormatInfo((byte)sampleInfo.BitSize, channels, sampleInfo.MiddleC, sampleInfo.LoopStart, sampleInfo.LoopLength, sampleInfo.Name, string.Empty);
 				if (!converterAgent.InitSaver(formatInfo, out string errorMessage))
 				{
 					ShowSimpleErrorMessage(errorMessage);
@@ -1080,7 +1080,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						{
 							if (stereo)
 							{
-								if (sampleInfo.BitSize == 8)
+								if (sampleInfo.BitSize == SampleInfo.SampleSize._8Bit)
 								{
 									sbyte[] left = (sbyte[])leftSamples[b];
 									sbyte[] right = (sbyte[])rightSamples[b];
@@ -1107,7 +1107,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 							}
 							else
 							{
-								if (sampleInfo.BitSize == 8)
+								if (sampleInfo.BitSize == SampleInfo.SampleSize._8Bit)
 								{
 									sbyte[] left = (sbyte[])leftSamples[b];
 

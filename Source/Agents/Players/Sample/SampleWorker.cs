@@ -113,7 +113,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 				case 2:
 				{
 					description = Resources.IDS_SAMPLE_INFODESCLINE2;
-					value = (formatInfo.Flags & LoadSampleFormatInfo.SampleFlags.Loop) != 0 ? Resources.IDS_SAMPLE_YES : Resources.IDS_SAMPLE_NO;
+					value = (formatInfo.Flags & LoadSampleFormatInfo.SampleFlag.Loop) != 0 ? Resources.IDS_SAMPLE_YES : Resources.IDS_SAMPLE_NO;
 					break;
 				}
 
@@ -247,7 +247,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 				OnEndReached();
 
 				// Loop the sample
-				if ((formatInfo.Flags & LoadSampleFormatInfo.SampleFlags.Loop) != 0)
+				if ((formatInfo.Flags & LoadSampleFormatInfo.SampleFlag.Loop) != 0)
 				{
 					loaderAgent.SetSamplePosition(modStream, formatInfo.LoopStart, formatInfo);
 					samplesRead = formatInfo.LoopStart;

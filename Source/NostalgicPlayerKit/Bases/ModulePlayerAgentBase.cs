@@ -272,7 +272,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// null is returned
 		/// </summary>
 		/********************************************************************/
-		public virtual InstrumentInfo[] Instruments => null;
+		public virtual IEnumerable<InstrumentInfo> Instruments => null;
 
 
 
@@ -282,7 +282,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// is returned
 		/// </summary>
 		/********************************************************************/
-		public virtual SampleInfo[] Samples => null;
+		public virtual IEnumerable<SampleInfo> Samples => null;
 
 
 

@@ -322,12 +322,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 		/// is returned
 		/// </summary>
 		/********************************************************************/
-		public override SampleInfo[] Samples
+		public override IEnumerable<SampleInfo> Samples
 		{
 			get
 			{
-				List<SampleInfo> result = new List<SampleInfo>();
-
 				for (int i = 0; i < module.NumberOfInstruments; i++)
 				{
 					DB3ModuleSampleInstrument inst = (DB3ModuleSampleInstrument)module.Instruments[i];
@@ -372,7 +370,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 					{
 						Name = inst.Name,
 						Type = SampleInfo.SampleType.Sample,
-						BitSize = (byte)(sample.Data16 != null ? 16 : 8),
+						BitSize = sample.Data16 != null ? SampleInfo.SampleSize._16Bit : SampleInfo.SampleSize._8Bit,
 						MiddleC = frequencies[12 + 3 * 12],
 						Volume = (ushort)(inst.Volume * 4),
 						Panning = (short)(inst.Panning + 128),
@@ -385,18 +383,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 
 					if ((inst.Flags & InstrumentFlag.Loop_Mask) != 0)
 					{
-						sampleInfo.Flags = SampleInfo.SampleFlags.Loop;
+						sampleInfo.Flags = SampleInfo.SampleFlag.Loop;
 
 						if ((inst.Flags & InstrumentFlag.PingPong_Loop) != 0)
-							sampleInfo.Flags |= SampleInfo.SampleFlags.PingPong;
+							sampleInfo.Flags |= SampleInfo.SampleFlag.PingPong;
 					}
 					else
-						sampleInfo.Flags = SampleInfo.SampleFlags.None;
+						sampleInfo.Flags = SampleInfo.SampleFlag.None;
 
-					result.Add(sampleInfo);
+					yield return sampleInfo;
 				}
-
-				return result.ToArray();
 			}
 		}
 

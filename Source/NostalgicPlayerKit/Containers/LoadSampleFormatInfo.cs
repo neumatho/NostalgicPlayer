@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// The different flags that can be set for the sample
 		/// </summary>
 		[Flags]
-		public enum SampleFlags
+		public enum SampleFlag
 		{
 			/// <summary>
 			/// Nothing
@@ -61,10 +61,10 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Holds some flags about this sample
 		/// </summary>
 		/********************************************************************/
-		public SampleFlags Flags
+		public SampleFlag Flags
 		{
 			get; set;
-		} = SampleFlags.None;
+		} = SampleFlag.None;
 
 
 

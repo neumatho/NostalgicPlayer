@@ -439,12 +439,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10
 		/// is returned
 		/// </summary>
 		/********************************************************************/
-		public override SampleInfo[] Samples
+		public override IEnumerable<SampleInfo> Samples
 		{
 			get
 			{
-				List<SampleInfo> result = new List<SampleInfo>();
-
 				foreach (Instrument inst in backupInstruments)
 				{
 					SampleInfo sampleInfo;
@@ -460,7 +458,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10
 						sampleInfo = new SampleInfo
 						{
 							Name = string.Empty,
-							BitSize = 8,
+							BitSize = SampleInfo.SampleSize._8Bit,
 							MiddleC = frequencies[3 * 12],
 							Volume = (ushort)(inst.Volume * 3),
 							Panning = -1,
@@ -476,22 +474,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10
 							if (inst.RepeatLength > 1)
 							{
 								// Sample loops
-								sampleInfo.Flags = SampleInfo.SampleFlags.Loop;
+								sampleInfo.Flags = SampleInfo.SampleFlag.Loop;
 								sampleInfo.LoopStart = inst.RepeatStart;
 								sampleInfo.LoopLength = inst.RepeatLength;
 							}
 							else
 							{
 								// No loop
-								sampleInfo.Flags = SampleInfo.SampleFlags.None;
+								sampleInfo.Flags = SampleInfo.SampleFlag.None;
 								sampleInfo.LoopStart = 0;
 								sampleInfo.LoopLength = 0;
 							}
 						}
 						else
 						{
-							sampleInfo.Type = SampleInfo.SampleType.Synth;
-							sampleInfo.Flags = SampleInfo.SampleFlags.None;
+							sampleInfo.Type = SampleInfo.SampleType.Synthesis;
+							sampleInfo.Flags = SampleInfo.SampleFlag.None;
 							sampleInfo.LoopStart = 0;
 							sampleInfo.LoopLength = 0;
 						}
@@ -501,9 +499,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10
 						sampleInfo = new SampleInfo
 						{
 							Name = string.Empty,
-							Flags = SampleInfo.SampleFlags.None,
+							Flags = SampleInfo.SampleFlag.None,
 							Type = SampleInfo.SampleType.Sample,
-							BitSize = 8,
+							BitSize = SampleInfo.SampleSize._8Bit,
 							MiddleC = 8287,
 							Volume = 256,
 							Panning = -1,
@@ -515,10 +513,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10
 						};
 					}
 
-					result.Add(sampleInfo);
+					yield return sampleInfo;
 				}
-
-				return result.ToArray();
 			}
 		}
 		#endregion

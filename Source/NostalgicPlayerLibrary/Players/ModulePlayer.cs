@@ -88,7 +88,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 							currentPlayer.SubSongChanged += Player_SubSongChanged;
 
 							// Initialize module information
-							StaticModuleInformation = new ModuleInfoStatic(loader.PlayerAgentInfo, loader.ConverterAgentInfo, currentPlayer.ModuleName.Trim(), FindAuthor(), currentPlayer.Comment, currentPlayer.CommentFont, currentPlayer.Lyrics, currentPlayer.LyricsFont, loader.ModuleFormat, loader.PlayerName, currentPlayer.ModuleChannelCount, currentPlayer.VirtualChannelCount, loader.CrunchedSize, loader.ModuleSize, currentPlayer.SupportFlags, currentPlayer.SubSongs.Number, currentPlayer.Instruments, currentPlayer.Samples);
+							StaticModuleInformation = new ModuleInfoStatic(loader.PlayerAgentInfo, loader.ConverterAgentInfo, currentPlayer.ModuleName.Trim(), FindAuthor(), currentPlayer.Comment, currentPlayer.CommentFont, currentPlayer.Lyrics, currentPlayer.LyricsFont, loader.ModuleFormat, loader.PlayerName, currentPlayer.ModuleChannelCount, currentPlayer.VirtualChannelCount, loader.CrunchedSize, loader.ModuleSize, currentPlayer.SupportFlags, currentPlayer.SubSongs.Number, currentPlayer.Instruments?.ToArray(), currentPlayer.Samples?.ToArray());
 
 							// Initialize the mixer
 							soundStream = new MixerStream();
@@ -556,16 +556,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			{
 				// We didn't get any author, now scan the instruments/samples
 				// after an author
-				var nameList = currentPlayer.Instruments?.Select(instInfo => instInfo.Name);
-				if (nameList != null)
-					name = FindAuthorInList(nameList.ToList());
+				List<string> nameList = currentPlayer.Instruments?.Select(instInfo => instInfo.Name).ToList();
+				if ((nameList != null) && (nameList.Count > 0))
+					name = FindAuthorInList(nameList);
 
 				if (string.IsNullOrEmpty(name))
 				{
 					// No author found in the instrument names, now try the samples
-					nameList = currentPlayer.Samples?.Select(sampInfo => sampInfo.Name);
-					if (nameList != null)
-						name = FindAuthorInList(nameList.ToList());
+					nameList = currentPlayer.Samples?.Select(sampInfo => sampInfo.Name).ToList();
+					if ((nameList != null) && (nameList.Count > 0))
+						name = FindAuthorInList(nameList);
 				}
 			}
 

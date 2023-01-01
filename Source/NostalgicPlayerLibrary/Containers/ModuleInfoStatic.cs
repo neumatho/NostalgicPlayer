@@ -77,8 +77,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 
 			ConverterAgentInfo = converterAgentInfo;
 
-			Instruments = instruments;
-			Samples = samples;
+			Instruments = instruments?.Length == 0 ? null : instruments;
+			Samples = samples?.Length == 0 ? null : samples;
 		}
 
 

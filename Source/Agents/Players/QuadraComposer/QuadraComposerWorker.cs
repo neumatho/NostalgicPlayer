@@ -413,12 +413,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 		/// is returned
 		/// </summary>
 		/********************************************************************/
-		public override SampleInfo[] Samples
+		public override IEnumerable<SampleInfo> Samples
 		{
 			get
 			{
-				List<SampleInfo> result = new List<SampleInfo>();
-
 				foreach (Sample sample in samples)
 				{
 					if (sample != null)
@@ -433,7 +431,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 						{
 							Name = sample.Name,
 							Type = SampleInfo.SampleType.Sample,
-							BitSize = 8,
+							BitSize = SampleInfo.SampleSize._8Bit,
 							MiddleC = frequencies[3 * 12 + 12],
 							Volume = (ushort)(sample.Volume * 4),
 							Panning = -1,
@@ -445,23 +443,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 						if ((sample.ControlByte & SampleControlFlag.Loop) != 0)
 						{
 							// Sample loops
-							sampleInfo.Flags = SampleInfo.SampleFlags.Loop;
+							sampleInfo.Flags = SampleInfo.SampleFlag.Loop;
 							sampleInfo.LoopStart = sample.LoopStart;
 							sampleInfo.LoopLength = sample.LoopLength;
 						}
 						else
 						{
 							// No loop
-							sampleInfo.Flags = SampleInfo.SampleFlags.None;
+							sampleInfo.Flags = SampleInfo.SampleFlag.None;
 							sampleInfo.LoopStart = 0;
 							sampleInfo.LoopLength = 0;
 						}
 
-						result.Add(sampleInfo);
+						yield return sampleInfo;
 					}
 				}
-
-				return result.ToArray();
 			}
 		}
 		#endregion

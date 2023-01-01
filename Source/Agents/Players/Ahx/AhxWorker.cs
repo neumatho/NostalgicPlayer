@@ -621,22 +621,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 		/// is returned
 		/// </summary>
 		/********************************************************************/
-		public override SampleInfo[] Samples
+		public override IEnumerable<SampleInfo> Samples
 		{
 			get
 			{
-				List<SampleInfo> result = new List<SampleInfo>();
-
 				for (int i = 1; i <= song.InstrumentNr; i++)
 				{
 					AhxInstrument inst = song.Instruments[i];
 
-					SampleInfo sampleInfo = new SampleInfo
+					yield return new SampleInfo
 					{
 						Name = inst.Name,
-						Flags = SampleInfo.SampleFlags.None,
-						Type = SampleInfo.SampleType.Synth,
-						BitSize = 8,
+						Flags = SampleInfo.SampleFlag.None,
+						Type = SampleInfo.SampleType.Synthesis,
+						BitSize = SampleInfo.SampleSize._8Bit,
 						MiddleC = 4144,
 						Volume = (ushort)(inst.Volume * 4),
 						Panning = -1,
@@ -645,11 +643,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 						LoopStart = 0,
 						LoopLength = 0
 					};
-
-					result.Add(sampleInfo);
 				}
-
-				return result.ToArray();
 			}
 		}
 		#endregion

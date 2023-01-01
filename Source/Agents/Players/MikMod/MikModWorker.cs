@@ -401,15 +401,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		/// null is returned
 		/// </summary>
 		/********************************************************************/
-		public override InstrumentInfo[] Instruments
+		public override IEnumerable<InstrumentInfo> Instruments
 		{
 			get
 			{
 				// Check to see if there is instruments at all in the module
 				if ((of.Flags & ModuleFlag.Inst) == 0)
-					return null;
-
-				List<InstrumentInfo> result = new List<InstrumentInfo>();
+					yield break;
 
 				for (int i = 0, cnt = of.NumIns; i < cnt; i++)
 				{
@@ -428,10 +426,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 							instInfo.Notes[j, k] = (short)inst.SampleNumber[s++];
 					}
 
-					result.Add(instInfo);
+					yield return instInfo;
 				}
-
-				return result.ToArray();
 			}
 		}
 
@@ -443,12 +439,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		/// is returned
 		/// </summary>
 		/********************************************************************/
-		public override SampleInfo[] Samples
+		public override IEnumerable<SampleInfo> Samples
 		{
 			get
 			{
-				List<SampleInfo> result = new List<SampleInfo>();
-
 				for (int i = 0, cnt = of.NumSmp; i < cnt; i++)
 				{
 					Sample sample = of.Samples[i];
@@ -462,9 +456,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						Name = sample.SampleName,
-						Flags = SampleInfo.SampleFlags.None,
+						Flags = SampleInfo.SampleFlag.None,
 						Type = SampleInfo.SampleType.Sample,
-						BitSize = (byte)((sample.Flags & SampleFlag._16Bits) != 0 ? 16 : 8),
+						BitSize = (sample.Flags & SampleFlag._16Bits) != 0 ? SampleInfo.SampleSize._16Bit : SampleInfo.SampleSize._8Bit,
 						MiddleC = frequencies[4 * 12],
 						Volume = (ushort)(sample.Volume * 4),
 						Panning = sample.Panning == SharedConstant.Pan_Surround ? (short)ChannelPanningType.Surround : sample.Panning,
@@ -479,17 +473,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 					if (((sample.Flags & SampleFlag.Loop) != 0) && (sample.LoopStart < sample.LoopEnd))
 					{
 						// Set loop flag
-						sampleInfo.Flags |= SampleInfo.SampleFlags.Loop;
+						sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
 
 						// Is the loop ping-pong?
 						if ((sample.Flags & SampleFlag.Bidi) != 0)
-							sampleInfo.Flags |= SampleInfo.SampleFlags.PingPong;
+							sampleInfo.Flags |= SampleInfo.SampleFlag.PingPong;
 					}
 
-					result.Add(sampleInfo);
+					yield return sampleInfo;
 				}
-
-				return result.ToArray();
 			}
 		}
 		#endregion

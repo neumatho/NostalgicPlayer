@@ -1432,9 +1432,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized string similar to Synth.
         /// </summary>
-        internal static string IDS_SAMPLE_INFO_SAMP_TYPE_SYNTH {
+        internal static string IDS_SAMPLE_INFO_SAMP_TYPE_SYNTHESIS {
             get {
-                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_TYPE_SYNTH", resourceCulture);
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_TYPE_SYNTHESIS", resourceCulture);
             }
         }
         

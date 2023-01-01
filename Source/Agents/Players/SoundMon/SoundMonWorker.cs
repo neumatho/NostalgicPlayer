@@ -582,12 +582,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		/// is returned
 		/// </summary>
 		/********************************************************************/
-		public override SampleInfo[] Samples
+		public override IEnumerable<SampleInfo> Samples
 		{
 			get
 			{
-				List<SampleInfo> result = new List<SampleInfo>();
-
 				for (int i = 0; i < 15; i++)
 				{
 					Instrument inst = instruments[i];
@@ -600,7 +598,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 					SampleInfo sampleInfo = new SampleInfo
 					{
-						BitSize = 8,
+						BitSize = SampleInfo.SampleSize._8Bit,
 						MiddleC = frequencies[4 * 12],
 						Volume = (ushort)(inst.Volume * 4),
 						Panning = -1,
@@ -617,33 +615,31 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 						if (sampleInst.LoopLength <= 2)
 						{
 							// No loop
-							sampleInfo.Flags = SampleInfo.SampleFlags.None;
+							sampleInfo.Flags = SampleInfo.SampleFlag.None;
 							sampleInfo.LoopStart = 0;
 							sampleInfo.LoopLength = 0;
 						}
 						else
 						{
 							// Sample loops
-							sampleInfo.Flags = SampleInfo.SampleFlags.Loop;
+							sampleInfo.Flags = SampleInfo.SampleFlag.Loop;
 							sampleInfo.LoopStart = sampleInst.LoopStart;
 							sampleInfo.LoopLength = sampleInst.LoopLength;
 						}
 					}
 					else
 					{
-						sampleInfo.Type = SampleInfo.SampleType.Synth;
+						sampleInfo.Type = SampleInfo.SampleType.Synthesis;
 						sampleInfo.Name = string.Empty;
 						sampleInfo.Sample = null;
 						sampleInfo.Length = 0;
-						sampleInfo.Flags = SampleInfo.SampleFlags.None;
+						sampleInfo.Flags = SampleInfo.SampleFlag.None;
 						sampleInfo.LoopStart = 0;
 						sampleInfo.LoopLength = 0;
 					}
 
-					result.Add(sampleInfo);
+					yield return sampleInfo;
 				}
-
-				return result.ToArray();
 			}
 		}
 		#endregion
