@@ -535,22 +535,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 		{
 			get
 			{
+				// Build frequency table
+				uint[] frequencies = new uint[10 * 12];
+
+				for (int j = 0; j < 6 * 12; j++)
+					frequencies[1 * 12 + j] = 3546895U / Tables.Periods[j + 1];
+
 				foreach (Instrument inst in instruments)
 				{
 					if (inst == null)
 						break;
 
-					// Build frequency table
-					uint[] frequencies = new uint[10 * 12];
-
-					for (int j = 1; j < 7 * 12; j++)
-						frequencies[j - 1] = 3546895U / Tables.Periods[j];
-
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						Name = string.Empty,
 						BitSize = SampleInfo.SampleSize._8Bit,
-						MiddleC = frequencies[3 * 12],
 						Volume = 256,
 						Panning = -1,
 						NoteFrequencies = frequencies

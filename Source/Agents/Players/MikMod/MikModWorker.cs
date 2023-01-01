@@ -450,8 +450,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 					// Build frequency table
 					uint[] frequencies = new uint[10 * 12];
 
-					for (int j = 0; j < 10 * 12; j++)
-						frequencies[j] = (uint)Math.Ceiling((double)MlUtil.GetFrequency(of.Flags, player.GetPeriod(of.Flags, (ushort)(j * 2), sample.Speed)));
+					for (int j = 0; j < 9 * 12; j++)
+						frequencies[1 * 12 + j] = (uint)Math.Ceiling((double)MlUtil.GetFrequency(of.Flags, player.GetPeriod(of.Flags, (ushort)(j * 2), sample.Speed)));
 
 					SampleInfo sampleInfo = new SampleInfo
 					{
@@ -459,7 +459,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 						Flags = SampleInfo.SampleFlag.None,
 						Type = SampleInfo.SampleType.Sample,
 						BitSize = (sample.Flags & SampleFlag._16Bits) != 0 ? SampleInfo.SampleSize._16Bit : SampleInfo.SampleSize._8Bit,
-						MiddleC = frequencies[4 * 12],
 						Volume = (ushort)(sample.Volume * 4),
 						Panning = sample.Panning == SharedConstant.Pan_Surround ? (short)ChannelPanningType.Surround : sample.Panning,
 						Sample = sample.Handle,

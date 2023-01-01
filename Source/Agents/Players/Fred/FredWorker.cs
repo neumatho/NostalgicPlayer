@@ -579,13 +579,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 					uint[] frequencies = new uint[10 * 12];
 
 					for (int j = 0; j < 6 * 12; j++)
-						frequencies[12 + j] = 3546895U / ((periodTable[j] * inst.Period) / 1024);
+						frequencies[2 * 12 + j] = 3546895U / ((periodTable[j] * inst.Period) / 1024);
 
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						Name = inst.Name,
 						BitSize = SampleInfo.SampleSize._8Bit,
-						MiddleC = frequencies[12 + 3 * 12],
 						Volume = inst.EnvVol,
 						Panning = -1,
 						NoteFrequencies = frequencies

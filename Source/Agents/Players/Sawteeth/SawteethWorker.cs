@@ -793,7 +793,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 						Flags = SampleInfo.SampleFlag.None,
 						Type = SampleInfo.SampleType.Synthesis,
 						BitSize = SampleInfo.SampleSize._16Bit,
-						MiddleC = 0,
 						Volume = 256,
 						Panning = -1,
 						Sample = null,

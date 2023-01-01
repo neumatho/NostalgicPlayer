@@ -586,20 +586,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		{
 			get
 			{
+				// Build frequency table
+				uint[] frequencies = new uint[10 * 12];
+
+				for (int j = 0; j < 7 * 12; j++)
+					frequencies[1 * 12 + j] = 3546895U / periods[j];
+
 				for (int i = 0; i < 15; i++)
 				{
 					Instrument inst = instruments[i];
 
-					// Build frequency table
-					uint[] frequencies = new uint[10 * 12];
-
-					for (int j = 0; j < 7 * 12; j++)
-						frequencies[j] = 3546895U / periods[j];
-
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						BitSize = SampleInfo.SampleSize._8Bit,
-						MiddleC = frequencies[4 * 12],
 						Volume = (ushort)(inst.Volume * 4),
 						Panning = -1,
 						NoteFrequencies = frequencies

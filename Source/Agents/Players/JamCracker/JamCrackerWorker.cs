@@ -411,19 +411,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		{
 			get
 			{
+				// Build frequency table
+				uint[] frequencies = new uint[10 * 12];
+
+				for (int j = 0; j < 3 + 3 * 12; j++)
+					frequencies[4 * 12 - 3 + j] = 3546895U / periods[j];
+
 				foreach (InstInfo instInfo in instTable)
 				{
-					// Build frequency table
-					uint[] frequencies = new uint[10 * 12];
-
-					for (int j = 0; j < periods.Length; j++)
-						frequencies[3 * 12 - 3 + j] = 3546895U / periods[j];
-
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						Name = EncoderCollection.Amiga.GetString(instInfo.Name),
 						BitSize = SampleInfo.SampleSize._8Bit,
-						MiddleC = frequencies[12 + 3 * 12],
 						Volume = 256,
 						Panning = -1,
 						NoteFrequencies = frequencies

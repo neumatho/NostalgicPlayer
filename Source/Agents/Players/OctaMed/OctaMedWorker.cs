@@ -1451,7 +1451,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 					uint[] frequencies = new uint[10 * 12];
 
 					for (byte j = 0; j < 6 * 12; j++)
-						frequencies[12 + j] = plr.GetNoteFrequency(j, fineTune);
+						frequencies[2 * 12 + j] = plr.GetNoteFrequency(j, fineTune);
 
 					SampleInfo sampleInfo;
 
@@ -1463,7 +1463,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 							Flags = SampleInfo.SampleFlag.None,
 							Type = SampleInfo.SampleType.Sample,
 							BitSize = SampleInfo.SampleSize._8Bit,
-							MiddleC = frequencies[12 + 3 * 12],
 							Volume = (ushort)(inst.GetInitVol() * 2),
 							Panning = -1,
 							Sample = null,
@@ -1478,7 +1477,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 						sampleInfo = new SampleInfo
 						{
 							BitSize = sample.Is16Bit() ? SampleInfo.SampleSize._16Bit : SampleInfo.SampleSize._8Bit,
-							MiddleC = frequencies[12 + 3 * 12],
 							Volume = (ushort)(inst.GetInitVol() * 2),
 							Panning = -1,
 							Length = sample.GetLength(),

@@ -443,23 +443,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10
 		{
 			get
 			{
+				// Build frequency table
+				uint[] frequencies = new uint[10 * 12];
+
+				for (int j = 0; j < 6 * 12; j++)
+					frequencies[1 * 12 + j] = 3546895U / Tables.Periods[j + 1];
+
 				foreach (Instrument inst in backupInstruments)
 				{
 					SampleInfo sampleInfo;
 
 					if (inst != null)
 					{
-						// Build frequency table
-						uint[] frequencies = new uint[10 * 12];
-
-						for (int j = 1; j < 7 * 12; j++)
-							frequencies[j - 1] = 3546895U / Tables.Periods[j];
-
 						sampleInfo = new SampleInfo
 						{
 							Name = string.Empty,
 							BitSize = SampleInfo.SampleSize._8Bit,
-							MiddleC = frequencies[3 * 12],
 							Volume = (ushort)(inst.Volume * 3),
 							Panning = -1,
 							NoteFrequencies = frequencies
@@ -502,7 +501,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10
 							Flags = SampleInfo.SampleFlag.None,
 							Type = SampleInfo.SampleType.Sample,
 							BitSize = SampleInfo.SampleSize._8Bit,
-							MiddleC = 8287,
 							Volume = 256,
 							Panning = -1,
 							Sample = null,

@@ -438,20 +438,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 		{
 			get
 			{
+				// Build frequency table
+				uint[] frequencies = new uint[10 * 12];
+
+				for (int j = 0; j < 4 + 3 * 12; j++)
+					frequencies[4 * 12 - 4 + j] = 3546895U / (ushort)noteTable[2 * 12 - 4 + j];
+
 				foreach (Sample sample in samples)
 				{
-					// Build frequency table
-					uint[] frequencies = new uint[10 * 12];
-
-					for (int j = 0; j < 7 * 12; j++)
-						frequencies[12 + j] = 3546895U / (ushort)noteTable[j];
-
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						Name = sample.Name,
 						Type = SampleInfo.SampleType.Sample,
 						BitSize = SampleInfo.SampleSize._8Bit,
-						MiddleC = frequencies[12 + 3 * 12],
 						Volume = (ushort)(sample.Volume * 4),
 						Panning = -1,
 						Sample = sample.SampleAddr,

@@ -508,12 +508,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					if (currentModuleType == ModuleType.HisMastersNoise)
 					{
 						for (int j = 0; j < 7 * 12; j++)
-							frequencies[12 + j] = (uint)(7093789.2 / (Tables.Periods[0, j] + (Tables.Periods[0, j] * sample.FineTuneHmn) / 256));
+							frequencies[3 * 12 + j] = (uint)(7093789.2 / (Tables.Periods[0, j] + (Tables.Periods[0, j] * sample.FineTuneHmn) / 256));
 					}
 					else
 					{
 						for (int j = 0; j < 7 * 12; j++)
-							frequencies[12 + j] = 3546895U / Tables.Periods[sample.FineTune, j];
+							frequencies[2 * 12 + j] = 3546895U / Tables.Periods[sample.FineTune, j];
 					}
 
 					yield return new SampleInfo
@@ -522,7 +522,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 						Flags = sample.LoopLength <= 1 ? SampleInfo.SampleFlag.None : SampleInfo.SampleFlag.Loop,
 						Type = ((amData?[i] != null) && (amData[i].Mark == 0x414d)) || ((hmnSynthData != null) && (hmnSynthData[i] != null)) ? SampleInfo.SampleType.Synthesis : SampleInfo.SampleType.Sample,
 						BitSize = SampleInfo.SampleSize._8Bit,
-						MiddleC = frequencies[12 + 3 * 12],
 						Volume = (ushort)(sample.Volume * 4),
 						Panning = -1,
 						Sample = sample.Data,

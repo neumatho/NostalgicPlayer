@@ -475,20 +475,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		{
 			get
 			{
+				// Build frequency table
+				uint[] frequencies = new uint[10 * 12];
+
+				for (int j = 0; j < 3 * 12; j++)
+					frequencies[4 * 12 + j] = 3546895U / (ushort)periods[j];
+
 				foreach (Sample sample in samples)
 				{
-					// Build frequency table
-					uint[] frequencies = new uint[10 * 12];
-
-					for (int j = 0; j < 3 * 12; j++)
-						frequencies[3 * 12 + j] = 3546895U / (ushort)periods[j];
-
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						Name = sample.Name,
 						Type = SampleInfo.SampleType.Sample,
 						BitSize = SampleInfo.SampleSize._8Bit,
-						MiddleC = frequencies[3 * 12 + 12],
 						Volume = (ushort)(sample.Volume * 4),
 						Panning = -1,
 						Sample = sample.SampleData,

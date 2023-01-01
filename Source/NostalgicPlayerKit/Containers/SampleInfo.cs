@@ -163,13 +163,10 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the frequency of the middle C (C-4)
+		/// Holds the frequency of the middle C
 		/// </summary>
 		/********************************************************************/
-		public uint MiddleC
-		{
-			get; set;
-		}
+		public uint MiddleC => NoteFrequencies == null ? 8287 : NoteFrequencies[5 * 12];
 
 
 

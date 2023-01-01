@@ -734,6 +734,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 		{
 			get
 			{
+				// Build frequency table
+				uint[] frequencies = new uint[10 * 12];
+
+				for (int j = 0; j < 5 * 12; j++)
+					frequencies[2 * 12 + j] = 3546895U / periods[5 * 12 + j];
+
 				for (int i = 0; i < 10; i++)
 				{
 					Sample sample = sampInfo[i];
@@ -743,19 +749,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 						for (int j = 0; j < 20; j++)
 						{
 							if (sample.Multi.Sample[j].Length != 0)
-								yield return CreateSampleInfo(sample.Multi.Sample[j]);
+								yield return CreateSampleInfo(sample.Multi.Sample[j], frequencies);
 						}
 					}
 					else
-						yield return CreateSampleInfo(sample);
+						yield return CreateSampleInfo(sample, frequencies);
 				}
 
 				for (int i = 0; i < wavNum; i++)
 				{
 					Sample sample = sampInfo[10 + i];
 
-					SampleInfo sampleInfo = CreateSampleInfo(sample);
+					SampleInfo sampleInfo = CreateSampleInfo(sample, frequencies);
 					sampleInfo.Type = SampleInfo.SampleType.Synthesis;
+
 					yield return sampleInfo;
 				}
 			}
@@ -811,20 +818,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 		/// Create a sample info structure from the given sample
 		/// </summary>
 		/********************************************************************/
-		private SampleInfo CreateSampleInfo(Sample sample)
+		private SampleInfo CreateSampleInfo(Sample sample, uint[] frequencies)
 		{
-			// Build frequency table
-			uint[] frequencies = new uint[10 * 12];
-
-			for (int j = 0; j < 6 * 12; j++)
-				frequencies[12 + j] = 3546895U / periods[5 * 12 + j];
-
 			SampleInfo sampleInfo = new SampleInfo
 			{
 				Name = string.Empty,
 				Type = SampleInfo.SampleType.Sample,
 				BitSize = SampleInfo.SampleSize._8Bit,
-				MiddleC = frequencies[12 + 3 * 12],
 				Volume = 256,
 				Panning = -1,
 				NoteFrequencies = frequencies

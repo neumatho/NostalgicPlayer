@@ -341,14 +341,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 							int32_t pitch = Tables.Periods[j];
 							int32_t frequency = 3579545 / pitch;
 							pitch = (int32_t)(3579545 / (((inst.C3Frequency * 256) / 8363 * frequency) / 256));
-							frequencies[12 + j] = (uint)((3546895 / pitch) * 4);
+							frequencies[j] = (uint)((3546895 / pitch) * 4);
 						}
 					}
 					else
 					{
 						for (int j = 0; j < 7; j++)
 						{
-							uint startFrequency = inst.C3Frequency;
+							long startFrequency = inst.C3Frequency;
 
 							if (j < 3)
 							{
@@ -362,7 +362,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 							}
 
 							for (int k = 0; k < 12; k++)
-								frequencies[12 + j * 12 + k] = (startFrequency * Tables.MusicScale[k * 8]) / 65536;
+								frequencies[2 * 12 + j * 12 + k] = (uint)((startFrequency * Tables.MusicScale[k * 8]) / 65536);
 						}
 					}
 
@@ -371,7 +371,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 						Name = inst.Name,
 						Type = SampleInfo.SampleType.Sample,
 						BitSize = sample.Data16 != null ? SampleInfo.SampleSize._16Bit : SampleInfo.SampleSize._8Bit,
-						MiddleC = frequencies[12 + 3 * 12],
 						Volume = (ushort)(inst.Volume * 4),
 						Panning = (short)(inst.Panning + 128),
 						Sample = (Array)sample.Data8 ?? sample.Data16,

@@ -625,6 +625,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 		{
 			get
 			{
+				// Build frequency table
+				uint[] frequencies = new uint[10 * 12];
+
+				for (int j = 0; j < 5 * 12; j++)
+					frequencies[2 * 12 + j] = (uint)(3546895 / Tables.PeriodTable[j + 1]);
+
 				for (int i = 1; i <= song.InstrumentNr; i++)
 				{
 					AhxInstrument inst = song.Instruments[i];
@@ -635,13 +641,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 						Flags = SampleInfo.SampleFlag.None,
 						Type = SampleInfo.SampleType.Synthesis,
 						BitSize = SampleInfo.SampleSize._8Bit,
-						MiddleC = 4144,
 						Volume = (ushort)(inst.Volume * 4),
 						Panning = -1,
 						Sample = null,
 						Length = 0,
 						LoopStart = 0,
-						LoopLength = 0
+						LoopLength = 0,
+						NoteFrequencies = frequencies
 					};
 				}
 			}
