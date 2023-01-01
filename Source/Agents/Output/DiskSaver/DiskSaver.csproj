@@ -8,7 +8,6 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Output sound to a file</Description>
-    <Copyright>Copyright © 2021-2022</Copyright>
     <Version>1.1.3</Version>
   </PropertyGroup>
 

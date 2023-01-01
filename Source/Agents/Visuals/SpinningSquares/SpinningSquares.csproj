@@ -2,13 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
-		<UseWindowsForms>true</UseWindowsForms>
-		<RootNamespace>Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares</RootNamespace>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares</RootNamespace>
     <Authors>Thomas Neumann</Authors>
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Show some spinning squares which moves to the music</Description>
-    <Copyright>Copyright © 2021-2022</Copyright>
     <Version>1.1.5</Version>
   </PropertyGroup>
 

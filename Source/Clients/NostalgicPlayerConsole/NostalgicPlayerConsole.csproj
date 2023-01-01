@@ -7,7 +7,6 @@
     <Description>Simple player that can be started from the console</Description>
     <Company>Polycode</Company>
     <Authors>Thomas Neumann</Authors>
-    <Copyright>Copyright © 2021-2022</Copyright>
     <Product>NostalgicPlayer</Product>
     <Platforms>x64;x86</Platforms>
   </PropertyGroup>

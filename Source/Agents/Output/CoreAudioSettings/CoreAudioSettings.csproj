@@ -9,7 +9,6 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Settings for the CoreAudio agent</Description>
-    <Copyright>Copyright © 2021-2022</Copyright>
     <Version>1.0.1</Version>
   </PropertyGroup>
 

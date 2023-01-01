@@ -2,13 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
-		<UseWindowsForms>true</UseWindowsForms>
-		<RootNamespace>Polycode.NostalgicPlayer.GuiKit</RootNamespace>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>Polycode.NostalgicPlayer.GuiKit</RootNamespace>
     <Authors>Thomas Neumann</Authors>
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Kit used for all agents which want some GUI interface</Description>
-    <Copyright>Copyright © 2021-2022</Copyright>
     <Version>1.9.0</Version>
   </PropertyGroup>
 

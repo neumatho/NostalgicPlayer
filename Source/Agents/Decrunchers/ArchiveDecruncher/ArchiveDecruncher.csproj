@@ -7,7 +7,6 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Decrunchers to different archive formats not covered by SharpCompress</Description>
-    <Copyright>Copyright © 2021-2022</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

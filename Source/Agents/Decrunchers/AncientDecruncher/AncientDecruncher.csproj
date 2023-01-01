@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -7,7 +7,6 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Decrunchers based on Ancient by Teemu Suutari</Description>
-    <Copyright>Copyright © 2021-2022</Copyright>
     <Version>1.2.0</Version>
   </PropertyGroup>
 

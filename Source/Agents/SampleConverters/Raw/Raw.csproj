@@ -7,7 +7,6 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Save samples in raw format</Description>
-    <Copyright>Copyright © 2021-2022</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

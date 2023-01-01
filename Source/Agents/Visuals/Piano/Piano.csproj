@@ -13,7 +13,6 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Show a piano and show the nodes playing on the keys</Description>
-    <Copyright>Copyright © 2021-2022</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

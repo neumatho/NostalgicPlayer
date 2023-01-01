@@ -7,7 +7,6 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Plays modules of type SoundMon, both version 1.1 and 2.2</Description>
-    <Copyright>Copyright © 2021-2022</Copyright>
     <Version>1.1.0</Version>
   </PropertyGroup>
 

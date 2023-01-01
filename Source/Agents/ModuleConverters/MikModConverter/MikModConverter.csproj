@@ -8,7 +8,6 @@
     <Product>NostalgicPlayer</Product>
     <Description>Contains the MikMod loaders.</Description>
     <Version>1.0.7</Version>
-    <Copyright>Copyright © 2021-2022</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

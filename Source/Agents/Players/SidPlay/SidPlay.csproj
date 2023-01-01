@@ -7,7 +7,6 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Emulates the C64 CPU and soundchip to play C64 modules</Description>
-    <Copyright>Copyright © 2021-2022</Copyright>
     <Version>1.5.0</Version>
   </PropertyGroup>
 

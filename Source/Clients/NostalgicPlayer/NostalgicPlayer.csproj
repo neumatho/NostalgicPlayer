@@ -8,7 +8,6 @@
     <Description>Music player with an user interface</Description>
     <Company>Polycode</Company>
     <Authors>Thomas Neumann</Authors>
-    <Copyright>Copyright © 2021-2022</Copyright>
     <ApplicationIcon>App.ico</ApplicationIcon>
     <Version>1.9.0</Version>
     <Platforms>x64;x86</Platforms>

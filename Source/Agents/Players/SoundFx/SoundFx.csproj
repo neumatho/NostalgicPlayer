@@ -7,7 +7,6 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Player to the SoundFX module format version 2.0</Description>
-    <Copyright>Copyright © 2021-2022</Copyright>
     <Version>1.1.0</Version>
   </PropertyGroup>
 

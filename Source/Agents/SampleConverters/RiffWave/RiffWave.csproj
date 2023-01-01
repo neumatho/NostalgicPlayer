@@ -6,7 +6,6 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Can load and save RIFF-WAVE samples</Description>
-    <Copyright>Copyright © 2021-2022</Copyright>
     <RootNamespace>Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave</RootNamespace>
     <Version>1.1.0</Version>
   </PropertyGroup>

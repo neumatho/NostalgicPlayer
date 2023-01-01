@@ -2,15 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
-		<UseWindowsForms>true</UseWindowsForms>
-		<RootNamespace>Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope</RootNamespace>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope</RootNamespace>
     <Authors>Thomas Neumann</Authors>
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Show an oscilloscope for the left and right channel of what is playing</Description>
-		<Copyright>Copyright © 2021-2022</Copyright>
-		<Version>1.1.1</Version>
-	</PropertyGroup>
+    <Version>1.1.1</Version>
+  </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>bin\Oscilloscope.xml</DocumentationFile>

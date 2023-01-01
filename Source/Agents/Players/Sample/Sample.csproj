@@ -6,7 +6,6 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Wrapper against the sample converters and make them as playable.</Description>
-    <Copyright>Copyright © 2021-2022</Copyright>
     <RootNamespace>Polycode.NostalgicPlayer.Agent.Player.Sample</RootNamespace>
     <Version>1.1.2</Version>
   </PropertyGroup>
