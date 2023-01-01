@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System.Diagnostics;
 using Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac.Containers;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 {
@@ -160,7 +161,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Private
 				int max_ShiftLimit = (1 << (int)(Constants.Flac__SubFrame_Lpc_Qlp_Shift_Len - 1)) - 1;
 				int min_ShiftLimit = -max_ShiftLimit - 1;
 
-				C.math.frexp(cMax, out int log2CMax);
+				CMath.frexp(cMax, out int log2CMax);
 				log2CMax--;
 				shift = (int)precision - log2CMax - 1;
 

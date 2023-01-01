@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <RootNamespace>Polycode.NostalgicPlayer.Client.ConsolePlayer</RootNamespace>
     <Description>Simple player that can be started from the console</Description>
     <Company>Polycode</Company>

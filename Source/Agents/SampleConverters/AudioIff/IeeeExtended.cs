@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Runtime.CompilerServices;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 {
@@ -72,8 +73,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 				else
 				{
 					expon -= 16383;
-					f = C.math.ldexp(UnsignedToFloat(hiMant), expon -= 31);
-					f += C.math.ldexp(UnsignedToFloat(loMant), expon -= 32);
+					f = CMath.ldexp(UnsignedToFloat(hiMant), expon -= 31);
+					f += CMath.ldexp(UnsignedToFloat(loMant), expon -= 32);
 				}
 			}
 
@@ -148,7 +149,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 			}
 			else
 			{
-				double fMant = C.math.frexp(num, out expon);
+				double fMant = CMath.frexp(num, out expon);
 				if ((expon > 16384) || !(fMant < 1.0))
 				{
 					// Infinity or NaN
@@ -163,15 +164,15 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 					if (expon < 0)
 					{
 						// Denormalized
-						fMant = C.math.ldexp(fMant, expon);
+						fMant = CMath.ldexp(fMant, expon);
 						expon = 0;
 					}
 
 					expon |= sign;
-					fMant = C.math.ldexp(fMant, 32);
+					fMant = CMath.ldexp(fMant, 32);
 					double fsMant = Math.Floor(fMant);
 					hiMant = FloatToUnsigned(fsMant);
-					fMant = C.math.ldexp(fMant - fsMant, 32);
+					fMant = CMath.ldexp(fMant - fsMant, 32);
 					fsMant = Math.Floor(fMant);
 					loMant = FloatToUnsigned(fsMant);
 				}

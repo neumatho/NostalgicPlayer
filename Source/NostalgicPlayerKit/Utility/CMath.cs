@@ -1,10 +1,9 @@
-﻿
-using System;
+﻿using System;
 
 // Declare assembly as CLS compliant.
 //[assembly: System.CLSCompliant(true)]
 
-namespace C
+namespace Polycode.NostalgicPlayer.Kit.Utility
 {
     /// <summary>
     /// Implements several <a href="http://en.cppreference.com/w/c/numeric/math">C Standard</a> mathematical functions that are missing from the .NET framework.
@@ -17,31 +16,31 @@ namespace C
     /// </para>
     /// </remarks>
     /// <author email="robert.baron@videotron.ca">Robert Baron</author>
-    public sealed class math
+    public sealed class CMath
     {
 
         /// <summary>
         /// Constructor is declared <c>private</c> because all members are <c>static</c>.
         /// </summary>
         /// <remarks></remarks>
-        private math()
+        private CMath()
         {
         }
 
         #region "The values returned by 'ilogb' for 0, NaN, and infinity respectively."
 
         /// <summary>
-        /// Value returned by <see cref="math.ilogb(double)"/> or <see cref="ilogb(float)"/> when its input argument is <c>±0</c>.
+        /// Value returned by <see cref="CMath.ilogb(double)"/> or <see cref="ilogb(float)"/> when its input argument is <c>±0</c>.
         /// </summary>
         public const int FP_ILOGB0 = (-2147483647);
 
         /// <summary>
-        /// Value returned by <see cref="math.ilogb(double)"/> or <see cref="ilogb(float)"/> when its input argument is <see cref="System.Double.NaN"/> or <see cref="System.Single.NaN"/> respectively.
+        /// Value returned by <see cref="CMath.ilogb(double)"/> or <see cref="ilogb(float)"/> when its input argument is <see cref="System.Double.NaN"/> or <see cref="System.Single.NaN"/> respectively.
         /// </summary>
         public const int FP_ILOGBNAN = (2147483647);
 
         /// <summary>
-        /// Value returned by <see cref="math.ilogb(double)"/> or <see cref="ilogb(float)"/> when its input argument is <c>±infinity</c>.
+        /// Value returned by <see cref="CMath.ilogb(double)"/> or <see cref="ilogb(float)"/> when its input argument is <c>±infinity</c>.
         /// </summary>
         public const int INT_MAX = (32767);
 
@@ -52,36 +51,36 @@ namespace C
         /// <summary>
         /// Indicates that a floating-point value is normal, i.e. not infinity, subnormal, NaN (not-a-number) or zero. 
         /// </summary>
-        /// <seealso cref="math.fpclassify(double)"/>
-        /// <seealso cref="math.fpclassify(float)"/>
+        /// <seealso cref="CMath.fpclassify(double)"/>
+        /// <seealso cref="CMath.fpclassify(float)"/>
         public const int FP_NORMAL = 0;
 
         /// <summary>
         /// Indicates that a floating-point value is subnormal. 
         /// </summary>
-        /// <seealso cref="math.fpclassify(double)"/>
-        /// <seealso cref="math.fpclassify(float)"/>
+        /// <seealso cref="CMath.fpclassify(double)"/>
+        /// <seealso cref="CMath.fpclassify(float)"/>
         public const int FP_SUBNORMAL = 1;
 
         /// <summary>
         /// Indicates that a floating-point value is positive or negative zero. 
         /// </summary>
-        /// <seealso cref="math.fpclassify(double)"/>
-        /// <seealso cref="math.fpclassify(float)"/>
+        /// <seealso cref="CMath.fpclassify(double)"/>
+        /// <seealso cref="CMath.fpclassify(float)"/>
         public const int FP_ZERO = 2;
 
         /// <summary>
         /// Indicates that the value is not representable by the underlying type (positive or negative infinity)  
         /// </summary>
-        /// <seealso cref="math.fpclassify(double)"/>
-        /// <seealso cref="math.fpclassify(float)"/>
+        /// <seealso cref="CMath.fpclassify(double)"/>
+        /// <seealso cref="CMath.fpclassify(float)"/>
         public const int FP_INFINITE = 3;
 
         /// <summary>
         /// Indicates that the value is not representable by the underlying type (positive or negative infinity)  
         /// </summary>
-        /// <seealso cref="math.fpclassify(double)"/>
-        /// <seealso cref="math.fpclassify(float)"/>
+        /// <seealso cref="CMath.fpclassify(double)"/>
+        /// <seealso cref="CMath.fpclassify(float)"/>
         public const int FP_NAN = 4;
 
         #endregion
@@ -248,7 +247,7 @@ namespace C
         /// Categorizes the given floating point <paramref name="number"/> into the categories: zero, subnormal, normal, infinite or NAN.
         /// </summary>
         /// <param name="number">A floating-point number.</param>
-        /// <returns>One of <see cref="math.FP_INFINITE"/>, <see cref="math.FP_NAN"/>, <see cref="math.FP_NORMAL"/>, <see cref="math.FP_SUBNORMAL"/> or <see cref="math.FP_ZERO"/>, specifying the category of <paramref name="number"/>.</returns>
+        /// <returns>One of <see cref="CMath.FP_INFINITE"/>, <see cref="CMath.FP_NAN"/>, <see cref="CMath.FP_NORMAL"/>, <see cref="CMath.FP_SUBNORMAL"/> or <see cref="CMath.FP_ZERO"/>, specifying the category of <paramref name="number"/>.</returns>
         /// <remarks>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/fpclassify">fpclassify</a> in the C standard documentation.
@@ -256,19 +255,19 @@ namespace C
         /// </remarks>
         public static int fpclassify(double number)
         {
-            long bits = System.BitConverter.DoubleToInt64Bits(number) & math.DBL_SGN_CLR_MASK;
+            long bits = System.BitConverter.DoubleToInt64Bits(number) & CMath.DBL_SGN_CLR_MASK;
             if (bits >= 0x7ff0000000000000L)
-                return (bits & math.DBL_MANT_MASK) == 0 ? math.FP_INFINITE : math.FP_NAN;
+                return (bits & CMath.DBL_MANT_MASK) == 0 ? CMath.FP_INFINITE : CMath.FP_NAN;
             else if (bits < 0x0010000000000000L)
-                return bits == 0 ? math.FP_ZERO : math.FP_SUBNORMAL;
-            return math.FP_NORMAL;
+                return bits == 0 ? CMath.FP_ZERO : CMath.FP_SUBNORMAL;
+            return CMath.FP_NORMAL;
         }
 
         /// <summary>
         /// Categorizes the given floating point <paramref name="number"/> into the categories: zero, subnormal, normal, infinite or NAN.
         /// </summary>
         /// <param name="number">A floating-point number.</param>
-        /// <returns>One of <see cref="math.FP_INFINITE"/>, <see cref="math.FP_NAN"/>, <see cref="math.FP_NORMAL"/>, <see cref="math.FP_SUBNORMAL"/> or <see cref="math.FP_ZERO"/>, specifying the category of <paramref name="number"/>.</returns>
+        /// <returns>One of <see cref="CMath.FP_INFINITE"/>, <see cref="CMath.FP_NAN"/>, <see cref="CMath.FP_NORMAL"/>, <see cref="CMath.FP_SUBNORMAL"/> or <see cref="CMath.FP_ZERO"/>, specifying the category of <paramref name="number"/>.</returns>
         /// <remarks>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/fpclassify">fpclassify</a> in the C standard documentation.
@@ -276,12 +275,12 @@ namespace C
         /// </remarks>
         public static int fpclassify(float number)
         {
-            int bits = SingleToInt32Bits(number) & math.FLT_SGN_CLR_MASK;
+            int bits = SingleToInt32Bits(number) & CMath.FLT_SGN_CLR_MASK;
             if (bits >= 0x7f800000)
-                return (bits & math.FLT_MANT_MASK) == 0 ? math.FP_INFINITE : math.FP_NAN;
+                return (bits & CMath.FLT_MANT_MASK) == 0 ? CMath.FP_INFINITE : CMath.FP_NAN;
             else if (bits < 0x00800000)
-                return bits == 0 ? math.FP_ZERO : math.FP_SUBNORMAL;
-            return math.FP_NORMAL;
+                return bits == 0 ? CMath.FP_ZERO : CMath.FP_SUBNORMAL;
+            return CMath.FP_NORMAL;
         }
 
         #endregion
@@ -304,7 +303,7 @@ namespace C
         public static bool isfinite(double number)
         {
             // Check the exponent part. If it is all 1's then we have infinity/NaN, i.e., not a finite value.
-            return (System.BitConverter.DoubleToInt64Bits(number) & math.DBL_EXP_MASK) != math.DBL_EXP_MASK;
+            return (System.BitConverter.DoubleToInt64Bits(number) & CMath.DBL_EXP_MASK) != CMath.DBL_EXP_MASK;
         }
 
         /// <summary>
@@ -323,7 +322,7 @@ namespace C
         public static bool isfinite(float number)
         {
             // Check the exponent part. If it is all 1's then we have infinity/NaN, i.e., not a finite value.
-            return (SingleToInt32Bits(number) & math.FLT_EXP_MASK) != math.FLT_EXP_MASK;
+            return (SingleToInt32Bits(number) & CMath.FLT_EXP_MASK) != CMath.FLT_EXP_MASK;
         }
 
         #endregion
@@ -342,7 +341,7 @@ namespace C
         /// </remarks>
         public static bool isinf(double number)
         {
-            return (System.BitConverter.DoubleToInt64Bits(number) & math.DBL_SGN_CLR_MASK) == 0x7ff0000000000000L;
+            return (System.BitConverter.DoubleToInt64Bits(number) & CMath.DBL_SGN_CLR_MASK) == 0x7ff0000000000000L;
         }
 
         /// <summary>
@@ -357,7 +356,7 @@ namespace C
         /// </remarks>
         public static bool isinf(float number)
         {
-            return (SingleToInt32Bits(number) & math.FLT_SGN_CLR_MASK) == 0x7f800000;
+            return (SingleToInt32Bits(number) & CMath.FLT_SGN_CLR_MASK) == 0x7f800000;
         }
 
         #endregion
@@ -376,7 +375,7 @@ namespace C
         /// </remarks>
         public static bool isnan(double number)
         {
-            return (System.BitConverter.DoubleToInt64Bits(number) & math.DBL_SGN_CLR_MASK) > 0x7ff0000000000000L;
+            return (System.BitConverter.DoubleToInt64Bits(number) & CMath.DBL_SGN_CLR_MASK) > 0x7ff0000000000000L;
         }
 
         /// <summary>
@@ -391,7 +390,7 @@ namespace C
         /// </remarks>
         public static bool isnan(float number)
         {
-            return (SingleToInt32Bits(number) & math.FLT_SGN_CLR_MASK) > 0x7f800000;
+            return (SingleToInt32Bits(number) & CMath.FLT_SGN_CLR_MASK) > 0x7f800000;
         }
 
         #endregion
@@ -413,7 +412,7 @@ namespace C
         /// </remarks>
         public static bool isnormal(double number)
         {
-            long bits = System.BitConverter.DoubleToInt64Bits(number) & math.DBL_SGN_CLR_MASK;
+            long bits = System.BitConverter.DoubleToInt64Bits(number) & CMath.DBL_SGN_CLR_MASK;
             // Not infinity or NaN and greater than zero or subnormal.
             return (bits < 0x7ff0000000000000L) && (bits >= 0x0010000000000000L);
         }
@@ -433,7 +432,7 @@ namespace C
         /// </remarks>
         public static bool isnormal(float number)
         {
-            int bits = SingleToInt32Bits(number) & math.FLT_SGN_CLR_MASK;
+            int bits = SingleToInt32Bits(number) & CMath.FLT_SGN_CLR_MASK;
             // Not infinity or NaN and greater than zero or subnormal.
             return (bits < 0x7f800000) && (bits >= 0x00800000);
         }
@@ -450,7 +449,7 @@ namespace C
         /// <remarks>
         /// <para>
         /// The function detects the sign bit of zeroes, infinities, and NaN. Along with
-        /// <see cref="math.copysign(double, double)"/>, <see cref="math.signbit(double)"/> is one
+        /// <see cref="CMath.copysign(double, double)"/>, <see cref="CMath.signbit(double)"/> is one
         /// of the only two portable ways to examine the sign of NaN. 
         /// </para>
         /// <para>
@@ -460,9 +459,9 @@ namespace C
         public static int signbit(double number)
         {
             if (System.Double.IsNaN(number))
-                return ((System.BitConverter.DoubleToInt64Bits(number) & math.DBL_SGN_MASK) != 0) ? 0 : 1;
+                return ((System.BitConverter.DoubleToInt64Bits(number) & CMath.DBL_SGN_MASK) != 0) ? 0 : 1;
             else
-                return ((System.BitConverter.DoubleToInt64Bits(number) & math.DBL_SGN_MASK) != 0) ? 1 : 0;
+                return ((System.BitConverter.DoubleToInt64Bits(number) & CMath.DBL_SGN_MASK) != 0) ? 1 : 0;
         }
 
         /// <summary>
@@ -473,7 +472,7 @@ namespace C
         /// <remarks>
         /// <para>
         /// The function detects the sign bit of zeroes, infinities, and NaN. Along with
-        /// <see cref="math.copysign(float, float)"/>, <see cref="math.signbit(float)"/> is one
+        /// <see cref="CMath.copysign(float, float)"/>, <see cref="CMath.signbit(float)"/> is one
         /// of the only two portable ways to examine the sign of NaN. 
         /// </para>
         /// <para>
@@ -483,9 +482,9 @@ namespace C
         public static int signbit(float number)
         {
             if (System.Double.IsNaN(number))
-                return ((SingleToInt32Bits(number) & math.FLT_SGN_MASK) != 0) ? 0 : 1;
+                return ((SingleToInt32Bits(number) & CMath.FLT_SGN_MASK) != 0) ? 0 : 1;
             else
-                return ((SingleToInt32Bits(number) & math.FLT_SGN_MASK) != 0) ? 1 : 0;
+                return ((SingleToInt32Bits(number) & CMath.FLT_SGN_MASK) != 0) ? 1 : 0;
         }
 
         #endregion
@@ -514,15 +513,15 @@ namespace C
         /// <para>
         /// </para>
         /// <para>
-        /// The function <see cref="math.frexp(double, out int)"/>, together with its dual, <see cref="math.ldexp(double, int)"/>,
+        /// The function <see cref="CMath.frexp(double, out int)"/>, together with its dual, <see cref="CMath.ldexp(double, int)"/>,
         /// can be used to manipulate the representation of a floating-point number without direct bit manipulations.
         /// </para>
         /// <para>
-        /// The relation of <see cref="math.frexp(double, out int)"/> to <see cref="math.logb(double)"/> and <see cref="math.scalbn(double, int)"/> is:
+        /// The relation of <see cref="CMath.frexp(double, out int)"/> to <see cref="CMath.logb(double)"/> and <see cref="CMath.scalbn(double, int)"/> is:
         /// </para>
         /// <para>
-        /// <c><paramref name="exponent"/> = (<paramref name="number"/> == 0) ? 0 : (int)(1 + <see cref="math.logb(double)">logb</see>(<paramref name="number"/>))</c><br/>
-        /// <c>fraction = <see cref="math.scalbn(double, int)">scalbn</see>(<paramref name="number"/>, -<paramref name="exponent"/>)</c>
+        /// <c><paramref name="exponent"/> = (<paramref name="number"/> == 0) ? 0 : (int)(1 + <see cref="CMath.logb(double)">logb</see>(<paramref name="number"/>))</c><br/>
+        /// <c>fraction = <see cref="CMath.scalbn(double, int)">scalbn</see>(<paramref name="number"/>, -<paramref name="exponent"/>)</c>
         /// </para>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/frexp">frexp</a> in the C standard documentation.
@@ -559,7 +558,7 @@ namespace C
         public static double frexp(double number, out int exponent)
         {
             long bits = System.BitConverter.DoubleToInt64Bits(number);
-            int exp = (int)((bits & math.DBL_EXP_MASK) >> math.DBL_MANT_BITS);
+            int exp = (int)((bits & CMath.DBL_EXP_MASK) >> CMath.DBL_MANT_BITS);
             exponent = 0;
 
             if (exp == 0x7ff || number == 0D)
@@ -573,11 +572,11 @@ namespace C
                     // Subnormal, scale number so that it is in [1, 2).
                     number *= System.BitConverter.Int64BitsToDouble(0x4350000000000000L); // 2^54
                     bits = System.BitConverter.DoubleToInt64Bits(number);
-                    exp = (int)((bits & math.DBL_EXP_MASK) >> math.DBL_MANT_BITS);
+                    exp = (int)((bits & CMath.DBL_EXP_MASK) >> CMath.DBL_MANT_BITS);
                     exponent = exp - 1022 - 54;
                 }
                 // Set exponent to -1 so that number is in [0.5, 1).
-                number = System.BitConverter.Int64BitsToDouble((bits & math.DBL_EXP_CLR_MASK) | 0x3fe0000000000000L);
+                number = System.BitConverter.Int64BitsToDouble((bits & CMath.DBL_EXP_CLR_MASK) | 0x3fe0000000000000L);
             }
 
             return number;
@@ -599,15 +598,15 @@ namespace C
         /// <item>If <paramref name="number"/> is NaN, it is returned, and an undefined value is returned in <paramref name="exponent"/>.</item>
         /// </list>
         /// <para>
-        /// The function <see cref="math.frexp(float, ref int)"/>, together with its dual, <see cref="math.ldexp(float, int)"/>,
+        /// The function <see cref="CMath.frexp(float, ref int)"/>, together with its dual, <see cref="CMath.ldexp(float, int)"/>,
         /// can be used to manipulate the representation of a floating-point number without direct bit manipulations.
         /// </para>
         /// <para>
-        /// The relation of <see cref="math.frexp(float, ref int)"/> to <see cref="math.logb(float)"/> and <see cref="math.scalbn(float, int)"/> is:
+        /// The relation of <see cref="CMath.frexp(float, ref int)"/> to <see cref="CMath.logb(float)"/> and <see cref="CMath.scalbn(float, int)"/> is:
         /// </para>
         /// <para>
-        /// <c><paramref name="exponent"/> = (<paramref name="number"/> == 0) ? 0 : (int)(1 + <see cref="math.logb(float)">logb</see>(<paramref name="number"/>))</c><br/>
-        /// <c>fraction = <see cref="math.scalbn(float, int)">scalbn</see>(<paramref name="number"/>, -<paramref name="exponent"/>)</c>
+        /// <c><paramref name="exponent"/> = (<paramref name="number"/> == 0) ? 0 : (int)(1 + <see cref="CMath.logb(float)">logb</see>(<paramref name="number"/>))</c><br/>
+        /// <c>fraction = <see cref="CMath.scalbn(float, int)">scalbn</see>(<paramref name="number"/>, -<paramref name="exponent"/>)</c>
         /// </para>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/frexp">frexp</a> in the C standard documentation.
@@ -643,8 +642,8 @@ namespace C
         /// </example>
         public static float frexp(float number, ref int exponent)
         {
-            int bits = math.SingleToInt32Bits(number);
-            int exp = (int)((bits & math.FLT_EXP_MASK) >> math.FLT_MANT_BITS);
+            int bits = CMath.SingleToInt32Bits(number);
+            int exp = (int)((bits & CMath.FLT_EXP_MASK) >> CMath.FLT_MANT_BITS);
             exponent = 0;
 
             if (exp == 0xff || number == 0F)
@@ -656,13 +655,13 @@ namespace C
                 if (exp == 0)
                 {
                     // Subnormal, scale number so that it is in [1, 2).
-                    number *= math.Int32BitsToSingle(0x4c000000); // 2^25
-                    bits = math.SingleToInt32Bits(number);
-                    exp = (int)((bits & math.FLT_EXP_MASK) >> math.FLT_MANT_BITS);
+                    number *= CMath.Int32BitsToSingle(0x4c000000); // 2^25
+                    bits = CMath.SingleToInt32Bits(number);
+                    exp = (int)((bits & CMath.FLT_EXP_MASK) >> CMath.FLT_MANT_BITS);
                     exponent = exp - 126 - 25;
                 }
                 // Set exponent to -1 so that number is in [0.5, 1).
-                number = math.Int32BitsToSingle((bits & math.FLT_EXP_CLR_MASK) | 0x3f000000);
+                number = CMath.Int32BitsToSingle((bits & CMath.FLT_EXP_CLR_MASK) | 0x3f000000);
             }
 
             return number;
@@ -683,25 +682,25 @@ namespace C
         /// The unbiased exponent is such that:
         /// </para>
         /// <para>
-        /// <c><paramref name="number"/> = <see cref="math.significand(double)">significand</see>(<paramref name="number"/>) * 2^<see cref="math.ilogb(double)">ilogb</see>(<paramref name="number"/>)</c>.
+        /// <c><paramref name="number"/> = <see cref="CMath.significand(double)">significand</see>(<paramref name="number"/>) * 2^<see cref="CMath.ilogb(double)">ilogb</see>(<paramref name="number"/>)</c>.
         /// </para>
         /// <para>
         /// The return unbiased exponent is valid for all normal and subnormal numbers. Special values are treated as follows.
         /// </para>
         /// <list type="bullet">
-        /// <item>If <paramref name="number"/> is <c>±0</c>, <see cref="math.FP_ILOGB0"/> is returned.</item>
-        /// <item>If <paramref name="number"/> is infinite, <see cref="math.INT_MAX"/> is returned.</item>
-        /// <item>If <paramref name="number"/> is NaN, <see cref="math.FP_ILOGBNAN"/> is returned.</item>
+        /// <item>If <paramref name="number"/> is <c>±0</c>, <see cref="CMath.FP_ILOGB0"/> is returned.</item>
+        /// <item>If <paramref name="number"/> is infinite, <see cref="CMath.INT_MAX"/> is returned.</item>
+        /// <item>If <paramref name="number"/> is NaN, <see cref="CMath.FP_ILOGBNAN"/> is returned.</item>
         /// </list>
         /// <para>
         /// If <paramref name="number"/> is not zero, infinite, or NaN, the value returned is exactly equivalent to
-        /// <c>(<see cref="int"/>)<see cref="math.logb(double)">logb</see>(<paramref name="number"/>)</c>. 
+        /// <c>(<see cref="int"/>)<see cref="CMath.logb(double)">logb</see>(<paramref name="number"/>)</c>. 
         /// </para>
         /// <para>
-        /// The value of the exponent returned by <see cref="math.ilogb(double)"/> is always <c>1</c> less than the exponent retuned by
-        /// <see cref="math.frexp(double, out int)"/> because of the different normalization requirements:
-        /// for <see cref="math.ilogb(double)"/>, the normalized significand is in the interval <c>[1, 2)</c>,
-        /// but for <see cref="math.frexp(double, out int)"/>, the normalized significand is in the interval <c>[0.5, 1)</c>.
+        /// The value of the exponent returned by <see cref="CMath.ilogb(double)"/> is always <c>1</c> less than the exponent retuned by
+        /// <see cref="CMath.frexp(double, out int)"/> because of the different normalization requirements:
+        /// for <see cref="CMath.ilogb(double)"/>, the normalized significand is in the interval <c>[1, 2)</c>,
+        /// but for <see cref="CMath.frexp(double, out int)"/>, the normalized significand is in the interval <c>[0.5, 1)</c>.
         /// </para>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/ilogb">ilogb</a> in the C standard documentation.
@@ -763,15 +762,15 @@ namespace C
         /// </example>
         public static int ilogb(double number)
         {
-            long bits = System.BitConverter.DoubleToInt64Bits(number) & (math.DBL_EXP_MASK | math.DBL_MANT_MASK);
+            long bits = System.BitConverter.DoubleToInt64Bits(number) & (CMath.DBL_EXP_MASK | CMath.DBL_MANT_MASK);
             if (bits == 0L)
-                return math.FP_ILOGB0;
-            int exp = (int)(bits >> math.DBL_MANT_BITS);
+                return CMath.FP_ILOGB0;
+            int exp = (int)(bits >> CMath.DBL_MANT_BITS);
             if (exp == 0x7ff)
-                return (bits & math.DBL_MANT_MASK) == 0L ? math.INT_MAX : math.FP_ILOGBNAN;
+                return (bits & CMath.DBL_MANT_MASK) == 0L ? CMath.INT_MAX : CMath.FP_ILOGBNAN;
             if (exp == 0)
                 exp -= (_leadingZeroesCount(bits) - (DBL_EXP_BITS + 1));
-            return exp - math.DBL_EXP_BIAS;
+            return exp - CMath.DBL_EXP_BIAS;
         }
 
         /// <summary>
@@ -785,25 +784,25 @@ namespace C
         /// The unbiased exponent is such that:
         /// </para>
         /// <para>
-        /// <c><paramref name="number"/> = <see cref="math.significand(float)">significand</see>(<paramref name="number"/>) * 2^<see cref="math.ilogb(float)">ilogb</see>(<paramref name="number"/>)</c>.
+        /// <c><paramref name="number"/> = <see cref="CMath.significand(float)">significand</see>(<paramref name="number"/>) * 2^<see cref="CMath.ilogb(float)">ilogb</see>(<paramref name="number"/>)</c>.
         /// </para>
         /// <para>
         /// The return unbiased exponent is valid for all normal and subnormal numbers. Special values are treated as follows.
         /// </para>
         /// <list type="bullet">
-        /// <item>If <paramref name="number"/> is <c>±0</c>, <see cref="math.FP_ILOGB0"/> is returned.</item>
-        /// <item>If <paramref name="number"/> is infinite, <see cref="math.INT_MAX"/> is returned.</item>
-        /// <item>If <paramref name="number"/> is NaN, <see cref="math.FP_ILOGBNAN"/> is returned.</item>
+        /// <item>If <paramref name="number"/> is <c>±0</c>, <see cref="CMath.FP_ILOGB0"/> is returned.</item>
+        /// <item>If <paramref name="number"/> is infinite, <see cref="CMath.INT_MAX"/> is returned.</item>
+        /// <item>If <paramref name="number"/> is NaN, <see cref="CMath.FP_ILOGBNAN"/> is returned.</item>
         /// </list>
         /// <para>
         /// If <paramref name="number"/> is not zero, infinite, or NaN, the value returned is exactly equivalent to
-        /// <c>(<see cref="int"/>)<see cref="math.logb(float)">logb</see>(<paramref name="number"/>)</c>. 
+        /// <c>(<see cref="int"/>)<see cref="CMath.logb(float)">logb</see>(<paramref name="number"/>)</c>. 
         /// </para>
         /// <para>
-        /// The value of the exponent returned by <see cref="math.ilogb(float)"/> is always <c>1</c> less than the exponent retuned by
-        /// <see cref="math.frexp(float, ref int)"/> because of the different normalization requirements:
-        /// for <see cref="math.ilogb(float)"/>, the normalized significand is in the interval <c>[1, 2)</c>,
-        /// but for <see cref="math.frexp(float, ref int)"/>, the normalized significand is in the interval <c>[0.5, 1)</c>.
+        /// The value of the exponent returned by <see cref="CMath.ilogb(float)"/> is always <c>1</c> less than the exponent retuned by
+        /// <see cref="CMath.frexp(float, ref int)"/> because of the different normalization requirements:
+        /// for <see cref="CMath.ilogb(float)"/>, the normalized significand is in the interval <c>[1, 2)</c>,
+        /// but for <see cref="CMath.frexp(float, ref int)"/>, the normalized significand is in the interval <c>[0.5, 1)</c>.
         /// </para>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/ilogb">ilogb</a> in the C standard documentation.
@@ -865,15 +864,15 @@ namespace C
         /// </example>
         public static int ilogb(float number)
         {
-            int bits = math.SingleToInt32Bits(number) & (math.FLT_EXP_MASK | math.FLT_MANT_MASK);
+            int bits = CMath.SingleToInt32Bits(number) & (CMath.FLT_EXP_MASK | CMath.FLT_MANT_MASK);
             if (bits == 0L)
-                return math.FP_ILOGB0;
-            int exp = (bits >> math.FLT_MANT_BITS);
+                return CMath.FP_ILOGB0;
+            int exp = (bits >> CMath.FLT_MANT_BITS);
             if (exp == 0xff)
-                return (bits & math.FLT_MANT_MASK) == 0L ? math.INT_MAX : math.FP_ILOGBNAN;
+                return (bits & CMath.FLT_MANT_MASK) == 0L ? CMath.INT_MAX : CMath.FP_ILOGBNAN;
             if (exp == 0)
                 exp -= (_leadingZeroesCount(bits) - (FLT_EXP_BITS + 1));
-            return exp - math.FLT_EXP_BIAS;
+            return exp - CMath.FLT_EXP_BIAS;
         }
 
         #endregion
@@ -897,11 +896,11 @@ namespace C
         /// <item>If <paramref name="number"/> is NaN, <see cref="System.Double.NaN"/> is returned.</item>
         /// </list>
         /// <para>
-        /// The function <see cref="math.ldexp(double, int)"/> ("load exponent"), together with its dual, <see cref="math.frexp(double, out int)"/>,
+        /// The function <see cref="CMath.ldexp(double, int)"/> ("load exponent"), together with its dual, <see cref="CMath.frexp(double, out int)"/>,
         /// can be used to manipulate the representation of a floating-point number without direct bit manipulations.
         /// </para>
         /// <para>
-        /// The function <see cref="math.ldexp(double, int)"/> is equivalent to <see cref="math.scalbn(double, int)"/>.
+        /// The function <see cref="CMath.ldexp(double, int)"/> is equivalent to <see cref="CMath.scalbn(double, int)"/>.
         /// </para>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/ldexp">ldexp</a> in the C standard documentation.
@@ -965,11 +964,11 @@ namespace C
         /// <item>If <paramref name="number"/> is NaN, <see cref="System.Single.NaN"/> is returned.</item>
         /// </list>
         /// <para>
-        /// The function <see cref="math.ldexp(float, int)"/> ("load exponent"), together with its dual, <see cref="math.frexp(float, ref int)"/>,
+        /// The function <see cref="CMath.ldexp(float, int)"/> ("load exponent"), together with its dual, <see cref="CMath.frexp(float, ref int)"/>,
         /// can be used to manipulate the representation of a floating-point number without direct bit manipulations.
         /// </para>
         /// <para>
-        /// The function <see cref="math.ldexp(float, int)"/> is equivalent to <see cref="math.scalbn(float, int)"/>.
+        /// The function <see cref="CMath.ldexp(float, int)"/> is equivalent to <see cref="CMath.scalbn(float, int)"/>.
         /// </para>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/ldexp">ldexp</a> in the C standard documentation.
@@ -1031,7 +1030,7 @@ namespace C
         /// The unbiased exponent is such that
         /// </para>
         /// <para>
-        /// <c><paramref name="number"/> = <see cref="math.significand(double)">significand</see>(<paramref name="number"/>) * 2^<see cref="math.logb(double)">logb</see>(<paramref name="number"/>)</c>.
+        /// <c><paramref name="number"/> = <see cref="CMath.significand(double)">significand</see>(<paramref name="number"/>) * 2^<see cref="CMath.logb(double)">logb</see>(<paramref name="number"/>)</c>.
         /// </para>
         /// <para>
         /// The return unbiased exponent is valid for all normal and subnormal numbers. Special values are treated as follows.
@@ -1043,13 +1042,13 @@ namespace C
         /// </list>
         /// <para>
         /// If <paramref name="number"/> is not zero, infinite, or NaN, the value returned is exactly equivalent to
-        /// <c><see cref="math.ilogb(double)">ilogb</see>(<paramref name="number"/>)</c>. 
+        /// <c><see cref="CMath.ilogb(double)">ilogb</see>(<paramref name="number"/>)</c>. 
         /// </para>
         /// <para>
-        /// The value of the exponent returned by <see cref="math.logb(double)"/> is always <c>1</c> less than the exponent retuned by
-        /// <see cref="math.frexp(double, out int)"/> because of the different normalization requirements:
-        /// for <see cref="math.logb(double)"/>, the normalized significand is in the interval <c>[1, 2)</c>,
-        /// but for <see cref="math.frexp(double, out int)"/>, the normalized significand is in the interval <c>[0.5, 1)</c>. 
+        /// The value of the exponent returned by <see cref="CMath.logb(double)"/> is always <c>1</c> less than the exponent retuned by
+        /// <see cref="CMath.frexp(double, out int)"/> because of the different normalization requirements:
+        /// for <see cref="CMath.logb(double)"/>, the normalized significand is in the interval <c>[1, 2)</c>,
+        /// but for <see cref="CMath.frexp(double, out int)"/>, the normalized significand is in the interval <c>[0.5, 1)</c>. 
         /// </para>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/logb">logb</a> in the C standard documentation.
@@ -1111,14 +1110,14 @@ namespace C
         /// </example>
         public static double logb(double number)
         {
-            int exp = math.ilogb(number);
+            int exp = CMath.ilogb(number);
             switch (exp)
             {
-                case math.FP_ILOGB0:
+                case CMath.FP_ILOGB0:
                     return System.Double.NegativeInfinity;
-                case math.FP_ILOGBNAN:
+                case CMath.FP_ILOGBNAN:
                     return System.Double.NaN;
-                case math.INT_MAX:
+                case CMath.INT_MAX:
                     return System.Double.PositiveInfinity;
             }
             return exp;
@@ -1135,7 +1134,7 @@ namespace C
         /// The unbiased exponent is such that
         /// </para>
         /// <para>
-        /// <c><paramref name="number"/> = <see cref="math.significand(float)">significand</see>(<paramref name="number"/>) * 2^<see cref="math.logb(float)">logb</see>(<paramref name="number"/>)</c>.
+        /// <c><paramref name="number"/> = <see cref="CMath.significand(float)">significand</see>(<paramref name="number"/>) * 2^<see cref="CMath.logb(float)">logb</see>(<paramref name="number"/>)</c>.
         /// </para>
         /// <para>
         /// The return unbiased exponent is valid for all normal and subnormal numbers. Special values are treated as follows.
@@ -1147,13 +1146,13 @@ namespace C
         /// </list>
         /// <para>
         /// If <paramref name="number"/> is not zero, infinite, or NaN, the value returned is exactly equivalent to
-        /// <c><see cref="math.ilogb(float)">ilogb</see>(<paramref name="number"/>)</c>. 
+        /// <c><see cref="CMath.ilogb(float)">ilogb</see>(<paramref name="number"/>)</c>. 
         /// </para>
         /// <para>
-        /// The value of the exponent returned by <see cref="math.logb(float)"/> is always <c>1</c> less than the exponent retuned by
-        /// <see cref="math.frexp(float, ref int)"/> because of the different normalization requirements:
-        /// for <see cref="math.logb(float)"/>, the normalized significand is in the interval <c>[1, 2)</c>,
-        /// but for <see cref="math.frexp(float, ref int)"/>, the normalized significand is in the interval <c>[0.5, 1)</c>. 
+        /// The value of the exponent returned by <see cref="CMath.logb(float)"/> is always <c>1</c> less than the exponent retuned by
+        /// <see cref="CMath.frexp(float, ref int)"/> because of the different normalization requirements:
+        /// for <see cref="CMath.logb(float)"/>, the normalized significand is in the interval <c>[1, 2)</c>,
+        /// but for <see cref="CMath.frexp(float, ref int)"/>, the normalized significand is in the interval <c>[0.5, 1)</c>. 
         /// </para>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/logb">logb</a> in the C standard documentation.
@@ -1215,14 +1214,14 @@ namespace C
         /// </example>
         public static float logb(float number)
         {
-            int exp = math.ilogb(number);
+            int exp = CMath.ilogb(number);
             switch (exp)
             {
-                case math.FP_ILOGB0:
+                case CMath.FP_ILOGB0:
                     return System.Single.NegativeInfinity;
-                case math.FP_ILOGBNAN:
+                case CMath.FP_ILOGBNAN:
                     return System.Single.NaN;
-                case math.INT_MAX:
+                case CMath.INT_MAX:
                     return System.Single.PositiveInfinity;
             }
             return exp;
@@ -1249,7 +1248,7 @@ namespace C
         /// <item>If <paramref name="number"/> is NaN, <see cref="System.Double.NaN"/> is returned.</item>
         /// </list>
         /// <para>
-        /// The function <see cref="math.scalbn(double, int)"/> is equivalent to <see cref="math.ldexp(double, int)"/>.
+        /// The function <see cref="CMath.scalbn(double, int)"/> is equivalent to <see cref="CMath.ldexp(double, int)"/>.
         /// </para>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/scalbn">scalbn</a> in the C standard documentation.
@@ -1293,7 +1292,7 @@ namespace C
         /// </example>
         public static double scalbn(double number, int exponent)
         {
-            return math.scalbln(number, exponent);
+            return CMath.scalbln(number, exponent);
         }
 
         /// <summary>
@@ -1313,7 +1312,7 @@ namespace C
         /// <item>If <paramref name="number"/> is NaN, <see cref="System.Single.NaN"/> is returned.</item>
         /// </list>
         /// <para>
-        /// The function <see cref="math.scalbn(float, int)"/> is equivalent to <see cref="math.ldexp(float, int)"/>.
+        /// The function <see cref="CMath.scalbn(float, int)"/> is equivalent to <see cref="CMath.ldexp(float, int)"/>.
         /// </para>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/scalbn">scalbn</a> in the C standard documentation.
@@ -1357,7 +1356,7 @@ namespace C
         /// </example>
         public static float scalbn(float number, int exponent)
         {
-            return math.scalbln(number, exponent);
+            return CMath.scalbln(number, exponent);
         }
 
         #endregion
@@ -1381,7 +1380,7 @@ namespace C
         /// <item>If <paramref name="number"/> is NaN, <see cref="System.Double.NaN"/> is returned.</item>
         /// </list>
         /// <para>
-        /// The function <see cref="math.scalbln(double, long)"/> is equivalent to <see cref="math.ldexp(double, int)"/>.
+        /// The function <see cref="CMath.scalbln(double, long)"/> is equivalent to <see cref="CMath.ldexp(double, int)"/>.
         /// </para>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/scalbn">scalbln</a> in the C standard documentation.
@@ -1426,7 +1425,7 @@ namespace C
         public static double scalbln(double number, long exponent)
         {
             long bits = System.BitConverter.DoubleToInt64Bits(number);
-            int exp = (int)((bits & math.DBL_EXP_MASK) >> math.DBL_MANT_BITS);
+            int exp = (int)((bits & CMath.DBL_EXP_MASK) >> CMath.DBL_MANT_BITS);
             // Check for infinity or NaN.
             if (exp == 0x7ff)
                 return number;
@@ -1434,29 +1433,29 @@ namespace C
             if (exp == 0)
             {
                 // Check for 0.
-                if ((bits & math.DBL_MANT_MASK) == 0)
+                if ((bits & CMath.DBL_MANT_MASK) == 0)
                     return number;
                 // Subnormal, scale number so that it is in [1, 2).
                 number *= System.BitConverter.Int64BitsToDouble(0x4350000000000000L); // 2^54
                 bits = System.BitConverter.DoubleToInt64Bits(number);
-                exp = (int)((bits & math.DBL_EXP_MASK) >> math.DBL_MANT_BITS) - 54;
+                exp = (int)((bits & CMath.DBL_EXP_MASK) >> CMath.DBL_MANT_BITS) - 54;
             }
             // Check for underflow.
             if (exponent < -50000)
-                return math.copysign(0D, number);
+                return CMath.copysign(0D, number);
             // Check for overflow.
             if (exponent > 50000 || (long)exp + exponent > 0x7feL)
-                return math.copysign(System.Double.PositiveInfinity, number);
+                return CMath.copysign(System.Double.PositiveInfinity, number);
             exp += (int)exponent;
             // Check for normal.
             if (exp > 0)
-                return System.BitConverter.Int64BitsToDouble((bits & math.DBL_EXP_CLR_MASK) | ((long)exp << math.DBL_MANT_BITS));
+                return System.BitConverter.Int64BitsToDouble((bits & CMath.DBL_EXP_CLR_MASK) | ((long)exp << CMath.DBL_MANT_BITS));
             // Check for underflow.
             if (exp <= -54)
-                return math.copysign(0D, number);
+                return CMath.copysign(0D, number);
             // Subnormal.
             exp += 54;
-            number = System.BitConverter.Int64BitsToDouble((bits & math.DBL_EXP_CLR_MASK) | ((long)exp << math.DBL_MANT_BITS));
+            number = System.BitConverter.Int64BitsToDouble((bits & CMath.DBL_EXP_CLR_MASK) | ((long)exp << CMath.DBL_MANT_BITS));
             return number * System.BitConverter.Int64BitsToDouble(0x3c90000000000000L); // 2^-54
         }
 
@@ -1477,7 +1476,7 @@ namespace C
         /// <item>If <paramref name="number"/> is NaN, <see cref="System.Single.NaN"/> is returned.</item>
         /// </list>
         /// <para>
-        /// The function <see cref="math.scalbln(float, long)"/> is equivalent to <see cref="math.ldexp(float, int)"/>.
+        /// The function <see cref="CMath.scalbln(float, long)"/> is equivalent to <see cref="CMath.ldexp(float, int)"/>.
         /// </para>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/scalbn">scalbln</a> in the C standard documentation.
@@ -1521,8 +1520,8 @@ namespace C
         /// </example>
         public static float scalbln(float number, long exponent)
         {
-            int bits = math.SingleToInt32Bits(number);
-            int exp = (bits & math.FLT_EXP_MASK) >> math.FLT_MANT_BITS;
+            int bits = CMath.SingleToInt32Bits(number);
+            int exp = (bits & CMath.FLT_EXP_MASK) >> CMath.FLT_MANT_BITS;
             // Check for infinity or NaN.
             if (exp == 0xff)
                 return number;
@@ -1530,30 +1529,30 @@ namespace C
             if (exp == 0)
             {
                 // Check for 0.
-                if ((bits & math.FLT_MANT_MASK) == 0)
+                if ((bits & CMath.FLT_MANT_MASK) == 0)
                     return number;
                 // Subnormal, scale number so that it is in [1, 2).
-                number *= math.Int32BitsToSingle(0x4c000000); // 2^25
-                bits = math.SingleToInt32Bits(number);
-                exp = ((bits & math.FLT_EXP_MASK) >> math.FLT_MANT_BITS) - 25;
+                number *= CMath.Int32BitsToSingle(0x4c000000); // 2^25
+                bits = CMath.SingleToInt32Bits(number);
+                exp = ((bits & CMath.FLT_EXP_MASK) >> CMath.FLT_MANT_BITS) - 25;
             }
             // Check for underflow.
             if (exponent < -50000)
-                return math.copysign(0F, number);
+                return CMath.copysign(0F, number);
             // Check for overflow.
             if (exponent > 50000 || exp + exponent > 0xfe)
-                return math.copysign(System.Single.PositiveInfinity, number);
+                return CMath.copysign(System.Single.PositiveInfinity, number);
             exp += (int)exponent;
             // Check for normal.
             if (exp > 0)
-                return math.Int32BitsToSingle((bits & math.FLT_EXP_CLR_MASK) | (exp << math.FLT_MANT_BITS));
+                return CMath.Int32BitsToSingle((bits & CMath.FLT_EXP_CLR_MASK) | (exp << CMath.FLT_MANT_BITS));
             // Check for underflow.
             if (exp <= -25)
-                return math.copysign(0F, number);
+                return CMath.copysign(0F, number);
             // Subnormal.
             exp += 25;
-            number = math.Int32BitsToSingle((bits & math.FLT_EXP_CLR_MASK) | (exp << math.FLT_MANT_BITS));
-            return number * math.Int32BitsToSingle(0x33000000); // 2^-25
+            number = CMath.Int32BitsToSingle((bits & CMath.FLT_EXP_CLR_MASK) | (exp << CMath.FLT_MANT_BITS));
+            return number * CMath.Int32BitsToSingle(0x33000000); // 2^-25
         }
 
         #endregion
@@ -1572,8 +1571,8 @@ namespace C
         /// <returns>The floating-point number whose absolute value is that of <paramref name="number1"/> with the sign of <paramref name="number2"/>.</returns>
         /// <remarks>
         /// <para>
-        /// <see cref="math.copysign(double, double)"/> is the only portable way to manipulate the sign of a <see cref="System.Double.NaN"/> value (to examine
-        /// the sign of a <see cref="System.Double.NaN"/>, <see cref="math.signbit(double)"/> may also be used). 
+        /// <see cref="CMath.copysign(double, double)"/> is the only portable way to manipulate the sign of a <see cref="System.Double.NaN"/> value (to examine
+        /// the sign of a <see cref="System.Double.NaN"/>, <see cref="CMath.signbit(double)"/> may also be used). 
         /// </para>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/copysign">copysign</a> in the C standard documentation.
@@ -1600,8 +1599,8 @@ namespace C
         public static double copysign(double number1, double number2)
         {
             // If number1 is NaN, we have to store in it the opposite of the sign bit.
-            long sign = (math.signbit(number2) == 1 ? math.DBL_SGN_MASK : 0L) ^ (System.Double.IsNaN(number1) ? math.DBL_SGN_MASK : 0L);
-            return System.BitConverter.Int64BitsToDouble((System.BitConverter.DoubleToInt64Bits(number1) & math.DBL_SGN_CLR_MASK) | sign);
+            long sign = (CMath.signbit(number2) == 1 ? CMath.DBL_SGN_MASK : 0L) ^ (System.Double.IsNaN(number1) ? CMath.DBL_SGN_MASK : 0L);
+            return System.BitConverter.Int64BitsToDouble((System.BitConverter.DoubleToInt64Bits(number1) & CMath.DBL_SGN_CLR_MASK) | sign);
         }
 
         /// <summary>
@@ -1612,8 +1611,8 @@ namespace C
         /// <returns>The floating-point number whose absolute value is that of <paramref name="number1"/> with the sign of <paramref name="number2"/>.</returns>
         /// <remarks>
         /// <para>
-        /// <see cref="math.copysign(float, float)"/> is the only portable way to manipulate the sign of a <see cref="System.Single.NaN"/> value (to examine
-        /// the sign of a <see cref="System.Single.NaN"/>, <see cref="math.signbit(float)"/> may also be used). 
+        /// <see cref="CMath.copysign(float, float)"/> is the only portable way to manipulate the sign of a <see cref="System.Single.NaN"/> value (to examine
+        /// the sign of a <see cref="System.Single.NaN"/>, <see cref="CMath.signbit(float)"/> may also be used). 
         /// </para>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/copysign">copysign</a> in the C standard documentation.
@@ -1640,8 +1639,8 @@ namespace C
         public static float copysign(float number1, float number2)
         {
             // If number1 is NaN, we have to store in it the opposite of the sign bit.
-            int sign = (math.signbit(number2) == 1 ? math.FLT_SGN_MASK : 0) ^ (System.Double.IsNaN(number1) ? math.FLT_SGN_MASK : 0);
-            return math.Int32BitsToSingle((math.SingleToInt32Bits(number1) & math.FLT_SGN_CLR_MASK) | sign);
+            int sign = (CMath.signbit(number2) == 1 ? CMath.FLT_SGN_MASK : 0) ^ (System.Double.IsNaN(number1) ? CMath.FLT_SGN_MASK : 0);
+            return CMath.Int32BitsToSingle((CMath.SingleToInt32Bits(number1) & CMath.FLT_SGN_CLR_MASK) | sign);
         }
 
         #endregion
@@ -1657,8 +1656,8 @@ namespace C
         /// <remarks>
         /// <para>
         /// IEC 60559 recommends that <paramref name="fromNumber"/> be returned whenever <c><paramref name="fromNumber"/> == <paramref name="towardNumber"/></c>.
-        /// These functions return <paramref name="towardNumber"/> instead, which makes the behavior around zero consistent: <c><see cref="math.nextafter(double, double)">nextafter</see>(-0.0, +0.0)</c>
-        /// returns <c>+0.0</c> and <c><see cref="math.nextafter(double, double)">nextafter</see>(+0.0, -0.0)</c> returns <c>–0.0</c>.
+        /// These functions return <paramref name="towardNumber"/> instead, which makes the behavior around zero consistent: <c><see cref="CMath.nextafter(double, double)">nextafter</see>(-0.0, +0.0)</c>
+        /// returns <c>+0.0</c> and <c><see cref="CMath.nextafter(double, double)">nextafter</see>(+0.0, -0.0)</c> returns <c>–0.0</c>.
         /// </para>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/nextafter">nextafter</a> in the C standard documentation.
@@ -1733,8 +1732,8 @@ namespace C
         /// <remarks>
         /// <para>
         /// IEC 60559 recommends that <paramref name="fromNumber"/> be returned whenever <c><paramref name="fromNumber"/> == <paramref name="towardNumber"/></c>.
-        /// These functions return <paramref name="towardNumber"/> instead, which makes the behavior around zero consistent: <c><see cref="math.nextafter(float, float)">nextafter</see>(-0.0, +0.0)</c>
-        /// returns <c>+0.0</c> and <c><see cref="math.nextafter(float, float)">nextafter</see>(+0.0, -0.0)</c> returns <c>–0.0</c>.
+        /// These functions return <paramref name="towardNumber"/> instead, which makes the behavior around zero consistent: <c><see cref="CMath.nextafter(float, float)">nextafter</see>(-0.0, +0.0)</c>
+        /// returns <c>+0.0</c> and <c><see cref="CMath.nextafter(float, float)">nextafter</see>(+0.0, -0.0)</c> returns <c>–0.0</c>.
         /// </para>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/nextafter">nextafter</a> in the C standard documentation.
@@ -1813,11 +1812,11 @@ namespace C
         /// <remarks>
         /// <para>
         /// IEC 60559 recommends that <paramref name="fromNumber"/> be returned whenever <c><paramref name="fromNumber"/> == <paramref name="towardNumber"/></c>.
-        /// These functions return <paramref name="towardNumber"/> instead, which makes the behavior around zero consistent: <c><see cref="math.nexttoward(double, double)">nexttoward</see>(-0.0, +0.0)</c>
-        /// returns <c>+0.0</c> and <c><see cref="math.nexttoward(double, double)">nexttoward</see>(+0.0, -0.0)</c> returns <c>–0.0</c>.
+        /// These functions return <paramref name="towardNumber"/> instead, which makes the behavior around zero consistent: <c><see cref="CMath.nexttoward(double, double)">nexttoward</see>(-0.0, +0.0)</c>
+        /// returns <c>+0.0</c> and <c><see cref="CMath.nexttoward(double, double)">nexttoward</see>(+0.0, -0.0)</c> returns <c>–0.0</c>.
         /// </para>
         /// <para>
-        /// The <see cref="math.nexttoward(double, double)"/> function is equivalent to the <see cref="math.nextafter(double, double)"/> function.
+        /// The <see cref="CMath.nexttoward(double, double)"/> function is equivalent to the <see cref="CMath.nextafter(double, double)"/> function.
         /// </para>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/nextafter">nexttoward</a> in the C standard documentation.
@@ -1825,7 +1824,7 @@ namespace C
         /// </remarks>
         public static double nexttoward(double fromNumber, double towardNumber)
         {
-            return math.nextafter(fromNumber, towardNumber);
+            return CMath.nextafter(fromNumber, towardNumber);
         }
 
         /// <summary>
@@ -1837,11 +1836,11 @@ namespace C
         /// <remarks>
         /// <para>
         /// IEC 60559 recommends that <paramref name="fromNumber"/> be returned whenever <c><paramref name="fromNumber"/> == <paramref name="towardNumber"/></c>.
-        /// These functions return <paramref name="towardNumber"/> instead, which makes the behavior around zero consistent: <c><see cref="math.nexttoward(float, float)">nexttoward</see>(-0.0, +0.0)</c>
-        /// returns <c>+0.0</c> and <c><see cref="math.nexttoward(float, float)">nexttoward</see>(+0.0, -0.0)</c> returns <c>–0.0</c>.
+        /// These functions return <paramref name="towardNumber"/> instead, which makes the behavior around zero consistent: <c><see cref="CMath.nexttoward(float, float)">nexttoward</see>(-0.0, +0.0)</c>
+        /// returns <c>+0.0</c> and <c><see cref="CMath.nexttoward(float, float)">nexttoward</see>(+0.0, -0.0)</c> returns <c>–0.0</c>.
         /// </para>
         /// <para>
-        /// The <see cref="math.nexttoward(float, float)"/> function is equivalent to the <see cref="math.nextafter(float, float)"/> function.
+        /// The <see cref="CMath.nexttoward(float, float)"/> function is equivalent to the <see cref="CMath.nextafter(float, float)"/> function.
         /// </para>
         /// <para>
         /// See <a href="http://en.cppreference.com/w/c/numeric/math/nextafter">nexttoward</a> in the C standard documentation.
@@ -1849,7 +1848,7 @@ namespace C
         /// </remarks>
         public static float nexttoward(float fromNumber, float towardNumber)
         {
-            return math.nextafter(fromNumber, towardNumber);
+            return CMath.nextafter(fromNumber, towardNumber);
         }
 
         #endregion
@@ -1870,36 +1869,36 @@ namespace C
         ///     </listheader>
         ///     <item>
         ///         <term><c>±<see cref="System.Double.NaN"/></c></term>
-        ///         <description><c>2047</c> (<c><see cref="math.DBL_EXP_MAX"/> + 1 + <see cref="math.DBL_EXP_BIAS"/></c>)</description>
+        ///         <description><c>2047</c> (<c><see cref="CMath.DBL_EXP_MAX"/> + 1 + <see cref="CMath.DBL_EXP_BIAS"/></c>)</description>
         ///         <description>N/A</description>
         ///     </item>
         ///     <item>
         ///         <term><c><see cref="System.Double.PositiveInfinity"/></c></term>
-        ///         <description><c>2047</c> (<c><see cref="math.DBL_EXP_MAX"/> + 1 + <see cref="math.DBL_EXP_BIAS"/></c>)</description>
+        ///         <description><c>2047</c> (<c><see cref="CMath.DBL_EXP_MAX"/> + 1 + <see cref="CMath.DBL_EXP_BIAS"/></c>)</description>
         ///         <description>N/A</description>
         ///     </item>
         ///     <item>
         ///         <term><c><see cref="System.Double.NegativeInfinity"/></c></term>
-        ///         <description><c>2047</c> (<c><see cref="math.DBL_EXP_MAX"/> + 1 + <see cref="math.DBL_EXP_BIAS"/></c>)</description>
+        ///         <description><c>2047</c> (<c><see cref="CMath.DBL_EXP_MAX"/> + 1 + <see cref="CMath.DBL_EXP_BIAS"/></c>)</description>
         ///         <description>N/A</description>
         ///     </item>
         ///     <item>
-        ///         <term><c>±<see cref="math.DBL_MAX"/></c></term>
-        ///         <description><c>2046</c> (<c><see cref="math.DBL_EXP_MAX"/> + <see cref="math.DBL_EXP_BIAS"/></c>)</description>
-        ///         <description><c>1023</c> (<c><see cref="math.DBL_EXP_MAX"/></c>)</description>
+        ///         <term><c>±<see cref="CMath.DBL_MAX"/></c></term>
+        ///         <description><c>2046</c> (<c><see cref="CMath.DBL_EXP_MAX"/> + <see cref="CMath.DBL_EXP_BIAS"/></c>)</description>
+        ///         <description><c>1023</c> (<c><see cref="CMath.DBL_EXP_MAX"/></c>)</description>
         ///     </item>
         ///     <item>
-        ///         <term><c>±<see cref="math.DBL_MIN"/></c></term>
-        ///         <description><c>1</c> (<c><see cref="math.DBL_EXP_MIN"/> + <see cref="math.DBL_EXP_BIAS"/></c>)</description>
-        ///         <description><c>-1022</c> (<c><see cref="math.DBL_EXP_MIN"/></c>)</description>
+        ///         <term><c>±<see cref="CMath.DBL_MIN"/></c></term>
+        ///         <description><c>1</c> (<c><see cref="CMath.DBL_EXP_MIN"/> + <see cref="CMath.DBL_EXP_BIAS"/></c>)</description>
+        ///         <description><c>-1022</c> (<c><see cref="CMath.DBL_EXP_MIN"/></c>)</description>
         ///     </item>
         ///     <item>
-        ///         <term><c>±<see cref="math.DBL_DENORM_MAX"/></c></term>
+        ///         <term><c>±<see cref="CMath.DBL_DENORM_MAX"/></c></term>
         ///         <description><c>0</c></description>
         ///         <description><c>0</c></description>
         ///     </item>
         ///     <item>
-        ///         <term><c>±<see cref="math.DBL_DENORM_MIN"/></c></term>
+        ///         <term><c>±<see cref="CMath.DBL_DENORM_MIN"/></c></term>
         ///         <description><c>0</c></description>
         ///         <description><c>0</c></description>
         ///     </item>
@@ -1912,7 +1911,7 @@ namespace C
         /// </remarks>
         public static int exponent(double number)
         {
-            return System.Convert.ToInt32((System.BitConverter.DoubleToInt64Bits(number) & math.DBL_EXP_MASK) >> math.DBL_MANT_BITS);
+            return System.Convert.ToInt32((System.BitConverter.DoubleToInt64Bits(number) & CMath.DBL_EXP_MASK) >> CMath.DBL_MANT_BITS);
         }
 
         /// <summary>
@@ -1929,36 +1928,36 @@ namespace C
         ///     </listheader>
         ///     <item>
         ///         <term><c>±<see cref="System.Single.NaN"/></c></term>
-        ///         <description><c>255</c> (<c><see cref="math.FLT_EXP_MAX"/> + 1 + <see cref="math.FLT_EXP_BIAS"/></c>)</description>
+        ///         <description><c>255</c> (<c><see cref="CMath.FLT_EXP_MAX"/> + 1 + <see cref="CMath.FLT_EXP_BIAS"/></c>)</description>
         ///         <description>N/A</description>
         ///     </item>
         ///     <item>
         ///         <term><c><see cref="System.Single.PositiveInfinity"/></c></term>
-        ///         <description><c>255</c> (<c><see cref="math.FLT_EXP_MAX"/> + 1 + <see cref="math.FLT_EXP_BIAS"/></c>)</description>
+        ///         <description><c>255</c> (<c><see cref="CMath.FLT_EXP_MAX"/> + 1 + <see cref="CMath.FLT_EXP_BIAS"/></c>)</description>
         ///         <description>N/A</description>
         ///     </item>
         ///     <item>
         ///         <term><c><see cref="System.Single.NegativeInfinity"/></c></term>
-        ///         <description><c>255</c> (<c><see cref="math.FLT_EXP_MAX"/> + 1 + <see cref="math.FLT_EXP_BIAS"/></c>)</description>
+        ///         <description><c>255</c> (<c><see cref="CMath.FLT_EXP_MAX"/> + 1 + <see cref="CMath.FLT_EXP_BIAS"/></c>)</description>
         ///         <description>N/A</description>
         ///     </item>
         ///     <item>
-        ///         <term><c>±<see cref="math.FLT_MAX"/></c></term>
-        ///         <description><c>255</c> (<c><see cref="math.FLT_EXP_MAX"/> + 1 + <see cref="math.FLT_EXP_BIAS"/></c>)</description>
-        ///         <description><c>128</c> (<c><see cref="math.FLT_EXP_MAX"/> + 1</c>)</description>
+        ///         <term><c>±<see cref="CMath.FLT_MAX"/></c></term>
+        ///         <description><c>255</c> (<c><see cref="CMath.FLT_EXP_MAX"/> + 1 + <see cref="CMath.FLT_EXP_BIAS"/></c>)</description>
+        ///         <description><c>128</c> (<c><see cref="CMath.FLT_EXP_MAX"/> + 1</c>)</description>
         ///     </item>
         ///     <item>
-        ///         <term><c>±<see cref="math.FLT_MIN"/></c></term>
-        ///         <description><c>255</c> (<c><see cref="math.FLT_EXP_MAX"/> + 1 + <see cref="math.FLT_EXP_BIAS"/></c>)</description>
-        ///         <description><c>-127</c> (<c><see cref="math.FLT_EXP_MAX"/> + 1</c>)</description>
+        ///         <term><c>±<see cref="CMath.FLT_MIN"/></c></term>
+        ///         <description><c>255</c> (<c><see cref="CMath.FLT_EXP_MAX"/> + 1 + <see cref="CMath.FLT_EXP_BIAS"/></c>)</description>
+        ///         <description><c>-127</c> (<c><see cref="CMath.FLT_EXP_MAX"/> + 1</c>)</description>
         ///     </item>
         ///     <item>
-        ///         <term><c>±<see cref="math.FLT_DENORM_MAX"/></c></term>
+        ///         <term><c>±<see cref="CMath.FLT_DENORM_MAX"/></c></term>
         ///         <description><c>0</c></description>
         ///         <description><c>0</c></description>
         ///     </item>
         ///     <item>
-        ///         <term><c>±<see cref="math.FLT_DENORM_MIN"/></c></term>
+        ///         <term><c>±<see cref="CMath.FLT_DENORM_MIN"/></c></term>
         ///         <description><c>0</c></description>
         ///         <description><c>0</c></description>
         ///     </item>
@@ -1971,7 +1970,7 @@ namespace C
         /// </remarks>
         public static int exponent(float number)
         {
-            return System.Convert.ToInt32((math.SingleToInt32Bits(number) & math.FLT_EXP_MASK) >> math.FLT_MANT_BITS);
+            return System.Convert.ToInt32((CMath.SingleToInt32Bits(number) & CMath.FLT_EXP_MASK) >> CMath.FLT_MANT_BITS);
         }
 
         #endregion
@@ -1986,7 +1985,7 @@ namespace C
         /// <remarks></remarks>
         public static long mantissa(double number)
         {
-            return System.BitConverter.DoubleToInt64Bits(number) & math.DBL_MANT_MASK;
+            return System.BitConverter.DoubleToInt64Bits(number) & CMath.DBL_MANT_MASK;
         }
 
         /// <summary>
@@ -1997,7 +1996,7 @@ namespace C
         /// <remarks></remarks>
         public static int mantissa(float number)
         {
-            return math.SingleToInt32Bits(number) & math.FLT_MANT_MASK;
+            return CMath.SingleToInt32Bits(number) & CMath.FLT_MANT_MASK;
         }
 
         #endregion
@@ -2012,7 +2011,7 @@ namespace C
         /// <remarks>
         /// <para>
         /// The significand is a number in the interval <c>[1, 2)</c> so that 
-        /// <c><paramref name="number"/> = <see cref="math.significand(double)">significand</see>(<paramref name="number"/>) * 2^<see cref="math.logb(double)">logb</see>(<paramref name="number"/>)</c>.
+        /// <c><paramref name="number"/> = <see cref="CMath.significand(double)">significand</see>(<paramref name="number"/>) * 2^<see cref="CMath.logb(double)">logb</see>(<paramref name="number"/>)</c>.
         /// If <paramref name="number"/> is subnormal, it is normalized so that the significand falls in the interval <c>[1, 2)</c>.
         /// </para>
         /// </remarks>
@@ -2044,9 +2043,9 @@ namespace C
             if (System.Double.IsNaN(number) || System.Double.IsInfinity(number))
                 return number;
             // Get the mantissa bits.
-            long mantissa = math.mantissa(number);
+            long mantissa = CMath.mantissa(number);
             // If the unbiased exponent is 0, we have either 0 or a subnormal number.
-            if (math.exponent(number) == 0)
+            if (CMath.exponent(number) == 0)
             {
                 // If number is zero, return zero.
                 if (mantissa == 0L)
@@ -2054,14 +2053,14 @@ namespace C
                 // Otherwise, shift the mantissa to the left until its first 1-bit makes
                 // the mantissa larger than or equal to the mantissa mask, and reset the
                 // the leading 1 bit. This yields a "normalized" number.
-                while (mantissa < math.DBL_MANT_MASK)
+                while (mantissa < CMath.DBL_MANT_MASK)
                 {
                     mantissa <<= 1;
                 }
-                mantissa = mantissa & math.DBL_MANT_MASK;
+                mantissa = mantissa & CMath.DBL_MANT_MASK;
             }
             // Build new double with exponent 0 and the normalized mantissa.
-            return System.BitConverter.Int64BitsToDouble((System.Convert.ToInt64(math.DBL_EXP_BIAS) << math.DBL_MANT_BITS) | mantissa | (math.signbit(number) == 1 ? math.DBL_SGN_MASK : 0L));
+            return System.BitConverter.Int64BitsToDouble((System.Convert.ToInt64(CMath.DBL_EXP_BIAS) << CMath.DBL_MANT_BITS) | mantissa | (CMath.signbit(number) == 1 ? CMath.DBL_SGN_MASK : 0L));
         }
 
         /// <summary>
@@ -2072,7 +2071,7 @@ namespace C
         /// <remarks>
         /// <para>
         /// The significand is a number in the interval <c>[1, 2)</c> so that 
-        /// <c><paramref name="number"/> = <see cref="math.significand(float)"/>(<paramref name="number"/>) * 2^<see cref="math.logb(float)"/>(<paramref name="number"/>)</c>.
+        /// <c><paramref name="number"/> = <see cref="CMath.significand(float)"/>(<paramref name="number"/>) * 2^<see cref="CMath.logb(float)"/>(<paramref name="number"/>)</c>.
         /// If <paramref name="number"/> is subnormal, it is normalized so that the significand falls in the interval <c>[1, 2)</c>.
         /// </para>
         /// </remarks>
@@ -2104,9 +2103,9 @@ namespace C
             if (System.Single.IsNaN(number) || System.Single.IsInfinity(number))
                 return number;
             // Get the mantissa bits.
-            int mantissa = math.mantissa(number);
+            int mantissa = CMath.mantissa(number);
             // If the unbiased exponent is 0, we have either 0 or a subnormal number.
-            if (math.exponent(number) == 0)
+            if (CMath.exponent(number) == 0)
             {
                 // If number is zero, return zero.
                 if (mantissa == 0F)
@@ -2114,14 +2113,14 @@ namespace C
                 // Otherwise, shift the mantissa to the left until its first 1-bit makes
                 // the mantissa larger than or equal to the mantissa mask, and reset the
                 // the leading 1 bit. This yields a "normalized" number.
-                while (mantissa < math.FLT_MANT_MASK)
+                while (mantissa < CMath.FLT_MANT_MASK)
                 {
                     mantissa <<= 1;
                 }
-                mantissa = mantissa & math.FLT_MANT_MASK;
+                mantissa = mantissa & CMath.FLT_MANT_MASK;
             }
             // Build new float with exponent 0 and the normalized mantissa.
-            return math.Int32BitsToSingle((System.Convert.ToInt32(math.FLT_EXP_BIAS) << math.FLT_MANT_BITS) | mantissa | (math.signbit(number) == 1 ? math.FLT_SGN_MASK : 0));
+            return CMath.Int32BitsToSingle((System.Convert.ToInt32(CMath.FLT_EXP_BIAS) << CMath.FLT_MANT_BITS) | mantissa | (CMath.signbit(number) == 1 ? CMath.FLT_SGN_MASK : 0));
         }
 
         #endregion
