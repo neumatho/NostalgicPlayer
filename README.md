@@ -5,7 +5,9 @@ NostalgicPlayer is a program that can play these modules. NostalgicPlayer is a W
 
 Please enjoy this program, and support the development by giving any feedback (bug reports and flattering comments :-))
 
-You can find an installation package on Microsoft Store, just search after NostalgicPlayer.
+# Download
+
+If you want to try it out, you can install the player from Microsoft Store <a href="https://apps.microsoft.com/store/detail/nostalgicplayer/9N1TNGT8PKC8">here</a>. If you don't have any modules by yourself, check out my <a href="https://nostalgicplayer.dk">homepage</a>. There you can find my collection of modules in all supported formats. When new formats are supported, the module list will grow.
 
 # License
 
