@@ -85,7 +85,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 							currentPlayer.SubSongChanged += Player_SubSongChanged;
 
 							// Initialize module information
-							StaticModuleInformation = new ModuleInfoStatic(loader.PlayerAgentInfo, loader.ConverterAgentInfo, currentPlayer.ModuleName.Trim(), FindAuthor(), currentPlayer.Comment, currentPlayer.CommentFont, currentPlayer.Lyrics, currentPlayer.LyricsFont, loader.ModuleFormat, loader.PlayerName, currentPlayer.ModuleChannelCount, currentPlayer.VirtualChannelCount, loader.CrunchedSize, loader.ModuleSize, currentPlayer.SupportFlags, currentPlayer.SubSongs.Number, currentPlayer.Instruments?.ToArray(), currentPlayer.Samples?.ToArray());
+							StaticModuleInformation = new ModuleInfoStatic(loader.PlayerAgentInfo, loader.ConverterAgentInfo, currentPlayer.ModuleName.Trim(), FindAuthor(), currentPlayer.Comment, currentPlayer.CommentFont, currentPlayer.Lyrics, currentPlayer.LyricsFont, loader.ModuleFormat, loader.ModuleFormatDescription, loader.PlayerName, loader.PlayerDescription, currentPlayer.ModuleChannelCount, currentPlayer.VirtualChannelCount, loader.CrunchedSize, loader.ModuleSize, currentPlayer.SupportFlags, currentPlayer.SubSongs.Number, currentPlayer.Instruments?.ToArray(), currentPlayer.Samples?.ToArray());
 
 							// Initialize the mixer
 							soundStream = new MixerStream();

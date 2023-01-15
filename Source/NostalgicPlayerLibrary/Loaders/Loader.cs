@@ -174,9 +174,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 							FileName = fileInfo.FileName;
 
 							PlayerName = PlayerAgentInfo.AgentName;
+							PlayerDescription = PlayerAgentInfo.AgentDescription;
+
 							ModuleFormat = convertInfo != null ? string.IsNullOrEmpty(convertInfo.OriginalFormat) ? convertInfo.Agent.TypeName : convertInfo.OriginalFormat : string.IsNullOrEmpty(PlayerAgentInfo.TypeName) ? PlayerAgentInfo.AgentName : PlayerAgentInfo.TypeName;
 							if (!string.IsNullOrEmpty(PlayerAgent.ExtraFormatInfo))
 								ModuleFormat += $" ({PlayerAgent.ExtraFormatInfo})";
+
+							ModuleFormatDescription = convertInfo != null ? convertInfo.Agent.TypeDescription : string.IsNullOrEmpty(PlayerAgentInfo.TypeName) ? PlayerAgentInfo.AgentDescription : PlayerAgentInfo.TypeDescription;
 
 							ConverterAgentInfo = convertInfo?.Agent;
 						}
@@ -249,7 +253,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 
 			ModuleSize = 0;
 			ModuleFormat = string.Empty;
+			ModuleFormatDescription = string.Empty;
 			PlayerName = string.Empty;
+			PlayerDescription = string.Empty;
 		}
 
 
@@ -328,10 +334,34 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 
 		/********************************************************************/
 		/// <summary>
+		/// Return the module format description
+		/// </summary>
+		/********************************************************************/
+		internal string ModuleFormatDescription
+		{
+			get; private set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the name of the player
 		/// </summary>
 		/********************************************************************/
 		internal string PlayerName
+		{
+			get; private set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the description of the player
+		/// </summary>
+		/********************************************************************/
+		internal string PlayerDescription
 		{
 			get; private set;
 		}
