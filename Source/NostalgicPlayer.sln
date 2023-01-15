@@ -121,6 +121,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DeltaMusic20", "Agents\Play
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DigiBoosterPro", "Agents\Players\DigiBoosterPro\DigiBoosterPro.csproj", "{F0ED0E23-8921-4B9A-82CE-E7B3DD551A52}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigiBooster", "Agents\Players\DigiBooster\DigiBooster.csproj", "{0500048E-7376-4CDE-B601-AE3D35A6864C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -626,6 +628,16 @@ Global
 		{F0ED0E23-8921-4B9A-82CE-E7B3DD551A52}.Release|x64.Build.0 = Release|Any CPU
 		{F0ED0E23-8921-4B9A-82CE-E7B3DD551A52}.Release|x86.ActiveCfg = Release|Any CPU
 		{F0ED0E23-8921-4B9A-82CE-E7B3DD551A52}.Release|x86.Build.0 = Release|Any CPU
+		{0500048E-7376-4CDE-B601-AE3D35A6864C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0500048E-7376-4CDE-B601-AE3D35A6864C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0500048E-7376-4CDE-B601-AE3D35A6864C}.Debug|x64.Build.0 = Debug|Any CPU
+		{0500048E-7376-4CDE-B601-AE3D35A6864C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0500048E-7376-4CDE-B601-AE3D35A6864C}.Debug|x86.Build.0 = Debug|Any CPU
+		{0500048E-7376-4CDE-B601-AE3D35A6864C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0500048E-7376-4CDE-B601-AE3D35A6864C}.Release|x64.ActiveCfg = Release|Any CPU
+		{0500048E-7376-4CDE-B601-AE3D35A6864C}.Release|x64.Build.0 = Release|Any CPU
+		{0500048E-7376-4CDE-B601-AE3D35A6864C}.Release|x86.ActiveCfg = Release|Any CPU
+		{0500048E-7376-4CDE-B601-AE3D35A6864C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -684,6 +696,7 @@ Global
 		{7CA8C0A6-C116-4E0C-AF9F-415E0D288773} = {76C2DEA4-D72F-4931-9ACA-B2DDC33BDE98}
 		{F48BFE96-C072-4FB7-82A1-94407B81F1B3} = {76C2DEA4-D72F-4931-9ACA-B2DDC33BDE98}
 		{F0ED0E23-8921-4B9A-82CE-E7B3DD551A52} = {76C2DEA4-D72F-4931-9ACA-B2DDC33BDE98}
+		{0500048E-7376-4CDE-B601-AE3D35A6864C} = {76C2DEA4-D72F-4931-9ACA-B2DDC33BDE98}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EA2EFEF5-9B3B-46F2-BE4B-077ED6CADA79}

@@ -968,6 +968,14 @@
             <uap:DisplayName>DigiBooster Pro 2.x/3.x</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="digifile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-digi">.digi</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>DigiBooster 1.x</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
