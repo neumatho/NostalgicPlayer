@@ -14,6 +14,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.GuiKit.Components;
+using Polycode.NostalgicPlayer.GuiKit.Extensions;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 
@@ -224,10 +225,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_AUTHOR, val);
 
 				int row = moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULEFORMAT, staticInfo.ModuleFormat);
-				moduleInfoInfoDataGridView.Rows[row].Cells[1] = new KryptonDataGridViewTextBoxCell { Value = moduleInfoInfoDataGridView.Rows[row].Cells[1].Value, ToolTipText = staticInfo.ModuleFormatDescription };
+				moduleInfoInfoDataGridView.Rows[row].Cells[1] = new KryptonDataGridViewTextBoxCell { Value = moduleInfoInfoDataGridView.Rows[row].Cells[1].Value, ToolTipText = string.Join("\r\n", staticInfo.ModuleFormatDescription.SplitIntoLines(moduleInfoInfoDataGridView.Handle, 400, moduleInfoInfoDataGridView.Font)) };
 
 				row = moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_ACTIVEPLAYER, staticInfo.PlayerName);
-				moduleInfoInfoDataGridView.Rows[row].Cells[1] = new KryptonDataGridViewTextBoxCell { Value = moduleInfoInfoDataGridView.Rows[row].Cells[1].Value, ToolTipText = staticInfo.PlayerDescription };
+				moduleInfoInfoDataGridView.Rows[row].Cells[1] = new KryptonDataGridViewTextBoxCell { Value = moduleInfoInfoDataGridView.Rows[row].Cells[1].Value, ToolTipText = string.Join("\r\n", staticInfo.PlayerDescription.SplitIntoLines(moduleInfoInfoDataGridView.Handle, 400, moduleInfoInfoDataGridView.Font)) };
 
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_CHANNELS, staticInfo.Channels);
 
