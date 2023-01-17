@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 	{
 		private static readonly Dictionary<Guid, ModuleType> moduleTypeLookup = new Dictionary<Guid, ModuleType>
 		{
-			{ OctaMed.Agent1Id, ModuleType.Med },
+			{ OctaMed.Agent1Id, ModuleType.Med210_MMD0 },
 			{ OctaMed.Agent2Id, ModuleType.OctaMed },
 			{ OctaMed.Agent3Id, ModuleType.OctaMed_Professional4 },
 			{ OctaMed.Agent4Id, ModuleType.OctaMed_Professional6 },
@@ -1713,7 +1713,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 				if (((MmdFlag)moduleStream.Read_UINT8() & MmdFlag.EightChannel) != 0)
 					return ModuleType.OctaMed;
 
-				return ModuleType.Med;
+				return ModuleType.Med210_MMD0;
 			}
 
 			if (markVersion == '1')

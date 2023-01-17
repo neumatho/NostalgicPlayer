@@ -78,7 +78,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed {
         ///   Looks up a localized string similar to Original player by Teijo Kinnunen.
         ///Converted to C# by Thomas Neumann.
         ///
-        ///This player plays 4 channels modules created with MED v2.1 to MED v3.22. This is the same as 4 channels MMD0 files..
+        ///This player plays 4 channels modules created with MED v2.10 to MED v3.22. This is the same as 4 channels MMD0 files..
         /// </summary>
         internal static string IDS_MED_DESCRIPTION_AGENT1 {
             get {
@@ -275,7 +275,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MED.
+        ///   Looks up a localized string similar to MED 2.10 MMD0.
         /// </summary>
         internal static string IDS_MED_NAME_AGENT1 {
             get {

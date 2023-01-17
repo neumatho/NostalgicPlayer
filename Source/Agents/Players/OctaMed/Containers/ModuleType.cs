@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers
 	internal enum ModuleType
 	{
 		Unknown = 0,
-		Med,
+		Med210_MMD0,
 		OctaMed,
 		OctaMed_Professional4,
 		OctaMed_Professional6,

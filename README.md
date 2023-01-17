@@ -87,7 +87,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Kefrens Sound Machine | .kms | ProWizard | ModTracker |
 | Laxity Tracker | .lax / .unic2 | ProWizard | ModTracker |
 | Master SoundTracker 1.0 | .mod | | ModTracker |
-| MED | .med / .mmd0 / .md0 | | OctaMED |
+| MED 2.10 MMD0 | .med / .mmd0 / .md0 | | OctaMED |
 | MED Packer | .med / .mmdc | | OctaMED |
 | Mod's Grave | .wow | | ModTracker |
 | Module-Patterncompressor | .pmd3 | ProWizard | ModTracker |
