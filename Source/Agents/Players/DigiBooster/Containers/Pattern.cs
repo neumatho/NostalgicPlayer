@@ -6,7 +6,7 @@
 namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster.Containers
 {
 	/// <summary>
-	/// Constains a single pattern
+	/// Contains a single pattern
 	/// </summary>
 	internal class Pattern
 	{

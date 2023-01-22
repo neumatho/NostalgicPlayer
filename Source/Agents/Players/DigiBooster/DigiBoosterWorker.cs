@@ -265,9 +265,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 				{
 					if (samples[i].Length != 0)
 					{
-						samples[i].SampleData = moduleStream.ReadSampleData(i, (int)samples[i].Length, out _);
+						samples[i].SampleData = moduleStream.ReadSampleData(i, (int)samples[i].Length, out int readBytes);
 
-						if (moduleStream.EndOfStream)
+						if (readBytes != samples[i].Length)
 						{
 							errorMessage = Resources.IDS_DIGI_ERR_LOADING_SAMPLES;
 							return AgentResult.Error;

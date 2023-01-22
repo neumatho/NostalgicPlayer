@@ -1505,7 +1505,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 									sampleInfo.MultiOctaveSamples[oct + 1].Sample[1] = sample.GetPlayBuffer(1, note, ref repeat, ref repLen);
 							}
 
-							// OctaMed only have 6 octaves, so the first the last will use the same buffer
+							// OctaMed only have 6 octaves, so the first and last will use the same buffer
 							sampleInfo.MultiOctaveSamples[0] = sampleInfo.MultiOctaveSamples[1];
 							sampleInfo.MultiOctaveSamples[7] = sampleInfo.MultiOctaveSamples[6];
 
