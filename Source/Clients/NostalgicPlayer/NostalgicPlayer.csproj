@@ -75,6 +75,7 @@
     <ProjectReference Include="..\..\Agents\Players\FutureComposer\FutureComposer.csproj" />
     <ProjectReference Include="..\..\Agents\Players\GameMusicCreator\GameMusicCreator.csproj" />
     <ProjectReference Include="..\..\Agents\Players\JamCracker\JamCracker.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\Med\Med.csproj" />
     <ProjectReference Include="..\..\Agents\Players\MikMod\MikMod.csproj" />
     <ProjectReference Include="..\..\Agents\Players\ModTracker\ModTracker.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Mpg123\Mpg123.csproj" />

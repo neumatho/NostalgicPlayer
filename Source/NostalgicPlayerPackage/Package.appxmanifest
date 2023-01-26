@@ -336,7 +336,7 @@
               <uap:FileType ContentType="audio/x-octamed">.md2</uap:FileType>
               <uap:FileType ContentType="audio/x-octamed">.md3</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>OctaMED</uap:DisplayName>
+            <uap:DisplayName>MED / OctaMED</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
