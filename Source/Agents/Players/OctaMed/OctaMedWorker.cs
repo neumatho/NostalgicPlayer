@@ -273,7 +273,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 						song0 = new Mmd0SongData();
 						ReadMmd0Song(moduleStream, song0);
 
-						if (song0.SongLen > 255)
+						if (song0.SongLen > 256)
 						{
 							errorMessage = Resources.IDS_MED_ERR_LOADING_HEADER;
 							Cleanup();
@@ -827,6 +827,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 					}
 
 					// Read ExpData
+					bool hasLoopBeenSet = false;
+
 					if (currHdr.ExpDataOffs != 0)
 					{
 						moduleStream.Seek(currHdr.ExpDataOffs, SeekOrigin.Begin);
@@ -873,6 +875,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 									if ((currIe.InstrFlags & InstrFlag.PingPong) != 0)
 										ci.flags |= Instr.Flag.PingPong;
 								}
+
+								hasLoopBeenSet = true;
 							}
 							else
 							{
@@ -1133,10 +1137,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 						moduleStream.Seek(currExp.NextHdr, SeekOrigin.Begin);
 						currHdr = hdrX;		// Don't overwrite the first MMD header
 					}
-					else
+
+					if (!hasLoopBeenSet)
 					{
-						if (sg.CurrInstr().GetRepeatLen() > 2)
-							sg.CurrInstr().flags = Instr.Flag.Loop;
+						for (uint cnt = 0; cnt < Constants.MaxInstr; cnt++)
+						{
+							Instr ci = sg.GetInstr(cnt);
+							if (ci != null)
+							{
+								if (ci.GetRepeatLen() > 2)
+									ci.flags = Instr.Flag.Loop;
+							}
+						}
 					}
 				}
 				while (hdr0.ExtraSongs-- != 0);
