@@ -251,7 +251,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 				{
 					foreach (MultiOctaveInfo info in value)
 					{
-						if ((info.Sample.GetType() != typeof(sbyte[][])) && (info.Sample.GetType() != typeof(short[][])))
+						if ((info.Sample != null) && (info.Sample.GetType() != typeof(sbyte[][])) && (info.Sample.GetType() != typeof(short[][])))
 							throw new ArgumentException("Type of array must be either sbyte[][] or short[][]", nameof(value));
 					}
 				}
@@ -279,8 +279,11 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 			set
 			{
-				if ((value.GetType() != typeof(sbyte[][][])) && (value.GetType() != typeof(short[][][])))
-					throw new ArgumentException("Type of array must be either sbyte[][][] or short[][][]", nameof(value));
+				if (value != null)
+				{
+					if ((value.GetType() != typeof(sbyte[][][])) && (value.GetType() != typeof(short[][][])))
+						throw new ArgumentException("Type of array must be either sbyte[][][] or short[][][]", nameof(value));
+				}
 
 				multiOctaveAllSamples = value;
 			}
