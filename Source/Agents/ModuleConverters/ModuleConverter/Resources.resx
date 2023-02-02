@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="IDS_ERR_LOADING_EXTERNAL_SAMPLE" xml:space="preserve">
+    <value>Can't load external sample with name {0}. Make sure you have an Instruments, Synthsounds and Hybrids folders in the same folder as the module, which have all needed samples and synthsounds</value>
+  </data>
   <data name="IDS_ERR_LOADING_HEADER" xml:space="preserve">
     <value>Can't read the module header</value>
   </data>
@@ -144,7 +147,8 @@ Current version can convert these formats:
 
 Fred Editor (Final) -&gt; Fred Editor
 Future Composer 1.0 - 1.3 -&gt; Future Composer 1.4
-SoundFX 1-x &gt; SoundFX 2.0</value>
+SoundFX 1-x &gt; SoundFX 2.0
+MED 2.10 MED4 -&gt; MED 2.10 MMD0</value>
   </data>
   <data name="IDS_MODCONV_DESCRIPTION_AGENT1" xml:space="preserve">
     <value>Original player by SuperSero.
@@ -166,6 +170,12 @@ Previously this music format has been known as 'Fredmon' or 'Fred Monitor' which
 
 The modules contain the player in 68000 assembler in the beginning of the files, but this player will extract the music data and only use that.</value>
   </data>
+  <data name="IDS_MODCONV_DESCRIPTION_AGENT4" xml:space="preserve">
+    <value>Original player by Teijo Kinnunen.
+Converted to C# by Thomas Neumann.
+
+This player plays modules created with MED v2.10 to MED v3.22. This format have both a real module format, where song data and samples are combined into a single file and song+sample format. The player can load both types of files. For song+sample format, you need to have the samples beside the song files. The player will load the samples from a folder named "Instruments", synth sounds from a folder named "Synthsounds" and hybrid samples in a folder named "Hybrids". All folders should be placed in the same folder as the song files.</value>
+  </data>
   <data name="IDS_MODCONV_NAME" xml:space="preserve">
     <value>Module Converter</value>
   </data>
@@ -177,5 +187,8 @@ The modules contain the player in 68000 assembler in the beginning of the files,
   </data>
   <data name="IDS_MODCONV_NAME_AGENT3" xml:space="preserve">
     <value>Fred Editor (Final)</value>
+  </data>
+  <data name="IDS_MODCONV_NAME_AGENT4" xml:space="preserve">
+    <value>MED 2.10 MED4</value>
   </data>
 </root>

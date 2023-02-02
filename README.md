@@ -89,6 +89,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Master SoundTracker 1.0 | .mod | | ModTracker |
 | MED 1.12 | .med | | MED |
 | MED 2.00 | .med | | MED |
+| MED 2.10 MED4 | .med | Module Converter | OctaMED |
 | MED 2.10 MMD0 | .med / .mmd0 / .md0 | | OctaMED |
 | MED Packer | .med / .mmdc | | OctaMED |
 | Mod's Grave | .wow | | ModTracker |

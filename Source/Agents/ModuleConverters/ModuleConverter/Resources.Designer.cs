@@ -61,6 +61,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t load external sample with name {0}. Make sure you have an Instruments, Synthsounds and Hybrids folders in the same folder as the module, which have all needed samples and synthsounds.
+        /// </summary>
+        internal static string IDS_ERR_LOADING_EXTERNAL_SAMPLE {
+            get {
+                return ResourceManager.GetString("IDS_ERR_LOADING_EXTERNAL_SAMPLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the module header.
         /// </summary>
         internal static string IDS_ERR_LOADING_HEADER {
@@ -123,7 +132,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         ///
         ///Fred Editor (Final) -&gt; Fred Editor
         ///Future Composer 1.0 - 1.3 -&gt; Future Composer 1.4
-        ///SoundFX 1-x &gt; SoundFX 2.0.
+        ///SoundFX 1-x &gt; SoundFX 2.0
+        ///MED 2.10 MED4 -&gt; MED 2.10 MMD0.
         /// </summary>
         internal static string IDS_MODCONV_DESCRIPTION {
             get {
@@ -170,6 +180,18 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Original player by Teijo Kinnunen.
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///This player plays modules created with MED v2.10 to MED v3.22. This format have both a real module format, where song data and samples are combined into a single file and song+sample format. The player can load both types of files. For song+sample format, you need to have the samples beside the song files. The player will load the samples from a folder named &quot;Instruments&quot;, synth sounds from a folder named &quot;Synthsounds&quot; and hybrid samp [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string IDS_MODCONV_DESCRIPTION_AGENT4 {
+            get {
+                return ResourceManager.GetString("IDS_MODCONV_DESCRIPTION_AGENT4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Module Converter.
         /// </summary>
         internal static string IDS_MODCONV_NAME {
@@ -202,6 +224,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         internal static string IDS_MODCONV_NAME_AGENT3 {
             get {
                 return ResourceManager.GetString("IDS_MODCONV_NAME_AGENT3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MED 2.10 MED4.
+        /// </summary>
+        internal static string IDS_MODCONV_NAME_AGENT4 {
+            get {
+                return ResourceManager.GetString("IDS_MODCONV_NAME_AGENT4", resourceCulture);
             }
         }
     }
