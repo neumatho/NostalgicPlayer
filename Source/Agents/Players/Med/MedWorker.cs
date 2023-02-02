@@ -12,6 +12,7 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.Med
 {
@@ -962,14 +963,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 
 				if ((currentLineMask & 0x80000000) != 0)
 				{
-					ushort lineMask = GetNibbles(blockData, ref nibbleNumber, trackCount / 4);
-					lineMask <<= (16 - trackCount);
+					ushort channelMask = GetNibbles(blockData, ref nibbleNumber, trackCount / 4);
+					channelMask <<= (16 - trackCount);
 
 					for (int j = 0; j < trackCount; j++)
 					{
 						TrackLine trackLine = new TrackLine();
 
-						if ((lineMask & 0x8000) != 0)
+						if ((channelMask & 0x8000) != 0)
 						{
 							trackLine.Note = (byte)GetNibbles(blockData, ref nibbleNumber, 2);
 							trackLine.SampleNumber = GetNibble(blockData, ref nibbleNumber);
@@ -981,7 +982,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 							}
 						}
 
-						lineMask <<= 1;
+						channelMask <<= 1;
 						track[j, i] = trackLine;
 					}
 				}
@@ -993,12 +994,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 
 				if ((currentEffectMask & 0x80000000) != 0)
 				{
-					ushort lineMask = GetNibbles(blockData, ref nibbleNumber, trackCount / 4);
-					lineMask <<= (16 - trackCount);
+					ushort channelMask = GetNibbles(blockData, ref nibbleNumber, trackCount / 4);
+					channelMask <<= (16 - trackCount);
 
 					for (int j = 0; j < trackCount; j++)
 					{
-						if ((lineMask & 0x8000) != 0)
+						if ((channelMask & 0x8000) != 0)
 						{
 							TrackLine trackLine = track[j, i];
 
@@ -1006,7 +1007,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 							trackLine.EffectArg = (byte)GetNibbles(blockData, ref nibbleNumber, 2);
 						}
 
-						lineMask <<= 1;
+						channelMask <<= 1;
 					}
 				}
 
@@ -1106,35 +1107,52 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		{
 			errorMessage = string.Empty;
 
+			bool isArchive = ArchivePath.IsArchivePath(fileInfo.FileName);
+			string directoryName = isArchive ? Path.GetDirectoryName(ArchivePath.GetEntryName(fileInfo.FileName)) : Path.GetDirectoryName(fileInfo.FileName);
+
 			for (int i = 1; i < 32; i++)
 			{
 				Sample sample = samples[i];
 
 				if (!string.IsNullOrEmpty(sample.Name))
 				{
-					string samplePath = Path.Combine(Path.GetDirectoryName(fileInfo.FileName), "Instruments", sample.Name);
-
-					using (ModuleStream moduleStream = fileInfo.Loader?.OpenExtraFile(samplePath, true))
+					for (;;)
 					{
-						// Did we get any file at all
-						if (moduleStream == null)
+						string newDirectory = isArchive ? ArchivePath.CombinePathParts(ArchivePath.GetArchiveName(fileInfo.FileName), directoryName) : directoryName;
+						string samplePath = Path.Combine(newDirectory, "Instruments", sample.Name);
+
+						using (ModuleStream moduleStream = fileInfo.Loader?.OpenExtraFile(samplePath, true))
 						{
-							errorMessage = string.Format(Resources.IDS_MED_ERR_LOADING_EXTERNAL_SAMPLE, sample.Name);
-							return AgentResult.Error;
+							// Did we get any file at all
+							if (moduleStream != null)
+							{
+								moduleStream.Seek(0, SeekOrigin.Begin);
+								sample.SampleData = moduleStream.ReadSampleData(i, (int)moduleStream.Length, out _);
+
+								sample.SampleData = FixIfIff(sample.SampleData);
+								if (sample.SampleData == null)
+								{
+									errorMessage = string.Format(Resources.IDS_MED_ERR_LOADING_EXTERNAL_SAMPLE, sample.Name);
+									return AgentResult.Error;
+								}
+
+								sample.Type = SampleType.Normal;
+
+								return AgentResult.Ok;
+							}
 						}
 
-						moduleStream.Seek(0, SeekOrigin.Begin);
-						sample.SampleData = moduleStream.ReadSampleData(i, (int)moduleStream.Length, out _);
+						int index = directoryName.LastIndexOf(Path.DirectorySeparatorChar);
+						if (index == -1)
+							break;
 
-						sample.SampleData = FixIfIff(sample.SampleData);
-						if (sample.SampleData == null)
-						{
-							errorMessage = string.Format(Resources.IDS_MED_ERR_LOADING_EXTERNAL_SAMPLE, sample.Name);
-							return AgentResult.Error;
-						}
-
-						sample.Type = SampleType.Normal;
+						directoryName = directoryName.Substring(0, index);
+						if (string.IsNullOrEmpty(directoryName) || (directoryName[^1] == ':'))
+							break;
 					}
+
+					errorMessage = string.Format(Resources.IDS_MED_ERR_LOADING_EXTERNAL_SAMPLE, sample.Name);
+					return AgentResult.Error;
 				}
 			}
 
