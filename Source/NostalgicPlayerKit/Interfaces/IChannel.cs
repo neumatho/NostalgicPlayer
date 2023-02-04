@@ -119,6 +119,12 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		void SetAmigaPeriod(uint period);
 
 		/// <summary>
+		/// Will update the current sample number being used
+		/// </summary>
+		/// <param name="sampleNumber">is the sample number being played. If unknown, set it to -1</param>
+		void SetSampleNumber(short sampleNumber);
+
+		/// <summary>
 		/// Returns true or false depending on the channel is in use
 		/// </summary>
 		bool IsActive { get; }

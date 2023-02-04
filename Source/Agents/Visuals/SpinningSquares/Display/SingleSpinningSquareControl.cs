@@ -182,7 +182,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 					}
 
 					// Has the frequency changed?
-					if (((channelChangedInfo.Flags & ChannelFlag.Frequency) != 0) && ((oldFrequency != 0) || ((channelChangedInfo.Flags & ChannelFlag.TrigIt) != 0)))
+					if (((channelChangedInfo.Flags & ChannelFlag.Frequency) != 0) && ((oldFrequency != 0) || HasChannelRetrigged(channelChangedInfo)))
 					{
 						int newFreq = (int)channelChangedInfo.Frequency;
 						if (newFreq != oldFrequency)
@@ -226,7 +226,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 					}
 				}
 
-				if ((channelChangedInfo.Flags & ChannelFlag.TrigIt) != 0)
+				if (HasChannelRetrigged(channelChangedInfo))
 				{
 					if (cachedSpeed == speed)
 						speed = -speed;
@@ -249,6 +249,18 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 		#endregion
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary> 
+		/// Check if a channel has retrigged
+		/// </summary>
+		/********************************************************************/
+		private bool HasChannelRetrigged(ChannelChanged channelChangedInfo)
+		{
+			return ((channelChangedInfo.Flags & ChannelFlag.TrigIt) != 0) || ((channelChangedInfo.Flags & ChannelFlag.VirtualTrig) != 0);
+		}
+
+
+
 		/********************************************************************/
 		/// <summary> 
 		/// Update the window

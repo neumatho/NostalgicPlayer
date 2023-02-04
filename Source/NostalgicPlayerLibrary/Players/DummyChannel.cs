@@ -163,6 +163,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 		/********************************************************************/
 		/// <summary>
+		/// Will update the current sample number being used
+		/// </summary>
+		/********************************************************************/
+		public void SetSampleNumber(short sampleNumber)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Returns true or false depending on the channel is in use
 		/// </summary>
 		/********************************************************************/

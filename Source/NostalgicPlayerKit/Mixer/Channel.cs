@@ -33,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/// <summary>
 		/// The sample number being played or -1 if unknown
 		/// </summary>
-		protected short sampleNumber;
+		protected short currentSampleNumber;
 
 		/// <summary>
 		/// Start offset in the sample in samples, not bytes
@@ -137,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 			if ((bit != 8) && (bit != 16))
 				throw new ArgumentException("Number of bits may only be 8 or 16", nameof(bit));
 
-			this.sampleNumber = sampleNumber;
+			currentSampleNumber = sampleNumber;
 
 			sampleAddresses[0] = adr;
 			sampleAddresses[1] = null;
@@ -195,7 +195,7 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 			if ((bit != 8) && (bit != 16))
 				throw new ArgumentException("Number of bits may only be 8 or 16", nameof(bit));
 
-			this.sampleNumber = sampleNumber;
+			currentSampleNumber = sampleNumber;
 
 			sampleAddresses[0] = leftAdr;
 			sampleAddresses[1] = rightAdr;
@@ -425,6 +425,20 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 
 		/********************************************************************/
 		/// <summary>
+		/// Will update the current sample number being used
+		/// </summary>
+		/// <param name="sampleNumber">is the sample number being played. If unknown, set it to -1</param>
+		/********************************************************************/
+		public void SetSampleNumber(short sampleNumber)
+		{
+			currentSampleNumber = sampleNumber;
+			flags |= ChannelFlag.VirtualTrig;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Returns true or false depending on the channel is in use
 		/// </summary>
 		/********************************************************************/
@@ -452,7 +466,7 @@ namespace Polycode.NostalgicPlayer.Kit.Mixer
 		/********************************************************************/
 		public short GetSampleNumber()
 		{
-			return sampleNumber;
+			return currentSampleNumber;
 		}
 
 

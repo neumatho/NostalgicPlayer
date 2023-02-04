@@ -339,7 +339,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 				Deactivate(visualChannelInfo);
 			else
 			{
-				if ((channelChangedInfo.Flags & ChannelFlag.TrigIt) != 0)
+				if (((channelChangedInfo.Flags & ChannelFlag.TrigIt) != 0) || ((channelChangedInfo.Flags & ChannelFlag.VirtualTrig) != 0))
 				{
 					Deactivate(visualChannelInfo);
 
