@@ -26,6 +26,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Implementation
 		public readonly AhxEnvelope adsr = new AhxEnvelope();	// Frames / delta fixed 8:8
 
 		public AhxInstrument instrument;						// Current instrument
+		public int instrumentNumber;
 
 		public int instrPeriod;
 		public int trackPeriod;
@@ -39,7 +40,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Implementation
 		public int waveform;
 		public bool plantSquare;
 		public bool plantPeriod;
+		public bool kickNote;
 		public bool ignoreSquare;
+		public bool waveformStarted;
 
 		public bool trackOn;
 		public bool fixedNote;
@@ -133,6 +136,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Implementation
 			adsr.RVolume = 0;
 
 			instrument = null;
+			instrumentNumber = 0;
 
 			instrPeriod = 0;
 			trackPeriod = 0;
@@ -146,7 +150,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Implementation
 			waveform = 0;
 			plantSquare	= false;
 			plantPeriod = false;
+			kickNote = false;
 			ignoreSquare = false;
+			waveformStarted = false;
 
 			trackOn = true;
 			fixedNote = false;

@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Polycode.NostalgicPlayer.Agent.Player.Ahx.Containers;
@@ -11,7 +12,6 @@ using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
-using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -32,10 +32,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 		private readonly ModuleType currentModuleType;
 
 		private AhxWaves waves;
-		private AhxOutput output;
-
-		private uint bufLen;
-		private short[][] sampBuffers;
 
 		public AhxSong song;
 
@@ -151,6 +147,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 					break;
 				}
 
+				// Current tempo (Hz):
+				case 4:
+				{
+					description = Resources.IDS_AHX_INFODESCLINE4;
+					value = PlayingFrequency.ToString("F2", CultureInfo.InvariantCulture);
+					break;
+				}
+
 				default:
 				{
 					description = null;
@@ -170,7 +174,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 		/// Will load the file into memory
 		/// </summary>
 		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.SetPosition;
+		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.SetPosition;
 
 
 
@@ -458,7 +462,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 		public override bool InitPlayer(out string errorMessage)
 		{
 			// Allocate helper classes
-			output = new AhxOutput();
 			waves = new AhxWaves();
 
 			return base.InitPlayer(out errorMessage);
@@ -512,47 +515,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 
 		/********************************************************************/
 		/// <summary>
-		/// Set the output frequency and number of channels
-		/// </summary>
-		/********************************************************************/
-		public override void SetOutputFormat(uint mixerFrequency, int channels)
-		{
-			base.SetOutputFormat(mixerFrequency, channels);
-
-			// Allocate channel buffers
-			sampBuffers = new short[4][];
-
-			bufLen = mixerFreq / 50;
-
-			for (int i = 0; i < 4; i++)
-				sampBuffers[i] = new short[bufLen];
-
-			// Initialize the output class
-			output.Init(this, (int)mixerFreq, 16, 1, 1.0f, 50);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// This is the main player method
 		/// </summary>
 		/********************************************************************/
 		public override void Play()
 		{
-			// Play and prepare the sample buffers
-			output.PrepareBuffers(sampBuffers);
-
-			// Feed NostalgicPlayer with the data
-			for (int i = 0; i < 4; i++)
-			{
-				IChannel channel = VirtualChannels[i];
-
-				channel.PlayBuffer(sampBuffers[i], 0, bufLen, 16);
-				channel.SetFrequency(mixerFreq);
-				channel.SetVolume(256);
-				channel.SetPanning((ushort)(((i % 3) == 0) ? ChannelPanningType.Left : ChannelPanningType.Right));
-			}
+			PlayIrq();
 		}
 
 
@@ -817,11 +785,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 		/********************************************************************/
 		private void Cleanup()
 		{
-			output = null;
 			waves = null;
-
-			sampBuffers = null;
-
 			song = null;
 		}
 
@@ -853,6 +817,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 
 			for (int v = 0; v < 4; v++)
 				voices[v].Init();
+
+			PlayingFrequency = 50 * song.SpeedMultiplier;
 		}
 
 
@@ -987,6 +953,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 				voice.periodSlideLimit = 0;
 				voice.adsrVolume = 0;
 				voice.instrument = song.Instruments[instrument];
+				voice.instrumentNumber = instrument;
 				voice.CalcAdsr();
 
 				// Init on instrument
@@ -1106,6 +1073,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 				{
 					voice.trackPeriod = note;
 					voice.plantPeriod = true;
+					voice.kickNote = true;
 				}
 			}
 
@@ -1398,6 +1366,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 					{
 						voice.instrPeriod = entry.Note;
 						voice.plantPeriod = true;
+						voice.kickNote = true;
 						voice.fixedNote = entry.Fixed;
 					}
 				}
@@ -1747,6 +1716,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 		private void SetAudio(int v)
 		{
 			AhxVoices voice = voices[v];
+			IChannel channel = VirtualChannels[v];
 
 			if (!voice.trackOn)
 			{
@@ -1755,11 +1725,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 			}
 
 			voice.voiceVolume = voice.audioVolume;
+			channel.SetAmigaVolume((ushort)voice.voiceVolume);
 
 			if (voice.plantPeriod)
 			{
 				voice.plantPeriod = false;
 				voice.voicePeriod = voice.audioPeriod;
+				channel.SetAmigaPeriod((uint)voice.voicePeriod);
 			}
 
 			if (voice.newWaveform)
@@ -1784,6 +1756,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 				}
 
 				voice.voiceBuffer[0x280] = voice.voiceBuffer[0];
+
+				if (!voice.waveformStarted)
+				{
+					// To avoid clicks in Stranglehold, we do only kick the playing buffer once and then change it doing loops
+					voice.waveformStarted = true;
+					channel.PlaySample((short)(voice.instrumentNumber - 1), voice.voiceBuffer, 0, 0x280);
+				}
+
+				if (voice.kickNote)
+				{
+					voice.kickNote = false;
+					channel.SetSampleNumber((short)(voice.instrumentNumber - 1));
+				}
+
+				channel.SetLoop(0, 0x280);
 			}
 		}
 

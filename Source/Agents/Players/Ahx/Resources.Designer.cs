@@ -173,6 +173,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Current tempo (Hz):.
+        /// </summary>
+        internal static string IDS_AHX_INFODESCLINE4 {
+            get {
+                return ResourceManager.GetString("IDS_AHX_INFODESCLINE4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to AHX.
         /// </summary>
         internal static string IDS_AHX_NAME {
