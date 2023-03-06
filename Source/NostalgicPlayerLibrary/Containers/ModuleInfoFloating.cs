@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Change the current song
 		/// </summary>
 		/********************************************************************/
-		public void SetCurrentSong(int newSubSong, DurationInfo newDurationInfo)
+		public void SetCurrentSong(int newSubSong, DurationInfo newDurationInfo, int newSongLength)
 		{
 			lock (this)
 			{

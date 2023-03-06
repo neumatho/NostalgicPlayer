@@ -4,64 +4,69 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Runtime.InteropServices;
+using Polycode.NostalgicPlayer.Kit.Bases;
+using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Kit.Containers.Events
+// This is needed to uniquely identify this agent
+[assembly: Guid("5A9D547C-2926-4C23-93D0-8E694AAC405A")]
+
+namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 {
 	/// <summary>
+	/// NostalgicPlayer agent interface implementation
 	/// </summary>
-	public delegate void SubSongChangedEventHandler(object sender, SubSongChangedEventArgs e);
-
-	/// <summary>
-	/// Event class holding needed information when sending a sub-song changed event
-	/// </summary>
-	public class SubSongChangedEventArgs : EventArgs
+	public class DavidWhittaker : AgentBase
 	{
+		private static readonly Guid Agent1Id = Guid.Parse("67DA1C7B-3848-4BAB-B639-663553C19479");
+
+		#region IAgent implementation
 		/********************************************************************/
 		/// <summary>
-		/// Constructor
+		/// Returns the name of this agent
 		/// </summary>
 		/********************************************************************/
-		public SubSongChangedEventArgs(int newSubSong, DurationInfo durationInfo, int newSongLength)
+		public override string Name => Resources.IDS_DW_NAME;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns a description of this agent
+		/// </summary>
+		/********************************************************************/
+		public override string Description => Resources.IDS_DW_DESCRIPTION;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns all the formats/types this agent supports
+		/// </summary>
+		/********************************************************************/
+		public override AgentSupportInfo[] AgentInformation
 		{
-			SubSong = newSubSong;
-			DurationInfo = durationInfo;
-			SongLength = newSongLength;
+			get
+			{
+				return new AgentSupportInfo[]
+				{
+					new AgentSupportInfo(Resources.IDS_DW_NAME_AGENT1, Resources.IDS_DW_DESCRIPTION_AGENT1, Agent1Id)
+				};
+			}
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Holding the sub-song that has been changed to
+		/// Creates a new worker instance
 		/// </summary>
 		/********************************************************************/
-		public int SubSong
+		public override IAgentWorker CreateInstance(Guid typeId)
 		{
-			get;
+			return new DavidWhittakerWorker();
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Holding the duration information
-		/// </summary>
-		/********************************************************************/
-		public DurationInfo DurationInfo
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Holding the new song length
-		/// </summary>
-		/********************************************************************/
-		public int SongLength
-		{
-			get;
-		}
+		#endregion
 	}
 }
