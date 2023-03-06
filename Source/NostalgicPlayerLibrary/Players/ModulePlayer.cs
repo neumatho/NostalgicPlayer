@@ -478,7 +478,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			if (currentPlayer != null)
 			{
 				// Update the sub-song
-				PlayingModuleInformation.SetCurrentSong(e.SubSong, e.DurationInfo);
+				PlayingModuleInformation.SetCurrentSong(e.SubSong, e.DurationInfo, e.SongLength);
 
 				// Just call the next event handler
 				if (SubSongChanged != null)

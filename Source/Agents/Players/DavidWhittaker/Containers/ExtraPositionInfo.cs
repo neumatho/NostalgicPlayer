@@ -3,51 +3,33 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
-
-namespace Polycode.NostalgicPlayer.Kit.Containers.Events
+namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker.Containers
 {
 	/// <summary>
+	/// Contains extra information for each position
 	/// </summary>
-	public delegate void SubSongChangedEventHandler(object sender, SubSongChangedEventArgs e);
-
-	/// <summary>
-	/// Event class holding needed information when sending a sub-song changed event
-	/// </summary>
-	public class SubSongChangedEventArgs : EventArgs
+	internal class ExtraPositionInfo
 	{
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SubSongChangedEventArgs(int newSubSong, DurationInfo durationInfo, int newSongLength)
+		public ExtraPositionInfo(ushort position, int trackPosition, ushort speedCounter)
 		{
-			SubSong = newSubSong;
-			DurationInfo = durationInfo;
-			SongLength = newSongLength;
+			Position = position;
+			TrackPosition = trackPosition;
+			SpeedCounter = speedCounter;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Holding the sub-song that has been changed to
+		/// Hold the position
 		/// </summary>
 		/********************************************************************/
-		public int SubSong
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Holding the duration information
-		/// </summary>
-		/********************************************************************/
-		public DurationInfo DurationInfo
+		public ushort Position
 		{
 			get;
 		}
@@ -56,10 +38,22 @@ namespace Polycode.NostalgicPlayer.Kit.Containers.Events
 
 		/********************************************************************/
 		/// <summary>
-		/// Holding the new song length
+		/// Hold the position in the track
 		/// </summary>
 		/********************************************************************/
-		public int SongLength
+		public int TrackPosition
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Hold the current speed count
+		/// </summary>
+		/********************************************************************/
+		public ushort SpeedCounter
 		{
 			get;
 		}
