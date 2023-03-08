@@ -812,7 +812,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 					if (channelInfo.RobotEnable)
 					{
 						if (retrig)
-							channel.PlaySample(channelInfo.OldSampleNumber, channelInfo.RobotBuffers[0], 0, (uint)channelInfo.RobotBytesToPlay);
+							channel.PlaySample((short)(channelInfo.OldSampleNumber - 1), channelInfo.RobotBuffers[0], 0, (uint)channelInfo.RobotBytesToPlay);
 
 						channel.SetLoop(channelInfo.RobotBuffers[0], 0, (uint)channelInfo.RobotBytesToPlay);
 
@@ -826,14 +826,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 
 							if (channelInfo.BackwardEnabled != 0)
 							{
-								channel.PlaySample(channelInfo.OldSampleNumber, channelInfo.SampleData, 0, sample.Length, backwards: true);
+								channel.PlaySample((short)(channelInfo.OldSampleNumber - 1), channelInfo.SampleData, 0, sample.Length, backwards: true);
 
 								if ((channelInfo.BackwardEnabled == 2) && (sample.LoopLength > 0))
 									channel.SetLoop(sample.LoopStart, sample.LoopLength);
 							}
 							else
 							{
-								channel.PlaySample(channelInfo.OldSampleNumber, channelInfo.SampleData, channelInfo.StartOffset, sample.Length);
+								channel.PlaySample((short)(channelInfo.OldSampleNumber - 1), channelInfo.SampleData, channelInfo.StartOffset, sample.Length);
 
 								if (sample.LoopLength > 0)
 									channel.SetLoop(sample.LoopStart, sample.LoopLength);
