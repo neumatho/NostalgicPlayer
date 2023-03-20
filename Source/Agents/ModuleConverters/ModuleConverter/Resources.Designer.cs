@@ -132,7 +132,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         ///
         ///Fred Editor (Final) -&gt; Fred Editor
         ///Future Composer 1.0 - 1.3 -&gt; Future Composer 1.4
-        ///SoundFX 1-x &gt; SoundFX 2.0
+        ///SoundFX 1.x &gt; SoundFX 2.0
         ///MED 2.10 MED4 -&gt; MED 2.10 MMD0.
         /// </summary>
         internal static string IDS_MODCONV_DESCRIPTION {
