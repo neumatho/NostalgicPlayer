@@ -121,7 +121,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 			foreach (byte[] sig in signatures)
 			{
-				if (Helpers.ArrayCompare(buf, 0, sig, 0, 8))
+				if (ArrayHelper.ArrayCompare(buf, 0, sig, 0, 8))
 					return AgentResult.Ok;
 			}
 
@@ -141,7 +141,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 			util = new MlUtil();
 
-			stxBuf = Helpers.InitializeArray<StxNote>(4 * 64);
+			stxBuf = ArrayHelper.InitializeArray<StxNote>(4 * 64);
 			mh = new StxHeader();
 			util.posLookup = new byte[256];
 

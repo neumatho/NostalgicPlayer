@@ -6,10 +6,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
@@ -17,28 +18,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class FutureComposerWorker : ModulePlayerAgentBase
+	internal class FutureComposerWorker : ModulePlayerWithPositionDurationAgentBase
 	{
-		private static readonly byte[] silent =
-		{
-			0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xe1
-		};
-
-		private static readonly ushort[] periods =
-		{
-			1712, 1616, 1524, 1440, 1356, 1280, 1208, 1140, 1076, 1016,  960,  906,
-			 856,  808,  762,  720,  678,  640,  604,  570,  538,  508,  480,  453,
-			 428,  404,  381,  360,  339,  320,  302,  285,  269,  254,  240,  226,
-			 214,  202,  190,  180,  170,  160,  151,  143,  135,  127,  120,  113,
-			 113,  113,  113,  113,  113,  113,  113,  113,  113,  113,  113,  113,
-			3424, 3232, 3048, 2880, 2712, 2560, 2416, 2280, 2152, 2032, 1920, 1812,
-			1712, 1616, 1524, 1440, 1356, 1280, 1208, 1140, 1076, 1016,  960,  906,
-			 856,  808,  762,  720,  678,  640,  604,  570,  538,  508,  480,  453,
-			 428,  404,  381,  360,  339,  320,  302,  285,  269,  254,  240,  226,
-			 214,  202,  190,  180,  170,  160,  151,  143,  135,  127,  120,  113,
-			 113,  113,  113,  113,  113,  113,  113,  113,  113,  113,  113,  113
-		};
-
 		private Sample[] sampInfo;
 
 		private Sequence[] sequences;
@@ -52,14 +33,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 		private short wavNum;
 		private short sampNum;
 
-		private ushort reSpCnt;
-		private ushort repSpd;
-		private ushort spdTemp;
-
-		private bool[] audTemp;
+		private GlobalPlayingInfo playingInfo;
 		private VoiceInfo[] voiceData;
 
-		private const int InfoSpeedLine = 4;
+		private bool endReached;
+
+		private const int InfoPositionLine = 4;
+		private const int InfoTrackLine = 5;
+		private const int InfoSpeedLine = 6;
 
 		#region IPlayerAgent implementation
 		/********************************************************************/
@@ -118,7 +99,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 			// Find out which line to take
 			switch (line)
 			{
-				// Song length
+				// Number of positions
 				case 0:
 				{
 					description = Resources.IDS_FC_INFODESCLINE0;
@@ -126,7 +107,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 					break;
 				}
 
-				// Used patterns
+				// Used tracks
 				case 1:
 				{
 					description = Resources.IDS_FC_INFODESCLINE1;
@@ -134,7 +115,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 					break;
 				}
 
-				// Supported / used samples
+				// Used samples
 				case 2:
 				{
 					description = Resources.IDS_FC_INFODESCLINE2;
@@ -150,11 +131,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 					break;
 				}
 
-				// Current speed
+				// Playing position
 				case 4:
 				{
 					description = Resources.IDS_FC_INFODESCLINE4;
-					value = repSpd.ToString();
+					value = voiceData[0].SongPos.ToString();
+					break;
+				}
+
+				// Playing tracks
+				case 5:
+				{
+					description = Resources.IDS_FC_INFODESCLINE5;
+					value = FormatTracks();
+					break;
+				}
+
+				// Current speed
+				case 6:
+				{
+					description = Resources.IDS_FC_INFODESCLINE6;
+					value = playingInfo.RepSpd.ToString();
 					break;
 				}
 
@@ -172,15 +169,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 		#endregion
 
 		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.SetPosition;
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -337,14 +325,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				}
 
 				// Allocate memory to hold the frequency sequences
-				frqSequences = new byte[silent.Length + frqLength + 1];
+				frqSequences = new byte[Tables.Silent.Length + frqLength + 1];
 
 				// Copy silent sequence to the first block
-				Array.Copy(silent, 0, frqSequences, 0, silent.Length);
+				Array.Copy(Tables.Silent, 0, frqSequences, 0, Tables.Silent.Length);
 
 				// Read the frequency sequences
 				moduleStream.Seek(frqOffset, SeekOrigin.Begin);
-				moduleStream.Read(frqSequences, silent.Length, frqLength);
+				moduleStream.Read(frqSequences, Tables.Silent.Length, frqLength);
 
 				// Set "end of sequence" mark
 				frqSequences[frqSequences.Length - 1] = 0xe1;
@@ -355,14 +343,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 
 				volSequences[0] = new VolSequence
 				{
-					Speed = silent[0],
-					FrqNumber = silent[1],
-					VibSpeed = (sbyte)silent[2],
-					VibDepth = (sbyte)silent[3],
-					VibDelay = silent[4]
+					Speed = Tables.Silent[0],
+					FrqNumber = Tables.Silent[1],
+					VibSpeed = (sbyte)Tables.Silent[2],
+					VibDepth = (sbyte)Tables.Silent[3],
+					VibDelay = Tables.Silent[4]
 				};
 
-				Array.Copy(silent, 4, volSequences[0].Values, 0, silent.Length - 4);
+				Array.Copy(Tables.Silent, 4, volSequences[0].Values, 0, Tables.Silent.Length - 4);
 
 				// Read the volume sequences
 				moduleStream.Seek(volOffset, SeekOrigin.Begin);
@@ -542,82 +530,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
+		public override bool InitSound(int songNumber, out string errorMessage)
 		{
-			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+			if (!base.InitSound(songNumber, out errorMessage))
 				return false;
 
-			// Initialize speed
-			ushort spd = sequences[0].Speed;
-			if (spd == 0)
-				spd = 3;
-
-			reSpCnt = spd;
-			repSpd = spd;
-			spdTemp = 1;
-
-			// Initialize other variables
-			audTemp = new bool[4];
-			audTemp[0] = false;
-			audTemp[1] = false;
-			audTemp[2] = false;
-			audTemp[3] = false;
-			
-			// Initialize channel variables
-			voiceData = new VoiceInfo[4];
-
-			for (int i = 0; i < 4; i++)
-			{
-				VoiceInfo voiceInfo = new VoiceInfo();
-
-				voiceInfo.PitchBendSpeed = 0;
-				voiceInfo.PitchBendTime = 0;
-				voiceInfo.SongPos = 0;
-				voiceInfo.CurNote = 0;
-				voiceInfo.VolumeSeq = volSequences[0].Values;
-				voiceInfo.VolumeBendSpeed = 0;
-				voiceInfo.VolumeBendTime = 0;
-				voiceInfo.VolumeSeqPos = 0;
-				voiceInfo.VolumeCounter = 1;
-				voiceInfo.VolumeSpeed = 1;
-				voiceInfo.VolSusCounter = 0;
-				voiceInfo.SusCounter = 0;
-				voiceInfo.VibSpeed = 0;
-				voiceInfo.VibDepth = 0;
-				voiceInfo.VibValue = 0;
-				voiceInfo.VibDelay = 0;
-				voiceInfo.VolBendFlag = false;
-				voiceInfo.PortFlag = false;
-				voiceInfo.PatternPos = 0;
-				voiceInfo.PitchBendFlag = false;
-				voiceInfo.PattTranspose = 0;
-				voiceInfo.Volume = 0;
-				voiceInfo.VibFlag = 0;
-				voiceInfo.Portamento = 0;
-				voiceInfo.FrequencySeqStartOffset = 0;
-				voiceInfo.FrequencySeqPos = 0;
-				voiceInfo.Pitch = 0;
-				voiceInfo.Channel = VirtualChannels[i];
-				voiceInfo.CurPattern = patterns[sequences[0].VoiceSeq[i].Pattern];
-				voiceInfo.Transpose = sequences[0].VoiceSeq[i].Transpose;
-				voiceInfo.SoundTranspose = sequences[0].VoiceSeq[i].SoundTranspose;
-
-				voiceData[i] = voiceInfo;
-			}
+			InitializeSound(0);
 
 			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override DurationInfo[] CalculateDuration()
-		{
-			return CalculateDurationBySongPosition();
 		}
 
 
@@ -630,11 +550,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 		public override void Play()
 		{
 			// Decrease replay speed counter
-			reSpCnt--;
-			if (reSpCnt == 0)
+			playingInfo.ReSpCnt--;
+			if (playingInfo.ReSpCnt == 0)
 			{
 				// Restore replay speed counter
-				reSpCnt = repSpd;
+				playingInfo.ReSpCnt = playingInfo.RepSpd;
 
 				// Get new note for each channel
 				NewNote(0);
@@ -648,75 +568,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 			Effect(1);
 			Effect(2);
 			Effect(3);
-		}
 
+			if (endReached)
+			{
+				OnEndReached(voiceData[0].SongPos);
+				endReached = false;
 
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the length of the current song
-		/// </summary>
-		/********************************************************************/
-		public override int SongLength => seqNum;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position of the song
-		/// </summary>
-		/********************************************************************/
-		public override int GetSongPosition()
-		{
-			return voiceData[0].SongPos;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set a new position of the song
-		/// </summary>
-		/********************************************************************/
-		public override void SetSongPosition(int position, PositionInfo positionInfo)
-		{
-			// Change the position
-			voiceData[0].SongPos = (ushort)position;
-			voiceData[0].PatternPos = 0;
-			voiceData[0].Transpose = sequences[position].VoiceSeq[0].Transpose;
-			voiceData[0].SoundTranspose = sequences[position].VoiceSeq[0].SoundTranspose;
-			byte pattNum = sequences[position].VoiceSeq[0].Pattern;
-			voiceData[0].CurPattern = patterns[pattNum >= patterns.Length ? 0 : pattNum];
-
-			voiceData[1].SongPos = (ushort)position;
-			voiceData[1].PatternPos = 0;
-			voiceData[1].Transpose = sequences[position].VoiceSeq[1].Transpose;
-			voiceData[1].SoundTranspose = sequences[position].VoiceSeq[1].SoundTranspose;
-			pattNum = sequences[position].VoiceSeq[1].Pattern;
-			voiceData[0].CurPattern = patterns[pattNum >= patterns.Length ? 0 : pattNum];
-
-			voiceData[2].SongPos = (ushort)position;
-			voiceData[2].PatternPos = 0;
-			voiceData[2].Transpose = sequences[position].VoiceSeq[2].Transpose;
-			voiceData[2].SoundTranspose = sequences[position].VoiceSeq[2].SoundTranspose;
-			pattNum = sequences[position].VoiceSeq[2].Pattern;
-			voiceData[0].CurPattern = patterns[pattNum >= patterns.Length ? 0 : pattNum];
-
-			voiceData[3].SongPos = (ushort)position;
-			voiceData[3].PatternPos = 0;
-			voiceData[3].Transpose = sequences[position].VoiceSeq[3].Transpose;
-			voiceData[3].SoundTranspose = sequences[position].VoiceSeq[3].SoundTranspose;
-			pattNum = sequences[position].VoiceSeq[3].Pattern;
-			voiceData[0].CurPattern = patterns[pattNum >= patterns.Length ? 0 : pattNum];
-
-			// Set the speed
-			reSpCnt = positionInfo.Speed;
-			repSpd = reSpCnt;
-			spdTemp = 1;
-
-			OnModuleInfoChanged(InfoSpeedLine, repSpd.ToString());
-
-			base.SetSongPosition(position, positionInfo);
+				MarkPositionAsVisited(voiceData[0].SongPos);
+			}
 		}
 
 
@@ -735,7 +594,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				uint[] frequencies = new uint[10 * 12];
 
 				for (int j = 0; j < 5 * 12; j++)
-					frequencies[2 * 12 + j] = 3546895U / periods[5 * 12 + j];
+					frequencies[2 * 12 + j] = 3546895U / Tables.Periods[5 * 12 + j];
 
 				for (int i = 0; i < 10; i++)
 				{
@@ -766,16 +625,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 		}
 		#endregion
 
-		#region Duration calculation methods
+		#region ModulePlayerWithPositionDurationAgentBase implementation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override int InitDurationCalculationByStartPos(int startPosition)
+		protected override int InitDuration(int startPosition)
 		{
-			InitSound(0, null, out _);
+			InitializeSound(startPosition);
+			MarkPositionAsVisited(startPosition);
 
 			return startPosition;
 		}
@@ -784,16 +644,117 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the current speed
+		/// Return the total number of positions
 		/// </summary>
 		/********************************************************************/
-		protected override byte GetCurrentSpeed()
+		protected override int GetTotalNumberOfPositions()
 		{
-			return (byte)repSpd;
+			return seqNum;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a snapshot of all the internal structures and return it
+		/// </summary>
+		/********************************************************************/
+		protected override ISnapshot CreateSnapshot()
+		{
+			return new Snapshot(playingInfo, voiceData);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize internal structures based on the snapshot given
+		/// </summary>
+		/********************************************************************/
+		protected override bool SetSnapshot(ISnapshot snapshot, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			// Start to make a clone of the snapshot
+			Snapshot currentSnapshot = (Snapshot)snapshot;
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayingInfo, currentSnapshot.Channels);
+
+			playingInfo = clonedSnapshot.PlayingInfo;
+			voiceData = clonedSnapshot.Channels;
+
+			UpdateModuleInformation();
+
+			return true;
 		}
 		#endregion
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Initialize sound structures
+		/// </summary>
+		/********************************************************************/
+		private void InitializeSound(int startPosition)
+		{
+			// Initialize speed
+			ushort spd = sequences[startPosition].Speed;
+			if (spd == 0)
+				spd = 3;
+
+			playingInfo = new GlobalPlayingInfo
+			{
+				ReSpCnt = spd,
+				RepSpd = spd,
+				SpdTemp = 1,
+				AudTemp = new[] { false, false, false, false }
+			};
+
+			endReached = false;
+
+			// Initialize channel variables
+			voiceData = new VoiceInfo[4];
+
+			for (int i = 0; i < 4; i++)
+			{
+				VoiceInfo voiceInfo = new VoiceInfo();
+
+				voiceInfo.PitchBendSpeed = 0;
+				voiceInfo.PitchBendTime = 0;
+				voiceInfo.SongPos = (ushort)startPosition;
+				voiceInfo.CurNote = 0;
+				voiceInfo.VolumeSeq = volSequences[0].Values;
+				voiceInfo.VolumeBendSpeed = 0;
+				voiceInfo.VolumeBendTime = 0;
+				voiceInfo.VolumeSeqPos = 0;
+				voiceInfo.VolumeCounter = 1;
+				voiceInfo.VolumeSpeed = 1;
+				voiceInfo.VolSusCounter = 0;
+				voiceInfo.SusCounter = 0;
+				voiceInfo.VibSpeed = 0;
+				voiceInfo.VibDepth = 0;
+				voiceInfo.VibValue = 0;
+				voiceInfo.VibDelay = 0;
+				voiceInfo.VolBendFlag = false;
+				voiceInfo.PortFlag = false;
+				voiceInfo.PatternPos = 0;
+				voiceInfo.PitchBendFlag = false;
+				voiceInfo.PattTranspose = 0;
+				voiceInfo.Volume = 0;
+				voiceInfo.VibFlag = 0;
+				voiceInfo.Portamento = 0;
+				voiceInfo.FrequencySeqStartOffset = 0;
+				voiceInfo.FrequencySeqPos = 0;
+				voiceInfo.Pitch = 0;
+				voiceInfo.CurPattern = patterns[sequences[startPosition].VoiceSeq[i].Pattern];
+				voiceInfo.Transpose = sequences[startPosition].VoiceSeq[i].Transpose;
+				voiceInfo.SoundTranspose = sequences[startPosition].VoiceSeq[i].SoundTranspose;
+
+				voiceData[i] = voiceInfo;
+			}
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Frees all the memory the player have allocated
@@ -806,6 +767,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 			patterns = null;
 			sequences = null;
 			sampInfo = null;
+
+			playingInfo = null;
+			voiceData = null;
 		}
 
 
@@ -858,6 +822,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 		{
 			// Get the voice data
 			VoiceInfo voiData = voiceData[chan];
+			IChannel channel = VirtualChannels[chan];
 
 			// Check for end of pattern or "END" mark in pattern
 			if ((voiData.PatternPos == 32) || (voiData.CurPattern.PatternRows[voiData.PatternPos].Note == 0x49))
@@ -871,29 +836,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				{
 					// We have, wrap around the module
 					voiData.SongPos = 0;
-
-					// Tell NostalgicPlayer the module have ended
-					OnEndReached();
 				}
 
 				// Count the speed counter
-				spdTemp++;
-				if (spdTemp == 5)
+				playingInfo.SpdTemp++;
+				if (playingInfo.SpdTemp == 5)
 				{
-					spdTemp = 1;
+					playingInfo.SpdTemp = 1;
 
 					// Get new replay speed
 					if (sequences[voiData.SongPos].Speed != 0)
 					{
-						reSpCnt = sequences[voiData.SongPos].Speed;
-						repSpd = reSpCnt;
+						playingInfo.ReSpCnt = sequences[voiData.SongPos].Speed;
+						playingInfo.RepSpd = playingInfo.ReSpCnt;
 
-						// Tell NostalgicPlayer about the speed change
-						OnModuleInfoChanged(InfoSpeedLine, repSpd.ToString());
+						ShowSpeed();
 					}
-
-					// Tell NostalgicPlayer we have changed position
-					OnPositionChanged();
 				}
 
 				// Get pattern information
@@ -905,6 +863,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 					pattNum = 0;
 
 				voiData.CurPattern = patterns[pattNum];
+
+				if (chan == 0)
+				{
+					ShowSongPosition();
+					ShowTracks();
+
+					if (HasPositionBeenVisited(voiData.SongPos))
+						endReached = true;
+
+					MarkPositionAsVisited(voiData.SongPos);
+				}
 			}
 
 			// Get the pattern row
@@ -940,8 +909,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				voiData.CurNote = (sbyte)note;
 
 				// Mute the channel
-				audTemp[chan] = false;
-				voiData.Channel.Mute();
+				playingInfo.AudTemp[chan] = false;
+				channel.Mute();
 
 				// Find the volume sequence
 				byte inst = (byte)((info & 0x3f) + voiData.SoundTranspose);
@@ -963,7 +932,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				voiData.VolumeSeq = volSequences[inst].Values;
 
 				// Find the frequency sequence
-				voiData.FrequencySeqStartOffset = (ushort)(silent.Length + volSequences[inst].FrqNumber * 64);
+				voiData.FrequencySeqStartOffset = (ushort)(Tables.Silent.Length + volSequences[inst].FrqNumber * 64);
 				voiData.FrequencySeqPos = 0;
 				voiData.SusCounter = 0;
 			}
@@ -983,6 +952,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 		{
 			// Get the voice data
 			VoiceInfo voiData = voiceData[chan];
+			IChannel channel = VirtualChannels[chan];
 
 			// Parse the frequency sequence commands
 			bool oneMore;
@@ -1041,13 +1011,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 							{
 								if (sampInfo[dat].Address != null)
 								{
-									voiData.Channel.PlaySample(sampInfo[dat].SampleNumber, sampInfo[dat].Address, 0, sampInfo[dat].Length);
+									channel.PlaySample(sampInfo[dat].SampleNumber, sampInfo[dat].Address, 0, sampInfo[dat].Length);
 									if (sampInfo[dat].LoopLength > 2)
 									{
 										if ((sampInfo[dat].LoopStart + sampInfo[dat].LoopLength) > sampInfo[dat].Length)
-											voiData.Channel.SetLoop(sampInfo[dat].LoopStart, (uint)(sampInfo[dat].Length - sampInfo[dat].LoopStart));
+											channel.SetLoop(sampInfo[dat].LoopStart, (uint)(sampInfo[dat].Length - sampInfo[dat].LoopStart));
 										else
-											voiData.Channel.SetLoop(sampInfo[dat].LoopStart, sampInfo[dat].LoopLength);
+											channel.SetLoop(sampInfo[dat].LoopStart, sampInfo[dat].LoopLength);
 									}
 								}
 							}
@@ -1055,7 +1025,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 							voiData.VolumeSeqPos = 0;
 							voiData.VolumeCounter = 1;
 							voiData.FrequencySeqPos += 2;
-							audTemp[chan] = true;
+							playingInfo.AudTemp[chan] = true;
 							break;
 						}
 
@@ -1063,13 +1033,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 						case 0xe4:
 						{
 							// Check to see if the channel is active
-							if (audTemp[chan])
+							if (playingInfo.AudTemp[chan])
 							{
 								// Get instrument number
 								dat = frqSequences[seqPoi++];
 
 								if (dat < 90)
-									voiData.Channel.SetLoop(sampInfo[dat].Address, sampInfo[dat].LoopStart, sampInfo[dat].LoopLength);
+									channel.SetLoop(sampInfo[dat].Address, sampInfo[dat].LoopStart, sampInfo[dat].LoopLength);
 
 								voiData.FrequencySeqPos += 2;
 							}
@@ -1079,7 +1049,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 						// Set sample
 						case 0xe9:
 						{
-							audTemp[chan] = true;
+							playingInfo.AudTemp[chan] = true;
 
 							// Get instrument number
 							dat = frqSequences[seqPoi++];
@@ -1095,13 +1065,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 								{
 									if (mulSamp.Sample[dat].Address != null)
 									{
-										voiData.Channel.PlaySample(mulSamp.Sample[dat].SampleNumber, mulSamp.Sample[dat].Address, 0, mulSamp.Sample[dat].Length);
+										channel.PlaySample(mulSamp.Sample[dat].SampleNumber, mulSamp.Sample[dat].Address, 0, mulSamp.Sample[dat].Length);
 										if (mulSamp.Sample[dat].LoopLength > 2)
 										{
 											if ((mulSamp.Sample[dat].LoopStart + mulSamp.Sample[dat].LoopLength) > mulSamp.Sample[dat].Length)
-												voiData.Channel.SetLoop(mulSamp.Sample[dat].LoopStart, (uint)(mulSamp.Sample[dat].Length - mulSamp.Sample[dat].LoopStart));
+												channel.SetLoop(mulSamp.Sample[dat].LoopStart, (uint)(mulSamp.Sample[dat].Length - mulSamp.Sample[dat].LoopStart));
 											else
-												voiData.Channel.SetLoop(mulSamp.Sample[dat].LoopStart, mulSamp.Sample[dat].LoopLength);
+												channel.SetLoop(mulSamp.Sample[dat].LoopStart, mulSamp.Sample[dat].LoopLength);
 										}
 									}
 								}
@@ -1122,7 +1092,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 							// Get new position
 							dat = frqSequences[seqPoi];
 
-							seqPoi = (ushort)(silent.Length + dat * 64);
+							seqPoi = (ushort)(Tables.Silent.Length + dat * 64);
 							if (seqPoi >= frqSequences.Length)
 								seqPoi = 0;
 
@@ -1249,7 +1219,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 			note &= 0x7f;
 
 			// Get the period
-			ushort period = note < periods.Length ? periods[note] : (ushort)0;
+			ushort period = note < Tables.Periods.Length ? Tables.Periods[note] : (ushort)0;
 			byte vibFlag = voiData.VibFlag;
 
 			// Shall we vibrate?
@@ -1338,8 +1308,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 			}
 
 			// Play the period
-			voiData.Channel.SetAmigaPeriod(period);
-			voiData.Channel.SetAmigaVolume((ushort)voiData.Volume);
+			channel.SetAmigaPeriod(period);
+			channel.SetAmigaVolume((ushort)voiData.Volume);
 		}
 
 
@@ -1371,6 +1341,78 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 					}
 				}
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current song position
+		/// </summary>
+		/********************************************************************/
+		private void ShowSongPosition()
+		{
+			OnModuleInfoChanged(InfoPositionLine, voiceData[0].SongPos.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with track numbers
+		/// </summary>
+		/********************************************************************/
+		private void ShowTracks()
+		{
+			OnModuleInfoChanged(InfoTrackLine, FormatTracks());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current speed
+		/// </summary>
+		/********************************************************************/
+		private void ShowSpeed()
+		{
+			OnModuleInfoChanged(InfoSpeedLine, playingInfo.RepSpd.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with all dynamic values
+		/// </summary>
+		/********************************************************************/
+		private void UpdateModuleInformation()
+		{
+			ShowSongPosition();
+			ShowTracks();
+			ShowSpeed();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the playing tracks
+		/// </summary>
+		/********************************************************************/
+		private string FormatTracks()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < 4; i++)
+			{
+				sb.Append(sequences[voiceData[i].SongPos].VoiceSeq[i].Pattern);
+				sb.Append(", ");
+			}
+
+			sb.Remove(sb.Length - 2, 2);
+
+			return sb.ToString();
 		}
 		#endregion
 	}

@@ -136,7 +136,7 @@ The player came from the Amiga, but it's not the most used format. There are som
     <value>Can't read the module samples</value>
   </data>
   <data name="IDS_JAM_INFODESCLINE0" xml:space="preserve">
-    <value>Song length:</value>
+    <value>Number of positions:</value>
   </data>
   <data name="IDS_JAM_INFODESCLINE1" xml:space="preserve">
     <value>Used patterns:</value>
@@ -144,7 +144,7 @@ The player came from the Amiga, but it's not the most used format. There are som
   <data name="IDS_JAM_INFODESCLINE2" xml:space="preserve">
     <value>Used instruments:</value>
   </data>
-  <data name="IDS_JAM_INFODESCLINE3" xml:space="preserve">
+  <data name="IDS_JAM_INFODESCLINE5" xml:space="preserve">
     <value>Current speed:</value>
   </data>
   <data name="IDS_JAM_NAME_AGENT1" xml:space="preserve">
@@ -154,5 +154,11 @@ The player came from the Amiga, but it's not the most used format. There are som
     <value>Written by Thomas Neumann.
 
 This is a C# version of the original assembly player by M. Gemmel and can play modules in the JamCracker format.</value>
+  </data>
+  <data name="IDS_JAM_INFODESCLINE3" xml:space="preserve">
+    <value>Playing position:</value>
+  </data>
+  <data name="IDS_JAM_INFODESCLINE4" xml:space="preserve">
+    <value>Playing pattern:</value>
   </data>
 </root>

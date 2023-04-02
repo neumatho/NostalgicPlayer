@@ -137,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 			util = new MlUtil();
 
-			s3mBuf = Helpers.InitializeArray<S3MNote>(32 * 64);
+			s3mBuf = ArrayHelper.InitializeArray<S3MNote>(32 * 64);
 			mh = new S3MHeader();
 			util.posLookup = new byte[256];
 

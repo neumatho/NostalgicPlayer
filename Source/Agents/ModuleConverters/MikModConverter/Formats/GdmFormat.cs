@@ -136,7 +136,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			errorMessage = string.Empty;
 
 			mh = new GdmHeader();
-			gdmBuf = Helpers.InitializeArray<GdmNote>(32 * 64);
+			gdmBuf = ArrayHelper.InitializeArray<GdmNote>(32 * 64);
 
 			try
 			{

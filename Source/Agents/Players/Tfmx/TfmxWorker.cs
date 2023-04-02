@@ -14,7 +14,6 @@ using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
-using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -24,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class TfmxWorker : ModulePlayerAgentBase
+	internal class TfmxWorker : ModulePlayerWithSubSongDurationAgentBase
 	{
 		private static readonly Dictionary<Guid, ModuleType> moduleTypeLookup = new Dictionary<Guid, ModuleType>
 		{
@@ -33,52 +32,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			{ Tfmx.Agent3Id, ModuleType.Tfmx7V }
 		};
 
-		// MD5 checksum for Danger Freak Title song
-		private static readonly byte[] dangerFreakTitle =
-		{
-			0x0a, 0x7b, 0xc5, 0x73, 0x1c, 0x51, 0xf8, 0x1b,
-			0x6c, 0x88, 0xe3, 0xd6, 0x03, 0x13, 0xca, 0xba
-		};
-
-		// MD5 checksum for Gem X Title song
-		private static readonly byte[] gemXTitle =
-		{
-			0x92, 0x31, 0xbe, 0xb5, 0x3a, 0x18, 0xb2, 0xf4,
-			0xfc, 0x0d, 0x4d, 0xce, 0x0c, 0x1c, 0xa6, 0x79
-		};
-
-		private static readonly ChannelPanningType[] pan4 =
-		{
-			ChannelPanningType.Left, ChannelPanningType.Right, ChannelPanningType.Right, ChannelPanningType.Left
-		};
-
-		private static readonly ChannelPanningType[] pan7 =
-		{
-			ChannelPanningType.Left, ChannelPanningType.Right, ChannelPanningType.Right,
-			ChannelPanningType.Left, ChannelPanningType.Right, ChannelPanningType.Right, ChannelPanningType.Left
-		};
-
-		private static readonly int[] noteVals =
-		{
-			0x6ae, 0x64e, 0x5f4, 0x59e, 0x54d, 0x501,
-			0x4b9, 0x475, 0x435, 0x3f9, 0x3c0, 0x38c, 0x358, 0x32a, 0x2fc, 0x2d0, 0x2a8, 0x282,
-			0x25e, 0x23b, 0x21b, 0x1fd, 0x1e0, 0x1c6, 0x1ac, 0x194, 0x17d, 0x168, 0x154, 0x140,
-			0x12f, 0x11e, 0x10e, 0x0fe, 0x0f0, 0x0e3, 0x0d6, 0x0ca, 0x0bf, 0x0b4, 0x0aa, 0x0a0,
-			0x097, 0x08f, 0x087, 0x07f, 0x078, 0x071, 0x0d6, 0x0ca, 0x0bf, 0x0b4, 0x0aa, 0x0a0,
-			0x097, 0x08f, 0x087, 0x07f, 0x078, 0x071, 0x0d6, 0x0ca, 0x0bf, 0x0b4
-		};
-
 		private const int BufSize = 1024;
-
-		private const int InfoSpeedLine = 3;
-		private const int InfoTempoLine = 4;
 
 		private readonly ModuleType currentModuleType;
 		private readonly bool isLittleEndian;
 
 		private int currentSong;
-
-		private bool firstTime;
 
 		private OneFile header;
 
@@ -102,29 +61,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		private int musicLen;
 		private int sampleLen;
 
-		private Hdb[] hdb;
-		private Mdb mdb;
-		private Cdb[] cdb;
-		private PdBlk pdb;
-		private Idb idb;
-
 		private bool gemx;
 		private bool dangerFreakHack;
 
-		private int jiffies;
-		private bool multiMode;
-
-		private int loops;
 		private int startPat;
-
-		private uint eClocks;
-		private int eRem;
 
 		private int[][] tBuf;
 		private short[][] outBuf;
 
 		private int numBytes;
 		private int bytesDone;
+
+		private bool firstTime;
+
+		private GlobalPlayingInfo playingInfo;
+
+		private bool endReached;
+
+		private const int InfoPositionLine = 3;
+		private const int InfoTrackLine = 4;
+		private const int InfoSpeedLine = 5;
+		private const int InfoTempoLine = 6;
 
 		/********************************************************************/
 		/// <summary>
@@ -186,15 +143,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			// Find out which line to take
 			switch (line)
 			{
-				// Used track steps
+				// Number of positions
 				case 0:
 				{
 					description = Resources.IDS_TFMX_INFODESCLINE0;
-					value = numTrackSteps.ToString();
+					value = FormatPositionLength();
 					break;
 				}
 
-				// Used patterns
+				// Used tracks
 				case 1:
 				{
 					description = Resources.IDS_TFMX_INFODESCLINE1;
@@ -210,19 +167,35 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 					break;
 				}
 
-				// Current speed
+				// Playing position
 				case 3:
 				{
 					description = Resources.IDS_TFMX_INFODESCLINE3;
-					value = pdb.PreScale.ToString();
+					value = FormatPosition();
 					break;
 				}
 
-				// BPM
+				// Playing tracks
 				case 4:
 				{
 					description = Resources.IDS_TFMX_INFODESCLINE4;
-					value = (0x1b51f8 / mdb.CiaSave).ToString();
+					value = FormatTracks();
+					break;
+				}
+
+				// Current speed
+				case 5:
+				{
+					description = Resources.IDS_TFMX_INFODESCLINE5;
+					value = (playingInfo.Pdb.PreScale + 1).ToString();
+					break;
+				}
+
+				// Current tempo (BPM)
+				case 6:
+				{
+					description = Resources.IDS_TFMX_INFODESCLINE6;
+					value = (0x1b51f8 / playingInfo.Mdb.CiaSave).ToString();
 					break;
 				}
 
@@ -245,7 +218,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/// Will load the file into memory
 		/// </summary>
 		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.SetPosition;
+		public override ModulePlayerSupportFlag SupportFlags => base.SupportFlags | ModulePlayerSupportFlag.BufferMode;
 
 
 
@@ -335,8 +308,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				byte[] checksum = md5.ComputeHash(musicData, 0, musicLen);
 
 				// Check the checksum
-				dangerFreakHack = checksum.SequenceEqual(dangerFreakTitle);
-				gemx = checksum.SequenceEqual(gemXTitle);
+				dangerFreakHack = checksum.SequenceEqual(Tables.DangerFreakTitle);
+				gemx = checksum.SequenceEqual(Tables.GemXTitle);
 
 				// Now that we have pointers to almost everything, this would be a good
 				// time to fix everything we can... fix endianess on track steps,
@@ -447,19 +420,25 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/********************************************************************/
 		public override bool InitPlayer(out string errorMessage)
 		{
-			hdb = Helpers.InitializeArray<Hdb>(8);
-			mdb = new Mdb();
-			cdb = Helpers.InitializeArray<Cdb>(16);
-			pdb = new PdBlk();
-			idb = new Idb();
+			if (!base.InitPlayer(out errorMessage))
+				return false;
+
+			playingInfo = new GlobalPlayingInfo
+			{
+				Hdb = ArrayHelper.InitializeArray<Hdb>(8),
+				Mdb = new Mdb(),
+				Cdb = ArrayHelper.InitializeArray<Cdb>(16),
+				Pdb = new PdBlk(),
+				Idb = new Idb()
+			};
 
 			// Initialize some of the member variables
-			eClocks = 14318;
+			playingInfo.EClocks = 14318;
 
 			if (currentModuleType == ModuleType.Tfmx7V)
-				multiMode = true;
+				playingInfo.MultiMode = true;
 			else
-				multiMode = false;
+				playingInfo.MultiMode = false;
 
 			// Allocate mixer buffers
 			tBuf = new int[7][];
@@ -471,7 +450,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				outBuf[i] = new short[BufSize];
 			}
 
-			if (multiMode)
+			if (playingInfo.MultiMode)
 			{
 				for (int i = 4; i < 7; i++)
 				{
@@ -483,7 +462,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			numBytes = 0;
 			bytesDone = 0;
 
-			return base.InitPlayer(out errorMessage);
+			return true;
 		}
 
 
@@ -495,14 +474,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/********************************************************************/
 		public override void CleanupPlayer()
 		{
-			idb = null;
-			pdb = null;
-			cdb = null;
-			mdb = null;
-			hdb = null;
-
 			tBuf = null;
 			outBuf = null;
+
+			playingInfo = null;
 
 			Cleanup();
 
@@ -516,206 +491,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
+		public override bool InitSound(int songNumber, out string errorMessage)
 		{
-			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+			if (!base.InitSound(songNumber, out errorMessage))
 				return false;
 
-			// Initialize member variables
-			currentSong = songNumber;
-
-			firstTime = true;
-
-			jiffies = 0;
-			loops = 0;				// Infinity loop on the modules
-			startPat = -1;
-			eRem = 0;
-
-			// Initialize the player
-			TfmxInit();
-			StartSong(songNumber, 0);
+			InitializeSound(songNumber);
 
 			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override DurationInfo[] CalculateDuration()
-		{
-			SubSongInfo subs = SubSongs;
-
-			// Initialize some of the temp variables
-			Pdb[] pattInfo = Helpers.InitializeArray<Pdb>(8);
-			List<DurationInfo> durationList = new List<DurationInfo>();
-
-			// Take each sub-song
-			for (int i = 0; i < subs.Number; i++)
-			{
-				// Get the start and end positions of the sub-song
-				ushort startPos = songStart[i];
-				ushort endPos = songEnd[i];
-
-				// Calculate the start tempo
-				ushort cia, spd;
-
-				if (tempo[i] >= 0x10)
-				{
-					cia = (ushort)(0x1b51f8 / tempo[i]);
-					spd = 5;
-				}
-				else
-				{
-					cia = 14318;
-					spd = tempo[i];
-				}
-
-				short trackLoop = -1;
-				float total = 0.0f;
-				List<PositionInfo> posInfoList = new List<PositionInfo>();
-
-				// Now take each position
-				for (int j = startPos; j <= endPos; j++)
-				{
-					PositionInfo posInfo = new PositionInfo((byte)spd, cia, new TimeSpan((long)total * TimeSpan.TicksPerMillisecond), i, j);
-
-					while ((j - startPos) >= posInfoList.Count)
-						posInfoList.Add(posInfo);
-
-Loop:
-					// Get the offset to the position data
-					int posData = trackStart + (j * 16);
-
-					if (BitConverter.ToUInt16(musicData, posData) == 0xeffe)
-					{
-						switch (BitConverter.ToUInt16(musicData, posData + 1 * 2))
-						{
-							// Stop
-							case 0:
-							{
-								j = endPos;
-								break;
-							}
-
-							// Loop
-							case 1:
-							{
-								if (trackLoop-- == 0)
-								{
-									trackLoop = -1;
-									break;
-								}
-								else
-								{
-									if (trackLoop < 0)
-									{
-										trackLoop = BitConverter.ToInt16(musicData, posData + 3 * 2);
-										if ((trackLoop == 0) || (trackLoop > 1000))
-										{
-											j = endPos;
-											break;
-										}
-									}
-								}
-
-								// If we jump back, the module has probably ended
-								ushort l2 = BitConverter.ToUInt16(musicData, posData + 2 * 2);
-								if ((l2 < j) && (trackLoop < 0))
-								{
-									j = endPos;
-									break;
-								}
-
-								j = l2;
-								goto Loop;
-							}
-
-							// Speed
-							case 2:
-							{
-								spd = BitConverter.ToUInt16(musicData, posData + 2 * 2);
-
-								int x;
-								ushort l3 = BitConverter.ToUInt16(musicData, posData + 3 * 2);
-								if (((l3 & 0xf200) == 0) && ((x = (l3 & 0x1ff)) > 0xf))
-									cia = (ushort)(0x1b51f8 / x);
-
-								break;
-							}
-
-							// Time share
-							case 3:
-							{
-								int x = BitConverter.ToUInt16(musicData, posData + 3 * 2);
-								if ((x & 0x8000) == 0)
-								{
-									sbyte xx = (sbyte)x;
-									xx = xx < -0x20 ? (sbyte)-0x20 : xx;
-									cia = (ushort)((14318 * (xx + 100)) / 100);
-								}
-								break;
-							}
-						}
-					}
-					else
-					{
-						for (int k = 0; k < 8; k++)
-						{
-							ushort lv = BitConverter.ToUInt16(musicData, posData + k * 2);
-
-							byte y = pattInfo[k].PNum = (byte)(lv >> 8);
-							if (y < 0x80)
-							{
-								pattInfo[k].PStep = 0;
-								pattInfo[k].PWait = 0;
-								pattInfo[k].PLoop = 0xffff;
-								pattInfo[k].PAddr = BitConverter.ToUInt32(musicData, patternStart + y * 4);
-								pattInfo[k].Looped = false;
-							}
-						}
-
-						// Take each row in the pattern
-						bool endPatt = false;
-
-						do
-						{
-							for (int k = 0; k < 8; k++)
-							{
-								if (DoTrack(pattInfo, pattInfo[k], true))
-									endPatt = true;
-							}
-
-							// Add the time it takes to play the current row
-							if (!endPatt)
-							{
-								total += ((cia * 1.3968255f) / 1000.0f) * (spd + 1);
-
-								// Check to see if all the channels are stopped.
-								// If so, the pattern ends
-								ushort l = 0;
-								for (int k = 0; k < 8; k++)
-								{
-									if (pattInfo[k].PNum >= 0x90)
-										l++;
-								}
-
-								if (l == 8)
-									endPatt = true;
-							}
-						}
-						while (!endPatt);
-					}
-				}
-
-				// Set the total time
-				durationList.Add(new DurationInfo(new TimeSpan((long)total * TimeSpan.TicksPerMillisecond), posInfoList.ToArray()));
-			}
-
-			return durationList.ToArray();
 		}
 
 
@@ -753,21 +536,21 @@ Loop:
 				if (stop)
 					break;
 
-				if (mdb.PlayerEnable)
+				if (playingInfo.Mdb.PlayerEnable)
 				{
 					DoAllMacros();
 
 					if (currentSong >= 0)
 						DoTracks();
 
-					numBytes = (int)(eClocks * (mixerFreq >> 1));
-					eRem += (numBytes % 357955);
+					numBytes = (int)(playingInfo.EClocks * (mixerFreq >> 1));
+					playingInfo.ERem += (numBytes % 357955);
 					numBytes /= 357955;
 
-					if (eRem > 357955)
+					if (playingInfo.ERem > 357955)
 					{
 						numBytes++;
-						eRem -= 357955;
+						playingInfo.ERem -= 357955;
 					}
 				}
 				else
@@ -779,7 +562,7 @@ Loop:
 			Conv16(tBuf[2], outBuf[2], bytesDone);
 			Conv16(tBuf[3], outBuf[3], bytesDone);
 
-			if (multiMode)
+			if (playingInfo.MultiMode)
 			{
 				Conv16(tBuf[4], outBuf[4], bytesDone);
 				Conv16(tBuf[5], outBuf[5], bytesDone);
@@ -794,11 +577,17 @@ Loop:
 			SetupChannel(2);
 			SetupChannel(3);
 
-			if (multiMode)
+			if (playingInfo.MultiMode)
 			{
 				SetupChannel(4);
 				SetupChannel(5);
 				SetupChannel(6);
+			}
+
+			if (endReached)
+			{
+				OnEndReachedOnAllChannels(playingInfo.Pdb.FirstPos);
+				endReached = false;
 			}
 		}
 
@@ -859,53 +648,52 @@ Loop:
 				return new SubSongInfo(songCount, 0);
 			}
 		}
+		#endregion
 
-
-
+		#region ModulePlayerWithSubSongDurationAgentBase implementation
 		/********************************************************************/
 		/// <summary>
-		/// Return the length of the current song
+		/// Initialize all internal structures when beginning duration
+		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		public override int SongLength => pdb.LastPos - pdb.FirstPos + 1;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position of the song
-		/// </summary>
-		/********************************************************************/
-		public override int GetSongPosition()
+		protected override void InitDuration(int subSong)
 		{
-			return pdb.CurrPos - pdb.FirstPos;
+			InitializeSound(subSong);
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Set a new position of the song
+		/// Create a snapshot of all the internal structures and return it
 		/// </summary>
 		/********************************************************************/
-		public override void SetSongPosition(int position, PositionInfo positionInfo)
+		protected override ISnapshot CreateSnapshot()
 		{
-			// Set the speed and tempo
-			mdb.CiaSave = positionInfo.Bpm;
-			eClocks = mdb.CiaSave;
-			mdb.SpeedCnt = pdb.PreScale = positionInfo.Speed;
+			return new Snapshot(playingInfo);
+		}
 
-			// Change the position
-			pdb.CurrPos = (ushort)(pdb.FirstPos + position);
-			if (pdb.CurrPos == pdb.FirstPos)
-				firstTime = true;
 
-			GetTrackStep();
 
-			OnModuleInfoChanged(InfoSpeedLine, pdb.PreScale.ToString());
-			OnModuleInfoChanged(InfoTempoLine, (0x1b51f8 / mdb.CiaSave).ToString());
+		/********************************************************************/
+		/// <summary>
+		/// Initialize internal structures based on the snapshot given
+		/// </summary>
+		/********************************************************************/
+		protected override bool SetSnapshot(ISnapshot snapshot, out string errorMessage)
+		{
+			errorMessage = string.Empty;
 
-			base.SetSongPosition(position, positionInfo);
+			// Start to make a clone of the snapshot
+			Snapshot currentSnapshot = (Snapshot)snapshot;
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayingInfo);
+
+			playingInfo = clonedSnapshot.PlayingInfo;
+
+			UpdateModuleInformation();
+
+			return true;
 		}
 		#endregion
 
@@ -1182,6 +970,33 @@ Loop:
 
 		/********************************************************************/
 		/// <summary>
+		/// Initialize sound structures
+		/// </summary>
+		/********************************************************************/
+		private void InitializeSound(int songNumber)
+		{
+			// Initialize member variables
+			currentSong = songNumber;
+			firstTime = true;
+
+			playingInfo.Loops = 0;		// Infinity loop on the modules
+			playingInfo.ERem = 0;
+
+			playingInfo.LastTrackPlayed = new int[ModuleChannelCount];
+
+			startPat = -1;
+
+			endReached = false;
+
+			// Initialize the player
+			TfmxInit();
+			StartSong(songNumber, 0);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Frees all the memory the player have allocated
 		/// </summary>
 		/********************************************************************/
@@ -1209,9 +1024,9 @@ Loop:
 
 			for (int x = 0; x < 8; x++)
 			{
-				hdb[x].C = cdb[x];
-				pdb.p[x].PNum = 0xff;
-				pdb.p[x].PAddr = 0;
+				playingInfo.Hdb[x].C = playingInfo.Cdb[x];
+				playingInfo.Pdb.p[x].PNum = 0xff;
+				playingInfo.Pdb.p[x].PAddr = 0;
 
 				ChannelOff(x);
 			}
@@ -1226,43 +1041,37 @@ Loop:
 		/********************************************************************/
 		private void StartSong(int song, int mode)
 		{
-			mdb.PlayerEnable = false;		// Sort of locking mechanism
+			playingInfo.Mdb.PlayerEnable = false;		// Sort of locking mechanism
 
-			mdb.MasterVol = 0x40;
-			mdb.FadeSlope = 0;
-			mdb.TrackLoop = -1;
-			mdb.PlayPattFlag = false;
-			mdb.CiaSave = 14318;			// Assume 125 BPM, NTSC timing
+			playingInfo.Mdb.MasterVol = 0x40;
+			playingInfo.Mdb.FadeSlope = 0;
+			playingInfo.Mdb.TrackLoop = -1;
+			playingInfo.Mdb.PlayPattFlag = false;
+			playingInfo.Mdb.CiaSave = 14318;			// Assume 125 BPM, NTSC timing
 
 			if (mode != 2)
 			{
-				pdb.CurrPos = pdb.FirstPos = songStart[song];
-				pdb.LastPos = songEnd[song];
+				playingInfo.Pdb.CurrPos = playingInfo.Pdb.FirstPos = songStart[song];
+				playingInfo.Pdb.LastPos = songEnd[song];
 
 				ushort x = tempo[song];
 				if (x >= 0x10)
 				{
-					mdb.CiaSave = (ushort)(0x1b51f8 / x);
-					pdb.PreScale = 5;		// Fix by Thomas Neumann
+					playingInfo.Mdb.CiaSave = (ushort)(0x1b51f8 / x);
+					playingInfo.Pdb.PreScale = 5;		// Fix by Thomas Neumann
 				}
 				else
-					pdb.PreScale = x;
-
-				// Change the module info
-				OnModuleInfoChanged(InfoSpeedLine, pdb.PreScale.ToString());
+					playingInfo.Pdb.PreScale = x;
 			}
 
-			// Change the module info
-			OnModuleInfoChanged(InfoTempoLine, (0x1b51f8 / mdb.CiaSave).ToString());
-
-			eClocks = mdb.CiaSave;
+			playingInfo.EClocks = playingInfo.Mdb.CiaSave;
 
 			for (int x = 0; x < 8; x++)
 			{
-				pdb.p[x].PAddr = 0;
-				pdb.p[x].PNum = 0xff;
-				pdb.p[x].PxPose = 0;
-				pdb.p[x].PStep = 0;
+				playingInfo.Pdb.p[x].PAddr = 0;
+				playingInfo.Pdb.p[x].PNum = 0xff;
+				playingInfo.Pdb.p[x].PxPose = 0;
+				playingInfo.Pdb.p[x].PStep = 0;
 			}
 
 			if (mode != 2)
@@ -1270,15 +1079,15 @@ Loop:
 
 			if (startPat != -1)
 			{
-				pdb.CurrPos = pdb.FirstPos = (ushort)startPat;
+				playingInfo.Pdb.CurrPos = playingInfo.Pdb.FirstPos = (ushort)startPat;
 				GetTrackStep();
 				startPat = -1;
 			}
 
-			mdb.SpeedCnt = 0;
-			mdb.EndFlag = false;
+			playingInfo.Mdb.SpeedCnt = 0;
+			playingInfo.Mdb.EndFlag = false;
 
-			mdb.PlayerEnable = true;
+			playingInfo.Mdb.PlayerEnable = true;
 		}
 
 
@@ -1291,7 +1100,7 @@ Loop:
 		private void NotePort(uint i)
 		{
 			Uni x = new Uni(i);
-			Cdb c = cdb[x.b2 & (multiMode ? 7 : 3)];
+			Cdb c = playingInfo.Cdb[x.b2 & (playingInfo.MultiMode ? 7 : 3)];
 
 			if (x.b0 == 0xfc)
 			{
@@ -1341,7 +1150,7 @@ Loop:
 						c.PortaPer = c.DestPeriod;
 
 					c.PortaRate = x.b3;
-					c.DestPeriod = (ushort)(noteVals[c.CurrNote = (byte)(x.b0 & 0x3f)]);
+					c.DestPeriod = (ushort)(Tables.NoteVals[c.CurrNote = (byte)(x.b0 & 0x3f)]);
 				}
 				else
 				{
@@ -1652,7 +1461,7 @@ Loop:
 					{
 						a = c.PrevNote;
 
-						a = (noteVals[a + x.b1 & 0x3f] * (0x100 + c.FineTune + (sbyte)x.b3)) >> 8;
+						a = (Tables.NoteVals[a + x.b1 & 0x3f] * (0x100 + c.FineTune + (sbyte)x.b3)) >> 8;
 						c.DestPeriod = (ushort)a;
 
 						if (c.PortaRate == 0)
@@ -1672,7 +1481,7 @@ Loop:
 					{
 						a = c.CurrNote;
 
-						a = (noteVals[a + x.b1 & 0x3f] * (0x100 + c.FineTune + (sbyte)x.b3)) >> 8;
+						a = (Tables.NoteVals[a + x.b1 & 0x3f] * (0x100 + c.FineTune + (sbyte)x.b3)) >> 8;
 						c.DestPeriod = (ushort)a;
 
 						if (c.PortaRate == 0)
@@ -1691,7 +1500,7 @@ Loop:
 					{
 						a = 0;
 
-						a = (noteVals[a + x.b1 & 0x3f] * (0x100 + c.FineTune + (sbyte)x.b3)) >> 8;
+						a = (Tables.NoteVals[a + x.b1 & 0x3f] * (0x100 + c.FineTune + (sbyte)x.b3)) >> 8;
 						c.DestPeriod = (ushort)a;
 
 						if (c.PortaRate == 0)
@@ -1831,7 +1640,7 @@ Loop:
 					// Cue
 					case 0x20:
 					{
-						idb.Cue[x.b1 & 0x03] = x.w1;
+						playingInfo.Idb.Cue[x.b1 & 0x03] = x.w1;
 						break;
 					}
 
@@ -1965,13 +1774,13 @@ Loop:
 				}
 			}
 
-			if ((mdb.FadeSlope != 0) && ((--mdb.FadeTime) == 0))
+			if ((playingInfo.Mdb.FadeSlope != 0) && ((--playingInfo.Mdb.FadeTime) == 0))
 			{
-				mdb.FadeTime = mdb.FadeReset;
-				mdb.MasterVol += mdb.FadeSlope;
+				playingInfo.Mdb.FadeTime = playingInfo.Mdb.FadeReset;
+				playingInfo.Mdb.MasterVol += playingInfo.Mdb.FadeSlope;
 
-				if (mdb.FadeDest == mdb.MasterVol)
-					mdb.FadeSlope = 0;
+				if (playingInfo.Mdb.FadeDest == playingInfo.Mdb.MasterVol)
+					playingInfo.Mdb.FadeSlope = 0;
 			}
 		}
 
@@ -1984,7 +1793,7 @@ Loop:
 		/********************************************************************/
 		private void DoMacro(int cc)
 		{
-			Cdb c = cdb[cc];
+			Cdb c = playingInfo.Cdb[cc];
 
 			// Locking
 			if (c.SfxLockTime >= 0)
@@ -2019,7 +1828,7 @@ Loop:
 				c.hw.SLen = c.hw.SampleLength;
 			}
 
-			c.hw.Vol = (byte)((c.CurVol * mdb.MasterVol) >> 6);
+			c.hw.Vol = (byte)((c.CurVol * playingInfo.Mdb.MasterVol) >> 6);
 		}
 
 
@@ -2035,7 +1844,7 @@ Loop:
 			DoMacro(1);
 			DoMacro(2);
 
-			if (multiMode)
+			if (playingInfo.MultiMode)
 			{
 				DoMacro(4);
 				DoMacro(5);
@@ -2055,7 +1864,7 @@ Loop:
 		/********************************************************************/
 		private void ChannelOff(int i)
 		{
-			Cdb c = cdb[i & 0xf];
+			Cdb c = playingInfo.Cdb[i & 0xf];
 			if (c.SfxFlag == 0)
 			{
 				c.hw.Mode = 0;
@@ -2080,16 +1889,16 @@ Loop:
 		/********************************************************************/
 		private void DoFade(sbyte sp, sbyte dv)
 		{
-			mdb.FadeDest = dv;
+			playingInfo.Mdb.FadeDest = dv;
 
-			if (((mdb.FadeTime = mdb.FadeReset = sp) == 0) || (mdb.MasterVol == sp))
+			if (((playingInfo.Mdb.FadeTime = playingInfo.Mdb.FadeReset = sp) == 0) || (playingInfo.Mdb.MasterVol == sp))
 			{
-				mdb.MasterVol = dv;
-				mdb.FadeSlope = 0;
+				playingInfo.Mdb.MasterVol = dv;
+				playingInfo.Mdb.FadeSlope = 0;
 				return;
 			}
 
-			mdb.FadeSlope = (sbyte)((mdb.MasterVol > mdb.FadeDest) ? -1 : 1);
+			playingInfo.Mdb.FadeSlope = (sbyte)((playingInfo.Mdb.MasterVol > playingInfo.Mdb.FadeDest) ? -1 : 1);
 		}
 
 
@@ -2104,17 +1913,16 @@ Loop:
 			for (;;)
 			{
 				// Check for "end of module"
-				if (pdb.CurrPos == pdb.FirstPos)
+				if (playingInfo.Pdb.CurrPos == playingInfo.Pdb.FirstPos)
 				{
 					if (firstTime)
 						firstTime = false;
 					else
-						OnEndReached();
+						endReached = true;
 				}
 
-				int l = trackStart + (pdb.CurrPos * 16);
+				int l = trackStart + (playingInfo.Pdb.CurrPos * 16);
 
-				jiffies = 0;
 				if (BitConverter.ToUInt16(musicData, l) == 0xeffe)
 				{
 					switch (BitConverter.ToUInt16(musicData, l + 1 * 2))
@@ -2122,74 +1930,77 @@ Loop:
 						// Stop
 						case 0:
 						{
-							OnEndReached();
+							endReached = true;
 							return;
 						}
 
 						// Loop
 						case 1:
 						{
-							if (loops != 0)
+							if (playingInfo.Loops != 0)
 							{
-								if ((--loops) == 0)
+								if ((--playingInfo.Loops) == 0)
 								{
-									OnEndReached();
+									endReached = true;
 									return;
 								}
 							}
 
-							if ((mdb.TrackLoop--) == 0)
+							if ((playingInfo.Mdb.TrackLoop--) == 0)
 							{
-								mdb.TrackLoop = -1;
-								pdb.CurrPos++;
+								playingInfo.Mdb.TrackLoop = -1;
+								playingInfo.Pdb.CurrPos++;
 
-								OnPositionChanged();
+								ShowSongPosition();
+								ShowTracks();
 								break;
 							}
 
-							if (mdb.TrackLoop < 0)
+							if (playingInfo.Mdb.TrackLoop < 0)
 							{
-								mdb.TrackLoop = BitConverter.ToInt16(musicData, l + 3 * 2);
-								if ((mdb.TrackLoop == 0) || (mdb.TrackLoop > 1000))		// Fix for Rames - Title song 0
-									OnEndReached();
+								playingInfo.Mdb.TrackLoop = BitConverter.ToInt16(musicData, l + 3 * 2);
+								if ((playingInfo.Mdb.TrackLoop == 0) || (playingInfo.Mdb.TrackLoop > 1000))		// Fix for Rames - Title song 0
+									endReached = true;
 							}
 
 							// If we jump back, the module has probably ended
 							ushort l2 = BitConverter.ToUInt16(musicData, l + 2 * 2);
 
 							// Fix for PP_Hammer - Ingame song 8 by Thomas Neumann
-							if (l2 < pdb.FirstPos)
-								l2 = pdb.FirstPos;
+							if (l2 < playingInfo.Pdb.FirstPos)
+								l2 = playingInfo.Pdb.FirstPos;
 
-							if ((l2 < pdb.CurrPos) && (mdb.TrackLoop < 0))
-								OnEndReached();
+							if ((l2 < playingInfo.Pdb.CurrPos) && (playingInfo.Mdb.TrackLoop < 0))
+								endReached = true;
 
-							pdb.CurrPos = l2;
-							OnPositionChanged();
+							playingInfo.Pdb.CurrPos = l2;
+
+							ShowSongPosition();
+							ShowTracks();
 							break;
 						}
 
 						// Speed
 						case 2:
 						{
-							mdb.SpeedCnt = pdb.PreScale = BitConverter.ToUInt16(musicData, l + 2 * 2);
+							playingInfo.Mdb.SpeedCnt = playingInfo.Pdb.PreScale = BitConverter.ToUInt16(musicData, l + 2 * 2);
 
-							// Change the module info
-							OnModuleInfoChanged(InfoSpeedLine, pdb.PreScale.ToString());
+							ShowSpeed();
 
 							int x;
 							ushort l3 = BitConverter.ToUInt16(musicData, l + 3 * 2);
 							if (((l3 & 0xf200) == 0) && ((x = (l3 & 0x1ff)) > 0xf))
 							{
-								mdb.CiaSave = (ushort)(0x1b51f8 / x);
-								eClocks = mdb.CiaSave;
+								playingInfo.Mdb.CiaSave = (ushort)(0x1b51f8 / x);
+								playingInfo.EClocks = playingInfo.Mdb.CiaSave;
 
-								// Change the module info
-								OnModuleInfoChanged(InfoTempoLine, (0x1b51f8 / mdb.CiaSave).ToString());
+								ShowTempo();
 							}
 
-							pdb.CurrPos++;
-							OnPositionChanged();
+							playingInfo.Pdb.CurrPos++;
+
+							ShowSongPosition();
+							ShowTracks();
 							break;
 						}
 
@@ -2201,16 +2012,17 @@ Loop:
 							{
 								sbyte xx = (sbyte)x;
 								xx = xx < -0x20 ? (sbyte)-0x20 : xx;
-								mdb.CiaSave = (ushort)((14318 * (xx + 100)) / 100);
-								eClocks = mdb.CiaSave;
-								multiMode = true;
+								playingInfo.Mdb.CiaSave = (ushort)((14318 * (xx + 100)) / 100);
+								playingInfo.EClocks = playingInfo.Mdb.CiaSave;
+								playingInfo.MultiMode = true;
 
-								// Change the module info
-								OnModuleInfoChanged(InfoTempoLine, (0x1b51f8 / mdb.CiaSave).ToString());
+								ShowTempo();
 							}
 
-							pdb.CurrPos++;
-							OnPositionChanged();
+							playingInfo.Pdb.CurrPos++;
+
+							ShowSongPosition();
+							ShowTracks();
 							break;
 						}
 
@@ -2221,15 +2033,19 @@ Loop:
 							ushort l3 = BitConverter.ToUInt16(musicData, l + 3 * 2);
 
 							DoFade((sbyte)(l2 & 0xff), (sbyte)(l3 & 0xff));
-							pdb.CurrPos++;
-							OnPositionChanged();
+							playingInfo.Pdb.CurrPos++;
+
+							ShowSongPosition();
+							ShowTracks();
 							break;
 						}
 
 						default:
 						{
-							pdb.CurrPos++;
-							OnPositionChanged();
+							playingInfo.Pdb.CurrPos++;
+
+							ShowSongPosition();
+							ShowTracks();
 							break;
 						}
 					}
@@ -2240,16 +2056,16 @@ Loop:
 					{
 						ushort lv = BitConverter.ToUInt16(musicData, l + x * 2);
 
-						pdb.p[x].PxPose = (sbyte)(lv & 0xff);
+						playingInfo.Pdb.p[x].PxPose = (sbyte)(lv & 0xff);
 
-						byte y = pdb.p[x].PNum = (byte)(lv >> 8);
+						byte y = playingInfo.Pdb.p[x].PNum = (byte)(lv >> 8);
 						if (y < 0x80)
 						{
-							pdb.p[x].PStep = 0;
-							pdb.p[x].PWait = 0;
-							pdb.p[x].PLoop = 0xffff;
-							pdb.p[x].PAddr = BitConverter.ToUInt32(musicData, patternStart + y * 4);
-							pdb.p[x].Looped = false;
+							playingInfo.Pdb.p[x].PStep = 0;
+							playingInfo.Pdb.p[x].PWait = 0;
+							playingInfo.Pdb.p[x].PLoop = 0xffff;
+							playingInfo.Pdb.p[x].PAddr = BitConverter.ToUInt32(musicData, patternStart + y * 4);
+							playingInfo.Pdb.p[x].Looped = false;
 						}
 					}
 					break;
@@ -2325,17 +2141,16 @@ Loop:
 
 							if (!simulating)
 							{
-								if (pdb.CurrPos == pdb.LastPos)
+								if (playingInfo.Pdb.CurrPos == playingInfo.Pdb.LastPos)
 								{
-									pdb.CurrPos = pdb.FirstPos;
-									OnPositionChanged();
-									OnEndReached();
+									playingInfo.Pdb.CurrPos = playingInfo.Pdb.FirstPos;
+									endReached = true;
 								}
 								else
-								{
-									pdb.CurrPos++;
-									OnPositionChanged();
-								}
+									playingInfo.Pdb.CurrPos++;
+
+								ShowSongPosition();
+								ShowTracks();
 
 								GetTrackStep();
 							}
@@ -2380,7 +2195,7 @@ Loop:
 									if (simulating)
 										return true;
 
-									OnEndReached();
+									endReached = true;
 								}
 							}
 							else
@@ -2421,7 +2236,7 @@ Loop:
 						// StCu
 						case 14:
 						{
-							mdb.PlayPattFlag = false;
+							playingInfo.Mdb.PlayPattFlag = false;
 							goto case 4;
 						}
 
@@ -2468,7 +2283,7 @@ Loop:
 						case 13:
 						{
 							if (!simulating)
-								idb.Cue[x.b1 & 0x3] = x.w1;
+								playingInfo.Idb.Cue[x.b1 & 0x3] = x.w1;
 
 							break;
 						}
@@ -2506,15 +2321,13 @@ Loop:
 		/********************************************************************/
 		private void DoTracks()
 		{
-			jiffies++;
-
-			if (mdb.SpeedCnt-- == 0)
+			if (playingInfo.Mdb.SpeedCnt-- == 0)
 			{
-				mdb.SpeedCnt = pdb.PreScale;
+				playingInfo.Mdb.SpeedCnt = playingInfo.Pdb.PreScale;
 
 				for (int x = 0; x < 8; x++)
 				{
-					if (DoTrack(pdb.p, pdb.p[x], false))
+					if (DoTrack(playingInfo.Pdb.p, playingInfo.Pdb.p[x], false))
 						x = -1;
 				}
 
@@ -2522,23 +2335,22 @@ Loop:
 				int y = 0;
 				for (int x = 0; x < 8; x++)
 				{
-					if (pdb.p[x].PNum >= 0x90)
+					if (playingInfo.Pdb.p[x].PNum >= 0x90)
 						y++;
 				}
 
 				if (y == 8)
 				{
-					if (pdb.CurrPos == pdb.LastPos)
+					if (playingInfo.Pdb.CurrPos == playingInfo.Pdb.LastPos)
 					{
-						pdb.CurrPos = pdb.FirstPos;
-						OnPositionChanged();
-						OnEndReached();
+						playingInfo.Pdb.CurrPos = playingInfo.Pdb.FirstPos;
+						endReached = true;
 					}
 					else
-					{
-						pdb.CurrPos++;
-						OnPositionChanged();
-					}
+						playingInfo.Pdb.CurrPos++;
+
+					ShowSongPosition();
+					ShowTracks();
 
 					GetTrackStep();
 				}
@@ -2554,20 +2366,20 @@ Loop:
 		/********************************************************************/
 		private void AllOff()
 		{
-			mdb.PlayerEnable = false;
+			playingInfo.Mdb.PlayerEnable = false;
 
 			for (int x = 0; x < 8; x++)
 			{
-				Cdb c = cdb[x];
-				c.hw = hdb[x];
+				Cdb c = playingInfo.Cdb[x];
+				c.hw = playingInfo.Hdb[x];
 				c.hw.C = c;			// Wait on DMA
 
-				hdb[x].Mode = 0;
+				playingInfo.Hdb[x].Mode = 0;
 				c.MacroWait = 0;
 				c.MacroRun = c.CurVol = 0;
 				c.SfxFlag = 0;
 				c.SfxCode = c.SaveAddr = 0;
-				hdb[x].Vol = 0;
+				playingInfo.Hdb[x].Vol = 0;
 				c.Loop = c.SfxLockTime = -1;
 				c.NewStyleMacro = 0xff;
 
@@ -2602,19 +2414,19 @@ Loop:
 		/********************************************************************/
 		private void MixIt(int n, int b)
 		{
-			if (multiMode)
+			if (playingInfo.MultiMode)
 			{
-				MixAdd(hdb[4], n, tBuf[3], b);
-				MixAdd(hdb[5], n, tBuf[4], b);
-				MixAdd(hdb[6], n, tBuf[5], b);
-				MixAdd(hdb[7], n, tBuf[6], b);
+				MixAdd(playingInfo.Hdb[4], n, tBuf[3], b);
+				MixAdd(playingInfo.Hdb[5], n, tBuf[4], b);
+				MixAdd(playingInfo.Hdb[6], n, tBuf[5], b);
+				MixAdd(playingInfo.Hdb[7], n, tBuf[6], b);
 			}
 			else
-				MixAdd(hdb[3], n, tBuf[3], b);
+				MixAdd(playingInfo.Hdb[3], n, tBuf[3], b);
 
-			MixAdd(hdb[0], n, tBuf[0], b);
-			MixAdd(hdb[1], n, tBuf[1], b);
-			MixAdd(hdb[2], n, tBuf[2], b);
+			MixAdd(playingInfo.Hdb[0], n, tBuf[0], b);
+			MixAdd(playingInfo.Hdb[1], n, tBuf[1], b);
+			MixAdd(playingInfo.Hdb[2], n, tBuf[2], b);
 		}
 
 
@@ -2703,10 +2515,131 @@ Loop:
 			channel.SetFrequency(mixerFreq);
 			channel.SetVolume(256);
 
-			if (multiMode)
-				channel.SetPanning((ushort)pan7[chan]);
+			if (playingInfo.MultiMode)
+				channel.SetPanning((ushort)Tables.Pan7[chan]);
 			else
-				channel.SetPanning((ushort)pan4[chan]);
+				channel.SetPanning((ushort)Tables.Pan4[chan]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current song position
+		/// </summary>
+		/********************************************************************/
+		private void ShowSongPosition()
+		{
+			OnModuleInfoChanged(InfoPositionLine, FormatPosition());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with track numbers
+		/// </summary>
+		/********************************************************************/
+		private void ShowTracks()
+		{
+			OnModuleInfoChanged(InfoTrackLine, FormatTracks());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current speed
+		/// </summary>
+		/********************************************************************/
+		private void ShowSpeed()
+		{
+			OnModuleInfoChanged(InfoSpeedLine, (playingInfo.Pdb.PreScale + 1).ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current tempo
+		/// </summary>
+		/********************************************************************/
+		private void ShowTempo()
+		{
+			OnModuleInfoChanged(InfoTempoLine, (0x1b51f8 / playingInfo.Mdb.CiaSave).ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with all dynamic values
+		/// </summary>
+		/********************************************************************/
+		private void UpdateModuleInformation()
+		{
+			ShowSongPosition();
+			ShowTracks();
+			ShowSpeed();
+			ShowTempo();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the number of positions
+		/// </summary>
+		/********************************************************************/
+		private string FormatPositionLength()
+		{
+			return (playingInfo.Pdb.LastPos - playingInfo.Pdb.FirstPos + 1).ToString();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the current position
+		/// </summary>
+		/********************************************************************/
+		private string FormatPosition()
+		{
+			return (playingInfo.Pdb.CurrPos - playingInfo.Pdb.FirstPos).ToString();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the playing tracks
+		/// </summary>
+		/********************************************************************/
+		private string FormatTracks()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			int count = ModuleChannelCount;
+			for (int i = 0; i < count; i++)
+			{
+				int track = BitConverter.ToUInt16(musicData, trackStart + (playingInfo.Pdb.CurrPos * 16) + i * 2) >> 8;
+				if (track >= 0x90)
+					sb.Append("-, ");
+				else
+				{
+					if (track >= 0x80)
+						track = playingInfo.LastTrackPlayed[i];
+					else
+						playingInfo.LastTrackPlayed[i] = track;
+
+					sb.Append(track);
+					sb.Append(", ");
+				}
+			}
+
+			sb.Remove(sb.Length - 2, 2);
+
+			return sb.ToString();
 		}
 		#endregion
 	}

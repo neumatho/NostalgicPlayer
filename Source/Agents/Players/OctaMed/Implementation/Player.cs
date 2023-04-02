@@ -15,13 +15,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 	/// <summary>
 	/// Player interface
 	/// </summary>
-	internal class Player : Mixer
+	internal class Player : Mixer, IDeepCloneable<Player>
 	{
 		#region SynthData class
 		/// <summary>
 		/// Track specific synth sound handling data
 		/// </summary>
-		private class SynthData
+		private class SynthData : IDeepCloneable<SynthData>
 		{
 			public enum SyType
 			{
@@ -53,6 +53,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			public ushort EnvCount;			// Envelope position counter
 			public int Vol;					// Current synth volume
 			public NoteNum NoteNumber;		// Note number with transpose for arpeggio
+
+			/********************************************************************/
+			/// <summary>
+			/// Make a deep copy of the current object
+			/// </summary>
+			/********************************************************************/
+			public SynthData MakeDeepClone()
+			{
+				return (SynthData)MemberwiseClone();
+			}
 		}
 		#endregion
 
@@ -60,7 +70,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// <summary>
 		/// TrackData structure for each track
 		/// </summary>
-		private class TrackData
+		private class TrackData : IDeepCloneable<TrackData>
 		{
 			public enum FxType
 			{
@@ -108,7 +118,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			public byte TrkTempVol;			// Temporary volume (+1; 0 = none)
 			public ushort TrkVibOffs;
 			public bool TrkLastNoteMidi;	// True if last note was MIDI note
-			public readonly SynthData TrkSy = new SynthData();
+			public SynthData TrkSy = new SynthData();
+
+			/********************************************************************/
+			/// <summary>
+			/// Make a deep copy of the current object
+			/// </summary>
+			/********************************************************************/
+			public TrackData MakeDeepClone()
+			{
+				TrackData clone = (TrackData)MemberwiseClone();
+
+				clone.TrkSy = TrkSy.MakeDeepClone();
+
+				return clone;
+			}
 		}
 		#endregion
 
@@ -126,9 +150,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			0, -25, -49, -71, -90, -106, -117, -125, -127, -125, -117, -106, -90, -71, -49, -25
 		};
 
-		private readonly TrackData[] td = Helpers.InitializeArray<TrackData>(Constants.MaxTracks);
+		private TrackData[] td = ArrayHelper.InitializeArray<TrackData>(Constants.MaxTracks);
 
-		private readonly bool[] plrTrackEnabled = new bool[Constants.MaxTracks];		// Track on/off states
+		private bool[] plrTrackEnabled = new bool[Constants.MaxTracks];		// Track on/off states
 
 		private Song plrSong;
 		private int plrPulseCtr;
@@ -213,6 +237,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// </summary>
 		/********************************************************************/
 		public IEffectMaster EffectMaster => plrSong.CurrSS().Fx();
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the current song
+		/// </summary>
+		/********************************************************************/
+		public Song GetSong()
+		{
+			return plrSong;
+		}
 
 
 
@@ -1122,6 +1158,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/********************************************************************/
 		public void RecalcVolAdjust()
 		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Player MakeDeepClone()
+		{
+			Player clone = (Player)MemberwiseClone();
+
+			clone.td = ArrayHelper.CloneObjectArray(td);
+			clone.plrTrackEnabled = ArrayHelper.CloneArray(plrTrackEnabled);
+
+			clone.plrSong = plrSong.MakeDeepClone();
+			clone.plrSong.CurrSS().SetPos(clone.plrPos);
+
+			return clone;
 		}
 
 		#region Overrides

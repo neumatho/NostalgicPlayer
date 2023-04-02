@@ -4,17 +4,17 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker.Containers
 {
 	/// <summary>
 	/// Voice info structure
 	/// </summary>
-	internal class VoiceInfo
+	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
 	{
 		public ushort WaveOffset = 0;
 		public ushort Dmacon;
-		public IChannel Channel;
 		public short InsNum;
 		public ushort InsLen;
 		public sbyte[] InsAddress;
@@ -35,5 +35,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker.Containers
 		public byte VibCnt;
 		public byte VibMax;
 		public byte Flags;
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public VoiceInfo MakeDeepClone()
+		{
+			VoiceInfo clone = (VoiceInfo)MemberwiseClone();
+
+			if (InsAddress != null)
+				clone.InsAddress = ArrayHelper.CloneArray(InsAddress);
+
+			if (RealInsAddress != null)
+				clone.RealInsAddress = ArrayHelper.CloneArray(RealInsAddress);
+
+			clone.WaveBuffer = ArrayHelper.CloneArray(WaveBuffer);
+			clone.Pers = ArrayHelper.CloneArray(Pers);
+
+			return clone;
+		}
 	}
 }

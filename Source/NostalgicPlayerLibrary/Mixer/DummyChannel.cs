@@ -7,7 +7,7 @@ using System;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
-namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 {
 	/// <summary>
 	/// This class is an empty implementation of the IChannel and is
@@ -15,6 +15,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 	/// </summary>
 	internal class DummyChannel : IChannel
 	{
+		private uint bufferLength;
+
 		#region IChannel implementation
 		/********************************************************************/
 		/// <summary>
@@ -25,6 +27,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		public void PlayBuffer(Array adr, uint startOffset, uint length, byte bit)
 		{
+			bufferLength = length;
 		}
 
 
@@ -235,7 +238,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		public uint GetSampleLength()
 		{
-			return 0;
+			return bufferLength;
 		}
 
 

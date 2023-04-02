@@ -3,12 +3,14 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+
 namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 {
 	/// <summary>
 	/// Channel structure
 	/// </summary>
-	internal class ModChannel
+	internal class ModChannel : IDeepCloneable<ModChannel>
 	{
 		public TrackLine TrackLine = new TrackLine();
 
@@ -53,5 +55,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		public byte DataCounter;
 		public short HmnVolume;			// Calculated volume from synth samples (0-64)
 		public HmnSynthData SynthData;
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public ModChannel MakeDeepClone()
+		{
+			ModChannel clone = (ModChannel)MemberwiseClone();
+			clone.TrackLine = TrackLine.MakeDeepClone();
+
+			return clone;
+		}
 	}
 }

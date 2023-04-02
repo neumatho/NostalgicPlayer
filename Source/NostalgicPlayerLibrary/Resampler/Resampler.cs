@@ -56,6 +56,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		private bool swapSpeakers;
 		private bool[] channelsEnabled;
 
+		private int samplesLeftToPositionChange;
+		private int currentSongPosition;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -124,6 +127,30 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 
 		/********************************************************************/
 		/// <summary>
+		/// Starts the resampler routines
+		/// </summary>
+		/********************************************************************/
+		public void StartResampler()
+		{
+			samplesLeftToPositionChange = 0;
+			currentSongPosition = 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Stops the resampler routines
+		/// </summary>
+		/********************************************************************/
+		public void StopResampler()
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Set the output format
 		/// </summary>
 		/********************************************************************/
@@ -143,6 +170,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 			leftVolume = 0;
 			rightVolume = 0;
 			rampVolume = 0;
+
+			samplesLeftToPositionChange = CalculateSamplesPerPositionChange();
 
 			// Get the maximum number of samples the given destination
 			// buffer from the output agent can be
@@ -179,6 +208,24 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 
 		/********************************************************************/
 		/// <summary>
+		/// Get current song position
+		/// </summary>
+		/********************************************************************/
+		public int SongPosition
+		{
+			get => currentSongPosition;
+
+			set
+			{
+				currentSongPosition = value;
+				samplesLeftToPositionChange = CalculateSamplesPerPositionChange();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// This is the main resampler method. It's the method that is called
 		/// from the ResamplerStream to read the next bunch of data
 		/// </summary>
@@ -199,7 +246,28 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 			return total;
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Event called when the position change
+		/// </summary>
+		/********************************************************************/
+		public event EventHandler PositionChanged;
+
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Return the number of samples between each position change
+		/// </summary>
+		/********************************************************************/
+		private int CalculateSamplesPerPositionChange()
+		{
+			return (int)(IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * outputFrequency);
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Will resample the sample and make sure to read new data when
@@ -233,12 +301,36 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 				{
 					lock (currentPlayer)
 					{
+						while (samplesLeftToPositionChange <= 0)
+						{
+							currentSongPosition++;
+							samplesLeftToPositionChange += CalculateSamplesPerPositionChange();
+
+							OnPositionChanged();
+						}
+
 						samplesRead = currentPlayer.LoadDataBlock(dataBuffer, dataBuffer.Length);
 
 						if (currentPlayer.HasEndReached)
 						{
 							currentPlayer.HasEndReached = false;
 							hasEndReached = true;
+
+							if (currentPlayer is IDurationPlayer durationPlayer)
+							{
+								double restartTime = durationPlayer.GetRestartTime().TotalMilliseconds;
+								int samplesPerPosition = CalculateSamplesPerPositionChange();
+
+								currentSongPosition = (int)(restartTime / (IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * 1000.0f));
+								samplesLeftToPositionChange = (int)(samplesPerPosition - (((restartTime - (currentSongPosition * IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * 1000.0f)) / 1000.0f) * outputFrequency));
+							}
+							else
+							{
+								samplesLeftToPositionChange = CalculateSamplesPerPositionChange();
+								currentSongPosition = 0;
+							}
+
+							OnPositionChanged();
 						}
 
 						if (samplesRead == 0)
@@ -287,6 +379,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 						}
 					}
 
+					samplesLeftToPositionChange -= todo;
 					count -= todo;
 					total += (todo * outputChannels);
 				}
@@ -887,6 +980,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 					dest[offset++] = x1;
 				}
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Send an event when the position change
+		/// </summary>
+		/********************************************************************/
+		private void OnPositionChanged()
+		{
+			if (PositionChanged != null)
+				PositionChanged(this, EventArgs.Empty);
 		}
 		#endregion
 	}

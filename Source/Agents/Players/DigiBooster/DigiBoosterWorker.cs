@@ -7,7 +7,6 @@ using Polycode.NostalgicPlayer.Agent.Player.DigiBooster.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
@@ -18,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class DigiBoosterWorker : ModulePlayerAgentBase
+	internal class DigiBoosterWorker : ModulePlayerWithPositionDurationAgentBase
 	{
 		private byte version;
 		private byte numberOfChannels;
@@ -31,19 +30,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		private Sample[] samples;
 		private Pattern[] patterns;
 
-		private ushort ciaTempo;
-		private byte tempo;
-		private byte count;
-
-		private byte songPosition;
-		private sbyte patternPosition;
-
-		private TrackLine[] currentRow;
-
-		private ushort pauseVbl;
-		private bool pauseEnabled;
-
+		private GlobalPlayingInfo playingInfo;
 		private ChannelInfo[] channels;
+
+		private bool endReached;
 
 		private static readonly ChannelPanningType[] panPos =
 		{
@@ -51,8 +41,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 			ChannelPanningType.Right, ChannelPanningType.Right, ChannelPanningType.Left, ChannelPanningType.Left
 		};
 
-		private const int InfoSpeedLine = 3;
-		private const int InfoTempoLine = 4;
+		private const int InfoPositionLine = 3;
+		private const int InfoPatternLine = 4;
+		private const int InfoSpeedLine = 5;
+		private const int InfoTempoLine = 6;
 
 		#region IPlayerAgent implementation
 		/********************************************************************/
@@ -111,7 +103,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 			// Find out which line to take
 			switch (line)
 			{
-				// Song length
+				// Number of positions
 				case 0:
 				{
 					description = Resources.IDS_DIGI_INFODESCLINE0;
@@ -135,19 +127,35 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 					break;
 				}
 
-				// Current speed
+				// Playing position
 				case 3:
 				{
 					description = Resources.IDS_DIGI_INFODESCLINE3;
-					value = tempo.ToString();
+					value = playingInfo.SongPosition.ToString();
 					break;
 				}
 
-				// BPM
+				// Playing pattern
 				case 4:
 				{
 					description = Resources.IDS_DIGI_INFODESCLINE4;
-					value = ciaTempo.ToString();
+					value = orders[playingInfo.SongPosition].ToString();
+					break;
+				}
+
+				// Current speed
+				case 5:
+				{
+					description = Resources.IDS_DIGI_INFODESCLINE5;
+					value = playingInfo.Tempo.ToString();
+					break;
+				}
+
+				// Current tempo (BPM)
+				case 6:
+				{
+					description = Resources.IDS_DIGI_INFODESCLINE6;
+					value = playingInfo.CiaTempo.ToString();
 					break;
 				}
 
@@ -165,15 +173,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		#endregion
 
 		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.SetPosition;
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -306,26 +305,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
+		public override bool InitSound(int songNumber, out string errorMessage)
 		{
-			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+			if (!base.InitSound(songNumber, out errorMessage))
 				return false;
 
-			InitializeSound(durationInfo.StartPosition);
+			InitializeSound(0);
 
 			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override DurationInfo[] CalculateDuration()
-		{
-			return CalculateDurationBySongPosition(true);
 		}
 
 
@@ -337,27 +324,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		/********************************************************************/
 		public override void Play()
 		{
-			byte currentSongPosition = songPosition;
+			byte currentSongPosition = playingInfo.SongPosition;
 
-			if (count >= tempo)
+			if (playingInfo.Count >= playingInfo.Tempo)
 			{
-				if ((tempo != 0) && (patternPosition == 64))
+				if ((playingInfo.Tempo != 0) && (playingInfo.PatternPosition == 64))
 				{
-					patternPosition = 0;
-					songPosition++;
+					playingInfo.PatternPosition = 0;
+					playingInfo.SongPosition++;
 				}
 
-				if (songPosition >= songLength)
+				if (playingInfo.SongPosition >= songLength)
 				{
-					songPosition = 0;
-					patternPosition = 0;
+					playingInfo.SongPosition = 0;
+					playingInfo.PatternPosition = 0;
 				}
 
-				if (tempo == 0)
+				if (playingInfo.Tempo == 0)
 				{
-					songPosition = 0;
-					patternPosition = 0;
-					tempo = 6;
+					playingInfo.SongPosition = 0;
+					playingInfo.PatternPosition = 0;
+					playingInfo.Tempo = 6;
 
 					for (int i = 0; i < numberOfChannels; i++)
 					{
@@ -369,49 +356,55 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 					}
 				}
 
-				TrackLine[,] rows = patterns[orders[songPosition]].Rows;
+				TrackLine[,] rows = patterns[orders[playingInfo.SongPosition]].Rows;
 
 				for (int i = 0; i < 8; i++)
-					currentRow[i] = rows[i, patternPosition];
+					playingInfo.CurrentRow[i] = rows[i, playingInfo.PatternPosition];
 			}
 
 			for (int i = 0; i < numberOfChannels; i++)
 				PlayVoice(channels[i], VirtualChannels[i]);
 
 			for (int i = 0; i < numberOfChannels; i++)
-				ParseVoice(channels[i], currentRow[i]);
+				ParseVoice(channels[i], playingInfo.CurrentRow[i]);
 
-			if (pauseVbl > 0)
+			if (playingInfo.PauseVbl > 0)
 			{
-				pauseEnabled = true;
-				pauseVbl--;
+				playingInfo.PauseEnabled = true;
+				playingInfo.PauseVbl--;
 			}
 
-			if (count >= tempo)
+			if (playingInfo.Count >= playingInfo.Tempo)
 			{
-				count = 0;
+				playingInfo.Count = 0;
 
-				if (pauseVbl == 0)
+				if (playingInfo.PauseVbl == 0)
 				{
-					patternPosition++;
-					pauseEnabled = false;
+					playingInfo.PatternPosition++;
+					playingInfo.PauseEnabled = false;
 				}
 			}
 
-			count++;
+			playingInfo.Count++;
 
-			if (currentSongPosition != songPosition)
+			if (currentSongPosition != playingInfo.SongPosition)
 			{
-				if (HasPositionBeenVisited(songPosition) && channels.All(x => x.LoopHowMany == 0))
-				{
-					// Next module
-					OnEndReached();
-				}
+				ShowSongPosition();
+				ShowPattern();
 
-				// Tell NostalgicPlayer we have changed the position
-				OnPositionChanged();
+				if (HasPositionBeenVisited(playingInfo.SongPosition) && channels.All(x => x.LoopHowMany == 0))
+					endReached = true;
 
-				MarkPositionAsVisited(songPosition);
+				MarkPositionAsVisited(playingInfo.SongPosition);
+			}
+
+			// Have we reached the end of the module
+			if (endReached)
+			{
+				OnEndReached(playingInfo.SongPosition);
+				endReached = false;
+
+				MarkPositionAsVisited(playingInfo.SongPosition);
 			}
 		}
 
@@ -423,55 +416,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		/// </summary>
 		/********************************************************************/
 		public override int ModuleChannelCount => numberOfChannels;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the length of the current song
-		/// </summary>
-		/********************************************************************/
-		public override int SongLength => songLength;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position of the song
-		/// </summary>
-		/********************************************************************/
-		public override int GetSongPosition()
-		{
-			return songPosition;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set a new position of the song
-		/// </summary>
-		/********************************************************************/
-		public override void SetSongPosition(int position, PositionInfo positionInfo)
-		{
-			songPosition = (byte)position;
-			patternPosition = 0;
-			count = positionInfo.Speed;
-
-			for (int i = 0; i < numberOfChannels; i++)
-			{
-				ChannelInfo channelInfo = channels[i];
-
-				channelInfo.LoopPatternPosition = 0;
-				channelInfo.LoopSongPosition = 0;
-				channelInfo.LoopHowMany = 0;
-			}
-
-			ChangeSpeed(positionInfo.Speed);
-			ChangeTempo((byte)positionInfo.Bpm);
-
-			base.SetSongPosition(position, positionInfo);
-		}
 
 
 
@@ -526,17 +470,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		}
 		#endregion
 
-		#region Duration calculation methods
+		#region ModulePlayerWithPositionDurationAgentBase implementation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override int InitDurationCalculationByStartPos(int startPosition)
+		protected override int InitDuration(int startPosition)
 		{
-			if (startPosition >= 0)
-				InitializeSound(startPosition);
+			InitializeSound(startPosition);
+			MarkPositionAsVisited(startPosition);
 
 			return startPosition;
 		}
@@ -545,24 +489,47 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the current speed
+		/// Return the total number of positions
 		/// </summary>
 		/********************************************************************/
-		protected override byte GetCurrentSpeed()
+		protected override int GetTotalNumberOfPositions()
 		{
-			return tempo;
+			return songLength;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the current BPM
+		/// Create a snapshot of all the internal structures and return it
 		/// </summary>
 		/********************************************************************/
-		protected override ushort GetCurrentBpm()
+		protected override ISnapshot CreateSnapshot()
 		{
-			return ciaTempo;
+			return new Snapshot(playingInfo, channels);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize internal structures based on the snapshot given
+		/// </summary>
+		/********************************************************************/
+		protected override bool SetSnapshot(ISnapshot snapshot, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			// Start to make a clone of the snapshot
+			Snapshot currentSnapshot = (Snapshot)snapshot;
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayingInfo, currentSnapshot.Channels);
+
+			playingInfo = clonedSnapshot.PlayingInfo;
+			channels = clonedSnapshot.Channels;
+
+			UpdateModuleInformation();
+
+			return true;
 		}
 		#endregion
 
@@ -729,25 +696,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		/********************************************************************/
 		private void InitializeSound(int startPosition)
 		{
-			ciaTempo = 125;
-			tempo = 6;
-			count = 6;
+			playingInfo = new GlobalPlayingInfo
+			{
+				CiaTempo = 125,
+				Tempo = 6,
+				Count = 6,
 
-			songPosition = (byte)startPosition;
-			patternPosition = 0;
+				SongPosition = (byte)startPosition,
+				PatternPosition = 0,
 
-			currentRow = new TrackLine[8];
+				CurrentRow = new TrackLine[8],
 
-			pauseVbl = 0;
-			pauseEnabled = false;
+				PauseVbl = 0,
+				PauseEnabled = false
+			};
 
-			channels = Helpers.InitializeArray<ChannelInfo>(numberOfChannels);
+			endReached = false;
+
+			channels = ArrayHelper.InitializeArray<ChannelInfo>(numberOfChannels);
 
 			for (int i = 0; i < numberOfChannels; i++)
 				VirtualChannels[i].SetPanning((ushort)panPos[i]);
 
-			SetBpmTempo(ciaTempo);
-			MarkPositionAsVisited(startPosition);
+			SetBpmTempo(playingInfo.CiaTempo);
 		}
 
 
@@ -763,7 +734,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 			samples = null;
 			patterns = null;
 
-			currentRow = null;
+			playingInfo = null;
 			channels = null;
 		}
 
@@ -859,13 +830,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		{
 			channelInfo.Volume = channelInfo.OldVolume;
 
-			if ((tempo != 0) && (count >= tempo))
+			if ((playingInfo.Tempo != 0) && (playingInfo.Count >= playingInfo.Tempo))
 			{
 				ParseRowData(channelInfo, trackLine);
 				DoTriggerEffects(channelInfo);
 			}
 
-			if ((tempo - 1) == count)
+			if ((playingInfo.Tempo - 1) == playingInfo.Count)
 			{
 				Effect effect = channelInfo.LastRoundInfo.Effect;
 
@@ -943,7 +914,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		{
 			bool oldPeriod = true;
 
-			if (!pauseEnabled && !channelInfo.OnOffChannel && (trackLine.Period != 0))
+			if (!playingInfo.PauseEnabled && !channelInfo.OnOffChannel && (trackLine.Period != 0))
 			{
 				if (trackLine.Effect == Effect.Glissando)
 					channelInfo.GlissandoNewPeriod = 0;
@@ -1346,8 +1317,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 			{
 				if (channelInfo.LoopHowMany == 0)
 				{
-					channelInfo.LoopPatternPosition = (sbyte)(patternPosition - 1);
-					channelInfo.LoopSongPosition = songPosition;
+					channelInfo.LoopPatternPosition = (sbyte)(playingInfo.PatternPosition - 1);
+					channelInfo.LoopSongPosition = playingInfo.SongPosition;
 				}
 			}
 			else
@@ -1364,16 +1335,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 					}
 					else
 					{
-						patternPosition = channelInfo.LoopPatternPosition;
-						songPosition = channelInfo.LoopSongPosition;
+						playingInfo.PatternPosition = channelInfo.LoopPatternPosition;
+						playingInfo.SongPosition = channelInfo.LoopSongPosition;
 					}
 				}
 				else
 				{
 					channelInfo.LoopHowMany = effectArg;
 
-					patternPosition = channelInfo.LoopPatternPosition;
-					songPosition = channelInfo.LoopSongPosition;
+					playingInfo.PatternPosition = channelInfo.LoopPatternPosition;
+					playingInfo.SongPosition = channelInfo.LoopSongPosition;
 				}
 			}
 		}
@@ -1387,10 +1358,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		/********************************************************************/
 		private void PatternDelay(byte effectArg)
 		{
-			if (!pauseEnabled)
+			if (!playingInfo.PauseEnabled)
 			{
 				if (effectArg != 0)
-					pauseVbl = (ushort)((tempo * effectArg) + 1);
+					playingInfo.PauseVbl = (ushort)((playingInfo.Tempo * effectArg) + 1);
 			}
 		}
 
@@ -1403,15 +1374,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		/********************************************************************/
 		private void SongRepeat(byte effectArg)
 		{
-			patternPosition = -1;
+			playingInfo.PatternPosition = -1;
 
 			if (effectArg > 127)
 				effectArg = 127;
 
-			if (effectArg <= songPosition)
-				OnEndReached();
-
-			songPosition = effectArg;
+			playingInfo.SongPosition = effectArg;
 		}
 
 
@@ -1426,14 +1394,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 			if (effectArg > 0x63)
 				effectArg = 0x63;
 
-			if (patternPosition != -1)
+			if (playingInfo.PatternPosition != -1)
 			{
-				songPosition++;
-				if (songPosition >= songLength)
-					songPosition = 0;
+				playingInfo.SongPosition++;
+				if (playingInfo.SongPosition >= songLength)
+					playingInfo.SongPosition = 0;
 			}
 
-			patternPosition = (sbyte)(Tables.Hex[effectArg] - 1);
+			playingInfo.PatternPosition = (sbyte)(Tables.Hex[effectArg] - 1);
 		}
 
 
@@ -1476,7 +1444,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 				ChangeTempo(effectArg);
 			else
 			{
-				count = effectArg;
+				playingInfo.Count = effectArg;
 				ChangeSpeed(effectArg);
 			}
 		}
@@ -1520,7 +1488,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		/********************************************************************/
 		private void Retrace(ChannelInfo channelInfo, byte effectArg)
 		{
-			if (count == 1)
+			if (playingInfo.Count == 1)
 				channelInfo.RetraceCount = 0;
 
 			if (channelInfo.RetraceCount == (effectArg - 1))
@@ -1542,7 +1510,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		/********************************************************************/
 		private void CutSample(ChannelInfo channelInfo, byte effectArg)
 		{
-			if (count == effectArg)
+			if (playingInfo.Count == effectArg)
 				channelInfo.Volume = 0;
 		}
 
@@ -1555,7 +1523,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		/********************************************************************/
 		private void Arpeggio(ChannelInfo channelInfo, byte effectArg)
 		{
-			byte arp = Tables.ArpeggioList[count - 1];
+			byte arp = Tables.ArpeggioList[playingInfo.Count - 1];
 
 			if (arp == 0)
 			{
@@ -1750,7 +1718,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 			if (effectArg == 0)
 				effectArg = channelInfo.GlissandoOldValue;
 
-			if (count == 1)
+			if (playingInfo.Count == 1)
 				channelInfo.GlissandoOldValue = effectArg;
 
 			if (channelInfo.GlissandoOldPeriod == 0)
@@ -1833,14 +1801,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		/********************************************************************/
 		private void Vibrato(ChannelInfo channelInfo, byte effectArg)
 		{
-			if ((count == tempo) && (channelInfo.VibratoPeriod == 0))
+			if ((playingInfo.Count == playingInfo.Tempo) && (channelInfo.VibratoPeriod == 0))
 				channelInfo.VibratoPeriod = channelInfo.LastRoundInfo.Period;
 
 			ushort period = channelInfo.VibratoPeriod;
 
 			try
 			{
-				if (count == (tempo - 1))
+				if (playingInfo.Count == (playingInfo.Tempo - 1))
 				{
 					channelInfo.VibratoPeriod = 0;
 					return;
@@ -1887,7 +1855,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 			}
 
 			// Calculate number of bytes to play from the sample in one tick
-			int tickBytes = ((35468 * 125 / ciaTempo) / channelInfo.MainPeriod) * 2 + 2;
+			int tickBytes = ((35468 * 125 / playingInfo.CiaTempo) / channelInfo.MainPeriod) * 2 + 2;
 
 			MakeRobotBuffer(channelInfo, tickBytes);
 
@@ -1978,13 +1946,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		/********************************************************************/
 		private void ChangeSpeed(byte newSpeed)
 		{
-			if (newSpeed != tempo)
+			if (newSpeed != playingInfo.Tempo)
 			{
-				// Change the module info
-				OnModuleInfoChanged(InfoSpeedLine, newSpeed.ToString());
-
 				// Remember the speed
-				tempo = newSpeed;
+				playingInfo.Tempo = newSpeed;
+
+				// Change the module info
+				ShowSpeed();
 			}
 		}
 
@@ -1997,17 +1965,80 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		/********************************************************************/
 		private void ChangeTempo(byte newTempo)
 		{
-			if (newTempo != ciaTempo)
+			if (newTempo != playingInfo.CiaTempo)
 			{
 				// BPM tempo
 				SetBpmTempo(newTempo);
 
-				// Change the module info
-				OnModuleInfoChanged(InfoTempoLine, newTempo.ToString());
-
 				// Remember the tempo
-				ciaTempo = newTempo;
+				playingInfo.CiaTempo = newTempo;
+
+				// Change the module info
+				ShowTempo();
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current song position
+		/// </summary>
+		/********************************************************************/
+		private void ShowSongPosition()
+		{
+			OnModuleInfoChanged(InfoPositionLine, playingInfo.SongPosition.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with pattern number
+		/// </summary>
+		/********************************************************************/
+		private void ShowPattern()
+		{
+			OnModuleInfoChanged(InfoPatternLine, orders[playingInfo.SongPosition].ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current speed
+		/// </summary>
+		/********************************************************************/
+		private void ShowSpeed()
+		{
+			OnModuleInfoChanged(InfoSpeedLine, playingInfo.Tempo.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with tempo
+		/// </summary>
+		/********************************************************************/
+		private void ShowTempo()
+		{
+			OnModuleInfoChanged(InfoTempoLine, playingInfo.CiaTempo.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with all dynamic values
+		/// </summary>
+		/********************************************************************/
+		private void UpdateModuleInformation()
+		{
+			ShowSongPosition();
+			ShowPattern();
+			ShowSpeed();
+			ShowTempo();
 		}
 		#endregion
 	}

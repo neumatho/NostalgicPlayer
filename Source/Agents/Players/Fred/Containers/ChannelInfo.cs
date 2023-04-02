@@ -3,12 +3,15 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility;
+
 namespace Polycode.NostalgicPlayer.Agent.Player.Fred.Containers
 {
 	/// <summary>
 	/// Channel information
 	/// </summary>
-	internal class ChannelInfo
+	internal class ChannelInfo : IDeepCloneable<ChannelInfo>
 	{
 		public int ChanNum;
 		public sbyte[] PositionTable;
@@ -47,5 +50,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred.Containers
 		public byte BlendDelay;
 		public byte BlendShot;
 		public sbyte[] SynthSample;
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public ChannelInfo MakeDeepClone()
+		{
+			ChannelInfo clone = (ChannelInfo)MemberwiseClone();
+
+			clone.SynthSample = ArrayHelper.CloneArray(SynthSample);
+
+			return clone;
+		}
 	}
 }

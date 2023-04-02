@@ -144,12 +144,21 @@ The modules are stored in the 'Editor' format, which can be loaded into the edit
     <value>Can't read the module sequences</value>
   </data>
   <data name="IDS_FRED_INFODESCLINE0" xml:space="preserve">
-    <value>Song length:</value>
+    <value>Number of positions:</value>
   </data>
   <data name="IDS_FRED_INFODESCLINE1" xml:space="preserve">
-    <value>Used instruments:</value>
+    <value>Used tracks:</value>
   </data>
   <data name="IDS_FRED_INFODESCLINE2" xml:space="preserve">
+    <value>Used instruments:</value>
+  </data>
+  <data name="IDS_FRED_INFODESCLINE3" xml:space="preserve">
+    <value>Playing positions:</value>
+  </data>
+  <data name="IDS_FRED_INFODESCLINE4" xml:space="preserve">
+    <value>Playing tracks:</value>
+  </data>
+  <data name="IDS_FRED_INFODESCLINE5" xml:space="preserve">
     <value>Current speed:</value>
   </data>
   <data name="IDS_FRED_NAME" xml:space="preserve">

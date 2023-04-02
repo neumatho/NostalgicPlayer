@@ -204,9 +204,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 			mh = new ItHeader();
 			util.posLookup = new byte[256];
-			itPat = Helpers.InitializeArray<ItNote>(200 * 64);
+			itPat = ArrayHelper.InitializeArray<ItNote>(200 * 64);
 			mask = new byte[64];
-			last = Helpers.InitializeArray<ItNote>(64);
+			last = ArrayHelper.InitializeArray<ItNote>(64);
 
 			try
 			{

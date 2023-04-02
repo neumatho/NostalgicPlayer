@@ -167,18 +167,6 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx.Formats
 
 		/********************************************************************/
 		/// <summary>
-		/// Calculates the number of samples from the byte position given
-		/// </summary>
-		/********************************************************************/
-		protected override long CalcSamplePosition(long position, LoadSampleFormatInfo formatInfo)
-		{
-			return position;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Returns the position where the right channel starts relative to
 		/// the left channel
 		/// </summary>

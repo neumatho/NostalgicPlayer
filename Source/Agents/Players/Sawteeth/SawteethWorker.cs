@@ -11,6 +11,7 @@ using Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Containers;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
@@ -19,15 +20,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class SawteethWorker : ModulePlayerAgentBase
+	internal class SawteethWorker : ModulePlayerWithSubSongDurationAgentBase
 	{
 		private const int CurrentFileVersion = 1200;
 		private const int MaxChan = 12;
 		private const int ChnSteps = 8192;
 
 		private bool textVersion;
-		public byte posChannel;
-		private short songLen;
 
 		private short[][] outBuffers;
 
@@ -47,14 +46,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 		public Ins[] ins;
 		private BreakPoint[] breakPoints;
 
+		private GlobalPlayingInfo playingInfo;
 		private Implementation.Player[] p;
-		private uint pals;
-
-		private bool looped;
 
 		public float[] n2f;
 		public float[] r2f;
 		private float[] cMul;
+
+		private const int InfoPositionLine = 4;
+		private const int InfoTrackLine = 5;
 
 		#region IPlayerAgent implementation
 		/********************************************************************/
@@ -154,15 +154,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 					break;
 				}
 
-				// Song length
+				// Number of positions
 				case 1:
 				{
 					description = Resources.IDS_SAW_INFODESCLINE1;
-					value = songLen.ToString();
+					value = FormatPositionLengths();
 					break;
 				}
 
-				// Used parts
+				// Used tracks
 				case 2:
 				{
 					description = Resources.IDS_SAW_INFODESCLINE2;
@@ -175,6 +175,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 				{
 					description = Resources.IDS_SAW_INFODESCLINE3;
 					value = instrumentCount.ToString();
+					break;
+				}
+
+				// Playing positions
+				case 4:
+				{
+					description = Resources.IDS_SAW_INFODESCLINE4;
+					value = FormatPositions();
+					break;
+				}
+
+				// Playing tracks
+				case 5:
+				{
+					description = Resources.IDS_SAW_INFODESCLINE5;
+					value = FormatTracks();
 					break;
 				}
 
@@ -197,7 +213,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 		/// Will load the file into memory
 		/// </summary>
 		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.SetPosition;
+		public override ModulePlayerSupportFlag SupportFlags => base.SupportFlags | ModulePlayerSupportFlag.BufferMode;
 
 
 
@@ -381,8 +397,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 
 				ins[0].FilterPoints = 1;
 				ins[0].AmpPoints = 1;
-				ins[0].Filter = Helpers.InitializeArray<TimeLev>(1);
-				ins[0].Amp = Helpers.InitializeArray<TimeLev>(1);
+				ins[0].Filter = ArrayHelper.InitializeArray<TimeLev>(1);
+				ins[0].Amp = ArrayHelper.InitializeArray<TimeLev>(1);
 
 				ins[0].FilterMode = 0;
 				ins[0].ClipMode = 0;
@@ -400,7 +416,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 				ins[0].Len = 0;
 				ins[0].Loop = 0;
 
-				ins[0].Steps = Helpers.InitializeArray<InsStep>(1);
+				ins[0].Steps = ArrayHelper.InitializeArray<InsStep>(1);
 
 				ins[0].Filter[0].Time = 0;
 				ins[0].Filter[0].Lev = 0;
@@ -426,7 +442,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 						return AgentResult.Error;
 					}
 
-					inst.Filter = Helpers.InitializeArray<TimeLev>(inst.FilterPoints);
+					inst.Filter = ArrayHelper.InitializeArray<TimeLev>(inst.FilterPoints);
 
 					for (int j = 0; j < inst.FilterPoints; j++)
 					{
@@ -443,7 +459,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 						return AgentResult.Error;
 					}
 
-					inst.Amp = Helpers.InitializeArray<TimeLev>(inst.AmpPoints);
+					inst.Amp = ArrayHelper.InitializeArray<TimeLev>(inst.AmpPoints);
 
 					for (int j = 0; j < inst.AmpPoints; j++)
 					{
@@ -499,7 +515,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 						return AgentResult.Error;
 					}
 
-					inst.Steps = Helpers.InitializeArray<InsStep>(inst.Len);
+					inst.Steps = ArrayHelper.InitializeArray<InsStep>(inst.Len);
 
 					for (int j = 0; j < inst.Len; j++)
 					{
@@ -525,7 +541,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 				// Break points
 				//
 				breakPCount = Read8Bit(moduleStream);
-				breakPoints = Helpers.InitializeArray<BreakPoint>(breakPCount);
+				breakPoints = ArrayHelper.InitializeArray<BreakPoint>(breakPCount);
 
 				for (int i = 0; i < breakPCount; i++)
 				{
@@ -572,6 +588,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 		/********************************************************************/
 		public override bool InitPlayer(out string errorMessage)
 		{
+			if (!base.InitPlayer(out errorMessage))
+				return false;
+
 			// Create player objects
 			p = new Implementation.Player[channelCount];
 
@@ -587,20 +606,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 			// Initialize the player
 			Init();
 
-			// Find the channel with the maximum number of positions
-			songLen = 0;
-			for (byte i = 0; i < channelCount; i++)
-			{
-				if (chan[i].RLoop >= songLen)
-				{
-					songLen = (short)(chan[i].RLoop + 1);
-					posChannel = i;
-				}
-			}
-
-			songLen++;
-
-			return base.InitPlayer(out errorMessage);
+			return true;
 		}
 
 
@@ -618,6 +624,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 
 			outBuffers = null;
 			p = null;
+			playingInfo = null;
 
 			Cleanup();
 
@@ -631,44 +638,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
+		public override bool InitSound(int songNumber, out string errorMessage)
 		{
-			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+			if (!base.InitSound(songNumber, out errorMessage))
 				return false;
 
-			for (int c = 0; c < channelCount; c++)
-				p[c].Init();
-
-			InitSong();
+			InitializeSound();
 
 			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override DurationInfo[] CalculateDuration()
-		{
-			ChStep[] step = chan[posChannel].Steps;
-			float framePerSec = 44100.0f / spsPal;
-			float total = 0.0f;
-
-			PositionInfo[] positionInfo = new PositionInfo[songLen];
-
-			for (int i = 0; i < step.Length; i++)
-			{
-				positionInfo[i] = new PositionInfo(new TimeSpan((long)(total * TimeSpan.TicksPerMillisecond)));
-
-				// Find the time the current position use
-				total += (1000.0f * (parts[step[i].Part].Sps * parts[step[i].Part].Len) / framePerSec);
-			}
-
-			// Return the duration
-			return new [] { new DurationInfo(new TimeSpan((long)(total * TimeSpan.TicksPerMillisecond)), positionInfo) };
 		}
 
 
@@ -702,20 +679,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 			}
 
 			// PAL looping
-			pals++;
+			playingInfo.Pals++;
 
 			if (p[0].Looped)
 			{
-				looped = true;
-				pals = 0;
+				playingInfo.Looped = true;
+				playingInfo.Pals = 0;
 
 				for (int cnt = 0; cnt < chan[0].LLoop; cnt++)
-					pals += (uint)(parts[chan[0].Steps[cnt].Part].Sps * parts[chan[0].Steps[cnt].Part].Len);
+					playingInfo.Pals += (uint)(parts[chan[0].Steps[cnt].Part].Sps * parts[chan[0].Steps[cnt].Part].Len);
 			}
 
 			// Break point part
-			if (looped)
-				looped = false;
+			if (playingInfo.Looped)
+				playingInfo.Looped = false;
 		}
 
 
@@ -726,49 +703,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 		/// </summary>
 		/********************************************************************/
 		public override int ModuleChannelCount => channelCount;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the length of the current song
-		/// </summary>
-		/********************************************************************/
-		public override int SongLength => songLen;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position of the song
-		/// </summary>
-		/********************************************************************/
-		public override int GetSongPosition()
-		{
-			return (int)p[posChannel].GetSeqPos();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set a new position of the song
-		/// </summary>
-		/********************************************************************/
-		public override void SetSongPosition(int position, PositionInfo positionInfo)
-		{
-			uint pal = 0;
-
-			// Find the pal value for the position to set
-			ChStep[] step = chan[posChannel].Steps;
-			for (int i = 0; i < position; i++)
-				pal += (uint)(parts[step[i].Part].Sps * parts[step[i].Part].Len);
-
-			// Now set the position
-			SetPos(pal);
-
-			base.SetSongPosition(position, positionInfo);
-		}
 
 
 
@@ -802,14 +736,62 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 		}
 		#endregion
 
+		#region ModulePlayerWithSubSongDurationAgentBase implementation
+		/********************************************************************/
+		/// <summary>
+		/// Initialize all internal structures when beginning duration
+		/// calculation on a new sub-song
+		/// </summary>
+		/********************************************************************/
+		protected override void InitDuration(int subSong)
+		{
+			InitializeSound();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a snapshot of all the internal structures and return it
+		/// </summary>
+		/********************************************************************/
+		protected override ISnapshot CreateSnapshot()
+		{
+			return new Snapshot(playingInfo, p);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize internal structures based on the snapshot given
+		/// </summary>
+		/********************************************************************/
+		protected override bool SetSnapshot(ISnapshot snapshot, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			// Start to make a clone of the snapshot
+			Snapshot currentSnapshot = (Snapshot)snapshot;
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayingInfo, currentSnapshot.Players);
+
+			playingInfo = clonedSnapshot.PlayingInfo;
+			p = clonedSnapshot.Players;
+
+			UpdateModuleInformation();
+
+			return true;
+		}
+		#endregion
+
 		/********************************************************************/
 		/// <summary>
 		/// Tells that the module has ended
 		/// </summary>
 		/********************************************************************/
-		public void EndReached()
+		public void EndReached(int channel)
 		{
-			OnEndReached();
+			OnEndReached(channel);
 		}
 
 
@@ -821,10 +803,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 		/********************************************************************/
 		public void ChangePosition()
 		{
-			OnPositionChanged();
+			ShowChannelPositions();
+			ShowTracks();
 		}
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Initialize sound structures
+		/// </summary>
+		/********************************************************************/
+		private void InitializeSound()
+		{
+			for (int c = 0; c < channelCount; c++)
+				p[c].Init();
+
+			InitSong();
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Frees all the memory the player has allocated
@@ -904,67 +902,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 		/********************************************************************/
 		private void InitSong()
 		{
-			looped = false;
-			pals = 0;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Change the song position to the number of pals given
-		/// </summary>
-		/********************************************************************/
-		private void SetPos(uint newPals)
-		{
-			pals = newPals;
-
-			for (int c = 0; c < channelCount; c++)
+			playingInfo = new GlobalPlayingInfo
 			{
-				// Set seq count
-				int sum = 0;
-				int seqCount = 0;
-				int sps = 0;
-				int len = 0;
-
-				while (sum <= (int)pals)
-				{
-					len = parts[chan[c].Steps[seqCount].Part].Len;
-					sps = parts[chan[c].Steps[seqCount].Part].Sps;
-					sum += sps * len;
-
-					if (seqCount > chan[c].RLoop)
-						seqCount = chan[c].LLoop;
-
-					seqCount++;
-				}
-
-				if (seqCount > 0)
-					seqCount--;
-				else
-					seqCount = chan[c].RLoop;
-
-				len = parts[chan[c].Steps[seqCount].Part].Len;
-				sps = parts[chan[c].Steps[seqCount].Part].Sps;
-
-				sum -= sps * len;
-
-				int stepCount = (int)((pals - sum) / sps);
-				int palCount = (int)((pals - sum) % sps);
-
-				p[c].JumpPos((byte)seqCount, (byte)stepCount, (byte)palCount);
-
-				if (c == 0)
-				{
-					pals = 0;
-
-					for (int cnt = 0; cnt < seqCount; cnt++)
-						pals += (uint)(parts[chan[0].Steps[cnt].Part].Sps * parts[chan[0].Steps[cnt].Part].Len);
-
-					pals += (uint)(stepCount * parts[chan[0].Steps[seqCount].Part].Sps);
-					pals += (uint)palCount;
-				}
-			}
+				Looped = false,
+				Pals = 0
+			};
 		}
 
 
@@ -1122,6 +1064,109 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 			}
 
 			return moduleStream.Read_B_UINT32();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current channel positions
+		/// </summary>
+		/********************************************************************/
+		private void ShowChannelPositions()
+		{
+			OnModuleInfoChanged(InfoPositionLine, FormatPositions());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with track numbers
+		/// </summary>
+		/********************************************************************/
+		private void ShowTracks()
+		{
+			OnModuleInfoChanged(InfoTrackLine, FormatTracks());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with all dynamic values
+		/// </summary>
+		/********************************************************************/
+		private void UpdateModuleInformation()
+		{
+			ShowChannelPositions();
+			ShowTracks();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the songs position lengths
+		/// </summary>
+		/********************************************************************/
+		private string FormatPositionLengths()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < channelCount; i++)
+			{
+				sb.Append(chan[i].RLoop + 1);
+				sb.Append(", ");
+			}
+
+			sb.Remove(sb.Length - 2, 2);
+
+			return sb.ToString();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the playing positions
+		/// </summary>
+		/********************************************************************/
+		private string FormatPositions()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < channelCount; i++)
+			{
+				sb.Append(p[i].GetSeqPos());
+				sb.Append(", ");
+			}
+
+			sb.Remove(sb.Length - 2, 2);
+
+			return sb.ToString();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the playing tracks
+		/// </summary>
+		/********************************************************************/
+		private string FormatTracks()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < channelCount; i++)
+			{
+				sb.Append(p[i].GetPartNumber());
+				sb.Append(", ");
+			}
+
+			sb.Remove(sb.Length - 2, 2);
+
+			return sb.ToString();
 		}
 		#endregion
 	}

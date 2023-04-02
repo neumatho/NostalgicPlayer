@@ -9,10 +9,11 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Text;
 using Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20.Containers;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
@@ -20,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class DeltaMusic20Worker : ModulePlayerAgentBase
+	internal class DeltaMusic20Worker : ModulePlayerWithSubSongDurationAgentBase
 	{
 		private sbyte[][] arpeggios;
 		private Instrument[] instruments;
@@ -30,16 +31,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 
 		private sbyte[][] waveforms;
 
+		private GlobalPlayingInfo playingInfo;
 		private ChannelInfo[] channels;
 
-		private int positionTrackIndex;
-
-		private uint lastNoiseValue;
-		private byte globalVolume;
-		private sbyte playSpeed;
-		private sbyte tick;
-
-		private const int InfoSpeedLine = 3;
+		private const int InfoPositionLine = 3;
+		private const int InfoTrackLine = 4;
+		private const int InfoSpeedLine = 5;
 
 		#region IPlayerAgent implementation
 		/********************************************************************/
@@ -120,15 +117,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 			// Find out which line to take
 			switch (line)
 			{
-				// Song length
+				// Number of positions:
 				case 0:
 				{
 					description = Resources.IDS_DM2_INFODESCLINE0;
-					value = SongLength.ToString();
+					value = FormatPositionLengths();
 					break;
 				}
 
-				// Used blocks
+				// Used tracks
 				case 1:
 				{
 					description = Resources.IDS_DM2_INFODESCLINE1;
@@ -136,10 +133,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 					break;
 				}
 
-				// Supported / used samples
+				// Used samples
 				case 2:
 				{
 					description = Resources.IDS_DM2_INFODESCLINE2;
+
 					int index = Array.IndexOf(instruments, null);
 					if (index < 0)
 						index = instruments.Length;
@@ -148,11 +146,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 					break;
 				}
 
-				// Current speed
+				// Playing positions
 				case 3:
 				{
 					description = Resources.IDS_DM2_INFODESCLINE3;
-					value = playSpeed.ToString();
+					value = FormatPositions();
+					break;
+				}
+
+				// Playing tracks
+				case 4:
+				{
+					description = Resources.IDS_DM2_INFODESCLINE4;
+					value = FormatTracks();
+					break;
+				}
+
+				// Current speed
+				case 5:
+				{
+					description = Resources.IDS_DM2_INFODESCLINE5;
+					value = playingInfo.PlaySpeed.ToString();
 					break;
 				}
 
@@ -170,15 +184,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 		#endregion
 
 		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.SetPosition;
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -391,29 +396,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 
 		/********************************************************************/
 		/// <summary>
-		/// Initializes the player
-		/// </summary>
-		/********************************************************************/
-		public override bool InitPlayer(out string errorMessage)
-		{
-			int max = 0;
-
-			for (int i = 0; i < 4; i++)
-			{
-				if (tracks[i].Track.Length > max)
-				{
-					positionTrackIndex = i;
-					max = tracks[i].Track.Length;
-				}
-			}
-
-			return base.InitPlayer(out errorMessage);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Cleanup the player
 		/// </summary>
 		/********************************************************************/
@@ -431,26 +413,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
+		public override bool InitSound(int songNumber, out string errorMessage)
 		{
-			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+			if (!base.InitSound(songNumber, out errorMessage))
 				return false;
 
-			InitializeSound(durationInfo.StartPosition);
+			InitializeSound();
 
 			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override DurationInfo[] CalculateDuration()
-		{
-			return CalculateDurationBySongPosition();
 		}
 
 
@@ -464,60 +434,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 		{
 			GenerateNoiseWaveform();
 
-			tick--;
-			if (tick < 0)
-				tick = playSpeed;
+			playingInfo.Tick--;
+			if (playingInfo.Tick < 0)
+				playingInfo.Tick = playingInfo.PlaySpeed;
 
 			for (int i = 0; i < 4; i++)
 				ProcessChannel(i, channels[i]);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the length of the current song
-		/// </summary>
-		/********************************************************************/
-		public override int SongLength => tracks[positionTrackIndex].Track.Length;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position of the song
-		/// </summary>
-		/********************************************************************/
-		public override int GetSongPosition()
-		{
-			return channels[positionTrackIndex].CurrentTrackPosition;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set a new position of the song
-		/// </summary>
-		/********************************************************************/
-		public override void SetSongPosition(int position, PositionInfo positionInfo)
-		{
-			// Change the position
-			for (int i = 0; i < 4; i++)
-			{
-				ChannelInfo channel = channels[i];
-
-				channel.NextTrackPosition = ((ushort[])positionInfo.ExtraInfo)[i];
-				channel.BlockPosition = 0;
-				channel.PositionChangedByUser = true;
-			}
-
-			tick = 0;
-
-			// Change the speed
-			ChangeSpeed((sbyte)positionInfo.Speed);
-
-			base.SetSongPosition(position, positionInfo);
 		}
 
 
@@ -587,42 +509,51 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 		}
 		#endregion
 
-		#region Duration calculation methods
+		#region ModulePlayerWithSubSongDurationAgentBase implementation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override int InitDurationCalculationByStartPos(int startPosition)
+		protected override void InitDuration(int subSong)
 		{
-			InitializeSound(startPosition);
-
-			return startPosition;
+			InitializeSound();
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the current speed
+		/// Create a snapshot of all the internal structures and return it
 		/// </summary>
 		/********************************************************************/
-		protected override byte GetCurrentSpeed()
+		protected override ISnapshot CreateSnapshot()
 		{
-			return (byte)playSpeed;
+			return new Snapshot(playingInfo, channels);
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return extra information for the current position
+		/// Initialize internal structures based on the snapshot given
 		/// </summary>
 		/********************************************************************/
-		protected override object GetExtraPositionInfo()
+		protected override bool SetSnapshot(ISnapshot snapshot, out string errorMessage)
 		{
-			return new[] { (ushort)(channels[0].NextTrackPosition - 1), (ushort)(channels[1].NextTrackPosition - 1), (ushort)(channels[2].NextTrackPosition - 1), (ushort)(channels[3].NextTrackPosition - 1) };
+			errorMessage = string.Empty;
+
+			// Start to make a clone of the snapshot
+			Snapshot currentSnapshot = (Snapshot)snapshot;
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayingInfo, currentSnapshot.Channels);
+
+			playingInfo = clonedSnapshot.PlayingInfo;
+			channels = clonedSnapshot.Channels;
+
+			UpdateModuleInformation();
+
+			return true;
 		}
 		#endregion
 
@@ -632,26 +563,28 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 		/// Initialize sound structures
 		/// </summary>
 		/********************************************************************/
-		private void InitializeSound(int startPosition)		// Currently, only start positions of 0 is supported, but it shouldn't have any problems, since no modules has sub-tunes anyway
+		private void InitializeSound()
 		{
 			// Initialize work variables
-			globalVolume = 63;
-			playSpeed = 6;
-			tick = 1;
+			playingInfo = new GlobalPlayingInfo
+			{
+				GlobalVolume = 63,
+				PlaySpeed = 6,
+				Tick = 1
+			};
 
 			// Initialize channel structure
 			channels = new ChannelInfo[4];
 
 			for (int i = 0; i < 4; i++)
 			{
-				ChannelInfo channelInfo = new ChannelInfo
+				channels[i] = new ChannelInfo
 				{
-					Hardware = VirtualChannels[i],
 					Track = tracks[i].Track,
 					TrackLoopPosition = tracks[i].LoopPosition,
 					TrackLength = (ushort)tracks[i].Track.Length,
 					BlockPosition = 0,
-					CurrentTrackPosition = 0,
+					CurrentTrackPosition = -1,
 					NextTrackPosition = 0,
 					Instrument = instruments[0],
 					ArpeggioPosition = 0,
@@ -664,8 +597,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 					MaxVolume = 63,
 					RetriggerSound = false
 				};
-
-				channels[i] = channelInfo;
 			}
 		}
 
@@ -685,6 +616,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 			blocks = null;
 
 			waveforms = null;
+
+			playingInfo = null;
+			channels = null;
 		}
 
 
@@ -696,7 +630,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 		/********************************************************************/
 		private void GenerateNoiseWaveform()
 		{
-			uint noiseValue = lastNoiseValue;
+			uint noiseValue = playingInfo.LastNoiseValue;
 			Span<uint> waveform = MemoryMarshal.Cast<sbyte, uint>(waveforms[0]);
 
 			for (int i = 0; i < 16; i++)
@@ -707,7 +641,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 				waveform[i] = noiseValue;
 			}
 
-			lastNoiseValue = noiseValue;
+			playingInfo.LastNoiseValue = noiseValue;
 		}
 
 
@@ -724,7 +658,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 
 			Instrument inst = channel.Instrument;
 
-			if (tick == 0)
+			if (playingInfo.Tick == 0)
 			{
 				if (channel.BlockPosition == 0)
 				{
@@ -732,39 +666,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 					channel.Transpose = track.Transpose;
 					channel.Block = blocks[track.BlockNumber];
 
-					channel.CurrentTrackPosition = channel.NextTrackPosition;
+					if (channel.NextTrackPosition <= channel.CurrentTrackPosition)
+						OnEndReached(channelNumber);
+
+					channel.CurrentTrackPosition = (short)channel.NextTrackPosition;
 
 					channel.NextTrackPosition++;
 					if (channel.NextTrackPosition >= channel.TrackLength)
 						channel.NextTrackPosition = channel.TrackLoopPosition >= channel.TrackLength ? (ushort)0 : channel.TrackLoopPosition;
 
-					if (channel.PositionChangedByUser)
-						channel.PositionChangedByUser = false;
-					else
-					{
-						if (channelNumber == positionTrackIndex)
-						{
-							if (HasPositionBeenVisited(channel.CurrentTrackPosition))
-							{
-								if (currentDurationInfo == null)
-									playSpeed = 6;
-								else
-								{
-									PositionInfo positionInfo = currentDurationInfo.PositionInfo[channel.CurrentTrackPosition];
-
-									ChangeSpeed((sbyte)positionInfo.Speed);
-									ChangeSubSong(positionInfo.SubSong);
-								}
-
-								// Tell NostalgicPlayer that the module has ended
-								OnEndReached();
-							}
-
-							OnPositionChanged();
-
-							MarkPositionAsVisited(channel.CurrentTrackPosition);
-						}
-					}
+					ShowSongPositions();
+					ShowTracks();
 				}
 
 				BlockLine block = channel.Block[channel.BlockPosition];
@@ -779,10 +691,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 					{
 						if (inst.IsSample)
 						{
-							channel.Hardware.PlaySample(inst.Number, inst.SampleData, 0, inst.SampleLength);
+							VirtualChannels[channelNumber].PlaySample(inst.Number, inst.SampleData, 0, inst.SampleLength);
 
 							if (inst.RepeatLength > 1)
-								channel.Hardware.SetLoop(inst.RepeatStart, inst.RepeatLength);
+								VirtualChannels[channelNumber].SetLoop(inst.RepeatStart, inst.RepeatLength);
 						}
 						else
 							channel.RetriggerSound = true;
@@ -800,7 +712,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 						channel.VibratoSustain = inst.VibratoTable[0].Sustain;
 					}
 					else
-						channel.Hardware.Mute();
+						VirtualChannels[channelNumber].Mute();
 				}
 
 				ParseEffect(channel, block.Effect, block.EffectArg);
@@ -811,7 +723,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 
 			if (inst != null)
 			{
-				SoundTableHandler(channel, inst);
+				SoundTableHandler(channelNumber, channel, inst);
 				VibratoHandler(channel, inst);
 				VolumeHandler(channel, inst);
 				PortamentoHandler(channel);
@@ -820,17 +732,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 				channel.VibratoPeriod -= (ushort)(inst.PitchBend - channel.PitchBend);
 
 				ushort newPeriod = (ushort)(channel.FinalPeriod + channel.VibratoPeriod);
-				channel.Hardware.SetAmigaPeriod(newPeriod);
+				VirtualChannels[channelNumber].SetAmigaPeriod(newPeriod);
 
 				byte newVolume = (byte)((channel.ActualVolume >> 2) & 0x3f);
 
 				if (newVolume > channel.MaxVolume)
 					newVolume = channel.MaxVolume;
 
-				if (newVolume > globalVolume)
-					newVolume = globalVolume;
+				if (newVolume > playingInfo.GlobalVolume)
+					newVolume = playingInfo.GlobalVolume;
 
-				channel.Hardware.SetAmigaVolume(newVolume);
+				VirtualChannels[channelNumber].SetAmigaVolume(newVolume);
 			}
 		}
 
@@ -883,7 +795,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 
 				case Effect.SetGlobalVolume:
 				{
-					globalVolume = (byte)(effectArg & 0x3f);
+					playingInfo.GlobalVolume = (byte)(effectArg & 0x3f);
 					break;
 				}
 
@@ -902,7 +814,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 		/// Find out what to play
 		/// </summary>
 		/********************************************************************/
-		private void SoundTableHandler(ChannelInfo channel, Instrument inst)
+		private void SoundTableHandler(int channelNumber, ChannelInfo channel, Instrument inst)
 		{
 			if (!inst.IsSample)
 			{
@@ -925,15 +837,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 					if (channel.RetriggerSound)
 					{
 						if (inst.SampleLength > 0)
-							channel.Hardware.PlaySample(inst.Number, waveforms[data], 0, inst.SampleLength);
+							VirtualChannels[channelNumber].PlaySample(inst.Number, waveforms[data], 0, inst.SampleLength);
 						else
-							channel.Hardware.Mute();
+							VirtualChannels[channelNumber].Mute();
 
 						channel.RetriggerSound = false;
 					}
 
 					if (inst.SampleLength > 0)
-						channel.Hardware.SetLoop(waveforms[data], 0, inst.SampleLength);
+						VirtualChannels[channelNumber].SetLoop(waveforms[data], 0, inst.SampleLength);
 
 					channel.SoundTablePosition++;
 					if (channel.SoundTablePosition >= 48)
@@ -1093,14 +1005,133 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 		/********************************************************************/
 		private void ChangeSpeed(sbyte newSpeed)
 		{
-			if (newSpeed != playSpeed)
+			if (newSpeed != playingInfo.PlaySpeed)
 			{
-				// Change the module info
-				OnModuleInfoChanged(InfoSpeedLine, newSpeed.ToString());
-
 				// Remember the speed
-				playSpeed = newSpeed;
+				playingInfo.PlaySpeed = newSpeed;
+
+				ShowSpeed();
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current song positions
+		/// </summary>
+		/********************************************************************/
+		private void ShowSongPositions()
+		{
+			OnModuleInfoChanged(InfoPositionLine, FormatPositions());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with track numbers
+		/// </summary>
+		/********************************************************************/
+		private void ShowTracks()
+		{
+			OnModuleInfoChanged(InfoTrackLine, FormatTracks());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current speed
+		/// </summary>
+		/********************************************************************/
+		private void ShowSpeed()
+		{
+			OnModuleInfoChanged(InfoSpeedLine, playingInfo.PlaySpeed.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with all dynamic values
+		/// </summary>
+		/********************************************************************/
+		private void UpdateModuleInformation()
+		{
+			ShowSongPositions();
+			ShowTracks();
+			ShowSpeed();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the position list lengths
+		/// </summary>
+		/********************************************************************/
+		private string FormatPositionLengths()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < 4; i++)
+			{
+				sb.Append(channels[i].TrackLength);
+				sb.Append(", ");
+			}
+
+			sb.Remove(sb.Length - 2, 2);
+
+			return sb.ToString();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the playing positions
+		/// </summary>
+		/********************************************************************/
+		private string FormatPositions()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < 4; i++)
+			{
+				sb.Append(channels[i].CurrentTrackPosition);
+				sb.Append(", ");
+			}
+
+			sb.Remove(sb.Length - 2, 2);
+
+			return sb.ToString();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the playing tracks
+		/// </summary>
+		/********************************************************************/
+		private string FormatTracks()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < 4; i++)
+			{
+				int index = channels[i].CurrentTrackPosition;
+				if (index < 0)
+					index = 0;
+
+				sb.Append(channels[i].Track[index].BlockNumber);
+				sb.Append(", ");
+			}
+
+			sb.Remove(sb.Length - 2, 2);
+
+			return sb.ToString();
 		}
 		#endregion
 	}

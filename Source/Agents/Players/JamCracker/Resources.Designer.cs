@@ -111,7 +111,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Song length:.
+        ///   Looks up a localized string similar to Number of positions:.
         /// </summary>
         internal static string IDS_JAM_INFODESCLINE0 {
             get {
@@ -138,11 +138,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Current speed:.
+        ///   Looks up a localized string similar to Playing position:.
         /// </summary>
         internal static string IDS_JAM_INFODESCLINE3 {
             get {
                 return ResourceManager.GetString("IDS_JAM_INFODESCLINE3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Playing pattern:.
+        /// </summary>
+        internal static string IDS_JAM_INFODESCLINE4 {
+            get {
+                return ResourceManager.GetString("IDS_JAM_INFODESCLINE4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current speed:.
+        /// </summary>
+        internal static string IDS_JAM_INFODESCLINE5 {
+            get {
+                return ResourceManager.GetString("IDS_JAM_INFODESCLINE5", resourceCulture);
             }
         }
         

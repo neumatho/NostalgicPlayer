@@ -4024,11 +4024,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private void SetPositionTime(int position)
 		{
 			// Set the new time
-			TimeSpan newTime = moduleHandler.GetPositionTime(position);
-			if (newTime.TotalMilliseconds != -1)
+			TimeSpan? newTime = moduleHandler.GetPositionTime(position);
+			if (newTime.HasValue)
 			{
-				timeStart -= (newTime - timeOccurred);
-				timeOccurred = newTime;
+				timeStart -= (newTime.Value - timeOccurred);
+				timeOccurred = newTime.Value;
 			}
 		}
 		#endregion
@@ -4397,6 +4397,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				prevSongPosition = newPos;
 
+				TimeSpan? positionTime = moduleHandler.GetPositionTime(newPos);
+				if (positionTime.HasValue)
+				{
+					if (Math.Abs((timeOccurred - positionTime.Value).TotalMilliseconds) > 1000)
+					{
+						timeOccurred = positionTime.Value;
+						timeStart = DateTime.Now - timeOccurred;
+					}
+				}
+
 				// Print the information
 				PrintInfo();
 
@@ -4460,10 +4470,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			BeginInvoke(() =>
 			{
-				timeOccurred = moduleHandler.GetPositionTime(moduleHandler.PlayingModuleInformation.SongPosition);
+				timeOccurred = moduleHandler.GetPositionTime(moduleHandler.PlayingModuleInformation.SongPosition)!.Value;
 				timeStart = DateTime.Now - timeOccurred;
 
 				SetPositionTime(moduleHandler.PlayingModuleInformation.SongPosition);
+				SetTimeOnItem(playItem, moduleHandler.PlayingModuleInformation.SongTotalTime);
 				PrintInfo();
 				UpdateTapeDeck();
 			});

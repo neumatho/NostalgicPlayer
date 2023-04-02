@@ -295,16 +295,16 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac
 			public Flac__real[] Windowed_Signal;														// The Integer_Signal[] * current Window[]
 			public uint32_t[] SubFrame_Bps = new uint32_t[Constants.Flac__Max_Channels];				// The effective bits per sample of the input signal (stream bps - wasted bits)
 			public uint32_t[] SubFrame_Bps_Mid_Side = new uint32_t[2];									// The effective bits per sample of the mid-side input signal (stream bps - wasted bits + 0/1)
-			public Flac__int32[][][] Residual_Workspace = Helpers.InitializeArrayWithArray<Flac__int32>((int)Constants.Flac__Max_Channels, 2);// Each channel has a candidate and best workspace where the subframe residual signals will be stored
-			public Flac__int32[][][] Residual_Workspace_Mid_Side = Helpers.InitializeArrayWithArray<Flac__int32>(2, 2);
-			public Flac__SubFrame[][] SubFrame_Workspace = Helpers.InitializeArray<Flac__SubFrame>((int)Constants.Flac__Max_Channels, 2);
-			public Flac__SubFrame[][] SubFrame_Workspace_Mid_Side = Helpers.InitializeArray<Flac__SubFrame>(2, 2);
-			public Flac__SubFrame[][] SubFrame_Workspace_Ptr = Helpers.Initialize2Arrays<Flac__SubFrame>((int)Constants.Flac__Max_Channels, 2);
-			public Flac__SubFrame[][] SubFrame_Workspace_Ptr_Mid_Side = Helpers.Initialize2Arrays<Flac__SubFrame>(2, 2);
-			public Flac__EntropyCodingMethod_PartitionedRiceContents[][] Partitioned_Rice_Contents_Workspace = Helpers.InitializeArray<Flac__EntropyCodingMethod_PartitionedRiceContents>((int)Constants.Flac__Max_Channels, 2);
-			public Flac__EntropyCodingMethod_PartitionedRiceContents[][] Partitioned_Rice_Contents_Workspace_Mid_Side = Helpers.InitializeArray<Flac__EntropyCodingMethod_PartitionedRiceContents>((int)Constants.Flac__Max_Channels, 2);
-			public Flac__EntropyCodingMethod_PartitionedRiceContents[][] Partitioned_Rice_Contents_Workspace_Ptr = Helpers.Initialize2Arrays<Flac__EntropyCodingMethod_PartitionedRiceContents>((int)Constants.Flac__Max_Channels, 2);
-			public Flac__EntropyCodingMethod_PartitionedRiceContents[][] Partitioned_Rice_Contents_Workspace_Ptr_Mid_Side = Helpers.Initialize2Arrays<Flac__EntropyCodingMethod_PartitionedRiceContents>((int)Constants.Flac__Max_Channels, 2);
+			public Flac__int32[][][] Residual_Workspace = ArrayHelper.InitializeArrayWithArray<Flac__int32>((int)Constants.Flac__Max_Channels, 2);// Each channel has a candidate and best workspace where the subframe residual signals will be stored
+			public Flac__int32[][][] Residual_Workspace_Mid_Side = ArrayHelper.InitializeArrayWithArray<Flac__int32>(2, 2);
+			public Flac__SubFrame[][] SubFrame_Workspace = ArrayHelper.InitializeArray<Flac__SubFrame>((int)Constants.Flac__Max_Channels, 2);
+			public Flac__SubFrame[][] SubFrame_Workspace_Mid_Side = ArrayHelper.InitializeArray<Flac__SubFrame>(2, 2);
+			public Flac__SubFrame[][] SubFrame_Workspace_Ptr = ArrayHelper.Initialize2Arrays<Flac__SubFrame>((int)Constants.Flac__Max_Channels, 2);
+			public Flac__SubFrame[][] SubFrame_Workspace_Ptr_Mid_Side = ArrayHelper.Initialize2Arrays<Flac__SubFrame>(2, 2);
+			public Flac__EntropyCodingMethod_PartitionedRiceContents[][] Partitioned_Rice_Contents_Workspace = ArrayHelper.InitializeArray<Flac__EntropyCodingMethod_PartitionedRiceContents>((int)Constants.Flac__Max_Channels, 2);
+			public Flac__EntropyCodingMethod_PartitionedRiceContents[][] Partitioned_Rice_Contents_Workspace_Mid_Side = ArrayHelper.InitializeArray<Flac__EntropyCodingMethod_PartitionedRiceContents>((int)Constants.Flac__Max_Channels, 2);
+			public Flac__EntropyCodingMethod_PartitionedRiceContents[][] Partitioned_Rice_Contents_Workspace_Ptr = ArrayHelper.Initialize2Arrays<Flac__EntropyCodingMethod_PartitionedRiceContents>((int)Constants.Flac__Max_Channels, 2);
+			public Flac__EntropyCodingMethod_PartitionedRiceContents[][] Partitioned_Rice_Contents_Workspace_Ptr_Mid_Side = ArrayHelper.Initialize2Arrays<Flac__EntropyCodingMethod_PartitionedRiceContents>((int)Constants.Flac__Max_Channels, 2);
 			public uint32_t[] Best_SubFrame = new uint32_t[Constants.Flac__Max_Channels];				// Index (0 or 1) into 2nd dimension of the above workspaces
 			public uint32_t[] Best_SubFrame_Mid_Side = new uint32_t[2];
 			public uint32_t[] Best_SubFrame_Bits = new uint32_t[Constants.Flac__Max_Channels];			// Size in bits of the best subframe for each channel
@@ -342,12 +342,12 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac
 			public Flac__int32[][] Integer_Signal_Mid_Side_Unaligned = new Flac__int32[2][];
 			public Flac__real[][] Window_Unaligned = new Flac__real[Constants.Flac__Max_Apodization_Functions][];
 			public Flac__real[] Windowed_Signal_Unaligned;
-			public Flac__int32[][][] Residual_Workspace_Unaligned = Helpers.InitializeArrayWithArray<Flac__int32>((int)Constants.Flac__Max_Channels, 2);
-			public Flac__int32[][][] Residual_Workspace_Mid_Side_Unaligned = Helpers.InitializeArrayWithArray<Flac__int32>(2, 2);
+			public Flac__int32[][][] Residual_Workspace_Unaligned = ArrayHelper.InitializeArrayWithArray<Flac__int32>((int)Constants.Flac__Max_Channels, 2);
+			public Flac__int32[][][] Residual_Workspace_Mid_Side_Unaligned = ArrayHelper.InitializeArrayWithArray<Flac__int32>(2, 2);
 			public Flac__uint64[] Abs_Residual_Partition_Sums_Unaligned;
 			public Flac__uint64[] Raw_Bits_Per_Partition_Unaligned;
-			public Flac__real[][] Lp_Coeff = Helpers.InitializeArray<Flac__real>((int)Constants.Flac__Max_Lpc_Order, (int)Constants.Flac__Max_Lpc_Order);	// From Process_SubFrame()
-			public Flac__EntropyCodingMethod_PartitionedRiceContents[] Partitioned_Rice_Contents_Extra = Helpers.InitializeArray<Flac__EntropyCodingMethod_PartitionedRiceContents>(2);	// From Find_Best_Partition_Order()
+			public Flac__real[][] Lp_Coeff = ArrayHelper.InitializeArray<Flac__real>((int)Constants.Flac__Max_Lpc_Order, (int)Constants.Flac__Max_Lpc_Order);	// From Process_SubFrame()
+			public Flac__EntropyCodingMethod_PartitionedRiceContents[] Partitioned_Rice_Contents_Extra = ArrayHelper.InitializeArray<Flac__EntropyCodingMethod_PartitionedRiceContents>(2);	// From Find_Best_Partition_Order()
 			public Flac__bool Is_Being_Deleted;		// If true, call to ..._Finish() from ..._Delete() will not call the callbacks
 		}
 

@@ -153,7 +153,7 @@ This player plays modules created with DigiBooster 3.x. This editor was continue
     <value>Wrong chunk order in the module</value>
   </data>
   <data name="IDS_DBM_INFODESCLINE0" xml:space="preserve">
-    <value>Song length:</value>
+    <value>Number of positions:</value>
   </data>
   <data name="IDS_DBM_INFODESCLINE1" xml:space="preserve">
     <value>Used patterns:</value>
@@ -165,10 +165,16 @@ This player plays modules created with DigiBooster 3.x. This editor was continue
     <value>Used samples:</value>
   </data>
   <data name="IDS_DBM_INFODESCLINE4" xml:space="preserve">
-    <value>Current speed:</value>
+    <value>Playing position:</value>
   </data>
   <data name="IDS_DBM_INFODESCLINE5" xml:space="preserve">
-    <value>BPM:</value>
+    <value>Playing pattern:</value>
+  </data>
+  <data name="IDS_DBM_INFODESCLINE6" xml:space="preserve">
+    <value>Current speed:</value>
+  </data>
+  <data name="IDS_DBM_INFODESCLINE7" xml:space="preserve">
+    <value>Current tempo (BPM):</value>
   </data>
   <data name="IDS_DBM_NAME" xml:space="preserve">
     <value>DigiBooster Pro</value>

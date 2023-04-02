@@ -6,7 +6,6 @@
 using System;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
-using Polycode.NostalgicPlayer.Kit.Mixer;
 using Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer

@@ -123,7 +123,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Song length:.
+        ///   Looks up a localized string similar to Number of positions:.
         /// </summary>
         internal static string IDS_FRED_INFODESCLINE0 {
             get {
@@ -132,7 +132,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Used instruments:.
+        ///   Looks up a localized string similar to Used tracks:.
         /// </summary>
         internal static string IDS_FRED_INFODESCLINE1 {
             get {
@@ -141,11 +141,38 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Current speed:.
+        ///   Looks up a localized string similar to Used instruments:.
         /// </summary>
         internal static string IDS_FRED_INFODESCLINE2 {
             get {
                 return ResourceManager.GetString("IDS_FRED_INFODESCLINE2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Playing positions:.
+        /// </summary>
+        internal static string IDS_FRED_INFODESCLINE3 {
+            get {
+                return ResourceManager.GetString("IDS_FRED_INFODESCLINE3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Playing tracks:.
+        /// </summary>
+        internal static string IDS_FRED_INFODESCLINE4 {
+            get {
+                return ResourceManager.GetString("IDS_FRED_INFODESCLINE4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current speed:.
+        /// </summary>
+        internal static string IDS_FRED_INFODESCLINE5 {
+            get {
+                return ResourceManager.GetString("IDS_FRED_INFODESCLINE5", resourceCulture);
             }
         }
         

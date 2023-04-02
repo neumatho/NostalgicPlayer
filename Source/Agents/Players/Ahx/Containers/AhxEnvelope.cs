@@ -3,12 +3,14 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+
 namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Containers
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class AhxEnvelope
+	internal class AhxEnvelope : IDeepCloneable<AhxEnvelope>
 	{
 		public int AFrames;
 		public int AVolume;
@@ -20,5 +22,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Containers
 
 		public int RFrames;
 		public int RVolume;
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public AhxEnvelope MakeDeepClone()
+		{
+			return (AhxEnvelope)MemberwiseClone();
+		}
 	}
 }

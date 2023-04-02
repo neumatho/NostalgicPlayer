@@ -11,7 +11,6 @@ using Polycode.NostalgicPlayer.Agent.Player.SoundFx.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -21,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class SoundFxWorker : ModulePlayerAgentBase
+	internal class SoundFxWorker : ModulePlayerWithPositionDurationAgentBase
 	{
 		private Sample[] samples;
 		private byte[] orders;
@@ -31,25 +30,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 		private ushort maxPattern;
 		private uint songLength;
 
+		private GlobalPlayingInfo playingInfo;
 		private Channel[] channelInfo;
 
-		private ushort timer;
-		private uint trackPos;
-		private uint posCounter;
-		private bool breakFlag;
+		private bool endReached;
 
-		// Period table
-		private static readonly short[] noteTable =
-		{
-			1076, 1076, 1076, 1076, 1076, 1076, 1076, 1076, 1076, 1076, 1076, 1076,
-			1076, 1076, 1076, 1076, 1076, 1076, 1076, 1076,	1076, 1016,  960,  906,
-			 856,  808,  762,  720,  678,  640,  604,  570,  538,  508,  480,  453,
-			 428,  404,  381,  360,  339,  320,  302,  285,  269,  254,  240,  226,
-			 214,  202,  190,  180,  170,  160,  151,  143,  135,  127,  120,  113,
-			 113,  113,  113,  113,  113,  113,  113,  113,  113,  113,  113,  113,
-			 113,  113,  113,  113,  113,  113,  113,  113,  113,  113,  113,  113,
-			 113,  113,   -1
-		};
+		private const int InfoPositionLine = 3;
+		private const int InfoPatternLine = 4;
 
 		#region IPlayerAgent implementation
 		/********************************************************************/
@@ -110,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 			// Find out which line to take
 			switch (line)
 			{
-				// Song length
+				// Number of positions
 				case 0:
 				{
 					description = Resources.IDS_SFX_INFODESCLINE0;
@@ -134,11 +121,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 					break;
 				}
 
-				// BPM
+				// Playing position
 				case 3:
 				{
 					description = Resources.IDS_SFX_INFODESCLINE3;
-					value = GetCurrentBpm().ToString();
+					value = playingInfo.TrackPos.ToString();
+					break;
+				}
+
+				// Playing pattern
+				case 4:
+				{
+					description = Resources.IDS_SFX_INFODESCLINE4;
+					value = orders[playingInfo.TrackPos].ToString();
+					break;
+				}
+
+				// Current tempo (BPM)
+				case 5:
+				{
+					description = Resources.IDS_SFX_INFODESCLINE5;
+					value = GetBpmTempo().ToString();
 					break;
 				}
 
@@ -156,15 +159,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 		#endregion
 
 		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.SetPosition;
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -325,38 +319,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
+		public override bool InitSound(int songNumber, out string errorMessage)
 		{
-			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+			if (!base.InitSound(songNumber, out errorMessage))
 				return false;
 
-			InitializeSound(durationInfo.StartPosition);
+			InitializeSound(0);
 
 			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Cleanup the current song
-		/// </summary>
-		/********************************************************************/
-		public override void CleanupSound()
-		{
-			channelInfo = null;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override DurationInfo[] CalculateDuration()
-		{
-			return CalculateDurationBySongPosition();
 		}
 
 
@@ -368,11 +338,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 		/********************************************************************/
 		public override void Play()
 		{
-			timer++;
-			if (timer == 6)
+			playingInfo.Timer++;
+			if (playingInfo.Timer == 6)
 			{
 				// Get the next pattern line
-				timer = 0;
+				playingInfo.Timer = 0;
 				PlaySound();
 			}
 			else
@@ -383,44 +353,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 				MakeEffects(channelInfo[2], VirtualChannels[2]);
 				MakeEffects(channelInfo[3], VirtualChannels[3]);
 			}
-		}
 
+			// Have we reached the end of the module
+			if (endReached)
+			{
+				OnEndReached((int)playingInfo.TrackPos);
+				endReached = false;
 
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the length of the current song
-		/// </summary>
-		/********************************************************************/
-		public override int SongLength => (int)songLength;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position of the song
-		/// </summary>
-		/********************************************************************/
-		public override int GetSongPosition()
-		{
-			return (int)trackPos;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set a new position of the song
-		/// </summary>
-		/********************************************************************/
-		public override void SetSongPosition(int position, PositionInfo positionInfo)
-		{
-			// Change the position
-			breakFlag = false;
-			posCounter = 0;
-			trackPos = (uint)position;
-
-			base.SetSongPosition(position, positionInfo);
+				MarkPositionAsVisited((int)playingInfo.TrackPos);
+			}
 		}
 
 
@@ -439,7 +380,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 				uint[] frequencies = new uint[10 * 12];
 
 				for (int j = 0; j < 4 + 3 * 12; j++)
-					frequencies[4 * 12 - 4 + j] = 3546895U / (ushort)noteTable[2 * 12 - 4 + j];
+					frequencies[4 * 12 - 4 + j] = 3546895U / (ushort)Tables.NoteTable[2 * 12 - 4 + j];
 
 				foreach (Sample sample in samples)
 				{
@@ -476,16 +417,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 		}
 		#endregion
 
-		#region Duration calculation methods
+		#region ModulePlayerWithPositionDurationAgentBase implementation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override int InitDurationCalculationByStartPos(int startPosition)
+		protected override int InitDuration(int startPosition)
 		{
 			InitializeSound(startPosition);
+			MarkPositionAsVisited(startPosition);
 
 			return startPosition;
 		}
@@ -494,12 +436,47 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the current BPM
+		/// Return the total number of positions
 		/// </summary>
 		/********************************************************************/
-		protected override ushort GetCurrentBpm()
+		protected override int GetTotalNumberOfPositions()
 		{
-			return (ushort)(PlayingFrequency * 2.5f);
+			return (int)songLength;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a snapshot of all the internal structures and return it
+		/// </summary>
+		/********************************************************************/
+		protected override ISnapshot CreateSnapshot()
+		{
+			return new Snapshot(playingInfo, channelInfo);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize internal structures based on the snapshot given
+		/// </summary>
+		/********************************************************************/
+		protected override bool SetSnapshot(ISnapshot snapshot, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			// Start to make a clone of the snapshot
+			Snapshot currentSnapshot = (Snapshot)snapshot;
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayingInfo, currentSnapshot.Channels);
+
+			playingInfo = clonedSnapshot.PlayingInfo;
+			channelInfo = clonedSnapshot.Channels;
+
+			UpdateModuleInformation();
+
+			return true;
 		}
 		#endregion
 
@@ -511,17 +488,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 		/********************************************************************/
 		private void InitializeSound(int startPosition)
 		{
-			channelInfo = Helpers.InitializeArray<Channel>(4);
+			playingInfo = new GlobalPlayingInfo
+			{
+				Timer = 0,
+				TrackPos = (uint)startPosition,
+				PosCounter = 0,
+				BreakFlag = false
+			};
 
-			timer = 0;
-			trackPos = (uint)startPosition;
-			posCounter = 0;
-			breakFlag = false;
+			endReached = false;
+
+			channelInfo = ArrayHelper.InitializeArray<Channel>(4);
 
 			// Calculate the frequency to play with
 			PlayingFrequency = 1773447.0f / delay / 2.5f;
-
-			MarkPositionAsVisited(startPosition);
 		}
 
 
@@ -536,6 +516,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 			patterns = null;
 			orders = null;
 			samples = null;
+
+			playingInfo = null;
+			channelInfo = null;
 		}
 
 
@@ -548,45 +531,42 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 		private void PlaySound()
 		{
 			// Find the pattern address
-			uint[] patternAdr = patterns[orders[trackPos]];
+			uint[] patternAdr = patterns[orders[playingInfo.TrackPos]];
 
 			// Parse the pattern data
-			PlayNote(channelInfo[0], VirtualChannels[0], patternAdr[posCounter]);
-			PlayNote(channelInfo[1], VirtualChannels[1], patternAdr[posCounter + 1]);
-			PlayNote(channelInfo[2], VirtualChannels[2], patternAdr[posCounter + 2]);
-			PlayNote(channelInfo[3], VirtualChannels[3], patternAdr[posCounter + 3]);
+			PlayNote(channelInfo[0], VirtualChannels[0], patternAdr[playingInfo.PosCounter]);
+			PlayNote(channelInfo[1], VirtualChannels[1], patternAdr[playingInfo.PosCounter + 1]);
+			PlayNote(channelInfo[2], VirtualChannels[2], patternAdr[playingInfo.PosCounter + 2]);
+			PlayNote(channelInfo[3], VirtualChannels[3], patternAdr[playingInfo.PosCounter + 3]);
 
 			// Do we need to break the current pattern?
-			if (breakFlag)
+			if (playingInfo.BreakFlag)
 			{
-				breakFlag = false;
-				posCounter = 4 * 63;
+				playingInfo.BreakFlag = false;
+				playingInfo.PosCounter = 4 * 63;
 			}
 
 			// Go to the next pattern line
-			posCounter += 4;
-			if (posCounter == 4 * 64)
+			playingInfo.PosCounter += 4;
+			if (playingInfo.PosCounter == 4 * 64)
 			{
 				// Okay, the pattern is done, go to the next pattern
-				posCounter = 0;
-				trackPos++;
+				playingInfo.PosCounter = 0;
+				playingInfo.TrackPos++;
 
-				if (trackPos == songLength)
+				if (playingInfo.TrackPos == songLength)
 				{
 					// Module is done, loop it
-					trackPos = (uint)(currentDurationInfo?.StartPosition ?? 0);
+					playingInfo.TrackPos = 0;
 				}
 
-				if (HasPositionBeenVisited((int)trackPos))
-				{
-					// Next module
-					OnEndReached();
-				}
+				if (HasPositionBeenVisited((int)playingInfo.TrackPos))
+					endReached = true;
 
-				// Tell NostalgicPlayer we have changed the position
-				OnPositionChanged();
+				MarkPositionAsVisited((int)playingInfo.TrackPos);
 
-				MarkPositionAsVisited((int)trackPos);
+				ShowSongPosition();
+				ShowPattern();
 			}
 		}
 
@@ -681,7 +661,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 			// Do we have a pattern BRK command?
 			if ((patternData & 0xffff0000) == 0xfffc0000)
 			{
-				breakFlag = true;
+				playingInfo.BreakFlag = true;
 				channel.PatternData &= 0xefffffff;
 				return;
 			}
@@ -876,7 +856,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 			short index;
 
 			// Find out which period to play
-			switch (timer)
+			switch (playingInfo.Timer)
 			{
 				case 1:
 				case 5:
@@ -904,11 +884,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 			for (;;)
 			{
 				// Couldn't find the period, so no arpeggio :(
-				if (noteTable[note] == -1)
+				if (Tables.NoteTable[note] == -1)
 					return;
 
 				// Found the period, break the loop
-				if (noteTable[note] == channel.CurrentNote)
+				if (Tables.NoteTable[note] == channel.CurrentNote)
 					break;
 
 				// Get the next period
@@ -916,7 +896,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 			}
 
 			// Set the period
-			virtChannel.SetAmigaPeriod((ushort)noteTable[note + index]);
+			virtChannel.SetAmigaPeriod((ushort)Tables.NoteTable[note + index]);
 		}
 
 
@@ -945,14 +925,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 			for (;;)
 			{
 				// Couldn't find the period, so don't really step anywhere
-				if (noteTable[note] == -1)
+				if (Tables.NoteTable[note] == -1)
 				{
 					channel.StepEndNote = channel.CurrentNote;
 					return;
 				}
 
 				// Found the period, break the loop
-				if (noteTable[note] == channel.CurrentNote)
+				if (Tables.NoteTable[note] == channel.CurrentNote)
 					break;
 
 				// Get the next period
@@ -960,7 +940,44 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 			}
 
 			// Get the end note
-			channel.StepEndNote = (ushort)noteTable[note + endIndex];
+			channel.StepEndNote = (ushort)Tables.NoteTable[note + endIndex];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current song position
+		/// </summary>
+		/********************************************************************/
+		private void ShowSongPosition()
+		{
+			OnModuleInfoChanged(InfoPositionLine, playingInfo.TrackPos.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with pattern number
+		/// </summary>
+		/********************************************************************/
+		private void ShowPattern()
+		{
+			OnModuleInfoChanged(InfoPatternLine, orders[playingInfo.TrackPos].ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with all dynamic values
+		/// </summary>
+		/********************************************************************/
+		private void UpdateModuleInformation()
+		{
+			ShowSongPosition();
+			ShowPattern();
 		}
 		#endregion
 	}

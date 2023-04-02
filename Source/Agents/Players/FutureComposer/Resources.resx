@@ -143,18 +143,24 @@ This is the same as Future Composer 1.0 - 1.3, except that it has been improved 
     <value>Can't read the module samples</value>
   </data>
   <data name="IDS_FC_INFODESCLINE0" xml:space="preserve">
-    <value>Song length:</value>
+    <value>Number of positions:</value>
   </data>
   <data name="IDS_FC_INFODESCLINE1" xml:space="preserve">
-    <value>Used patterns:</value>
+    <value>Used tracks:</value>
   </data>
   <data name="IDS_FC_INFODESCLINE2" xml:space="preserve">
-    <value>Supported / used samples:</value>
+    <value>Used samples:</value>
   </data>
   <data name="IDS_FC_INFODESCLINE3" xml:space="preserve">
     <value>Used wave tables:</value>
   </data>
   <data name="IDS_FC_INFODESCLINE4" xml:space="preserve">
+    <value>Playing position:</value>
+  </data>
+  <data name="IDS_FC_INFODESCLINE5" xml:space="preserve">
+    <value>Playing tracks:</value>
+  </data>
+  <data name="IDS_FC_INFODESCLINE6" xml:space="preserve">
     <value>Current speed:</value>
   </data>
   <data name="IDS_FC_NAME" xml:space="preserve">

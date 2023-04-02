@@ -3,9 +3,13 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 {
@@ -14,9 +18,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 	/// </summary>
 	public class ModuleInfoStatic
 	{
-		private readonly ModulePlayerSupportFlag moduleSupportFlag;
-		private readonly SamplePlayerSupportFlag sampleSupportFlag;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -29,10 +30,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 			ModuleFormat = string.Empty;
 			PlayerName = string.Empty;
 			Channels = 0;
+			VirtualChannels = 0;
+			CrunchedSize = 0;
 			ModuleSize = 0;
-
-			moduleSupportFlag = ModulePlayerSupportFlag.None;
-			sampleSupportFlag = SamplePlayerSupportFlag.None;
+			MaxSongNumber = 0;
+			CanChangePosition = false;
 		}
 
 
@@ -66,33 +68,68 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructor (for module players)
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		internal ModuleInfoStatic(AgentInfo playerAgentInfo, AgentInfo converterAgentInfo, string moduleName, string author, string[] comment, Font commentFont, string[] lyrics, Font lyricsFont, string moduleFormat, string moduleFormatDescription, string playerName, string playerDescription, int channels, int virtualChannels, long crunchedSize, long moduleSize, ModulePlayerSupportFlag supportFlag, int maxSongNumber, InstrumentInfo[] instruments, SampleInfo[] samples) : this(playerAgentInfo, moduleName, author, comment, commentFont, lyrics, lyricsFont, moduleFormat, moduleFormatDescription, playerName, playerDescription, channels, virtualChannels, crunchedSize, moduleSize, maxSongNumber)
+		private ModuleInfoStatic(Loader loader, IPlayerAgent playerAgent)
 		{
-			moduleSupportFlag = supportFlag;
-			sampleSupportFlag = SamplePlayerSupportFlag.None;
-
-			ConverterAgentInfo = converterAgentInfo;
-
-			Instruments = instruments?.Length == 0 ? null : instruments;
-			Samples = samples?.Length == 0 ? null : samples;
+			PlayerAgentInfo = loader.PlayerAgentInfo;
+			ModuleName = playerAgent.ModuleName.Trim();
+			Comment = playerAgent.Comment;
+			CommentFont = playerAgent.CommentFont;
+			Lyrics = playerAgent.Lyrics;
+			LyricsFont = playerAgent.LyricsFont;
+			ModuleFormat = loader.ModuleFormat;
+			ModuleFormatDescription = loader.ModuleFormatDescription;
+			PlayerName = loader.PlayerName;
+			PlayerDescription = loader.PlayerDescription;
+			CrunchedSize = loader.CrunchedSize;
+			ModuleSize = loader.ModuleSize;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructor (for sample players)
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		internal ModuleInfoStatic(AgentInfo playerAgentInfo, string moduleName, string author, string[] comment, Font commentFont, string[] lyrics, Font lyricsFont, string moduleFormat, string moduleFormatDescription, string playerName, string playerDescription, int channels, long crunchedSize, long moduleSize, SamplePlayerSupportFlag supportFlag, int frequency) : this(playerAgentInfo, moduleName, author, comment, commentFont, lyrics, lyricsFont, moduleFormat, moduleFormatDescription, playerName, playerDescription, channels, channels, crunchedSize, moduleSize, 1)
+		internal ModuleInfoStatic(Loader loader, IModulePlayerAgent modulePlayerAgent) : this(loader, (IPlayerAgent)modulePlayerAgent)
 		{
-			sampleSupportFlag = supportFlag;
-			moduleSupportFlag = ModulePlayerSupportFlag.None;
+			Channels = modulePlayerAgent.ModuleChannelCount;
+			VirtualChannels = modulePlayerAgent.VirtualChannelCount;
+			MaxSongNumber = modulePlayerAgent.SubSongs.Number;
+			CanChangePosition = (modulePlayerAgent is IDurationPlayer) && ((modulePlayerAgent.SupportFlags & ModulePlayerSupportFlag.SetPosition) != 0);
+			ConverterAgentInfo = loader.ConverterAgentInfo;
 
-			Frequency = frequency;
+			Instruments = modulePlayerAgent.Instruments?.ToArray();
+			Samples = modulePlayerAgent.Samples?.ToArray();
+
+			if (Instruments?.Length == 0)
+				Instruments = null;
+
+			if (Samples?.Length == 0)
+				Samples = null;
+
+			Author = FindAuthor(modulePlayerAgent);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		internal ModuleInfoStatic(Loader loader, ISamplePlayerAgent samplePlayerAgent) : this(loader, (IPlayerAgent)samplePlayerAgent)
+		{
+			Channels = samplePlayerAgent.ChannelCount;
+			VirtualChannels = samplePlayerAgent.ChannelCount;
+			MaxSongNumber = 1;
+			CanChangePosition = (samplePlayerAgent is IDurationPlayer) && ((samplePlayerAgent.SupportFlags & SamplePlayerSupportFlag.SetPosition) != 0);
+			Frequency = samplePlayerAgent.Frequency;
+
+			Author = FindAuthor(samplePlayerAgent);
 		}
 
 		#region Common properties
@@ -288,6 +325,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		{
 			get;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tells whether it is possible to change the position
+		/// </summary>
+		/********************************************************************/
+		public bool CanChangePosition
+		{
+			get;
+		}
 		#endregion
 
 		#region Module specific properties
@@ -299,21 +348,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		public AgentInfo ConverterAgentInfo
 		{
 			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Tells whether it is possible to change the position
-		/// </summary>
-		/********************************************************************/
-		public bool CanChangePosition
-		{
-			get
-			{
-				return ((moduleSupportFlag & ModulePlayerSupportFlag.SetPosition) != 0) || ((sampleSupportFlag & SamplePlayerSupportFlag.SetPosition) != 0);
-			}
 		}
 
 
@@ -350,6 +384,423 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		public int Frequency
 		{
 			get;
+		}
+		#endregion
+
+		#region Find author algorithm
+		/********************************************************************/
+		/// <summary>
+		/// Return the author of the module
+		/// </summary>
+		/********************************************************************/
+		private string FindAuthor(IPlayerAgent playerAgent)
+		{
+			string name = playerAgent.Author;
+
+			if (string.IsNullOrWhiteSpace(name))
+			{
+				// We didn't get any author, now scan the instruments/samples
+				// after an author
+				List<string> nameList = Instruments?.Select(instInfo => instInfo.Name).ToList();
+				if ((nameList != null) && (nameList.Count > 0))
+					name = FindAuthorInList(nameList);
+
+				if (string.IsNullOrEmpty(name))
+				{
+					// No author found in the instrument names, now try the samples
+					nameList = Samples?.Select(sampInfo => sampInfo.Name).ToList();
+					if ((nameList != null) && (nameList.Count > 0))
+						name = FindAuthorInList(nameList);
+				}
+			}
+
+			// Trim and return the name
+			return name?.Trim();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tries to find the author in a list of names
+		/// </summary>
+		/********************************************************************/
+		private string FindAuthorInList(List<string> list)
+		{
+			int i, pos = -1, startPos = -1;
+			string itemStr = string.Empty;
+			string name = string.Empty;
+
+			// First get the number of items in the list
+			int count = list.Count;
+
+			// Traverse all the names after the hash mark
+			for (i = 0; i < count; i++)
+			{
+				// Get the string to search in
+				itemStr = list[i];
+
+				pos = itemStr.IndexOf('#');
+				if (pos != -1)
+				{
+					if ((itemStr.Length >= (pos + 5)) && (itemStr.Substring(pos + 1, 4).ToLower() == "from"))
+						startPos = pos + 5;
+					else
+					{
+						startPos = pos + 1;
+
+						// See if there is a "by" word after the mark
+						pos = FindBy(itemStr.Substring(startPos));
+						if (pos != -1)
+							startPos = pos;
+					}
+
+					// Try to find the beginning of the author in the current string
+					for (pos = startPos; pos < itemStr.Length; pos++)
+					{
+						if (char.IsLetterOrDigit(itemStr[pos]))
+						{
+							startPos = pos;
+							break;
+						}
+					}
+
+					// Find the author
+					name = ClipOutAuthor(itemStr, startPos);
+
+					// If the found name starts with a digit, ignore it.
+					// Also ignore other common names, we know is not the author
+					if (string.IsNullOrEmpty(name) || (char.IsDigit(name[0]) && !name.StartsWith("4-mat")) || name.ToLower().StartsWith("trax"))
+					{
+						startPos = -1;
+						name = string.Empty;
+					}
+					break;
+				}
+			}
+
+			if (startPos == -1)
+			{
+				// Traverse all the names
+				for (i = 0; i < count; i++)
+				{
+					// Get the string to search in
+					itemStr = list[i];
+
+					// If the string is empty, we don't need to do a search :-)
+					if (string.IsNullOrWhiteSpace(itemStr))
+						continue;
+
+					// Try to find a "by" word
+					pos = FindBy(itemStr);
+					if (pos != -1)
+						break;
+				}
+
+				if (pos != -1)
+				{
+					// Now try to find the author, search through the current
+					// string to the end of the list
+					for (;;)
+					{
+						// Scan each character in the rest of the string
+						for (; pos < itemStr.Length; pos++)
+						{
+							if (char.IsLetterOrDigit(itemStr[pos]))
+							{
+								startPos = pos;
+								break;
+							}
+						}
+
+						// Get a start position, break the loop
+						if (startPos != -1)
+							break;
+
+						// Get next line
+						i++;
+						if (i == count)
+							break;
+
+						itemStr = list[i];
+						pos = 0;
+					}
+				}
+				else
+				{
+					// We didn't find a "by" word, try to find other author marks
+					for (i = 0; i < count; i++)
+					{
+						// Get the string to search in
+						itemStr = list[i];
+
+						// If the string is empty, we don't need to do a search :-)
+						if (string.IsNullOrWhiteSpace(itemStr))
+							continue;
+
+						// Is there a ">>>" mark?
+						if (itemStr.StartsWith(">>>"))
+						{
+							startPos = 3;
+							break;
+						}
+
+						// What about the ">>" mark?
+						if (itemStr.StartsWith(">>"))
+						{
+							startPos = 2;
+							break;
+						}
+
+						// Is there a "?>>>" mark?
+						if ((itemStr.Length >= 4) && (itemStr.Substring(1, 3) == ">>>"))
+						{
+							startPos = 4;
+							break;
+						}
+
+						// What about the "?>>" mark?
+						if ((itemStr.Length >= 4) && (itemStr.Substring(1, 2) == ">>"))
+						{
+							startPos = 3;
+							break;
+						}
+					}
+
+					if (startPos != -1)
+					{
+						// See if there is a "by" word after the mark
+						pos = FindBy(itemStr.Substring(startPos));
+						if (pos != -1)
+							startPos = pos;
+					}
+				}
+
+				if (startPos != -1)
+					name = ClipOutAuthor(itemStr, startPos);
+			}
+
+			return name;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Find the end of the given string and return what is found
+		/// </summary>
+		/********************************************************************/
+		private string ClipOutAuthor(string itemStr, int startPos)
+		{
+			// Got the start position of the author, now find the end position
+			string name = itemStr.Substring(startPos).Trim();
+
+			int pos;
+			for (pos = 0; pos < name.Length; pos++)
+			{
+				// Get the current character
+				char chr = name[pos];
+
+				// Check for legal characters
+				if (((chr == ' ') || (chr == '!') || (chr == '\'') || (chr == '-') || (chr == '/') || char.IsDigit(chr)))
+				{
+					// It's legal, go to the next character
+					continue;
+				}
+
+				// Check to see if the & character is the last one and if
+				// not, it's legal
+				if ((chr == '&') && ((pos + 1) < name.Length))
+					continue;
+
+				if (chr == '.')
+				{
+					// The point is the last character
+					if ((pos + 1) == name.Length)
+						break;
+
+					// Are there a space or another point after the first one?
+					if ((name[pos + 1] == ' ') || (name[pos + 1] == '.'))
+						break;
+
+					continue;
+				}
+
+				// Is the character a letter?
+				if (!char.IsLetter(chr))
+				{
+					// No, stop the loop
+					break;
+				}
+
+				// Stop if .... of
+				if ((pos + 1) < name.Length)
+				{
+					if ((chr == 'o') && (name[pos + 1] == 'f') && ((pos + 2) == name.Length))
+					{
+						if ((pos > 0) && (name[pos - 1] == ' '))
+							break;
+					}
+				}
+
+				// Stop if .... from
+				if ((pos + 3) < name.Length)
+				{
+					if ((chr == 'f') && (name[pos + 1] == 'r') && (name[pos + 2] == 'o') && (name[pos + 3] == 'm') && ((pos + 4) == name.Length))
+					{
+						if ((pos > 0) && (name[pos - 1] == ' '))
+							break;
+					}
+				}
+
+				// Stop if .... in
+				if ((pos + 1) < name.Length)
+				{
+					if ((chr == 'i') && (name[pos + 1] == 'n') && ((pos + 2) == name.Length))
+					{
+						if ((pos > 0) && (name[pos - 1] == ' '))
+							break;
+					}
+				}
+
+				// Stop if .... and
+				if ((pos + 2) < name.Length)
+				{
+					if ((chr == 'a') && (name[pos + 1] == 'n') && (name[pos + 2] == 'd') && ((pos + 3) == name.Length))
+					{
+						if ((pos > 0) && (name[pos - 1] == ' '))
+							break;
+					}
+				}
+			}
+
+			// Clip out the author
+			name = name.Substring(0, pos).TrimEnd();
+
+			// Check for some special characters that needs to be removed
+			if (!string.IsNullOrEmpty(name))
+			{
+				for (;;)
+				{
+					char chr = name[name.Length - 1];
+					if (chr != '-')
+						break;
+
+					if (name[0] == chr)
+						break;
+
+					name = name.Substring(0, name.Length - 1);
+				}
+			}
+
+			return name.TrimEnd('/').TrimEnd();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will look in the string given after the "by" word and return the
+		/// index where it found it
+		/// </summary>
+		/********************************************************************/
+		private int FindBy(string str)
+		{
+			int index = 0;
+			bool found = false;
+
+			while (index < (str.Length - 1))
+			{
+				if (((str[index] == 'b') || (str[index] == 'B')) && ((str[index + 1] == 'y') || (str[index + 1] == 'Y')))
+				{
+					// Check to see if the character before "by" is a letter
+					if ((index > 0) && char.IsLetter(str[index - 1]))
+					{
+						index++;
+						continue;
+					}
+
+					// Check to see if the character after "by" is a letter
+					if (((index + 2) < str.Length) && char.IsLetter(str[index + 2]))
+					{
+						index++;
+						continue;
+					}
+
+					if ((index + 2) == str.Length)
+					{
+						// The last word in the string is "by", so we found it
+						return index + 2;
+					}
+
+					index += 2;
+					found = true;
+					break;
+				}
+
+				// Go to the next character
+				index++;
+			}
+
+			// Did we found the "by" word?
+			if (found)
+			{
+				// Yep, check if it's "by" some known phrases we need to ignore
+				if (((index + 5) <= str.Length) && (str.Substring(index + 1, 4) == "KIWI"))
+					return -1;
+
+				if (((index + 11) <= str.Length) && (str.Substring(index + 1, 10) == "the welder"))
+					return -1;
+
+				if (((index + 7) <= str.Length) && (str.Substring(index + 1, 6) == "e-mail"))
+					return -1;
+
+				if (((index + 7) <= str.Length) && (str.Substring(index + 1, 6) == "Gryzor"))
+					return -1;
+
+				if (((index + 6) <= str.Length) && (str.Substring(index + 1, 5) == ">Asle"))
+					return -1;
+
+				if (((index + 5) <= str.Length) && (str.Substring(index + 1, 4) == "Asle"))
+					return -1;
+
+				if (((index + 8) <= str.Length) && (str.Substring(index + 1, 7) == "Trilogy"))
+					return -1;
+			}
+			else
+			{
+				// Okay, now try to find "(c)"
+				index = 0;
+				while (index < (str.Length - 2))
+				{
+					if ((str[index] == '(') && ((str[index + 1] == 'c') || (str[index + 1] == 'C')) && (str[index + 2] == ')'))
+					{
+						index += 3;
+						found = true;
+						break;
+					}
+
+					// Go to the next character
+					index++;
+				}
+			}
+
+			if (found)
+			{
+				// Find the first letter in author
+				for (; index < str.Length; index++)
+				{
+					if (str[index] < '0')
+						continue;
+
+					if ((str[index] <= '9') || (str[index] >= 'A'))
+						break;
+				}
+
+				return index;
+			}
+
+			return -1;
 		}
 		#endregion
 	}

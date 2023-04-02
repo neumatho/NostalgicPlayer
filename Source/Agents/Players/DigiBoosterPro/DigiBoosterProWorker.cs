@@ -10,7 +10,6 @@ using Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers;
 using Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
@@ -19,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class DigiBoosterProWorker : ModulePlayerAgentBase
+	internal class DigiBoosterProWorker : ModulePlayerWithSubSongDurationAgentBase
 	{
 		private static readonly Dictionary<Guid, ModuleType> moduleTypeLookup = new Dictionary<Guid, ModuleType>
 		{
@@ -90,11 +89,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 			// Find out which line to take
 			switch (line)
 			{
-				// Song length
+				// Number of positions:
 				case 0:
 				{
 					description = Resources.IDS_DBM_INFODESCLINE0;
-					value = SongLength.ToString();
+					value = player.GetSongLength().ToString();
 					break;
 				}
 
@@ -122,18 +121,34 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 					break;
 				}
 
-				// Current speed
+				// Playing position
 				case 4:
 				{
 					description = Resources.IDS_DBM_INFODESCLINE4;
+					value = player.GetPosition().ToString();
+					break;
+				}
+
+				// Playing pattern
+				case 5:
+				{
+					description = Resources.IDS_DBM_INFODESCLINE5;
+					value = player.GetPattern().ToString();
+					break;
+				}
+
+				// Current speed
+				case 6:
+				{
+					description = Resources.IDS_DBM_INFODESCLINE6;
 					value = player.GetSpeed().ToString();
 					break;
 				}
 
-				// BPM
-				case 5:
+				// Current tempo (BPM)
+				case 7:
 				{
-					description = Resources.IDS_DBM_INFODESCLINE5;
+					description = Resources.IDS_DBM_INFODESCLINE7;
 					value = player.GetTempo().ToString();
 					break;
 				}
@@ -152,15 +167,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 		#endregion
 
 		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.SetPosition;
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -197,9 +203,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 		/********************************************************************/
 		public override bool InitPlayer(out string errorMessage)
 		{
+			if (!base.InitPlayer(out errorMessage))
+				return false;
+
 			player = Implementation.Player.NewEngine(module, this);
 
-			return base.InitPlayer(out errorMessage);
+			return true;
 		}
 
 
@@ -223,26 +232,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
+		public override bool InitSound(int songNumber, out string errorMessage)
 		{
-			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+			if (!base.InitSound(songNumber, out errorMessage))
 				return false;
 
 			InitializeSound(songNumber);
 
 			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override DurationInfo[] CalculateDuration()
-		{
-			return CalculateDurationBySubSongs();
 		}
 
 
@@ -274,42 +271,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 		/// </summary>
 		/********************************************************************/
 		public override SubSongInfo SubSongs => new SubSongInfo(module.NumberOfSongs, 0);
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the length of the current song
-		/// </summary>
-		/********************************************************************/
-		public override int SongLength => player.GetSongLength();
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position of the song
-		/// </summary>
-		/********************************************************************/
-		public override int GetSongPosition()
-		{
-			return player.GetPosition();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set a new position of the song
-		/// </summary>
-		/********************************************************************/
-		public override void SetSongPosition(int position, PositionInfo positionInfo)
-		{
-			player.SetPosition((uint32_t)position, 0);
-			player.SetTempo(positionInfo.Speed, positionInfo.Bpm);
-
-			base.SetSongPosition(position, positionInfo);
-		}
 
 
 
@@ -403,14 +364,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 		public override IEffectMaster EffectMaster => player.GetEffectMaster();
 		#endregion
 
-		#region Duration calculation methods
+		#region ModulePlayerWithSubSongDurationAgentBase implementation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override void InitDurationCalculationBySubSong(int subSong)
+		protected override void InitDuration(int subSong)
 		{
 			InitializeSound(subSong);
 		}
@@ -419,24 +380,44 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the current speed
+		/// Return the total number of positions. You only need to derive
+		/// from this method, if your player have one position list for all
+		/// channels and can restart on another position than 0
 		/// </summary>
 		/********************************************************************/
-		protected override byte GetCurrentSpeed()
+		protected override int GetTotalNumberOfPositions()
 		{
-			return (byte)player.GetSpeed();
+			return player.GetSongLength();
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the current BPM
+		/// Create a snapshot of all the internal structures and return it
 		/// </summary>
 		/********************************************************************/
-		protected override ushort GetCurrentBpm()
+		protected override ISnapshot CreateSnapshot()
 		{
-			return (ushort)player.GetTempo();
+			return player.CreateSnapshot();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize internal structures based on the snapshot given
+		/// </summary>
+		/********************************************************************/
+		protected override bool SetSnapshot(ISnapshot snapshot, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			player.SetSnapshot(snapshot);
+
+			player.UpdateModuleInformation();
+
+			return true;
 		}
 		#endregion
 
@@ -458,9 +439,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 		/// Tell NostalgicPlayer that the position has changed
 		/// </summary>
 		/********************************************************************/
-		internal void PositionHasChanged()
+		internal void PositionHasChanged(int position)
 		{
-			OnPositionChanged();
+			MarkPositionAsVisited(position);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will restart the current sub-song from the beginning
+		/// </summary>
+		/********************************************************************/
+		internal void Restart()
+		{
+			RestartSong();
 		}
 
 
@@ -472,7 +465,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 		/********************************************************************/
 		internal void ModuleEnded()
 		{
-			OnEndReached();
+			OnEndReachedOnAllChannels(player.GetPosition());
 		}
 
 

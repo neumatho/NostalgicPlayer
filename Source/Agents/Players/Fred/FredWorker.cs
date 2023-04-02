@@ -8,17 +8,15 @@ using Polycode.NostalgicPlayer.Agent.Player.Fred.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 {
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class FredWorker : ModulePlayerAgentBase
+	internal class FredWorker : ModulePlayerWithSubSongDurationAgentBase
 	{
 		private const byte TrackEndCode = 0x80;
 		private const byte TrackPortCode = 0x81;
@@ -27,31 +25,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 		private const byte TrackPauseCode = 0x84;
 		private const byte TrackMaxCode = 0xa0;
 
-		private static readonly uint[] periodTable =
-		{
-			8192, 7728, 7296, 6888, 6504, 6136, 5792, 5464, 5160, 4872, 4600, 4336,
-			4096, 3864, 3648, 3444, 3252, 3068, 2896, 2732, 2580, 2436, 2300, 2168,
-			2048, 1932, 1824, 1722, 1626, 1534, 1448, 1366, 1290, 1218, 1150, 1084,
-			1024,  966,  912,  861,  813,  767,  724,  683,  645,  609,  575,  542,
- 			 512,  483,  456,  430,  406,  383,  362,  341,  322,  304,  287,  271,
-			 256,  241,  228,  215,  203,  191,  181,  170,  161,  152,  143,  135
-		};
-
 		private ushort subSongNum;
 		private ushort instNum;
+		private int trackNum;
 
 		private byte[] startTempos;
 		private sbyte[][][] positions;
 		private byte[][] tracks;
 		private Instrument[] instruments;
 
-		private ChannelInfo[] channels;
+		private int[,] positionLengths;
+		private bool[,] hasNotes;
+
 		private int currentSong;
-		private byte currentTempo;
 
-		private PosLength[] posLength;
+		private GlobalPlayingInfo playingInfo;
+		private ChannelInfo[] channels;
 
-		private const int InfoSpeedLine = 2;
+		private const int InfoPositionLine = 3;
+		private const int InfoTrackLine = 4;
+		private const int InfoSpeedLine = 5;
 
 		#region IPlayerAgent implementation
 		/********************************************************************/
@@ -115,27 +108,51 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 			// Find out which line to take
 			switch (line)
 			{
-				// Song length
+				// Number of positions:
 				case 0:
 				{
 					description = Resources.IDS_FRED_INFODESCLINE0;
-					value = posLength[currentSong].Length.ToString();
+					value = FormatPositionLengths();
+					break;
+				}
+
+				// Used tracks
+				case 1:
+				{
+					description = Resources.IDS_FRED_INFODESCLINE1;
+					value = trackNum.ToString();
 					break;
 				}
 
 				// Used instruments
-				case 1:
+				case 2:
 				{
-					description = Resources.IDS_FRED_INFODESCLINE1;
+					description = Resources.IDS_FRED_INFODESCLINE2;
 					value = instNum.ToString();
 					break;
 				}
 
-				// Current speed
-				case 2:
+				// Playing positions
+				case 3:
 				{
-					description = Resources.IDS_FRED_INFODESCLINE2;
-					value = currentTempo.ToString();
+					description = Resources.IDS_FRED_INFODESCLINE3;
+					value = FormatPositions();
+					break;
+				}
+
+				// Playing tracks
+				case 4:
+				{
+					description = Resources.IDS_FRED_INFODESCLINE4;
+					value = FormatTracks();
+					break;
+				}
+
+				// Current speed
+				case 5:
+				{
+					description = Resources.IDS_FRED_INFODESCLINE5;
+					value = playingInfo.CurrentTempo.ToString();
 					break;
 				}
 
@@ -153,15 +170,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 		#endregion
 
 		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.SetPosition;
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -361,6 +369,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 
 		/********************************************************************/
 		/// <summary>
+		/// Initializes the player
+		/// </summary>
+		/********************************************************************/
+		public override bool InitPlayer(out string errorMessage)
+		{
+			if (!base.InitPlayer(out errorMessage))
+				return false;
+
+			CalculatePositionLengthsAndNumberOfTracks();
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Cleanup the player
 		/// </summary>
 		/********************************************************************/
@@ -378,84 +403,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
+		public override bool InitSound(int songNumber, out string errorMessage)
 		{
-			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+			if (!base.InitSound(songNumber, out errorMessage))
 				return false;
 
-			// Remember the song number
-			currentSong = songNumber;
-
-			// Get the start tempo
-			currentTempo = startTempos[songNumber];
-
-			// Initialize the channel structure
-			channels = Helpers.InitializeArray<ChannelInfo>(4);
-
-			for (int i = 0; i < 4; i++)
-			{
-				ChannelInfo chanInfo = channels[i];
-
-				chanInfo.ChanNum = i;
-				chanInfo.PositionTable = positions[songNumber][i];
-				chanInfo.TrackTable = tracks[chanInfo.PositionTable[0]];
-				chanInfo.Position = 0;
-				chanInfo.TrackPosition = 0;
-				chanInfo.TrackDuration = 1;
-				chanInfo.TrackNote = 0;
-				chanInfo.TrackPeriod = 0;
-				chanInfo.TrackVolume = 0;
-				chanInfo.Instrument = null;
-				chanInfo.VibFlags = VibFlags.None;
-				chanInfo.VibDelay = 0;
-				chanInfo.VibSpeed = 0;
-				chanInfo.VibAmpl = 0;
-				chanInfo.VibValue = 0;
-				chanInfo.PortRunning = false;
-				chanInfo.PortDelay = 0;
-				chanInfo.PortLimit = 0;
-				chanInfo.PortTargetNote = 0;
-				chanInfo.PortStartPeriod = 0;
-				chanInfo.PeriodDiff = 0;
-				chanInfo.PortCounter = 0;
-				chanInfo.PortSpeed = 0;
-				chanInfo.EnvState = EnvelopeState.Attack;
-				chanInfo.SustainDelay = 0;
-				chanInfo.ArpPosition = 0;
-				chanInfo.ArpSpeed = 0;
-				chanInfo.PulseWay = false;
-				chanInfo.PulsePosition = 0;
-				chanInfo.PulseDelay = 0;
-				chanInfo.PulseSpeed = 0;
-				chanInfo.PulseShot = 0;
-				chanInfo.BlendWay = false;
-				chanInfo.BlendPosition = 0;
-				chanInfo.BlendDelay = 0;
-				chanInfo.BlendShot = 0;
-				chanInfo.SynthSample = new sbyte[64];	// Well, it seems only 32 bytes are needed, but we allocate 64 just in case
-			}
+			InitializeSound(songNumber);
 
 			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override DurationInfo[] CalculateDuration()
-		{
-			// Find the longest (in time) channel and create
-			// position structures. Do it for each sub-song
-			DurationInfo[] result = new DurationInfo[subSongNum];
-			posLength = new PosLength[subSongNum];
-
-			for (ushort i = 0; i < subSongNum; i++)
-				result[i] = FindLongestChannel(i);
-
-			return result;
 		}
 
 
@@ -513,55 +468,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the length of the current song
-		/// </summary>
-		/********************************************************************/
-		public override int SongLength => posLength[currentSong].Length;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position of the song
-		/// </summary>
-		/********************************************************************/
-		public override int GetSongPosition()
-		{
-			return channels[posLength[currentSong].Channel].Position;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set a new position of the song
-		/// </summary>
-		/********************************************************************/
-		public override void SetSongPosition(int position, PositionInfo positionInfo)
-		{
-			// Change the position
-			ExtraPositionInfo[] extraInfo = (ExtraPositionInfo[])positionInfo.ExtraInfo;
-
-			for (int i = 0; i < 4; i++)
-			{
-				channels[i].Position = extraInfo[i].Position;
-				channels[i].TrackTable = tracks[channels[i].PositionTable[channels[i].Position]];
-				channels[i].TrackPosition = extraInfo[i].TrackPosition;
-				channels[i].TrackDuration = extraInfo[i].TrackDuration;
-			}
-
-			// Change the speed
-			currentTempo = positionInfo.Speed;
-
-			OnModuleInfoChanged(InfoSpeedLine, currentTempo.ToString());
-
-			base.SetSongPosition(position, positionInfo);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Returns all the samples available in the module. If none, null
 		/// is returned
 		/// </summary>
@@ -576,7 +482,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 					uint[] frequencies = new uint[10 * 12];
 
 					for (int j = 0; j < 6 * 12; j++)
-						frequencies[2 * 12 + j] = 3546895U / ((periodTable[j] * inst.Period) / 1024);
+						frequencies[2 * 12 + j] = 3546895U / ((Tables.PeriodTable[j] * inst.Period) / 1024);
 
 					SampleInfo sampleInfo = new SampleInfo
 					{
@@ -624,7 +530,193 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 		}
 		#endregion
 
+		#region ModulePlayerWithSubSongDurationAgentBase implementation
+		/********************************************************************/
+		/// <summary>
+		/// Initialize all internal structures when beginning duration
+		/// calculation on a new sub-song
+		/// </summary>
+		/********************************************************************/
+		protected override void InitDuration(int subSong)
+		{
+			InitializeSound(subSong);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a snapshot of all the internal structures and return it
+		/// </summary>
+		/********************************************************************/
+		protected override ISnapshot CreateSnapshot()
+		{
+			return new Snapshot(playingInfo, channels);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize internal structures based on the snapshot given
+		/// </summary>
+		/********************************************************************/
+		protected override bool SetSnapshot(ISnapshot snapshot, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			// Start to make a clone of the snapshot
+			Snapshot currentSnapshot = (Snapshot)snapshot;
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayingInfo, currentSnapshot.Channels);
+
+			playingInfo = clonedSnapshot.PlayingInfo;
+			channels = clonedSnapshot.Channels;
+
+			UpdateModuleInformation();
+
+			return true;
+		}
+		#endregion
+
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Calculate the lengths of the position lists for each sub-song
+		/// </summary>
+		/********************************************************************/
+		private void CalculatePositionLengthsAndNumberOfTracks()
+		{
+			positionLengths = new int[subSongNum, 4];
+			hasNotes = new bool[subSongNum, 4];
+			trackNum = 0;
+
+			for (int i = 0; i < subSongNum; i++)
+			{
+				for (int j = 0; j < 4; j++)
+				{
+					sbyte[] positionList = positions[i][j];
+
+					for (int k = 0; k < positionList.Length; k++)
+					{
+						if (positionList[k] < 0)
+						{
+							positionLengths[i, j] = k;
+							break;
+						}
+
+						trackNum = Math.Max(trackNum, positionList[k]);
+
+						if (!hasNotes[i, j])
+						{
+							byte[] track = tracks[positionList[k]];
+
+							for (int m = 0; ; m++)
+							{
+								byte cmd = track[m];
+
+								if (cmd < 0x80)
+								{
+									hasNotes[i, j] = true;
+									break;
+								}
+
+								if (cmd == TrackEndCode)
+									break;
+
+								switch (cmd)
+								{
+									case TrackInstCode:
+									case TrackTempoCode:
+									{
+										m++;
+										break;
+									}
+
+									case TrackPortCode:
+									{
+										m += 3;
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			trackNum++;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize sound structures
+		/// </summary>
+		/********************************************************************/
+		private void InitializeSound(int songNumber)
+		{
+			// Remember the song number
+			currentSong = songNumber;
+
+			// Initialize player variables
+			playingInfo = new GlobalPlayingInfo
+			{
+				CurrentTempo = startTempos[songNumber]
+			};
+
+			// Initialize the channel structure
+			channels = new ChannelInfo[4];
+
+			for (int i = 0; i < 4; i++)
+			{
+				sbyte[] positionTable = positions[songNumber][i];
+
+				channels[i] = new ChannelInfo
+				{
+					ChanNum = i,
+					PositionTable = positionTable,
+					TrackTable = tracks[positionTable[0]],
+					Position = 0,
+					TrackPosition = 0,
+					TrackDuration = 1,
+					TrackNote = 0,
+					TrackPeriod = 0,
+					TrackVolume = 0,
+					Instrument = null,
+					VibFlags = VibFlags.None,
+					VibDelay = 0,
+					VibSpeed = 0,
+					VibAmpl = 0,
+					VibValue = 0,
+					PortRunning = false,
+					PortDelay = 0,
+					PortLimit = 0,
+					PortTargetNote = 0,
+					PortStartPeriod = 0,
+					PeriodDiff = 0,
+					PortCounter = 0,
+					PortSpeed = 0,
+					EnvState = EnvelopeState.Attack,
+					SustainDelay = 0,
+					ArpPosition = 0,
+					ArpSpeed = 0,
+					PulseWay = false,
+					PulsePosition = 0,
+					PulseDelay = 0,
+					PulseSpeed = 0,
+					PulseShot = 0,
+					BlendWay = false,
+					BlendPosition = 0,
+					BlendDelay = 0,
+					BlendShot = 0,
+					SynthSample = new sbyte[64]		// Well, it seems only 32 bytes are needed, but we allocate 64 just in case
+				};
+			}
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Frees all the memory the player has allocated
@@ -636,215 +728,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 			positions = null;
 			tracks = null;
 			instruments = null;
-		}
 
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Scans all the channels to find the channel which take longest
-		/// time to play
-		/// </summary>
-		/********************************************************************/
-		private DurationInfo FindLongestChannel(ushort songNum)
-		{
-			// Get the start tempo
-			byte curTempo = startTempos[songNum];
-
-			// Initialize the channels
-			channels = Helpers.InitializeArray<ChannelInfo>(4);
-
-			for (int i = 0; i < 4; i++)
-			{
-				ChannelInfo chanInfo = channels[i];
-
-				chanInfo.PositionTable = positions[songNum][i];
-				chanInfo.TrackTable = tracks[chanInfo.PositionTable[0]];
-				chanInfo.Position = 0;
-				chanInfo.TrackPosition = 0;
-				chanInfo.TrackDuration = 1;
-			}
-
-			// Okay, now calculate the time for each channel
-			float[] chanTimes = { 0.0f, 0.0f, 0.0f, 0.0f };
-			bool[] doneFlags = { false, false, false, false };
-			bool[] hasNote = { false, false, false, false };
-			int[] posBeforeRestart = { 0, 0, 0, 0 };
-			List<PositionInfo>[] posTimes = Helpers.InitializeArray<List<PositionInfo>>(4);
-
-			for (int i = 0; i < 4; i++)
-			{
-				posTimes[i].Add(new PositionInfo(curTempo, 125, new TimeSpan(0), songNum, new ExtraPositionInfo[]
-				{
-					new ExtraPositionInfo(0, 0, 1),
-					new ExtraPositionInfo(0, 0, 1),
-					new ExtraPositionInfo(0, 0, 1),
-					new ExtraPositionInfo(0, 0, 1)
-				}));
-			}
-
-			for (;;)
-			{
-				// Check to see if all channels has been parsed
-				if (doneFlags[0] && doneFlags[1] && doneFlags[2] && doneFlags[3])
-					break;
-
-				bool[] changePos = { false, false, false, false };
-
-				ExtraPositionInfo[] extraInfo = new ExtraPositionInfo[]
-				{
-					new ExtraPositionInfo(channels[0].Position, channels[0].TrackPosition, channels[0].TrackDuration),
-					new ExtraPositionInfo(channels[1].Position, channels[1].TrackPosition, channels[1].TrackDuration),
-					new ExtraPositionInfo(channels[2].Position, channels[2].TrackPosition, channels[2].TrackDuration),
-					new ExtraPositionInfo(channels[3].Position, channels[3].TrackPosition, channels[3].TrackDuration)
-				};
-
-				for (int i = 0; i < 4; i++)
-				{
-					ChannelInfo chanInfo = channels[i];
-					bool chanDone = false;
-					bool doneFlag = false;
-
-					chanInfo.TrackDuration--;
-					if (chanInfo.TrackDuration == 0)
-					{
-						do
-						{
-							// Get the channel command
-							byte cmd = chanInfo.TrackTable[chanInfo.TrackPosition++];
-
-							// Is the command a note?
-							if (cmd < 0x80)
-							{
-								// Yes
-								chanInfo.TrackDuration = curTempo;
-
-								hasNote[i] = true;
-								chanDone = true;
-							}
-							else
-							{
-								// It's a real command
-								switch (cmd)
-								{
-									case TrackInstCode:
-									{
-										chanInfo.TrackPosition++;
-										break;
-									}
-
-									case TrackTempoCode:
-									{
-										curTempo = chanInfo.TrackTable[chanInfo.TrackPosition++];
-										break;
-									}
-
-									case TrackPortCode:
-									{
-										chanInfo.TrackPosition += 3;
-										break;
-									}
-
-									case TrackPauseCode:
-									{
-										chanInfo.TrackDuration = curTempo;
-										chanDone = true;
-										break;
-									}
-
-									case TrackEndCode:
-									{
-										chanInfo.Position++;
-
-										for (;;)
-										{
-											if (chanInfo.PositionTable[chanInfo.Position] == -1)
-											{
-												posBeforeRestart[i] = chanInfo.Position;
-
-												chanInfo.Position = 0;
-												curTempo = startTempos[songNum];
-
-												doneFlag = true;
-												chanDone = true;
-												continue;
-											}
-
-											if (chanInfo.PositionTable[chanInfo.Position] < 0)
-											{
-												posBeforeRestart[i] = chanInfo.Position;
-												chanInfo.Position = (ushort)(chanInfo.PositionTable[chanInfo.Position] & 0x7f);
-
-												doneFlag = true;
-												chanDone = true;
-												continue;
-											}
-											break;
-										}
-
-										chanInfo.TrackTable = tracks[chanInfo.PositionTable[chanInfo.Position]];
-										chanInfo.TrackPosition = 0;
-										chanInfo.TrackDuration = 1;
-
-										extraInfo[i] = new ExtraPositionInfo(chanInfo.Position, 0, 1);
-										changePos[i] = true;
-										break;
-									}
-
-									default:	// Note delay
-									{
-										chanInfo.TrackDuration = (ushort)(-(sbyte)cmd * curTempo);
-										chanDone = true;
-										break;
-									}
-								}
-							}
-						}
-						while (!chanDone);
-					}
-
-					if (!doneFlags[i])
-						chanTimes[i] += 1000.0f / 50.0f;
-
-					if (doneFlag)
-						doneFlags[i] = true;
-				}
-
-				for (int i = 0; i < 4; i++)
-				{
-					if (changePos[i])
-						posTimes[i].Add(new PositionInfo(curTempo, 125, new TimeSpan((long)chanTimes[i] * TimeSpan.TicksPerMillisecond), songNum, extraInfo));
-				}
-			}
-
-			// Find the channel which takes the longest time to play
-			float time = 0.0f;
-
-			for (int i = 0; i < 4; i++)
-			{
-				// Skip channels that does not have any notes
-				if (hasNote[i])
-				{
-					if (chanTimes[i] >= time)
-					{
-						posLength[songNum] = new PosLength
-						{
-							Channel = i,
-							Length = posBeforeRestart[i]
-						};
-
-						time = chanTimes[i];
-					}
-				}
-			}
-
-			// Some songs may have zero length, which means
-			// that the PosLength object hasn't been created
-			if (posLength[songNum] == null)
-				posLength[songNum] = new PosLength();
-
-			// Now return a duration object with the position times
-			return new DurationInfo(new TimeSpan((long)time * TimeSpan.TicksPerMillisecond), posTimes[posLength[songNum].Channel].ToArray());
+			playingInfo = null;
+			channels = null;
 		}
 
 
@@ -857,6 +743,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 		private byte DoNewLine(ChannelInfo chanInfo, IChannel channel)
 		{
 			bool instChange = false;
+
+			// For channels that does not contain any notes, mark them as done immediately
+			if (!hasNotes[currentSong, chanInfo.ChanNum])
+				OnEndReached(chanInfo.ChanNum);
 
 			// Get the current track position
 			ushort trackPos = chanInfo.TrackPosition;
@@ -907,7 +797,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 					}
 
 					// Set the track duration (speed)
-					chanInfo.TrackDuration = currentTempo;
+					chanInfo.TrackDuration = playingInfo.CurrentTempo;
 
 					// Play the instrument
 					if (inst.InstType == InstrumentType.Sample)
@@ -940,7 +830,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 					chanInfo.SustainDelay = inst.SustainDelay;
 
 					// Set the period
-					chanInfo.TrackPeriod = (ushort)((periodTable[chanInfo.TrackNote] * inst.Period) / 1024);
+					chanInfo.TrackPeriod = (ushort)((Tables.PeriodTable[chanInfo.TrackNote] * inst.Period) / 1024);
 					channel.SetAmigaPeriod(chanInfo.TrackPeriod);
 
 					// Initialize portamento
@@ -981,10 +871,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 					// Change tempo
 					case TrackTempoCode:
 					{
-						currentTempo = chanInfo.TrackTable[trackPos++];
+						playingInfo.CurrentTempo = chanInfo.TrackTable[trackPos++];
 
-						// Change the module info
-						OnModuleInfoChanged(InfoSpeedLine, currentTempo.ToString());
+						ShowSpeed();
 						break;
 					}
 
@@ -996,11 +885,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 						if (chanInfo.Instrument != null)
 							instPeriod = chanInfo.Instrument.Period;
 
-						chanInfo.PortSpeed = (ushort)(chanInfo.TrackTable[trackPos++] * currentTempo);
+						chanInfo.PortSpeed = (ushort)(chanInfo.TrackTable[trackPos++] * playingInfo.CurrentTempo);
 						chanInfo.PortTargetNote = chanInfo.TrackTable[trackPos++];
-						chanInfo.PortLimit = (ushort)((periodTable[chanInfo.PortTargetNote] * instPeriod) / 1024);
+						chanInfo.PortLimit = (ushort)((Tables.PeriodTable[chanInfo.PortTargetNote] * instPeriod) / 1024);
 						chanInfo.PortStartPeriod = 0;
-						chanInfo.PortDelay = (ushort)(chanInfo.TrackTable[trackPos++] * currentTempo);
+						chanInfo.PortDelay = (ushort)(chanInfo.TrackTable[trackPos++] * playingInfo.CurrentTempo);
 						chanInfo.PortRunning = true;
 						break;
 					}
@@ -1008,7 +897,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 					// Execute pause
 					case TrackPauseCode:
 					{
-						chanInfo.TrackDuration = currentTempo;
+						chanInfo.TrackDuration = playingInfo.CurrentTempo;
 						chanInfo.TrackPosition = trackPos;
 						channel.Mute();
 
@@ -1027,15 +916,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 							if (chanInfo.PositionTable[chanInfo.Position] == -1)
 							{
 								chanInfo.Position = 0;
-								currentTempo = startTempos[currentSong];
+								playingInfo.CurrentTempo = startTempos[currentSong];
 
-								// Change the module info
-								OnModuleInfoChanged(InfoSpeedLine, currentTempo.ToString());
+								ShowSpeed();
 
-								// Tell NostalgicPlayer that the song has ended
-								if (chanInfo.ChanNum == posLength[currentSong].Channel)
-									OnEndReached();
-
+								// Tell NostalgicPlayer that the channel has ended
+								OnEndReached(chanInfo.ChanNum);
 								continue;
 							}
 
@@ -1045,12 +931,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 								ushort oldPosition = chanInfo.Position;
 								chanInfo.Position = (ushort)(chanInfo.PositionTable[chanInfo.Position] & 0x7f);
 
-								if (chanInfo.ChanNum == posLength[currentSong].Channel)
-								{
-									// Do we jump back in the song
-									if (chanInfo.Position < oldPosition)
-										OnEndReached();
-								}
+								// Do we jump back in the song
+								if (chanInfo.Position < oldPosition)
+									OnEndReached(chanInfo.ChanNum);
+
 								continue;
 							}
 
@@ -1063,9 +947,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 						chanInfo.TrackPosition = 0;
 						chanInfo.TrackDuration = 1;
 
-						// Tell NostalgicPlayer we have changed the position
-						if (chanInfo.ChanNum == posLength[currentSong].Channel)
-							OnPositionChanged();
+						ShowChannelPositions();
+						ShowTracks();
 
 						// Take the same channel again
 						return 2;
@@ -1074,7 +957,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 					// Note delay
 					default:
 					{
-						chanInfo.TrackDuration = (ushort)(-(sbyte)cmd * currentTempo);
+						chanInfo.TrackDuration = (ushort)(-(sbyte)cmd * playingInfo.CurrentTempo);
 						chanInfo.TrackPosition = trackPos;
 
 						// Take the next channel
@@ -1160,7 +1043,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 			}
 
 			// Find the new period
-			chanInfo.TrackPeriod = (ushort)((periodTable[newNote] * inst.Period) / 1024);
+			chanInfo.TrackPeriod = (ushort)((Tables.PeriodTable[newNote] * inst.Period) / 1024);
 
 			// Portamento
 			if (chanInfo.PortRunning)
@@ -1371,6 +1254,122 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 						chanInfo.SynthSample[i] = (sbyte)(((chanInfo.BlendPosition * inst.SampleAddr[i + 32]) >> inst.Blend) + inst.SampleAddr[i]);
 				}
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current channel positions
+		/// </summary>
+		/********************************************************************/
+		private void ShowChannelPositions()
+		{
+			OnModuleInfoChanged(InfoPositionLine, FormatPositions());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with track numbers
+		/// </summary>
+		/********************************************************************/
+		private void ShowTracks()
+		{
+			OnModuleInfoChanged(InfoTrackLine, FormatTracks());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current speed
+		/// </summary>
+		/********************************************************************/
+		private void ShowSpeed()
+		{
+			OnModuleInfoChanged(InfoSpeedLine, playingInfo.CurrentTempo.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with all dynamic values
+		/// </summary>
+		/********************************************************************/
+		private void UpdateModuleInformation()
+		{
+			ShowChannelPositions();
+			ShowTracks();
+			ShowSpeed();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the songs position lengths
+		/// </summary>
+		/********************************************************************/
+		private string FormatPositionLengths()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < 4; i++)
+			{
+				sb.Append(positionLengths[currentSong, i]);
+				sb.Append(", ");
+			}
+
+			sb.Remove(sb.Length - 2, 2);
+
+			return sb.ToString();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the playing positions
+		/// </summary>
+		/********************************************************************/
+		private string FormatPositions()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < 4; i++)
+			{
+				sb.Append(channels[i].Position);
+				sb.Append(", ");
+			}
+
+			sb.Remove(sb.Length - 2, 2);
+
+			return sb.ToString();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the playing tracks
+		/// </summary>
+		/********************************************************************/
+		private string FormatTracks()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < 4; i++)
+			{
+				sb.Append(channels[i].PositionTable[channels[i].Position]);
+				sb.Append(", ");
+			}
+
+			sb.Remove(sb.Length - 2, 2);
+
+			return sb.ToString();
 		}
 		#endregion
 	}

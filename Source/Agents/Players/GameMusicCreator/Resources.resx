@@ -141,7 +141,7 @@ This tracker is especially suitable for creating music files for games. The trac
     <value>Can't read the module samples</value>
   </data>
   <data name="IDS_GMC_INFODESCLINE0" xml:space="preserve">
-    <value>Song length:</value>
+    <value>Number of positions:</value>
   </data>
   <data name="IDS_GMC_INFODESCLINE1" xml:space="preserve">
     <value>Used patterns:</value>
@@ -150,6 +150,12 @@ This tracker is especially suitable for creating music files for games. The trac
     <value>Supported / used samples:</value>
   </data>
   <data name="IDS_GMC_INFODESCLINE3" xml:space="preserve">
+    <value>Playing position:</value>
+  </data>
+  <data name="IDS_GMC_INFODESCLINE4" xml:space="preserve">
+    <value>Playing pattern:</value>
+  </data>
+  <data name="IDS_GMC_INFODESCLINE6" xml:space="preserve">
     <value>Current speed:</value>
   </data>
   <data name="IDS_GMC_NAME" xml:space="preserve">

@@ -3,11 +3,13 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+
 namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
 {
 	/// <summary>
 	/// </summary>
-	internal class Pdb
+	internal class Pdb : IDeepCloneable<Pdb>
 	{
 		public uint PAddr;
 		public byte PNum;
@@ -18,5 +20,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
 		public uint PrOAddr;
 		public ushort PrOStep;
 		public bool Looped;
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Pdb MakeDeepClone()
+		{
+			return (Pdb)MemberwiseClone();
+		}
 	}
 }

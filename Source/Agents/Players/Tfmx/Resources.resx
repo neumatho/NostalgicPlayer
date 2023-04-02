@@ -158,19 +158,25 @@ This player can play the TFMX modules using 7 voices, both in one and two file f
     <value>Can't read the module samples</value>
   </data>
   <data name="IDS_TFMX_INFODESCLINE0" xml:space="preserve">
-    <value>Used track steps:</value>
+    <value>Number of positions:</value>
   </data>
   <data name="IDS_TFMX_INFODESCLINE1" xml:space="preserve">
-    <value>Used patterns:</value>
+    <value>Used tracks:</value>
   </data>
   <data name="IDS_TFMX_INFODESCLINE2" xml:space="preserve">
     <value>Used macros:</value>
   </data>
   <data name="IDS_TFMX_INFODESCLINE3" xml:space="preserve">
-    <value>Current speed:</value>
+    <value>Playing position:</value>
   </data>
   <data name="IDS_TFMX_INFODESCLINE4" xml:space="preserve">
-    <value>BPM:</value>
+    <value>Playing tracks:</value>
+  </data>
+  <data name="IDS_TFMX_INFODESCLINE5" xml:space="preserve">
+    <value>Current speed:</value>
+  </data>
+  <data name="IDS_TFMX_INFODESCLINE6" xml:space="preserve">
+    <value>Current tempo (BPM):</value>
   </data>
   <data name="IDS_TFMX_NAME" xml:space="preserve">
     <value>TFMX</value>

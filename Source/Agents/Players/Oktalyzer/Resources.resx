@@ -146,7 +146,7 @@ This player is able to play all Oktalyzer modules with 4 to 8 channels.</value>
     <value>Unknown chunk ({0}{1}{2}{3}) has been read</value>
   </data>
   <data name="IDS_OKT_INFODESCLINE0" xml:space="preserve">
-    <value>Song length:</value>
+    <value>Number of positions:</value>
   </data>
   <data name="IDS_OKT_INFODESCLINE1" xml:space="preserve">
     <value>Used patterns:</value>
@@ -155,6 +155,12 @@ This player is able to play all Oktalyzer modules with 4 to 8 channels.</value>
     <value>Supported / used samples:</value>
   </data>
   <data name="IDS_OKT_INFODESCLINE3" xml:space="preserve">
+    <value>Playing position:</value>
+  </data>
+  <data name="IDS_OKT_INFODESCLINE4" xml:space="preserve">
+    <value>Playing pattern:</value>
+  </data>
+  <data name="IDS_OKT_INFODESCLINE5" xml:space="preserve">
     <value>Current speed:</value>
   </data>
   <data name="IDS_OKT_NAME" xml:space="preserve">

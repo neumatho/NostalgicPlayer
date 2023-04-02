@@ -3,12 +3,14 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+
 namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class EnvelopeInterpolator
+	internal class EnvelopeInterpolator : IDeepCloneable<EnvelopeInterpolator>
 	{
 		public uint16_t Index;					// Index to envelopes table, set in MSynth_Instrument(), -1 if no envelope
 		public uint16_t TickCounter;			// Ticks left in section
@@ -20,5 +22,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers
 		public uint16_t SustainA;				// Set by trigger, cleared to 0xffff with keyoff
 		public uint16_t SustainB;				// Set by trigger, cleared to 0xffff with keyoff
 		public uint16_t LoopEnd;				// Set by trigger, cleared to 0xffff with keyoff
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public EnvelopeInterpolator MakeDeepClone()
+		{
+			return (EnvelopeInterpolator)MemberwiseClone();
+		}
 	}
 }

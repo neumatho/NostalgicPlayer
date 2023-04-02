@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -131,7 +131,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Song length:.
+        ///   Looks up a localized string similar to Number of positions:.
         /// </summary>
         internal static string IDS_SAW_INFODESCLINE1 {
             get {
@@ -140,7 +140,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Used parts:.
+        ///   Looks up a localized string similar to Used tracks:.
         /// </summary>
         internal static string IDS_SAW_INFODESCLINE2 {
             get {
@@ -154,6 +154,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth {
         internal static string IDS_SAW_INFODESCLINE3 {
             get {
                 return ResourceManager.GetString("IDS_SAW_INFODESCLINE3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Playing positions:.
+        /// </summary>
+        internal static string IDS_SAW_INFODESCLINE4 {
+            get {
+                return ResourceManager.GetString("IDS_SAW_INFODESCLINE4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Playing tracks:.
+        /// </summary>
+        internal static string IDS_SAW_INFODESCLINE5 {
+            get {
+                return ResourceManager.GetString("IDS_SAW_INFODESCLINE5", resourceCulture);
             }
         }
         

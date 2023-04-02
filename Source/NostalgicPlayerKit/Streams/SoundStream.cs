@@ -190,6 +190,18 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Set the stream to the given song position
+		/// </summary>
+		/********************************************************************/
+		public abstract int SongPosition
+		{
+			get; set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Tells if the end has been reached
 		/// </summary>
 		/********************************************************************/
@@ -202,10 +214,32 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Event called when the position change
+		/// </summary>
+		/********************************************************************/
+		public event EventHandler PositionChanged;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Event called when the player has reached the end
 		/// </summary>
 		/********************************************************************/
 		public event EventHandler EndReached;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Send an event when the position change
+		/// </summary>
+		/********************************************************************/
+		protected void OnPositionChanged()
+		{
+			if (PositionChanged != null)
+				PositionChanged(this, EventArgs.Empty);
+		}
 
 
 

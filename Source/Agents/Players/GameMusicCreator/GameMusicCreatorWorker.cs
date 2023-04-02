@@ -10,7 +10,6 @@ using System.Linq;
 using Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator.Containers;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
@@ -19,30 +18,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class GameMusicCreatorWorker : ModulePlayerAgentBase
+	internal class GameMusicCreatorWorker : ModulePlayerWithPositionDurationAgentBase
 	{
-		private static readonly short[] periods =
-		{
-			856, 808, 762, 720, 678, 640, 604, 570, 538, 508, 480, 453,
-			428, 404, 381, 360, 339, 320, 302, 285, 269, 254, 240, 226,
-			214, 202, 190, 180, 170, 160, 151, 143, 135, 127, 120, 113
-		};
-
 		private int numberOfPositions;
 		private byte[] positionList;
 
 		private Sample[] samples;
 		private Pattern[] patterns;
 
+		private GlobalPlayingInfo playingInfo;
 		private ChannelInfo[] channelInfo;
 
-		private ushort songSpeed;
-		private ushort songStep;
-		private ushort patternCount;
-		private short currentPosition;
-		private byte currentPattern;
+		private bool endReached;
 
-		private const int InfoSpeedLine = 3;
+		private const int InfoPositionLine = 3;
+		private const int InfoPatternLine = 4;
+		private const int InfoSpeedLine = 5;
 
 		#region IPlayerAgent implementation
 		/********************************************************************/
@@ -154,7 +145,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 
 				if ((temp != 0) && (temp != 0xffe))
 				{
-					if (!periods.Contains((short)temp))
+					if (!Tables.Periods.Contains((short)temp))
 						return AgentResult.Unknown;
 
 					periodCount++;
@@ -180,7 +171,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 			// Find out which line to take
 			switch (line)
 			{
-				// Song length
+				// Number of positions
 				case 0:
 				{
 					description = Resources.IDS_GMC_INFODESCLINE0;
@@ -204,11 +195,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 					break;
 				}
 
-				// Current speed
+				// Playing position
 				case 3:
 				{
 					description = Resources.IDS_GMC_INFODESCLINE3;
-					value = songStep.ToString();
+					value = playingInfo.CurrentPosition.ToString();
+					break;
+				}
+
+				// Playing pattern
+				case 4:
+				{
+					description = Resources.IDS_GMC_INFODESCLINE4;
+					value = playingInfo.CurrentPattern.ToString();
+					break;
+				}
+
+				// Current speed
+				case 5:
+				{
+					description = Resources.IDS_GMC_INFODESCLINE6;
+					value = playingInfo.SongStep.ToString();
 					break;
 				}
 
@@ -226,15 +233,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 		#endregion
 
 		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.SetPosition;
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -403,26 +401,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
+		public override bool InitSound(int songNumber, out string errorMessage)
 		{
-			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+			if (!base.InitSound(songNumber, out errorMessage))
 				return false;
 
-			InitializeSound(durationInfo.StartPosition);
+			InitializeSound(0);
 
 			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override DurationInfo[] CalculateDuration()
-		{
-			return CalculateDurationBySongPosition();
 		}
 
 
@@ -436,59 +422,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 		{
 			EveryTick();
 
-			songSpeed++;
-			if (songSpeed >= songStep)
+			playingInfo.SongSpeed++;
+			if (playingInfo.SongSpeed >= playingInfo.SongStep)
 			{
-				songSpeed = 0;
+				playingInfo.SongSpeed = 0;
 
 				UpdatePatternCounters();
 				PlayPatternRow();
 			}
-		}
 
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the length of the current song
-		/// </summary>
-		/********************************************************************/
-		public override int SongLength => numberOfPositions;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position of the song
-		/// </summary>
-		/********************************************************************/
-		public override int GetSongPosition()
-		{
-			return currentPosition < 0 ? 0 : currentPosition;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set a new position of the song
-		/// </summary>
-		/********************************************************************/
-		public override void SetSongPosition(int position, PositionInfo positionInfo)
-		{
-			// Change the position
-			currentPosition = (short)position;
-
-			patternCount = 0;
-			currentPattern = positionList[currentPosition];
-
-			// Change the speed
-			songStep = positionInfo.Speed;
-			songSpeed = 0;
-
-			OnModuleInfoChanged(InfoSpeedLine, songStep.ToString());
-
-			base.SetSongPosition(position, positionInfo);
+			if (endReached)
+			{
+				OnEndReached(playingInfo.CurrentPosition);
+				endReached = false;
+			}
 		}
 
 
@@ -507,7 +454,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 				uint[] frequencies = new uint[10 * 12];
 
 				for (int j = 0; j < 3 * 12; j++)
-					frequencies[4 * 12 + j] = 3546895U / (ushort)periods[j];
+					frequencies[4 * 12 + j] = 3546895U / (ushort)Tables.Periods[j];
 
 				foreach (Sample sample in samples)
 				{
@@ -544,14 +491,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 		}
 		#endregion
 
-		#region Duration calculation methods
+		#region ModulePlayerWithPositionDurationAgentBase implementation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override int InitDurationCalculationByStartPos(int startPosition)
+		protected override int InitDuration(int startPosition)
 		{
 			InitializeSound(startPosition);
 
@@ -562,12 +509,47 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the current speed
+		/// Return the total number of positions
 		/// </summary>
 		/********************************************************************/
-		protected override byte GetCurrentSpeed()
+		protected override int GetTotalNumberOfPositions()
 		{
-			return (byte)songStep;
+			return numberOfPositions;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a snapshot of all the internal structures and return it
+		/// </summary>
+		/********************************************************************/
+		protected override ISnapshot CreateSnapshot()
+		{
+			return new Snapshot(playingInfo, channelInfo);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize internal structures based on the snapshot given
+		/// </summary>
+		/********************************************************************/
+		protected override bool SetSnapshot(ISnapshot snapshot, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			// Start to make a clone of the snapshot
+			Snapshot currentSnapshot = (Snapshot)snapshot;
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayingInfo, currentSnapshot.Channels);
+
+			playingInfo = clonedSnapshot.PlayingInfo;
+			channelInfo = clonedSnapshot.Channels;
+
+			UpdateModuleInformation();
+
+			return true;
 		}
 		#endregion
 
@@ -580,12 +562,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 		private void InitializeSound(int startPosition)
 		{
 			// Initialize work variables
-			currentPosition = (short)(startPosition - 1);
-			currentPattern = 0;
+			playingInfo = new GlobalPlayingInfo
+			{
+				CurrentPosition = (short)(startPosition - 1),
+				CurrentPattern = 0,
 
-			songSpeed = 0;
-			songStep = 6;
-			patternCount = 63;
+				SongSpeed = 0,
+				SongStep = 6,
+				PatternCount = 63
+			};
+
+			endReached = false;
 
 			// Initialize channel structure
 			channelInfo = new ChannelInfo[4];
@@ -611,11 +598,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 		/********************************************************************/
 		private void Cleanup()
 		{
-			channelInfo = null;
-
 			samples = null;
 			patterns = null;
 			positionList = null;
+
+			playingInfo = null;
+			channelInfo = null;
 		}
 
 
@@ -627,27 +615,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 		/********************************************************************/
 		private void UpdatePatternCounters()
 		{
-			patternCount++;
-			if (patternCount == 64)
+			playingInfo.PatternCount++;
+			if (playingInfo.PatternCount == 64)
 			{
-				currentPosition++;
-				if (currentPosition >= numberOfPositions)
-					currentPosition = (short)(currentDurationInfo?.StartPosition ?? 0);
+				playingInfo.CurrentPosition++;
+				if (playingInfo.CurrentPosition >= numberOfPositions)
+					playingInfo.CurrentPosition = 0;
 
-				OnPositionChanged();
+				if (HasPositionBeenVisited(playingInfo.CurrentPosition))
+					endReached = true;
 
-				if (HasPositionBeenVisited(currentPosition))
-				{
-					// Tell NostalgicPlayer that the module has ended
-					OnEndReached();
+				MarkPositionAsVisited(playingInfo.CurrentPosition);
 
-					songStep = currentDurationInfo?.PositionInfo[currentPosition].Speed ?? 6;
-				}
+				playingInfo.PatternCount = 0;
+				playingInfo.CurrentPattern = positionList[playingInfo.CurrentPosition];
 
-				MarkPositionAsVisited(currentPosition);
-
-				patternCount = 0;
-				currentPattern = positionList[currentPosition];
+				ShowSongPosition();
+				ShowPattern();
 			}
 		}
 
@@ -665,7 +649,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 				ChannelInfo chanInfo = channelInfo[i];
 				IChannel channel = VirtualChannels[i];
 
-				TrackLine trackLine = patterns[currentPattern].Tracks[i, patternCount];
+				TrackLine trackLine = patterns[playingInfo.CurrentPattern].Tracks[i, playingInfo.PatternCount];
 
 				SetInstrument(channel, chanInfo, trackLine);
 				SetEffect(chanInfo, trackLine);
@@ -740,14 +724,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 
 				case Effect.PatternBreak:
 				{
-					patternCount = 63;
+					playingInfo.PatternCount = 63;
 					break;
 				}
 
 				case Effect.PositionJump:
 				{
-					currentPosition = (short)(effectArg - 1);
-					patternCount = 63;
+					playingInfo.CurrentPosition = (short)(effectArg - 1);
+					playingInfo.PatternCount = 63;
 					break;
 				}
 
@@ -765,10 +749,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 
 				case Effect.SetSpeed:
 				{
-					songStep = effectArg;
+					playingInfo.SongStep = effectArg;
 
-					// Change the module info
-					OnModuleInfoChanged(InfoSpeedLine, songStep.ToString());
+					ShowSpeed();
 					break;
 				}
 			}
@@ -793,6 +776,56 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 				channel.SetAmigaPeriod(chanInfo.Period);
 				channel.SetAmigaVolume(chanInfo.Volume);
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current song position
+		/// </summary>
+		/********************************************************************/
+		private void ShowSongPosition()
+		{
+			OnModuleInfoChanged(InfoPositionLine, playingInfo.CurrentPosition.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with pattern number
+		/// </summary>
+		/********************************************************************/
+		private void ShowPattern()
+		{
+			OnModuleInfoChanged(InfoPatternLine, playingInfo.CurrentPattern.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current speed
+		/// </summary>
+		/********************************************************************/
+		private void ShowSpeed()
+		{
+			OnModuleInfoChanged(InfoSpeedLine, playingInfo.SongStep.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with all dynamic values
+		/// </summary>
+		/********************************************************************/
+		private void UpdateModuleInformation()
+		{
+			ShowSongPosition();
+			ShowPattern();
+			ShowSpeed();
 		}
 		#endregion
 	}

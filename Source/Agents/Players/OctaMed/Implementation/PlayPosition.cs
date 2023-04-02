@@ -193,8 +193,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 				{
 					AdvanceSongPosition(pSeqPos + 1, cmdHandler);
 
-					// Tell NostalgicPlayer that the position has changed
-					worker.ChangePosition();
+					worker.ShowSongPosition();
+					worker.ShowPattern();
 				}
 			}
 		}
@@ -215,8 +215,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			if (pLine >= parentSS.Block(pBlock).Lines())
 				pLine = 0;
 
-			// Tell NostalgicPlayer that the position has changed
-			worker.ChangePosition();
+			worker.ShowSongPosition();
+			worker.ShowPattern();
 		}
 
 
@@ -238,8 +238,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 
 			pLine = 0;
 
-			// Tell NostalgicPlayer that the position has changed
-			worker.ChangePosition();
+			worker.ShowSongPosition();
+			worker.ShowPattern();
 		}
 
 

@@ -322,19 +322,16 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/// Sets the file position to the sample position given
 		/// </summary>
 		/********************************************************************/
-		public long SetSamplePosition(ModuleStream moduleStream, long position, LoadSampleFormatInfo formatInfo)
+		public void SetSamplePosition(ModuleStream moduleStream, long position, LoadSampleFormatInfo formatInfo)
 		{
 			// Reset the loader
 			ResetBasicLoader();
 
 			// Calculate the position in bytes
 			position = CalcFilePosition(position, formatInfo);
-			long samplePosition = CalcSamplePosition(position, formatInfo);
 
 			// Seek to the right position in the data chunk
 			moduleStream.Seek(dataStarts + position, SeekOrigin.Begin);
-
-			return samplePosition;
 		}
 		#endregion
 
@@ -407,15 +404,6 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/// </summary>
 		/********************************************************************/
 		protected abstract long CalcFilePosition(long position, LoadSampleFormatInfo formatInfo);
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculates the number of samples from the byte position given
-		/// </summary>
-		/********************************************************************/
-		protected abstract long CalcSamplePosition(long position, LoadSampleFormatInfo formatInfo);
 
 		#region Helper methods
 		/********************************************************************/

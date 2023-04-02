@@ -7,13 +7,14 @@ using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers;
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Block;
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Sequences;
 using Polycode.NostalgicPlayer.Kit;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 {
 	/// <summary>
 	/// Sub-song interface
 	/// </summary>
-	internal class SubSong
+	internal class SubSong : IDeepCloneable<SubSong>
 	{
 		[Flags]
 		private enum SongFlags
@@ -46,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		private PlayPosition position;
 		private bool filter;
 
-		private readonly EffectMaster fx;
+		private EffectMaster fx;
 
 		/********************************************************************/
 		/// <summary>
@@ -646,6 +647,25 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		public EffectMaster Fx()
 		{
 			return fx;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public SubSong MakeDeepClone()
+		{
+			SubSong clone = (SubSong)MemberwiseClone();
+
+			clone.tempo = new Tempo(tempo);
+			clone.position.SetParent(clone);
+			clone.fx = fx.MakeDeepClone();
+			clone.fx.SetParent(clone);
+
+			return clone;
 		}
 	}
 }

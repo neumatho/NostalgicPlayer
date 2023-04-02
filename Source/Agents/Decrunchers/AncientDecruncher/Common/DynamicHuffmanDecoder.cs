@@ -48,7 +48,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 			if (this.initialCount > maxCount)
 				throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 
-			nodes = Helpers.InitializeArray<Node>((int)maxCount * 2 - 1);
+			nodes = ArrayHelper.InitializeArray<Node>((int)maxCount * 2 - 1);
 			codeMap = new uint[maxCount * 2 - 1];
 
 			Reset();

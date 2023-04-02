@@ -50,7 +50,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			public byte NumPat;											// Number of patterns
 			public byte GlobalVol;
 			public readonly byte[] Reserved = new byte[13];
-			public readonly StmSample[] Sample = Helpers.InitializeArray<StmSample>(31);	// STM sample data
+			public readonly StmSample[] Sample = ArrayHelper.InitializeArray<StmSample>(31);	// STM sample data
 			public readonly byte[] PatOrder = new byte[128];			// Docs say 64 - actually 128
 		}
 		#endregion
@@ -114,7 +114,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			// Check for the signatures
 			foreach (byte[] sig in signatures)
 			{
-				if (Helpers.ArrayCompare(buf, 0, sig, 0, 8))
+				if (ArrayHelper.ArrayCompare(buf, 0, sig, 0, 8))
 					return AgentResult.Ok;
 			}
 
@@ -133,7 +133,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			errorMessage = string.Empty;
 
 			mh = new StmHeader();
-			stmBuf = Helpers.InitializeArray<StmNote>(64 * 4);
+			stmBuf = ArrayHelper.InitializeArray<StmNote>(64 * 4);
 
 			try
 			{
@@ -204,7 +204,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 				// Set module variables
 				for (t = 0; t < signatures.Length; t++)
 				{
-					if (Helpers.ArrayCompare(mh.TrackerName, 0, signatures[t], 0, 8))
+					if (ArrayHelper.ArrayCompare(mh.TrackerName, 0, signatures[t], 0, 8))
 						break;
 				}
 

@@ -17,11 +17,11 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public DurationInfo(TimeSpan totalTime, PositionInfo[] posInfo)
+		public DurationInfo(TimeSpan totalTime, PositionInfo[] positionInfo, TimeSpan[] playerPositionTime)
 		{
 			TotalTime = totalTime;
-			PositionInfo = posInfo;
-			StartPosition = 0;
+			PositionInfo = positionInfo;
+			PlayerPositionTime = playerPositionTime;
 		}
 
 
@@ -31,11 +31,8 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public DurationInfo(TimeSpan totalTime, PositionInfo[] posInfo, int startPosition)
+		public DurationInfo(TimeSpan totalTime, PositionInfo[] positionInfo) : this(totalTime, positionInfo, Array.Empty<TimeSpan>())
 		{
-			TotalTime = totalTime;
-			PositionInfo = posInfo;
-			StartPosition = startPosition;
 		}
 
 
@@ -66,10 +63,10 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the start position (only needed for position sub-songs)
+		/// Holds the time on each player specific position
 		/// </summary>
 		/********************************************************************/
-		public int StartPosition
+		public TimeSpan[] PlayerPositionTime
 		{
 			get;
 		}

@@ -6,17 +6,18 @@
 using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 {
 	/// <summary>
 	/// Handles all the effects
 	/// </summary>
-	internal class EffectMaster : IEffectMaster
+	internal class EffectMaster : IEffectMaster, IDeepCloneable<EffectMaster>
 	{
 		public const int DefaultEffectGroup = int.MaxValue;
 
-		private class EffectGroupInfo
+		private class EffectGroupInfo : IDeepCloneable<EffectGroupInfo>
 		{
 			public EchoArguments Arguments;
 			public uint MixerFrequency;
@@ -34,10 +35,25 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 			public int PCrossNBack;
 			public int NCrossPBack;
 			public int NCrossNBack;
+
+			/********************************************************************/
+			/// <summary>
+			/// Make a deep copy of the current object
+			/// </summary>
+			/********************************************************************/
+			public EffectGroupInfo MakeDeepClone()
+			{
+				EffectGroupInfo clone = (EffectGroupInfo)MemberwiseClone();
+
+				if (DelayLine != null)
+					clone.DelayLine = ArrayHelper.CloneArray(DelayLine);
+
+				return clone;
+			}
 		}
 
-		private readonly Dictionary<int, int> trackGroups;
-		private readonly Dictionary<int, EffectGroupInfo> effectGroups;
+		private Dictionary<int, int> trackGroups;
+		private Dictionary<int, EffectGroupInfo> effectGroups;
 
 		/********************************************************************/
 		/// <summary>
@@ -178,6 +194,25 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		{
 		}
 		#endregion
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public EffectMaster MakeDeepClone()
+		{
+			EffectMaster clone = (EffectMaster)MemberwiseClone();
+
+			clone.trackGroups = new Dictionary<int, int>(trackGroups);
+
+			clone.effectGroups = new Dictionary<int, EffectGroupInfo>();
+
+			foreach (KeyValuePair<int, EffectGroupInfo> pair in effectGroups)
+				clone.effectGroups.Add(pair.Key, pair.Value.MakeDeepClone());
+
+			return clone;
+		}
 
 		#region Private methods
 		/********************************************************************/

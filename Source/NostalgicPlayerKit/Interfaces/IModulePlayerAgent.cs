@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
@@ -39,17 +38,12 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Initializes the current song
 		/// </summary>
-		bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage);
+		bool InitSound(int songNumber, out string errorMessage);
 
 		/// <summary>
 		/// Cleanup the current song
 		/// </summary>
 		void CleanupSound();
-
-		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		DurationInfo[] CalculateDuration();
 
 		/// <summary>
 		/// Is only called if BufferMode is set in the SupportFlags. It tells
@@ -79,21 +73,6 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Return information about sub-songs
 		/// </summary>
 		SubSongInfo SubSongs { get; }
-
-		/// <summary>
-		/// Return the length of the current song
-		/// </summary>
-		int SongLength { get; }
-
-		/// <summary>
-		/// Return the current position of the song
-		/// </summary>
-		int GetSongPosition();
-
-		/// <summary>
-		/// Set a new position of the song
-		/// </summary>
-		void SetSongPosition(int position, PositionInfo positionInfo);
 
 		/// <summary>
 		/// Returns all the instruments available in the module. If none,
@@ -127,11 +106,6 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Return the current state of the Amiga filter
 		/// </summary>
 		bool AmigaFilter { get; }
-
-		/// <summary>
-		/// Event called when the player change position
-		/// </summary>
-		event EventHandler PositionChanged;
 
 		/// <summary>
 		/// Event called when the player change sub-song

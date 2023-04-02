@@ -138,7 +138,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20 {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Song length:.
+        ///   Looks up a localized string similar to Number of positions:.
         /// </summary>
         internal static string IDS_DM2_INFODESCLINE0 {
             get {
@@ -147,7 +147,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20 {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Used blocks:.
+        ///   Looks up a localized string similar to Used tracks:.
         /// </summary>
         internal static string IDS_DM2_INFODESCLINE1 {
             get {
@@ -156,7 +156,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20 {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Supported / used samples:.
+        ///   Looks up a localized string similar to Used samples:.
         /// </summary>
         internal static string IDS_DM2_INFODESCLINE2 {
             get {
@@ -165,11 +165,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20 {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Current speed:.
+        ///   Looks up a localized string similar to Playing positions:.
         /// </summary>
         internal static string IDS_DM2_INFODESCLINE3 {
             get {
                 return ResourceManager.GetString("IDS_DM2_INFODESCLINE3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Playing tracks:.
+        /// </summary>
+        internal static string IDS_DM2_INFODESCLINE4 {
+            get {
+                return ResourceManager.GetString("IDS_DM2_INFODESCLINE4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current speed:.
+        /// </summary>
+        internal static string IDS_DM2_INFODESCLINE5 {
+            get {
+                return ResourceManager.GetString("IDS_DM2_INFODESCLINE5", resourceCulture);
             }
         }
         

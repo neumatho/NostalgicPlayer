@@ -32,6 +32,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			mixer = new Mixer();
 			mixerLock = new object();
 
+			mixer.PositionChanged += Mixer_PositionChanged;
+
 			return mixer.InitMixer(agentManager, playerConfiguration, out errorMessage);
 		}
 
@@ -49,6 +51,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				lock (mixerLock)
 				{
 					mixer.CleanupMixer();
+
+					mixer.PositionChanged -= Mixer_PositionChanged;
+
 					mixer = null;
 					mixerLock = null;
 				}
@@ -153,6 +158,32 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		/********************************************************************/
 		/// <summary>
+		/// Holds the current song position
+		/// </summary>
+		/********************************************************************/
+		public override int SongPosition
+		{
+			get
+			{
+				lock (mixerLock)
+				{
+					return mixer.SongPosition;
+				}
+			}
+
+			set
+			{
+				lock (mixerLock)
+				{
+					mixer.SongPosition = value;
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Read mixed data
 		/// </summary>
 		/********************************************************************/
@@ -183,6 +214,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				Debug.WriteLine(ex);
 				throw;
 			}
+		}
+		#endregion
+
+		#region Handler methods
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the position changes in the mixer
+		/// </summary>
+		/********************************************************************/
+		private void Mixer_PositionChanged(object sender, EventArgs e)
+		{
+			OnPositionChanged();
 		}
 		#endregion
 	}

@@ -291,7 +291,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac
 			public BitReader Input;
 			public Flac__int32[][] Output = new Flac__int32[Constants.Flac__Max_Channels][];
 			public Flac__int32[][] Residual = new Flac__int32[Constants.Flac__Max_Channels][];	// WATCHOUT: These are the aligned pointers; the real pointers that should be free()'d are residual_unaligned[] below
-			public Flac__EntropyCodingMethod_PartitionedRiceContents[] Partitioned_Rice_Contents = Helpers.InitializeArray<Flac__EntropyCodingMethod_PartitionedRiceContents>((int)Constants.Flac__Max_Channels);
+			public Flac__EntropyCodingMethod_PartitionedRiceContents[] Partitioned_Rice_Contents = ArrayHelper.InitializeArray<Flac__EntropyCodingMethod_PartitionedRiceContents>((int)Constants.Flac__Max_Channels);
 			public uint32_t Output_Capacity, Output_Channels;
 			public Flac__uint32 Fixed_Block_Size, Next_Fixed_Block_Size;
 			public Flac__uint64 Samples_Decoded;

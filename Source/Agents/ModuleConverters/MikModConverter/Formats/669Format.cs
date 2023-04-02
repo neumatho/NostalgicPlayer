@@ -168,7 +168,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			errorMessage = string.Empty;
 
 			// Start to allocate some buffers we need
-			s69Pat = Helpers.InitializeArray<S69Note>(64 * 8);
+			s69Pat = ArrayHelper.InitializeArray<S69Note>(64 * 8);
 			mh = new S69Header();
 
 			try

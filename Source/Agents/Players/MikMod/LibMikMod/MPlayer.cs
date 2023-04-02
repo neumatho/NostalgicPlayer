@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Agent.Player.MikMod.Containers;
 using Polycode.NostalgicPlayer.Agent.Shared.MikMod;
 using Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
@@ -15,9 +16,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 	/// <summary>
 	/// Main player routine
 	/// </summary>
-	internal class MPlayer
+	internal class MPlayer : IDeepCloneable<MPlayer>
 	{
-		private readonly Module pf;
+		public Module pf;
 		private readonly IDriver driver;
 
 		private readonly MUniTrk uniTrk;
@@ -149,6 +150,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 
 		/********************************************************************/
 		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public MPlayer MakeDeepClone()
+		{
+			MPlayer clone = (MPlayer)MemberwiseClone();
+
+			clone.pf = pf.MakeDeepClone();
+
+			return clone;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Initialize the player
 		/// </summary>
 		/********************************************************************/
@@ -163,8 +180,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			mod.RelSpd = 0;
 
 			// Make sure that the player doesn't start with garbage
-			mod.Control = Helpers.InitializeArray<Mp_Control>(mod.NumChn);
-			mod.Voice = Helpers.InitializeArray<Mp_Voice>(mdSngChn);
+			mod.Control = ArrayHelper.InitializeArray<Mp_Control>(mod.NumChn);
+			mod.Voice = ArrayHelper.InitializeArray<Mp_Voice>(mdSngChn);
 
 			mod.NumVoices = mdSngChn;
 

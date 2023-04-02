@@ -65,7 +65,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Flac.Test.Common
 
 			metaSeekTable.Num_Points = 2;
 			seekTable.Length = metaSeekTable.Num_Points * Constants.Flac__Stream_Metadata_SeekPoint_Length;
-			metaSeekTable.Points = Helpers.InitializeArray<Flac__StreamMetadata_SeekPoint>((int)metaSeekTable.Num_Points);
+			metaSeekTable.Points = ArrayHelper.InitializeArray<Flac__StreamMetadata_SeekPoint>((int)metaSeekTable.Num_Points);
 			metaSeekTable.Points[0].Sample_Number = 0;
 			metaSeekTable.Points[0].Stream_Offset = 0;
 			metaSeekTable.Points[0].Frame_Samples = metaStreamInfo.Min_BlockSize;
@@ -110,7 +110,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Flac.Test.Common
 			metaVorbisComment.Vendor_String.Entry = new Flac__byte[vendor_String_Length + 1];
 			Array.Copy(vendor_String, metaVorbisComment.Vendor_String.Entry, vendor_String_Length);
 			metaVorbisComment.Num_Comments = 2;
-			metaVorbisComment.Comments = Helpers.InitializeArray<Flac__StreamMetadata_VorbisComment_Entry>((int)metaVorbisComment.Num_Comments);
+			metaVorbisComment.Comments = ArrayHelper.InitializeArray<Flac__StreamMetadata_VorbisComment_Entry>((int)metaVorbisComment.Num_Comments);
 			metaVorbisComment.Comments[0].Length = 5;
 			metaVorbisComment.Comments[0].Entry = new Flac__byte[5 + 1];
 			Array.Copy(Encoding.UTF8.GetBytes("ab=cd"), metaVorbisComment.Comments[0].Entry, 5);
@@ -154,14 +154,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Flac.Test.Common
 			metaCueSheet.Lead_In = 2 * 44100;
 			metaCueSheet.Is_Cd = true;
 			metaCueSheet.Num_Tracks = 3;
-			metaCueSheet.Tracks = Helpers.InitializeArray<Flac__StreamMetadata_CueSheet_Track>((int)metaCueSheet.Num_Tracks);
+			metaCueSheet.Tracks = ArrayHelper.InitializeArray<Flac__StreamMetadata_CueSheet_Track>((int)metaCueSheet.Num_Tracks);
 			metaCueSheet.Tracks[0].Offset = 0;
 			metaCueSheet.Tracks[0].Number = 1;
 			Array.Copy(Encoding.ASCII.GetBytes("ACBDE1234567"), metaCueSheet.Tracks[0].Isrc, 12);
 			metaCueSheet.Tracks[0].Type = 0;
 			metaCueSheet.Tracks[0].Pre_Emphasis = 1;
 			metaCueSheet.Tracks[0].Num_Indices = 2;
-			metaCueSheet.Tracks[0].Indices = Helpers.InitializeArray<Flac__StreamMetadata_CueSheet_Index>(metaCueSheet.Tracks[0].Num_Indices);
+			metaCueSheet.Tracks[0].Indices = ArrayHelper.InitializeArray<Flac__StreamMetadata_CueSheet_Index>(metaCueSheet.Tracks[0].Num_Indices);
 			metaCueSheet.Tracks[0].Indices[0].Offset = 0;
 			metaCueSheet.Tracks[0].Indices[0].Number = 0;
 			metaCueSheet.Tracks[0].Indices[1].Offset = 123 * 588;
@@ -172,7 +172,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Flac.Test.Common
 			metaCueSheet.Tracks[1].Type = 1;
 			metaCueSheet.Tracks[1].Pre_Emphasis = 0;
 			metaCueSheet.Tracks[1].Num_Indices = 1;
-			metaCueSheet.Tracks[1].Indices = Helpers.InitializeArray<Flac__StreamMetadata_CueSheet_Index>(metaCueSheet.Tracks[1].Num_Indices);
+			metaCueSheet.Tracks[1].Indices = ArrayHelper.InitializeArray<Flac__StreamMetadata_CueSheet_Index>(metaCueSheet.Tracks[1].Num_Indices);
 			metaCueSheet.Tracks[1].Indices[0].Offset = 0;
 			metaCueSheet.Tracks[1].Indices[0].Number = 1;
 			metaCueSheet.Tracks[2].Offset = 12345 * 588;

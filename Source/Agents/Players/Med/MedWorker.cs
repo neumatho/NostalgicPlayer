@@ -9,7 +9,6 @@ using Polycode.NostalgicPlayer.Agent.Player.Med.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -19,20 +18,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class MedWorker : ModulePlayerAgentBase
+	internal class MedWorker : ModulePlayerWithPositionDurationAgentBase
 	{
 		private static readonly Dictionary<Guid, ModuleType> moduleTypeLookup = new Dictionary<Guid, ModuleType>
 		{
 			{ Med.Agent1Id, ModuleType.Med112 },
 			{ Med.Agent2Id, ModuleType.Med200 }
 		};
-
-		#region ExtraPosInfo class
-		private class ExtraPosInfo
-		{
-			public float Tempo;
-		}
-		#endregion
 
 		#region PlaySampleInfo class
 		/// <summary>
@@ -64,22 +56,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		private Block[] blocks;
 		private Sample[] samples;
 
-		private ushort playPositionNumber;
-		private ushort playBlock;
-		private ushort playLine;
+		private GlobalPlayingInfo playingInfo;
 
-		private byte counter;
-		private ushort currentTrackCount;
-		private bool nextBlock;
+		private bool endReached;
 
-		private ushort[] previousPeriod;
-		private byte[] previousNotes;
-		private byte[] previousSamples;
-		private byte[] previousVolumes;
-		private Effect[] effects;
-		private byte[] effectArgs;
-
-		private const int InfoTempoLine = 3;
+		private const int InfoPositionLine = 3;
+		private const int InfoPatternLine = 4;
+		private const int InfoTempoLine = 5;
 
 		/********************************************************************/
 		/// <summary>
@@ -130,7 +113,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 			// Find out which line to take
 			switch (line)
 			{
-				// Song length
+				// Number of positions
 				case 0:
 				{
 					description = Resources.IDS_MED_INFODESCLINE0;
@@ -138,7 +121,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 					break;
 				}
 
-				// Used blocks
+				// Used patterns
 				case 1:
 				{
 					description = Resources.IDS_MED_INFODESCLINE1;
@@ -154,10 +137,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 					break;
 				}
 
-				// Current tempo (Hz)
+				// Playing position
 				case 3:
 				{
 					description = Resources.IDS_MED_INFODESCLINE3;
+					value = playingInfo.PlayPositionNumber.ToString();
+					break;
+				}
+
+				// Playing pattern
+				case 4:
+				{
+					description = Resources.IDS_MED_INFODESCLINE4;
+					value = playingInfo.PlayBlock.ToString();
+					break;
+				}
+
+				// Current tempo (Hz)
+				case 5:
+				{
+					description = Resources.IDS_MED_INFODESCLINE5;
 					value = PlayingFrequency.ToString("F2", CultureInfo.InvariantCulture);
 					break;
 				}
@@ -176,15 +175,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		#endregion
 
 		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.SetPosition;
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -223,7 +213,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		/********************************************************************/
 		public override bool InitPlayer(out string errorMessage)
 		{
-			errorMessage = string.Empty;
+			if (!base.InitPlayer(out errorMessage))
+				return false;
 
 			periods = currentModuleType == ModuleType.Med112 ? Tables.Periods112 : Tables.Periods200;
 
@@ -251,26 +242,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
+		public override bool InitSound(int songNumber, out string errorMessage)
 		{
-			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+			if (!base.InitSound(songNumber, out errorMessage))
 				return false;
 
-			InitializeSound(durationInfo.StartPosition);
+			InitializeSound(0);
 
 			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override DurationInfo[] CalculateDuration()
-		{
-			return CalculateDurationBySongPosition();
 		}
 
 
@@ -282,59 +261,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		/********************************************************************/
 		public override void Play()
 		{
-			counter++;
-			if (counter == 6)
+			playingInfo.Counter++;
+			if (playingInfo.Counter == 6)
 			{
-				counter = 0;
+				playingInfo.Counter = 0;
 				ParseNextRow();
 			}
 
 			HandleEffects();
-		}
 
+			// Have we reached the end of the module
+			if (endReached)
+			{
+				OnEndReached(playingInfo.PlayPositionNumber);
+				endReached = false;
 
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the length of the current song
-		/// </summary>
-		/********************************************************************/
-		public override int SongLength => songLength;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position of the song
-		/// </summary>
-		/********************************************************************/
-		public override int GetSongPosition()
-		{
-			return playPositionNumber;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set a new position of the song
-		/// </summary>
-		/********************************************************************/
-		public override void SetSongPosition(int position, PositionInfo positionInfo)
-		{
-			ExtraPosInfo extraPosInfo = (ExtraPosInfo)positionInfo.ExtraInfo;
-
-			playPositionNumber = (ushort)position;
-			playLine = 0;
-
-			playBlock = orders[position];
-			counter = 5;
-			nextBlock = false;
-
-			PlayingFrequency = extraPosInfo.Tempo;
-			OnModuleInfoChanged(InfoTempoLine, PlayingFrequency.ToString("F2", CultureInfo.InvariantCulture));
-
-			base.SetSongPosition(position, positionInfo);
+				MarkPositionAsVisited(playingInfo.PlayPositionNumber);
+			}
 		}
 
 
@@ -409,16 +352,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		}
 		#endregion
 
-		#region Duration calculation methods
+		#region ModulePlayerWithPositionDurationAgentBase implementation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override int InitDurationCalculationByStartPos(int startPosition)
+		protected override int InitDuration(int startPosition)
 		{
 			InitializeSound(startPosition);
+			MarkPositionAsVisited(startPosition);
 
 			return startPosition;
 		}
@@ -427,17 +371,46 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 
 		/********************************************************************/
 		/// <summary>
-		/// Return extra information for the current position
+		/// Return the total number of positions
 		/// </summary>
 		/********************************************************************/
-		protected override object GetExtraPositionInfo()
+		protected override int GetTotalNumberOfPositions()
 		{
-			ExtraPosInfo extraPosInfo = new ExtraPosInfo
-			{
-				Tempo = PlayingFrequency
-			};
+			return songLength;
+		}
 
-			return extraPosInfo;
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a snapshot of all the internal structures and return it
+		/// </summary>
+		/********************************************************************/
+		protected override ISnapshot CreateSnapshot()
+		{
+			return new Snapshot(playingInfo);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize internal structures based on the snapshot given
+		/// </summary>
+		/********************************************************************/
+		protected override bool SetSnapshot(ISnapshot snapshot, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			// Start to make a clone of the snapshot
+			Snapshot currentSnapshot = (Snapshot)snapshot;
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayingInfo);
+
+			playingInfo = clonedSnapshot.PlayingInfo;
+
+			UpdateModuleInformation();
+
+			return true;
 		}
 		#endregion
 
@@ -1112,51 +1085,66 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 
 			for (int i = 1; i < 32; i++)
 			{
-				Sample sample = samples[i];
-
-				if (!string.IsNullOrEmpty(sample.Name))
+				if (!string.IsNullOrEmpty(samples[i].Name))
 				{
-					for (;;)
-					{
-						string newDirectory = isArchive ? ArchivePath.CombinePathParts(ArchivePath.GetArchiveName(fileInfo.FileName), directoryName) : directoryName;
-						string samplePath = Path.Combine(newDirectory, "Instruments", sample.Name);
-
-						using (ModuleStream moduleStream = fileInfo.Loader?.OpenExtraFile(samplePath, true))
-						{
-							// Did we get any file at all
-							if (moduleStream != null)
-							{
-								moduleStream.Seek(0, SeekOrigin.Begin);
-								sample.SampleData = moduleStream.ReadSampleData(i, (int)moduleStream.Length, out _);
-
-								sample.SampleData = FixIfIff(sample.SampleData);
-								if (sample.SampleData == null)
-								{
-									errorMessage = string.Format(Resources.IDS_MED_ERR_LOADING_EXTERNAL_SAMPLE, sample.Name);
-									return AgentResult.Error;
-								}
-
-								sample.Type = SampleType.Normal;
-
-								return AgentResult.Ok;
-							}
-						}
-
-						int index = directoryName.LastIndexOf(Path.DirectorySeparatorChar);
-						if (index == -1)
-							break;
-
-						directoryName = directoryName.Substring(0, index);
-						if (string.IsNullOrEmpty(directoryName) || (directoryName[^1] == ':'))
-							break;
-					}
-
-					errorMessage = string.Format(Resources.IDS_MED_ERR_LOADING_EXTERNAL_SAMPLE, sample.Name);
-					return AgentResult.Error;
+					if (LoadSingleExternalSample(fileInfo, isArchive, directoryName, i, out errorMessage) != AgentResult.Ok)
+						return AgentResult.Error;
 				}
 			}
 
 			return AgentResult.Ok;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Load a single sample as extern file
+		/// </summary>
+		/********************************************************************/
+		private AgentResult LoadSingleExternalSample(PlayerFileInfo fileInfo, bool isArchive, string directoryName, int sampleNumber, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			Sample sample = samples[sampleNumber];
+
+			for (;;)
+			{
+				string newDirectory = isArchive ? ArchivePath.CombinePathParts(ArchivePath.GetArchiveName(fileInfo.FileName), directoryName) : directoryName;
+				string samplePath = Path.Combine(newDirectory, "Instruments", sample.Name);
+
+				using (ModuleStream moduleStream = fileInfo.Loader?.OpenExtraFile(samplePath, true))
+				{
+					// Did we get any file at all
+					if (moduleStream != null)
+					{
+						moduleStream.Seek(0, SeekOrigin.Begin);
+						sample.SampleData = moduleStream.ReadSampleData(sampleNumber, (int)moduleStream.Length, out _);
+
+						sample.SampleData = FixIfIff(sample.SampleData);
+						if (sample.SampleData == null)
+						{
+							errorMessage = string.Format(Resources.IDS_MED_ERR_LOADING_EXTERNAL_SAMPLE, sample.Name);
+							return AgentResult.Error;
+						}
+
+						sample.Type = SampleType.Normal;
+
+						return AgentResult.Ok;
+					}
+				}
+
+				int index = directoryName.LastIndexOf(Path.DirectorySeparatorChar);
+				if (index == -1)
+					break;
+
+				directoryName = directoryName.Substring(0, index);
+				if (string.IsNullOrEmpty(directoryName) || (directoryName[^1] == ':'))
+					break;
+			}
+
+			errorMessage = string.Format(Resources.IDS_MED_ERR_LOADING_EXTERNAL_SAMPLE, sample.Name);
+			return AgentResult.Error;
 		}
 
 
@@ -1204,23 +1192,25 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		/********************************************************************/
 		private void InitializeSound(int startPosition)
 		{
-			SetTempo((byte)startTempo);
+			playingInfo = new GlobalPlayingInfo
+			{
+				PlayPositionNumber = (ushort)startPosition,
+				PlayBlock = orders[startPosition],
+				Counter = 5,
+				NextBlock = false,
 
-			playPositionNumber = (ushort)startPosition;
-			playBlock = orders[startPosition];
-			counter = 5;
-			nextBlock = false;
+				PreviousPeriod = new ushort[4],
+				PreviousNotes = new byte[16],
+				PreviousSamples = new byte[16],
+				PreviousVolumes = new byte[16],
+				Effects = new Effect[16],
+				EffectArgs = new byte[16]
+			};
+
+			endReached = false;
 
 			AmigaFilter = (moduleFlags & ModuleFlag.FilterOn) != 0;
-
-			previousPeriod = new ushort[4];
-			previousNotes = new byte[16];
-			previousSamples = new byte[16];
-			previousVolumes = new byte[16];
-			effects = new Effect[16];
-			effectArgs = new byte[16];
-
-			MarkPositionAsVisited(startPosition);
+			SetTempo((byte)startTempo);
 		}
 
 
@@ -1236,12 +1226,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 			samples = null;
 			orders = null;
 
-			previousPeriod = null;
-			previousNotes = null;
-			previousSamples = null;
-			previousVolumes = null;
-			effects = null;
-			effectArgs = null;
+			playingInfo = null;
 		}
 
 
@@ -1267,7 +1252,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 				PlayingFrequency = 709379f / ciaTempo;
 			}
 
-			OnModuleInfoChanged(InfoTempoLine, PlayingFrequency.ToString("F2", CultureInfo.InvariantCulture));
+			ShowTempo();
 		}
 
 
@@ -1279,23 +1264,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		/********************************************************************/
 		private void ParseNextRow()
 		{
-			Block block = blocks[playBlock];
-			currentTrackCount = (ushort)block.Rows.GetLength(0);
+			Block block = blocks[playingInfo.PlayBlock];
+			playingInfo.CurrentTrackCount = (ushort)block.Rows.GetLength(0);
 
-			for (int i = 0; i < currentTrackCount; i++)
+			for (int i = 0; i < playingInfo.CurrentTrackCount; i++)
 			{
-				TrackLine trackLine = block.Rows[i, playLine];
+				TrackLine trackLine = block.Rows[i, playingInfo.PlayLine];
 
 				byte note = trackLine.Note;
-				effectArgs[i] = trackLine.EffectArg;
+				playingInfo.EffectArgs[i] = trackLine.EffectArg;
 
 				if (trackLine.SampleNumber != 0)
 				{
-					previousSamples[i] = trackLine.SampleNumber;
-					previousVolumes[i] = samples[trackLine.SampleNumber].Volume;
+					playingInfo.PreviousSamples[i] = trackLine.SampleNumber;
+					playingInfo.PreviousVolumes[i] = samples[trackLine.SampleNumber].Volume;
 				}
 
-				effects[i] = trackLine.Effect;
+				playingInfo.Effects[i] = trackLine.Effect;
 				if (trackLine.Effect != Effect.None)
 				{
 					if (trackLine.Effect == Effect.SetTempo)
@@ -1306,36 +1291,33 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 
 				if (note != 0)
 				{
-					previousNotes[i] = note;
-					PlayNote(i, note, previousVolumes[i], previousSamples[i]);
+					playingInfo.PreviousNotes[i] = note;
+					PlayNote(i, note, playingInfo.PreviousVolumes[i], playingInfo.PreviousSamples[i]);
 				}
 			}
 
-			playLine++;
-			if ((playLine > 63) || nextBlock)
+			playingInfo.PlayLine++;
+			if ((playingInfo.PlayLine > 63) || playingInfo.NextBlock)
 			{
-				playLine = 0;
+				playingInfo.PlayLine = 0;
 
-				playPositionNumber++;
-				if (playPositionNumber >= songLength)
-					playPositionNumber = 0;
+				playingInfo.PlayPositionNumber++;
+				if (playingInfo.PlayPositionNumber >= songLength)
+					playingInfo.PlayPositionNumber = 0;
 
-				byte newBlockNumber = orders[playPositionNumber];
+				byte newBlockNumber = orders[playingInfo.PlayPositionNumber];
 				if (newBlockNumber < numberOfBlocks)
-					playBlock = newBlockNumber;
+					playingInfo.PlayBlock = newBlockNumber;
 
-				nextBlock = false;
+				playingInfo.NextBlock = false;
 
-				if (HasPositionBeenVisited(playPositionNumber))
-				{
-					// Next module
-					OnEndReached();
-				}
+				if (HasPositionBeenVisited(playingInfo.PlayPositionNumber))
+					endReached = true;
 
-				// Tell NostalgicPlayer we have changed the position
-				OnPositionChanged();
+				MarkPositionAsVisited(playingInfo.PlayPositionNumber);
 
-				MarkPositionAsVisited(playPositionNumber);
+				ShowSongPosition();
+				ShowPattern();
 			}
 		}
 
@@ -1348,35 +1330,35 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		/********************************************************************/
 		private void HandleEffects()
 		{
-			for (int i = 0; i < currentTrackCount; i++)
+			for (int i = 0; i < playingInfo.CurrentTrackCount; i++)
 			{
-				byte effectArg = effectArgs[i];
+				byte effectArg = playingInfo.EffectArgs[i];
 
 				ushort newPeriod = 0;
 				bool setHardware = true;
 
-				switch (effects[i])
+				switch (playingInfo.Effects[i])
 				{
 					case Effect.SlideUp:
 					{
-						if ((sliding == 5) && (counter == 0))
+						if ((sliding == 5) && (playingInfo.Counter == 0))
 							break;
 
-						previousPeriod[i] -= effectArg;
-						if (previousPeriod[i] < 113)
-							previousPeriod[i] = 113;
+						playingInfo.PreviousPeriod[i] -= effectArg;
+						if (playingInfo.PreviousPeriod[i] < 113)
+							playingInfo.PreviousPeriod[i] = 113;
 
 						break;
 					}
 
 					case Effect.SlideDown:
 					{
-						if ((sliding == 5) && (counter == 0))
+						if ((sliding == 5) && (playingInfo.Counter == 0))
 							break;
 
-						previousPeriod[i] += effectArg;
-						if (previousPeriod[i] > 856)
-							previousPeriod[i] = 856;
+						playingInfo.PreviousPeriod[i] += effectArg;
+						if (playingInfo.PreviousPeriod[i] > 856)
+							playingInfo.PreviousPeriod[i] = 856;
 
 						break;
 					}
@@ -1389,14 +1371,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 							break;
 						}
 
-						byte newNote = DoArpeggio(previousNotes[i], effectArg);
+						byte newNote = DoArpeggio(playingInfo.PreviousNotes[i], effectArg);
 						newPeriod = periods[newNote - 1 + playTranspose];
 						break;
 					}
 
 					case Effect.Crescendo:
 					{
-						sbyte newVolume = (sbyte)previousVolumes[i];
+						sbyte newVolume = (sbyte)playingInfo.PreviousVolumes[i];
 
 						if ((effectArg & 0xf0) != 0)
 						{
@@ -1411,15 +1393,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 								newVolume = 0;
 						}
 
-						previousVolumes[i] = (byte)newVolume;
+						playingInfo.PreviousVolumes[i] = (byte)newVolume;
 						break;
 					}
 
 					case Effect.Vibrato:
 					{
-						newPeriod = previousPeriod[i];
+						newPeriod = playingInfo.PreviousPeriod[i];
 
-						if (counter < 3)
+						if (playingInfo.Counter < 3)
 							newPeriod -= effectArg;
 
 						break;
@@ -1438,17 +1420,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 
 							if (effectArg == 0xf1)		// Play this note twice
 							{
-								if (counter != 3)
+								if (playingInfo.Counter != 3)
 									break;
 							}
 							else if (effectArg == 0xf2)	// Play this note in the second half of this note
 							{
-								if (counter != 3)
+								if (playingInfo.Counter != 3)
 									break;
 							}
 							else if (effectArg == 0xf3)	// Play this note three times during the note
 							{
-								if ((counter & 6) == 0)
+								if ((playingInfo.Counter & 6) == 0)
 									break;
 							}
 							else
@@ -1457,7 +1439,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 								break;
 							}
 
-							PlayNote(i, previousNotes[i], previousVolumes[i], previousSamples[i]);
+							PlayNote(i, playingInfo.PreviousNotes[i], playingInfo.PreviousVolumes[i], playingInfo.PreviousSamples[i]);
 						}
 
 						setHardware = false;
@@ -1489,10 +1471,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 				if (setHardware)
 				{
 					if (newPeriod == 0)
-						newPeriod = previousPeriod[i];
+						newPeriod = playingInfo.PreviousPeriod[i];
 
 					VirtualChannels[i].SetAmigaPeriod(newPeriod);
-					VirtualChannels[i].SetAmigaVolume(previousVolumes[i]);
+					VirtualChannels[i].SetAmigaVolume(playingInfo.PreviousVolumes[i]);
 				}
 			}
 		}
@@ -1508,7 +1490,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		{
 			if (effectArg == 0)		// F00 is the same as block break
 			{
-				nextBlock = true;
+				playingInfo.NextBlock = true;
 				return;
 			}
 
@@ -1520,14 +1502,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 
 			if (effectArg == 0xf2)	// Play the note in the second half of the note (delay the note)
 			{
-				previousNotes[trackNumber] = note;
+				playingInfo.PreviousNotes[trackNumber] = note;
 				note = 0;
 				return;
 			}
 
 			if (effectArg == 0xfe)	// Stop the playing
 			{
-				nextBlock = true;
+				playingInfo.NextBlock = true;
 			}
 		}
 
@@ -1545,7 +1527,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 			if (effectArg > 64)
 				effectArg = 64;
 
-			previousVolumes[trackNumber] = effectArg;
+			playingInfo.PreviousVolumes[trackNumber] = effectArg;
 		}
 
 
@@ -1557,10 +1539,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		/********************************************************************/
 		private byte DoArpeggio(byte note, byte effectArg)
 		{
-			if ((counter == 0) || (counter == 3))
+			if ((playingInfo.Counter == 0) || (playingInfo.Counter == 3))
 				return (byte)(note + (effectArg & 0x0f));
 
-			if ((counter == 1) || (counter == 4))
+			if ((playingInfo.Counter == 1) || (playingInfo.Counter == 4))
 				return (byte)(note + (effectArg >> 4));
 
 			return note;
@@ -1600,7 +1582,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 				channel.SetLoop(toPlay.LoopStart, toPlay.LoopLength);
 
 			channel.SetAmigaPeriod(toPlay.Period);
-			previousPeriod[trackNumber] = toPlay.Period;
+			playingInfo.PreviousPeriod[trackNumber] = toPlay.Period;
 
 			channel.SetAmigaVolume(volume);
 		}
@@ -1658,6 +1640,56 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 			}
 
 			return result;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current song position
+		/// </summary>
+		/********************************************************************/
+		private void ShowSongPosition()
+		{
+			OnModuleInfoChanged(InfoPositionLine, playingInfo.PlayPositionNumber.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with pattern number
+		/// </summary>
+		/********************************************************************/
+		private void ShowPattern()
+		{
+			OnModuleInfoChanged(InfoPatternLine, playingInfo.PlayBlock.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with tempo
+		/// </summary>
+		/********************************************************************/
+		private void ShowTempo()
+		{
+			OnModuleInfoChanged(InfoTempoLine, PlayingFrequency.ToString("F2", CultureInfo.InvariantCulture));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with all dynamic values
+		/// </summary>
+		/********************************************************************/
+		private void UpdateModuleInformation()
+		{
+			ShowSongPosition();
+			ShowPattern();
+			ShowTempo();
 		}
 		#endregion
 	}

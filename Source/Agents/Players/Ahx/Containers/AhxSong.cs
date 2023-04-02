@@ -17,7 +17,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Containers
 		public int TrackLength;
 		public int TrackNr;
 		public int InstrumentNr;
-		public int SubSongNr;
 
 		public int Revision;
 		public int SpeedMultiplier;
@@ -25,6 +24,5 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Containers
 		public AhxPosition[] Positions;
 		public AhxStep[][] Tracks;
 		public AhxInstrument[] Instruments;
-		public int[] SubSongs;
 	}
 }

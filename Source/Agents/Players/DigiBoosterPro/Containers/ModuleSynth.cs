@@ -3,12 +3,15 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility;
+
 namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class ModuleSynth
+	internal class ModuleSynth : IDeepCloneable<ModuleSynth>
 	{
 		public DB3Module Module;				// The module played
 		public ModuleTrack[] Tracks;			// Table of tracks
@@ -24,7 +27,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers
 		public bool DelayModuleEnd;				// Module ending (because of end of play list or F00 command) is also delayed
 		public int DelayPatternBreak;			// (Dxx) Delayed pattern break position (position num)
 		public int DelayPatternJump;			// (Bxx) Delayed pattern jump (pattern num)
-		public ModuleTrack DelayLoop;			// (E6x) Points to a track containing the loop information if there is a loop to start, else null
+		public int DelayLoop;					// (E6x) Track number containing the loop information if there is a loop to start, else -1
 		public int16_t GlobalVolume;			// (Gxx, Hxx)
 		public int16_t GlobalVolumeSlide;		// (Hxx)
 		public uint8_t OldGlobalVolumeSlide;	// (Hxx)
@@ -39,5 +42,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers
 		public uint8_t ArpCounter;				// Arpeggio counter
 
 		public bool ManualUpdate;				// Send (one) tracker position update being in HALTED mode
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public ModuleSynth MakeDeepClone()
+		{
+			ModuleSynth clone = (ModuleSynth)MemberwiseClone();
+
+			clone.Tracks = ArrayHelper.CloneObjectArray(Tracks);
+
+			return clone;
+		}
 	}
 }

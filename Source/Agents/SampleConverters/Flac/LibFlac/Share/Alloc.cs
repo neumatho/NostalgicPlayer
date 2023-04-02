@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Share
 			if (size == 0)
 				size++;
 
-			return Helpers.InitializeArray<T>((int)size);
+			return ArrayHelper.InitializeArray<T>((int)size);
 		}
 
 
@@ -40,7 +40,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Share
 			if (size == 0)
 				size++;
 
-			return Helpers.InitializeArray<T>((int)size);
+			return ArrayHelper.InitializeArray<T>((int)size);
 		}
 
 
@@ -96,12 +96,12 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Share
 		public static T[] Safe_MAlloc_Mul_2Op<T>(size_t size1, size_t size2) where T : new()
 		{
 			if ((size1 == 0) || (size2 == 0))
-				return Helpers.InitializeArray<T>(1);
+				return ArrayHelper.InitializeArray<T>(1);
 
 			if (size1 > (size_t.MaxValue / size2))
 				return null;
 
-			return Helpers.InitializeArray<T>((int)(size1 * size2));
+			return ArrayHelper.InitializeArray<T>((int)(size1 * size2));
 		}
 
 
@@ -175,12 +175,12 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Share
 		public static T[] Safe_MAlloc_Mul_2Op_P<T>(size_t size1, size_t size2) where T : new()
 		{
 			if ((size1 == 0) || (size2 == 0))
-				return Helpers.InitializeArray<T>(1);
+				return ArrayHelper.InitializeArray<T>(1);
 
 			if (size1 > (size_t.MaxValue / size2))
 				return null;
 
-			return Helpers.InitializeArray<T>((int)(size1 * size2));
+			return ArrayHelper.InitializeArray<T>((int)(size1 * size2));
 		}
 	}
 }

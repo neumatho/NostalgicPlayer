@@ -59,6 +59,6 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Sets the file position to the sample position given
 		/// </summary>
-		long SetSamplePosition(ModuleStream moduleStream, long position, LoadSampleFormatInfo formatInfo);
+		void SetSamplePosition(ModuleStream moduleStream, long position, LoadSampleFormatInfo formatInfo);
 	}
 }

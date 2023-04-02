@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class SidPlayWorker : ModulePlayerAgentBase, IAgentSettingsRegistrar
+	internal class SidPlayWorker : ModulePlayerAgentBase, IDurationPlayer, IAgentSettingsRegistrar
 	{
 		private const int BufferSize = 2048;
 
@@ -39,10 +39,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		private bool firstTime;
 
 		private bool haveDuration;
-		private int songPosition;
 		private Timer durationTimer;
 		private uint_least32_t startTime;
-		private int previousPercent;
 
 		private SidPlaySettings settings;
 		private static readonly SidStil sidStil = new SidStil();
@@ -51,13 +49,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		private List<string> comments;
 		private List<string> lyrics;
 
-		private const int InfoClockSpeedLine = 8;
-
 		[DllImport("gdi32.dll")]
 		private static extern IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont, IntPtr pdv, [In] ref uint pcFonts);
 
 		private PrivateFontCollection fonts;
 		private Font commentFont;
+
+		private DurationInfo[] allDurationInfo;
+
+		private const int InfoClockSpeedLine = 8;
 
 		#region IAgentSettingsRegistrar implementation
 		/********************************************************************/
@@ -303,7 +303,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Will load the file into memory
 		/// </summary>
 		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.BufferDirect;
+		public override ModulePlayerSupportFlag SupportFlags => base.SupportFlags | ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.BufferDirect;
 
 
 
@@ -422,6 +422,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/********************************************************************/
 		public override bool InitPlayer(out string errorMessage)
 		{
+			if (!base.InitPlayer(out errorMessage))
+				return false;
+
 			engine = new SidPlayFp();
 
 			// Add ROMs
@@ -532,7 +535,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			leftOutputBuffer = new short[BufferSize];
 			rightOutputBuffer = new short[BufferSize];
 
-			return base.InitPlayer(out errorMessage);
+			return true;
 		}
 
 
@@ -556,9 +559,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
+		public override bool InitSound(int songNumber, out string errorMessage)
 		{
-			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+			if (!base.InitSound(songNumber, out errorMessage))
 				return false;
 
 			// Select sub-song to play
@@ -582,16 +585,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			}
 
 			firstTime = true;
-			songPosition = 0;
-
-			// Create duration handler if needed
-			if (haveDuration)
-			{
-				startTime = 0;
-				previousPercent = 0;
-
-				durationTimer = new Timer(DurationTimerHandler, durationInfo.TotalTime, 0, 900);
-			}
 
 			return true;
 		}
@@ -613,30 +606,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 
 			if (engine != null)
 				engine.Stop();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override DurationInfo[] CalculateDuration()
-		{
-			haveDuration = false;
-
-			List<TimeSpan> songLengths = sidSongLength.GetSongLengths(sidTune);
-			if (songLengths == null)
-				return null;
-
-			DurationInfo[] result = new DurationInfo[songLengths.Count];
-			for (int i = songLengths.Count - 1; i >= 0; i--)
-				result[i] = new DurationInfo(songLengths[i], Array.Empty<PositionInfo>());
-
-			haveDuration = true;
-
-			return result;
 		}
 
 
@@ -709,26 +678,92 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				return new SubSongInfo((int)info.Songs(), (int)info.StartSong() - 1);
 			}
 		}
+		#endregion
 
-
-
+		#region IDurationPlayer implementation
 		/********************************************************************/
 		/// <summary>
-		/// Return the length of the current song
+		/// Calculate the duration for all sub-songs
 		/// </summary>
 		/********************************************************************/
-		public override int SongLength => haveDuration ? 100 : 0;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position of the song
-		/// </summary>
-		/********************************************************************/
-		public override int GetSongPosition()
+		public DurationInfo[] CalculateDuration()
 		{
-			return songPosition;
+			haveDuration = false;
+
+			List<TimeSpan> songLengths = sidSongLength.GetSongLengths(sidTune);
+			if (songLengths == null)
+				return null;
+
+			DurationInfo[] result = new DurationInfo[songLengths.Count];
+			TimeSpan increment = new TimeSpan(0, 0, (int)IDurationPlayer.NumberOfSecondsBetweenEachSnapshot);
+
+			for (int i = songLengths.Count - 1; i >= 0; i--)
+			{
+				List<PositionInfo> positionInfoList = new List<PositionInfo>();
+
+				TimeSpan currentTotalTime = TimeSpan.Zero;
+				
+				for (;;)
+				{
+					positionInfoList.Add(new PositionInfo(currentTotalTime, PlayingFrequency, null));
+
+					currentTotalTime += increment;
+					if (currentTotalTime >= songLengths[i])
+						break;
+				}
+
+				result[i] = new DurationInfo(songLengths[i], positionInfoList.ToArray());
+			}
+
+			haveDuration = true;
+			allDurationInfo = result;
+
+			return result;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize player to play the given sub-song
+		/// </summary>
+		/********************************************************************/
+		public bool SetSubSong(int subSong, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			// Create duration handler if needed
+			if (haveDuration)
+			{
+				startTime = 0;
+				durationTimer = new Timer(DurationTimerHandler, allDurationInfo[subSong].TotalTime, 0, 900);
+			}
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will tell the player to change its current state to match the
+		/// position given
+		/// </summary>
+		/********************************************************************/
+		public void SetSongPosition(PositionInfo positionInfo)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the time into the song when restarting
+		/// </summary>
+		/********************************************************************/
+		public TimeSpan GetRestartTime()
+		{
+			return TimeSpan.Zero;
 		}
 		#endregion
 
@@ -750,6 +785,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 
 			engineConfig = null;
 			settings = null;
+
+			allDurationInfo = null;
 		}
 
 
@@ -807,23 +844,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			{
 				uint_least32_t seconds = engine.Time() - startTime;
 
-				// Calculate the percent of how long that has been heard so far
-				int percent = (int)(seconds * 100 / ((TimeSpan)stateInfo).TotalSeconds);
-				if (percent != previousPercent)
-				{
-					if (percent >= 100)
-					{
-						percent = 0;
-						startTime = seconds;
-
-						OnEndReached();
-					}
-
-					previousPercent = percent;
-					songPosition = percent;
-
-					OnPositionChanged();
-				}
+				// Check if the module has reached the end
+				if (seconds >= ((TimeSpan)stateInfo).TotalSeconds)
+					OnEndReached();
 			}
 		}
 		#endregion

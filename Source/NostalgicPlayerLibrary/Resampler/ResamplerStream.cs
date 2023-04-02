@@ -22,6 +22,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		private bool playing;
 
 		private Resampler resampler;
+		private object resamplerLock;
 
 		private int maxBufferSize;
 		private int delayCount;
@@ -39,6 +40,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 			delayCount = 0;
 
 			resampler = new Resampler();
+			resamplerLock = new object();
+
+			resampler.PositionChanged += Resampler_PositionChanged;
+
 			return resampler.InitResampler(agentManager, playerConfiguration, out errorMessage);
 		}
 
@@ -51,8 +56,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		/********************************************************************/
 		public void Cleanup()
 		{
-			resampler?.CleanupResampler();
-			resampler = null;
+			if (resamplerLock != null)
+			{
+				lock (resamplerLock)
+				{
+					resampler.CleanupResampler();
+
+					resampler.PositionChanged -= Resampler_PositionChanged;
+
+					resampler = null;
+					resamplerLock = null;
+				}
+			}
 		}
 
 
@@ -64,7 +79,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		/********************************************************************/
 		public void ChangeConfiguration(MixerConfiguration mixerConfiguration)
 		{
-			resampler?.ChangeConfiguration(mixerConfiguration);
+			lock (resamplerLock)
+			{
+				resampler.ChangeConfiguration(mixerConfiguration);
+			}
 		}
 
 		#region SoundStream implementation
@@ -75,9 +93,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		/********************************************************************/
 		public override void SetOutputFormat(OutputInfo outputInformation)
 		{
-			bytesPerSampling = outputInformation.BytesPerSample;
+			if (resamplerLock != null)
+			{
+				lock (resamplerLock)
+				{
+					bytesPerSampling = outputInformation.BytesPerSample;
 
-			resampler?.SetOutputFormat(outputInformation);
+					resampler.SetOutputFormat(outputInformation);
+				}
+			}
 		}
 
 
@@ -89,8 +113,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		/********************************************************************/
 		public override void Start()
 		{
-			// Ok to play
-			playing = true;
+			lock (resamplerLock)
+			{
+				resampler.StartResampler();
+				playing = true;
+			}
 		}
 
 
@@ -102,7 +129,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		/********************************************************************/
 		public override void Stop()
 		{
-			playing = false;
+			lock (resamplerLock)
+			{
+				playing = false;
+				resampler.StopResampler();
+			}
 		}
 
 
@@ -133,10 +164,35 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 
 		/********************************************************************/
 		/// <summary>
+		/// Set the stream to the given song position
+		/// </summary>
+		/********************************************************************/
+		public override int SongPosition
+		{
+			get
+			{
+				lock (resamplerLock)
+				{
+					return resampler.SongPosition;
+				}
+			}
+
+			set
+			{
+				lock (resamplerLock)
+				{
+					resampler.SongPosition = value;
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Read mixed data
 		/// </summary>
 		/********************************************************************/
-		
 		public override int Read(byte[] buffer, int offset, int count)
 		{
 			try
@@ -180,6 +236,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 			{
 				return 0;
 			}
+		}
+		#endregion
+
+		#region Handler methods
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the position changes in the resampler
+		/// </summary>
+		/********************************************************************/
+		private void Resampler_PositionChanged(object sender, EventArgs e)
+		{
+			OnPositionChanged();
 		}
 		#endregion
 	}

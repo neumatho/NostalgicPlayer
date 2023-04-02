@@ -141,15 +141,21 @@ This is the first version of this editor. There is not that many modules in this
     <value>Can't read the sample data</value>
   </data>
   <data name="IDS_DM1_INFODESCLINE0" xml:space="preserve">
-    <value>Song length:</value>
+    <value>Number of positions:</value>
   </data>
   <data name="IDS_DM1_INFODESCLINE1" xml:space="preserve">
-    <value>Used blocks:</value>
+    <value>Used tracks:</value>
   </data>
   <data name="IDS_DM1_INFODESCLINE2" xml:space="preserve">
     <value>Supported / used samples:</value>
   </data>
   <data name="IDS_DM1_INFODESCLINE3" xml:space="preserve">
+    <value>Playing positions:</value>
+  </data>
+  <data name="IDS_DM1_INFODESCLINE4" xml:space="preserve">
+    <value>Playing tracks:</value>
+  </data>
+  <data name="IDS_DM1_INFODESCLINE5" xml:space="preserve">
     <value>Current speed:</value>
   </data>
   <data name="IDS_DM1_NAME" xml:space="preserve">

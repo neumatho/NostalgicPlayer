@@ -5,13 +5,14 @@
 /******************************************************************************/
 using System;
 using Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Implementation
 {
 	/// <summary>
 	/// Wave generator
 	/// </summary>
-	internal class Wave
+	internal class Wave : IDeepCloneable<Wave>
 	{
 		private const float PwmLim = 0.9f;
 
@@ -201,6 +202,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Implementation
 			}
 
 			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Wave MakeDeepClone()
+		{
+			return (Wave)MemberwiseClone();
 		}
 
 		#region Private methods

@@ -642,7 +642,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 					return Error.Data_Corrupted;
 
 				mp.NumberOfRows = (ushort)rows;
-				mp.Pattern = Helpers.InitializeArray<DB3ModuleEntry>(rows * tracks);
+				mp.Pattern = ArrayHelper.InitializeArray<DB3ModuleEntry>(rows * tracks);
 
 				uint8_t[] packedData = new uint8_t[packSize];
 				error = Read_Data(dc, moduleStream, packedData, packSize);

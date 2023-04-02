@@ -280,18 +280,6 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats
 			int blockNum = (int)(position / (samplesPerBlock * formatInfo.Channels));
 			return blockNum * blockAlign;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculates the number of samples from the byte position given
-		/// </summary>
-		/********************************************************************/
-		protected override long CalcSamplePosition(long position, LoadSampleFormatInfo formatInfo)
-		{
-			return (position / blockAlign) * samplesPerBlock * formatInfo.Channels;
-		}
 		#endregion
 
 		#region ISampleSaverAgent implementation

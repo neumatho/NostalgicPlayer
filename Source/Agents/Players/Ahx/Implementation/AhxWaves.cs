@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Implementation
 			public readonly sbyte[] WhiteNoiseBig = new sbyte[0x280 * 3];
 		}
 
-		public readonly Waves[] filterSets = Helpers.InitializeArray<Waves>(31 + 1 + 31);
+		public readonly Waves[] filterSets = ArrayHelper.InitializeArray<Waves>(31 + 1 + 31);
 
 		/********************************************************************/
 		/// <summary>

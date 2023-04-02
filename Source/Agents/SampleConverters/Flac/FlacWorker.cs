@@ -276,12 +276,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 		/// Sets the file position to the sample position given
 		/// </summary>
 		/********************************************************************/
-		public long SetSamplePosition(ModuleStream moduleStream, long position, LoadSampleFormatInfo formatInfo)
+		public void SetSamplePosition(ModuleStream moduleStream, long position, LoadSampleFormatInfo formatInfo)
 		{
-			if (flacDecoder.Flac__Stream_Decoder_Seek_Absolute((Flac__uint64)position / streamInfo.Channels))
-				return position;
-
-			return 0;
+			flacDecoder.Flac__Stream_Decoder_Seek_Absolute((Flac__uint64)position / streamInfo.Channels);
 		}
 		#endregion
 

@@ -102,7 +102,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 		{
 			lock (this)
 			{
-				visualChannels = Helpers.InitializeArray<VisualChannelInfo>(channels);
+				visualChannels = ArrayHelper.InitializeArray<VisualChannelInfo>(channels);
 				allocatedKeys = new bool[NumberOfOctaves * 12, 3];
 			}
 

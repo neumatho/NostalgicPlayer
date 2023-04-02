@@ -10,13 +10,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20.Containers
 	/// <summary>
 	/// Contains work information for one channel
 	/// </summary>
-	internal class ChannelInfo
+	internal class ChannelInfo : IDeepCloneable<ChannelInfo>
 	{
-		public IChannel Hardware;
 		public Instrument Instrument;
 		public Track[] Track;
 		public BlockLine[] Block;
-		public ushort CurrentTrackPosition;
+		public short CurrentTrackPosition;
 		public ushort NextTrackPosition;
 		public ushort BlockPosition;
 		public byte SoundTableDelay;
@@ -41,6 +40,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20.Containers
 		public ushort TrackLoopPosition;
 		public ushort TrackLength;
 		public bool RetriggerSound;
-		public bool PositionChangedByUser;
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public ChannelInfo MakeDeepClone()
+		{
+			return (ChannelInfo)MemberwiseClone();
+		}
 	}
 }

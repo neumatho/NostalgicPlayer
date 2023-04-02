@@ -4,10 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using System.Linq;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
@@ -16,15 +14,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class SampleWorker : SamplePlayerAgentBase
+	internal class SampleWorker : SamplePlayerWithDurationAgentBase
 	{
 		private readonly ISampleLoaderAgent loaderAgent;
 
 		private LoadSampleFormatInfo formatInfo;
 
 		private long totalLength;
-		private long samplesRead;
-		private int oldPosition;
 
 		/********************************************************************/
 		/// <summary>
@@ -130,15 +126,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		#region ISamplePlayerAgent implementation
 		/********************************************************************/
 		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override SamplePlayerSupportFlag SupportFlags => totalLength > 0 ? SamplePlayerSupportFlag.SetPosition : SamplePlayerSupportFlag.None;
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Will load the header information from the file
 		/// </summary>
 		/********************************************************************/
@@ -191,38 +178,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		/// Initializes the player to start the sample from start
 		/// </summary>
 		/********************************************************************/
-		public override bool InitSound(DurationInfo durationInfo, out string errorMessage)
+		public override bool InitSound(out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
 			// Reset the sample position
 			loaderAgent.SetSamplePosition(modStream, 0, formatInfo);
 
-			samplesRead = 0;
-			oldPosition = 0;
-
 			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override DurationInfo CalculateDuration()
-		{
-			if (totalLength == 0)
-				return null;
-
-			// Calculate the total time
-			long totalTime = totalLength * 1000 / formatInfo.Frequency / formatInfo.Channels;
-
-			// Now build the list
-			PositionInfo[] positionInfo = Enumerable.Range(0, 100).Select(i => new PositionInfo(new TimeSpan(i * (totalTime / 100) * TimeSpan.TicksPerMillisecond))).ToArray();
-
-			return new DurationInfo(new TimeSpan(totalTime * TimeSpan.TicksPerMillisecond), positionInfo);
 		}
 
 
@@ -237,7 +200,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		{
 			// Load the next block of data
 			int filled = loaderAgent.LoadData(modStream, outputBuffer, count, formatInfo);
-			samplesRead += filled;
 
 			if (filled == 0)
 			{
@@ -245,23 +207,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 
 				// Loop the sample
 				if ((formatInfo.Flags & LoadSampleFormatInfo.SampleFlag.Loop) != 0)
-				{
 					loaderAgent.SetSamplePosition(modStream, formatInfo.LoopStart, formatInfo);
-					samplesRead = formatInfo.LoopStart;
-				}
 				else
-				{
 					loaderAgent.SetSamplePosition(modStream, 0, formatInfo);
-					samplesRead = 0;
-				}
-			}
-
-			// Check if we have changed position
-			int pos = GetSongPosition();
-			if (pos != oldPosition)
-			{
-				oldPosition = pos;
-				OnPositionChanged();
 			}
 
 			return filled;
@@ -284,55 +232,36 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		/// </summary>
 		/********************************************************************/
 		public override int Frequency => formatInfo.Frequency;
+		#endregion
 
-
-
+		#region SamplePlayerWithDurationAgentBase
 		/********************************************************************/
 		/// <summary>
-		/// Return the length of the current song
+		/// Return the total time of the sample
 		/// </summary>
 		/********************************************************************/
-		public override int SongLength
-		{
-			get
-			{
-				if (totalLength == 0)
-					return 0;
-
-				return 100;
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position of the song
-		/// </summary>
-		/********************************************************************/
-		public override int GetSongPosition()
+		protected override TimeSpan GetTotalDuration()
 		{
 			if (totalLength == 0)
-				return 0;
+				return TimeSpan.Zero;
 
-			int pos = (int)(samplesRead * 100 / totalLength);
-			if (pos >= 100)
-				pos = 99;
+			// Calculate the total time
+			long totalTime = totalLength * 1000 / formatInfo.Frequency / formatInfo.Channels;
 
-			return pos;
+			return new TimeSpan(totalTime * TimeSpan.TicksPerMillisecond);
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Set a new position of the song
+		/// Set the position in the playing sample to the time given
 		/// </summary>
 		/********************************************************************/
-		public override void SetSongPosition(int position, PositionInfo positionInfo)
+		protected override void SetPosition(TimeSpan time)
 		{
-			long newPos = position * totalLength / 100;
-			samplesRead = loaderAgent.SetSamplePosition(modStream, newPos, formatInfo);
+			long newPos = (int)(formatInfo.Frequency * time.TotalSeconds) * formatInfo.Channels;
+			loaderAgent.SetSamplePosition(modStream, newPos, formatInfo);
 		}
 		#endregion
 	}

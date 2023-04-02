@@ -130,7 +130,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Cpu
 		/// <summary>
 		/// Table of CPU opcode implementations
 		/// </summary>
-		private readonly ProcessorCycle[] instrTable = Helpers.InitializeArray<ProcessorCycle>(0x101 << 3);
+		private readonly ProcessorCycle[] instrTable = ArrayHelper.InitializeArray<ProcessorCycle>(0x101 << 3);
 
 		/// <summary>
 		/// Represents an instruction sub-cycle that writes

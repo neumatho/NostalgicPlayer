@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+
 namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 {
 #pragma warning disable 1591
@@ -12,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 	/// Used by NNA only player (audio control. AUDTMP is used for full effects
 	/// control).
 	/// </summary>
-	public class Mp_Voice
+	public class Mp_Voice : IDeepCloneable<Mp_Voice>
 	{
 		public Mp_Channel Main;
 
@@ -31,6 +33,16 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 		public short MasterChn;
 		public ushort MasterPeriod;
 		public Mp_Control Master;				// Index of "master" effects channel
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Mp_Voice MakeDeepClone()
+		{
+			return (Mp_Voice)MemberwiseClone();
+		}
 	}
 #pragma warning restore 1591
 }

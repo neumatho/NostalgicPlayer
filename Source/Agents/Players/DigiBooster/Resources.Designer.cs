@@ -121,7 +121,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Song length:.
+        ///   Looks up a localized string similar to Number of positions:.
         /// </summary>
         internal static string IDS_DIGI_INFODESCLINE0 {
             get {
@@ -148,7 +148,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Current speed:.
+        ///   Looks up a localized string similar to Playing position:.
         /// </summary>
         internal static string IDS_DIGI_INFODESCLINE3 {
             get {
@@ -157,11 +157,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to BPM:.
+        ///   Looks up a localized string similar to Playing pattern:.
         /// </summary>
         internal static string IDS_DIGI_INFODESCLINE4 {
             get {
                 return ResourceManager.GetString("IDS_DIGI_INFODESCLINE4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current speed:.
+        /// </summary>
+        internal static string IDS_DIGI_INFODESCLINE5 {
+            get {
+                return ResourceManager.GetString("IDS_DIGI_INFODESCLINE5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current tempo (BPM):.
+        /// </summary>
+        internal static string IDS_DIGI_INFODESCLINE6 {
+            get {
+                return ResourceManager.GetString("IDS_DIGI_INFODESCLINE6", resourceCulture);
             }
         }
         

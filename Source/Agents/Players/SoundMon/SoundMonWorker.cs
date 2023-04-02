@@ -11,7 +11,7 @@ using Polycode.NostalgicPlayer.Agent.Player.SoundMon.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
@@ -20,30 +20,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class SoundMonWorker : ModulePlayerAgentBase
+	internal class SoundMonWorker : ModulePlayerWithPositionDurationAgentBase
 	{
 		private static readonly Dictionary<Guid, ModuleType> moduleTypeLookup = new Dictionary<Guid, ModuleType>
 		{
 			{ SoundMon.Agent1Id, ModuleType.SoundMon11 },
 			{ SoundMon.Agent2Id, ModuleType.SoundMon22 }
-		};
-
-		// Period table
-		private static readonly ushort[] periods =
-		{
-			6848, 6464, 6080, 5760, 5440, 5120, 4832, 4576, 4320, 4064, 3840, 3616,
-			3424, 3232, 3040, 2880, 2720, 2560, 2416, 2288, 2160, 2032, 1920, 1808,
-			1712, 1616, 1520, 1440, 1360, 1280, 1208, 1144, 1080, 1016,  960,  904,
-			 856,  808,  760,  720,  680,  640,  604,  572,  540,  508,  480,  452,
-			 428,  404,  380,  360,  340,  320,  302,  286,  270,  254,  240,  226,
-			 214,  202,  190,  180,  170,  160,  151,  143,  135,  127,  120,  113,
-			 107,  101,   95,   90,   85,   80,   76,   72,   68,   64,   60,   57
-		};
-
-		// Vibrato table
-		private static readonly short[] vibTable =
-		{
-			0, 64, 128, 64, 0, -64, -128, -64
 		};
 
 		private readonly ModuleType currentModuleType;
@@ -58,22 +40,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		private Track[][] tracks;
 		private sbyte[] waveTables;
 
+		private GlobalPlayingInfo playingInfo;
 		private BpCurrent[] bpCurrent;
-		private sbyte[][] synthBuffer;
 
-		private ushort bpStep;
-		private byte vibIndex;
-		private byte arpCount;
-		private byte bpCount;
-		private byte bpDelay;
-		private sbyte st;
-		private sbyte tr;
-		private byte bpPatCount;
-		private byte bpRepCount;
-		private byte newPos;
-		private bool posFlag;
+		private bool endReached;
 
-		private const int InfoSpeedLine = 4;
+		private const int InfoPositionLine = 4;
+		private const int InfoTrackLine = 5;
+		private const int InfoSpeedLine = 6;
 
 		/********************************************************************/
 		/// <summary>
@@ -133,7 +107,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 			// Find out which line to take
 			switch (line)
 			{
-				// Song length
+				// Number of positions
 				case 0:
 				{
 					description = Resources.IDS_BP_INFODESCLINE0;
@@ -165,11 +139,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 					break;
 				}
 
-				// Current speed
+				// Playing position
 				case 4:
 				{
 					description = Resources.IDS_BP_INFODESCLINE4;
-					value = bpDelay.ToString();
+					value = playingInfo.BpStep.ToString();
+					break;
+				}
+
+				// Playing tracks
+				case 5:
+				{
+					description = Resources.IDS_BP_INFODESCLINE5;
+					value = FormatTracks();
+					break;
+				}
+
+				// Current speed
+				case 6:
+				{
+					description = Resources.IDS_BP_INFODESCLINE6;
+					value = playingInfo.BpDelay.ToString();
 					break;
 				}
 
@@ -187,15 +177,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		#endregion
 
 		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.SetPosition;
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -345,7 +326,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 				steps = new Step[4][];
 
 				for (int i = 0; i < 4; i++)
-					steps[i] = Helpers.InitializeArray<Step>(stepNum);
+					steps[i] = ArrayHelper.InitializeArray<Step>(stepNum);
 
 				// Read the step data
 				trackNum = 0;
@@ -379,7 +360,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 				for (int i = 0; i < trackNum; i++)
 				{
 					// Allocate one track
-					tracks[i] = Helpers.InitializeArray<Track>(16);
+					tracks[i] = ArrayHelper.InitializeArray<Track>(16);
 
 					// Read it
 					for (int j = 0; j < 16; j++)
@@ -468,49 +449,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
+		public override bool InitSound(int songNumber, out string errorMessage)
 		{
-			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+			if (!base.InitSound(songNumber, out errorMessage))
 				return false;
 
-			InitializeSound(durationInfo.StartPosition);
+			InitializeSound(0);
 
 			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Cleanup the current song
-		/// </summary>
-		/********************************************************************/
-		public override void CleanupSound()
-		{
-			// If a previous song has been played, make sure that
-			// the changed waveforms are reset back to they original
-			// values. This is also needed, after the duration has
-			// been calculated
-			if (bpCurrent != null)
-			{
-				for (int i = 0; i < 4; i++)
-				{
-					if (bpCurrent[i].SynthOffset >= 0)
-						Array.Copy(synthBuffer[i], 0, waveTables, bpCurrent[i].SynthOffset, 32);
-				}
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override DurationInfo[] CalculateDuration()
-		{
-			return CalculateDurationBySongPosition(true);
 		}
 
 
@@ -524,51 +470,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		{
 			// Call the player
 			BpPlay();
-		}
 
+			if (endReached)
+			{
+				OnEndReached(playingInfo.BpStep);
+				endReached = false;
 
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the length of the current song
-		/// </summary>
-		/********************************************************************/
-		public override int SongLength => stepNum;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position of the song
-		/// </summary>
-		/********************************************************************/
-		public override int GetSongPosition()
-		{
-			return bpStep;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set a new position of the song
-		/// </summary>
-		/********************************************************************/
-		public override void SetSongPosition(int position, PositionInfo positionInfo)
-		{
-			// Change the position
-			bpStep = (ushort)position;
-			bpPatCount = 0;
-			bpRepCount = 0;
-			posFlag = false;
-
-			// Change the speed
-			bpCount = 1;
-			bpDelay = positionInfo.Speed;
-
-			OnModuleInfoChanged(InfoSpeedLine, bpDelay.ToString());
-
-			base.SetSongPosition(position, positionInfo);
+				MarkPositionAsVisited(playingInfo.BpStep);
+			}
 		}
 
 
@@ -587,7 +496,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 				uint[] frequencies = new uint[10 * 12];
 
 				for (int j = 0; j < 7 * 12; j++)
-					frequencies[1 * 12 + j] = 3546895U / periods[j];
+					frequencies[1 * 12 + j] = 3546895U / Tables.Periods[j];
 
 				for (int i = 0; i < 15; i++)
 				{
@@ -640,19 +549,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		}
 		#endregion
 
-		#region Duration calculation methods
+		#region ModulePlayerWithPositionDurationAgentBase implementation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override int InitDurationCalculationByStartPos(int startPosition)
+		protected override int InitDuration(int startPosition)
 		{
-			if ((startPosition < 0) || (startPosition >= stepNum))
-				return -1;
-
 			InitializeSound(startPosition);
+			MarkPositionAsVisited(startPosition);
 
 			return startPosition;
 		}
@@ -661,24 +568,47 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 		/********************************************************************/
 		/// <summary>
-		/// Cleanup needed stuff after a sub-song calculation
+		/// Return the total number of positions
 		/// </summary>
 		/********************************************************************/
-		protected override void CleanupDurationCalculation()
+		protected override int GetTotalNumberOfPositions()
 		{
-			CleanupSound();
+			return stepNum;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the current speed
+		/// Create a snapshot of all the internal structures and return it
 		/// </summary>
 		/********************************************************************/
-		protected override byte GetCurrentSpeed()
+		protected override ISnapshot CreateSnapshot()
 		{
-			return bpDelay;
+			return new Snapshot(playingInfo, bpCurrent);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize internal structures based on the snapshot given
+		/// </summary>
+		/********************************************************************/
+		protected override bool SetSnapshot(ISnapshot snapshot, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			// Start to make a clone of the snapshot
+			Snapshot currentSnapshot = (Snapshot)snapshot;
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayingInfo, currentSnapshot.Channels);
+
+			playingInfo = clonedSnapshot.PlayingInfo;
+			bpCurrent = clonedSnapshot.Channels;
+
+			UpdateModuleInformation();
+
+			return true;
 		}
 		#endregion
 
@@ -723,6 +653,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 			steps = null;
 			tracks = null;
 			waveTables = null;
+
+			playingInfo = null;
+			bpCurrent = null;
 		}
 
 
@@ -735,33 +668,39 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		private void InitializeSound(int startPosition)
 		{
 			// Initialize member variables
-			arpCount = 1;
-			bpCount = 1;
-			bpDelay = 6;
-			bpRepCount = 0;
-			vibIndex = 0;
-			bpStep = (ushort)startPosition;
-			bpPatCount = 0;
-			st = 0;
-			tr = 0;
-			newPos = 0;
-			posFlag = false;
+			playingInfo = new GlobalPlayingInfo
+			{
+				ArpCount = 1,
+				BpCount = 1,
+				BpDelay = 6,
+				BpRepCount = 0,
+				VibIndex = 0,
+				BpStep = (ushort)startPosition,
+				BpPatCount = 0,
+				St = 0,
+				Tr = 0,
+				NewPos = 0,
+				PosFlag = false
+			};
+
+			endReached = false;
 
 			// Initialize the BpCurrent structure for each channel
-			bpCurrent = Helpers.InitializeArray<BpCurrent>(4);
+			bpCurrent = ArrayHelper.InitializeArray<BpCurrent>(4);
 			bpCurrent[0].SynthOffset = -1;
 			bpCurrent[1].SynthOffset = -1;
 			bpCurrent[2].SynthOffset = -1;
 			bpCurrent[3].SynthOffset = -1;
 
 			// Allocate the temporary synth data buffer
-			synthBuffer = new sbyte[4][];
-			synthBuffer[0] = new sbyte[32];
-			synthBuffer[1] = new sbyte[32];
-			synthBuffer[2] = new sbyte[32];
-			synthBuffer[3] = new sbyte[32];
+			playingInfo.SynthBuffer = new sbyte[4][];
+			playingInfo.SynthBuffer[0] = new sbyte[32];
+			playingInfo.SynthBuffer[1] = new sbyte[32];
+			playingInfo.SynthBuffer[2] = new sbyte[32];
+			playingInfo.SynthBuffer[3] = new sbyte[32];
 
-			MarkPositionAsVisited(startPosition);
+			// Make a copy of the wave tables
+			playingInfo.WaveTables = ArrayHelper.CloneArray(waveTables);
 		}
 
 
@@ -780,10 +719,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 			DoSynths();
 
 			// At last, update the positions
-			bpCount--;
-			if (bpCount == 0)
+			playingInfo.BpCount--;
+			if (playingInfo.BpCount == 0)
 			{
-				bpCount = bpDelay;
+				playingInfo.BpCount = playingInfo.BpDelay;
 				BpNext();
 
 				for (int i = 0; i < 4; i++)
@@ -794,7 +733,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 						// Copy temporary synth data back
 						if (bpCurrent[i].SynthOffset >= 0)
 						{
-							Array.Copy(synthBuffer[i], 0, waveTables, bpCurrent[i].SynthOffset, 32);
+							Array.Copy(playingInfo.SynthBuffer[i], 0, playingInfo.WaveTables, bpCurrent[i].SynthOffset, 32);
 							bpCurrent[i].SynthOffset = -1;
 						}
 
@@ -819,12 +758,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 				BpCurrent cur = bpCurrent[i];
 
 				// Get the step information
-				ushort track = steps[i][bpStep].TrackNumber;
-				st = steps[i][bpStep].SoundTranspose;
-				tr = steps[i][bpStep].Transpose;
+				ushort track = steps[i][playingInfo.BpStep].TrackNumber;
+				playingInfo.St = steps[i][playingInfo.BpStep].SoundTranspose;
+				playingInfo.Tr = steps[i][playingInfo.BpStep].Transpose;
 
 				// Find the track
-				Track curTrack = tracks[track - 1][bpPatCount];
+				Track curTrack = tracks[track - 1][playingInfo.BpPatCount];
 
 				// Is there any note?
 				sbyte note = curTrack.Note;
@@ -837,10 +776,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 					// Find the note number and period
 					if ((curTrack.Optional != Optional.Transpose) || ((curTrack.OptionalData & 0xf0) == 0))
-						note += tr;
+						note += playingInfo.Tr;
 
 					cur.Note = (byte)note;
-					cur.Period = periods[note + 36 - 1];
+					cur.Period = Tables.Periods[note + 36 - 1];
 					cur.Restart = false;
 
 					// Should the voice be retrigged?
@@ -857,9 +796,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 					if ((inst != 0) && ((curTrack.Optional != Optional.Transpose) || ((curTrack.OptionalData & 0x0f) == 0)))
 					{
-						inst += (byte)st;
+						inst += (byte)playingInfo.St;
 						if ((inst < 1) || (inst > 15))
-							inst -= (byte)st;
+							inst -= (byte)playingInfo.St;
 					}
 
 					if ((curTrack.Optional < Optional.ChangeInversion) && (!cur.SynthMode || (cur.Instrument != inst)))
@@ -870,46 +809,44 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 			}
 
 			// Change the position
-			if (posFlag)
+			if (playingInfo.PosFlag)
 			{
-				bpPatCount = 0;
-				bpStep = newPos;
+				playingInfo.BpPatCount = 0;
+				playingInfo.BpStep = playingInfo.NewPos;
 			}
 			else
 			{
 				// Next row in the pattern
-				bpPatCount++;
-				if (bpPatCount == 16)
+				playingInfo.BpPatCount++;
+				if (playingInfo.BpPatCount == 16)
 				{
 					// Done with the pattern, now go to the next step
-					posFlag = true;
-					bpPatCount = 0;
-					bpStep++;
+					playingInfo.PosFlag = true;
+					playingInfo.BpPatCount = 0;
+					playingInfo.BpStep++;
 
-					if (bpStep == stepNum)
+					if (playingInfo.BpStep == stepNum)
 					{
 						// Done with the module, repeat it
-						bpStep = (ushort)(currentDurationInfo?.StartPosition ?? 0);
+						playingInfo.BpStep = 0;
 					}
 				}
 			}
 
-			if (posFlag)
+			if (playingInfo.PosFlag)
 			{
-				OnPositionChanged();
+				ShowSongPosition();
+				ShowTracks();
 
-				if (bpRepCount == 0)
+				if ((playingInfo.BpRepCount == 0) || playingInfo.FirstRepeat)
 				{
-					if (HasPositionBeenVisited(bpStep))
-					{
-						bpDelay = currentDurationInfo?.PositionInfo[bpStep].Speed ?? 6;
-						OnEndReached();
-					}
+					if (HasPositionBeenVisited(playingInfo.BpStep))
+						endReached = true;
 
-					MarkPositionAsVisited(bpStep);
+					MarkPositionAsVisited(playingInfo.BpStep);
 				}
 
-				posFlag = false;
+				playingInfo.PosFlag = false;
 			}
 		}
 
@@ -958,14 +895,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 					// Play the synth sound
 					int waveOffset = synthInst.WaveTable * 64;
-					VirtualChannels[voice].PlaySample((short)(cur.Instrument - 1), waveTables, (uint)waveOffset, synthInst.WaveLength);
+					VirtualChannels[voice].PlaySample((short)(cur.Instrument - 1), playingInfo.WaveTables, (uint)waveOffset, synthInst.WaveLength);
 					VirtualChannels[voice].SetLoop((uint)waveOffset, synthInst.WaveLength);
 
 					// Initialize ADSR
 					if (cur.AdsrControl != 0)
 					{
 						// Get table value
-						int tmp = (waveTables[synthInst.AdsrTable * 64] + 128) / 4;
+						int tmp = (playingInfo.WaveTables[synthInst.AdsrTable * 64] + 128) / 4;
 
 						if (cur.UseDefaultVolume)
 						{
@@ -986,7 +923,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 					if ((cur.EgControl != 0) || (cur.ModControl != 0) || (cur.FxControl != 0))
 					{
 						cur.SynthOffset = waveOffset;
-						Array.Copy(waveTables, waveOffset, synthBuffer[voice], 0, 32);
+						Array.Copy(playingInfo.WaveTables, waveOffset, playingInfo.SynthBuffer[voice], 0, 32);
 					}
 				}
 				else if (inst is SampleInstrument sampleInst)
@@ -1056,10 +993,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 				// Set speed
 				case Optional.SetSpeed:
 				{
-					bpCount = optionalData;
-					bpDelay = optionalData;
+					playingInfo.BpCount = optionalData;
+					playingInfo.BpDelay = optionalData;
 
-					OnModuleInfoChanged(InfoSpeedLine, optionalData.ToString());
+					ShowSpeed();
 					break;
 				}
 
@@ -1091,8 +1028,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 				{
 					if (currentModuleType == ModuleType.SoundMon11)
 					{
-						if (bpRepCount == 0)
-							bpRepCount = optionalData;
+						if (playingInfo.BpRepCount == 0)
+						{
+							playingInfo.BpRepCount = optionalData;
+
+							if (playingInfo.BpRepCount != 0)
+								playingInfo.FirstRepeat = true;
+						}
 					}
 					else
 						cur.Vibrato = (sbyte)optionalData;
@@ -1107,18 +1049,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 					{
 						case ModuleType.SoundMon11:
 						{
-							if (bpRepCount != 0)
+							if (playingInfo.BpRepCount != 0)
 							{
-								bpRepCount--;
-								if (bpRepCount != 0)
+								playingInfo.FirstRepeat = false;
+
+								playingInfo.BpRepCount--;
+								if (playingInfo.BpRepCount != 0)
 								{
-									newPos = optionalData;
-									posFlag = true;
+									playingInfo.NewPos = optionalData;
+									playingInfo.PosFlag = true;
 
 									// Set the "end" mark, if we have to
 									// repeat the block a lot
-									if ((bpRepCount == 254) || ((bpRepCount >= 15) && (newPos < bpStep)))
-										OnEndReached();
+									if ((playingInfo.BpRepCount == 254) || ((playingInfo.BpRepCount >= 15) && (playingInfo.NewPos < playingInfo.BpStep)))
+										endReached = true;
 								}
 							}
 							break;
@@ -1126,8 +1070,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 						case ModuleType.SoundMon22:
 						{
-							newPos = optionalData;
-							posFlag = true;
+							playingInfo.NewPos = optionalData;
+							playingInfo.PosFlag = true;
 							break;
 						}
 					}
@@ -1208,10 +1152,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		private void DoEffects()
 		{
 			// Adjust the arpeggio counter
-			arpCount = (byte)((arpCount - 1) & 3);
+			playingInfo.ArpCount = (byte)((playingInfo.ArpCount - 1) & 3);
 
 			// Adjust the vibrato table index
-			vibIndex = (byte)((vibIndex + 1) & 7);
+			playingInfo.VibIndex = (byte)((playingInfo.VibIndex + 1) & 7);
 
 			for (int i = 0; i < 4; i++)
 			{
@@ -1222,7 +1166,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 				// Vibrato
 				if (cur.Vibrato != 0)
-					VirtualChannels[i].SetAmigaPeriod((ushort)(cur.Period + vibTable[vibIndex] / cur.Vibrato));
+					VirtualChannels[i].SetAmigaPeriod((ushort)(cur.Period + Tables.VibratoTable[playingInfo.VibIndex] / cur.Vibrato));
 				else
 					VirtualChannels[i].SetAmigaPeriod(cur.Period);
 
@@ -1231,17 +1175,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 				{
 					int note = (sbyte)cur.Note;
 
-					if (arpCount == 0)
+					if (playingInfo.ArpCount == 0)
 						note += ((cur.ArpValue & 0xf0) >> 4) + ((cur.AutoArp & 0xf0) >> 4);
 					else
 					{
-						if (arpCount == 1)
+						if (playingInfo.ArpCount == 1)
 							note += (cur.ArpValue & 0x0f) + (cur.AutoArp & 0x0f);
 					}
 
 					// Find the period
 					cur.Restart = false;
-					cur.Period = periods[note + 36 - 1];
+					cur.Period = Tables.Periods[note + 36 - 1];
 					VirtualChannels[i].SetAmigaPeriod(cur.Period);
 				}
 			}
@@ -1301,7 +1245,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 					cur.AdsrCount = synthInst.AdsrSpeed;
 
 					// Calculate new volume
-					int tableValue = (((waveTables[synthInst.AdsrTable * 64 + cur.AdsrPtr] + 128) / 4) * cur.Volume) / 16;
+					int tableValue = (((playingInfo.WaveTables[synthInst.AdsrTable * 64 + cur.AdsrPtr] + 128) / 4) * cur.Volume) / 16;
 					VirtualChannels[voice].SetVolume((ushort)(tableValue > 256 ? 256 : tableValue));
 
 					// Update the ADSR pointer
@@ -1336,7 +1280,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 					cur.LfoCount = synthInst.LfoSpeed;
 
 					// Get the wave table value
-					int tableValue = waveTables[synthInst.LfoTable * 64 + cur.LfoPtr];
+					int tableValue = playingInfo.WaveTables[synthInst.LfoTable * 64 + cur.LfoPtr];
 
 					// Adjust the value by the LFO depth
 					if (synthInst.LfoDepth != 0)
@@ -1378,13 +1322,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 					// Calculate new EG value
 					int tableValue = cur.OldEgValue;
-					cur.OldEgValue = (byte)((waveTables[synthInst.EgTable * 64 + cur.EgPtr] + 128) / 8);
+					cur.OldEgValue = (byte)((playingInfo.WaveTables[synthInst.EgTable * 64 + cur.EgPtr] + 128) / 8);
 
 					// Do we need to do the EG thing at all?
 					if (cur.OldEgValue != tableValue)
 					{
 						// Find the source and destination offset
-						sbyte[] source = synthBuffer[voice];
+						sbyte[] source = playingInfo.SynthBuffer[voice];
 						int sourceOffset = tableValue;
 						int destOffset = cur.SynthOffset + tableValue;
 
@@ -1393,14 +1337,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 							tableValue = tableValue - cur.OldEgValue;
 
 							for (int j = 0; j < tableValue; j++)
-								waveTables[--destOffset] = source[--sourceOffset];
+								playingInfo.WaveTables[--destOffset] = source[--sourceOffset];
 						}
 						else
 						{
 							tableValue = cur.OldEgValue - tableValue;
 
 							for (int j = 0; j < tableValue; j++)
-								waveTables[destOffset++] = (sbyte)-source[sourceOffset++];
+								playingInfo.WaveTables[destOffset++] = (sbyte)-source[sourceOffset++];
 						}
 					}
 
@@ -1468,7 +1412,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 						cur.FxControl = 0;
 						cur.FxCount = 1;
 
-						Array.Copy(waveTables, cur.SynthOffset + 64, waveTables, cur.SynthOffset, 32);
+						Array.Copy(playingInfo.WaveTables, cur.SynthOffset + 64, playingInfo.WaveTables, cur.SynthOffset, 32);
 					}
 					break;
 				}
@@ -1493,7 +1437,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 					cur.ModCount = synthInst.ModSpeed;
 
 					// Get the table value and store it in the synth sample
-					waveTables[cur.SynthOffset + 32] = waveTables[synthInst.ModTable * 64 + cur.ModPtr];
+					playingInfo.WaveTables[cur.SynthOffset + 32] = playingInfo.WaveTables[synthInst.ModTable * 64 + cur.ModPtr];
 
 					// Update the MOD pointer
 					cur.ModPtr++;
@@ -1519,12 +1463,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		private void Averaging(int voice)
 		{
 			int synthOffset = bpCurrent[voice].SynthOffset;
-			sbyte lastVal = waveTables[synthOffset];
+			sbyte lastVal = playingInfo.WaveTables[synthOffset];
 
 			for (int i = 0; i < 32 - 1; i++)
 			{
-				lastVal = (sbyte)((lastVal + waveTables[synthOffset + 1]) / 2);
-				waveTables[synthOffset++] = lastVal;
+				lastVal = (sbyte)((lastVal + playingInfo.WaveTables[synthOffset + 1]) / 2);
+				playingInfo.WaveTables[synthOffset++] = lastVal;
 			}
 		}
 
@@ -1537,21 +1481,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		/********************************************************************/
 		private void Transform2(int voice, sbyte delta)
 		{
-			sbyte[] source = synthBuffer[voice];
+			sbyte[] source = playingInfo.SynthBuffer[voice];
 			int sourceOffset = 31;
 			int destOffset = bpCurrent[voice].SynthOffset;
 
 			for (int i = 0; i < 32; i++)
 			{
 				sbyte sourceVal = source[sourceOffset];
-				sbyte destVal = waveTables[destOffset];
+				sbyte destVal = playingInfo.WaveTables[destOffset];
 
 				if (sourceVal < destVal)
-					waveTables[destOffset] -= delta;
+					playingInfo.WaveTables[destOffset] -= delta;
 				else
 				{
 					if (sourceVal > destVal)
-						waveTables[destOffset] += delta;
+						playingInfo.WaveTables[destOffset] += delta;
 				}
 
 				sourceOffset--;
@@ -1568,21 +1512,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		/********************************************************************/
 		private void Transform3(int voice, sbyte delta)
 		{
-			sbyte[] source = synthBuffer[voice];
+			sbyte[] source = playingInfo.SynthBuffer[voice];
 			int sourceOffset = 0;
 			int destOffset = bpCurrent[voice].SynthOffset;
 
 			for (int i = 0; i < 32; i++)
 			{
 				sbyte sourceVal = source[sourceOffset];
-				sbyte destVal = waveTables[destOffset];
+				sbyte destVal = playingInfo.WaveTables[destOffset];
 
 				if (sourceVal < destVal)
-					waveTables[destOffset] -= delta;
+					playingInfo.WaveTables[destOffset] -= delta;
 				else
 				{
 					if (sourceVal > destVal)
-						waveTables[destOffset] += delta;
+						playingInfo.WaveTables[destOffset] += delta;
 				}
 
 				sourceOffset++;
@@ -1604,20 +1548,92 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 			for (int i = 0; i < 32; i++)
 			{
-				sbyte sourceVal = sourceOffset >= waveTables.Length ? (sbyte)0 : waveTables[sourceOffset];
-				sbyte destVal = waveTables[destOffset];
+				sbyte sourceVal = sourceOffset >= playingInfo.WaveTables.Length ? (sbyte)0 : playingInfo.WaveTables[sourceOffset];
+				sbyte destVal = playingInfo.WaveTables[destOffset];
 
 				if (sourceVal < destVal)
-					waveTables[destOffset] -= delta;
+					playingInfo.WaveTables[destOffset] -= delta;
 				else
 				{
 					if (sourceVal > destVal)
-						waveTables[destOffset] += delta;
+						playingInfo.WaveTables[destOffset] += delta;
 				}
 
 				sourceOffset++;
 				destOffset++;
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current song position
+		/// </summary>
+		/********************************************************************/
+		private void ShowSongPosition()
+		{
+			OnModuleInfoChanged(InfoPositionLine, playingInfo.BpStep.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with track numbers
+		/// </summary>
+		/********************************************************************/
+		private void ShowTracks()
+		{
+			OnModuleInfoChanged(InfoTrackLine, FormatTracks());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current speed
+		/// </summary>
+		/********************************************************************/
+		private void ShowSpeed()
+		{
+			OnModuleInfoChanged(InfoSpeedLine, playingInfo.BpDelay.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with all dynamic values
+		/// </summary>
+		/********************************************************************/
+		private void UpdateModuleInformation()
+		{
+			ShowSongPosition();
+			ShowTracks();
+			ShowSpeed();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the playing tracks
+		/// </summary>
+		/********************************************************************/
+		private string FormatTracks()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < 4; i++)
+			{
+				sb.Append(steps[i][playingInfo.BpStep].TrackNumber);
+				sb.Append(", ");
+			}
+
+			sb.Remove(sb.Length - 2, 2);
+
+			return sb.ToString();
 		}
 		#endregion
 	}

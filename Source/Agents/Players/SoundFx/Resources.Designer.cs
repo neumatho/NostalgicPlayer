@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -123,7 +123,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Song length:.
+        ///   Looks up a localized string similar to Number of positions:.
         /// </summary>
         internal static string IDS_SFX_INFODESCLINE0 {
             get {
@@ -150,11 +150,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to BPM:.
+        ///   Looks up a localized string similar to Playing position:.
         /// </summary>
         internal static string IDS_SFX_INFODESCLINE3 {
             get {
                 return ResourceManager.GetString("IDS_SFX_INFODESCLINE3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Playing pattern:.
+        /// </summary>
+        internal static string IDS_SFX_INFODESCLINE4 {
+            get {
+                return ResourceManager.GetString("IDS_SFX_INFODESCLINE4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current tempo (BPM):.
+        /// </summary>
+        internal static string IDS_SFX_INFODESCLINE5 {
+            get {
+                return ResourceManager.GetString("IDS_SFX_INFODESCLINE5", resourceCulture);
             }
         }
         

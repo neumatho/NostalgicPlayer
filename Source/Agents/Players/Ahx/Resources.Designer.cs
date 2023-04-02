@@ -137,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Song length:.
+        ///   Looks up a localized string similar to Number of positions:.
         /// </summary>
         internal static string IDS_AHX_INFODESCLINE0 {
             get {
@@ -164,7 +164,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Current speed:.
+        ///   Looks up a localized string similar to Playing position:.
         /// </summary>
         internal static string IDS_AHX_INFODESCLINE3 {
             get {
@@ -173,11 +173,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Current tempo (Hz):.
+        ///   Looks up a localized string similar to Playing tracks:.
         /// </summary>
         internal static string IDS_AHX_INFODESCLINE4 {
             get {
                 return ResourceManager.GetString("IDS_AHX_INFODESCLINE4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current speed:.
+        /// </summary>
+        internal static string IDS_AHX_INFODESCLINE5 {
+            get {
+                return ResourceManager.GetString("IDS_AHX_INFODESCLINE5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current tempo (Hz):.
+        /// </summary>
+        internal static string IDS_AHX_INFODESCLINE6 {
+            get {
+                return ResourceManager.GetString("IDS_AHX_INFODESCLINE6", resourceCulture);
             }
         }
         

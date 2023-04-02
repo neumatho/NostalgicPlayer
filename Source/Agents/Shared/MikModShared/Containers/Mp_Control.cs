@@ -3,13 +3,15 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+
 namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 {
 #pragma warning disable 1591
 	/// <summary>
 	/// Mp_Control structure
 	/// </summary>
-	public class Mp_Control
+	public class Mp_Control : IDeepCloneable<Mp_Control>
 	{
 		public Mp_Channel Main;
 
@@ -93,6 +95,16 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 
 		public short Pat_RepPos;				// PatternLoop position
 		public ushort Pat_RepCnt;				// Times to loop
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Mp_Control MakeDeepClone()
+		{
+			return (Mp_Control)MemberwiseClone();
+		}
 	}
 #pragma warning restore 1591
 }

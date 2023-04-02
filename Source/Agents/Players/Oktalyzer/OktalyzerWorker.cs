@@ -11,8 +11,7 @@ using Polycode.NostalgicPlayer.Agent.Player.Oktalyzer.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
-using Polycode.NostalgicPlayer.Kit.Containers.Types;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
@@ -21,59 +20,32 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class OktalyzerWorker : ModulePlayerAgentBase
+	internal class OktalyzerWorker : ModulePlayerWithPositionDurationAgentBase
 	{
-		private static readonly short[] periods =
-		{
-			856, 808, 762, 720, 678, 640, 604, 570, 538, 508, 480, 453,
-			428, 404, 381, 360, 339, 320, 302, 285, 269, 254, 240, 226,
-			214, 202, 190, 180, 170, 160, 151, 143, 135, 127, 120, 113
-		};
-
-		private static readonly ChannelPanningType[] panPos =
-		{
-			ChannelPanningType.Left, ChannelPanningType.Left, ChannelPanningType.Right, ChannelPanningType.Right,
-			ChannelPanningType.Right, ChannelPanningType.Right, ChannelPanningType.Left, ChannelPanningType.Left
-		};
-
-		private static readonly sbyte[] arp10 =
-		{
-			0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0
-		};
-
-		private static readonly sbyte[] arp12 =
-		{
-			0, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3
-		};
-
 		private uint sampNum;
 		private ushort pattNum;
 		private ushort songLength;
 		private ushort chanNum;
 		private ushort startSpeed;
 
-		private ushort currentSpeed;
-		private ushort speedCounter;
-		private short songPos;
-		private short newSongPos;
-		private short pattPos;
-		private bool filterStatus;
-
 		private bool[] channelFlags;
 		private byte[] patternTable;
 		private Sample[] samples;
 		private Pattern[] patterns;
 
-		private PatternLine[] currLine;
-		private ChannelInfo[] chanInfo;
-		private sbyte[] chanVol;
 		private byte[] chanIndex;
 
 		private uint readPatt;
 		private uint readSamp;
 		private uint realUsedSampNum;
 
-		private const int InfoSpeedLine = 3;
+		private GlobalPlayingInfo playingInfo;
+
+		private bool endReached;
+
+		private const int InfoPositionLine = 3;
+		private const int InfoPatternLine = 4;
+		private const int InfoSpeedLine = 5;
 
 		#region IPlayerAgent implementation
 		/********************************************************************/
@@ -120,7 +92,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 			// Find out which line to take
 			switch (line)
 			{
-				// Song length
+				// Number of positions
 				case 0:
 				{
 					description = Resources.IDS_OKT_INFODESCLINE0;
@@ -144,11 +116,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 					break;
 				}
 
-				// Current speed
+				// Playing position
 				case 3:
 				{
 					description = Resources.IDS_OKT_INFODESCLINE3;
-					value = currentSpeed.ToString();
+					value = playingInfo.SongPos.ToString();
+					break;
+				}
+
+				// Playing pattern
+				case 4:
+				{
+					description = Resources.IDS_OKT_INFODESCLINE4;
+					value = patternTable[playingInfo.SongPos].ToString();
+					break;
+				}
+
+				// Current speed
+				case 5:
+				{
+					description = Resources.IDS_OKT_INFODESCLINE5;
+					value = playingInfo.CurrentSpeed.ToString();
 					break;
 				}
 
@@ -166,15 +154,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		#endregion
 
 		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.SetPosition;
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -343,41 +322,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
+		public override bool InitSound(int songNumber, out string errorMessage)
 		{
-			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+			if (!base.InitSound(songNumber, out errorMessage))
 				return false;
 
-			InitializeSound(durationInfo.StartPosition);
+			InitializeSound(0);
 
 			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Cleanup the current song
-		/// </summary>
-		/********************************************************************/
-		public override void CleanupSound()
-		{
-			chanInfo = null;
-			currLine = null;
-			chanVol = null;
-			chanIndex = null;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override DurationInfo[] CalculateDuration()
-		{
-			return CalculateDurationBySongPosition();
 		}
 
 
@@ -390,11 +342,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		public override void Play()
 		{
 			// Wait until we need to play another pattern line
-			speedCounter++;
-			if (speedCounter >= currentSpeed)
+			playingInfo.SpeedCounter++;
+			if (playingInfo.SpeedCounter >= playingInfo.CurrentSpeed)
 			{
 				// Play next pattern line
-				speedCounter = 0;
+				playingInfo.SpeedCounter = 0;
 
 				FindNextPatternLine();
 				PlayPatternLine();
@@ -405,7 +357,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 			SetVolumes();
 
 			// Do the filter stuff
-			AmigaFilter = filterStatus;
+			AmigaFilter = playingInfo.FilterStatus;
+
+			// Have we reached the end of the module
+			if (endReached)
+			{
+				OnEndReached(playingInfo.SongPos);
+				endReached = false;
+
+				MarkPositionAsVisited(playingInfo.SongPos);
+			}
 		}
 
 
@@ -416,49 +377,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		/// </summary>
 		/********************************************************************/
 		public override int ModuleChannelCount => chanNum;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the length of the current song
-		/// </summary>
-		/********************************************************************/
-		public override int SongLength => songLength;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position of the song
-		/// </summary>
-		/********************************************************************/
-		public override int GetSongPosition()
-		{
-			return songPos;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set a new position of the song
-		/// </summary>
-		/********************************************************************/
-		public override void SetSongPosition(int position, PositionInfo positionInfo)
-		{
-			// Change the position
-			songPos = (short)position;
-			newSongPos = -1;
-			pattPos = 0;
-			currentSpeed = positionInfo.Speed;
-			speedCounter = currentSpeed;
-
-			OnModuleInfoChanged(InfoSpeedLine, currentSpeed.ToString());
-			ChangeSubSong(positionInfo.SubSong);
-
-			base.SetSongPosition(position, positionInfo);
-		}
 
 
 
@@ -476,7 +394,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				uint[] frequencies = new uint[10 * 12];
 
 				for (int j = 0; j < 3 * 12; j++)
-					frequencies[4 * 12 + j] = 3546895U / (ushort)periods[j];
+					frequencies[4 * 12 + j] = 3546895U / (ushort)Tables.Periods[j];
 
 				foreach (Sample sample in samples)
 				{
@@ -513,16 +431,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		}
 		#endregion
 
-		#region Duration calculation methods
+		#region ModulePlayerWithPositionDurationAgentBase implementation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override int InitDurationCalculationByStartPos(int startPosition)
+		protected override int InitDuration(int startPosition)
 		{
 			InitializeSound(startPosition);
+			MarkPositionAsVisited(startPosition);
 
 			return startPosition;
 		}
@@ -531,12 +450,46 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the current speed
+		/// Return the total number of positions
 		/// </summary>
 		/********************************************************************/
-		protected override byte GetCurrentSpeed()
+		protected override int GetTotalNumberOfPositions()
 		{
-			return (byte)currentSpeed;
+			return songLength;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a snapshot of all the internal structures and return it
+		/// </summary>
+		/********************************************************************/
+		protected override ISnapshot CreateSnapshot()
+		{
+			return new Snapshot(playingInfo);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize internal structures based on the snapshot given
+		/// </summary>
+		/********************************************************************/
+		protected override bool SetSnapshot(ISnapshot snapshot, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			// Start to make a clone of the snapshot
+			Snapshot currentSnapshot = (Snapshot)snapshot;
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayingInfo);
+
+			playingInfo = clonedSnapshot.PlayingInfo;
+
+			UpdateModuleInformation();
+
+			return true;
 		}
 		#endregion
 
@@ -549,32 +502,36 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		private void InitializeSound(int startPosition)
 		{
 			// Initialize the variables
-			chanInfo = Helpers.InitializeArray<ChannelInfo>(8);
-			currLine = Helpers.InitializeArray<PatternLine>(8);
-			chanVol = new sbyte[8];
+			playingInfo = new GlobalPlayingInfo
+			{
+				ChanInfo = ArrayHelper.InitializeArray<ChannelInfo>(8),
+				CurrLine = ArrayHelper.InitializeArray<PatternLine>(8),
+				ChanVol = new sbyte[8],
+
+				SongPos = (short)startPosition,
+				NewSongPos = -1,
+				PattPos = -1,
+				CurrentSpeed = startSpeed,
+				SpeedCounter = 0,
+				FilterStatus = false
+			};
+
 			chanIndex = new byte[8];
 
 			for (int i = 0; i < 8; i++)
-				chanVol[i] = 64;
-
-			songPos = (short)startPosition;
-			newSongPos = -1;
-			pattPos = -1;
-			currentSpeed = startSpeed;
-			speedCounter = 0;
-			filterStatus = false;
+				playingInfo.ChanVol[i] = 64;
 
 			// Set the channel panning + create the channel index
 			for (int i = 0, panNum = 0; i < chanNum; i++, panNum++)
 			{
-				VirtualChannels[i].SetPanning((ushort)panPos[panNum]);
+				VirtualChannels[i].SetPanning((ushort)Tables.PanPos[panNum]);
 				chanIndex[i] = (byte)(panNum / 2);
 
 				if (!channelFlags[panNum / 2])
 					panNum++;
 			}
 
-			MarkPositionAsVisited(startPosition);
+			endReached = false;
 		}
 
 
@@ -589,6 +546,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 			patterns = null;
 			samples = null;
 			channelFlags = null;
+			chanIndex = null;
+
+			playingInfo = null;
 		}
 
 
@@ -864,47 +824,42 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		private void FindNextPatternLine()
 		{
 			// Find the right pattern
-			Pattern patt = patterns[patternTable[songPos]];
+			Pattern patt = patterns[patternTable[playingInfo.SongPos]];
 
 			// Go to next pattern line
-			pattPos++;
+			playingInfo.PattPos++;
 
-			if ((pattPos >= patt.LineNum) || (newSongPos != -1))
+			if ((playingInfo.PattPos >= patt.LineNum) || (playingInfo.NewSongPos != -1))
 			{
 				// Okay, we're done with the current pattern. Find the next one
-				pattPos = 0;
+				playingInfo.PattPos = 0;
 
-				if (newSongPos != -1)
+				if (playingInfo.NewSongPos != -1)
 				{
-					songPos = newSongPos;
-					newSongPos = -1;
+					playingInfo.SongPos = playingInfo.NewSongPos;
+					playingInfo.NewSongPos = -1;
 				}
 				else
-					songPos++;
+					playingInfo.SongPos++;
 
-				if (songPos == songLength)
-					songPos = (short)(currentDurationInfo?.StartPosition ?? 0);
+				if (playingInfo.SongPos == songLength)
+					playingInfo.SongPos = 0;
 
-				if (HasPositionBeenVisited(songPos))
-				{
-					currentSpeed = currentDurationInfo?.PositionInfo[songPos].Speed ?? startSpeed;
+				if (HasPositionBeenVisited(playingInfo.SongPos))
+					endReached = true;
 
-					// Tell NostalgicPlayer that the module has ended
-					OnEndReached();
-				}
-
-				// Tell NostalgicPlayer we have changed the song position
-				OnPositionChanged();
-
-				MarkPositionAsVisited(songPos);
+				MarkPositionAsVisited(playingInfo.SongPos);
 
 				// Find the right pattern
-				patt = patterns[patternTable[songPos]];
+				patt = patterns[patternTable[playingInfo.SongPos]];
+
+				ShowSongPosition();
+				ShowPattern();
 			}
 
 			// Copy the current line data
 			for (int i = 0; i < chanNum; i++)
-				currLine[i] = patt.Lines[pattPos * chanNum + i];
+				playingInfo.CurrLine[i] = patt.Lines[playingInfo.PattPos * chanNum + i];
 		}
 
 
@@ -935,8 +890,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		private void PlayChannel(uint channelNum)
 		{
 			// Get the pattern and channel data
-			PatternLine pattData = currLine[channelNum];
-			ChannelInfo chanData = chanInfo[channelNum];
+			PatternLine pattData = playingInfo.CurrLine[channelNum];
+			ChannelInfo chanData = playingInfo.ChanInfo[channelNum];
 
 			// If we shouldn't play any note, well just return
 			if (pattData.Note == 0)
@@ -974,7 +929,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 					return;
 
 				// Set the channel volume
-				chanVol[chanIndex[channelNum]] = (sbyte)samp.Volume;
+				playingInfo.ChanVol[chanIndex[channelNum]] = (sbyte)samp.Volume;
 
 				// Does the sample loop?
 				if (samp.RepeatLength == 0)
@@ -998,7 +953,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 
 			// Find the period
 			chanData.CurrNote = note;
-			chanData.CurrPeriod = periods[note];
+			chanData.CurrPeriod = Tables.Periods[note];
 
 			VirtualChannels[channelNum].SetAmigaPeriod((uint)chanData.CurrPeriod);
 		}
@@ -1013,18 +968,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		private void SetVolumes()
 		{
 			// Start to copy the volumes
-			chanVol[4] = chanVol[0];
-			chanVol[5] = chanVol[1];
-			chanVol[6] = chanVol[2];
-			chanVol[7] = chanVol[3];
+			playingInfo.ChanVol[4] = playingInfo.ChanVol[0];
+			playingInfo.ChanVol[5] = playingInfo.ChanVol[1];
+			playingInfo.ChanVol[6] = playingInfo.ChanVol[2];
+			playingInfo.ChanVol[7] = playingInfo.ChanVol[3];
 
 			// Now set the volume
 			for (int i = 0, j = 0; i < 4; i++, j++)
 			{
-				VirtualChannels[j].SetAmigaVolume((ushort)chanVol[i]);
+				VirtualChannels[j].SetAmigaVolume((ushort)playingInfo.ChanVol[i]);
 
 				if (channelFlags[i])
-					VirtualChannels[++j].SetAmigaVolume((ushort)chanVol[i]);
+					VirtualChannels[++j].SetAmigaVolume((ushort)playingInfo.ChanVol[i]);
 			}
 		}
 
@@ -1056,8 +1011,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		private void DoChannelEffect(uint channelNum)
 		{
 			// Get the pattern and channel data
-			PatternLine pattData = currLine[channelNum];
-			ChannelInfo chanData = chanInfo[channelNum];
+			PatternLine pattData = playingInfo.CurrLine[channelNum];
+			ChannelInfo chanData = playingInfo.ChanInfo[channelNum];
 
 			switch (pattData.Effect)
 			{
@@ -1087,7 +1042,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				case 10:
 				{
 					sbyte workNote = (sbyte)chanData.CurrNote;
-					sbyte arpNum = arp10[speedCounter];
+					sbyte arpNum = Tables.Arp10[playingInfo.SpeedCounter];
 
 					switch (arpNum)
 					{
@@ -1119,7 +1074,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				{
 					sbyte workNote = (sbyte)chanData.CurrNote;
 
-					switch (speedCounter & 0x3)
+					switch (playingInfo.SpeedCounter & 0x3)
 					{
 						// Note
 						case 0:
@@ -1149,7 +1104,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				case 12:
 				{
 					sbyte workNote = (sbyte)chanData.CurrNote;
-					sbyte arpNum = arp12[speedCounter];
+					sbyte arpNum = Tables.Arp12[playingInfo.SpeedCounter];
 
 					if (arpNum == 0)
 						break;
@@ -1182,7 +1137,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				// Effect 'H': Increase note once per line
 				case 17:
 				{
-					if (speedCounter != 0)
+					if (playingInfo.SpeedCounter != 0)
 						break;
 
 					goto case 30;
@@ -1199,7 +1154,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				// Effect 'L': Decrease note once per line
 				case 21:
 				{
-					if (speedCounter != 0)
+					if (playingInfo.SpeedCounter != 0)
 						break;
 
 					goto case 13;
@@ -1216,8 +1171,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				// Effect 'F': Filter control
 				case 15:
 				{
-					if (speedCounter == 0)
-						filterStatus = pattData.EffectArg != 0;
+					if (playingInfo.SpeedCounter == 0)
+						playingInfo.FilterStatus = pattData.EffectArg != 0;
 
 					break;
 				}
@@ -1225,12 +1180,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				// Effect 'P': Position jump
 				case 25:
 				{
-					if (speedCounter == 0)
+					if (playingInfo.SpeedCounter == 0)
 					{
 						ushort newPos = (ushort)(((pattData.EffectArg & 0xf0) >> 4) * 10 + (pattData.EffectArg & 0x0f));
 
 						if (newPos < songLength)
-							newSongPos = (short)newPos;
+							playingInfo.NewSongPos = (short)newPos;
 					}
 					break;
 				}
@@ -1247,12 +1202,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				// Effect 'S': Set speed
 				case 28:
 				{
-					if ((speedCounter == 0) && ((pattData.EffectArg & 0xf) != 0))
+					if ((playingInfo.SpeedCounter == 0) && ((pattData.EffectArg & 0xf) != 0))
 					{
-						currentSpeed = (ushort)(pattData.EffectArg & 0xf);
+						playingInfo.CurrentSpeed = (ushort)(pattData.EffectArg & 0xf);
 
-						// Change the module info
-						OnModuleInfoChanged(InfoSpeedLine, currentSpeed.ToString());
+						ShowSpeed();
 					}
 					break;
 				}
@@ -1260,7 +1214,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				// Effect 'O': Volume control with retrig
 				case 24:
 				{
-					chanVol[chanIndex[channelNum]] = chanVol[chanIndex[channelNum] + 4];
+					playingInfo.ChanVol[chanIndex[channelNum]] = playingInfo.ChanVol[chanIndex[channelNum] + 4];
 
 					goto case 31;
 				}
@@ -1274,7 +1228,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 					if (effArg <= 64)
 					{
 						// Set the volume
-						chanVol[volIndex] = (sbyte)effArg;
+						playingInfo.ChanVol[volIndex] = (sbyte)effArg;
 						break;
 					}
 
@@ -1282,9 +1236,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 					if (effArg < 16)
 					{
 						// Decrease the volume for every tick
-						chanVol[volIndex] -= (sbyte)effArg;
-						if (chanVol[volIndex] < 0)
-							chanVol[volIndex] = 0;
+						playingInfo.ChanVol[volIndex] -= (sbyte)effArg;
+						if (playingInfo.ChanVol[volIndex] < 0)
+							playingInfo.ChanVol[volIndex] = 0;
 
 						break;
 					}
@@ -1293,9 +1247,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 					if (effArg < 16)
 					{
 						// Increase the volume for every tick
-						chanVol[volIndex] += (sbyte)effArg;
-						if (chanVol[volIndex] > 64)
-							chanVol[volIndex] = 64;
+						playingInfo.ChanVol[volIndex] += (sbyte)effArg;
+						if (playingInfo.ChanVol[volIndex] > 64)
+							playingInfo.ChanVol[volIndex] = 64;
 
 						break;
 					}
@@ -1304,11 +1258,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 					if (effArg < 16)
 					{
 						// Decrease the volume for every line
-						if (speedCounter == 0)
+						if (playingInfo.SpeedCounter == 0)
 						{
-							chanVol[volIndex] -= (sbyte)effArg;
-							if (chanVol[volIndex] < 0)
-								chanVol[volIndex] = 0;
+							playingInfo.ChanVol[volIndex] -= (sbyte)effArg;
+							if (playingInfo.ChanVol[volIndex] < 0)
+								playingInfo.ChanVol[volIndex] = 0;
 						}
 						break;
 					}
@@ -1317,11 +1271,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 					if (effArg < 16)
 					{
 						// Increase the volume for every line
-						if (speedCounter == 0)
+						if (playingInfo.SpeedCounter == 0)
 						{
-							chanVol[volIndex] += (sbyte)effArg;
-							if (chanVol[volIndex] > 64)
-								chanVol[volIndex] = 64;
+							playingInfo.ChanVol[volIndex] += (sbyte)effArg;
+							if (playingInfo.ChanVol[volIndex] > 64)
+								playingInfo.ChanVol[volIndex] = 64;
 						}
 						break;
 					}
@@ -1347,8 +1301,58 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				note = 35;
 
 			// Play the note
-			chanData.CurrPeriod = periods[note];
+			chanData.CurrPeriod = Tables.Periods[note];
 			VirtualChannels[channelNum].SetAmigaPeriod((uint)chanData.CurrPeriod);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current song position
+		/// </summary>
+		/********************************************************************/
+		private void ShowSongPosition()
+		{
+			OnModuleInfoChanged(InfoPositionLine, playingInfo.SongPos.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with pattern number
+		/// </summary>
+		/********************************************************************/
+		private void ShowPattern()
+		{
+			OnModuleInfoChanged(InfoPatternLine, patternTable[playingInfo.SongPos].ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current speed
+		/// </summary>
+		/********************************************************************/
+		private void ShowSpeed()
+		{
+			OnModuleInfoChanged(InfoSpeedLine, playingInfo.CurrentSpeed.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with all dynamic values
+		/// </summary>
+		/********************************************************************/
+		private void UpdateModuleInformation()
+		{
+			ShowSongPosition();
+			ShowPattern();
+			ShowSpeed();
 		}
 		#endregion
 	}

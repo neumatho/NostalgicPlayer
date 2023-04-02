@@ -6,19 +6,21 @@
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers;
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Synth;
 using Polycode.NostalgicPlayer.Kit;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 {
 	/// <summary>
 	/// Song interface
 	/// </summary>
-	internal class Song
+	internal class Song : IDeepCloneable<Song>
 	{
 		private readonly OctaMedWorker worker;
 
 		private readonly List<SubSong> songs = new List<SubSong>();
-		private readonly Instr[] inst = new Instr[Constants.MaxInstr];
+		private Instr[] inst = new Instr[Constants.MaxInstr];
 		private readonly Sample[] samp = new Sample[Constants.MaxInstr];
 
 		private SubSong current;
@@ -395,6 +397,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		{
 			song.SetSSNum((int)song.currNum + 1);
 			return song;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Song MakeDeepClone()
+		{
+			Song clone = (Song)MemberwiseClone();
+
+			clone.inst = ArrayHelper.CloneObjectArray(inst);
+			clone.current = current.MakeDeepClone();
+
+			return clone;
 		}
 	}
 }

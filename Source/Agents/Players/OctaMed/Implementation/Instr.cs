@@ -4,13 +4,14 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 {
 	/// <summary>
 	/// Instrument interface
 	/// </summary>
-	internal class Instr
+	internal class Instr : IDeepCloneable<Instr>
 	{
 		[Flags]
 		public enum Flag
@@ -422,6 +423,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/********************************************************************/
 		public void Update()
 		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Instr MakeDeepClone()
+		{
+			Instr clone = (Instr)MemberwiseClone();
+
+			clone.SetVol(GetVol());
+
+			return clone;
 		}
 
 		#region Private methods

@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			public byte NumOrders;
 			public byte RepPos;
 			public byte[] Positions = new byte[256];					// Which pattern to play at pos
-			public readonly MSampInfo[] Samples = Helpers.InitializeArray<MSampInfo>(64);	// All sample info
+			public readonly MSampInfo[] Samples = ArrayHelper.InitializeArray<MSampInfo>(64);	// All sample info
 		}
 		#endregion
 
@@ -287,7 +287,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 				return false;
 
 			// Allocate temporary buffer for loading and converting the patterns
-			patBuf = Helpers.InitializeArray<ModNote>(64 * of.NumChn);
+			patBuf = ArrayHelper.InitializeArray<ModNote>(64 * of.NumChn);
 
 			// Patterns start here
 			moduleStream.Seek(0xa66, SeekOrigin.Begin);

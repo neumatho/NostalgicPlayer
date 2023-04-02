@@ -3,13 +3,16 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility;
+
 namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 {
 #pragma warning disable 1591
 	/// <summary>
 	/// UniMod structure
 	/// </summary>
-	public class Module
+	public class Module : IDeepCloneable<Module>
 	{
 		// General module information
 		public string SongName;					// Name of the song
@@ -33,8 +36,8 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 		public byte InitSpeed;					// Initial song speed
 		public ushort InitTempo;				// Initial song tempo
 		public byte InitVolume;					// Initial global volume (0 - 128)
-		public readonly ushort[] Panning = new ushort[SharedConstant.UF_MaxChan];	// Panning positions
-		public readonly byte[] ChanVol = new byte[SharedConstant.UF_MaxChan];		// Channel positions
+		public ushort[] Panning = new ushort[SharedConstant.UF_MaxChan];	// Panning positions
+		public byte[] ChanVol = new byte[SharedConstant.UF_MaxChan];		// Channel positions
 		public ushort Bpm;						// Current beats-per-minute speed
 		public ushort SngSpd;					// Current song speed
 		public short Volume;					// Song volume (0-128) (or user volume)
@@ -73,6 +76,23 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers
 		public byte PatDly2;					// Pattern delay counter (real one)
 		public short PosJmp;					// Flag to indicate a position jump is needed...
 		public ushort BpmLimit;					// Threshold to detect BPM or speed values
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Module MakeDeepClone()
+		{
+			Module clone = (Module)MemberwiseClone();
+
+			clone.Panning = ArrayHelper.CloneArray(Panning);
+			clone.ChanVol = ArrayHelper.CloneArray(ChanVol);
+			clone.Control = ArrayHelper.CloneObjectArray(Control);
+			clone.Voice = ArrayHelper.CloneObjectArray(Voice);
+
+			return clone;
+		}
 	}
 #pragma warning restore 1591
 }

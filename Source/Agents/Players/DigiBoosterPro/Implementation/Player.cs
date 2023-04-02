@@ -21,8 +21,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		private DigiBoosterProWorker worker;
 		private EffectMaster effectMaster;
 
-		private const int InfoSpeedLine = 4;
-		private const int InfoTempoLine = 5;
+		private bool endReached;
+		private bool restartSong;
+		private int lastPosition;
+
+		private const int InfoPositionLine = 4;
+		private const int InfoPatternLine = 5;
+		private const int InfoSpeedLine = 6;
+		private const int InfoTempoLine = 7;
 
 		/********************************************************************/
 		/// <summary>
@@ -35,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 
 			modSynth = new ModuleSynth();
 
-			modSynth.Tracks = Helpers.InitializeArray<ModuleTrack>(m.NumberOfTracks);
+			modSynth.Tracks = ArrayHelper.InitializeArray<ModuleTrack>(m.NumberOfTracks);
 			modSynth.Module = m;
 		}
 
@@ -69,6 +75,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 			});
 
 			MSynth_Reset(modSynth);
+
+			endReached = false;
+			restartSong = false;
+			lastPosition = -1;
 		}
 
 
@@ -93,6 +103,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		public int GetPosition()
 		{
 			return modSynth.Order;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Gets the current pattern number
+		/// </summary>
+		/********************************************************************/
+		public int GetPattern()
+		{
+			return modSynth.Pattern;
 		}
 
 
@@ -150,19 +172,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 
 		/********************************************************************/
 		/// <summary>
-		/// Sets the current speed and tempo
-		/// </summary>
-		/********************************************************************/
-		public void SetTempo(int speed, int tempo)
-		{
-			ChangeSpeed(speed);
-			ChangeTempo(tempo);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Gets the effect master
 		/// </summary>
 		/********************************************************************/
@@ -187,8 +196,71 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 				ModuleTrack mt = modSynth.Tracks[track];
 
 				if (!mt.IsOn)
-					mt.Channel.Mute();
+					worker.VirtualChannels[track].Mute();
 			}
+
+			if (endReached)
+			{
+				worker.ModuleEnded();
+				endReached = false;
+
+				if (restartSong)
+				{
+					worker.Restart();
+					restartSong = false;
+				}
+				else
+				{
+					modSynth.GlobalVolume = 64;
+
+					for (int track = 0; track < modSynth.Module.NumberOfTracks; track++)
+						worker.VirtualChannels[track].Mute();
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with all dynamic values
+		/// </summary>
+		/********************************************************************/
+		public void UpdateModuleInformation()
+		{
+			ShowSongPosition();
+			ShowPattern();
+			ShowSpeed();
+			ShowTempo();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a snapshot of all the internal structures and return it
+		/// </summary>
+		/********************************************************************/
+		public ISnapshot CreateSnapshot()
+		{
+			return new Snapshot(modSynth, effectMaster);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize internal structures based on the snapshot given
+		/// </summary>
+		/********************************************************************/
+		public void SetSnapshot(ISnapshot snapshot)
+		{
+			// Start to make a clone of the snapshot
+			Snapshot currentSnapshot = (Snapshot)snapshot;
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.ModuleSynth, currentSnapshot.EffectMaster);
+
+			modSynth = clonedSnapshot.ModuleSynth;
+			effectMaster = clonedSnapshot.EffectMaster;
 		}
 
 
@@ -248,7 +320,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void MSynth_Trigger(DB3Module m, ModuleTrack mt)
+		private void MSynth_Trigger(DB3Module m, ModuleTrack mt, int channel)
 		{
 			mt.VolumeEnvelopeCurrent = 16384;
 			mt.PanningEnvelopeCurrent = 0;
@@ -280,10 +352,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 			else if (mt.TriggerOffset < 0)
 				mt.TriggerOffset = 0;
 
-			mt.Channel.PlaySample((short)(mt.Instrument - 1), mt.SampleData, (uint)mt.TriggerOffset, mt.SampleLength, mt.SampleBitSize, mt.PlayBackwards);
+			worker.VirtualChannels[channel].PlaySample((short)(mt.Instrument - 1), mt.SampleData, (uint)mt.TriggerOffset, mt.SampleLength, mt.SampleBitSize, mt.PlayBackwards);
 
 			if (mt.SampleLoopLength > 0)
-				mt.Channel.SetLoop(mt.SampleLoopStartOffset, mt.SampleLoopLength, mt.SampleLoopType);
+				worker.VirtualChannels[channel].SetLoop(mt.SampleLoopStartOffset, mt.SampleLoopLength, mt.SampleLoopType);
 
 			mt.VibratoCounter = 0;
 			mt.IsOn = true;
@@ -370,7 +442,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// C-0 note
 		/// </summary>
 		/********************************************************************/
-		private void MSynth_Pitch(ModuleSynth mSyn, ModuleTrack mt)
+		private void MSynth_Pitch(ModuleSynth mSyn, ModuleTrack mt, int channel)
 		{
 			int32_t pitch = mt.Pitch;
 
@@ -401,7 +473,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 								int32_t tempoPitch = 256;//(mSyn.Tempo * 256) / 125;
 
 								frequency = (3546895 / pitch) * tempoPitch / 64;
-								mt.Channel.SetFrequency((uint)frequency);
+								worker.VirtualChannels[channel].SetFrequency((uint)frequency);
 							}
 							else
 							{
@@ -426,7 +498,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 								uint64_t frequency64 = (uint64_t)mis.C3Frequency * beta * alpha;
 								frequency64 >>= 19 - octave;
 								uint32_t frequency = (uint32_t)(frequency64 / 65536);
-								mt.Channel.SetFrequency(frequency);
+								worker.VirtualChannels[channel].SetFrequency(frequency);
 							}
 							break;
 						}
@@ -474,7 +546,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		{
 			mSyn.DelayPatternBreak = -1;
 			mSyn.DelayPatternJump = -1;
-			mSyn.DelayLoop = null;
+			mSyn.DelayLoop = -1;
 			mSyn.DelayModuleEnd = false;
 		}
 
@@ -545,20 +617,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 			}
 
 			// Loops
-			if (mSyn.DelayLoop != null)
+			if (mSyn.DelayLoop != -1)
 			{
-				mSyn.Order = mSyn.DelayLoop.LoopOrder;
+				mSyn.Order = mSyn.Tracks[mSyn.DelayLoop].LoopOrder;
 				mSyn.Pattern = song.PlayList[mSyn.Order];
-				mSyn.Row = mSyn.DelayLoop.LoopRow;
+				mSyn.Row = mSyn.Tracks[mSyn.DelayLoop].LoopRow;
 			}
 			else
 			{
 				// Module end
 				if (mSyn.DelayModuleEnd)
-				{
-					mSyn.PatternDelay = 0x7fffffff;
-					MSynth_Update_Callback_End();
-				}
+					endReached = true;
 			}
 
 			// Reset all delayed things
@@ -679,7 +748,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void MSynth_Effect_Exx(ModuleSynth mSyn, ModuleTrack mt, uint8_t parameter)
+		private void MSynth_Effect_Exx(ModuleSynth mSyn, ModuleTrack mt, int channel, uint8_t parameter)
 		{
 			switch ((ExtraEffect)(parameter >> 4))
 			{
@@ -744,16 +813,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 						if (mt.LoopCounter == 0)
 						{
 							mt.LoopCounter = parameter & 0x0f;
-							mSyn.DelayLoop = mt;
+							mSyn.DelayLoop = channel;
 						}
 						else
 						{
 							if (--mt.LoopCounter > 0)
-								mSyn.DelayLoop = mt;
+								mSyn.DelayLoop = channel;
 							else
 							{
 								MSynth_Reset_Loop(mt);
-								mSyn.DelayLoop = null;
+								mSyn.DelayLoop = -1;
 							}
 						}
 					}
@@ -831,7 +900,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void MSynth_Effect(ModuleSynth mSyn, ModuleTrack mt, Effect command, uint8_t parameter)
+		private void MSynth_Effect(ModuleSynth mSyn, ModuleTrack mt, int channel, Effect command, uint8_t parameter)
 		{
 			switch (command)
 			{
@@ -1099,7 +1168,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 
 				case Effect.ExtraEffects:
 				{
-					MSynth_Effect_Exx(mSyn, mt, parameter);
+					MSynth_Effect_Exx(mSyn, mt, channel, parameter);
 					break;
 				}
 
@@ -1247,19 +1316,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/********************************************************************/
 		private void MSynth_Update_Callback()
 		{
-			worker.PositionHasChanged();
-		}
+			if (modSynth.Order != lastPosition)
+			{
+				lastPosition = modSynth.Order;
 
+				ShowSongPosition();
+				ShowPattern();
 
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		private void MSynth_Update_Callback_End()
-		{
-			worker.ModuleEnded();
+				if (!endReached)
+					worker.PositionHasChanged(modSynth.Order);
+			}
 		}
 
 
@@ -1454,10 +1520,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 
 				// Now is the time for effects
 				if ((me.Command1 != Effect.None) || (me.Parameter1 != 0))
-					MSynth_Effect(mSyn, mt, me.Command1, me.Parameter1);
+					MSynth_Effect(mSyn, mt, track, me.Command1, me.Parameter1);
 
 				if ((me.Command2 != Effect.None) || (me.Parameter2 != 0))
-					MSynth_Effect(mSyn, mt, me.Command2, me.Parameter2);
+					MSynth_Effect(mSyn, mt, track, me.Command2, me.Parameter2);
 			}
 
 			// Moving to the next row (or not, depending on playback mode).
@@ -1602,7 +1668,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 				{
 					if (mt.TriggerCounter == 0)
 					{
-						MSynth_Trigger(mSyn.Module, mt);
+						MSynth_Trigger(mSyn.Module, mt, track);
 						mt.TriggerCounter = mt.Retrigger;
 					}
 
@@ -1715,7 +1781,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 			{
 				ModuleTrack mt = mSyn.Tracks[track];
 
-				MSynth_Pitch(mSyn, mt);
+				MSynth_Pitch(mSyn, mt, track);
 
 				// Convert [PT * speed] units of accumulated volume slide to 14-bit gain
 				// Apply panning then
@@ -1757,8 +1823,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 				pan += p2;
 
 				// Tell NostalgicPlayer about volume/panning
-				mt.Channel.SetVolume((ushort)(volc / 64));
-				mt.Channel.SetPanning((ushort)((pan + 16384) / 128));
+				worker.VirtualChannels[track].SetVolume((ushort)(volc / 64));
+				worker.VirtualChannels[track].SetPanning((ushort)((pan + 16384) / 128));
 			}
 		}
 
@@ -1874,7 +1940,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 					// delay must be caused by either song end in MMODE_SONG_ONCE mode
 					// or F00 effect
 					if (mSyn.PatternDelay-- > 15)
-						MSynth_Update_Callback_End();
+					{
+						endReached = true;
+						restartSong = true;
+					}
 				}
 				else
 				{
@@ -1938,7 +2007,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 			{
 				ModuleTrack mt = mSyn.Tracks[track];
 
-				mt.Channel = worker.VirtualChannels[track];
 				mt.TrackNumber = track;
 
 				mt.Instrument = 0;
@@ -2026,7 +2094,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		{
 			modSynth.Speed = speed;
 
-			worker.UpdateModuleInfo(InfoSpeedLine, speed.ToString());
+			ShowSpeed();
 		}
 
 
@@ -2041,7 +2109,55 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 			modSynth.Tempo = tempo;
 
 			worker.SetTempo((ushort)tempo);
-			worker.UpdateModuleInfo(InfoTempoLine, tempo.ToString());
+			ShowTempo();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current song position
+		/// </summary>
+		/********************************************************************/
+		private void ShowSongPosition()
+		{
+			worker.UpdateModuleInfo(InfoPositionLine, modSynth.Order.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with pattern number
+		/// </summary>
+		/********************************************************************/
+		private void ShowPattern()
+		{
+			worker.UpdateModuleInfo(InfoPatternLine, modSynth.Pattern.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current speed
+		/// </summary>
+		/********************************************************************/
+		private void ShowSpeed()
+		{
+			worker.UpdateModuleInfo(InfoSpeedLine, modSynth.Speed.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with tempo
+		/// </summary>
+		/********************************************************************/
+		private void ShowTempo()
+		{
+			worker.UpdateModuleInfo(InfoTempoLine, modSynth.Tempo.ToString());
 		}
 		#endregion
 	}

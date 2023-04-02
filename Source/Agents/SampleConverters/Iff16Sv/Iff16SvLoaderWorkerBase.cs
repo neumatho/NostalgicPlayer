@@ -458,7 +458,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff16Sv
 		/// Sets the file position to the sample position given
 		/// </summary>
 		/********************************************************************/
-		public long SetSamplePosition(ModuleStream moduleStream, long position, LoadSampleFormatInfo formatInfo)
+		public void SetSamplePosition(ModuleStream moduleStream, long position, LoadSampleFormatInfo formatInfo)
 		{
 			// Reset the loader
 			ResetBasicLoader();
@@ -466,13 +466,10 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff16Sv
 
 			// Calculate the position in bytes
 			long filePosition = CalcFilePosition(position, formatInfo);
-			long samplePosition = CalcSamplePosition(position, formatInfo);
 
 			// Seek to the right position in the data chunk
 			moduleStream.Seek(dataStarts1 + filePosition, SeekOrigin.Begin);
 			moduleStream2?.Seek(dataStarts2 + filePosition, SeekOrigin.Begin);
-
-			return samplePosition;
 		}
 		#endregion
 
@@ -521,15 +518,6 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff16Sv
 		/// </summary>
 		/********************************************************************/
 		protected abstract long CalcFilePosition(long position, LoadSampleFormatInfo formatInfo);
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculates the number of samples from the byte position given
-		/// </summary>
-		/********************************************************************/
-		protected abstract long CalcSamplePosition(long position, LoadSampleFormatInfo formatInfo);
 
 
 

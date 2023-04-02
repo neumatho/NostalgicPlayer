@@ -5,12 +5,10 @@
 /******************************************************************************/
 using System;
 using System.IO;
-using System.Linq;
 using NVorbis;
 using NVorbis.Contracts;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
@@ -18,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class OggVorbisWorker : SamplePlayerAgentBase
+	internal class OggVorbisWorker : SamplePlayerWithDurationAgentBase
 	{
 		private const int InputBufSize = 32 * 1024;
 
@@ -39,8 +37,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 		private string descrip;
 		private string vendor;
 		private int bitRate;
-
-		private int oldPosition;
 
 		private const int InfoBitRateLine = 7;
 
@@ -212,15 +208,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 		#region ISamplePlayerAgent implementation
 		/********************************************************************/
 		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override SamplePlayerSupportFlag SupportFlags => SamplePlayerSupportFlag.SetPosition;
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Will load the header information from the file
 		/// </summary>
 		/********************************************************************/
@@ -293,7 +280,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 		/// Initializes the player to start the sample from start
 		/// </summary>
 		/********************************************************************/
-		public override bool InitSound(DurationInfo durationInfo, out string errorMessage)
+		public override bool InitSound(out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
@@ -303,26 +290,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 				reader.TimePosition = TimeSpan.Zero;
 
 			bitRate = reader.NominalBitrate / 1000;
-			oldPosition = -1;
 
 			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override DurationInfo CalculateDuration()
-		{
-			TimeSpan totalTime = reader.TotalTime;
-
-			// Now build the list
-			PositionInfo[] positionInfo = Enumerable.Range(0, 100).Select(i => new PositionInfo(new TimeSpan(i * (totalTime.Ticks / 100)))).ToArray();
-
-			return new DurationInfo(totalTime, positionInfo);
 		}
 
 
@@ -344,15 +313,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 
 				// Loop the sample
 				CleanupSound();
-				InitSound(null, out _);
-			}
-
-			// Check if we have changed position
-			int pos = GetSongPosition();
-			if (pos != oldPosition)
-			{
-				oldPosition = pos;
-				OnPositionChanged();
+				InitSound(out _);
 			}
 
 			// Has the bit rate changed
@@ -384,34 +345,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 		/// </summary>
 		/********************************************************************/
 		public override int Frequency => frequency;
+		#endregion
 
-
-
+		#region SamplePlayerWithDurationAgentBase
 		/********************************************************************/
 		/// <summary>
-		/// Return the current position of the song
+		/// Return the total time of the sample
 		/// </summary>
 		/********************************************************************/
-		public override int GetSongPosition()
+		protected override TimeSpan GetTotalDuration()
 		{
-			int pos = (int)(reader.SamplePosition * 100 / reader.TotalSamples);
-			if (pos >= 100)
-				pos = 99;
-
-			return pos;
+			return reader.TotalTime;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Set a new position of the song
+		/// Set the position in the playing sample to the time given
 		/// </summary>
 		/********************************************************************/
-		public override void SetSongPosition(int position, PositionInfo positionInfo)
+		protected override void SetPosition(TimeSpan time)
 		{
-			int newPos = (int)(position * reader.TotalSamples / 100);
-			reader.SamplePosition = newPos;
+			reader.TimePosition = time;
 		}
 		#endregion
 

@@ -3,12 +3,14 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+
 namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx.Containers
 {
 	/// <summary>
 	/// Information about a single playing channel
 	/// </summary>
-	internal class Channel
+	internal class Channel : IDeepCloneable<Channel>
 	{
 		public uint PatternData;
 		public short SampleNumber;
@@ -26,5 +28,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx.Containers
 		public ushort SlideParam;
 		public ushort SlidePeriod;
 		public ushort SlideSpeed;
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Channel MakeDeepClone()
+		{
+			return (Channel)MemberwiseClone();
+		}
 	}
 }

@@ -12,7 +12,6 @@ using Polycode.NostalgicPlayer.Agent.Player.QuadraComposer.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -22,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class QuadraComposerWorker : ModulePlayerAgentBase
+	internal class QuadraComposerWorker : ModulePlayerWithPositionDurationAgentBase
 	{
 		private string songName;
 		private string composer;
@@ -38,30 +37,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 		private byte numberOfPositions;
 		private byte[] positionList;
 
-		private TrackLine[,] currentPattern;
-		private ushort currentPosition;
-		private ushort newPosition;
-		private ushort breakRow;
-		private ushort newRow;
-		private ushort rowCount;
-		private ushort loopRow;
-		private byte patternWait;
-
-		private ushort tempo;
-		private ushort speed;
-		private ushort speedCount;
-
-		private bool newPositionFlag;
-		private bool jumpBreakFlag;
-		private byte loopCount;
-		private bool introRow;
-
-		private bool setTempo;
-
+		private GlobalPlayingInfo playingInfo;
 		private ChannelInfo[] channels;
 
-		private const int InfoSpeedLine = 3;
-		private const int InfoTempoLine = 4;
+		private bool endReached;
+
+		private const int InfoPositionLine = 3;
+		private const int InfoPatternLine = 4;
+		private const int InfoSpeedLine = 5;
+		private const int InfoTempoLine = 6;
 
 		#region IPlayerAgent implementation
 		/********************************************************************/
@@ -139,7 +123,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 			// Find out which line to take
 			switch (line)
 			{
-				// Song length
+				// Number of positions:
 				case 0:
 				{
 					description = Resources.IDS_EMOD_INFODESCLINE0;
@@ -163,19 +147,35 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 					break;
 				}
 
-				// Current speed
+				// Playing position
 				case 3:
 				{
 					description = Resources.IDS_EMOD_INFODESCLINE3;
-					value = speed.ToString();
+					value = playingInfo.CurrentPosition.ToString();
+					break;
+				}
+
+				// Playing pattern
+				case 4:
+				{
+					description = Resources.IDS_EMOD_INFODESCLINE4;
+					value = positionList[playingInfo.CurrentPosition].ToString();
+					break;
+				}
+
+				// Current speed
+				case 5:
+				{
+					description = Resources.IDS_EMOD_INFODESCLINE5;
+					value = playingInfo.Speed.ToString();
 					break;
 				}
 
 				// BPM
-				case 4:
+				case 6:
 				{
-					description = Resources.IDS_EMOD_INFODESCLINE4;
-					value = tempo.ToString();
+					description = Resources.IDS_EMOD_INFODESCLINE6;
+					value = playingInfo.Tempo.ToString();
 					break;
 				}
 
@@ -193,15 +193,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 		#endregion
 
 		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.SetPosition;
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -303,26 +294,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
+		public override bool InitSound(int songNumber, out string errorMessage)
 		{
-			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+			if (!base.InitSound(songNumber, out errorMessage))
 				return false;
 
-			InitializeSound(durationInfo.StartPosition);
+			InitializeSound(0);
 
 			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override DurationInfo[] CalculateDuration()
-		{
-			return CalculateDurationBySongPosition();
 		}
 
 
@@ -336,70 +315,30 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 		{
 			ChangeTempoIfNeeded();
 
-			speedCount++;
-			if (speedCount < speed)
+			playingInfo.SpeedCount++;
+			if (playingInfo.SpeedCount < playingInfo.Speed)
 				RunTickEffects();
 			else
 			{
-				if (patternWait != 0)
+				if (playingInfo.PatternWait != 0)
 				{
-					patternWait--;
-					speedCount = 0;
+					playingInfo.PatternWait--;
+					playingInfo.SpeedCount = 0;
 
 					RunTickEffects();
 				}
 				else
 					GetNotes();
 			}
-		}
 
+			if (endReached)
+			{
+				// Tell NostalgicPlayer that the module has ended
+				OnEndReached(playingInfo.CurrentPosition);
+				endReached = false;
 
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the length of the current song
-		/// </summary>
-		/********************************************************************/
-		public override int SongLength => numberOfPositions;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position of the song
-		/// </summary>
-		/********************************************************************/
-		public override int GetSongPosition()
-		{
-			return currentPosition;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set a new position of the song
-		/// </summary>
-		/********************************************************************/
-		public override void SetSongPosition(int position, PositionInfo positionInfo)
-		{
-			// Change the position
-			currentPosition = (ushort)position;
-
-			Pattern pattern = patterns[positionList[currentPosition]];
-			currentPattern = pattern.Tracks;
-			breakRow = pattern.NumberOfRows;
-
-			rowCount = 0;
-			newRow = 0;
-
-			// Change the speed
-			ChangeSpeed(positionInfo.Speed);
-
-			tempo = positionInfo.Bpm;
-			setTempo = true;
-
-			base.SetSongPosition(position, positionInfo);
+				MarkPositionAsVisited(playingInfo.CurrentPosition);
+			}
 		}
 
 
@@ -458,16 +397,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 		}
 		#endregion
 
-		#region Duration calculation methods
+		#region ModulePlayerWithPositionDurationAgentBase implementation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override int InitDurationCalculationByStartPos(int startPosition)
+		protected override int InitDuration(int startPosition)
 		{
 			InitializeSound(startPosition);
+			MarkPositionAsVisited(startPosition);
 
 			return startPosition;
 		}
@@ -476,24 +416,47 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the current speed
+		/// Return the total number of positions
 		/// </summary>
 		/********************************************************************/
-		protected override byte GetCurrentSpeed()
+		protected override int GetTotalNumberOfPositions()
 		{
-			return (byte)speed;
+			return numberOfPositions;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the current BPM
+		/// Create a snapshot of all the internal structures and return it
 		/// </summary>
 		/********************************************************************/
-		protected override ushort GetCurrentBpm()
+		protected override ISnapshot CreateSnapshot()
 		{
-			return tempo;
+			return new Snapshot(playingInfo, channels);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize internal structures based on the snapshot given
+		/// </summary>
+		/********************************************************************/
+		protected override bool SetSnapshot(ISnapshot snapshot, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			// Start to make a clone of the snapshot
+			Snapshot currentSnapshot = (Snapshot)snapshot;
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayingInfo, currentSnapshot.Channels);
+
+			playingInfo = clonedSnapshot.PlayingInfo;
+			channels = clonedSnapshot.Channels;
+
+			UpdateModuleInformation();
+
+			return true;
 		}
 		#endregion
 
@@ -506,27 +469,31 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 		private void InitializeSound(int startPosition)
 		{
 			// Initialize work variables
-			currentPosition = (ushort)startPosition;
-			
-			Pattern pattern = patterns[positionList[currentPosition]];
-			currentPattern = pattern.Tracks;
-			breakRow = pattern.NumberOfRows;
-			newRow = 0;
-			rowCount = 0;
+			Pattern pattern = patterns[positionList[startPosition]];
 
-			tempo = startTempo;
-			speed = 6;
-			speedCount = speed;
-			setTempo = true;
+			playingInfo = new GlobalPlayingInfo
+			{
+				CurrentPosition = (ushort)startPosition,
 
-			newPositionFlag = false;
-			jumpBreakFlag = false;
-			introRow = true;
+				CurrentPattern = pattern.Tracks,
+				BreakRow = pattern.NumberOfRows,
+				NewRow = 0,
+				RowCount = 0,
+
+				Tempo = startTempo,
+				Speed = 6,
+				SpeedCount = 6,
+				SetTempo = true,
+
+				NewPositionFlag = false,
+				JumpBreakFlag = false,
+				IntroRow = true
+			};
+
+			endReached = false;
 
 			// Initialize channel structure
-			channels = Helpers.InitializeArray<ChannelInfo>(4);
-
-			MarkPositionAsVisited(startPosition);
+			channels = ArrayHelper.InitializeArray<ChannelInfo>(4);
 		}
 
 
@@ -541,6 +508,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 			samples = null;
 			patterns = null;
 			positionList = null;
+
+			channels = null;
+			playingInfo = null;
 		}
 
 
@@ -723,87 +693,49 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 
 		/********************************************************************/
 		/// <summary>
-		/// Will check if a tempo changed is needed and if so, do it
-		/// </summary>
-		/********************************************************************/
-		private void ChangeTempoIfNeeded()
-		{
-			if (setTempo)
-			{
-				setTempo = false;
-				SetBpmTempo(tempo);
-
-				// Change the module info
-				OnModuleInfoChanged(InfoTempoLine, tempo.ToString());
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will change the speed on the module
-		/// </summary>
-		/********************************************************************/
-		private void ChangeSpeed(ushort newSpeed)
-		{
-			if (newSpeed != speed)
-			{
-				// Change the module info
-				OnModuleInfoChanged(InfoSpeedLine, newSpeed.ToString());
-
-				// Remember the speed
-				speed = newSpeed;
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Parse next row
 		/// </summary>
 		/********************************************************************/
 		private void GetNotes()
 		{
-			if (!introRow)
+			if (!playingInfo.IntroRow)
 			{
 				ChangeTempoIfNeeded();
 
-				if (newPositionFlag)
+				if (playingInfo.NewPositionFlag)
 				{
-					newPositionFlag = false;
+					playingInfo.NewPositionFlag = false;
 
-					currentPosition = newPosition;
+					playingInfo.CurrentPosition = playingInfo.NewPosition;
 					InitializeNewPosition();
 				}
 				else
 				{
-					if (jumpBreakFlag)
+					if (playingInfo.JumpBreakFlag)
 					{
-						jumpBreakFlag = false;
+						playingInfo.JumpBreakFlag = false;
 
-						if (loopRow <= breakRow)
-							rowCount = loopRow;
+						if (playingInfo.LoopRow <= playingInfo.BreakRow)
+							playingInfo.RowCount = playingInfo.LoopRow;
 					}
 					else
 					{
-						rowCount++;
+						playingInfo.RowCount++;
 
-						if (rowCount > breakRow)
+						if (playingInfo.RowCount > playingInfo.BreakRow)
 						{
-							currentPosition++;
+							playingInfo.CurrentPosition++;
 							InitializeNewPosition();
 						}
 					}
 				}
 			}
 
-			introRow = false;
-			speedCount = 0;
+			playingInfo.IntroRow = false;
+			playingInfo.SpeedCount = 0;
 
 			for (int i = 0; i < 4; i++)
-				PlayNote(channels[i], VirtualChannels[i], currentPattern[i, rowCount]);
+				PlayNote(channels[i], VirtualChannels[i], playingInfo.CurrentPattern[i, playingInfo.RowCount]);
 		}
 
 
@@ -815,45 +747,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 		/********************************************************************/
 		private void InitializeNewPosition()
 		{
-			if (currentPosition >= numberOfPositions)
-				currentPosition = 0;
+			if (playingInfo.CurrentPosition >= numberOfPositions)
+				playingInfo.CurrentPosition = 0;
 
-			if (HasPositionBeenVisited(currentPosition))
-			{
-				if (currentDurationInfo == null)
-				{
-					speed = 6;
-					tempo = startTempo;
-				}
-				else
-				{
-					PositionInfo positionInfo = currentDurationInfo.PositionInfo[currentPosition];
+			if (HasPositionBeenVisited(playingInfo.CurrentPosition))
+				endReached = true;
 
-					tempo = positionInfo.Bpm;
-					setTempo = true;
+			MarkPositionAsVisited(playingInfo.CurrentPosition);
 
-					ChangeSpeed(positionInfo.Speed);
-					ChangeSubSong(positionInfo.SubSong);
-				}
+			Pattern pattern = patterns[positionList[playingInfo.CurrentPosition]];
+			playingInfo.CurrentPattern = pattern.Tracks;
+			playingInfo.BreakRow = pattern.NumberOfRows;
 
-				// Tell NostalgicPlayer that the module has ended
-				OnEndReached();
-			}
+			playingInfo.RowCount = playingInfo.NewRow;
+			playingInfo.NewRow = 0;
 
-			// Tell NostalgicPlayer we have changed the song position
-			OnPositionChanged();
+			if (playingInfo.BreakRow < playingInfo.RowCount)
+				playingInfo.RowCount = playingInfo.BreakRow;
 
-			MarkPositionAsVisited(currentPosition);
-
-			Pattern pattern = patterns[positionList[currentPosition]];
-			currentPattern = pattern.Tracks;
-			breakRow = pattern.NumberOfRows;
-
-			rowCount = newRow;
-			newRow = 0;
-
-			if (breakRow < rowCount)
-				rowCount = breakRow;
+			ShowSongPosition();
+			ShowPattern();
 		}
 
 
@@ -1203,7 +1116,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 		{
 			if (channelInfo.TrackLine.EffectArg != 0)
 			{
-				sbyte offset = Tables.ArpeggioOffsets[speedCount % 3];
+				sbyte offset = Tables.ArpeggioOffsets[playingInfo.SpeedCount % 3];
 
 				if (offset < 0)
 					channel.SetAmigaPeriod(channelInfo.Period);
@@ -1520,9 +1433,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 		/********************************************************************/
 		private void DoPositionJump(ChannelInfo channelInfo)
 		{
-			newPosition = channelInfo.TrackLine.EffectArg;
-			newPositionFlag = true;
-			newRow = 0;
+			playingInfo.NewPosition = channelInfo.TrackLine.EffectArg;
+			playingInfo.NewPositionFlag = true;
+			playingInfo.NewRow = 0;
 		}
 
 
@@ -1550,9 +1463,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 		/********************************************************************/
 		private void DoPatternBreak(ChannelInfo channelInfo)
 		{
-			newPosition = (ushort)(currentPosition + 1);
-			newRow = channelInfo.TrackLine.EffectArg;
-			newPositionFlag = true;
+			playingInfo.NewPosition = (ushort)(playingInfo.CurrentPosition + 1);
+			playingInfo.NewRow = channelInfo.TrackLine.EffectArg;
+			playingInfo.NewPositionFlag = true;
 		}
 
 
@@ -1566,8 +1479,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 		{
 			if (channelInfo.TrackLine.EffectArg > 31)
 			{
-				tempo = channelInfo.TrackLine.EffectArg;
-				setTempo = true;
+				playingInfo.Tempo = channelInfo.TrackLine.EffectArg;
+				playingInfo.SetTempo = true;
 			}
 			else
 			{
@@ -1576,7 +1489,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 					newSpeed = 1;
 
 				ChangeSpeed(newSpeed);
-				speedCount = 0;
+				playingInfo.SpeedCount = 0;
 			}
 		}
 		#endregion
@@ -1672,19 +1585,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 			byte arg = (byte)(channelInfo.TrackLine.EffectArg & 0x0f);
 
 			if (arg == 0)
-				loopRow = rowCount;
+				playingInfo.LoopRow = playingInfo.RowCount;
 			else
 			{
-				if (loopCount == 0)
+				if (playingInfo.LoopCount == 0)
 				{
-					loopCount = arg;
-					jumpBreakFlag = true;
+					playingInfo.LoopCount = arg;
+					playingInfo.JumpBreakFlag = true;
 				}
 				else
 				{
-					loopCount--;
-					if (loopCount != 0)
-						jumpBreakFlag = true;
+					playingInfo.LoopCount--;
+					if (playingInfo.LoopCount != 0)
+						playingInfo.JumpBreakFlag = true;
 				}
 			}
 		}
@@ -1777,7 +1690,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 		/********************************************************************/
 		private void DoNoteCut(ChannelInfo channelInfo, IChannel channel)
 		{
-			if ((channelInfo.TrackLine.EffectArg & 0x0f) <= speedCount)
+			if ((channelInfo.TrackLine.EffectArg & 0x0f) <= playingInfo.SpeedCount)
 			{
 				channelInfo.Volume = 0;
 				channel.SetVolume(0);
@@ -1795,7 +1708,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 		{
 			if (channelInfo.NoteNr >= 0)
 			{
-				if ((channelInfo.TrackLine.EffectArg & 0x0f) == speedCount)
+				if ((channelInfo.TrackLine.EffectArg & 0x0f) == playingInfo.SpeedCount)
 				{
 					channel.PlaySample(channelInfo.TrackLine.Sample, channelInfo.SampleData, channelInfo.Start, channelInfo.Length);
 					channel.SetAmigaPeriod(channelInfo.Period);
@@ -1812,10 +1725,108 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 		/********************************************************************/
 		private void DoPatternDelay(ChannelInfo channelInfo)
 		{
-			patternWait = (byte)(channelInfo.TrackLine.EffectArg & 0x0f);
+			playingInfo.PatternWait = (byte)(channelInfo.TrackLine.EffectArg & 0x0f);
 		}
 		#endregion
 
+		/********************************************************************/
+		/// <summary>
+		/// Will check if a tempo changed is needed and if so, do it
+		/// </summary>
+		/********************************************************************/
+		private void ChangeTempoIfNeeded()
+		{
+			if (playingInfo.SetTempo)
+			{
+				playingInfo.SetTempo = false;
+				SetBpmTempo(playingInfo.Tempo);
+
+				// Change the module info
+				ShowTempo();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will change the speed on the module
+		/// </summary>
+		/********************************************************************/
+		private void ChangeSpeed(ushort newSpeed)
+		{
+			if (newSpeed != playingInfo.Speed)
+			{
+				// Remember the speed
+				playingInfo.Speed = newSpeed;
+
+				// Change the module info
+				ShowSpeed();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current song position
+		/// </summary>
+		/********************************************************************/
+		private void ShowSongPosition()
+		{
+			OnModuleInfoChanged(InfoPositionLine, playingInfo.CurrentPosition.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with pattern number
+		/// </summary>
+		/********************************************************************/
+		private void ShowPattern()
+		{
+			OnModuleInfoChanged(InfoPatternLine, positionList[playingInfo.CurrentPosition].ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current speed
+		/// </summary>
+		/********************************************************************/
+		private void ShowSpeed()
+		{
+			OnModuleInfoChanged(InfoSpeedLine, playingInfo.Speed.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with tempo
+		/// </summary>
+		/********************************************************************/
+		private void ShowTempo()
+		{
+			OnModuleInfoChanged(InfoTempoLine, playingInfo.Tempo.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with all dynamic values
+		/// </summary>
+		/********************************************************************/
+		private void UpdateModuleInformation()
+		{
+			ShowSongPosition();
+			ShowPattern();
+			ShowSpeed();
+			ShowTempo();
+		}
 		#endregion
 	}
 }

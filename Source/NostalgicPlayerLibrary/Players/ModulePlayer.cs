@@ -4,7 +4,6 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
@@ -80,15 +79,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 							CalculateDuration();
 
 							// Subscribe the events
-							currentPlayer.PositionChanged += Player_PositionChanged;
 							currentPlayer.ModuleInfoChanged += Player_ModuleInfoChanged;
 							currentPlayer.SubSongChanged += Player_SubSongChanged;
 
 							// Initialize module information
-							StaticModuleInformation = new ModuleInfoStatic(loader.PlayerAgentInfo, loader.ConverterAgentInfo, currentPlayer.ModuleName.Trim(), FindAuthor(), currentPlayer.Comment, currentPlayer.CommentFont, currentPlayer.Lyrics, currentPlayer.LyricsFont, loader.ModuleFormat, loader.ModuleFormatDescription, loader.PlayerName, loader.PlayerDescription, currentPlayer.ModuleChannelCount, currentPlayer.VirtualChannelCount, loader.CrunchedSize, loader.ModuleSize, currentPlayer.SupportFlags, currentPlayer.SubSongs.Number, currentPlayer.Instruments?.ToArray(), currentPlayer.Samples?.ToArray());
+							StaticModuleInformation = new ModuleInfoStatic(loader, currentPlayer);
 
 							// Initialize the mixer
 							soundStream = new MixerStream();
+							soundStream.PositionChanged += Stream_PositionChanged;
 							soundStream.EndReached += Stream_EndReached;
 
 							initOk = soundStream.Initialize(agentManager, playerConfiguration, out errorMessage);
@@ -131,6 +130,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						if (soundStream != null)
 						{
 							soundStream.EndReached -= Stream_EndReached;
+							soundStream.PositionChanged -= Stream_PositionChanged;
 
 							soundStream.Cleanup();
 							soundStream.Dispose();
@@ -142,7 +142,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						currentPlayer.CleanupPlayer();
 
 						// Unsubscribe the events
-						currentPlayer.PositionChanged -= Player_PositionChanged;
 						currentPlayer.ModuleInfoChanged -= Player_ModuleInfoChanged;
 						currentPlayer.SubSongChanged -= Player_SubSongChanged;
 
@@ -361,7 +360,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		#region IModulePlayer implementation
 		/********************************************************************/
 		/// <summary>
-		/// Will select the song you want to play
+		/// Will select the song you want to play. If songNumber is -1, the
+		/// default song will be selected
 		/// </summary>
 		/********************************************************************/
 		public bool SelectSong(int songNumber, out string errorMessage)
@@ -382,21 +382,24 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 							// Find the right song number
 							int songNum = songNumber == -1 ? subSongs.DefaultStartSong : songNumber;
 
-							// Get the position times for the current song
-							DurationInfo durationInfo = allSongsInfo?[songNum];
-
 							// Initialize the player with the new song
-							if (!currentPlayer.InitSound(songNum, durationInfo, out errorMessage))
+							if (!currentPlayer.InitSound(songNum, out errorMessage))
 							{
 								CleanupPlayer();
 								return false;
 							}
 
-							// Find the length of the song
-							int songLength = currentPlayer.SongLength;
+							if (currentPlayer is IModuleDurationPlayer moduleDurationPlayer)
+							{
+								if (!moduleDurationPlayer.SetSubSong(songNum, out errorMessage))
+								{
+									CleanupPlayer();
+									return false;
+								}
+							}
 
 							// Initialize the module information
-							PlayingModuleInformation = new ModuleInfoFloating(songNum, durationInfo, currentPlayer.GetSongPosition(), songLength, PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
+							PlayingModuleInformation = new ModuleInfoFloating(songNum, allSongsInfo?[songNum], PlayerHelper.GetModuleInformation(currentPlayer).ToArray());
 						}
 						catch (Exception ex)
 						{
@@ -427,9 +430,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				{
 					lock (currentPlayer)
 					{
-						currentPlayer.SetSongPosition(position, PlayingModuleInformation.DurationInfo?.PositionInfo[position]);
+						if (currentPlayer is IDurationPlayer durationPlayer)
+							durationPlayer.SetSongPosition(PlayingModuleInformation.DurationInfo?.PositionInfo[position]);
 					}
 
+					soundStream.SongPosition = position;
 					PlayingModuleInformation.SongPosition = position;
 				}
 			}
@@ -439,36 +444,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 		/********************************************************************/
 		/// <summary>
-		/// Event called when the player change position
+		/// Event called when the position is changed
 		/// </summary>
 		/********************************************************************/
 		public event EventHandler PositionChanged;
 		#endregion
 
 		#region Event handlers
-		/********************************************************************/
-		/// <summary>
-		/// Is called every time the player changed position
-		/// </summary>
-		/********************************************************************/
-		private void Player_PositionChanged(object sender, EventArgs e)
-		{
-			if (currentPlayer != null)
-			{
-				lock (currentPlayer)
-				{
-					// Update the position
-					PlayingModuleInformation.SongPosition = currentPlayer.GetSongPosition();
-				}
-
-				// Call the next event handler
-				if (PositionChanged != null)
-					PositionChanged(sender, e);
-			}
-		}
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Is called when the player change some of the module information
@@ -508,6 +490,26 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 		/********************************************************************/
 		/// <summary>
+		/// Is called every time the position is changed
+		/// </summary>
+		/********************************************************************/
+		private void Stream_PositionChanged(object sender, EventArgs e)
+		{
+			if (currentPlayer != null)
+			{
+				// Update the position
+				PlayingModuleInformation.SongPosition = soundStream.SongPosition;
+
+				// Call the next event handler
+				if (PositionChanged != null)
+					PositionChanged(sender, e);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Is called when the player has reached the end
 		/// </summary>
 		/********************************************************************/
@@ -530,429 +532,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/********************************************************************/
 		private void CalculateDuration()
 		{
-			currentPlayer.VirtualChannels = new IChannel[currentPlayer.VirtualChannelCount];
-
-			for (int i = 0; i < currentPlayer.VirtualChannels.Length; i++)
-				currentPlayer.VirtualChannels[i] = new DummyChannel();
-
-			allSongsInfo = currentPlayer.CalculateDuration();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the author of the module
-		/// </summary>
-		/********************************************************************/
-		private string FindAuthor()
-		{
-			string name = currentPlayer.Author;
-
-			if (string.IsNullOrWhiteSpace(name))
+			if (currentPlayer is IDurationPlayer durationPlayer)
 			{
-				// We didn't get any author, now scan the instruments/samples
-				// after an author
-				List<string> nameList = currentPlayer.Instruments?.Select(instInfo => instInfo.Name).ToList();
-				if ((nameList != null) && (nameList.Count > 0))
-					name = FindAuthorInList(nameList);
+				currentPlayer.VirtualChannels = new IChannel[currentPlayer.VirtualChannelCount];
 
-				if (string.IsNullOrEmpty(name))
-				{
-					// No author found in the instrument names, now try the samples
-					nameList = currentPlayer.Samples?.Select(sampInfo => sampInfo.Name).ToList();
-					if ((nameList != null) && (nameList.Count > 0))
-						name = FindAuthorInList(nameList);
-				}
+				for (int i = 0; i < currentPlayer.VirtualChannels.Length; i++)
+					currentPlayer.VirtualChannels[i] = new DummyChannel();
+
+				allSongsInfo = durationPlayer.CalculateDuration();
+				if ((allSongsInfo != null) && (allSongsInfo.Length == 0))
+					allSongsInfo = null;
 			}
-
-			// Trim and return the name
-			return name?.Trim();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Tries to find the author in a list of names
-		/// </summary>
-		/********************************************************************/
-		private string FindAuthorInList(List<string> list)
-		{
-			int i, pos = -1, startPos = -1;
-			string itemStr = string.Empty;
-			string name = string.Empty;
-
-			// First get the number of items in the list
-			int count = list.Count;
-
-			// Traverse all the names after the hash mark
-			for (i = 0; i < count; i++)
-			{
-				// Get the string to search in
-				itemStr = list[i];
-
-				pos = itemStr.IndexOf('#');
-				if (pos != -1)
-				{
-					if ((itemStr.Length >= (pos + 5)) && (itemStr.Substring(pos + 1, 4).ToLower() == "from"))
-						startPos = pos + 5;
-					else
-					{
-						startPos = pos + 1;
-
-						// See if there is a "by" word after the mark
-						pos = FindBy(itemStr.Substring(startPos));
-						if (pos != -1)
-							startPos = pos;
-					}
-
-					// Try to find the beginning of the author in the current string
-					for (pos = startPos; pos < itemStr.Length; pos++)
-					{
-						if (char.IsLetterOrDigit(itemStr[pos]))
-						{
-							startPos = pos;
-							break;
-						}
-					}
-
-					// Find the author
-					name = ClipOutAuthor(itemStr, startPos);
-
-					// If the found name starts with a digit, ignore it.
-					// Also ignore other common names, we know is not the author
-					if (string.IsNullOrEmpty(name) || (char.IsDigit(name[0]) && !name.StartsWith("4-mat")) || name.ToLower().StartsWith("trax"))
-					{
-						startPos = -1;
-						name = string.Empty;
-					}
-					break;
-				}
-			}
-
-			if (startPos == -1)
-			{
-				// Traverse all the names
-				for (i = 0; i < count; i++)
-				{
-					// Get the string to search in
-					itemStr = list[i];
-
-					// If the string is empty, we don't need to do a search :-)
-					if (string.IsNullOrWhiteSpace(itemStr))
-						continue;
-
-					// Try to find a "by" word
-					pos = FindBy(itemStr);
-					if (pos != -1)
-						break;
-				}
-
-				if (pos != -1)
-				{
-					// Now try to find the author, search through the current
-					// string to the end of the list
-					for (;;)
-					{
-						// Scan each character in the rest of the string
-						for (; pos < itemStr.Length; pos++)
-						{
-							if (char.IsLetterOrDigit(itemStr[pos]))
-							{
-								startPos = pos;
-								break;
-							}
-						}
-
-						// Get a start position, break the loop
-						if (startPos != -1)
-							break;
-
-						// Get next line
-						i++;
-						if (i == count)
-							break;
-
-						itemStr = list[i];
-						pos = 0;
-					}
-				}
-				else
-				{
-					// We didn't find a "by" word, try to find other author marks
-					for (i = 0; i < count; i++)
-					{
-						// Get the string to search in
-						itemStr = list[i];
-
-						// If the string is empty, we don't need to do a search :-)
-						if (string.IsNullOrWhiteSpace(itemStr))
-							continue;
-
-						// Is there a ">>>" mark?
-						if (itemStr.StartsWith(">>>"))
-						{
-							startPos = 3;
-							break;
-						}
-
-						// What about the ">>" mark?
-						if (itemStr.StartsWith(">>"))
-						{
-							startPos = 2;
-							break;
-						}
-
-						// Is there a "?>>>" mark?
-						if ((itemStr.Length >= 4) && (itemStr.Substring(1, 3) == ">>>"))
-						{
-							startPos = 4;
-							break;
-						}
-
-						// What about the "?>>" mark?
-						if ((itemStr.Length >= 4) && (itemStr.Substring(1, 2) == ">>"))
-						{
-							startPos = 3;
-							break;
-						}
-					}
-
-					if (startPos != -1)
-					{
-						// See if there is a "by" word after the mark
-						pos = FindBy(itemStr.Substring(startPos));
-						if (pos != -1)
-							startPos = pos;
-					}
-				}
-
-				if (startPos != -1)
-					name = ClipOutAuthor(itemStr, startPos);
-			}
-
-			return name;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Find the end of the given string and return what is found
-		/// </summary>
-		/********************************************************************/
-		private string ClipOutAuthor(string itemStr, int startPos)
-		{
-			// Got the start position of the author, now find the end position
-			string name = itemStr.Substring(startPos).Trim();
-
-			int pos;
-			for (pos = 0; pos < name.Length; pos++)
-			{
-				// Get the current character
-				char chr = name[pos];
-
-				// Check for legal characters
-				if (((chr == ' ') || (chr == '!') || (chr == '\'') || (chr == '-') || (chr == '/') || char.IsDigit(chr)))
-				{
-					// It's legal, go to the next character
-					continue;
-				}
-
-				// Check to see if the & character is the last one and if
-				// not, it's legal
-				if ((chr == '&') && ((pos + 1) < name.Length))
-					continue;
-
-				if (chr == '.')
-				{
-					// The point is the last character
-					if ((pos + 1) == name.Length)
-						break;
-
-					// Are there a space or another point after the first one?
-					if ((name[pos + 1] == ' ') || (name[pos + 1] == '.'))
-						break;
-
-					continue;
-				}
-
-				// Is the character a letter?
-				if (!char.IsLetter(chr))
-				{
-					// No, stop the loop
-					break;
-				}
-
-				// Stop if .... of
-				if ((pos + 1) < name.Length)
-				{
-					if ((chr == 'o') && (name[pos + 1] == 'f') && ((pos + 2) == name.Length))
-					{
-						if ((pos > 0) && (name[pos - 1] == ' '))
-							break;
-					}
-				}
-
-				// Stop if .... from
-				if ((pos + 3) < name.Length)
-				{
-					if ((chr == 'f') && (name[pos + 1] == 'r') && (name[pos + 2] == 'o') && (name[pos + 3] == 'm') && ((pos + 4) == name.Length))
-					{
-						if ((pos > 0) && (name[pos - 1] == ' '))
-							break;
-					}
-				}
-
-				// Stop if .... in
-				if ((pos + 1) < name.Length)
-				{
-					if ((chr == 'i') && (name[pos + 1] == 'n') && ((pos + 2) == name.Length))
-					{
-						if ((pos > 0) && (name[pos - 1] == ' '))
-							break;
-					}
-				}
-
-				// Stop if .... and
-				if ((pos + 2) < name.Length)
-				{
-					if ((chr == 'a') && (name[pos + 1] == 'n') && (name[pos + 2] == 'd') && ((pos + 3) == name.Length))
-					{
-						if ((pos > 0) && (name[pos - 1] == ' '))
-							break;
-					}
-				}
-			}
-
-			// Clip out the author
-			name = name.Substring(0, pos).TrimEnd();
-
-			// Check for some special characters that needs to be removed
-			if (!string.IsNullOrEmpty(name))
-			{
-				for (;;)
-				{
-					char chr = name[name.Length - 1];
-					if (chr != '-')
-						break;
-
-					if (name[0] == chr)
-						break;
-
-					name = name.Substring(0, name.Length - 1);
-				}
-			}
-
-			return name.TrimEnd('/').TrimEnd();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will look in the string given after the "by" word and return the
-		/// index where it found it
-		/// </summary>
-		/********************************************************************/
-		private int FindBy(string str)
-		{
-			int index = 0;
-			bool found = false;
-
-			while (index < (str.Length - 1))
-			{
-				if (((str[index] == 'b') || (str[index] == 'B')) && ((str[index + 1] == 'y') || (str[index + 1] == 'Y')))
-				{
-					// Check to see if the character before "by" is a letter
-					if ((index > 0) && char.IsLetter(str[index - 1]))
-					{
-						index++;
-						continue;
-					}
-
-					// Check to see if the character after "by" is a letter
-					if (((index + 2) < str.Length) && char.IsLetter(str[index + 2]))
-					{
-						index++;
-						continue;
-					}
-
-					if ((index + 2) == str.Length)
-					{
-						// The last word in the string is "by", so we found it
-						return index + 2;
-					}
-
-					index += 2;
-					found = true;
-					break;
-				}
-
-				// Go to the next character
-				index++;
-			}
-
-			// Did we found the "by" word?
-			if (found)
-			{
-				// Yep, check if it's "by" some known phrases we need to ignore
-				if (((index + 5) <= str.Length) && (str.Substring(index + 1, 4) == "KIWI"))
-					return -1;
-
-				if (((index + 11) <= str.Length) && (str.Substring(index + 1, 10) == "the welder"))
-					return -1;
-
-				if (((index + 7) <= str.Length) && (str.Substring(index + 1, 6) == "e-mail"))
-					return -1;
-
-				if (((index + 7) <= str.Length) && (str.Substring(index + 1, 6) == "Gryzor"))
-					return -1;
-
-				if (((index + 6) <= str.Length) && (str.Substring(index + 1, 5) == ">Asle"))
-					return -1;
-
-				if (((index + 5) <= str.Length) && (str.Substring(index + 1, 4) == "Asle"))
-					return -1;
-
-				if (((index + 8) <= str.Length) && (str.Substring(index + 1, 7) == "Trilogy"))
-					return -1;
-			}
-			else
-			{
-				// Okay, now try to find "(c)"
-				index = 0;
-				while (index < (str.Length - 2))
-				{
-					if ((str[index] == '(') && ((str[index + 1] == 'c') || (str[index + 1] == 'C')) && (str[index + 2] == ')'))
-					{
-						index += 3;
-						found = true;
-						break;
-					}
-
-					// Go to the next character
-					index++;
-				}
-			}
-
-			if (found)
-			{
-				// Find the first letter in author
-				for (; index < str.Length; index++)
-				{
-					if (str[index] < '0')
-						continue;
-
-					if ((str[index] <= '9') || (str[index] >= 'A'))
-						break;
-				}
-
-				return index;
-			}
-
-			return -1;
 		}
 		#endregion
 	}

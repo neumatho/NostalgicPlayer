@@ -14,7 +14,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 	public interface IModulePlayer : IPlayer
 	{
 		/// <summary>
-		/// Will select the song you want to play
+		/// Will select the song you want to play. If songNumber is -1, the
+		/// default song will be selected
 		/// </summary>
 		bool SelectSong(int songNumber, out string errorMessage);
 
@@ -24,7 +25,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		void SetSongPosition(int position);
 
 		/// <summary>
-		/// Event called when the player change position
+		/// Event called when the position is changed
 		/// </summary>
 		event EventHandler PositionChanged;
 

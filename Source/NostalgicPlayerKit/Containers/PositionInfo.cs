@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Kit.Containers
 {
@@ -17,13 +18,11 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor (used by module players)
 		/// </summary>
 		/********************************************************************/
-		public PositionInfo(byte speed, ushort bpm, TimeSpan time, int subSong, object extra = null)
+		public PositionInfo(TimeSpan time, float playingFrequency, ISnapshot snapshot)
 		{
-			Speed = speed;
-			Bpm = bpm;
 			Time = time;
-			SubSong = subSong;
-			ExtraInfo = extra;
+			PlayingFrequency = playingFrequency;
+			Snapshot = snapshot;
 		}
 
 
@@ -33,34 +32,9 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor (used by sample players)
 		/// </summary>
 		/********************************************************************/
-		public PositionInfo(TimeSpan time, object extra = null)
+		public PositionInfo(TimeSpan time)
 		{
 			Time = time;
-			ExtraInfo = extra;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Holds the speed at the current position
-		/// </summary>
-		/********************************************************************/
-		public byte Speed
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Holds the BPM at the current position
-		/// </summary>
-		/********************************************************************/
-		public ushort Bpm
-		{
-			get;
 		}
 
 
@@ -79,10 +53,10 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the current sub-song
+		/// Holds the playing frequency at the current position
 		/// </summary>
 		/********************************************************************/
-		public int SubSong
+		internal float PlayingFrequency
 		{
 			get;
 		}
@@ -91,10 +65,10 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds some extra information if needed
+		/// Holds the snapshot from the player
 		/// </summary>
 		/********************************************************************/
-		public object ExtraInfo
+		internal ISnapshot Snapshot
 		{
 			get;
 		}

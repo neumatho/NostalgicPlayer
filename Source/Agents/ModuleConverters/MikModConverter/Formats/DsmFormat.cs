@@ -123,7 +123,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			errorMessage = string.Empty;
 
 			mh = new DsmSong();
-			dsmBuf = Helpers.InitializeArray<DsmNote>(MaxChan * 64);
+			dsmBuf = ArrayHelper.InitializeArray<DsmNote>(MaxChan * 64);
 
 			try
 			{

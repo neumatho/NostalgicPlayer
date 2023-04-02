@@ -34,31 +34,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructor (for module players)
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		internal ModuleInfoFloating(int songNumber, DurationInfo durationInfo, int songPosition, int songLength, string[] moduleInfo)
+		internal ModuleInfoFloating(int songNumber, DurationInfo durationInfo, string[] moduleInfo)
 		{
 			currentSong = songNumber;
 			DurationInfo = durationInfo;
-			this.songPosition = songPosition;
-			SongLength = songLength;
-			ModuleInformation = moduleInfo;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor (for sample players)
-		/// </summary>
-		/********************************************************************/
-		internal ModuleInfoFloating(DurationInfo durationInfo, int songPosition, int songLength, string[] moduleInfo)
-		{
-			currentSong = 0;
-			DurationInfo = durationInfo;
-			this.songPosition = songPosition;
-			SongLength = songLength;
+			songPosition = 0;
+			SongLength = durationInfo != null ? durationInfo.PositionInfo.Length : 0;
 			ModuleInformation = moduleInfo;
 		}
 
@@ -93,6 +77,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 			{
 				currentSong = newSubSong;
 				DurationInfo = newDurationInfo;
+				SongLength = newDurationInfo.PositionInfo.Length;
 			}
 		}
 
@@ -152,7 +137,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/********************************************************************/
 		public int SongLength
 		{
-			get;
+			get; private set;
 		}
 
 

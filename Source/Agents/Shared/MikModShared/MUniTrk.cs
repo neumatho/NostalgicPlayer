@@ -6,6 +6,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod
@@ -238,7 +239,7 @@ namespace Polycode.NostalgicPlayer.Agent.Shared.MikMod
 
 			// Now, check if the previous and the current row are identical..
 			// When they are, just increase the repeat field of the previous row
-			if ((n < 8) && (len == l) && Helpers.ArrayCompare(uniBuf, lastP + 1, uniBuf, uniTt + 1, len - 1))
+			if ((n < 8) && (len == l) && ArrayHelper.ArrayCompare(uniBuf, lastP + 1, uniBuf, uniTt + 1, len - 1))
 			{
 				uniBuf[lastP] += 0x20;
 				uniPc = (ushort)(uniTt + 1);

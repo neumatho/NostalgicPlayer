@@ -146,13 +146,19 @@ This format is produced by the Sawteeth music editor on BeOS / Haiku. The module
     <value>Song version:</value>
   </data>
   <data name="IDS_SAW_INFODESCLINE1" xml:space="preserve">
-    <value>Song length:</value>
+    <value>Number of positions:</value>
   </data>
   <data name="IDS_SAW_INFODESCLINE2" xml:space="preserve">
-    <value>Used parts:</value>
+    <value>Used tracks:</value>
   </data>
   <data name="IDS_SAW_INFODESCLINE3" xml:space="preserve">
     <value>Used instruments:</value>
+  </data>
+  <data name="IDS_SAW_INFODESCLINE4" xml:space="preserve">
+    <value>Playing positions:</value>
+  </data>
+  <data name="IDS_SAW_INFODESCLINE5" xml:space="preserve">
+    <value>Playing tracks:</value>
   </data>
   <data name="IDS_SAW_NAME" xml:space="preserve">
     <value>Sawteeth</value>

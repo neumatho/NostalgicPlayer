@@ -151,15 +151,21 @@ This player plays modules created with MED v2.00 to MED v2.01. This format have 
     <value>Can't read the module samples</value>
   </data>
   <data name="IDS_MED_INFODESCLINE0" xml:space="preserve">
-    <value>Song length:</value>
+    <value>Number of positions:</value>
   </data>
   <data name="IDS_MED_INFODESCLINE1" xml:space="preserve">
-    <value>Used blocks:</value>
+    <value>Used patterns:</value>
   </data>
   <data name="IDS_MED_INFODESCLINE2" xml:space="preserve">
     <value>Supported / used samples:</value>
   </data>
   <data name="IDS_MED_INFODESCLINE3" xml:space="preserve">
+    <value>Playing position:</value>
+  </data>
+  <data name="IDS_MED_INFODESCLINE4" xml:space="preserve">
+    <value>Playing pattern:</value>
+  </data>
+  <data name="IDS_MED_INFODESCLINE5" xml:space="preserve">
     <value>Current tempo (Hz):</value>
   </data>
   <data name="IDS_MED_NAME" xml:space="preserve">

@@ -3,12 +3,14 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+
 namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon.Containers
 {
 	/// <summary>
 	/// BpCurrent structure
 	/// </summary>
-	internal class BpCurrent
+	internal class BpCurrent : IDeepCloneable<BpCurrent>
 	{
 		public bool Restart;
 		public bool UseDefaultVolume;
@@ -37,5 +39,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon.Containers
 		public byte ModControl;
 		public byte FxControl;
 		public sbyte Vibrato;
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public BpCurrent MakeDeepClone()
+		{
+			return (BpCurrent)MemberwiseClone();
+		}
 	}
 }

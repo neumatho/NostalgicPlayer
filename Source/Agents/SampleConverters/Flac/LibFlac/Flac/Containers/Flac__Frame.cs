@@ -13,7 +13,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac.Conta
 	internal class Flac__Frame
 	{
 		public Flac__FrameHeader Header = new Flac__FrameHeader();
-		public Flac__SubFrame[] SubFrames = Helpers.InitializeArray<Flac__SubFrame>((int)Constants.Flac__Max_Channels);
+		public Flac__SubFrame[] SubFrames = ArrayHelper.InitializeArray<Flac__SubFrame>((int)Constants.Flac__Max_Channels);
 		public Flac__FrameFooter Footer = new Flac__FrameFooter();
 	}
 }

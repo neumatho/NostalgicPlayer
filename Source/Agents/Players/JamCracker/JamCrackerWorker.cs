@@ -10,7 +10,6 @@ using Polycode.NostalgicPlayer.Agent.Player.JamCracker.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
@@ -19,17 +18,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class JamCrackerWorker : ModulePlayerAgentBase
+	internal class JamCrackerWorker : ModulePlayerWithPositionDurationAgentBase
 	{
-		private static readonly ushort[] periods =
-		{
-			1019, 962, 908,
-			 857, 809, 763, 720, 680, 642, 606, 572, 540, 509, 481, 454,
-			 428, 404, 381, 360, 340, 321, 303, 286, 270, 254, 240, 227,
-			 214, 202, 190, 180, 170, 160, 151, 143, 135, 135, 135, 135,
-			 135, 135, 135, 135, 135, 135, 135, 135, 135, 135, 135, 135
-		};
-
 		private ushort samplesNum;
 		private ushort patternNum;
 		private ushort songLen;
@@ -38,20 +28,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		private PattInfo[] pattTable;
 		private ushort[] songTable;
 
-		private NoteInfo[] address;
+		private GlobalPlayingInfo playingInfo;
 		private VoiceInfo[] variables;
 
-		private int addressIndex;
+		private bool endReached;
 
-		private ushort tmpDmacon;
-
-		private ushort songPos;
-		private ushort noteCnt;
-
-		private byte wait;
-		private byte waitCnt;
-
-		private const int InfoSpeedLine = 3;
+		private const int InfoPositionLine = 3;
+		private const int InfoPatternLine = 4;
+		private const int InfoSpeedLine = 5;
 
 		#region IPlayerAgent implementation
 		/********************************************************************/
@@ -98,7 +82,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 			// Find out which line to take
 			switch (line)
 			{
-				// Song length
+				// Number of positions
 				case 0:
 				{
 					description = Resources.IDS_JAM_INFODESCLINE0;
@@ -122,11 +106,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 					break;
 				}
 
-				// Current speed
+				// Playing position
 				case 3:
 				{
 					description = Resources.IDS_JAM_INFODESCLINE3;
-					value = wait.ToString();
+					value = playingInfo.SongPos.ToString();
+					break;
+				}
+
+				// Playing pattern
+				case 4:
+				{
+					description = Resources.IDS_JAM_INFODESCLINE4;
+					value = songTable[playingInfo.SongPos].ToString();
+					break;
+				}
+
+				// Current speed
+				case 5:
+				{
+					description = Resources.IDS_JAM_INFODESCLINE5;
+					value = playingInfo.Wait.ToString();
 					break;
 				}
 
@@ -144,15 +144,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		#endregion
 
 		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.SetPosition;
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -305,26 +296,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
+		public override bool InitSound(int songNumber, out string errorMessage)
 		{
-			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+			if (!base.InitSound(songNumber, out errorMessage))
 				return false;
 
-			InitializeSound(durationInfo.StartPosition);
+			InitializeSound(0);
 
 			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override DurationInfo[] CalculateDuration()
-		{
-			return CalculateDurationBySongPosition();
 		}
 
 
@@ -336,64 +315,25 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/********************************************************************/
 		public override void Play()
 		{
-			if (--waitCnt == 0)
+			if (--playingInfo.WaitCnt == 0)
 			{
 				NewNote();
-				waitCnt = wait;
+				playingInfo.WaitCnt = playingInfo.Wait;
 			}
 
-			SetChannel(variables[0]);
-			SetChannel(variables[1]);
-			SetChannel(variables[2]);
-			SetChannel(variables[3]);
-		}
+			SetChannel(variables[0], VirtualChannels[0]);
+			SetChannel(variables[1], VirtualChannels[1]);
+			SetChannel(variables[2], VirtualChannels[2]);
+			SetChannel(variables[3], VirtualChannels[3]);
 
+			// Have we reached the end of the module
+			if (endReached)
+			{
+				OnEndReached(playingInfo.SongPos);
+				endReached = false;
 
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the length of the current song
-		/// </summary>
-		/********************************************************************/
-		public override int SongLength => songLen;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position of the song
-		/// </summary>
-		/********************************************************************/
-		public override int GetSongPosition()
-		{
-			return songPos;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set a new position of the song
-		/// </summary>
-		/********************************************************************/
-		public override void SetSongPosition(int position, PositionInfo positionInfo)
-		{
-			// Change the position
-			songPos = (ushort)position;
-
-			PattInfo pattInfo = pattTable[songTable[songPos]];
-			noteCnt = pattInfo.Size;
-			address = pattInfo.Address;
-
-			addressIndex = 0;
-
-			// Change the speed
-			waitCnt = 1;
-			wait = positionInfo.Speed;
-
-			OnModuleInfoChanged(InfoSpeedLine, wait.ToString());
-
-			base.SetSongPosition(position, positionInfo);
+				MarkPositionAsVisited(playingInfo.SongPos);
+			}
 		}
 
 
@@ -412,7 +352,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				uint[] frequencies = new uint[10 * 12];
 
 				for (int j = 0; j < 3 + 3 * 12; j++)
-					frequencies[4 * 12 - 3 + j] = 3546895U / periods[j];
+					frequencies[4 * 12 - 3 + j] = 3546895U / Tables.Periods[j];
 
 				foreach (InstInfo instInfo in instTable)
 				{
@@ -464,16 +404,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		}
 		#endregion
 
-		#region Duration calculation methods
+		#region ModulePlayerWithPositionDurationAgentBase implementation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override int InitDurationCalculationByStartPos(int startPosition)
+		protected override int InitDuration(int startPosition)
 		{
 			InitializeSound(startPosition);
+			MarkPositionAsVisited(startPosition);
 
 			return startPosition;
 		}
@@ -482,12 +423,47 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the current speed
+		/// Return the total number of positions
 		/// </summary>
 		/********************************************************************/
-		protected override byte GetCurrentSpeed()
+		protected override int GetTotalNumberOfPositions()
 		{
-			return wait;
+			return songLen;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a snapshot of all the internal structures and return it
+		/// </summary>
+		/********************************************************************/
+		protected override ISnapshot CreateSnapshot()
+		{
+			return new Snapshot(playingInfo, variables);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize internal structures based on the snapshot given
+		/// </summary>
+		/********************************************************************/
+		protected override bool SetSnapshot(ISnapshot snapshot, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			// Start to make a clone of the snapshot
+			Snapshot currentSnapshot = (Snapshot)snapshot;
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayingInfo, currentSnapshot.Channels);
+
+			playingInfo = clonedSnapshot.PlayingInfo;
+			variables = clonedSnapshot.Channels;
+
+			UpdateModuleInformation();
+
+			return true;
 		}
 		#endregion
 
@@ -500,16 +476,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		private void InitializeSound(int startPosition)
 		{
 			// Initialize other variables
-			songPos = (ushort)startPosition;
+			PattInfo pattInfo = pattTable[songTable[startPosition]];
 
-			PattInfo pattInfo = pattTable[songTable[songPos]];
-			noteCnt = pattInfo.Size;
-			address = pattInfo.Address;
+			playingInfo = new GlobalPlayingInfo
+			{
+				SongPos = (ushort)startPosition,
 
-			addressIndex = 0;
+				NoteCnt = pattInfo.Size,
+				Address = pattInfo.Address,
 
-			wait = 6;
-			waitCnt = 1;
+				AddressIndex = 0,
+
+				Wait = 6,
+				WaitCnt = 1
+			};
+
+			endReached = false;
 
 			// Initialize channel variables
 			ushort waveOff = 0x80;
@@ -521,7 +503,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 				voiceInfo.WaveOffset = waveOff;
 				voiceInfo.Dmacon = (ushort)(1 << i);
-				voiceInfo.Channel = VirtualChannels[i];
 				voiceInfo.InsNum = -1;
 				voiceInfo.InsLen = 0;
 				voiceInfo.InsAddress = null;
@@ -548,8 +529,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 				waveOff += 0x40;
 			}
-
-			MarkPositionAsVisited(startPosition);
 		}
 
 
@@ -564,6 +543,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 			songTable = null;
 			pattTable = null;
 			instTable = null;
+
+			playingInfo = null;
+			variables = null;
 		}
 
 
@@ -576,47 +558,42 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/********************************************************************/
 		private void NewNote()
 		{
-			NoteInfo[] adr = address;
-			int adrIndex = addressIndex;
-			addressIndex += 4;				// Go to the next row
+			NoteInfo[] adr = playingInfo.Address;
+			int adrIndex = playingInfo.AddressIndex;
+			playingInfo.AddressIndex += 4;				// Go to the next row
 
-			if (--noteCnt == 0)
+			if (--playingInfo.NoteCnt == 0)
 			{
-				songPos++;
-				if (songPos >= songLen)
-					songPos = (ushort)(currentDurationInfo?.StartPosition ?? 0);
+				playingInfo.SongPos++;
+				if (playingInfo.SongPos >= songLen)
+					playingInfo.SongPos = 0;
 
-				if (HasPositionBeenVisited(songPos))
-				{
-					wait = currentDurationInfo?.PositionInfo[songPos].Speed ?? 6;
+				if (HasPositionBeenVisited(playingInfo.SongPos))
+					endReached = true;
 
-					// Next module
-					OnEndReached();
-				}
+				MarkPositionAsVisited(playingInfo.SongPos);
 
-				// Next position
-				OnPositionChanged();
+				PattInfo pattInfo = pattTable[songTable[playingInfo.SongPos]];
+				playingInfo.NoteCnt = pattInfo.Size;
+				playingInfo.Address = pattInfo.Address;
 
-				MarkPositionAsVisited(songPos);
+				playingInfo.AddressIndex = 0;
 
-				PattInfo pattInfo = pattTable[songTable[songPos]];
-				noteCnt = pattInfo.Size;
-				address = pattInfo.Address;
-
-				addressIndex = 0;
+				ShowSongPosition();
+				ShowPattern();
 			}
 
-			tmpDmacon = 0;
+			playingInfo.TmpDmacon = 0;
 
 			NwNote(adr[adrIndex], variables[0]);
 			NwNote(adr[++adrIndex], variables[1]);
 			NwNote(adr[++adrIndex], variables[2]);
 			NwNote(adr[++adrIndex], variables[3]);
 
-			SetVoice(variables[0]);
-			SetVoice(variables[1]);
-			SetVoice(variables[2]);
-			SetVoice(variables[3]);
+			SetVoice(variables[0], VirtualChannels[0]);
+			SetVoice(variables[1], VirtualChannels[1]);
+			SetVoice(variables[2], VirtualChannels[2]);
+			SetVoice(variables[3], VirtualChannels[3]);
 		}
 
 
@@ -635,15 +612,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				perIndex = adr.Period - 1;
 
 				if ((adr.Speed & 64) != 0)
-					voice.PorLevel = (short)periods[perIndex];
+					voice.PorLevel = (short)Tables.Periods[perIndex];
 				else
 				{
-					tmpDmacon |= voice.Dmacon;
+					playingInfo.TmpDmacon |= voice.Dmacon;
 
 					voice.PerIndex = perIndex;
-					voice.Pers[0] = periods[perIndex];
-					voice.Pers[1] = periods[perIndex];
-					voice.Pers[2] = periods[perIndex];
+					voice.Pers[0] = Tables.Periods[perIndex];
+					voice.Pers[1] = Tables.Periods[perIndex];
+					voice.Pers[2] = Tables.Periods[perIndex];
 
 					voice.Por = 0;
 
@@ -692,10 +669,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 
 			if ((adr.Speed & 15) != 0)
 			{
-				wait = (byte)(adr.Speed & 15);
+				playingInfo.Wait = (byte)(adr.Speed & 15);
 
-				// Change the module info
-				OnModuleInfoChanged(InfoSpeedLine, wait.ToString());
+				ShowSpeed();
 			}
 
 			// Do arpeggio
@@ -705,15 +681,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 			{
 				if (adr.Arpeggio == 255)
 				{
-					voice.Pers[0] = periods[perIndex];
-					voice.Pers[1] = periods[perIndex];
-					voice.Pers[2] = periods[perIndex];
+					voice.Pers[0] = Tables.Periods[perIndex];
+					voice.Pers[1] = Tables.Periods[perIndex];
+					voice.Pers[2] = Tables.Periods[perIndex];
 				}
 				else
 				{
-					voice.Pers[2] = periods[perIndex + (adr.Arpeggio & 15)];
-					voice.Pers[1] = periods[perIndex + (adr.Arpeggio >> 4)];
-					voice.Pers[0] = periods[perIndex];
+					voice.Pers[2] = Tables.Periods[perIndex + (adr.Arpeggio & 15)];
+					voice.Pers[1] = Tables.Periods[perIndex + (adr.Arpeggio >> 4)];
+					voice.Pers[0] = Tables.Periods[perIndex];
 				}
 			}
 
@@ -824,12 +800,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/// Will setup the voice in the channel structure
 		/// </summary>
 		/********************************************************************/
-		private void SetVoice(VoiceInfo voice)
+		private void SetVoice(VoiceInfo voice, IChannel chan)
 		{
-			if ((tmpDmacon & voice.Dmacon) != 0)
+			if ((playingInfo.TmpDmacon & voice.Dmacon) != 0)
 			{
-				IChannel chan = voice.Channel;
-
 				// Setup the start sample
 				if (voice.InsAddress == null)
 					chan.Mute();
@@ -861,10 +835,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/// Will setup the channel structure
 		/// </summary>
 		/********************************************************************/
-		private void SetChannel(VoiceInfo voice)
+		private void SetChannel(VoiceInfo voice, IChannel chan)
 		{
-			IChannel chan = voice.Channel;
-
 			while (voice.Pers[0] == 0)
 				RotatePeriods(voice);
 
@@ -951,6 +923,56 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 			voice.Pers[0] = voice.Pers[1];
 			voice.Pers[1] = voice.Pers[2];
 			voice.Pers[2] = temp1;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current song position
+		/// </summary>
+		/********************************************************************/
+		private void ShowSongPosition()
+		{
+			OnModuleInfoChanged(InfoPositionLine, playingInfo.SongPos.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with pattern number
+		/// </summary>
+		/********************************************************************/
+		private void ShowPattern()
+		{
+			OnModuleInfoChanged(InfoPatternLine, songTable[playingInfo.SongPos].ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current speed
+		/// </summary>
+		/********************************************************************/
+		private void ShowSpeed()
+		{
+			OnModuleInfoChanged(InfoSpeedLine, playingInfo.Wait.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with all dynamic values
+		/// </summary>
+		/********************************************************************/
+		private void UpdateModuleInformation()
+		{
+			ShowSongPosition();
+			ShowPattern();
+			ShowSpeed();
 		}
 		#endregion
 	}

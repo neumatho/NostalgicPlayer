@@ -188,18 +188,24 @@ This player is the same as the MED (MMD0) format, but the patterns are packed. S
     <value>A sample has an unknown type defined. Can't load the module</value>
   </data>
   <data name="IDS_MED_INFODESCLINE0" xml:space="preserve">
-    <value>Song length:</value>
+    <value>Number of positions:</value>
   </data>
   <data name="IDS_MED_INFODESCLINE1" xml:space="preserve">
-    <value>Used blocks:</value>
+    <value>Used patterns:</value>
   </data>
   <data name="IDS_MED_INFODESCLINE2" xml:space="preserve">
     <value>Used samples:</value>
   </data>
   <data name="IDS_MED_INFODESCLINE3" xml:space="preserve">
-    <value>Current speed:</value>
+    <value>Playing position:</value>
   </data>
   <data name="IDS_MED_INFODESCLINE4" xml:space="preserve">
+    <value>Playing pattern:</value>
+  </data>
+  <data name="IDS_MED_INFODESCLINE5" xml:space="preserve">
+    <value>Current speed:</value>
+  </data>
+  <data name="IDS_MED_INFODESCLINE6" xml:space="preserve">
     <value>Current tempo (Hz):</value>
   </data>
   <data name="IDS_MED_NAME" xml:space="preserve">

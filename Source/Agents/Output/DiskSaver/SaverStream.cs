@@ -102,6 +102,19 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 
 		/********************************************************************/
 		/// <summary>
+		/// Set the stream to the given song position
+		/// </summary>
+		/********************************************************************/
+		public override int SongPosition
+		{
+			get => wrapperStream.SongPosition;
+			set => wrapperStream.SongPosition = value;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Read mixed data
 		/// </summary>
 		/********************************************************************/

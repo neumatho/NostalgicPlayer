@@ -4,13 +4,14 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Implementation
 {
 	/// <summary>
 	/// Low frequency oscillation
 	/// </summary>
-	internal class Lfo
+	internal class Lfo : IDeepCloneable<Lfo>
 	{
 		private float curr;
 		private float step;
@@ -48,6 +49,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Implementation
 		public float Next()
 		{
 			return (float)Math.Cos(curr += step);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Lfo MakeDeepClone()
+		{
+			return (Lfo)MemberwiseClone();
 		}
 	}
 }

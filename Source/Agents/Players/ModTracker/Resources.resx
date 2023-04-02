@@ -244,7 +244,7 @@ This is a NoiseTracker clone, but improved by the possibility to have synth samp
     <value>Can't read the module samples</value>
   </data>
   <data name="IDS_MOD_INFODESCLINE0" xml:space="preserve">
-    <value>Song length:</value>
+    <value>Number of positions:</value>
   </data>
   <data name="IDS_MOD_INFODESCLINE1" xml:space="preserve">
     <value>Used patterns:</value>
@@ -253,10 +253,16 @@ This is a NoiseTracker clone, but improved by the possibility to have synth samp
     <value>Supported / used samples:</value>
   </data>
   <data name="IDS_MOD_INFODESCLINE3" xml:space="preserve">
-    <value>Current speed:</value>
+    <value>Playing position:</value>
   </data>
   <data name="IDS_MOD_INFODESCLINE4" xml:space="preserve">
-    <value>BPM:</value>
+    <value>Playing pattern:</value>
+  </data>
+  <data name="IDS_MOD_INFODESCLINE5" xml:space="preserve">
+    <value>Current speed:</value>
+  </data>
+  <data name="IDS_MOD_INFODESCLINE6" xml:space="preserve">
+    <value>Current tempo (BPM):</value>
   </data>
   <data name="IDS_MOD_NAME_AGENT1" xml:space="preserve">
     <value>Ultimate SoundTracker 1.0 - 1.21</value>

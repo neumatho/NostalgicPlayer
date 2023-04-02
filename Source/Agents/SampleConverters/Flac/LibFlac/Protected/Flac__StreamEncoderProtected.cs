@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Protected
 		public uint32_t Sample_Rate;
 		public uint32_t BlockSize;
 		public uint32_t Num_Apodizations;
-		public Flac__ApodizationSpecification[] Apodizations = Helpers.InitializeArray<Flac__ApodizationSpecification>((int)Constants.Flac__Max_Apodization_Functions);
+		public Flac__ApodizationSpecification[] Apodizations = ArrayHelper.InitializeArray<Flac__ApodizationSpecification>((int)Constants.Flac__Max_Apodization_Functions);
 		public uint32_t Max_Lpc_Order;
 		public uint32_t Qlp_Coeff_Precision;
 		public Flac__bool Do_Qlp_Coeff_Prec_Search;

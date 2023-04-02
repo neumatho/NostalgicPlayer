@@ -11,7 +11,6 @@ using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.ScanSong;
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Sequences;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
@@ -20,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class OctaMedWorker : ModulePlayerAgentBase
+	internal class OctaMedWorker : ModulePlayerWithSubSongDurationAgentBase
 	{
 		private static readonly Dictionary<Guid, ModuleType> moduleTypeLookup = new Dictionary<Guid, ModuleType>
 		{
@@ -32,14 +31,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 			{ OctaMed.Agent6Id, ModuleType.MedPacker }
 		};
 
-		#region ExtraPosInfo class
-		private class ExtraPosInfo
-		{
-			public Tempo tempo;
-			public readonly uint[] instVolumes = new uint[Constants.MaxInstr - 1];
-		}
-		#endregion
-
 		private readonly ModuleType currentModuleType;
 
 		private uint numSamples;
@@ -48,8 +39,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		public Song sg;
 		public Implementation.Player plr;
 
-		private const int InfoSpeedLine = 3;
-		private const int InfoTempoLine = 4;
+		private const int InfoPositionLine = 3;
+		private const int InfoPatternLine = 4;
+		private const int InfoSpeedLine = 5;
+		private const int InfoTempoLine = 6;
 
 		/********************************************************************/
 		/// <summary>
@@ -118,15 +111,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 			// Find out which line to take
 			switch (line)
 			{
-				// Song length
+				// Number of positions
 				case 0:
 				{
 					description = Resources.IDS_MED_INFODESCLINE0;
-					value = SongLength.ToString();
+					value = GetSongLength().ToString();
 					break;
 				}
 
-				// Used blocks
+				// Used patterns
 				case 1:
 				{
 					description = Resources.IDS_MED_INFODESCLINE1;
@@ -142,18 +135,34 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 					break;
 				}
 
-				// Current speed
+				// Playing position
 				case 3:
 				{
 					description = Resources.IDS_MED_INFODESCLINE3;
+					value = FormatPosition();
+					break;
+				}
+
+				// Playing pattern
+				case 4:
+				{
+					description = Resources.IDS_MED_INFODESCLINE4;
+					value = plr.plrPos.Block().ToString();
+					break;
+				}
+
+				// Current speed
+				case 5:
+				{
+					description = Resources.IDS_MED_INFODESCLINE5;
 					value = sg.CurrSS().GetTempoTpl().ToString();
 					break;
 				}
 
 				// Current tempo (Hz)
-				case 4:
+				case 6:
 				{
-					description = Resources.IDS_MED_INFODESCLINE4;
+					description = Resources.IDS_MED_INFODESCLINE6;
 					value = PlayingFrequency.ToString("F2", CultureInfo.InvariantCulture);
 					break;
 				}
@@ -172,15 +181,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		#endregion
 
 		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.SetPosition;
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -1252,6 +1252,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		/********************************************************************/
 		public override bool InitPlayer(out string errorMessage)
 		{
+			if (!base.InitPlayer(out errorMessage))
+				return false;
+
 			// Get the number of sub-songs
 			uint numSongs = sg.NumSubSongs();
 
@@ -1266,7 +1269,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 				ss.SetStartTempo(tempo);
 			}
 
-			return base.InitPlayer(out errorMessage);
+			return true;
 		}
 
 
@@ -1290,26 +1293,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
+		public override bool InitSound(int songNumber, out string errorMessage)
 		{
-			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+			if (!base.InitSound(songNumber, out errorMessage))
 				return false;
 
 			InitializeSound(songNumber);
 
 			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override DurationInfo[] CalculateDuration()
-		{
-			return CalculateDurationBySubSongs();
 		}
 
 
@@ -1341,101 +1332,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		/// </summary>
 		/********************************************************************/
 		public override SubSongInfo SubSongs => new SubSongInfo((int)sg.NumSubSongs(), 0);
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the length of the current song
-		/// </summary>
-		/********************************************************************/
-		public override int SongLength
-		{
-			get
-			{
-				SubSong ss = sg.CurrSS();
-				uint numSec = ss.NumSections();
-				int len = 0;
-
-				for (uint i = 0; i < numSec; i++)
-				{
-					PSeqNum seq = ss.Sect(i).Value;
-					len += ss.PSeq(seq).Count;
-				}
-
-				return len;
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position of the song
-		/// </summary>
-		/********************************************************************/
-		public override int GetSongPosition()
-		{
-			SubSong ss = sg.CurrSS();
-			uint secNum = plr.plrPos.PSectPos();
-			int pos = 0;
-
-			for (uint i = 0; i < secNum; i++)
-			{
-				PSeqNum seq = ss.Sect(i).Value;
-				pos += ss.PSeq(seq).Count;
-			}
-
-			return (int)(pos + plr.plrPos.PSeqPos());
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set a new position of the song
-		/// </summary>
-		/********************************************************************/
-		public override void SetSongPosition(int position, PositionInfo positionInfo)
-		{
-			SubSong ss = sg.CurrSS();
-			uint numSec = ss.NumSections();
-			ExtraPosInfo extraPosInfo = (ExtraPosInfo)positionInfo.ExtraInfo;
-
-			uint i;
-			PSeqNum seq;
-
-			// Calculate the different sequence, section etc. positions
-			for (i = 0; i < numSec; i++)
-			{
-				seq = ss.Sect(i).Value;
-				int seqNum = ss.PSeq(seq).Count;
-
-				if (position < seqNum)
-					break;
-
-				position -= seqNum;
-			}
-
-			// Now set the player position
-			plr.plrPos.PSectPos(i);
-			plr.plrPos.PSeqPos((uint)position);
-			plr.plrPos.Line(0);
-
-			seq = ss.Sect(i).Value;
-			PlaySeqEntry pse = ss.PSeq(seq)[position];
-			plr.plrPos.Block(pse.Value);
-
-			// Set the tempo
-			ss.SetTempo(extraPosInfo.tempo);
-			ChangePlayFreq();
-
-			// Set instrument volumes (can be changed with Cxx effect)
-			for (i = 0; i < Constants.MaxInstr - 1; i++)
-				sg.GetInstr(i).SetVol(extraPosInfo.instVolumes[i]);
-
-			base.SetSongPosition(position, positionInfo);
-		}
 
 
 
@@ -1587,14 +1483,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		public override IEffectMaster EffectMaster => plr.EffectMaster;
 		#endregion
 
-		#region Duration calculation methods
+		#region ModulePlayerWithSubSongDurationAgentBase implementation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override void InitDurationCalculationBySubSong(int subSong)
+		protected override void InitDuration(int subSong)
 		{
 			InitializeSound(subSong);
 		}
@@ -1603,20 +1499,49 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 
 		/********************************************************************/
 		/// <summary>
-		/// Return extra information for the current position
+		/// Return the total number of positions. You only need to derive
+		/// from this method, if your player have one position list for all
+		/// channels and can restart on another position than 0
 		/// </summary>
 		/********************************************************************/
-		protected override object GetExtraPositionInfo()
+		protected override int GetTotalNumberOfPositions()
 		{
-			ExtraPosInfo extraPosInfo = new ExtraPosInfo
-			{
-				tempo = new Tempo(sg.CurrSS().GetTempo())
-			};
+			return GetSongLength();
+		}
 
-			for (uint cnt = 0; cnt < Constants.MaxInstr - 1; cnt++)
-				extraPosInfo.instVolumes[cnt] = sg.GetInstr(cnt).GetVol();
 
-			return extraPosInfo;
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a snapshot of all the internal structures and return it
+		/// </summary>
+		/********************************************************************/
+		protected override ISnapshot CreateSnapshot()
+		{
+			return new Snapshot(plr);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize internal structures based on the snapshot given
+		/// </summary>
+		/********************************************************************/
+		protected override bool SetSnapshot(ISnapshot snapshot, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			// Start to make a clone of the snapshot
+			Snapshot currentSnapshot = (Snapshot)snapshot;
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.Player);
+
+			plr = clonedSnapshot.Player;
+			sg = plr.GetSong();
+
+			UpdateModuleInformation();
+
+			return true;
 		}
 		#endregion
 
@@ -1646,18 +1571,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 
 		/********************************************************************/
 		/// <summary>
-		/// Tell that the position has changed
-		/// </summary>
-		/********************************************************************/
-		public void ChangePosition()
-		{
-			OnPositionChanged();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Set the end reached flag
 		/// </summary>
 		/********************************************************************/
@@ -1675,9 +1588,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		/********************************************************************/
 		public void ChangePlayFreq()
 		{
-			// Change the module info
-			OnModuleInfoChanged(InfoSpeedLine, sg.CurrSS().GetTempoTpl().ToString());
-			OnModuleInfoChanged(InfoTempoLine, PlayingFrequency.ToString("F2", CultureInfo.InvariantCulture));
+			ShowSpeed();
+			ShowTempo();
 		}
 
 		#region Private methods
@@ -1934,6 +1846,113 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 			moduleStream.Seek(16, SeekOrigin.Current);
 			song.MasterVol = moduleStream.Read_UINT8();
 			song.NumSamples = moduleStream.Read_UINT8();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current song position
+		/// </summary>
+		/********************************************************************/
+		public void ShowSongPosition()
+		{
+			OnModuleInfoChanged(InfoPositionLine, FormatPosition());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with pattern number
+		/// </summary>
+		/********************************************************************/
+		public void ShowPattern()
+		{
+			OnModuleInfoChanged(InfoPatternLine, plr.plrPos.Block().ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current speed
+		/// </summary>
+		/********************************************************************/
+		private void ShowSpeed()
+		{
+			OnModuleInfoChanged(InfoSpeedLine, sg.CurrSS().GetTempoTpl().ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current tempo
+		/// </summary>
+		/********************************************************************/
+		private void ShowTempo()
+		{
+			OnModuleInfoChanged(InfoTempoLine, PlayingFrequency.ToString("F2", CultureInfo.InvariantCulture));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with all dynamic values
+		/// </summary>
+		/********************************************************************/
+		private void UpdateModuleInformation()
+		{
+			ShowSongPosition();
+			ShowPattern();
+			ShowSpeed();
+			ShowTempo();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the total number of positions
+		/// </summary>
+		/********************************************************************/
+		private int GetSongLength()
+		{
+			SubSong ss = sg.CurrSS();
+			uint numSec = ss.NumSections();
+			int len = 0;
+
+			for (uint i = 0; i < numSec; i++)
+			{
+				PSeqNum seq = ss.Sect(i).Value;
+				len += ss.PSeq(seq).Count;
+			}
+
+			return len;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the playing position
+		/// </summary>
+		/********************************************************************/
+		private string FormatPosition()
+		{
+			SubSong ss = sg.CurrSS();
+			uint secNum = plr.plrPos.PSectPos();
+			int pos = 0;
+
+			for (uint i = 0; i < secNum; i++)
+			{
+				PSeqNum seq = ss.Sect(i).Value;
+				pos += ss.PSeq(seq).Count;
+			}
+
+			return (pos + plr.plrPos.PSeqPos()).ToString();
 		}
 		#endregion
 	}

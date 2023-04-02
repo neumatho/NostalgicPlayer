@@ -189,7 +189,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		{
 			errorMessage = string.Empty;
 
-			imfPat = Helpers.InitializeArray<ImfNote>(32 * 256);
+			imfPat = ArrayHelper.InitializeArray<ImfNote>(32 * 256);
 			mh = new ImfHeader();
 
 			util = new MlUtil();
@@ -240,7 +240,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 				of.NumChn = 0;
 				Array.Fill<byte>(util.remap, 255);
 
-				ImfChannel[] channels = Helpers.InitializeArray<ImfChannel>(32);
+				ImfChannel[] channels = ArrayHelper.InitializeArray<ImfChannel>(32);
 
 				for (int t = 0; t < 32; t++)
 				{

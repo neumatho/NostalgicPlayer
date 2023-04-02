@@ -5,23 +5,24 @@
 /******************************************************************************/
 using System;
 using Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Implementation
 {
 	/// <summary>
 	/// Instrument player
 	/// </summary>
-	internal class InsPly
+	internal class InsPly : IDeepCloneable<InsPly>
 	{
 		// Clipping
-		private readonly Lfo vib;
-		private readonly Lfo pwm;
+		private Lfo vib;
+		private Lfo pwm;
 		private float vAmp;
 		private float pAmp;
 		private float pwmOffs;
 
 		private readonly SawteethWorker song;
-		private readonly Wave w;
+		private Wave w;
 		private readonly Ins[] ins;
 		private InsStep currStep;
 		private byte stepC;					// Instrument step
@@ -349,6 +350,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Implementation
 			}
 
 			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public InsPly MakeDeepClone()
+		{
+			InsPly clone = (InsPly)MemberwiseClone();
+
+			clone.vib = vib.MakeDeepClone();
+			clone.pwm = pwm.MakeDeepClone();
+			clone.w = w.MakeDeepClone();
+
+			return clone;
 		}
 
 		#region Private methods

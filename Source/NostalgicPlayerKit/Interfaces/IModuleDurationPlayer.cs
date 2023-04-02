@@ -3,22 +3,16 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Agent.Player.Fred.Containers
+namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
 	/// <summary>
-	/// Holds information about which channel to
-	/// take position information from
+	/// Add some extra methods for a module duration player
 	/// </summary>
-	internal class PosLength
+	public interface IModuleDurationPlayer : IDurationPlayer
 	{
 		/// <summary>
-		/// The channel to use positions from
+		/// Initialize player to play the given sub-song
 		/// </summary>
-		public int Channel;
-
-		/// <summary>
-		/// The number of positions in the channel
-		/// </summary>
-		public int Length;
+		bool SetSubSong(int subSong, out string errorMessage);
 	}
 }

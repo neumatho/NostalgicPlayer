@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers
 	/// <summary>
 	/// Voice information structure
 	/// </summary>
-	internal class VoiceInfo
+	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
 	{
 		public sbyte PitchBendSpeed;
 		public byte PitchBendTime;
@@ -42,6 +42,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer.Containers
 		public ushort FrequencySeqStartOffset;
 		public ushort FrequencySeqPos;
 		public ushort Pitch;
-		public IChannel Channel;
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public VoiceInfo MakeDeepClone()
+		{
+			return (VoiceInfo)MemberwiseClone();
+		}
 	}
 }

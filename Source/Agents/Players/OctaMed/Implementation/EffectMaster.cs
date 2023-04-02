@@ -10,12 +10,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 	/// <summary>
 	/// Handles all the effects
 	/// </summary>
-	internal class EffectMaster : IEffectMaster
+	internal class EffectMaster : IEffectMaster, IDeepCloneable<EffectMaster>
 	{
-		private readonly SubSong subSong;
+		private SubSong subSong;
 
-		private readonly List<EffectGroup> groups;
-		private readonly Dictionary<int, int> trackGroups;
+		private List<EffectGroup> groups;
+		private Dictionary<int, int> trackGroups;
 
 		/********************************************************************/
 		/// <summary>
@@ -77,6 +77,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		public void SetTrackGroup(TrackNum trk, int grp)
 		{
 			trackGroups[trk] = grp;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Change the parent sub-song
+		/// </summary>
+		/********************************************************************/
+		public void SetParent(SubSong ss)
+		{
+			subSong = ss;
+
+			foreach (EffectGroup grp in groups)
+				grp.SetParent(ss);
 		}
 
 
@@ -173,5 +188,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 				GlobalGroup.DoEffects(dest, todo, mixerFrequency, stereo);
 		}
 		#endregion
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public EffectMaster MakeDeepClone()
+		{
+			EffectMaster clone = (EffectMaster)MemberwiseClone();
+
+			clone.trackGroups = new Dictionary<int, int>(trackGroups);
+
+			clone.groups = new List<EffectGroup>();
+
+			foreach (EffectGroup grp in groups)
+				clone.groups.Add(grp.MakeDeepClone());
+
+			return clone;
+		}
 	}
 }

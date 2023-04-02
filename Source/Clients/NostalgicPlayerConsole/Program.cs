@@ -45,14 +45,14 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 				// to add an implementation that read these settings. You can implement your
 				// own version by deriving from ISettings and register it
 				DependencyInjection.Build(services =>
-						{
-							// We use the default NostalgicPlayer implementation,
-							// which will read/write the settings in
-							// %ProgramData%\Polycode\NostalgicPlayer folder
-							//
-							// It is important that the ISettings is added as transient
-							services.AddTransient<ISettings, Settings>();
-						}
+					{
+						// We use the default NostalgicPlayer implementation,
+						// which will read/write the settings in
+						// %ProgramData%\Polycode\NostalgicPlayer folder
+						//
+						// It is important that the ISettings is added as transient
+						services.AddTransient<ISettings, Settings>();
+					}
 				);
 
 				// Load needed agents
@@ -106,7 +106,7 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 							// Start to play the music
 							if (player is IModulePlayer modulePlayer)
 							{
-								if (!modulePlayer.SelectSong(0, out errorMessage))
+								if (!modulePlayer.SelectSong(-1, out errorMessage))
 								{
 									Console.WriteLine("Cannot initialize player.");
 									Console.WriteLine(errorMessage);

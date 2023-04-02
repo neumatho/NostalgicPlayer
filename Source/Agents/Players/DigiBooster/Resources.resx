@@ -142,7 +142,7 @@ This player plays modules created with DigiBooster 1.x. The editor was created b
     <value>Can't read the module samples</value>
   </data>
   <data name="IDS_DIGI_INFODESCLINE0" xml:space="preserve">
-    <value>Song length:</value>
+    <value>Number of positions:</value>
   </data>
   <data name="IDS_DIGI_INFODESCLINE1" xml:space="preserve">
     <value>Used patterns:</value>
@@ -151,10 +151,16 @@ This player plays modules created with DigiBooster 1.x. The editor was created b
     <value>Supported / used samples:</value>
   </data>
   <data name="IDS_DIGI_INFODESCLINE3" xml:space="preserve">
-    <value>Current speed:</value>
+    <value>Playing position:</value>
   </data>
   <data name="IDS_DIGI_INFODESCLINE4" xml:space="preserve">
-    <value>BPM:</value>
+    <value>Playing pattern:</value>
+  </data>
+  <data name="IDS_DIGI_INFODESCLINE5" xml:space="preserve">
+    <value>Current speed:</value>
+  </data>
+  <data name="IDS_DIGI_INFODESCLINE6" xml:space="preserve">
+    <value>Current tempo (BPM):</value>
   </data>
   <data name="IDS_DIGI_NAME" xml:space="preserve">
     <value>DigiBooster 1.x</value>

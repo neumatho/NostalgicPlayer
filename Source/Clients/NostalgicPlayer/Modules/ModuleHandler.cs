@@ -656,10 +656,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/// Return the time on the position given
 		/// </summary>
 		/********************************************************************/
-		public TimeSpan GetPositionTime(int position)
+		public TimeSpan? GetPositionTime(int position)
 		{
 			if ((PlayingModuleInformation.DurationInfo == null) || (position < 0) || (position >= PlayingModuleInformation.DurationInfo.PositionInfo.Length))
-				return new TimeSpan(0);
+				return null;
 
 			return PlayingModuleInformation.DurationInfo.PositionInfo[position].Time;
 		}
@@ -875,7 +875,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				SetVolume(currentMasterVolume);
 
 				// Initialize the module
-				if (player is IModulePlayer modulePlayer)
+				IModulePlayer modulePlayer = null;
+				ISamplePlayer samplePlayer = null;
+
+				if ((modulePlayer = player as IModulePlayer) != null)
 				{
 					if (!modulePlayer.SelectSong(subSong, out string errorMessage))
 					{
@@ -885,15 +888,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 						return false;
 					}
 
-					if ((startPos != -1) && (modulePlayer.StaticModuleInformation.CanChangePosition))
-						modulePlayer.SetSongPosition(startPos);
-
 					// Subscribe to event notifications
 					modulePlayer.PositionChanged += Player_PositionChanged;
 					modulePlayer.SubSongChanged += Player_SubSongChanged;
 				}
-				else if (player is ISamplePlayer samplePlayer)
+				else if ((samplePlayer = player as ISamplePlayer) != null)
 				{
+					if ((startPos != -1) && (samplePlayer.StaticModuleInformation.CanChangePosition))
+						samplePlayer.SetSongPosition(startPos);
+
 					// Subscribe to event notifications
 					samplePlayer.PositionChanged += Player_PositionChanged;
 				}
@@ -914,6 +917,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 								ShowErrorMessage(string.Format(Resources.IDS_ERR_INIT_PLAYER, player.StaticModuleInformation.PlayerAgentInfo.AgentName, errorMessage), listItem);
 
 							return false;
+						}
+
+						if ((startPos != -1) && (player.StaticModuleInformation.CanChangePosition))
+						{
+							modulePlayer?.SetSongPosition(startPos);
+							samplePlayer?.SetSongPosition(startPos);
 						}
 					}
 				}

@@ -152,7 +152,7 @@ This player plays the 2.x file format, which has added filter support.</value>
     <value>Can't read the module tracks</value>
   </data>
   <data name="IDS_AHX_INFODESCLINE0" xml:space="preserve">
-    <value>Song length:</value>
+    <value>Number of positions:</value>
   </data>
   <data name="IDS_AHX_INFODESCLINE1" xml:space="preserve">
     <value>Used tracks:</value>
@@ -161,9 +161,15 @@ This player plays the 2.x file format, which has added filter support.</value>
     <value>Used instruments:</value>
   </data>
   <data name="IDS_AHX_INFODESCLINE3" xml:space="preserve">
-    <value>Current speed:</value>
+    <value>Playing position:</value>
   </data>
   <data name="IDS_AHX_INFODESCLINE4" xml:space="preserve">
+    <value>Playing tracks:</value>
+  </data>
+  <data name="IDS_AHX_INFODESCLINE5" xml:space="preserve">
+    <value>Current speed:</value>
+  </data>
+  <data name="IDS_AHX_INFODESCLINE6" xml:space="preserve">
     <value>Current tempo (Hz):</value>
   </data>
   <data name="IDS_AHX_NAME" xml:space="preserve">

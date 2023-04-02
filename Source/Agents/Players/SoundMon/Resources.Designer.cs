@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -133,7 +133,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Song length:.
+        ///   Looks up a localized string similar to Number of positions:.
         /// </summary>
         internal static string IDS_BP_INFODESCLINE0 {
             get {
@@ -169,11 +169,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Current speed:.
+        ///   Looks up a localized string similar to Playing position:.
         /// </summary>
         internal static string IDS_BP_INFODESCLINE4 {
             get {
                 return ResourceManager.GetString("IDS_BP_INFODESCLINE4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Playing tracks:.
+        /// </summary>
+        internal static string IDS_BP_INFODESCLINE5 {
+            get {
+                return ResourceManager.GetString("IDS_BP_INFODESCLINE5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current speed:.
+        /// </summary>
+        internal static string IDS_BP_INFODESCLINE6 {
+            get {
+                return ResourceManager.GetString("IDS_BP_INFODESCLINE6", resourceCulture);
             }
         }
         

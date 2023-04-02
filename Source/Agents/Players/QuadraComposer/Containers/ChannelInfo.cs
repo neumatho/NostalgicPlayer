@@ -3,12 +3,14 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+
 namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer.Containers
 {
 	/// <summary>
 	/// Contains work information for one channel
 	/// </summary>
-	internal class ChannelInfo
+	internal class ChannelInfo : IDeepCloneable<ChannelInfo>
 	{
 		public TrackLine TrackLine;
 		public uint Loop;
@@ -32,5 +34,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer.Containers
 		public ushort PortSpeed;
 		public byte FineTune;
 		public sbyte[] SampleData;
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public ChannelInfo MakeDeepClone()
+		{
+			return (ChannelInfo)MemberwiseClone();
+		}
 	}
 }

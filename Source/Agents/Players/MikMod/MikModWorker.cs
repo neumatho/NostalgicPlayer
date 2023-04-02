@@ -6,14 +6,15 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Polycode.NostalgicPlayer.Agent.Player.MikMod.Containers;
 using Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod;
 using Polycode.NostalgicPlayer.Agent.Shared.MikMod;
 using Polycode.NostalgicPlayer.Agent.Shared.MikMod.Containers;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
@@ -21,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class MikModWorker : ModulePlayerAgentBase, IDriver
+	internal class MikModWorker : ModulePlayerWithPositionDurationAgentBase, IDriver
 	{
 		private Module of;
 
@@ -29,8 +30,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 
 		private byte mdNumChn;
 
-		private const int InfoSpeedLine = 4;
-		private const int InfoTempoLine = 5;
+		private const int InfoPositionLine = 5;
+		private const int InfoPatternLine = 6;
+		private const int InfoTrackLine = 7;
+		private const int InfoSpeedLine = 8;
+		private const int InfoTempoLine = 9;
 
 		#region IPlayerAgent implementation
 		/********************************************************************/
@@ -99,7 +103,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 			// Find out which line to take
 			switch (line)
 			{
-				// Song length
+				// Number of positions
 				case 0:
 				{
 					description = Resources.IDS_MIK_INFODESCLINE0;
@@ -115,34 +119,66 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 					break;
 				}
 
-				// Used instruments
+				// Used tracks
 				case 2:
 				{
 					description = Resources.IDS_MIK_INFODESCLINE2;
+					value = of.NumTrk.ToString();
+					break;
+				}
+
+				// Used instruments
+				case 3:
+				{
+					description = Resources.IDS_MIK_INFODESCLINE3;
 					value = (of.Flags & ModuleFlag.Inst) != 0 ? of.NumIns.ToString() : "0";
 					break;
 				}
 
 				// Used samples
-				case 3:
+				case 4:
 				{
-					description = Resources.IDS_MIK_INFODESCLINE3;
+					description = Resources.IDS_MIK_INFODESCLINE4;
 					value = of.NumSmp.ToString();
 					break;
 				}
 
-				// Current speed
-				case 4:
+				// Playing position
+				case 5:
 				{
-					description = Resources.IDS_MIK_INFODESCLINE4;
+					description = Resources.IDS_MIK_INFODESCLINE5;
+					value = of.SngPos.ToString();
+					break;
+				}
+
+				// Playing pattern
+				case 6:
+				{
+					description = Resources.IDS_MIK_INFODESCLINE6;
+					value = of.Positions[of.SngPos].ToString();
+					break;
+				}
+
+				// Playing tracks
+				case 7:
+				{
+					description = Resources.IDS_MIK_INFODESCLINE7;
+					value = FormatTracks();
+					break;
+				}
+
+				// Current speed
+				case 8:
+				{
+					description = Resources.IDS_MIK_INFODESCLINE8;
 					value = of.SngSpd.ToString();
 					break;
 				}
 
-				// BPM
-				case 5:
+				// Current tempo (BPM)
+				case 9:
 				{
-					description = Resources.IDS_MIK_INFODESCLINE5;
+					description = Resources.IDS_MIK_INFODESCLINE9;
 					value = of.Bpm.ToString();
 					break;
 				}
@@ -161,15 +197,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		#endregion
 
 		#region IModulePlayerAgent implementation
-		/********************************************************************/
-		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.SetPosition;
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Will load the file into memory
@@ -197,11 +224,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		/********************************************************************/
 		public override bool InitPlayer(out string errorMessage)
 		{
+			if (!base.InitPlayer(out errorMessage))
+				return false;
+
 			player = new MPlayer(of, this);
 
 			mdNumChn = player.mdSngChn;
 
-			return base.InitPlayer(out errorMessage);
+			return true;
 		}
 
 
@@ -228,19 +258,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
+		public override bool InitSound(int songNumber, out string errorMessage)
 		{
-			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+			if (!base.InitSound(songNumber, out errorMessage))
 				return false;
 
-			player.Init(of, (short)durationInfo.StartPosition);
-
-			// We want to wrap the module
-			of.Wrap = true;
-
-			// Tell NostalgicPlayer about the initial BPM tempo
-			SetTempo(of.Bpm);
-			player.mdBpm = of.Bpm;
+			InitializeSound(0);
 
 			return true;
 		}
@@ -256,18 +279,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		{
 			of.Control = null;
 			of.Voice = null;
-		}
 
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override DurationInfo[] CalculateDuration()
-		{
-			return CalculateDurationBySongPosition();
+			base.CleanupSound();
 		}
 
 
@@ -284,18 +297,32 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 			ushort oldBpm = player.mdBpm;
 
 			player.HandleTick();
+			bool endReached = player.endReached;
 
 			if (of.SngSpd != oldSngSpd)
-				OnModuleInfoChanged(InfoSpeedLine, of.SngSpd.ToString());
+				ShowSpeed();
 
 			if (player.mdBpm != oldBpm)
 				SetTempo(player.mdBpm);
 
 			if (of.SngPos != oldSngPos)
-				OnPositionChanged();
+			{
+				if (HasPositionBeenVisited(of.SngPos))
+					endReached = true;
 
-			if (player.endReached)
-				OnEndReached();
+				MarkPositionAsVisited(of.SngPos);
+
+				ShowSongPosition();
+				ShowPattern();
+				ShowTracks();
+			}
+
+			if (endReached)
+			{
+				OnEndReached(of.SngPos);
+
+				MarkPositionAsVisited(of.SngPos);
+			}
 		}
 
 
@@ -315,80 +342,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		/// </summary>
 		/********************************************************************/
 		public override int ModuleChannelCount => of.NumChn;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the length of the current song
-		/// </summary>
-		/********************************************************************/
-		public override int SongLength => of.NumPos;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position of the song
-		/// </summary>
-		/********************************************************************/
-		public override int GetSongPosition()
-		{
-			return of.SngPos;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set a new position of the song
-		/// </summary>
-		/********************************************************************/
-		public override void SetSongPosition(int position, PositionInfo positionInfo)
-		{
-			// Change the position
-			ushort pos = (ushort)position;
-
-			if (pos >= of.NumPos)
-				pos = of.NumPos;
-
-			DurationExtraInfo extraInfo = (DurationExtraInfo)positionInfo.ExtraInfo;
-
-			// Change the speed
-			of.SngSpd = positionInfo.Speed;
-			of.Bpm = positionInfo.Bpm;
-			of.Control[0].FarCurTempo = extraInfo.FarCurTempo;
-			of.Control[0].FarTempoBend = extraInfo.FarTempoBend;
-			SetTempo((ushort)(of.Bpm + of.RelSpd));
-
-			player.mdBpm = of.Bpm;
-
-			of.PosJmp = 2;
-			of.PatBrk = 0;
-			of.PatPos = 0;
-			of.Pat_RepCrazy = false;
-			of.PatDly = 0;
-			of.PatDly2 = 0;
-			of.SngPos = (short)pos;
-			of.VbTick = of.SngSpd;
-
-			for (sbyte t = 0; t < player.NumVoices(of); t++)
-			{
-				VoiceStopInternal(t);
-				of.Voice[t].Main.I = null;
-				of.Voice[t].Main.S = null;
-			}
-
-			for (int t = 0; t < of.NumChn; t++)
-			{
-				of.Control[t].Main.I = null;
-				of.Control[t].Main.S = null;
-			}
-
-			OnModuleInfoChanged(InfoSpeedLine, of.SngSpd.ToString());
-
-			base.SetSongPosition(position, positionInfo);
-		}
 
 
 
@@ -592,19 +545,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 		}
 		#endregion
 
-		#region Duration calculation methods
+		#region ModulePlayerWithPositionDurationAgentBase implementation
 		/********************************************************************/
 		/// <summary>
 		/// Initialize all internal structures when beginning duration
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override int InitDurationCalculationByStartPos(int startPosition)
+		protected override int InitDuration(int startPosition)
 		{
-			player.Init(of, (short)startPosition);
-
-			// We want to wrap the module
-			of.Wrap = true;
+			InitializeSound(startPosition);
+			MarkPositionAsVisited(startPosition);
 
 			return startPosition;
 		}
@@ -613,40 +564,47 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the current speed
+		/// Return the total number of positions
 		/// </summary>
 		/********************************************************************/
-		protected override byte GetCurrentSpeed()
+		protected override int GetTotalNumberOfPositions()
 		{
-			return (byte)of.SngSpd;
+			return of.NumPos;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the current BPM
+		/// Create a snapshot of all the internal structures and return it
 		/// </summary>
 		/********************************************************************/
-		protected override ushort GetCurrentBpm()
+		protected override ISnapshot CreateSnapshot()
 		{
-			return of.Bpm;
+			return new Snapshot(player);
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return extra information for the current position
+		/// Initialize internal structures based on the snapshot given
 		/// </summary>
 		/********************************************************************/
-		protected override object GetExtraPositionInfo()
+		protected override bool SetSnapshot(ISnapshot snapshot, out string errorMessage)
 		{
-			return new DurationExtraInfo
-			{
-				FarCurTempo = of.Control[0].FarCurTempo,
-				FarTempoBend = of.Control[0].FarTempoBend
-			};
+			errorMessage = string.Empty;
+
+			// Start to make a clone of the snapshot
+			Snapshot currentSnapshot = (Snapshot)snapshot;
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.Player);
+
+			player = clonedSnapshot.Player;
+			of = player.pf;
+
+			UpdateModuleInformation();
+
+			return true;
 		}
 		#endregion
 
@@ -917,13 +875,130 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod
 
 		/********************************************************************/
 		/// <summary>
+		/// Initialize sound structures
+		/// </summary>
+		/********************************************************************/
+		private void InitializeSound(int startPosition)
+		{
+			player.Init(of, (short)startPosition);
+
+			// We want to wrap the module
+			of.Wrap = true;
+
+			// Tell NostalgicPlayer about the initial BPM tempo
+			SetTempo(of.Bpm);
+			player.mdBpm = of.Bpm;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Sets the NostalgicPlayer to the right BPM tempo
 		/// </summary>
 		/********************************************************************/
 		private void SetTempo(ushort tempo)
 		{
 			SetBpmTempo(tempo);
-			OnModuleInfoChanged(InfoTempoLine, tempo.ToString());
+			ShowTempo();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current song position
+		/// </summary>
+		/********************************************************************/
+		private void ShowSongPosition()
+		{
+			OnModuleInfoChanged(InfoPositionLine, of.SngPos.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with pattern number
+		/// </summary>
+		/********************************************************************/
+		private void ShowPattern()
+		{
+			OnModuleInfoChanged(InfoPatternLine, of.Positions[of.SngPos].ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with track numbers
+		/// </summary>
+		/********************************************************************/
+		private void ShowTracks()
+		{
+			OnModuleInfoChanged(InfoTrackLine, FormatTracks());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current speed
+		/// </summary>
+		/********************************************************************/
+		private void ShowSpeed()
+		{
+			OnModuleInfoChanged(InfoSpeedLine, of.SngSpd.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with tempo
+		/// </summary>
+		/********************************************************************/
+		private void ShowTempo()
+		{
+			OnModuleInfoChanged(InfoTempoLine, of.Bpm.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with all dynamic values
+		/// </summary>
+		/********************************************************************/
+		private void UpdateModuleInformation()
+		{
+			ShowSongPosition();
+			ShowPattern();
+			ShowTracks();
+			ShowSpeed();
+			ShowTempo();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the playing tracks
+		/// </summary>
+		/********************************************************************/
+		private string FormatTracks()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < of.NumChn; i++)
+			{
+				sb.Append(of.Patterns[of.Positions[of.SngPos] * of.NumChn + i]);
+				sb.Append(", ");
+			}
+
+			sb.Remove(sb.Length - 2, 2);
+
+			return sb.ToString();
 		}
 		#endregion
 	}

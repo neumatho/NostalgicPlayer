@@ -4,13 +4,14 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Implementation
 {
 	/// <summary>
 	/// Main player
 	/// </summary>
-	internal class Player
+	internal class Player : IDeepCloneable<Player>
 	{
 		private readonly byte myChannel;
 
@@ -20,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Implementation
 		private readonly SawteethWorker song;
 		private readonly ChStep[] step;
 		private readonly ChannelInfo ch;
-		private readonly InsPly ip;
+		private InsPly ip;
 
 		private Step currStep;
 		private Part currPart;
@@ -214,9 +215,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Implementation
 					looped = true;
 					tmpLoop = false;
 
-					// Tell NostalgicPlayer that the song has ended
-					if (song.posChannel == myChannel)
-						song.EndReached();
+					song.EndReached(myChannel);
 				}
 				else
 					looped = false;
@@ -227,11 +226,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Implementation
 					stepC = 0;
 					seqCount++;
 
-					// Do only tell NostalgicPlayer about a position change,
-					// if we are the position teller channel
-					if (song.posChannel == myChannel)
-						song.ChangePosition();
-
 					if (seqCount > ch.RLoop)
 					{
 						seqCount = ch.LLoop;	// Limit
@@ -239,6 +233,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Implementation
 					}
 
 					currPart = song.parts[step[seqCount].Part];
+
+					song.ChangePosition();
 				}
 			}
 
@@ -348,6 +344,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Implementation
 
 		/********************************************************************/
 		/// <summary>
+		/// Returns the current part
+		/// </summary>
+		/********************************************************************/
+		public byte GetPartNumber()
+		{
+			return step[seqCount].Part;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Jumps to the specific position given
 		/// </summary>
 		/********************************************************************/
@@ -381,6 +389,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth.Implementation
 				nexts = (uint)(currPart.Sps - pal);
 				currStep = currPart.Steps[stepC];
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Player MakeDeepClone()
+		{
+			Player clone = (Player)MemberwiseClone();
+
+			clone.ip = ip.MakeDeepClone();
+
+			return clone;
 		}
 	}
 }

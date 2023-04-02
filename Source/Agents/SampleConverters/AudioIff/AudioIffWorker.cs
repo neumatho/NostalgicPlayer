@@ -333,15 +333,13 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 		/// Sets the file position to the sample position given
 		/// </summary>
 		/********************************************************************/
-		public long SetSamplePosition(ModuleStream moduleStream, long position, LoadSampleFormatInfo formatInfo)
+		public void SetSamplePosition(ModuleStream moduleStream, long position, LoadSampleFormatInfo formatInfo)
 		{
 			// Calculate the position in bytes
 			long newPosition = position * ((formatInfo.Bits + 7) / 8);
 
 			// Seek to the right position in the SSND chunk
 			moduleStream.Seek(ssndStart + newPosition, SeekOrigin.Begin);
-
-			return position;
 		}
 		#endregion
 

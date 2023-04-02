@@ -788,7 +788,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 				if (ph.NumRows != 0)
 				{
-					XmNote[] xmPat = Helpers.InitializeArray<XmNote>(ph.NumRows * of.NumChn);
+					XmNote[] xmPat = ArrayHelper.InitializeArray<XmNote>(ph.NumRows * of.NumChn);
 
 					// When PackSize is 0, don't try to load a pattern.. it's empty
 					if (ph.PackSize != 0)
@@ -827,7 +827,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			{
 				of.PattRows[t] = 64;
 
-				XmNote[] xmPat = Helpers.InitializeArray<XmNote>(64 * of.NumChn);
+				XmNote[] xmPat = ArrayHelper.InitializeArray<XmNote>(64 * of.NumChn);
 
 				for (int v = 0; v < of.NumChn; v++)
 					of.Tracks[numTrk++] = Xm_Convert(uniTrk, xmPat, v * 64, 64);

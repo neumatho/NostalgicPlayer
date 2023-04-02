@@ -138,7 +138,7 @@ This tracker used Amiga Workbench instead of a pixelated user interface like Pro
     <value>Can't read the sample data</value>
   </data>
   <data name="IDS_EMOD_INFODESCLINE0" xml:space="preserve">
-    <value>Song length:</value>
+    <value>Number of positions:</value>
   </data>
   <data name="IDS_EMOD_INFODESCLINE1" xml:space="preserve">
     <value>Used patterns:</value>
@@ -147,10 +147,16 @@ This tracker used Amiga Workbench instead of a pixelated user interface like Pro
     <value>Supported / used samples:</value>
   </data>
   <data name="IDS_EMOD_INFODESCLINE3" xml:space="preserve">
-    <value>Current speed:</value>
+    <value>Playing position:</value>
   </data>
   <data name="IDS_EMOD_INFODESCLINE4" xml:space="preserve">
-    <value>BPM:</value>
+    <value>Playing pattern:</value>
+  </data>
+  <data name="IDS_EMOD_INFODESCLINE5" xml:space="preserve">
+    <value>Current speed:</value>
+  </data>
+  <data name="IDS_EMOD_INFODESCLINE6" xml:space="preserve">
+    <value>Current tempo (BPM):</value>
   </data>
   <data name="IDS_EMOD_NAME" xml:space="preserve">
     <value>Quadra Composer</value>

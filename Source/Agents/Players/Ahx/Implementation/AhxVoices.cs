@@ -4,28 +4,30 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Agent.Player.Ahx.Containers;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Implementation
 {
 	/// <summary>
 	/// Handler of a single voice
 	/// </summary>
-	internal class AhxVoices
+	internal class AhxVoices : IDeepCloneable<AhxVoices>
 	{
 		// Read those variables for mixing
 		public int voiceVolume;
 		public int voicePeriod;
-		public readonly sbyte[] voiceBuffer = new sbyte[0x281];
+		public sbyte[] voiceBuffer = new sbyte[0x281];
 
 		public int track;
 		public int transpose;
 		public int nextTrack;
 		public int nextTranspose;
 
-		public int adsrVolume;									// Fixed point 8:8
-		public readonly AhxEnvelope adsr = new AhxEnvelope();	// Frames / delta fixed 8:8
+		public int adsrVolume;							// Fixed point 8:8
+		public AhxEnvelope adsr = new AhxEnvelope();	// Frames / delta fixed 8:8
 
-		public AhxInstrument instrument;						// Current instrument
+		public AhxInstrument instrument;				// Current instrument
 		public int instrumentNumber;
 
 		public int instrPeriod;
@@ -109,7 +111,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Implementation
 		public int audioPeriod;
 		public int audioVolume;
 
-		public readonly sbyte[] squareTempBuffer = new sbyte[0x80];
+		public sbyte[] squareTempBuffer = new sbyte[0x80];
 
 		/********************************************************************/
 		/// <summary>
@@ -238,6 +240,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Implementation
 			adsr.SFrames = instrument.Envelope.SFrames;
 			adsr.RFrames = instrument.Envelope.RFrames;
 			adsr.RVolume = (instrument.Envelope.RVolume - instrument.Envelope.DVolume) * 256 / adsr.RFrames;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public AhxVoices MakeDeepClone()
+		{
+			AhxVoices clone = (AhxVoices)MemberwiseClone();
+
+			clone.voiceBuffer = ArrayHelper.CloneArray(voiceBuffer);
+			clone.adsr = adsr.MakeDeepClone();
+			clone.squareTempBuffer = ArrayHelper.CloneArray(squareTempBuffer);
+
+			return clone;
 		}
 	}
 }

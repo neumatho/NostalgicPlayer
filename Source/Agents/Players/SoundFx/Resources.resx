@@ -144,7 +144,7 @@ The SoundFX file format is like SoundTracker. It only have a few effects, but it
     <value>Can't read the module samples</value>
   </data>
   <data name="IDS_SFX_INFODESCLINE0" xml:space="preserve">
-    <value>Song length:</value>
+    <value>Number of positions:</value>
   </data>
   <data name="IDS_SFX_INFODESCLINE1" xml:space="preserve">
     <value>Used patterns:</value>
@@ -153,7 +153,13 @@ The SoundFX file format is like SoundTracker. It only have a few effects, but it
     <value>Supported / used samples:</value>
   </data>
   <data name="IDS_SFX_INFODESCLINE3" xml:space="preserve">
-    <value>BPM:</value>
+    <value>Playing position:</value>
+  </data>
+  <data name="IDS_SFX_INFODESCLINE4" xml:space="preserve">
+    <value>Playing pattern:</value>
+  </data>
+  <data name="IDS_SFX_INFODESCLINE5" xml:space="preserve">
+    <value>Current tempo (BPM):</value>
   </data>
   <data name="IDS_SFX_NAME" xml:space="preserve">
     <value>SoundFX</value>

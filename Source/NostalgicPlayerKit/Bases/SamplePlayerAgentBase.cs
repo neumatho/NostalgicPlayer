@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
@@ -64,7 +63,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Initializes the player to start the sample from start
 		/// </summary>
 		/********************************************************************/
-		public virtual bool InitSound(DurationInfo durationInfo, out string errorMessage)
+		public virtual bool InitSound(out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
@@ -82,18 +81,6 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		public virtual void CleanupSound()
 		{
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public virtual DurationInfo CalculateDuration()
-		{
-			return null;
 		}
 
 
@@ -132,59 +119,5 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// </summary>
 		/********************************************************************/
 		public abstract int Frequency { get; }
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the length of the current song
-		/// </summary>
-		/********************************************************************/
-		public virtual int SongLength => 100;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position of the song
-		/// </summary>
-		/********************************************************************/
-		public virtual int GetSongPosition()
-		{
-			return 0;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set a new position of the song
-		/// </summary>
-		/********************************************************************/
-		public virtual void SetSongPosition(int position, PositionInfo positionInfo)
-		{
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Event called when the player change position
-		/// </summary>
-		/********************************************************************/
-		public event EventHandler PositionChanged;
-
-		#region Helper methods
-		/********************************************************************/
-		/// <summary>
-		/// Call this every time your player change it's position
-		/// </summary>
-		/********************************************************************/
-		protected void OnPositionChanged()
-		{
-			if (PositionChanged != null)
-				PositionChanged(this, EventArgs.Empty);
-		}
-		#endregion
 	}
 }

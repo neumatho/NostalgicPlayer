@@ -5,15 +5,17 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers;
 using Polycode.NostalgicPlayer.Kit;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class EffectGroup
+	internal class EffectGroup : IDeepCloneable<EffectGroup>
 	{
-		private readonly SubSong subSong;
+		private SubSong subSong;
 		private uint lastMixerFrequency;
 		private bool lastStereoMode;
 
@@ -102,6 +104,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 
 		/********************************************************************/
 		/// <summary>
+		/// Change the parent sub-song
+		/// </summary>
+		/********************************************************************/
+		public void SetParent(SubSong ss)
+		{
+			subSong = ss;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Initialize all effect groups
 		/// </summary>
 		/********************************************************************/
@@ -137,6 +151,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 
 			if (stereo && (stereoSeparator != 0) && subSong.GetStereo())
 				DoStereoSeparation(dest, todo);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public EffectGroup MakeDeepClone()
+		{
+			EffectGroup clone = (EffectGroup)MemberwiseClone();
+
+			if (echoBuffer != null)
+				clone.echoBuffer = ArrayHelper.CloneArray(echoBuffer);
+
+			return clone;
 		}
 
 		#region Private methods

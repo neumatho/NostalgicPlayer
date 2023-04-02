@@ -179,18 +179,6 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats
 		{
 			return position * ((formatInfo.Bits + 7) / 8);
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Calculates the number of samples from the byte position given
-		/// </summary>
-		/********************************************************************/
-		protected override long CalcSamplePosition(long position, LoadSampleFormatInfo formatInfo)
-		{
-			return position / ((formatInfo.Bits + 7) / 8);
-		}
 		#endregion
 
 		#region ISampleSaverAgent implementation

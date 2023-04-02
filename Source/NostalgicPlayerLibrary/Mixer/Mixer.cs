@@ -31,19 +31,22 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private MixerBase currentMixer;
 		private MixerVisualize currentVisualizer;
 
-		private MixerMode mixerMode;		// Which modes the mixer has to work in
-		private MixerMode currentMode;		// Is the current mode the mixer uses
-		private int mixerFrequency;			// The mixer frequency
-		private int moduleChannelNumber;	// The number of channels the module use
+		private MixerMode mixerMode;			// Which modes the mixer has to work in
+		private MixerMode currentMode;			// Is the current mode the mixer uses
+		private int mixerFrequency;				// The mixer frequency
+		private int moduleChannelNumber;		// The number of channels the module use
 
-		private int[] mixBuffer;			// The buffer to hold the mixed data
-		private int bufferSize;				// The maximum number of samples a buffer can be
-		private int ticksLeft;				// Number of ticks left to call the player
+		private int[] mixBuffer;				// The buffer to hold the mixed data
+		private int bufferSize;					// The maximum number of samples a buffer can be
+		private int ticksLeft;					// Number of ticks left to call the player
 
-		private int filterPrevLeft;			// The previous value for the left channel
-		private int filterPrevRight;		// The previous value for the right channel
+		private int filterPrevLeft;				// The previous value for the left channel
+		private int filterPrevRight;			// The previous value for the right channel
 
 		private int samplesTakenSinceLastCall;	// Holds number of samples taken since the last call to Play(). Used by channel visualizers
+
+		private int ticksLeftToPositionChange;	// Number of ticks left before sending a position change event
+		private int currentSongPosition;
 
 		private bool swapSpeakers;
 		private bool emulateFilter;
@@ -194,7 +197,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 			// Initialize ticks left to call the player
 			ticksLeft = 0;
+			ticksLeftToPositionChange = 0;
 			samplesTakenSinceLastCall = 0;
+			currentSongPosition = 0;
 
 			// Ok to play
 			playing = true;
@@ -248,6 +253,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		public void SetOutputFormat(OutputInfo outputInformation)
 		{
 			mixerFrequency = outputInformation.Frequency;
+			ticksLeftToPositionChange = CalculateTicksPerPositionChange();
 
 			// Get the maximum number of samples the given destination
 			// buffer from the output agent can be
@@ -313,6 +319,24 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		/********************************************************************/
 		/// <summary>
+		/// Get current song position
+		/// </summary>
+		/********************************************************************/
+		public int SongPosition
+		{
+			get => currentSongPosition;
+
+			set
+			{
+				currentSongPosition = value;
+				ticksLeftToPositionChange = CalculateTicksPerPositionChange();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// This is the main mixer method. It's the method that is called
 		/// from the MixerStream to read the next bunch of data
 		/// </summary>
@@ -349,6 +373,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 			return total;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Event called when the position change
+		/// </summary>
+		/********************************************************************/
+		public event EventHandler PositionChanged;
 
 		#region Private methods
 		/********************************************************************/
@@ -405,6 +438,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		/********************************************************************/
 		/// <summary>
+		/// Return the number of ticks between each position change
+		/// </summary>
+		/********************************************************************/
+		private int CalculateTicksPerPositionChange()
+		{
+			return (int)(IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * mixerFrequency);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// This is the main mixer method. It will call the right mixer
 		/// and mix the main module samples
 		/// </summary>
@@ -439,6 +484,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						// Call the player to play the next frame
 						lock (currentPlayer)
 						{
+							while (ticksLeftToPositionChange <= 0)
+							{
+								currentSongPosition++;
+								ticksLeftToPositionChange += CalculateTicksPerPositionChange();
+
+								OnPositionChanged();
+							}
+
 							currentPlayer.Play();
 
 							// Get some mixer information we need to parse the data
@@ -478,6 +531,22 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 								currentPlayer.HasEndReached = false;
 								hasEndReached = true;
 
+								if (currentPlayer is IDurationPlayer durationPlayer)
+								{
+									double restartTime = durationPlayer.GetRestartTime().TotalMilliseconds;
+									int ticksPerPosition = CalculateTicksPerPositionChange();
+
+									currentSongPosition = (int)(restartTime / (IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * 1000.0f));
+									ticksLeftToPositionChange = (int)(ticksPerPosition - (((restartTime - (currentSongPosition * IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * 1000.0f)) / 1000.0f) * mixerFrequency));
+								}
+								else
+								{
+									ticksLeftToPositionChange = CalculateTicksPerPositionChange();
+									currentSongPosition = 0;
+								}
+
+								OnPositionChanged();
+
 								// Break out of the loop
 								break;
 							}
@@ -501,6 +570,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					// Calculate new values for the counter variables
 					samplesTakenSinceLastCall += left;
 					ticksLeft -= left;
+					ticksLeftToPositionChange -= left;
 					todo -= left;
 					total += (currentMode & MixerMode.Stereo) != 0 ? left << 1 : left;
 
@@ -664,6 +734,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					}
 				}
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Send an event when the position change
+		/// </summary>
+		/********************************************************************/
+		private void OnPositionChanged()
+		{
+			if (PositionChanged != null)
+				PositionChanged(this, EventArgs.Empty);
 		}
 		#endregion
 	}

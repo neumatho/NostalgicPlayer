@@ -125,7 +125,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 					Array.Clear(pattern);
 
 					// Allocate channel structures
-					P4xxChannel[] channels = Helpers.InitializeArray<P4xxChannel>(4);
+					P4xxChannel[] channels = ArrayHelper.InitializeArray<P4xxChannel>(4);
 
 					// Build each channel from the tracks
 					int maxRowNumber = 64;

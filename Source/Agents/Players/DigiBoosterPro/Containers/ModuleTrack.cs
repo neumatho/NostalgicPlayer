@@ -6,15 +6,15 @@
 using System;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class ModuleTrack
+	internal class ModuleTrack : IDeepCloneable<ModuleTrack>
 	{
-		public IChannel Channel;
 		public int16_t TrackNumber;
 
 		public int Instrument;					// A currently set instrument number (from 1!)
@@ -62,5 +62,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers
 		public uint SampleLoopStartOffset;
 		public uint SampleLoopLength;
 		public ChannelLoopType SampleLoopType;
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public ModuleTrack MakeDeepClone()
+		{
+			ModuleTrack clone = (ModuleTrack)MemberwiseClone();
+
+			clone.ArpTable = ArrayHelper.CloneArray(ArpTable);
+			clone.VolumeEnvelope = VolumeEnvelope.MakeDeepClone();
+			clone.PanningEnvelope = PanningEnvelope.MakeDeepClone();
+
+			return clone;
+		}
 	}
 }

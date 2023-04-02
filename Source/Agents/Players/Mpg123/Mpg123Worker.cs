@@ -6,7 +6,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -14,7 +13,6 @@ using Polycode.NostalgicPlayer.Agent.Player.Mpg123.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
@@ -22,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class Mpg123Worker : SamplePlayerAgentBase
+	internal class Mpg123Worker : SamplePlayerWithDurationAgentBase
 	{
 		private static readonly Dictionary<Guid, ModuleType> moduleTypeLookup = new Dictionary<Guid, ModuleType>
 		{
@@ -45,7 +43,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		private Frame firstFrame;
 
 		private long calculatedFileLength;
-		private long totalLengthInSamples;
 		private int numberOfFrames;
 
 		private bool isVbr;
@@ -54,11 +51,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		private int vbrScale;
 		private byte[] vbrToc;
 
-		private long samplesRead;
 		private int frequency;
 		private int bitRateMode;
 
-		private int oldPosition;
 		private int oldBitRate;
 
 		private string songName;
@@ -336,15 +331,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		#region ISamplePlayerAgent implementation
 		/********************************************************************/
 		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
-		public override SamplePlayerSupportFlag SupportFlags => SamplePlayerSupportFlag.SetPosition;
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Will load the header information from the file
 		/// </summary>
 		/********************************************************************/
@@ -453,7 +439,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		/// Initializes the player to start the sample from start
 		/// </summary>
 		/********************************************************************/
-		public override bool InitSound(DurationInfo durationInfo, out string errorMessage)
+		public override bool InitSound(out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
@@ -480,8 +466,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 			numberOfFrames = isVbr ? vbrFrames : (int)(calculatedFileLength / (firstFrame.FrameSize + 4));
 
 			// Initialize some variables
-			samplesRead = 0;
-			oldPosition = -1;
 			oldBitRate = -1;
 			bitRateMode = -1;
 
@@ -504,30 +488,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 
 		/********************************************************************/
 		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override DurationInfo CalculateDuration()
-		{
-			double totalTime;
-
-			if (isVbr)
-				totalTime = bs[firstFrame.Lay] / LookupTables.Freqs[firstFrame.SamplingFrequency] * vbrFrames;
-			else
-				totalTime = (double)calculatedFileLength / ((LookupTables.TabSel123[firstFrame.Lsf, firstFrame.Lay - 1, firstFrame.BitRateIndex] / 8) * 1000);
-
-			totalLengthInSamples = (long)(totalTime * LookupTables.Freqs[firstFrame.SamplingFrequency]);
-
-			// Now build the list
-			PositionInfo[] positionInfo = Enumerable.Range(0, 100).Select(i => new PositionInfo(new TimeSpan((long)(i * (totalTime / 100) * TimeSpan.TicksPerSecond)))).ToArray();
-
-			return new DurationInfo(new TimeSpan((long)(totalTime * TimeSpan.TicksPerSecond)), positionInfo);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Will load and decode a data block and store it in the buffer
 		/// given
 		/// </summary>
@@ -536,7 +496,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		{
 			// Load the next block of data
 			int filled = LoadData(outputBuffer, count);
-			samplesRead += (filled / ChannelCount);
 
 			if (filled == 0)
 			{
@@ -544,15 +503,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 
 				// Loop the sample
 				CleanupSound();
-				InitSound(null, out _);
-			}
-
-			// Check if we have changed position
-			int pos = GetSongPosition();
-			if (pos != oldPosition)
-			{
-				oldPosition = pos;
-				OnPositionChanged();
+				InitSound(out _);
 			}
 
 			// Has the bit rate changed (mostly on VBR streams)
@@ -587,54 +538,48 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		/// </summary>
 		/********************************************************************/
 		public override int Frequency => frequency;
+		#endregion
 
-
-
+		#region SamplePlayerWithDurationAgentBase
 		/********************************************************************/
 		/// <summary>
-		/// Return the current position of the song
+		/// Return the total time of the sample
 		/// </summary>
 		/********************************************************************/
-		public override int GetSongPosition()
+		protected override TimeSpan GetTotalDuration()
 		{
-			int pos;
+			double totalTime;
 
-			if (totalLengthInSamples > 0)
-				pos = (int)(samplesRead * 100 / totalLengthInSamples);
+			if (isVbr)
+				totalTime = bs[firstFrame.Lay] / LookupTables.Freqs[firstFrame.SamplingFrequency] * vbrFrames;
 			else
-				pos = (int)(modStream.Position * 100 / (calculatedFileLength - firstFramePosition));
+				totalTime = (double)calculatedFileLength / ((LookupTables.TabSel123[firstFrame.Lsf, firstFrame.Lay - 1, firstFrame.BitRateIndex] / 8) * 1000);
 
-			if (pos >= 100)
-				pos = 99;
+			if (totalTime == 0.0f)
+			{
+				// Could not calculate the duration
+				return TimeSpan.Zero;
 
-			return pos;
+				// TODO: Fix this when mpg123 has been converted to C#. Then I can use a different approch than
+				// feeding, e.g. open from a C# stream directly. Then I can do a mpg123_scan() here to find the time
+			}
+
+			return new TimeSpan((long)(totalTime * TimeSpan.TicksPerSecond));
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Set a new position of the song
+		/// Set the position in the playing sample to the time given
 		/// </summary>
 		/********************************************************************/
-		public override void SetSongPosition(int position, PositionInfo positionInfo)
+		protected override void SetPosition(TimeSpan time)
 		{
-			if (totalLengthInSamples > 0)
-			{
-				int newPos = (int)(position * totalLengthInSamples / 100);
-				int result = Native.mpg123_feedseek(mpg123Handle, newPos, 0/*SEEK_SET*/, out int inputOffset);
-				if (result >= 0)
-				{
-					samplesRead = result;
-					modStream.Seek(firstFramePosition + inputOffset, SeekOrigin.Begin);
-				}
-			}
-			else
-			{
-				int newPos = (int)(position * (calculatedFileLength - firstFramePosition) / 100);
-				samplesRead = newPos * ChannelCount;
-				modStream.Seek(firstFramePosition + newPos, SeekOrigin.Begin);
-			}
+			int newPos = (int)(frequency * time.TotalSeconds);
+			int result = Native.mpg123_feedseek(mpg123Handle, newPos, 0/*SEEK_SET*/, out int inputOffset);
+			if (result >= 0)
+				modStream.Seek(firstFramePosition + inputOffset, SeekOrigin.Begin);
 		}
 		#endregion
 

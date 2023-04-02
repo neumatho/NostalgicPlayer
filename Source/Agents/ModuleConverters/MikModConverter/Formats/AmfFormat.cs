@@ -121,7 +121,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 			errorMessage = string.Empty;
 
 			mh = new AmfHeader();
-			track = Helpers.InitializeArray<AmfNote>(64);
+			track = ArrayHelper.InitializeArray<AmfNote>(64);
 
 			try
 			{
@@ -521,7 +521,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		private bool UnpackTrack(ModuleStream moduleStream)
 		{
 			// Empty track
-			track = Helpers.InitializeArray<AmfNote>(64);
+			track = ArrayHelper.InitializeArray<AmfNote>(64);
 
 			// Read packed track
 			if (moduleStream != null)

@@ -10,9 +10,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10.Containers
 	/// <summary>
 	/// Contains work information for one channel
 	/// </summary>
-	internal class ChannelInfo
+	internal class ChannelInfo : IDeepCloneable<ChannelInfo>
 	{
-		public IChannel Hardware;
 		public Instrument SoundData;
 		public ushort Period;
 		public byte[] SoundTable;
@@ -41,5 +40,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10.Containers
 		public Effect EffectNumber;
 		public byte EffectData;
 		public bool RetriggerSound;
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public ChannelInfo MakeDeepClone()
+		{
+			return (ChannelInfo)MemberwiseClone();
+		}
 	}
 }
