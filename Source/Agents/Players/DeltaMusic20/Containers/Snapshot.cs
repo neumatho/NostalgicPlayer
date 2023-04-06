@@ -3,8 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.Linq;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20.Containers
 {
@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20.Containers
 		public Snapshot(GlobalPlayingInfo playingInfo, ChannelInfo[] channels)
 		{
 			PlayingInfo = playingInfo.MakeDeepClone();
-			Channels = channels.Select(x => x.MakeDeepClone()).ToArray();
+			Channels = ArrayHelper.CloneObjectArray(channels);
 		}
 	}
 }

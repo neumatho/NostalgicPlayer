@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.Fred.Containers
 {
@@ -23,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred.Containers
 		public Snapshot(GlobalPlayingInfo playingInfo, ChannelInfo[] channels)
 		{
 			PlayingInfo = playingInfo.MakeDeepClone();
-			Channels = channels.Select(x => x.MakeDeepClone()).ToArray();
+			Channels = ArrayHelper.CloneObjectArray(channels);
 		}
 	}
 }

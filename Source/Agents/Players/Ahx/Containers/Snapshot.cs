@@ -5,6 +5,7 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Agent.Player.Ahx.Implementation;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Containers
 {
@@ -24,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Containers
 		public Snapshot(GlobalPlayingInfo playingInfo, AhxVoices[] channels)
 		{
 			PlayingInfo = playingInfo.MakeDeepClone();
-			Channels = channels.Select(x => x.MakeDeepClone()).ToArray();
+			Channels = ArrayHelper.CloneObjectArray(channels);
 		}
 	}
 }
