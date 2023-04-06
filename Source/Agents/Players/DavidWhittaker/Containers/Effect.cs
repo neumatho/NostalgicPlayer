@@ -22,6 +22,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker.Containers
 		Effect9,							// 9
 		SetSpeed,							// A
 		GlobalVolumeFade,					// B
-		SetGlobalVolume						// C
+		SetGlobalVolume,					// C
+		StartOrStopSoundFx,					// D
+		StopSoundFx							// E
 	}
 }

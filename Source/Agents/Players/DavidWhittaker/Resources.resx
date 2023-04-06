@@ -148,7 +148,7 @@ This format is not a standard file format like other modules. The music data are
     <value>Can't read module tracks</value>
   </data>
   <data name="IDS_DW_INFODESCLINE0" xml:space="preserve">
-    <value>Song length:</value>
+    <value>Number of positions:</value>
   </data>
   <data name="IDS_DW_INFODESCLINE1" xml:space="preserve">
     <value>Used tracks:</value>
@@ -157,6 +157,12 @@ This format is not a standard file format like other modules. The music data are
     <value>Used samples:</value>
   </data>
   <data name="IDS_DW_INFODESCLINE3" xml:space="preserve">
+    <value>Playing positions:</value>
+  </data>
+  <data name="IDS_DW_INFODESCLINE4" xml:space="preserve">
+    <value>Playing tracks:</value>
+  </data>
+  <data name="IDS_DW_INFODESCLINE5" xml:space="preserve">
     <value>Current speed:</value>
   </data>
   <data name="IDS_DW_NAME" xml:space="preserve">

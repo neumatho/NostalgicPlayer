@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
@@ -67,6 +68,8 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 						int totalPositions = GetTotalNumberOfPositions();
 						positionTimes = new float[totalPositions];
 
+						playerRestartTime = TimeSpan.Zero;
+
 						List<PositionInfo> positionInfoList = new List<PositionInfo>();
 						positionInfoList.Add(new PositionInfo(TimeSpan.Zero, PlayingFrequency, CreateSnapshot()));
 
@@ -100,7 +103,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 						TimeSpan totalTime = new TimeSpan((long)currentTotalTime * TimeSpan.TicksPerMillisecond);
 
 						// Remember the song
-						result.Add(new DurationInfo(totalTime, positionInfoList.ToArray(), positionTimes.Select(x => new TimeSpan((long)x * TimeSpan.TicksPerMillisecond)).ToArray()));
+						result.Add(new DurationInfo(totalTime, positionInfoList.ToArray(), positionTimes.Select(x => new TimeSpan((long)x * TimeSpan.TicksPerMillisecond)).ToArray(), playerRestartTime));
 					}
 					finally
 					{
@@ -136,7 +139,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		{
 			currentSubSong = subSong;
 			currentDurationInfo = allDurationInfo[subSong];
-			playerRestartTime = TimeSpan.Zero;
+			playerRestartTime = currentDurationInfo.RestartTime ?? TimeSpan.Zero;
 
 			PositionInfo positionInfo = currentDurationInfo.PositionInfo[0];
 
@@ -298,13 +301,29 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Will set the current time as the restart time
+		/// </summary>
+		/********************************************************************/
+		protected void SetRestartTime()
+		{
+			if (positionTimes != null)
+				playerRestartTime = new TimeSpan((long)currentTotalTime * TimeSpan.TicksPerMillisecond);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will restart the current sub-song from the beginning
 		/// </summary>
 		/********************************************************************/
 		protected void RestartSong()
 		{
 			if (positionTimes == null)
+			{
 				SetSubSong(currentSubSong, out _);
+				Array.Clear(channelsDone);
+			}
 		}
 
 
@@ -321,7 +340,10 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 			channelsDone[channel] = true;
 
 			if (!channelsDone.Contains(false))
+			{
 				OnEndReached();
+				Array.Clear(channelsDone);
+			}
 		}
 
 

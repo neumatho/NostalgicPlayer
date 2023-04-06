@@ -211,10 +211,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 				}
 				else
 				{
-					modSynth.GlobalVolume = 64;
+					if (modSynth.GlobalVolume == 0)
+					{
+						for (int track = 0; track < modSynth.Module.NumberOfTracks; track++)
+							worker.VirtualChannels[track].Mute();
+					}
 
-					for (int track = 0; track < modSynth.Module.NumberOfTracks; track++)
-						worker.VirtualChannels[track].Mute();
+					modSynth.GlobalVolume = 64;
 				}
 			}
 		}
