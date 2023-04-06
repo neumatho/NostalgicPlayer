@@ -2,23 +2,25 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker.Containers;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 {
 	/// <summary>
 	/// Main worker class
 	/// </summary>
-	internal class DavidWhittakerWorker : ModulePlayerAgentBase
+	internal class DavidWhittakerWorker : ModulePlayerWithSubSongDurationAgentBase
 	{
 		// Information for the loader
 		private bool uses32BitPointers;
+
+		private int startOffset;
 
 		private int sampleInfoOffset;
 		private int sampleDataOffset;
@@ -30,8 +32,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		private int numberOfChannels;
 
 		private List<SongInfo> songInfoList;
-		private Dictionary<uint, uint[]> positionLists;
 		private Dictionary<uint, byte[]> tracks;
+		private Dictionary<uint, int> trackNumbers;
 		private byte[][] arpeggios;
 		private byte[][] envelopes;
 		private Sample[] samples;
@@ -39,7 +41,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		private bool enableSampleTranspose;
 		private bool enableChannelTranspose;
 		private bool enableGlobalTranspose;
-		private sbyte transpose;
 
 		private byte newSampleCmd;
 		private byte newEnvelopeCmd;
@@ -50,41 +51,35 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		private bool enableVibrato;
 
 		private bool enableVolumeFade;
-		private ushort volumeFadeSpeed;
 		private bool enableHalfVolume;
-
 		private bool enableGlobalVolumeFade;
-		private ushort globalVolume;
-		private byte globalVolumeFadeSpeed;
-		private byte globalVolumeFadeCounter;
+		private bool enableSetGlobalVolume;
 
 		private bool enableSquareWaveform;
 		private int squareWaveformSampleNumber;
-		private ushort squareChangePosition;
+		private uint squareWaveformSampleLength;
 		private ushort squareChangeMinPosition;
 		private ushort squareChangeMaxPosition;
 		private byte squareChangeSpeed;
-		private bool squareChangeDirection;
 		private sbyte squareByte1;
 		private sbyte squareByte2;
 
 		private bool useExtraCounter;
-		private byte extraCounter;
 
 		private bool enableDelayCounter;
 		private bool enableDelayMultiply;
-		private byte delayCounterSpeed;
-		private ushort delayCounter;
+		private bool enableDelaySpeed;
 
 		private ushort[] periods;
+
+		private GlobalPlayingInfo playingInfo;
 		private ChannelInfo[] channels;
 
-		private ushort speed;
-
 		private int currentSong;
-		private PositionLength[] positionLengths;
 
-		private const int InfoSpeedLine = 3;
+		private const int InfoPositionLine = 3;
+		private const int InfoTrackLine = 4;
+		private const int InfoSpeedLine = 5;
 
 		#region IPlayerAgent implementation
 		/********************************************************************/
@@ -131,11 +126,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 			// Find out which line to take
 			switch (line)
 			{
-				// Song length
+				// Number of positions
 				case 0:
 				{
 					description = Resources.IDS_DW_INFODESCLINE0;
-					value = positionLengths[currentSong].Length.ToString();
+					value = FormatPositionLengths();
 					break;
 				}
 
@@ -155,11 +150,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 					break;
 				}
 
-				// Current speed
+				// Playing positions
 				case 3:
 				{
 					description = Resources.IDS_DW_INFODESCLINE3;
-					value = speed.ToString();
+					value = FormatPositions();
+					break;
+				}
+
+				// Playing tracks
+				case 4:
+				{
+					description = Resources.IDS_DW_INFODESCLINE4;
+					value = FormatTracks();
+					break;
+				}
+
+				// Current speed
+				case 5:
+				{
+					description = Resources.IDS_DW_INFODESCLINE5;
+					value = playingInfo.Speed.ToString();
 					break;
 				}
 
@@ -199,17 +210,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 			{
 				ModuleStream moduleStream = fileInfo.ModuleStream;
 
-				if (!LoadSubSongInfo(moduleStream, out HashSet<uint> trackOffsets))
-				{
-					errorMessage = Resources.IDS_DW_ERR_LOADING_SUBSONG;
+				if (!LoadSubSongInfoAndTracks(moduleStream, out int numberOfArpeggios, out int numberOfEnvelopes, out errorMessage))
 					return AgentResult.Error;
-				}
-
-				if (!LoadTracks(moduleStream, trackOffsets, out int numberOfArpeggios, out int numberOfEnvelopes))
-				{
-					errorMessage = Resources.IDS_DW_ERR_LOADING_TRACKS;
-					return AgentResult.Error;
-				}
 
 				if (!LoadArpeggios(moduleStream, numberOfArpeggios))
 				{
@@ -249,6 +251,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 
 		/********************************************************************/
 		/// <summary>
+		/// Initializes the player
+		/// </summary>
+		/********************************************************************/
+		public override bool InitPlayer(out string errorMessage)
+		{
+			if (!base.InitPlayer(out errorMessage))
+				return false;
+
+			trackNumbers = tracks.Keys.Order().Select((key, index) => (key, index)).ToDictionary(x => x.key, x => x.index);
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Cleanup the player
 		/// </summary>
 		/********************************************************************/
@@ -266,9 +285,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		/// Initializes the current song
 		/// </summary>
 		/********************************************************************/
-		public override bool InitSound(int songNumber, DurationInfo durationInfo, out string errorMessage)
+		public override bool InitSound(int songNumber, out string errorMessage)
 		{
-			if (!base.InitSound(songNumber, durationInfo, out errorMessage))
+			if (!base.InitSound(songNumber, out errorMessage))
 				return false;
 
 			InitializeSound(songNumber);
@@ -283,30 +302,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 
 		/********************************************************************/
 		/// <summary>
-		/// Calculate the duration for all sub-songs
-		/// </summary>
-		/********************************************************************/
-		public override DurationInfo[] CalculateDuration()
-		{
-			// Find the longest (in time) channel and create
-			// position structures. Do it for each sub-song
-			int numberOfSubSongs = songInfoList.Count;
-
-			DurationInfo[] result = new DurationInfo[numberOfSubSongs];
-			positionLengths = new PositionLength[numberOfSubSongs];
-
-			for (ushort i = 0; i < numberOfSubSongs; i++)
-				result[i] = FindLongestChannel(i);
-
-			allDurations = result;
-
-			return result;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// This is the main player method
 		/// </summary>
 		/********************************************************************/
@@ -314,36 +309,36 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		{
 			if (enableDelayCounter)
 			{
-				delayCounter += delayCounterSpeed;
-				if (delayCounter > 255)
+				playingInfo.DelayCounter += playingInfo.DelayCounterSpeed;
+				if (playingInfo.DelayCounter > 255)
 				{
-					delayCounter -= 256;
+					playingInfo.DelayCounter -= 256;
 					return;
 				}
 			}
 
 			if (useExtraCounter)
 			{
-				extraCounter--;
-				if (extraCounter == 0)
+				playingInfo.ExtraCounter--;
+				if (playingInfo.ExtraCounter == 0)
 				{
-					extraCounter = 6;
+					playingInfo.ExtraCounter = 6;
 					return;
 				}
 			}
 
 			if (enableGlobalVolumeFade)
 			{
-				if (globalVolumeFadeSpeed != 0)
+				if (playingInfo.GlobalVolumeFadeSpeed != 0)
 				{
-					if (globalVolume > 0)
+					if (playingInfo.GlobalVolume > 0)
 					{
-						globalVolumeFadeCounter--;
-						if (globalVolumeFadeCounter == 0)
+						playingInfo.GlobalVolumeFadeCounter--;
+						if (playingInfo.GlobalVolumeFadeCounter == 0)
 						{
-							globalVolume--;
-							if (globalVolume > 0)
-								globalVolumeFadeCounter = globalVolumeFadeSpeed;
+							playingInfo.GlobalVolume--;
+							if (playingInfo.GlobalVolume > 0)
+								playingInfo.GlobalVolumeFadeCounter = playingInfo.GlobalVolumeFadeSpeed;
 						}
 					}
 				}
@@ -382,50 +377,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		/// </summary>
 		/********************************************************************/
 		public override SubSongInfo SubSongs => new SubSongInfo(songInfoList.Count, 0);
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the length of the current song
-		/// </summary>
-		/********************************************************************/
-		public override int SongLength => positionLengths[currentSong].Length;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position of the song
-		/// </summary>
-		/********************************************************************/
-		public override int GetSongPosition()
-		{
-			return channels[positionLengths[currentSong].Channel].CurrentPosition - 1;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set a new position of the song
-		/// </summary>
-		/********************************************************************/
-		public override void SetSongPosition(int position, PositionInfo positionInfo)
-		{
-			// Change the position
-			ExtraPositionInfo[] extraInfo = (ExtraPositionInfo[])positionInfo.ExtraInfo;
-
-			for (int i = 0; i < numberOfChannels; i++)
-			{
-				channels[i].CurrentPosition = extraInfo[i].Position;
-				channels[i].TrackData = tracks[channels[i].PositionList[channels[i].CurrentPosition - 1]];
-				channels[i].TrackDataPosition = extraInfo[i].TrackPosition;
-				channels[i].SpeedCounter = extraInfo[i].SpeedCounter;
-			}
-
-			base.SetSongPosition(position, positionInfo);
-		}
 
 
 
@@ -477,6 +428,54 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		}
 		#endregion
 
+		#region ModulePlayerWithSubSongDurationAgentBase implementation
+		/********************************************************************/
+		/// <summary>
+		/// Initialize all internal structures when beginning duration
+		/// calculation on a new sub-song
+		/// </summary>
+		/********************************************************************/
+		protected override void InitDuration(int subSong)
+		{
+			InitializeSound(subSong);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a snapshot of all the internal structures and return it
+		/// </summary>
+		/********************************************************************/
+		protected override ISnapshot CreateSnapshot()
+		{
+			return new Snapshot(playingInfo, channels);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize internal structures based on the snapshot given
+		/// </summary>
+		/********************************************************************/
+		protected override bool SetSnapshot(ISnapshot snapshot, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			// Start to make a clone of the snapshot
+			Snapshot currentSnapshot = (Snapshot)snapshot;
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayingInfo, currentSnapshot.Channels);
+
+			playingInfo = clonedSnapshot.PlayingInfo;
+			channels = clonedSnapshot.Channels;
+
+			UpdateModuleInformation();
+
+			return true;
+		}
+		#endregion
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
@@ -511,16 +510,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 			// Start to find the init function in the player
 			for (index = 0; index < searchLength; index += 2)
 			{
-				if ((searchBuffer[index] == 0x47) && (searchBuffer[index + 1] == 0xfa))
+				if ((searchBuffer[index] == 0x47) && (searchBuffer[index + 1] == 0xfa) && ((searchBuffer[index + 2] & 0xf0) == 0xf0))
 					break;
 			}
 
 			if (index >= (searchLength - 6))
 				return false;
 
-			int offset = (((sbyte)searchBuffer[index + 2] << 8) | searchBuffer[index + 3]) + index + 2;
-			if (offset < 0)
-				return false;
+			startOffset = (((sbyte)searchBuffer[index + 2] << 8) | searchBuffer[index + 3]) + index + 2;
 
 			for (; index < searchLength; index += 2)
 			{
@@ -546,7 +543,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 					break;
 			}
 
-			if (index >= (searchLength - 18))
+			if (index >= (searchLength - 36))
 				return false;
 
 			if (searchBuffer[index + 4] != 0x66)
@@ -555,31 +552,59 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 			if (searchBuffer[index + 5] == 0x00)
 				index += 2;
 
-			if ((searchBuffer[index + 6] != 0x41) || (searchBuffer[index + 7] != 0xfa) || (searchBuffer[index + 10] != 0x4b) || (searchBuffer[index + 11] != 0xfa) || (searchBuffer[index + 14] != 0x72))
+			if ((searchBuffer[index + 6] != 0x41) || (searchBuffer[index + 7] != 0xfa))
 				return false;
 
-			numberOfSamples = (searchBuffer[index + 15] & 0x00ff) + 1;
-
-			sampleInfoOffset = (((sbyte)searchBuffer[index + 12] << 8) | searchBuffer[index + 13]) + index + 12;
 			sampleDataOffset = (((sbyte)searchBuffer[index + 8] << 8) | searchBuffer[index + 9]) + index + 8;
+			index += 10;
+
+			if ((searchBuffer[index] == 0x27) && (searchBuffer[index + 1] == 0x48) && (searchBuffer[index + 4] == 0xd0) && (searchBuffer[index + 5] == 0xfc))
+			{
+				sampleDataOffset += ((searchBuffer[index + 6] << 8) | searchBuffer[index + 7]);
+				index += 12;
+
+				if ((searchBuffer[index] != 0xd0) || (searchBuffer[index + 1] != 0xfc))
+					return false;
+
+				sampleDataOffset += ((searchBuffer[index + 2] << 8) | searchBuffer[index + 3]);
+				index += 4;
+			}
+
+			if ((searchBuffer[index] != 0x4b) || (searchBuffer[index + 1] != 0xfa) || (searchBuffer[index + 4] != 0x72))
+				return false;
+
+			numberOfSamples = (searchBuffer[index + 5] & 0x00ff) + 1;
+
+			sampleInfoOffset = (((sbyte)searchBuffer[index + 2] << 8) | searchBuffer[index + 3]) + index + 2;
+
+			index += 8;
+
+			for (; index < searchLength - 4; index += 2)
+			{
+				if ((searchBuffer[index] == 0x37) && (searchBuffer[index + 1] == 0x7c))
+				{
+					squareWaveformSampleLength = (uint)(((searchBuffer[index + 2] << 8) | searchBuffer[index + 3]) * 2);
+					break;
+				}
+			}
 
 			//
 			// Extract sub-song information
 			//
 			for (index = startOfInit; index < searchLength; index += 2)
 			{
-				if ((searchBuffer[index] == 0xc0) && (searchBuffer[index + 1] == 0xfc))
+				if ((searchBuffer[index] == 0x41) && (searchBuffer[index + 1] == 0xfa) && (searchBuffer[index + 4] != 0x4b))
 					break;
 			}
 
-			if (index >= (searchLength - 8))
+			if (index >= (searchLength - 4))
 				return false;
 
-			if ((searchBuffer[index + 4] != 0x41) || (searchBuffer[index + 5] != 0xfa))
+			if (((searchBuffer[index + 4] != 0x12) || (searchBuffer[index + 5] != 0x30)) && ((searchBuffer[index + 4] != 0x37) || (searchBuffer[index + 5] != 0x70)))
 				return false;
 
-			subSongListOffset = (((sbyte)searchBuffer[index + 6] << 8) | searchBuffer[index + 7]) + index + 6;
-			index += 8;
+			subSongListOffset = (((sbyte)searchBuffer[index + 2] << 8) | searchBuffer[index + 3]) + index + 2;
+			index += 4;
 
 			//
 			// Find out if pointers or offsets are used
@@ -671,7 +696,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 				if ((searchBuffer[index] == 0x53) && (searchBuffer[index + 1] == 0x2b) && (searchBuffer[index + 4] == 0x66))
 				{
 					offset = (searchBuffer[index - 4] << 8) | searchBuffer[index - 3];
-					useExtraCounter = searchBuffer[offset] != 0;
+					useExtraCounter = searchBuffer[offset + startOffset] != 0;
 					break;
 				}
 			}
@@ -889,31 +914,43 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 
 			enableVibrato = false;
 
-			int effectOffset = (searchBuffer[jumpTableOffset + 6 * 2] << 8) | searchBuffer[jumpTableOffset + 6 * 2 + 1];
-			if ((effectOffset < (searchLength - 6)) && (searchBuffer[effectOffset] == 0x50) && (searchBuffer[effectOffset + 1] == 0xe8) && (searchBuffer[effectOffset + 4] == 0x11) && (searchBuffer[effectOffset + 5] == 0x59))
+			int effectOffset = ((searchBuffer[jumpTableOffset + 6 * 2] << 8) | searchBuffer[jumpTableOffset + 6 * 2 + 1]) + startOffset;
+			if ((effectOffset >= 0) && (effectOffset < (searchLength - 6)) && (searchBuffer[effectOffset] == 0x50) && (searchBuffer[effectOffset + 1] == 0xe8) && (searchBuffer[effectOffset + 4] == 0x11) && (searchBuffer[effectOffset + 5] == 0x59))
 				enableVibrato = true;
 
 			enableVolumeFade = false;
 
-			effectOffset = (searchBuffer[jumpTableOffset + 8 * 2] << 8) | searchBuffer[jumpTableOffset + 8 * 2 + 1];
-			if ((effectOffset < (searchLength - 2)) && (searchBuffer[effectOffset] == 0x17) && (searchBuffer[effectOffset + 1] == 0x59))
+			effectOffset = ((searchBuffer[jumpTableOffset + 8 * 2] << 8) | searchBuffer[jumpTableOffset + 8 * 2 + 1]) + startOffset;
+			if ((effectOffset >= 0) && (effectOffset < (searchLength - 2)) && (searchBuffer[effectOffset] == 0x17) && (searchBuffer[effectOffset + 1] == 0x59))
 				enableVolumeFade = true;
 
 			enableHalfVolume = false;
 
-			effectOffset = (searchBuffer[jumpTableOffset + 8 * 2] << 8) | searchBuffer[jumpTableOffset + 8 * 2 + 1];
-			if ((effectOffset < (searchLength - 2)) && (searchBuffer[effectOffset] == 0x50) && (searchBuffer[effectOffset + 1] == 0xe8))
+			effectOffset = ((searchBuffer[jumpTableOffset + 8 * 2] << 8) | searchBuffer[jumpTableOffset + 8 * 2 + 1]) + startOffset;
+			if ((effectOffset >= 0) && (effectOffset < (searchLength - 2)) && (searchBuffer[effectOffset] == 0x50) && (searchBuffer[effectOffset + 1] == 0xe8))
 			{
-				effectOffset = (searchBuffer[jumpTableOffset + 9 * 2] << 8) | searchBuffer[jumpTableOffset + 9 * 2 + 1];
+				effectOffset = ((searchBuffer[jumpTableOffset + 9 * 2] << 8) | searchBuffer[jumpTableOffset + 9 * 2 + 1]) + startOffset;
 				if ((effectOffset < (searchLength - 2)) && (searchBuffer[effectOffset] == 0x51) && (searchBuffer[effectOffset + 1] == 0xe8))
 					enableHalfVolume = true;
 			}
 
 			enableGlobalVolumeFade = false;
 
-			effectOffset = (searchBuffer[jumpTableOffset + 11 * 2] << 8) | searchBuffer[jumpTableOffset + 11 * 2 + 1];
-			if ((effectOffset < (searchLength - 2)) && (searchBuffer[effectOffset] == 0x17) && (searchBuffer[effectOffset + 1] == 0x59))
+			effectOffset = ((searchBuffer[jumpTableOffset + 11 * 2] << 8) | searchBuffer[jumpTableOffset + 11 * 2 + 1]) + startOffset;
+			if ((effectOffset >= 0) && (effectOffset < (searchLength - 2)) && (searchBuffer[effectOffset] == 0x17) && (searchBuffer[effectOffset + 1] == 0x59))
 				enableGlobalVolumeFade = true;
+
+			enableDelaySpeed = false;
+
+			effectOffset = ((searchBuffer[jumpTableOffset + 10 * 2] << 8) | searchBuffer[jumpTableOffset + 10 * 2 + 1]) + startOffset;
+			if ((effectOffset >= 0) && (effectOffset < (searchLength - 4)) && (searchBuffer[effectOffset] == 0x10) && (searchBuffer[effectOffset + 1] == 0x19) && (searchBuffer[effectOffset + 2] == 0x17) && (searchBuffer[effectOffset + 3] == 0x40))
+				enableDelaySpeed = true;
+
+			enableSetGlobalVolume = true;
+
+			effectOffset = ((searchBuffer[jumpTableOffset + 12 * 2] << 8) | searchBuffer[jumpTableOffset + 12 * 2 + 1]) + startOffset;
+			if ((effectOffset >= 0) && (effectOffset < (searchLength - 4)) && (searchBuffer[effectOffset + 2] == 0x42) && (searchBuffer[effectOffset + 3] == 0x41))
+				enableSetGlobalVolume = false;
 
 			return true;
 		}
@@ -922,15 +959,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 
 		/********************************************************************/
 		/// <summary>
-		/// Load the sub-song information for all sub-songs
+		/// Load the sub-song information for all sub-songs including
+		/// position lists and tracks
 		/// </summary>
 		/********************************************************************/
-		private bool LoadSubSongInfo(ModuleStream moduleStream, out HashSet<uint> trackOffsets)
+		private bool LoadSubSongInfoAndTracks(ModuleStream moduleStream, out int numberOfArpeggios, out int numberOfEnvelopes, out string errorMessage)
 		{
-			songInfoList = new List<SongInfo>();
+			numberOfArpeggios = 0;
+			numberOfEnvelopes = 0;
+			errorMessage = string.Empty;
 
-			positionLists = new Dictionary<uint, uint[]>();
-			trackOffsets = new HashSet<uint>();
+			songInfoList = new List<SongInfo>();
+			tracks = new Dictionary<uint, byte[]>();
 
 			moduleStream.Seek(subSongListOffset, SeekOrigin.Begin);
 
@@ -941,7 +981,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 				ushort songSpeed;
 				byte delaySpeed;
 
-				if (moduleStream.Position == minPositionOffset)
+				if ((moduleStream.Position + 8) >= minPositionOffset)
 					break;
 
 				if (enableDelayCounter)
@@ -958,10 +998,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 				if (songSpeed > 255)
 					break;
 
-				SongInfo info = new SongInfo
+				SongInfo songInfo = new SongInfo
 				{
 					Speed = songSpeed,
-					DelayCounterSpeed = delaySpeed
+					DelayCounterSpeed = delaySpeed,
+					PositionLists = new PositionList[numberOfChannels]
 				};
 
 				uint[] positionOffsets = new uint[numberOfChannels];
@@ -971,7 +1012,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 					for (int i = 0; i < numberOfChannels; i++)
 					{
 						positionOffsets[i] = moduleStream.Read_B_UINT32();
-						minPositionOffset = Math.Min(minPositionOffset, positionOffsets[i]);
+						minPositionOffset = Math.Min(minPositionOffset, positionOffsets[i] + startOffset);
 					}
 				}
 				else
@@ -979,27 +1020,34 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 					for (int i = 0; i < numberOfChannels; i++)
 					{
 						positionOffsets[i] = moduleStream.Read_B_UINT16();
-						minPositionOffset = Math.Min(minPositionOffset, positionOffsets[i]);
+						minPositionOffset = Math.Min(minPositionOffset, positionOffsets[i] + startOffset);
 					}
 				}
 
 				if (moduleStream.EndOfStream)
+				{
+					errorMessage = Resources.IDS_DW_ERR_LOADING_SUBSONG;
 					return false;
+				}
 
 				long currentPosition = moduleStream.Position;
 
-				info.PositionLists = positionOffsets;
-
 				for (int i = 0; i < numberOfChannels; i++)
 				{
-					uint[] list = LoadPositionList(moduleStream, positionOffsets[i], trackOffsets);
-					if (list == null)
+					PositionList positionList = LoadPositionList(moduleStream, positionOffsets[i], out int arpeggioCount, out int envelopeCount);
+					if (positionList == null)
+					{
+						errorMessage = Resources.IDS_DW_ERR_LOADING_TRACKS;
 						return false;
+					}
 
-					positionLists[positionOffsets[i]] = list;
+					songInfo.PositionLists[i] = positionList;
+
+					numberOfArpeggios = Math.Max(numberOfArpeggios, arpeggioCount);
+					numberOfEnvelopes = Math.Max(numberOfEnvelopes, envelopeCount);
 				}
 
-				songInfoList.Add(info);
+				songInfoList.Add(songInfo);
 
 				moduleStream.Position = currentPosition;
 			}
@@ -1014,14 +1062,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		/// Load a single position list and initialize the track offset list
 		/// </summary>
 		/********************************************************************/
-		private uint[] LoadPositionList(ModuleStream moduleStream, uint startPosition, HashSet<uint> trackOffsets)
+		private PositionList LoadPositionList(ModuleStream moduleStream, uint startPosition, out int numberOfArpeggios, out int numberOfEnvelopes)
 		{
-			if (startPosition == 0)
-				return Array.Empty<uint>();
+			numberOfArpeggios = 0;
+			numberOfEnvelopes = 0;
 
-			moduleStream.Seek(startPosition, SeekOrigin.Begin);
+			if (startPosition == 0)
+				return null;
+
+			moduleStream.Seek(startPosition + startOffset, SeekOrigin.Begin);
+
+			long minPosition = startPosition;
+			long maxPosition = startPosition;
 
 			List<uint> positionList = new List<uint>();
+			ushort restartPosition = 0;
 
 			for (;;)
 			{
@@ -1032,102 +1087,200 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 				if (moduleStream.EndOfStream)
 					return null;
 
-				trackOffsets.Add(trackOffset);
+				long currentPosition = moduleStream.Position;
+
 				positionList.Add(trackOffset);
+
+				if (!LoadAndParseTrack(moduleStream, trackOffset, out int newPositionListOffset, out int arpeggioCount, out int envelopeCount))
+					return null;
+
+				numberOfArpeggios = Math.Max(numberOfArpeggios, arpeggioCount);
+				numberOfEnvelopes = Math.Max(numberOfEnvelopes, envelopeCount);
+
+				if ((newPositionListOffset != 0) && ((newPositionListOffset < minPosition) || (newPositionListOffset > maxPosition)))
+				{
+					restartPosition = (ushort)positionList.Count;
+					currentPosition = newPositionListOffset + startOffset;
+				}
+
+				minPosition = Math.Min(minPosition, currentPosition);
+				maxPosition = Math.Max(maxPosition, currentPosition);
+
+				moduleStream.Position = currentPosition;
 			}
 
-			return positionList.ToArray();
+			return new PositionList
+			{
+				TrackOffsets = positionList.ToArray(),
+				RestartPosition = restartPosition
+			};
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Load all the tracks
+		/// Parse a single track. It will load the track into memory, if not
+		/// already loaded
 		/// </summary>
 		/********************************************************************/
-		private bool LoadTracks(ModuleStream moduleStream, HashSet<uint> trackOffsets, out int numberOfArpeggios, out int numberOfEnvelopes)
+		private bool LoadAndParseTrack(ModuleStream moduleStream, uint trackOffset, out int newPositionListOffset, out int numberOfArpeggios, out int numberOfEnvelopes)
 		{
 			numberOfArpeggios = 0;
 			numberOfEnvelopes = 0;
+			newPositionListOffset = 0;
 
-			tracks = new Dictionary<uint, byte[]>();
-
-			foreach (uint offset in trackOffsets)
+			if (!tracks.TryGetValue(trackOffset, out byte[] trackBytes))
 			{
-				moduleStream.Seek(offset, SeekOrigin.Begin);
-				List<byte> trackBytes = new List<byte>();
+				trackBytes = LoadTrack(moduleStream, trackOffset);
+				if (trackBytes == null)
+					return false;
 
-				// Read the track and parse it to find the end + count number of arpeggios
-				for (;;)
+				tracks[trackOffset] = trackBytes;
+			}
+
+			// Parse the track to count number of arpeggios, envelopes and find restart position
+			for (int index = 0; index < trackBytes.Length; )
+			{
+				byte byt = trackBytes[index++];
+
+				if ((byt & 0x80) != 0)
 				{
-					byte byt = moduleStream.Read_UINT8();
-					if (moduleStream.EndOfStream)
-						return false;
+					if (byt >= 0xe0)
+						continue;
 
-					trackBytes.Add(byt);
+					if (byt >= newSampleCmd)
+						continue;
 
-					if ((byt & 0x80) != 0)
+					if (enableEnvelopes && (byt >= newEnvelopeCmd))
 					{
-						if (byt >= 0xe0)
-							continue;
-
-						if (byt >= newSampleCmd)
-							continue;
-
-						if (enableEnvelopes && (byt >= newEnvelopeCmd))
-						{
-							numberOfEnvelopes = Math.Max(numberOfEnvelopes, byt - newEnvelopeCmd + 1);
-							continue;
-						}
-
-						if (enableArpeggio && (byt >= newArpeggioCmd))
-						{
-							numberOfArpeggios = Math.Max(numberOfArpeggios, byt - newArpeggioCmd + 1);
-							continue;
-						}
-
-						if (byt >= 0x80)
-						{
-							if ((byt == 0x80) || (byt == 0x84))
-								break;
-
-							if ((byt == 0x82) || (byt == 0x83) || (byt == 0x87))
-								continue;
-
-							if ((byt == 0x85) || (byt == 0x88) || (byt == 0x8a) || (byt == 0x8b) || (byt == 0x8c))
-							{
-								trackBytes.Add(moduleStream.Read_UINT8());
-								continue;
-							}
-
-							if ((byt == 0x81) || (byt == 0x86))
-							{
-								trackBytes.Add(moduleStream.Read_UINT8());
-								trackBytes.Add(moduleStream.Read_UINT8());
-								continue;
-							}
-
-							if (byt == 0x89)
-							{
-								if (!enableHalfVolume)
-								{
-									trackBytes.Add(moduleStream.Read_UINT8());
-									trackBytes.Add(moduleStream.Read_UINT8());
-									break;
-								}
-								continue;
-							}
-
-							throw new Exception($"Invalid track byte detected ({byt})");
-						}
+						numberOfEnvelopes = Math.Max(numberOfEnvelopes, byt - newEnvelopeCmd + 1);
+						continue;
 					}
-				}
 
-				tracks[offset] = trackBytes.ToArray();
+					if (enableArpeggio && (byt >= newArpeggioCmd))
+					{
+						numberOfArpeggios = Math.Max(numberOfArpeggios, byt - newArpeggioCmd + 1);
+						continue;
+					}
+
+					Effect effect = (Effect)(byt & 0x7f);
+
+					int effectCount = FindEffectByteCount(effect);
+					if (effectCount == -1)
+						break;
+
+					index += effectCount;
+
+					if ((effect == Effect.Effect9) && !enableHalfVolume)
+						newPositionListOffset = (trackBytes[index - 2] << 8) | trackBytes[index - 1];
+				}
 			}
 
 			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Load a single track
+		/// </summary>
+		/********************************************************************/
+		private byte[] LoadTrack(ModuleStream moduleStream, uint trackOffset)
+		{
+			moduleStream.Seek(trackOffset + startOffset, SeekOrigin.Begin);
+
+			List<byte> trackBytes = new List<byte>();
+
+			// Read the track
+			for (;;)
+			{
+				byte byt = moduleStream.Read_UINT8();
+				if (moduleStream.EndOfStream)
+					return null;
+
+				trackBytes.Add(byt);
+
+				if ((byt & 0x80) != 0)
+				{
+					if (byt >= 0xe0)
+						continue;
+
+					if (byt >= newSampleCmd)
+						continue;
+
+					if (enableEnvelopes && (byt >= newEnvelopeCmd))
+						continue;
+
+					if (enableArpeggio && (byt >= newArpeggioCmd))
+						continue;
+
+					Effect effect = (Effect)(byt & 0x7f);
+
+					int effectCount = FindEffectByteCount(effect);
+					if (effectCount == -1)
+						break;
+
+					for (; effectCount > 0; effectCount--)
+						trackBytes.Add(moduleStream.Read_UINT8());
+				}
+			}
+
+			return trackBytes.ToArray();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Find out how many bytes the given effect uses after the effect
+		/// itself. -1 means stop parsing
+		/// </summary>
+		/********************************************************************/
+		private int FindEffectByteCount(Effect effect)
+		{
+			switch (effect)
+			{
+				case Effect.EndOfTrack:
+				case Effect.StopSong:
+					return -1;
+
+				case Effect.Mute:
+				case Effect.WaitUntilNextRow:
+				case Effect.StopVibrato:
+				case Effect.StopSoundFx:
+					return 0;
+
+				case Effect.GlobalTranspose:
+				case Effect.Effect8:
+				case Effect.SetSpeed:
+				case Effect.GlobalVolumeFade:
+				case Effect.SetGlobalVolume:
+					return 1;
+
+				case Effect.Slide:
+				case Effect.StartVibrato:
+					return 2;
+
+				case Effect.Effect9:
+				{
+					if (enableHalfVolume)
+						return 0;
+
+					return 2;
+				}
+
+				case Effect.StartOrStopSoundFx:
+				{
+					if (enableSetGlobalVolume)
+						return 1;
+
+					return 0;
+				}
+			}
+
+			throw new Exception($"Invalid track byte detected ({(byte)effect})");
 		}
 
 
@@ -1158,7 +1311,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 
 			for (int i = 0; i < numberOfArpeggios; i++)
 			{
-				moduleStream.Seek(offsets[i], SeekOrigin.Begin);
+				moduleStream.Seek(offsets[i] + startOffset, SeekOrigin.Begin);
 
 				List<byte> arpBytes = new List<byte>();
 
@@ -1202,7 +1355,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 
 			for (int i = 0; i < numberOfEnvelopes; i++)
 			{
-				moduleStream.Seek(offsets[i] - 1, SeekOrigin.Begin);
+				moduleStream.Seek(offsets[i] + startOffset - 1, SeekOrigin.Begin);
 
 				List<byte> envBytes = new List<byte>();
 				envBytes.Add(moduleStream.Read_UINT8());		// First byte is the speed
@@ -1250,6 +1403,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 
 				if (moduleStream.EndOfStream)
 					return false;
+
+				// Fix for Jaws
+				if ((sample.LoopStart != -1) && (sample.LoopStart > 64 * 1024))
+					sample.LoopStart = -1;
 
 				if (uses32BitPointers)
 				{
@@ -1314,251 +1471,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 					return false;
 			}
 
+			if (enableSquareWaveform)
+				samples[squareWaveformSampleNumber].Length = squareWaveformSampleLength;
+
 			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Scans all the channels to find the channel which take longest
-		/// time to play
-		/// </summary>
-		/********************************************************************/
-		private DurationInfo FindLongestChannel(ushort songNum)
-		{
-			InitializeSound(songNum);
-
-			// Now calculate the time for each channel
-			float[] channelTimes = new float[numberOfChannels];
-			bool[] doneFlags = new bool[numberOfChannels];
-			bool[] hasNote = new bool[numberOfChannels];
-			ushort[] positionBeforeRestart = new ushort[numberOfChannels];
-
-			List<PositionInfo>[] positionTimes = Helpers.InitializeArray<List<PositionInfo>>(numberOfChannels);
-			ExtraPositionInfo[] extraInfo;
-
-			for (int i = 0; i < numberOfChannels; i++)
-			{
-				extraInfo = new ExtraPositionInfo[numberOfChannels];
-
-				for (int j = 0; j < numberOfChannels; j++)
-					extraInfo[j] = new ExtraPositionInfo(channels[j].CurrentPosition, channels[j].TrackDataPosition, channels[j].SpeedCounter);
-
-				positionTimes[i].Add(new PositionInfo((byte)speed, 125, new TimeSpan(0), songNum, extraInfo));
-			}
-
-			for (;;)
-			{
-				// Check to see if all channels has been parsed
-				bool allDone = true;
-
-				for (int i = 0; i < numberOfChannels; i++)
-				{
-					if (!doneFlags[i])
-					{
-						allDone = false;
-						break;
-					}
-				}
-
-				if (allDone)
-					break;
-
-				extraInfo = new ExtraPositionInfo[numberOfChannels];
-
-				for (int i = 0; i < numberOfChannels; i++)
-					extraInfo[i] = new ExtraPositionInfo(channels[i].CurrentPosition, channels[i].TrackDataPosition, channels[i].SpeedCounter);
-
-				if (enableDelayCounter)
-				{
-					delayCounter += delayCounterSpeed;
-					if (delayCounter > 255)
-					{
-						delayCounter -= 256;
-
-						for (int i = 0; i < numberOfChannels; i++)
-							channelTimes[i] += 1000.0f / 50.0f;
-
-						continue;
-					}
-				}
-
-				if (useExtraCounter)
-				{
-					extraCounter--;
-					if (extraCounter == 0)
-					{
-						extraCounter = 6;
-
-						for (int i = 0; i < numberOfChannels; i++)
-							channelTimes[i] += 1000.0f / 50.0f;
-
-						continue;
-					}
-				}
-
-				for (int i = 0; i < numberOfChannels; i++)
-				{
-					ChannelInfo channelInfo = channels[i];
-					bool doneFlag = false;
-
-					channelInfo.SpeedCounter--;
-					if (channelInfo.SpeedCounter == 0)
-					{
-						bool channelDone = false;
-
-						do
-						{
-							bool changePosition = false;
-
-							byte trackByte = channelInfo.TrackData[channelInfo.TrackDataPosition++];
-
-							if ((trackByte & 0x80) != 0)
-							{
-								if (trackByte >= 0xe0)
-								{
-									// Set number of rows to wait including the current one
-									channelInfo.Speed = (ushort)((trackByte - 0xdf) * speed);
-								}
-								else if (trackByte < 0x90)
-								{
-									// Do effects
-									switch ((Effect)(trackByte & 0x1f))
-									{
-										case Effect.EndOfTrack:
-										{
-											// Move to next position
-											if (channelInfo.CurrentPosition >= channelInfo.PositionList.Length)
-											{
-												positionBeforeRestart[i] = channelInfo.CurrentPosition;
-												channelInfo.CurrentPosition = 1;
-
-												channelDone = true;
-												doneFlag = true;
-											}
-											else
-												channelInfo.CurrentPosition++;
-
-											channelInfo.TrackData = channelInfo.PositionList.Length == 0 ? Tables.EmptyTrack : tracks[channelInfo.PositionList[channelInfo.CurrentPosition - 1]];
-											channelInfo.TrackDataPosition = 0;
-
-											changePosition = true;
-											break;
-										}
-
-										case Effect.Effect8:
-										{
-											if (enableChannelTranspose)
-												channelInfo.TrackDataPosition++;
-
-											break;
-										}
-
-										case Effect.Effect9:
-										{
-											if (!enableHalfVolume)
-											{
-												channelInfo.TrackDataPosition += 2;
-												positionBeforeRestart[i] = channelInfo.CurrentPosition;
-												goto case Effect.StopSong;
-											}
-											break;
-										}
-
-										case Effect.Slide:
-										case Effect.StartVibrato:
-										{
-											channelInfo.TrackDataPosition += 2;
-											break;
-										}
-
-										case Effect.Mute:
-										case Effect.WaitUntilNextRow:
-										{
-											channelDone = true;
-											break;
-										}
-
-										case Effect.StopSong:
-										{
-											for (int j = 0; j < numberOfChannels; j++)
-											{
-												positionBeforeRestart[j] = channels[j].CurrentPosition;
-												doneFlags[j] = true;
-											}
-
-											channelDone = true;
-											doneFlag = true;
-											break;
-										}
-
-										case Effect.GlobalTranspose:
-										case Effect.GlobalVolumeFade:
-										case Effect.SetGlobalVolume:
-										{
-											channelInfo.TrackDataPosition++;
-											break;
-										}
-
-										case Effect.SetSpeed:
-										{
-											speed = channelInfo.TrackData[channelInfo.TrackDataPosition++];
-											break;
-										}
-									}
-								}
-							}
-							else
-							{
-								hasNote[i] = true;
-								channelDone = true;
-							}
-
-							if (changePosition)
-								positionTimes[i].Add(new PositionInfo((byte)speed, 125, new TimeSpan((long)channelTimes[i] * TimeSpan.TicksPerMillisecond), songNum, extraInfo));
-						}
-						while (!channelDone);
-
-						channelInfo.SpeedCounter = channelInfo.Speed;
-					}
-
-					if (!doneFlags[i])
-						channelTimes[i] += 1000.0f / 50.0f;
-
-					if (doneFlag)
-						doneFlags[i] = true;
-				}
-			}
-
-			// Find the channel which takes the longest time to play
-			float time = 0.0f;
-
-			for (int i = 0; i < numberOfChannels; i++)
-			{
-				// Skip channels that does not have any notes
-				if (hasNote[i])
-				{
-					if ((channelTimes[i] > time) || ((channelTimes[i] == time) && (positionBeforeRestart[i] > positionLengths[songNum]?.Length)))
-					{
-						positionLengths[songNum] = new PositionLength
-						{
-							Channel = i,
-							Length = positionBeforeRestart[i]
-						};
-
-						time = channelTimes[i];
-					}
-				}
-			}
-
-			// Some songs may have zero length, which means
-			// that the PosLength object hasn't been created
-			if (positionLengths[songNum] == null)
-				positionLengths[songNum] = new PositionLength();
-
-			// Now return a duration object with the position times
-			return new DurationInfo(new TimeSpan((long)time * TimeSpan.TicksPerMillisecond), positionTimes[positionLengths[songNum].Channel].ToArray());
 		}
 
 
@@ -1572,16 +1488,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		{
 			SongInfo song = songInfoList[subSong];
 
-			transpose = 0;
-			speed = song.Speed;
-			volumeFadeSpeed = 0;
-			globalVolume = 64;
-			globalVolumeFadeSpeed = 0;
-			extraCounter = 1;
-			delayCounter = 0;
-			delayCounterSpeed = song.DelayCounterSpeed;
+			playingInfo = new GlobalPlayingInfo
+			{
+				Transpose = 0,
+				Speed = song.Speed,
+				VolumeFadeSpeed = 0,
+				GlobalVolume = 64,
+				GlobalVolumeFadeSpeed = 0,
+				ExtraCounter = 1,
+				DelayCounter = 0,
+				DelayCounterSpeed = song.DelayCounterSpeed
+			};
+
 			if (enableDelayMultiply)
-				delayCounterSpeed *= 16;
+				playingInfo.DelayCounterSpeed *= 16;
 
 			channels = new ChannelInfo[numberOfChannels];
 			InitializeChannelInfo(subSong);
@@ -1599,14 +1519,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		private void Cleanup()
 		{
 			songInfoList = null;
-			positionLists = null;
 			tracks = null;
+			trackNumbers = null;
 			arpeggios = null;
 			envelopes = null;
 			samples = null;
 
+			playingInfo = null;
 			channels = null;
-			positionLengths = null;
 		}
 
 
@@ -1618,7 +1538,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		/********************************************************************/
 		private void InitializeChannelInfo(int subSong)
 		{
-			SongInfo song = songInfoList[subSong];
+			SongInfo songInfo = songInfoList[subSong];
 
 			for (int i = 0; i < numberOfChannels; i++)
 			{
@@ -1632,8 +1552,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 					Transpose = 0,
 					EnableHalfVolume = false,
 					EnvelopeList = null,
-					PositionList = positionLists[song.PositionLists[i]],
-					CurrentPosition = 1
+					PositionList = songInfo.PositionLists[i].TrackOffsets,
+					CurrentPosition = 1,
+					RestartPosition = songInfo.PositionLists[i].RestartPosition,
 				};
 
 				if (enableArpeggio)
@@ -1669,8 +1590,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 					sample.SampleData[i + halfLength] = squareByte2;
 				}
 
-				squareChangePosition = squareChangeMinPosition;
-				squareChangeDirection = false;
+				playingInfo.SquareChangePosition = squareChangeMinPosition;
+				playingInfo.SquareChangeDirection = false;
 			}
 		}
 
@@ -1688,25 +1609,25 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 			{
 				sbyte[] squareWaveform = samples[squareWaveformSampleNumber].SampleData;
 
-				if (squareChangeDirection)
+				if (playingInfo.SquareChangeDirection)
 				{
 					for (int i = 0; i < squareChangeSpeed; i++)
-						squareWaveform[squareChangePosition + i] = squareByte2;
+						squareWaveform[playingInfo.SquareChangePosition + i] = squareByte2;
 
-					squareChangePosition -= squareChangeSpeed;
+					playingInfo.SquareChangePosition -= squareChangeSpeed;
 
-					if (squareChangePosition == squareChangeMinPosition)
-						squareChangeDirection = false;
+					if (playingInfo.SquareChangePosition == squareChangeMinPosition)
+						playingInfo.SquareChangeDirection = false;
 				}
 				else
 				{
 					for (int i = 0; i < squareChangeSpeed; i++)
-						squareWaveform[squareChangePosition + i] = squareByte1;
+						squareWaveform[playingInfo.SquareChangePosition + i] = squareByte1;
 
-					squareChangePosition += squareChangeSpeed;
+					playingInfo.SquareChangePosition += squareChangeSpeed;
 
-					if (squareChangePosition == squareChangeMaxPosition)
-						squareChangeDirection = true;
+					if (playingInfo.SquareChangePosition == squareChangeMaxPosition)
+						playingInfo.SquareChangeDirection = true;
 				}
 			}
 		}
@@ -1769,12 +1690,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 
 					if (enableVolumeFade)
 					{
-						newVolume -= volumeFadeSpeed;
+						newVolume -= playingInfo.VolumeFadeSpeed;
 						if (newVolume < 0)
 							newVolume = 0;
 					}
 
-					newVolume = newVolume * globalVolume / 64;
+					newVolume = newVolume * playingInfo.GlobalVolume / 64;
 					channel.SetAmigaVolume((ushort)newVolume);
 
 					if (trackByte >= 128)
@@ -1804,7 +1725,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 			if (trackCommand >= 0xe0)
 			{
 				// Set number of rows to wait including the current one
-				channelInfo.Speed = (ushort)((trackCommand - 0xdf) * speed);
+				channelInfo.Speed = (ushort)((trackCommand - 0xdf) * playingInfo.Speed);
 			}
 			else if (trackCommand >= newSampleCmd)
 			{
@@ -1849,22 +1770,32 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 					// Move to next position
 					if (channelInfo.CurrentPosition >= channelInfo.PositionList.Length)
 					{
-						channelInfo.CurrentPosition = 1;
+						channelInfo.CurrentPosition = (ushort)(channelInfo.RestartPosition + 1);
+						OnEndReached(channelInfo.ChannelNumber);
 
-						// Tell NostalgicPlayer that the song has ended
-						if (channelInfo.ChannelNumber == positionLengths[currentSong].Channel)
-							StopModule();
+						if (HasEndReached)
+						{
+							playingInfo.Transpose = 0;
+							playingInfo.VolumeFadeSpeed = 0;
+							playingInfo.GlobalVolumeFadeSpeed = 0;
+
+							if (playingInfo.GlobalVolume == 0)
+								playingInfo.GlobalVolume = 64;
+						}
 					}
 					else
+					{
+						if (channelInfo.CurrentPosition == channelInfo.RestartPosition)
+							SetRestartTime();
+
 						channelInfo.CurrentPosition++;
+					}
 
 					channelInfo.TrackData = channelInfo.PositionList.Length == 0 ? Tables.EmptyTrack : tracks[channelInfo.PositionList[channelInfo.CurrentPosition - 1]];
 					channelInfo.TrackDataPosition = 0;
 
-					// Tell NostalgicPlayer we have changed the position
-					if (channelInfo.ChannelNumber == positionLengths[currentSong].Channel)
-						OnPositionChanged();
-
+					ShowChannelPositions();
+					ShowTracks();
 					break;
 				}
 
@@ -1895,7 +1826,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 				case Effect.GlobalTranspose:
 				{
 					if (enableGlobalTranspose)
-						transpose = (sbyte)channelInfo.TrackData[channelInfo.TrackDataPosition++];
+						playingInfo.Transpose = (sbyte)channelInfo.TrackData[channelInfo.TrackDataPosition++];
 
 					break;
 				}
@@ -1923,7 +1854,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 				case Effect.Effect8:
 				{
 					if (enableVolumeFade)
-						volumeFadeSpeed = channelInfo.TrackData[channelInfo.TrackDataPosition++];
+						playingInfo.VolumeFadeSpeed = channelInfo.TrackData[channelInfo.TrackDataPosition++];
 					else if (enableChannelTranspose)
 						channelInfo.Transpose = (sbyte)channelInfo.TrackData[channelInfo.TrackDataPosition++];
 					else if (enableHalfVolume)
@@ -1938,84 +1869,55 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 						channelInfo.EnableHalfVolume = false;
 					else
 					{
-						byte byt1 = channelInfo.TrackData[channelInfo.TrackDataPosition++];
-						byte byt2 = channelInfo.TrackData[channelInfo.TrackDataPosition++];
-
-						uint offset = (uint)((byt1 << 8) | byt2);
-						ushort newPosition = 1;
-
-						if (!positionLists.TryGetValue(offset, out uint[] positionList))
-						{
-							positionList = channelInfo.PositionList;
-							KeyValuePair<uint, uint[]>? previousPositionList = null;
-
-							foreach (KeyValuePair<uint, uint[]> pair in positionLists.OrderBy(x => x.Key))
-							{
-								if (offset < pair.Key)
-								{
-									positionList = previousPositionList!.Value.Value;
-									newPosition = (ushort)(((offset - previousPositionList.Value.Key) / 2) + 1);
-									break;
-								}
-
-								previousPositionList = pair;
-							}
-						}
-
-						channelInfo.PositionList = positionList;
-						channelInfo.CurrentPosition = newPosition;
-
-						channelInfo.TrackData = tracks[channelInfo.PositionList[newPosition - 1]];
-						channelInfo.TrackDataPosition = 0;
-
-						// Tell NostalgicPlayer we have changed the position
-						if (channelInfo.ChannelNumber == positionLengths[currentSong].Channel)
-						{
-							transpose = 0;
-							volumeFadeSpeed = 0;
-							globalVolume = 64;
-							globalVolumeFadeSpeed = 0;
-
-							for (int i = songInfoList.Count - 1; i >= 0; i--)
-							{
-								SongInfo subSong = songInfoList[i];
-
-								if (subSong.PositionLists[channelInfo.ChannelNumber] == offset)
-								{
-									currentSong = i;
-									ChangeSubSong(i);
-									break;
-								}
-							}
-
-							OnPositionChanged();
-							OnEndReached();
-						}
+						// Position restart is handled in the loader
+						channelInfo.TrackDataPosition += 2;
 					}
 					break;
 				}
 
 				case Effect.SetSpeed:
 				{
-					speed = channelInfo.TrackData[channelInfo.TrackDataPosition++];
-
-					// Change the module info
-					OnModuleInfoChanged(InfoSpeedLine, speed.ToString());
+					if (enableDelaySpeed)
+						playingInfo.DelayCounterSpeed = channelInfo.TrackData[channelInfo.TrackDataPosition++];
+					else
+					{
+						playingInfo.Speed = channelInfo.TrackData[channelInfo.TrackDataPosition++];
+						ShowSpeed();
+					}
 					break;
 				}
 
 				case Effect.GlobalVolumeFade:
 				{
-					globalVolumeFadeSpeed = channelInfo.TrackData[channelInfo.TrackDataPosition++];
-					globalVolumeFadeCounter = globalVolumeFadeSpeed;
+					playingInfo.GlobalVolumeFadeSpeed = channelInfo.TrackData[channelInfo.TrackDataPosition++];
+					playingInfo.GlobalVolumeFadeCounter = playingInfo.GlobalVolumeFadeSpeed;
 					break;
 				}
 
 				case Effect.SetGlobalVolume:
 				{
-					globalVolume = channelInfo.TrackData[channelInfo.TrackDataPosition++];
+					if (enableSetGlobalVolume)
+						playingInfo.GlobalVolume = channelInfo.TrackData[channelInfo.TrackDataPosition++];
+					else
+					{
+						// Start sound effect. This is used in Emlyn Hughes International Soccer to play a whistle sound,
+						// but we do not support it
+						channelInfo.TrackDataPosition++;
+					}
 					break;
 				}
+
+				case Effect.StartOrStopSoundFx:
+				{
+					// If effect C if global volume, this is start sound effect. If not, it is stop sound effect
+					if (enableSetGlobalVolume)
+						channelInfo.TrackDataPosition++;
+
+					break;
+				}
+
+				case Effect.StopSoundFx:
+					break;
 			}
 
 			return false;
@@ -2035,7 +1937,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 				sbyte note = (sbyte)channelInfo.Note;
 
 				if (enableGlobalTranspose)
-					note += transpose;
+					note += playingInfo.Transpose;
 
 				if (enableChannelTranspose)
 					note += channelInfo.Transpose;
@@ -2120,12 +2022,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 
 						if (enableVolumeFade)
 						{
-							newVolume -= volumeFadeSpeed;
+							newVolume -= playingInfo.VolumeFadeSpeed;
 							if (newVolume < 0)
 								newVolume = 0;
 						}
 
-						newVolume = newVolume * globalVolume / 64;
+						newVolume = newVolume * playingInfo.GlobalVolume / 64;
 						channel.SetAmigaVolume((ushort)newVolume);
 					}
 				}
@@ -2141,10 +2043,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		/********************************************************************/
 		private void StopModule()
 		{
-			transpose = 0;
-			volumeFadeSpeed = 0;
-			globalVolume = 64;
-			globalVolumeFadeSpeed = 0;
+			playingInfo.Transpose = 0;
+			playingInfo.VolumeFadeSpeed = 0;
+			playingInfo.GlobalVolume = 64;
+			playingInfo.GlobalVolumeFadeSpeed = 0;
 
 			for (int i = 0; i < numberOfChannels; i++)
 				VirtualChannels[i].Mute();
@@ -2154,6 +2056,122 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 
 			// Tell NostalgicPlayer that the song has ended
 			OnEndReached();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current channel positions
+		/// </summary>
+		/********************************************************************/
+		private void ShowChannelPositions()
+		{
+			OnModuleInfoChanged(InfoPositionLine, FormatPositions());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with track numbers
+		/// </summary>
+		/********************************************************************/
+		private void ShowTracks()
+		{
+			OnModuleInfoChanged(InfoTrackLine, FormatTracks());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with current speed
+		/// </summary>
+		/********************************************************************/
+		private void ShowSpeed()
+		{
+			OnModuleInfoChanged(InfoSpeedLine, playingInfo.Speed.ToString());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update the module information with all dynamic values
+		/// </summary>
+		/********************************************************************/
+		private void UpdateModuleInformation()
+		{
+			ShowChannelPositions();
+			ShowTracks();
+			ShowSpeed();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the songs position lengths
+		/// </summary>
+		/********************************************************************/
+		private string FormatPositionLengths()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < numberOfChannels; i++)
+			{
+				sb.Append(channels[i].PositionList.Length);
+				sb.Append(", ");
+			}
+
+			sb.Remove(sb.Length - 2, 2);
+
+			return sb.ToString();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the playing positions
+		/// </summary>
+		/********************************************************************/
+		private string FormatPositions()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < numberOfChannels; i++)
+			{
+				sb.Append(channels[i].CurrentPosition - 1);
+				sb.Append(", ");
+			}
+
+			sb.Remove(sb.Length - 2, 2);
+
+			return sb.ToString();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the playing tracks
+		/// </summary>
+		/********************************************************************/
+		private string FormatTracks()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < numberOfChannels; i++)
+			{
+				sb.Append(trackNumbers[channels[i].PositionList[channels[i].CurrentPosition - 1]]);
+				sb.Append(", ");
+			}
+
+			sb.Remove(sb.Length - 2, 2);
+
+			return sb.ToString();
 		}
 		#endregion
 	}

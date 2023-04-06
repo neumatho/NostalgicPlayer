@@ -139,7 +139,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Song length:.
+        ///   Looks up a localized string similar to Number of positions:.
         /// </summary>
         internal static string IDS_DW_INFODESCLINE0 {
             get {
@@ -166,11 +166,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Current speed:.
+        ///   Looks up a localized string similar to Playing positions:.
         /// </summary>
         internal static string IDS_DW_INFODESCLINE3 {
             get {
                 return ResourceManager.GetString("IDS_DW_INFODESCLINE3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Playing tracks:.
+        /// </summary>
+        internal static string IDS_DW_INFODESCLINE4 {
+            get {
+                return ResourceManager.GetString("IDS_DW_INFODESCLINE4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current speed:.
+        /// </summary>
+        internal static string IDS_DW_INFODESCLINE5 {
+            get {
+                return ResourceManager.GetString("IDS_DW_INFODESCLINE5", resourceCulture);
             }
         }
         

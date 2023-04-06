@@ -6,18 +6,11 @@
 namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker.Containers
 {
 	/// <summary>
-	/// Holds information about which channel to take position information from
+	/// Contains information about a single position list
 	/// </summary>
-	internal class PositionLength
+	internal class PositionList
 	{
-		/// <summary>
-		/// The channel to use positions from
-		/// </summary>
-		public int Channel;
-
-		/// <summary>
-		/// The number of positions in the channel
-		/// </summary>
-		public int Length;
+		public uint[] TrackOffsets;
+		public ushort RestartPosition;
 	}
 }

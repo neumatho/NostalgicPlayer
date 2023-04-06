@@ -21,11 +21,10 @@ namespace Polycode.NostalgicPlayer.Kit.Containers.Events
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SubSongChangedEventArgs(int newSubSong, DurationInfo durationInfo, int newSongLength)
+		public SubSongChangedEventArgs(int newSubSong, DurationInfo durationInfo)
 		{
 			SubSong = newSubSong;
 			DurationInfo = durationInfo;
-			SongLength = newSongLength;
 		}
 
 
@@ -48,18 +47,6 @@ namespace Polycode.NostalgicPlayer.Kit.Containers.Events
 		/// </summary>
 		/********************************************************************/
 		public DurationInfo DurationInfo
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Holding the new song length
-		/// </summary>
-		/********************************************************************/
-		public int SongLength
 		{
 			get;
 		}

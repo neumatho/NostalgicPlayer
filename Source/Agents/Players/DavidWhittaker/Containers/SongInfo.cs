@@ -12,6 +12,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker.Containers
 	{
 		public ushort Speed;
 		public byte DelayCounterSpeed;
-		public uint[] PositionLists;
+		public PositionList[] PositionLists;
 	}
 }

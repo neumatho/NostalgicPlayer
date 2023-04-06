@@ -17,11 +17,12 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public DurationInfo(TimeSpan totalTime, PositionInfo[] positionInfo, TimeSpan[] playerPositionTime)
+		public DurationInfo(TimeSpan totalTime, PositionInfo[] positionInfo, TimeSpan[] playerPositionTime, TimeSpan? restartTime = null)
 		{
 			TotalTime = totalTime;
 			PositionInfo = positionInfo;
 			PlayerPositionTime = playerPositionTime;
+			RestartTime = restartTime;
 		}
 
 
@@ -67,6 +68,18 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// </summary>
 		/********************************************************************/
 		public TimeSpan[] PlayerPositionTime
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the restart time if any
+		/// </summary>
+		/********************************************************************/
+		public TimeSpan? RestartTime
 		{
 			get;
 		}
