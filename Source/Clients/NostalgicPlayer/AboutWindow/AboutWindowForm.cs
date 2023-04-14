@@ -8,11 +8,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Native;
 using Polycode.NostalgicPlayer.GuiKit.Components;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
@@ -24,9 +24,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 	/// </summary>
 	public partial class AboutWindowForm : WindowFormBase
 	{
-		[DllImport("kernel32.dll", EntryPoint = "RtlMoveMemory", SetLastError = true)]
-		private static extern void CopyMemory(IntPtr dest, IntPtr src, uint count);
-
 		private const int AreaWidth = 340;
 		private const int AreaHeight = 170;
 
@@ -276,7 +273,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 				IntPtr ptr = bitData.Scan0;
 
 				// Scroll the bitmap one line up
-				CopyMemory(ptr, ptr + bitData.Stride, (uint)((bitData.Height - 1) * bitData.Stride));
+				Kernel32.CopyMemory(ptr, ptr + bitData.Stride, (uint)((bitData.Height - 1) * bitData.Stride));
 			}
 			finally
 			{
@@ -332,7 +329,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AboutWindow
 										IntPtr logoPtr = logoData.Scan0;
 
 										// Copy one line into the bitmap
-										CopyMemory(ptr + ((AreaHeight - 1) * bitData.Stride), logoPtr + (logoLine * logoData.Stride), (uint)bitData.Stride);
+										Kernel32.CopyMemory(ptr + ((AreaHeight - 1) * bitData.Stride), logoPtr + (logoLine * logoData.Stride), (uint)bitData.Stride);
 									}
 									finally
 									{

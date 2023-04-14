@@ -3,10 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.Native;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Controls
 {
@@ -15,9 +14,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Controls
 	/// </summary>
 	public partial class ReadOnlyRichTextBox : UserControl
 	{
-		[DllImport("user32.dll")]
-		private static extern bool HideCaret(IntPtr hWnd);
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -30,9 +26,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Controls
 			richTextBox.StateCommon.Border.Color1 = Color.FromArgb(133, 158, 191);
 
 			// Setup events
-			richTextBox.RichTextBox.HandleCreated += (sender, args) => { HideCaret(richTextBox.RichTextBox.Handle); };
-			richTextBox.RichTextBox.GotFocus += (sender, args) => { HideCaret(richTextBox.RichTextBox.Handle); looseFocusLabel.Focus(); };
-			richTextBox.RichTextBox.MouseDown += (sender, args) => { HideCaret(richTextBox.RichTextBox.Handle); };
+			richTextBox.RichTextBox.HandleCreated += (sender, args) => { User32.HideCaret(richTextBox.RichTextBox.Handle); };
+			richTextBox.RichTextBox.GotFocus += (sender, args) => { User32.HideCaret(richTextBox.RichTextBox.Handle); looseFocusLabel.Focus(); };
+			richTextBox.RichTextBox.MouseDown += (sender, args) => { User32.HideCaret(richTextBox.RichTextBox.Handle); };
 		}
 
 
