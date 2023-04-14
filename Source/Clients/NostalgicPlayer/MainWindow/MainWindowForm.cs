@@ -5,7 +5,6 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -44,13 +43,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 	/// </summary>
 	public partial class MainWindowForm : WindowFormBase, IExtraChannels
 	{
-		private enum FileDropType
-		{
-			ClearAndAdd,
-			Append,
-			Insert
-		}
-
 		private class AgentEntry
 		{
 			public Guid TypeId;
@@ -102,15 +94,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		// Window/control status variables
 		private bool allowPosSliderUpdate;
 
-		// Drag'n'drop variables
-		private int indexOfItemUnderMouseToDrop = -2;
-		private Rectangle dragBoxFromMouseDown;
-		private bool drawLine;
-		private FileDropType dropType;
-
-		private bool restoreSelection = false;
-		private int[] savedSelection = Array.Empty<int>();
-
 		// Different helper classes
 		private readonly ModuleDatabase database;
 		private FileScanner fileScanner;
@@ -148,9 +131,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			// Remember my self
 			self = this;
-
-			// Enable drag'n'drop
-			moduleListBox.ListBox.AllowDrop = true;
 
 			// Disable escape key closing
 			disableEscapeKey = true;
@@ -196,7 +176,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					optionSettings.LastCleanupTime = DateTime.Now.Ticks;
 				}
 
-				fileScanner = new FileScanner(moduleListBox, optionSettings, agentManager, database, this);
+				fileScanner = new FileScanner(moduleListControl, optionSettings, agentManager, database, this);
 				fileScanner.Start();
 			}
 
@@ -388,10 +368,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				case 'S':
 				{
 					// Get the index of the module that couldn't be loaded + 1
-					int index = moduleListBox.Items.IndexOf(listItem) + 1;
+					int index = moduleListControl.Items.IndexOf(listItem) + 1;
 
 					// Get the number of items in the list
-					int count = moduleListBox.Items.Count;
+					int count = moduleListControl.Items.Count;
 
 					// Deselect the playing flag
 					ChangePlayItem(null);
@@ -409,8 +389,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						{
 							// Load the first module, but only if it's valid
 							// or haven't been loaded before
-							ModuleListItem item = (ModuleListItem)moduleListBox.Items[0];
-							if (!item.HaveTime || (item.HaveTime && item.Time.TotalMilliseconds != 0))
+							ModuleListItem item = moduleListControl.Items[0];
+							if (!item.HaveTime || (item.HaveTime && item.Duration.TotalMilliseconds != 0))
 								LoadAndPlayModule(item);
 						}
 					}
@@ -421,16 +401,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				case 'r':
 				{
 					// Get the index of the module that couldn't be loaded
-					int index = moduleListBox.Items.IndexOf(listItem);
+					int index = moduleListControl.Items.IndexOf(listItem);
 
 					// Get the number of items in the list - 1
-					int count = moduleListBox.Items.Count - 1;
+					int count = moduleListControl.Items.Count - 1;
 
 					// Deselect the playing flag
 					ChangePlayItem(null);
 
 					// Remove the module from the list
-					moduleListBox.Items.RemoveAt(index);
+					moduleListControl.Items.RemoveAt(index);
 
 					// Update the window
 					UpdateControls();
@@ -448,8 +428,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						{
 							// Load the first module, but only if it's valid
 							// or haven't been loaded before
-							ModuleListItem item = (ModuleListItem)moduleListBox.Items[0];
-							if (!item.HaveTime || (item.HaveTime && item.Time.TotalMilliseconds != 0))
+							ModuleListItem item = moduleListControl.Items[0];
+							if (!item.HaveTime || (item.HaveTime && item.Duration.TotalMilliseconds != 0))
 								LoadAndPlayModule(item);
 						}
 					}
@@ -504,7 +484,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				toolTip.Active = optionSettings.ToolTips;
 
 				SetTitle();
-				moduleListBox.EnableListNumber(optionSettings.ShowListNumber);
+				moduleListControl.EnableListNumber(optionSettings.ShowListNumber);
 
 				if (optionSettings.UseDatabase)
 				{
@@ -534,26 +514,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			if (listItem != null)
 			{
 				// Get the previous item time
-				TimeSpan prevTime = listItem.Time;
+				TimeSpan prevTime = listItem.Duration;
 
 				// Change the time on the item
-				listItem.Time = time;
+				listItem.Duration = time;
 
 				// Find index of the item
-				int index = moduleListBox.Items.IndexOf(listItem);
+				int index = moduleListControl.Items.IndexOf(listItem);
 				if (index >= 0)
 				{
 					// And update it in the list
-					moduleListBox.BeginUpdate();
-
-					try
-					{
-						moduleListBox.Invalidate(moduleListBox.GetItemRectangle(index));
-					}
-					finally
-					{
-						moduleListBox.EndUpdate();
-					}
+					moduleListControl.InvalidateItem(index);
 
 					// Now calculate the new list time
 					listTime = listTime - prevTime + time;
@@ -673,7 +644,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			lock (openAgentDisplays)
 			{
 				foreach (AgentDisplayWindowForm agentDisplayWindow in openAgentDisplays.Values)
-					yield return  agentDisplayWindow;
+					yield return agentDisplayWindow;
 			}
 		}
 		#endregion
@@ -854,18 +825,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			moduleInfoButton.Click += ModuleInfoButton_Click;
 
 			// Module list
-			moduleListBox.SelectedIndexChanged += ModuleListBox_SelectedIndexChanged;
-			moduleListBox.ListBox.MouseDoubleClick += ModuleListBox_MouseDoubleClick;
-			moduleListBox.KeyPress += ModuleListBox_KeyPress;
-
-			moduleListBox.ListBox.MouseDown += ModuleListBox_MouseDown;
-			moduleListBox.ListBox.MouseUp += ModuleListBox_MouseUp;
-			moduleListBox.ListBox.MouseMove += ModuleListBox_MouseMove;
-			moduleListBox.ListBox.DragEnter += ModuleListBox_DragEnter;
-			moduleListBox.ListBox.DragOver += ModuleListBox_DragOver;
-			moduleListBox.ListBox.DragLeave += ModuleListBox_DragLeave;
-			moduleListBox.ListBox.DragDrop += ModuleListBox_DragDrop;
-			scrollTimer.Tick += ScrollTimer_Tick;
+			moduleListControl.SelectedIndexChanged += ModuleListControl_SelectedIndexChanged;
+			moduleListControl.MouseDoubleClick += ModuleListControl_MouseDoubleClick;
+			moduleListControl.KeyPress += ModuleListControl_KeyPress;
+			moduleListControl.DragDrop += ModuleListControl_DragDrop;
 
 			// Volume
 			muteCheckButton.CheckedChanged += MuteCheckButton_CheckedChanged;
@@ -936,7 +899,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					// F12 - Play a random module
 					case Keys.F12:
 					{
-						int total = moduleListBox.Items.Count;
+						int total = moduleListControl.Items.Count;
 
 						// Do only continue if we have more than one
 						// module in the list
@@ -944,7 +907,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						{
 							// Find a random module until we found
 							// one that is not the playing one
-							int playingIndex = playItem == null ? -1 : moduleListBox.Items.IndexOf(playItem);
+							int playingIndex = playItem == null ? -1 : moduleListControl.Items.IndexOf(playItem);
 							int index;
 
 							do
@@ -1131,7 +1094,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					// Left arrow - Load previous module
 					case Keys.Left:
 					{
-						if (moduleListBox.Items.Count > 1)
+						if (moduleListControl.Items.Count > 1)
 							previousModuleButton.PerformClick();
 
 						return true;
@@ -1140,7 +1103,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					// Right arrow - Fast forward
 					case Keys.Right:
 					{
-						if (moduleListBox.Items.Count > 1)
+						if (moduleListControl.Items.Count > 1)
 							nextModuleButton.PerformClick();
 
 						return true;
@@ -1232,7 +1195,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				if (moduleHandler.IsModuleLoaded)
 				{
-					rememberSelected = moduleListBox.Items.IndexOf(playItem);
+					rememberSelected = moduleListControl.Items.IndexOf(playItem);
 					rememberPosition = moduleHandler.PlayingModuleInformation.SongPosition;
 					rememberSong = moduleHandler.PlayingModuleInformation.CurrentSong;
 				}
@@ -1497,7 +1460,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// The user changed the selection of the modules
 		/// </summary>
 		/********************************************************************/
-		private void ModuleListBox_SelectedIndexChanged(object sender, EventArgs e)
+		private void ModuleListControl_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			// Update the time and count controls
 			UpdateTimes();
@@ -1505,9 +1468,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			// Update the list controls
 			UpdateListControls();
-
-			if (!restoreSelection)
-				SaveSelection();
 		}
 
 
@@ -1517,10 +1477,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// The user double-clicked in the module list box
 		/// </summary>
 		/********************************************************************/
-		private void ModuleListBox_MouseDoubleClick(object sender, MouseEventArgs e)
+		private void ModuleListControl_MouseDoubleClick(object sender, MouseEventArgs e)
 		{
 			// Find out, if an item has been clicked and which one
-			int index = moduleListBox.IndexFromPoint(e.Location);
+			int index = moduleListControl.IndexFromPoint(e.Location);
 			if (index != -1)
 			{
 				// Stop playing any modules
@@ -1538,206 +1498,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// User clicked on a key in the module list box
 		/// </summary>
 		/********************************************************************/
-		private void ModuleListBox_KeyPress(object sender, KeyPressEventArgs e)
+		private void ModuleListControl_KeyPress(object sender, KeyPressEventArgs e)
 		{
 			// Enter - Load the selected module
 			if (e.KeyChar == '\r')
 			{
-				if (moduleListBox.SelectedItem != null)
+				if (moduleListControl.SelectedItem != null)
 				{
 					// Stop playing any modules
 					StopAndFreeModule();
 
 					// Load and play the selected module
-					LoadAndPlayModule((ModuleListItem)moduleListBox.SelectedItem);
-				}
-			}
-		}
-
-		#region Drag'n'drop
-		/********************************************************************/
-		/// <summary>
-		/// User clicked in the module list box
-		/// </summary>
-		/********************************************************************/
-		private void ModuleListBox_MouseDown(object sender, MouseEventArgs e)
-		{
-			// If no items is selected, then do not start drag'n'drop
-			if (moduleListBox.SelectedIndex != -1)
-			{
-				int clickedItemIndex = moduleListBox.IndexFromPoint(e.Location);
-				if ((clickedItemIndex >= 0) && ((e.Button & MouseButtons.Left) != 0) && (moduleListBox.GetSelected(clickedItemIndex) /*|| (ModifierKeys == Keys.Shift)*/))	// Shift test is removed, because there is some issue that the selection collection isn't updated when selecting items with shift and begin to drag without release the mouse button first
-				{
-					RestoreSelection(clickedItemIndex);
-
-					// Remember the point where the mouse down occurred. The DragSize
-					// indicates the size that the mouse can move before a drag event
-					// should be started
-					Size dragSize = SystemInformation.DragSize;
-
-					// Create a rectangle using DragSize, with the mouse position
-					// being at the center of the rectangle
-					dragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width / 2), e.Y - (dragSize.Height / 2)), dragSize);
-				}
-				else
-					dragBoxFromMouseDown = Rectangle.Empty;
-			}
-			else
-			{
-				// Reset the rectangle if no item is selected
-				dragBoxFromMouseDown = Rectangle.Empty;
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// User released the mouse in the module list box
-		/// </summary>
-		/********************************************************************/
-		private void ModuleListBox_MouseUp(object sender, MouseEventArgs e)
-		{
-			dragBoxFromMouseDown = Rectangle.Empty;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// User moves the mouse around in the module list box
-		/// </summary>
-		/********************************************************************/
-		private void ModuleListBox_MouseMove(object sender, MouseEventArgs e)
-		{
-			// If the mouse moves outside the rectangle, start the drag
-			if ((dragBoxFromMouseDown != Rectangle.Empty) && !dragBoxFromMouseDown.Contains(e.X, e.Y))
-			{
-				// Start the dragging, where custom data is all the selected items.
-				// Also make a copy of the collection
-				moduleListBox.DoDragDrop(this, DragDropEffects.Move);
-
-				// Stop drag functionality by clearing the rectangle
-				dragBoxFromMouseDown = Rectangle.Empty;
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called when the mouse enters the list control and a dragging
-		/// begins
-		/// </summary>
-		/********************************************************************/
-		private void ModuleListBox_DragEnter(object sender, DragEventArgs e)
-		{
-			indexOfItemUnderMouseToDrop = -2;
-
-			// Start the timer
-			scrollTimer.Start();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called when the mouse leaves the list control
-		/// </summary>
-		/********************************************************************/
-		private void ModuleListBox_DragLeave(object sender, EventArgs e)
-		{
-			DrawLine(true);
-
-			// Stop the timer again
-			scrollTimer.Stop();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Should set if it is valid to drag into the list box
-		/// </summary>
-		/********************************************************************/
-		private void ModuleListBox_DragOver(object sender, DragEventArgs e)
-		{
-			if (e.Data.GetDataPresent(GetType()))
-			{
-				// Drag started from our own list, so it is ok
-				e.Effect = DragDropEffects.Move;
-				drawLine = true;
-			}
-			else if (e.Data.GetDataPresent(DataFormats.FileDrop))
-			{
-				// Either a file or directory is dropped from File Explorer
-				if ((ModifierKeys & Keys.Control) != 0)
-				{
-					if ((ModifierKeys & Keys.Shift) != 0)
-					{
-						e.Effect = DragDropEffects.Copy;		// Append to list
-						dropType = FileDropType.Append;
-						drawLine = false;
-					}
-					else
-					{
-						e.Effect = DragDropEffects.Move;		// Insert into position in list
-						dropType = FileDropType.Insert;
-						drawLine = true;
-					}
-				}
-				else
-				{
-					e.Effect = DragDropEffects.Move;			// Clear list and add files
-					dropType = FileDropType.ClearAndAdd;
-					drawLine = false;
-				}
-			}
-			else
-			{
-				// Unknown type, so it is not allowed
-				e.Effect = DragDropEffects.None;
-			}
-
-			if (e.Effect != DragDropEffects.None)
-			{
-				// Remember the index where the drop will occur
-				Point clientPoint = moduleListBox.PointToClient(new Point(e.X, e.Y));
-				int index = moduleListBox.IndexFromPoint(clientPoint);
-
-				// Hotfix, because of a bug in IndexFromPoint()
-				if (index == 65535)
-					index = -1;
-
-				// Because Krypton ListBox control uses OwnerDrawVariable when
-				// drawing the control, the above IndexFromPoint will always
-				// return the last item, even if the mouse is over the empty area.
-				// https://stackoverflow.com/questions/48387671/ownerdrawvariable-listbox-selects-last-item-when-clicking-on-control-below-items
-				//
-				// We try to make a work-around for this
-				if ((index == moduleListBox.Items.Count - 1) && (index != -1))      // It would be -1, if the list is empty
-				{
-					// Get the rectangle for the last item
-					Rectangle lastItemRect = moduleListBox.GetItemRectangle(moduleListBox.Items.Count - 1);
-
-					// Is the mouse inside this rect?
-					if (!lastItemRect.Contains(clientPoint))
-					{
-						// No, then the mouse is over the empty area
-						index = -1;
-					}
-				}
-
-				// If the drop point has changed, redraw the line
-				if (index != indexOfItemUnderMouseToDrop)
-				{
-					// First erase the old line
-					DrawLine(true);
-
-					indexOfItemUnderMouseToDrop = index;
-
-					// Then draw the new one
-					DrawLine(false);
+					LoadAndPlayModule(moduleListControl.SelectedItem);
 				}
 			}
 		}
@@ -1749,70 +1521,37 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Is called when the drop ends
 		/// </summary>
 		/********************************************************************/
-		private void ModuleListBox_DragDrop(object sender, DragEventArgs e)
+		private void ModuleListControl_DragDrop(object sender, DragEventArgs e)
 		{
-			// Stop the timer again
-			scrollTimer.Stop();
+			ModuleListControl.DragDropInformation dropInfo = moduleListControl.GetLatestDragAndDropInformation(e);
 
-			using (new SleepCursor())
+			switch (dropInfo.Type)
 			{
-				if (e.Data.GetDataPresent(GetType()))
+				case ModuleListControl.DragDropType.List:
 				{
-					// Moving list items around
-					//
-					// Get the selected items and order them in reverse
-					var selectedItems = moduleListBox.SelectedIndices.Cast<int>().OrderByDescending(i => i);
-
-					if (indexOfItemUnderMouseToDrop == -1)
-					{
-						int insertAt = moduleListBox.Items.Count;
-
-						foreach (int index in selectedItems)
-						{
-							ModuleListItem listItem = (ModuleListItem)moduleListBox.Items[index];
-
-							moduleListBox.Items.Insert(insertAt--, listItem);
-							moduleListBox.Items.RemoveAt(index);
-						}
-					}
-					else
-					{
-						int insertAt = indexOfItemUnderMouseToDrop;
-
-						foreach (int index in selectedItems)
-						{
-							ModuleListItem listItem = (ModuleListItem)moduleListBox.Items[index];
-
-							moduleListBox.Items.Insert(insertAt, listItem);
-
-							if (index < insertAt)
-								moduleListBox.Items.RemoveAt(index);
-							else
-								moduleListBox.Items.RemoveAt(index + 1);
-						}
-					}
-
 					// Free any extra loaded modules
 					moduleHandler.FreeExtraModules();
+					break;
 				}
-				else if (e.Data.GetDataPresent(DataFormats.FileDrop))
+
+				case ModuleListControl.DragDropType.File:
 				{
 					int jumpNumber = -1;
 
 					// File or directory dragged from File Explorer
 					string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
 
-					switch (dropType)
+					switch (dropInfo.DropType)
 					{
-						case FileDropType.Append:
+						case ModuleListControl.FileDropType.Append:
 						{
-							jumpNumber = moduleListBox.Items.Count;
+							jumpNumber = moduleListControl.Items.Count;
 
 							AddFilesToList(files, checkForList: true);
 							break;
 						}
 
-						case FileDropType.ClearAndAdd:
+						case ModuleListControl.FileDropType.ClearAndAdd:
 						{
 							StopAndFreeModule();
 							EmptyList();
@@ -1823,10 +1562,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							break;
 						}
 
-						case FileDropType.Insert:
+						case ModuleListControl.FileDropType.Insert:
 						{
-							jumpNumber = indexOfItemUnderMouseToDrop == -1 ? 0 : indexOfItemUnderMouseToDrop;
-							AddFilesToList(files, indexOfItemUnderMouseToDrop, true);
+							jumpNumber = dropInfo.IndexOfItemUnderMouseToDrop == -1 ? 0 : dropInfo.IndexOfItemUnderMouseToDrop;
+							AddFilesToList(files, dropInfo.IndexOfItemUnderMouseToDrop, true);
 
 							// Free any extra loaded modules
 							moduleHandler.FreeExtraModules();
@@ -1840,168 +1579,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						StopAndFreeModule();
 						LoadAndPlayModule(jumpNumber);
 					}
+					break;
 				}
 			}
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called by an interval to check if a scroll is needed
-		/// </summary>
-		/********************************************************************/
-		private void ScrollTimer_Tick(object sender, EventArgs e)
-		{
-			if (moduleListBox.Items.Count > 0)
-			{
-				int y = moduleListBox.PointToClient(MousePosition).Y;
-
-				if ((moduleListBox.Height - y) <= 10)
-				{
-					int itemsThatCanBeSeen = moduleListBox.Height / moduleListBox.GetItemHeight(0);
-					if (moduleListBox.TopIndex + itemsThatCanBeSeen < moduleListBox.Items.Count)
-					{
-						DrawLine(true);
-						moduleListBox.TopIndex++;
-					}
-				}
-				else if (y <= 10)
-				{
-					if (moduleListBox.TopIndex > 0)
-					{
-						DrawLine(true);
-						moduleListBox.TopIndex--;
-					}
-				}
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will draw a line at the place where the drop will happen
-		/// </summary>
-		/********************************************************************/
-		private void DrawLine(bool erase)
-		{
-			if (erase || drawLine)
-			{
-				using (Graphics g = moduleListBox.ListBox.CreateGraphics())
-				{
-					// Find the position where to draw the line
-					int pos;
-
-					int count = moduleListBox.Items.Count;
-
-					int indexCheck;
-
-					// If no items in the list or it is the first position to insert,
-					// just draw the line at top of the control
-					int indexFromTop = indexOfItemUnderMouseToDrop - moduleListBox.TopIndex;
-
-					if ((count == 0) || (indexFromTop == 0))
-					{
-						pos = 0;
-						indexCheck = -1;
-					}
-					else
-					{
-						int height = moduleListBox.GetItemHeight(0);
-
-						// Do we point at any item?
-						if (indexOfItemUnderMouseToDrop < 0)
-						{
-							pos = (count - moduleListBox.TopIndex) * height - 1;
-							indexCheck = count - 1;
-						}
-						else
-						{
-							pos = indexFromTop * height - 1;
-							indexCheck = indexOfItemUnderMouseToDrop - 1;
-						}
-					}
-
-					if (erase && moduleListBox.SelectedIndices.Contains(indexCheck))
-					{
-						Rectangle itemRect = moduleListBox.GetItemRectangle(indexCheck);
-
-						// This is hardcoded to draw how Krypton list box draw a selected item
-						using (SolidBrush corner1 = new SolidBrush(Color.FromArgb(251, 249, 244)))
-						{
-							using (SolidBrush corner2 = new SolidBrush(Color.FromArgb(215, 193, 136)))
-							{
-								using (SolidBrush corner3 = new SolidBrush(Color.FromArgb(208, 181, 113)))
-								{
-									using (SolidBrush corner4 = new SolidBrush(Color.FromArgb(247, 243, 232)))
-									{
-										using (Pen line = new Pen(Color.FromArgb(194, 160, 73)))
-										{
-											g.FillRectangle(corner1, itemRect.Left, pos, 1, 1);
-											g.FillRectangle(corner2, itemRect.Left + 1, pos, 1, 1);
-											g.DrawLine(line, itemRect.Left + 2, pos, itemRect.Right - 3, pos);
-											g.FillRectangle(corner3, itemRect.Right - 2, pos, 1, 1);
-											g.FillRectangle(corner4, itemRect.Right - 1, pos, 1, 1);
-										}
-									}
-								}
-							}
-						}
-					}
-					else
-					{
-						// Draw the line
-						Rectangle rect = indexCheck < 0 ? moduleListBox.ClientRectangle : moduleListBox.GetItemRectangle(indexCheck);
-
-						using (Pen pen = new Pen(erase ? Color.White : Color.CornflowerBlue))
-						{
-							g.DrawLine(pen, rect.Left, pos, rect.Right, pos);
-						}
-					}
-				}
-			}
-		}
-
-
-		// This saving and restoring stuff of the selected items, is made
-		// so the list box behaves like the list view, when the user selects
-		// the item. See https://www.codeproject.com/Articles/36412/Drag-and-Drop-ListBox
-
-		/********************************************************************/
-		/// <summary>
-		/// Will save the current selected items
-		/// </summary>
-		/********************************************************************/
-		private void SaveSelection()
-		{
-			savedSelection = moduleListBox.SelectedIndices.Cast<int>().ToArray();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will restore the saved selection back again
-		/// </summary>
-		/********************************************************************/
-		private void RestoreSelection(int clickedItemIndex)
-		{
-			if ((ModifierKeys == Keys.None) && savedSelection.Contains(clickedItemIndex))
-			{
-				restoreSelection = true;
-
-				foreach (int index in savedSelection)
-					moduleListBox.SetSelected(index, true);
-
-				// Select the clicked item again to make it the current item
-				moduleListBox.SetSelected(clickedItemIndex, true);
-
-				restoreSelection = false;
-			}
-		}
-		#endregion
-
 		#endregion
 
 		#region Volume events
@@ -2070,30 +1651,30 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void SwapModulesButton_Click(object sender, EventArgs e)
 		{
-			int index1 = moduleListBox.SelectedIndices[0];
-			int index2 = moduleListBox.SelectedIndices[1];
+			int index1 = moduleListControl.SelectedIndexes[0];
+			int index2 = moduleListControl.SelectedIndexes[1];
 
-			moduleListBox.BeginUpdate();
+			moduleListControl.BeginUpdate();
 
 			try
 			{
 				// Swap the items
-				ModuleListItem item1 = (ModuleListItem)moduleListBox.Items[index1];
-				ModuleListItem item2 = (ModuleListItem)moduleListBox.Items[index2];
+				ModuleListItem item1 = moduleListControl.Items[index1];
+				ModuleListItem item2 = moduleListControl.Items[index2];
 
-				moduleListBox.Items.RemoveAt(index1);
-				moduleListBox.Items.Insert(index1, item2);
+				moduleListControl.Items.RemoveAt(index1);
+				moduleListControl.Items.Insert(index1, item2);
 
-				moduleListBox.Items.RemoveAt(index2);
-				moduleListBox.Items.Insert(index2, item1);
+				moduleListControl.Items.RemoveAt(index2);
+				moduleListControl.Items.Insert(index2, item1);
 
 				// Keep the selection
-				moduleListBox.SetSelected(index1, true);
-				moduleListBox.SetSelected(index2, true);
+				moduleListControl.SetSelected(index1, true);
+				moduleListControl.SetSelected(index2, true);
 			}
 			finally
 			{
-				moduleListBox.EndUpdate();
+				moduleListControl.EndUpdate();
 			}
 
 			// Free any extra loaded modules
@@ -2204,11 +1785,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					int jumpNumber;
 
 					// Get the selected item
-					int selected = moduleListBox.SelectedIndex;
+					int selected = moduleListControl.SelectedIndex;
 					if (selected < 0)
 					{
 						selected = -1;
-						jumpNumber = moduleListBox.Items.Count;
+						jumpNumber = moduleListControl.Items.Count;
 					}
 					else
 						jumpNumber = selected;
@@ -2246,17 +1827,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					int jumpNumber;
 
 					// Get the selected item
-					int selected = moduleListBox.SelectedIndex;
+					int selected = moduleListControl.SelectedIndex;
 					if (selected < 0)
 					{
 						selected = -1;
-						jumpNumber = moduleListBox.Items.Count;
+						jumpNumber = moduleListControl.Items.Count;
 					}
 					else
 						jumpNumber = selected;
 
 					// Add all the files in the module list
-					AddFilesToList(new [] { moduleDirectoryDialog.SelectedPath }, selected);
+					AddFilesToList(new[] { moduleDirectoryDialog.SelectedPath }, selected);
 
 					// Free any extra loaded modules
 					moduleHandler.FreeExtraModules();
@@ -2283,18 +1864,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			using (new SleepCursor())
 			{
-				moduleListBox.BeginUpdate();
+				moduleListControl.BeginUpdate();
 
 				try
 				{
-					ModuleListItem[] newList = moduleListBox.Items.Cast<ModuleListItem>().OrderBy(i => i).ToArray();
+					ModuleListItem[] newList = moduleListControl.Items.OrderBy(i => i).ToArray();
 
-					moduleListBox.Items.Clear();
-					moduleListBox.Items.AddRange(newList);
+					moduleListControl.Items.Clear();
+					moduleListControl.Items.AddRange(newList);
 				}
 				finally
 				{
-					moduleListBox.EndUpdate();
+					moduleListControl.EndUpdate();
 				}
 
 				// Free any extra loaded modules
@@ -2313,18 +1894,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			using (new SleepCursor())
 			{
-				moduleListBox.BeginUpdate();
+				moduleListControl.BeginUpdate();
 
 				try
 				{
-					ModuleListItem[] newList = moduleListBox.Items.Cast<ModuleListItem>().OrderByDescending(i => i).ToArray();
+					ModuleListItem[] newList = moduleListControl.Items.OrderByDescending(i => i).ToArray();
 
-					moduleListBox.Items.Clear();
-					moduleListBox.Items.AddRange(newList);
+					moduleListControl.Items.Clear();
+					moduleListControl.Items.AddRange(newList);
 				}
 				finally
 				{
-					moduleListBox.EndUpdate();
+					moduleListControl.EndUpdate();
 				}
 
 				// Free any extra loaded modules
@@ -2364,16 +1945,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			using (new SleepCursor())
 			{
-				moduleListBox.BeginUpdate();
+				moduleListControl.BeginUpdate();
 
 				try
 				{
-					for (int i = moduleListBox.Items.Count - 1; i >= 0; i--)
-						moduleListBox.SetSelected(i, true);
+					moduleListControl.SetSelectedOnAllItems(true);
 				}
 				finally
 				{
-					moduleListBox.EndUpdate();
+					moduleListControl.EndUpdate();
 				}
 			}
 		}
@@ -2389,16 +1969,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			using (new SleepCursor())
 			{
-				moduleListBox.BeginUpdate();
+				moduleListControl.BeginUpdate();
 
 				try
 				{
-					for (int i = moduleListBox.Items.Count - 1; i >= 0; i--)
-						moduleListBox.SetSelected(i, false);
+					moduleListControl.SetSelectedOnAllItems(false);
 				}
 				finally
 				{
-					moduleListBox.EndUpdate();
+					moduleListControl.EndUpdate();
 				}
 			}
 		}
@@ -2444,11 +2023,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					int jumpNumber;
 
 					// Get the selected item
-					int selected = moduleListBox.SelectedIndex;
+					int selected = moduleListControl.SelectedIndex;
 					if (selected < 0)
 					{
 						selected = -1;
-						jumpNumber = moduleListBox.Items.Count;
+						jumpNumber = moduleListControl.Items.Count;
 					}
 					else
 						jumpNumber = selected;
@@ -2749,8 +2328,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				else
 				{
 					// Load previous module
-					int newIndex = moduleListBox.Items.IndexOf(playItem) - 1;
-					int count = moduleListBox.Items.Count;
+					int newIndex = moduleListControl.Items.IndexOf(playItem) - 1;
+					int count = moduleListControl.Items.Count;
 
 					if (newIndex < 0)
 					{
@@ -2785,8 +2364,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			if (playItem != null)
 			{
 				// Load next module
-				int newIndex = moduleListBox.Items.IndexOf(playItem) + 1;
-				int count = moduleListBox.Items.Count;
+				int newIndex = moduleListControl.Items.IndexOf(playItem) + 1;
+				int count = moduleListControl.Items.Count;
 
 				if (newIndex == count)
 					newIndex = 0;
@@ -2952,15 +2531,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						if (itemList.Count > 0)
 						{
 							// Add the items to the list
-							moduleListBox.BeginUpdate();
+							moduleListControl.BeginUpdate();
 
 							try
 							{
-								moduleListBox.Items.AddRange(itemList.ToArray());
+								moduleListControl.Items.AddRange(itemList);
 							}
 							finally
 							{
-								moduleListBox.EndUpdate();
+								moduleListControl.EndUpdate();
 							}
 
 							// Update the window
@@ -2976,7 +2555,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 
 			// Tell the file scanner to scan the new items
-			fileScanner.ScanItems(moduleListBox.Items.Cast<ModuleListItem>().Take(moduleListBox.Items.Count));
+			fileScanner.ScanItems(moduleListControl.Items.Take(moduleListControl.Items.Count));
 		}
 
 
@@ -3009,7 +2588,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				}
 
 				// Get the previous number of items in the list
-				listCount = moduleListBox.Items.Count;
+				listCount = moduleListControl.Items.Count;
 
 				// Add all the files to the module list
 				AddFilesToList(arguments, checkForList: true);
@@ -3679,32 +3258,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			if (playItem != null)
 			{
 				// Check to see if the playing item can be seen
-				int itemIndex = moduleListBox.Items.IndexOf(playItem);
-				Rectangle listRect = moduleListBox.Bounds;
-				Rectangle itemRect = moduleListBox.GetItemRectangle(itemIndex);
-				if (itemRect == Rectangle.Empty)
-				{
-					// Sometimes the rectangle returned is empty.
-					// If that's the case, scroll to the playing item
-					moduleListBox.TopIndex = itemIndex;
-				}
-				else
-				{
-					itemRect.X += listRect.X;
-					itemRect.Y += listRect.Y;
+				int itemIndex = moduleListControl.Items.IndexOf(playItem);
 
-					if (!listRect.Contains(itemRect))
-					{
-						// Make sure the item can be seen
-						moduleListBox.TopIndex = itemIndex;
-					}
-				}
+				// Make sure the item can be seen
+				if (!moduleListControl.IsItemVisible(itemIndex))
+					moduleListControl.TopIndex = itemIndex;
 
 				// Add the new index to the random list
 				randomList.Add(itemIndex);
 
 				// Do we need to remove any previous items
-				if (randomList.Count > (moduleListBox.Items.Count / 3))
+				if (randomList.Count > (moduleListControl.Items.Count / 3))
 					randomList.RemoveAt(0);
 			}
 		}
@@ -3718,7 +3282,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void ChangePlayItem(ModuleListItem listItem)
 		{
-			moduleListBox.BeginUpdate();
+			moduleListControl.BeginUpdate();
 
 			try
 			{
@@ -3726,7 +3290,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				if (playItem != null)
 				{
 					playItem.IsPlaying = false;
-					moduleListBox.Invalidate(moduleListBox.GetItemRectangle(moduleListBox.Items.IndexOf(playItem)));
+					moduleListControl.InvalidateItem(moduleListControl.Items.IndexOf(playItem));
 				}
 
 				// Remember the item
@@ -3735,12 +3299,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				if (playItem != null)
 				{
 					playItem.IsPlaying = true;
-					moduleListBox.Invalidate(moduleListBox.GetItemRectangle(moduleListBox.Items.IndexOf(playItem)));
+					moduleListControl.InvalidateItem(moduleListControl.Items.IndexOf(playItem));
 				}
 			}
 			finally
 			{
-				moduleListBox.EndUpdate();
+				moduleListControl.EndUpdate();
 			}
 		}
 
@@ -3755,7 +3319,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			// Subtract the item time
 			if (listItem.HaveTime)
-				listTime -= listItem.Time;
+				listTime -= listItem.Duration;
 		}
 
 
@@ -3782,7 +3346,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private void UpdateTapeDeck()
 		{
 			// Get the number of items in the list
-			int count = moduleListBox.Items.Count;
+			int count = moduleListControl.Items.Count;
 
 			// Get playing flag
 			bool isLoaded = moduleHandler.IsModuleLoaded;
@@ -3844,10 +3408,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Calculate the total time for all the selected items
 			selectedTime = new TimeSpan(0);
 
-			foreach (ModuleListItem listItem in moduleListBox.SelectedItems)
+			foreach (ModuleListItem listItem in moduleListControl.SelectedItems)
 			{
 				// Add the time to the total
-				selectedTime += listItem.Time;
+				selectedTime += listItem.Duration;
 			}
 
 			// Build the selected time string
@@ -3884,8 +3448,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private void UpdateListCount()
 		{
 			// Get the different numbers
-			int selected = moduleListBox.SelectedItems.Count;
-			int total = moduleListBox.Items.Count;
+			int selected = moduleListControl.SelectedItems.Count;
+			int total = moduleListControl.Items.Count;
 
 			// Update the "number of files" label
 			totalLabel.Text = $"{selected}/{total}";
@@ -3900,7 +3464,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void UpdateListControls()
 		{
-			if (moduleListBox.SelectedIndex == -1)
+			if (moduleListControl.SelectedIndex == -1)
 			{
 				// No items are selected
 				removeModuleButton.Enabled = false;
@@ -3916,7 +3480,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				moveModulesDownButton.Enabled = true;
 
 				// Are two and only two items selected?
-				if (moduleListBox.SelectedItems.Count == 2)
+				if (moduleListControl.SelectedItems.Count == 2)
 				{
 					// Enable the swap button
 					swapModulesButton.Enabled = true;
@@ -4045,7 +3609,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			agentManager.LoadAllAgents();
 
 			// Fix agent settings
-			userSettings.RemoveSection("Players Agents");		// Not used anymore
+			userSettings.RemoveSection("Players Agents");       // Not used anymore
 
 			FixAgentSettings("Formats", agentManager.GetAllAgents(Manager.AgentType.Players).Union(agentManager.GetAllAgents(Manager.AgentType.ModuleConverters)));
 			FixAgentSettings("Output", agentManager.GetAllAgents(Manager.AgentType.Output));
@@ -4206,8 +3770,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void LoadAndPlayModule(int index, int subSong = -1, int startPos = -1)
 		{
-			if (index < moduleListBox.Items.Count)
-				LoadAndPlayModule((ModuleListItem)moduleListBox.Items[index], subSong, startPos);
+			if (index < moduleListControl.Items.Count)
+				LoadAndPlayModule(moduleListControl.Items[index], subSong, startPos);
 		}
 
 
@@ -4242,8 +3806,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				// Free loaded module
 				StopAndFreeModule();
 
-				// Set a zero time on the item, to mark it as "taken"
-				listItem.Time = new TimeSpan(0);
+				// Set a zero time on the item, to mark it as "taken" for the FileScanner
+				listItem.Duration = new TimeSpan(0);
 			}
 		}
 
@@ -4256,7 +3820,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void PlayNextModule(int index)
 		{
-			ModuleListItem listItem = (ModuleListItem)moduleListBox.Items[index];
+			ModuleListItem listItem = moduleListControl.Items[index];
 
 			moduleHandler.PlayModule(listItem);
 
@@ -4425,8 +3989,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						if (newPos >= (songLength - earlyLoad))
 						{
 							// Check to see if we have to load the module
-							int curPlay = moduleListBox.Items.IndexOf(playItem);
-							int count = moduleListBox.Items.Count;
+							int curPlay = moduleListControl.Items.IndexOf(playItem);
+							int count = moduleListControl.Items.Count;
 
 							// Are we at the end of the list?
 							bool load = true;
@@ -4450,7 +4014,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 								{
 									// If output agent has changed, do not load the module
 									if (moduleHandler.OutputAgentInfo.Enabled && (moduleHandler.OutputAgentInfo.TypeId == soundSettings.OutputAgent))
-										moduleHandler.LoadAndInitModule((ModuleListItem)moduleListBox.Items[newPlay], showError: false);
+										moduleHandler.LoadAndInitModule(moduleListControl.Items[newPlay], showError: false);
 								}
 							}
 						}
@@ -4507,10 +4071,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							bool loadNext = true;
 
 							// Get the number of modules in the list
-							int count = moduleListBox.Items.Count;
+							int count = moduleListControl.Items.Count;
 
 							// Get the index of the current playing module
-							int curPlay = moduleListBox.Items.IndexOf(playItem);
+							int curPlay = moduleListControl.Items.IndexOf(playItem);
 
 							// The next module to load
 							int newPlay = curPlay + 1;
@@ -4650,7 +4214,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			DialogResult result = moduleFileDialog.ShowDialog();
 			if (result == DialogResult.OK)
-				moduleFileDialog.InitialDirectory = null;	// Clear so it won't start in the initial directory again, but in current directory next time it is opened
+				moduleFileDialog.InitialDirectory = null;   // Clear so it won't start in the initial directory again, but in current directory next time it is opened
 
 			return result;
 		}
@@ -4669,10 +4233,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			if (moduleDirectoryDialog == null)
 			{
 				moduleDirectoryDialog = new FolderBrowserDialog();
-				moduleDirectoryDialog.SelectedPath = pathSettings.Modules;
+				moduleDirectoryDialog.InitialDirectory = pathSettings.Modules;
 			}
 
 			DialogResult result = moduleDirectoryDialog.ShowDialog();
+			if (result == DialogResult.OK)
+				moduleDirectoryDialog.InitialDirectory = null;   // Clear so it won't start in the initial directory again, but in current directory next time it is opened
 
 			return result;
 		}
@@ -4698,7 +4264,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			DialogResult result = loadListFileDialog.ShowDialog();
 			if (result == DialogResult.OK)
-				loadListFileDialog.InitialDirectory = null;	// Clear so it won't start in the initial directory again, but in current directory next time it is opened
+				loadListFileDialog.InitialDirectory = null; // Clear so it won't start in the initial directory again, but in current directory next time it is opened
 
 			return result;
 		}
@@ -4724,7 +4290,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			DialogResult result = saveListFileDialog.ShowDialog();
 			if (result == DialogResult.OK)
-				saveListFileDialog.InitialDirectory = null;	// Clear so it won't start in the initial directory again, but in current directory next time it is opened
+				saveListFileDialog.InitialDirectory = null; // Clear so it won't start in the initial directory again, but in current directory next time it is opened
 
 			return result;
 		}
@@ -4752,34 +4318,34 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs))
 							tempList.Add(ListItemConverter.Convert(info));
 
-						int currentCount = moduleListBox.Items.Count;
+						int currentCount = moduleListControl.Items.Count;
 
-						moduleListBox.BeginUpdate();
+						moduleListControl.BeginUpdate();
 
 						try
 						{
 							if (index == -1)
-								moduleListBox.Items.AddRange(tempList.ToArray());
+								moduleListControl.Items.AddRange(tempList);
 							else
 							{
 								for (int i = tempList.Count - 1; i >= 0; i--)
-									moduleListBox.Items.Insert(index, tempList[i]);
+									moduleListControl.Items.Insert(index, tempList[i]);
 							}
 						}
 						finally
 						{
-							moduleListBox.EndUpdate();
+							moduleListControl.EndUpdate();
 						}
 
 						// Update the controls
 						UpdateControls();
 
 						// Tell the file scanner to scan the new items
-						fileScanner.ScanItems(moduleListBox.Items.Cast<ModuleListItem>().Skip(index == -1 ? currentCount : index).Take(tempList.Count));
+						fileScanner.ScanItems(moduleListControl.Items.Skip(index == -1 ? currentCount : index).Take(tempList.Count));
 					}
 				}
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				// Show error
 				ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_LOAD_LIST, ex.Message));
@@ -4799,7 +4365,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			{
 				NpmlList.SaveList(fileName, GetModuleList());
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				// Show error
 				ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_SAVE_LIST, ex.Message));
@@ -4815,7 +4381,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private IEnumerable<MultiFileInfo> GetModuleList()
 		{
-			foreach (ModuleListItem listItem in moduleListBox.Items)
+			foreach (ModuleListItem listItem in moduleListControl.Items)
 				yield return ListItemConverter.Convert(listItem);
 		}
 		#endregion
@@ -4891,31 +4457,31 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				}
 			}
 
-			int currentCount = moduleListBox.Items.Count;
+			int currentCount = moduleListControl.Items.Count;
 
 			// Add the items to the list
-			moduleListBox.BeginUpdate();
+			moduleListControl.BeginUpdate();
 
 			try
 			{
 				if (startIndex == -1)
-					moduleListBox.Items.AddRange(itemList.ToArray());
+					moduleListControl.Items.AddRange(itemList);
 				else
 				{
 					for (int i = itemList.Count - 1; i >= 0; i--)
-						moduleListBox.Items.Insert(startIndex, itemList[i]);
+						moduleListControl.Items.Insert(startIndex, itemList[i]);
 				}
 			}
 			finally
 			{
-				moduleListBox.EndUpdate();
+				moduleListControl.EndUpdate();
 			}
 
 			// Update the controls
 			UpdateControls();
 
 			// Tell the file scanner to scan the new items
-			fileScanner.ScanItems(moduleListBox.Items.Cast<ModuleListItem>().Skip(startIndex == -1 ? currentCount : startIndex).Take(itemList.Count));
+			fileScanner.ScanItems(moduleListControl.Items.Skip(startIndex == -1 ? currentCount : startIndex).Take(itemList.Count));
 		}
 
 
@@ -4928,7 +4494,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private void EmptyList()
 		{
 			// Clear the module list
-			moduleListBox.Items.Clear();
+			moduleListControl.Items.Clear();
 
 			// Clear the time variables
 			listTime = new TimeSpan(0);
@@ -4950,17 +4516,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void RemoveSelectedItems()
 		{
-			moduleListBox.BeginUpdate();
+			moduleListControl.BeginUpdate();
 
 			try
 			{
 				// Remember which item to select, after removing is done
-				int indexToSelect = moduleListBox.SelectedIndices[moduleListBox.SelectedIndices.Count - 1] - moduleListBox.SelectedIndices.Count + 1;
+				int indexToSelect = moduleListControl.SelectedIndexes[moduleListControl.SelectedIndexes.Count - 1] - moduleListControl.SelectedIndexes.Count + 1;
 
 				// Remove all the selected module items
-				foreach (int index in moduleListBox.SelectedIndices.Cast<int>().Reverse())	// Take the items in reverse order, which is done via a copy of the selected items
+				foreach (int index in moduleListControl.SelectedIndexes.Reverse())  // Take the items in reverse order, which is done via a copy of the selected items
 				{
-					ModuleListItem listItem = (ModuleListItem)moduleListBox.Items[index];
+					ModuleListItem listItem = moduleListControl.Items[index];
 
 					// If the item is the one that is playing, stop it
 					if (listItem.IsPlaying)
@@ -4974,20 +4540,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					// Subtract the item time from the list
 					RemoveItemTimeFromList(listItem);
 
-					moduleListBox.Items.Remove(listItem);
+					moduleListControl.Items.Remove(listItem);
 				}
 
-				if (moduleListBox.Items.Count > 0)
+				if (moduleListControl.Items.Count > 0)
 				{
-					if (indexToSelect >= moduleListBox.Items.Count)
-						indexToSelect = moduleListBox.Items.Count - 1;
+					if (indexToSelect >= moduleListControl.Items.Count)
+						indexToSelect = moduleListControl.Items.Count - 1;
 
-					moduleListBox.SelectedIndex = indexToSelect;
+					moduleListControl.SelectedIndex = indexToSelect;
 				}
 			}
 			finally
 			{
-				moduleListBox.EndUpdate();
+				moduleListControl.EndUpdate();
 			}
 		}
 
@@ -5000,14 +4566,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void MoveSelectedItemsUp()
 		{
-			moduleListBox.BeginUpdate();
+			moduleListControl.BeginUpdate();
 
 			try
 			{
 				int previousSelected = -1;
 				bool previousMoved = false;
 
-				foreach (int selected in moduleListBox.SelectedIndices)
+				foreach (int selected in moduleListControl.SelectedIndexes)
 				{
 					if ((selected > 0) && (((selected - 1) != previousSelected) || previousMoved))
 					{
@@ -5022,7 +4588,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 			finally
 			{
-				moduleListBox.EndUpdate();
+				moduleListControl.EndUpdate();
 			}
 		}
 
@@ -5035,15 +4601,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void MoveSelectedItemsDown()
 		{
-			moduleListBox.BeginUpdate();
+			moduleListControl.BeginUpdate();
 
 			try
 			{
 				int previousSelected = -1;
 				bool previousMoved = false;
-				int listCount = moduleListBox.Items.Count;
+				int listCount = moduleListControl.Items.Count;
 
-				foreach (int selected in moduleListBox.SelectedIndices.Cast<int>().Reverse())	// Take the items in reverse order, which is done via a copy of the selected items
+				foreach (int selected in moduleListControl.SelectedIndexes.Reverse())   // Take the items in reverse order, which is done via a copy of the selected items
 				{
 					if (((selected + 1) < listCount) && (((selected + 1) != previousSelected) || previousMoved))
 					{
@@ -5058,7 +4624,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 			finally
 			{
-				moduleListBox.EndUpdate();
+				moduleListControl.EndUpdate();
 			}
 		}
 
@@ -5071,14 +4637,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void MoveSelectedItemsToTop()
 		{
-			moduleListBox.BeginUpdate();
+			moduleListControl.BeginUpdate();
 
 			try
 			{
 				// Move all the items
 				int index = 0;
 
-				foreach (int selected in moduleListBox.SelectedIndices)
+				foreach (int selected in moduleListControl.SelectedIndexes)
 				{
 					MoveItem(selected, index);
 					index++;
@@ -5086,7 +4652,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 			finally
 			{
-				moduleListBox.EndUpdate();
+				moduleListControl.EndUpdate();
 			}
 		}
 
@@ -5099,15 +4665,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void MoveSelectedItemsToBottom()
 		{
-			moduleListBox.BeginUpdate();
+			moduleListControl.BeginUpdate();
 
 			try
 			{
 				// Move all the items
-				int listCount = moduleListBox.Items.Count;
+				int listCount = moduleListControl.Items.Count;
 				int index = 0;
 
-				foreach (int selected in moduleListBox.SelectedIndices.Cast<int>().Reverse())	// Take the items in reverse order, which is done via a copy of the selected items
+				foreach (int selected in moduleListControl.SelectedIndexes.Reverse())   // Take the items in reverse order, which is done via a copy of the selected items
 				{
 					MoveItem(selected, listCount - index - 1);
 					index++;
@@ -5115,7 +4681,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 			finally
 			{
-				moduleListBox.EndUpdate();
+				moduleListControl.EndUpdate();
 			}
 		}
 
@@ -5128,12 +4694,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void ShuffleList()
 		{
-			moduleListBox.BeginUpdate();
+			moduleListControl.BeginUpdate();
 
 			try
 			{
 				// Get the number of items
-				int total = moduleListBox.Items.Count;
+				int total = moduleListControl.Items.Count;
 
 				// Do we have enough items in the list?
 				if (total > 1)
@@ -5142,14 +4708,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					List<ModuleListItem> newList = new List<ModuleListItem>();
 
 					// Make a copy of all the items in the list
-					List<ModuleListItem> tempList = new List<ModuleListItem>(moduleListBox.Items.Cast<ModuleListItem>());
+					List<ModuleListItem> tempList = new List<ModuleListItem>(moduleListControl.Items);
 
 					// Well, if a module is playing, we want to
 					// place that module in the top of the list
 					if (playItem != null)
 					{
 						// Find the item index
-						int index = moduleListBox.Items.IndexOf(playItem);
+						int index = moduleListControl.Items.IndexOf(playItem);
 
 						// Move the item to the new list
 						newList.Add(tempList[index]);
@@ -5172,13 +4738,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					}
 
 					// Copy the new list into the list control
-					moduleListBox.Items.Clear();
-					moduleListBox.Items.AddRange(newList.ToArray());
+					moduleListControl.Items.Clear();
+					moduleListControl.Items.AddRange(newList);
 				}
 			}
 			finally
 			{
-				moduleListBox.EndUpdate();
+				moduleListControl.EndUpdate();
 			}
 		}
 
@@ -5191,12 +4757,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void MoveItem(int from, int to)
 		{
-			ModuleListItem listItem = (ModuleListItem)moduleListBox.Items[from];
-			moduleListBox.Items.RemoveAt(from);
-			moduleListBox.Items.Insert(to, listItem);
+			ModuleListItem listItem = moduleListControl.Items[from];
+			moduleListControl.Items.RemoveAt(from);
+			moduleListControl.Items.Insert(to, listItem);
 
 			// Keep selection
-			moduleListBox.SetSelected(to, true);
+			moduleListControl.SetSelected(to, true);
 		}
 
 
@@ -5220,7 +4786,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				infoSettings.DeleteSettings();
 
 				// Check if we should write the module list
-				if (optionSettings.RememberList && (moduleListBox.Items.Count > 0))
+				if (optionSettings.RememberList && (moduleListControl.Items.Count > 0))
 				{
 					// Save the module list
 					SaveModuleList(fileName);

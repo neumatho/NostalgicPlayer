@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
@@ -28,7 +27,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			public List<ModuleListItem> Items;
 		}
 
-		private readonly KryptonListBox listBox;
+		private readonly ModuleListControl moduleListControl;
 		private readonly OptionSettings settings;
 		private readonly Manager manager;
 		private readonly ModuleDatabase database;
@@ -45,9 +44,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public FileScanner(KryptonListBox listBox, OptionSettings optionSettings, Manager agentManager, ModuleDatabase moduleDatabase, MainWindowForm mainWindow)
+		public FileScanner(ModuleListControl listControl, OptionSettings optionSettings, Manager agentManager, ModuleDatabase moduleDatabase, MainWindowForm mainWindow)
 		{
-			this.listBox = listBox;
+			moduleListControl = listControl;
 			settings = optionSettings;
 			manager = agentManager;
 			database = moduleDatabase;
@@ -203,7 +202,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					}
 
 					// Update the list item
-					listBox.Invoke(() =>
+					moduleListControl.Invoke(() =>
 					{
 						mainWindowForm.SetTimeOnItem(listItem, moduleDatabaseInfo.Duration);
 					});

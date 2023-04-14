@@ -30,507 +30,514 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
+			components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindowForm));
-			this.menuStrip = new System.Windows.Forms.MenuStrip();
-			this.infoLabel = new Krypton.Toolkit.KryptonLabel();
-			this.bigFontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
-			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
-			this.infoGroup = new Krypton.Toolkit.KryptonGroup();
-			this.moduleInfoButton = new Krypton.Toolkit.KryptonButton();
-			this.masterVolumeTrackBar = new Krypton.Toolkit.KryptonTrackBar();
-			this.moduleListBox = new Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ModuleListControl();
-			this.listButtonsGroup = new Krypton.Toolkit.KryptonGroup();
-			this.diskButton = new Krypton.Toolkit.KryptonButton();
-			this.listButton = new Krypton.Toolkit.KryptonButton();
-			this.moveModulesDownButton = new Krypton.Toolkit.KryptonButton();
-			this.moveModulesUpButton = new Krypton.Toolkit.KryptonButton();
-			this.sortModulesButton = new Krypton.Toolkit.KryptonButton();
-			this.swapModulesButton = new Krypton.Toolkit.KryptonButton();
-			this.removeModuleButton = new Krypton.Toolkit.KryptonButton();
-			this.addModuleButton = new Krypton.Toolkit.KryptonButton();
-			this.listInfoGroup = new Krypton.Toolkit.KryptonGroup();
-			this.totalLabel = new Krypton.Toolkit.KryptonLabel();
-			this.timeLabel = new Krypton.Toolkit.KryptonLabel();
-			this.positionTrackBar = new Krypton.Toolkit.KryptonTrackBar();
-			this.tapedeckGroup = new Krypton.Toolkit.KryptonGroup();
-			this.pauseCheckButton = new Krypton.Toolkit.KryptonCheckButton();
-			this.ejectButton = new Krypton.Toolkit.KryptonButton();
-			this.nextModuleButton = new Krypton.Toolkit.KryptonButton();
-			this.nextSongButton = new Krypton.Toolkit.KryptonButton();
-			this.fastForwardButton = new Krypton.Toolkit.KryptonButton();
-			this.playButton = new Krypton.Toolkit.KryptonButton();
-			this.rewindButton = new Krypton.Toolkit.KryptonButton();
-			this.previousSongButton = new Krypton.Toolkit.KryptonButton();
-			this.previousModuleButton = new Krypton.Toolkit.KryptonButton();
-			this.functionsGroup = new Krypton.Toolkit.KryptonGroup();
-			this.loopCheckButton = new Krypton.Toolkit.KryptonCheckButton();
-			this.favoritesButton = new Krypton.Toolkit.KryptonButton();
-			this.sampleInfoButton = new Krypton.Toolkit.KryptonButton();
-			this.muteCheckButton = new Krypton.Toolkit.KryptonCheckButton();
-			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-			this.clockTimer = new System.Windows.Forms.Timer(this.components);
-			this.sortContextMenu = new Krypton.Toolkit.KryptonContextMenu();
-			this.listContextMenu = new Krypton.Toolkit.KryptonContextMenu();
-			this.diskContextMenu = new Krypton.Toolkit.KryptonContextMenu();
-			this.scrollTimer = new System.Windows.Forms.Timer(this.components);
-			this.neverEndingTimer = new System.Windows.Forms.Timer(this.components);
-			this.addContextMenu = new Krypton.Toolkit.KryptonContextMenu();
-			((System.ComponentModel.ISupportInitialize)(this.infoGroup)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.infoGroup.Panel)).BeginInit();
-			this.infoGroup.Panel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.listButtonsGroup)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.listButtonsGroup.Panel)).BeginInit();
-			this.listButtonsGroup.Panel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.listInfoGroup)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.listInfoGroup.Panel)).BeginInit();
-			this.listInfoGroup.Panel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.tapedeckGroup)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.tapedeckGroup.Panel)).BeginInit();
-			this.tapedeckGroup.Panel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.functionsGroup)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.functionsGroup.Panel)).BeginInit();
-			this.functionsGroup.Panel.SuspendLayout();
-			this.SuspendLayout();
+			menuStrip = new System.Windows.Forms.MenuStrip();
+			infoLabel = new KryptonLabel();
+			bigFontPalette = new GuiKit.Components.FontPalette(components);
+			fontPalette = new GuiKit.Components.FontPalette(components);
+			infoGroup = new KryptonGroup();
+			moduleInfoButton = new KryptonButton();
+			masterVolumeTrackBar = new KryptonTrackBar();
+			listButtonsGroup = new KryptonGroup();
+			diskButton = new KryptonButton();
+			listButton = new KryptonButton();
+			moveModulesDownButton = new KryptonButton();
+			moveModulesUpButton = new KryptonButton();
+			sortModulesButton = new KryptonButton();
+			swapModulesButton = new KryptonButton();
+			removeModuleButton = new KryptonButton();
+			addModuleButton = new KryptonButton();
+			listInfoGroup = new KryptonGroup();
+			totalLabel = new KryptonLabel();
+			timeLabel = new KryptonLabel();
+			positionTrackBar = new KryptonTrackBar();
+			tapedeckGroup = new KryptonGroup();
+			pauseCheckButton = new KryptonCheckButton();
+			ejectButton = new KryptonButton();
+			nextModuleButton = new KryptonButton();
+			nextSongButton = new KryptonButton();
+			fastForwardButton = new KryptonButton();
+			playButton = new KryptonButton();
+			rewindButton = new KryptonButton();
+			previousSongButton = new KryptonButton();
+			previousModuleButton = new KryptonButton();
+			functionsGroup = new KryptonGroup();
+			loopCheckButton = new KryptonCheckButton();
+			favoritesButton = new KryptonButton();
+			sampleInfoButton = new KryptonButton();
+			muteCheckButton = new KryptonCheckButton();
+			toolTip = new System.Windows.Forms.ToolTip(components);
+			clockTimer = new System.Windows.Forms.Timer(components);
+			sortContextMenu = new KryptonContextMenu();
+			listContextMenu = new KryptonContextMenu();
+			diskContextMenu = new KryptonContextMenu();
+			neverEndingTimer = new System.Windows.Forms.Timer(components);
+			addContextMenu = new KryptonContextMenu();
+			moduleListControl = new ModuleListControl();
+			((System.ComponentModel.ISupportInitialize)infoGroup).BeginInit();
+			((System.ComponentModel.ISupportInitialize)infoGroup.Panel).BeginInit();
+			infoGroup.Panel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)listButtonsGroup).BeginInit();
+			((System.ComponentModel.ISupportInitialize)listButtonsGroup.Panel).BeginInit();
+			listButtonsGroup.Panel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)listInfoGroup).BeginInit();
+			((System.ComponentModel.ISupportInitialize)listInfoGroup.Panel).BeginInit();
+			listInfoGroup.Panel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)tapedeckGroup).BeginInit();
+			((System.ComponentModel.ISupportInitialize)tapedeckGroup.Panel).BeginInit();
+			tapedeckGroup.Panel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)functionsGroup).BeginInit();
+			((System.ComponentModel.ISupportInitialize)functionsGroup.Panel).BeginInit();
+			functionsGroup.Panel.SuspendLayout();
+			SuspendLayout();
 			// 
 			// menuStrip
 			// 
-			this.menuStrip.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-			this.menuStrip.Location = new System.Drawing.Point(0, 0);
-			this.menuStrip.Name = "menuStrip";
-			this.menuStrip.Size = new System.Drawing.Size(384, 24);
-			this.menuStrip.TabIndex = 0;
-			this.menuStrip.Text = "menuStrip";
+			menuStrip.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			menuStrip.Location = new System.Drawing.Point(0, 0);
+			menuStrip.Name = "menuStrip";
+			menuStrip.Size = new System.Drawing.Size(384, 24);
+			menuStrip.TabIndex = 0;
+			menuStrip.Text = "menuStrip";
 			// 
 			// infoLabel
 			// 
-			this.infoLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.infoLabel.AutoSize = false;
-			this.infoLabel.Location = new System.Drawing.Point(3, 3);
-			this.infoLabel.Name = "infoLabel";
-			this.infoLabel.Palette = this.bigFontPalette;
-			this.infoLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.infoLabel.Size = new System.Drawing.Size(342, 16);
-			this.infoLabel.TabIndex = 0;
-			this.infoLabel.Values.Text = "";
+			infoLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			infoLabel.AutoSize = false;
+			infoLabel.Location = new System.Drawing.Point(3, 3);
+			infoLabel.Name = "infoLabel";
+			infoLabel.Palette = bigFontPalette;
+			infoLabel.PaletteMode = PaletteMode.Custom;
+			infoLabel.Size = new System.Drawing.Size(342, 16);
+			infoLabel.TabIndex = 0;
+			infoLabel.Values.Text = "";
 			// 
 			// bigFontPalette
 			// 
-			this.bigFontPalette.BaseFontSize = 9F;
+			bigFontPalette.BaseFontSize = 9F;
 			// 
 			// infoGroup
 			// 
-			this.infoGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.infoGroup.Location = new System.Drawing.Point(4, 28);
-			this.infoGroup.Name = "infoGroup";
+			infoGroup.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			infoGroup.Location = new System.Drawing.Point(4, 28);
+			infoGroup.Name = "infoGroup";
 			// 
 			// 
 			// 
-			this.infoGroup.Panel.Controls.Add(this.infoLabel);
-			this.infoGroup.Size = new System.Drawing.Size(348, 24);
-			this.infoGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
-			this.infoGroup.TabIndex = 1;
+			infoGroup.Panel.Controls.Add(infoLabel);
+			infoGroup.Size = new System.Drawing.Size(348, 24);
+			infoGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
+			infoGroup.TabIndex = 1;
 			// 
 			// moduleInfoButton
 			// 
-			this.moduleInfoButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.moduleInfoButton.Location = new System.Drawing.Point(356, 28);
-			this.moduleInfoButton.Name = "moduleInfoButton";
-			this.moduleInfoButton.Size = new System.Drawing.Size(24, 24);
-			this.moduleInfoButton.TabIndex = 2;
-			this.moduleInfoButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("moduleInfoButton.Values.Image")));
-			this.moduleInfoButton.Values.Text = "";
+			moduleInfoButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+			moduleInfoButton.CornerRoundingRadius = -1F;
+			moduleInfoButton.Location = new System.Drawing.Point(356, 28);
+			moduleInfoButton.Name = "moduleInfoButton";
+			moduleInfoButton.Size = new System.Drawing.Size(24, 24);
+			moduleInfoButton.TabIndex = 2;
+			moduleInfoButton.Values.Image = (System.Drawing.Image)resources.GetObject("moduleInfoButton.Values.Image");
+			moduleInfoButton.Values.Text = "";
 			// 
 			// masterVolumeTrackBar
 			// 
-			this.masterVolumeTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-			this.masterVolumeTrackBar.Location = new System.Drawing.Point(4, 84);
-			this.masterVolumeTrackBar.Maximum = 256;
-			this.masterVolumeTrackBar.Name = "masterVolumeTrackBar";
-			this.masterVolumeTrackBar.Orientation = System.Windows.Forms.Orientation.Vertical;
-			this.masterVolumeTrackBar.Size = new System.Drawing.Size(27, 88);
-			this.masterVolumeTrackBar.TabIndex = 4;
-			this.masterVolumeTrackBar.TickFrequency = 8;
-			this.masterVolumeTrackBar.VolumeControl = true;
-			// 
-			// moduleListBox
-			// 
-			this.moduleListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.moduleListBox.Location = new System.Drawing.Point(35, 56);
-			this.moduleListBox.Name = "moduleListBox";
-			this.moduleListBox.Palette = this.fontPalette;
-			this.moduleListBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.moduleListBox.ScrollAlwaysVisible = true;
-			this.moduleListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-			this.moduleListBox.Size = new System.Drawing.Size(345, 116);
-			this.moduleListBox.TabIndex = 5;
+			masterVolumeTrackBar.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+			masterVolumeTrackBar.Location = new System.Drawing.Point(4, 84);
+			masterVolumeTrackBar.Maximum = 256;
+			masterVolumeTrackBar.Name = "masterVolumeTrackBar";
+			masterVolumeTrackBar.Orientation = System.Windows.Forms.Orientation.Vertical;
+			masterVolumeTrackBar.Size = new System.Drawing.Size(27, 88);
+			masterVolumeTrackBar.TabIndex = 4;
+			masterVolumeTrackBar.TickFrequency = 8;
+			masterVolumeTrackBar.VolumeControl = true;
 			// 
 			// listButtonsGroup
 			// 
-			this.listButtonsGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.listButtonsGroup.Location = new System.Drawing.Point(4, 176);
-			this.listButtonsGroup.Name = "listButtonsGroup";
+			listButtonsGroup.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+			listButtonsGroup.Location = new System.Drawing.Point(4, 176);
+			listButtonsGroup.Name = "listButtonsGroup";
 			// 
 			// 
 			// 
-			this.listButtonsGroup.Panel.Controls.Add(this.diskButton);
-			this.listButtonsGroup.Panel.Controls.Add(this.listButton);
-			this.listButtonsGroup.Panel.Controls.Add(this.moveModulesDownButton);
-			this.listButtonsGroup.Panel.Controls.Add(this.moveModulesUpButton);
-			this.listButtonsGroup.Panel.Controls.Add(this.sortModulesButton);
-			this.listButtonsGroup.Panel.Controls.Add(this.swapModulesButton);
-			this.listButtonsGroup.Panel.Controls.Add(this.removeModuleButton);
-			this.listButtonsGroup.Panel.Controls.Add(this.addModuleButton);
-			this.listButtonsGroup.Size = new System.Drawing.Size(230, 34);
-			this.listButtonsGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
-			this.listButtonsGroup.TabIndex = 6;
+			listButtonsGroup.Panel.Controls.Add(diskButton);
+			listButtonsGroup.Panel.Controls.Add(listButton);
+			listButtonsGroup.Panel.Controls.Add(moveModulesDownButton);
+			listButtonsGroup.Panel.Controls.Add(moveModulesUpButton);
+			listButtonsGroup.Panel.Controls.Add(sortModulesButton);
+			listButtonsGroup.Panel.Controls.Add(swapModulesButton);
+			listButtonsGroup.Panel.Controls.Add(removeModuleButton);
+			listButtonsGroup.Panel.Controls.Add(addModuleButton);
+			listButtonsGroup.Size = new System.Drawing.Size(230, 34);
+			listButtonsGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
+			listButtonsGroup.TabIndex = 6;
 			// 
 			// diskButton
 			// 
-			this.diskButton.Location = new System.Drawing.Point(200, 4);
-			this.diskButton.Name = "diskButton";
-			this.diskButton.Size = new System.Drawing.Size(24, 24);
-			this.diskButton.TabIndex = 7;
-			this.diskButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("diskButton.Values.Image")));
-			this.diskButton.Values.Text = "";
+			diskButton.CornerRoundingRadius = -1F;
+			diskButton.Location = new System.Drawing.Point(200, 4);
+			diskButton.Name = "diskButton";
+			diskButton.Size = new System.Drawing.Size(24, 24);
+			diskButton.TabIndex = 7;
+			diskButton.Values.Image = (System.Drawing.Image)resources.GetObject("diskButton.Values.Image");
+			diskButton.Values.Text = "";
 			// 
 			// listButton
 			// 
-			this.listButton.Location = new System.Drawing.Point(172, 4);
-			this.listButton.Name = "listButton";
-			this.listButton.Size = new System.Drawing.Size(24, 24);
-			this.listButton.TabIndex = 6;
-			this.listButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("listButton.Values.Image")));
-			this.listButton.Values.Text = "";
+			listButton.CornerRoundingRadius = -1F;
+			listButton.Location = new System.Drawing.Point(172, 4);
+			listButton.Name = "listButton";
+			listButton.Size = new System.Drawing.Size(24, 24);
+			listButton.TabIndex = 6;
+			listButton.Values.Image = (System.Drawing.Image)resources.GetObject("listButton.Values.Image");
+			listButton.Values.Text = "";
 			// 
 			// moveModulesDownButton
 			// 
-			this.moveModulesDownButton.Location = new System.Drawing.Point(144, 4);
-			this.moveModulesDownButton.Name = "moveModulesDownButton";
-			this.moveModulesDownButton.Size = new System.Drawing.Size(24, 24);
-			this.moveModulesDownButton.TabIndex = 5;
-			this.moveModulesDownButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("moveModulesDownButton.Values.Image")));
-			this.moveModulesDownButton.Values.Text = "";
+			moveModulesDownButton.CornerRoundingRadius = -1F;
+			moveModulesDownButton.Location = new System.Drawing.Point(144, 4);
+			moveModulesDownButton.Name = "moveModulesDownButton";
+			moveModulesDownButton.Size = new System.Drawing.Size(24, 24);
+			moveModulesDownButton.TabIndex = 5;
+			moveModulesDownButton.Values.Image = (System.Drawing.Image)resources.GetObject("moveModulesDownButton.Values.Image");
+			moveModulesDownButton.Values.Text = "";
 			// 
 			// moveModulesUpButton
 			// 
-			this.moveModulesUpButton.Location = new System.Drawing.Point(116, 4);
-			this.moveModulesUpButton.Name = "moveModulesUpButton";
-			this.moveModulesUpButton.Size = new System.Drawing.Size(24, 24);
-			this.moveModulesUpButton.TabIndex = 4;
-			this.moveModulesUpButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("moveModulesUpButton.Values.Image")));
-			this.moveModulesUpButton.Values.Text = "";
+			moveModulesUpButton.CornerRoundingRadius = -1F;
+			moveModulesUpButton.Location = new System.Drawing.Point(116, 4);
+			moveModulesUpButton.Name = "moveModulesUpButton";
+			moveModulesUpButton.Size = new System.Drawing.Size(24, 24);
+			moveModulesUpButton.TabIndex = 4;
+			moveModulesUpButton.Values.Image = (System.Drawing.Image)resources.GetObject("moveModulesUpButton.Values.Image");
+			moveModulesUpButton.Values.Text = "";
 			// 
 			// sortModulesButton
 			// 
-			this.sortModulesButton.Location = new System.Drawing.Point(88, 4);
-			this.sortModulesButton.Name = "sortModulesButton";
-			this.sortModulesButton.Size = new System.Drawing.Size(24, 24);
-			this.sortModulesButton.TabIndex = 3;
-			this.sortModulesButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("sortModulesButton.Values.Image")));
-			this.sortModulesButton.Values.Text = "";
+			sortModulesButton.CornerRoundingRadius = -1F;
+			sortModulesButton.Location = new System.Drawing.Point(88, 4);
+			sortModulesButton.Name = "sortModulesButton";
+			sortModulesButton.Size = new System.Drawing.Size(24, 24);
+			sortModulesButton.TabIndex = 3;
+			sortModulesButton.Values.Image = (System.Drawing.Image)resources.GetObject("sortModulesButton.Values.Image");
+			sortModulesButton.Values.Text = "";
 			// 
 			// swapModulesButton
 			// 
-			this.swapModulesButton.Location = new System.Drawing.Point(60, 4);
-			this.swapModulesButton.Name = "swapModulesButton";
-			this.swapModulesButton.Size = new System.Drawing.Size(24, 24);
-			this.swapModulesButton.TabIndex = 2;
-			this.swapModulesButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("swapModulesButton.Values.Image")));
-			this.swapModulesButton.Values.Text = "";
+			swapModulesButton.CornerRoundingRadius = -1F;
+			swapModulesButton.Location = new System.Drawing.Point(60, 4);
+			swapModulesButton.Name = "swapModulesButton";
+			swapModulesButton.Size = new System.Drawing.Size(24, 24);
+			swapModulesButton.TabIndex = 2;
+			swapModulesButton.Values.Image = (System.Drawing.Image)resources.GetObject("swapModulesButton.Values.Image");
+			swapModulesButton.Values.Text = "";
 			// 
 			// removeModuleButton
 			// 
-			this.removeModuleButton.Location = new System.Drawing.Point(32, 4);
-			this.removeModuleButton.Name = "removeModuleButton";
-			this.removeModuleButton.Size = new System.Drawing.Size(24, 24);
-			this.removeModuleButton.TabIndex = 1;
-			this.removeModuleButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("removeModuleButton.Values.Image")));
-			this.removeModuleButton.Values.Text = "";
+			removeModuleButton.CornerRoundingRadius = -1F;
+			removeModuleButton.Location = new System.Drawing.Point(32, 4);
+			removeModuleButton.Name = "removeModuleButton";
+			removeModuleButton.Size = new System.Drawing.Size(24, 24);
+			removeModuleButton.TabIndex = 1;
+			removeModuleButton.Values.Image = (System.Drawing.Image)resources.GetObject("removeModuleButton.Values.Image");
+			removeModuleButton.Values.Text = "";
 			// 
 			// addModuleButton
 			// 
-			this.addModuleButton.Location = new System.Drawing.Point(4, 4);
-			this.addModuleButton.Name = "addModuleButton";
-			this.addModuleButton.Size = new System.Drawing.Size(24, 24);
-			this.addModuleButton.TabIndex = 0;
-			this.addModuleButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("addModuleButton.Values.Image")));
-			this.addModuleButton.Values.Text = "";
+			addModuleButton.CornerRoundingRadius = -1F;
+			addModuleButton.Location = new System.Drawing.Point(4, 4);
+			addModuleButton.Name = "addModuleButton";
+			addModuleButton.Size = new System.Drawing.Size(24, 24);
+			addModuleButton.TabIndex = 0;
+			addModuleButton.Values.Image = (System.Drawing.Image)resources.GetObject("addModuleButton.Values.Image");
+			addModuleButton.Values.Text = "";
 			// 
 			// listInfoGroup
 			// 
-			this.listInfoGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.listInfoGroup.Location = new System.Drawing.Point(238, 176);
-			this.listInfoGroup.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-			this.listInfoGroup.Name = "listInfoGroup";
+			listInfoGroup.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			listInfoGroup.Location = new System.Drawing.Point(238, 176);
+			listInfoGroup.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			listInfoGroup.Name = "listInfoGroup";
 			// 
 			// 
 			// 
-			this.listInfoGroup.Panel.Controls.Add(this.totalLabel);
-			this.listInfoGroup.Panel.Controls.Add(this.timeLabel);
-			this.listInfoGroup.Size = new System.Drawing.Size(142, 34);
-			this.listInfoGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
-			this.listInfoGroup.TabIndex = 7;
+			listInfoGroup.Panel.Controls.Add(totalLabel);
+			listInfoGroup.Panel.Controls.Add(timeLabel);
+			listInfoGroup.Size = new System.Drawing.Size(142, 34);
+			listInfoGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
+			listInfoGroup.TabIndex = 7;
 			// 
 			// totalLabel
 			// 
-			this.totalLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.totalLabel.Location = new System.Drawing.Point(106, 7);
-			this.totalLabel.Name = "totalLabel";
-			this.totalLabel.Palette = this.bigFontPalette;
-			this.totalLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.totalLabel.Size = new System.Drawing.Size(28, 18);
-			this.totalLabel.TabIndex = 1;
-			this.totalLabel.Values.Text = "0/0";
+			totalLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+			totalLabel.Location = new System.Drawing.Point(106, 7);
+			totalLabel.Name = "totalLabel";
+			totalLabel.Palette = bigFontPalette;
+			totalLabel.PaletteMode = PaletteMode.Custom;
+			totalLabel.Size = new System.Drawing.Size(28, 18);
+			totalLabel.TabIndex = 1;
+			totalLabel.Values.Text = "0/0";
 			// 
 			// timeLabel
 			// 
-			this.timeLabel.Location = new System.Drawing.Point(3, 7);
-			this.timeLabel.Name = "timeLabel";
-			this.timeLabel.Palette = this.bigFontPalette;
-			this.timeLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.timeLabel.Size = new System.Drawing.Size(62, 18);
-			this.timeLabel.TabIndex = 0;
-			this.timeLabel.Values.Text = "0:00/0:00";
+			timeLabel.Location = new System.Drawing.Point(3, 7);
+			timeLabel.Name = "timeLabel";
+			timeLabel.Palette = bigFontPalette;
+			timeLabel.PaletteMode = PaletteMode.Custom;
+			timeLabel.Size = new System.Drawing.Size(62, 18);
+			timeLabel.TabIndex = 0;
+			timeLabel.Values.Text = "0:00/0:00";
 			// 
 			// positionTrackBar
 			// 
-			this.positionTrackBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.positionTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.SeparatorLowProfile;
-			this.positionTrackBar.Location = new System.Drawing.Point(4, 216);
-			this.positionTrackBar.Maximum = 100;
-			this.positionTrackBar.Name = "positionTrackBar";
-			this.positionTrackBar.Size = new System.Drawing.Size(376, 21);
-			this.positionTrackBar.TabIndex = 8;
-			this.positionTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
+			positionTrackBar.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			positionTrackBar.BackStyle = PaletteBackStyle.SeparatorLowProfile;
+			positionTrackBar.Location = new System.Drawing.Point(4, 216);
+			positionTrackBar.Maximum = 100;
+			positionTrackBar.Name = "positionTrackBar";
+			positionTrackBar.Size = new System.Drawing.Size(376, 21);
+			positionTrackBar.TabIndex = 8;
+			positionTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
 			// 
 			// tapedeckGroup
 			// 
-			this.tapedeckGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.tapedeckGroup.Location = new System.Drawing.Point(4, 243);
-			this.tapedeckGroup.Name = "tapedeckGroup";
+			tapedeckGroup.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+			tapedeckGroup.Location = new System.Drawing.Point(4, 243);
+			tapedeckGroup.Name = "tapedeckGroup";
 			// 
 			// 
 			// 
-			this.tapedeckGroup.Panel.Controls.Add(this.pauseCheckButton);
-			this.tapedeckGroup.Panel.Controls.Add(this.ejectButton);
-			this.tapedeckGroup.Panel.Controls.Add(this.nextModuleButton);
-			this.tapedeckGroup.Panel.Controls.Add(this.nextSongButton);
-			this.tapedeckGroup.Panel.Controls.Add(this.fastForwardButton);
-			this.tapedeckGroup.Panel.Controls.Add(this.playButton);
-			this.tapedeckGroup.Panel.Controls.Add(this.rewindButton);
-			this.tapedeckGroup.Panel.Controls.Add(this.previousSongButton);
-			this.tapedeckGroup.Panel.Controls.Add(this.previousModuleButton);
-			this.tapedeckGroup.Size = new System.Drawing.Size(258, 34);
-			this.tapedeckGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
-			this.tapedeckGroup.TabIndex = 9;
+			tapedeckGroup.Panel.Controls.Add(pauseCheckButton);
+			tapedeckGroup.Panel.Controls.Add(ejectButton);
+			tapedeckGroup.Panel.Controls.Add(nextModuleButton);
+			tapedeckGroup.Panel.Controls.Add(nextSongButton);
+			tapedeckGroup.Panel.Controls.Add(fastForwardButton);
+			tapedeckGroup.Panel.Controls.Add(playButton);
+			tapedeckGroup.Panel.Controls.Add(rewindButton);
+			tapedeckGroup.Panel.Controls.Add(previousSongButton);
+			tapedeckGroup.Panel.Controls.Add(previousModuleButton);
+			tapedeckGroup.Size = new System.Drawing.Size(258, 34);
+			tapedeckGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
+			tapedeckGroup.TabIndex = 9;
 			// 
 			// pauseCheckButton
 			// 
-			this.pauseCheckButton.Location = new System.Drawing.Point(228, 4);
-			this.pauseCheckButton.Name = "pauseCheckButton";
-			this.pauseCheckButton.Size = new System.Drawing.Size(24, 24);
-			this.pauseCheckButton.TabIndex = 8;
-			this.pauseCheckButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("pauseCheckButton.Values.Image")));
-			this.pauseCheckButton.Values.Text = "";
+			pauseCheckButton.CornerRoundingRadius = -1F;
+			pauseCheckButton.Location = new System.Drawing.Point(228, 4);
+			pauseCheckButton.Name = "pauseCheckButton";
+			pauseCheckButton.Size = new System.Drawing.Size(24, 24);
+			pauseCheckButton.TabIndex = 8;
+			pauseCheckButton.Values.Image = (System.Drawing.Image)resources.GetObject("pauseCheckButton.Values.Image");
+			pauseCheckButton.Values.Text = "";
 			// 
 			// ejectButton
 			// 
-			this.ejectButton.Location = new System.Drawing.Point(200, 4);
-			this.ejectButton.Name = "ejectButton";
-			this.ejectButton.Size = new System.Drawing.Size(24, 24);
-			this.ejectButton.TabIndex = 7;
-			this.ejectButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("ejectButton.Values.Image")));
-			this.ejectButton.Values.Text = "";
+			ejectButton.CornerRoundingRadius = -1F;
+			ejectButton.Location = new System.Drawing.Point(200, 4);
+			ejectButton.Name = "ejectButton";
+			ejectButton.Size = new System.Drawing.Size(24, 24);
+			ejectButton.TabIndex = 7;
+			ejectButton.Values.Image = (System.Drawing.Image)resources.GetObject("ejectButton.Values.Image");
+			ejectButton.Values.Text = "";
 			// 
 			// nextModuleButton
 			// 
-			this.nextModuleButton.Location = new System.Drawing.Point(172, 4);
-			this.nextModuleButton.Name = "nextModuleButton";
-			this.nextModuleButton.Size = new System.Drawing.Size(24, 24);
-			this.nextModuleButton.TabIndex = 6;
-			this.nextModuleButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("nextModuleButton.Values.Image")));
-			this.nextModuleButton.Values.Text = "";
+			nextModuleButton.CornerRoundingRadius = -1F;
+			nextModuleButton.Location = new System.Drawing.Point(172, 4);
+			nextModuleButton.Name = "nextModuleButton";
+			nextModuleButton.Size = new System.Drawing.Size(24, 24);
+			nextModuleButton.TabIndex = 6;
+			nextModuleButton.Values.Image = (System.Drawing.Image)resources.GetObject("nextModuleButton.Values.Image");
+			nextModuleButton.Values.Text = "";
 			// 
 			// nextSongButton
 			// 
-			this.nextSongButton.Location = new System.Drawing.Point(144, 4);
-			this.nextSongButton.Name = "nextSongButton";
-			this.nextSongButton.Size = new System.Drawing.Size(24, 24);
-			this.nextSongButton.TabIndex = 5;
-			this.nextSongButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("nextSongButton.Values.Image")));
-			this.nextSongButton.Values.Text = "";
+			nextSongButton.CornerRoundingRadius = -1F;
+			nextSongButton.Location = new System.Drawing.Point(144, 4);
+			nextSongButton.Name = "nextSongButton";
+			nextSongButton.Size = new System.Drawing.Size(24, 24);
+			nextSongButton.TabIndex = 5;
+			nextSongButton.Values.Image = (System.Drawing.Image)resources.GetObject("nextSongButton.Values.Image");
+			nextSongButton.Values.Text = "";
 			// 
 			// fastForwardButton
 			// 
-			this.fastForwardButton.Location = new System.Drawing.Point(116, 4);
-			this.fastForwardButton.Name = "fastForwardButton";
-			this.fastForwardButton.Size = new System.Drawing.Size(24, 24);
-			this.fastForwardButton.TabIndex = 4;
-			this.fastForwardButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("fastForwardButton.Values.Image")));
-			this.fastForwardButton.Values.Text = "";
+			fastForwardButton.CornerRoundingRadius = -1F;
+			fastForwardButton.Location = new System.Drawing.Point(116, 4);
+			fastForwardButton.Name = "fastForwardButton";
+			fastForwardButton.Size = new System.Drawing.Size(24, 24);
+			fastForwardButton.TabIndex = 4;
+			fastForwardButton.Values.Image = (System.Drawing.Image)resources.GetObject("fastForwardButton.Values.Image");
+			fastForwardButton.Values.Text = "";
 			// 
 			// playButton
 			// 
-			this.playButton.Location = new System.Drawing.Point(88, 4);
-			this.playButton.Name = "playButton";
-			this.playButton.Size = new System.Drawing.Size(24, 24);
-			this.playButton.TabIndex = 3;
-			this.playButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("playButton.Values.Image")));
-			this.playButton.Values.Text = "";
+			playButton.CornerRoundingRadius = -1F;
+			playButton.Location = new System.Drawing.Point(88, 4);
+			playButton.Name = "playButton";
+			playButton.Size = new System.Drawing.Size(24, 24);
+			playButton.TabIndex = 3;
+			playButton.Values.Image = (System.Drawing.Image)resources.GetObject("playButton.Values.Image");
+			playButton.Values.Text = "";
 			// 
 			// rewindButton
 			// 
-			this.rewindButton.Location = new System.Drawing.Point(60, 4);
-			this.rewindButton.Name = "rewindButton";
-			this.rewindButton.Size = new System.Drawing.Size(24, 24);
-			this.rewindButton.TabIndex = 2;
-			this.rewindButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("rewindButton.Values.Image")));
-			this.rewindButton.Values.Text = "";
+			rewindButton.CornerRoundingRadius = -1F;
+			rewindButton.Location = new System.Drawing.Point(60, 4);
+			rewindButton.Name = "rewindButton";
+			rewindButton.Size = new System.Drawing.Size(24, 24);
+			rewindButton.TabIndex = 2;
+			rewindButton.Values.Image = (System.Drawing.Image)resources.GetObject("rewindButton.Values.Image");
+			rewindButton.Values.Text = "";
 			// 
 			// previousSongButton
 			// 
-			this.previousSongButton.Location = new System.Drawing.Point(32, 4);
-			this.previousSongButton.Name = "previousSongButton";
-			this.previousSongButton.Size = new System.Drawing.Size(24, 24);
-			this.previousSongButton.TabIndex = 1;
-			this.previousSongButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("previousSongButton.Values.Image")));
-			this.previousSongButton.Values.Text = "";
+			previousSongButton.CornerRoundingRadius = -1F;
+			previousSongButton.Location = new System.Drawing.Point(32, 4);
+			previousSongButton.Name = "previousSongButton";
+			previousSongButton.Size = new System.Drawing.Size(24, 24);
+			previousSongButton.TabIndex = 1;
+			previousSongButton.Values.Image = (System.Drawing.Image)resources.GetObject("previousSongButton.Values.Image");
+			previousSongButton.Values.Text = "";
 			// 
 			// previousModuleButton
 			// 
-			this.previousModuleButton.Location = new System.Drawing.Point(4, 4);
-			this.previousModuleButton.Name = "previousModuleButton";
-			this.previousModuleButton.Size = new System.Drawing.Size(24, 24);
-			this.previousModuleButton.TabIndex = 0;
-			this.previousModuleButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("previousModuleButton.Values.Image")));
-			this.previousModuleButton.Values.Text = "";
+			previousModuleButton.CornerRoundingRadius = -1F;
+			previousModuleButton.Location = new System.Drawing.Point(4, 4);
+			previousModuleButton.Name = "previousModuleButton";
+			previousModuleButton.Size = new System.Drawing.Size(24, 24);
+			previousModuleButton.TabIndex = 0;
+			previousModuleButton.Values.Image = (System.Drawing.Image)resources.GetObject("previousModuleButton.Values.Image");
+			previousModuleButton.Values.Text = "";
 			// 
 			// functionsGroup
 			// 
-			this.functionsGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.functionsGroup.Location = new System.Drawing.Point(290, 243);
-			this.functionsGroup.Name = "functionsGroup";
+			functionsGroup.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+			functionsGroup.Location = new System.Drawing.Point(290, 243);
+			functionsGroup.Name = "functionsGroup";
 			// 
 			// 
 			// 
-			this.functionsGroup.Panel.Controls.Add(this.loopCheckButton);
-			this.functionsGroup.Panel.Controls.Add(this.favoritesButton);
-			this.functionsGroup.Panel.Controls.Add(this.sampleInfoButton);
-			this.functionsGroup.Size = new System.Drawing.Size(90, 34);
-			this.functionsGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
-			this.functionsGroup.TabIndex = 10;
+			functionsGroup.Panel.Controls.Add(loopCheckButton);
+			functionsGroup.Panel.Controls.Add(favoritesButton);
+			functionsGroup.Panel.Controls.Add(sampleInfoButton);
+			functionsGroup.Size = new System.Drawing.Size(90, 34);
+			functionsGroup.StateNormal.Back.Color1 = System.Drawing.SystemColors.Control;
+			functionsGroup.TabIndex = 10;
 			// 
 			// loopCheckButton
 			// 
-			this.loopCheckButton.Location = new System.Drawing.Point(4, 4);
-			this.loopCheckButton.Name = "loopCheckButton";
-			this.loopCheckButton.Size = new System.Drawing.Size(24, 24);
-			this.loopCheckButton.TabIndex = 0;
-			this.loopCheckButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("loopCheckButton.Values.Image")));
-			this.loopCheckButton.Values.Text = "";
+			loopCheckButton.CornerRoundingRadius = -1F;
+			loopCheckButton.Location = new System.Drawing.Point(4, 4);
+			loopCheckButton.Name = "loopCheckButton";
+			loopCheckButton.Size = new System.Drawing.Size(24, 24);
+			loopCheckButton.TabIndex = 0;
+			loopCheckButton.Values.Image = (System.Drawing.Image)resources.GetObject("loopCheckButton.Values.Image");
+			loopCheckButton.Values.Text = "";
 			// 
 			// favoritesButton
 			// 
-			this.favoritesButton.Location = new System.Drawing.Point(32, 4);
-			this.favoritesButton.Name = "favoritesButton";
-			this.favoritesButton.Size = new System.Drawing.Size(24, 24);
-			this.favoritesButton.TabIndex = 1;
-			this.favoritesButton.Values.Image = global::Polycode.NostalgicPlayer.Client.GuiPlayer.Resources.IDB_FAVORITES;
-			this.favoritesButton.Values.Text = "";
+			favoritesButton.CornerRoundingRadius = -1F;
+			favoritesButton.Location = new System.Drawing.Point(32, 4);
+			favoritesButton.Name = "favoritesButton";
+			favoritesButton.Size = new System.Drawing.Size(24, 24);
+			favoritesButton.TabIndex = 1;
+			favoritesButton.Values.Image = Resources.IDB_FAVORITES;
+			favoritesButton.Values.Text = "";
 			// 
 			// sampleInfoButton
 			// 
-			this.sampleInfoButton.Location = new System.Drawing.Point(60, 4);
-			this.sampleInfoButton.Name = "sampleInfoButton";
-			this.sampleInfoButton.Size = new System.Drawing.Size(24, 24);
-			this.sampleInfoButton.TabIndex = 2;
-			this.sampleInfoButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("sampleInfoButton.Values.Image")));
-			this.sampleInfoButton.Values.Text = "";
+			sampleInfoButton.CornerRoundingRadius = -1F;
+			sampleInfoButton.Location = new System.Drawing.Point(60, 4);
+			sampleInfoButton.Name = "sampleInfoButton";
+			sampleInfoButton.Size = new System.Drawing.Size(24, 24);
+			sampleInfoButton.TabIndex = 2;
+			sampleInfoButton.Values.Image = (System.Drawing.Image)resources.GetObject("sampleInfoButton.Values.Image");
+			sampleInfoButton.Values.Text = "";
 			// 
 			// muteCheckButton
 			// 
-			this.muteCheckButton.Location = new System.Drawing.Point(4, 56);
-			this.muteCheckButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-			this.muteCheckButton.Name = "muteCheckButton";
-			this.muteCheckButton.Size = new System.Drawing.Size(27, 24);
-			this.muteCheckButton.TabIndex = 3;
-			this.muteCheckButton.Values.Image = ((System.Drawing.Image)(resources.GetObject("muteCheckButton.Values.Image")));
-			this.muteCheckButton.Values.Text = "";
+			muteCheckButton.CornerRoundingRadius = -1F;
+			muteCheckButton.Location = new System.Drawing.Point(4, 56);
+			muteCheckButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			muteCheckButton.Name = "muteCheckButton";
+			muteCheckButton.Size = new System.Drawing.Size(27, 24);
+			muteCheckButton.TabIndex = 3;
+			muteCheckButton.Values.Image = (System.Drawing.Image)resources.GetObject("muteCheckButton.Values.Image");
+			muteCheckButton.Values.Text = "";
 			// 
 			// clockTimer
 			// 
-			this.clockTimer.Interval = 995;
+			clockTimer.Interval = 995;
 			// 
 			// sortContextMenu
 			// 
-			this.sortContextMenu.Palette = this.fontPalette;
+			sortContextMenu.Palette = fontPalette;
 			// 
 			// listContextMenu
 			// 
-			this.listContextMenu.Palette = this.fontPalette;
+			listContextMenu.Palette = fontPalette;
 			// 
 			// diskContextMenu
 			// 
-			this.diskContextMenu.Palette = this.fontPalette;
-			// 
-			// scrollTimer
-			// 
-			this.scrollTimer.Interval = 300;
+			diskContextMenu.Palette = fontPalette;
 			// 
 			// addContextMenu
 			// 
-			this.addContextMenu.Palette = this.fontPalette;
+			addContextMenu.Palette = fontPalette;
+			// 
+			// moduleListControl
+			// 
+			moduleListControl.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			moduleListControl.Location = new System.Drawing.Point(35, 56);
+			moduleListControl.Name = "moduleListControl";
+			moduleListControl.SelectedIndex = -1;
+			moduleListControl.Size = new System.Drawing.Size(345, 116);
+			moduleListControl.TabIndex = 5;
+			moduleListControl.TopIndex = 0;
 			// 
 			// MainWindowForm
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(384, 281);
-			this.Controls.Add(this.muteCheckButton);
-			this.Controls.Add(this.functionsGroup);
-			this.Controls.Add(this.tapedeckGroup);
-			this.Controls.Add(this.positionTrackBar);
-			this.Controls.Add(this.listInfoGroup);
-			this.Controls.Add(this.listButtonsGroup);
-			this.Controls.Add(this.moduleListBox);
-			this.Controls.Add(this.masterVolumeTrackBar);
-			this.Controls.Add(this.moduleInfoButton);
-			this.Controls.Add(this.infoGroup);
-			this.Controls.Add(this.menuStrip);
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.KeyPreview = true;
-			this.MainMenuStrip = this.menuStrip;
-			this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-			this.MinimumSize = new System.Drawing.Size(400, 320);
-			this.Name = "MainWindowForm";
-			this.Palette = this.fontPalette;
-			this.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			((System.ComponentModel.ISupportInitialize)(this.infoGroup.Panel)).EndInit();
-			this.infoGroup.Panel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.infoGroup)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.listButtonsGroup.Panel)).EndInit();
-			this.listButtonsGroup.Panel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.listButtonsGroup)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.listInfoGroup.Panel)).EndInit();
-			this.listInfoGroup.Panel.ResumeLayout(false);
-			this.listInfoGroup.Panel.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.listInfoGroup)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.tapedeckGroup.Panel)).EndInit();
-			this.tapedeckGroup.Panel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.tapedeckGroup)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.functionsGroup.Panel)).EndInit();
-			this.functionsGroup.Panel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.functionsGroup)).EndInit();
-			this.ResumeLayout(false);
-			this.PerformLayout();
-
+			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			ClientSize = new System.Drawing.Size(384, 281);
+			Controls.Add(moduleListControl);
+			Controls.Add(muteCheckButton);
+			Controls.Add(functionsGroup);
+			Controls.Add(tapedeckGroup);
+			Controls.Add(positionTrackBar);
+			Controls.Add(listInfoGroup);
+			Controls.Add(listButtonsGroup);
+			Controls.Add(masterVolumeTrackBar);
+			Controls.Add(moduleInfoButton);
+			Controls.Add(infoGroup);
+			Controls.Add(menuStrip);
+			Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+			KeyPreview = true;
+			MainMenuStrip = menuStrip;
+			Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			MinimumSize = new System.Drawing.Size(400, 320);
+			Name = "MainWindowForm";
+			Palette = fontPalette;
+			PaletteMode = PaletteMode.Custom;
+			((System.ComponentModel.ISupportInitialize)infoGroup.Panel).EndInit();
+			infoGroup.Panel.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)infoGroup).EndInit();
+			((System.ComponentModel.ISupportInitialize)listButtonsGroup.Panel).EndInit();
+			listButtonsGroup.Panel.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)listButtonsGroup).EndInit();
+			((System.ComponentModel.ISupportInitialize)listInfoGroup.Panel).EndInit();
+			listInfoGroup.Panel.ResumeLayout(false);
+			listInfoGroup.Panel.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)listInfoGroup).EndInit();
+			((System.ComponentModel.ISupportInitialize)tapedeckGroup.Panel).EndInit();
+			tapedeckGroup.Panel.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)tapedeckGroup).EndInit();
+			((System.ComponentModel.ISupportInitialize)functionsGroup.Panel).EndInit();
+			functionsGroup.Panel.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)functionsGroup).EndInit();
+			ResumeLayout(false);
+			PerformLayout();
 		}
 
 		#endregion
@@ -540,7 +547,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private Krypton.Toolkit.KryptonGroup infoGroup;
 		private KryptonButton moduleInfoButton;
 		private KryptonTrackBar masterVolumeTrackBar;
-		private ModuleListControl moduleListBox;
 		private KryptonGroup listButtonsGroup;
 		private KryptonButton addModuleButton;
 		private KryptonButton removeModuleButton;
@@ -573,12 +579,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private KryptonContextMenu sortContextMenu;
 		private KryptonContextMenu listContextMenu;
 		private KryptonContextMenu diskContextMenu;
-		private System.Windows.Forms.Timer scrollTimer;
 		private System.Windows.Forms.Timer neverEndingTimer;
 		private KryptonContextMenu addContextMenu;
 		private KryptonButton favoritesButton;
 		private GuiKit.Components.FontPalette fontPalette;
 		private GuiKit.Components.FontPalette bigFontPalette;
+		private ModuleListControl moduleListControl;
 	}
 }
 

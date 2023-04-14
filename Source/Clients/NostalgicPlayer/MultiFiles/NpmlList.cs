@@ -172,7 +172,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 								if (timePos != -1)
 								{
 									// Set the time
-									fileInfo.PlayTime = new TimeSpan(long.Parse(line.Substring(timePos + 1)));
+									long ticks = long.Parse(line.Substring(timePos + 1));
+									if (ticks != 0)
+										fileInfo.PlayTime = new TimeSpan(ticks);
+
 									line = line.Substring(0, timePos);
 								}
 
