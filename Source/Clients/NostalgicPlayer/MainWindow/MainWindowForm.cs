@@ -1523,63 +1523,66 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void ModuleListControl_DragDrop(object sender, DragEventArgs e)
 		{
-			ModuleListControl.DragDropInformation dropInfo = moduleListControl.GetLatestDragAndDropInformation(e);
-
-			switch (dropInfo.Type)
+			using (new SleepCursor())
 			{
-				case ModuleListControl.DragDropType.List:
+				ModuleListControl.DragDropInformation dropInfo = moduleListControl.GetLatestDragAndDropInformation(e);
+
+				switch (dropInfo.Type)
 				{
-					// Free any extra loaded modules
-					moduleHandler.FreeExtraModules();
-					break;
-				}
-
-				case ModuleListControl.DragDropType.File:
-				{
-					int jumpNumber = -1;
-
-					// File or directory dragged from File Explorer
-					string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-
-					switch (dropInfo.DropType)
+					case ModuleListControl.DragDropType.List:
 					{
-						case ModuleListControl.FileDropType.Append:
-						{
-							jumpNumber = moduleListControl.Items.Count;
+						// Free any extra loaded modules
+						moduleHandler.FreeExtraModules();
+						break;
+					}
 
-							AddFilesToList(files, checkForList: true);
-							break;
+					case ModuleListControl.DragDropType.File:
+					{
+						int jumpNumber = -1;
+
+						// File or directory dragged from File Explorer
+						string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+						switch (dropInfo.DropType)
+						{
+							case ModuleListControl.FileDropType.Append:
+							{
+								jumpNumber = moduleListControl.Items.Count;
+
+								AddFilesToList(files, checkForList: true);
+								break;
+							}
+
+							case ModuleListControl.FileDropType.ClearAndAdd:
+							{
+								StopAndFreeModule();
+								EmptyList();
+
+								AddFilesToList(files, checkForList: true);
+
+								LoadAndPlayModule(0);
+								break;
+							}
+
+							case ModuleListControl.FileDropType.Insert:
+							{
+								jumpNumber = dropInfo.IndexOfItemUnderMouseToDrop == -1 ? 0 : dropInfo.IndexOfItemUnderMouseToDrop;
+								AddFilesToList(files, dropInfo.IndexOfItemUnderMouseToDrop, true);
+
+								// Free any extra loaded modules
+								moduleHandler.FreeExtraModules();
+								break;
+							}
 						}
 
-						case ModuleListControl.FileDropType.ClearAndAdd:
+						if ((jumpNumber != -1) && optionSettings.AddJump)
 						{
+							// Stop playing any modules and load the first added one
 							StopAndFreeModule();
-							EmptyList();
-
-							AddFilesToList(files, checkForList: true);
-
-							LoadAndPlayModule(0);
-							break;
+							LoadAndPlayModule(jumpNumber);
 						}
-
-						case ModuleListControl.FileDropType.Insert:
-						{
-							jumpNumber = dropInfo.IndexOfItemUnderMouseToDrop == -1 ? 0 : dropInfo.IndexOfItemUnderMouseToDrop;
-							AddFilesToList(files, dropInfo.IndexOfItemUnderMouseToDrop, true);
-
-							// Free any extra loaded modules
-							moduleHandler.FreeExtraModules();
-							break;
-						}
+						break;
 					}
-
-					if ((jumpNumber != -1) && optionSettings.AddJump)
-					{
-						// Stop playing any modules and load the first added one
-						StopAndFreeModule();
-						LoadAndPlayModule(jumpNumber);
-					}
-					break;
 				}
 			}
 		}
