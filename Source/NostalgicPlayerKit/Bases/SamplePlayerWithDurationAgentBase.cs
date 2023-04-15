@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 				try
 				{
 					TimeSpan totalTime = GetTotalDuration();
-					if (totalTime.TotalSeconds < 1.0f)
+					if (totalTime == TimeSpan.Zero)
 						return null;
 
 					TimeSpan increment = new TimeSpan(0, 0, (int)IDurationPlayer.NumberOfSecondsBetweenEachSnapshot);
