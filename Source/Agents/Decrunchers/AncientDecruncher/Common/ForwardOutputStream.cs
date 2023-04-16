@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 	internal class ForwardOutputStream : IOutputStream
 	{
 		private readonly string agentName;
-		private readonly byte[] buf;
+		private readonly byte[] buffer;
 
 		private readonly uint startOffset;
 		private uint currentOffset;
@@ -30,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 		public ForwardOutputStream(string agentName, byte[] buffer, uint startOffset, uint endOffset)
 		{
 			this.agentName = agentName;
-			buf = buffer;
+			this.buffer = buffer;
 
 			this.startOffset = startOffset;
 			currentOffset = startOffset;
@@ -72,7 +72,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 			if (currentOffset >= endOffset)
 				throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 
-			buf[currentOffset++] = (byte)value;
+			buffer[currentOffset++] = (byte)value;
 		}
 
 
@@ -90,7 +90,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 			byte ret = 0;
 
 			for (uint i = 0; i < count; i++, currentOffset++)
-				ret = buf[currentOffset] = buf[currentOffset - distance];
+				ret = buffer[currentOffset] = buffer[currentOffset - distance];
 
 			return ret;
 		}
@@ -145,7 +145,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 					uint todo = Math.Min(total, (uint)(prev.Length - index));
 
 					for (uint i = 0; i < todo; i++, currentOffset++)
-						ret = buf[currentOffset] = prev[index + i];
+						ret = buffer[currentOffset] = prev[index + i];
 
 					total -= todo;
 					if (total == 0)
@@ -160,7 +160,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 			}
 
 			for (uint i = prevCount; i < count; i++, currentOffset++)
-				ret = buf[currentOffset] = buf[currentOffset - distance];
+				ret = buffer[currentOffset] = buffer[currentOffset - distance];
 
 			return ret;
 		}

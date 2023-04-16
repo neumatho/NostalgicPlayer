@@ -14,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 	internal class BackwardOutputStream : IOutputStream
 	{
 		private readonly string agentName;
-		private readonly byte[] buf;
+		private readonly byte[] buffer;
 
 		private readonly uint startOffset;
 		private uint currentOffset;
@@ -28,7 +28,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 		public BackwardOutputStream(string agentName, byte[] buffer, uint startOffset, uint endOffset)
 		{
 			this.agentName = agentName;
-			buf = buffer;
+			this.buffer = buffer;
 
 			this.startOffset = startOffset;
 			currentOffset = endOffset;
@@ -70,7 +70,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 			if (currentOffset <= startOffset)
 				throw new DecruncherException(agentName, Resources.IDS_ANC_ERR_CORRUPT_DATA);
 
-			buf[--currentOffset] = (byte)value;
+			buffer[--currentOffset] = (byte)value;
 		}
 
 
@@ -88,7 +88,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Common
 			byte ret = 0;
 
 			for (uint i = 0; i < count; i++, --currentOffset)
-				ret = buf[currentOffset - 1] = buf[currentOffset + distance - 1];
+				ret = buffer[currentOffset - 1] = buffer[currentOffset + distance - 1];
 
 			return ret;
 		}
