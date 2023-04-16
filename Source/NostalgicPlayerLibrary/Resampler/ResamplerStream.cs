@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Diagnostics;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
@@ -232,9 +233,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 
 				return 0;
 			}
-			catch(Exception)
+			catch(Exception ex)
 			{
-				return 0;
+				Debug.WriteLine(ex);
+				throw;
 			}
 		}
 		#endregion

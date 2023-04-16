@@ -151,10 +151,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		/********************************************************************/
 		public override bool InitPlayer(ModuleStream moduleStream, out string errorMessage)
 		{
+			if (!base.InitPlayer(moduleStream, out errorMessage))
+				return false;
+
 			// Get number of samples of the file
 			totalLength = loaderAgent.GetTotalSampleLength(formatInfo);
 
-			return base.InitPlayer(moduleStream, out errorMessage);
+			return true;
 		}
 
 
@@ -180,7 +183,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		/********************************************************************/
 		public override bool InitSound(out string errorMessage)
 		{
-			errorMessage = string.Empty;
+			if (!base.InitSound(out errorMessage))
+				return false;
 
 			// Reset the sample position
 			loaderAgent.SetSamplePosition(modStream, 0, formatInfo);

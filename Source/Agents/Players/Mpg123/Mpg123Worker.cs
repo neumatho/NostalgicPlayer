@@ -364,6 +364,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		/********************************************************************/
 		public override bool InitPlayer(ModuleStream moduleStream, out string errorMessage)
 		{
+			if (!base.InitPlayer(moduleStream, out errorMessage))
+				return false;
+
 			// Get a Mpg123 handle, which is used on all other calls
 			mpg123Handle = Native.mpg123_new(null, out int error);
 			if (error != Native.mpg123_errors.MPG123_OK)
@@ -406,7 +409,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 			inputBuffer = new byte[InputBufSize];
 			tempOutputBuffer = new byte[OutputBufSize];
 
-			return base.InitPlayer(moduleStream, out errorMessage);
+			return true;
 		}
 
 
@@ -441,7 +444,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		/********************************************************************/
 		public override bool InitSound(out string errorMessage)
 		{
-			errorMessage = string.Empty;
+			if (!base.InitSound(out errorMessage))
+				return false;
 
 			// Reset the sample position
 			modStream.Seek(firstFramePosition, SeekOrigin.Begin);
@@ -482,6 +486,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		public override void CleanupSound()
 		{
 			Native.mpg123_close(mpg123Handle);
+
+			base.CleanupSound();
 		}
 
 

@@ -227,6 +227,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 		/********************************************************************/
 		public override bool InitPlayer(ModuleStream moduleStream, out string errorMessage)
 		{
+			if (!base.InitPlayer(moduleStream, out errorMessage))
+				return false;
+
 			// Initialize the reader
 			reader = new VorbisReader(moduleStream);
 
@@ -250,7 +253,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 			descrip = string.IsNullOrEmpty(tags.Description) ? Resources.IDS_OGG_INFO_NONE : tags.Description;
 			vendor = string.IsNullOrEmpty(tags.EncoderVendor) ? Resources.IDS_OGG_INFO_UNKNOWN : tags.EncoderVendor;
 
-			return base.InitPlayer(moduleStream, out errorMessage);
+			return true;
 		}
 
 
@@ -282,6 +285,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 		/********************************************************************/
 		public override bool InitSound(out string errorMessage)
 		{
+			if (!base.InitSound(out errorMessage))
+				return false;
+
 			errorMessage = string.Empty;
 
 			// Reset the sample position
