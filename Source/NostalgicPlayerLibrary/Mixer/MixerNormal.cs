@@ -314,7 +314,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				// If the sample is not blocked
 				int done;
 
-				if ((end == vnf.Current) || (vnf.Increment == 0))
+				if (((vnf.Increment > 0) && (vnf.Current >= end)) || ((vnf.Increment < 0) && (vnf.Current <= end)) || (vnf.Increment == 0))
 					done = 0;
 				else
 				{

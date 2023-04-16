@@ -118,7 +118,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 		private const int XmSmpIncr = 64;
 
-		private const int XmEnvCnt = 12 * 2;
+		private const int XmEnvPts = 12;
+		private const int XmEnvCnt = XmEnvPts * 2;
 		private const int XmNoteCnt = 8 * SharedConstant.Octave;
 
 		private XmHeader mh;
@@ -978,13 +979,13 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 						// We can't trust the envelope point count here, as some
 						// modules have incorrect values (K_OSPACE.XM reports 32 volume
 						// points, for example)
-						if (pth.VolPts > XmEnvCnt / 2)
-							pth.VolPts = XmEnvCnt / 2;
+						if (pth.VolPts > XmEnvPts)
+							pth.VolPts = XmEnvPts;
 
-						if (pth.PanPts > XmEnvCnt / 2)
-							pth.PanPts = XmEnvCnt / 2;
+						if (pth.PanPts > XmEnvPts)
+							pth.PanPts = XmEnvPts;
 
-						if (moduleStream.EndOfStream || (pth.VolPts > XmEnvCnt / 2) || (pth.PanPts > XmEnvCnt / 2))
+						if (moduleStream.EndOfStream)
 							return false;
 
 						for (int u = 0; u < XmNoteCnt; u++)
@@ -992,7 +993,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 
 						d.VolFade = pth.VolFade;
 
-						for (int u = 0; u < (XmEnvCnt >> 1); u++)
+						for (int u = 0; u < XmEnvPts; u++)
 						{
 							d.VolEnv[u].Pos = (short)pth.VolEnv[u << 1];
 							d.VolEnv[u].Val = (short)pth.VolEnv[(u << 1) + 1];
@@ -1013,13 +1014,13 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 						d.VolPts = pth.VolPts;
 
 						// Scale envelope
-						for (int p = 0; p < XmEnvCnt / 2; p++)
+						for (int p = 0; p < XmEnvPts; p++)
 							d.VolEnv[p].Val <<= 2;
 
 						if (((d.VolFlg & EnvelopeFlag.On) != 0) && (d.VolPts < 2))
 							d.VolFlg &= ~EnvelopeFlag.On;
 
-						for (int u = 0; u < (XmEnvCnt >> 1); u++)
+						for (int u = 0; u < XmEnvPts; u++)
 						{
 							d.PanEnv[u].Pos = (short)pth.PanEnv[u << 1];
 							d.PanEnv[u].Val = (short)pth.PanEnv[(u << 1) + 1];
@@ -1040,7 +1041,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 						d.PanPts = pth.PanPts;
 
 						// Scale envelope
-						for (int p = 0; p < XmEnvCnt / 2; p++)
+						for (int p = 0; p < XmEnvPts; p++)
 							d.PanEnv[p].Val <<= 2;
 
 						if (((d.PanFlg & EnvelopeFlag.On) != 0) && (d.PanPts < 2))

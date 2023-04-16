@@ -1265,6 +1265,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			}
 			else
 			{
+				// Ignore junk loops
+				if ((loopBeg > pts) || (loopBeg > loopEnd))
+					t.Flg &= ~EnvelopeFlag.Loop;
+
+				if ((susBeg > pts) || (susBeg > susEnd))
+					t.Flg &= ~EnvelopeFlag.Sustain;
+
 				// Imago Orpheus sometimes stores an extra initial point in the envelope
 				if ((t.Pts >= 2) && (t.Env[0].Pos == t.Env[1].Pos))
 					t.Index++;

@@ -50,6 +50,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		#region ItSample class
 		private class ItSample
 		{
+			public readonly byte[] Id = new byte[4];					// IMPS
 			public readonly byte[] FileName = new byte[13];
 			public byte ZeroByte;
 			public byte GlobVol;
@@ -75,6 +76,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 		#region ItInstHeader class
 		private class ItInstHeader
 		{
+			public readonly byte[] Id = new byte[4];					// IMPI
 //			public uint Size;											// Instrument size
 			public readonly byte[] FileName = new byte[13];				// Instrument file name
 			public byte ZeroByte;										// Instrument type (always 0)
@@ -408,7 +410,14 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 					Sample q = of.Samples[t];
 
 					// Seek to sample position
-					moduleStream.Seek(paraPtr[mh.InsNum + t] + 4, SeekOrigin.Begin);
+					moduleStream.Seek(paraPtr[mh.InsNum + t], SeekOrigin.Begin);
+
+					if ((moduleStream.Read(s.Id, 0, 4) != 4) || (s.Id[0] != 0x49) || (s.Id[1] != 0x4d) || (s.Id[2] != 0x50) || (s.Id[3] != 0x53))		// IMPS
+					{
+						// No error so that use-brdg.it and use-funk.it
+						// to load correctly (both IT 2.04)
+						continue;
+					}
 
 					// And load sample info
 					moduleStream.ReadString(s.FileName, 12);
@@ -521,7 +530,13 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter.Formats
 						Instrument d = of.Instruments[t];
 
 						// Seek to instrument position
-						moduleStream.Seek(paraPtr[t] + 4, SeekOrigin.Begin);
+						moduleStream.Seek(paraPtr[t], SeekOrigin.Begin);
+
+						if ((moduleStream.Read(ih.Id, 0, 4) != 4) || (ih.Id[0] != 0x49) || (ih.Id[1] != 0x4d) || (ih.Id[2] != 0x50) || (ih.Id[3] != 0x49))		// IMPI
+						{
+							errorMessage = Resources.IDS_MIKCONV_ERR_LOADING_INSTRUMENTS;
+							return false;
+						}
 
 						// Load instrument info
 						moduleStream.ReadString(ih.FileName, 12);
