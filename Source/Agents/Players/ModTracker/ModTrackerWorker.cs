@@ -1960,7 +1960,9 @@ stopLoop:
 				GotBreak = false,
 				LowMask = 0xff,
 				PattDelayTime = 0,
-				PattDelayTime2 = 0
+				PattDelayTime2 = 0,
+				LastUsedPositionJumpArgument = -1,
+				LastUsedBreakPositionArgument = -1
 			};
 
 			endReached = false;
@@ -2077,6 +2079,8 @@ stopLoop:
 			if (playingInfo.SongPos >= songLength)
 			{
 				playingInfo.SongPos = restartPos;
+				playingInfo.LastUsedBreakPositionArgument = -1;
+				playingInfo.LastUsedPositionJumpArgument = -1;
 
 				// And the module has repeated
 				endReached = true;
@@ -2090,8 +2094,7 @@ stopLoop:
 						endReached = true;
 					else
 					{
-						// Bxx and Dxx which replay same row                                                 
-						if (playingInfo.GotBreak && (playingInfo.BreakPos == (playingInfo.PatternPos - 1)))
+						if ((playingInfo.GotBreak && playingInfo.GotPositionJump && (playingInfo.SongPos == playingInfo.LastUsedPositionJumpArgument) && (playingInfo.BreakPos == playingInfo.LastUsedBreakPositionArgument)))
 						{
 							endReached = true;
 							restartSong = true;
@@ -2103,10 +2106,17 @@ stopLoop:
 			// Initialize the position variables
 			MarkPositionAsVisited(playingInfo.SongPos);
 
+			if (playingInfo.GotBreak)
+				playingInfo.LastUsedBreakPositionArgument = (short)playingInfo.BreakPos;
+
+			if (playingInfo.GotPositionJump)
+				playingInfo.LastUsedPositionJumpArgument = (short)playingInfo.SongPos;
+
 			playingInfo.PatternPos = playingInfo.BreakPos;
 			playingInfo.BreakPos = 0;
 			playingInfo.PosJumpFlag = false;
 			playingInfo.GotBreak = false;
+			playingInfo.GotPositionJump = false;
 
 			ShowSongPosition();
 			ShowPattern();
@@ -3689,6 +3699,7 @@ stopLoop:
 			playingInfo.SongPos = (ushort)(pos - 1);
 			playingInfo.BreakPos = 0;
 			playingInfo.PosJumpFlag = true;
+			playingInfo.GotPositionJump = true;
 		}
 
 
