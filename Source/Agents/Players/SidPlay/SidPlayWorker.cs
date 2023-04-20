@@ -586,6 +586,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 
 			firstTime = true;
 
+			// Create duration handler if needed
+			if (haveDuration)
+			{
+				startTime = 0;
+				durationTimer = new Timer(DurationTimerHandler, allDurationInfo[songNumber].TotalTime, 0, 900);
+			}
+
 			return true;
 		}
 
@@ -719,27 +726,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			allDurationInfo = result;
 
 			return result;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Initialize player to play the given sub-song
-		/// </summary>
-		/********************************************************************/
-		public bool SetSubSong(int subSong, out string errorMessage)
-		{
-			errorMessage = string.Empty;
-
-			// Create duration handler if needed
-			if (haveDuration)
-			{
-				startTime = 0;
-				durationTimer = new Timer(DurationTimerHandler, allDurationInfo[subSong].TotalTime, 0, 900);
-			}
-
-			return true;
 		}
 
 
