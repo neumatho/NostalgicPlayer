@@ -3,9 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
-using System.Windows.Forms;
+using System.Linq;
 using Microsoft.VisualBasic.ApplicationServices;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 {
@@ -19,25 +19,39 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		private SingleInstanceApplication()
+		public SingleInstanceApplication()
 		{
 			IsSingleInstance = true;
+
+			StartupNextInstance += StartupNextInstanceHandler;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Starts the application
+		/// Is called if the main form needs to be created
 		/// </summary>
 		/********************************************************************/
-		public static void Run(Form form, StartupNextInstanceEventHandler startupHandler)
+		protected override void OnCreateMainForm()
 		{
-			SingleInstanceApplication app = new SingleInstanceApplication();
-			app.MainForm = form;
-			app.StartupNextInstance += startupHandler;
+			MainForm = new MainWindowForm();
 
-			app.Run(Environment.GetCommandLineArgs());
+			base.OnCreateMainForm();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called if an instance is already called when starting the
+		/// program
+		/// </summary>
+		/********************************************************************/
+		private void StartupNextInstanceHandler(object sender, StartupNextInstanceEventArgs e)
+		{
+			// Skip the first argument, which is the name of our application
+			((MainWindowForm)MainForm).StartupHandler(e.CommandLine.Skip(1).ToArray());
 		}
 	}
 }

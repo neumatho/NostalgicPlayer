@@ -4,11 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using System.Linq;
 using System.Windows.Forms;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualBasic.ApplicationServices;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
@@ -25,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 		/// </summary>
 		/********************************************************************/
 		[STAThread]
-		static void Main(string[] arguments)
+		static void Main()
 		{
 			try
 			{
@@ -41,27 +38,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer
 				Application.SetHighDpiMode(HighDpiMode.DpiUnaware);
 				Application.EnableVisualStyles();
 				Application.SetCompatibleTextRenderingDefault(false);
-				SingleInstanceApplication.Run(new MainWindowForm(), NewInstanceHandler);
+
+				SingleInstanceApplication singleInstanceApplication = new SingleInstanceApplication();
+				singleInstanceApplication.Run(Environment.GetCommandLineArgs());
 			}
 			catch (Exception ex)
 			{
 				MessageBox.Show(string.Format(Resources.IDS_ERR_EXCEPTION, ex.Message), Resources.IDS_MAIN_TITLE, MessageBoxButtons.OK, MessageBoxIcon.Error);
 				Application.Exit();
 			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called if an instance is already called when starting the
-		/// program
-		/// </summary>
-		/********************************************************************/
-		private static void NewInstanceHandler(object sender, StartupNextInstanceEventArgs e)
-		{
-			// Skip the first argument, which is the name of our application
-			MainWindowForm.StartupHandler(e.CommandLine.Skip(1).ToArray());
 		}
 	}
 }

@@ -49,8 +49,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			public bool Enabled;
 		}
 
-		private static MainWindowForm self;
-
 		private Manager agentManager;
 		private ModuleHandler moduleHandler;
 
@@ -129,9 +127,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			InitializeComponent();
 
-			// Remember my self
-			self = this;
-
 			// Disable escape key closing
 			disableEscapeKey = true;
 
@@ -192,10 +187,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// arguments from the second instance
 		/// </summary>
 		/********************************************************************/
-		public static void StartupHandler(string[] arguments)
+		public void StartupHandler(string[] arguments)
 		{
 			if (arguments.Length > 0)
-				self.AddFilesFromStartupHandler(arguments);
+				AddFilesFromStartupHandler(arguments);
 		}
 
 
