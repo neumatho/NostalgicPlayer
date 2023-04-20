@@ -125,7 +125,7 @@
     <value>Original player by
 2000-2001 Simon White.
 2007-2010 Antti Lankila.
-2010-2021 Leandro Nini.
+2010-2023 Leandro Nini.
 SID emulator (residfp) by Dag Lem.
 C64 font by Style.
 Ported to C# by Thomas Neumann.
@@ -138,7 +138,7 @@ The player has been ported to C# and is based on the libsidplayfp library starte
     <value>Original player by
 2000-2001 Simon White.
 2007-2010 Antti Lankila.
-2010-2021 Leandro Nini.
+2010-2023 Leandro Nini.
 SID emulator (reSID) by Dag Lem.
 C64 font by Style.
 Ported to C# by Thomas Neumann.
@@ -150,6 +150,9 @@ SID modules contains tunes and sound effects from the good old Commodore 64.  Th
   </data>
   <data name="IDS_SID_ERR_BAD_ADDR" xml:space="preserve">
     <value>Bad address data</value>
+  </data>
+  <data name="IDS_SID_ERR_BAD_BUFFER_SIZE" xml:space="preserve">
+    <value>Bad buffer size</value>
   </data>
   <data name="IDS_SID_ERR_BAD_RELOC" xml:space="preserve">
     <value>Bad reloc data</value>

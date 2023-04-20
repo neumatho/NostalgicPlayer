@@ -71,22 +71,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		/// </summary>
 		private class CombinedWaveformConfig
 		{
-			public CombinedWaveformConfig(float bias, float pulseStrength, float topBit, float distance1, float distance2, float stMix)
+			public CombinedWaveformConfig(float threshold, float pulseStrength, float distance1, float distance2)
 			{
-				this.bias = bias;
+				this.threshold = threshold;
 				this.pulseStrength = pulseStrength;
-				this.topBit = topBit;
 				this.distance1 = distance1;
 				this.distance2 = distance2;
-				this.stMix = stMix;
 			}
 
-			public readonly float bias;
+			public readonly float threshold;
 			public readonly float pulseStrength;
-			public readonly float topBit;
 			public readonly float distance1;
 			public readonly float distance2;
-			public readonly float stMix;
 		}
 
 		// Parameters derived with the Monte Carlo method based on
@@ -94,31 +90,33 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		//
 		// The score here reported is the acoustic error
 		// calculated XORing the estimated and the sampled values.
-		// In parentheses the number of mispredicted bits
-		// on a total of 32768.
+		// In parentheses the number of mispredicted bits.
 		//
 		// [1] https://github.com/libsidplayfp/combined-waveforms
 		private static readonly CombinedWaveformConfig[][] config = new CombinedWaveformConfig[2][]
 		{
-			new CombinedWaveformConfig[4]
+			new CombinedWaveformConfig[5]
 			{ // kevtris chip G (6581 R2)
-				new CombinedWaveformConfig(0.90522f, 0.0f,       0.0f,       1.97506f,   1.66937f, 0.63482f),	// error  1687 (278)
-				new CombinedWaveformConfig(0.93088f, 2.4843f,    0.0f,       1.0353f,    1.1484f,  0.0f    ),	// error  6128 (130)
-				new CombinedWaveformConfig(0.912142f,2.32076f,   1.106015f,  0.053906f,  0.25143f, 0.0f    ),	// error 10567 (567)
-				new CombinedWaveformConfig(0.901f,   1.0845f,    0.0f,       1.056f,     1.1848f,  0.599f  )	// error    36  (12)
+				new CombinedWaveformConfig(0.862147212f, 0.0f,         10.8962431f,    2.50848103f),		// TS  error  1941 (327/28672)
+				new CombinedWaveformConfig(0.932746708f, 2.07508397f,   1.03668225f,   1.14876997f),		// PT  error  5992 (126/32768)
+				new CombinedWaveformConfig(0.860927045f, 2.43506575f,   0.908603609f,  1.07907593f),		// PS  error  3693 (521/28672)
+				new CombinedWaveformConfig(0.741343081f, 0.0452554375f, 1.1439606f,    1.05711341f),		// PTS error   338 ( 29/28672)
+				new CombinedWaveformConfig(0.96f,        2.5f,          1.1f,          1.2f        )		// NP  guessed
 			},
-			new CombinedWaveformConfig[4]
+			new CombinedWaveformConfig[5]
 			{ // kevtris chip V (8580 R5)
-				new CombinedWaveformConfig(0.94344f, 0.0f,       0.976f,     1.6347f,    2.51537f, 0.73115f),	// error  1300 (184)
-				new CombinedWaveformConfig(0.93303f, 1.7025f,    0.0f,       1.0868f,    1.43527f, 0.0f    ),	// error  7981 (204)
-				new CombinedWaveformConfig(0.95831f, 1.95269f,   0.992986f,  0.0077384f, 0.18408f, 0.0f    ),	// error  9596 (324)
-				new CombinedWaveformConfig(0.94699f, 1.09668f,   0.99586f,   0.94167f,   2.0139f,  0.5633f )	// error  2118  (54)
+				new CombinedWaveformConfig(0.715788841f, 0.0f,          1.32999945f,   2.2172699f  ),		// TS  error   928 (135/32768)
+				new CombinedWaveformConfig(0.93500334f,  1.05977178f,   1.08629429f,   1.43518543f ),		// PT  error  7991 (212/32768)
+				new CombinedWaveformConfig(0.920648575f, 0.943601072f,  1.13034654f,   1.41881108f ),		// PS  error 12566 (394/32768)
+				new CombinedWaveformConfig(0.90921098f,  0.979807794f,  0.942194462f,  1.40958893f ),		// PTS error  2092 ( 60/32768)
+				new CombinedWaveformConfig(0.95f,        1.15f,         1.0f,          1.45f       )		// NP  guessed
 			}
 		};
 
 		private static WaveformCalculator instance = null;
 
-		private readonly Dictionary<CombinedWaveformConfig[], matrix_t> cache = new Dictionary<CombinedWaveformConfig[], Matrix<short>>();
+		private readonly matrix_t wfTable;
+		private readonly Dictionary<CombinedWaveformConfig[], matrix_t> pulldownCache = new Dictionary<CombinedWaveformConfig[], Matrix<short>>();
 
 		delegate float distance_t(float distance, int i);
 
@@ -129,6 +127,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		/********************************************************************/
 		private WaveformCalculator()
 		{
+			wfTable = new matrix_t(4, 4096);
+
+			BuildWaveTable();
 		}
 
 
@@ -150,33 +151,50 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 
 		/********************************************************************/
 		/// <summary>
-		/// Build waveform tables for use by WaveformGenerator
+		/// Get the waveform table for use by WaveformGenerator
 		/// </summary>
 		/********************************************************************/
-		public matrix_t BuildTable(ChipModel model)
+		public matrix_t GetWaveTable()
 		{
-			bool is8580 = model != ChipModel.MOS6581;
+			return wfTable;
+		}
 
-			CombinedWaveformConfig[] cfgArray = config[is8580 ? 1 : 0];
 
-			if (cache.TryGetValue(cfgArray, out matrix_t wfTable))
-				return wfTable;
 
-			wfTable = new matrix_t(8, 4096);
+		/********************************************************************/
+		/// <summary>
+		/// Build pulldown table for use by WaveformGenerator
+		/// </summary>
+		/********************************************************************/
+		public matrix_t BuildPulldownTable(ChipModel model)
+		{
+			CombinedWaveformConfig[] cfgArray = config[model == ChipModel.MOS6581 ? 0 : 1];
 
-			for (int idx = 0; idx < 1 << 12; idx++)
+			if (pulldownCache.TryGetValue(cfgArray, out matrix_t pdTable))
+				return pdTable;
+
+			pdTable = new matrix_t(5, 4096);
+
+			for (int wav = 0; wav < 5; wav++)
 			{
-				wfTable[0][idx] = 0xfff;
-				wfTable[1][idx] = (short)((idx & 0x800) == 0 ? idx << 1 : (idx ^ 0xfff) << 1);
-				wfTable[2][idx] = (short)idx;
-				wfTable[3][idx] = CalculateCombinedWaveform(cfgArray[0], 3, idx, is8580);
-				wfTable[4][idx] = 0xfff;
-				wfTable[5][idx] = CalculateCombinedWaveform(cfgArray[1], 5, idx, is8580);
-				wfTable[6][idx] = CalculateCombinedWaveform(cfgArray[2], 6, idx, is8580);
-				wfTable[7][idx] = CalculateCombinedWaveform(cfgArray[3], 7, idx, is8580);
+				CombinedWaveformConfig cfg = cfgArray[wav];
+
+				distance_t distFunc = ExponentialDistance;
+
+				float[] distanceTable = new float[12 * 2 + 1];
+				distanceTable[12] = 1.0f;
+
+				for (int i = 12; i > 0; i--)
+				{
+					distanceTable[12 - i] = distFunc(cfg.distance1, i);
+					distanceTable[12 + i] = distFunc(cfg.distance2, i);
+				}
+
+				for (uint idx = 0; idx < (1U << 12);  idx++)
+					pdTable[(uint)wav][idx] = CalculatePulldown(distanceTable, cfg.pulseStrength, cfg.threshold, idx);
 			}
 
-			cache[cfgArray] = wfTable;
+			pulldownCache[cfgArray] = pdTable;
 
 			return wfTable;
 		}
@@ -215,104 +233,87 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		{
 			return 1.0f / (1.0f + (i * i) * distance);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Calculate triangle waveform
+		/// </summary>
+		/********************************************************************/
+		private uint TriXor(uint val)
+		{
+			return (((val & 0x800) == 0) ? val : (val ^ 0xfff)) << 1;
+		}
 		#endregion
 
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
-		/// Generate bitstate based on emulation of combined waves
+		/// Generate bitstate based on emulation of combined waves pulldown
 		/// </summary>
 		/********************************************************************/
-		private short CalculateCombinedWaveform(CombinedWaveformConfig config, int waveform, int accumulator, bool is8580)
+		private short CalculatePulldown(float[] distanceTable, float pulseStrength, float threshold, uint accumulator)
 		{
-			float[] o = new float[12];
-
-			// Saw
-			for (int i = 0; i < 12; i++)
-				o[i] = (accumulator & (1 << i)) != 0 ? 1.0f : 0.0f;
-
-			// If saw is not selected the bits are XORed
-			if ((waveform & 2) == 0)
-			{
-				bool top = (accumulator & 0x800) != 0;
-
-				for (int i = 11; i > 0; i--)
-					o[i] = top ? 1.0f - o[i - 1] : o[i - 1];
-
-				o[0] = 0.0f;
-			}
-			else if ((waveform & 3) == 3)	// If both Saw and Triangle are selected the bits are interconnected
-			{
-				// Bottom bit is grounded via T waveform selector
-				o[0] *= config.stMix;
-
-				for (int i = 1; i < 12; i++)
-				{
-					// Enabling the S waveform pulls the XOR circuit selector transistor down
-					// (which would normally make the descending ramp of the triangle waveform),
-					// so ST does not actually have a sawtooth and triangle waveform combined,
-					// but merely combines two sawtooths, one rising double the speed the other.
-					//
-					// http://www.lemon64.com/forum/viewtopic.php?t=25442&postdays=0&postorder=asc&start=165
-					o[i] = o[i - 1] * (1.0f - config.stMix) + o[i] * config.stMix;
-				}
-			}
-
-			// Topbit for Saw
-			if ((waveform & 2) == 2)
-				o[11] *= config.topBit;
-
-			// ST, P* waveforms
-
-			distance_t distFunc = (waveform & 1) == 1 ? ExponentialDistance : is8580 ? QuadraticDistance : LinearDistance;
-
-			float[] distanceTable = new float[12 * 2 + 1];
-			distanceTable[12] = 1.0f;
-
-			for (int i = 12; i > 0; i--)
-			{
-				distanceTable[12 - i] = distFunc(config.distance1, i);
-				distanceTable[12 + i] = distFunc(config.distance2, i);
-			}
-
-			float[] tmp = new float[12];
+			byte[] bit = new byte[12];
 
 			for (int i = 0; i < 12; i++)
+				bit[i] = (byte)((accumulator & (1U << i)) != 0 ? 1 : 0);
+
+			float[] pulldown = new float[12];
+
+			for (int sb = 0; sb < 12; sb++)
 			{
 				float avg = 0.0f;
 				float n = 0.0f;
 
-				for (int j = 0; j < 12; j++)
+				for (int cb = 0; cb < 12; cb++)
 				{
-					float weight = distanceTable[i - j + 12];
-					avg += o[j] * weight;
+					if (cb == sb)
+						continue;
+
+					float weight = distanceTable[sb - cb + 12];
+					avg += (1 - bit[cb]) * weight;
 					n += weight;
 				}
 
-				// Pulse control bit
-				if (waveform > 4)
-				{
-					float weight = distanceTable[i - 12 + 12];
-					avg += config.pulseStrength * weight;
-					n += weight;
-				}
+				avg -= pulseStrength;
 
-				tmp[i] = (o[i] + avg / n) * 0.5f;
+				pulldown[sb] = avg / n;
 			}
-
-			for (int i = 0; i < 12; i++)
-				o[i] = tmp[i];
 
 			// Get the predicted value
 			short value = 0;
 
 			for (int i = 0; i < 12; i++)
 			{
-				if (o[i] > config.bias)
-					value |= (short)(1 << i);
+				float bitValue = bit[i] != 0 ? 1.0f - pulldown[i] : 0.0f;
+				if (bitValue > threshold)
+					value |= (short)(1U << i);
 			}
 
 			return value;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Build waveform table
+		/// </summary>
+		/********************************************************************/
+		private void BuildWaveTable()
+		{
+			for (uint idx = 0; idx < (1U << 12); idx++)
+			{
+				short saw = (short)idx;
+				short tri = (short)TriXor(idx);
+
+				wfTable[0][idx] = 0xfff;
+				wfTable[1][idx] = tri;
+				wfTable[2][idx] = saw;
+				wfTable[3][idx] = (short)(saw & (saw << 1));
+			}
 		}
 		#endregion
 	}

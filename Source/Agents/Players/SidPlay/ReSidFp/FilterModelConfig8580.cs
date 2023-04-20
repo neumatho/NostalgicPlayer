@@ -105,7 +105,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 			OPAMP_SIZE)
 		{
 			// Create lookup tables for gains / summers
-			OpAmp opampModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt);
+			OpAmp opampModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
 
 			// The filter summer operates at n ~ 1, and has 5 fundamentally different
 			// input configurations (2 - 6 input "resistors")

@@ -96,15 +96,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.Test
 		[TestMethod]
 		public void TestSetTestBit()
 		{
-			matrix_t tables = WaveformCalculator.GetInstance().BuildTable(ChipModel.MOS6581);
+			matrix_t waveTables = WaveformCalculator.GetInstance().GetWaveTable();
+			matrix_t tables = WaveformCalculator.GetInstance().BuildPulldownTable(ChipModel.MOS6581);
 
 			WaveformGenerator generator = new WaveformGenerator();
 			generator.Reset();
 			generator.shift_register = 0x35555e;
-			generator.SetWaveformModels(tables);
+			generator.SetWaveformModels(waveTables);
+			generator.SetPulldownModels(tables);
 
 			generator.WriteControl_Reg(0x08);	// Set test bit
+			generator.Clock();
 			generator.WriteControl_Reg(0x00);	// Unset test bit
+			generator.Clock();
 
 			Assert.AreEqual(0x9f0U, generator.noise_output);
 		}
@@ -119,14 +123,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.Test
 		[TestMethod]
 		public void TestNoiseWriteBack1()
 		{
-			matrix_t tables = WaveformCalculator.GetInstance().BuildTable(ChipModel.MOS6581);
+			matrix_t waveTables = WaveformCalculator.GetInstance().GetWaveTable();
+			matrix_t tables = WaveformCalculator.GetInstance().BuildPulldownTable(ChipModel.MOS6581);
 
 			WaveformGenerator modulator = new WaveformGenerator();
 
 			WaveformGenerator generator = new WaveformGenerator();
-			generator.SetWaveformModels(tables);
+			generator.SetModel(true);	// 6581
+			generator.SetWaveformModels(waveTables);
+			generator.SetPulldownModels(tables);
 			generator.Reset();
 
+			// Switch from noise to noise+triangle
 			generator.WriteControl_Reg(0x88);
 			generator.Clock();
 			generator.Output(modulator);

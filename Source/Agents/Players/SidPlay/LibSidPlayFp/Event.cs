@@ -29,8 +29,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp
 		/// <summary>
 		/// Constructor
 		///
-		/// Events are used for delayed execution. Name is not used by code,
-		/// but is useful for debugging
+		/// Events are used for delayed execution
 		/// </summary>
 		/********************************************************************/
 		protected Event(string name)

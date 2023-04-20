@@ -71,7 +71,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 			for (int i = 0; i < opamp_size; i++)
 			{
 				scaled_voltage.Add(new Spline.Point(
-					n16 * (opamp_voltage[i].x - opamp_voltage[i].y + denorm) / 2.0,
+					(n16 * (opamp_voltage[i].x - opamp_voltage[i].y) / 2.0f
+					// We add 32768 to get a positive number in the range [0-65535]
+					+ (1U << 15)),
 					n16 * (opamp_voltage[i].x - vMin))
 				);
 			}
@@ -83,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 			{
 				Spline.Point @out = s.Evaluate(x);
 
-				// If Vmax > max opamp_voltage the first element may be negative
+				// When interpolating outside range the first element may be negative
 				double tmp = @out.x > 0 ? @out.x : 0;
 				opamp_rev[x] = (ushort)(tmp + 0.5);
 			}

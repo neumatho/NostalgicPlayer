@@ -159,9 +159,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public uint_least32_t Time()
+		public uint_least32_t TimeMs()
 		{
-			return c64.GetTime();
+			return c64.GetTimeMs();
 		}
 
 
@@ -247,6 +247,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp
 			info.channels = isStereo ? (uint)2 : 1;
 
 			mixer.SetStereo(isStereo);
+			mixer.SetSampleRate(config.frequency);
 			mixer.SetVolume((int)config.leftVolume, (int)config.rightVolume);
 
 			// Update configuration
@@ -299,16 +300,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp
 
 			if (isPlaying == state_t.PLAYING)
 			{
-				mixer.Begin(leftBuffer, rightBuffer, count);
-
 				try
 				{
+					mixer.Begin(leftBuffer, rightBuffer, count);
+
 					int size;
 
 					if (mixer.GetSid(0) != null)
 					{
 						if ((count != 0) && (leftBuffer != null) && (rightBuffer != null))
 						{
+							// Reset count in case of exceptions
+							count = 0;
+
 							// Clock chips and mix into output buffers
 							while ((isPlaying != state_t.STOPPED) && mixer.NotFinished())
 							{
@@ -346,6 +350,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp
 				catch (HaltInstructionException)
 				{
 					errorString = Resources.IDS_SID_ERR_ILLEGAL_INST;
+					isPlaying = state_t.STOPPING;
+				}
+				catch (BadBufferSize)
+				{
+					errorString = Resources.IDS_SID_ERR_BAD_BUFFER_SIZE;
 					isPlaying = state_t.STOPPING;
 				}
 			}

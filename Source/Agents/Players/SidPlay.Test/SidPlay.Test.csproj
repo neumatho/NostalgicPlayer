@@ -24,6 +24,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Vice\VICE-testprogs\**" />
+    <EmbeddedResource Remove="Vice\VICE-testprogs\**" />
+    <None Remove="Vice\VICE-testprogs\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="..\SidPlay\LibSidPlayFp\LibSidPlayTypes.cs" Link="LibSidPlayTypes.cs" />
     <Compile Include="..\SidPlay\ReSidFp\ReSidTypes.cs" Link="ReSidTypes.cs" />
   </ItemGroup>

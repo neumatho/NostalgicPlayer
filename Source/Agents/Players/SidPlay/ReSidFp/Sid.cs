@@ -252,7 +252,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 			this.model = model;
 
 			// Calculate waveform-related tables
-			matrix_t tables = WaveformCalculator.GetInstance().BuildTable(model);
+			matrix_t waveTables = WaveformCalculator.GetInstance().GetWaveTable();
+			matrix_t pulldownTables = WaveformCalculator.GetInstance().BuildPulldownTable(model);
 
 			// Calculate envelope DAC table
 			{
@@ -285,7 +286,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 				voice[i].SetEnvDac(envDac);
 				voice[i].SetWavDac(oscDac);
 				voice[i].Wave().SetModel(is6581);
-				voice[i].Wave().SetWaveformModels(tables);
+				voice[i].Wave().SetWaveformModels(waveTables);
+				voice[i].Wave().SetPulldownModels(pulldownTables);
 			}
 		}
 

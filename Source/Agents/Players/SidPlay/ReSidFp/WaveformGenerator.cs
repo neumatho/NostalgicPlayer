@@ -95,9 +95,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		private const uint SHIFT_REGISTER_RESET_8580R5 = 986000;
 		private const uint SHIFT_REGISTER_FADE_8580R5 = 314300;
 
+		private const uint shift_mask =
+			~(
+				(1U <<  2) |	// Bit 20
+				(1U <<  4) |	// Bit 18
+				(1U <<  8) |	// Bit 14
+				(1U << 11) |	// Bit 11
+				(1U << 13) |	// Bit  9
+				(1U << 17) |	// Bit  5
+				(1U << 20) |	// Bit  2
+				(1U << 22) 		// Bit  0
+			);
+
 		private matrix_t model_wave;
+		private matrix_t model_pulldown;
 
 		private short[] wave;
+		private short[] pulldown;
 
 		/// <summary>
 		/// PWout = (PWn/40.95)%
@@ -174,7 +188,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		public WaveformGenerator()
 		{
 			model_wave = null;
+			model_pulldown = null;
 			wave = null;
+			pulldown = null;
 			pw = 0;
 			shift_register = 0;
 			shift_pipeline = 0;
@@ -207,6 +223,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		public void SetWaveformModels(matrix_t models)
 		{
 			model_wave = models;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void SetPulldownModels(matrix_t models)
+		{
+			model_pulldown = models;
 		}
 
 
@@ -309,8 +337,49 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 
 			if (waveform != waveform_prev)
 			{
-				// Set up waveform table
-				wave = model_wave[waveform & 0x7];
+				// Set up waveform tables
+				wave = model_wave[waveform & 0x3];
+
+				// We assume tha combinations include noise
+				// behave the same as without
+				switch (waveform & 0x7)
+				{
+					case 3:
+					{
+						pulldown = model_pulldown[0];
+						break;
+					}
+
+					case 4:
+					{
+						pulldown = (waveform & 0x8) != 0 ? model_pulldown[4] : null;
+						break;
+					}
+
+					case 5:
+					{
+						pulldown = model_pulldown[1];
+						break;
+					}
+
+					case 6:
+					{
+						pulldown = model_pulldown[2];
+						break;
+					}
+
+					case 7:
+					{
+						pulldown = model_pulldown[3];
+						break;
+					}
+
+					default:
+					{
+						pulldown = null;
+						break;
+					}
+				}
 
 				// No_noise and no_pulse are used in Set_Waveform_Output() as bitmasks to
 				// only let the noise or pulse influence the output when the noise or pulse
@@ -346,10 +415,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 					// completed by enabling SRAM write.
 
 					// During first phase of the shift the bits are interconnected
-					// and the output of each bit is latched into the following.
+					// and the output of each bit is loaded into the following.
 					// The output may overwrite the latched value
 					if (Do_Pre_Writeback(waveform_prev, waveform, is6581))
-						shift_register &= Get_Noise_Writeback();
+						shift_register = (shift_register & shift_mask) | Get_Noise_Writeback();
 
 					// Bit0 = (bit22 | test) ^ bit17 = 1 ^ bit17 = ~bit17
 					Clock_Shift_Register((~shift_register << 17) & (1 << 22));
@@ -379,6 +448,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 			sync = false;
 
 			wave = model_wave != null ? model_wave[0] : null;
+			pulldown = null;
 
 			ring_msb_mask = 0;
 			no_noise = 0xfff;
@@ -504,7 +574,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 				else if ((shift_pipeline != 0) && (--shift_pipeline == 0))
 				{
 					// Bit0 = (bit22 | test) ^ bit17
-					Clock_Shift_Register(((shift_register << 22) ^ (shift_register << 17)) & (1 << 22));
+					Clock_Shift_Register(((shift_register << 22) ^ (shift_register << 17)) & (1U << 22));
 				}
 			}
 		}
@@ -527,12 +597,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 				// The bit masks no_pulse and no_noise are used to achieve branch-free
 				// calculation of the output value
 				waveform_output = (uint)(wave[ix] & (no_pulse | pulse_output) & no_noise_or_noise_output);
+				if (pulldown != null)
+					waveform_output = (uint)pulldown[waveform_output];
 
 				// Triangle/Sawtooth output is delayed half cycle on 8580.
-				// This will appear as a one cycle delay on OSC3 as it is latched first phase of the clock
+				// This will appear as a one cycle delay on OSC3 as it is latched
+				// in the first phase of the clock
 				if (((waveform & 3) != 0) && !is6581)
 				{
 					osc3 = tri_saw_pipeline & (no_pulse | pulse_output) & no_noise_or_noise_output;
+					if (pulldown != null)
+						osc3 = (uint)pulldown[osc3];
+
 					tri_saw_pipeline = (uint)wave[ix];
 				}
 				else
@@ -623,24 +699,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		private uint Get_Noise_Writeback()
 		{
 			return
-				~(uint)(
-					(1 <<  2) |		// Bit 20
-					(1 <<  4) |		// Bit 18
-					(1 <<  8) |		// Bit 14
-					(1 << 11) |		// Bit 11
-					(1 << 13) |		// Bit  9
-					(1 << 17) |		// Bit  5
-					(1 << 20) |		// Bit  2
-					(1 << 22)		// Bit  0
-				) |
-				((waveform_output & (1 << 11)) >>  9) |		// Bit 11 -> bit 20
-				((waveform_output & (1 << 10)) >>  6) |		// Bit 10 -> bit 18
-				((waveform_output & (1 <<  9)) >>  1) |		// Bit  9 -> bit 14
-				((waveform_output & (1 <<  8)) <<  3) |		// Bit  8 -> bit 11
-				((waveform_output & (1 <<  7)) <<  6) |		// Bit  7 -> bit  9
-				((waveform_output & (1 <<  6)) << 11) |		// Bit  6 -> bit  5
-				((waveform_output & (1 <<  5)) << 15) |		// Bit  5 -> bit  2
-				((waveform_output & (1 <<  4)) << 18);		// Bit  4 -> bit  0
+				((waveform_output & (1U << 11)) >>  9) |	// Bit 11 -> bit 20
+				((waveform_output & (1U << 10)) >>  6) |	// Bit 10 -> bit 18
+				((waveform_output & (1U <<  9)) >>  1) |	// Bit  9 -> bit 14
+				((waveform_output & (1U <<  8)) <<  3) |	// Bit  8 -> bit 11
+				((waveform_output & (1U <<  7)) <<  6) |	// Bit  7 -> bit  9
+				((waveform_output & (1U <<  6)) << 11) |	// Bit  6 -> bit  5
+				((waveform_output & (1U <<  5)) << 15) |	// Bit  5 -> bit  2
+				((waveform_output & (1U <<  4)) << 18);		// Bit  4 -> bit  0
 		}
 
 
@@ -660,11 +726,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 				// A bit once set to zero cannot be changed, hence the and'ing.
 				//
 				// [1] ftp://ftp.untergrund.net/users/nata/sid_test/$D1+$81_wave_test.7z
-				//
-				// FIXME: Write test program to check the effect of 1 bits and whether
-				// neighboring bits are affected
 
-				shift_register &= Get_Noise_Writeback();
+				shift_register &= shift_mask | Get_Noise_Writeback();
 
 				noise_output &= waveform_output;
 				Set_No_Noise_Or_Noise_Output();
@@ -681,14 +744,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		internal void Set_Noise_Output()
 		{
 			noise_output =
-				((shift_register & (1 <<  2)) <<  9) |	// Bit 20 -> bit 11
-				((shift_register & (1 <<  4)) <<  6) |	// Bit 18 -> bit 10
-				((shift_register & (1 <<  8)) <<  1) |	// Bit 14 -> bit  9
-				((shift_register & (1 << 11)) >>  3) |	// Bit 11 -> bit  8
-				((shift_register & (1 << 13)) >>  6) |	// Bit  9 -> bit  7
-				((shift_register & (1 << 17)) >> 11) |	// Bit  5 -> bit  6
-				((shift_register & (1 << 20)) >> 15) |	// Bit  2 -> bit  5
-				((shift_register & (1 << 22)) >> 18);	// Bit  0 -> bit  4
+				((shift_register & (1U <<  2)) <<  9) |	// Bit 20 -> bit 11
+				((shift_register & (1U <<  4)) <<  6) |	// Bit 18 -> bit 10
+				((shift_register & (1U <<  8)) <<  1) |	// Bit 14 -> bit  9
+				((shift_register & (1U << 11)) >>  3) |	// Bit 11 -> bit  8
+				((shift_register & (1U << 13)) >>  6) |	// Bit  9 -> bit  7
+				((shift_register & (1U << 17)) >> 11) |	// Bit  5 -> bit  6
+				((shift_register & (1U << 20)) >> 15) |	// Bit  2 -> bit  5
+				((shift_register & (1U << 22)) >> 18);	// Bit  0 -> bit  4
 
 			Set_No_Noise_Or_Noise_Output();
 		}
@@ -703,7 +766,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		private bool Do_Pre_Writeback(uint waveform_prev, uint waveform, bool is6581)
 		{
 			// No writeback without combined waveforms
-			if (waveform_prev <= 0x8)
+			if (waveform <= 8)
 				return false;
 
 			// No writeback when changing to noise
@@ -719,44 +782,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 			}
 
 			if (waveform_prev == 0xc)
-			{
-				if (is6581)
-					return false;
-
-				if ((waveform != 0x9) && (waveform != 0xe))
-					return false;
-			}
+				return false;
 
 			// Ok do the writeback
 			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// When noise and pulse are combined all the bits are connected and
-		/// the four lower ones are grounded. This causes the adjacent bits
-		/// to be pulled down, with different strength depending on model.
-		///
-		/// This is just a rough attempt at modelling the effect
-		/// </summary>
-		/********************************************************************/
-		private uint Noise_Pulse6581(uint noise)
-		{
-			return noise < 0xf00 ? 0x000 : noise & (noise << 1) & (noise << 2);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		private uint Noise_Pulse8580(uint noise)
-		{
-			return noise < 0xfc0 ? noise & (noise << 1) : 0xfc0;
 		}
 
 
@@ -769,10 +798,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		private void Set_No_Noise_Or_Noise_Output()
 		{
 			no_noise_or_noise_output = no_noise | noise_output;
-
-			// Pulse+noise
-			if ((waveform & 0xc) == 0xc)
-				no_noise_or_noise_output = is6581 ? Noise_Pulse6581(no_noise_or_noise_output) : Noise_Pulse8580(no_noise_or_noise_output);
 		}
 
 

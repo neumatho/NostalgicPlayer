@@ -31,6 +31,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		//
 		//     n*((Vddt - vx)^2 - (Vddt - vi)^2) + (Vddt - vx)^2 - (Vddt - vo)^2 = 0
 		//
+		// where n is the ratio between R1 and R2.
+		//
 		// Our root function f can thus be written as:
 		//
 		//     f = (n + 1)*(Vddt - vx)^2 - n*(Vddt - vi)^2 - (Vddt - vo)^2 = 0
@@ -64,12 +66,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public OpAmp(List<Spline.Point> opamp, double vddt)
+		public OpAmp(List<Spline.Point> opamp, double vddt, double vMin, double vMax)
 		{
 			x = 0.0;
 			this.vddt = vddt;
-			vMin = opamp.First().x;
-			vMax = opamp.Last().x;
+			this.vMin = vMin;
+			this.vMax = vMax;
 			this.opamp = new Spline(opamp);
 		}
 
@@ -77,7 +79,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Reset root position
 		/// </summary>
 		/********************************************************************/
 		public void Reset()

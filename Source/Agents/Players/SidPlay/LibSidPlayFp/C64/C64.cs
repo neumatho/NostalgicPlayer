@@ -386,9 +386,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public uint_least32_t GetTime()
+		public uint_least32_t GetTimeMs()
 		{
-			return (uint_least32_t)(((eventScheduler.GetTime(EventScheduler.event_phase_t.EVENT_CLOCK_PHI1) * 1000) / cpuFrequency) / 1000);
+			return (uint_least32_t)((eventScheduler.GetTime(EventScheduler.event_phase_t.EVENT_CLOCK_PHI1) * 1000) / cpuFrequency);
 		}
 
 

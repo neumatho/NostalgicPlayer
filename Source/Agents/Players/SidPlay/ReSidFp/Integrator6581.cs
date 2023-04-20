@@ -80,7 +80,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		//     I0 = (2 * uCox * Ut^2) / k
 		//
 		// The remaining problem with the textbook model is that the transition
-		// from subthreshold the triode/saturation is not continuous.
+		// from subthreshold to triode/saturation is not continuous.
 		//
 		// Realizing that the subthreshold and triode/saturation modes may both
 		// be defined by independent (and equal) terms of Vgs and Vds,
@@ -193,11 +193,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 			// VCR gate voltage.		// Scaled by m*2^16
 			// Vg = Vddt - sqrt(((Vddt - vW)^2 + Vgdt^2)/2)
 			int nVg = fmc.GetVcr_nVg((nVddt_vw_2 + (vgdt_2 >> 1)) >> 16);
-			int kVg = (nVg - nVt) - nVMin;
+			int kVgt = (nVg - nVt) - nVMin;
 
 			// VCR voltages for EKV model table lookup
-			int kVgt_Vs = (vx < kVg) ? kVg - vx : 0;
-			int kVgt_Vd = (vi < kVg) ? kVg - vi : 0;
+			int kVgt_Vs = (vx < kVgt) ? kVgt - vx : 0;
+			int kVgt_Vd = (vi < kVgt) ? kVgt - vi : 0;
 
 			// VCR current, scaled by m*2^15*2^15 = m*2^30
 			uint @if = (uint)(fmc.GetVcr_n_Ids_Term(kVgt_Vs)) << 15;

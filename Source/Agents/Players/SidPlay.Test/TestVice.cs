@@ -17,6 +17,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.Test
 {
 	/// <summary>
 	/// Run all the test from Vice
+	/// (start in debugger for output)
 	/// </summary>
 	[TestClass]
 	public class TestVice
@@ -59,9 +60,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.Test
 			// Open test file and run tests
 			using (StreamReader sr = new StreamReader(Path.Combine(viceDirectory, "testlist")))
 			{
+				int lineNumber = 0;
+
 				while (!sr.EndOfStream)
 				{
 					string line = sr.ReadLine();
+					lineNumber++;
+
 					if (string.IsNullOrEmpty(line))
 						continue;
 
@@ -69,8 +74,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.Test
 						continue;
 
 					string[] args = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-					Console.WriteLine($"Running test {args[0]}");
-					Debug.WriteLine($"Running test {args[0]}");
+					Console.WriteLine($"{lineNumber} - Running test {args[0]}");
+					Debug.WriteLine($"{lineNumber} - Running test {args[0]}");
 
 					RunTest(viceDirectory, args);
 				}

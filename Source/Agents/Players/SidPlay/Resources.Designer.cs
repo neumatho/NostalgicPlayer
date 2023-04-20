@@ -74,7 +74,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         ///   Looks up a localized string similar to Original player by
         ///2000-2001 Simon White.
         ///2007-2010 Antti Lankila.
-        ///2010-2021 Leandro Nini.
+        ///2010-2023 Leandro Nini.
         ///SID emulator (residfp) by Dag Lem.
         ///C64 font by Style.
         ///Ported to C# by Thomas Neumann.
@@ -93,7 +93,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         ///   Looks up a localized string similar to Original player by
         ///2000-2001 Simon White.
         ///2007-2010 Antti Lankila.
-        ///2010-2021 Leandro Nini.
+        ///2010-2023 Leandro Nini.
         ///SID emulator (reSID) by Dag Lem.
         ///C64 font by Style.
         ///Ported to C# by Thomas Neumann.
@@ -121,6 +121,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay {
         internal static string IDS_SID_ERR_BAD_ADDR {
             get {
                 return ResourceManager.GetString("IDS_SID_ERR_BAD_ADDR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bad buffer size.
+        /// </summary>
+        internal static string IDS_SID_ERR_BAD_BUFFER_SIZE {
+            get {
+                return ResourceManager.GetString("IDS_SID_ERR_BAD_BUFFER_SIZE", resourceCulture);
             }
         }
         

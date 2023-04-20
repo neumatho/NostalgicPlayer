@@ -54,9 +54,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Cia
 					// Count 50/60 hz ticks
 					parent.todTickCounter++;
 
-					// Wild assumption: counter is 3 bits and is not reset elsewhere
-					// FIXME: this doesn't seem to be 100% correct - apparently it is reset
-					//        in some cases
+					// Counter is 3 bits
 					parent.todTickCounter &= 7;
 
 					// If the counter matches the TOD frequency ...
@@ -178,12 +176,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Cia
 				}
 
 				// Time of Day clock sec
-				case SECONDS:
-				{
-					goto case MINUTES;
-				}
-
 				// Time of Day clock min
+				case SECONDS:
 				case MINUTES:
 				{
 					data &= 0x7f;
@@ -195,12 +189,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Cia
 				{
 					// Force bits 6-5 = 0
 					data &= 0x9f;
-
-					// Flip AM/PM on hour 12
-					// Flip AM/PM only when writing time, not when writing alarm
-					if (((data & 0x1f) == 0x12) && ((regs[Mos652x.CRB] & 0x80) == 0))
-						data ^= 0x80;
-
 					break;
 				}
 			}
@@ -220,7 +208,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Cia
 				// Set time
 				if (reg == TENTHS)
 				{
-					// Apparently the tick counter is reset to 0 when the clock
+					// The tick counter is kept clear while the clock
 					// is not running and then restarted by writing to the 10th
 					// seconds register
 					if (isStopped)
@@ -234,6 +222,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Cia
 
 				if (clock[reg] != data)
 				{
+					// Flip AM/PM on hour 12 on the rising edge of the comparator
+					if ((reg == HOURS) && ((data & 0x1f) == 0x12))
+						data ^= 0x80;
+
 					changed = true;
 					clock[reg] = data;
 				}
@@ -266,62 +258,58 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Cia
 		private void UpdateCounters()
 		{
 			// Advance the counters
-			// - individual counters are all 4 bit
-			uint8_t t0 = (uint8_t)(clock[TENTHS] & 0x0f);
-			uint8_t t1 = (uint8_t)(clock[SECONDS] & 0x0f);
-			uint8_t t2 = (uint8_t)((clock[SECONDS] >> 4) & 0x0f);
-			uint8_t t3 = (uint8_t)(clock[MINUTES] & 0x0f);
-			uint8_t t4 = (uint8_t)((clock[MINUTES] >> 4) & 0x0f);
-			uint8_t t5 = (uint8_t)(clock[HOURS] & 0x0f);
-			uint8_t t6 = (uint8_t)((clock[HOURS] >> 4) & 0x01);
+			// - individual counters are 4 bit
+			//   except for sh and mh which are 3 bits
+			uint8_t ts = (uint8_t)(clock[TENTHS] & 0x0f);
+			uint8_t sl = (uint8_t)(clock[SECONDS] & 0x0f);
+			uint8_t sh = (uint8_t)((clock[SECONDS] >> 4) & 0x07);
+			uint8_t ml = (uint8_t)(clock[MINUTES] & 0x0f);
+			uint8_t mh = (uint8_t)((clock[MINUTES] >> 4) & 0x07);
+			uint8_t hl = (uint8_t)(clock[HOURS] & 0x0f);
+			uint8_t hh = (uint8_t)((clock[HOURS] >> 4) & 0x01);
 			uint8_t pm = (uint8_t)(clock[HOURS] & 0x80);
 
 			// Tenth seconds (0-9)
-			t0 = (uint8_t)((t0 + 1) & 0x0f);
-			if (t0 == 10)
+			ts = (uint8_t)((ts + 1) & 0x0f);
+			if (ts == 10)
 			{
-				t0 = 0;
+				ts = 0;
 
 				// Seconds (0-59)
-				t1 = (uint8_t)((t1 + 1) & 0x0f);	// x0...x9
-				if (t1 == 10)
+				sl = (uint8_t)((sl + 1) & 0x0f);	// x0...x9
+				if (sl == 10)
 				{
-					t1 = 0;
-					t2 = (uint8_t)((t2 + 1) & 0x07);	// 0x...5x
-					if (t2 == 6)
+					sl = 0;
+					sh = (uint8_t)((sh + 1) & 0x07);	// 0x...5x
+					if (sh == 6)
 					{
-						t2 = 0;
+						sh = 0;
 
 						// Minutes (0-59)
-						t3 = (uint8_t)((t3 + 1) & 0x0f);	// x0...x9
-						if (t3 == 10)
+						ml = (uint8_t)((ml + 1) & 0x0f);	// x0...x9
+						if (ml == 10)
 						{
-							t3 = 0;
-							t4 = (uint8_t)((t4 + 1) & 0x07);	// 0x...5x
-							if (t4 == 6)
+							ml = 0;
+							mh = (uint8_t)((mh + 1) & 0x07);	// 0x...5x
+							if (mh == 6)
 							{
-								t4 = 0;
+								mh = 0;
 
 								// Hours (1-12)
-								t5 = (uint8_t)((t5 + 1) & 0x0f);
-								if (t6 != 0)
+								// Flip from 09:59:59 to 10:00:00
+								// or from 12:59:59 to 01:00:00
+								if (((hl == 2) && (hh == 1)) || ((hl == 9) && (hh == 0)))
 								{
-									// Toggle the am/pm flag when going from 11 to 12 (!)
-									if (t5 == 2)
-										pm ^= 0x80;
-									else if (t5 == 3)	// Wrap 12h -> 1h (FIXME: when hour became x3?)
-									{
-										t5 = 1;
-										t6 = 0;
-									}
+									hl = hh;
+									hh ^= 1;
 								}
 								else
 								{
-									if (t5 == 10)
-									{
-										t5 = 0;
-										t6 = 1;
-									}
+									hl = (byte)((hl + 1) & 0x0f);
+
+									// Toggle the am/pm flag when reaching 12
+									if ((hl == 2) && (hh == 1))
+										pm ^= 0x80;
 								}
 							}
 						}
@@ -329,10 +317,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Cia
 				}
 			}
 
-			clock[TENTHS] = t0;
-			clock[SECONDS] = (uint8_t)(t1 | (t2 << 4));
-			clock[MINUTES] = (uint8_t)(t3 | (t4 << 4));
-			clock[HOURS] = (uint8_t)(t5 | (t6 << 4) | pm);
+			clock[TENTHS] = ts;
+			clock[SECONDS] = (uint8_t)(sl | (sh << 4));
+			clock[MINUTES] = (uint8_t)(ml | (mh << 4));
+			clock[HOURS] = (uint8_t)(hl | (hh << 4) | pm);
 
 			CheckAlarm();
 		}

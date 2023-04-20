@@ -119,7 +119,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidPlayFp
 		/********************************************************************/
 		public uint_least32_t Time()
 		{
-			return sidPlayer.Time();
+			return sidPlayer.TimeMs() / 1000;
 		}
 
 
