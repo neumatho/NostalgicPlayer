@@ -86,7 +86,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 				// and return that instead. It will use more memory to do so, but modules
 				// are relative small anyway, so it should not matter that much
 				Stream stream = new MemoryStream((int)entryStream.Length);
-				Helpers.CopyData(entryStream, stream, (int)entryStream.Length);
+
+				if (entryStream.Length == 0)
+					entryStream.CopyTo(stream);
+				else
+					Helpers.CopyData(entryStream, stream, (int)entryStream.Length);
 
 				// The entry may be crunched, so decrunch it
 				SingleFileDecruncher decruncher = new SingleFileDecruncher(manager);
