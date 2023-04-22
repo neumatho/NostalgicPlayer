@@ -94,8 +94,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			separateWindowsCheckBox.Checked = optionSettings.SeparateWindows;
 			showWindowsInTaskBarCheckBox.Checked = optionSettings.ShowWindowsInTaskBar;
 
-			scanFilesCheckBox.Checked = optionSettings.ScanFiles;
 			useDatabaseCheckBox.Checked = optionSettings.UseDatabase;
+			scanFilesCheckBox.Checked = optionSettings.ScanFiles;
+			removeUnknownCheckBox.Checked = optionSettings.RemoveUnknownModules;
+			extractPlayingTimeCheckBox.Checked = optionSettings.ExtractPlayingTime;
 
 			// Loading
 			doubleBufferingCheckBox.Checked = optionSettings.DoubleBuffering;
@@ -144,8 +146,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			optionSettings.SeparateWindows = separateWindowsCheckBox.Checked;
 			optionSettings.ShowWindowsInTaskBar = showWindowsInTaskBarCheckBox.Checked;
 
-			optionSettings.ScanFiles = scanFilesCheckBox.Checked;
 			optionSettings.UseDatabase = useDatabaseCheckBox.Checked;
+			optionSettings.ScanFiles = scanFilesCheckBox.Checked;
+			optionSettings.RemoveUnknownModules = removeUnknownCheckBox.Checked;
+			optionSettings.ExtractPlayingTime = extractPlayingTimeCheckBox.Checked;
 
 			// Loading
 			optionSettings.DoubleBuffering = doubleBufferingCheckBox.Checked;
@@ -229,6 +233,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private void SeparateWindows_CheckedChanged(object sender, EventArgs e)
 		{
 			windowPanel.Enabled = separateWindowsCheckBox.Checked;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user change the scan files
+		/// </summary>
+		/********************************************************************/
+		private void ScanFiles_CheckedChanged(object sender, EventArgs e)
+		{
+			scanFilesPanel.Enabled = scanFilesCheckBox.Checked;
 		}
 
 

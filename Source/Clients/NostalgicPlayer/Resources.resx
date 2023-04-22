@@ -761,6 +761,9 @@ what has changed since your previous version.</value>
   <data name="IDS_SETTINGS_OPTIONS_GENERAL_ADDTOLIST" xml:space="preserve">
     <value>Add to list as default</value>
   </data>
+  <data name="IDS_SETTINGS_OPTIONS_GENERAL_EXTRACTPLAYINGTIME" xml:space="preserve">
+    <value>Extract playing time</value>
+  </data>
   <data name="IDS_SETTINGS_OPTIONS_GENERAL_REMEMBERLIST" xml:space="preserve">
     <value>Remember list on exit</value>
   </data>
@@ -769,6 +772,9 @@ what has changed since your previous version.</value>
   </data>
   <data name="IDS_SETTINGS_OPTIONS_GENERAL_REMEMBERMODULEPOSITION" xml:space="preserve">
     <value>Remember module position</value>
+  </data>
+  <data name="IDS_SETTINGS_OPTIONS_GENERAL_REMOVEUNKNOWN" xml:space="preserve">
+    <value>Remove unknown modules</value>
   </data>
   <data name="IDS_SETTINGS_OPTIONS_GENERAL_SCANFILES" xml:space="preserve">
     <value>Scan added files</value>

@@ -362,31 +362,35 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				// Skip
 				case 'S':
 				{
-					// Get the index of the module that couldn't be loaded + 1
-					int index = moduleListControl.Items.IndexOf(listItem) + 1;
-
-					// Get the number of items in the list
-					int count = moduleListControl.Items.Count;
-
-					// Deselect the playing flag
-					ChangePlayItem(null);
-
-					// Do there exist a "next" module
-					if (index < count)
+					// Get the index of the module that couldn't be loaded
+					int index = moduleListControl.Items.IndexOf(listItem);
+					if (index != -1)
 					{
-						// Yes, load it
-						LoadAndPlayModule(index);
-					}
-					else
-					{
-						// No
-						if ((count > 1) && (optionSettings.ModuleListEnd == OptionSettings.ModuleListEndAction.JumpToStart))
+						index++;
+
+						// Get the number of items in the list
+						int count = moduleListControl.Items.Count;
+
+						// Deselect the playing flag
+						ChangePlayItem(null);
+
+						// Do there exist a "next" module
+						if (index < count)
 						{
-							// Load the first module, but only if it's valid
-							// or haven't been loaded before
-							ModuleListItem item = moduleListControl.Items[0];
-							if (!item.HaveTime || (item.HaveTime && item.Duration.TotalMilliseconds != 0))
-								LoadAndPlayModule(item);
+							// Yes, load it
+							LoadAndPlayModule(index);
+						}
+						else
+						{
+							// No
+							if ((count > 1) && (optionSettings.ModuleListEnd == OptionSettings.ModuleListEndAction.JumpToStart))
+							{
+								// Load the first module, but only if it's valid
+								// or haven't been loaded before
+								ModuleListItem item = moduleListControl.Items[0];
+								if (!item.HaveTime || (item.HaveTime && item.Duration.TotalMilliseconds != 0))
+									LoadAndPlayModule(item);
+							}
 						}
 					}
 					break;
@@ -397,35 +401,37 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				{
 					// Get the index of the module that couldn't be loaded
 					int index = moduleListControl.Items.IndexOf(listItem);
-
-					// Get the number of items in the list - 1
-					int count = moduleListControl.Items.Count - 1;
-
-					// Deselect the playing flag
-					ChangePlayItem(null);
-
-					// Remove the module from the list
-					moduleListControl.Items.RemoveAt(index);
-
-					// Update the window
-					UpdateControls();
-
-					// Do there exist a "next" module
-					if (index < count)
+					if (index != -1)
 					{
-						// Yes, load it
-						LoadAndPlayModule(index);
-					}
-					else
-					{
-						// No
-						if ((count > 1) && (optionSettings.ModuleListEnd == OptionSettings.ModuleListEndAction.JumpToStart))
+						// Get the number of items in the list - 1
+						int count = moduleListControl.Items.Count - 1;
+
+						// Deselect the playing flag
+						ChangePlayItem(null);
+
+						// Remove the module from the list
+						moduleListControl.Items.RemoveAt(index);
+
+						// Update the window
+						UpdateControls();
+
+						// Do there exist a "next" module
+						if (index < count)
 						{
-							// Load the first module, but only if it's valid
-							// or haven't been loaded before
-							ModuleListItem item = moduleListControl.Items[0];
-							if (!item.HaveTime || (item.HaveTime && item.Duration.TotalMilliseconds != 0))
-								LoadAndPlayModule(item);
+							// Yes, load it
+							LoadAndPlayModule(index);
+						}
+						else
+						{
+							// No
+							if ((count > 1) && (optionSettings.ModuleListEnd == OptionSettings.ModuleListEndAction.JumpToStart))
+							{
+								// Load the first module, but only if it's valid
+								// or haven't been loaded before
+								ModuleListItem item = moduleListControl.Items[0];
+								if (!item.HaveTime || (item.HaveTime && item.Duration.TotalMilliseconds != 0))
+									LoadAndPlayModule(item);
+							}
 						}
 					}
 					break;
@@ -501,33 +507,96 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Will change the time on the item given
+		/// Will replace the given item with the new list of items
 		/// </summary>
 		/********************************************************************/
-		public void SetTimeOnItem(ModuleListItem listItem, TimeSpan time)
+		public void ReplaceItem(ModuleListItem listItem, List<ModuleListItem> newItems)
 		{
-			if (listItem != null)
+			if ((listItem != null) && (newItems.Count > 0))
 			{
-				// Get the previous item time
-				TimeSpan prevTime = listItem.Duration;
-
-				// Change the time on the item
-				listItem.Duration = time;
-
 				// Find index of the item
 				int index = moduleListControl.Items.IndexOf(listItem);
-				if (index >= 0)
+				if (index != -1)
 				{
-					// And update it in the list
-					moduleListControl.InvalidateItem(index);
+					moduleListControl.BeginUpdate();
 
-					// Now calculate the new list time
-					listTime = listTime - prevTime + time;
+					try
+					{
+						moduleListControl.Items.RemoveAt(index);
+						moduleListControl.Items.InsertRange(index, newItems);
+					}
+					finally
+					{
+						moduleListControl.EndUpdate();
+					}
 
-					// And show it
-					UpdateTimes();
+					UpdateListCount();
+					UpdateListControls();
 				}
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will remove all the items in the given list from the module list
+		/// </summary>
+		/********************************************************************/
+		public void RemoveItemsFromModuleList(List<ModuleListItem> items)
+		{
+			moduleListControl.BeginUpdate();
+
+			try
+			{
+				foreach (ModuleListItem moduleListItem in items)
+					moduleListControl.Items.Remove(moduleListItem);
+			}
+			finally
+			{
+				moduleListControl.EndUpdate();
+			}
+
+			UpdateListCount();
+			UpdateListControls();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will update all the items in the given list on the module list
+		/// </summary>
+		/********************************************************************/
+		public void UpdateModuleList(List<ModuleListItemUpdateInfo> items)
+		{
+			moduleListControl.BeginUpdate();
+
+			try
+			{
+				foreach (ModuleListItemUpdateInfo updateInfo in items)
+				{
+					if (moduleListControl.Items.Contains(updateInfo.ListItem))
+					{
+						if (updateInfo.Duration.HasValue)
+						{
+							TimeSpan prevTime = updateInfo.ListItem.Duration;
+
+							// Change the time on the item
+							updateInfo.ListItem.Duration = updateInfo.Duration.Value;
+
+							// Now calculate the new list time
+							listTime = listTime - prevTime + updateInfo.Duration.Value;
+						}
+					}
+				}
+			}
+			finally
+			{
+				moduleListControl.EndUpdate();
+			}
+
+			UpdateTimes();
 		}
 
 		#region Agent window handling
@@ -2524,7 +2593,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					{
 						// Add all the files in the directory
 						List<ModuleListItem> itemList = new List<ModuleListItem>();
-						AddDirectoryToList(path, itemList, false);
+
+						string[] listExtensions = ListFactory.GetExtensions();
+						string[] archiveExtensions = new ArchiveDetector(agentManager).GetExtensions();
+
+						AddDirectoryToList(path, itemList, listExtensions, archiveExtensions, false);
 
 						if (itemList.Count > 0)
 						{
@@ -3324,6 +3397,39 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// Will change the time on the item given
+		/// </summary>
+		/********************************************************************/
+		private void SetTimeOnItem(ModuleListItem listItem, TimeSpan time)
+		{
+			if (listItem != null)
+			{
+				// Get the previous item time
+				TimeSpan prevTime = listItem.Duration;
+
+				// Change the time on the item
+				listItem.Duration = time;
+
+				// Find index of the item
+				int index = moduleListControl.Items.IndexOf(listItem);
+				if (index != -1)
+				{
+					// And update it in the list
+					moduleListControl.InvalidateItem(index);
+
+					// Now calculate the new list time
+					listTime = listTime - prevTime + time;
+
+					// And show it
+					UpdateTimes();
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Update all user controls
 		/// </summary>
 		/********************************************************************/
@@ -3803,9 +3909,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			{
 				// Free loaded module
 				StopAndFreeModule();
-
-				// Set a zero time on the item, to mark it as "taken" for the FileScanner
-				listItem.Duration = new TimeSpan(0);
 			}
 		}
 
@@ -4129,35 +4232,50 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Will append the given file to the list given
 		/// </summary>
 		/********************************************************************/
-		private void AddSingleFileToList(string fileName, List<ModuleListItem> list, bool checkForList)
+		private void AddSingleFileToList(string fileName, List<ModuleListItem> list, string[] listExtensions, string[] archiveExtensions, bool checkForList)
 		{
-			IMultiFileLoader loader = null;
-
-			if (checkForList)
+			try
 			{
-				using (FileStream fs = File.OpenRead(fileName))
+				IMultiFileLoader loader = null;
+
+				string extension = Path.GetExtension(fileName);
+				if (!string.IsNullOrEmpty(extension))
+					extension = extension.Substring(1).ToLower();
+
+				if (checkForList)
 				{
-					loader = ListFactory.Create(fs);
-					if (loader != null)
+					if (listExtensions.Contains(extension))
 					{
-						foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs))
-							list.Add(ListItemConverter.Convert(info));
+						using (FileStream fs = File.OpenRead(fileName))
+						{
+							loader = ListFactory.Create(fs);
+							if (loader != null)
+							{
+								foreach (MultiFileInfo info in loader.LoadList(Path.GetDirectoryName(fileName), fs))
+									list.Add(ListItemConverter.Convert(info));
+							}
+						}
 					}
 				}
-			}
 
-			if (loader == null)
-			{
-				try
+				if (loader == null)
 				{
-					// Check if the file is an archive
-					ArchiveDetector detector = new ArchiveDetector(agentManager);
-
-					bool isArchive = detector.IsArchive(fileName);
-					if (isArchive)
+					if (archiveExtensions.Contains(extension))
 					{
-						foreach (string archiveFileName in detector.GetEntries(fileName))
-							list.Add(new ModuleListItem(new ArchiveFileListItem(archiveFileName)));
+						// Check if the file is an archive
+						ArchiveDetector detector = new ArchiveDetector(agentManager);
+
+						bool isArchive = detector.IsArchive(fileName);
+						if (isArchive)
+						{
+							foreach (string archiveFileName in detector.GetEntries(fileName))
+								list.Add(new ModuleListItem(new ArchiveFileListItem(archiveFileName)));
+						}
+						else
+						{
+							// Just a plain file
+							list.Add(new ModuleListItem(new SingleFileListItem(fileName)));
+						}
 					}
 					else
 					{
@@ -4165,11 +4283,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						list.Add(new ModuleListItem(new SingleFileListItem(fileName)));
 					}
 				}
-				catch (Exception ex)
-				{
-					// Show error
-					ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_ADD_ITEMS, ex.Message));
-				}
+			}
+			catch (Exception ex)
+			{
+				// Show error
+				ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_ADD_ITEMS, ex.Message));
 			}
 		}
 
@@ -4181,15 +4299,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// given
 		/// </summary>
 		/********************************************************************/
-		private void AddDirectoryToList(string directory, List<ModuleListItem> list, bool checkForList)
+		private void AddDirectoryToList(string directory, List<ModuleListItem> list, string[] listExtensions, string[] archiveExtensions, bool checkForList)
 		{
 			// First go through all the files
 			foreach (string fileName in Directory.EnumerateFiles(directory))
-				AddSingleFileToList(fileName, list, checkForList);
+				AddSingleFileToList(fileName, list, listExtensions, archiveExtensions, checkForList);
 
 			// Now go through all the directories
 			foreach (string directoryName in Directory.EnumerateDirectories(directory))
-				AddDirectoryToList(directoryName, list, checkForList);
+				AddDirectoryToList(directoryName, list, listExtensions, archiveExtensions, checkForList);
 		}
 
 
@@ -4441,17 +4559,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			List<ModuleListItem> itemList = new List<ModuleListItem>();
 
+			string[] listExtensions = ListFactory.GetExtensions();
+			string[] archiveExtensions = new ArchiveDetector(agentManager).GetExtensions();
+
 			foreach (string file in files)
 			{
 				if (Directory.Exists(file))
 				{
 					// It's a directory, so add all files inside it
-					AddDirectoryToList(file, itemList, checkForList);
+					AddDirectoryToList(file, itemList, listExtensions, archiveExtensions, checkForList);
 				}
 				else
 				{
 					// It's a file
-					AddSingleFileToList(file, itemList, checkForList);
+					AddSingleFileToList(file, itemList, listExtensions, archiveExtensions, checkForList);
 				}
 			}
 

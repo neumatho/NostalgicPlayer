@@ -28,7 +28,18 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 			this.agentName = agentName;
 		}
 
-		#region IFileDecruncherAgent implementation
+		#region IArchiveDecruncherAgent implementation
+		/********************************************************************/
+		/// <summary>
+		/// Returns the file extensions that identify this player
+		///
+		/// Has to be in lowercase
+		/// </summary>
+		/********************************************************************/
+		public override string[] FileExtensions => new[] { "zip" };
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Test the file to see if it could be identified

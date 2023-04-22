@@ -19,6 +19,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 	{
 		/********************************************************************/
 		/// <summary>
+		/// Returns the file extensions that identify this player
+		/// </summary>
+		/********************************************************************/
+		public string[] FileExtensions => new [] { "npml" };
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will save a list to the given file
 		/// </summary>
 		/********************************************************************/

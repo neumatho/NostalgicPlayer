@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Exceptions;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
@@ -30,6 +31,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		public ArchiveDetector(Manager agentManager)
 		{
 			manager = agentManager;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return all available extensions for archive files
+		/// </summary>
+		/********************************************************************/
+		public string[] GetExtensions()
+		{
+			return GetAllArchiveAgents().SelectMany(x => x.archiveDecruncher.FileExtensions).ToArray();
 		}
 
 
@@ -99,6 +112,27 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
+		/// Return all enabled archive agents
+		/// </summary>
+		/********************************************************************/
+		private IEnumerable<(AgentInfo agentInfo, IArchiveDecruncherAgent archiveDecruncher)> GetAllArchiveAgents()
+		{
+			foreach (AgentInfo agentInfo in manager.GetAllAgents(Manager.AgentType.ArchiveDecrunchers))
+			{
+				// Is the decruncher enabled?
+				if (agentInfo.Enabled)
+				{
+					// Create an instance of the decruncher
+					if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IArchiveDecruncherAgent archiveDecruncher)
+						yield return (agentInfo, archiveDecruncher);
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will try to find the archive agent that can be used on the
 		/// given stream
 		/// </summary>
@@ -110,25 +144,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			// The archive file itself can be crunched, e.g. Bzip2, so decrunch it
 			newStream = decruncher.DecrunchFileMultipleLevels(stream);
 
-			foreach (AgentInfo agentInfo in manager.GetAllAgents(Manager.AgentType.ArchiveDecrunchers))
+			foreach ((AgentInfo agentInfo, IArchiveDecruncherAgent archiveDecruncher) in GetAllArchiveAgents())
 			{
-				// Is the decruncher enabled?
-				if (agentInfo.Enabled)
-				{
-					// Create an instance of the decruncher
-					if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IArchiveDecruncherAgent archiveDecruncher)
-					{
-						// Check the file
-						AgentResult agentResult = archiveDecruncher.Identify(newStream);
-						if (agentResult == AgentResult.Ok)
-							return archiveDecruncher;
+				// Check the file
+				AgentResult agentResult = archiveDecruncher.Identify(newStream);
+				if (agentResult == AgentResult.Ok)
+					return archiveDecruncher;
 
-						if (agentResult != AgentResult.Unknown)
-						{
-							// Some error occurred
-							throw new DecruncherException(agentInfo.TypeName, "Identify() returned an error");
-						}
-					}
+				if (agentResult != AgentResult.Unknown)
+				{
+					// Some error occurred
+					throw new DecruncherException(agentInfo.TypeName, "Identify() returned an error");
 				}
 			}
 

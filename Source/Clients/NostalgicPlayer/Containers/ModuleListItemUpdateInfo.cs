@@ -3,44 +3,48 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.IO;
-using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Interfaces;
+using System;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 
-namespace Polycode.NostalgicPlayer.Kit.Bases
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers
 {
 	/// <summary>
-	/// Base class that can be used for archive decruncher agents
+	/// Indicate which item and what to update on it
 	/// </summary>
-	public abstract class ArchiveDecruncherAgentBase : IArchiveDecruncherAgent
+	public class ModuleListItemUpdateInfo
 	{
-		#region IArchiveDecruncherAgent implementation
 		/********************************************************************/
 		/// <summary>
-		/// Returns the file extensions that identify this player
-		///
-		/// Has to be in lowercase
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public abstract string[] FileExtensions { get; }
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Test the file to see if it could be identified
-		/// </summary>
-		/********************************************************************/
-		public abstract AgentResult Identify(Stream archiveStream);
+		public ModuleListItemUpdateInfo(ModuleListItem moduleListItem)
+		{
+			ListItem = moduleListItem;
+		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Will open the archive and return it
+		/// Holds the item to update
 		/// </summary>
 		/********************************************************************/
-		public abstract IArchive OpenArchive(Stream archiveStream);
-		#endregion
+		public ModuleListItem ListItem
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the new duration
+		/// </summary>
+		/********************************************************************/
+		public TimeSpan? Duration
+		{
+			get; set;
+		}
 	}
 }

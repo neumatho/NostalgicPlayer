@@ -82,12 +82,20 @@
 								<td>If checked, you will see each opened window collected in the NostalgicPlayer icon in the task bar.</td>
 							</tr>
 							<tr>
-								<td>Scan added files</td>
-								<td>NostalgicPlayer tries to find and add module playing time to playlist. This scans newly added modules with missing playing time in the background.</td>
+								<td>Use database to store module information</td>
+								<td>Use a local database to store information about the modules, e.g. the playing time or favorite song system information. This database is then used first to retrieve the information and if not available, NostalgicPlayer will calculate the information.</td>
 							</tr>
 							<tr>
-								<td>Use database to store module information</td>
-								<td>Use a local database to store information about the modules, e.g. the playing time. This database is then used first to retrieve the information and if not available, NostalgicPlayer will calculate the information. This work best together with the <i>Scan added files</i> option above.</td>
+								<td>Scan added files</td>
+								<td>When adding new files to the module list, NostalgicPlayer will look at the file extensions to see if it is a list or archive file, so it can read the entries inside the archive. Sometimes, the extension is wrong or does not exists and therefore NostalgicPlayer cannot detect if the file is an archive. If you then enable this option, NostalgicPlayer will make a deeper check on all the added files. This may take longer time, special when you add a lot of files, e.g. the whole modland directory. Therefore this will run in the background and update the module list when necessary.</td>
+							</tr>
+							<tr>
+								<td>Remove unknown modules</td>
+								<td>If this option is enabled, the background scanner will try to detect each new file added. If NostalgicPlayer cannot figure out which module format the files are, they will be removed from the module list.</td>
+							</tr>
+							<tr>
+								<td>Extract playing time</td>
+								<td>Enable this option if you want to update the module list with the playing time of all known module formats. NostalgicPlayer will first try to read the information from the database, if <i>Use database to store module information</i> is enabled. If NostalgicPlayer cannot read the information from the database, it will try to load the module and calculate the playing time instead.</td>
 							</tr>
 						</table>
 						<br>

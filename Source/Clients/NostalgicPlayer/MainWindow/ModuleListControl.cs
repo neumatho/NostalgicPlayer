@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Native;
 
@@ -125,6 +126,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				collection.Insert(index, item);
 
 				InvalidateIfNeeded(index);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Insert a bunch of items to the collection at the specified
+			/// position
+			/// </summary>
+			/********************************************************************/
+			public void InsertRange(int index, IEnumerable<ModuleListItem> items)
+			{
+				List<ModuleListItem> list = items.ToList();
+
+				for (int i = list.Count - 1; i >= 0; i--)
+					collection.Insert(index, list[i]);
+
+				InvalidateIfNeeded(index, list.Count - 1);
 			}
 
 
@@ -472,8 +491,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		public void InvalidateItem(int index)
 		{
-			if (IsItemVisible(index))
-				moduleListItemsControl.Invalidate();
+			if (index >= 0)
+			{
+				if (IsItemVisible(index))
+					moduleListItemsControl.Invalidate();
+			}
 		}
 
 

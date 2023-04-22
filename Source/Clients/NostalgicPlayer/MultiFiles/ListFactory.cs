@@ -30,6 +30,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 
 		/********************************************************************/
 		/// <summary>
+		/// Return all available extensions for list files
+		/// </summary>
+		/********************************************************************/
+		public static string[] GetExtensions()
+		{
+			return new NpmlList().FileExtensions;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Try to figure out which kind of list this is and return a loader
 		/// if anyone could be found
 		/// </summary>

@@ -196,6 +196,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
+		/// Use database to store module information
+		/// </summary>
+		/********************************************************************/
+		public bool UseDatabase
+		{
+			get => settings.GetBoolEntry("Options", "UseDatabase", false);
+
+			set => settings.SetBoolEntry("Options", "UseDatabase", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Scan added files
 		/// </summary>
 		/********************************************************************/
@@ -210,14 +224,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
-		/// Use database to store module information
+		/// Remove unknown modules from list
 		/// </summary>
 		/********************************************************************/
-		public bool UseDatabase
+		public bool RemoveUnknownModules
 		{
-			get => settings.GetBoolEntry("Options", "UseDatabase", false);
+			get => settings.GetBoolEntry("Options", "RemoveUnknownModules", false);
 
-			set => settings.SetBoolEntry("Options", "UseDatabase", value);
+			set => settings.SetBoolEntry("Options", "RemoveUnknownModules", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Extract playing time from module
+		/// </summary>
+		/********************************************************************/
+		public bool ExtractPlayingTime
+		{
+			get => settings.GetBoolEntry("Options", "ExtractPlayingTime", false);
+
+			set => settings.SetBoolEntry("Options", "ExtractPlayingTime", value);
 		}
 
 

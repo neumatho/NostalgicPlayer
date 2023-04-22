@@ -1772,6 +1772,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Extract playing time.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_GENERAL_EXTRACTPLAYINGTIME {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_GENERAL_EXTRACTPLAYINGTIME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remember list on exit.
         /// </summary>
         internal static string IDS_SETTINGS_OPTIONS_GENERAL_REMEMBERLIST {
@@ -1795,6 +1804,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_SETTINGS_OPTIONS_GENERAL_REMEMBERMODULEPOSITION {
             get {
                 return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_GENERAL_REMEMBERMODULEPOSITION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove unknown modules.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_GENERAL_REMOVEUNKNOWN {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_GENERAL_REMOVEUNKNOWN", resourceCulture);
             }
         }
         

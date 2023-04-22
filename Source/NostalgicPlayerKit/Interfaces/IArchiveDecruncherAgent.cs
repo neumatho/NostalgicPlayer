@@ -14,6 +14,13 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	public interface IArchiveDecruncherAgent : IAgentWorker
 	{
 		/// <summary>
+		/// Returns the file extensions that identify this player
+		///
+		/// Has to be in lowercase
+		/// </summary>
+		string[] FileExtensions { get; }
+
+		/// <summary>
 		/// Test the file to see if it could be identified
 		/// </summary>
 		AgentResult Identify(Stream archiveStream);
