@@ -344,21 +344,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 								{
 									if (player is IModulePlayer modulePlayer)
 									{
-										if (modulePlayer.SelectSong(-1, out _))
-										{
-											duration = player.PlayingModuleInformation.SongTotalTime;
+										if (!modulePlayer.SelectSong(-1, out _))
+											return;
+									}
 
-											if (settings.UseDatabase)
-											{
-												// Update the information in the database
-												if (moduleDatabaseInfo != null)
-													moduleDatabaseInfo = new ModuleDatabaseInfo(duration.Value, moduleDatabaseInfo.ListenCount, moduleDatabaseInfo.LastLoaded);
-												else
-													moduleDatabaseInfo = new ModuleDatabaseInfo(duration.Value, 0, DateTime.MinValue);
+									duration = player.PlayingModuleInformation.SongTotalTime;
 
-												database.StoreInformation(fileName, moduleDatabaseInfo);
-											}
-										}
+									if (settings.UseDatabase)
+									{
+										// Update the information in the database
+										if (moduleDatabaseInfo != null)
+											moduleDatabaseInfo = new ModuleDatabaseInfo(duration.Value, moduleDatabaseInfo.ListenCount, moduleDatabaseInfo.LastLoaded);
+										else
+											moduleDatabaseInfo = new ModuleDatabaseInfo(duration.Value, 0, DateTime.MinValue);
+
+										database.StoreInformation(fileName, moduleDatabaseInfo);
 									}
 								}
 								finally

@@ -421,7 +421,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 			{
 				DurationInfo[] allSongsInfo = durationPlayer.CalculateDuration();
 				if ((allSongsInfo != null) && (allSongsInfo.Length > 0))
+				{
 					durationInfo = allSongsInfo[0];
+
+					// Initialize the module information
+					PlayingModuleInformation = new ModuleInfoFloating(0, durationInfo, null);
+				}
 			}
 		}
 		#endregion
