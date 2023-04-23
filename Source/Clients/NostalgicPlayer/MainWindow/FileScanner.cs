@@ -334,34 +334,37 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						if (loader == null)
 							loader = FindPlayer(fileName);
 
-						IPlayer player = loader.Player;
-
-						if (player.InitPlayer(new PlayerConfiguration(null, loader, new MixerConfiguration()), out string _))
+						if (loader != null)
 						{
-							try
+							IPlayer player = loader.Player;
+
+							if (player.InitPlayer(new PlayerConfiguration(null, loader, new MixerConfiguration()), out string _))
 							{
-								if (player is IModulePlayer modulePlayer)
+								try
 								{
-									if (modulePlayer.SelectSong(-1, out _))
+									if (player is IModulePlayer modulePlayer)
 									{
-										duration = player.PlayingModuleInformation.SongTotalTime;
-
-										if (settings.UseDatabase)
+										if (modulePlayer.SelectSong(-1, out _))
 										{
-											// Update the information in the database
-											if (moduleDatabaseInfo != null)
-												moduleDatabaseInfo = new ModuleDatabaseInfo(duration.Value, moduleDatabaseInfo.ListenCount, moduleDatabaseInfo.LastLoaded);
-											else
-												moduleDatabaseInfo = new ModuleDatabaseInfo(duration.Value, 0, DateTime.MinValue);
+											duration = player.PlayingModuleInformation.SongTotalTime;
 
-											database.StoreInformation(fileName, moduleDatabaseInfo);
+											if (settings.UseDatabase)
+											{
+												// Update the information in the database
+												if (moduleDatabaseInfo != null)
+													moduleDatabaseInfo = new ModuleDatabaseInfo(duration.Value, moduleDatabaseInfo.ListenCount, moduleDatabaseInfo.LastLoaded);
+												else
+													moduleDatabaseInfo = new ModuleDatabaseInfo(duration.Value, 0, DateTime.MinValue);
+
+												database.StoreInformation(fileName, moduleDatabaseInfo);
+											}
 										}
 									}
 								}
-							}
-							finally
-							{
-								player.CleanupPlayer();
+								finally
+								{
+									player.CleanupPlayer();
+								}
 							}
 						}
 					}

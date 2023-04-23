@@ -426,6 +426,20 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 				newStream = new ModuleStream(ms, false);
 			}
 
+			if (wrapperStream is MemoryStream)
+			{
+				// Copy the whole stream into a new one
+				long position = wrapperStream.Position;
+
+				MemoryStream ms = new MemoryStream((int)wrapperStream.Length);
+				wrapperStream.Seek(0, SeekOrigin.Begin);
+				wrapperStream.CopyTo(ms);
+
+				wrapperStream.Seek(position, SeekOrigin.Begin);
+
+				newStream = new ModuleStream(ms, false);
+			}
+
 			if (newStream == null)
 				throw new NotSupportedException($"Stream of type {wrapperStream.GetType()} cannot be duplicated");
 
