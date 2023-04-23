@@ -112,12 +112,13 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 					if (temp > 0x24)
 						return false;
 
+					if (temp > 0)
+						gotNotes = true;
+
 					// Check sample number
 					temp = (ushort)((temp1 & 0xff000000) >> 24);
 					if (temp > 0x1f)
 						return false;
-
-					gotNotes = true;
 				}
 			}
 
