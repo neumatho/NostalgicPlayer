@@ -485,6 +485,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		/********************************************************************/
 		private AgentResult TestModule(byte[] buffer)
 		{
+			// We do not support SC68 modules yet, so ignore those until now
+			if ((buffer[0] == 0x53) && (buffer[1] == 0x43) && (buffer[2] == 0x36) && (buffer[3] == 0x38))
+				return AgentResult.Unknown;
+
 			if (!ExtractInfoFromInitFunction(buffer))
 				return AgentResult.Unknown;
 
