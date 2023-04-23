@@ -1193,7 +1193,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MikMod.LibMikMod
 			uint i = (uint)(n << 2) + (fine >> 4);		// n * 8 + fine / 16
 
 			ushort p1 = LookupTables.LogTab[i];
-			ushort p2 = LookupTables.LogTab[i + 1];
+			ushort p2 = i + 1 < LookupTables.LogTab.Length ? LookupTables.LogTab[i + 1] : p1;
 
 			return (ushort)(Interpolate((short)(fine >> 4), 0, 15, (short)p1, (short)p2) >> o);
 		}

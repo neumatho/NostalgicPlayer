@@ -1379,6 +1379,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 			if (effectArg > 127)
 				effectArg = 127;
 
+			if (effectArg <= playingInfo.SongPosition)
+				endReached = true;
+
 			playingInfo.SongPosition = effectArg;
 		}
 

@@ -120,6 +120,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 
 						newFileName = ArchivePath.CombinePathParts(archiveName, Path.Combine(directoryName, $"{newExtension}.{name}"));
 						yield return newFileName;
+
+						newFileName = Path.ChangeExtension(newFileName, string.Empty)[0..^1];
+						yield return newFileName;
 					}
 				}
 				else
@@ -133,6 +136,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 						name = name.Substring(index + 1);
 
 						newFileName = Path.Combine(directoryName, $"{newExtension}.{name}");
+						yield return newFileName;
+
+						newFileName = Path.ChangeExtension(newFileName, string.Empty)[0..^1];
 						yield return newFileName;
 					}
 				}

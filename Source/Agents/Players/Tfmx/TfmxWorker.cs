@@ -2141,7 +2141,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 							if (!simulating)
 							{
-								if (playingInfo.Pdb.CurrPos == playingInfo.Pdb.LastPos)
+								if (playingInfo.Pdb.CurrPos >= playingInfo.Pdb.LastPos)
 								{
 									playingInfo.Pdb.CurrPos = playingInfo.Pdb.FirstPos;
 									endReached = true;
@@ -2328,20 +2328,25 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				for (int x = 0; x < 8; x++)
 				{
 					if (DoTrack(playingInfo.Pdb.p, playingInfo.Pdb.p[x], false))
+					{
+						if (endReached)
+							break;
+
 						x = -1;
+					}
 				}
 
 				// Extra check for "end of module" added by Thomas Neumann
 				int y = 0;
 				for (int x = 0; x < 8; x++)
 				{
-					if (playingInfo.Pdb.p[x].PNum >= 0x90)
+					if (playingInfo.Pdb.p[x].PNum >= 0x80)
 						y++;
 				}
 
 				if (y == 8)
 				{
-					if (playingInfo.Pdb.CurrPos == playingInfo.Pdb.LastPos)
+					if (playingInfo.Pdb.CurrPos >= playingInfo.Pdb.LastPos)
 					{
 						playingInfo.Pdb.CurrPos = playingInfo.Pdb.FirstPos;
 						endReached = true;

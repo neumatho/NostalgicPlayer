@@ -654,7 +654,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 		private void ProcessChannel(int channelNumber, ChannelInfo channel)
 		{
 			if (channel.TrackLength == 0)
+			{
+				OnEndReached(channelNumber);
 				return;
+			}
 
 			Instrument inst = channel.Instrument;
 
@@ -1125,7 +1128,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 				if (index < 0)
 					index = 0;
 
-				sb.Append(channels[i].Track[index].BlockNumber);
+				if (index < channels[i].Track.Length)
+					sb.Append(channels[i].Track[index].BlockNumber);
+				else
+					sb.Append("-");
+
 				sb.Append(", ");
 			}
 
