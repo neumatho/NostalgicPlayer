@@ -44,37 +44,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		private ModuleInfoStatic(AgentInfo playerAgentInfo, string moduleName, string author, string[] comment, Font commentFont, string[] lyrics, Font lyricsFont, string moduleFormat, string moduleFormatDescription, string playerName, string playerDescription, int channels, int virtualChannels, long crunchedSize, long moduleSize, int maxSongNumber)
-		{
-			PlayerAgentInfo = playerAgentInfo;
-			ModuleName = moduleName;
-			Author = author;
-			Comment = comment;
-			CommentFont = commentFont;
-			Lyrics = lyrics;
-			LyricsFont = lyricsFont;
-			ModuleFormat = moduleFormat;
-			ModuleFormatDescription = moduleFormatDescription;
-			PlayerName = playerName;
-			PlayerDescription = playerDescription;
-			Channels = channels;
-			VirtualChannels = virtualChannels;
-			CrunchedSize = crunchedSize;
-			ModuleSize = moduleSize;
-			MaxSongNumber = maxSongNumber;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
 		private ModuleInfoStatic(Loader loader, IPlayerAgent playerAgent)
 		{
 			PlayerAgentInfo = loader.PlayerAgentInfo;
-			ModuleName = playerAgent.ModuleName.Trim();
+			ModuleName = playerAgent.ModuleName?.Trim();
 			Comment = playerAgent.Comment;
 			CommentFont = playerAgent.CommentFont;
 			Lyrics = playerAgent.Lyrics;
