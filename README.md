@@ -11,7 +11,7 @@ If you want to try it out, you can install the player from Microsoft Store <a hr
 
 # License
 
-NostalgicPlayer is licensed under the <a href="https://github.com/neumatho/NostalgicPlayer/blob/main/LICENSE">Apache-2.0 License</a>. SidPlayFp, ReSIDfp, MikMod player and converter are licensed under <a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Agents/Players/MikMod/LICENSE">GNU Lesser General Public License</a>. Ancient decruncher is licensed under the <a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Agents/Decrunchers/AncientDecruncher/LICENSE">BSD 2-Clause License</a>.
+NostalgicPlayer is licensed under the <a href="https://github.com/neumatho/NostalgicPlayer/blob/main/LICENSE">Apache-2.0 License</a>. SidPlayFp, ReSIDfp, Mpg123, MikMod player and converter are licensed under <a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Agents/Players/MikMod/LICENSE">GNU Lesser General Public License</a>. Ancient decruncher is licensed under the <a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Agents/Decrunchers/AncientDecruncher/LICENSE">BSD 2-Clause License</a>.
 
 # Structure
 
