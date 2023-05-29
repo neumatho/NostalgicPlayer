@@ -11,32 +11,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123.Containers
 	internal static class LookupTables
 	{
 		/// <summary>
-		/// Bit rates for [MPEG 1/2][layer]
-		/// </summary>
-		public static readonly int[,,] TabSel123 = new int[2, 3, 16]
-		{
-			{
-				{ 0, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448, 0 },
-				{ 0, 32, 48, 56,  64,  80,  96, 112, 128, 160, 192, 224, 256, 320, 384, 0 },
-				{ 0, 32, 40, 48,  56,  64,  80,  96, 112, 128, 160, 192, 224, 256, 320, 0 }
-			},
-
-			{
-				{ 0, 32, 48, 56, 64, 80, 96, 112, 128, 144, 160, 176, 192, 224, 256, 0 },
-				{ 0,  8, 16, 24, 32, 40, 48,  56,  64,  80,  96, 112, 128, 144, 160, 0 },
-				{ 0,  8, 16, 24, 32, 40, 48,  56,  64,  80,  96, 112, 128, 144, 160, 0 }
-			}
-		};
-
-		/// <summary>
-		/// Frequency table
-		/// </summary>
-		public static readonly int[] Freqs = new int[9]
-		{
-			44100, 48000, 32000, 22050, 24000, 16000, 11025, 12000, 8000
-		};
-
-		/// <summary>
 		/// Genres from MP3 tags
 		/// </summary>
 		public static readonly string[] Genre = new string[192]

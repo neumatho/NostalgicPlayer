@@ -216,6 +216,9 @@ MPEG files are audio samples using a lossy compression algorithm. MPEG 2.5 has a
   <data name="IDS_MPG_INFO_EMPHASIS3" xml:space="preserve">
     <value>CCIT J.17</value>
   </data>
+  <data name="IDS_MPG_INFO_FREE_FORMAT" xml:space="preserve">
+    <value>Free format</value>
+  </data>
   <data name="IDS_MPG_INFO_NO" xml:space="preserve">
     <value>No</value>
   </data>

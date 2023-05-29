@@ -3,16 +3,19 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123.Containers
+using System;
+
+namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123.LibMpg123.Containers
 {
 	/// <summary>
-	/// Different modes of the MPG stream
+	/// 
 	/// </summary>
-	internal enum Mode
+	[Flags]
+	internal enum Frame_State_Flags
 	{
-		Stereo,
-		JointStereo,
-		DualChannel,
-		Mono
+		Accurate = 0x1,					// < 0001 Positions are considered accurate
+		Frankenstein = 0x2,				// < 0010 This stream is concatenated
+		Fresh_Decoder = 0x4,			// < 0100 Decoder is fleshly initialized
+		Decoder_Live = 0x8,				// < 1000 Decoder can be used
 	}
 }

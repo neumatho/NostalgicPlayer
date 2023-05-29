@@ -152,6 +152,24 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 				return flag;
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initializes the player to start the sample from start
+		/// </summary>
+		/********************************************************************/
+		public override bool InitSound(out string errorMessage)
+		{
+			if (!base.InitSound(out errorMessage))
+				return false;
+
+			if ((SupportFlags & SamplePlayerSupportFlag.SetPosition) != 0)
+				SetPosition(TimeSpan.Zero);
+
+			return true;
+		}
 		#endregion
 	}
 }

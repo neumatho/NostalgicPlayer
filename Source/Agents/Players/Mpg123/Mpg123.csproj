@@ -33,16 +33,16 @@
     <DocumentationFile>bin\Mpg123.xml</DocumentationFile>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(Platform)'=='x64'">
-    <None Include="..\..\..\3rdParty\Mpg123\libmpg123-x64.dll" Link="libs\libmpg123-x64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 	<ItemGroup Condition="'$(Platform)'=='x86'">
 		<None Include="..\..\..\3rdParty\Mpg123\libmpg123-x86.dll" Link="libs\libmpg123-x86.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="libs\**" />
+	  <EmbeddedResource Remove="libs\**" />
+	  <None Remove="libs\**" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -62,10 +62,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="libs\" />
   </ItemGroup>
 
 </Project>

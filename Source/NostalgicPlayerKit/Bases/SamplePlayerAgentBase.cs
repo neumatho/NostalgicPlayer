@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.IO;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
@@ -66,8 +65,6 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		public virtual bool InitSound(out string errorMessage)
 		{
 			errorMessage = string.Empty;
-
-			modStream.Seek(0, SeekOrigin.Begin);
 
 			return true;
 		}

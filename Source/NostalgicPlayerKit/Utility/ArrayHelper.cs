@@ -22,6 +22,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		public static T[] InitializeArray<T>(int length) where T : new()
 		{
 			T[] array = new T[length];
+
 			for (int i = 0; i < length; i++)
 				array[i] = new T();
 
@@ -32,13 +33,15 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 		/********************************************************************/
 		/// <summary>
-		/// Create an array of the type given and fill it will newly created
-		/// objects of same type
+		/// Create an array where each element holds an array of the type
+		/// given. The second array is filled with newly created objects of
+		/// same type
 		/// </summary>
 		/********************************************************************/
 		public static T[][] InitializeArray<T>(int length1, int length2) where T : new()
 		{
 			T[][] array = new T[length1][];
+
 			for (int i = 0; i < length1; i++)
 				array[i] = InitializeArray<T>(length2);
 
@@ -49,13 +52,14 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 		/********************************************************************/
 		/// <summary>
-		/// Create an array of the type given and fill it will newly created
-		/// objects of same type
+		/// Create an array where each element holds an array of the type
+		/// given. The second array is not initialized
 		/// </summary>
 		/********************************************************************/
 		public static T[][] Initialize2Arrays<T>(int length1, int length2) where T : new()
 		{
 			T[][] array = new T[length1][];
+
 			for (int i = 0; i < length1; i++)
 				array[i] = new T[length2];
 
@@ -66,15 +70,57 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 		/********************************************************************/
 		/// <summary>
-		/// Create an array of the type given and fill it will newly created
-		/// objects of same type
+		/// Create an array where each element holds an array to an array of
+		/// the type given. The first and second arrays are initialized, the
+		/// third is not
+		/// </summary>
+		/********************************************************************/
+		public static T[][][] Initialize3Arrays<T>(int length1, int length2, int length3) where T : new()
+		{
+			T[][][] array = new T[length1][][];
+
+			for (int i = 0; i < length1; i++)
+				array[i] = Initialize2Arrays<T>(length2, length3);
+
+			return array;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create an array where each element holds an array to an array of
+		/// the type given. The last array is not initialized
 		/// </summary>
 		/********************************************************************/
 		public static T[][][] InitializeArrayWithArray<T>(int length1, int length2) where T : new()
 		{
 			T[][][] array = new T[length1][][];
+
 			for (int i = 0; i < length1; i++)
 				array[i] = new T[length2][];
+
+			return array;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a 2D array where each element holds an array of the type
+		/// given. The second array is filled with newly created objects of
+		/// same type
+		/// </summary>
+		/********************************************************************/
+		public static T[,] Initialize2DArray<T>(int length1, int length2) where T : new()
+		{
+			T[,] array = new T[length1, length2];
+
+			for (int i = 0; i < length1; i++)
+			{
+				for (int j = 0; j < length2; j++)
+					array[i, j] = new T();
+			}
 
 			return array;
 		}
@@ -171,6 +217,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 			int dimension1Count = array.GetLength(1);
 
 			T[,] newArray = new T[dimension0Count, dimension1Count];
+
 			for (int i = 0; i < dimension0Count; i++)
 			{
 				for (int j = 0; j < dimension1Count; j++)
