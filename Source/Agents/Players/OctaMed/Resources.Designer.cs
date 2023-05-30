@@ -293,7 +293,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MED 2.10 MMD0.
+        ///   Looks up a localized string similar to MED 2.10 (MMD0).
         /// </summary>
         internal static string IDS_MED_NAME_AGENT1 {
             get {

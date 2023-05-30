@@ -212,7 +212,7 @@ This player is the same as the MED (MMD0) format, but the patterns are packed. S
     <value>OctaMED</value>
   </data>
   <data name="IDS_MED_NAME_AGENT1" xml:space="preserve">
-    <value>MED 2.10 MMD0</value>
+    <value>MED 2.10 (MMD0)</value>
   </data>
   <data name="IDS_MED_NAME_AGENT2" xml:space="preserve">
     <value>OctaMED</value>

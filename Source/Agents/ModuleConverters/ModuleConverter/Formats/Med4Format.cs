@@ -16,7 +16,7 @@ using Polycode.NostalgicPlayer.Kit.Utility;
 namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 {
 	/// <summary>
-	/// Can convert MED 2.10 MED4 to MED 2.10 MMD0 format
+	/// Can convert MED 2.10 (MED4) to MED 2.10 (MMD0) format
 	/// </summary>
 	internal class Med4Format : ModuleConverterAgentBase
 	{
