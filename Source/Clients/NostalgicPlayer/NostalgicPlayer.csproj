@@ -10,7 +10,7 @@
     <Authors>Thomas Neumann</Authors>
     <ApplicationIcon>App.ico</ApplicationIcon>
     <Version>1.9.0</Version>
-    <Platforms>x64;x86;AnyCPU</Platforms>
+    <Platforms>x64;x86;AnyCPU;ARM64</Platforms>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
@@ -24,6 +24,13 @@
     <OutputPath></OutputPath>
     <DocumentationFile>bin\NostalgicPlayer.xml</DocumentationFile>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <OutputPath />
+    <DocumentationFile>bin\NostalgicPlayer.xml</DocumentationFile>
+    <RuntimeIdentifier>win-arm64</RuntimeIdentifier>
     <SelfContained>false</SelfContained>
   </PropertyGroup>
 
@@ -50,6 +57,17 @@
     <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <WarningsAsErrors />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <OutputPath />
+    <DocumentationFile>bin\NostalgicPlayer.xml</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <RuntimeIdentifier>win-arm64</RuntimeIdentifier>
     <SelfContained>false</SelfContained>
     <WarningsAsErrors />
   </PropertyGroup>
