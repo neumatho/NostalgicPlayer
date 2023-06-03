@@ -119,7 +119,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				shutdownEvent.Set();
 
 				handlerThread.Join(10000);
+
+				shutdownEvent.Dispose();
+				shutdownEvent = null;
 			}
+
+			queueSemaphore?.Dispose();
+			queueSemaphore = null;
+
+			cleanupEvent?.Dispose();
+			cleanupEvent = null;
+
+			handlerThread = null;
 		}
 
 
@@ -530,19 +541,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 			catch (Exception)
 			{
 				// If an exception is thrown, abort the thread
-			}
-			finally
-			{
-				shutdownEvent.Dispose();
-				shutdownEvent = null;
-
-				queueSemaphore.Dispose();
-				queueSemaphore = null;
-
-				cleanupEvent.Dispose();
-				cleanupEvent = null;
-
-				handlerThread = null;
 			}
 		}
 
