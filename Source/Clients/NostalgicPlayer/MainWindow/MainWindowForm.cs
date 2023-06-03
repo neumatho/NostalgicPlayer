@@ -1272,6 +1272,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				// Stop any playing modules
 				StopAndFreeModule();
+				moduleHandler.FreeAllModules();
 
 				// Close all windows
 				CloseWindows();
