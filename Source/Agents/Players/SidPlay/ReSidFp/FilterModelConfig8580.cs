@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 {
@@ -95,8 +96,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		/// </summary>
 		/********************************************************************/
 		private FilterModelConfig8580() : base(
-			0.25,	// Voice voltage range FIXME measure
-			4.80,	// Voice DC voltage FIXME was 4.76
+			0.30,	// Voice voltage range FIXME measure
+			4.84,	// Voice DC voltage FIXME measure
 			22e-9,	// Capacitor value
 			9.09,	// Vdd
 			0.80,	// Vth
@@ -105,89 +106,115 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 			OPAMP_SIZE)
 		{
 			// Create lookup tables for gains / summers
-			OpAmp opampModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
-
-			// The filter summer operates at n ~ 1, and has 5 fundamentally different
-			// input configurations (2 - 6 input "resistors")
-			//
-			// Note that all "on" transistors are modeled as one. This is not
-			// entirely accurate, since the input for each transistor is different,
-			// and transistors are not linear components. However modeling all
-			// transistors separately would be extremely costly
-			for (int i = 0; i < 5; i++)
+			void Loop1()
 			{
-				int iDiv = 2 + i;		// 2 - 6 input "resistors"
-				int size = iDiv << 16;
-				double n = iDiv;
+				OpAmp opampModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
 
-				opampModel.Reset();
-				summer[i] = new ushort[size];
-
-				for (int vi = 0; vi < size; vi++)
+				// The filter summer operates at n ~ 1, and has 5 fundamentally different
+				// input configurations (2 - 6 input "resistors")
+				//
+				// Note that all "on" transistors are modeled as one. This is not
+				// entirely accurate, since the input for each transistor is different,
+				// and transistors are not linear components. However modeling all
+				// transistors separately would be extremely costly
+				for (int i = 0; i < 5; i++)
 				{
-					double vIn = vMin + vi / n16 / iDiv;	// vMin .. vMax
-					summer[i][vi] = GetNormalizedValue(opampModel.Solve(n, vIn));
+					int iDiv = 2 + i;		// 2 - 6 input "resistors"
+					int size = iDiv << 16;
+					double n = iDiv;
+
+					opampModel.Reset();
+					summer[i] = new ushort[size];
+
+					for (int vi = 0; vi < size; vi++)
+					{
+						double vIn = vMin + vi / n16 / iDiv;	// vMin .. vMax
+						summer[i][vi] = GetNormalizedValue(opampModel.Solve(n, vIn));
+					}
 				}
 			}
 
-			// The audio mixer operates at n ~ 8/5, ans has 8 fundamentally different
-			// input configurations (0 - 7 input "resistors").
-			//
-			// All "on", transistors are modeled as one - see comments above for
-			// the filter summer
-			for (int i = 0; i < 8; i++)
+			void Loop2()
 			{
-				int iDiv = i == 0 ? 1 : i;
-				int size = i == 0 ? 1 : i << 16;
-				double n = i * 8.0 / 5.0;
+				OpAmp opampModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
 
-				opampModel.Reset();
-				mixer[i] = new ushort[size];
-
-				for (int vi = 0; vi < size; vi++)
+				// The audio mixer operates at n ~ 8/5, ans has 8 fundamentally different
+				// input configurations (0 - 7 input "resistors").
+				//
+				// All "on", transistors are modeled as one - see comments above for
+				// the filter summer
+				for (int i = 0; i < 8; i++)
 				{
-					double vIn = vMin + vi / n16 / iDiv;	// vMin .. vMax
-					mixer[i][vi] = GetNormalizedValue(opampModel.Solve(n, vIn));
+					int iDiv = i == 0 ? 1 : i;
+					int size = i == 0 ? 1 : i << 16;
+					double n = i * 8.0 / 5.0;
+
+					opampModel.Reset();
+					mixer[i] = new ushort[size];
+
+					for (int vi = 0; vi < size; vi++)
+					{
+						double vIn = vMin + vi / n16 / iDiv;	// vMin .. vMax
+						mixer[i][vi] = GetNormalizedValue(opampModel.Solve(n, vIn));
+					}
 				}
 			}
 
-			// 4 bit "resistor" ladders in the audio output gain
-			// necessitate 16 gain tables.
-			// From die photographs of the volume "resistor" ladders
-			// it follows that gain ~ vol/16 (assuming ideal op-amps)
-			for (int n8 = 0; n8 < 16; n8++)
+			void Loop3()
 			{
-				int size = 1 << 16;
-				double n = n8 / 16.0;
+				OpAmp opampModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
 
-				opampModel.Reset();
-				gain_vol[n8] = new ushort[size];
-
-				for (int vi = 0; vi < size; vi++)
+				// 4 bit "resistor" ladders in the audio output gain
+				// necessitate 16 gain tables.
+				// From die photographs of the volume "resistor" ladders
+				// it follows that gain ~ vol/16 (assuming ideal
+				// op-amps and ideal "resistors")
+				for (int n8 = 0; n8 < 16; n8++)
 				{
-					double vIn = vMin + vi / n16;			// vMin .. vMax
-					gain_vol[n8][vi] = GetNormalizedValue(opampModel.Solve(n, vIn));
+					int size = 1 << 16;
+					double n = n8 / 16.0;
+
+					opampModel.Reset();
+					gain_vol[n8] = new ushort[size];
+
+					for (int vi = 0; vi < size; vi++)
+					{
+						double vIn = vMin + vi / n16;			// vMin .. vMax
+						gain_vol[n8][vi] = GetNormalizedValue(opampModel.Solve(n, vIn));
+					}
 				}
 			}
 
-			// 4 bit "resistor" ladders in the bandpass resonance gain
-			// necessitate 16 gain tables.
-			// From die photographs of the bandpass and volume "resistor" ladders
-			// it follows that 1/Q ~ 2^((4 - res)/8) (assuming ideal
-			// op-amps and ideal "resistors")
-			for (int n8 = 0; n8 < 16; n8++)
+			void Loop4()
 			{
-				int size = 1 << 16;
+				OpAmp opampModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
 
-				opampModel.Reset();
-				gain_res[n8] = new ushort[size];
-
-				for (int vi = 0; vi < size; vi++)
+				// 4 bit "resistor" ladders in the bandpass resonance gain
+				// necessitate 16 gain tables.
+				// From die photographs of the bandpass "resistor" ladders
+				// it follows that 1/Q ~ 2^((4 - res)/8) (assuming ideal
+				// op-amps and ideal "resistors")
+				for (int n8 = 0; n8 < 16; n8++)
 				{
-					double vIn = vMin + vi / n16;			// vMin .. vMax
-					gain_res[n8][vi] = GetNormalizedValue(opampModel.Solve(resGain[n8], vIn));
+					int size = 1 << 16;
+
+					opampModel.Reset();
+					gain_res[n8] = new ushort[size];
+
+					for (int vi = 0; vi < size; vi++)
+					{
+						double vIn = vMin + vi / n16;			// vMin .. vMax
+						gain_res[n8][vi] = GetNormalizedValue(opampModel.Solve(resGain[n8], vIn));
+					}
 				}
 			}
+
+			Task loop1Task = Task.Run(Loop1);
+			Task loop2Task = Task.Run(Loop2);
+			Task loop3Task = Task.Run(Loop3);
+			Task loop4Task = Task.Run(Loop4);
+
+			Task.WaitAll(loop1Task, loop2Task, loop3Task, loop4Task);
 		}
 
 

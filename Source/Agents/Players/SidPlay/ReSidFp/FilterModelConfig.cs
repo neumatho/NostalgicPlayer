@@ -203,19 +203,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 			return vth;
 		}
 
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public double GetVoiceDcVoltage()
-		{
-			return voice_dc_voltage;
-		}
-
 		#region Helper functions
 		/********************************************************************/
 		/// <summary>

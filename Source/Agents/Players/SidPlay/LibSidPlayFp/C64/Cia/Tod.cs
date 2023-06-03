@@ -51,18 +51,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.C64.Cia
 
 				if (!parent.isStopped)
 				{
-					// Count 50/60 hz ticks
-					parent.todTickCounter++;
-
-					// Counter is 3 bits
-					parent.todTickCounter &= 7;
-
-					// If the counter matches the TOD frequency ...
-					if (parent.todTickCounter == ((parent.regs[Mos652x.CRA] & 0x80) != 0 ? 5 : 6))
+					// The divider which divides the 50 or 60 Hz power supply ticks into
+					// 10 Hz uses a 3-bit ring counter, which goes 000, 001, 011, 111, 110,
+					// 100.
+					// For 50 Hz: matches at 110 (like "4")
+					// For 60 Hz: matches at 100 (like "5")
+					// (the middle bit of the match value is CRA7)
+					// After a match there is a 1 tick delay (until the next power supply
+					// tick) and then the 1/10 seconds counter increases, and the ring
+					// resets to 000
+					//
+					// todtickcounter bits are mirrored to save an ANDing
+					if (parent.todTickCounter == (0x1 | ((parent.regs[Mos652x.CRA] & 0x80) >> 6)))
 					{
 						// Reset the counter and update the timer
 						parent.todTickCounter = 0;
 						parent.UpdateCounters();
+					}
+					else
+					{
+						// Count 50/60 Hz power supply ticks
+						parent.todTickCounter = (parent.todTickCounter >> 1) | ((~parent.todTickCounter << 2) & 0x4);
 					}
 				}
 			}

@@ -129,7 +129,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		{
 			wfTable = new matrix_t(4, 4096);
 
-			BuildWaveTable();
+			// Build waveform table
+			for (uint idx = 0; idx < (1U << 12); idx++)
+			{
+				short saw = (short)idx;
+				short tri = (short)TriXor(idx);
+
+				wfTable[0][idx] = 0xfff;
+				wfTable[1][idx] = tri;
+				wfTable[2][idx] = saw;
+				wfTable[3][idx] = (short)(saw & (saw << 1));
+			}
 		}
 
 
@@ -293,27 +303,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 			}
 
 			return value;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Build waveform table
-		/// </summary>
-		/********************************************************************/
-		private void BuildWaveTable()
-		{
-			for (uint idx = 0; idx < (1U << 12); idx++)
-			{
-				short saw = (short)idx;
-				short tri = (short)TriXor(idx);
-
-				wfTable[0][idx] = 0xfff;
-				wfTable[1][idx] = tri;
-				wfTable[2][idx] = saw;
-				wfTable[3][idx] = (short)(saw & (saw << 1));
-			}
 		}
 		#endregion
 	}

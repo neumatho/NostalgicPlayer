@@ -294,7 +294,7 @@ general/Lorenz-2.15/src/cia1tbnew                    --cia new
 #general/Lorenz-2.15/src/cia2tanew                    --cia new
 #general/Lorenz-2.15/src/cia2tbnew                    --cia new
 general/Lorenz-2.15/src/finish
-# Sprite collision, won't work
+# sprite collision, won't work
 #general/ram0001/test1
 ### C64 ###
 C64/bankio/bankio
@@ -439,6 +439,7 @@ CIA/tod/hzsync2
 CIA/tod/hzsync3
 CIA/tod/hzsync4
 CIA/tod/hzsync5
+CIA/tod/hzsync6
 CIA/tod/powerup
 CIA/tod/read-latch
 CIA/tod/stability
@@ -571,7 +572,7 @@ interrupts/irq-ackn-bug/cia1                         --cia old
 interrupts/irq-ackn-bug/cia1new                      --cia new
 interrupts/irq-ackn-bug/cia2                         --cia old
 interrupts/irq-ackn-bug/cia2new                      --cia new
-# Sprite collision, won't work
+# sprite collision, won't work
 #interrupts/irq-ackn-bug/irq-ack-vicii
 interrupts/irqdma/nmitest6                           --cia old
 interrupts/irqdma/nmitest6                           --cia new
@@ -762,7 +763,7 @@ VICII/split-tests/bascan/bascan
 VICII/split-tests/lightpen/lightpen                  --vic pal
 VICII/split-tests/lightpen/lightpen                  --vic ntsc
 VICII/split-tests/lightpen/lightpen                  --vic drean
-# Are these supposed to work?
+# are these supposed to work?
 #VICII/split-tests/spritescan/spritescan              --vic pal
 #VICII/split-tests/spritescan/spritescan_drean        --vic drean
 VICII/vspbug/vsp_bug

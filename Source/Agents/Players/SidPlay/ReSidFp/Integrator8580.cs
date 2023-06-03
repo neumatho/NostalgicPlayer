@@ -74,7 +74,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.ReSidFp
 		{
 			// Gate voltage is controlled by the switched capacitor voltage divider
 			// Ua = Ue * v = 4.76v  1<v<2
-			double vg = fmc.GetVoiceDcVoltage() * v;
+			double vg = 4.76 * v;
 			double vgt = vg - fmc.GetVth();
 
 			// Vg - Vth, normalized so that translated values can be subtracted:

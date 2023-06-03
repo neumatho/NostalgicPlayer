@@ -33,12 +33,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidPlayFp
 		public enum sid_model_t
 		{
 			/// <summary>
-			/// Old MOS 6581
+			/// Old SID (MOS 6581)
 			/// </summary>
 			MOS6581,
 
 			/// <summary>
-			/// New CSG 8580/MOS 6582
+			/// New SID (CSG 8580/MOS 6582)
 			/// </summary>
 			MOS8580
 		}
@@ -49,17 +49,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidPlayFp
 		public enum cia_model_t
 		{
 			/// <summary>
-			/// Old MOS 6526/6526A with interrupts delayed by one cycle
+			/// Old CIA with interrupts delayed by one cycle (MOS 6526/6526A)
 			/// </summary>
 			MOS6526,
 
 			/// <summary>
-			/// New CSG 8521, often marked 6526 216A
+			/// New CIA (CSG 8521/MOS 6526 216A)
 			/// </summary>
 			MOS8521,
 
 			/// <summary>
-			/// Old MOS 6526, peculiar batch from week 4485 with different serial port behavior since 2.2
+			/// Old CIA, peculiar batch from week 4485 with different serial port behavior (MOS 6526 4485) since 2.2
 			/// </summary>
 			MOS6526W4485
 		}
@@ -70,27 +70,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidPlayFp
 		public enum c64_model_t
 		{
 			/// <summary>
-			/// European PAL model
+			/// European PAL model (MOS 6569)
 			/// </summary>
 			PAL,
 
 			/// <summary>
-			/// American/Japanese NTSC model
+			/// American/Japanese NTSC model (MOS 6567 R8)
 			/// </summary>
 			NTSC,
 
 			/// <summary>
-			/// Older NTSC model with different video chip revision
+			/// Older NTSC model with different video chip revision (MOS 6567 R56A)
 			/// </summary>
 			OLD_NTSC,
 
 			/// <summary>
-			/// Argentinian PAL-N model
+			/// Argentinian PAL-N model (MOS 6572)
 			/// </summary>
 			DREAN,
 
 			/// <summary>
-			/// Brasilian PAL-M model
+			/// Brasilian PAL-M model (MOS 6573)
 			/// </summary>
 			PAL_M
 		}
