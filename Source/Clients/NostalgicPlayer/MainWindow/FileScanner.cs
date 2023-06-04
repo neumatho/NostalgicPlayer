@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			// Create queue
 			queue = new Queue<QueueInfo>();
-			queueSemaphore = new Semaphore(0, 1000);
+			queueSemaphore = new Semaphore(0, 50000);
 
 			// Start the background thread
 			scannerThread = new Thread(DoScannerThread);
@@ -279,14 +279,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				return list.Count > 0;
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
-				// Show error
-				mainWindowForm.BeginInvoke(new Action(() =>
-				{
-					mainWindowForm.ShowSimpleErrorMessage(string.Format(Resources.IDS_ERR_ADD_ITEMS, ex.Message));
-				}));
-
 				return false;
 			}
 		}
