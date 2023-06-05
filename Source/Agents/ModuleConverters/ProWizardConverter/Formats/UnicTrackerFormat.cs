@@ -118,7 +118,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			for (int i = 0; i < numberOfPatterns * 256; i++)
 			{
 				// Check note
-				if (moduleStream.Read_UINT8() > 0x66)
+				if ((moduleStream.Read_UINT8() & 0x3f) > 37)
 				{
 					ok = false;
 					break;
@@ -138,7 +138,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 				for (int i = 0; i < numberOfPatterns * 256; i++)
 				{
 					// Check note
-					if (moduleStream.Read_UINT8() > 0x66)
+					if ((moduleStream.Read_UINT8() & 0x3f) > 37)
 						return false;
 
 					moduleStream.Seek(2, SeekOrigin.Current);

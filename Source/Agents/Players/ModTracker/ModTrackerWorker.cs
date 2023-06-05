@@ -641,6 +641,27 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 		/********************************************************************/
 		/// <summary>
+		/// Checks for foreign module formats, which should be ignored
+		/// </summary>
+		/********************************************************************/
+		private bool CheckForeignModuleFormats(ModuleStream moduleStream)
+		{
+			moduleStream.Seek(0, SeekOrigin.Begin);
+
+			uint id1 = moduleStream.Read_B_UINT32();
+			uint id2 = moduleStream.Read_B_UINT32();
+			uint id3 = moduleStream.Read_B_UINT32();
+
+			if ((id1 == 0x46616d69) && (id2 == 0x54726163) && (id3 == 0x6b657220))	// FamiTracker
+				return true;
+
+			return false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Checks the module to see if it's a 15 samples SoundTracker
 		///
 		/// These checks are based on the information found at:
@@ -652,11 +673,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/********************************************************************/
 		private ModuleType Check15SamplesModule(ModuleStream moduleStream)
 		{
+			// First check for any other module types that may be detected as
+			// a 15-samples module in some cases. We want to skip those
+			if (CheckForeignModuleFormats(moduleStream))
+				return ModuleType.Unknown;
+
 			ModuleType minimumVersion = ModuleType.UltimateSoundTracker10;
 
 			byte[] buf = new byte[22];
 			int diskPrefixCount = 0;
 			bool hasBigSamples = false;
+			int sampleLength = 0;
 
 			// Check all sample names
 			//
@@ -694,13 +721,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				}
 
 				// Check the sample length
-				ushort len = moduleStream.Read_B_UINT16();
-				if ((len * 2) > 9999)
+				int len = moduleStream.Read_B_UINT16() * 2;
+				if (len > 9999)
 				{
 					// 32 KB samples was introduced in Master SoundTracker
 					minimumVersion = GetMinimumVersion(minimumVersion, ModuleType.MasterSoundTracker10);
 					hasBigSamples = true;
 				}
+
+				sampleLength += len;
 			}
 
 			if (diskPrefixCount > 0)
@@ -718,13 +747,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			byte[] pos = new byte[128];
 			moduleStream.Read(pos, 0, 128);
 
-			byte[] usedPatterns = FindUsedPatterns(pos, songLen);
+			byte[] usedPatterns = FindUsedPatterns(pos, 128);
 			if (usedPatterns.FirstOrDefault(p => p >= 64) != 0)
 				return ModuleType.Unknown;
 
-			if ((usedPatterns.Max(p => p) * 1024 + moduleStream.Position) >= moduleStream.Length)
+			long calculatedLength = (usedPatterns.Max(p => p) + 1) * 1024 + 0x258 + sampleLength;
+			if ((calculatedLength < (moduleStream.Length - 0x640)) || (calculatedLength > (moduleStream.Length + 0x200)))
 			{
-				// If a pattern number points outside the file itself, it is invalid
+				// The calculated module length should match almost the actual length
 				return ModuleType.Unknown;
 			}
 
