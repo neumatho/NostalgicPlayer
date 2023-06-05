@@ -904,7 +904,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123.LibMpg123
 				c_int rt = 0;
 
 				// Should one assume a zero RVA as no RVA?
-				if ((fr.P.Rva == 2) && (fr.Rva.Level[1] != -1))
+				if ((fr.P.Rva == Mpg123_Param_Rva.Rva_Album) && (fr.Rva.Level[1] != -1))
 					rt = 1;
 
 				if (fr.Rva.Level[rt] != -1)

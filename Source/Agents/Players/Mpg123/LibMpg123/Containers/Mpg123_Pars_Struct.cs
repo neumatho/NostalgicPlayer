@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123.LibMpg123.Containers
 		public Mpg123_Param_Flags Flags;// Combination of above
 		public c_long Force_Rate;
 		public c_int Down_Sample;
-		public c_int Rva;				// (which) rva to do: 0: nothing, 1: radio/mix/track 2: album/audiophile
+		public Mpg123_Param_Rva Rva;	// (which) rva to do: 0: nothing, 1: radio/mix/track 2: album/audiophile
 		public c_long HalfSpeed;
 		public c_long DoubleSpeed;
 		public c_long Timeout;

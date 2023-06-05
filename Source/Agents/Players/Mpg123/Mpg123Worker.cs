@@ -536,30 +536,61 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		{
 			ModuleStream moduleStream = fileInfo.ModuleStream;
 
+			// Some other module formats have a lot of data that can be parsed as a MPEG file.
+			// To prevent false positives, we check some for these module formats and will
+			// then skip the MPEG test below if such a module is found
+			if (CheckModuleFormats(moduleStream))
+				return ModuleType.Unknown;
+
 			mpg123Handle = LibMpg123.LibMpg123.Mpg123_New(null, out Mpg123_Errors error);
 			if (error != Mpg123_Errors.Ok)
 				return ModuleType.Unknown;
 
 			try
 			{
+				Mpg123_Errors result = mpg123Handle.Mpg123_Param(Mpg123_Parms.Add_Flags, (c_int)(Mpg123_Param_Flags.No_Frankenstein | Mpg123_Param_Flags.No_Resync), 0);
+				if (result != Mpg123_Errors.Ok)
+					return ModuleType.Unknown;
+
 				moduleStream.Seek(0, SeekOrigin.Begin);
 
 				// Open the stream and scan it to find all tags, etc.
-				Mpg123_Errors result = mpg123Handle.Mpg123_Open_Fd(moduleStream);
+				result = mpg123Handle.Mpg123_Open_Fd(moduleStream);
 				if (result != Mpg123_Errors.Ok)
 					return ModuleType.Unknown;
 
-				// We need 10 ok frames
-				for (int i = 0; i < 10; i++)
-				{
-					result = mpg123Handle.Mpg123_FrameByFrame_Next();
-					if ((result != Mpg123_Errors.Ok) && (result != Mpg123_Errors.New_Format))
-						return ModuleType.Unknown;
-				}
+				// Read first frame
+				result = mpg123Handle.Mpg123_FrameByFrame_Next();
+				if (result != Mpg123_Errors.New_Format)
+					return ModuleType.Unknown;
 
+				// Get frame information
 				result = mpg123Handle.Mpg123_Info(out Mpg123_FrameInfo fi);
 				if (result != Mpg123_Errors.Ok)
 					return ModuleType.Unknown;
+
+				// We need ok frames in the first Kb and 20 frames after that
+				long minPosition = moduleStream.Position + 1024;
+
+				for (int i = 0; i < 20; i++)
+				{
+					result = mpg123Handle.Mpg123_FrameByFrame_Next();
+					if (result != Mpg123_Errors.Ok)
+						return ModuleType.Unknown;
+
+					if (fi.BitRate == 0)	// Free format
+					{
+						result = mpg123Handle.Mpg123_Info(out Mpg123_FrameInfo info);
+						if (result != Mpg123_Errors.Ok)
+							return ModuleType.Unknown;
+
+						if (info.FrameSize < 32)
+							return ModuleType.Unknown;
+					}
+
+					if (moduleStream.Position < minPosition)
+						i--;
+				}
 
 				switch (fi.Version)
 				{
@@ -580,6 +611,92 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 				mpg123Handle.Mpg123_Close();
 				mpg123Handle.Mpg123_Delete();
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check for different module formats that should be ignored
+		/// </summary>
+		/********************************************************************/
+		private bool CheckModuleFormats(ModuleStream moduleStream)
+		{
+			// Beepola
+			moduleStream.Seek(0, SeekOrigin.Begin);
+
+			uint id1 = moduleStream.Read_B_UINT32();
+			uint id2 = moduleStream.Read_B_UINT32();
+
+			if ((id1 == 0x4242534f) && ((id2 & 0xffff0000) == 0x4e470000))	// BBSONG
+				return true;
+
+			// Funktracker
+			if (id1 == 0x46756e6b)											// Funk
+				return true;
+
+			// Nintendo Sound Format
+			if (id1 == 0x4e45534d)											// NESM
+				return true;
+
+			// Nintendo SPC
+			if (id1 == 0x534e4553)											// SNES
+				return true;
+
+			// SC68
+			if (id1 == 0x53433638)											// SC68
+				return true;
+
+			// Gameboy Sound System
+			uint maskedId = id1 & 0xffffff00;
+
+			if (maskedId == 0x47425300)										// GBS
+				return true;
+
+			// Graoumf Tracker
+			if (maskedId == 0x47544b00)										// GTK
+				return true;
+
+			// Graoumf Tracker 2
+			if (maskedId == 0x47543200)										// GT2
+				return true;
+
+			// MO3
+			if (maskedId == 0x4d4f3300)										// MO3
+				return true;
+
+			// YM
+			if (maskedId == 0x594d3500)										// YM5
+				return true;
+
+			// Delitracker custom
+			if (id1 == 0x000003f3)
+			{
+				moduleStream.Seek(8, SeekOrigin.Begin);
+
+				id1 = moduleStream.Read_B_UINT32();
+				moduleStream.Seek((id1 + 1) * 4 + 16, SeekOrigin.Current);
+
+				id1 = moduleStream.Read_B_UINT32();
+				id2 = moduleStream.Read_B_UINT32();
+
+				if ((id1 == 0x44454c49) && (id2 == 0x5249554d))				// DELIRIUM
+					return true;
+			}
+
+			// The Musical Enlightenment
+			moduleStream.Seek(0x1a8a, SeekOrigin.Begin);
+
+			byte[] buf = new byte[32];
+			moduleStream.Read(buf, 0, 32);
+
+			for (int i = buf.Length - 1; i >= 0; i--)
+			{
+				if ((buf[i] >= 0x20) && (buf[i] <= 0x7f))
+					return true;
+			}
+
+			return false;
 		}
 
 

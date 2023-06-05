@@ -152,6 +152,45 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123.LibMpg123
 
 		/********************************************************************/
 		/// <summary>
+		/// Set a specific parameter on a handle
+		/// </summary>
+		/********************************************************************/
+		public Mpg123_Errors Mpg123_Param(Mpg123_Parms key, c_long val, c_double fVal)
+		{
+			Mpg123_Handle mh = handle;
+
+			if (mh == null)
+				return Mpg123_Errors.Bad_Handle;
+
+			Mpg123_Errors r = Mpg123_Par(mh.P, key, val, fVal);
+			if (r != Mpg123_Errors.Ok)
+			{
+				mh.Err = r;
+				r = Mpg123_Errors.Err;
+			}
+			else
+			{
+				// Special treatment for some settings
+				if (key == Mpg123_Parms.Index_Size)
+				{
+					// Apply frame index size and grow property on the fly
+					r = frame.Frame_Index_Setup(mh);
+					if (r != Mpg123_Errors.Ok)
+						mh.Err = Mpg123_Errors.Index_Fail;
+				}
+
+				// Feeder pool size is applied right away, reader will react to that
+				if ((key == Mpg123_Parms.FeedPool) || (key == Mpg123_Parms.FeedBuffer))
+					readers.Bc_PoolSize(mh.RDat.Buffer, (size_t)mh.P.FeedPool, (size_t)mh.P.FeedBuffer);
+			}
+
+			return r;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Look up error strings given integer code
 		/// </summary>
 		/********************************************************************/
@@ -1134,6 +1173,179 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123.LibMpg123
 		public Mpg123_Errors Mpg123_Fmt2(Mpg123_Pars mp, c_long rate, Mpg123_ChannelCount channels, Mpg123_Enc_Enum encodings)
 		{
 			return format.Mpg123_Fmt2(mp, rate, channels, encodings);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set a specific parameter in a par handle
+		/// </summary>
+		/********************************************************************/
+		public Mpg123_Errors Mpg123_Par(Mpg123_Pars mp, Mpg123_Parms key, c_long val, c_double fVal)
+		{
+			Mpg123_Errors ret = Mpg123_Errors.Ok;
+
+			if (mp == null)
+				return Mpg123_Errors.Bad_Pars;
+
+			switch (key)
+			{
+				case Mpg123_Parms.Verbose:
+				{
+					mp.Verbose = val;
+					break;
+				}
+
+				case Mpg123_Parms.Flags:
+				{
+					if (((Mpg123_Param_Flags)val & Mpg123_Param_Flags.Gapless) != 0)
+						ret = Mpg123_Errors.No_Gapless;
+
+					if (ret == Mpg123_Errors.Ok)
+						mp.Flags = (Mpg123_Param_Flags)val;
+
+					break;
+				}
+
+				case Mpg123_Parms.Add_Flags:
+				{
+					// Enabling of gapless mode doesn't work when it's not there, but
+					// disabling (below) is no problem
+					if (((Mpg123_Param_Flags)val & Mpg123_Param_Flags.Gapless) != 0)
+						ret = Mpg123_Errors.No_Gapless;
+					else
+						mp.Flags |= (Mpg123_Param_Flags)val;
+
+					break;
+				}
+
+				case Mpg123_Parms.Remove_Flags:
+				{
+					mp.Flags &= ~(Mpg123_Param_Flags)val;
+					break;
+				}
+
+				case Mpg123_Parms.Force_Rate:
+				{
+					if (val > 96000)
+						ret = Mpg123_Errors.Bad_Rate;
+					else
+						mp.Force_Rate = val < 0 ? 0 : val;	// > 0 means enable, 0 disable
+
+					break;
+				}
+
+				case Mpg123_Parms.Down_Sample:
+				{
+					if ((val < 0) || (val > 2))
+						ret = Mpg123_Errors.Bad_Rate;
+					else
+						mp.Down_Sample = val;
+
+					break;
+				}
+
+				case Mpg123_Parms.Rva:
+				{
+					if ((val < 0) || ((Mpg123_Param_Rva)val > Mpg123_Param_Rva.Rva_Max))
+						ret = Mpg123_Errors.Bad_Rva;
+					else
+						mp.Rva = (Mpg123_Param_Rva)val;
+
+					break;
+				}
+
+				case Mpg123_Parms.DownSpeed:
+				{
+					mp.HalfSpeed = val < 0 ? 0 : val;
+					break;
+				}
+
+				case Mpg123_Parms.UpSpeed:
+				{
+					mp.DoubleSpeed = val < 0 ? 0 : val;
+					break;
+				}
+
+				case Mpg123_Parms.Icy_Interval:
+				{
+					mp.Icy_Interval = val > 0 ? val : 0;
+					break;
+				}
+
+				case Mpg123_Parms.Outscale:
+				{
+					// Choose the value that is non-zero, if any.
+					// Downscaling integers to 1.0
+					mp.OutScale = val == 0 ? fVal : (c_double)val / Constant.Short_Scale;
+					break;
+				}
+
+				case Mpg123_Parms.Timeout:
+				{
+					if (val > 0)
+						ret = Mpg123_Errors.No_Timeout;
+
+					break;
+				}
+
+				case Mpg123_Parms.Resync_Limit:
+				{
+					mp.Resync_Limit = val;
+					break;
+				}
+
+				case Mpg123_Parms.Index_Size:
+				{
+					mp.Index_Size = val;
+					break;
+				}
+
+				case Mpg123_Parms.Preframes:
+				{
+					if (val >= 0)
+						mp.PreFrames = val;
+					else
+						ret = Mpg123_Errors.Bad_Value;
+
+					break;
+				}
+
+				case Mpg123_Parms.FeedPool:
+				{
+					if (val >= 0)
+						mp.FeedPool = val;
+					else
+						ret = Mpg123_Errors.Bad_Value;
+
+					break;
+				}
+
+				case Mpg123_Parms.FeedBuffer:
+				{
+					if (val > 0)
+						mp.FeedBuffer = val;
+					else
+						ret = Mpg123_Errors.Bad_Value;
+
+					break;
+				}
+
+				case Mpg123_Parms.FreeFormat_Size:
+				{
+					mp.FreeFormat_FrameSize = val;
+					break;
+				}
+
+				default:
+				{
+					ret = Mpg123_Errors.Bad_Param;
+					break;
+				}
+			}
+
+			return ret;
 		}
 
 		#region Private methods

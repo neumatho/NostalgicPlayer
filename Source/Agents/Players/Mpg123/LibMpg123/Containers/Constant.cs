@@ -36,6 +36,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123.LibMpg123.Containers
 
 		public const int Scale_Block = 12;
 
+		public const int Short_Scale = 32768;
+
 		public const int Mpg123_Rates = 9;
 		public const int Mpg123_Encodings = 12;
 	}

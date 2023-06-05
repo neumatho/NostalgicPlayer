@@ -470,6 +470,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123.LibMpg123
 			(
 				((head & Hdr_Sync) != Hdr_Sync)
 				||
+				// Version: 00, 10, 11 is 2.5,2,1; 01 is reserved (added by Thomas Neumann)
+				(((head & Hdr_Version) >> Hdr_Version_Shift) == 1)
+				||
 				// Layer: 01,10,11 is 1,2,3; 00 is reserved
 				(((head & Hdr_Layer) >> Hdr_Layer_Shift) == 0)
 				||
@@ -478,6 +481,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123.LibMpg123
 				||
 				// Sampling freq: 11 is reserved
 				(((head & Hdr_SampleRate) >> Hdr_SampleRate_Shift) == 0x3)
+				||
+				// Emphasis: 10 is reserved (added by Thomas Neumann)
+				(((head & Hdr_Emphasis) >> Hdr_Emphasis_Shift) == 0x2)
 				// Here used to be a mpeg 2.5 check... re-enabled 2.5 decoding due to lack
 				// of evidence that it is really not good
 			)
