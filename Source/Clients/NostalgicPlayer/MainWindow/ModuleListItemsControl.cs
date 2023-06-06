@@ -542,7 +542,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			if (e.Button == MouseButtons.Left)
 			{
-				int previousCount = selectedItems.Count;
+				bool selectionChanged = false;
 
 				int index = IndexFromPoint(e.Location);
 				if (index != -1)
@@ -552,11 +552,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						case Keys.Control:
 						{
 							if (!selectedItems.ContainsKey(index))
-							{
 								selectedItems[index] = collection[index];
+							else
+								selectedItems.Remove(index);
 
-								lastItemSelected = index;
-							}
+							lastItemSelected = index;
+							selectionChanged = true;
 							break;
 						}
 
@@ -578,6 +579,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 								for (int i = from; i <= to; i++)
 									selectedItems[i] = collection[i];
 							}
+
+							selectionChanged = true;
 							break;
 						}
 
@@ -589,6 +592,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 								selectedItems[index] = collection[index];
 
 								lastItemSelected = index;
+								selectionChanged = true;
 							}
 							break;
 						}
@@ -607,11 +611,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				{
 					selectedItems.Clear();
 					lastItemSelected = -1;
+					selectionChanged = true;
 
 					dragBoxFromMouseDown = Rectangle.Empty;
 				}
 
-				if (selectedItems.Count != previousCount)
+				if (selectionChanged)
 				{
 					deltaToLastSelected = 0;
 
