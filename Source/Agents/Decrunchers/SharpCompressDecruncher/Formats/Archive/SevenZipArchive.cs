@@ -44,10 +44,14 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		public ArchiveStream OpenEntry(string entryName)
 		{
 			entryName = entryName.Replace('\\', '/');
-
 			SevenZipArchiveEntry entry = archive.Entries.FirstOrDefault(e => e.Key.Equals(entryName, StringComparison.OrdinalIgnoreCase));
 			if (entry == null)
-				throw new DecruncherException(agentName, string.Format(Resources.IDS_SCOM_ERR_ENTRY_NOT_FOUND, entryName));
+			{
+				entryName = entryName.Replace('/', '\\');
+				entry = archive.Entries.FirstOrDefault(e => e.Key.Equals(entryName, StringComparison.OrdinalIgnoreCase));
+				if (entry == null)
+					throw new DecruncherException(agentName, string.Format(Resources.IDS_SCOM_ERR_ENTRY_NOT_FOUND, entryName));
+			}
 
 			return new ArchiveEntryStream(entry, entry.OpenEntryStream());
 		}
