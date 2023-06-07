@@ -575,6 +575,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 				for (int i = 0; i < 20; i++)
 				{
 					result = mpg123Handle.Mpg123_FrameByFrame_Next();
+					if (result == Mpg123_Errors.Done)
+						break;
+
 					if (result != Mpg123_Errors.Ok)
 						return ModuleType.Unknown;
 
@@ -685,15 +688,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 			}
 
 			// The Musical Enlightenment
-			moduleStream.Seek(0x1a8a, SeekOrigin.Begin);
-
-			byte[] buf = new byte[32];
-			moduleStream.Read(buf, 0, 32);
-
-			for (int i = buf.Length - 1; i >= 0; i--)
+			if (moduleStream.Length > (0x1a8a + 32))
 			{
-				if ((buf[i] >= 0x20) && (buf[i] <= 0x7f))
-					return true;
+				moduleStream.Seek(0x1a8a, SeekOrigin.Begin);
+
+				byte[] buf = new byte[32];
+				moduleStream.Read(buf, 0, 32);
+
+				if (buf[0] != 0x00)
+				{
+					bool invalid = false;
+
+					for (int i = buf.Length - 1; i > 0; i--)
+					{
+						if ((buf[i] != 0x00) && ((buf[i] < 0x20) || (buf[i] > 0x7f)))
+						{
+							invalid = true;
+							break;
+						}
+					}
+
+					if (!invalid)
+						return true;
+				}
 			}
 
 			return false;

@@ -481,9 +481,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123.LibMpg123
 				||
 				// Sampling freq: 11 is reserved
 				(((head & Hdr_SampleRate) >> Hdr_SampleRate_Shift) == 0x3)
-				||
+//				||
 				// Emphasis: 10 is reserved (added by Thomas Neumann)
-				(((head & Hdr_Emphasis) >> Hdr_Emphasis_Shift) == 0x2)
+//				(((head & Hdr_Emphasis) >> Hdr_Emphasis_Shift) == 0x2)
 				// Here used to be a mpeg 2.5 check... re-enabled 2.5 decoding due to lack
 				// of evidence that it is really not good
 			)
