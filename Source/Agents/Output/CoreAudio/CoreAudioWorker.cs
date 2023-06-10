@@ -575,10 +575,12 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/********************************************************************/
 		private void SetVolume()
 		{
-			if (outputFormat.Channels == 1)
-				audioClient.AudioStreamVolume.SetAllVolumes(new[] { currentVolume });
-			else
-				audioClient.AudioStreamVolume.SetAllVolumes(new[] { currentVolume, currentVolume });
+			float[] volumes = new float[audioClient.AudioStreamVolume.ChannelCount];
+			for (int i = 0; i < volumes.Length; ++i)
+			{
+				volumes[i] = currentVolume;
+			}
+			audioClient.AudioStreamVolume.SetAllVolumes(volumes);
 		}
 
 
