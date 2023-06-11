@@ -12,6 +12,7 @@ using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 {
@@ -260,36 +261,50 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 
 				// Allocate memory to hold the sequences
 				seqNum = (short)(seqLength / 13);
-				sequences = new Sequence[seqNum];
 
-				// Read the sequences
-				for (i = 0; i < seqNum; i++)
+				if (seqNum == 0)
 				{
-					Sequence seq = new Sequence();
+					// If no sequences are stored in the module, create
+					// an empty one
+					sequences = new Sequence[1];
+					sequences[0] = new Sequence
+					{
+						VoiceSeq = ArrayHelper.InitializeArray<VoiceSeq>(4)
+					};
+				}
+				else
+				{
+					sequences = new Sequence[seqNum];
 
-					seq.VoiceSeq[0] = new VoiceSeq();
-					seq.VoiceSeq[0].Pattern = moduleStream.Read_UINT8();
-					seq.VoiceSeq[0].Transpose = (sbyte)moduleStream.Read_UINT8();
-					seq.VoiceSeq[0].SoundTranspose = (sbyte)moduleStream.Read_UINT8();
+					// Read the sequences
+					for (i = 0; i < seqNum; i++)
+					{
+						Sequence seq = new Sequence();
 
-					seq.VoiceSeq[1] = new VoiceSeq();
-					seq.VoiceSeq[1].Pattern = moduleStream.Read_UINT8();
-					seq.VoiceSeq[1].Transpose = (sbyte)moduleStream.Read_UINT8();
-					seq.VoiceSeq[1].SoundTranspose = (sbyte)moduleStream.Read_UINT8();
+						seq.VoiceSeq[0] = new VoiceSeq();
+						seq.VoiceSeq[0].Pattern = moduleStream.Read_UINT8();
+						seq.VoiceSeq[0].Transpose = (sbyte)moduleStream.Read_UINT8();
+						seq.VoiceSeq[0].SoundTranspose = (sbyte)moduleStream.Read_UINT8();
 
-					seq.VoiceSeq[2] = new VoiceSeq();
-					seq.VoiceSeq[2].Pattern = moduleStream.Read_UINT8();
-					seq.VoiceSeq[2].Transpose = (sbyte)moduleStream.Read_UINT8();
-					seq.VoiceSeq[2].SoundTranspose = (sbyte)moduleStream.Read_UINT8();
+						seq.VoiceSeq[1] = new VoiceSeq();
+						seq.VoiceSeq[1].Pattern = moduleStream.Read_UINT8();
+						seq.VoiceSeq[1].Transpose = (sbyte)moduleStream.Read_UINT8();
+						seq.VoiceSeq[1].SoundTranspose = (sbyte)moduleStream.Read_UINT8();
 
-					seq.VoiceSeq[3] = new VoiceSeq();
-					seq.VoiceSeq[3].Pattern = moduleStream.Read_UINT8();
-					seq.VoiceSeq[3].Transpose = (sbyte)moduleStream.Read_UINT8();
-					seq.VoiceSeq[3].SoundTranspose = (sbyte)moduleStream.Read_UINT8();
+						seq.VoiceSeq[2] = new VoiceSeq();
+						seq.VoiceSeq[2].Pattern = moduleStream.Read_UINT8();
+						seq.VoiceSeq[2].Transpose = (sbyte)moduleStream.Read_UINT8();
+						seq.VoiceSeq[2].SoundTranspose = (sbyte)moduleStream.Read_UINT8();
 
-					seq.Speed = moduleStream.Read_UINT8();
+						seq.VoiceSeq[3] = new VoiceSeq();
+						seq.VoiceSeq[3].Pattern = moduleStream.Read_UINT8();
+						seq.VoiceSeq[3].Transpose = (sbyte)moduleStream.Read_UINT8();
+						seq.VoiceSeq[3].SoundTranspose = (sbyte)moduleStream.Read_UINT8();
 
-					sequences[i] = seq;
+						seq.Speed = moduleStream.Read_UINT8();
+
+						sequences[i] = seq;
+					}
 				}
 
 				// Allocate memory to hold the patterns
@@ -832,7 +847,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				voiData.PatternPos = 0;
 
 				// Have we reached the end of the module
-				if (voiData.SongPos == seqNum)
+				if (voiData.SongPos >= seqNum)
 				{
 					// We have, wrap around the module
 					voiData.SongPos = 0;

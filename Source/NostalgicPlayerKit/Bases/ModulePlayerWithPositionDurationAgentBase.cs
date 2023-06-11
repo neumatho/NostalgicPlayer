@@ -123,6 +123,9 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 				// Clear the "end" flag again, so the module don't stop playing immediately
 				HasEndReached = false;
 
+				if (result.Count == 0)
+					result.Add(new DurationInfo(TimeSpan.Zero, Array.Empty<PositionInfo>(), Array.Empty<TimeSpan>()));
+
 				subSongInfo = new SubSongInfo(result.Count, 0);
 				allDurationInfo = result.ToArray();
 
@@ -152,6 +155,12 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 			playerRestartTime = TimeSpan.Zero;
 
 			PositionInfoForPositionDuration positionInfo = GetPositionInfo(0);
+			if (positionInfo == null)
+			{
+				errorMessage = string.Empty;
+				return true;
+			}
+
 			InitializeWorkingPositionSubSongArray(positionInfo);
 
 			PlayingFrequency = positionInfo.PlayingFrequency;
@@ -292,7 +301,12 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		protected bool HasPositionBeenVisited(int position)
 		{
-			return GetPositionSubSongArray()[position] != -1;
+			int[] array = GetPositionSubSongArray();
+
+			if (position >= array.Length)
+				return true;
+
+			return array[position] != -1;
 		}
 
 
@@ -305,24 +319,26 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		protected void MarkPositionAsVisited(int position)
 		{
 			int[] array = GetPositionSubSongArray();
-
-			if (array[position] == -1)
+			if (position < array.Length)
 			{
-				array[position] = currentSubSong;
-
-				if (positionTimes != null)
-					positionTimes[position] = currentTotalTime;
-			}
-
-			if (!doNotTrigEvents)
-			{
-				int subSong = array[position];
-				if (subSong != currentSubSong)
+				if (array[position] == -1)
 				{
-					currentSubSong = subSong;
-					currentDurationInfo = allDurationInfo[subSong];
+					array[position] = currentSubSong;
 
-					OnSubSongChanged(new SubSongChangedEventArgs(currentSubSong, currentDurationInfo));
+					if (positionTimes != null)
+						positionTimes[position] = currentTotalTime;
+				}
+
+				if (!doNotTrigEvents)
+				{
+					int subSong = array[position];
+					if (subSong != currentSubSong)
+					{
+						currentSubSong = subSong;
+						currentDurationInfo = allDurationInfo[subSong];
+
+						OnSubSongChanged(new SubSongChangedEventArgs(currentSubSong, currentDurationInfo));
+					}
 				}
 			}
 		}
@@ -351,8 +367,13 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		{
 			if (currentDurationInfo != null)
 			{
-				playerRestartTime = currentDurationInfo.PlayerPositionTime[restartPosition];
-				InitializeWorkingPositionSubSongArray(GetPositionInfo((int)(playerRestartTime.TotalSeconds / IDurationPlayer.NumberOfSecondsBetweenEachSnapshot)));
+				if (restartPosition < currentDurationInfo.PlayerPositionTime.Length)
+				{
+					playerRestartTime = currentDurationInfo.PlayerPositionTime[restartPosition];
+					InitializeWorkingPositionSubSongArray(GetPositionInfo((int)(playerRestartTime.TotalSeconds / IDurationPlayer.NumberOfSecondsBetweenEachSnapshot)));
+				}
+				else
+					playerRestartTime = TimeSpan.Zero;
 			}
 
 			OnEndReached();
@@ -379,7 +400,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		private PositionInfoForPositionDuration GetPositionInfo(int index)
 		{
-			return (PositionInfoForPositionDuration)currentDurationInfo.PositionInfo[index];
+			return index < currentDurationInfo.PositionInfo.Length ? (PositionInfoForPositionDuration)currentDurationInfo.PositionInfo[index] : null;
 		}
 
 

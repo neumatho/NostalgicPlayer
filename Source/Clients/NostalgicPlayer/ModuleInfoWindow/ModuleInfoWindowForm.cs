@@ -280,7 +280,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				}
 
 				// Add comment
-				if (staticInfo.Comment.Length > 0)
+				if (staticInfo.Comment?.Length > 0)
 				{
 					navigator.Pages[Page_Comments].Visible = true;
 
@@ -297,7 +297,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 					navigator.Pages[Page_Comments].Visible = false;
 
 				// Add lyrics
-				if (staticInfo.Lyrics.Length > 0)
+				if (staticInfo.Lyrics?.Length > 0)
 				{
 					navigator.Pages[Page_Lyrics].Visible = true;
 
