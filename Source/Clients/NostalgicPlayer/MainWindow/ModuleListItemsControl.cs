@@ -449,7 +449,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							UpdateSelectedItemsDown(itemsVisible - 1);
 						else
 						{
-							if (lastItemSelected > 0)
+							if (lastItemSelected < (collection.Count - 1))
 							{
 								lastItemSelected = Math.Min(topIndex + itemsVisible - 1, collection.Count - 1);
 
