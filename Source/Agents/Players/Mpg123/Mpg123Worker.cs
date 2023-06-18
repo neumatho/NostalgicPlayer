@@ -698,6 +698,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 				if (buf[0] != 0x00)
 				{
 					bool invalid = false;
+					int uCount = 0;
 
 					for (int i = buf.Length - 1; i > 0; i--)
 					{
@@ -706,9 +707,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 							invalid = true;
 							break;
 						}
+
+						if (buf[i] == 0x55)
+							uCount++;
 					}
 
-					if (!invalid)
+					if (!invalid && (uCount != (buf.Length - 1)))
 						return true;
 				}
 			}
