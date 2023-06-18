@@ -295,8 +295,11 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 										else
 										{
 											visualChannelInfo.Alpha -= 6;
-											if (visualChannelInfo.Alpha < 128)
+											if (visualChannelInfo.Alpha <= 128)
+											{
+												visualChannelInfo.Alpha = 128;
 												visualChannelInfo.Direction = true;
+											}
 										}
 									}
 								}
