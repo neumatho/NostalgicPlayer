@@ -31,6 +31,19 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Return the identity priority number. Players with the lowest
+		/// numbers will be called first.
+		///
+		/// Normally, you should not change this, but make your Identify()
+		/// method to be aware of similar formats
+		/// </summary>
+		/********************************************************************/
+		public virtual int IdentifyPriority => int.MaxValue / 2;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Test the file to see if it could be identified
 		/// </summary>
 		/********************************************************************/

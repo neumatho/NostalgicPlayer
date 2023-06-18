@@ -22,6 +22,15 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		string[] FileExtensions { get; }
 
 		/// <summary>
+		/// Return the identity priority number. Players with the lowest
+		/// numbers will be called first.
+		///
+		/// Normally, you should not change this, but make your Identify()
+		/// method to be aware of similar formats
+		/// </summary>
+		int IdentifyPriority { get; }
+
+		/// <summary>
 		/// Test the file to see if it could be identified
 		/// </summary>
 		AgentResult Identify(PlayerFileInfo fileInfo);

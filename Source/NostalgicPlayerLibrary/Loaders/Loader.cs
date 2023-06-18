@@ -503,6 +503,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/********************************************************************/
 		private bool FindPlayer(PlayerFileInfo fileInfo)
 		{
+			// Create a list with all the players and sort them by priority
+			List<(IPlayerAgent player, AgentInfo agentInfo)> agents = new List<(IPlayerAgent, AgentInfo)>();
+
 			foreach (AgentInfo agentInfo in agentManager.GetAllAgents(Manager.AgentType.Players))
 			{
 				// Is the player enabled?
@@ -510,24 +513,27 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 				{
 					// Create an instance of the player
 					if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IPlayerAgent player)
-					{
-						// Check the file
-						AgentResult agentResult = player.Identify(fileInfo);
-						if (agentResult == AgentResult.Ok)
-						{
-							// We found the right player
-							PlayerAgentInfo = agentInfo;
-							PlayerAgent = player;
+						agents.Add((player, agentInfo));
+				}
+			}
 
-							return true;
-						}
+			foreach ((IPlayerAgent player, AgentInfo agentInfo) agent in agents.OrderBy(a => a.player.IdentifyPriority))
+			{
+				// Check the file
+				AgentResult agentResult = agent.player.Identify(fileInfo);
+				if (agentResult == AgentResult.Ok)
+				{
+					// We found the right player
+					PlayerAgentInfo = agent.agentInfo;
+					PlayerAgent = agent.player;
 
-						if (agentResult != AgentResult.Unknown)
-						{
-							// Some error occurred
-							throw new Exception($"Identify() on player {agentInfo.TypeName} returned an error");
-						}
-					}
+					return true;
+				}
+
+				if (agentResult != AgentResult.Unknown)
+				{
+					// Some error occurred
+					throw new Exception($"Identify() on player {agent.agentInfo.TypeName} returned an error");
 				}
 			}
 
