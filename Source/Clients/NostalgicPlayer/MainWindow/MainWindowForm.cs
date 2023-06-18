@@ -2639,38 +2639,38 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void AddFilesFromStartupHandler(string[] arguments)
 		{
-			// Because Explorer calls the application for each file selected
-			// when multiple files are opened, we have a timeout for 1 second
-			// before we consider it as a new bunch
-			bool continuing = (DateTime.Now.Ticks - lastAddedTimeFromExplorer) < TimeSpan.TicksPerSecond;
-
-			// Get the previous number of items in the list
-			int listCount;
-
-			using (new SleepCursor())
+			BeginInvoke(new Action(() =>
 			{
-				// Check the "add to list" option
-				if (!optionSettings.AddToList && !continuing)
-				{
-					// Stop playing module if any
-					StopAndFreeModule();
+				// Because Explorer calls the application for each file selected
+				// when multiple files are opened, we have a timeout for 1 second
+				// before we consider it as a new bunch
+				bool continuing = (DateTime.Now.Ticks - lastAddedTimeFromExplorer) < TimeSpan.TicksPerSecond;
 
-					// Clear the module list
-					EmptyList();
+				using (new SleepCursor())
+				{
+					// Check the "add to list" option
+					if (!optionSettings.AddToList && !continuing)
+					{
+						// Stop playing module if any
+						StopAndFreeModule();
+
+						// Clear the module list
+						EmptyList();
+					}
+
+					// Get the previous number of items in the list
+					int listCount = moduleListControl.Items.Count;
+
+					// Add all the files to the module list
+					AddFilesToList(arguments, checkForList: true);
+
+					// Check if the added module should be loaded
+					if ((listCount == 0) || (optionSettings.AddJump && !continuing))
+						LoadAndPlayModule(listCount);
 				}
 
-				// Get the previous number of items in the list
-				listCount = moduleListControl.Items.Count;
-
-				// Add all the files to the module list
-				AddFilesToList(arguments, checkForList: true);
-			}
-
-			// Check if the added module should be loaded
-			if ((listCount == 0) || (optionSettings.AddJump && !continuing))
-				LoadAndPlayModule(listCount);
-
-			lastAddedTimeFromExplorer = DateTime.Now.Ticks;
+				lastAddedTimeFromExplorer = DateTime.Now.Ticks;
+			}));
 		}
 
 

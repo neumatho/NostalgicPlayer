@@ -198,6 +198,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 				lock (mixerLock)
 				{
+					// In some rare cases, a cleanup is about to happen and the mixer has been cleared while waiting for the lock
+					if (mixer == null)
+						return 0;
+
 					int samplesMixed = mixer.Mixing(buffer, offset, count / bytesPerSampling, out bool hasEndReached);
 					HasEndReached = hasEndReached;
 
