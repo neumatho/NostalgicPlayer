@@ -173,6 +173,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Original player by Bjorn Wesen (Exolon).
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///This is the commercial version of StarTrekker. I do not know, what the real difference is, except that the external file have the extension .as instead..
+        /// </summary>
+        internal static string IDS_MOD_DESCRIPTION_AGENT18 {
+            get {
+                return ResourceManager.GetString("IDS_MOD_DESCRIPTION_AGENT18", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Original player by Karsten Obarski.
         ///Converted to C# by Thomas Neumann.
         ///
@@ -444,6 +456,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         internal static string IDS_MOD_NAME_AGENT17 {
             get {
                 return ResourceManager.GetString("IDS_MOD_NAME_AGENT17", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Audio Sculpture.
+        /// </summary>
+        internal static string IDS_MOD_NAME_AGENT18 {
+            get {
+                return ResourceManager.GetString("IDS_MOD_NAME_AGENT18", resourceCulture);
             }
         }
         

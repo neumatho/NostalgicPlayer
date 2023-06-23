@@ -153,18 +153,26 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/// but with a different extension. It will also try to use the
 		/// extension as a prefix. Will add the file sizes to one or both of
 		/// ModuleSize and CrunchedSize.
+		/// 
+		/// If addSize is set to true, it will add the file sizes to one or
+		/// both of ModuleSize and CrunchedSize. If false, you need to call
+		/// AddSizes() by yourself, if you want to include the opened file
+		/// as part of the collection of loaded files. This has to be done
+		/// before calling this method again.
 		///
 		/// You need to dispose the returned stream when done
 		/// </summary>
 		/********************************************************************/
-		public ModuleStream OpenExtraFile(string newExtension)
+		public ModuleStream OpenExtraFileByExtension(string newExtension, bool addSize)
 		{
 			foreach (string newFileName in GetPossibleFileNames(newExtension))
 			{
 				ModuleStream moduleStream = OpenStream(newFileName, out lastExtraFileInfo);
 				if (moduleStream != null)
 				{
-					AddSizes();
+					if (addSize)
+						AddSizes();
+
 					return moduleStream;
 				}
 			}
@@ -182,12 +190,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/// both of ModuleSize and CrunchedSize. If false, you need to call
 		/// AddSizes() by yourself, if you want to include the opened file
 		/// as part of the collection of loaded files. This has to be done
-		/// before calling this method again
+		/// before calling this method again.
 		/// 
 		/// You need to dispose the returned stream when done
 		/// </summary>
 		/********************************************************************/
-		public ModuleStream OpenExtraFile(string fullFileName, bool addSize)
+		public ModuleStream OpenExtraFileByFileName(string fullFileName, bool addSize)
 		{
 			ModuleStream moduleStream = OpenStream(fullFileName, out lastExtraFileInfo);
 			if ((moduleStream != null) && addSize)

@@ -175,6 +175,12 @@ This player is based on the NoiseTracker player, but extended with some special 
 
 The editor was created by Mahoney, which want an editor with the features he like. Music created in this editor by him and some friends was mainly used in the music disk “His Master's Noise” and is therefore most known by this name. However, there exists some other modules in this format, which does not went into the music disk.</value>
   </data>
+  <data name="IDS_MOD_DESCRIPTION_AGENT18" xml:space="preserve">
+    <value>Original player by Bjorn Wesen (Exolon).
+Converted to C# by Thomas Neumann.
+
+This is the commercial version of StarTrekker. I do not know, what the real difference is, except that the external file have the extension .as instead.</value>
+  </data>
   <data name="IDS_MOD_DESCRIPTION_AGENT2" xml:space="preserve">
     <value>Original player by Karsten Obarski.
 Converted to C# by Thomas Neumann.
@@ -287,6 +293,9 @@ This is a NoiseTracker clone, but improved by the possibility to have synth samp
   </data>
   <data name="IDS_MOD_NAME_AGENT17" xml:space="preserve">
     <value>His Master's Noise (Gnomie by Night)</value>
+  </data>
+  <data name="IDS_MOD_NAME_AGENT18" xml:space="preserve">
+    <value>Audio Sculpture</value>
   </data>
   <data name="IDS_MOD_NAME_AGENT2" xml:space="preserve">
     <value>Ultimate SoundTracker 1.8 - 2.0</value>

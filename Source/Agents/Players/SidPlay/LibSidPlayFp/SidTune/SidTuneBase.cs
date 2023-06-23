@@ -543,7 +543,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidTune
 					// Try to load lyrics
 					byte[] lyricsBuf = null;
 
-					using (ModuleStream moduleStream = fileInfo.Loader.OpenExtraFile("wds"))
+					using (ModuleStream moduleStream = fileInfo.Loader.OpenExtraFileByExtension("wds"))
 					{
 						if (moduleStream != null)
 						{
@@ -564,7 +564,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidTune
 							{
 								try
 								{
-									using (ModuleStream moduleStream = fileInfo.Loader.OpenExtraFile(fileName2, false))
+									using (ModuleStream moduleStream = fileInfo.Loader.OpenExtraFileByFileName(fileName2, false))
 									{
 										if (moduleStream != null)
 										{

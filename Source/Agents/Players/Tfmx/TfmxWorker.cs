@@ -377,9 +377,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				else
 				{
 					// Two file format. Find the other file and read the samples from it
-					ModuleStream sampleStream = fileInfo.Loader?.OpenExtraFile("smpl");
+					ModuleStream sampleStream = fileInfo.Loader?.OpenExtraFileByExtension("smpl");
 					if (sampleStream == null)
-						sampleStream = fileInfo.Loader?.OpenExtraFile("sam");
+						sampleStream = fileInfo.Loader?.OpenExtraFileByExtension("sam");
 
 					if (sampleStream == null)
 					{

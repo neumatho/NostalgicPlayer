@@ -33,10 +33,16 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// but with a different extension. It will also try to use the
 		/// extension as a prefix. Will add the file sizes to one or both of
 		/// ModuleSize and CrunchedSize.
+		/// 
+		/// If addSize is set to true, it will add the file sizes to one or
+		/// both of ModuleSize and CrunchedSize. If false, you need to call
+		/// AddSizes() by yourself, if you want to include the opened file
+		/// as part of the collection of loaded files. This has to be done
+		/// before calling this method again.
 		///
 		/// You need to dispose the returned stream when done
 		/// </summary>
-		ModuleStream OpenExtraFile(string newExtension);
+		ModuleStream OpenExtraFileByExtension(string newExtension, bool addSize = true);
 
 		/// <summary>
 		/// Will try to open a file with the name given as extra file.
@@ -45,11 +51,11 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// both of ModuleSize and CrunchedSize. If false, you need to call
 		/// AddSizes() by yourself, if you want to include the opened file
 		/// as part of the collection of loaded files. This has to be done
-		/// before calling this method again
+		/// before calling this method again.
 		/// 
 		/// You need to dispose the returned stream when done
 		/// </summary>
-		ModuleStream OpenExtraFile(string fullFileName, bool addSize);
+		ModuleStream OpenExtraFileByFileName(string fullFileName, bool addSize);
 
 		/// <summary>
 		/// Will add the sizes of the previous opened extra file to the

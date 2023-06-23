@@ -42,14 +42,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			{ ModTracker.Agent14Id, ModuleType.Octalyser },
 			{ ModTracker.Agent15Id, ModuleType.ModsGrave },
 			{ ModTracker.Agent16Id, ModuleType.DigitalTracker },
-			{ ModTracker.Agent17Id, ModuleType.HisMastersNoise }
+			{ ModTracker.Agent17Id, ModuleType.HisMastersNoise },
+			{ ModTracker.Agent18Id, ModuleType.AudioSculpture }
 		};
 
 		private const int NumberOfNotes = 7 * 12;
 
-		private static readonly byte[] synthId1 = { 0x53, 0x54, 0x31, 0x2e, 0x33, 0x20, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x49, 0x4e, 0x46, 0x4f };		// ST1.3 ModuleINFO
-		private static readonly byte[] synthId2 = { 0x53, 0x54, 0x31, 0x2e, 0x32, 0x20, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x49, 0x4e, 0x46, 0x4f };		// ST1.2 ModuleINFO
-		private static readonly byte[] synthId3 = { 0x41, 0x75, 0x64, 0x69, 0x6f, 0x53, 0x63, 0x75, 0x6c, 0x70, 0x74, 0x75, 0x72, 0x65, 0x31, 0x30 };		// AudioSculpture10
+		private static readonly byte[] stSynthId1 = { 0x53, 0x54, 0x31, 0x2e, 0x33, 0x20, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x49, 0x4e, 0x46, 0x4f };		// ST1.3 ModuleINFO
+		private static readonly byte[] stSynthId2 = { 0x53, 0x54, 0x31, 0x2e, 0x32, 0x20, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x49, 0x4e, 0x46, 0x4f };		// ST1.2 ModuleINFO
+
+		private static readonly byte[] asSynthId1 = { 0x41, 0x75, 0x64, 0x69, 0x6f, 0x53, 0x63, 0x75, 0x6c, 0x70, 0x74, 0x75, 0x72, 0x65, 0x31, 0x30 };		// AudioSculpture10
 
 		private readonly ModuleType currentModuleType;
 		private bool packed;
@@ -110,7 +112,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "mod", "mtm", "wow" };
+		public override string[] FileExtensions => new [] { "mod", "mtm", "wow", "adsc" };
 
 
 
@@ -383,7 +385,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					NextPosition();
 			}
 
-			if (currentModuleType == ModuleType.StarTrekker)
+			if (IsStarTrekker())
 				StarAmHandler();
 
 			// Set volume on all channels
@@ -547,13 +549,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 		/********************************************************************/
 		/// <summary>
-		/// Tests the current module to see if it's in noise tracker or
+		/// Tests the current module to see if it's in NoiseTracker or
 		/// similar format
 		/// </summary>
 		/********************************************************************/
 		private bool IsNoiseTracker()
 		{
-			return (currentModuleType >= ModuleType.NoiseTracker) && (currentModuleType <= ModuleType.StarTrekker8);
+			return (currentModuleType >= ModuleType.NoiseTracker) && (currentModuleType <= ModuleType.AudioSculpture);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tests the current module to see if it's in StarTrekker or
+		/// similar format
+		/// </summary>
+		/********************************************************************/
+		private bool IsStarTrekker()
+		{
+			return (currentModuleType >= ModuleType.StarTrekker) && (currentModuleType <= ModuleType.AudioSculpture);
 		}
 
 
@@ -632,7 +647,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			if (nonValid)
 				retVal = Check15SamplesModule(moduleStream);
 			else
-				retVal = Check31SamplesModule(moduleStream, mark);
+				retVal = Check31SamplesModule(fileInfo, mark);
 
 			return retVal;
 		}
@@ -1011,9 +1026,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// Checks the module to see if it's a 31 samples module
 		/// </summary>
 		/********************************************************************/
-		private ModuleType Check31SamplesModule(ModuleStream moduleStream, uint mark)
+		private ModuleType Check31SamplesModule(PlayerFileInfo fileInfo, uint mark)
 		{
 			ModuleType retVal = ModuleType.Unknown;
+
+			ModuleStream moduleStream = fileInfo.ModuleStream;
 
 			if ((mark == 0x4d2e4b2e) || (mark == 0x4d214b21) ||		// M.K. || M!K!
 				(mark == 0x4d264b21) ||								// M&K! (Echobea3.mod and some His Master's Noise modules)
@@ -1213,7 +1230,10 @@ stopLoop:
 			else
 			{
 				if ((mark == 0x464c5434) || (mark == 0x45584f34))			// FLT4 || EXO4
-					retVal = ModuleType.StarTrekker;
+				{
+					// Find out if the file is an Audio Sculpture module
+					retVal = CheckSynthFile(fileInfo);
+				}
 				else if (mark == 0x464c5438)								// FLT8
 					retVal = ModuleType.StarTrekker8;
 				else if ((mark == 0x43443831) || (mark == 0x43443631))		// CD81 || CD61
@@ -1227,6 +1247,51 @@ stopLoop:
 			}
 
 			return retVal;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Checks the synth file if any to see what kind of module it is
+		/// </summary>
+		/********************************************************************/
+		private ModuleType CheckSynthFile(PlayerFileInfo fileInfo)
+		{
+			if ((currentModuleType == ModuleType.StarTrekker) || (currentModuleType == ModuleType.AudioSculpture))
+			{
+				using (ModuleStream moduleStream = OpenSynthFile(fileInfo, false))
+				{
+					// Did we get any file at all
+					if (moduleStream != null)
+					{
+						byte[] id = new byte[16];
+						if (moduleStream.Read(id, 0, 16) == 16)
+						{
+							if (id.SequenceEqual(asSynthId1))
+								return ModuleType.AudioSculpture;
+						}
+					}
+				}
+			}
+
+			return ModuleType.StarTrekker;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will try to open the synth file
+		/// </summary>
+		/********************************************************************/
+		private ModuleStream OpenSynthFile(PlayerFileInfo fileInfo, bool addSize)
+		{
+			ModuleStream moduleStream = fileInfo.Loader?.OpenExtraFileByExtension("nt", addSize);
+			if (moduleStream == null)
+				moduleStream = fileInfo.Loader?.OpenExtraFileByExtension("as", addSize);
+
+			return moduleStream;
 		}
 
 
@@ -1668,7 +1733,7 @@ stopLoop:
 				}
 
 				// Ok, we're done, load any extra files if needed
-				if (currentModuleType == ModuleType.StarTrekker)
+				if (IsStarTrekker())
 					LoadSynthSamples(fileInfo);
 
 				errorMessage = string.Empty;
@@ -1919,13 +1984,13 @@ stopLoop:
 		/********************************************************************/
 		private void LoadSynthSamples(PlayerFileInfo fileInfo)
 		{
-			using (ModuleStream moduleStream = fileInfo.Loader?.OpenExtraFile("nt"))
+			using (ModuleStream moduleStream = OpenSynthFile(fileInfo, true))
 			{
 				// Did we get any file at all
 				if (moduleStream != null)
 				{
 					byte[] id = new byte[16];
-					if ((moduleStream.Read(id, 0, 16) == 16) && (id.SequenceEqual(synthId1) || id.SequenceEqual(synthId2) || id.SequenceEqual(synthId3)))
+					if ((moduleStream.Read(id, 0, 16) == 16) && (id.SequenceEqual(stSynthId1) || id.SequenceEqual(stSynthId2) || id.SequenceEqual(asSynthId1)))
 					{
 						amData = new AmSample[31];
 
@@ -2266,12 +2331,13 @@ stopLoop:
 				modChan.HmnVolume = 64;
 				modChan.StarVolume = 256;
 
-				if (currentModuleType == ModuleType.StarTrekker)
+				if (IsStarTrekker())
 				{
 					AmSample amSamp = amData?[sampNum - 1];
 					if ((amSamp != null) && (amSamp.Mark == 0x414d))	// AM
 					{
-						modChan.Volume = (sbyte)(amSamp.StartAmp / 4);
+						modChan.StarVolume = (short)amSamp.StartAmp;
+						modChan.Volume = 64;
 						modChan.SynthSample = true;
 					}
 				}
@@ -2335,7 +2401,7 @@ stopLoop:
 				// There is a new note to play
 				Effect cmd = modChan.TrackLine.Effect;
 
-				if (!modChan.SynthSample || (currentModuleType != ModuleType.StarTrekker))
+				if (!modChan.SynthSample || !IsStarTrekker())
 				{
 					if ((currentModuleType == ModuleType.SoundTrackerII) || (currentModuleType == ModuleType.SoundTrackerVI))
 					{
@@ -2396,7 +2462,7 @@ stopLoop:
 
 					if (modChan.SynthSample)
 					{
-						if (currentModuleType == ModuleType.StarTrekker)
+						if (IsStarTrekker())
 						{
 							// Setup AM sample
 							AmSample amSample = amData?[modChan.SampleNumber];

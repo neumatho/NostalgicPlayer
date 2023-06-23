@@ -26,6 +26,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		HisMastersNoise,
 		StarTrekker,
 		StarTrekker8,
+		AudioSculpture,
 
 		// PC trackers
 		FastTracker,

@@ -1113,7 +1113,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 				string newDirectory = isArchive ? ArchivePath.CombinePathParts(ArchivePath.GetArchiveName(fileInfo.FileName), directoryName) : directoryName;
 				string samplePath = Path.Combine(newDirectory, "Instruments", sample.Name);
 
-				using (ModuleStream moduleStream = fileInfo.Loader?.OpenExtraFile(samplePath, true))
+				using (ModuleStream moduleStream = fileInfo.Loader?.OpenExtraFileByFileName(samplePath, true))
 				{
 					// Did we get any file at all
 					if (moduleStream != null)

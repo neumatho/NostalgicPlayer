@@ -40,6 +40,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | AHX 2.x | .ahx / .thx | | AHX |
 | Asylum | .amf | MikMod Converter | MikMod |
 | Atari Octalyser | .mod | | ModTracker |
+| Audio Sculpture | .adsc | | ModTracker |
 | AudioIFF | .aiff / .aif | | Sample |
 | Ben Replay | .ben | ProWizard | ModTracker |
 | Binary Packer | .bnr | ProWizard | ModTracker |
