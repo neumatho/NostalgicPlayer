@@ -21,8 +21,9 @@
     <DocumentationFile>bin\Mpg123.xml</DocumentationFile>
   </PropertyGroup>
 
-	<ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
+    <ProjectReference Include="..\..\..\Ports\LibMpg123\LibMpg123.csproj" />
   </ItemGroup>
 
   <ItemGroup>

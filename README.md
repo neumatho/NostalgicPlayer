@@ -14,7 +14,7 @@ If you want to try it out, you can install the player from Microsoft Store <a hr
 NostalgicPlayer is licensed under the <a href="https://github.com/neumatho/NostalgicPlayer/blob/main/LICENSE">MIT License</a>. Some parts of the player are 3rd party components which has been ported to C#. Their original licenses are the following:
 * Ancient decruncher (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Agents/Decrunchers/AncientDecruncher/LICENSE">BSD 2-Clause License</a>)
 * MikMod player and converter (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Agents/Players/MikMod/LICENSE">GNU Lesser General Public License version 3</a>)
-* Mpg123 (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Agents/Players/Mpg123/LICENSE">GNU Lesser General Public License version 2.1</a>)
+* Mpg123 (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibMpg123/LICENSE">GNU Lesser General Public License version 2.1</a>)
 * SidPlayFp and ReSIDfp (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Agents/Players/SidPlay/LICENSE">GNU General Public License version 2</a>)
 
 # Structure
