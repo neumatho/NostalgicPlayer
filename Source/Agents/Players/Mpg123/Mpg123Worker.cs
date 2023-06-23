@@ -584,6 +584,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 
 				// We need ok frames in the first Kb and 20 frames after that
 				long minPosition = moduleStream.Position + 1024;
+				int foundFrames = 0;
 
 				for (int i = 0; i < 20; i++)
 				{
@@ -606,7 +607,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 
 					if (moduleStream.Position < minPosition)
 						i--;
+
+					foundFrames++;
 				}
+
+				if (foundFrames < 5)
+					return ModuleType.Unknown;
 
 				switch (fi.Version)
 				{
