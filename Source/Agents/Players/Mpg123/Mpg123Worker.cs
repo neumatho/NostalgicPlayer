@@ -10,11 +10,12 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using Polycode.NostalgicPlayer.Agent.Player.Mpg123.Containers;
-using Polycode.NostalgicPlayer.Agent.Player.Mpg123.LibMpg123.Containers;
+using Polycode.NostalgicPlayer.Ports.LibMpg123.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Ports.LibMpg123;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 {
@@ -35,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		private int oldBitRate;
 
 		private Mpg123_FrameInfo frameInfo;
-		private off_t numberOfFrames;
+		private int numberOfFrames;
 		private long firstFramePosition;
 
 		private string songName;
@@ -46,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		private string genre;
 		private byte trackNum;
 
-		private LibMpg123.LibMpg123 mpg123Handle;
+		private LibMpg123 mpg123Handle;
 
 		private const int InfoBitRateLine = 6;
 
@@ -345,7 +346,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 				return false;
 
 			// Get a Mpg123 handle, which is used on all other calls
-			mpg123Handle = LibMpg123.LibMpg123.Mpg123_New(null, out Mpg123_Errors error);
+			mpg123Handle = LibMpg123.Mpg123_New(null, out Mpg123_Errors error);
 			if (error != Mpg123_Errors.Ok)
 			{
 				errorMessage = GetErrorString(error);
@@ -360,11 +361,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 				return false;
 			}
 
-			mpg123Handle.Mpg123_Rates(out c_long[] supportedRates, out size_t number);
+			mpg123Handle.Mpg123_Rates(out int[] supportedRates, out ulong number);
 			if (number > 0)
 			{
 				// Set the output format to 32-bit on every rate
-				foreach (c_long rate in supportedRates)
+				foreach (int rate in supportedRates)
 				{
 					result = mpg123Handle.Mpg123_Format(rate, Mpg123_ChannelCount.Mono | Mpg123_ChannelCount.Stereo, Mpg123_Enc_Enum.Enc_Signed_32);
 					if (result != Mpg123_Errors.Ok)
@@ -504,7 +505,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		/********************************************************************/
 		protected override TimeSpan GetTotalDuration()
 		{
-			off_t numberOfSamples = mpg123Handle.Mpg123_Length();
+			int numberOfSamples = mpg123Handle.Mpg123_Length();
 			double totalTime = (double)numberOfSamples / frameInfo.Rate;
 
 			return new TimeSpan((long)(totalTime * TimeSpan.TicksPerSecond));
@@ -555,13 +556,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 			if (CheckModuleFormats(moduleStream))
 				return ModuleType.Unknown;
 
-			mpg123Handle = LibMpg123.LibMpg123.Mpg123_New(null, out Mpg123_Errors error);
+			mpg123Handle = LibMpg123.Mpg123_New(null, out Mpg123_Errors error);
 			if (error != Mpg123_Errors.Ok)
 				return ModuleType.Unknown;
 
 			try
 			{
-				Mpg123_Errors result = mpg123Handle.Mpg123_Param(Mpg123_Parms.Add_Flags, (c_int)(Mpg123_Param_Flags.No_Frankenstein | Mpg123_Param_Flags.No_Resync), 0);
+				Mpg123_Errors result = mpg123Handle.Mpg123_Param(Mpg123_Parms.Add_Flags, (int)(Mpg123_Param_Flags.No_Frankenstein | Mpg123_Param_Flags.No_Resync), 0);
 				if (result != Mpg123_Errors.Ok)
 					return ModuleType.Unknown;
 
@@ -761,7 +762,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 			if (numberOfFrames < 0)
 				numberOfFrames = 0;
 
-			result = mpg123Handle.Mpg123_Index(out off_t[] offsets, out _, out _);
+			result = mpg123Handle.Mpg123_Index(out int[] offsets, out _, out _);
 			if (result == Mpg123_Errors.Ok)
 				firstFramePosition = offsets[0];
 			else
@@ -949,7 +950,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 
 			while (todo > 0)
 			{
-				Mpg123_Errors result = mpg123Handle.Mpg123_Read(outBuf, (size_t)todo * 4, out size_t done);
+				Mpg123_Errors result = mpg123Handle.Mpg123_Read(outBuf, (ulong)todo * 4, out ulong done);
 				if ((result == Mpg123_Errors.Ok) || (result == Mpg123_Errors.Done))
 				{
 					if (done == 0)
