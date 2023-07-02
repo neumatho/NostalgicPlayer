@@ -199,26 +199,11 @@ The LHLB is a cruncher library for the XPK cruncher created by Gunther Nikl. Thi
 
 This XPK compressor uses the general purpose data compression library ZLIB by Jean-loup Gailly and Mark Adler. It implements the compression technique used by GZIP.</value>
   </data>
+  <data name="IDS_ANC_ERR_CHECKSUM_MISMATCH" xml:space="preserve">
+    <value>Checksum mismatch</value>
+  </data>
   <data name="IDS_ANC_ERR_CORRUPT_DATA" xml:space="preserve">
     <value>Crunched data is corrupt</value>
-  </data>
-  <data name="IDS_ANC_ERR_NO_ENCRYPTION" xml:space="preserve">
-    <value>Encryption is not supported</value>
-  </data>
-  <data name="IDS_ANC_ERR_OUT_OF_DATA" xml:space="preserve">
-    <value>Ran out of crunched data</value>
-  </data>
-  <data name="IDS_ANC_ERR_UNKNOWN_CHUNK_TYPE" xml:space="preserve">
-    <value>Unknown chunk type</value>
-  </data>
-  <data name="IDS_ANC_ERR_WRONG_BLOCK_CHECKSUM" xml:space="preserve">
-    <value>Block data checksum mismatch</value>
-  </data>
-  <data name="IDS_ANC_ERR_WRONG_CHUNK_CHECKSUM" xml:space="preserve">
-    <value>Chunk data checksum mismatch</value>
-  </data>
-  <data name="IDS_ANC_ERR_WRONG_HEADER_CHECKSUM" xml:space="preserve">
-    <value>Header checksum mismatch</value>
   </data>
   <data name="IDS_ANC_NAME" xml:space="preserve">
     <value>Ancient Decruncher</value>

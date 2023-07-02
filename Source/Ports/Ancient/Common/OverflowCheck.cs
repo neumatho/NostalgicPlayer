@@ -3,51 +3,62 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.IO;
-using Polycode.NostalgicPlayer.Kit.Streams;
-using SharpCompress.Common;
+using System;
 
-namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.Streams
+namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 {
 	/// <summary>
-	/// Wrapper class to the SharpCompress entry stream
+	/// 
 	/// </summary>
-	internal class ArchiveEntryStream : ArchiveStream
+	internal static class OverflowCheck
 	{
-		private readonly IEntry entry;
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public static size_t Sum(size_t a, size_t b)
+		{
+			// TODO: Add type traits to handle signed integers
+			size_t ret = a + b;
+			if (ret < a)
+				throw new OverflowException();
+
+			return ret;
+		}
+
+
 
 		/********************************************************************/
 		/// <summary>
-		/// Constructor
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public ArchiveEntryStream(IEntry entry, Stream entryStream) : base(entryStream, false)
+		public static uint32_t Sum(uint32_t a, uint32_t b)
 		{
-			this.entry = entry;
+			// TODO: Add type traits to handle signed integers
+			uint32_t ret = a + b;
+			if (ret < a)
+				throw new OverflowException();
+
+			return ret;
 		}
 
-		#region DecruncherStream overrides
-		/********************************************************************/
-		/// <summary>
-		/// Return the size of the decrunched data
-		/// </summary>
-		/********************************************************************/
-		public override int GetDecrunchedLength()
-		{
-			return (int)entry.Size;
-		}
-		#endregion
 
-		#region ArchiveStream overrides
+
 		/********************************************************************/
 		/// <summary>
-		/// Return the size of the crunched data
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public override int GetCrunchedLength()
+		public static uint Sum(uint a, uint b, params uint[] args)
 		{
-			return entry.CompressedSize == 0 ? -1 : (int)entry.CompressedSize;
+			uint ret = Sum(a, b);
+
+			foreach (uint v in args)
+				ret = Sum(ret, v);
+
+			return ret;
 		}
-		#endregion
 	}
 }

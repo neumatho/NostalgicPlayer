@@ -104,7 +104,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.St
 		/// Return the size of the decrunched data
 		/// </summary>
 		/********************************************************************/
-		protected override int GetDecrunchedLength()
+		public override int GetDecrunchedLength()
 		{
 			return entry.DecrunchedSize;
 		}

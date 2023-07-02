@@ -4,74 +4,72 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using System.IO;
 
-namespace Polycode.NostalgicPlayer.Kit.Streams
+namespace Polycode.NostalgicPlayer.Ports.Ancient.Common.Buffers
 {
 	/// <summary>
-	/// This class is used for the decruncher agent interfaces
+	/// Wraps an array as a buffer
 	/// </summary>
-	public abstract class DecruncherStream : ReaderStream
+	internal class WrappedArrayBuffer : Buffer
 	{
+		private readonly uint8_t[] refData;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		protected DecruncherStream(Stream wrapperStream, bool leaveOpen) : base(wrapperStream, leaveOpen)
+		public WrappedArrayBuffer(uint8_t[] refData)
 		{
+			this.refData = refData;
 		}
 
-		#region Stream implementation
+		#region Overrides
 		/********************************************************************/
 		/// <summary>
-		/// Indicate if the stream supports seeking
+		/// Return the size of the buffer
 		/// </summary>
 		/********************************************************************/
-		public override bool CanSeek => false;
-
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the length of the data
-		/// </summary>
-		/********************************************************************/
-		public override long Length => GetDecrunchedLength();
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position
-		/// </summary>
-		/********************************************************************/
-		public override long Position
+		public override size_t Size()
 		{
-			get => wrapperStream.Position;
-
-			set => throw new NotSupportedException("Set position not supported");
+			return (size_t)refData.Length;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Seek to a new position
+		/// Read the number of bytes at the offset given and return them
 		/// </summary>
 		/********************************************************************/
-		public override long Seek(long offset, SeekOrigin origin)
+		public override Span<uint8_t> GetData(size_t offset, size_t count)
 		{
-			throw new NotSupportedException("Seek not supported");
+			return refData.AsSpan((int)offset, (int)count);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set a value in the internal buffer
+		/// </summary>
+		/********************************************************************/
+		public override void SetData(size_t offset, uint8_t value)
+		{
+			refData[offset] = value;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Clone the current buffer and make it start at the given offset
+		/// </summary>
+		/********************************************************************/
+		protected override Buffer CloneBuffer(size_t offset)
+		{
+			throw new NotImplementedException();
 		}
 		#endregion
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the size of the decrunched data
-		/// </summary>
-		/********************************************************************/
-		public abstract int GetDecrunchedLength();
 	}
 }

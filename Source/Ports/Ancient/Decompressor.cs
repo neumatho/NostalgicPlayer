@@ -3,51 +3,63 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Collections.Generic;
 using System.IO;
-using Polycode.NostalgicPlayer.Kit.Streams;
-using SharpCompress.Common;
+using Polycode.NostalgicPlayer.Ports.Ancient.Internal;
 
-namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.Streams
+namespace Polycode.NostalgicPlayer.Ports.Ancient
 {
-	/// <summary>
-	/// Wrapper class to the SharpCompress entry stream
-	/// </summary>
-	internal class ArchiveEntryStream : ArchiveStream
+    /// <summary>
+    /// Main entry point to the API
+    /// </summary>
+    public class Decompressor
 	{
-		private readonly IEntry entry;
+		private readonly DecompressorImpl impl;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ArchiveEntryStream(IEntry entry, Stream entryStream) : base(entryStream, false)
+		public Decompressor(Stream crunchedDataStream)
 		{
-			this.entry = entry;
+			impl = new DecompressorImpl(crunchedDataStream);
 		}
 
-		#region DecruncherStream overrides
-		/********************************************************************/
-		/// <summary>
-		/// Return the size of the decrunched data
-		/// </summary>
-		/********************************************************************/
-		public override int GetDecrunchedLength()
-		{
-			return (int)entry.Size;
-		}
-		#endregion
 
-		#region ArchiveStream overrides
+
 		/********************************************************************/
 		/// <summary>
-		/// Return the size of the crunched data
+		/// Return the type of the current decompressor
 		/// </summary>
 		/********************************************************************/
-		public override int GetCrunchedLength()
+		public DecompressorType GetDecompressorType()
 		{
-			return entry.CompressedSize == 0 ? -1 : (int)entry.CompressedSize;
+			return impl.decompressor.GetDecompressorType();
 		}
-		#endregion
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Actual decompression
+		/// </summary>
+		/********************************************************************/
+		public size_t GetRawSize()
+		{
+			return impl.decompressor.GetRawSize();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Actual decompression
+		/// </summary>
+		/********************************************************************/
+		public IEnumerable<uint8_t[]> Decompress()
+		{
+			return impl.decompressor.Decompress();
+		}
 	}
 }

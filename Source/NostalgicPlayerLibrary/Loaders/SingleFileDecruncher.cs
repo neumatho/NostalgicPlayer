@@ -3,6 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+
+using System;
+using System.Collections.Generic;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Exceptions;
@@ -65,23 +68,37 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/********************************************************************/
 		private DecruncherStream DecrunchFile(Stream crunchedDataStream)
 		{
+			HashSet<Guid> agentsToSkip = new HashSet<Guid>();
+
 			foreach (AgentInfo agentInfo in manager.GetAllAgents(Manager.AgentType.FileDecrunchers))
 			{
 				// Is the decruncher enabled?
-				if (agentInfo.Enabled)
+				if (agentInfo.Enabled && !agentsToSkip.Contains(agentInfo.AgentId))
 				{
-					// Create an instance of the decruncher
-					if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IFileDecruncherAgent decruncher)
+					// Do the decruncher implement multiple format identify method?
+					if (agentInfo.Agent is IAgentMultipleFormatIdentify multipleFormatIdentify)
 					{
-						// Check the file
-						AgentResult agentResult = decruncher.Identify(crunchedDataStream);
-						if (agentResult == AgentResult.Ok)
+						IFileDecruncherAgent decruncher = multipleFormatIdentify.IdentifyFormat(crunchedDataStream) as IFileDecruncherAgent;
+						if (decruncher != null)
 							return decruncher.OpenStream(crunchedDataStream);
 
-						if (agentResult != AgentResult.Unknown)
+						agentsToSkip.Add(agentInfo.AgentId);
+					}
+					else
+					{
+						// Create an instance of the decruncher
+						if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IFileDecruncherAgent decruncher)
 						{
-							// Some error occurred
-							throw new DecruncherException(agentInfo.TypeName, "Identify() returned an error");
+							// Check the file
+							AgentResult agentResult = decruncher.Identify(crunchedDataStream);
+							if (agentResult == AgentResult.Ok)
+								return decruncher.OpenStream(crunchedDataStream);
+
+							if (agentResult != AgentResult.Unknown)
+							{
+								// Some error occurred
+								throw new DecruncherException(agentInfo.TypeName, "Identify() returned an error");
+							}
 						}
 					}
 				}

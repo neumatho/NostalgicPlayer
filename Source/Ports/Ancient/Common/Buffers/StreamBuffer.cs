@@ -6,72 +6,92 @@
 using System;
 using System.IO;
 
-namespace Polycode.NostalgicPlayer.Kit.Streams
+namespace Polycode.NostalgicPlayer.Ports.Ancient.Common.Buffers
 {
 	/// <summary>
-	/// This class is used for the decruncher agent interfaces
+	/// A buffer like implementation based on a stream
 	/// </summary>
-	public abstract class DecruncherStream : ReaderStream
+	internal class StreamBuffer : Buffer
 	{
+		private readonly Stream stream;
+		private readonly size_t startOffset;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		protected DecruncherStream(Stream wrapperStream, bool leaveOpen) : base(wrapperStream, leaveOpen)
+		public StreamBuffer(Stream dataStream) : this(dataStream, 0)
 		{
 		}
 
-		#region Stream implementation
-		/********************************************************************/
-		/// <summary>
-		/// Indicate if the stream supports seeking
-		/// </summary>
-		/********************************************************************/
-		public override bool CanSeek => false;
-
-
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the length of the data
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public override long Length => GetDecrunchedLength();
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position
-		/// </summary>
-		/********************************************************************/
-		public override long Position
+		private StreamBuffer(Stream dataStream, size_t startOffset)
 		{
-			get => wrapperStream.Position;
+			stream = dataStream;
+			this.startOffset = startOffset;
+		}
 
-			set => throw new NotSupportedException("Set position not supported");
+		#region Overrides
+		/********************************************************************/
+		/// <summary>
+		/// Return the size of the buffer
+		/// </summary>
+		/********************************************************************/
+		public override size_t Size()
+		{
+			return (size_t)stream.Length - startOffset;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Seek to a new position
+		/// Read the number of bytes at the offset given and return them
 		/// </summary>
 		/********************************************************************/
-		public override long Seek(long offset, SeekOrigin origin)
+		public override Span<uint8_t> GetData(size_t offset, size_t count)
 		{
-			throw new NotSupportedException("Seek not supported");
+			if ((offset + startOffset) != (size_t)stream.Position)
+				stream.Seek((long)(offset + startOffset), SeekOrigin.Begin);
+
+			size_t todo = Math.Min(count, (size_t)(stream.Length - stream.Position));
+
+			uint8_t[] buffer = new uint8_t[todo];
+			stream.Read(buffer, 0, (int)todo);
+
+			return buffer.AsSpan();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set a value in the internal buffer
+		/// </summary>
+		/********************************************************************/
+		public override void SetData(size_t offset, uint8_t value)
+		{
+			throw new NotSupportedException();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Clone the current buffer and make it start at the given offset
+		/// </summary>
+		/********************************************************************/
+		protected override Buffer CloneBuffer(size_t offset)
+		{
+			return new StreamBuffer(stream, offset);
 		}
 		#endregion
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the size of the decrunched data
-		/// </summary>
-		/********************************************************************/
-		public abstract int GetDecrunchedLength();
 	}
 }

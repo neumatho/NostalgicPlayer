@@ -205,65 +205,20 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Checksum mismatch.
+        /// </summary>
+        internal static string IDS_ANC_ERR_CHECKSUM_MISMATCH {
+            get {
+                return ResourceManager.GetString("IDS_ANC_ERR_CHECKSUM_MISMATCH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Crunched data is corrupt.
         /// </summary>
         internal static string IDS_ANC_ERR_CORRUPT_DATA {
             get {
                 return ResourceManager.GetString("IDS_ANC_ERR_CORRUPT_DATA", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Encryption is not supported.
-        /// </summary>
-        internal static string IDS_ANC_ERR_NO_ENCRYPTION {
-            get {
-                return ResourceManager.GetString("IDS_ANC_ERR_NO_ENCRYPTION", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ran out of crunched data.
-        /// </summary>
-        internal static string IDS_ANC_ERR_OUT_OF_DATA {
-            get {
-                return ResourceManager.GetString("IDS_ANC_ERR_OUT_OF_DATA", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unknown chunk type.
-        /// </summary>
-        internal static string IDS_ANC_ERR_UNKNOWN_CHUNK_TYPE {
-            get {
-                return ResourceManager.GetString("IDS_ANC_ERR_UNKNOWN_CHUNK_TYPE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Block data checksum mismatch.
-        /// </summary>
-        internal static string IDS_ANC_ERR_WRONG_BLOCK_CHECKSUM {
-            get {
-                return ResourceManager.GetString("IDS_ANC_ERR_WRONG_BLOCK_CHECKSUM", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Chunk data checksum mismatch.
-        /// </summary>
-        internal static string IDS_ANC_ERR_WRONG_CHUNK_CHECKSUM {
-            get {
-                return ResourceManager.GetString("IDS_ANC_ERR_WRONG_CHUNK_CHECKSUM", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Header checksum mismatch.
-        /// </summary>
-        internal static string IDS_ANC_ERR_WRONG_HEADER_CHECKSUM {
-            get {
-                return ResourceManager.GetString("IDS_ANC_ERR_WRONG_HEADER_CHECKSUM", resourceCulture);
             }
         }
         

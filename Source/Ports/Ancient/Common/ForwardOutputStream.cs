@@ -3,50 +3,50 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.IO;
-using Polycode.NostalgicPlayer.Kit.Streams;
-using SharpCompress.Common;
+using Polycode.NostalgicPlayer.Ports.Ancient.Common.Buffers;
+using Polycode.NostalgicPlayer.Ports.Ancient.Exceptions;
 
-namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.Streams
+namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 {
 	/// <summary>
-	/// Wrapper class to the SharpCompress entry stream
+	/// Write to a buffer forward
 	/// </summary>
-	internal class ArchiveEntryStream : ArchiveStream
+	internal class ForwardOutputStream : ForwardOutputStreamBase
 	{
-		private readonly IEntry entry;
+		private readonly size_t endOffset;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ArchiveEntryStream(IEntry entry, Stream entryStream) : base(entryStream, false)
+		public ForwardOutputStream(Buffer buffer, size_t startOffset, size_t endOffset) : base(buffer, startOffset)
 		{
-			this.entry = entry;
+			this.endOffset = endOffset;
+
+			if ((this.startOffset > this.endOffset) || (this.endOffset > buffer.Size()))
+				throw new DecompressionException();
 		}
 
-		#region DecruncherStream overrides
+		#region IOutputStream implementation
 		/********************************************************************/
 		/// <summary>
-		/// Return the size of the decrunched data
+		/// Indicate if the buffer has been filled or not
 		/// </summary>
 		/********************************************************************/
-		public override int GetDecrunchedLength()
-		{
-			return (int)entry.Size;
-		}
+		public override bool Eof => currentOffset == endOffset;
 		#endregion
 
-		#region ArchiveStream overrides
+		#region Override methods
 		/********************************************************************/
 		/// <summary>
-		/// Return the size of the crunched data
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public override int GetCrunchedLength()
+		protected override void EnsureSize(size_t offset)
 		{
-			return entry.CompressedSize == 0 ? -1 : (int)entry.CompressedSize;
+			if (offset > endOffset)
+				throw new DecompressionException();
 		}
 		#endregion
 	}
