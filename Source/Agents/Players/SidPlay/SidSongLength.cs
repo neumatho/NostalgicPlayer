@@ -142,11 +142,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 								return false;
 							}
 
-							string md5 = line.Substring(0, index).Trim().ToUpper();
-							string[] times = line.Substring(index + 1).Trim().Split(' ');
-							List<TimeSpan> timeSpans = times.Select(t => TimeSpan.Parse("0:" + t, CultureInfo.InvariantCulture)).ToList();
+							try
+							{
+								string md5 = line.Substring(0, index).Trim().ToUpper();
+								string[] times = line.Substring(index + 1).Trim().Split(' ');
+								List<TimeSpan> timeSpans = times.Select(t => TimeSpan.Parse("0:" + t, CultureInfo.InvariantCulture)).ToList();
 
-							entries[md5] = timeSpans;
+								entries[md5] = timeSpans;
+							}
+							catch(Exception)
+							{
+								// Ignore this entry
+							}
 						}
 					}
 				}
