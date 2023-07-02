@@ -3,27 +3,22 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.IO;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using SharpCompress.Common;
 
-namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.Streams
+namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Streams
 {
 	/// <summary>
-	/// Wrapper class to the SharpCompress entry stream
+	/// Implementation of the decruncher stream
 	/// </summary>
-	internal class ArchiveEntryStream : ArchiveStream
+	internal class AncientDecruncherStream : DecruncherStream
 	{
-		private readonly IEntry entry;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ArchiveEntryStream(IEntry entry, Stream entryStream) : base(entryStream, false)
+		public AncientDecruncherStream(AncientStream wrapperStream) : base(wrapperStream, false)
 		{
-			this.entry = entry;
 		}
 
 		#region DecruncherStream overrides
@@ -34,19 +29,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		/********************************************************************/
 		public override int GetDecrunchedLength()
 		{
-			return (int)entry.Size;
-		}
-		#endregion
-
-		#region ArchiveStream overrides
-		/********************************************************************/
-		/// <summary>
-		/// Return the size of the crunched data
-		/// </summary>
-		/********************************************************************/
-		public override int GetCrunchedLength()
-		{
-			return entry.CompressedSize == 0 ? -1 : (int)entry.CompressedSize;
+			return (int)wrapperStream.Length;
 		}
 		#endregion
 	}

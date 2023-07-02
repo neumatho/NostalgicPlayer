@@ -7,7 +7,7 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Decrunchers based on Ancient by Teemu Suutari</Description>
-    <Version>2.0.0</Version>
+    <Version>2.1.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
+    <ProjectReference Include="..\..\..\Ports\Ancient\Ancient.csproj" />
   </ItemGroup>
 
   <ItemGroup>

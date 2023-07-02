@@ -4,74 +4,84 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using System.IO;
 
-namespace Polycode.NostalgicPlayer.Kit.Streams
+namespace Polycode.NostalgicPlayer.Ports.Ancient.Common.Buffers
 {
 	/// <summary>
-	/// This class is used for the decruncher agent interfaces
+	/// Splice buffer class
 	/// </summary>
-	public abstract class DecruncherStream : ReaderStream
+	internal class GenericSubBuffer : Buffer
 	{
+		private readonly Buffer baseBuffer;
+		private readonly size_t start;
+		private readonly size_t length;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		protected DecruncherStream(Stream wrapperStream, bool leaveOpen) : base(wrapperStream, leaveOpen)
+		public GenericSubBuffer(Buffer baseBuffer, size_t start, size_t length)
 		{
+			this.baseBuffer = baseBuffer;
+			this.start = start;
+			this.length = length;
+
+			// If the sub-buffer is invalid, we set both start and length to 0
+			// TODO: Check if invalid-empty buffers are still required
+			if (OverflowCheck.Sum(start, length) > this.baseBuffer.Size())
+			{
+				this.start = 0;
+				this.length = 0;
+			}
 		}
 
-		#region Stream implementation
+		#region Overrides
 		/********************************************************************/
 		/// <summary>
-		/// Indicate if the stream supports seeking
+		/// Return the size of the buffer
 		/// </summary>
 		/********************************************************************/
-		public override bool CanSeek => false;
-
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the length of the data
-		/// </summary>
-		/********************************************************************/
-		public override long Length => GetDecrunchedLength();
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the current position
-		/// </summary>
-		/********************************************************************/
-		public override long Position
+		public override size_t Size()
 		{
-			get => wrapperStream.Position;
-
-			set => throw new NotSupportedException("Set position not supported");
+			return length;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Seek to a new position
+		/// Read the number of bytes at the offset given and return them
 		/// </summary>
 		/********************************************************************/
-		public override long Seek(long offset, SeekOrigin origin)
+		public override Span<uint8_t> GetData(size_t offset, size_t count)
 		{
-			throw new NotSupportedException("Seek not supported");
+			return baseBuffer.GetData(start + offset, count);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set a value in the internal buffer
+		/// </summary>
+		/********************************************************************/
+		public override void SetData(size_t offset, uint8_t value)
+		{
+			baseBuffer.SetData(start + offset, value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Clone the current buffer and make it start at the given offset
+		/// </summary>
+		/********************************************************************/
+		protected override Buffer CloneBuffer(size_t offset)
+		{
+			throw new NotImplementedException();
 		}
 		#endregion
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the size of the decrunched data
-		/// </summary>
-		/********************************************************************/
-		public abstract int GetDecrunchedLength();
 	}
 }

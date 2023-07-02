@@ -81,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		/// Return the size of the decrunched data
 		/// </summary>
 		/********************************************************************/
-		protected override int GetDecrunchedLength()
+		public override int GetDecrunchedLength()
 		{
 			return decrunchedLength;
 		}

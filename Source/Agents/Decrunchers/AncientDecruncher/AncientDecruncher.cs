@@ -4,22 +4,23 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
-using Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats;
-using Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Formats.Xpk;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Ports.Ancient;
+using Polycode.NostalgicPlayer.Ports.Ancient.Exceptions;
 
 // This is needed to uniquely identify this agent
 [assembly: Guid("AFDBEE3F-E5A6-4255-8A68-89D876BCE943")]
 
 namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher
 {
-	/// <summary>
-	/// NostalgicPlayer agent interface implementation
-	/// </summary>
-	public class AncientDecruncher : AgentBase
+    /// <summary>
+    /// NostalgicPlayer agent interface implementation
+    /// </summary>
+    public class AncientDecruncher : AgentBase, IAgentMultipleFormatIdentify
 	{
 		private static readonly Guid agent1Id = Guid.Parse("C7165383-9774-4297-8168-9FACE978EFA3");
 		private static readonly Guid agent2Id = Guid.Parse("15166B32-0EFF-49F3-93CC-DCB8F6D9C23C");
@@ -79,39 +80,134 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
 			if (typeId == agent1Id)
-				return new PowerPackerFormat(Resources.IDS_ANC_NAME_AGENT1);
+				return new AncientWorker(Resources.IDS_ANC_NAME_AGENT1);
 
 			if (typeId == agent2Id)
-				return new Xpk_SqshFormat(Resources.IDS_ANC_NAME_AGENT2);
+				return new AncientWorker(Resources.IDS_ANC_NAME_AGENT2);
 
 			if (typeId == agent3Id)
-				return new MmcmpFormat(Resources.IDS_ANC_NAME_AGENT3);
+				return new AncientWorker(Resources.IDS_ANC_NAME_AGENT3);
 
 			if (typeId == agent4Id)
-				return new Xpk_Bzp2Format(Resources.IDS_ANC_NAME_AGENT4);
+				return new AncientWorker(Resources.IDS_ANC_NAME_AGENT4);
 
 			if (typeId == agent5Id)
-				return new Xpk_BlzwFormat(Resources.IDS_ANC_NAME_AGENT5);
+				return new AncientWorker(Resources.IDS_ANC_NAME_AGENT5);
 
 			if (typeId == agent6Id)
-				return new Xpk_RakeFormat(Resources.IDS_ANC_NAME_AGENT6);
+				return new AncientWorker(Resources.IDS_ANC_NAME_AGENT6);
 
 			if (typeId == agent7Id)
-				return new Xpk_SmplFormat(Resources.IDS_ANC_NAME_AGENT7);
+				return new AncientWorker(Resources.IDS_ANC_NAME_AGENT7);
 
 			if (typeId == agent8Id)
-				return new Xpk_ShriFormat(Resources.IDS_ANC_NAME_AGENT8);
+				return new AncientWorker(Resources.IDS_ANC_NAME_AGENT8);
 
 			if (typeId == agent9Id)
-				return new Xpk_LhlbFormat(Resources.IDS_ANC_NAME_AGENT9);
+				return new AncientWorker(Resources.IDS_ANC_NAME_AGENT9);
 
 			if (typeId == agent10Id)
-				return new Xpk_MashFormat(Resources.IDS_ANC_NAME_AGENT10);
+				return new AncientWorker(Resources.IDS_ANC_NAME_AGENT10);
 
 			if (typeId == agent11Id)
-				return new CrunchManiaFormat(Resources.IDS_ANC_NAME_AGENT11);
+				return new AncientWorker(Resources.IDS_ANC_NAME_AGENT11, null);
 
 			return null;
+		}
+		#endregion
+
+		#region IAgentMultipleFormatIdentify implementation
+		/********************************************************************/
+		/// <summary>
+		/// Try to identify which format are used in the given stream and
+		/// return the format Guid if found
+		/// </summary>
+		/********************************************************************/
+		public IAgentWorker IdentifyFormat(Stream dataStream)
+		{
+			try
+			{
+				Decompressor decompressor = new Decompressor(dataStream);
+				string agentName;
+
+				switch (decompressor.GetDecompressorType())
+				{
+					case DecompressorType.PowerPacker:
+					{
+						agentName = Resources.IDS_ANC_NAME_AGENT1;
+						break;
+					}
+
+					case DecompressorType.Xpk_Sqsh:
+					{
+						agentName = Resources.IDS_ANC_NAME_AGENT2;
+						break;
+					}
+
+					case DecompressorType.Mmcmp:
+					{
+						agentName = Resources.IDS_ANC_NAME_AGENT3;
+						break;
+					}
+
+					case DecompressorType.Xpk_Bzp2:
+					{
+						agentName = Resources.IDS_ANC_NAME_AGENT4;
+						break;
+					}
+
+					case DecompressorType.Xpk_Blzw:
+					{
+						agentName = Resources.IDS_ANC_NAME_AGENT5;
+						break;
+					}
+
+					case DecompressorType.Xpk_Rake:
+					{
+						agentName = Resources.IDS_ANC_NAME_AGENT6;
+						break;
+					}
+
+					case DecompressorType.Xpk_Smpl:
+					{
+						agentName = Resources.IDS_ANC_NAME_AGENT7;
+						break;
+					}
+
+					case DecompressorType.Xpk_Shri:
+					{
+						agentName = Resources.IDS_ANC_NAME_AGENT8;
+						break;
+					}
+
+					case DecompressorType.Xpk_Lhlb:
+					{
+						agentName = Resources.IDS_ANC_NAME_AGENT9;
+						break;
+					}
+
+					case DecompressorType.Xpk_Mash:
+					{
+						agentName = Resources.IDS_ANC_NAME_AGENT10;
+						break;
+					}
+
+					case DecompressorType.CrunchMania:
+					{
+						agentName = Resources.IDS_ANC_NAME_AGENT11;
+						break;
+					}
+
+					default:
+						return null;
+				}
+
+				return new AncientWorker(agentName, decompressor);
+			}
+			catch (InvalidFormatException)
+			{
+				return null;
+			}
 		}
 		#endregion
 	}
