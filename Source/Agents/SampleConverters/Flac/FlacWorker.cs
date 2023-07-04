@@ -4,12 +4,14 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Text;
-using Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac;
-using Polycode.NostalgicPlayer.Agent.SampleConverter.Flac.LibFlac.Flac.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Ports.LibFlac.Flac;
+using Polycode.NostalgicPlayer.Ports.LibFlac.Flac.Containers.Decoder;
+using Polycode.NostalgicPlayer.Ports.LibFlac.Flac.Containers.Encoder;
+using Polycode.NostalgicPlayer.Ports.LibFlac.Flac.Containers.Format;
 
 namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 {
@@ -278,7 +280,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 		/********************************************************************/
 		public void SetSamplePosition(ModuleStream moduleStream, long position, LoadSampleFormatInfo formatInfo)
 		{
-			flacDecoder.Flac__Stream_Decoder_Seek_Absolute((Flac__uint64)position / streamInfo.Channels);
+			flacDecoder.Flac__Stream_Decoder_Seek_Absolute((ulong)position / streamInfo.Channels);
 		}
 		#endregion
 
@@ -312,9 +314,9 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 
 			// Initialize variables
 			flacEncoder = Stream_Encoder.Flac__Stream_Encoder_New();
-			flacEncoder.Flac__Stream_Encoder_Set_Bits_Per_Sample((uint32_t)formatInfo.Bits);
-			flacEncoder.Flac__Stream_Encoder_Set_Channels((uint32_t)formatInfo.Channels);
-			flacEncoder.Flac__Stream_Encoder_Set_Sample_Rate((uint32_t)formatInfo.Frequency);
+			flacEncoder.Flac__Stream_Encoder_Set_Bits_Per_Sample(formatInfo.Bits);
+			flacEncoder.Flac__Stream_Encoder_Set_Channels((uint)formatInfo.Channels);
+			flacEncoder.Flac__Stream_Encoder_Set_Sample_Rate(formatInfo.Frequency);
 
 			return true;
 		}
@@ -360,8 +362,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 			if (length > 0)
 			{
 				int[] convertedBuffer = new int[length];
-				uint32_t bits = flacEncoder.Flac__Stream_Encoder_Get_Bits_Per_Sample();
-				uint32_t channels = flacEncoder.Flac__Stream_Encoder_Get_Channels();
+				uint bits = flacEncoder.Flac__Stream_Encoder_Get_Bits_Per_Sample();
+				uint channels = flacEncoder.Flac__Stream_Encoder_Get_Channels();
 
 				if (bits == 8)
 				{
@@ -376,7 +378,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 						convertedBuffer[i] = buffer[i] >> 16;
 				}
 
-				if (!flacEncoder.Flac__Stream_Encoder_Process_Interleaved(convertedBuffer, (uint32_t)length / channels))
+				if (!flacEncoder.Flac__Stream_Encoder_Process_Interleaved(convertedBuffer, (uint)length / channels))
 					throw new Exception(Resources.IDS_FLAC_ERR_ENCODER_WRITE_SAMPLES_FAILED);
 			}
 		}

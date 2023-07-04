@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
+    <ProjectReference Include="..\..\..\Ports\LibFlac\LibFlac.csproj" />
   </ItemGroup>
 
   <ItemGroup>

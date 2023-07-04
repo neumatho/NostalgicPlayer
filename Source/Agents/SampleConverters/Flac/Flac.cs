@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -11,9 +10,6 @@ using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 // This is needed to uniquely identify this agent
 [assembly: Guid("920050C8-7A1F-46B1-968A-DE61E3332611")]
-
-// Make unit test able to read internals
-[assembly: InternalsVisibleTo("Flac.Test")]
 
 namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 {
