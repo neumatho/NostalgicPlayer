@@ -10,7 +10,7 @@
 
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
 
-    <DocumentationFile>bin\Flac.Test.xml</DocumentationFile>
+    <DocumentationFile>bin\LibFlac.Test.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

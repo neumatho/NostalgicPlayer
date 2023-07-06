@@ -14,7 +14,7 @@ using Polycode.NostalgicPlayer.Kit.Interfaces;
 [assembly: Guid("278F5859-79FF-49D5-A376-021EADA893E0")]
 
 // Make unit test able to read internals
-[assembly: InternalsVisibleTo("SidPlay.Test")]
+[assembly: InternalsVisibleTo("LibSidPlayFp.Test")]
 
 namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 {

@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
+    <ProjectReference Include="..\..\..\Ports\LibSidPlayFp\LibSidPlayFp.csproj" />
   </ItemGroup>
 
   <ItemGroup>

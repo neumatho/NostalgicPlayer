@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>disable</Nullable>
+
+    <IsPackable>false</IsPackable>
+
+    <RootNamespace>Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test</RootNamespace>
+
+    <IsPublishable>False</IsPublishable>
+
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+
+    <DocumentationFile>bin\LibSidPlayFp.Test.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Vice\VICE-testprogs\**" />
+    <EmbeddedResource Remove="Vice\VICE-testprogs\**" />
+    <None Remove="Vice\VICE-testprogs\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\LibSidPlayFp\LibSidPlayTypes.cs" Link="LibSidPlayTypes.cs" />
+    <Compile Include="..\..\ReSidFp\ReSidTypes.cs" Link="ReSidTypes.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
+    <PackageReference Include="coverlet.collector" Version="3.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Agents\Players\SidPlay\SidPlay.csproj" />
+    <ProjectReference Include="..\..\..\NostalgicPlayerLibrary\NostalgicPlayerLibrary.csproj" />
+    <ProjectReference Include="..\..\LibSidPlayFp\LibSidPlayFp.csproj" />
+    <ProjectReference Include="..\..\ReSidFp\ReSidFp.csproj" />
+  </ItemGroup>
+
+</Project>

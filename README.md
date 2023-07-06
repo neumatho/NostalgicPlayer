@@ -16,7 +16,8 @@ NostalgicPlayer is licensed under the <a href="https://github.com/neumatho/Nosta
 * libFLAC (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibFlac/LICENSE">BSD License</a>)
 * MikMod player and converter (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Agents/Players/MikMod/LICENSE">GNU Lesser General Public License version 3</a>)
 * Mpg123 (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibMpg123/LICENSE">GNU Lesser General Public License version 2.1</a>)
-* SidPlayFp and ReSIDfp (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Agents/Players/SidPlay/LICENSE">GNU General Public License version 2</a>)
+* ReSIDfp (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/ReSidFp/LICENSE">GNU General Public License version 2</a>)
+* SidPlayFp (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibSidPlayFp/LICENSE">GNU General Public License version 2</a>)
 
 # Structure
 
