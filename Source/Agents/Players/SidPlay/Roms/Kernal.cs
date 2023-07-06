@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.Roms
 	/// </summary>
 	internal static class Kernal
 	{
-		public static readonly uint8_t[] Data =
+		public static readonly byte[] Data =
 		{
 			0x85, 0x56, 0x20, 0x0f, 0xbc, 0xa5, 0x61, 0xc9,
 			0x88, 0x90, 0x03, 0x20, 0xd4, 0xba, 0x20, 0xcc,

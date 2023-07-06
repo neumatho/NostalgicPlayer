@@ -10,13 +10,13 @@ using System.Drawing.Text;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Threading;
-using Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.Builders.ReSidFpBuilder;
-using Polycode.NostalgicPlayer.Agent.Player.SidPlay.LibSidPlayFp.SidPlayFp;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.Roms;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder;
+using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 {
@@ -40,7 +40,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 
 		private bool haveDuration;
 		private Timer durationTimer;
-		private uint_least32_t startTime;
+		private uint startTime;
 
 		private SidPlaySettings settings;
 		private static readonly SidStil sidStil = new SidStil();
@@ -828,7 +828,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		{
 			if (engine != null)
 			{
-				uint_least32_t seconds = engine.Time() - startTime;
+				uint seconds = engine.Time() - startTime;
 
 				// Check if the module has reached the end
 				if (seconds >= ((TimeSpan)stateInfo).TotalSeconds)

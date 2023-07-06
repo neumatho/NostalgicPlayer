@@ -145,117 +145,6 @@ Ported to C# by Thomas Neumann.
 
 SID modules contains tunes and sound effects from the good old Commodore 64.  The behaviour of the SID player can be changed with the SID settings.</value>
   </data>
-  <data name="IDS_SID_ERR_2ND_INVALID" xml:space="preserve">
-    <value>2nd file contains invalid data</value>
-  </data>
-  <data name="IDS_SID_ERR_BAD_ADDR" xml:space="preserve">
-    <value>Bad address data</value>
-  </data>
-  <data name="IDS_SID_ERR_BAD_BUFFER_SIZE" xml:space="preserve">
-    <value>Bad buffer size</value>
-  </data>
-  <data name="IDS_SID_ERR_BAD_RELOC" xml:space="preserve">
-    <value>Bad reloc data</value>
-  </data>
-  <data name="IDS_SID_ERR_CANT_LOAD_FILE" xml:space="preserve">
-    <value>Could not load input file</value>
-  </data>
-  <data name="IDS_SID_ERR_CORRUPT" xml:space="preserve">
-    <value>File is incomplete or corrupt</value>
-  </data>
-  <data name="IDS_SID_ERR_CREATE_OBJECT" xml:space="preserve">
-    <value>{0}: Unable to create emulator</value>
-  </data>
-  <data name="IDS_SID_ERR_DATA_TOO_LONG" xml:space="preserve">
-    <value>Size of music data exceeds C64 memory</value>
-  </data>
-  <data name="IDS_SID_ERR_EMPTY" xml:space="preserve">
-    <value>No data to load</value>
-  </data>
-  <data name="IDS_SID_ERR_FILTER_DEFINITION" xml:space="preserve">
-    <value>Filter definition is not valid</value>
-  </data>
-  <data name="IDS_SID_ERR_ILLEGAL_INST" xml:space="preserve">
-    <value>Illegal instruction executed</value>
-  </data>
-  <data name="IDS_SID_ERR_INVALID" xml:space="preserve">
-    <value>File contains invalid data</value>
-  </data>
-  <data name="IDS_SID_ERR_INVALID_CHIP" xml:space="preserve">
-    <value>Invalid chip model</value>
-  </data>
-  <data name="IDS_SID_ERR_INVALID_SAMPLING" xml:space="preserve">
-    <value>Invalid sampling method</value>
-  </data>
-  <data name="IDS_SID_ERR_NO_ERRORS" xml:space="preserve">
-    <value>No errors</value>
-  </data>
-  <data name="IDS_SID_ERR_NO_SIDS" xml:space="preserve">
-    <value>{0}: No available SIDs to lock</value>
-  </data>
-  <data name="IDS_SID_ERR_NO_SPACE" xml:space="preserve">
-    <value>No space to install PSID driver in C64 ram</value>
-  </data>
-  <data name="IDS_SID_ERR_NO_STRINGS1" xml:space="preserve">
-    <value>Info file does not contain required strings</value>
-  </data>
-  <data name="IDS_SID_ERR_PSID_MUS" xml:space="preserve">
-    <value>Compute!'s Sidplayer MUS data is not supported yet</value>
-  </data>
-  <data name="IDS_SID_ERR_RELOC" xml:space="preserve">
-    <value>Failed whilst relocating PSID driver</value>
-  </data>
-  <data name="IDS_SID_ERR_SIZE_EXCEEDED" xml:space="preserve">
-    <value>Total file size too large</value>
-  </data>
-  <data name="IDS_SID_ERR_TOO_BIG1" xml:space="preserve">
-    <value>Size of music data exceeds C64 memory</value>
-  </data>
-  <data name="IDS_SID_ERR_TRUNCATED" xml:space="preserve">
-    <value>File is most likely truncated</value>
-  </data>
-  <data name="IDS_SID_ERR_UNKNOWN_CHIP" xml:space="preserve">
-    <value>Unknown chip model</value>
-  </data>
-  <data name="IDS_SID_ERR_UNKNOWN_PSID" xml:space="preserve">
-    <value>Unsupported PSID version</value>
-  </data>
-  <data name="IDS_SID_ERR_UNKNOWN_RSID" xml:space="preserve">
-    <value>Unsupported RSID version</value>
-  </data>
-  <data name="IDS_SID_ERR_UNKNOWN_SAMPLING_METHOD" xml:space="preserve">
-    <value>Unknown sampling method</value>
-  </data>
-  <data name="IDS_SID_ERR_UNRECOGNIZED_FORMAT" xml:space="preserve">
-    <value>Could not determine file format</value>
-  </data>
-  <data name="IDS_SID_ERR_UNSUPPORTED_FREQ" xml:space="preserve">
-    <value>Unsupported sampling frequency</value>
-  </data>
-  <data name="IDS_SID_ERR_UNSUPPORTED_OUTPUT_FREQ" xml:space="preserve">
-    <value>Unable to set desired output frequency</value>
-  </data>
-  <data name="IDS_SID_ERR_UNSUPPORTED_SID_ADDR" xml:space="preserve">
-    <value>Unsupported SID address</value>
-  </data>
-  <data name="IDS_SID_ERR_UNSUPPORTED_SIZE" xml:space="preserve">
-    <value>Size of music data exceeds C64 memory</value>
-  </data>
-  <data name="IDS_SID_FORMAT_MUS" xml:space="preserve">
-    <value>C64 Sidplayer format (MUS)</value>
-  </data>
-  <data name="IDS_SID_FORMAT_PRG" xml:space="preserve">
-    <value>Tape image file (PRG)</value>
-  </data>
-  <data name="IDS_SID_FORMAT_PSID" xml:space="preserve">
-    <value>PlaySID one-file format (PSID)</value>
-  </data>
-  <data name="IDS_SID_FORMAT_RSID" xml:space="preserve">
-    <value>Real C64 one-file format (RSID)</value>
-  </data>
-  <data name="IDS_SID_FORMAT_STR" xml:space="preserve">
-    <value>C64 stereo Sidplayer format (MUS+STR)</value>
-  </data>
   <data name="IDS_SID_INFODESCLINE0" xml:space="preserve">
     <value>Released:</value>
   </data>
@@ -283,9 +172,6 @@ SID modules contains tunes and sound effects from the good old Commodore 64.  Th
   <data name="IDS_SID_INFODESCLINE8" xml:space="preserve">
     <value>Clock speed:</value>
   </data>
-  <data name="IDS_SID_NA" xml:space="preserve">
-    <value>n/a</value>
-  </data>
   <data name="IDS_SID_NAME" xml:space="preserve">
     <value>SidPlay</value>
   </data>
@@ -294,29 +180,5 @@ SID modules contains tunes and sound effects from the good old Commodore 64.  Th
   </data>
   <data name="IDS_SID_NOT_PRESENT" xml:space="preserve">
     <value>Not present</value>
-  </data>
-  <data name="IDS_SID_SPEED_CIA" xml:space="preserve">
-    <value>CIA 1 Timer A</value>
-  </data>
-  <data name="IDS_SID_SPEED_NTSC_CIA" xml:space="preserve">
-    <value>CIA (NTSC)</value>
-  </data>
-  <data name="IDS_SID_SPEED_NTSC_VBI" xml:space="preserve">
-    <value>60 Hz VBI (NTSC)</value>
-  </data>
-  <data name="IDS_SID_SPEED_NTSC_VBI_FIXED" xml:space="preserve">
-    <value>50 Hz VBI (NTSC FIXED)</value>
-  </data>
-  <data name="IDS_SID_SPEED_PAL_CIA" xml:space="preserve">
-    <value>CIA (PAL)</value>
-  </data>
-  <data name="IDS_SID_SPEED_PAL_VBI" xml:space="preserve">
-    <value>50 Hz VBI (PAL)</value>
-  </data>
-  <data name="IDS_SID_SPEED_PAL_VBI_FIXED" xml:space="preserve">
-    <value>60 Hz VBI (PAL FIXED)</value>
-  </data>
-  <data name="IDS_SID_SPEED_VBI" xml:space="preserve">
-    <value>VBI</value>
   </data>
 </root>

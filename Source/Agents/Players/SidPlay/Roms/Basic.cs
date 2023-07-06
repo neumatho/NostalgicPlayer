@@ -10,7 +10,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay.Roms
 	/// </summary>
 	internal static class Basic
 	{
-		public static readonly uint8_t[] Data =
+		public static readonly byte[] Data =
 		{
 			0x94, 0xe3, 0x7b, 0xe3, 0x43, 0x42, 0x4d, 0x42,
 			0x41, 0x53, 0x49, 0x43, 0x30, 0xa8, 0x41, 0xa7,
