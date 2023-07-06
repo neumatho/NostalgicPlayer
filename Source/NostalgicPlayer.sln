@@ -124,6 +124,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DavidWhittaker", "Agents\Players\DavidWhittaker\DavidWhittaker.csproj", "{3567792F-12EE-436D-B0ED-D24BA049063A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ports", "Ports", "{409138C0-F329-4BA5-8F10-1C401960E3AC}"
+	ProjectSection(SolutionItems) = preProject
+		Ports\README.md = Ports\README.md
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibMpg123", "Ports\LibMpg123\LibMpg123.csproj", "{A5525C20-DF2C-4D07-9E37-DA755CEA1253}"
 EndProject
