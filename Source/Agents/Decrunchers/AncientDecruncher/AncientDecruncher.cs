@@ -123,78 +123,90 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher
 		/// return the format Guid if found
 		/// </summary>
 		/********************************************************************/
-		public IAgentWorker IdentifyFormat(Stream dataStream)
+		public IdentifyFormatInfo IdentifyFormat(Stream dataStream)
 		{
 			try
 			{
 				Decompressor decompressor = new Decompressor(dataStream);
 				string agentName;
+				Guid typeId;
 
 				switch (decompressor.GetDecompressorType())
 				{
 					case DecompressorType.PowerPacker:
 					{
 						agentName = Resources.IDS_ANC_NAME_AGENT1;
+						typeId = agent1Id;
 						break;
 					}
 
 					case DecompressorType.Xpk_Sqsh:
 					{
 						agentName = Resources.IDS_ANC_NAME_AGENT2;
+						typeId = agent2Id;
 						break;
 					}
 
 					case DecompressorType.Mmcmp:
 					{
 						agentName = Resources.IDS_ANC_NAME_AGENT3;
+						typeId = agent3Id;
 						break;
 					}
 
 					case DecompressorType.Xpk_Bzp2:
 					{
 						agentName = Resources.IDS_ANC_NAME_AGENT4;
+						typeId = agent4Id;
 						break;
 					}
 
 					case DecompressorType.Xpk_Blzw:
 					{
 						agentName = Resources.IDS_ANC_NAME_AGENT5;
+						typeId = agent5Id;
 						break;
 					}
 
 					case DecompressorType.Xpk_Rake:
 					{
 						agentName = Resources.IDS_ANC_NAME_AGENT6;
+						typeId = agent6Id;
 						break;
 					}
 
 					case DecompressorType.Xpk_Smpl:
 					{
 						agentName = Resources.IDS_ANC_NAME_AGENT7;
+						typeId = agent7Id;
 						break;
 					}
 
 					case DecompressorType.Xpk_Shri:
 					{
 						agentName = Resources.IDS_ANC_NAME_AGENT8;
+						typeId = agent8Id;
 						break;
 					}
 
 					case DecompressorType.Xpk_Lhlb:
 					{
 						agentName = Resources.IDS_ANC_NAME_AGENT9;
+						typeId = agent9Id;
 						break;
 					}
 
 					case DecompressorType.Xpk_Mash:
 					{
 						agentName = Resources.IDS_ANC_NAME_AGENT10;
+						typeId = agent10Id;
 						break;
 					}
 
 					case DecompressorType.CrunchMania:
 					{
 						agentName = Resources.IDS_ANC_NAME_AGENT11;
+						typeId = agent11Id;
 						break;
 					}
 
@@ -202,7 +214,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher
 						return null;
 				}
 
-				return new AncientWorker(agentName, decompressor);
+				return new IdentifyFormatInfo(new AncientWorker(agentName, decompressor), typeId);
 			}
 			catch (InvalidFormatException)
 			{

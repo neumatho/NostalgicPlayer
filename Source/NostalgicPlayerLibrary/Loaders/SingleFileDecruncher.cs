@@ -70,35 +70,46 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		{
 			HashSet<Guid> agentsToSkip = new HashSet<Guid>();
 
-			foreach (AgentInfo agentInfo in manager.GetAllAgents(Manager.AgentType.FileDecrunchers))
+			foreach (AgentInfo info in manager.GetAllAgents(Manager.AgentType.FileDecrunchers))
 			{
-				// Is the decruncher enabled?
-				if (agentInfo.Enabled && !agentsToSkip.Contains(agentInfo.AgentId))
+				if (agentsToSkip.Contains(info.AgentId))
+					continue;
+
+				AgentInfo agentInfo = info;
+
+				// Do the decruncher implement multiple format identify method?
+				if (agentInfo.Agent is IAgentMultipleFormatIdentify multipleFormatIdentify)
 				{
-					// Do the decruncher implement multiple format identify method?
-					if (agentInfo.Agent is IAgentMultipleFormatIdentify multipleFormatIdentify)
+					// Since this is a multi format agent, we don't want to call the agent for
+					// each format and therefore we store the ID in this list
+					agentsToSkip.Add(agentInfo.AgentId);
+
+					IdentifyFormatInfo identifyFormatInfo = multipleFormatIdentify.IdentifyFormat(crunchedDataStream);
+					if (identifyFormatInfo != null)
 					{
-						IFileDecruncherAgent decruncher = multipleFormatIdentify.IdentifyFormat(crunchedDataStream) as IFileDecruncherAgent;
-						if (decruncher != null)
+						agentInfo = manager.GetAgent(Manager.AgentType.FileDecrunchers, identifyFormatInfo.TypeId);
+						if (agentInfo.Enabled)
+						{
+							IFileDecruncherAgent decruncher = identifyFormatInfo.Worker as IFileDecruncherAgent;
+							if (decruncher != null)
+								return decruncher.OpenStream(crunchedDataStream);
+						}
+					}
+				}
+				else
+				{
+					// Create an instance of the decruncher
+					if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IFileDecruncherAgent decruncher)
+					{
+						// Check the file
+						AgentResult agentResult = decruncher.Identify(crunchedDataStream);
+						if (agentResult == AgentResult.Ok)
 							return decruncher.OpenStream(crunchedDataStream);
 
-						agentsToSkip.Add(agentInfo.AgentId);
-					}
-					else
-					{
-						// Create an instance of the decruncher
-						if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IFileDecruncherAgent decruncher)
+						if (agentResult != AgentResult.Unknown)
 						{
-							// Check the file
-							AgentResult agentResult = decruncher.Identify(crunchedDataStream);
-							if (agentResult == AgentResult.Ok)
-								return decruncher.OpenStream(crunchedDataStream);
-
-							if (agentResult != AgentResult.Unknown)
-							{
-								// Some error occurred
-								throw new DecruncherException(agentInfo.TypeName, "Identify() returned an error");
-							}
+							// Some error occurred
+							throw new DecruncherException(agentInfo.TypeName, "Identify() returned an error");
 						}
 					}
 				}

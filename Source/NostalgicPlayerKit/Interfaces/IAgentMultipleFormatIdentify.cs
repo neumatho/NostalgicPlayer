@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.IO;
+using Polycode.NostalgicPlayer.Kit.Containers;
 
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
@@ -20,6 +21,6 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Try to identify which format are used in the given stream and
 		/// return the worker for the format if found
 		/// </summary>
-		IAgentWorker IdentifyFormat(Stream dataStream);
+		IdentifyFormatInfo IdentifyFormat(Stream dataStream);
 	}
 }
