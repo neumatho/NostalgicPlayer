@@ -452,40 +452,80 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			int index = fileName.IndexOf('.');
 			string postExtension = index == lastIndex ? string.Empty : fileName.Substring(0, index).ToLower();
 
-			foreach (AgentInfo agentInfo in agentManager.GetAllAgents(Manager.AgentType.Players))
+			HashSet<Guid> agentsToSkip = new HashSet<Guid>();
+
+			foreach (AgentInfo info in agentManager.GetAllAgents(Manager.AgentType.Players))
 			{
-				// Check if the player is enabled
-				if (agentInfo.Enabled)
+				if (agentsToSkip.Contains(info.AgentId))
+					continue;
+
+				IPlayerAgent player = null;
+				AgentInfo agentInfo = info;
+
+				// Do the player implement multiple format identify method?
+				if (agentInfo.Agent is IPlayerAgentMultipleFormatIdentify multipleFormatIdentify)
 				{
-					// Create an instance of the player
-					if (agentInfo.Agent.CreateInstance(agentInfo.TypeId) is IPlayerAgent player)
+					// Since this is a multi format agent, we don't want to call the agent for
+					// each format and therefore we store the ID in this list
+					agentsToSkip.Add(agentInfo.AgentId);
+
+					// Get the extensions
+					string[] playerExtensions = multipleFormatIdentify.FileExtensions;
+
+					// Did we get a match
+					if (playerExtensions.Contains(fileExtension) || (!string.IsNullOrEmpty(postExtension) && playerExtensions.Contains(postExtension)))
 					{
-						// Get the player type
-						string[] playerTypes = player.FileExtensions;
-
-						// Did we get a match
-						if (playerTypes.Contains(fileExtension) || (!string.IsNullOrEmpty(postExtension) && playerTypes.Contains(postExtension)))
+						IdentifyFormatInfo identifyFormatInfo = multipleFormatIdentify.IdentifyFormat(fileInfo);
+						if (identifyFormatInfo != null)
 						{
-							// Found the file type in a player. Now call the
-							// players check routine, just to make sure it's
-							// the right player
-							AgentResult agentResult = player.Identify(fileInfo);
-							if (agentResult == AgentResult.Ok)
-							{
-								// We found a player
-								PlayerAgentInfo = agentInfo;
-								PlayerAgent = player;
-
-								return true;
-							}
-
-							if (agentResult != AgentResult.Unknown)
-							{
-								// Some error occurred
-								throw new Exception($"Identify() on player {agentInfo.TypeName} returned an error");
-							}
+							agentInfo = agentManager.GetAgent(Manager.AgentType.Players, identifyFormatInfo.TypeId);
+							if (agentInfo.Enabled)
+								player = identifyFormatInfo.Worker as IPlayerAgent;
 						}
 					}
+				}
+				else
+				{
+					// Check if the player is enabled
+					if (agentInfo.Enabled)
+					{
+						// Create an instance of the player
+						player = agentInfo.Agent.CreateInstance(agentInfo.TypeId) as IPlayerAgent;
+						if (player != null)
+						{
+							// Get the extensions
+							string[] playerExtensions = player.FileExtensions;
+
+							// Did we get a match
+							if (playerExtensions.Contains(fileExtension) || (!string.IsNullOrEmpty(postExtension) && playerExtensions.Contains(postExtension)))
+							{
+								// Found the file extension in a player. Now call the
+								// players check routine, just to make sure it's
+								// the right player
+								AgentResult agentResult = player.Identify(fileInfo);
+
+								if (agentResult == AgentResult.Error)
+								{
+									// Some error occurred
+									throw new Exception($"Identify() on player {agentInfo.TypeName} returned an error");
+								}
+
+								if (agentResult == AgentResult.Unknown)
+									player = null;
+							}
+							else
+								player = null;
+						}
+					}
+				}
+
+				if (player != null)
+				{
+					// We found a player
+					PlayerAgentInfo = agentInfo;
+					PlayerAgent = player;
+
+					return true;
 				}
 			}
 
@@ -517,23 +557,54 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 				}
 			}
 
+			HashSet<Guid> agentsToSkip = new HashSet<Guid>();
+
 			foreach ((IPlayerAgent player, AgentInfo agentInfo) agent in agents.OrderBy(a => a.player.IdentifyPriority))
 			{
-				// Check the file
-				AgentResult agentResult = agent.player.Identify(fileInfo);
-				if (agentResult == AgentResult.Ok)
-				{
-					// We found the right player
-					PlayerAgentInfo = agent.agentInfo;
-					PlayerAgent = agent.player;
+				AgentInfo agentInfo = agent.agentInfo;
 
-					return true;
+				if (agentsToSkip.Contains(agentInfo.AgentId))
+					continue;
+
+				IPlayerAgent player = null;
+
+				// Do the player implement multiple format identify method?
+				if (agentInfo.Agent is IPlayerAgentMultipleFormatIdentify multipleFormatIdentify)
+				{
+					// Since this is a multi format agent, we don't want to call the agent for
+					// each format and therefore we store the ID in this list
+					agentsToSkip.Add(agentInfo.AgentId);
+
+					IdentifyFormatInfo identifyFormatInfo = multipleFormatIdentify.IdentifyFormat(fileInfo);
+					if (identifyFormatInfo != null)
+					{
+						agentInfo = agentManager.GetAgent(Manager.AgentType.Players, identifyFormatInfo.TypeId);
+						if (agentInfo.Enabled)
+							player = identifyFormatInfo.Worker as IPlayerAgent;
+					}
+				}
+				else
+				{
+					// Check the file
+					AgentResult agentResult = agent.player.Identify(fileInfo);
+
+					if (agentResult == AgentResult.Error)
+					{
+						// Some error occurred
+						throw new Exception($"Identify() on player {agent.agentInfo.TypeName} returned an error");
+					}
+
+					if (agentResult == AgentResult.Ok)
+						player = agent.player;
 				}
 
-				if (agentResult != AgentResult.Unknown)
+				if (player != null)
 				{
-					// Some error occurred
-					throw new Exception($"Identify() on player {agent.agentInfo.TypeName} returned an error");
+					// We found the right player
+					PlayerAgentInfo = agentInfo;
+					PlayerAgent = player;
+
+					return true;
 				}
 			}
 

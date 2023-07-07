@@ -24,28 +24,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 	/// </summary>
 	internal class ModTrackerWorker : ModulePlayerWithPositionDurationAgentBase
 	{
-		private static readonly Dictionary<Guid, ModuleType> moduleTypeLookup = new Dictionary<Guid, ModuleType>
-		{
-			{ ModTracker.Agent1Id, ModuleType.UltimateSoundTracker10 },
-			{ ModTracker.Agent2Id, ModuleType.UltimateSoundTracker18 },
-			{ ModTracker.Agent3Id, ModuleType.SoundTrackerII },
-			{ ModTracker.Agent4Id, ModuleType.SoundTrackerVI },
-			{ ModTracker.Agent5Id, ModuleType.SoundTrackerIX },
-			{ ModTracker.Agent6Id, ModuleType.MasterSoundTracker10 },
-			{ ModTracker.Agent7Id, ModuleType.SoundTracker2x },
-			{ ModTracker.Agent8Id, ModuleType.NoiseTracker },
-			{ ModTracker.Agent9Id, ModuleType.StarTrekker },
-			{ ModTracker.Agent10Id, ModuleType.StarTrekker8 },
-			{ ModTracker.Agent11Id, ModuleType.ProTracker },
-			{ ModTracker.Agent12Id, ModuleType.FastTracker },
-			{ ModTracker.Agent13Id, ModuleType.MultiTracker },
-			{ ModTracker.Agent14Id, ModuleType.Octalyser },
-			{ ModTracker.Agent15Id, ModuleType.ModsGrave },
-			{ ModTracker.Agent16Id, ModuleType.DigitalTracker },
-			{ ModTracker.Agent17Id, ModuleType.HisMastersNoise },
-			{ ModTracker.Agent18Id, ModuleType.AudioSculpture }
-		};
-
 		private const int NumberOfNotes = 7 * 12;
 
 		private static readonly byte[] stSynthId1 = { 0x53, 0x54, 0x31, 0x2e, 0x33, 0x20, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x49, 0x4e, 0x46, 0x4f };		// ST1.3 ModuleINFO
@@ -98,10 +76,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModTrackerWorker(Guid typeId)
+		public ModTrackerWorker(ModuleType moduleType = ModuleType.Unknown)
 		{
-			if (!moduleTypeLookup.TryGetValue(typeId, out currentModuleType))
-				currentModuleType = ModuleType.Unknown;
+			currentModuleType = moduleType;
 
 			rnd = new Random();
 		}
@@ -112,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "mod", "mtm", "wow", "adsc" };
+		public override string[] FileExtensions => ModTracker.fileExtensions;
 
 
 
@@ -123,11 +100,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/********************************************************************/
 		public override AgentResult Identify(PlayerFileInfo fileInfo)
 		{
-			// Check the module
-			ModuleType checkType = TestModule(fileInfo);
-			if (checkType == currentModuleType)
-				return AgentResult.Ok;
-
 			return AgentResult.Unknown;
 		}
 
@@ -534,75 +506,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		}
 		#endregion
 
-		#region Private methods
-		/********************************************************************/
-		/// <summary>
-		/// Tests the current module to see if it's in sound tracker format
-		/// </summary>
-		/********************************************************************/
-		private bool IsSoundTracker()
-		{
-			return currentModuleType <= ModuleType.SoundTracker2x;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Tests the current module to see if it's in NoiseTracker or
-		/// similar format
-		/// </summary>
-		/********************************************************************/
-		private bool IsNoiseTracker()
-		{
-			return (currentModuleType >= ModuleType.NoiseTracker) && (currentModuleType <= ModuleType.AudioSculpture);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Tests the current module to see if it's in StarTrekker or
-		/// similar format
-		/// </summary>
-		/********************************************************************/
-		private bool IsStarTrekker()
-		{
-			return (currentModuleType >= ModuleType.StarTrekker) && (currentModuleType <= ModuleType.AudioSculpture);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Tests the current module to see if it's one of the PC trackers
-		/// </summary>
-		/********************************************************************/
-		private bool IsPcTracker()
-		{
-			return (currentModuleType >= ModuleType.FastTracker) && (currentModuleType <= ModuleType.MultiTracker);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Tests the current module to see if it's one of the Atari trackers
-		/// </summary>
-		/********************************************************************/
-		private bool IsAtariTracker()
-		{
-			return (currentModuleType >= ModuleType.Octalyser) && (currentModuleType <= ModuleType.DigitalTracker);
-		}
-
-
-
+		#region Identify methods
 		/********************************************************************/
 		/// <summary>
 		/// Tests the module to see which type of module it is
 		/// </summary>
 		/********************************************************************/
-		private ModuleType TestModule(PlayerFileInfo fileInfo)
+		public static ModuleType TestModule(PlayerFileInfo fileInfo)
 		{
 			ModuleStream moduleStream = fileInfo.ModuleStream;
 
@@ -659,7 +569,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// Checks for foreign module formats, which should be ignored
 		/// </summary>
 		/********************************************************************/
-		private bool CheckForeignModuleFormats(ModuleStream moduleStream)
+		private static bool CheckForeignModuleFormats(ModuleStream moduleStream)
 		{
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
@@ -686,7 +596,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// https://source.openmpt.org/svn/openmpt/tags/libopenmpt-0.2.3746-beta3/soundlib/Load_mod.cpp
 		/// </summary>
 		/********************************************************************/
-		private ModuleType Check15SamplesModule(ModuleStream moduleStream)
+		private static ModuleType Check15SamplesModule(ModuleStream moduleStream)
 		{
 			// First check for any other module types that may be detected as
 			// a 15-samples module in some cases. We want to skip those
@@ -1026,7 +936,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// Checks the module to see if it's a 31 samples module
 		/// </summary>
 		/********************************************************************/
-		private ModuleType Check31SamplesModule(PlayerFileInfo fileInfo, uint mark)
+		private static ModuleType Check31SamplesModule(PlayerFileInfo fileInfo, uint mark)
 		{
 			ModuleType retVal = ModuleType.Unknown;
 
@@ -1256,21 +1166,18 @@ stopLoop:
 		/// Checks the synth file if any to see what kind of module it is
 		/// </summary>
 		/********************************************************************/
-		private ModuleType CheckSynthFile(PlayerFileInfo fileInfo)
+		private static ModuleType CheckSynthFile(PlayerFileInfo fileInfo)
 		{
-			if ((currentModuleType == ModuleType.StarTrekker) || (currentModuleType == ModuleType.AudioSculpture))
+			using (ModuleStream moduleStream = OpenSynthFile(fileInfo, false))
 			{
-				using (ModuleStream moduleStream = OpenSynthFile(fileInfo, false))
+				// Did we get any file at all
+				if (moduleStream != null)
 				{
-					// Did we get any file at all
-					if (moduleStream != null)
+					byte[] id = new byte[16];
+					if (moduleStream.Read(id, 0, 16) == 16)
 					{
-						byte[] id = new byte[16];
-						if (moduleStream.Read(id, 0, 16) == 16)
-						{
-							if (id.SequenceEqual(asSynthId1))
-								return ModuleType.AudioSculpture;
-						}
+						if (id.SequenceEqual(asSynthId1))
+							return ModuleType.AudioSculpture;
 					}
 				}
 			}
@@ -1285,7 +1192,7 @@ stopLoop:
 		/// Will try to open the synth file
 		/// </summary>
 		/********************************************************************/
-		private ModuleStream OpenSynthFile(PlayerFileInfo fileInfo, bool addSize)
+		private static ModuleStream OpenSynthFile(PlayerFileInfo fileInfo, bool addSize)
 		{
 			ModuleStream moduleStream = fileInfo.Loader?.OpenExtraFileByExtension("nt", addSize);
 			if (moduleStream == null)
@@ -1301,7 +1208,7 @@ stopLoop:
 		/// Find the minimum version
 		/// </summary>
 		/********************************************************************/
-		private ModuleType GetMinimumVersion(ModuleType type1, ModuleType type2)
+		private static ModuleType GetMinimumVersion(ModuleType type1, ModuleType type2)
 		{
 			return (ModuleType)Math.Max((int)type1, (int)type2);
 		}
@@ -1314,9 +1221,71 @@ stopLoop:
 		/// actual played
 		/// </summary>
 		/********************************************************************/
-		private byte[] FindUsedPatterns(byte[] pos, byte songLen)
+		private static byte[] FindUsedPatterns(byte[] pos, byte songLen)
 		{
 			return pos.Take(songLen).Distinct().OrderBy(b => b).ToArray();
+		}
+		#endregion
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Tests the current module to see if it's in sound tracker format
+		/// </summary>
+		/********************************************************************/
+		private bool IsSoundTracker()
+		{
+			return currentModuleType <= ModuleType.SoundTracker2x;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tests the current module to see if it's in NoiseTracker or
+		/// similar format
+		/// </summary>
+		/********************************************************************/
+		private bool IsNoiseTracker()
+		{
+			return (currentModuleType >= ModuleType.NoiseTracker) && (currentModuleType <= ModuleType.AudioSculpture);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tests the current module to see if it's in StarTrekker or
+		/// similar format
+		/// </summary>
+		/********************************************************************/
+		private bool IsStarTrekker()
+		{
+			return (currentModuleType >= ModuleType.StarTrekker) && (currentModuleType <= ModuleType.AudioSculpture);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tests the current module to see if it's one of the PC trackers
+		/// </summary>
+		/********************************************************************/
+		private bool IsPcTracker()
+		{
+			return (currentModuleType >= ModuleType.FastTracker) && (currentModuleType <= ModuleType.MultiTracker);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tests the current module to see if it's one of the Atari trackers
+		/// </summary>
+		/********************************************************************/
+		private bool IsAtariTracker()
+		{
+			return (currentModuleType >= ModuleType.Octalyser) && (currentModuleType <= ModuleType.DigitalTracker);
 		}
 
 
