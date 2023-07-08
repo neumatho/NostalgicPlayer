@@ -3719,6 +3719,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			FixAgentSettings("Formats", agentManager.GetAllAgents(Manager.AgentType.Players).Union(agentManager.GetAllAgents(Manager.AgentType.ModuleConverters)));
 			FixAgentSettings("Output", agentManager.GetAllAgents(Manager.AgentType.Output));
 			FixAgentSettings("Visuals", agentManager.GetAllAgents(Manager.AgentType.Visuals));
+			FixAgentSettings("Decrunchers", agentManager.GetAllAgents(Manager.AgentType.FileDecrunchers).Union(agentManager.GetAllAgents(Manager.AgentType.ArchiveDecrunchers)));
 
 			// And finally, save the settings to disk
 			userSettings.SaveSettings();
@@ -3774,6 +3775,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					if (agentInfo.TypeId == agentEntry.TypeId)
 					{
 						enabled = agentEntry.Enabled;
+						agentInfo.Enabled = enabled;
 
 						found = true;
 						break;
