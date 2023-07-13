@@ -6,6 +6,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibFlac.Flac.Containers;
@@ -259,6 +260,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		public delegate void Flac__StreamEncoderProgressCallback(Stream_Encoder encoder, Flac__uint64 bytes_Written, Flac__uint64 samples_Written, uint32_t frames_Written, uint32_t total_Frames_Estimates, object client_Data);
 		#endregion
 
+		private class Apply_Apodization_State_Struct
+		{
+			public uint32_t A;
+			public uint32_t B;
+			public uint32_t C;
+			public Flac__ApodizationSpecification Current_Apodization;
+			public double[] Autoc_Root = new double[Constants.Flac__Max_Lpc_Order + 1];
+			public double[] Autoc = new double[Constants.Flac__Max_Lpc_Order + 1];
+		}
+
 		private class CompressionLevels
 		{
 			public CompressionLevels(Flac__bool do_Mid_Side_Stereo, Flac__bool loose_Mid_Side_Stereo, uint32_t max_Lpc_Order, uint32_t qlp_Coeff_Precision, Flac__bool do_Qlp_Coeff_Prec_Search, Flac__bool do_Exhaustive_Model_Search, uint32_t min_Residual_Partition_Order, uint32_t max_Residual_Partition_Order, string apodization)
@@ -296,6 +307,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			public uint32_t Input_Capacity;																// Current size (in samples) of the signal and residual buffers
 			public Flac__int32[][] Integer_Signal = new Flac__int32[Constants.Flac__Max_Channels][];	// The integer version of the input signal
 			public Flac__int32[][] Integer_Signal_Mid_Size = new Flac__int32[2][];						// The integer version of the mid-side input signal (stereo only)
+			public Flac__int64[] Integer_Signal_33Bit_Side;												// 33-bit side for 32-bit stereo decorrelation
 			public Flac__real[][] Window = new Flac__real[Constants.Flac__Max_Apodization_Functions][];	// The pre-computed floating-point window for each apodization function
 			public Flac__real[] Windowed_Signal;														// The Integer_Signal[] * current Window[]
 			public uint32_t[] SubFrame_Bps = new uint32_t[Constants.Flac__Max_Channels];				// The effective bits per sample of the input signal (stream bps - wasted bits)
@@ -345,6 +357,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			public uint32_t Total_Frames_Estimate;
 			public Flac__int32[][] Integer_Signal_Unaligned = new Flac__int32[Constants.Flac__Max_Channels][];
 			public Flac__int32[][] Integer_Signal_Mid_Side_Unaligned = new Flac__int32[2][];
+			public Flac__int64[] Integer_Signal_33Bit_Side_Unaligned;
 			public Flac__real[][] Window_Unaligned = new Flac__real[Constants.Flac__Max_Apodization_Functions][];
 			public Flac__real[] Windowed_Signal_Unaligned;
 			public Flac__int32[][][] Residual_Workspace_Unaligned = ArrayHelper.InitializeArrayWithArray<Flac__int32>((int)Constants.Flac__Max_Channels, 2);
@@ -364,9 +377,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			new CompressionLevels(false, false, 6, 0, false, false, 0, 4, "tukey(5e-1)"),
 			new CompressionLevels(true, true, 8, 0, false, false, 0, 4, "tukey(5e-1)"),
 			new CompressionLevels(true, false, 8, 0, false, false, 0, 5, "tukey(5e-1)"),
-			new CompressionLevels(true, false, 8, 0, false, false, 0, 6, "tukey(5e-1);partial_tukey(2)"),
-			new CompressionLevels(true, false, 12, 0, false, false, 0, 6, "tukey(5e-1);partial_tukey(2)"),
-			new CompressionLevels(true, false, 12, 0, false, false, 0, 6, "tukey(5e-1);partial_tukey(2);punchout_tukey(3)")
+			new CompressionLevels(true, false, 8, 0, false, false, 0, 6, "subdivide_tukey(2)"),
+			new CompressionLevels(true, false, 12, 0, false, false, 0, 6, "subdivide_tukey(2)"),
+			new CompressionLevels(true, false, 12, 0, false, false, 0, 6, "subdivide_tukey(3)")
 		};
 
 		// Number of samples that will be overread to watch for end of stream. By
@@ -622,16 +635,38 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			Debug.Assert(encoder.Protected != null);
 
 			if (encoder.Protected.State == Flac__StreamEncoderState.Uninitialized)
+			{
+				if (encoder.Protected.Metadata != null)	// True in case Flac__Stream_Encoder_Set_Metadata was used but init failed
+				{
+					encoder.Protected.Metadata = null;
+					encoder.Protected.Num_Metadata_Blocks = 0;
+				}
+
+				if (encoder.Private.File != null)
+				{
+					if (!encoder.Private.Leave_Stream_Open)
+						encoder.Private.File.Dispose();
+
+					encoder.Private.File = null;
+					encoder.Private.Leave_Stream_Open = false;
+				}
+
 				return true;
+			}
 
 			if ((encoder.Protected.State == Flac__StreamEncoderState.Ok) && !encoder.Private.Is_Being_Deleted)
 			{
 				if (encoder.Private.Current_Sample_Number != 0)
 				{
-					Flac__bool is_Fractional_Block = encoder.Protected.BlockSize != encoder.Private.Current_Sample_Number;
 					encoder.Protected.BlockSize = encoder.Private.Current_Sample_Number;
 
-					if (!Process_Frame(is_Fractional_Block, true))
+					if (!Resize_Buffers(encoder.Protected.BlockSize))
+					{
+						// The above function sets the state for us in case of an error
+						return true;
+					}
+
+					if (!Process_Frame(true))
 						error = true;
 				}
 			}
@@ -1123,6 +1158,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 						}
 					}
 				}
+				else if ((n > 17) && specification.StartsWith("subdivide_tukey("))
+				{
+					Flac__int32 parts = Helpers.ParseInt(specification.Substring(16));
+
+					if (parts > 1)
+					{
+						int si_1 = specification.IndexOf('/');
+						Flac__real p = si_1 != -1 ? Helpers.ParseFloat(specification.Substring(si_1 + 1)) : 5e-1f;
+
+						if (p > 1)
+							p = 1;
+						else if (p < 0)
+							p = 0;
+
+						encoder.Protected.Apodizations[encoder.Protected.Num_Apodizations].Parameters = new Flac__ApodizationParameter_Subdivide_Tukey { Parts = parts, P = p / parts };
+						encoder.Protected.Apodizations[encoder.Protected.Num_Apodizations++].Type = Flac__ApodizationFunction.Subdivide_Tukey;
+					}
+				}
 				else if ((n == 5) && specification.StartsWith("welch"))
 					encoder.Protected.Apodizations[encoder.Protected.Num_Apodizations++].Type = Flac__ApodizationFunction.Welch;
 
@@ -1177,10 +1230,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// Set the precision, in bits, of the quantized linear predictor
 		/// coefficients, or 0 to let the encoder select it based on the
 		/// blocksize.
-		///
-		/// NOTE:
-		/// In the current implementation, qlp_coeff_precision +
-		/// bits_per_sample must be less than 32.
 		///
 		/// Default 0
 		/// <param name="value">See above</param>
@@ -1466,6 +1515,35 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 		/********************************************************************/
 		/// <summary>
+		/// Set to true to make the encoder not output frames which contain
+		/// only constant subframes. This is beneficial for streaming
+		/// applications: very small frames can cause problems with buffering
+		/// as bitrates can drop as low 1kbit/s for CDDA audio encoded within
+		/// subset. The minimum bitrate for a FLAC file encoded with this
+		/// function used is raised to 1bit/sample (i.e. 48kbit/s for 48kHz
+		/// material).
+		/// <param name="value">Flag value</param>
+		/// <returns>False if the encoder is already initialized, else true</returns>
+		/// </summary>
+		/********************************************************************/
+		public Flac__bool Flac__Stream_Encoder_Set_Limit_Min_Bitrate(Flac__bool value)
+		{
+			Debug.Assert(encoder != null);
+			Debug.Assert(encoder.Private != null);
+			Debug.Assert(encoder.Protected != null);
+
+			if (encoder.Protected.State != Flac__StreamEncoderState.Uninitialized)
+				return false;
+
+			encoder.Protected.Limit_Min_Bitrate = value;
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Get the current encoder state
 		/// <returns>The current encoder state</returns>
 		/// </summary>
@@ -1724,6 +1802,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 		/********************************************************************/
 		/// <summary>
+		/// Get the "limit_min_bitrate" flag
+		/// <returns>See Flac__Stream_Encoder_Set_Limit_Min_Bitrate()</returns>
+		/// </summary>
+		/********************************************************************/
+		public Flac__bool Flac__Stream_Encoder_Get_Limit_Min_Bitrate()
+		{
+			Debug.Assert(encoder != null);
+			Debug.Assert(encoder.Private != null);
+			Debug.Assert(encoder.Protected != null);
+
+			return encoder.Protected.Limit_Min_Bitrate;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Submit data for encoding.
 		/// This version allows you to supply the input data via an array of
 		/// pointers, each pointer pointing to an array of samples samples
@@ -1746,11 +1841,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			Debug.Assert(encoder != null);
 			Debug.Assert(encoder.Private != null);
 			Debug.Assert(encoder.Protected != null);
-			Debug.Assert(encoder.Protected.State == Flac__StreamEncoderState.Ok);
+
+			if (encoder.Protected.State != Flac__StreamEncoderState.Ok)
+				return false;
 
 			uint32_t j = 0;
 			uint32_t channels = encoder.Protected.Channels;
 			uint32_t blockSize = encoder.Protected.BlockSize;
+			Flac__int32 sample_Max = int32_t.MaxValue >> (int)(32 - encoder.Protected.Bits_Per_Sample);
+			Flac__int32 sample_Min = int32_t.MinValue >> (int)(32 - encoder.Protected.Bits_Per_Sample);
 
 			do
 			{
@@ -1761,23 +1860,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					if (buffer[channel] == null)
 						return false;
 
+					for (uint32_t i = encoder.Private.Current_Sample_Number, k = j; (i <= blockSize) && (k < samples); i++, k++)
+					{
+						if ((buffer[channel][k] < sample_Min) || (buffer[channel][k] > sample_Max))
+						{
+							encoder.Protected.State = Flac__StreamEncoderState.Client_Error;
+							return false;
+						}
+					}
+
 					Array.Copy(buffer[channel], j, encoder.Private.Integer_Signal[channel], encoder.Private.Current_Sample_Number, n);
 				}
 
-				if (encoder.Protected.Do_Mid_Side_Stereo)
-				{
-					Debug.Assert(channels == 2);
-
-					// "i <= blockSize" to overread 1 sample; see comment in Overread decl
-					for (uint32_t i = encoder.Private.Current_Sample_Number; (i <= blockSize) && (j < samples); i++, j++)
-					{
-						encoder.Private.Integer_Signal_Mid_Size[1][i] = buffer[0][j] - buffer[1][j];
-						encoder.Private.Integer_Signal_Mid_Size[0][i] = (buffer[0][j] + buffer[1][j]) >> 1;	// NOTE: Not the same as 'mid = (buffer[0][j] + buffer[1][j]) / 2' !
-					}
-				}
-				else
-					j += n;
-
+				j += n;
 				encoder.Private.Current_Sample_Number += n;
 
 				// We only process if we have a full block + 1 extra sample; final block is always handled by Flac__Stream_Encoder_Finish()
@@ -1786,18 +1881,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					Debug.Assert(encoder.Private.Current_Sample_Number == blockSize + Overread);
 					Debug.Assert(Overread == 1);	// Assert we only overread 1 sample which simplifies the rest of the code below
 
-					if (!Process_Frame(false, false))
+					if (!Process_Frame(false))
 						return false;
 
 					// Move unprocessed overread samples to beginnings of arrays
 					for (uint32_t channel = 0; channel < channels; channel++)
 						encoder.Private.Integer_Signal[channel][0] = encoder.Private.Integer_Signal[channel][blockSize];
-
-					if (encoder.Protected.Do_Mid_Side_Stereo)
-					{
-						encoder.Private.Integer_Signal_Mid_Size[0][0] = encoder.Private.Integer_Signal_Mid_Size[0][blockSize];
-						encoder.Private.Integer_Signal_Mid_Size[1][0] = encoder.Private.Integer_Signal_Mid_Size[1][blockSize];
-					}
 
 					encoder.Private.Current_Sample_Number = 1;
 				}
@@ -1835,91 +1924,55 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			Debug.Assert(encoder != null);
 			Debug.Assert(encoder.Private != null);
 			Debug.Assert(encoder.Protected != null);
-			Debug.Assert(encoder.Protected.State == Flac__StreamEncoderState.Ok);
+
+			if (encoder.Protected.State != Flac__StreamEncoderState.Ok)
+				return false;
 
 			uint32_t channels = encoder.Protected.Channels;
 			uint32_t blockSize = encoder.Protected.BlockSize;
+			Flac__int32 sample_Max = int32_t.MaxValue >> (int)(32 - encoder.Protected.Bits_Per_Sample);
+			Flac__int32 sample_Min = int32_t.MinValue >> (int)(32 - encoder.Protected.Bits_Per_Sample);
 
 			uint32_t j = 0;
 			uint32_t k = 0;
 			uint32_t i;
-			Flac__int32 mid, side;
 
-			// We have several flavors of the same basic loop, optimized for
-			// different conditions
-			if (encoder.Protected.Do_Mid_Side_Stereo && (channels == 2))
+			do
 			{
-				// Stereo coding: unroll channel loop
-				do
+				// "i <= blockSize" to overread 1 sample; see comment in Overread decl
+				for (i = encoder.Private.Current_Sample_Number; (i <= blockSize) && (j < samples); i++, j++)
 				{
-					// "i <= blockSize" to overread 1 sample; see comment in Overread decl
-					for (i = encoder.Private.Current_Sample_Number; (i <= blockSize) && (j < samples); i++, j++)
+					for (uint32_t channel = 0; channel < channels; channel++)
 					{
-						encoder.Private.Integer_Signal[0][i] = mid = side = buffer[k++];
-						Flac__int32 x = buffer[k++];
-						encoder.Private.Integer_Signal[1][i] = x;
-
-						mid += x;
-						side -= x;
-						mid >>= 1;	// NOTE: Not the same as 'mid = (left + right) / 2' !
-
-						encoder.Private.Integer_Signal_Mid_Size[1][i] = side;
-						encoder.Private.Integer_Signal_Mid_Size[0][i] = mid;
-					}
-
-					encoder.Private.Current_Sample_Number = i;
-
-					// We only process if we have a full block + 1 extra sample; final block is always handled by Flac__Stream_Encoder_Finish()
-					if (i > blockSize)
-					{
-						if (!Process_Frame(false, false))
+						if ((buffer[k] < sample_Min) || (buffer[k] > sample_Max))
+						{
+							encoder.Protected.State = Flac__StreamEncoderState.Client_Error;
 							return false;
+						}
 
-						// Move unprocessed overread samples to beginnings of arrays
-						Debug.Assert(i == blockSize + Overread);
-						Debug.Assert(Overread == 1);	// Assert we only overread 1 sample which simplifies the rest of the code below
-
-						encoder.Private.Integer_Signal[0][0] = encoder.Private.Integer_Signal[0][blockSize];
-						encoder.Private.Integer_Signal[1][0] = encoder.Private.Integer_Signal[1][blockSize];
-						encoder.Private.Integer_Signal_Mid_Size[0][0] = encoder.Private.Integer_Signal_Mid_Size[0][blockSize];
-						encoder.Private.Integer_Signal_Mid_Size[1][0] = encoder.Private.Integer_Signal_Mid_Size[1][blockSize];
-						encoder.Private.Current_Sample_Number = 1;
+						encoder.Private.Integer_Signal[channel][i] = buffer[k++];
 					}
 				}
-				while (j < samples);
-			}
-			else
-			{
-				// Independent channel coding: buffer each channel in inner loop
-				do
+
+				encoder.Private.Current_Sample_Number = i;
+
+				// We only process if we have a full block + 1 extra sample; final block is always handled by Flac__Stream_Encoder_Finish()
+				if (i > blockSize)
 				{
-					// "i <= blockSize" to overread 1 sample; see comment in Overread decl
-					for (i = encoder.Private.Current_Sample_Number; (i <= blockSize) && (j < samples); i++, j++)
-					{
-						for (uint32_t channel = 0; channel < channels; channel++)
-							encoder.Private.Integer_Signal[channel][i] = buffer[k++];
-					}
+					if (!Process_Frame(false))
+						return false;
 
-					encoder.Private.Current_Sample_Number = i;
+					// Move unprocessed overread samples to beginnings of arrays
+					Debug.Assert(i == blockSize + Overread);
+					Debug.Assert(Overread == 1);	// Assert we only overread 1 sample which simplifies the rest of the code below
 
-					// We only process if we have a full block + 1 extra sample; final block is always handled by Flac__Stream_Encoder_Finish()
-					if (i > blockSize)
-					{
-						if (!Process_Frame(false, false))
-							return false;
+					for (uint32_t channel = 0; channel < channels; channel++)
+						encoder.Private.Integer_Signal[channel][0] = encoder.Private.Integer_Signal[channel][blockSize];
 
-						// Move unprocessed overread samples to beginnings of arrays
-						Debug.Assert(i == blockSize + Overread);
-						Debug.Assert(Overread == 1);	// Assert we only overread 1 sample which simplifies the rest of the code below
-
-						for (uint32_t channel = 0; channel < channels; channel++)
-							encoder.Private.Integer_Signal[channel][0] = encoder.Private.Integer_Signal[channel][blockSize];
-
-						encoder.Private.Current_Sample_Number = 1;
-					}
+					encoder.Private.Current_Sample_Number = 1;
 				}
-				while (j < samples);
 			}
+			while (j < samples);
 
 			return true;
 		}
@@ -1951,9 +2004,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			}
 			else if (!encoder.Protected.Do_Mid_Side_Stereo)
 				encoder.Protected.Loose_Mid_Side_Stereo = false;
-
-			if (encoder.Protected.Bits_Per_Sample >= 32)
-				encoder.Protected.Do_Mid_Side_Stereo = false;	// Since we currently do 32-bit math, the side channel would have 33 bps and overflow
 
 			if ((encoder.Protected.Bits_Per_Sample < Constants.Flac__Min_Bits_Per_Sample) || (encoder.Protected.Bits_Per_Sample > Constants.Flac__Reference_Codec_Max_Bits_Per_Sample))
 				return Flac__StreamEncoderInitStatus.Invalid_Bits_Per_Sample;
@@ -2026,8 +2076,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				if (!Format.Flac__Format_Sample_Rate_Is_Subset(encoder.Protected.Sample_Rate))
 					return Flac__StreamEncoderInitStatus.Not_Streamable;
 
-				if ((encoder.Protected.Bits_Per_Sample != 8) && (encoder.Protected.Bits_Per_Sample != 12) && (encoder.Protected.Bits_Per_Sample != 16) && (encoder.Protected.Bits_Per_Sample != 20) && (encoder.Protected.Bits_Per_Sample != 24))
+				if ((encoder.Protected.Bits_Per_Sample != 8) && (encoder.Protected.Bits_Per_Sample != 12) && (encoder.Protected.Bits_Per_Sample != 16) &&
+				    (encoder.Protected.Bits_Per_Sample != 20) && (encoder.Protected.Bits_Per_Sample != 24) && (encoder.Protected.Bits_Per_Sample != 32))
+				{
 					return Flac__StreamEncoderInitStatus.Not_Streamable;
+				}
 
 				if (encoder.Protected.Max_Residual_Partition_Order > Constants.Flac__Subset_Max_Rice_Partition_Order)
 					return Flac__StreamEncoderInitStatus.Not_Streamable;
@@ -2129,6 +2182,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 			for (uint32_t i = 0; i < 2; i++)
 				encoder.Private.Integer_Signal_Mid_Side_Unaligned[i] = encoder.Private.Integer_Signal_Mid_Size[i] = null;
+
+			encoder.Private.Integer_Signal_33Bit_Side_Unaligned = encoder.Private.Integer_Signal_33Bit_Side = null;
 
 			for (uint32_t i = 0; i < encoder.Protected.Num_Apodizations; i++)
 				encoder.Private.Window_Unaligned[i] = encoder.Private.Window[i] = null;
@@ -2233,7 +2288,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				encoder.Private.Md5.Flac__Md5Init();
 			}
 
-			if (!Stream_Encoder_Framing.Flac__Add_Metadata_Block(encoder.Private.StreamInfo, encoder.Private.Frame))
+			if (!Stream_Encoder_Framing.Flac__Add_Metadata_Block(encoder.Private.StreamInfo, encoder.Private.Frame, true))
 			{
 				encoder.Protected.State = Flac__StreamEncoderState.Framing_Error;
 				return Flac__StreamEncoderInitStatus.Encoder_Error;
@@ -2269,7 +2324,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				metaVorbis_Comment.Num_Comments = 0;
 				metaVorbis_Comment.Comments = null;
 
-				if (!Stream_Encoder_Framing.Flac__Add_Metadata_Block(vorbis_Comment, encoder.Private.Frame))
+				if (!Stream_Encoder_Framing.Flac__Add_Metadata_Block(vorbis_Comment, encoder.Private.Frame, true))
 				{
 					encoder.Protected.State = Flac__StreamEncoderState.Framing_Error;
 					return Flac__StreamEncoderInitStatus.Encoder_Error;
@@ -2287,7 +2342,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			{
 				encoder.Protected.Metadata[i].Is_Last = i == encoder.Protected.Num_Metadata_Blocks - 1;
 
-				if (!Stream_Encoder_Framing.Flac__Add_Metadata_Block(encoder.Protected.Metadata[i], encoder.Private.Frame))
+				if (!Stream_Encoder_Framing.Flac__Add_Metadata_Block(encoder.Protected.Metadata[i], encoder.Private.Frame, true))
 				{
 					encoder.Protected.State = Flac__StreamEncoderState.Framing_Error;
 					return Flac__StreamEncoderInitStatus.Encoder_Error;
@@ -2421,6 +2476,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			encoder.encoder.Protected.Min_Residual_Partition_Order = 0;
 			encoder.encoder.Protected.Max_Residual_Partition_Order = 0;
 			encoder.encoder.Protected.Total_Samples_Estimate = 0;
+			encoder.encoder.Protected.Limit_Min_Bitrate = false;
 			encoder.encoder.Protected.Metadata = null;
 			encoder.encoder.Protected.Num_Metadata_Blocks = 0;
 
@@ -2466,6 +2522,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				if (encoder.Private.Integer_Signal_Mid_Side_Unaligned[i] != null)
 					encoder.Private.Integer_Signal_Mid_Side_Unaligned[i] = null;
 			}
+
+			if (encoder.Private.Integer_Signal_33Bit_Side_Unaligned != null)
+				encoder.Private.Integer_Signal_33Bit_Side_Unaligned = null;
 
 			for (uint32_t i = 0; i < encoder.Protected.Num_Apodizations; i++)
 			{
@@ -2514,52 +2573,79 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		{
 			Debug.Assert(new_BlockSize > 0);
 			Debug.Assert(encoder.Protected.State == Flac__StreamEncoderState.Ok);
-			Debug.Assert(encoder.Private.Current_Sample_Number == 0);
-
-			// To avoid excessive malloc'ing, we only grow the buffer; no shrinking
-			if (new_BlockSize <= encoder.Private.Input_Capacity)
-				return true;
 
 			Flac__bool ok = true;
 
-			for (uint32_t i = 0; ok && i < encoder.Protected.Channels; i++)
-				ok = ok && Memory.Flac__Memory_Alloc_Aligned_Int32_Array(new_BlockSize + 4 + Overread, ref encoder.Private.Integer_Signal_Unaligned[i], ref encoder.Private.Integer_Signal[i]);
-
-			for (uint32_t i = 0; ok && i < 2; i++)
-				ok = ok && Memory.Flac__Memory_Alloc_Aligned_Int32_Array(new_BlockSize + 4 + Overread, ref encoder.Private.Integer_Signal_Mid_Side_Unaligned[i], ref encoder.Private.Integer_Signal_Mid_Size[i]);
-
-			if (ok && (encoder.Protected.Max_Lpc_Order > 0))
+			// To avoid excessive malloc'ing, we only grow the buffer; no shrinking
+			if (new_BlockSize > encoder.Private.Input_Capacity)
 			{
-				for (uint32_t i = 0; ok && i < encoder.Protected.Num_Apodizations; i++)
-					ok = ok && Memory.Flac__Memory_Alloc_Aligned_Real_Array(new_BlockSize, ref encoder.Private.Window_Unaligned[i], ref encoder.Private.Window[i]);
+				for (uint32_t i = 0; ok && i < encoder.Protected.Channels; i++)
+					ok = ok && Memory.Flac__Memory_Alloc_Aligned_Int32_Array(new_BlockSize + 4 + Overread, ref encoder.Private.Integer_Signal_Unaligned[i], ref encoder.Private.Integer_Signal[i]);
 
-				ok = ok && Memory.Flac__Memory_Alloc_Aligned_Real_Array(new_BlockSize, ref encoder.Private.Windowed_Signal_Unaligned, ref encoder.Private.Windowed_Signal);
-			}
+				for (uint32_t i = 0; ok && i < 2; i++)
+					ok = ok && Memory.Flac__Memory_Alloc_Aligned_Int32_Array(new_BlockSize + 4 + Overread, ref encoder.Private.Integer_Signal_Mid_Side_Unaligned[i], ref encoder.Private.Integer_Signal_Mid_Size[i]);
 
-			for (uint32_t channel = 0; ok && channel < encoder.Protected.Channels; channel++)
-			{
+				ok = ok && Memory.Flac__Memory_Alloc_Aligned_Int64_Array(new_BlockSize + 4 + Overread, ref encoder.Private.Integer_Signal_33Bit_Side_Unaligned, ref encoder.Private.Integer_Signal_33Bit_Side);
+
+				if (ok && (encoder.Protected.Max_Lpc_Order > 0))
+				{
+					for (uint32_t i = 0; ok && i < encoder.Protected.Num_Apodizations; i++)
+						ok = ok && Memory.Flac__Memory_Alloc_Aligned_Real_Array(new_BlockSize, ref encoder.Private.Window_Unaligned[i], ref encoder.Private.Window[i]);
+
+					ok = ok && Memory.Flac__Memory_Alloc_Aligned_Real_Array(new_BlockSize, ref encoder.Private.Windowed_Signal_Unaligned, ref encoder.Private.Windowed_Signal);
+				}
+
+				for (uint32_t channel = 0; ok && channel < encoder.Protected.Channels; channel++)
+				{
+					for (uint32_t i = 0; i < 2; i++)
+						ok = ok && Memory.Flac__Memory_Alloc_Aligned_Int32_Array(new_BlockSize, ref encoder.Private.Residual_Workspace_Unaligned[channel][i], ref encoder.Private.Residual_Workspace[channel][i]);
+				}
+
+				for (uint32_t channel = 0; ok && channel < encoder.Protected.Channels; channel++)
+				{
+					for (uint32_t i = 0; i < 2; i++)
+					{
+						ok = ok && Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Ensure_Size(encoder.Private.Partitioned_Rice_Contents_Workspace[channel][i], encoder.Protected.Max_Residual_Partition_Order);
+						ok = ok && Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Ensure_Size(encoder.Private.Partitioned_Rice_Contents_Workspace[channel][i], encoder.Protected.Max_Residual_Partition_Order);
+					}
+				}
+
+				for (uint32_t channel = 0; ok && channel < 2; channel++)
+				{
+					for (uint32_t i = 0; i < 2; i++)
+						ok = ok && Memory.Flac__Memory_Alloc_Aligned_Int32_Array(new_BlockSize, ref encoder.Private.Residual_Workspace_Mid_Side_Unaligned[channel][i], ref encoder.Private.Residual_Workspace_Mid_Side[channel][i]);
+				}
+
+				for (uint32_t channel = 0; ok && channel < encoder.Protected.Channels; channel++)
+				{
+					for (uint32_t i = 0; i < 2; i++)
+						ok = ok && Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Ensure_Size(encoder.Private.Partitioned_Rice_Contents_Workspace_Mid_Side[channel][i], encoder.Protected.Max_Residual_Partition_Order);
+				}
+
 				for (uint32_t i = 0; i < 2; i++)
-					ok = ok && Memory.Flac__Memory_Alloc_Aligned_Int32_Array(new_BlockSize, ref encoder.Private.Residual_Workspace_Unaligned[channel][i], ref encoder.Private.Residual_Workspace[channel][i]);
+					ok = ok && Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Ensure_Size(encoder.Private.Partitioned_Rice_Contents_Extra[i], encoder.Protected.Max_Residual_Partition_Order);
+
+				// The *2 is an approximation to the series 1 + 1/2 + 1/4 + ... that sums tree occupies in a flat array
+				// @@@ new_BlockSize*2 is too pessimistic, but to fix, we need smarter logic
+				// because a smaller new_BlockSize can actually increase the # of partitions;
+				// would require moving this out into a separate function, then checking its
+				// capacity against the need of the current blockSize&min/max_Partition_Order
+				// (and maybe predictor order)
+				ok = ok && Memory.Flac__Memory_Alloc_Aligned_UInt64_Array(new_BlockSize * 2, ref encoder.Private.Abs_Residual_Partition_Sums_Unaligned, ref encoder.Private.Abs_Residual_Partition_Sums);
 			}
 
-			for (uint32_t channel = 0; ok && channel < 2; channel++)
+			if (ok)
+				encoder.Private.Input_Capacity = new_BlockSize;
+			else
 			{
-				for (uint32_t i = 0; i < 2; i++)
-					ok = ok && Memory.Flac__Memory_Alloc_Aligned_Int32_Array(new_BlockSize, ref encoder.Private.Residual_Workspace_Mid_Side_Unaligned[channel][i], ref encoder.Private.Residual_Workspace_Mid_Side[channel][i]);
+				encoder.Protected.State = Flac__StreamEncoderState.Memory_Allocation_Error;
+				return ok;
 			}
-
-			// The *2 is an approximation to the series 1 + 1/2 + 1/4 + ... that sums tree occupies in a flat array
-			// @@@ new_BlockSize*2 is too pessimistic, but to fix, we need smarter logic
-			// because a smaller new_BlockSize can actually increase the # of partitions;
-			// would require moving this out into a separate function, then checking its
-			// capacity against the need of the current blockSize&min/max_Partition_Order
-			// (and maybe predictor order)
-			ok = ok && Memory.Flac__Memory_Alloc_Aligned_UInt64_Array(new_BlockSize * 2, ref encoder.Private.Abs_Residual_Partition_Sums_Unaligned, ref encoder.Private.Abs_Residual_Partition_Sums);
 
 			// Now adjust the windows if the blockSize has changed
-			if (ok && (new_BlockSize != encoder.Private.Input_Capacity) && (encoder.Protected.Max_Lpc_Order > 0))
+			if ((encoder.Protected.Max_Lpc_Order > 0) && (new_BlockSize > 1))
 			{
-				for (uint32_t i = 0; ok && i < encoder.Protected.Num_Apodizations; i++)
+				for (uint32_t i = 0; i < encoder.Protected.Num_Apodizations; i++)
 				{
 					switch (encoder.Protected.Apodizations[i].Type)
 					{
@@ -2659,6 +2745,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 							break;
 						}
 
+						case Flac__ApodizationFunction.Subdivide_Tukey:
+						{
+							Window.Flac__Window_Tukey(encoder.Private.Window[i], (Flac__int32)new_BlockSize, ((Flac__ApodizationParameter_Subdivide_Tukey)encoder.Protected.Apodizations[i].Parameters).P);
+							break;
+						}
+
 						case Flac__ApodizationFunction.Welch:
 						{
 							Window.Flac__Window_Welch(encoder.Private.Window[i], (Flac__int32)new_BlockSize);
@@ -2677,12 +2769,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				}
 			}
 
-			if (ok)
-				encoder.Private.Input_Capacity = new_BlockSize;
-			else
-				encoder.Protected.State = Flac__StreamEncoderState.Memory_Allocation_Error;
+			if (new_BlockSize <= Constants.Flac__Max_Lpc_Order)
+			{
+				// Intrinsics autocorrelation routines do not all handle cases in which lag might be
+				// larger than data_len. Lag is one larger than the LPC order
+				encoder.Private.Lpc = new Lpc();
+			}
 
-			return ok;
+			return true;
 		}
 
 
@@ -2872,6 +2966,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 										  - 4
 				                      ) / 8;
 
+				if (samples > (1L << (int)Constants.Flac__Stream_Metadata_StreamInfo_Total_Samples_Len))
+					samples = 0;
+
 				b[0] = (Flac__byte)(((bps - 1) << 4) | ((samples >> 32) & 0x0f));
 				b[1] = (Flac__byte)((samples >> 24) & 0xff);
 				b[2] = (Flac__byte)((samples >> 16) & 0xff);
@@ -2980,7 +3077,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private Flac__bool Process_Frame(Flac__bool is_Fractional_Block, Flac__bool is_Last_Block)
+		private Flac__bool Process_Frame(Flac__bool is_Last_Block)
 		{
 			Debug.Assert(encoder.Protected.State == Flac__StreamEncoderState.Ok);
 
@@ -2992,7 +3089,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			}
 
 			// Process the frame header and subframes into the frame bitbuffer
-			if (!Process_SubFrames(is_Fractional_Block))
+			if (!Process_SubFrames())
 			{
 				// The above function sets the state for us in case of an error
 				return false;
@@ -3036,19 +3133,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private Flac__bool Process_SubFrames(Flac__bool is_Fractional_Block)
+		private Flac__bool Process_SubFrames()
 		{
 			uint32_t min_Partition_Order = encoder.Protected.Min_Residual_Partition_Order;
-			uint32_t max_Partition_Order;
+			Flac__bool backup_Disable_Constant_SubFrames = encoder.Private.Disable_Constant_SubFrames;
+			Flac__bool all_SubFrames_Constant = true;
 
 			// Calculate the min,max Rice partition orders
-			if (is_Fractional_Block)
-				max_Partition_Order = 0;
-			else
-			{
-				max_Partition_Order = Format.Flac__Format_Get_Max_Rice_Partition_Order_From_BlockSize(encoder.Protected.BlockSize);
-				max_Partition_Order = Math.Min(max_Partition_Order, encoder.Protected.Max_Residual_Partition_Order);
-			}
+			uint32_t max_Partition_Order = Format.Flac__Format_Get_Max_Rice_Partition_Order_From_BlockSize(encoder.Protected.BlockSize);
+			max_Partition_Order = Math.Min(max_Partition_Order, encoder.Protected.Max_Residual_Partition_Order);
 
 			min_Partition_Order = Math.Min(min_Partition_Order, max_Partition_Order);
 
@@ -3094,6 +3187,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 			Debug.Assert(do_Independent || do_Mid_Side);
 
+			// Prepare mid side signals if applicable
+			if (do_Mid_Side)
+			{
+				Debug.Assert(encoder.Protected.Channels == 2);
+
+				if (encoder.Protected.Bits_Per_Sample < 32)
+				{
+					for (uint32_t i = 0; i < encoder.Protected.BlockSize; i++)
+					{
+						encoder.Private.Integer_Signal_Mid_Size[1][i] = encoder.Private.Integer_Signal[0][i] - encoder.Private.Integer_Signal[1][i];
+						encoder.Private.Integer_Signal_Mid_Size[0][i] = (encoder.Private.Integer_Signal[0][i] + encoder.Private.Integer_Signal[1][i]) >> 1;	// NOTE: not the same as 'mid = (signal[0][j] + signal[1][j]) / 2' !
+					}
+				}
+				else
+				{
+					for (uint32_t i = 0; i < encoder.Protected.BlockSize; i++)
+					{
+						encoder.Private.Integer_Signal_33Bit_Side[i] = (Flac__int64)encoder.Private.Integer_Signal[0][i] - encoder.Private.Integer_Signal[1][i];
+						encoder.Private.Integer_Signal_Mid_Size[0][i] = (Flac__int32)(((Flac__int64)encoder.Private.Integer_Signal[0][i] + encoder.Private.Integer_Signal[1][i]) >> 1);	// NOTE: not the same as 'mid = (signal[0][j] + signal[1][j]) / 2' !
+					}
+				}
+			}
+
 			// Check for wasted bits; set effective bps for each subframe
 			if (do_Independent)
 			{
@@ -3115,7 +3231,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 				for (uint32_t channel = 0; channel < 2; channel++)
 				{
-					uint32_t w = Get_Wasted_Bits(encoder.Private.Integer_Signal_Mid_Size[channel], encoder.Protected.BlockSize);
+					uint32_t w;
+
+					if ((encoder.Protected.Bits_Per_Sample < 32) || (channel == 0))
+						w = Get_Wasted_Bits(encoder.Private.Integer_Signal_Mid_Size[channel], encoder.Protected.BlockSize);
+					else
+						w = Get_Wasted_Bits_Wide(encoder.Private.Integer_Signal_33Bit_Side, encoder.Private.Integer_Signal_Mid_Size[channel], encoder.Protected.BlockSize);
 
 					if (w > encoder.Protected.Bits_Per_Sample)
 						w = encoder.Protected.Bits_Per_Sample;
@@ -3130,12 +3251,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			{
 				for (uint32_t channel = 0; channel < encoder.Protected.Channels; channel++)
 				{
+					if (encoder.Protected.Limit_Min_Bitrate && all_SubFrames_Constant && ((channel + 1) == encoder.Protected.Channels))
+					{
+						// This frame contains only constant subframes at this point.
+						// To prevent the frame from becoming too small, make sure
+						// the last subframe isn't constant
+						encoder.Private.Disable_Constant_SubFrames = true;
+					}
+
 					if (!Process_SubFrame(min_Partition_Order, max_Partition_Order, frame_Header, encoder.Private.SubFrame_Bps[channel], encoder.Private.Integer_Signal[channel],
 						    encoder.Private.SubFrame_Workspace_Ptr[channel], encoder.Private.Partitioned_Rice_Contents_Workspace_Ptr[channel], encoder.Private.Residual_Workspace[channel],
 						    out encoder.Private.Best_SubFrame[channel], out encoder.Private.Best_SubFrame_Bits[channel]))
 					{
 						return false;
 					}
+
+					if (encoder.Private.SubFrame_Workspace[channel][encoder.Private.Best_SubFrame[channel]].Type != Flac__SubFrameType.Constant)
+						all_SubFrames_Constant = false;
 				}
 			}
 
@@ -3146,7 +3278,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 				for (uint32_t channel = 0; channel < 2; channel++)
 				{
-					if (!Process_SubFrame(min_Partition_Order, max_Partition_Order, frame_Header, encoder.Private.SubFrame_Bps_Mid_Side[channel], encoder.Private.Integer_Signal_Mid_Size[channel],
+					Array integer_Signal;
+
+					if (encoder.Private.SubFrame_Bps_Mid_Side[channel] <= 32)
+						integer_Signal = encoder.Private.Integer_Signal_Mid_Size[channel];
+					else
+						integer_Signal = encoder.Private.Integer_Signal_33Bit_Side;
+
+					if (!Process_SubFrame(min_Partition_Order, max_Partition_Order, frame_Header, encoder.Private.SubFrame_Bps_Mid_Side[channel], integer_Signal,
 						    encoder.Private.SubFrame_Workspace_Ptr_Mid_Side[channel], encoder.Private.Partitioned_Rice_Contents_Workspace_Ptr_Mid_Side[channel], encoder.Private.Residual_Workspace_Mid_Side[channel],
 						    out encoder.Private.Best_SubFrame_Mid_Side[channel], out encoder.Private.Best_SubFrame_Bits_Mid_Side[channel]))
 					{
@@ -3187,7 +3326,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					channel_Assignment = Flac__ChannelAssignment.Independent;
 					uint32_t min_Bits = bits[(int)channel_Assignment];
 
-					for (uint32_t ca = 1; ca <= 3; ca++)
+					// When doing loose mid side stereo, ignore left side
+					// and right side options
+					uint32_t ca = encoder.Protected.Loose_Mid_Side_Stereo ? 3U : 1U;
+
+					for (; ca <= 3; ca++)
 					{
 						if (bits[ca] < min_Bits)
 						{
@@ -3313,6 +3456,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			}
 
 			encoder.Private.Last_Channel_Assignment = frame_Header.Channel_Assignment;
+			encoder.Private.Disable_Constant_SubFrames = backup_Disable_Constant_SubFrames;
 
 			return true;
 		}
@@ -3324,10 +3468,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private Flac__bool Process_SubFrame(uint32_t min_Partition_Order, uint32_t max_Partition_Order, Flac__FrameHeader frame_Header, uint32_t subFrame_Bps, Flac__int32[] integer_Signal, Flac__SubFrame[] subFrame, Flac__EntropyCodingMethod_PartitionedRiceContents[] partitioned_Rice_Contents, Flac__int32[][] residual, out uint32_t best_SubFrame, out uint32_t best_Bits)
+		private Flac__bool Process_SubFrame(uint32_t min_Partition_Order, uint32_t max_Partition_Order, Flac__FrameHeader frame_Header, uint32_t subFrame_Bps, Array integer_Signal, Flac__SubFrame[] subFrame, Flac__EntropyCodingMethod_PartitionedRiceContents[] partitioned_Rice_Contents, Flac__int32[][] residual, out uint32_t best_SubFrame, out uint32_t best_Bits)
 		{
 			float[] fixed_Residual_Bits_Per_Sample = new float[Constants.Flac__Max_Fixed_Order + 1];
-			Flac__real[] autoc = new Flac__real[Constants.Flac__Max_Lpc_Order + 1];		// WATHOUT: The size is important even though encoder.Protected.Max_Lpc_Order might be less; some asm and x86 intrinsic routines need all the space
+			Apply_Apodization_State_Struct apply_Apodization_State = new Apply_Apodization_State_Struct();
 			double[] lpc_Error = new double[Constants.Flac__Max_Lpc_Order];
 
 			// Only use RICE2 partitions if stream bps > 16
@@ -3344,15 +3488,35 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			else
 				_best_Bits = Evaluate_Verbatim_SubFrame(integer_Signal, frame_Header.BlockSize, subFrame_Bps, subFrame[_best_SubFrame]);
 
-			if (frame_Header.BlockSize >= Constants.Flac__Max_Fixed_Order)
+			best_Bits = _best_Bits;
+
+			if (frame_Header.BlockSize > Constants.Flac__Max_Fixed_Order)
 			{
-				uint32_t guess_Fixed_Order;
 				Flac__bool signal_Is_Constant = false;
 
-				if ((subFrame_Bps + 4 + BitMath.Flac__BitMath_ILog2((frame_Header.BlockSize - Constants.Flac__Max_Fixed_Order) | 1) <= 32))
-					guess_Fixed_Order = encoder.Private.Fixed.Compute_Best_Predictor(integer_Signal, Constants.Flac__Max_Fixed_Order, frame_Header.BlockSize - Constants.Flac__Max_Fixed_Order, fixed_Residual_Bits_Per_Sample);
+				// The next formula determines when to use a 64-bit accumulator
+				// for the error of a fixed predictor, and when a 32-bit one. As
+				// the error of a 4th order predictor for a given sample is the
+				// sum of 17 sample values (1+4+6+4+1) and there are blocksize -
+				// order error values to be summed, the maximum total error is
+				// maximum_sample_value * (blocksize - order) * 17. As ilog2(x)
+				// calculates floor(2log(x)), the result must be 31 or lower
+				uint32_t guess_Fixed_Order;
+
+				if (subFrame_Bps < 28)
+				{
+					if ((subFrame_Bps + BitMath.Flac__BitMath_ILog2((frame_Header.BlockSize - Constants.Flac__Max_Fixed_Order) * 17)) < 32)
+						guess_Fixed_Order = encoder.Private.Fixed.Compute_Best_Predictor((Flac__int32[])integer_Signal, Constants.Flac__Max_Fixed_Order, frame_Header.BlockSize - Constants.Flac__Max_Fixed_Order, fixed_Residual_Bits_Per_Sample);
+					else
+						guess_Fixed_Order = encoder.Private.Fixed.Compute_Best_Predictor_Wide((Flac__int32[])integer_Signal, Constants.Flac__Max_Fixed_Order, frame_Header.BlockSize - Constants.Flac__Max_Fixed_Order, fixed_Residual_Bits_Per_Sample);
+				}
 				else
-					guess_Fixed_Order = encoder.Private.Fixed.Compute_Best_Predictor_Wide(integer_Signal, Constants.Flac__Max_Fixed_Order, frame_Header.BlockSize - Constants.Flac__Max_Fixed_Order, fixed_Residual_Bits_Per_Sample);
+				{
+					if (subFrame_Bps <= 32)
+						guess_Fixed_Order = encoder.Private.Fixed.Compute_Best_Predictor_Limit_Residual((Flac__int32[])integer_Signal, Constants.Flac__Max_Fixed_Order, frame_Header.BlockSize - Constants.Flac__Max_Fixed_Order, fixed_Residual_Bits_Per_Sample);
+					else
+						guess_Fixed_Order = encoder.Private.Fixed.Compute_Best_Predictor_Limit_Residual_33Bit((Flac__int64[])integer_Signal, Constants.Flac__Max_Fixed_Order, frame_Header.BlockSize - Constants.Flac__Max_Fixed_Order, fixed_Residual_Bits_Per_Sample);
+				}
 
 				// Check for constant subframe
 				if (!encoder.Private.Disable_Constant_SubFrames && (fixed_Residual_Bits_Per_Sample[1] == 0.0))
@@ -3360,19 +3524,43 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					// The above means it's possible all samples are the same value; now double-check it
 					signal_Is_Constant = true;
 
-					for (uint32_t i = 1; i < frame_Header.BlockSize; i++)
+					if (subFrame_Bps <= 32)
 					{
-						if (integer_Signal[0] != integer_Signal[i])
+						Flac__int32[] integer_Signal_ = (Flac__int32[])integer_Signal;
+
+						for (uint32_t i = 1; i < frame_Header.BlockSize; i++)
 						{
-							signal_Is_Constant = false;
-							break;
+							if (integer_Signal_[0] != integer_Signal_[i])
+							{
+								signal_Is_Constant = false;
+								break;
+							}
+						}
+					}
+					else
+					{
+						Flac__int64[] integer_Signal_ = (Flac__int64[])integer_Signal;
+
+						for (uint32_t i = 1; i < frame_Header.BlockSize; i++)
+						{
+							if (integer_Signal_[0] != integer_Signal_[i])
+							{
+								signal_Is_Constant = false;
+								break;
+							}
 						}
 					}
 				}
 
 				if (signal_Is_Constant)
 				{
-					uint32_t candidate_Bits = Evaluate_Constant_SubFrame(integer_Signal[0], frame_Header.BlockSize, subFrame_Bps, subFrame[_best_SubFrame == 0 ? 1U : 0]);
+					uint32_t candidate_Bits;
+
+					if (subFrame_Bps <= 32)
+						candidate_Bits = Evaluate_Constant_SubFrame(((Flac__int32[])integer_Signal)[0], frame_Header.BlockSize, subFrame_Bps, subFrame[_best_SubFrame == 0 ? 1U : 0]);
+					else
+						candidate_Bits = Evaluate_Constant_SubFrame(((Flac__int64[])integer_Signal)[0], frame_Header.BlockSize, subFrame_Bps, subFrame[_best_SubFrame == 0 ? 1U : 0]);
+
 					if (candidate_Bits < _best_Bits)
 					{
 						_best_SubFrame = _best_SubFrame == 0 ? 1U : 0;
@@ -3402,14 +3590,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 							if (fixed_Residual_Bits_Per_Sample[fixed_Order] >= subFrame_Bps)
 								continue;	// Don't even try
 
-							uint32_t rice_Parameter = fixed_Residual_Bits_Per_Sample[fixed_Order] > 0.0f ? (uint32_t)(fixed_Residual_Bits_Per_Sample[fixed_Order] + 0.5f) : 0;	// 0.5 is for rounding
-							rice_Parameter++;	// To account for the signed->uint32_t conversion during rice coding
-
-							if (rice_Parameter >= rice_Parameter_Limit)
-								rice_Parameter = rice_Parameter_Limit - 1;
-
 							uint32_t invertBest_SubFrame = _best_SubFrame == 0 ? 1U : 0;
-							uint32_t candidate_Bits = Evaluate_Fixed_SubFrame(integer_Signal, residual[invertBest_SubFrame], encoder.Private.Abs_Residual_Partition_Sums, encoder.Private.Raw_Bits_Per_Partition, frame_Header.BlockSize, subFrame_Bps, fixed_Order, rice_Parameter, rice_Parameter_Limit, min_Partition_Order, max_Partition_Order, subFrame[invertBest_SubFrame], partitioned_Rice_Contents[invertBest_SubFrame]);
+							uint32_t candidate_Bits = Evaluate_Fixed_SubFrame(integer_Signal, residual[invertBest_SubFrame], encoder.Private.Abs_Residual_Partition_Sums, encoder.Private.Raw_Bits_Per_Partition, frame_Header.BlockSize, subFrame_Bps, fixed_Order, rice_Parameter_Limit, min_Partition_Order, max_Partition_Order, subFrame[invertBest_SubFrame], partitioned_Rice_Contents[invertBest_SubFrame]);
 							if (candidate_Bits < _best_Bits)
 							{
 								_best_SubFrame = _best_SubFrame == 0 ? 1U : 0;
@@ -3430,70 +3612,60 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 						if (max_Lpc_Order > 0)
 						{
-							uint32_t min_Lpc_Order;
+							apply_Apodization_State.A = 0;
+							apply_Apodization_State.B = 1;
+							apply_Apodization_State.C = 0;
 
-							for (uint32_t a = 0; a < encoder.Protected.Num_Apodizations; a++)
+							while (apply_Apodization_State.A < encoder.Protected.Num_Apodizations)
 							{
-								Lpc.Flac__Lpc_Window_Data(integer_Signal, encoder.Private.Window[a], encoder.Private.Windowed_Signal, frame_Header.BlockSize);
+								uint32_t min_Lpc_Order;
+								uint32_t max_Lpc_Order_This_Apodization = max_Lpc_Order;
 
-								encoder.Private.Lpc.Compute_Autocorrelation(encoder.Private.Windowed_Signal, frame_Header.BlockSize, max_Lpc_Order + 1, autoc);
-
-								// If autoc[0] == 0.0, the signal is constant and we usually won't get here, but it can happen
-								if (autoc[0] != 0.0)
+								if (!Apply_Apodization(apply_Apodization_State, frame_Header.BlockSize, lpc_Error, ref max_Lpc_Order_This_Apodization, subFrame_Bps, integer_Signal, out uint32_t guess_Lpc_Order))
 								{
-									Lpc.Flac__Lpc_Compute_Lp_Coefficients(autoc, ref max_Lpc_Order, encoder.Private.Lp_Coeff, lpc_Error);
-									if (encoder.Protected.Do_Exhaustive_Model_Search)
-										min_Lpc_Order = 1;
-									else
+									// If Apply_Apodization fails, try next apodization
+									continue;
+								}
+
+								if (encoder.Protected.Do_Exhaustive_Model_Search)
+									min_Lpc_Order = 1;
+								else
+									min_Lpc_Order = max_Lpc_Order_This_Apodization = guess_Lpc_Order;
+
+								for (uint32_t lpc_Order = min_Lpc_Order; lpc_Order <= max_Lpc_Order_This_Apodization; lpc_Order++)
+								{
+									double lpc_Residual_Bits_Per_Sample = Lpc.Flac__Lpc_Compute_Expected_Bits_Per_Residual_Sample(lpc_Error[lpc_Order - 1], frame_Header.BlockSize - lpc_Order);
+									if (lpc_Residual_Bits_Per_Sample >= subFrame_Bps)
+										continue;	// Don't even try
+
+									uint32_t min_Qlp_Coeff_Precision, max_Qlp_Coeff_Precision;
+
+									if (encoder.Protected.Do_Qlp_Coeff_Prec_Search)
 									{
-										uint32_t guess_Lpc_Order = Lpc.Flac__Lpc_Compute_Best_Order(lpc_Error, max_Lpc_Order, frame_Header.BlockSize, subFrame_Bps + (encoder.Protected.Do_Qlp_Coeff_Prec_Search ? Constants.Flac__Min_Qlp_Coeff_Precision : /* have to guess; use the min possible size to avoid accidentally favoring lower orders*/ encoder.Protected.Qlp_Coeff_Precision));
-										min_Lpc_Order = max_Lpc_Order = guess_Lpc_Order;
-									}
+										min_Qlp_Coeff_Precision = Constants.Flac__Min_Qlp_Coeff_Precision;
 
-									if (max_Lpc_Order >= frame_Header.BlockSize)
-										max_Lpc_Order = frame_Header.BlockSize - 1;
-
-									for (uint32_t lpc_Order = min_Lpc_Order; lpc_Order <= max_Lpc_Order; lpc_Order++)
-									{
-										double lpc_Residual_Bits_Per_Sample = Lpc.Flac__Lpc_Compute_Expected_Bits_Per_Residual_Sample(lpc_Error[lpc_Order - 1], frame_Header.BlockSize - lpc_Order);
-										if (lpc_Residual_Bits_Per_Sample >= subFrame_Bps)
-											continue;	// Don't even try
-
-										uint32_t rice_Parameter = lpc_Residual_Bits_Per_Sample > 0.0f ? (uint32_t)(lpc_Residual_Bits_Per_Sample + 0.5f) : 0;	// 0.5 is for rounding
-										rice_Parameter++;	// To account for the signed->uint32_t conversion during rice coding
-
-										if (rice_Parameter >= rice_Parameter_Limit)
-											rice_Parameter = rice_Parameter_Limit - 1;
-
-										uint32_t min_Qlp_Coeff_Precision, max_Qlp_Coeff_Precision;
-
-										if (encoder.Protected.Do_Qlp_Coeff_Prec_Search)
+										// Try to keep qlp coeff precision such that only 32-bit math is required for decode of <=16bps(+1bps for side channel) streams
+										if (subFrame_Bps <= 17)
 										{
-											min_Qlp_Coeff_Precision = Constants.Flac__Min_Qlp_Coeff_Precision;
-
-											// Try to keep qlp coeff precision such that only 32-bit math is required for decode of <=16bps(+1bps for side channel) streams
-											if (subFrame_Bps <= 17)
-											{
-												max_Qlp_Coeff_Precision = Math.Min(32 - subFrame_Bps - BitMath.Flac__BitMath_ILog2(lpc_Order), Constants.Flac__Max_Qlp_Coeff_Precision);
-												max_Qlp_Coeff_Precision = Math.Max(max_Qlp_Coeff_Precision, min_Qlp_Coeff_Precision);
-											}
-											else
-												max_Qlp_Coeff_Precision = Constants.Flac__Max_Qlp_Coeff_Precision;
+											max_Qlp_Coeff_Precision = Math.Min(32 - subFrame_Bps - BitMath.Flac__BitMath_ILog2(lpc_Order), Constants.Flac__Max_Qlp_Coeff_Precision);
+											max_Qlp_Coeff_Precision = Math.Max(max_Qlp_Coeff_Precision, min_Qlp_Coeff_Precision);
 										}
 										else
-											min_Qlp_Coeff_Precision = max_Qlp_Coeff_Precision = encoder.Protected.Qlp_Coeff_Precision;
+											max_Qlp_Coeff_Precision = Constants.Flac__Max_Qlp_Coeff_Precision;
+									}
+									else
+										min_Qlp_Coeff_Precision = max_Qlp_Coeff_Precision = encoder.Protected.Qlp_Coeff_Precision;
 
-										for (uint32_t qlp_Coeff_Precision = min_Qlp_Coeff_Precision; qlp_Coeff_Precision <= max_Qlp_Coeff_Precision; qlp_Coeff_Precision++)
+									for (uint32_t qlp_Coeff_Precision = min_Qlp_Coeff_Precision; qlp_Coeff_Precision <= max_Qlp_Coeff_Precision; qlp_Coeff_Precision++)
+									{
+										uint32_t invertBest_SubFrame = _best_SubFrame == 0 ? 1U : 0;
+										uint32_t candidate_Bits = Evaluate_Lpc_SubFrame(integer_Signal, residual[invertBest_SubFrame], encoder.Private.Abs_Residual_Partition_Sums, encoder.Private.Raw_Bits_Per_Partition, encoder.Private.Lp_Coeff[lpc_Order - 1], frame_Header.BlockSize, subFrame_Bps, lpc_Order, qlp_Coeff_Precision, rice_Parameter_Limit, min_Partition_Order, max_Partition_Order, subFrame[invertBest_SubFrame], partitioned_Rice_Contents[invertBest_SubFrame]);
+										if (candidate_Bits > 0)	// if == 0m there was a problem quantizing the lpcoeffs
 										{
-											uint32_t invertBest_SubFrame = _best_SubFrame == 0 ? 1U : 0;
-											uint32_t candidate_Bits = Evaluate_Lpc_SubFrame(integer_Signal, residual[invertBest_SubFrame], encoder.Private.Abs_Residual_Partition_Sums, encoder.Private.Raw_Bits_Per_Partition, encoder.Private.Lp_Coeff[lpc_Order - 1], frame_Header.BlockSize, subFrame_Bps, lpc_Order, qlp_Coeff_Precision, rice_Parameter, rice_Parameter_Limit, min_Partition_Order, max_Partition_Order, subFrame[invertBest_SubFrame], partitioned_Rice_Contents[invertBest_SubFrame]);
-											if (candidate_Bits > 0)	// if == 0m there was a problem quantizing the lpcoeffs
+											if (candidate_Bits < _best_Bits)
 											{
-												if (candidate_Bits < _best_Bits)
-												{
-													_best_SubFrame = _best_SubFrame == 0 ? 1U : 0;
-													_best_Bits = candidate_Bits;
-												}
+												_best_SubFrame = _best_SubFrame == 0 ? 1U : 0;
+												_best_Bits = candidate_Bits;
 											}
 										}
 									}
@@ -3514,6 +3686,125 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 			best_SubFrame = _best_SubFrame;
 			best_Bits = _best_Bits;
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void Set_Next_Subdivide_Tukey(Flac__int32 parts, ref uint32_t apodizations, ref uint32_t current_Depth, ref uint32_t current_Part)
+		{
+			// Current part is interleaved even are partial, odd are punchout
+			if (current_Depth == 2)
+			{
+				// For depth 2, we only do partial, no punchout as that is almost redundant
+				if (current_Part == 0)
+					current_Part = 2;
+				else	// current_Part == 2
+				{
+					current_Part = 0;
+					current_Depth++;
+				}
+			}
+			else if (current_Part < (2 * current_Depth - 1))
+				current_Part++;
+			else	// current_Part >= (2 * current_Depth - 1)
+			{
+				current_Part = 0;
+				current_Depth++;
+			}
+
+			// Now check if we are done with the SUBDIVIDE_TUKEY apodization
+			if (current_Depth > (uint32_t)parts)
+			{
+				apodizations++;
+				current_Depth = 1;
+				current_Part = 0;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private Flac__bool Apply_Apodization(Apply_Apodization_State_Struct apply_Apodization_State, uint32_t blockSize, double[] lpc_Error, ref uint32_t max_Lpc_Order_This_Apodization, uint32_t subFrame_Bps, Array integer_Signal, out uint32_t guess_Lpc_Order)
+		{
+			apply_Apodization_State.Current_Apodization = encoder.Protected.Apodizations[apply_Apodization_State.A];
+
+			if (apply_Apodization_State.B == 1)
+			{
+				// Window full subblock
+				if (subFrame_Bps <= 32)
+					Lpc.Flac__Lpc_Window_Data((Flac__int32[])integer_Signal, encoder.Private.Window[apply_Apodization_State.A], encoder.Private.Windowed_Signal, blockSize);
+				else
+					Lpc.Flac__Lpc_Window_Data_Wide((Flac__int64[])integer_Signal, encoder.Private.Window[apply_Apodization_State.A], encoder.Private.Windowed_Signal, blockSize);
+
+				encoder.Private.Lpc.Compute_Autocorrelation(encoder.Private.Windowed_Signal, blockSize, max_Lpc_Order_This_Apodization + 1, apply_Apodization_State.Autoc);
+
+				if (apply_Apodization_State.Current_Apodization.Type == Flac__ApodizationFunction.Subdivide_Tukey)
+				{
+					Array.Copy(apply_Apodization_State.Autoc, apply_Apodization_State.Autoc_Root, max_Lpc_Order_This_Apodization);
+					apply_Apodization_State.B++;
+				}
+				else
+					apply_Apodization_State.A++;
+			}
+			else
+			{
+				// Window part of subblock
+				if ((blockSize / apply_Apodization_State.B) <= Constants.Flac__Max_Lpc_Order)
+				{
+					// Intrinsics autocorrelation routines do not all handle cases in which lag might be
+					// larger than data_len, and some routines round lag up to the nearest multiple of 4.
+					// As little gain is expected from using LPC on part of a signal as small as 32 samples
+					// and to enable widening this rounding up to larger values in the future, windowing
+					// parts smaller than or equal to FLAC__MAX_LPC_ORDER (which is 32) samples is not supported
+					Set_Next_Subdivide_Tukey(((Flac__ApodizationParameter_Subdivide_Tukey)apply_Apodization_State.Current_Apodization.Parameters).Parts, ref apply_Apodization_State.A, ref apply_Apodization_State.B, ref apply_Apodization_State.C);
+
+					guess_Lpc_Order = 0;
+					return false;
+				}
+
+				if ((apply_Apodization_State.C % 2) == 0)
+				{
+					// On even c, evaluate the (c/2)th partial window of size blocksize/b
+					if (subFrame_Bps <= 32)
+						Lpc.Flac__Lpc_Window_Data_Partial((int32_t[])integer_Signal, encoder.Private.Window[apply_Apodization_State.A], encoder.Private.Windowed_Signal, blockSize, blockSize / apply_Apodization_State.B / 2, (apply_Apodization_State.C / 2 * blockSize) / apply_Apodization_State.B);
+					else
+						Lpc.Flac__Lpc_Window_Data_Partial_Wide((int64_t[])integer_Signal, encoder.Private.Window[apply_Apodization_State.A], encoder.Private.Windowed_Signal, blockSize, blockSize / apply_Apodization_State.B / 2, (apply_Apodization_State.C / 2 * blockSize) / apply_Apodization_State.B);
+
+					encoder.Private.Lpc.Compute_Autocorrelation(encoder.Private.Windowed_Signal, blockSize / apply_Apodization_State.B, max_Lpc_Order_This_Apodization + 1, apply_Apodization_State.Autoc);
+				}
+				else
+				{
+					// On uneven c, evaluate the root window (over the whole block) minus the previous partial window
+					// similar to tukey_punchout apodization but more efficient
+					for (uint32_t i = 0; i < max_Lpc_Order_This_Apodization; i++)
+						apply_Apodization_State.Autoc[i] = apply_Apodization_State.Autoc_Root[i] - apply_Apodization_State.Autoc[i];
+				}
+
+				// Next function sets a, b and c appropriate for next iteration
+				Set_Next_Subdivide_Tukey(((Flac__ApodizationParameter_Subdivide_Tukey)apply_Apodization_State.Current_Apodization.Parameters).Parts, ref apply_Apodization_State.A, ref apply_Apodization_State.B, ref apply_Apodization_State.C);
+			}
+
+			if (apply_Apodization_State.Autoc[0] == 0.0f)	// Signal seems to be constant, so we can't dp lp. Constant detection is probably disabled
+			{
+				guess_Lpc_Order = 0;
+				return false;
+			}
+
+			Lpc.Flac__Lpc_Compute_Lp_Coefficients(apply_Apodization_State.Autoc, ref max_Lpc_Order_This_Apodization, encoder.Private.Lp_Coeff, lpc_Error);
+			guess_Lpc_Order = Lpc.Flac__Lpc_Compute_Best_Order(lpc_Error, max_Lpc_Order_This_Apodization, blockSize, subFrame_Bps + (encoder.Protected.Do_Qlp_Coeff_Prec_Search ? Constants.Flac__Min_Qlp_Coeff_Precision : encoder.Protected.Qlp_Coeff_Precision));
 
 			return true;
 		}
@@ -3586,7 +3877,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private uint32_t Evaluate_Constant_SubFrame(Flac__int32 signal, uint32_t blockSize, uint32_t subFrame_Bps, Flac__SubFrame subFrame)
+		private uint32_t Evaluate_Constant_SubFrame(Flac__int64 signal, uint32_t blockSize, uint32_t subFrame_Bps, Flac__SubFrame subFrame)
 		{
 			subFrame.Type = Flac__SubFrameType.Constant;
 
@@ -3606,11 +3897,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private uint32_t Evaluate_Fixed_SubFrame(Flac__int32[] signal, Flac__int32[] residual, Flac__uint64[] abs_Residual_Partition_Sums, uint32_t[] raw_Bits_Per_Partition, uint32_t blockSize, uint32_t subFrame_Bps, uint32_t order, uint32_t rice_Parameter, uint32_t rice_Parameter_Limit, uint32_t min_Partition_Order, uint32_t max_Partition_Order, Flac__SubFrame subFrame, Flac__EntropyCodingMethod_PartitionedRiceContents partition_Rice_Contents)
+		private uint32_t Evaluate_Fixed_SubFrame(Array signal, Flac__int32[] residual, Flac__uint64[] abs_Residual_Partition_Sums, uint32_t[] raw_Bits_Per_Partition, uint32_t blockSize, uint32_t subFrame_Bps, uint32_t order, uint32_t rice_Parameter_Limit, uint32_t min_Partition_Order, uint32_t max_Partition_Order, Flac__SubFrame subFrame, Flac__EntropyCodingMethod_PartitionedRiceContents partition_Rice_Contents)
 		{
 			uint32_t residual_Samples = blockSize - order;
 
-			Fixed.Flac__Fixed_Compute_Residual(signal, order, residual_Samples, order, residual);
+			if ((subFrame_Bps + order) <= 32)
+				Fixed.Flac__Fixed_Compute_Residual((Flac__int32[])signal, order, residual_Samples, order, residual);
+			else if (subFrame_Bps <= 32)
+				Fixed.Flac__Fixed_Compute_Residual_Wide((Flac__int32[])signal, order, residual_Samples, order, residual);
+			else
+				Fixed.Flac__Fixed_Compute_Residual_Wide_33Bit((Flac__int64[])signal, order, residual_Samples, order, residual);
 
 			subFrame.Type = Flac__SubFrameType.Fixed;
 
@@ -3623,14 +3919,26 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			partitionedRice.Contents = partition_Rice_Contents;
 			@fixed.Residual = residual;
 
-			uint32_t residual_Bits = Find_Best_Partition_Order(residual, abs_Residual_Partition_Sums, raw_Bits_Per_Partition, residual_Samples, order, rice_Parameter, rice_Parameter_Limit, min_Partition_Order, max_Partition_Order, subFrame_Bps, @fixed.Entropy_Coding_Method);
+			uint32_t residual_Bits = Find_Best_Partition_Order(residual, abs_Residual_Partition_Sums, raw_Bits_Per_Partition, residual_Samples, order, rice_Parameter_Limit, min_Partition_Order, max_Partition_Order, subFrame_Bps, @fixed.Entropy_Coding_Method);
 
 			@fixed.Order = order;
 
-			for (uint32_t i = 0; i < order; i++)
-				@fixed.Warmup[i] = signal[i];
+			if (subFrame_Bps <= 32)
+			{
+				for (uint32_t i = 0; i < order; i++)
+					@fixed.Warmup[i] = ((Flac__int32[])signal)[i];
+			}
+			else
+			{
+				for (uint32_t i = 0; i < order; i++)
+					@fixed.Warmup[i] = ((Flac__int64[])signal)[i];
+			}
 
-			uint32_t estimate = Constants.Flac__SubFrame_Zero_Pad_Len + Constants.Flac__SubFrame_Type_Len + Constants.Flac__SubFrame_Wasted_Bits_Flag_Len + subFrame.Wasted_Bits + (order * subFrame_Bps) + residual_Bits;
+			uint32_t estimate = Constants.Flac__SubFrame_Zero_Pad_Len + Constants.Flac__SubFrame_Type_Len + Constants.Flac__SubFrame_Wasted_Bits_Flag_Len + subFrame.Wasted_Bits + (order * subFrame_Bps);
+			if (residual_Bits < (uint32_t.MaxValue - estimate))	// To make sure estimate doesn't overflow
+				estimate += residual_Bits;
+			else
+				estimate = uint32_t.MaxValue;
 
 			return estimate;
 		}
@@ -3642,7 +3950,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private uint32_t Evaluate_Lpc_SubFrame(Flac__int32[] signal, Flac__int32[] residual, Flac__uint64[] abs_Residual_Partition_Sums, uint32_t[] raw_Bits_Per_Partition, Flac__real[] lp_Coeff, uint32_t blockSize, uint32_t subFrame_Bps, uint32_t order, uint32_t qlp_Coeff_Precision, uint32_t rice_Parameter, uint32_t rice_Parameter_Limit, uint32_t min_Partition_Order, uint32_t max_Partition_Order, Flac__SubFrame subFrame, Flac__EntropyCodingMethod_PartitionedRiceContents partition_Rice_Contents)
+		private uint32_t Evaluate_Lpc_SubFrame(Array signal, Flac__int32[] residual, Flac__uint64[] abs_Residual_Partition_Sums, uint32_t[] raw_Bits_Per_Partition, Flac__real[] lp_Coeff, uint32_t blockSize, uint32_t subFrame_Bps, uint32_t order, uint32_t qlp_Coeff_Precision, uint32_t rice_Parameter_Limit, uint32_t min_Partition_Order, uint32_t max_Partition_Order, Flac__SubFrame subFrame, Flac__EntropyCodingMethod_PartitionedRiceContents partition_Rice_Contents)
 		{
 			Flac__int32[] qlp_Coeff = new Flac__int32[Constants.Flac__Max_Lpc_Order];	// WATCHOUT: The size is important; some x86 intrinsic routines need more than lpc order elements
 			uint32_t residual_Samples = blockSize - order;
@@ -3660,15 +3968,31 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			if (ret != 0)
 				return 0;	// This is a hack to indicate to the caller that we can't do lp at this order on this subframe
 
-			if ((subFrame_Bps + qlp_Coeff_Precision + BitMath.Flac__BitMath_ILog2(order)) <= 32)
+			if (Lpc.Flac__Lpc_Max_Residual_Bps(subFrame_Bps, qlp_Coeff, order, quantization) > 32)
 			{
-				if ((subFrame_Bps <= 16) && (qlp_Coeff_Precision <= 16))
-					encoder.Private.Lpc.Compute_Residual_From_Qlp_Coefficients_16Bit(signal, order, residual_Samples, qlp_Coeff, order, quantization, residual);
+				if (subFrame_Bps <= 32)
+				{
+					if (!Lpc.Flac__Lpc_Compute_Residual_From_Qlp_Coefficients_Limit_Residual((Flac__int32[])signal, order, residual_Samples, qlp_Coeff, order, quantization, residual))
+						return 0;
+				}
 				else
-					encoder.Private.Lpc.Compute_Residual_From_Qlp_Coefficients(signal, order, residual_Samples, qlp_Coeff, order, quantization, residual);
+				{
+					if (!Lpc.Flac__Lpc_Compute_Residual_From_Qlp_Coefficients_Limit_Residual_33Bit((Flac__int64[])signal, order, residual_Samples, qlp_Coeff, order, quantization, residual))
+						return 0;
+				}
 			}
 			else
-				encoder.Private.Lpc.Compute_Residual_From_Qlp_Coefficients_64Bit(signal, order, residual_Samples, qlp_Coeff, order, quantization, residual);
+			{
+				if (Lpc.Flac__Lpc_Max_Prediction_Before_Shift_Bps(subFrame_Bps, qlp_Coeff, order) <= 32)
+				{
+					if ((subFrame_Bps <= 16) && (qlp_Coeff_Precision <= 16))
+						encoder.Private.Lpc.Compute_Residual_From_Qlp_Coefficients_16Bit((Flac__int32[])signal, order, residual_Samples, qlp_Coeff, order, quantization, residual);
+					else
+						encoder.Private.Lpc.Compute_Residual_From_Qlp_Coefficients((Flac__int32[])signal, order, residual_Samples, qlp_Coeff, order, quantization, residual);
+				}
+				else
+					encoder.Private.Lpc.Compute_Residual_From_Qlp_Coefficients_Wide((Flac__int32[])signal, order, residual_Samples, qlp_Coeff, order, quantization, residual);
+			}
 
 			subFrame.Type = Flac__SubFrameType.Lpc;
 
@@ -3682,17 +4006,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			rice.Contents = partition_Rice_Contents;
 			lpc.Residual = residual;
 
-			uint32_t residual_Bits = Find_Best_Partition_Order(residual, abs_Residual_Partition_Sums, raw_Bits_Per_Partition, residual_Samples, order, rice_Parameter, rice_Parameter_Limit, min_Partition_Order, max_Partition_Order, subFrame_Bps, lpc.Entropy_Coding_Method);
+			uint32_t residual_Bits = Find_Best_Partition_Order(residual, abs_Residual_Partition_Sums, raw_Bits_Per_Partition, residual_Samples, order, rice_Parameter_Limit, min_Partition_Order, max_Partition_Order, subFrame_Bps, lpc.Entropy_Coding_Method);
 
 			lpc.Order = order;
 			lpc.Qlp_Coeff_Precision = qlp_Coeff_Precision;
 			lpc.Quantization_Level = quantization;
 			Array.Copy(qlp_Coeff, lpc.Qlp_Coeff, Constants.Flac__Max_Lpc_Order);
 
-			for (uint32_t i = 0; i < order; i++)
-				lpc.Warmup[i] = signal[i];
+			if (subFrame_Bps <= 32)
+			{
+				for (uint32_t i = 0; i < order; i++)
+					lpc.Warmup[i] = ((Flac__int32[])signal)[i];
+			}
+			else
+			{
+				for (uint32_t i = 0; i < order; i++)
+					lpc.Warmup[i] = ((Flac__int64[])signal)[i];
+			}
 
-			uint32_t estimate = Constants.Flac__SubFrame_Zero_Pad_Len + Constants.Flac__SubFrame_Type_Len + Constants.Flac__SubFrame_Wasted_Bits_Flag_Len + subFrame.Wasted_Bits + Constants.Flac__SubFrame_Lpc_Qlp_Coeff_Precision_Len + Constants.Flac__SubFrame_Lpc_Qlp_Shift_Len + (order * (qlp_Coeff_Precision + subFrame_Bps)) + residual_Bits;
+			uint32_t estimate = Constants.Flac__SubFrame_Zero_Pad_Len + Constants.Flac__SubFrame_Type_Len + Constants.Flac__SubFrame_Wasted_Bits_Flag_Len + subFrame.Wasted_Bits + Constants.Flac__SubFrame_Lpc_Qlp_Coeff_Precision_Len + Constants.Flac__SubFrame_Lpc_Qlp_Shift_Len + (order * (qlp_Coeff_Precision + subFrame_Bps));
+			if (residual_Bits < (uint32_t.MaxValue - estimate))	// To make sure estimate doesn't overflow
+				estimate += residual_Bits;
+			else
+				estimate = uint32_t.MaxValue;
 
 			return estimate;
 		}
@@ -3704,13 +4040,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private uint32_t Evaluate_Verbatim_SubFrame(Flac__int32[] signal, uint32_t blockSize, uint32_t subFrame_Bps, Flac__SubFrame subFrame)
+		private uint32_t Evaluate_Verbatim_SubFrame(Array signal, uint32_t blockSize, uint32_t subFrame_Bps, Flac__SubFrame subFrame)
 		{
 			subFrame.Type = Flac__SubFrameType.Verbatim;
 
 			Flac__SubFrame_Verbatim verbatim = new Flac__SubFrame_Verbatim();
 			subFrame.Data = verbatim;
-			verbatim.Data = signal;
+
+			if (subFrame_Bps <= 32)
+			{
+				verbatim.Data_Type = Flac__VerbatimSubFrameDataType.Int32;
+				verbatim.Data32 = (Flac__int32[])signal;
+			}
+			else
+			{
+				verbatim.Data_Type = Flac__VerbatimSubFrameDataType.Int64;
+				verbatim.Data64 = (Flac__int64[])signal;
+			}
 
 			uint32_t estimate = Constants.Flac__SubFrame_Zero_Pad_Len + Constants.Flac__SubFrame_Type_Len + Constants.Flac__SubFrame_Wasted_Bits_Flag_Len + subFrame.Wasted_Bits + (blockSize * subFrame_Bps);
 
@@ -3724,7 +4070,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private uint32_t Find_Best_Partition_Order(Flac__int32[] residual, Flac__uint64[] abs_Residual_Partition_Sums, uint32_t[] raw_Bits_Per_Partition, uint32_t residual_Samples, uint32_t predictor_Order, uint32_t rice_Parameter, uint32_t rice_Parameter_Limit, uint32_t min_Partition_Order, uint32_t max_Partition_Order, uint32_t bps, Flac__EntropyCodingMethod best_Ecm)
+		private uint32_t Find_Best_Partition_Order(Flac__int32[] residual, Flac__uint64[] abs_Residual_Partition_Sums, uint32_t[] raw_Bits_Per_Partition, uint32_t residual_Samples, uint32_t predictor_Order, uint32_t rice_Parameter_Limit, uint32_t min_Partition_Order, uint32_t max_Partition_Order, uint32_t bps, Flac__EntropyCodingMethod best_Ecm)
 		{
 			uint32_t best_Residual_Bits = 0;
 			uint32_t best_Parameters_Index = 0;
@@ -3739,7 +4085,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			{
 				for (int partition_Order = (int)max_Partition_Order, sum = 0; partition_Order >= (int)min_Partition_Order; partition_Order--)
 				{
-					if (!Set_Partitioned_Rice(abs_Residual_Partition_Sums, raw_Bits_Per_Partition, sum, residual_Samples, predictor_Order, rice_Parameter, rice_Parameter_Limit, (uint32_t)partition_Order, encoder.Private.Partitioned_Rice_Contents_Extra[best_Parameters_Index == 0 ? 1 : 0], out uint32_t residual_Bits))
+					if (!Set_Partitioned_Rice(abs_Residual_Partition_Sums, raw_Bits_Per_Partition, sum, residual_Samples, predictor_Order, rice_Parameter_Limit, (uint32_t)partition_Order, encoder.Private.Partitioned_Rice_Contents_Extra[best_Parameters_Index == 0 ? 1 : 0], out uint32_t residual_Bits))
 					{
 						Debug.Assert(best_Residual_Bits != 0);
 						break;
@@ -3756,16 +4102,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				}
 			}
 
-			Flac__EntropyCodingMethod_PartitionedRice partitionedRice = new Flac__EntropyCodingMethod_PartitionedRice();
-			partitionedRice.Contents = new Flac__EntropyCodingMethod_PartitionedRiceContents();
-			best_Ecm.Data = partitionedRice;
+//			Flac__EntropyCodingMethod_PartitionedRice partitionedRice = new Flac__EntropyCodingMethod_PartitionedRice();
+//			partitionedRice.Contents = new Flac__EntropyCodingMethod_PartitionedRiceContents();
+//			best_Ecm.Data = partitionedRice;
+			Flac__EntropyCodingMethod_PartitionedRice partitionedRice = (Flac__EntropyCodingMethod_PartitionedRice)best_Ecm.Data;
 			partitionedRice.Order = best_Partition_Order;
 
 			{
 				Flac__EntropyCodingMethod_PartitionedRiceContents prc = partitionedRice.Contents;
 
 				// Save bes parameters and raw_Bits
-				Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Ensure_Size(prc, Math.Max(6, best_Partition_Order));
 				Array.Copy(encoder.Private.Partitioned_Rice_Contents_Extra[best_Parameters_Index].Parameters, 0, prc.Parameters, 0, 1 << (int)best_Partition_Order);
 
 				// Now need to check if the type should be changed to
@@ -3812,7 +4158,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 						end += default_Partition_Samples;
 
 						for (; residual_Sample < end; residual_Sample++)
-							abs_Residual_Partition_Sum += (Flac__uint32)Math.Abs(residual[residual_Sample]);
+							abs_Residual_Partition_Sum += (Flac__uint32)Math.Abs(residual[residual_Sample]);	// abs(INT_MIN) is undefined, but if the residual is INT_MIN we have bigger problems
 
 						abs_Residual_Partition_Sums[partition] = abs_Residual_Partition_Sum;
 					}
@@ -3825,7 +4171,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 						end += default_Partition_Samples;
 
 						for (; residual_Sample < end; residual_Sample++)
-							abs_Residual_Partition_Sum64 += (Flac__uint64)Math.Abs(residual[residual_Sample]);
+							abs_Residual_Partition_Sum64 += (Flac__uint64)Math.Abs(residual[residual_Sample]);	// abs(INT_MIN) is undefined, but if the residual is INT_MIN we have bigger problems
 
 						abs_Residual_Partition_Sums[partition] = abs_Residual_Partition_Sum64;
 					}
@@ -3882,26 +4228,63 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private Flac__bool Set_Partitioned_Rice(Flac__uint64[] abs_Residual_Partition_Sums, uint32_t[] raw_Bits_Per_Partition, int offset, uint32_t residual_Samples, uint32_t predictor_Order, uint32_t suggested_Rice_Parameter, uint32_t rice_Parameter_Limit, uint32_t partition_Order, Flac__EntropyCodingMethod_PartitionedRiceContents partitioned_Rice_Contents, out uint32_t bits)
+		private Flac__bool Set_Partitioned_Rice(Flac__uint64[] abs_Residual_Partition_Sums, uint32_t[] raw_Bits_Per_Partition, int offset, uint32_t residual_Samples, uint32_t predictor_Order, uint32_t rice_Parameter_Limit, uint32_t partition_Order, Flac__EntropyCodingMethod_PartitionedRiceContents partitioned_Rice_Contents, out uint32_t bits)
 		{
+			uint32_t rice_Parameter;
 			uint32_t best_Rice_Parameter = 0;
 			uint32_t bits_ = Constants.Flac__Entropy_Coding_Method_Type_Len + Constants.Flac__Entropy_Coding_Method_Partitioned_Rice_Order_Len;
+			uint32_t partitions = 1U << (int)partition_Order;
 
-			Debug.Assert(suggested_Rice_Parameter < Constants.Flac__Entropy_Coding_Method_Partitioned_Rice2_Escape_Parameter);
 			Debug.Assert(rice_Parameter_Limit <= Constants.Flac__Entropy_Coding_Method_Partitioned_Rice2_Escape_Parameter);
 
-			Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Ensure_Size(partitioned_Rice_Contents, Math.Max(6, partition_Order));
 			uint32_t[] parameters = partitioned_Rice_Contents.Parameters;
 			uint32_t[] raw_Bits = partitioned_Rice_Contents.Raw_Bits;
-			uint32_t rice_Parameter;
-			uint32_t best_Partition_Bits;
-			uint32_t partition_Bits;
 
-			if (partition_Order == 0)
+			uint32_t partition_Samples_Base = (residual_Samples + predictor_Order) >> (int)partition_Order;
+
+			// Integer division is slow. To speed up things, precalculate a fixed point
+			// divisor, as all partitions except the first are the same size. 18 bits
+			// are taken because maximum block size is 65535, max partition size for
+			// partitions other than 0 is 32767 (15 bit), max abs residual is 2^31,
+			// which leaves 18 bit
+			uint32_t partition_Samples_Fixed_Point_Divisor_Base = 0x40000 / partition_Samples_Base;
+
+			for (uint32_t partition = 0, residual_Sample = 0; partition < partitions; partition++)
 			{
-				best_Partition_Bits = uint32_t.MaxValue;
-				rice_Parameter = suggested_Rice_Parameter;
-				partition_Bits = Count_Rice_Bits_In_Partition(rice_Parameter, residual_Samples, abs_Residual_Partition_Sums[0]);
+				uint32_t partition_Samples = partition_Samples_Base;
+				uint32_t partition_Samples_Fixed_Point_Divisor;
+
+				if (partition > 0)
+					partition_Samples_Fixed_Point_Divisor = partition_Samples_Fixed_Point_Divisor_Base;
+				else
+				{
+					if (partition_Samples <= predictor_Order)
+					{
+						bits = 0;
+						return false;
+					}
+					else
+						partition_Samples -= predictor_Order;
+
+					partition_Samples_Fixed_Point_Divisor = 0x40000 / partition_Samples;
+				}
+
+				Flac__uint64 mean = abs_Residual_Partition_Sums[partition];
+
+				// 'mean' is not a good name for the variable, it is
+				// actually the sum of magnitudes of all residual values
+				// in the partition, so the actual mean is
+				// mean/partition_samples
+				if ((mean < 2) || (((mean - 1) * partition_Samples_Fixed_Point_Divisor) >> 18) == 0)
+					rice_Parameter = 0;
+				else
+					rice_Parameter = BitMath.Flac__BitMath_ILog2_Wide(((mean - 1) * partition_Samples_Fixed_Point_Divisor) >> 18) + 1;
+
+				if (rice_Parameter >= rice_Parameter_Limit)
+					rice_Parameter = rice_Parameter_Limit - 1;
+
+				uint32_t best_Partition_Bits = uint32_t.MaxValue;
+				uint32_t partition_Bits = Count_Rice_Bits_In_Partition(rice_Parameter, partition_Samples, abs_Residual_Partition_Sums[partition]);
 
 				if (partition_Bits < best_Partition_Bits)
 				{
@@ -3909,100 +4292,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					best_Partition_Bits = partition_Bits;
 				}
 
-				parameters[0] = best_Rice_Parameter;
+				parameters[partition] = best_Rice_Parameter;
 
 				if (best_Partition_Bits < uint32_t.MaxValue - bits_)	// To make sure _bits doesn't overflow
 					bits_ += best_Partition_Bits;
 				else
 					bits_ = uint32_t.MaxValue;
-			}
-			else
-			{
-				uint32_t partitions = 1U << (int)partition_Order;
 
-				for (uint32_t partition = 0, residual_Sample = 0; partition < partitions; partition++)
-				{
-					uint32_t partition_Samples = (residual_Samples + predictor_Order) >> (int)partition_Order;
-					if (partition == 0)
-					{
-						if (partition_Samples <= predictor_Order)
-						{
-							bits = 0;
-							return false;
-						}
-						else
-							partition_Samples -= predictor_Order;
-					}
-
-					Flac__uint64 mean = abs_Residual_Partition_Sums[partition];
-
-					// We are basically calculating the size in bits of the
-					// average residual magnitude in the partition:
-					//   rice_Parameter = floor(log2(mean/partition_Samples))
-					// 'mean' is not a good name for the variable, it is
-					// actually the sum of magnitudes of all residual values
-					// in the partition, so the actual mean is
-					// mean/partition_samples
-					if (mean <= 0x80000000 / 512)
-					{
-						Flac__uint32 mean2 = (Flac__uint32)mean;
-						rice_Parameter = 0;
-						Flac__uint32 k2 = partition_Samples;
-
-						while (k2 * 8 < mean2)	// Requires: mean <= (2^31)/8
-						{
-							rice_Parameter += 4;
-							k2 <<= 4;		// Tuned for 16-bit input
-						}
-
-						while (k2 < mean2)	// Requires: mean <= 2^31
-						{
-							rice_Parameter++;
-							k2 <<= 1;
-						}
-					}
-					else
-					{
-						rice_Parameter = 0;
-						Flac__uint64 k = partition_Samples;
-
-						if (mean <= 0x8000000000000000 / 128)	// Usually mean is _much_ smaller than this value
-						{
-							while (k * 128 < mean)	// Requires: mean <= (2^63)/128
-							{
-								rice_Parameter += 8;
-								k <<= 8;
-							}
-						}
-
-						while (k < mean)	// Requires: mean <= 2^63
-						{
-							rice_Parameter++;
-							k <<= 1;
-						}
-					}
-
-					if (rice_Parameter >= rice_Parameter_Limit)
-						rice_Parameter = rice_Parameter_Limit - 1;
-
-					best_Partition_Bits = uint32_t.MaxValue;
-					partition_Bits = Count_Rice_Bits_In_Partition(rice_Parameter, partition_Samples, abs_Residual_Partition_Sums[partition]);
-
-					if (partition_Bits < best_Partition_Bits)
-					{
-						best_Rice_Parameter = rice_Parameter;
-						best_Partition_Bits = partition_Bits;
-					}
-
-					parameters[partition] = best_Rice_Parameter;
-
-					if (best_Partition_Bits < uint32_t.MaxValue - bits_)	// To make sure _bits doesn't overflow
-						bits_ += best_Partition_Bits;
-					else
-						bits_ = uint32_t.MaxValue;
-
-					residual_Sample += partition_Samples;
-				}
+				residual_Sample += partition_Samples;
 			}
 
 			bits = bits_;
@@ -4037,6 +4334,38 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			{
 				for (uint32_t i = 0; i < samples; i++)
 					signal[i] >>= (int)shift;
+			}
+
+			return shift;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private uint32_t Get_Wasted_Bits_Wide(Flac__int64[] signal_Wide, Flac__int32[] signal, uint32_t samples)
+		{
+			Flac__int64 x = 0;
+			uint32_t shift;
+
+			for (uint32_t i = 0; (i < samples) && ((x & 1) == 0); i++)
+				x |= signal_Wide[i];
+
+			if (x == 0)
+				shift = 0;
+			else
+			{
+				for (shift = 0; (x & 1) == 0; shift++)
+					x >>= 1;
+			}
+
+			if (shift > 0)
+			{
+				for (uint32_t i = 0; i < samples; i++)
+					signal[i] = (Flac__int32)(signal_Wide[i] >> (int)shift);
 			}
 
 			return shift;

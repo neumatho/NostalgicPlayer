@@ -132,10 +132,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 			Flac__int32 N = L - 1;
 			double N2 = N / 2.0;
 
-			for (Flac__int32 n = 0; n <= N; n++)
+			if (!((stdDev > 0.0f) && (stdDev <= 0.5f)))
 			{
-				double k = (n - N2) / (stdDev * N2);
-				window[n] = (Flac__real)Math.Exp(-0.5 * k * k);
+				// stdDev is not between 0 and 0.5, might be NaN.
+				// Default to 0.5
+				Flac__Window_Gauss(window, L, 0.25f);
+			}
+			else
+			{
+				for (Flac__int32 n = 0; n <= N; n++)
+				{
+					double k = (n - N2) / (stdDev * N2);
+					window[n] = (Flac__real)Math.Exp(-0.5 * k * k);
+				}
 			}
 		}
 
@@ -254,6 +263,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 				Flac__Window_Rectangle(window, L);
 			else if (p >= 1.0f)
 				Flac__Window_Hann(window, L);
+			else if (!((p > 0.0f) && (p < 1.0f)))
+			{
+				// p is not between 0 and 1, probably NaN.
+				// Default to 0.5
+				Flac__Window_Tukey(window, L, 0.5f);
+			}
 			else
 			{
 				Flac__int32 Np = (Flac__int32)(p / 2.0f * L) - 1;
@@ -286,6 +301,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 				Flac__Window_Partial_Tukey(window, L, 0.05f, start, end);
 			else if (p >= 1.0f)
 				Flac__Window_Partial_Tukey(window, L, 0.95f, start, end);
+			else if (!((p > 0.0f) && (p < 1.0f)))
+			{
+				// p is not between 0 and 1, probably NaN.
+				// Default to 0.5
+				Flac__Window_Partial_Tukey(window, L, 0.5f, start, end);
+			}
 			else
 			{
 				Flac__int32 start_N = (Flac__int32)(start * L);
@@ -325,6 +346,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 				Flac__Window_Punchout_Tukey(window, L, 0.05f, start, end);
 			else if (p >= 1.0f)
 				Flac__Window_Punchout_Tukey(window, L, 0.95f, start, end);
+			else if (!((p > 0.0f) && (p < 1.0f)))
+			{
+				// p is not between 0 and 1, probably NaN.
+				// Default to 0.5
+				Flac__Window_Punchout_Tukey(window, L, 0.5f, start, end);
+			}
 			else
 			{
 				Flac__int32 start_N = (Flac__int32)(start * L);

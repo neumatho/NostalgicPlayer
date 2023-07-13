@@ -5,28 +5,9 @@
 /******************************************************************************/
 namespace Polycode.NostalgicPlayer.Ports.LibFlac.Protected.Containers
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	internal enum Flac__ApodizationFunction
+	internal class Flac__ApodizationParameter_Subdivide_Tukey : IApodizationParameters
 	{
-		Bartlett,
-		Bartlett_Hann,
-		Blackman,
-		Blackman_Harris_4Term_92Db_Sidelobe,
-		Connes,
-		Flattop,
-		Gauss,
-		Hamming,
-		Hann,
-		Kaiser_Bessel,
-		Nuttall,
-		Rectangle,
-		Triangle,
-		Tukey,
-		Partial_Tukey,
-		Punchout_Tukey,
-		Subdivide_Tukey,
-		Welch
+		public Flac__real P;
+		public Flac__int32 Parts;
 	}
 }

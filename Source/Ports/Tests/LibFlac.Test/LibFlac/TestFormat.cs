@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.LibFlac
 
 		private static readonly Sample_Rates[] sampleRates =
 		{
-			new Sample_Rates { rate = 0      , valid = false, subset = false },
+			new Sample_Rates { rate = 0      , valid = true , subset = true  },
 			new Sample_Rates { rate = 1      , valid = true , subset = true  },
 			new Sample_Rates { rate = 9      , valid = true , subset = true  },
 			new Sample_Rates { rate = 10     , valid = true , subset = true  },
@@ -56,11 +56,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.LibFlac
 			new Sample_Rates { rate = 500010 , valid = true , subset = true  },
 			new Sample_Rates { rate = 655349 , valid = true , subset = false },
 			new Sample_Rates { rate = 655350 , valid = true , subset = true  },
-			new Sample_Rates { rate = 655351 , valid = false, subset = false },
-			new Sample_Rates { rate = 655360 , valid = false, subset = false },
-			new Sample_Rates { rate = 700000 , valid = false, subset = false },
-			new Sample_Rates { rate = 700010 , valid = false, subset = false },
-			new Sample_Rates { rate = 1000000, valid = false, subset = false },
+			new Sample_Rates { rate = 655351 , valid = true , subset = false },
+			new Sample_Rates { rate = 655360 , valid = true , subset = false },
+			new Sample_Rates { rate = 700000 , valid = true , subset = false },
+			new Sample_Rates { rate = 700010 , valid = true , subset = false },
+			new Sample_Rates { rate = 705600 , valid = true , subset = false },
+			new Sample_Rates { rate = 768000 , valid = true , subset = false },
+			new Sample_Rates { rate = 1000000, valid = true , subset = false },
+			new Sample_Rates { rate = 1048575, valid = true , subset = false },
 			new Sample_Rates { rate = 1100000, valid = false, subset = false }
 		};
 

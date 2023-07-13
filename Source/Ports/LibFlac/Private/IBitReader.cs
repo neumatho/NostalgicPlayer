@@ -3,30 +3,17 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Ports.LibFlac.Protected.Containers
+namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 {
 	/// <summary>
-	/// 
+	/// Common interface for all BitReader implementations
 	/// </summary>
-	internal enum Flac__ApodizationFunction
+	internal interface IBitReader
 	{
-		Bartlett,
-		Bartlett_Hann,
-		Blackman,
-		Blackman_Harris_4Term_92Db_Sidelobe,
-		Connes,
-		Flattop,
-		Gauss,
-		Hamming,
-		Hann,
-		Kaiser_Bessel,
-		Nuttall,
-		Rectangle,
-		Triangle,
-		Tukey,
-		Partial_Tukey,
-		Punchout_Tukey,
-		Subdivide_Tukey,
-		Welch
+		/// <summary>
+		/// This is far the most heavily used reader call. It ain't pretty
+		/// but it's fast
+		/// </summary>
+		Flac__bool Read_Rice_Signed_Block(int[] vals, uint32_t offset, uint32_t nVals, uint32_t parameter);
 	}
 }

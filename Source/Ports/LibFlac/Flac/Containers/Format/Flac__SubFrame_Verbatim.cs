@@ -11,8 +11,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac.Containers.Format
 	public class Flac__SubFrame_Verbatim : ISubFrame
 	{
 		/// <summary>
-		/// A pointer to verbatim signal
+		/// A Flac__int32 pointer to verbatim signal
 		/// </summary>
-		public Flac__int32[] Data;
+		public Flac__int32[] Data32;
+
+		/// <summary>
+		/// A Flac__int64 pointer to verbatim signal
+		/// </summary>
+		public Flac__int64[] Data64;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public Flac__VerbatimSubFrameDataType Data_Type;
 	}
 }

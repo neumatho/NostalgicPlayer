@@ -215,6 +215,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.LibFlac
 			Console.WriteLine("Testing Flac__Stream_Encoder_Set_Metadata()");
 			Assert.IsTrue(encoder.Flac__Stream_Encoder_Set_Metadata(metadata_Sequence, num_Metadata));
 
+			Console.WriteLine("Testing Flac__Stream_Encoder_Set_Limit_Min_Bitrate()");
+			Assert.IsTrue(encoder.Flac__Stream_Encoder_Set_Limit_Min_Bitrate(true));
+
 			FileStream file = null;
 
 			if (layer != Layer.FileName)
@@ -307,6 +310,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.LibFlac
 
 				Console.WriteLine("Testing Flac__Stream_Encoder_Get_Total_Samples_Estimate()");
 				Assert.AreEqual(metaStreamInfo.Total_Samples, encoder.Flac__Stream_Encoder_Get_Total_Samples_Estimate());
+
+				Console.WriteLine("Testing Flac__Stream_Encoder_Get_Limit_Min_Bitrate()");
+				Assert.AreEqual(true, encoder.Flac__Stream_Encoder_Get_Limit_Min_Bitrate());
 
 				// Init the dummy sample buffer
 				Flac__int32[] samples = new Flac__int32[1024];

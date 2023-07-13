@@ -290,12 +290,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			public Flac__StreamDecoderMetadataCallback Metadata_Callback;
 			public Flac__StreamDecoderErrorCallback Error_Callback;
 			public object Client_Data;
-			public ILpc Lpc;
 			public Stream File;											// Only used if Flac__Stream_Decoder_Init_File() is called, else null
 			public bool Leave_Stream_Open;
 			public BitReader Input;
 			public Flac__int32[][] Output = new Flac__int32[Constants.Flac__Max_Channels][];
 			public Flac__int32[][] Residual = new Flac__int32[Constants.Flac__Max_Channels][];	// WATCHOUT: These are the aligned pointers; the real pointers that should be free()'d are residual_unaligned[] below
+			public Flac__int64[] Side_SubFrame;
+			public Flac__bool Side_SubFrame_In_Use;
 			public Flac__EntropyCodingMethod_PartitionedRiceContents[] Partitioned_Rice_Contents = ArrayHelper.InitializeArray<Flac__EntropyCodingMethod_PartitionedRiceContents>((int)Constants.Flac__Max_Channels);
 			public uint32_t Output_Capacity, Output_Channels;
 			public Flac__uint32 Fixed_Block_Size, Next_Fixed_Block_Size;
@@ -317,11 +318,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			public Md5 Md5;
 			public Flac__byte[] Computed_Md5Sum;						// This is the sum we computed from the decoded data
 
-			// The rese of these are only used for seeking
-			public Flac__Frame Last_Frame;				// Holds the info of the last frame we seeked to
+			// The rest of these are only used for seeking
+			public Flac__Frame Last_Frame;				// Holds the info of the last frame we decoded or seeked to
+			public Flac__bool Last_Frame_Is_Set;
 			public Flac__uint64 First_Frame_Offset;		// Hint to the seek routine of where in the stream the first audio frame starts
+			public Flac__uint64 Last_Seen_FrameSync;	// If tell callback works, the location of the last seen frame sync code, to rewind to if needed
 			public Flac__uint64 Target_Sample;
 			public uint32_t Unparseable_Frame_Count;	// Used to tell whether we're decoding a future version of FLAC or just got a bad sync
+			public IBitReader BitReader;
 		}
 
 		private Flac__StreamDecoder decoder;
@@ -365,6 +369,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				decoder.decoder.Private.Residual_Unaligned[i] = null;
 				decoder.decoder.Private.Residual[i] = null;
 			}
+
+			decoder.decoder.Private.Side_SubFrame = null;
 
 			decoder.decoder.Private.Output_Capacity = 0;
 			decoder.decoder.Private.Output_Channels = 0;
@@ -557,6 +563,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					decoder.Private.Residual[i] = null;
 				}
 			}
+
+			if (decoder.Private.Side_SubFrame != null)
+				decoder.Private.Side_SubFrame = null;
 
 			decoder.Private.Output_Capacity = 0;
 			decoder.Private.Output_Channels = 0;
@@ -981,6 +990,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 			decoder.Private.Samples_Decoded = 0;
 			decoder.Private.Do_Md5_Checking = false;
+			decoder.Private.Last_Seen_FrameSync = 0;
+			decoder.Private.Last_Frame_Is_Set = false;
 
 			if (!decoder.Private.Input.Flac__BitReader_Clear())
 			{
@@ -1077,8 +1088,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				if ((decoder.Private.Seek_Callback != null) && (decoder.Private.Seek_Callback(this, 0, decoder.Private.Client_Data) == Flac__StreamDecoderSeekStatus.Error))
 					return false;	// Seekable and seek fails, reset fails
 			}
-			else
-				decoder.Private.Internal_Reset_Hack = false;
 
 			decoder.Protected.State = Flac__StreamDecoderState.Search_For_Metadata;
 
@@ -1100,11 +1109,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			// a seek occurs. So we init the context here and finalize it in
 			// Flac__Stream_Decoder_Finish() to make sure things are always cleaned up
 			// properly
+			if (!decoder.Private.Internal_Reset_Hack)
+			{
+				// Only finish MD5 context when it has been initialized
+				// (i.e. when internal_reset_hack is not set)
+				decoder.Private.Md5.Flac__Md5Final();
+			}
+			else
+				decoder.Private.Internal_Reset_Hack = false;
+
 			decoder.Private.Md5 = new Md5();
 			decoder.Private.Md5.Flac__Md5Init();
 
 			decoder.Private.First_Frame_Offset = 0;
 			decoder.Private.Unparseable_Frame_Count = 0;
+			decoder.Private.Last_Seen_FrameSync = 0;
+			decoder.Private.Last_Frame_Is_Set = false;
 
 			return true;
 		}
@@ -1186,10 +1206,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 						return true;
 
 					default:
-					{
-						Debug.Assert(false);
 						return false;
-					}
 				}
 			}
 		}
@@ -1242,10 +1259,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 						return true;
 
 					default:
-					{
-						Debug.Assert(false);
 						return false;
-					}
 				}
 			}
 		}
@@ -1311,10 +1325,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 						return true;
 
 					default:
-					{
-						Debug.Assert(false);
 						return false;
-					}
 				}
 			}
 		}
@@ -1390,10 +1401,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 						return true;
 
 					default:
-					{
-						Debug.Assert(false);
 						return false;
-					}
 				}
 			}
 		}
@@ -1494,10 +1502,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			if ((read_Callback == null) || (write_Callback == null) || (error_Callback == null) || ((seek_Callback != null) && ((tell_Callback == null) || (length_Callback == null) || (eof_Callback == null))))
 				return Flac__StreamDecoderInitStatus.Invalid_Callbacks;
 
-			// First default to the non-asm routines
-			decoder.Private.Lpc = new Lpc();
-
-			// Since this is a C# port, we do not have any assembler versions of the LPC decoder, so this part has been removed
+			decoder.Private.BitReader = decoder.Private.Input;
 
 			// From here on, errors are fatal
 			if (!decoder.Private.Input.Flac__BitReader_Init(Read_Callback, this))
@@ -1644,9 +1649,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private Flac__bool Allocate_Output(uint32_t size, uint32_t channels)
+		private Flac__bool Allocate_Output(uint32_t size, uint32_t channels, uint32_t bps)
 		{
-			if ((size <= decoder.Private.Output_Capacity) && (channels <= decoder.Private.Output_Channels))
+			if ((size <= decoder.Private.Output_Capacity) && (channels <= decoder.Private.Output_Channels) && ((bps < 32) || (decoder.Private.Side_SubFrame != null)))
 				return true;
 
 			// Simply using realloc() is not practical because the number of channels may change mid-stream
@@ -1662,6 +1667,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				}
 			}
 
+			if (decoder.Private.Side_SubFrame != null)
+				decoder.Private.Side_SubFrame = null;
+
 			for (uint32_t i = 0; i < channels; i++)
 			{
 				Flac__int32[] tmp = Alloc.Safe_MAlloc_Mul_2Op<Flac__int32>(size, 1);
@@ -1674,6 +1682,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				decoder.Private.Output[i] = tmp;
 
 				if (!Memory.Flac__Memory_Alloc_Aligned_Int32_Array(size, ref decoder.Private.Residual_Unaligned[i], ref decoder.Private.Residual[i]))
+				{
+					decoder.Protected.State = Flac__StreamDecoderState.Memory_Allocation_Error;
+					return false;
+				}
+			}
+
+			if (bps == 32)
+			{
+				decoder.Private.Side_SubFrame = Alloc.Safe_MAlloc_Mul_2Op_P<Flac__int64>(1, size);
+				if (decoder.Private.Side_SubFrame == null)
 				{
 					decoder.Protected.State = Flac__StreamDecoderState.Memory_Allocation_Error;
 					return false;
@@ -1837,13 +1855,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				// Just in case we already have a seek table, and reading the next one fails:
 				decoder.Private.Has_Seek_Table = false;
 
-				if (!Read_Metadata_SeekTable(is_Last, length))
-					return false;
+				if (length > 0)
+				{
+					if (!Read_Metadata_SeekTable(is_Last, length))
+						return false;
 
-				decoder.Private.Has_Seek_Table = true;
+					decoder.Private.Has_Seek_Table = true;
 
-				if (!decoder.Private.Is_Seeking && decoder.Private.Metadata_Filter[(int)Flac__MetadataType.SeekTable] && (decoder.Private.Metadata_Callback != null))
-					decoder.Private.Metadata_Callback(this, decoder.Private.Seek_Table, decoder.Private.Client_Data);
+					if (!decoder.Private.Is_Seeking && decoder.Private.Metadata_Filter[(int)Flac__MetadataType.SeekTable] && (decoder.Private.Metadata_Callback != null))
+						decoder.Private.Metadata_Callback(this, decoder.Private.Seek_Table, decoder.Private.Client_Data);
+				}
 			}
 			else
 			{
@@ -1883,6 +1904,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				else
 				{
 					Flac__bool ok = true;
+					decoder.Private.Input.Flac__BitReader_Set_Limit(real_Length * 8);
 
 					switch (type)
 					{
@@ -1974,6 +1996,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 						}
 					}
 
+					if (decoder.Private.Input.Flac__BitReader_Limit_Remaining() > 0)
+					{
+						// Content in metadata block didn't fit in block length.
+						// We cannot know whether the length or the content was
+						// corrupt, so stop parsing metadata
+						Send_Error_To_Client(Flac__StreamDecoderErrorStatus.Bad_Metadata);
+
+						if (decoder.Protected.State == Flac__StreamDecoderState.Read_Metadata)
+							decoder.Protected.State = Flac__StreamDecoderState.Search_For_Frame_Sync;
+
+						ok = false;
+					}
+
+					decoder.Private.Input.Flac__BitReader_Remove_Limit();
+
 					if (ok && !decoder.Private.Is_Seeking && (decoder.Private.Metadata_Callback != null))
 						decoder.Private.Metadata_Callback(this, block, decoder.Private.Client_Data);
 
@@ -2019,7 +2056,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 						{
 							Flac__StreamMetadata_CueSheet metaCueSheet = (Flac__StreamMetadata_CueSheet)block.Data;
 
-							if (metaCueSheet.Num_Tracks > 0)
+							if ((metaCueSheet.Num_Tracks > 0) && (metaCueSheet.Tracks != null))
 							{
 								for (Flac__uint32 i = 0; i < metaCueSheet.Num_Tracks; i++)
 								{
@@ -2194,6 +2231,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			decoder.Private.Seek_Table.Is_Last = is_Last;
 			decoder.Private.Seek_Table.Length = length;
 
+			if ((length % Constants.Flac__Stream_Metadata_SeekPoint_Length) != 0)
+			{
+				decoder.Private.Input.Flac__BitReader_Limit_Invalidate();
+				return false;
+			}
+
 			Flac__StreamMetadata_SeekTable metaSeekTable = new Flac__StreamMetadata_SeekTable();
 			decoder.Private.Seek_Table.Data = metaSeekTable;
 
@@ -2227,13 +2270,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 			length -= (metaSeekTable.Num_Points * Constants.Flac__Stream_Metadata_SeekPoint_Length);
 
-			// If there is a partial point left, skip over it
-			if (length > 0)
-			{
-				// @@@ Do a Send_Error_To_Client() here? There's an argument for either way
-				if (!decoder.Private.Input.Flac__BitReader_Skip_Byte_Block_Aligned_No_Crc(length))
-					return false;	// Read_Callback sets the state for us
-			}
+			Debug.Assert(length == 0);
 
 			return true;
 		}
@@ -2258,30 +2295,25 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				if (!decoder.Private.Input.Flac__BitReader_Read_UInt32_Little_Endian(out obj.Vendor_String.Length))
 					return false;	// Read_Callback sets the state for us
 
-				if (obj.Vendor_String.Length > 0)
+				if (length < obj.Vendor_String.Length)
 				{
-					if (length < obj.Vendor_String.Length)
-					{
-						obj.Vendor_String.Length = 0;
-						obj.Vendor_String.Entry = null;
-						goto Skip;
-					}
-					else
-						length -= obj.Vendor_String.Length;
-
-					if ((obj.Vendor_String.Entry = Alloc.Safe_MAlloc_Add_2Op<Flac__byte>(obj.Vendor_String.Length, 1)) == null)
-					{
-						decoder.Protected.State = Flac__StreamDecoderState.Memory_Allocation_Error;
-						return false;
-					}
-
-					if (!decoder.Private.Input.Flac__BitReader_Read_Byte_Block_Aligned_No_Crc(obj.Vendor_String.Entry, obj.Vendor_String.Length))
-						return false;	// Read_Callback sets the state for us
-
-					obj.Vendor_String.Entry[obj.Vendor_String.Length] = 0x00;
+					obj.Vendor_String.Length = 0;
+					obj.Vendor_String.Entry = null;
+					goto Skip;
 				}
 				else
-					obj.Vendor_String.Entry = null;
+					length -= obj.Vendor_String.Length;
+
+				if ((obj.Vendor_String.Entry = Alloc.Safe_MAlloc_Add_2Op<Flac__byte>(obj.Vendor_String.Length, 1)) == null)
+				{
+					decoder.Protected.State = Flac__StreamDecoderState.Memory_Allocation_Error;
+					return false;
+				}
+
+				if (!decoder.Private.Input.Flac__BitReader_Read_Byte_Block_Aligned_No_Crc(obj.Vendor_String.Entry, obj.Vendor_String.Length))
+					return false;	// Read_Callback sets the state for us
+
+				obj.Vendor_String.Entry[obj.Vendor_String.Length] = 0x00;
 
 				// Read num comments
 				Debug.Assert(Constants.Flac__Stream_Metadata_Vorbis_Comment_Num_Comments_Len == 32);
@@ -2328,39 +2360,40 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 							return false;	// Read_Callback sets the state for us
 						}
 
-						if (obj.Comments[i].Length > 0)
+						if (length < obj.Comments[i].Length)
 						{
-							if (length < obj.Comments[i].Length)
-							{
-								obj.Num_Comments = i;
-								goto Skip;
-							}
-							else
-								length -= obj.Comments[i].Length;
-
-							if ((obj.Comments[i].Entry = Alloc.Safe_MAlloc_Add_2Op<Flac__byte>(obj.Comments[i].Length, 1)) == null)
-							{
-								decoder.Protected.State = Flac__StreamDecoderState.Memory_Allocation_Error;
-								obj.Num_Comments = i;
-								return false;
-							}
-
-							Array.Clear(obj.Comments[i].Entry);
-
-							if (!decoder.Private.Input.Flac__BitReader_Read_Byte_Block_Aligned_No_Crc(obj.Comments[i].Entry, obj.Comments[i].Length))
-							{
-								// Current i-th entry is bad, so we delete it
-								obj.Comments[i].Entry = null;
-								obj.Num_Comments = i;
-								goto Skip;
-							}
-
-							obj.Comments[i].Entry[obj.Comments[i].Length] = 0x00;
+							obj.Num_Comments = i;
+							decoder.Private.Input.Flac__BitReader_Limit_Invalidate();
+							return false;
 						}
 						else
+							length -= obj.Comments[i].Length;
+
+						if ((obj.Comments[i].Entry = Alloc.Safe_MAlloc_Add_2Op<Flac__byte>(obj.Comments[i].Length, 1)) == null)
+						{
+							decoder.Protected.State = Flac__StreamDecoderState.Memory_Allocation_Error;
+							obj.Num_Comments = i;
+							return false;
+						}
+
+						Array.Clear(obj.Comments[i].Entry);
+
+						if (!decoder.Private.Input.Flac__BitReader_Read_Byte_Block_Aligned_No_Crc(obj.Comments[i].Entry, obj.Comments[i].Length))
+						{
+							// Current i-th entry is bad, so we delete it
 							obj.Comments[i].Entry = null;
+							obj.Num_Comments = i;
+							goto Skip;
+						}
+
+						obj.Comments[i].Entry[obj.Comments[i].Length] = 0x00;
 					}
 				}
+			}
+			else
+			{
+				decoder.Private.Input.Flac__BitReader_Limit_Invalidate();
+				return false;
 			}
 Skip:
 			if (length > 0)
@@ -2369,8 +2402,8 @@ Skip:
 				if (obj.Num_Comments < 1)
 					obj.Comments = null;
 
-				if (!decoder.Private.Input.Flac__BitReader_Skip_Byte_Block_Aligned_No_Crc(length))
-					return false;	// Read_Callback sets the state for us
+				decoder.Private.Input.Flac__BitReader_Limit_Invalidate();
+				return false;
 			}
 
 			return true;
@@ -2477,6 +2510,11 @@ Skip:
 					}
 				}
 			}
+			else	// obj.Num_Tracks == 0
+			{
+				decoder.Private.Input.Flac__BitReader_Limit_Invalidate();
+				return false;
+			}
 
 			return true;
 		}
@@ -2496,11 +2534,20 @@ Skip:
 			if (!decoder.Private.Input.Flac__BitReader_Read_Raw_UInt32(out Flac__uint32 x, Constants.Flac__Stream_Metadata_Picture_Type_Len))
 				return false;	// Read_Callback sets the state for us
 
-			obj.Type = (Flac__StreamMetadata_Picture_Type)x;
+			if (x < (Flac__uint32)Flac__StreamMetadata_Picture_Type.Undefined)
+				obj.Type = (Flac__StreamMetadata_Picture_Type)x;
+			else
+				obj.Type = Flac__StreamMetadata_Picture_Type.Other;
 
 			// Read MIME type
 			if (!decoder.Private.Input.Flac__BitReader_Read_Raw_UInt32(out x, Constants.Flac__Stream_Metadata_Picture_Mime_Type_Length_Len))
 				return false;	// Read_Callback sets the state for us
+
+			if (decoder.Private.Input.Flac__BitReader_Limit_Remaining() < x)
+			{
+				decoder.Private.Input.Flac__BitReader_Limit_Invalidate();
+				return false;
+			}
 
 			if ((obj.Mime_Type = Alloc.Safe_MAlloc_Add_2Op<byte>(x, 1)) == null)
 			{
@@ -2519,6 +2566,12 @@ Skip:
 			// Read description
 			if (!decoder.Private.Input.Flac__BitReader_Read_Raw_UInt32(out x, Constants.Flac__Stream_Metadata_Picture_Description_Length_Len))
 				return false;	// Read_Callback sets the state for us
+
+			if (decoder.Private.Input.Flac__BitReader_Limit_Remaining() < x)
+			{
+				decoder.Private.Input.Flac__BitReader_Limit_Invalidate();
+				return false;
+			}
 
 			if ((obj.Description = Alloc.Safe_MAlloc_Add_2Op<byte>(x, 1)) == null)
 			{
@@ -2553,6 +2606,12 @@ Skip:
 			// Read data
 			if (!decoder.Private.Input.Flac__BitReader_Read_Raw_UInt32(out obj.Data_Length, Constants.Flac__Stream_Metadata_Picture_Data_Length_Len))
 				return false;	// Read_Callback sets the state for us
+
+			if (decoder.Private.Input.Flac__BitReader_Limit_Remaining() < obj.Data_Length)
+			{
+				decoder.Private.Input.Flac__BitReader_Limit_Invalidate();
+				return false;
+			}
 
 			if ((obj.Data = Alloc.Safe_MAlloc<byte>(obj.Data_Length)) == null)
 			{
@@ -2612,17 +2671,6 @@ Skip:
 		{
 			Flac__bool first = true;
 
-			// If we know the total number of samples in the stream, stop if we're read that many.
-			// This will stop us, for example, from wasting time trying to sync on an ID3v1 tag
-			if (Flac__Stream_Decoder_Get_Total_Samples() > 0)
-			{
-				if (decoder.Private.Samples_Decoded >= Flac__Stream_Decoder_Get_Total_Samples())
-				{
-					decoder.Protected.State = Flac__StreamDecoderState.End_Of_Stream;
-					return true;
-				}
-			}
-
 			// Make sure we're byte aligned
 			if (!decoder.Private.Input.Flac__BitReader_Is_Consumed_Byte_Aligned())
 			{
@@ -2664,6 +2712,13 @@ Skip:
 						decoder.Private.Header_Warmup[1] = (Flac__byte)x;
 						decoder.Protected.State = Flac__StreamDecoderState.Read_Frame;
 
+						// Save location so we can rewind in case the frame turns
+						// out to be invalid after the header
+						decoder.Private.Input.Flac__BitReader_Set_Framesync_Location();
+
+						if (!Flac__Stream_Decoder_Get_Decode_Position(out decoder.Private.Last_Seen_FrameSync))
+							decoder.Private.Last_Seen_FrameSync = 0;
+
 						return true;
 					}
 				}
@@ -2686,6 +2741,7 @@ Skip:
 		private Flac__bool Read_Frame(out Flac__bool got_A_Frame, Flac__bool do_Full_Decode)
 		{
 			got_A_Frame = false;
+			decoder.Private.Side_SubFrame_In_Use = false;
 
 			// Init the CRC
 			uint32_t frame_Crc = 0;
@@ -2699,7 +2755,7 @@ Skip:
 			if (decoder.Protected.State == Flac__StreamDecoderState.Search_For_Frame_Sync)	// Means we didn't sync on a valid header
 				return true;
 
-			if (!Allocate_Output(decoder.Private.Frame.Header.BlockSize, decoder.Private.Frame.Header.Channels))
+			if (!Allocate_Output(decoder.Private.Frame.Header.BlockSize, decoder.Private.Frame.Header.Channels, decoder.Private.Frame.Header.Bits_Per_Sample))
 				return false;
 
 			for (uint32_t channel = 0; channel < decoder.Private.Frame.Header.Channels; channel++)
@@ -2754,117 +2810,195 @@ Skip:
 
 				// Now read it
 				if (!Read_SubFrame(channel, bps, do_Full_Decode))
-					return false;
+				{
+					// Read_Callback sets the state for us
+					if (decoder.Protected.State == Flac__StreamDecoderState.End_Of_Stream)
+						break;
+					else
+						return false;
+				}
 
-				if (decoder.Protected.State == Flac__StreamDecoderState.Search_For_Frame_Sync)	// Means bad sync or got corruption
-					return true;
+				if (decoder.Protected.State != Flac__StreamDecoderState.Read_Frame)
+					break;
 			}
 
-			if (!Read_Zero_Padding())
-				return false;
-
-			if (decoder.Protected.State == Flac__StreamDecoderState.Search_For_Frame_Sync)	// Means bad sync or got corruption (i.e. "zero bits" were not all zeroes)
-				return true;
+			if (decoder.Protected.State != Flac__StreamDecoderState.End_Of_Stream)
+			{
+				if (!Read_Zero_Padding())
+					return false;
+			}
 
 			// Read the frame CRC-16 from the footer and check
-			frame_Crc = decoder.Private.Input.Flac__BitReader_Get_Read_Crc16();
+			Flac__uint32 x = 0;
 
-			if (!decoder.Private.Input.Flac__BitReader_Read_Raw_UInt32(out Flac__uint32 x, Constants.Flac__Frame_Footer_Crc_Len))
-				return false;	// Read_Callback sets the state for us
+			if (decoder.Protected.State == Flac__StreamDecoderState.Read_Frame)
+			{
+				frame_Crc = decoder.Private.Input.Flac__BitReader_Get_Read_Crc16();
 
-			if (frame_Crc == x)
+				if (!decoder.Private.Input.Flac__BitReader_Read_Raw_UInt32(out x, Constants.Flac__Frame_Footer_Crc_Len))
+				{
+					// Read_CallBack sets the state for us
+					if (decoder.Protected.State != Flac__StreamDecoderState.End_Of_Stream)
+						return false;
+				}
+			}
+
+			if ((decoder.Protected.State == Flac__StreamDecoderState.Read_Frame) && (frame_Crc == x))
 			{
 				if (do_Full_Decode)
 				{
 					// Undo any special channel coding
-					switch (decoder.Private.Frame.Header.Channel_Assignment)
+					Undo_Channel_Coding();
+
+					// Check whether decoded data actually fits bps
+					for (uint32_t channel = 0; channel < decoder.Private.Frame.Header.Channels; channel++)
 					{
-						case Flac__ChannelAssignment.Independent:
+						for (uint32_t i = 0; i < decoder.Private.Frame.Header.BlockSize; i++)
 						{
-							// Do nothing
-							break;
-						}
+							int shift_Bits = (int)(32 - decoder.Private.Frame.Header.Bits_Per_Sample);
 
-						case Flac__ChannelAssignment.Left_Side:
-						{
-							Debug.Assert(decoder.Private.Frame.Header.Channels == 2);
-
-							for (uint32_t i = 0; i < decoder.Private.Frame.Header.BlockSize; i++)
-								decoder.Private.Output[1][i] = decoder.Private.Output[0][i] - decoder.Private.Output[1][i];
-
-							break;
-						}
-
-						case Flac__ChannelAssignment.Right_Side:
-						{
-							Debug.Assert(decoder.Private.Frame.Header.Channels == 2);
-
-							for (uint32_t i = 0; i < decoder.Private.Frame.Header.BlockSize; i++)
-								decoder.Private.Output[0][i] += decoder.Private.Output[1][i];
-
-							break;
-						}
-
-						case Flac__ChannelAssignment.Mid_Side:
-						{
-							Debug.Assert(decoder.Private.Frame.Header.Channels == 2);
-
-							for (uint32_t i = 0; i < decoder.Private.Frame.Header.BlockSize; i++)
+							// Check whether shift_Bits MSBs are 'empty' by shifting up and down
+							if ((decoder.Private.Output[channel][i] < (int32_t.MinValue >> shift_Bits)) || (decoder.Private.Output[channel][i] > (int32_t.MaxValue >> shift_Bits)))
 							{
-								Flac__int32 mid = decoder.Private.Output[0][i];
-								Flac__int32 side = decoder.Private.Output[1][i];
-								mid = (Flac__int32)(((uint32_t)mid) << 1);
-								mid |= (side & 1);	// I.e. if 'side' is odd...
-								decoder.Private.Output[0][i] = (mid + side) >> 1;
-								decoder.Private.Output[1][i] = (mid - side) >> 1;
+								// Bad frame, emit error
+								Send_Error_To_Client(Flac__StreamDecoderErrorStatus.Crc_Mismatch);
+								decoder.Protected.State = Flac__StreamDecoderState.Search_For_Frame_Sync;
+								break;
 							}
-							break;
+						}
+					}
+				}
+			}
+			else if (decoder.Protected.State == Flac__StreamDecoderState.Read_Frame)
+			{
+				// Bad frame, emit error
+				Send_Error_To_Client(Flac__StreamDecoderErrorStatus.Crc_Mismatch);
+				decoder.Protected.State = Flac__StreamDecoderState.Search_For_Frame_Sync;
+			}
+
+			// Check whether frames are missing, if so, add silence to compensate
+			if (decoder.Private.Last_Frame_Is_Set && (decoder.Protected.State == Flac__StreamDecoderState.Read_Frame) && !decoder.Private.Is_Seeking && do_Full_Decode)
+			{
+				Debug.Assert(decoder.Private.Frame.Header.Number_Type == Flac__FrameNumberType.Sample_Number);
+				Debug.Assert(decoder.Private.Last_Frame.Header.Number_Type == Flac__FrameNumberType.Sample_Number);
+
+				if ((decoder.Private.Last_Frame.Header.Sample_Number + decoder.Private.Last_Frame.Header.BlockSize) < decoder.Private.Frame.Header.Sample_Number)
+				{
+					uint32_t padding_Samples_Needed = (uint32_t)(decoder.Private.Frame.Header.Sample_Number - (decoder.Private.Last_Frame.Header.Sample_Number + decoder.Private.Last_Frame.Header.BlockSize));
+
+					// Do some extra validation to assure last frame an current frame
+					// header are both valid before adding silence in-between.
+					// Technically both frames could be valid with differing sample_rates,
+					// channels and bits_per_sample, but it is quite rare
+					if ((decoder.Private.Last_Frame.Header.Sample_Rate == decoder.Private.Frame.Header.Sample_Rate) && (decoder.Private.Last_Frame.Header.Channels == decoder.Private.Frame.Header.Channels) &&
+					    (decoder.Private.Last_Frame.Header.Bits_Per_Sample == decoder.Private.Frame.Header.Bits_Per_Sample) && (decoder.Private.Last_Frame.Header.BlockSize >= 16))
+					{
+						Flac__Frame empty_Frame = new Flac__Frame();
+						Flac__int32[][] empty_Buffer = new Flac__int32[Constants.Flac__Max_Channels][];
+						empty_Frame.Header = decoder.Private.Last_Frame.Header;
+						empty_Frame.Footer.Crc = 0;
+
+						for (uint32_t i = 0; i < empty_Frame.Header.Channels; i++)
+						{
+							empty_Buffer[i] = Alloc.Safe_CAlloc<Flac__int32>(empty_Frame.Header.BlockSize);
+							if (empty_Buffer[i] == null)
+							{
+								decoder.Protected.State = Flac__StreamDecoderState.Memory_Allocation_Error;
+								return false;
+							}
 						}
 
-						default:
+						// No repairs larger than 5 seconds or 50 frames are made, to not
+						// unexpectedly create enormous files when one of the headers was
+						// corrupt after all
+						if (padding_Samples_Needed > (5 * empty_Frame.Header.Sample_Rate))
+							padding_Samples_Needed = 5 * empty_Frame.Header.Sample_Rate;
+
+						if (padding_Samples_Needed > (50 * empty_Frame.Header.BlockSize))
+							padding_Samples_Needed = 50 * empty_Frame.Header.BlockSize;
+
+						while (padding_Samples_Needed != 0)
 						{
-							Debug.Assert(false);
-							break;
+							empty_Frame.Header.Sample_Number += empty_Frame.Header.BlockSize;
+
+							if (padding_Samples_Needed < empty_Frame.Header.BlockSize)
+								empty_Frame.Header.BlockSize = padding_Samples_Needed;
+
+							padding_Samples_Needed -= empty_Frame.Header.BlockSize;
+							decoder.Protected.BlockSize = empty_Frame.Header.BlockSize;
+
+							Debug.Assert(empty_Frame.Header.Number_Type == Flac__FrameNumberType.Sample_Number);
+							decoder.Private.Samples_Decoded = empty_Frame.Header.Sample_Number + empty_Frame.Header.BlockSize;
+
+							for (uint32_t channel = 0; channel < empty_Frame.Header.Channels; channel++)
+							{
+								empty_Frame.SubFrames[channel].Type = Flac__SubFrameType.Constant;
+								empty_Frame.SubFrames[channel].Data = new Flac__SubFrame_Constant { Value = 0 };
+								empty_Frame.SubFrames[channel].Wasted_Bits = 0;
+
+								Array.Clear(decoder.Private.Output[channel], 0, (int)empty_Frame.Header.BlockSize);
+							}
+
+							if (Write_Audio_Frame_To_Client(empty_Frame, empty_Buffer) != Flac__StreamDecoderWriteStatus.Continue)
+							{
+								decoder.Protected.State = Flac__StreamDecoderState.Aborted;
+								return false;
+							}
+						}
+					}
+				}
+			}
+
+			if ((decoder.Protected.State == Flac__StreamDecoderState.Search_For_Frame_Sync) || (decoder.Protected.State == Flac__StreamDecoderState.End_Of_Stream))
+			{
+				// Got corruption, rewind if possible. Return value of seek
+				// isn't checked, if the seek fails the decoder will continue anyway
+				if (!decoder.Private.Input.Flac__BitReader_Rewind_To_After_Last_Seen_Framesync())
+				{
+					if ((decoder.Private.Seek_Callback != null) && (decoder.Private.Last_Seen_FrameSync != 0))
+					{
+						// Last framesync isn't in bitreader anymore, rewind with seek if possible
+						if (decoder.Private.Seek_Callback(this, decoder.Private.Last_Seen_FrameSync, decoder.Private.Client_Data) == Flac__StreamDecoderSeekStatus.Error)
+						{
+							decoder.Protected.State = Flac__StreamDecoderState.Seek_Error;
+							return false;
+						}
+
+						if (decoder.Private.Input.Flac__BitReader_Clear())
+						{
+							decoder.Protected.State = Flac__StreamDecoderState.Memory_Allocation_Error;
+							return false;
 						}
 					}
 				}
 			}
 			else
 			{
-				// Bad frame, emit error and zero the output signal
-				Send_Error_To_Client(Flac__StreamDecoderErrorStatus.Crc_Mismatch);
+				got_A_Frame = true;
 
+				// We wait to update Fixed_Block_Size until here, when we're sure we've got a proper frame and hence a correct blocksize
+				if (decoder.Private.Next_Fixed_Block_Size != 0)
+					decoder.Private.Fixed_Block_Size = decoder.Private.Next_Fixed_Block_Size;
+
+				// Put the latest values into the public section of the decoder instance
+				decoder.Protected.Channels = decoder.Private.Frame.Header.Channels;
+				decoder.Protected.Channel_Assignment = decoder.Private.Frame.Header.Channel_Assignment;
+				decoder.Protected.Bits_Per_Sample = decoder.Private.Frame.Header.Bits_Per_Sample;
+				decoder.Protected.Sample_Rate = decoder.Private.Frame.Header.Sample_Rate;
+				decoder.Protected.BlockSize = decoder.Private.Frame.Header.BlockSize;
+
+				Debug.Assert(decoder.Private.Frame.Header.Number_Type == Flac__FrameNumberType.Sample_Number);
+
+				decoder.Private.Samples_Decoded = decoder.Private.Frame.Header.Sample_Number + decoder.Private.Frame.Header.BlockSize;
+
+				// Write it
 				if (do_Full_Decode)
 				{
-					for (uint32_t channel = 0; channel < decoder.Private.Frame.Header.Channels; channel++)
-						Array.Clear(decoder.Private.Output[channel]);
-				}
-			}
-
-			got_A_Frame = true;
-
-			// We wait to update Fixed_Block_Size until here, when we're sure we've got a proper frame and hence a correct blocksize
-			if (decoder.Private.Next_Fixed_Block_Size != 0)
-				decoder.Private.Fixed_Block_Size = decoder.Private.Next_Fixed_Block_Size;
-
-			// Put the latest values into the public section of the decoder instance
-			decoder.Protected.Channels = decoder.Private.Frame.Header.Channels;
-			decoder.Protected.Channel_Assignment = decoder.Private.Frame.Header.Channel_Assignment;
-			decoder.Protected.Bits_Per_Sample = decoder.Private.Frame.Header.Bits_Per_Sample;
-			decoder.Protected.Sample_Rate = decoder.Private.Frame.Header.Sample_Rate;
-			decoder.Protected.BlockSize = decoder.Private.Frame.Header.BlockSize;
-
-			Debug.Assert(decoder.Private.Frame.Header.Number_Type == Flac__FrameNumberType.Sample_Number);
-
-			decoder.Private.Samples_Decoded = decoder.Private.Frame.Header.Sample_Number + decoder.Private.Frame.Header.BlockSize;
-
-			// Write it
-			if (do_Full_Decode)
-			{
-				if (Write_Audio_Frame_To_Client(decoder.Private.Frame, decoder.Private.Output) != Flac__StreamDecoderWriteStatus.Continue)
-				{
-					decoder.Protected.State = Flac__StreamDecoderState.Aborted;
-					return false;
+					if (Write_Audio_Frame_To_Client(decoder.Private.Frame, decoder.Private.Output) != Flac__StreamDecoderWriteStatus.Continue)
+					{
+						decoder.Protected.State = Flac__StreamDecoderState.Aborted;
+						return false;
+					}
 				}
 			}
 
@@ -3153,6 +3287,12 @@ Skip:
 					break;
 				}
 
+				case 3:
+				{
+					is_Unparseable = true;
+					break;
+				}
+
 				case 4:
 				{
 					decoder.Private.Frame.Header.Bits_Per_Sample = 16;
@@ -3171,10 +3311,9 @@ Skip:
 					break;
 				}
 
-				case 3:
 				case 7:
 				{
-					is_Unparseable = true;
+					decoder.Private.Frame.Header.Bits_Per_Sample = 32;
 					break;
 				}
 
@@ -3183,12 +3322,6 @@ Skip:
 					Debug.Assert(false);
 					break;
 				}
-			}
-
-			if ((decoder.Private.Frame.Header.Bits_Per_Sample == 32) && (decoder.Private.Frame.Header.Channel_Assignment != Flac__ChannelAssignment.Independent))
-			{
-				// Decoder isn't equipped for 33-bit side frame
-				is_Unparseable = true;
 			}
 
 			// Check to make sure that reserved bit is 0
@@ -3210,7 +3343,6 @@ Skip:
 					decoder.Private.Cached = true;
 
 					Send_Error_To_Client(Flac__StreamDecoderErrorStatus.Bad_Header);
-
 					decoder.Protected.State = Flac__StreamDecoderState.Search_For_Frame_Sync;
 
 					return true;
@@ -3231,7 +3363,6 @@ Skip:
 					decoder.Private.Cached = true;
 
 					Send_Error_To_Client(Flac__StreamDecoderErrorStatus.Bad_Header);
-
 					decoder.Protected.State = Flac__StreamDecoderState.Search_For_Frame_Sync;
 
 					return true;
@@ -3258,6 +3389,17 @@ Skip:
 				}
 
 				decoder.Private.Frame.Header.BlockSize = x + 1;
+
+				if (decoder.Private.Frame.Header.BlockSize > 65535)	// Invalid blocksize (65536) specified
+				{
+					decoder.Private.Lookahead = raw_Header[raw_Header_Len - 1];	// Back up as much as we can
+					decoder.Private.Cached = true;
+
+					Send_Error_To_Client(Flac__StreamDecoderErrorStatus.Bad_Header);
+					decoder.Protected.State = Flac__StreamDecoderState.Search_For_Frame_Sync;
+
+					return true;
+				}
 			}
 
 			if (sample_Rate_Hint != 0)
@@ -3364,7 +3506,11 @@ Skip:
 				decoder.Private.Frame.SubFrames[channel].Wasted_Bits = u + 1;
 
 				if (decoder.Private.Frame.SubFrames[channel].Wasted_Bits >= bps)
-					return false;
+				{
+					Send_Error_To_Client(Flac__StreamDecoderErrorStatus.Lost_Sync);
+					decoder.Protected.State = Flac__StreamDecoderState.Search_For_Frame_Sync;
+					return true;
+				}
 
 				bps -= decoder.Private.Frame.SubFrames[channel].Wasted_Bits;
 			}
@@ -3399,15 +3545,6 @@ Skip:
 			else if (x <= 24)
 			{
 				uint32_t predictor_Order = (x >> 1) & 7;
-
-				if (decoder.Private.Frame.Header.Bits_Per_Sample > 24)
-				{
-					// Decoder isn't equipped for fixed subframes with more than 24 bps
-					Send_Error_To_Client(Flac__StreamDecoderErrorStatus.Unparseable_Stream);
-					decoder.Protected.State = Flac__StreamDecoderState.Search_For_Frame_Sync;
-
-					return true;
-				}
 
 				if (decoder.Private.Frame.Header.BlockSize <= predictor_Order)
 				{
@@ -3453,10 +3590,25 @@ Skip:
 			{
 				x = decoder.Private.Frame.SubFrames[channel].Wasted_Bits;
 
-				for (uint32_t i = 0; i < decoder.Private.Frame.Header.BlockSize; i++)
+				if ((bps + x) < 33)
 				{
-					uint32_t val = (uint32_t)decoder.Private.Output[channel][i];
-					decoder.Private.Output[channel][i] = (int32_t)(val << (int32_t)x);
+					for (uint32_t i = 0; i < decoder.Private.Frame.Header.BlockSize; i++)
+					{
+						uint32_t val = (uint32_t)decoder.Private.Output[channel][i];
+						decoder.Private.Output[channel][i] = (int32_t)(val << (int)x);
+					}
+				}
+				else
+				{
+					// When there are wasted bits, bps is never 33 and so
+					// side_subframe is never already in use
+					Debug.Assert(!decoder.Private.Side_SubFrame_In_Use);
+
+					for (uint32_t i = 0; i < decoder.Private.Frame.Header.BlockSize; i++)
+					{
+						uint64_t val = (uint32_t)decoder.Private.Output[channel][i];
+						decoder.Private.Side_SubFrame[i] = (int64_t)(val << (int)x);
+					}
 				}
 			}
 
@@ -3483,10 +3635,10 @@ Skip:
 			// Read warm-up samples
 			for (uint32_t u = 0; u < order; u++)
 			{
-				if (!decoder.Private.Input.Flac__BitReader_Read_Raw_Int32(out Flac__int32 i32, bps))
+				if (!decoder.Private.Input.Flac__BitReader_Read_Raw_Int64(out Flac__int64 i64, bps))
 					return false;	// Read_Callback sets the state for us
 
-				subFrame.Warmup[u] = i32;
+				subFrame.Warmup[u] = i64;
 			}
 
 			// Read entropy coding method info
@@ -3550,8 +3702,23 @@ Skip:
 			// Decode the subframe
 			if (do_Full_Decode)
 			{
-				Array.Copy(subFrame.Warmup, decoder.Private.Output[channel], order);
-				Fixed.Flac__Fixed_Restore_Signal(decoder.Private.Residual[channel], decoder.Private.Frame.Header.BlockSize - order, order, decoder.Private.Output[channel], order);
+				if (bps < 33)
+				{
+					for (uint32_t i = 0; i < order; i++)
+						decoder.Private.Output[channel][i] = (Flac__int32)subFrame.Warmup[i];
+
+					if ((bps + order) <= 32)
+						Fixed.Flac__Fixed_Restore_Signal(decoder.Private.Residual[channel], decoder.Private.Frame.Header.BlockSize - order, order, decoder.Private.Output[channel], order);
+					else
+						Fixed.Flac__Fixed_Restore_Signal_Wide(decoder.Private.Residual[channel], decoder.Private.Frame.Header.BlockSize - order, order, decoder.Private.Output[channel], order);
+				}
+				else
+				{
+					decoder.Private.Side_SubFrame_In_Use = true;
+					Array.Copy(subFrame.Warmup, decoder.Private.Side_SubFrame, order);
+
+					Fixed.Flac__Fixed_Restore_Signal_Wide_33Bit(decoder.Private.Residual[channel], decoder.Private.Frame.Header.BlockSize - order, order, decoder.Private.Side_SubFrame, order);
+				}
 			}
 
 			return true;
@@ -3574,15 +3741,13 @@ Skip:
 			subFrame.Residual = decoder.Private.Residual[channel];
 			subFrame.Order = order;
 
-			Flac__int32 i32;
-
 			// Read warm-up samples
 			for (uint32_t u = 0; u < order; u++)
 			{
-				if (!decoder.Private.Input.Flac__BitReader_Read_Raw_Int32(out i32, bps))
+				if (!decoder.Private.Input.Flac__BitReader_Read_Raw_Int64(out Flac__int64 i64, bps))
 					return false;	// Read_Callback sets the state for us
 
-				subFrame.Warmup[u] = i32;
+				subFrame.Warmup[u] = i64;
 			}
 
 			// Read glp coeff precision
@@ -3600,7 +3765,7 @@ Skip:
 			subFrame.Qlp_Coeff_Precision = u32 + 1;
 
 			// Read qlp shift
-			if (!decoder.Private.Input.Flac__BitReader_Read_Raw_Int32(out i32, Constants.Flac__SubFrame_Lpc_Qlp_Shift_Len))
+			if (!decoder.Private.Input.Flac__BitReader_Read_Raw_Int32(out Flac__int32 i32, Constants.Flac__SubFrame_Lpc_Qlp_Shift_Len))
 				return false;	// Read_Callback sets the state for us
 
 			if (i32 < 0)
@@ -3683,17 +3848,23 @@ Skip:
 			// Decode the subframe
 			if (do_Full_Decode)
 			{
-				Array.Copy(subFrame.Warmup, decoder.Private.Output[channel], order);
-
-				if ((bps + subFrame.Qlp_Coeff_Precision + BitMath.Flac__BitMath_ILog2(order)) <= 32)
+				if (bps <= 32)
 				{
-					if ((bps <= 16) && (subFrame.Qlp_Coeff_Precision <= 16))
-						decoder.Private.Lpc.Restore_Signal_16Bit(decoder.Private.Residual[channel], decoder.Private.Frame.Header.BlockSize - order, subFrame.Qlp_Coeff, order, subFrame.Quantization_Level, decoder.Private.Output[channel], order);
+					for (uint32_t i = 0; i < order; i++)
+						decoder.Private.Output[channel][i] = (Flac__int32)subFrame.Warmup[i];
+
+					if ((Lpc.Flac__Lpc_Max_Residual_Bps(bps, subFrame.Qlp_Coeff, order, subFrame.Quantization_Level) <= 32) && (Lpc.Flac__Lpc_Max_Prediction_Before_Shift_Bps(bps, subFrame.Qlp_Coeff, order) <= 32))
+						Lpc.Flac__Lpc_Restore_Signal(decoder.Private.Residual[channel], decoder.Private.Frame.Header.BlockSize - order, subFrame.Qlp_Coeff, order, subFrame.Quantization_Level, decoder.Private.Output[channel], order);
 					else
-						decoder.Private.Lpc.Restore_Signal(decoder.Private.Residual[channel], decoder.Private.Frame.Header.BlockSize - order, subFrame.Qlp_Coeff, order, subFrame.Quantization_Level, decoder.Private.Output[channel], order);
+						Lpc.Flac__Lpc_Restore_Signal_Wide(decoder.Private.Residual[channel], decoder.Private.Frame.Header.BlockSize - order, subFrame.Qlp_Coeff, order, subFrame.Quantization_Level, decoder.Private.Output[channel], order);
 				}
 				else
-					decoder.Private.Lpc.Restore_Signal_64Bit(decoder.Private.Residual[channel], decoder.Private.Frame.Header.BlockSize - order, subFrame.Qlp_Coeff, order, subFrame.Quantization_Level, decoder.Private.Output[channel], order);
+				{
+					decoder.Private.Side_SubFrame_In_Use = true;
+					Array.Copy(subFrame.Warmup, decoder.Private.Side_SubFrame, order);
+
+					Lpc.Flac__Lpc_Restore_Signal_Wide_33Bit(decoder.Private.Residual[channel], decoder.Private.Frame.Header.BlockSize - order, subFrame.Qlp_Coeff, order, subFrame.Quantization_Level, decoder.Private.Side_SubFrame, order);
+				}
 			}
 
 			return true;
@@ -3711,11 +3882,9 @@ Skip:
 			Flac__SubFrame_Constant subFrame = new Flac__SubFrame_Constant();
 			decoder.Private.Frame.SubFrames[channel].Data = subFrame;
 
-			Flac__int32[] output = decoder.Private.Output[channel];
-
 			decoder.Private.Frame.SubFrames[channel].Type = Flac__SubFrameType.Constant;
 
-			if (!decoder.Private.Input.Flac__BitReader_Read_Raw_Int32(out Flac__int32 x, bps))
+			if (!decoder.Private.Input.Flac__BitReader_Read_Raw_Int64(out Flac__int64 x, bps))
 				return false;	// Read_Callback sets the state for us
 
 			subFrame.Value = x;
@@ -3723,8 +3892,21 @@ Skip:
 			// Decode the subframe
 			if (do_Full_Decode)
 			{
-				for (uint32_t i = 0; i < decoder.Private.Frame.Header.BlockSize; i++)
-					output[i] = x;
+				if (bps <= 32)
+				{
+					Flac__int32[] output = decoder.Private.Output[channel];
+
+					for (uint32_t i = 0; i < decoder.Private.Frame.Header.BlockSize; i++)
+						output[i] = (Flac__int32)x;
+				}
+				else
+				{
+					Flac__int64[] output = decoder.Private.Side_SubFrame;
+					decoder.Private.Side_SubFrame_In_Use = true;
+
+					for (uint32_t i = 0; i < decoder.Private.Frame.Header.BlockSize; i++)
+						output[i] = x;
+				}
 			}
 
 			return true;
@@ -3742,23 +3924,43 @@ Skip:
 			Flac__SubFrame_Verbatim subFrame = new Flac__SubFrame_Verbatim();
 			decoder.Private.Frame.SubFrames[channel].Data = subFrame;
 
-			Flac__int32[] residual = decoder.Private.Residual[channel];
-
 			decoder.Private.Frame.SubFrames[channel].Type = Flac__SubFrameType.Verbatim;
 
-			subFrame.Data = residual;
-
-			for (uint32_t i = 0; i < decoder.Private.Frame.Header.BlockSize; i++)
+			if (bps < 33)
 			{
-				if (!decoder.Private.Input.Flac__BitReader_Read_Raw_Int32(out Flac__int32 x, bps))
-					return false;	// Read_Callback sets the state for us
+				Flac__int32[] residual = decoder.Private.Residual[channel];
 
-				residual[i] = x;
+				subFrame.Data_Type = Flac__VerbatimSubFrameDataType.Int32;
+				subFrame.Data32 = residual;
+
+				for (uint32_t i = 0; i < decoder.Private.Frame.Header.BlockSize; i++)
+				{
+					if (!decoder.Private.Input.Flac__BitReader_Read_Raw_Int32(out Flac__int32 x, bps))
+						return false;	// Read_Callback sets the state for us
+
+					residual[i] = x;
+				}
+
+				// Decode the subframe
+				if (do_Full_Decode)
+					Array.Copy(subFrame.Data32, decoder.Private.Output[channel], decoder.Private.Frame.Header.BlockSize);
 			}
+			else
+			{
+				Flac__int64[] side = decoder.Private.Side_SubFrame;
 
-			// Decode the subframe
-			if (do_Full_Decode)
-				Array.Copy(subFrame.Data, decoder.Private.Output[channel], decoder.Private.Frame.Header.BlockSize);
+				subFrame.Data_Type = Flac__VerbatimSubFrameDataType.Int64;
+				subFrame.Data64 = side;
+				decoder.Private.Side_SubFrame_In_Use = true;
+
+				for (uint32_t i = 0; i < decoder.Private.Frame.Header.BlockSize; i++)
+				{
+					if (!decoder.Private.Input.Flac__BitReader_Read_Raw_Int64(out Flac__int64 x, bps))
+						return false;	// Read_Callback sets the state for us
+
+					side[i] = x;
+				}
+			}
 
 			return true;
 		}
@@ -3799,8 +4001,20 @@ Skip:
 					partitioned_Rice_Contents.Raw_Bits[partition] = 0;
 					uint32_t u = (partition == 0) ? partition_Samples - predictor_Order : partition_Samples;
 
-					if (!decoder.Private.Input.Flac__BitReader_Read_Rice_Signed_Block(residual, sample, u, rice_Parameter))
-						return false;	// Read_Callback sets the state for us
+					if (!decoder.Private.BitReader.Read_Rice_Signed_Block(residual, sample, u, rice_Parameter))
+					{
+						if (decoder.Protected.State == Flac__StreamDecoderState.Read_Frame)
+						{
+							// No error was set, Read_Callback didn't set it, so
+							// invalid rice symbol was found
+							Send_Error_To_Client(Flac__StreamDecoderErrorStatus.Lost_Sync);
+							decoder.Protected.State = Flac__StreamDecoderState.Search_For_Frame_Sync;
+
+							return true;
+						}
+						else
+							return false;	// Read_Callback sets the state for us
+					}
 
 					sample += u;
 				}
@@ -3811,12 +4025,20 @@ Skip:
 
 					partitioned_Rice_Contents.Raw_Bits[partition] = rice_Parameter;
 
-					for (uint32_t u = (partition == 0) ? predictor_Order : 0; u < partition_Samples; u++, sample++)
+					if (rice_Parameter == 0)
 					{
-						if (!decoder.Private.Input.Flac__BitReader_Read_Raw_Int32(out int32_t i, rice_Parameter))
-							return false;	// Read_Callback sets the state for us
+						for (uint32_t u = (partition == 0) ? predictor_Order : 0; u < partition_Samples; u++, sample++)
+							residual[sample] = 0;
+					}
+					else
+					{
+						for (uint32_t u = (partition == 0) ? predictor_Order : 0; u < partition_Samples; u++, sample++)
+						{
+							if (!decoder.Private.Input.Flac__BitReader_Read_Raw_Int32(out int32_t i, rice_Parameter))
+								return false;	// Read_Callback sets the state for us
 
-						residual[sample] = i;
+							residual[sample] = i;
+						}
 					}
 				}
 			}
@@ -3918,8 +4140,94 @@ Skip:
 		/// 
 		/// </summary>
 		/********************************************************************/
+		private void Undo_Channel_Coding()
+		{
+			switch (decoder.Private.Frame.Header.Channel_Assignment)
+			{
+				case Flac__ChannelAssignment.Independent:
+				{
+					// Do nothing
+					break;
+				}
+
+				case Flac__ChannelAssignment.Left_Side:
+				{
+					Debug.Assert(decoder.Private.Frame.Header.Channels == 2);
+					Debug.Assert(decoder.Private.Side_SubFrame_In_Use != /* logical XOR */ (decoder.Private.Frame.Header.Bits_Per_Sample < 32));
+
+					for (uint32_t i = 0; i < decoder.Private.Frame.Header.BlockSize; i++)
+					{
+						if (decoder.Private.Side_SubFrame_In_Use)
+							decoder.Private.Output[1][i] = (Flac__int32)(decoder.Private.Output[0][i] - decoder.Private.Side_SubFrame[i]);
+						else
+							decoder.Private.Output[1][i] = decoder.Private.Output[0][i] - decoder.Private.Output[1][i];
+					}
+
+					break;
+				}
+
+				case Flac__ChannelAssignment.Right_Side:
+				{
+					Debug.Assert(decoder.Private.Frame.Header.Channels == 2);
+					Debug.Assert(decoder.Private.Side_SubFrame_In_Use != /* logical XOR */ (decoder.Private.Frame.Header.Bits_Per_Sample < 32));
+
+					for (uint32_t i = 0; i < decoder.Private.Frame.Header.BlockSize; i++)
+					{
+						if (decoder.Private.Side_SubFrame_In_Use)
+							decoder.Private.Output[0][i] = (Flac__int32)(decoder.Private.Output[1][i] + decoder.Private.Side_SubFrame[i]);
+						else
+							decoder.Private.Output[0][i] += decoder.Private.Output[1][i];
+					}
+					break;
+				}
+
+				case Flac__ChannelAssignment.Mid_Side:
+				{
+					Debug.Assert(decoder.Private.Frame.Header.Channels == 2);
+					Debug.Assert(decoder.Private.Side_SubFrame_In_Use != /* logical XOR */ (decoder.Private.Frame.Header.Bits_Per_Sample < 32));
+
+					for (uint32_t i = 0; i < decoder.Private.Frame.Header.BlockSize; i++)
+					{
+						if (!decoder.Private.Side_SubFrame_In_Use)
+						{
+							Flac__int32 mid = decoder.Private.Output[0][i];
+							Flac__int32 side = decoder.Private.Output[1][i];
+							mid = (Flac__int32)(((uint32_t)mid) << 1);
+							mid |= (side & 1);	// I.e. if 'side' is odd...
+							decoder.Private.Output[0][i] = (mid + side) >> 1;
+							decoder.Private.Output[1][i] = (mid - side) >> 1;
+						}
+						else	// bps == 32
+						{
+							Flac__int64 mid = (Flac__int64)(((uint64_t)decoder.Private.Output[0][i]) << 1);
+							mid |= (decoder.Private.Side_SubFrame[i] & 1);	// I.e. if 'side' is odd...
+							decoder.Private.Output[0][i] = (Flac__int32)((mid + decoder.Private.Side_SubFrame[i]) >> 1);
+							decoder.Private.Output[1][i] = (Flac__int32)((mid - decoder.Private.Side_SubFrame[i]) >> 1);
+						}
+					}
+					break;
+				}
+
+				default:
+				{
+					Debug.Assert(false);
+					break;
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		private Flac__StreamDecoderWriteStatus Write_Audio_Frame_To_Client(Flac__Frame frame, Flac__int32[][] buffer)
 		{
+			decoder.Private.Last_Frame = frame;	// Save the frame
+			decoder.Private.Last_Frame_Is_Set = true;
+
 			if (decoder.Private.Is_Seeking)
 			{
 				Flac__uint64 this_Frame_Sample = frame.Header.Sample_Number;
@@ -3927,8 +4235,6 @@ Skip:
 				Flac__uint64 target_Sample = decoder.Private.Target_Sample;
 
 				Debug.Assert(frame.Header.Number_Type == Flac__FrameNumberType.Sample_Number);
-
-				decoder.Private.Last_Frame = frame;	// Save the frame
 
 				if ((this_Frame_Sample <= target_Sample) && (target_Sample < next_Frame_Sample))	// We hit our target frame
 				{
@@ -3943,7 +4249,16 @@ Skip:
 						Flac__int32[][] newBuffer = new Flac__int32[Constants.Flac__Max_Channels][];
 
 						for (uint32_t channel = 0; channel < frame.Header.Channels; channel++)
+						{
 							newBuffer[channel] = buffer[channel].AsSpan((int)delta).ToArray();
+
+							decoder.Private.Last_Frame.SubFrames[channel].Type = Flac__SubFrameType.Verbatim;
+							decoder.Private.Last_Frame.SubFrames[channel].Data = new Flac__SubFrame_Verbatim()
+							{
+								Data_Type = Flac__VerbatimSubFrameDataType.Int32,
+								Data32 = newBuffer[channel]
+							};
+						}
 
 						decoder.Private.Last_Frame.Header.BlockSize -= delta;
 						decoder.Private.Last_Frame.Header.Sample_Number += delta;
@@ -4002,7 +4317,7 @@ Skip:
 		private Flac__bool Seek_To_Absolute_Sample(Flac__uint64 stream_Length, Flac__uint64 target_Sample)
 		{
 			Flac__uint64 first_Frame_Offset = decoder.Private.First_Frame_Offset;
-			Flac__bool first_Seek = true;
+			Flac__bool first_Seek = true, seek_From_Lower_Bound = false;
 			Flac__uint64 total_Samples = Flac__Stream_Decoder_Get_Total_Samples();
 			uint32_t min_BlockSize = ((Flac__StreamMetadata_StreamInfo)decoder.Private.Stream_Info.Data).Min_BlockSize;
 			uint32_t max_BlockSize = ((Flac__StreamMetadata_StreamInfo)decoder.Private.Stream_Info.Data).Max_BlockSize;
@@ -4048,7 +4363,7 @@ Skip:
 			Flac__uint64 upper_Bound = stream_Length;
 			Flac__uint64 upper_Bound_Sample = total_Samples > 0 ? total_Samples : target_Sample;	// Estimate it
 
-			if (decoder.Protected.State == Flac__StreamDecoderState.Read_Frame)
+			if ((decoder.Protected.State == Flac__StreamDecoderState.Search_For_Frame_Sync) && (decoder.Private.Samples_Decoded != 0))
 			{
 				if (target_Sample < decoder.Private.Samples_Decoded)
 				{
@@ -4067,7 +4382,9 @@ Skip:
 			// must be ordered by ascending sample number.
 			//
 			// Note: to protect against invalid seek tables we will ignore points
-			// that have frame_Samples==0 or sample_Number>=total_Samples
+			// that have frame_Samples==0 or sample_Number>=total_Samples. Also,
+			// because math is limited to 64-bit ints, seekpoints with an offset
+			// larger than 2^63 (8 exbibyte) are rejected
 			if (seek_Table != null)
 			{
 				Flac__uint64 new_Lower_Bound = lower_Bound;
@@ -4092,8 +4409,11 @@ Skip:
 				// Find the closest seek point > target_Sample, if it exists
 				for (i = 0; i < (int)seek_Table.Num_Points; i++)
 				{
-					if ((seek_Table.Points[i].Sample_Number != Constants.Flac__Stream_Metadata_SeekPoint_Placeholder) && (seek_Table.Points[i].Frame_Samples > 0) && ((total_Samples <= 0) || (seek_Table.Points[i].Sample_Number < total_Samples)) && seek_Table.Points[i].Sample_Number > target_Sample)
+					if ((seek_Table.Points[i].Sample_Number != Constants.Flac__Stream_Metadata_SeekPoint_Placeholder) && (seek_Table.Points[i].Frame_Samples > 0) &&
+					    ((total_Samples <= 0) || (seek_Table.Points[i].Sample_Number < total_Samples)) && (seek_Table.Points[i].Sample_Number > target_Sample))
+					{
 						break;
+					}
 				}
 
 				if (i < seek_Table.Num_Points)	// I.e. we found a suitable seek point
@@ -4128,14 +4448,24 @@ Skip:
 
 			while (true)
 			{
+				// Check whether decoder is still valid or so bad state isn't overwritten
+				// with seek error
+				if ((decoder.Protected.State == Flac__StreamDecoderState.Memory_Allocation_Error) || (decoder.Protected.State == Flac__StreamDecoderState.Aborted))
+					return false;
+
 				// Check if the bounds are still ok
-				if ((lower_Bound_Sample >= upper_Bound_Sample) || (lower_Bound > upper_Bound))
+				if ((lower_Bound_Sample >= upper_Bound_Sample) || (lower_Bound > upper_Bound) || (upper_Bound >= int64_t.MaxValue))
 				{
 					decoder.Protected.State = Flac__StreamDecoderState.Seek_Error;
 					return false;
 				}
 
-				Flac__int64 pos = (Flac__int64)lower_Bound + (Flac__int64)((double)(target_Sample - lower_Bound_Sample) / (upper_Bound_Sample - lower_Bound_Sample) * (upper_Bound - lower_Bound)) - approx_Bytes_Per_Frame;
+				Flac__int64 pos;
+
+				if (seek_From_Lower_Bound)
+					pos = (Flac__int64)lower_Bound;
+				else
+					pos = (Flac__int64)lower_Bound + (Flac__int64)((double)(target_Sample - lower_Bound_Sample) / (upper_Bound_Sample - lower_Bound_Sample) * (upper_Bound - lower_Bound)) - approx_Bytes_Per_Frame;
 
 				if (pos >= (Flac__int64)upper_Bound)
 					pos = (Flac__int64)upper_Bound - 1;
@@ -4162,19 +4492,36 @@ Skip:
 				// Flac__Stream_Decoder_Process_Single() to return false
 				decoder.Private.Unparseable_Frame_Count = 0;
 
-				if (!Flac__Stream_Decoder_Process_Single() || (decoder.Protected.State == Flac__StreamDecoderState.Aborted))
+				if (!Flac__Stream_Decoder_Process_Single() || (decoder.Protected.State == Flac__StreamDecoderState.Aborted) || (decoder.Private.Samples_Decoded == 0))
 				{
-					decoder.Protected.State = Flac__StreamDecoderState.Seek_Error;
-					return false;
+					// No frame could be decoded
+					if ((decoder.Protected.State != Flac__StreamDecoderState.Aborted) && decoder.Private.Eof_Callback(this, decoder.Private.Client_Data) && !seek_From_Lower_Bound)
+					{
+						// Decoder has hit end of stream while processing corrupt
+						// frame. To remedy this, try decoding a frame at the lower
+						// bound so the seek after that hopefully ends up somewhere
+						// else
+						seek_From_Lower_Bound = true;
+						continue;
+					}
+					else
+					{
+						decoder.Protected.State = Flac__StreamDecoderState.Seek_Error;
+						return false;
+					}
 				}
 
+				seek_From_Lower_Bound = false;
+
+				// Our write callback will change the state when it gets to the target frame.
+				// Actually, we could have got_a_frame if our decoder is at FLAC_STREAM_DECODER_END_OF_STREAM so we need to check for that also
 				if (!decoder.Private.Is_Seeking)
 					break;
 
 				Debug.Assert(decoder.Private.Last_Frame.Header.Number_Type == Flac__FrameNumberType.Sample_Number);
 				Flac__uint64 this_Frame_Sample = decoder.Private.Last_Frame.Header.Sample_Number;
 
-				if ((decoder.Private.Samples_Decoded == 0) || ((this_Frame_Sample + decoder.Private.Last_Frame.Header.BlockSize >= upper_Bound_Sample) && !first_Seek))
+				if (((this_Frame_Sample + decoder.Private.Last_Frame.Header.BlockSize) >= upper_Bound_Sample) && !first_Seek)
 				{
 					if (pos == (Flac__int64)lower_Bound)
 					{

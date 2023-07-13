@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Ports.LibFlac.Flac.Containers;
 using Polycode.NostalgicPlayer.Ports.LibFlac.Share;
 using bwWord = System.UInt64;
+using Flac__bwTemp = System.UInt64;
 
 namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 {
@@ -189,6 +190,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 		/// 
 		/// </summary>
 		/********************************************************************/
+		public uint32_t Flac__BitWriter_Get_Input_Bits_Unconsumed()
+		{
+			return (bw.Words * Constants.Flac__Bits_Per_Word) + bw.Bits;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public Flac__bool Flac__BitWriter_Get_Buffer(out Span<Flac__byte> buffer, out size_t bytes)
 		{
 			Debug.Assert((bw.Bits & 7) == 0);
@@ -345,6 +358,25 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public Flac__bool Flac__BitWriter_Write_Raw_Int64(Flac__int64 val, uint32_t bits)
+		{
+			Flac__uint64 uVal = (Flac__uint64)val;
+
+			// Zero out unused bits
+			if (bits < 64)
+				uVal &= (~(uint64_t.MaxValue << (int)bits));
+
+			return Flac__BitWriter_Write_Raw_UInt64(uVal, bits);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public Flac__bool Flac__BitWriter_Write_Raw_UInt32_Little_Endian(Flac__uint32 val)
 		{
 			// This doesn't need to be that fast as currently it is only used for vorbis comments
@@ -415,6 +447,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 			Flac__uint32 mask1 = 0xffffffff << (int)parameter;			// We val|=mask1 to set the stop bit above it
 			Flac__uint32 mask2 = 0xffffffff >> (int)(31 - parameter);	// Then mask off the bits above the stop bit with val&=mask2
 			uint32_t lsBits = 1 + parameter;
+			Flac__bwTemp wide_Accum = 0;
+			Flac__uint32 bitPointer = Constants.Flac__Temp_Bits;
 
 			Debug.Assert(bw != null);
 			Debug.Assert(bw.Buffer != null);
@@ -422,6 +456,25 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 
 			// WATCHOUT: Code does not work with <32bit words; w can make things much faster with this assertion
 			Debug.Assert(Constants.Flac__Bits_Per_Word >= 32);
+
+			if ((bw.Bits > 0) && (bw.Bits < Constants.Flac__Half_Temp_Bits))
+			{
+				bitPointer -= bw.Bits;
+				wide_Accum = bw.Accum << (int)bitPointer;
+				bw.Bits = 0;
+			}
+			else if (bw.Bits > Constants.Flac__Half_Temp_Bits)
+			{
+				bitPointer -= (bw.Bits - Constants.Flac__Half_Temp_Bits);
+				wide_Accum = bw.Accum << (int)bitPointer;
+				bw.Accum >>= (int)(bw.Bits - Constants.Flac__Half_Temp_Bits);
+				bw.Bits = Constants.Flac__Half_Temp_Bits;
+			}
+
+			// Reserve one FLAC__TEMP_BITS per symbol, so checks for space are only necessary when very large symbols are encountered.
+			// This might be considered wasteful, but is only at most 8kB more than necessary for a blocksize of 4096
+			if (((bw.Capacity * Constants.Flac__Bits_Per_Word) <= (bw.Words * Constants.Flac__Bits_Per_Word + nVals * Constants.Flac__Temp_Bits + bw.Bits)) && !BitWriter_Grow(nVals * Constants.Flac__Temp_Bits))
+				return false;
 
 			while (nVals != 0)
 			{
@@ -433,91 +486,97 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 				uint32_t msBits = uVal >> (int)parameter;
 				uint32_t total_Bits = lsBits + msBits;
 
-				if ((bw.Bits != 0) && ((bw.Bits + total_Bits) < Constants.Flac__Bits_Per_Word))	// I.e. if the whole thing fits in the current bwWord
+				uVal |= mask1;	// Set stop bit
+				uVal &= mask2;	// Mask off unused top bits
+
+				if (total_Bits <= bitPointer)
 				{
-					// ^^^ if bw.Bits is 0 then we may have filled the buffer and have no free bwWord to work in
-					bw.Bits += total_Bits;
+					// There is room enough to store the symbol whole at once
+					wide_Accum |= (Flac__bwTemp)uVal << (int)(bitPointer - total_Bits);
+					bitPointer -= total_Bits;
 
-					uVal |= mask1;	// Set stop bit
-					uVal &= mask2;	// Mask off unused top bits
-
-					bw.Accum <<= (int)total_Bits;
-					bw.Accum |= uVal;
+					if (bitPointer <= Constants.Flac__Half_Temp_Bits)
+					{
+						// A word is finished, copy the upper 32 bits of the wide_accum
+						Wide_Accum_To_Bw(ref wide_Accum, ref bitPointer);
+					}
 				}
 				else
 				{
-					// Slightly pessimistic size check but faster than ""<= bw->words + (bw->bits+msbits+lsbits+FLAC__BITS_PER_WORD-1)/FLAC__BITS_PER_WORD"
-					// OPT: pessimism may cause flurry of false calls to grow_ which eat up all savings before it
-					if ((bw.Capacity <= (bw.Words + bw.Bits + msBits + 1 /* lsBits always fit in 1 bwWord */)) && !BitWriter_Grow(total_Bits))
-						return false;
-
-					uint32_t left;
-
-					if (msBits != 0)
+					// The symbol needs to be split. This code isn't used often.
+					// First check for space in the bitwriter
+					if (total_Bits > Constants.Flac__Temp_Bits)
 					{
-						// First part gets to word alignment
-						if (bw.Bits != 0)
-						{
-							left = Constants.Flac__Bits_Per_Word - bw.Bits;
-							if (msBits < left)
-							{
-								bw.Accum <<= (int)msBits;
-								bw.Bits += msBits;
-								goto break1;
-							}
-							else
-							{
-								bw.Accum <<= (int)left;
-								msBits -= left;
-								bw.Buffer[bw.Words++] = Swap_Be_Word_To_Host(bw.Accum);
-								bw.Bits = 0;
-							}
-						}
+						Flac__uint32 oversize_In_Bits = total_Bits - Constants.Flac__Temp_Bits;
+						Flac__uint32 capacity_Needed = bw.Words * Constants.Flac__Bits_Per_Word + bw.Bits + nVals * Constants.Flac__Temp_Bits + oversize_In_Bits;
 
-						// Do whole words
-						while (msBits >= Constants.Flac__Bits_Per_Word)
-						{
-							bw.Buffer[bw.Words++] = 0;
-							msBits -= Constants.Flac__Bits_Per_Word;
-						}
-
-						// Do any leftovers
-						if (msBits > 0)
-						{
-							bw.Accum = 0;
-							bw.Bits = msBits;
-						}
+						if (((bw.Capacity * Constants.Flac__Bits_Per_Word) <= capacity_Needed) && !BitWriter_Grow(nVals * Constants.Flac__Temp_Bits + oversize_In_Bits))
+							return false;
 					}
 
-break1:
-					uVal |= mask1;	// Set stop bit
-					uVal &= mask2;	// Mask off unused top bits
-
-					left = Constants.Flac__Bits_Per_Word - bw.Bits;
-
-					if (lsBits < left)
+					if (msBits > bitPointer)
 					{
-						bw.Accum <<= (int)lsBits;
-						bw.Accum |= uVal;
-						bw.Bits += lsBits;
+						// We have a lot of 0 bits to write, first align with bitwriter word
+						msBits -= bitPointer - Constants.Flac__Half_Temp_Bits;
+						bitPointer = Constants.Flac__Half_Temp_Bits;
+						Wide_Accum_To_Bw(ref wide_Accum, ref bitPointer);
+
+						while (msBits > bitPointer)
+						{
+							// As the accumulator is already zero, we only need to
+							// assign zeroes to the bitbuffer
+							Wide_Accum_To_Bw(ref wide_Accum, ref bitPointer);
+							bitPointer -= Constants.Flac__Half_Temp_Bits;
+							msBits -= Constants.Flac__Half_Temp_Bits;
+						}
+
+						// The remaining bits are zero, and the accumulator already is zero,
+						// so just subtract the number of bits from bitpointer. When storing,
+						// we can also just store 0
+						bitPointer -= msBits;
+
+						if (bitPointer <= Constants.Flac__Half_Temp_Bits)
+							Wide_Accum_To_Bw(ref wide_Accum, ref bitPointer);
 					}
 					else
 					{
-						// If bw.Bits == 0, left==FLAC__BITS_PER_WORD which will always
-						// be > lsBits (because of previous assertions) so it would have
-						// triggered the (lsBits<left) case above
-						Debug.Assert(bw.Bits != 0);
-						Debug.Assert(left < Constants.Flac__Bits_Per_Word);
+						bitPointer -= msBits;
 
-						bw.Accum <<= (int)left;
-						bw.Accum |= uVal >> (int)(bw.Bits = lsBits - left);
-						bw.Buffer[bw.Words++] = Swap_Be_Word_To_Host(bw.Accum);
-						bw.Accum = uVal;	// Unused top bits can contain garbage
+						if (bitPointer <= Constants.Flac__Half_Temp_Bits)
+							Wide_Accum_To_Bw(ref wide_Accum, ref bitPointer);
+					}
+
+					// The lsbs + stop bit always fit 32 bit, so this code mirrors the code above
+					wide_Accum |= (Flac__bwTemp)uVal << (int)(bitPointer - lsBits);
+					bitPointer -= lsBits;
+
+					if (bitPointer <= Constants.Flac__Half_Temp_Bits)
+					{
+						// A word is finished, copy the upper 32 bits of the wide_accum
+						Wide_Accum_To_Bw(ref wide_Accum, ref bitPointer);
 					}
 				}
 
 				offset++;
 				nVals--;
+			}
+
+			// Now fixup remainder of wide_accum
+			if (bitPointer < Constants.Flac__Temp_Bits)
+			{
+				if (bw.Bits == 0)
+				{
+					bw.Accum = wide_Accum >> (int)bitPointer;
+					bw.Bits = Constants.Flac__Temp_Bits - bitPointer;
+				}
+				else if (bw.Bits == Constants.Flac__Half_Temp_Bits)
+				{
+					bw.Accum <<= (int)(Constants.Flac__Temp_Bits - bitPointer);
+					bw.Accum |= (wide_Accum >> (int)bitPointer);
+					bw.Bits = Constants.Flac__Half_Temp_Bits + Constants.Flac__Temp_Bits - bitPointer;
+				}
+				else
+					Debug.Assert(false);
 			}
 
 			return true;
@@ -688,6 +747,36 @@ break1:
 		/// 
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void Wide_Accum_To_Bw(ref Flac__bwTemp wide_Accum, ref Flac__uint32 bitPointer)
+		{
+			Debug.Assert((bw.Bits % Constants.Flac__Half_Temp_Bits) == 0);
+
+			if (bw.Bits == 0)
+			{
+				bw.Accum = wide_Accum >> (int)Constants.Flac__Half_Temp_Bits;
+				wide_Accum <<= (int)Constants.Flac__Half_Temp_Bits;
+				bw.Bits = Constants.Flac__Half_Temp_Bits;
+			}
+			else
+			{
+				bw.Accum <<= (int)Constants.Flac__Half_Temp_Bits;
+				bw.Accum += wide_Accum >> (int)Constants.Flac__Half_Temp_Bits;
+				bw.Buffer[bw.Words++] = Swap_Be_Word_To_Host(bw.Accum);
+				wide_Accum <<= (int)Constants.Flac__Half_Temp_Bits;
+				bw.Bits = 0;
+			}
+
+			bitPointer += Constants.Flac__Half_Temp_Bits;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		private Flac__bool BitWriter_Grow(uint32_t bits_To_Add)
 		{
 			Debug.Assert(bw != null);
@@ -701,6 +790,15 @@ break1:
 			if (bw.Capacity >= new_Capacity)
 				return true;
 
+			if (new_Capacity * sizeof(bwWord) > (1U << (int)Constants.Flac__Stream_Metadata_Length_Len))
+			{
+				// Requested new capacity is larger than the largest possible metadata block,
+				// which us also larger than the largest sane framesize. That means something
+				// went very wrong somewhere and previous checks failed.
+				// To prevent crashing, give up
+				return false;
+			}
+
 			// Round up capacity increase to the nearest FLAC__BITWRITER_DEFAULT_INCREMENT
 			if (((new_Capacity - bw.Capacity) % Flac__BitWriter_Default_Increment) != 0)
 				new_Capacity += Flac__BitWriter_Default_Increment - ((new_Capacity - bw.Capacity) % Flac__BitWriter_Default_Increment);
@@ -710,7 +808,7 @@ break1:
 			Debug.Assert(new_Capacity > bw.Capacity);
 			Debug.Assert(new_Capacity >= bw.Words + ((bw.Bits + bits_To_Add + Constants.Flac__Bits_Per_Word - 1) / Constants.Flac__Bits_Per_Word));
 
-			bwWord[] new_Buffer = Alloc.Safe_Realloc_Mul_2Op(bw.Buffer, 1, new_Capacity);
+			bwWord[] new_Buffer = Alloc.Safe_Realloc_NoFree_Mul_2Op(bw.Buffer, 1, new_Capacity);
 			if (new_Buffer == null)
 				return false;
 

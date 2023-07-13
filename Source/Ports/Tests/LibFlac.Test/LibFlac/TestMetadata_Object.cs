@@ -1389,10 +1389,12 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.LibFlac
 			{
 				Array.Resize(ref vc.Comments, (int)num);
 
-				if (num > vc.Num_Comments)
+				for (uint32_t i = vc.Num_Comments; i < num; i++)
 				{
-					for (uint32_t i = vc.Num_Comments; i < num; i++)
-						vc.Comments[i] = new Flac__StreamMetadata_VorbisComment_Entry();
+					vc.Comments[i] = new Flac__StreamMetadata_VorbisComment_Entry();
+					vc.Comments[i].Length = 0;
+					vc.Comments[i].Entry = new Flac__byte[1];
+					vc.Comments[i].Entry[0] = 0;
 				}
 			}
 
@@ -1468,7 +1470,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.LibFlac
 			Flac__StreamMetadata_VorbisComment vc = (Flac__StreamMetadata_VorbisComment)block.Data;
 
 			VC_Resize(block, vc.Num_Comments + 1);
+			Flac__StreamMetadata_VorbisComment_Entry temp = vc.Comments[vc.Num_Comments - 1];
 			Array.Copy(vc.Comments, pos, vc.Comments, pos + 1, vc.Num_Comments - 1 - pos);
+			vc.Comments[pos] = temp;
 
 			VC_Set_New(out entry, block, pos, field);
 			VC_Calc_Len(block);

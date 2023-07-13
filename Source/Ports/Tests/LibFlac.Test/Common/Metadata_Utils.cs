@@ -116,7 +116,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test.Common
 			metaVorbisComment.Comments[0].Entry = new Flac__byte[5 + 1];
 			Array.Copy(Encoding.UTF8.GetBytes("ab=cd"), metaVorbisComment.Comments[0].Entry, 5);
 			metaVorbisComment.Comments[1].Length = 0;
-			metaVorbisComment.Comments[1].Entry = null;
+			metaVorbisComment.Comments[1].Entry = new Flac__byte[1];
+			metaVorbisComment.Comments[1].Entry[0] = 0;
 
 			cueSheet = new Flac__StreamMetadata();
 			cueSheet.Is_Last = false;

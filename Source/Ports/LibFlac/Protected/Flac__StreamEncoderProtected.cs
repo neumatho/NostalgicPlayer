@@ -34,6 +34,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Protected
 		public uint32_t Min_Residual_Partition_Order;
 		public uint32_t Max_Residual_Partition_Order;
 		public Flac__uint64 Total_Samples_Estimate;
+		public Flac__bool Limit_Min_Bitrate;
 		public Flac__StreamMetadata[] Metadata;
 		public uint32_t Num_Metadata_Blocks;
 		public Flac__uint64 StreamInfo_Offset;

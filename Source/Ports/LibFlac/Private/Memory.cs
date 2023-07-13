@@ -41,6 +41,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 		/// 
 		/// </summary>
 		/********************************************************************/
+		public static Flac__bool Flac__Memory_Alloc_Aligned_Int64_Array(size_t elements, ref Flac__int64[] unaligned_Pointer, ref Flac__int64[] aligned_Pointer)
+		{
+			Debug.Assert(elements > 0);
+
+			Flac__int64[] pu = Flac__Memory_Alloc_Aligned(elements, out Flac__int64[] _);
+			if (pu == null)
+				return false;
+			else
+			{
+				unaligned_Pointer = pu;
+				aligned_Pointer = pu;
+
+				return true;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public static Flac__bool Flac__Memory_Alloc_Aligned_UInt64_Array(size_t elements, ref Flac__uint64[] unaligned_Pointer, ref Flac__uint64[] aligned_Pointer)
 		{
 			Debug.Assert(elements > 0);

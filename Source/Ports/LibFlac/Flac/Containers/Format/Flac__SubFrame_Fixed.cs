@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac.Containers.Format
 		/// <summary>
 		/// Warmup samples to prime the predictor, length == order
 		/// </summary>
-		public Flac__int32[] Warmup = new Flac__int32[Constants.Flac__Max_Fixed_Order];
+		public Flac__int64[] Warmup = new Flac__int64[Constants.Flac__Max_Fixed_Order];
 
 		/// <summary>
 		/// The residual signal, length == (blocksize minus order) samples

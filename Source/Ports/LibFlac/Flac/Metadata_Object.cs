@@ -334,7 +334,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// Resize the seekpoint array.
 		///
 		/// If the size shrinks, elements will truncated; if it grows,
-		/// new placeholder points will be added to the end
+		/// new placeholder points will be added to the end. If this function
+		/// returns false, the object is left untouched
 		/// <param name="object">A pointer to an existing SEEKTABLE object</param>
 		/// <param name="new_Num_Points">The desired length of the array; may be 0</param>
 		/// <returns>False if memory allocation error, else true</returns>
@@ -344,6 +345,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		{
 			Debug.Assert(@object != null);
 			Debug.Assert(@object.Type == Flac__MetadataType.SeekTable);
+
+			if (((Flac__uint64)new_Num_Points * Constants.Flac__Stream_Metadata_SeekPoint_Length) > (1U << (int)Constants.Flac__Stream_Metadata_Length_Len))
+				return false;
 
 			Flac__StreamMetadata_SeekTable metaSeekTable = (Flac__StreamMetadata_SeekTable)@object.Data;
 
@@ -371,15 +375,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					metaSeekTable.Points = null;
 				else
 				{
-					metaSeekTable.Points = Alloc.Safe_Realloc(metaSeekTable.Points, new_Size);
-					if (metaSeekTable.Points == null)
+					// Leave object.data.seek_table_points untounched if realloc fails
+					Flac__StreamMetadata_SeekPoint[] tmpPtr = metaSeekTable.Points;
+					Array.Resize(ref tmpPtr, (int)new_Size);
+					if (tmpPtr == null)
 						return false;
+
+					metaSeekTable.Points = tmpPtr;
 
 					// If growing, set new elements to placeholders
 					if (new_Size > old_Size)
 					{
 						for (uint32_t i = metaSeekTable.Num_Points; i < new_Num_Points; i++)
 						{
+							metaSeekTable.Points[i] = new Flac__StreamMetadata_SeekPoint();
 							metaSeekTable.Points[i].Sample_Number = Constants.Flac__Stream_Metadata_SeekPoint_Placeholder;
 							metaSeekTable.Points[i].Stream_Offset = 0;
 							metaSeekTable.Points[i].Frame_Samples = 0;
@@ -616,7 +625,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		{
 			Debug.Assert(@object != null);
 			Debug.Assert(@object.Type == Flac__MetadataType.SeekTable);
-			Debug.Assert(total_Samples > 0);
 
 			if ((num > 0) && (total_Samples > 0))
 			{
@@ -658,8 +666,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		{
 			Debug.Assert(@object != null);
 			Debug.Assert(@object.Type == Flac__MetadataType.SeekTable);
-			Debug.Assert(samples > 0);
-			Debug.Assert(total_Samples > 0);
 
 			if ((samples > 0) && (total_Samples > 0))
 			{
@@ -750,7 +756,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// Resize the comment array.
 		///
 		/// If the size shrinks, elements will truncated; if it grows, new
-		/// empty fields will be added to the end
+		/// empty fields will be added to the end. If this function returns
+		/// false, the object is left untouched
 		/// <param name="object">A pointer to an existing VORBIS_COMMENT object</param>
 		/// <param name="new_Num_Comments">The desired length of the array; may be 0</param>
 		/// <returns>False if memory allocation fails, else true</returns>
@@ -774,6 +781,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					metaVorbisComment.Comments = VorbisComment_Entry_Array_New(new_Num_Comments);
 					if (metaVorbisComment.Comments == null)
 						return false;
+
+					for (uint32_t i = 0; i < new_Num_Comments; i++)
+					{
+						metaVorbisComment.Comments[i].Length = 0;
+						metaVorbisComment.Comments[i].Entry = new Flac__byte[1];
+						if (metaVorbisComment.Comments[i].Entry == null)
+						{
+							metaVorbisComment.Num_Comments = i + 1;
+							return false;
+						}
+
+						metaVorbisComment.Comments[i].Entry[0] = 0;
+					}
 				}
 			}
 			else
@@ -796,13 +816,32 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				if (new_Size == 0)
 					metaVorbisComment.Comments = null;
 				else
-					Array.Resize(ref metaVorbisComment.Comments, (int)new_Size);
+				{
+					// Leave object.data.vorbis_comment.comments untounched if realloc fails
+					Flac__StreamMetadata_VorbisComment_Entry[] tmpPtr = metaVorbisComment.Comments;
+					Array.Resize(ref tmpPtr, (int)new_Size);
+					if (tmpPtr == null)
+						return false;
+
+					metaVorbisComment.Comments = tmpPtr;
+				}
 
 				// If growing, zero all the length/pointers of new elements
 				if (new_Size > old_Size)
 				{
-					for (uint32_t i = metaVorbisComment.Num_Comments; i < new_Size; i++)
+					for (uint32_t i = metaVorbisComment.Num_Comments; i < new_Num_Comments; i++)
+					{
 						metaVorbisComment.Comments[i] = new Flac__StreamMetadata_VorbisComment_Entry();
+						metaVorbisComment.Comments[i].Length = 0;
+						metaVorbisComment.Comments[i].Entry = new Flac__byte[1];
+						if (metaVorbisComment.Comments[i].Entry == null)
+						{
+							metaVorbisComment.Num_Comments = i + 1;
+							return false;
+						}
+
+						metaVorbisComment.Comments[i].Entry[0] = 0;
+					}
 				}
 			}
 
@@ -874,9 +913,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			if (!Flac__Metadata_Object_VorbisComment_Resize_Comments(@object, vc.Num_Comments + 1))
 				return false;
 
-			// Move all comments >= comment_Num forward one space
+			// Move all comments >= comment_Num forward one space.
+			// Reuse newly added empty comment
+			Flac__StreamMetadata_VorbisComment_Entry temp = vc.Comments[vc.Num_Comments - 1];
 			Array.Copy(vc.Comments, comment_Num, vc.Comments, comment_Num + 1, vc.Num_Comments - 1 - comment_Num);
-			vc.Comments[comment_Num] = new Flac__StreamMetadata_VorbisComment_Entry();
+			vc.Comments[comment_Num] = temp;
 
 			return Flac__Metadata_Object_VorbisComment_Set_Comment(@object, comment_Num, entry, copy);
 		}
@@ -906,7 +947,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/********************************************************************/
 		public static Flac__bool Flac__Metadata_Object_VorbisComment_Replace_Comment(Flac__StreamMetadata @object, Flac__StreamMetadata_VorbisComment_Entry entry, Flac__bool all, Flac__bool copy)
 		{
-			Debug.Assert((entry.Entry != null) && (entry.Length > 0));
+			Debug.Assert(entry.Entry != null);
 
 			if (!Format.Flac__Format_VorbisComment_Entry_Is_Legal(entry.Entry, entry.Length))
 				return false;
@@ -1067,7 +1108,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/********************************************************************/
 		public static Flac__bool Flac__Metadata_Object_VorbisComment_Entry_To_Name_Value_Pair(Flac__StreamMetadata_VorbisComment_Entry entry, out string field_Name, out string field_Value)
 		{
-			Debug.Assert((entry.Entry != null) && (entry.Length > 0));
+			Debug.Assert(entry.Entry != null);
 
 			field_Name = null;
 			field_Value = null;
@@ -1098,7 +1139,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/********************************************************************/
 		public static Flac__bool Flac__Metadata_Object_VorbisComment_Entry_Matches(Flac__StreamMetadata_VorbisComment_Entry entry, string field_Name)
 		{
-			Debug.Assert((entry.Entry != null) && (entry.Length > 0));
+			Debug.Assert(entry.Entry != null);
 
 			int eq = Array.IndexOf(entry.Entry, (byte)'=');
 			if (eq == -1)
@@ -1259,7 +1300,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// Resize a track's index point array.
 		///
 		/// If the size shrinks, elements will truncated; if it grows, new
-		/// blank indices will be added to the end
+		/// blank indices will be added to the end. If this function returns
+		/// false, the object is left untouched
 		/// <param name="object">A pointer to an existing CUESHEET object</param>
 		/// <param name="track_Num">The index of the track to modify. NOTE: this is not necessarily the same as the track's number field</param>
 		/// <param name="new_Num_Indices">The desired length of the array; may be 0</param>
@@ -1300,9 +1342,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					track.Indices = null;
 				else
 				{
-					track.Indices = Alloc.Safe_Realloc(track.Indices, new_Size);
-					if (track.Indices == null)
+					// Leave track.indicies untounched if realloc fails
+					Flac__StreamMetadata_CueSheet_Index[] tmpPtr = track.Indices;
+					Array.Resize(ref tmpPtr, (int)new_Size);
+					if (tmpPtr == null)
 						return false;
+
+					track.Indices = tmpPtr;
 				}
 
 				// If growing, zero all the length/pointers of new elements
@@ -1411,7 +1457,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// Resize the track array.
 		///
 		/// If the size shrinks, elements will truncated; if it grows, new
-		/// blank tracks will be added to the end
+		/// blank tracks will be added to the end. If this function returns
+		/// false, the object is left untouched
 		/// <param name="object">A pointer to an existing CUESHEET object</param>
 		/// <param name="new_Num_Tracks">The desired length of the array; may be 0</param>
 		/// <returns>False if memory allocation error, else true</returns>
@@ -1455,9 +1502,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					metaCueSheet.Tracks = null;
 				else
 				{
-					metaCueSheet.Tracks = Alloc.Safe_Realloc(metaCueSheet.Tracks, new_Size);
-					if (metaCueSheet.Tracks == null)
+					// Leave object.data.cur_sheet.tracks untounched if realloc fails
+					Flac__StreamMetadata_CueSheet_Track[] tmpPtr = metaCueSheet.Tracks;
+					Array.Resize(ref tmpPtr, (int)new_Size);
+					if (tmpPtr == null)
 						return false;
+
+					metaCueSheet.Tracks = tmpPtr;
 				}
 
 				// If growing, zero all the length/pointers of new elements
@@ -1767,7 +1818,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/********************************************************************/
 		private static Flac__bool Ensure_Null_Terminated(ref Flac__byte[] entry, uint32_t length)
 		{
-			Flac__byte[] x = Alloc.Safe_Realloc_Add_2Op(entry, length, 1);
+			Flac__byte[] x = Alloc.Safe_Realloc_NoFree_Add_2Op(entry, length, 1);
 			if (x != null)
 			{
 				x[length] = 0x00;
@@ -1813,12 +1864,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			if (from.Entry == null)
 			{
 				Debug.Assert(from.Length == 0);
-				to.Entry = null;
+				to.Entry = new Flac__byte[1];
+				if (to.Entry == null)
+					return false;
+
+				to.Entry[0] = 0;
 			}
 			else
 			{
-				Debug.Assert(from.Length > 0);
-
 				Flac__byte[] x = Alloc.Safe_MAlloc_Add_2Op<Flac__byte>(from.Length, 1);
 				if (x == null)
 					return false;
@@ -1959,7 +2012,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/********************************************************************/
 		private static void VorbisComment_Entry_Array_Delete(Flac__StreamMetadata_VorbisComment_Entry[] object_Array, uint32_t num_Comments)
 		{
-			Debug.Assert((object_Array != null) && (num_Comments > 0));
+			Debug.Assert(object_Array != null);
 
 			for (uint32_t i = 0; i < num_Comments; i++)
 				object_Array[i].Entry = null;
@@ -2273,8 +2326,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 					if (metaVorbisComment.Comments != null)
 					{
-						Debug.Assert(metaVorbisComment.Num_Comments > 0);
-
 						VorbisComment_Entry_Array_Delete(metaVorbisComment.Comments, metaVorbisComment.Num_Comments);
 						metaVorbisComment.Comments = null;
 						metaVorbisComment.Num_Comments = 0;

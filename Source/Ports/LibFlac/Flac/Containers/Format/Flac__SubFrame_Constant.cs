@@ -13,6 +13,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac.Containers.Format
 		/// <summary>
 		/// The constant signal value
 		/// </summary>
-		public Flac__int32 Value;
+		public Flac__int64 Value;
 	}
 }

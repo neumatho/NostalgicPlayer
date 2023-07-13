@@ -33,6 +33,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		};
 
+		private static readonly uint8_t[] debruijn_Idx64 =
+		{
+			 0,  1,  2,  7,  3, 13,  8, 19,  4, 25, 14, 28,  9, 34, 20, 40,
+			 5, 17, 26, 38, 15, 46, 29, 48, 10, 31, 35, 54, 21, 50, 41, 57,
+			63,  6, 12, 18, 24, 27, 33, 39, 16, 37, 45, 47, 30, 53, 49, 56,
+			62, 11, 23, 32, 36, 44, 52, 55, 61, 22, 43, 51, 60, 42, 59, 58
+		};
+
 		/********************************************************************/
 		/// <summary>
 		/// 
@@ -92,6 +100,51 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 			Debug.Assert(v > 0);
 
 			return Flac__Clz_UInt32(v) ^ 31U;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static uint32_t Flac__BitMath_ILog2_Wide(Flac__uint64 v)
+		{
+			Debug.Assert(v > 0);
+
+			// de Bruijn sequences (http://supertech.csail.mit.edu/papers/debruijn.pdf)
+			// (C) Timothy B. Terriberry (tterribe@xiph.org) 2001-2009 CC0 (Public domain)
+			v |= v >> 1;
+			v |= v >> 2;
+			v |= v >> 4;
+			v |= v >> 8;
+			v |= v >> 16;
+			v |= v >> 32;
+			v = (v >> 1) + 1;
+
+			return debruijn_Idx64[v * 0x218A392CD3D5DBF >> 58 & 0x3f];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public static uint32_t Flac__BitMath_SiLog2(Flac__int64 v)
+		{
+			if (v == 0)
+				return 0;
+
+			if (v == -1)
+				return 2;
+
+			v = (v < 0) ? (-(v + 1)) : v;
+
+			return Flac__BitMath_ILog2_Wide((Flac__uint64)v) + 2;
 		}
 
 		#region Private methods

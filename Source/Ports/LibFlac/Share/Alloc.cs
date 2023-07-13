@@ -137,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Share
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T[] Safe_Realloc_Add_2Op<T>(T[] ptr, size_t size1, size_t size2) where T : new()
+		public static T[] Safe_Realloc_NoFree_Add_2Op<T>(T[] ptr, size_t size1, size_t size2) where T : new()
 		{
 			size2 += size1;
 			if (size2 < size1)
@@ -161,6 +161,31 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Share
 				Array.Resize(ref ptr, 0);
 				return ptr;
 			}
+
+			if (size1 > (size_t.MaxValue / size2))
+				return null;
+
+			return Safe_Realloc(ptr, size1 * size2);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static T[] Safe_Realloc_NoFree_Mul_2Op<T>(T[] ptr, size_t size1, size_t size2) where T : new()
+		{
+			if ((size1 == 0) || (size2 == 0))
+			{
+				Array.Resize(ref ptr, 0);
+				return ptr;
+			}
+
+			if (size1 > (size_t.MaxValue / size2))
+				return null;
 
 			return Safe_Realloc(ptr, size1 * size2);
 		}

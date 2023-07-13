@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class BitReader
+	internal class BitReader : IBitReader
 	{
 		// This should be at least twice as large as the largest number of words
 		// required to represent any 'number' (in any encoding) you are going to
@@ -45,6 +45,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 			public uint32_t Read_Crc16;		// The running frame CRC
 			public uint32_t Crc16_Offset;	// The number of words in the current buffer that should not be CRC'd
 			public uint32_t Crc16_Align;	// The number of bits in the current consumed word that should not be CRC'd
+			public Flac__bool Read_Limit_Set;	// Whether reads are limited
+			public uint32_t Read_Limit;		// The remaining size of what can be read
+			public uint32_t Last_Seen_Framesync;	// The location of the last seen framesync, if it is in the buffer, in bits from front of buffer
 			public Flac__BitReaderReadCallback Read_Callback;
 			public object Client_Data;
 		}
@@ -108,6 +111,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 			br.Buffer = new brWord[br.Capacity];
 			br.Read_Callback = rcb;
 			br.Client_Data = cd;
+			br.Read_Limit_Set = false;
+			br.Read_Limit = uint32_t.MaxValue;
+			br.Last_Seen_Framesync = uint32_t.MaxValue;
 
 			return true;
 		}
@@ -129,6 +135,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 			br.Consumed_Words = br.Consumed_Bits = 0;
 			br.Read_Callback = null;
 			br.Client_Data = null;
+			br.Read_Limit_Set = false;
+			br.Read_Limit = uint32_t.MaxValue;
+			br.Last_Seen_Framesync = uint32_t.MaxValue;
 		}
 
 
@@ -142,8 +151,47 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 		{
 			br.Words = br.Bytes = 0;
 			br.Consumed_Words = br.Consumed_Bits = 0;
+			br.Read_Limit_Set = false;
+			br.Read_Limit = uint32_t.MaxValue;
+			br.Last_Seen_Framesync = uint32_t.MaxValue;
 
 			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void Flac__BitReader_Set_Framesync_Location()
+		{
+			br.Last_Seen_Framesync = br.Consumed_Words * Constants.Flac__Bytes_Per_Word + br.Consumed_Bits / 8;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Flac__bool Flac__BitReader_Rewind_To_After_Last_Seen_Framesync()
+		{
+			if (br.Last_Seen_Framesync == uint32_t.MaxValue)
+			{
+				br.Consumed_Words = br.Consumed_Bits = 0;
+
+				return false;
+			}
+			else
+			{
+				br.Consumed_Words = (br.Last_Seen_Framesync + 1) / Constants.Flac__Bytes_Per_Word;
+				br.Consumed_Bits = ((br.Last_Seen_Framesync + 1) % Constants.Flac__Bytes_Per_Word) * 8;
+
+				return true;
+			}
 		}
 		#endregion
 
@@ -232,6 +280,58 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 		{
 			return (br.Words - br.Consumed_Words) * Constants.Flac__Bits_Per_Word + br.Bytes * 8 - br.Consumed_Bits;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void Flac__BitReader_Set_Limit(uint32_t limit)
+		{
+			br.Read_Limit = limit;
+			br.Read_Limit_Set = true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void Flac__BitReader_Remove_Limit()
+		{
+			br.Read_Limit_Set = false;
+			br.Read_Limit = uint32_t.MaxValue;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public uint32_t Flac__BitReader_Limit_Remaining()
+		{
+			Debug.Assert(br.Read_Limit_Set);
+
+			return br.Read_Limit;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void Flac__BitReader_Limit_Invalidate()
+		{
+			br.Read_Limit = uint32_t.MaxValue;
+		}
 		#endregion
 
 		#region Read methods
@@ -256,6 +356,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 			{
 				val = 0;
 				return true;
+			}
+
+			if (br.Read_Limit_Set && (br.Read_Limit < uint32_t.MaxValue))
+			{
+				if (br.Read_Limit < bits)
+				{
+					br.Read_Limit = uint32_t.MaxValue;
+					val = 0;
+					return false;
+				}
+				else
+					br.Read_Limit -= bits;
 			}
 
 			while (((br.Words - br.Consumed_Words) * Constants.Flac__Bits_Per_Word + br.Bytes * 8 - br.Consumed_Bits) < bits)
@@ -365,7 +477,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 
 			// Sign-extend *val assuming it is currently bits wide
 			// From: https://graphics.stanford.edu/~seander/bithacks.html#FixedSignExtend
-			Flac__uint32 mask = bits >= 33 ? 0 : 1u << ((int32_t)bits - 1);
+			Flac__uint32 mask = bits >= 33 ? 0 : 1U << ((int)bits - 1);
 			val = (Flac__int32)((uVal ^ mask) - mask);
 
 			return true;
@@ -401,6 +513,28 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 
 				val = lo;
 			}
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public Flac__bool Flac__BitReader_Read_Raw_Int64(out Flac__int64 val, uint32_t bits)
+		{
+			val = 0;
+
+			if ((bits < 1) || !Flac__BitReader_Read_Raw_UInt64(out Flac__uint64 uVal, bits))
+				return false;
+
+			// Sign-extend *val assuming it is currently bits wide
+			// From: https://graphics.stanford.edu/~seander/bithacks.html#FixedSignExtend
+			Flac__uint64 mask = bits >= 65 ? 0 : 1LU << (int)(bits - 1);
+			val = (Flac__int64)((uVal ^ mask) - mask);
 
 			return true;
 		}
@@ -501,6 +635,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 			Debug.Assert(br.Buffer != null);
 			Debug.Assert(Flac__BitReader_Is_Consumed_Byte_Aligned());
 
+			if (br.Read_Limit_Set && (br.Read_Limit < uint32_t.MaxValue))
+			{
+				if (br.Read_Limit < nVals * 8)
+				{
+					br.Read_Limit = uint32_t.MaxValue;
+					return false;
+				}
+			}
+
 			// Step 1: Skip over partial head word to get word aligned
 			while ((nVals != 0) && (br.Consumed_Bits != 0))		// I.e. run until we read 'nVals' bytes or we hit the end of the head word
 			{
@@ -520,6 +663,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 				{
 					br.Consumed_Words++;
 					nVals -= Constants.Flac__Bytes_Per_Word;
+
+					if (br.Read_Limit_Set)
+						br.Read_Limit -= Constants.Flac__Bits_Per_Word;
 				}
 				else
 				{
@@ -633,6 +779,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 			Debug.Assert(br.Buffer != null);
 			Debug.Assert(Flac__BitReader_Is_Consumed_Byte_Aligned());
 
+			if (br.Read_Limit_Set && (br.Read_Limit < uint32_t.MaxValue))
+			{
+				if (br.Read_Limit < nVals * 8)
+				{
+					br.Read_Limit = uint32_t.MaxValue;
+					return false;
+				}
+			}
+
 			uint32_t offset = 0;
 
 			// Step 1: Read from partial head word to get word aligned
@@ -666,6 +821,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 
 					offset += Constants.Flac__Bytes_Per_Word;
 					nVals -= Constants.Flac__Bytes_Per_Word;
+
+					if (br.Read_Limit_Set)
+						br.Read_Limit -= Constants.Flac__Bits_Per_Word;
 				}
 				else
 				{
@@ -695,185 +853,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 		/// but it's fast
 		/// </summary>
 		/********************************************************************/
-		public Flac__bool Flac__BitReader_Read_Rice_Signed_Block(int[] vals, uint32_t offset, uint32_t nVals, uint32_t parameter)
+		public Flac__bool Read_Rice_Signed_Block(int[] vals, uint32_t offset, uint32_t nVals, uint32_t parameter)
 		{
-			Debug.Assert(br != null);
-			Debug.Assert(br.Buffer != null);
-
-			// WATCHOUT: Code does not work with <32 words; we can make things much faster with this assertion
-			Debug.Assert(Constants.Flac__Bits_Per_Word >= 32);
-			Debug.Assert(parameter < 32);
-			// The above two asserts also guarantee that the binary part never straddles more than 2 words, so we don't have to loop to read it
-
-			uint32_t val = offset;
-			uint32_t end = offset + nVals;
-			uint32_t msbs = 0;
-
-			if (parameter == 0)
-			{
-				while (val < end)
-				{
-					// Read the unary MSBs and end bit
-					if (!Flac__BitReader_Read_Unary_Unsigned(out msbs))
-						return false;
-
-					vals[val++] = (int)(msbs >> 1) ^ -(int)(msbs & 1);
-				}
-
-				return true;
-			}
-
-			Debug.Assert(parameter > 0);
-
-			uint32_t cWords = br.Consumed_Words;
-			uint32_t words = br.Words;
-
-			uint32_t x = 0, y;
-			Flac__bool process_Tail = false;
-			Flac__bool incomplete_Msbs = false;
-			Flac__bool incomplete_Lsbs = false;
-			uint32_t ucBits = 0;
-			brWord b = 0;
-
-			// If we've not consumed up to a partial tail word
-			if (cWords >= words)
-			{
-				x = 0;
-				process_Tail = true;
-			}
-			else
-			{
-				ucBits = Constants.Flac__Bits_Per_Word - br.Consumed_Bits;
-				b = br.Buffer[cWords] << (int)br.Consumed_Bits;	// Keep unconsumed bits aligned to left
-			}
-
-			while (val < end)
-			{
-				if (process_Tail)
-				{
-					process_Tail = false;
-					goto Process_Tail;
-				}
-
-				// Read the unary MSBs and end bit
-				x = y = Count_Zero_Msbs2(b);
-
-				if (x == Constants.Flac__Bits_Per_Word)
-				{
-					x = ucBits;
-
-					do
-					{
-						// Didn't find stop bit yet, have to keep going
-						cWords++;
-						if (cWords >= words)
-						{
-							incomplete_Msbs = true;
-							goto Process_Tail;
-						}
-
-						b = br.Buffer[cWords];
-						y = Count_Zero_Msbs2(b);
-						x += y;
-					}
-					while (y == Constants.Flac__Bits_Per_Word);
-				}
-
-				b <<= (int)y;
-				b <<= 1;	// Account for stop bit
-				ucBits = (ucBits - x - 1) % Constants.Flac__Bits_Per_Word;
-				msbs = x;
-
-				// Read the binary LSBs
-				x = (Flac__uint32)(b >> (int)(Constants.Flac__Bits_Per_Word - parameter));	// Parameter < 32, so we can cast to 32-bit uint32_t
-
-				if (parameter <= ucBits)
-				{
-					ucBits -= parameter;
-					b <<= (int)parameter;
-				}
-				else
-				{
-					// There are still bits left to read, they will all be in the next word
-					cWords++;
-					if (cWords >= words)
-					{
-						incomplete_Lsbs = true;
-						goto Process_Tail;
-					}
-
-					b = br.Buffer[cWords];
-					ucBits += Constants.Flac__Bits_Per_Word - parameter;
-					x |= (Flac__uint32)(b >> (int)ucBits);
-					b <<= (int)(Constants.Flac__Bits_Per_Word - ucBits);
-				}
-
-				uint32_t lsbs = x;
-
-				// Compose the value
-				x = (msbs << (int)parameter) | lsbs;
-				vals[val++] = (int)(x >> 1) ^ -(int)(x & 1);
-
-				continue;
-
-				// At this point we've eaten up all the whole words
-Process_Tail:
-				do
-				{
-					if (!incomplete_Lsbs)
-					{
-						if (incomplete_Msbs)
-						{
-							incomplete_Msbs = false;
-							br.Consumed_Bits = 0;
-							br.Consumed_Words = cWords;
-						}
-
-						// Read the unary MSBs and end bit
-						if (!Flac__BitReader_Read_Unary_Unsigned(out msbs))
-							return false;
-
-						msbs += x;
-						x = ucBits = 0;
-					}
-
-					if (incomplete_Lsbs)
-					{
-						incomplete_Lsbs = false;
-						br.Consumed_Bits = 0;
-						br.Consumed_Words = cWords;
-					}
-
-					// Read the binary LSBs
-					if (!Flac__BitReader_Read_Raw_UInt32(out lsbs, parameter - ucBits))
-						return false;
-
-					lsbs = x | lsbs;
-
-					// Compose the value
-					x = (msbs << (int)parameter) | lsbs;
-					vals[val++] = (int)(x >> 1) ^ -(int)(x & 1);
-					x = 0;
-
-					cWords = br.Consumed_Words;
-					words = br.Words;
-					ucBits = Constants.Flac__Bits_Per_Word - br.Consumed_Bits;
-					b = cWords < br.Capacity ? br.Buffer[cWords] << (int)br.Consumed_Bits : 0;
-				}
-				while ((cWords >= words) && (val < end));
-			}
-
-			if ((ucBits == 0) && (cWords < words))
-			{
-				// Don't leave the head word with no consumed bits
-				cWords++;
-				ucBits = Constants.Flac__Bits_Per_Word;
-			}
-
-			br.Consumed_Bits = Constants.Flac__Bits_Per_Word - ucBits;
-			br.Consumed_Words = cWords;
-
-			return true;
+			return BitReader_Read_Rice_Signed_Block(vals, offset, nVals, parameter);
 		}
 
 
@@ -1093,10 +1075,14 @@ Process_Tail:
 		private Flac__bool BitReader_Read_From_Client()
 		{
 			uint32_t start, end;
+			brWord preswap_Backup = 0;
 
 			// First shift the unconsumed buffer data toward the front as much as possible
 			if (br.Consumed_Words > 0)
 			{
+				// Invalidate last seen framesync
+				br.Last_Seen_Framesync = uint32_t.MaxValue;
+
 				Crc16_Update_Block();	// CRC consumed words
 
 				start = br.Consumed_Words;
@@ -1123,6 +1109,8 @@ Process_Tail:
 			// overwritten
 			if (BitConverter.IsLittleEndian)
 			{
+				preswap_Backup = br.Buffer[br.Words];
+
 				if (br.Bytes != 0)
 					br.Buffer[br.Words] = Swap_Be_Word_To_Host(br.Buffer[br.Words]);
 			}
@@ -1135,7 +1123,15 @@ Process_Tail:
 
 			// Read in the data; note that the callback may return a smaller number of bytes
 			if (!br.Read_Callback(target, ref bytes, br.Client_Data))
+			{
+				// Despite the read callback failing, the data in the target
+				// might be used later, when the buffer is rewound. Therefore
+				// we revert the swap that was just done
+				if (BitConverter.IsLittleEndian)
+					br.Buffer[br.Words] = preswap_Backup;
+
 				return false;
+			}
 
 			// After reading bytes 66 77 88 99 AA BB CC DD EE FF from client:
 			//   bitstream : 11 22 33 44 55 66 77 88 99 AA BB CC DD EE FF
@@ -1206,6 +1202,202 @@ Process_Tail:
 			}
 
 			br.Crc16_Offset = 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private Flac__bool BitReader_Read_Rice_Signed_Block(int[] vals, uint32_t offset, uint32_t nVals, uint32_t parameter)
+		{
+			Debug.Assert(br != null);
+			Debug.Assert(br.Buffer != null);
+
+			// WATCHOUT: Code does not work with <32 words; we can make things much faster with this assertion
+			Debug.Assert(Constants.Flac__Bits_Per_Word >= 32);
+			Debug.Assert(parameter < 32);
+			// The above two asserts also guarantee that the binary part never straddles more than 2 words, so we don't have to loop to read it
+
+			uint32_t limit = uint32_t.MaxValue >> (int)parameter;	// Maximal msbs that can occur with residual bounded to int32_t
+
+			uint32_t val = offset;
+			uint32_t end = offset + nVals;
+			uint32_t msbs = 0;
+
+			if (parameter == 0)
+			{
+				while (val < end)
+				{
+					// Read the unary MSBs and end bit
+					if (!Flac__BitReader_Read_Unary_Unsigned(out msbs))
+						return false;
+
+					// Checking limit here would be overzealous: coding UINT32_MAX
+					// with parameter == 0 would take 4GiB
+					vals[val++] = (int)(msbs >> 1) ^ -(int)(msbs & 1);
+				}
+
+				return true;
+			}
+
+			Debug.Assert(parameter > 0);
+
+			uint32_t cWords = br.Consumed_Words;
+			uint32_t words = br.Words;
+
+			uint32_t x = 0, y;
+			Flac__bool process_Tail = false;
+			Flac__bool incomplete_Msbs = false;
+			Flac__bool incomplete_Lsbs = false;
+			uint32_t ucBits = 0;
+			brWord b = 0;
+
+			// If we've not consumed up to a partial tail word
+			if (cWords >= words)
+			{
+				x = 0;
+				process_Tail = true;
+			}
+			else
+			{
+				ucBits = Constants.Flac__Bits_Per_Word - br.Consumed_Bits;
+				b = br.Buffer[cWords] << (int)br.Consumed_Bits;	// Keep unconsumed bits aligned to left
+			}
+
+			while (val < end)
+			{
+				if (process_Tail)
+				{
+					process_Tail = false;
+					goto Process_Tail;
+				}
+
+				// Read the unary MSBs and end bit
+				x = y = Count_Zero_Msbs2(b);
+
+				if (x == Constants.Flac__Bits_Per_Word)
+				{
+					x = ucBits;
+
+					do
+					{
+						// Didn't find stop bit yet, have to keep going
+						cWords++;
+						if (cWords >= words)
+						{
+							incomplete_Msbs = true;
+							goto Process_Tail;
+						}
+
+						b = br.Buffer[cWords];
+						y = Count_Zero_Msbs2(b);
+						x += y;
+					}
+					while (y == Constants.Flac__Bits_Per_Word);
+				}
+
+				b <<= (int)y;
+				b <<= 1;	// Account for stop bit
+				ucBits = (ucBits - x - 1) % Constants.Flac__Bits_Per_Word;
+				msbs = x;
+
+				if (x > limit)
+					return false;
+
+				// Read the binary LSBs
+				x = (Flac__uint32)(b >> (int)(Constants.Flac__Bits_Per_Word - parameter));	// Parameter < 32, so we can cast to 32-bit uint32_t
+
+				if (parameter <= ucBits)
+				{
+					ucBits -= parameter;
+					b <<= (int)parameter;
+				}
+				else
+				{
+					// There are still bits left to read, they will all be in the next word
+					cWords++;
+					if (cWords >= words)
+					{
+						incomplete_Lsbs = true;
+						goto Process_Tail;
+					}
+
+					b = br.Buffer[cWords];
+					ucBits += Constants.Flac__Bits_Per_Word - parameter;
+					x |= (Flac__uint32)(b >> (int)ucBits);
+					b <<= (int)(Constants.Flac__Bits_Per_Word - ucBits);
+				}
+
+				uint32_t lsbs = x;
+
+				// Compose the value
+				x = (msbs << (int)parameter) | lsbs;
+				vals[val++] = (int)(x >> 1) ^ -(int)(x & 1);
+
+				continue;
+
+				// At this point we've eaten up all the whole words
+Process_Tail:
+				do
+				{
+					if (!incomplete_Lsbs)
+					{
+						if (incomplete_Msbs)
+						{
+							incomplete_Msbs = false;
+							br.Consumed_Bits = 0;
+							br.Consumed_Words = cWords;
+						}
+
+						// Read the unary MSBs and end bit
+						if (!Flac__BitReader_Read_Unary_Unsigned(out msbs))
+							return false;
+
+						msbs += x;
+						x = ucBits = 0;
+					}
+
+					if (incomplete_Lsbs)
+					{
+						incomplete_Lsbs = false;
+						br.Consumed_Bits = 0;
+						br.Consumed_Words = cWords;
+					}
+
+					// Read the binary LSBs
+					if (!Flac__BitReader_Read_Raw_UInt32(out lsbs, parameter - ucBits))
+						return false;
+
+					lsbs = x | lsbs;
+
+					// Compose the value
+					x = (msbs << (int)parameter) | lsbs;
+					vals[val++] = (int)(x >> 1) ^ -(int)(x & 1);
+					x = 0;
+
+					cWords = br.Consumed_Words;
+					words = br.Words;
+					ucBits = Constants.Flac__Bits_Per_Word - br.Consumed_Bits;
+					b = cWords < br.Capacity ? br.Buffer[cWords] << (int)br.Consumed_Bits : 0;
+				}
+				while ((cWords >= words) && (val < end));
+			}
+
+			if ((ucBits == 0) && (cWords < words))
+			{
+				// Don't leave the head word with no consumed bits
+				cWords++;
+				ucBits = Constants.Flac__Bits_Per_Word;
+			}
+
+			br.Consumed_Bits = Constants.Flac__Bits_Per_Word - ucBits;
+			br.Consumed_Words = cWords;
+
+			return true;
 		}
 		#endregion
 	}

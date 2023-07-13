@@ -3,30 +3,21 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Ports.LibFlac.Protected.Containers
+namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac.Containers.Format
 {
 	/// <summary>
-	/// 
+	/// An enumeration of the possible verbatim subframe data types
 	/// </summary>
-	internal enum Flac__ApodizationFunction
+	public enum Flac__VerbatimSubFrameDataType
 	{
-		Bartlett,
-		Bartlett_Hann,
-		Blackman,
-		Blackman_Harris_4Term_92Db_Sidelobe,
-		Connes,
-		Flattop,
-		Gauss,
-		Hamming,
-		Hann,
-		Kaiser_Bessel,
-		Nuttall,
-		Rectangle,
-		Triangle,
-		Tukey,
-		Partial_Tukey,
-		Punchout_Tukey,
-		Subdivide_Tukey,
-		Welch
+		/// <summary>
+		/// Verbatim subframe has 32-bit int
+		/// </summary>
+		Int32,
+
+		/// <summary>
+		/// Verbatim subframe has 64-bit int
+		/// </summary>
+		Int64
 	}
 }

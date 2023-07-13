@@ -20,9 +20,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac.Containers
 		public const uint32_t Flac__Bits_Per_Word = 64;
 
 		/// <summary></summary>
-		public const uint64_t Flac__Word_All_Ones = 0xffffffffffffffff;
+		public const uint32_t Flac__Temp_Bits = 64;
 
 		/// <summary></summary>
+		public const uint32_t Flac__Half_Temp_Bits = 32;
+
+		/// <summary></summary>
+		public const uint64_t Flac__Word_All_Ones = 0xffffffffffffffff;
+
+		/// <summary>
+		/// This is used to avoid overflow with unusual signals in 32 bit
+		/// accumulator in the *precompute_partition_info_sums_* functions
+		/// </summary>
 		public const uint32_t Flac__Max_Extra_Residual_Bps = 4;
 
 		/// <summary></summary>
@@ -69,17 +78,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac.Containers
 		///
 		/// WARNING:
 		/// Flac__Max_Bits_Per_Sample is the limit of the FLAC format. However,
-		/// the reference encoder/decoder is currently limited to 24 bits because
-		/// of prevalent 32-bit math, so make sure and use this value when
-		/// appropriate
+		/// the reference encoder/decoder used to be limited to 24 bits. This
+		/// value was used to signal that limit
 		/// </summary>
-		public const uint32_t Flac__Reference_Codec_Max_Bits_Per_Sample = 24;
+		public const uint32_t Flac__Reference_Codec_Max_Bits_Per_Sample = 32;
 
 		/// <summary>
 		/// The maximum sample rate permitted by the format. The value is
 		/// ((2 ^ 16) - 1) * 10
 		/// </summary>
-		public const uint32_t Flac__Max_Sample_Rate = 655350;
+		public const uint32_t Flac__Max_Sample_Rate = 1048575;
 
 		/// <summary>
 		/// The maximum LPC order permitted by the format

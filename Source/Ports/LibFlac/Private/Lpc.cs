@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibFlac.Flac.Containers;
 
@@ -30,37 +31,113 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 
 		/********************************************************************/
 		/// <summary>
+		/// Applies the given window to the data
+		/// </summary>
+		/********************************************************************/
+		public static void Flac__Lpc_Window_Data_Wide(Flac__int64[] @in, Flac__real[] window, Flac__real[] @out, uint32_t data_Len)
+		{
+			for (uint32_t i = 0; i < data_Len; i++)
+				@out[i] = @in[i] * window[i];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Applies the given window to the data
+		/// </summary>
+		/********************************************************************/
+		public static void Flac__Lpc_Window_Data_Partial(Flac__int32[] @in, Flac__real[] window, Flac__real[] @out, uint32_t data_Len, uint32_t part_Size, uint32_t data_Shift)
+		{
+			if ((part_Size + data_Shift) < data_Len)
+			{
+				uint32_t i;
+
+				for (i = 0; i < part_Size; i++)
+					@out[i] = @in[data_Shift + i] * window[i];
+
+				i = Math.Min(i, data_Len - part_Size - data_Shift);
+
+				for (uint32_t j = data_Len - part_Size; j < data_Len; i++, j++)
+					@out[i] = @in[data_Shift + i] * window[j];
+
+				if (i < data_Len)
+					@out[i] = 0.0f;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Applies the given window to the data
+		/// </summary>
+		/********************************************************************/
+		public static void Flac__Lpc_Window_Data_Partial_Wide(Flac__int64[] @in, Flac__real[] window, Flac__real[] @out, uint32_t data_Len, uint32_t part_Size, uint32_t data_Shift)
+		{
+			if ((part_Size + data_Shift) < data_Len)
+			{
+				uint32_t i;
+
+				for (i = 0; i < part_Size; i++)
+					@out[i] = @in[data_Shift + i] * window[i];
+
+				i = Math.Min(i, data_Len - part_Size - data_Shift);
+
+				for (uint32_t j = data_Len - part_Size; j < data_Len; i++, j++)
+					@out[i] = @in[data_Shift + i] * window[j];
+
+				if (i < data_Len)
+					@out[i] = 0.0f;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Compute the autocorrelation for lags between 0 and lag-1.
 		/// Assumes data[] outside of [0,data_len-1] == 0.
 		/// Asserts that lag > 0.
 		/// </summary>
 		/********************************************************************/
-		public void Compute_Autocorrelation(Flac__real[] data, uint32_t data_Len, uint32_t lag, Flac__real[] autoc)
+		public void Compute_Autocorrelation(Flac__real[] data, uint32_t data_Len, uint32_t lag, double[] autoc)
 		{
-			uint32_t limit = data_Len - lag;
-
-			Debug.Assert(lag > 0);
-			Debug.Assert(lag <= data_Len);
-
-			for (uint32_t coeff = 0; coeff < lag; coeff++)
-				autoc[coeff] = 0.0f;
-
-			uint32_t sample;
-			for (sample = 0; sample <= limit; sample++)
+			if ((data_Len < Constants.Flac__Max_Lpc_Order) || (lag > 16))
 			{
-				Flac__real d = data[sample];
+				// This version tends to run faster because of better data locality
+				// ('data_len' is usually much larger that 'lag')
+				uint32_t limit = data_Len - lag;
+
+				Debug.Assert(lag > 0);
+				Debug.Assert(lag <= data_Len);
 
 				for (uint32_t coeff = 0; coeff < lag; coeff++)
-					autoc[coeff] += d * data[sample + coeff];
-			}
+					autoc[coeff] = 0.0f;
 
-			for (; sample < data_Len; sample++)
-			{
-				Flac__real d = data[sample];
+				uint32_t sample;
+				for (sample = 0; sample <= limit; sample++)
+				{
+					double d = data[sample];
 
-				for (uint32_t coeff = 0; coeff < data_Len - sample; coeff++)
-					autoc[coeff] += d * data[sample + coeff];
+					for (uint32_t coeff = 0; coeff < lag; coeff++)
+						autoc[coeff] += d * data[sample + coeff];
+				}
+
+				for (; sample < data_Len; sample++)
+				{
+					double d = data[sample];
+
+					for (uint32_t coeff = 0; coeff < data_Len - sample; coeff++)
+						autoc[coeff] += d * data[sample + coeff];
+				}
 			}
+			else if (lag <= 8)
+				Lpc_Compute_Autocorrelation_Intrin(data, data_Len, lag,8, autoc);
+			else if (lag <= 12)
+				Lpc_Compute_Autocorrelation_Intrin(data, data_Len, lag,12, autoc);
+			else if (lag <= 16)
+				Lpc_Compute_Autocorrelation_Intrin(data, data_Len, lag,16, autoc);
 		}
 
 
@@ -72,7 +149,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 		/// and there is no point in calculating a predictor
 		/// </summary>
 		/********************************************************************/
-		public static void Flac__Lpc_Compute_Lp_Coefficients(Flac__real[] autoc, ref uint32_t max_Order, Flac__real[][] lp_Coeff, double[] error)
+		public static void Flac__Lpc_Compute_Lp_Coefficients(double[] autoc, ref uint32_t max_Order, Flac__real[][] lp_Coeff, double[] error)
 		{
 			double[] lpc = new double[Constants.Flac__Max_Lpc_Order];
 
@@ -598,7 +675,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 		/// Generic 64-bit datapath
 		/// </summary>
 		/********************************************************************/
-		public void Compute_Residual_From_Qlp_Coefficients_64Bit(Flac__int32[] data, uint32_t data_Offset, uint32_t data_Len, Flac__int32[] qlp_Coeff, uint32_t order, int lp_Quantization, Flac__int32[] residual)
+		public void Compute_Residual_From_Qlp_Coefficients_Wide(Flac__int32[] data, uint32_t data_Offset, uint32_t data_Len, Flac__int32[] qlp_Coeff, uint32_t order, int lp_Quantization, Flac__int32[] residual)
 		{
 			Debug.Assert(order > 0);
 			Debug.Assert(order <= 32);
@@ -617,20 +694,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 							for (int i = 0; i < data_Len; i++)
 							{
 								Flac__int64 sum = 0;
-								sum += qlp_Coeff[11] * data[data_Offset + i - 12];
-								sum += qlp_Coeff[10] * data[data_Offset + i - 11];
-								sum += qlp_Coeff[9] * data[data_Offset + i - 10];
-								sum += qlp_Coeff[8] * data[data_Offset + i - 9];
-								sum += qlp_Coeff[7] * data[data_Offset + i - 8];
-								sum += qlp_Coeff[6] * data[data_Offset + i - 7];
-								sum += qlp_Coeff[5] * data[data_Offset + i - 6];
-								sum += qlp_Coeff[4] * data[data_Offset + i - 5];
-								sum += qlp_Coeff[3] * data[data_Offset + i - 4];
-								sum += qlp_Coeff[2] * data[data_Offset + i - 3];
-								sum += qlp_Coeff[1] * data[data_Offset + i - 2];
-								sum += qlp_Coeff[0] * data[data_Offset + i - 1];
+								sum += qlp_Coeff[11] * (Flac__int64)data[data_Offset + i - 12];
+								sum += qlp_Coeff[10] * (Flac__int64)data[data_Offset + i - 11];
+								sum += qlp_Coeff[9] * (Flac__int64)data[data_Offset + i - 10];
+								sum += qlp_Coeff[8] * (Flac__int64)data[data_Offset + i - 9];
+								sum += qlp_Coeff[7] * (Flac__int64)data[data_Offset + i - 8];
+								sum += qlp_Coeff[6] * (Flac__int64)data[data_Offset + i - 7];
+								sum += qlp_Coeff[5] * (Flac__int64)data[data_Offset + i - 6];
+								sum += qlp_Coeff[4] * (Flac__int64)data[data_Offset + i - 5];
+								sum += qlp_Coeff[3] * (Flac__int64)data[data_Offset + i - 4];
+								sum += qlp_Coeff[2] * (Flac__int64)data[data_Offset + i - 3];
+								sum += qlp_Coeff[1] * (Flac__int64)data[data_Offset + i - 2];
+								sum += qlp_Coeff[0] * (Flac__int64)data[data_Offset + i - 1];
 
-								residual[i] = data[data_Offset + i] - (Flac__int32)(sum >> lp_Quantization);
+								residual[i] = (Flac__int32)(data[data_Offset + i] - (sum >> lp_Quantization));
 							}
 						}
 						else	// order == 11
@@ -638,19 +715,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 							for (int i = 0; i < data_Len; i++)
 							{
 								Flac__int64 sum = 0;
-								sum += qlp_Coeff[10] * data[data_Offset + i - 11];
-								sum += qlp_Coeff[9] * data[data_Offset + i - 10];
-								sum += qlp_Coeff[8] * data[data_Offset + i - 9];
-								sum += qlp_Coeff[7] * data[data_Offset + i - 8];
-								sum += qlp_Coeff[6] * data[data_Offset + i - 7];
-								sum += qlp_Coeff[5] * data[data_Offset + i - 6];
-								sum += qlp_Coeff[4] * data[data_Offset + i - 5];
-								sum += qlp_Coeff[3] * data[data_Offset + i - 4];
-								sum += qlp_Coeff[2] * data[data_Offset + i - 3];
-								sum += qlp_Coeff[1] * data[data_Offset + i - 2];
-								sum += qlp_Coeff[0] * data[data_Offset + i - 1];
+								sum += qlp_Coeff[10] * (Flac__int64)data[data_Offset + i - 11];
+								sum += qlp_Coeff[9] * (Flac__int64)data[data_Offset + i - 10];
+								sum += qlp_Coeff[8] * (Flac__int64)data[data_Offset + i - 9];
+								sum += qlp_Coeff[7] * (Flac__int64)data[data_Offset + i - 8];
+								sum += qlp_Coeff[6] * (Flac__int64)data[data_Offset + i - 7];
+								sum += qlp_Coeff[5] * (Flac__int64)data[data_Offset + i - 6];
+								sum += qlp_Coeff[4] * (Flac__int64)data[data_Offset + i - 5];
+								sum += qlp_Coeff[3] * (Flac__int64)data[data_Offset + i - 4];
+								sum += qlp_Coeff[2] * (Flac__int64)data[data_Offset + i - 3];
+								sum += qlp_Coeff[1] * (Flac__int64)data[data_Offset + i - 2];
+								sum += qlp_Coeff[0] * (Flac__int64)data[data_Offset + i - 1];
 
-								residual[i] = data[data_Offset + i] - (Flac__int32)(sum >> lp_Quantization);
+								residual[i] = (Flac__int32)(data[data_Offset + i] - (sum >> lp_Quantization));
 							}
 						}
 					}
@@ -661,18 +738,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 							for (int i = 0; i < data_Len; i++)
 							{
 								Flac__int64 sum = 0;
-								sum += qlp_Coeff[9] * data[data_Offset + i - 10];
-								sum += qlp_Coeff[8] * data[data_Offset + i - 9];
-								sum += qlp_Coeff[7] * data[data_Offset + i - 8];
-								sum += qlp_Coeff[6] * data[data_Offset + i - 7];
-								sum += qlp_Coeff[5] * data[data_Offset + i - 6];
-								sum += qlp_Coeff[4] * data[data_Offset + i - 5];
-								sum += qlp_Coeff[3] * data[data_Offset + i - 4];
-								sum += qlp_Coeff[2] * data[data_Offset + i - 3];
-								sum += qlp_Coeff[1] * data[data_Offset + i - 2];
-								sum += qlp_Coeff[0] * data[data_Offset + i - 1];
+								sum += qlp_Coeff[9] * (Flac__int64)data[data_Offset + i - 10];
+								sum += qlp_Coeff[8] * (Flac__int64)data[data_Offset + i - 9];
+								sum += qlp_Coeff[7] * (Flac__int64)data[data_Offset + i - 8];
+								sum += qlp_Coeff[6] * (Flac__int64)data[data_Offset + i - 7];
+								sum += qlp_Coeff[5] * (Flac__int64)data[data_Offset + i - 6];
+								sum += qlp_Coeff[4] * (Flac__int64)data[data_Offset + i - 5];
+								sum += qlp_Coeff[3] * (Flac__int64)data[data_Offset + i - 4];
+								sum += qlp_Coeff[2] * (Flac__int64)data[data_Offset + i - 3];
+								sum += qlp_Coeff[1] * (Flac__int64)data[data_Offset + i - 2];
+								sum += qlp_Coeff[0] * (Flac__int64)data[data_Offset + i - 1];
 
-								residual[i] = data[data_Offset + i] - (Flac__int32)(sum >> lp_Quantization);
+								residual[i] = (Flac__int32)(data[data_Offset + i] - (sum >> lp_Quantization));
 							}
 						}
 						else	// order == 9
@@ -680,17 +757,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 							for (int i = 0; i < data_Len; i++)
 							{
 								Flac__int64 sum = 0;
-								sum += qlp_Coeff[8] * data[data_Offset + i - 9];
-								sum += qlp_Coeff[7] * data[data_Offset + i - 8];
-								sum += qlp_Coeff[6] * data[data_Offset + i - 7];
-								sum += qlp_Coeff[5] * data[data_Offset + i - 6];
-								sum += qlp_Coeff[4] * data[data_Offset + i - 5];
-								sum += qlp_Coeff[3] * data[data_Offset + i - 4];
-								sum += qlp_Coeff[2] * data[data_Offset + i - 3];
-								sum += qlp_Coeff[1] * data[data_Offset + i - 2];
-								sum += qlp_Coeff[0] * data[data_Offset + i - 1];
+								sum += qlp_Coeff[8] * (Flac__int64)data[data_Offset + i - 9];
+								sum += qlp_Coeff[7] * (Flac__int64)data[data_Offset + i - 8];
+								sum += qlp_Coeff[6] * (Flac__int64)data[data_Offset + i - 7];
+								sum += qlp_Coeff[5] * (Flac__int64)data[data_Offset + i - 6];
+								sum += qlp_Coeff[4] * (Flac__int64)data[data_Offset + i - 5];
+								sum += qlp_Coeff[3] * (Flac__int64)data[data_Offset + i - 4];
+								sum += qlp_Coeff[2] * (Flac__int64)data[data_Offset + i - 3];
+								sum += qlp_Coeff[1] * (Flac__int64)data[data_Offset + i - 2];
+								sum += qlp_Coeff[0] * (Flac__int64)data[data_Offset + i - 1];
 
-								residual[i] = data[data_Offset + i] - (Flac__int32)(sum >> lp_Quantization);
+								residual[i] = (Flac__int32)(data[data_Offset + i] - (sum >> lp_Quantization));
 							}
 						}
 					}
@@ -704,16 +781,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 							for (int i = 0; i < data_Len; i++)
 							{
 								Flac__int64 sum = 0;
-								sum += qlp_Coeff[7] * data[data_Offset + i - 8];
-								sum += qlp_Coeff[6] * data[data_Offset + i - 7];
-								sum += qlp_Coeff[5] * data[data_Offset + i - 6];
-								sum += qlp_Coeff[4] * data[data_Offset + i - 5];
-								sum += qlp_Coeff[3] * data[data_Offset + i - 4];
-								sum += qlp_Coeff[2] * data[data_Offset + i - 3];
-								sum += qlp_Coeff[1] * data[data_Offset + i - 2];
-								sum += qlp_Coeff[0] * data[data_Offset + i - 1];
+								sum += qlp_Coeff[7] * (Flac__int64)data[data_Offset + i - 8];
+								sum += qlp_Coeff[6] * (Flac__int64)data[data_Offset + i - 7];
+								sum += qlp_Coeff[5] * (Flac__int64)data[data_Offset + i - 6];
+								sum += qlp_Coeff[4] * (Flac__int64)data[data_Offset + i - 5];
+								sum += qlp_Coeff[3] * (Flac__int64)data[data_Offset + i - 4];
+								sum += qlp_Coeff[2] * (Flac__int64)data[data_Offset + i - 3];
+								sum += qlp_Coeff[1] * (Flac__int64)data[data_Offset + i - 2];
+								sum += qlp_Coeff[0] * (Flac__int64)data[data_Offset + i - 1];
 
-								residual[i] = data[data_Offset + i] - (Flac__int32)(sum >> lp_Quantization);
+								residual[i] = (Flac__int32)(data[data_Offset + i] - (sum >> lp_Quantization));
 							}
 						}
 						else	// order == 7
@@ -721,15 +798,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 							for (int i = 0; i < data_Len; i++)
 							{
 								Flac__int64 sum = 0;
-								sum += qlp_Coeff[6] * data[data_Offset + i - 7];
-								sum += qlp_Coeff[5] * data[data_Offset + i - 6];
-								sum += qlp_Coeff[4] * data[data_Offset + i - 5];
-								sum += qlp_Coeff[3] * data[data_Offset + i - 4];
-								sum += qlp_Coeff[2] * data[data_Offset + i - 3];
-								sum += qlp_Coeff[1] * data[data_Offset + i - 2];
-								sum += qlp_Coeff[0] * data[data_Offset + i - 1];
+								sum += qlp_Coeff[6] * (Flac__int64)data[data_Offset + i - 7];
+								sum += qlp_Coeff[5] * (Flac__int64)data[data_Offset + i - 6];
+								sum += qlp_Coeff[4] * (Flac__int64)data[data_Offset + i - 5];
+								sum += qlp_Coeff[3] * (Flac__int64)data[data_Offset + i - 4];
+								sum += qlp_Coeff[2] * (Flac__int64)data[data_Offset + i - 3];
+								sum += qlp_Coeff[1] * (Flac__int64)data[data_Offset + i - 2];
+								sum += qlp_Coeff[0] * (Flac__int64)data[data_Offset + i - 1];
 
-								residual[i] = data[data_Offset + i] - (Flac__int32)(sum >> lp_Quantization);
+								residual[i] = (Flac__int32)(data[data_Offset + i] - (sum >> lp_Quantization));
 							}
 						}
 					}
@@ -740,14 +817,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 							for (int i = 0; i < data_Len; i++)
 							{
 								Flac__int64 sum = 0;
-								sum += qlp_Coeff[5] * data[data_Offset + i - 6];
-								sum += qlp_Coeff[4] * data[data_Offset + i - 5];
-								sum += qlp_Coeff[3] * data[data_Offset + i - 4];
-								sum += qlp_Coeff[2] * data[data_Offset + i - 3];
-								sum += qlp_Coeff[1] * data[data_Offset + i - 2];
-								sum += qlp_Coeff[0] * data[data_Offset + i - 1];
+								sum += qlp_Coeff[5] * (Flac__int64)data[data_Offset + i - 6];
+								sum += qlp_Coeff[4] * (Flac__int64)data[data_Offset + i - 5];
+								sum += qlp_Coeff[3] * (Flac__int64)data[data_Offset + i - 4];
+								sum += qlp_Coeff[2] * (Flac__int64)data[data_Offset + i - 3];
+								sum += qlp_Coeff[1] * (Flac__int64)data[data_Offset + i - 2];
+								sum += qlp_Coeff[0] * (Flac__int64)data[data_Offset + i - 1];
 
-								residual[i] = data[data_Offset + i] - (Flac__int32)(sum >> lp_Quantization);
+								residual[i] = (Flac__int32)(data[data_Offset + i] - (sum >> lp_Quantization));
 							}
 						}
 						else	// order == 5
@@ -755,13 +832,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 							for (int i = 0; i < data_Len; i++)
 							{
 								Flac__int64 sum = 0;
-								sum += qlp_Coeff[4] * data[data_Offset + i - 5];
-								sum += qlp_Coeff[3] * data[data_Offset + i - 4];
-								sum += qlp_Coeff[2] * data[data_Offset + i - 3];
-								sum += qlp_Coeff[1] * data[data_Offset + i - 2];
-								sum += qlp_Coeff[0] * data[data_Offset + i - 1];
+								sum += qlp_Coeff[4] * (Flac__int64)data[data_Offset + i - 5];
+								sum += qlp_Coeff[3] * (Flac__int64)data[data_Offset + i - 4];
+								sum += qlp_Coeff[2] * (Flac__int64)data[data_Offset + i - 3];
+								sum += qlp_Coeff[1] * (Flac__int64)data[data_Offset + i - 2];
+								sum += qlp_Coeff[0] * (Flac__int64)data[data_Offset + i - 1];
 
-								residual[i] = data[data_Offset + i] - (Flac__int32)(sum >> lp_Quantization);
+								residual[i] = (Flac__int32)(data[data_Offset + i] - (sum >> lp_Quantization));
 							}
 						}
 					}
@@ -775,12 +852,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 							for (int i = 0; i < data_Len; i++)
 							{
 								Flac__int64 sum = 0;
-								sum += qlp_Coeff[3] * data[data_Offset + i - 4];
-								sum += qlp_Coeff[2] * data[data_Offset + i - 3];
-								sum += qlp_Coeff[1] * data[data_Offset + i - 2];
-								sum += qlp_Coeff[0] * data[data_Offset + i - 1];
+								sum += qlp_Coeff[3] * (Flac__int64)data[data_Offset + i - 4];
+								sum += qlp_Coeff[2] * (Flac__int64)data[data_Offset + i - 3];
+								sum += qlp_Coeff[1] * (Flac__int64)data[data_Offset + i - 2];
+								sum += qlp_Coeff[0] * (Flac__int64)data[data_Offset + i - 1];
 
-								residual[i] = data[data_Offset + i] - (Flac__int32)(sum >> lp_Quantization);
+								residual[i] = (Flac__int32)(data[data_Offset + i] - (sum >> lp_Quantization));
 							}
 						}
 						else	// order == 3
@@ -788,11 +865,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 							for (int i = 0; i < data_Len; i++)
 							{
 								Flac__int64 sum = 0;
-								sum += qlp_Coeff[2] * data[data_Offset + i - 3];
-								sum += qlp_Coeff[1] * data[data_Offset + i - 2];
-								sum += qlp_Coeff[0] * data[data_Offset + i - 1];
+								sum += qlp_Coeff[2] * (Flac__int64)data[data_Offset + i - 3];
+								sum += qlp_Coeff[1] * (Flac__int64)data[data_Offset + i - 2];
+								sum += qlp_Coeff[0] * (Flac__int64)data[data_Offset + i - 1];
 
-								residual[i] = data[data_Offset + i] - (Flac__int32)(sum >> lp_Quantization);
+								residual[i] = (Flac__int32)(data[data_Offset + i] - (sum >> lp_Quantization));
 							}
 						}
 					}
@@ -803,16 +880,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 							for (int i = 0; i < data_Len; i++)
 							{
 								Flac__int64 sum = 0;
-								sum += qlp_Coeff[1] * data[data_Offset + i - 2];
-								sum += qlp_Coeff[0] * data[data_Offset + i - 1];
+								sum += qlp_Coeff[1] * (Flac__int64)data[data_Offset + i - 2];
+								sum += qlp_Coeff[0] * (Flac__int64)data[data_Offset + i - 1];
 
-								residual[i] = data[data_Offset + i] - (Flac__int32)(sum >> lp_Quantization);
+								residual[i] = (Flac__int32)(data[data_Offset + i] - (sum >> lp_Quantization));
 							}
 						}
 						else	// order == 1
 						{
 							for (int i = 0; i < data_Len; i++)
-								residual[i] = data[data_Offset + i] - (Flac__int32)((qlp_Coeff[0] * (Flac__int64)data[data_Offset + i - 1]) >> lp_Quantization);
+								residual[i] = (Flac__int32)(data[data_Offset + i] - ((qlp_Coeff[0] * (Flac__int64)data[data_Offset + i - 1]) >> lp_Quantization));
 						}
 					}
 				}
@@ -958,9 +1035,455 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 						}
 					}
 
-					residual[i] = data[data_Offset + i] - (Flac__int32)(sum >> lp_Quantization);
+					residual[i] = (Flac__int32)(data[data_Offset + i] - (sum >> lp_Quantization));
 				}
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public static Flac__bool Flac__Lpc_Compute_Residual_From_Qlp_Coefficients_Limit_Residual(Flac__int32[] data, uint32_t data_Offset, uint32_t data_Len, Flac__int32[] qlp_Coeff, uint32_t order, int lp_Quantization, Flac__int32[] residual)
+		{
+			Debug.Assert(order > 0);
+			Debug.Assert(order <= 32);
+
+			for (int i = 0; i < data_Len; i++)
+			{
+				Flac__int64 sum = 0;
+
+				switch (order)
+				{
+					case 32:
+					{
+						sum += qlp_Coeff[31] * (Flac__int64)data[data_Offset + i - 32];
+						goto case 31;
+					}
+
+					case 31:
+					{
+						sum += qlp_Coeff[30] * (Flac__int64)data[data_Offset + i - 31];
+						goto case 30;
+					}
+
+					case 30:
+					{
+						sum += qlp_Coeff[29] * (Flac__int64)data[data_Offset + i - 30];
+						goto case 29;
+					}
+
+					case 29:
+					{
+						sum += qlp_Coeff[28] * (Flac__int64)data[data_Offset + i - 29];
+						goto case 28;
+					}
+
+					case 28:
+					{
+						sum += qlp_Coeff[27] * (Flac__int64)data[data_Offset + i - 28];
+						goto case 27;
+					}
+
+					case 27:
+					{
+						sum += qlp_Coeff[26] * (Flac__int64)data[data_Offset + i - 27];
+						goto case 26;
+					}
+
+					case 26:
+					{
+						sum += qlp_Coeff[25] * (Flac__int64)data[data_Offset + i - 26];
+						goto case 25;
+					}
+
+					case 25:
+					{
+						sum += qlp_Coeff[24] * (Flac__int64)data[data_Offset + i - 25];
+						goto case 24;
+					}
+
+					case 24:
+					{
+						sum += qlp_Coeff[23] * (Flac__int64)data[data_Offset + i - 24];
+						goto case 23;
+					}
+
+					case 23:
+					{
+						sum += qlp_Coeff[22] * (Flac__int64)data[data_Offset + i - 23];
+						goto case 22;
+					}
+
+					case 22:
+					{
+						sum += qlp_Coeff[21] * (Flac__int64)data[data_Offset + i - 22];
+						goto case 21;
+					}
+
+					case 21:
+					{
+						sum += qlp_Coeff[20] * (Flac__int64)data[data_Offset + i - 21];
+						goto case 20;
+					}
+
+					case 20:
+					{
+						sum += qlp_Coeff[19] * (Flac__int64)data[data_Offset + i - 20];
+						goto case 19;
+					}
+
+					case 19:
+					{
+						sum += qlp_Coeff[18] * (Flac__int64)data[data_Offset + i - 19];
+						goto case 18;
+					}
+
+					case 18:
+					{
+						sum += qlp_Coeff[17] * (Flac__int64)data[data_Offset + i - 18];
+						goto case 17;
+					}
+
+					case 17:
+					{
+						sum += qlp_Coeff[16] * (Flac__int64)data[data_Offset + i - 17];
+						goto case 16;
+					}
+
+					case 16:
+					{
+						sum += qlp_Coeff[15] * (Flac__int64)data[data_Offset + i - 16];
+						goto case 15;
+					}
+
+					case 15:
+					{
+						sum += qlp_Coeff[14] * (Flac__int64)data[data_Offset + i - 15];
+						goto case 14;
+					}
+
+					case 14:
+					{
+						sum += qlp_Coeff[13] * (Flac__int64)data[data_Offset + i - 14];
+						goto case 13;
+					}
+
+					case 13:
+					{
+						sum += qlp_Coeff[12] * (Flac__int64)data[data_Offset + i - 13];
+						goto case 12;
+					}
+
+					case 12:
+					{
+						sum += qlp_Coeff[11] * (Flac__int64)data[data_Offset + i - 12];
+						goto case 11;
+					}
+
+					case 11:
+					{
+						sum += qlp_Coeff[10] * (Flac__int64)data[data_Offset + i - 11];
+						goto case 10;
+					}
+
+					case 10:
+					{
+						sum += qlp_Coeff[9] * (Flac__int64)data[data_Offset + i - 10];
+						goto case 9;
+					}
+
+					case 9:
+					{
+						sum += qlp_Coeff[8] * (Flac__int64)data[data_Offset + i - 9];
+						goto case 8;
+					}
+
+					case 8:
+					{
+						sum += qlp_Coeff[7] * (Flac__int64)data[data_Offset + i - 8];
+						goto case 7;
+					}
+
+					case 7:
+					{
+						sum += qlp_Coeff[6] * (Flac__int64)data[data_Offset + i - 7];
+						goto case 6;
+					}
+
+					case 6:
+					{
+						sum += qlp_Coeff[5] * (Flac__int64)data[data_Offset + i - 6];
+						goto case 5;
+					}
+
+					case 5:
+					{
+						sum += qlp_Coeff[4] * (Flac__int64)data[data_Offset + i - 5];
+						goto case 4;
+					}
+
+					case 4:
+					{
+						sum += qlp_Coeff[3] * (Flac__int64)data[data_Offset + i - 4];
+						goto case 3;
+					}
+
+					case 3:
+					{
+						sum += qlp_Coeff[2] * (Flac__int64)data[data_Offset + i - 3];
+						goto case 2;
+					}
+
+					case 2:
+					{
+						sum += qlp_Coeff[1] * (Flac__int64)data[data_Offset + i - 2];
+						goto case 1;
+					}
+
+					case 1:
+					{
+						sum += qlp_Coeff[0] * (Flac__int64)data[data_Offset + i - 1];
+						break;
+					}
+				}
+
+				Flac__int64 residual_To_Check = data[data_Offset + i] - (sum >> lp_Quantization);
+
+				// Residual must not be INT32_MIN because abs(INT32_MIN) is undefined
+				if ((residual_To_Check <= int32_t.MinValue) || (residual_To_Check > int32_t.MaxValue))
+					return false;
+				else
+					residual[i] = (Flac__int32)residual_To_Check;
+			}
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public static Flac__bool Flac__Lpc_Compute_Residual_From_Qlp_Coefficients_Limit_Residual_33Bit(Flac__int64[] data, uint32_t data_Offset, uint32_t data_Len, Flac__int32[] qlp_Coeff, uint32_t order, int lp_Quantization, Flac__int32[] residual)
+		{
+			Debug.Assert(order > 0);
+			Debug.Assert(order <= 32);
+
+			for (int i = 0; i < data_Len; i++)
+			{
+				Flac__int64 sum = 0;
+
+				switch (order)
+				{
+					case 32:
+					{
+						sum += qlp_Coeff[31] * data[data_Offset + i - 32];
+						goto case 31;
+					}
+
+					case 31:
+					{
+						sum += qlp_Coeff[30] * data[data_Offset + i - 31];
+						goto case 30;
+					}
+
+					case 30:
+					{
+						sum += qlp_Coeff[29] * data[data_Offset + i - 30];
+						goto case 29;
+					}
+
+					case 29:
+					{
+						sum += qlp_Coeff[28] * data[data_Offset + i - 29];
+						goto case 28;
+					}
+
+					case 28:
+					{
+						sum += qlp_Coeff[27] * data[data_Offset + i - 28];
+						goto case 27;
+					}
+
+					case 27:
+					{
+						sum += qlp_Coeff[26] * data[data_Offset + i - 27];
+						goto case 26;
+					}
+
+					case 26:
+					{
+						sum += qlp_Coeff[25] * data[data_Offset + i - 26];
+						goto case 25;
+					}
+
+					case 25:
+					{
+						sum += qlp_Coeff[24] * data[data_Offset + i - 25];
+						goto case 24;
+					}
+
+					case 24:
+					{
+						sum += qlp_Coeff[23] * data[data_Offset + i - 24];
+						goto case 23;
+					}
+
+					case 23:
+					{
+						sum += qlp_Coeff[22] * data[data_Offset + i - 23];
+						goto case 22;
+					}
+
+					case 22:
+					{
+						sum += qlp_Coeff[21] * data[data_Offset + i - 22];
+						goto case 21;
+					}
+
+					case 21:
+					{
+						sum += qlp_Coeff[20] * data[data_Offset + i - 21];
+						goto case 20;
+					}
+
+					case 20:
+					{
+						sum += qlp_Coeff[19] * data[data_Offset + i - 20];
+						goto case 19;
+					}
+
+					case 19:
+					{
+						sum += qlp_Coeff[18] * data[data_Offset + i - 19];
+						goto case 18;
+					}
+
+					case 18:
+					{
+						sum += qlp_Coeff[17] * data[data_Offset + i - 18];
+						goto case 17;
+					}
+
+					case 17:
+					{
+						sum += qlp_Coeff[16] * data[data_Offset + i - 17];
+						goto case 16;
+					}
+
+					case 16:
+					{
+						sum += qlp_Coeff[15] * data[data_Offset + i - 16];
+						goto case 15;
+					}
+
+					case 15:
+					{
+						sum += qlp_Coeff[14] * data[data_Offset + i - 15];
+						goto case 14;
+					}
+
+					case 14:
+					{
+						sum += qlp_Coeff[13] * data[data_Offset + i - 14];
+						goto case 13;
+					}
+
+					case 13:
+					{
+						sum += qlp_Coeff[12] * data[data_Offset + i - 13];
+						goto case 12;
+					}
+
+					case 12:
+					{
+						sum += qlp_Coeff[11] * data[data_Offset + i - 12];
+						goto case 11;
+					}
+
+					case 11:
+					{
+						sum += qlp_Coeff[10] * data[data_Offset + i - 11];
+						goto case 10;
+					}
+
+					case 10:
+					{
+						sum += qlp_Coeff[9] * data[data_Offset + i - 10];
+						goto case 9;
+					}
+
+					case 9:
+					{
+						sum += qlp_Coeff[8] * data[data_Offset + i - 9];
+						goto case 8;
+					}
+
+					case 8:
+					{
+						sum += qlp_Coeff[7] * data[data_Offset + i - 8];
+						goto case 7;
+					}
+
+					case 7:
+					{
+						sum += qlp_Coeff[6] * data[data_Offset + i - 7];
+						goto case 6;
+					}
+
+					case 6:
+					{
+						sum += qlp_Coeff[5] * data[data_Offset + i - 6];
+						goto case 5;
+					}
+
+					case 5:
+					{
+						sum += qlp_Coeff[4] * data[data_Offset + i - 5];
+						goto case 4;
+					}
+
+					case 4:
+					{
+						sum += qlp_Coeff[3] * data[data_Offset + i - 4];
+						goto case 3;
+					}
+
+					case 3:
+					{
+						sum += qlp_Coeff[2] * data[data_Offset + i - 3];
+						goto case 2;
+					}
+
+					case 2:
+					{
+						sum += qlp_Coeff[1] * data[data_Offset + i - 2];
+						goto case 1;
+					}
+
+					case 1:
+					{
+						sum += qlp_Coeff[0] * data[data_Offset + i - 1];
+						break;
+					}
+				}
+
+				Flac__int64 residual_To_Check = data[data_Offset + i] - (sum >> lp_Quantization);
+
+				// Residual must not be INT32_MIN because abs(INT32_MIN) is undefined
+				if ((residual_To_Check <= int32_t.MinValue) || (residual_To_Check > int32_t.MaxValue))
+					return false;
+				else
+					residual[i] = (Flac__int32)residual_To_Check;
+			}
+
+			return true;
 		}
 
 
@@ -981,11 +1504,52 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 
 		/********************************************************************/
 		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public static uint32_t Flac__Lpc_Max_Prediction_Before_Shift_Bps(uint32_t subframe_Bps, Flac__int32[] qlp_Coeff, uint32_t order)
+		{
+			// This used to be subframe_bps + qlp_coeff_precision + FLAC__bitmath_ilog2(order)
+			// but that treats both the samples as well as the predictor as unknown. The
+			// predictor is known however, so taking the log2 of the sum of the absolute values
+			// of all coefficients is a more accurate representation of the predictor
+			Flac__int32 abs_Sum_Of_Qlp_Coeff = 0;
+
+			for (uint32_t i = 0; i < order; i++)
+				abs_Sum_Of_Qlp_Coeff += Math.Abs(qlp_Coeff[i]);
+
+			if (abs_Sum_Of_Qlp_Coeff == 0)
+				abs_Sum_Of_Qlp_Coeff = 1;
+
+			return subframe_Bps + BitMath.Flac__BitMath_SiLog2(abs_Sum_Of_Qlp_Coeff);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public static uint32_t Flac__Lpc_Max_Residual_Bps(uint32_t subframe_Bps, Flac__int32[] qlp_Coeff, uint32_t order, int lp_Quantization)
+		{
+			Flac__int32 predictor_Sum_Bps = (Flac__int32)Flac__Lpc_Max_Prediction_Before_Shift_Bps(subframe_Bps, qlp_Coeff, order) - lp_Quantization;
+
+			if ((int)subframe_Bps > predictor_Sum_Bps)
+				return subframe_Bps + 1;
+			else
+				return (uint32_t)predictor_Sum_Bps + 1;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Restore the original signal by summing the residual and the
 		/// predictor
 		/// </summary>
 		/********************************************************************/
-		public void Restore_Signal(Flac__int32[] residual, uint32_t data_Len, Flac__int32[] qlp_Coeff, uint32_t order, int lp_Quantization, Flac__int32[] data, uint32_t data_Offset)
+		public static void Flac__Lpc_Restore_Signal(Flac__int32[] residual, uint32_t data_Len, Flac__int32[] qlp_Coeff, uint32_t order, int lp_Quantization, Flac__int32[] data, uint32_t data_Offset)
 		{
 			Debug.Assert(order > 0);
 			Debug.Assert(order <= 32);
@@ -1354,10 +1918,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 
 		/********************************************************************/
 		/// <summary>
-		/// Generic 64-bit datapath
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Restore_Signal_64Bit(Flac__int32[] residual, uint32_t data_Len, Flac__int32[] qlp_Coeff, uint32_t order, int lp_Quantization, Flac__int32[] data, uint32_t data_Offset)
+		public static void Flac__Lpc_Restore_Signal_Wide(Flac__int32[] residual, uint32_t data_Len, Flac__int32[] qlp_Coeff, uint32_t order, int lp_Quantization, Flac__int32[] data, uint32_t data_Offset)
 		{
 			Debug.Assert(order > 0);
 			Debug.Assert(order <= 32);
@@ -1726,14 +2290,215 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 
 		/********************************************************************/
 		/// <summary>
-		/// For use when the signal is less-or-equal-to 16 bits-per-sample,
-		/// or less-or-equal-to 15 bits-per-sample on a side channel (which
-		/// requires 1 extra bit)
+		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Restore_Signal_16Bit(Flac__int32[] residual, uint32_t data_Len, Flac__int32[] qlp_Coeff, uint32_t order, int lp_Quantization, Flac__int32[] data, uint32_t data_Offset)
+		public static void Flac__Lpc_Restore_Signal_Wide_33Bit(Flac__int32[] residual, uint32_t data_Len, Flac__int32[] qlp_Coeff, uint32_t order, int lp_Quantization, Flac__int64[] data, uint32_t data_Offset)
 		{
-			Restore_Signal(residual, data_Len, qlp_Coeff, order, lp_Quantization, data, data_Offset);
+			Debug.Assert(order > 0);
+			Debug.Assert(order <= 32);
+
+			for (int i = 0; i < data_Len; i++)
+			{
+				Flac__int64 sum = 0;
+
+				switch (order)
+				{
+					case 32:
+					{
+						sum += qlp_Coeff[31] * data[data_Offset + i - 32];
+						goto case 31;
+					}
+
+					case 31:
+					{
+						sum += qlp_Coeff[30] * data[data_Offset + i - 31];
+						goto case 30;
+					}
+
+					case 30:
+					{
+						sum += qlp_Coeff[29] * data[data_Offset + i - 30];
+						goto case 29;
+					}
+
+					case 29:
+					{
+						sum += qlp_Coeff[28] * data[data_Offset + i - 29];
+						goto case 28;
+					}
+
+					case 28:
+					{
+						sum += qlp_Coeff[27] * data[data_Offset + i - 28];
+						goto case 27;
+					}
+
+					case 27:
+					{
+						sum += qlp_Coeff[26] * data[data_Offset + i - 27];
+						goto case 26;
+					}
+
+					case 26:
+					{
+						sum += qlp_Coeff[25] * data[data_Offset + i - 26];
+						goto case 25;
+					}
+
+					case 25:
+					{
+						sum += qlp_Coeff[24] * data[data_Offset + i - 25];
+						goto case 24;
+					}
+
+					case 24:
+					{
+						sum += qlp_Coeff[23] * data[data_Offset + i - 24];
+						goto case 23;
+					}
+
+					case 23:
+					{
+						sum += qlp_Coeff[22] * data[data_Offset + i - 23];
+						goto case 22;
+					}
+
+					case 22:
+					{
+						sum += qlp_Coeff[21] * data[data_Offset + i - 22];
+						goto case 21;
+					}
+
+					case 21:
+					{
+						sum += qlp_Coeff[20] * data[data_Offset + i - 21];
+						goto case 20;
+					}
+
+					case 20:
+					{
+						sum += qlp_Coeff[19] * data[data_Offset + i - 20];
+						goto case 19;
+					}
+
+					case 19:
+					{
+						sum += qlp_Coeff[18] * data[data_Offset + i - 19];
+						goto case 18;
+					}
+
+					case 18:
+					{
+						sum += qlp_Coeff[17] * data[data_Offset + i - 18];
+						goto case 17;
+					}
+
+					case 17:
+					{
+						sum += qlp_Coeff[16] * data[data_Offset + i - 17];
+						goto case 16;
+					}
+
+					case 16:
+					{
+						sum += qlp_Coeff[15] * data[data_Offset + i - 16];
+						goto case 15;
+					}
+
+					case 15:
+					{
+						sum += qlp_Coeff[14] * data[data_Offset + i - 15];
+						goto case 14;
+					}
+
+					case 14:
+					{
+						sum += qlp_Coeff[13] * data[data_Offset + i - 14];
+						goto case 13;
+					}
+
+					case 13:
+					{
+						sum += qlp_Coeff[12] * data[data_Offset + i - 13];
+						goto case 12;
+					}
+
+					case 12:
+					{
+						sum += qlp_Coeff[11] * data[data_Offset + i - 12];
+						goto case 11;
+					}
+
+					case 11:
+					{
+						sum += qlp_Coeff[10] * data[data_Offset + i - 11];
+						goto case 10;
+					}
+
+					case 10:
+					{
+						sum += qlp_Coeff[9] * data[data_Offset + i - 10];
+						goto case 9;
+					}
+
+					case 9:
+					{
+						sum += qlp_Coeff[8] * data[data_Offset + i - 9];
+						goto case 8;
+					}
+
+					case 8:
+					{
+						sum += qlp_Coeff[7] * data[data_Offset + i - 8];
+						goto case 7;
+					}
+
+					case 7:
+					{
+						sum += qlp_Coeff[6] * data[data_Offset + i - 7];
+						goto case 6;
+					}
+
+					case 6:
+					{
+						sum += qlp_Coeff[5] * data[data_Offset + i - 6];
+						goto case 5;
+					}
+
+					case 5:
+					{
+						sum += qlp_Coeff[4] * data[data_Offset + i - 5];
+						goto case 4;
+					}
+
+					case 4:
+					{
+						sum += qlp_Coeff[3] * data[data_Offset + i - 4];
+						goto case 3;
+					}
+
+					case 3:
+					{
+						sum += qlp_Coeff[2] * data[data_Offset + i - 3];
+						goto case 2;
+					}
+
+					case 2:
+					{
+						sum += qlp_Coeff[1] * data[data_Offset + i - 2];
+						goto case 1;
+					}
+
+					case 1:
+					{
+						sum += qlp_Coeff[0] * data[data_Offset + i - 1];
+						break;
+					}
+				}
+
+				data[data_Offset + i] = residual[i] + (sum >> lp_Quantization);
+			}
 		}
 
 
@@ -1804,6 +2569,34 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 				return 1e32;
 			else
 				return 0.0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void Lpc_Compute_Autocorrelation_Intrin(Flac__real[] data, uint32_t data_Len, uint32_t lag, uint32_t maxLag, double[] autoc)
+		{
+			Debug.Assert(lag <= maxLag);
+
+			for (int i = 0; i < maxLag; i++)
+				autoc[i] = 0.0;
+
+			for (int i = 0; i < maxLag; i++)
+			{
+				for (int j = 0; j <= i; j++)
+					autoc[j] += (double)data[i] * data[i - j];
+			}
+
+			for (int i = (int)maxLag; i < data_Len; i++)
+			{
+				for (int j = 0; j < maxLag; j++)
+					autoc[j] += (double)data[i] * data[i -j];
+			}
 		}
 		#endregion
 	}

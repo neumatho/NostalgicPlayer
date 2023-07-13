@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// Return the vendor string
 		/// </summary>
 		/********************************************************************/
-		public static string Flac__Vendor_String => "NostalgicPlayer (reference libFLAC 1.3.4 20220220)";
+		public static string Flac__Vendor_String => "NostalgicPlayer (reference libFLAC 1.4.3 20230623)";
 
 
 
@@ -54,7 +54,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/********************************************************************/
 		public static Flac__bool Flac__Format_Sample_Rate_Is_Valid(uint32_t sample_Rate)
 		{
-			if ((sample_Rate == 0) || (sample_Rate > Constants.Flac__Max_Sample_Rate))
+			if (sample_Rate > Constants.Flac__Max_Sample_Rate)
 				return false;
 			else
 				return true;
@@ -89,8 +89,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/********************************************************************/
 		public static Flac__bool Flac__Format_Sample_Rate_Is_Subset(uint32_t sample_Rate)
 		{
-			if (!Flac__Format_Sample_Rate_Is_Valid(sample_Rate) || ((sample_Rate >= (1 << 16)) && !((sample_Rate % 1000 == 0) || (sample_Rate % 10 == 0))))
+			if ( // Sample rate is not subset of
+				!Flac__Format_Sample_Rate_Is_Valid(sample_Rate) ||	// Sample rate is invalid or
+				(sample_Rate >= ((1 << 16) * 10)) ||	// Sample rate is larger then or equal to 655360 or
+				((sample_Rate >= (1 << 16)) && (sample_Rate % 10 != 0)))	// Sample rate is >= 65536 and not divisible by 10
+			{
 				return false;
+			}
 			else
 				return true;
 		}
@@ -110,6 +115,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			Flac__bool got_Prev = false;
 
 			Debug.Assert(seek_Table != null);
+
+			if (((Flac__uint64)seek_Table.Num_Points * Constants.Flac__Stream_Metadata_SeekPoint_Length) >= (1U << (int)Constants.Flac__Stream_Metadata_Length_Len))
+				return false;
 
 			for (uint32_t i = 0; i < seek_Table.Num_Points; i++)
 			{
@@ -513,9 +521,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		{
 			Debug.Assert(@object != null);
 
-			Debug.Assert((@object.Capacity_By_Order > 0) || ((@object.Parameters == null) && (@object.Raw_Bits == null)));
-
-			if (@object.Capacity_By_Order < max_Partition_Order)
+			if ((@object.Capacity_By_Order < max_Partition_Order) || (@object.Parameters == null) || (@object.Raw_Bits == null))
 			{
 				if ((@object.Parameters = Alloc.Safe_Realloc(@object.Parameters, 1U << (int)max_Partition_Order)) == null)
 					return false;

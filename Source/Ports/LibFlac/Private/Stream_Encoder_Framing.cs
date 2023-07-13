@@ -21,9 +21,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static Flac__bool Flac__Add_Metadata_Block(Flac__StreamMetadata metadata, BitWriter bw)
+		public static Flac__bool Flac__Add_Metadata_Block(Flac__StreamMetadata metadata, BitWriter bw, Flac__bool update_Vendor_String)
 		{
 			uint32_t vendor_String_Length = (uint32_t)Encoding.UTF8.GetByteCount(Format.Flac__Vendor_String);
+			uint32_t start_Bits = bw.Flac__BitWriter_Get_Input_Bits_Unconsumed();
+
+			Debug.Assert(bw.Flac__BitWriter_Is_Byte_Aligned());
 
 			if (!bw.Flac__BitWriter_Write_Raw_UInt32(metadata.Is_Last ? 1U : 0, Constants.Flac__Stream_Metadata_Is_Last_Len))
 				return false;
@@ -32,23 +35,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 				return false;
 
 			// First, for VORBIS_COMMENTs, adjust the length to reflect our vendor string
-			uint32_t i = metadata.Length;
+			uint32_t metadata_Length = metadata.Length;
 
-			if (metadata.Type == Flac__MetadataType.Vorbis_Comment)
+			if ((metadata.Type == Flac__MetadataType.Vorbis_Comment) && update_Vendor_String)
 			{
 				Debug.Assert((((Flac__StreamMetadata_VorbisComment)metadata.Data).Vendor_String.Length == 0) || (((Flac__StreamMetadata_VorbisComment)metadata.Data).Vendor_String.Entry != null));
 
-				i -= ((Flac__StreamMetadata_VorbisComment)metadata.Data).Vendor_String.Length;
-				i += vendor_String_Length;
+				metadata_Length -= ((Flac__StreamMetadata_VorbisComment)metadata.Data).Vendor_String.Length;
+				metadata_Length += vendor_String_Length;
 			}
 
-			Debug.Assert(i < (1 << (int)Constants.Flac__Stream_Metadata_Length_Len));
+			Debug.Assert(metadata_Length < (1 << (int)Constants.Flac__Stream_Metadata_Length_Len));
 
 			// Double protection
-			if (i >= (1 << (int)Constants.Flac__Stream_Metadata_Length_Len))
+			if (metadata_Length >= (1 << (int)Constants.Flac__Stream_Metadata_Length_Len))
 				return false;
 
-			if (!bw.Flac__BitWriter_Write_Raw_UInt32(i, Constants.Flac__Stream_Metadata_Length_Len))
+			if (!bw.Flac__BitWriter_Write_Raw_UInt32(metadata_Length, Constants.Flac__Stream_Metadata_Length_Len))
 				return false;
 
 			switch (metadata.Type)
@@ -94,10 +97,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 					if (!bw.Flac__BitWriter_Write_Raw_UInt32(metaStreamInfo.Bits_Per_Sample - 1, Constants.Flac__Stream_Metadata_StreamInfo_Bits_Per_Sample_Len))
 						return false;
 
-					Debug.Assert(metaStreamInfo.Total_Samples <= (1L << (int)Constants.Flac__Stream_Metadata_StreamInfo_Total_Samples_Len));
-
-					if (!bw.Flac__BitWriter_Write_Raw_UInt64(metaStreamInfo.Total_Samples, Constants.Flac__Stream_Metadata_StreamInfo_Total_Samples_Len))
-						return false;
+					if (metaStreamInfo.Total_Samples >= (1L << (int)Constants.Flac__Stream_Metadata_StreamInfo_Total_Samples_Len))
+					{
+						if (!bw.Flac__BitWriter_Write_Raw_UInt64(0, Constants.Flac__Stream_Metadata_StreamInfo_Total_Samples_Len))
+							return false;
+					}
+					else
+					{
+						if (!bw.Flac__BitWriter_Write_Raw_UInt64(metaStreamInfo.Total_Samples, Constants.Flac__Stream_Metadata_StreamInfo_Total_Samples_Len))
+							return false;
+					}
 
 					if (!bw.Flac__BitWriter_Write_Byte_Block(metaStreamInfo.Md5Sum, 16))
 						return false;
@@ -130,7 +139,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 				{
 					Flac__StreamMetadata_SeekTable metaSeekTable = (Flac__StreamMetadata_SeekTable)metadata.Data;
 
-					for (i = 0; i < metaSeekTable.Num_Points; i++)
+					for (uint32_t i = 0; i < metaSeekTable.Num_Points; i++)
 					{
 						if (!bw.Flac__BitWriter_Write_Raw_UInt64(metaSeekTable.Points[i].Sample_Number, Constants.Flac__Stream_Metadata_SeekPoint_Sample_Number_Len))
 							return false;
@@ -148,16 +157,27 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 				{
 					Flac__StreamMetadata_VorbisComment metaVorbisComment = (Flac__StreamMetadata_VorbisComment)metadata.Data;
 
-					if (!bw.Flac__BitWriter_Write_Raw_UInt32_Little_Endian(vendor_String_Length))
-						return false;
+					if (update_Vendor_String)
+					{
+						if (!bw.Flac__BitWriter_Write_Raw_UInt32_Little_Endian(vendor_String_Length))
+							return false;
 
-					if (!bw.Flac__BitWriter_Write_Byte_Block(Encoding.UTF8.GetBytes(Format.Flac__Vendor_String), vendor_String_Length))
-						return false;
+						if (!bw.Flac__BitWriter_Write_Byte_Block(Encoding.UTF8.GetBytes(Format.Flac__Vendor_String), vendor_String_Length))
+							return false;
+					}
+					else
+					{
+						if (!bw.Flac__BitWriter_Write_Raw_UInt32_Little_Endian(metaVorbisComment.Vendor_String.Length))
+							return false;
+
+						if (!bw.Flac__BitWriter_Write_Byte_Block(metaVorbisComment.Vendor_String.Entry, metaVorbisComment.Vendor_String.Length))
+							return false;
+					}
 
 					if (!bw.Flac__BitWriter_Write_Raw_UInt32_Little_Endian(metaVorbisComment.Num_Comments))
 						return false;
 
-					for (i = 0; i < metaVorbisComment.Num_Comments; i++)
+					for (uint32_t i = 0; i < metaVorbisComment.Num_Comments; i++)
 					{
 						if (!bw.Flac__BitWriter_Write_Raw_UInt32_Little_Endian(metaVorbisComment.Comments[i].Length))
 							return false;
@@ -189,7 +209,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 					if (!bw.Flac__BitWriter_Write_Raw_UInt32(metaCueSheet.Num_Tracks, Constants.Flac__Stream_Metadata_CueSheet_Num_Tracks_Len))
 						return false;
 
-					for (i = 0; i < metaCueSheet.Num_Tracks; i++)
+					for (uint32_t i = 0; i < metaCueSheet.Num_Tracks; i++)
 					{
 						Flac__StreamMetadata_CueSheet_Track track = metaCueSheet.Tracks[i];
 
@@ -284,6 +304,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 
 					break;
 				}
+			}
+
+			// Now check whether metadata block length was correct
+			{
+				uint32_t length_In_Bits = bw.Flac__BitWriter_Get_Input_Bits_Unconsumed();
+
+				if (length_In_Bits < start_Bits)
+					return false;
+
+				length_In_Bits -= start_Bits;
+				if (((length_In_Bits % 8) != 0) || (length_In_Bits != (metadata_Length * 8 + 32)))
+					return false;
 			}
 
 			Debug.Assert(bw.Flac__BitWriter_Is_Byte_Aligned());
@@ -488,7 +520,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 				{
 					if ((header.Sample_Rate <= 255000) && ((header.Sample_Rate % 1000) == 0))
 						sample_Rate_Hint = u = 12;
-					else if ((header.Sample_Rate % 10) == 0)
+					else if ((header.Sample_Rate <= 655350) && ((header.Sample_Rate % 10) == 0))
 						sample_Rate_Hint = u = 14;
 					else if (header.Sample_Rate <= 0xffff)
 						sample_Rate_Hint = u = 13;
@@ -577,6 +609,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 					break;
 				}
 
+				case 32:
+				{
+					u = 7;
+					break;
+				}
+
 				default:
 				{
 					u = 0;
@@ -655,7 +693,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 		{
 			Flac__bool ok = bw.Flac__BitWriter_Write_Raw_UInt32(Constants.Flac__SubFrame_Type_Constant_Byte_Aligned_Mask | (wasted_Bits != 0 ? 1U : 0), Constants.Flac__SubFrame_Zero_Pad_Len + Constants.Flac__SubFrame_Type_Len + Constants.Flac__SubFrame_Wasted_Bits_Flag_Len) &&
 							(wasted_Bits != 0 ? bw.Flac__BitWriter_Write_Unary_Unsigned(wasted_Bits - 1) : true) &&
-							bw.Flac__BitWriter_Write_Raw_Int32(subFrame.Value, subFrame_Bps);
+							bw.Flac__BitWriter_Write_Raw_Int64(subFrame.Value, subFrame_Bps);
 
 			return ok;
 		}
@@ -680,7 +718,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 
 			for (uint32_t i = 0; i < subFrame.Order; i++)
 			{
-				if (!bw.Flac__BitWriter_Write_Raw_Int32(subFrame.Warmup[i], subFrame_Bps))
+				if (!bw.Flac__BitWriter_Write_Raw_Int64(subFrame.Warmup[i], subFrame_Bps))
 					return false;
 			}
 
@@ -730,7 +768,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 
 			for (uint32_t i = 0; i < subFrame.Order; i++)
 			{
-				if (!bw.Flac__BitWriter_Write_Raw_Int32(subFrame.Warmup[i], subFrame_Bps))
+				if (!bw.Flac__BitWriter_Write_Raw_Int64(subFrame.Warmup[i], subFrame_Bps))
 					return false;
 			}
 
@@ -781,8 +819,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 		/********************************************************************/
 		public static Flac__bool Flac__SubFrame_Add_Verbatim(Flac__SubFrame_Verbatim subFrame, uint32_t samples, uint32_t subFrame_Bps, uint32_t wasted_Bits, BitWriter bw)
 		{
-			Flac__int32[] signal = subFrame.Data;
-
 			if (!bw.Flac__BitWriter_Write_Raw_UInt32(Constants.Flac__SubFrame_Type_Verbatim_Byte_Aligned_Mask | (wasted_Bits != 0 ? 1U : 0), Constants.Flac__SubFrame_Zero_Pad_Len + Constants.Flac__SubFrame_Type_Len + Constants.Flac__SubFrame_Wasted_Bits_Flag_Len))
 				return false;
 
@@ -792,10 +828,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 					return false;
 			}
 
-			for (uint32_t i = 0; i < samples; i++)
+			if (subFrame.Data_Type == Flac__VerbatimSubFrameDataType.Int32)
 			{
-				if (!bw.Flac__BitWriter_Write_Raw_Int32(signal[i], subFrame_Bps))
-					return false;
+				Flac__int32[] signal = subFrame.Data32;
+
+				Debug.Assert(subFrame_Bps < 33);
+
+				for (uint32_t i = 0; i < samples; i++)
+				{
+					if (!bw.Flac__BitWriter_Write_Raw_Int32(signal[i], subFrame_Bps))
+						return false;
+				}
+			}
+			else
+			{
+				Flac__int64[] signal = subFrame.Data64;
+
+				Debug.Assert(subFrame_Bps == 33);
+
+				for (uint32_t i = 0; i < samples; i++)
+				{
+					if (!bw.Flac__BitWriter_Write_Raw_Int64(signal[i], subFrame_Bps))
+						return false;
+				}
 			}
 
 			return true;
