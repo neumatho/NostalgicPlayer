@@ -290,7 +290,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 		/// Return some flags telling what the saver supports
 		/// </summary>
 		/********************************************************************/
-		public SampleSaverSupportFlag SaverSupportFlags => SampleSaverSupportFlag.Support8Bit | SampleSaverSupportFlag.Support16Bit | SampleSaverSupportFlag.SupportMono | SampleSaverSupportFlag.SupportStereo;
+		public SampleSaverSupportFlag SaverSupportFlags => SampleSaverSupportFlag.Support8Bit | SampleSaverSupportFlag.Support16Bit | SampleSaverSupportFlag.Support32Bit | SampleSaverSupportFlag.SupportMono | SampleSaverSupportFlag.SupportStereo;
 
 
 
@@ -376,6 +376,11 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 					// Convert to 16-bit
 					for (int i = 0; i < length; i++)
 						convertedBuffer[i] = buffer[i] >> 16;
+				}
+				else if (bits == 32)
+				{
+					// Just copy the data
+					Array.Copy(buffer, convertedBuffer, length);
 				}
 
 				if (!flacEncoder.Flac__Stream_Encoder_Process_Interleaved(convertedBuffer, (uint)length / channels))
