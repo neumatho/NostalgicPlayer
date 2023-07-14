@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 	{
 		private readonly Buffer packedData;
 		private readonly uint32_t maxBits;
-		private readonly size_t stackLength;
+		private readonly uint32_t stackLength;
 
 		/********************************************************************/
 		/// <summary>
@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 			if ((maxBits < 9) || (maxBits > 20))
 				throw new InvalidFormatException();
 
-			stackLength = (uint32_t)(packedData.ReadBe16(2)) + 5;
+			stackLength = packedData.ReadBe16(2) + 5U;
 		}
 
 
@@ -85,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 			uint32_t ReadCode() => ReadBits(codeBits);
 
 			uint32_t firstCode = ReadCode();
-			LzwDecoder decoder = new LzwDecoder(1U << (int)maxBits, 259, (uint32_t)stackLength, firstCode);
+			LzwDecoder decoder = new LzwDecoder(1U << (int)maxBits, 259, stackLength, firstCode);
 			decoder.Write(firstCode, false, WriteByte);
 
 			while (!outputStream.Eof)

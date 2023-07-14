@@ -6,11 +6,11 @@
 
     <IsPackable>false</IsPackable>
 
-    <RootNamespace>Polycode.NostalgicPlayer.Ports.Tests.LibFlac.Test</RootNamespace>
+    <RootNamespace>Polycode.NostalgicPlayer.Ports.Tests.Ancient.Test</RootNamespace>
 
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
 
-    <DocumentationFile>bin\LibFlac.Test.xml</DocumentationFile>
+    <DocumentationFile>bin\Ancient.Test.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -20,10 +20,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="..\..\LibFlac\Ordinals.cs" Link="Ordinals.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
@@ -36,13 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\LibFlac\LibFlac.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="TestData\metadata.flac">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\..\Ancient\Ancient.csproj" />
   </ItemGroup>
 
 </Project>

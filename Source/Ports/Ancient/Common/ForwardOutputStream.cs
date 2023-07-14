@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 		{
 			this.endOffset = endOffset;
 
-			if ((this.startOffset > this.endOffset) || (this.endOffset > buffer.Size()))
+			if ((this.startOffset > this.endOffset) || (this.endOffset > this.buffer.Size()))
 				throw new DecompressionException();
 		}
 

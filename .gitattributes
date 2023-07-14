@@ -5,3 +5,12 @@
 *.dll filter=lfs diff=lfs merge=lfs -text
 *.ttf filter=lfs diff=lfs merge=lfs -text
 *.flac filter=lfs diff=lfs merge=lfs -text
+*.raw filter=lfs diff=lfs merge=lfs -text
+*.xm filter=lfs diff=lfs merge=lfs -text
+*.crm filter=lfs diff=lfs merge=lfs -text
+*.mmcmp122 filter=lfs diff=lfs merge=lfs -text
+*.mmcmp130 filter=lfs diff=lfs merge=lfs -text
+*.mmcmp132 filter=lfs diff=lfs merge=lfs -text
+*.mmcmp134 filter=lfs diff=lfs merge=lfs -text
+*.pp filter=lfs diff=lfs merge=lfs -text
+*.xpkf filter=lfs diff=lfs merge=lfs -text

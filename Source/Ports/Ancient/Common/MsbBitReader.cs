@@ -67,7 +67,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 		/// Reset internal variables
 		/// </summary>
 		/********************************************************************/
-		public void Reset(uint32_t bufContent, uint8_t bufLength)
+		public void Reset(uint32_t bufContent = 0, uint8_t bufLength = 0)
 		{
 			this.bufContent = bufContent;
 			this.bufLength = bufLength;

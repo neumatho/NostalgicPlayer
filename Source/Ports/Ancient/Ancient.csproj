@@ -22,24 +22,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Internal\Decompressors\Xpk\**" />
-    <EmbeddedResource Remove="Internal\Decompressors\Xpk\**" />
-    <None Remove="Internal\Decompressors\Xpk\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Internal\Decompressors\Xpk\BlzwDecompressor.cs" />
-    <Compile Include="Internal\Decompressors\Xpk\BZip2Decompressor.cs" />
-    <Compile Include="Internal\Decompressors\Xpk\BZip2Table.cs" />
-    <Compile Include="Internal\Decompressors\Xpk\LhlbDecompressor.cs" />
-    <Compile Include="Internal\Decompressors\Xpk\MashDecompressor.cs" />
-    <Compile Include="Internal\Decompressors\Xpk\RakeDecompressor.cs" />
-    <Compile Include="Internal\Decompressors\Xpk\ShriDecompressor.cs" />
-    <Compile Include="Internal\Decompressors\Xpk\SmplDecompressor.cs" />
-    <Compile Include="Internal\Decompressors\Xpk\SqshDecompressor.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
   </ItemGroup>
 

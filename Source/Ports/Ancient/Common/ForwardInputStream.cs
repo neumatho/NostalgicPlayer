@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 			this.endOffset = endOffset;
 			this.allowOverrun = allowOverrun;
 
-			if ((currentOffset > this.endOffset) || (currentOffset > buffer.Size()) || (this.endOffset > buffer.Size()))
+			if ((currentOffset > this.endOffset) || (currentOffset > this.buffer.Size()) || (this.endOffset > this.buffer.Size()))
 				throw new DecompressionException();
 		}
 

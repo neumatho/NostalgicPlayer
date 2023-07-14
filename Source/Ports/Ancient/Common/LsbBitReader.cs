@@ -49,14 +49,14 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 		/// Read count number of bits in big endian format
 		/// </summary>
 		/********************************************************************/
-		public uint32_t ReadBitsBe32(uint32_t count)
+		public uint32_t ReadBitsBe32(uint32_t count, uint32_t xorKey = 0)
 		{
 			return ReadBitsInternal(count, () =>
 			{
 				uint8_t[] tmp = new uint8_t[4];
 				Span<uint8_t> buf = inputStream.Consume(4, tmp);
 
-				bufContent = (uint32_t)((buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | buf[3]);
+				bufContent = (uint32_t)(((buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | buf[3]) ^ xorKey);
 				bufLength = 32;
 			});
 		}
@@ -68,7 +68,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 		/// Reset internal variables
 		/// </summary>
 		/********************************************************************/
-		public void Reset(uint32_t bufContent, uint8_t bufLength)
+		public void Reset(uint32_t bufContent = 0, uint8_t bufLength = 0)
 		{
 			this.bufContent = bufContent;
 			this.bufLength = bufLength;

@@ -36,7 +36,8 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 			new DecompressorPair { First = RakeDecompressor.DetectHeaderXpk, Second = RakeDecompressor.Create, Type = DecompressorType.Xpk_Rake },
 			new DecompressorPair { First = ShriDecompressor.DetectHeaderXpk, Second = ShriDecompressor.Create, Type = DecompressorType.Xpk_Shri },
 			new DecompressorPair { First = SmplDecompressor.DetectHeaderXpk, Second = SmplDecompressor.Create, Type = DecompressorType.Xpk_Smpl },
-			new DecompressorPair { First = SqshDecompressor.DetectHeaderXpk, Second = SqshDecompressor.Create, Type = DecompressorType.Xpk_Sqsh }
+			new DecompressorPair { First = SqshDecompressor.DetectHeaderXpk, Second = SqshDecompressor.Create, Type = DecompressorType.Xpk_Sqsh },
+			new DecompressorPair { First = UnimplementedDecompressor.DetectHeaderXpk, Second = UnimplementedDecompressor.Create, Type = DecompressorType.Unknown },
 		};
 
 		private readonly Buffer packedData;
@@ -46,6 +47,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 		private readonly uint32_t headerSize;
 		private readonly uint32_t type;
 		private readonly bool longHeaders;
+		private readonly bool hasPassword = false;
 
 		private CreateSubDecompressor subDecompressor;
 		private DecompressorType decompressorType;
@@ -79,8 +81,8 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 			uint8_t flags = packedData.Read8(32);
 			longHeaders = (flags & 1) != 0;
 
-			if ((flags & 2) != 0)		// Needs password. We do not support that
-				throw new InvalidFormatException();
+			if ((flags & 2) != 0)		// Late failure so we can identify format
+				hasPassword = true;
 
 			if ((flags & 4) != 0)		// Extra header
 				headerSize = (uint32_t)38 + packedData.ReadBe16(36);
@@ -167,6 +169,9 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 		/********************************************************************/
 		protected override IEnumerable<uint8_t[]> DecompressImpl()
 		{
+			if (hasPassword)
+				throw new DecompressionException();
+
 			uint32_t destOffset = 0;
 			XpkDecompressor.State state = null;
 			List<Buffer> previousBuffers = new List<Buffer>();
