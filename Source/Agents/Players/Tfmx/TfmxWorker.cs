@@ -4,7 +4,6 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -25,21 +24,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 	/// </summary>
 	internal class TfmxWorker : ModulePlayerWithSubSongDurationAgentBase
 	{
-		private static readonly Dictionary<Guid, ModuleType> moduleTypeLookup = new Dictionary<Guid, ModuleType>
-		{
-			{ Tfmx.Agent1Id, ModuleType.Tfmx15 },
-			{ Tfmx.Agent2Id, ModuleType.TfmxPro },
-			{ Tfmx.Agent3Id, ModuleType.Tfmx7V }
-		};
-
 		private const int BufSize = 1024;
 
 		private readonly ModuleType currentModuleType;
 		private readonly bool isLittleEndian;
 
 		private int currentSong;
-
-		private OneFile header;
 
 		private string[] comment;
 
@@ -88,10 +78,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public TfmxWorker(Guid typeId)
+		public TfmxWorker(ModuleType moduleType = ModuleType.Unknown)
 		{
-			if (!moduleTypeLookup.TryGetValue(typeId, out currentModuleType))
-				currentModuleType = ModuleType.Unknown;
+			currentModuleType = moduleType;
 
 			isLittleEndian = BitConverter.IsLittleEndian;
 		}
@@ -102,7 +91,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "tfx", "mdat", "tfm" };
+		public override string[] FileExtensions => Tfmx.fileExtensions;
 
 
 
@@ -113,11 +102,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/********************************************************************/
 		public override AgentResult Identify(PlayerFileInfo fileInfo)
 		{
-			// Check the module
-			ModuleType checkType = TestModule(fileInfo);
-			if (checkType == currentModuleType)
-				return AgentResult.Ok;
-
 			return AgentResult.Unknown;
 		}
 
@@ -236,6 +220,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				ModuleStream moduleStream = fileInfo.ModuleStream;
 				Encoding encoder = EncoderCollection.Amiga;
 
+				OneFile header = IsOneFile(moduleStream);
 				int startOffset = header != null ? (int)header.HeaderSize : 0;
 
 				// Skip the mark and other stuff
@@ -697,85 +682,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		}
 		#endregion
 
-		#region Private methods
-		/********************************************************************/
-		/// <summary>
-		/// Convert the int at the given position to host endian format and
-		/// return it
-		/// </summary>
-		/********************************************************************/
-		private short ToInt16(int index)
-		{
-			return (short)((musicData[index] << 8) | musicData[index + 1]);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Convert the int at the given position to host endian format and
-		/// return it
-		/// </summary>
-		/********************************************************************/
-		private int ToInt32(int index)
-		{
-			return (musicData[index] << 24) | (musicData[index + 1] << 16) | (musicData[index + 2] << 8) | musicData[index + 3];
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Store the given int at the given index in host format
-		/// </summary>
-		/********************************************************************/
-		private void StoreInt16(int index, short value)
-		{
-			if (isLittleEndian)
-			{
-				musicData[index] = (byte)(value & 0xff);
-				musicData[index + 1] = (byte)((value & 0xff00) >> 8);
-			}
-			else
-			{
-				musicData[index] = (byte)((value & 0xff00) >> 8);
-				musicData[index + 1] = (byte)(value & 0xff);
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Store the given int at the given index in host format
-		/// </summary>
-		/********************************************************************/
-		private void StoreInt32(int index, int value)
-		{
-			if (isLittleEndian)
-			{
-				musicData[index] = (byte)(value & 0xff);
-				musicData[index + 1] = (byte)((value & 0xff00) >> 8);
-				musicData[index + 2] = (byte)((value & 0xff0000) >> 16);
-				musicData[index + 3] = (byte)((value & 0xff000000) >> 24);
-			}
-			else
-			{
-				musicData[index] = (byte)((value & 0xff000000) >> 24);
-				musicData[index + 1] = (byte)((value & 0xff0000) >> 16);
-				musicData[index + 2] = (byte)((value & 0xff00) >> 8);
-				musicData[index + 3] = (byte)(value & 0xff);
-			}
-		}
-
-
-
+		#region Identify methods
 		/********************************************************************/
 		/// <summary>
 		/// Tests the module to see which type of module it is
 		/// </summary>
 		/********************************************************************/
-		private ModuleType TestModule(PlayerFileInfo fileInfo)
+		public static ModuleType TestModule(PlayerFileInfo fileInfo)
 		{
 			ModuleStream moduleStream = fileInfo.ModuleStream;
 
@@ -786,7 +699,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			int startOffset = 0;
 
 			// First check for one-file format
-			if (IsOneFile(moduleStream))
+			OneFile header = IsOneFile(moduleStream);
+			if (header != null)
 			{
 				// Check to see if the module is forced or not checked
 				if (((header.Type & 128) != 0) || ((header.Type & 127) == 0))
@@ -940,7 +854,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/// If that is true, it will load the structure
 		/// </summary>
 		/********************************************************************/
-		private bool IsOneFile(ModuleStream moduleStream)
+		private static OneFile IsOneFile(ModuleStream moduleStream)
 		{
 			// Seek to the start of the file
 			moduleStream.Seek(0, SeekOrigin.Begin);
@@ -958,12 +872,82 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				oneFile.MdatSize = moduleStream.Read_B_UINT32();
 				oneFile.SmplSize = moduleStream.Read_B_UINT32();
 
-				header = oneFile;
-
-				return true;
+				return oneFile;
 			}
 
-			return false;
+			return null;
+		}
+		#endregion
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Convert the int at the given position to host endian format and
+		/// return it
+		/// </summary>
+		/********************************************************************/
+		private short ToInt16(int index)
+		{
+			return (short)((musicData[index] << 8) | musicData[index + 1]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert the int at the given position to host endian format and
+		/// return it
+		/// </summary>
+		/********************************************************************/
+		private int ToInt32(int index)
+		{
+			return (musicData[index] << 24) | (musicData[index + 1] << 16) | (musicData[index + 2] << 8) | musicData[index + 3];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Store the given int at the given index in host format
+		/// </summary>
+		/********************************************************************/
+		private void StoreInt16(int index, short value)
+		{
+			if (isLittleEndian)
+			{
+				musicData[index] = (byte)(value & 0xff);
+				musicData[index + 1] = (byte)((value & 0xff00) >> 8);
+			}
+			else
+			{
+				musicData[index] = (byte)((value & 0xff00) >> 8);
+				musicData[index + 1] = (byte)(value & 0xff);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Store the given int at the given index in host format
+		/// </summary>
+		/********************************************************************/
+		private void StoreInt32(int index, int value)
+		{
+			if (isLittleEndian)
+			{
+				musicData[index] = (byte)(value & 0xff);
+				musicData[index + 1] = (byte)((value & 0xff00) >> 8);
+				musicData[index + 2] = (byte)((value & 0xff0000) >> 16);
+				musicData[index + 3] = (byte)((value & 0xff000000) >> 24);
+			}
+			else
+			{
+				musicData[index] = (byte)((value & 0xff000000) >> 24);
+				musicData[index + 1] = (byte)((value & 0xff0000) >> 16);
+				musicData[index + 2] = (byte)((value & 0xff00) >> 8);
+				musicData[index + 3] = (byte)(value & 0xff);
+			}
 		}
 
 

@@ -4,7 +4,9 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
@@ -17,11 +19,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 	/// <summary>
 	/// NostalgicPlayer agent interface implementation
 	/// </summary>
-	public class Tfmx : AgentBase
+	public class Tfmx : AgentBase, IPlayerAgentMultipleFormatIdentify
 	{
-		internal static readonly Guid Agent1Id = Guid.Parse("E41B630B-0C68-41D5-9D09-2771581A0D22");
-		internal static readonly Guid Agent2Id = Guid.Parse("E9333E11-4CD4-4631-B758-507C4607AB8A");
-		internal static readonly Guid Agent3Id = Guid.Parse("AFB99395-AA4B-4F35-BA5E-4B1513615B51");
+		private static readonly Guid agent1Id = Guid.Parse("E41B630B-0C68-41D5-9D09-2771581A0D22");
+		private static readonly Guid agent2Id = Guid.Parse("E9333E11-4CD4-4631-B758-507C4607AB8A");
+		private static readonly Guid agent3Id = Guid.Parse("AFB99395-AA4B-4F35-BA5E-4B1513615B51");
+
+		private static readonly Dictionary<ModuleType, Guid> moduleTypeLookup = new Dictionary<ModuleType, Guid>
+		{
+			{ ModuleType.Tfmx15, agent1Id },
+			{ ModuleType.TfmxPro, agent2Id },
+			{ ModuleType.Tfmx7V, agent3Id }
+		};
+
+		internal static readonly string[] fileExtensions = { "tfx", "mdat", "tfm" };
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -53,9 +64,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_TFMX_NAME_AGENT1, Resources.IDS_TFMX_DESCRIPTION_AGENT1, Agent1Id),
-					new AgentSupportInfo(Resources.IDS_TFMX_NAME_AGENT2, Resources.IDS_TFMX_DESCRIPTION_AGENT2, Agent2Id),
-					new AgentSupportInfo(Resources.IDS_TFMX_NAME_AGENT3, Resources.IDS_TFMX_DESCRIPTION_AGENT3, Agent3Id)
+					new AgentSupportInfo(Resources.IDS_TFMX_NAME_AGENT1, Resources.IDS_TFMX_DESCRIPTION_AGENT1, agent1Id),
+					new AgentSupportInfo(Resources.IDS_TFMX_NAME_AGENT2, Resources.IDS_TFMX_DESCRIPTION_AGENT2, agent2Id),
+					new AgentSupportInfo(Resources.IDS_TFMX_NAME_AGENT3, Resources.IDS_TFMX_DESCRIPTION_AGENT3, agent3Id)
 				};
 			}
 		}
@@ -69,7 +80,34 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/********************************************************************/
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
-			return new TfmxWorker(typeId);
+			return new TfmxWorker();
+		}
+		#endregion
+
+		#region IAgentMultipleFormatIdentify implementation
+		/********************************************************************/
+		/// <summary>
+		/// Returns the file extensions that identify all the formats that
+		/// can be returned in IdentifyFormat()
+		/// </summary>
+		/********************************************************************/
+		public string[] FileExtensions => fileExtensions;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Try to identify which format are used in the given stream and
+		/// return the format Guid if found
+		/// </summary>
+		/********************************************************************/
+		public IdentifyFormatInfo IdentifyFormat(PlayerFileInfo fileInfo)
+		{
+			ModuleType moduleType = TfmxWorker.TestModule(fileInfo);
+			if (moduleType == ModuleType.Unknown)
+				return null;
+
+			return new IdentifyFormatInfo(new TfmxWorker(moduleType), moduleTypeLookup[moduleType]);
 		}
 		#endregion
 	}
