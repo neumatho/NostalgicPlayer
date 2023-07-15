@@ -145,7 +145,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			bytesPerSample = outputInformation.BytesPerSample;
 
 			visualBufferOffset = 0;
-			visualBuffer = new int[(mixerFrequency / (1000 / 20)) * outputInformation.Channels];
+			visualBuffer = new int[Math.Min(outputInformation.BufferSizeInSamples, mixerFrequency / (1000 / 20) * outputInformation.Channels)];
 
 			minimumLatency = outputInformation.BufferSizeInSamples * 1000 / outputInformation.Frequency;
 

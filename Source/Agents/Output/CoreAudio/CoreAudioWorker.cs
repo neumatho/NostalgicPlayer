@@ -45,7 +45,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 			Paused
 		}
 
-		private const int LatencyMilliseconds = 200;
+		private const int LatencyMilliseconds = 20;
 
 		private object streamLock;
 		private SoundStream stream;
