@@ -759,6 +759,51 @@ what has changed since your previous version.</value>
   <data name="IDS_SETTINGS_MIXER_OUPUT_SETTINGS" xml:space="preserve">
     <value>Settings</value>
   </data>
+  <data name="IDS_SETTINGS_MODULES_LOADING" xml:space="preserve">
+    <value>Loading</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_LOADING_DOUBLEBUFFERING" xml:space="preserve">
+    <value>Double buffering</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_LOADING_EARLYLOAD" xml:space="preserve">
+    <value>Early load</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_LOADING_MODULEERROR" xml:space="preserve">
+    <value>When a module error is reached</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_LOADING_MODULEERROR_SHOW" xml:space="preserve">
+    <value>Show error dialog</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_LOADING_MODULEERROR_SKIP" xml:space="preserve">
+    <value>Skip file</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_LOADING_MODULEERROR_SKIPREMOVE" xml:space="preserve">
+    <value>Skip file and remove from list</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_LOADING_MODULEERROR_STOP" xml:space="preserve">
+    <value>Stop playing</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_PLAYING" xml:space="preserve">
+    <value>Playing</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_PLAYING_MODULELISTEND" xml:space="preserve">
+    <value>At end of module list</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_PLAYING_MODULELISTEND_EJECT" xml:space="preserve">
+    <value>Eject module</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_PLAYING_MODULELISTEND_JUMPTOSTART" xml:space="preserve">
+    <value>Jump to start</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_PLAYING_MODULELISTEND_LOOP" xml:space="preserve">
+    <value>Loop module</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_PLAYING_NEVERENDING" xml:space="preserve">
+    <value>Never ending module timeout</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_PLAYING_NEVERENDING_SECONDS" xml:space="preserve">
+    <value>seconds</value>
+  </data>
   <data name="IDS_SETTINGS_OK" xml:space="preserve">
     <value>OK</value>
   </data>
@@ -809,51 +854,6 @@ switcher</value>
     <value>Use database to store module
 information</value>
   </data>
-  <data name="IDS_SETTINGS_OPTIONS_LOADING" xml:space="preserve">
-    <value>Loading</value>
-  </data>
-  <data name="IDS_SETTINGS_OPTIONS_LOADING_DOUBLEBUFFERING" xml:space="preserve">
-    <value>Double buffering</value>
-  </data>
-  <data name="IDS_SETTINGS_OPTIONS_LOADING_EARLYLOAD" xml:space="preserve">
-    <value>Early load</value>
-  </data>
-  <data name="IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR" xml:space="preserve">
-    <value>When a module error is reached</value>
-  </data>
-  <data name="IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR_SHOW" xml:space="preserve">
-    <value>Show error dialog</value>
-  </data>
-  <data name="IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR_SKIP" xml:space="preserve">
-    <value>Skip file</value>
-  </data>
-  <data name="IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR_SKIPREMOVE" xml:space="preserve">
-    <value>Skip file and remove from list</value>
-  </data>
-  <data name="IDS_SETTINGS_OPTIONS_LOADING_MODULEERROR_STOP" xml:space="preserve">
-    <value>Stop playing</value>
-  </data>
-  <data name="IDS_SETTINGS_OPTIONS_PLAYING" xml:space="preserve">
-    <value>Playing</value>
-  </data>
-  <data name="IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND" xml:space="preserve">
-    <value>At end of module list</value>
-  </data>
-  <data name="IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND_EJECT" xml:space="preserve">
-    <value>Eject module</value>
-  </data>
-  <data name="IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND_JUMPTOSTART" xml:space="preserve">
-    <value>Jump to start</value>
-  </data>
-  <data name="IDS_SETTINGS_OPTIONS_PLAYING_MODULELISTEND_LOOP" xml:space="preserve">
-    <value>Loop module</value>
-  </data>
-  <data name="IDS_SETTINGS_OPTIONS_PLAYING_NEVERENDING" xml:space="preserve">
-    <value>Never ending module timeout</value>
-  </data>
-  <data name="IDS_SETTINGS_OPTIONS_PLAYING_NEVERENDING_SECONDS" xml:space="preserve">
-    <value>seconds</value>
-  </data>
   <data name="IDS_SETTINGS_PATHS_LISTPATH" xml:space="preserve">
     <value>List path</value>
   </data>
@@ -868,6 +868,9 @@ information</value>
   </data>
   <data name="IDS_SETTINGS_TAB_MIXER" xml:space="preserve">
     <value>Mixer</value>
+  </data>
+  <data name="IDS_SETTINGS_TAB_MODULES" xml:space="preserve">
+    <value>Modules</value>
   </data>
   <data name="IDS_SETTINGS_TAB_OPTIONS" xml:space="preserve">
     <value>Options</value>

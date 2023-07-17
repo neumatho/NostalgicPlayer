@@ -12,34 +12,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 	/// </summary>
 	public class OptionSettings
 	{
-		/// <summary>
-		/// The different actions to take when a module error occur
-		/// </summary>
-		public enum ModuleErrorAction
-		{
-			/// <summary></summary>
-			ShowError,
-			/// <summary></summary>
-			SkipFile,
-			/// <summary></summary>
-			SkipFileAndRemoveFromList,
-			/// <summary></summary>
-			StopPlaying
-		}
-
-		/// <summary>
-		/// The different actions to take when reached the end of the list
-		/// </summary>
-		public enum ModuleListEndAction
-		{
-			/// <summary></summary>
-			Eject,
-			/// <summary></summary>
-			JumpToStart,
-			/// <summary></summary>
-			Loop
-		}
-
 		private readonly ISettings settings;
 
 		/********************************************************************/
@@ -260,90 +232,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 			get => settings.GetLongEntry("Options", "LastCleanupTime", 0);
 
 			set => settings.SetLongEntry("Options", "LastCleanupTime", value);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Double buffering
-		/// </summary>
-		/********************************************************************/
-		public bool DoubleBuffering
-		{
-			get => settings.GetBoolEntry("Options", "DoubleBuffering", false);
-
-			set => settings.SetBoolEntry("Options", "DoubleBuffering", value);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Early load
-		/// </summary>
-		/********************************************************************/
-		public int DoubleBufferingEarlyLoad
-		{
-			get => settings.GetIntEntry("Options", "DoubleBufferingEarlyLoad", 2);
-
-			set => settings.SetIntEntry("Options", "DoubleBufferingEarlyLoad", value);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Module error reached
-		/// </summary>
-		/********************************************************************/
-		public ModuleErrorAction ModuleError
-		{
-			get => settings.GetEnumEntry("Options", "ModuleError", ModuleErrorAction.ShowError);
-
-			set => settings.SetEnumEntry("Options", "ModuleError", value);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Never ending
-		/// </summary>
-		/********************************************************************/
-		public bool NeverEnding
-		{
-			get => settings.GetBoolEntry("Options", "NeverEnding", false);
-
-			set => settings.SetBoolEntry("Options", "NeverEnding", value);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Never ending timeout
-		/// </summary>
-		/********************************************************************/
-		public int NeverEndingTimeout
-		{
-			get => settings.GetIntEntry("Options", "NeverEndingTimeout", 180);
-
-			set => settings.SetIntEntry("Options", "NeverEndingTimeout", value);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Module list end reached
-		/// </summary>
-		/********************************************************************/
-		public ModuleListEndAction ModuleListEnd
-		{
-			get => settings.GetEnumEntry("Options", "ModuleListEnd", ModuleListEndAction.JumpToStart);
-
-			set => settings.SetEnumEntry("Options", "ModuleListEnd", value);
 		}
 	}
 }

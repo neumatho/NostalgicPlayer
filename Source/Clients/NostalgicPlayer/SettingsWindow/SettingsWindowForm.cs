@@ -28,6 +28,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		private readonly ISettings userSettings;
 		private readonly SettingsWindowSettings windowSettings;
 
+		private const int Page_Options = 0;
+		private const int Page_Modules = 1;
+		private const int Page_Paths = 2;
+		private const int Page_Mixer = 3;
+		private const int Page_Agents = 4;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -61,10 +67,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 				Text = Resources.IDS_SETTINGS_TITLE;
 
 				// Set the string resources on each string per tab
-				navigator.Pages[0].Text = Resources.IDS_SETTINGS_TAB_OPTIONS;
-				navigator.Pages[1].Text = Resources.IDS_SETTINGS_TAB_PATHS;
-				navigator.Pages[2].Text = Resources.IDS_SETTINGS_TAB_MIXER;
-				navigator.Pages[3].Text = Resources.IDS_SETTINGS_TAB_AGENTS;
+				navigator.Pages[Page_Options].Text = Resources.IDS_SETTINGS_TAB_OPTIONS;
+				navigator.Pages[Page_Modules].Text = Resources.IDS_SETTINGS_TAB_MODULES;
+				navigator.Pages[Page_Paths].Text = Resources.IDS_SETTINGS_TAB_PATHS;
+				navigator.Pages[Page_Mixer].Text = Resources.IDS_SETTINGS_TAB_MIXER;
+				navigator.Pages[Page_Agents].Text = Resources.IDS_SETTINGS_TAB_AGENTS;
 
 				// Initialize the pages
 				InitSettings();
@@ -83,6 +90,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			if (mainWindow != null)
 			{
 				optionsPageControl.RefreshWindow();
+				modulesPageControl.RefreshWindow();
 				pathsPageControl.RefreshWindow();
 				mixerPageControl.RefreshWindow();
 				agentsPageControl.RefreshWindow();
@@ -108,6 +116,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 				windowSettings.ActiveTab = navigator.SelectedIndex;
 
 				optionsPageControl.WriteWindowSettings();
+				modulesPageControl.WriteWindowSettings();
 				pathsPageControl.WriteWindowSettings();
 				mixerPageControl.WriteWindowSettings();
 				agentsPageControl.WriteWindowSettings();
@@ -172,6 +181,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		{
 			// Initialize the tab pages
 			optionsPageControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, allWindowSettings);
+			modulesPageControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, allWindowSettings);
 			pathsPageControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, allWindowSettings);
 			mixerPageControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, allWindowSettings);
 			agentsPageControl.InitSettings(agentManager, moduleHandler, mainWindow, userSettings, allWindowSettings);
@@ -179,6 +189,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			// Make a backup of the settings. This is used for real-time
 			// settings, that can be restored back when clicking cancel
 			optionsPageControl.MakeBackup();
+			modulesPageControl.MakeBackup();
 			pathsPageControl.MakeBackup();
 			mixerPageControl.MakeBackup();
 			agentsPageControl.MakeBackup();
@@ -204,12 +215,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		{
 			// Load all the window settings
 			optionsPageControl.ReadWindowSettings();
+			modulesPageControl.ReadWindowSettings();
 			pathsPageControl.ReadWindowSettings();
 			mixerPageControl.ReadWindowSettings();
 			agentsPageControl.ReadWindowSettings();
 
 			// Load all the settings
 			optionsPageControl.ReadSettings();
+			modulesPageControl.ReadSettings();
 			pathsPageControl.ReadSettings();
 			mixerPageControl.ReadSettings();
 			agentsPageControl.ReadSettings();
@@ -226,6 +239,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		{
 			// Save all the settings
 			optionsPageControl.WriteSettings();
+			modulesPageControl.WriteSettings();
 			pathsPageControl.WriteSettings();
 			mixerPageControl.WriteSettings();
 			agentsPageControl.WriteSettings();
@@ -245,6 +259,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 		{
 			// Cancel all the settings
 			optionsPageControl.CancelSettings();
+			modulesPageControl.CancelSettings();
 			pathsPageControl.CancelSettings();
 			mixerPageControl.CancelSettings();
 			agentsPageControl.CancelSettings();

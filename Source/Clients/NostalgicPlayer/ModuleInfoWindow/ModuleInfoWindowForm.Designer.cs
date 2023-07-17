@@ -137,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			navigator.Palette = fontPalette;
 			navigator.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			navigator.Panel.PanelBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
-			navigator.SelectedIndex = 3;
+			navigator.SelectedIndex = 0;
 			navigator.Size = new System.Drawing.Size(284, 184);
 			navigator.TabIndex = 1;
 			navigator.SelectedPageChanged += Navigator_SelectedPageChanged;

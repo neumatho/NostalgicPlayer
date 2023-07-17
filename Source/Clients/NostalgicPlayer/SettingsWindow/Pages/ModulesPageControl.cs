@@ -14,22 +14,38 @@ using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 {
 	/// <summary>
-	/// Holds all the controls for the Options tab
+	/// Holds all the controls for the Modules tab
 	/// </summary>
-	public partial class OptionsPageControl : UserControl, ISettingsPage
+	public partial class ModulesPageControl : UserControl, ISettingsPage
 	{
 		private MainWindowForm mainWin;
 
-		private OptionSettings optionSettings;
+		private ModuleSettings moduleSettings;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public OptionsPageControl()
+		public ModulesPageControl()
 		{
 			InitializeComponent();
+
+			// Add items to the combo controls
+			moduleErrorComboBox.Items.AddRange(new object[]
+			{
+				Resources.IDS_SETTINGS_MODULES_LOADING_MODULEERROR_SHOW,
+				Resources.IDS_SETTINGS_MODULES_LOADING_MODULEERROR_SKIP,
+				Resources.IDS_SETTINGS_MODULES_LOADING_MODULEERROR_SKIPREMOVE,
+				Resources.IDS_SETTINGS_MODULES_LOADING_MODULEERROR_STOP
+			});
+
+			moduleListEndComboBox.Items.AddRange(new object[]
+			{
+				Resources.IDS_SETTINGS_MODULES_PLAYING_MODULELISTEND_EJECT,
+				Resources.IDS_SETTINGS_MODULES_PLAYING_MODULELISTEND_JUMPTOSTART,
+				Resources.IDS_SETTINGS_MODULES_PLAYING_MODULELISTEND_LOOP
+			});
 		}
 
 		#region ISettingsPage implementation
@@ -42,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		{
 			mainWin = mainWindow;
 
-			optionSettings = new OptionSettings(userSettings);
+			moduleSettings = new ModuleSettings(userSettings);
 		}
 
 
@@ -65,23 +81,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		public void ReadSettings()
 		{
-			// General
-			addJumpCheckBox.Checked = optionSettings.AddJump;
-			addToListCheckBox.Checked = optionSettings.AddToList;
-			rememberListCheckBox.Checked = optionSettings.RememberList;
-			rememberListPositionCheckBox.Checked = optionSettings.RememberListPosition;
-			rememberModulePositionCheckBox.Checked = optionSettings.RememberModulePosition;
-			showListNumberCheckBox.Checked = optionSettings.ShowListNumber;
+			// Loading
+			doubleBufferingCheckBox.Checked = moduleSettings.DoubleBuffering;
+			doubleBufferingTrackBar.Value = moduleSettings.DoubleBufferingEarlyLoad;
 
-			tooltipsCheckBox.Checked = optionSettings.ToolTips;
-			showNameInTitleCheckBox.Checked = optionSettings.ShowNameInTitle;
-			separateWindowsCheckBox.Checked = optionSettings.SeparateWindows;
-			showWindowsInTaskBarCheckBox.Checked = optionSettings.ShowWindowsInTaskBar;
+			moduleErrorComboBox.SelectedIndex = (int)moduleSettings.ModuleError;
 
-			useDatabaseCheckBox.Checked = optionSettings.UseDatabase;
-			scanFilesCheckBox.Checked = optionSettings.ScanFiles;
-			removeUnknownCheckBox.Checked = optionSettings.RemoveUnknownModules;
-			extractPlayingTimeCheckBox.Checked = optionSettings.ExtractPlayingTime;
+			// Playing
+			neverEndingCheckBox.Checked = moduleSettings.NeverEnding;
+			neverEndingNumberTextBox.Text = moduleSettings.NeverEndingTimeout.ToString();
+
+			moduleListEndComboBox.SelectedIndex = (int)moduleSettings.ModuleListEnd;
 		}
 
 
@@ -105,25 +115,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		public void WriteSettings()
 		{
-			// General
-			optionSettings.AddJump = addJumpCheckBox.Checked;
-			optionSettings.AddToList = addToListCheckBox.Checked;
-			optionSettings.RememberList = rememberListCheckBox.Checked;
-			optionSettings.RememberListPosition = rememberListPositionCheckBox.Checked;
-			optionSettings.RememberModulePosition = rememberModulePositionCheckBox.Checked;
-			optionSettings.ShowListNumber = showListNumberCheckBox.Checked;
+			// Loading
+			moduleSettings.DoubleBuffering = doubleBufferingCheckBox.Checked;
+			moduleSettings.DoubleBufferingEarlyLoad = doubleBufferingTrackBar.Value;
 
-			optionSettings.ToolTips = tooltipsCheckBox.Checked;
-			optionSettings.ShowNameInTitle = showNameInTitleCheckBox.Checked;
-			optionSettings.SeparateWindows = separateWindowsCheckBox.Checked;
-			optionSettings.ShowWindowsInTaskBar = showWindowsInTaskBarCheckBox.Checked;
+			moduleSettings.ModuleError = (ModuleSettings.ModuleErrorAction)moduleErrorComboBox.SelectedIndex;
 
-			optionSettings.UseDatabase = useDatabaseCheckBox.Checked;
-			optionSettings.ScanFiles = scanFilesCheckBox.Checked;
-			optionSettings.RemoveUnknownModules = removeUnknownCheckBox.Checked;
-			optionSettings.ExtractPlayingTime = extractPlayingTimeCheckBox.Checked;
+			// Playing
+			moduleSettings.NeverEnding = neverEndingCheckBox.Checked;
+			moduleSettings.NeverEndingTimeout = int.Parse(neverEndingNumberTextBox.Text);
 
-			mainWin.EnableUserInterfaceSettings();
+			moduleSettings.ModuleListEnd = (ModuleSettings.ModuleListEndAction)moduleListEndComboBox.SelectedIndex;
 		}
 
 
@@ -163,48 +165,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		#region Event handlers
 		/********************************************************************/
 		/// <summary>
-		/// Is called when the user change the remember list
+		/// Is called when the user change the double buffering
 		/// </summary>
 		/********************************************************************/
-		private void RememberListCheckBox_CheckedChanged(object sender, EventArgs e)
+		private void DoubleBufferingCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			rememberListPanel.Enabled = rememberListCheckBox.Checked;
+			doubleBufferingPanel.Enabled = doubleBufferingCheckBox.Checked;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Is called when the user change the remember module
+		/// Is called when the user change the never ending
 		/// </summary>
 		/********************************************************************/
-		private void RememberListPositionCheckBox_CheckedChanged(object sender, EventArgs e)
+		private void NeverEnding_CheckedChanged(object sender, EventArgs e)
 		{
-			rememberModulePositionCheckBox.Enabled = rememberListPositionCheckBox.Checked;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called when the user change the separate windows
-		/// </summary>
-		/********************************************************************/
-		private void SeparateWindows_CheckedChanged(object sender, EventArgs e)
-		{
-			windowPanel.Enabled = separateWindowsCheckBox.Checked;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called when the user change the scan files
-		/// </summary>
-		/********************************************************************/
-		private void ScanFiles_CheckedChanged(object sender, EventArgs e)
-		{
-			scanFilesPanel.Enabled = scanFilesCheckBox.Checked;
+			neverEndingNumberTextBox.Enabled = neverEndingCheckBox.Checked;
 		}
 		#endregion
 	}

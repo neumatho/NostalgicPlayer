@@ -55,6 +55,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		// Settings
 		private ISettings userSettings;
 		private OptionSettings optionSettings;
+		private ModuleSettings moduleSettings;
 		private PathSettings pathSettings;
 		private SoundSettings soundSettings;
 
@@ -320,9 +321,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			char response;
 
-			switch (optionSettings.ModuleError)
+			switch (moduleSettings.ModuleError)
 			{
-				case OptionSettings.ModuleErrorAction.ShowError:
+				case ModuleSettings.ModuleErrorAction.ShowError:
 				{
 					using (CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error))
 					{
@@ -335,20 +336,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					break;
 				}
 
-				case OptionSettings.ModuleErrorAction.SkipFile:
+				case ModuleSettings.ModuleErrorAction.SkipFile:
 				default:
 				{
 					response = 'S';
 					break;
 				}
 
-				case OptionSettings.ModuleErrorAction.SkipFileAndRemoveFromList:
+				case ModuleSettings.ModuleErrorAction.SkipFileAndRemoveFromList:
 				{
 					response = 'r';
 					break;
 				}
 
-				case OptionSettings.ModuleErrorAction.StopPlaying:
+				case ModuleSettings.ModuleErrorAction.StopPlaying:
 				{
 					response = 'p';
 					break;
@@ -383,7 +384,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						else
 						{
 							// No
-							if ((count > 1) && (optionSettings.ModuleListEnd == OptionSettings.ModuleListEndAction.JumpToStart))
+							if ((count > 1) && (moduleSettings.ModuleListEnd == ModuleSettings.ModuleListEndAction.JumpToStart))
 							{
 								// Load the first module, but only if it's valid
 								// or haven't been loaded before
@@ -424,7 +425,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						else
 						{
 							// No
-							if ((count > 1) && (optionSettings.ModuleListEnd == OptionSettings.ModuleListEndAction.JumpToStart))
+							if ((count > 1) && (moduleSettings.ModuleListEnd == ModuleSettings.ModuleListEndAction.JumpToStart))
 							{
 								// Load the first module, but only if it's valid
 								// or haven't been loaded before
@@ -2701,9 +2702,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Create instances of the settings
 			userSettings = DependencyInjection.GetDefaultProvider().GetService<ISettings>();
 			userSettings.LoadSettings("Settings");
+			FixSettings();
 
 			// Setup setting wrappers
 			optionSettings = new OptionSettings(userSettings);
+			moduleSettings = new ModuleSettings(userSettings);
 			pathSettings = new PathSettings(userSettings);
 			soundSettings = new SoundSettings(userSettings);
 
@@ -2721,6 +2724,62 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// Will fix the settings if needed
+		/// </summary>
+		/********************************************************************/
+		private void FixSettings()
+		{
+			int version = userSettings.GetIntEntry("General", "Version", 1);
+
+			if (version == 1)
+			{
+				ConvertSettingsToVersion2();
+				version++;
+			}
+
+			userSettings.SetIntEntry("General", "Version", version);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will convert the settings from version 1 to version 2
+		/// </summary>
+		/********************************************************************/
+		private void ConvertSettingsToVersion2()
+		{
+			// Move some of the options to the modules section
+			bool boolValue = userSettings.GetBoolEntry("Options", "DoubleBuffering", false);
+			userSettings.SetBoolEntry("Modules", "DoubleBuffering", boolValue);
+
+			int intValue = userSettings.GetIntEntry("Options", "DoubleBufferingEarlyLoad", 2);
+			userSettings.SetIntEntry("Modules", "DoubleBufferingEarlyLoad", intValue);
+
+			ModuleSettings.ModuleErrorAction enum1Value = userSettings.GetEnumEntry("Options", "ModuleError", ModuleSettings.ModuleErrorAction.ShowError);
+			userSettings.SetEnumEntry("Modules", "ModuleError", enum1Value);
+
+			boolValue = userSettings.GetBoolEntry("Options", "NeverEnding", false);
+			userSettings.SetBoolEntry("Modules", "NeverEnding", boolValue);
+
+			intValue = userSettings.GetIntEntry("Options", "NeverEndingTimeout", 180);
+			userSettings.SetIntEntry("Modules", "NeverEndingTimeout", intValue);
+
+			ModuleSettings.ModuleListEndAction enum2Value = userSettings.GetEnumEntry("Options", "ModuleListEnd", ModuleSettings.ModuleListEndAction.JumpToStart);
+			userSettings.SetEnumEntry("Modules", "ModuleListEnd", enum2Value);
+
+			userSettings.RemoveEntry("Options", "DoubleBuffering");
+			userSettings.RemoveEntry("Options", "DoubleBufferingEarlyLoad");
+			userSettings.RemoveEntry("Options", "ModuleError");
+			userSettings.RemoveEntry("Options", "NeverEnding");
+			userSettings.RemoveEntry("Options", "NeverEndingTimeout");
+			userSettings.RemoveEntry("Options", "ModuleListEnd");
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will save and destroy the settings
 		/// </summary>
 		/********************************************************************/
@@ -2731,6 +2790,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			soundSettings = null;
 			pathSettings = null;
+			moduleSettings = null;
 			optionSettings = null;
 		}
 		#endregion
@@ -4080,15 +4140,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				// If module loop is off and double buffering is enabled,
 				// check if it's time to load the next module in the list
-				if (!loopCheckButton.Checked && optionSettings.DoubleBuffering)
+				if (!loopCheckButton.Checked && moduleSettings.DoubleBuffering)
 				{
 					// Is the file already loaded?
 					if (!moduleHandler.IsDoubleBufferingModuleLoaded && (playItem != null))
 					{
 						// Everything is enabled, check if it's time to load
 						int songLength = moduleHandler.PlayingModuleInformation.SongLength;
-						int earlyLoad = optionSettings.DoubleBufferingEarlyLoad;
-						OptionSettings.ModuleListEndAction listEnd = optionSettings.ModuleListEnd;
+						int earlyLoad = moduleSettings.DoubleBufferingEarlyLoad;
+						ModuleSettings.ModuleListEndAction listEnd = moduleSettings.ModuleListEnd;
 
 						if (newPos >= (songLength - earlyLoad))
 						{
@@ -4102,7 +4162,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 							if ((curPlay + 1) == count)
 							{
-								if ((count == 1) || (listEnd != OptionSettings.ModuleListEndAction.JumpToStart))
+								if ((count == 1) || (listEnd != ModuleSettings.ModuleListEndAction.JumpToStart))
 									load = false;
 							}
 							else
@@ -4187,9 +4247,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							if (newPlay == count)
 							{
 								// We are, now check what we has to do
-								OptionSettings.ModuleListEndAction listEnd = optionSettings.ModuleListEnd;
+								ModuleSettings.ModuleListEndAction listEnd = moduleSettings.ModuleListEnd;
 
-								if (listEnd == OptionSettings.ModuleListEndAction.Eject)
+								if (listEnd == ModuleSettings.ModuleListEndAction.Eject)
 								{
 									// Eject the module
 									StopAndFreeModule();
@@ -4197,7 +4257,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 								}
 								else
 								{
-									if ((count == 1) || (listEnd == OptionSettings.ModuleListEndAction.Loop))
+									if ((count == 1) || (listEnd == ModuleSettings.ModuleListEndAction.Loop))
 										loadNext = false;
 									else
 										newPlay = 0;
@@ -4207,7 +4267,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							// Should we load the next module?
 							if (loadNext)
 							{
-								if (optionSettings.DoubleBuffering && moduleHandler.IsDoubleBufferingModuleLoaded)
+								if (moduleSettings.DoubleBuffering && moduleHandler.IsDoubleBufferingModuleLoaded)
 								{
 									// Double buffering is on and the next module has already been loaded, so just
 									// start to play it
@@ -4519,9 +4579,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				timeStart = DateTime.Now;
 				timeOccurred = new TimeSpan(0);
 
-				if ((moduleHandler.PlayingModuleInformation.DurationInfo == null) && optionSettings.NeverEnding)
+				if ((moduleHandler.PlayingModuleInformation.DurationInfo == null) && moduleSettings.NeverEnding)
 				{
-					neverEndingTimeout = new TimeSpan(optionSettings.NeverEndingTimeout * TimeSpan.TicksPerSecond);
+					neverEndingTimeout = new TimeSpan(moduleSettings.NeverEndingTimeout * TimeSpan.TicksPerSecond);
 					neverEndingStarted = true;
 				}
 				else
