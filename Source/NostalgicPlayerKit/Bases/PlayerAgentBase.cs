@@ -117,6 +117,15 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Return all pictures available
+		/// </summary>
+		/********************************************************************/
+		public virtual PictureInfo[] Pictures => null;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Returns the description and value on the line given. If the line
 		/// is out of range, false is returned
 		/// </summary>

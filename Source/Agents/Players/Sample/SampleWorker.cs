@@ -74,6 +74,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 
 		/********************************************************************/
 		/// <summary>
+		/// Return all pictures available
+		/// </summary>
+		/********************************************************************/
+		public override PictureInfo[] Pictures => formatInfo.Pictures;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Returns the description and value on the line given. If the line
 		/// is out of range, false is returned
 		/// </summary>

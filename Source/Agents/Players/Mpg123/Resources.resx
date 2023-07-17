@@ -240,6 +240,69 @@ MPEG files are audio samples using a lossy compression algorithm. MPEG 2.5 has a
   <data name="IDS_MPG_NAME_AGENT3" xml:space="preserve">
     <value>MPEG 2.5</value>
   </data>
+  <data name="IDS_MPG_PICTURE_TYPE_ARTIST" xml:space="preserve">
+    <value>Artist</value>
+  </data>
+  <data name="IDS_MPG_PICTURE_TYPE_ARTIST_LOGO" xml:space="preserve">
+    <value>Artist logo</value>
+  </data>
+  <data name="IDS_MPG_PICTURE_TYPE_BACK_COVER" xml:space="preserve">
+    <value>Back cover</value>
+  </data>
+  <data name="IDS_MPG_PICTURE_TYPE_COMPOSER" xml:space="preserve">
+    <value>Composer</value>
+  </data>
+  <data name="IDS_MPG_PICTURE_TYPE_CONDUCTOR" xml:space="preserve">
+    <value>Conductor</value>
+  </data>
+  <data name="IDS_MPG_PICTURE_TYPE_FISH" xml:space="preserve">
+    <value>Fish</value>
+  </data>
+  <data name="IDS_MPG_PICTURE_TYPE_FRONT_COVER" xml:space="preserve">
+    <value>Front cover</value>
+  </data>
+  <data name="IDS_MPG_PICTURE_TYPE_ICON" xml:space="preserve">
+    <value>Icon</value>
+  </data>
+  <data name="IDS_MPG_PICTURE_TYPE_ILLUSTRATION" xml:space="preserve">
+    <value>Illustration</value>
+  </data>
+  <data name="IDS_MPG_PICTURE_TYPE_LEAD" xml:space="preserve">
+    <value>Lead</value>
+  </data>
+  <data name="IDS_MPG_PICTURE_TYPE_LEAFLET" xml:space="preserve">
+    <value>Leaflet</value>
+  </data>
+  <data name="IDS_MPG_PICTURE_TYPE_LOCATION" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="IDS_MPG_PICTURE_TYPE_LYRICIST" xml:space="preserve">
+    <value>Lyricist</value>
+  </data>
+  <data name="IDS_MPG_PICTURE_TYPE_MEDIA" xml:space="preserve">
+    <value>Media</value>
+  </data>
+  <data name="IDS_MPG_PICTURE_TYPE_ORCHESTRA" xml:space="preserve">
+    <value>Orchestra</value>
+  </data>
+  <data name="IDS_MPG_PICTURE_TYPE_OTHER" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="IDS_MPG_PICTURE_TYPE_OTHER_ICON" xml:space="preserve">
+    <value>Other icon</value>
+  </data>
+  <data name="IDS_MPG_PICTURE_TYPE_PERFORMANCE" xml:space="preserve">
+    <value>Performance</value>
+  </data>
+  <data name="IDS_MPG_PICTURE_TYPE_PUBLISHER_LOGO" xml:space="preserve">
+    <value>Publisher logo</value>
+  </data>
+  <data name="IDS_MPG_PICTURE_TYPE_RECORDING" xml:space="preserve">
+    <value>Recording</value>
+  </data>
+  <data name="IDS_MPG_PICTURE_TYPE_VIDEO" xml:space="preserve">
+    <value>Video</value>
+  </data>
   <data name="IDS_NAME" xml:space="preserve">
     <value>Mpg123</value>
   </data>

@@ -201,6 +201,195 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Artist.
+        /// </summary>
+        internal static string IDS_FLAC_PICTURE_TYPE_ARTIST {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_PICTURE_TYPE_ARTIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Back cover.
+        /// </summary>
+        internal static string IDS_FLAC_PICTURE_TYPE_BACK_COVER {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_PICTURE_TYPE_BACK_COVER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Band.
+        /// </summary>
+        internal static string IDS_FLAC_PICTURE_TYPE_BAND {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_PICTURE_TYPE_BAND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Band logo.
+        /// </summary>
+        internal static string IDS_FLAC_PICTURE_TYPE_BAND_LOGO {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_PICTURE_TYPE_BAND_LOGO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Composer.
+        /// </summary>
+        internal static string IDS_FLAC_PICTURE_TYPE_COMPOSER {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_PICTURE_TYPE_COMPOSER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Conductor.
+        /// </summary>
+        internal static string IDS_FLAC_PICTURE_TYPE_CONDUCTOR {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_PICTURE_TYPE_CONDUCTOR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to During performance.
+        /// </summary>
+        internal static string IDS_FLAC_PICTURE_TYPE_DURING_PERFORMANCE {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_PICTURE_TYPE_DURING_PERFORMANCE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to During recording.
+        /// </summary>
+        internal static string IDS_FLAC_PICTURE_TYPE_DURING_RECORDING {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_PICTURE_TYPE_DURING_RECORDING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File icon.
+        /// </summary>
+        internal static string IDS_FLAC_PICTURE_TYPE_FILE_ICON {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_PICTURE_TYPE_FILE_ICON", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Icon.
+        /// </summary>
+        internal static string IDS_FLAC_PICTURE_TYPE_FILE_ICON_STANDARD {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_PICTURE_TYPE_FILE_ICON_STANDARD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fish.
+        /// </summary>
+        internal static string IDS_FLAC_PICTURE_TYPE_FISH {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_PICTURE_TYPE_FISH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Front cover.
+        /// </summary>
+        internal static string IDS_FLAC_PICTURE_TYPE_FRONT_COVER {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_PICTURE_TYPE_FRONT_COVER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illustration.
+        /// </summary>
+        internal static string IDS_FLAC_PICTURE_TYPE_ILLUSTRATION {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_PICTURE_TYPE_ILLUSTRATION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lead artist.
+        /// </summary>
+        internal static string IDS_FLAC_PICTURE_TYPE_LEAD_ARTIST {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_PICTURE_TYPE_LEAD_ARTIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Leaflet page.
+        /// </summary>
+        internal static string IDS_FLAC_PICTURE_TYPE_LEAFLET_PAGE {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_PICTURE_TYPE_LEAFLET_PAGE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lyricist.
+        /// </summary>
+        internal static string IDS_FLAC_PICTURE_TYPE_LYRICIST {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_PICTURE_TYPE_LYRICIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Media.
+        /// </summary>
+        internal static string IDS_FLAC_PICTURE_TYPE_MEDIA {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_PICTURE_TYPE_MEDIA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Other.
+        /// </summary>
+        internal static string IDS_FLAC_PICTURE_TYPE_OTHER {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_PICTURE_TYPE_OTHER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Publisher logo.
+        /// </summary>
+        internal static string IDS_FLAC_PICTURE_TYPE_PUBLISHER_LOGO {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_PICTURE_TYPE_PUBLISHER_LOGO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recording location.
+        /// </summary>
+        internal static string IDS_FLAC_PICTURE_TYPE_RECORDING_LOCATION {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_PICTURE_TYPE_RECORDING_LOCATION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Video screen capture.
+        /// </summary>
+        internal static string IDS_FLAC_PICTURE_TYPE_VIDEO_SCREEN_CAPTURE {
+            get {
+                return ResourceManager.GetString("IDS_FLAC_PICTURE_TYPE_VIDEO_SCREEN_CAPTURE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown.
         /// </summary>
         internal static string IDS_FLAC_UNKNOWN {

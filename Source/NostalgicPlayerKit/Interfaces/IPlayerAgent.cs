@@ -72,6 +72,11 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		Font LyricsFont { get; }
 
 		/// <summary>
+		/// Return all pictures available
+		/// </summary>
+		PictureInfo[] Pictures { get; }
+
+		/// <summary>
 		/// Returns the description and value on the line given. If the line
 		/// is out of range, false is returned
 		/// </summary>

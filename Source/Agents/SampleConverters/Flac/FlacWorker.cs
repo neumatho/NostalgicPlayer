@@ -26,6 +26,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 
 		private string vendor;
 		private Dictionary<string, string> comments;
+		private List<PictureInfo> pictures;
 
 		private int[] decodedDataBuffer;
 		private int bufferFilled;
@@ -157,6 +158,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 			flacDecoder = Stream_Decoder.Flac__Stream_Decoder_New();
 			flacDecoder.Flac__Stream_Decoder_Set_Md5_Checking(false);
 			flacDecoder.Flac__Stream_Decoder_Set_Metadata_Respond(Flac__MetadataType.Vorbis_Comment);
+			flacDecoder.Flac__Stream_Decoder_Set_Metadata_Respond(Flac__MetadataType.Picture);
 
 			return true;
 		}
@@ -199,6 +201,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 				return false;
 			}
 
+			pictures = new List<PictureInfo>();
+
 			if (!flacDecoder.Flac__Stream_Decoder_Process_Until_End_Of_Metadata())
 			{
 				errorMessage = Resources.IDS_FLAC_ERR_DECODER_READ_METADATA;
@@ -209,7 +213,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 			{
 				Bits = (int)streamInfo.Bits_Per_Sample,
 				Channels = (int)streamInfo.Channels,
-				Frequency = (int)streamInfo.Sample_Rate
+				Frequency = (int)streamInfo.Sample_Rate,
+				Pictures = pictures.Count > 0 ? pictures.ToArray() : null
 			};
 
 			if (comments.TryGetValue("title", out string val))
@@ -217,6 +222,8 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 
 			if (comments.TryGetValue("artist", out val))
 				formatInfo.Author = val;
+
+			pictures = null;
 
 			decodedDataBuffer = new int[streamInfo.Max_BlockSize * streamInfo.Channels];
 			bufferFilled = 0;
@@ -410,10 +417,26 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 		/********************************************************************/
 		private void MetadataCallback(Stream_Decoder decoder, Flac__StreamMetadata metadata, object client_data)
 		{
-			if (metadata.Type == Flac__MetadataType.StreamInfo)
-				streamInfo = (Flac__StreamMetadata_StreamInfo)metadata.Data;
-			else if (metadata.Type == Flac__MetadataType.Vorbis_Comment)
-				ParseVorbisComment((Flac__StreamMetadata_VorbisComment)metadata.Data);
+			switch (metadata.Type)
+			{
+				case Flac__MetadataType.StreamInfo:
+				{
+					streamInfo = (Flac__StreamMetadata_StreamInfo)metadata.Data;
+					break;
+				}
+
+				case Flac__MetadataType.Vorbis_Comment:
+				{
+					ParseVorbisComment((Flac__StreamMetadata_VorbisComment)metadata.Data);
+					break;
+				}
+
+				case Flac__MetadataType.Picture:
+				{
+					ParsePicture((Flac__StreamMetadata_Picture)metadata.Data);
+					break;
+				}
+			}
 		}
 
 
@@ -503,6 +526,108 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 					}
 				}
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Parse the Vorbis picture metadata block
+		/// </summary>
+		/********************************************************************/
+		private void ParsePicture(Flac__StreamMetadata_Picture picture)
+		{
+			string mimeType = Encoding.ASCII.GetString(picture.Mime_Type, 0, picture.Mime_Type.Length - 1);
+			if (mimeType == "-->")	// URL, we do not support that
+				return;
+
+			string type = GetTypeDescription(picture.Type);
+
+			string description = Encoding.UTF8.GetString(picture.Description, 0, picture.Description.Length - 1);
+			if (string.IsNullOrEmpty(description))
+				description = type;
+			else
+				description = $"{type}: {description}";
+
+			pictures.Add(new PictureInfo(picture.Data, description));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Find the picture type string
+		/// </summary>
+		/********************************************************************/
+		private string GetTypeDescription(Flac__StreamMetadata_Picture_Type type)
+		{
+			switch (type)
+			{
+				case Flac__StreamMetadata_Picture_Type.Other:
+					return Resources.IDS_FLAC_PICTURE_TYPE_OTHER;
+
+				case Flac__StreamMetadata_Picture_Type.File_Icon_Standard:
+					return Resources.IDS_FLAC_PICTURE_TYPE_FILE_ICON_STANDARD;
+
+				case Flac__StreamMetadata_Picture_Type.File_Icon:
+					return Resources.IDS_FLAC_PICTURE_TYPE_FILE_ICON;
+
+				case Flac__StreamMetadata_Picture_Type.Front_Cover:
+					return Resources.IDS_FLAC_PICTURE_TYPE_FRONT_COVER;
+
+				case Flac__StreamMetadata_Picture_Type.Back_Cover:
+					return Resources.IDS_FLAC_PICTURE_TYPE_BACK_COVER;
+
+				case Flac__StreamMetadata_Picture_Type.Leaflet_Page:
+					return Resources.IDS_FLAC_PICTURE_TYPE_LEAFLET_PAGE;
+
+				case Flac__StreamMetadata_Picture_Type.Media:
+					return Resources.IDS_FLAC_PICTURE_TYPE_MEDIA;
+
+				case Flac__StreamMetadata_Picture_Type.Lead_Artist:
+					return Resources.IDS_FLAC_PICTURE_TYPE_LEAD_ARTIST;
+
+				case Flac__StreamMetadata_Picture_Type.Artist:
+					return Resources.IDS_FLAC_PICTURE_TYPE_ARTIST;
+
+				case Flac__StreamMetadata_Picture_Type.Conductor:
+					return Resources.IDS_FLAC_PICTURE_TYPE_CONDUCTOR;
+
+				case Flac__StreamMetadata_Picture_Type.Band:
+					return Resources.IDS_FLAC_PICTURE_TYPE_BAND;
+
+				case Flac__StreamMetadata_Picture_Type.Composer:
+					return Resources.IDS_FLAC_PICTURE_TYPE_COMPOSER;
+
+				case Flac__StreamMetadata_Picture_Type.Lyricist:
+					return Resources.IDS_FLAC_PICTURE_TYPE_LYRICIST;
+
+				case Flac__StreamMetadata_Picture_Type.Recording_Location:
+					return Resources.IDS_FLAC_PICTURE_TYPE_RECORDING_LOCATION;
+
+				case Flac__StreamMetadata_Picture_Type.During_Recoding:
+					return Resources.IDS_FLAC_PICTURE_TYPE_DURING_RECORDING;
+
+				case Flac__StreamMetadata_Picture_Type.During_Performance:
+					return Resources.IDS_FLAC_PICTURE_TYPE_DURING_PERFORMANCE;
+
+				case Flac__StreamMetadata_Picture_Type.Video_Screen_Capture:
+					return Resources.IDS_FLAC_PICTURE_TYPE_VIDEO_SCREEN_CAPTURE;
+
+				case Flac__StreamMetadata_Picture_Type.Fish:
+					return Resources.IDS_FLAC_PICTURE_TYPE_FISH;
+
+				case Flac__StreamMetadata_Picture_Type.Illustration:
+					return Resources.IDS_FLAC_PICTURE_TYPE_ILLUSTRATION;
+
+				case Flac__StreamMetadata_Picture_Type.Band_LogoType:
+					return Resources.IDS_FLAC_PICTURE_TYPE_BAND_LOGO;
+
+				case Flac__StreamMetadata_Picture_Type.Publisher_LogoType:
+					return Resources.IDS_FLAC_PICTURE_TYPE_PUBLISHER_LOGO;
+			}
+
+			return string.Empty;
 		}
 		#endregion
 	}

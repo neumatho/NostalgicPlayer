@@ -46,6 +46,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		private string comment;
 		private string genre;
 		private byte trackNum;
+		private PictureInfo[] pictures;
 
 		private LibMpg123 mpg123Handle;
 
@@ -117,6 +118,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		/// </summary>
 		/********************************************************************/
 		public override string Author => artist;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return all pictures available
+		/// </summary>
+		/********************************************************************/
+		public override PictureInfo[] Pictures => pictures;
 
 
 
@@ -374,6 +384,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 						return false;
 					}
 				}
+			}
+
+			// We want to include pictures in the scan
+			result = mpg123Handle.Mpg123_Param(Mpg123_Parms.Add_Flags, (int)Mpg123_Param_Flags.Picture, 0);
+			if (result != Mpg123_Errors.Ok)
+			{
+				errorMessage = GetErrorString(result);
+				return false;
 			}
 
 			// Reset the stream to the beginning
@@ -841,6 +859,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 			year = GetId3V2String(v2.Year);
 			comment = GetId3V2String(v2.Comment);
 			genre = ProcessGenre(GetId3V2String(v2.Genre));
+			pictures = ProcessPictures(v2.Picture, v2.Pictures);
 		}
 
 
@@ -933,6 +952,117 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 			}
 
 			return sb.ToString().Trim();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Process the pictures
+		/// </summary>
+		/********************************************************************/
+		private PictureInfo[] ProcessPictures(Mpg123_Picture[] allPictures, ulong count)
+		{
+			List<PictureInfo> result = new List<PictureInfo>((int)count);
+
+			for (ulong i = 0; i < count; i++)
+			{
+				Mpg123_Picture picture = allPictures[i];
+
+				string mimeType = GetId3V2String(picture.Mime_Type);
+				if (mimeType == "-->")	// URL, we do not support that
+					continue;
+
+				string type = GetTypeDescription(picture.Type);
+
+				string description = GetId3V2String(picture.Description);
+				if (string.IsNullOrEmpty(description))
+					description = type;
+				else
+					description = $"{type}: {description}";
+
+				result.Add(new PictureInfo(picture.Data, description));
+			}
+
+			return result.ToArray();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Find the picture type string
+		/// </summary>
+		/********************************************************************/
+		private string GetTypeDescription(Mpg123_Id3_Pic_Type type)
+		{
+			switch (type)
+			{
+				case Mpg123_Id3_Pic_Type.Other:
+					return Resources.IDS_MPG_PICTURE_TYPE_OTHER;
+
+				case Mpg123_Id3_Pic_Type.Icon:
+					return Resources.IDS_MPG_PICTURE_TYPE_ICON;
+
+				case Mpg123_Id3_Pic_Type.Other_Icon:
+					return Resources.IDS_MPG_PICTURE_TYPE_OTHER_ICON;
+
+				case Mpg123_Id3_Pic_Type.Front_Cover:
+					return Resources.IDS_MPG_PICTURE_TYPE_FRONT_COVER;
+
+				case Mpg123_Id3_Pic_Type.Back_Cover:
+					return Resources.IDS_MPG_PICTURE_TYPE_BACK_COVER;
+
+				case Mpg123_Id3_Pic_Type.Leaflet:
+					return Resources.IDS_MPG_PICTURE_TYPE_LEAFLET;
+
+				case Mpg123_Id3_Pic_Type.Media:
+					return Resources.IDS_MPG_PICTURE_TYPE_MEDIA;
+
+				case Mpg123_Id3_Pic_Type.Lead:
+					return Resources.IDS_MPG_PICTURE_TYPE_LEAD;
+
+				case Mpg123_Id3_Pic_Type.Artist:
+					return Resources.IDS_MPG_PICTURE_TYPE_ARTIST;
+
+				case Mpg123_Id3_Pic_Type.Conductor:
+					return Resources.IDS_MPG_PICTURE_TYPE_CONDUCTOR;
+
+				case Mpg123_Id3_Pic_Type.Orchestra:
+					return Resources.IDS_MPG_PICTURE_TYPE_ORCHESTRA;
+
+				case Mpg123_Id3_Pic_Type.Composer:
+					return Resources.IDS_MPG_PICTURE_TYPE_COMPOSER;
+
+				case Mpg123_Id3_Pic_Type.Lyricist:
+					return Resources.IDS_MPG_PICTURE_TYPE_LYRICIST;
+
+				case Mpg123_Id3_Pic_Type.Location:
+					return Resources.IDS_MPG_PICTURE_TYPE_LOCATION;
+
+				case Mpg123_Id3_Pic_Type.Recording:
+					return Resources.IDS_MPG_PICTURE_TYPE_RECORDING;
+
+				case Mpg123_Id3_Pic_Type.Performance:
+					return Resources.IDS_MPG_PICTURE_TYPE_PERFORMANCE;
+
+				case Mpg123_Id3_Pic_Type.Video:
+					return Resources.IDS_MPG_PICTURE_TYPE_VIDEO;
+
+				case Mpg123_Id3_Pic_Type.Fish:
+					return Resources.IDS_MPG_PICTURE_TYPE_FISH;
+
+				case Mpg123_Id3_Pic_Type.Illustration:
+					return Resources.IDS_MPG_PICTURE_TYPE_ILLUSTRATION;
+
+				case Mpg123_Id3_Pic_Type.Artist_Logo:
+					return Resources.IDS_MPG_PICTURE_TYPE_ARTIST_LOGO;
+
+				case Mpg123_Id3_Pic_Type.Publisher_Logo:
+					return Resources.IDS_MPG_PICTURE_TYPE_PUBLISHER_LOGO;
+			}
+
+			return string.Empty;
 		}
 
 

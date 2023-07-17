@@ -394,6 +394,195 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123 {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Artist.
+        /// </summary>
+        internal static string IDS_MPG_PICTURE_TYPE_ARTIST {
+            get {
+                return ResourceManager.GetString("IDS_MPG_PICTURE_TYPE_ARTIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Artist logo.
+        /// </summary>
+        internal static string IDS_MPG_PICTURE_TYPE_ARTIST_LOGO {
+            get {
+                return ResourceManager.GetString("IDS_MPG_PICTURE_TYPE_ARTIST_LOGO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Back cover.
+        /// </summary>
+        internal static string IDS_MPG_PICTURE_TYPE_BACK_COVER {
+            get {
+                return ResourceManager.GetString("IDS_MPG_PICTURE_TYPE_BACK_COVER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Composer.
+        /// </summary>
+        internal static string IDS_MPG_PICTURE_TYPE_COMPOSER {
+            get {
+                return ResourceManager.GetString("IDS_MPG_PICTURE_TYPE_COMPOSER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Conductor.
+        /// </summary>
+        internal static string IDS_MPG_PICTURE_TYPE_CONDUCTOR {
+            get {
+                return ResourceManager.GetString("IDS_MPG_PICTURE_TYPE_CONDUCTOR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fish.
+        /// </summary>
+        internal static string IDS_MPG_PICTURE_TYPE_FISH {
+            get {
+                return ResourceManager.GetString("IDS_MPG_PICTURE_TYPE_FISH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Front cover.
+        /// </summary>
+        internal static string IDS_MPG_PICTURE_TYPE_FRONT_COVER {
+            get {
+                return ResourceManager.GetString("IDS_MPG_PICTURE_TYPE_FRONT_COVER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Icon.
+        /// </summary>
+        internal static string IDS_MPG_PICTURE_TYPE_ICON {
+            get {
+                return ResourceManager.GetString("IDS_MPG_PICTURE_TYPE_ICON", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Illustration.
+        /// </summary>
+        internal static string IDS_MPG_PICTURE_TYPE_ILLUSTRATION {
+            get {
+                return ResourceManager.GetString("IDS_MPG_PICTURE_TYPE_ILLUSTRATION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lead.
+        /// </summary>
+        internal static string IDS_MPG_PICTURE_TYPE_LEAD {
+            get {
+                return ResourceManager.GetString("IDS_MPG_PICTURE_TYPE_LEAD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Leaflet.
+        /// </summary>
+        internal static string IDS_MPG_PICTURE_TYPE_LEAFLET {
+            get {
+                return ResourceManager.GetString("IDS_MPG_PICTURE_TYPE_LEAFLET", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Location.
+        /// </summary>
+        internal static string IDS_MPG_PICTURE_TYPE_LOCATION {
+            get {
+                return ResourceManager.GetString("IDS_MPG_PICTURE_TYPE_LOCATION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lyricist.
+        /// </summary>
+        internal static string IDS_MPG_PICTURE_TYPE_LYRICIST {
+            get {
+                return ResourceManager.GetString("IDS_MPG_PICTURE_TYPE_LYRICIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Media.
+        /// </summary>
+        internal static string IDS_MPG_PICTURE_TYPE_MEDIA {
+            get {
+                return ResourceManager.GetString("IDS_MPG_PICTURE_TYPE_MEDIA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Orchestra.
+        /// </summary>
+        internal static string IDS_MPG_PICTURE_TYPE_ORCHESTRA {
+            get {
+                return ResourceManager.GetString("IDS_MPG_PICTURE_TYPE_ORCHESTRA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Other.
+        /// </summary>
+        internal static string IDS_MPG_PICTURE_TYPE_OTHER {
+            get {
+                return ResourceManager.GetString("IDS_MPG_PICTURE_TYPE_OTHER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Other icon.
+        /// </summary>
+        internal static string IDS_MPG_PICTURE_TYPE_OTHER_ICON {
+            get {
+                return ResourceManager.GetString("IDS_MPG_PICTURE_TYPE_OTHER_ICON", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Performance.
+        /// </summary>
+        internal static string IDS_MPG_PICTURE_TYPE_PERFORMANCE {
+            get {
+                return ResourceManager.GetString("IDS_MPG_PICTURE_TYPE_PERFORMANCE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Publisher logo.
+        /// </summary>
+        internal static string IDS_MPG_PICTURE_TYPE_PUBLISHER_LOGO {
+            get {
+                return ResourceManager.GetString("IDS_MPG_PICTURE_TYPE_PUBLISHER_LOGO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recording.
+        /// </summary>
+        internal static string IDS_MPG_PICTURE_TYPE_RECORDING {
+            get {
+                return ResourceManager.GetString("IDS_MPG_PICTURE_TYPE_RECORDING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Video.
+        /// </summary>
+        internal static string IDS_MPG_PICTURE_TYPE_VIDEO {
+            get {
+                return ResourceManager.GetString("IDS_MPG_PICTURE_TYPE_VIDEO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mpg123.
         /// </summary>
         internal static string IDS_NAME {

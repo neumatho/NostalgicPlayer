@@ -55,6 +55,18 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
+		/// Holds all pictures available
+		/// </summary>
+		/********************************************************************/
+		public PictureInfo[] Pictures
+		{
+			get; set;
+		} = null;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Holds some flags about this sample
 		/// </summary>
 		/********************************************************************/

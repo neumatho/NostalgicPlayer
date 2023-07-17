@@ -168,4 +168,67 @@ This player can play the audio format Ogg Vorbis. The format is an open standard
   <data name="IDS_OGG_NAME_AGENT1" xml:space="preserve">
     <value>Ogg Vorbis</value>
   </data>
+  <data name="IDS_OGG_PICTURE_TYPE_ARTIST" xml:space="preserve">
+    <value>Artist</value>
+  </data>
+  <data name="IDS_OGG_PICTURE_TYPE_BACK_COVER" xml:space="preserve">
+    <value>Back cover</value>
+  </data>
+  <data name="IDS_OGG_PICTURE_TYPE_BAND" xml:space="preserve">
+    <value>Band</value>
+  </data>
+  <data name="IDS_OGG_PICTURE_TYPE_BAND_LOGO" xml:space="preserve">
+    <value>Band logo</value>
+  </data>
+  <data name="IDS_OGG_PICTURE_TYPE_COMPOSER" xml:space="preserve">
+    <value>Composer</value>
+  </data>
+  <data name="IDS_OGG_PICTURE_TYPE_CONDUCTOR" xml:space="preserve">
+    <value>Conductor</value>
+  </data>
+  <data name="IDS_OGG_PICTURE_TYPE_DURING_PERFORMANCE" xml:space="preserve">
+    <value>During performance</value>
+  </data>
+  <data name="IDS_OGG_PICTURE_TYPE_DURING_RECORDING" xml:space="preserve">
+    <value>During recording</value>
+  </data>
+  <data name="IDS_OGG_PICTURE_TYPE_FILE_ICON" xml:space="preserve">
+    <value>File icon</value>
+  </data>
+  <data name="IDS_OGG_PICTURE_TYPE_FILE_ICON_STANDARD" xml:space="preserve">
+    <value>Icon</value>
+  </data>
+  <data name="IDS_OGG_PICTURE_TYPE_FISH" xml:space="preserve">
+    <value>Fish</value>
+  </data>
+  <data name="IDS_OGG_PICTURE_TYPE_FRONT_COVER" xml:space="preserve">
+    <value>Front cover</value>
+  </data>
+  <data name="IDS_OGG_PICTURE_TYPE_ILLUSTRATION" xml:space="preserve">
+    <value>Illustration</value>
+  </data>
+  <data name="IDS_OGG_PICTURE_TYPE_LEAD_ARTIST" xml:space="preserve">
+    <value>Lead artist</value>
+  </data>
+  <data name="IDS_OGG_PICTURE_TYPE_LEAFLET_PAGE" xml:space="preserve">
+    <value>Leaflet page</value>
+  </data>
+  <data name="IDS_OGG_PICTURE_TYPE_LYRICIST" xml:space="preserve">
+    <value>Lyricist</value>
+  </data>
+  <data name="IDS_OGG_PICTURE_TYPE_MEDIA" xml:space="preserve">
+    <value>Media</value>
+  </data>
+  <data name="IDS_OGG_PICTURE_TYPE_OTHER" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="IDS_OGG_PICTURE_TYPE_PUBLISHER_LOGO" xml:space="preserve">
+    <value>Publisher logo</value>
+  </data>
+  <data name="IDS_OGG_PICTURE_TYPE_RECORDING_LOCATION" xml:space="preserve">
+    <value>Recording location</value>
+  </data>
+  <data name="IDS_OGG_PICTURE_TYPE_VIDEO_SCREEN_CAPTURE" xml:space="preserve">
+    <value>Video screen capture</value>
+  </data>
 </root>

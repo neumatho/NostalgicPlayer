@@ -88,5 +88,38 @@ namespace Polycode.NostalgicPlayer.GuiKit.Extensions
 				}
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will check if the whole string can be shown inside the width
+		/// given. If not, it will cut it down until it can with an ellipsis
+		/// </summary>
+		/********************************************************************/
+		public static string EllipsisLine(this string str, IntPtr handle, int maxWidth, Font font, out int newWidth)
+		{
+			using (Graphics g = Graphics.FromHwnd(handle))
+			{
+				string tempStr = str;
+				string tempStr1 = str;
+
+				int width = (int)g.MeasureString(tempStr, font).Width;
+
+				while (width >= maxWidth)
+				{
+					tempStr1 = tempStr1.Substring(0, tempStr1.Length - 1);
+					tempStr = tempStr1 + "…";
+
+					width = (int)g.MeasureString(tempStr, font).Width;
+
+					if (string.IsNullOrEmpty(tempStr1))
+						break;
+				}
+
+				newWidth = width;
+				return tempStr;
+			}
+		}
 	}
 }

@@ -52,6 +52,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 			CommentFont = playerAgent.CommentFont;
 			Lyrics = playerAgent.Lyrics;
 			LyricsFont = playerAgent.LyricsFont;
+			Pictures = playerAgent.Pictures;
 			ModuleFormat = loader.ModuleFormat;
 			ModuleFormatDescription = loader.ModuleFormatDescription;
 			PlayerName = loader.PlayerName;
@@ -184,6 +185,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// </summary>
 		/********************************************************************/
 		public Font LyricsFont
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return all pictures available
+		/// </summary>
+		/********************************************************************/
+		public PictureInfo[] Pictures
 		{
 			get;
 		}

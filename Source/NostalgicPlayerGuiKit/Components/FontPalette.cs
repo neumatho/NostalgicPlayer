@@ -104,6 +104,18 @@ namespace Polycode.NostalgicPlayer.GuiKit.Components
 
 		/********************************************************************/
 		/// <summary>
+		/// Return the default font color
+		/// </summary>
+		/********************************************************************/
+		public Color GetDefaultFontColor()
+		{
+			return GetContentShortTextColor1(PaletteContentStyle.LabelNormalPanel, PaletteState.ContextNormal);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Tell whether you want to use monospace font on data grid controls
 		/// </summary>
 		/********************************************************************/

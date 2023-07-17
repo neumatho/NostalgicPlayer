@@ -995,6 +995,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			list = x;
 			size += 1;
 
+			list[size - 1] = new Mpg123_Picture();
 			Init_Mpg123_Picture(list[size - 1]);
 
 			return list[size - 1];	// Return pointer to the added picture

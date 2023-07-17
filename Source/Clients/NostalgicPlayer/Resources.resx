@@ -172,6 +172,9 @@
   <data name="IDB_NEXT_MODULE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\NextModule.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="IDB_NEXT_PICTURE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\NextPicture.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="IDB_NEXT_SONG" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\NextSong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -189,6 +192,9 @@
   </data>
   <data name="IDB_PREVIOUS_MODULE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\PreviousModule.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IDB_PREVIOUS_PICTURE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\PreviousPicture.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="IDB_PREVIOUS_SONG" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\PreviousSong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -544,6 +550,9 @@ Formats supported:
   </data>
   <data name="IDS_MODULE_INFO_TAB_LYRICS" xml:space="preserve">
     <value>Lyrics</value>
+  </data>
+  <data name="IDS_MODULE_INFO_TAB_PICTURES" xml:space="preserve">
+    <value>Pictures</value>
   </data>
   <data name="IDS_MODULE_INFO_TITLE" xml:space="preserve">
     <value>Module Information</value>

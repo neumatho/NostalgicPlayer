@@ -4,9 +4,12 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using NVorbis;
 using NVorbis.Contracts;
+using Polycode.NostalgicPlayer.Agent.Player.OggVorbis.Containers;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
@@ -36,6 +39,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 		private string copyright;
 		private string descrip;
 		private string vendor;
+		private PictureInfo[] pictures;
 		private int bitRate;
 
 		private const int InfoBitRateLine = 7;
@@ -106,6 +110,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 		/// </summary>
 		/********************************************************************/
 		public override string Author => artist;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return all pictures available
+		/// </summary>
+		/********************************************************************/
+		public override PictureInfo[] Pictures => pictures;
 
 
 
@@ -252,6 +265,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 			copyright = string.IsNullOrEmpty(tags.Copyright) ? Resources.IDS_OGG_INFO_UNKNOWN : tags.Copyright;
 			descrip = string.IsNullOrEmpty(tags.Description) ? Resources.IDS_OGG_INFO_NONE : tags.Description;
 			vendor = string.IsNullOrEmpty(tags.EncoderVendor) ? Resources.IDS_OGG_INFO_UNKNOWN : tags.EncoderVendor;
+			pictures = ParsePictures(tags);
 
 			return true;
 		}
@@ -378,6 +392,161 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 		#endregion
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Parse the Vorbis picture metadata block
+		/// </summary>
+		/********************************************************************/
+		private PictureInfo[] ParsePictures(ITagData tags)
+		{
+			try
+			{
+				IReadOnlyList<string> allPictures = tags.GetTagMulti("METADATA_BLOCK_PICTURE");
+				if (allPictures.Count == 0)
+					return null;
+
+				List<PictureInfo> pictureList = new List<PictureInfo>();
+
+				foreach (string base64 in allPictures)
+				{
+					try
+					{
+						using (ReaderStream rs = new ReaderStream(new MemoryStream(Convert.FromBase64String(base64))))
+						{
+							PictureType pictureType = (PictureType)rs.Read_B_INT32();
+
+							int length = rs.Read_B_INT32();
+							byte[] bytes = new byte[length];
+
+							if (rs.Read(bytes, 0, length) != length)
+								continue;
+
+							string mimeType = Encoding.ASCII.GetString(bytes);
+							if (mimeType == "-->")	// URL, we do not support that
+								continue;
+
+							length = rs.Read_B_INT32();
+							bytes = new byte[length];
+
+							if (rs.Read(bytes, 0, length) != length)
+								continue;
+
+							string description = Encoding.UTF8.GetString(bytes);
+
+							// Skip width, height, color depth and number of colors
+							rs.Seek(4 * 4, SeekOrigin.Current);
+
+							// Get the picture data
+							length = rs.Read_B_INT32();
+							bytes = new byte[length];
+
+							if (rs.Read(bytes, 0, length) != length)
+								continue;
+
+							string type = GetTypeDescription(pictureType);
+
+							if (string.IsNullOrEmpty(description))
+								description = type;
+							else
+								description = $"{type}: {description}";
+
+							pictureList.Add(new PictureInfo(bytes, description));
+						}
+					}
+					catch (Exception)
+					{
+						// Ignore exception
+					}
+				}
+
+				return pictureList.Count > 0 ? pictureList.ToArray() : null;
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Find the picture type string
+		/// </summary>
+		/********************************************************************/
+		private string GetTypeDescription(PictureType type)
+		{
+			switch (type)
+			{
+				case PictureType.Other:
+					return Resources.IDS_OGG_PICTURE_TYPE_OTHER;
+
+				case PictureType.File_Icon_Standard:
+					return Resources.IDS_OGG_PICTURE_TYPE_FILE_ICON_STANDARD;
+
+				case PictureType.File_Icon:
+					return Resources.IDS_OGG_PICTURE_TYPE_FILE_ICON;
+
+				case PictureType.Front_Cover:
+					return Resources.IDS_OGG_PICTURE_TYPE_FRONT_COVER;
+
+				case PictureType.Back_Cover:
+					return Resources.IDS_OGG_PICTURE_TYPE_BACK_COVER;
+
+				case PictureType.Leaflet_Page:
+					return Resources.IDS_OGG_PICTURE_TYPE_LEAFLET_PAGE;
+
+				case PictureType.Media:
+					return Resources.IDS_OGG_PICTURE_TYPE_MEDIA;
+
+				case PictureType.Lead_Artist:
+					return Resources.IDS_OGG_PICTURE_TYPE_LEAD_ARTIST;
+
+				case PictureType.Artist:
+					return Resources.IDS_OGG_PICTURE_TYPE_ARTIST;
+
+				case PictureType.Conductor:
+					return Resources.IDS_OGG_PICTURE_TYPE_CONDUCTOR;
+
+				case PictureType.Band:
+					return Resources.IDS_OGG_PICTURE_TYPE_BAND;
+
+				case PictureType.Composer:
+					return Resources.IDS_OGG_PICTURE_TYPE_COMPOSER;
+
+				case PictureType.Lyricist:
+					return Resources.IDS_OGG_PICTURE_TYPE_LYRICIST;
+
+				case PictureType.Recording_Location:
+					return Resources.IDS_OGG_PICTURE_TYPE_RECORDING_LOCATION;
+
+				case PictureType.During_Recoding:
+					return Resources.IDS_OGG_PICTURE_TYPE_DURING_RECORDING;
+
+				case PictureType.During_Performance:
+					return Resources.IDS_OGG_PICTURE_TYPE_DURING_PERFORMANCE;
+
+				case PictureType.Video_Screen_Capture:
+					return Resources.IDS_OGG_PICTURE_TYPE_VIDEO_SCREEN_CAPTURE;
+
+				case PictureType.Fish:
+					return Resources.IDS_OGG_PICTURE_TYPE_FISH;
+
+				case PictureType.Illustration:
+					return Resources.IDS_OGG_PICTURE_TYPE_ILLUSTRATION;
+
+				case PictureType.Band_LogoType:
+					return Resources.IDS_OGG_PICTURE_TYPE_BAND_LOGO;
+
+				case PictureType.Publisher_LogoType:
+					return Resources.IDS_OGG_PICTURE_TYPE_PUBLISHER_LOGO;
+			}
+
+			return string.Empty;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Read next block of data
