@@ -29,59 +29,103 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			this.deviceLabel = new Krypton.Toolkit.KryptonLabel();
-			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
-			this.controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
-			this.deviceComboBox = new Krypton.Toolkit.KryptonComboBox();
-			((System.ComponentModel.ISupportInitialize)(this.controlResource)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.deviceComboBox)).BeginInit();
-			this.SuspendLayout();
+			components = new System.ComponentModel.Container();
+			deviceLabel = new Krypton.Toolkit.KryptonLabel();
+			fontPalette = new GuiKit.Components.FontPalette(components);
+			controlResource = new GuiKit.Designer.ControlResource();
+			deviceComboBox = new Krypton.Toolkit.KryptonComboBox();
+			latencyTrackBar = new Krypton.Toolkit.KryptonTrackBar();
+			latencyLabel = new Krypton.Toolkit.KryptonLabel();
+			latencyMsLabel = new Krypton.Toolkit.KryptonLabel();
+			((System.ComponentModel.ISupportInitialize)controlResource).BeginInit();
+			((System.ComponentModel.ISupportInitialize)deviceComboBox).BeginInit();
+			SuspendLayout();
 			// 
 			// deviceLabel
 			// 
-			this.deviceLabel.Location = new System.Drawing.Point(0, 22);
-			this.deviceLabel.Name = "deviceLabel";
-			this.deviceLabel.Palette = this.fontPalette;
-			this.deviceLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.controlResource.SetResourceKey(this.deviceLabel, "IDS_SETTINGS_DEVICE");
-			this.deviceLabel.Size = new System.Drawing.Size(78, 16);
-			this.deviceLabel.TabIndex = 0;
-			this.deviceLabel.Values.Text = "Output device";
+			deviceLabel.Location = new System.Drawing.Point(0, 9);
+			deviceLabel.Name = "deviceLabel";
+			deviceLabel.Palette = fontPalette;
+			deviceLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(deviceLabel, "IDS_SETTINGS_DEVICE");
+			deviceLabel.Size = new System.Drawing.Size(78, 16);
+			deviceLabel.TabIndex = 0;
+			deviceLabel.Values.Text = "Output device";
 			// 
 			// controlResource
 			// 
-			this.controlResource.ResourceClassName = "Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings.Resources";
+			controlResource.ResourceClassName = "Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings.Resources";
 			// 
 			// deviceComboBox
 			// 
-			this.deviceComboBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-			this.deviceComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.deviceComboBox.DropDownWidth = 305;
-			this.deviceComboBox.IntegralHeight = false;
-			this.deviceComboBox.Location = new System.Drawing.Point(87, 21);
-			this.deviceComboBox.Name = "deviceComboBox";
-			this.deviceComboBox.Palette = this.fontPalette;
-			this.deviceComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.controlResource.SetResourceKey(this.deviceComboBox, null);
-			this.deviceComboBox.Size = new System.Drawing.Size(305, 18);
-			this.deviceComboBox.TabIndex = 1;
+			deviceComboBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			deviceComboBox.CornerRoundingRadius = -1F;
+			deviceComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			deviceComboBox.DropDownWidth = 305;
+			deviceComboBox.IntegralHeight = false;
+			deviceComboBox.Location = new System.Drawing.Point(87, 8);
+			deviceComboBox.Name = "deviceComboBox";
+			deviceComboBox.Palette = fontPalette;
+			deviceComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(deviceComboBox, null);
+			deviceComboBox.Size = new System.Drawing.Size(305, 18);
+			deviceComboBox.TabIndex = 1;
+			// 
+			// latencyTrackBar
+			// 
+			latencyTrackBar.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			latencyTrackBar.BackStyle = Krypton.Toolkit.PaletteBackStyle.InputControlStandalone;
+			latencyTrackBar.Location = new System.Drawing.Point(89, 34);
+			latencyTrackBar.Maximum = 9;
+			latencyTrackBar.Name = "latencyTrackBar";
+			latencyTrackBar.Palette = fontPalette;
+			latencyTrackBar.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(latencyTrackBar, null);
+			latencyTrackBar.Size = new System.Drawing.Size(249, 27);
+			latencyTrackBar.TabIndex = 3;
+			latencyTrackBar.ValueChanged += LatencyTrackBar_ValueChanged;
+			// 
+			// latencyLabel
+			// 
+			latencyLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+			latencyLabel.Location = new System.Drawing.Point(0, 39);
+			latencyLabel.Name = "latencyLabel";
+			latencyLabel.Palette = fontPalette;
+			latencyLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(latencyLabel, "IDS_SETTINGS_LATENCY");
+			latencyLabel.Size = new System.Drawing.Size(49, 16);
+			latencyLabel.TabIndex = 2;
+			latencyLabel.Values.Text = "Latency";
+			// 
+			// latencyMsLabel
+			// 
+			latencyMsLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+			latencyMsLabel.Location = new System.Drawing.Point(346, 39);
+			latencyMsLabel.Name = "latencyMsLabel";
+			latencyMsLabel.Palette = fontPalette;
+			latencyMsLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(latencyMsLabel, null);
+			latencyMsLabel.Size = new System.Drawing.Size(40, 16);
+			latencyMsLabel.TabIndex = 4;
+			latencyMsLabel.Values.Text = "20 ms";
 			// 
 			// SettingsControl
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.BackColor = System.Drawing.Color.Transparent;
-			this.Controls.Add(this.deviceComboBox);
-			this.Controls.Add(this.deviceLabel);
-			this.MinimumSize = new System.Drawing.Size(400, 62);
-			this.Name = "SettingsControl";
-			this.controlResource.SetResourceKey(this, null);
-			this.Size = new System.Drawing.Size(400, 62);
-			((System.ComponentModel.ISupportInitialize)(this.controlResource)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.deviceComboBox)).EndInit();
-			this.ResumeLayout(false);
-			this.PerformLayout();
-
+			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			BackColor = System.Drawing.Color.Transparent;
+			Controls.Add(latencyMsLabel);
+			Controls.Add(latencyLabel);
+			Controls.Add(latencyTrackBar);
+			Controls.Add(deviceComboBox);
+			Controls.Add(deviceLabel);
+			MinimumSize = new System.Drawing.Size(400, 70);
+			Name = "SettingsControl";
+			controlResource.SetResourceKey(this, null);
+			Size = new System.Drawing.Size(400, 70);
+			((System.ComponentModel.ISupportInitialize)controlResource).EndInit();
+			((System.ComponentModel.ISupportInitialize)deviceComboBox).EndInit();
+			ResumeLayout(false);
+			PerformLayout();
 		}
 
 		#endregion
@@ -89,5 +133,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 		private GuiKit.Designer.ControlResource controlResource;
 		private Krypton.Toolkit.KryptonComboBox deviceComboBox;
 		private GuiKit.Components.FontPalette fontPalette;
+		private Krypton.Toolkit.KryptonTrackBar latencyTrackBar;
+		private Krypton.Toolkit.KryptonLabel latencyLabel;
+		private Krypton.Toolkit.KryptonLabel latencyMsLabel;
 	}
 }

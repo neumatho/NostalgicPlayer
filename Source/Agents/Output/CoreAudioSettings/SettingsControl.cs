@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.Threading;
 using System.Windows.Forms;
 using Krypton.Toolkit;
@@ -89,7 +90,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 			}
 
 			if (deviceComboBox.SelectedIndex == -1)
-				deviceComboBox.SelectedIndex = 0;		// Select "Default"
+				deviceComboBox.SelectedIndex = 0;       // Select "Default"
+
+			int value = (settings.Latency - 20) / 20;
+			latencyTrackBar.Value = Math.Min(latencyTrackBar.Maximum, value);
 		}
 
 
@@ -104,6 +108,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 		{
 			if (deviceComboBox.SelectedIndex != -1)
 				settings.OutputDevice = (string)((KryptonListItem)deviceComboBox.SelectedItem).Tag;
+
+			settings.Latency = latencyTrackBar.Value * 20 + 20;
 
 			// Save the settings to disk
 			settings.Settings.SaveSettings();
@@ -122,6 +128,19 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 		/********************************************************************/
 		public void CancelSettings()
 		{
+		}
+		#endregion
+
+		#region Event handlers
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the latency value changes
+		/// </summary>
+		/********************************************************************/
+		private void LatencyTrackBar_ValueChanged(object sender, System.EventArgs e)
+		{
+			int ms = latencyTrackBar.Value * 20 + 20;
+			latencyMsLabel.Text = $"{ms} ms";
 		}
 		#endregion
 	}

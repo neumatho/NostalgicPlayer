@@ -49,5 +49,19 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 			set => settings.SetStringEntry("General", "OutputDevice", value);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Latency in number of milliseconds
+		/// </summary>
+		/********************************************************************/
+		public int Latency
+		{
+			get => settings.GetIntEntry("General", "Latency", 20);
+
+			set => settings.SetIntEntry("General", "Latency", value);
+		}
 	}
 }

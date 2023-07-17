@@ -45,8 +45,6 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 			Paused
 		}
 
-		private const int LatencyMilliseconds = 20;
-
 		private object streamLock;
 		private SoundStream stream;
 
@@ -118,6 +116,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 				// Now create the thread which is going to drive the renderer
 				renderThread = new Thread(DoRenderThread);
 				renderThread.Name = "CoreAudio render";
+				renderThread.Priority = ThreadPriority.Highest;
 				renderThread.Start();
 
 				return AgentResult.Ok;
@@ -300,7 +299,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 				stream?.Dispose();
 
 				int bytesPerSample = outputFormat.BitsPerSample / 8;
-				soundStream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, (outputFormat.AverageBytesPerSecond / bytesPerSample) * LatencyMilliseconds / 1000, bytesPerSample));
+				soundStream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, (outputFormat.AverageBytesPerSecond / bytesPerSample) * settings.Latency / 1000, bytesPerSample));
 				stream = soundStream;
 			}
 
@@ -351,7 +350,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/********************************************************************/
 		private void InitializeAudioEngine()
 		{
-			long latencyRefTimes = LatencyMilliseconds * 10000;
+			long latencyRefTimes = settings.Latency * 10000;
 
 			// Try these formats in this order:
 			//
@@ -527,7 +526,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 					// Tell the mixer about new sample rates etc.
 					int bytesPerSample = outputFormat.BitsPerSample / 8;
-					stream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, (outputFormat.AverageBytesPerSecond / bytesPerSample) * LatencyMilliseconds / 1000, bytesPerSample));
+					stream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, (outputFormat.AverageBytesPerSecond / bytesPerSample) * settings.Latency / 1000, bytesPerSample));
 
 					playbackState = oldState;
 				}
