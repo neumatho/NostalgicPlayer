@@ -3,6 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
+using System.Linq;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
@@ -38,6 +41,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 			JumpToStart,
 			/// <summary></summary>
 			Loop
+		}
+
+		/// <summary>
+		/// The different tabs in the window. The order need to be the same as
+		/// shown in the window
+		/// </summary>
+		public enum ModuleInfoTab
+		{
+			/// <summary></summary>
+			Info = 0,
+			/// <summary></summary>
+			Comments,
+			/// <summary></summary>
+			Lyrics,
+			/// <summary></summary>
+			Pictures
 		}
 
 		private readonly ISettings settings;
@@ -134,6 +153,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 			get => settings.GetEnumEntry("Modules", "ModuleListEnd", ModuleListEndAction.JumpToStart);
 
 			set => settings.SetEnumEntry("Modules", "ModuleListEnd", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Module information tab order
+		/// </summary>
+		/********************************************************************/
+		public ModuleInfoTab[] ModuleInfoActivateTabOrder
+		{
+			get => settings.GetStringEntry("Modules", "ModuleInfoActivateTabOrder", string.Join(',', new[]
+			{
+				ModuleInfoTab.Pictures.ToString(),
+				ModuleInfoTab.Lyrics.ToString(),
+				ModuleInfoTab.Comments.ToString(),
+				ModuleInfoTab.Info.ToString()
+			})).Split(',', StringSplitOptions.RemoveEmptyEntries)
+				.Where(x => Enum.TryParse<ModuleInfoTab>(x, out _))
+				.Select(Enum.Parse<ModuleInfoTab>).ToArray();
+
+			set => settings.SetStringEntry("Modules", "ModuleInfoActivateTabOrder", string.Join(',', value));
 		}
 	}
 }

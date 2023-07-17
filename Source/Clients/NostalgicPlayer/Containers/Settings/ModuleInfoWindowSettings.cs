@@ -22,20 +22,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		public ModuleInfoWindowSettings(ISettings windowSettings)
 		{
 			settings = windowSettings;
-		}
 
-
-
-		/********************************************************************/
-		/// <summary>
-		/// The tab to auto select when new module is loaded
-		/// </summary>
-		/********************************************************************/
-		public int AutoSelectTab
-		{
-			get => settings.GetIntEntry("Window", "AutoSelectTab", 0);
-
-			set => settings.SetIntEntry("Window", "AutoSelectTab", value);
+			windowSettings.RemoveEntry("Window", "AutoSelectTab");
 		}
 
 

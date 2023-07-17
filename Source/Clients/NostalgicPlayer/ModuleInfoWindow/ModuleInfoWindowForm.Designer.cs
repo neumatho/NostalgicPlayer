@@ -140,7 +140,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			navigator.SelectedIndex = 0;
 			navigator.Size = new System.Drawing.Size(284, 184);
 			navigator.TabIndex = 1;
-			navigator.SelectedPageChanged += Navigator_SelectedPageChanged;
 			// 
 			// navigatorInfoPage
 			// 

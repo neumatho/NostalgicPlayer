@@ -44,6 +44,11 @@
 			neverEndingLabel = new Krypton.Toolkit.KryptonLabel();
 			moduleListEndComboBox = new Krypton.Toolkit.KryptonComboBox();
 			moduleListEndLabel = new Krypton.Toolkit.KryptonLabel();
+			showingGroupBox = new Krypton.Toolkit.KryptonGroupBox();
+			moduleInfoOrderDownButton = new Krypton.Toolkit.KryptonButton();
+			moduleInfoOrderUpButton = new Krypton.Toolkit.KryptonButton();
+			moduleInfoOrderLabel = new Krypton.Toolkit.KryptonLabel();
+			moduleInfoOrderListBox = new Krypton.Toolkit.KryptonListBox();
 			((System.ComponentModel.ISupportInitialize)controlResource).BeginInit();
 			((System.ComponentModel.ISupportInitialize)loadingGroupBox).BeginInit();
 			((System.ComponentModel.ISupportInitialize)loadingGroupBox.Panel).BeginInit();
@@ -54,6 +59,9 @@
 			((System.ComponentModel.ISupportInitialize)playingGroupBox.Panel).BeginInit();
 			playingGroupBox.Panel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)moduleListEndComboBox).BeginInit();
+			((System.ComponentModel.ISupportInitialize)showingGroupBox).BeginInit();
+			((System.ComponentModel.ISupportInitialize)showingGroupBox.Panel).BeginInit();
+			showingGroupBox.Panel.SuspendLayout();
 			SuspendLayout();
 			// 
 			// controlResource
@@ -87,7 +95,7 @@
 			doubleBufferingCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(doubleBufferingCheckBox, "IDS_SETTINGS_MODULES_LOADING_DOUBLEBUFFERING");
 			doubleBufferingCheckBox.Size = new System.Drawing.Size(104, 16);
-			doubleBufferingCheckBox.TabIndex = 4;
+			doubleBufferingCheckBox.TabIndex = 0;
 			doubleBufferingCheckBox.Values.Text = "Double buffering";
 			doubleBufferingCheckBox.CheckedChanged += DoubleBufferingCheckBox_CheckedChanged;
 			// 
@@ -101,7 +109,7 @@
 			doubleBufferingPanel.Name = "doubleBufferingPanel";
 			controlResource.SetResourceKey(doubleBufferingPanel, null);
 			doubleBufferingPanel.Size = new System.Drawing.Size(574, 30);
-			doubleBufferingPanel.TabIndex = 5;
+			doubleBufferingPanel.TabIndex = 1;
 			// 
 			// earlyLoadLabel
 			// 
@@ -132,7 +140,7 @@
 			moduleErrorLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(moduleErrorLabel, "IDS_SETTINGS_MODULES_LOADING_MODULEERROR");
 			moduleErrorLabel.Size = new System.Drawing.Size(166, 16);
-			moduleErrorLabel.TabIndex = 6;
+			moduleErrorLabel.TabIndex = 2;
 			moduleErrorLabel.Values.Text = "When a module error is reached";
 			// 
 			// moduleErrorComboBox
@@ -147,7 +155,7 @@
 			moduleErrorComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(moduleErrorComboBox, null);
 			moduleErrorComboBox.Size = new System.Drawing.Size(180, 18);
-			moduleErrorComboBox.TabIndex = 7;
+			moduleErrorComboBox.TabIndex = 3;
 			// 
 			// playingGroupBox
 			// 
@@ -177,7 +185,7 @@
 			neverEndingCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(neverEndingCheckBox, "IDS_SETTINGS_MODULES_PLAYING_NEVERENDING");
 			neverEndingCheckBox.Size = new System.Drawing.Size(166, 16);
-			neverEndingCheckBox.TabIndex = 5;
+			neverEndingCheckBox.TabIndex = 0;
 			neverEndingCheckBox.Values.Text = "Never ending module timeout";
 			neverEndingCheckBox.CheckedChanged += NeverEnding_CheckedChanged;
 			// 
@@ -191,7 +199,7 @@
 			neverEndingNumberTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(neverEndingNumberTextBox, null);
 			neverEndingNumberTextBox.Size = new System.Drawing.Size(32, 20);
-			neverEndingNumberTextBox.TabIndex = 6;
+			neverEndingNumberTextBox.TabIndex = 1;
 			// 
 			// neverEndingLabel
 			// 
@@ -201,7 +209,7 @@
 			neverEndingLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(neverEndingLabel, "IDS_SETTINGS_MODULES_PLAYING_NEVERENDING_SECONDS");
 			neverEndingLabel.Size = new System.Drawing.Size(51, 16);
-			neverEndingLabel.TabIndex = 7;
+			neverEndingLabel.TabIndex = 2;
 			neverEndingLabel.Values.Text = "seconds";
 			// 
 			// moduleListEndComboBox
@@ -216,7 +224,7 @@
 			moduleListEndComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(moduleListEndComboBox, null);
 			moduleListEndComboBox.Size = new System.Drawing.Size(100, 18);
-			moduleListEndComboBox.TabIndex = 9;
+			moduleListEndComboBox.TabIndex = 4;
 			// 
 			// moduleListEndLabel
 			// 
@@ -226,13 +234,83 @@
 			moduleListEndLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(moduleListEndLabel, "IDS_SETTINGS_MODULES_PLAYING_MODULELISTEND");
 			moduleListEndLabel.Size = new System.Drawing.Size(109, 16);
-			moduleListEndLabel.TabIndex = 8;
+			moduleListEndLabel.TabIndex = 3;
 			moduleListEndLabel.Values.Text = "At end of module list";
+			// 
+			// showingGroupBox
+			// 
+			showingGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
+			showingGroupBox.Location = new System.Drawing.Point(8, 196);
+			showingGroupBox.Name = "showingGroupBox";
+			showingGroupBox.Palette = fontPalette;
+			showingGroupBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			// 
+			// 
+			// 
+			showingGroupBox.Panel.Controls.Add(moduleInfoOrderDownButton);
+			showingGroupBox.Panel.Controls.Add(moduleInfoOrderUpButton);
+			showingGroupBox.Panel.Controls.Add(moduleInfoOrderLabel);
+			showingGroupBox.Panel.Controls.Add(moduleInfoOrderListBox);
+			controlResource.SetResourceKey(showingGroupBox, "IDS_SETTINGS_MODULES_SHOWING");
+			showingGroupBox.Size = new System.Drawing.Size(592, 152);
+			showingGroupBox.TabIndex = 2;
+			showingGroupBox.Values.Heading = "Showing";
+			// 
+			// moduleInfoOrderDownButton
+			// 
+			moduleInfoOrderDownButton.CornerRoundingRadius = -1F;
+			moduleInfoOrderDownButton.Enabled = false;
+			moduleInfoOrderDownButton.Location = new System.Drawing.Point(128, 62);
+			moduleInfoOrderDownButton.Name = "moduleInfoOrderDownButton";
+			moduleInfoOrderDownButton.Palette = fontPalette;
+			moduleInfoOrderDownButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(moduleInfoOrderDownButton, "IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_DOWN");
+			moduleInfoOrderDownButton.Size = new System.Drawing.Size(60, 25);
+			moduleInfoOrderDownButton.TabIndex = 3;
+			moduleInfoOrderDownButton.Values.Text = "Down";
+			moduleInfoOrderDownButton.Click += ModuleInfoOrderDownButton_Click;
+			// 
+			// moduleInfoOrderUpButton
+			// 
+			moduleInfoOrderUpButton.CornerRoundingRadius = -1F;
+			moduleInfoOrderUpButton.Enabled = false;
+			moduleInfoOrderUpButton.Location = new System.Drawing.Point(128, 33);
+			moduleInfoOrderUpButton.Name = "moduleInfoOrderUpButton";
+			moduleInfoOrderUpButton.Palette = fontPalette;
+			moduleInfoOrderUpButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(moduleInfoOrderUpButton, "IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_UP");
+			moduleInfoOrderUpButton.Size = new System.Drawing.Size(60, 25);
+			moduleInfoOrderUpButton.TabIndex = 2;
+			moduleInfoOrderUpButton.Values.Text = "Up";
+			moduleInfoOrderUpButton.Click += ModuleInfoOrderUpButton_Click;
+			// 
+			// moduleInfoOrderLabel
+			// 
+			moduleInfoOrderLabel.Location = new System.Drawing.Point(4, 5);
+			moduleInfoOrderLabel.Name = "moduleInfoOrderLabel";
+			moduleInfoOrderLabel.Palette = fontPalette;
+			moduleInfoOrderLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(moduleInfoOrderLabel, "IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_ORDER");
+			moduleInfoOrderLabel.Size = new System.Drawing.Size(155, 28);
+			moduleInfoOrderLabel.TabIndex = 0;
+			moduleInfoOrderLabel.Values.Text = "In which order to activate tabs\r\nin Module Information window";
+			// 
+			// moduleInfoOrderListBox
+			// 
+			moduleInfoOrderListBox.Location = new System.Drawing.Point(4, 33);
+			moduleInfoOrderListBox.Name = "moduleInfoOrderListBox";
+			moduleInfoOrderListBox.Palette = fontPalette;
+			moduleInfoOrderListBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(moduleInfoOrderListBox, null);
+			moduleInfoOrderListBox.Size = new System.Drawing.Size(120, 89);
+			moduleInfoOrderListBox.TabIndex = 1;
+			moduleInfoOrderListBox.SelectedIndexChanged += ModuleInfoOrderListBox_SelectedIndexChanged;
 			// 
 			// ModulesPageControl
 			// 
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			BackColor = System.Drawing.Color.Transparent;
+			Controls.Add(showingGroupBox);
 			Controls.Add(playingGroupBox);
 			Controls.Add(loadingGroupBox);
 			Name = "ModulesPageControl";
@@ -251,6 +329,10 @@
 			playingGroupBox.Panel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)playingGroupBox).EndInit();
 			((System.ComponentModel.ISupportInitialize)moduleListEndComboBox).EndInit();
+			((System.ComponentModel.ISupportInitialize)showingGroupBox.Panel).EndInit();
+			showingGroupBox.Panel.ResumeLayout(false);
+			showingGroupBox.Panel.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)showingGroupBox).EndInit();
 			ResumeLayout(false);
 		}
 
@@ -271,5 +353,10 @@
 		private Krypton.Toolkit.KryptonLabel neverEndingLabel;
 		private Krypton.Toolkit.KryptonComboBox moduleListEndComboBox;
 		private Krypton.Toolkit.KryptonLabel moduleListEndLabel;
+		private Krypton.Toolkit.KryptonGroupBox showingGroupBox;
+		private Krypton.Toolkit.KryptonListBox moduleInfoOrderListBox;
+		private Krypton.Toolkit.KryptonLabel moduleInfoOrderLabel;
+		private Krypton.Toolkit.KryptonButton moduleInfoOrderUpButton;
+		private Krypton.Toolkit.KryptonButton moduleInfoOrderDownButton;
 	}
 }

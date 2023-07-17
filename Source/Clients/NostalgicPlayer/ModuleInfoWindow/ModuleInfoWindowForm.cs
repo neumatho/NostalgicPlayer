@@ -34,8 +34,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		private ModuleHandler moduleHandler;
 		private MainWindowForm mainWindow;
 
-		private bool doNotUpdateAutoSelection;
-
 		private PictureInfo[] pictures;
 		private int pictureIndex;
 		private int nextPictureIndex;
@@ -62,6 +60,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		private Bitmap newFadeLabelBitmap;
 
 		private readonly ModuleInfoWindowSettings settings;
+		private readonly ModuleSettings moduleSettings;
 
 		private static readonly float[][] fadeMatrix =
 		{
@@ -72,23 +71,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			new float[] { 0, 0, 0, 0, 1 }
 		};
 
-		private const int Page_ModuleInfo = 0;
-		private const int Page_Comments = 1;
-		private const int Page_Lyrics = 2;
-		private const int Page_Pictures = 3;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ModuleInfoWindowForm(ModuleHandler moduleHandler, MainWindowForm mainWindow, OptionSettings optionSettings)
+		public ModuleInfoWindowForm(ModuleHandler moduleHandler, MainWindowForm mainWindow, OptionSettings optionSettings, ModuleSettings moduleSettings)
 		{
 			InitializeComponent();
 
 			// Remember the arguments
 			this.moduleHandler = moduleHandler;
 			this.mainWindow = mainWindow;
+			this.moduleSettings = moduleSettings;
 
 			if (!DesignMode)
 			{
@@ -102,10 +97,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				Text = Resources.IDS_MODULE_INFO_TITLE;
 
 				// Set the tab titles
-				navigator.Pages[Page_ModuleInfo].Text = Resources.IDS_MODULE_INFO_TAB_INFO;
-				navigator.Pages[Page_Comments].Text = Resources.IDS_MODULE_INFO_TAB_COMMENT;
-				navigator.Pages[Page_Lyrics].Text = Resources.IDS_MODULE_INFO_TAB_LYRICS;
-				navigator.Pages[Page_Pictures].Text = Resources.IDS_MODULE_INFO_TAB_PICTURES;
+				navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Info].Text = Resources.IDS_MODULE_INFO_TAB_INFO;
+				navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Comments].Text = Resources.IDS_MODULE_INFO_TAB_COMMENT;
+				navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Lyrics].Text = Resources.IDS_MODULE_INFO_TAB_LYRICS;
+				navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Pictures].Text = Resources.IDS_MODULE_INFO_TAB_PICTURES;
 
 				// Add the columns to the controls
 				moduleInfoInfoDataGridView.Columns.Add(new KryptonDataGridViewTextBoxColumn
@@ -144,14 +139,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				moduleInfoInfoDataGridView.Rows.Clear();
 				moduleInfoCommentReadOnlyRichTextBox.Clear();
 				moduleInfoLyricsReadOnlyRichTextBox.Clear();
+
 				CleanupPictures();
 
 				// Add the items
-				doNotUpdateAutoSelection = true;
-
 				AddItems();
-
-				doNotUpdateAutoSelection = false;
 			}
 		}
 
@@ -228,19 +220,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				mainWindow = null;
 				moduleHandler = null;
 			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called when a tab is selected
-		/// </summary>
-		/********************************************************************/
-		private void Navigator_SelectedPageChanged(object sender, EventArgs e)
-		{
-			if (!doNotUpdateAutoSelection)
-				settings.AutoSelectTab = navigator.SelectedIndex;
 		}
 
 
@@ -535,10 +514,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				// Add comment
 				if (staticInfo.Comment?.Length > 0)
 				{
-					navigator.Pages[Page_Comments].Visible = true;
-
-					if (settings.AutoSelectTab == Page_Comments)
-						navigator.SelectedIndex = Page_Comments;
+					navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Comments].Visible = true;
 
 					// Switch font
 					moduleInfoCommentReadOnlyRichTextBox.SetFont(staticInfo.CommentFont ?? FontPalette.GetMonospaceFont());
@@ -547,15 +523,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 					moduleInfoCommentReadOnlyRichTextBox.Lines = staticInfo.Comment;
 				}
 				else
-					navigator.Pages[Page_Comments].Visible = false;
+					navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Comments].Visible = false;
 
 				// Add lyrics
 				if (staticInfo.Lyrics?.Length > 0)
 				{
-					navigator.Pages[Page_Lyrics].Visible = true;
-
-					if (settings.AutoSelectTab == Page_Lyrics)
-						navigator.SelectedIndex = Page_Lyrics;
+					navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Lyrics].Visible = true;
 
 					// Switch font
 					moduleInfoLyricsReadOnlyRichTextBox.SetFont(staticInfo.LyricsFont ?? FontPalette.GetMonospaceFont());
@@ -564,20 +537,31 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 					moduleInfoLyricsReadOnlyRichTextBox.Lines = staticInfo.Lyrics;
 				}
 				else
-					navigator.Pages[Page_Lyrics].Visible = false;
+					navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Lyrics].Visible = false;
 
 				// Add pictures
 				if (staticInfo.Pictures?.Length > 0)
 				{
+					navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Pictures].Visible = true;
+
+					// Remember the pictures
 					pictures = staticInfo.Pictures;
 
+					// Prepare needed bitmaps
 					InitializePictures();
-
-					navigator.Pages[Page_Pictures].Visible = true;
-					navigator.SelectedIndex = Page_Pictures;
 				}
 				else
-					navigator.Pages[Page_Pictures].Visible = false;
+					navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Pictures].Visible = false;
+
+				// Find out which tab to activate
+				foreach (ModuleSettings.ModuleInfoTab tab in moduleSettings.ModuleInfoActivateTabOrder)
+				{
+					if (navigator.Pages[(int)tab].Visible)
+					{
+						navigator.SelectedIndex = (int)tab;
+						break;
+					}
+				}
 			}
 			else
 			{
@@ -593,9 +577,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE, na);
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, na);
 
-				navigator.Pages[Page_Comments].Visible = false;
-				navigator.Pages[Page_Lyrics].Visible = false;
-				navigator.Pages[Page_Pictures].Visible = false;
+				navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Comments].Visible = false;
+				navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Lyrics].Visible = false;
+				navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Pictures].Visible = false;
 
 				CleanupPictures();
 			}

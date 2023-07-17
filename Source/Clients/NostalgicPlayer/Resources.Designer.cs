@@ -1900,6 +1900,79 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Showing.
+        /// </summary>
+        internal static string IDS_SETTINGS_MODULES_SHOWING {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MODULES_SHOWING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Down.
+        /// </summary>
+        internal static string IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_DOWN {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_DOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to In which order to activate tabs
+        ///in Module Information window.
+        /// </summary>
+        internal static string IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_ORDER {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_ORDER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Comments.
+        /// </summary>
+        internal static string IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_TAB_COMMENTS {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_TAB_COMMENTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Info.
+        /// </summary>
+        internal static string IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_TAB_INFO {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_TAB_INFO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lyrics.
+        /// </summary>
+        internal static string IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_TAB_LYRICS {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_TAB_LYRICS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pictures.
+        /// </summary>
+        internal static string IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_TAB_PICTURES {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_TAB_PICTURES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Up.
+        /// </summary>
+        internal static string IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_UP {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_UP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to OK.
         /// </summary>
         internal static string IDS_SETTINGS_OK {

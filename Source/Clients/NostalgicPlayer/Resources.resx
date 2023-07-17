@@ -804,6 +804,31 @@ what has changed since your previous version.</value>
   <data name="IDS_SETTINGS_MODULES_PLAYING_NEVERENDING_SECONDS" xml:space="preserve">
     <value>seconds</value>
   </data>
+  <data name="IDS_SETTINGS_MODULES_SHOWING" xml:space="preserve">
+    <value>Showing</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_DOWN" xml:space="preserve">
+    <value>Down</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_ORDER" xml:space="preserve">
+    <value>In which order to activate tabs
+in Module Information window</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_TAB_COMMENTS" xml:space="preserve">
+    <value>Comments</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_TAB_INFO" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_TAB_LYRICS" xml:space="preserve">
+    <value>Lyrics</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_TAB_PICTURES" xml:space="preserve">
+    <value>Pictures</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_UP" xml:space="preserve">
+    <value>Up</value>
+  </data>
   <data name="IDS_SETTINGS_OK" xml:space="preserve">
     <value>OK</value>
   </data>

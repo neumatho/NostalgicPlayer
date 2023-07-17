@@ -30,14 +30,15 @@
 					</span>
 					<map name="tabs">
 						<area shape="rect" coords="0,0,57,21" href="#options">
-						<area shape="rect" coords="59,0,104,21" href="#paths">
-						<area shape="rect" coords="106,0,150,21" href="#mixer">
-						<area shape="rect" coords="152,0,206,21" href="#agents">
+						<area shape="rect" coords="59,0,121,21" href="#modules">
+						<area shape="rect" coords="123,0,168,21" href="#paths">
+						<area shape="rect" coords="170,0,214,21" href="#mixer">
+						<area shape="rect" coords="216,0,269,21" href="#agents">
 					</map>
 					<img src="images/settingstabs.png" alt="Settings tabs" usemap="#tabs"/>
 					<span>
 						<a name="options"><h3>Options</h3></a>
-						<img src="images/settingsoptions.png" alt="path settings"/>
+						<img src="images/settingsoptions.png" alt="option settings"/>
 						<br>
 						<h4>General</h4>
 						<table class="usage2table">
@@ -98,6 +99,10 @@
 								<td>Enable this option if you want to update the module list with the playing time of all known module formats. NostalgicPlayer will first try to read the information from the database, if <i>Use database to store module information</i> is enabled. If NostalgicPlayer cannot read the information from the database, it will try to load the module and calculate the playing time instead.</td>
 							</tr>
 						</table>
+					</span>
+					<span>
+						<a name="modules"><h3>Modules</h3></a>
+						<img src="images/settingsmodules.png" alt="module settings"/>
 						<br>
 						<h4>Loading</h4>
 						<table class="usage2table">
@@ -154,6 +159,14 @@
 										</tr>
 									</table>
 								</td>
+							</tr>
+						</table>
+						<h4>Showing</h4>
+						<table class="usage2table">
+							<tr>
+								<td>Module Information window activation tab order</td>
+								<td>When a module is playing, different information are shown in the Module Information window. These information can be spread over several tabs. With this option, you can select which tab to autoselect. The search starts from the beginning and stops when reached the first tab visible.
+								<br/>Note that the Info tab is always visible, so all tabs below this one in the list, will never be autoselected. This can be used if you e.g. always want the info tab to be the active one, then place it first in the list.</td>
 							</tr>
 						</table>
 					</span>

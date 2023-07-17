@@ -1420,7 +1420,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 			else
 			{
-				moduleInfoWindow = new ModuleInfoWindowForm(moduleHandler, this, optionSettings);
+				moduleInfoWindow = new ModuleInfoWindowForm(moduleHandler, this, optionSettings, moduleSettings);
 				moduleInfoWindow.Disposed += (o, args) => { moduleInfoWindow = null; };
 				moduleInfoWindow.Show();
 			}
@@ -3056,7 +3056,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			if (mainWindowSettings.OpenModuleInformationWindow)
 			{
-				moduleInfoWindow = new ModuleInfoWindowForm(moduleHandler, this, optionSettings);
+				moduleInfoWindow = new ModuleInfoWindowForm(moduleHandler, this, optionSettings, moduleSettings);
 				moduleInfoWindow.Show();
 			}
 

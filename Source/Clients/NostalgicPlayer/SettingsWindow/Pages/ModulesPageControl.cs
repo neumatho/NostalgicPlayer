@@ -4,6 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
@@ -18,7 +20,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 	/// </summary>
 	public partial class ModulesPageControl : UserControl, ISettingsPage
 	{
-		private MainWindowForm mainWin;
+		private class ModuleInfoOrderListBoxItem
+		{
+			public string Name;
+			public ModuleSettings.ModuleInfoTab Tab;
+
+			public override string ToString()
+			{
+				return Name;
+			}
+		}
 
 		private ModuleSettings moduleSettings;
 
@@ -56,8 +67,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		public void InitSettings(Manager agentManager, ModuleHandler moduleHandler, MainWindowForm mainWindow, ISettings userSettings, ISettings windowSettings)
 		{
-			mainWin = mainWindow;
-
 			moduleSettings = new ModuleSettings(userSettings);
 		}
 
@@ -92,6 +101,41 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			neverEndingNumberTextBox.Text = moduleSettings.NeverEndingTimeout.ToString();
 
 			moduleListEndComboBox.SelectedIndex = (int)moduleSettings.ModuleListEnd;
+
+			// Showing
+			Dictionary<ModuleSettings.ModuleInfoTab, string> moduleInfoTabs = new Dictionary<ModuleSettings.ModuleInfoTab, string>
+			{
+				{ ModuleSettings.ModuleInfoTab.Info, Resources.IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_TAB_INFO },
+				{ ModuleSettings.ModuleInfoTab.Comments, Resources.IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_TAB_COMMENTS },
+				{ ModuleSettings.ModuleInfoTab.Lyrics, Resources.IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_TAB_LYRICS },
+				{ ModuleSettings.ModuleInfoTab.Pictures, Resources.IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_TAB_PICTURES }
+			};
+
+			moduleInfoOrderListBox.Items.Clear();
+
+			foreach (ModuleSettings.ModuleInfoTab tab in moduleSettings.ModuleInfoActivateTabOrder)
+			{
+				if (moduleInfoTabs.TryGetValue(tab, out string name))
+				{
+					moduleInfoOrderListBox.Items.Add(new ModuleInfoOrderListBoxItem
+					{
+						Name = name,
+						Tab = tab
+					});
+
+					moduleInfoTabs.Remove(tab);
+				}
+			}
+
+			// If any items left in the dictionary, it means that new tabs has been added
+			foreach (KeyValuePair<ModuleSettings.ModuleInfoTab, string> pair in moduleInfoTabs)
+			{
+				moduleInfoOrderListBox.Items.Insert(0, new ModuleInfoOrderListBoxItem
+				{
+					Name = pair.Value,
+					Tab = pair.Key
+				});
+			}
 		}
 
 
@@ -126,6 +170,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			moduleSettings.NeverEndingTimeout = int.Parse(neverEndingNumberTextBox.Text);
 
 			moduleSettings.ModuleListEnd = (ModuleSettings.ModuleListEndAction)moduleListEndComboBox.SelectedIndex;
+
+			// Showing
+			moduleSettings.ModuleInfoActivateTabOrder = moduleInfoOrderListBox.Items.Cast<ModuleInfoOrderListBoxItem>().Select(x => x.Tab).ToArray();
 		}
 
 
@@ -183,6 +230,64 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private void NeverEnding_CheckedChanged(object sender, EventArgs e)
 		{
 			neverEndingNumberTextBox.Enabled = neverEndingCheckBox.Checked;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user selects an item in the module info order
+		/// list box
+		/// </summary>
+		/********************************************************************/
+		private void ModuleInfoOrderListBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			int selectedIndex = moduleInfoOrderListBox.SelectedIndex;
+			if (selectedIndex == -1)
+			{
+				moduleInfoOrderUpButton.Enabled = false;
+				moduleInfoOrderDownButton.Enabled = false;
+			}
+			else
+			{
+				moduleInfoOrderUpButton.Enabled = selectedIndex > 0;
+				moduleInfoOrderDownButton.Enabled = selectedIndex < (moduleInfoOrderListBox.Items.Count - 1);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user clicks on the module info order up button
+		/// </summary>
+		/********************************************************************/
+		private void ModuleInfoOrderUpButton_Click(object sender, EventArgs e)
+		{
+			int selectedIndex = moduleInfoOrderListBox.SelectedIndex;
+
+			moduleInfoOrderListBox.Items.Insert(selectedIndex - 1, moduleInfoOrderListBox.Items[selectedIndex]);
+			moduleInfoOrderListBox.Items.RemoveAt(selectedIndex + 1);
+
+			moduleInfoOrderListBox.SelectedIndex = selectedIndex - 1;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the user clicks on the module info order down
+		/// button
+		/// </summary>
+		/********************************************************************/
+		private void ModuleInfoOrderDownButton_Click(object sender, EventArgs e)
+		{
+			int selectedIndex = moduleInfoOrderListBox.SelectedIndex;
+
+			moduleInfoOrderListBox.Items.Insert(selectedIndex + 2, moduleInfoOrderListBox.Items[selectedIndex]);
+			moduleInfoOrderListBox.Items.RemoveAt(selectedIndex);
+
+			moduleInfoOrderListBox.SelectedIndex = selectedIndex + 1;
 		}
 		#endregion
 	}
