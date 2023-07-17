@@ -663,12 +663,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		/********************************************************************/
 		private bool CheckModuleFormats(ModuleStream moduleStream)
 		{
-			// Beepola
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
 			uint id1 = moduleStream.Read_B_UINT32();
 			uint id2 = moduleStream.Read_B_UINT32();
 
+			// If starts with ID3, then it is probably a valid file
+			if ((id1 & 0xffffff00) == 0x49443300)
+				return false;
+
+			// Beepola
 			if ((id1 == 0x4242534f) && ((id2 & 0xffff0000) == 0x4e470000))	// BBSONG
 				return true;
 
