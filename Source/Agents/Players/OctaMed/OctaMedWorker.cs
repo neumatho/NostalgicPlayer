@@ -21,16 +21,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 	/// </summary>
 	internal class OctaMedWorker : ModulePlayerWithSubSongDurationAgentBase
 	{
-		private static readonly Dictionary<Guid, ModuleType> moduleTypeLookup = new Dictionary<Guid, ModuleType>
-		{
-			{ OctaMed.Agent1Id, ModuleType.Med210_MMD0 },
-			{ OctaMed.Agent2Id, ModuleType.OctaMed },
-			{ OctaMed.Agent3Id, ModuleType.OctaMed_Professional4 },
-			{ OctaMed.Agent4Id, ModuleType.OctaMed_Professional6 },
-			{ OctaMed.Agent5Id, ModuleType.OctaMed_SoundStudio },
-			{ OctaMed.Agent6Id, ModuleType.MedPacker }
-		};
-
 		private readonly ModuleType currentModuleType;
 
 		private uint numSamples;
@@ -49,10 +39,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public OctaMedWorker(Guid typeId)
+		public OctaMedWorker(ModuleType moduleType = ModuleType.Unknown)
 		{
-			if (!moduleTypeLookup.TryGetValue(typeId, out currentModuleType))
-				currentModuleType = ModuleType.Unknown;
+			currentModuleType = moduleType;
 		}
 
 		#region IPlayerAgent implementation
@@ -61,7 +50,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "med", "mmd0", "mmd1", "mmd2", "mmd3", "mmdc", "omed", "ocss", "md0", "md1", "md2", "md3" };
+		public override string[] FileExtensions => OctaMed.fileExtensions;
 
 
 
@@ -72,11 +61,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		/********************************************************************/
 		public override AgentResult Identify(PlayerFileInfo fileInfo)
 		{
-			// Check the module
-			ModuleType checkType = TestModule(fileInfo);
-			if (checkType == currentModuleType)
-				return AgentResult.Ok;
-
 			return AgentResult.Unknown;
 		}
 
@@ -1545,60 +1529,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		}
 		#endregion
 
-		/********************************************************************/
-		/// <summary>
-		/// Set the playing frequency
-		/// </summary>
-		/********************************************************************/
-		public void SetPlayingFrequency(float freq)
-		{
-			PlayingFrequency = freq;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set the Amiga filter
-		/// </summary>
-		/********************************************************************/
-		public void SetAmigaFilter(bool filter)
-		{
-			AmigaFilter = filter;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set the end reached flag
-		/// </summary>
-		/********************************************************************/
-		public void SetEndReached()
-		{
-			OnEndReached();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will tell NostalgicPlayer about the play frequency change
-		/// </summary>
-		/********************************************************************/
-		public void ChangePlayFreq()
-		{
-			ShowSpeed();
-			ShowTempo();
-		}
-
-		#region Private methods
+		#region Identify methods
 		/********************************************************************/
 		/// <summary>
 		/// Tests the module to see which type of module it is
 		/// </summary>
 		/********************************************************************/
-		private ModuleType TestModule(PlayerFileInfo fileInfo)
+		public static ModuleType TestModule(PlayerFileInfo fileInfo)
 		{
 			ModuleStream moduleStream = fileInfo.ModuleStream;
 
@@ -1654,9 +1591,56 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 
 			return ModuleType.Unknown;
 		}
+		#endregion
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the playing frequency
+		/// </summary>
+		/********************************************************************/
+		public void SetPlayingFrequency(float freq)
+		{
+			PlayingFrequency = freq;
+		}
 
 
 
+		/********************************************************************/
+		/// <summary>
+		/// Set the Amiga filter
+		/// </summary>
+		/********************************************************************/
+		public void SetAmigaFilter(bool filter)
+		{
+			AmigaFilter = filter;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the end reached flag
+		/// </summary>
+		/********************************************************************/
+		public void SetEndReached()
+		{
+			OnEndReached();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will tell NostalgicPlayer about the play frequency change
+		/// </summary>
+		/********************************************************************/
+		public void ChangePlayFreq()
+		{
+			ShowSpeed();
+			ShowTempo();
+		}
+
+		#region Private methods
 		/********************************************************************/
 		/// <summary>
 		/// Initialize sound structures
