@@ -732,30 +732,33 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 			// The Musical Enlightenment
 			if (moduleStream.Length > (0x1a8a + 32))
 			{
-				moduleStream.Seek(0x1a8a, SeekOrigin.Begin);
-
-				byte[] buf = new byte[32];
-				moduleStream.Read(buf, 0, 32);
-
-				if (buf[0] != 0x00)
+				if ((id2 & 0x000000ff) == 0x1f)
 				{
-					bool invalid = false;
-					int uCount = 0;
+					moduleStream.Seek(0x1a8a, SeekOrigin.Begin);
 
-					for (int i = buf.Length - 1; i > 0; i--)
+					byte[] buf = new byte[32];
+					moduleStream.Read(buf, 0, 32);
+
+					if (buf[0] != 0x00)
 					{
-						if ((buf[i] != 0x00) && ((buf[i] < 0x20) || (buf[i] > 0x7f)))
+						bool invalid = false;
+						int uCount = 0;
+
+						for (int i = buf.Length - 1; i > 0; i--)
 						{
-							invalid = true;
-							break;
+							if ((buf[i] != 0x00) && ((buf[i] < 0x20) || (buf[i] > 0x7f)))
+							{
+								invalid = true;
+								break;
+							}
+
+							if (buf[i] == 0x55)
+								uCount++;
 						}
 
-						if (buf[i] == 0x55)
-							uCount++;
+						if (!invalid && (uCount != (buf.Length - 1)))
+							return true;
 					}
-
-					if (!invalid && (uCount != (buf.Length - 1)))
-						return true;
 				}
 			}
 
