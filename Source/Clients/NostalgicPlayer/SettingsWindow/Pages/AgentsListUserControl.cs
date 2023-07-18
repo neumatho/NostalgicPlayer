@@ -259,12 +259,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		public void RefreshWindow()
 		{
-			Guid[] agentIds = moduleHandler.IsModuleLoaded ? GetAgentIdsInUse(moduleHandler) : inUseAgents;
-
-			if (agentIds != null)
+			void FindAndColorItems(Guid[] agentIds, Color itemColor)
 			{
-				Color itemColor = moduleHandler.IsModuleLoaded ? Color.Blue : Color.Black;
-
 				foreach (Guid id in agentIds)
 				{
 					// Find the right row
@@ -280,12 +276,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 						style.SelectionForeColor = itemColor;
 					}
 				}
-
-				inUseAgents = agentIds;
 			}
 
-			if (!moduleHandler.IsModuleLoaded)
+			if (inUseAgents != null)
+			{
+				FindAndColorItems(inUseAgents, Color.Black);
 				inUseAgents = null;
+			}
+
+			if (moduleHandler.IsModuleLoaded)
+			{
+				inUseAgents = GetAgentIdsInUse(moduleHandler);
+				if (inUseAgents != null)
+					FindAndColorItems(inUseAgents, Color.Blue);
+			}
 		}
 
 		#region Event handlers
