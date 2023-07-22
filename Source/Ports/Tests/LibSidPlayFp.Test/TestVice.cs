@@ -92,7 +92,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		{
 			string directory = Environment.CurrentDirectory;
 
-			while (!directory.EndsWith("\\SidPlay.Test"))
+			while (!directory.EndsWith("\\LibSidPlayFp.Test"))
 			{
 				int index = directory.LastIndexOf('\\');
 				if (index == -1)
