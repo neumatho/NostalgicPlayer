@@ -109,11 +109,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 		/********************************************************************/
 		public override byte[] CreateMD5New()
 		{
-			MD5 md5 = MD5.Create();
-
-			// The calculation is now simplified.
-			// All the header + all the data
-			return md5.ComputeHash(cache, 0, cache.Length);
+			using (MD5 md5 = MD5.Create())
+			{
+				// The calculation is now simplified.
+				// All the header + all the data
+				return md5.ComputeHash(cache, 0, cache.Length);
+			}
 		}
 
 		#region Private methods
