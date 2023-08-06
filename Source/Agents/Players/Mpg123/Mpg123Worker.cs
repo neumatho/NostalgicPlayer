@@ -605,7 +605,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 				long minPosition = moduleStream.Position + 1024;
 				int foundFrames = 0;
 
-				for (int i = 0; i < 20; i++)
+				for (int i = 0; i < 8; i++)
 				{
 					result = mpg123Handle.Mpg123_FrameByFrame_Next();
 					if (result == Mpg123_Errors.Done)
