@@ -208,7 +208,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					SampleNumber = chan.GetSampleNumber(),
 					SampleLength = chan.GetSampleLength(),
 					SamplePosition = chan.GetSamplePosition(),
-					Enabled = i < enabledChannels.Length ? enabledChannels[i] : true
+					Enabled = (enabledChannels != null) && (i < enabledChannels.Length) ? enabledChannels[i] : true
 				};
 			};
 
