@@ -1,0 +1,71 @@
+name: Build different releases
+on: push
+
+jobs:
+  Build_Release_AnyCPU:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '7.0.x' ]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Install dependencies
+        run: dotnet restore Source\NostalgicPlayer.sln
+      - name: Build AnyCPU
+        run: dotnet build Source\NostalgicPlayer.sln --configuration Release -p:Platform="Any CPU" --no-restore
+
+  Build_Release_x86:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '7.0.x' ]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Install dependencies
+        run: dotnet restore Source\NostalgicPlayer.sln
+      - name: Build AnyCPU
+        run: dotnet build Source\NostalgicPlayer.sln --configuration Release -p:Platform=x86 --no-restore
+
+  Build_Release_x64:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '7.0.x' ]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Install dependencies
+        run: dotnet restore Source\NostalgicPlayer.sln
+      - name: Build AnyCPU
+        run: dotnet build Source\NostalgicPlayer.sln --configuration Release -p:Platform=x64 --no-restore
+
+  Build_Release_ARM64:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '7.0.x' ]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Install dependencies
+        run: dotnet restore Source\NostalgicPlayer.sln
+      - name: Build AnyCPU
+        run: dotnet build Source\NostalgicPlayer.sln --configuration Release -p:Platform=ARM64 --no-restore
