@@ -1,4 +1,4 @@
-name: Run unit test for Ancient
+name: Run unit test for LibFlac
 on:
   workflow_dispatch:
   push:
