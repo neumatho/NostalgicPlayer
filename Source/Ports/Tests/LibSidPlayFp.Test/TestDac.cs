@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Polycode.NostalgicPlayer.Ports.ReSidFp;
 using Polycode.NostalgicPlayer.Ports.ReSidFp.Containers;
 
@@ -12,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 	/// <summary>
 	/// 
 	/// </summary>
-	[TestClass]
+	[TestFixture]
 	public class TestDac
 	{
 		private const int DacBits = 8;
@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestDac6581()
 		{
 			Assert.AreEqual(false, IsDacLinear(ChipModel.MOS6581));
@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestDac8580()
 		{
 			Assert.AreEqual(true, IsDacLinear(ChipModel.MOS8580));

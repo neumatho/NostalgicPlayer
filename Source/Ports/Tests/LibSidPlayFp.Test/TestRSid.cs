@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 	/// <summary>
 	/// 
 	/// </summary>
-	[TestClass]
+	[TestFixture]
 	public class TestRSid
 	{
 		private const int BufferSize = 128;
@@ -68,7 +68,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestInitialize]
+		[SetUp]
 		public void Initialize()
 		{
 			Array.Copy(bufferRSid, data, BufferSize);
@@ -81,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// Check that unmodified data loads ok
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestLoadOk()
 		{
 			SidTune tune = LoadTune();
@@ -96,7 +96,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// Version must be at least 2 for RSID files
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestUnsupportedVersion()
 		{
 			data[VersionLo] = 0x01;
@@ -113,7 +113,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// Load address must always be 0 for RSID files
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestWrongLoadAddress()
 		{
 			data[LoadAddressLo] = 0xff;
@@ -130,7 +130,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// Actual load address must NOT be less that $07e8 for RSID files
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestWrongActualLoadAddress()
 		{
 			data[124] = 0xe7;
@@ -148,7 +148,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// Play address must always be 0 for RSID files
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestWrongPlayAddress()
 		{
 			data[PlayAddressLo] = 0xff;
@@ -165,7 +165,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// Speed must always be 0 for RSID files
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestWrongSpeed()
 		{
 			data[SpeedLoLo] = 0xff;
@@ -182,7 +182,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// Data offset must always be 0x007c for RSID files
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestWrongDataOffset()
 		{
 			data[DataOffsetLo] = 0x76;
@@ -199,7 +199,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// Init address must never point to a ROM area for RSID files
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestWrongInitAddressRom()
 		{
 			data[InitAddressHi] = 0xb0;
@@ -216,7 +216,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// Init address must never be lower than $07e8 for RSID files
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestWrongInitAddressTooLow()
 		{
 			data[InitAddressHi] = 0x07;
@@ -234,7 +234,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// The maximum number of songs is 256
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestTooManySongs()
 		{
 			data[SongsHi] = 0x01;
@@ -251,7 +251,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// The song number to be played by default has a default of 1
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestDefaultStartSong()
 		{
 			SidTune tune = LoadTune();
@@ -265,7 +265,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// If 'start page' is 0 or 0xff, 'page length' must be set to 0
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestWrongPageLength()
 		{
 			data[StartPage] = 0xff;
@@ -282,7 +282,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// $d420 is a valid second SID address
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestSecondSidAddressOk()
 		{
 			data[VersionLo] = 0x03;
@@ -299,7 +299,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// SecondSidAddress: Only even values are valid
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestWrongSecondSidAddressOdd()
 		{
 			data[VersionLo] = 0x03;
@@ -317,7 +317,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// ($d800-$ddf0) are invalid
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestWrongSecondSidAddressOutOfRange()
 		{
 			data[VersionLo] = 0x03;
@@ -334,7 +334,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// $d500 is a valid third SID address
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestThirdSidAddressOk()
 		{
 			data[VersionLo] = 0x04;
@@ -352,7 +352,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// ThirdSidAddress: Only even values are valid
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestWrongThirdSidAddressOdd()
 		{
 			data[VersionLo] = 0x04;
@@ -371,7 +371,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// ($d800-$ddf0) are invalid
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestWrongThirdSidAddressOutOfRange()
 		{
 			data[VersionLo] = 0x04;
@@ -389,7 +389,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// The address of the third SID cannot be the same as the second SID
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestWrongThirdSidAddressLikeSecond()
 		{
 			data[VersionLo] = 0x04;

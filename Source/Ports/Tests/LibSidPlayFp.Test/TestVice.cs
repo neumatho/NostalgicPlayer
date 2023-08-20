@@ -6,7 +6,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.Roms;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
@@ -19,9 +19,26 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 	/// Run all the test from Vice
 	/// (start in debugger for output)
 	/// </summary>
-	[TestClass]
+	[TestFixture]
 	public class TestVice
 	{
+		#region ViceException class
+		/// <summary>
+		/// 
+		/// </summary>
+		public class ViceException : Exception
+		{
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public ViceException(string message) : base(message)
+			{
+			}
+		}
+		#endregion
+
 		// Screen codes conversion table (0x01 = no output)
 		private static readonly char[] chrTab =
 		{
@@ -52,10 +69,12 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void Test()
 		{
 			string viceDirectory = Path.Combine(GetSolutionDirectory(), "Vice");
+			int successCount = 0;
+			int failedCount = 0;
 
 			// Open test file and run tests
 			using (StreamReader sr = new StreamReader(Path.Combine(viceDirectory, "testlist")))
@@ -74,12 +93,30 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 						continue;
 
 					string[] args = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-					Console.WriteLine($"{lineNumber} - Running test {args[0]}");
 					Debug.WriteLine($"{lineNumber} - Running test {args[0]}");
+					TestContext.Progress.WriteLine($"{lineNumber} - Running test {args[0]}");
 
-					RunTest(viceDirectory, args);
+					try
+					{
+						RunTest(viceDirectory, args);
+					}
+					catch(ViceException ex)
+					{
+						if (ex.Message == "OK")
+							successCount++;
+						else
+						{
+							TestContext.Progress.WriteLine(">>> Failed");
+							failedCount++;
+						}
+					}
 				}
 			}
+
+			Debug.WriteLine($"Successful tests: {successCount} - Failed tests {failedCount}");
+			TestContext.Progress.WriteLine($"Successful tests: {successCount} - Failed tests {failedCount}");
+
+			Assert.AreEqual(0, failedCount);
 		}
 
 		#region Private methods
@@ -215,10 +252,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 				if (addr == 0xd7ff)
 				{
 					if (data == 0)
-						throw new ApplicationException("OK");
+						throw new ViceException("OK");
 
 					if (data == 0xff)
-						throw new ApplicationException("KO");
+						throw new ViceException("KO");
 				}
 #if false
 				if ((addr >= 1024) && (addr <= 2047))
@@ -229,15 +266,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 #endif
 			});
 
-			try
-			{
-				for (;;)
-					engine.Play(null, null, 0);
-			}
-			catch(ApplicationException ex)
-			{
-				Assert.AreEqual("OK", ex.Message);
-			}
+			for (;;)
+				engine.Play(null, null, 0);
 		}
 		#endregion
 	}

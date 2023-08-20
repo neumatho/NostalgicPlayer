@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Polycode.NostalgicPlayer.Ports.ReSidFp;
 
 namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 	/// <summary>
 	/// 
 	/// </summary>
-	[TestClass]
+	[TestFixture]
 	public class TestEnvelopeGenerator
 	{
 		private EnvelopeGenerator generator;
@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestInitialize]
+		[SetUp]
 		public void Initialize()
 		{
 			generator = new EnvelopeGenerator();
@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestAdsrDelayBug()
 		{
 			// If the rate counter comparison value is set below the current value of the
@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestFlipFFto00()
 		{
 			// The envelope counter can flip from 0xff to 0x00 by changing state to
@@ -113,7 +113,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestFlip00toFF()
 		{
 			// The envelope counter can flip from 0x00 to 0xff by changing state to

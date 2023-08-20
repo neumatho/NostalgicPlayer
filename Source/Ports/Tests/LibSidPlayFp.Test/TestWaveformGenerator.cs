@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Polycode.NostalgicPlayer.Ports.ReSidFp;
 using Polycode.NostalgicPlayer.Ports.ReSidFp.Containers;
 
@@ -12,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 	/// <summary>
 	/// 
 	/// </summary>
-	[TestClass]
+	[TestFixture]
 	public class TestWaveformGenerator
 	{
 		/********************************************************************/
@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestShiftRegisterInitValue()
 		{
 			WaveformGenerator generator = new WaveformGenerator();
@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestClockShiftRegister()
 		{
 			WaveformGenerator generator = new WaveformGenerator();
@@ -55,7 +55,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestNoiseOutput()
 		{
 			WaveformGenerator generator = new WaveformGenerator();
@@ -74,7 +74,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestWriteShiftRegister()
 		{
 			WaveformGenerator generator = new WaveformGenerator();
@@ -93,7 +93,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestSetTestBit()
 		{
 			matrix_t waveTables = WaveformCalculator.GetInstance().GetWaveTable();
@@ -120,7 +120,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestNoiseWriteBack1()
 		{
 			matrix_t waveTables = WaveformCalculator.GetInstance().GetWaveTable();

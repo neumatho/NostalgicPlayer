@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using System.IO;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 	/// <summary>
 	/// 
 	/// </summary>
-	[TestClass]
+	[TestFixture]
 	public class TestMus
 	{
 		private const int BufferSize = 26;
@@ -42,7 +42,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestInitialize]
+		[SetUp]
 		public void Initialize()
 		{
 			Array.Copy(bufferMus, data, BufferSize);
@@ -55,7 +55,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestPlayerAddress()
 		{
 			SidTune tune = LoadTune();
@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestWrongVoiceLength()
 		{
 			data[Voice1LenLo] = 0x76;

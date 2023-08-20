@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Polycode.NostalgicPlayer.Ports.ReSidFp;
 
 namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
@@ -12,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 	/// <summary>
 	/// 
 	/// </summary>
-	[TestClass]
+	[TestFixture]
 	public class TestSpline
 	{
 		private const int OpAmpSize = 33;
@@ -59,7 +59,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestMonotonicity()
 		{
 			Spline s = new Spline(new List<Spline.Point>(opamp_voltage));
@@ -81,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestPoints()
 		{
 			Spline s = new Spline(new List<Spline.Point>(opamp_voltage));
@@ -100,7 +100,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[TestMethod]
+		[Test]
 		public void TestInterpolateOutsideBounds()
 		{
 			Spline.Point[] values =
