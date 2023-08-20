@@ -1,0 +1,29 @@
+name: Run unit test for Ancient
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '**/LibFlac/**'
+      - '**/LibFlac.Test/**'
+
+jobs:
+  Test:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        dotnet-version: [ '7.0.x' ]
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          lfs: 'true'
+      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Install dependencies
+        run: dotnet restore Source\NostalgicPlayer.sln
+      - name: Build
+        run: dotnet build Source\NostalgicPlayer.sln --configuration Debug -p:Platform="Any CPU" --no-restore
+      - name: Test
+        run: dotnet test Source\Ports\Tests\LibFlac.Test\LibFlac.Test.csproj --no-build --verbosity normal
