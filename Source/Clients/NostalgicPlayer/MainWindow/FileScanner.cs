@@ -186,11 +186,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			try
 			{
-				Random rand = new Random();
-
 				List<ModuleListItem> itemsToRemove = new List<ModuleListItem>();
 				List<ModuleListItemUpdateInfo> itemsToUpdate = new List<ModuleListItemUpdateInfo>();
-				int itemsToCheckBeforeUpdating = rand.Next(10, 30);
+				int itemsToCheckBeforeUpdating = Helpers.GetRandomNumber(10, 30);
 
 				foreach (ModuleListItem listItem in queueInfo.Items)
 				{
@@ -213,7 +211,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					itemsToCheckBeforeUpdating--;
 					if (itemsToCheckBeforeUpdating == 0)
 					{
-						itemsToCheckBeforeUpdating = rand.Next(10, 30);
+						itemsToCheckBeforeUpdating = Helpers.GetRandomNumber(10, 30);
 						UpdateModuleList(itemsToRemove, itemsToUpdate);
 					}
 				}

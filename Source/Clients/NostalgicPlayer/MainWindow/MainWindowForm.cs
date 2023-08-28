@@ -102,7 +102,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private bool playSamples;
 
 		// Misc.
-		private readonly Random rnd;
 		private readonly List<int> randomList;
 
 		private long lastAddedTimeFromExplorer = 0;
@@ -135,7 +134,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			playItem = null;
 			allowPosSliderUpdate = true;
 
-			rnd = new Random();
 			randomList = new List<int>();
 
 			openAgentSettings = new Dictionary<Guid, AgentSettingsWindowForm>();
@@ -977,7 +975,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 							do
 							{
-								index = rnd.Next(total);
+								index = Helpers.GetRandomNumber(total);
 							}
 							while ((index == playingIndex) || randomList.Contains(index));
 
@@ -4912,7 +4910,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					{
 						// Find a random item and add it to the new list +
 						// remove it from the old one
-						int index = rnd.Next(total);
+						int index = Helpers.GetRandomNumber(total);
 
 						// Move the item to the new list
 						newList.Add(tempList[index]);

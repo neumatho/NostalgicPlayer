@@ -14,6 +14,8 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 	/// </summary>
 	public static class Helpers
 	{
+		private static readonly Random rand = new Random();
+
 		/********************************************************************/
 		/// <summary>
 		/// Copy length bytes from one stream to another. If getting out of
@@ -132,6 +134,52 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 				return float.Parse(match.Value);
 
 			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a random number between 0 and int.MaxValue
+		/// </summary>
+		/********************************************************************/
+		public static int GetRandomNumber()
+		{
+			lock (rand)
+			{
+				return rand.Next();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a random number between 0 and maxValue (exclusive)
+		/// </summary>
+		/********************************************************************/
+		public static int GetRandomNumber(int maxValue)
+		{
+			lock (rand)
+			{
+				return rand.Next(maxValue);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a random number between minValue (inclusive) and
+		/// maxValue (exclusive)
+		/// </summary>
+		/********************************************************************/
+		public static int GetRandomNumber(int minValue, int maxValue)
+		{
+			lock (rand)
+			{
+				return rand.Next(minValue, maxValue);
+			}
 		}
 	}
 }

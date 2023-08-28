@@ -16,6 +16,7 @@ using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Extensions;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 {
@@ -61,8 +62,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		private GlobalPlayingInfo playingInfo;
 		private ModChannel[] channels;
 
-		private readonly Random rnd;
-
 		private bool endReached;
 		private bool restartSong;
 
@@ -79,8 +78,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		public ModTrackerWorker(ModuleType moduleType = ModuleType.Unknown)
 		{
 			currentModuleType = moduleType;
-
-			rnd = new Random();
 		}
 
 		#region IPlayerAgent implementation
@@ -3267,7 +3264,7 @@ stopLoop:
 
 			// Generate noise waveform
 			for (int i = 0; i < 32; i++)
-				Tables.AmWaveforms[3][i] = (sbyte)rnd.Next(255);
+				Tables.AmWaveforms[3][i] = (sbyte)Helpers.GetRandomNumber(255);
 		}
 
 

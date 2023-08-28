@@ -11,6 +11,7 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff16Sv
 {
@@ -178,7 +179,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff16Sv
 						throw new NotSupportedException($"Writing IFF-16SV stereo files using stream of type {stream.GetType()} is not supported");
 
 					// Build a new file name
-					string newName = fs.Name + "nps" + new Random().Next();
+					string newName = fs.Name + "nps" + Helpers.GetRandomNumber();
 
 					stereoFile = new FileStream(newName, FileMode.CreateNew, FileAccess.ReadWrite);
 				}
