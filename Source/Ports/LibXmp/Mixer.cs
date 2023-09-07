@@ -489,9 +489,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 					if (Has_Active_Loop(vi, xxs))
 					{
-						if ((vi.Flags & Mixer_Flag.Voice_Reverse) != 0)
+						if ((vi.Flags & Mixer_Flag.Voice_Reverse) != 0)//XX Temporary test for debugging
 						{
-							int u=7;
 						}
 						nostalgicChannels[voc].SetLoop((uint)vi.Start, (uint)(vi.End - vi.Start));
 					}

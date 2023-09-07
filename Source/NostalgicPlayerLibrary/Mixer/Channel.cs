@@ -76,16 +76,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		protected ushort volume;
 
 		/// <summary>
-		/// The left volume (0-256)
-		/// </summary>
-		protected ushort leftVolume;
-
-		/// <summary>
-		/// The right volume (0-256)
-		/// </summary>
-		protected ushort rightVolume;
-
-		/// <summary>
 		/// The panning (0 = left; 128 = center; 255 = right; 512 = surround)
 		/// </summary>
 		protected uint panning;
