@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Virt;
 
 namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer
@@ -10,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class Mixer_Voice
+	internal class Mixer_Voice : IDeepCloneable<Mixer_Voice>
 	{
 		/// <summary>
 		/// Channel number
@@ -136,6 +137,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer
 			c_int CutOff,
 			c_int Resonance
 		) Filter;
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Mixer_Voice MakeDeepClone()
+		{
+			return (Mixer_Voice)MemberwiseClone();
+		}
+
+
 
 		/********************************************************************/
 		/// <summary>

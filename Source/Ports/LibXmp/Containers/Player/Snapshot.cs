@@ -4,25 +4,25 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 
-namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
+namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 {
 	/// <summary>
-	/// 
+	/// Holds all the information about the player state at a specific time
 	/// </summary>
-	internal class Virt_Channel : IDeepCloneable<Virt_Channel>
+	internal class Snapshot : ISnapshot
 	{
-		public c_int Count;
-		public c_int Map;
+		public Player_Data PlayerData;
 
 		/********************************************************************/
 		/// <summary>
-		/// Make a deep copy of the current object
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Virt_Channel MakeDeepClone()
+		public Snapshot(Player_Data playerData)
 		{
-			return (Virt_Channel)MemberwiseClone();
+			PlayerData = playerData.MakeDeepClone();
 		}
 	}
 }

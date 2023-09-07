@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer;
 
 namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
@@ -10,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class Virt_Control
+	internal class Virt_Control : IDeepCloneable<Virt_Control>
 	{
 		/// <summary>
 		/// Number of tracks
@@ -35,5 +37,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		public Virt_Channel[] Virt_Channel;
 
 		public Mixer_Voice[] Voice_Array;
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Virt_Control MakeDeepClone()
+		{
+			Virt_Control clone = (Virt_Control)MemberwiseClone();
+
+			clone.Virt_Channel = ArrayHelper.CloneObjectArray(Virt_Channel);
+			clone.Voice_Array = ArrayHelper.CloneObjectArray(Voice_Array);
+
+			return clone;
+		}
 	}
 }

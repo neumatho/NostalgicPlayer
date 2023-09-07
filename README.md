@@ -79,7 +79,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Future Composer 1.4 | .fc / .fc14 | | Future Composer |
 | Fuzzac Packer | .fuzzac / .fuz | ProWizard | ModTracker |
 | Game Music Creator | .gmc | | Game Music Creator |
-| General DigiMusic | .gdm | MikMod Converter | MikMod |
+| General DigiMusic | .gdm | | Xmp |
 | GnoiPacker | .gnoi | ProWizard | ModTracker |
 | GnuPlayer | .gnu | ProWizard | ModTracker |
 | GPMO | .gpmo | ProWizard | ModTracker |

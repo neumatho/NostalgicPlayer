@@ -23,6 +23,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		private readonly LibXmp lib;
 		private readonly Xmp_Context ctx;
 
+		private Guid? formatToUse;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -107,6 +109,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			h.Hio_Close();
 
 			return ret;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will set a specific format, so the loader only will check against
+		/// this
+		/// </summary>
+		/********************************************************************/
+		public void Xmp_Set_Load_Format(Guid formatId)
+		{
+			formatToUse = formatId;
 		}
 
 
@@ -341,20 +356,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			c_int test_Result = -1, load_Result = -1;
 
-			//XX Der skal laves et nyt API som sætter et format. Hvis dette er sat, skal der kun lige laves en sikkerheds test her
 			for (c_int i = 0; Format.format_Loaders[i] != null; i++)
 			{
-				h.Hio_Seek(0, SeekOrigin.Begin);
-
-				IFormatLoader loader = Format.format_Loaders[i].Create(lib);
-
-				test_Result = loader.Test(h, out _, 0);
-				if (test_Result == 0)
+				if (!formatToUse.HasValue || (Format.format_Loaders[i].Id == formatToUse.Value))
 				{
 					h.Hio_Seek(0, SeekOrigin.Begin);
 
-					load_Result = loader.Loader(m, h, 0);
-					break;
+					IFormatLoader loader = Format.format_Loaders[i].Create(lib);
+
+					test_Result = loader.Test(h, out _, 0);
+					if (test_Result == 0)
+					{
+						h.Hio_Seek(0, SeekOrigin.Begin);
+
+						load_Result = loader.Loader(m, h, 0);
+						break;
+					}
 				}
 			}
 

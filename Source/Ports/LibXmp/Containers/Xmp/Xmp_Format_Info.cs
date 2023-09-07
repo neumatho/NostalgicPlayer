@@ -4,20 +4,27 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.Ports.LibXmp.Loaders;
 
-namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Format
+namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 {
 	/// <summary>
-	/// 
+	/// Hold information about a single format
 	/// </summary>
-	internal class Format_Loader
+	public class Xmp_Format_Info
 	{
-		public delegate IFormatLoader Create_Delegate(LibXmp libXmp);
-
+		/// <summary>
+		/// A unique identifier for the format
+		/// </summary>
 		public Guid Id;
+
+		/// <summary>
+		/// The name of the format
+		/// </summary>
 		public string Name;
+
+		/// <summary>
+		/// A description about the format
+		/// </summary>
 		public string Description;
-		public Create_Delegate Create;
 	}
 }

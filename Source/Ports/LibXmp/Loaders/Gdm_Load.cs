@@ -31,6 +31,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			Id = Guid.Parse("6118D229-7AEC-4FF6-8A0C-F4F5BCCE2564"),
 			Name = "General Digital Music",
+			Description = "This loader recognizes the “General DigiMusic” format, which is the internal format of the “Bells, Whistles and Sound Boards” library. This format has the same limitations as the S3M format.\n\nThe BWSB library was written by Edward Schlunder and first released in 1993.",
 			Create = Create
 		};
 

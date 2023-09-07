@@ -560,6 +560,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 		/********************************************************************/
 		/// <summary>
+		/// Query the list of supported module formats
+		/// </summary>
+		/********************************************************************/
+		public static Xmp_Format_Info[] Xmp_Get_Format_Info_List()
+		{
+			return Format.Format_Info_List();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Dynamically insert a new event into a playing module
 		/// </summary>
 		/********************************************************************/

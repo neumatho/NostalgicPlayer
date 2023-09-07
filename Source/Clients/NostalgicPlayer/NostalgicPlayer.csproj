@@ -125,6 +125,7 @@
     <ProjectReference Include="..\..\Agents\Players\SoundFx\SoundFx.csproj" />
     <ProjectReference Include="..\..\Agents\Players\SoundMon\SoundMon.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Tfmx\Tfmx.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\Xmp\Xmp.csproj" />
     <ProjectReference Include="..\..\Agents\SampleConverters\AudioIff\AudioIff.csproj" />
     <ProjectReference Include="..\..\Agents\SampleConverters\Flac\Flac.csproj" />
     <ProjectReference Include="..\..\Agents\SampleConverters\Iff16Sv\Iff16Sv.csproj" />

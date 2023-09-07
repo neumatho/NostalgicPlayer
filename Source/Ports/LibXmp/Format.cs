@@ -3,7 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Linq;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Format;
+using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Loaders;
 
 namespace Polycode.NostalgicPlayer.Ports.LibXmp
@@ -16,18 +18,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		private const int Num_Formats = 4;
 		private const int Num_Pw_Formats = 0;
 
-		private static readonly string[] _fArray = new string[Num_Formats + Num_Pw_Formats + 1];
+		private static readonly Xmp_Format_Info[] _fArray = new Xmp_Format_Info[Num_Formats + Num_Pw_Formats + 1];
 
 		/// <summary>
 		/// List of all supported formats
 		/// </summary>
-		public static readonly Format_Loader[] format_Loaders = new Format_Loader[Num_Formats + 2]
+		public static readonly Format_Loader[] format_Loaders = new Format_Loader[Num_Formats + 1]
 		{
 			Xm_Load.LibXmp_Loader_Xm,
 			It_Load.LibXmp_Loader_It,
 			S3M_Load.LibXmp_Loader_S3M,
 			Gdm_Load.LibXmp_Loader_Gdm,
-			null,
 			null
 		};
 
@@ -38,12 +39,33 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/********************************************************************/
 		public static string[] Format_List()
 		{
+			return Format_Info_List().Select(x => x?.Name).ToArray();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Query the list of supported module formats
+		/// </summary>
+		/********************************************************************/
+		public static Xmp_Format_Info[] Format_Info_List()
+		{
 			if (_fArray[0] == null)
 			{
 				c_int count = 0;
 
 				for (c_int i = 0; format_Loaders[i] != null; i++)
-					_fArray[count++] = format_Loaders[i].Name;
+				{
+					Format_Loader fl = format_Loaders[i];
+
+					_fArray[count++] = new Xmp_Format_Info
+					{
+						Id = fl.Id,
+						Name = fl.Name,
+						Description = fl.Description
+					};
+				}
 
 				_fArray[count] = null;
 			}

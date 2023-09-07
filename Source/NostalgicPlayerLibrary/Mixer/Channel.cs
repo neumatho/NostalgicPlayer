@@ -13,7 +13,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 	/// <summary>
 	/// This class is used to trigger samples when playing modules
 	/// </summary>
-	public class Channel : IChannel
+	internal class Channel : IChannel
 	{
 		/// <summary>
 		/// Indicate what has been set/changed
@@ -125,8 +125,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			if (adr == null)
 				throw new ArgumentNullException(nameof(adr));
 
-			if ((adr.GetType() != typeof(sbyte[])) && (adr.GetType() != typeof(short[])))
-				throw new ArgumentException("Type of array must be either sbyte[] or short[]", nameof(adr));
+			if ((adr.GetType() != typeof(sbyte[])) && (adr.GetType() != typeof(short[])) && (adr.GetType() != typeof(byte[])))
+				throw new ArgumentException("Type of array must be either sbyte[], short[] or byte[]", nameof(adr));
 
 			if (length == 0)
 				throw new ArgumentException("Length may not be zero", nameof(length));
@@ -183,8 +183,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			if (leftAdr.Length != rightAdr.Length)
 				throw new ArgumentException("Left and right speaker arrays must be of equal size", nameof(leftAdr));
 
-			if ((leftAdr.GetType() != typeof(sbyte[])) && (leftAdr.GetType() != typeof(short[])))
-				throw new ArgumentException("Type of array must be either sbyte[] or short[]", nameof(leftAdr));
+			if ((leftAdr.GetType() != typeof(sbyte[])) && (leftAdr.GetType() != typeof(short[])) && (leftAdr.GetType() != typeof(byte[])))
+				throw new ArgumentException("Type of array must be either sbyte[], short[] or byte[]", nameof(leftAdr));
 
 			if (length == 0)
 				throw new ArgumentException("Length may not be zero", nameof(length));
@@ -250,8 +250,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			if (adr == null)
 				throw new ArgumentNullException(nameof(adr));
 
-			if ((adr.GetType() != typeof(sbyte[])) && (adr.GetType() != typeof(short[])))
-				throw new ArgumentException("Type of array must be either sbyte[] or short[]", nameof(adr));
+			if ((adr.GetType() != typeof(sbyte[])) && (adr.GetType() != typeof(short[])) && (adr.GetType() != typeof(byte[])))
+				throw new ArgumentException("Type of array must be either sbyte[], short[] or byte[]", nameof(adr));
 
 			if (length == 0)
 				throw new ArgumentException("Length may not be zero", nameof(length));
@@ -288,8 +288,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			if (leftAdr.Length != rightAdr.Length)
 				throw new ArgumentException("Left and right speaker arrays must be of equal size", nameof(leftAdr));
 
-			if ((leftAdr.GetType() != typeof(sbyte[])) && (leftAdr.GetType() != typeof(short[])))
-				throw new ArgumentException("Type of array must be either sbyte[] or short[]", nameof(leftAdr));
+			if ((leftAdr.GetType() != typeof(sbyte[])) && (leftAdr.GetType() != typeof(short[])) && (leftAdr.GetType() != typeof(byte[])))
+				throw new ArgumentException("Type of array must be either sbyte[], short[] or byte[]", nameof(leftAdr));
 
 			if (length == 0)
 				throw new ArgumentException("Length may not be zero", nameof(length));

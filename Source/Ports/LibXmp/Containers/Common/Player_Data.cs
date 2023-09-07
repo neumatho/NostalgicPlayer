@@ -65,5 +65,27 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		/// Amiga led filter
 		/// </summary>
 		public bool Filter;
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Player_Data MakeDeepClone()
+		{
+			Player_Data clone = (Player_Data)MemberwiseClone();
+
+			clone.Flow = Flow.MakeDeepClone();
+			clone.Virt = Virt.MakeDeepClone();
+
+			clone.Sequence_Control = ArrayHelper.CloneArray(Sequence_Control);
+			clone.Channel_Vol = ArrayHelper.CloneArray(Channel_Vol);
+			clone.Channel_Mute = ArrayHelper.CloneArray(Channel_Mute);
+
+			clone.Xc_Data = ArrayHelper.CloneObjectArray(Xc_Data);
+			clone.Inject_Event = ArrayHelper.CloneObjectArray(Inject_Event);
+
+			return clone;
+		}
 	}
 }

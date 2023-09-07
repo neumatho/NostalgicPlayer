@@ -5,6 +5,8 @@
 /******************************************************************************/
 using System;
 using System.Runtime.InteropServices;
+using Polycode.NostalgicPlayer.Kit.Containers.Types;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer;
@@ -46,6 +48,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		private readonly Mix_Fp[] nearest_Mixers;
 		private readonly Mix_Fp[] linear_Mixers;
 		private readonly Mix_Fp[] spline_Mixers;
+
+		private IChannel[] nostalgicChannels;
 
 		/********************************************************************/
 		/// <summary>
@@ -92,6 +96,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				null,
 				null
 			};
+
+			nostalgicChannels = null;
 		}
 
 
@@ -109,13 +115,38 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Mixer_Data s = ctx.S;
 			Module_Data m = ctx.M;
 			Xmp_Module mod = m.Mod;
+			Mixer_Voice vi;
+			c_int voc;
+
+			if (nostalgicChannels != null)
+			{
+				// OpenMPT Bidi-Loops.it: "In Impulse Tracker's software
+				// mixer, ping-pong loops are shortened by one sample."
+				s.BiDir_Adjust = Common.Is_Player_Mode_It(m) ? 1 : 0;
+
+				for (voc = 0; voc < p.Virt.MaxVoc; voc++)
+				{
+					vi = p.Virt.Voice_Array[voc];
+
+					if (vi.Chn < 0)
+						continue;
+
+					if (vi.Period < 1)
+					{
+						lib.virt.LibXmp_Virt_ResetVoice(voc, true);
+						continue;
+					}
+				}
+
+				return;
+			}
+
 			Extra_Sample_Data xtra;
 			Xmp_Sample xxs;
-			Mixer_Voice vi;
 			Loop_Data loop_Data = new Loop_Data();
 			c_double step, step_Dir;
 			c_int samples, size;
-			c_int vol, vol_L, vol_R, voc, uSmp;
+			c_int vol, vol_L, vol_R, uSmp;
 			c_int prev_L, prev_R = 0;
 			c_int buf_Pos;
 			Mix_Fp mix_Fn;
@@ -449,6 +480,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			if (ac)
 				AntiClick(vi);
+
+			if (nostalgicChannels != null)
+			{
+				if (ac)
+				{
+					nostalgicChannels[voc].PlaySample((short)vi.Smp, vi.SPtr, (uint)(vi.SPtrOffset + vi.Pos), (uint)vi.End, (byte)((vi.FIdx & Mixer_Index_Flag._16_Bits) != 0 ? 16 : 8), (vi.Flags & Mixer_Flag.Voice_Reverse) != 0);
+
+					if (Has_Active_Loop(vi, xxs))
+					{
+						if ((vi.Flags & Mixer_Flag.Voice_Reverse) != 0)
+						{
+							int u=7;
+						}
+						nostalgicChannels[voc].SetLoop((uint)vi.Start, (uint)(vi.End - vi.Start));
+					}
+				}
+			}
 		}
 
 
@@ -533,6 +581,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			vi.Period = lib.period.LibXmp_Note_To_Period_Mix(note, 0);
 
 			AntiClick(vi);
+
+			if (nostalgicChannels != null)
+				nostalgicChannels[voc].SetAmigaPeriod((uint)vi.Period);
 		}
 
 
@@ -548,6 +599,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Mixer_Voice vi = p.Virt.Voice_Array[voc];
 
 			vi.Period = period;
+
+			if (nostalgicChannels != null)
+				nostalgicChannels[voc].SetAmigaPeriod((uint)period);
 		}
 
 
@@ -566,6 +620,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				AntiClick(vi);
 
 			vi.Vol = vol;
+
+			if (nostalgicChannels != null)
+			{
+				Module_Data m = ctx.M;
+
+				if ((m.MVolBase > 0) && (m.MVol != m.MVolBase))
+					vol = vol * m.MVol / m.MVolBase;
+
+				nostalgicChannels[voc].SetVolume((ushort)(vol / 4));
+			}
 		}
 
 
@@ -681,6 +745,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Mixer_Voice vi = p.Virt.Voice_Array[voc];
 
 			vi.Pan = pan;
+
+			if (nostalgicChannels != null)
+			{
+				if (vi.Pan == Constants.Pan_Surround)
+					pan = (int)ChannelPanningType.Surround;
+				else
+					pan += 128;
+
+				nostalgicChannels[voc].SetPanning((ushort)pan);
+			}
 		}
 
 
@@ -749,6 +823,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			s.Buf32 = null;
 			s.Buffer = null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will set the channel objects to use
+		/// </summary>
+		/********************************************************************/
+		public void Xmp_Set_NostalgicPlayer_Channels(IChannel[] channels)
+		{
+			nostalgicChannels = channels;
 		}
 
 		#region Private methods

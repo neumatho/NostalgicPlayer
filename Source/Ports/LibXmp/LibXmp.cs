@@ -5,6 +5,8 @@
 /******************************************************************************/
 using System;
 using System.IO;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
 
 namespace Polycode.NostalgicPlayer.Ports.LibXmp
@@ -79,6 +81,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		public void Xmp_Free_Context()
 		{
 			control.Xmp_Free_Context();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will set a specific format, so the loader only will check against
+		/// this
+		/// </summary>
+		/********************************************************************/
+		public void Xmp_Set_Load_Format(Guid formatId)
+		{
+			load.Xmp_Set_Load_Format(formatId);
 		}
 
 
@@ -296,6 +311,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 		/********************************************************************/
 		/// <summary>
+		/// Query the list of supported module formats
+		/// </summary>
+		/********************************************************************/
+		public static Xmp_Format_Info[] Xmp_Get_Format_Info_List()
+		{
+			return Format.Format_Info_List();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Skip replay to the start of the next position
 		/// </summary>
 		/********************************************************************/
@@ -422,6 +449,46 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		public c_int Xmp_Get_Player(Xmp_Player parm)
 		{
 			return control.Xmp_Get_Player(parm);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will set the channel objects to use
+		/// </summary>
+		/********************************************************************/
+		public void Xmp_Set_NostalgicPlayer_Channels(IChannel[] channels)
+		{
+			mixer.Xmp_Set_NostalgicPlayer_Channels(channels);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will create a snapshot of the current player state
+		/// </summary>
+		/********************************************************************/
+		public ISnapshot Xmp_Create_Snapshot()
+		{
+			return new Snapshot(ctx.P);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will set the player state to the given snapshot
+		/// </summary>
+		/********************************************************************/
+		public void Xmp_Set_Snapshot(ISnapshot snapshot)
+		{
+			// Start to make a clone of the snapshot
+			Snapshot currentSnapshot = (Snapshot)snapshot;
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayerData);
+
+			ctx.P = clonedSnapshot.PlayerData;
 		}
 	}
 }

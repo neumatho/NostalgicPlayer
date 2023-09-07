@@ -472,6 +472,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			info.Num_Sequences = m.Num_Sequences;
 			info.Seq_Data = m.Seq_Data;
 			info.Vol_Base = m.VolBase;
+
+			// These information has been added by Thomas Neumann, because I
+			// need them in NostalgicPlayer
+			info.RRate = m.RRate;
+			info.Time_Factor = m.Time_Factor;
+			info.PeriodType = (c_int)m.Period_Type;
+
+			info.VirtualChannels = lib.mixer.LibXmp_Mixer_NumVoices(-1);
 		}
 
 
@@ -534,6 +542,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			info.Virt_Used = p.Virt.Virt_Used;
 
 			info.Sequence = p.Sequence;
+			info.Filter = p.Filter;
 
 			if (p.Xc_Data != null)
 			{

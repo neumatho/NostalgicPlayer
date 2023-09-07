@@ -3,12 +3,14 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+
 namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class Xmp_Event
+	public class Xmp_Event : IDeepCloneable<Xmp_Event>
 	{
 		/// <summary>
 		/// Note number (0 means no note)
@@ -49,6 +51,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// Internal (reserved) flags
 		/// </summary>
 		public byte _Flag;
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Xmp_Event MakeDeepClone()
+		{
+			return (Xmp_Event)MemberwiseClone();
+		}
+
+
 
 		/********************************************************************/
 		/// <summary>

@@ -9,7 +9,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
@@ -22,6 +21,7 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
+using Polycode.NostalgicPlayer.PlayerLibrary.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 {
@@ -1038,21 +1038,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 				int channels = stereo ? 2 : 1;
 
 				// Build list of buffers to be saved
-				Array[] leftSamples, rightSamples = null;
+				(Array data, uint offset, int length)[] leftSamples, rightSamples = null;
 
 				if ((sampleInfo.Flags & SampleInfo.SampleFlag.MultiOctave) != 0)
 				{
-					leftSamples = sampleInfo.MultiOctaveAllSamples[0].OrderBy(s => s.Length).ToArray();
+					leftSamples = sampleInfo.MultiOctaveAllSamples[0].OrderBy(s => s.Length).Select(x => (x, 0U, x.Length)).ToArray();
 
 					if (stereo)
-						rightSamples = sampleInfo.MultiOctaveAllSamples[1].OrderBy(s => s.Length).ToArray();
+						rightSamples = sampleInfo.MultiOctaveAllSamples[1].OrderBy(s => s.Length).Select(x => (x, 0U, x.Length)).ToArray();
 				}
 				else
 				{
-					leftSamples = new[] { sampleInfo.Sample };
+					leftSamples = new (Array data, uint offset, int length)[] { (sampleInfo.Sample, sampleInfo.SampleOffset, (int)sampleInfo.Length) };
 
 					if (stereo)
-						rightSamples = new[] { sampleInfo.SecondSample };
+						rightSamples = new (Array data, uint offset, int length)[] { (sampleInfo.SecondSample, sampleInfo.SampleOffset, (int)sampleInfo.Length) };
 				}
 
 				SaveSampleFormatInfo formatInfo = new SaveSampleFormatInfo((byte)sampleInfo.BitSize, channels, sampleInfo.MiddleC, sampleInfo.LoopStart, sampleInfo.LoopLength, sampleInfo.Name, string.Empty);
@@ -1071,7 +1071,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						converterAgent.SaveHeader(fs);
 
 						// Convert sample to 32-bit
-						int[] buffer = new int[leftSamples.Max(s => s.Length) * channels];
+						int[] buffer = new int[leftSamples.Max(s => s.length) * channels];
 
 						for (int b = 0; b < leftSamples.Length; b++)
 						{
@@ -1079,10 +1079,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 							{
 								if (sampleInfo.BitSize == SampleInfo.SampleSize._8Bit)
 								{
-									sbyte[] left = (sbyte[])leftSamples[b];
-									sbyte[] right = (sbyte[])rightSamples[b];
+									Span<sbyte> left = SampleHelper.ConvertSampleTo8Bit(leftSamples[b].data, leftSamples[b].offset);
+									Span<sbyte> right = SampleHelper.ConvertSampleTo8Bit(rightSamples[b].data, rightSamples[b].offset);
 
-									for (int i = 0, j = 0, cnt = left.Length; i < cnt; i++, j += 2)
+									for (int i = 0, j = 0, cnt = leftSamples[b].length; i < cnt; i++, j += 2)
 									{
 										buffer[j] = left[i] << 24;
 										buffer[j + 1] = right[i] << 24;
@@ -1090,37 +1090,35 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 								}
 								else
 								{
-									Span<short> left = leftSamples[b].GetType() == typeof(sbyte[]) ? MemoryMarshal.Cast<sbyte, short>((sbyte[])leftSamples[b]) : (short[])leftSamples[b];
-									Span<short> right = rightSamples[b].GetType() == typeof(sbyte[]) ? MemoryMarshal.Cast<sbyte, short>((sbyte[])rightSamples[b]) : (short[])rightSamples[b];
+									Span<short> left = SampleHelper.ConvertSampleTo16Bit(leftSamples[b].data, leftSamples[b].offset);
+									Span<short> right = SampleHelper.ConvertSampleTo16Bit(rightSamples[b].data, rightSamples[b].offset);
 
-									for (int i = 0, j = 0, cnt = left.Length; i < cnt; i++, j += 2)
+									for (int i = 0, j = 0, cnt = leftSamples[b].length; i < cnt; i++, j += 2)
 									{
 										buffer[j] = left[i] << 16;
 										buffer[j + 1] = right[i] << 16;
 									}
 								}
-
-								converterAgent.SaveData(fs, buffer, leftSamples[b].Length * 2);
 							}
 							else
 							{
 								if (sampleInfo.BitSize == SampleInfo.SampleSize._8Bit)
 								{
-									sbyte[] left = (sbyte[])leftSamples[b];
+									Span<sbyte> left = SampleHelper.ConvertSampleTo8Bit(leftSamples[b].data, leftSamples[b].offset);
 
-									for (int i = 0, cnt = left.Length; i < cnt; i++)
+									for (int i = 0, cnt = leftSamples[b].length; i < cnt; i++)
 										buffer[i] = left[i] << 24;
 								}
 								else
 								{
-									Span<short> left = leftSamples[b].GetType() == typeof(sbyte[]) ? MemoryMarshal.Cast<sbyte, short>((sbyte[])leftSamples[b]) : (short[])leftSamples[b];
+									Span<short> left = SampleHelper.ConvertSampleTo16Bit(leftSamples[b].data, leftSamples[b].offset);
 
-									for (int i = 0, cnt = left.Length; i < cnt; i++)
+									for (int i = 0, cnt = leftSamples[b].length; i < cnt; i++)
 										buffer[i] = left[i] << 16;
 								}
-
-								converterAgent.SaveData(fs, buffer, leftSamples[b].Length);
 							}
+
+							converterAgent.SaveData(fs, buffer, buffer.Length);
 						}
 
 						// Save any left overs

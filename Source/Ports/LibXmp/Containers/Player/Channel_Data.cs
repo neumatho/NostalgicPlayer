@@ -4,6 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
 
 namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
@@ -11,7 +13,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class Channel_Data
+	internal class Channel_Data : IDeepCloneable<Channel_Data>
 	{
 		/// <summary>
 		/// Channel flags
@@ -311,6 +313,28 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 		/// Final pan including envelopes
 		/// </summary>
 		public c_int Info_FinalPan;
+
+		/********************************************************************/
+		/// <summary>
+		/// Make a deep copy of the current object
+		/// </summary>
+		/********************************************************************/
+		public Channel_Data MakeDeepClone()
+		{
+			Channel_Data clone = (Channel_Data)MemberwiseClone();
+
+			clone.Arpeggio.Val = ArrayHelper.CloneArray(Arpeggio.Val);
+
+			clone.Vibrato.Lfo = Vibrato.Lfo.MakeDeepClone();
+			clone.Tremolo.Lfo = Tremolo.Lfo.MakeDeepClone();
+			clone.Panbrello.Lfo = Panbrello.Lfo.MakeDeepClone();
+			clone.InsVib.Lfo = InsVib.Lfo.MakeDeepClone();
+			clone.Delayed_Event = Delayed_Event.MakeDeepClone();
+
+			return clone;
+		}
+
+
 
 		/********************************************************************/
 		/// <summary>
