@@ -158,8 +158,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 				Assert.AreEqual(target_Order, info.Pos, "Pos mismatch");
 				Assert.AreEqual(data[i].Row, info.Row, "Row mismatch");
 				Assert.AreEqual(data[i].Frame, info.Frame, "Frame mismatch");
-				Assert.AreEqual(data[i].Note, info.channel_Info[0].Note, "Note mismatch");
-				Assert.AreEqual(data[i].Volume, info.channel_Info[0].Volume, "Volume mismatch");
+				Assert.AreEqual(data[i].Note, info.Channel_Info[0].Note, "Note mismatch");
+				Assert.AreEqual(data[i].Volume, info.Channel_Info[0].Volume, "Volume mismatch");
 			}
 
 			opaque.Xmp_Release_Module();

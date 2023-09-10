@@ -137,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		protected c_int Period(Xmp_Frame_Info info)
 		{
-			return (c_int)LibXmp_Round(1.0 * info.channel_Info[0].Period / 4096);
+			return (c_int)LibXmp_Round(1.0 * info.Channel_Info[0].Period / 4096);
 		}
 	}
 }

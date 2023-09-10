@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_OpenMpt_It
 				if (info.Loop_Count > 0)
 					break;
 
-				Xmp_Channel_Info ci = info.channel_Info[0];
+				Xmp_Channel_Info ci = info.Channel_Info[0];
 				if (info.Row >= 2)
 					Assert.AreEqual(0, ci.Volume, "Volume not zero");
 			}

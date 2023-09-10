@@ -54,8 +54,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 			opaque.Xmp_Play_Frame();
 			opaque.Xmp_Get_Frame_Info(out fi);
 
-			Assert.AreEqual(59, fi.channel_Info[0].Note, "Set note");
-			Assert.AreEqual(64, fi.channel_Info[0].Volume, "Set volume");
+			Assert.AreEqual(59, fi.Channel_Info[0].Note, "Set note");
+			Assert.AreEqual(64, fi.Channel_Info[0].Volume, "Set volume");
 
 			opaque.Xmp_Play_Frame();
 
@@ -63,8 +63,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 			opaque.Xmp_Play_Frame();
 			opaque.Xmp_Get_Frame_Info(out fi);
 
-			Assert.AreEqual(59, fi.channel_Info[0].Note, "Set note");
-			Assert.AreEqual(0, fi.channel_Info[0].Volume, "Set volume");
+			Assert.AreEqual(59, fi.Channel_Info[0].Note, "Set note");
+			Assert.AreEqual(0, fi.Channel_Info[0].Volume, "Set volume");
 
 			opaque.Xmp_Play_Frame();
 
@@ -72,8 +72,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 			opaque.Xmp_Play_Frame();
 			opaque.Xmp_Get_Frame_Info(out fi);
 
-			Assert.AreEqual(49, fi.channel_Info[0].Note, "Set note");
-			Assert.AreEqual(19, fi.channel_Info[0].Volume, "Set volume");
+			Assert.AreEqual(49, fi.Channel_Info[0].Note, "Set note");
+			Assert.AreEqual(19, fi.Channel_Info[0].Volume, "Set volume");
 
 			opaque.Xmp_Play_Frame();
 

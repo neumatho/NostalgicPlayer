@@ -55,10 +55,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 				opaque.Xmp_Play_Frame();
 				opaque.Xmp_Get_Frame_Info(out Xmp_Frame_Info info);
 
-				c_int pan0 = info.channel_Info[0].Pan;
-				c_int pan1 = info.channel_Info[1].Pan;
-				c_int pan2 = info.channel_Info[2].Pan;
-				c_int pan3 = info.channel_Info[3].Pan;
+				c_int pan0 = info.Channel_Info[0].Pan;
+				c_int pan1 = info.Channel_Info[1].Pan;
+				c_int pan2 = info.Channel_Info[2].Pan;
+				c_int pan3 = info.Channel_Info[3].Pan;
 
 				Assert.AreEqual(0x00 + i, pan0, "Pan error in channel 0");
 				Assert.AreEqual(0x40 + i, pan1, "Pan error in channel 1");

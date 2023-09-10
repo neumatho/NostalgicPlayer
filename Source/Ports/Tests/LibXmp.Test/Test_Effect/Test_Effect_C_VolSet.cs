@@ -88,7 +88,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			{
 				opaque.Xmp_Play_Frame();
 				opaque.Xmp_Get_Frame_Info(out info);
-				Assert.AreEqual(vals_C[i], info.channel_Info[0].Volume, "Volume set error");
+				Assert.AreEqual(vals_C[i], info.Channel_Info[0].Volume, "Volume set error");
 			}
 
 			// Again different volbase
@@ -99,7 +99,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			{
 				opaque.Xmp_Play_Frame();
 				opaque.Xmp_Get_Frame_Info(out info);
-				Assert.AreEqual(vals2_C[i], info.channel_Info[0].Volume, "Volume set error");
+				Assert.AreEqual(vals2_C[i], info.Channel_Info[0].Volume, "Volume set error");
 			}
 
 			// Again with volume map
@@ -111,7 +111,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			{
 				opaque.Xmp_Play_Frame();
 				opaque.Xmp_Get_Frame_Info(out info);
-				Assert.AreEqual(vals3_C[i], info.channel_Info[0].Volume, "Volume set error");
+				Assert.AreEqual(vals3_C[i], info.Channel_Info[0].Volume, "Volume set error");
 			}
 
 			opaque.Xmp_Release_Module();

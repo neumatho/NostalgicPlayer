@@ -66,8 +66,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 			opaque.Xmp_Play_Frame();
 			opaque.Xmp_Get_Frame_Info(out fi);
 
-			Assert.AreEqual(59, fi.channel_Info[0].Note, "Set note");
-			Assert.AreEqual(64, fi.channel_Info[0].Volume, "Volume");
+			Assert.AreEqual(59, fi.Channel_Info[0].Note, "Set note");
+			Assert.AreEqual(64, fi.Channel_Info[0].Volume, "Volume");
 
 			opaque.Xmp_Play_Frame();
 
@@ -75,7 +75,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 			opaque.Xmp_Play_Frame();
 			opaque.Xmp_Get_Frame_Info(out fi);
 
-			Assert.AreEqual(64, fi.channel_Info[0].Volume, "Volume");
+			Assert.AreEqual(64, fi.Channel_Info[0].Volume, "Volume");
 
 			opaque.Xmp_Play_Frame();
 
@@ -83,7 +83,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 			opaque.Xmp_Play_Frame();
 			opaque.Xmp_Get_Frame_Info(out fi);
 
-			Assert.AreEqual(56, fi.channel_Info[0].Volume, "Volume");
+			Assert.AreEqual(56, fi.Channel_Info[0].Volume, "Volume");
 
 			opaque.Xmp_Play_Frame();
 
@@ -91,8 +91,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 			opaque.Xmp_Play_Frame();
 			opaque.Xmp_Get_Frame_Info(out fi);
 
-			Assert.AreEqual(59, fi.channel_Info[0].Note, "Set note");
-			Assert.AreEqual(63, fi.channel_Info[0].Volume, "Volume");
+			Assert.AreEqual(59, fi.Channel_Info[0].Note, "Set note");
+			Assert.AreEqual(63, fi.Channel_Info[0].Volume, "Volume");
 
 			opaque.Xmp_Play_Frame();
 
@@ -102,10 +102,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 				c_int vol = 63 - (i - 5) * 2;
 
 				opaque.Xmp_Play_Frame();
-				Assert.AreEqual(vol > 0 ? vol : 0, fi.channel_Info[0].Volume, "Volume");
+				Assert.AreEqual(vol > 0 ? vol : 0, fi.Channel_Info[0].Volume, "Volume");
 
 				// Instrument should not change in row 40
-				Assert.AreEqual(0, fi.channel_Info[0].Instrument, "Instrument");
+				Assert.AreEqual(0, fi.Channel_Info[0].Instrument, "Instrument");
 
 				opaque.Xmp_Get_Frame_Info(out fi);
 				opaque.Xmp_Play_Frame();

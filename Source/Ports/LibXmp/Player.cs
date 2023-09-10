@@ -549,7 +549,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				for (c_int i = 0; i < chn; i++)
 				{
 					Channel_Data c = p.Xc_Data[i];
-					Xmp_Channel_Info ci = info.channel_Info[i];
+					Xmp_Channel_Info ci = info.Channel_Info[i];
 
 					ci.Note = (byte)c.Key;
 					ci.PitchBend = (c_short)c.Info_PitchBend;

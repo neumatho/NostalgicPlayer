@@ -43,8 +43,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 				if (info.Loop_Count > 0)
 					break;
 
-				Xmp_Channel_Info ci0 = info.channel_Info[0];
-				Xmp_Channel_Info ci1 = info.channel_Info[1];
+				Xmp_Channel_Info ci0 = info.Channel_Info[0];
+				Xmp_Channel_Info ci1 = info.Channel_Info[1];
 
 				Assert.AreEqual(ci1.Volume, ci0.Volume, "Tremor error");
 			}

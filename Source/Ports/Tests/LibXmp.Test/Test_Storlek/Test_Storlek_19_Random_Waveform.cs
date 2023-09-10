@@ -46,8 +46,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 				opaque.Xmp_Play_Frame();
 				opaque.Xmp_Get_Frame_Info(out Xmp_Frame_Info info);
 
-				Xmp_Channel_Info c0 = info.channel_Info[0];
-				Xmp_Channel_Info c1 = info.channel_Info[1];
+				Xmp_Channel_Info c0 = info.Channel_Info[0];
+				Xmp_Channel_Info c1 = info.Channel_Info[1];
 
 				val0[i] = c0.Volume;
 				val1[i] = c1.Volume;
@@ -58,8 +58,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 				opaque.Xmp_Play_Frame();
 				opaque.Xmp_Get_Frame_Info(out Xmp_Frame_Info info);
 
-				Xmp_Channel_Info c0 = info.channel_Info[0];
-				Xmp_Channel_Info c1 = info.channel_Info[1];
+				Xmp_Channel_Info c0 = info.Channel_Info[0];
+				Xmp_Channel_Info c1 = info.Channel_Info[1];
 
 				val0[i] = (c_int)c0.Period;
 				val1[i] = (c_int)c1.Period;
@@ -70,8 +70,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 				opaque.Xmp_Play_Frame();
 				opaque.Xmp_Get_Frame_Info(out Xmp_Frame_Info info);
 
-				Xmp_Channel_Info c0 = info.channel_Info[0];
-				Xmp_Channel_Info c1 = info.channel_Info[1];
+				Xmp_Channel_Info c0 = info.Channel_Info[0];
+				Xmp_Channel_Info c1 = info.Channel_Info[1];
 
 				val0[i] = c0.Pan;
 				val1[i] = c1.Pan;
@@ -87,8 +87,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 				opaque.Xmp_Play_Frame();
 				opaque.Xmp_Get_Frame_Info(out Xmp_Frame_Info info);
 
-				Xmp_Channel_Info c0 = info.channel_Info[0];
-				Xmp_Channel_Info c1 = info.channel_Info[1];
+				Xmp_Channel_Info c0 = info.Channel_Info[0];
+				Xmp_Channel_Info c1 = info.Channel_Info[1];
 
 				if ((c0.Volume == val0[i]) && (c1.Volume == val1[i]))
 					flag++;
@@ -99,8 +99,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 				opaque.Xmp_Play_Frame();
 				opaque.Xmp_Get_Frame_Info(out Xmp_Frame_Info info);
 
-				Xmp_Channel_Info c0 = info.channel_Info[0];
-				Xmp_Channel_Info c1 = info.channel_Info[1];
+				Xmp_Channel_Info c0 = info.Channel_Info[0];
+				Xmp_Channel_Info c1 = info.Channel_Info[1];
 
 				if ((c0.Period == val0[i]) && (c1.Period == val1[i]))
 					flag++;
@@ -111,8 +111,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 				opaque.Xmp_Play_Frame();
 				opaque.Xmp_Get_Frame_Info(out Xmp_Frame_Info info);
 
-				Xmp_Channel_Info c0 = info.channel_Info[0];
-				Xmp_Channel_Info c1 = info.channel_Info[1];
+				Xmp_Channel_Info c0 = info.Channel_Info[0];
+				Xmp_Channel_Info c1 = info.Channel_Info[1];
 
 				if ((c0.Pan == val0[i]) && (c1.Pan == val1[i]))
 					flag++;

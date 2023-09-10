@@ -54,8 +54,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 
 					c_int p0 = (c_int)csscanf.Results[0];
 					c_int p1 = (c_int)csscanf.Results[1];
-					Assert.AreEqual((c_uint)p0, info.channel_Info[0].Period, "Bad period");
-					Assert.AreEqual((c_uint)p1, info.channel_Info[1].Period, "Bad period");
+					Assert.AreEqual((c_uint)p0, info.Channel_Info[0].Period, "Bad period");
+					Assert.AreEqual((c_uint)p1, info.Channel_Info[1].Period, "Bad period");
 				}
 
 				line = sr.ReadLine();

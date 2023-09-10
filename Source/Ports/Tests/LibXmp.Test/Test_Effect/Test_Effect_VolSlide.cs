@@ -77,7 +77,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			{
 				opaque.Xmp_Play_Frame();
 				opaque.Xmp_Get_Frame_Info(out Xmp_Frame_Info info);
-				Assert.AreEqual(vals_VS[i], info.channel_Info[0].Volume, "Volume slide error");
+				Assert.AreEqual(vals_VS[i], info.Channel_Info[0].Volume, "Volume slide error");
 			}
 
 			opaque.Xmp_Release_Module();

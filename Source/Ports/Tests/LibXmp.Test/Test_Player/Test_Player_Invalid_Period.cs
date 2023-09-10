@@ -39,32 +39,32 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 			opaque.Xmp_Play_Frame();
 			opaque.Xmp_Get_Frame_Info(out info);
 
-			Assert.AreEqual(3506176U, info.channel_Info[0].Period, "Period error");
-			Assert.AreEqual(64, info.channel_Info[0].Volume, "Volume error");
+			Assert.AreEqual(3506176U, info.Channel_Info[0].Period, "Period error");
+			Assert.AreEqual(64, info.Channel_Info[0].Volume, "Volume error");
 
 			// Frame 1
 			xc.Period = 1;
 			opaque.Xmp_Play_Frame();
 			opaque.Xmp_Get_Frame_Info(out info);
 
-			Assert.AreEqual(4096U, info.channel_Info[0].Period, "Period error");
-			Assert.AreEqual(64, info.channel_Info[0].Volume, "Volume error");
+			Assert.AreEqual(4096U, info.Channel_Info[0].Period, "Period error");
+			Assert.AreEqual(64, info.Channel_Info[0].Volume, "Volume error");
 
 			// Frame 2
 			xc.Period = 0;
 			opaque.Xmp_Play_Frame();
 			opaque.Xmp_Get_Frame_Info(out info);
 
-			Assert.AreEqual(4096U, info.channel_Info[0].Period, "Period error");
-			Assert.AreEqual(64, info.channel_Info[0].Volume, "Volume error");
+			Assert.AreEqual(4096U, info.Channel_Info[0].Period, "Period error");
+			Assert.AreEqual(64, info.Channel_Info[0].Volume, "Volume error");
 
 			// Frame 3 -- Periods are updated in update_frequency() so it
 			// will appear one frame later
 			opaque.Xmp_Play_Frame();
 			opaque.Xmp_Get_Frame_Info(out info);
 
-			Assert.AreEqual(4096U, info.channel_Info[0].Period, "Period error");
-			Assert.AreEqual(0, info.channel_Info[0].Volume, "Volume error");
+			Assert.AreEqual(4096U, info.Channel_Info[0].Period, "Period error");
+			Assert.AreEqual(0, info.Channel_Info[0].Volume, "Volume error");
 
 			opaque.Xmp_Release_Module();
 			opaque.Xmp_Free_Context();

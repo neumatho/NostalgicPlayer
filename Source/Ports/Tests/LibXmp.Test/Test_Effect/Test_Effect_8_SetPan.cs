@@ -88,7 +88,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			{
 				opaque.Xmp_Play_Frame();
 				opaque.Xmp_Get_Frame_Info(out info);
-				Assert.AreEqual(vals_Ft2_8[i], info.channel_Info[0].Pan, "Pan error");
+				Assert.AreEqual(vals_Ft2_8[i], info.Channel_Info[0].Pan, "Pan error");
 			}
 
 			opaque.Xmp_Restart_Module();
@@ -100,7 +100,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			{
 				opaque.Xmp_Play_Frame();
 				opaque.Xmp_Get_Frame_Info(out info);
-				Assert.AreEqual(vals_St3_8[i], info.channel_Info[0].Pan, "Pan error");
+				Assert.AreEqual(vals_St3_8[i], info.Channel_Info[0].Pan, "Pan error");
 			}
 
 			opaque.Xmp_Restart_Module();
@@ -112,7 +112,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			{
 				opaque.Xmp_Play_Frame();
 				opaque.Xmp_Get_Frame_Info(out info);
-				Assert.AreEqual(vals_It_8[i], info.channel_Info[0].Pan, "Pan error");
+				Assert.AreEqual(vals_It_8[i], info.Channel_Info[0].Pan, "Pan error");
 			}
 
 			opaque.Xmp_Restart_Module();
@@ -124,7 +124,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			{
 				opaque.Xmp_Play_Frame();
 				opaque.Xmp_Get_Frame_Info(out info);
-				Assert.AreEqual(vals_Dp_8[i], info.channel_Info[0].Pan, "Pan error");
+				Assert.AreEqual(vals_Dp_8[i], info.Channel_Info[0].Pan, "Pan error");
 			}
 
 			opaque.Xmp_Release_Module();

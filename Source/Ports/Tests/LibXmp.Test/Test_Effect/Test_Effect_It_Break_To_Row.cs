@@ -56,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 						c_int ins = (c_int)csscanf.Results[6];
 						c_int pan = (c_int)csscanf.Results[7];
 
-						Xmp_Channel_Info ci = info.channel_Info[chan];
+						Xmp_Channel_Info ci = info.Channel_Info[chan];
 
 						Assert.AreEqual(time, info.Time, "Time mismatch");
 						Assert.AreEqual(row, info.Row, "Row mismatch");

@@ -57,8 +57,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 				if (info.Loop_Count > 0)
 					break;
 
-				Xmp_Channel_Info ci0 = info.channel_Info[0];
-				Xmp_Channel_Info ci1 = info.channel_Info[1];
+				Xmp_Channel_Info ci0 = info.Channel_Info[0];
+				Xmp_Channel_Info ci1 = info.Channel_Info[1];
 
 				Assert.IsTrue(((ci0.Position == 0) && (ci1.Position == 0)) || ((ci0.Position != 0) && (ci1.Position != 0)), "Retrigger error");
 				count++;

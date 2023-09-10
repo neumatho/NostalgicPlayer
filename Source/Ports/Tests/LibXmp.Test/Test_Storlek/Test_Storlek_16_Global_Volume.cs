@@ -64,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 				if (info.Loop_Count > 0)
 					break;
 
-				Xmp_Channel_Info ci = info.channel_Info[0];
+				Xmp_Channel_Info ci = info.Channel_Info[0];
 
 				if (info.Row < 8)
 					vol[i++] = ci.Volume;

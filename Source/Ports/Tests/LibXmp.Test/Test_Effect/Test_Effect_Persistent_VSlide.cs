@@ -43,9 +43,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 					opaque.Xmp_Get_Frame_Info(out Xmp_Frame_Info info);
 
 					if ((k + j) > 64)
-						Assert.AreEqual(64, info.channel_Info[0].Volume, "Volume slide up error");
+						Assert.AreEqual(64, info.Channel_Info[0].Volume, "Volume slide up error");
 					else
-						Assert.AreEqual(k + j, info.channel_Info[0].Volume, "Volume slide up error");
+						Assert.AreEqual(k + j, info.Channel_Info[0].Volume, "Volume slide up error");
 				}
 			}
 
@@ -65,9 +65,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 					opaque.Xmp_Get_Frame_Info(out Xmp_Frame_Info info);
 
 					if ((k - j) < 0)
-						Assert.AreEqual(0, info.channel_Info[0].Volume, "Volume slide down error");
+						Assert.AreEqual(0, info.Channel_Info[0].Volume, "Volume slide down error");
 					else
-						Assert.AreEqual(k - j, info.channel_Info[0].Volume, "Volume slide down error");
+						Assert.AreEqual(k - j, info.Channel_Info[0].Volume, "Volume slide down error");
 				}
 			}
 
@@ -88,9 +88,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 					opaque.Xmp_Get_Frame_Info(out Xmp_Frame_Info info);
 
 					if ((k + j) > 10)
-						Assert.AreEqual(10, info.channel_Info[0].Volume, "Volume slide up error");
+						Assert.AreEqual(10, info.Channel_Info[0].Volume, "Volume slide up error");
 					else
-						Assert.AreEqual(k + j, info.channel_Info[0].Volume, "Volume slide up error");
+						Assert.AreEqual(k + j, info.Channel_Info[0].Volume, "Volume slide up error");
 				}
 			}
 
@@ -111,9 +111,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 					opaque.Xmp_Get_Frame_Info(out Xmp_Frame_Info info);
 
 					if ((k - j) < 54)
-						Assert.AreEqual(54, info.channel_Info[0].Volume, "Volume slide down error");
+						Assert.AreEqual(54, info.Channel_Info[0].Volume, "Volume slide down error");
 					else
-						Assert.AreEqual(k - j, info.channel_Info[0].Volume, "Volume slide down error");
+						Assert.AreEqual(k - j, info.Channel_Info[0].Volume, "Volume slide down error");
 				}
 			}
 

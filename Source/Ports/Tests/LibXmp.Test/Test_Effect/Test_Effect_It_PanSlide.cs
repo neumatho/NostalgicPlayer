@@ -61,7 +61,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			{
 				opaque.Xmp_Play_Frame();
 				opaque.Xmp_Get_Frame_Info(out Xmp_Frame_Info info);
-				Assert.AreEqual(vals_It_PS[i], info.channel_Info[0].Pan, "Pan error");
+				Assert.AreEqual(vals_It_PS[i], info.Channel_Info[0].Pan, "Pan error");
 			}
 
 			opaque.Xmp_Release_Module();
