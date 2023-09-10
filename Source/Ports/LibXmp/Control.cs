@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
@@ -428,6 +427,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				case Xmp_Player.Voices:
 				{
 					s.NumVoc = val;
+					break;
+				}
+
+				case Xmp_Player.MixerFrequency:
+				{
+					if ((val >= Constants.Xmp_Min_SRate) && (val <= Constants.Xmp_Max_SRate))
+						s.Freq = val;
+
+					break;
+				}
+
+				case Xmp_Player.MixerChannels:
+				{
+					if (val == 1)
+						s.Format |= Xmp_Format.Mono;
+					else if (val == 2)
+						s.Format &= ~Xmp_Format.Mono;
+
 					break;
 				}
 			}

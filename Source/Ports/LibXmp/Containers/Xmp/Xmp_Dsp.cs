@@ -3,11 +3,14 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
+
 namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 {
 	/// <summary>
 	/// 
 	/// </summary>
+	[Flags]
 	public enum Xmp_Dsp
 	{
 		/// <summary>

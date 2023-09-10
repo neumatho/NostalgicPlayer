@@ -5,7 +5,6 @@
 /******************************************************************************/
 using System;
 using System.Runtime.InteropServices;
-using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
@@ -20,6 +19,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 	/// </summary>
 	internal class Mixer
 	{
+		private const c_int DownMix_Shift = 12;
+		private const c_int Lim16_Hi = 32767;
+		private const c_int Lim16_Lo = -32768;
+
 		private const c_int Loop_Prologue = 1;
 		private const c_int Loop_Epilogue = 2;
 
@@ -48,8 +51,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		private readonly Mix_Fp[] nearest_Mixers;
 		private readonly Mix_Fp[] linear_Mixers;
 		private readonly Mix_Fp[] spline_Mixers;
-
-		private IChannel[] nostalgicChannels;
 
 		/********************************************************************/
 		/// <summary>
@@ -87,17 +88,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			spline_Mixers = new Mix_Fp[]
 			{
-				null,
-				null,
-				null,
-				null,
+				Mix_All.LibXmp_Mix_Mono_8Bit_Spline,
+				Mix_All.LibXmp_Mix_Mono_16Bit_Spline,
+				Mix_All.LibXmp_Mix_Stereo_8Bit_Spline,
+				Mix_All.LibXmp_Mix_Stereo_16Bit_Spline,
 				null,
 				null,
 				null,
 				null
 			};
-
-			nostalgicChannels = null;
 		}
 
 
@@ -118,7 +117,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Mixer_Voice vi;
 			c_int voc;
 
-			if (nostalgicChannels != null)
+/*//XX			if (nostalgicChannels != null)
 			{
 				// OpenMPT Bidi-Loops.it: "In Impulse Tracker's software
 				// mixer, ping-pong loops are shortened by one sample."
@@ -140,7 +139,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				return;
 			}
-
+*/
 			Extra_Sample_Data xtra;
 			Xmp_Sample xxs;
 			Loop_Data loop_Data = new Loop_Data();
@@ -356,7 +355,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 							}
 
 							if (mix_Fn != null)
-								mix_Fn(vi, s.Buf32, buf_Pos, samples, vol_L >> 8, vol_R >> 8, (c_int)step_Dir * (1 << Constants.SMix_Shift), rSize, delta_L, delta_R);
+								mix_Fn(vi, s.Buf32, buf_Pos, samples, vol_L >> 8, vol_R >> 8, (c_int)(step_Dir * (1 << Constants.SMix_Shift)), rSize, delta_L, delta_R);
 
 							buf_Pos += mix_Size;
 							vi.Old_VL += samples * delta_L;
@@ -429,7 +428,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if ((s.Format & Xmp_Format._8Bit) != 0)
 				DownMix_Int_8Bit(s.Buffer, s.Buf32, size, s.Amplify, (s.Format & Xmp_Format.Unsigned) != 0 ? 0x80 : 0);
 			else
-				DownMix_Int_16Bit(s.Buffer, s.Buf32, size, s.Amplify, (s.Format & Xmp_Format.Unsigned) != 0 ? 0x8000 : 0);
+				DownMix_Int_16Bit(MemoryMarshal.Cast<sbyte, int16>(s.Buffer), s.Buf32, size, s.Amplify, (s.Format & Xmp_Format.Unsigned) != 0 ? 0x8000 : 0);
 
 			s.DtRight = s.DtLeft = 0;
 		}
@@ -481,21 +480,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (ac)
 				AntiClick(vi);
 
-			if (nostalgicChannels != null)
+/*//XX			if (nostalgicChannels != null)
 			{
 				if (ac)
 				{
 					nostalgicChannels[voc].PlaySample((short)vi.Smp, vi.SPtr, (uint)(vi.SPtrOffset + vi.Pos), (uint)vi.End, (byte)((vi.FIdx & Mixer_Index_Flag._16_Bits) != 0 ? 16 : 8), (vi.Flags & Mixer_Flag.Voice_Reverse) != 0);
 
 					if (Has_Active_Loop(vi, xxs))
-					{
-						if ((vi.Flags & Mixer_Flag.Voice_Reverse) != 0)//XX Temporary test for debugging
-						{
-						}
-						nostalgicChannels[voc].SetLoop((uint)vi.Start, (uint)(vi.End - vi.Start));
-					}
+						nostalgicChannels[voc].SetLoop((uint)vi.Start, (uint)(vi.End - vi.Start), (vi.Flags & Mixer_Flag.Voice_BiDir) != 0 ? ChannelLoopType.PingPong : ChannelLoopType.Normal);
 				}
-			}
+			}*/
 		}
 
 
@@ -581,8 +575,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			AntiClick(vi);
 
-			if (nostalgicChannels != null)
-				nostalgicChannels[voc].SetAmigaPeriod((uint)vi.Period);
+//XX			if (nostalgicChannels != null)
+//XX				nostalgicChannels[voc].SetAmigaPeriod((uint)vi.Period);
 		}
 
 
@@ -599,8 +593,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			vi.Period = period;
 
-			if (nostalgicChannels != null)
-				nostalgicChannels[voc].SetAmigaPeriod((uint)period);
+//XX			if (nostalgicChannels != null)
+//XX				nostalgicChannels[voc].SetAmigaPeriod((uint)period);
 		}
 
 
@@ -620,7 +614,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			vi.Vol = vol;
 
-			if (nostalgicChannels != null)
+/*//XX			if (nostalgicChannels != null)
 			{
 				Module_Data m = ctx.M;
 
@@ -628,7 +622,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					vol = vol * m.MVol / m.MVolBase;
 
 				nostalgicChannels[voc].SetVolume((ushort)(vol / 4));
-			}
+			}*/
 		}
 
 
@@ -745,7 +739,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			vi.Pan = pan;
 
-			if (nostalgicChannels != null)
+/*//XX			if (nostalgicChannels != null)
 			{
 				if (vi.Pan == Constants.Pan_Surround)
 					pan = (int)ChannelPanningType.Surround;
@@ -753,7 +747,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					pan += 128;
 
 				nostalgicChannels[voc].SetPanning((ushort)pan);
-			}
+			}*/
 		}
 
 
@@ -833,7 +827,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/********************************************************************/
 		public void Xmp_Set_NostalgicPlayer_Channels(IChannel[] channels)
 		{
-			nostalgicChannels = channels;
+//XX			nostalgicChannels = channels;
 		}
 
 		#region Private methods
@@ -855,8 +849,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// stereo output
 		/// </summary>
 		/********************************************************************/
-		private void DownMix_Int_16Bit(sbyte[] dest, int32[] src, c_int num, c_int amp, c_int offs)
+		private void DownMix_Int_16Bit(Span<int16> dest, int32[] src, c_int num, c_int amp, c_int offs)
 		{
+			c_int shift = DownMix_Shift - amp;
+
+			for (c_int offset = 0; num-- != 0; offset++)
+			{
+				c_int smp = src[offset] >> shift;
+				if (smp > Lim16_Hi)
+					dest[offset] = Lim16_Hi;
+				else if (smp < Lim16_Lo)
+					dest[offset] = Lim16_Lo;
+				else
+					dest[offset] = (int16)smp;
+
+				if (offs != 0)
+					dest[offset] += (int16)offs;
+			}
 		}
 
 

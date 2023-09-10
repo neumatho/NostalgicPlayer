@@ -65,7 +65,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// <summary>
 		/// Pointer to sound buffer
 		/// </summary>
-		public uint8[] Buffer;
+		public int8[] Buffer;
 
 		/// <summary>
 		/// Used buffer size

@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// Pointer to sequence data
 		/// </summary>
 		public Xmp_Sequence[] Seq_Data;
-
+//XX
 		/// <summary>
 		/// Replay rate
 		/// </summary>
@@ -54,10 +54,5 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// The period type used by the module
 		/// </summary>
 		public c_int PeriodType;
-
-		/// <summary>
-		/// Number of virtual channels to reserve
-		/// </summary>
-		public c_int VirtualChannels;
 	}
 }

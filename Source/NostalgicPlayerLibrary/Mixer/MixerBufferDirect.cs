@@ -106,33 +106,36 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			}
 
 			int count = Math.Min(todo, (int)vnf.Size - (int)vnf.Current);
-			vol *= 128;
-
-			if ((vnf.Flags & SampleFlag._16Bits) != 0)
+			if (count > 0)
 			{
-				// 16-bit
-				Span<short> source = SampleHelper.ConvertSampleTo16Bit(vnf.Addresses[0], 0);
+				vol *= 128;
 
-				for (int i = (int)vnf.Current; i < vnf.Current + count; i++)
+				if ((vnf.Flags & SampleFlag._16Bits) != 0)
 				{
-					dest[destOffset] = (int)((((long)source[i] << 16) * vol) / 32768);
-					destOffset += destSkip;
+					// 16-bit
+					Span<short> source = SampleHelper.ConvertSampleTo16Bit(vnf.Addresses[0], 0);
+
+					for (int i = (int)vnf.Current; i < vnf.Current + count; i++)
+					{
+						dest[destOffset] = (int)((((long)source[i] << 16) * vol) / 32768);
+						destOffset += destSkip;
+					}
+
+					vnf.Current += count;
 				}
-
-				vnf.Current += count;
-			}
-			else
-			{
-				// 8-bit
-				Span<sbyte> source = SampleHelper.ConvertSampleTo8Bit(vnf.Addresses[0], 0);
-
-				for (int i = (int)vnf.Current; i < vnf.Current + count; i++)
+				else
 				{
-					dest[destOffset] = (int)((((long)source[i] << 32) * vol) / 32768);
-					destOffset += destSkip;
-				}
+					// 8-bit
+					Span<sbyte> source = SampleHelper.ConvertSampleTo8Bit(vnf.Addresses[0], 0);
 
-				vnf.Current += count;
+					for (int i = (int)vnf.Current; i < vnf.Current + count; i++)
+					{
+						dest[destOffset] = (int)((((long)source[i] << 32) * vol) / 32768);
+						destOffset += destSkip;
+					}
+
+					vnf.Current += count;
+				}
 			}
 		}
 

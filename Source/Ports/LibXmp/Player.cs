@@ -478,8 +478,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			info.RRate = m.RRate;
 			info.Time_Factor = m.Time_Factor;
 			info.PeriodType = (c_int)m.Period_Type;
-
-			info.VirtualChannels = lib.mixer.LibXmp_Mixer_NumVoices(-1);
 		}
 
 
@@ -525,7 +523,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			info.Total_Time = p.Scan[p.Sequence].Time;
 			info.Frame_Time = (c_int)(p.Frame_Time * 1000);
 			info.Time = (c_int)p.Current_Time;
-			info.Buffer = null;//s.Buffer;
+			info.Buffer = s.Buffer;
 
 			info.Total_Size = Constants.Xmp_Max_FrameSize;
 			info.Buffer_Size = s.TickSize;

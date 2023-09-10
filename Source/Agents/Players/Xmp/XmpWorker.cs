@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
@@ -31,6 +32,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		private int playingPattern;
 		private int currentSpeed;
 		private int currentTempo;
+
+		private short[] leftBuffer;
+		private short[] rightBuffer;
 
 		private const int InfoPositionLine = 5;
 		private const int InfoPatternOrTracksLine = 6;
@@ -208,7 +212,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		/// Return some flags telling what the player supports
 		/// </summary>
 		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => base.SupportFlags | ModulePlayerSupportFlag.SetPosition;
+		public override ModulePlayerSupportFlag SupportFlags => base.SupportFlags | ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.BufferDirect;
 
 
 
@@ -296,6 +300,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 		/********************************************************************/
 		/// <summary>
+		/// Set the output frequency and number of channels
+		/// </summary>
+		/********************************************************************/
+		public override void SetOutputFormat(uint mixerFrequency, int channels)
+		{
+			base.SetOutputFormat(mixerFrequency, channels);
+
+			libXmp.Xmp_Set_Player(Xmp_Player.MixerFrequency, (int)mixerFrequency);
+			libXmp.Xmp_Set_Player(Xmp_Player.MixerChannels, channels);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// This is the main player method
 		/// </summary>
 		/********************************************************************/
@@ -308,6 +327,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 			libXmp.Xmp_Play_Frame();
 
 			libXmp.Xmp_Get_Frame_Info(out Xmp_Frame_Info afterInfo);
+
+			PlayBuffer(afterInfo);
 
 			AmigaFilter = afterInfo.Filter;
 
@@ -322,7 +343,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 			{
 				currentTempo = afterInfo.Bpm;
 
-				SetPlayingFrequency(currentTempo);
 				ShowTempo();
 			}
 
@@ -351,19 +371,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the number of channels the module want to reserve
-		/// </summary>
-		/********************************************************************/
-		public override int VirtualChannelCount => moduleInfo.VirtualChannels;
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Return the number of channels the module use
 		/// </summary>
 		/********************************************************************/
-		public override int ModuleChannelCount => moduleInfo.Mod.Chn;
+		public override int ModuleChannelCount => 2;//XXmoduleInfo.Mod.Chn;
 
 
 
@@ -390,10 +401,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 						};
 
 						// Fill out the note samples
-						for (int j = 0; j < InstrumentInfo.Octaves; j++)
+						if (inst.Nsm > 0)
 						{
-							for (int k = 0; k < InstrumentInfo.NotesPerOctave; k++)
-								instInfo.Notes[j, k] = inst.Sub[inst.Map[j * InstrumentInfo.NotesPerOctave + k].Ins].Sid;
+							for (int j = 0; j < InstrumentInfo.Octaves; j++)
+							{
+								for (int k = 0; k < InstrumentInfo.NotesPerOctave; k++)
+									instInfo.Notes[j, k] = inst.Sub[inst.Map[j * InstrumentInfo.NotesPerOctave + k].Ins].Sid;
+							}
 						}
 
 						yield return instInfo;
@@ -416,7 +430,52 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 			{
 				if (hasInstruments)
 				{
+					for (int i = 0; i < moduleInfo.Mod.Smp; i++)
+					{
+						Xmp_Sample sample = moduleInfo.Mod.Xxs[i];
 
+						SampleInfo sampleInfo = new SampleInfo
+						{
+							Name = sample.Name,
+							Flags = SampleInfo.SampleFlag.None,
+							Type = SampleInfo.SampleType.Sample,
+							BitSize = SampleInfo.SampleSize._8Bit,
+							Volume = 256,
+							Panning = -1,
+							Sample = sample.Data,
+							SampleOffset = (uint)sample.DataOffset,
+							Length = (uint)sample.Len,
+							LoopStart = (uint)sample.Lps,
+							LoopLength = (uint)(sample.Lpe - sample.Lps)
+						};
+
+						if ((sample.Flg & Xmp_Sample_Flag.Synth) != 0)
+							sampleInfo.Type = SampleInfo.SampleType.Synthesis;
+
+						if ((sample.Flg & Xmp_Sample_Flag._16Bit) != 0)
+							sampleInfo.BitSize = SampleInfo.SampleSize._16Bit;
+
+						// Add extra loop flags if any
+						if ((sample.Flg & Xmp_Sample_Flag.Loop) != 0)
+						{
+							// Set loop flag
+							sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
+
+							// Is the loop ping-pong?
+							if ((sample.Flg & Xmp_Sample_Flag.Loop_BiDir) != 0)
+								sampleInfo.Flags |= SampleInfo.SampleFlag.PingPong;
+						}
+
+						// Build frequency table
+						uint[] frequencies = new uint[10 * 12];
+
+						for (int j = 0; j < 10 * 12; j++)
+							frequencies[j] = (uint)(3546895 / Note_To_Period(j, 0));
+
+						sampleInfo.NoteFrequencies = frequencies;
+
+						yield return sampleInfo;
+					}
 				}
 				else
 				{
@@ -559,9 +618,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		/********************************************************************/
 		private void InitializeSound(int startPosition)
 		{
-			libXmp.Xmp_Start_Player(44100, 0);	// Arguments are not used
+			libXmp.Xmp_Start_Player(44100, 0);	// Real values will be set in SetOutputFormat()
+
+			// Set mixer options
+			libXmp.Xmp_Set_Player(Xmp_Player.Interp, (int)Xmp_Interp.Spline);
 			libXmp.Xmp_Set_Player(Xmp_Player.Mix, 100);		// Make 100% pan separation, since our own mixer handle the panning
-			SetPlayingFrequency(moduleInfo.Mod.Bpm);
 
 			libXmp.Xmp_Set_NostalgicPlayer_Channels(VirtualChannels);
 
@@ -572,12 +633,43 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 		/********************************************************************/
 		/// <summary>
-		/// Set the playing speed
+		/// Convert the playing buffer into two and play them
 		/// </summary>
 		/********************************************************************/
-		private void SetPlayingFrequency(int bpm)
+		private void PlayBuffer(Xmp_Frame_Info frameInfo)
 		{
-			PlayingFrequency = (float)(bpm / (moduleInfo.Time_Factor * moduleInfo.RRate / 1000));
+			int bufferSize = frameInfo.Buffer_Size / 2;
+			Span<short> buffer = MemoryMarshal.Cast<sbyte, short>(frameInfo.Buffer);
+
+			if (mixerChannels == 1)
+			{
+				if ((leftBuffer == null) || (leftBuffer.Length < bufferSize))
+					leftBuffer = new short[bufferSize];
+
+				for (int i = 0; i < bufferSize; i++)
+					leftBuffer[i] = buffer[i];
+
+				VirtualChannels[0].PlayBuffer(leftBuffer, 0, (uint)bufferSize, 16);
+			}
+			else
+			{
+				bufferSize /= 2;
+
+				if ((leftBuffer == null) || (leftBuffer.Length < bufferSize))
+				{
+					leftBuffer = new short[bufferSize];
+					rightBuffer = new short[bufferSize];
+				}
+
+				for (int i = 0, j = 0; i < bufferSize; i++)
+				{
+					leftBuffer[i] = buffer[j++];
+					rightBuffer[i] = buffer[j++];
+				}
+
+				VirtualChannels[0].PlayBuffer(leftBuffer, 0, (uint)bufferSize, 16);
+				VirtualChannels[1].PlayBuffer(rightBuffer, 0, (uint)bufferSize, 16);
+			}
 		}
 
 
@@ -590,32 +682,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		private double Note_To_Period(int note, int fineTune)
 		{
 			double d = note + (double)fineTune / 128;
-			double per;
 
-			switch (moduleInfo.PeriodType)
-			{
-				// Linear:
-				case 2:
-				{
-					per = (240.0 - d) * 16;		// Linear
-					break;
-				}
-
-				// CSpd
-				case 3:
-				{
-					per = 8363.0 * Math.Pow(2, note / 12.0) / 32 + fineTune;	// Hz
-					break;
-				}
-
-				default:
-				{
-					per = 13696.0 / Math.Pow(2, d / 12);	// Amiga
-					break;
-				}
-			}
-
-			return per;
+			return 13696.0 / Math.Pow(2, d / 12);
 		}
 
 

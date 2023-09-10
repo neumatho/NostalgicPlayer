@@ -33,6 +33,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers
 
 		public const c_int SMix_NumVoc = 128;			// Default number of softmixer voices
 		public const c_int SMix_Shift = 16;
+		public const c_int SMix_Mask = 0xffff;
 
 		public const c_int Filter_Shift = 16;
 		public const c_int AntiClick_Shift = 3;

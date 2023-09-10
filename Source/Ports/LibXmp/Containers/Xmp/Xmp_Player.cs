@@ -73,6 +73,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// <summary>
 		/// Maximum number of mixer voices
 		/// </summary>
-		Voices
+		Voices,
+
+		/// <summary>
+		/// The mixer frequency to use
+		/// </summary>
+		MixerFrequency,
+
+		/// <summary>
+		/// Number of channels to mix.
+		/// Currently only 1 and 2 are supported
+		/// </summary>
+		MixerChannels,
 	}
 }
