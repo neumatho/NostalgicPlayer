@@ -300,7 +300,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		#region IModulePlayerAgent implementation
 		/********************************************************************/
 		/// <summary>
-		/// Will load the file into memory
+		/// Return some flags telling what the player supports
 		/// </summary>
 		/********************************************************************/
 		public override ModulePlayerSupportFlag SupportFlags => base.SupportFlags | ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.BufferDirect;

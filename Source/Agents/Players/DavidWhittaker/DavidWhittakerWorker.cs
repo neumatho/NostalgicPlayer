@@ -193,15 +193,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		/// Will load the file into memory
 		/// </summary>
 		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => ModulePlayerSupportFlag.SetPosition;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will load the file into memory
-		/// </summary>
-		/********************************************************************/
 		public override AgentResult Load(PlayerFileInfo fileInfo, out string errorMessage)
 		{
 			errorMessage = string.Empty;

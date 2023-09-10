@@ -199,7 +199,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		#region IModulePlayerAgent implementation
 		/********************************************************************/
 		/// <summary>
-		/// Will load the file into memory
+		/// Return some flags telling what the player supports
 		/// </summary>
 		/********************************************************************/
 		public override ModulePlayerSupportFlag SupportFlags => base.SupportFlags | ModulePlayerSupportFlag.BufferMode;
