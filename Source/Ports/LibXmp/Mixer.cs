@@ -221,7 +221,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				if ((m.MVolBase > 0) && (m.MVol != m.MVolBase))
 					vol = vol * m.MVol / m.MVolBase;
 
-				if (vi.Pan == Constants.Pan_Surround)
+				if (vi.Pan == Constants.Pan_Surround && s.EnableSurround)
 				{
 					vol_R = vol * 0x80;
 					vol_L = -vol * 0x80;
@@ -794,6 +794,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			s.Dsp = Xmp_Dsp.LowPass;		// Enable filters by default
 			s.DtRight = s.DtLeft = 0;
 			s.BiDir_Adjust = 0;
+			s.EnableSurround = true;
 
 			return 0;
 

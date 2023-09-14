@@ -212,7 +212,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		/// Return some flags telling what the player supports
 		/// </summary>
 		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => base.SupportFlags | ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.BufferDirect;
+		public override ModulePlayerSupportFlag SupportFlags => base.SupportFlags | ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.BufferDirect | ModulePlayerSupportFlag.EnableChannels;
 
 
 
@@ -315,6 +315,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 		/********************************************************************/
 		/// <summary>
+		/// Is only called if BufferDirect is set in the SupportFlags. It
+		/// tells your player about the different mixer settings you need to
+		/// take care of
+		/// </summary>
+		/********************************************************************/
+		public override void ChangeMixerConfiguration(MixerInfo mixerInfo)
+		{
+			base.ChangeMixerConfiguration(mixerInfo);
+
+			libXmp.Xmp_Set_Player(Xmp_Player.Mix, mixerInfo.StereoSeparator);
+			libXmp.Xmp_Set_Player(Xmp_Player.Surround, mixerInfo.EnableSurround ? 1 : 0);
+
+			for (int i = 0; i < ModuleChannelCount; i++)
+				libXmp.Xmp_Channel_Mute(i, mixerInfo.ChannelsEnabled[i] ? 0 : 1);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// This is the main player method
 		/// </summary>
 		/********************************************************************/
@@ -374,7 +394,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		/// Return the number of channels the module use
 		/// </summary>
 		/********************************************************************/
-		public override int ModuleChannelCount => 2;//XXmoduleInfo.Mod.Chn;
+		public override int ModuleChannelCount => moduleInfo.Mod.Chn;
 
 
 
@@ -622,7 +642,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 			// Set mixer options
 			libXmp.Xmp_Set_Player(Xmp_Player.Interp, (int)Xmp_Interp.Spline);
-			libXmp.Xmp_Set_Player(Xmp_Player.Mix, 100);		// Make 100% pan separation, since our own mixer handle the panning
 
 			libXmp.Xmp_Set_NostalgicPlayer_Channels(VirtualChannels);
 

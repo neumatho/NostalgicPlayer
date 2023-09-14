@@ -40,6 +40,12 @@ namespace Polycode.NostalgicPlayer.Kit.Containers.Flags
 		/// mono or stereo. You will get that information via the SetOutputFormat()
 		/// method in your player
 		/// </summary>
-		BufferDirect = 0x2000
+		BufferDirect = 0x2000,
+
+		/// <summary>
+		/// This flag can only be set together with BufferDirect. It indicate, that
+		/// you have your own enable/disable channel implementation
+		/// </summary>
+		EnableChannels = 0x4000
 	}
 }

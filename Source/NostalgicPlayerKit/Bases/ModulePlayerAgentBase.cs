@@ -128,6 +128,19 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Is only called if BufferDirect is set in the SupportFlags. It
+		/// tells your player about the different mixer settings you need to
+		/// take care of
+		/// </summary>
+		/********************************************************************/
+		public virtual void ChangeMixerConfiguration(MixerInfo mixerInfo)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// This is the main player method
 		/// </summary>
 		/********************************************************************/

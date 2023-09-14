@@ -430,6 +430,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					break;
 				}
 
+				// NostalgicPlayer
 				case Xmp_Player.MixerFrequency:
 				{
 					if ((val >= Constants.Xmp_Min_SRate) && (val <= Constants.Xmp_Max_SRate))
@@ -445,6 +446,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					else if (val == 2)
 						s.Format &= ~Xmp_Format.Mono;
 
+					break;
+				}
+
+				case Xmp_Player.Surround:
+				{
+					s.EnableSurround = val != 0;
 					break;
 				}
 			}

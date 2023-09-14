@@ -81,5 +81,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		/// Period base
 		/// </summary>
 		public c_double PBase;
+
+		/// <summary>
+		/// Indicate if surround should be handled or not
+		/// </summary>
+		public bool EnableSurround;
 	}
 }

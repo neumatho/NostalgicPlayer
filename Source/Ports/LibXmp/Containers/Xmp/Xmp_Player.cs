@@ -85,5 +85,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// Currently only 1 and 2 are supported
 		/// </summary>
 		MixerChannels,
+
+		/// <summary>
+		/// Enable/disable surround
+		/// </summary>
+		Surround
 	}
 }

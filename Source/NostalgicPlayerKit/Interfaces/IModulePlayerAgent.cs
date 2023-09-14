@@ -55,6 +55,13 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		void SetOutputFormat(uint mixerFrequency, int channels);
 
 		/// <summary>
+		/// Is only called if BufferDirect is set in the SupportFlags. It
+		/// tells your player about the different mixer settings you need to
+		/// take care of
+		/// </summary>
+		void ChangeMixerConfiguration(MixerInfo mixerInfo);
+
+		/// <summary>
 		/// This is the main player method
 		/// </summary>
 		void Play();

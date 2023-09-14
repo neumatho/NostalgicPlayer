@@ -25,6 +25,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private IModulePlayerAgent currentPlayer;
 		private bool bufferMode;
 		private bool bufferDirect;
+		private bool enableChannelsSupport;
 
 		private bool playing;
 
@@ -34,7 +35,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private MixerMode mixerMode;			// Which modes the mixer has to work in
 		private MixerMode currentMode;			// Is the current mode the mixer uses
 		private int mixerFrequency;				// The mixer frequency
-		private int moduleChannelNumber;		// The number of channels the module use
+		private int virtualChannelNumber;		// The number of channels the module use
 
 		private int[] mixBuffer;				// The buffer to hold the mixed data
 		private int bufferSize;					// The maximum number of samples a buffer can be
@@ -99,7 +100,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			bufferDirect = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferDirect) != 0;
 
 			// Get player information
-			moduleChannelNumber = bufferDirect ? 2 : currentPlayer.VirtualChannelCount;
+			virtualChannelNumber = bufferDirect ? 2 : currentPlayer.VirtualChannelCount;
+			enableChannelsSupport = !bufferDirect || ((currentPlayer.SupportFlags & ModulePlayerSupportFlag.EnableChannels) == 0);
 
 			// Initialize other member variables
 			filterPrevLeft = 0;
@@ -120,17 +122,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					currentMixer = new MixerNormal();
 
 				// Initialize the mixer
-				currentMixer.Initialize(moduleChannelNumber);
+				currentMixer.Initialize(virtualChannelNumber);
 
 				// Allocate channel objects
-				IChannel[] channels = new IChannel[moduleChannelNumber];
-				for (int i = 0; i < moduleChannelNumber; i++)
+				IChannel[] channels = new IChannel[virtualChannelNumber];
+				for (int i = 0; i < virtualChannelNumber; i++)
 					channels[i] = new ChannelParser();
 
 				currentPlayer.VirtualChannels = channels;
 
 				// Initialize the visualizer
-				currentVisualizer.Initialize(agentManager, moduleChannelNumber);
+				currentVisualizer.Initialize(agentManager, virtualChannelNumber);
 
 				// Initialize extra channels
 				if (!bufferDirect)
@@ -280,10 +282,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 			// Create pool of buffers needed for extra effects
 			groupBuffers = new Dictionary<int, int[]>();
-			channelMap = new int[moduleChannelNumber][];
+			channelMap = new int[virtualChannelNumber][];
 
 			// As default, map all channels to use the same output buffer
-			for (int i = 0; i < moduleChannelNumber; i++)
+			for (int i = 0; i < virtualChannelNumber; i++)
 				channelMap[i] = mixBuffer;
 		}
 
@@ -313,6 +315,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			emulateFilter = mixerConfiguration.EnableAmigaFilter;
 
 			channelsEnabled = mixerConfiguration.ChannelsEnabled;
+
+			lock (currentPlayer)
+			{
+				currentPlayer.ChangeMixerConfiguration(new MixerInfo
+				{
+					StereoSeparator = mixerConfiguration.StereoSeparator,
+					EnableInterpolation = mixerConfiguration.EnableInterpolation,
+					EnableSurround = mixerConfiguration.EnableSurround,
+					ChannelsEnabled = mixerConfiguration.ChannelsEnabled
+				});
+			}
 		}
 
 
@@ -498,10 +511,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 							VoiceInfo[] voiceInfo = currentMixer.GetMixerChannels();
 							int click = currentMixer.GetClickConstant();
 
-							ChannelFlag[] flagArray = new ChannelFlag[moduleChannelNumber];
+							ChannelFlag[] flagArray = new ChannelFlag[virtualChannelNumber];
 							ChannelFlag chanFlags = ChannelFlag.None;
 
-							for (int t = 0; t < moduleChannelNumber; t++)
+							for (int t = 0; t < virtualChannelNumber; t++)
 							{
 								flagArray[t] = ((ChannelParser)currentPlayer.VirtualChannels[t]).ParseInfo(ref voiceInfo[t], click, bufferMode);
 								chanFlags |= flagArray[t];
@@ -574,12 +587,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					todo -= left;
 					total += (currentMode & MixerMode.Stereo) != 0 ? left << 1 : left;
 
-					// Check all the channels to see if they are still active and
-					// enable/disable the channels depending on the user settings
-					for (int t = 0, cnt = channelsEnabled == null ? moduleChannelNumber : Math.Min(moduleChannelNumber, channelsEnabled.Length); t < cnt; t++)
+					if (enableChannelsSupport)
 					{
-						((ChannelParser)currentPlayer.VirtualChannels[t]).Active(currentMixer.IsActive(t));
-						currentMixer.EnableChannel(t, (channelsEnabled == null) || channelsEnabled[t]);
+						// Check all the channels to see if they are still active and
+						// enable/disable the channels depending on the user settings
+						for (int t = 0, cnt = channelsEnabled == null ? virtualChannelNumber : Math.Min(virtualChannelNumber, channelsEnabled.Length); t < cnt; t++)
+						{
+							((ChannelParser)currentPlayer.VirtualChannels[t]).Active(currentMixer.IsActive(t));
+							currentMixer.EnableChannel(t, (channelsEnabled == null) || channelsEnabled[t]);
+						}
 					}
 				}
 			}
@@ -644,7 +660,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			{
 				IReadOnlyDictionary<int, int> groupMap = effectMaster.GetChannelGroups();
 
-				for (int i = 0; i < moduleChannelNumber; i++)
+				for (int i = 0; i < virtualChannelNumber; i++)
 				{
 					if ((groupMap != null) && groupMap.TryGetValue(i, out int group))
 					{
