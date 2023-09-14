@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
@@ -35,6 +36,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private MixerMode mixerMode;			// Which modes the mixer has to work in
 		private MixerMode currentMode;			// Is the current mode the mixer uses
 		private int mixerFrequency;				// The mixer frequency
+		private int bytesPerSample;				// How many bytes each sample uses in the output buffer
 		private int virtualChannelNumber;		// The number of channels the module use
 
 		private int[] mixBuffer;				// The buffer to hold the mixed data
@@ -48,6 +50,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		private int ticksLeftToPositionChange;	// Number of ticks left before sending a position change event
 		private int currentSongPosition;
+
+		private int[] extraChannelsMixBuffer;
+		private byte[] extraTempBuffer;
 
 		private bool swapSpeakers;
 		private bool emulateFilter;
@@ -135,8 +140,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				currentVisualizer.Initialize(agentManager, virtualChannelNumber);
 
 				// Initialize extra channels
-				if (!bufferDirect)
-					InitializeExtraChannels(playerConfiguration.MixerConfiguration.ExtraChannels);
+				InitializeExtraChannels(playerConfiguration.MixerConfiguration.ExtraChannels);
 
 				// Initialize the mixers
 				ChangeConfiguration(playerConfiguration.MixerConfiguration);
@@ -255,6 +259,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		public void SetOutputFormat(OutputInfo outputInformation)
 		{
 			mixerFrequency = outputInformation.Frequency;
+			bytesPerSample = outputInformation.BytesPerSample;
 			ticksLeftToPositionChange = CalculateTicksPerPositionChange();
 
 			// Get the maximum number of samples the given destination
@@ -271,8 +276,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				mixerMode &= ~MixerMode.Stereo;
 
 			currentMixer.SetOutputFormat(outputInformation);
-			extraChannelsMixer?.SetOutputFormat(outputInformation);
 			currentVisualizer.SetOutputFormat(outputInformation);
+
+			if (extraChannelsMixer != null)
+			{
+				extraChannelsMixBuffer = new int[mixBuffer.Length];
+
+				extraChannelsMixer.SetOutputFormat(outputInformation);
+			}
 
 			lock (currentPlayer)
 			{
@@ -359,13 +370,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			// Find the size of the buffer
 			int bufSize = Math.Min(bufferSize, count);
 
-			int total = DoMixing1(bufSize, out hasEndReached);
-
-			if (!bufferDirect)
-			{
-				int total2 = DoMixing2(bufSize);
-				total = Math.Max(total, total2);
-			}
+			int total = DoMixing(bufSize, out hasEndReached);
 
 			if (playing)
 			{
@@ -377,9 +382,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			}
 
 			bool isStereo = (currentMode & MixerMode.Stereo) != 0;
+			bool swap = isStereo ? swapSpeakers : false;
 
 			// Now convert the mixed data to our output format
-			currentMixer.ConvertMixedData(buffer, offset, mixBuffer, bufSize, isStereo ? swapSpeakers : false);
+			currentMixer.ConvertMixedData(buffer, offset, mixBuffer, bufSize, swap);
+
+			// Mix extra channels into the output buffer
+			int total2 = MixExtraChannels(bufSize);
+			total = Math.Max(total, total2);
+
+			if (total2 > 0)
+				AddExtraChannelsIntoOutput(buffer, offset, bufSize, swap);
 
 			// Tell visual agents about the mixed data
 			currentVisualizer.TellAgentsAboutMixedData(buffer, offset, bufSize, isStereo, swapSpeakers);
@@ -444,6 +457,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				extraChannelsMixer = null;
 
 				extraChannelsChannels = null;
+				extraChannelsMixBuffer = null;
 			}
 		}
 
@@ -467,7 +481,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// and mix the main module samples
 		/// </summary>
 		/********************************************************************/
-		private int DoMixing1(int todo, out bool hasEndReached)
+		private int DoMixing(int todo, out bool hasEndReached)
 		{
 			hasEndReached = false;
 
@@ -607,11 +621,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		/********************************************************************/
 		/// <summary>
-		/// This is the secondary mixer method. It will call the right mixer
-		/// and mix the extra samples and add effect to the mixed data
+		/// This will mix any extra samples playing
 		/// </summary>
 		/********************************************************************/
-		private int DoMixing2(int todo)
+		private int MixExtraChannels(int todo)
 		{
 			int total = 0;
 
@@ -620,6 +633,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			{
 				if (extraChannelsInstance.PlayChannels(extraChannelsChannels))
 				{
+					Array.Clear(extraChannelsMixBuffer);
+
 					// Get some mixer information we need to parse the data
 					VoiceInfo[] voiceInfo = extraChannelsMixer.GetMixerChannels();
 					int click = extraChannelsMixer.GetClickConstant();
@@ -628,8 +643,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					// Parse the channels
 					for (int t = 0; t < extraChannelsNumber; t++)
 					{
-						((ChannelParser)extraChannelsChannels[t]).ParseInfo(ref voiceInfo[t], click, bufferMode);
-						chanMap[t] = mixBuffer;
+						((ChannelParser)extraChannelsChannels[t]).ParseInfo(ref voiceInfo[t], click, false);
+						chanMap[t] = extraChannelsMixBuffer;
 					}
 
 					// Mix the data
@@ -644,6 +659,48 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			}
 
 			return total;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will mix the channel mixer and extra channel mixer data together
+		/// </summary>
+		/********************************************************************/
+		private void AddExtraChannelsIntoOutput(byte[] buffer, int offset, int todo, bool swapSpeakers)
+		{
+			if ((extraTempBuffer == null) || (extraTempBuffer.Length < buffer.Length))
+				extraTempBuffer = new byte[buffer.Length];
+
+			extraChannelsMixer.ConvertMixedData(extraTempBuffer, 0, extraChannelsMixBuffer, todo, swapSpeakers);
+
+			if (bytesPerSample == 2)
+			{
+				Span<short> source = MemoryMarshal.Cast<byte, short>(extraTempBuffer);
+				Span<short> dest = MemoryMarshal.Cast<byte, short>(buffer);
+				offset /= 2;
+
+				for (int i = 0; i < todo; i++)
+				{
+					int val = dest[offset] + source[i];
+					val = (val >= 32767) ? 32767 - 1 : (val < -32767) ? -32767 : val;
+					dest[offset++] = (short)val;
+				}
+			}
+			else if (bytesPerSample == 4)
+			{
+				Span<int> source = MemoryMarshal.Cast<byte, int>(extraTempBuffer);
+				Span<int> dest = MemoryMarshal.Cast<byte, int>(buffer);
+				offset /= 4;
+
+				for (int i = 0; i < todo; i++)
+				{
+					long val = dest[offset] + source[i];
+					val = (val >= 2147483647) ? 2147483647 - 1 : (val < -2147483647) ? -2147483647 : val;
+					dest[offset++] = (int)val;
+				}
+			}
 		}
 
 
