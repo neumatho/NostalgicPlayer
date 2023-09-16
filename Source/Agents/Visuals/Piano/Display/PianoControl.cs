@@ -5,7 +5,6 @@
 /******************************************************************************/
 using System.Drawing.Drawing2D;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
@@ -338,11 +337,11 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 		{
 			visualChannelInfo.Enabled = channelChangedInfo.Enabled;
 
-			if ((channelChangedInfo.Flags & ChannelFlag.MuteIt) != 0)
+			if (channelChangedInfo.Muted)
 				Deactivate(visualChannelInfo);
 			else
 			{
-				if (((channelChangedInfo.Flags & ChannelFlag.TrigIt) != 0) || ((channelChangedInfo.Flags & ChannelFlag.VirtualTrig) != 0))
+				if (channelChangedInfo.NoteKicked)
 				{
 					Deactivate(visualChannelInfo);
 
@@ -365,26 +364,26 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 					}
 				}
 
-				if ((channelChangedInfo.Flags & ChannelFlag.Loop) != 0)
+				if (channelChangedInfo.Looping)
 					visualChannelInfo.Pulsing = true;
 
-				if ((channelChangedInfo.Flags & ChannelFlag.ChangePosition) != 0)
+				if (channelChangedInfo.SamplePosition.HasValue)
 				{
-					if ((channelChangedInfo.Flags & ChannelFlag.Relative) != 0)
-						visualChannelInfo.CalculatedSamplePosition += channelChangedInfo.SamplePosition;
+					if (channelChangedInfo.SamplePositionRelative)
+						visualChannelInfo.CalculatedSamplePosition += channelChangedInfo.SamplePosition.Value;
 					else
-						visualChannelInfo.CalculatedSamplePosition = channelChangedInfo.SamplePosition;
+						visualChannelInfo.CalculatedSamplePosition = channelChangedInfo.SamplePosition.Value;
 				}
 
-				if ((channelChangedInfo.Flags & ChannelFlag.Frequency) != 0)
+				if (channelChangedInfo.Frequency.HasValue)
 				{
-					visualChannelInfo.Frequency = channelChangedInfo.Frequency;
+					visualChannelInfo.Frequency = channelChangedInfo.Frequency.Value;
 
 					if ((visualChannelInfo.Frequency != 0) && (visualChannelInfo.SampleNumber != -1))
 					{
 						Deactivate(visualChannelInfo);
 
-						byte noteNumber = FindNoteNumber(visualChannelInfo.SampleNumber, channelChangedInfo.Frequency);
+						byte noteNumber = FindNoteNumber(visualChannelInfo.SampleNumber, channelChangedInfo.Frequency.Value);
 						if (noteNumber != byte.MaxValue)
 						{
 							visualChannelInfo.KeyPosition = FindNotePosition(noteNumber, out var reservedIndexes);

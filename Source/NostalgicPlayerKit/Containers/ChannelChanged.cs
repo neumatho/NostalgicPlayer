@@ -3,8 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
-
 namespace Polycode.NostalgicPlayer.Kit.Containers
 {
 	/// <summary>
@@ -17,25 +15,28 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ChannelChanged(ChannelFlag flags, ushort volume, uint frequency, short sampleNumber, uint sampleLength, int samplePosition, bool enabled)
+		public ChannelChanged(bool enabled, bool muted, bool noteKicked, short sampleNumber, uint sampleLength, bool looping, bool samplePositionRelative, int? samplePosition, ushort? volume, uint? frequency)
 		{
-			Flags = flags;
-			Volume = volume;
-			Frequency = frequency;
+			Enabled = enabled;
+			Muted = muted;
+			NoteKicked = noteKicked;
 			SampleNumber = sampleNumber;
 			SampleLength = sampleLength;
+			Looping = looping;
+			SamplePositionRelative = samplePositionRelative;
 			SamplePosition = samplePosition;
-			Enabled = enabled;
+			Volume = volume;
+			Frequency = frequency;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the channel flags. Indicate which information has changed
+		/// Indicate if the channel are enabled (via mixer settings)
 		/// </summary>
 		/********************************************************************/
-		public ChannelFlag Flags
+		public bool Enabled
 		{
 			get;
 		}
@@ -44,10 +45,10 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the current volume on the channel
+		/// Indicate if the current channel has been muted
 		/// </summary>
 		/********************************************************************/
-		public ushort Volume
+		public bool Muted
 		{
 			get;
 		}
@@ -56,10 +57,10 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the current frequency on the channel
+		/// Tells if a new note has just started playing
 		/// </summary>
 		/********************************************************************/
-		public uint Frequency
+		public bool NoteKicked
 		{
 			get;
 		}
@@ -92,10 +93,10 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds new sample position if set
+		/// Indicate if the sample is looping or not
 		/// </summary>
 		/********************************************************************/
-		public int SamplePosition
+		public bool Looping
 		{
 			get;
 		}
@@ -104,10 +105,47 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Indicate if the channel are enabled (not muted)
+		/// If sample position has a value, this indicate if the position is
+		/// a relative or absolute position
 		/// </summary>
 		/********************************************************************/
-		public bool Enabled
+		public bool SamplePositionRelative
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds new sample position if set
+		/// </summary>
+		/********************************************************************/
+		public int? SamplePosition
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the current volume on the channel
+		/// </summary>
+		/********************************************************************/
+		public ushort? Volume
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the current frequency on the channel
+		/// </summary>
+		/********************************************************************/
+		public uint? Frequency
 		{
 			get;
 		}

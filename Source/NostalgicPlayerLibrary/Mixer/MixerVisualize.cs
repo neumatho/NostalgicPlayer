@@ -27,13 +27,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		private class ChannelInfo
 		{
-			public ChannelFlag ChannelFlags;
-			public ushort Volume;
-			public uint Frequency;
+			public bool Enabled;
+			public bool Muted;
+			public bool NoteKicked;
 			public short SampleNumber;
 			public uint SampleLength;
-			public int SamplePosition;
-			public bool Enabled;
+			public bool Looping;
+			public bool SamplePositionRelative;
+			public int? SamplePosition;
+			public ushort? Volume;
+			public uint? Frequency;
 		}
 
 		private class SampleDataInfo
@@ -194,23 +197,37 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				ChannelInfo = new ChannelInfo[channels.Length]
 			};
 
-			ChannelInfo[] chanInfo = channelDataInfo.ChannelInfo;
+			ChannelInfo[] allChanInfo = channelDataInfo.ChannelInfo;
 
-			for (int i = 0; i < chanInfo.Length; i++)
+			for (int i = 0; i < allChanInfo.Length; i++)
 			{
 				IChannel chan = channels[i];
+				ChannelFlag flag = channelFlags[i];
 
-				chanInfo[i] = new ChannelInfo
+				ChannelInfo chanInfo = new ChannelInfo
 				{
-					ChannelFlags = channelFlags[i],
-					Volume = chan.GetVolume(),
-					Frequency = chan.GetFrequency(),
+					Enabled = (enabledChannels != null) && (i < enabledChannels.Length) ? enabledChannels[i] : true,
+					Muted = (flag & ChannelFlag.MuteIt) != 0,
+					NoteKicked = ((flag & ChannelFlag.TrigIt) != 0) || ((flag & ChannelFlag.VirtualTrig) != 0),
 					SampleNumber = chan.GetSampleNumber(),
 					SampleLength = chan.GetSampleLength(),
-					SamplePosition = chan.GetSamplePosition(),
-					Enabled = (enabledChannels != null) && (i < enabledChannels.Length) ? enabledChannels[i] : true
+					Looping = (flag & ChannelFlag.Loop) != 0
 				};
-			};
+
+				if ((flag & ChannelFlag.ChangePosition) != 0)
+				{
+					chanInfo.SamplePositionRelative = (flag & ChannelFlag.Relative) != 0;
+					chanInfo.SamplePosition = chan.GetSamplePosition();
+				}
+
+				if ((flag & ChannelFlag.Volume) != 0)
+					chanInfo.Volume = chan.GetVolume();
+
+				if ((flag & ChannelFlag.Frequency) != 0)
+					chanInfo.Frequency = chan.GetFrequency();
+
+				allChanInfo[i] = chanInfo;
+			}
 
 			channelLatencyQueue.Enqueue(channelDataInfo);
 		}
@@ -383,7 +400,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						for (int i = 0; i < channelCount; i++)
 						{
 							ChannelInfo info = chanInfo[i];
-							channelChanged[i] = new ChannelChanged(info.ChannelFlags, info.Volume, info.Frequency, info.SampleNumber, info.SampleLength, info.SamplePosition, info.Enabled);
+							channelChanged[i] = new ChannelChanged(info.Enabled, info.Muted, info.NoteKicked, info.SampleNumber, info.SampleLength, info.Looping, info.SamplePositionRelative, info.SamplePosition, info.Volume, info.Frequency);
 						}
 
 						foreach (IVisualAgent visualAgent in manager.GetRegisteredVisualAgent())
