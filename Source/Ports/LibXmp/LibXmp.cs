@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.IO;
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
@@ -455,12 +456,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 		/********************************************************************/
 		/// <summary>
-		/// Will set the channel objects to use
+		/// Will return the visualizer channels
 		/// </summary>
 		/********************************************************************/
-		public void Xmp_Set_NostalgicPlayer_Channels(IChannel[] channels)
+		public ChannelChanged[] Xmp_Get_Visualizer_Channels()
 		{
-			mixer.Xmp_Set_NostalgicPlayer_Channels(channels);
+			return mixer.LibXmp_Mixer_GetVisualizerChannels();
 		}
 
 

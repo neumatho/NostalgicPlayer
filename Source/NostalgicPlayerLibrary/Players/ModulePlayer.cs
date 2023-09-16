@@ -192,13 +192,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					}
 
 					// Tell all visuals to start
-					bool bufferMode = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferMode) != 0;
+					bool channelChangeEnabled = ((currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferMode) == 0) || ((currentPlayer.SupportFlags & (ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.Visualize)) == (ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.Visualize));
 
 					foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
 					{
 						visualAgent.CleanupVisual();
 
-						if (bufferMode && (visualAgent is IChannelChangeVisualAgent))
+						if (!channelChangeEnabled && (visualAgent is IChannelChangeVisualAgent))
 							continue;
 
 						visualAgent.InitVisual(StaticModuleInformation.Channels, StaticModuleInformation.VirtualChannels);

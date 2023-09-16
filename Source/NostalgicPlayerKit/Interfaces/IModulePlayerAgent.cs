@@ -99,6 +99,12 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		IChannel[] VirtualChannels { get; set; }
 
 		/// <summary>
+		/// Holds the channels used by visuals. Only needed for players using
+		/// buffer mode if possible
+		/// </summary>
+		ChannelChanged[] VisualChannels { get; }
+
+		/// <summary>
 		/// Return an effect master instance if the player adds extra mixer
 		/// effects to the output
 		/// </summary>

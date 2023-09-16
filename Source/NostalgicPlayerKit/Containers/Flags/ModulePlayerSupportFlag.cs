@@ -29,7 +29,20 @@ namespace Polycode.NostalgicPlayer.Kit.Containers.Flags
 		/// which means your Play() method will only be called, when a
 		/// new buffer needs to be set
 		/// </summary>
-		BufferMode = 0x1000,
+		BufferMode = 0x0100,
+
+		/// <summary>
+		/// This flag can only be used together with BufferMode.
+		///
+		/// Normally, channel visualizers don't work, except when the player
+		/// uses IChannel to play the individual samples. If that's not the
+		/// case, BufferMode is used, sometimes together with BufferDirect.
+		///
+		/// If this flag is set, it indicate that the player itself fill out
+		/// the needed information to give to the visualizers about what
+		/// happens on the different channels
+		/// </summary>
+		Visualize = 0x0200,
 
 		/// <summary>
 		/// If this flag is set together with BufferMode, the buffer mode
@@ -40,12 +53,12 @@ namespace Polycode.NostalgicPlayer.Kit.Containers.Flags
 		/// mono or stereo. You will get that information via the SetOutputFormat()
 		/// method in your player
 		/// </summary>
-		BufferDirect = 0x2000,
+		BufferDirect = 0x1000,
 
 		/// <summary>
 		/// This flag can only be set together with BufferDirect. It indicate, that
 		/// you have your own enable/disable channel implementation
 		/// </summary>
-		EnableChannels = 0x4000
+		EnableChannels = 0x2000
 	}
 }

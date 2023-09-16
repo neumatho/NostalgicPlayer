@@ -39,20 +39,5 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// Pointer to sequence data
 		/// </summary>
 		public Xmp_Sequence[] Seq_Data;
-//XX
-		/// <summary>
-		/// Replay rate
-		/// </summary>
-		public c_double RRate;
-
-		/// <summary>
-		/// Time conversion constant
-		/// </summary>
-		public c_double Time_Factor;
-
-		/// <summary>
-		/// The period type used by the module
-		/// </summary>
-		public c_int PeriodType;
 	}
 }

@@ -209,6 +209,16 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Holds the channels used by visuals. Only needed for players using
+		/// buffer mode if possible
+		/// </summary>
+		/********************************************************************/
+		public virtual ChannelChanged[] VisualChannels => null;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return an effect master instance if the player adds extra mixer
 		/// effects to the output
 		/// </summary>

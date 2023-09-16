@@ -27,6 +27,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private IModulePlayerAgent currentPlayer;
 		private bool bufferMode;
 		private bool bufferDirect;
+		private bool enableChannelVisualization;
 		private bool enableChannelsSupport;
 
 		private bool playing;
@@ -107,6 +108,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 			// Get player information
 			virtualChannelNumber = bufferDirect ? 2 : currentPlayer.VirtualChannelCount;
+			enableChannelVisualization = bufferMode && ((currentPlayer.SupportFlags & ModulePlayerSupportFlag.Visualize) != 0);
 			enableChannelsSupport = !bufferDirect || ((currentPlayer.SupportFlags & ModulePlayerSupportFlag.EnableChannels) == 0);
 
 			// Initialize other member variables
@@ -138,7 +140,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				currentPlayer.VirtualChannels = channels;
 
 				// Initialize the visualizer
-				currentVisualizer.Initialize(agentManager, virtualChannelNumber);
+				currentVisualizer.Initialize(agentManager);
 
 				// Initialize extra channels
 				InitializeExtraChannels(playerConfiguration.MixerConfiguration.ExtraChannels);
@@ -534,21 +536,25 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 								channelChanges[t] = ((ChannelParser)currentPlayer.VirtualChannels[t]).ParseInfo(ref voiceInfo[t], click, channelEnabled, bufferMode);
 							}
 
+							if (enableChannelVisualization)
+								channelChanges = currentPlayer.VisualChannels;
+
+							// If at least one channel has changed its information,
+							// tell visual agents about it
+							if ((channelChanges != null) && channelChanges.Any(x => x != null))
+								currentVisualizer.QueueChannelChange(channelChanges, samplesTakenSinceLastCall);
+
+							samplesTakenSinceLastCall = 0;
+
 							if (bufferDirect)
 								ticksLeft = (int)voiceInfo[0].Size;
 							else if (bufferMode)
 								ticksLeft = (int)(mixerFrequency * voiceInfo[0].Size / voiceInfo[0].Frequency);
 							else
 							{
-								// If at least one channel has changed its information,
-								// tell visual agents about it
-								if (channelChanges.Any(x => x != null))
-									currentVisualizer.QueueChannelChange(channelChanges, samplesTakenSinceLastCall);
-
 								// Calculate the number of sample pair to mix before the
 								// player need to be called again
 								ticksLeft = (int)(mixerFrequency / currentPlayer.PlayingFrequency);
-								samplesTakenSinceLastCall = 0;
 							}
 
 							BuildChannelMap();

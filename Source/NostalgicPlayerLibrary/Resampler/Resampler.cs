@@ -93,7 +93,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 				currentVisualizer = new MixerVisualize();
 
 				// Initialize the visualizer
-				currentVisualizer.Initialize(agentManager, 0);
+				currentVisualizer.Initialize(agentManager);
 
 				// Initialize the resampler
 				ChangeConfiguration(playerConfiguration.MixerConfiguration);

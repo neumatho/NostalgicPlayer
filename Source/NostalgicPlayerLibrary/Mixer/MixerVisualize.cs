@@ -33,7 +33,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		private Manager manager;
 
-		private int channelCount;
 		private int mixerFrequency;
 		private int bytesPerSample;
 
@@ -64,11 +63,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Will initialize itself
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(Manager agentManager, int numberOfChannels)
+		public void Initialize(Manager agentManager)
 		{
 			manager = agentManager;
-
-			channelCount = numberOfChannels;
 
 			channelLatencyQueue = new Queue<ChannelDataInfo>();
 

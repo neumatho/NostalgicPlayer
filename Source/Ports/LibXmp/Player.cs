@@ -283,6 +283,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (Common.Has_Quirk(m, Quirk_Flag.Marker) && (mod.Xxo[p.Ord] == 0xff))
 				return -(c_int)Xmp_Error.End;
 
+			lib.mixer.LibXmp_Mixer_Prepare_Frame();
+
 			// Check reposition
 			if (p.Ord != p.Pos)
 			{
@@ -472,12 +474,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			info.Num_Sequences = m.Num_Sequences;
 			info.Seq_Data = m.Seq_Data;
 			info.Vol_Base = m.VolBase;
-
-			// These information has been added by Thomas Neumann, because I
-			// need them in NostalgicPlayer
-			info.RRate = m.RRate;
-			info.Time_Factor = m.Time_Factor;
-			info.PeriodType = (c_int)m.Period_Type;
 		}
 
 

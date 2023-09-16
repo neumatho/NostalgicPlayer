@@ -69,7 +69,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				return;
 
 			if (mute)
+			{
 				lib.mixer.LibXmp_Mixer_SetVol(voc, 0);
+				lib.mixer.LibXmp_Mixer_ResetChannel(voc);
+			}
 
 			p.Virt.Virt_Used--;
 			p.Virt.Virt_Channel[vi.Root].Count--;
@@ -216,6 +219,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				return;
 
 			lib.mixer.LibXmp_Mixer_SetVol(voc, 0);
+			lib.mixer.LibXmp_Mixer_ResetChannel(voc);
 
 			p.Virt.Virt_Used--;
 			p.Virt.Virt_Channel[p.Virt.Voice_Array[voc].Root].Count--;

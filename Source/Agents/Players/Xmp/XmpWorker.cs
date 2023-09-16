@@ -212,7 +212,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		/// Return some flags telling what the player supports
 		/// </summary>
 		/********************************************************************/
-		public override ModulePlayerSupportFlag SupportFlags => base.SupportFlags | ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.BufferDirect | ModulePlayerSupportFlag.EnableChannels;
+		public override ModulePlayerSupportFlag SupportFlags => base.SupportFlags | ModulePlayerSupportFlag.BufferMode | ModulePlayerSupportFlag.BufferDirect | ModulePlayerSupportFlag.Visualize | ModulePlayerSupportFlag.EnableChannels;
 
 
 
@@ -557,6 +557,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 				}
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the channels used by visuals. Only needed for players using
+		/// buffer mode if possible
+		/// </summary>
+		/********************************************************************/
+		public override ChannelChanged[] VisualChannels => libXmp.Xmp_Get_Visualizer_Channels();
 		#endregion
 
 		#region ModulePlayerWithPositionDurationAgentBase implementation
@@ -640,11 +650,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		{
 			libXmp.Xmp_Start_Player(44100, 0);	// Real values will be set in SetOutputFormat()
 
-			// Set mixer options
 			libXmp.Xmp_Set_Player(Xmp_Player.Interp, (int)Xmp_Interp.Spline);
-
-			libXmp.Xmp_Set_NostalgicPlayer_Channels(VirtualChannels);
-
 			libXmp.Xmp_Set_Position(startPosition);
 		}
 

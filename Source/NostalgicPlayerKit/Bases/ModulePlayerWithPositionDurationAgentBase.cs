@@ -183,7 +183,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 			InitializeWorkingPositionSubSongArray((PositionInfoForPositionDuration)positionInfo);
 
-			for (int i = VirtualChannelCount - 1; i >= 0; i--)
+			for (int i = VirtualChannels.Length - 1; i >= 0; i--)
 				VirtualChannels[i].Mute();
 		}
 
