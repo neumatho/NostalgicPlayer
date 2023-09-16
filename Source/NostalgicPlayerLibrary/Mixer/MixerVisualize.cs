@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 
@@ -22,21 +21,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private class ChannelDataInfo
 		{
 			public int SamplesLeftBeforeTriggering;
-			public ChannelInfo[] ChannelInfo;
-		}
-
-		private class ChannelInfo
-		{
-			public bool Enabled;
-			public bool Muted;
-			public bool NoteKicked;
-			public short SampleNumber;
-			public uint SampleLength;
-			public bool Looping;
-			public bool SamplePositionRelative;
-			public int? SamplePosition;
-			public ushort? Volume;
-			public uint? Frequency;
+			public ChannelChanged[] ChannelChanges;
 		}
 
 		private class SampleDataInfo
@@ -52,7 +37,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private int mixerFrequency;
 		private int bytesPerSample;
 
-		private volatile ChannelInfo[] channelInfo;
+		private volatile ChannelChanged[] channelChanges;
 		private volatile SampleDataInfo sampleDataInfo;
 
 		private AutoResetEvent channelChangedEvent;
@@ -189,45 +174,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Will queue the given channel change information
 		/// </summary>
 		/********************************************************************/
-		public void QueueChannelChange(ChannelFlag[] channelFlags, IChannel[] channels, bool[] enabledChannels, int samplesTakenSinceLastCall)
+		public void QueueChannelChange(ChannelChanged[] channelChanges, int samplesTakenSinceLastCall)
 		{
 			ChannelDataInfo channelDataInfo = new ChannelDataInfo
 			{
 				SamplesLeftBeforeTriggering = samplesTakenSinceLastCall,
-				ChannelInfo = new ChannelInfo[channels.Length]
+				ChannelChanges = channelChanges
 			};
-
-			ChannelInfo[] allChanInfo = channelDataInfo.ChannelInfo;
-
-			for (int i = 0; i < allChanInfo.Length; i++)
-			{
-				IChannel chan = channels[i];
-				ChannelFlag flag = channelFlags[i];
-
-				ChannelInfo chanInfo = new ChannelInfo
-				{
-					Enabled = (enabledChannels != null) && (i < enabledChannels.Length) ? enabledChannels[i] : true,
-					Muted = (flag & ChannelFlag.MuteIt) != 0,
-					NoteKicked = ((flag & ChannelFlag.TrigIt) != 0) || ((flag & ChannelFlag.VirtualTrig) != 0),
-					SampleNumber = chan.GetSampleNumber(),
-					SampleLength = chan.GetSampleLength(),
-					Looping = (flag & ChannelFlag.Loop) != 0
-				};
-
-				if ((flag & ChannelFlag.ChangePosition) != 0)
-				{
-					chanInfo.SamplePositionRelative = (flag & ChannelFlag.Relative) != 0;
-					chanInfo.SamplePosition = chan.GetSamplePosition();
-				}
-
-				if ((flag & ChannelFlag.Volume) != 0)
-					chanInfo.Volume = chan.GetVolume();
-
-				if ((flag & ChannelFlag.Frequency) != 0)
-					chanInfo.Frequency = chan.GetFrequency();
-
-				allChanInfo[i] = chanInfo;
-			}
 
 			channelLatencyQueue.Enqueue(channelDataInfo);
 		}
@@ -258,7 +211,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					peekInfo.SamplesLeftBeforeTriggering -= todo;
 					if (peekInfo.SamplesLeftBeforeTriggering == 0)
 					{
-						channelInfo = channelLatencyQueue.Dequeue().ChannelInfo;
+						channelChanges = channelLatencyQueue.Dequeue().ChannelChanges;
 
 						// Tell the thread that a channel has changed its status
 						channelChangedEvent.Set();
@@ -394,14 +347,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					// channelChangedEvent
 					case 1:
 					{
-						ChannelInfo[] chanInfo = channelInfo;
-						ChannelChanged[] channelChanged = new ChannelChanged[channelCount];
-
-						for (int i = 0; i < channelCount; i++)
-						{
-							ChannelInfo info = chanInfo[i];
-							channelChanged[i] = new ChannelChanged(info.Enabled, info.Muted, info.NoteKicked, info.SampleNumber, info.SampleLength, info.Looping, info.SamplePositionRelative, info.SamplePosition, info.Volume, info.Frequency);
-						}
+						ChannelChanged[] channelChanged = channelChanges;
 
 						foreach (IVisualAgent visualAgent in manager.GetRegisteredVisualAgent())
 						{

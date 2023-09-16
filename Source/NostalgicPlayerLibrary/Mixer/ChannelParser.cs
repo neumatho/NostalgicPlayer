@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers;
@@ -22,8 +23,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// given
 		/// </summary>
 		/********************************************************************/
-		public ChannelFlag ParseInfo(ref VoiceInfo voiceInfo, int clickBuffer, bool bufferMode)
+		public ChannelChanged ParseInfo(ref VoiceInfo voiceInfo, int clickBuffer, bool channelEnabled, bool bufferMode)
 		{
+			// Initialize ChannelChanged properties
+			bool ccMuted = false;
+			bool ccNoteKicked = false;
+			bool ccLooping = false;
+			bool ccSamplePositionRelative = false;
+			int? ccSamplePosition = null;
+			ushort? ccVolume = null;
+			uint? ccFrequency = null;
+			
 			SampleFlag infoFlags = voiceInfo.Flags;
 
 			// Change the volume?
@@ -34,6 +44,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					voiceInfo.RampVolume = clickBuffer;
 
 				voiceInfo.Volume = volume;
+				ccVolume = volume;
 			}
 
 			// Change the panning?
@@ -53,7 +64,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 			// Change the frequency?
 			if ((flags & ChannelFlag.Frequency) != 0)
+			{
 				voiceInfo.Frequency = frequency;
+				ccFrequency = frequency;
+			}
 
 			// Mute the channel?
 			if ((flags & ChannelFlag.MuteIt) != 0)
@@ -61,6 +75,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				voiceInfo.Active = false;
 				voiceInfo.Kick = false;
 				infoFlags = SampleFlag.None;
+
+				ccMuted = true;
 			}
 			else
 			{
@@ -88,6 +104,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						voiceInfo.NewRepeatPosition = 0;
 						voiceInfo.NewRepeatEnd = 0;
 						voiceInfo.Kick = true;
+
+						ccNoteKicked = true;
 					}
 
 					if ((flags & ChannelFlag.ChangePosition) != 0)
@@ -96,6 +114,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						voiceInfo.RelativePosition = (flags & ChannelFlag.Relative) != 0;
 
 						infoFlags |= SampleFlag.ChangePosition;
+
+						ccSamplePositionRelative = voiceInfo.RelativePosition;
+						ccSamplePosition = samplePosition;
 					}
 
 					if (!bufferMode)
@@ -103,6 +124,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						// Does the sample loop?
 						if (((flags & ChannelFlag.Loop) != 0) && (loopLength > 2))
 						{
+							ccLooping = true;
+
 							voiceInfo.NewLoopAddresses[0] = loopAddresses[0];
 							voiceInfo.NewLoopAddresses[1] = loopAddresses[1];
 							voiceInfo.NewRepeatPosition = loopStart;
@@ -133,6 +156,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					if ((flags & ChannelFlag._16Bit) != 0)
 						infoFlags |= SampleFlag._16Bits;
 				}
+
+				if ((flags & ChannelFlag.VirtualTrig) != 0)
+					ccNoteKicked = true;
 			}
 
 			// Store the flags back
@@ -141,7 +167,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			ChannelFlag retFlags = flags;
 			flags = ChannelFlag.None;
 
-			return retFlags & ~ChannelFlag.Active;
+			return ((retFlags & ~ChannelFlag.Active) == ChannelFlag.None) ? null : new ChannelChanged(channelEnabled, ccMuted, ccNoteKicked, currentSampleNumber, voiceInfo.Size, ccLooping, ccSamplePositionRelative, ccSamplePosition, ccVolume, ccFrequency);
 		}
 
 

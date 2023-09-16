@@ -87,8 +87,11 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 			{
 				for (int i = 0, cnt = Math.Min(channelChanged.Length, Math.Min(channelsInUse, squaresPanel.Controls.Count)); i < cnt; i++)
 				{
-					if (squaresPanel.Controls[i].Controls[0] is SingleSpinningSquareControl singleSpinningSquare)
-						singleSpinningSquare.ChannelChange(channelChanged[i]);
+					if (channelChanged[i] != null)
+					{
+						if (squaresPanel.Controls[i].Controls[0] is SingleSpinningSquareControl singleSpinningSquare)
+							singleSpinningSquare.ChannelChange(channelChanged[i]);
+					}
 				}
 			}
 		}

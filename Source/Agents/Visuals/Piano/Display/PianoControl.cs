@@ -173,7 +173,10 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 				if (visualChannels != null)
 				{
 					for (int i = 0, cnt = channelChanged.Length; i < cnt; i++)
-						UpdateChanges(channelChanged[i], visualChannels[i]);
+					{
+						if (channelChanged[i] != null)
+							UpdateChanges(channelChanged[i], visualChannels[i]);
+					}
 				}
 			}
 		}

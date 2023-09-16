@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
@@ -525,13 +526,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 							VoiceInfo[] voiceInfo = currentMixer.GetMixerChannels();
 							int click = currentMixer.GetClickConstant();
 
-							ChannelFlag[] flagArray = new ChannelFlag[virtualChannelNumber];
-							ChannelFlag chanFlags = ChannelFlag.None;
+							ChannelChanged[] channelChanges = new ChannelChanged[virtualChannelNumber];
 
 							for (int t = 0; t < virtualChannelNumber; t++)
 							{
-								flagArray[t] = ((ChannelParser)currentPlayer.VirtualChannels[t]).ParseInfo(ref voiceInfo[t], click, bufferMode);
-								chanFlags |= flagArray[t];
+								bool channelEnabled = (channelsEnabled != null) && (t < channelsEnabled.Length) ? channelsEnabled[t] : true;
+								channelChanges[t] = ((ChannelParser)currentPlayer.VirtualChannels[t]).ParseInfo(ref voiceInfo[t], click, channelEnabled, bufferMode);
 							}
 
 							if (bufferDirect)
@@ -542,8 +542,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 							{
 								// If at least one channel has changed its information,
 								// tell visual agents about it
-								if (chanFlags != ChannelFlag.None)
-									currentVisualizer.QueueChannelChange(flagArray, currentPlayer.VirtualChannels, channelsEnabled, samplesTakenSinceLastCall);
+								if (channelChanges.Any(x => x != null))
+									currentVisualizer.QueueChannelChange(channelChanges, samplesTakenSinceLastCall);
 
 								// Calculate the number of sample pair to mix before the
 								// player need to be called again
@@ -643,7 +643,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					// Parse the channels
 					for (int t = 0; t < extraChannelsNumber; t++)
 					{
-						((ChannelParser)extraChannelsChannels[t]).ParseInfo(ref voiceInfo[t], click, false);
+						((ChannelParser)extraChannelsChannels[t]).ParseInfo(ref voiceInfo[t], click, true, false);
 						chanMap[t] = extraChannelsMixBuffer;
 					}
 
