@@ -126,9 +126,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/********************************************************************/
 		public void LibXmp_Mixer_Prepare_Frame()
 		{
-			Player_Data p = ctx.P;
+			Module_Data m = ctx.M;
+			Xmp_Module mod = m.Mod;
 
-			visualizerChannels = ArrayHelper.InitializeArray<VisualizerChannel>(p.Virt.Num_Tracks);
+			visualizerChannels = ArrayHelper.InitializeArray<VisualizerChannel>(mod.Chn);
 		}
 
 
@@ -488,7 +489,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			{
 				AntiClick(vi);
 
-				VisualizerChannel visualizerChannel = visualizerChannels[vi.Chn];
+				VisualizerChannel visualizerChannel = visualizerChannels[vi.Root];
 
 				visualizerChannel.NoteKicked = true;
 				visualizerChannel.SampleNumber = (short)vi.Smp;
@@ -581,7 +582,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			AntiClick(vi);
 
-			visualizerChannels[vi.Chn].Frequency = FindFrequency(vi.Smp, vi.Period);
+			visualizerChannels[vi.Root].Frequency = FindFrequency(vi.Smp, vi.Period);
 		}
 
 
@@ -598,7 +599,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			vi.Period = period;
 
-			visualizerChannels[vi.Chn].Frequency = FindFrequency(vi.Smp, vi.Period);
+			visualizerChannels[vi.Root].Frequency = FindFrequency(vi.Smp, vi.Period);
 		}
 
 
@@ -623,7 +624,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if ((m.MVolBase > 0) && (m.MVol != m.MVolBase))
 				vol = vol * m.MVol / m.MVolBase;
 
-			visualizerChannels[vi.Chn].Volume = (ushort)(vol / 4);
+			visualizerChannels[vi.Root].Volume = (ushort)(vol / 4);
 		}
 
 
@@ -822,7 +823,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Player_Data p = ctx.P;
 			Mixer_Voice vi = p.Virt.Voice_Array[voc];
 
-			visualizerChannels[vi.Chn].Muted = true;
+			visualizerChannels[vi.Root].Muted = true;
 		}
 
 
