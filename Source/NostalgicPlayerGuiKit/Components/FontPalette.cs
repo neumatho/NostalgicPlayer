@@ -85,7 +85,7 @@ namespace Polycode.NostalgicPlayer.GuiKit.Components
 		/********************************************************************/
 		public static Font GetRegularFont(float size = DefaultFontSize)
 		{
-			return new Font("Lucida Unicode", size, FontStyle.Regular, GraphicsUnit.Point);
+			return new Font("Microsoft Sans", size, FontStyle.Regular, GraphicsUnit.Point);
 		}
 
 

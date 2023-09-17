@@ -1038,7 +1038,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			string moduleTime = tempTime.ToString((int)tempTime.TotalHours > 0 ? Resources.IDS_TIMEFORMAT : Resources.IDS_TIMEFORMAT_SMALL);
 
 			Size size = TextRenderer.MeasureText(g, moduleTime, font);
-			TextRenderer.DrawText(g, moduleTime, font, new Point(Width - size.Width, y + 1), textColor);
+			TextRenderer.DrawText(g, moduleTime, font, new Point(Width - size.Width, y + 1), textColor, TextFormatFlags.NoPrefix);
 
 			return size.Width;
 		}
@@ -1066,7 +1066,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				nameWidth = TextRenderer.MeasureText(g, showName, font).Width;
 			}
 
-			TextRenderer.DrawText(g, showName, font, new Point(10, y + 1), textColor);
+			TextRenderer.DrawText(g, showName, font, new Point(10, y + 1), textColor, TextFormatFlags.NoPrefix);
 		}
 
 
