@@ -10,6 +10,11 @@ updates:
     schedule:
       interval: "weekly"
 
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
 # This is uncommeted, because dependabot cannot find wapproj files
 #  - package-ecosystem: "nuget"
 #    directory: "/Source/NostalgicPlayerPackage"
