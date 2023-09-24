@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
@@ -474,6 +475,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			info.Num_Sequences = m.Num_Sequences;
 			info.Seq_Data = m.Seq_Data;
 			info.Vol_Base = m.VolBase;
+			info.C5Speeds = m.Xtra?.Select(x => x.C5Spd).ToArray();
 		}
 
 
@@ -838,7 +840,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Update_Envelope_Xm(Xmp_Envelope env, c_int x, bool release)
+		private c_int Update_Envelope_Default(Xmp_Envelope env, c_int x, bool release)
 		{
 			int16[] data = env.Data;
 
@@ -878,6 +880,60 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			// Envelope loops
 			if (has_Loop && (x >= data[lpe]))
+			{
+				if (!(release && has_Sus && (sus == lpe)))
+					x = data[lps];
+			}
+
+			return x;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private c_int Update_Envelope_Xm(Xmp_Envelope env, c_int x, bool release)
+		{
+			int16[] data = env.Data;
+
+			bool has_Loop = (env.Flg & Xmp_Envelope_Flag.Loop) != 0;
+			bool has_Sus = (env.Flg & Xmp_Envelope_Flag.Sus) != 0;
+
+			c_int lps = env.Lps << 1;
+			c_int lpe = env.Lpe << 1;
+			c_int sus = env.Sus << 1;
+
+			// FT2 and IT envelopes behave in a different way regarding loops,
+			// sustain and release. When the sustain point is at the end of the
+			// envelope loop end and the key is released, FT2 escapes the loop
+			// while IT runs another iteration. (See EnvLoops.xm in the OpenMPT
+			// test cases)
+			if (has_Loop && has_Sus && sus == lpe)
+			{
+				if (!release)
+					has_Sus = false;
+			}
+
+			if (has_Sus && x > data[sus] + 1)
+				release = true;
+
+			// If enabled, stay at the sustain loop
+			if (has_Sus && !release)
+			{
+				if (x >= data[sus])
+					x = data[sus];
+			}
+
+			// Envelope loops
+			//
+			// If the envelope point is set to somewhere after the sustain point
+			// or sustain loop, the loop point is ignored to prevent the envelope
+			// point to return to the sustain point or loop start. (See Filip Skutela's
+			// farewell_tear.xm or Ebony Owl Netsuke.xm)
+			if (has_Loop && (x == data[lpe]))
 			{
 				if (!(release && has_Sus && (sus == lpe)))
 					x = data[lps];
@@ -937,8 +993,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Update_Envelope(Xmp_Envelope env, c_int x, bool release, bool key_Off, bool it_Env)
+		private c_int Update_Envelope(Xmp_Envelope env, c_int x, bool release, bool key_Off)
 		{
+			Module_Data m = ctx.M;
+
 			if (x < 0xffff)		// Increment tick
 				x++;
 
@@ -948,7 +1006,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (((~env.Flg & Xmp_Envelope_Flag.On) != 0) || (env.Npt <= 0))
 				return x;
 
-			return it_Env ? Update_Envelope_It(env, x, release, key_Off) : Update_Envelope_Xm(env, x, release);
+			return Common.Is_Player_Mode_It(m)
+				? Update_Envelope_It(env, x, release, key_Off)
+				: Common.Has_Quirk(m, Quirk_Flag.Ft2Env)
+					? Update_Envelope_Xm(env, x, release)
+					: Update_Envelope_Default(env, x, release);
 		}
 
 
@@ -1771,7 +1833,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			}
 
 			if (!Test_Per(xc, Channel_Flag.VEnv_Pause))
-				xc.V_Idx = Update_Envelope(instrument.Aei, xc.V_Idx, DoEnv_Release(xc, act), Test(xc, Channel_Flag.Key_Off), Common.Is_Player_Mode_It(m));
+				xc.V_Idx = Update_Envelope(instrument.Aei, xc.V_Idx, DoEnv_Release(xc, act), Test(xc, Channel_Flag.Key_Off));
 
 			uint16 vol_Envelope = (uint16)Get_Envelope(instrument.Aei, xc.V_Idx, 64);
 
@@ -1898,7 +1960,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Xmp_Instrument instrument = lib.sMix.LibXmp_Get_Instrument(xc.Ins);
 
 			if (!Test(xc, Channel_Flag.FEnv_Pause))
-				xc.F_Idx = Update_Envelope(instrument.Fei, xc.F_Idx, DoEnv_Release(xc, act), Test(xc, Channel_Flag.Key_Off), Common.Is_Player_Mode_It(m));
+				xc.F_Idx = Update_Envelope(instrument.Fei, xc.F_Idx, DoEnv_Release(xc, act), Test(xc, Channel_Flag.Key_Off));
 
 			c_int frq_Envelope = Get_Envelope(instrument.Fei, xc.F_Idx, 0);
 
@@ -2102,7 +2164,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Xmp_Instrument instrument = lib.sMix.LibXmp_Get_Instrument(xc.Ins);
 
 			if (!Test_Per(xc, Channel_Flag.PEnv_Pause))
-				xc.P_Idx = Update_Envelope(instrument.Pei, xc.P_Idx, DoEnv_Release(xc, act), Test(xc, Channel_Flag.Key_Off), Common.Is_Player_Mode_It(m));
+				xc.P_Idx = Update_Envelope(instrument.Pei, xc.P_Idx, DoEnv_Release(xc, act), Test(xc, Channel_Flag.Key_Off));
 
 			c_int pan_Envelope = Get_Envelope(instrument.Pei, xc.P_Idx, 32);
 

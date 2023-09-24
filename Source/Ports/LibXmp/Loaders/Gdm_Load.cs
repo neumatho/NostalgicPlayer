@@ -54,7 +54,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// Create a new instance of the loader
 		/// </summary>
 		/********************************************************************/
-		public static IFormatLoader Create(LibXmp libXmp)
+		private static IFormatLoader Create(LibXmp libXmp)
 		{
 			return new Gdm_Load(libXmp);
 		}

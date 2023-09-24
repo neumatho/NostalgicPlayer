@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 			// XM
 			ret = Test_Module_From_Memory_Helper("Xm_Portamento_Target.xm", out tInfo, buf);
 			Assert.AreEqual(0, ret, "XM test module fail");
-			Assert.AreEqual("Fast Tracker II", tInfo.Type, "XM module type fail");
+			Assert.AreEqual("FastTracker II", tInfo.Type, "XM module type fail");
 
 			// IT
 			ret = Test_Module_From_Memory_Helper("Storlek_01.it", out tInfo, buf);

@@ -466,6 +466,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						h.Handle.File.Seek(offset, whence);
 						ret = 0;
+
+						if (h.Error == Constants.EOF)
+							h.Error = 0;
 					}
 					catch(IOException ex)
 					{

@@ -62,7 +62,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Mixer
 					opaque.Xmp_Play_Frame();
 					opaque.Xmp_Get_Frame_Info(out info);
 
-					for (c_int j = 0, k = 0; j < info.Buffer_Size / 4; j++)
+					for (c_int j = 0; j < info.Buffer_Size / 4; j++)
 						Assert.AreEqual(0, s.Buf32[j], "Mixing error");
 				}
 

@@ -351,7 +351,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					Xmp_Interp v = (Xmp_Interp)val;
 
-					if ((v >= Xmp_Interp.Nearest) && (v <= Xmp_Interp.Spline))
+					if ((v >= Xmp_Interp.None) && (v <= Xmp_Interp.Spline))
 					{
 						s.Interp = v;
 						ret = 0;

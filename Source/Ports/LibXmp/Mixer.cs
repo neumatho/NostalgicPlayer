@@ -192,6 +192,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			LibXmp_Mixer_Prepare();
 
+			if (s.Interp == Xmp_Interp.None)
+				return;
+
 			for (voc = 0; voc < p.Virt.MaxVoc; voc++)
 			{
 				c_int c5Spd, rampSize, delta_L, delta_R;

@@ -39,5 +39,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// Pointer to sequence data
 		/// </summary>
 		public Xmp_Sequence[] Seq_Data;
+
+		/// <summary>
+		/// C-5 speeds for each sample
+		/// </summary>
+		public c_double[] C5Speeds;
 	}
 }

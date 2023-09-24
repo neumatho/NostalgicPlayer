@@ -14,7 +14,7 @@ If you want to try it out, you can install the player from Microsoft Store <a hr
 NostalgicPlayer is licensed under the <a href="https://github.com/neumatho/NostalgicPlayer/blob/main/LICENSE">MIT License</a>. Some parts of the player are 3rd party components which has been ported to C#. Their original licenses are the following:
 * Ancient decruncher (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/Ancient/LICENSE">BSD 2-Clause License</a>)
 * libFLAC (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibFlac/LICENSE">BSD License</a>)
-* libxmp (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibXmp/LICENSE">MIT License</a>)
+* libXmp (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibXmp/LICENSE">MIT License</a>)
 * MikMod player and converter (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Agents/Players/MikMod/LICENSE">GNU Lesser General Public License version 3</a>)
 * Mpg123 (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibMpg123/LICENSE">GNU Lesser General Public License version 2.1</a>)
 * ReSIDfp (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/ReSidFp/LICENSE">GNU General Public License version 2</a>)
@@ -69,7 +69,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Eureka Packer | .eureka / .eu | ProWizard | ModTracker |
 | Farandole Composer | .far | MikMod Converter | MikMod |
 | Fast/TakeTracker | .mod | | ModTracker |
-| FastTracker II | .xm | MikMod Converter | MikMod |
+| FastTracker II | .xm | | Xmp |
 | FC-M Packer | .fc-m / .fcm | ProWizard | ModTracker |
 | FLAC | .flac | | Sample |
 | Fred Editor | .frd / .fred | | Fred Editor |

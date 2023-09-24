@@ -187,6 +187,24 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
+		protected void Set_Instrument_Envelope_Loop(Ports.LibXmp.LibXmp opaque, c_int ins, c_int lps, c_int lpe)
+		{
+			Xmp_Context ctx = GetContext(opaque);
+			Module_Data m = ctx.M;
+			Xmp_Module mod = m.Mod;
+
+			mod.Xxi[ins].Aei.Lps = lps;
+			mod.Xxi[ins].Aei.Lpe = lpe;
+			mod.Xxi[ins].Aei.Flg |= Xmp_Envelope_Flag.Loop;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		protected void Set_Instrument_Envelope_Sus(Ports.LibXmp.LibXmp opaque, c_int ins, c_int sus)
 		{
 			Xmp_Context ctx = GetContext(opaque);

@@ -11,6 +11,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 	public enum Xmp_Interp
 	{
 		/// <summary>
+		/// No mixing is done at all
+		/// </summary>
+		None,
+
+		/// <summary>
 		/// Nearest neighbor
 		/// </summary>
 		Nearest,

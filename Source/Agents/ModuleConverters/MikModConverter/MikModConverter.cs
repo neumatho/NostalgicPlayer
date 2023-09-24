@@ -82,7 +82,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT13, Resources.IDS_MIKCONV_DESCRIPTION_AGENT13, agent13Id),
 					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT14, Resources.IDS_MIKCONV_DESCRIPTION_AGENT14, agent14Id),
 					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT15, Resources.IDS_MIKCONV_DESCRIPTION_AGENT15, agent15Id),
-					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT16, Resources.IDS_MIKCONV_DESCRIPTION_AGENT16, agent16Id)
+//					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT16, Resources.IDS_MIKCONV_DESCRIPTION_AGENT16, agent16Id)
 				};
 			}
 		}

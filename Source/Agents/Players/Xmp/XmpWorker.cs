@@ -36,6 +36,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		private short[] leftBuffer;
 		private short[] rightBuffer;
 
+		private MixerInfo lastMixerInfo;
+
 		private const int InfoPositionLine = 5;
 		private const int InfoPatternOrTracksLine = 6;
 		private const int InfoSpeedLine = 7;
@@ -276,7 +278,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 			if (!base.InitSound(songNumber, out errorMessage))
 				return false;
 
-			InitializeSound(0);
+			InitializeSound(0, Xmp_Interp.Spline);
 			SetModuleInformation();
 
 			return true;
@@ -329,6 +331,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 			for (int i = 0; i < ModuleChannelCount; i++)
 				libXmp.Xmp_Channel_Mute(i, mixerInfo.ChannelsEnabled[i] ? 0 : 1);
+
+			lastMixerInfo = mixerInfo;
 		}
 
 
@@ -370,9 +374,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 			{
 				playingPosition = afterInfo.Pos;
 				playingPattern = afterInfo.Pattern;
-
-				if (HasPositionBeenVisited(playingPosition))
-					endReached = true;
 
 				MarkPositionAsVisited(playingPosition);
 
@@ -426,7 +427,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 							for (int j = 0; j < InstrumentInfo.Octaves; j++)
 							{
 								for (int k = 0; k < InstrumentInfo.NotesPerOctave; k++)
-									instInfo.Notes[j, k] = inst.Sub[inst.Map[j * InstrumentInfo.NotesPerOctave + k].Ins].Sid;
+								{
+									byte ins = inst.Map[j * InstrumentInfo.NotesPerOctave + k].Ins;
+									instInfo.Notes[j, k] = (ins != 0xff) && (ins < inst.Nsm) ? inst.Sub[ins].Sid : -1;
+								}
 							}
 						}
 
@@ -448,112 +452,91 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		{
 			get
 			{
-				if (hasInstruments)
+				for (int i = 0; i < moduleInfo.Mod.Smp; i++)
 				{
-					for (int i = 0; i < moduleInfo.Mod.Smp; i++)
+					Xmp_Sample sample = moduleInfo.Mod.Xxs[i];
+
+					Xmp_Instrument inst = null;
+					Xmp_SubInstrument sub = null;
+					string name = string.Empty;
+
+					if (hasInstruments)
 					{
-						Xmp_Sample sample = moduleInfo.Mod.Xxs[i];
-
-						SampleInfo sampleInfo = new SampleInfo
+						for (int j = 0; j < moduleInfo.Mod.Ins; j++)
 						{
-							Name = sample.Name,
-							Flags = SampleInfo.SampleFlag.None,
-							Type = SampleInfo.SampleType.Sample,
-							BitSize = SampleInfo.SampleSize._8Bit,
-							Volume = 256,
-							Panning = -1,
-							Sample = sample.Data,
-							SampleOffset = (uint)sample.DataOffset,
-							Length = (uint)sample.Len,
-							LoopStart = (uint)sample.Lps,
-							LoopLength = (uint)(sample.Lpe - sample.Lps)
-						};
-
-						if ((sample.Flg & Xmp_Sample_Flag.Synth) != 0)
-							sampleInfo.Type = SampleInfo.SampleType.Synthesis;
-
-						if ((sample.Flg & Xmp_Sample_Flag._16Bit) != 0)
-							sampleInfo.BitSize = SampleInfo.SampleSize._16Bit;
-
-						// Add extra loop flags if any
-						if ((sample.Flg & Xmp_Sample_Flag.Loop) != 0)
-						{
-							// Set loop flag
-							sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
-
-							// Is the loop ping-pong?
-							if ((sample.Flg & Xmp_Sample_Flag.Loop_BiDir) != 0)
-								sampleInfo.Flags |= SampleInfo.SampleFlag.PingPong;
+							if (moduleInfo.Mod.Xxi[j].Nsm > 0)
+							{
+								sub = moduleInfo.Mod.Xxi[j].Sub.FirstOrDefault(x => x.Sid == i);
+								if (sub != null)
+								{
+									inst = moduleInfo.Mod.Xxi[j];
+									name = sample.Name;
+									break;
+								}
+							}
 						}
-
-						// Build frequency table
-						uint[] frequencies = new uint[10 * 12];
-
-						for (int j = 0; j < 10 * 12; j++)
-							frequencies[j] = (uint)(3546895 / Note_To_Period(j, 0));
-
-						sampleInfo.NoteFrequencies = frequencies;
-
-						yield return sampleInfo;
 					}
-				}
-				else
-				{
-					for (int i = 0; i < moduleInfo.Mod.Smp; i++)
+					else
 					{
-						Xmp_Instrument inst = moduleInfo.Mod.Xxi[i];
-
-						SampleInfo sampleInfo = new SampleInfo
-						{
-							Name = inst.Name,
-							Flags = SampleInfo.SampleFlag.None,
-							Type = SampleInfo.SampleType.Sample,
-							BitSize = SampleInfo.SampleSize._8Bit,
-							Volume = (ushort)(inst.Vol * 4),
-							Panning = -1
-						};
+						inst = moduleInfo.Mod.Xxi[i];
+						name = inst.Name;
 
 						if (inst.Nsm > 0)
-						{
-							Xmp_SubInstrument sub = inst.Sub[0];
-							Xmp_Sample sample = moduleInfo.Mod.Xxs[i];
-
-							sampleInfo.Volume = (ushort)(inst.Vol * 4);
-							sampleInfo.Panning = (short)(sub.Pan + 0x80);
-							sampleInfo.Sample = sample.Data;
-							sampleInfo.SampleOffset = (uint)sample.DataOffset;
-							sampleInfo.Length = (uint)sample.Len;
-							sampleInfo.LoopStart = (uint)sample.Lps;
-							sampleInfo.LoopLength = (uint)(sample.Lpe - sample.Lps);
-
-							if ((sample.Flg & Xmp_Sample_Flag.Synth) != 0)
-								sampleInfo.Type = SampleInfo.SampleType.Synthesis;
-
-							if ((sample.Flg & Xmp_Sample_Flag._16Bit) != 0)
-								sampleInfo.BitSize = SampleInfo.SampleSize._16Bit;
-
-							// Add extra loop flags if any
-							if ((sample.Flg & Xmp_Sample_Flag.Loop) != 0)
-							{
-								// Set loop flag
-								sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
-
-								// Is the loop ping-pong?
-								if ((sample.Flg & Xmp_Sample_Flag.Loop_BiDir) != 0)
-									sampleInfo.Flags |= SampleInfo.SampleFlag.PingPong;
-							}
-
-							// Build frequency table
-							uint[] frequencies = new uint[10 * 12];
-
-							for (int j = 0; j < 10 * 12; j++)
-								frequencies[j] = (uint)(3546895 / Note_To_Period(j + sub.Xpo, sub.Fin));
-
-							sampleInfo.NoteFrequencies = frequencies;
-						}
-
-						yield return sampleInfo;
+							sub = inst.Sub[0];
 					}
+
+					SampleInfo sampleInfo = new SampleInfo
+					{
+						Name = name,
+						Flags = SampleInfo.SampleFlag.None,
+						Type = SampleInfo.SampleType.Sample,
+						BitSize = SampleInfo.SampleSize._8Bit,
+						Volume = 256,
+						Panning = -1,
+						Sample = sample.Data,
+						SampleOffset = (uint)sample.DataOffset,
+						Length = (uint)sample.Len,
+						LoopStart = (uint)sample.Lps,
+						LoopLength = (uint)(sample.Lpe - sample.Lps)
+					};
+
+					if ((sample.Flg & Xmp_Sample_Flag.Synth) != 0)
+						sampleInfo.Type = SampleInfo.SampleType.Synthesis;
+
+					if ((sample.Flg & Xmp_Sample_Flag._16Bit) != 0)
+						sampleInfo.BitSize = SampleInfo.SampleSize._16Bit;
+
+					// Add extra loop flags if any
+					if ((sample.Flg & Xmp_Sample_Flag.Loop) != 0)
+					{
+						// Set loop flag
+						sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
+
+						// Is the loop ping-pong?
+						if ((sample.Flg & Xmp_Sample_Flag.Loop_BiDir) != 0)
+							sampleInfo.Flags |= SampleInfo.SampleFlag.PingPong;
+					}
+
+					if (inst != null)
+					{
+						sampleInfo.Volume = (ushort)(inst.Vol * 4);
+
+						if (sub != null)
+							sampleInfo.Panning = (short)sub.Pan;
+					}
+
+					// Build frequency table
+					uint[] frequencies = new uint[10 * 12];
+					int c5Spd = (int)moduleInfo.C5Speeds[i];
+					int xpo = sub != null ? sub.Xpo : 0;
+					int fin = sub != null ? sub.Fin : 0;
+
+					for (int j = 0; j < 10 * 12; j++)
+						frequencies[j] = (uint)(428 * c5Spd / Note_To_Period(j + xpo, fin));
+
+					sampleInfo.NoteFrequencies = frequencies;
+
+					yield return sampleInfo;
 				}
 			}
 		}
@@ -578,7 +561,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		/********************************************************************/
 		protected override int InitDuration(int startPosition)
 		{
-			InitializeSound(startPosition);
+			InitializeSound(startPosition, Xmp_Interp.None);
 			MarkPositionAsVisited(startPosition);
 
 			return startPosition;
@@ -636,6 +619,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 			SetModuleInformation();
 			UpdateModuleInformation();
 
+			if (lastMixerInfo != null)
+				ChangeMixerConfiguration(lastMixerInfo);
+
 			return true;
 		}
 		#endregion
@@ -646,11 +632,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		/// Initialize sound structures
 		/// </summary>
 		/********************************************************************/
-		private void InitializeSound(int startPosition)
+		private void InitializeSound(int startPosition, Xmp_Interp interp)
 		{
 			libXmp.Xmp_Start_Player(44100, 0);	// Real values will be set in SetOutputFormat()
 
-			libXmp.Xmp_Set_Player(Xmp_Player.Interp, (int)Xmp_Interp.Spline);
+			libXmp.Xmp_Set_Player(Xmp_Player.Interp, (int)interp);
 			libXmp.Xmp_Set_Position(startPosition);
 		}
 

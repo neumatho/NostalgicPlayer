@@ -144,7 +144,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		RtDelay = (1 << 25),
 
 		/// <summary>
-		/// Ft2 bug compatibility
+		/// FT2 bug compatibility
 		/// </summary>
 		Ft2Bugs = (1 << 26),
 
@@ -167,6 +167,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		/// Reset channel on sample end
 		/// </summary>
 		RstChn = (1 << 30),
+
+		/// <summary>
+		/// Use FT2-style envelope handling
+		/// </summary>
+		Ft2Env = (1 << 31),
 
 		// Format quirks
 		St3 = S3MLoop | VolPdn | FineFx | S3MRtg | Marker | RstChn,

@@ -344,6 +344,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 #pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
 		#endregion
 
+		private enum Format
+		{
+			Xm,
+			OggMod
+		}
+
+		private readonly Format format;
 		private readonly LibXmp lib;
 		private readonly Encoding encoder;
 
@@ -351,11 +358,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static readonly Format_Loader LibXmp_Loader_Xm = new Format_Loader
 		{
 			Id = Guid.Parse("1574A876-5F9D-4BAE-81AF-7DB01370ADDD"),
-			Name = "Fast Tracker II",
-			Create = Create
+			Name = "FastTracker II",
+			Description = "This loader recognizes “FastTracker 2” modules. This format was designed from scratch, instead of creating yet another ProTracker variation. It was the first format using instruments as well as samples, and envelopes for finer effects.\nFastTracker 2 was written by Fredrik Huss and Magnus Hogdahl, and released in 1994.",
+			Create = Create_Xm
 		};
-
-		//XX Skal lave et nyt format for hver del type, f.eks. OpenMPT og Schism Tracker
 
 		private const uint8 Xm_Event_Packing = 0x80;
 		private const uint8 Xm_Event_Pack_Mask = 0x7f;
@@ -384,10 +390,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		private Xm_Load(LibXmp libXmp)
+		private Xm_Load(LibXmp libXmp, Format format)
 		{
+			this.format = format;
 			lib = libXmp;
-			encoder = EncoderCollection.Win1252;
+			encoder = EncoderCollection.Dos;
 		}
 
 
@@ -398,9 +405,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// Create a new instance of the loader
 		/// </summary>
 		/********************************************************************/
-		public static IFormatLoader Create(LibXmp libXmp)
+		private static IFormatLoader Create_Xm(LibXmp libXmp)
 		{
-			return new Xm_Load(libXmp);
+			return new Xm_Load(libXmp, Format.Xm);
 		}
 
 
@@ -424,7 +431,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			lib.common.LibXmp_Read_Title(f, out t, 20, encoder);
 
-			return 0;
+			return FindFormat(f) == format ? 0 : -1;
 		}
 
 
@@ -659,7 +666,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			for (c_int i = 0; i < mod.Chn; i++)
 				mod.Xxc[i].Pan = 0x80;
 
-			m.Quirk |= Quirk_Flag.Ft2;
+			m.Quirk |= Quirk_Flag.Ft2 | Quirk_Flag.Ft2Env;
 			m.Read_Event_Type = Read_Event.Ft2;
 
 			return 0;
@@ -1375,6 +1382,106 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Debug.Assert(((int)flag & ~7) == 0);
 
 			return newFlag;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Try to figure out, which format the xm module is
+		/// </summary>
+		/********************************************************************/
+		private Format FindFormat(Hio f)
+		{
+			if (f.Hio_Seek(21, SeekOrigin.Current) < 0)
+				return Format.Xm;
+
+			uint16 version = f.Hio_Read16L();
+			if (version <= 0x0103)
+				return Format.Xm;
+
+			uint32 headerSize = f.Hio_Read32L();
+
+			if (f.Hio_Seek(6, SeekOrigin.Current) < 0)
+				return Format.Xm;
+
+			uint16 patternCount = f.Hio_Read16L();
+			uint16 instrumentCount = f.Hio_Read16L();
+
+			if (f.Hio_Seek((c_long)headerSize - 14, SeekOrigin.Current) < 0)
+				return Format.Xm;
+
+			// Skip patterns
+			for (c_int i = 0; i < patternCount; i++)
+			{
+				headerSize = f.Hio_Read32L();
+
+				if (f.Hio_Seek(3, SeekOrigin.Current) < 0)
+					return Format.Xm;
+
+				uint16 patternSize = f.Hio_Read16L();
+
+				if (f.Hio_Seek((c_long)headerSize - 9 + patternSize, SeekOrigin.Current) < 0)
+					return Format.Xm;
+			}
+
+			// Find sample data and check it
+			for (c_int i = 0; i < instrumentCount; i++)
+			{
+				if ((f.Hio_Size() - f.Hio_Tell()) < Xm_Inst_Header_Size)
+					break;
+
+				headerSize = f.Hio_Read32L();
+
+				if (f.Hio_Seek(23, SeekOrigin.Current) < 0)
+					return Format.Xm;
+
+				uint16 sampleCount = f.Hio_Read16L();
+
+				if (f.Hio_Seek((c_long)headerSize - 29, SeekOrigin.Current) < 0)
+					return Format.Xm;
+
+				if (sampleCount > 0)
+				{
+					uint32[] sampleLengths = new uint32[sampleCount];
+
+					for (c_int j = 0; j < sampleCount; j++)
+					{
+						sampleLengths[j] = f.Hio_Read32L();
+
+						if (f.Hio_Seek(13, SeekOrigin.Current) < 0)
+							return Format.Xm;
+
+						if (f.Hio_Read8() == 0xad)
+							sampleLengths[j] = 16 + ((sampleLengths[j] + 1) >> 1);
+
+						if (f.Hio_Seek(22, SeekOrigin.Current) < 0)
+							return Format.Xm;
+					}
+
+					for (c_int j = 0; j < sampleCount; j++)
+					{
+						if (sampleLengths[j] != 0)
+						{
+							if (f.Hio_Seek(4, SeekOrigin.Current) < 0)
+								return Format.Xm;
+
+							uint32 id = f.Hio_Read32B();
+
+							if (f.Hio_Error() != 0)
+								return Format.Xm;
+
+							if (id == Magic_Oggs)
+								return Format.OggMod;
+
+							if (f.Hio_Seek((c_long)sampleLengths[j] - 8, SeekOrigin.Current) < 0)
+								return Format.Xm;
+						}
+					}
+				}
+			}
+
+			return Format.Xm;
 		}
 		#endregion
 	}
