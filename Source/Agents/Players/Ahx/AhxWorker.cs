@@ -332,6 +332,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 					song.Instruments[i].Envelope.RFrames = moduleStream.Read_UINT8();
 					song.Instruments[i].Envelope.RVolume = moduleStream.Read_UINT8();
 
+					if (song.Instruments[i].Envelope.DFrames == 0)
+						song.Instruments[i].Envelope.DFrames = 1;
+
+					if (song.Instruments[i].Envelope.RFrames == 0)
+						song.Instruments[i].Envelope.RFrames = 1;
+
 					moduleStream.Seek(3, SeekOrigin.Current);
 
 					byte1 = moduleStream.Read_UINT8();
