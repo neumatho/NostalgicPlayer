@@ -1083,7 +1083,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 							{
 								fxParam -= (0xa0 - 0x50);
 
-								if (fxParam <= 0x40)
+								if ((fxParam > 0) && (fxParam <= 0x40))
 									voice.trackMasterVolume = fxParam;
 							}
 						}
