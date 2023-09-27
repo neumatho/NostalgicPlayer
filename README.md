@@ -123,6 +123,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | OctaMED Professional 5.00 - 6.xx | .med / .mmd2 / .md2 / .omed | | OctaMED |
 | OctaMED Soundstudio | .med / .mmd3 / .md3 / .omed / .ocss | | OctaMED |
 | Ogg Vorbis | .ogg / oga | | Ogg Vorbis |
+| OggMod | .oxm | | Xmp |
 | Oktalyzer | .okt / .okta | | Oktalyzer |
 | Perfect Song 1 | .pf1 | ProWizard | ModTracker |
 | Perfect Song 2 | .pf2 | ProWizard | ModTracker |

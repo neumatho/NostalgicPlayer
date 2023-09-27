@@ -6,7 +6,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
+using NVorbis;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
@@ -363,6 +365,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Create = Create_Xm
 		};
 
+		/// <summary></summary>
+		public static readonly Format_Loader LibXmp_Loader_OggMod = new Format_Loader
+		{
+			Id = Guid.Parse("F1878ED9-37B8-4D5F-9AFE-46B6A9C195DF"),
+			Name = "OggMod",
+			Description = "This format is the same as FastTracker 2, except that the samples are packed with Ogg-Vorbis. This make the modules smaller. The tool was created by Neil Graham.",
+			Create = Create_OggMod
+		};
+
 		private const uint8 Xm_Event_Packing = 0x80;
 		private const uint8 Xm_Event_Pack_Mask = 0x7f;
 		private const uint8 Xm_Event_Note_Follows = 0x01;
@@ -399,7 +410,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 
 
-
 		/********************************************************************/
 		/// <summary>
 		/// Create a new instance of the loader
@@ -408,6 +418,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private static IFormatLoader Create_Xm(LibXmp libXmp)
 		{
 			return new Xm_Load(libXmp, Format.Xm);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a new instance of the loader
+		/// </summary>
+		/********************************************************************/
+		private static IFormatLoader Create_OggMod(LibXmp libXmp)
+		{
+			return new Xm_Load(libXmp, Format.OggMod);
 		}
 
 
@@ -1075,7 +1097,60 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/********************************************************************/
 		private c_int OggDec(Module_Data m, Hio f, Xmp_Sample xxs, c_int len)
 		{
-			throw new NotImplementedException();
+			uint8[] data = new uint8[len];
+			if (data == null)
+				return -1;
+
+			f.Hio_Read32B();
+
+			if ((f.Hio_Error() != 0) || (f.Hio_Read(data, 1, (size_t)len - 4) != (size_t)(len - 4)))
+				return -1;
+
+			float[] decodedBuffer;
+			uint8[] pcm;
+
+			try
+			{
+				using (VorbisReader vorbis = new VorbisReader(new MemoryStream(data)))
+				{
+					decodedBuffer = new float[vorbis.TotalSamples];
+
+					if (vorbis.ReadSamples(decodedBuffer) != vorbis.TotalSamples)
+						return -1;
+				}
+			}
+			catch (Exception)
+			{
+				return -1;
+			}
+
+			xxs.Len = decodedBuffer.Length;
+
+			if ((xxs.Flg & Xmp_Sample_Flag._16Bit) == 0)
+			{
+				pcm = new uint8[xxs.Len];
+				Span<int8> pcm8 = MemoryMarshal.Cast<uint8, int8>(pcm);
+
+				for (c_int i = 0; i < xxs.Len; i++)
+					pcm8[i] = (int8)((int16)(decodedBuffer[i] * 32767.0f) >> 8);
+			}
+			else
+			{
+				pcm = new uint8[xxs.Len * 2];
+				Span<int16> pcm16 = MemoryMarshal.Cast<uint8, int16>(pcm);
+
+				for (c_int i = 0; i < xxs.Len; i++)
+					pcm16[i] = (int16)(decodedBuffer[i] * 32767.0f);
+			}
+
+			Sample_Flag flags = Sample_Flag.NoLoad;
+
+			if (!BitConverter.IsLittleEndian)
+				flags |= Sample_Flag.BigEnd;
+
+			c_int ret = Sample.LibXmp_Load_Sample(m, null, flags, xxs, pcm);
+
+			return ret;
 		}
 
 
