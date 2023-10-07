@@ -62,7 +62,12 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 			/// <summary>
 			/// Normal sample used as waveform when generating synthesis sound
 			/// </summary>
-			Hybrid
+			Hybrid,
+
+			/// <summary>
+			/// Adlib / OPL sample
+			/// </summary>
+			Adlib
 		}
 
 		/// <summary>

@@ -556,7 +556,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override int InitDuration(int startPosition)
+		protected override int InitDuration(int songNumber, int startPosition)
 		{
 			InitializeSound(startPosition);
 			MarkPositionAsVisited(startPosition);

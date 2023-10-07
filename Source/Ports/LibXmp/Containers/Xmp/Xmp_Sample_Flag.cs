@@ -59,6 +59,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		Stereo = (1 << 7),
 
 		/// <summary>
+		/// Adlib sample
+		/// </summary>
+		Adlib = (1 << 14),
+
+		/// <summary>
 		/// Data contains synth patch
 		/// </summary>
 		Synth = (1 << 15)

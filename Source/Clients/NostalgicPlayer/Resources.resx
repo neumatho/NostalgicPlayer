@@ -651,6 +651,9 @@ what has changed since your previous version.</value>
   <data name="IDS_SAMPLE_INFO_SAMP_TOOLTIP_INFO_STEREO" xml:space="preserve">
     <value>Stereo</value>
   </data>
+  <data name="IDS_SAMPLE_INFO_SAMP_TYPE_ADLIB" xml:space="preserve">
+    <value>Adlib</value>
+  </data>
   <data name="IDS_SAMPLE_INFO_SAMP_TYPE_HYBRID" xml:space="preserve">
     <value>Hybrid</value>
   </data>

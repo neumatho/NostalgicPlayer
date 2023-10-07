@@ -148,7 +148,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | RIFF-WAVE (PCM) | .wav | | Sample |
 | Sawteeth | .st | | Sawteeth |
 | Scream Tracker 2 | .stm | MikMod Converter | MikMod |
-| Scream Tracker 3 | .s3m | MikMod Converter | MikMod |
+| Scream Tracker 3 | .s3m | | Xmp |
 | Scream Tracker Music Interface Kit | .stx | MikMod Converter | MikMod |
 | SidPlay | .sid / .c64 / .mus / .str / .prg | | SidPlay |
 | SKYT Packer | .skt / .skyt | ProWizard | ModTracker |

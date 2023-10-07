@@ -339,10 +339,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			Id = Guid.Parse("EB0B4765-CA32-43A3-AC3A-93ED4907498B"),
 			Name = "Scream Tracker 3",
+			Description = "This loader recognizes “Scream Tracker 3” modules. This version was a huge improvement over the original “Scream Tracker”. It supported 32 channels, up to 99 instruments, and a large choice of effects.\n\n“Scream Tracker 3” was written by PSI of Future Crew, a.k.a. Sami Tammilehto, and released in 1994.",
 			Create = Create
 		};
-
-		//XX Skal lave et nyt format for hver del type, f.eks. OpenMPT og Schism Tracker
 
 		private static readonly uint8[] fx = new uint8[27]
 		{
@@ -665,7 +664,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				default:
 				{
-					tracker_Name = string.Format("Unknown {0:x4", sfh.Version);
+					tracker_Name = string.Format("Unknown {0:x4}", sfh.Version);
 					break;
 				}
 			}
@@ -756,6 +755,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				goto Err3;
 
 			// Read and convert instruments and samples
+			bool modPlugin = false;
+
 			for (i = 0; i < mod.Ins; i++)
 			{
 				Xmp_Instrument xxi = mod.Xxi[i];
@@ -805,6 +806,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					if (ret < 0)
 						goto Err3;
 
+					xxs.Flg = Xmp_Sample_Flag.Adlib;
 					continue;
 				}
 
@@ -840,7 +842,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				Sample_Flag load_Sample_Flag = (sfh.Ffi == 1) ? Sample_Flag.None : Sample_Flag.Uns;
 				if (sih.Pack == 4)
+				{
 					load_Sample_Flag = Sample_Flag.Adpcm;
+					modPlugin = true;
+				}
 
 				sub.Vol = sih.Vol;
 				sih.Magic = 0;
@@ -858,6 +863,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				if (ret < 0)
 					goto Err3;
 			}
+
+			if (modPlugin)
+				lib.common.LibXmp_Set_Type(m, "MOD Plugin packed S3M");
 
 			m.Quirk |= Quirk_Flag.St3 | Quirk_Flag.ArpMem;
 			m.Read_Event_Type = Read_Event.St3;

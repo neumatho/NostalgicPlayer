@@ -502,6 +502,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 					if ((sample.Flg & Xmp_Sample_Flag.Synth) != 0)
 						sampleInfo.Type = SampleInfo.SampleType.Synthesis;
+					else if ((sample.Flg & Xmp_Sample_Flag.Adlib) != 0)
+						sampleInfo.Type = SampleInfo.SampleType.Adlib;
 
 					if ((sample.Flg & Xmp_Sample_Flag._16Bit) != 0)
 						sampleInfo.BitSize = SampleInfo.SampleSize._16Bit;
@@ -559,8 +561,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected override int InitDuration(int startPosition)
+		protected override int InitDuration(int songNumber, int startPosition)
 		{
+			libXmp.Xmp_Get_Module_Info(out Xmp_Module_Info info);
+
+			if (songNumber >= info.Num_Sequences)
+				return -1;
+
+			if (info.Seq_Data[songNumber].Duration == 0)
+				return -1;
+
+			startPosition = info.Seq_Data[songNumber].Entry_Point;
+
 			InitializeSound(startPosition, Xmp_Interp.None);
 			MarkPositionAsVisited(startPosition);
 

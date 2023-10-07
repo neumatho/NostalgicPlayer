@@ -232,10 +232,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				if ((m.MVolBase > 0) && (m.MVol != m.MVolBase))
 					vol = vol * m.MVol / m.MVolBase;
 
-				if (vi.Pan == Constants.Pan_Surround && s.EnableSurround)
+				if (vi.Pan == Constants.Pan_Surround)
 				{
 					vol_R = vol * 0x80;
-					vol_L = -vol * 0x80;
+
+					if (s.EnableSurround)
+						vol_L = -vol * 0x80;
+					else
+						vol_L = vol * 0x80;
 				}
 				else
 				{
@@ -467,7 +471,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			else
 				return;
 
-			if ((xxs.Flg & Xmp_Sample_Flag.Synth) != 0)
+			if (((xxs.Flg & Xmp_Sample_Flag.Synth) != 0) || ((xxs.Flg & Xmp_Sample_Flag.Adlib) != 0))
 				return;
 
 			vi.Pos = pos;
@@ -516,7 +520,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			Xmp_Sample xxs = lib.sMix.LibXmp_Get_Sample(vi.Smp);
 
-			if ((xxs.Flg & Xmp_Sample_Flag.Synth) != 0)
+			if (((xxs.Flg & Xmp_Sample_Flag.Synth) != 0) || ((xxs.Flg & Xmp_Sample_Flag.Adlib) != 0))
 				return 0;
 
 			return vi.Pos;
@@ -621,11 +625,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				AntiClick(vi);
 
 			vi.Vol = vol;
-
-			Module_Data m = ctx.M;
-
-			if ((m.MVolBase > 0) && (m.MVol != m.MVolBase))
-				vol = vol * m.MVol / m.MVolBase;
 
 			visualizerChannels[vi.Root].Volume = (ushort)(vol / 4);
 		}

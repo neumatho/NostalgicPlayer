@@ -852,6 +852,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 
 				case SampleInfo.SampleType.Hybrid:
 					return Resources.IDS_SAMPLE_INFO_SAMP_TYPE_HYBRID;
+
+				case SampleInfo.SampleType.Adlib:
+					return Resources.IDS_SAMPLE_INFO_SAMP_TYPE_ADLIB;
 			}
 
 			return string.Empty;

@@ -1441,6 +1441,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Adlib.
+        /// </summary>
+        internal static string IDS_SAMPLE_INFO_SAMP_TYPE_ADLIB {
+            get {
+                return ResourceManager.GetString("IDS_SAMPLE_INFO_SAMP_TYPE_ADLIB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hybrid.
         /// </summary>
         internal static string IDS_SAMPLE_INFO_SAMP_TYPE_HYBRID {

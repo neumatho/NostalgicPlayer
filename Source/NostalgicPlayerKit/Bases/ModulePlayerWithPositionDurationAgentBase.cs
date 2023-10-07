@@ -72,7 +72,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 					currentTotalTime = 0.0f;
 					float lastSnapshotTime = 0.0f;
 
-					startPosition = InitDuration(startPosition);
+					startPosition = InitDuration(currentSubSong, startPosition);
 					if (startPosition < 0)
 						break;
 
@@ -206,7 +206,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// calculation on a new sub-song
 		/// </summary>
 		/********************************************************************/
-		protected abstract int InitDuration(int startPosition);
+		protected abstract int InitDuration(int songNumber, int startPosition);
 
 
 
