@@ -3264,7 +3264,7 @@ stopLoop:
 
 			// Generate noise waveform
 			for (int i = 0; i < 32; i++)
-				Tables.AmWaveforms[3][i] = (sbyte)Helpers.GetRandomNumber(255);
+				Tables.AmWaveforms[3][i] = (sbyte)RandomGenerator.GetRandomNumber(255);
 		}
 
 

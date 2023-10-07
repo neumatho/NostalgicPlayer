@@ -179,7 +179,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff16Sv
 						throw new NotSupportedException($"Writing IFF-16SV stereo files using stream of type {stream.GetType()} is not supported");
 
 					// Build a new file name
-					string newName = fs.Name + "nps" + Helpers.GetRandomNumber();
+					string newName = fs.Name + "nps" + RandomGenerator.GetRandomNumber();
 
 					stereoFile = new FileStream(newName, FileMode.CreateNew, FileAccess.ReadWrite);
 				}

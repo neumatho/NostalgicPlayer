@@ -169,7 +169,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				// Random
 				case 3:
 				{
-					val = (Helpers.GetRandomNumber() & 0x1ff) - 256;
+					val = (RandomGenerator.GetRandomNumber() & 0x1ff) - 256;
 					break;
 				}
 

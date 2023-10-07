@@ -1382,7 +1382,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					if (rvv != 0)
 					{
 						Common.Clamp(ref rvv, 0, 100);
-						xc.Rvv = Helpers.GetRandomNumber() % (rvv + 1);
+						xc.Rvv = RandomGenerator.GetRandomNumber() % (rvv + 1);
 					}
 					else
 						xc.Rvv = 0;
@@ -1392,7 +1392,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					if (rvv != 0)
 					{
 						Common.Clamp(ref rvv, 0, 64);
-						xc.Rpv = Helpers.GetRandomNumber() % (rvv + 1) - (rvv / 2);
+						xc.Rpv = RandomGenerator.GetRandomNumber() % (rvv + 1) - (rvv / 2);
 					}
 					else
 						xc.Rpv = 0;
