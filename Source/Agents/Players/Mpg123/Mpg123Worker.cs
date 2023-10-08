@@ -692,6 +692,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 			if (id1 == 0x53433638)											// SC68
 				return true;
 
+			// Impulse Tracker
+			if (id1 == 0x494d504d)											// IMPM
+				return true;
+
 			// Gameboy Sound System
 			uint maskedId = id1 & 0xffffff00;
 
