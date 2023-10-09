@@ -49,8 +49,6 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 				if (bufferMode)
 					SetOutputFormat(44100, 2);
 
-				DateTime safeguardStartTime = DateTime.Now;
-
 				for (currentSubSong = 0; currentSubSong < totalSubSongs; currentSubSong++)
 				{
 					HasEndReached = false;
@@ -72,10 +70,12 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 						List<PositionInfo> positionInfoList = new List<PositionInfo>();
 						positionInfoList.Add(new PositionInfo(TimeSpan.Zero, PlayingFrequency, CreateSnapshot()));
 
+						DateTime safeguardStartTime = DateTime.Now;
+
 						for (;;)
 						{
 							// Check for time out
-							if ((DateTime.Now - safeguardStartTime).Seconds >= 5)
+							if ((DateTime.Now - safeguardStartTime).Seconds >= 10)
 								throw new Exception(Resources.IDS_ERR_DURATION_TIMEOUT);
 
 							// Time to create a new snapshot?

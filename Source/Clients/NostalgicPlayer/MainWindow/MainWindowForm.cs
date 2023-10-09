@@ -3949,28 +3949,31 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void LoadAndPlayModule(ModuleListItem listItem, int subSong = -1, int startPos = -1)
 		{
-			bool ok = moduleHandler.LoadAndPlayModule(listItem, subSong, startPos);
-			if (ok)
+			using (new SleepCursor())
 			{
-				// Initialize other stuff in the window
-				InitSubSongs();
+				bool ok = moduleHandler.LoadAndPlayModule(listItem, subSong, startPos);
+				if (ok)
+				{
+					// Initialize other stuff in the window
+					InitSubSongs();
 
-				// Mark the item in the list
-				ChangePlayItem(listItem);
+					// Mark the item in the list
+					ChangePlayItem(listItem);
 
-				// Initialize controls
-				InitControls();
+					// Initialize controls
+					InitControls();
 
-				// Update database
-				UpdateDatabase(listItem);
+					// Update database
+					UpdateDatabase(listItem);
 
-				// And refresh other windows
-				RefreshWindows(true);
-			}
-			else
-			{
-				// Free loaded module
-				StopAndFreeModule();
+					// And refresh other windows
+					RefreshWindows(true);
+				}
+				else
+				{
+					// Free loaded module
+					StopAndFreeModule();
+				}
 			}
 		}
 
