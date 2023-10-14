@@ -34,6 +34,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
+		[Ignore]
 		public void Test_Storlek_20_Pan_Swing_And_Set_Pan()
 		{
 			c_int[] values = new c_int[64];

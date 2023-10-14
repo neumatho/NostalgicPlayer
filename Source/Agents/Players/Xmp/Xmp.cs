@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 	/// </summary>
 	public class Xmp : AgentBase, IPlayerAgentMultipleFormatIdentify
 	{
-		internal static readonly string[] fileExtensions = { "gdm", "xm", "oxm", "s3m" };
+		internal static readonly string[] fileExtensions = { "gdm", "xm", "oxm", "s3m", "it" };
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -52,9 +52,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		{
 			get
 			{
-				return Ports.LibXmp.LibXmp.Xmp_Get_Format_Info_List()
+				return LibXmp.Xmp_Get_Format_Info_List()
 					.SkipLast(1)	// Skip last null value
-					.Where(x => x.Id == Guid.Parse("6118D229-7AEC-4FF6-8A0C-F4F5BCCE2564") || x.Id == Guid.Parse("1574A876-5F9D-4BAE-81AF-7DB01370ADDD") || x.Id == Guid.Parse("F1878ED9-37B8-4D5F-9AFE-46B6A9C195DF") || x.Id == Guid.Parse("EB0B4765-CA32-43A3-AC3A-93ED4907498B"))//XX
 					.Select(x => new AgentSupportInfo(x.Name, x.Description, x.Id)).ToArray();
 			}
 		}
@@ -97,7 +96,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 			libXmp.Xmp_Free_Context();
 
-			if (retVal == 0 && (testInfo.Id == Guid.Parse("6118D229-7AEC-4FF6-8A0C-F4F5BCCE2564") || testInfo.Id == Guid.Parse("1574A876-5F9D-4BAE-81AF-7DB01370ADDD") || testInfo.Id == Guid.Parse("F1878ED9-37B8-4D5F-9AFE-46B6A9C195DF") || testInfo.Id == Guid.Parse("EB0B4765-CA32-43A3-AC3A-93ED4907498B")))//XX
+			if (retVal == 0)
 				return new IdentifyFormatInfo(new XmpWorker(testInfo.Id), testInfo.Id);
 
 			return null;

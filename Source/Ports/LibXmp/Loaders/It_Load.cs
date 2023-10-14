@@ -610,10 +610,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			Id = Guid.Parse("6D40CCCF-45AE-4F5C-BF6B-2ABCD31B80AC"),
 			Name = "Impulse Tracker",
+			Description = "This loader recognizes “Impulse Tracker” modules, currently the most powerful format. These modules support up to 64 real channels, and up to 256 virtual channels with the “New Note Action” feature. Besides, it has the widest range of effects, and supports 16 bit samples as well as surround sound.\n\n“Impulse Tracker” was written by Jeffrey Lim and released in 1996.",
 			Create = Create
 		};
-
-		//XX Skal lave et nyt format for hver del type, f.eks. OpenMPT og Schism Tracker
 
 		private static readonly uint8[] fx = new uint8[32]
 		{
@@ -690,6 +689,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return -1;
 
 			lib.common.LibXmp_Read_Title(f, out t, 26, encoder);
+
+			// OpenMPT modules has a lot of extra extensions, which is not supported.
+			// So if we can detect it is such a module, we won't play it
+			if (IsOpenMpt(f))
+				return -1;
 
 			return 0;
 		}
@@ -1524,7 +1528,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					else if (ifh.Cwt == 0x7fff)
 						tracker_Name = "munch.py";
 					else
-						tracker_Name = string.Format("Unknown ({0:x4}", ifh.Cwt);
+						tracker_Name = string.Format("Unknown ({0:x4})", ifh.Cwt);
 
 					break;
 				}
@@ -1556,7 +1560,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 						default:
 						{
-							tracker_Name = string.Format("Unknown ({0:x4}", ifh.Cwt);
+							tracker_Name = string.Format("Unknown ({0:x4})", ifh.Cwt);
 							break;
 						}
 					}
@@ -2227,6 +2231,40 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			}
 
 			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private bool IsOpenMpt(Hio f)
+		{
+			// Start to check the version
+			if (f.Hio_Seek(40, SeekOrigin.Begin) < 0)
+				return false;
+
+			uint16 cwt = f.Hio_Read16L();
+			if ((cwt < 0x0889) || (cwt > 0x0fff))
+				return false;
+
+			// Check for the "228" mark
+			if (f.Hio_Seek(-4, SeekOrigin.End) < 0)
+				return false;
+
+			uint32 offset = f.Hio_Read32L();
+			if (offset >= f.Hio_Size())
+				return false;
+
+			if (f.Hio_Seek((c_long)offset, SeekOrigin.Begin) < 0)
+				return false;
+
+			if ((f.Hio_Read32B() & 0xffffff00) == 0x32323800)
+				return true;
+
+			return false;
 		}
 		#endregion
 	}

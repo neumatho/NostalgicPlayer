@@ -490,6 +490,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayerData);
 
 			ctx.P = clonedSnapshot.PlayerData;
+
+			virt.LibXmp_Virt_Reset();
 		}
 	}
 }

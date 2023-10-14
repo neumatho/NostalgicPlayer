@@ -110,10 +110,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				Mix_All.LibXmp_Mix_Mono_16Bit_Spline,
 				Mix_All.LibXmp_Mix_Stereo_8Bit_Spline,
 				Mix_All.LibXmp_Mix_Stereo_16Bit_Spline,
-				null,
-				null,
-				null,
-				null
+				Mix_All.LibXmp_Mix_Mono_8Bit_Spline_Filter,
+				Mix_All.LibXmp_Mix_Mono_16Bit_Spline_Filter,
+				Mix_All.LibXmp_Mix_Stereo_8Bit_Spline_Filter,
+				Mix_All.LibXmp_Mix_Stereo_16Bit_Spline_Filter
 			};
 		}
 
@@ -825,7 +825,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Player_Data p = ctx.P;
 			Mixer_Voice vi = p.Virt.Voice_Array[voc];
 
-			visualizerChannels[vi.Root].Muted = true;
+			if (vi.Root != -1)
+				visualizerChannels[vi.Root].Muted = true;
 		}
 
 
