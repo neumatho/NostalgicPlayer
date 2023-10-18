@@ -51,7 +51,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Channel Player 2 | .ch2 / .chn / .chan | ProWizard | ModTracker |
 | Channel Player 3 | .ch3 / .chn / .chan | ProWizard | ModTracker |
 | ChipTracker | .chp / .chip / .krs / .kris | ProWizard | ModTracker |
-| Composer 669 | .669 | MikMod Converter | MikMod |
+| Composer 669 | .669 | | Xmp |
 | David Whittaker | .dw | | David Whittaker |
 | Delta Music 1.0 | .dm1 | | Delta Music 1.0 |
 | Delta Music 2.0 | .dm2 | | Delta Music 2.0 |
@@ -183,7 +183,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | UltraTracker | .ult | MikMod Converter | MikMod |
 | Unic Tracker | .unic | ProWizard | ModTracker |
 | UniMod | .uni | MikMod Converter | MikMod |
-| Unis 669 | .669 | MikMod Converter | MikMod |
+| Unis 669 | .669 | | Xmp |
 | Unreal Music File | .umx | MikMod Converter | MikMod |
 | Wanton Packer | .wnp | ProWizard | ModTracker |
 | Xann Packer | .xann | ProWizard | ModTracker |

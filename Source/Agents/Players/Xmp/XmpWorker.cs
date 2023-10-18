@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 	/// </summary>
 	internal class XmpWorker : ModulePlayerWithPositionDurationAgentBase
 	{
-		private readonly Guid currentFormatId;
+		private readonly Xmp_Format_Info currentFormat;
 
 		private LibXmp libXmp;
 		private Xmp_Module_Info moduleInfo;
@@ -50,7 +50,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		/********************************************************************/
 		public XmpWorker(Guid formatId)
 		{
-			currentFormatId = formatId;
+			currentFormat = LibXmp.Xmp_Get_Format_Info_List().First(x => x.Id == formatId);
 		}
 
 		#region IPlayerAgent implementation
@@ -81,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		/// null or an empty string, nothing extra is shown
 		/// </summary>
 		/********************************************************************/
-		public override string ExtraFormatInfo => moduleInfo.Mod.Type;
+		public override string ExtraFormatInfo => moduleInfo.Mod.Type.Equals(currentFormat.Name, StringComparison.InvariantCultureIgnoreCase) ? null : moduleInfo.Mod.Type;
 
 
 
@@ -229,7 +229,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 			libXmp = LibXmp.Xmp_Create_Context();
 
-			libXmp.Xmp_Set_Load_Format(currentFormatId);
+			libXmp.Xmp_Set_Load_Format(currentFormat.Id);
 			int retVal = libXmp.Xmp_Load_Module_From_File(fileInfo.ModuleStream);
 
 			if (retVal != 0)

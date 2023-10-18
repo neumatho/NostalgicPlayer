@@ -33,6 +33,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_int DefPan(Module_Data m, c_int x)
+		{
+			return 0x80 + (x - 0x80) * m.DefPan / 100;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static uint32 Magic4(char a, char b, char c, char d)
 		{
 			return ((uint32)a << 24) | ((uint32)b << 16) | ((uint32)c << 8) | d;
