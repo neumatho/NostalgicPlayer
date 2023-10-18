@@ -33,6 +33,16 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Fuzzer
 			ret = LoadModule(Path.Combine(dataDirectory, "F"), "Load_Xm_Vorbis_Crash2.oxm", opaque);
 			Assert.AreEqual(-(c_int)Xmp_Error.Load, ret, "Module load (2)");
 
+			// This input OXM caused heap corruption in stb_vorbis due to
+			// the bounding of f->temp_memory_required being slightly off
+			ret = LoadModule(Path.Combine(dataDirectory, "F"), "Load_Xm_Vorbis_Crash3.oxm", opaque);
+			Assert.AreEqual(-(c_int)Xmp_Error.Load, ret, "Module load (3)");
+
+			// This input OXM caused out-of-bounds reads of the multiplicands
+			// array due to a bad clamp on the number of dimensions to decode
+			ret = LoadModule(Path.Combine(dataDirectory, "F"), "Load_Xm_Vorbis_Crash4.oxm", opaque);
+			Assert.AreEqual(-(c_int)Xmp_Error.Load, ret, "Module load (4)");
+
 			opaque.Xmp_Free_Context();
 		}
 	}

@@ -80,8 +80,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Mixer
 			Xmp_Context ctx = GetContext(opaque);
 			Mixer_Data s = ctx.S;
 
-			opaque.Xmp_Start_Player(8000, Xmp_Format.Mono);
-			opaque.Xmp_Set_Player(Xmp_Player.Interp, (c_int)Xmp_Interp.Spline);
+			opaque.Xmp_Start_Player(rate, Xmp_Format.Mono);
+			opaque.Xmp_Set_Player(Xmp_Player.Interp, (c_int)interp);
 
 			for (c_int i = 0; i < Render_Frames; i++)
 			{

@@ -238,7 +238,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				// Allow more complex order reuse only in main sequence
 				if ((ep != 0) && (p.Sequence_Control[ord] != 0xff))
+				{
+					// ...unless it's an end marker. Two sequences (7 and 8) in
+					// "alien incident - leohou2.s3m" by Purple Motion share the
+					// same S3M_END due to an off-by-one pattern jump
+					if (has_Marker && (pat == S3M_End))
+					{
+						ord = mod.Len;
+						continue;
+					}
 					break;
+				}
 
 				p.Sequence_Control[ord] = (uint8)chain;
 
@@ -687,6 +697,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				pat = mod.Xxo[ord];
 				if ((pat >= mod.Pat) || (row >= mod.Xxp[pat].Rows))
 					row = 0;
+
+				// Currently to detect the end of the sequence, the player needs the
+				// end to be a real position and row, so skip invalid and S3M_SKIP.
+				// "amazonas-dynomite mix.it" by Skaven has a sequence (9) where an
+				// S3M_END repeats into an S3M_SKIP
+				while ((ord < mod.Len) && (mod.Xxo[ord] >= mod.Pat))
+					ord++;
 			}
 
 			p.Scan[chain].Num = m.Scan_Cnt[ord][row];

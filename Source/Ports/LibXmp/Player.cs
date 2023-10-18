@@ -2572,25 +2572,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				if ((p.Ord >= mod.Len) || mark)
 				{
 					if ((mod.Rst > mod.Len) || (mod.Xxo[mod.Rst] >= mod.Pat) || (p.Ord < m.Seq_Data[p.Sequence].Entry_Point))
-					{
-						// Increment loop count. This will make the player to quit like other modules when
-						// playing sequence 8 of "alien incident - leohou2.s3m" by Purple Motion
-						if (p.Ord < m.Seq_Data[p.Sequence].Entry_Point)
-							p.Loop_Count++;
-
 						p.Ord = m.Seq_Data[p.Sequence].Entry_Point;
-					}
 					else
 					{
 						if (lib.scan.LibXmp_Get_Sequence(mod.Rst) == p.Sequence)
 							p.Ord = mod.Rst;
 						else
-						{
 							p.Ord = m.Seq_Data[p.Sequence].Entry_Point;
-
-							// Increment loop count here too. This will fix e.g. "amazonas-dynomite mix.it" by Skaven
-							p.Loop_Count++;
-						}
 					}
 
 					// This might be a marker, so delay updating global
