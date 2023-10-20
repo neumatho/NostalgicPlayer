@@ -159,5 +159,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		/// 
 		/// </summary>
 		public bool Compare_VBlank;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public Xmp_Module_Flags Module_Flags;
 	}
 }

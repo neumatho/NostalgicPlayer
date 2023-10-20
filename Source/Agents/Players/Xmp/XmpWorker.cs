@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
@@ -30,6 +31,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 		private int playingPosition;
 		private int playingPattern;
+		private int[] playingTracks;
 		private int currentSpeed;
 		private int currentTempo;
 
@@ -38,10 +40,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 		private MixerInfo lastMixerInfo;
 
-		private const int InfoPositionLine = 5;
-		private const int InfoPatternOrTracksLine = 6;
-		private const int InfoSpeedLine = 7;
-		private const int InfoTempoLine = 8;
+		private const int InfoPositionLine = 4;
+		private const int InfoPatternOrTracksLine = 5;
+		private const int InfoSpeedLine = 6;
+		private const int InfoTempoLine = 7;
 
 		/********************************************************************/
 		/// <summary>
@@ -131,66 +133,70 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 					break;
 				}
 
-				// Used patterns
+				// Used patterns or Used Tracks
 				case 1:
 				{
-					description = Resources.IDS_XMP_INFODESCLINE1;
-					value = moduleInfo.Mod.Pat.ToString();
-					break;
-				}
-
-				// Used tracks
-				case 2:
-				{
-					description = Resources.IDS_XMP_INFODESCLINE2;
-					value = moduleInfo.Mod.Trk.ToString();
+					if ((moduleInfo.Flags & Xmp_Module_Flags.Uses_Tracks) != 0)
+					{
+						description = Resources.IDS_XMP_INFODESCLINE1b;
+						value = moduleInfo.Mod.Trk.ToString();
+					}
+					else
+					{
+						description = Resources.IDS_XMP_INFODESCLINE1a;
+						value = moduleInfo.Mod.Pat.ToString();
+					}
 					break;
 				}
 
 				// Used instruments
-				case 3:
+				case 2:
 				{
-					description = Resources.IDS_XMP_INFODESCLINE3;
+					description = Resources.IDS_XMP_INFODESCLINE2;
 					value = moduleInfo.Mod.Ins.ToString();
 					break;
 				}
 
 				// Used samples
-				case 4:
+				case 3:
 				{
-					description = Resources.IDS_XMP_INFODESCLINE4;
+					description = Resources.IDS_XMP_INFODESCLINE3;
 					value = moduleInfo.Mod.Smp.ToString();
 					break;
 				}
 
 				// Playing position
-				case 5:
+				case 4:
 				{
-					description = Resources.IDS_XMP_INFODESCLINE5;
+					description = Resources.IDS_XMP_INFODESCLINE4;
 					value = playingPosition.ToString();
 					break;
 				}
 
 				// Playing pattern or Playing tracks
-				case 6:
+				case 5:
 				{
-					description = Resources.IDS_XMP_INFODESCLINE6a;
+					if ((moduleInfo.Flags & Xmp_Module_Flags.Uses_Tracks) != 0)
+						description = Resources.IDS_XMP_INFODESCLINE5b;
+					else
+						description = Resources.IDS_XMP_INFODESCLINE5a;
+
 					value = FormatPatternOrTracks();
 					break;
 				}
 
 				// Current speed
-				case 7:
+				case 6:
 				{
-					description = Resources.IDS_XMP_INFODESCLINE7;
+					description = Resources.IDS_XMP_INFODESCLINE6;
 					value = currentSpeed.ToString();
 					break;
 				}
 
 				// Current tempo (BPM)
-				case 8:
+				case 7:
 				{
-					description = Resources.IDS_XMP_INFODESCLINE8;
+					description = Resources.IDS_XMP_INFODESCLINE7;
 					value = currentTempo.ToString();
 					break;
 				}
@@ -374,6 +380,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 			{
 				playingPosition = afterInfo.Pos;
 				playingPattern = afterInfo.Pattern;
+				playingTracks = afterInfo.Playing_Tracks;
 
 				MarkPositionAsVisited(playingPosition);
 
@@ -723,6 +730,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 			playingPosition = frameInfo.Pos;
 			playingPattern = frameInfo.Pattern;
+			playingTracks = frameInfo.Playing_Tracks;
 			currentSpeed = frameInfo.Speed;
 			currentTempo = frameInfo.Bpm;
 		}
@@ -800,7 +808,32 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		/********************************************************************/
 		private string FormatPatternOrTracks()
 		{
+			if ((moduleInfo.Flags & Xmp_Module_Flags.Uses_Tracks) != 0)
+				return FormatTracks();
+
 			return playingPattern.ToString();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the playing tracks
+		/// </summary>
+		/********************************************************************/
+		private string FormatTracks()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < ModuleChannelCount; i++)
+			{
+				sb.Append(playingTracks[i]);
+				sb.Append(", ");
+			}
+
+			sb.Remove(sb.Length - 2, 2);
+
+			return sb.ToString();
 		}
 		#endregion
 	}

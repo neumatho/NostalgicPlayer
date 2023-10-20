@@ -98,6 +98,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			m.Comment = null;
 			m.Scan_Cnt = null;
 			m.Midi = null;
+			m.Module_Flags = Xmp_Module_Flags.None;
 
 			// Set defaults
 			m.Mod.Pat = 0;

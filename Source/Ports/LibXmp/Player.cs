@@ -476,6 +476,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			info.Seq_Data = m.Seq_Data;
 			info.Vol_Base = m.VolBase;
 			info.C5Speeds = m.Xtra?.Select(x => x.C5Spd).ToArray();
+			info.Flags = m.Module_Flags;
 		}
 
 
@@ -571,6 +572,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					}
 				}
 			}
+
+			Array.Copy(mod.Xxp[info.Pattern].Index, info.Playing_Tracks, chn);
 		}
 
 		#region Private methods

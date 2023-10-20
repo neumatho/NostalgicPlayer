@@ -44,5 +44,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// C-5 speeds for each sample
 		/// </summary>
 		public c_double[] C5Speeds;
+
+		/// <summary>
+		/// Different flags
+		/// </summary>
+		public Xmp_Module_Flags Flags;
 	}
 }

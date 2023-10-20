@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 	/// </summary>
 	internal class Format
 	{
-		private const int Num_Formats = 7;
+		private const int Num_Formats = 8;
 		private const int Num_Pw_Formats = 0;
 
 		private static readonly Xmp_Format_Info[] _fArray = new Xmp_Format_Info[Num_Formats + Num_Pw_Formats + 1];
@@ -29,6 +29,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Xm_Load.LibXmp_Loader_OggMod,
 			It_Load.LibXmp_Loader_It,
 			S3M_Load.LibXmp_Loader_S3M,
+			Amf_Load.LibXmp_Loader_Amf,
 			Gdm_Load.LibXmp_Loader_Gdm,
 			_669_Load.LibXmp_Loader_Composer669,
 			_669_Load.LibXmp_Loader_Unis669,

@@ -93,14 +93,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp {
         /// <summary>
         ///   Looks up a localized string similar to Used patterns:.
         /// </summary>
-        internal static string IDS_XMP_INFODESCLINE1 {
+        internal static string IDS_XMP_INFODESCLINE1a {
             get {
-                return ResourceManager.GetString("IDS_XMP_INFODESCLINE1", resourceCulture);
+                return ResourceManager.GetString("IDS_XMP_INFODESCLINE1a", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Used tracks:.
+        /// </summary>
+        internal static string IDS_XMP_INFODESCLINE1b {
+            get {
+                return ResourceManager.GetString("IDS_XMP_INFODESCLINE1b", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Used instruments:.
         /// </summary>
         internal static string IDS_XMP_INFODESCLINE2 {
             get {
@@ -109,7 +118,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Used instruments:.
+        ///   Looks up a localized string similar to Used samples:.
         /// </summary>
         internal static string IDS_XMP_INFODESCLINE3 {
             get {
@@ -118,7 +127,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Used samples:.
+        ///   Looks up a localized string similar to Playing position:.
         /// </summary>
         internal static string IDS_XMP_INFODESCLINE4 {
             get {
@@ -127,47 +136,38 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Playing position:.
-        /// </summary>
-        internal static string IDS_XMP_INFODESCLINE5 {
-            get {
-                return ResourceManager.GetString("IDS_XMP_INFODESCLINE5", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Playing pattern:.
         /// </summary>
-        internal static string IDS_XMP_INFODESCLINE6a {
+        internal static string IDS_XMP_INFODESCLINE5a {
             get {
-                return ResourceManager.GetString("IDS_XMP_INFODESCLINE6a", resourceCulture);
+                return ResourceManager.GetString("IDS_XMP_INFODESCLINE5a", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Playing tracks:.
         /// </summary>
-        internal static string IDS_XMP_INFODESCLINE6b {
+        internal static string IDS_XMP_INFODESCLINE5b {
             get {
-                return ResourceManager.GetString("IDS_XMP_INFODESCLINE6b", resourceCulture);
+                return ResourceManager.GetString("IDS_XMP_INFODESCLINE5b", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Current speed:.
         /// </summary>
-        internal static string IDS_XMP_INFODESCLINE7 {
+        internal static string IDS_XMP_INFODESCLINE6 {
             get {
-                return ResourceManager.GetString("IDS_XMP_INFODESCLINE7", resourceCulture);
+                return ResourceManager.GetString("IDS_XMP_INFODESCLINE6", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Current tempo (BPM):.
         /// </summary>
-        internal static string IDS_XMP_INFODESCLINE8 {
+        internal static string IDS_XMP_INFODESCLINE7 {
             get {
-                return ResourceManager.GetString("IDS_XMP_INFODESCLINE8", resourceCulture);
+                return ResourceManager.GetString("IDS_XMP_INFODESCLINE7", resourceCulture);
             }
         }
         

@@ -129,31 +129,31 @@ This player uses the LibXmp which stands for Extended Module Player Library. It 
   <data name="IDS_XMP_INFODESCLINE0" xml:space="preserve">
     <value>Number of positions:</value>
   </data>
-  <data name="IDS_XMP_INFODESCLINE1" xml:space="preserve">
+  <data name="IDS_XMP_INFODESCLINE1a" xml:space="preserve">
     <value>Used patterns:</value>
   </data>
-  <data name="IDS_XMP_INFODESCLINE2" xml:space="preserve">
+  <data name="IDS_XMP_INFODESCLINE1b" xml:space="preserve">
     <value>Used tracks:</value>
   </data>
-  <data name="IDS_XMP_INFODESCLINE3" xml:space="preserve">
+  <data name="IDS_XMP_INFODESCLINE2" xml:space="preserve">
     <value>Used instruments:</value>
   </data>
-  <data name="IDS_XMP_INFODESCLINE4" xml:space="preserve">
+  <data name="IDS_XMP_INFODESCLINE3" xml:space="preserve">
     <value>Used samples:</value>
   </data>
-  <data name="IDS_XMP_INFODESCLINE5" xml:space="preserve">
+  <data name="IDS_XMP_INFODESCLINE4" xml:space="preserve">
     <value>Playing position:</value>
   </data>
-  <data name="IDS_XMP_INFODESCLINE6a" xml:space="preserve">
+  <data name="IDS_XMP_INFODESCLINE5a" xml:space="preserve">
     <value>Playing pattern:</value>
   </data>
-  <data name="IDS_XMP_INFODESCLINE6b" xml:space="preserve">
+  <data name="IDS_XMP_INFODESCLINE5b" xml:space="preserve">
     <value>Playing tracks:</value>
   </data>
-  <data name="IDS_XMP_INFODESCLINE7" xml:space="preserve">
+  <data name="IDS_XMP_INFODESCLINE6" xml:space="preserve">
     <value>Current speed:</value>
   </data>
-  <data name="IDS_XMP_INFODESCLINE8" xml:space="preserve">
+  <data name="IDS_XMP_INFODESCLINE7" xml:space="preserve">
     <value>Current tempo (BPM):</value>
   </data>
   <data name="IDS_XMP_NAME" xml:space="preserve">
