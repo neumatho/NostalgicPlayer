@@ -41,7 +41,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | AC1D Packer | .ac1d / .ac1 | ProWizard | ModTracker |
 | AHX 1.x | .ahx / .thx | | AHX |
 | AHX 2.x | .ahx / .thx | | AHX |
-| Asylum | .amf | MikMod Converter | MikMod |
+| Asylum Music Format | .amf | | Xmp |
 | Atari Octalyser | .mod | | ModTracker |
 | Audio Sculpture | .adsc | | ModTracker |
 | AudioIFF | .aiff / .aif | | Sample |
