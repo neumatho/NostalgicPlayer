@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Loader
 		{
 			Ports.LibXmp.LibXmp opaque = Ports.LibXmp.LibXmp.Xmp_Create_Context();
 
-			c_int ret = LoadModule(Path.Combine(dataDirectory, "M"), "Revelution.amf", opaque);
+			c_int ret = LoadModule(Path.Combine(dataDirectory, "M"), "Beat It Up.amf", opaque);
 			Assert.AreEqual(0, ret, "Module load");
 
 			opaque.Xmp_Get_Module_Info(out Xmp_Module_Info info);
