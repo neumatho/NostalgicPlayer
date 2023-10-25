@@ -185,13 +185,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			{
 				case Keys.Left:
 				{
-					ShowPreviousPicture();
+					if (navigator.SelectedIndex == (int)ModuleSettings.ModuleInfoTab.Pictures)
+						ShowPreviousPicture();
+
 					return true;
 				}
 
 				case Keys.Right:
 				{
-					ShowNextPicture();
+					if (navigator.SelectedIndex == (int)ModuleSettings.ModuleInfoTab.Pictures)
+						ShowNextPicture();
+
 					return true;
 				}
 			}

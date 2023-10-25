@@ -5,7 +5,6 @@
 /******************************************************************************/
 using System;
 using System.Linq;
-using Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
