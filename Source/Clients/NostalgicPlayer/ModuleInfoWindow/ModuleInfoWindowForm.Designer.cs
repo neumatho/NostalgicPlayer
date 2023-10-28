@@ -38,10 +38,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			navigatorInfoPage = new Krypton.Navigator.KryptonPage();
 			navigatorCommentPage = new Krypton.Navigator.KryptonPage();
 			commentGroup = new Krypton.Toolkit.KryptonGroup();
-			moduleInfoCommentReadOnlyRichTextBox = new Controls.ReadOnlyRichTextBox();
+			moduleInfoCommentReadOnlyTextBox = new Controls.ReadOnlyTextBox();
 			navigatorLyricsPage = new Krypton.Navigator.KryptonPage();
 			lyricsGroup = new Krypton.Toolkit.KryptonGroup();
-			moduleInfoLyricsReadOnlyRichTextBox = new Controls.ReadOnlyRichTextBox();
+			moduleInfoLyricsReadOnlyTextBox = new Controls.ReadOnlyTextBox();
 			navigatorPicturePage = new Krypton.Navigator.KryptonPage();
 			pictureGroup = new Krypton.Toolkit.KryptonGroup();
 			previousPictureButton = new System.Windows.Forms.PictureBox();
@@ -162,7 +162,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			navigatorCommentPage.LastVisibleSet = true;
 			navigatorCommentPage.MinimumSize = new System.Drawing.Size(50, 50);
 			navigatorCommentPage.Name = "navigatorCommentPage";
-			navigatorCommentPage.Size = new System.Drawing.Size(282, 157);
+			navigatorCommentPage.Size = new System.Drawing.Size(282, 158);
 			navigatorCommentPage.Text = "";
 			navigatorCommentPage.ToolTipTitle = "Page ToolTip";
 			navigatorCommentPage.UniqueName = "a6135a5732ce46a98b44f9d9f3bed53f";
@@ -175,18 +175,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			// 
 			// 
 			// 
-			commentGroup.Panel.Controls.Add(moduleInfoCommentReadOnlyRichTextBox);
-			commentGroup.Size = new System.Drawing.Size(266, 141);
+			commentGroup.Panel.Controls.Add(moduleInfoCommentReadOnlyTextBox);
+			commentGroup.Size = new System.Drawing.Size(266, 142);
 			commentGroup.StateCommon.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
 			commentGroup.TabIndex = 0;
 			// 
-			// moduleInfoCommentReadOnlyRichTextBox
+			// moduleInfoCommentReadOnlyTextBox
 			// 
-			moduleInfoCommentReadOnlyRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			moduleInfoCommentReadOnlyRichTextBox.Location = new System.Drawing.Point(0, 0);
-			moduleInfoCommentReadOnlyRichTextBox.Name = "moduleInfoCommentReadOnlyRichTextBox";
-			moduleInfoCommentReadOnlyRichTextBox.Size = new System.Drawing.Size(266, 141);
-			moduleInfoCommentReadOnlyRichTextBox.TabIndex = 0;
+			moduleInfoCommentReadOnlyTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			moduleInfoCommentReadOnlyTextBox.Location = new System.Drawing.Point(0, 0);
+			moduleInfoCommentReadOnlyTextBox.Name = "moduleInfoCommentReadOnlyTextBox";
+			moduleInfoCommentReadOnlyTextBox.Size = new System.Drawing.Size(266, 142);
+			moduleInfoCommentReadOnlyTextBox.TabIndex = 0;
 			// 
 			// navigatorLyricsPage
 			// 
@@ -209,18 +209,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			// 
 			// 
 			// 
-			lyricsGroup.Panel.Controls.Add(moduleInfoLyricsReadOnlyRichTextBox);
+			lyricsGroup.Panel.Controls.Add(moduleInfoLyricsReadOnlyTextBox);
 			lyricsGroup.Size = new System.Drawing.Size(266, 142);
 			lyricsGroup.StateCommon.Border.DrawBorders = Krypton.Toolkit.PaletteDrawBorders.None;
 			lyricsGroup.TabIndex = 0;
 			// 
-			// moduleInfoLyricsReadOnlyRichTextBox
+			// moduleInfoLyricsReadOnlyTextBox
 			// 
-			moduleInfoLyricsReadOnlyRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			moduleInfoLyricsReadOnlyRichTextBox.Location = new System.Drawing.Point(0, 0);
-			moduleInfoLyricsReadOnlyRichTextBox.Name = "moduleInfoLyricsReadOnlyRichTextBox";
-			moduleInfoLyricsReadOnlyRichTextBox.Size = new System.Drawing.Size(266, 142);
-			moduleInfoLyricsReadOnlyRichTextBox.TabIndex = 0;
+			moduleInfoLyricsReadOnlyTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			moduleInfoLyricsReadOnlyTextBox.Location = new System.Drawing.Point(0, 0);
+			moduleInfoLyricsReadOnlyTextBox.Name = "moduleInfoLyricsReadOnlyTextBox";
+			moduleInfoLyricsReadOnlyTextBox.Size = new System.Drawing.Size(266, 142);
+			moduleInfoLyricsReadOnlyTextBox.TabIndex = 0;
 			// 
 			// navigatorPicturePage
 			// 
@@ -348,9 +348,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		private Krypton.Navigator.KryptonPage navigatorInfoPage;
 		private Krypton.Navigator.KryptonPage navigatorCommentPage;
 		private Krypton.Toolkit.KryptonGroup commentGroup;
-		private Controls.ReadOnlyRichTextBox moduleInfoCommentReadOnlyRichTextBox;
 		private Krypton.Navigator.KryptonPage navigatorLyricsPage;
-		private Controls.ReadOnlyRichTextBox moduleInfoLyricsReadOnlyRichTextBox;
 		private Krypton.Toolkit.KryptonGroup lyricsGroup;
 		private GuiKit.Components.FontPalette fontPalette;
 		private Krypton.Navigator.KryptonPage navigatorPicturePage;
@@ -360,5 +358,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		private System.Windows.Forms.PictureBox pictureBox;
 		private System.Windows.Forms.PictureBox pictureLabelPictureBox;
 		private System.Windows.Forms.Timer animationTimer;
+		private Controls.ReadOnlyTextBox moduleInfoCommentReadOnlyTextBox;
+		private Controls.ReadOnlyTextBox moduleInfoLyricsReadOnlyTextBox;
 	}
 }

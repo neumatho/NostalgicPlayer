@@ -137,8 +137,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			{
 				// Remove all the items
 				moduleInfoInfoDataGridView.Rows.Clear();
-				moduleInfoCommentReadOnlyRichTextBox.Clear();
-				moduleInfoLyricsReadOnlyRichTextBox.Clear();
+				moduleInfoCommentReadOnlyTextBox.Lines = null;
+				moduleInfoLyricsReadOnlyTextBox.Lines = null;
 
 				CleanupPictures();
 
@@ -521,10 +521,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 					navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Comments].Visible = true;
 
 					// Switch font
-					moduleInfoCommentReadOnlyRichTextBox.SetFont(staticInfo.CommentFont ?? FontPalette.GetMonospaceFont());
+					moduleInfoCommentReadOnlyTextBox.Font = staticInfo.CommentFont ?? FontPalette.GetMonospaceFont();
 
 					// Set text
-					moduleInfoCommentReadOnlyRichTextBox.Lines = staticInfo.Comment;
+					moduleInfoCommentReadOnlyTextBox.Lines = staticInfo.Comment;
 				}
 				else
 					navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Comments].Visible = false;
@@ -535,10 +535,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 					navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Lyrics].Visible = true;
 
 					// Switch font
-					moduleInfoLyricsReadOnlyRichTextBox.SetFont(staticInfo.LyricsFont ?? FontPalette.GetMonospaceFont());
+					moduleInfoLyricsReadOnlyTextBox.Font = staticInfo.LyricsFont ?? FontPalette.GetMonospaceFont();
 
 					// Set text
-					moduleInfoLyricsReadOnlyRichTextBox.Lines = staticInfo.Lyrics;
+					moduleInfoLyricsReadOnlyTextBox.Lines = staticInfo.Lyrics;
 				}
 				else
 					navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Lyrics].Visible = false;
