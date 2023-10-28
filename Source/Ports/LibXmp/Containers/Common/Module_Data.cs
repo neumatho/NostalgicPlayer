@@ -5,6 +5,7 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
+using Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras;
 
 namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 {
@@ -138,7 +139,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		/// <summary>
 		/// Format-specific extra fields
 		/// </summary>
-		public object Extra;
+		public IModuleExtra Extra;
 
 		/// <summary>
 		/// Scan counters

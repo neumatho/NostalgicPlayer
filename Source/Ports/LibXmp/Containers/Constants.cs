@@ -22,6 +22,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers
 		public const c_int Default_Mix = 100;
 
 		public const c_double Default_Time_Factor = 10.0;
+		public const c_double Far_Time_Factor = 4.01373;// See Far_Extras
 
 		public const c_int Max_Sequences = 255;
 		public const c_int Max_Sample_Size = 0x10000000;

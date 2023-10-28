@@ -13,7 +13,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Format
 	/// </summary>
 	internal class Format_Loader
 	{
-		public delegate IFormatLoader Create_Delegate(LibXmp libXmp);
+		public delegate IFormatLoader Create_Delegate(LibXmp libXmp, Xmp_Context ctx);
 
 		public Guid Id;
 		public string Name;

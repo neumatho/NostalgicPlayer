@@ -15,6 +15,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 	/// </summary>
 	internal class Period
 	{
+		// Gravis Ultrasound frequency increments in steps of Hz/1024, where Hz is the
+		// current rate of the card and is dependent on the active channel count.
+		// For <=14 channels, the rate is 44100. For 15 to 32 channels, the rate is
+		// round(14 * 44100 / active_channels)
+		private static readonly c_double[] gus_Rates = new c_double[]
+		{
+			/* <= 14 */ 44100.0,
+			/* 15-20 */ 41160.0,  38587.5,  36317.65, 34300.0, 32494.74, 30870.0,
+			/* 21-26 */ 29400.0,  28063.64, 26843.48, 25725.0, 24696.0,  23746.15,
+			/* 27-32 */ 22866.67, 22050.0,  21289.66, 20580.0, 19916.13, 19294.75
+		};
+
 		private const c_double M_LN2 = 0.69314718055994530942;
 
 		private readonly Xmp_Context ctx;
@@ -142,6 +154,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			c_int c = (c_int)(1536.0 * Math.Log((c_double)c2Spd / 8363) / M_LN2);
 			n = c / 128;
 			f = c % 128;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Get a Gravis Ultrasound frequency offset in Hz for a given number
+		/// of steps
+		/// </summary>
+		/********************************************************************/
+		public c_double LibXmp_Gus_Frequency_Steps(c_int num_Steps, c_int num_Channels_Active)
+		{
+			Common.Clamp(ref num_Channels_Active, 14, 32);
+
+			return (num_Steps * gus_Rates[num_Channels_Active - 14]) / 1024.0;
 		}
 
 		#region Private methods

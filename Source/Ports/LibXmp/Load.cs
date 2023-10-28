@@ -322,7 +322,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			{
 				h.Hio_Seek(0, SeekOrigin.Begin);
 
-				IFormatLoader loader = Format.format_Loaders[i].Create(lib);
+				IFormatLoader loader = Format.format_Loaders[i].Create(lib, ctx);
 
 				if (loader.Test(h, out string buf, 0) == 0)
 				{
@@ -362,7 +362,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					h.Hio_Seek(0, SeekOrigin.Begin);
 
-					IFormatLoader loader = Format.format_Loaders[i].Create(lib);
+					IFormatLoader loader = Format.format_Loaders[i].Create(lib, ctx);
 
 					test_Result = loader.Test(h, out _, 0);
 					if (test_Result == 0)

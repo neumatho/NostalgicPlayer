@@ -415,7 +415,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// Create a new instance of the loader
 		/// </summary>
 		/********************************************************************/
-		private static IFormatLoader Create_Xm(LibXmp libXmp)
+		private static IFormatLoader Create_Xm(LibXmp libXmp, Xmp_Context ctx)
 		{
 			return new Xm_Load(libXmp, Format.Xm);
 		}
@@ -427,7 +427,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// Create a new instance of the loader
 		/// </summary>
 		/********************************************************************/
-		private static IFormatLoader Create_OggMod(LibXmp libXmp)
+		private static IFormatLoader Create_OggMod(LibXmp libXmp, Xmp_Context ctx)
 		{
 			return new Xm_Load(libXmp, Format.OggMod);
 		}

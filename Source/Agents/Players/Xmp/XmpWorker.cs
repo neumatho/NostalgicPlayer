@@ -528,7 +528,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 					if (inst != null)
 					{
-						sampleInfo.Volume = (ushort)(inst.Vol * 4);
+						sampleInfo.Volume = (ushort)(inst.Vol * (256.0f / moduleInfo.Vol_Base));
 
 						if (sub != null)
 							sampleInfo.Panning = (short)sub.Pan;

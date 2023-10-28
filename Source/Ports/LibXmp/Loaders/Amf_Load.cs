@@ -29,7 +29,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Id = Guid.Parse("D1499BF4-82D2-4B9C-9CDA-7D2ADE977E63"),
 			Name = "Digital Sound and Music Interface",
 			Description = "This loader recognizes the “Advanced Module Format”, which is the internal module format of the “Digital Sound and Music Interface” (DSMI) library.\n\nThis format has the same limitations as the S3M format. The most famous DSMI application was DMP, the Dual Module Player.\n\nDMP and the DSMI library were written by Otto Chrons. DSMI was first released in 1993.",
-			Create = Create_Amf
+			Create = Create
 		};
 
 		/********************************************************************/
@@ -50,7 +50,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// Create a new instance of the loader
 		/// </summary>
 		/********************************************************************/
-		private static IFormatLoader Create_Amf(LibXmp libXmp)
+		private static IFormatLoader Create(LibXmp libXmp, Xmp_Context ctx)
 		{
 			return new Amf_Load(libXmp);
 		}

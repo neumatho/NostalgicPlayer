@@ -152,7 +152,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// Create a new instance of the loader
 		/// </summary>
 		/********************************************************************/
-		private static IFormatLoader Create_Composer(LibXmp libXmp)
+		private static IFormatLoader Create_Composer(LibXmp libXmp, Xmp_Context ctx)
 		{
 			return new _669_Load(libXmp, Format.Composer);
 		}
@@ -164,7 +164,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// Create a new instance of the loader
 		/// </summary>
 		/********************************************************************/
-		private static IFormatLoader Create_Unis(LibXmp libXmp)
+		private static IFormatLoader Create_Unis(LibXmp libXmp, Xmp_Context ctx)
 		{
 			return new _669_Load(libXmp, Format.Unis);
 		}

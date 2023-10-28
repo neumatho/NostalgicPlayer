@@ -13,13 +13,14 @@ using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Virt;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
+using Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras;
 
 namespace Polycode.NostalgicPlayer.Ports.LibXmp
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	internal partial class Player
+	internal partial class Player : Player_Helpers
 	{
 		#region Retrig_Control class
 		private class Retrig_Control
@@ -577,175 +578,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		}
 
 		#region Private methods
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Set(Channel_Data xc, Channel_Flag flag)
-		{
-			xc.Flags |= flag;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Reset(Channel_Data xc, Channel_Flag flag)
-		{
-			xc.Flags &= ~flag;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private bool Test(Channel_Data xc, Channel_Flag flag)
-		{
-			return (xc.Flags & flag) != 0;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Set_Per(Channel_Data xc, Channel_Flag flag)
-		{
-			xc.Per_Flags |= flag;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Reset_Per(Channel_Data xc, Channel_Flag flag)
-		{
-			xc.Per_Flags &= ~flag;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private bool Test_Per(Channel_Data xc, Channel_Flag flag)
-		{
-			return (xc.Per_Flags & flag) != 0;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Set_Note(Channel_Data xc, Note_Flag flag)
-		{
-			xc.Note_Flags |= flag;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Reset_Note(Channel_Data xc, Note_Flag flag)
-		{
-			xc.Note_Flags &= ~flag;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private bool Test_Note(Channel_Data xc, Note_Flag flag)
-		{
-			return (xc.Note_Flags & flag) != 0;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private bool Is_Valid_Instrument(Xmp_Module mod, c_int x)
-		{
-			return ((uint32)x < mod.Ins) && (mod.Xxi[x].Nsm > 0);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private bool Is_Valid_Instrument_Or_Sfx(Xmp_Module mod, c_int x)
-		{
-			return ((uint32)x < mod.Ins) && (mod.Xxi[x].Nsm > 0);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private bool Is_Valid_Sample(Xmp_Module mod, c_int x)
-		{
-			return ((uint32)x < mod.Smp) && (mod.Xxs[x].Data != null);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private bool Is_Valid_Note(c_int x)
-		{
-			return (uint32)x < Constants.Xmp_Max_Keys;
-		}
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// 
@@ -1494,7 +1326,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (c_int i = 0; i < p.Virt.Virt_Channels; i++)
 			{
 				Channel_Data xc = p.Xc_Data[i];
-				object extra = xc.Extra;
+				IChannelExtra extra = xc.Extra;
 				xc.Clear();
 				xc.Extra = extra;
 
@@ -1664,7 +1496,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					if ((f.RowDelay_Set == RowDelay_Flag.None) || (((f.RowDelay_Set & RowDelay_Flag.First_Frame) != 0) && (f.RowDelay > 0)))
 					{
 						LibXmp_Read_Event(ev, chn);
-//XX						LibXmp_Med_Hold_Hack(pat, chn, row);
+
+						if (m.Extra is IModuleHoldHack moduleHoldHack)
+							moduleHoldHack.Hold_Hack(pat, chn, row);
 					}
 				}
 				else

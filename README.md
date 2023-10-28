@@ -67,7 +67,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | D.O.C. SoundTracker VI | .mod | | ModTracker |
 | D.O.C. SoundTracker IX | .mod | | ModTracker |
 | Eureka Packer | .eureka / .eu | ProWizard | ModTracker |
-| Farandole Composer | .far | MikMod Converter | MikMod |
+| Farandole Composer | .far | | Xmp |
 | Fast/TakeTracker | .mod | | ModTracker |
 | FastTracker II | .xm | | Xmp |
 | FC-M Packer | .fc-m / .fcm | ProWizard | ModTracker |

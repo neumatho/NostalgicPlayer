@@ -669,7 +669,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// Create a new instance of the loader
 		/// </summary>
 		/********************************************************************/
-		public static IFormatLoader Create(LibXmp libXmp)
+		public static IFormatLoader Create(LibXmp libXmp, Xmp_Context ctx)
 		{
 			return new It_Load(libXmp);
 		}

@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras;
+
 namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 {
 	/// <summary>
@@ -74,6 +76,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// <summary>
 		/// Extra fields
 		/// </summary>
-		public object Extra;
+		public IInstrumentExtra Extra;
 	}
 }

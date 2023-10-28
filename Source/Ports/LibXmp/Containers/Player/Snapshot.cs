@@ -5,6 +5,7 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
+using Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras;
 
 namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 {
@@ -14,15 +15,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 	internal class Snapshot : ISnapshot
 	{
 		public Player_Data PlayerData;
+		public IModuleExtra ModuleExtra;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Snapshot(Player_Data playerData)
+		public Snapshot(Player_Data playerData, IModuleExtra moduleExtra)
 		{
 			PlayerData = playerData.MakeDeepClone();
+			ModuleExtra = moduleExtra?.MakeDeepClone();
 		}
 	}
 }

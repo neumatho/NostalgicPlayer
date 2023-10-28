@@ -7,6 +7,7 @@ using System;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
+using Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras;
 
 namespace Polycode.NostalgicPlayer.Ports.LibXmp
 {
@@ -171,16 +172,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			c_int speed = mod.Spd;
 			c_int base_Time = (c_int)m.RRate;
 			c_int st26_Speed = 0;
-/*//XX			c_int far_Tempo_Coarse = 4;
+			c_int far_Tempo_Coarse = 4;
 			c_int far_Tempo_Fine = 0;
 			c_int far_Tempo_Mode = 1;
 
-			if (Has_Far_Module_Extras(ctx.M))
+			if (ctx.M.Extra is Far_Module_Extra farExtras)
 			{
-				far_Tempo_Coarse = Far_Module_Extras(ctx.M).Coarse_Tempo;
-				LibXmp_Far_Translate_Tempo(far_Tempo_Mode, 0, far_Tempo_Coarse, ref far_Tempo_Fine, ref speed, ref bpm);
+				far_Tempo_Coarse = ((Far_Module_Extra.Far_Module_Extra_Info)farExtras.Module_Extras).Coarse_Tempo;
+				farExtras.LibXmp_Far_Translate_Tempo(far_Tempo_Mode, 0, far_Tempo_Coarse, ref far_Tempo_Fine, ref speed, ref bpm);
 			}
-*/
+
 			bool has_Marker = Common.Has_Quirk(m, Quirk_Flag.Marker);
 
 			// By erlk ozlr <erlk.ozlr@gmail.com>
@@ -442,9 +443,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						}
 
 						// FAR tempo processing
-/*//XX						if ((f1 == Effects.Fx_Far_Tempo) || (f1 == Effects.Fx_Far_F_Tempo))
+						if ((f1 == Effects.Fx_Far_Tempo) || (f1 == Effects.Fx_Far_F_Tempo))
 						{
-							c_int far_Speed, far_Bpm, fine_Change = 0;
+							c_int far_Speed = 0, far_Bpm = 0, fine_Change = 0;
 
 							if (f1 == Effects.Fx_Far_Tempo)
 							{
@@ -470,7 +471,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 									far_Tempo_Fine = 0;
 							}
 
-							if (LibXmp_Far_Translate_Tempo(far_Tempo_Mode, fine_Change, far_Tempo_Coarse, ref far_Tempo_Fine, ref far_Speed, ref far_Bpm) == 0)
+							if (((Far_Module_Extra)m.Extra).LibXmp_Far_Translate_Tempo(far_Tempo_Mode, fine_Change, far_Tempo_Coarse, ref far_Tempo_Fine, ref far_Speed, ref far_Bpm) == 0)
 							{
 								frame_Count += row_Count * speed;
 								row_Count = 0;
@@ -480,7 +481,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 								bpm = far_Bpm;
 							}
 						}
-*/
+
 						if (((f1 == Effects.Fx_S3M_Speed) && (p1 != 0)) || ((f2 == Effects.Fx_S3M_Speed) && (p2 != 0)))
 						{
 							parm = (f1 == Effects.Fx_S3M_Speed) ? p1 : p2;

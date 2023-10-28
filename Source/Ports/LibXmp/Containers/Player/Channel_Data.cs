@@ -7,6 +7,7 @@ using System;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
+using Polycode.NostalgicPlayer.Ports.LibXmp.FormatExtras;
 
 namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 {
@@ -280,7 +281,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 			c_int Count			// PTM note slide counter
 		) NoteSlide;
 
-		public object Extra;
+		public IChannelExtra Extra;
 
 		public Xmp_Event Delayed_Event = new Xmp_Event();
 
@@ -330,6 +331,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 			clone.Panbrello.Lfo = Panbrello.Lfo.MakeDeepClone();
 			clone.InsVib.Lfo = InsVib.Lfo.MakeDeepClone();
 			clone.Delayed_Event = Delayed_Event.MakeDeepClone();
+
+			if (Extra != null)
+			{
+				clone.Extra = Extra.MakeDeepClone();
+				clone.Extra.SetChannel(clone);
+			}
 
 			return clone;
 		}
@@ -462,7 +469,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 			NoteSlide.Speed = 0;
 			NoteSlide.Count = 0;
 
-			Extra = 0;
+			Extra = null;
 
 			Delayed_Event.Clear();
 

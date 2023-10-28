@@ -473,7 +473,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/********************************************************************/
 		public ISnapshot Xmp_Create_Snapshot()
 		{
-			return new Snapshot(ctx.P);
+			return new Snapshot(ctx.P, ctx.M.Extra);
 		}
 
 
@@ -487,9 +487,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		{
 			// Start to make a clone of the snapshot
 			Snapshot currentSnapshot = (Snapshot)snapshot;
-			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayerData);
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayerData, currentSnapshot.ModuleExtra);
 
 			ctx.P = clonedSnapshot.PlayerData;
+			ctx.M.Extra = clonedSnapshot.ModuleExtra;
 
 			virt.LibXmp_Virt_Reset();
 		}
