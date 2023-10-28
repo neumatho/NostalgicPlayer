@@ -85,8 +85,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Controls
 		/********************************************************************/
 		protected override void OnMouseWheel(MouseEventArgs e)
 		{
-			// Navigate the mouse wheel message to the scrollbar control
-			User32.SendMessageW(textVScrollBar.Handle, WM.MOUSEWHEEL, (e.Delta * SystemInformation.MouseWheelScrollLines) << 16, IntPtr.Zero);
+			if (textVScrollBar.Visible)
+			{
+				// Navigate the mouse wheel message to the scrollbar control
+				User32.SendMessageW(textVScrollBar.Handle, WM.MOUSEWHEEL, (e.Delta * SystemInformation.MouseWheelScrollLines) << 16, IntPtr.Zero);
+			}
 
 			base.OnMouseWheel(e);
 		}
