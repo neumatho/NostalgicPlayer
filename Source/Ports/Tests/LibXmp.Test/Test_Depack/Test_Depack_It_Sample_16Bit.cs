@@ -24,6 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Depack
 		[TestMethod]
 		public void Test_Depack_It_Sample_16Bit()
 		{
+			uint8[] tmp = new uint8[10000];
 			uint8[] dest = new uint8[10000];
 
 			using (Stream stream = OpenStream(dataDirectory, "It-Sample-16Bit.raw"))
@@ -31,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Depack
 				Hio f = Hio.Hio_Open_File(stream);
 				Assert.IsNotNull(f, "Can't open data file");
 
-				c_int ret = Sample.ItSex_Decompress16(f, MemoryMarshal.Cast<uint8, int16>(dest), 4646, false);
+				c_int ret = Sample.ItSex_Decompress16(f, MemoryMarshal.Cast<uint8, int16>(dest), 4646, tmp, tmp.Length, false);
 				Assert.AreEqual(0, ret, "Decompression fail");
 
 				if (Is_Big_Endian())

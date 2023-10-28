@@ -4,27 +4,39 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 {
 	/// <summary>
 	/// Public domain IT sample decompressor by Olivier Lapicque
+	///
+	/// Modified by Alice Rowan (2023)- more or less complete rewrite of the input
+	/// stream to add buffering
 	/// </summary>
 	internal static partial class Sample
 	{
+		private class It_Stream
+		{
+			public uint8[] Buf;
+			public c_int Pos;
+			public size_t Left;
+			public uint32 Bits;
+			public c_int Num_Bits;
+			public c_int Err;
+		}
+
 		/********************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int ItSex_Decompress8(Hio src, Span<uint8> dst, c_int len, bool it215)
+		public static c_int ItSex_Decompress8(Hio src, Span<uint8> dst, c_int len, uint8[] tmp, c_int tmpLen, bool it215)
 		{
+			It_Stream @in = new It_Stream();
 			uint32 block_Count = 0;
-			uint32 bitBuf = 0;
-			c_int bitNum = 0;
 			uint8 left = 0, temp = 0, temp2 = 0;
-			c_int err = 0;
 			int dstOffset = 0;
 
 			while (len != 0)
@@ -32,11 +44,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				if (block_Count == 0)
 				{
 					block_Count = 0x8000;
-					/* size =*/ src.Hio_Read16L();
 					left = 9;
 					temp = temp2 = 0;
-					bitBuf = 0;
-					bitNum = 0;
+
+					if (Init_Block(@in, tmp, tmpLen, src) < 0)
+						return -1;
 				}
 
 				uint32 d = block_Count;
@@ -48,8 +60,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				do
 				{
-					uint16 bits = (uint16)Read_Bits(src, ref bitBuf, ref bitNum, left, out err);
-					if (err != 0)
+					uint16 bits = (uint16)Read_Bits(@in, left);
+					if (@in.Err != 0)
 						return -1;
 
 					if (left < 7)
@@ -60,8 +72,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						if (i != j)
 							goto Unpack_Byte;
 
-						bits = (uint16)((Read_Bits(src, ref bitBuf, ref bitNum, 3, out err) + 1) & 0xff);
-						if (err != 0)
+						bits = (uint16)((Read_Bits(@in, 3) + 1) & 0xff);
+						if (@in.Err != 0)
 							return -1;
 
 						left = ((uint8)bits < left) ? (uint8)bits : (uint8)((bits + 1) & 0xff);
@@ -128,14 +140,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int ItSex_Decompress16(Hio src, Span<int16> dst, c_int len, bool it215)
+		public static c_int ItSex_Decompress16(Hio src, Span<int16> dst, c_int len, uint8[] tmp, c_int tmpLen, bool it215)
 		{
+			It_Stream @in = new It_Stream();
 			uint32 block_Count = 0;
-			uint32 bitBuf = 0;
-			c_int bitNum = 0;
 			uint8 left = 0;
 			int16 temp = 0, temp2 = 0;
-			c_int err = 0;
 			int dstOffset = 0;
 
 			while (len != 0)
@@ -143,11 +153,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				if (block_Count == 0)
 				{
 					block_Count = 0x4000;
-					/* size =*/ src.Hio_Read16L();
 					left = 17;
 					temp = temp2 = 0;
-					bitBuf = 0;
-					bitNum = 0;
+
+					if (Init_Block(@in, tmp, tmpLen, src) < 0)
+						return -1;
 				}
 
 				uint32 d = block_Count;
@@ -159,8 +169,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				do
 				{
-					uint32 bits = Read_Bits(src, ref bitBuf, ref bitNum, left, out err);
-					if (err != 0)
+					uint32 bits = Read_Bits(@in, left);
+					if (@in.Err != 0)
 						return -1;
 
 					if (left < 7)
@@ -171,8 +181,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						if (i != j)
 							goto Unpack_Byte;
 
-						bits = Read_Bits(src, ref bitBuf, ref bitNum, 4, out err) + 1;
-						if (err != 0)
+						bits = Read_Bits(@in, 4) + 1;
+						if (@in.Err != 0)
 							return -1;
 
 						left = ((uint8)(bits & 0xff) < left) ? (uint8)(bits & 0xff) : (uint8)((bits + 1) & 0xff);
@@ -241,51 +251,87 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static uint32 Read_Bits(Hio iBuf, ref uint32 bitBuf, ref c_int bitNum, c_int n, out c_int err)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static uint32 Read_Bits_Mask(c_int n)
 		{
-			uint32 retVal = 0;
-			c_int i = n;
-			c_int bNum = bitNum;
-			uint32 bBuf = bitBuf;
+			return (1U << n) - 1U;
+		}
 
-			if ((n > 0) && (n < 32))
-			{
-				do
-				{
-					if (bNum == 0)
-					{
-						if (iBuf.Hio_Eof())
-						{
-							err = Constants.EOF;
-							return 0;
-						}
 
-						bBuf = iBuf.Hio_Read8();
-						bNum = 8;
-					}
 
-					retVal >>= 1;
-					retVal |= bBuf << 31;
-					bBuf >>= 1;
-					bNum--;
-					i--;
-				}
-				while (i != 0);
-
-				i = n;
-
-				bitNum = bNum;
-				bitBuf = bBuf;
-			}
-			else
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private static uint32 Read_Bits(It_Stream @in, c_int n)
+		{
+			if ((n <= 0) || (n >= 32))
 			{
 				// Invalid shift value
-				err = -2;
+				@in.Err = -2;
 				return 0;
 			}
 
-			err = 0;
-			return retVal >> (32 - i);
+			uint32 retVal = @in.Bits & Read_Bits_Mask(n);
+
+			if (@in.Num_Bits < n)
+			{
+				uint32 offset = (uint32)@in.Num_Bits;
+
+				if (@in.Left == 0)
+				{
+					@in.Err = Constants.EOF;
+					return 0;
+				}
+
+				// Buffer should be zero-padded to 4-byte alignment
+				@in.Bits = (uint32)(@in.Buf[@in.Pos] | (@in.Buf[@in.Pos + 1] << 8) | (@in.Buf[@in.Pos + 2] << 16) | (@in.Buf[@in.Pos + 3] << 24));
+
+				uint32 used = (uint32)Math.Min(@in.Left, 4);
+
+				@in.Num_Bits = (c_int)(used * 8);
+				@in.Pos += 4;
+				@in.Left -= used;
+
+				n = (c_int)(n - offset);
+				retVal |= (@in.Bits & Read_Bits_Mask(n)) << (c_int)offset;
+			}
+
+			@in.Bits >>= n;
+			@in.Num_Bits -= n;
+
+			return retVal;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private static c_int Init_Block(It_Stream @in, uint8[] tmp, c_int tmpLen, Hio src)
+		{
+			@in.Buf = tmp;
+			@in.Pos = 0;
+			@in.Left = src.Hio_Read16L();
+			@in.Bits = 0;
+			@in.Num_Bits = 0;
+			@in.Err = 0;
+
+			// tmp should be INT16_MAX rounded up to a multiple of 4 bytes long
+			if (tmpLen < (c_int)((@in.Left + 4) & ~3U))
+				return -1;
+
+			if (src.Hio_Read(tmp, 1, @in.Left) < @in.Left)
+				return -1;
+
+			// Zero pad to a multiple of 4 bytes for read_bits
+			for (size_t i = @in.Left; (i & 3) != 0; i++)
+				tmp[i] = 0;
+
+			return 0;
 		}
 		#endregion
 	}

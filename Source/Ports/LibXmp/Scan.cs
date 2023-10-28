@@ -240,12 +240,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				// Allow more complex order reuse only in main sequence
 				if ((ep != 0) && (p.Sequence_Control[ord] != 0xff))
 				{
-					// ...unless it's an end marker. Two sequences (7 and 8) in
-					// "alien incident - leohou2.s3m" by Purple Motion share the
-					// same S3M_END due to an off-by-one pattern jump
-					if (has_Marker && (pat == S3M_End))
+					// Currently to detect the end of the sequence, the player needs the
+					// end to be a real position and row, so skip invalid and S3M_SKIP.
+					// "amazonas-dynomite mix.it" by Skaven has a sequence (9) where an
+					// S3M_END repeats into an S3M_SKIP.
+					//
+					// Two sequences (7 and 8) in "alien incident - leohou2.s3m" by
+					// Purple Motion share the same S3M_END due to an off-by-one jump,
+					// so check S3M_END here too
+					if (pat >= mod.Pat)
 					{
-						ord = mod.Len;
+						if (has_Marker && (pat == S3M_End))
+							ord = mod.Len;
+
 						continue;
 					}
 					break;
@@ -351,6 +358,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						c_int p1 = @event.FxP;
 						c_int f2 = @event.F2T;
 						c_int p2 = @event.F2P;
+
+						if ((f1 == 0) && (f2 == 0))
+							continue;
+
 						c_int parm;
 
 						if ((f1 == Effects.Fx_GlobalVol) || (f2 == Effects.Fx_GlobalVol))
@@ -698,13 +709,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				pat = mod.Xxo[ord];
 				if ((pat >= mod.Pat) || (row >= mod.Xxp[pat].Rows))
 					row = 0;
-
-				// Currently to detect the end of the sequence, the player needs the
-				// end to be a real position and row, so skip invalid and S3M_SKIP.
-				// "amazonas-dynomite mix.it" by Skaven has a sequence (9) where an
-				// S3M_END repeats into an S3M_SKIP
-				while ((ord < mod.Len) && (mod.Xxo[ord] >= mod.Pat))
-					ord++;
 			}
 
 			p.Scan[chain].Num = m.Scan_Cnt[ord][row];

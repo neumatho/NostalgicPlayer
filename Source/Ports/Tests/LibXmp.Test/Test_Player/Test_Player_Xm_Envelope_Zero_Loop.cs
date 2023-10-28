@@ -16,13 +16,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 	{
 		/********************************************************************/
 		/// <summary>
-		/// Fasttracker 2 process the first point before it checks for
-		/// sustain/looping. This test will check if the loop on the first
-		/// point is ignored
+		/// Fasttracker 2 increments the envelope position before checking
+		/// for the end of the envelope loop, and only loops if the envelope
+		/// position is exactly at the envelope end. This causes it to
+		/// entirely skip loops where the start and end points are the same
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test_Player_Xm_Envelope()
+		public void Test_Player_Xm_Envelope_Zero_Loop()
 		{
 			Ports.LibXmp.LibXmp opaque = Ports.LibXmp.LibXmp.Xmp_Create_Context();
 			Xmp_Frame_Info fi;

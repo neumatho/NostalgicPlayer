@@ -598,6 +598,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private static readonly uint32 Magic_IMPI = Common.Magic4('I', 'M', 'P', 'I');
 		private static readonly uint32 Magic_IMPS = Common.Magic4('I', 'M', 'P', 'S');
 
+		private const c_int Temp_Buffer_Len = 65536;
+
 		private const uint8 Fx_None = 0xff;
 		private const uint8 Fx_Xtnd = 0xfe;
 		private const c_int L_Channels = 64;
@@ -886,12 +888,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				}
 			}
 
+			// This buffer should be able to hold any pattern or sample block.
+			// Round up to a multiple of 4--the sample decompressor relies on
+			// this to simplify its code
+			uint8[] patBuf = new uint8[Temp_Buffer_Len];
+			if (patBuf == null)
+				goto Err4;
+
 			for (c_int i = 0; i < mod.Smp; i++)
 			{
 				if (f.Hio_Seek((c_long)(start + pp_Smp[i]), SeekOrigin.Begin) < 0)
 					goto Err4;
 
-				if (Load_It_Sample(m, i, start, sample_Mode, f) < 0)
+				if (Load_It_Sample(m, i, start, sample_Mode, patBuf, f) < 0)
 					goto Err4;
 			}
 
@@ -921,13 +930,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				// - ModPlug Tracker 1.16 allows 256 rows
 				// - OpenMPT allows 1024 rows
 				if (num_Rows > 1024)
+				{
+					pp_Pat[i] = 0;
 					continue;
+				}
+
+				if (f.Hio_Read(patBuf, 1, (size_t)pat_Len) < (size_t)pat_Len)
+					goto Err4;
+
+				c_int pos = 0;
 
 				c_int row = 0;
 
 				while ((row < num_Rows) && (--pat_Len >= 0))
 				{
-					c_int b = f.Hio_Read8();
+					c_int b = patBuf[pos++];
 					if (f.Hio_Error() != 0)
 						goto Err4;
 
@@ -944,32 +961,34 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 					if ((b & 0x80) != 0)
 					{
-						mask[c] = f.Hio_Read8();
+						if (pat_Len < 1)
+							break;
+
+						mask[c] = patBuf[pos++];
 						pat_Len--;
 					}
 
 					if ((mask[c] & 0x01) != 0)
 					{
-						f.Hio_Read8();
+						pos++;
 						pat_Len--;
 					}
 
 					if ((mask[c] & 0x02) != 0)
 					{
-						f.Hio_Read8();
+						pos++;
 						pat_Len--;
 					}
 
 					if ((mask[c] & 0x04) != 0)
 					{
-						f.Hio_Read8();
+						pos++;
 						pat_Len--;
 					}
 
 					if ((mask[c] & 0x08) != 0)
 					{
-						f.Hio_Read8();
-						f.Hio_Read8();
+						pos += 2;
 						pat_Len -= 2;
 					}
 				}
@@ -1008,24 +1027,25 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				if (f.Hio_Seek((c_long)(start + pp_Pat[i]), SeekOrigin.Begin) < 0)
 					goto Err4;
 
-				if (Load_It_Pattern(m, i, new_Fx, f) < 0)
+				if (Load_It_Pattern(m, i, new_Fx, patBuf, f) < 0)
 					goto Err4;
 			}
 
+			patBuf = null;
 			pp_Pat = null;
 			pp_Smp = null;
 			pp_Ins = null;
 
 			// Song message
-			if ((ifh.Special & It_Special.Has_Msg) != 0)
+			if (((ifh.Special & It_Special.Has_Msg) != 0) && (ifh.MsgLen > 0))
 			{
 				uint8[] comment = new uint8[ifh.MsgLen];
 				if (comment != null)
 				{
 					f.Hio_Seek((c_long)(start + ifh.MsgOfs), SeekOrigin.Begin);
 
-					for (c_int j = 0; j + 1 < ifh.MsgLen; j++)
-						comment[j] = f.Hio_Read8();
+					ifh.MsgLen = (uint16)f.Hio_Read(comment, 1, ifh.MsgLen);
+					f.Hio_Error();	// Clear error if any
 
 					m.Comment = encoder.GetString(comment);
 
@@ -1065,6 +1085,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			return 0;
 
 			Err4:
+			patBuf = null;
 			pp_Pat = null;
 
 			Err3:
@@ -1897,7 +1918,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Load_It_Sample(Module_Data m, c_int i, c_int start, bool sample_Mode, Hio f)
+		private c_int Load_It_Sample(Module_Data m, c_int i, c_int start, bool sample_Mode, uint8[] tmpBuf, Hio f)
 		{
 			It_Sample_Header ish = new It_Sample_Header();
 			Xmp_Module mod = m.Mod;
@@ -2055,13 +2076,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 					if ((ish.Flags & It_Smp_Flag._16Bit) != 0)
 					{
-						Sample.ItSex_Decompress16(s, MemoryMarshal.Cast<uint8, int16>(decBuf), xxs.Len, (ish.Convert & It_Cvt_Flag.Diff) != 0);
+						Sample.ItSex_Decompress16(s, MemoryMarshal.Cast<uint8, int16>(decBuf), xxs.Len, tmpBuf, Temp_Buffer_Len, (ish.Convert & It_Cvt_Flag.Diff) != 0);
 
 						if (!BitConverter.IsLittleEndian)
 							cvt |= Sample_Flag.BigEnd;
 					}
 					else
-						Sample.ItSex_Decompress8(s, decBuf, xxs.Len, (ish.Convert & It_Cvt_Flag.Diff) != 0);
+						Sample.ItSex_Decompress8(s, decBuf, xxs.Len, tmpBuf, Temp_Buffer_Len, (ish.Convert & It_Cvt_Flag.Diff) != 0);
 
 					s.Hio_Close();
 
@@ -2086,7 +2107,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Load_It_Pattern(Module_Data m, c_int i, bool new_Fx, Hio f)
+		private c_int Load_It_Pattern(Module_Data m, c_int i, bool new_Fx, uint8[] patBuf, Hio f)
 		{
 			Xmp_Module mod = m.Mod;
 			Xmp_Event dummy = new Xmp_Event();
@@ -2106,11 +2127,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			f.Hio_Read16L();
 			f.Hio_Read16L();
 
+			if (f.Hio_Read(patBuf, 1, (size_t)pat_Len) < (size_t)pat_Len)
+				return -1;
+
+			c_int pos = 0;
+
 			while ((r < num_Rows) && (--pat_Len >= 0))
 			{
-				uint8 b = f.Hio_Read8();
-				if (f.Hio_Error() != 0)
-					return -1;
+				uint8 b = patBuf[pos++];
 
 				if (b == 0)
 				{
@@ -2122,7 +2146,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				if ((b & 0x80) != 0)
 				{
-					mask[c] = f.Hio_Read8();
+					if (pat_Len < 1)
+						break;
+
+					mask[c] = patBuf[pos++];
 					pat_Len--;
 				}
 
@@ -2139,7 +2166,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				if ((mask[c] & 0x01) != 0)
 				{
-					b = f.Hio_Read8();
+					if (pat_Len < 1)
+						break;
+
+					b = patBuf[pos++];
 
 					// From ittech.txt:
 					// Note ranges from 0->119 (C-0 -> B-9)
@@ -2179,14 +2209,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				if ((mask[c] & 0x02) != 0)
 				{
-					b = f.Hio_Read8();
+					if (pat_Len < 1)
+						break;
+
+					b = patBuf[pos++];
 					lastEvent[c].Ins = @event.Ins = b;
 					pat_Len--;
 				}
 
 				if ((mask[c] & 0x04) != 0)
 				{
-					b = f.Hio_Read8();
+					if (pat_Len < 1)
+						break;
+
+					b = patBuf[pos++];
 					lastEvent[c].Vol = @event.Vol = b;
 					Xlat_VolFx(@event);
 					pat_Len--;
@@ -2194,13 +2230,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				if ((mask[c] & 0x08) != 0)
 				{
-					b = f.Hio_Read8();
+					if (pat_Len < 2)
+						break;
+
+					b = patBuf[pos++];
 					if (b >= fx.Length)
-						f.Hio_Read8();
+						pos++;
 					else
 					{
 						@event.FxT = b;
-						@event.FxP = f.Hio_Read8();
+						@event.FxP = patBuf[pos++];
 
 						Xlat_Fx(c, @event, last_Fxp, new_Fx);
 

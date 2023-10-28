@@ -80,6 +80,24 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 			Set_Order(opaque, pos++, It_End);
 			seq++;
 
+			// Sequence: jump into skip into end. This should be last
+			c_int jump_Skip_End = pat;
+			test_Seq[seq].Entry = pos;
+			test_Seq[seq].Ticks = 6;
+			Set_Order(opaque, pos++, pat++);
+			seq++;
+
+			// Sequence: do it again, because the reuse is what caused a bug
+			test_Seq[seq].Entry = pos;
+			test_Seq[seq].Ticks = 6;
+			Set_Order(opaque, pos++, jump_Skip_End);
+			seq++;
+
+			// Target
+			New_Event(opaque, jump_Skip_End, 0, 0, 0, 0, 0, Effects.Fx_Jump, pos, 0, 0);
+			Set_Order(opaque, pos++, It_Skip);
+			// Intentionally no terminating IT_END
+
 			ctx.M.Mod.Len = pos;
 			opaque.loadHelpers.LibXmp_Prepare_Scan();
 			opaque.scan.LibXmp_Scan_Sequences();

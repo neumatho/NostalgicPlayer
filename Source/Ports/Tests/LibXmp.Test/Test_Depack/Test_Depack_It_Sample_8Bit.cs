@@ -23,6 +23,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Depack
 		[TestMethod]
 		public void Test_Depack_It_Sample_8Bit()
 		{
+			uint8[] tmp = new uint8[10000];
 			uint8[] dest = new uint8[10000];
 
 			using (Stream stream = OpenStream(dataDirectory, "It-Sample-8Bit.raw"))
@@ -30,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Depack
 				Hio f = Hio.Hio_Open_File(stream);
 				Assert.IsNotNull(f, "Can't open data file");
 
-				c_int ret = Sample.ItSex_Decompress8(f, dest, 4879, false);
+				c_int ret = Sample.ItSex_Decompress8(f, dest, 4879, tmp, tmp.Length, false);
 				Assert.AreEqual(0, ret, "Decompression fail");
 
 				ret = Util.Check_Md5(dest, 4879, "299C9144AE2349B90B430AAFDE8D799A");

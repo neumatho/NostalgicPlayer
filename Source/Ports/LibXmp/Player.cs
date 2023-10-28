@@ -675,7 +675,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Update_Envelope_Default(Xmp_Envelope env, c_int x, bool release)
+		private c_int Update_Envelope_Generic(Xmp_Envelope env, c_int x, bool release)
 		{
 			int16[] data = env.Data;
 
@@ -691,19 +691,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			// envelope loop end and the key is released, FT2 escapes the loop
 			// while IT runs another iteration. (See EnvLoops.xm in the OpenMPT
 			// test cases)
-			if (has_Loop && has_Sus && sus == lpe)
+			if (has_Loop && has_Sus && (sus == lpe))
 			{
 				if (!release)
 					has_Sus = false;
 			}
 
 			// If the envelope point is set to somewhere after the sustain point
-			// or sustain loop, enable release to prevent the envelope point to
-			// return to the sustain point or loop start. (See Filip Skutela's
+			// or sustain loop, enable release to prevent the envelope point from
+			// returning to the sustain point or loop start. (See Filip Skutela's
 			// farewell_tear.xm)
 			if (has_Loop && (x > data[lpe] + 1))
 				release = true;
-			else if (has_Sus && x > data[sus] + 1)
+			else if (has_Sus && (x > data[sus] + 1))
 				release = true;
 
 			// If enabled, stay at the sustain loop
@@ -713,7 +713,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					x = data[sus];
 			}
 
-			// Envelope loops
+			// XM-like formats and players assume that an envelope position past the
+			// end of the loop or sustain point should return to the loop/sustain point.
+			// While there are some differences with sustain points, this general loop
+			// behavior is used by DigiBooster Pro, Digitrakker, Imago Orpheus, and
+			// Real Tracker 2
 			if (has_Loop && (x >= data[lpe]))
 			{
 				if (!(release && has_Sus && (sus == lpe)))
@@ -746,13 +750,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			// envelope loop end and the key is released, FT2 escapes the loop
 			// while IT runs another iteration. (See EnvLoops.xm in the OpenMPT
 			// test cases)
-			if (has_Loop && has_Sus && sus == lpe)
+			if (has_Loop && has_Sus && (sus == lpe))
 			{
 				if (!release)
 					has_Sus = false;
 			}
 
-			if (has_Sus && x > data[sus] + 1)
+			if (has_Sus && (x > data[sus] + 1))
 				release = true;
 
 			// If enabled, stay at the sustain loop
@@ -841,11 +845,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (((~env.Flg & Xmp_Envelope_Flag.On) != 0) || (env.Npt <= 0))
 				return x;
 
-			return Common.Is_Player_Mode_It(m)
-				? Update_Envelope_It(env, x, release, key_Off)
-				: Common.Has_Quirk(m, Quirk_Flag.Ft2Env)
-					? Update_Envelope_Xm(env, x, release)
-					: Update_Envelope_Default(env, x, release);
+			return
+				Common.Is_Player_Mode_It(m) ?
+				Update_Envelope_It(env, x, release, key_Off) :
+				!Common.Has_Quirk(m, Quirk_Flag.Ft2Env) ?
+				Update_Envelope_Generic(env, x, release) :
+				Update_Envelope_Xm(env, x, release);
 		}
 
 

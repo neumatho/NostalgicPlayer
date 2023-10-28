@@ -33,6 +33,16 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Fuzzer
 			ret = LoadModule(Path.Combine(dataDirectory, "F"), "Load_It_Invalid_Compressed2.it", opaque);
 			Assert.AreEqual(0, ret, "Module load");
 
+			// This input sets the word length to 32, which can cause invalid shift
+			// exponents if not carefully implemented
+			ret = LoadModule(Path.Combine(dataDirectory, "F"), "Load_It_Invalid_Compressed3.it", opaque);
+			Assert.AreEqual(0, ret, "Module load");
+
+			// This input sets the word length to 31, which can cause signed int
+			// overflows if not carefully implemented
+			ret = LoadModule(Path.Combine(dataDirectory, "F"), "Load_It_Invalid_Compressed4.it", opaque);
+			Assert.AreEqual(0, ret, "Module load");
+
 			opaque.Xmp_Free_Context();
 		}
 	}
