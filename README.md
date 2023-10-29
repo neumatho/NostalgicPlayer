@@ -90,7 +90,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | IFF-16SV (PCM) | .16sv | | Sample |
 | IFF-8SVX (Fibonacci) | .8svx | | Sample |
 | IFF-8SVX (PCM) | .8svx | | Sample |
-| Imago Orpheus | .imf | MikMod Converter | MikMod |
+| Imago Orpheus | .imf | | Xmp |
 | Impulse Tracker | .it | | Xmp |
 | JamCracker | .jam | | JamCracker |
 | Kefrens Sound Machine | .kms | ProWizard | ModTracker |

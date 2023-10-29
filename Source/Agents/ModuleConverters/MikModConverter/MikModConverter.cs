@@ -74,7 +74,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.MikModConverter
 					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT5, Resources.IDS_MIKCONV_DESCRIPTION_AGENT5, agent5Id),
 //					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT6, Resources.IDS_MIKCONV_DESCRIPTION_AGENT6, agent6Id),
 //					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT7, Resources.IDS_MIKCONV_DESCRIPTION_AGENT7, agent7Id),
-					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT8, Resources.IDS_MIKCONV_DESCRIPTION_AGENT8, agent8Id),
+//					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT8, Resources.IDS_MIKCONV_DESCRIPTION_AGENT8, agent8Id),
 //					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT9, Resources.IDS_MIKCONV_DESCRIPTION_AGENT9, agent9Id),
 					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT10, Resources.IDS_MIKCONV_DESCRIPTION_AGENT10, agent10Id),
 //					new AgentSupportInfo(Resources.IDS_MIKCONV_NAME_AGENT11, Resources.IDS_MIKCONV_DESCRIPTION_AGENT11, agent11Id),
