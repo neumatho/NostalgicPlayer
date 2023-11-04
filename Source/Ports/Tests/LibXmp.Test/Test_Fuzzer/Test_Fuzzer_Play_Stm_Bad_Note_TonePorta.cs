@@ -3,31 +3,33 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
+namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Fuzzer
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public partial class Test_Api
+	public partial class Test_Fuzzer
 	{
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// This input caused out-of-bounds reads in the tone portamento
+		/// effects handlers due to missing validity checks on the current
+		/// key and portamento key values, which can be -1
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test_Api_Get_Format_List()
+		public void Test_Fuzzer_Play_Stm_Bad_Note_TonePorta()
 		{
-			string[] list = Ports.LibXmp.LibXmp.Xmp_Get_Format_List();
-			Assert.IsNotNull(list, "Returned null");
+			Playback_Sequence[] sequence = new Playback_Sequence[]
+			{
+				new Playback_Sequence(Playback_Action.Play_Frames, 3, 0),
+				new Playback_Sequence(Playback_Action.Play_End, 0, 0)
+			};
 
-			c_int i;
-			for (i = 0; list[i] != null; i++)
-				Assert.IsNotNull(list[i], "Empty format name");
-
-			Assert.AreEqual(12, i, "Wrong number of formats");
+			Util.Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_Stm_Bad_Note_TonePorta.stm", sequence, 4000, 0, 0);
 		}
 	}
 }

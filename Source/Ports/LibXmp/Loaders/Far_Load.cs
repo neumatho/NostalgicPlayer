@@ -81,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Id = Guid.Parse("E2C8619A-6957-43C9-A518-71002E37408B"),
 			Name = "Farandole Composer",
 			Description = "This loader recognizes “Farandole” modules. These modules can be up to 16 channels and have Protracker comparable effects.\n\nThe Farandole composer was written by Daniel Potter and released in 1994.",
-			Create = Create_Far
+			Create = Create
 		};
 
 		/********************************************************************/
@@ -103,7 +103,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// Create a new instance of the loader
 		/// </summary>
 		/********************************************************************/
-		private static IFormatLoader Create_Far(LibXmp libXmp, Xmp_Context ctx)
+		private static IFormatLoader Create(LibXmp libXmp, Xmp_Context ctx)
 		{
 			return new Far_Load(libXmp, ctx);
 		}

@@ -127,7 +127,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private static readonly uint32 Magic_IW10 = Common.Magic4('I', 'W', '1', '0');		// Leaving all behind.imf
 
 		private readonly LibXmp lib;
-		private readonly Xmp_Context ctx;
 		private readonly Encoding encoder;
 
 		/// <summary></summary>
@@ -136,7 +135,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Id = Guid.Parse("F0906D97-B9B3-451E-870D-A97529D38480"),
 			Name = "Imago Orpheus",
 			Description = "This loader recognizes “Imago Orpheus” modules. This format is roughly equivalent to the XM format, but with two effects columns instead of a volume column and an effect column.\n\nImago Orpheus was written by Lutz Roeder and released in 1994.",
-			Create = Create_Imf
+			Create = Create
 		};
 
 		private const uint8 None = 0xff;
@@ -189,10 +188,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		private Imf_Load(LibXmp libXmp, Xmp_Context ctx)
+		private Imf_Load(LibXmp libXmp)
 		{
 			lib = libXmp;
-			this.ctx = ctx;
 			encoder = EncoderCollection.Dos;
 		}
 
@@ -203,9 +201,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// Create a new instance of the loader
 		/// </summary>
 		/********************************************************************/
-		private static IFormatLoader Create_Imf(LibXmp libXmp, Xmp_Context ctx)
+		private static IFormatLoader Create(LibXmp libXmp, Xmp_Context ctx)
 		{
-			return new Imf_Load(libXmp, ctx);
+			return new Imf_Load(libXmp);
 		}
 
 

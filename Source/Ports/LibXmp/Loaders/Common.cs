@@ -9,6 +9,7 @@ using System.Text;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
+using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Loader;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
 
 namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
@@ -323,6 +324,35 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			buf[s] = 0;
 
 			LibXmp_Copy_Adjust(out t, buf, s, encoder);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_int LibXmp_Test_Name(uint8[] s, c_int n, Test_Name flags)
+		{
+			for (c_int i = 0; i < n; i++)
+			{
+				if ((s[i] == '\0') && ((flags & Test_Name.Ignore_After_0) != 0))
+					break;
+
+				if ((s[i] == '\r') && ((flags & Test_Name.Ignore_After_Cr) != 0))
+					break;
+
+				if (s[i] > 0x7f)
+					return -1;
+
+				// ACS_Team2.mod has a backspace in instrument name
+				// Numerous ST modules from Music Channel BBS have char 14
+				if ((s[i] > 0) && (s[i] < 32) && (s[i] != 0x08) && (s[i] != 0x0e))
+					return -1;
+			}
+
+			return 0;
 		}
 
 
