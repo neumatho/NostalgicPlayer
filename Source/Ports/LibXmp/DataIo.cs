@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System.IO;
 using System.Runtime.CompilerServices;
+using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibXmp
 {
@@ -26,6 +27,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				err = 0;
 				return (uint8)a;
+			}
+			catch (EndOfStreamException)
+			{
+				err = Constants.EOF;
+				return 0xff;
 			}
 			catch (IOException ex)
 			{
@@ -49,6 +55,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				err = 0;
 				return (int8)a;
+			}
+			catch (EndOfStreamException)
+			{
+				err = Constants.EOF;
+				return 0;
 			}
 			catch (IOException ex)
 			{
@@ -74,6 +85,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				err = 0;
 				return (uint16)((b << 8) | a);
 			}
+			catch (EndOfStreamException)
+			{
+				err = Constants.EOF;
+				return 0xffff;
+			}
 			catch (IOException ex)
 			{
 				err = ex.HResult;
@@ -97,6 +113,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				err = 0;
 				return (uint16)((a << 8) | b);
+			}
+			catch (EndOfStreamException)
+			{
+				err = Constants.EOF;
+				return 0xffff;
 			}
 			catch (IOException ex)
 			{
@@ -123,6 +144,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				err = 0;
 				return (uint32)((c << 16) | (b << 8) | a);
 			}
+			catch (EndOfStreamException)
+			{
+				err = Constants.EOF;
+				return 0xffffffff;
+			}
 			catch (IOException ex)
 			{
 				err = ex.HResult;
@@ -147,6 +173,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				err = 0;
 				return (uint32)((a << 16) | (b << 8) | c);
+			}
+			catch (EndOfStreamException)
+			{
+				err = Constants.EOF;
+				return 0xffffffff;
 			}
 			catch (IOException ex)
 			{
@@ -174,6 +205,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				err = 0;
 				return (uint32)((d << 24) | (c << 16) | (b << 8) | a);
 			}
+			catch (EndOfStreamException)
+			{
+				err = Constants.EOF;
+				return 0xffffffff;
+			}
 			catch (IOException ex)
 			{
 				err = ex.HResult;
@@ -199,6 +235,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				err = 0;
 				return (uint32)((a << 24) | (b << 16) | (c << 8) | d);
+			}
+			catch (EndOfStreamException)
+			{
+				err = Constants.EOF;
+				return 0xffffffff;
 			}
 			catch (IOException ex)
 			{

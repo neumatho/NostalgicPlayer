@@ -307,11 +307,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private static readonly uint32 Magic_SCRS = Common.Magic4('S', 'C', 'R', 'S');
 
 		// S3M packed pattern
-		private const c_int S3M_Eor = 0;				// End of row
-		private const c_int S3M_Ch_Mask = 0x1f;			// Channel
-		private const c_int S3M_Ni_Follow = 0x20;		// Note and instrument follow
-		private const c_int S3M_Vol_Follows = 0x40;		// Volume follows
-		private const c_int S3M_Fx_Follows = 0x80;		// Effect and parameter follow
+		internal const c_int S3M_Eor = 0;				// End of row
+		internal const c_int S3M_Ch_Mask = 0x1f;		// Channel
+		internal const c_int S3M_Ni_Follow = 0x20;		// Note and instrument follow
+		internal const c_int S3M_Vol_Follows = 0x40;	// Volume follows
+		internal const c_int S3M_Fx_Follows = 0x80;		// Effect and parameter follow
 
 		// S3M mix volume
 		private const c_int S3M_Mv_Volume = 0x7f;		// Module mix volume, typically 16 to 127
