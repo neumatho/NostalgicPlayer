@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 	{
 		#region Internal structures
 
-		#region S3M_File_Header
+		#region Stx_File_Header
 		private class Stx_File_Header
 		{
 			public uint8[] Name = new uint8[20];		// Song name
@@ -48,7 +48,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		}
 		#endregion
 
-		#region S3M_File_Header
+		#region Stx_Instrument_Header
 		private class Stx_Instrument_Header
 		{
 			public uint8 Type;							// Instrument type

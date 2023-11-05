@@ -180,7 +180,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Tracker Packer 3 | .tp3 | ProWizard | ModTracker |
 | Ultimate SoundTracker 1.0 - 1.21 | .mod | | ModTracker |
 | Ultimate SoundTracker 1.8 - 2.0 | .mod | | ModTracker |
-| UltraTracker | .ult | MikMod Converter | MikMod |
+| UltraTracker | .ult | | Xmp |
 | Unic Tracker | .unic | ProWizard | ModTracker |
 | UniMod | .uni | MikMod Converter | MikMod |
 | Unis 669 | .669 | | Xmp |
