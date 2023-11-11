@@ -145,10 +145,11 @@ Converts different module formats (mostly Amiga formats) to another format Nosta
 
 Current version can convert these formats:
 
-Fred Editor (Final) -&gt; Fred Editor
-Future Composer 1.0 - 1.3 -&gt; Future Composer 1.4
-SoundFX 1.x &gt; SoundFX 2.0
-MED 2.10 (MED4) -&gt; MED 2.10 (MMD0)</value>
+Epic Games UMX ➜ Whatever format inside
+Fred Editor (Final) ➜ Fred Editor
+Future Composer 1.0 - 1.3 ➜ Future Composer 1.4
+MED 2.10 (MED4) ➜ MED 2.10 (MMD0)
+SoundFX 1.x ➜ SoundFX 2.0</value>
   </data>
   <data name="IDS_MODCONV_DESCRIPTION_AGENT1" xml:space="preserve">
     <value>Original player by SuperSero.
@@ -176,6 +177,12 @@ Converted to C# by Thomas Neumann.
 
 This player plays modules created with MED v2.10 to MED v3.22. This format have both a real module format, where song data and samples are combined into a single file and song+sample format. The player can load both types of files. For song+sample format, you need to have the samples beside the song files. The player will load the samples from a folder named "Instruments", synth sounds from a folder named "Synthsounds" and hybrid samples in a folder named "Hybrids". All folders should be placed in the same folder as the song files.</value>
   </data>
+  <data name="IDS_MODCONV_DESCRIPTION_AGENT5" xml:space="preserve">
+    <value>This converter is based on the code for LibXmp.
+Converted to C# by Thomas Neumann.
+
+This converter recognizes the modules in “umx” files from games like “Unreal”, “DeusEx”, etc. To NostalgicPlayer, UMX is just a container and the real music format may be one of “ScreamTracker 3”, “Impulse Tracker”, “FastTracker 2”, or possibly a “ProTracker” compatible one.</value>
+  </data>
   <data name="IDS_MODCONV_NAME" xml:space="preserve">
     <value>Module Converter</value>
   </data>
@@ -190,5 +197,8 @@ This player plays modules created with MED v2.10 to MED v3.22. This format have 
   </data>
   <data name="IDS_MODCONV_NAME_AGENT4" xml:space="preserve">
     <value>MED 2.10 (MED4)</value>
+  </data>
+  <data name="IDS_MODCONV_NAME_AGENT5" xml:space="preserve">
+    <value>Epic Games UMX</value>
   </data>
 </root>

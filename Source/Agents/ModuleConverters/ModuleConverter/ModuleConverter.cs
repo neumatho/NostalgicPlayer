@@ -24,6 +24,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 		private static readonly Guid agent2Id = Guid.Parse("0C8D0CEE-EA9D-4132-95ED-DFE72D5D8FB6");
 		private static readonly Guid agent3Id = Guid.Parse("44F2292A-BBA1-42C7-B9EC-1ACED9A42BF8");
 		private static readonly Guid agent4Id = Guid.Parse("CED4726A-EF3B-40C6-8F93-865F0CE5321E");
+		private static readonly Guid agent5Id = Guid.Parse("E03F718C-8FA9-4843-9EBE-6D69EC3A421D");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -58,7 +59,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT1, Resources.IDS_MODCONV_DESCRIPTION_AGENT1, agent1Id),
 					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT2, Resources.IDS_MODCONV_DESCRIPTION_AGENT2, agent2Id),
 					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT3, Resources.IDS_MODCONV_DESCRIPTION_AGENT3, agent3Id),
-					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT4, Resources.IDS_MODCONV_DESCRIPTION_AGENT4, agent4Id)
+					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT4, Resources.IDS_MODCONV_DESCRIPTION_AGENT4, agent4Id),
+					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT5, Resources.IDS_MODCONV_DESCRIPTION_AGENT5, agent5Id)
 				};
 			}
 		}
@@ -83,6 +85,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 
 			if (typeId == agent4Id)
 				return new Med4Format();
+
+			if (typeId == agent5Id)
+				return new UmxFormat();
 
 			return null;
 		}

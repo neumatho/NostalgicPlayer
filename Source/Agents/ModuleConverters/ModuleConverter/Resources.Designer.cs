@@ -130,10 +130,11 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         ///
         ///Current version can convert these formats:
         ///
-        ///Fred Editor (Final) -&gt; Fred Editor
-        ///Future Composer 1.0 - 1.3 -&gt; Future Composer 1.4
-        ///SoundFX 1.x &gt; SoundFX 2.0
-        ///MED 2.10 (MED4) -&gt; MED 2.10 (MMD0).
+        ///Epic Games UMX ➜ Whatever format inside
+        ///Fred Editor (Final) ➜ Fred Editor
+        ///Future Composer 1.0 - 1.3 ➜ Future Composer 1.4
+        ///MED 2.10 (MED4) ➜ MED 2.10 (MMD0)
+        ///SoundFX 1.x ➜ SoundFX 2.0.
         /// </summary>
         internal static string IDS_MODCONV_DESCRIPTION {
             get {
@@ -192,6 +193,18 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This converter is based on the code for LibXmp.
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///This converter recognizes the modules in “umx” files from games like “Unreal”, “DeusEx”, etc. To NostalgicPlayer, UMX is just a container and the real music format may be one of “ScreamTracker 3”, “Impulse Tracker”, “FastTracker 2”, or possibly a “ProTracker” compatible one..
+        /// </summary>
+        internal static string IDS_MODCONV_DESCRIPTION_AGENT5 {
+            get {
+                return ResourceManager.GetString("IDS_MODCONV_DESCRIPTION_AGENT5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Module Converter.
         /// </summary>
         internal static string IDS_MODCONV_NAME {
@@ -233,6 +246,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         internal static string IDS_MODCONV_NAME_AGENT4 {
             get {
                 return ResourceManager.GetString("IDS_MODCONV_NAME_AGENT4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Epic Games UMX.
+        /// </summary>
+        internal static string IDS_MODCONV_NAME_AGENT5 {
+            get {
+                return ResourceManager.GetString("IDS_MODCONV_NAME_AGENT5", resourceCulture);
             }
         }
     }

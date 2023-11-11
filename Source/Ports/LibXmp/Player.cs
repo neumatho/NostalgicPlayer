@@ -574,7 +574,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				}
 			}
 
-			Array.Copy(mod.Xxp[info.Pattern].Index, info.Playing_Tracks, chn);
+			if (info.Pattern < mod.Pat)
+				Array.Copy(mod.Xxp[info.Pattern].Index, info.Playing_Tracks, chn);
+			else
+				Array.Clear(info.Playing_Tracks, 0, chn);
 		}
 
 		#region Private methods
