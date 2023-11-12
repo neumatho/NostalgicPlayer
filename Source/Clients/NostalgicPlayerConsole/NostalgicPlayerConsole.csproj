@@ -29,7 +29,6 @@
     <ProjectReference Include="..\..\Agents\Decrunchers\AncientDecruncher\AncientDecruncher.csproj" />
     <ProjectReference Include="..\..\Agents\Decrunchers\ArchiveDecruncher\ArchiveDecruncher.csproj" />
     <ProjectReference Include="..\..\Agents\Decrunchers\SharpCompressDecruncher\SharpCompressDecruncher.csproj" />
-    <ProjectReference Include="..\..\Agents\ModuleConverters\MikModConverter\MikModConverter.csproj" />
     <ProjectReference Include="..\..\Agents\ModuleConverters\ModuleConverter\ModuleConverter.csproj" />
     <ProjectReference Include="..\..\Agents\ModuleConverters\ProWizardConverter\ProWizardConverter.csproj" />
     <ProjectReference Include="..\..\Agents\Output\CoreAudio\CoreAudio.csproj" />
@@ -44,7 +43,6 @@
     <ProjectReference Include="..\..\Agents\Players\GameMusicCreator\GameMusicCreator.csproj" />
     <ProjectReference Include="..\..\Agents\Players\JamCracker\JamCracker.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Med\Med.csproj" />
-    <ProjectReference Include="..\..\Agents\Players\MikMod\MikMod.csproj" />
     <ProjectReference Include="..\..\Agents\Players\ModTracker\ModTracker.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Mpg123\Mpg123.csproj" />
     <ProjectReference Include="..\..\Agents\Players\OctaMed\OctaMed.csproj" />

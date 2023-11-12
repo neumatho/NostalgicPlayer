@@ -104,14 +104,6 @@
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation Name="unifile">
-            <uap:SupportedFileTypes>
-              <uap:FileType ContentType="audio/x-uni">.uni</uap:FileType>
-            </uap:SupportedFileTypes>
-            <uap:DisplayName>MikMod UniMod</uap:DisplayName>
-          </uap:FileTypeAssociation>
-        </uap:Extension>
-        <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="xmfile">
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="audio/x-xm">.xm</uap:FileType>
@@ -140,7 +132,7 @@
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="audio/x-dsm">.dsm</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>DSIK</uap:DisplayName>
+            <uap:DisplayName>Digital Sound Interface Kit</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
@@ -188,7 +180,7 @@
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="audio/x-stx">.stx</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>STMIK</uap:DisplayName>
+            <uap:DisplayName>Scream Tracker Music Interface Kit</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
@@ -212,7 +204,7 @@
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="audio/x-umx">.umx</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>Unreal Music File</uap:DisplayName>
+            <uap:DisplayName>Epic Games UMX</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
