@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// 1.6.0
 		/// </summary>
-		public const int NostalgicPlayer_Current_Version = (2 << 16) + (0 << 8) + 1;
+		public const int NostalgicPlayer_Current_Version = (2 << 16) + (1 << 8) + 0;
 
 		/// <summary>
 		/// Return the NostalgicPlayer_Current_Version constant defined above
