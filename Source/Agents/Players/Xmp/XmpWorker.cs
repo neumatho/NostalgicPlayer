@@ -336,7 +336,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 			libXmp.Xmp_Set_Player(Xmp_Player.Surround, mixerInfo.EnableSurround ? 1 : 0);
 
 			for (int i = 0; i < ModuleChannelCount; i++)
-				libXmp.Xmp_Channel_Mute(i, mixerInfo.ChannelsEnabled[i] ? 0 : 1);
+			{
+				bool channelEnabled = (mixerInfo.ChannelsEnabled != null) && (i < mixerInfo.ChannelsEnabled.Length) ? mixerInfo.ChannelsEnabled[i] : true;
+				libXmp.Xmp_Channel_Mute(i, channelEnabled ? 0 : 1);
+			}
 
 			lastMixerInfo = mixerInfo;
 		}
