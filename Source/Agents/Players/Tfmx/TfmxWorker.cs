@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -24,6 +25,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 	/// </summary>
 	internal class TfmxWorker : ModulePlayerWithSubSongDurationAgentBase
 	{
+		private class SampleRange : IComparable<SampleRange>
+		{
+			public int Start;
+			public int End;
+			public int LoopStart;
+			public int LoopLength;
+
+			public int CompareTo(SampleRange other)
+			{
+				return Start.CompareTo(other.Start);
+			}
+		}
+
 		private const int BufSize = 1024;
 
 		private readonly ModuleType currentModuleType;
@@ -67,6 +81,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		private GlobalPlayingInfo playingInfo;
 
 		private bool endReached;
+
+		private SampleInfo[] sampleInfo;
 
 		private const int InfoPositionLine = 3;
 		private const int InfoTrackLine = 4;
@@ -449,6 +465,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			numBytes = 0;
 			bytesDone = 0;
 
+			ExtractSampleInfo();
+
 			return true;
 		}
 
@@ -635,6 +653,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				return new SubSongInfo(songCount, 0);
 			}
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns all the samples available in the module. If none, null
+		/// is returned
+		/// </summary>
+		/********************************************************************/
+		public override IEnumerable<SampleInfo> Samples => sampleInfo;
 		#endregion
 
 		#region ModulePlayerWithSubSongDurationAgentBase implementation
@@ -2510,6 +2538,164 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				channel.SetPanning((ushort)Tables.Pan7[chan]);
 			else
 				channel.SetPanning((ushort)Tables.Pan4[chan]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Extract the sample information by parsing the instrument macros
+		/// </summary>
+		/********************************************************************/
+		private void ExtractSampleInfo()
+		{
+			List<SampleRange> samples = new List<SampleRange>();
+
+			for (int i = 0; i < numMacro; i++)
+			{
+				// Find the start of the macro
+				int macroOffset = BitConverter.ToInt32(musicData, macroStart + i * 4);
+				bool endOfMacro = false;
+
+				SampleRange range = new SampleRange();
+
+				for (int step = 0; !endOfMacro; step += 4)
+				{
+					Uni x = new Uni((uint)ToInt32(macroOffset + step));
+					byte b0 = x.b0;
+					x.b0 = 0;
+
+					switch (b0)
+					{
+						// Stop
+						case 0x07:
+						case 0xff:
+						{
+							endOfMacro = true;
+							break;
+						}
+
+						// SetBegin
+						case 0x02:
+						{
+							if (range.Start != 0)
+							{
+								AddSample(samples, range);
+								range = new SampleRange();
+							}
+
+							range.Start = (int)x.l;
+							break;
+						}
+
+						// SetLen
+						case 0x03:
+						{
+							range.End = range.Start + x.w1 * 2;
+							break;
+						}
+
+						// SampleLoop
+						case 0x18:
+						{
+							range.LoopStart = (int)(range.Start + x.l);
+							range.LoopLength = range.End - range.LoopStart;
+							break;
+						}
+					}
+				}
+
+				AddSample(samples, range);
+			}
+
+			sampleInfo = new SampleInfo[samples.Count];
+
+			if (samples.Count > 0)
+			{
+				for (int i = 0; i < samples.Count - 1; i++)
+					sampleInfo[i] = GetSampleInfo(samples[i], samples[i + 1]);
+
+				sampleInfo[samples.Count - 1] = GetSampleInfo(samples[samples.Count - 1], null);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Add current range into the right position in the list
+		/// </summary>
+		/********************************************************************/
+		private void AddSample(List<SampleRange> list, SampleRange range)
+		{
+			if (range.End == 0)
+				return;
+
+			int j;
+
+			for (j = 0; j < list.Count; j++)
+			{
+				SampleRange storedRange = list[j];
+
+				if ((range.Start >= storedRange.Start) && (range.Start < storedRange.End))
+				{
+					if (range.End > storedRange.End)
+						storedRange.End = range.End;
+
+					j = -1;
+					break;
+				}
+
+				if ((range.Start < storedRange.Start) && (range.End > storedRange.Start))
+				{
+					storedRange.Start = range.Start;
+
+					if (range.End > storedRange.End)
+						storedRange.End = range.End;
+
+					j = -1;
+					break;
+				}
+
+				if (range.Start < storedRange.Start)
+					break;
+			}
+
+			if (j != -1)
+				list.Insert(j, range);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return an initialized sample info object
+		/// </summary>
+		/********************************************************************/
+		private SampleInfo GetSampleInfo(SampleRange current, SampleRange next)
+		{
+			int sampleLength = (next == null ? current.End : next.Start) - current.Start;
+
+			SampleInfo info = new SampleInfo
+			{
+				Name = string.Empty,
+				Flags = SampleInfo.SampleFlag.None,
+				Type = SampleInfo.SampleType.Sample,
+				BitSize = SampleInfo.SampleSize._8Bit,
+				Panning = -1,
+				Volume = 256,
+				Sample = sampleData.AsSpan(current.Start, sampleLength).ToArray(),//XX
+				Length = (uint)sampleLength
+			};
+
+			if (current.LoopLength != 0)
+			{
+				info.Flags |= SampleInfo.SampleFlag.Loop;
+				info.LoopStart = (uint)(current.LoopStart - current.Start);
+				info.LoopLength = (uint)current.LoopLength;
+			}
+
+			return info;
 		}
 
 
