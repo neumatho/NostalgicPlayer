@@ -800,17 +800,35 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 					return;
 			}
 
-			// Allocate memory to hold the sample data
-			uint allocLen = Math.Max(chunkSize, samples[readSamp].Length);
-			samples[readSamp].SampleData = new sbyte[allocLen];
+			Sample sample = samples[readSamp];
 
-			int readBytes = moduleStream.ReadSampleData((int)readSamp, samples[readSamp].SampleData, (int)chunkSize);
+			// Allocate memory to hold the sample data
+			uint allocLen = Math.Max(chunkSize, sample.Length);
+			sample.SampleData = new sbyte[allocLen];
+
+			int readBytes = moduleStream.ReadSampleData((int)readSamp, sample.SampleData, (int)chunkSize);
 
 			if (moduleStream.EndOfStream)
 			{
 				if (((readSamp + 1) < realUsedSampNum) || ((readBytes + 20) < chunkSize))
 					errorMessage = Resources.IDS_OKT_ERR_LOADING_SAMPLES;
 			}
+
+			if ((sample.Mode == 0) || (sample.Mode == 2))
+				ConvertFrom7BitTo8Bit(sample.SampleData);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert a single sample from 7-bit to 8-bit
+		/// </summary>
+		/********************************************************************/
+		private void ConvertFrom7BitTo8Bit(sbyte[] sampleData)
+		{
+			for (int i = sampleData.Length - 1; i >= 0; i--)
+				sampleData[i] *= 2;
 		}
 
 
