@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 	/// </summary>
 	public class SidPlay : AgentBase
 	{
-		internal static readonly Guid Agent1Id = Guid.Parse("1048D3BB-EA39-4CF2-91F0-619AC7270946");
+		private static readonly Guid agent1Id = Guid.Parse("1048D3BB-EA39-4CF2-91F0-619AC7270946");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -55,7 +55,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_SID_NAME_AGENT1, Resources.IDS_SID_DESCRIPTION_AGENT1, Agent1Id)
+					new AgentSupportInfo(Resources.IDS_SID_NAME_AGENT1, Resources.IDS_SID_DESCRIPTION_AGENT1, agent1Id)
 				};
 			}
 		}

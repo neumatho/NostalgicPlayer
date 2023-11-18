@@ -667,7 +667,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 		/// Return the number of channels the module use
 		/// </summary>
 		/********************************************************************/
-		public override int ModuleChannelCount => 2;
+		public override int ModuleChannelCount => sidTune.GetInfo().SidChips() * 3;
 
 
 
