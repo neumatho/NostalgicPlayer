@@ -2684,7 +2684,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				BitSize = SampleInfo.SampleSize._8Bit,
 				Panning = -1,
 				Volume = 256,
-				Sample = sampleData.AsSpan(current.Start, sampleLength).ToArray(),//XX
+				Sample = sampleData.AsSpan(current.Start, sampleLength).ToArray(),
 				Length = (uint)sampleLength
 			};
 
