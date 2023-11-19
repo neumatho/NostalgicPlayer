@@ -13,6 +13,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123.Containers
 		public const int Index_Size = 1000;
 
 		// Compat
+		public const ptrdiff_t PtrDiff_Max = ptrdiff_t.MaxValue / 2;
 		public const off_t Off_Max = off_t.MaxValue / 2;
 
 		// Decode

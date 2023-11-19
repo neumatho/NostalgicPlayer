@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123.Containers
 	internal class Icy_Meta
 	{
 		public c_uchar[] Data;
-		public off_t Interval;
-		public off_t Next;
+		public int64_t Interval;
+		public int64_t Next;
 	}
 }

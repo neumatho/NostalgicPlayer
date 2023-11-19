@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Fi_Init(Frame_Index fi)
+		public void Int123_Fi_Init(Frame_Index fi)
 		{
 			fi.Data = null;
 			fi.Step = 1;
@@ -34,9 +34,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Fi_Exit(Frame_Index fi)
+		public void Int123_Fi_Exit(Frame_Index fi)
 		{
-			Fi_Init(fi);
+			Int123_Fi_Init(fi);		// Be prepared for further fun, still
 		}
 
 
@@ -46,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Mpg123_Errors Fi_Resize(Frame_Index fi, size_t newSize)
+		public Mpg123_Errors Int123_Fi_Resize(Frame_Index fi, size_t newSize)
 		{
 			if (newSize == fi.Size)
 				return Mpg123_Errors.Ok;
@@ -58,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					Fi_Shrink(fi);
 			}
 
-			off_t[] newData = Memory.Safe_Realloc(fi.Data, newSize);
+			int64_t[] newData = Memory.Int123_Safe_Realloc(fi.Data, newSize);
 			if ((newSize == 0) || (newData != null))
 			{
 				fi.Data = newData;
@@ -82,16 +82,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Fi_Add(Frame_Index fi, off_t pos)
+		public void Int123_Fi_Add(Frame_Index fi, int64_t pos)
 		{
 			if (fi.Fill == fi.Size)
 			{
 				// Index is full, we need to shrink... or grow.
 				// Store the current frame number to check later if we still want it
-				off_t frameNum = (off_t)fi.Fill * fi.Step;
+				int64_t frameNum = (int64_t)fi.Fill * fi.Step;
 
 				// If we want not / cannot grow, we shrink
-				if (!((fi.Grow_Size != 0) && Fi_Resize(fi, fi.Size + fi.Grow_Size) == 0))
+				if (!((fi.Grow_Size != 0) && Int123_Fi_Resize(fi, fi.Size + fi.Grow_Size) == 0))
 					Fi_Shrink(fi);
 
 				// Now check if we still want to add this frame (could be that not,
@@ -116,7 +116,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Fi_Reset(Frame_Index fi)
+		public void Int123_Fi_Reset(Frame_Index fi)
 		{
 			fi.Fill = 0;
 			fi.Step = 1;
@@ -129,9 +129,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// The next expected frame offset, one step ahead
 		/// </summary>
 		/********************************************************************/
-		private off_t Fi_Next(Frame_Index fi)
+		private int64_t Fi_Next(Frame_Index fi)
 		{
-			return (off_t)fi.Fill * fi.Step;
+			return (int64_t)fi.Fill * fi.Step;
 		}
 
 

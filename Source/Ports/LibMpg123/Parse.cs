@@ -115,7 +115,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_int Frame_BitRate(Mpg123_Handle fr)
+		public c_int Int123_Frame_BitRate(Mpg123_Handle fr)
 		{
 			return tabSel_123[fr.Lsf, fr.Lay - 1, fr.Bitrate_Index];
 		}
@@ -127,7 +127,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_long Frame_Freq(Mpg123_Handle fr)
+		public c_long Int123_Frame_Freq(Mpg123_Handle fr)
 		{
 			return freqs[fr.Sampling_Frequency];
 		}
@@ -142,7 +142,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// again
 		/// </summary>
 		/********************************************************************/
-		public c_int Read_Frame(Mpg123_Handle fr)
+		public c_int Int123_Read_Frame(Mpg123_Handle fr)
 		{
 			// TODO: Rework this thing
 			c_int freeFormat_Count = 0;
@@ -269,7 +269,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			}
 
 			// If filepos is invalid, so is framepos
-			off_t framePos = fr.Rd.Tell(fr) - 4;
+			int64_t framePos = fr.Rd.Tell(fr) - 4;
 
 			// Flip/init buffer for layer 3
 			{
@@ -312,16 +312,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					}
 
 					// Now adjust volume
-					lib.frame.Do_Rva(fr);
+					lib.frame.Int123_Do_Rva(fr);
 				}
 			}
 
-			Set_Pointer(fr, false, 0);
+			Int123_Set_Pointer(fr, false, 0);
 
 			// Question: How bad does the floating point value get with repeated recomputation?
 			// Also, considering that we can play the file or parts of many times
 			if (++fr.Mean_Frames != 0)
-				fr.Mean_FrameSize = ((fr.Mean_Frames - 1) * fr.Mean_FrameSize + Compute_Bpf(fr)) / fr.Mean_Frames;
+				fr.Mean_FrameSize = ((fr.Mean_Frames - 1) * fr.Mean_FrameSize + Int123_Compute_Bpf(fr)) / fr.Mean_Frames;
 
 			++fr.Num;	// 0 for first frame!
 
@@ -336,7 +336,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			// Keep track of true frame positions in our frame index.
 			// But only do so when we are sure that the frame number is accurate...
 			if (((fr.State_Flags & Frame_State_Flags.Accurate) != 0) && ((fr.Index.Size != 0) && (fr.Num == fr.Index.Next)))
-				lib.index.Fi_Add(fr.Index, framePos);
+				lib.index.Int123_Fi_Add(fr.Index, framePos);
 
 			if (fr.Silent_Resync > 0)
 				--fr.Silent_Resync;
@@ -411,10 +411,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		///    This overwrites side info needed for stage 0.
 		///
 		/// Continuing to read bits after layer 3 side info shall fail unless
-		/// Set_Pointer() is called to refresh things
+		/// INT123_Set_Pointer() is called to refresh things
 		/// </summary>
 		/********************************************************************/
-		public void Set_Pointer(Mpg123_Handle fr, bool part2, c_long backStep)
+		public void Int123_Set_Pointer(Mpg123_Handle fr, bool part2, c_long backStep)
 		{
 			fr.BitIndex = 0;
 
@@ -452,7 +452,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_double Compute_Bpf(Mpg123_Handle fr)
+		public c_double Int123_Compute_Bpf(Mpg123_Handle fr)
 		{
 			return (fr.FrameSize > 0) ? fr.FrameSize + 4.0 : 1.0;
 		}
@@ -593,7 +593,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				if ((fr.P.Flags & Mpg123_Param_Flags.Ignore_StreamLength) == 0)
 				{
 					// Check for endless stream, but: TRACK_MAX_FRAMES sensible at all?
-					fr.Track_Frames = long_Tmp > Track_Max_Frames ? 0 : (off_t)long_Tmp;
+					fr.Track_Frames = long_Tmp > Track_Max_Frames ? 0 : long_Tmp;
 				}
 			}
 
@@ -611,7 +611,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					// ignoring leading ID3v2 data. Trailing tags (ID3v1) seem to be
 					// included, though
 					if (fr.RDat.FileLen < 1)
-						fr.RDat.FileLen = (off_t)long_Tmp + fr.Audio_Start;	// Overflow?
+						fr.RDat.FileLen = long_Tmp + fr.Audio_Start;	// Overflow?
 				}
 			}
 
@@ -620,7 +620,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				if (fr.FrameSize < (lame_Offset + 100))
 					goto Check_Lame_Tag_Yes;
 
-				lib.frame.Frame_Fill_Toc(fr, fr.BsBuf.AsMemory(fr.BsBufIndex + lame_Offset));
+				lib.frame.Int123_Frame_Fill_Toc(fr, fr.BsBuf.AsMemory(fr.BsBufIndex + lame_Offset));
 				lame_Offset += 100;
 			}
 
@@ -760,14 +760,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 				// Encoder delay and padding, two 12 bit values
 				// ... lame does write them from int
-				off_t pad_In = (((bsBufSpan[lame_Offset]) << 4) | ((bsBufSpan[lame_Offset + 1]) >> 4));
-				off_t pad_Out = (((bsBufSpan[lame_Offset + 1]) << 8) | (bsBufSpan[lame_Offset + 2])) & 0xfff;
+				int64_t pad_In = (((bsBufSpan[lame_Offset]) << 4) | ((bsBufSpan[lame_Offset + 1]) >> 4));
+				int64_t pad_Out = (((bsBufSpan[lame_Offset + 1]) << 8) | (bsBufSpan[lame_Offset + 2])) & 0xfff;
 
 				lame_Offset += 3;	// 24 in
 
 				// Store even if libmpg123 does not do gapless decoding itself
-				fr.Enc_Delay = pad_In;
-				fr.Enc_Padding = pad_Out;
+				fr.Enc_Delay = (c_int)pad_In;
+				fr.Enc_Padding = (c_int)pad_Out;
 
 				// Final: 24 B LAME data
 			}
@@ -839,7 +839,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					fr.To_Decode = fr.To_Ignore = true;
 					--fr.HalfPhase;
 
-					Set_Pointer(fr, false, 0);
+					Int123_Set_Pointer(fr, false, 0);
 
 					if (fr.Lay == 3)
 						Array.Copy(fr.SSave, 0, fr.BsBuf, fr.BsBufIndex, fr.SSize);
@@ -906,8 +906,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 		/********************************************************************/
 		/// <summary>
-		/// Decode a heade and write the information into the frame structure
-		/// Return values are compatible with those of read_frame, namely:
+		/// Decode a header and write the information into the frame
+		/// structure. Return values are compatible with those of
+		/// INT123_read_frame, namely:
 		/// 
 		/// 1: Success
 		/// 0: No valid header
@@ -978,7 +979,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				case 1:
 				{
 					fr.Spf = 384;
-					fr.Do_Layer = lib.layer1.Do_Layer1;
+					fr.Do_Layer = lib.layer1.Int123_Do_Layer1;
 
 					if (!fr.FreeFormat)
 					{
@@ -993,7 +994,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				case 2:
 				{
 					fr.Spf = 1152;
-					fr.Do_Layer = lib.layer2.Do_Layer2;
+					fr.Do_Layer = lib.layer2.Int123_Do_Layer2;
 
 					if (!fr.FreeFormat)
 					{
@@ -1008,7 +1009,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				case 3:
 				{
 					fr.Spf = fr.Lsf != 0 ? 576 : 1152;	// MPEG 2.5 implies LSF
-					fr.Do_Layer = lib.layer3.Do_Layer3;
+					fr.Do_Layer = lib.layer3.Int123_Do_Layer3;
 
 					if (fr.Lsf != 0)
 						fr.SSize = (fr.Stereo == 1) ? 9 : 17;
@@ -1058,12 +1059,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			if (!((fr.FirstHead == 0) && ((fr.RDat.Flags & (ReaderFlags.Seekable | ReaderFlags.Buffered)) != 0)))
 				return Parse_Good;
 
-			off_t start = fr.Rd.Tell(fr);
+			int64_t start = fr.Rd.Tell(fr);
 
 			// Step framesize bytes forward and read next possible header
-			off_t oRet = fr.Rd.Skip_Bytes(fr, fr.FrameSize);
+			int64_t oRet = fr.Rd.Skip_Bytes(fr, fr.FrameSize);
 			if (oRet < 0)
-				return oRet == (off_t)Mpg123_Errors.Need_More ? Parse_More : Parse_Err;
+				return oRet == (int64_t)Mpg123_Errors.Need_More ? Parse_More : Parse_Err;
 
 			// Read header, seek back
 			hd = fr.Rd.Head_Read(fr, out nextHead);
@@ -1103,7 +1104,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		{
 			fr.OldHead = 0;		// Think about that. Used to be present only for skipping of junk, not resync-style wetwork
 
-			c_int ret = lib.id3.Parse_New_Id3(fr, newHead);
+			c_int ret = lib.id3.Int123_Parse_New_Id3(fr, newHead);
 			if (ret < 0)
 				return ret;
 			else if (ret > 0)
@@ -1145,7 +1146,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			c_ulong val = ((c_ulong)apeBuf[11] << 24) | ((c_ulong)apeBuf[10] << 16) | ((c_ulong)apeBuf[9] << 8) | apeBuf[8];
 
 			// If encountering EOF here, things are just at an end
-			ret = fr.Rd.Skip_Bytes(fr, (c_long)val);
+			ret = (c_int)fr.Rd.Skip_Bytes(fr, val);
 			if (ret < 0)
 				return ret;
 

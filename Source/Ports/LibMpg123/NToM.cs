@@ -31,9 +31,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_int Synth_NToM_Set_Step(Mpg123_Handle fr)
+		public c_int Int123_Synth_NToM_Set_Step(Mpg123_Handle fr)
 		{
-			c_long m = lib.parse.Frame_Freq(fr);
+			c_long m = lib.parse.Int123_Frame_Freq(fr);
 			c_long n = fr.Af.Rate;
 
 			if ((n > Constant.NToM_Max_Freq) || (m > Constant.NToM_Max_Freq) || (m <= 0) || (n <= 0))
@@ -51,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				return -1;
 			}
 
-			fr.NToM_Val[0] = fr.NToM_Val[1] = NToM_Val(fr, fr.Num);
+			fr.Int123_NToM_Val[0] = fr.Int123_NToM_Val[1] = Int123_NToM_Val(fr, fr.Num);
 
 			return 0;
 		}
@@ -64,9 +64,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// This is for keeping output consistent across seeks
 		/// </summary>
 		/********************************************************************/
-		public void NToM_Set_NToM(Mpg123_Handle fr, off_t num)
+		public void Int123_NToM_Set_NToM(Mpg123_Handle fr, int64_t num)
 		{
-			fr.NToM_Val[1] = fr.NToM_Val[0] = NToM_Val(fr, num);
+			fr.Int123_NToM_Val[1] = fr.Int123_NToM_Val[0] = Int123_NToM_Val(fr, num);
 		}
 
 
@@ -77,11 +77,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// No fear of integer overflow here
 		/// </summary>
 		/********************************************************************/
-		public off_t NToM_Frame_OutSamples(Mpg123_Handle fr)
+		public int64_t Int123_NToM_Frame_OutSamples(Mpg123_Handle fr)
 		{
 			// The do this before decoding the separate channels, so there is
 			// only one common ntom value
-			c_int ntm = (c_int)fr.NToM_Val[0];
+			c_int ntm = (c_int)fr.Int123_NToM_Val[0];
 			ntm += (c_int)(fr.Spf * fr.NToM_Step);
 
 			return ntm / Constant.NToM_Mul;
@@ -94,17 +94,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// Convert frame offset to unadjusted output sample offset
 		/// </summary>
 		/********************************************************************/
-		public off_t NToM_FrmOuts(Mpg123_Handle fr, off_t frame)
+		public int64_t Int123_NToM_FrmOuts(Mpg123_Handle fr, int64_t frame)
 		{
-			off_t sOff = 0;
-			off_t ntm = (off_t)NToM_Val(fr, 0);
+			int64_t sOff = 0;
+			int64_t ntm = Int123_NToM_Val(fr, 0);
 
 			if (frame <= 0)
 				return 0;
 
-			for (off_t f = 0; f < frame; ++f)
+			for (int64_t f = 0; f < frame; ++f)
 			{
-				ntm += fr.Spf * (off_t)fr.NToM_Step;
+				ntm += fr.Spf * fr.NToM_Step;
 				sOff += ntm / Constant.NToM_Mul;
 				ntm -= (ntm / Constant.NToM_Mul) * Constant.NToM_Mul;
 			}
@@ -119,21 +119,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// Convert input samples to unadjusted output samples
 		/// </summary>
 		/********************************************************************/
-		public off_t NToM_Ins2Outs(Mpg123_Handle fr, off_t ins)
+		public int64_t Int123_NToM_Ins2Outs(Mpg123_Handle fr, int64_t ins)
 		{
-			off_t sOff = 0;
-			off_t ntm = (off_t)NToM_Val(fr, 0);
+			int64_t sOff = 0;
+			int64_t ntm = Int123_NToM_Val(fr, 0);
 
 			{
-				off_t block = fr.Spf;
+				int64_t block = fr.Spf;
 
 				if (ins <= 0)
 					return 0;
 
 				do
 				{
-					off_t nowBlock = ins > block ? block : ins;
-					ntm += nowBlock * (off_t)fr.NToM_Step;
+					int64_t nowBlock = ins > block ? block : ins;
+					ntm += nowBlock * fr.NToM_Step;
 					sOff += ntm / Constant.NToM_Mul;
 					ntm -= (ntm / Constant.NToM_Mul) * Constant.NToM_Mul;
 					ins -= nowBlock;
@@ -151,17 +151,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// Determine frame offset from unadjusted output sample offset
 		/// </summary>
 		/********************************************************************/
-		public off_t NToM_FrameOff(Mpg123_Handle fr, off_t sOff)
+		public int64_t Int123_NToM_FrameOff(Mpg123_Handle fr, int64_t sOff)
 		{
-			off_t iOff = 0;	// Frames or samples
-			off_t ntm = (off_t)NToM_Val(fr, 0);
+			int64_t iOff = 0;	// Frames or samples
+			int64_t ntm = Int123_NToM_Val(fr, 0);
 
 			if (sOff <= 0)
 				return 0;
 
 			for (iOff = 0; true; ++iOff)
 			{
-				ntm += fr.Spf * (off_t)fr.NToM_Step;
+				ntm += fr.Spf * fr.NToM_Step;
 
 				if ((ntm / Constant.NToM_Mul) > sOff)
 					break;
@@ -179,11 +179,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_ulong NToM_Val(Mpg123_Handle fr, off_t frame)
+		private c_ulong Int123_NToM_Val(Mpg123_Handle fr, int64_t frame)
 		{
-			off_t ntm = Constant.NToM_Mul >> 1;	// For frame 0
+			int64_t ntm = Constant.NToM_Mul >> 1;	// For frame 0
 
-			for (off_t f = 0; f < frame; ++f)	// For frame > 0
+			for (int64_t f = 0; f < frame; ++f)	// For frame > 0
 			{
 				ntm += fr.Spf * (off_t)fr.NToM_Step;
 				ntm -= (ntm / Constant.NToM_Mul) * Constant.NToM_Mul;

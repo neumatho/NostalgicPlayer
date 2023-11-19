@@ -51,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// just needs a little scaling in the MMX/SSE case
 		/// </summary>
 		/********************************************************************/
-		public void Init_Layer12_Stuff(Mpg123_Handle fr, Func<Mpg123_Handle, Real[], int, Memory<Real>> init_Table)
+		public void Int123_Init_Layer12_Stuff(Mpg123_Handle fr, Func<Mpg123_Handle, Real[], int, Memory<Real>> init_Table)
 		{
 			for (c_int k = 0; k < 27; k++)
 			{
@@ -67,7 +67,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Memory<Real> Init_Layer12_Table(Mpg123_Handle fr, Real[] table, c_int m)
+		public Memory<Real> Int123_Init_Layer12_Table(Mpg123_Handle fr, Real[] table, c_int m)
 		{
 			c_int i;
 
@@ -84,7 +84,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_int Do_Layer2(Mpg123_Handle fr)
+		public c_int Int123_Do_Layer2(Mpg123_Handle fr)
 		{
 			c_int clip = 0;
 			c_int stereo = fr.Stereo;

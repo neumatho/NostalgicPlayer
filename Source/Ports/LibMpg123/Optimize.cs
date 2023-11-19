@@ -79,10 +79,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			synth_Base = new Synth_S
 			{
-				Plain = new Synth_S.Func_Synth[,] { { lib.synth_s32.Synth_1To1_S32 }, { lib.synth_s32.Synth_2To1_S32 }, { lib.synth_s32.Synth_4To1_S32 }, { lib.synth_s32.Synth_NToM_S32 } },
+				Plain = new Synth_S.Func_Synth[,] { { lib.synth_s32.Int123_Synth_1To1_S32 }, { lib.synth_s32.Int123_Synth_2To1_S32 }, { lib.synth_s32.Int123_Synth_4To1_S32 }, { lib.synth_s32.Int123_Synth_NToM_S32 } },
 				Stereo = new Synth_S.Func_Synth_Stereo[,] { { Synth_Stereo_Wrap }, { Synth_Stereo_Wrap }, { Synth_Stereo_Wrap }, { Synth_Stereo_Wrap } },
-				Mono2Stereo = new Synth_S.Func_Synth_Mono[,] { { lib.synth_s32.Synth_1To1_S32_M2S }, { lib.synth_s32.Synth_2To1_S32_M2S }, { lib.synth_s32.Synth_4To1_S32_M2S }, { lib.synth_s32.Synth_NToM_S32_M2S } },
-				Mono = new Synth_S.Func_Synth_Mono[,] { { lib.synth_s32.Synth_1To1_S32_Mono }, { lib.synth_s32.Synth_2To1_S32_Mono }, { lib.synth_s32.Synth_4To1_S32_Mono }, { lib.synth_s32.Synth_NToM_S32_Mono } },
+				Mono2Stereo = new Synth_S.Func_Synth_Mono[,] { { lib.synth_s32.Int123_Synth_1To1_S32_M2S }, { lib.synth_s32.Int123_Synth_2To1_S32_M2S }, { lib.synth_s32.Int123_Synth_4To1_S32_M2S }, { lib.synth_s32.Int123_Synth_NToM_S32_M2S } },
+				Mono = new Synth_S.Func_Synth_Mono[,] { { lib.synth_s32.Int123_Synth_1To1_S32_Mono }, { lib.synth_s32.Int123_Synth_2To1_S32_Mono }, { lib.synth_s32.Int123_Synth_4To1_S32_Mono }, { lib.synth_s32.Int123_Synth_NToM_S32_Mono } },
 			};
 		}
 
@@ -93,7 +93,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public OptDec DefDec()
+		public OptDec Int123_DefDec()
 		{
 			return DefOpt;
 		}
@@ -105,7 +105,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public OptCla DecClass(OptDec type)
+		public OptCla Int123_DecClass(OptDec type)
 		{
 			return
 				(type == OptDec.Mmx) ||
@@ -125,7 +125,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// Set synth functions for current frame
 		/// </summary>
 		/********************************************************************/
-		public c_int Set_Synth_Functions(Mpg123_Handle fr)
+		public c_int Int123_Set_Synth_Functions(Mpg123_Handle fr)
 		{
 			Synth_Resample resample = Synth_Resample.None;
 			Synth_Format basic_Format = Synth_Format.None;	// Default is always 16bit, or whatever
@@ -185,21 +185,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				return (c_int)Mpg123_Errors.Err;
 			}
 
-			if (lib.frame.Frame_Buffers(fr) != 0)
+			if (lib.frame.Int123_Frame_Buffers(fr) != 0)
 			{
 				fr.Err = Mpg123_Errors.No_Buffers;
 				return (c_int)Mpg123_Errors.Err;
 			}
 
 			{
-				lib.layer3.Init_Layer3_Stuff(fr, lib.layer3.Init_Layer3_GainPow2);
-				lib.layer2.Init_Layer12_Stuff(fr, lib.layer2.Init_Layer12_Table);
+				lib.layer3.Int123_Init_Layer3_Stuff(fr, lib.layer3.Int123_Init_Layer3_GainPow2);
+				lib.layer2.Int123_Init_Layer12_Stuff(fr, lib.layer2.Int123_Init_Layer12_Table);
 
-				fr.Make_Decode_Tables = lib.tabInit.Make_Decode_Tables;
+				fr.Int123_Make_Decode_Tables = lib.tabInit.Int123_Make_Decode_Tables;
 			}
 
 			// We allocated the table buffers just now, so (re)create the tables
-			fr.Make_Decode_Tables(fr);
+			fr.Int123_Make_Decode_Tables(fr);
 
 			return 0;
 		}
@@ -211,14 +211,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public bool Frame_Cpu_Opt(Mpg123_Handle fr, string cpu)
+		public bool Int123_Frame_Cpu_Opt(Mpg123_Handle fr, string cpu)
 		{
 			string chosen = string.Empty;		// The chosen decoder opt as string
 			OptDec want_Dec = OptDec.NoDec;
 			bool done = false;
 			bool auto_Choose = false;
 
-			want_Dec = DecType(cpu);
+			want_Dec = Int123_DecType(cpu);
 			auto_Choose = want_Dec == OptDec.AutoDec;
 
 			// Fill whole array of synth functions with generic code first
@@ -242,7 +242,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				done = true;
 			}
 
-			fr.Cpu_Opts.Class = DecClass(fr.Cpu_Opts.Type);
+			fr.Cpu_Opts.Class = Int123_DecClass(fr.Cpu_Opts.Type);
 
 			if (done)
 				return true;
@@ -259,7 +259,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/********************************************************************/
 		public Dct36_Delegate Opt_Dct36()
 		{
-			return lib.layer3.Dct36;
+			return lib.layer3.Int123_Dct36;
 		}
 
 		#region Private methods
@@ -322,7 +322,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			if (type != OptDec.NoDec)
 			{
 				fr.Cpu_Opts.Type = type;
-				fr.Cpu_Opts.Class = DecClass(type);
+				fr.Cpu_Opts.Class = Int123_DecClass(type);
 
 				return Mpg123_Errors.Ok;
 			}
@@ -340,7 +340,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private OptDec DecType(string decoder)
+		private OptDec Int123_DecType(string decoder)
 		{
 			if (string.IsNullOrEmpty(decoder))
 				return OptDec.AutoDec;

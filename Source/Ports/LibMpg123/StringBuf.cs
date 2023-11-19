@@ -102,7 +102,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			if (sb.Size != new_)
 			{
-				c_uchar[] t = Memory.Safe_Realloc(sb.P, new_);
+				c_uchar[] t = Memory.Int123_Safe_Realloc(sb.P, new_);
 				if (t != null)
 				{
 					sb.P = t;

@@ -11,8 +11,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123.Containers
 	internal class Buffy
 	{
 		public c_uchar[] Data;
-		public ssize_t Size;
-		public ssize_t RealSize;
+		public ptrdiff_t Size;
+		public ptrdiff_t RealSize;
 		public Buffy Next;
 	}
 }

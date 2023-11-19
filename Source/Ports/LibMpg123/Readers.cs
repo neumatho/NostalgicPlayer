@@ -19,6 +19,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		private readonly Reader bad_Reader;
 		private readonly Reader[] readers;
 
+		private delegate ptrdiff_t FullRead_Delegate(Mpg123_Handle fr, Memory<c_uchar> buf, ptrdiff_t count);
+
 		private enum ReaderType
 		{
 			Stream,
@@ -57,7 +59,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			{
 				new Reader // READER_STREAM
 				{
-					Init = Default_Init,
+					Init = Stream_Init,
 					Close = Stream_Close,
 					FullRead = Plain_FullRead,
 					Head_Read = Generic_Head_Read,
@@ -72,7 +74,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				},
 				new Reader // READER_ICY_STREAM
 				{
-					Init = Default_Init,
+					Init = Stream_Init,
 					Close = Stream_Close,
 					FullRead = Icy_FullRead,
 					Head_Read = Generic_Head_Read,
@@ -102,9 +104,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				},
 				new Reader // READER_BUF_STREAM
 				{
-					Init = Default_Init,
+					Init = Stream_Init,
 					Close = Stream_Close,
-					FullRead = Buffered_FullRead,
+					FullRead = Buffered_Plain_FullRead,
 					Head_Read = Generic_Head_Read,
 					Head_Shift = Generic_Head_Shift,
 					Skip_Bytes = Stream_Skip_Bytes,
@@ -117,9 +119,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				},
 				new Reader // READER_BUF_ICY_STREAM
 				{
-					Init = Default_Init,
+					Init = Stream_Init,
 					Close = Stream_Close,
-					FullRead = Buffered_FullRead,
+					FullRead = Buffered_Icy_FullRead,
 					Head_Read = Generic_Head_Read,
 					Head_Shift = Generic_Head_Shift,
 					Skip_Bytes = Stream_Skip_Bytes,
@@ -140,9 +142,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Bc_Prepare(BufferChain bc, size_t pool_Size, size_t bufBlock)
+		public void Int123_Bc_Prepare(BufferChain bc, size_t pool_Size, size_t bufBlock)
 		{
-			Bc_PoolSize(bc, pool_Size, bufBlock);
+			Int123_Bc_PoolSize(bc, pool_Size, bufBlock);
 
 			bc.Pool = null;
 			bc.Pool_Fill = 0;
@@ -157,7 +159,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Bc_PoolSize(BufferChain bc, size_t pool_Size, size_t bufBlock)
+		public void Int123_Bc_PoolSize(BufferChain bc, size_t pool_Size, size_t bufBlock)
 		{
 			bc.Pool_Size = pool_Size;
 			bc.BufBlock = bufBlock;
@@ -170,7 +172,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Bc_Cleanup(BufferChain bc)
+		public void Int123_Bc_Cleanup(BufferChain bc)
 		{
 			Buffy_Del_Chain(bc.Pool);
 
@@ -183,11 +185,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/********************************************************************/
 		/// <summary>
 		/// Externally called function, returns 0 on success, -1 on error
+		/// 
+		/// External API uses size_t, we use signed ptrdiff_t internally.
+		/// Overflow is a theoretical possibility
 		/// </summary>
 		/********************************************************************/
-		public int Feed_More(Mpg123_Handle fr, Span<c_uchar> in_, c_long count)
+		public int Int123_Feed_More(Mpg123_Handle fr, Span<c_uchar> in_, size_t count)
 		{
-			c_int ret = Bc_Add(fr.RDat.Buffer, in_, count);
+			if (count > Constant.PtrDiff_Max)
+				return (c_int)Mpg123_Errors.Err;
+
+			c_int ret = Bc_Add(fr.RDat.Buffer, in_, (ptrdiff_t)count);
 			if (ret != 0)
 				ret = (c_int)Mpg123_Errors.Err;
 
@@ -201,9 +209,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Open_Bad(Mpg123_Handle mh)
+		public void Int123_Open_Bad(Mpg123_Handle mh)
 		{
-			lib.icy.Clear_Icy(mh.Icy);
+			lib.icy.Int123_Clear_Icy(mh.Icy);
 
 			mh.Rd = bad_Reader;
 			mh.RDat.Flags = 0;
@@ -217,84 +225,53 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Final code common to open_stream and INT123_open_stream_handle
 		/// </summary>
 		/********************************************************************/
-		public Mpg123_Errors Open_Stream(Mpg123_Handle fr, string bs_FileNam, Stream fd)
+		public c_int Int123_Open_Stream_Handle(Mpg123_Handle fr, object ioHandle)
 		{
-			bool filePt_Opened = true;
-			Stream filePt;
+			lib.icy.Int123_Clear_Icy(fr.Icy);
 
-			lib.icy.Clear_Icy(fr.Icy);		// Can be done inside frame_clear ...?
+			fr.RDat.FileLen = -1;
+			fr.RDat.IOHandle = ioHandle;
+			fr.RDat.Flags = ReaderFlags.None;
+			fr.RDat.Flags |= ReaderFlags.HandleIo;
 
-			if (string.IsNullOrEmpty(bs_FileNam))
+			if (fr.P.Icy_Interval > 0)
 			{
-				filePt = fd;
-				filePt_Opened = false;		// And don't try to close it...
+				fr.Icy.Interval = fr.P.Icy_Interval;
+				fr.Icy.Next = fr.Icy.Interval;
+				fr.Rd = readers[(int)ReaderType.Icy_Stream];
 			}
 			else
-			{
-				try
-				{
-					filePt = File.OpenRead(bs_FileNam);
-				}
-				catch (Exception)
-				{
-					fr.Err = Mpg123_Errors.Bad_File;
-					return Mpg123_Errors.Err;
-				}
-			}
+				fr.Rd = readers[(int)ReaderType.Stream];
 
-			// Now we have something behind filept and can init the reader
-			fr.RDat.FileLen = -1;
-			fr.RDat.FilePt = filePt;
-			fr.RDat.Flags = 0;
+			if (fr.Rd.Init(fr) < 0)
+				return (c_int)Mpg123_Errors.Err;
 
-			if (filePt_Opened)
-				fr.RDat.Flags |= ReaderFlags.Fd_Opened;
-
-			return Open_Finish(fr);
+			return (c_int)Mpg123_Errors.Ok;
 		}
 
 		#region Private members
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// This is only for streams, so READER_HANDLEIO must be set
 		/// </summary>
 		/********************************************************************/
-		private ssize_t Posix_Read(Stream fd, Memory<c_uchar> buf, size_t count)
+		private ptrdiff_t FdRead(Mpg123_Handle fr, Memory<c_uchar> buf, size_t count)
 		{
-			return fd.Read(buf.Span.Slice(0, (int)count));
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		private ssize_t Posix_LSeek(Stream fd, off_t offset, SeekOrigin whence)
-		{
-			try
+			if (((fr.RDat.Flags & ReaderFlags.HandleIo) != 0) && (fr.RDat.R_Read64 != null))
 			{
-				return fd.Seek(offset, whence);
+				size_t got = 0;
+
+				c_int ret = fr.RDat.R_Read64(fr.RDat.IOHandle, buf, count, out got);
+				if (ret < 0)
+					return -1;
+
+				// Stupid handling, but at least some handling of never occuring case
+				return (ptrdiff_t)(got > Constant.PtrDiff_Max ? Constant.PtrDiff_Max : got);
 			}
-			catch (Exception)
-			{
-				return -1;
-			}
-		}
 
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		private ssize_t Nix_LSeek(Stream fd, off_t offset, SeekOrigin whence)
-		{
 			return -1;
 		}
 
@@ -302,14 +279,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 		/********************************************************************/
 		/// <summary>
-		/// A normal read
+		/// 
 		/// </summary>
 		/********************************************************************/
-		private ssize_t Plain_Read(Mpg123_Handle fr, Memory<c_uchar> buf, size_t count)
+		private int64_t FdSeek(Mpg123_Handle fr, int64_t offset, SeekOrigin whence)
 		{
-			ssize_t ret = Io_Read(fr.RDat, buf, count);
+			if (((fr.RDat.Flags & ReaderFlags.HandleIo) != 0) && (fr.RDat.R_LSeek64 != null))
+				return ((fr.RDat.Flags & ReaderFlags.NoSeek) != 0) ? -1 : fr.RDat.R_LSeek64(fr.RDat.IOHandle, offset, whence);
 
-			return ret;
+			return -1;
 		}
 
 
@@ -319,10 +297,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private ssize_t Icy_FullRead(Mpg123_Handle fr, Memory<c_uchar> buf, ssize_t count)
+		private ptrdiff_t Icy_FullRead(Mpg123_Handle fr, Memory<c_uchar> buf, ptrdiff_t count)
 		{
-			ssize_t ret;
-			ssize_t cnt = 0;
+			ptrdiff_t ret;
+			ptrdiff_t cnt = 0;
 
 			if ((fr.RDat.Flags & ReaderFlags.Seekable) != 0)
 				return -1;
@@ -339,13 +317,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				{
 					c_uchar[] temp_Buff = new c_uchar[1];
 					size_t meta_Size;
-					ssize_t cut_Pos;
+					ptrdiff_t cut_Pos;
 
 					// We are near icy-metaint boundary, read up to the boundary
 					if (fr.Icy.Next > 0)
 					{
 						cut_Pos = fr.Icy.Next;
-						ret = fr.RDat.FdRead(fr, buf.Slice((int)cnt), (size_t)cut_Pos);
+						ret = FdRead(fr, buf.Slice((int)cnt), (size_t)cut_Pos);
 						if (ret < 1)
 						{
 							if (ret == 0)
@@ -355,7 +333,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 						}
 
 						if ((fr.RDat.Flags & ReaderFlags.Buffered) == 0)
-							Saturate_Add(ref fr.RDat.FilePos, ret, Constant.Off_Max);
+							Saturate_Add(ref fr.RDat.FilePos, ret, int64_t.MaxValue);
 
 						cnt += ret;
 						fr.Icy.Next -= (off_t)ret;
@@ -367,7 +345,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					// Now off to read icy data
 					//
 					// One byte icy-meta size (must be multiplied by 16 to get icy-meta length)
-					ret = fr.RDat.FdRead(fr, temp_Buff, 1);		// Getting one single byte
+					ret = FdRead(fr, temp_Buff, 1);		// Getting one single byte
 					if (ret < 0)
 						return (c_int)Mpg123_Errors.Err;
 
@@ -375,7 +353,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 						break;
 
 					if ((fr.RDat.Flags & ReaderFlags.Buffered) == 0)
-						Saturate_Add(ref fr.RDat.FilePos, ret, Constant.Off_Max);	// 1...
+						Saturate_Add(ref fr.RDat.FilePos, ret, int64_t.MaxValue);	// 1...
 
 					if (((meta_Size = temp_Buff[0]) * 16) != 0)
 					{
@@ -383,11 +361,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 						c_uchar[] meta_Buff = new c_uchar[meta_Size + 1];
 						if (meta_Buff != null)
 						{
-							ssize_t left = (ssize_t)meta_Size;
+							ptrdiff_t left = (ptrdiff_t)meta_Size;
 
 							while (left > 0)
 							{
-								ret = fr.RDat.FdRead(fr, meta_Buff.AsMemory((int)((ssize_t)meta_Size - left)), (size_t)left);
+								ret = FdRead(fr, meta_Buff.AsMemory((int)((ssize_t)meta_Size - left)), (size_t)left);
 
 								// 0 is error here, too... there _must_ be the ICY data, the server promised!
 								if (ret < 1)
@@ -399,7 +377,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 							meta_Buff[meta_Size] = 0;	// string paranoia
 
 							if ((fr.RDat.Flags & ReaderFlags.Buffered) == 0)
-								Saturate_Add(ref fr.RDat.FilePos, ret, Constant.Off_Max);
+								Saturate_Add(ref fr.RDat.FilePos, ret, int64_t.MaxValue);
 
 							fr.Icy.Data = meta_Buff;
 							fr.MetaFlags |= Mpg123_MetaFlags.New_Icy;
@@ -436,9 +414,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private ssize_t Plain_FullRead(Mpg123_Handle fr, Memory<c_uchar> buf, ssize_t count)
+		private ptrdiff_t Plain_FullRead(Mpg123_Handle fr, Memory<c_uchar> buf, ptrdiff_t count)
 		{
-			ssize_t cnt = 0;
+			ptrdiff_t cnt = 0;
 
 			// There used to be a check for expected file end here (length value or ID3 flag).
 			// This is not needed:
@@ -447,7 +425,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			// 3. ... files that have ID3v1 tags in between (stream with intro)
 			while (cnt < count)
 			{
-				ssize_t ret = fr.RDat.FdRead(fr, buf.Slice((int)cnt), (size_t)(count - cnt));
+				ptrdiff_t ret = FdRead(fr, buf.Slice((int)cnt), (size_t)(count - cnt));
 				if (ret < 0)
 					return (ssize_t)Mpg123_Errors.Err;
 
@@ -455,7 +433,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					break;
 
 				if ((fr.RDat.Flags & ReaderFlags.Buffered) == 0)
-					Saturate_Add(ref fr.RDat.FilePos, ret, Constant.Off_Max);
+					Saturate_Add(ref fr.RDat.FilePos, ret, int64_t.MaxValue);
 
 				cnt += ret;
 			}
@@ -470,16 +448,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private off_t Stream_LSeek(Mpg123_Handle fr, off_t pos, SeekOrigin whence)
+		private int64_t Stream_LSeek(Mpg123_Handle fr, int64_t pos, SeekOrigin whence)
 		{
-			off_t ret = Io_Seek(fr.RDat, pos, whence);
+			int64_t ret = FdSeek(fr, pos, whence);
 
 			if (ret >= 0)
 				fr.RDat.FilePos = ret;
 			else
 			{
 				fr.Err = Mpg123_Errors.LSeek_Failed;
-				ret = (off_t)Mpg123_Errors.Err;
+				ret = (int64_t)Mpg123_Errors.Err;
 			}
 
 			return ret;
@@ -494,11 +472,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/********************************************************************/
 		private void Stream_Close(Mpg123_Handle fr)
 		{
-			if ((fr.RDat.Flags & ReaderFlags.Fd_Opened) != 0)
-				fr.RDat.FilePt.Dispose();
-
-			fr.RDat.FilePt = null;
-
 			if ((fr.RDat.Flags & ReaderFlags.Buffered) != 0)
 				Bc_Reset(fr.RDat.Buffer);
 
@@ -518,20 +491,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Stream_Seek_Frame(Mpg123_Handle fr, off_t newFrame)
+		private c_int Stream_Seek_Frame(Mpg123_Handle fr, int64_t newFrame)
 		{
 			// Seekable streams can go backwards and jump forwards.
 			// Non-seekable streams still can go forward, just not jump
 			if (((fr.RDat.Flags & ReaderFlags.Seekable) != 0) || (newFrame >= fr.Num))
 			{
-				off_t preFrame;		// A leading frame we jump to
-				off_t seek_To;		// The byte offset we want to reach
-				off_t to_Skip;		// Bytes to skip to get there (can be negative)
+				int64_t preFrame;		// A leading frame we jump to
+				int64_t seek_To;		// The byte offset we want to reach
+				int64_t to_Skip;		// Bytes to skip to get there (can be negative)
 
 				// Now seek to nearest leading index position and read from there until newFrame is reached.
 				// We use skip_Bytes, which handles seekable and non-seekable streams
 				// (the latter only for positive offset, which we ensured before entering here)
-				seek_To = lib.frame.Frame_Index_Find(fr, newFrame, out preFrame);
+				seek_To = lib.frame.Int123_Frame_Index_Find(fr, newFrame, out preFrame);
 
 				// No need to seek to index position if we are closer already.
 				// But I am picky about fr.Num == newFrame, play safe by reading the frame again.
@@ -549,7 +522,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				while (fr.Num < newFrame)
 				{
 					// Try to be non-fatal now... frameNum only gets advanced on success anyway
-					if (lib.parse.Read_Frame(fr) == 0)
+					if (lib.parse.Int123_Read_Frame(fr) == 0)
 						break;
 				}
 
@@ -619,29 +592,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// Returns reached position... negative ones are bad
 		/// </summary>
 		/********************************************************************/
-		private off_t Stream_Skip_Bytes(Mpg123_Handle fr, off_t len)
+		private int64_t Stream_Skip_Bytes(Mpg123_Handle fr, int64_t len)
 		{
 			if ((fr.RDat.Flags & ReaderFlags.Seekable) != 0)
 			{
-				off_t ret = Stream_LSeek(fr, len, SeekOrigin.Current);
-				return ret < 0 ? (off_t)Mpg123_Errors.Err : ret;
+				int64_t ret = Stream_LSeek(fr, len, SeekOrigin.Current);
+				return ret < 0 ? (int64_t)Mpg123_Errors.Err : ret;
 			}
 			else if (len >= 0)
 			{
 				c_uchar[] buf = new c_uchar[1024];	// ThOr: Compaq cxx complained and it makes sense to me... or should one do a cast? What for?
-				ssize_t ret;
+				ptrdiff_t ret;
 
 				while (len > 0)
 				{
-					ssize_t num = len < buf.Length ? len : buf.Length;
+					ptrdiff_t num = len < buf.Length ? len : buf.Length;
 					ret = fr.Rd.FullRead(fr, buf, num);
 
 					if (ret < 0)
-						return (off_t)ret;
+						return ret;
 					else if (ret == 0)
 						break;		// EOF... an error? Interface defined to tell the actual position...
 
-					len -= (off_t)ret;
+					len -= ret;
 				}
 
 				return fr.Rd.Tell(fr);
@@ -659,14 +632,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				{
 					fr.Err = Mpg123_Errors.No_Seek;
 
-					return (off_t)Mpg123_Errors.Err;
+					return (int64_t)Mpg123_Errors.Err;
 				}
 			}
 			else
 			{
 				fr.Err = Mpg123_Errors.No_Seek;
 
-				return (off_t)Mpg123_Errors.Err;
+				return (int64_t)Mpg123_Errors.Err;
 			}
 		}
 
@@ -677,9 +650,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Stream_Back_Bytes(Mpg123_Handle fr, off_t bytes)
+		private c_int Stream_Back_Bytes(Mpg123_Handle fr, int64_t bytes)
 		{
-			off_t want = fr.Rd.Tell(fr) - bytes;
+			int64_t want = fr.Rd.Tell(fr) - bytes;
 
 			if (want < 0)
 				return (c_int)Mpg123_Errors.Err;
@@ -699,9 +672,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/********************************************************************/
 		private c_int Generic_Read_Frame_Body(Mpg123_Handle fr, Memory<c_uchar> buf, c_int size)
 		{
-			c_long l = (c_long)fr.Rd.FullRead(fr, buf, size);
+			ptrdiff_t l = fr.Rd.FullRead(fr, buf, size);
 
-			return (l >= 0) && (l < size) ? (c_int)Mpg123_Errors.Err : l;
+			return (l >= 0) && (l < size) ? (c_int)Mpg123_Errors.Err : (c_int)l;
 		}
 
 
@@ -711,12 +684,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private off_t Generic_Tell(Mpg123_Handle fr)
+		private int64_t Generic_Tell(Mpg123_Handle fr)
 		{
 			if ((fr.RDat.Flags & ReaderFlags.Buffered) != 0)
 			{
 				fr.RDat.FilePos = fr.RDat.Buffer.FileOff;
-				Saturate_Add(ref fr.RDat.FilePos, fr.RDat.Buffer.Pos, Constant.Off_Max);
+				Saturate_Add(ref fr.RDat.FilePos, fr.RDat.Buffer.Pos, int64_t.MaxValue);
 			}
 
 			return fr.RDat.FilePos;
@@ -753,14 +726,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private off_t Get_FileInfo(Mpg123_Handle fr)
+		private int64_t Get_FileInfo(Mpg123_Handle fr)
 		{
-			off_t len = Io_Seek(fr.RDat, 0, SeekOrigin.End);
+			int64_t len = FdSeek(fr, 0, SeekOrigin.End);
 			if (len < 0)
 				return -1;
 			else if (len >= 128)
 			{
-				if (Io_Seek(fr.RDat, -128, SeekOrigin.End) < 0)
+				if (FdSeek(fr, -128, SeekOrigin.End) < 0)
 					return -1;
 
 				if (fr.Rd.FullRead(fr, fr.Id3Buf, 128) != 128)
@@ -770,7 +743,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					len -= 128;
 			}
 
-			if (Io_Seek(fr.RDat, 0, SeekOrigin.Begin) < 0)
+			if (FdSeek(fr, 0, SeekOrigin.Begin) < 0)
 				return -1;
 
 			fr.RDat.FilePos = 0;	// Un-do out seeking here
@@ -785,13 +758,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private Buffy Buffy_New(size_t size, size_t minSize)
+		private Buffy Buffy_New(ptrdiff_t size, ptrdiff_t minSize)
 		{
+			if (size > Constant.PtrDiff_Max)
+				return null;
+
 			Buffy newBuf = new Buffy();
 			if (newBuf == null)
 				return null;
 
-			newBuf.RealSize = (ssize_t)(size > minSize ? size : minSize);
+			newBuf.RealSize = size > minSize ? size : minSize;
 			newBuf.Data = new c_uchar[newBuf.RealSize];
 			if (newBuf.Data == null)
 				return null;
@@ -892,7 +868,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			}
 			else
 			{
-				return Buffy_New(size, bc.BufBlock);
+				return Buffy_New((ptrdiff_t)size, (ptrdiff_t)bc.BufBlock);
 			}
 		}
 
@@ -919,7 +895,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			while (bc.Pool_Fill < bc.Pool_Size)
 			{
 				// Again, just work on the front
-				Buffy buf = Buffy_New(0, bc.BufBlock);		// Use default block size
+				Buffy buf = Buffy_New(0, (ptrdiff_t)bc.BufBlock);		// Use default block size
 				if (buf == null)
 					return -1;
 
@@ -960,7 +936,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// Create a new buffy at the end to be filled
 		/// </summary>
 		/********************************************************************/
-		private int Bc_Append(BufferChain bc, ssize_t size)
+		private int Bc_Append(BufferChain bc, ptrdiff_t size)
 		{
 			if (size < 1)
 				return -1;
@@ -986,11 +962,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// Append a new buffer and copy content to it
 		/// </summary>
 		/********************************************************************/
-		private c_int Bc_Add(BufferChain bc, Span<c_uchar> data, ssize_t size)
+		private c_int Bc_Add(BufferChain bc, Span<c_uchar> data, ptrdiff_t size)
 		{
 			c_int ret = 0;
-			ssize_t part = 0;
-			ssize_t dataOffset = 0;
+			ptrdiff_t part = 0;
+			ptrdiff_t dataOffset = 0;
+
+			if ((Constant.PtrDiff_Max - bc.Size) < size)
+				return -1;
 
 			while (size > 0)
 			{
@@ -1024,7 +1003,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// Common handler for "You want more than I can give." situation
 		/// </summary>
 		/********************************************************************/
-		private ssize_t Bc_Need_More(BufferChain bc)
+		private ptrdiff_t Bc_Need_More(BufferChain bc, ptrdiff_t size)
 		{
 			// Go back to firstpos, undo the previous reads
 			bc.Pos = bc.FirstPos;
@@ -1039,14 +1018,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// Give some data, advancing position but not forgetting yet
 		/// </summary>
 		/********************************************************************/
-		private ssize_t Bc_Give(BufferChain bc, Memory<c_uchar> out_, ssize_t size)
+		private ptrdiff_t Bc_Give(BufferChain bc, Memory<c_uchar> out_, ptrdiff_t size)
 		{
 			Buffy b = bc.First;
-			ssize_t gotCount = 0;
-			ssize_t offset = 0;
+			ptrdiff_t gotCount = 0;
+			ptrdiff_t offset = 0;
 
 			if ((bc.Size - bc.Pos) < size)
-				return Bc_Need_More(bc);
+				return Bc_Need_More(bc, size);
 
 			// Find the current buffer
 			while ((b != null) && (offset + b.Size) <= bc.Pos)
@@ -1058,8 +1037,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			// Now start copying from there
 			while ((gotCount < size) && (b != null))
 			{
-				ssize_t lOff = bc.Pos - offset;
-				ssize_t chunk = size - gotCount;	// Amount of bytes to get from here...
+				ptrdiff_t lOff = bc.Pos - offset;
+				ptrdiff_t chunk = size - gotCount;	// Amount of bytes to get from here...
 
 				b.Data.AsSpan((int)lOff, (int)chunk).CopyTo(out_.Slice((int)gotCount).Span);
 				gotCount += chunk;
@@ -1080,17 +1059,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// The buffers are still there, just the read pointer is moved!
 		/// </summary>
 		/********************************************************************/
-		private ssize_t Bc_Skip(BufferChain bc, ssize_t count)
+		private ptrdiff_t Bc_Skip(BufferChain bc, ptrdiff_t count)
 		{
 			if (count >= 0)
 			{
 				if ((bc.Size - bc.Pos) < count)
-					return Bc_Need_More(bc);
+					return Bc_Need_More(bc, count);
 				else
 					return bc.Pos += count;
 			}
 			else
-				return (ssize_t)Mpg123_Errors.Err;
+				return (ptrdiff_t)Mpg123_Errors.Err;
 		}
 
 
@@ -1100,12 +1079,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private ssize_t Bc_SeekBack(BufferChain bc, ssize_t count)
+		private ptrdiff_t Bc_SeekBack(BufferChain bc, ptrdiff_t count)
 		{
 			if ((count >= 0) && (count <= bc.Pos))
 				return bc.Pos -= count;
 			else
-				return (ssize_t)Mpg123_Errors.Err;
+				return (ptrdiff_t)Mpg123_Errors.Err;
 		}
 
 
@@ -1165,12 +1144,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private ssize_t Feed_Read(Mpg123_Handle fr, Memory<c_uchar> out_, ssize_t count)
+		private ptrdiff_t Feed_Read(Mpg123_Handle fr, Memory<c_uchar> out_, ptrdiff_t count)
 		{
-			ssize_t gotCount = Bc_Give(fr.RDat.Buffer, out_, count);
+			ptrdiff_t gotCount = Bc_Give(fr.RDat.Buffer, out_, count);
 
 			if ((gotCount >= 0) && (gotCount != count))
-				return (ssize_t)Mpg123_Errors.Err;
+				return (ptrdiff_t)Mpg123_Errors.Err;
 			else
 			{
 				return gotCount;
@@ -1184,10 +1163,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// Returns reached position... negative ones are bad...
 		/// </summary>
 		/********************************************************************/
-		private off_t Feed_Skip_Bytes(Mpg123_Handle fr, off_t len)
+		private int64_t Feed_Skip_Bytes(Mpg123_Handle fr, int64_t len)
 		{
 			// This is either the new buffer offset or some negative error value
-			off_t res = (off_t)Bc_Skip(fr.RDat.Buffer, len);
+			int64_t res = Bc_Skip(fr.RDat.Buffer, len);
 			if (res < 0)
 				return res;
 
@@ -1201,7 +1180,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Feed_Back_Bytes(Mpg123_Handle fr, off_t bytes)
+		private c_int Feed_Back_Bytes(Mpg123_Handle fr, int64_t bytes)
 		{
 			if (bytes >= 0)
 				return Bc_SeekBack(fr.RDat.Buffer, bytes) >= 0 ? 0 : (c_int)Mpg123_Errors.Err;
@@ -1216,7 +1195,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Feed_Seek_Frame(Mpg123_Handle fr, off_t num)
+		private c_int Feed_Seek_Frame(Mpg123_Handle fr, int64_t num)
 		{
 			return (c_int)Mpg123_Errors.Err;
 		}
@@ -1233,7 +1212,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			Bc_Forget(fr.RDat.Buffer);
 
 			fr.RDat.FilePos = fr.RDat.Buffer.FileOff;
-			Saturate_Add(ref fr.RDat.FilePos, fr.RDat.Buffer.Pos, Constant.Off_Max);
+			Saturate_Add(ref fr.RDat.FilePos, fr.RDat.Buffer.Pos, int64_t.MaxValue);
 		}
 
 
@@ -1243,24 +1222,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// The specific stuff for buffered stream reader
 		/// </summary>
 		/********************************************************************/
-		private ssize_t Buffered_FullRead(Mpg123_Handle fr, Memory<c_uchar> out_, ssize_t count)
+		private ptrdiff_t Buffered_FullRead(Mpg123_Handle fr, Memory<c_uchar> out_, ptrdiff_t count, FullRead_Delegate fullRead)
 		{
 			BufferChain bc = fr.RDat.Buffer;
 
 			if ((bc.Size - bc.Pos) < count)
 			{   // Add more stuff to buffer. If hitting end of file, adjust count
 				c_uchar[] readBuf = new c_uchar[4096];
-				ssize_t need = count - (bc.Size - bc.Pos);
+				ptrdiff_t need = count - (bc.Size - bc.Pos);
 
 				while (need > 0)
 				{
-					ssize_t got = fr.RDat.FullRead(fr, readBuf, readBuf.Length);
+					ptrdiff_t got = fullRead(fr, readBuf, readBuf.Length);
 					if (got < 0)
-						return (ssize_t)Mpg123_Errors.Err;
+						return (ptrdiff_t)Mpg123_Errors.Err;
 
 					c_int ret;
 					if ((got > 0) && ((ret = Bc_Add(bc, readBuf, got)) != 0))
-						return (ssize_t)Mpg123_Errors.Err;
+						return (ptrdiff_t)Mpg123_Errors.Err;
 
 					need -= got;	// May underflow here...
 					if (got < readBuf.Length)	// That naturally catches got == 0, too
@@ -1271,10 +1250,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					count = bc.Size - bc.Pos;	// We want only what we got
 			}
 
-			ssize_t gotCount = Bc_Give(bc, out_, count);
+			ptrdiff_t gotCount = Bc_Give(bc, out_, count);
 
 			if (gotCount != count)
-				return (ssize_t)Mpg123_Errors.Err;
+				return (ptrdiff_t)Mpg123_Errors.Err;
 			else
 				return gotCount;
 		}
@@ -1286,22 +1265,44 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Default_Init(Mpg123_Handle fr)
+		private ptrdiff_t Buffered_Plain_FullRead(Mpg123_Handle fr, Memory<c_uchar> out_, ptrdiff_t count)
 		{
-			fr.RDat.FdRead = Plain_Read;
+			return Buffered_FullRead(fr, out_, count, Plain_FullRead);
+		}
 
-			fr.RDat.Read = fr.RDat.R_Read != null ? fr.RDat.R_Read : Posix_Read;
-			fr.RDat.LSeek = fr.RDat.R_LSeek != null ? fr.RDat.R_LSeek : Posix_LSeek;
 
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private ptrdiff_t Buffered_Icy_FullRead(Mpg123_Handle fr, Memory<c_uchar> out_, ptrdiff_t count)
+		{
+			return Buffered_FullRead(fr, out_, count, Icy_FullRead);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private c_int Stream_Init(Mpg123_Handle fr)
+		{
 			// ICY streams of any sort shall not be seekable
 			if (fr.P.Icy_Interval > 0)
-				fr.RDat.LSeek = Nix_LSeek;
+				fr.RDat.Flags |= ReaderFlags.NoSeek;
 
 			fr.RDat.FilePos = 0;
 			fr.RDat.FileLen = (fr.P.Flags & Mpg123_Param_Flags.No_Peek_End) != 0 ? -1 : Get_FileInfo(fr);
 
 			if ((fr.P.Flags & Mpg123_Param_Flags.Force_Seekable) != 0)
+			{
 				fr.RDat.Flags |= ReaderFlags.Seekable;
+				fr.RDat.Flags &= ~ReaderFlags.NoSeek;
+			}
 
 			// Don't enable seeking on ICY streams, just plain normal files.
 			// This check is necessary since the client can enforce ICY parsing on files
@@ -1320,15 +1321,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			else if ((fr.P.Flags & Mpg123_Param_Flags.SeekBuffer) != 0)
 			{
 				if (fr.Rd == readers[(int)ReaderType.Stream])
-				{
 					fr.Rd = readers[(int)ReaderType.Buf_Stream];
-					fr.RDat.FullRead = Plain_FullRead;
-				}
 				else if (fr.Rd == readers[(int)ReaderType.Icy_Stream])
-				{
 					fr.Rd = readers[(int)ReaderType.Buf_Icy_Stream];
-					fr.RDat.FullRead = Icy_FullRead;
-				}
 				else
 					return -1;
 
@@ -1417,7 +1412,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private off_t Bad_Skip_Bytes(Mpg123_Handle mh, off_t len)
+		private int64_t Bad_Skip_Bytes(Mpg123_Handle mh, int64_t len)
 		{
 			mh.Err = Mpg123_Errors.No_Reader;
 
@@ -1445,7 +1440,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Bad_Back_Bytes(Mpg123_Handle mh, off_t bytes)
+		private c_int Bad_Back_Bytes(Mpg123_Handle mh, int64_t bytes)
 		{
 			mh.Err = Mpg123_Errors.No_Reader;
 
@@ -1459,7 +1454,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Bad_Seek_Frame(Mpg123_Handle mh, off_t num)
+		private c_int Bad_Seek_Frame(Mpg123_Handle mh, int64_t num)
 		{
 			mh.Err = Mpg123_Errors.No_Reader;
 
@@ -1473,7 +1468,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private off_t Bad_Tell(Mpg123_Handle mh)
+		private int64_t Bad_Tell(Mpg123_Handle mh)
 		{
 			mh.Err = Mpg123_Errors.No_Reader;
 
@@ -1495,76 +1490,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 		/********************************************************************/
 		/// <summary>
-		/// Final code common to open_stream and open_stream_handle
-		/// </summary>
-		/********************************************************************/
-		private Mpg123_Errors Open_Finish(Mpg123_Handle fr)
-		{
-			if (fr.P.Icy_Interval > 0)
-			{
-				fr.Icy.Interval = fr.P.Icy_Interval;
-				fr.Icy.Next = fr.Icy.Interval;
-				fr.Rd = readers[(int)ReaderType.Icy_Stream];
-			}
-			else
-				fr.Rd = readers[(int)ReaderType.Stream];
-
-			if (fr.Rd.Init(fr) < 0)
-				return Mpg123_Errors.Err;
-
-			return Mpg123_Errors.Ok;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Wrappers for actual reading/seeking... I'm full of wrappers here
-		/// </summary>
-		/********************************************************************/
-		private off_t Io_Seek(Reader_Data rDat, off_t offset, SeekOrigin whence)
-		{
-			if ((rDat.Flags & ReaderFlags.HandleIo) != 0)
-			{
-				if (rDat.R_LSeek_Handle != null)
-					return (off_t)rDat.R_LSeek_Handle(rDat.IOHandle, offset, whence);
-				else
-					return -1;
-			}
-			else
-				return (off_t)rDat.LSeek(rDat.FilePt, offset, whence);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private ssize_t Io_Read(Reader_Data rDat, Memory<c_uchar> buf, size_t count)
+		private void Saturate_Add(ref int64_t inOut, ptrdiff_t add, int64_t limit)
 		{
-			if ((rDat.Flags & ReaderFlags.HandleIo) != 0)
-			{
-				if (rDat.R_Read_Handle != null)
-					return rDat.R_Read_Handle(rDat.IOHandle, buf, count);
-				else
-					return -1;
-			}
-			else
-				return rDat.Read(rDat.FilePt, buf, count);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		private void Saturate_Add(ref off_t inOut, ssize_t add, uint64_t limit)
-		{
-			inOut = ((off_t)limit - add >= inOut) ? (inOut + (off_t)add) : (off_t)limit;
+			inOut = (limit - add >= inOut) ? (inOut + add) : limit;
 		}
 		#endregion
 	}

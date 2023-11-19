@@ -14,14 +14,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123.Containers
 	{
 		public delegate c_int Init_Delegate(Mpg123_Handle fr);
 		public delegate void Close_Delegate(Mpg123_Handle fr);
-		public delegate ssize_t FullRead_Delegate(Mpg123_Handle fr, Memory<c_uchar> buf, ssize_t count);
+		public delegate ptrdiff_t FullRead_Delegate(Mpg123_Handle fr, Memory<c_uchar> buf, ptrdiff_t count);
 		public delegate c_int Head_Read_Delegate(Mpg123_Handle fr, out c_ulong newHead);
 		public delegate c_int Head_Shift_Delegate(Mpg123_Handle fr, ref c_ulong head);
-		public delegate off_t Skip_Bytes_Delegate(Mpg123_Handle fr, off_t len);
+		public delegate int64_t Skip_Bytes_Delegate(Mpg123_Handle fr, int64_t len);
 		public delegate c_int Read_Frame_Body_Delegate(Mpg123_Handle fr, Memory<c_uchar> buf, c_int size);
-		public delegate c_int Back_Bytes_Delegate(Mpg123_Handle fr, off_t bytes);
-		public delegate c_int Seek_Frame_Delegate(Mpg123_Handle fr, off_t newFrame);
-		public delegate off_t Tell_Delegate(Mpg123_Handle fr);
+		public delegate c_int Back_Bytes_Delegate(Mpg123_Handle fr, int64_t bytes);
+		public delegate c_int Seek_Frame_Delegate(Mpg123_Handle fr, int64_t newFrame);
+		public delegate int64_t Tell_Delegate(Mpg123_Handle fr);
 		public delegate void Rewind_Delegate(Mpg123_Handle fr);
 		public delegate void Forget_Delegate(Mpg123_Handle fr);
 

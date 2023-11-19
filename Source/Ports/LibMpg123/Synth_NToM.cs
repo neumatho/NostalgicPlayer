@@ -115,26 +115,26 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				fr.Bo--;
 				fr.Bo &= 0xf;
 				buf = fr.Real_Buffs[0];
-				ntom = fr.NToM_Val[1] = fr.NToM_Val[0];
+				ntom = fr.Int123_NToM_Val[1] = fr.Int123_NToM_Val[0];
 			}
 			else
 			{
 				samplesOffset = 1;
 				buf = fr.Real_Buffs[1];
-				ntom = fr.NToM_Val[1];
+				ntom = fr.Int123_NToM_Val[1];
 			}
 
 			if ((fr.Bo & 0x1) != 0)
 			{
 				b0 = buf[0].Span;
 				bo1 = fr.Bo;
-				lib.dct64.DoDct64(buf[1].Slice((fr.Bo + 1) & 0xf), buf[0].Slice(fr.Bo), bandPtr);
+				lib.dct64.Int123_Dct64(buf[1].Slice((fr.Bo + 1) & 0xf), buf[0].Slice(fr.Bo), bandPtr);
 			}
 			else
 			{
 				b0 = buf[1].Span;
 				bo1 = fr.Bo + 1;
-				lib.dct64.DoDct64(buf[0].Slice(fr.Bo), buf[1].Slice(fr.Bo + 1), bandPtr);
+				lib.dct64.Int123_Dct64(buf[0].Slice(fr.Bo), buf[1].Slice(fr.Bo + 1), bandPtr);
 			}
 
 			{
@@ -240,7 +240,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				}
 			}
 
-			fr.NToM_Val[channel] = ntom;
+			fr.Int123_NToM_Val[channel] = ntom;
 
 			if (final)
 				fr.Buffer.Fill = (size_t)(samplesOffset - (channel != 0 ? Marshal.SizeOf(default(SAMPLE_T)) : 0));

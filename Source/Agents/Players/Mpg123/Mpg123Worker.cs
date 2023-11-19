@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		private int oldBitRate;
 
 		private Mpg123_FrameInfo frameInfo;
-		private int numberOfFrames;
+		private long numberOfFrames;
 		private long firstFramePosition;
 
 		private string songName;
@@ -398,7 +398,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
 			// Open the stream and scan it to find all tags, etc.
-			result = mpg123Handle.Mpg123_Open_Fd(moduleStream);
+			result = OpenFile(moduleStream);
 			if (result != Mpg123_Errors.Ok)
 			{
 				errorMessage = GetErrorString(result);
@@ -523,7 +523,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		/********************************************************************/
 		protected override TimeSpan GetTotalDuration()
 		{
-			int numberOfSamples = mpg123Handle.Mpg123_Length();
+			long numberOfSamples = mpg123Handle.Mpg123_Length64();
 			double totalTime = (double)numberOfSamples / frameInfo.Rate;
 
 			return new TimeSpan((long)(totalTime * TimeSpan.TicksPerSecond));
@@ -538,8 +538,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		/********************************************************************/
 		protected override void SetPosition(TimeSpan time)
 		{
-			int newPos = (int)(frameInfo.Rate * time.TotalSeconds);
-			mpg123Handle.Mpg123_Seek(newPos, SeekOrigin.Begin);
+			long newPos = (long)(frameInfo.Rate * time.TotalSeconds);
+			mpg123Handle.Mpg123_Seek64(newPos, SeekOrigin.Begin);
 		}
 		#endregion
 
@@ -555,6 +555,52 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 				return mpg123Handle.Mpg123_StrError();
 
 			return mpg123Handle.Mpg123_Plain_StrError(error);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Open the file
+		/// </summary>
+		/********************************************************************/
+		private Mpg123_Errors OpenFile(ModuleStream moduleStream)
+		{
+			Mpg123_Errors result = mpg123Handle.Mpg123_Reader64(Read, Seek, null);
+			if (result != Mpg123_Errors.Ok)
+				return result;
+
+			return mpg123Handle.Mpg123_Open_Handle(moduleStream);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read from the file
+		/// </summary>
+		/********************************************************************/
+		private int Read(object handle, Memory<byte> buf, ulong count, out ulong readCount)
+		{
+			ModuleStream moduleStream = (ModuleStream)handle;
+
+			readCount = (ulong)moduleStream.Read(buf.Span.Slice(0, (int)count));
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Seek in the file
+		/// </summary>
+		/********************************************************************/
+		private long Seek(object handle, long offset, SeekOrigin whence)
+		{
+			ModuleStream moduleStream = (ModuleStream)handle;
+
+			return moduleStream.Seek(offset, whence);
 		}
 
 
@@ -587,7 +633,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 				moduleStream.Seek(0, SeekOrigin.Begin);
 
 				// Open the stream and scan it to find all tags, etc.
-				result = mpg123Handle.Mpg123_Open_Fd(moduleStream);
+				result = OpenFile(moduleStream);
 				if (result != Mpg123_Errors.Ok)
 					return ModuleType.Unknown;
 
@@ -787,11 +833,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 				return false;
 			}
 
-			numberOfFrames = mpg123Handle.Mpg123_FrameLength();
+			numberOfFrames = mpg123Handle.Mpg123_FrameLength64();
 			if (numberOfFrames < 0)
 				numberOfFrames = 0;
 
-			result = mpg123Handle.Mpg123_Index(out int[] offsets, out _, out _);
+			result = mpg123Handle.Mpg123_Index64(out long[] offsets, out _, out _);
 			if (result == Mpg123_Errors.Ok)
 				firstFramePosition = offsets[0];
 			else

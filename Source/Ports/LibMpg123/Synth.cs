@@ -37,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		public c_int DoSynth<SAMPLE_T>(Memory<Real> bandPtr, c_int channel, Mpg123_Handle fr, bool final, c_int block, Write_Sample<SAMPLE_T> write_Sample) where SAMPLE_T : struct
 		{
 			const c_int BackPedal = 0x10;     // We use autoincrement and thus need this re-adjustment for window/b0
-			Action<Memory<Real>, Memory<Real>, Memory<Real>> myDct64 = lib.dct64.DoDct64;
+			Action<Memory<Real>, Memory<Real>, Memory<Real>> myDct64 = lib.dct64.Int123_Dct64;
 			const c_int Step = 2;
 
 			Span<SAMPLE_T> samples = MemoryMarshal.Cast<byte, SAMPLE_T>(fr.Buffer.Data.AsSpan((int)fr.Buffer.Fill));

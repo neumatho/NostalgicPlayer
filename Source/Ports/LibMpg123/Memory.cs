@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// Reallocate the array given
 		/// </summary>
 		/********************************************************************/
-		public static T[] Safe_Realloc<T>(T[] array, size_t newSize)
+		public static T[] Int123_Safe_Realloc<T>(T[] array, size_t newSize)
 		{
 			Array.Resize(ref array, (int)newSize);
 

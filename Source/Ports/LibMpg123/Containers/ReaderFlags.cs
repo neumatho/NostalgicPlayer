@@ -13,11 +13,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123.Containers
 	[Flags]
 	internal enum ReaderFlags
 	{
-		Fd_Opened = 0x1,
+		None = 0,
 		Id3Tag = 0x2,
 		Seekable = 0x4,
 		Buffered = 0x8,
-		NonBlock = 0x20,
+		NoSeek = 0x10,
 		HandleIo = 0x40
 	}
 }

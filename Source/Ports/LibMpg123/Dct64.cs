@@ -31,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void DoDct64(Memory<Real> out0, Memory<Real> out1, Memory<Real> samples)
+		public void Int123_Dct64(Memory<Real> out0, Memory<Real> out1, Memory<Real> samples)
 		{
 			Real[] bufs = new Real[64];
 
@@ -40,7 +40,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				int b1Offset = 0;
 				Real[] bs = bufs;
 				int bsOffset = 0;
-				Real[] cosTab = lib.tabInit.Pnts[0];
+				Real[] cosTab = lib.tabInit.Int123_Pnts[0];
 				int cosTabOffset = 16;
 				Span<Real> b2 = b1;
 				int b2Offset = 32;
@@ -53,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 				b1 = bufs.AsSpan();
 				b1Offset = 0;
-				cosTab = lib.tabInit.Pnts[1];
+				cosTab = lib.tabInit.Int123_Pnts[1];
 				cosTabOffset = 8;
 				b2 = b1;
 				b2Offset = b1Offset + 16;
@@ -79,7 +79,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 				bs = bufs;
 				bsOffset = 0;
-				cosTab = lib.tabInit.Pnts[2];
+				cosTab = lib.tabInit.Int123_Pnts[2];
 				b2 = b1;
 				b2Offset = b1Offset + 8;
 
@@ -104,7 +104,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 				b1 = bufs.AsSpan();
 				b1Offset = 0;
-				cosTab = lib.tabInit.Pnts[3];
+				cosTab = lib.tabInit.Int123_Pnts[3];
 				b2 = b1;
 				b2Offset = b1Offset + 4;
 
@@ -127,7 +127,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 				bs = bufs;
 				bsOffset = 0;
-				cosTab = lib.tabInit.Pnts[4];
+				cosTab = lib.tabInit.Int123_Pnts[4];
 
 				for (c_int j = 8; j != 0; j--)
 				{

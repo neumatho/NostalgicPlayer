@@ -108,7 +108,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// Return: -1: error; 0: no format change; 1: format change
 		/// </summary>
 		/********************************************************************/
-		public c_int Frame_Output_Format(Mpg123_Handle fr)
+		public c_int Int123_Frame_Output_Format(Mpg123_Handle fr)
 		{
 			AudioFormat nf = new AudioFormat();
 			c_int f0 = 0;
@@ -167,32 +167,32 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			}
 
 			// Native decoder rate first
-			if (Enc_Chan_Fit(p, lib.parse.Frame_Freq(fr) >> p.Down_Sample, nf, f0, f2, try_Float))
+			if (Enc_Chan_Fit(p, lib.parse.Int123_Frame_Freq(fr) >> p.Down_Sample, nf, f0, f2, try_Float))
 				goto End;
 
 			// Then downsamplings
 			if (((p.Flags & Mpg123_Param_Flags.Auto_Resample) != 0) && (p.Down_Sample < 2))
 			{
-				if (Enc_Chan_Fit(p, lib.parse.Frame_Freq(fr) >> (p.Down_Sample + 1), nf, f0, f2, try_Float))
+				if (Enc_Chan_Fit(p, lib.parse.Int123_Frame_Freq(fr) >> (p.Down_Sample + 1), nf, f0, f2, try_Float))
 					goto End;
 
-				if ((p.Down_Sample < 1) && (Enc_Chan_Fit(p, lib.parse.Frame_Freq(fr) >> 2, nf, f0, f2, try_Float)))
+				if ((p.Down_Sample < 1) && (Enc_Chan_Fit(p, lib.parse.Int123_Frame_Freq(fr) >> 2, nf, f0, f2, try_Float)))
 					goto End;
 			}
 
 			// And again the whole deal with float fallback
 			if (!try_Float)
 			{
-				if (Enc_Chan_Fit(p, lib.parse.Frame_Freq(fr) >> p.Down_Sample, nf, f0, f2, true))
+				if (Enc_Chan_Fit(p, lib.parse.Int123_Frame_Freq(fr) >> p.Down_Sample, nf, f0, f2, true))
 					goto End;
 
 				// Then downsamplings
 				if (((p.Flags & Mpg123_Param_Flags.Auto_Resample) != 0) && (p.Down_Sample < 2))
 				{
-					if (Enc_Chan_Fit(p, lib.parse.Frame_Freq(fr) >> (p.Down_Sample + 1), nf, f0, f2, true))
+					if (Enc_Chan_Fit(p, lib.parse.Int123_Frame_Freq(fr) >> (p.Down_Sample + 1), nf, f0, f2, true))
 						goto End;
 
-					if ((p.Down_Sample < 1) && (Enc_Chan_Fit(p, lib.parse.Frame_Freq(fr) >> 2, nf, f0, f2, true)))
+					if ((p.Down_Sample < 1) && (Enc_Chan_Fit(p, lib.parse.Int123_Frame_Freq(fr) >> 2, nf, f0, f2, true)))
 						goto End;
 				}
 			}
@@ -200,7 +200,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			// Try to find any rate that works and resample using NtoM hackery
 			if (((p.Flags & Mpg123_Param_Flags.Auto_Resample) != 0) && (fr.Down_Sample == 0))
 			{
-				c_int rn = Rate2Num(p, lib.parse.Frame_Freq(fr));
+				c_int rn = Rate2Num(p, lib.parse.Int123_Frame_Freq(fr));
 				if (rn < 0)
 					return 0;
 
@@ -458,7 +458,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// different than this
 		/// </summary>
 		/********************************************************************/
-		public void Invalidate_Format(AudioFormat af)
+		public void Int123_Invalidate_Format(AudioFormat af)
 		{
 			af.Encoding = 0;
 			af.Rate = 0;
@@ -472,7 +472,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// Number of bytes the decoder produces
 		/// </summary>
 		/********************************************************************/
-		public off_t Decoder_Synth_Bytes(Mpg123_Handle fr, off_t s)
+		public int64_t Int123_Decoder_Synth_Bytes(Mpg123_Handle fr, int64_t s)
 		{
 			return s * fr.Af.EncSize * fr.Af.Channels;
 		}
@@ -484,7 +484,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public off_t Bytes_To_Samples(Mpg123_Handle fr, off_t b)
+		public int64_t Int123_Bytes_To_Samples(Mpg123_Handle fr, int64_t b)
 		{
 			return b / fr.Af.EncSize / fr.Af.Channels;
 		}
@@ -496,7 +496,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// Number of bytes needed for decoding _and_ post-processing
 		/// </summary>
 		/********************************************************************/
-		public off_t OutBlock_Bytes(Mpg123_Handle fr, off_t s)
+		public int64_t Int123_OutBlock_Bytes(Mpg123_Handle fr, int64_t s)
 		{
 			c_int encSize = ((fr.Af.Encoding & Mpg123_Enc_Enum.Enc_24) != 0) ? 4 :
 				(fr.Af.EncSize > fr.Af.Dec_EncSize ? fr.Af.EncSize : fr.Af.Dec_EncSize);
@@ -511,7 +511,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void PostProcess_Buffer(Mpg123_Handle fr)
+		public void Int123_PostProcess_Buffer(Mpg123_Handle fr)
 		{
 			// This caters for the final output formats that are never produced by
 			// decoder synth directly (wide unsigned and 24 bit formats) or that are

@@ -162,7 +162,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static off_t Sample_Adjust(Mpg123_Handle mh, off_t x)
+		public static int64_t Sample_Adjust(Mpg123_Handle mh, int64_t x)
 		{
 			return x;
 		}
@@ -175,7 +175,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static off_t Sample_Unadjust(Mpg123_Handle mh, off_t x)
+		public static int64_t Sample_Unadjust(Mpg123_Handle mh, int64_t x)
 		{
 			return x;
 		}

@@ -102,7 +102,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Real Init_Layer3_GainPow2(Mpg123_Handle fr, c_int i)
+		public Real Int123_Init_Layer3_GainPow2(Mpg123_Handle fr, c_int i)
 		{
 			return Helpers.Double_To_Real_Scale_Layer3(Math.Pow(2.0, -0.25 * (i + 210)), i + 256);
 		}
@@ -114,7 +114,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Init_Layer3_Stuff(Mpg123_Handle fr, Func<Mpg123_Handle, c_int, Real> gainPow2_Func)
+		public void Int123_Init_Layer3_Stuff(Mpg123_Handle fr, Func<Mpg123_Handle, c_int, Real> gainPow2_Func)
 		{
 			for (c_int i = -256; i < 118 + 4; i++)
 				fr.GainPow2[i + 256] = gainPow2_Func(fr, i);
@@ -146,7 +146,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_int Do_Layer3(Mpg123_Handle fr)
+		public c_int Int123_Do_Layer3(Mpg123_Handle fr)
 		{
 			c_int clip = 0;
 			c_int[][] scaleFacs = ArrayHelper.Initialize2Arrays<c_int>(2, 39);	// Max 39 for short[13][3] mode, mixed: 38, long: 22
@@ -182,7 +182,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			if (III_Get_Side_Info(fr, sideInfo, stereo, ms_Stereo, sFreq, single) != 0)
 				return clip;
 
-			lib.parse.Set_Pointer(fr, true, (c_long)sideInfo.Main_Data_Begin);
+			lib.parse.Int123_Set_Pointer(fr, true, (c_long)sideInfo.Main_Data_Begin);
 
 			if (fr.PInfo != null)
 			{
@@ -379,7 +379,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// Pages 175-199
 		/// </summary>
 		/********************************************************************/
-		public void Dct36(Memory<Real> inBuf, Memory<Real> o1, Memory<Real> o2, Real[] winTab, Memory<Real> tsBuf)
+		public void Int123_Dct36(Memory<Real> inBuf, Memory<Real> o1, Memory<Real> o2, Real[] winTab, Memory<Real> tsBuf)
 		{
 			Real[] tmp = new Real[18];
 
@@ -461,7 +461,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					t0 = Helpers.Real_Mul(L3Tabs.Cos9[0], (in_[5] + in_[9]));
 					t1 = Helpers.Real_Mul(L3Tabs.Cos9[1], (in_[9] - in_[17]));
 
-					tmp[13] = Helpers.Real_Mul((t4 + t2 + t2), L3Tabs.TfCos36[17 - 13]);
+					tmp[13] = Helpers.Real_Mul((t4 + t2 + t2), L3Tabs.Int123_TfCos36[17 - 13]);
 					t2 = Helpers.Real_Mul(L3Tabs.Cos9[2], (in_[5] + in_[17]));
 
 					t6 = t3 - t0 - t2;
@@ -473,21 +473,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					t7 = Helpers.Real_Mul(Constant.Cos6_1, in_[7]);
 
 					t1 = t2 + t4 + t7;
-					tmp[17] = Helpers.Real_Mul((t0 + t1), L3Tabs.TfCos36[17 - 17]);
-					tmp[9] = Helpers.Real_Mul((t0 - t1), L3Tabs.TfCos36[17 - 9]);
+					tmp[17] = Helpers.Real_Mul((t0 + t1), L3Tabs.Int123_TfCos36[17 - 17]);
+					tmp[9] = Helpers.Real_Mul((t0 - t1), L3Tabs.Int123_TfCos36[17 - 9]);
 					t1 = Helpers.Real_Mul(L3Tabs.Cos18[2], (in_[3] + in_[15]));
 					t2 += t1 - t7;
 
-					tmp[14] = Helpers.Real_Mul((t3 + t2), L3Tabs.TfCos36[17 - 14]);
+					tmp[14] = Helpers.Real_Mul((t3 + t2), L3Tabs.Int123_TfCos36[17 - 14]);
 					t0 = Helpers.Real_Mul(Constant.Cos6_1, (in_[11] + in_[15] - in_[3]));
-					tmp[12] = Helpers.Real_Mul((t3 - t2), L3Tabs.TfCos36[17 - 12]);
+					tmp[12] = Helpers.Real_Mul((t3 - t2), L3Tabs.Int123_TfCos36[17 - 12]);
 
 					t4 -= t1 + t7;
 
-					tmp[16] = Helpers.Real_Mul((t5 - t0), L3Tabs.TfCos36[17 - 16]);
-					tmp[10] = Helpers.Real_Mul((t5 + t0), L3Tabs.TfCos36[17 - 10]);
-					tmp[15] = Helpers.Real_Mul((t6 + t4), L3Tabs.TfCos36[17 - 15]);
-					tmp[11] = Helpers.Real_Mul((t6 - t4), L3Tabs.TfCos36[17 - 11]);
+					tmp[16] = Helpers.Real_Mul((t5 - t0), L3Tabs.Int123_TfCos36[17 - 16]);
+					tmp[10] = Helpers.Real_Mul((t5 + t0), L3Tabs.Int123_TfCos36[17 - 10]);
+					tmp[15] = Helpers.Real_Mul((t6 + t4), L3Tabs.Int123_TfCos36[17 - 15]);
+					tmp[11] = Helpers.Real_Mul((t6 - t4), L3Tabs.Int123_TfCos36[17 - 11]);
 				}
 
 				{
@@ -889,7 +889,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			c_int numBits = 0;
 			c_uint sLen;
 
-			if (i_Stereo != 0)	// i_stereo AND second channel -> do_layer3() checks this
+			if (i_Stereo != 0)	// i_stereo AND second channel -> INT123_do_layer3() checks this
 				sLen = L3Tabs.I_SLen2[gr_Info.ScaleFac_Compress >> 1];
 			else
 				sLen = L3Tabs.N_SLen2[gr_Info.ScaleFac_Compress];

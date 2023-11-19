@@ -34,7 +34,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public int Do_Layer1(Mpg123_Handle fr)
+		public int Int123_Do_Layer1(Mpg123_Handle fr)
 		{
 			c_int clip = 0;
 			c_int stereo = fr.Stereo;

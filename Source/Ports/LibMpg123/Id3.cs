@@ -160,7 +160,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Init_Id3(Mpg123_Handle fr)
+		public void Int123_Init_Id3(Mpg123_Handle fr)
 		{
 			fr.Id3V2.Version = 0;		// Nothing there
 
@@ -183,7 +183,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Exit_Id3(Mpg123_Handle fr)
+		public void Int123_Exit_Id3(Mpg123_Handle fr)
 		{
 			Free_Picture(fr);
 			Free_Comment(fr);
@@ -198,10 +198,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Reset_Id3(Mpg123_Handle fr)
+		public void Int123_Reset_Id3(Mpg123_Handle fr)
 		{
-			Exit_Id3(fr);
-			Init_Id3(fr);
+			Int123_Exit_Id3(fr);
+			Int123_Init_Id3(fr);
 		}
 
 
@@ -212,7 +212,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// array
 		/// </summary>
 		/********************************************************************/
-		public void Id3_Link(Mpg123_Handle fr)
+		public void Int123_Id3_Link(Mpg123_Handle fr)
 		{
 			Mpg123_Id3V2 v2 = fr.Id3V2;
 
@@ -259,7 +259,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		///                    again)
 		/// </summary>
 		/********************************************************************/
-		public c_int Parse_New_Id3(Mpg123_Handle fr, c_ulong first4Bytes)
+		public c_int Int123_Parse_New_Id3(Mpg123_Handle fr, c_ulong first4Bytes)
 		{
 			const int Unsync_Flag = 128;
 			const int ExtHead_Flag = 64;	// ID3v2.3+
@@ -282,9 +282,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			if (major == 0xff)
 				return 0;	// Invalid...
 
-			off_t ret2 = fr.Rd.Read_Frame_Body(fr, buf, 6);
+			int64_t ret2 = fr.Rd.Read_Frame_Body(fr, buf, 6);
 			if (ret2 < 0)	// Read more header information
-				return ret2;
+				return (c_int)ret2;
 
 			if (buf[0] == 0xff)
 				return 0;	// Revision, will never be 0xff
@@ -369,15 +369,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				// Stores the whole tag with footer and an additional trailing zero
 				ret2 = Store_Id3V2(fr, first4Bytes, buf, length + footLen);
 				if (ret2 <= 0)
-					return ret2;
+					return (c_int)ret2;
 			}
 
 			if (skipTag)
 			{
-				Reset_Id3(fr);	// Old data is invalid
+				Int123_Reset_Id3(fr);	// Old data is invalid
 
 				if (!storeTag && (ret2 = fr.Rd.Skip_Bytes(fr, (off_t)(length + footLen))) < 0)
-					ret = ret2;
+					ret = (c_int)ret2;
 			}
 			else
 			{
@@ -421,7 +421,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					}
 
 					if ((extFlags & Ext_Update_Flag) == 0)
-						Reset_Id3(fr);
+						Int123_Reset_Id3(fr);
 
 					if (ret > 0)
 					{
@@ -683,10 +683,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 						}
 					}
 					else
-						Reset_Id3(fr);
+						Int123_Reset_Id3(fr);
 				}
 				else	// No new data, but still there was a tag that invalidates old data
-					Reset_Id3(fr);
+					Int123_Reset_Id3(fr);
 
 				TagParse_Cleanup:
 				// Get rid of stored raw data that should not be kept
@@ -952,7 +952,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			}
 
 			// Nothing found, add new one
-			Mpg123_Text[] x = Memory.Safe_Realloc(list, size + 1);
+			Mpg123_Text[] x = Memory.Int123_Safe_Realloc(list, size + 1);
 			if (x == null)
 				return null;	// Bad
 
@@ -988,7 +988,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			}
 
 			// Append a new one
-			Mpg123_Picture[] x = Memory.Safe_Realloc(list, size + 1);
+			Mpg123_Picture[] x = Memory.Int123_Safe_Realloc(list, size + 1);
 			if (x == null)
 				return null;	// Bad
 
@@ -1038,7 +1038,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			if (encoding > Mpg123_Id3_Enc.Enc_Max)
 				return;
 
-			Id3_To_Utf8(sb, encoding, source, source_Size);
+			Int123_Id3_To_Utf8(sb, encoding, source, source_Size);
 		}
 
 
@@ -1049,7 +1049,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// Also, encoding has been checked already
 		/// </summary>
 		/********************************************************************/
-		private void Id3_To_Utf8(Mpg123_String sb, Mpg123_Id3_Enc encoding, Span<c_uchar> source, size_t source_Size)
+		private void Int123_Id3_To_Utf8(Mpg123_String sb, Mpg123_Id3_Enc encoding, Span<c_uchar> source, size_t source_Size)
 		{
 			if (sb != null)
 				sb.Fill = 0;
@@ -1092,9 +1092,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			textOffset = 0;
 			size_t width = encoding_Widths[(int)encoding];
 
+			if (limit > Constant.PtrDiff_Max)
+				return null;
+
 			// So I go lengths to find zero or double zero...
 			// Remember bug 2834636: Only check for aligned NULLs!
-			while (offset < (ssize_t)limit)
+			while (offset < (ptrdiff_t)limit)
 			{
 				if (text[offset] == 0)
 				{
@@ -1186,7 +1189,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			if (workpoint == null)
 				return;
 
-			Id3_To_Utf8(mime, Mpg123_Id3_Enc.Latin1, realData, workpointOffset);
+			Int123_Id3_To_Utf8(mime, Mpg123_Id3_Enc.Latin1, realData, workpointOffset);
 			realSize -= workpointOffset;
 			realData = realData.Slice((int)workpointOffset);
 
@@ -1203,7 +1206,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				return;
 			}
 
-			Id3_To_Utf8(description, encoding, realData, workpointOffset);
+			Int123_Id3_To_Utf8(description, encoding, realData, workpointOffset);
 			realSize -= workpointOffset;
 
 			if (realSize != 0)
@@ -1476,7 +1479,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		private c_int Store_Id3V2(Mpg123_Handle fr, c_ulong first4Bytes, c_uchar[] buf, c_ulong length)
 		{
 			c_int ret = 1;
-			off_t ret2;
+			int64_t ret2;
 			c_ulong fulLen = 10 + length;
 
 			fr.Id3V2_Size = 0;
@@ -1490,7 +1493,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 				ret2 = fr.Rd.Skip_Bytes(fr, (off_t)length);
 				if (ret2 < 0)
-					ret = ret2;
+					ret = (c_int)ret2;
 				else
 					ret = 0;
 			}
@@ -1506,7 +1509,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				ret2 = fr.Rd.Read_Frame_Body(fr, fr.Id3V2_Raw.AsMemory(10), (int)length);
 				if (ret2 < 0)
 				{
-					ret = ret2;
+					ret = (c_int)ret2;
 					fr.Id3V2_Raw = null;
 				}
 				else

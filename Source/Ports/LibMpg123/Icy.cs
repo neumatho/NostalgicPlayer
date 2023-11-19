@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Init_Icy(Icy_Meta icy)
+		public void Int123_Init_Icy(Icy_Meta icy)
 		{
 			icy.Data = null;
 		}
@@ -29,9 +29,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Clear_Icy(Icy_Meta icy)
+		public void Int123_Clear_Icy(Icy_Meta icy)
 		{
-			Init_Icy(icy);
+			Int123_Init_Icy(icy);
 		}
 
 
@@ -41,10 +41,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Reset_Icy(Icy_Meta icy)
+		public void Int123_Reset_Icy(Icy_Meta icy)
 		{
-			Clear_Icy(icy);
-			Init_Icy(icy);
+			Int123_Clear_Icy(icy);
+			Int123_Init_Icy(icy);
 		}
 	}
 }

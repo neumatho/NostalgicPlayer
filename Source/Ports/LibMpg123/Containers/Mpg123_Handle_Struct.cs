@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123.Containers
 		public Real[][] Muls = ArrayHelper.Initialize2Arrays<Real>(27, 64);	// Also used by layer 1
 
 		// Decode ntom
-		public readonly c_ulong[] NToM_Val = new c_ulong[2];
+		public readonly c_ulong[] Int123_NToM_Val = new c_ulong[2];
 		public c_ulong NToM_Step;
 
 		public Synth_S Synths = new Synth_S();
@@ -60,7 +60,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123.Containers
 		public Synth_S.Func_Synth_Mono Synth_Mono;
 
 		// Yes, this function is runtime-switched, too
-		public Action<Mpg123_Handle> Make_Decode_Tables;
+		public Action<Mpg123_Handle> Int123_Make_Decode_Tables;
 
 		public c_int Stereo;			// I _think_ 1 for mono and 2 for stereo
 		public c_int JsBound;
@@ -89,10 +89,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123.Containers
 		public c_int FrameSize;			// Computed frame size
 		public c_int FreeSize;			// Free format frame size
 		public Mpg123_Vbr Vbr;
-		public off_t Num;				// Frame offset ...
-		public off_t Input_Offset;		// Byte offset of this frame in input stream
-		public off_t PlayNum;			// Playback offset... includes repetitions, reset at seeks
-		public off_t Audio_Start;		// The byte offset in the file where audio data begins
+		public int64_t Num;				// Frame offset ...
+		public int64_t Input_Offset;	// Byte offset of this frame in input stream
+		public int64_t PlayNum;			// Playback offset... includes repetitions, reset at seeks
+		public int64_t Audio_Start;		// The byte offset in the file where audio data begins
 		public Frame_State_Flags State_Flags;
 		public c_char Silent_Resync;	// Do not complain for the next n resyncs
 		public c_uchar[] Xing_Toc;		// The seek TOC from Xing header
@@ -119,10 +119,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123.Containers
 		) Rva = ( new c_int[2], new c_float[2], new c_float[2] );
 
 		// Input data
-		public off_t Track_Frames;
-		public off_t Track_Samples;
+		public int64_t Track_Frames;
+		public int64_t Track_Samples;
 		public c_double Mean_FrameSize;
-		public off_t Mean_Frames;
+		public int64_t Mean_Frames;
 		public c_int FSizeOld;
 		public c_int SSize;
 		public c_uint BitReservoir;
@@ -148,9 +148,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123.Containers
 		public size_t OutBlock;			// Number of bytes that this frame produces (upper bound)
 		public bool To_Decode;			// This frame holds data to be decoded
 		public bool To_Ignore;			// The same, somehow
-		public off_t FirstFrame;		// Start decoding from here
-		public off_t LastFrame;			// Last frame to decode (for gapless or num_frames limit)
-		public off_t IgnoreFrame;		// Frames to decode but discard before firstframe
+		public int64_t FirstFrame;		// Start decoding from here
+		public int64_t LastFrame;		// Last frame to decode (for gapless or num_frames limit)
+		public int64_t IgnoreFrame;		// Frames to decode but discard before firstframe
 		public c_uint Crc;				// Well, I need a safe 16bit type, actually. But wider doesn't hurt
 		public Reader Rd;				// Pointer to the reading functions
 		public readonly Reader_Data RDat = new Reader_Data();	// Reader data and state info
@@ -184,8 +184,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123.Containers
 		// A place for storing additional data for the large file wrapper. This is cruft!
 		public Wrap_Data WrapperData;
 
-		// A callback used to properly destruct the wrapper data
-		public Action<Wrap_Data> WrapperClean;
 		public c_int Enc_Delay;
 		public c_int Enc_Padding;
 		public Mpg123_MoreInfo PInfo;

@@ -123,7 +123,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123.Containers
 		/// </summary>
 		No_Seek,
 		/// <summary>
-		/// No stream opened
+		/// No stream opened or no reader callback setup
 		/// </summary>
 		No_Reader,
 		/// <summary>

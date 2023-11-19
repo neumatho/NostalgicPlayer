@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_int Synth_1To1_S32(Memory<Real> bandPtr, c_int channel, Mpg123_Handle fr, bool final)
+		public c_int Int123_Synth_1To1_S32(Memory<Real> bandPtr, c_int channel, Mpg123_Handle fr, bool final)
 		{
 			return lib.synth.DoSynth<int32_t>(bandPtr, channel, fr, final, 0x40, Write_S32_Sample);
 		}
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_int Synth_1To1_S32_Mono(Memory<Real> bandPtr, Mpg123_Handle fr)
+		public c_int Int123_Synth_1To1_S32_Mono(Memory<Real> bandPtr, Mpg123_Handle fr)
 		{
 			return lib.synth_Mono.DoMonoSynth<int32_t>(bandPtr, fr, 0x40, fr.Synths.Plain[(int)Synth_Resample.OneToOne, (int)Synth_Format.ThirtyTwo]);
 		}
@@ -59,7 +59,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_int Synth_1To1_S32_M2S(Memory<Real> bandPtr, Mpg123_Handle fr)
+		public c_int Int123_Synth_1To1_S32_M2S(Memory<Real> bandPtr, Mpg123_Handle fr)
 		{
 			return lib.synth_Mono.DoMono2StereoSynth<int32_t>(bandPtr, fr, 0x40, fr.Synths.Plain[(int)Synth_Resample.OneToOne, (int)Synth_Format.ThirtyTwo]);
 		}
@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_int Synth_2To1_S32(Memory<Real> bandPtr, int channel, Mpg123_Handle fr, bool final)
+		public c_int Int123_Synth_2To1_S32(Memory<Real> bandPtr, int channel, Mpg123_Handle fr, bool final)
 		{
 			return lib.synth.DoSynth<int32_t>(bandPtr, channel, fr, final, 0x20, Write_S32_Sample);
 		}
@@ -83,7 +83,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_int Synth_2To1_S32_Mono(Memory<Real> bandPtr, Mpg123_Handle fr)
+		public c_int Int123_Synth_2To1_S32_Mono(Memory<Real> bandPtr, Mpg123_Handle fr)
 		{
 			return lib.synth_Mono.DoMonoSynth<int32_t>(bandPtr, fr, 0x20, fr.Synths.Plain[(int)Synth_Resample.TwoToOne, (int)Synth_Format.ThirtyTwo]);
 		}
@@ -95,7 +95,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_int Synth_2To1_S32_M2S(Memory<Real> bandPtr, Mpg123_Handle fr)
+		public c_int Int123_Synth_2To1_S32_M2S(Memory<Real> bandPtr, Mpg123_Handle fr)
 		{
 			return lib.synth_Mono.DoMono2StereoSynth<int32_t>(bandPtr, fr, 0x20, fr.Synths.Plain[(int)Synth_Resample.TwoToOne, (int)Synth_Format.ThirtyTwo]);
 		}
@@ -107,7 +107,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_int Synth_4To1_S32(Memory<Real> bandPtr, int channel, Mpg123_Handle fr, bool final)
+		public c_int Int123_Synth_4To1_S32(Memory<Real> bandPtr, int channel, Mpg123_Handle fr, bool final)
 		{
 			return lib.synth.DoSynth<int32_t>(bandPtr, channel, fr, final, 0x10, Write_S32_Sample);
 		}
@@ -119,7 +119,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_int Synth_4To1_S32_Mono(Memory<Real> bandPtr, Mpg123_Handle fr)
+		public c_int Int123_Synth_4To1_S32_Mono(Memory<Real> bandPtr, Mpg123_Handle fr)
 		{
 			return lib.synth_Mono.DoMonoSynth<int32_t>(bandPtr, fr, 0x10, fr.Synths.Plain[(int)Synth_Resample.FourToOne, (int)Synth_Format.ThirtyTwo]);
 		}
@@ -131,7 +131,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_int Synth_4To1_S32_M2S(Memory<Real> bandPtr, Mpg123_Handle fr)
+		public c_int Int123_Synth_4To1_S32_M2S(Memory<Real> bandPtr, Mpg123_Handle fr)
 		{
 			return lib.synth_Mono.DoMono2StereoSynth<int32_t>(bandPtr, fr, 0x10, fr.Synths.Plain[(int)Synth_Resample.FourToOne, (int)Synth_Format.ThirtyTwo]);
 		}
@@ -143,7 +143,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_int Synth_NToM_S32_Mono(Memory<Real> bandPtr, Mpg123_Handle fr)
+		public c_int Int123_Synth_NToM_S32_Mono(Memory<Real> bandPtr, Mpg123_Handle fr)
 		{
 			return lib.synth_NToM.DoMono<int32_t>(bandPtr, fr, Write_S32_Sample);
 		}
@@ -155,7 +155,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_int Synth_NToM_S32_M2S(Memory<Real> bandPtr, Mpg123_Handle fr)
+		public c_int Int123_Synth_NToM_S32_M2S(Memory<Real> bandPtr, Mpg123_Handle fr)
 		{
 			return lib.synth_NToM.DoMono2Stereo<int32_t>(bandPtr, fr, Write_S32_Sample);
 		}
@@ -167,7 +167,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_int Synth_NToM_S32(Memory<Real> bandPtr, c_int channel, Mpg123_Handle fr, bool final)
+		public c_int Int123_Synth_NToM_S32(Memory<Real> bandPtr, c_int channel, Mpg123_Handle fr, bool final)
 		{
 			return lib.synth_NToM.DoSynth<int32_t>(bandPtr, channel, fr, final, Write_S32_Sample);
 		}

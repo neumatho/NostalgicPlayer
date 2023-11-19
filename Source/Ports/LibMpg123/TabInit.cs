@@ -12,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 	/// </summary>
 	internal class TabInit
 	{
-		public readonly Real[][] Pnts = { CosTabs.Cos64, CosTabs.Cos32, CosTabs.Cos16, CosTabs.Cos8, CosTabs.Cos4 };
+		public readonly Real[][] Int123_Pnts = { CosTabs.Cos64, CosTabs.Cos32, CosTabs.Cos16, CosTabs.Cos8, CosTabs.Cos4 };
 
 		private static readonly c_long[] intWinBase =
 		{
@@ -49,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Make_Decode_Tables(Mpg123_Handle fr)
+		public void Int123_Make_Decode_Tables(Mpg123_Handle fr)
 		{
 			Span<Real> decWin = fr.DecWin.Span;
 			c_int i, j;

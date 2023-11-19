@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Ports.LibMpg123.Containers;
 using Single = Polycode.NostalgicPlayer.Ports.LibMpg123.Containers.Single;
 
@@ -15,6 +16,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 	/// </summary>
 	public class LibMpg123
 	{
+		/// <summary></summary>
+		public delegate c_int R_Read_Delegate(object handle, Memory<c_uchar> buf, size_t count, out size_t readCount);
+		/// <summary></summary>
+		public delegate int64_t R_LSeek_Delegate(object handle, int64_t offset, SeekOrigin whence);
+		/// <summary></summary>
+		public delegate void Cleanup_Handle_Delegate(object handle);
+
 		private static readonly string[] mpg123_Error =
 		{
 			"No error... (code 0)",
@@ -41,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			"Build does not support stream timeouts. (code 21)",
 			"File access error. (code 22)",
 			"Seek not supported by stream. (code 23)",
-			"No stream opened. (code 24)",
+			"No stream opened or missing reader setup while opening. (code 24)",
 			"Bad parameter handle. (code 25)",
 			"Invalid parameter addresses for index retrieval. (code 26)",
 			"Lost track in the bytestream and did not attempt resync. (code 27)",
@@ -144,7 +152,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			if (handle != null)
 			{
 				Mpg123_Close();
-				frame.Frame_Exit(handle);
+				frame.Int123_Frame_Exit(handle);
 			}
 		}
 
@@ -174,14 +182,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				if (key == Mpg123_Parms.Index_Size)
 				{
 					// Apply frame index size and grow property on the fly
-					r = frame.Frame_Index_Setup(mh);
+					r = frame.Int123_Frame_Index_Setup(mh);
 					if (r != Mpg123_Errors.Ok)
 						mh.Err = Mpg123_Errors.Index_Fail;
 				}
 
 				// Feeder pool size is applied right away, reader will react to that
 				if ((key == Mpg123_Parms.FeedPool) || (key == Mpg123_Parms.FeedBuffer))
-					readers.Bc_PoolSize(mh.RDat.Buffer, (size_t)mh.P.FeedPool, (size_t)mh.P.FeedBuffer);
+					readers.Int123_Bc_PoolSize(mh.RDat.Buffer, (size_t)mh.P.FeedPool, (size_t)mh.P.FeedBuffer);
 			}
 
 			return r;
@@ -308,11 +316,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 		/********************************************************************/
 		/// <summary>
-		/// Use an already opened stream as the bitstream input.
-		/// mpg123_close() will _not_ close the stream
+		/// Use an opaque handle as bitstream input. This works only with the
+		/// replaced I/O from mpg123_replace_reader_handle() or
+		/// mpg123_reader64()! mpg123_close() will call the cleanup callback
+		/// for your non-NULL handle (if you gave one)
 		/// </summary>
 		/********************************************************************/
-		public Mpg123_Errors Mpg123_Open_Fd(Stream fd)
+		public Mpg123_Errors Mpg123_Open_Handle(object ioHandle)
 		{
 			Mpg123_Handle mh = handle;
 
@@ -321,7 +331,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			Mpg123_Close();
 
-			return readers.Open_Stream(mh, null, fd);
+			c_int ret = readers.Int123_Open_Stream_Handle(mh, ioHandle);
+
+			return (Mpg123_Errors)ret;
 		}
 
 
@@ -343,13 +355,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			if (mh.New_Format)
 			{
-				format.Invalidate_Format(handle.Af);
+				format.Int123_Invalidate_Format(handle.Af);
 				mh.New_Format = false;
 			}
 
 			// Always reset the frame buffers on close, so we cannot forget it in funky
 			// opening routines (wrappers, even)
-			frame.Frame_Reset(mh);
+			frame.Int123_Frame_Reset(mh);
 
 			return Mpg123_Errors.Ok;
 		}
@@ -386,7 +398,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			{
 				if (in_ != null)
 				{
-					if (readers.Feed_More(mh, in_, (c_long)size) != 0)
+					if (readers.Int123_Feed_More(mh, in_, size) != 0)
 						return Mpg123_Errors.Err;
 					else
 					{
@@ -465,7 +477,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 						goto DecodeEnd;
 					}
 
-					if ((mh.Decoder_Change && (Decode_Update(mh) < 0)) || ((mh.State_Flags & Frame_State_Flags.Decoder_Live) == 0))
+					if ((mh.Decoder_Change && (Int123_Decode_Update(mh) < 0)) || ((mh.State_Flags & Frame_State_Flags.Decoder_Live) == 0))
 					{
 						ret = Mpg123_Errors.Err;
 						goto DecodeEnd;
@@ -557,12 +569,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 		/********************************************************************/
 		/// <summary>
-		/// Returns the current position in samples.
+		/// Returns the current 64-bit position in samples.
 		/// On the next successful read, you'd get audio data with that
 		/// offset
 		/// </summary>
 		/********************************************************************/
-		public off_t Mpg123_Tell()
+		public int64_t Mpg123_Tell64()
 		{
 			// Now, where are we? We need to know the last decoded frame... and what's left of it in buffer.
 			// The current frame number can mean the last decoded frame or the to-be-decoded frame.
@@ -573,30 +585,30 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			Mpg123_Handle mh = handle;
 
 			if (mh == null)
-				return (off_t)Mpg123_Errors.Err;
+				return (int64_t)Mpg123_Errors.Err;
 
 			if (Track_Need_Init(mh))
 				return 0;
 
 			// Now we have all the info at hand
 			{
-				off_t pos = 0;
+				int64_t pos = 0;
 
 				if ((mh.Num < mh.FirstFrame) || ((mh.Num == mh.FirstFrame) && mh.To_Decode))
 				{
 					// We are at the beginning, expect output from firstframe on
-					pos = frame.Frame_Outs(mh, mh.FirstFrame);
+					pos = frame.Int123_Frame_Outs(mh, mh.FirstFrame);
 				}
 				else if (mh.To_Decode)
 				{
 					// We start fresh with this frame. Buffer should be empty, but we make
 					// sure to count it in
-					pos = frame.Frame_Outs(mh, mh.Num) - format.Bytes_To_Samples(mh, (off_t)mh.Buffer.Fill);
+					pos = frame.Int123_Frame_Outs(mh, mh.Num) - format.Int123_Bytes_To_Samples(mh, (off_t)mh.Buffer.Fill);
 				}
 				else
 				{
 					// We serve what we have in buffer and then the beginning of next frame...
-					pos = frame.Frame_Outs(mh, mh.Num + 1) - format.Bytes_To_Samples(mh, (off_t)mh.Buffer.Fill);
+					pos = frame.Int123_Frame_Outs(mh, mh.Num + 1) - format.Int123_Bytes_To_Samples(mh, (off_t)mh.Buffer.Fill);
 				}
 
 				// Subtract padding and delay from the beginning
@@ -611,14 +623,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 		/********************************************************************/
 		/// <summary>
-		/// Seek to a desired sample offset
+		/// Seek to a desired 64-bit sample offset
 		/// </summary>
 		/********************************************************************/
-		public off_t Mpg123_Seek(off_t sampleOff, SeekOrigin whence)
+		public int64_t Mpg123_Seek64(int64_t sampleOff, SeekOrigin whence)
 		{
 			Mpg123_Handle mh = handle;
 
-			off_t pos = Mpg123_Tell();	// Adjusted samples
+			int64_t pos = Mpg123_Tell64();	// Adjusted samples
 
 			// pos < 0 also can mean that simply a former seek failed at the lower levels.
 			// In that case, we only allow absolute seeks
@@ -628,7 +640,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				if (mh != null)
 					mh.Err = Mpg123_Errors.No_RelSeek;
 
-				return (off_t)Mpg123_Errors.Err;
+				return (int64_t)Mpg123_Errors.Err;
 			}
 
 			c_int b = Init_Track(mh);
@@ -651,16 +663,25 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 				case SeekOrigin.End:
 				{
+					// Fix for a bug that existed since the beginning of libmpg123: SEEK_END offsets are
+					// also pointing forward for SEEK_END in lseek(). In libmpg123, they used to interpreted
+					// as positive from the end towards the beginning. Since just swapping the sign now would
+					// break existing programs and seeks beyond the end just don't make sense for a
+					// read-only library, we simply ignore the sign and always assume negative offsets
+					// (pointing towards the beginning). Assuming INT64_MIN <= -INT64_MAX
+					if (sampleOff > 0)
+						sampleOff = -sampleOff;
+
 					// When we do not know the end already, we can try to find it
 					if ((mh.Track_Frames < 1) && ((mh.RDat.Flags & ReaderFlags.Seekable) != 0))
 						Mpg123_Scan();
 
 					if (mh.Track_Frames > 0)
-						pos = Helpers.Sample_Adjust(mh, frame.Frame_Outs(mh, mh.Track_Frames)) - sampleOff;
+						pos = Helpers.Sample_Adjust(mh, frame.Int123_Frame_Outs(mh, mh.Track_Frames)) + sampleOff;
 					else
 					{
 						mh.Err = Mpg123_Errors.No_Seek_From_End;
-						return (off_t)Mpg123_Errors.Err;
+						return (int64_t)Mpg123_Errors.Err;
 					}
 					break;
 				}
@@ -668,7 +689,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				default:
 				{
 					mh.Err = Mpg123_Errors.Bad_Whence;
-					return (off_t)Mpg123_Errors.Err;
+					return (int64_t)Mpg123_Errors.Err;
 				}
 			}
 
@@ -676,25 +697,25 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				pos = 0;
 
 			// Pos now holds the wanted sample offset in adjusted samples
-			frame.Frame_Set_Seek(mh, Helpers.Sample_Unadjust(mh, pos));
+			frame.Int123_Frame_Set_Seek(mh, Helpers.Sample_Unadjust(mh, pos));
 			pos = Do_The_Seek(mh);
 
 			if (pos < 0)
 				return pos;
 
-			return Mpg123_Tell();
+			return Mpg123_Tell64();
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Give access to the frame index table that is managed for seeking.
-		/// You are asked not to modify the values... Use mpg123_set_index
-		/// to set the seek index
+		/// Give access to the 64 bit frame index table that is managed for
+		/// seeking. You are asked not to modify the values... Use
+		/// mpg123_set_index to set the seek index
 		/// </summary>
 		/********************************************************************/
-		public Mpg123_Errors Mpg123_Index(out off_t[] offsets, out off_t step, out size_t fill)
+		public Mpg123_Errors Mpg123_Index64(out int64_t[] offsets, out int64_t step, out size_t fill)
 		{
 			offsets = null;
 			step = 0;
@@ -748,11 +769,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			{
 				Version = mh.Mpeg25 ? Mpg123_Version._2_5 : (mh.Lsf != 0) ? Mpg123_Version._2_0 : Mpg123_Version._1_0,
 				Layer = mh.Lay,
-				Rate = parse.Frame_Freq(mh),
+				Rate = parse.Int123_Frame_Freq(mh),
 				Mode_Ext = mh.Mode_Ext,
 				FrameSize = mh.FrameSize + 4,	// Include header
 				Emphasis = mh.Emphasis,
-				BitRate = parse.Frame_BitRate(mh),
+				BitRate = parse.Int123_Frame_BitRate(mh),
 				Abr_Rate = mh.Abr_Rate,
 				Vbr = mh.Vbr
 			};
@@ -819,8 +840,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/********************************************************************/
 		public Mpg123_Errors Mpg123_Scan()
 		{
-			off_t track_Frames = 0;
-			off_t track_Samples = 0;
+			int64_t track_Frames = 0;
+			int64_t track_Samples = 0;
 
 			Mpg123_Handle mh = handle;
 
@@ -846,7 +867,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					return Mpg123_Errors.Err;	// Must be error here, NEED_MORE is not for seekable streams
 			}
 
-			off_t oldPos = Mpg123_Tell();
+			int64_t oldPos = Mpg123_Tell64();
 
 			b = mh.Rd.Seek_Frame(mh, 0);
 			if ((b < 0) || (mh.Num != 0))
@@ -857,7 +878,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			track_Samples = mh.Spf;		// Internal samples
 
 			// Do not increment mh->track_frames in the loop as tha would confuse Frankenstein detection
-			while (parse.Read_Frame(mh) == 1)
+			while (parse.Int123_Read_Frame(mh) == 1)
 			{
 				++track_Frames;
 				track_Samples += mh.Spf;
@@ -866,7 +887,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			mh.Track_Frames = track_Frames;
 			mh.Track_Samples = track_Samples;
 
-			return Mpg123_Seek(oldPos, SeekOrigin.Begin) >= 0 ? Mpg123_Errors.Ok : Mpg123_Errors.Err;
+			return Mpg123_Seek64(oldPos, SeekOrigin.Begin) >= 0 ? Mpg123_Errors.Ok : Mpg123_Errors.Err;
 		}
 
 
@@ -874,15 +895,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/********************************************************************/
 		/// <summary>
 		/// Return, if possible, the full (expected) length of current track
-		/// in MPEG frames
+		/// in MPEG frames as 64 bit number
 		/// </summary>
 		/********************************************************************/
-		public off_t Mpg123_FrameLength()
+		public int64_t Mpg123_FrameLength64()
 		{
 			Mpg123_Handle mh = handle;
 
 			if (mh == null)
-				return (off_t)Mpg123_Errors.Err;
+				return (int64_t)Mpg123_Errors.Err;
 
 			c_int b = Init_Track(mh);
 			if (b < 0)
@@ -893,10 +914,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			if (mh.RDat.FileLen > 0)
 			{
-				// Bad estimate. Ignoring tags 'n stuff
-				c_double bpf = mh.Mean_FrameSize > 0.0 ? mh.Mean_FrameSize : parse.Compute_Bpf(mh);
+				// A bad estimate. Ignoring tags 'n stuff
+				c_double bpf = mh.Mean_FrameSize > 0.0 ? mh.Mean_FrameSize : parse.Int123_Compute_Bpf(mh);
 
-				return (off_t)(mh.RDat.FileLen / bpf + 0.5);
+				return (int64_t)(mh.RDat.FileLen / bpf + 0.5);
 			}
 
 			// Last resort: No view of the future, can at least count the frames that
@@ -905,7 +926,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				return mh.Num + 1;
 
 			// Giving up
-			return (off_t)Mpg123_Errors.Err;
+			return (int64_t)Mpg123_Errors.Err;
 		}
 
 
@@ -913,7 +934,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/********************************************************************/
 		/// <summary>
 		/// Return, if possible, the full (expected) length of current track
-		/// in samples (PCM frames).
+		/// in samples (PCM frames) as 64 bit value.
 		///
 		/// This relies either on an Info frame at the beginning or a
 		/// previous call to mpg123_scan() to get the real number of MPEG
@@ -923,18 +944,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// example in case the open file gets appended to during decoding
 		/// </summary>
 		/********************************************************************/
-		public off_t Mpg123_Length()
+		public int64_t Mpg123_Length64()
 		{
 			Mpg123_Handle mh = handle;
 
 			if (mh == null)
-				return (off_t)Mpg123_Errors.Err;
+				return (int64_t)Mpg123_Errors.Err;
 
 			c_int b = Init_Track(mh);
 			if (b < 0)
 				return b;
 
-			off_t length;
+			int64_t length;
 
 			if (mh.Track_Samples > -1)
 				length = mh.Track_Samples;
@@ -943,15 +964,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			else if (mh.RDat.FileLen > 0)	// Let the case of 0 length just fall through
 			{
 				// A bad estimate. Ignoring tags 'n stuff
-				c_double bpf = mh.Mean_FrameSize != 0 ? mh.Mean_FrameSize : parse.Compute_Bpf(mh);
-				length = (off_t)(mh.RDat.FileLen / bpf * mh.Spf);
+				c_double bpf = mh.Mean_FrameSize != 0 ? mh.Mean_FrameSize : parse.Int123_Compute_Bpf(mh);
+				length = (int64_t)(mh.RDat.FileLen / bpf * mh.Spf);
 			}
 			else if (mh.RDat.FileLen == 0)
-				return Mpg123_Tell();	// We could be in feeder mode
+				return Mpg123_Tell64();	// We could be in feeder mode
 			else
-				return (off_t)Mpg123_Errors.Err;
+				return (int64_t)Mpg123_Errors.Err;
 
-			length = frame.Frame_Ins2Outs(mh, length);
+			length = frame.Int123_Frame_Ins2Outs(mh, length);
 			length = Helpers.Sample_Adjust(mh, length);
 
 			return length;
@@ -1068,7 +1089,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			if ((mh.MetaFlags & Mpg123_MetaFlags.Id3) != 0)
 			{
-				id3.Id3_Link(mh);
+				id3.Int123_Id3_Link(mh);
 
 				if ((mh.RDat.Flags & ReaderFlags.Id3Tag) != 0)
 				{
@@ -1107,11 +1128,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			LibMpg123 lib = new LibMpg123();
 			Mpg123_Handle fr = lib.handle;
 
-			lib.frame.Frame_Init_Par(fr, mp);
-			if (!lib.optimize.Frame_Cpu_Opt(fr, decoder))
+			lib.frame.Int123_Frame_Init_Par(fr, mp);
+			if (!lib.optimize.Int123_Frame_Cpu_Opt(fr, decoder))
 			{
 				err = Mpg123_Errors.Bad_Decoder;
-				lib.frame.Frame_Exit(fr);
+				lib.frame.Int123_Frame_Exit(fr);
 				fr = null;
 			}
 
@@ -1348,13 +1369,58 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			return ret;
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set up portable read functions on an opaque handle.
+		/// The handle is a void pointer, so you can pass any data you want.
+		/// mpg123_open_handle() is the call you make to use the I/O defined
+		/// here.
+		/// There is no fallback to internal read/seek here.
+		/// Note: As it would be troublesome to mess with this while having a
+		/// file open, this mpg123_close() is implied here.
+		/// </summary>
+		/********************************************************************/
+		public Mpg123_Errors Mpg123_Reader64(R_Read_Delegate r_Read, R_LSeek_Delegate r_LSeek, Cleanup_Handle_Delegate cleanup)
+		{
+			Mpg123_Handle mh = handle;
+
+			if (mh == null)
+				return Mpg123_Errors.Bad_Handle;
+
+			Mpg123_Close();
+
+			if (r_Read == null)
+				return Mpg123_Errors.Null_Pointer;
+
+			mh.RDat.R_Read64 = r_Read;
+			mh.RDat.R_LSeek64 = r_LSeek != null ? r_LSeek : No_LSeek64;
+			mh.RDat.Cleanup_Handle = cleanup;
+
+			return Mpg123_Errors.Ok;
+		}
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private off_t SeekFrame(Mpg123_Handle mh)
+		private int64_t No_LSeek64(object handle, int64_t offset, SeekOrigin whence)
+		{
+			return -1;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private int64_t SeekFrame(Mpg123_Handle mh)
 		{
 			return mh.IgnoreFrame < 0 ? 0 : mh.IgnoreFrame;
 		}
@@ -1369,7 +1435,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// ... calls are only valid after parsing some MPEG frame!
 		/// </summary>
 		/********************************************************************/
-		private c_int Decode_Update(Mpg123_Handle mh)
+		private c_int Int123_Decode_Update(Mpg123_Handle mh)
 		{
 			mh.State_Flags &= ~Frame_State_Flags.Decoder_Live;
 
@@ -1380,9 +1446,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			}
 
 			mh.State_Flags |= Frame_State_Flags.Fresh_Decoder;
-			c_long native_Rate = parse.Frame_Freq(mh);
+			c_long native_Rate = parse.Int123_Frame_Freq(mh);
 
-			c_int b = format.Frame_Output_Format(mh);	// Select the new output format based on given constraints
+			c_int b = format.Int123_Frame_Output_Format(mh);	// Select the new output format based on given constraints
 			if (b < 0)
 				return (c_int)Mpg123_Errors.Err;
 
@@ -1407,19 +1473,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					mh.Down_Sample_SbLimit = Constant.SBLimit >> mh.Down_Sample;
 
 					// With downsampling I get less samples per frame
-					mh.OutBlock = (size_t)format.OutBlock_Bytes(mh, mh.Spf >> mh.Down_Sample);
+					mh.OutBlock = (size_t)format.Int123_OutBlock_Bytes(mh, mh.Spf >> mh.Down_Sample);
 					break;
 				}
 
 				case 3:
 				{
-					if (nToM.Synth_NToM_Set_Step(mh) != 0)
+					if (nToM.Int123_Synth_NToM_Set_Step(mh) != 0)
 						return -1;
 
-					if (parse.Frame_Freq(mh) > mh.Af.Rate)
+					if (parse.Int123_Frame_Freq(mh) > mh.Af.Rate)
 					{
 						mh.Down_Sample_SbLimit = Constant.SBLimit * mh.Af.Rate;
-						mh.Down_Sample_SbLimit /= parse.Frame_Freq(mh);
+						mh.Down_Sample_SbLimit /= parse.Int123_Frame_Freq(mh);
 
 						if (mh.Down_Sample_SbLimit < 1)
 							mh.Down_Sample_SbLimit = 1;
@@ -1427,7 +1493,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					else
 						mh.Down_Sample_SbLimit = Constant.SBLimit;
 
-					mh.OutBlock = (size_t)format.OutBlock_Bytes(mh, ((Constant.NToM_Mul - 1 + mh.Spf * ((Constant.NToM_Mul * mh.Af.Rate) / parse.Frame_Freq(mh))) / Constant.NToM_Mul));
+					mh.OutBlock = (size_t)format.Int123_OutBlock_Bytes(mh, ((Constant.NToM_Mul - 1 + mh.Spf * ((Constant.NToM_Mul * mh.Af.Rate) / parse.Int123_Frame_Freq(mh))) / Constant.NToM_Mul));
 					break;
 				}
 			}
@@ -1442,14 +1508,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			else
 				mh.Single = (Single)((mh.P.Flags & Mpg123_Param_Flags.Force_Mono) - 1);
 
-			if (optimize.Set_Synth_Functions(mh) != 0)
+			if (optimize.Int123_Set_Synth_Functions(mh) != 0)
 				return -1;
 
 			// The needed size of output buffer may have changed
-			if (frame.Frame_OutBuffer(mh) != Mpg123_Errors.Ok)
+			if (frame.Int123_Frame_OutBuffer(mh) != Mpg123_Errors.Ok)
 				return -1;
 
-			frame.Do_Rva(mh);
+			frame.Int123_Do_Rva(mh);
 
 			mh.Decoder_Change = false;
 			mh.State_Flags |= Frame_State_Flags.Decoder_Live;
@@ -1478,7 +1544,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				change = true;
 				mh.Header_Change = 0;
 
-				if (Decode_Update(mh) < 0)
+				if (Int123_Decode_Update(mh) < 0)
 					return (c_int)Mpg123_Errors.Err;
 			}
 
@@ -1487,13 +1553,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				// Decode & discard some frame(s) before beginning
 				if (mh.To_Ignore && (mh.Num < mh.FirstFrame) && (mh.Num >= mh.IgnoreFrame))
 				{
-					// Decoder structure must be current! decode_update has been called before...
+					// Decoder structure must be current! INT123_decode_update has been called before...
 					mh.Do_Layer(mh);
 					mh.Buffer.Fill = 0;
 
 					// The ignored decoding may have failed. Make sure ntom stays consistent
 					if (mh.Down_Sample == 3)
-						nToM.NToM_Set_NToM(mh, mh.Num + 1);
+						nToM.Int123_NToM_Set_NToM(mh, mh.Num + 1);
 
 					mh.To_Ignore = mh.To_Decode = false;
 				}
@@ -1501,7 +1567,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				// Read new frame data; possibly breaking out here for MPG123_NEED_MORE
 				mh.To_Decode = false;
 
-				c_int b = parse.Read_Frame(mh);	// That sets to_decode only if a full frame was read
+				c_int b = parse.Int123_Read_Frame(mh);	// That sets to_decode only if a full frame was read
 				if (b == (c_int)Mpg123_Errors.Need_More)
 					return (c_int)Mpg123_Errors.Need_More;	// Need another call with data
 				else if (b <= 0)
@@ -1525,7 +1591,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 					// Need to update decoder structure right away since frame might need to
 					// be decoded on next loop iteration for properly ignoring its output
-					if (Decode_Update(mh) < 0)
+					if (Int123_Decode_Update(mh) < 0)
 						return (c_int)Mpg123_Errors.Err;
 				}
 
@@ -1537,7 +1603,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				{
 					if (!(mh.To_Ignore && (mh.Num < mh.FirstFrame) && (mh.Num >= mh.IgnoreFrame)))
 					{
-						frame.Frame_Skip(mh);
+						frame.Int123_Frame_Skip(mh);
 
 						// Should one fix NtoM here or not?
 						// It is not work the trouble for doublespeed, but what with leading frames?
@@ -1584,7 +1650,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/********************************************************************/
 		private void Decode_The_Frame(Mpg123_Handle fr)
 		{
-			size_t needed_Bytes = (size_t)format.Decoder_Synth_Bytes(fr, frame.Frame_Expect_OutSamples(fr));
+			size_t needed_Bytes = (size_t)format.Int123_Decoder_Synth_Bytes(fr, frame.Int123_Frame_Expect_OutSamples(fr));
 			fr.Clip += fr.Do_Layer(fr);
 
 			if (fr.Buffer.Fill < needed_Bytes)
@@ -1597,11 +1663,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 				fr.Buffer.Fill = needed_Bytes;
 
-				// ntom_val will be wrong when the decoding wasn't carried out completely
-				nToM.NToM_Set_NToM(fr, fr.Num + 1);
+				// INT123_ntom_val will be wrong when the decoding wasn't carried out completely
+				nToM.Int123_NToM_Set_NToM(fr, fr.Num + 1);
 			}
 
-			format.PostProcess_Buffer(fr);
+			format.Int123_PostProcess_Buffer(fr);
 		}
 
 
@@ -1646,7 +1712,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/********************************************************************/
 		private c_int Do_The_Seek(Mpg123_Handle mh)
 		{
-			off_t fNum = SeekFrame(mh);
+			int64_t fNum = SeekFrame(mh);
 			mh.Buffer.Fill = 0;
 
 			// If we are inside the ignoreframe - firstframe window, we may get away
@@ -1671,16 +1737,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			}
 
 			// Ok, real seeking follows... clear buffers and go for it
-			frame.Frame_Buffers_Reset(mh);
+			frame.Int123_Frame_Buffers_Reset(mh);
 
 			if (mh.Down_Sample == 3)
-				nToM.NToM_Set_NToM(mh, fNum);
+				nToM.Int123_NToM_Set_NToM(mh, fNum);
 
 			c_int b = mh.Rd.Seek_Frame(mh, fNum);
 
 			if (mh.Header_Change > 1)
 			{
-				if (Decode_Update(mh) < 0)
+				if (Int123_Decode_Update(mh) < 0)
 					return (c_int)Mpg123_Errors.Err;
 
 				mh.Header_Change = 0;

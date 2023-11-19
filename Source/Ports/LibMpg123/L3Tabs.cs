@@ -2222,7 +2222,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static readonly Real[] TfCos36 =
+		public static readonly Real[] Int123_TfCos36 =
 		{
 			 5.01909919e-01f,  5.17638090e-01f,  5.51688959e-01f,  6.10387294e-01f,
 			 7.07106781e-01f,  8.71723398e-01f,  1.18310079e+00f,  1.93185165e+00f,
