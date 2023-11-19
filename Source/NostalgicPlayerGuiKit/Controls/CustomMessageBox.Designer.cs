@@ -28,103 +28,95 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CustomMessageBox));
-			this.messageLabel = new Krypton.Toolkit.KryptonLabel();
-			this.pictureBox = new System.Windows.Forms.PictureBox();
-			this.messagePanel = new System.Windows.Forms.Panel();
-			this.buttonPanel = new System.Windows.Forms.Panel();
-			this.imageList = new System.Windows.Forms.ImageList(this.components);
-			this.fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(this.components);
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
-			this.messagePanel.SuspendLayout();
-			this.SuspendLayout();
+			components = new System.ComponentModel.Container();
+			messageLabel = new Krypton.Toolkit.KryptonLabel();
+			fontPalette = new Components.FontPalette(components);
+			pictureBox = new System.Windows.Forms.PictureBox();
+			messagePanel = new System.Windows.Forms.Panel();
+			buttonPanel = new System.Windows.Forms.Panel();
+			((System.ComponentModel.ISupportInitialize)pictureBox).BeginInit();
+			messagePanel.SuspendLayout();
+			SuspendLayout();
 			// 
 			// messageLabel
 			// 
-			this.messageLabel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.messageLabel.Location = new System.Drawing.Point(0, 0);
-			this.messageLabel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-			this.messageLabel.Name = "messageLabel";
-			this.messageLabel.Palette = this.fontPalette;
-			this.messageLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			this.messageLabel.Size = new System.Drawing.Size(54, 18);
-			this.messageLabel.TabIndex = 0;
-			this.messageLabel.Values.Text = "label1";
+			messageLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+			messageLabel.Location = new System.Drawing.Point(0, 0);
+			messageLabel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			messageLabel.Name = "messageLabel";
+			messageLabel.Palette = fontPalette;
+			messageLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			messageLabel.Size = new System.Drawing.Size(40, 16);
+			messageLabel.TabIndex = 0;
+			messageLabel.Values.Text = "label1";
+			// 
+			// fontPalette
+			// 
+			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
+			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
+			fontPalette.ThemeName = "";
+			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// pictureBox
 			// 
-			this.pictureBox.Location = new System.Drawing.Point(15, 15);
-			this.pictureBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-			this.pictureBox.Name = "pictureBox";
-			this.pictureBox.Size = new System.Drawing.Size(37, 37);
-			this.pictureBox.TabIndex = 2;
-			this.pictureBox.TabStop = false;
+			pictureBox.Location = new System.Drawing.Point(15, 15);
+			pictureBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			pictureBox.Name = "pictureBox";
+			pictureBox.Size = new System.Drawing.Size(37, 37);
+			pictureBox.TabIndex = 2;
+			pictureBox.TabStop = false;
 			// 
 			// messagePanel
 			// 
-			this.messagePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.messagePanel.AutoSize = true;
-			this.messagePanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.messagePanel.Controls.Add(this.messageLabel);
-			this.messagePanel.Location = new System.Drawing.Point(56, 15);
-			this.messagePanel.Margin = new System.Windows.Forms.Padding(0);
-			this.messagePanel.Name = "messagePanel";
-			this.messagePanel.Size = new System.Drawing.Size(54, 18);
-			this.messagePanel.TabIndex = 3;
+			messagePanel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			messagePanel.AutoSize = true;
+			messagePanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			messagePanel.Controls.Add(messageLabel);
+			messagePanel.Location = new System.Drawing.Point(56, 15);
+			messagePanel.Margin = new System.Windows.Forms.Padding(0);
+			messagePanel.Name = "messagePanel";
+			messagePanel.Size = new System.Drawing.Size(40, 16);
+			messagePanel.TabIndex = 3;
 			// 
 			// buttonPanel
 			// 
-			this.buttonPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonPanel.AutoSize = true;
-			this.buttonPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.buttonPanel.Location = new System.Drawing.Point(273, 56);
-			this.buttonPanel.Margin = new System.Windows.Forms.Padding(0, 12, 0, 6);
-			this.buttonPanel.Name = "buttonPanel";
-			this.buttonPanel.Size = new System.Drawing.Size(0, 0);
-			this.buttonPanel.TabIndex = 4;
-			// 
-			// imageList
-			// 
-			this.imageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-			this.imageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList.ImageStream")));
-			this.imageList.TransparentColor = System.Drawing.Color.Transparent;
-			this.imageList.Images.SetKeyName(0, "Information.png");
-			this.imageList.Images.SetKeyName(1, "Question.png");
-			this.imageList.Images.SetKeyName(2, "Warning.png");
-			this.imageList.Images.SetKeyName(3, "Error.png");
+			buttonPanel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+			buttonPanel.AutoSize = true;
+			buttonPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			buttonPanel.Location = new System.Drawing.Point(273, 56);
+			buttonPanel.Margin = new System.Windows.Forms.Padding(0, 12, 0, 6);
+			buttonPanel.Name = "buttonPanel";
+			buttonPanel.Size = new System.Drawing.Size(0, 0);
+			buttonPanel.TabIndex = 4;
 			// 
 			// CustomMessageBox
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.AutoSize = true;
-			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.ClientSize = new System.Drawing.Size(284, 62);
-			this.ControlBox = false;
-			this.Controls.Add(this.buttonPanel);
-			this.Controls.Add(this.messagePanel);
-			this.Controls.Add(this.pictureBox);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-			this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-			this.MaximizeBox = false;
-			this.MaximumSize = new System.Drawing.Size(581, 340);
-			this.MinimizeBox = false;
-			this.MinimumSize = new System.Drawing.Size(114, 52);
-			this.Name = "CustomMessageBox";
-			this.ShowIcon = false;
-			this.ShowInTaskbar = false;
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Text = "Dialog";
-			this.Resize += new System.EventHandler(this.CustomMessageBox_Resize);
-			((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
-			this.messagePanel.ResumeLayout(false);
-			this.messagePanel.PerformLayout();
-			this.ResumeLayout(false);
-			this.PerformLayout();
-
+			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			AutoSize = true;
+			AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			ClientSize = new System.Drawing.Size(284, 62);
+			ControlBox = false;
+			Controls.Add(buttonPanel);
+			Controls.Add(messagePanel);
+			Controls.Add(pictureBox);
+			FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			MaximizeBox = false;
+			MaximumSize = new System.Drawing.Size(581, 340);
+			MinimizeBox = false;
+			MinimumSize = new System.Drawing.Size(114, 52);
+			Name = "CustomMessageBox";
+			ShowIcon = false;
+			ShowInTaskbar = false;
+			StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			Text = "Dialog";
+			Resize += CustomMessageBox_Resize;
+			((System.ComponentModel.ISupportInitialize)pictureBox).EndInit();
+			messagePanel.ResumeLayout(false);
+			messagePanel.PerformLayout();
+			ResumeLayout(false);
+			PerformLayout();
 		}
 
 		#endregion
@@ -133,7 +125,6 @@
 		private System.Windows.Forms.PictureBox pictureBox;
 		private System.Windows.Forms.Panel messagePanel;
 		private System.Windows.Forms.Panel buttonPanel;
-		private System.Windows.Forms.ImageList imageList;
 		private Components.FontPalette fontPalette;
 	}
 }

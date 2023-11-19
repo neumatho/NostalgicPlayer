@@ -222,7 +222,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 		{
 			byte[] pattern = new byte[1024];
 
-			int sampleSize = sampleLengths.Cast<int>().Sum();
+			int sampleSize = (int)sampleLengths.Sum(x => x);
 			moduleStream.Seek(564 + sampleSize, SeekOrigin.Begin);
 
 			for (int i = 0; i < numberOfPatterns; i++)

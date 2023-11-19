@@ -191,7 +191,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 		/********************************************************************/
 		protected override Span<byte> GetPositionList(ModuleStream moduleStream)
 		{
-			int sampleSize = sampleLengths.Cast<int>().Sum();
+			int sampleSize = (int)sampleLengths.Sum(x => x);
 			uint offset = (uint)(0x636 + numberOfPatterns * 1024 + sampleSize);
 			moduleStream.Seek(offset, SeekOrigin.Begin);
 

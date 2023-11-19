@@ -138,22 +138,11 @@ namespace Polycode.NostalgicPlayer.GuiKit.Components
 		#region PaletteOffice2010Blue overrides
 		/********************************************************************/
 		/// <summary>
-		/// Hide the base font name, since we do not allow it to be changed
-		/// </summary>
-		/********************************************************************/
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[Browsable(false)]
-		public override string BaseFontName => null;
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Hide the base font size, since we do not allow it to be changed
 		/// </summary>
 		/********************************************************************/
 		[DefaultValue(DefaultFontSize)]
-		public override float BaseFontSize
+		public new float BaseFontSize
 		{
 			get => baseFontSize;
 

@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Krypton.Toolkit;
@@ -35,6 +36,8 @@ namespace Polycode.NostalgicPlayer.GuiKit.Controls
 		private int lastWidth = 0;
 		private string originalMessage;
 
+		private readonly List<Image> imageList;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -43,6 +46,14 @@ namespace Polycode.NostalgicPlayer.GuiKit.Controls
 		public CustomMessageBox()
 		{
 			InitializeComponent();
+
+			imageList = new List<Image>
+			{
+				Resources.Information,
+				Resources.Question,
+				Resources.Warning,
+				Resources.Error
+			};
 		}
 
 
@@ -80,7 +91,7 @@ namespace Polycode.NostalgicPlayer.GuiKit.Controls
 		/********************************************************************/
 		public void SetIcon(IconType iconType)
 		{
-			pictureBox.Image = imageList.Images[(int)iconType];
+			pictureBox.Image = imageList[(int)iconType];
 		}
 
 

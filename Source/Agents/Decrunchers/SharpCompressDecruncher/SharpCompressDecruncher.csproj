@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher</RootNamespace>
     <Authors>Thomas Neumann</Authors>
     <Company>Polycode</Company>
@@ -21,7 +21,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SharpCompress" Version="0.34.1" />
+    <PackageReference Include="SharpCompress" Version="0.34.2" />
   </ItemGroup>
 
   <ItemGroup>

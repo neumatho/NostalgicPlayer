@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>Polycode.NostalgicPlayer.Client.GuiPlayer</RootNamespace>
     <Description>Music player with an user interface</Description>
@@ -86,8 +86,8 @@
   </Target>
 
   <ItemGroup>
-    <PackageReference Include="Krypton.Navigator" Version="70.22.11.312" />
-    <PackageReference Include="Krypton.Toolkit" Version="70.22.11.312" />
+    <PackageReference Include="Krypton.Navigator" Version="80.23.11.321" />
+    <PackageReference Include="Krypton.Toolkit" Version="80.23.11.321" />
   </ItemGroup>
 
   <ItemGroup>

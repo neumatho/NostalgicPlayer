@@ -276,7 +276,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 		protected override bool WriteSampleData(ModuleStream moduleStream, ConverterStream converterStream)
 		{
 			// Convert sample data
-			int sampleSize = sampleLengths.Cast<int>().Sum();
+			int sampleSize = (int)sampleLengths.Sum(x => x);
 			sbyte[] allSamples = new sbyte[sampleSize];
 			moduleStream.ReadSigned(allSamples, 0, sampleSize);
 
