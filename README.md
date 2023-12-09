@@ -108,7 +108,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | MPEG 1.0 | .mp1 / .mp2 / .mp3 / .m2a / .mpg | | Mpg123 |
 | MPEG 2.0 | .mp1 / .mp2 / .mp3 / .m2a / .mpg | | Mpg123 |
 | MPEG 2.5 | .mp1 / .mp2 / .mp3 / .m2a / .mpg | | Mpg123 |
-| MultiTracker | .mtm | | ModTracker |
+| MultiTracker | .mtm | | Xmp |
 | Newtron Packer 1.0 | .nw1 | ProWizard | ModTracker |
 | Newtron Packer 2.0 | .nw2 | ProWizard | ModTracker |
 | NoisePacker 1 | .np1 | ProWizard | ModTracker |

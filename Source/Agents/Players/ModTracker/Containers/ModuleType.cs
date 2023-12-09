@@ -30,7 +30,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 
 		// PC trackers
 		FastTracker,
-		MultiTracker,
 
 		// Atari trackers
 		Octalyser,

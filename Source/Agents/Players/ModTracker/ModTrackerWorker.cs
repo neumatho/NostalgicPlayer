@@ -36,7 +36,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		private bool packed;
 
 		private string songName;
-		private string[] comment;
 		private ushort maxPattern;
 		private ushort channelNum;
 		private ushort sampleNum;
@@ -49,7 +48,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		private ushort minPeriod;
 		private ushort maxPeriod;
 
-		private byte[] panning;
 		private byte[] positions;
 
 		private Sample[] samples;
@@ -127,15 +125,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// </summary>
 		/********************************************************************/
 		public override string ModuleName => songName;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Return the comment separated in lines
-		/// </summary>
-		/********************************************************************/
-		public override string[] Comment => comment;
 
 
 
@@ -232,12 +221,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			// Load the module
 			packed = false;
 
-			if (currentModuleType == ModuleType.MultiTracker)
-				retVal = LoadMultiTracker(fileInfo, out errorMessage);
-			else
-				retVal = LoadTracker(fileInfo, out errorMessage);
-
-			return retVal;
+			return LoadTracker(fileInfo, out errorMessage);
 		}
 
 
@@ -513,20 +497,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		{
 			ModuleStream moduleStream = fileInfo.ModuleStream;
 
-			// First check to see if it's a MultiTracker module
-			if (moduleStream.Length < 36)
-				return ModuleType.Unknown;
-
-			byte[] buf = new byte[22];
-
-			// Check the signature
-			moduleStream.Seek(0, SeekOrigin.Begin);
-			moduleStream.Read(buf, 0, 4);
-
-			if ((buf[0] == 'M') && (buf[1] == 'T') && (buf[2] == 'M') && (buf[3] == 0x10))
-				return ModuleType.MultiTracker;
-
-			// Now check to see if it's a Noise- or ProTracker module
 			if (moduleStream.Length < 1084)
 				return ModuleType.Unknown;
 
@@ -1270,7 +1240,7 @@ stopLoop:
 		/********************************************************************/
 		private bool IsPcTracker()
 		{
-			return (currentModuleType >= ModuleType.FastTracker) && (currentModuleType <= ModuleType.MultiTracker);
+			return (currentModuleType == ModuleType.FastTracker);
 		}
 
 
@@ -1315,7 +1285,6 @@ stopLoop:
 				moduleStream.Read(buf, 0, 20);
 
 				songName = encoder.GetString(buf);
-				comment = new string[0];
 
 				// Allocate space to the samples
 				samples = new Sample[sampleNum];
@@ -1716,191 +1685,6 @@ stopLoop:
 
 		/********************************************************************/
 		/// <summary>
-		/// Will load a MultiTracker module into memory
-		/// </summary>
-		/********************************************************************/
-		private AgentResult LoadMultiTracker(PlayerFileInfo fileInfo, out string errorMessage)
-		{
-			try
-			{
-				byte[] buf = new byte[23];
-
-				ModuleStream moduleStream = fileInfo.ModuleStream;
-				Encoding encoder = EncoderCollection.Dos;
-
-				// Read the header
-				moduleStream.Seek(3, SeekOrigin.Begin);
-
-				moduleStream.Read_UINT8();									// File version
-
-				buf[20] = 0x00;
-				moduleStream.Read(buf, 0, 20);					// Name of the module
-				songName = encoder.GetString(buf);
-
-				trackNum = (ushort)(moduleStream.Read_L_UINT16() + 1);		// Number of tracks. Add one because track 0 is not written but considered empty
-				maxPattern = (ushort)(moduleStream.Read_UINT8() + 1);		// Number of patterns
-				songLength = (ushort)(moduleStream.Read_UINT8() + 1);		// Length of the song
-				ushort commentLength = moduleStream.Read_L_UINT16();		// Length of the comment field
-				sampleNum = moduleStream.Read_UINT8();						// Number of samples
-				moduleStream.Read_UINT8();									// Attributes -> not used yet
-				patternLength = moduleStream.Read_UINT8();					// Number of lines in each pattern
-				channelNum = moduleStream.Read_UINT8();						// Number of channels
-
-				panning = new byte[32];
-				moduleStream.Read(panning, 0, 32);				// Panning table
-
-				if (moduleStream.EndOfStream)
-				{
-					errorMessage = Resources.IDS_MOD_ERR_LOADING_HEADER;
-					Cleanup();
-
-					return AgentResult.Error;
-				}
-
-				// Allocate the sample information and read them
-				samples = new Sample[sampleNum];
-
-				for (int i = 0; i < sampleNum; i++)
-				{
-					Sample sample = samples[i] = new Sample();
-
-					// Read the sample info
-					buf[22] = 0x00;
-					moduleStream.Read(buf, 0, 22);				// Name of the sample
-
-					uint length = moduleStream.Read_L_UINT32();				// Length in bytes
-					uint repeatStart = moduleStream.Read_L_UINT32();		// Number of bytes from the beginning where the loop starts
-					uint repeatEnd = moduleStream.Read_L_UINT32();			// Number of bytes from the beginning where the loop ends
-					byte fineTune = moduleStream.Read_UINT8();				// Only the low nibble is used (mask it out and extend the sign)
-					byte volume = moduleStream.Read_UINT8();				// The volume (0-64)
-					moduleStream.Read_UINT8();								// Attributes -> not used
-
-					if (moduleStream.EndOfStream)
-					{
-						errorMessage = Resources.IDS_MOD_ERR_LOADING_SAMPLEINFO;
-						Cleanup();
-
-						return AgentResult.Error;
-					}
-
-					// Put the information into the sample structure
-					sample.SampleName = encoder.GetString(buf).RemoveInvalidChars();
-					sample.Data = null;
-					sample.Length = (ushort)(length / 2);
-					sample.LoopStart = (ushort)(repeatStart / 2);
-					sample.LoopLength = (ushort)(repeatEnd / 2 - sample.LoopStart);
-					sample.FineTune = (byte)(fineTune & 0x0f);
-					sample.Volume = volume;
-				}
-
-				// Read the positions
-				positions = new byte[128];
-				moduleStream.Read(positions, 0, 128);
-
-				// Allocate memory to hold all the tracks
-				tracks = new TrackLine[trackNum][];
-
-				// Generate an empty track
-				tracks[0] = new TrackLine[patternLength];
-				for (int j = 0; j < patternLength; j++)
-					tracks[0][j] = new TrackLine();
-
-				// Read the tracks
-				for (int i = 0, cnt = trackNum - 1; i < cnt; i++)
-				{
-					// Allocate memory to hold the track
-					TrackLine[] line = tracks[i + 1] = new TrackLine[patternLength];
-
-					// Now read the track
-					for (int j = 0; j < patternLength; j++)
-					{
-						TrackLine workLine = line[j] = new TrackLine();
-
-						byte a = moduleStream.Read_UINT8();
-						byte b = moduleStream.Read_UINT8();
-						byte c = moduleStream.Read_UINT8();
-
-						workLine.Note = (byte)(a >> 2);
-						if (workLine.Note != 0)
-							workLine.Note += 13;
-
-						workLine.Sample = (byte)((a & 0x03) << 4 | ((b & 0xf0) >> 4));
-						workLine.Effect = (Effect)(b & 0x0f);
-						workLine.EffectArg = c;
-					}
-
-					if (moduleStream.EndOfStream)
-					{
-						errorMessage = Resources.IDS_MOD_ERR_LOADING_PATTERNS;
-						Cleanup();
-
-						return AgentResult.Error;
-					}
-				}
-
-				// Allocate memory to hold the sequences
-				sequences = new ushort[32 * maxPattern];
-
-				// Read the sequence data
-				moduleStream.ReadArray_L_UINT16s(sequences, 0, sequences.Length);
-
-				// Read the comment field
-				comment = moduleStream.ReadCommentBlock(commentLength, 40, encoder);
-
-				if (moduleStream.EndOfStream)
-				{
-					errorMessage = Resources.IDS_MOD_ERR_LOADING_PATTERNS;
-					Cleanup();
-
-					return AgentResult.Error;
-				}
-
-				// Read the samples
-				for (int i = 0; i < sampleNum; i++)
-				{
-					// Allocate space to hold the sample
-					int length = samples[i].Length * 2;
-					if (length != 0)
-					{
-						// Read the sample
-						samples[i].Data = moduleStream.ReadSampleData(i, length, out _);
-
-						if (moduleStream.EndOfStream)
-						{
-							errorMessage = Resources.IDS_MOD_ERR_LOADING_SAMPLES;
-							Cleanup();
-
-							return AgentResult.Error;
-						}
-
-						// Convert the sample to signed
-						sbyte[] sampleData = samples[i].Data;
-						for (int j = 0; j < length; j++)
-							sampleData[j] = (sbyte)((byte)sampleData[j] + 0x80);
-					}
-				}
-
-				// Initialize the rest of the variables used
-				minPeriod = 45;
-				maxPeriod = 1616;
-				restartPos = 0;
-				initTempo = 125;
-
-				// Ok, we're done
-				errorMessage = string.Empty;
-				return AgentResult.Ok;
-			}
-			catch (Exception)
-			{
-				Cleanup();
-				throw;
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Will load x number of tracks in MOD format
 		/// </summary>
 		/********************************************************************/
@@ -2077,12 +1861,7 @@ stopLoop:
 				modChan.SynthData = null;
 
 				if (IsPcTracker())
-				{
-					if (currentModuleType == ModuleType.MultiTracker)
-						modChan.Panning = (ushort)(panning[i] * 16);
-					else
-						modChan.Panning = (ushort)((((i & 3) == 0) || ((i & 3) == 3)) ? ChannelPanningType.Left : ChannelPanningType.Right);
-				}
+					modChan.Panning = (ushort)((((i & 3) == 0) || ((i & 3) == 3)) ? ChannelPanningType.Left : ChannelPanningType.Right);
 				else
 					modChan.Panning = 0;
 			}
@@ -2099,7 +1878,6 @@ stopLoop:
 		/********************************************************************/
 		private void Cleanup()
 		{
-			panning = null;
 			positions = null;
 
 			samples = null;
@@ -2714,91 +2492,6 @@ stopLoop:
 						case Effect2.SetSpeed:
 						{
 							SetSpeed(modChan);
-							break;
-						}
-					}
-					break;
-				}
-
-				case ModuleType.MultiTracker:
-				{
-					switch (modChan.TrackLine.Effect)
-					{
-						case Effect.SampleOffset:
-						{
-							SampleOffset(modChan);
-							break;
-						}
-
-						case Effect.PosJump:
-						{
-							PositionJump(modChan);
-							break;
-						}
-
-						case Effect.SetVolume:
-						{
-							VolumeChange(modChan);
-							break;
-						}
-
-						case Effect.PatternBreak:
-						{
-							PatternBreak(modChan);
-							break;
-						}
-
-						case Effect.ExtraEffect:
-						{
-							ECommands(chan, modChan);
-							break;
-						}
-
-						case Effect.SetSpeed:
-						{
-							SetSpeed(modChan);
-							break;
-						}
-
-						case Effect.SlideUp:
-						{
-							PortaUp(chan, modChan);
-							break;
-						}
-
-						case Effect.SlideDown:
-						{
-							PortaDown(chan, modChan);
-							break;
-						}
-
-						case Effect.TonePortamento:
-						{
-							TonePortamento(chan, modChan);
-							break;
-						}
-
-						case Effect.Vibrato:
-						{
-							Vibrato(chan, modChan);
-							break;
-						}
-
-						case Effect.TonePort_VolSlide:
-						{
-							TonePlusVolSlide(chan, modChan);
-							break;
-						}
-
-						case Effect.Vibrato_VolSlide:
-						{
-							VibratoPlusVolSlide(chan, modChan);
-							break;
-						}
-
-						default:
-						{
-							SetPeriod(modChan.Period, chan, modChan);
 							break;
 						}
 					}
