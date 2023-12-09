@@ -216,8 +216,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/********************************************************************/
 		public override AgentResult Load(PlayerFileInfo fileInfo, out string errorMessage)
 		{
-			AgentResult retVal;
-
 			// Load the module
 			packed = false;
 
