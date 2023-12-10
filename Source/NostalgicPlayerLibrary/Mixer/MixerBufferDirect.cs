@@ -81,12 +81,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// in the supplied buffer
 		/// </summary>
 		/********************************************************************/
-		public override void ConvertMixedData(byte[] dest, int offset, int[] source, int todo, bool swapSpeakers)
+		public override void ConvertMixedData(byte[] dest, int offset, int[] source, int todo, int samplesToSkip, bool isStereo, bool swapSpeakers)
 		{
-			if (bytesPerSample == 2)
-				MixConvertTo16(MemoryMarshal.Cast<byte, short>(dest), offset / 2, source, todo, swapSpeakers);
-			else if (bytesPerSample == 4)
-				MixConvertTo32(MemoryMarshal.Cast<byte, int>(dest), offset / 4, source, todo, swapSpeakers);
+			MixConvertTo32(MemoryMarshal.Cast<byte, int>(dest), offset / 4, source, todo, samplesToSkip, isStereo, swapSpeakers);
 		}
 		#endregion
 
@@ -143,128 +140,101 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		/********************************************************************/
 		/// <summary>
-		/// Converts the mixed data to a 16 bit sample buffer
-		/// </summary>
-		/********************************************************************/
-		private void MixConvertTo16(Span<short> dest, int offset, int[] source, int count, bool swapSpeakers)
-		{
-			int x1, x2, x3, x4;
-
-			int remain = count & 3;
-			int sourceOffset = 0;
-
-			if (swapSpeakers)
-			{
-				for (count >>= 2; count != 0; count--)
-				{
-					x1 = source[sourceOffset++];
-					x2 = source[sourceOffset++];
-					x3 = source[sourceOffset++];
-					x4 = source[sourceOffset++];
-
-					dest[offset++] = (short)(x2 >> 16);
-					dest[offset++] = (short)(x1 >> 16);
-					dest[offset++] = (short)(x4 >> 16);
-					dest[offset++] = (short)(x3 >> 16);
-				}
-
-				// We know it is always stereo samples when coming here
-				while (remain > 0)
-				{
-					x1 = source[sourceOffset++];
-					x2 = source[sourceOffset++];
-
-					dest[offset++] = (short)(x2 >> 16);
-					dest[offset++] = (short)(x1 >> 16);
-
-					remain -= 2;
-				}
-			}
-			else
-			{
-				for (count >>= 2; count != 0; count--)
-				{
-					x1 = source[sourceOffset++];
-					x2 = source[sourceOffset++];
-					x3 = source[sourceOffset++];
-					x4 = source[sourceOffset++];
-
-					dest[offset++] = (short)(x1 >> 16);
-					dest[offset++] = (short)(x2 >> 16);
-					dest[offset++] = (short)(x3 >> 16);
-					dest[offset++] = (short)(x4 >> 16);
-				}
-
-				while (remain-- != 0)
-				{
-					x1 = source[sourceOffset++];
-					dest[offset++] = (short)(x1 >> 16);
-				}
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Converts the mixed data to a 32 bit sample buffer
 		/// </summary>
 		/********************************************************************/
-		private void MixConvertTo32(Span<int> dest, int offset, int[] source, int count, bool swapSpeakers)
+		private void MixConvertTo32(Span<int> dest, int offset, int[] source, int count, int samplesToSkip, bool isStereo, bool swapSpeakers)
 		{
 			int x1, x2, x3, x4;
+			int remain;
 
-			int remain = count & 3;
 			int sourceOffset = 0;
 
 			if (swapSpeakers)
 			{
-				for (count >>= 2; count != 0; count--)
+				if (samplesToSkip == 0)
 				{
-					x1 = source[sourceOffset++];
-					x2 = source[sourceOffset++];
-					x3 = source[sourceOffset++];
-					x4 = source[sourceOffset++];
+					remain = count & 3;
 
-					dest[offset++] = x2;
-					dest[offset++] = x1;
-					dest[offset++] = x4;
-					dest[offset++] = x3;
+					for (count >>= 2; count != 0; count--)
+					{
+						x1 = source[sourceOffset++];
+						x2 = source[sourceOffset++];
+						x3 = source[sourceOffset++];
+						x4 = source[sourceOffset++];
+
+						dest[offset++] = x2;
+						dest[offset++] = x1;
+						dest[offset++] = x4;
+						dest[offset++] = x3;
+					}
 				}
-
-				// We know it is always stereo samples when coming here
-				while (remain > 0)
+				else
 				{
-					x1 = source[sourceOffset++];
-					x2 = source[sourceOffset++];
+					remain = count & 1;
 
-					dest[offset++] = x2;
-					dest[offset++] = x1;
+					for (count >>= 1; count != 0; count--)
+					{
+						x1 = source[sourceOffset++];
+						x2 = source[sourceOffset++];
 
-					remain -= 2;
+						dest[offset++] = x2;
+						dest[offset++] = x1;
+
+						for (int i = 0; i < samplesToSkip; i++)
+							dest[offset++] = 0;
+					}
 				}
 			}
 			else
 			{
-				for (count >>= 2; count != 0; count--)
+				if (isStereo)
 				{
-					x1 = source[sourceOffset++];
-					x2 = source[sourceOffset++];
-					x3 = source[sourceOffset++];
-					x4 = source[sourceOffset++];
+					if (samplesToSkip == 0)
+					{
+						remain = count & 3;
 
-					dest[offset++] = x1;
-					dest[offset++] = x2;
-					dest[offset++] = x3;
-					dest[offset++] = x4;
+						for (count >>= 2; count != 0; count--)
+						{
+							x1 = source[sourceOffset++];
+							x2 = source[sourceOffset++];
+							x3 = source[sourceOffset++];
+							x4 = source[sourceOffset++];
+
+							dest[offset++] = x1;
+							dest[offset++] = x2;
+							dest[offset++] = x3;
+							dest[offset++] = x4;
+						}
+					}
+					else
+					{
+						remain = count & 1;
+
+						for (count >>= 1; count != 0; count--)
+						{
+							x1 = source[sourceOffset++];
+							x2 = source[sourceOffset++];
+
+							dest[offset++] = x1;
+							dest[offset++] = x2;
+
+							for (int i = 0; i < samplesToSkip; i++)
+								dest[offset++] = 0;
+						}
+					}
 				}
-
-				while (remain-- != 0)
+				else
 				{
-					x1 = source[sourceOffset++];
-					dest[offset++] = x1;
+					remain = 0;
+
+					for (; count != 0; count--)
+						dest[offset++] = source[sourceOffset++];
 				}
 			}
+
+			while (remain-- != 0)
+				dest[offset++] = source[sourceOffset++];
 		}
 		#endregion
 	}

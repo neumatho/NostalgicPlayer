@@ -17,8 +17,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 	/// </summary>
 	internal class MixerStream : SoundStream
 	{
-		private int bytesPerSampling;
-
 		private Mixer mixer;
 		private object mixerLock;
 
@@ -87,8 +85,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			{
 				lock (mixerLock)
 				{
-					bytesPerSampling = outputInformation.BytesPerSample;
-
 					mixer.SetOutputFormat(outputInformation);
 				}
 			}
@@ -202,10 +198,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					if (mixer == null)
 						return 0;
 
-					int samplesMixed = mixer.Mixing(buffer, offset, count / bytesPerSampling, out bool hasEndReached);
+					int samplesMixed = mixer.Mixing(buffer, offset, count / OutputInfo.BytesPerSample, out bool hasEndReached);
 					HasEndReached = hasEndReached;
 
-					mixedSamples = samplesMixed * bytesPerSampling;
+					mixedSamples = samplesMixed * OutputInfo.BytesPerSample;
 				}
 
 				if (HasEndReached)

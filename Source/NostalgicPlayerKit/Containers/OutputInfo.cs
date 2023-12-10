@@ -7,29 +7,35 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 {
 	/// <summary>
 	/// This class holds information about how the output should
-	/// be given to the output agent
+	/// be given to the output agent.
+	///
+	/// Note that the output should always be in 32-bit PCM and the
+	/// number of channels, even if bigger than 2 channels
 	/// </summary>
 	public class OutputInfo
 	{
+		/// <summary>
+		/// Output is always in 32-bit
+		/// </summary>
+		public const int BytesPerSample = 32 / 8;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public OutputInfo(int channels, int frequency, int bufferSizeInSamples, int bytesPerSample)
+		public OutputInfo(int channels, int frequency, int bufferSizeInSamples)
 		{
 			Channels = channels;
 			Frequency = frequency;
 			BufferSizeInSamples = bufferSizeInSamples;
-			BytesPerSample = bytesPerSample;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the number of channels. This can either be 1 for mono or
-		/// 2 for stereo
+		/// Holds the number of channels
 		/// </summary>
 		/********************************************************************/
 		public int Channels
@@ -57,18 +63,6 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// </summary>
 		/********************************************************************/
 		public int BufferSizeInSamples
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Holds the number of bytes each sample is using
-		/// </summary>
-		/********************************************************************/
-		public int BytesPerSample
 		{
 			get;
 		}

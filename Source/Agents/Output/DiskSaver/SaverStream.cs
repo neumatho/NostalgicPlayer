@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
+using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
@@ -122,9 +124,50 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 		{
 			int read = wrapperStream.Read(buffer, offset, count);
 			if (read > 0)
-				worker.SaveSampleBuffer(buffer, read, OutputInfo.BytesPerSample * 8);
+			{
+				byte[] newBuffer = FixBuffer(buffer, offset, read);
+				worker.SaveSampleBuffer(newBuffer, newBuffer.Length, OutputInfo.BytesPerSample * 8);
+			}
 
 			return read;
+		}
+		#endregion
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Will make sure that the returned buffer only contain max 2
+		/// channels
+		/// </summary>
+		/********************************************************************/
+		private byte[] FixBuffer(byte[] buffer, int offset, int count)
+		{
+			if (OutputInfo.Channels > 2)
+			{
+				byte[] newBuffer = new byte[(count / OutputInfo.Channels) * 2];
+
+				Span<int> source = MemoryMarshal.Cast<byte, int>(buffer.AsSpan(offset, count));
+				Span<int> dest = MemoryMarshal.Cast<byte, int>(newBuffer);
+
+				int channelsToSkip = OutputInfo.Channels - 2;
+				int sourceOffset = 0;
+				int destOffset = 0;
+
+				while (sourceOffset < count / 4)
+				{
+					dest[destOffset++] = source[sourceOffset++];
+					dest[destOffset++] = source[sourceOffset++];
+
+					sourceOffset += channelsToSkip;
+				}
+
+				return newBuffer;
+			}
+
+			if (offset > 0)
+				return buffer.AsSpan(offset, count).ToArray();
+
+			return buffer;
 		}
 		#endregion
 	}

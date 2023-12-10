@@ -38,8 +38,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private MixerMode mixerMode;			// Which modes the mixer has to work in
 		private MixerMode currentMode;			// Is the current mode the mixer uses
 		private int mixerFrequency;				// The mixer frequency
-		private int bytesPerSample;				// How many bytes each sample uses in the output buffer
 		private int virtualChannelNumber;		// The number of channels the module use
+		private int outputChannelNumber;		// The number of channels the output want
+		private int mixerChannels;				// Number of channels mixed. Can either be 1 or 2
 
 		private int[] mixBuffer;				// The buffer to hold the mixed data
 		private int bufferSize;					// The maximum number of samples a buffer can be
@@ -262,21 +263,26 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		public void SetOutputFormat(OutputInfo outputInformation)
 		{
 			mixerFrequency = outputInformation.Frequency;
-			bytesPerSample = outputInformation.BytesPerSample;
+			outputChannelNumber = outputInformation.Channels;
 			ticksLeftToPositionChange = CalculateTicksPerPositionChange();
+
+			mixerChannels = 1;
+
+			if (outputChannelNumber >= 2)
+			{
+				mixerMode |= MixerMode.Stereo;
+				mixerChannels = 2;
+			}
+			else
+				mixerMode &= ~MixerMode.Stereo;
 
 			// Get the maximum number of samples the given destination
 			// buffer from the output agent can be
-			bufferSize = outputInformation.BufferSizeInSamples;
+			bufferSize = (outputInformation.BufferSizeInSamples / outputChannelNumber) * mixerChannels;
 
 			// Allocate mixer buffer. This buffer is used by the mixer
 			// routines to store the mixed data
 			mixBuffer = new int[bufferSize + MixerBufferPadSize];
-
-			if (outputInformation.Channels == 2)
-				mixerMode |= MixerMode.Stereo;
-			else
-				mixerMode &= ~MixerMode.Stereo;
 
 			currentMixer.SetOutputFormat(outputInformation);
 			currentVisualizer.SetOutputFormat(outputInformation);
@@ -370,35 +376,50 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/********************************************************************/
 		public int Mixing(byte[] buffer, int offset, int count, out bool hasEndReached)
 		{
-			// Find the size of the buffer
-			int bufSize = Math.Min(bufferSize, count);
-
-			int total = DoMixing(bufSize, out hasEndReached);
-
-			if (playing)
-			{
-				// Add extra effects if enabled
-				AddEffects(mixBuffer, bufSize);
-
-				// Add Amiga low-pass filter if enabled
-				AddAmigaFilter(mixBuffer, bufSize);
-			}
+			// Remember the mixing mode. The reason to hold this in another
+			// variable, it when the user change the mixing mode, it won't
+			// be changed in the middle of a mixing, but used the next
+			// time this method is called
+			currentMode = mixerMode;
 
 			bool isStereo = (currentMode & MixerMode.Stereo) != 0;
 			bool swap = isStereo ? swapSpeakers : false;
 
+			// Find the size of the buffer
+			//
+			// bufferSize = size of mixer buffer for either mono or stereo
+			// count = size of output buffer for all channels the output need
+			int outputCheckCount = (count / outputChannelNumber) * mixerChannels;
+			int bufSize = Math.Min(bufferSize, outputCheckCount);
+
+			int total = DoMixing(bufSize, out hasEndReached);
+			if (total == 0)
+				Array.Clear(buffer);
+
+			if (playing)
+			{
+				// Add extra effects if enabled
+				AddEffects(mixBuffer, total);
+
+				// Add Amiga low-pass filter if enabled
+				AddAmigaFilter(mixBuffer, total);
+			}
+
 			// Now convert the mixed data to our output format
-			currentMixer.ConvertMixedData(buffer, offset, mixBuffer, bufSize, swap);
+			int samplesToSkip = isStereo ? outputChannelNumber - 2 : 0;
+			currentMixer.ConvertMixedData(buffer, offset, mixBuffer, total, samplesToSkip, isStereo, swap);
 
 			// Mix extra channels into the output buffer
 			int total2 = MixExtraChannels(bufSize);
-			total = Math.Max(total, total2);
-
 			if (total2 > 0)
-				AddExtraChannelsIntoOutput(buffer, offset, bufSize, swap);
+				AddExtraChannelsIntoOutput(buffer, offset, total2, samplesToSkip, isStereo, swap);
+
+			// Calculate total bytes really written
+			total = Math.Max(total, total2);
+			total = (total / mixerChannels) * outputChannelNumber;
 
 			// Tell visual agents about the mixed data
-			currentVisualizer.TellAgentsAboutMixedData(buffer, offset, bufSize, isStereo, swapSpeakers);
+			currentVisualizer.TellAgentsAboutMixedData(buffer, offset, total, outputChannelNumber, swap);
 
 			return total;
 		}
@@ -489,12 +510,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			hasEndReached = false;
 
 			int total = 0;
-
-			// Remember the mixing mode. The reason to hold this in another
-			// variable, it when the user change the mixing mode, it won't
-			// be changed in the middle of a mixing, but used the next
-			// time this method is called
-			currentMode = mixerMode;
 
 			// And convert the number of samples to number of samples pair
 			todo = (currentMode & MixerMode.Stereo) != 0 ? todo >> 1 : todo;
@@ -674,38 +689,23 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Will mix the channel mixer and extra channel mixer data together
 		/// </summary>
 		/********************************************************************/
-		private void AddExtraChannelsIntoOutput(byte[] buffer, int offset, int todo, bool swapSpeakers)
+		private void AddExtraChannelsIntoOutput(byte[] buffer, int offset, int todo, int samplesToSkip, bool isStereo, bool swap)
 		{
 			if ((extraTempBuffer == null) || (extraTempBuffer.Length < buffer.Length))
 				extraTempBuffer = new byte[buffer.Length];
 
-			extraChannelsMixer.ConvertMixedData(extraTempBuffer, 0, extraChannelsMixBuffer, todo, swapSpeakers);
+			extraChannelsMixer.ConvertMixedData(extraTempBuffer, 0, extraChannelsMixBuffer, todo, samplesToSkip, isStereo, swap);
 
-			if (bytesPerSample == 2)
+			Span<int> source = MemoryMarshal.Cast<byte, int>(extraTempBuffer);
+			Span<int> dest = MemoryMarshal.Cast<byte, int>(buffer);
+			offset /= 4;
+			todo = (todo / mixerChannels) * outputChannelNumber;
+
+			for (int i = 0; i < todo; i++)
 			{
-				Span<short> source = MemoryMarshal.Cast<byte, short>(extraTempBuffer);
-				Span<short> dest = MemoryMarshal.Cast<byte, short>(buffer);
-				offset /= 2;
-
-				for (int i = 0; i < todo; i++)
-				{
-					int val = dest[offset] + source[i];
-					val = (val >= 32767) ? 32767 - 1 : (val < -32767) ? -32767 : val;
-					dest[offset++] = (short)val;
-				}
-			}
-			else if (bytesPerSample == 4)
-			{
-				Span<int> source = MemoryMarshal.Cast<byte, int>(extraTempBuffer);
-				Span<int> dest = MemoryMarshal.Cast<byte, int>(buffer);
-				offset /= 4;
-
-				for (int i = 0; i < todo; i++)
-				{
-					long val = dest[offset] + source[i];
-					val = (val >= 2147483647) ? 2147483647 - 1 : (val < -2147483647) ? -2147483647 : val;
-					dest[offset++] = (int)val;
-				}
+				long val = dest[offset] + source[i];
+				val = (val >= 2147483647) ? 2147483647 - 1 : (val < -2147483647) ? -2147483647 : val;
+				dest[offset++] = (int)val;
 			}
 		}
 

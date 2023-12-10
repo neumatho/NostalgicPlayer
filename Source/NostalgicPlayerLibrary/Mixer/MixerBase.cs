@@ -19,8 +19,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		protected int channelNumber;		// Number of channels this mixer use
 		protected int stereoSeparation;		// This is the stereo separation (0-128)
 
-		protected int bytesPerSample;		// How many bytes each sample uses in the output buffer
-
 		protected VoiceInfo[] voiceInfo;
 
 		protected const int MasterVolume = 256;
@@ -123,7 +121,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		public void SetOutputFormat(OutputInfo outputInformation)
 		{
 			mixerFrequency = outputInformation.Frequency;
-			bytesPerSample = outputInformation.BytesPerSample;
 		}
 
 
@@ -221,6 +218,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// in the supplied buffer
 		/// </summary>
 		/********************************************************************/
-		public abstract void ConvertMixedData(byte[] dest, int offset, int[] source, int todo, bool swapSpeakers);
+		public abstract void ConvertMixedData(byte[] dest, int offset, int[] source, int todo, int samplesToSkip, bool isStereo, bool swapSpeakers);
 	}
 }

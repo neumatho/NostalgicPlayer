@@ -72,15 +72,20 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpectrumAnalyzer
 		/// Add the given sound values to the FFT analyzer
 		/// </summary>
 		/********************************************************************/
-		public void AddValues(int[] buffer, bool stereo)
+		public void AddValues(int[] buffer, int numberOfChannels)
 		{
 			if (FftCalculated != null)
 			{
-				if (stereo)
+				if (numberOfChannels >= 2)
 				{
-					for (int i = 0, cnt = buffer.Length; i < cnt; i += 2)
+					for (int i = 0, cnt = buffer.Length; i < cnt; i += numberOfChannels)
 					{
-						double value = ((long)buffer[i] + buffer[i + 1]) / 2147483648f;
+						long mixedValue = 0;
+
+						for (int j = numberOfChannels - 1; j >= 0; j--)
+							mixedValue += buffer[i + j];
+
+						double value = mixedValue / 2147483648f;
 
 						fftBuffer[fftPos].X = (float)(value * FastFourierTransform.BlackmannHarrisWindow(fftPos, fftLength));
 						fftBuffer[fftPos].Y = 0;

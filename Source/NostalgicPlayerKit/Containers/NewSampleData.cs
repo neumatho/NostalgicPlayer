@@ -15,10 +15,10 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public NewSampleData(int[] buffer, bool stereo, bool swapSpeakers)
+		public NewSampleData(int[] buffer, int numberOfChannels, bool swapSpeakers)
 		{
 			SampleData = buffer;
-			Stereo = stereo;
+			NumberOfChannels = numberOfChannels;
 			SwapSpeakers = swapSpeakers;
 		}
 
@@ -38,10 +38,10 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Tells if the sample data is in stereo or mono
+		/// Holds the total number of channels used in the buffer
 		/// </summary>
 		/********************************************************************/
-		public bool Stereo
+		public int NumberOfChannels
 		{
 			get;
 		}

@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -45,6 +46,14 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 			Paused
 		}
 
+		private enum SampleFormat
+		{
+			Unknown,
+			_16,
+			_32,
+			Ieee
+		}
+
 		private object streamLock;
 		private SoundStream stream;
 
@@ -52,6 +61,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		private AudioClient audioClient;
 
 		private WaveFormat outputFormat;
+		private SampleFormat outputSampleFormat;
 		private float currentVolume;
 
 		private AudioRenderClient audioRenderClient;
@@ -299,7 +309,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 				stream?.Dispose();
 
 				int bytesPerSample = outputFormat.BitsPerSample / 8;
-				soundStream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, (outputFormat.AverageBytesPerSecond / bytesPerSample) * settings.Latency / 1000, bytesPerSample));
+				soundStream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, (outputFormat.AverageBytesPerSecond / bytesPerSample) * settings.Latency / 1000));
 				stream = soundStream;
 			}
 
@@ -352,27 +362,15 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		{
 			long latencyRefTimes = settings.Latency * 10000;
 
-			// Try these formats in this order:
-			//
-			// 32-bit, 2 channels
-			// 16-bit, 2 channels
-			// 32-bit, 1 channel
-			// 16-bit, 1 channel
-			outputFormat = new WaveFormat(audioClient.MixFormat.SampleRate, 32, 2);
+			outputFormat = audioClient.MixFormat;
+//			outputFormat = new WaveFormat(audioClient.MixFormat.SampleRate, 32, 2);		// Uncomment the one you want to test
+//			outputFormat = new WaveFormat(audioClient.MixFormat.SampleRate, 16, 2);
 			if (!audioClient.IsFormatSupported(AudioClientShareMode.Shared, outputFormat, out WaveFormatExtensible _))
-			{
-				outputFormat = new WaveFormat(audioClient.MixFormat.SampleRate, 16, 2);
-				if (!audioClient.IsFormatSupported(AudioClientShareMode.Shared, outputFormat, out WaveFormatExtensible _))
-				{
-					outputFormat = new WaveFormat(audioClient.MixFormat.SampleRate, 32, 1);
-					if (!audioClient.IsFormatSupported(AudioClientShareMode.Shared, outputFormat, out WaveFormatExtensible _))
-					{
-						outputFormat = new WaveFormat(audioClient.MixFormat.SampleRate, 16, 1);
-						if (!audioClient.IsFormatSupported(AudioClientShareMode.Shared, outputFormat, out WaveFormatExtensible _))
-							throw new Exception(Resources.IDS_ERR_NO_OUTPUT_DEVICE_FOUND);
-					}
-				}
-			}
+				throw new IOException(Resources.IDS_ERR_NO_OUTPUT_DEVICE_FOUND);
+
+			outputSampleFormat = FindSampleFormat(outputFormat);
+			if (outputSampleFormat == SampleFormat.Unknown)
+				throw new IOException(Resources.IDS_ERR_NO_OUTPUT_DEVICE_FOUND);
 
 			// Normal setup for both sharedMode
 			audioClient.Initialize(AudioClientShareMode.Shared, AudioClientStreamFlags.EventCallback | AudioClientStreamFlags.NoPersist, latencyRefTimes, 0, outputFormat, Guid.Empty);
@@ -382,7 +380,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 			// Set up the read buffer
 			bufferFrameCount = audioClient.BufferSize;
-			bytesPerFrame = outputFormat.Channels * outputFormat.BitsPerSample / 8;
+			bytesPerFrame = outputFormat.Channels * OutputInfo.BytesPerSample;
 			readBuffer = new byte[bufferFrameCount * bytesPerFrame];
 
 			// Make sure that the render thread does not play anything
@@ -526,7 +524,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 					// Tell the mixer about new sample rates etc.
 					int bytesPerSample = outputFormat.BitsPerSample / 8;
-					stream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, (outputFormat.AverageBytesPerSecond / bytesPerSample) * settings.Latency / 1000, bytesPerSample));
+					stream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, (outputFormat.AverageBytesPerSecond / bytesPerSample) * settings.Latency / 1000));
 
 					playbackState = oldState;
 				}
@@ -675,6 +673,35 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 		/********************************************************************/
 		/// <summary>
+		/// Find the sample format if possible
+		/// </summary>
+		/********************************************************************/
+		private SampleFormat FindSampleFormat(WaveFormat waveFormat)
+		{
+			if (waveFormat.Encoding == WaveFormatEncoding.Extensible)
+				waveFormat = waveFormat.AsStandardWaveFormat();
+
+			if (waveFormat.Encoding == WaveFormatEncoding.Pcm)
+			{
+				switch (waveFormat.BitsPerSample)
+				{
+					case 16:
+						return SampleFormat._16;
+
+					case 32:
+						return SampleFormat._32;
+				}
+			}
+			else if (waveFormat.Encoding == WaveFormatEncoding.IeeeFloat)
+				return SampleFormat.Ieee;
+
+			return SampleFormat.Unknown;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Fill the buffer with the next bunch of samples
 		/// </summary>
 		/********************************************************************/
@@ -690,7 +717,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 					int readLength = frameCount * bytesPerFrame;
 					read = stream == null ? 0 : stream.Read(readBuffer, 0, readLength);
 					if (read > 0)
-						Marshal.Copy(readBuffer, 0, buffer, read);
+						ConvertToOutputFormat(buffer, read);
 				}
 				catch(Exception)
 				{
@@ -700,6 +727,129 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 				int actualFrameCount = read / bytesPerFrame;
 				audioRenderClient.ReleaseBuffer(actualFrameCount, AudioClientBufferFlags.None);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will convert the read 32-bit PCM to whatever output format needed
+		/// </summary>
+		/********************************************************************/
+		private void ConvertToOutputFormat(IntPtr outputBuffer, int bytesRead)
+		{
+			switch (outputSampleFormat)
+			{
+				case SampleFormat._16:
+				{
+					ConvertTo16Bit(readBuffer, outputBuffer, bytesRead);
+					break;
+				}
+
+				case SampleFormat._32:
+				{
+					ConvertTo32Bit(readBuffer, outputBuffer, bytesRead);
+					break;
+				}
+
+				case SampleFormat.Ieee:
+				{
+					ConvertToIeeeFloat(readBuffer, outputBuffer, bytesRead);
+					break;
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert to 16-bit PCM
+		/// </summary>
+		/********************************************************************/
+		private unsafe void ConvertTo16Bit(byte[] inputBuffer, IntPtr outputBuffer, int bytesRead)
+		{
+			short x1, x2, x3, x4;
+
+			int samplesLeft = bytesRead / OutputInfo.BytesPerSample;
+
+			Span<int> source = MemoryMarshal.Cast<byte, int>(inputBuffer);
+			Span<short> dest = new Span<short>(outputBuffer.ToPointer(), samplesLeft * 2);
+
+			int remain = samplesLeft & 3;
+			int sourceOffset = 0;
+			int destOffset = 0;
+
+			for (samplesLeft >>= 2; samplesLeft != 0; samplesLeft--)
+			{
+				x1 = (short)(source[sourceOffset++] >> 16);
+				x2 = (short)(source[sourceOffset++] >> 16);
+				x3 = (short)(source[sourceOffset++] >> 16);
+				x4 = (short)(source[sourceOffset++] >> 16);
+
+				dest[destOffset++] = x1;
+				dest[destOffset++] = x2;
+				dest[destOffset++] = x3;
+				dest[destOffset++] = x4;
+			}
+
+			while (remain-- != 0)
+			{
+				x1 = (short)(source[sourceOffset++] >> 16);
+				dest[destOffset++] = x1;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert to 32-bit PCM
+		/// </summary>
+		/********************************************************************/
+		private void ConvertTo32Bit(byte[] inputBuffer, IntPtr outputBuffer, int bytesRead)
+		{
+			Marshal.Copy(inputBuffer, 0, outputBuffer, bytesRead);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert to IEEE floating point
+		/// </summary>
+		/********************************************************************/
+		private unsafe void ConvertToIeeeFloat(byte[] inputBuffer, IntPtr outputBuffer, int bytesRead)
+		{
+			float x1, x2, x3, x4;
+
+			int samplesLeft = bytesRead / OutputInfo.BytesPerSample;
+
+			Span<int> source = MemoryMarshal.Cast<byte, int>(inputBuffer);
+			Span<float> dest = new Span<float>(outputBuffer.ToPointer(), samplesLeft * 4);
+
+			int remain = samplesLeft & 3;
+			int sourceOffset = 0;
+			int destOffset = 0;
+
+			for (samplesLeft >>= 2; samplesLeft != 0; samplesLeft--)
+			{
+				x1 = source[sourceOffset++] / 2147483647.0f;
+				x2 = source[sourceOffset++] / 2147483647.0f;
+				x3 = source[sourceOffset++] / 2147483647.0f;
+				x4 = source[sourceOffset++] / 2147483647.0f;
+
+				dest[destOffset++] = x1;
+				dest[destOffset++] = x2;
+				dest[destOffset++] = x3;
+				dest[destOffset++] = x4;
+			}
+
+			while (remain-- != 0)
+			{
+				x1 = source[sourceOffset++] / 2147483647.0f;
+				dest[destOffset++] = x1;
 			}
 		}
 		#endregion

@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 
 		private int outputFrequency;
 		private int outputChannels;
-		private int outputBits;
+		private int mixerChannels;
 
 		private int[] dataBuffer;
 		private int samplesRead;
@@ -158,7 +158,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		{
 			outputFrequency = outputInformation.Frequency;
 			outputChannels = outputInformation.Channels;
-			outputBits = outputInformation.BytesPerSample * 8;
+			mixerChannels = outputChannels >= 2 ? 2 : 1;
 
 			// Initialize variables
 			samplesRead = 0;
@@ -175,7 +175,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 
 			// Get the maximum number of samples the given destination
 			// buffer from the output agent can be
-			bufferSize = outputInformation.BufferSizeInSamples;
+			bufferSize = (outputInformation.BufferSizeInSamples / outputChannels) * mixerChannels;
 
 			// Allocate the buffers
 			int len = inputFrequency / 2 * inputChannels;		// Around half second buffer size
@@ -232,16 +232,24 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		/********************************************************************/
 		public int Resampling(byte[] buffer, int offset, int count, out bool hasEndReached)
 		{
-			int total = ResampleSample(count, out hasEndReached);
+			// Find the size of the buffer
+			//
+			// bufferSize = size of mixer buffer for either mono or stereo
+			// count = size of output buffer for all channels the output need
+			int outputCheckCount = (count / outputChannels) * mixerChannels;
+			int bufSize = Math.Min(bufferSize, outputCheckCount);
+
+			int total = ResampleSample(bufSize, out hasEndReached);
 
 			// And then convert the resampled sample to the output format
-			if (outputBits == 16)
-				ResampleConvertTo16(MemoryMarshal.Cast<byte, short>(buffer), offset / 2, sampleBuffer, total, outputChannels == 2 ? swapSpeakers : false);
-			else if (outputBits == 32)
-				ResampleConvertTo32(MemoryMarshal.Cast<byte, int>(buffer), offset / 4, sampleBuffer, total, outputChannels == 2 ? swapSpeakers : false);
+			bool isStereo = outputChannels >= 2;
+			int samplesToSkip = isStereo ? outputChannels - 2 : 0;
+			ResampleConvertTo32(MemoryMarshal.Cast<byte, int>(buffer), offset / 4, sampleBuffer, total, samplesToSkip, isStereo, isStereo ? swapSpeakers : false);
+
+			total = (total / mixerChannels) * outputChannels;
 
 			// Tell visual agents about the mixed data
-			currentVisualizer.TellAgentsAboutMixedData(buffer, offset, total, outputChannels == 2, swapSpeakers);
+			currentVisualizer.TellAgentsAboutMixedData(buffer, offset, total, outputChannels, swapSpeakers);
 
 			return total;
 		}
@@ -278,11 +286,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		{
 			hasEndReached = false;
 
-			// Find the size of the buffer
-			int bufSize = Math.Min(bufferSize, count);
-
 			// And convert the number of samples to number of samples pair
-			count = outputChannels == 2 ? bufSize >> 1 : bufSize;
+			count = outputChannels >= 2 ? count >> 1 : count;
 
 			// Get different parameters needed for the resampling
 			bool doInterpolation = interpolation;
@@ -348,14 +353,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 					{
 						if (inputChannels == 1)
 						{
-							if (outputChannels == 1)
+							if (mixerChannels == 1)
 								currentIndex = ResampleMonoToMonoInterpolation(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, oldLeftVolume, ref rampVolume);
 							else
 								currentIndex = ResampleMonoToStereoInterpolation(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, oldLeftVolume, ref rampVolume);
 						}
 						else if (inputChannels == 2)
 						{
-							if (outputChannels == 1)
+							if (mixerChannels == 1)
 								currentIndex = ResampleStereoToMonoInterpolation(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, rightVolume, oldLeftVolume, oldRightVolume, ref rampVolume);
 							else
 								currentIndex = ResampleStereoToStereoInterpolation(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, rightVolume, oldLeftVolume, oldRightVolume, ref rampVolume);
@@ -365,14 +370,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 					{
 						if (inputChannels == 1)
 						{
-							if (outputChannels == 1)
+							if (mixerChannels == 1)
 								currentIndex = ResampleMonoToMonoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume);
 							else
 								currentIndex = ResampleMonoToStereoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume);
 						}
 						else if (inputChannels == 2)
 						{
-							if (outputChannels == 1)
+							if (mixerChannels == 1)
 								currentIndex = ResampleStereoToMonoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, rightVolume);
 							else
 								currentIndex = ResampleStereoToStereoNormal(dataBuffer, sampleBuffer, total, currentIndex, increment, todo, leftVolume, rightVolume);
@@ -381,7 +386,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 
 					samplesLeftToPositionChange -= todo;
 					count -= todo;
-					total += (todo * outputChannels);
+					total += (todo * mixerChannels);
 				}
 			}
 
@@ -858,128 +863,101 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 
 		/********************************************************************/
 		/// <summary>
-		/// Converts the resampled data to a 16 bit sample buffer
-		/// </summary>
-		/********************************************************************/
-		private void ResampleConvertTo16(Span<short> dest, int offset, int[] source, int count, bool swapSpeakers)
-		{
-			int x1, x2, x3, x4;
-
-			int remain = count & 3;
-			int sourceOffset = 0;
-
-			if (swapSpeakers)
-			{
-				for (count >>= 2; count != 0; count--)
-				{
-					x1 = source[sourceOffset++] >> BitShift16;
-					x2 = source[sourceOffset++] >> BitShift16;
-					x3 = source[sourceOffset++] >> BitShift16;
-					x4 = source[sourceOffset++] >> BitShift16;
-
-					dest[offset++] = (short)x2;
-					dest[offset++] = (short)x1;
-					dest[offset++] = (short)x4;
-					dest[offset++] = (short)x3;
-				}
-
-				// We know it is always stereo samples when coming here
-				while (remain > 0)
-				{
-					x1 = source[sourceOffset++] >> BitShift16;
-					x2 = source[sourceOffset++] >> BitShift16;
-
-					dest[offset++] = (short)x2;
-					dest[offset++] = (short)x1;
-
-					remain -= 2;
-				}
-			}
-			else
-			{
-				for (count >>= 2; count != 0; count--)
-				{
-					x1 = source[sourceOffset++] >> BitShift16;
-					x2 = source[sourceOffset++] >> BitShift16;
-					x3 = source[sourceOffset++] >> BitShift16;
-					x4 = source[sourceOffset++] >> BitShift16;
-
-					dest[offset++] = (short)x1;
-					dest[offset++] = (short)x2;
-					dest[offset++] = (short)x3;
-					dest[offset++] = (short)x4;
-				}
-
-				while (remain-- != 0)
-				{
-					x1 = source[sourceOffset++] >> BitShift16;
-					dest[offset++] = (short)x1;
-				}
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Converts the resampled data to a 32 bit sample buffer
 		/// </summary>
 		/********************************************************************/
-		private void ResampleConvertTo32(Span<int> dest, int offset, int[] source, int count, bool swapSpeakers)
+		private void ResampleConvertTo32(Span<int> dest, int offset, int[] source, int count, int samplesToSkip, bool isStereo, bool swap)
 		{
 			int x1, x2, x3, x4;
+			int remain;
 
-			int remain = count & 3;
 			int sourceOffset = 0;
 
-			if (swapSpeakers)
+			if (swap)
 			{
-				for (count >>= 2; count != 0; count--)
+				if (samplesToSkip == 0)
 				{
-					x1 = source[sourceOffset++];
-					x2 = source[sourceOffset++];
-					x3 = source[sourceOffset++];
-					x4 = source[sourceOffset++];
+					remain = count & 3;
 
-					dest[offset++] = x2;
-					dest[offset++] = x1;
-					dest[offset++] = x4;
-					dest[offset++] = x3;
+					for (count >>= 2; count != 0; count--)
+					{
+						x1 = source[sourceOffset++];
+						x2 = source[sourceOffset++];
+						x3 = source[sourceOffset++];
+						x4 = source[sourceOffset++];
+
+						dest[offset++] = x2;
+						dest[offset++] = x1;
+						dest[offset++] = x4;
+						dest[offset++] = x3;
+					}
 				}
-
-				// We know it is always stereo samples when coming here
-				while (remain > 0)
+				else
 				{
-					x1 = source[sourceOffset++];
-					x2 = source[sourceOffset++];
+					remain = count & 1;
 
-					dest[offset++] = x2;
-					dest[offset++] = x1;
+					for (count >>= 1; count != 0; count--)
+					{
+						x1 = source[sourceOffset++];
+						x2 = source[sourceOffset++];
 
-					remain -= 2;
+						dest[offset++] = x2;
+						dest[offset++] = x1;
+
+						for (int i = 0; i < samplesToSkip; i++)
+							dest[offset++] = 0;
+					}
 				}
 			}
 			else
 			{
-				for (count >>= 2; count != 0; count--)
+				if (isStereo)
 				{
-					x1 = source[sourceOffset++];
-					x2 = source[sourceOffset++];
-					x3 = source[sourceOffset++];
-					x4 = source[sourceOffset++];
+					if (samplesToSkip == 0)
+					{
+						remain = count & 3;
 
-					dest[offset++] = x1;
-					dest[offset++] = x2;
-					dest[offset++] = x3;
-					dest[offset++] = x4;
+						for (count >>= 2; count != 0; count--)
+						{
+							x1 = source[sourceOffset++];
+							x2 = source[sourceOffset++];
+							x3 = source[sourceOffset++];
+							x4 = source[sourceOffset++];
+
+							dest[offset++] = x1;
+							dest[offset++] = x2;
+							dest[offset++] = x3;
+							dest[offset++] = x4;
+						}
+					}
+					else
+					{
+						remain = count & 1;
+
+						for (count >>= 1; count != 0; count--)
+						{
+							x1 = source[sourceOffset++];
+							x2 = source[sourceOffset++];
+
+							dest[offset++] = x1;
+							dest[offset++] = x2;
+
+							for (int i = 0; i < samplesToSkip; i++)
+								dest[offset++] = 0;
+						}
+					}
 				}
-
-				while (remain-- != 0)
+				else
 				{
-					x1 = source[sourceOffset++];
-					dest[offset++] = x1;
+					remain = 0;
+
+					for (; count != 0; count--)
+						dest[offset++] = source[sourceOffset++];
 				}
 			}
+
+			while (remain-- != 0)
+				dest[offset++] = source[sourceOffset++];
 		}
 
 

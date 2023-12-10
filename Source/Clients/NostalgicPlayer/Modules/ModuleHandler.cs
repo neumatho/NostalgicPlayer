@@ -894,7 +894,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				}
 				else if ((samplePlayer = player as ISamplePlayer) != null)
 				{
-					if ((startPos != -1) && (samplePlayer.StaticModuleInformation.CanChangePosition))
+					if ((startPos != -1) && samplePlayer.StaticModuleInformation.CanChangePosition)
 						samplePlayer.SetSongPosition(startPos);
 
 					// Subscribe to event notifications
@@ -919,7 +919,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 							return false;
 						}
 
-						if ((startPos != -1) && (player.StaticModuleInformation.CanChangePosition))
+						if ((startPos != -1) && player.StaticModuleInformation.CanChangePosition)
 						{
 							modulePlayer?.SetSongPosition(startPos);
 							samplePlayer?.SetSongPosition(startPos);

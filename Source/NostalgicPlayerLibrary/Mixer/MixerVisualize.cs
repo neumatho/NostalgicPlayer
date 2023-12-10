@@ -5,7 +5,6 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
@@ -27,14 +26,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private class SampleDataInfo
 		{
 			public int[] Buffer;
-			public bool Stereo;
+			public int NumberOfChannels;
 			public bool SwapSpeakers;
 		}
 
 		private Manager manager;
 
 		private int mixerFrequency;
-		private int bytesPerSample;
 
 		private volatile ChannelChanged[] channelChanges;
 		private volatile SampleDataInfo sampleDataInfo;
@@ -127,7 +125,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		public void SetOutputFormat(OutputInfo outputInformation)
 		{
 			mixerFrequency = outputInformation.Frequency;
-			bytesPerSample = outputInformation.BytesPerSample;
 
 			visualBufferOffset = 0;
 			visualBuffer = new int[Math.Min(outputInformation.BufferSizeInSamples, mixerFrequency / (1000 / 20) * outputInformation.Channels)];
@@ -227,7 +224,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// data
 		/// </summary>
 		/********************************************************************/
-		public void TellAgentsAboutMixedData(byte[] buffer, int offset, int count, bool stereo, bool swapSpeakers)
+		public void TellAgentsAboutMixedData(byte[] buffer, int offset, int count, int numberOfChannels, bool swapSpeakers)
 		{
 			int[] bufferToSend = null;
 
@@ -238,22 +235,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				if (bufferLatencySamplesLeft > 0)
 					todo = Math.Min(todo, bufferLatencySamplesLeft);
 
-				if (bytesPerSample == 4)
-				{
-					// Mixed output is already in 32-bit, so just copy the data
-					Buffer.BlockCopy(buffer, offset, visualBuffer, visualBufferOffset * 4, todo * 4);
+				// Mixed output is already in 32-bit, so just copy the data
+				Buffer.BlockCopy(buffer, offset, visualBuffer, visualBufferOffset * 4, todo * 4);
 
-					visualBufferOffset += todo;
-					offset += todo * 4;
-				}
-				else
-				{
-					// Mixed output is in 16-bit, so convert it to 32-bit
-					Span<short> source = MemoryMarshal.Cast<byte, short>(buffer);
-
-					for (int i = 0, cnt = todo; i < cnt; i++)
-						visualBuffer[visualBufferOffset++] = source[offset++] << 16;
-				}
+				visualBufferOffset += todo;
+				offset += todo * 4;
 
 				count -= todo;
 
@@ -274,7 +260,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				SampleDataInfo info = new SampleDataInfo
 				{
 					Buffer = bufferToSend,
-					Stereo = stereo,
+					NumberOfChannels = numberOfChannels,
 					SwapSpeakers = swapSpeakers
 				};
 
@@ -358,7 +344,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					case 2:
 					{
 						SampleDataInfo info = sampleDataInfo;
-						NewSampleData sampleData = new NewSampleData(info.Buffer, info.Stereo, info.SwapSpeakers);
+						NewSampleData sampleData = new NewSampleData(info.Buffer, info.NumberOfChannels, info.SwapSpeakers);
 
 						foreach (IVisualAgent visualAgent in manager.GetRegisteredVisualAgent())
 						{

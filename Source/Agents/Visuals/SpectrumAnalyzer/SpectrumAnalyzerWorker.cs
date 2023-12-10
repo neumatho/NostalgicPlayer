@@ -91,7 +91,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpectrumAnalyzer
 		public void SampleData(NewSampleData sampleData)
 		{
 			if (analyzer != null)
-				analyzer.AddValues(sampleData.SampleData, sampleData.Stereo);
+				analyzer.AddValues(sampleData.SampleData, sampleData.NumberOfChannels);
 		}
 		#endregion
 

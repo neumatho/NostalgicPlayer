@@ -18,8 +18,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 	/// </summary>
 	internal class ResamplerStream : SoundStream
 	{
-		private int bytesPerSampling;
-
 		private bool playing;
 
 		private Resampler resampler;
@@ -98,8 +96,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 			{
 				lock (resamplerLock)
 				{
-					bytesPerSampling = outputInformation.BytesPerSample;
-
 					resampler.SetOutputFormat(outputInformation);
 				}
 			}
@@ -222,13 +218,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 						return todo;
 					}
 
-					int samplesTaken = resampler.Resampling(buffer, offset, count / bytesPerSampling, out bool hasEndReached);
+					int samplesTaken = resampler.Resampling(buffer, offset, count / OutputInfo.BytesPerSample, out bool hasEndReached);
 					HasEndReached = hasEndReached;
 
 					if (hasEndReached)
 						delayCount = maxBufferSize;		// Set the delay count to a whole buffer
 
-					return samplesTaken * bytesPerSampling;
+					return samplesTaken * OutputInfo.BytesPerSample;
 				}
 
 				return 0;
