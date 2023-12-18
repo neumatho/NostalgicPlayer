@@ -192,7 +192,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			{
 				c_double per = lib.period.LibXmp_Note_To_Period(note, xc.FineTune, xc.Per_Adj);
 
-				if (Common.Has_Quirk(m, Quirk_Flag.ProTrack) || ((note > 0) && is_TonePorta))
+				if (!Common.Has_Quirk(m, Quirk_Flag.ProTrack) || ((note > 0) && is_TonePorta))
 					xc.Porta.Target = per;
 
 				if ((xc.Period < 1) || !is_TonePorta)
