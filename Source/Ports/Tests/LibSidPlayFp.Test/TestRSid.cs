@@ -85,8 +85,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		public void TestLoadOk()
 		{
 			SidTune tune = LoadTune();
-			Assert.IsTrue(tune.GetStatus());
-			Assert.AreEqual("No errors", tune.StatusString());
+			Assert.That(tune.GetStatus(), Is.True);
+			Assert.That(tune.StatusString(), Is.EqualTo("No errors"));
 		}
 
 
@@ -102,8 +102,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[VersionLo] = 0x01;
 
 			SidTune tune = LoadTune();
-			Assert.IsFalse(tune.GetStatus());
-			Assert.AreEqual("Unsupported RSID version", tune.StatusString());
+			Assert.That(tune.GetStatus(), Is.False);
+			Assert.That(tune.StatusString(), Is.EqualTo("Unsupported RSID version"));
 		}
 
 
@@ -119,8 +119,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[LoadAddressLo] = 0xff;
 
 			SidTune tune = LoadTune();
-			Assert.IsFalse(tune.GetStatus());
-			Assert.AreEqual("File contains invalid data", tune.StatusString());
+			Assert.That(tune.GetStatus(), Is.False);
+			Assert.That(tune.StatusString(), Is.EqualTo("File contains invalid data"));
 		}
 
 
@@ -137,8 +137,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[125] = 0x07;
 
 			SidTune tune = LoadTune();
-			Assert.IsFalse(tune.GetStatus());
-			Assert.AreEqual("Bad address data", tune.StatusString());
+			Assert.That(tune.GetStatus(), Is.False);
+			Assert.That(tune.StatusString(), Is.EqualTo("Bad address data"));
 		}
 
 
@@ -154,8 +154,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[PlayAddressLo] = 0xff;
 
 			SidTune tune = LoadTune();
-			Assert.IsFalse(tune.GetStatus());
-			Assert.AreEqual("File contains invalid data", tune.StatusString());
+			Assert.That(tune.GetStatus(), Is.False);
+			Assert.That(tune.StatusString(), Is.EqualTo("File contains invalid data"));
 		}
 
 
@@ -171,8 +171,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[SpeedLoLo] = 0xff;
 
 			SidTune tune = LoadTune();
-			Assert.IsFalse(tune.GetStatus());
-			Assert.AreEqual("File contains invalid data", tune.StatusString());
+			Assert.That(tune.GetStatus(), Is.False);
+			Assert.That(tune.StatusString(), Is.EqualTo("File contains invalid data"));
 		}
 
 
@@ -188,8 +188,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[DataOffsetLo] = 0x76;
 
 			SidTune tune = LoadTune();
-			Assert.IsFalse(tune.GetStatus());
-			Assert.AreEqual("Bad address data", tune.StatusString());
+			Assert.That(tune.GetStatus(), Is.False);
+			Assert.That(tune.StatusString(), Is.EqualTo("Bad address data"));
 		}
 
 
@@ -205,8 +205,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[InitAddressHi] = 0xb0;
 
 			SidTune tune = LoadTune();
-			Assert.IsFalse(tune.GetStatus());
-			Assert.AreEqual("Bad address data", tune.StatusString());
+			Assert.That(tune.GetStatus(), Is.False);
+			Assert.That(tune.StatusString(), Is.EqualTo("Bad address data"));
 		}
 
 
@@ -223,8 +223,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[InitAddressLo] = 0xe7;
 
 			SidTune tune = LoadTune();
-			Assert.IsFalse(tune.GetStatus());
-			Assert.AreEqual("Bad address data", tune.StatusString());
+			Assert.That(tune.GetStatus(), Is.False);
+			Assert.That(tune.StatusString(), Is.EqualTo("Bad address data"));
 		}
 
 
@@ -241,7 +241,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[SongsLo] = 0x01;
 
 			SidTune tune = LoadTune();
-			Assert.AreEqual(256U, tune.GetInfo().Songs());
+			Assert.That(tune.GetInfo().Songs(), Is.EqualTo(256U));
 		}
 
 
@@ -255,7 +255,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		public void TestDefaultStartSong()
 		{
 			SidTune tune = LoadTune();
-			Assert.AreEqual(1U, tune.GetInfo().StartSong());
+			Assert.That(tune.GetInfo().StartSong(), Is.EqualTo(1U));
 		}
 
 
@@ -272,7 +272,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[PageLength] = 0x77;
 
 			SidTune tune = LoadTune();
-			Assert.AreEqual(0, tune.GetInfo().RelocPages());
+			Assert.That(tune.GetInfo().RelocPages(), Is.EqualTo(0));
 		}
 
 		/*** TEST v3 ***/
@@ -289,7 +289,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[SecondSidAddress] = 0x42;
 
 			SidTune tune = LoadTune();
-			Assert.AreEqual(0xd420, tune.GetInfo().SidChipBase(1));
+			Assert.That(tune.GetInfo().SidChipBase(1), Is.EqualTo(0xd420));
 		}
 
 
@@ -306,7 +306,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[SecondSidAddress] = 0x43;
 
 			SidTune tune = LoadTune();
-			Assert.AreEqual(0, tune.GetInfo().SidChipBase(1));
+			Assert.That(tune.GetInfo().SidChipBase(1), Is.EqualTo(0));
 		}
 
 
@@ -324,7 +324,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[SecondSidAddress] = 0x80;
 
 			SidTune tune = LoadTune();
-			Assert.AreEqual(0, tune.GetInfo().SidChipBase(1));
+			Assert.That(tune.GetInfo().SidChipBase(1), Is.EqualTo(0));
 		}
 
 		/*** TEST v4 ***/
@@ -342,7 +342,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[ThirdSidAddress] = 0x50;
 
 			SidTune tune = LoadTune();
-			Assert.AreEqual(0xd500, tune.GetInfo().SidChipBase(2));
+			Assert.That(tune.GetInfo().SidChipBase(2), Is.EqualTo(0xd500));
 		}
 
 
@@ -360,7 +360,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[ThirdSidAddress] = 0x43;
 
 			SidTune tune = LoadTune();
-			Assert.AreEqual(0, tune.GetInfo().SidChipBase(2));
+			Assert.That(tune.GetInfo().SidChipBase(2), Is.EqualTo(0));
 		}
 
 
@@ -379,7 +379,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[ThirdSidAddress] = 0x80;
 
 			SidTune tune = LoadTune();
-			Assert.AreEqual(0, tune.GetInfo().SidChipBase(2));
+			Assert.That(tune.GetInfo().SidChipBase(2), Is.EqualTo(0));
 		}
 
 
@@ -397,7 +397,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[ThirdSidAddress] = 0x42;
 
 			SidTune tune = LoadTune();
-			Assert.AreEqual(0, tune.GetInfo().SidChipBase(2));
+			Assert.That(tune.GetInfo().SidChipBase(2), Is.EqualTo(0));
 		}
 
 		#region Private methods

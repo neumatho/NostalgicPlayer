@@ -60,8 +60,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		{
 			SidTune tune = LoadTune();
 
-			Assert.AreEqual(0xec60, tune.GetInfo().InitAddr());
-			Assert.AreEqual(0xec80, tune.GetInfo().PlayAddr());
+			Assert.That(tune.GetInfo().InitAddr(), Is.EqualTo(0xec60));
+			Assert.That(tune.GetInfo().PlayAddr(), Is.EqualTo(0xec80));
 		}
 
 
@@ -77,9 +77,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[Voice1LenLo] = 0x76;
 
 			SidTune tune = LoadTune();
-			Assert.IsFalse(tune.GetStatus());
+			Assert.That(tune.GetStatus(), Is.False);
 
-			Assert.AreEqual("Could not determine file format", tune.StatusString());
+			Assert.That(tune.StatusString(), Is.EqualTo("Could not determine file format"));
 		}
 
 		#region Private methods

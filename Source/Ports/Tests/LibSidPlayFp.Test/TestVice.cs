@@ -116,7 +116,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			Debug.WriteLine($"Successful tests: {successCount} - Failed tests {failedCount}");
 			TestContext.Progress.WriteLine($"Successful tests: {successCount} - Failed tests {failedCount}");
 
-			Assert.AreEqual(0, failedCount);
+			Assert.That(failedCount, Is.EqualTo(0));
 		}
 
 		#region Private methods

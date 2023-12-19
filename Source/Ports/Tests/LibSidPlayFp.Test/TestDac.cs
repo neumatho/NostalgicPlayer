@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		[Test]
 		public void TestDac6581()
 		{
-			Assert.AreEqual(false, IsDacLinear(ChipModel.MOS6581));
+			Assert.That(IsDacLinear(ChipModel.MOS6581), Is.False);
 		}
 
 
@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		[Test]
 		public void TestDac8580()
 		{
-			Assert.AreEqual(true, IsDacLinear(ChipModel.MOS8580));
+			Assert.That(IsDacLinear(ChipModel.MOS8580), Is.True);
 		}
 
 		#region Private methods
