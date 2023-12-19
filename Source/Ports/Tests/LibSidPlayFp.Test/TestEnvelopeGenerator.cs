@@ -51,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			for (int i = 0; i < 200; i++)
 				generator.Clock();
 
-			Assert.AreEqual(1, generator.ReadEnv());
+			Assert.That(generator.ReadEnv(), Is.EqualTo(1));
 
 			// Set lower attack time
 			// should theoretically clock after 63 cycles
@@ -61,7 +61,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			for (int i = 0; i < 200; i++)
 				generator.Clock();
 
-			Assert.AreEqual(1, generator.ReadEnv());
+			Assert.That(generator.ReadEnv(), Is.EqualTo(1));
 		}
 
 
@@ -103,7 +103,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			for (int i = 0; i < 315; i++)
 				generator.Clock();
 
-			Assert.AreEqual(0, generator.ReadEnv());
+			Assert.That(generator.ReadEnv(), Is.EqualTo(0));
 		}
 
 
@@ -125,7 +125,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			generator.WriteAttack_Decay(0x77);
 			generator.WriteSustain_Release(0x77);
 			generator.Clock();
-			Assert.AreEqual(0, generator.ReadEnv());
+			Assert.That(generator.ReadEnv(), Is.EqualTo(0));
 
 			generator.WriteControl_Reg(0x01);
 
@@ -140,7 +140,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			for (int i = 0; i < 315; i++)
 				generator.Clock();
 
-			Assert.AreEqual(0xff, generator.ReadEnv());
+			Assert.That(generator.ReadEnv(), Is.EqualTo(0xff));
 		}
 	}
 }

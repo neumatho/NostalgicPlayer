@@ -68,7 +68,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			for (double x = 0.0; x < 12.0; x += 0.01)
 			{
 				Spline.Point o = s.Evaluate(x);
-				Assert.IsTrue(o.x <= old);
+				Assert.That(o.x <= old, Is.True);
 
 				old = o.x;
 			}
@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			for (int i = 0; i < OpAmpSize; i++)
 			{
 				Spline.Point o = s.Evaluate(opamp_voltage[i].x);
-				Assert.AreEqual(opamp_voltage[i].y, o.x);
+				Assert.That(o.x, Is.EqualTo(opamp_voltage[i].y));
 			}
 		}
 

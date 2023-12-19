@@ -132,7 +132,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			scheduler.Clock();	// T1
 			scheduler.Clock();	// T0+T2
 			scheduler.Clock();	// T1
-			Assert.IsTrue(cpu.Check(Opcodes.BRKn));
+			Assert.That(cpu.Check(Opcodes.BRKn), Is.True);
 		}
 
 
@@ -158,11 +158,11 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			scheduler.Clock();	// T1
 			scheduler.Clock();	// T0+T2
 			scheduler.Clock();	// T1
-			Assert.IsTrue(cpu.Check(Opcodes.NOPn));
+			Assert.That(cpu.Check(Opcodes.NOPn), Is.True);
 
 			scheduler.Clock();	// T0+T2
 			scheduler.Clock();	// T1
-			Assert.IsTrue(cpu.Check(Opcodes.BRKn));
+			Assert.That(cpu.Check(Opcodes.BRKn), Is.True);
 		}
 
 
@@ -192,7 +192,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			cpu.SetRdy(true);
 			scheduler.Clock();	// T0+T2
 			scheduler.Clock();	// T1
-			Assert.IsTrue(cpu.Check(Opcodes.BRKn));
+			Assert.That(cpu.Check(Opcodes.BRKn), Is.True);
 		}
 
 
@@ -218,7 +218,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			scheduler.Clock();	// T1
 			scheduler.Clock();	// T0+T2
 			scheduler.Clock();	// T1
-			Assert.IsTrue(cpu.Check(Opcodes.BRKn));
+			Assert.That(cpu.Check(Opcodes.BRKn), Is.True);
 		}
 
 
@@ -247,7 +247,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			cpu.SetRdy(true);
 			scheduler.Clock();	// T0+T2
 			scheduler.Clock();	// T1
-			Assert.IsTrue(cpu.Check(Opcodes.BRKn));
+			Assert.That(cpu.Check(Opcodes.BRKn), Is.True);
 		}
 
 
@@ -276,7 +276,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			cpu.SetRdy(true);
 			scheduler.Clock();	// T0+T2
 			scheduler.Clock();	// T1
-			Assert.IsTrue(cpu.Check(Opcodes.NOPn));
+			Assert.That(cpu.Check(Opcodes.NOPn), Is.True);
 		}
 
 
@@ -313,11 +313,11 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			scheduler.Clock();	// T3
 			scheduler.Clock();	// T0
 			scheduler.Clock();	// T1
-			Assert.IsTrue(cpu.Check(Opcodes.NOPn));
+			Assert.That(cpu.Check(Opcodes.NOPn), Is.True);
 
 			scheduler.Clock();	// T0+T2
 			scheduler.Clock();	// T1
-			Assert.IsTrue(cpu.Check(Opcodes.BRKn));
+			Assert.That(cpu.Check(Opcodes.BRKn), Is.True);
 		}
 
 
@@ -357,11 +357,11 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			cpu.SetRdy(true);
 			scheduler.Clock();	// T0
 			scheduler.Clock();	// T1
-			Assert.IsTrue(cpu.Check(Opcodes.NOPn));
+			Assert.That(cpu.Check(Opcodes.NOPn), Is.True);
 
 			scheduler.Clock();	// T0+T2
 			scheduler.Clock();	// T1
-			Assert.IsTrue(cpu.Check(Opcodes.BRKn));
+			Assert.That(cpu.Check(Opcodes.BRKn), Is.True);
 		}
 
 
@@ -398,7 +398,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			scheduler.Clock();	// T3
 			scheduler.Clock();	// T0
 			scheduler.Clock();	// T1
-			Assert.IsTrue(cpu.Check(Opcodes.BRKn));
+			Assert.That(cpu.Check(Opcodes.BRKn), Is.True);
 		}
 
 
@@ -438,7 +438,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			cpu.SetRdy(true);
 			scheduler.Clock();	// T0
 			scheduler.Clock();	// T1
-			Assert.IsTrue(cpu.Check(Opcodes.BRKn));
+			Assert.That(cpu.Check(Opcodes.BRKn), Is.True);
 		}
 	}
 }
