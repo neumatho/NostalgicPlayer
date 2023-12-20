@@ -227,6 +227,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		public void TellAgentsAboutMixedData(byte[] buffer, int offset, int count, int numberOfChannels, bool swapSpeakers)
 		{
 			int[] bufferToSend = null;
+			int bufferSize = ((count + visualBuffer.Length - 1) / visualBuffer.Length) * visualBuffer.Length;
+			int writeOffset = 0;
 
 			while (count > 0)
 			{
@@ -249,21 +251,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				if (visualBufferOffset == visualBuffer.Length)
 				{
 					if (bufferToSend == null)
-						bufferToSend = visualBuffer;
-					else
-					{
-						int oldLength = bufferToSend.Length;
-						Array.Resize(ref bufferToSend, oldLength + visualBuffer.Length);
-						Array.Copy(visualBuffer, 0, bufferToSend, oldLength, visualBuffer.Length);
-					}
+						bufferToSend = new int[bufferSize];
 
-					visualBuffer = new int[visualBuffer.Length];
+					Array.Copy(visualBuffer, 0, bufferToSend, writeOffset, visualBuffer.Length);
+					writeOffset += visualBuffer.Length;
+
 					visualBufferOffset = 0;
 				}
 			}
 
 			if (bufferToSend != null)
 			{
+				Array.Resize(ref bufferToSend, writeOffset);
+
 				SampleDataInfo info = new SampleDataInfo
 				{
 					Buffer = bufferToSend,
