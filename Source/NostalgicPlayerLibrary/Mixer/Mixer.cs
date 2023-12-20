@@ -419,7 +419,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			total = (total / mixerChannels) * outputChannelNumber;
 
 			// Tell visual agents about the mixed data
-			currentVisualizer.TellAgentsAboutMixedData(buffer, offset, total, outputChannelNumber, swap);
+			currentVisualizer.TellAgentsAboutMixedData(buffer, offset, bufSize, outputChannelNumber, swap);
 
 			return total;
 		}
