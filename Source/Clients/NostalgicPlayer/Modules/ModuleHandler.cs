@@ -104,6 +104,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 			mixerConfiguration = new MixerConfiguration
 			{
 				StereoSeparator = sndSettings.StereoSeparation,
+				VisualsLatency = sndSettings.VisualsLatency * 20,
 				EnableInterpolation = sndSettings.Interpolation,
 				SwapSpeakers = sndSettings.SwapSpeakers,
 				EnableSurround = sndSettings.Surround,

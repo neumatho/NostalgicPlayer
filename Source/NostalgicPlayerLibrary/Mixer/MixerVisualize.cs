@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		private Thread thread;
 
-		private int[] visualBuffer;			// Holding samples that visuals should show. It contain samples for 20 milliseconds
+		private int[] visualBuffer;			// Holding samples that visuals should show. It contains samples for 20 milliseconds
 		private int visualBufferOffset;		// The position in the buffer above where to fill the next samples
 
 		private int minimumLatency;
@@ -248,7 +248,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 				if (visualBufferOffset == visualBuffer.Length)
 				{
-					bufferToSend = visualBuffer;
+					if (bufferToSend == null)
+						bufferToSend = visualBuffer;
+					else
+					{
+						int oldLength = bufferToSend.Length;
+						Array.Resize(ref bufferToSend, oldLength + visualBuffer.Length);
+						Array.Copy(visualBuffer, 0, bufferToSend, oldLength, visualBuffer.Length);
+					}
 
 					visualBuffer = new int[visualBuffer.Length];
 					visualBufferOffset = 0;

@@ -261,8 +261,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		private void VisualsLatencyTrackBar_ValueChanged(object sender, EventArgs e)
 		{
-			soundSettings.VisualsLatency = visualsLatencyTrackBar.Value * 20;
-			visualsLatencyMsLabel.Text = $"{soundSettings.VisualsLatency} ms";
+			soundSettings.VisualsLatency = visualsLatencyTrackBar.Value;
+			visualsLatencyMsLabel.Text = $"{soundSettings.VisualsLatency * 20} ms";
 
 			SetMixerSettings();
 		}
@@ -432,7 +432,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			moduleHandler.ChangeMixerSettings(new MixerConfiguration
 			{
 				StereoSeparator = soundSettings.StereoSeparation,
-				VisualsLatency = soundSettings.VisualsLatency,
+				VisualsLatency = soundSettings.VisualsLatency * 20,
 				EnableInterpolation = soundSettings.Interpolation,
 				SwapSpeakers = soundSettings.SwapSpeakers,
 				EnableSurround = soundSettings.Surround,

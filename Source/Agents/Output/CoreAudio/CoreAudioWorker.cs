@@ -54,6 +54,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 			Ieee
 		}
 
+		private const int LatencyMilliseconds = 200;
+
 		private object streamLock;
 		private SoundStream stream;
 
@@ -309,7 +311,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 				stream?.Dispose();
 
 				int bytesPerSample = outputFormat.BitsPerSample / 8;
-				soundStream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, (outputFormat.AverageBytesPerSecond / bytesPerSample) * settings.Latency / 1000));
+				soundStream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, (outputFormat.AverageBytesPerSecond / bytesPerSample) * LatencyMilliseconds / 1000));
 				stream = soundStream;
 			}
 
@@ -360,7 +362,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/********************************************************************/
 		private void InitializeAudioEngine()
 		{
-			long latencyRefTimes = settings.Latency * 10000;
+			long latencyRefTimes = LatencyMilliseconds * 10000;
 
 			outputFormat = audioClient.MixFormat;
 //			outputFormat = new WaveFormat(audioClient.MixFormat.SampleRate, 32, 2);		// Uncomment the one you want to test
@@ -524,7 +526,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 					// Tell the mixer about new sample rates etc.
 					int bytesPerSample = outputFormat.BitsPerSample / 8;
-					stream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, (outputFormat.AverageBytesPerSecond / bytesPerSample) * settings.Latency / 1000));
+					stream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, (outputFormat.AverageBytesPerSecond / bytesPerSample) * LatencyMilliseconds / 1000));
 
 					playbackState = oldState;
 				}

@@ -25,6 +25,9 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		{
 			settings = DependencyInjection.GetDefaultProvider().GetService<ISettings>();
 			settings.LoadSettings("CoreAudio");
+
+			// Remove obsolete settings
+			settings.RemoveEntry("General", "Latency");
 		}
 
 
@@ -48,20 +51,6 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 			get => settings.GetStringEntry("General", "OutputDevice", string.Empty);
 
 			set => settings.SetStringEntry("General", "OutputDevice", value);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Latency in number of milliseconds
-		/// </summary>
-		/********************************************************************/
-		public int Latency
-		{
-			get => settings.GetIntEntry("General", "Latency", 20);
-
-			set => settings.SetIntEntry("General", "Latency", value);
 		}
 	}
 }
