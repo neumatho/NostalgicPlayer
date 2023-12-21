@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Events;
 
 namespace Polycode.NostalgicPlayer.Kit.Streams
 {
@@ -232,6 +233,15 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Event called when the player update some module information
+		/// </summary>
+		/********************************************************************/
+		public event ModuleInfoChangedEventHandler ModuleInfoChanged;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Send an event when the position change
 		/// </summary>
 		/********************************************************************/
@@ -253,6 +263,19 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 			// Just call the next event handler
 			if (EndReached != null)
 				EndReached(sender, e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Send an event when the module information change
+		/// </summary>
+		/********************************************************************/
+		protected void OnModuleInfoChanged(ModuleInfoChangedEventArgs e)
+		{
+			if (ModuleInfoChanged != null)
+				ModuleInfoChanged(this, e);
 		}
 	}
 }

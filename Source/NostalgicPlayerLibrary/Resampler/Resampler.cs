@@ -6,6 +6,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
@@ -251,6 +252,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 			// Tell visual agents about the mixed data
 			currentVisualizer.TellAgentsAboutMixedData(buffer, offset, total, outputChannels, swapSpeakers);
 
+			// Update module information
+			foreach (ModuleInfoChanged[] updatedModuleInfoChanges in currentVisualizer.GetModuleInfoChanges(total))
+			{
+				foreach (ModuleInfoChanged changes in updatedModuleInfoChanges)
+					OnModuleInfoChanged(new ModuleInfoChangedEventArgs(changes.Line, changes.Value));
+			}
+
 			return total;
 		}
 
@@ -262,6 +270,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		/// </summary>
 		/********************************************************************/
 		public event EventHandler PositionChanged;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Event called when the player update some module information
+		/// </summary>
+		/********************************************************************/
+		public event ModuleInfoChangedEventHandler ModuleInfoChanged;
 
 		#region Private methods
 		/********************************************************************/
@@ -315,6 +332,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 						}
 
 						samplesRead = currentPlayer.LoadDataBlock(dataBuffer, dataBuffer.Length);
+
+						// If any module information has been updated, queue those
+						ModuleInfoChanged[] moduleInfoChanges = currentPlayer.GetChangedInformation();
+						if ((moduleInfoChanges != null) && (moduleInfoChanges.Length > 0))
+							currentVisualizer.QueueModuleInfoChange(moduleInfoChanges, 0);
 
 						if (currentPlayer.HasEndReached)
 						{
@@ -971,6 +993,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		{
 			if (PositionChanged != null)
 				PositionChanged(this, EventArgs.Empty);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Send an event when the module information change
+		/// </summary>
+		/********************************************************************/
+		private void OnModuleInfoChanged(ModuleInfoChangedEventArgs e)
+		{
+			if (ModuleInfoChanged != null)
+				ModuleInfoChanged(this, e);
 		}
 		#endregion
 	}

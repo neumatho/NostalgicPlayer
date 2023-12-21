@@ -30,6 +30,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			public bool SwapSpeakers;
 		}
 
+		private class ModuleInfoChangeInfo
+		{
+			public int SamplesLeftBeforeTriggering;
+			public ModuleInfoChanged[] ModuleInfoChanges;
+		}
+
 		private Manager manager;
 
 		private int mixerFrequency;
@@ -56,6 +62,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private int bufferLatencySamplesLeft;
 		private bool bufferLatencyUseQueue;
 
+		private Queue<ModuleInfoChangeInfo> moduleInfoLatencyQueue;
+		private int moduleInfoLatencySamples;
+		private int moduleInfoLatencySamplesLeft;
+
 		/********************************************************************/
 		/// <summary>
 		/// Will initialize itself
@@ -69,6 +79,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 			bufferLatencyQueue = new Queue<SampleDataInfo>();
 			bufferLatencyUseQueue = false;
+
+			moduleInfoLatencyQueue = new Queue<ModuleInfoChangeInfo>();
 
 			// Create the trigger events
 			channelChangedEvent = new AutoResetEvent(false);
@@ -111,6 +123,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			channelChangedEvent?.Dispose();
 			channelChangedEvent = null;
 
+			moduleInfoLatencyQueue = null;
 			channelLatencyQueue = null;
 			bufferLatencyQueue = null;
 		}
@@ -177,6 +190,24 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			};
 
 			channelLatencyQueue.Enqueue(channelDataInfo);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will queue the given module information change information
+		/// </summary>
+		/********************************************************************/
+		public void QueueModuleInfoChange(ModuleInfoChanged[] moduleInfoChanges, int samplesTakenSinceLastCall)
+		{
+			ModuleInfoChangeInfo moduleInfoChange = new ModuleInfoChangeInfo
+			{
+				SamplesLeftBeforeTriggering = samplesTakenSinceLastCall,
+				ModuleInfoChanges = moduleInfoChanges
+			};
+
+			moduleInfoLatencyQueue.Enqueue(moduleInfoChange);
 		}
 
 
@@ -292,6 +323,44 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		/********************************************************************/
 		/// <summary>
+		/// Will tell if it's time to send module information changes
+		/// </summary>
+		/********************************************************************/
+		public List<ModuleInfoChanged[]> GetModuleInfoChanges(int samplesProcessed)
+		{
+			List<ModuleInfoChanged[]> changes = new List<ModuleInfoChanged[]>();
+			int samplesTaken = 0;
+
+			while (samplesProcessed > 0)
+			{
+				int todo = Math.Min(samplesProcessed, moduleInfoLatencySamplesLeft);
+				moduleInfoLatencySamplesLeft -= todo;
+				samplesTaken += todo;
+
+				if (moduleInfoLatencySamplesLeft == 0)
+				{
+					moduleInfoLatencySamplesLeft = moduleInfoLatencySamples;
+
+					if (moduleInfoLatencyQueue.Count > 0)
+					{
+						ModuleInfoChangeInfo peekInfo = moduleInfoLatencyQueue.Peek();
+
+						peekInfo.SamplesLeftBeforeTriggering -= samplesTaken;
+						if (peekInfo.SamplesLeftBeforeTriggering <= 0)
+							changes.Add(moduleInfoLatencyQueue.Dequeue().ModuleInfoChanges);
+					}
+				}
+
+				samplesProcessed -= todo;
+			}
+
+			return changes;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Initialize the visuals latency variables
 		/// </summary>
 		/********************************************************************/
@@ -299,6 +368,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		{
 			channelLatencySamplesLeft = (int)(((float)mixerFrequency / 1000) * currentLatency);
 			bufferLatencySamplesLeft = (int)(((float)mixerFrequency / 1000) * (minimumLatency + currentLatency));
+			moduleInfoLatencySamples = channelLatencySamplesLeft;
+			moduleInfoLatencySamplesLeft = moduleInfoLatencySamples;
 
 			bufferLatencyUseQueue = false;
 			bufferLatencyQueue.Clear();

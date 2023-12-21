@@ -3,9 +3,10 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
+using System.Collections.Generic;
 using System.Drawing;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Kit.Bases
@@ -16,6 +17,8 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 	public abstract class PlayerAgentBase : IPlayerAgent
 	{
 		internal bool doNotTrigEvents;
+
+		private readonly List<ModuleInfoChanged> changedModuleInfo = new List<ModuleInfoChanged>();
 
 		/********************************************************************/
 		/// <summary>
@@ -84,7 +87,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return the comment separated in lines
 		/// </summary>
 		/********************************************************************/
-		public virtual string[] Comment => new string[0];
+		public virtual string[] Comment => Array.Empty<string>();
 
 
 
@@ -102,7 +105,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Return the lyrics separated in lines
 		/// </summary>
 		/********************************************************************/
-		public virtual string[] Lyrics => new string[0];
+		public virtual string[] Lyrics => Array.Empty<string>();
 
 
 
@@ -142,6 +145,21 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Return all module information changed since last call
+		/// </summary>
+		/********************************************************************/
+		public virtual ModuleInfoChanged[] GetChangedInformation()
+		{
+			ModuleInfoChanged[] changedInfo = changedModuleInfo.ToArray();
+			changedModuleInfo.Clear();
+
+			return changedInfo;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// This flag is set to true, when end is reached
 		/// </summary>
 		/********************************************************************/
@@ -149,15 +167,6 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		{
 			get; set;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Event called when the player update some module information
-		/// </summary>
-		/********************************************************************/
-		public event ModuleInfoChangedEventHandler ModuleInfoChanged;
 
 		#region Helper methods
 		/********************************************************************/
@@ -181,8 +190,8 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		protected void OnModuleInfoChanged(int line, string newValue)
 		{
-			if (!doNotTrigEvents && (ModuleInfoChanged != null))
-				ModuleInfoChanged(this, new ModuleInfoChangedEventArgs(line, newValue));
+			if (!doNotTrigEvents)
+				changedModuleInfo.Add(new ModuleInfoChanged(line, newValue));
 		}
 		#endregion
 	}

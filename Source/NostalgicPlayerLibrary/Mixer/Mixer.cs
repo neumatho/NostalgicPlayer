@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
@@ -433,6 +434,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/********************************************************************/
 		public event EventHandler PositionChanged;
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Event called when the player update some module information
+		/// </summary>
+		/********************************************************************/
+		public event ModuleInfoChangedEventHandler ModuleInfoChanged;
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
@@ -559,6 +569,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 							if ((channelChanges != null) && channelChanges.Any(x => x != null))
 								currentVisualizer.QueueChannelChange(channelChanges, samplesTakenSinceLastCall);
 
+							// If any module information has been updated, queue those
+							ModuleInfoChanged[] moduleInfoChanges = currentPlayer.GetChangedInformation();
+							if ((moduleInfoChanges != null) && (moduleInfoChanges.Length > 0))
+								currentVisualizer.QueueModuleInfoChange(moduleInfoChanges, samplesTakenSinceLastCall);
+
 							samplesTakenSinceLastCall = 0;
 
 							if (bufferDirect)
@@ -632,6 +647,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 							currentMixer.EnableChannel(t, (channelsEnabled == null) || channelsEnabled[t]);
 						}
 					}
+				}
+
+				// Update module information
+				foreach (ModuleInfoChanged[] updatedModuleInfoChanges in currentVisualizer.GetModuleInfoChanges((currentMode & MixerMode.Stereo) != 0 ? total >> 1 : total))
+				{
+					foreach (ModuleInfoChanged changes in updatedModuleInfoChanges)
+						OnModuleInfoChanged(new ModuleInfoChangedEventArgs(changes.Line, changes.Value));
 				}
 			}
 
@@ -826,6 +848,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		{
 			if (PositionChanged != null)
 				PositionChanged(this, EventArgs.Empty);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Send an event when the module information change
+		/// </summary>
+		/********************************************************************/
+		private void OnModuleInfoChanged(ModuleInfoChangedEventArgs e)
+		{
+			if (ModuleInfoChanged != null)
+				ModuleInfoChanged(this, e);
 		}
 		#endregion
 	}

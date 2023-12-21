@@ -6,6 +6,7 @@
 using System;
 using System.Diagnostics;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
@@ -42,6 +43,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 			resamplerLock = new object();
 
 			resampler.PositionChanged += Resampler_PositionChanged;
+			resampler.ModuleInfoChanged += Resampler_ModuleInfoChanged;
 
 			return resampler.InitResampler(agentManager, playerConfiguration, out errorMessage);
 		}
@@ -61,6 +63,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 				{
 					resampler.CleanupResampler();
 
+					resampler.ModuleInfoChanged -= Resampler_ModuleInfoChanged;
 					resampler.PositionChanged -= Resampler_PositionChanged;
 
 					resampler = null;
@@ -246,6 +249,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		private void Resampler_PositionChanged(object sender, EventArgs e)
 		{
 			OnPositionChanged();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when some module information changes in the mixer
+		/// </summary>
+		/********************************************************************/
+		private void Resampler_ModuleInfoChanged(object sender, ModuleInfoChangedEventArgs e)
+		{
+			OnModuleInfoChanged(e);
 		}
 		#endregion
 	}

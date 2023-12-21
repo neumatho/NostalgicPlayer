@@ -74,16 +74,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						// Calculate the duration of the sample
 						CalculateDuration();
 
-						// Subscribe the events
-						currentPlayer.ModuleInfoChanged += Player_ModuleInfoChanged;
-
 						// Initialize module information
 						StaticModuleInformation = new ModuleInfoStatic(loader, currentPlayer);
 
 						// Initialize the mixer
 						soundStream = new ResamplerStream();
+
+						// Subscribe the events
 						soundStream.PositionChanged += Stream_PositionChanged;
 						soundStream.EndReached += Stream_EndReached;
+						soundStream.ModuleInfoChanged += Stream_ModuleInfoChanged;
 
 						initOk = soundStream.Initialize(agentManager, playerConfiguration, out errorMessage);
 
@@ -121,6 +121,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					// End the mixer
 					if (soundStream != null)
 					{
+						soundStream.ModuleInfoChanged -= Stream_ModuleInfoChanged;
 						soundStream.EndReached -= Stream_EndReached;
 						soundStream.PositionChanged -= Stream_PositionChanged;
 
@@ -132,9 +133,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					// Shutdown the player
 					currentPlayer.CleanupSound();
 					currentPlayer.CleanupPlayer();
-
-					// Unsubscribe the events
-					currentPlayer.ModuleInfoChanged -= Player_ModuleInfoChanged;
 
 					durationInfo = null;
 					currentPlayer = null;
@@ -355,23 +353,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		#region Event handlers
 		/********************************************************************/
 		/// <summary>
-		/// Is called when the player change some of the module information
-		/// </summary>
-		/********************************************************************/
-		private void Player_ModuleInfoChanged(object sender, ModuleInfoChangedEventArgs e)
-		{
-			if (currentPlayer != null)
-			{
-				// Just call the next event handler
-				if (ModuleInfoChanged != null)
-					ModuleInfoChanged(sender, e);
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Is called every time the position is changed
 		/// </summary>
 		/********************************************************************/
@@ -405,6 +386,23 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				// Just call the next event handler
 				if (EndReached != null)
 					EndReached(sender, e);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the player change some of the module information
+		/// </summary>
+		/********************************************************************/
+		private void Stream_ModuleInfoChanged(object sender, ModuleInfoChangedEventArgs e)
+		{
+			if (currentPlayer != null)
+			{
+				// Just call the next event handler
+				if (ModuleInfoChanged != null)
+					ModuleInfoChanged(sender, e);
 			}
 		}
 		#endregion

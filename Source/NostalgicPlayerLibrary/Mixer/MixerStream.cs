@@ -6,6 +6,7 @@
 using System;
 using System.Diagnostics;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
@@ -31,6 +32,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			mixerLock = new object();
 
 			mixer.PositionChanged += Mixer_PositionChanged;
+			mixer.ModuleInfoChanged += Mixer_ModuleInfoChanged;
 
 			return mixer.InitMixer(agentManager, playerConfiguration, out errorMessage);
 		}
@@ -226,6 +228,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private void Mixer_PositionChanged(object sender, EventArgs e)
 		{
 			OnPositionChanged();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called when some module information changes in the mixer
+		/// </summary>
+		/********************************************************************/
+		private void Mixer_ModuleInfoChanged(object sender, ModuleInfoChangedEventArgs e)
+		{
+			OnModuleInfoChanged(e);
 		}
 		#endregion
 	}

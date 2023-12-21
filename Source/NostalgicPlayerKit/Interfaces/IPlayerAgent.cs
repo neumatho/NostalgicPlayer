@@ -5,7 +5,6 @@
 /******************************************************************************/
 using System.Drawing;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Events;
 
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
@@ -83,13 +82,13 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		bool GetInformationString(int line, out string description, out string value);
 
 		/// <summary>
+		/// Return all module information changed since last call
+		/// </summary>
+		ModuleInfoChanged[] GetChangedInformation();
+
+		/// <summary>
 		/// This flag is set to true, when end is reached
 		/// </summary>
 		bool HasEndReached { get; set; }
-
-		/// <summary>
-		/// Event called when the player update some module information
-		/// </summary>
-		event ModuleInfoChangedEventHandler ModuleInfoChanged;
 	}
 }
