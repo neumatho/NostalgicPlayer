@@ -346,12 +346,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						ModuleInfoChangeInfo peekInfo = moduleInfoLatencyQueue.Peek();
 
 						peekInfo.SamplesLeftBeforeTriggering -= samplesTaken;
-						if (peekInfo.SamplesLeftBeforeTriggering <= 0)
+						if ((peekInfo.SamplesLeftBeforeTriggering <= 0) || (todo == 0))
 							changes.Add(moduleInfoLatencyQueue.Dequeue().ModuleInfoChanges);
 					}
 				}
 
 				samplesProcessed -= todo;
+
+				if (todo == 0)
+					break;
 			}
 
 			return changes;
