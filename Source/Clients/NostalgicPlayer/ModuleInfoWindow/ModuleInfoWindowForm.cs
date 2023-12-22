@@ -34,6 +34,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		private ModuleHandler moduleHandler;
 		private MainWindowForm mainWindow;
 
+		private bool previousPlayingState;
+
 		private PictureInfo[] pictures;
 		private int pictureIndex;
 		private int nextPictureIndex;
@@ -84,6 +86,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			this.moduleHandler = moduleHandler;
 			this.mainWindow = mainWindow;
 			this.moduleSettings = moduleSettings;
+
+			previousPlayingState = false;
 
 			if (!DesignMode)
 			{
@@ -558,12 +562,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 					navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Pictures].Visible = false;
 
 				// Find out which tab to activate
-				foreach (ModuleSettings.ModuleInfoTab tab in moduleSettings.ModuleInfoActivateTabOrder)
+				if (!previousPlayingState)
 				{
-					if (navigator.Pages[(int)tab].Visible)
+					foreach (ModuleSettings.ModuleInfoTab tab in moduleSettings.ModuleInfoActivateTabOrder)
 					{
-						navigator.SelectedIndex = (int)tab;
-						break;
+						if (navigator.Pages[(int)tab].Visible)
+						{
+							navigator.SelectedIndex = (int)tab;
+							break;
+						}
 					}
 				}
 			}
@@ -587,6 +594,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 
 				CleanupPictures();
 			}
+
+			previousPlayingState = moduleHandler.IsPlaying;
 
 			// Resize the rows, so the lines are compacted
 			moduleInfoInfoDataGridView.AutoResizeRows();
