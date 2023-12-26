@@ -108,7 +108,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 						}
 
 						// Calculate the total time of the song
-						TimeSpan totalTime = new TimeSpan((long)currentTotalTime * TimeSpan.TicksPerMillisecond);
+						TimeSpan totalTime = new TimeSpan((long)Math.Round(currentTotalTime, MidpointRounding.AwayFromZero) * TimeSpan.TicksPerMillisecond);
 
 						// Remember the song
 						result.Add(new DurationInfo(totalTime, positionInfoList.ToArray(), positionTimes.Select(x => new TimeSpan((long)x * TimeSpan.TicksPerMillisecond)).ToArray()));

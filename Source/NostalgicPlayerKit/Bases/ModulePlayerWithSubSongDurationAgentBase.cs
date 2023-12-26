@@ -81,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 							// Time to create a new snapshot?
 							if ((currentTotalTime - lastSnapshotTime) >= IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * 1000.0f)
 							{
-								positionInfoList.Add(new PositionInfo(new TimeSpan((long)currentTotalTime * TimeSpan.TicksPerMillisecond), PlayingFrequency, CreateSnapshot()));
+								positionInfoList.Add(new PositionInfo(new TimeSpan((long)Math.Round(currentTotalTime, MidpointRounding.AwayFromZero) * TimeSpan.TicksPerMillisecond), PlayingFrequency, CreateSnapshot()));
 								lastSnapshotTime = currentTotalTime;
 							}
 
