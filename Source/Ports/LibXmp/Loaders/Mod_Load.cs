@@ -53,6 +53,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			Unknown,
 			FastTracker,
+			TakeTracker,
 
 			TestOnly
 		}
@@ -137,6 +138,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Create = Create_FastTracker
 		};
 
+		/// <summary></summary>
+		public static readonly Format_Loader LibXmp_Loader_Take = new Format_Loader
+		{
+			Id = Guid.Parse("73128541-1DF2-46DE-93FF-614C2D1ECB18"),
+			Name = "TakeTracker",
+			Description = "This tracker is from the PC, but uses the same file format as FastTracker MOD files. It has extended the number of channels up to 16 and it also supports an odd number of channels. The tracker was written by Anders B. Ervik.",
+			Create = Create_TakeTracker
+		};
+
+		/// <summary></summary>
 		public static readonly Format_Loader LibXmp_Loader_TestOnly = new Format_Loader
 		{
 			Id = Guid.Parse("0D3538F7-BF9F-484E-967F-9E84C92DE010"),
@@ -166,6 +177,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private static IFormatLoader Create_FastTracker(LibXmp libXmp, Xmp_Context ctx)
 		{
 			return new Mod_Load(libXmp, ExternalFormat.FastTracker);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a new instance of the loader
+		/// </summary>
+		/********************************************************************/
+		private static IFormatLoader Create_TakeTracker(LibXmp libXmp, Xmp_Context ctx)
+		{
+			return new Mod_Load(libXmp, ExternalFormat.TakeTracker);
 		}
 
 
@@ -997,7 +1020,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			tracker_Id = FindInternalFormat(f, start);
 
-			if (!out_Of_Range && mkMark)
+			if (!out_Of_Range && mkMark && !LibXmp.UnitTestMode)
 				return ExternalFormat.Unknown;
 
 			switch (tracker_Id)
@@ -1005,6 +1028,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				case InternalFormat.FastTracker:
 				case InternalFormat.FastTracker2:
 					return ExternalFormat.FastTracker;
+
+				case InternalFormat.TakeTracker:
+					return ExternalFormat.TakeTracker;
 
 				// Converted and unknown are treated as FastTracker
 				case InternalFormat.Converted:
@@ -1023,7 +1049,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					return LibXmp.UnitTestMode ? ExternalFormat.TestOnly : ExternalFormat.Unknown;
 
 				case InternalFormat.Octalyser:
-				case InternalFormat.TakeTracker:
 				case InternalFormat.DigitalTracker:
 				case InternalFormat.Flextrax:
 				case InternalFormat.ModsGrave:
