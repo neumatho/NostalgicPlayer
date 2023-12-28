@@ -25,7 +25,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		public byte FineTune;
 		public sbyte FineTuneHmn;
 		public sbyte Volume;			// Volume set from sample data or changed by effects
-		public ushort Panning;
 		public byte TonePortDirec;
 		public byte TonePortSpeed;
 		public ushort WantedPeriod;

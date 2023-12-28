@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 	/// </summary>
 	public class Xmp : AgentBase, IPlayerAgentMultipleFormatIdentify
 	{
-		internal static readonly string[] fileExtensions = { "gdm", "xm", "oxm", "s3m", "it", "669", "amf", "far", "imf", "stm", "stx", "ult" };
+		internal static readonly string[] fileExtensions = { "gdm", "xm", "oxm", "s3m", "it", "669", "amf", "far", "imf", "stm", "stx", "ult", "mtm", "mod" };
 
 		#region IAgent implementation
 		/********************************************************************/

@@ -50,13 +50,26 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			player = new Player(this, ctx);
 			extras = new Extras(ctx);
 			virt = new Virtual(this, ctx);
-			common = new Loaders.Common();
+			common = new Loaders.Common(this);
 			scan = new Scan(ctx);
 			period = new Period(ctx);
 			lfo = new Lfo(ctx);
 			mixer = new Mixer(this, ctx);
 			sMix = new SMix(ctx);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds a value telling if LibXmp is running in unit test mode.
+		/// Should not be set in normal use
+		/// </summary>
+		/********************************************************************/
+		public static bool UnitTestMode
+		{
+			get; set;
+		} = false;
 
 
 

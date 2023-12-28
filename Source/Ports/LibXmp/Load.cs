@@ -320,6 +320,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		{
 			for (c_int i = 0; Format.format_Loaders[i] != null; i++)
 			{
+				if (Format.format_Loaders[i].OnlyAvailableInTest && !LibXmp.UnitTestMode)
+					continue;
+
 				h.Hio_Seek(0, SeekOrigin.Begin);
 
 				IFormatLoader loader = Format.format_Loaders[i].Create(lib, ctx);
@@ -358,6 +361,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			for (c_int i = 0; Format.format_Loaders[i] != null; i++)
 			{
+				if (Format.format_Loaders[i].OnlyAvailableInTest && !LibXmp.UnitTestMode)
+					continue;
+
 				if (!formatToUse.HasValue || (Format.format_Loaders[i].Id == formatToUse.Value))
 				{
 					h.Hio_Seek(0, SeekOrigin.Begin);

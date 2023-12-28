@@ -28,9 +28,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		StarTrekker8,
 		AudioSculpture,
 
-		// PC trackers
-		FastTracker,
-
 		// Atari trackers
 		Octalyser,
 		DigitalTracker,

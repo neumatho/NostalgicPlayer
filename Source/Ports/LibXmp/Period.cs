@@ -100,6 +100,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 		/********************************************************************/
 		/// <summary>
+		/// Get note from period.
+		/// This function is used only by the MOD loader
+		/// </summary>
+		/********************************************************************/
+		public c_int LibXmp_Period_To_Note(c_int p)
+		{
+			if (p <= 0)
+				return 0;
+
+			return (c_int)(LibXmp_Round(12.0 * Math.Log(Constants.Period_Base / p) / M_LN2) + 1);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Get pitchbend from base note and Amiga period
 		/// </summary>
 		/********************************************************************/

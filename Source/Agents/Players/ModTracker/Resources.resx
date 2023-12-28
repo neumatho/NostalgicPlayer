@@ -143,13 +143,6 @@ This was a very popular tracker on the demo scene. When it came out, almost ever
 
 This player can handle modules in both 64 and 100 patterns format.</value>
   </data>
-  <data name="IDS_MOD_DESCRIPTION_AGENT12" xml:space="preserve">
-    <value>Original player by Fredrik Muss (FastTracker).
-TakeTracker player by Anders B. Ervik and Oyvind Neuman.
-Converted to C# by Thomas Neumann.
-
-This tracker is from the PC, but uses the same file format as the other mod trackers. It supports up to 32 channels. TakeTracker only up to 16 channels. The modules use the same ID mark, so thats why they are under one format.</value>
-  </data>
   <data name="IDS_MOD_DESCRIPTION_AGENT14" xml:space="preserve">
     <value>Original player by Christian Dahl, Davor Slutej and Tord Jansson.
 
@@ -278,9 +271,6 @@ This is a NoiseTracker clone, but improved by the possibility to have synth samp
   </data>
   <data name="IDS_MOD_NAME_AGENT11" xml:space="preserve">
     <value>ProTracker</value>
-  </data>
-  <data name="IDS_MOD_NAME_AGENT12" xml:space="preserve">
-    <value>Fast/TakeTracker</value>
   </data>
   <data name="IDS_MOD_NAME_AGENT14" xml:space="preserve">
     <value>Atari Octalyser</value>

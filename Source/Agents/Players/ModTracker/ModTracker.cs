@@ -32,7 +32,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		private static readonly Guid agent9Id = Guid.Parse("A5FDC6F5-DB8B-4066-9566-466E1DA8642C");
 		private static readonly Guid agent10Id = Guid.Parse("AF2E4860-5731-4007-828E-34B84DF689D2");
 		private static readonly Guid agent11Id = Guid.Parse("0A47F13A-78A4-4CD7-9A31-DBBC5107FC7C");
-		private static readonly Guid agent12Id = Guid.Parse("622FC871-244D-4E46-9423-35609EDFCF48");
 		private static readonly Guid agent14Id = Guid.Parse("E9C85D93-AA77-4A86-8B8C-3C62B79C5FBE");
 		private static readonly Guid agent15Id = Guid.Parse("4B17DA31-92E4-49AF-89F1-0D6CC627E78E");
 		private static readonly Guid agent16Id = Guid.Parse("A9B16B49-1472-4208-A300-3A73EED474AB");
@@ -52,7 +51,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			{ ModuleType.StarTrekker , agent9Id },
 			{ ModuleType.StarTrekker8 , agent10Id },
 			{ ModuleType.ProTracker , agent11Id },
-			{ ModuleType.FastTracker , agent12Id },
 			{ ModuleType.Octalyser , agent14Id },
 			{ ModuleType.ModsGrave, agent15Id },
 			{ ModuleType.DigitalTracker, agent16Id },
@@ -103,7 +101,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT9, Resources.IDS_MOD_DESCRIPTION_AGENT9, agent9Id),
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT10, Resources.IDS_MOD_DESCRIPTION_AGENT10, agent10Id),
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT11, Resources.IDS_MOD_DESCRIPTION_AGENT11, agent11Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT12, Resources.IDS_MOD_DESCRIPTION_AGENT12, agent12Id),
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT14, Resources.IDS_MOD_DESCRIPTION_AGENT14, agent14Id),
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT15, Resources.IDS_MOD_DESCRIPTION_AGENT15, agent15Id),
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT16, Resources.IDS_MOD_DESCRIPTION_AGENT16, agent16Id),

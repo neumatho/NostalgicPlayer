@@ -29,6 +29,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		{
 			string solutionDirectory = GetSolutionDirectory();
 			dataDirectory = Path.Combine(solutionDirectory, "Data");
+
+			Ports.LibXmp.LibXmp.UnitTestMode = true;
 		}
 
 

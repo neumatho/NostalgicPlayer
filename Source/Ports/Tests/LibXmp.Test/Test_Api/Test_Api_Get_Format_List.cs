@@ -27,7 +27,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 			for (i = 0; list[i] != null; i++)
 				Assert.IsNotNull(list[i], "Empty format name");
 
-			Assert.AreEqual(16, i, "Wrong number of formats");
+			Assert.AreEqual(18, i, "Wrong number of formats");
 		}
 	}
 }

@@ -12,7 +12,6 @@ using Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Extensions;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
@@ -959,7 +958,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					}
 				}
 
-				// Mod's Grave .WOW files have an M.K. signature but they're actually 8 channel.
+				// Mod's Grave .WOW files have an M.K. signature, but they're actually 8 channel.
 				// The only way to distinguish them from a 4-channel M.K. file is to check the
 				// length of the .MOD against the expected length of a .WOW file with the same
 				// number of patterns as this file. To make things harder, Mod's Grave occasionally
@@ -981,7 +980,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					// Check the patterns for any BPM speed effects or ExtraEffect effects
 					// just to be sure it's not a NoiseTracker module.
 					//
-					// Also check to see if it's a Unic Tracker module. If so, don't
+					// Also check to see if it's an Unic Tracker module. If so, don't
 					// recognize it
 					moduleStream.Seek(1084, SeekOrigin.Begin);
 
@@ -998,7 +997,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 								byte c = moduleStream.Read_UINT8();
 								byte d = moduleStream.Read_UINT8();
 
-								// Check the data to see if it's not a Unic Tracker module
+								// Check the data to see if it's not an Unic Tracker module
 								//
 								// Is sample > 31
 								byte s = (byte)((a & 0xf0) | ((c & 0xf0) >> 4));
@@ -1010,7 +1009,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 								// Is pitch between 28 and 856 (increased to 1750, because of Oh Yeah.mod)
 								uint temp = (((uint)a & 0x0f) << 8) | b;
-								if ((temp != 0) && ((temp < 28) || (temp > 1750)))
+								if ((temp != 0) && ((temp < 113/*28*/) || (temp > 856/*1750*/)))//XX
 								{
 									retVal = ModuleType.Unknown;
 									goto stopLoop;
@@ -1055,51 +1054,52 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 							i++;
 						}
 					}
-
 stopLoop:
-					if ((retVal != ModuleType.Unknown) && (retVal != ModuleType.ProTracker))
+					;
+				}
+
+				if ((retVal != ModuleType.Unknown) && (retVal != ModuleType.ProTracker))
+				{
+					// Well, now we want to be really really sure it's
+					// not a NoiseTracker module, so we check the sample
+					// information to see if some samples has a fine tune.
+					// Also check if ST-xx: is used in any of the sample names
+					byte[] buf = new byte[30];
+					bool hasDiskPrefix = false;
+
+					moduleStream.Seek(20, SeekOrigin.Begin);
+
+					for (int i = 0; i < 31; i++)
 					{
-						// Well, now we want to be really really sure it's
-						// not a NoiseTracker module, so we check the sample
-						// information to see if some samples has a fine tune.
-						// Also check if ST-xx: is used in any of the sample names
-						byte[] buf = new byte[30];
-						bool hasDiskPrefix = false;
+						moduleStream.Read(buf, 0, 30);
 
-						moduleStream.Seek(20, SeekOrigin.Begin);
-
-						for (int i = 0; i < 31; i++)
+						// Check for disk prefix
+						if (((buf[0] == 'S') || (buf[0] == 's')) && ((buf[1] == 'T') || (buf[1] == 't')) && (buf[2] == '-') && (buf[5] == ':'))
 						{
-							moduleStream.Read(buf, 0, 30);
-
-							// Check for disk prefix
-							if (((buf[0] == 'S') || (buf[0] == 's')) && ((buf[1] == 'T') || (buf[1] == 't')) && (buf[2] == '-') && (buf[5] == ':'))
-							{
-								// ProTracker does not have ST-xx: prefixes
-								hasDiskPrefix = true;
-							}
-
-							byte fineTune = buf[24];
-
-							// Some His Master's Noise modules uses the "M&K!" mark, so check
-							// for that (this is not the real format, which is "FEST", but I do
-							// not know why some download web pages has modules in "M&K!" format)
-							if (((fineTune & 0xf0) != 0) && (mark == 0x4d264b21))
-							{
-								retVal = ModuleType.HisMastersNoise;
-								break;
-							}
-
-							if ((fineTune & 0x0f) != 0)
-							{
-								retVal = ModuleType.ProTracker;
-								break;
-							}
+							// ProTracker does not have ST-xx: prefixes
+							hasDiskPrefix = true;
 						}
 
-						if (!hasDiskPrefix && (restartByte >= 120))
+						byte fineTune = buf[24];
+
+						// Some His Master's Noise modules uses the "M&K!" mark, so check
+						// for that (this is not the real format, which is "FEST", but I do
+						// not know why some download web pages has modules in "M&K!" format)
+						if (((fineTune & 0xf0) != 0) && (mark == 0x4d264b21))
+						{
+							retVal = ModuleType.HisMastersNoise;
+							break;
+						}
+
+						if ((fineTune & 0x0f) != 0)
+						{
 							retVal = ModuleType.ProTracker;
+							break;
+						}
 					}
+
+					if (!hasDiskPrefix && (restartByte >= 120))
+						retVal = ModuleType.ProTracker;
 				}
 			}
 			else
@@ -1115,8 +1115,6 @@ stopLoop:
 					retVal = ModuleType.Octalyser;
 				else if (mark == 0x46455354)								// FEST
 					retVal = ModuleType.HisMastersNoise;
-				else if (((mark & 0x00ffffff) == 0x0043484e) || ((mark & 0x0000ffff) == 0x00004348) || ((mark & 0xffffff00) == 0x54445a00))		// \0CHN || \0\0CH || TDZ\0 (this is TakeTracker only)
-					retVal = ModuleType.FastTracker;
 				else if ((mark == 0x46413034) || (mark == 0x46413036) || (mark == 0x46413038))	// FA04 || FA06 || FA08
 					retVal = ModuleType.DigitalTracker;
 			}
@@ -1233,18 +1231,6 @@ stopLoop:
 
 		/********************************************************************/
 		/// <summary>
-		/// Tests the current module to see if it's one of the PC trackers
-		/// </summary>
-		/********************************************************************/
-		private bool IsPcTracker()
-		{
-			return (currentModuleType == ModuleType.FastTracker);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Tests the current module to see if it's one of the Atari trackers
 		/// </summary>
 		/********************************************************************/
@@ -1267,7 +1253,7 @@ stopLoop:
 				byte[] buf = new byte[23];
 
 				ModuleStream moduleStream = fileInfo.ModuleStream;
-				Encoding encoder = IsPcTracker() || (currentModuleType == ModuleType.ModsGrave) ? EncoderCollection.Dos : IsAtariTracker() ? EncoderCollection.Atari : EncoderCollection.Amiga;
+				Encoding encoder = (currentModuleType == ModuleType.ModsGrave) ? EncoderCollection.Dos : IsAtariTracker() ? EncoderCollection.Atari : EncoderCollection.Amiga;
 
 				// This is only used for His Master's Noise and contains patterns
 				// that holds synth wave forms instead of real pattern data.
@@ -1388,7 +1374,7 @@ stopLoop:
 				if (songLength > 128)
 					songLength = 128;
 
-				if (IsNoiseTracker() || (currentModuleType == ModuleType.FastTracker) || (currentModuleType == ModuleType.Octalyser))
+				if (IsNoiseTracker() || (currentModuleType == ModuleType.Octalyser))
 				{
 					initTempo = 125;
 					restartPos = (ushort)(moduleStream.Read_UINT8() & 0x7f);
@@ -1501,16 +1487,8 @@ stopLoop:
 				trackNum = (ushort)(maxPattern * channelNum);
 
 				// Find the min and max periods
-				if (IsPcTracker())
-				{
-					minPeriod = 28;
-					maxPeriod = 3424;
-				}
-				else
-				{
-					minPeriod = 113;
-					maxPeriod = 856;
-				}
+				minPeriod = 113;
+				maxPeriod = 856;
 
 				// Allocate space for the patterns
 				tracks = new TrackLine[trackNum][];
@@ -1857,11 +1835,6 @@ stopLoop:
 				modChan.DataCounter = 0;
 				modChan.HmnVolume = 0;
 				modChan.SynthData = null;
-
-				if (IsPcTracker())
-					modChan.Panning = (ushort)((((i & 3) == 0) || ((i & 3) == 3)) ? ChannelPanningType.Left : ChannelPanningType.Right);
-				else
-					modChan.Panning = 0;
 			}
 
 			SetBpmTempo(initTempo);
@@ -2131,10 +2104,6 @@ stopLoop:
 						}
 					}
 				}
-
-				// Set panning
-				if (IsPcTracker())
-					chan.SetPanning(modChan.Panning);
 			}
 
 			// Check for some commands
@@ -2558,14 +2527,6 @@ stopLoop:
 							break;
 						}
 
-						case Effect.SetPanning:
-						{
-							if (IsPcTracker())
-								SetPanning(chan, modChan, modChan.TrackLine.EffectArg);
-
-							break;
-						}
-
 						case Effect.ExtraEffect:
 						{
 							ECommands(chan, modChan);
@@ -2609,7 +2570,7 @@ stopLoop:
 					{
 						case ExtraEffect.SetFilter:
 						{
-							if (!IsPcTracker() && !IsAtariTracker() && (currentModuleType != ModuleType.ModsGrave))
+							if (!IsAtariTracker() && (currentModuleType != ModuleType.ModsGrave))
 								FilterOnOff(modChan);
 
 							break;
@@ -2660,12 +2621,8 @@ stopLoop:
 						case ExtraEffect.KarplusStrong:
 						{
 							if (!IsAtariTracker() && (currentModuleType != ModuleType.ModsGrave))
-							{
-								if (IsPcTracker())
-									SetPanning(chan, modChan, (ushort)((modChan.TrackLine.EffectArg & 0x0f) << 4));
-								else
-									KarplusStrong(modChan);
-							}
+								KarplusStrong(modChan);
+
 							break;
 						}
 
@@ -3370,19 +3327,6 @@ stopLoop:
 			modChan.HmnVolume = (sbyte)volume;
 
 			modChan.TremoloPos += (sbyte)((modChan.TremoloCmd / 4) & 0x3c);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 0x08 - Set a new panning
-		/// </summary>
-		/********************************************************************/
-		private void SetPanning(IChannel chan, ModChannel modChan, ushort pan)
-		{
-			modChan.Panning = pan;
-			chan.SetPanning(pan);
 		}
 
 

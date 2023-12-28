@@ -111,19 +111,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Original player by Fredrik Muss (FastTracker).
-        ///TakeTracker player by Anders B. Ervik and Oyvind Neuman.
-        ///Converted to C# by Thomas Neumann.
-        ///
-        ///This tracker is from the PC, but uses the same file format as the other mod trackers. It supports up to 32 channels. TakeTracker only up to 16 channels. The modules use the same ID mark, so thats why they are under one format..
-        /// </summary>
-        internal static string IDS_MOD_DESCRIPTION_AGENT12 {
-            get {
-                return ResourceManager.GetString("IDS_MOD_DESCRIPTION_AGENT12", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Original player by Christian Dahl, Davor Slutej and Tord Jansson.
         ///
         ///This player plays module from the Atari Octalyser. It is a 6 and 8 channel ProTracker clone and using the same file format..
@@ -411,15 +398,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         internal static string IDS_MOD_NAME_AGENT11 {
             get {
                 return ResourceManager.GetString("IDS_MOD_NAME_AGENT11", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fast/TakeTracker.
-        /// </summary>
-        internal static string IDS_MOD_NAME_AGENT12 {
-            get {
-                return ResourceManager.GetString("IDS_MOD_NAME_AGENT12", resourceCulture);
             }
         }
         

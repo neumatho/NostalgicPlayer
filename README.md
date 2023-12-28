@@ -68,7 +68,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Epic Games UMX | .umx | Module Converter | ModTracker / Mpg123 / Xmp |
 | Eureka Packer | .eureka / .eu | ProWizard | ModTracker |
 | Farandole Composer | .far | | Xmp |
-| Fast/TakeTracker | .mod | | ModTracker |
+| FastTracker | .mod | | Xmp |
 | FastTracker II | .xm | | Xmp |
 | FC-M Packer | .fc-m / .fcm | ProWizard | ModTracker |
 | FLAC | .flac | | Sample |

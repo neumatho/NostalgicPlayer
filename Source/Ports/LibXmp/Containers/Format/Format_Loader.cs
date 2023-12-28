@@ -19,5 +19,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Format
 		public string Name;
 		public string Description;
 		public Create_Delegate Create;
+		public bool OnlyAvailableInTest;
 	}
 }

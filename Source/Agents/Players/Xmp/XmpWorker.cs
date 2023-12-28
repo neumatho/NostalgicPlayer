@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		/********************************************************************/
 		public XmpWorker(Guid formatId)
 		{
-			currentFormat = LibXmp.Xmp_Get_Format_Info_List().First(x => x.Id == formatId);
+			currentFormat = LibXmp.Xmp_Get_Format_Info_List().SkipLast(1).First(x => x.Id == formatId);
 		}
 
 		#region IPlayerAgent implementation
@@ -527,6 +527,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 						// Is the loop ping-pong?
 						if ((sample.Flg & Xmp_Sample_Flag.Loop_BiDir) != 0)
 							sampleInfo.Flags |= SampleInfo.SampleFlag.PingPong;
+					}
+					else
+					{
+						sampleInfo.LoopStart = 0;
+						sampleInfo.LoopLength = 0;
 					}
 
 					if (inst != null)

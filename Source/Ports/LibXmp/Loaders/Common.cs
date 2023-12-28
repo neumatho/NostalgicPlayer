@@ -28,6 +28,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			0xB4, 0xB8, 0xBC, 0xC0	// 24-31
 		};
 
+		private readonly LibXmp lib;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public Common(LibXmp libXmp)
+		{
+			lib = libXmp;
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// 
@@ -50,6 +64,32 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		public static uint32 Magic4(char a, char b, char c, char d)
 		{
 			return ((uint32)a << 24) | ((uint32)b << 16) | ((uint32)c << 8) | d;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static uint32 Magic4(byte a, byte b, byte c, byte d)
+		{
+			return ((uint32)a << 24) | ((uint32)b << 16) | ((uint32)c << 8) | d;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static uint32 Magic4(string s)
+		{
+			return ((uint32)s[0] << 24) | ((uint32)s[1] << 16) | ((uint32)s[2] << 8) | s[3];
 		}
 
 
@@ -353,6 +393,116 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			}
 
 			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Honor Noisetracker effects:
+		///
+		///  0 - Arpeggio
+		///  1 - Portamento up
+		///  2 - Portamento down
+		///  3 - Tone-portamento
+		///  4 - Vibrato
+		///  A - Slide volume
+		///  B - Position jump
+		///  C - Set volume
+		///  D - Pattern break
+		///  E - Set filter (keep the led off, please!)
+		///  F - Set speed (now up to $1F)
+		///
+		/// Pex Tufvesson's notes from http://www.livet.se/mahoney/:
+		///
+		/// Note that some of the modules will have bugs in the playback with
+		/// all known PC module players. This is due to that in many demos
+		/// where I synced events in the demo with the music, I used commands
+		/// that these newer PC module players erroneously interpret as
+		/// "newer-version-trackers commands". Which they aren't
+		/// </summary>
+		/********************************************************************/
+		public void LibXmp_Decode_NoiseTracker_Event(Xmp_Event @event, uint8[] patBuf, c_int mod_Event)
+		{
+			@event.Clear();
+
+			@event.Note = (byte)lib.period.LibXmp_Period_To_Note((Ports.LibXmp.Common.Lsn(patBuf[mod_Event]) << 8) + patBuf[mod_Event + 1]);
+			@event.Ins = (byte)((Ports.LibXmp.Common.Msn(patBuf[mod_Event]) << 4) | Ports.LibXmp.Common.Msn(patBuf[mod_Event + 2]));
+			c_int fxT = Ports.LibXmp.Common.Lsn(patBuf[mod_Event + 2]);
+
+			if ((fxT <= 0x06) || ((fxT >= 0x0a) && (fxT != 0x0e)))
+			{
+				@event.FxT = (byte)fxT;
+				@event.FxP = patBuf[mod_Event + 3];
+			}
+
+			LibXmp_Disable_Continue_Fx(@event);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void LibXmp_Decode_ProTracker_Event(Xmp_Event @event, uint8[] patBuf, c_int mod_Event)
+		{
+			c_int fxT = Ports.LibXmp.Common.Lsn(patBuf[mod_Event + 2]);
+
+			@event.Clear();
+
+			@event.Note = (byte)lib.period.LibXmp_Period_To_Note((Ports.LibXmp.Common.Lsn(patBuf[mod_Event]) << 8) + patBuf[mod_Event + 1]);
+			@event.Ins = (byte)((Ports.LibXmp.Common.Msn(patBuf[mod_Event]) << 4) | Ports.LibXmp.Common.Msn(patBuf[mod_Event + 2]));
+
+			if (fxT != 0x08)
+			{
+				@event.FxT = (byte)fxT;
+				@event.FxP = patBuf[mod_Event + 3];
+			}
+
+			LibXmp_Disable_Continue_Fx(@event);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void LibXmp_Disable_Continue_Fx(Xmp_Event @event)
+		{
+			if (@event.FxP == 0)
+			{
+				switch (@event.FxT)
+				{
+					case 0x05:
+					{
+						@event.FxT = 0x03;
+						break;
+					}
+
+					case 0x06:
+					{
+						@event.FxT = 0x04;
+						break;
+					}
+
+					case 0x01:
+					case 0x02:
+					case 0x0a:
+					{
+						@event.FxT = 0x00;
+						break;
+					}
+				}
+			}
+			else if (@event.FxT == 0x0e)
+			{
+				if ((@event.FxP == 0xa0) || (@event.FxP == 0xb0))
+					@event.FxT = @event.FxP = 0;
+			}
 		}
 
 
