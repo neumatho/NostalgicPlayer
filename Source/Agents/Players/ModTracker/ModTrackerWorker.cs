@@ -1005,9 +1005,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 								goto stopLoop;
 							}
 
-							// Is pitch between 28 and 856 (increased to 1750, because of Oh Yeah.mod)
+							// Is pitch between 28 and 856
 							uint temp = (((uint)a & 0x0f) << 8) | b;
-							if ((temp != 0) && ((temp < 113/*28*/) || (temp > 856/*1750*/)))//XX
+							if ((temp != 0) && ((temp < 113) || (temp > 856)))
 							{
 								retVal = ModuleType.Unknown;
 								goto stopLoop;
@@ -1173,7 +1173,7 @@ stopLoop:
 
 		/********************************************************************/
 		/// <summary>
-		/// Find the patterns to search. Returns only the patterns the are
+		/// Find the patterns to search. Return only the patterns that are
 		/// actual played
 		/// </summary>
 		/********************************************************************/

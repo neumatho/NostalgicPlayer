@@ -125,6 +125,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Ogg Vorbis | .ogg / oga | | Ogg Vorbis |
 | OggMod | .oxm | | Xmp |
 | Oktalyzer | .okt / .okta | | Oktalyzer |
+| OpenMPT MOD | .mod | | Xmp |
 | Perfect Song 1 | .pf1 | ProWizard | ModTracker |
 | Perfect Song 2 | .pf2 | ProWizard | ModTracker |
 | Pha Packer | .pha | ProWizard | ModTracker |

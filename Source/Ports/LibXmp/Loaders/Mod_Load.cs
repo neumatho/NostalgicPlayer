@@ -55,6 +55,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			FastTracker,
 			TakeTracker,
 			ScreamTracker3,
+			OpenMpt,
 
 			TestOnly
 		}
@@ -158,6 +159,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		};
 
 		/// <summary></summary>
+		public static readonly Format_Loader LibXmp_Loader_OpenMpt = new Format_Loader
+		{
+			Id = Guid.Parse("0FE3B659-4DF0-4192-AEA0-96376F20296C"),
+			Name = "OpenMPT MOD",
+			Description = "This format is the same as the standard MOD format used by e.g. ProTracker, but with some small difference made by OpenMPT when saving in this format.\n\n“OpenMPT” is currently maintained by Saga Musix a.k.a. Johannes Schultz.",
+			Create = Create_OpenMpt
+		};
+
+		/// <summary></summary>
 		public static readonly Format_Loader LibXmp_Loader_TestOnly = new Format_Loader
 		{
 			Id = Guid.Parse("0D3538F7-BF9F-484E-967F-9E84C92DE010"),
@@ -211,6 +221,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private static IFormatLoader Create_ScreamTracker3(LibXmp libXmp, Xmp_Context ctx)
 		{
 			return new Mod_Load(libXmp, ExternalFormat.ScreamTracker3);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a new instance of the loader
+		/// </summary>
+		/********************************************************************/
+		private static IFormatLoader Create_OpenMpt(LibXmp libXmp, Xmp_Context ctx)
+		{
+			return new Mod_Load(libXmp, ExternalFormat.OpenMpt);
 		}
 
 
@@ -1057,6 +1079,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				case InternalFormat.ScreamTracker3:
 					return ExternalFormat.ScreamTracker3;
 
+				case InternalFormat.OpenMpt:
+					return ExternalFormat.OpenMpt;
+
 				// Converted and unknown are treated as FastTracker
 				case InternalFormat.Converted:
 				case InternalFormat.ConvertedSt:
@@ -1069,7 +1094,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				case InternalFormat.NoiseTracker:
 				case InternalFormat.Probably_NoiseTracker:
 				case InternalFormat.ProTracker:
-				case InternalFormat.OpenMpt:
 					return LibXmp.UnitTestMode ? ExternalFormat.TestOnly : ExternalFormat.Unknown;
 
 				case InternalFormat.Octalyser:
