@@ -982,76 +982,69 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					//
 					// Also check to see if it's an Unic Tracker module. If so, don't
 					// recognize it
-					moduleStream.Seek(1084, SeekOrigin.Begin);
-
 					byte[] usedPatterns = FindUsedPatterns(pos, songLen);
 
-					for (int i = 0, p = 0; i < usedPatterns.Length; p++)
+					for (int i = 0; i < usedPatterns.Length; i++)
 					{
-						if (p == usedPatterns[i])
+						moduleStream.Seek(1084 + usedPatterns[i] * 1024, SeekOrigin.Begin);
+
+						for (int j = 0; j < 4 * 64; j++)
 						{
-							for (int j = 0; j < 4 * 64; j++)
+							byte a = moduleStream.Read_UINT8();
+							byte b = moduleStream.Read_UINT8();
+							byte c = moduleStream.Read_UINT8();
+							byte d = moduleStream.Read_UINT8();
+
+							// Check the data to see if it's not an Unic Tracker module
+							//
+							// Is sample > 31
+							byte s = (byte)((a & 0xf0) | ((c & 0xf0) >> 4));
+							if (s > 31)
 							{
-								byte a = moduleStream.Read_UINT8();
-								byte b = moduleStream.Read_UINT8();
-								byte c = moduleStream.Read_UINT8();
-								byte d = moduleStream.Read_UINT8();
+								retVal = ModuleType.Unknown;
+								goto stopLoop;
+							}
 
-								// Check the data to see if it's not an Unic Tracker module
-								//
-								// Is sample > 31
-								byte s = (byte)((a & 0xf0) | ((c & 0xf0) >> 4));
-								if (s > 31)
+							// Is pitch between 28 and 856 (increased to 1750, because of Oh Yeah.mod)
+							uint temp = (((uint)a & 0x0f) << 8) | b;
+							if ((temp != 0) && ((temp < 113/*28*/) || (temp > 856/*1750*/)))//XX
+							{
+								retVal = ModuleType.Unknown;
+								goto stopLoop;
+							}
+
+							Effect effect = (Effect)(c & 0x0f);
+
+							switch (effect)
+							{
+								case Effect.Tremolo:
+								case Effect.SampleOffset:
 								{
-									retVal = ModuleType.Unknown;
-									goto stopLoop;
+									retVal = ModuleType.ProTracker;
+									break;
 								}
 
-								// Is pitch between 28 and 856 (increased to 1750, because of Oh Yeah.mod)
-								uint temp = (((uint)a & 0x0f) << 8) | b;
-								if ((temp != 0) && ((temp < 113/*28*/) || (temp > 856/*1750*/)))//XX
+								// This check has been uncommented, because it is not very
+								// secure way, e.g. Klisje Paa Klisje was wrongly detected
+								// as ProTracker, which it isn't
+/*									case Effect.SetSpeed:
 								{
-									retVal = ModuleType.Unknown;
-									goto stopLoop;
-								}
-
-								Effect effect = (Effect)(c & 0x0f);
-
-								switch (effect)
-								{
-									case Effect.Tremolo:
-									case Effect.SampleOffset:
+									if (d > 31)
 									{
 										retVal = ModuleType.ProTracker;
 										goto stopLoop;
 									}
-
-									// This check has been uncommented, because it is not very
-									// secure way, e.g. Klisje Paa Klisje was wrongly detected
-									// as ProTracker, which it isn't
-/*									case Effect.SetSpeed:
-									{
-										if (d > 31)
-										{
-											retVal = ModuleType.ProTracker;
-											goto stopLoop;
-										}
-										break;
-									}
+									break;
+								}
 */
-									case Effect.ExtraEffect:
-									{
-										if (d >= 16)
-										{
-											retVal = ModuleType.ProTracker;
-											goto stopLoop;
-										}
-										break;
-									}
+								case Effect.ExtraEffect:
+								{
+									if (d >= 16)
+										retVal = ModuleType.ProTracker;
+
+									break;
 								}
 							}
-
-							i++;
 						}
 					}
 stopLoop:

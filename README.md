@@ -149,6 +149,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Sawteeth | .st | | Sawteeth |
 | Scream Tracker 2 | .stm | | Xmp |
 | Scream Tracker 3 | .s3m | | Xmp |
+| Scream Tracker 3 MOD | .mod | | Xmp |
 | Scream Tracker Music Interface Kit | .stx | | Xmp |
 | SidPlay | .sid / .c64 / .mus / .str / .prg | | SidPlay |
 | SKYT Packer | .skt / .skyt | ProWizard | ModTracker |

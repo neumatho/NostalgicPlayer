@@ -54,6 +54,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Unknown,
 			FastTracker,
 			TakeTracker,
+			ScreamTracker3,
 
 			TestOnly
 		}
@@ -134,7 +135,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			Id = Guid.Parse("622FC871-244D-4E46-9423-35609EDFCF48"),
 			Name = "FastTracker",
-			Description = "This tracker is from the PC, but uses the same file format as the other mod trackers. It supports up to 8 channels, but MOD files saved with FastTracker 2 can have up to 32 channels. The tracker was written by Fredrik Muss.",
+			Description = "This tracker is from the PC, but uses the same file format as the other mod trackers. It supports up to 8 channels, but MOD files saved with FastTracker 2 can have up to 32 channels.\n\nThe tracker was written by Fredrik Muss.",
 			Create = Create_FastTracker
 		};
 
@@ -143,8 +144,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			Id = Guid.Parse("73128541-1DF2-46DE-93FF-614C2D1ECB18"),
 			Name = "TakeTracker",
-			Description = "This tracker is from the PC, but uses the same file format as FastTracker MOD files. It has extended the number of channels up to 16 and it also supports an odd number of channels. The tracker was written by Anders B. Ervik.",
+			Description = "This tracker is from the PC, but uses the same file format as FastTracker MOD files. It has extended the number of channels up to 16 and it also supports an odd number of channels.\n\nThe tracker was written by Anders B. Ervik.",
 			Create = Create_TakeTracker
+		};
+
+		/// <summary></summary>
+		public static readonly Format_Loader LibXmp_Loader_Scream3 = new Format_Loader
+		{
+			Id = Guid.Parse("3A557D47-E229-4944-AF1E-47C0571D3C7F"),
+			Name = "Scream Tracker 3 MOD",
+			Description = "This format is the same as the standard MOD format used by e.g. ProTracker, but with some small difference made by Scream Tracker 3 when saving in this format.\n\n“Scream Tracker 3” was written by PSI of Future Crew, a.k.a. Sami Tammilehto, and released in 1994.",
+			Create = Create_ScreamTracker3
 		};
 
 		/// <summary></summary>
@@ -189,6 +199,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private static IFormatLoader Create_TakeTracker(LibXmp libXmp, Xmp_Context ctx)
 		{
 			return new Mod_Load(libXmp, ExternalFormat.TakeTracker);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a new instance of the loader
+		/// </summary>
+		/********************************************************************/
+		private static IFormatLoader Create_ScreamTracker3(LibXmp libXmp, Xmp_Context ctx)
+		{
+			return new Mod_Load(libXmp, ExternalFormat.ScreamTracker3);
 		}
 
 
@@ -1032,6 +1054,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				case InternalFormat.TakeTracker:
 					return ExternalFormat.TakeTracker;
 
+				case InternalFormat.ScreamTracker3:
+					return ExternalFormat.ScreamTracker3;
+
 				// Converted and unknown are treated as FastTracker
 				case InternalFormat.Converted:
 				case InternalFormat.ConvertedSt:
@@ -1044,7 +1069,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				case InternalFormat.NoiseTracker:
 				case InternalFormat.Probably_NoiseTracker:
 				case InternalFormat.ProTracker:
-				case InternalFormat.ScreamTracker3:
 				case InternalFormat.OpenMpt:
 					return LibXmp.UnitTestMode ? ExternalFormat.TestOnly : ExternalFormat.Unknown;
 
