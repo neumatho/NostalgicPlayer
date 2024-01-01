@@ -43,7 +43,13 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			generator.Reset();
 
 			generator.shift_register = 0x35555e;
-			generator.Clock_Shift_Register(0);
+
+			// Shift phase 1
+			generator.test_or_reset = false;
+			generator.shift_latch = generator.shift_register;
+
+			// Shift phase 2
+			generator.Shift_Phase2(0, 0);
 
 			Assert.That(generator.noise_output, Is.EqualTo(0x9e0U));
 		}

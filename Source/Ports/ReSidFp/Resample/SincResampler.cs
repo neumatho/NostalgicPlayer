@@ -60,6 +60,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp.Resample
 
 		// Cache for the expensive FIR table computation results
 		private static readonly fir_cache_t firCache = new fir_cache_t();
+		private static readonly object firCache_Lock = new object();
 
 		/********************************************************************/
 		/// <summary>
@@ -132,40 +133,43 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp.Resample
 			// Create the map key
 			string firKey = $"{firN};{firRes};{cyclesPerSampleD}";
 
-			// The FIR computation is expensive and we set sampling parameters often, but
-			// from a very small set of choices. Thus, caching is used to speed initialization
-			if (!firCache.TryGetValue(firKey, out firTable))
+			lock (firCache_Lock)
 			{
-				// Allocate memory for FIR tables
-				firTable = new matrix_t((uint)firRes, (uint)firN);
-				firCache[firKey] = firTable;
-
-				// The cutoff frequency is midway through the transition band, in effect the same as nyquist
-				double wc = Math.PI;
-
-				// Calculate the sinc tables
-				double scale = 32768.0 * wc / cyclesPerSampleD / Math.PI;
-
-				// We're not interested in the fractional part
-				// so use int division before converting to double
-				int tmp = firN / 2;
-				double firN2 = tmp;
-
-				for (int i = 0; i < firRes; i++)
+				// The FIR computation is expensive and we set sampling parameters often, but
+				// from a very small set of choices. Thus, caching is used to speed initialization
+				if (!firCache.TryGetValue(firKey, out firTable))
 				{
-					double jPhase = (double)i / firRes + firN2;
+					// Allocate memory for FIR tables
+					firTable = new matrix_t((uint)firRes, (uint)firN);
+					firCache[firKey] = firTable;
 
-					for (int j = 0; j < firN; j++)
+					// The cutoff frequency is midway through the transition band, in effect the same as nyquist
+					double wc = Math.PI;
+
+					// Calculate the sinc tables
+					double scale = 32768.0 * wc / cyclesPerSampleD / Math.PI;
+
+					// We're not interested in the fractional part
+					// so use int division before converting to double
+					int tmp = firN / 2;
+					double firN2 = tmp;
+
+					for (int i = 0; i < firRes; i++)
 					{
-						double x = j - jPhase;
+						double jPhase = (double)i / firRes + firN2;
 
-						double xt = x / firN2;
-						double kaiserXt = Math.Abs(xt) < 1.0 ? I0(beta * Math.Sqrt(1.0 - xt * xt)) / i0Beta : 0.0;
+						for (int j = 0; j < firN; j++)
+						{
+							double x = j - jPhase;
 
-						double wt = wc * x / cyclesPerSampleD;
-						double sincWt = Math.Abs(wt) >= 1e-8 ? Math.Sin(wt) / wt : 1.0;
+							double xt = x / firN2;
+							double kaiserXt = Math.Abs(xt) < 1.0 ? I0(beta * Math.Sqrt(1.0 - xt * xt)) / i0Beta : 0.0;
 
-						firTable[(uint)i][j] = (short)(scale * sincWt * kaiserXt);
+							double wt = wc * x / cyclesPerSampleD;
+							double sincWt = Math.Abs(wt) >= 1e-8 ? Math.Sin(wt) / wt : 1.0;
+
+							firTable[(uint)i][j] = (short)(scale * sincWt * kaiserXt);
+						}
 					}
 				}
 			}

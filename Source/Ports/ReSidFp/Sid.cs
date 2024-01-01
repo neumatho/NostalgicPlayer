@@ -144,6 +144,11 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		private readonly Voice[] voice =  new Voice[3];
 
 		/// <summary>
+		/// Used to amplify the output by x/2 to get an adequate playback volume
+		/// </summary>
+		private int scaleFactor;
+
+		/// <summary>
 		/// Time to live for the last written value
 		/// </summary>
 		private int busValueTtl;
@@ -234,6 +239,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				case ChipModel.MOS6581:
 				{
 					filter = filter6581;
+					scaleFactor = 3;
 					modelTtl = BUS_TTL_6581;
 					break;
 				}
@@ -241,6 +247,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				case ChipModel.MOS8580:
 				{
 					filter = filter8580;
+					scaleFactor = 5;
 					modelTtl = BUS_TTL_8580;
 					break;
 				}
@@ -766,7 +773,9 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			int v2 = voice[1].Output(voice[0].Wave());
 			int v3 = voice[2].Output(voice[1].Wave());
 
-			return externalFilter.Clock(filter.Clock(v1, v2, v3));
+			int input = (int)((scaleFactor * (uint)filter.Clock(v1, v2, v3)) / 2);
+
+			return externalFilter.Clock(input);
 		}
 		#endregion
 	}

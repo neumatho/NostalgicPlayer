@@ -89,6 +89,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		};
 
 		private static FilterModelConfig8580 instance = null;
+		private static readonly object instance8580_Lock = new object();
 
 		/********************************************************************/
 		/// <summary>
@@ -96,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// </summary>
 		/********************************************************************/
 		private FilterModelConfig8580() : base(
-			0.30,	// Voice voltage range FIXME measure
+			0.24,	// Voice voltage range FIXME measure
 			4.84,	// Voice DC voltage FIXME measure
 			22e-9,	// Capacitor value
 			9.09,	// Vdd
@@ -226,10 +227,13 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/********************************************************************/
 		public static FilterModelConfig8580 GetInstance()
 		{
-			if (instance == null)
-				instance = new FilterModelConfig8580();
+			lock (instance8580_Lock)
+			{
+				if (instance == null)
+					instance = new FilterModelConfig8580();
 
-			return instance;
+				return instance;
+			}
 		}
 
 

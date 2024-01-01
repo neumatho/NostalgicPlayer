@@ -121,6 +121,11 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		internal uint shift_register;
 
 		/// <summary>
+		/// Shift register is latched when transitioning to shift phase 1
+		/// </summary>
+		internal uint shift_latch;
+
+		/// <summary>
 		/// Emulation of pipeline causing bit 19 to clock the shift register
 		/// </summary>
 		private int shift_pipeline;
@@ -172,6 +177,11 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		// The control register bits. Gate is handled by EnvelopeGenerator
 		private bool test;
 		private bool sync;
+
+		/// <summary>
+		/// Test bit is latched at phi2 for the noise XOR
+		/// </summary>
+		internal bool test_or_reset;
 
 		/// <summary>
 		/// Tell whether the accumulator MSB was set high on this cycle
@@ -406,22 +416,17 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 					// Flush shift pipeline
 					shift_pipeline = 0;
 
+					// Latch the shift register value
+					shift_latch = shift_register;
+
 					// Set reset time for shift register
 					shift_register_reset = is6581 ? SHIFT_REGISTER_RESET_6581R3 : SHIFT_REGISTER_RESET_8580R5;
 				}
 				else
 				{
 					// When the test bit is falling, the second phase of the shift is
-					// completed by enabling SRAM write.
-
-					// During first phase of the shift the bits are interconnected
-					// and the output of each bit is loaded into the following.
-					// The output may overwrite the latched value
-					if (Do_Pre_Writeback(waveform_prev, waveform, is6581))
-						shift_register = (shift_register & shift_mask) | Get_Noise_Writeback();
-
-					// Bit0 = (bit22 | test) ^ bit17 = 1 ^ bit17 = ~bit17
-					Clock_Shift_Register((~shift_register << 17) & (1 << 22));
+					// completed by enabling SRAM write
+					Shift_Phase2(waveform_prev, waveform);
 				}
 			}
 		}
@@ -461,7 +466,9 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			// When reset is released the shift register is clocked once
 			// so the lower bit is zeroed out
 			// bit0 = (bit22 | test) ^ bit17 = 1 ^ 1 = 0
-			Clock_Shift_Register(0);
+			test_or_reset = true;
+			shift_latch = shift_register;
+			Shift_Phase2(0, 0);
 
 			shift_pipeline = 0;
 
@@ -544,10 +551,14 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				if ((shift_register_reset != 0) && (--shift_register_reset == 0))
 				{
 					ShiftRegBitFade();
+					shift_latch = shift_register;
 
 					// New noise waveform output
 					Set_Noise_Output();
 				}
+
+				// Latch the test bit value for shift phase 2
+				test_or_reset = true;
 
 				// The test bit sets pulse high
 				pulse_output = 0xfff;
@@ -571,10 +582,24 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 					// Pipeline: Detect rising bit, shift phase 1, shift phase 2
 					shift_pipeline = 2;
 				}
-				else if ((shift_pipeline != 0) && (--shift_pipeline == 0))
+				else if (shift_pipeline != 0)
 				{
-					// Bit0 = (bit22 | test) ^ bit17
-					Clock_Shift_Register(((shift_register << 22) ^ (shift_register << 17)) & (1U << 22));
+					switch (--shift_pipeline)
+					{
+						case 0:
+						{
+							Shift_Phase2(waveform, waveform);
+							break;
+						}
+
+						case 1:
+						{
+							// Start shift phase 1
+							test_or_reset = false;
+							shift_latch = shift_register;
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -743,12 +768,69 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		// On the second half of shift phase 2 c2 closes and we're back to
 		// normal cycles.
 		/********************************************************************/
-		internal void Clock_Shift_Register(uint bit0)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private bool Do_Writeback(uint waveform_old, uint waveform_new, bool is6581)
 		{
-			shift_register = (shift_register >> 1) | bit0;
+			// No writeback without combined waveforms
+			if (waveform_old <= 8)
+			{
+				// Fixes SID/noisewriteback/noise_writeback_test2-{old,new}
+				return false;
+			}
 
-			// New noise waveform output
-			Set_Noise_Output();
+			if (waveform_new < 8)
+				return false;
+
+			if ((waveform_new == 8)
+				// Breaks noise_writeback_check_F_to_8_old
+				// but fixes simple and scan
+				&& (waveform_old != 0xf))
+			{
+				// Fixes
+				// noise_writeback_check_9_to_8_old
+				// noise_writeback_check_A_to_8_old
+				// noise_writeback_check_B_to_8_old
+				// noise_writeback_check_D_to_8_old
+				// noise_writeback_check_E_to_8_old
+				// noise_writeback_check_F_to_8_old
+				// noise_writeback_check_9_to_8_new
+				// noise_writeback_check_A_to_8_new
+				// noise_writeback_check_D_to_8_new
+				// noise_writeback_check_E_to_8_new
+				// noise_writeback_test1-{old,new}
+				return false;
+			}
+
+			// What's happening here?
+			if (is6581 && ((((waveform_old & 0x3) == 0x1) && ((waveform_new & 0x3) == 0x2)) || (((waveform_old & 0x3) == 0x2) && ((waveform_new & 0x3) == 0x1))))
+			{
+				// Fixes
+				// noise_writeback_check_9_to_A_old
+				// noise_writeback_check_9_to_E_old
+				// noise_writeback_check_A_to_9_old
+				// noise_writeback_check_A_to_D_old
+				// noise_writeback_check_D_to_A_old
+				// noise_writeback_check_E_to_9_old
+				return false;
+			}
+
+			if (waveform_old == 0xc)
+			{
+				// Fixes
+				// noise_writeback_check_C_to_A_new
+				return false;
+			}
+
+			if (waveform_new == 0xc)
+			{
+				// Fixes
+				// noise_writeback_check_9_to_C_old
+				// noise_writeback_check_A_to_C_old
+				return false;
+			}
+
+			// Ok, do the writeback
+			return true;
 		}
 
 
@@ -758,7 +840,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private uint Get_Noise_Writeback()
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private uint Get_Noise_Writeback(uint waveform_output)
 		{
 			return
 				((waveform_output & (1U << 11)) >>  9) |	// Bit 11 -> bit 20
@@ -775,23 +858,53 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 		/********************************************************************/
 		/// <summary>
+		/// Perform the actual shifting, moving the latched value into
+		/// following bits. The XORing for bit0 is done in this cycle using
+		/// the test bit latched during the previous phi2 cycle
+		/// </summary>
+		/********************************************************************/
+		internal void Shift_Phase2(uint waveform_old, uint waveform_new)
+		{
+			if (Do_Writeback(waveform_old, waveform_new, is6581))
+			{
+				// If noise is combined with another waveform the output drives the SR bits
+				shift_latch = (shift_register & shift_mask) | Get_Noise_Writeback(waveform_output);
+			}
+
+			// Bit0 = (bit22 | test | reset) ^ bit17 = 1 ^ bit17 = ~bit17
+			uint bit22 = ((test_or_reset ? 1U : 0) | shift_latch) << 22;
+			uint bit0 = (bit22 ^ (shift_latch << 17)) & (1 << 22);
+
+			shift_register = (shift_latch >> 1) | bit0;
+
+			Set_Noise_Output();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
 		internal void Write_Shift_Register()
 		{
-			if ((waveform > 0x8) && !test && (shift_pipeline != 1))
+			if (waveform > 0x8)
 			{
 				// Write changes to the shift register output caused by combined waveforms
-				// back into the shift register. This happens only when the register is clocked
-				// (see $D1+$81 wave_test [1]) or when the test bit is falling.
-				// A bit once set to zero cannot be changed, hence the and'ing.
-				//
-				// [1] ftp://ftp.untergrund.net/users/nata/sid_test/$D1+$81_wave_test.7z
+				// back into the shift register
+				if ((shift_pipeline != 1) && !test)
+				{
+					// The output pulls down the SR bits
+					shift_register = shift_register & (shift_mask | Get_Noise_Writeback(waveform_output));
+					noise_output &= waveform_output;
+				}
+				else
+				{
+					// Shift phase 1 the output drives the SR bits
+					noise_output = waveform_output;
+				}
 
-				shift_register &= shift_mask | Get_Noise_Writeback();
-
-				noise_output &= waveform_output;
 				Set_No_Noise_Or_Noise_Output();
 			}
 		}
@@ -816,38 +929,6 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				((shift_register & (1U << 22)) >> 18);	// Bit  0 -> bit  4
 
 			Set_No_Noise_Or_Noise_Output();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		private bool Do_Pre_Writeback(uint waveform_prev, uint waveform, bool is6581)
-		{
-			// No writeback without combined waveforms
-			if (waveform <= 8)
-				return false;
-
-			// No writeback when changing to noise
-			if (waveform == 8)
-				return false;
-
-			// What's happening here?
-			if (is6581 &&
-					((((waveform_prev & 0x3) == 0x1) && ((waveform & 0x3) == 0x2))
-					|| (((waveform_prev & 0x3) == 0x2) && ((waveform & 0x3) == 0x1))))
-			{
-				return false;
-			}
-
-			if (waveform_prev == 0xc)
-				return false;
-
-			// Ok do the writeback
-			return true;
 		}
 
 

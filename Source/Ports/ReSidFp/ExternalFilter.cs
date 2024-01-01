@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		// equipment impedance. Here we suppose an impedance of 10kOhm resulting
 		// in a 3 dB attenuation at 1.6Hz.
 		// To operate properly the 6581 audio output needs a pull-down resistor
-		//(1KOhm recommended, not needed on 8580)
+		// (1KOhm recommended, not needed on 8580)
 		//
 		// ~~~
 		//                                 9/12V
@@ -113,9 +113,9 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int Clock(ushort input)
+		public int Clock(int input)
 		{
-			int vi = (int)((uint)input << 11) - (1 << (11 + 15));
+			int vi = (input << 11) - (1 << (11 + 15));
 			int dVlp = (w0lp_1_s7 * (vi - vlp) >> 7);
 			int dVhp = (w0hp_1_s17 * (vlp - vhp) >> 17);
 

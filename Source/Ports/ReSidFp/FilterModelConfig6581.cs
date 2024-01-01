@@ -62,6 +62,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		};
 
 		private static FilterModelConfig6581 instance = null;
+		private static readonly object instance6581_Lock = new object();
 
 		// Transistor parameters
 		private readonly double wl_vcr;			// W/L for VCR
@@ -269,10 +270,13 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/********************************************************************/
 		public static FilterModelConfig6581 GetInstance()
 		{
-			if (instance == null)
-				instance = new FilterModelConfig6581();
+			lock (instance6581_Lock)
+			{
+				if (instance == null)
+					instance = new FilterModelConfig6581();
 
-			return instance;
+				return instance;
+			}
 		}
 
 

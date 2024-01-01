@@ -93,6 +93,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			// 6581 DACs are not terminated by a 2R resistor
 			bool term = chipModel == ChipModel.MOS8580;
 
+			double vSum = 0.0;
+
 			// Calculate voltage contribution by each individual bit in the R-2R ladder
 			for (uint set_bit = 0; set_bit < dacLength; set_bit++)
 			{
@@ -132,14 +134,10 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				}
 
 				dac[set_bit] = vn;
+				vSum += vn;
 			}
 
 			// Normalize to integerish behaviour
-			double vSum = 0.0;
-
-			for (uint i = 0; i < dacLength; i++)
-				vSum += dac[i];
-
 			vSum /= 1 << (int)dacLength;
 
 			for (uint i = 0; i < dacLength; i++)
