@@ -196,8 +196,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			int kVgt = (nVg - nVt) - nVMin;
 
 			// VCR voltages for EKV model table lookup
-			int kVgt_Vs = (vx < kVgt) ? kVgt - vx : 0;
-			int kVgt_Vd = (vi < kVgt) ? kVgt - vi : 0;
+			int kVgt_Vs = (kVgt - vx) + (1 << 15);
+			int kVgt_Vd = (kVgt - vi) + (1 << 15);
 
 			// VCR current, scaled by m*2^15*2^15 = m*2^30
 			uint @if = (uint)(fmc.GetVcr_n_Ids_Term(kVgt_Vs)) << 15;

@@ -239,13 +239,14 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 				// kVgt_Vx = k*(Vg - Vt) - Vx
 				// I.e. if k != 1.0, Vg must be scaled accordingly
-				for (int kVgt_vx = 0; kVgt_vx < (1 << 16); kVgt_vx++)
+				for (int i = 0; i < (1 << 16); i++)
 				{
-					double log_term = Log1p(Math.Exp((kVgt_vx / n16) / (2.0 * ut)));
+					int kVgt_Vx = i - (1 << 15);
+					double log_term = Log1p(Math.Exp((kVgt_Vx / n16) / (2.0 * ut)));
 
 					// Scaled by m*2^15
 					double tmp = n_is * log_term * log_term;
-					vcr_n_ids_term[kVgt_vx] = (ushort)(tmp + 0.5);
+					vcr_n_ids_term[i] = (ushort)(tmp + 0.5);
 				}
 			}
 
