@@ -120,7 +120,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		/// Will cleanup the player
 		/// </summary>
 		/********************************************************************/
-		public void CleanupPlayer()
+		public void CleanupPlayer(bool stopVisuals = true)
 		{
 			try
 			{
@@ -154,9 +154,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						StaticModuleInformation = new ModuleInfoStatic();
 						PlayingModuleInformation = new ModuleInfoFloating();
 
-						// Tell all visuals to stop
-						foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
-							visualAgent.CleanupVisual();
+						if (stopVisuals)
+						{
+							// Tell all visuals to stop
+							foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
+								visualAgent.CleanupVisual();
+						}
 					}
 				}
 			}

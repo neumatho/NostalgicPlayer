@@ -373,7 +373,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					player.ModuleInfoChanged -= Player_ModuleInfoChanged;
 
 					// Cleanup the player
-					player.CleanupPlayer();
+					player.CleanupPlayer(false);
 
 					// Unload the module
 					item.Loader.Unload();
