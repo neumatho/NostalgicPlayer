@@ -9,6 +9,7 @@ using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
+using Timer = System.Timers.Timer;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 {
@@ -28,6 +29,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			public int[] Buffer;
 			public int NumberOfChannels;
 			public bool SwapSpeakers;
+			public long TimeWhenBufferWasRendered;
 		}
 
 		private class ModuleInfoChangeInfo
@@ -36,31 +38,33 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			public ModuleInfoChanged[] ModuleInfoChanges;
 		}
 
+		private const int SampleBufferSizeInMs = 20;
+		private const int MaxSecondsInSampleBuffer = 2;
+
 		private Manager manager;
 
 		private int mixerFrequency;
 
 		private volatile ChannelChanged[] channelChanges;
-		private volatile SampleDataInfo sampleDataInfo;
 
 		private AutoResetEvent channelChangedEvent;
-		private AutoResetEvent newSampleDataEvent;
 		private ManualResetEvent exitEvent;
 
 		private Thread thread;
+		private Timer timer;
 
-		private int[] visualBuffer;			// Holding samples that visuals should show. It contains samples for 20 milliseconds
+		private int[] visualBuffer;			// Is the current buffer that is filled with samples that visuals should show. When filled, it will be stored in a list and a new buffer is allocated
 		private int visualBufferOffset;		// The position in the buffer above where to fill the next samples
 
-		private int minimumLatency;
 		private int currentLatency;
 
 		private Queue<ChannelDataInfo> channelLatencyQueue;
 		private int channelLatencySamplesLeft;
 
-		private Queue<SampleDataInfo> bufferLatencyQueue;
-		private int bufferLatencySamplesLeft;
-		private bool bufferLatencyUseQueue;
+		private List<SampleDataInfo> sampleDataList;
+		private long currentSampleDataTimeWhenFilling;
+		private long currentSampleDataTimeForTimer;
+		private int sampleDataLatencyLeft;
 
 		private Queue<ModuleInfoChangeInfo> moduleInfoLatencyQueue;
 		private int moduleInfoLatencySamples;
@@ -77,14 +81,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 			channelLatencyQueue = new Queue<ChannelDataInfo>();
 
-			bufferLatencyQueue = new Queue<SampleDataInfo>();
-			bufferLatencyUseQueue = false;
+			sampleDataList = new List<SampleDataInfo>();
+			currentSampleDataTimeWhenFilling = 0;
+			currentSampleDataTimeForTimer = 0;
 
 			moduleInfoLatencyQueue = new Queue<ModuleInfoChangeInfo>();
 
 			// Create the trigger events
 			channelChangedEvent = new AutoResetEvent(false);
-			newSampleDataEvent = new AutoResetEvent(false);
 
 			// Create exit event used in the thread
 			exitEvent = new ManualResetEvent(false);
@@ -93,6 +97,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			thread = new Thread(VisualizeThread);
 			thread.Name = "Visualizer distributor";
 			thread.Start();
+
+			// Initialize timer
+			timer = new Timer(SampleBufferSizeInMs);
+			timer.AutoReset = true;
+			timer.Elapsed += VisualizeTimer;
+			timer.Start();
 		}
 
 
@@ -104,6 +114,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/********************************************************************/
 		public void Cleanup()
 		{
+			// Tell the timer to stop
+			if (timer != null)
+			{
+				timer.Stop();
+				timer.Dispose();
+
+				timer = null;
+			}
+
 			// Tell the thread to exit
 			if (exitEvent != null)
 			{
@@ -117,15 +136,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			}
 
 			// Clear variables
-			newSampleDataEvent?.Dispose();
-			newSampleDataEvent = null;
-
 			channelChangedEvent?.Dispose();
 			channelChangedEvent = null;
 
 			moduleInfoLatencyQueue = null;
 			channelLatencyQueue = null;
-			bufferLatencyQueue = null;
+			sampleDataList = null;
 		}
 
 
@@ -139,10 +155,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		{
 			mixerFrequency = outputInformation.Frequency;
 
+			visualBuffer = new int[mixerFrequency / (1000 / SampleBufferSizeInMs) * outputInformation.Channels];
 			visualBufferOffset = 0;
-			visualBuffer = new int[Math.Min(outputInformation.BufferSizeInSamples, mixerFrequency / (1000 / 20) * outputInformation.Channels)];
-
-			minimumLatency = outputInformation.BufferSizeInSamples * 1000 / outputInformation.Frequency;
 
 			InitializeVisualsLatency();
 		}
@@ -172,6 +186,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		{
 			foreach (IVisualAgent visualAgent in manager.GetRegisteredVisualAgent())
 				visualAgent.SetPauseState(paused);
+
+			if (!paused)
+			{
+				lock (sampleDataList)
+				{
+					sampleDataList.Clear();
+					sampleDataLatencyLeft = currentLatency;
+				}
+			}
 		}
 
 
@@ -181,12 +204,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Will queue the given channel change information
 		/// </summary>
 		/********************************************************************/
-		public void QueueChannelChange(ChannelChanged[] channelChanges, int samplesTakenSinceLastCall)
+		public void QueueChannelChange(ChannelChanged[] changes, int samplesTakenSinceLastCall)
 		{
 			ChannelDataInfo channelDataInfo = new ChannelDataInfo
 			{
 				SamplesLeftBeforeTriggering = samplesTakenSinceLastCall,
-				ChannelChanges = channelChanges
+				ChannelChanges = changes
 			};
 
 			channelLatencyQueue.Enqueue(channelDataInfo);
@@ -257,16 +280,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/********************************************************************/
 		public void TellAgentsAboutMixedData(byte[] buffer, int offset, int count, int numberOfChannels, bool swapSpeakers)
 		{
-			int[] bufferToSend = null;
-			int bufferSize = ((count + visualBuffer.Length - 1) / visualBuffer.Length) * visualBuffer.Length;
-			int writeOffset = 0;
-
 			while (count > 0)
 			{
 				int todo = Math.Min(count, visualBuffer.Length - visualBufferOffset);
-
-				if (bufferLatencySamplesLeft > 0)
-					todo = Math.Min(todo, bufferLatencySamplesLeft);
 
 				// Mixed output is already in 32-bit, so just copy the data
 				Buffer.BlockCopy(buffer, offset, visualBuffer, visualBufferOffset * 4, todo * 4);
@@ -276,45 +292,25 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 				count -= todo;
 
-				if (bufferLatencySamplesLeft > 0)
-					bufferLatencySamplesLeft -= todo;
-
 				if (visualBufferOffset == visualBuffer.Length)
 				{
-					if (bufferToSend == null)
-						bufferToSend = new int[bufferSize];
-
-					Array.Copy(visualBuffer, 0, bufferToSend, writeOffset, visualBuffer.Length);
-					writeOffset += visualBuffer.Length;
-
-					visualBufferOffset = 0;
-				}
-			}
-
-			if (bufferToSend != null)
-			{
-				Array.Resize(ref bufferToSend, writeOffset);
-
-				SampleDataInfo info = new SampleDataInfo
-				{
-					Buffer = bufferToSend,
-					NumberOfChannels = numberOfChannels,
-					SwapSpeakers = swapSpeakers
-				};
-
-				bufferLatencyQueue.Enqueue(info);
-
-				if (bufferLatencySamplesLeft == 0)
-				{
-					if (bufferLatencyUseQueue && (bufferLatencyQueue.Count > 0))
+					SampleDataInfo info = new SampleDataInfo
 					{
-						sampleDataInfo = bufferLatencyQueue.Dequeue();
+						Buffer = visualBuffer,
+						NumberOfChannels = numberOfChannels,
+						SwapSpeakers = swapSpeakers,
+						TimeWhenBufferWasRendered = currentSampleDataTimeWhenFilling
+					};
 
-						// Tell the thread about new data
-						newSampleDataEvent.Set();
+					lock (sampleDataList)
+					{
+						sampleDataList.Add(info);
 					}
-					else
-						bufferLatencyUseQueue = true;
+
+					currentSampleDataTimeWhenFilling += SampleBufferSizeInMs;
+
+					visualBuffer = new int[visualBuffer.Length];
+					visualBufferOffset = 0;
 				}
 			}
 		}
@@ -370,13 +366,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private void InitializeVisualsLatency()
 		{
 			channelLatencySamplesLeft = (int)(((float)mixerFrequency / 1000) * currentLatency);
-			bufferLatencySamplesLeft = (int)(((float)mixerFrequency / 1000) * (minimumLatency + currentLatency));
+			sampleDataLatencyLeft = currentLatency;
 			moduleInfoLatencySamples = channelLatencySamplesLeft;
 			moduleInfoLatencySamplesLeft = moduleInfoLatencySamples;
 
-			bufferLatencyUseQueue = false;
-			bufferLatencyQueue.Clear();
 			channelLatencyQueue.Clear();
+
+			lock (sampleDataList)
+			{
+				sampleDataList.Clear();
+			}
 		}
 
 
@@ -390,7 +389,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		private void VisualizeThread()
 		{
 			// Initialize the synchronize objects to wait for
-			WaitHandle[] waitArray = { exitEvent, channelChangedEvent, newSampleDataEvent };
+			WaitHandle[] waitArray = { exitEvent, channelChangedEvent };
 
 			bool stillRunning = true;
 
@@ -420,22 +419,66 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						}
 						break;
 					}
+				}
+			}
+		}
 
-					// newSampleDataEvent
-					case 2:
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Is called for every 20 ms and will give the next sample buffer
+		/// to the visualizer agents
+		/// </summary>
+		/********************************************************************/
+		private void VisualizeTimer(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			SampleDataInfo sampleDataInfo = null;
+
+			lock (sampleDataList)
+			{
+				if (sampleDataLatencyLeft > 0)
+					sampleDataLatencyLeft -= SampleBufferSizeInMs;
+				else
+				{
+					if (sampleDataList.Count > 0)
 					{
-						SampleDataInfo info = sampleDataInfo;
-						NewSampleData sampleData = new NewSampleData(info.Buffer, info.NumberOfChannels, info.SwapSpeakers);
+						// Check if we're behind in time. This can happen if e.g. using the Disk Saver
+						// output agent. If so, skip some of the buffers until we're in sync again
+						long maxTime = currentSampleDataTimeForTimer + (MaxSecondsInSampleBuffer * 1000) - currentLatency;
+						long lastItemTime = sampleDataList[^1].TimeWhenBufferWasRendered;
 
-						foreach (IVisualAgent visualAgent in manager.GetRegisteredVisualAgent())
+						if (lastItemTime >= maxTime)
 						{
-							if (visualAgent is ISampleDataVisualAgent sampleDataVisualAgent)
-								sampleDataVisualAgent.SampleData(sampleData);
+							maxTime = lastItemTime - currentLatency;
+
+							while (sampleDataList[0].TimeWhenBufferWasRendered < maxTime)
+								sampleDataList.RemoveAt(0);
+
+							currentSampleDataTimeForTimer = maxTime;
 						}
-						break;
+
+						if (sampleDataList.Count > 0)
+						{
+							sampleDataInfo = sampleDataList[0];
+							sampleDataList.RemoveAt(0);
+						}
 					}
 				}
 			}
+
+			if (sampleDataInfo != null)
+			{
+				NewSampleData sampleData = new NewSampleData(sampleDataInfo.Buffer, sampleDataInfo.NumberOfChannels, sampleDataInfo.SwapSpeakers);
+
+				foreach (IVisualAgent visualAgent in manager.GetRegisteredVisualAgent())
+				{
+					if (visualAgent is ISampleDataVisualAgent sampleDataVisualAgent)
+						sampleDataVisualAgent.SampleData(sampleData);
+				}
+			}
+
+			currentSampleDataTimeForTimer += SampleBufferSizeInMs;
 		}
 	}
 }

@@ -153,6 +153,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						// Clear player information
 						StaticModuleInformation = new ModuleInfoStatic();
 						PlayingModuleInformation = new ModuleInfoFloating();
+
+						// Tell all visuals to stop
+						foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
+							visualAgent.CleanupVisual();
 					}
 				}
 			}
@@ -245,13 +249,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					{
 						currentPlayer.CleanupSound();
 					}
-				}
-
-				if (stopOutputAgent)
-				{
-					// Tell all visuals to stop
-					foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
-						visualAgent.CleanupVisual();
 				}
 			}
 		}
