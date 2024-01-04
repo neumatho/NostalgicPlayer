@@ -101,7 +101,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | MED 2.10 (MED4) | .med | Module Converter | OctaMED |
 | MED 2.10 (MMD0) | .med / .mmd0 / .md0 | | OctaMED |
 | MED Packer | .med / .mmdc | | OctaMED |
-| Mod's Grave | .wow | | ModTracker |
+| Mod's Grave | .wow | | Xmp |
 | Module-Patterncompressor | .pmd3 | ProWizard | ModTracker |
 | Module Protector | .mp | ProWizard | ModTracker |
 | Mosh Player | .mosh | ProWizard | ModTracker |

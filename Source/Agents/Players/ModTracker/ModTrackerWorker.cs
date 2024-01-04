@@ -972,10 +972,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 					uint wowLength = (uint)(1084 + totalSampleLength + (maxPat * 64 * 4 * 8));
 					if ((moduleStream.Length & ~1) == wowLength)
-						retVal = ModuleType.ModsGrave;
+						return ModuleType.Unknown;
 				}
 
-				if ((retVal != ModuleType.ModsGrave) && (mark != 0x4d264b21))	// Skip check for most likely His Master's Noise format
+				if (mark != 0x4d264b21)	// Skip check for most likely His Master's Noise format
 				{
 					// Check the patterns for any BPM speed effects or ExtraEffect effects
 					// just to be sure it's not a NoiseTracker module.
@@ -1246,7 +1246,7 @@ stopLoop:
 				byte[] buf = new byte[23];
 
 				ModuleStream moduleStream = fileInfo.ModuleStream;
-				Encoding encoder = (currentModuleType == ModuleType.ModsGrave) ? EncoderCollection.Dos : IsAtariTracker() ? EncoderCollection.Atari : EncoderCollection.Amiga;
+				Encoding encoder = IsAtariTracker() ? EncoderCollection.Atari : EncoderCollection.Amiga;
 
 				// This is only used for His Master's Noise and contains patterns
 				// that holds synth wave forms instead of real pattern data.
@@ -1328,7 +1328,7 @@ stopLoop:
 					else
 					{
 						// Do the recognized format support fine tune?
-						if (IsSoundTracker() || IsNoiseTracker() || (currentModuleType == ModuleType.ModsGrave))
+						if (IsSoundTracker() || IsNoiseTracker())
 							fineTune = 0;
 					}
 
@@ -1441,7 +1441,7 @@ stopLoop:
 				patternLength = 64;
 
 				// Find the number of channels used
-				if ((currentModuleType == ModuleType.StarTrekker8) || (currentModuleType == ModuleType.ModsGrave))
+				if (currentModuleType == ModuleType.StarTrekker8)
 					channelNum = 8;
 				else
 				{
@@ -2563,7 +2563,7 @@ stopLoop:
 					{
 						case ExtraEffect.SetFilter:
 						{
-							if (!IsAtariTracker() && (currentModuleType != ModuleType.ModsGrave))
+							if (!IsAtariTracker())
 								FilterOnOff(modChan);
 
 							break;
@@ -2613,7 +2613,7 @@ stopLoop:
 
 						case ExtraEffect.KarplusStrong:
 						{
-							if (!IsAtariTracker() && (currentModuleType != ModuleType.ModsGrave))
+							if (!IsAtariTracker())
 								KarplusStrong(modChan);
 
 							break;

@@ -33,7 +33,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		DigitalTracker,
 
 		// Out of category in checks
-		ProTracker,
-		ModsGrave,
+		ProTracker
 	}
 }

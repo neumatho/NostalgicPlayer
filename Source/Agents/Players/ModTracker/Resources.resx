@@ -148,13 +148,6 @@ This player can handle modules in both 64 and 100 patterns format.</value>
 
 This player plays module from the Atari Octalyser. It is a 6 and 8 channel ProTracker clone and using the same file format.</value>
   </data>
-  <data name="IDS_MOD_DESCRIPTION_AGENT15" xml:space="preserve">
-    <value>This format is very rare. The format is created by the Mod's Grave tool, which convert 669 modules to a 8 channel mod file with the M.K. signature. This make it very hard to detect properly.
-
-The converter is not that good and some modules simply sounds bad, because some effects are not converted properly. Even some modules stop too early, because of added position jump and pattern break effects.
-
-The detection routine is created by Alice Rowan for the MikMod player, but I have copied it into this player instead. A big thanks for all the research you have made for this.</value>
-  </data>
   <data name="IDS_MOD_DESCRIPTION_AGENT16" xml:space="preserve">
     <value>This editor was written for the Atari by Softjee. It is the little brother to Digital Home Studio.
 
@@ -274,9 +267,6 @@ This is a NoiseTracker clone, but improved by the possibility to have synth samp
   </data>
   <data name="IDS_MOD_NAME_AGENT14" xml:space="preserve">
     <value>Atari Octalyser</value>
-  </data>
-  <data name="IDS_MOD_NAME_AGENT15" xml:space="preserve">
-    <value>Mod's Grave</value>
   </data>
   <data name="IDS_MOD_NAME_AGENT16" xml:space="preserve">
     <value>Digital Tracker MOD</value>

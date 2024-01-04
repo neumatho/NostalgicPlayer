@@ -56,6 +56,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			TakeTracker,
 			ScreamTracker3,
 			OpenMpt,
+			ModsGrave,
 
 			TestOnly
 		}
@@ -168,6 +169,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		};
 
 		/// <summary></summary>
+		public static readonly Format_Loader LibXmp_Loader_ModsGrave = new Format_Loader
+		{
+			Id = Guid.Parse("4B17DA31-92E4-49AF-89F1-0D6CC627E78E"),
+			Name = "Mod's Grave",
+			Description = "This format is very rare. The format is created by the Mod's Grave tool, which convert 669 modules to a 8 channel mod file with the M.K. signature. This make it very hard to detect properly.\n\nThe converter is not that good and some modules simply sounds bad, because some effects are not converted properly. Even some modules stop too early, because of added position jump and pattern break effects.",
+			Create = Create_ModsGrave
+		};
+
+		/// <summary></summary>
 		public static readonly Format_Loader LibXmp_Loader_TestOnly = new Format_Loader
 		{
 			Id = Guid.Parse("0D3538F7-BF9F-484E-967F-9E84C92DE010"),
@@ -233,6 +243,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private static IFormatLoader Create_OpenMpt(LibXmp libXmp, Xmp_Context ctx)
 		{
 			return new Mod_Load(libXmp, ExternalFormat.OpenMpt);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a new instance of the loader
+		/// </summary>
+		/********************************************************************/
+		private static IFormatLoader Create_ModsGrave(LibXmp libXmp, Xmp_Context ctx)
+		{
+			return new Mod_Load(libXmp, ExternalFormat.ModsGrave);
 		}
 
 
@@ -1064,7 +1086,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			tracker_Id = FindInternalFormat(f, start);
 
-			if (!out_Of_Range && mkMark && !LibXmp.UnitTestMode)
+			if (!out_Of_Range && mkMark && (tracker_Id != InternalFormat.ModsGrave) && !LibXmp.UnitTestMode)
 				return ExternalFormat.Unknown;
 
 			switch (tracker_Id)
@@ -1081,6 +1103,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				case InternalFormat.OpenMpt:
 					return ExternalFormat.OpenMpt;
+
+				case InternalFormat.ModsGrave:
+					return ExternalFormat.ModsGrave;
 
 				// Converted and unknown are treated as FastTracker
 				case InternalFormat.Converted:
@@ -1099,7 +1124,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				case InternalFormat.Octalyser:
 				case InternalFormat.DigitalTracker:
 				case InternalFormat.Flextrax:
-				case InternalFormat.ModsGrave:
 					return ExternalFormat.Unknown;
 			}
 
