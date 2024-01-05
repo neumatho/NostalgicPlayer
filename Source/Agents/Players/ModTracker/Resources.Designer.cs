@@ -122,17 +122,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This editor was written for the Atari by Softjee. It is the little brother to Digital Home Studio.
-        ///
-        ///Normally, modules saved with this tracker have their own format, but it is possible to save the modules in MOD format. This player can play the MOD format modules..
-        /// </summary>
-        internal static string IDS_MOD_DESCRIPTION_AGENT16 {
-            get {
-                return ResourceManager.GetString("IDS_MOD_DESCRIPTION_AGENT16", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Original player by Mahoney.
         ///Converted to C# by Thomas Neumann.
         ///
@@ -394,15 +383,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         internal static string IDS_MOD_NAME_AGENT14 {
             get {
                 return ResourceManager.GetString("IDS_MOD_NAME_AGENT14", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Digital Tracker MOD.
-        /// </summary>
-        internal static string IDS_MOD_NAME_AGENT16 {
-            get {
-                return ResourceManager.GetString("IDS_MOD_NAME_AGENT16", resourceCulture);
             }
         }
         

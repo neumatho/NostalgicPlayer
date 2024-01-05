@@ -30,7 +30,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 
 		// Atari trackers
 		Octalyser,
-		DigitalTracker,
 
 		// Out of category in checks
 		ProTracker

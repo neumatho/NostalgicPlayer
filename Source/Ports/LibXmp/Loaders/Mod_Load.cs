@@ -57,6 +57,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			ScreamTracker3,
 			OpenMpt,
 			ModsGrave,
+			DigitalTracker,
 
 			TestOnly
 		}
@@ -178,6 +179,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		};
 
 		/// <summary></summary>
+		public static readonly Format_Loader LibXmp_Loader_Dt = new Format_Loader
+		{
+			Id = Guid.Parse("A9B16B49-1472-4208-A300-3A73EED474AB"),
+			Name = "Digital Tracker MOD",
+			Description = "This editor was written for the Atari by Softjee. It is the little brother to Digital Home Studio.\n\nNormally, modules saved with this tracker have their own format, but it is possible to save the modules in MOD format. This player can play the MOD format modules.",
+			Create = Create_Dt
+		};
+
+		/// <summary></summary>
 		public static readonly Format_Loader LibXmp_Loader_TestOnly = new Format_Loader
 		{
 			Id = Guid.Parse("0D3538F7-BF9F-484E-967F-9E84C92DE010"),
@@ -255,6 +265,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private static IFormatLoader Create_ModsGrave(LibXmp libXmp, Xmp_Context ctx)
 		{
 			return new Mod_Load(libXmp, ExternalFormat.ModsGrave);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a new instance of the loader
+		/// </summary>
+		/********************************************************************/
+		private static IFormatLoader Create_Dt(LibXmp libXmp, Xmp_Context ctx)
+		{
+			return new Mod_Load(libXmp, ExternalFormat.DigitalTracker);
 		}
 
 
@@ -1107,6 +1129,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				case InternalFormat.ModsGrave:
 					return ExternalFormat.ModsGrave;
 
+				case InternalFormat.DigitalTracker:
+					return ExternalFormat.DigitalTracker;
+
 				// Converted and unknown are treated as FastTracker
 				case InternalFormat.Converted:
 				case InternalFormat.ConvertedSt:
@@ -1122,7 +1147,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					return LibXmp.UnitTestMode ? ExternalFormat.TestOnly : ExternalFormat.Unknown;
 
 				case InternalFormat.Octalyser:
-				case InternalFormat.DigitalTracker:
 				case InternalFormat.Flextrax:
 					return ExternalFormat.Unknown;
 			}

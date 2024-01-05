@@ -1108,8 +1108,6 @@ stopLoop:
 					retVal = ModuleType.Octalyser;
 				else if (mark == 0x46455354)								// FEST
 					retVal = ModuleType.HisMastersNoise;
-				else if ((mark == 0x46413034) || (mark == 0x46413036) || (mark == 0x46413038))	// FA04 || FA06 || FA08
-					retVal = ModuleType.DigitalTracker;
 			}
 
 			return retVal;
@@ -1229,7 +1227,7 @@ stopLoop:
 		/********************************************************************/
 		private bool IsAtariTracker()
 		{
-			return (currentModuleType >= ModuleType.Octalyser) && (currentModuleType <= ModuleType.DigitalTracker);
+			return (currentModuleType >= ModuleType.Octalyser);
 		}
 
 
@@ -1424,10 +1422,6 @@ stopLoop:
 
 				// All 31 samples modules have a mark
 				uint mark = sampleNum == 31 ? moduleStream.Read_B_UINT32() : 0;
-
-				// Digital Tracker have extra 4 bytes, which can safely be ignored
-				if (currentModuleType == ModuleType.DigitalTracker)
-					moduleStream.Seek(4, SeekOrigin.Current);
 
 				if (moduleStream.EndOfStream)
 				{

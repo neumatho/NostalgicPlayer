@@ -61,7 +61,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Digital Illusions | .di | ProWizard | ModTracker |
 | Digital Sound and Music Interface | .amf | | Xmp |
 | Digital Sound Interface Kit RIFF | .dsm | | Xmp |
-| Digital Tracker MOD | .mod | | ModTracker |
+| Digital Tracker MOD | .mod | | Xmp |
 | D.O.C. SoundTracker II | .mod | | ModTracker |
 | D.O.C. SoundTracker VI | .mod | | ModTracker |
 | D.O.C. SoundTracker IX | .mod | | ModTracker |
