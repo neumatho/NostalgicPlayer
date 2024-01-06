@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
@@ -745,6 +746,34 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/********************************************************************/
 		private void Compare_VBlank_Scan()
 		{
+			// Calculate both CIA and VBlank time for certain long MODs
+			// and pick the more likely (i.e. shorter) one. The same logic
+			// works regardless of the initial mode selected--either way,
+			// the wrong timing mode usually makes modules MUCH longer
+			Player_Data p = ctx.P;
+			Module_Data m = ctx.M;
+			byte[] ctrl_Backup = new byte[256];
+
+			// Back up the current info to avoid a third scan
+			Scan_Data scan_Backup = p.Scan[0];
+			Ord_Data[] info_Backup = m.Xxo_Info;
+			Array.Copy(p.Sequence_Control, ctrl_Backup, p.Sequence_Control.Length);
+
+			p.Scan[0] = new Scan_Data();
+			m.Xxo_Info = ArrayHelper.InitializeArray<Ord_Data>(m.Xxo_Info.Length);
+
+			Reset_Scan_Data();
+
+			m.Quirk ^= Quirk_Flag.NoBpm;
+			p.Scan[0].Time = Scan_Module(0, 0);
+
+			if (p.Scan[0].Time >= scan_Backup.Time)
+			{
+				m.Quirk ^= Quirk_Flag.NoBpm;
+				p.Scan[0] = scan_Backup;
+				m.Xxo_Info = info_Backup;
+				Array.Copy(ctrl_Backup, p.Sequence_Control, p.Sequence_Control.Length);
+			}
 		}
 
 

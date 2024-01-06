@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
 
 namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Module_Length
@@ -16,25 +17,31 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Module_Length
 	{
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Listen by Bruno uses VBlank timing and should have a duration of
+		/// 2:27 (Bruno's Musicbox 2 musicdisk). The only instance of a high
+		/// speed effect is near the end, which extends the module by 10
+		/// seconds when interpreted as a BPM.
+		///
+		/// Currently detected as VBlank by checks for modules where the only
+		/// high speed effect is near the end
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test_Module_Length_Roadblast()
+		public void Test_Module_Length_Listen()
 		{
 			Ports.LibXmp.LibXmp opaque = Ports.LibXmp.LibXmp.Xmp_Create_Context();
 			c_int time = 0;
 
-			c_int ret = LoadModule(Path.Combine(dataDirectory, "P"), "Roadblas.xm", opaque);
+			c_int ret = LoadModule(Path.Combine(dataDirectory, "P"), "Listen.mod", opaque);
 			Assert.AreEqual(0, ret, "Module load");
 
 			opaque.Xmp_Get_Module_Info(out Xmp_Module_Info mi);
 			opaque.Xmp_Get_Frame_Info(out Xmp_Frame_Info fi);
 
-			Assert.AreEqual(41, mi.Mod.Len, "Module length");
-			Assert.AreEqual(99840, fi.Total_Time, "Estimated time");
+			Assert.AreEqual(28, mi.Mod.Len, "Module length");
+			Assert.AreEqual(147000, fi.Total_Time, "Estimated time");
 
-			opaque.Xmp_Start_Player(8000, 0);
+			opaque.Xmp_Start_Player(Constants.Xmp_Min_SRate, 0);
 
 			while (opaque.Xmp_Play_Frame() == 0)
 			{
