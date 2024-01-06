@@ -96,7 +96,6 @@
 			AutoSize = true;
 			AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			ClientSize = new System.Drawing.Size(284, 62);
-			ControlBox = false;
 			Controls.Add(buttonPanel);
 			Controls.Add(messagePanel);
 			Controls.Add(pictureBox);

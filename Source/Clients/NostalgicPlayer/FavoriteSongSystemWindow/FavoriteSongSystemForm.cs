@@ -368,11 +368,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.FavoriteSongSystemWindow
 		{
 			using (CustomMessageBox dialog = new CustomMessageBox(Resources.IDS_FAVORITE_RESET, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Question))
 			{
-				dialog.AddButton(Resources.IDS_BUT_YES, 'Y');
+				dialog.AddButton(Resources.IDS_BUT_YES, 'y');
 				dialog.AddButton(Resources.IDS_BUT_NO, 'N');
 				dialog.ShowDialog();
 
-				if (dialog.GetButtonResult() == 'Y')
+				if (dialog.GetButtonResult('N') == 'y')
 				{
 					using (new SleepCursor())
 					{

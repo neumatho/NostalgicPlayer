@@ -291,11 +291,11 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 				{
 					using (CustomMessageBox dialog = new CustomMessageBox(string.Format(Resources.IDS_MSG_OVERWRITE_FILE, fileName), Resources.IDS_NAME, CustomMessageBox.IconType.Question))
 					{
-						dialog.AddButton(Resources.IDS_BUT_YES, 'Y');
+						dialog.AddButton(Resources.IDS_BUT_YES, 'y');
 						dialog.AddButton(Resources.IDS_BUT_NO, 'N');
 						dialog.ShowDialog();
 
-						if (dialog.GetButtonResult() == 'N')
+						if (dialog.GetButtonResult('N') == 'N')
 						{
 							errorMessage = string.Empty;
 							return AgentResult.Error;

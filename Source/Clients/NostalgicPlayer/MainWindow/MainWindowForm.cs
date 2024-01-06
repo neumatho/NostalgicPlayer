@@ -329,7 +329,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						dialog.AddButton(Resources.IDS_BUT_SKIPREMOVE, 'r');
 						dialog.AddButton(Resources.IDS_BUT_STOP, 'p');
 						dialog.ShowDialog(this);
-						response = dialog.GetButtonResult();
+						response = dialog.GetButtonResult('p');
 					}
 					break;
 				}

@@ -54,6 +54,8 @@ namespace Polycode.NostalgicPlayer.GuiKit.Controls
 				Resources.Warning,
 				Resources.Error
 			};
+
+			result = '\0';		// Default, if the window is closed without pressing any button
 		}
 
 
@@ -153,9 +155,9 @@ namespace Polycode.NostalgicPlayer.GuiKit.Controls
 		/// Will get the button clicked
 		/// </summary>
 		/********************************************************************/
-		public char GetButtonResult()
+		public char GetButtonResult(char resultWhenClosing)
 		{
-			return result;
+			return result == '\0' ? resultWhenClosing : result;
 		}
 
 
