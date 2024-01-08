@@ -32,7 +32,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		private static readonly Guid agent9Id = Guid.Parse("A5FDC6F5-DB8B-4066-9566-466E1DA8642C");
 		private static readonly Guid agent10Id = Guid.Parse("AF2E4860-5731-4007-828E-34B84DF689D2");
 		private static readonly Guid agent11Id = Guid.Parse("0A47F13A-78A4-4CD7-9A31-DBBC5107FC7C");
-		private static readonly Guid agent14Id = Guid.Parse("E9C85D93-AA77-4A86-8B8C-3C62B79C5FBE");
 		private static readonly Guid agent17Id = Guid.Parse("7027B4BE-2D15-4377-8F95-D628184328AF");
 		private static readonly Guid agent18Id = Guid.Parse("70E8FE84-09B2-4FE6-9515-4307F14DCBCC");
 
@@ -49,7 +48,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			{ ModuleType.StarTrekker , agent9Id },
 			{ ModuleType.StarTrekker8 , agent10Id },
 			{ ModuleType.ProTracker , agent11Id },
-			{ ModuleType.Octalyser , agent14Id },
 			{ ModuleType.HisMastersNoise, agent17Id },
 			{ ModuleType.AudioSculpture , agent18Id }
 		};
@@ -97,7 +95,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT9, Resources.IDS_MOD_DESCRIPTION_AGENT9, agent9Id),
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT10, Resources.IDS_MOD_DESCRIPTION_AGENT10, agent10Id),
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT11, Resources.IDS_MOD_DESCRIPTION_AGENT11, agent11Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT14, Resources.IDS_MOD_DESCRIPTION_AGENT14, agent14Id),
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT17, Resources.IDS_MOD_DESCRIPTION_AGENT17, agent17Id),
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT18, Resources.IDS_MOD_DESCRIPTION_AGENT18, agent18Id)
 				};

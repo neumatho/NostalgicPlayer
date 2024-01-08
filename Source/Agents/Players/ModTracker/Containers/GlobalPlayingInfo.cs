@@ -28,7 +28,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		public byte PattDelayTime2;
 		public short LastUsedPositionJumpArgument;
 		public short LastUsedBreakPositionArgument;
-		public bool PatternLoopHandled;	// Indicate if an E6x effect has been handled on the same line. Only used for Atari Octalyser modules
 
 		/********************************************************************/
 		/// <summary>

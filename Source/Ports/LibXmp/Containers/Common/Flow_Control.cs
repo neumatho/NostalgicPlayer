@@ -19,6 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		public c_int JumpLine;
 		public c_int Loop_Chn;
 		public c_int Jump_In_Pat;
+		public bool Loop_Set;
 
 		public Pattern_Loop[] Loop;
 

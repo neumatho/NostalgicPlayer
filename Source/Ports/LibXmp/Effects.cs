@@ -744,6 +744,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						// Loop pattern
 						case Effects.Ex_Pattern_Loop:
 						{
+							bool is_Octalyser = Common.Has_Quirk(m, Quirk_Flag.OctalyserLoop);
+
+							// Atari Octalyser seems to have the loop arguments as global instead
+							// of channel separated. At least what I can see from 8er-mod.
+							//
+							// The replay sources that I got my hands on, does not support E6x, so
+							// I can not verify it. However, Dammed Illusion have the same E6x on
+							// multiple channels, so that's why the "Loop_Set" has been introduced
+							// so the loop count isn't decremented too many times
+							if (is_Octalyser)
+								chn = 0;
+
 							if (fxP == 0)
 							{
 								// Mark start of loop
@@ -757,21 +769,31 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 								// End of loop
 								if (f.Loop[chn].Count != 0)
 								{
-									if (--f.Loop[chn].Count != 0)
+									if (!is_Octalyser || !f.Loop_Set)
 									{
-										// **** H:FIXME ****
-										f.Loop_Chn = ++chn;
-									}
-									else
-									{
-										if (Common.Has_Quirk(m, Quirk_Flag.S3MLoop))
-											f.Loop[chn].Start = p.Row + 1;
+										f.Loop_Set = true;
+
+										if (--f.Loop[chn].Count != 0)
+										{
+											// **** H:FIXME ****
+											f.Loop_Chn = ++chn;
+										}
+										else
+										{
+											if (Common.Has_Quirk(m, Quirk_Flag.S3MLoop))
+												f.Loop[chn].Start = p.Row + 1;
+										}
 									}
 								}
 								else
 								{
-									f.Loop[chn].Count = fxP;
-									f.Loop_Chn = ++chn;
+									if (!is_Octalyser || !f.Loop_Set)
+									{
+										f.Loop_Set = true;
+
+										f.Loop[chn].Count = fxP;
+										f.Loop_Chn = ++chn;
+									}
 								}
 							}
 							break;

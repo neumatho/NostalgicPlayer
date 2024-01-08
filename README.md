@@ -41,7 +41,6 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | AHX 1.x | .ahx / .thx | | AHX |
 | AHX 2.x | .ahx / .thx | | AHX |
 | Asylum Music Format | .amf | | Xmp |
-| Atari Octalyser | .mod | | ModTracker |
 | Audio Sculpture | .adsc | | ModTracker |
 | AudioIFF | .aiff / .aif | | Sample |
 | Ben Replay | .ben | ProWizard | ModTracker |
@@ -118,6 +117,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | NoiseTracker | .mod | | ModTracker |
 | NoiseTracker Compressed | .ntc | ProWizard | ModTracker |
 | NovoTrade Packer | .ntp | ProWizard | ModTracker |
+| Octalyser | .mod | | Xmp |
 | OctaMED | .med / .mmd0 / .md0 / .omed | | OctaMED |
 | OctaMED Professional 3.00 - 4.xx | .med / .mmd1 / .md1 / .omed | | OctaMED |
 | OctaMED Professional 5.00 - 6.xx | .med / .mmd2 / .md2 / .omed | | OctaMED |

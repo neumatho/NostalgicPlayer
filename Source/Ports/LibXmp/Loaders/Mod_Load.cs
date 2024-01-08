@@ -58,6 +58,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			OpenMpt,
 			ModsGrave,
 			DigitalTracker,
+			Octalyser,
 
 			TestOnly
 		}
@@ -188,6 +189,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		};
 
 		/// <summary></summary>
+		public static readonly Format_Loader LibXmp_Loader_Octalyser = new Format_Loader
+		{
+			Id = Guid.Parse("E9C85D93-AA77-4A86-8B8C-3C62B79C5FBE"),
+			Name = "Octalyser",
+			Description = "Original player by Christian Dahl, Davor Slutej and Tord Jansson.\n\nThis player plays module from Octalyser, which is an editor to the Atari. It is a 6 and 8 channels ProTracker clone and using the same file format.",
+			Create = Create_Octalyser
+		};
+
+		/// <summary></summary>
 		public static readonly Format_Loader LibXmp_Loader_TestOnly = new Format_Loader
 		{
 			Id = Guid.Parse("0D3538F7-BF9F-484E-967F-9E84C92DE010"),
@@ -277,6 +287,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private static IFormatLoader Create_Dt(LibXmp libXmp, Xmp_Context ctx)
 		{
 			return new Mod_Load(libXmp, ExternalFormat.DigitalTracker);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a new instance of the loader
+		/// </summary>
+		/********************************************************************/
+		private static IFormatLoader Create_Octalyser(LibXmp libXmp, Xmp_Context ctx)
+		{
+			return new Mod_Load(libXmp, ExternalFormat.Octalyser);
 		}
 
 
@@ -725,6 +747,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				case InternalFormat.Octalyser:
 				{
 					tracker = "Octalyser";
+					m.Quirk |= Quirk_Flag.OctalyserLoop;
 					break;
 				}
 
@@ -1132,6 +1155,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				case InternalFormat.DigitalTracker:
 					return ExternalFormat.DigitalTracker;
 
+				case InternalFormat.Octalyser:
+					return ExternalFormat.Octalyser;
+
 				// Converted and unknown are treated as FastTracker
 				case InternalFormat.Converted:
 				case InternalFormat.ConvertedSt:
@@ -1146,7 +1172,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				case InternalFormat.ProTracker:
 					return LibXmp.UnitTestMode ? ExternalFormat.TestOnly : ExternalFormat.Unknown;
 
-				case InternalFormat.Octalyser:
 				case InternalFormat.Flextrax:
 					return ExternalFormat.Unknown;
 			}

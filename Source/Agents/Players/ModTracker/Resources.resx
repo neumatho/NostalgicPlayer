@@ -143,11 +143,6 @@ This was a very popular tracker on the demo scene. When it came out, almost ever
 
 This player can handle modules in both 64 and 100 patterns format.</value>
   </data>
-  <data name="IDS_MOD_DESCRIPTION_AGENT14" xml:space="preserve">
-    <value>Original player by Christian Dahl, Davor Slutej and Tord Jansson.
-
-This player plays module from the Atari Octalyser. It is a 6 and 8 channel ProTracker clone and using the same file format.</value>
-  </data>
   <data name="IDS_MOD_DESCRIPTION_AGENT17" xml:space="preserve">
     <value>Original player by Mahoney.
 Converted to C# by Thomas Neumann.
@@ -259,9 +254,6 @@ This is a NoiseTracker clone, but improved by the possibility to have synth samp
   </data>
   <data name="IDS_MOD_NAME_AGENT11" xml:space="preserve">
     <value>ProTracker</value>
-  </data>
-  <data name="IDS_MOD_NAME_AGENT14" xml:space="preserve">
-    <value>Atari Octalyser</value>
   </data>
   <data name="IDS_MOD_NAME_AGENT17" xml:space="preserve">
     <value>His Master's Noise (Gnomie by Night)</value>

@@ -312,6 +312,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				for (; row < last_Row; row++, row_Count++, row_Count_Total++)
 				{
+					bool loop_Set = false;
+
 					// Prevent crashes caused by large softmixer frames
 					if (bpm < Constants.Xmp_Min_Bpm)
 						bpm = Constants.Xmp_Min_Bpm;
@@ -624,38 +626,52 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							if ((parm >> 4) == Effects.Ex_Pattern_Loop)
 							{
+								bool is_Octalyser = Common.Has_Quirk(m, Quirk_Flag.OctalyserLoop);
+
+								c_int chn_To_Use = is_Octalyser ? 0 : chn;
+
 								parm &= 0x0f;
 								if (parm != 0)
 								{
 									// Loop end
-									if (loop_Count[chn] != 0)
+									if (loop_Count[chn_To_Use] != 0)
 									{
-										if (--loop_Count[chn] != 0)
+										if (!is_Octalyser || !loop_Set)
 										{
-											// Next iteraction
-											loop_Chn = chn;
-										}
-										else
-										{
-											// Finish looping
-											loop_Num--;
-											inside_Loop = false;
+											loop_Set = true;
 
-											if ((m.Quirk & Quirk_Flag.S3MLoop) != 0)
-												loop_Row[chn] = row;
+											if (--loop_Count[chn_To_Use] != 0)
+											{
+												// Next iteraction
+												loop_Chn = chn_To_Use;
+											}
+											else
+											{
+												// Finish looping
+												loop_Num--;
+												inside_Loop = false;
+
+												if ((m.Quirk & Quirk_Flag.S3MLoop) != 0)
+													loop_Row[chn_To_Use] = row;
+											}
 										}
 									}
 									else
 									{
-										loop_Count[chn] = parm;
-										loop_Chn = chn;
-										loop_Num++;
+										if (!is_Octalyser || !loop_Set)
+										{
+											loop_Set = true;
+
+											loop_Count[chn_To_Use] = parm;
+											loop_Chn = chn_To_Use;
+											loop_Num++;
+										}
 									}
 								}
 								else
 								{
 									// Loop start
-									loop_Row[chn] = row - 1;
+									loop_Row[chn_To_Use] = row - 1;
 									inside_Loop = true;
 
 									if (Common.Has_Quirk(m, Quirk_Flag.Ft2Bugs))

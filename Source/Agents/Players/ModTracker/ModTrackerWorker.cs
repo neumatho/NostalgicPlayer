@@ -279,8 +279,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/********************************************************************/
 		public override void Play()
 		{
-			playingInfo.PatternLoopHandled = false;
-
 			if (playingInfo.Speed != 0)				// Only play if speed <> 0
 			{
 				playingInfo.Counter++;				// Count speed counter
@@ -1104,8 +1102,6 @@ stopLoop:
 				}
 				else if (mark == 0x464c5438)								// FLT8
 					retVal = ModuleType.StarTrekker8;
-				else if ((mark == 0x43443831) || (mark == 0x43443631))		// CD81 || CD61
-					retVal = ModuleType.Octalyser;
 				else if (mark == 0x46455354)								// FEST
 					retVal = ModuleType.HisMastersNoise;
 			}
@@ -1222,18 +1218,6 @@ stopLoop:
 
 		/********************************************************************/
 		/// <summary>
-		/// Tests the current module to see if it's one of the Atari trackers
-		/// </summary>
-		/********************************************************************/
-		private bool IsAtariTracker()
-		{
-			return (currentModuleType >= ModuleType.Octalyser);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Will load a tracker module into memory
 		/// </summary>
 		/********************************************************************/
@@ -1244,7 +1228,7 @@ stopLoop:
 				byte[] buf = new byte[23];
 
 				ModuleStream moduleStream = fileInfo.ModuleStream;
-				Encoding encoder = IsAtariTracker() ? EncoderCollection.Atari : EncoderCollection.Amiga;
+				Encoding encoder = EncoderCollection.Amiga;
 
 				// This is only used for His Master's Noise and contains patterns
 				// that holds synth wave forms instead of real pattern data.
@@ -1365,7 +1349,7 @@ stopLoop:
 				if (songLength > 128)
 					songLength = 128;
 
-				if (IsNoiseTracker() || (currentModuleType == ModuleType.Octalyser))
+				if (IsNoiseTracker())
 				{
 					initTempo = 125;
 					restartPos = (ushort)(moduleStream.Read_UINT8() & 0x7f);
@@ -2557,9 +2541,7 @@ stopLoop:
 					{
 						case ExtraEffect.SetFilter:
 						{
-							if (!IsAtariTracker())
-								FilterOnOff(modChan);
-
+							FilterOnOff(modChan);
 							break;
 						}
 
@@ -2607,9 +2589,7 @@ stopLoop:
 
 						case ExtraEffect.KarplusStrong:
 						{
-							if (!IsAtariTracker())
-								KarplusStrong(modChan);
-
+							KarplusStrong(modChan);
 							break;
 						}
 
@@ -3577,37 +3557,15 @@ stopLoop:
 			{
 				byte arg = (byte)(modChan.TrackLine.EffectArg & 0x0f);
 
-				// Atari Octalyser seems to have the loop arguments as global instead
-				// of channel separated. At least what I can see from 8er-mod.
-				//
-				// The replay sources that I got my hand on, does not support E6x, so
-				// I can not verify it. However, Dammed Illusion have the same E6x on
-				// multiple channels, so that's why the "patternLoopHandled" has been
-				// introduced
-				if (currentModuleType == ModuleType.Octalyser)
-					modChan = channels[0];
-
 				if (arg != 0)
 				{
 					if (playingInfo.PattDelayTime2 == 0)
 					{
 						// Jump to the loop currently set
 						if (modChan.LoopCount == 0)
-						{
-							if (!playingInfo.PatternLoopHandled)
-							{
-								modChan.LoopCount = arg;
-								playingInfo.PatternLoopHandled = true;
-							}
-						}
+							modChan.LoopCount = arg;
 						else
-						{
-							if ((currentModuleType != ModuleType.Octalyser) || !playingInfo.PatternLoopHandled)
-							{
-								modChan.LoopCount--;
-								playingInfo.PatternLoopHandled = true;
-							}
-						}
+							modChan.LoopCount--;
 
 						if ((modChan.LoopCount != 0) && (modChan.PattPos != -1))
 						{

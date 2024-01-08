@@ -111,17 +111,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Original player by Christian Dahl, Davor Slutej and Tord Jansson.
-        ///
-        ///This player plays module from the Atari Octalyser. It is a 6 and 8 channel ProTracker clone and using the same file format..
-        /// </summary>
-        internal static string IDS_MOD_DESCRIPTION_AGENT14 {
-            get {
-                return ResourceManager.GetString("IDS_MOD_DESCRIPTION_AGENT14", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Original player by Mahoney.
         ///Converted to C# by Thomas Neumann.
         ///
@@ -374,15 +363,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         internal static string IDS_MOD_NAME_AGENT11 {
             get {
                 return ResourceManager.GetString("IDS_MOD_NAME_AGENT11", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Atari Octalyser.
-        /// </summary>
-        internal static string IDS_MOD_NAME_AGENT14 {
-            get {
-                return ResourceManager.GetString("IDS_MOD_NAME_AGENT14", resourceCulture);
             }
         }
         

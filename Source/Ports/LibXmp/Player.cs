@@ -287,6 +287,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			lib.mixer.LibXmp_Mixer_Prepare_Frame();
 
+			f.Loop_Set = false;
+
 			// Check reposition
 			if (p.Ord != p.Pos)
 			{
