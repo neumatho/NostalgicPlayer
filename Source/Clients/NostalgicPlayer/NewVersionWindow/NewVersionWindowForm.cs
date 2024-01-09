@@ -9,7 +9,7 @@ using System.Text;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.GuiKit.Components;
 
-namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
+namespace Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow
 {
 	/// <summary>
 	/// This shows the help documentation

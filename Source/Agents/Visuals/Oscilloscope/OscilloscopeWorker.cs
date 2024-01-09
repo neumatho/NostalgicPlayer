@@ -39,6 +39,15 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
 			userControl = new OscilloscopeControl();
 			return userControl;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the anchor name on the help page or null if none exists
+		/// </summary>
+		/********************************************************************/
+		public string HelpAnchor => "oscilloscope";
 		#endregion
 
 		#region IVisualAgent implementation

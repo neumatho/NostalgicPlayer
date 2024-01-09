@@ -27,6 +27,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 		private ModuleHandler moduleHandler;
 
 		private IVisualAgent visualAgent;
+		private readonly string helpUrl;
 
 		/********************************************************************/
 		/// <summary>
@@ -78,6 +79,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 					}
 					else
 						Size = new Size(width, height);
+
+					string helpAnchor = guiDisplay.HelpAnchor;
+					if (!string.IsNullOrEmpty(helpAnchor))
+						helpUrl = $"agentdisplay.html#{helpAnchor}";
 				}
 
 				visualAgent = worker as IVisualAgent;
@@ -109,6 +114,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 				LoadWindowSettings($"{agentInfo.TypeName.Replace(" ", string.Empty)}DisplayWindow");
 			}
 		}
+
+		#region WindowFormBase overrides
+		/********************************************************************/
+		/// <summary>
+		/// Return the URL to the help page
+		/// </summary>
+		/********************************************************************/
+		protected override string HelpUrl => helpUrl;
+		#endregion
 
 		#region Event handlers
 

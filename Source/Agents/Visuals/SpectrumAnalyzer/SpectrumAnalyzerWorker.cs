@@ -43,6 +43,15 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpectrumAnalyzer
 			userControl = new SpectrumAnalyzerControl();
 			return userControl;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the anchor name on the help page or null if none exists
+		/// </summary>
+		/********************************************************************/
+		public string HelpAnchor => "spectrumanalyzer";
 		#endregion
 
 		#region IVisualAgent implementation

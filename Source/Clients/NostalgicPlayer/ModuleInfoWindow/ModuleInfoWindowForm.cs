@@ -174,6 +174,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			}
 		}
 
+		#region WindowFormBase overrides
+		/********************************************************************/
+		/// <summary>
+		/// Return the URL to the help page
+		/// </summary>
+		/********************************************************************/
+		protected override string HelpUrl => "modinfo.html";
+		#endregion
+
 		#region Keyboard shortcuts
 		/********************************************************************/
 		/// <summary>
@@ -204,7 +213,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				}
 			}
 
-			return false;
+			return base.ProcessCmdKey(ref msg, keyData);
 		}
 		#endregion
 

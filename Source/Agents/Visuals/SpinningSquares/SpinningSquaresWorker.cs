@@ -39,6 +39,15 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares
 			userControl = new SpinningSquaresControl();
 			return userControl;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the anchor name on the help page or null if none exists
+		/// </summary>
+		/********************************************************************/
+		public string HelpAnchor => "spinningsquares";
 		#endregion
 
 		#region IVisualAgent implementation

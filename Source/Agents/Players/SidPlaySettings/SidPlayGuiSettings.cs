@@ -48,6 +48,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlaySettings
 		{
 			return new SettingsControl();
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the anchor name on the help page or null if none exists
+		/// </summary>
+		/********************************************************************/
+		public string HelpAnchor => "sidplay";
 		#endregion
 	}
 }

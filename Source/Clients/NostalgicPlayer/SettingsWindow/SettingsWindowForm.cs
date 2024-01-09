@@ -97,6 +97,41 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			}
 		}
 
+		#region WindowFormBase overrides
+		/********************************************************************/
+		/// <summary>
+		/// Return the URL to the help page
+		/// </summary>
+		/********************************************************************/
+		protected override string HelpUrl
+		{
+			get
+			{
+				switch (navigator.SelectedIndex)
+				{
+					case Page_Options:
+						return "settings.html#options";
+
+					case Page_Modules:
+						return "settings.html#modules";
+
+					case Page_Paths:
+						return "settings.html#paths";
+
+					case Page_Mixer:
+						return "settings.html#mixer";
+
+					case Page_Agents:
+						return "settings.html#agents";
+
+					default:
+						return null;
+				}
+			}
+		}
+
+		#endregion
+
 		#region Event handlers
 
 		#region Form events

@@ -22,6 +22,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles;
+using Polycode.NostalgicPlayer.Client.GuiPlayer.NewVersionWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow;
 using Polycode.NostalgicPlayer.GuiKit.Controls;
@@ -306,6 +307,27 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				dialog.AddButton(Resources.IDS_BUT_OK, 'O');
 				dialog.ShowDialog(this);
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Open the help window if not already open
+		/// </summary>
+		/********************************************************************/
+		public void OpenHelpWindow(string newUrl)
+		{
+			if (IsHelpWindowOpen())
+				helpWindow.Activate();
+			else
+			{
+				helpWindow = new HelpWindowForm(this, optionSettings);
+				helpWindow.Disposed += (o, args) => { helpWindow = null; };
+				helpWindow.Show();
+			}
+
+			helpWindow.Navigate(newUrl);
 		}
 
 
@@ -597,6 +619,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			UpdateTimes();
 		}
+
+		#region WindowFormBase overrides
+		/********************************************************************/
+		/// <summary>
+		/// Return the URL to the help page
+		/// </summary>
+		/********************************************************************/
+		protected override string HelpUrl => "howtouse.html";
+		#endregion
 
 		#region Agent window handling
 		/********************************************************************/
@@ -1351,14 +1382,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void Menu_Help_Help_Click(object sender, EventArgs e)
 		{
-			if (IsHelpWindowOpen())
-				helpWindow.Activate();
-			else
-			{
-				helpWindow = new HelpWindowForm(this, optionSettings);
-				helpWindow.Disposed += (o, args) => { helpWindow = null; };
-				helpWindow.Show();
-			}
+			OpenHelpWindow("index.html");
 		}
 
 
@@ -2717,6 +2741,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			// Set the master volume
 			masterVolumeTrackBar.Value = mainWindowSettings.MasterVolume;
+
+			// Initialize base class
+			SetOptions(this, optionSettings);
 		}
 
 

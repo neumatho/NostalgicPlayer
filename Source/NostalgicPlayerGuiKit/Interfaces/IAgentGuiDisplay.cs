@@ -17,5 +17,10 @@ namespace Polycode.NostalgicPlayer.GuiKit.Interfaces
 		/// Return the user control to show
 		/// </summary>
 		UserControl GetUserControl();
+
+		/// <summary>
+		/// Return the anchor name on the help page or null if none exists
+		/// </summary>
+		string HelpAnchor { get; }
 	}
 }

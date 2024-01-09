@@ -367,6 +367,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 			base.OnFormClosed(e);
 		}
 
+		#region WindowFormBase overrides
+		/********************************************************************/
+		/// <summary>
+		/// Return the URL to the help page
+		/// </summary>
+		/********************************************************************/
+		protected override string HelpUrl => "sampinfo.html";
+		#endregion
+
 		#region Event handlers
 		/********************************************************************/
 		/// <summary>

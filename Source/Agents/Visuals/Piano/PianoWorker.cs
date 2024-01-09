@@ -38,6 +38,15 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano
 			userControl = new PianoControl();
 			return userControl;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the anchor name on the help page or null if none exists
+		/// </summary>
+		/********************************************************************/
+		public string HelpAnchor => "piano";
 		#endregion
 
 		#region IVisualAgent implementation

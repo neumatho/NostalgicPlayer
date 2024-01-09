@@ -15,6 +15,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 	/// </summary>
 	public partial class HelpWindowForm : WindowFormBase
 	{
+		private readonly WebBrowser webBrowser;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -25,7 +27,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 			InitializeComponent();
 
 			// Add the browser control
-			WebBrowser webBrowser = new WebBrowser();
+			webBrowser = new WebBrowser();
 			webBrowser.Dock = DockStyle.Fill;
 			Controls.Add(webBrowser);
 
@@ -38,10 +40,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 
 				// Set the title of the window
 				Text = Resources.IDS_HELP_TITLE;
-
-				// Load the version specific documentation
-				webBrowser.Navigate($"https://nostalgicplayer.dk/appdoc/{Env.CurrentVersion}/index.html");
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Navigate to a specific page
+		/// </summary>
+		/********************************************************************/
+		public void Navigate(string page)
+		{
+			// Load the version specific documentation
+			webBrowser.Navigate($"https://nostalgicplayer.dk/appdoc/{Env.CurrentVersion}/{page}");
 		}
 	}
 }

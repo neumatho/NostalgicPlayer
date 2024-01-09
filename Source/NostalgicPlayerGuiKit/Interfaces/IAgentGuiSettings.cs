@@ -16,5 +16,10 @@ namespace Polycode.NostalgicPlayer.GuiKit.Interfaces
 		/// Return a new instance of the settings control
 		/// </summary>
 		ISettingsControl GetSettingsControl();
+
+		/// <summary>
+		/// Return the anchor name on the help page or null if none exists
+		/// </summary>
+		string HelpAnchor { get; }
 	}
 }

@@ -50,6 +50,15 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 		{
 			return new SettingsControl(loadedOutputAgents, loadedSampleConverterAgents);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the anchor name on the help page or null if none exists
+		/// </summary>
+		/********************************************************************/
+		public string HelpAnchor => "disksaver";
 		#endregion
 
 		#region IWantOutputAgents implementation

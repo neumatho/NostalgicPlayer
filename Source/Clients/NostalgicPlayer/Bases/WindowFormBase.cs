@@ -30,6 +30,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 		/// </summary>
 		protected bool disableEscapeKey = false;
 
+		private MainWindowForm mainWindow;
+		private OptionSettings optionSettings;
 		private WindowSettings windowSettings;
 
 		/********************************************************************/
@@ -57,11 +59,26 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Set option settings. Should only be used by the main window
+		/// </summary>
+		/********************************************************************/
+		protected void SetOptions(MainWindowForm mainForm, OptionSettings optSettings)
+		{
+			mainWindow = mainForm;
+			optionSettings = optSettings;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Call this to initialize the window with basis settings
 		/// </summary>
 		/********************************************************************/
-		protected void InitializeWindow(MainWindowForm mainWindow, OptionSettings optionSettings)
+		protected void InitializeWindow(MainWindowForm mainForm, OptionSettings optSettings)
 		{
+			SetOptions(mainForm, optSettings);
+
 			// Set how the window should act in the task bar and task switcher
 			if (!optionSettings.SeparateWindows)
 			{
@@ -117,6 +134,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Return the URL to the help page
+		/// </summary>
+		/********************************************************************/
+		protected virtual string HelpUrl => null;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Is called when the form is closed
 		/// </summary>
 		/********************************************************************/
@@ -145,18 +171,29 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 		/********************************************************************/
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
 		{
-			if (!disableEscapeKey)
-			{
-				// Check for different keyboard shortcuts
-				Keys modifiers = keyData & Keys.Modifiers;
-				Keys key = keyData & Keys.KeyCode;
+			// Check for different keyboard shortcuts
+			Keys modifiers = keyData & Keys.Modifiers;
+			Keys key = keyData & Keys.KeyCode;
 
-				if (modifiers == Keys.None)
+			if (modifiers == Keys.None)
+			{
+				switch (key)
 				{
-					if (key == Keys.Escape)
+					case Keys.Escape:
 					{
+						if (disableEscapeKey)
+							break;
+
 						Close();
 						return true;
+					}
+
+					case Keys.F1:
+					{
+						if (ShowWindowSpecificHelp())
+							return true;
+
+						break;
 					}
 				}
 			}
@@ -179,6 +216,24 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Bases
 				geometry += screen.WorkingArea;
 
 			return geometry;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Open the help and navigate to the right page
+		/// </summary>
+		/********************************************************************/
+		private bool ShowWindowSpecificHelp()
+		{
+			string url = HelpUrl;
+			if (string.IsNullOrEmpty(url))
+				return false;
+
+			mainWindow.OpenHelpWindow(url);
+
+			return true;
 		}
 	}
 }

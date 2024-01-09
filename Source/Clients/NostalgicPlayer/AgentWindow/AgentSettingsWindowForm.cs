@@ -24,6 +24,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 		private AgentInfo agentInfo;
 
 		private ISettingsControl settingsControl;
+		private readonly string helpUrl;
 
 		/********************************************************************/
 		/// <summary>
@@ -71,6 +72,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 
 						MinimumSize = new Size(minWidth, minHeight);
 						Size = new Size(width, height);
+
+						string helpAnchor = guiSettings.HelpAnchor;
+						if (!string.IsNullOrEmpty(helpAnchor))
+							helpUrl = $"agentsettings.html#{helpAnchor}";
 					}
 				}
 
@@ -78,6 +83,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 				InitSettings();
 			}
 		}
+
+		#region WindowFormBase overrides
+		/********************************************************************/
+		/// <summary>
+		/// Return the URL to the help page
+		/// </summary>
+		/********************************************************************/
+		protected override string HelpUrl => helpUrl;
+		#endregion
 
 		#region Event handlers
 
