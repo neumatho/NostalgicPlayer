@@ -71,6 +71,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | FastTracker II | .xm | | Xmp |
 | FC-M Packer | .fc-m / .fcm | ProWizard | ModTracker |
 | FLAC | .flac | | Sample |
+| FlexTrax | .flx | | Xmp |
 | Fred Editor | .frd / .fred | | Fred Editor |
 | Fred Editor (Final) | .frd / .fred | Module Converter | Fred Editor |
 | Fuchs Tracker | .ft | ProWizard | ModTracker |

@@ -992,6 +992,14 @@
             <uap:DisplayName>OggMod</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="flxname">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-flx">.flx</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>FlexTrax</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

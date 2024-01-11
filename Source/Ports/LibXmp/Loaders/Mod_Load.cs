@@ -59,6 +59,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			ModsGrave,
 			DigitalTracker,
 			Octalyser,
+			FlexTrax,
 
 			TestOnly
 		}
@@ -74,7 +75,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Octalyser,
 			TakeTracker,
 			DigitalTracker,
-			Flextrax,
+			FlexTrax,
 			ModsGrave,
 			ScreamTracker3,
 			OpenMpt,
@@ -198,6 +199,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		};
 
 		/// <summary></summary>
+		public static readonly Format_Loader LibXmp_Loader_FlexTrax = new Format_Loader
+		{
+			Id = Guid.Parse("44FBD144-40DA-450C-B0E9-7006B68E4113"),
+			Name = "FlexTrax",
+			Description = "This player is from the Atari Falcon and uses the standard MOD file format. However, it has added some extra information at the end of the file which contains DSP parameters, such as reverb and delay. The editor was written by Thomas Bergström.\n\nThis player does not support the extra features at the moment.",
+			Create = Create_FlexTrax
+		};
+
+		/// <summary></summary>
 		public static readonly Format_Loader LibXmp_Loader_TestOnly = new Format_Loader
 		{
 			Id = Guid.Parse("0D3538F7-BF9F-484E-967F-9E84C92DE010"),
@@ -299,6 +309,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private static IFormatLoader Create_Octalyser(LibXmp libXmp, Xmp_Context ctx)
 		{
 			return new Mod_Load(libXmp, ExternalFormat.Octalyser);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Create a new instance of the loader
+		/// </summary>
+		/********************************************************************/
+		private static IFormatLoader Create_FlexTrax(LibXmp libXmp, Xmp_Context ctx)
+		{
+			return new Mod_Load(libXmp, ExternalFormat.FlexTrax);
 		}
 
 
@@ -711,7 +733,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			{
 				case InternalFormat.ProTracker:
 				{
-					tracker = "Protracker";
+					tracker = "ProTracker";
 					ptkLoop = true;
 					break;
 				}
@@ -719,27 +741,27 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				case InternalFormat.Probably_NoiseTracker:
 				case InternalFormat.NoiseTracker:
 				{
-					tracker = "Noisetracker";
+					tracker = "NoiseTracker";
 					break;
 				}
 
 				case InternalFormat.SoundTracker:
 				{
-					tracker = "Soundtracker";
+					tracker = "SoundTracker";
 					break;
 				}
 
 				case InternalFormat.FastTracker:
 				case InternalFormat.FastTracker2:
 				{
-					tracker = "Fast Tracker";
+					tracker = "FastTracker";
 					m.Period_Type = Containers.Common.Period.Amiga;
 					break;
 				}
 
 				case InternalFormat.TakeTracker:
 				{
-					tracker = "Take Tracker";
+					tracker = "TakeTracker";
 					m.Period_Type = Containers.Common.Period.Amiga;
 					break;
 				}
@@ -757,9 +779,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					break;
 				}
 
-				case InternalFormat.Flextrax:
+				case InternalFormat.FlexTrax:
 				{
-					tracker = "Flextrax";
+					tracker = "FlexTrax";
 					break;
 				}
 
@@ -785,7 +807,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				case InternalFormat.Clone:
 				{
-					tracker = "Protracker clone";
+					tracker = "ProTracker clone";
 					m.Period_Type = Containers.Common.Period.Amiga;
 					break;
 				}
@@ -1158,6 +1180,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				case InternalFormat.Octalyser:
 					return ExternalFormat.Octalyser;
 
+				case InternalFormat.FlexTrax:
+					return ExternalFormat.FlexTrax;
+
 				// Converted and unknown are treated as FastTracker
 				case InternalFormat.Converted:
 				case InternalFormat.ConvertedSt:
@@ -1171,9 +1196,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				case InternalFormat.Probably_NoiseTracker:
 				case InternalFormat.ProTracker:
 					return LibXmp.UnitTestMode ? ExternalFormat.TestOnly : ExternalFormat.Unknown;
-
-				case InternalFormat.Flextrax:
-					return ExternalFormat.Unknown;
 			}
 
 			return ExternalFormat.Unknown;
@@ -1313,7 +1335,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 				if ((num_Read == 4) && (Common.Magic4(idBuffer[0], idBuffer[1], idBuffer[2], idBuffer[3]) == Common.Magic4("FLEX")))
 				{
-					trackerId = InternalFormat.Flextrax;
+					trackerId = InternalFormat.FlexTrax;
 					needs_Timing_Detection = false;
 					goto Skip_Test;
 				}
