@@ -1405,7 +1405,8 @@ stopLoop:
 				moduleStream.Read(positions, 0, 128);
 
 				// All 31 samples modules have a mark
-				uint mark = sampleNum == 31 ? moduleStream.Read_B_UINT32() : 0;
+				if (sampleNum == 31)
+					moduleStream.Seek(4, SeekOrigin.Current);
 
 				if (moduleStream.EndOfStream)
 				{
