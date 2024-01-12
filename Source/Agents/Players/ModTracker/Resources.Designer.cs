@@ -118,9 +118,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         ///
         ///The editor was created by Mahoney, which want an editor with the features he like. Music created in this editor by him an [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string IDS_MOD_DESCRIPTION_AGENT17 {
+        internal static string IDS_MOD_DESCRIPTION_AGENT12 {
             get {
-                return ResourceManager.GetString("IDS_MOD_DESCRIPTION_AGENT17", resourceCulture);
+                return ResourceManager.GetString("IDS_MOD_DESCRIPTION_AGENT12", resourceCulture);
             }
         }
         
@@ -130,9 +130,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         ///
         ///This is the commercial version of StarTrekker. I do not know, what the real difference is, except that the external file have the extension .as instead..
         /// </summary>
-        internal static string IDS_MOD_DESCRIPTION_AGENT18 {
+        internal static string IDS_MOD_DESCRIPTION_AGENT13 {
             get {
-                return ResourceManager.GetString("IDS_MOD_DESCRIPTION_AGENT18", resourceCulture);
+                return ResourceManager.GetString("IDS_MOD_DESCRIPTION_AGENT13", resourceCulture);
             }
         }
         
@@ -369,18 +369,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         /// <summary>
         ///   Looks up a localized string similar to His Master&apos;s Noise (Gnomie by Night).
         /// </summary>
-        internal static string IDS_MOD_NAME_AGENT17 {
+        internal static string IDS_MOD_NAME_AGENT12 {
             get {
-                return ResourceManager.GetString("IDS_MOD_NAME_AGENT17", resourceCulture);
+                return ResourceManager.GetString("IDS_MOD_NAME_AGENT12", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Audio Sculpture.
         /// </summary>
-        internal static string IDS_MOD_NAME_AGENT18 {
+        internal static string IDS_MOD_NAME_AGENT13 {
             get {
-                return ResourceManager.GetString("IDS_MOD_NAME_AGENT18", resourceCulture);
+                return ResourceManager.GetString("IDS_MOD_NAME_AGENT13", resourceCulture);
             }
         }
         

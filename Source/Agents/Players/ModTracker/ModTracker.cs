@@ -32,8 +32,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		private static readonly Guid agent9Id = Guid.Parse("A5FDC6F5-DB8B-4066-9566-466E1DA8642C");
 		private static readonly Guid agent10Id = Guid.Parse("AF2E4860-5731-4007-828E-34B84DF689D2");
 		private static readonly Guid agent11Id = Guid.Parse("0A47F13A-78A4-4CD7-9A31-DBBC5107FC7C");
-		private static readonly Guid agent17Id = Guid.Parse("7027B4BE-2D15-4377-8F95-D628184328AF");
-		private static readonly Guid agent18Id = Guid.Parse("70E8FE84-09B2-4FE6-9515-4307F14DCBCC");
+		private static readonly Guid agent12Id = Guid.Parse("7027B4BE-2D15-4377-8F95-D628184328AF");
+		private static readonly Guid agent13Id = Guid.Parse("70E8FE84-09B2-4FE6-9515-4307F14DCBCC");
 
 		private static readonly Dictionary<ModuleType, Guid> moduleTypeLookup = new Dictionary<ModuleType, Guid>
 		{
@@ -48,8 +48,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			{ ModuleType.StarTrekker , agent9Id },
 			{ ModuleType.StarTrekker8 , agent10Id },
 			{ ModuleType.ProTracker , agent11Id },
-			{ ModuleType.HisMastersNoise, agent17Id },
-			{ ModuleType.AudioSculpture , agent18Id }
+			{ ModuleType.HisMastersNoise, agent12Id },
+			{ ModuleType.AudioSculpture , agent13Id }
 		};
 
 		internal static readonly string[] fileExtensions = { "mod", "adsc" };
@@ -95,8 +95,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT9, Resources.IDS_MOD_DESCRIPTION_AGENT9, agent9Id),
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT10, Resources.IDS_MOD_DESCRIPTION_AGENT10, agent10Id),
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT11, Resources.IDS_MOD_DESCRIPTION_AGENT11, agent11Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT17, Resources.IDS_MOD_DESCRIPTION_AGENT17, agent17Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT18, Resources.IDS_MOD_DESCRIPTION_AGENT18, agent18Id)
+					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT12, Resources.IDS_MOD_DESCRIPTION_AGENT12, agent12Id),
+					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT13, Resources.IDS_MOD_DESCRIPTION_AGENT13, agent13Id)
 				};
 			}
 		}

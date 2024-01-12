@@ -24,7 +24,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 	/// </summary>
 	internal class ModTrackerWorker : ModulePlayerWithPositionDurationAgentBase
 	{
-		private const int NumberOfNotes = 7 * 12;
+		private const int NumberOfNotes = 3 * 12;
+
+		private const int MinPeriod = 113;
+		private const int MaxPeriod = 856;
 
 		private static readonly byte[] stSynthId1 = { 0x53, 0x54, 0x31, 0x2e, 0x33, 0x20, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x49, 0x4e, 0x46, 0x4f };		// ST1.3 ModuleINFO
 		private static readonly byte[] stSynthId2 = { 0x53, 0x54, 0x31, 0x2e, 0x32, 0x20, 0x4d, 0x6f, 0x64, 0x75, 0x6c, 0x65, 0x49, 0x4e, 0x46, 0x4f };		// ST1.2 ModuleINFO
@@ -43,9 +46,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		private ushort patternLength;
 		private ushort restartPos;
 		private byte initTempo;
-
-		private ushort minPeriod;
-		private ushort maxPeriod;
 
 		private byte[] positions;
 
@@ -391,13 +391,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 					if (currentModuleType == ModuleType.HisMastersNoise)
 					{
-						for (int j = 0; j < 7 * 12; j++)
-							frequencies[3 * 12 + j] = (uint)(7093789.2 / (Tables.Periods[0, j] + (Tables.Periods[0, j] * sample.FineTuneHmn) / 256));
+						for (int j = 0; j < 3 * 12; j++)
+							frequencies[4 * 12 + j] = (uint)(7093789.2 / (Tables.Periods[0, j] + (Tables.Periods[0, j] * sample.FineTuneHmn) / 256));
 					}
 					else
 					{
-						for (int j = 0; j < 7 * 12; j++)
-							frequencies[2 * 12 + j] = 3546895U / Tables.Periods[sample.FineTune, j];
+						for (int j = 0; j < 3 * 12; j++)
+							frequencies[4 * 12 + j] = 3546895U / Tables.Periods[sample.FineTune, j];
 					}
 
 					yield return new SampleInfo
@@ -1419,23 +1419,7 @@ stopLoop:
 				patternLength = 64;
 
 				// Find the number of channels used
-				if (currentModuleType == ModuleType.StarTrekker8)
-					channelNum = 8;
-				else
-				{
-					if ((mark & 0xffff00ff) == 0x43440031)				// CD\01
-						channelNum = (ushort)(((mark & 0x0000ff00) >> 8) - 0x30);
-					else if ((mark & 0x00ffffff) == 0x0043484e)			// \0CHN
-						channelNum = (ushort)(((mark & 0xff000000) >> 24) - 0x30);
-					else if ((mark & 0x0000ffff) == 0x00004348)			// \0\0CH
-						channelNum = (ushort)((((mark & 0xff000000) >> 24) - 0x30) * 10 + ((mark & 0x00ff0000) >> 16) - 0x30);
-					else if ((mark & 0xffffff00) == 0x54445a00)			// TDZ\0
-						channelNum = (ushort)((mark & 0x000000ff) - 0x30);
-					else if ((mark & 0xffffff00) == 0x46413000)			// FA0\0
-						channelNum = (ushort)((mark & 0x000000ff) - 0x30);
-					else
-						channelNum = 4;
-				}
+				channelNum = (ushort)(currentModuleType == ModuleType.StarTrekker8 ? 8 : 4);
 
 				// If we load a StarTrekker 8-voices module, divide all the
 				// pattern numbers by 2
@@ -1456,10 +1440,6 @@ stopLoop:
 
 				maxPattern++;
 				trackNum = (ushort)(maxPattern * channelNum);
-
-				// Find the min and max periods
-				minPeriod = 113;
-				maxPeriod = 856;
 
 				// Allocate space for the patterns
 				tracks = new TrackLine[trackNum][];
@@ -2977,14 +2957,14 @@ stopLoop:
 			if ((modChan.TrackLine.EffectArg & 0xf0) == 0)
 			{
 				modChan.Period -= (ushort)(modChan.TrackLine.EffectArg & 0x0f);
-				if (modChan.Period < minPeriod)
-					modChan.Period = minPeriod;
+				if (modChan.Period < MinPeriod)
+					modChan.Period = MinPeriod;
 			}
 			else
 			{
 				modChan.Period += (ushort)((modChan.TrackLine.EffectArg & 0xf0) >> 4);
-				if (modChan.Period > maxPeriod)
-					modChan.Period = maxPeriod;
+				if (modChan.Period > MaxPeriod)
+					modChan.Period = MaxPeriod;
 			}
 
 			SetPeriod(modChan.Period, chan, modChan);
@@ -3000,8 +2980,8 @@ stopLoop:
 		private void PortaUp(IChannel chan, ModChannel modChan)
 		{
 			modChan.Period -= (ushort)(modChan.TrackLine.EffectArg & playingInfo.LowMask);
-			if (modChan.Period < minPeriod)
-				modChan.Period = minPeriod;
+			if (modChan.Period < MinPeriod)
+				modChan.Period = MinPeriod;
 
 			playingInfo.LowMask = 0xff;
 
@@ -3018,8 +2998,8 @@ stopLoop:
 		private void PortaDown(IChannel chan, ModChannel modChan)
 		{
 			modChan.Period += (ushort)(modChan.TrackLine.EffectArg & playingInfo.LowMask);
-			if (modChan.Period > maxPeriod)
-				modChan.Period = maxPeriod;
+			if (modChan.Period > MaxPeriod)
+				modChan.Period = MaxPeriod;
 
 			playingInfo.LowMask = 0xff;
 
