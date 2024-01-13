@@ -394,6 +394,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 				return false;
 			}
 
+			// Increase the resync limit
+			result = mpg123Handle.Mpg123_Param(Mpg123_Parms.Resync_Limit, 16 * 1024, 0);
+			if (result != Mpg123_Errors.Ok)
+			{
+				errorMessage = GetErrorString(result);
+				return false;
+			}
+
 			// Reset the stream to the beginning
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
