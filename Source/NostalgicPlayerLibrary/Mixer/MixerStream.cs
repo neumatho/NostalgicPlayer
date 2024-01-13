@@ -133,7 +133,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		{
 			lock (mixerLock)
 			{
-				mixer.PauseMixer();
+				mixer.Pause();
 			}
 		}
 
@@ -148,7 +148,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		{
 			lock (mixerLock)
 			{
-				mixer.ResumeMixer();
+				mixer.Resume();
 			}
 		}
 

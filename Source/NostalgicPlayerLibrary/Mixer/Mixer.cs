@@ -235,7 +235,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Pause the mixing routines
 		/// </summary>
 		/********************************************************************/
-		public void PauseMixer()
+		public void Pause()
 		{
 			playing = false;
 			currentVisualizer.TellAgentsAboutPauseState(true);
@@ -248,7 +248,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Resume the mixing routines
 		/// </summary>
 		/********************************************************************/
-		public void ResumeMixer()
+		public void Resume()
 		{
 			currentVisualizer.TellAgentsAboutPauseState(false);
 			playing = true;

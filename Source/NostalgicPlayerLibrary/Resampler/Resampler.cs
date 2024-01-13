@@ -152,6 +152,30 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 
 		/********************************************************************/
 		/// <summary>
+		/// Pause the resampler routines
+		/// </summary>
+		/********************************************************************/
+		public void Pause()
+		{
+			currentVisualizer.TellAgentsAboutPauseState(true);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Resume the resampler routines
+		/// </summary>
+		/********************************************************************/
+		public void Resume()
+		{
+			currentVisualizer.TellAgentsAboutPauseState(false);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Set the output format
 		/// </summary>
 		/********************************************************************/

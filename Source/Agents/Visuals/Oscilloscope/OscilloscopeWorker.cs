@@ -18,6 +18,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
 	internal class OscilloscopeWorker : ISampleDataVisualAgent, IAgentGuiDisplay
 	{
 		private OscilloscopeControl userControl;
+		private bool ignoreSampleData;
 
 		#region IAgentDisplay implementation
 		/********************************************************************/
@@ -81,6 +82,10 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
 		/********************************************************************/
 		public void SetPauseState(bool paused)
 		{
+			ignoreSampleData = paused;
+
+			if (paused)
+				userControl.CleanupVisual();
 		}
 		#endregion
 
@@ -92,7 +97,8 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
 		/********************************************************************/
 		public void SampleData(NewSampleData sampleData)
 		{
-			userControl.SampleData(sampleData);
+			if (!ignoreSampleData)
+				userControl.SampleData(sampleData);
 		}
 		#endregion
 	}

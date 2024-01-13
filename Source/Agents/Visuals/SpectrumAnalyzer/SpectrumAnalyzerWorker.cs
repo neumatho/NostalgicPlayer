@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Windows.Forms;
+using NAudio.Dsp;
 using Polycode.NostalgicPlayer.Agent.Visual.SpectrumAnalyzer.Display;
 using Polycode.NostalgicPlayer.GuiKit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -22,6 +23,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpectrumAnalyzer
 		private Analyzer analyzer;
 
 		private SpectrumAnalyzerControl userControl;
+		private bool ignoreSampleData;
 
 		#region IAgentDisplay implementation
 		/********************************************************************/
@@ -88,6 +90,10 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpectrumAnalyzer
 		/********************************************************************/
 		public void SetPauseState(bool paused)
 		{
+			ignoreSampleData = paused;
+
+			if (paused)
+				userControl.Update(new Complex[FftLength]);
 		}
 		#endregion
 
@@ -99,8 +105,8 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpectrumAnalyzer
 		/********************************************************************/
 		public void SampleData(NewSampleData sampleData)
 		{
-			if (analyzer != null)
-				analyzer.AddValues(sampleData.SampleData, sampleData.NumberOfChannels);
+			if (!ignoreSampleData)
+				analyzer?.AddValues(sampleData.SampleData, sampleData.NumberOfChannels);
 		}
 		#endregion
 
@@ -112,7 +118,8 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpectrumAnalyzer
 		/********************************************************************/
 		private void Analyzer_FftCalculated(object sender, Analyzer.FftEventArgs e)
 		{
-			userControl.Update(e.Result);
+			if (!ignoreSampleData)
+				userControl.Update(e.Result);
 		}
 		#endregion
 	}

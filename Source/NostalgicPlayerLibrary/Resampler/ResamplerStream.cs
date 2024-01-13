@@ -145,7 +145,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		/********************************************************************/
 		public override void Pause()
 		{
-			playing = false;
+			lock (resamplerLock)
+			{
+				playing = false;
+				resampler.Pause();
+			}
 		}
 
 
@@ -157,7 +161,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 		/********************************************************************/
 		public override void Resume()
 		{
-			playing = true;
+			lock (resamplerLock)
+			{
+				playing = true;
+				resampler.Resume();
+			}
 		}
 
 
