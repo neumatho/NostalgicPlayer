@@ -2460,13 +2460,33 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				int count = moduleListControl.Items.Count;
 
 				if (newIndex == count)
-					newIndex = 0;
+				{
+					// We are, now check what we have to do
+					ModuleSettings.ModuleListEndAction listEnd = moduleSettings.ModuleListEnd;
 
-				// Stop playing the module
-				StopAndFreeModule();
+					if (listEnd == ModuleSettings.ModuleListEndAction.Eject)
+					{
+						// Eject the module
+						StopAndFreeModule();
+						newIndex = -1;
+					}
+					else
+					{
+						if ((count == 1) || (listEnd == ModuleSettings.ModuleListEndAction.Loop))
+							newIndex = -1;
+						else
+							newIndex = 0;
+					}
+				}
 
-				// Load and play the new module
-				LoadAndPlayModule(newIndex);
+				if (newIndex >= 0)
+				{
+					// Stop playing the module
+					StopAndFreeModule();
+
+					// Load and play the new module
+					LoadAndPlayModule(newIndex);
+				}
 			}
 		}
 		#endregion
@@ -4255,7 +4275,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						// Check to see if there is module loop on
 						if (loopCheckButton.Checked)
 						{
-							// It is, so update the position as well so it starts over
+							// It is, so update the position as well, so it starts over
 							prevSongPosition = int.MaxValue;
 							HandlePositionChanged();
 						}
@@ -4272,10 +4292,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							// The next module to load
 							int newPlay = curPlay + 1;
 
-							// Test to see if we is at the end of the list
+							// Test to see if we are at the end of the list
 							if (newPlay == count)
 							{
-								// We are, now check what we has to do
+								// We are, now check what we have to do
 								ModuleSettings.ModuleListEndAction listEnd = moduleSettings.ModuleListEnd;
 
 								if (listEnd == ModuleSettings.ModuleListEndAction.Eject)
