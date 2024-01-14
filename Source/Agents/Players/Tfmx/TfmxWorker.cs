@@ -2555,6 +2555,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			{
 				// Find the start of the macro
 				int macroOffset = BitConverter.ToInt32(musicData, macroStart + i * 4);
+				if (macroOffset < 0)
+					continue;
+
 				bool endOfMacro = false;
 
 				SampleRange range = new SampleRange();
@@ -2617,6 +2620,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 				sampleInfo[samples.Count - 1] = GetSampleInfo(samples[samples.Count - 1], null);
 			}
+
+			sampleInfo = sampleInfo.Where(x => x != null).ToArray();
 		}
 
 
@@ -2674,7 +2679,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/********************************************************************/
 		private SampleInfo GetSampleInfo(SampleRange current, SampleRange next)
 		{
+			if (current.Start >= sampleData.Length)
+				return null;
+
 			int sampleLength = (next == null ? current.End : next.Start) - current.Start;
+			sampleLength = Math.Min(sampleLength, sampleData.Length - current.Start);
 
 			SampleInfo info = new SampleInfo
 			{
@@ -2693,6 +2702,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				info.Flags |= SampleInfo.SampleFlag.Loop;
 				info.LoopStart = (uint)(current.LoopStart - current.Start);
 				info.LoopLength = (uint)current.LoopLength;
+
+				if (info.LoopStart >= info.Length)
+				{
+					info.Flags &= ~SampleInfo.SampleFlag.Loop;
+					info.LoopStart = 0;
+					info.LoopLength = 0;
+				}
+				else if ((info.LoopStart + info.LoopLength) > info.Length)
+				{
+					info.LoopLength = info.Length - info.LoopStart;
+				}
 			}
 
 			return info;
