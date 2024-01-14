@@ -9,14 +9,14 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
 	/// <summary>
-	/// All agents implements this interface
+	/// All agents implement this interface
 	/// </summary>
 	public interface IAgent
 	{
 		/// <summary>
 		/// 1.6.0
 		/// </summary>
-		public const int NostalgicPlayer_Current_Version = (2 << 16) + (1 << 8) + 0;
+		public const int NostalgicPlayer_Current_Version = (2 << 16) + (2 << 8) + 0;
 
 		/// <summary>
 		/// Return the NostalgicPlayer_Current_Version constant defined above
