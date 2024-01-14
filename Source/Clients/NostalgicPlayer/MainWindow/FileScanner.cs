@@ -38,6 +38,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private readonly MainWindowForm mainWindowForm;
 
 		private ManualResetEvent shutdownEvent;
+		private AutoResetEvent breakEvent;
 		private Thread scannerThread;
 
 		private Semaphore queueSemaphore;
@@ -68,6 +69,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			// Create event used to tell the thread to stop
 			shutdownEvent = new ManualResetEvent(false);
+
+			// Create event used to break a scanning loop when the queue is cleared
+			breakEvent = new AutoResetEvent(false);
 
 			// Create queue
 			queue = new Queue<QueueInfo>();
@@ -101,6 +105,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			queueSemaphore = null;
 			queue = null;
 
+			breakEvent?.Dispose();
+			breakEvent = null;
+
 			shutdownEvent?.Dispose();
 			shutdownEvent = null;
 		}
@@ -125,6 +132,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						queueSemaphore.Release();
 					}
 				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will clear the current query and stop ongoing scanning
+		/// </summary>
+		/********************************************************************/
+		public void ClearQueue()
+		{
+			lock (queue)
+			{
+				queue.Clear();
+				breakEvent.Set();
 			}
 		}
 
@@ -156,14 +179,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						// New queue element
 						case 1:
 						{
-							QueueInfo queueInfo;
+							QueueInfo queueInfo = null;
 
 							lock (queue)
 							{
-								queueInfo = queue.Dequeue();
+								if (queue.Count > 0)
+									queueInfo = queue.Dequeue();
 							}
 
-							ProcessQueueInfo(queueInfo);
+							if (queueInfo != null)
+								ProcessQueueInfo(queueInfo);
+
 							break;
 						}
 					}
@@ -186,13 +212,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			try
 			{
+				WaitHandle[] waitArray = { shutdownEvent, breakEvent };
+
 				List<ModuleListItem> itemsToRemove = new List<ModuleListItem>();
 				List<ModuleListItemUpdateInfo> itemsToUpdate = new List<ModuleListItemUpdateInfo>();
 				int itemsToCheckBeforeUpdating = RandomGenerator.GetRandomNumber(10, 30);
 
+				breakEvent.Reset();
+
 				foreach (ModuleListItem listItem in queueInfo.Items)
 				{
-					if (shutdownEvent.WaitOne(0))
+					if (WaitHandle.WaitAny(waitArray, 0) != WaitHandle.WaitTimeout)
 						return;
 
 					// Get needed information

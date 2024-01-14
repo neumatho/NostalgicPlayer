@@ -4727,6 +4727,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Clear the module list
 			moduleListControl.Items.Clear();
 
+			// Tell scanner to stop
+			fileScanner.ClearQueue();
+
 			// Clear the time variables
 			listTime = new TimeSpan(0);
 			selectedTime = new TimeSpan(0);
