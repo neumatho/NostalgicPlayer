@@ -8,7 +8,7 @@
     <Product>NostalgicPlayer</Product>
     <Description>This is a port of the libFLAC library created by Xiph.org</Description>
     <Platforms>AnyCPU</Platforms>
-    <Version>2.1.0</Version>
+    <Version>1.4.3</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
