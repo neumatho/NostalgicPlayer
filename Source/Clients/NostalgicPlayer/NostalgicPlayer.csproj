@@ -130,6 +130,7 @@
     <ProjectReference Include="..\..\Agents\SampleConverters\Iff8Svx\Iff8Svx.csproj" />
     <ProjectReference Include="..\..\Agents\SampleConverters\Raw\Raw.csproj" />
     <ProjectReference Include="..\..\Agents\SampleConverters\RiffWave\RiffWave.csproj" />
+    <ProjectReference Include="..\..\Agents\Visuals\LevelMeter\LevelMeter.csproj" />
     <ProjectReference Include="..\..\Agents\Visuals\Oscilloscope\Oscilloscope.csproj" />
     <ProjectReference Include="..\..\Agents\Visuals\Piano\Piano.csproj" />
     <ProjectReference Include="..\..\Agents\Visuals\SpectrumAnalyzer\SpectrumAnalyzer.csproj" />
