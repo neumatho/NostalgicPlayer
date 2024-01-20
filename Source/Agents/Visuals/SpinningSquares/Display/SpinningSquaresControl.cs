@@ -178,7 +178,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares.Display
 		{
 			while (squaresPanel.Controls.Count > 0)
 			{
-				// Since the dispose also removes the control from the
+				// Since dispose also removes the control from the
 				// collection, we just remove the first item in every
 				// iteration
 				squaresPanel.Controls[0].Dispose();
