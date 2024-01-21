@@ -101,8 +101,11 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.LevelMeter.Display
 
 			lock (this)
 			{
-				((SpeakerLevelMeterControl)levelsPanel.Controls[0]).UpdateLevel(levelL);
-				((SpeakerLevelMeterControl)levelsPanel.Controls[1]).UpdateLevel(levelR);
+				if (levelsPanel.Controls.Count > 0)
+				{
+					((SpeakerLevelMeterControl)levelsPanel.Controls[0]).UpdateLevel(levelL);
+					((SpeakerLevelMeterControl)levelsPanel.Controls[1]).UpdateLevel(levelR);
+				}
 			}
 		}
 
