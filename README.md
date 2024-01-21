@@ -160,6 +160,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | SoundMon 1.1 | .bp / .bp2 | | SoundMon |
 | SoundMon 2.2 | .bp / .bp3 | | SoundMon |
 | SoundTracker 2.2 | .mod | | ModTracker |
+| SoundTracker 2.6 | .st26 | | ModTracker |
 | StarTrekker | .mod | | ModTracker |
 | StarTrekker 8 voices | .mod | | ModTracker |
 | StarTrekker Packer | .stp / .stpk | ProWizard | ModTracker |

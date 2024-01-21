@@ -20,6 +20,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		SoundTrackerIX,
 		MasterSoundTracker10,
 		SoundTracker2x,
+		SoundTracker26,
 
 		// NoiseTracker compatibility
 		NoiseTracker,
@@ -28,7 +29,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		StarTrekker8,
 		AudioSculpture,
 
-		// Out of category in checks
+		// ProTracker compatibility
 		ProTracker
 	}
 }

@@ -36,6 +36,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 		private readonly ModuleType currentModuleType;
 		private bool packed;
+		private bool showTracks;
 
 		private string songName;
 		private ushort maxPattern;
@@ -51,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 		private Sample[] samples;
 		private TrackLine[][] tracks;
-		private ushort[] sequences;
+		private ushort[,] sequences;
 
 		private AmSample[] amData;
 		private HmnSynthData[] hmnSynthData;
@@ -146,11 +147,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					break;
 				}
 
-				// Used patterns
+				// Used patterns / Used tracks
 				case 1:
 				{
-					description = Resources.IDS_MOD_INFODESCLINE1;
-					value = maxPattern.ToString();
+					if (showTracks)
+					{
+						description = Resources.IDS_MOD_INFODESCLINE1b;
+						value = trackNum.ToString();
+					}
+					else
+					{
+						description = Resources.IDS_MOD_INFODESCLINE1a;
+						value = maxPattern.ToString();
+					}
 					break;
 				}
 
@@ -170,11 +179,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					break;
 				}
 
-				// Playing pattern
+				// Playing pattern / Playing tracks
 				case 4:
 				{
-					description = Resources.IDS_MOD_INFODESCLINE4;
-					value = positions[playingInfo.SongPos].ToString();
+					if (showTracks)
+					{
+						description = Resources.IDS_MOD_INFODESCLINE4b;
+						value = FormatTracks();
+					}
+					else
+					{
+						description = Resources.IDS_MOD_INFODESCLINE4a;
+						value = positions[playingInfo.SongPos].ToString();
+					}
 					break;
 				}
 
@@ -182,7 +199,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				case 5:
 				{
 					description = Resources.IDS_MOD_INFODESCLINE5;
-					value = playingInfo.Speed.ToString();
+					value = FormatSpeed();
 					break;
 				}
 
@@ -217,6 +234,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		{
 			// Load the module
 			packed = false;
+			showTracks = false;
+
+			if (currentModuleType == ModuleType.SoundTracker26)
+				return LoadSoundTracker26(fileInfo, out errorMessage);
 
 			return LoadTracker(fileInfo, out errorMessage);
 		}
@@ -279,10 +300,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/********************************************************************/
 		public override void Play()
 		{
-			if (playingInfo.Speed != 0)				// Only play if speed <> 0
+			byte currentSpeed = (playingInfo.PatternPos & 1) == 0 ? playingInfo.SpeedEven : playingInfo.SpeedOdd;
+			ChangeSpeed(currentSpeed);
+
+			if (currentSpeed != 0)				// Only play if speed <> 0
 			{
 				playingInfo.Counter++;				// Count speed counter
-				if (playingInfo.Counter >= playingInfo.Speed)   // Do we have to change pattern line?
+				if (playingInfo.Counter >= currentSpeed)   // Do we have to change pattern line?
 				{
 					playingInfo.Counter = 0;
 
@@ -492,12 +516,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		{
 			ModuleStream moduleStream = fileInfo.ModuleStream;
 
-			if (moduleStream.Length < 1084)
+			if (moduleStream.Length < 1468)
 				return ModuleType.Unknown;
 
 			// Check mark
-			moduleStream.Seek(1080, SeekOrigin.Begin);
+			moduleStream.Seek(1464, SeekOrigin.Begin);
 			uint mark = moduleStream.Read_B_UINT32();
+
+			if (mark == 0x4d544e00)		// MNT\0
+				return ModuleType.SoundTracker26;
+
+			moduleStream.Seek(1080, SeekOrigin.Begin);
+			mark = moduleStream.Read_B_UINT32();
 
 			// Check the mark for valid characters
 			bool nonValid = false;
@@ -1185,7 +1215,7 @@ stopLoop:
 		/********************************************************************/
 		private bool IsSoundTracker()
 		{
-			return currentModuleType <= ModuleType.SoundTracker2x;
+			return currentModuleType <= ModuleType.SoundTracker26;
 		}
 
 
@@ -1212,6 +1242,19 @@ stopLoop:
 		private bool IsStarTrekker()
 		{
 			return (currentModuleType >= ModuleType.StarTrekker) && (currentModuleType <= ModuleType.AudioSculpture);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Tests the current module to see if it's in ProTracker or
+		/// similar format
+		/// </summary>
+		/********************************************************************/
+		private bool IsProTracker()
+		{
+			return currentModuleType == ModuleType.ProTracker;
 		}
 
 
@@ -1404,10 +1447,6 @@ stopLoop:
 				positions = new byte[128];
 				moduleStream.Read(positions, 0, 128);
 
-				// All 31 samples modules have a mark
-				if (sampleNum == 31)
-					moduleStream.Seek(4, SeekOrigin.Current);
-
 				if (moduleStream.EndOfStream)
 				{
 					errorMessage = Resources.IDS_MOD_ERR_LOADING_HEADER;
@@ -1415,6 +1454,10 @@ stopLoop:
 
 					return AgentResult.Error;
 				}
+
+				// All 31 samples modules have a mark
+				if (sampleNum == 31)
+					moduleStream.Seek(4, SeekOrigin.Current);
 
 				// Find the missing information
 				patternLength = 64;
@@ -1482,13 +1525,13 @@ stopLoop:
 				}
 
 				// Allocate memory to hold the sequences
-				sequences = new ushort[32 * maxPattern];
+				sequences = new ushort[channelNum, maxPattern];
 
 				// Calculate the sequence numbers
 				for (int i = 0; i < maxPattern; i++)
 				{
 					for (int j = 0; j < channelNum; j++)
-						sequences[i * 32 + j] = (ushort)(i * channelNum + j);
+						sequences[j, i] = (ushort)(i * channelNum + j);
 				}
 
 				byte[] decodeTable = null;
@@ -1613,6 +1656,193 @@ stopLoop:
 
 		/********************************************************************/
 		/// <summary>
+		/// Will load a SoundTracker 2.6 module into memory
+		/// </summary>
+		/********************************************************************/
+		private AgentResult LoadSoundTracker26(PlayerFileInfo fileInfo, out string errorMessage)
+		{
+			try
+			{
+				byte[] buf = new byte[23];
+
+				ModuleStream moduleStream = fileInfo.ModuleStream;
+				Encoding encoder = EncoderCollection.Amiga;
+
+				sampleNum = 31;
+
+				// Read the song name
+				buf[20] = 0x00;
+				moduleStream.Read(buf, 0, 20);
+
+				songName = encoder.GetString(buf);
+
+				// Allocate space to the samples
+				samples = new Sample[sampleNum];
+
+				// Read the samples
+				for (int i = 0; i < sampleNum; i++)
+				{
+					Sample sample = samples[i] = new Sample();
+
+					// Read the sample info
+					buf[22] = 0x00;
+					moduleStream.Read(buf, 0, 22);				// Name of the sample
+
+					ushort length = moduleStream.Read_B_UINT16();			// Length in words
+					ushort volume = moduleStream.Read_B_UINT16();			// The volume
+					ushort repeatStart = moduleStream.Read_B_UINT16();		// Number of words from the beginning where the loop starts
+					ushort repeatLength = moduleStream.Read_B_UINT16();		// The loop length in words
+
+					// If repeat length is 1, it is the same as no loop, so reset it
+					if (repeatLength == 1)
+						repeatLength = 0;
+
+					// Correct "funny" modules
+					if (repeatStart > length)
+					{
+						repeatStart = 0;
+						repeatLength = 0;
+					}
+
+					if ((repeatStart + repeatLength) > length)
+						repeatLength = (ushort)(length - repeatStart);
+
+					if (moduleStream.EndOfStream)
+					{
+						errorMessage = Resources.IDS_MOD_ERR_LOADING_SAMPLEINFO;
+						Cleanup();
+
+						return AgentResult.Error;
+					}
+
+					// Put the information into the sample structure
+					sample.SampleName = encoder.GetString(buf).RemoveInvalidChars();
+					sample.Data = null;
+					sample.Length = length;
+					sample.LoopStart = repeatStart;
+					sample.LoopLength = repeatLength;
+					sample.Volume = (byte)volume;
+					sample.FineTune = 0;
+					sample.FineTuneHmn = 0;
+				}
+
+				// Read more header information
+				songLength = moduleStream.Read_UINT8();
+				trackNum = moduleStream.Read_UINT8();
+
+				initTempo = 125;
+				restartPos = 0;
+				showTracks = true;
+
+				positions = new byte[128 * 4];
+				moduleStream.Read(positions, 0, positions.Length);
+
+				if (moduleStream.EndOfStream)
+				{
+					errorMessage = Resources.IDS_MOD_ERR_LOADING_HEADER;
+					Cleanup();
+
+					return AgentResult.Error;
+				}
+
+				// Skip mark
+				moduleStream.Seek(4, SeekOrigin.Current);
+
+				// Set the missing information
+				patternLength = 64;
+				channelNum = 4;
+
+				// Find the highest track number
+				ushort maxTrack = 0;
+
+				for (int i = 0; i < 128 * 4; i++)
+				{
+					if (positions[i] > maxTrack)
+						maxTrack = positions[i];
+				}
+
+				maxTrack++;
+				if (maxTrack != trackNum)
+				{
+					errorMessage = Resources.IDS_MOD_ERR_LOADING_HEADER;
+					Cleanup();
+
+					return AgentResult.Error;
+				}
+
+				// Allocate space for the tracks
+				tracks = new TrackLine[trackNum][];
+
+				// Read the tracks
+				for (int i = 0; i < trackNum; i++)
+				{
+					// Allocate memory to hold the track
+					tracks[i] = new TrackLine[patternLength];
+
+					LoadModTracks(moduleStream, tracks, i, 1);
+
+					if (moduleStream.EndOfStream)
+					{
+						errorMessage = Resources.IDS_MOD_ERR_LOADING_TRACKS;
+						Cleanup();
+
+						return AgentResult.Error;
+					}
+				}
+
+				// Allocate memory to hold the sequences
+				sequences = new ushort[channelNum, songLength];
+
+				// Calculate the sequence numbers
+				for (int i = 0; i < songLength; i++)
+				{
+					for (int j = 0; j < channelNum; j++)
+						sequences[j, i] = positions[i * channelNum + j];
+
+					positions[i] = (byte)i;
+				}
+
+				// Read the samples
+				for (int i = 0; i < sampleNum; i++)
+				{
+					// Allocate space to hold the sample
+					int length = samples[i].Length * 2;
+					if (length != 0)
+					{
+						sbyte[] sampleBuffer = new sbyte[length];
+						samples[i].Data = sampleBuffer;
+
+						using (ModuleStream sampleDataStream = moduleStream.GetSampleDataStream(i, length))
+						{
+							// Check to see if we miss too much from the last sample
+							if (sampleDataStream.Length - sampleDataStream.Position < (length - 512))
+							{
+								errorMessage = Resources.IDS_MOD_ERR_LOADING_SAMPLES;
+								Cleanup();
+
+								return AgentResult.Error;
+							}
+
+							// Read the sample
+							sampleDataStream.ReadSigned(sampleBuffer, 0, length);
+						}
+					}
+				}
+
+				errorMessage = string.Empty;
+				return AgentResult.Ok;
+			}
+			catch (Exception)
+			{
+				Cleanup();
+				throw;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will load x number of tracks in MOD format
 		/// </summary>
 		/********************************************************************/
@@ -1722,7 +1952,9 @@ stopLoop:
 			// Initialize all the variables
 			playingInfo = new GlobalPlayingInfo
 			{
-				Speed = 6,
+				SpeedEven = 6,
+				SpeedOdd = 6,
+				LastShownSpeed = 6,
 				Tempo = initTempo,
 				PatternPos = 0,
 				Counter = 0,
@@ -1944,7 +2176,7 @@ stopLoop:
 			for (int i = 0; i < channelNum; i++)
 			{
 				// Find the track to use
-				ushort trkNum = sequences[positions[curSongPos] * 32 + i];
+				ushort trkNum = sequences[i, positions[curSongPos]];
 				TrackLine trackData = tracks[trkNum][curPattPos];
 
 				IChannel chan = VirtualChannels[i];
@@ -2294,6 +2526,52 @@ stopLoop:
 						case Effect.MegaArp:
 						{
 							MegaArpeggio(chan, modChan);
+							break;
+						}
+
+						default:
+						{
+							SetPeriod(modChan.Period, chan, modChan);
+
+							if (cmd == Effect.VolumeSlide)
+								VolumeSlide(modChan, modChan.TrackLine.EffectArg);
+
+							break;
+						}
+					}
+				}
+				else if (currentModuleType == ModuleType.SoundTracker26)
+				{
+					switch (cmd)
+					{
+						case Effect.Arpeggio:
+						{
+							// Arpeggio or normal note
+							Arpeggio(chan, modChan);
+							break;
+						}
+
+						case Effect.SlideUp:
+						{
+							PortaUp(chan, modChan);
+							break;
+						}
+
+						case Effect.SlideDown:
+						{
+							PortaDown(chan, modChan);
+							break;
+						}
+
+						case Effect.TonePortamento:
+						{
+							TonePortamento(chan, modChan);
+							break;
+						}
+
+						case Effect.Vibrato:
+						{
+							Vibrato(chan, modChan);
 							break;
 						}
 
@@ -2897,7 +3175,6 @@ stopLoop:
 		private void Arpeggio(IChannel chan, ModChannel modChan)
 		{
 			ushort period;
-			int note;
 
 			if (modChan.TrackLine.EffectArg != 0)
 			{
@@ -2934,7 +3211,7 @@ stopLoop:
 				}
 
 				// Get the period
-				note = i + arp >= NumberOfNotes ? NumberOfNotes - 1 : i + arp;
+				int note = i + arp >= NumberOfNotes ? NumberOfNotes - 1 : i + arp;
 				period = Tables.Periods[modChan.FineTune, note];
 			}
 			else
@@ -3095,7 +3372,7 @@ stopLoop:
 			{
 				byte vibCmd = modChan.VibratoCmd;
 
-				if (!IsNoiseTracker())
+				if (IsProTracker())
 				{
 					if ((effArg & 0x0f) != 0)
 						vibCmd = (byte)((vibCmd & 0xf0) | (effArg & 0x0f));
@@ -3399,13 +3676,32 @@ stopLoop:
 			// Get the new speed
 			byte newSpeed = modChan.TrackLine.EffectArg;
 
-			if (IsSoundTracker())
+			if (currentModuleType == ModuleType.SoundTracker26)
+			{
+				if (newSpeed != 0)
+				{
+					byte speed1 = (byte)((newSpeed & 0xf0) >> 4);
+					byte speed2 = (byte)(newSpeed & 0x0f);
+
+					if (speed1 == 0)
+						speed1 = speed2;
+
+					if (speed2 == 0)
+						speed2 = speed1;
+
+					playingInfo.SpeedEven = speed2;
+					playingInfo.SpeedOdd = speed1;
+					playingInfo.Counter = 0;
+				}
+			}
+			else if (IsSoundTracker())
 			{
 				newSpeed &= 0x0f;
 				if (newSpeed != 0)
 				{
 					// Set the new speed
-					ChangeSpeed(newSpeed);
+					playingInfo.SpeedEven = newSpeed;
+					playingInfo.SpeedOdd = newSpeed;
 				}
 			}
 			else if (IsNoiseTracker())
@@ -3416,7 +3712,8 @@ stopLoop:
 					newSpeed = 1;
 
 				// Set the new speed
-				ChangeSpeed(newSpeed);
+				playingInfo.SpeedEven = newSpeed;
+				playingInfo.SpeedOdd = newSpeed;
 			}
 			else
 			{
@@ -3428,7 +3725,8 @@ stopLoop:
 					else
 					{
 						// Set the new speed
-						ChangeSpeed(newSpeed);
+						playingInfo.SpeedEven = newSpeed;
+						playingInfo.SpeedOdd = newSpeed;
 						playingInfo.Counter = 0;
 					}
 				}
@@ -3750,10 +4048,10 @@ stopLoop:
 		/********************************************************************/
 		private void ChangeSpeed(byte newSpeed)
 		{
-			if (newSpeed != playingInfo.Speed)
+			if (newSpeed != playingInfo.LastShownSpeed)
 			{
 				// Remember the speed
-				playingInfo.Speed = newSpeed;
+				playingInfo.LastShownSpeed = newSpeed;
 
 				// Change the module info
 				ShowSpeed();
@@ -3803,7 +4101,7 @@ stopLoop:
 		/********************************************************************/
 		private void ShowPattern()
 		{
-			OnModuleInfoChanged(InfoPatternLine, positions[playingInfo.SongPos].ToString());
+			OnModuleInfoChanged(InfoPatternLine, showTracks ? FormatTracks() : positions[playingInfo.SongPos].ToString());
 		}
 
 
@@ -3815,7 +4113,7 @@ stopLoop:
 		/********************************************************************/
 		private void ShowSpeed()
 		{
-			OnModuleInfoChanged(InfoSpeedLine, playingInfo.Speed.ToString());
+			OnModuleInfoChanged(InfoSpeedLine, FormatSpeed());
 		}
 
 
@@ -3843,6 +4141,40 @@ stopLoop:
 			ShowPattern();
 			ShowSpeed();
 			ShowTempo();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the playing tracks
+		/// </summary>
+		/********************************************************************/
+		private string FormatTracks()
+		{
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < channelNum; i++)
+			{
+				sb.Append(sequences[i, playingInfo.SongPos]);
+				sb.Append(", ");
+			}
+
+			sb.Remove(sb.Length - 2, 2);
+
+			return sb.ToString();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the current speed
+		/// </summary>
+		/********************************************************************/
+		private string FormatSpeed()
+		{
+			return ((playingInfo.PatternPos & 1) == 0 ? playingInfo.SpeedEven : playingInfo.SpeedOdd).ToString();
 		}
 		#endregion
 	}

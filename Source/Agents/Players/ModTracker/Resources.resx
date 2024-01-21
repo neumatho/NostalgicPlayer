@@ -157,6 +157,14 @@ Converted to C# by Thomas Neumann.
 
 This is the commercial version of StarTrekker. I do not know, what the real difference is, except that the external file have the extension .as instead.</value>
   </data>
+  <data name="IDS_MOD_DESCRIPTION_AGENT14" xml:space="preserve">
+    <value>Original player by MnemoTroN/Spreadpoint.
+Converted to C# by Thomas Neumann.
+
+This format is almost the same as NoiseTracker, except that instead of a pattern has its own 4 tracks, SoundTracker 2.6 have independent tracks. A pattern is then build by combining the different tracks.
+
+The speed effect has also been extended, so it's possible to set the speed for both odd and even rows in one command. The player will then automatical switch between the two speeds while playing.</value>
+  </data>
   <data name="IDS_MOD_DESCRIPTION_AGENT2" xml:space="preserve">
     <value>Original player by Karsten Obarski.
 Converted to C# by Thomas Neumann.
@@ -225,11 +233,17 @@ This is a NoiseTracker clone, but improved by the possibility to have synth samp
   <data name="IDS_MOD_ERR_LOADING_SAMPLES" xml:space="preserve">
     <value>Can't read the module samples</value>
   </data>
+  <data name="IDS_MOD_ERR_LOADING_TRACKS" xml:space="preserve">
+    <value>Can't read the module tracks</value>
+  </data>
   <data name="IDS_MOD_INFODESCLINE0" xml:space="preserve">
     <value>Number of positions:</value>
   </data>
-  <data name="IDS_MOD_INFODESCLINE1" xml:space="preserve">
+  <data name="IDS_MOD_INFODESCLINE1a" xml:space="preserve">
     <value>Used patterns:</value>
+  </data>
+  <data name="IDS_MOD_INFODESCLINE1b" xml:space="preserve">
+    <value>Used tracks:</value>
   </data>
   <data name="IDS_MOD_INFODESCLINE2" xml:space="preserve">
     <value>Supported / used samples:</value>
@@ -237,8 +251,11 @@ This is a NoiseTracker clone, but improved by the possibility to have synth samp
   <data name="IDS_MOD_INFODESCLINE3" xml:space="preserve">
     <value>Playing position:</value>
   </data>
-  <data name="IDS_MOD_INFODESCLINE4" xml:space="preserve">
+  <data name="IDS_MOD_INFODESCLINE4a" xml:space="preserve">
     <value>Playing pattern:</value>
+  </data>
+  <data name="IDS_MOD_INFODESCLINE4b" xml:space="preserve">
+    <value>Playing tracks:</value>
   </data>
   <data name="IDS_MOD_INFODESCLINE5" xml:space="preserve">
     <value>Current speed:</value>
@@ -260,6 +277,9 @@ This is a NoiseTracker clone, but improved by the possibility to have synth samp
   </data>
   <data name="IDS_MOD_NAME_AGENT13" xml:space="preserve">
     <value>Audio Sculpture</value>
+  </data>
+  <data name="IDS_MOD_NAME_AGENT14" xml:space="preserve">
+    <value>SoundTracker 2.6</value>
   </data>
   <data name="IDS_MOD_NAME_AGENT2" xml:space="preserve">
     <value>Ultimate SoundTracker 1.8 - 2.0</value>

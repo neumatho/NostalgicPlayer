@@ -21,7 +21,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		public bool GotBreak;
 		public bool GotPositionJump;
 		public byte Tempo;
-		public byte Speed;
+		public byte SpeedEven;
+		public byte SpeedOdd;
+		public byte LastShownSpeed;
 		public byte Counter;
 		public byte LowMask;
 		public byte PattDelayTime;

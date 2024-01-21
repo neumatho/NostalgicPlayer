@@ -137,6 +137,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Original player by MnemoTroN/Spreadpoint.
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///This format is almost the same as NoiseTracker, except that instead of a pattern has its own 4 tracks, SoundTracker 2.6 have independent tracks. A pattern is then build by combining the different tracks.
+        ///
+        ///The speed effect has also been extended, so it&apos;s possible to set the speed for both odd and even rows in one command. The player will then automatical switch between the two speeds while playing..
+        /// </summary>
+        internal static string IDS_MOD_DESCRIPTION_AGENT14 {
+            get {
+                return ResourceManager.GetString("IDS_MOD_DESCRIPTION_AGENT14", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Original player by Karsten Obarski.
         ///Converted to C# by Thomas Neumann.
         ///
@@ -277,6 +291,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t read the module tracks.
+        /// </summary>
+        internal static string IDS_MOD_ERR_LOADING_TRACKS {
+            get {
+                return ResourceManager.GetString("IDS_MOD_ERR_LOADING_TRACKS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Number of positions:.
         /// </summary>
         internal static string IDS_MOD_INFODESCLINE0 {
@@ -288,9 +311,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         /// <summary>
         ///   Looks up a localized string similar to Used patterns:.
         /// </summary>
-        internal static string IDS_MOD_INFODESCLINE1 {
+        internal static string IDS_MOD_INFODESCLINE1a {
             get {
-                return ResourceManager.GetString("IDS_MOD_INFODESCLINE1", resourceCulture);
+                return ResourceManager.GetString("IDS_MOD_INFODESCLINE1a", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Used tracks:.
+        /// </summary>
+        internal static string IDS_MOD_INFODESCLINE1b {
+            get {
+                return ResourceManager.GetString("IDS_MOD_INFODESCLINE1b", resourceCulture);
             }
         }
         
@@ -315,9 +347,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         /// <summary>
         ///   Looks up a localized string similar to Playing pattern:.
         /// </summary>
-        internal static string IDS_MOD_INFODESCLINE4 {
+        internal static string IDS_MOD_INFODESCLINE4a {
             get {
-                return ResourceManager.GetString("IDS_MOD_INFODESCLINE4", resourceCulture);
+                return ResourceManager.GetString("IDS_MOD_INFODESCLINE4a", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Playing tracks:.
+        /// </summary>
+        internal static string IDS_MOD_INFODESCLINE4b {
+            get {
+                return ResourceManager.GetString("IDS_MOD_INFODESCLINE4b", resourceCulture);
             }
         }
         
@@ -381,6 +422,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         internal static string IDS_MOD_NAME_AGENT13 {
             get {
                 return ResourceManager.GetString("IDS_MOD_NAME_AGENT13", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SoundTracker 2.6.
+        /// </summary>
+        internal static string IDS_MOD_NAME_AGENT14 {
+            get {
+                return ResourceManager.GetString("IDS_MOD_NAME_AGENT14", resourceCulture);
             }
         }
         
