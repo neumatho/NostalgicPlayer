@@ -236,7 +236,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			packed = false;
 			showTracks = false;
 
-			if (currentModuleType == ModuleType.SoundTracker26)
+			if ((currentModuleType == ModuleType.SoundTracker26) || (currentModuleType == ModuleType.IceTracker))
 				return LoadSoundTracker26(fileInfo, out errorMessage);
 
 			return LoadTracker(fileInfo, out errorMessage);
@@ -525,6 +525,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 			if (mark == 0x4d544e00)		// MNT\0
 				return ModuleType.SoundTracker26;
+
+			if (mark == 0x49543130)		// IT10
+				return ModuleType.IceTracker;
 
 			moduleStream.Seek(1080, SeekOrigin.Begin);
 			mark = moduleStream.Read_B_UINT32();
@@ -1215,7 +1218,7 @@ stopLoop:
 		/********************************************************************/
 		private bool IsSoundTracker()
 		{
-			return currentModuleType <= ModuleType.SoundTracker26;
+			return currentModuleType <= ModuleType.IceTracker;
 		}
 
 
@@ -2316,10 +2319,10 @@ stopLoop:
 					}
 					else
 					{
-						if (currentModuleType >= ModuleType.NoiseTracker)
+						if (IsNoiseTracker() || IsProTracker())
 						{
 							// Check for SetFineTune
-							if ((currentModuleType >= ModuleType.ProTracker) && (cmd == Effect.ExtraEffect) && ((ExtraEffect)(modChan.TrackLine.EffectArg & 0xf0) == ExtraEffect.SetFineTune))
+							if (IsProTracker() && (cmd == Effect.ExtraEffect) && ((ExtraEffect)(modChan.TrackLine.EffectArg & 0xf0) == ExtraEffect.SetFineTune))
 								SetFineTune(modChan);
 							else
 							{
@@ -2347,7 +2350,7 @@ stopLoop:
 				// Set the period
 				modChan.Period = Tables.Periods[modChan.FineTune, modChan.TrackLine.Note - 1];
 
-				if (!((currentModuleType >= ModuleType.ProTracker) && (cmd == Effect.ExtraEffect) && ((ExtraEffect)(modChan.TrackLine.EffectArg & 0xf0) == ExtraEffect.NoteDelay)))
+				if (!IsProTracker() || (cmd != Effect.ExtraEffect) || ((ExtraEffect)(modChan.TrackLine.EffectArg & 0xf0) != ExtraEffect.NoteDelay))
 				{
 					if ((modChan.WaveControl & 4) == 0)
 						modChan.VibratoPos = 0;
@@ -2792,7 +2795,9 @@ stopLoop:
 		{
 			if (currentModuleType >= ModuleType.SoundTrackerIX)
 			{
-				if (IsSoundTracker() || IsNoiseTracker())
+				if ((currentModuleType == ModuleType.IceTracker) && ((ExtraEffect)(modChan.TrackLine.EffectArg & 0xf0) == ExtraEffect.InvertLoop))
+					FunkIt(modChan);
+				else if (IsSoundTracker() || IsNoiseTracker())
 					FilterOnOff(modChan);
 				else
 				{
@@ -3691,6 +3696,17 @@ stopLoop:
 
 					playingInfo.SpeedEven = speed2;
 					playingInfo.SpeedOdd = speed1;
+					playingInfo.Counter = 0;
+				}
+			}
+			else if (currentModuleType == ModuleType.IceTracker)
+			{
+				newSpeed &= 0x1f;
+				if (newSpeed != 0)
+				{
+					// Set the new speed
+					playingInfo.SpeedEven = newSpeed;
+					playingInfo.SpeedOdd = newSpeed;
 					playingInfo.Counter = 0;
 				}
 			}

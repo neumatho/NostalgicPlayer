@@ -151,6 +151,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Original player by Icepic.
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///This format is the same as SoundTracker 2.6, which means it also have independent tracks which can be combined to a pattern. It also include more effects than SoundTracker 2.6..
+        /// </summary>
+        internal static string IDS_MOD_DESCRIPTION_AGENT15 {
+            get {
+                return ResourceManager.GetString("IDS_MOD_DESCRIPTION_AGENT15", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Original player by Karsten Obarski.
         ///Converted to C# by Thomas Neumann.
         ///
@@ -431,6 +443,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         internal static string IDS_MOD_NAME_AGENT14 {
             get {
                 return ResourceManager.GetString("IDS_MOD_NAME_AGENT14", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IceTracker.
+        /// </summary>
+        internal static string IDS_MOD_NAME_AGENT15 {
+            get {
+                return ResourceManager.GetString("IDS_MOD_NAME_AGENT15", resourceCulture);
             }
         }
         

@@ -21,6 +21,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		MasterSoundTracker10,
 		SoundTracker2x,
 		SoundTracker26,
+		IceTracker,
 
 		// NoiseTracker compatibility
 		NoiseTracker,

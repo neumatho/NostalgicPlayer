@@ -1008,6 +1008,14 @@
             <uap:DisplayName>SoundTracker 2.6</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="icename">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-ice">.ice</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>IceTracker</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

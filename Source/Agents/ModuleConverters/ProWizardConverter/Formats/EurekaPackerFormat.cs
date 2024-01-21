@@ -63,7 +63,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 				return false;
 
 			moduleStream.Seek(1464, SeekOrigin.Begin);
-			if (moduleStream.Read_B_UINT32() == 0x4d544e00)						// MTN
+			uint mark = moduleStream.Read_B_UINT32();
+			if ((mark == 0x4d544e00) || (mark == 0x49543130))					// MTN and IT10
 				return false;
 
 			// Check sample information

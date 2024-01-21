@@ -165,6 +165,12 @@ This format is almost the same as NoiseTracker, except that instead of a pattern
 
 The speed effect has also been extended, so it's possible to set the speed for both odd and even rows in one command. The player will then automatical switch between the two speeds while playing.</value>
   </data>
+  <data name="IDS_MOD_DESCRIPTION_AGENT15" xml:space="preserve">
+    <value>Original player by Icepic.
+Converted to C# by Thomas Neumann.
+
+This format is the same as SoundTracker 2.6, which means it also have independent tracks which can be combined to a pattern. It also include more effects than SoundTracker 2.6.</value>
+  </data>
   <data name="IDS_MOD_DESCRIPTION_AGENT2" xml:space="preserve">
     <value>Original player by Karsten Obarski.
 Converted to C# by Thomas Neumann.
@@ -280,6 +286,9 @@ This is a NoiseTracker clone, but improved by the possibility to have synth samp
   </data>
   <data name="IDS_MOD_NAME_AGENT14" xml:space="preserve">
     <value>SoundTracker 2.6</value>
+  </data>
+  <data name="IDS_MOD_NAME_AGENT15" xml:space="preserve">
+    <value>IceTracker</value>
   </data>
   <data name="IDS_MOD_NAME_AGENT2" xml:space="preserve">
     <value>Ultimate SoundTracker 1.8 - 2.0</value>

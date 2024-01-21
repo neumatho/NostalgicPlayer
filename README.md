@@ -87,6 +87,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Heatseeker mc1.0 | .hmc / .crb | ProWizard | ModTracker |
 | His Master's Noise (Gnomie by Night) | .mod | | ModTracker |
 | Hornet Packer | .hrt | ProWizard | ModTracker |
+| IceTracker | .ice | | ModTracker |
 | IFF-16SV (PCM) | .16sv | | Sample |
 | IFF-8SVX (Fibonacci) | .8svx | | Sample |
 | IFF-8SVX (PCM) | .8svx | | Sample |

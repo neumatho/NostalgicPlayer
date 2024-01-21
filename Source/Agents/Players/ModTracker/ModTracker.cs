@@ -35,6 +35,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		private static readonly Guid agent12Id = Guid.Parse("7027B4BE-2D15-4377-8F95-D628184328AF");
 		private static readonly Guid agent13Id = Guid.Parse("70E8FE84-09B2-4FE6-9515-4307F14DCBCC");
 		private static readonly Guid agent14Id = Guid.Parse("07D57E48-3E89-44DF-BB6A-04AEFBEC8A29");
+		private static readonly Guid agent15Id = Guid.Parse("74665248-A67A-45B1-9659-D51F32DB6606");
 
 		private static readonly Dictionary<ModuleType, Guid> moduleTypeLookup = new Dictionary<ModuleType, Guid>
 		{
@@ -51,10 +52,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			{ ModuleType.ProTracker, agent11Id },
 			{ ModuleType.HisMastersNoise, agent12Id },
 			{ ModuleType.AudioSculpture, agent13Id },
-			{ ModuleType.SoundTracker26, agent14Id }
+			{ ModuleType.SoundTracker26, agent14Id },
+			{ ModuleType.IceTracker, agent15Id }
 		};
 
-		internal static readonly string[] fileExtensions = { "mod", "adsc", "st26" };
+		internal static readonly string[] fileExtensions = { "mod", "adsc", "st26", "ice" };
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -99,7 +101,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT11, Resources.IDS_MOD_DESCRIPTION_AGENT11, agent11Id),
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT12, Resources.IDS_MOD_DESCRIPTION_AGENT12, agent12Id),
 					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT13, Resources.IDS_MOD_DESCRIPTION_AGENT13, agent13Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT14, Resources.IDS_MOD_DESCRIPTION_AGENT14, agent14Id)
+					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT14, Resources.IDS_MOD_DESCRIPTION_AGENT14, agent14Id),
+					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT15, Resources.IDS_MOD_DESCRIPTION_AGENT15, agent15Id)
 				};
 			}
 		}
