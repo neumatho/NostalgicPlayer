@@ -18,7 +18,6 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.LevelMeter
 	internal class LevelMeterWorker : ISampleDataVisualAgent, IAgentGuiDisplay
 	{
 		private LevelMeterControl userControl;
-		private bool ignoreSampleData;
 
 		#region IAgentDisplay implementation
 		/********************************************************************/
@@ -83,7 +82,6 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.LevelMeter
 		/********************************************************************/
 		public void SetPauseState(bool paused)
 		{
-			ignoreSampleData = paused;
 		}
 		#endregion
 
@@ -95,8 +93,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.LevelMeter
 		/********************************************************************/
 		public void SampleData(NewSampleData sampleData)
 		{
-			if (!ignoreSampleData)
-				userControl.SampleData(sampleData);
+			userControl.SampleData(sampleData);
 		}
 		#endregion
 	}

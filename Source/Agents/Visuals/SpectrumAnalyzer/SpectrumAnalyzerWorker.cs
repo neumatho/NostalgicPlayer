@@ -23,7 +23,6 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpectrumAnalyzer
 		private Analyzer analyzer;
 
 		private SpectrumAnalyzerControl userControl;
-		private bool ignoreSampleData;
 
 		#region IAgentDisplay implementation
 		/********************************************************************/
@@ -90,8 +89,6 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpectrumAnalyzer
 		/********************************************************************/
 		public void SetPauseState(bool paused)
 		{
-			ignoreSampleData = paused;
-
 			if (paused)
 				userControl.Update(new Complex[FftLength]);
 		}
@@ -105,8 +102,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpectrumAnalyzer
 		/********************************************************************/
 		public void SampleData(NewSampleData sampleData)
 		{
-			if (!ignoreSampleData)
-				analyzer?.AddValues(sampleData.SampleData, sampleData.NumberOfChannels);
+			analyzer?.AddValues(sampleData.SampleData, sampleData.NumberOfChannels);
 		}
 		#endregion
 
@@ -118,8 +114,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpectrumAnalyzer
 		/********************************************************************/
 		private void Analyzer_FftCalculated(object sender, Analyzer.FftEventArgs e)
 		{
-			if (!ignoreSampleData)
-				userControl.Update(e.Result);
+			userControl.Update(e.Result);
 		}
 		#endregion
 	}

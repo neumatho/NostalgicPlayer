@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		}
 
 		private const int SampleBufferSizeInMs = 20;
-		private const int MaxSecondsInSampleBuffer = 2;
+		private const int MaxMilliSecondsInSampleBuffer = 300;
 
 		private Manager manager;
 
@@ -187,13 +187,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			foreach (IVisualAgent visualAgent in manager.GetRegisteredVisualAgent())
 				visualAgent.SetPauseState(paused);
 
-			if (!paused)
+			lock (sampleDataList)
 			{
-				lock (sampleDataList)
-				{
-					sampleDataList.Clear();
-					sampleDataLatencyLeft = currentLatency;
-				}
+				sampleDataList.Clear();
+				sampleDataLatencyLeft = currentLatency;
 			}
 		}
 
@@ -445,7 +442,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					{
 						// Check if we're behind in time. This can happen if e.g. using the Disk Saver
 						// output agent. If so, skip some of the buffers until we're in sync again
-						long maxTime = currentSampleDataTimeForTimer + (MaxSecondsInSampleBuffer * 1000) - currentLatency;
+						long maxTime = currentSampleDataTimeForTimer + MaxMilliSecondsInSampleBuffer - currentLatency;
 						long lastItemTime = sampleDataList[^1].TimeWhenBufferWasRendered;
 
 						if (lastItemTime >= maxTime)
