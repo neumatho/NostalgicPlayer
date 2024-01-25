@@ -163,6 +163,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Original player by Tom Beyer.
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///This format uses IFF format to store the module. Else it is like normal ProTracker..
+        /// </summary>
+        internal static string IDS_MOD_DESCRIPTION_AGENT16 {
+            get {
+                return ResourceManager.GetString("IDS_MOD_DESCRIPTION_AGENT16", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Original player by Karsten Obarski.
         ///Converted to C# by Thomas Neumann.
         ///
@@ -312,6 +324,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Required IFF chunk is missing from module.
+        /// </summary>
+        internal static string IDS_MOD_ERR_MISSING_CHUNK {
+            get {
+                return ResourceManager.GetString("IDS_MOD_ERR_MISSING_CHUNK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Number of positions:.
         /// </summary>
         internal static string IDS_MOD_INFODESCLINE0 {
@@ -452,6 +473,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker {
         internal static string IDS_MOD_NAME_AGENT15 {
             get {
                 return ResourceManager.GetString("IDS_MOD_NAME_AGENT15", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ProTracker IFF.
+        /// </summary>
+        internal static string IDS_MOD_NAME_AGENT16 {
+            get {
+                return ResourceManager.GetString("IDS_MOD_NAME_AGENT16", resourceCulture);
             }
         }
         

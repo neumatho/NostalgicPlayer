@@ -47,6 +47,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		private ushort patternLength;
 		private ushort restartPos;
 		private byte initTempo;
+		private byte globalVolume;
 
 		private byte[] positions;
 
@@ -239,6 +240,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			if ((currentModuleType == ModuleType.SoundTracker26) || (currentModuleType == ModuleType.IceTracker))
 				return LoadSoundTracker26(fileInfo, out errorMessage);
 
+			if (currentModuleType == ModuleType.ProTrackerIff)
+				return LoadProTrackerIff(fileInfo, out errorMessage);
+
 			return LoadTracker(fileInfo, out errorMessage);
 		}
 
@@ -366,7 +370,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				IChannel chan = VirtualChannels[i];
 				ModChannel modChan = channels[i];
 
-				chan.SetVolume((ushort)(modChan.Volume * modChan.StarVolume * modChan.HmnVolume / 4096));
+				chan.SetVolume((ushort)(modChan.Volume * modChan.StarVolume * modChan.HmnVolume * globalVolume / 262144));
 			}
 
 			// Have we reached the end of the module
@@ -519,6 +523,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			if (moduleStream.Length < 1468)
 				return ModuleType.Unknown;
 
+			if (CheckForProTrackerIff(fileInfo.ModuleStream))
+				return ModuleType.ProTrackerIff;
+
 			// Check mark
 			moduleStream.Seek(1464, SeekOrigin.Begin);
 			uint mark = moduleStream.Read_B_UINT32();
@@ -555,6 +562,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				retVal = Check31SamplesModule(fileInfo, mark);
 
 			return retVal;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Checks for ProTracker IFF format
+		/// </summary>
+		/********************************************************************/
+		private static bool CheckForProTrackerIff(ModuleStream moduleStream)
+		{
+			moduleStream.Seek(0, SeekOrigin.Begin);
+			if (moduleStream.Read_B_UINT32() != 0x464f524d)		// FORM
+				return false;
+
+			moduleStream.Seek(8, SeekOrigin.Begin);
+			if (moduleStream.Read_B_UINT32() != 0x4d4f444c)		// MODL
+				return false;
+
+			return true;
 		}
 
 
@@ -1257,11 +1284,12 @@ stopLoop:
 		/********************************************************************/
 		private bool IsProTracker()
 		{
-			return currentModuleType == ModuleType.ProTracker;
+			return currentModuleType >= ModuleType.ProTracker;
 		}
 
+		#region Loaders
 
-
+		#region Tracker loader
 		/********************************************************************/
 		/// <summary>
 		/// Will load a tracker module into memory
@@ -1464,6 +1492,7 @@ stopLoop:
 
 				// Find the missing information
 				patternLength = 64;
+				globalVolume = 64;
 
 				// Find the number of channels used
 				channelNum = (ushort)(currentModuleType == ModuleType.StarTrekker8 ? 8 : 4);
@@ -1654,9 +1683,9 @@ stopLoop:
 				throw;
 			}
 		}
+		#endregion
 
-
-
+		#region SoundTracker 2.6 loader
 		/********************************************************************/
 		/// <summary>
 		/// Will load a SoundTracker 2.6 module into memory
@@ -1672,6 +1701,7 @@ stopLoop:
 				Encoding encoder = EncoderCollection.Amiga;
 
 				sampleNum = 31;
+				globalVolume = 64;
 
 				// Read the song name
 				buf[20] = 0x00;
@@ -1841,8 +1871,149 @@ stopLoop:
 				throw;
 			}
 		}
+		#endregion
+
+		#region ProTracker IFF loader
+		/********************************************************************/
+		/// <summary>
+		/// Will load a ProTracker IFF module into memory
+		/// </summary>
+		/********************************************************************/
+		private AgentResult LoadProTrackerIff(PlayerFileInfo fileInfo, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			try
+			{
+				ModuleStream moduleStream = fileInfo.ModuleStream;
+
+				moduleStream.Seek(12, SeekOrigin.Begin);
+
+				InfoChunk infoChunk = null;
+				bool hasPtdt = false;
+
+				for (;;)
+				{
+					// Read the chunk name and length
+					uint chunkName = moduleStream.Read_B_UINT32();
+					uint chunkSize = moduleStream.Read_B_UINT32() - 8;
+
+					// Do we have any chunks left?
+					if (moduleStream.EndOfStream)
+						break;			// No, stop the loading
+
+					// Find out what the chunk is and begin to parse it
+					switch (chunkName)
+					{
+						// Version (VERS)
+						case 0x56455253:
+						{
+							// Ignore the VERS chunk, but it has an invalid size, so skip an absolute number
+							moduleStream.Seek(10, SeekOrigin.Current);
+							break;
+						}
+
+						// Module information (INFO)
+						case 0x494e464f:
+						{
+							infoChunk = ParseInfo(moduleStream, chunkSize, out errorMessage);
+							break;
+						}
+
+						// Ordinary module (PTDT)
+						case 0x50544454:
+						{
+							ParsePtdt(fileInfo, out errorMessage);
+							hasPtdt = true;
+							break;
+						}
+
+						// Unknown chunks
+						default:
+						{
+							// Ignore unknown chunks
+							moduleStream.Seek(chunkSize, SeekOrigin.Current);
+							break;
+						}
+					}
+
+					if (!string.IsNullOrEmpty(errorMessage))
+					{
+						Cleanup();
+						return AgentResult.Error;
+					}
+				}
+
+				if ((infoChunk == null) || !hasPtdt)
+				{
+					Cleanup();
+
+					errorMessage = Resources.IDS_MOD_ERR_MISSING_CHUNK;
+					return AgentResult.Error;
+				}
+
+				initTempo = (byte)infoChunk.DefaultBpm;
+				globalVolume = (byte)infoChunk.GlobalVolume;
+
+				return AgentResult.Ok;
+			}
+			catch (Exception)
+			{
+				Cleanup();
+				throw;
+			}
+		}
 
 
+
+		/********************************************************************/
+		/// <summary>
+		/// Parse the INFO chunk
+		/// </summary>
+		/********************************************************************/
+		private InfoChunk ParseInfo(ModuleStream moduleStream, uint chunkSize, out string errorMessage)
+		{
+			if (chunkSize < 64)
+			{
+				errorMessage = Resources.IDS_MOD_ERR_LOADING_HEADER;
+				return null;
+			}
+
+			InfoChunk infoChunk = new InfoChunk();
+
+			// Skip no needed information
+			moduleStream.Seek(38, SeekOrigin.Current);
+
+			// Read needed information
+			infoChunk.GlobalVolume = moduleStream.Read_B_UINT16();
+			infoChunk.DefaultBpm = moduleStream.Read_B_UINT16();
+
+			if (moduleStream.EndOfStream)
+			{
+				errorMessage = Resources.IDS_MOD_ERR_LOADING_HEADER;
+				return null;
+			}
+
+			// Skip rest of chunk
+			moduleStream.Seek(chunkSize - 64 + 22, SeekOrigin.Current);
+
+			errorMessage = string.Empty;
+
+			return infoChunk;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Parse the PTDT chunk
+		/// </summary>
+		/********************************************************************/
+		private void ParsePtdt(PlayerFileInfo fileInfo, out string errorMessage)
+		{
+			LoadTracker(fileInfo, out errorMessage);
+		}
+		#endregion
 
 		/********************************************************************/
 		/// <summary>
@@ -1942,8 +2113,7 @@ stopLoop:
 				}
 			}
 		}
-
-
+		#endregion
 
 		/********************************************************************/
 		/// <summary>
@@ -2979,6 +3149,23 @@ stopLoop:
 
 		/********************************************************************/
 		/// <summary>
+		/// Jump to the given position
+		/// </summary>
+		/********************************************************************/
+		private void SetPosition(ushort pos)
+		{
+			// Set the new position
+			playingInfo.OldSongPos = playingInfo.SongPos;
+			playingInfo.SongPos = (ushort)(pos - 1);
+			playingInfo.BreakPos = 0;
+			playingInfo.PosJumpFlag = true;
+			playingInfo.GotPositionJump = true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Handles StarTrekker AM samples
 		/// </summary>
 		/********************************************************************/
@@ -3620,13 +3807,7 @@ stopLoop:
 		private void PositionJump(ModChannel modChan)
 		{
 			byte pos = modChan.TrackLine.EffectArg;
-
-			// Set the new position
-			playingInfo.OldSongPos = playingInfo.SongPos;
-			playingInfo.SongPos = (ushort)(pos - 1);
-			playingInfo.BreakPos = 0;
-			playingInfo.PosJumpFlag = true;
-			playingInfo.GotPositionJump = true;
+			SetPosition(pos);
 		}
 
 
@@ -3753,6 +3934,9 @@ stopLoop:
 
 					// Make the song start over from the beginning
 					restartSong = true;
+
+					// Restart the module
+					SetPosition(restartPos);
 				}
 			}
 		}

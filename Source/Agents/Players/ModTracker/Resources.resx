@@ -171,6 +171,12 @@ Converted to C# by Thomas Neumann.
 
 This format is the same as SoundTracker 2.6, which means it also have independent tracks which can be combined to a pattern. It also include more effects than SoundTracker 2.6.</value>
   </data>
+  <data name="IDS_MOD_DESCRIPTION_AGENT16" xml:space="preserve">
+    <value>Original player by Tom Beyer.
+Converted to C# by Thomas Neumann.
+
+This format uses IFF format to store the module. Else it is like normal ProTracker.</value>
+  </data>
   <data name="IDS_MOD_DESCRIPTION_AGENT2" xml:space="preserve">
     <value>Original player by Karsten Obarski.
 Converted to C# by Thomas Neumann.
@@ -242,6 +248,9 @@ This is a NoiseTracker clone, but improved by the possibility to have synth samp
   <data name="IDS_MOD_ERR_LOADING_TRACKS" xml:space="preserve">
     <value>Can't read the module tracks</value>
   </data>
+  <data name="IDS_MOD_ERR_MISSING_CHUNK" xml:space="preserve">
+    <value>Required IFF chunk is missing from module</value>
+  </data>
   <data name="IDS_MOD_INFODESCLINE0" xml:space="preserve">
     <value>Number of positions:</value>
   </data>
@@ -289,6 +298,9 @@ This is a NoiseTracker clone, but improved by the possibility to have synth samp
   </data>
   <data name="IDS_MOD_NAME_AGENT15" xml:space="preserve">
     <value>IceTracker</value>
+  </data>
+  <data name="IDS_MOD_NAME_AGENT16" xml:space="preserve">
+    <value>ProTracker IFF</value>
   </data>
   <data name="IDS_MOD_NAME_AGENT2" xml:space="preserve">
     <value>Ultimate SoundTracker 1.8 - 2.0</value>

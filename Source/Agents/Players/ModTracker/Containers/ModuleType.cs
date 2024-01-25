@@ -31,6 +31,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		AudioSculpture,
 
 		// ProTracker compatibility
-		ProTracker
+		ProTracker,
+		ProTrackerIff
 	}
 }

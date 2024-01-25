@@ -144,6 +144,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | ProRunner 1 | .pr1 / .pru1 | ProWizard | ModTracker |
 | ProRunner 2 | .pr2 / .pru2 | ProWizard | ModTracker |
 | ProTracker | .mod | | ModTracker |
+| ProTracker IFF | .ptm | | ModTracker |
 | Pygmy Packer | .pyg | ProWizard | ModTracker |
 | Quadra Composer | .emod | | Quadra Composer |
 | RIFF-WAVE (ADPCM) | .wav | | Sample |
