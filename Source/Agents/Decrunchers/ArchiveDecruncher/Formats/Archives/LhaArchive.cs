@@ -15,7 +15,7 @@ using Polycode.NostalgicPlayer.Kit.Exceptions;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
-namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Archive
+namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Archives
 {
 	/// <summary>
 	/// Handle a Lha archive

@@ -6,7 +6,7 @@
 using System;
 using System.IO;
 using System.IO.Hashing;
-using Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Archive;
+using Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Archives;
 using Polycode.NostalgicPlayer.Kit.Exceptions;
 using Polycode.NostalgicPlayer.Kit.Streams;
 

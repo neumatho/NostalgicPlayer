@@ -11,28 +11,34 @@ using Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.
 using Polycode.NostalgicPlayer.Kit.Exceptions;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using SharpCompress.Archives.Zip;
+using SharpCompress.Archives.Tar;
 
-namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.Archive
+namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.Archives
 {
 	/// <summary>
-	/// Handle a Zip archive
+	/// Handle a Tar archive
 	/// </summary>
-	internal class ZipArchive : IArchive
+	internal class TarArchive : IArchive
 	{
 		private readonly string agentName;
-		private readonly SharpCompress.Archives.Zip.ZipArchive archive;
+		private readonly SharpCompress.Archives.Tar.TarArchive archive;
+
+		private readonly List<TarArchiveEntry> entries;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ZipArchive(string agentName, Stream archiveStream)
+		public TarArchive(string agentName, Stream archiveStream)
 		{
 			this.agentName = agentName;
 
-			archive = SharpCompress.Archives.Zip.ZipArchive.Open(archiveStream);
+			archive = SharpCompress.Archives.Tar.TarArchive.Open(archiveStream);
+
+			// Make a copy of all the entries. For some reason, then the last
+			// entry disappear sometimes in the original collection
+			entries = archive.Entries.ToList();
 		}
 
 		#region IArchive implementation
@@ -44,7 +50,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		public ArchiveStream OpenEntry(string entryName)
 		{
 			entryName = entryName.Replace('\\', '/');
-			ZipArchiveEntry entry = archive.Entries.FirstOrDefault(e => e.Key.Equals(entryName, StringComparison.OrdinalIgnoreCase));
+			TarArchiveEntry entry = entries.FirstOrDefault(e => e.Key.Equals(entryName, StringComparison.OrdinalIgnoreCase));
 			if (entry == null)
 			{
 				entryName = entryName.Replace('/', '\\');
@@ -65,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		/********************************************************************/
 		public IEnumerable<string> GetEntries()
 		{
-			foreach (ZipArchiveEntry entry in archive.Entries.Where(e => !e.IsDirectory))
+			foreach (TarArchiveEntry entry in entries.Where(e => !e.IsDirectory))
 				yield return entry.Key;
 		}
 		#endregion

@@ -11,28 +11,32 @@ using Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.
 using Polycode.NostalgicPlayer.Kit.Exceptions;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using SharpCompress.Archives.SevenZip;
+using SharpCompress.Archives.Rar;
+using SharpCompress.Readers.Rar;
 
-namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.Archive
+namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.Archives
 {
 	/// <summary>
-	/// Handle a 7-Zip archive
+	/// Handle a Rar archive
 	/// </summary>
-	internal class SevenZipArchive : IArchive
+	internal class RarArchive : IArchive
 	{
 		private readonly string agentName;
-		private readonly SharpCompress.Archives.SevenZip.SevenZipArchive archive;
+		private readonly SharpCompress.Archives.Rar.RarArchive archive;
+
+		private Stream archiveStream;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SevenZipArchive(string agentName, Stream archiveStream)
+		public RarArchive(string agentName, Stream archiveStream)
 		{
 			this.agentName = agentName;
 
-			archive = SharpCompress.Archives.SevenZip.SevenZipArchive.Open(archiveStream);
+			archive = SharpCompress.Archives.Rar.RarArchive.Open(archiveStream);
+			this.archiveStream = archiveStream;
 		}
 
 		#region IArchive implementation
@@ -43,15 +47,24 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		/********************************************************************/
 		public ArchiveStream OpenEntry(string entryName)
 		{
-			entryName = entryName.Replace('\\', '/');
-			SevenZipArchiveEntry entry = archive.Entries.FirstOrDefault(e => e.Key.Equals(entryName, StringComparison.OrdinalIgnoreCase));
-			if (entry == null)
+			if (archive.IsSolid)
 			{
-				entryName = entryName.Replace('/', '\\');
-				entry = archive.Entries.FirstOrDefault(e => e.Key.Equals(entryName, StringComparison.OrdinalIgnoreCase));
-				if (entry == null)
-					throw new DecruncherException(agentName, string.Format(Resources.IDS_SCOM_ERR_ENTRY_NOT_FOUND, entryName));
+				// Solid Rar archives is only supported trough the reader, so use that
+				archiveStream.Seek(0, SeekOrigin.Begin);
+				RarReader reader = RarReader.Open(archiveStream);
+
+				while (reader.MoveToNextEntry())
+				{
+					if (!reader.Entry.IsDirectory && (reader.Entry.Key.Equals(entryName, StringComparison.OrdinalIgnoreCase)))
+						return new ArchiveEntryStream(reader.Entry, reader.OpenEntryStream());
+				}
+
+				throw new DecruncherException(agentName, string.Format(Resources.IDS_SCOM_ERR_ENTRY_NOT_FOUND, entryName));
 			}
+
+			RarArchiveEntry entry = archive.Entries.FirstOrDefault(e => e.Key.Equals(entryName, StringComparison.OrdinalIgnoreCase));
+			if (entry == null)
+				throw new DecruncherException(agentName, string.Format(Resources.IDS_SCOM_ERR_ENTRY_NOT_FOUND, entryName));
 
 			return new ArchiveEntryStream(entry, entry.OpenEntryStream());
 		}
@@ -65,7 +78,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		/********************************************************************/
 		public IEnumerable<string> GetEntries()
 		{
-			foreach (SevenZipArchiveEntry entry in archive.Entries.Where(e => !e.IsDirectory))
+			foreach (RarArchiveEntry entry in archive.Entries.Where(e => !e.IsDirectory))
 				yield return entry.Key;
 		}
 		#endregion

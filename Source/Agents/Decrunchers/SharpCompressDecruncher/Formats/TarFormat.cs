@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.IO;
-using Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.Archive;
+using Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Formats.Archives;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;

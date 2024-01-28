@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using System.IO;
-using Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Archive;
+using Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Archives;
 using Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Lha;
 using Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats.Lha.Containers;
 using Polycode.NostalgicPlayer.Kit.Exceptions;
