@@ -14,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 	/// <summary>
 	/// Can decrunch Lha archives
 	/// </summary>
-	internal class ArchiveDecruncher_Lha : ArchiveDecruncherAgentBase
+	internal class LhaFormat : ArchiveDecruncherAgentBase
 	{
 		private readonly string agentName;
 
@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ArchiveDecruncher_Lha(string agentName)
+		public LhaFormat(string agentName)
 		{
 			this.agentName = agentName;
 		}

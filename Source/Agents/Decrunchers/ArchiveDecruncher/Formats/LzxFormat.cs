@@ -14,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 	/// <summary>
 	/// Can decrunch Lzx archives
 	/// </summary>
-	internal class ArchiveDecruncher_Lzx : ArchiveDecruncherAgentBase
+	internal class LzxFormat : ArchiveDecruncherAgentBase
 	{
 		private readonly string agentName;
 
@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ArchiveDecruncher_Lzx(string agentName)
+		public LzxFormat(string agentName)
 		{
 			this.agentName = agentName;
 		}

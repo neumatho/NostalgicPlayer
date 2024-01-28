@@ -60,10 +60,10 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
 			if (typeId == agent1Id)
-				return new ArchiveDecruncher_Lzx(Resources.IDS_ARD_NAME_AGENT1);
+				return new LzxFormat(Resources.IDS_ARD_NAME_AGENT1);
 
 			if (typeId == agent2Id)
-				return new ArchiveDecruncher_Lha(Resources.IDS_ARD_NAME_AGENT2);
+				return new LhaFormat(Resources.IDS_ARD_NAME_AGENT2);
 
 			return null;
 		}
