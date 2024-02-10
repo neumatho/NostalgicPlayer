@@ -28,6 +28,6 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Will open the archive and return it
 		/// </summary>
-		IArchive OpenArchive(Stream archiveStream);
+		IArchive OpenArchive(string archiveFileName, Stream archiveStream);
 	}
 }

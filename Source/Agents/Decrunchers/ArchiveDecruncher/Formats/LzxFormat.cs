@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 		/// Will open the archive and return it
 		/// </summary>
 		/********************************************************************/
-		public override IArchive OpenArchive(Stream archiveStream)
+		public override IArchive OpenArchive(string archiveFileName, Stream archiveStream)
 		{
 			return new LzxArchive(agentName, archiveStream);
 		}

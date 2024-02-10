@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="IDS_ERR_ENTRY_NOT_FOUND" xml:space="preserve">
+    <value>Could not find archive entry ({0})</value>
+  </data>
+  <data name="IDS_ERR_LOADING_EOF_REACHED" xml:space="preserve">
+    <value>End-of-file reached before end mark</value>
+  </data>
   <data name="IDS_ERR_LOADING_EXTERNAL_SAMPLE" xml:space="preserve">
     <value>Can't load external sample with name {0}. Make sure you have an Instruments, Synthsounds and Hybrids folders in the same folder as the module, which have all needed samples and synthsounds</value>
   </data>
@@ -125,6 +131,9 @@
   </data>
   <data name="IDS_ERR_LOADING_INSTRUMENTS" xml:space="preserve">
     <value>Can't read the instrument information</value>
+  </data>
+  <data name="IDS_ERR_LOADING_NO_MUSIC_BLOCK" xml:space="preserve">
+    <value>Found data block without a music block</value>
   </data>
   <data name="IDS_ERR_LOADING_PATTERNS" xml:space="preserve">
     <value>Can't read the pattern information</value>
@@ -149,6 +158,7 @@ Epic Games UMX ➜ Whatever format inside
 Fred Editor (Final) ➜ Fred Editor
 Future Composer 1.0 - 1.3 ➜ Future Composer 1.4
 MED 2.10 (MED4) ➜ MED 2.10 (MMD0)
+SC68 ➜ Whatever format inside
 SoundFX 1.x ➜ SoundFX 2.0</value>
   </data>
   <data name="IDS_MODCONV_DESCRIPTION_AGENT1" xml:space="preserve">
@@ -183,6 +193,19 @@ Converted to C# by Thomas Neumann.
 
 This converter recognizes the modules in “umx” files from games like “Unreal”, “DeusEx”, etc. To NostalgicPlayer, UMX is just a container and the real music format may be one of “ScreamTracker 3”, “Impulse Tracker”, “FastTracker 2”, or possibly a “ProTracker” compatible one.</value>
   </data>
+  <data name="IDS_MODCONV_DESCRIPTION_AGENT6a" xml:space="preserve">
+    <value>Format by Benjamin Gerard.
+Written by Thomas Neumann.
+
+This converter recognizes SC68 modules. SC68 is a free open source project that intends to play musics originally designed for Atari ST and Amiga computers. It is a container format, that just wrap the original module.
+
+This converter will extract the module and then hope there exists a player which can handle it. Note that there are not players for all SC68 formats yet, so don't be surprised if you find a file which can not be played.</value>
+  </data>
+  <data name="IDS_MODCONV_DESCRIPTION_AGENT6b" xml:space="preserve">
+    <value>Written by Thomas Neumann.
+
+SC68 modules can contain several modules in one file. To support this, they are treated as achives with each module as an entry in the archive.</value>
+  </data>
   <data name="IDS_MODCONV_NAME" xml:space="preserve">
     <value>Module Converter</value>
   </data>
@@ -200,5 +223,11 @@ This converter recognizes the modules in “umx” files from games like “Unre
   </data>
   <data name="IDS_MODCONV_NAME_AGENT5" xml:space="preserve">
     <value>Epic Games UMX</value>
+  </data>
+  <data name="IDS_MODCONV_NAME_AGENT6a" xml:space="preserve">
+    <value>SC68</value>
+  </data>
+  <data name="IDS_MODCONV_NAME_AGENT6b" xml:space="preserve">
+    <value>SC68</value>
   </data>
 </root>

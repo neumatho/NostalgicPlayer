@@ -62,7 +62,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 		/// Will open the archive and return it
 		/// </summary>
 		/********************************************************************/
-		public override IArchive OpenArchive(Stream archiveStream)
+		public override IArchive OpenArchive(string archiveFileName, Stream archiveStream)
 		{
 			return new SevenZipArchive(agentName, archiveStream);
 		}

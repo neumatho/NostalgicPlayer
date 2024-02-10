@@ -25,6 +25,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 		private static readonly Guid agent3Id = Guid.Parse("44F2292A-BBA1-42C7-B9EC-1ACED9A42BF8");
 		private static readonly Guid agent4Id = Guid.Parse("CED4726A-EF3B-40C6-8F93-865F0CE5321E");
 		private static readonly Guid agent5Id = Guid.Parse("E03F718C-8FA9-4843-9EBE-6D69EC3A421D");
+		private static readonly Guid agent6aId = Guid.Parse("D6F10415-FCC6-4CDF-8756-EA786786711B");
+		private static readonly Guid agent6bId = Guid.Parse("6221A135-3F32-4499-AB4B-32BFAB93F0EF");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -60,7 +62,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT2, Resources.IDS_MODCONV_DESCRIPTION_AGENT2, agent2Id),
 					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT3, Resources.IDS_MODCONV_DESCRIPTION_AGENT3, agent3Id),
 					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT4, Resources.IDS_MODCONV_DESCRIPTION_AGENT4, agent4Id),
-					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT5, Resources.IDS_MODCONV_DESCRIPTION_AGENT5, agent5Id)
+					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT5, Resources.IDS_MODCONV_DESCRIPTION_AGENT5, agent5Id),
+					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT6a, Resources.IDS_MODCONV_DESCRIPTION_AGENT6a, agent6aId),
+					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT6b, Resources.IDS_MODCONV_DESCRIPTION_AGENT6b, agent6bId)
 				};
 			}
 		}
@@ -74,20 +78,29 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 		/********************************************************************/
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
-			if (typeId == agent1Id)
-				return new FutureComposer13Format();
+			switch (typeId)
+			{
+				case var id when id == agent1Id:
+					return new FutureComposer13Format();
 
-			if (typeId == agent2Id)
-				return new SoundFx1xFormat();
+				case var id when id == agent2Id:
+					return new SoundFx1xFormat();
 
-			if (typeId == agent3Id)
-				return new FredEditorFinalFormat();
+				case var id when id == agent3Id:
+					return new FredEditorFinalFormat();
 
-			if (typeId == agent4Id)
-				return new Med4Format();
+				case var id when id == agent4Id:
+					return new Med4Format();
 
-			if (typeId == agent5Id)
-				return new UmxFormat();
+				case var id when id == agent5Id:
+					return new UmxFormat();
+
+				case var id when id == agent6aId:
+					return new Sc68Format();
+
+				case var id when id == agent6bId:
+					return new Sc68FormatArchive(Resources.IDS_MODCONV_NAME_AGENT6b);
+			}
 
 			return null;
 		}

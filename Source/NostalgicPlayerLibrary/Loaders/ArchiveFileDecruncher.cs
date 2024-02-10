@@ -119,7 +119,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 				Stream stream = new FileStream(parts[0], FileMode.Open, FileAccess.Read);
 
 				// Open the archive stream
-				archive = OpenArchive(stream, out stream);
+				archive = OpenArchive(Path.GetFileName(parts[0]), stream, out stream);
 				archiveStreams.Push(stream);
 
 				// Now take each part and open it, except for the last which contains
@@ -130,7 +130,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 
 					stream = entryInfo.EntryStream;
 
-					archive = OpenArchive(stream, out stream);
+					archive = OpenArchive(parts[i], stream, out stream);
 					archiveStreams.Push(stream);
 				}
 			}

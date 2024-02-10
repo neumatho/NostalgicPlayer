@@ -1024,6 +1024,14 @@
             <uap:DisplayName>ProTracker IFF</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="sc68file">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-sc68">.sc68</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>SC68 module</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

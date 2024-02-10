@@ -61,6 +61,24 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not find archive entry ({0}).
+        /// </summary>
+        internal static string IDS_ERR_ENTRY_NOT_FOUND {
+            get {
+                return ResourceManager.GetString("IDS_ERR_ENTRY_NOT_FOUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to End-of-file reached before end mark.
+        /// </summary>
+        internal static string IDS_ERR_LOADING_EOF_REACHED {
+            get {
+                return ResourceManager.GetString("IDS_ERR_LOADING_EOF_REACHED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can&apos;t load external sample with name {0}. Make sure you have an Instruments, Synthsounds and Hybrids folders in the same folder as the module, which have all needed samples and synthsounds.
         /// </summary>
         internal static string IDS_ERR_LOADING_EXTERNAL_SAMPLE {
@@ -84,6 +102,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         internal static string IDS_ERR_LOADING_INSTRUMENTS {
             get {
                 return ResourceManager.GetString("IDS_ERR_LOADING_INSTRUMENTS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Found data block without a music block.
+        /// </summary>
+        internal static string IDS_ERR_LOADING_NO_MUSIC_BLOCK {
+            get {
+                return ResourceManager.GetString("IDS_ERR_LOADING_NO_MUSIC_BLOCK", resourceCulture);
             }
         }
         
@@ -134,6 +161,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         ///Fred Editor (Final) ➜ Fred Editor
         ///Future Composer 1.0 - 1.3 ➜ Future Composer 1.4
         ///MED 2.10 (MED4) ➜ MED 2.10 (MMD0)
+        ///SC68 ➜ Whatever format inside
         ///SoundFX 1.x ➜ SoundFX 2.0.
         /// </summary>
         internal static string IDS_MODCONV_DESCRIPTION {
@@ -205,6 +233,31 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Format by Benjamin Gerard.
+        ///Written by Thomas Neumann.
+        ///
+        ///This converter recognizes SC68 modules. SC68 is a free open source project that intends to play musics originally designed for Atari ST and Amiga computers. It is a container format, that just wrap the original module.
+        ///
+        ///This converter will extract the module and then hope there exists a player which can handle it. Note that there are not players for all SC68 formats yet, so don&apos;t be surprised if you find a file which can not be played..
+        /// </summary>
+        internal static string IDS_MODCONV_DESCRIPTION_AGENT6a {
+            get {
+                return ResourceManager.GetString("IDS_MODCONV_DESCRIPTION_AGENT6a", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Written by Thomas Neumann.
+        ///
+        ///SC68 modules can contain several modules in one file. To support this, they are treated as achives with each module as an entry in the archive..
+        /// </summary>
+        internal static string IDS_MODCONV_DESCRIPTION_AGENT6b {
+            get {
+                return ResourceManager.GetString("IDS_MODCONV_DESCRIPTION_AGENT6b", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Module Converter.
         /// </summary>
         internal static string IDS_MODCONV_NAME {
@@ -255,6 +308,24 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         internal static string IDS_MODCONV_NAME_AGENT5 {
             get {
                 return ResourceManager.GetString("IDS_MODCONV_NAME_AGENT5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SC68.
+        /// </summary>
+        internal static string IDS_MODCONV_NAME_AGENT6a {
+            get {
+                return ResourceManager.GetString("IDS_MODCONV_NAME_AGENT6a", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SC68.
+        /// </summary>
+        internal static string IDS_MODCONV_NAME_AGENT6b {
+            get {
+                return ResourceManager.GetString("IDS_MODCONV_NAME_AGENT6b", resourceCulture);
             }
         }
     }

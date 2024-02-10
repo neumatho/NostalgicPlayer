@@ -11,6 +11,7 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Exceptions;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
@@ -96,7 +97,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/// given stream and then open the archive and return a new stream
 		/// </summary>
 		/********************************************************************/
-		protected IArchive OpenArchive(Stream stream, out Stream newStream)
+		protected IArchive OpenArchive(string archiveFileName, Stream stream, out Stream newStream)
 		{
 			IArchiveDecruncherAgent archiveDecruncher = FindArchiveAgent(stream, out newStream);
 			if (archiveDecruncher == null)
@@ -105,7 +106,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			// Seek back to the beginning of the stream
 			newStream.Seek(0, SeekOrigin.Begin);
 
-			return archiveDecruncher.OpenArchive(newStream);
+			return archiveDecruncher.OpenArchive(archiveFileName, newStream);
 		}
 		#endregion
 
@@ -171,7 +172,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/********************************************************************/
 		private IEnumerable<string> GetAllEntries(string fullPath, Stream archiveStream)
 		{
-			IArchive archive = OpenArchive(archiveStream, out Stream newStream);
+			string archiveFileName = ArchivePath.IsArchivePath(fullPath) ? ArchivePath.GetEntryName(fullPath) : Path.GetFileName(fullPath);
+			IArchive archive = OpenArchive(archiveFileName, archiveStream, out Stream newStream);
 
 			try
 			{

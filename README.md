@@ -151,6 +151,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | RIFF-WAVE (IEEE Float) | .wav | | Sample |
 | RIFF-WAVE (PCM) | .wav | | Sample |
 | Sawteeth | .st | | Sawteeth |
+| SC68 | .sc68 | Module Converter | |
 | Scream Tracker 2 | .stm | | Xmp |
 | Scream Tracker 3 | .s3m | | Xmp |
 | Scream Tracker 3 MOD | .mod | | Xmp |

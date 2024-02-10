@@ -40,7 +40,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// Will open the archive and return it
 		/// </summary>
 		/********************************************************************/
-		public abstract IArchive OpenArchive(Stream archiveStream);
+		public abstract IArchive OpenArchive(string archiveFileName, Stream archiveStream);
 		#endregion
 	}
 }
