@@ -824,6 +824,30 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 				}
 			}
 
+			// Maniacs of Noise
+			if (moduleStream.Length > 1024)
+			{
+				moduleStream.Seek(0, SeekOrigin.Begin);
+
+				byte[] buf = new byte[1024];
+				moduleStream.Read(buf, 0, 1024);
+
+				byte[] compareBuf = "Maniacs of Noise"u8.ToArray();
+
+				int i, j;
+				for (i = 0, j = 0; i < buf.Length - compareBuf.Length; i++)
+				{
+					if (buf[i] == compareBuf[j])
+					{
+						j++;
+						if (j == compareBuf.Length)
+							return true;
+					}
+					else
+						j = 0;
+				}
+			}
+
 			return false;
 		}
 
