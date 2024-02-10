@@ -1089,6 +1089,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} bytes.
+        /// </summary>
+        internal static string IDS_MODULE_INFO_ITEM_MODULESIZE_VALUE {
+            get {
+                return ResourceManager.GetString("IDS_MODULE_INFO_ITEM_MODULESIZE_VALUE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to n/a.
         /// </summary>
         internal static string IDS_MODULE_INFO_ITEM_NA {
@@ -1098,7 +1107,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  (packed: {0}).
+        ///   Looks up a localized string similar to  (packed: {0} bytes).
         /// </summary>
         internal static string IDS_MODULE_INFO_ITEM_PACKEDSIZE {
             get {

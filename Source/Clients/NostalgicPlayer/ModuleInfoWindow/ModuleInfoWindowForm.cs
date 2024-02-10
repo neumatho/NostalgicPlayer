@@ -494,7 +494,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_TIME, val);
 
-				val = $"{staticInfo.ModuleSize:n0}";
+				val = string.Format(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE_VALUE, staticInfo.ModuleSize.ToString("N0"));
 				if (staticInfo.CrunchedSize != 0)
 					val += string.Format(Resources.IDS_MODULE_INFO_ITEM_PACKEDSIZE, staticInfo.CrunchedSize == -1 ? Resources.IDS_MODULE_INFO_UNKNOWN.ToLower() : staticInfo.CrunchedSize.ToString("N0"));
 
