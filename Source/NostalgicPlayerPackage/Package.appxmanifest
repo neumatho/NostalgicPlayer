@@ -1032,6 +1032,22 @@
             <uap:DisplayName>SC68 module</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="dmufile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-dmu">.dmu</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Digital Mugician</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="mugfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-mug">.mug</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Digital Mugician 2</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

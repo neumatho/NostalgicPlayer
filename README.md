@@ -58,6 +58,8 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | DigiBooster 3.x | .dbm | | DigiBooster Pro |
 | DigiBooster Pro 2.x | .dbm | | DigiBooster Pro |
 | Digital Illusions | .di | ProWizard | ModTracker |
+| Digital Mugician | .dmu | | Digital Mugician |
+| Digital Mugician 2 | .mug | | Digital Mugician |
 | Digital Sound and Music Interface | .amf | | Xmp |
 | Digital Sound Interface Kit RIFF | .dsm | | Xmp |
 | Digital Tracker MOD | .mod | | Xmp |

@@ -105,6 +105,7 @@
     <ProjectReference Include="..\..\Agents\Players\DeltaMusic20\DeltaMusic20.csproj" />
     <ProjectReference Include="..\..\Agents\Players\DigiBoosterPro\DigiBoosterPro.csproj" />
     <ProjectReference Include="..\..\Agents\Players\DigiBooster\DigiBooster.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\DigitalMugician\DigitalMugician.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Fred\Fred.csproj" />
     <ProjectReference Include="..\..\Agents\Players\FutureComposer\FutureComposer.csproj" />
     <ProjectReference Include="..\..\Agents\Players\GameMusicCreator\GameMusicCreator.csproj" />
