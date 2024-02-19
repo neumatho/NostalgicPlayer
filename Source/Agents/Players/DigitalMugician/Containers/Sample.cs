@@ -12,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician.Containers
 	{
 		public uint StartOffset;
 		public uint EndOffset;
-		public uint LoopStart;
+		public int LoopStart;
 		public sbyte[] SampleData;
 	}
 }

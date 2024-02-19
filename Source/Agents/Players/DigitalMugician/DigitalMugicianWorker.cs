@@ -347,7 +347,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 
 					sample.StartOffset = moduleStream.Read_B_UINT32();
 					sample.EndOffset = moduleStream.Read_B_UINT32();
-					sample.LoopStart = moduleStream.Read_B_UINT32();
+					sample.LoopStart = moduleStream.Read_B_INT32();
 
 					if (moduleStream.EndOfStream)
 					{
@@ -418,7 +418,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 					}
 
 					if (sample.LoopStart != 0)
-						sample.LoopStart -= sample.StartOffset;
+						sample.LoopStart = (int)(sample.LoopStart - sample.StartOffset);
+					else
+						sample.LoopStart = -1;
 
 					sample.StartOffset = 0;
 					sample.EndOffset = (uint)length;
@@ -640,7 +642,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 							NoteFrequencies = frequencies
 						};
 
-						if (sample.LoopStart == 0)
+						if (sample.LoopStart < 0)
 						{
 							// No loop
 							sampleInfo.Flags = SampleInfo.SampleFlag.None;
@@ -651,7 +653,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 						{
 							// Sample loops
 							sampleInfo.Flags = SampleInfo.SampleFlag.Loop;
-							sampleInfo.LoopStart = sample.LoopStart;
+							sampleInfo.LoopStart = (uint)sample.LoopStart;
 							sampleInfo.LoopLength = sample.EndOffset - sampleInfo.LoopStart;
 						}
 					}
@@ -956,8 +958,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 
 								channel.PlaySample((short)voiceInfo.LastInstrument, sample.SampleData, sample.StartOffset, sample.EndOffset - sample.StartOffset);
 
-								if (sample.LoopStart != 0)
-									channel.SetLoop(sample.LoopStart, sample.EndOffset - sample.LoopStart);
+								if (sample.LoopStart >= 0)
+									channel.SetLoop((uint)sample.LoopStart, sample.EndOffset - (uint)sample.LoopStart);
 							}
 							else
 							{
