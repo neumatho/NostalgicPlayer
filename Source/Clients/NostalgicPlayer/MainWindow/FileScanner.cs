@@ -358,34 +358,37 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 						if (loader != null)
 						{
-							IPlayer player = loader.Player;
-
-							if (player.InitPlayer(new PlayerConfiguration(null, loader, new MixerConfiguration()), out string _))
+							if (loader.Load(out _))
 							{
-								try
+								IPlayer player = loader.Player;
+
+								if (player.InitPlayer(new PlayerConfiguration(null, loader, new MixerConfiguration()), out string _))
 								{
-									if (player is IModulePlayer modulePlayer)
+									try
 									{
-										if (!modulePlayer.SelectSong(-1, out _))
-											return;
+										if (player is IModulePlayer modulePlayer)
+										{
+											if (!modulePlayer.SelectSong(-1, out _))
+												return;
+										}
+
+										duration = player.PlayingModuleInformation.SongTotalTime;
+
+										if (settings.UseDatabase)
+										{
+											// Update the information in the database
+											if (moduleDatabaseInfo != null)
+												moduleDatabaseInfo = new ModuleDatabaseInfo(duration.Value, moduleDatabaseInfo.ListenCount, moduleDatabaseInfo.LastLoaded);
+											else
+												moduleDatabaseInfo = new ModuleDatabaseInfo(duration.Value, 0, DateTime.MinValue);
+
+											database.StoreInformation(fileName, moduleDatabaseInfo);
+										}
 									}
-
-									duration = player.PlayingModuleInformation.SongTotalTime;
-
-									if (settings.UseDatabase)
+									finally
 									{
-										// Update the information in the database
-										if (moduleDatabaseInfo != null)
-											moduleDatabaseInfo = new ModuleDatabaseInfo(duration.Value, moduleDatabaseInfo.ListenCount, moduleDatabaseInfo.LastLoaded);
-										else
-											moduleDatabaseInfo = new ModuleDatabaseInfo(duration.Value, 0, DateTime.MinValue);
-
-										database.StoreInformation(fileName, moduleDatabaseInfo);
+										player.CleanupPlayer();
 									}
-								}
-								finally
-								{
-									player.CleanupPlayer();
 								}
 							}
 						}
@@ -421,7 +424,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			Loader loader = new Loader(manager);
 
-			if (loader.Load(fileName, out string _))
+			if (loader.FindPlayer(fileName, out string _))
 				return loader;
 
 			return null;
