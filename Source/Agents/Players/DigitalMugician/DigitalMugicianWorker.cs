@@ -805,7 +805,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 				Speed = currentSubSong.SongSpeed,
 				CurrentSpeed = (ushort)(((currentSubSong.SongSpeed & 0x0f) << 4) | (currentSubSong.SongSpeed & 0x0f)),
 				NewPattern = true,
-				NewInstrument = true,
+				NewRow = true,
 				CurrentPosition = 0,
 				SongLength = currentSubSong.NumberOfSequences,
 				CurrentRow = 0,
@@ -847,7 +847,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 				DoEffects(i);
 
 			playingInfo.NewPattern = false;
-			playingInfo.NewInstrument = false;
+			playingInfo.NewRow = false;
 
 			playingInfo.Speed--;
 			if (playingInfo.Speed == 0)
@@ -855,7 +855,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 				playingInfo.Speed = (ushort)((playingInfo.CurrentSpeed) & 0x0f);
 				ChangeSpeed((ushort)(((playingInfo.CurrentSpeed & 0x0f) << 4) | ((playingInfo.CurrentSpeed & 0xf0) >> 4)));
 
-				playingInfo.NewInstrument = true;
+				playingInfo.NewRow = true;
 
 				playingInfo.CurrentRow++;
 				if ((playingInfo.CurrentRow == 64) || (playingInfo.CurrentRow == playingInfo.PatternLength))
@@ -908,7 +908,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 				ShowTracks();
 			}
 
-			if (playingInfo.NewInstrument)
+			if (playingInfo.NewRow)
 			{
 				Track track = tracks[voiceInfo.Track];
 				TrackRow row = track.Rows[playingInfo.CurrentRow];

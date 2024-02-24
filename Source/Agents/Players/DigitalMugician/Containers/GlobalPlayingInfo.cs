@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician.Containers
 		public ushort CurrentSpeed;
 		public ushort LastShownSpeed;
 		public bool NewPattern;
-		public bool NewInstrument;
+		public bool NewRow;
 		public ushort CurrentPosition;
 		public ushort SongLength;
 		public ushort CurrentRow;
