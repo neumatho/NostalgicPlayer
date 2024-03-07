@@ -132,6 +132,9 @@ This format is not a standard file format like other modules. The music data are
   <data name="IDS_DW_ERR_LOADING_ARPEGGIOS" xml:space="preserve">
     <value>Can't read module arpeggios</value>
   </data>
+  <data name="IDS_DW_ERR_LOADING_CHANNELVOLS" xml:space="preserve">
+    <value>Can't read channel volumes</value>
+  </data>
   <data name="IDS_DW_ERR_LOADING_ENVELOPES" xml:space="preserve">
     <value>Can't read module envelopes</value>
   </data>

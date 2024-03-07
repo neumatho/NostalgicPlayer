@@ -8,6 +8,7 @@ using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 {
@@ -16,7 +17,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 	/// </summary>
 	internal class DavidWhittakerWorker : ModulePlayerWithSubSongDurationAgentBase
 	{
-		// Information for the loader
+		private bool oldPlayer;
+
 		private bool uses32BitPointers;
 
 		private int startOffset;
@@ -26,6 +28,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		private int subSongListOffset;
 		private int arpeggioListOffset;
 		private int envelopeListOffset;
+		private int channelVolumeOffset;
 
 		private int numberOfSamples;
 		private int numberOfChannels;
@@ -36,6 +39,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		private byte[][] arpeggios;
 		private byte[][] envelopes;
 		private Sample[] samples;
+		private ushort[] channelVolumes;
 
 		private bool enableSampleTranspose;
 		private bool enableChannelTranspose;
@@ -100,7 +104,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 			ModuleStream moduleStream = fileInfo.ModuleStream;
 
 			// Check the module size
-			if (moduleStream.Length < 4096)
+			if (moduleStream.Length < 2048)
 				return AgentResult.Unknown;
 
 			// Read the first part of the file, so it is easier to search
@@ -212,6 +216,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 				if (!LoadEnvelopes(moduleStream, numberOfEnvelopes))
 				{
 					errorMessage = Resources.IDS_DW_ERR_LOADING_ENVELOPES;
+					return AgentResult.Error;
+				}
+
+				if (!LoadChannelVolumes(moduleStream, numberOfEnvelopes))
+				{
+					errorMessage = Resources.IDS_DW_ERR_LOADING_CHANNELVOLS;
 					return AgentResult.Error;
 				}
 
@@ -385,9 +395,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 					// Build frequency table
 					uint[] frequencies = new uint[10 * 12];
 
-					for (int j = 0; j < Tables.Periods2.Length; j++)
+					for (int j = 0; j < Tables.Periods3.Length; j++)
 					{
-						uint period = (uint)((Tables.Periods2[j] * sample.FineTunePeriod) >> 10);
+						uint period = (uint)((Tables.Periods3[j] * sample.FineTunePeriod) >> 10);
 						frequencies[1 * 12 - 3 + j] = 3546895U / period;
 					}
 
@@ -475,7 +485,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		/********************************************************************/
 		private AgentResult TestModule(byte[] buffer)
 		{
-			// We do not support SC68 modules yet, so ignore those until now
+			// SC68 support are handled in a converter, so ignore these modules here
 			if ((buffer[0] == 0x53) && (buffer[1] == 0x43) && (buffer[2] == 0x36) && (buffer[3] == 0x38))
 				return AgentResult.Unknown;
 
@@ -541,83 +551,133 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 				return false;
 
 			if (searchBuffer[index + 4] != 0x66)
-				return false;
-
-			if (searchBuffer[index + 5] == 0x00)
-				index += 2;
-
-			if ((searchBuffer[index + 6] != 0x41) || (searchBuffer[index + 7] != 0xfa))
-				return false;
-
-			sampleDataOffset = (((sbyte)searchBuffer[index + 8] << 8) | searchBuffer[index + 9]) + index + 8;
-			index += 10;
-
-			if ((searchBuffer[index] == 0x27) && (searchBuffer[index + 1] == 0x48) && (searchBuffer[index + 4] == 0xd0) && (searchBuffer[index + 5] == 0xfc))
 			{
-				sampleDataOffset += ((searchBuffer[index + 6] << 8) | searchBuffer[index + 7]);
-				index += 12;
+				// Maybe this is a format where the sample initializing is not in a sub-function like QBall,
+				// so check for this
+				for (index = startOfInit; index < searchLength; index += 2)
+				{
+					if ((searchBuffer[index] == 0x41) && (searchBuffer[index + 1] == 0xeb))
+						break;
+				}
 
-				if ((searchBuffer[index] != 0xd0) || (searchBuffer[index + 1] != 0xfc))
+				if (index >= (searchLength - 36))
 					return false;
 
-				sampleDataOffset += ((searchBuffer[index + 2] << 8) | searchBuffer[index + 3]);
+				sampleDataOffset = (((sbyte)searchBuffer[index + 2] << 8) | searchBuffer[index + 3]) + startOffset;
 				index += 4;
-			}
 
-			if ((searchBuffer[index] != 0x4b) || (searchBuffer[index + 1] != 0xfa) || (searchBuffer[index + 4] != 0x72))
-				return false;
+				if (searchBuffer[index + 4] != 0x72)
+					return false;
 
-			numberOfSamples = (searchBuffer[index + 5] & 0x00ff) + 1;
+				numberOfSamples = (searchBuffer[index + 5] & 0x00ff) + 1;
 
-			sampleInfoOffset = (((sbyte)searchBuffer[index + 2] << 8) | searchBuffer[index + 3]) + index + 2;
-
-			index += 8;
-
-			for (; index < searchLength - 4; index += 2)
-			{
-				if ((searchBuffer[index] == 0x37) && (searchBuffer[index + 1] == 0x7c))
+				for (; index < searchLength - 4; index += 2)
 				{
-					squareWaveformSampleLength = (uint)(((searchBuffer[index + 2] << 8) | searchBuffer[index + 3]) * 2);
-					break;
+					if ((searchBuffer[index] == 0x41) && (searchBuffer[index + 1] == 0xeb) && (searchBuffer[index + 4] == 0xe3) && (searchBuffer[index + 5] == 0x4f))
+						break;
 				}
-			}
 
-			//
-			// Extract sub-song information
-			//
-			for (index = startOfInit; index < searchLength; index += 2)
-			{
-				if ((searchBuffer[index] == 0x41) && (searchBuffer[index + 1] == 0xfa) && (searchBuffer[index + 4] != 0x4b))
-					break;
-			}
+				if (index >= (searchLength - 4))
+					return false;
 
-			if (index >= (searchLength - 4))
-				return false;
+				channelVolumeOffset = (((sbyte)searchBuffer[index + 2] << 8) | searchBuffer[index + 3]) + startOffset;
 
-			if (((searchBuffer[index + 4] != 0x12) || (searchBuffer[index + 5] != 0x30)) && ((searchBuffer[index + 4] != 0x37) || (searchBuffer[index + 5] != 0x70)))
-				return false;
+				//
+				// Extract sub-song information
+				//
+				for (index = startOfInit; index < searchLength; index += 2)
+				{
+					if ((searchBuffer[index] == 0x41) && (searchBuffer[index + 1] == 0xeb) && (searchBuffer[index + 4] == 0x17))
+						break;
+				}
 
-			subSongListOffset = (((sbyte)searchBuffer[index + 2] << 8) | searchBuffer[index + 3]) + index + 2;
-			index += 4;
+				if (index >= (searchLength - 4))
+					return false;
 
-			//
-			// Find out if pointers or offsets are used
-			//
-			for (; index < searchLength; index += 2)
-			{
-				if ((searchBuffer[index] == 0x41) && (searchBuffer[index + 1] == 0xfa) && (searchBuffer[index + 4] != 0x23))
-					break;
-			}
+				subSongListOffset = (((sbyte)searchBuffer[index + 2] << 8) | searchBuffer[index + 3]) + startOffset;
 
-			if (index >= (searchLength - 8))
-				return false;
-
-			if ((searchBuffer[index + 4] == 0x20) && (searchBuffer[index + 5] == 0x70))
 				uses32BitPointers = true;
-			else if ((searchBuffer[index + 4] == 0x30) && (searchBuffer[index + 5] == 0x70))
-				uses32BitPointers = false;
+				oldPlayer = true;
+			}
 			else
-				return false;
+			{
+				oldPlayer = false;
+
+				if (searchBuffer[index + 5] == 0x00)
+					index += 2;
+
+				if ((searchBuffer[index + 6] != 0x41) || (searchBuffer[index + 7] != 0xfa))
+					return false;
+
+				sampleDataOffset = (((sbyte)searchBuffer[index + 8] << 8) | searchBuffer[index + 9]) + index + 8;
+				index += 10;
+
+				if ((searchBuffer[index] == 0x27) && (searchBuffer[index + 1] == 0x48) && (searchBuffer[index + 4] == 0xd0) && (searchBuffer[index + 5] == 0xfc))
+				{
+					sampleDataOffset += ((searchBuffer[index + 6] << 8) | searchBuffer[index + 7]);
+					index += 12;
+
+					if ((searchBuffer[index] != 0xd0) || (searchBuffer[index + 1] != 0xfc))
+						return false;
+
+					sampleDataOffset += ((searchBuffer[index + 2] << 8) | searchBuffer[index + 3]);
+					index += 4;
+				}
+
+				if ((searchBuffer[index] != 0x4b) || (searchBuffer[index + 1] != 0xfa) || (searchBuffer[index + 4] != 0x72))
+					return false;
+
+				sampleInfoOffset = (((sbyte)searchBuffer[index + 2] << 8) | searchBuffer[index + 3]) + index + 2;
+				numberOfSamples = (searchBuffer[index + 5] & 0x00ff) + 1;
+
+				index += 8;
+
+				for (; index < searchLength - 4; index += 2)
+				{
+					if ((searchBuffer[index] == 0x37) && (searchBuffer[index + 1] == 0x7c))
+					{
+						squareWaveformSampleLength = (uint)(((searchBuffer[index + 2] << 8) | searchBuffer[index + 3]) * 2);
+						break;
+					}
+				}
+
+				//
+				// Extract sub-song information
+				//
+				for (index = startOfInit; index < searchLength; index += 2)
+				{
+					if ((searchBuffer[index] == 0x41) && (searchBuffer[index + 1] == 0xfa) && (searchBuffer[index + 4] != 0x4b))
+						break;
+				}
+
+				if (index >= (searchLength - 4))
+					return false;
+
+				if (((searchBuffer[index + 4] != 0x12) || (searchBuffer[index + 5] != 0x30)) && ((searchBuffer[index + 4] != 0x37) || (searchBuffer[index + 5] != 0x70)))
+					return false;
+
+				subSongListOffset = (((sbyte)searchBuffer[index + 2] << 8) | searchBuffer[index + 3]) + index + 2;
+				index += 4;
+
+				//
+				// Find out if pointers or offsets are used
+				//
+				for (; index < searchLength; index += 2)
+				{
+					if ((searchBuffer[index] == 0x41) && (searchBuffer[index + 1] == 0xfa) && (searchBuffer[index + 4] != 0x23))
+						break;
+				}
+
+				if (index >= (searchLength - 8))
+					return false;
+
+				if ((searchBuffer[index + 4] == 0x20) && (searchBuffer[index + 5] == 0x70))
+					uses32BitPointers = true;
+				else if ((searchBuffer[index + 4] == 0x30) && (searchBuffer[index + 5] == 0x70))
+					uses32BitPointers = false;
+				else
+					return false;
+			}
 
 			return true;
 		}
@@ -689,8 +749,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 			{
 				if ((searchBuffer[index] == 0x53) && (searchBuffer[index + 1] == 0x2b) && (searchBuffer[index + 4] == 0x66))
 				{
-					offset = (searchBuffer[index - 4] << 8) | searchBuffer[index - 3];
-					useExtraCounter = searchBuffer[offset + startOffset] != 0;
+					if (searchBuffer[index + 6] == 0x17)
+					{
+						offset = (searchBuffer[index - 4] << 8) | searchBuffer[index - 3];
+						useExtraCounter = searchBuffer[offset + startOffset] != 0;
+					}
 					break;
 				}
 			}
@@ -771,29 +834,47 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 			//
 			// Find different parts of the player
 			//
-			for (index = startOfPlay; index < searchLength; index += 2)
+			int readTrackCommandsOffset, doFrameStuffOffset;
+
+			if (oldPlayer)
 			{
-				if ((searchBuffer[index] == 0x53) && (searchBuffer[index + 1] == 0x68))
-					break;
+				for (index = startOfPlay; index < searchLength; index += 2)
+				{
+					if ((searchBuffer[index] == 0x70) && (searchBuffer[index + 1] == 0x00))
+						break;
+				}
+
+				readTrackCommandsOffset = index;
+
+				if (searchBuffer[index + 2] != 0x10)
+					return false;
+
+				doFrameStuffOffset = -1;
 			}
-
-			if (index >= (searchLength - 16))
-				return false;
-
-			if (searchBuffer[index + 4] != 0x67)
-				return false;
-
-			int readTrackCommandsOffset = searchBuffer[index + 5] + index + 6;
-
-			if (searchBuffer[index + 12] != 0x66)
-				return false;
-
-			int doFrameStuffOffset;
-
-			if (searchBuffer[index + 13] == 0x00)
-				doFrameStuffOffset = ((searchBuffer[index + 14] << 8) | searchBuffer[index + 15]) + index + 14;
 			else
-				doFrameStuffOffset = searchBuffer[index + 13] + index + 14;
+			{
+				for (index = startOfPlay; index < searchLength; index += 2)
+				{
+					if ((searchBuffer[index] == 0x53) && (searchBuffer[index + 1] == 0x68))
+						break;
+				}
+
+				if (index >= (searchLength - 16))
+					return false;
+
+				if (searchBuffer[index + 4] != 0x67)
+					return false;
+
+				readTrackCommandsOffset = searchBuffer[index + 5] + index + 6;
+
+				if (searchBuffer[index + 12] != 0x66)
+					return false;
+
+				if (searchBuffer[index + 13] == 0x00)
+					doFrameStuffOffset = ((searchBuffer[index + 14] << 8) | searchBuffer[index + 15]) + index + 14;
+				else
+					doFrameStuffOffset = searchBuffer[index + 13] + index + 14;
+			}
 
 			for (index = readTrackCommandsOffset; index < searchLength; index += 2)
 			{
@@ -806,25 +887,32 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 			//
 			// Find period table to check which version to use
 			//
-			for (index = readTrackCommandsOffset; index < searchLength; index += 2)
+			if (oldPlayer)
 			{
-				if ((searchBuffer[index] == 0x45) && (searchBuffer[index + 1] == 0xfa) && (searchBuffer[index + 4] == 0x32) && (searchBuffer[index + 5] == 0x2d))
-					break;
-			}
-
-			if (index >= (searchLength - 6))
-				return false;
-
-			offset =  ((searchBuffer[index + 2] << 8) | searchBuffer[index + 3]) + index + 2;
-			if (offset >= (searchLength - 72 * 2))
-				return false;
-
-			if ((searchBuffer[offset] == 0x10) && (searchBuffer[offset + 1] == 0x00))
 				periods = Tables.Periods1;
-			else if ((searchBuffer[offset] == 0x20) && (searchBuffer[offset + 1] == 0x00))
-				periods = Tables.Periods2;
+			}
 			else
-				return false;
+			{
+				for (index = readTrackCommandsOffset; index < searchLength; index += 2)
+				{
+					if ((searchBuffer[index] == 0x45) && (searchBuffer[index + 1] == 0xfa) && (searchBuffer[index + 4] == 0x32) && (searchBuffer[index + 5] == 0x2d))
+						break;
+				}
+
+				if (index >= (searchLength - 6))
+					return false;
+
+				offset =  ((searchBuffer[index + 2] << 8) | searchBuffer[index + 3]) + index + 2;
+				if (offset >= (searchLength - 72 * 2))
+					return false;
+
+				if ((searchBuffer[offset] == 0x10) && (searchBuffer[offset + 1] == 0x00))
+					periods = Tables.Periods2;
+				else if ((searchBuffer[offset] == 0x20) && (searchBuffer[offset + 1] == 0x00))
+					periods = Tables.Periods3;
+				else
+					return false;
+			}
 
 			//
 			// Check for support of different transposes
@@ -843,7 +931,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 				enableSampleTranspose = true;
 
 			enableGlobalTranspose = false;
-			if ((searchBuffer[doFrameStuffOffset] == 0x10) && (searchBuffer[doFrameStuffOffset + 1] == 0x28))
+			if ((doFrameStuffOffset != -1) && (searchBuffer[doFrameStuffOffset] == 0x10) && (searchBuffer[doFrameStuffOffset + 1] == 0x28))
 			{
 				if ((searchBuffer[doFrameStuffOffset + 4] == 0xd0) && (searchBuffer[doFrameStuffOffset + 5] == 0x3a))
 					enableGlobalTranspose = true;
@@ -891,7 +979,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 				}
 			}
 
-			if (newSampleCmd == 0)
+			if (!oldPlayer && (newSampleCmd == 0))
 				return false;
 
 			//
@@ -903,6 +991,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 				jumpTableOffset = (((sbyte)searchBuffer[index - 8] << 8) | searchBuffer[index - 7]) + index - 8;
 			else if ((searchBuffer[index - 8] == 0x45) && (searchBuffer[index - 7] == 0xfa))
 				jumpTableOffset = (((sbyte)searchBuffer[index - 6] << 8) | searchBuffer[index - 5]) + index - 6;
+			else if ((searchBuffer[index - 10] == 0x45) && (searchBuffer[index - 9] == 0xeb))
+				jumpTableOffset = (((sbyte)searchBuffer[index - 8] << 8) | searchBuffer[index - 7]) + startOffset;
 			else
 				return false;
 
@@ -1143,7 +1233,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 					if (byt >= 0xe0)
 						continue;
 
-					if (byt >= newSampleCmd)
+					if (!oldPlayer && (byt >= newSampleCmd))
 						continue;
 
 					if (enableEnvelopes && (byt >= newEnvelopeCmd))
@@ -1201,7 +1291,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 					if (byt >= 0xe0)
 						continue;
 
-					if (byt >= newSampleCmd)
+					if (!oldPlayer && (byt >= newSampleCmd))
 						continue;
 
 					if (enableEnvelopes && (byt >= newEnvelopeCmd))
@@ -1234,43 +1324,59 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		/********************************************************************/
 		private int FindEffectByteCount(Effect effect)
 		{
-			switch (effect)
+			if (oldPlayer)
 			{
-				case Effect.EndOfTrack:
-				case Effect.StopSong:
-					return -1;
-
-				case Effect.Mute:
-				case Effect.WaitUntilNextRow:
-				case Effect.StopVibrato:
-				case Effect.StopSoundFx:
-					return 0;
-
-				case Effect.GlobalTranspose:
-				case Effect.Effect8:
-				case Effect.SetSpeed:
-				case Effect.GlobalVolumeFade:
-				case Effect.SetGlobalVolume:
-					return 1;
-
-				case Effect.Slide:
-				case Effect.StartVibrato:
-					return 2;
-
-				case Effect.Effect9:
+				// For the old player (QBall), the effect is in another order
+				switch ((int)effect)
 				{
-					if (enableHalfVolume)
+					case 0:		// EndOfTrack
+					case 1:		// StopSong
+						return -1;
+
+					case 2:		// ???
+						return 1;
+				}
+			}
+			else
+			{
+				switch (effect)
+				{
+					case Effect.EndOfTrack:
+					case Effect.StopSong:
+						return -1;
+
+					case Effect.Mute:
+					case Effect.WaitUntilNextRow:
+					case Effect.StopVibrato:
+					case Effect.StopSoundFx:
 						return 0;
 
-					return 2;
-				}
-
-				case Effect.StartOrStopSoundFx:
-				{
-					if (enableSetGlobalVolume)
+					case Effect.GlobalTranspose:
+					case Effect.Effect8:
+					case Effect.SetSpeed:
+					case Effect.GlobalVolumeFade:
+					case Effect.SetGlobalVolume:
 						return 1;
 
-					return 0;
+					case Effect.Slide:
+					case Effect.StartVibrato:
+						return 2;
+
+					case Effect.Effect9:
+					{
+						if (enableHalfVolume)
+							return 0;
+
+						return 2;
+					}
+
+					case Effect.StartOrStopSoundFx:
+					{
+						if (enableSetGlobalVolume)
+							return 1;
+
+						return 0;
+					}
 				}
 			}
 
@@ -1376,6 +1482,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 
 		/********************************************************************/
 		/// <summary>
+		/// Load all the channel volumes
+		/// </summary>
+		/********************************************************************/
+		private bool LoadChannelVolumes(ModuleStream moduleStream, int numberOfEnvelopes)
+		{
+			if (!oldPlayer)
+				return true;
+
+			channelVolumes = new ushort[numberOfChannels];
+
+			moduleStream.Seek(channelVolumeOffset, SeekOrigin.Begin);
+			moduleStream.ReadArray_B_UINT16s(channelVolumes, 0, numberOfChannels);
+
+			return !moduleStream.EndOfStream;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Load all the sample information
 		/// </summary>
 		/********************************************************************/
@@ -1383,58 +1509,74 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		{
 			samples = new Sample[numberOfSamples];
 
-			moduleStream.Seek(sampleInfoOffset, SeekOrigin.Begin);
-
-			for (short i = 0; i < numberOfSamples; i++)
+			if (oldPlayer)
 			{
-				Sample sample = new Sample();
-
-				sample.SampleNumber = i;
-
-				moduleStream.Seek(4, SeekOrigin.Current);		// Skip pointer to sample data
-				sample.LoopStart = moduleStream.Read_B_INT32();
-				sample.Length = moduleStream.Read_B_UINT16() * 2U;
-
-				if (moduleStream.EndOfStream)
-					return false;
-
-				// Fix for Jaws
-				if ((sample.LoopStart != -1) && (sample.LoopStart > 64 * 1024))
-					sample.LoopStart = -1;
-
-				if (uses32BitPointers)
+				for (short i = 0; i < numberOfSamples; i++)
 				{
-					moduleStream.Seek(2, SeekOrigin.Current);		// Padding
+					Sample sample = new Sample();
 
-					sample.FineTunePeriod = moduleStream.Read_B_UINT16();
-					sample.Volume = moduleStream.Read_B_UINT16();
-					sample.Transpose = 0;
+					sample.SampleNumber = i;
+					sample.LoopStart = -1;
+					sample.Volume = 64;
+
+					samples[i] = sample;
+				}
+			}
+			else
+			{
+				moduleStream.Seek(sampleInfoOffset, SeekOrigin.Begin);
+
+				for (short i = 0; i < numberOfSamples; i++)
+				{
+					Sample sample = new Sample();
+
+					sample.SampleNumber = i;
+
+					moduleStream.Seek(4, SeekOrigin.Current);		// Skip pointer to sample data
+					sample.LoopStart = moduleStream.Read_B_INT32();
+					sample.Length = moduleStream.Read_B_UINT16() * 2U;
 
 					if (moduleStream.EndOfStream)
 						return false;
-				}
-				else
-				{
-					sample.FineTunePeriod = moduleStream.Read_B_UINT16();
 
-					if (!enableEnvelopes)
+					// Fix for Jaws
+					if ((sample.LoopStart != -1) && (sample.LoopStart > 64 * 1024))
+						sample.LoopStart = -1;
+
+					if (uses32BitPointers)
 					{
+						moduleStream.Seek(2, SeekOrigin.Current);		// Padding
+
+						sample.FineTunePeriod = moduleStream.Read_B_UINT16();
 						sample.Volume = moduleStream.Read_B_UINT16();
-						sample.Transpose = moduleStream.Read_INT8();
+						sample.Transpose = 0;
 
 						if (moduleStream.EndOfStream)
 							return false;
-
-						moduleStream.Seek(1, SeekOrigin.Current);		// Padding
 					}
 					else
 					{
-						sample.Volume = 64;
-						sample.Transpose = 0;
-					}
-				}
+						sample.FineTunePeriod = moduleStream.Read_B_UINT16();
 
-				samples[i] = sample;
+						if (!enableEnvelopes)
+						{
+							sample.Volume = moduleStream.Read_B_UINT16();
+							sample.Transpose = moduleStream.Read_INT8();
+
+							if (moduleStream.EndOfStream)
+								return false;
+
+							moduleStream.Seek(1, SeekOrigin.Current);		// Padding
+						}
+						else
+						{
+							sample.Volume = 64;
+							sample.Transpose = 0;
+						}
+					}
+
+					samples[i] = sample;
+				}
 			}
 
 			return true;
@@ -1651,55 +1793,73 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 					// Play the note
 					channelInfo.Note = trackByte;
 
-					if (enableSampleTranspose)
-						trackByte = (byte)(trackByte + channelInfo.CurrentSampleInfo.Transpose);
+					if (oldPlayer)
+					{
+						int sampleNumber = trackByte / 12;
+						int note = trackByte % 12;
 
-					if (enableChannelTranspose)
-						trackByte = (byte)(trackByte + channelInfo.Transpose);
+						Sample sample = samples[sampleNumber];
+
+						if (channelInfo.Note != 0)
+						{
+							channel.SetAmigaPeriod(periods[note]);
+							channel.PlaySample(sample.SampleNumber, sample.SampleData, 0, sample.Length);
+							channel.SetAmigaVolume(channelVolumes[channelInfo.ChannelNumber]);
+						}
+						else
+							channel.Mute();
+					}
 					else
 					{
-						// Old players store the note after it has been transposed in the note field
-						channelInfo.Note = trackByte;
+						if (enableSampleTranspose)
+							trackByte = (byte)(trackByte + channelInfo.CurrentSampleInfo.Transpose);
+
+						if (enableChannelTranspose)
+							trackByte = (byte)(trackByte + channelInfo.Transpose);
+						else
+						{
+							// Old players store the note after it has been transposed in the note field
+							channelInfo.Note = trackByte;
+						}
+
+						Sample sample = channelInfo.CurrentSampleInfo;
+
+						channel.PlaySample(sample.SampleNumber, sample.SampleData, 0, sample.Length);
+
+						if (sample.LoopStart >= 0)
+							channel.SetLoop((uint)sample.LoopStart, sample.Length - (uint)sample.LoopStart);
+
+						int newVolume = sample.Volume;
+
+						if (enableEnvelopes && (channelInfo.EnvelopeList != null))
+						{
+							newVolume = channelInfo.EnvelopeList[1] & 0x7f;
+							channelInfo.EnvelopeListPosition = channelInfo.EnvelopeList.Length > 2 ? 2 : 1;
+
+							channelInfo.EnvelopeCounter = (sbyte)channelInfo.EnvelopeSpeed;
+						}
+
+						if (enableHalfVolume && channelInfo.EnableHalfVolume)
+							newVolume /= 2;
+
+						if (enableVolumeFade)
+						{
+							newVolume -= playingInfo.VolumeFadeSpeed;
+							if (newVolume < 0)
+								newVolume = 0;
+						}
+
+						newVolume = newVolume * playingInfo.GlobalVolume / 64;
+						channel.SetAmigaVolume((ushort)newVolume);
+
+						if (trackByte >= 128)
+							trackByte = 0;
+						else if (trackByte >= periods.Length)
+							trackByte = (byte)(periods.Length - 1);
+
+						uint period = (uint)((periods[trackByte] * sample.FineTunePeriod) >> 10);
+						channel.SetAmigaPeriod(period);
 					}
-
-					Sample sample = channelInfo.CurrentSampleInfo;
-
-					channel.PlaySample(sample.SampleNumber, sample.SampleData, 0, sample.Length);
-
-					if (sample.LoopStart >= 0)
-						channel.SetLoop((uint)sample.LoopStart, sample.Length - (uint)sample.LoopStart);
-
-					int newVolume = sample.Volume;
-
-					if (enableEnvelopes && (channelInfo.EnvelopeList != null))
-					{
-						newVolume = channelInfo.EnvelopeList[1] & 0x7f;
-						channelInfo.EnvelopeListPosition = channelInfo.EnvelopeList.Length > 2 ? 2 : 1;
-
-						channelInfo.EnvelopeCounter = (sbyte)channelInfo.EnvelopeSpeed;
-					}
-
-					if (enableHalfVolume && channelInfo.EnableHalfVolume)
-						newVolume /= 2;
-
-					if (enableVolumeFade)
-					{
-						newVolume -= playingInfo.VolumeFadeSpeed;
-						if (newVolume < 0)
-							newVolume = 0;
-					}
-
-					newVolume = newVolume * playingInfo.GlobalVolume / 64;
-					channel.SetAmigaVolume((ushort)newVolume);
-
-					if (trackByte >= 128)
-						trackByte = 0;
-					else if (trackByte >= periods.Length)
-						trackByte = (byte)(periods.Length - 1);
-
-					uint period = (uint)((periods[trackByte] * sample.FineTunePeriod) >> 10);
-					channel.SetAmigaPeriod(period);
-
 					break;
 				}
 			}
@@ -1721,7 +1881,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 				// Set number of rows to wait including the current one
 				channelInfo.Speed = (ushort)((trackCommand - 0xdf) * playingInfo.Speed);
 			}
-			else if (trackCommand >= newSampleCmd)
+			else if (!oldPlayer && (trackCommand >= newSampleCmd))
 			{
 				// Set sample to use
 				channelInfo.CurrentSampleInfo = samples[trackCommand - newSampleCmd];
@@ -1757,164 +1917,200 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		/********************************************************************/
 		private bool DoEffects(ChannelInfo channelInfo, IChannel channel, Effect effect)
 		{
-			switch (effect)
+			if (oldPlayer)
 			{
-				case Effect.EndOfTrack:
+				// For the old player (QBall), the effect is in another order
+				switch ((int)effect)
 				{
-					// Move to next position
-					if (channelInfo.CurrentPosition >= channelInfo.PositionList.Length)
+					case 0:		// EndOfTrack
 					{
-						channelInfo.CurrentPosition = (ushort)(channelInfo.RestartPosition + 1);
-						OnEndReached(channelInfo.ChannelNumber);
+						HandleEndOfTrackEffect(channelInfo);
+						break;
+					}
 
-						if (HasEndReached)
+					case 1:		// StopSong
+					{
+						StopModule();
+						return true;
+					}
+
+					case 2:		// ???
+						break;
+				}
+			}
+			else
+			{
+				switch (effect)
+				{
+					case Effect.EndOfTrack:
+					{
+						HandleEndOfTrackEffect(channelInfo);
+						break;
+					}
+
+					case Effect.Slide:
+					{
+						channelInfo.SlideValue = 0;
+						channelInfo.SlideSpeed = (sbyte)channelInfo.TrackData[channelInfo.TrackDataPosition++];
+						channelInfo.SlideCounter = channelInfo.TrackData[channelInfo.TrackDataPosition++];
+						channelInfo.SlideEnabled = true;
+						break;
+					}
+
+					case Effect.Mute:
+					{
+						channel.Mute();
+						return true;
+					}
+
+					case Effect.WaitUntilNextRow:
+						return true;
+
+					case Effect.StopSong:
+					{
+						StopModule();
+						return true;
+					}
+
+					case Effect.GlobalTranspose:
+					{
+						if (enableGlobalTranspose)
+							playingInfo.Transpose = (sbyte)channelInfo.TrackData[channelInfo.TrackDataPosition++];
+
+						break;
+					}
+
+					case Effect.StartVibrato:
+					{
+						if (enableVibrato)
 						{
-							playingInfo.Transpose = 0;
-							playingInfo.VolumeFadeSpeed = 0;
-							playingInfo.GlobalVolumeFadeSpeed = 0;
-
-							if (playingInfo.GlobalVolume == 0)
-								playingInfo.GlobalVolume = 64;
+							channelInfo.VibratoDirection = -1;
+							channelInfo.VibratoSpeed = channelInfo.TrackData[channelInfo.TrackDataPosition++];
+							channelInfo.VibratoMaxValue = channelInfo.TrackData[channelInfo.TrackDataPosition++];
+							channelInfo.VibratoValue = 0;
 						}
+						break;
 					}
-					else
+
+					case Effect.StopVibrato:
 					{
-						if (channelInfo.CurrentPosition == channelInfo.RestartPosition)
-							SetRestartTime();
+						if (enableVibrato)
+							channelInfo.VibratoDirection = 0;
 
-						channelInfo.CurrentPosition++;
+						break;
 					}
 
-					channelInfo.TrackData = channelInfo.PositionList.Length == 0 ? Tables.EmptyTrack : tracks[channelInfo.PositionList[channelInfo.CurrentPosition - 1]];
-					channelInfo.TrackDataPosition = 0;
-
-					ShowChannelPositions();
-					ShowTracks();
-					break;
-				}
-
-				case Effect.Slide:
-				{
-					channelInfo.SlideValue = 0;
-					channelInfo.SlideSpeed = (sbyte)channelInfo.TrackData[channelInfo.TrackDataPosition++];
-					channelInfo.SlideCounter = channelInfo.TrackData[channelInfo.TrackDataPosition++];
-					channelInfo.SlideEnabled = true;
-					break;
-				}
-
-				case Effect.Mute:
-				{
-					channel.Mute();
-					return true;
-				}
-
-				case Effect.WaitUntilNextRow:
-					return true;
-
-				case Effect.StopSong:
-				{
-					StopModule();
-					return true;
-				}
-
-				case Effect.GlobalTranspose:
-				{
-					if (enableGlobalTranspose)
-						playingInfo.Transpose = (sbyte)channelInfo.TrackData[channelInfo.TrackDataPosition++];
-
-					break;
-				}
-
-				case Effect.StartVibrato:
-				{
-					if (enableVibrato)
+					case Effect.Effect8:
 					{
-						channelInfo.VibratoDirection = -1;
-						channelInfo.VibratoSpeed = channelInfo.TrackData[channelInfo.TrackDataPosition++];
-						channelInfo.VibratoMaxValue = channelInfo.TrackData[channelInfo.TrackDataPosition++];
-						channelInfo.VibratoValue = 0;
+						if (enableVolumeFade)
+							playingInfo.VolumeFadeSpeed = channelInfo.TrackData[channelInfo.TrackDataPosition++];
+						else if (enableChannelTranspose)
+							channelInfo.Transpose = (sbyte)channelInfo.TrackData[channelInfo.TrackDataPosition++];
+						else if (enableHalfVolume)
+							channelInfo.EnableHalfVolume = true;
+
+						break;
 					}
-					break;
-				}
 
-				case Effect.StopVibrato:
-				{
-					if (enableVibrato)
-						channelInfo.VibratoDirection = 0;
-
-					break;
-				}
-
-				case Effect.Effect8:
-				{
-					if (enableVolumeFade)
-						playingInfo.VolumeFadeSpeed = channelInfo.TrackData[channelInfo.TrackDataPosition++];
-					else if (enableChannelTranspose)
-						channelInfo.Transpose = (sbyte)channelInfo.TrackData[channelInfo.TrackDataPosition++];
-					else if (enableHalfVolume)
-						channelInfo.EnableHalfVolume = true;
-
-					break;
-				}
-
-				case Effect.Effect9:
-				{
-					if (enableHalfVolume)
-						channelInfo.EnableHalfVolume = false;
-					else
+					case Effect.Effect9:
 					{
-						// Position restart is handled in the loader
-						channelInfo.TrackDataPosition += 2;
+						if (enableHalfVolume)
+							channelInfo.EnableHalfVolume = false;
+						else
+						{
+							// Position restart is handled in the loader
+							channelInfo.TrackDataPosition += 2;
+						}
+						break;
 					}
-					break;
-				}
 
-				case Effect.SetSpeed:
-				{
-					if (enableDelaySpeed)
-						playingInfo.DelayCounterSpeed = channelInfo.TrackData[channelInfo.TrackDataPosition++];
-					else
+					case Effect.SetSpeed:
 					{
-						playingInfo.Speed = channelInfo.TrackData[channelInfo.TrackDataPosition++];
-						ShowSpeed();
+						if (enableDelaySpeed)
+							playingInfo.DelayCounterSpeed = channelInfo.TrackData[channelInfo.TrackDataPosition++];
+						else
+						{
+							playingInfo.Speed = channelInfo.TrackData[channelInfo.TrackDataPosition++];
+							ShowSpeed();
+						}
+						break;
 					}
-					break;
-				}
 
-				case Effect.GlobalVolumeFade:
-				{
-					playingInfo.GlobalVolumeFadeSpeed = channelInfo.TrackData[channelInfo.TrackDataPosition++];
-					playingInfo.GlobalVolumeFadeCounter = playingInfo.GlobalVolumeFadeSpeed;
-					break;
-				}
-
-				case Effect.SetGlobalVolume:
-				{
-					if (enableSetGlobalVolume)
-						playingInfo.GlobalVolume = channelInfo.TrackData[channelInfo.TrackDataPosition++];
-					else
+					case Effect.GlobalVolumeFade:
 					{
-						// Start sound effect. This is used in Emlyn Hughes International Soccer to play a whistle sound,
-						// but we do not support it
-						channelInfo.TrackDataPosition++;
+						playingInfo.GlobalVolumeFadeSpeed = channelInfo.TrackData[channelInfo.TrackDataPosition++];
+						playingInfo.GlobalVolumeFadeCounter = playingInfo.GlobalVolumeFadeSpeed;
+						break;
 					}
-					break;
+
+					case Effect.SetGlobalVolume:
+					{
+						if (enableSetGlobalVolume)
+							playingInfo.GlobalVolume = channelInfo.TrackData[channelInfo.TrackDataPosition++];
+						else
+						{
+							// Start sound effect. This is used in Emlyn Hughes International Soccer to play a whistle sound,
+							// but we do not support it
+							channelInfo.TrackDataPosition++;
+						}
+						break;
+					}
+
+					case Effect.StartOrStopSoundFx:
+					{
+						// If effect C if global volume, this is start sound effect. If not, it is stop sound effect
+						if (enableSetGlobalVolume)
+							channelInfo.TrackDataPosition++;
+
+						break;
+					}
+
+					case Effect.StopSoundFx:
+						break;
 				}
-
-				case Effect.StartOrStopSoundFx:
-				{
-					// If effect C if global volume, this is start sound effect. If not, it is stop sound effect
-					if (enableSetGlobalVolume)
-						channelInfo.TrackDataPosition++;
-
-					break;
-				}
-
-				case Effect.StopSoundFx:
-					break;
 			}
 
 			return false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Start over a track
+		/// </summary>
+		/********************************************************************/
+		private void HandleEndOfTrackEffect(ChannelInfo channelInfo)
+		{
+			// Move to next position
+			if (channelInfo.CurrentPosition >= channelInfo.PositionList.Length)
+			{
+				channelInfo.CurrentPosition = (ushort)(channelInfo.RestartPosition + 1);
+				OnEndReached(channelInfo.ChannelNumber);
+
+				if (HasEndReached)
+				{
+					playingInfo.Transpose = 0;
+					playingInfo.VolumeFadeSpeed = 0;
+					playingInfo.GlobalVolumeFadeSpeed = 0;
+
+					if (playingInfo.GlobalVolume == 0)
+						playingInfo.GlobalVolume = 64;
+				}
+			}
+			else
+			{
+				if (channelInfo.CurrentPosition == channelInfo.RestartPosition)
+					SetRestartTime();
+
+				channelInfo.CurrentPosition++;
+			}
+
+			channelInfo.TrackData = channelInfo.PositionList.Length == 0 ? Tables.EmptyTrack : tracks[channelInfo.PositionList[channelInfo.CurrentPosition - 1]];
+			channelInfo.TrackDataPosition = 0;
+
+			ShowChannelPositions();
+			ShowTracks();
 		}
 
 

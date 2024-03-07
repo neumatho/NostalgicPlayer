@@ -94,6 +94,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t read channel volumes.
+        /// </summary>
+        internal static string IDS_DW_ERR_LOADING_CHANNELVOLS {
+            get {
+                return ResourceManager.GetString("IDS_DW_ERR_LOADING_CHANNELVOLS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read module envelopes.
         /// </summary>
         internal static string IDS_DW_ERR_LOADING_ENVELOPES {

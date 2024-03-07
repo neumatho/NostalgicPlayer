@@ -12,10 +12,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 	{
 		/********************************************************************/
 		/// <summary>
-		/// Periods used by first version of player
+		/// Periods used by a real old player which is only used by QBall
 		/// </summary>
 		/********************************************************************/
 		public static readonly ushort[] Periods1 =
+		{
+			                                                       256,  242,  228,
+			 215,  203,  192,  181,  171,  161,  152,  144,  136
+		};
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Periods used by first version of player
+		/// </summary>
+		/********************************************************************/
+		public static readonly ushort[] Periods2 =
 		{
 			                                                      4096, 3864, 3648,
 			3444, 3252, 3068, 2896, 2732, 2580, 2436, 2300, 2168, 2048, 1932, 1824,
@@ -36,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		/// Periods used by newer version of player
 		/// </summary>
 		/********************************************************************/
-		public static readonly ushort[] Periods2 =
+		public static readonly ushort[] Periods3 =
 		{
 			                                                      8192, 7728, 7296,
 			6888, 6504, 6136, 5792, 5464, 5160, 4872, 4600, 4336, 4096, 3864, 3648,

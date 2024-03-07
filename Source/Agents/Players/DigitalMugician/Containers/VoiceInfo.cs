@@ -8,7 +8,7 @@ using Polycode.NostalgicPlayer.Kit.Interfaces;
 namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician.Containers
 {
 	/// <summary>
-	/// Holds playinh information for a single channel
+	/// Holds playing information for a single channel
 	/// </summary>
 	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
 	{
