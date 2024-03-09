@@ -77,5 +77,11 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Return the size of the module crunched. Is zero if not crunched
 		/// </summary>
 		long CrunchedSize { get; }
+
+		/// <summary>
+		/// Return a list of all the algorithms used to decrunch the module.
+		/// If null, no decruncher has been used
+		/// </summary>
+		string[] DecruncherAlgorithms { get; }
 	}
 }

@@ -31,6 +31,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 			PlayerName = string.Empty;
 			Channels = 0;
 			VirtualChannels = 0;
+			DecruncherAlgorithms = null;
 			CrunchedSize = 0;
 			ModuleSize = 0;
 			MaxSongNumber = 0;
@@ -57,6 +58,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 			ModuleFormatDescription = loader.ModuleFormatDescription;
 			PlayerName = loader.PlayerName;
 			PlayerDescription = loader.PlayerDescription;
+			DecruncherAlgorithms = loader.DecruncherAlgorithms;
 			CrunchedSize = loader.CrunchedSize;
 			ModuleSize = loader.ModuleSize;
 		}
@@ -273,6 +275,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		public int VirtualChannels
 		{
 			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a list of all the algorithms used to decrunch the module.
+		/// If null, no decruncher has been used
+		/// </summary>
+		/********************************************************************/
+		public string[] DecruncherAlgorithms
+		{
+			get; private set;
 		}
 
 

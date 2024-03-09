@@ -494,11 +494,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_TIME, val);
 
-				val = string.Format(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE_VALUE, staticInfo.ModuleSize.ToString("N0"));
-				if (staticInfo.CrunchedSize != 0)
-					val += string.Format(Resources.IDS_MODULE_INFO_ITEM_PACKEDSIZE, staticInfo.CrunchedSize == -1 ? Resources.IDS_MODULE_INFO_UNKNOWN.ToLower() : staticInfo.CrunchedSize.ToString("N0"));
-
+				val = string.Format(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE_VALUE, staticInfo.ModuleSize);
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_MODULESIZE, val);
+
+				if (staticInfo.DecruncherAlgorithms != null)
+				{
+					val = staticInfo.CrunchedSize == -1 ? Resources.IDS_MODULE_INFO_UNKNOWN : string.Format(Resources.IDS_MODULE_INFO_ITEM_PACKEDSIZE_VALUE, staticInfo.CrunchedSize);
+					val += string.Format(" / {0}", string.Join(" \u2b95 ", staticInfo.DecruncherAlgorithms));
+
+					moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_PACKEDSIZE, val);
+				}
 
 				if (Env.IsWindows10S)
 					moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_FILE, fileInfo.FileName);

@@ -48,6 +48,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			if (ModuleSize == CrunchedSize)
 				CrunchedSize = 0;
 
+			// Set algorithms used
+			DecruncherAlgorithms = decruncher.DecruncherAlgorithms;
+
 			return stream;
 		}
 

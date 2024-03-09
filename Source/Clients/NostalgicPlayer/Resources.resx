@@ -535,13 +535,16 @@ Formats supported:
     <value>Module size:</value>
   </data>
   <data name="IDS_MODULE_INFO_ITEM_MODULESIZE_VALUE" xml:space="preserve">
-    <value>{0} bytes</value>
+    <value>{0:n0} bytes</value>
   </data>
   <data name="IDS_MODULE_INFO_ITEM_NA" xml:space="preserve">
     <value>n/a</value>
   </data>
   <data name="IDS_MODULE_INFO_ITEM_PACKEDSIZE" xml:space="preserve">
-    <value> (packed: {0} bytes)</value>
+    <value>Packed size / algorithms:</value>
+  </data>
+  <data name="IDS_MODULE_INFO_ITEM_PACKEDSIZE_VALUE" xml:space="preserve">
+    <value>{0:n0} bytes</value>
   </data>
   <data name="IDS_MODULE_INFO_ITEM_TIME" xml:space="preserve">
     <value>Total time:</value>

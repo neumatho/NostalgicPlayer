@@ -298,6 +298,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 
 		/********************************************************************/
 		/// <summary>
+		/// Return a list of all the algorithms used to decrunch the module.
+		/// If null, no decruncher has been used
+		/// </summary>
+		/********************************************************************/
+		internal string[] DecruncherAlgorithms
+		{
+			get; private set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the stream to use when reading sample files
 		/// </summary>
 		/********************************************************************/
@@ -803,6 +816,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 
 				ModuleSize = loader.ModuleSize;
 				CrunchedSize = loader.CrunchedSize;
+				DecruncherAlgorithms = loader.DecruncherAlgorithms;
 			}
 
 			CleanupLoadState();

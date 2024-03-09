@@ -277,6 +277,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			get; protected set;
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a list of all the algorithms used to decrunch the module.
+		/// If null, no decruncher has been used
+		/// </summary>
+		/********************************************************************/
+		public string[] DecruncherAlgorithms
+		{
+			get; protected set;
+		}
+
 		#region Overrides
 		/********************************************************************/
 		/// <summary>

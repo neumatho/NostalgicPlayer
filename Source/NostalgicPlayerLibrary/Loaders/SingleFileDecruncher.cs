@@ -42,11 +42,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		/********************************************************************/
 		public Stream DecrunchFileMultipleLevels(Stream stream)
 		{
+			List<string> decruncherAlgorithms = new List<string>();
+
 			for (;;)
 			{
-				DecruncherStream decruncherStream = DecrunchFile(stream);
+				DecruncherStream decruncherStream = DecrunchFile(stream, decruncherAlgorithms);
 				if (decruncherStream == null)
 				{
+					DecruncherAlgorithms = decruncherAlgorithms.Count > 0 ? decruncherAlgorithms.ToArray() : null;
+
 					// Make sure that the stream is at the beginning
 					stream.Seek(0, SeekOrigin.Begin);
 
@@ -60,13 +64,26 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			}
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a list of all the algorithms used to decrunch the module.
+		/// If null, no decruncher has been used
+		/// </summary>
+		/********************************************************************/
+		public string[] DecruncherAlgorithms
+		{
+			get; private set;
+		}
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
 		/// Will try to decrunch the file if needed
 		/// </summary>
 		/********************************************************************/
-		private DecruncherStream DecrunchFile(Stream crunchedDataStream)
+		private DecruncherStream DecrunchFile(Stream crunchedDataStream, List<string> decruncherAlgorithms)
 		{
 			HashSet<Guid> agentsToSkip = new HashSet<Guid>();
 
@@ -92,7 +109,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 						{
 							IFileDecruncherAgent decruncher = identifyFormatInfo.Worker as IFileDecruncherAgent;
 							if (decruncher != null)
+							{
+								decruncherAlgorithms.Add(agentInfo.TypeName);
+
 								return decruncher.OpenStream(crunchedDataStream);
+							}
 						}
 					}
 				}
@@ -104,7 +125,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 						// Check the file
 						AgentResult agentResult = decruncher.Identify(crunchedDataStream);
 						if (agentResult == AgentResult.Ok)
+						{
+							decruncherAlgorithms.Add(agentInfo.TypeName);
+
 							return decruncher.OpenStream(crunchedDataStream);
+						}
 
 						if (agentResult != AgentResult.Unknown)
 						{

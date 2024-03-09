@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -22,6 +23,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		private readonly string fullArchivePath;
 
 		private Stack<Stream> archiveStreams;
+		private List<string> decruncherAlgorithms;
 		private IArchive archive;
 
 		/********************************************************************/
@@ -96,8 +98,27 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 				SingleFileDecruncher decruncher = new SingleFileDecruncher(manager);
 				stream = decruncher.DecrunchFileMultipleLevels(stream);
 
+				List<string> algorithms = new List<string>(decruncherAlgorithms);
+				if (decruncher.DecruncherAlgorithms != null)
+					algorithms.AddRange(decruncher.DecruncherAlgorithms);
+
+				DecruncherAlgorithms = algorithms.ToArray();
+
 				return new ArchiveEntryInfo(stream, entryStream.GetCrunchedLength(), (int)stream.Length);
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a list of all the algorithms used to decrunch the module.
+		/// If null, no decruncher has been used
+		/// </summary>
+		/********************************************************************/
+		public string[] DecruncherAlgorithms
+		{
+			get; private set;
 		}
 
 		#region Private methods
@@ -109,6 +130,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		private void OpenArchiveStream()
 		{
 			archiveStreams = new Stack<Stream>();
+			decruncherAlgorithms = new List<string>();
 
 			try
 			{
@@ -119,8 +141,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 				Stream stream = new FileStream(parts[0], FileMode.Open, FileAccess.Read);
 
 				// Open the archive stream
-				archive = OpenArchive(Path.GetFileName(parts[0]), stream, out stream);
+				archive = OpenArchive(Path.GetFileName(parts[0]), stream, out stream, out List<string> archiveAlgorimths);
 				archiveStreams.Push(stream);
+				decruncherAlgorithms.AddRange(archiveAlgorimths);
 
 				// Now take each part and open it, except for the last which contains
 				// the file itself
@@ -130,8 +153,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 
 					stream = entryInfo.EntryStream;
 
-					archive = OpenArchive(parts[i], stream, out stream);
+					archive = OpenArchive(parts[i], stream, out stream, out archiveAlgorimths);
 					archiveStreams.Push(stream);
+					decruncherAlgorithms.AddRange(archiveAlgorimths);
 				}
 			}
 			catch(Exception)
