@@ -61,7 +61,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Original player by Reinier V. Vliet.
+        ///   Looks up a localized string similar to Original player by Reinier van Vliet.
         ///Converted to C# by Thomas Neumann.
         ///
         ///This player can play both 4-voices and 7-voices Digital Mugician modules..
@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Original player by Reinier V. Vliet.
+        ///   Looks up a localized string similar to Original player by Reinier van Vliet.
         ///Converted to C# by Thomas Neumann.
         ///
         ///This format is the successor of SidMon. The authors want to improve SidMon to a more mature platform and upgrade it. It can both do synthesis sounds as well as samples..
@@ -85,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Original player by Reinier V. Vliet.
+        ///   Looks up a localized string similar to Original player by Reinier van Vliet.
         ///Converted to C# by Thomas Neumann.
         ///
         ///This format is a 7-voices version of the first Digital Mugician editor. It was never released to the public. It works by combining 2 sub-songs into one song. The first 3 voices of the first sub-song are played normally, but all the 4 voices of the second sub-song are mixed together. It tooks so much CPU power to do, so even the display may max be in 16 colors to save DMA cycles..

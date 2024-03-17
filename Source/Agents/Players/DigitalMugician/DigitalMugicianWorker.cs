@@ -598,17 +598,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 		{
 			get
 			{
-				// Build frequency table
-				uint[] frequencies = new uint[10 * 12];
+				HashSet<uint> takenSamples = new HashSet<uint>();
 
-				for (int j = 0; j < 5 * 12 - 2; j++)
-					frequencies[2 * 12 + j] = 3546895U / Tables.Periods[6 + j];
-
-				for (int i = 0; i < numberOfInstruments; i++)
+				foreach (Instrument instr in instruments)
 				{
 					SampleInfo sampleInfo;
 
-					Instrument instr = instruments[i];
+					// Build frequency table
+					uint[] frequencies = new uint[10 * 12];
+
+					for (int j = 0; j < 5 * 12 - 2; j++)
+						frequencies[2 * 12 + j] = 3546895U / Tables.Periods[6 + instr.Finetune * 64 + j];
 
 					if (instr.WaveformNumber < 32)
 					{
@@ -628,6 +628,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 					}
 					else
 					{
+						if (!takenSamples.Add(instr.WaveformNumber))
+							continue;
+
 						Sample sample = samples[instr.WaveformNumber - 32];
 
 						sampleInfo = new SampleInfo
