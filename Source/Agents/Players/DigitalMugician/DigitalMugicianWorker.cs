@@ -59,6 +59,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 		private byte[] chTab;
 		private int chTabIndex;
 
+		private short[] instrumentToSampleInfoMapping;
+
 		private bool endReached;
 
 		private const int InfoPositionLine = 4;
@@ -290,8 +292,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 
 				// Read instruments
 				instruments = new Instrument[numberOfInstruments];
+				instrumentToSampleInfoMapping = new short[numberOfInstruments];
 
-				for (int i = 0; i < numberOfInstruments; i++)
+				Dictionary<uint, short> samplesTaken = new Dictionary<uint, short>();
+
+				for (short i = 0, sampleInfoIndex = 0; i < numberOfInstruments; i++)
 				{
 					Instrument inst = new Instrument();
 
@@ -318,6 +323,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 						Cleanup();
 
 						return AgentResult.Error;
+					}
+
+					if (inst.WaveformNumber < 32)
+						instrumentToSampleInfoMapping[i] = sampleInfoIndex++;
+					else
+					{
+						if (samplesTaken.TryGetValue(inst.WaveformNumber, out short instrumentNumber))
+							instrumentToSampleInfoMapping[i] = instrumentNumber;
+						else
+						{
+							samplesTaken[inst.WaveformNumber] = sampleInfoIndex;
+							instrumentToSampleInfoMapping[i] = sampleInfoIndex++;
+						}
 					}
 
 					instruments[i] = inst;
@@ -598,17 +616,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 		{
 			get
 			{
-				HashSet<uint> takenSamples = new HashSet<uint>();
-
-				foreach (Instrument instr in instruments)
+				for (int i = 0, j = 0; i < instruments.Length; i++)
 				{
-					SampleInfo sampleInfo;
+					if (instrumentToSampleInfoMapping[i] < j)
+						continue;
+
+					j++;
+					Instrument instr = instruments[i];
 
 					// Build frequency table
 					uint[] frequencies = new uint[10 * 12];
 
-					for (int j = 0; j < 5 * 12 - 2; j++)
-						frequencies[2 * 12 + j] = 3546895U / Tables.Periods[6 + instr.Finetune * 64 + j];
+					for (int k = 0; k < 5 * 12 - 2; k++)
+						frequencies[2 * 12 + k] = 3546895U / Tables.Periods[6 + instr.Finetune * 64 + k];
+
+					SampleInfo sampleInfo;
 
 					if (instr.WaveformNumber < 32)
 					{
@@ -628,9 +650,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 					}
 					else
 					{
-						if (!takenSamples.Add(instr.WaveformNumber))
-							continue;
-
 						Sample sample = samples[instr.WaveformNumber - 32];
 
 						sampleInfo = new SampleInfo
@@ -787,6 +806,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 			subSongs = null;
 
 			subSongMapping = null;
+
+			instrumentToSampleInfoMapping = null;
 		}
 
 
@@ -959,7 +980,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 							{
 								Sample sample = samples[waveform - 32];
 
-								channel.PlaySample((short)voiceInfo.LastInstrument, sample.SampleData, sample.StartOffset, sample.EndOffset - sample.StartOffset);
+								channel.PlaySample(instrumentToSampleInfoMapping[voiceInfo.LastInstrument], sample.SampleData, sample.StartOffset, sample.EndOffset - sample.StartOffset);
 
 								if (sample.LoopStart >= 0)
 									channel.SetLoop((uint)sample.LoopStart, sample.EndOffset - (uint)sample.LoopStart);
@@ -971,7 +992,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 								channel.SetLoop(waveformData, 0, instr.LoopLength);
 
 								if (voiceInfo.LastEffect != Effect.NoDma)
-									channel.PlaySample((short)voiceInfo.LastInstrument, waveformData, 0, instr.LoopLength);
+									channel.PlaySample(instrumentToSampleInfoMapping[voiceInfo.LastInstrument], waveformData, 0, instr.LoopLength);
 
 								if (currentModuleType == ModuleType.DigitalMugician)
 								{
