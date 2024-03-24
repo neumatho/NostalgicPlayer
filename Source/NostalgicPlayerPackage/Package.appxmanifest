@@ -1048,6 +1048,15 @@
             <uap:DisplayName>Digital Mugician 2</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="sd1file">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-sd1">.sd1</uap:FileType>
+              <uap:FileType ContentType="audio/x-sd1">.sid1</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>SidMon 1.0</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

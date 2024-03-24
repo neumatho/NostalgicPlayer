@@ -158,6 +158,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Scream Tracker 3 | .s3m | | Xmp |
 | Scream Tracker 3 MOD | .mod | | Xmp |
 | Scream Tracker Music Interface Kit | .stx | | Xmp |
+| SidMon 1.0 | .sd1 / .sid1 / .sid | | SidMon 1.0 |
 | SidPlay | .sid / .c64 / .mus / .str / .prg | | SidPlay |
 | SKYT Packer | .skt / .skyt | ProWizard | ModTracker |
 | SoundFX 1.x | .sfx | Module Converter | SoundFX |

@@ -130,6 +130,11 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		bool IsActive { get; }
 
 		/// <summary>
+		/// Returns true or false depending on the channel is muted or not
+		/// </summary>
+		bool IsMuted { get; }
+
+		/// <summary>
 		/// Mute the channel
 		/// </summary>
 		void Mute();

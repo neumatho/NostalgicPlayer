@@ -438,6 +438,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 		/********************************************************************/
 		/// <summary>
+		/// Returns true or false depending on the channel is muted or not
+		/// </summary>
+		/********************************************************************/
+		public bool IsMuted => (flags & ChannelFlag.MuteIt) != 0;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Mute the channel
 		/// </summary>
 		/********************************************************************/
