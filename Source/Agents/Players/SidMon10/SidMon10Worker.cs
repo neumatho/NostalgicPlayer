@@ -875,7 +875,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10
 				do
 				{
 					uint offset = moduleStream.Read_B_UINT32();
-					if (offset == 0)
+					if ((offset == 0) || (offset > moduleStream.Length))
 						break;
 
 					numberOfTracks++;
@@ -1463,7 +1463,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10
 						{
 							voiceInfo.RowCount = row.Duration;
 
-							if (voiceInfo.LoopControl)
+							if (voiceInfo.LoopControl && (row.Note != -1))
 								PlaySample(voiceInfo.WaveformNumber);
 						}
 					}
