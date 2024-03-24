@@ -945,7 +945,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 				}
 			}
 
-			if ((initTemp != 0) && (initTemp < 80) && ((minimumVersion == ModuleType.UltimateSoundTracker10) || (minimumVersion == ModuleType.SoundTrackerII) || (minimumVersion == ModuleType.SoundTrackerVI) || (minimumVersion == ModuleType.MasterSoundTracker10) || (minimumVersion == ModuleType.SoundTracker2x)))
+			if ((initTemp != 0) && (initTemp < 60) && ((minimumVersion == ModuleType.UltimateSoundTracker10) || (minimumVersion == ModuleType.SoundTrackerII) || (minimumVersion == ModuleType.SoundTrackerVI) || (minimumVersion == ModuleType.MasterSoundTracker10) || (minimumVersion == ModuleType.SoundTracker2x)))
 				return ModuleType.Unknown;
 
 			return minimumVersion;
