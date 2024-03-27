@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician.Containers
 {
@@ -13,15 +14,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician.Containers
 	internal class Snapshot : ISnapshot
 	{
 		public GlobalPlayingInfo PlayingInfo;
+		public Instrument[] Instruments;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Snapshot(GlobalPlayingInfo playingInfo)
+		public Snapshot(GlobalPlayingInfo playingInfo, Instrument[] instruments)
 		{
 			PlayingInfo = playingInfo.MakeDeepClone();
+			Instruments = ArrayHelper.CloneObjectArray(instruments);
 		}
 	}
 }

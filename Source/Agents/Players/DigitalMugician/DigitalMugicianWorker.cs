@@ -722,7 +722,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 		/********************************************************************/
 		protected override ISnapshot CreateSnapshot()
 		{
-			return new Snapshot(playingInfo);
+			return new Snapshot(playingInfo, instruments);
 		}
 
 
@@ -738,9 +738,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 
 			// Start to make a clone of the snapshot
 			Snapshot currentSnapshot = (Snapshot)snapshot;
-			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayingInfo);
+			Snapshot clonedSnapshot = new Snapshot(currentSnapshot.PlayingInfo, currentSnapshot.Instruments);
 
 			playingInfo = clonedSnapshot.PlayingInfo;
+			instruments = clonedSnapshot.Instruments;
 
 			UpdateModuleInformation();
 
