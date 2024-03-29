@@ -59,9 +59,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			CrunchedSize = entryInfo.CrunchedSize;
 			ModuleSize = entryInfo.DecrunchedSize;
 
-			if (ModuleSize == CrunchedSize)
-				CrunchedSize = 0;
-
 			DecruncherAlgorithms = archiveFileDecruncher.DecruncherAlgorithms;
 
 			return entryInfo.EntryStream;
