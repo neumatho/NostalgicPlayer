@@ -91,7 +91,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 		/********************************************************************/
 		public void SaveHeader(Stream stream)
 		{
-			using (WriterStream writerStream = new WriterStream(stream))
+			using (WriterStream writerStream = new WriterStream(stream, true))
 			{
 				byte[] strBuf;
 				int strLen;
@@ -203,7 +203,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 		{
 			if (length > 0)
 			{
-				using (WriterStream writerStream = new WriterStream(stream))
+				using (WriterStream writerStream = new WriterStream(stream, true))
 				{
 					total += WriteData(writerStream, stereoFile, buffer, length);
 				}
@@ -219,7 +219,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 		/********************************************************************/
 		public void SaveTail(Stream stream)
 		{
-			using (WriterStream writerStream = new WriterStream(stream))
+			using (WriterStream writerStream = new WriterStream(stream, true))
 			{
 				// Write anything left
 				total += WriteTail(writerStream, stereoFile);

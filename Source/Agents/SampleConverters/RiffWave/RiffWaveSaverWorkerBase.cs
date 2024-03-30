@@ -83,7 +83,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/********************************************************************/
 		public void SaveHeader(Stream stream)
 		{
-			using (WriterStream writerStream = new WriterStream(stream))
+			using (WriterStream writerStream = new WriterStream(stream, true))
 			{
 				// Write RIFF header
 				writerStream.Write_B_UINT32(0x52494646);						// RIFF
@@ -131,7 +131,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		{
 			if (length > 0)
 			{
-				using (WriterStream writerStream = new WriterStream(stream))
+				using (WriterStream writerStream = new WriterStream(stream, true))
 				{
 					total += WriteData(writerStream, buffer, length);
 				}
@@ -147,7 +147,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/********************************************************************/
 		public void SaveTail(Stream stream)
 		{
-			using (WriterStream writerStream = new WriterStream(stream))
+			using (WriterStream writerStream = new WriterStream(stream, true))
 			{
 				// Write anything left
 				total += WriteTail(writerStream);

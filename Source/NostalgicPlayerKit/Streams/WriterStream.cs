@@ -14,6 +14,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 	public class WriterStream : Stream
 	{
 		private readonly Stream wrapperStream;
+		private readonly bool leaveStreamOpen;
 
 		private readonly byte[] saveBuffer;
 
@@ -22,11 +23,27 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public WriterStream(Stream wrapperStream)
+		public WriterStream(Stream wrapperStream, bool leaveOpen)
 		{
 			this.wrapperStream = wrapperStream;
+			leaveStreamOpen = leaveOpen;
 
 			saveBuffer = new byte[8];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Dispose our self
+		/// </summary>
+		/********************************************************************/
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+
+			if (!leaveStreamOpen)
+				wrapperStream.Dispose();
 		}
 
 		#region Stream implementation

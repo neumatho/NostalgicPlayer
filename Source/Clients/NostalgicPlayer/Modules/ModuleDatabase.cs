@@ -266,7 +266,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 					using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
 					{
-						using (WriterStream ws = new WriterStream(fs))
+						using (WriterStream ws = new WriterStream(fs, true))
 						{
 							// Start to write the version
 							ws.Write_B_UINT16(DatabaseVersion);

@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ConverterStream(Stream wrapperStream, Dictionary<int, ConvertSampleInfo> sampleInfo) : base(wrapperStream)
+		public ConverterStream(Stream wrapperStream, bool leaveOpen, Dictionary<int, ConvertSampleInfo> sampleInfo) : base(wrapperStream, leaveOpen)
 		{
 			this.sampleInfo = sampleInfo;
 			HasSampleDataMarkers = false;

@@ -665,7 +665,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 
 									MemoryStream ms = new MemoryStream(convertedLength);
 
-									using (ConverterStream converterStream = new ConverterStream(ms, sampleInfo))
+									using (ConverterStream converterStream = new ConverterStream(ms, true, sampleInfo))
 									{
 										agentResult = converter.Convert(fileInfo, converterStream, out errorMessage);
 										if (agentResult == AgentResult.Ok)

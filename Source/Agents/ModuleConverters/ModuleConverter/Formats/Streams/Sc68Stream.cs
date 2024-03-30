@@ -64,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 		/********************************************************************/
 		private void BuildModuleData(Stream archiveStream)
 		{
-			using (WriterStream writerStream = new WriterStream(wrapperStream))
+			using (WriterStream writerStream = new WriterStream(wrapperStream, true))
 			{
 				byte[] id = Encoding.ASCII.GetBytes(Sc68Helper.IdString);
 				writerStream.Write(id);

@@ -60,7 +60,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 				if (decruncherStream.CanSeek)
 					stream = decruncherStream;
 				else
-					stream = new SeekableStream(decruncherStream);
+					stream = new SeekableStream(decruncherStream, false);
 			}
 		}
 

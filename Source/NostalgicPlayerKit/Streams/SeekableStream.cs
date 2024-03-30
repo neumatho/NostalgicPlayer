@@ -15,6 +15,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 	public class SeekableStream : Stream
 	{
 		private readonly Stream wrapperStream;
+		private readonly bool leaveStreamOpen;
 
 		private readonly MemoryStream bufferStream;
 		private int bufferIndex;
@@ -24,9 +25,10 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SeekableStream(Stream wrapperStream)
+		public SeekableStream(Stream wrapperStream, bool leaveOpen)
 		{
 			this.wrapperStream = wrapperStream;
+			leaveStreamOpen = leaveOpen;
 
 			bufferStream = new MemoryStream();
 			bufferIndex = 0;
@@ -43,7 +45,9 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			base.Dispose(disposing);
 
-			wrapperStream.Dispose();
+			if (!leaveStreamOpen)
+				wrapperStream.Dispose();
+
 			bufferStream.Dispose();
 		}
 

@@ -401,7 +401,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 		/********************************************************************/
 		public void SaveHeader(Stream stream)
 		{
-			using (WriterStream writerStream = new WriterStream(stream))
+			using (WriterStream writerStream = new WriterStream(stream, true))
 			{
 				Encoding encoder = EncoderCollection.Macintosh;
 
@@ -454,7 +454,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 		{
 			if (length > 0)
 			{
-				using (WriterStream writerStream = new WriterStream(stream))
+				using (WriterStream writerStream = new WriterStream(stream, true))
 				{
 					if (saveFormat.Bits == 8)
 					{
@@ -502,7 +502,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 		/********************************************************************/
 		public void SaveTail(Stream stream)
 		{
-			using (WriterStream writerStream = new WriterStream(stream))
+			using (WriterStream writerStream = new WriterStream(stream, true))
 			{
 				// Change the SSND chunk size
 				writerStream.Seek(ssndPosition + 4, SeekOrigin.Begin);

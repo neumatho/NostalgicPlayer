@@ -193,7 +193,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 					try
 					{
 						if (!entryStream.CanSeek)
-							entryStream = new SeekableStream(entryStream);
+							entryStream = new SeekableStream(entryStream, false);
 
 						IArchiveDecruncherAgent decruncherAgent = FindArchiveAgent(entryStream, null, out Stream newEntryStream);
 						if (decruncherAgent != null)
