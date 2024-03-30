@@ -107,7 +107,11 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			get => wrapperStream.Position;
 
-			set => wrapperStream.Position = value;
+			set
+			{
+				wrapperStream.Position = value;
+				EndOfStream = value > Length;
+			}
 		}
 
 

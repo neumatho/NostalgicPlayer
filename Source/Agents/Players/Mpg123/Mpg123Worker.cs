@@ -402,9 +402,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 				return false;
 			}
 
-			// Reset the stream to the beginning
-			moduleStream.Seek(0, SeekOrigin.Begin);
-
 			// Open the stream and scan it to find all tags, etc.
 			result = OpenFile(moduleStream);
 			if (result != Mpg123_Errors.Ok)
@@ -569,16 +566,53 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 
 		/********************************************************************/
 		/// <summary>
+		/// Skip blocks of zeros
+		/// </summary>
+		/********************************************************************/
+		private long SkipZeroes(ModuleStream moduleStream)
+		{
+			byte[] buf = new byte[4096];
+
+			moduleStream.Seek(0, SeekOrigin.Begin);
+
+			while (!moduleStream.EndOfStream)
+			{
+				int read = moduleStream.Read(buf, 0, buf.Length);
+
+				for (int i = 0; i < read; i++)
+				{
+					if (buf[i] != 0)
+					{
+						moduleStream.Seek(-(buf.Length - i), SeekOrigin.Current);
+						return moduleStream.Position;
+					}
+				}
+			}
+
+			return -1;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Open the file
 		/// </summary>
 		/********************************************************************/
 		private Mpg123_Errors OpenFile(ModuleStream moduleStream)
 		{
-			Mpg123_Errors result = mpg123Handle.Mpg123_Reader64(Read, Seek, null);
+			// Skip blocks of zeros before checking
+			long startPosition = SkipZeroes(moduleStream);
+			if (startPosition < 0)
+				return Mpg123_Errors.Err;
+
+			Stream stream = startPosition == 0 ? moduleStream : new SliceStream(moduleStream, true, startPosition, moduleStream.Length - startPosition);
+
+			Mpg123_Errors result = mpg123Handle.Mpg123_Reader64(Read, Seek, Close);
 			if (result != Mpg123_Errors.Ok)
 				return result;
 
-			return mpg123Handle.Mpg123_Open_Handle(moduleStream);
+			return mpg123Handle.Mpg123_Open_Handle(stream);
 		}
 
 
@@ -590,9 +624,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		/********************************************************************/
 		private int Read(object handle, Memory<byte> buf, ulong count, out ulong readCount)
 		{
-			ModuleStream moduleStream = (ModuleStream)handle;
+			Stream stream = (Stream)handle;
 
-			readCount = (ulong)moduleStream.Read(buf.Span.Slice(0, (int)count));
+			readCount = (ulong)stream.Read(buf.Span.Slice(0, (int)count));
 
 			return 0;
 		}
@@ -606,9 +640,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		/********************************************************************/
 		private long Seek(object handle, long offset, SeekOrigin whence)
 		{
-			ModuleStream moduleStream = (ModuleStream)handle;
+			Stream stream = (Stream)handle;
 
-			return moduleStream.Seek(offset, whence);
+			return stream.Seek(offset, whence);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Close the file
+		/// </summary>
+		/********************************************************************/
+		private void Close(object handle)
+		{
+			if (handle is SliceStream sliceStream)
+				sliceStream.Dispose();
 		}
 
 
@@ -637,8 +684,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 				Mpg123_Errors result = mpg123Handle.Mpg123_Param(Mpg123_Parms.Add_Flags, (int)(Mpg123_Param_Flags.No_Frankenstein | Mpg123_Param_Flags.No_Resync), 0);
 				if (result != Mpg123_Errors.Ok)
 					return ModuleType.Unknown;
-
-				moduleStream.Seek(0, SeekOrigin.Begin);
 
 				// Open the stream and scan it to find all tags, etc.
 				result = OpenFile(moduleStream);
