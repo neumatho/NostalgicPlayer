@@ -40,6 +40,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | AC1D Packer | .ac1d / .ac1 | ProWizard | ModTracker |
 | AHX 1.x | .ahx / .thx | | AHX |
 | AHX 2.x | .ahx / .thx | | AHX |
+| AMOS Music Bank | .abk | | AMOS Music Bank |
 | Asylum Music Format | .amf | | Xmp |
 | Audio Sculpture | .adsc | | ModTracker |
 | AudioIFF | .aiff / .aif | | Sample |

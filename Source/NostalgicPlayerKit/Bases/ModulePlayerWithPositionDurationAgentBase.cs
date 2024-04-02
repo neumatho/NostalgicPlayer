@@ -90,7 +90,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 							// Time to create a new snapshot?
 							if ((currentTotalTime - lastSnapshotTime) >= IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * 1000.0f)
 							{
-								positionInfoList.Add(new PositionInfoForPositionDuration(new TimeSpan((long)currentTotalTime * TimeSpan.TicksPerMillisecond), PlayingFrequency, originalPositionSubSong, CreateSnapshot()));
+								positionInfoList.Add(new PositionInfoForPositionDuration(new TimeSpan((long)(currentTotalTime * TimeSpan.TicksPerMillisecond)), PlayingFrequency, originalPositionSubSong, CreateSnapshot()));
 								lastSnapshotTime = currentTotalTime;
 							}
 
@@ -108,10 +108,10 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 						}
 
 						// Calculate the total time of the song
-						TimeSpan totalTime = new TimeSpan((long)Math.Round(currentTotalTime, MidpointRounding.AwayFromZero) * TimeSpan.TicksPerMillisecond);
+						TimeSpan totalTime = new TimeSpan((long)(Math.Round(currentTotalTime, MidpointRounding.AwayFromZero) * TimeSpan.TicksPerMillisecond));
 
 						// Remember the song
-						result.Add(new DurationInfo(totalTime, positionInfoList.ToArray(), positionTimes.Select(x => new TimeSpan((long)x * TimeSpan.TicksPerMillisecond)).ToArray()));
+						result.Add(new DurationInfo(totalTime, positionInfoList.ToArray(), positionTimes.Select(x => new TimeSpan((long)(x * TimeSpan.TicksPerMillisecond))).ToArray()));
 						currentSubSong++;
 					}
 					finally

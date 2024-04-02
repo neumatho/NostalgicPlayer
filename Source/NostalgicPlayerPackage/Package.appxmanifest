@@ -1066,6 +1066,14 @@
             <uap:DisplayName>SidMon 2.0</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="abkfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-abk">.abk</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>AMOS Music Bank</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

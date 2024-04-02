@@ -33,6 +33,7 @@
     <ProjectReference Include="..\..\Agents\ModuleConverters\ProWizardConverter\ProWizardConverter.csproj" />
     <ProjectReference Include="..\..\Agents\Output\CoreAudio\CoreAudio.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Ahx\Ahx.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\AmosMusicBank\AmosMusicBank.csproj" />
     <ProjectReference Include="..\..\Agents\Players\DavidWhittaker\DavidWhittaker.csproj" />
     <ProjectReference Include="..\..\Agents\Players\DeltaMusic10\DeltaMusic10.csproj" />
     <ProjectReference Include="..\..\Agents\Players\DeltaMusic20\DeltaMusic20.csproj" />

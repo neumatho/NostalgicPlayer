@@ -81,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 							// Time to create a new snapshot?
 							if ((currentTotalTime - lastSnapshotTime) >= IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * 1000.0f)
 							{
-								positionInfoList.Add(new PositionInfo(new TimeSpan((long)Math.Round(currentTotalTime, MidpointRounding.AwayFromZero) * TimeSpan.TicksPerMillisecond), PlayingFrequency, CreateSnapshot()));
+								positionInfoList.Add(new PositionInfo(new TimeSpan((long)(Math.Round(currentTotalTime, MidpointRounding.AwayFromZero) * TimeSpan.TicksPerMillisecond)), PlayingFrequency, CreateSnapshot()));
 								lastSnapshotTime = currentTotalTime;
 							}
 
@@ -99,10 +99,10 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 						}
 
 						// Calculate the total time of the song
-						TimeSpan totalTime = new TimeSpan((long)currentTotalTime * TimeSpan.TicksPerMillisecond);
+						TimeSpan totalTime = new TimeSpan((long)(currentTotalTime * TimeSpan.TicksPerMillisecond));
 
 						// Remember the song
-						result.Add(new DurationInfo(totalTime, positionInfoList.ToArray(), positionTimes.Select(x => new TimeSpan((long)x * TimeSpan.TicksPerMillisecond)).ToArray(), playerRestartTime));
+						result.Add(new DurationInfo(totalTime, positionInfoList.ToArray(), positionTimes.Select(x => new TimeSpan((long)(x * TimeSpan.TicksPerMillisecond))).ToArray(), playerRestartTime));
 					}
 					finally
 					{
@@ -293,7 +293,10 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		protected void MarkPositionAsVisited(int position)
 		{
 			if (positionTimes != null)
-				positionTimes[position] = currentTotalTime;
+			{
+				if (((position == 0) && (positionTimes.Length > 1) && (positionTimes[1] == 0)) || ((position != 0) && (positionTimes[position] == 0)))
+					positionTimes[position] = currentTotalTime;
+			}
 		}
 
 
@@ -306,7 +309,21 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		protected void SetRestartTime()
 		{
 			if (positionTimes != null)
-				playerRestartTime = new TimeSpan((long)currentTotalTime * TimeSpan.TicksPerMillisecond);
+				playerRestartTime = new TimeSpan((long)(currentTotalTime * TimeSpan.TicksPerMillisecond));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will set the reset time to the time remembered for the given
+		/// position
+		/// </summary>
+		/********************************************************************/
+		protected void SetPositionTime(int position)
+		{
+			if (positionTimes != null)
+				playerRestartTime = new TimeSpan((long)(positionTimes[position] * TimeSpan.TicksPerMillisecond));
 		}
 
 
