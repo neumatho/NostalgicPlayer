@@ -29,8 +29,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 	/// </summary>
 	public partial class ModuleInfoWindowForm : WindowFormBase
 	{
-		private const int FirstCustomLine = 9;
-
 		private ModuleHandler moduleHandler;
 		private MainWindowForm mainWindow;
 
@@ -63,6 +61,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 
 		private readonly ModuleInfoWindowSettings settings;
 		private readonly ModuleSettings moduleSettings;
+
+		private int firstCustomLine;
 
 		private static readonly float[][] fadeMatrix =
 		{
@@ -165,10 +165,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				// Check to see if there are any module loaded at the moment
 				if (moduleHandler.IsModuleLoaded)
 				{
-					if ((FirstCustomLine + line) < moduleInfoInfoDataGridView.RowCount)
+					if ((firstCustomLine + line) < moduleInfoInfoDataGridView.RowCount)
 					{
-						moduleInfoInfoDataGridView.Rows[FirstCustomLine + line].Cells[1].Value = newValue;
-						moduleInfoInfoDataGridView.InvalidateRow(FirstCustomLine + line);
+						moduleInfoInfoDataGridView.Rows[firstCustomLine + line].Cells[1].Value = newValue;
+						moduleInfoInfoDataGridView.InvalidateRow(firstCustomLine + line);
 					}
 				}
 			}
@@ -457,6 +457,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 
 			if (moduleHandler.IsPlaying && ((fileInfo = mainWindow.GetFileInfo()) != null))
 			{
+				firstCustomLine = 9;
+
 				// Module in memory, add items
 				ModuleInfoStatic staticInfo = moduleHandler.StaticModuleInformation;
 				ModuleInfoFloating floatingInfo = moduleHandler.PlayingModuleInformation;
@@ -503,6 +505,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 					val += string.Format(" / {0}", string.Join(" \u2b95 ", staticInfo.DecruncherAlgorithms));
 
 					moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_PACKEDSIZE, val);
+					firstCustomLine++;
 				}
 
 				if (Env.IsWindows10S)
