@@ -144,13 +144,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// Will add DSP effect to the mixed output
 		/// </summary>
 		/********************************************************************/
-		public void DoEffects(int[] dest, int todo, uint mixerFrequency, bool stereo)
+		public void DoEffects(int[] dest, int todoInSamples, uint mixerFrequency, bool stereo)
 		{
 			if (echoMode != EchoMode.None)
-				DoEcho(dest, todo, mixerFrequency, stereo);
+				DoEcho(dest, todoInSamples, mixerFrequency, stereo);
 
 			if (stereo && (stereoSeparator != 0) && subSong.GetStereo())
-				DoStereoSeparation(dest, todo);
+				DoStereoSeparation(dest, todoInSamples);
 		}
 
 
@@ -176,7 +176,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// Apply echo to the output
 		/// </summary>
 		/********************************************************************/
-		private void DoEcho(int[] dest, int todo, uint mixerFrequency, bool stereo)
+		private void DoEcho(int[] dest, int todoInSamples, uint mixerFrequency, bool stereo)
 		{
 			if ((echoLength > 0) && (echoDepth > 0))
 			{
@@ -196,9 +196,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 					case EchoMode.Normal:
 					{
 						if (stereo)
-							DoNormalEchoStereo(dest, todo);
+							DoNormalEchoStereo(dest, todoInSamples);
 						else
-							DoNormalEchoMono(dest, todo);
+							DoNormalEchoMono(dest, todoInSamples);
 
 						break;
 					}
@@ -206,9 +206,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 					case EchoMode.CrossEcho:
 					{
 						if (stereo)
-							DoCrossEchoStereo(dest, todo);
+							DoCrossEchoStereo(dest, todoInSamples);
 						else
-							DoNormalEchoMono(dest, todo);
+							DoNormalEchoMono(dest, todoInSamples);
 
 						break;
 					}
@@ -223,16 +223,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// Apply normal echo to the mono output
 		/// </summary>
 		/********************************************************************/
-		private void DoNormalEchoMono(int[] dest, int todo)
+		private void DoNormalEchoMono(int[] dest, int todoInSamples)
 		{
 			int copied = 0;
 
-			while (copied < todo)
+			while (copied < todoInSamples)
 			{
 				if (echoPosition >= echoBuffer.Length)
 					echoPosition = 0;
 
-				int toCopy = Math.Min(todo - copied, echoBuffer.Length - echoPosition);
+				int toCopy = Math.Min(todoInSamples - copied, echoBuffer.Length - echoPosition);
 				if (toCopy == 0)
 					break;
 
@@ -282,16 +282,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// Apply cross echo to the stereo output
 		/// </summary>
 		/********************************************************************/
-		private void DoCrossEchoStereo(int[] dest, int todo)
+		private void DoCrossEchoStereo(int[] dest, int todoInSamples)
 		{
 			int copied = 0;
 
-			while (copied < todo)
+			while (copied < todoInSamples)
 			{
 				if (echoPosition >= echoBuffer.Length)
 					echoPosition = 0;
 
-				int toCopy = Math.Min(todo - copied, echoBuffer.Length - echoPosition) / 2;
+				int toCopy = Math.Min(todoInSamples - copied, echoBuffer.Length - echoPosition) / 2;
 				if (toCopy == 0)
 					break;
 
@@ -313,15 +313,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// Apply stereo separation to the output
 		/// </summary>
 		/********************************************************************/
-		private void DoStereoSeparation(int[] dest, int todo)
+		private void DoStereoSeparation(int[] dest, int todoInSamples)
 		{
-			todo /= 2;
+			todoInSamples /= 2;
 
 			if (stereoSeparator < 0)
 			{
 				int shift = stereoSeparator + 5;
 
-				for (int i = 0; i < todo; i += 2)
+				for (int i = 0; i < todoInSamples; i += 2)
 				{
 					int left = dest[i];
 					int right = dest[i + 1];
@@ -334,7 +334,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			{
 				int shift = 5 - stereoSeparator;
 
-				for (int i = 0; i < todo; i += 2)
+				for (int i = 0; i < todoInSamples; i += 2)
 				{
 					int left = dest[i];
 					int right = dest[i + 1];

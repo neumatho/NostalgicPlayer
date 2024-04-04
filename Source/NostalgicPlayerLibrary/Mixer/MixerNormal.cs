@@ -62,7 +62,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// This is the main mixer method
 		/// </summary>
 		/********************************************************************/
-		public override void Mixing(int[][] channelMap, int offset, int todo, MixerMode mode)
+		public override void Mixing(int[][] channelMap, int offsetInSamples, int todoInSamples, MixerMode mode)
 		{
 			// Loop through all the channels and mix the samples into the buffer
 			for (int t = 0; t < channelNumber; t++)
@@ -133,7 +133,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						vnf.LeftVolumeSelected = vol;
 					}
 
-					AddChannel(ref vnf, channelMap[t], offset, todo, mode);
+					AddChannel(ref vnf, channelMap[t], offsetInSamples, todoInSamples, mode);
 				}
 			}
 		}
@@ -146,9 +146,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// in the supplied buffer
 		/// </summary>
 		/********************************************************************/
-		public override void ConvertMixedData(byte[] dest, int offset, int[] source, int todo, int samplesToSkip, bool isStereo, bool swapSpeakers)
+		public override void ConvertMixedData(byte[] dest, int offsetInBytes, int[] source, int todoInSamples, int samplesToSkip, bool isStereo, bool swapSpeakers)
 		{
-			MixConvertTo32(MemoryMarshal.Cast<byte, int>(dest), offset / 4, source, todo, samplesToSkip, isStereo, swapSpeakers);
+			MixConvertTo32(MemoryMarshal.Cast<byte, int>(dest), offsetInBytes / 4, source, todoInSamples, samplesToSkip, isStereo, swapSpeakers);
 		}
 		#endregion
 
@@ -158,7 +158,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Mix a channel into the buffer
 		/// </summary>
 		/********************************************************************/
-		private void AddChannel(ref VoiceInfo vnf, int[] buf, int offset, int todo, MixerMode mode)
+		private void AddChannel(ref VoiceInfo vnf, int[] buf, int offsetInSamples, int todoInSamples, MixerMode mode)
 		{
 			Array left = vnf.Addresses[0];
 			Array right = vnf.Addresses[1];
@@ -184,7 +184,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 
 			// Update the 'current' index so the sample loops, or
 			// stops playing if it reached the end of the sample
-			while (todo > 0)
+			while (todoInSamples > 0)
 			{
 				if ((vnf.Flags & SampleFlag.Reverse) != 0)
 				{
@@ -316,7 +316,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					done = 0;
 				else
 				{
-					done = Math.Min((int)((end - vnf.Current) / vnf.Increment + 1), todo);
+					done = Math.Min((int)((end - vnf.Current) / vnf.Increment + 1), todoInSamples);
 					if (done < 0)
 						done = 0;
 				}
@@ -332,25 +332,25 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				if (vnf.Volume != 0)
 				{
 					if (right == null)
-						vnf.Current = MixSample(ref vnf, left, buf, offset, done, mode);
+						vnf.Current = MixSample(ref vnf, left, buf, offsetInSamples, done, mode);
 					else
 					{
 						if (((mode & MixerMode.Stereo) != 0) && (vnf.Panning != (int)ChannelPanningType.Surround))
 						{
 							int oldVolume = vnf.RightVolumeSelected;
 							vnf.RightVolumeSelected = 0;
-							MixSample(ref vnf, left, buf, offset, done, mode);
+							MixSample(ref vnf, left, buf, offsetInSamples, done, mode);
 							vnf.RightVolumeSelected = oldVolume;
 
 							oldVolume = vnf.LeftVolumeSelected;
 							vnf.LeftVolumeSelected = 0;
-							vnf.Current = MixSample(ref vnf, right, buf, offset, done, mode);
+							vnf.Current = MixSample(ref vnf, right, buf, offsetInSamples, done, mode);
 							vnf.LeftVolumeSelected = oldVolume;
 						}
 						else
 						{
-							MixSample(ref vnf, left, buf, offset, done, mode);
-							vnf.Current = MixSample(ref vnf, right, buf, offset, done, mode);
+							MixSample(ref vnf, left, buf, offsetInSamples, done, mode);
+							vnf.Current = MixSample(ref vnf, right, buf, offsetInSamples, done, mode);
 						}
 					}
 				}
@@ -360,8 +360,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					vnf.Current = endPos;
 				}
 
-				todo -= done;
-				offset += (mode & MixerMode.Stereo) != 0 ? done << 1 : done;
+				todoInSamples -= done;
+				offsetInSamples += (mode & MixerMode.Stereo) != 0 ? done << 1 : done;
 			}
 		}
 		#endregion
@@ -373,7 +373,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Mix the given sample into the output buffers
 		/// </summary>
 		/********************************************************************/
-		private long MixSample(ref VoiceInfo vnf, Array s, int[] buf, int offset, int done, MixerMode mode)
+		private long MixSample(ref VoiceInfo vnf, Array s, int[] buf, int offsetInSamples, int todoInSamples, MixerMode mode)
 		{
 			// Check to see if we need to make interpolation on the mixing
 			if ((mode & MixerMode.Interpolation) != 0)
@@ -386,12 +386,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					if ((mode & MixerMode.Stereo) != 0)
 					{
 						if ((vnf.Panning == (int)ChannelPanningType.Surround) && ((mode & MixerMode.Surround) != 0))
-							return Mix16SurroundInterpolation(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
+							return Mix16SurroundInterpolation(source, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
 
-						return Mix16StereoInterpolation(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
+						return Mix16StereoInterpolation(source, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
 					}
 
-					return Mix16MonoInterpolation(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.OldLeftVolume, ref vnf.RampVolume);
+					return Mix16MonoInterpolation(source, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, vnf.LeftVolumeSelected, vnf.OldLeftVolume, ref vnf.RampVolume);
 				}
 				else
 				{
@@ -401,12 +401,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					if ((mode & MixerMode.Stereo) != 0)
 					{
 						if ((vnf.Panning == (int)ChannelPanningType.Surround) && ((mode & MixerMode.Surround) != 0))
-							return Mix8SurroundInterpolation(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
+							return Mix8SurroundInterpolation(source, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
 
-						return Mix8StereoInterpolation(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
+						return Mix8StereoInterpolation(source, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
 					}
 
-					return Mix8MonoInterpolation(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.OldLeftVolume, ref vnf.RampVolume);
+					return Mix8MonoInterpolation(source, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, vnf.LeftVolumeSelected, vnf.OldLeftVolume, ref vnf.RampVolume);
 				}
 			}
 
@@ -419,12 +419,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				if ((mode & MixerMode.Stereo) != 0)
 				{
 					if ((vnf.Panning == (int)ChannelPanningType.Surround) && ((mode & MixerMode.Surround) != 0))
-						return Mix16SurroundNormal(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
+						return Mix16SurroundNormal(source, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
 
-					return Mix16StereoNormal(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
+					return Mix16StereoNormal(source, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
 				}
 
-				return Mix16MonoNormal(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected);
+				return Mix16MonoNormal(source, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, vnf.LeftVolumeSelected);
 			}
 			else
 			{
@@ -434,12 +434,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				if ((mode & MixerMode.Stereo) != 0)
 				{
 					if ((vnf.Panning == (int)ChannelPanningType.Surround) && ((mode & MixerMode.Surround) != 0))
-						return Mix8SurroundNormal(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
+						return Mix8SurroundNormal(source, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
 
-					return Mix8StereoNormal(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
+					return Mix8StereoNormal(source, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
 				}
 
-				return Mix8MonoNormal(source, buf, offset, vnf.Current, vnf.Increment, done, vnf.LeftVolumeSelected);
+				return Mix8MonoNormal(source, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, vnf.LeftVolumeSelected);
 			}
 		}
 
@@ -451,11 +451,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Mixes a 8 bit sample into a mono output buffer
 		/// </summary>
 		/********************************************************************/
-		private long Mix8MonoNormal(Span<sbyte> source, int[] dest, int offset, long index, long increment, int todo, int volSel)
+		private long Mix8MonoNormal(Span<sbyte> source, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int volSel)
 		{
 			int len = source.Length;
 
-			while (todo-- != 0)
+			while (todoInSamples-- != 0)
 			{
 				long idx = index >> FracBits;
 				if (idx >= len)
@@ -464,7 +464,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				int sample = source[(int)idx] << 7;
 				index += increment;
 
-				dest[offset++] += volSel * sample;
+				dest[offsetInSamples++] += volSel * sample;
 			}
 
 			return index;
@@ -477,11 +477,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Mixes a 8 bit sample into a stereo output buffer
 		/// </summary>
 		/********************************************************************/
-		private long Mix8StereoNormal(Span<sbyte> source, int[] dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel)
+		private long Mix8StereoNormal(Span<sbyte> source, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int lVolSel, int rVolSel)
 		{
 			int len = source.Length;
 
-			while (todo-- != 0)
+			while (todoInSamples-- != 0)
 			{
 				long idx = index >> FracBits;
 				if (idx >= len)
@@ -490,8 +490,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				int sample = source[(int)idx] << 8;
 				index += increment;
 
-				dest[offset++] += lVolSel * sample;
-				dest[offset++] += rVolSel * sample;
+				dest[offsetInSamples++] += lVolSel * sample;
+				dest[offsetInSamples++] += rVolSel * sample;
 			}
 
 			return index;
@@ -504,13 +504,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Mixes a 8 bit surround sample into a stereo output buffer
 		/// </summary>
 		/********************************************************************/
-		private long Mix8SurroundNormal(Span<sbyte> source, int[] dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel)
+		private long Mix8SurroundNormal(Span<sbyte> source, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int lVolSel, int rVolSel)
 		{
 			int len = source.Length;
 
 			if (lVolSel >= rVolSel)
 			{
-				while (todo-- != 0)
+				while (todoInSamples-- != 0)
 				{
 					long idx = index >> FracBits;
 					if (idx >= len)
@@ -519,13 +519,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					int sample = source[(int)idx] << 8;
 					index += increment;
 
-					dest[offset++] += lVolSel * sample;
-					dest[offset++] -= lVolSel * sample;
+					dest[offsetInSamples++] += lVolSel * sample;
+					dest[offsetInSamples++] -= lVolSel * sample;
 				}
 			}
 			else
 			{
-				while (todo-- != 0)
+				while (todoInSamples-- != 0)
 				{
 					long idx = index >> FracBits;
 					if (idx >= len)
@@ -534,8 +534,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					int sample = source[(int)idx] << 8;
 					index += increment;
 
-					dest[offset++] -= rVolSel * sample;
-					dest[offset++] += rVolSel * sample;
+					dest[offsetInSamples++] -= rVolSel * sample;
+					dest[offsetInSamples++] += rVolSel * sample;
 				}
 			}
 
@@ -549,7 +549,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Mixes a 8 bit sample into a mono output buffer with interpolation
 		/// </summary>
 		/********************************************************************/
-		private long Mix8MonoInterpolation(Span<sbyte> source, int[] dest, int offset, long index, long increment, int todo, int volSel, int oldVol, ref int rampVol)
+		private long Mix8MonoInterpolation(Span<sbyte> source, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int volSel, int oldVol, ref int rampVol)
 		{
 			int len = source.Length;
 
@@ -557,7 +557,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			{
 				oldVol -= volSel;
 
-				while (todo-- != 0)
+				while (todoInSamples-- != 0)
 				{
 					int idx = (int)(index >> FracBits);
 					if (idx >= len)
@@ -569,17 +569,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
 					index += increment;
 
-					dest[offset++] += ((volSel << ClickShift) + oldVol * rampVol) * sample >> ClickShift;
+					dest[offsetInSamples++] += ((volSel << ClickShift) + oldVol * rampVol) * sample >> ClickShift;
 
 					if (--rampVol == 0)
 						break;
 				}
 
-				if (todo < 0)
+				if (todoInSamples < 0)
 					return index;
 			}
 
-			while (todo-- != 0)
+			while (todoInSamples-- != 0)
 			{
 				int idx = (int)(index >> FracBits);
 				if (idx >= len)
@@ -591,7 +591,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
 				index += increment;
 
-				dest[offset++] += volSel * sample;
+				dest[offsetInSamples++] += volSel * sample;
 			}
 
 			return index;
@@ -605,7 +605,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// interpolation
 		/// </summary>
 		/********************************************************************/
-		private long Mix8StereoInterpolation(Span<sbyte> source, int[] dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
+		private long Mix8StereoInterpolation(Span<sbyte> source, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
 		{
 			int len = source.Length;
 
@@ -614,7 +614,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				oldLVol -= lVolSel;
 				oldRVol -= rVolSel;
 
-				while (todo-- != 0)
+				while (todoInSamples-- != 0)
 				{
 					int idx = (int)(index >> FracBits);
 					if (idx >= len)
@@ -626,18 +626,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
 					index += increment;
 
-					dest[offset++] += ((lVolSel << ClickShift) + oldLVol * rampVol) * sample >> ClickShift;
-					dest[offset++] += ((rVolSel << ClickShift) + oldRVol * rampVol) * sample >> ClickShift;
+					dest[offsetInSamples++] += ((lVolSel << ClickShift) + oldLVol * rampVol) * sample >> ClickShift;
+					dest[offsetInSamples++] += ((rVolSel << ClickShift) + oldRVol * rampVol) * sample >> ClickShift;
 
 					if (--rampVol == 0)
 						break;
 				}
 
-				if (todo < 0)
+				if (todoInSamples < 0)
 					return index;
 			}
 
-			while (todo-- != 0)
+			while (todoInSamples-- != 0)
 			{
 				int idx = (int)(index >> FracBits);
 				if (idx >= len)
@@ -649,8 +649,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
 				index += increment;
 
-				dest[offset++] += lVolSel * sample;
-				dest[offset++] += rVolSel * sample;
+				dest[offsetInSamples++] += lVolSel * sample;
+				dest[offsetInSamples++] += rVolSel * sample;
 			}
 
 			return index;
@@ -664,7 +664,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// interpolation
 		/// </summary>
 		/********************************************************************/
-		private long Mix8SurroundInterpolation(Span<sbyte> source, int[] dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
+		private long Mix8SurroundInterpolation(Span<sbyte> source, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
 		{
 			int oldVol, vol;
 			int len = source.Length;
@@ -684,7 +684,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			{
 				oldVol -= vol;
 
-				while (todo-- != 0)
+				while (todoInSamples-- != 0)
 				{
 					int idx = (int)(index >> FracBits);
 					if (idx >= len)
@@ -697,18 +697,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					index += increment;
 
 					sample = ((vol << ClickShift) + oldVol * rampVol) * sample >> ClickShift;
-					dest[offset++] += sample;
-					dest[offset++] -= sample;
+					dest[offsetInSamples++] += sample;
+					dest[offsetInSamples++] -= sample;
 
 					if (--rampVol == 0)
 						break;
 				}
 
-				if (todo < 0)
+				if (todoInSamples < 0)
 					return index;
 			}
 
-			while (todo-- != 0)
+			while (todoInSamples-- != 0)
 			{
 				int idx = (int)(index >> FracBits);
 				if (idx >= len)
@@ -720,8 +720,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
 				index += increment;
 
-				dest[offset++] += vol * sample;
-				dest[offset++] -= vol * sample;
+				dest[offsetInSamples++] += vol * sample;
+				dest[offsetInSamples++] -= vol * sample;
 			}
 
 			return index;
@@ -738,11 +738,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Mixes a 16 bit sample into a mono output buffer
 		/// </summary>
 		/********************************************************************/
-		private long Mix16MonoNormal(Span<short> source, int[] dest, int offset, long index, long increment, int todo, int volSel)
+		private long Mix16MonoNormal(Span<short> source, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int volSel)
 		{
 			int len = source.Length;
 
-			while (todo-- != 0)
+			while (todoInSamples-- != 0)
 			{
 				long idx = index >> FracBits;
 				if (idx >= len)
@@ -751,7 +751,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				int sample = source[(int)idx];
 				index += increment;
 
-				dest[offset++] += volSel * sample;
+				dest[offsetInSamples++] += volSel * sample;
 			}
 
 			return index;
@@ -764,11 +764,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Mixes a 16 bit sample into a stereo output buffer
 		/// </summary>
 		/********************************************************************/
-		private long Mix16StereoNormal(Span<short> source, int[] dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel)
+		private long Mix16StereoNormal(Span<short> source, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int lVolSel, int rVolSel)
 		{
 			int len = source.Length;
 
-			while (todo-- != 0)
+			while (todoInSamples-- != 0)
 			{
 				long idx = index >> FracBits;
 				if (idx >= len)
@@ -777,8 +777,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				int sample = source[(int)idx];
 				index += increment;
 
-				dest[offset++] += lVolSel * sample;
-				dest[offset++] += rVolSel * sample;
+				dest[offsetInSamples++] += lVolSel * sample;
+				dest[offsetInSamples++] += rVolSel * sample;
 			}
 
 			return index;
@@ -791,13 +791,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Mixes a 16 bit surround sample into a stereo output buffer
 		/// </summary>
 		/********************************************************************/
-		private long Mix16SurroundNormal(Span<short> source, int[] dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel)
+		private long Mix16SurroundNormal(Span<short> source, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int lVolSel, int rVolSel)
 		{
 			int len = source.Length;
 
 			if (lVolSel >= rVolSel)
 			{
-				while (todo-- != 0)
+				while (todoInSamples-- != 0)
 				{
 					long idx = index >> FracBits;
 					if (idx >= len)
@@ -806,13 +806,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					int sample = source[(int)idx];
 					index += increment;
 
-					dest[offset++] += lVolSel * sample;
-					dest[offset++] -= lVolSel * sample;
+					dest[offsetInSamples++] += lVolSel * sample;
+					dest[offsetInSamples++] -= lVolSel * sample;
 				}
 			}
 			else
 			{
-				while (todo-- != 0)
+				while (todoInSamples-- != 0)
 				{
 					long idx = index >> FracBits;
 					if (idx >= len)
@@ -821,8 +821,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					int sample = source[(int)idx];
 					index += increment;
 
-					dest[offset++] -= rVolSel * sample;
-					dest[offset++] += rVolSel * sample;
+					dest[offsetInSamples++] -= rVolSel * sample;
+					dest[offsetInSamples++] += rVolSel * sample;
 				}
 			}
 
@@ -836,7 +836,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Mixes a 16 bit sample into a mono output buffer with interpolation
 		/// </summary>
 		/********************************************************************/
-		private long Mix16MonoInterpolation(Span<short> source, int[] dest, int offset, long index, long increment, int todo, int volSel, int oldVol, ref int rampVol)
+		private long Mix16MonoInterpolation(Span<short> source, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int volSel, int oldVol, ref int rampVol)
 		{
 			int len = source.Length;
 
@@ -844,7 +844,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			{
 				oldVol -= volSel;
 
-				while (todo-- != 0)
+				while (todoInSamples-- != 0)
 				{
 					int idx = (int)(index >> FracBits);
 					if (idx >= len)
@@ -856,17 +856,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
 					index += increment;
 
-					dest[offset++] += ((volSel << ClickShift) + oldVol * rampVol) * sample >> ClickShift;
+					dest[offsetInSamples++] += ((volSel << ClickShift) + oldVol * rampVol) * sample >> ClickShift;
 
 					if (--rampVol == 0)
 						break;
 				}
 
-				if (todo < 0)
+				if (todoInSamples < 0)
 					return index;
 			}
 
-			while (todo-- != 0)
+			while (todoInSamples-- != 0)
 			{
 				int idx = (int)(index >> FracBits);
 				if (idx >= len)
@@ -878,7 +878,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
 				index += increment;
 
-				dest[offset++] += volSel * sample;
+				dest[offsetInSamples++] += volSel * sample;
 			}
 
 			return index;
@@ -892,7 +892,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// interpolation
 		/// </summary>
 		/********************************************************************/
-		private long Mix16StereoInterpolation(Span<short> source, int[] dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
+		private long Mix16StereoInterpolation(Span<short> source, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
 		{
 			int len = source.Length;
 
@@ -901,7 +901,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				oldLVol -= lVolSel;
 				oldRVol -= rVolSel;
 
-				while (todo-- != 0)
+				while (todoInSamples-- != 0)
 				{
 					int idx = (int)(index >> FracBits);
 					if (idx >= len)
@@ -913,18 +913,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
 					index += increment;
 
-					dest[offset++] += ((lVolSel << ClickShift) + oldLVol * rampVol) * sample >> ClickShift;
-					dest[offset++] += ((rVolSel << ClickShift) + oldRVol * rampVol) * sample >> ClickShift;
+					dest[offsetInSamples++] += ((lVolSel << ClickShift) + oldLVol * rampVol) * sample >> ClickShift;
+					dest[offsetInSamples++] += ((rVolSel << ClickShift) + oldRVol * rampVol) * sample >> ClickShift;
 
 					if (--rampVol == 0)
 						break;
 				}
 
-				if (todo < 0)
+				if (todoInSamples < 0)
 					return index;
 			}
 
-			while (todo-- != 0)
+			while (todoInSamples-- != 0)
 			{
 				int idx = (int)(index >> FracBits);
 				if (idx >= len)
@@ -936,8 +936,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
 				index += increment;
 
-				dest[offset++] += lVolSel * sample;
-				dest[offset++] += rVolSel * sample;
+				dest[offsetInSamples++] += lVolSel * sample;
+				dest[offsetInSamples++] += rVolSel * sample;
 			}
 
 			return index;
@@ -951,7 +951,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// interpolation
 		/// </summary>
 		/********************************************************************/
-		private long Mix16SurroundInterpolation(Span<short> source, int[] dest, int offset, long index, long increment, int todo, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
+		private long Mix16SurroundInterpolation(Span<short> source, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
 		{
 			int oldVol, vol;
 			int len = source.Length;
@@ -971,7 +971,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			{
 				oldVol -= vol;
 
-				while (todo-- != 0)
+				while (todoInSamples-- != 0)
 				{
 					int idx = (int)(index >> FracBits);
 					if (idx >= len)
@@ -984,18 +984,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					index += increment;
 
 					sample = ((vol << ClickShift) + oldVol * rampVol) * sample >> ClickShift;
-					dest[offset++] += sample;
-					dest[offset++] -= sample;
+					dest[offsetInSamples++] += sample;
+					dest[offsetInSamples++] -= sample;
 
 					if (--rampVol == 0)
 						break;
 				}
 
-				if (todo < 0)
+				if (todoInSamples < 0)
 					return index;
 			}
 
-			while (todo-- != 0)
+			while (todoInSamples-- != 0)
 			{
 				int idx = (int)(index >> FracBits);
 				if (idx >= len)
@@ -1007,8 +1007,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
 				index += increment;
 
-				dest[offset++] += vol * sample;
-				dest[offset++] -= vol * sample;
+				dest[offsetInSamples++] += vol * sample;
+				dest[offsetInSamples++] -= vol * sample;
 			}
 
 			return index;
@@ -1027,7 +1027,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Converts the mixed data to a 32 bit sample buffer
 		/// </summary>
 		/********************************************************************/
-		private void MixConvertTo32(Span<int> dest, int offset, int[] source, int count, int samplesToSkip, bool isStereo, bool swapSpeakers)
+		private void MixConvertTo32(Span<int> dest, int offsetInSamples, int[] source, int countInSamples, int samplesToSkip, bool isStereo, bool swapSpeakers)
 		{
 			long x1, x2, x3, x4;
 			int remain;
@@ -1038,9 +1038,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			{
 				if (samplesToSkip == 0)
 				{
-					remain = count & 3;
+					remain = countInSamples & 3;
 
-					for (count >>= 2; count != 0; count--)
+					for (countInSamples >>= 2; countInSamples != 0; countInSamples--)
 					{
 						x1 = (long)source[sourceOffset++] << MixBitShift;
 						x2 = (long)source[sourceOffset++] << MixBitShift;
@@ -1052,17 +1052,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						x3 = (x3 >= 2147483647) ? 2147483647 - 1 : (x3 < -2147483647) ? -2147483647 : x3;
 						x4 = (x4 >= 2147483647) ? 2147483647 - 1 : (x4 < -2147483647) ? -2147483647 : x4;
 
-						dest[offset++] = (int)x2;
-						dest[offset++] = (int)x1;
-						dest[offset++] = (int)x4;
-						dest[offset++] = (int)x3;
+						dest[offsetInSamples++] = (int)x2;
+						dest[offsetInSamples++] = (int)x1;
+						dest[offsetInSamples++] = (int)x4;
+						dest[offsetInSamples++] = (int)x3;
 					}
 				}
 				else
 				{
-					remain = count & 1;
+					remain = countInSamples & 1;
 
-					for (count >>= 1; count != 0; count--)
+					for (countInSamples >>= 1; countInSamples != 0; countInSamples--)
 					{
 						x1 = (long)source[sourceOffset++] << MixBitShift;
 						x2 = (long)source[sourceOffset++] << MixBitShift;
@@ -1070,11 +1070,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 						x1 = (x1 >= 2147483647) ? 2147483647 - 1 : (x1 < -2147483647) ? -2147483647 : x1;
 						x2 = (x2 >= 2147483647) ? 2147483647 - 1 : (x2 < -2147483647) ? -2147483647 : x2;
 
-						dest[offset++] = (int)x2;
-						dest[offset++] = (int)x1;
+						dest[offsetInSamples++] = (int)x2;
+						dest[offsetInSamples++] = (int)x1;
 
 						for (int i = 0; i < samplesToSkip; i++)
-							dest[offset++] = 0;
+							dest[offsetInSamples++] = 0;
 					}
 				}
 			}
@@ -1084,9 +1084,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				{
 					if (samplesToSkip == 0)
 					{
-						remain = count & 3;
+						remain = countInSamples & 3;
 
-						for (count >>= 2; count != 0; count--)
+						for (countInSamples >>= 2; countInSamples != 0; countInSamples--)
 						{
 							x1 = (long)source[sourceOffset++] << MixBitShift;
 							x2 = (long)source[sourceOffset++] << MixBitShift;
@@ -1098,17 +1098,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 							x3 = (x3 >= 2147483647) ? 2147483647 - 1 : (x3 < -2147483647) ? -2147483647 : x3;
 							x4 = (x4 >= 2147483647) ? 2147483647 - 1 : (x4 < -2147483647) ? -2147483647 : x4;
 
-							dest[offset++] = (int)x1;
-							dest[offset++] = (int)x2;
-							dest[offset++] = (int)x3;
-							dest[offset++] = (int)x4;
+							dest[offsetInSamples++] = (int)x1;
+							dest[offsetInSamples++] = (int)x2;
+							dest[offsetInSamples++] = (int)x3;
+							dest[offsetInSamples++] = (int)x4;
 						}
 					}
 					else
 					{
-						remain = count & 1;
+						remain = countInSamples & 1;
 
-						for (count >>= 1; count != 0; count--)
+						for (countInSamples >>= 1; countInSamples != 0; countInSamples--)
 						{
 							x1 = (long)source[sourceOffset++] << MixBitShift;
 							x2 = (long)source[sourceOffset++] << MixBitShift;
@@ -1116,11 +1116,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 							x1 = (x1 >= 2147483647) ? 2147483647 - 1 : (x1 < -2147483647) ? -2147483647 : x1;
 							x2 = (x2 >= 2147483647) ? 2147483647 - 1 : (x2 < -2147483647) ? -2147483647 : x2;
 
-							dest[offset++] = (int)x1;
-							dest[offset++] = (int)x2;
+							dest[offsetInSamples++] = (int)x1;
+							dest[offsetInSamples++] = (int)x2;
 
 							for (int i = 0; i < samplesToSkip; i++)
-								dest[offset++] = 0;
+								dest[offsetInSamples++] = 0;
 						}
 					}
 				}
@@ -1128,11 +1128,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				{
 					remain = 0;
 
-					for (; count != 0; count--)
+					for (; countInSamples != 0; countInSamples--)
 					{
 						x1 = (long)source[sourceOffset++] << MixBitShift;
 						x1 = (x1 >= 2147483647) ? 2147483647 - 1 : (x1 < -2147483647) ? -2147483647 : x1;
-						dest[offset++] = (int)x1;
+						dest[offsetInSamples++] = (int)x1;
 					}
 				}
 			}
@@ -1141,10 +1141,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			{
 				x1 = (long)source[sourceOffset++] << MixBitShift;
 				x1 = (x1 >= 2147483647) ? 2147483647 - 1 : (x1 < -2147483647) ? -2147483647 : x1;
-				dest[offset++] = (int)x1;
+				dest[offsetInSamples++] = (int)x1;
 
 				for (int i = 0; i < samplesToSkip; i++)
-					dest[offset++] = 0;
+					dest[offsetInSamples++] = 0;
 			}
 		}
 		#endregion

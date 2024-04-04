@@ -216,17 +216,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 					// Check if we need to delay the filling (wait for the latency buffer to be played)
 					if (delayCount > 0)
 					{
-						int todo = Math.Min(delayCount, count);
+						int todoInBytes = Math.Min(delayCount, count);
 
-						delayCount -= todo;
+						delayCount -= todoInBytes;
 						if (delayCount == 0)
 						{
 							// Now we're sure that the whole sampling has been played, so tell the client
 							OnEndReached(this, EventArgs.Empty);
 						}
 
-						Array.Clear(buffer, offset, todo);
-						return todo;
+						Array.Clear(buffer, offset, todoInBytes);
+						return todoInBytes;
 					}
 
 					int samplesTaken = resampler.Resampling(buffer, offset, count / OutputInfo.BytesPerSample, out bool hasEndReached);

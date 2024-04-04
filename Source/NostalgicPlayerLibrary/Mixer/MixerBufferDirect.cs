@@ -55,21 +55,21 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// This is the main mixer method
 		/// </summary>
 		/********************************************************************/
-		public override void Mixing(int[][] channelMap, int offset, int todo, MixerMode mode)
+		public override void Mixing(int[][] channelMap, int offsetInSamples, int todoInSamples, MixerMode mode)
 		{
 			if ((mode & MixerMode.Stereo) != 0)
 			{
 				int leftVolume = voiceInfo[0].Enabled ? MasterVolume : 0;
 				int rightVolume = voiceInfo[1].Enabled ? MasterVolume : 0;
 
-				AddPlayerSamples(ref voiceInfo[0], channelMap[0], offset, 2, todo, leftVolume);
-				AddPlayerSamples(ref voiceInfo[1], channelMap[1], offset + 1, 2, todo, rightVolume);
+				AddPlayerSamples(ref voiceInfo[0], channelMap[0], offsetInSamples, 2, todoInSamples, leftVolume);
+				AddPlayerSamples(ref voiceInfo[1], channelMap[1], offsetInSamples + 1, 2, todoInSamples, rightVolume);
 			}
 			else
 			{
 				int volume = voiceInfo[0].Enabled ? MasterVolume : 0;
 
-				AddPlayerSamples(ref voiceInfo[0], channelMap[0], offset, 1, todo, volume);
+				AddPlayerSamples(ref voiceInfo[0], channelMap[0], offsetInSamples, 1, todoInSamples, volume);
 			}
 		}
 
@@ -81,9 +81,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// in the supplied buffer
 		/// </summary>
 		/********************************************************************/
-		public override void ConvertMixedData(byte[] dest, int offset, int[] source, int todo, int samplesToSkip, bool isStereo, bool swapSpeakers)
+		public override void ConvertMixedData(byte[] dest, int offsetInBytes, int[] source, int todoInSamples, int samplesToSkip, bool isStereo, bool swapSpeakers)
 		{
-			MixConvertTo32(MemoryMarshal.Cast<byte, int>(dest), offset / 4, source, todo, samplesToSkip, isStereo, swapSpeakers);
+			MixConvertTo32(MemoryMarshal.Cast<byte, int>(dest), offsetInBytes / 4, source, todoInSamples, samplesToSkip, isStereo, swapSpeakers);
 		}
 		#endregion
 
@@ -93,7 +93,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Convert the output from the player to 32-bit samples
 		/// </summary>
 		/********************************************************************/
-		private void AddPlayerSamples(ref VoiceInfo vnf, int[] dest, int destOffset, int destSkip, int todo, int vol)
+		private void AddPlayerSamples(ref VoiceInfo vnf, int[] dest, int destOffsetInSamples, int destSkip, int todoInSamples, int vol)
 		{
 			if (vnf.Kick)
 			{
@@ -102,8 +102,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				vnf.Active = true;
 			}
 
-			int count = Math.Min(todo, (int)vnf.Size - (int)vnf.Current);
-			if (count > 0)
+			int countInSamples = Math.Min(todoInSamples, (int)vnf.Size - (int)vnf.Current);
+			if (countInSamples > 0)
 			{
 				vol *= 128;
 
@@ -112,26 +112,26 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 					// 16-bit
 					Span<short> source = SampleHelper.ConvertSampleTo16Bit(vnf.Addresses[0], 0);
 
-					for (int i = (int)vnf.Current; i < vnf.Current + count; i++)
+					for (int i = (int)vnf.Current; i < vnf.Current + countInSamples; i++)
 					{
-						dest[destOffset] = (int)((((long)source[i] << 16) * vol) / 32768);
-						destOffset += destSkip;
+						dest[destOffsetInSamples] = (int)((((long)source[i] << 16) * vol) / 32768);
+						destOffsetInSamples += destSkip;
 					}
 
-					vnf.Current += count;
+					vnf.Current += countInSamples;
 				}
 				else
 				{
 					// 8-bit
 					Span<sbyte> source = SampleHelper.ConvertSampleTo8Bit(vnf.Addresses[0], 0);
 
-					for (int i = (int)vnf.Current; i < vnf.Current + count; i++)
+					for (int i = (int)vnf.Current; i < vnf.Current + countInSamples; i++)
 					{
-						dest[destOffset] = (int)((((long)source[i] << 32) * vol) / 32768);
-						destOffset += destSkip;
+						dest[destOffsetInSamples] = (int)((((long)source[i] << 32) * vol) / 32768);
+						destOffsetInSamples += destSkip;
 					}
 
-					vnf.Current += count;
+					vnf.Current += countInSamples;
 				}
 			}
 		}
@@ -143,7 +143,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// Converts the mixed data to a 32 bit sample buffer
 		/// </summary>
 		/********************************************************************/
-		private void MixConvertTo32(Span<int> dest, int offset, int[] source, int count, int samplesToSkip, bool isStereo, bool swapSpeakers)
+		private void MixConvertTo32(Span<int> dest, int offsetInSamples, int[] source, int countInSamples, int samplesToSkip, bool isStereo, bool swapSpeakers)
 		{
 			int x1, x2, x3, x4;
 			int remain;
@@ -154,35 +154,35 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 			{
 				if (samplesToSkip == 0)
 				{
-					remain = count & 3;
+					remain = countInSamples & 3;
 
-					for (count >>= 2; count != 0; count--)
+					for (countInSamples >>= 2; countInSamples != 0; countInSamples--)
 					{
 						x1 = source[sourceOffset++];
 						x2 = source[sourceOffset++];
 						x3 = source[sourceOffset++];
 						x4 = source[sourceOffset++];
 
-						dest[offset++] = x2;
-						dest[offset++] = x1;
-						dest[offset++] = x4;
-						dest[offset++] = x3;
+						dest[offsetInSamples++] = x2;
+						dest[offsetInSamples++] = x1;
+						dest[offsetInSamples++] = x4;
+						dest[offsetInSamples++] = x3;
 					}
 				}
 				else
 				{
-					remain = count & 1;
+					remain = countInSamples & 1;
 
-					for (count >>= 1; count != 0; count--)
+					for (countInSamples >>= 1; countInSamples != 0; countInSamples--)
 					{
 						x1 = source[sourceOffset++];
 						x2 = source[sourceOffset++];
 
-						dest[offset++] = x2;
-						dest[offset++] = x1;
+						dest[offsetInSamples++] = x2;
+						dest[offsetInSamples++] = x1;
 
 						for (int i = 0; i < samplesToSkip; i++)
-							dest[offset++] = 0;
+							dest[offsetInSamples++] = 0;
 					}
 				}
 			}
@@ -192,35 +192,35 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				{
 					if (samplesToSkip == 0)
 					{
-						remain = count & 3;
+						remain = countInSamples & 3;
 
-						for (count >>= 2; count != 0; count--)
+						for (countInSamples >>= 2; countInSamples != 0; countInSamples--)
 						{
 							x1 = source[sourceOffset++];
 							x2 = source[sourceOffset++];
 							x3 = source[sourceOffset++];
 							x4 = source[sourceOffset++];
 
-							dest[offset++] = x1;
-							dest[offset++] = x2;
-							dest[offset++] = x3;
-							dest[offset++] = x4;
+							dest[offsetInSamples++] = x1;
+							dest[offsetInSamples++] = x2;
+							dest[offsetInSamples++] = x3;
+							dest[offsetInSamples++] = x4;
 						}
 					}
 					else
 					{
-						remain = count & 1;
+						remain = countInSamples & 1;
 
-						for (count >>= 1; count != 0; count--)
+						for (countInSamples >>= 1; countInSamples != 0; countInSamples--)
 						{
 							x1 = source[sourceOffset++];
 							x2 = source[sourceOffset++];
 
-							dest[offset++] = x1;
-							dest[offset++] = x2;
+							dest[offsetInSamples++] = x1;
+							dest[offsetInSamples++] = x2;
 
 							for (int i = 0; i < samplesToSkip; i++)
-								dest[offset++] = 0;
+								dest[offsetInSamples++] = 0;
 						}
 					}
 				}
@@ -228,13 +228,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 				{
 					remain = 0;
 
-					for (; count != 0; count--)
-						dest[offset++] = source[sourceOffset++];
+					for (; countInSamples != 0; countInSamples--)
+						dest[offsetInSamples++] = source[sourceOffset++];
 				}
 			}
 
 			while (remain-- != 0)
-				dest[offset++] = source[sourceOffset++];
+				dest[offsetInSamples++] = source[sourceOffset++];
 		}
 		#endregion
 	}

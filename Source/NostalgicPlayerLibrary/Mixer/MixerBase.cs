@@ -208,7 +208,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// This is the main mixer method
 		/// </summary>
 		/********************************************************************/
-		public abstract void Mixing(int[][] channelMap, int offset, int todo, MixerMode mode);
+		public abstract void Mixing(int[][] channelMap, int offsetInSamples, int todoInSamples, MixerMode mode);
 
 
 
@@ -218,6 +218,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
 		/// in the supplied buffer
 		/// </summary>
 		/********************************************************************/
-		public abstract void ConvertMixedData(byte[] dest, int offset, int[] source, int todo, int samplesToSkip, bool isStereo, bool swapSpeakers);
+		public abstract void ConvertMixedData(byte[] dest, int offsetInBytes, int[] source, int todoInSamples, int samplesToSkip, bool isStereo, bool swapSpeakers);
 	}
 }

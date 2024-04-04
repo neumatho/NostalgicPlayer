@@ -163,7 +163,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// Will add effects to a channel group
 		/// </summary>
 		/********************************************************************/
-		public void AddChannelGroupEffects(int group, int[] dest, int todo, uint mixerFrequency, bool stereo)
+		public void AddChannelGroupEffects(int group, int[] dest, int todoInSamples, uint mixerFrequency, bool stereo)
 		{
 			if (effectGroups.TryGetValue(group, out EffectGroupInfo effectGroupInfo))
 			{
@@ -177,9 +177,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 				}
 
 				if (effectGroupInfo.StereoMode)
-					DoEchoStereo(effectGroupInfo, dest, todo);
+					DoEchoStereo(effectGroupInfo, dest, todoInSamples);
 				else
-					DoEchoMono(effectGroupInfo, dest, todo);
+					DoEchoMono(effectGroupInfo, dest, todoInSamples);
 			}
 		}
 
@@ -190,7 +190,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// Will add effects to the final mixed output
 		/// </summary>
 		/********************************************************************/
-		public void AddGlobalEffects(int[] dest, int todo, uint mixerFrequency, bool stereo)
+		public void AddGlobalEffects(int[] dest, int todoInSamples, uint mixerFrequency, bool stereo)
 		{
 		}
 		#endregion
@@ -274,11 +274,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// Will add the echo effect on the given mono buffer
 		/// </summary>
 		/********************************************************************/
-		private void DoEchoMono(EffectGroupInfo effectGroupInfo, int[] dest, int todo)
+		private void DoEchoMono(EffectGroupInfo effectGroupInfo, int[] dest, int todoInSamples)
 		{
 			int bufferOffset = 0;
 
-			while (todo > 0)
+			while (todoInSamples > 0)
 			{
 				int readPos = effectGroupInfo.WritePos - effectGroupInfo.DelayTime;
 				if (readPos < 0)
@@ -302,7 +302,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 				// Output samples now
 				dest[bufferOffset++] = ((sample * effectGroupInfo.NMix + sampleDelay * effectGroupInfo.PMix) >> 8) << 16;
 
-				todo--;
+				todoInSamples--;
 			}
 		}
 
@@ -313,11 +313,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// Will add the echo effect on the given stereo buffer
 		/// </summary>
 		/********************************************************************/
-		private void DoEchoStereo(EffectGroupInfo effectGroupInfo, int[] dest, int todo)
+		private void DoEchoStereo(EffectGroupInfo effectGroupInfo, int[] dest, int todoInSamples)
 		{
 			int bufferOffset = 0;
 
-			while (todo > 0)
+			while (todoInSamples > 0)
 			{
 				int readPos = effectGroupInfo.WritePos - effectGroupInfo.DelayTime;
 				if (readPos < 0)
@@ -352,7 +352,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 				dest[bufferOffset++] = ((left * effectGroupInfo.NMix + leftDelay * effectGroupInfo.PMix) >> 8) << 16;
 				dest[bufferOffset++] = ((right * effectGroupInfo.NMix + rightDelay * effectGroupInfo.PMix) >> 8) << 16;
 
-				todo -= 2;
+				todoInSamples -= 2;
 			}
 		}
 		#endregion
