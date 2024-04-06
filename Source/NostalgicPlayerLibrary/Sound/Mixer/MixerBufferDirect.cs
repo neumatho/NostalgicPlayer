@@ -5,10 +5,10 @@
 /******************************************************************************/
 using System;
 using System.Runtime.InteropServices;
-using Polycode.NostalgicPlayer.PlayerLibrary.Mixer.Containers;
+using Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Utility;
 
-namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 {
 	/// <summary>
 	/// Used when a player using buffer direct mode

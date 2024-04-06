@@ -10,14 +10,13 @@ using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
-using Polycode.NostalgicPlayer.PlayerLibrary.Mixer;
 
-namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 {
 	/// <summary>
 	/// This class read a block from a sample and resample it to the right output format
 	/// </summary>
-	internal class Resampler
+	internal class Resampler : SoundBase
 	{
 		private const int FracBits = 11;
 		private const int FracMask = ((1 << FracBits) - 1);
@@ -30,7 +29,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 
 		private ISamplePlayerAgent currentPlayer;
 
-		private MixerVisualize currentVisualizer;
+		private Visualizer currentVisualizer;
 
 		private int inputFrequency;
 		private int inputChannels;
@@ -91,7 +90,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 				inputChannels = currentPlayer.ChannelCount;
 
 				// Allocate the visual component
-				currentVisualizer = new MixerVisualize();
+				currentVisualizer = new Visualizer();
 
 				// Initialize the visualizer
 				currentVisualizer.Initialize(agentManager);
@@ -285,24 +284,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 
 			return totalSamples;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Event called when the position change
-		/// </summary>
-		/********************************************************************/
-		public event EventHandler PositionChanged;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Event called when the player update some module information
-		/// </summary>
-		/********************************************************************/
-		public event ModuleInfoChangedEventHandler ModuleInfoChanged;
 
 		#region Private methods
 		/********************************************************************/
@@ -1004,32 +985,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
 
 			while (remain-- != 0)
 				dest[offsetInSamples++] = source[sourceOffset++];
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Send an event when the position change
-		/// </summary>
-		/********************************************************************/
-		private void OnPositionChanged()
-		{
-			if (PositionChanged != null)
-				PositionChanged(this, EventArgs.Empty);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Send an event when the module information change
-		/// </summary>
-		/********************************************************************/
-		private void OnModuleInfoChanged(ModuleInfoChangedEventArgs e)
-		{
-			if (ModuleInfoChanged != null)
-				ModuleInfoChanged(this, e);
 		}
 		#endregion
 	}

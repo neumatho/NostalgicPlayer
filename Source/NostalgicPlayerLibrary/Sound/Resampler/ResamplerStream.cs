@@ -11,7 +11,7 @@ using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 
-namespace Polycode.NostalgicPlayer.PlayerLibrary.Resampler
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 {
 	/// <summary>
 	/// This stream do the playing of the samples and resample it to have the

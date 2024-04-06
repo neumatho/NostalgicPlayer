@@ -12,7 +12,7 @@ using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
-using Polycode.NostalgicPlayer.PlayerLibrary.Mixer;
+using Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 {

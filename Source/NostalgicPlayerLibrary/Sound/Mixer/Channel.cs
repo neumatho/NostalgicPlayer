@@ -8,7 +8,7 @@ using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
-namespace Polycode.NostalgicPlayer.PlayerLibrary.Mixer
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 {
 	/// <summary>
 	/// This class is used to trigger samples when playing modules
