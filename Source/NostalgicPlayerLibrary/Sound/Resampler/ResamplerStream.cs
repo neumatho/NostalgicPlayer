@@ -45,7 +45,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 			resampler.PositionChanged += Resampler_PositionChanged;
 			resampler.ModuleInfoChanged += Resampler_ModuleInfoChanged;
 
-			return resampler.InitResampler(agentManager, playerConfiguration, out errorMessage);
+			return resampler.Initialize(agentManager, playerConfiguration, out errorMessage);
 		}
 
 
@@ -61,7 +61,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 			{
 				lock (resamplerLock)
 				{
-					resampler.CleanupResampler();
+					resampler.Cleanup();
 
 					resampler.ModuleInfoChanged -= Resampler_ModuleInfoChanged;
 					resampler.PositionChanged -= Resampler_PositionChanged;
@@ -115,7 +115,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		{
 			lock (resamplerLock)
 			{
-				resampler.StartResampler();
+				resampler.Start();
 				playing = true;
 			}
 		}
@@ -132,7 +132,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 			lock (resamplerLock)
 			{
 				playing = false;
-				resampler.StopResampler();
+				resampler.Stop();
 			}
 		}
 

@@ -9,7 +9,6 @@ using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
-using Timer = System.Timers.Timer;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 {
@@ -32,12 +31,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 			public long TimeWhenBufferWasRendered;
 		}
 
-		private class ModuleInfoChangeInfo
-		{
-			public int SamplesLeftBeforeTriggering;
-			public ModuleInfoChanged[] ModuleInfoChanges;
-		}
-
 		private const int SampleBufferSizeInMs = 20;
 		private const int MaxMilliSecondsInSampleBuffer = 300;
 
@@ -51,7 +44,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		private ManualResetEvent exitEvent;
 
 		private Thread thread;
-		private Timer timer;
+		private System.Timers.Timer timer;
 
 		private int[] visualBuffer;			// Is the current buffer that is filled with samples that visuals should show. When filled, it will be stored in a list and a new buffer is allocated
 		private int visualBufferOffset;		// The position in the buffer above where to fill the next samples
@@ -65,10 +58,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		private long currentSampleDataTimeWhenFilling;
 		private long currentSampleDataTimeForTimer;
 		private int sampleDataLatencyLeft;
-
-		private Queue<ModuleInfoChangeInfo> moduleInfoLatencyQueue;
-		private int moduleInfoLatencySamples;
-		private int moduleInfoLatencySamplesLeft;
 
 		/********************************************************************/
 		/// <summary>
@@ -85,8 +74,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 			currentSampleDataTimeWhenFilling = 0;
 			currentSampleDataTimeForTimer = 0;
 
-			moduleInfoLatencyQueue = new Queue<ModuleInfoChangeInfo>();
-
 			// Create the trigger events
 			channelChangedEvent = new AutoResetEvent(false);
 
@@ -99,7 +86,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 			thread.Start();
 
 			// Initialize timer
-			timer = new Timer(SampleBufferSizeInMs);
+			timer = new System.Timers.Timer(SampleBufferSizeInMs);
 			timer.AutoReset = true;
 			timer.Elapsed += VisualizeTimer;
 			timer.Start();
@@ -139,7 +126,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 			channelChangedEvent?.Dispose();
 			channelChangedEvent = null;
 
-			moduleInfoLatencyQueue = null;
 			channelLatencyQueue = null;
 			sampleDataList = null;
 		}
@@ -210,24 +196,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 			};
 
 			channelLatencyQueue.Enqueue(channelDataInfo);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will queue the given module information change information
-		/// </summary>
-		/********************************************************************/
-		public void QueueModuleInfoChange(ModuleInfoChanged[] moduleInfoChanges, int samplesTakenSinceLastCall)
-		{
-			ModuleInfoChangeInfo moduleInfoChange = new ModuleInfoChangeInfo
-			{
-				SamplesLeftBeforeTriggering = samplesTakenSinceLastCall,
-				ModuleInfoChanges = moduleInfoChanges
-			};
-
-			moduleInfoLatencyQueue.Enqueue(moduleInfoChange);
 		}
 
 
@@ -316,47 +284,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 
 		/********************************************************************/
 		/// <summary>
-		/// Will tell if it's time to send module information changes
-		/// </summary>
-		/********************************************************************/
-		public List<ModuleInfoChanged[]> GetModuleInfoChanges(int samplesProcessed)
-		{
-			List<ModuleInfoChanged[]> changes = new List<ModuleInfoChanged[]>();
-			int samplesTaken = 0;
-
-			while (samplesProcessed > 0)
-			{
-				int todo = Math.Min(samplesProcessed, moduleInfoLatencySamplesLeft);
-				moduleInfoLatencySamplesLeft -= todo;
-				samplesTaken += todo;
-
-				if (moduleInfoLatencySamplesLeft == 0)
-				{
-					moduleInfoLatencySamplesLeft = moduleInfoLatencySamples;
-
-					if (moduleInfoLatencyQueue.Count > 0)
-					{
-						ModuleInfoChangeInfo peekInfo = moduleInfoLatencyQueue.Peek();
-
-						peekInfo.SamplesLeftBeforeTriggering -= samplesTaken;
-						if ((peekInfo.SamplesLeftBeforeTriggering <= 0) || (todo == 0))
-							changes.Add(moduleInfoLatencyQueue.Dequeue().ModuleInfoChanges);
-					}
-				}
-
-				samplesProcessed -= todo;
-
-				if (todo == 0)
-					break;
-			}
-
-			return changes;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Initialize the visuals latency variables
 		/// </summary>
 		/********************************************************************/
@@ -364,8 +291,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		{
 			channelLatencySamplesLeft = (int)(((float)mixerFrequency / 1000) * currentLatency);
 			sampleDataLatencyLeft = currentLatency;
-			moduleInfoLatencySamples = channelLatencySamplesLeft;
-			moduleInfoLatencySamplesLeft = moduleInfoLatencySamples;
 
 			channelLatencyQueue.Clear();
 

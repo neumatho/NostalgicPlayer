@@ -6,10 +6,10 @@
 using System;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
+using Polycode.NostalgicPlayer.PlayerLibrary.Sound.Timer.Events;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 {
@@ -56,9 +56,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		private bool swapSpeakers;
 		private bool[] channelsEnabled;
 
-		private int samplesLeftToPositionChange;
-		private int currentSongPosition;
-
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -76,13 +73,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		/// Initialize the resampler routines
 		/// </summary>
 		/********************************************************************/
-		public bool InitResampler(Manager agentManager, PlayerConfiguration playerConfiguration, out string errorMessage)
+		public override bool Initialize(Manager agentManager, PlayerConfiguration playerConfiguration, out string errorMessage)
 		{
-			errorMessage = string.Empty;
 			bool retVal = true;
 
 			try
 			{
+				if (!base.Initialize(agentManager, playerConfiguration, out errorMessage))
+					return false;
+
 				// Get the player instance
 				currentPlayer = (ISamplePlayerAgent)playerConfiguration.Loader.PlayerAgent;
 
@@ -100,7 +99,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 			}
 			catch (Exception ex)
 			{
-				CleanupResampler();
+				Cleanup();
 
 				errorMessage = string.Format(Resources.IDS_ERR_RESAMPLER_INIT, ex.HResult.ToString("X8"), ex.Message);
 				retVal = false;
@@ -116,35 +115,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		/// Cleanup resampler
 		/// </summary>
 		/********************************************************************/
-		public void CleanupResampler()
+		public override void Cleanup()
 		{
 			// Deallocate the visualizer
 			currentVisualizer?.Cleanup();
 			currentVisualizer = null;
-		}
 
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Starts the resampler routines
-		/// </summary>
-		/********************************************************************/
-		public void StartResampler()
-		{
-			samplesLeftToPositionChange = 0;
-			currentSongPosition = 0;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Stops the resampler routines
-		/// </summary>
-		/********************************************************************/
-		public void StopResampler()
-		{
+			base.Cleanup();
 		}
 
 
@@ -154,8 +131,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		/// Pause the resampler routines
 		/// </summary>
 		/********************************************************************/
-		public void Pause()
+		public override void Pause()
 		{
+			base.Pause();
+
 			currentVisualizer.TellAgentsAboutPauseState(true);
 		}
 
@@ -166,8 +145,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		/// Resume the resampler routines
 		/// </summary>
 		/********************************************************************/
-		public void Resume()
+		public override void Resume()
 		{
+			base.Resume();
+
 			currentVisualizer.TellAgentsAboutPauseState(false);
 		}
 
@@ -178,8 +159,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		/// Set the output format
 		/// </summary>
 		/********************************************************************/
-		public void SetOutputFormat(OutputInfo outputInformation)
+		public override void SetOutputFormat(OutputInfo outputInformation)
 		{
+			base.SetOutputFormat(outputInformation);
+
 			outputFrequency = outputInformation.Frequency;
 			outputChannels = outputInformation.Channels;
 			mixerChannels = outputChannels >= 2 ? 2 : 1;
@@ -194,8 +177,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 			leftVolume = 0;
 			rightVolume = 0;
 			rampVolume = 0;
-
-			samplesLeftToPositionChange = CalculateSamplesPerPositionChange();
 
 			// Get the maximum number of samples the given destination
 			// buffer from the output agent can be
@@ -219,31 +200,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		/// Will change the mixer configuration
 		/// </summary>
 		/********************************************************************/
-		public void ChangeConfiguration(MixerConfiguration mixerConfiguration)
+		public override void ChangeConfiguration(MixerConfiguration mixerConfiguration)
 		{
+			base.ChangeConfiguration(mixerConfiguration);
+
 			currentVisualizer.SetVisualsLatency(mixerConfiguration.VisualsLatency);
 
 			interpolation = mixerConfiguration.EnableInterpolation;
 			swapSpeakers = mixerConfiguration.SwapSpeakers;
 			channelsEnabled = mixerConfiguration.ChannelsEnabled;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Get current song position
-		/// </summary>
-		/********************************************************************/
-		public int SongPosition
-		{
-			get => currentSongPosition;
-
-			set
-			{
-				currentSongPosition = value;
-				samplesLeftToPositionChange = CalculateSamplesPerPositionChange();
-			}
 		}
 
 
@@ -275,29 +240,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 			// Tell visual agents about the mixed data
 			currentVisualizer.TellAgentsAboutMixedData(buffer, offsetInBytes, totalSamples, outputChannels, swapSpeakers);
 
-			// Update module information
-			foreach (ModuleInfoChanged[] updatedModuleInfoChanges in currentVisualizer.GetModuleInfoChanges(totalSamples))
-			{
-				foreach (ModuleInfoChanged changes in updatedModuleInfoChanges)
-					OnModuleInfoChanged(new ModuleInfoChangedEventArgs(changes.Line, changes.Value));
-			}
-
 			return totalSamples;
 		}
 
 		#region Private methods
-		/********************************************************************/
-		/// <summary>
-		/// Return the number of samples between each position change
-		/// </summary>
-		/********************************************************************/
-		private int CalculateSamplesPerPositionChange()
-		{
-			return (int)(IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * outputFrequency);
-		}
-
-
-
 		/********************************************************************/
 		/// <summary>
 		/// Will resample the sample and make sure to read new data when
@@ -320,6 +266,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 			leftVolume = (channelsEnabled == null) || channelsEnabled[0] ? MasterVolume : 0;
 			rightVolume = (inputChannels == 2) && ((channelsEnabled == null) || channelsEnabled[1]) ? MasterVolume : 0;
 
+			// This method is called right after the previous buffer has been player,
+			// so at this point, add the number of samples played since last call
+			DoTimedEvents();
+			IncreaseCurrentTime(countInSamples);
+
 			int totalSamples = 0;
 
 			while ((countInSamples > 0) && !hasEndReached)
@@ -328,20 +279,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 				{
 					lock (currentPlayer)
 					{
-						while (samplesLeftToPositionChange <= 0)
-						{
-							currentSongPosition++;
-							samplesLeftToPositionChange += CalculateSamplesPerPositionChange();
-
-							OnPositionChanged();
-						}
-
 						samplesRead = currentPlayer.LoadDataBlock(dataBuffer, dataBuffer.Length);
 
 						// If any module information has been updated, queue those
 						ModuleInfoChanged[] moduleInfoChanges = currentPlayer.GetChangedInformation();
-						if ((moduleInfoChanges != null) && (moduleInfoChanges.Length > 0))
-							currentVisualizer.QueueModuleInfoChange(moduleInfoChanges, 0);
+						if (moduleInfoChanges != null)
+						{
+							foreach (ModuleInfoChanged moduleInfoChanged in moduleInfoChanges)
+								timedEventHandler.AddEvent(new ModuleInfoChangedEvent(this, moduleInfoChanged), 0);
+						}
 
 						if (currentPlayer.HasEndReached)
 						{
@@ -351,18 +297,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 							if (currentPlayer is IDurationPlayer durationPlayer)
 							{
 								double restartTime = durationPlayer.GetRestartTime().TotalMilliseconds;
-								int samplesPerPosition = CalculateSamplesPerPositionChange();
-
-								currentSongPosition = (int)(restartTime / (IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * 1000.0f));
-								samplesLeftToPositionChange = (int)(samplesPerPosition - (((restartTime - (currentSongPosition * IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * 1000.0f)) / 1000.0f) * outputFrequency));
+								RestartPosition(restartTime);
 							}
 							else
-							{
-								samplesLeftToPositionChange = CalculateSamplesPerPositionChange();
-								currentSongPosition = 0;
-							}
-
-							OnPositionChanged();
+								RestartPosition(0);
 						}
 
 						if (samplesRead == 0)
@@ -411,7 +349,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 						}
 					}
 
-					samplesLeftToPositionChange -= todoInSamples;
 					countInSamples -= todoInSamples;
 					totalSamples += (todoInSamples * mixerChannels);
 				}

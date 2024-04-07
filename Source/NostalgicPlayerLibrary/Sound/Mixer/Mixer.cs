@@ -8,13 +8,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Containers;
-using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers;
+using Polycode.NostalgicPlayer.PlayerLibrary.Sound.Timer.Events;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 {
@@ -49,9 +49,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		private int filterPrevRight;			// The previous value for the right channel
 
 		private int samplesTakenSinceLastCall;	// Holds number of samples taken since the last call to Play(). Used by channel visualizers
-
-		private int ticksLeftToPositionChange;	// Number of ticks left before sending a position change event
-		private int currentSongPosition;
 
 		private int[] extraChannelsMixBuffer;
 		private byte[] extraTempBuffer;
@@ -93,36 +90,38 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Initialize the mixing routines
 		/// </summary>
 		/********************************************************************/
-		public bool InitMixer(Manager agentManager, PlayerConfiguration playerConfiguration, out string errorMessage)
+		public override bool Initialize(Manager agentManager, PlayerConfiguration playerConfiguration, out string errorMessage)
 		{
-			errorMessage = string.Empty;
 			bool retVal = true;
-
-			// Clear the playing flag
-			playing = false;
-
-			// Get the player instance
-			currentPlayer = (IModulePlayerAgent)playerConfiguration.Loader.PlayerAgent;
-			bufferMode = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferMode) != 0;
-			bufferDirect = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferDirect) != 0;
-
-			// Get player information
-			virtualChannelNumber = bufferDirect ? 2 : currentPlayer.VirtualChannelCount;
-			enableChannelVisualization = bufferMode && ((currentPlayer.SupportFlags & ModulePlayerSupportFlag.Visualize) != 0);
-			enableChannelsSupport = !bufferDirect || ((currentPlayer.SupportFlags & ModulePlayerSupportFlag.EnableChannels) == 0);
-
-			// Initialize other member variables
-			filterPrevLeft = 0;
-			filterPrevRight = 0;
-
-			// Set flag for different mixer modes
-			mixerMode = MixerMode.None;
-
-			// Allocate the visual component
-			currentVisualizer = new Visualizer();
 
 			try
 			{
+				if (!base.Initialize(agentManager, playerConfiguration, out errorMessage))
+					return false;
+
+				// Clear the playing flag
+				playing = false;
+
+				// Get the player instance
+				currentPlayer = (IModulePlayerAgent)playerConfiguration.Loader.PlayerAgent;
+				bufferMode = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferMode) != 0;
+				bufferDirect = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferDirect) != 0;
+
+				// Get player information
+				virtualChannelNumber = bufferDirect ? 2 : currentPlayer.VirtualChannelCount;
+				enableChannelVisualization = bufferMode && ((currentPlayer.SupportFlags & ModulePlayerSupportFlag.Visualize) != 0);
+				enableChannelsSupport = !bufferDirect || ((currentPlayer.SupportFlags & ModulePlayerSupportFlag.EnableChannels) == 0);
+
+				// Initialize other member variables
+				filterPrevLeft = 0;
+				filterPrevRight = 0;
+
+				// Set flag for different mixer modes
+				mixerMode = MixerMode.None;
+
+				// Allocate the visual component
+				currentVisualizer = new Visualizer();
+
 				// Allocate mixer to use
 				if (bufferDirect)
 					currentMixer = new MixerBufferDirect();
@@ -150,7 +149,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			}
 			catch (Exception ex)
 			{
-				CleanupMixer();
+				Cleanup();
 
 				errorMessage = string.Format(Resources.IDS_ERR_MIXER_INIT, ex.HResult.ToString("X8"), ex.Message);
 				retVal = false;
@@ -166,7 +165,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Cleanup mixer
 		/// </summary>
 		/********************************************************************/
-		public void CleanupMixer()
+		public override void Cleanup()
 		{
 			// Cleanup extra channels
 			CleanupExtraChannels();
@@ -190,6 +189,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 			// Cleanup member variables
 			currentPlayer = null;
+
+			base.Cleanup();
 		}
 
 
@@ -199,16 +200,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Starts the mixing routines
 		/// </summary>
 		/********************************************************************/
-		public void StartMixer()
+		public override void Start()
 		{
+			base.Start();
+
 			// Clear all the voices
 			currentMixer.ClearVoices();
 
 			// Initialize ticks left to call the player
 			ticksLeft = 0;
-			ticksLeftToPositionChange = 0;
 			samplesTakenSinceLastCall = 0;
-			currentSongPosition = 0;
 
 			// Ok to play
 			playing = true;
@@ -221,8 +222,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Stops the mixing routines
 		/// </summary>
 		/********************************************************************/
-		public void StopMixer()
+		public override void Stop()
 		{
+			base.Stop();
+
 			playing = false;
 		}
 
@@ -233,8 +236,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Pause the mixing routines
 		/// </summary>
 		/********************************************************************/
-		public void Pause()
+		public override void Pause()
 		{
+			base.Pause();
+
 			playing = false;
 			currentVisualizer.TellAgentsAboutPauseState(true);
 		}
@@ -246,8 +251,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Resume the mixing routines
 		/// </summary>
 		/********************************************************************/
-		public void Resume()
+		public override void Resume()
 		{
+			base.Resume();
+
 			currentVisualizer.TellAgentsAboutPauseState(false);
 			playing = true;
 		}
@@ -259,11 +266,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Set the output format
 		/// </summary>
 		/********************************************************************/
-		public void SetOutputFormat(OutputInfo outputInformation)
+		public override void SetOutputFormat(OutputInfo outputInformation)
 		{
+			base.SetOutputFormat(outputInformation);
+
 			mixerFrequency = outputInformation.Frequency;
 			outputChannelNumber = outputInformation.Channels;
-			ticksLeftToPositionChange = CalculateTicksPerPositionChange();
 
 			mixerChannels = 1;
 
@@ -312,11 +320,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 		/********************************************************************/
 		/// <summary>
-		/// Will change the mixer configuration
+		/// Will change the configuration
 		/// </summary>
 		/********************************************************************/
-		public void ChangeConfiguration(MixerConfiguration mixerConfiguration)
+		public override void ChangeConfiguration(MixerConfiguration mixerConfiguration)
 		{
+			base.ChangeConfiguration(mixerConfiguration);
+
 			currentMixer?.SetStereoSeparation(mixerConfiguration.StereoSeparator);
 			currentVisualizer?.SetVisualsLatency(mixerConfiguration.VisualsLatency);
 
@@ -344,24 +354,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					EnableSurround = mixerConfiguration.EnableSurround,
 					ChannelsEnabled = mixerConfiguration.ChannelsEnabled
 				});
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Get current song position
-		/// </summary>
-		/********************************************************************/
-		public int SongPosition
-		{
-			get => currentSongPosition;
-
-			set
-			{
-				currentSongPosition = value;
-				ticksLeftToPositionChange = CalculateTicksPerPositionChange();
 			}
 		}
 
@@ -479,18 +471,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the number of ticks between each position change
-		/// </summary>
-		/********************************************************************/
-		private int CalculateTicksPerPositionChange()
-		{
-			return (int)(IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * mixerFrequency);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// This is the main mixer method. It will call the right mixer
 		/// and mix the main module samples
 		/// </summary>
@@ -513,6 +493,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 			if (playing)
 			{
+				// This method is called right after the previous buffer has been player,
+				// so at this point, add the number of samples played since last call
+				DoTimedEvents();
+				IncreaseCurrentTime(todoInSamples);
+
 				while (todoInSamples > 0)
 				{
 					if (ticksLeft == 0)
@@ -520,14 +505,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 						// Call the player to play the next frame
 						lock (currentPlayer)
 						{
-							while (ticksLeftToPositionChange <= 0)
-							{
-								currentSongPosition++;
-								ticksLeftToPositionChange += CalculateTicksPerPositionChange();
-
-								OnPositionChanged();
-							}
-
 							currentPlayer.Play();
 
 							// Get some mixer information we need to parse the data
@@ -552,8 +529,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 							// If any module information has been updated, queue those
 							ModuleInfoChanged[] moduleInfoChanges = currentPlayer.GetChangedInformation();
-							if ((moduleInfoChanges != null) && (moduleInfoChanges.Length > 0))
-								currentVisualizer.QueueModuleInfoChange(moduleInfoChanges, samplesTakenSinceLastCall);
+							if (moduleInfoChanges != null)
+							{
+								foreach (ModuleInfoChanged moduleInfoChanged in moduleInfoChanges)
+									timedEventHandler.AddEvent(new ModuleInfoChangedEvent(this, moduleInfoChanged), samplesTakenSinceLastCall);
+							}
 
 							samplesTakenSinceLastCall = 0;
 
@@ -578,18 +558,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 								if (currentPlayer is IDurationPlayer durationPlayer)
 								{
 									double restartTime = durationPlayer.GetRestartTime().TotalMilliseconds;
-									int ticksPerPosition = CalculateTicksPerPositionChange();
-
-									currentSongPosition = (int)(restartTime / (IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * 1000.0f));
-									ticksLeftToPositionChange = (int)(ticksPerPosition - (((restartTime - (currentSongPosition * IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * 1000.0f)) / 1000.0f) * mixerFrequency));
+									RestartPosition(restartTime);
 								}
 								else
-								{
-									ticksLeftToPositionChange = CalculateTicksPerPositionChange();
-									currentSongPosition = 0;
-								}
-
-								OnPositionChanged();
+									RestartPosition(0);
 
 								// Break out of the loop
 								break;
@@ -614,7 +586,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					// Calculate new values for the counter variables
 					samplesTakenSinceLastCall += leftInSamples;
 					ticksLeft -= leftInSamples;
-					ticksLeftToPositionChange -= leftInSamples;
 					todoInSamples -= leftInSamples;
 					totalSamples += isStereo ? leftInSamples << 1 : leftInSamples;
 
@@ -628,13 +599,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 							currentMixer.EnableChannel(t, (channelsEnabled == null) || channelsEnabled[t]);
 						}
 					}
-				}
-
-				// Update module information
-				foreach (ModuleInfoChanged[] updatedModuleInfoChanges in currentVisualizer.GetModuleInfoChanges(isStereo ? totalSamples >> 1 : totalSamples))
-				{
-					foreach (ModuleInfoChanged changes in updatedModuleInfoChanges)
-						OnModuleInfoChanged(new ModuleInfoChangedEventArgs(changes.Line, changes.Value));
 				}
 			}
 

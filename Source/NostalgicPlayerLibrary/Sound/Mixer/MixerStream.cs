@@ -34,7 +34,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			mixer.PositionChanged += Mixer_PositionChanged;
 			mixer.ModuleInfoChanged += Mixer_ModuleInfoChanged;
 
-			return mixer.InitMixer(agentManager, playerConfiguration, out errorMessage);
+			return mixer.Initialize(agentManager, playerConfiguration, out errorMessage);
 		}
 
 
@@ -50,7 +50,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			{
 				lock (mixerLock)
 				{
-					mixer.CleanupMixer();
+					mixer.Cleanup();
 
 					mixer.PositionChanged -= Mixer_PositionChanged;
 
@@ -103,7 +103,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		{
 			lock (mixerLock)
 			{
-				mixer.StartMixer();
+				mixer.Start();
 			}
 		}
 
@@ -118,7 +118,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		{
 			lock (mixerLock)
 			{
-				mixer.StopMixer();
+				mixer.Stop();
 			}
 		}
 
