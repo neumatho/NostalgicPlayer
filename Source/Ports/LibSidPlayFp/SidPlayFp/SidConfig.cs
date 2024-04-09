@@ -44,6 +44,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 		}
 
 		/// <summary>
+		/// SID combined waveforms strength
+		/// </summary>
+		public enum sid_cw_t
+		{
+			/// <summary></summary>
+			AVERAGE,
+			/// <summary></summary>
+			WEAK,
+			/// <summary></summary>
+			STRONG
+		}
+
+		/// <summary>
 		/// CIA chip model
 		/// </summary>
 		public enum cia_model_t

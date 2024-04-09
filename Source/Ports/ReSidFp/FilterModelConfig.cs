@@ -11,9 +11,6 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 {
 	internal abstract class FilterModelConfig
 	{
-		private readonly double voice_voltage_range;
-		private readonly double voice_dc_voltage;
-
 		// Capacitor value
 		protected readonly double c;
 
@@ -21,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		private readonly double vdd;
 		private readonly double vth;			// Threshold voltage
 		protected readonly double ut;			// Thermal voltage: Ut = kT/q = 8.61734315e-5*T ~ 26mV
-		protected readonly double uCox;			// Transconductance coefficient: u*Cox
+		protected double uCox;					// Transconductance coefficient: u*Cox
 		protected readonly double vddt;			// Vdd - Vth;
 
 		// Derived stuff
@@ -32,13 +29,16 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		protected readonly double n16;
 
 		// Current factor coefficient for op-amp integrators
-		private readonly double currFactorCoeff;
+		private double currFactorCoeff;
+
+		private readonly double voice_voltage_range;
+		private readonly double voice_dc_voltage;
 
 		// Lookup tables for gain and summer op-amps in output stage / filter
 		protected readonly ushort[][] mixer = new ushort[8][];			// This is initialized in the derived class constructor
 		protected readonly ushort[][] summer = new ushort[5][];			// This is initialized in the derived class constructor
-		protected readonly ushort[][] gain_vol = new ushort[16][];		// This is initialized in the derived class constructor
-		protected readonly ushort[][] gain_res = new ushort[16][];		// This is initialized in the derived class constructor
+		protected readonly ushort[][] volume = new ushort[16][];		// This is initialized in the derived class constructor
+		protected readonly ushort[][] resonance = new ushort[16][];		// This is initialized in the derived class constructor
 
 		// Reverse op-amp transfer function
 		protected readonly ushort[] opamp_rev = new ushort[1 << 16];	// This is initialized in the derived class constructor
@@ -50,13 +50,10 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/********************************************************************/
 		protected FilterModelConfig(double vvr, double vdv, double c, double vdd, double vth, double uCox, Spline.Point[] opamp_voltage, uint opamp_size)
 		{
-			voice_voltage_range = vvr;
-			voice_dc_voltage = vdv;
 			this.c = c;
 			this.vdd = vdd;
 			this.vth = vth;
 			ut = 26.0e-3;
-			this.uCox = uCox;
 			vddt = vdd - vth;
 			vMin = opamp_voltage[0].x;
 			vMax = Math.Max(vddt, opamp_voltage[0].y);
@@ -64,6 +61,10 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			norm = 1.0 / denorm;
 			n16 = norm * ((1 << 16) - 1);
 			currFactorCoeff = denorm * (uCox / 2.0 * 1.0e-6 / c);
+			voice_voltage_range = vvr;
+			voice_dc_voltage = vdv;
+
+			SetUCox(uCox);
 
 			// Convert op-amp voltage transfer to 16 bit values
 			List<Spline.Point> scaled_voltage = new List<Spline.Point>((int)opamp_size);
@@ -98,9 +99,9 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public ushort[][] GetGainVol()
+		public ushort[][] GetVolume()
 		{
-			return gain_vol;
+			return volume;
 		}
 
 
@@ -110,9 +111,9 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public ushort[][] GetGainRes()
+		public ushort[][] GetResonance()
 		{
-			return gain_res;
+			return resonance;
 		}
 
 
@@ -137,31 +138,6 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		public ushort[][] GetMixer()
 		{
 			return mixer;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// The digital range of one voice is 20 bits; create a scaling term
-		/// for multiplication which fits in 11 bits
-		/// </summary>
-		/********************************************************************/
-		public int GetVoiceScaleS11()
-		{
-			return (int)((norm * ((1 << 11) - 1)) * voice_voltage_range);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// The "zero" output level of the voices
-		/// </summary>
-		/********************************************************************/
-		public int GetNormalizedVoiceDc()
-		{
-			return (int)(n16 * (voice_dc_voltage - vMin));
 		}
 
 
@@ -203,7 +179,16 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			return vth;
 		}
 
-		#region Helper functions
+		#region Overrides
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public abstract Integrator BuildIntegrator();
+		#endregion
+
+		#region Helper methods
 		/********************************************************************/
 		/// <summary>
 		/// 
@@ -242,6 +227,168 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		{
 			double tmp = n16 * vMin;
 			return (ushort)(tmp + 0.5);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public int GetNormalizedVoice(float value)
+		{
+			return GetNormalizedValue(GetVoiceVoltage(value));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The filter summer operates at n ~ 1, and has 5 fundamentally
+		/// different input configurations (2 - 6 input "resistors")
+		///
+		/// Note that all "on" transistors are modeled as one. This is not
+		/// entirely accurate, since the input for each transistor is
+		/// different, and transistors are not linear components. However
+		/// modeling all transistors separately would be extremely costly
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		protected void BuildSummerTable(OpAmp opAmpModel)
+		{
+			for (int i = 0; i < 5; i++)
+			{
+				int iDiv = 2 + i;		// 2 - 6 input "resistors"
+				int size = iDiv << 16;
+				double n = iDiv;
+
+				opAmpModel.Reset();
+				summer[i] = new ushort[size];
+
+				for (int vi = 0; vi < size; vi++)
+				{
+					double vIn = vMin + vi / n16 / iDiv;	// vMin .. vMax
+					summer[i][vi] = GetNormalizedValue(opAmpModel.Solve(n, vIn));
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The audio mixer operates at n ~ 8/6 (6581) or 8/5 (8580), and has
+		/// 8 fundamentally different input configurations (0 - 7 input
+		/// "resistors").
+		///
+		/// All "on", transistors are modeled as one - see comments above
+		/// for the filter summer
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		protected void BuildMixerTable(OpAmp opAmpModel, double nRatio)
+		{
+			for (int i = 0; i < 8; i++)
+			{
+				int iDiv = i == 0 ? 1 : i;
+				int size = i == 0 ? 1 : i << 16;
+				double n = i * nRatio;
+
+				opAmpModel.Reset();
+				mixer[i] = new ushort[size];
+
+				for (int vi = 0; vi < size; vi++)
+				{
+					double vIn = vMin + vi / n16 / iDiv;	// vMin .. vMax
+					mixer[i][vi] = GetNormalizedValue(opAmpModel.Solve(n, vIn));
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 4 bit "resistor" ladders in the audio output gain necessitate 16
+		/// gain tables. From die photographs of the volume "resistor"
+		/// ladders it follows that gain ~ vol/12 (6581) or vol/16 (8580)
+		/// (assuming ideal op-amps and ideal "resistors")
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		protected void BuildVolumeTable(OpAmp opAmpModel, double nDivisor)
+		{
+			for (int n8 = 0; n8 < 16; n8++)
+			{
+				int size = 1 << 16;
+				double n = n8 / nDivisor;
+
+				opAmpModel.Reset();
+				volume[n8] = new ushort[size];
+
+				for (int vi = 0; vi < size; vi++)
+				{
+					double vIn = vMin + vi / n16;			// vMin .. vMax
+					volume[n8][vi] = GetNormalizedValue(opAmpModel.Solve(n, vIn));
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 4 bit "resistor" ladders in the bandpass resonance gain
+		/// necessitate 16 gain tables. From die photographs of the bandpass
+		/// "resistor" ladders it follows that 1/Q ~ ~res/8 (6581) or
+		/// 2^((4 - res)/8) (8580)
+		/// (assuming ideal op-amps and ideal "resistors")
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		protected void BuildResonanceTable(OpAmp opAmpModel, double[] resonance_n)
+		{
+			for (int n8 = 0; n8 < 16; n8++)
+			{
+				int size = 1 << 16;
+
+				opAmpModel.Reset();
+				resonance[n8] = new ushort[size];
+
+				for (int vi = 0; vi < size; vi++)
+				{
+					double vIn = vMin + vi / n16;			// vMin .. vMax
+					resonance[n8][vi] = GetNormalizedValue(opAmpModel.Solve(resonance_n[n8], vIn));
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		protected void SetUCox(double new_uCox)
+		{
+			uCox = new_uCox;
+			currFactorCoeff = denorm * (uCox / 2.0 * 1.0e-6 / c);
+		}
+		#endregion
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private double GetVoiceVoltage(float value)
+		{
+			return value * voice_voltage_range + voice_dc_voltage;
 		}
 		#endregion
 	}

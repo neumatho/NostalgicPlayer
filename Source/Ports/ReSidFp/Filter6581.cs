@@ -291,44 +291,41 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		// terminals are pairwise common), which implies that we can model the two
 		// transistors as one.
 
-		private readonly ushort[] f0_dac;
-
-		private readonly ushort[][] mixer;
-		private readonly ushort[][] summer;
-		private readonly ushort[][] gain_res;
-		private readonly ushort[][] gain_vol;
-
-		private readonly int voiceScaleS11;
-		private readonly int voiceDc;
-
-		/// <summary>
-		/// VCR + associated capacitor connected to highpass output
-		/// </summary>
-		private Integrator6581 hpIntegrator;
-
-		/// <summary>
-		/// VCR + associated capacitor connected to bandpass output
-		/// </summary>
-		private Integrator6581 bpIntegrator;
+		private ushort[] f0_dac;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Filter6581()
+		public Filter6581() : base(FilterModelConfig6581.GetInstance())
 		{
 			f0_dac = FilterModelConfig6581.GetInstance().GetDac(0.5);
-			mixer = FilterModelConfig6581.GetInstance().GetMixer();
-			summer = FilterModelConfig6581.GetInstance().GetSummer();
-			gain_res = FilterModelConfig6581.GetInstance().GetGainRes();
-			gain_vol = FilterModelConfig6581.GetInstance().GetGainVol();
-			voiceScaleS11 = FilterModelConfig6581.GetInstance().GetVoiceScaleS11();
-			voiceDc = FilterModelConfig6581.GetInstance().GetNormalizedVoiceDc();
-			hpIntegrator = FilterModelConfig6581.GetInstance().BuildIntegrator();
-			bpIntegrator = FilterModelConfig6581.GetInstance().BuildIntegrator();
+		}
 
-			Input(0);
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set filter curve type based on single parameter
+		/// </summary>
+		/********************************************************************/
+		public void SetFilterCurve(double filterCurve)
+		{
+			f0_dac = FilterModelConfig6581.GetInstance().GetDac(filterCurve);
+			UpdateCenterFrequency();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set filter offset and range based on single parameter
+		/// </summary>
+		/********************************************************************/
+		public void SetFilterRange(double adjustment)
+		{
+			FilterModelConfig6581.GetInstance().SetFilterRange(adjustment);
 		}
 
 		#region Overrides
@@ -337,139 +334,11 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// Set filter cutoff frequency
 		/// </summary>
 		/********************************************************************/
-		protected override void UpdatedCenterFrequency()
+		protected override void UpdateCenterFrequency()
 		{
-			ushort vw = f0_dac[fc];
-			hpIntegrator.SetVw(vw);
-			bpIntegrator.SetVw(vw);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set filter resonance.
-		///
-		/// In the MOS 6581, 1/Q is controlled linearly by res
-		/// </summary>
-		/********************************************************************/
-		protected override void UpdateResonance(byte res)
-		{
-			currentResonance = gain_res[res];
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Mixing configuration modified (offsets change)
-		/// </summary>
-		/********************************************************************/
-		protected override void UpdateMixing()
-		{
-			currentGain = gain_vol[vol];
-
-			uint ni = 0;
-			uint no = 0;
-
-			if (filt1)
-				ni++;
-			else
-				no++;
-
-			if (filt2)
-				ni++;
-			else
-				no++;
-
-			if (filt3)
-				ni++;
-			else if (!voice3Off)
-				no++;
-
-			if (filtE)
-				ni++;
-			else
-				no++;
-
-			currentSummer = summer[ni];
-
-			if (lp)
-				no++;
-
-			if (bp)
-				no++;
-
-			if (hp)
-				no++;
-
-			currentMixer = mixer[no];
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public override void Input(int sample)
-		{
-			ve = (sample * voiceScaleS11 * 3 >> 11) + mixer[0][0];
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public override ushort Clock(int voice1, int voice2, int voice3)
-		{
-			voice1 = (voice1 * voiceScaleS11 >> 15) + voiceDc;
-			voice2 = (voice2 * voiceScaleS11 >> 15) + voiceDc;
-
-			// Voice 3 is silenced by voice3Off if it is not routed through the filter
-			voice3 = (filt3 || !voice3Off) ? (voice3 * voiceScaleS11 >> 15) + voiceDc : 0;
-
-			int vi = 0;
-			int vo = 0;
-
-			if (filt1)
-				vi += voice1;
-			else
-				vo += voice1;
-
-			if (filt2)
-				vi += voice2;
-			else
-				vo += voice2;
-
-			if (filt3)
-				vi += voice3;
-			else
-				vo += voice3;
-
-			if (filtE)
-				vi += ve;
-			else
-				vo += ve;
-
-			vhp = currentSummer[currentResonance[vbp] + vlp + vi];
-			vbp = hpIntegrator.Solve(vhp);
-			vlp = bpIntegrator.Solve(vbp);
-
-			if (lp)
-				vo += vlp;
-
-			if (bp)
-				vo += vbp;
-
-			if (hp)
-				vo += vhp;
-
-			return currentGain[currentMixer[vo]];
+			ushort vw = f0_dac[GetFc()];
+			((Integrator6581)hpIntegrator).SetVw(vw);
+			((Integrator6581)bpIntegrator).SetVw(vw);
 		}
 		#endregion
 	}

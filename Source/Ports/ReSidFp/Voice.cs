@@ -77,14 +77,14 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int Output(WaveformGenerator ringModulator)
+		public float Output(WaveformGenerator ringModulator)
 		{
 			uint wav = waveformGenerator.Output(ringModulator);
 			uint env = envelopeGenerator.Output();
 
 			// DAC imperfections are emulated by using the digital output
 			// as an index into a DAC lookup table
-			return (int)(wavDac[wav] * envDac[env]);
+			return wavDac[wav] * envDac[env];
 		}
 
 

@@ -105,7 +105,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		//
 		// [1] https://github.com/libsidplayfp/combined-waveforms
 		// [2] https://github.com/daglem/reDIP-SID/blob/master/research/combsample.d64
-		private static readonly CombinedWaveformConfig[][] config = new CombinedWaveformConfig[2][]
+		private static readonly CombinedWaveformConfig[][] configAverage = new CombinedWaveformConfig[2][]
 		{
 			new CombinedWaveformConfig[5]
 			{ // 6581 R3 4785 sampled by Trurl
@@ -130,6 +130,66 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				new CombinedWaveformConfig(QuadraticDistance, 0.963866293f, 1.22095084f, 1.01380754f, 0.0110885892f, 0.381492466f),
 				// PTS error 3701 (117/32768)
 				new CombinedWaveformConfig(LinearDistance, 0.976761818f, 0.202727556f, 0.988633931f, 0.939373314f, 9.37139416f),
+				// NP  guessed
+				new CombinedWaveformConfig(ExponentialDistance, 0.95f, 1.0f, 1.15f, 1.0f, 1.45f),
+			}
+		};
+
+		private static readonly CombinedWaveformConfig[][] configWeak = new CombinedWaveformConfig[2][]
+		{
+			new CombinedWaveformConfig[5]
+			{ // 6581 R2 4383 sampled by ltx128
+				// TS  error 1858 (204/32768)
+				new CombinedWaveformConfig(ExponentialDistance, 0.886832297f, 1.0f, 0.0f, 2.14438701f, 9.51839447f),
+				// PT  error  612 (102/32768)
+				new CombinedWaveformConfig(LinearDistance, 1.01262534f, 1.0f, 2.46070528f, 0.0537485816f, 0.0986242667f),
+				// PS  error 8135 (575/32768)
+				new CombinedWaveformConfig(LinearDistance, 2.14896345f, 1.0216713f, 10.5400085f, 0.244498149f, 0.126134038f),
+				// PTS error 2505 (63/32768)
+				new CombinedWaveformConfig(LinearDistance, 1.29061747f, 0.9754318f, 3.15377498f, 0.0968349651f, 0.318573922f),
+				// NP  guessed
+				new CombinedWaveformConfig(ExponentialDistance, 0.96f, 1.0f, 2.5f, 1.1f, 1.2f),
+			},
+			new CombinedWaveformConfig[5]
+			{ // 8580 R5 1087 sampled by reFX-Mike
+				// TS  error 1627 (137/32768)
+				new CombinedWaveformConfig(ExponentialDistance, 0.795011938f, 1.54905677f, 0.0f, 1.79432333f, 2.24898171f),
+				// PT  error 7898 (162/32768)
+				new CombinedWaveformConfig(ExponentialDistance,  0.9482705f, 1.0f, 1.21793139f, 1.04166055f, 1.37272894f),
+				// PS  error 9804 (337/32768)
+				new CombinedWaveformConfig(QuadraticDistance, 0.954935849f, 1.00321376f, 1.28759611f, 0.000331178948f, 0.151375741f),
+				// PTS error 3184 (56/32768)
+				new CombinedWaveformConfig(LinearDistance, 0.945096612f, 1.06510091f, 0.905796111f, 1.05054963f, 1.4661454f),
+				// NP  guessed
+				new CombinedWaveformConfig(ExponentialDistance, 0.95f, 1.0f, 1.15f, 1.0f, 1.45f),
+			}
+		};
+
+		private static readonly CombinedWaveformConfig[][] configStrong = new CombinedWaveformConfig[2][]
+		{
+			new CombinedWaveformConfig[5]
+			{ // 6581 R2 0384 sampled by Trurl
+				// TS  error 20337 (1579/32768)
+				new CombinedWaveformConfig(ExponentialDistance, 0.000637792516f, 1.56725872f, 0.0f, 0.00036806846f, 1.51800942f),
+				// PT  error  5194 (240/32768)
+				new CombinedWaveformConfig(LinearDistance, 0.924824238f, 1.0f, 1.96749473f, 0.0891806409f, 0.234794483f),
+				// PS  error 31015 (2181/32768)
+				new CombinedWaveformConfig(LinearDistance, 1.2328074f, 0.73079139f, 3.9719491f, 0.00156516861f, 0.314677745f),
+				// PTS error  9874 (201/32768)
+				new CombinedWaveformConfig(LinearDistance, 1.08558261f, 0.857638359f, 1.52781796f, 0.152927235f, 1.02657032f),
+				// NP  guessed
+				new CombinedWaveformConfig(ExponentialDistance, 0.96f, 1.0f, 2.5f, 1.1f, 1.2f),
+			},
+			new CombinedWaveformConfig[5]
+			{ // 8580 R5 1489 sampled by reFX-Mike
+				// TS  error 4837 (388/32768)
+				new CombinedWaveformConfig(ExponentialDistance, 0.89762634f, 56.7594185f, 0.0f, 7.68995237f, 12.0754194f),
+				// PT  error 9298 (506/32768)
+				new CombinedWaveformConfig(ExponentialDistance,  0.867885351f, 1.0f, 1.4511894f, 1.07057536f, 1.43333757f),
+				// PS  error 13168 (718/32768)
+				new CombinedWaveformConfig(QuadraticDistance, 0.89255774f, 1.2253896f, 1.75615835f, 0.0245045591f, 0.12982437f),
+				// PTS error 6879 (309/32768)
+				new CombinedWaveformConfig(LinearDistance, 0.913530529f, 0.96415776f, 0.931084037f, 1.05731869f, 1.80506349f),
 				// NP  guessed
 				new CombinedWaveformConfig(ExponentialDistance, 0.95f, 1.0f, 1.15f, 1.0f, 1.45f),
 			}
@@ -199,11 +259,34 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// Build pulldown table for use by WaveformGenerator
 		/// </summary>
 		/********************************************************************/
-		public matrix_t BuildPulldownTable(ChipModel model)
+		public matrix_t BuildPulldownTable(ChipModel model, CombinedWaveforms cws)
 		{
 			lock (pulldownCache_Lock)
 			{
-				CombinedWaveformConfig[] cfgArray = config[model == ChipModel.MOS6581 ? 0 : 1];
+				int modelIdx = model == ChipModel.MOS6581 ? 0 : 1;
+				CombinedWaveformConfig[] cfgArray;
+
+				switch (cws)
+				{
+					default:
+					case CombinedWaveforms.AVERAGE:
+					{
+						cfgArray = configAverage[modelIdx];
+						break;
+					}
+
+					case CombinedWaveforms.WEAK:
+					{
+						cfgArray = configWeak[modelIdx];
+						break;
+					}
+
+					case CombinedWaveforms.STRONG:
+					{
+						cfgArray = configStrong[modelIdx];
+						break;
+					}
+				}
 
 				if (pulldownCache.TryGetValue(cfgArray, out matrix_t pdTable))
 					return pdTable;

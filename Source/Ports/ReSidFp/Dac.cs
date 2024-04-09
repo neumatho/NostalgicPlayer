@@ -58,6 +58,13 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		private const double R_INFINITY = 1e6;
 
 		/// <summary>
+		/// DAC leakage
+		///
+		/// "Even in standard transistors a small amount of current leaks even when they are technically switched off."
+		/// </summary>
+		private readonly double leakage;
+
+		/// <summary>
 		/// Analog values
 		/// </summary>
 		private readonly double[] dac;
@@ -74,6 +81,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/********************************************************************/
 		public Dac(uint bits)
 		{
+			leakage = 0.01;
 			dac = new double[bits];
 			dacLength = bits;
 		}
@@ -138,8 +146,6 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			}
 
 			// Normalize to integerish behaviour
-			vSum /= 1 << (int)dacLength;
-
 			for (uint i = 0; i < dacLength; i++)
 				dac[i] /= vSum;
 		}
@@ -157,8 +163,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 			for (int i = 0; i < dacLength; i++)
 			{
-				if ((input & (1 << i)) != 0)
-					dacValue += dac[i];
+				bool transistor_on = (input & (1 << i)) != 0;
+				dacValue += transistor_on ? dac[i] : dac[i] * leakage;
 			}
 
 			return dacValue;

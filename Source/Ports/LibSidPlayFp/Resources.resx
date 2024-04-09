@@ -153,6 +153,9 @@
   <data name="IDS_SID_ERR_INVALID_CHIP" xml:space="preserve">
     <value>Invalid chip model</value>
   </data>
+  <data name="IDS_SID_ERR_INVALID_CW" xml:space="preserve">
+    <value>Invalid combined waveforms strength</value>
+  </data>
   <data name="IDS_SID_ERR_INVALID_SAMPLING" xml:space="preserve">
     <value>Invalid sampling method</value>
   </data>

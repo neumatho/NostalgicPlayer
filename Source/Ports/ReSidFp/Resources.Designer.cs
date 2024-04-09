@@ -70,6 +70,15 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unknown combined waveforms type.
+        /// </summary>
+        internal static string IDS_SID_ERR_UNKNOWN_COMBINED_WAVEFORMS {
+            get {
+                return ResourceManager.GetString("IDS_SID_ERR_UNKNOWN_COMBINED_WAVEFORMS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown sampling method.
         /// </summary>
         internal static string IDS_SID_ERR_UNKNOWN_SAMPLING_METHOD {

@@ -77,9 +77,9 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// </summary>
 		private readonly Dac dac;
 
-		// VCR - 6581 only
+		// Voltage Controlled Resistors
 		private readonly ushort[] vcr_nVg = new ushort[1 << 16];
-		private readonly ushort[] vcr_n_ids_term = new ushort[1 << 16];
+		private readonly double[] vcr_n_ids_term = new double[1 << 16];
 
 		/********************************************************************/
 		/// <summary>
@@ -107,106 +107,33 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			// Create lookup tables for gains / summers
 			void Loop1()
 			{
-				OpAmp opampModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
-
-				// The filter summer operates at n ~ 1, and has 5 fundamentally different
-				// input configurations (2 - 6 input "resistors")
-				//
-				// Note that all "on" transistors are modeled as one. This is not
-				// entirely accurate, since the input for each transistor is different,
-				// and transistors are not linear components. However modeling all
-				// transistors separately would be extremely costly
-				for (int i = 0; i < 5; i++)
-				{
-					int iDiv = 2 + i;		// 2 - 6 input "resistors"
-					int size = iDiv << 16;
-					double n = iDiv;
-
-					opampModel.Reset();
-					summer[i] = new ushort[size];
-
-					for (int vi = 0; vi < size; vi++)
-					{
-						double vIn = vMin + vi / n16 / iDiv;	// vMin .. vMax
-						summer[i][vi] = GetNormalizedValue(opampModel.Solve(n, vIn));
-					}
-				}
+				OpAmp opAmpModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
+				BuildSummerTable(opAmpModel);
 			}
 
 			void Loop2()
 			{
-				OpAmp opampModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
-
-				// The audio mixer operates at n ~ 8/6, ans has 8 fundamentally different
-				// input configurations (0 - 7 input "resistors").
-				//
-				// All "on", transistors are modeled as one - see comments above for
-				// the filter summer
-				for (int i = 0; i < 8; i++)
-				{
-					int iDiv = i == 0 ? 1 : i;
-					int size = i == 0 ? 1 : i << 16;
-					double n = i * 8.0 / 6.0;
-
-					opampModel.Reset();
-					mixer[i] = new ushort[size];
-
-					for (int vi = 0; vi < size; vi++)
-					{
-						double vIn = vMin + vi / n16 / iDiv;	// vMin .. vMax
-						mixer[i][vi] = GetNormalizedValue(opampModel.Solve(n, vIn));
-					}
-				}
+				OpAmp opAmpModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
+				BuildMixerTable(opAmpModel, 8.0 / 6.0);
 			}
 
 			void Loop3()
 			{
-				OpAmp opampModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
-
-				// 4 bit "resistor" ladders in the audio output gain
-				// necessitate 16 gain tables.
-				// From die photographs of the volume "resistor" ladders
-				// it follows that gain ~ vol/12 (assuming ideal
-				// op-amps and ideal "resistors")
-				for (int n8 = 0; n8 < 16; n8++)
-				{
-					int size = 1 << 16;
-					double n = n8 / 12.0;
-
-					opampModel.Reset();
-					gain_vol[n8] = new ushort[size];
-
-					for (int vi = 0; vi < size; vi++)
-					{
-						double vIn = vMin + vi / n16;			// vMin .. vMax
-						gain_vol[n8][vi] = GetNormalizedValue(opampModel.Solve(n, vIn));
-					}
-				}
+				OpAmp opAmpModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
+				BuildVolumeTable(opAmpModel, 12.0);
 			}
 
 			void Loop4()
 			{
-				OpAmp opampModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
+				OpAmp opAmpModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
 
-				// 4 bit "resistor" ladders in the bandpass resonance gain
-				// necessitate 16 gain tables.
-				// From die photographs of the bandpass "resistor" ladders
-				// it follows that 1/Q ~ ~res/8 (assuming ideal
-				// op-amps and ideal "resistors")
+				// Build temp n table
+				double[] resonance_n = new double[16];
+
 				for (int n8 = 0; n8 < 16; n8++)
-				{
-					int size = 1 << 16;
-					double n = (~n8 & 0xf) / 8.0;
+					resonance_n[n8] = (~n8 & 0xf) / 8.0;
 
-					opampModel.Reset();
-					gain_res[n8] = new ushort[size];
-
-					for (int vi = 0; vi < size; vi++)
-					{
-						double vIn = vMin + vi / n16;			// vMin .. vMax
-						gain_res[n8][vi] = GetNormalizedValue(opampModel.Solve(n, vIn));
-					}
-				}
+				BuildResonanceTable(opAmpModel, resonance_n);
 			}
 
 			void Loop5()
@@ -232,7 +159,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				//  ir = ln^2(1 + e^((k*(Vg - Vt) - Vd)/(2*Ut))
 
 				// Moderate inversion characteristic current
-				double @is = (2.0 * uCox * ut * ut) * wl_vcr;
+				// will be multiplied by uCox later
+				double @is = (2.0 * ut * ut) * wl_vcr;
 
 				// Normalize current factor for 1 cycle at 1Mhz
 				double n15 = norm * ((1 << 15) - 1);
@@ -246,8 +174,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 					double log_term = Log1p(Math.Exp((kVgt_Vx / n16) / (2.0 * ut)));
 
 					// Scaled by m*2^15
-					double tmp = n_is * log_term * log_term;
-					vcr_n_ids_term[i] = (ushort)(tmp + 0.5);
+					vcr_n_ids_term[i] = n_is * log_term * log_term;
 				}
 			}
 
@@ -283,6 +210,28 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 		/********************************************************************/
 		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void SetFilterRange(double adjustment)
+		{
+			// Clamp into allowed range
+			adjustment = Math.Max(Math.Min(adjustment, 1.0), 0.0);
+
+			// Get the new uCox value, in the range [1,40]
+			double new_uCox = (1.0 + 39.0 * adjustment) * 1e-6;
+
+			// Ignore small changes
+			if (Math.Abs(uCox - new_uCox) < 1e-12)
+				return;
+
+			SetUCox(new_uCox);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Construct an 11 bit cutoff frequency DAC output voltage table.
 		/// Ownership is transferred to the requester which becomes
 		/// responsible of freeing the object when done
@@ -297,22 +246,10 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			for (uint i = 0; i < (1 << DAC_BITS); i++)
 			{
 				double fcd = dac.GetOutput(i);
-				f0_dac[i] = GetNormalizedValue(dac_zero + fcd * dac_scale / (1 << DAC_BITS));
+				f0_dac[i] = GetNormalizedValue(dac_zero + fcd * dac_scale);
 			}
 
 			return f0_dac;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Construct an integrator solver
-		/// </summary>
-		/********************************************************************/
-		public Integrator6581 BuildIntegrator()
-		{
-			return new Integrator6581(this, wl_snake);
 		}
 
 
@@ -338,8 +275,22 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ushort GetVcr_n_Ids_Term(int i)
 		{
-			return vcr_n_ids_term[i];
+			double tmp = vcr_n_ids_term[i] * uCox;
+
+			return (ushort)(tmp + 0.5);
 		}
+
+		#region Overrides
+		/********************************************************************/
+		/// <summary>
+		/// Construct an integrator solver
+		/// </summary>
+		/********************************************************************/
+		public override Integrator BuildIntegrator()
+		{
+			return new Integrator6581(this, wl_snake);
+		}
+		#endregion
 
 		#region Private methods
 		/********************************************************************/

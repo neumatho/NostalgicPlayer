@@ -103,7 +103,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		public void TestSetTestBit()
 		{
 			matrix_t waveTables = WaveformCalculator.GetInstance().GetWaveTable();
-			matrix_t tables = WaveformCalculator.GetInstance().BuildPulldownTable(ChipModel.MOS6581);
+			matrix_t tables = WaveformCalculator.GetInstance().BuildPulldownTable(ChipModel.MOS6581, CombinedWaveforms.AVERAGE);
 
 			WaveformGenerator generator = new WaveformGenerator();
 			generator.Reset();
@@ -130,7 +130,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		public void TestNoiseWriteBack1()
 		{
 			matrix_t waveTables = WaveformCalculator.GetInstance().GetWaveTable();
-			matrix_t tables = WaveformCalculator.GetInstance().BuildPulldownTable(ChipModel.MOS6581);
+			matrix_t tables = WaveformCalculator.GetInstance().BuildPulldownTable(ChipModel.MOS6581, CombinedWaveforms.AVERAGE);
 
 			WaveformGenerator modulator = new WaveformGenerator();
 

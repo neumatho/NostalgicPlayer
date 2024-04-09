@@ -8,7 +8,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class Integrator6581
+	internal class Integrator6581 : Integrator
 	{
 		// Find output voltage in inverting integrator SID op-amp circuits, using a
 		// single fixpoint iteration step.
@@ -131,14 +131,13 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		//
 		//     Vg = nVddt - sqrt(((nVddt - vi)^2 + (nVddt - Vw)^2)/2)
 
+		private readonly double wlSnake;
+
 		private uint nVddt_vw_2;
-		private int vx;
-		private int vc;
 
 		private readonly ushort nVddt;
 		private readonly ushort nVt;
 		private readonly ushort nVMin;
-		private readonly ushort nSnake;
 
 		private readonly FilterModelConfig6581 fmc;
 
@@ -149,13 +148,11 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/********************************************************************/
 		public Integrator6581(FilterModelConfig6581 fmc, double wl_snake)
 		{
+			wlSnake = wl_snake;
 			nVddt_vw_2 = 0;
-			vx = 0;
-			vc = 0;
 			nVddt = fmc.GetNormalizedValue(fmc.GetVddt());
 			nVt = fmc.GetNormalizedValue(fmc.GetVth());
 			nVMin = fmc.GetNVMin();
-			nSnake = fmc.GetNormalizedCurrentFactor(wl_snake);
 			this.fmc = fmc;
 		}
 
@@ -178,7 +175,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public int Solve(int vi)
+		public override int Solve(int vi)
 		{
 			// "Snake" voltages for triode mode calculation
 			uint vgst = (uint)(nVddt - vx);
@@ -188,7 +185,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			uint vgdt_2 = vgdt * vgdt;
 
 			// "Snake" current, scaled by (1/m)*2^13*m*2^16*m*2^16*2^-15 = m*2^30
-			int n_I_snake = nSnake * ((int)(vgst_2 - vgdt_2) >> 15);
+			int n_I_snake = fmc.GetNormalizedCurrentFactor(wlSnake) * ((int)(vgst_2 - vgdt_2) >> 15);
 
 			// VCR gate voltage.		// Scaled by m*2^16
 			// Vg = Vddt - sqrt(((Vddt - vW)^2 + Vgdt^2)/2)

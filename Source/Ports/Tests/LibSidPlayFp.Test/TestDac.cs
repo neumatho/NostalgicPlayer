@@ -41,6 +41,22 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			Assert.That(IsDacLinear(ChipModel.MOS8580), Is.True);
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[Test]
+		public void TestLeak()
+		{
+			double[] dac = new double[1 << DacBits];
+			BuildDac(dac, ChipModel.MOS6581);
+
+			Assert.That(dac[0] > 0);
+		}
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>

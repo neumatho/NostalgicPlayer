@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Runtime.CompilerServices;
+
 namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 {
 	/// <summary>
@@ -10,70 +12,87 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 	/// </summary>
 	internal abstract class Filter
 	{
+		private readonly FilterModelConfig fmc;
+
+		private readonly ushort[][] mixer;
+		private readonly ushort[][] summer;
+		private readonly ushort[][] resonance;
+		private readonly ushort[][] volume;
+
 		/// <summary>
-		/// Current volume amplifier setting
+		/// VCR + associated capacitor connected to highpass output
 		/// </summary>
-		protected ushort[] currentGain;
+		protected Integrator hpIntegrator;
+
+		/// <summary>
+		/// VCR + associated capacitor connected to bandpass output
+		/// </summary>
+		protected Integrator bpIntegrator;
 
 		/// <summary>
 		/// Current filter/voice mixer setting
 		/// </summary>
-		protected ushort[] currentMixer;
+		private ushort[] currentMixer;
 
 		/// <summary>
 		/// Filter input summer setting
 		/// </summary>
-		protected ushort[] currentSummer;
+		private ushort[] currentSummer;
 
 		/// <summary>
 		/// Filter resonance value
 		/// </summary>
-		protected ushort[] currentResonance;
+		private ushort[] currentResonance;
+
+		/// <summary>
+		/// Current volume amplifier setting
+		/// </summary>
+		private ushort[] currentVolume;
 
 		/// <summary>
 		/// Filter highpass state
 		/// </summary>
-		protected int vhp;
+		private int vhp;
 
 		/// <summary>
 		/// Filter bandpass state
 		/// </summary>
-		protected int vbp;
+		private int vbp;
 
 		/// <summary>
 		/// Filter lowpass state
 		/// </summary>
-		protected int vlp;
+		private int vlp;
 
 		/// <summary>
 		/// Filter external input
 		/// </summary>
-		protected int ve;
+		private int ve;
 
 		/// <summary>
 		/// Filter cutoff frequency
 		/// </summary>
-		protected uint fc;
+		private uint fc;
 
 		/// <summary>
 		/// Routing to filter or outside filter
 		/// </summary>
-		protected bool filt1, filt2, filt3, filtE;
+		private bool filt1, filt2, filt3, filtE;
 
 		/// <summary>
 		/// Switch voice 3 off
 		/// </summary>
-		protected bool voice3Off;
+		private bool voice3Off;
 
 		/// <summary>
 		/// Highpass, bandpass, and lowpass filter modes
 		/// </summary>
-		protected bool hp, bp, lp;
+		private bool hp, bp, lp;
 
 		/// <summary>
 		/// Current volume
 		/// </summary>
-		protected byte vol;
+		private byte vol;
 
 		/// <summary>
 		/// Filter enabled
@@ -90,12 +109,19 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		protected Filter()
+		protected Filter(FilterModelConfig fmc)
 		{
-			currentGain = null;
+			this.fmc = fmc;
+			mixer = fmc.GetMixer();
+			summer = fmc.GetSummer();
+			resonance = fmc.GetResonance();
+			volume = fmc.GetVolume();
+			hpIntegrator = fmc.BuildIntegrator();
+			bpIntegrator = fmc.BuildIntegrator();
 			currentMixer = null;
 			currentSummer = null;
 			currentResonance = null;
+			currentVolume = null;
 			vhp = 0;
 			vbp = 0;
 			vlp = 0;
@@ -112,38 +138,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			vol = 0;
 			enabled = true;
 			filt = 0;
-		}
 
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Enable filter
-		/// </summary>
-		/********************************************************************/
-		public void EnableFilter(bool enable)
-		{
-			enabled = enable;
-
-			if (enabled)
-				WriteRes_Filt(filt);
-			else
-				filt1 = filt2 = filt3 = filtE = false;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// SID reset
-		/// </summary>
-		/********************************************************************/
-		public void Reset()
-		{
-			WriteFc_Lo(0);
-			WriteFc_Hi(0);
-			WriteMode_Vol(0);
-			WriteRes_Filt(0);
+			Input(0);
 		}
 
 
@@ -156,7 +152,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		public void WriteFc_Lo(byte fc_lo)
 		{
 			fc = (fc & 0x7f8) | ((uint)fc_lo & 0x007);
-			UpdatedCenterFrequency();
+			UpdateCenterFrequency();
 		}
 
 
@@ -169,7 +165,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		public void WriteFc_Hi(byte fc_hi)
 		{
 			fc = ((uint)fc_hi << 3 & 0x7f8) | (fc & 0x007);
-			UpdatedCenterFrequency();
+			UpdateCenterFrequency();
 		}
 
 
@@ -214,31 +210,45 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			UpdateMixing();
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Enable filter
+		/// </summary>
+		/********************************************************************/
+		public void Enable(bool enable)
+		{
+			enabled = enable;
+
+			if (enabled)
+				WriteRes_Filt(filt);
+			else
+				filt1 = filt2 = filt3 = filtE = false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// SID reset
+		/// </summary>
+		/********************************************************************/
+		public void Reset()
+		{
+			WriteFc_Lo(0);
+			WriteFc_Hi(0);
+			WriteMode_Vol(0);
+			WriteRes_Filt(0);
+		}
+
 		#region Overrides
 		/********************************************************************/
 		/// <summary>
-		/// Set filter cutoff frequency
+		/// Update filter cutoff frequency
 		/// </summary>
 		/********************************************************************/
-		protected abstract void UpdatedCenterFrequency();
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set filter resonance
-		/// </summary>
-		/********************************************************************/
-		protected abstract void UpdateResonance(byte res);
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Mixing configuration modified (offsets change)
-		/// </summary>
-		/********************************************************************/
-		protected abstract void UpdateMixing();
+		protected abstract void UpdateCenterFrequency();
 
 
 
@@ -247,16 +257,137 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// SID clocking - 1 cycle
 		/// </summary>
 		/********************************************************************/
-		public abstract ushort Clock(int v1, int v2, int v3);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public ushort Clock(float voice1, float voice2, float voice3)
+		{
+			int v1 = fmc.GetNormalizedVoice(voice1);
+			int v2 = fmc.GetNormalizedVoice(voice2);
+
+			// Voice 3 is silenced by voice3Off if it is not routed through the filter
+			int v3 = (filt3 || !voice3Off) ? fmc.GetNormalizedVoice(voice3) : 0;
+
+			int vSum = 0;
+			int vMix = 0;
+
+			if (filt1)
+				vSum += v1;
+			else
+				vMix += v1;
+
+			if (filt2)
+				vSum += v2;
+			else
+				vMix += v2;
+
+			if (filt3)
+				vSum += v3;
+			else
+				vMix += v3;
+
+			if (filtE)
+				vSum += ve;
+			else
+				vMix += ve;
+
+			vhp = currentSummer[currentResonance[vbp] + vlp + vSum];
+			vbp = hpIntegrator.Solve(vhp);
+			vlp = bpIntegrator.Solve(vbp);
+
+			if (lp)
+				vMix += vlp;
+
+			if (bp)
+				vMix += vbp;
+
+			if (hp)
+				vMix += vhp;
+
+			return currentVolume[currentMixer[vMix]];
+		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Apply a signal to EXT-IN
 		/// </summary>
 		/********************************************************************/
-		public abstract void Input(int input);
+		public void Input(int input)
+		{
+			ve = fmc.GetNormalizedVoice(input / 65536.0f);
+		}
+		#endregion
+
+		#region Helper methods
+		/********************************************************************/
+		/// <summary>
+		/// Get the filter cutoff register value
+		/// </summary>
+		/********************************************************************/
+		protected int GetFc()
+		{
+			return (int)fc;
+		}
+		#endregion
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Update filter resonance
+		/// </summary>
+		/********************************************************************/
+		private void UpdateResonance(byte res)
+		{
+			currentResonance = resonance[res];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Mixing configuration modified (offsets change)
+		/// </summary>
+		/********************************************************************/
+		private void UpdateMixing()
+		{
+			currentVolume = volume[vol];
+
+			uint nSum = 0;
+			uint nMix = 0;
+
+			if (filt1)
+				nSum++;
+			else
+				nMix++;
+
+			if (filt2)
+				nSum++;
+			else
+				nMix++;
+
+			if (filt3)
+				nSum++;
+			else if (!voice3Off)
+				nMix++;
+
+			if (filtE)
+				nSum++;
+			else
+				nMix++;
+
+			currentSummer = summer[nSum];
+
+			if (lp)
+				nMix++;
+
+			if (bp)
+				nMix++;
+
+			if (hp)
+				nMix++;
+
+			currentMixer = mixer[nMix];
+		}
 		#endregion
 	}
 }

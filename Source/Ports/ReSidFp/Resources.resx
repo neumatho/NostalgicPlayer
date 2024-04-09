@@ -120,6 +120,9 @@
   <data name="IDS_SID_ERR_UNKNOWN_CHIP" xml:space="preserve">
     <value>Unknown chip model</value>
   </data>
+  <data name="IDS_SID_ERR_UNKNOWN_COMBINED_WAVEFORMS" xml:space="preserve">
+    <value>Unknown combined waveforms type</value>
+  </data>
   <data name="IDS_SID_ERR_UNKNOWN_SAMPLING_METHOD" xml:space="preserve">
     <value>Unknown sampling method</value>
   </data>

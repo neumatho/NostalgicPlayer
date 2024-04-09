@@ -257,45 +257,16 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// </summary>
 		private const double DAC_WL0 = 0.00615;
 
-		private readonly ushort[][] mixer;
-		private readonly ushort[][] summer;
-		private readonly ushort[][] gain_res;
-		private readonly ushort[][] gain_vol;
-
-		private readonly int voiceScaleS11;
-		private readonly int voiceDc;
-
 		private double cp;
-
-		/// <summary>
-		/// VCR + associated capacitor connected to highpass output
-		/// </summary>
-		private Integrator8580 hpIntegrator;
-
-		/// <summary>
-		/// VCR + associated capacitor connected to bandpass output
-		/// </summary>
-		private Integrator8580 bpIntegrator;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Filter8580()
+		public Filter8580() : base(FilterModelConfig8580.GetInstance())
 		{
-			mixer = FilterModelConfig8580.GetInstance().GetMixer();
-			summer = FilterModelConfig8580.GetInstance().GetSummer();
-			gain_res = FilterModelConfig8580.GetInstance().GetGainRes();
-			gain_vol = FilterModelConfig8580.GetInstance().GetGainVol();
-			voiceScaleS11 = FilterModelConfig8580.GetInstance().GetVoiceScaleS11();
-			voiceDc = FilterModelConfig8580.GetInstance().GetNormalizedVoiceDc();
-			cp = 0.5;
-			hpIntegrator = FilterModelConfig8580.GetInstance().BuildIntegrator();
-			bpIntegrator = FilterModelConfig8580.GetInstance().BuildIntegrator();
-
-			SetFilterCurve(cp);
-			Input(0);
+			SetFilterCurve(0.5);
 		}
 
 
@@ -314,8 +285,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			// 1.2 <= cp <= 1.8
 			cp = 1.8 - curvePosition * 3.0 / 5.0;
 
-			hpIntegrator.SetV(cp);
-			bpIntegrator.SetV(cp);
+			((Integrator8580)hpIntegrator).SetV(cp);
+			((Integrator8580)bpIntegrator).SetV(cp);
 		}
 
 		#region Overrides
@@ -324,18 +295,18 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// Set filter cutoff frequency
 		/// </summary>
 		/********************************************************************/
-		protected override void UpdatedCenterFrequency()
+		protected override void UpdateCenterFrequency()
 		{
 			double wl;
 			double dacWl = DAC_WL0;
 
-			if (fc != 0)
+			if (GetFc() != 0)
 			{
 				wl = 0.0;
 
 				for (int i = 0; i < 11; i++)
 				{
-					if ((fc & (1 << i)) != 0)
+					if ((GetFc() & (1 << i)) != 0)
 						wl += dacWl;
 
 					dacWl *= 2.0;
@@ -344,134 +315,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			else
 				wl = dacWl / 2.0;
 
-			hpIntegrator.SetFc(wl);
-			bpIntegrator.SetFc(wl);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set filter resonance
-		/// </summary>
-		/********************************************************************/
-		protected override void UpdateResonance(byte res)
-		{
-			currentResonance = gain_res[res];
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Mixing configuration modified (offsets change)
-		/// </summary>
-		/********************************************************************/
-		protected override void UpdateMixing()
-		{
-			currentGain = gain_vol[vol];
-
-			uint ni = 0;
-			uint no = 0;
-
-			if (filt1)
-				ni++;
-			else
-				no++;
-
-			if (filt2)
-				ni++;
-			else
-				no++;
-
-			if (filt3)
-				ni++;
-			else if (!voice3Off)
-				no++;
-
-			if (filtE)
-				ni++;
-			else
-				no++;
-
-			currentSummer = summer[ni];
-
-			if (lp)
-				no++;
-
-			if (bp)
-				no++;
-
-			if (hp)
-				no++;
-
-			currentMixer = mixer[no];
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public override void Input(int sample)
-		{
-			ve = (sample * voiceScaleS11 * 3 >> 11) + mixer[0][0];
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public override ushort Clock(int voice1, int voice2, int voice3)
-		{
-			voice1 = (voice1 * voiceScaleS11 >> 15) + voiceDc;
-			voice2 = (voice2 * voiceScaleS11 >> 15) + voiceDc;
-
-			// Voice 3 is silenced by voice3Off if it is not routed through the filter
-			voice3 = (filt3 || !voice3Off) ? (voice3 * voiceScaleS11 >> 15) + voiceDc : 0;
-
-			int vi = 0;
-			int vo = 0;
-
-			if (filt1)
-				vi += voice1;
-			else
-				vo += voice1;
-
-			if (filt2)
-				vi += voice2;
-			else
-				vo += voice2;
-
-			if (filt3)
-				vi += voice3;
-			else
-				vo += voice3;
-
-			if (filtE)
-				vi += ve;
-			else
-				vo += ve;
-
-			vhp = currentSummer[currentResonance[vbp] + vlp + vi];
-			vbp = hpIntegrator.Solve(vhp);
-			vlp = bpIntegrator.Solve(vbp);
-
-			if (lp)
-				vo += vlp;
-
-			if (bp)
-				vo += vbp;
-
-			if (hp)
-				vo += vhp;
-
-			return currentGain[currentMixer[vo]];
+			((Integrator8580)hpIntegrator).SetFc(wl);
+			((Integrator8580)bpIntegrator).SetFc(wl);
 		}
 		#endregion
 	}

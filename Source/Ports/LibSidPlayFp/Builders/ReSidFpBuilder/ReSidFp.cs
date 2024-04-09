@@ -42,6 +42,85 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 			sid.EnableFilter(enable);
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void Filter6581Curve(double filterCurve)
+		{
+			sid.SetFilter6581Curve(filterCurve);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void Filter6581Range(double adjustment)
+		{
+			sid.SetFilter6581Range(adjustment);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void Filter8580Curve(double filterCurve)
+		{
+			sid.SetFilter8580Curve(filterCurve);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set the emulated SID combined waveforms
+		/// </summary>
+		/********************************************************************/
+		public void CombinedWaveforms(SidConfig.sid_cw_t cws)
+		{
+			CombinedWaveforms combinedWaveforms;
+
+			switch (cws)
+			{
+				case SidConfig.sid_cw_t.AVERAGE:
+				{
+					combinedWaveforms = Ports.ReSidFp.Containers.CombinedWaveforms.AVERAGE;
+					break;
+				}
+
+				case SidConfig.sid_cw_t.WEAK:
+				{
+					combinedWaveforms = Ports.ReSidFp.Containers.CombinedWaveforms.WEAK;
+					break;
+				}
+
+				case SidConfig.sid_cw_t.STRONG:
+				{
+					combinedWaveforms = Ports.ReSidFp.Containers.CombinedWaveforms.STRONG;
+					break;
+				}
+
+				default:
+				{
+					status = false;
+					error = Resources.IDS_SID_ERR_INVALID_CW;
+					return;
+				}
+			}
+
+			sid.SetCombinedWaveforms(combinedWaveforms);
+			status = true;
+		}
+
 		#region SidEmu overrides
 		/********************************************************************/
 		/// <summary>

@@ -22,6 +22,58 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 		{
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set 6581 filter curve
+		/// </summary>
+		/********************************************************************/
+		public void Filter6581Curve(double filterCurve)
+		{
+			foreach (ReSidFp s in sidObjs)
+				s.Filter6581Curve(filterCurve);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set 6581 filter curve
+		/// </summary>
+		/********************************************************************/
+		public void Filter6581Range(double filterRange)
+		{
+			foreach (ReSidFp s in sidObjs)
+				s.Filter6581Range(filterRange);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set 8580 filter curve
+		/// </summary>
+		/********************************************************************/
+		public void Filter8580Curve(double filterCurve)
+		{
+			foreach (ReSidFp s in sidObjs)
+				s.Filter8580Curve(filterCurve);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void CombinedWaveformsStrength(SidConfig.sid_cw_t cws)
+		{
+			foreach (ReSidFp s in sidObjs)
+				s.CombinedWaveforms(cws);
+		}
+
 		#region Overrides
 		/********************************************************************/
 		/// <summary>

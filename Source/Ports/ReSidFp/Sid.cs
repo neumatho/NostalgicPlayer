@@ -169,6 +169,11 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		private ChipModel model;
 
 		/// <summary>
+		/// Currently selected combined waveforms strength
+		/// </summary>
+		private CombinedWaveforms cws;
+
+		/// <summary>
 		/// Last written value
 		/// </summary>
 		private byte busValue;
@@ -201,6 +206,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			resampler = null;
 			potX = new Potentiometer();
 			potY = new Potentiometer();
+			cws = CombinedWaveforms.AVERAGE;
 
 			voice[0] = new Voice();
 			voice[1] = new Voice();
@@ -216,13 +222,49 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 		/********************************************************************/
 		/// <summary>
+		/// Set filter curve parameter for 6581 model
+		/// </summary>
+		/********************************************************************/
+		public void SetFilter6581Curve(double filterCurve)
+		{
+			filter6581.SetFilterCurve(filterCurve);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set filter curve parameter for 6581 model
+		/// </summary>
+		/********************************************************************/
+		public void SetFilter6581Range(double adjustment)
+		{
+			filter6581.SetFilterRange(adjustment);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set filter curve parameter for 8580 model
+		/// </summary>
+		/********************************************************************/
+		public void SetFilter8580Curve(double filterCurve)
+		{
+			filter8580.SetFilterCurve(filterCurve);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Enable filter emulation
 		/// </summary>
 		/********************************************************************/
 		public void EnableFilter(bool enable)
 		{
-			filter6581.EnableFilter(enable);
-			filter8580.EnableFilter(enable);
+			filter6581.Enable(enable);
+			filter8580.Enable(enable);
 		}
 
 
@@ -260,7 +302,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 			// Calculate waveform-related tables
 			matrix_t waveTables = WaveformCalculator.GetInstance().GetWaveTable();
-			matrix_t pulldownTables = WaveformCalculator.GetInstance().BuildPulldownTable(model);
+			matrix_t pulldownTables = WaveformCalculator.GetInstance().BuildPulldownTable(model, cws);
 
 			// Calculate envelope DAC table
 			{
@@ -296,6 +338,35 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				voice[i].Wave().SetWaveformModels(waveTables);
 				voice[i].Wave().SetPulldownModels(pulldownTables);
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Set combined waveforms strength
+		/// </summary>
+		/********************************************************************/
+		public void SetCombinedWaveforms(CombinedWaveforms cws)
+		{
+			switch (cws)
+			{
+				case CombinedWaveforms.AVERAGE:
+				case CombinedWaveforms.STRONG:
+				case CombinedWaveforms.WEAK:
+					break;
+
+				default:
+					throw new SidErrorException(Resources.IDS_SID_ERR_UNKNOWN_COMBINED_WAVEFORMS);
+			}
+
+			this.cws = cws;
+
+			// Rebuild waveform related tables
+			matrix_t pulldownTables = WaveformCalculator.GetInstance().BuildPulldownTable(model, cws);
+
+			for (int i = 0; i < 3; i++)
+				voice[i].Wave().SetPulldownModels(pulldownTables);
 		}
 
 
@@ -639,7 +710,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 						voice[2].Envelope().Clock();
 
 						if (resampler.Input(Output()))
-							buf[s++] = resampler.GetOutput();
+							buf[s++] = resampler.GetOutput(scaleFactor);
 					}
 
 					cycles -= delta_t;
@@ -769,11 +840,11 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private int Output()
 		{
-			int v1 = voice[0].Output(voice[2].Wave());
-			int v2 = voice[1].Output(voice[0].Wave());
-			int v3 = voice[2].Output(voice[1].Wave());
+			float v1 = voice[0].Output(voice[2].Wave());
+			float v2 = voice[1].Output(voice[0].Wave());
+			float v3 = voice[2].Output(voice[1].Wave());
 
-			int input = (int)((scaleFactor * (uint)filter.Clock(v1, v2, v3)) / 2);
+			int input = filter.Clock(v1, v2, v3);
 
 			return externalFilter.Clock(input);
 		}

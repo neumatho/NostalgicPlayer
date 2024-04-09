@@ -198,6 +198,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 				{
 					// Force bits 6-5 = 0
 					data &= 0x9f;
+
+					// Flip AM/PM on hour 12 on the rising edge of the comparator
+					if (((data & 0x1f) == 0x12) && ((regs[Mos652x.CRB] & 0x80) == 0))
+						data ^= 0x80;
+
 					break;
 				}
 			}
@@ -231,9 +236,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 
 				if (clock[reg] != data)
 				{
+					// see https://sourceforge.net/p/vice-emu/bugs/1988/
 					// Flip AM/PM on hour 12 on the rising edge of the comparator
-					if ((reg == HOURS) && ((data & 0x1f) == 0x12))
-						data ^= 0x80;
+					//if ((reg == HOURS) && ((data & 0x1f) == 0x12))
+					//	data ^= 0x80;
 
 					changed = true;
 					clock[reg] = data;

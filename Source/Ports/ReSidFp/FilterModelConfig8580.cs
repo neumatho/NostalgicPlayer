@@ -109,105 +109,26 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			// Create lookup tables for gains / summers
 			void Loop1()
 			{
-				OpAmp opampModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
-
-				// The filter summer operates at n ~ 1, and has 5 fundamentally different
-				// input configurations (2 - 6 input "resistors")
-				//
-				// Note that all "on" transistors are modeled as one. This is not
-				// entirely accurate, since the input for each transistor is different,
-				// and transistors are not linear components. However modeling all
-				// transistors separately would be extremely costly
-				for (int i = 0; i < 5; i++)
-				{
-					int iDiv = 2 + i;		// 2 - 6 input "resistors"
-					int size = iDiv << 16;
-					double n = iDiv;
-
-					opampModel.Reset();
-					summer[i] = new ushort[size];
-
-					for (int vi = 0; vi < size; vi++)
-					{
-						double vIn = vMin + vi / n16 / iDiv;	// vMin .. vMax
-						summer[i][vi] = GetNormalizedValue(opampModel.Solve(n, vIn));
-					}
-				}
+				OpAmp opAmpModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
+				BuildSummerTable(opAmpModel);
 			}
 
 			void Loop2()
 			{
-				OpAmp opampModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
-
-				// The audio mixer operates at n ~ 8/5, ans has 8 fundamentally different
-				// input configurations (0 - 7 input "resistors").
-				//
-				// All "on", transistors are modeled as one - see comments above for
-				// the filter summer
-				for (int i = 0; i < 8; i++)
-				{
-					int iDiv = i == 0 ? 1 : i;
-					int size = i == 0 ? 1 : i << 16;
-					double n = i * 8.0 / 5.0;
-
-					opampModel.Reset();
-					mixer[i] = new ushort[size];
-
-					for (int vi = 0; vi < size; vi++)
-					{
-						double vIn = vMin + vi / n16 / iDiv;	// vMin .. vMax
-						mixer[i][vi] = GetNormalizedValue(opampModel.Solve(n, vIn));
-					}
-				}
+				OpAmp opAmpModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
+				BuildMixerTable(opAmpModel, 8.0 / 5.0);
 			}
 
 			void Loop3()
 			{
-				OpAmp opampModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
-
-				// 4 bit "resistor" ladders in the audio output gain
-				// necessitate 16 gain tables.
-				// From die photographs of the volume "resistor" ladders
-				// it follows that gain ~ vol/16 (assuming ideal
-				// op-amps and ideal "resistors")
-				for (int n8 = 0; n8 < 16; n8++)
-				{
-					int size = 1 << 16;
-					double n = n8 / 16.0;
-
-					opampModel.Reset();
-					gain_vol[n8] = new ushort[size];
-
-					for (int vi = 0; vi < size; vi++)
-					{
-						double vIn = vMin + vi / n16;			// vMin .. vMax
-						gain_vol[n8][vi] = GetNormalizedValue(opampModel.Solve(n, vIn));
-					}
-				}
+				OpAmp opAmpModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
+				BuildVolumeTable(opAmpModel, 16.0);
 			}
 
 			void Loop4()
 			{
-				OpAmp opampModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
-
-				// 4 bit "resistor" ladders in the bandpass resonance gain
-				// necessitate 16 gain tables.
-				// From die photographs of the bandpass "resistor" ladders
-				// it follows that 1/Q ~ 2^((4 - res)/8) (assuming ideal
-				// op-amps and ideal "resistors")
-				for (int n8 = 0; n8 < 16; n8++)
-				{
-					int size = 1 << 16;
-
-					opampModel.Reset();
-					gain_res[n8] = new ushort[size];
-
-					for (int vi = 0; vi < size; vi++)
-					{
-						double vIn = vMin + vi / n16;			// vMin .. vMax
-						gain_res[n8][vi] = GetNormalizedValue(opampModel.Solve(resGain[n8], vIn));
-					}
-				}
+				OpAmp opAmpModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
+				BuildResonanceTable(opAmpModel, resGain);
 			}
 
 			Task loop1Task = Task.Run(Loop1);
@@ -236,16 +157,16 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			}
 		}
 
-
-
+		#region Overrides
 		/********************************************************************/
 		/// <summary>
 		/// Construct an integrator solver
 		/// </summary>
 		/********************************************************************/
-		public Integrator8580 BuildIntegrator()
+		public override Integrator BuildIntegrator()
 		{
 			return new Integrator8580(this);
 		}
+		#endregion
 	}
 }

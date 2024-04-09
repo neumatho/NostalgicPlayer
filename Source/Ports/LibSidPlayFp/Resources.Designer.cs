@@ -169,6 +169,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid combined waveforms strength.
+        /// </summary>
+        internal static string IDS_SID_ERR_INVALID_CW {
+            get {
+                return ResourceManager.GetString("IDS_SID_ERR_INVALID_CW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid sampling method.
         /// </summary>
         internal static string IDS_SID_ERR_INVALID_SAMPLING {
