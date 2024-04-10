@@ -3280,7 +3280,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private void RefreshWindows(bool onLoad)
 		{
 			if (IsModuleInfoWindowOpen())
-				moduleInfoWindow.RefreshWindow();
+				moduleInfoWindow.RefreshWindow(onLoad);
 
 			if (IsSampleInfoWindowOpen())
 				sampleInfoWindow.RefreshWindow();

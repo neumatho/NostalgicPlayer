@@ -32,8 +32,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		private ModuleHandler moduleHandler;
 		private MainWindowForm mainWindow;
 
-		private bool previousPlayingState;
-
 		private PictureInfo[] pictures;
 		private int pictureIndex;
 		private int nextPictureIndex;
@@ -87,8 +85,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			this.mainWindow = mainWindow;
 			this.moduleSettings = moduleSettings;
 
-			previousPlayingState = false;
-
 			if (!DesignMode)
 			{
 				InitializeWindow(mainWindow, optionSettings);
@@ -124,7 +120,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				});
 
 				// Make sure that the content is up-to date
-				RefreshWindow();
+				RefreshWindow(false);
 			}
 		}
 
@@ -135,7 +131,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/// Will clear the window and add all the items again
 		/// </summary>
 		/********************************************************************/
-		public void RefreshWindow()
+		public void RefreshWindow(bool onLoad)
 		{
 			if (moduleHandler != null)
 			{
@@ -147,7 +143,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 				CleanupPictures();
 
 				// Add the items
-				AddItems();
+				AddItems(onLoad);
 			}
 		}
 
@@ -450,7 +446,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/// Will add all the items in the list
 		/// </summary>
 		/********************************************************************/
-		private void AddItems()
+		private void AddItems(bool onLoad)
 		{
 			// Check to see if there are any module loaded at the moment
 			MultiFileInfo fileInfo;
@@ -579,7 +575,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 					navigator.Pages[(int)ModuleSettings.ModuleInfoTab.Pictures].Visible = false;
 
 				// Find out which tab to activate
-				if (!previousPlayingState)
+				if (onLoad)
 				{
 					foreach (ModuleSettings.ModuleInfoTab tab in moduleSettings.ModuleInfoActivateTabOrder)
 					{
@@ -611,8 +607,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 
 				CleanupPictures();
 			}
-
-			previousPlayingState = moduleHandler.IsPlaying;
 
 			// Resize the rows, so the lines are compacted
 			moduleInfoInfoDataGridView.AutoResizeRows();
