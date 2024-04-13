@@ -88,6 +88,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 							soundStream = new MixerStream();
 
 							// Subscribe the events
+							soundStream.ClockUpdated += Stream_ClockUpdated;
 							soundStream.PositionChanged += Stream_PositionChanged;
 							soundStream.EndReached += Stream_EndReached;
 							soundStream.ModuleInfoChanged += Stream_ModuleInfoChanged;
@@ -134,6 +135,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 							soundStream.ModuleInfoChanged -= Stream_ModuleInfoChanged;
 							soundStream.EndReached -= Stream_EndReached;
 							soundStream.PositionChanged -= Stream_PositionChanged;
+							soundStream.ClockUpdated -= Stream_ClockUpdated;
 
 							soundStream.Cleanup();
 							soundStream.Dispose();
@@ -335,6 +337,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 
 		/********************************************************************/
 		/// <summary>
+		/// Event called for each second the module has played
+		/// </summary>
+		/********************************************************************/
+		public event ClockUpdatedEventHandler ClockUpdated;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Event called when the player reached the end
 		/// </summary>
 		/********************************************************************/
@@ -453,6 +464,23 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		#endregion
 
 		#region Event handlers
+		/********************************************************************/
+		/// <summary>
+		/// Is called every time the clock is updated
+		/// </summary>
+		/********************************************************************/
+		private void Stream_ClockUpdated(object sender, ClockUpdatedEventArgs e)
+		{
+			if (currentPlayer != null)
+			{
+				// Call the next event handler
+				if (ClockUpdated != null)
+					ClockUpdated(sender, e);
+			}
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called when the player change the sub-song

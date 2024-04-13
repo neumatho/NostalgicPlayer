@@ -43,6 +43,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 			resampler = new Resampler();
 			resamplerLock = new object();
 
+			resampler.ClockUpdated += Resampler_ClockUpdated;
 			resampler.PositionChanged += Resampler_PositionChanged;
 			resampler.ModuleInfoChanged += Resampler_ModuleInfoChanged;
 
@@ -66,6 +67,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 
 					resampler.ModuleInfoChanged -= Resampler_ModuleInfoChanged;
 					resampler.PositionChanged -= Resampler_PositionChanged;
+					resampler.ClockUpdated -= Resampler_ClockUpdated;
 
 					resampler = null;
 					resamplerLock = null;
@@ -252,6 +254,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		#endregion
 
 		#region Handler methods
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the clock is updated in the resampler
+		/// </summary>
+		/********************************************************************/
+		private void Resampler_ClockUpdated(object sender, ClockUpdatedEventArgs e)
+		{
+			OnClockUpdated(e);
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called when the position changes in the resampler

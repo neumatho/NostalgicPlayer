@@ -215,6 +215,15 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Event called for each second the module has played
+		/// </summary>
+		/********************************************************************/
+		public event ClockUpdatedEventHandler ClockUpdated;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Event called when the position change
 		/// </summary>
 		/********************************************************************/
@@ -237,6 +246,19 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// </summary>
 		/********************************************************************/
 		public event ModuleInfoChangedEventHandler ModuleInfoChanged;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Send an event when the clock is updated
+		/// </summary>
+		/********************************************************************/
+		protected void OnClockUpdated(ClockUpdatedEventArgs e)
+		{
+			if (ClockUpdated != null)
+				ClockUpdated(this, e);
+		}
 
 
 

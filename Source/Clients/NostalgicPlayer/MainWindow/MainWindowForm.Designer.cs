@@ -68,7 +68,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			sampleInfoButton = new KryptonButton();
 			muteCheckButton = new KryptonCheckButton();
 			toolTip = new System.Windows.Forms.ToolTip(components);
-			clockTimer = new System.Windows.Forms.Timer(components);
 			sortContextMenu = new KryptonContextMenu();
 			listContextMenu = new KryptonContextMenu();
 			diskContextMenu = new KryptonContextMenu();
@@ -94,7 +93,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// menuStrip
 			// 
-			menuStrip.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+			menuStrip.Font = new System.Drawing.Font("Segoe UI", 9F);
 			menuStrip.Location = new System.Drawing.Point(0, 0);
 			menuStrip.Name = "menuStrip";
 			menuStrip.Size = new System.Drawing.Size(384, 24);
@@ -115,7 +114,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// bigFontPalette
 			// 
+			bigFontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
 			bigFontPalette.BaseFontSize = 9F;
+			bigFontPalette.BasePaletteType = BasePaletteType.Custom;
+			bigFontPalette.ThemeName = "";
+			bigFontPalette.UseKryptonFileDialogs = true;
+			// 
+			// fontPalette
+			// 
+			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
+			fontPalette.BasePaletteType = BasePaletteType.Custom;
+			fontPalette.ThemeName = "";
+			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// infoGroup
 			// 
@@ -133,7 +143,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// moduleInfoButton
 			// 
 			moduleInfoButton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-			moduleInfoButton.CornerRoundingRadius = -1F;
 			moduleInfoButton.Location = new System.Drawing.Point(356, 28);
 			moduleInfoButton.Name = "moduleInfoButton";
 			moduleInfoButton.Size = new System.Drawing.Size(24, 24);
@@ -175,7 +184,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// diskButton
 			// 
-			diskButton.CornerRoundingRadius = -1F;
 			diskButton.Location = new System.Drawing.Point(200, 4);
 			diskButton.Name = "diskButton";
 			diskButton.Size = new System.Drawing.Size(24, 24);
@@ -185,7 +193,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// listButton
 			// 
-			listButton.CornerRoundingRadius = -1F;
 			listButton.Location = new System.Drawing.Point(172, 4);
 			listButton.Name = "listButton";
 			listButton.Size = new System.Drawing.Size(24, 24);
@@ -195,7 +202,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// moveModulesDownButton
 			// 
-			moveModulesDownButton.CornerRoundingRadius = -1F;
 			moveModulesDownButton.Location = new System.Drawing.Point(144, 4);
 			moveModulesDownButton.Name = "moveModulesDownButton";
 			moveModulesDownButton.Size = new System.Drawing.Size(24, 24);
@@ -205,7 +211,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// moveModulesUpButton
 			// 
-			moveModulesUpButton.CornerRoundingRadius = -1F;
 			moveModulesUpButton.Location = new System.Drawing.Point(116, 4);
 			moveModulesUpButton.Name = "moveModulesUpButton";
 			moveModulesUpButton.Size = new System.Drawing.Size(24, 24);
@@ -215,7 +220,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// sortModulesButton
 			// 
-			sortModulesButton.CornerRoundingRadius = -1F;
 			sortModulesButton.Location = new System.Drawing.Point(88, 4);
 			sortModulesButton.Name = "sortModulesButton";
 			sortModulesButton.Size = new System.Drawing.Size(24, 24);
@@ -225,7 +229,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// swapModulesButton
 			// 
-			swapModulesButton.CornerRoundingRadius = -1F;
 			swapModulesButton.Location = new System.Drawing.Point(60, 4);
 			swapModulesButton.Name = "swapModulesButton";
 			swapModulesButton.Size = new System.Drawing.Size(24, 24);
@@ -235,7 +238,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// removeModuleButton
 			// 
-			removeModuleButton.CornerRoundingRadius = -1F;
 			removeModuleButton.Location = new System.Drawing.Point(32, 4);
 			removeModuleButton.Name = "removeModuleButton";
 			removeModuleButton.Size = new System.Drawing.Size(24, 24);
@@ -245,7 +247,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// addModuleButton
 			// 
-			addModuleButton.CornerRoundingRadius = -1F;
 			addModuleButton.Location = new System.Drawing.Point(4, 4);
 			addModuleButton.Name = "addModuleButton";
 			addModuleButton.Size = new System.Drawing.Size(24, 24);
@@ -323,7 +324,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// pauseCheckButton
 			// 
-			pauseCheckButton.CornerRoundingRadius = -1F;
 			pauseCheckButton.Location = new System.Drawing.Point(228, 4);
 			pauseCheckButton.Name = "pauseCheckButton";
 			pauseCheckButton.Size = new System.Drawing.Size(24, 24);
@@ -333,7 +333,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// ejectButton
 			// 
-			ejectButton.CornerRoundingRadius = -1F;
 			ejectButton.Location = new System.Drawing.Point(200, 4);
 			ejectButton.Name = "ejectButton";
 			ejectButton.Size = new System.Drawing.Size(24, 24);
@@ -343,7 +342,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// nextModuleButton
 			// 
-			nextModuleButton.CornerRoundingRadius = -1F;
 			nextModuleButton.Location = new System.Drawing.Point(172, 4);
 			nextModuleButton.Name = "nextModuleButton";
 			nextModuleButton.Size = new System.Drawing.Size(24, 24);
@@ -353,7 +351,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// nextSongButton
 			// 
-			nextSongButton.CornerRoundingRadius = -1F;
 			nextSongButton.Location = new System.Drawing.Point(144, 4);
 			nextSongButton.Name = "nextSongButton";
 			nextSongButton.Size = new System.Drawing.Size(24, 24);
@@ -363,7 +360,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// fastForwardButton
 			// 
-			fastForwardButton.CornerRoundingRadius = -1F;
 			fastForwardButton.Location = new System.Drawing.Point(116, 4);
 			fastForwardButton.Name = "fastForwardButton";
 			fastForwardButton.Size = new System.Drawing.Size(24, 24);
@@ -373,7 +369,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// playButton
 			// 
-			playButton.CornerRoundingRadius = -1F;
 			playButton.Location = new System.Drawing.Point(88, 4);
 			playButton.Name = "playButton";
 			playButton.Size = new System.Drawing.Size(24, 24);
@@ -383,7 +378,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// rewindButton
 			// 
-			rewindButton.CornerRoundingRadius = -1F;
 			rewindButton.Location = new System.Drawing.Point(60, 4);
 			rewindButton.Name = "rewindButton";
 			rewindButton.Size = new System.Drawing.Size(24, 24);
@@ -393,7 +387,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// previousSongButton
 			// 
-			previousSongButton.CornerRoundingRadius = -1F;
 			previousSongButton.Location = new System.Drawing.Point(32, 4);
 			previousSongButton.Name = "previousSongButton";
 			previousSongButton.Size = new System.Drawing.Size(24, 24);
@@ -403,7 +396,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// previousModuleButton
 			// 
-			previousModuleButton.CornerRoundingRadius = -1F;
 			previousModuleButton.Location = new System.Drawing.Point(4, 4);
 			previousModuleButton.Name = "previousModuleButton";
 			previousModuleButton.Size = new System.Drawing.Size(24, 24);
@@ -428,7 +420,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// loopCheckButton
 			// 
-			loopCheckButton.CornerRoundingRadius = -1F;
 			loopCheckButton.Location = new System.Drawing.Point(4, 4);
 			loopCheckButton.Name = "loopCheckButton";
 			loopCheckButton.Size = new System.Drawing.Size(24, 24);
@@ -438,7 +429,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// favoritesButton
 			// 
-			favoritesButton.CornerRoundingRadius = -1F;
 			favoritesButton.Location = new System.Drawing.Point(32, 4);
 			favoritesButton.Name = "favoritesButton";
 			favoritesButton.Size = new System.Drawing.Size(24, 24);
@@ -448,7 +438,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// sampleInfoButton
 			// 
-			sampleInfoButton.CornerRoundingRadius = -1F;
 			sampleInfoButton.Location = new System.Drawing.Point(60, 4);
 			sampleInfoButton.Name = "sampleInfoButton";
 			sampleInfoButton.Size = new System.Drawing.Size(24, 24);
@@ -458,7 +447,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// muteCheckButton
 			// 
-			muteCheckButton.CornerRoundingRadius = -1F;
 			muteCheckButton.Location = new System.Drawing.Point(4, 56);
 			muteCheckButton.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			muteCheckButton.Name = "muteCheckButton";
@@ -466,10 +454,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			muteCheckButton.TabIndex = 3;
 			muteCheckButton.Values.Image = (System.Drawing.Image)resources.GetObject("muteCheckButton.Values.Image");
 			muteCheckButton.Values.Text = "";
-			// 
-			// clockTimer
-			// 
-			clockTimer.Interval = 995;
 			// 
 			// sortContextMenu
 			// 
@@ -575,7 +559,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private KryptonButton sampleInfoButton;
 		private KryptonCheckButton muteCheckButton;
 		private System.Windows.Forms.ToolTip toolTip;
-		private System.Windows.Forms.Timer clockTimer;
 		private KryptonContextMenu sortContextMenu;
 		private KryptonContextMenu listContextMenu;
 		private KryptonContextMenu diskContextMenu;

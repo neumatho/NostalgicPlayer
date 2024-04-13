@@ -75,7 +75,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		// Timer variables
 		private MainWindowSettings.TimeFormat timeFormat;
-		private DateTime timeStart;
 		private TimeSpan timeOccurred;
 		private TimeSpan neverEndingTimeout;
 		private bool neverEndingStarted;
@@ -83,9 +82,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		// Module variables
 		private ModuleListItem playItem;
 		private int subSongMultiply;
-
-		// Information variables
-		private int prevSongPosition;
 
 		// List times
 		private TimeSpan listTime;
@@ -915,7 +911,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Module information
 			infoGroup.Panel.Click += InfoGroup_Click;
 			infoLabel.Click += InfoGroup_Click;
-			clockTimer.Tick += ClockTimer_Tick;
 
 			moduleInfoButton.Click += ModuleInfoButton_Click;
 
@@ -967,6 +962,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			neverEndingTimer.Tick += NeverEndingTimer_Tick;
 
 			// Module handler
+			moduleHandler.ClockUpdated += ModuleHandler_ClockUpdated;
 			moduleHandler.PositionChanged += ModuleHandler_PositionChanged;
 			moduleHandler.SubSongChanged += ModuleHandler_SubSongChanged;
 			moduleHandler.EndReached += ModuleHandler_EndReached;
@@ -1453,16 +1449,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Is called every second to update the module information
+		/// Is called every time the clock is updated
 		/// </summary>
 		/********************************************************************/
-		private void ClockTimer_Tick(object sender, EventArgs e)
+		private void ModuleHandler_ClockUpdated(object sender, ClockUpdatedEventArgs e)
 		{
 			// Do only print the information if the module is playing
 			if ((playItem != null) && moduleHandler.IsPlaying)
 			{
-				// Calculate time offset
-				timeOccurred = DateTime.Now - timeStart;
+				// Set the time offset
+				timeOccurred = e.Time;
 
 				// Print the module information
 				PrintInfo();
@@ -2278,10 +2274,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			{
 				// Start to play again
 				moduleHandler.ResumePlaying();
-
-				// We add the time to the start time, so there won't be added
-				// a lot of seconds to the played time
-				timeStart += (DateTime.Now - timeStart - timeOccurred);
 
 				// Start the timers again
 				StartTimers(false);
@@ -3403,8 +3395,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void InitControls()
 		{
-			prevSongPosition = -1;
-
 			// Start the timers
 			if (playItem != null)
 				StartTimers(true);
@@ -3420,9 +3410,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			// Get module information
 			ModuleInfoFloating playingModuleInfo = moduleHandler.PlayingModuleInformation;
-
-			// Change the time to the position time
-			SetPositionTime(playingModuleInfo.SongPosition);
 
 			// Print the module information
 			PrintInfo();
@@ -3788,24 +3775,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			infoLabel.Text = $"{posStr} {subStr} {timeStr}";
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will change the time depending on the position given
-		/// </summary>
-		/********************************************************************/
-		private void SetPositionTime(int position)
-		{
-			// Set the new time
-			TimeSpan? newTime = moduleHandler.GetPositionTime(position);
-			if (newTime.HasValue)
-			{
-				timeStart -= (newTime.Value - timeOccurred);
-				timeOccurred = newTime.Value;
-			}
-		}
 		#endregion
 
 		#region Module handling
@@ -4142,12 +4111,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			{
 				if (newPosition != moduleHandler.PlayingModuleInformation.SongPosition)
 				{
-					// Change the time to the position time
-					SetPositionTime(newPosition);
-
 					// Change the position
 					moduleHandler.SetSongPosition(newPosition);
-					prevSongPosition = newPosition;
 
 					// Show it to the user
 					PrintInfo();
@@ -4166,24 +4131,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			BeginInvoke(() =>
 			{
-				int newPos = moduleHandler.PlayingModuleInformation.SongPosition;
-
-				// Change the time to the position time
-				if (newPos < prevSongPosition)
-					SetPositionTime(newPos);
-
-				prevSongPosition = newPos;
-
-				TimeSpan? positionTime = moduleHandler.GetPositionTime(newPos);
-				if (positionTime.HasValue)
-				{
-					if (Math.Abs((timeOccurred - positionTime.Value).TotalMilliseconds) > 1000)
-					{
-						timeOccurred = positionTime.Value;
-						timeStart = DateTime.Now - timeOccurred;
-					}
-				}
-
 				// Print the information
 				PrintInfo();
 
@@ -4198,6 +4145,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						int songLength = moduleHandler.PlayingModuleInformation.SongLength;
 						int earlyLoad = moduleSettings.DoubleBufferingEarlyLoad;
 						ModuleSettings.ModuleListEndAction listEnd = moduleSettings.ModuleListEnd;
+						int newPos = moduleHandler.PlayingModuleInformation.SongPosition;
 
 						if (newPos >= (songLength - earlyLoad))
 						{
@@ -4247,10 +4195,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			BeginInvoke(() =>
 			{
-				timeOccurred = moduleHandler.GetPositionTime(moduleHandler.PlayingModuleInformation.SongPosition)!.Value;
-				timeStart = DateTime.Now - timeOccurred;
-
-				SetPositionTime(moduleHandler.PlayingModuleInformation.SongPosition);
 				SetTimeOnItem(playItem, moduleHandler.PlayingModuleInformation.SongTotalTime);
 				PrintInfo();
 				UpdateTapeDeck();
@@ -4276,7 +4220,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						if (loopCheckButton.Checked)
 						{
 							// It is, so update the position as well, so it starts over
-							prevSongPosition = int.MaxValue;
 							HandlePositionChanged();
 						}
 						else
@@ -4625,7 +4568,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Start the playing timer
 			if (resetTimes)
 			{
-				timeStart = DateTime.Now;
 				timeOccurred = new TimeSpan(0);
 
 				if ((moduleHandler.PlayingModuleInformation.DurationInfo == null) && moduleSettings.NeverEnding)
@@ -4636,8 +4578,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				else
 					neverEndingStarted = false;
 			}
-
-			clockTimer.Start();
 
 			// Start the never ending timer if needed
 			if (neverEndingStarted)
@@ -4656,7 +4596,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void StopTimers()
 		{
-			clockTimer.Stop();
 			neverEndingTimer.Stop();
 		}
 		#endregion

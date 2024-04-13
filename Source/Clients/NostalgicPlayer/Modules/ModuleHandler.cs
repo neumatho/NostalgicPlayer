@@ -44,6 +44,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 		/********************************************************************/
 		/// <summary>
+		/// Event called for each second the module has played
+		/// </summary>
+		/********************************************************************/
+		public event ClockUpdatedEventHandler ClockUpdated;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Event called when the player change position
 		/// </summary>
 		/********************************************************************/
@@ -371,6 +380,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 					player.EndReached -= Player_EndReached;
 					player.ModuleInfoChanged -= Player_ModuleInfoChanged;
+					player.ClockUpdated -= Player_ClockUpdated;
 
 					// Cleanup the player
 					player.CleanupPlayer(false);
@@ -416,6 +426,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 					player.EndReached -= Player_EndReached;
 					player.ModuleInfoChanged -= Player_ModuleInfoChanged;
+					player.ClockUpdated -= Player_ClockUpdated;
 
 					isPlaying = false;
 
@@ -654,21 +665,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the time on the position given
-		/// </summary>
-		/********************************************************************/
-		public TimeSpan? GetPositionTime(int position)
-		{
-			if ((PlayingModuleInformation.DurationInfo == null) || (position < 0) || (position >= PlayingModuleInformation.DurationInfo.PositionInfo.Length))
-				return null;
-
-			return PlayingModuleInformation.DurationInfo.PositionInfo[position].Time;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Return the enable status for all channels
 		/// </summary>
 		/********************************************************************/
@@ -697,6 +693,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		#endregion
 
 		#region Event handlers
+		/********************************************************************/
+		/// <summary>
+		/// Is called every time the clock is updated
+		/// </summary>
+		/********************************************************************/
+		private void Player_ClockUpdated(object sender, ClockUpdatedEventArgs e)
+		{
+			// Just call the next event handler
+			if (ClockUpdated != null)
+				ClockUpdated(sender, e);
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called every time the player changed position
@@ -903,6 +913,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				}
 
 				// Subscribe to event notifications
+				player.ClockUpdated += Player_ClockUpdated;
 				player.EndReached += Player_EndReached;
 				player.ModuleInfoChanged += Player_ModuleInfoChanged;
 

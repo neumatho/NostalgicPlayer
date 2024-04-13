@@ -62,6 +62,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		ModuleInfoFloating PlayingModuleInformation { get; }
 
 		/// <summary>
+		/// Event called for each second the module has played
+		/// </summary>
+		event ClockUpdatedEventHandler ClockUpdated;
+
+		/// <summary>
 		/// Event called when the player reached the end
 		/// </summary>
 		event EventHandler EndReached;

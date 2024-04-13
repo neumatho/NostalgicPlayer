@@ -6,6 +6,7 @@
 using System;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Sound.Timer;
@@ -21,11 +22,21 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		/// <summary></summary>
 		protected TimedEventHandler timedEventHandler;
 		/// <summary></summary>
-		protected TimedEventHandler noLatencyTimedEventHandler;
+		protected TimedEventWithNoLatencyHandler noLatencyTimedEventHandler;
 
 		private int framesPlayedLastRound;
 
+		private ClockUpdatedEvent clockUpdatedEvent;
 		private PositionChangedEvent positionChangedEvent;
+
+		/********************************************************************/
+		/// <summary>
+		/// Event called for each second the module has played
+		/// </summary>
+		/********************************************************************/
+		public event ClockUpdatedEventHandler ClockUpdated;
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -42,6 +53,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		/// </summary>
 		/********************************************************************/
 		public event ModuleInfoChangedEventHandler ModuleInfoChanged;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Send an event when the clock is updated
+		/// </summary>
+		/********************************************************************/
+		public void OnClockUpdated(ClockUpdatedEventArgs e)
+		{
+			if (ClockUpdated != null)
+				ClockUpdated(this, e);
+		}
 
 
 
@@ -80,7 +104,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		{
 			get => positionChangedEvent.SongPosition;
 
-			set => positionChangedEvent.SongPosition = value;
+			set
+			{
+				clockUpdatedEvent.SetClockToGivenTime(value * IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * 1000);
+				positionChangedEvent.SongPosition = value;
+			}
 		}
 
 
@@ -90,9 +118,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		/// Restart the position
 		/// </summary>
 		/********************************************************************/
-		protected void RestartPosition(double restartPosition)
+		protected void RestartPosition(double restartTime)
 		{
-			positionChangedEvent.RestartPosition(restartPosition);
+			clockUpdatedEvent.SetClockToGivenTime(restartTime);
+			positionChangedEvent.RestartPosition(restartTime);
 		}
 
 		#region Overrides
@@ -130,9 +159,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		{
 			// Initializer event timer
 			timedEventHandler = new TimedEventHandler();
-			noLatencyTimedEventHandler = new TimedEventHandler();
+			noLatencyTimedEventHandler = new TimedEventWithNoLatencyHandler();
 			framesPlayedLastRound = 0;
 
+			clockUpdatedEvent = new ClockUpdatedEvent(this, noLatencyTimedEventHandler);
 			positionChangedEvent = new PositionChangedEvent(this, noLatencyTimedEventHandler);
 		}
 
@@ -149,6 +179,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 			timedEventHandler = null;
 			noLatencyTimedEventHandler = null;
 
+			clockUpdatedEvent = null;
 			positionChangedEvent = null;
 		}
 
@@ -186,6 +217,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 			timedEventHandler.SetOutputFormat(outputInformation);
 			noLatencyTimedEventHandler.SetOutputFormat(outputInformation);
 
+			clockUpdatedEvent.SetOutputFormat(outputInformation);
 			positionChangedEvent.SetOutputFormat(outputInformation);
 		}
 
@@ -199,7 +231,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		public virtual void ChangeConfiguration(MixerConfiguration mixerConfiguration)
 		{
 			timedEventHandler?.SetLatency(mixerConfiguration.VisualsLatency);
-			noLatencyTimedEventHandler?.SetLatency(0);
 		}
 		#endregion
 

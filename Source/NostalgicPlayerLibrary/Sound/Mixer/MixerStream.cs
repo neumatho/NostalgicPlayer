@@ -31,6 +31,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			mixer = new Mixer();
 			mixerLock = new object();
 
+			mixer.ClockUpdated += Mixer_ClockUpdated;
 			mixer.PositionChanged += Mixer_PositionChanged;
 			mixer.ModuleInfoChanged += Mixer_ModuleInfoChanged;
 
@@ -52,7 +53,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				{
 					mixer.Cleanup();
 
+					mixer.ModuleInfoChanged -= Mixer_ModuleInfoChanged;
 					mixer.PositionChanged -= Mixer_PositionChanged;
+					mixer.ClockUpdated -= Mixer_ClockUpdated;
 
 					mixer = null;
 					mixerLock = null;
@@ -218,6 +221,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		#endregion
 
 		#region Handler methods
+		/********************************************************************/
+		/// <summary>
+		/// Is called when the clock is updated in the mixer
+		/// </summary>
+		/********************************************************************/
+		private void Mixer_ClockUpdated(object sender, ClockUpdatedEventArgs e)
+		{
+			OnClockUpdated(e);
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Is called when the position changes in the mixer

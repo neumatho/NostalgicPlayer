@@ -48,7 +48,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Timer
 		#endregion
 
 		private int mixerFrequency;
-		private int outputLatencyInFrames;
+		protected int outputLatencyInFrames;
 		private int currentLatency;
 		private int latencyInFrames;
 
@@ -74,7 +74,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Timer
 		/// Set the output format
 		/// </summary>
 		/********************************************************************/
-		public void SetOutputFormat(OutputInfo outputInformation)
+		public virtual void SetOutputFormat(OutputInfo outputInformation)
 		{
 			mixerFrequency = outputInformation.Frequency;
 			outputLatencyInFrames = outputInformation.BufferSizeInFrames;
@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Timer
 		/// Set the latency
 		/// </summary>
 		/********************************************************************/
-		public void SetLatency(int latency)
+		public virtual void SetLatency(int latency)
 		{
 			currentLatency = latency;
 
@@ -161,13 +161,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Timer
 			}
 		}
 
-		#region Private methods
+		#region Helper methods
 		/********************************************************************/
 		/// <summary>
 		/// Calculate the current latency
 		/// </summary>
 		/********************************************************************/
-		private void CalculateLatency()
+		protected void CalculateLatency()
 		{
 			latencyInFrames = (int)(((float)mixerFrequency / 1000) * currentLatency) + outputLatencyInFrames;
 		}
