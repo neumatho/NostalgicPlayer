@@ -40,6 +40,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 		private Stream fileStream;
 
 		private byte[] mixerBuffer;
+		private int mixerBufferSizeInFrames;
 		private int[] converterBuffer;
 
 		private ManualResetEvent shutdownEvent;
@@ -112,7 +113,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 				outputAgentInUse = null;
 
 				// Allocate buffer to use
+				int channels = settings.OutputType == DiskSaverSettings.OutType.Stereo ? 2 : 1;
+
 				mixerBuffer = new byte[MixerBufferSize];
+				mixerBufferSizeInFrames = MixerBufferSize / channels / settings.OutputSize;
 
 				// Create needed events
 				shutdownEvent = new ManualResetEvent(false);
@@ -308,9 +312,9 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 				if (outputAgentInUse == null)
 				{
 					int channels = settings.OutputType == DiskSaverSettings.OutType.Stereo ? 2 : 1;
-					soundStream.SetOutputFormat(new OutputInfo(channels, settings.OutputFrequency, MixerBufferSize / channels));
+					soundStream.SetOutputFormat(new OutputInfo(channels, settings.OutputFrequency, mixerBufferSizeInFrames));
 
-					formatInfo = new SaveSampleFormatInfo((byte)settings.OutputSize, settings.OutputType == DiskSaverSettings.OutType.Mono ? 1 : 2, (uint)settings.OutputFrequency, 0, 0, moduleName, author);
+					formatInfo = new SaveSampleFormatInfo((byte)settings.OutputSize, channels, (uint)settings.OutputFrequency, 0, 0, moduleName, author);
 				}
 				else
 				{
@@ -359,11 +363,13 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 		/// Save the given buffer to disk
 		/// </summary>
 		/********************************************************************/
-		public void SaveSampleBuffer(byte[] buffer, int length, int bitsPerSample)
+		public void SaveSampleBuffer(byte[] buffer, int lengthInFrames, int bitsPerSample)
 		{
-			if (length > 0)
+			if (lengthInFrames > 0)
 			{
-				int numberOfSamples = length / (bitsPerSample / 8);
+				int channels = settings.OutputType == DiskSaverSettings.OutType.Stereo ? 2 : 1;
+				int numberOfSamples = lengthInFrames * channels;
+				int numberOfBytes = numberOfSamples * (bitsPerSample / 8);
 
 				if ((converterBuffer == null) || (converterBuffer.Length < numberOfSamples))
 				{
@@ -374,7 +380,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 				if (bitsPerSample == 32)
 				{
 					// Convert 32-bit byte array to an int array
-					for (int i = 0, j = 0; i < length; i += 4, j++)
+					for (int i = 0, j = 0; i < numberOfBytes; i += 4, j++)
 					{
 						int sample = BitConverter.ToInt32(buffer, i);
 						converterBuffer[j] = sample;
@@ -383,7 +389,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 				else if (bitsPerSample == 16)
 				{
 					// Convert 16-bit byte array to an int array
-					for (int i = 0, j = 0; i < length; i += 2, j++)
+					for (int i = 0, j = 0; i < numberOfBytes; i += 2, j++)
 					{
 						int sample = BitConverter.ToInt16(buffer, i) << 16;
 						converterBuffer[j] = sample;
@@ -461,10 +467,10 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 					//
 					// Since we do not know if we're playing a module or sampling, we always do the logic described
 					// above, but it does not matter if we do it for modules too, since nothing extra is saved
-					int read = stream.Read(mixerBuffer, 0, mixerBuffer.Length);
+					int framesRead = stream.Read(mixerBuffer, 0, mixerBufferSizeInFrames);
 
 					if (!sampleDelay)
-						SaveSampleBuffer(mixerBuffer, read, 32);
+						SaveSampleBuffer(mixerBuffer, framesRead, 32);
 					else
 					{
 						// Pause the playing

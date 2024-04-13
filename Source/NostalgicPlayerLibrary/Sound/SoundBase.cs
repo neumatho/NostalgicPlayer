@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		/// <summary></summary>
 		protected TimedEventHandler noLatencyTimedEventHandler;
 
-		private int samplesPlayedLastRound;
+		private int framesPlayedLastRound;
 
 		private PositionChangedEvent positionChangedEvent;
 
@@ -131,7 +131,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 			// Initializer event timer
 			timedEventHandler = new TimedEventHandler();
 			noLatencyTimedEventHandler = new TimedEventHandler();
-			samplesPlayedLastRound = 0;
+			framesPlayedLastRound = 0;
 
 			positionChangedEvent = new PositionChangedEvent(this, noLatencyTimedEventHandler);
 		}
@@ -209,12 +209,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		/// Increase the current time by the number of samples given
 		/// </summary>
 		/********************************************************************/
-		protected void IncreaseCurrentTime(int numberOfSamples)
+		protected void IncreaseCurrentTime(int numberOfFrames)
 		{
-			timedEventHandler.IncreaseCurrentTime(samplesPlayedLastRound);
-			noLatencyTimedEventHandler?.IncreaseCurrentTime(samplesPlayedLastRound);
+			timedEventHandler.IncreaseCurrentTime(framesPlayedLastRound);
+			noLatencyTimedEventHandler?.IncreaseCurrentTime(framesPlayedLastRound);
 
-			samplesPlayedLastRound = numberOfSamples;
+			framesPlayedLastRound = numberOfFrames;
 		}
 
 

@@ -311,7 +311,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 				stream?.Dispose();
 
 				int bytesPerSample = outputFormat.BitsPerSample / 8;
-				soundStream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, (outputFormat.AverageBytesPerSecond / bytesPerSample) * LatencyMilliseconds / 1000));
+				soundStream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, (outputFormat.AverageBytesPerSecond / bytesPerSample / outputFormat.Channels) * LatencyMilliseconds / 1000));
 				stream = soundStream;
 			}
 
@@ -526,7 +526,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 					// Tell the mixer about new sample rates etc.
 					int bytesPerSample = outputFormat.BitsPerSample / 8;
-					stream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, (outputFormat.AverageBytesPerSecond / bytesPerSample) * LatencyMilliseconds / 1000));
+					stream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, (outputFormat.AverageBytesPerSecond / bytesPerSample / outputFormat.Channels) * LatencyMilliseconds / 1000));
 
 					playbackState = oldState;
 				}
@@ -712,14 +712,13 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 			lock (streamLock)
 			{
 				IntPtr buffer = audioRenderClient.GetBuffer(frameCount);
-				int read;
+				int framesRead;
 
 				try
 				{
-					int readLength = frameCount * bytesPerFrame;
-					read = stream == null ? 0 : stream.Read(readBuffer, 0, readLength);
-					if (read > 0)
-						ConvertToOutputFormat(buffer, read);
+					framesRead = stream == null ? 0 : stream.Read(readBuffer, 0, frameCount);
+					if (framesRead > 0)
+						ConvertToOutputFormat(buffer, framesRead);
 				}
 				catch(Exception)
 				{
@@ -727,8 +726,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 					throw;
 				}
 
-				int actualFrameCount = read / bytesPerFrame;
-				audioRenderClient.ReleaseBuffer(actualFrameCount, AudioClientBufferFlags.None);
+				audioRenderClient.ReleaseBuffer(framesRead, AudioClientBufferFlags.None);
 			}
 		}
 
@@ -739,25 +737,27 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/// Will convert the read 32-bit PCM to whatever output format needed
 		/// </summary>
 		/********************************************************************/
-		private void ConvertToOutputFormat(IntPtr outputBuffer, int bytesRead)
+		private void ConvertToOutputFormat(IntPtr outputBuffer, int framesRead)
 		{
+			int samplesLeft = framesRead * outputFormat.Channels;
+
 			switch (outputSampleFormat)
 			{
 				case SampleFormat._16:
 				{
-					ConvertTo16Bit(readBuffer, outputBuffer, bytesRead);
+					ConvertTo16Bit(readBuffer, outputBuffer, samplesLeft);
 					break;
 				}
 
 				case SampleFormat._32:
 				{
-					ConvertTo32Bit(readBuffer, outputBuffer, bytesRead);
+					ConvertTo32Bit(readBuffer, outputBuffer, samplesLeft);
 					break;
 				}
 
 				case SampleFormat.Ieee:
 				{
-					ConvertToIeeeFloat(readBuffer, outputBuffer, bytesRead);
+					ConvertToIeeeFloat(readBuffer, outputBuffer, samplesLeft);
 					break;
 				}
 			}
@@ -770,11 +770,9 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/// Convert to 16-bit PCM
 		/// </summary>
 		/********************************************************************/
-		private unsafe void ConvertTo16Bit(byte[] inputBuffer, IntPtr outputBuffer, int bytesRead)
+		private unsafe void ConvertTo16Bit(byte[] inputBuffer, IntPtr outputBuffer, int samplesLeft)
 		{
 			short x1, x2, x3, x4;
-
-			int samplesLeft = bytesRead / OutputInfo.BytesPerSample;
 
 			Span<int> source = MemoryMarshal.Cast<byte, int>(inputBuffer);
 			Span<short> dest = new Span<short>(outputBuffer.ToPointer(), samplesLeft * 2);
@@ -810,9 +808,9 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/// Convert to 32-bit PCM
 		/// </summary>
 		/********************************************************************/
-		private void ConvertTo32Bit(byte[] inputBuffer, IntPtr outputBuffer, int bytesRead)
+		private void ConvertTo32Bit(byte[] inputBuffer, IntPtr outputBuffer, int samplesLeft)
 		{
-			Marshal.Copy(inputBuffer, 0, outputBuffer, bytesRead);
+			Marshal.Copy(inputBuffer, 0, outputBuffer, samplesLeft * OutputInfo.BytesPerSample);
 		}
 
 
@@ -822,11 +820,9 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 		/// Convert to IEEE floating point
 		/// </summary>
 		/********************************************************************/
-		private unsafe void ConvertToIeeeFloat(byte[] inputBuffer, IntPtr outputBuffer, int bytesRead)
+		private unsafe void ConvertToIeeeFloat(byte[] inputBuffer, IntPtr outputBuffer, int samplesLeft)
 		{
 			float x1, x2, x3, x4;
-
-			int samplesLeft = bytesRead / OutputInfo.BytesPerSample;
 
 			Span<int> source = MemoryMarshal.Cast<byte, int>(inputBuffer);
 			Span<float> dest = new Span<float>(outputBuffer.ToPointer(), samplesLeft * 4);

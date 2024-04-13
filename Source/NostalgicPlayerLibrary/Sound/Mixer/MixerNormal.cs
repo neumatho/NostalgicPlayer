@@ -62,8 +62,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// This is the main mixer method
 		/// </summary>
 		/********************************************************************/
-		public override void Mixing(int[][] channelMap, int offsetInSamples, int todoInSamples, MixerMode mode)
+		public override void Mixing(int[][] channelMap, int offsetInFrames, int todoInFrames, MixerMode mode)
 		{
+			bool isStereo = (mode & MixerMode.Stereo) != 0;
+			int offsetInSamples = offsetInFrames * (isStereo ? 2 : 1);
+
 			// Loop through all the channels and mix the samples into the buffer
 			for (int t = 0; t < channelNumber; t++)
 			{
@@ -133,7 +136,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 						vnf.LeftVolumeSelected = vol;
 					}
 
-					AddChannel(ref vnf, channelMap[t], offsetInSamples, todoInSamples, mode);
+					AddChannel(ref vnf, channelMap[t], offsetInSamples, todoInFrames, mode);
 				}
 			}
 		}
@@ -158,8 +161,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Mix a channel into the buffer
 		/// </summary>
 		/********************************************************************/
-		private void AddChannel(ref VoiceInfo vnf, int[] buf, int offsetInSamples, int todoInSamples, MixerMode mode)
+		private void AddChannel(ref VoiceInfo vnf, int[] buf, int offsetInSamples, int todoInFrames, MixerMode mode)
 		{
+			// todoInFrames at this point is actually the same as todoInSamples, since it works on the
+			// sample to be mixed into the buf[] and the sample is in mono
+
 			Array left = vnf.Addresses[0];
 			Array right = vnf.Addresses[1];
 
@@ -169,6 +175,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				vnf.Active = false;
 				return;
 			}
+
+			bool isStereo = (mode & MixerMode.Stereo) != 0;
 
 			// The current size of the playing sample in fixed point
 			long idxSize = vnf.Size != 0 ? ((long)vnf.Size << FracBits) - 1 : 0;
@@ -184,7 +192,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 			// Update the 'current' index so the sample loops, or
 			// stops playing if it reached the end of the sample
-			while (todoInSamples > 0)
+			while (todoInFrames > 0)
 			{
 				if ((vnf.Flags & SampleFlag.Reverse) != 0)
 				{
@@ -316,7 +324,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					done = 0;
 				else
 				{
-					done = Math.Min((int)((end - vnf.Current) / vnf.Increment + 1), todoInSamples);
+					done = Math.Min((int)((end - vnf.Current) / vnf.Increment + 1), todoInFrames);
 					if (done < 0)
 						done = 0;
 				}
@@ -360,8 +368,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					vnf.Current = endPos;
 				}
 
-				todoInSamples -= done;
-				offsetInSamples += (mode & MixerMode.Stereo) != 0 ? done << 1 : done;
+				todoInFrames -= done;
+				offsetInSamples += isStereo ? done << 1 : done;
 			}
 		}
 		#endregion

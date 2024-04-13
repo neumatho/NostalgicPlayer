@@ -208,7 +208,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// This is the main mixer method
 		/// </summary>
 		/********************************************************************/
-		public abstract void Mixing(int[][] channelMap, int offsetInSamples, int todoInSamples, MixerMode mode);
+		public abstract void Mixing(int[][] channelMap, int offsetInFrames, int todoInFrames, MixerMode mode);
 
 
 

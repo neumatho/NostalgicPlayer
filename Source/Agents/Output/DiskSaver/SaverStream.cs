@@ -120,16 +120,16 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 		/// Read mixed data
 		/// </summary>
 		/********************************************************************/
-		public override int Read(byte[] buffer, int offset, int count)
+		public override int Read(byte[] buffer, int offsetInBytes, int frameCount)
 		{
-			int read = wrapperStream.Read(buffer, offset, count);
-			if (read > 0)
+			int framesRead = wrapperStream.Read(buffer, offsetInBytes, frameCount);
+			if (framesRead > 0)
 			{
-				byte[] newBuffer = FixBuffer(buffer, offset, read);
-				worker.SaveSampleBuffer(newBuffer, newBuffer.Length, OutputInfo.BytesPerSample * 8);
+				byte[] newBuffer = FixBuffer(buffer, offsetInBytes, framesRead);
+				worker.SaveSampleBuffer(newBuffer, framesRead, OutputInfo.BytesPerSample * 8);
 			}
 
-			return read;
+			return framesRead;
 		}
 		#endregion
 
@@ -140,20 +140,22 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 		/// channels
 		/// </summary>
 		/********************************************************************/
-		private byte[] FixBuffer(byte[] buffer, int offset, int count)
+		private byte[] FixBuffer(byte[] buffer, int offsetInBytes, int framesCount)
 		{
+			int countInSamples = framesCount * OutputInfo.Channels;
+
 			if (OutputInfo.Channels > 2)
 			{
-				byte[] newBuffer = new byte[(count / OutputInfo.Channels) * 2];
+				byte[] newBuffer = new byte[framesCount * 2 * OutputInfo.BytesPerSample];
 
-				Span<int> source = MemoryMarshal.Cast<byte, int>(buffer.AsSpan(offset, count));
+				Span<int> source = MemoryMarshal.Cast<byte, int>(buffer.AsSpan(offsetInBytes, countInSamples * OutputInfo.BytesPerSample));
 				Span<int> dest = MemoryMarshal.Cast<byte, int>(newBuffer);
 
 				int channelsToSkip = OutputInfo.Channels - 2;
 				int sourceOffset = 0;
 				int destOffset = 0;
 
-				while (sourceOffset < count / 4)
+				while (sourceOffset < countInSamples)
 				{
 					dest[destOffset++] = source[sourceOffset++];
 					dest[destOffset++] = source[sourceOffset++];
@@ -164,8 +166,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 				return newBuffer;
 			}
 
-			if (offset > 0)
-				return buffer.AsSpan(offset, count).ToArray();
+			if (offsetInBytes > 0)
+				return buffer.AsSpan(offsetInBytes, countInSamples * OutputInfo.BytesPerSample).ToArray();
 
 			return buffer;
 		}

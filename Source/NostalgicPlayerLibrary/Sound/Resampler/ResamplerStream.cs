@@ -24,8 +24,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		private Resampler resampler;
 		private object resamplerLock;
 
-		private int maxBufferSize;
+		private int maxBufferSizeInFrames;
 		private int delayCount;
+		private int outputChannelNumber;
 
 		/********************************************************************/
 		/// <summary>
@@ -36,7 +37,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		{
 			playing = false;
 
-			maxBufferSize = 0;
+			maxBufferSizeInFrames = 0;
 			delayCount = 0;
 
 			resampler = new Resampler();
@@ -97,6 +98,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		{
 			if (resamplerLock != null)
 			{
+				outputChannelNumber = outputInformation.Channels;
+
 				lock (resamplerLock)
 				{
 					resampler.SetOutputFormat(outputInformation);
@@ -201,7 +204,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		/// Read mixed data
 		/// </summary>
 		/********************************************************************/
-		public override int Read(byte[] buffer, int offset, int count)
+		public override int Read(byte[] buffer, int offsetInBytes, int frameCount)
 		{
 			try
 			{
@@ -211,31 +214,31 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 					// event, we want to play a full buffer of silence when the sample has ended
 					//
 					// We need to keep track of the maximum size the buffer could be
-					maxBufferSize = Math.Max(maxBufferSize, count);
+					maxBufferSizeInFrames = Math.Max(maxBufferSizeInFrames, frameCount);
 
 					// Check if we need to delay the filling (wait for the latency buffer to be played)
 					if (delayCount > 0)
 					{
-						int todoInBytes = Math.Min(delayCount, count);
+						int todoInFrames = Math.Min(delayCount, frameCount);
 
-						delayCount -= todoInBytes;
+						delayCount -= todoInFrames;
 						if (delayCount == 0)
 						{
 							// Now we're sure that the whole sampling has been played, so tell the client
 							OnEndReached(this, EventArgs.Empty);
 						}
 
-						Array.Clear(buffer, offset, todoInBytes);
-						return todoInBytes;
+						Array.Clear(buffer, offsetInBytes, todoInFrames * outputChannelNumber * OutputInfo.BytesPerSample);
+						return todoInFrames;
 					}
 
-					int samplesTaken = resampler.Resampling(buffer, offset, count / OutputInfo.BytesPerSample, out bool hasEndReached);
+					int framesTaken = resampler.Resampling(buffer, offsetInBytes, frameCount, out bool hasEndReached);
 					HasEndReached = hasEndReached;
 
 					if (hasEndReached)
-						delayCount = maxBufferSize;		// Set the delay count to a whole buffer
+						delayCount = maxBufferSizeInFrames;		// Set the delay count to a whole buffer
 
-					return samplesTaken * OutputInfo.BytesPerSample;
+					return framesTaken;
 				}
 
 				return 0;

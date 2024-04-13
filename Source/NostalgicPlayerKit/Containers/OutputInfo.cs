@@ -24,11 +24,11 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public OutputInfo(int channels, int frequency, int bufferSizeInSamples)
+		public OutputInfo(int channels, int frequency, int bufferSizeInFrames)
 		{
 			Channels = channels;
 			Frequency = frequency;
-			BufferSizeInSamples = bufferSizeInSamples;
+			BufferSizeInFrames = bufferSizeInFrames;
 		}
 
 
@@ -59,10 +59,10 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the average buffer size in samples
+		/// Holds the average buffer size in frames
 		/// </summary>
 		/********************************************************************/
-		public int BufferSizeInSamples
+		public int BufferSizeInFrames
 		{
 			get;
 		}

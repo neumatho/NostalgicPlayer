@@ -185,11 +185,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Read mixed data
 		/// </summary>
 		/********************************************************************/
-		public override int Read(byte[] buffer, int offset, int count)
+		public override int Read(byte[] buffer, int offsetInBytes, int frameCount)
 		{
 			try
 			{
-				int mixedSamples;
+				int framesMixed;
 
 				if (mixerLock == null)
 					return 0;
@@ -200,16 +200,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					if (mixer == null)
 						return 0;
 
-					int samplesMixed = mixer.Mixing(buffer, offset, count / OutputInfo.BytesPerSample, out bool hasEndReached);
+					framesMixed = mixer.Mixing(buffer, offsetInBytes, frameCount, out bool hasEndReached);
 					HasEndReached = hasEndReached;
-
-					mixedSamples = samplesMixed * OutputInfo.BytesPerSample;
 				}
 
 				if (HasEndReached)
 					OnEndReached(this, EventArgs.Empty);
 
-				return mixedSamples;
+				return framesMixed;
 			}
 			catch(Exception ex)
 			{

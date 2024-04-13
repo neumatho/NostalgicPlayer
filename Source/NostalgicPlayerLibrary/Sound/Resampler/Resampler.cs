@@ -39,10 +39,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		private int mixerChannels;
 
 		private int[] dataBuffer;
-		private int samplesRead;
+		private int framesRead;
 
 		private int[] sampleBuffer;
-		private int bufferSizeInSamples;
+		private int bufferSizeInFrames;
 
 		private int dataSize;
 		private int currentIndex;
@@ -168,7 +168,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 			mixerChannels = outputChannels >= 2 ? 2 : 1;
 
 			// Initialize variables
-			samplesRead = 0;
+			framesRead = 0;
 
 			dataSize = 0;
 			currentIndex = 0;
@@ -178,9 +178,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 			rightVolume = 0;
 			rampVolume = 0;
 
-			// Get the maximum number of samples the given destination
+			// Get the maximum number of frames the given destination
 			// buffer from the output agent can be
-			bufferSizeInSamples = (outputInformation.BufferSizeInSamples / outputChannels) * mixerChannels;
+			bufferSizeInFrames = outputInformation.BufferSizeInFrames;
 
 			// Allocate the buffers
 			int len = inputFrequency / 2 * inputChannels;		// Around half second buffer size
@@ -188,7 +188,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 				len++;		// Need to make it even
 
 			dataBuffer = new int[len];
-			sampleBuffer = new int[bufferSizeInSamples];
+			sampleBuffer = new int[bufferSizeInFrames * mixerChannels];
 
 			currentVisualizer.SetOutputFormat(outputInformation);
 		}
@@ -219,28 +219,23 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		/// from the ResamplerStream to read the next bunch of data
 		/// </summary>
 		/********************************************************************/
-		public int Resampling(byte[] buffer, int offsetInBytes, int countInSamples, out bool hasEndReached)
+		public int Resampling(byte[] buffer, int offsetInBytes, int frameCount, out bool hasEndReached)
 		{
-			// Find the size of the buffer
-			//
-			// bufferSize = size of mixer buffer for either mono or stereo
-			// count = size of output buffer for all channels the output need
-			int outputCheckCount = (countInSamples / outputChannels) * mixerChannels;
-			int bufSizeInSamples = Math.Min(bufferSizeInSamples, outputCheckCount);
+			// Find out how many frames to process
+			int framesToProcess = Math.Min(frameCount, bufferSizeInFrames);
 
-			int totalSamples = ResampleSample(bufSizeInSamples, out hasEndReached);
+			int totalFramesProcessed = ResampleSample(framesToProcess, out hasEndReached);
 
 			// And then convert the resampled sample to the output format
 			bool isStereo = outputChannels >= 2;
+			int totalSamplesProcessed = totalFramesProcessed * (isStereo ? 2 : 1);
 			int samplesToSkip = isStereo ? outputChannels - 2 : 0;
-			ResampleConvertTo32(MemoryMarshal.Cast<byte, int>(buffer), offsetInBytes / 4, sampleBuffer, totalSamples, samplesToSkip, isStereo, isStereo ? swapSpeakers : false);
-
-			totalSamples = (totalSamples / mixerChannels) * outputChannels;
+			ResampleConvertTo32(MemoryMarshal.Cast<byte, int>(buffer), offsetInBytes / 4, sampleBuffer, totalSamplesProcessed, samplesToSkip, isStereo, isStereo ? swapSpeakers : false);
 
 			// Tell visual agents about the mixed data
-			currentVisualizer.TellAgentsAboutMixedData(buffer, offsetInBytes, totalSamples, outputChannels, swapSpeakers);
+			currentVisualizer.TellAgentsAboutMixedData(buffer, offsetInBytes, totalFramesProcessed * outputChannels, outputChannels, swapSpeakers);
 
-			return totalSamples;
+			return totalFramesProcessed;
 		}
 
 		#region Private methods
@@ -250,12 +245,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		/// needed
 		/// </summary>
 		/********************************************************************/
-		private int ResampleSample(int countInSamples, out bool hasEndReached)
+		private int ResampleSample(int countInFrames, out bool hasEndReached)
 		{
 			hasEndReached = false;
-
-			// And convert the number of samples to number of samples pair
-			countInSamples = outputChannels >= 2 ? countInSamples >> 1 : countInSamples;
 
 			// Get different parameters needed for the resampling
 			bool doInterpolation = interpolation;
@@ -269,17 +261,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 			// This method is called right after the previous buffer has been player,
 			// so at this point, add the number of samples played since last call
 			DoTimedEvents();
-			IncreaseCurrentTime(countInSamples);
+			IncreaseCurrentTime(countInFrames);
 
-			int totalSamples = 0;
+			int totalFrames = 0;
 
-			while ((countInSamples > 0) && !hasEndReached)
+			while ((countInFrames > 0) && !hasEndReached)
 			{
 				if (currentIndex >= dataSize)
 				{
 					lock (currentPlayer)
 					{
-						samplesRead = currentPlayer.LoadDataBlock(dataBuffer, dataBuffer.Length);
+						int samplesRead = currentPlayer.LoadDataBlock(dataBuffer, dataBuffer.Length);
+						framesRead = samplesRead / inputChannels;
 
 						// If any module information has been updated, queue those
 						ModuleInfoChanged[] moduleInfoChanges = currentPlayer.GetChangedInformation();
@@ -308,27 +301,29 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 					}
 
 					currentIndex = 0;
-					dataSize = samplesRead == 0 ? 0 : ((samplesRead / inputChannels) << FracBits) - 1;
+					dataSize = framesRead == 0 ? 0 : (framesRead << FracBits) - 1;
 				}
 
-				int todoInSamples = Math.Min((dataSize - currentIndex) / increment + 1, Math.Min(samplesRead, countInSamples));
-				if (todoInSamples > 0)
+				int todoInFrames = Math.Min((dataSize - currentIndex) / increment + 1, Math.Min(framesRead, countInFrames));
+				if (todoInFrames > 0)
 				{
+					int offsetInSamples = totalFrames * mixerChannels;
+
 					if (doInterpolation)
 					{
 						if (inputChannels == 1)
 						{
 							if (mixerChannels == 1)
-								currentIndex = ResampleMonoToMonoInterpolation(dataBuffer, sampleBuffer, totalSamples, currentIndex, increment, todoInSamples, leftVolume, oldLeftVolume, ref rampVolume);
+								currentIndex = ResampleMonoToMonoInterpolation(dataBuffer, sampleBuffer, offsetInSamples, currentIndex, increment, todoInFrames, leftVolume, oldLeftVolume, ref rampVolume);
 							else
-								currentIndex = ResampleMonoToStereoInterpolation(dataBuffer, sampleBuffer, totalSamples, currentIndex, increment, todoInSamples, leftVolume, oldLeftVolume, ref rampVolume);
+								currentIndex = ResampleMonoToStereoInterpolation(dataBuffer, sampleBuffer, offsetInSamples, currentIndex, increment, todoInFrames, leftVolume, oldLeftVolume, ref rampVolume);
 						}
 						else if (inputChannels == 2)
 						{
 							if (mixerChannels == 1)
-								currentIndex = ResampleStereoToMonoInterpolation(dataBuffer, sampleBuffer, totalSamples, currentIndex, increment, todoInSamples, leftVolume, rightVolume, oldLeftVolume, oldRightVolume, ref rampVolume);
+								currentIndex = ResampleStereoToMonoInterpolation(dataBuffer, sampleBuffer, offsetInSamples, currentIndex, increment, todoInFrames, leftVolume, rightVolume, oldLeftVolume, oldRightVolume, ref rampVolume);
 							else
-								currentIndex = ResampleStereoToStereoInterpolation(dataBuffer, sampleBuffer, totalSamples, currentIndex, increment, todoInSamples, leftVolume, rightVolume, oldLeftVolume, oldRightVolume, ref rampVolume);
+								currentIndex = ResampleStereoToStereoInterpolation(dataBuffer, sampleBuffer, offsetInSamples, currentIndex, increment, todoInFrames, leftVolume, rightVolume, oldLeftVolume, oldRightVolume, ref rampVolume);
 						}
 					}
 					else
@@ -336,25 +331,25 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 						if (inputChannels == 1)
 						{
 							if (mixerChannels == 1)
-								currentIndex = ResampleMonoToMonoNormal(dataBuffer, sampleBuffer, totalSamples, currentIndex, increment, todoInSamples, leftVolume);
+								currentIndex = ResampleMonoToMonoNormal(dataBuffer, sampleBuffer, offsetInSamples, currentIndex, increment, todoInFrames, leftVolume);
 							else
-								currentIndex = ResampleMonoToStereoNormal(dataBuffer, sampleBuffer, totalSamples, currentIndex, increment, todoInSamples, leftVolume);
+								currentIndex = ResampleMonoToStereoNormal(dataBuffer, sampleBuffer, offsetInSamples, currentIndex, increment, todoInFrames, leftVolume);
 						}
 						else if (inputChannels == 2)
 						{
 							if (mixerChannels == 1)
-								currentIndex = ResampleStereoToMonoNormal(dataBuffer, sampleBuffer, totalSamples, currentIndex, increment, todoInSamples, leftVolume, rightVolume);
+								currentIndex = ResampleStereoToMonoNormal(dataBuffer, sampleBuffer, offsetInSamples, currentIndex, increment, todoInFrames, leftVolume, rightVolume);
 							else
-								currentIndex = ResampleStereoToStereoNormal(dataBuffer, sampleBuffer, totalSamples, currentIndex, increment, todoInSamples, leftVolume, rightVolume);
+								currentIndex = ResampleStereoToStereoNormal(dataBuffer, sampleBuffer, offsetInSamples, currentIndex, increment, todoInFrames, leftVolume, rightVolume);
 						}
 					}
 
-					countInSamples -= todoInSamples;
-					totalSamples += (todoInSamples * mixerChannels);
+					countInFrames -= todoInFrames;
+					totalFrames += todoInFrames;
 				}
 			}
 
-			return totalSamples;
+			return totalFrames;
 		}
 
 		#region Normal
@@ -363,11 +358,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		/// Resample a mono sample into a mono output buffer
 		/// </summary>
 		/********************************************************************/
-		private int ResampleMonoToMonoNormal(int[] source, int[] dest, int offsetInSamples, int index, int incr, int todoInSamples, int volSel)
+		private int ResampleMonoToMonoNormal(int[] source, int[] dest, int offsetInSamples, int index, int incr, int todoInFrames, int volSel)
 		{
 			if (volSel == 256)
 			{
-				while (todoInSamples-- != 0)
+				while (todoInFrames-- != 0)
 				{
 					int sample = source[index >> FracBits];
 					index += incr;
@@ -379,7 +374,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 			{
 				float volDiv = 256.0f / volSel;
 
-				while (todoInSamples-- != 0)
+				while (todoInFrames-- != 0)
 				{
 					int sample = (int)(source[index >> FracBits] / volDiv);
 					index += incr;
@@ -398,11 +393,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		/// Resample a mono sample into a stereo output buffer
 		/// </summary>
 		/********************************************************************/
-		private int ResampleMonoToStereoNormal(int[] source, int[] dest, int offsetInSamples, int index, int incr, int todoInSamples, int volSel)
+		private int ResampleMonoToStereoNormal(int[] source, int[] dest, int offsetInSamples, int index, int incr, int todoInFrames, int volSel)
 		{
 			if (volSel == 256)
 			{
-				while (todoInSamples-- != 0)
+				while (todoInFrames-- != 0)
 				{
 					int sample = source[index >> FracBits];
 					index += incr;
@@ -415,7 +410,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 			{
 				float volDiv = 256.0f / volSel;
 
-				while (todoInSamples-- != 0)
+				while (todoInFrames-- != 0)
 				{
 					int sample = (int)(source[index >> FracBits] / volDiv);
 					index += incr;
@@ -435,11 +430,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		/// Resample a stereo sample into a mono output buffer
 		/// </summary>
 		/********************************************************************/
-		private int ResampleStereoToMonoNormal(int[] source, int[] dest, int offsetInSamples, int index, int incr, int todoInSamples, int lVolSel, int rVolSel)
+		private int ResampleStereoToMonoNormal(int[] source, int[] dest, int offsetInSamples, int index, int incr, int todoInFrames, int lVolSel, int rVolSel)
 		{
 			if ((lVolSel == 256) && (rVolSel == 256))
 			{
-				while (todoInSamples-- != 0)
+				while (todoInFrames-- != 0)
 				{
 					long sample1 = source[(index >> FracBits) * 2];
 					long sample2 = source[(index >> FracBits) * 2 + 1];
@@ -453,7 +448,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 				float lVolDiv = lVolSel == 0 ? 0f : 256.0f / lVolSel;
 				float rVolDiv = rVolSel == 0 ? 0f : 256.0f / rVolSel;
 
-				while (todoInSamples-- != 0)
+				while (todoInFrames-- != 0)
 				{
 					long sample1 = lVolSel == 0 ? 0 : (int)(source[(index >> FracBits) * 2] / lVolDiv);
 					long sample2 = rVolSel == 0 ? 0 : (int)(source[(index >> FracBits) * 2 + 1] / rVolDiv);
@@ -473,11 +468,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		/// Resample a stereo sample into a stereo output buffer
 		/// </summary>
 		/********************************************************************/
-		private int ResampleStereoToStereoNormal(int[] source, int[] dest, int offsetInSamples, int index, int incr, int todoInSamples, int lVolSel, int rVolSel)
+		private int ResampleStereoToStereoNormal(int[] source, int[] dest, int offsetInSamples, int index, int incr, int todoInFrames, int lVolSel, int rVolSel)
 		{
 			if ((lVolSel == 256) && (rVolSel == 256))
 			{
-				while (todoInSamples-- != 0)
+				while (todoInFrames-- != 0)
 				{
 					int sample1 = source[(index >> FracBits) * 2];
 					int sample2 = source[(index >> FracBits) * 2 + 1];
@@ -492,7 +487,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 				float lVolDiv = lVolSel == 0 ? 0f : 256.0f / lVolSel;
 				float rVolDiv = rVolSel == 0 ? 0f : 256.0f / rVolSel;
 
-				while (todoInSamples-- != 0)
+				while (todoInFrames-- != 0)
 				{
 					int sample1 = lVolSel == 0 ? 0 : (int)(source[(index >> FracBits) * 2] / lVolDiv);
 					int sample2 = rVolSel == 0 ? 0 : (int)(source[(index >> FracBits) * 2 + 1] / rVolDiv);
@@ -514,7 +509,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		/// interpolation
 		/// </summary>
 		/********************************************************************/
-		private int ResampleMonoToMonoInterpolation(int[] source, int[] dest, int offsetInSamples, int index, int incr, int todoInSamples, int volSel, int oldVol, ref int rampVol)
+		private int ResampleMonoToMonoInterpolation(int[] source, int[] dest, int offsetInSamples, int index, int incr, int todoInFrames, int volSel, int oldVol, ref int rampVol)
 		{
 			int len = source.Length;
 
@@ -524,7 +519,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 			{
 				oldVol -= volSel;
 
-				while (todoInSamples-- != 0)
+				while (todoInFrames-- != 0)
 				{
 					int idx = index >> FracBits;
 					if (idx >= len)
@@ -547,11 +542,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 						break;
 				}
 
-				if (todoInSamples < 0)
+				if (todoInFrames < 0)
 					return index;
 			}
 
-			while (todoInSamples-- != 0)
+			while (todoInFrames-- != 0)
 			{
 				int idx = index >> FracBits;
 				if (idx >= len)
@@ -582,7 +577,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		/// interpolation
 		/// </summary>
 		/********************************************************************/
-		private int ResampleMonoToStereoInterpolation(int[] source, int[] dest, int offsetInSamples, int index, int incr, int todoInSamples, int volSel, int oldVol, ref int rampVol)
+		private int ResampleMonoToStereoInterpolation(int[] source, int[] dest, int offsetInSamples, int index, int incr, int todoInFrames, int volSel, int oldVol, ref int rampVol)
 		{
 			int len = source.Length;
 
@@ -592,7 +587,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 			{
 				oldVol -= volSel;
 
-				while (todoInSamples-- != 0)
+				while (todoInFrames-- != 0)
 				{
 					int idx = index >> FracBits;
 					if (idx >= len)
@@ -618,11 +613,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 						break;
 				}
 
-				if (todoInSamples < 0)
+				if (todoInFrames < 0)
 					return index;
 			}
 
-			while (todoInSamples-- != 0)
+			while (todoInFrames-- != 0)
 			{
 				int idx = index >> FracBits;
 				if (idx >= len)
@@ -654,7 +649,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		/// interpolation
 		/// </summary>
 		/********************************************************************/
-		private int ResampleStereoToMonoInterpolation(int[] source, int[] dest, int offsetInSamples, int index, int incr, int todoInSamples, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
+		private int ResampleStereoToMonoInterpolation(int[] source, int[] dest, int offsetInSamples, int index, int incr, int todoInFrames, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
 		{
 			int len = source.Length;
 
@@ -666,7 +661,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 				oldLVol -= lVolSel;
 				oldRVol -= rVolSel;
 
-				while (todoInSamples-- != 0)
+				while (todoInFrames-- != 0)
 				{
 					int idx = (index >> FracBits) * 2;
 					if (idx >= len)
@@ -698,11 +693,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 						break;
 				}
 
-				if (todoInSamples < 0)
+				if (todoInFrames < 0)
 					return index;
 			}
 
-			while (todoInSamples-- != 0)
+			while (todoInFrames-- != 0)
 			{
 				int idx = (index >> FracBits) * 2;
 				if (idx >= len)
@@ -742,7 +737,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		/// interpolation
 		/// </summary>
 		/********************************************************************/
-		private int ResampleStereoToStereoInterpolation(int[] source, int[] dest, int offsetInSamples, int index, int incr, int todoInSamples, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
+		private int ResampleStereoToStereoInterpolation(int[] source, int[] dest, int offsetInSamples, int index, int incr, int todoInFrames, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
 		{
 			int len = source.Length;
 
@@ -754,7 +749,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 				oldLVol -= lVolSel;
 				oldRVol -= rVolSel;
 
-				while (todoInSamples-- != 0)
+				while (todoInFrames-- != 0)
 				{
 					int idx = (index >> FracBits) * 2;
 					if (idx >= len)
@@ -787,11 +782,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 						break;
 				}
 
-				if (todoInSamples < 0)
+				if (todoInFrames < 0)
 					return index;
 			}
 
-			while (todoInSamples-- != 0)
+			while (todoInFrames-- != 0)
 			{
 				int idx = (index >> FracBits) * 2;
 				if (idx >= len)

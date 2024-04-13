@@ -48,11 +48,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Timer
 		#endregion
 
 		private int mixerFrequency;
-		private int outputLatencyInSamples;
+		private int outputLatencyInFrames;
 		private int currentLatency;
-		private int latencyInSamples;
+		private int latencyInFrames;
 
-		private long currentTimeInSamples;
+		private long currentTimeInFrames;
 
 		private readonly List<EventItem> events;
 
@@ -63,7 +63,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Timer
 		/********************************************************************/
 		public TimedEventHandler()
 		{
-			currentTimeInSamples = 0;
+			currentTimeInFrames = 0;
 			events = new List<EventItem>();
 		}
 
@@ -77,7 +77,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Timer
 		public void SetOutputFormat(OutputInfo outputInformation)
 		{
 			mixerFrequency = outputInformation.Frequency;
-			outputLatencyInSamples = outputInformation.BufferSizeInSamples / outputInformation.Channels;
+			outputLatencyInFrames = outputInformation.BufferSizeInFrames;
 
 			CalculateLatency();
 		}
@@ -100,12 +100,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Timer
 
 		/********************************************************************/
 		/// <summary>
-		/// Increase the current time by the number of samples given
+		/// Increase the current time by the number of frames given
 		/// </summary>
 		/********************************************************************/
-		public void IncreaseCurrentTime(int numberOfSamples)
+		public void IncreaseCurrentTime(int numberOfFrames)
 		{
-			currentTimeInSamples += numberOfSamples;
+			currentTimeInFrames += numberOfFrames;
 		}
 
 
@@ -117,7 +117,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Timer
 		/********************************************************************/
 		public void AddEvent(ITimedEvent timedEvent, int executionTime)
 		{
-			events.Add(new EventItem(currentTimeInSamples + executionTime + latencyInSamples, timedEvent));
+			events.Add(new EventItem(currentTimeInFrames + executionTime + latencyInFrames, timedEvent));
 		}
 
 
@@ -152,10 +152,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Timer
 			while (events.Count > 0)
 			{
 				EventItem item = events[0];
-				if (item.ExecutionTime > currentTimeInSamples)
+				if (item.ExecutionTime > currentTimeInFrames)
 					break;
 
-				item.TimedEvent.Execute((int)(currentTimeInSamples - item.ExecutionTime));
+				item.TimedEvent.Execute((int)(currentTimeInFrames - item.ExecutionTime));
 
 				events.RemoveAt(0);
 			}
@@ -169,7 +169,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Timer
 		/********************************************************************/
 		private void CalculateLatency()
 		{
-			latencyInSamples = (int)(((float)mixerFrequency / 1000) * currentLatency) + outputLatencyInSamples;
+			latencyInFrames = (int)(((float)mixerFrequency / 1000) * currentLatency) + outputLatencyInFrames;
 		}
 		#endregion
 	}
