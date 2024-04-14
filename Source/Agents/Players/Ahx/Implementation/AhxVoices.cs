@@ -15,103 +15,103 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Implementation
 	internal class AhxVoices : IDeepCloneable<AhxVoices>
 	{
 		// Read those variables for mixing
-		public int voiceVolume;
-		public int voicePeriod;
-		public sbyte[] voiceBuffer = new sbyte[0x281];
+		public int VoiceVolume;
+		public int VoicePeriod;
+		public sbyte[] VoiceBuffer = new sbyte[0x281];
 
-		public int track;
-		public int transpose;
-		public int nextTrack;
-		public int nextTranspose;
+		public int Track;
+		public int Transpose;
+		public int NextTrack;
+		public int NextTranspose;
 
-		public int adsrVolume;							// Fixed point 8:8
-		public AhxEnvelope adsr = new AhxEnvelope();	// Frames / delta fixed 8:8
+		public int AdsrVolume;							// Fixed point 8:8
+		public AhxEnvelope Adsr = new AhxEnvelope();	// Frames / delta fixed 8:8
 
-		public AhxInstrument instrument;				// Current instrument
-		public int instrumentNumber;
+		public AhxInstrument Instrument;				// Current instrument
+		public int InstrumentNumber;
 
-		public int instrPeriod;
-		public int trackPeriod;
-		public int vibratoPeriod;
+		public int InstrPeriod;
+		public int TrackPeriod;
+		public int VibratoPeriod;
 
-		public int noteMaxVolume;
-		public int perfSubVolume;
-		public int trackMasterVolume;
+		public int NoteMaxVolume;
+		public int PerfSubVolume;
+		public int TrackMasterVolume;
 
-		public bool newWaveform;
-		public int waveform;
-		public bool plantSquare;
-		public bool plantPeriod;
-		public bool kickNote;
-		public bool ignoreSquare;
-		public bool waveformStarted;
+		public bool NewWaveform;
+		public int Waveform;
+		public bool PlantSquare;
+		public bool PlantPeriod;
+		public bool KickNote;
+		public bool IgnoreSquare;
+		public bool WaveformStarted;
 
-		public bool trackOn;
-		public bool fixedNote;
+		public bool TrackOn;
+		public bool FixedNote;
 
-		public int volumeSlideUp;
-		public int volumeSlideDown;
+		public int VolumeSlideUp;
+		public int VolumeSlideDown;
 
-		public int hardCut;
-		public bool hardCutRelease;
-		public int hardCutReleaseF;
+		public int HardCut;
+		public bool HardCutRelease;
+		public int HardCutReleaseF;
 
-		public int periodSlideSpeed;
-		public int periodSlidePeriod;
-		public int periodSlideLimit;
-		public bool periodSlideOn;
-		public bool periodSlideWithLimit;
+		public int PeriodSlideSpeed;
+		public int PeriodSlidePeriod;
+		public int PeriodSlideLimit;
+		public bool PeriodSlideOn;
+		public bool PeriodSlideWithLimit;
 
-		public int periodPerfSlideSpeed;
-		public int periodPerfSlidePeriod;
-		public bool periodPerfSlideOn;
+		public int PeriodPerfSlideSpeed;
+		public int PeriodPerfSlidePeriod;
+		public bool PeriodPerfSlideOn;
 
-		public int vibratoDelay;
-		public int vibratoCurrent;
-		public int vibratoDepth;
-		public int vibratoSpeed;
+		public int VibratoDelay;
+		public int VibratoCurrent;
+		public int VibratoDepth;
+		public int VibratoSpeed;
 
-		public bool squareOn;
-		public bool squareInit;
-		public int squareWait;
-		public int squareLowerLimit;
-		public int squareUpperLimit;
-		public int squarePos;
-		public int squareSign;
-		public bool squareSlidingIn;
-		public bool squareReverse;
+		public bool SquareOn;
+		public bool SquareInit;
+		public int SquareWait;
+		public int SquareLowerLimit;
+		public int SquareUpperLimit;
+		public int SquarePos;
+		public int SquareSign;
+		public bool SquareSlidingIn;
+		public bool SquareReverse;
 
-		public bool filterOn;
-		public bool filterInit;
-		public int filterWait;
-		public int filterLowerLimit;
-		public int filterUpperLimit;
-		public int filterPos;
-		public int filterSign;
-		public int filterSpeed;
-		public bool filterSlidingIn;
-		public bool ignoreFilter;
+		public bool FilterOn;
+		public bool FilterInit;
+		public int FilterWait;
+		public int FilterLowerLimit;
+		public int FilterUpperLimit;
+		public int FilterPos;
+		public int FilterSign;
+		public int FilterSpeed;
+		public bool FilterSlidingIn;
+		public bool IgnoreFilter;
 
-		public int perfCurrent;
-		public int perfSpeed;
-		public int perfWait;
+		public int PerfCurrent;
+		public int PerfSpeed;
+		public int PerfWait;
 
-		public int waveLength;
+		public int WaveLength;
 
-		public AhxPList perfList;
+		public AhxPList PerfList;
 
-		public int noteDelayWait;
-		public bool noteDelayOn;
-		public int noteCutWait;
-		public bool noteCutOn;
+		public int NoteDelayWait;
+		public bool NoteDelayOn;
+		public int NoteCutWait;
+		public bool NoteCutOn;
 
-		public sbyte[] audioSource;
-		public int audioOffset;
+		public sbyte[] AudioSource;
+		public int AudioOffset;
 
-		public int audioPeriod;
-		public int audioVolume;
+		public int AudioPeriod;
+		public int AudioVolume;
 
-		public sbyte[] squareTempBuffer = new sbyte[0x80];
+		public sbyte[] SquareTempBuffer = new sbyte[0x80];
 
 		/********************************************************************/
 		/// <summary>
@@ -120,108 +120,108 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Implementation
 		/********************************************************************/
 		public void Init()
 		{
-			voiceVolume = 0;
-			voicePeriod = 0;
+			VoiceVolume = 0;
+			VoicePeriod = 0;
 
-			track = 0;
-			transpose = 0;
-			nextTrack = 0;
-			nextTranspose = 0;
+			Track = 0;
+			Transpose = 0;
+			NextTrack = 0;
+			NextTranspose = 0;
 
-			adsrVolume = 0;
-			adsr.AFrames = 0;
-			adsr.AVolume = 0;
-			adsr.DFrames = 0;
-			adsr.DVolume = 0;
-			adsr.SFrames = 0;
-			adsr.RFrames = 0;
-			adsr.RVolume = 0;
+			AdsrVolume = 0;
+			Adsr.AFrames = 0;
+			Adsr.AVolume = 0;
+			Adsr.DFrames = 0;
+			Adsr.DVolume = 0;
+			Adsr.SFrames = 0;
+			Adsr.RFrames = 0;
+			Adsr.RVolume = 0;
 
-			instrument = null;
-			instrumentNumber = 0;
+			Instrument = null;
+			InstrumentNumber = 0;
 
-			instrPeriod = 0;
-			trackPeriod = 0;
-			vibratoPeriod = 0;
+			InstrPeriod = 0;
+			TrackPeriod = 0;
+			VibratoPeriod = 0;
 
-			noteMaxVolume = 0;
-			perfSubVolume = 0;
-			trackMasterVolume = 0x40;
+			NoteMaxVolume = 0;
+			PerfSubVolume = 0;
+			TrackMasterVolume = 0x40;
 
-			newWaveform = false;
-			waveform = 0;
-			plantSquare	= false;
-			plantPeriod = false;
-			kickNote = false;
-			ignoreSquare = false;
-			waveformStarted = false;
+			NewWaveform = false;
+			Waveform = 0;
+			PlantSquare	= false;
+			PlantPeriod = false;
+			KickNote = false;
+			IgnoreSquare = false;
+			WaveformStarted = false;
 
-			trackOn = true;
-			fixedNote = false;
+			TrackOn = true;
+			FixedNote = false;
 
-			volumeSlideUp = 0;
-			volumeSlideDown = 0;
+			VolumeSlideUp = 0;
+			VolumeSlideDown = 0;
 
-			hardCut = 0;
-			hardCutRelease = false;
-			hardCutReleaseF = 0;
+			HardCut = 0;
+			HardCutRelease = false;
+			HardCutReleaseF = 0;
 
-			periodSlideSpeed = 0;
-			periodSlidePeriod = 0;
-			periodSlideLimit = 0;
-			periodSlideOn = false;
-			periodSlideWithLimit = false;
+			PeriodSlideSpeed = 0;
+			PeriodSlidePeriod = 0;
+			PeriodSlideLimit = 0;
+			PeriodSlideOn = false;
+			PeriodSlideWithLimit = false;
 
-			periodPerfSlideSpeed = 0;
-			periodPerfSlidePeriod = 0;
-			periodPerfSlideOn = false;
+			PeriodPerfSlideSpeed = 0;
+			PeriodPerfSlidePeriod = 0;
+			PeriodPerfSlideOn = false;
 
-			vibratoDelay = 0;
-			vibratoCurrent = 0;
-			vibratoDepth = 0;
-			vibratoSpeed = 0;
+			VibratoDelay = 0;
+			VibratoCurrent = 0;
+			VibratoDepth = 0;
+			VibratoSpeed = 0;
 
-			squareOn = false;
-			squareInit = false;
-			squareWait = 0;
-			squareLowerLimit = 0;
-			squareUpperLimit = 0;
-			squarePos = 0;
-			squareSign = 0;
-			squareSlidingIn = false;
-			squareReverse = false;
+			SquareOn = false;
+			SquareInit = false;
+			SquareWait = 0;
+			SquareLowerLimit = 0;
+			SquareUpperLimit = 0;
+			SquarePos = 0;
+			SquareSign = 0;
+			SquareSlidingIn = false;
+			SquareReverse = false;
 
-			filterOn = false;
-			filterInit = false;
-			filterWait = 0;
-			filterLowerLimit = 0;
-			filterUpperLimit = 0;
-			filterPos = 0;
-			filterSign = 0;
-			filterSpeed = 0;
-			filterSlidingIn = false;
-			ignoreFilter = false;
+			FilterOn = false;
+			FilterInit = false;
+			FilterWait = 0;
+			FilterLowerLimit = 0;
+			FilterUpperLimit = 0;
+			FilterPos = 0;
+			FilterSign = 0;
+			FilterSpeed = 0;
+			FilterSlidingIn = false;
+			IgnoreFilter = false;
 
-			perfCurrent = 0;
-			perfSpeed = 0;
-			perfWait = 0;
+			PerfCurrent = 0;
+			PerfSpeed = 0;
+			PerfWait = 0;
 
-			waveLength = 0;
+			WaveLength = 0;
 
-			perfList = null;
+			PerfList = null;
 
-			noteDelayWait = 0;
-			noteDelayOn = false;
-			noteCutWait = 0;
-			noteCutOn = false;
+			NoteDelayWait = 0;
+			NoteDelayOn = false;
+			NoteCutWait = 0;
+			NoteCutOn = false;
 
-			audioSource = null;
+			AudioSource = null;
 
-			audioPeriod = 0;
-			audioVolume = 0;
+			AudioPeriod = 0;
+			AudioVolume = 0;
 
-			Array.Clear(voiceBuffer);
-			Array.Clear(squareTempBuffer);
+			Array.Clear(VoiceBuffer);
+			Array.Clear(SquareTempBuffer);
 		}
 
 
@@ -233,13 +233,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Implementation
 		/********************************************************************/
 		public void CalcAdsr()
 		{
-			adsr.AFrames = instrument.Envelope.AFrames;
-			adsr.AVolume = instrument.Envelope.AVolume * 256 / adsr.AFrames;
-			adsr.DFrames = instrument.Envelope.DFrames;
-			adsr.DVolume = (instrument.Envelope.DVolume - instrument.Envelope.AVolume) * 256 / adsr.DFrames;
-			adsr.SFrames = instrument.Envelope.SFrames;
-			adsr.RFrames = instrument.Envelope.RFrames;
-			adsr.RVolume = (instrument.Envelope.RVolume - instrument.Envelope.DVolume) * 256 / adsr.RFrames;
+			Adsr.AFrames = Instrument.Envelope.AFrames;
+			Adsr.AVolume = Instrument.Envelope.AVolume * 256 / Adsr.AFrames;
+			Adsr.DFrames = Instrument.Envelope.DFrames;
+			Adsr.DVolume = (Instrument.Envelope.DVolume - Instrument.Envelope.AVolume) * 256 / Adsr.DFrames;
+			Adsr.SFrames = Instrument.Envelope.SFrames;
+			Adsr.RFrames = Instrument.Envelope.RFrames;
+			Adsr.RVolume = (Instrument.Envelope.RVolume - Instrument.Envelope.DVolume) * 256 / Adsr.RFrames;
 		}
 
 
@@ -253,9 +253,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Implementation
 		{
 			AhxVoices clone = (AhxVoices)MemberwiseClone();
 
-			clone.voiceBuffer = ArrayHelper.CloneArray(voiceBuffer);
-			clone.adsr = adsr.MakeDeepClone();
-			clone.squareTempBuffer = ArrayHelper.CloneArray(squareTempBuffer);
+			clone.VoiceBuffer = ArrayHelper.CloneArray(VoiceBuffer);
+			clone.Adsr = Adsr.MakeDeepClone();
+			clone.SquareTempBuffer = ArrayHelper.CloneArray(SquareTempBuffer);
 
 			return clone;
 		}

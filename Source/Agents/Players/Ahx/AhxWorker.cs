@@ -618,10 +618,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 			{
 				AhxVoices voice = voices[i];
 
-				voice.plantPeriod = true;
-				voice.audioPeriod = voices[i].voicePeriod;
-				voice.newWaveform = true;
-				voice.waveformStarted = false;
+				voice.PlantPeriod = true;
+				voice.AudioPeriod = voices[i].VoicePeriod;
+				voice.NewWaveform = true;
+				voice.WaveformStarted = false;
 			}
 
 			UpdateModuleInformation();
@@ -724,10 +724,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 
 					for (int i = 0; i < 4; i++)
 					{
-						voices[i].track = song.Positions[playingInfo.PosNr].Track[i];
-						voices[i].transpose = song.Positions[playingInfo.PosNr].Transpose[i];
-						voices[i].nextTrack = song.Positions[nextPos].Track[i];
-						voices[i].nextTranspose = song.Positions[nextPos].Transpose[i];
+						voices[i].Track = song.Positions[playingInfo.PosNr].Track[i];
+						voices[i].Transpose = song.Positions[playingInfo.PosNr].Transpose[i];
+						voices[i].NextTrack = song.Positions[nextPos].Track[i];
+						voices[i].NextTranspose = song.Positions[nextPos].Transpose[i];
 					}
 
 					playingInfo.GetNewPosition = false;
@@ -795,11 +795,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 		{
 			AhxVoices voice = voices[v];
 
-			if (!voice.trackOn)
+			if (!voice.TrackOn)
 				return;
 
-			voice.volumeSlideUp = 0;
-			voice.volumeSlideDown = 0;
+			voice.VolumeSlideUp = 0;
+			voice.VolumeSlideDown = 0;
 
 			AhxStep step = song.Tracks[song.Positions[playingInfo.PosNr].Track[v]][playingInfo.NoteNr];
 			int note = step.Note;
@@ -821,8 +821,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 				case 0x5:	// Volume slide + Tone portamento
 				case 0xa:	// Volume slide
 				{
-					voice.volumeSlideDown = fxParam & 0x0f;
-					voice.volumeSlideUp = fxParam >> 4;
+					voice.VolumeSlideDown = fxParam & 0x0f;
+					voice.VolumeSlideUp = fxParam >> 4;
 					break;
 				}
 
@@ -857,12 +857,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 						{
 							if ((fxParam & 0x0f) < playingInfo.Tempo)
 							{
-								voice.noteCutWait = fxParam & 0x0f;
+								voice.NoteCutWait = fxParam & 0x0f;
 
-								if (voice.noteCutWait != 0)
+								if (voice.NoteCutWait != 0)
 								{
-									voice.noteCutOn = true;
-									voice.hardCutRelease = false;
+									voice.NoteCutOn = true;
+									voice.HardCutRelease = false;
 								}
 							}
 							break;
@@ -871,17 +871,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 						// Note delay
 						case 0xd:
 						{
-							if (voice.noteDelayOn)
-								voice.noteDelayOn = false;
+							if (voice.NoteDelayOn)
+								voice.NoteDelayOn = false;
 							else
 							{
 								if ((fxParam & 0x0f) < playingInfo.Tempo)
 								{
-									voice.noteDelayWait = fxParam & 0x0f;
+									voice.NoteDelayWait = fxParam & 0x0f;
 
-									if (voice.noteDelayWait != 0)
+									if (voice.NoteDelayWait != 0)
 									{
-										voice.noteDelayOn = true;
+										voice.NoteDelayOn = true;
 										return;
 									}
 								}
@@ -913,54 +913,54 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 			// Instrument range check by Thomas Neumann
 			if ((instrument != 0) && (instrument <= song.InstrumentNr))
 			{
-				voice.perfSubVolume = 0x40;
-				voice.periodSlideSpeed = 0;
-				voice.periodSlidePeriod = 0;
-				voice.periodSlideLimit = 0;
-				voice.adsrVolume = 0;
-				voice.instrument = song.Instruments[instrument];
-				voice.instrumentNumber = instrument;
+				voice.PerfSubVolume = 0x40;
+				voice.PeriodSlideSpeed = 0;
+				voice.PeriodSlidePeriod = 0;
+				voice.PeriodSlideLimit = 0;
+				voice.AdsrVolume = 0;
+				voice.Instrument = song.Instruments[instrument];
+				voice.InstrumentNumber = instrument;
 				voice.CalcAdsr();
 
 				// Init on instrument
-				voice.waveLength = voice.instrument.WaveLength;
-				voice.noteMaxVolume = voice.instrument.Volume;
+				voice.WaveLength = voice.Instrument.WaveLength;
+				voice.NoteMaxVolume = voice.Instrument.Volume;
 
 				// Init vibrato
-				voice.vibratoCurrent = 0;
-				voice.vibratoDelay = voice.instrument.VibratoDelay;
-				voice.vibratoDepth = voice.instrument.VibratoDepth;
-				voice.vibratoSpeed = voice.instrument.VibratoSpeed;
-				voice.vibratoPeriod = 0;
+				voice.VibratoCurrent = 0;
+				voice.VibratoDelay = voice.Instrument.VibratoDelay;
+				voice.VibratoDepth = voice.Instrument.VibratoDepth;
+				voice.VibratoSpeed = voice.Instrument.VibratoSpeed;
+				voice.VibratoPeriod = 0;
 
 				// Init hard cut
-				voice.hardCutRelease = voice.instrument.HardCutRelease;
-				voice.hardCut = voice.instrument.HardCutReleaseFrames;
+				voice.HardCutRelease = voice.Instrument.HardCutRelease;
+				voice.HardCut = voice.Instrument.HardCutReleaseFrames;
 
 				// Init square
-				voice.ignoreSquare = false;
-				voice.squareSlidingIn = false;
-				voice.squareWait = 0;
-				voice.squareOn = false;
+				voice.IgnoreSquare = false;
+				voice.SquareSlidingIn = false;
+				voice.SquareWait = 0;
+				voice.SquareOn = false;
 
-				int squareLower = voice.instrument.SquareLowerLimit >> (5 - voice.waveLength);
-				int squareUpper = voice.instrument.SquareUpperLimit >> (5 - voice.waveLength);
+				int squareLower = voice.Instrument.SquareLowerLimit >> (5 - voice.WaveLength);
+				int squareUpper = voice.Instrument.SquareUpperLimit >> (5 - voice.WaveLength);
 
 				if (squareUpper < squareLower)
 					(squareUpper, squareLower) = (squareLower, squareUpper);
 
-				voice.squareUpperLimit = squareUpper;
-				voice.squareLowerLimit = squareLower;
+				voice.SquareUpperLimit = squareUpper;
+				voice.SquareLowerLimit = squareLower;
 
 				// Init filter
-				voice.ignoreFilter = false;
-				voice.filterWait = 0;
-				voice.filterOn = false;
-				voice.filterSlidingIn = false;
+				voice.IgnoreFilter = false;
+				voice.FilterWait = 0;
+				voice.FilterOn = false;
+				voice.FilterSlidingIn = false;
 
-				int d6 = voice.instrument.FilterSpeed;
-				int d3 = voice.instrument.FilterLowerLimit;
-				int d4 = voice.instrument.FilterUpperLimit;
+				int d6 = voice.Instrument.FilterSpeed;
+				int d3 = voice.Instrument.FilterLowerLimit;
+				int d4 = voice.Instrument.FilterUpperLimit;
 
 				if ((d3 & 0x80) != 0)
 					d6 |= 0x20;
@@ -968,7 +968,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 				if ((d4 & 0x80) != 0)
 					d6 |= 0x40;
 
-				voices[v].filterSpeed = d6;
+				voices[v].FilterSpeed = d6;
 
 				d3 &= ~0x80;
 				d4 &= ~0x80;
@@ -976,18 +976,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 				if (d3 > d4)
 					(d4, d3) = (d3, d4);
 
-				voice.filterUpperLimit = d4;
-				voice.filterLowerLimit = d3;
-				voice.filterPos = 32;
+				voice.FilterUpperLimit = d4;
+				voice.FilterLowerLimit = d3;
+				voice.FilterPos = 32;
 
 				// Init perf list
-				voice.perfWait = 0;
-				voice.perfCurrent = 0;
-				voice.perfSpeed = voice.instrument.PlayList.Speed;
-				voice.perfList = voice.instrument.PlayList;
+				voice.PerfWait = 0;
+				voice.PerfCurrent = 0;
+				voice.PerfSpeed = voice.Instrument.PlayList.Speed;
+				voice.PerfList = voice.Instrument.PlayList;
 			}
 
-			voice.periodSlideOn = false;
+			voice.PeriodSlideOn = false;
 
 			bool skipNoteKick = false;
 
@@ -1000,9 +1000,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 				// Set square wave offset
 				case 0x9:
 				{
-					voice.squarePos = fxParam >> (5 - voices[v].waveLength);
-					voice.plantSquare = true;
-					voice.ignoreSquare = true;
+					voice.SquarePos = fxParam >> (5 - voices[v].WaveLength);
+					voice.PlantSquare = true;
+					voice.IgnoreSquare = true;
 					break;
 				}
 
@@ -1010,22 +1010,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 				case 0x3:	// Tone portamento (period slide up/down w/ limit)
 				{
 					if (fxParam != 0)
-						voice.periodSlideSpeed = fxParam;
+						voice.PeriodSlideSpeed = fxParam;
 
 					if (note != 0)
 					{
 						int neue = Tables.PeriodTable[note];
-						int alte = Tables.PeriodTable[voice.trackPeriod];
+						int alte = Tables.PeriodTable[voice.TrackPeriod];
 
 						alte -= neue;
-						neue = alte + voice.periodSlidePeriod;
+						neue = alte + voice.PeriodSlidePeriod;
 
 						if (neue != 0)
-							voice.periodSlideLimit = -alte;
+							voice.PeriodSlideLimit = -alte;
 					}
 
-					voice.periodSlideOn = true;
-					voice.periodSlideWithLimit = true;
+					voice.PeriodSlideOn = true;
+					voice.PeriodSlideWithLimit = true;
 
 					skipNoteKick = true;
 					break;
@@ -1037,9 +1037,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 				// Note kicking
 				if (note != 0)
 				{
-					voice.trackPeriod = note;
-					voice.plantPeriod = true;
-					voice.kickNote = true;
+					voice.TrackPeriod = note;
+					voice.PlantPeriod = true;
+					voice.KickNote = true;
 				}
 			}
 
@@ -1048,18 +1048,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 				// Portamento up (period slide down)
 				case 0x1:
 				{
-					voice.periodSlideSpeed = -fxParam;
-					voice.periodSlideOn = true;
-					voice.periodSlideWithLimit = false;
+					voice.PeriodSlideSpeed = -fxParam;
+					voice.PeriodSlideOn = true;
+					voice.PeriodSlideWithLimit = false;
 					break;
 				}
 
 				// Portamento down (period slide up)
 				case 0x2:
 				{
-					voice.periodSlideSpeed = fxParam;
-					voice.periodSlideOn = true;
-					voice.periodSlideWithLimit = false;
+					voice.PeriodSlideSpeed = fxParam;
+					voice.PeriodSlideOn = true;
+					voice.PeriodSlideWithLimit = false;
 					break;
 				}
 
@@ -1067,7 +1067,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 				case 0xc:
 				{
 					if (fxParam <= 0x40)
-						voice.noteMaxVolume = fxParam;
+						voice.NoteMaxVolume = fxParam;
 					else
 					{
 						if (fxParam >= 0x50)
@@ -1077,14 +1077,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 							if (fxParam <= 0x40)
 							{
 								for (int i = 0; i < 4; i++)
-									voices[i].trackMasterVolume = fxParam;
+									voices[i].TrackMasterVolume = fxParam;
 							}
 							else
 							{
 								fxParam -= (0xa0 - 0x50);
 
 								if ((fxParam > 0) && (fxParam <= 0x40))
-									voice.trackMasterVolume = fxParam;
+									voice.TrackMasterVolume = fxParam;
 							}
 						}
 					}
@@ -1099,33 +1099,33 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 						// Fine slide up (period fine slide down)
 						case 0x1:
 						{
-							voice.periodSlidePeriod = -(fxParam & 0x0f);
-							voice.plantPeriod = true;
+							voice.PeriodSlidePeriod = -(fxParam & 0x0f);
+							voice.PlantPeriod = true;
 							break;
 						}
 
 						// Fine slide down (period fine slide up)
 						case 0x2:
 						{
-							voice.periodSlidePeriod = fxParam & 0x0f;
-							voice.plantPeriod = true;
+							voice.PeriodSlidePeriod = fxParam & 0x0f;
+							voice.PlantPeriod = true;
 							break;
 						}
 
 						// Vibrato control
 						case 0x4:
 						{
-							voice.vibratoDepth = fxParam & 0x0f;
+							voice.VibratoDepth = fxParam & 0x0f;
 							break;
 						}
 
 						// Fine volume up
 						case 0xa:
 						{
-							voice.noteMaxVolume += fxParam & 0x0f;
+							voice.NoteMaxVolume += fxParam & 0x0f;
 
-							if (voice.noteMaxVolume > 0x40)
-								voice.noteMaxVolume = 0x40;
+							if (voice.NoteMaxVolume > 0x40)
+								voice.NoteMaxVolume = 0x40;
 
 							break;
 						}
@@ -1133,10 +1133,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 						// Fine volume down
 						case 0xb:
 						{
-							voice.noteMaxVolume -= fxParam & 0x0f;
+							voice.NoteMaxVolume -= fxParam & 0x0f;
 
-							if (voice.noteMaxVolume < 0)
-								voice.noteMaxVolume = 0;
+							if (voice.NoteMaxVolume < 0)
+								voice.NoteMaxVolume = 0;
 
 							break;
 						}
@@ -1157,115 +1157,115 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 		{
 			AhxVoices voice = voices[v];
 
-			if (!voice.trackOn)
+			if (!voice.TrackOn)
 				return;
 
-			if (voice.noteDelayOn)
+			if (voice.NoteDelayOn)
 			{
-				if (voice.noteDelayWait <= 0)
+				if (voice.NoteDelayWait <= 0)
 					ProcessStep(v);
 				else
-					voice.noteDelayWait--;
+					voice.NoteDelayWait--;
 			}
 
-			if (voice.hardCut != 0)
+			if (voice.HardCut != 0)
 			{
 				int nextInstrument;
 
 				if ((playingInfo.NoteNr + 1) < song.TrackLength)
-					nextInstrument = song.Tracks[voice.track][playingInfo.NoteNr + 1].Instrument;
+					nextInstrument = song.Tracks[voice.Track][playingInfo.NoteNr + 1].Instrument;
 				else
-					nextInstrument = song.Tracks[voice.nextTrack][0].Instrument;
+					nextInstrument = song.Tracks[voice.NextTrack][0].Instrument;
 
 				if (nextInstrument != 0)
 				{
-					int d1 = playingInfo.Tempo - voice.hardCut;
+					int d1 = playingInfo.Tempo - voice.HardCut;
 
 					if (d1 < 0)
 						d1 = 0;
 
-					if (!voice.noteCutOn)
+					if (!voice.NoteCutOn)
 					{
-						voice.noteCutOn = true;
-						voice.noteCutWait = d1;
-						voice.hardCutReleaseF = -(d1 - playingInfo.Tempo);
+						voice.NoteCutOn = true;
+						voice.NoteCutWait = d1;
+						voice.HardCutReleaseF = -(d1 - playingInfo.Tempo);
 					}
 					else
-						voice.hardCut = 0;
+						voice.HardCut = 0;
 				}
 			}
 
-			if (voice.noteCutOn)
+			if (voice.NoteCutOn)
 			{
-				if (voice.noteCutWait <= 0)
+				if (voice.NoteCutWait <= 0)
 				{
-					voice.noteCutOn = false;
+					voice.NoteCutOn = false;
 
-					if (voice.hardCutRelease)
+					if (voice.HardCutRelease)
 					{
-						voice.adsr.RVolume = -(voice.adsrVolume - (voice.instrument.Envelope.RVolume << 8)) / voice.hardCutReleaseF;
-						voice.adsr.RFrames = voice.hardCutReleaseF;
-						voice.adsr.AFrames = 0;
-						voice.adsr.DFrames = 0;
-						voice.adsr.SFrames = 0;
+						voice.Adsr.RVolume = -(voice.AdsrVolume - (voice.Instrument.Envelope.RVolume << 8)) / voice.HardCutReleaseF;
+						voice.Adsr.RFrames = voice.HardCutReleaseF;
+						voice.Adsr.AFrames = 0;
+						voice.Adsr.DFrames = 0;
+						voice.Adsr.SFrames = 0;
 					}
 					else
-						voice.noteMaxVolume = 0;
+						voice.NoteMaxVolume = 0;
 				}
 				else
-					voice.noteCutWait--;
+					voice.NoteCutWait--;
 			}
 
 			// ADSR envelope
-			if (voice.adsr.AFrames != 0)
+			if (voice.Adsr.AFrames != 0)
 			{
-				voice.adsrVolume += voice.adsr.AVolume;		// Delta
+				voice.AdsrVolume += voice.Adsr.AVolume;		// Delta
 
-				if (--voice.adsr.AFrames <= 0)
-					voice.adsrVolume = voice.instrument.Envelope.AVolume << 8;
+				if (--voice.Adsr.AFrames <= 0)
+					voice.AdsrVolume = voice.Instrument.Envelope.AVolume << 8;
 			}
 			else
 			{
-				if (voice.adsr.DFrames != 0)
+				if (voice.Adsr.DFrames != 0)
 				{
-					voice.adsrVolume += voice.adsr.DVolume;	// Delta
+					voice.AdsrVolume += voice.Adsr.DVolume;	// Delta
 
-					if (--voice.adsr.DFrames <= 0)
-						voice.adsrVolume = voice.instrument.Envelope.DVolume << 8;
+					if (--voice.Adsr.DFrames <= 0)
+						voice.AdsrVolume = voice.Instrument.Envelope.DVolume << 8;
 				}
 				else
 				{
-					if (voice.adsr.SFrames != 0)
-						voice.adsr.SFrames--;
+					if (voice.Adsr.SFrames != 0)
+						voice.Adsr.SFrames--;
 					else
 					{
-						if (voice.adsr.RFrames != 0)
+						if (voice.Adsr.RFrames != 0)
 						{
-							voice.adsrVolume += voice.adsr.RVolume;	// Delta
+							voice.AdsrVolume += voice.Adsr.RVolume;	// Delta
 
-							if (--voice.adsr.RFrames <= 0)
-								voice.adsrVolume = voice.instrument.Envelope.RVolume << 8;
+							if (--voice.Adsr.RFrames <= 0)
+								voice.AdsrVolume = voice.Instrument.Envelope.RVolume << 8;
 						}
 					}
 				}
 			}
 
 			// Volume slide
-			voice.noteMaxVolume = voice.noteMaxVolume + voice.volumeSlideUp - voice.volumeSlideDown;
+			voice.NoteMaxVolume = voice.NoteMaxVolume + voice.VolumeSlideUp - voice.VolumeSlideDown;
 
-			if (voice.noteMaxVolume < 0)
-				voice.noteMaxVolume = 0;
+			if (voice.NoteMaxVolume < 0)
+				voice.NoteMaxVolume = 0;
 
-			if (voice.noteMaxVolume > 0x40)
-				voice.noteMaxVolume = 0x40;
+			if (voice.NoteMaxVolume > 0x40)
+				voice.NoteMaxVolume = 0x40;
 
 			// Portamento
-			if (voice.periodSlideOn)
+			if (voice.PeriodSlideOn)
 			{
-				if (voice.periodSlideWithLimit)
+				if (voice.PeriodSlideWithLimit)
 				{
-					int d0 = voice.periodSlidePeriod - voice.periodSlideLimit;
-					int d2 = voice.periodSlideSpeed;
+					int d0 = voice.PeriodSlidePeriod - voice.PeriodSlideLimit;
+					int d2 = voice.PeriodSlideSpeed;
 
 					if (d0 > 0)
 						d2 = -d2;
@@ -1275,54 +1275,54 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 						int d3 = (d0 + d2) ^ d0;
 
 						if (d3 >= 0)
-							d0 = voice.periodSlidePeriod + d2;
+							d0 = voice.PeriodSlidePeriod + d2;
 						else
-							d0 = voice.periodSlideLimit;
+							d0 = voice.PeriodSlideLimit;
 
-						voice.periodSlidePeriod = d0;
-						voice.plantPeriod = true;
+						voice.PeriodSlidePeriod = d0;
+						voice.PlantPeriod = true;
 					}
 				}
 				else
 				{
-					voice.periodSlidePeriod += voice.periodSlideSpeed;
-					voice.plantPeriod = true;
+					voice.PeriodSlidePeriod += voice.PeriodSlideSpeed;
+					voice.PlantPeriod = true;
 				}
 			}
 
 			// Vibrato
-			if (voice.vibratoDepth != 0)
+			if (voice.VibratoDepth != 0)
 			{
-				if (voice.vibratoDelay <= 0)
+				if (voice.VibratoDelay <= 0)
 				{
-					voice.vibratoPeriod = (Tables.VibratoTable[voice.vibratoCurrent] * voice.vibratoDepth) >> 7;
-					voice.plantPeriod = true;
-					voice.vibratoCurrent = (voice.vibratoCurrent + voice.vibratoSpeed) & 0x3f;
+					voice.VibratoPeriod = (Tables.VibratoTable[voice.VibratoCurrent] * voice.VibratoDepth) >> 7;
+					voice.PlantPeriod = true;
+					voice.VibratoCurrent = (voice.VibratoCurrent + voice.VibratoSpeed) & 0x3f;
 				}
 				else
-					voice.vibratoDelay--;
+					voice.VibratoDelay--;
 			}
 
 			// PList
-			if ((voice.instrument != null) && (voice.perfCurrent < voice.instrument.PlayList.Length))
+			if ((voice.Instrument != null) && (voice.PerfCurrent < voice.Instrument.PlayList.Length))
 			{
-				if (--voice.perfWait <= 0)
+				if (--voice.PerfWait <= 0)
 				{
-					int cur = voice.perfCurrent++;
-					voice.perfWait = voice.perfSpeed;
+					int cur = voice.PerfCurrent++;
+					voice.PerfWait = voice.PerfSpeed;
 
-					AhxPListEntry entry = voice.perfList.Entries[cur];
+					AhxPListEntry entry = voice.PerfList.Entries[cur];
 
 					if (entry.Waveform != 0)
 					{
-						voice.waveform = entry.Waveform - 1;
-						voice.newWaveform = true;
-						voice.periodPerfSlideSpeed = 0;
-						voice.periodPerfSlidePeriod = 0;
+						voice.Waveform = entry.Waveform - 1;
+						voice.NewWaveform = true;
+						voice.PeriodPerfSlideSpeed = 0;
+						voice.PeriodPerfSlidePeriod = 0;
 					}
 
 					// Hold wave
-					voice.periodPerfSlideOn = false;
+					voice.PeriodPerfSlideOn = false;
 
 					for (int i = 0; i < 2; i++)
 						PListCommandParse(v, entry.Fx[i], entry.FxParam[i]);
@@ -1330,130 +1330,130 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 					// Get note
 					if (entry.Note != 0)
 					{
-						voice.instrPeriod = entry.Note;
-						voice.plantPeriod = true;
-						voice.kickNote = true;
-						voice.fixedNote = entry.Fixed;
+						voice.InstrPeriod = entry.Note;
+						voice.PlantPeriod = true;
+						voice.KickNote = true;
+						voice.FixedNote = entry.Fixed;
 					}
 				}
 			}
 			else
 			{
-				if (voice.perfWait != 0)
-					voice.perfWait--;
+				if (voice.PerfWait != 0)
+					voice.PerfWait--;
 				else
-					voice.periodPerfSlideSpeed = 0;
+					voice.PeriodPerfSlideSpeed = 0;
 			}
 
 			// Perf portamento
-			if (voice.periodPerfSlideOn)
+			if (voice.PeriodPerfSlideOn)
 			{
-				voice.periodPerfSlidePeriod -= voice.periodPerfSlideSpeed;
+				voice.PeriodPerfSlidePeriod -= voice.PeriodPerfSlideSpeed;
 
-				if (voice.periodPerfSlidePeriod != 0)
-					voice.plantPeriod = true;
+				if (voice.PeriodPerfSlidePeriod != 0)
+					voice.PlantPeriod = true;
 			}
 
-			if ((voice.waveform == 3 - 1) && voice.squareOn)
+			if ((voice.Waveform == 3 - 1) && voice.SquareOn)
 			{
-				if (--voice.squareWait <= 0)
+				if (--voice.SquareWait <= 0)
 				{
-					int d1 = voice.squareLowerLimit;
-					int d2 = voice.squareUpperLimit;
-					int d3 = voice.squarePos;
+					int d1 = voice.SquareLowerLimit;
+					int d2 = voice.SquareUpperLimit;
+					int d3 = voice.SquarePos;
 
-					if (voice.squareInit)
+					if (voice.SquareInit)
 					{
-						voice.squareInit = false;
+						voice.SquareInit = false;
 
 						if (d3 <= d1)
 						{
-							voice.squareSlidingIn = true;
-							voice.squareSign = 1;
+							voice.SquareSlidingIn = true;
+							voice.SquareSign = 1;
 						}
 						else
 						{
 							if (d3 >= d2)
 							{
-								voice.squareSlidingIn = true;
-								voice.squareSign = -1;
+								voice.SquareSlidingIn = true;
+								voice.SquareSign = -1;
 							}
 						}
 					}
 
 					if ((d3 == d1) || (d3 == d2))
 					{
-						if (voice.squareSlidingIn)
-							voice.squareSlidingIn = false;
+						if (voice.SquareSlidingIn)
+							voice.SquareSlidingIn = false;
 						else
-							voice.squareSign = -voice.squareSign;
+							voice.SquareSign = -voice.SquareSign;
 					}
 
-					d3 += voice.squareSign;
-					voice.squarePos = d3;
-					voice.plantSquare = true;
-					voice.squareWait = voice.instrument.SquareSpeed;
+					d3 += voice.SquareSign;
+					voice.SquarePos = d3;
+					voice.PlantSquare = true;
+					voice.SquareWait = voice.Instrument.SquareSpeed;
 				}
 			}
 
-			if (voice.filterOn && (--voice.filterWait <= 0))
+			if (voice.FilterOn && (--voice.FilterWait <= 0))
 			{
-				int d1 = voice.filterLowerLimit;
-				int d2 = voice.filterUpperLimit;
-				int d3 = voice.filterPos;
+				int d1 = voice.FilterLowerLimit;
+				int d2 = voice.FilterUpperLimit;
+				int d3 = voice.FilterPos;
 
-				if (voice.filterInit)
+				if (voice.FilterInit)
 				{
-					voice.filterInit = false;
+					voice.FilterInit = false;
 
 					if (d3 <= d1)
 					{
-						voice.filterSlidingIn = true;
-						voice.filterSign = 1;
+						voice.FilterSlidingIn = true;
+						voice.FilterSign = 1;
 					}
 					else
 					{
 						if (d3 >= d2)
 						{
-							voice.filterSlidingIn = true;
-							voice.filterSign = -1;
+							voice.FilterSlidingIn = true;
+							voice.FilterSign = -1;
 						}
 					}
 				}
 
-				int fMax = (voice.filterSpeed < 3) ? (5 - voice.filterSpeed) : 1;
+				int fMax = (voice.FilterSpeed < 3) ? (5 - voice.FilterSpeed) : 1;
 
 				for (int i = 0; i < fMax; i++)
 				{
 					if ((d1 == d3) || (d2 == d3))
 					{
-						if (voice.filterSlidingIn)
-							voice.filterSlidingIn = false;
+						if (voice.FilterSlidingIn)
+							voice.FilterSlidingIn = false;
 						else
-							voice.filterSign = -voice.filterSign;
+							voice.FilterSign = -voice.FilterSign;
 					}
 
-					d3 += voice.filterSign;
+					d3 += voice.FilterSign;
 				}
 
-				voice.filterPos = d3;
-				voice.newWaveform = true;
-				voice.filterWait = voice.filterSpeed - 3;
+				voice.FilterPos = d3;
+				voice.NewWaveform = true;
+				voice.FilterWait = voice.FilterSpeed - 3;
 
-				if (voice.filterWait < 1)
-					voice.filterWait = 1;
+				if (voice.FilterWait < 1)
+					voice.FilterWait = 1;
 			}
 
-			if ((voice.waveform == 3 - 1) || voice.plantSquare)
+			if ((voice.Waveform == 3 - 1) || voice.PlantSquare)
 			{
 				// Calc square
-				sbyte[] squarePtr = waves.filterSets[ToSixtyTwo(voice.filterPos - 1)].Squares;
-				int x = voice.squarePos << (5 - voice.waveLength);
+				sbyte[] squarePtr = waves.filterSets[ToSixtyTwo(voice.FilterPos - 1)].Squares;
+				int x = voice.SquarePos << (5 - voice.WaveLength);
 
 				if (x > 0x20)
 				{
 					x = 0x40 - x;
-					voice.squareReverse = true;
+					voice.SquareReverse = true;
 				}
 
 				// Range fix by Thomas Neumann
@@ -1462,80 +1462,80 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 
 				int squareOffset = x << 7;
 
-				int delta = 32 >> voice.waveLength;
+				int delta = 32 >> voice.WaveLength;
 
-				for (int i = 0; i < (1 << voice.waveLength) * 4; i++)
+				for (int i = 0; i < (1 << voice.WaveLength) * 4; i++)
 				{
-					voice.squareTempBuffer[i] = squarePtr[squareOffset];
+					voice.SquareTempBuffer[i] = squarePtr[squareOffset];
 					squareOffset += delta;
 				}
 
-				voice.audioSource = voice.squareTempBuffer;
-				voice.audioOffset = 0;
+				voice.AudioSource = voice.SquareTempBuffer;
+				voice.AudioOffset = 0;
 
-				voice.newWaveform = true;
-				voice.waveform = 3 - 1;
-				voice.plantSquare = false;
+				voice.NewWaveform = true;
+				voice.Waveform = 3 - 1;
+				voice.PlantSquare = false;
 			}
 
-			if (voice.waveform == 4 - 1)
-				voice.newWaveform = true;
+			if (voice.Waveform == 4 - 1)
+				voice.NewWaveform = true;
 
-			if (voice.newWaveform)
+			if (voice.NewWaveform)
 			{
 				// Don't process squares
-				if (voice.waveform != 3 - 1)
+				if (voice.Waveform != 3 - 1)
 				{
-					int filterSet = ToSixtyTwo(voice.filterPos - 1);
+					int filterSet = ToSixtyTwo(voice.FilterPos - 1);
 
-					if (voice.waveform == 4 - 1)	// White noise
+					if (voice.Waveform == 4 - 1)	// White noise
 					{
-						voice.audioSource = waves.filterSets[filterSet].WhiteNoiseBig;
-						voice.audioOffset = (playingInfo.WnRandom & (2 * 0x280 - 1)) & ~1;
+						voice.AudioSource = waves.filterSets[filterSet].WhiteNoiseBig;
+						voice.AudioOffset = (playingInfo.WnRandom & (2 * 0x280 - 1)) & ~1;
 
 						// Go on random
 						playingInfo.WnRandom += 2239384;
 						playingInfo.WnRandom = ((((playingInfo.WnRandom >> 8) | (playingInfo.WnRandom << 24)) + 782323) ^ 75) - 6735;
 					}
-					else if (voice.waveform == 1 - 1)	// Triangle
+					else if (voice.Waveform == 1 - 1)	// Triangle
 					{
-						voice.audioSource = waves.filterSets[filterSet].Triangles;
-						voice.audioOffset = Tables.OffsetTable[voice.waveLength];
+						voice.AudioSource = waves.filterSets[filterSet].Triangles;
+						voice.AudioOffset = Tables.OffsetTable[voice.WaveLength];
 					}
-					else if (voice.waveform == 2 - 1)	// Sawtooth
+					else if (voice.Waveform == 2 - 1)	// Sawtooth
 					{
-						voice.audioSource = waves.filterSets[filterSet].Sawtooths;
-						voice.audioOffset = Tables.OffsetTable[voice.waveLength];
+						voice.AudioSource = waves.filterSets[filterSet].Sawtooths;
+						voice.AudioOffset = Tables.OffsetTable[voice.WaveLength];
 					}
 				}
 			}
 
-			voice.audioPeriod = voice.instrPeriod;
+			voice.AudioPeriod = voice.InstrPeriod;
 
-			if (!voice.fixedNote)
-				voice.audioPeriod += voice.transpose + voice.trackPeriod - 1;
+			if (!voice.FixedNote)
+				voice.AudioPeriod += voice.Transpose + voice.TrackPeriod - 1;
 
-			if (voice.audioPeriod > 5 * 12)
-				voice.audioPeriod = 5 * 12;
+			if (voice.AudioPeriod > 5 * 12)
+				voice.AudioPeriod = 5 * 12;
 
-			if (voice.audioPeriod < 0)
-				voice.audioPeriod = 0;
+			if (voice.AudioPeriod < 0)
+				voice.AudioPeriod = 0;
 
-			voice.audioPeriod = Tables.PeriodTable[voice.audioPeriod];
+			voice.AudioPeriod = Tables.PeriodTable[voice.AudioPeriod];
 
-			if (!voice.fixedNote)
-				voice.audioPeriod += voice.periodSlidePeriod;
+			if (!voice.FixedNote)
+				voice.AudioPeriod += voice.PeriodSlidePeriod;
 
-			voice.audioPeriod += voice.periodPerfSlidePeriod + voice.vibratoPeriod;
+			voice.AudioPeriod += voice.PeriodPerfSlidePeriod + voice.VibratoPeriod;
 
-			if (voice.audioPeriod > 0x0d60)
-				voice.audioPeriod = 0x0d60;
+			if (voice.AudioPeriod > 0x0d60)
+				voice.AudioPeriod = 0x0d60;
 
-			if (voice.audioPeriod < 0x0071)
-				voice.audioPeriod = 0x0071;
+			if (voice.AudioPeriod < 0x0071)
+				voice.AudioPeriod = 0x0071;
 
 			// Audio init volume
-			voice.audioVolume = ((((((((voice.adsrVolume >> 8) * voice.noteMaxVolume) >> 6) * voice.perfSubVolume) >> 6) * voice.trackMasterVolume) >> 6) * playingInfo.MainVolume) >> 6;
+			voice.AudioVolume = ((((((((voice.AdsrVolume >> 8) * voice.NoteMaxVolume) >> 6) * voice.PerfSubVolume) >> 6) * voice.TrackMasterVolume) >> 6) * playingInfo.MainVolume) >> 6;
 		}
 
 
@@ -1556,15 +1556,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 				{
 					if ((song.Revision > 0) && (fxParam != 0))
 					{
-						if (voice.ignoreFilter)
+						if (voice.IgnoreFilter)
 						{
-							voice.filterPos = 1;
-							voice.ignoreFilter = false;
+							voice.FilterPos = 1;
+							voice.IgnoreFilter = false;
 						}
 						else
-							voice.filterPos = fxParam;
+							voice.FilterPos = fxParam;
 
-						voice.newWaveform = true;
+						voice.NewWaveform = true;
 					}
 					break;
 				}
@@ -1572,26 +1572,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 				// Slide up
 				case 1:
 				{
-					voice.periodPerfSlideSpeed = fxParam;
-					voice.periodPerfSlideOn = true;
+					voice.PeriodPerfSlideSpeed = fxParam;
+					voice.PeriodPerfSlideOn = true;
 					break;
 				}
 
 				// Slide down
 				case 2:
 				{
-					voice.periodPerfSlideSpeed = -fxParam;
-					voice.periodPerfSlideOn = true;
+					voice.PeriodPerfSlideSpeed = -fxParam;
+					voice.PeriodPerfSlideOn = true;
 					break;
 				}
 
 				// Init square modulation
 				case 3:
 				{
-					if (!voice.ignoreSquare)
-						voice.squarePos = fxParam >> (5 - voice.waveLength);
+					if (!voice.IgnoreSquare)
+						voice.SquarePos = fxParam >> (5 - voice.WaveLength);
 					else
-						voice.ignoreSquare = false;
+						voice.IgnoreSquare = false;
 
 					break;
 				}
@@ -1601,30 +1601,30 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 				{
 					if ((song.Revision == 0) || (fxParam == 0))
 					{
-						voice.squareOn = !voice.squareOn;
-						voice.squareInit = voice.squareOn;
-						voice.squareSign = 1;
+						voice.SquareOn = !voice.SquareOn;
+						voice.SquareInit = voice.SquareOn;
+						voice.SquareSign = 1;
 					}
 					else
 					{
 						if ((fxParam & 0x0f) != 0x00)
 						{
-							voice.squareOn = !voice.squareOn;
-							voice.squareInit = voice.squareOn;
-							voice.squareSign = 1;
+							voice.SquareOn = !voice.SquareOn;
+							voice.SquareInit = voice.SquareOn;
+							voice.SquareSign = 1;
 
 							if ((fxParam & 0x0f) == 0x0f)
-								voice.squareSign = -1;
+								voice.SquareSign = -1;
 						}
 
 						if ((fxParam & 0xf0) != 0x00)
 						{
-							voice.filterOn = !voice.filterOn;
-							voice.filterInit = voice.filterOn;
-							voice.filterSign = 1;
+							voice.FilterOn = !voice.FilterOn;
+							voice.FilterInit = voice.FilterOn;
+							voice.FilterSign = 1;
 
 							if ((fxParam & 0xf0) == 0xf0)
-								voice.filterSign = -1;
+								voice.FilterSign = -1;
 						}
 					}
 					break;
@@ -1633,7 +1633,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 				// Jump to step
 				case 5:
 				{
-					voice.perfCurrent = fxParam;
+					voice.PerfCurrent = fxParam;
 					break;
 				}
 
@@ -1645,19 +1645,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 						if ((fxParam -= 0x50) >= 0)
 						{
 							if (fxParam <= 0x40)
-								voice.perfSubVolume = fxParam;
+								voice.PerfSubVolume = fxParam;
 							else
 							{
 								if ((fxParam -= 0xa0 - 0x50) >= 0)
 								{
 									if (fxParam <= 0x40)
-										voice.trackMasterVolume = fxParam;
+										voice.TrackMasterVolume = fxParam;
 								}
 							}
 						}
 					}
 					else
-						voice.noteMaxVolume = fxParam;
+						voice.NoteMaxVolume = fxParam;
 
 					break;
 				}
@@ -1665,8 +1665,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 				// Set speed
 				case 7:
 				{
-					voice.perfSpeed = fxParam;
-					voice.perfWait = fxParam;
+					voice.PerfSpeed = fxParam;
+					voice.PerfWait = fxParam;
 					break;
 				}
 			}
@@ -1684,56 +1684,56 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 			AhxVoices voice = voices[v];
 			IChannel channel = VirtualChannels[v];
 
-			if (!voice.trackOn)
+			if (!voice.TrackOn)
 			{
-				voice.voiceVolume = 0;
+				voice.VoiceVolume = 0;
 				return;
 			}
 
-			voice.voiceVolume = voice.audioVolume;
-			channel.SetAmigaVolume((ushort)voice.voiceVolume);
+			voice.VoiceVolume = voice.AudioVolume;
+			channel.SetAmigaVolume((ushort)voice.VoiceVolume);
 
-			if (voice.plantPeriod)
+			if (voice.PlantPeriod)
 			{
-				voice.plantPeriod = false;
-				voice.voicePeriod = voice.audioPeriod;
-				channel.SetAmigaPeriod((uint)voice.voicePeriod);
+				voice.PlantPeriod = false;
+				voice.VoicePeriod = voice.AudioPeriod;
+				channel.SetAmigaPeriod((uint)voice.VoicePeriod);
 			}
 
-			if (voice.newWaveform)
+			if (voice.NewWaveform)
 			{
-				if (voice.waveform == 4 - 1)
-					Array.Copy(voice.audioSource, voice.audioOffset, voice.voiceBuffer, 0, 0x280);
+				if (voice.Waveform == 4 - 1)
+					Array.Copy(voice.AudioSource, voice.AudioOffset, voice.VoiceBuffer, 0, 0x280);
 				else
 				{
-					int waveLoops = (1 << (5 - voice.waveLength)) * 5;
-					int loopLen = 4 * (1 << voice.waveLength);
+					int waveLoops = (1 << (5 - voice.WaveLength)) * 5;
+					int loopLen = 4 * (1 << voice.WaveLength);
 
-					if (voice.audioSource != null)
+					if (voice.AudioSource != null)
 					{
 						for (int i = 0; i < waveLoops; i++)
-							Array.Copy(voice.audioSource, voice.audioOffset, voice.voiceBuffer, i * loopLen, loopLen);
+							Array.Copy(voice.AudioSource, voice.AudioOffset, voice.VoiceBuffer, i * loopLen, loopLen);
 					}
 					else
 					{
 						for (int i = 0; i < waveLoops; i++)
-							Array.Clear(voice.voiceBuffer, i * loopLen, loopLen);
+							Array.Clear(voice.VoiceBuffer, i * loopLen, loopLen);
 					}
 				}
 
-				voice.voiceBuffer[0x280] = voice.voiceBuffer[0];
+				voice.VoiceBuffer[0x280] = voice.VoiceBuffer[0];
 
-				if (!voice.waveformStarted)
+				// To avoid clicks in Stranglehold, we do only kick the playing buffer once and then change it doing loops
+				if (!voice.WaveformStarted)
 				{
-					// To avoid clicks in Stranglehold, we do only kick the playing buffer once and then change it doing loops
-					voice.waveformStarted = true;
-					channel.PlaySample((short)(voice.instrumentNumber - 1), voice.voiceBuffer, 0, 0x280);
+					voice.WaveformStarted = true;
+					channel.PlaySample((short)(voice.InstrumentNumber - 1), voice.VoiceBuffer, 0, 0x280);
 				}
 
-				if (voice.kickNote)
+				if (voice.KickNote)
 				{
-					voice.kickNote = false;
-					channel.SetSampleNumber((short)(voice.instrumentNumber - 1));
+					voice.KickNote = false;
+					channel.SetSampleNumber((short)(voice.InstrumentNumber - 1));
 				}
 
 				channel.SetLoop(0, 0x280);
@@ -1821,7 +1821,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx
 
 			for (int i = 0; i < 4; i++)
 			{
-				sb.Append(voices[i].track);
+				sb.Append(voices[i].Track);
 				sb.Append(", ");
 			}
 
