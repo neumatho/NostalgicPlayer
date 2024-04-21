@@ -3,12 +3,12 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Containers
+namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Containers
 {
 	/// <summary>
 	/// Holds general song information
 	/// </summary>
-	internal class AhxSong
+	internal class HvlSong
 	{
 		public string Name;
 
@@ -18,11 +18,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Containers
 		public int TrackNr;
 		public int InstrumentNr;
 
-		public int Revision;
 		public int SpeedMultiplier;
+		public int Channels;
 
-		public AhxPosition[] Positions;
-		public AhxStep[][] Tracks;
-		public AhxInstrument[] Instruments;
+		public int MixGain;
+		public int DefaultStereo;
+		public int DefaultPanningLeft;
+		public int DefaultPanningRight;
+
+		public HvlPosition[] Positions;
+		public HvlStep[][] Tracks;
+		public HvlInstrument[] Instruments;
 	}
 }

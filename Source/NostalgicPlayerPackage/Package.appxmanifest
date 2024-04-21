@@ -1074,6 +1074,14 @@
             <uap:DisplayName>AMOS Music Bank</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="hvlfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-hvl">.hvl</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>HivelyTracker</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

@@ -3,18 +3,18 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Containers
+namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Containers
 {
 	/// <summary>
 	/// Holds information about a single instrument
 	/// </summary>
-	internal class AhxInstrument
+	internal class HvlInstrument
 	{
 		public string Name;
 
 		public int Volume;
 		public int WaveLength;
-		public AhxEnvelope Envelope = new AhxEnvelope();
+		public HvlEnvelope Envelope = new HvlEnvelope();
 
 		public int FilterLowerLimit;
 		public int FilterUpperLimit;
@@ -31,6 +31,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Containers
 		public int HardCutReleaseFrames;
 		public bool HardCutRelease;
 
-		public AhxPList PlayList = new AhxPList();
+		public HvlPList PlayList = new HvlPList();
 	}
 }

@@ -4,14 +4,14 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <RootNamespace>Polycode.NostalgicPlayer.Agent.Player.Ahx</RootNamespace>
+    <RootNamespace>Polycode.NostalgicPlayer.Agent.Player.HivelyTracker</RootNamespace>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationFile>bin\Ahx.xml</DocumentationFile>
+    <DocumentationFile>bin\HivelyTracker.xml</DocumentationFile>
     <Company>Polycode</Company>
     <Authors>Thomas Neumann</Authors>
     <Product>NostalgicPlayer</Product>
-    <Description>Plays modules of type AHX</Description>
-    <Version>2.1.0</Version>
+    <Description>Plays modules of type AHX and HivelyTracker</Description>
+    <Version>2.2.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -5,37 +5,32 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Containers
+namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Containers
 {
 	/// <summary>
-	/// Holds global information about the playing state
+	/// 
 	/// </summary>
-	internal class GlobalPlayingInfo : IDeepCloneable<GlobalPlayingInfo>
+	internal class HvlEnvelope : IDeepCloneable<HvlEnvelope>
 	{
-		public int StepWaitFrames;
-		public bool GetNewPosition;
+		public int AFrames;
+		public int AVolume;
 
-		public bool PatternBreak;
-		public int MainVolume;
+		public int DFrames;
+		public int DVolume;
 
-		public int Tempo;
+		public int SFrames;
 
-		public int PosNr;
-		public int PosJump;
-
-		public int NoteNr;
-		public int PosJumpNote;
-
-		public int WnRandom;
+		public int RFrames;
+		public int RVolume;
 
 		/********************************************************************/
 		/// <summary>
 		/// Make a deep copy of the current object
 		/// </summary>
 		/********************************************************************/
-		public GlobalPlayingInfo MakeDeepClone()
+		public HvlEnvelope MakeDeepClone()
 		{
-			return (GlobalPlayingInfo)MemberwiseClone();
+			return (HvlEnvelope)MemberwiseClone();
 		}
 	}
 }

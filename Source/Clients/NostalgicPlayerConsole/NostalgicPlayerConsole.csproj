@@ -32,7 +32,6 @@
     <ProjectReference Include="..\..\Agents\ModuleConverters\ModuleConverter\ModuleConverter.csproj" />
     <ProjectReference Include="..\..\Agents\ModuleConverters\ProWizardConverter\ProWizardConverter.csproj" />
     <ProjectReference Include="..\..\Agents\Output\CoreAudio\CoreAudio.csproj" />
-    <ProjectReference Include="..\..\Agents\Players\Ahx\Ahx.csproj" />
     <ProjectReference Include="..\..\Agents\Players\AmosMusicBank\AmosMusicBank.csproj" />
     <ProjectReference Include="..\..\Agents\Players\DavidWhittaker\DavidWhittaker.csproj" />
     <ProjectReference Include="..\..\Agents\Players\DeltaMusic10\DeltaMusic10.csproj" />
@@ -43,6 +42,7 @@
     <ProjectReference Include="..\..\Agents\Players\Fred\Fred.csproj" />
     <ProjectReference Include="..\..\Agents\Players\FutureComposer\FutureComposer.csproj" />
     <ProjectReference Include="..\..\Agents\Players\GameMusicCreator\GameMusicCreator.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\HivelyTracker\HivelyTracker.csproj" />
     <ProjectReference Include="..\..\Agents\Players\JamCracker\JamCracker.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Med\Med.csproj" />
     <ProjectReference Include="..\..\Agents\Players\ModTracker\ModTracker.csproj" />

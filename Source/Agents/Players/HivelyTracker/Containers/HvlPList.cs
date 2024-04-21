@@ -3,14 +3,15 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Containers
+namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Containers
 {
 	/// <summary>
-	/// Holds information about a single position
+	/// 
 	/// </summary>
-	internal class AhxPosition
+	internal class HvlPList
 	{
-		public int[] Track = new int[4];
-		public int[] Transpose = new int[4];
+		public int Speed;
+		public int Length;
+		public HvlPListEntry[] Entries;
 	}
 }

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Polycode.NostalgicPlayer.Agent.Player.Ahx {
+namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Polycode.NostalgicPlayer.Agent.Player.Ahx.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -62,13 +62,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx {
         
         /// <summary>
         ///   Looks up a localized string similar to Original player by Bernhard Wodok.
+        ///HivelyTracker parts by Xeron/IRIS.
         ///Converted to C# by Thomas Neumann + addional fixes by Bryc.
         ///
         ///This is a module format where the modules uses C64 like synth sounds. It come from the Amiga, where it was known as the THX format, but the programmers changed the name to AHX because of legal problems with George Lucas. AHX stands for Abyss&apos; Highest Experience..
         /// </summary>
-        internal static string IDS_AHX_DESCRIPTION {
+        internal static string IDS_HVL_DESCRIPTION {
             get {
-                return ResourceManager.GetString("IDS_AHX_DESCRIPTION", resourceCulture);
+                return ResourceManager.GetString("IDS_HVL_DESCRIPTION", resourceCulture);
             }
         }
         
@@ -80,9 +81,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx {
         ///
         ///This player plays the 1.x file format..
         /// </summary>
-        internal static string IDS_AHX_DESCRIPTION_AGENT1 {
+        internal static string IDS_HVL_DESCRIPTION_AGENT1 {
             get {
-                return ResourceManager.GetString("IDS_AHX_DESCRIPTION_AGENT1", resourceCulture);
+                return ResourceManager.GetString("IDS_HVL_DESCRIPTION_AGENT1", resourceCulture);
             }
         }
         
@@ -94,135 +95,157 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx {
         ///
         ///This player plays the 2.x file format, which has added filter support..
         /// </summary>
-        internal static string IDS_AHX_DESCRIPTION_AGENT2 {
+        internal static string IDS_HVL_DESCRIPTION_AGENT2 {
             get {
-                return ResourceManager.GetString("IDS_AHX_DESCRIPTION_AGENT2", resourceCulture);
+                return ResourceManager.GetString("IDS_HVL_DESCRIPTION_AGENT2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Original player by Xeron/IRIS.
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///HivelyTracker is based on the old AHX format from the Amiga, so it is possible to compose new modules in this format. However, it has extended the functionality and thereby introduced a new version of the AHX file format. Some of the new features includes more than 4 channels and ring modulation.
+        ///.
+        /// </summary>
+        internal static string IDS_HVL_DESCRIPTION_AGENT3 {
+            get {
+                return ResourceManager.GetString("IDS_HVL_DESCRIPTION_AGENT3", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Header has invalid values.
         /// </summary>
-        internal static string IDS_AHX_ERR_CORRUPT_HEADER {
+        internal static string IDS_HVL_ERR_CORRUPT_HEADER {
             get {
-                return ResourceManager.GetString("IDS_AHX_ERR_CORRUPT_HEADER", resourceCulture);
+                return ResourceManager.GetString("IDS_HVL_ERR_CORRUPT_HEADER", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the module header.
         /// </summary>
-        internal static string IDS_AHX_ERR_LOADING_HEADER {
+        internal static string IDS_HVL_ERR_LOADING_HEADER {
             get {
-                return ResourceManager.GetString("IDS_AHX_ERR_LOADING_HEADER", resourceCulture);
+                return ResourceManager.GetString("IDS_HVL_ERR_LOADING_HEADER", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the module instruments.
         /// </summary>
-        internal static string IDS_AHX_ERR_LOADING_INSTRUMENTS {
+        internal static string IDS_HVL_ERR_LOADING_INSTRUMENTS {
             get {
-                return ResourceManager.GetString("IDS_AHX_ERR_LOADING_INSTRUMENTS", resourceCulture);
+                return ResourceManager.GetString("IDS_HVL_ERR_LOADING_INSTRUMENTS", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the module tracks.
         /// </summary>
-        internal static string IDS_AHX_ERR_LOADING_TRACKS {
+        internal static string IDS_HVL_ERR_LOADING_TRACKS {
             get {
-                return ResourceManager.GetString("IDS_AHX_ERR_LOADING_TRACKS", resourceCulture);
+                return ResourceManager.GetString("IDS_HVL_ERR_LOADING_TRACKS", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Number of positions:.
         /// </summary>
-        internal static string IDS_AHX_INFODESCLINE0 {
+        internal static string IDS_HVL_INFODESCLINE0 {
             get {
-                return ResourceManager.GetString("IDS_AHX_INFODESCLINE0", resourceCulture);
+                return ResourceManager.GetString("IDS_HVL_INFODESCLINE0", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Used tracks:.
         /// </summary>
-        internal static string IDS_AHX_INFODESCLINE1 {
+        internal static string IDS_HVL_INFODESCLINE1 {
             get {
-                return ResourceManager.GetString("IDS_AHX_INFODESCLINE1", resourceCulture);
+                return ResourceManager.GetString("IDS_HVL_INFODESCLINE1", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Used instruments:.
         /// </summary>
-        internal static string IDS_AHX_INFODESCLINE2 {
+        internal static string IDS_HVL_INFODESCLINE2 {
             get {
-                return ResourceManager.GetString("IDS_AHX_INFODESCLINE2", resourceCulture);
+                return ResourceManager.GetString("IDS_HVL_INFODESCLINE2", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Playing position:.
         /// </summary>
-        internal static string IDS_AHX_INFODESCLINE3 {
+        internal static string IDS_HVL_INFODESCLINE3 {
             get {
-                return ResourceManager.GetString("IDS_AHX_INFODESCLINE3", resourceCulture);
+                return ResourceManager.GetString("IDS_HVL_INFODESCLINE3", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Playing tracks:.
         /// </summary>
-        internal static string IDS_AHX_INFODESCLINE4 {
+        internal static string IDS_HVL_INFODESCLINE4 {
             get {
-                return ResourceManager.GetString("IDS_AHX_INFODESCLINE4", resourceCulture);
+                return ResourceManager.GetString("IDS_HVL_INFODESCLINE4", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Current speed:.
         /// </summary>
-        internal static string IDS_AHX_INFODESCLINE5 {
+        internal static string IDS_HVL_INFODESCLINE5 {
             get {
-                return ResourceManager.GetString("IDS_AHX_INFODESCLINE5", resourceCulture);
+                return ResourceManager.GetString("IDS_HVL_INFODESCLINE5", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Current tempo (Hz):.
         /// </summary>
-        internal static string IDS_AHX_INFODESCLINE6 {
+        internal static string IDS_HVL_INFODESCLINE6 {
             get {
-                return ResourceManager.GetString("IDS_AHX_INFODESCLINE6", resourceCulture);
+                return ResourceManager.GetString("IDS_HVL_INFODESCLINE6", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to AHX.
+        ///   Looks up a localized string similar to HivelyTracker.
         /// </summary>
-        internal static string IDS_AHX_NAME {
+        internal static string IDS_HVL_NAME {
             get {
-                return ResourceManager.GetString("IDS_AHX_NAME", resourceCulture);
+                return ResourceManager.GetString("IDS_HVL_NAME", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to AHX 1.x.
         /// </summary>
-        internal static string IDS_AHX_NAME_AGENT1 {
+        internal static string IDS_HVL_NAME_AGENT1 {
             get {
-                return ResourceManager.GetString("IDS_AHX_NAME_AGENT1", resourceCulture);
+                return ResourceManager.GetString("IDS_HVL_NAME_AGENT1", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to AHX 2.x.
         /// </summary>
-        internal static string IDS_AHX_NAME_AGENT2 {
+        internal static string IDS_HVL_NAME_AGENT2 {
             get {
-                return ResourceManager.GetString("IDS_AHX_NAME_AGENT2", resourceCulture);
+                return ResourceManager.GetString("IDS_HVL_NAME_AGENT2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HivelyTracker.
+        /// </summary>
+        internal static string IDS_HVL_NAME_AGENT3 {
+            get {
+                return ResourceManager.GetString("IDS_HVL_NAME_AGENT3", resourceCulture);
             }
         }
     }

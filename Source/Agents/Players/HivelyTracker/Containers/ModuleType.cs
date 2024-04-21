@@ -3,15 +3,16 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Containers
+namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Containers
 {
 	/// <summary>
-	/// 
+	/// Holds the different module types
 	/// </summary>
-	internal class AhxPList
+	internal enum ModuleType
 	{
-		public int Speed;
-		public int Length;
-		public AhxPListEntry[] Entries;
+		Unknown = 0,
+		Ahx1,
+		Ahx2,
+		HivelyTracker
 	}
 }

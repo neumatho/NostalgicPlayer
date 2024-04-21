@@ -105,7 +105,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// If sample position has a value, this indicate if the position is
+		/// If sample position has a value, this indicates if the position is
 		/// a relative or absolute position
 		/// </summary>
 		/********************************************************************/

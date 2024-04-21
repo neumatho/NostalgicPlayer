@@ -38,8 +38,8 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Format | Extension | Converter | Player |
 | ------ | -------------- | --------- | ------ |
 | AC1D Packer | .ac1d / .ac1 | ProWizard | ModTracker |
-| AHX 1.x | .ahx / .thx | | AHX |
-| AHX 2.x | .ahx / .thx | | AHX |
+| AHX 1.x | .ahx / .thx | | HivelyTracker |
+| AHX 2.x | .ahx / .thx | | HivelyTracker |
 | AMOS Music Bank | .abk | | AMOS Music Bank |
 | Asylum Music Format | .amf | | Xmp |
 | Audio Sculpture | .adsc | | ModTracker |
@@ -89,6 +89,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | HCD Protector | .hcd | ProWizard | ModTracker |
 | Heatseeker mc1.0 | .hmc / .crb | ProWizard | ModTracker |
 | His Master's Noise (Gnomie by Night) | .mod | | ModTracker |
+| HivelyTracker | .hvl | | HivelyTracker |
 | Hornet Packer | .hrt | ProWizard | ModTracker |
 | IceTracker | .ice | | ModTracker |
 | IFF-16SV (PCM) | .16sv | | Sample |

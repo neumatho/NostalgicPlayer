@@ -3,12 +3,12 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Containers
+namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Containers
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class AhxPListEntry
+	internal class HvlPListEntry
 	{
 		public int Note;
 		public bool Fixed;

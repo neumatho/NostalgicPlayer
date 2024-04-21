@@ -87,7 +87,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArchiveDecruncher", "Agents
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OggVorbis", "Agents\Players\OggVorbis\OggVorbis.csproj", "{8465279A-C96A-4B4B-ADB2-B92B542B3E70}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ahx", "Agents\Players\Ahx\Ahx.csproj", "{634F989B-612C-4C6B-8193-E6D2C0294E9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HivelyTracker", "Agents\Players\HivelyTracker\HivelyTracker.csproj", "{634F989B-612C-4C6B-8193-E6D2C0294E9E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fred", "Agents\Players\Fred\Fred.csproj", "{AE1748DC-4130-4500-9467-9E41327E9E28}"
 EndProject

@@ -117,13 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="IDS_AHX_DESCRIPTION" xml:space="preserve">
+  <data name="IDS_HVL_DESCRIPTION" xml:space="preserve">
     <value>Original player by Bernhard Wodok.
+HivelyTracker parts by Xeron/IRIS.
 Converted to C# by Thomas Neumann + addional fixes by Bryc.
 
 This is a module format where the modules uses C64 like synth sounds. It come from the Amiga, where it was known as the THX format, but the programmers changed the name to AHX because of legal problems with George Lucas. AHX stands for Abyss' Highest Experience.</value>
   </data>
-  <data name="IDS_AHX_DESCRIPTION_AGENT1" xml:space="preserve">
+  <data name="IDS_HVL_DESCRIPTION_AGENT1" xml:space="preserve">
     <value>Original player by Bernhard Wodok.
 Converted to C# by Thomas Neumann + addional fixes by Bryc.
 
@@ -131,7 +132,7 @@ This is a module format where the modules uses C64 like synth sounds. It come fr
 
 This player plays the 1.x file format.</value>
   </data>
-  <data name="IDS_AHX_DESCRIPTION_AGENT2" xml:space="preserve">
+  <data name="IDS_HVL_DESCRIPTION_AGENT2" xml:space="preserve">
     <value>Original player by Bernhard Wodok.
 Converted to C# by Thomas Neumann + addional fixes by Bryc.
 
@@ -139,46 +140,56 @@ This is a module format where the modules uses C64 like synth sounds. It come fr
 
 This player plays the 2.x file format, which has added filter support.</value>
   </data>
-  <data name="IDS_AHX_ERR_CORRUPT_HEADER" xml:space="preserve">
+  <data name="IDS_HVL_DESCRIPTION_AGENT3" xml:space="preserve">
+    <value>Original player by Xeron/IRIS.
+Converted to C# by Thomas Neumann.
+
+HivelyTracker is based on the old AHX format from the Amiga, so it is possible to compose new modules in this format. However, it has extended the functionality and thereby introduced a new version of the AHX file format. Some of the new features includes more than 4 channels and ring modulation.
+</value>
+  </data>
+  <data name="IDS_HVL_ERR_CORRUPT_HEADER" xml:space="preserve">
     <value>Header has invalid values</value>
   </data>
-  <data name="IDS_AHX_ERR_LOADING_HEADER" xml:space="preserve">
+  <data name="IDS_HVL_ERR_LOADING_HEADER" xml:space="preserve">
     <value>Can't read the module header</value>
   </data>
-  <data name="IDS_AHX_ERR_LOADING_INSTRUMENTS" xml:space="preserve">
+  <data name="IDS_HVL_ERR_LOADING_INSTRUMENTS" xml:space="preserve">
     <value>Can't read the module instruments</value>
   </data>
-  <data name="IDS_AHX_ERR_LOADING_TRACKS" xml:space="preserve">
+  <data name="IDS_HVL_ERR_LOADING_TRACKS" xml:space="preserve">
     <value>Can't read the module tracks</value>
   </data>
-  <data name="IDS_AHX_INFODESCLINE0" xml:space="preserve">
+  <data name="IDS_HVL_INFODESCLINE0" xml:space="preserve">
     <value>Number of positions:</value>
   </data>
-  <data name="IDS_AHX_INFODESCLINE1" xml:space="preserve">
+  <data name="IDS_HVL_INFODESCLINE1" xml:space="preserve">
     <value>Used tracks:</value>
   </data>
-  <data name="IDS_AHX_INFODESCLINE2" xml:space="preserve">
+  <data name="IDS_HVL_INFODESCLINE2" xml:space="preserve">
     <value>Used instruments:</value>
   </data>
-  <data name="IDS_AHX_INFODESCLINE3" xml:space="preserve">
+  <data name="IDS_HVL_INFODESCLINE3" xml:space="preserve">
     <value>Playing position:</value>
   </data>
-  <data name="IDS_AHX_INFODESCLINE4" xml:space="preserve">
+  <data name="IDS_HVL_INFODESCLINE4" xml:space="preserve">
     <value>Playing tracks:</value>
   </data>
-  <data name="IDS_AHX_INFODESCLINE5" xml:space="preserve">
+  <data name="IDS_HVL_INFODESCLINE5" xml:space="preserve">
     <value>Current speed:</value>
   </data>
-  <data name="IDS_AHX_INFODESCLINE6" xml:space="preserve">
+  <data name="IDS_HVL_INFODESCLINE6" xml:space="preserve">
     <value>Current tempo (Hz):</value>
   </data>
-  <data name="IDS_AHX_NAME" xml:space="preserve">
-    <value>AHX</value>
+  <data name="IDS_HVL_NAME" xml:space="preserve">
+    <value>HivelyTracker</value>
   </data>
-  <data name="IDS_AHX_NAME_AGENT1" xml:space="preserve">
+  <data name="IDS_HVL_NAME_AGENT1" xml:space="preserve">
     <value>AHX 1.x</value>
   </data>
-  <data name="IDS_AHX_NAME_AGENT2" xml:space="preserve">
+  <data name="IDS_HVL_NAME_AGENT2" xml:space="preserve">
     <value>AHX 2.x</value>
+  </data>
+  <data name="IDS_HVL_NAME_AGENT3" xml:space="preserve">
+    <value>HivelyTracker</value>
   </data>
 </root>

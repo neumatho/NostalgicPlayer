@@ -3,11 +3,11 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Agent.Player.Ahx.Implementation;
+using Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Implementation;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
-namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Containers
+namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker.Containers
 {
 	/// <summary>
 	/// Holds all the information about the player state at a specific time
@@ -15,14 +15,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Ahx.Containers
 	internal class Snapshot : ISnapshot
 	{
 		public GlobalPlayingInfo PlayingInfo;
-		public AhxVoices[] Channels;
+		public HvlVoice[] Channels;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Snapshot(GlobalPlayingInfo playingInfo, AhxVoices[] channels)
+		public Snapshot(GlobalPlayingInfo playingInfo, HvlVoice[] channels)
 		{
 			PlayingInfo = playingInfo.MakeDeepClone();
 			Channels = ArrayHelper.CloneObjectArray(channels);
