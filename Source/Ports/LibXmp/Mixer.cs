@@ -498,6 +498,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				VisualizerChannel visualizerChannel = visualizerChannels[vi.Root];
 
+				visualizerChannel.Muted = false;
 				visualizerChannel.NoteKicked = true;
 				visualizerChannel.SampleNumber = (short)vi.Smp;
 				visualizerChannel.SamplePosition = (int)vi.Pos;
