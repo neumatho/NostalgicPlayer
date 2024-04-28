@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
@@ -18,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 	{
 		internal bool doNotTrigEvents;
 
-		private readonly List<ModuleInfoChanged> changedModuleInfo = new List<ModuleInfoChanged>();
+		private readonly Dictionary<int, ModuleInfoChanged> changedModuleInfo = new Dictionary<int, ModuleInfoChanged>();
 
 		/********************************************************************/
 		/// <summary>
@@ -150,7 +151,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/********************************************************************/
 		public virtual ModuleInfoChanged[] GetChangedInformation()
 		{
-			ModuleInfoChanged[] changedInfo = changedModuleInfo.ToArray();
+			ModuleInfoChanged[] changedInfo = changedModuleInfo.Values.ToArray();
 			changedModuleInfo.Clear();
 
 			return changedInfo;
@@ -191,7 +192,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		protected void OnModuleInfoChanged(int line, string newValue)
 		{
 			if (!doNotTrigEvents)
-				changedModuleInfo.Add(new ModuleInfoChanged(line, newValue));
+				changedModuleInfo[line] = new ModuleInfoChanged(line, newValue);
 		}
 		#endregion
 	}
