@@ -8,16 +8,13 @@ using System;
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers
 {
 	/// <summary>
-	/// Different flags used when playing a sample
+	/// Holds addresses for a single sample
 	/// </summary>
-	[Flags]
-	internal enum SampleFlag
+	internal class VoiceSample
 	{
-		None = 0,
-
-		_16Bits = 0x0001,
-
-		Bidi = 0x0200,
-		Reverse = 0x0400
+		public Array Left;
+		public Array Right;
+		public uint Start;
+		public uint Size;
 	}
 }

@@ -56,6 +56,30 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 		/********************************************************************/
 		/// <summary>
+		/// Will play the sample in the channel, but first when the current
+		/// sample stops or loops. No retrigger is made
+		/// </summary>
+		/********************************************************************/
+		public void SetSample(Array adr, uint startOffset, uint length, byte bit, bool backwards)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will play the sample in the channel, but first when the current
+		/// sample stops or loops. No retrigger is made
+		/// </summary>
+		/********************************************************************/
+		public void SetStereoSample(Array leftAdr, Array rightAdr, uint startOffset, uint length, byte bit, bool backwards)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will set the loop point in the sample
 		/// </summary>
 		/********************************************************************/

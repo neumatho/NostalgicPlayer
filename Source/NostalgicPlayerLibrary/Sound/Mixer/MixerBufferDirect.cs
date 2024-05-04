@@ -62,14 +62,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				int leftVolume = voiceInfo[0].Enabled ? MasterVolume : 0;
 				int rightVolume = voiceInfo[1].Enabled ? MasterVolume : 0;
 
-				AddPlayerSamples(ref voiceInfo[0], channelMap[0], offsetInFrames * 2, 2, todoInFrames, leftVolume);
-				AddPlayerSamples(ref voiceInfo[1], channelMap[1], offsetInFrames * 2 + 1, 2, todoInFrames, rightVolume);
+				AddPlayerSamples(voiceInfo[0], channelMap[0], offsetInFrames * 2, 2, todoInFrames, leftVolume);
+				AddPlayerSamples(voiceInfo[1], channelMap[1], offsetInFrames * 2 + 1, 2, todoInFrames, rightVolume);
 			}
 			else
 			{
 				int volume = voiceInfo[0].Enabled ? MasterVolume : 0;
 
-				AddPlayerSamples(ref voiceInfo[0], channelMap[0], offsetInFrames, 1, todoInFrames, volume);
+				AddPlayerSamples(voiceInfo[0], channelMap[0], offsetInFrames, 1, todoInFrames, volume);
 			}
 		}
 
@@ -93,24 +93,26 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Convert the output from the player to 32-bit samples
 		/// </summary>
 		/********************************************************************/
-		private void AddPlayerSamples(ref VoiceInfo vnf, int[] dest, int destOffsetInSamples, int destSkip, int todoInSamples, int vol)
+		private void AddPlayerSamples(VoiceInfo vnf, int[] dest, int destOffsetInSamples, int destSkip, int todoInSamples, int vol)
 		{
+			VoiceSampleInfo vsi = vnf.SampleInfo;
+
 			if (vnf.Kick)
 			{
-				vnf.Current = vnf.Start;
+				vnf.Current = vsi.Sample.Start;
 				vnf.Kick = false;
 				vnf.Active = true;
 			}
 
-			int countInSamples = Math.Min(todoInSamples, (int)vnf.Size - (int)vnf.Current);
+			int countInSamples = Math.Min(todoInSamples, (int)vsi.Sample.Size - (int)vnf.Current);
 			if (countInSamples > 0)
 			{
 				vol *= 128;
 
-				if ((vnf.Flags & SampleFlag._16Bits) != 0)
+				if ((vsi.Flags & SampleFlag._16Bits) != 0)
 				{
 					// 16-bit
-					Span<short> source = SampleHelper.ConvertSampleTo16Bit(vnf.Addresses[0], 0);
+					Span<short> source = SampleHelper.ConvertSampleTo16Bit(vsi.Sample.Left, 0);
 
 					for (int i = (int)vnf.Current; i < vnf.Current + countInSamples; i++)
 					{
@@ -123,7 +125,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				else
 				{
 					// 8-bit
-					Span<sbyte> source = SampleHelper.ConvertSampleTo8Bit(vnf.Addresses[0], 0);
+					Span<sbyte> source = SampleHelper.ConvertSampleTo8Bit(vsi.Sample.Left, 0);
 
 					for (int i = (int)vnf.Current; i < vnf.Current + countInSamples; i++)
 					{

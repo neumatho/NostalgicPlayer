@@ -519,7 +519,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 							for (int t = 0; t < virtualChannelNumber; t++)
 							{
 								bool channelEnabled = (channelsEnabled != null) && (t < channelsEnabled.Length) ? channelsEnabled[t] : true;
-								channelChanges[t] = ((ChannelParser)currentPlayer.VirtualChannels[t]).ParseInfo(ref voiceInfo[t], click, channelEnabled, bufferMode);
+								channelChanges[t] = ((ChannelParser)currentPlayer.VirtualChannels[t]).ParseInfo(voiceInfo[t], click, channelEnabled, bufferMode);
 							}
 
 							if (enableChannelVisualization)
@@ -541,9 +541,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 							framesTakenSinceLastCall = 0;
 
 							if (bufferDirect)
-								framesLeft = (int)voiceInfo[0].Size;
+								framesLeft = (int)voiceInfo[0].SampleInfo.Sample.Size;
 							else if (bufferMode)
-								framesLeft = (int)(mixerFrequency * voiceInfo[0].Size / voiceInfo[0].Frequency);
+								framesLeft = (int)(mixerFrequency * voiceInfo[0].SampleInfo.Sample.Size / voiceInfo[0].Frequency);
 							else
 							{
 								// Calculate the number of frames to mix before the
@@ -634,7 +634,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					// Parse the channels
 					for (int t = 0; t < extraChannelsNumber; t++)
 					{
-						((ChannelParser)extraChannelsChannels[t]).ParseInfo(ref voiceInfo[t], click, true, false);
+						((ChannelParser)extraChannelsChannels[t]).ParseInfo(voiceInfo[t], click, true, false);
 						chanMap[t] = extraChannelsMixBuffer;
 					}
 

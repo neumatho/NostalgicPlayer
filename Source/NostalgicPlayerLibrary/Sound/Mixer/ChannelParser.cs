@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// given
 		/// </summary>
 		/********************************************************************/
-		public ChannelChanged ParseInfo(ref VoiceInfo voiceInfo, int clickBuffer, bool channelEnabled, bool bufferMode)
+		public ChannelChanged ParseInfo(VoiceInfo voiceInfo, int clickBuffer, bool channelEnabled, bool bufferMode)
 		{
 			// Initialize ChannelChanged properties
 			bool ccMuted = false;
@@ -33,8 +33,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			int? ccSamplePosition = null;
 			ushort? ccVolume = null;
 			uint? ccFrequency = null;
-			
-			SampleFlag infoFlags = voiceInfo.Flags;
+
+			VoiceFlag voiceInfoFlags = voiceInfo.Flags;
+			SampleFlag sampleInfoFlags = voiceInfo.SampleInfo.Flags;
 
 			// Change the volume?
 			if ((flags & ChannelFlag.Volume) != 0)
@@ -74,38 +75,72 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			{
 				voiceInfo.Active = false;
 				voiceInfo.Kick = false;
-				infoFlags = SampleFlag.None;
+				voiceInfoFlags = VoiceFlag.None;
+				sampleInfoFlags = SampleFlag.None;
 
 				ccMuted = true;
 			}
 			else
 			{
-				if (sampleAddresses[0] != null)
+				if (sampleInfo.Sample.Left != null)
 				{
 					// Trigger the sample to play from the start?
 					if ((flags & ChannelFlag.TrigIt) != 0)
 					{
-						infoFlags = SampleFlag.None;
+						Sample sample = sampleInfo.Sample;
+						VoiceSampleInfo voiceSampleInfo = voiceInfo.SampleInfo;
+						VoiceSample voiceSample = voiceSampleInfo.Sample;
 
-						bool backwards = false;
-						if ((flags & ChannelFlag.Backwards) != 0)
+						voiceInfoFlags = VoiceFlag.None;
+						sampleInfoFlags = SampleFlag.None;
+
+						voiceSample.Left = sample.Left;
+						voiceSample.Right = sample.Right;
+						voiceSample.Start = sample.Start;
+						voiceSample.Size = sample.Length;
+
+						if ((sampleInfo.Flags & ChannelSampleFlag.Backwards) != 0)
 						{
-							backwards = true;
-							infoFlags |= SampleFlag.Reverse;
+							voiceSample.Start = sample.Length - sample.Start - 1;
+							sampleInfoFlags |= SampleFlag.Reverse;
 						}
 
-						voiceInfo.Addresses[0] = sampleAddresses[0];
-						voiceInfo.Addresses[1] = sampleAddresses[1];
-						voiceInfo.Start = backwards ? sampleLength - sampleStart - 1 : sampleStart;
-						voiceInfo.Size = sampleLength;
-						voiceInfo.RepeatPosition = 0;
-						voiceInfo.RepeatEnd = 0;
 						voiceInfo.ReleaseEnd = 0;
-						voiceInfo.NewRepeatPosition = 0;
-						voiceInfo.NewRepeatEnd = 0;
+						voiceInfo.NewSampleInfo = null;
 						voiceInfo.Kick = true;
 
+						if ((sampleInfo.Flags & ChannelSampleFlag._16Bit) != 0)
+							sampleInfoFlags |= SampleFlag._16Bits;
+
 						ccNoteKicked = true;
+
+						// Does sample loops?
+						if (sampleInfo.Loop != null)
+						{
+							Sample loopSample = sampleInfo.Loop;
+
+							if (loopSample.Length > 2)
+							{
+								VoiceSample loopVoiceSample = voiceSampleInfo.Loop = new VoiceSample();
+
+								loopVoiceSample.Left = loopSample.Left;
+								loopVoiceSample.Right = loopSample.Right;
+								loopVoiceSample.Start = loopSample.Start;
+								loopVoiceSample.Size = loopSample.Length;
+
+								if ((sampleInfo.Flags & ChannelSampleFlag.Backwards) != 0)
+									loopVoiceSample.Start = loopSample.Length - loopSample.Start - 1;
+
+								if ((sampleInfo.Flags & ChannelSampleFlag.PingPong) != 0)
+									sampleInfoFlags |= SampleFlag.Bidi;
+
+								ccLooping = true;
+							}
+
+							sampleInfo.Loop = null;
+						}
+						else
+							voiceSampleInfo.Loop = null;
 					}
 
 					if ((flags & ChannelFlag.ChangePosition) != 0)
@@ -113,7 +148,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 						voiceInfo.NewPosition = samplePosition;
 						voiceInfo.RelativePosition = (flags & ChannelFlag.Relative) != 0;
 
-						infoFlags |= SampleFlag.ChangePosition;
+						voiceInfoFlags |= VoiceFlag.ChangePosition;
 
 						ccSamplePositionRelative = voiceInfo.RelativePosition;
 						ccSamplePosition = samplePosition;
@@ -121,40 +156,95 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 					if (!bufferMode)
 					{
-						// Does the sample loop?
-						if (((flags & ChannelFlag.Loop) != 0) && (loopLength > 2))
+						// Use new sample after current sample has played or looping?
+						if (newSampleInfo != null)
 						{
-							ccLooping = true;
+							Sample newSample = newSampleInfo.Sample;
 
-							voiceInfo.NewLoopAddresses[0] = loopAddresses[0];
-							voiceInfo.NewLoopAddresses[1] = loopAddresses[1];
-							voiceInfo.NewRepeatPosition = loopStart;
-							voiceInfo.NewRepeatEnd = loopStart + loopLength;
-
-							if (voiceInfo.Kick)
+							if (newSample.Length > 2)
 							{
-								voiceInfo.RepeatPosition = voiceInfo.NewRepeatPosition;
-								voiceInfo.RepeatEnd = voiceInfo.NewRepeatEnd;
+								VoiceSampleInfo newVoiceSampleInfo = voiceInfo.NewSampleInfo = new VoiceSampleInfo();
+								VoiceSample newVoiceSample = newVoiceSampleInfo.Sample;
+
+								newVoiceSample.Left = newSample.Left;
+								newVoiceSample.Right = newSample.Right;
+								newVoiceSample.Start = newSample.Start;
+								newVoiceSample.Size = newSample.Length - newSample.Start;	// Because the new sample is used as loop points, the size need to be the length of the loop and not the sample
+
+								if ((newSampleInfo.Flags & ChannelSampleFlag.Backwards) != 0)
+								{
+									newVoiceSample.Start = newSample.Length - newSample.Start - 1;
+									sampleInfoFlags |= SampleFlag.Reverse;
+								}
+
+								if ((newSampleInfo.Flags & ChannelSampleFlag._16Bit) != 0)
+									sampleInfoFlags |= SampleFlag._16Bits;
+
+								// Does sample loops?
+								if ((newSampleInfo.Loop != null) && (newSampleInfo.Loop.Length > 2))
+								{
+									Sample loopSample = newSampleInfo.Loop;
+									VoiceSample loopVoiceSample = newVoiceSampleInfo.Loop = new VoiceSample();
+
+									loopVoiceSample.Left = loopSample.Left;
+									loopVoiceSample.Right = loopSample.Right;
+									loopVoiceSample.Start = loopSample.Start;
+									loopVoiceSample.Size = loopSample.Length;
+
+									if ((sampleInfo.Flags & ChannelSampleFlag.Backwards) != 0)
+										loopVoiceSample.Start = loopSample.Length - loopSample.Start - 1;
+
+									if ((sampleInfo.Flags & ChannelSampleFlag.PingPong) != 0)
+										sampleInfoFlags |= SampleFlag.Bidi;
+								}
+
+								ccLooping = true;
 							}
 
-							infoFlags |= SampleFlag.Loop;
+							newSampleInfo = null;
+						}
 
-							if ((flags & ChannelFlag.PingPong) != 0)
-								infoFlags |= SampleFlag.Bidi;
+						//XX To be backward compatible, an extra check has been added here. Some players
+						// still use SetLoop() to play a new sample after current one has played. Until
+						// the players has been rewritten to use SetSample(), we need this part
+						if (sampleInfo.Loop != null)
+						{
+							if ((voiceInfo.NewSampleInfo == null) && (sampleInfo.Loop.Length > 2))
+							{
+								Sample loopSample = sampleInfo.Loop;
+								VoiceSampleInfo newVoiceSampleInfo = voiceInfo.NewSampleInfo = new VoiceSampleInfo();
+								VoiceSample newVoiceSample = newVoiceSampleInfo.Sample;
+
+								newVoiceSample.Left = loopSample.Left;
+								newVoiceSample.Right = loopSample.Right;
+								newVoiceSample.Start = loopSample.Start;
+								newVoiceSample.Size = loopSample.Length;
+
+								VoiceSample loopVoiceSample = newVoiceSampleInfo.Loop = new VoiceSample();
+
+								loopVoiceSample.Left = loopSample.Left;
+								loopVoiceSample.Right = loopSample.Right;
+								loopVoiceSample.Start = loopSample.Start;
+								loopVoiceSample.Size = loopSample.Length;
+
+								if ((sampleInfo.Flags & ChannelSampleFlag.PingPong) != 0)
+									sampleInfoFlags |= SampleFlag.Bidi;
+
+								ccLooping = true;
+							}
+
+							sampleInfo.Loop = null;
 						}
 
 						// Special release command. Used in Oktalyzer player
-						if ((flags & ChannelFlag.Release) != 0)
+						if ((flags & ChannelFlag.Release) != 0)//XX Need to look at this later on
 						{
-							voiceInfo.NewLoopAddresses[0] = loopAddresses[0];
+/*							voiceInfo.NewLoopAddresses[0] = loopAddresses[0];
 							voiceInfo.NewLoopAddresses[1] = loopAddresses[1];
 							voiceInfo.NewRepeatPosition = voiceInfo.RepeatPosition = loopStart;
 							voiceInfo.ReleaseEnd = loopStart + releaseLength;
-						}
+*/						}
 					}
-
-					if ((flags & ChannelFlag._16Bit) != 0)
-						infoFlags |= SampleFlag._16Bits;
 				}
 
 				if ((flags & ChannelFlag.VirtualTrig) != 0)
@@ -162,12 +252,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			}
 
 			// Store the flags back
-			voiceInfo.Flags = infoFlags;
+			voiceInfo.Flags = voiceInfoFlags;
+			voiceInfo.SampleInfo.Flags = sampleInfoFlags;
 
 			ChannelFlag retFlags = flags;
 			flags = ChannelFlag.None;
 
-			return bufferMode || ((retFlags & ~ChannelFlag.Active) == ChannelFlag.None) ? null : new ChannelChanged(channelEnabled, ccMuted, ccNoteKicked, currentSampleNumber, voiceInfo.Size, ccLooping, ccSamplePositionRelative, ccSamplePosition, ccVolume, ccFrequency);
+			return bufferMode || ((retFlags & ~ChannelFlag.Active) == ChannelFlag.None) ? null : new ChannelChanged(channelEnabled, ccMuted, ccNoteKicked, currentSampleNumber, voiceInfo.SampleInfo.Sample.Size, ccLooping, ccSamplePositionRelative, ccSamplePosition, ccVolume, ccFrequency);
 		}
 
 

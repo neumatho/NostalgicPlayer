@@ -3,21 +3,15 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
-
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers
 {
 	/// <summary>
-	/// Different flags used when playing a sample
+	/// Holds standard information about a sample
 	/// </summary>
-	[Flags]
-	internal enum SampleFlag
+	internal class VoiceSampleInfo
 	{
-		None = 0,
-
-		_16Bits = 0x0001,
-
-		Bidi = 0x0200,
-		Reverse = 0x0400
+		public SampleFlag Flags;
+		public VoiceSample Sample = new VoiceSample();
+		public VoiceSample Loop;
 	}
 }

@@ -11,13 +11,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers
 	/// Different flags used when playing a sample
 	/// </summary>
 	[Flags]
-	internal enum SampleFlag
+	internal enum VoiceFlag
 	{
 		None = 0,
 
-		_16Bits = 0x0001,
-
-		Bidi = 0x0200,
-		Reverse = 0x0400
+		ChangePosition = 0x1000,
+		Release = 0x2000
 	}
 }

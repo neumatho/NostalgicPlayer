@@ -5,19 +5,32 @@
 /******************************************************************************/
 using System;
 
-namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers
+namespace Polycode.NostalgicPlayer.Kit.Containers.Flags
 {
 	/// <summary>
-	/// Different flags used when playing a sample
+	/// Sample in a channel flags
 	/// </summary>
 	[Flags]
-	internal enum SampleFlag
+	public enum ChannelSampleFlag : uint
 	{
+		/// <summary>
+		/// No flags
+		/// </summary>
 		None = 0,
 
-		_16Bits = 0x0001,
+		/// <summary>
+		/// Set this if the sample is 16 bit
+		/// </summary>
+		_16Bit = 0x00000001,
 
-		Bidi = 0x0200,
-		Reverse = 0x0400
+		/// <summary>
+		/// Set this to play the sample backwards
+		/// </summary>
+		Backwards = 0x00000002,
+
+		/// <summary>
+		/// Set this together with the loop for ping-pong loop
+		/// </summary>
+		PingPong = 0x00000010,
 	}
 }

@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers;
@@ -83,31 +82,25 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		{
 			for (int i = 0; i < channelNumber; i++)
 			{
-				ref VoiceInfo info = ref voiceInfo[i];
-
-				info.Enabled = true;
-				info.Kick = false;
-				info.Active = false;
-				info.Flags = SampleFlag.None;
-				info.Addresses = new Array[2];
-				info.Start = 0;
-				info.Size = 0;
-				info.RepeatPosition = 0;
-				info.RepeatEnd = 0;
-				info.NewLoopAddresses = new Array[2];
-				info.NewRepeatPosition = 0;
-				info.NewRepeatEnd = 0;
-				info.ReleaseEnd = 0;
-				info.Frequency = 10000;
-				info.Volume = 0;
-				info.Panning = (int)((((i & 3) == 0) || ((i & 3) == 3)) ? ChannelPanningType.Left : ChannelPanningType.Right);
-				info.RampVolume = 0;
-				info.LeftVolumeSelected = 0;
-				info.RightVolumeSelected = 0;
-				info.OldLeftVolume = 0;
-				info.OldRightVolume = 0;
-				info.Current = 0;
-				info.Increment = 0;
+				voiceInfo[i] = new VoiceInfo
+				{
+					Enabled = true,
+					Kick = false,
+					Active = false,
+					Flags = VoiceFlag.None,
+					SampleInfo = new VoiceSampleInfo(),
+					ReleaseEnd = 0,
+					Frequency = 10000,
+					Volume = 0,
+					Panning = (int)((((i & 3) == 0) || ((i & 3) == 3)) ? ChannelPanningType.Left : ChannelPanningType.Right),
+					RampVolume = 0,
+					LeftVolumeSelected = 0,
+					RightVolumeSelected = 0,
+					OldLeftVolume = 0,
+					OldRightVolume = 0,
+					Current = 0,
+					Increment = 0
+				};
 			}
 		}
 
