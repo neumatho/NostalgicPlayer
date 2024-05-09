@@ -82,8 +82,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			}
 			else
 			{
-				if (sampleInfo.Sample.Left != null)
+				if ((sampleInfo.Sample.Left != null) || (newSampleInfo?.Sample?.Left != null))
 				{
+					if ((newSampleInfo != null) && !IsActive)
+					{
+						sampleInfo = newSampleInfo;
+						flags |= ChannelFlag.TrigIt;
+
+						newSampleInfo = null;
+					}
+
 					// Trigger the sample to play from the start?
 					if ((flags & ChannelFlag.TrigIt) != 0)
 					{

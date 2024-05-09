@@ -1082,6 +1082,14 @@
             <uap:DisplayName>HivelyTracker</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="hipfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-hip">.hip</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Hippel</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
