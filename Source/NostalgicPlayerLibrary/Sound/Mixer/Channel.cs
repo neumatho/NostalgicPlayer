@@ -83,11 +83,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		protected int samplePosition;
 
 		/// <summary>
-		/// Length of the release part of the sample
-		/// </summary>
-		protected uint releaseLength;
-
-		/// <summary>
 		/// The frequency to play with
 		/// </summary>
 		protected uint frequency;
