@@ -51,6 +51,14 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Will play the sample in the channel, but first when the current
 		/// sample stops or loops. No retrigger is made
 		/// </summary>
+		/// <param name="startOffset">is the number of samples in the sample to start</param>
+		/// <param name="length">is the length in samples of the sample</param>
+		void SetSample(uint startOffset, uint length);
+
+		/// <summary>
+		/// Will play the sample in the channel, but first when the current
+		/// sample stops or loops. No retrigger is made
+		/// </summary>
 		/// <param name="adr">is a pointer to the sample in memory</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
 		/// <param name="length">is the length in samples of the sample</param>
@@ -103,13 +111,6 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <param name="position">The new position in the sample</param>
 		/// <param name="relative">Indicate if the given position is relative to the current position or an absolute position. If true, position can be negative as well as position</param>
 		void SetPosition(int position, bool relative);
-
-		/// <summary>
-		/// Will start to play the release part of the sample
-		/// </summary>
-		/// <param name="startOffset">is the number of samples in the sample to start</param>
-		/// <param name="length">is the length in samples to play</param>
-		void PlayReleasePart(uint startOffset, uint length);
 
 		/// <summary>
 		/// Will change the volume

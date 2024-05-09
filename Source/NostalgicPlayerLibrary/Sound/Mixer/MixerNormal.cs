@@ -196,9 +196,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				idxLoopEnd = vsi.Loop.Size != 0 ? ((long)(vsi.Loop.Start + vsi.Loop.Size) << FracBits) - 1 : 0;
 			}
 
-			// The release end position in fixed point
-			long idxReleaseEnd = vnf.ReleaseEnd != 0 ? ((long)vnf.ReleaseEnd << FracBits) - 1 : 0;
-
 			// Update the 'current' index so the sample loops, or
 			// stops playing if it reached the end of the sample
 			while (todoInFrames > 0)
@@ -260,36 +257,22 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					else
 					{
 						// Sample is not looping, so check if it reached the last position
-/*//XX						if ((vnf.Flags & SampleFlag.Release) != 0)
+						if (vnf.Current >= idxSize)
 						{
-							// We play the release part
-							if (vnf.Current >= idxReleaseEnd)
+							if (vnf.NewSampleInfo != null)
+							{
+								vnf.SampleInfo = vnf.NewSampleInfo;
+								vnf.NewSampleInfo = null;
+
+								vsi = vnf.SampleInfo;
+								setLoop = vsi.Sample;
+							}
+							else
 							{
 								// Stop playing this sample
 								vnf.Current = 0;
 								vnf.Active = false;
 								break;
-							}
-						}
-						else*/
-						{
-							if (vnf.Current >= idxSize)
-							{
-								if (vnf.NewSampleInfo != null)
-								{
-									vnf.SampleInfo = vnf.NewSampleInfo;
-									vnf.NewSampleInfo = null;
-
-									vsi = vnf.SampleInfo;
-									setLoop = vsi.Sample;
-								}
-								else
-								{
-									// Stop playing this sample
-									vnf.Current = 0;
-									vnf.Active = false;
-									break;
-								}
 							}
 						}
 					}
@@ -305,40 +288,29 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 						long idxNewLoopPos = (long)setLoop.Start << FracBits;
 						long idxNewLoopEnd = setLoop.Size != 0 ? ((long)(setLoop.Start + setLoop.Size) << FracBits) - 1 : 0;
 
-						// Should we release the sample?
-/*//XX						if (vnf.ReleaseEnd != 0)
+						// The sample is looping, so check if it reached the loopEnd index
+						if ((vnf.SampleInfo.Flags & SampleFlag.Bidi) != 0)
 						{
-							// Yes, so set the current position
-							vnf.Current = idxLoopPos + (vnf.Current - idxLoopEnd);
-							vnf.Flags |= SampleFlag.Release;
-							vnf.Flags &= ~SampleFlag.Loop;
+							// Sample is doing bidirectional loops, so 'bounce'
+							// the current index against the idxLoopEnd
+							vnf.Current = idxNewLoopEnd - (vnf.Current - idxLoopEnd);
+							vnf.Increment = -vnf.Increment;
+							vsi.Flags |= SampleFlag.Reverse;
 						}
 						else
-*/						{
-							// The sample is looping, so check if it reached the loopEnd index
-							if ((vnf.SampleInfo.Flags & SampleFlag.Bidi) != 0)
-							{
-								// Sample is doing bidirectional loops, so 'bounce'
-								// the current index against the idxLoopEnd
-								vnf.Current = idxNewLoopEnd - (vnf.Current - idxLoopEnd);
-								vnf.Increment = -vnf.Increment;
-								vsi.Flags |= SampleFlag.Reverse;
-							}
-							else
-							{
-								// Normal looping, so set the
-								// current position to loopEnd index
-								vnf.Current = idxNewLoopPos + (vnf.Current - idxLoopEnd);
-							}
-
-							idxLoopPos = idxNewLoopPos;
-							idxLoopEnd = idxNewLoopEnd;
+						{
+							// Normal looping, so set the
+							// current position to loopEnd index
+							vnf.Current = idxNewLoopPos + (vnf.Current - idxLoopEnd);
 						}
+
+						idxLoopPos = idxNewLoopPos;
+						idxLoopEnd = idxNewLoopEnd;
 					}
 				}
 
 				long end = (vsi.Flags & SampleFlag.Reverse) != 0 ? vsi.Loop != null ? idxLoopPos : 0 :
-							vsi.Loop != null ? idxLoopEnd : (vnf.Flags & VoiceFlag.Release) != 0 ? idxReleaseEnd : idxSize;
+							vsi.Loop != null ? idxLoopEnd : idxSize;
 
 				// If the sample is not blocked
 				int done;

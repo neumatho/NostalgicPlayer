@@ -18,7 +18,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers
 		public VoiceSampleInfo NewSampleInfo;	// Information for a new sample to use when loop is restarted
 		public int NewPosition;					// New position to use immediately
 		public bool RelativePosition;			// Indicate if the new position is relative or absolute
-		public uint ReleaseEnd;					// Release end
 		public uint Frequency;					// Current frequency
 		public int Volume;						// Current volume
 		public int Panning;						// Current panning position

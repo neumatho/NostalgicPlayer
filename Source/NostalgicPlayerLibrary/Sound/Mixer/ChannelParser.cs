@@ -113,7 +113,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 							sampleInfoFlags |= SampleFlag.Reverse;
 						}
 
-						voiceInfo.ReleaseEnd = 0;
 						voiceInfo.NewSampleInfo = null;
 						voiceInfo.Kick = true;
 
@@ -243,15 +242,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 							sampleInfo.Loop = null;
 						}
-
-						// Special release command. Used in Oktalyzer player
-						if ((flags & ChannelFlag.Release) != 0)//XX Need to look at this later on
-						{
-/*							voiceInfo.NewLoopAddresses[0] = loopAddresses[0];
-							voiceInfo.NewLoopAddresses[1] = loopAddresses[1];
-							voiceInfo.NewRepeatPosition = voiceInfo.RepeatPosition = loopStart;
-							voiceInfo.ReleaseEnd = loopStart + releaseLength;
-*/						}
 					}
 				}
 

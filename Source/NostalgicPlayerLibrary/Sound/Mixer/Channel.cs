@@ -202,6 +202,28 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Will play the sample in the channel, but first when the current
 		/// sample stops or loops. No retrigger is made
 		/// </summary>
+		/// <param name="startOffset">is the number of samples in the sample to start</param>
+		/// <param name="length">is the length in samples of the sample</param>
+		/********************************************************************/
+		public void SetSample(uint startOffset, uint length)
+		{
+			if (length == 0)
+				throw new ArgumentException("Length may not be zero", nameof(length));
+
+			if (startOffset > sampleInfo.Sample.Length)
+				throw new ArgumentException("startOffset is bigger than length", nameof(startOffset));
+
+			SetNewSampleInfo(sampleInfo.Sample.Left, sampleInfo.Sample.Right, startOffset, length, null, null);
+			newSampleInfo.Flags = sampleInfo.Flags;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will play the sample in the channel, but first when the current
+		/// sample stops or loops. No retrigger is made
+		/// </summary>
 		/// <param name="adr">is a pointer to the sample in memory</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
 		/// <param name="length">is the length in samples of the sample</param>
@@ -389,30 +411,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 			if (relative)
 				flags |= ChannelFlag.Relative;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will start to play the release part of the sample
-		/// </summary>
-		/// <param name="startOffset">is the number of samples in the sample to start</param>
-		/// <param name="length">is the length in samples to play</param>
-		/********************************************************************/
-		public void PlayReleasePart(uint startOffset, uint length)
-		{
-			if (length == 0)
-				throw new ArgumentException("Length may not be zero", nameof(length));
-
-			sampleInfo.Loop.Left = sampleInfo.Sample.Left;
-			sampleInfo.Loop.Right = sampleInfo.Sample.Right;
-
-			sampleInfo.Loop.Start = startOffset;
-			releaseLength = length;
-			flags |= ChannelFlag.Release;
-
-			flags &= ~ChannelFlag.MuteIt;
 		}
 
 
@@ -625,7 +623,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Set new sample information in internal variables
 		/// </summary>
 		/********************************************************************/
-		private void SetNewSampleInfo(Array leftAdr, Array rightAdr, uint startOffset, uint length, byte bit, bool backwards)
+		private void SetNewSampleInfo(Array leftAdr, Array rightAdr, uint startOffset, uint length, byte? bit, bool? backwards)
 		{
 			newSampleInfo = new SampleInfo();
 
@@ -639,7 +637,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Set the sample information in internal variables
 		/// </summary>
 		/********************************************************************/
-		private void SetSampleInfo(SampleInfo sampleInf, Array leftAdr, Array rightAdr, uint startOffset, uint length, byte bit, bool backwards)
+		private void SetSampleInfo(SampleInfo sampleInf, Array leftAdr, Array rightAdr, uint startOffset, uint length, byte? bit, bool? backwards)
 		{
 			sampleInf.Sample.Left = leftAdr;
 			sampleInf.Sample.Right = rightAdr;
@@ -647,10 +645,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			sampleInf.Sample.Length = length;
 			sampleInf.Flags = ChannelSampleFlag.None;
 
-			if (bit == 16)
+			if (bit.HasValue && (bit.Value == 16))
 				sampleInf.Flags |= ChannelSampleFlag._16Bit;
 
-			if (backwards)
+			if (backwards.HasValue && backwards.Value)
 				sampleInf.Flags |= ChannelSampleFlag.Backwards;
 		}
 

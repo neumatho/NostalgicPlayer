@@ -15,7 +15,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers
 	{
 		None = 0,
 
-		ChangePosition = 0x1000,
-		Release = 0x2000
+		ChangePosition = 0x1000
 	}
 }

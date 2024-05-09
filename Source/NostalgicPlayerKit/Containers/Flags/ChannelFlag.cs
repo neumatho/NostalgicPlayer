@@ -55,11 +55,6 @@ namespace Polycode.NostalgicPlayer.Kit.Containers.Flags
 		Frequency = 0x0004000,
 
 		/// <summary>
-		/// Release the sample
-		/// </summary>
-		Release = 0x00008000,
-
-		/// <summary>
 		/// Virtual trig of the sample (only used by visuals)
 		/// </summary>
 		VirtualTrig = 0x00100000,

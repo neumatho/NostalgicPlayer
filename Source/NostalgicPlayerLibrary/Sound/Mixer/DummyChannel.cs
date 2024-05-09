@@ -60,6 +60,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// sample stops or loops. No retrigger is made
 		/// </summary>
 		/********************************************************************/
+		public void SetSample(uint startOffset, uint length)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will play the sample in the channel, but first when the current
+		/// sample stops or loops. No retrigger is made
+		/// </summary>
+		/********************************************************************/
 		public void SetSample(Array adr, uint startOffset, uint length, byte bit, bool backwards)
 		{
 		}
@@ -117,17 +129,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// </summary>
 		/********************************************************************/
 		public void SetPosition(int position, bool relative)
-		{
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will start to play the release part of the sample
-		/// </summary>
-		/********************************************************************/
-		public void PlayReleasePart(uint startOffset, uint length)
 		{
 		}
 

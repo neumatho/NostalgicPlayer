@@ -965,7 +965,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 					VirtualChannels[channelNum].SetLoop(samp.RepeatStart, samp.RepeatLength);
 
 					chanData.ReleaseStart = (uint)samp.RepeatStart + samp.RepeatLength;
-					chanData.ReleaseLength = samp.Length - chanData.ReleaseStart;
+					chanData.ReleaseLength = samp.Length;
 				}
 			}
 
@@ -1212,7 +1212,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				case 27:
 				{
 					if ((chanData.ReleaseStart != 0) && (chanData.ReleaseLength != 0))
-						VirtualChannels[channelNum].PlayReleasePart(chanData.ReleaseStart, chanData.ReleaseLength);
+						VirtualChannels[channelNum].SetSample(chanData.ReleaseStart, chanData.ReleaseLength);
 
 					break;
 				}

@@ -89,7 +89,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					Active = false,
 					Flags = VoiceFlag.None,
 					SampleInfo = new VoiceSampleInfo(),
-					ReleaseEnd = 0,
 					Frequency = 10000,
 					Volume = 0,
 					Panning = (int)((((i & 3) == 0) || ((i & 3) == 3)) ? ChannelPanningType.Left : ChannelPanningType.Right),
