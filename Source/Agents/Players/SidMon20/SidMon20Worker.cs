@@ -1274,7 +1274,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20
 						voiceInfo.LoopOffset = sample.LoopStart;
 						voiceInfo.LoopLength = sample.LoopLength;
 
-						channel.SetLoop(voiceInfo.LoopSample, voiceInfo.LoopOffset, voiceInfo.LoopLength);
+						if (channel.IsActive)
+						{
+							channel.SetSample(voiceInfo.LoopSample, voiceInfo.LoopOffset, voiceInfo.LoopOffset + voiceInfo.LoopLength);
+							channel.SetLoop(voiceInfo.LoopOffset, voiceInfo.LoopLength);
+						}
 					}
 					else
 						voiceInfo.WaveListOffset--;

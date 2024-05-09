@@ -349,9 +349,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 					worker.VirtualChannels[chNum].PlaySample((short)instNum, data, 0, length);
 					startSyn[chNum] = false;
 				}
+				else
+					worker.VirtualChannels[chNum].SetSample(data, 0, length);
 
 				// Set the loop
-				worker.VirtualChannels[chNum].SetLoop(data, 0, length);
+				worker.VirtualChannels[chNum].SetLoop(0, length);
 			}
 		}
 		#endregion

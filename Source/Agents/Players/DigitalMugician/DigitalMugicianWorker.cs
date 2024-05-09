@@ -990,10 +990,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 							{
 								sbyte[] waveformData = waveforms[waveform];
 
-								channel.SetLoop(waveformData, 0, instr.LoopLength);
-
 								if (voiceInfo.LastEffect != Effect.NoDma)
 									channel.PlaySample(instrumentToSampleInfoMapping[voiceInfo.LastInstrument], waveformData, 0, instr.LoopLength);
+								else
+									channel.SetSample(waveformData, 0, instr.LoopLength);
+
+								channel.SetLoop(waveformData, 0, instr.LoopLength);
 
 								if (currentModuleType == ModuleType.DigitalMugician)
 								{

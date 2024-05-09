@@ -143,6 +143,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 								ccLooping = true;
 							}
+							else
+								voiceSampleInfo.Loop = null;
 
 							sampleInfo.Loop = null;
 						}
@@ -209,38 +211,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 							}
 
 							newSampleInfo = null;
-						}
-
-						//XX To be backward compatible, an extra check has been added here. Some players
-						// still use SetLoop() to play a new sample after current one has played. Until
-						// the players has been rewritten to use SetSample(), we need this part
-						if (sampleInfo.Loop != null)
-						{
-							if ((voiceInfo.NewSampleInfo == null) && (sampleInfo.Loop.Length > 2))
-							{
-								Sample loopSample = sampleInfo.Loop;
-								VoiceSampleInfo newVoiceSampleInfo = voiceInfo.NewSampleInfo = new VoiceSampleInfo();
-								VoiceSample newVoiceSample = newVoiceSampleInfo.Sample;
-
-								newVoiceSample.Left = loopSample.Left;
-								newVoiceSample.Right = loopSample.Right;
-								newVoiceSample.Start = loopSample.Start;
-								newVoiceSample.Size = loopSample.Length;
-
-								VoiceSample loopVoiceSample = newVoiceSampleInfo.Loop = new VoiceSample();
-
-								loopVoiceSample.Left = loopSample.Left;
-								loopVoiceSample.Right = loopSample.Right;
-								loopVoiceSample.Start = loopSample.Start;
-								loopVoiceSample.Size = loopSample.Length;
-
-								if ((sampleInfo.Flags & ChannelSampleFlag.PingPong) != 0)
-									sampleInfoFlags |= SampleFlag.Bidi;
-
-								ccLooping = true;
-							}
-
-							sampleInfo.Loop = null;
 						}
 					}
 				}

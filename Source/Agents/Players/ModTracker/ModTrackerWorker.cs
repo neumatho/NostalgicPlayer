@@ -2328,7 +2328,10 @@ stopLoop:
 					ProgHandler(modChan);
 
 					if (modChan.SynthSample)
-						chan.SetLoop(modChan.SynthData.WaveData, modChan.LoopStart, (uint)modChan.LoopLength * 2);
+					{
+						chan.SetSample(modChan.SynthData.WaveData, modChan.LoopStart, (uint)(modChan.LoopStart + modChan.LoopLength * 2));
+						chan.SetLoop(modChan.LoopStart, (uint)modChan.LoopLength * 2);
+					}
 				}
 			}
 		}

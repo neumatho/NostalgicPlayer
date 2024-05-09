@@ -840,15 +840,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 					if (channel.RetriggerSound)
 					{
 						if (inst.SampleLength > 0)
+						{
 							VirtualChannels[channelNumber].PlaySample(inst.Number, waveforms[data], 0, inst.SampleLength);
+							VirtualChannels[channelNumber].SetLoop(0, inst.SampleLength);
+						}
 						else
 							VirtualChannels[channelNumber].Mute();
 
 						channel.RetriggerSound = false;
 					}
-
-					if (inst.SampleLength > 0)
-						VirtualChannels[channelNumber].SetLoop(waveforms[data], 0, inst.SampleLength);
+					else
+					{
+						if (inst.SampleLength > 0)
+						{
+							VirtualChannels[channelNumber].SetSample(waveforms[data], 0, inst.SampleLength);
+							VirtualChannels[channelNumber].SetLoop(0, inst.SampleLength);
+						}
+					}
 
 					channel.SoundTablePosition++;
 					if (channel.SoundTablePosition >= 48)

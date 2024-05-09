@@ -309,9 +309,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				throw new ArgumentException("Loop length is bigger than previous set length of sample", nameof(length));
 
 			SetLoopInfo(sampleInf, sampleInf.Sample.Left, sampleInf.Sample.Right, startOffset, length, type);
-
-			if (newSampleInfo == null)
-				flags &= ~ChannelFlag.MuteIt;		//XX Just to be backwards compatible with previous usage of SetLoop
 		}
 
 
@@ -342,9 +339,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				throw new InvalidOperationException("Can only be used on mono samples");
 
 			SetLoopInfo(sampleInf, adr, null, startOffset, length, type);
-
-			if (newSampleInfo == null)
-				flags &= ~ChannelFlag.MuteIt;		//XX Just to be backwards compatible with previous usage of SetLoop
 		}
 
 
@@ -382,9 +376,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				throw new ArgumentException("Length may not be zero", nameof(length));
 
 			SetLoopInfo(sampleInf, leftAdr, rightAdr, startOffset, length, type);
-
-			if (newSampleInfo == null)
-				flags &= ~ChannelFlag.MuteIt;		//XX Just to be backwards compatible with previous usage of SetLoop
 		}
 
 

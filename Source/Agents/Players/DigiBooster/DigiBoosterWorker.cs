@@ -784,6 +784,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 					{
 						if (retrig)
 							channel.PlaySample((short)(channelInfo.OldSampleNumber - 1), channelInfo.RobotBuffers[0], 0, (uint)channelInfo.RobotBytesToPlay);
+						else
+							channel.SetSample(channelInfo.RobotBuffers[0], 0, (uint)channelInfo.RobotBytesToPlay);
 
 						channel.SetLoop(channelInfo.RobotBuffers[0], 0, (uint)channelInfo.RobotBytesToPlay);
 

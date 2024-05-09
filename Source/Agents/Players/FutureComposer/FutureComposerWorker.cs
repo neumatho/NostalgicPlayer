@@ -1054,7 +1054,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 								dat = frqSequences[seqPoi++];
 
 								if (dat < 90)
-									channel.SetLoop(sampInfo[dat].Address, sampInfo[dat].LoopStart, sampInfo[dat].LoopLength);
+								{
+									channel.SetSample(sampInfo[dat].Address, sampInfo[dat].LoopStart, (uint)sampInfo[dat].LoopStart + sampInfo[dat].LoopLength);
+									channel.SetLoop(sampInfo[dat].LoopStart, sampInfo[dat].LoopLength);
+								}
 
 								voiData.FrequencySeqPos += 2;
 							}
