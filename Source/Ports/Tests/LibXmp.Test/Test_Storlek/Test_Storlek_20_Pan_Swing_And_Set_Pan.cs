@@ -4,6 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.Ports.LibXmp;
+using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
 
 namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
@@ -13,6 +15,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 	/// </summary>
 	public partial class Test_Storlek
 	{
+		private const c_uint Fixed_Seed = 0x00006a36;
+
 		/********************************************************************/
 		/// <summary>
 		/// A couple of brief notes about instrument pan swing: All of the
@@ -34,7 +38,6 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		[Ignore]
 		public void Test_Storlek_20_Pan_Swing_And_Set_Pan()
 		{
 			c_int[] values = new c_int[64];
@@ -44,6 +47,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 			LoadModule(dataDirectory, "Storlek_20.it", opaque);
 			opaque.Xmp_Start_Player(44100, 0);
 			opaque.Xmp_Set_Player(Xmp_Player.Mix, 100);
+
+			// This test has some broken statistical testing that
+			// isn't worth replacing right now -- just preset a seed that
+			// produces extremes and a nice spread of values. -Lachesis
+			Context_Data ctx = GetContext(opaque);
+			Rng_State rng = ctx.Rng;
+
+			Rng.LibXmp_Set_Random(rng, Fixed_Seed);
 
 			while (true)
 			{
@@ -68,7 +79,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 
 			// Check if left-biased pan values are used
 			for (c_int i = 0; i < 8; i++)
-				Assert.IsTrue(values[8 + i] < 128, "Pan not left-biased");
+				Assert.IsTrue(values[8 + i] <= 128, "Pan not left-biased");
 
 			// Check if right pan values are used
 			for (c_int i = 0; i < 8; i++)
@@ -76,7 +87,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 
 			// Check if right-biased pan values are used
 			for (c_int i = 0; i < 8; i++)
-				Assert.IsTrue(values[24 + i] >= 124, "Pan not right-biased");
+				Assert.IsTrue(values[24 + i] >= 127, "Pan not right-biased");
 
 			// Check if center pan values are used
 			for (c_int i = 0; i < 16; i++)

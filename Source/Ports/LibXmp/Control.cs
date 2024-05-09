@@ -45,6 +45,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			ctx.State = Xmp_State.Unloaded;
 			ctx.M.DefPan = 100;
 			ctx.S.NumVoc = Constants.SMix_NumVoc;
+			Rng.LibXmp_Init_Random(ctx.Rng);
 
 			return ctx;
 		}

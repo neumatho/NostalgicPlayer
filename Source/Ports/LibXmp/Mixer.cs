@@ -773,7 +773,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		{
 			Mixer_Data s = ctx.S;
 
-			s.Buffer = new int8[2 * Constants.Xmp_Max_FrameSize];
+			s.Buffer = new int8[Constants.Xmp_Max_FrameSize * sizeof(int16)];
 			if (s.Buffer == null)
 				goto Err;
 

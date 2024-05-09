@@ -3,19 +3,13 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
-
 namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class Context_Data
+	internal class Rng_State
 	{
-		public Player_Data P = new Player_Data();
-		public Mixer_Data S = new Mixer_Data();
-		public Module_Data M = new Module_Data();
-		public Rng_State Rng = new Rng_State();
-		public Xmp_State State;
+		public c_uint State;
 	}
 }

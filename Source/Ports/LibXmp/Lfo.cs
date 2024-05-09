@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 
 namespace Polycode.NostalgicPlayer.Ports.LibXmp
@@ -169,7 +168,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				// Random
 				case 3:
 				{
-					val = (RandomGenerator.GetRandomNumber() & 0x1ff) - 256;
+					val = (c_int)Rng.LibXmp_Get_Random(ctx.Rng, 512) - 256;
 					break;
 				}
 

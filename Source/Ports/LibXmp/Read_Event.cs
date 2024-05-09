@@ -5,7 +5,6 @@
 /******************************************************************************/
 using System;
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player;
@@ -1382,7 +1381,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					if (rvv != 0)
 					{
 						Common.Clamp(ref rvv, 0, 100);
-						xc.Rvv = RandomGenerator.GetRandomNumber() % (rvv + 1);
+						xc.Rvv = (c_int)Rng.LibXmp_Get_Random(ctx.Rng, (c_uint)(rvv + 1));
 					}
 					else
 						xc.Rvv = 0;
@@ -1392,7 +1391,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					if (rvv != 0)
 					{
 						Common.Clamp(ref rvv, 0, 64);
-						xc.Rpv = RandomGenerator.GetRandomNumber() % (rvv + 1) - (rvv / 2);
+						xc.Rpv = (c_int)Rng.LibXmp_Get_Random(ctx.Rng, (c_uint)(rvv + 1)) - (rvv / 2);
 					}
 					else
 						xc.Rpv = 0;
