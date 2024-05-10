@@ -313,7 +313,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 										visualChannelInfo.Retrig = false;
 
 									if (!visualChannelInfo.Retrig)
-										visualChannelInfo.Alpha = newAlpha;
+										visualChannelInfo.Alpha = Math.Max(0, newAlpha);
 
 									visualChannelInfo.CalculatedSamplePosition += visualChannelInfo.Frequency * pulseTimer.Interval / 1000.0f;
 									if (visualChannelInfo.CalculatedSamplePosition > visualChannelInfo.SampleLength)
