@@ -767,7 +767,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			// And check it
 			//
 			// If the file starts with TFMX and does not have SONG, it's the old format
-			if ((mark1 == 0x54464d58) && ((mark2 & 0x00ffffff) != 0x00534f4e) && (mark3 != 0x47))
+			if ((mark1 == 0x54464d58) && ((mark2 & 0xff000000) == 0x20000000) && ((mark2 & 0x00ffffff) != 0x00534f4e) && (mark3 != 0x47))
 				return ModuleType.Tfmx15;
 
 			// TFMX-SONG / TFMX_SONG / tfmxsong
