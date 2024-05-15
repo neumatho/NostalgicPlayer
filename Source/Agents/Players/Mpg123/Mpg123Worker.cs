@@ -574,6 +574,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 			byte[] buf = new byte[4096];
 
 			moduleStream.Seek(0, SeekOrigin.Begin);
+			long bufferStartPosition = 0;
 
 			while (!moduleStream.EndOfStream)
 			{
@@ -583,10 +584,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 				{
 					if (buf[i] != 0)
 					{
-						moduleStream.Seek(-(buf.Length - i), SeekOrigin.Current);
+						moduleStream.Seek(bufferStartPosition + i, SeekOrigin.Begin);
 						return moduleStream.Position;
 					}
 				}
+
+				bufferStartPosition += read;
 			}
 
 			return -1;
