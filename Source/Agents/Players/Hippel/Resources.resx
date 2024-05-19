@@ -129,6 +129,14 @@ Converted to C# by Thomas Neumann.
 
 This format is not a standard file format like other modules. The music data are embedded into an assembler player, so the whole module file contains both the player and music. This player can recognize all the different versions of Jochen Hippel player and extract the data and play them back.</value>
   </data>
+  <data name="IDS_HIP_DESCRIPTION_AGENT2" xml:space="preserve">
+    <value>Original player by Jochen Hippel.
+Converted to C# by Thomas Neumann.
+
+This format is like the Hippel format, but without the player at the beginning. It also compresses the data, that's why COSO stands for COmpressed SOng. However, there are still some small difference between the players used among the games Jochen has composed for. This player will try to guess what you're playing by calculate a small checksum and adjust itself according to that.
+
+Some modules only have a single sample file which is reused between them. This player can detect that and load and play them as well as the normal module files.</value>
+  </data>
   <data name="IDS_HIP_ERR_LOADING_ENVELOPES" xml:space="preserve">
     <value>Can't read envelopes</value>
   </data>
@@ -176,5 +184,8 @@ This format is not a standard file format like other modules. The music data are
   </data>
   <data name="IDS_HIP_NAME_AGENT1" xml:space="preserve">
     <value>Hippel</value>
+  </data>
+  <data name="IDS_HIP_NAME_AGENT2" xml:space="preserve">
+    <value>Hippel COSO</value>
   </data>
 </root>

@@ -22,9 +22,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 	/// </summary>
 	internal class HippelWorker : ModulePlayerWithPositionDurationAgentBase
 	{
+		private static readonly Dictionary<Guid, ModuleType> moduleTypeLookup = new Dictionary<Guid, ModuleType>
+		{
+			{ Hippel.Agent1Id, ModuleType.Hippel },
+			{ Hippel.Agent2Id, ModuleType.HippelCoso }
+		};
+
+		private readonly ModuleType currentModuleType;
+
 		private int startOffset;
 
-		private int bytesPerTrack;
 		private int numberOfPositions;
 
 		private List<SongInfo> songInfoList;
@@ -40,12 +47,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 		private GlobalPlayingInfo playingInfo;
 		private VoiceInfo[] voices;
 
+		private bool cosoModeEnabled;
+
 		private bool enableMute;
 		private bool enableFrequencyPreviousInfo;
+		private bool enablePositionEffect;
+		private bool enableFrequencyResetCheck;
+		private bool enableVolumeFade;
+		private bool enableEffectLoop;
+		private bool convertEffects;
 		private bool skipIdCheck;
 		private bool e9Ands;
 		private bool e9FixSample;
 		private int vibratoVersion;
+		private int portamentoVersion;
 
 		private int[] effectsEnabled;
 		private int speedInitValue;
@@ -56,6 +71,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 
 		private const int InfoPositionLine = 3;
 		private const int InfoTrackLine = 4;
+		private const int InfoSpeedLine = 5;
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public HippelWorker(Guid typeId)
+		{
+			if (!moduleTypeLookup.TryGetValue(typeId, out currentModuleType))
+				currentModuleType = ModuleType.Unknown;
+		}
 
 		#region IPlayerAgent implementation
 		/********************************************************************/
@@ -63,7 +90,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "hip" };
+		public override string[] FileExtensions => new [] { "hip", "hipc" };
 
 
 
@@ -77,8 +104,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 			ModuleStream moduleStream = fileInfo.ModuleStream;
 
 			// Check the module size
-			if (moduleStream.Length < 2048)
+			if (moduleStream.Length < 1024)
 				return AgentResult.Unknown;
+
+			if (currentModuleType == ModuleType.HippelCoso)
+				return TestModuleForCoso(moduleStream);
 
 			// Read the first part of the file, so it is easier to search
 			byte[] buffer = new byte[16384];
@@ -146,7 +176,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 				case 5:
 				{
 					description = Resources.IDS_HIP_INFODESCLINE5;
-					value = playingInfo.Speed.ToString();
+					value = FormatSpeed();
 					break;
 				}
 
@@ -179,6 +209,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 
 				moduleStream.Seek(startOffset, SeekOrigin.Begin);
 
+				CosoHeader cosoHeader = null;
+				if (cosoModeEnabled)
+				{
+					cosoHeader = LoadCosoHeader(moduleStream);
+					if (cosoHeader == null)
+					{
+						errorMessage = Resources.IDS_HIP_ERR_LOADING_HEADER;
+						return AgentResult.Error;
+					}
+				}
+
 				Header header = LoadHeader(moduleStream);
 				if (header == null)
 				{
@@ -186,48 +227,51 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 					return AgentResult.Error;
 				}
 
-				if (!LoadFrequencies(moduleStream, header.NumberOfFrequencies + 1))
+				if (!LoadFrequencies(moduleStream, header.NumberOfFrequencies + 1, cosoHeader))
 				{
 					errorMessage = Resources.IDS_HIP_ERR_LOADING_FREQUENCIES;
 					return AgentResult.Error;
 				}
 
-				if (!LoadEnvelopes(moduleStream, header.NumberOfEnvelopes + 1))
+				if (!LoadEnvelopes(moduleStream, header.NumberOfEnvelopes + 1, cosoHeader))
 				{
 					errorMessage = Resources.IDS_HIP_ERR_LOADING_ENVELOPES;
 					return AgentResult.Error;
 				}
 
-				if (!LoadTracks(moduleStream, header.NumberOfTracks + 1))
+				if (!LoadTracks(moduleStream, header.NumberOfTracks + 1, header.BytesPerTrack, cosoHeader))
 				{
 					errorMessage = Resources.IDS_HIP_ERR_LOADING_TRACKS;
 					return AgentResult.Error;
 				}
 
-				if (!LoadPositionList(moduleStream, header.NumberOfPositions + 1))
+				if (!LoadPositionList(moduleStream, header.NumberOfPositions + 1, cosoHeader))
 				{
 					errorMessage = Resources.IDS_HIP_ERR_LOADING_POSITIONLIST;
 					return AgentResult.Error;
 				}
 
-				if (!LoadSongInfo(moduleStream, header.NumberOfSubSongs))
+				if (!LoadSongInfo(moduleStream, header.NumberOfSubSongs, cosoHeader))
 				{
 					errorMessage = Resources.IDS_HIP_ERR_LOADING_SUBSONGS;
 					return AgentResult.Error;
 				}
 
-				uint[] sampleOffsets = LoadSampleInfo(moduleStream, header.NumberOfSamples);
+				uint[] sampleOffsets = LoadSampleInfo(moduleStream, header.NumberOfSamples, cosoHeader);
 				if (sampleOffsets == null)
 				{
 					errorMessage = Resources.IDS_HIP_ERR_LOADING_SAMPLEINFO;
 					return AgentResult.Error;
 				}
 
-				if (!LoadSampleData(moduleStream, sampleOffsets))
+				if (!LoadSampleData(fileInfo, moduleStream, sampleOffsets, cosoHeader))
 				{
 					errorMessage = Resources.IDS_HIP_ERR_LOADING_SAMPLES;
 					return AgentResult.Error;
 				}
+
+				if (cosoModeEnabled)
+					EnableCosoFeatures(moduleStream, cosoHeader);
 			}
 			catch (Exception)
 			{
@@ -285,8 +329,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 			{
 				playingInfo.SpeedCounter = playingInfo.Speed;
 
-				for (int i = 0; i < 4; i++)
-					ReadNextRow(i);
+				if (cosoModeEnabled)
+				{
+					for (int i = 0; i < 4; i++)
+						ReadNextRowCoso(i);
+				}
+				else
+				{
+					for (int i = 0; i < 4; i++)
+						ReadNextRow(i);
+				}
 			}
 
 			for (int i = 0; i < 4; i++)
@@ -439,6 +491,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 					if ((buffer[index] == 'T') && (buffer[index + 1] == 'F') && (buffer[index + 2] == 'M') && (buffer[index + 3] == 'X'))
 					{
 						startOffset = index;
+						cosoModeEnabled = false;
 
 						return FindFeatures(buffer, startOffset);
 					}
@@ -446,6 +499,56 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 			}
 
 			return AgentResult.Unknown;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test the file to see if it's COSO format
+		/// </summary>
+		/********************************************************************/
+		private AgentResult TestModuleForCoso(ModuleStream moduleStream)
+		{
+			// Check the two marks
+			moduleStream.Seek(0, SeekOrigin.Begin);
+			uint mark = moduleStream.Read_B_UINT32();
+
+			if (mark != 0x434f534f)		// COSO
+				return AgentResult.Unknown;
+
+			moduleStream.Seek(32, SeekOrigin.Begin);
+			mark = moduleStream.Read_B_UINT32();
+
+			if (mark != 0x54464d58)		// TFMX
+				return AgentResult.Unknown;
+
+			// If number of samples is 0, it is probably an ST module
+			moduleStream.Seek(50, SeekOrigin.Begin);
+
+			ushort numberOfSamples = moduleStream.Read_B_UINT16();
+			if (numberOfSamples == 0)
+				return AgentResult.Unknown;
+
+			// I do not know what the next word stands for, but it seems that
+			// some ST modules has non-zero here
+			if (moduleStream.Read_B_UINT16() != 0)
+				return AgentResult.Unknown;
+
+			// Still, some ST modules have a count, but it does not match the difference
+			// between sub-song and sample info as for Amiga modules
+			moduleStream.Seek(24, SeekOrigin.Begin);
+
+			uint offset = moduleStream.Read_B_UINT32();
+
+			moduleStream.Seek(offset + numberOfSamples * 4, SeekOrigin.Begin);
+			if ((moduleStream.Read_B_UINT16() == 0) && (moduleStream.Read_B_UINT16() == 0))
+				return AgentResult.Unknown;
+
+			startOffset = 0;
+			cosoModeEnabled = true;
+
+			return AgentResult.Ok;
 		}
 
 
@@ -465,6 +568,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 
 			if (ExtractFromInitializeStructures(searchBuffer, searchLength) != AgentResult.Ok)
 				return AgentResult.Unknown;
+
+			enablePositionEffect = false;
+			enableFrequencyResetCheck = false;
+			enableVolumeFade = false;
+			convertEffects = false;
+			portamentoVersion = 1;
 
 			return AgentResult.Ok;
 		}
@@ -595,6 +704,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 				skipIdCheck = false;
 				e9Ands = false;
 				e9FixSample = false;
+				enableEffectLoop = false;
 			}
 			else
 			{
@@ -625,6 +735,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 				}
 
 				skipIdCheck = true;
+				enableEffectLoop = true;
 			}
 
 			// Extract from RunEffect part
@@ -718,6 +829,40 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 
 		/********************************************************************/
 		/// <summary>
+		/// Load COSO header information
+		/// </summary>
+		/********************************************************************/
+		private CosoHeader LoadCosoHeader(ModuleStream moduleStream)
+		{
+			CosoHeader cosoHeader = new CosoHeader();
+
+			// Skip ID
+			moduleStream.Seek(4, SeekOrigin.Current);
+
+			cosoHeader.FrequenciesOffset = moduleStream.Read_B_UINT32();
+			cosoHeader.EnvelopesOffset = moduleStream.Read_B_UINT32();
+			cosoHeader.TracksOffset = moduleStream.Read_B_UINT32();
+			cosoHeader.PositionListOffset = moduleStream.Read_B_UINT32();
+			cosoHeader.SubSongsOffset = moduleStream.Read_B_UINT32();
+			cosoHeader.SampleInfoOffset = moduleStream.Read_B_UINT32();
+			cosoHeader.SampleDataOffset = moduleStream.Read_B_INT32();
+
+			if (moduleStream.EndOfStream)
+				return null;
+
+			if (cosoHeader.SampleDataOffset == moduleStream.Length)
+			{
+				// Sample data is stored in an external file, so mark that
+				cosoHeader.SampleDataOffset = -1;
+			}
+
+			return cosoHeader;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Load header information
 		/// </summary>
 		/********************************************************************/
@@ -747,8 +892,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 
 			moduleStream.Seek(12, SeekOrigin.Current);
 
-			bytesPerTrack = header.BytesPerTrack;
-
 			return header;
 		}
 
@@ -759,17 +902,55 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 		/// Load frequency tables
 		/// </summary>
 		/********************************************************************/
-		private bool LoadFrequencies(ModuleStream moduleStream, int numberOfFrequencies)
+		private bool LoadFrequencies(ModuleStream moduleStream, int numberOfFrequencies, CosoHeader cosoHeader)
 		{
 			frequencies = new byte[numberOfFrequencies][];
 
-			for (int i = 0; i < numberOfFrequencies; i++)
+			if (cosoModeEnabled)
 			{
-				frequencies[i] = new byte[64];
+				if ((cosoHeader.FrequenciesOffset == 0) || (cosoHeader.EnvelopesOffset == 0))
+					return false;
 
-				moduleStream.Read(frequencies[i], 0, 64);
+				moduleStream.Seek(startOffset + cosoHeader.FrequenciesOffset, SeekOrigin.Begin);
+
+				ushort[] offsets = new ushort[numberOfFrequencies + 1];
+				moduleStream.ReadArray_B_UINT16s(offsets, 0, numberOfFrequencies);
+				offsets[numberOfFrequencies] = (ushort)cosoHeader.EnvelopesOffset;
+
 				if (moduleStream.EndOfStream)
 					return false;
+
+				for (int i = 0; i < numberOfFrequencies; i++)
+				{
+					int length = offsets[i + 1] - offsets[i];
+
+					for (int j = 2; (length == 0) && (i + j < numberOfFrequencies); j++)		// If length is 0, it means that the envelope table expands over multiple envelopes, but only the last part is stored
+						length = offsets[i + j] - offsets[i];
+
+					if (length == 0)
+						frequencies[i] = [];
+					else
+					{
+						moduleStream.Seek(startOffset + offsets[i], SeekOrigin.Begin);
+
+						frequencies[i] = new byte[length];
+
+						moduleStream.Read(frequencies[i], 0, length);
+						if (moduleStream.EndOfStream)
+							return false;
+					}
+				}
+			}
+			else
+			{
+				for (int i = 0; i < numberOfFrequencies; i++)
+				{
+					frequencies[i] = new byte[64];
+
+					moduleStream.Read(frequencies[i], 0, 64);
+					if (moduleStream.EndOfStream)
+						return false;
+				}
 			}
 
 			return true;
@@ -782,11 +963,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 		/// Load envelope tables
 		/// </summary>
 		/********************************************************************/
-		private bool LoadEnvelopes(ModuleStream moduleStream, int numberOfEnvelopes)
+		private bool LoadEnvelopes(ModuleStream moduleStream, int numberOfEnvelopes, CosoHeader cosoHeader)
 		{
 			envelopes = new Envelope[numberOfEnvelopes];
 
-			for (int i = 0; i < numberOfEnvelopes; i++)
+			Envelope ReadEnvelope(int length)
 			{
 				Envelope envelope = new Envelope();
 
@@ -795,12 +976,56 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 				envelope.VibratoSpeed = moduleStream.Read_UINT8();
 				envelope.VibratoDepth = moduleStream.Read_UINT8();
 				envelope.VibratoDelay = moduleStream.Read_UINT8();
+				envelope.EnvelopeTable = new byte[Math.Max(0, length - 5)];
 
 				moduleStream.Read(envelope.EnvelopeTable, 0, envelope.EnvelopeTable.Length);
 				if (moduleStream.EndOfStream)
+					return null;
+
+				return envelope;
+			}
+
+			if (cosoModeEnabled)
+			{
+				if ((cosoHeader.EnvelopesOffset == 0) || (cosoHeader.TracksOffset == 0))
 					return false;
 
-				envelopes[i] = envelope;
+				moduleStream.Seek(startOffset + cosoHeader.EnvelopesOffset, SeekOrigin.Begin);
+
+				ushort[] offsets = new ushort[numberOfEnvelopes + 1];
+				moduleStream.ReadArray_B_UINT16s(offsets, 0, numberOfEnvelopes);
+				offsets[numberOfEnvelopes] = (ushort)cosoHeader.TracksOffset;
+
+				if (moduleStream.EndOfStream)
+					return false;
+
+				for (int i = 0; i < numberOfEnvelopes; i++)
+				{
+					int length = offsets[i + 1] - offsets[i];
+
+					for (int j = 2; (length == 0) && (i + j < numberOfEnvelopes); j++)		// If length is 0, it means that the envelope table expands over multiple envelopes, but only the last part is stored
+						length = offsets[i + j] - offsets[i];
+
+					if (length == 0)
+						envelopes[i] = new Envelope();
+					else
+					{
+						moduleStream.Seek(startOffset + offsets[i], SeekOrigin.Begin);
+
+						envelopes[i] = ReadEnvelope(length);
+						if (envelopes[i] == null)
+							return false;
+					}
+				}
+			}
+			else
+			{
+				for (int i = 0; i < numberOfEnvelopes; i++)
+				{
+					envelopes[i] = ReadEnvelope(64);
+					if (envelopes[i] == null)
+						return false;
+				}
 			}
 
 			return true;
@@ -813,17 +1038,44 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 		/// Load tracks
 		/// </summary>
 		/********************************************************************/
-		private bool LoadTracks(ModuleStream moduleStream, int numberOfTracks)
+		private bool LoadTracks(ModuleStream moduleStream, int numberOfTracks, ushort bytesPerTrack, CosoHeader cosoHeader)
 		{
 			tracks = new byte[numberOfTracks][];
 
-			for (int i = 0; i < numberOfTracks; i++)
+			if (cosoModeEnabled)
 			{
-				tracks[i] = new byte[bytesPerTrack];
+				if ((cosoHeader.TracksOffset == 0) || (cosoHeader.PositionListOffset == 0))
+					return false;
 
-				moduleStream.Read(tracks[i], 0, tracks[i].Length);
+				moduleStream.Seek(startOffset + cosoHeader.TracksOffset, SeekOrigin.Begin);
+
+				ushort[] offsets = new ushort[numberOfTracks + 1];
+				moduleStream.ReadArray_B_UINT16s(offsets, 0, numberOfTracks);
+				offsets[numberOfTracks] = (ushort)cosoHeader.PositionListOffset;
+
 				if (moduleStream.EndOfStream)
 					return false;
+
+				for (int i = 0; i < numberOfTracks; i++)
+				{
+					int length = offsets[i + 1] - offsets[i];
+					tracks[i] = new byte[length];
+
+					moduleStream.Read(tracks[i], 0, tracks[i].Length);
+					if (moduleStream.EndOfStream)
+						return false;
+				}
+			}
+			else
+			{
+				for (int i = 0; i < numberOfTracks; i++)
+				{
+					tracks[i] = new byte[bytesPerTrack];
+
+					moduleStream.Read(tracks[i], 0, tracks[i].Length);
+					if (moduleStream.EndOfStream)
+						return false;
+				}
 			}
 
 			return true;
@@ -836,11 +1088,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 		/// Load position list
 		/// </summary>
 		/********************************************************************/
-		private bool LoadPositionList(ModuleStream moduleStream, int numberOfPositions)
+		private bool LoadPositionList(ModuleStream moduleStream, int numOfPositions, CosoHeader cosoHeader)
 		{
-			positionList = new Position[numberOfPositions];
+			positionList = new Position[numOfPositions];
 
-			for (int i = 0; i < numberOfPositions; i++)
+			if (cosoModeEnabled)
+			{
+				if (cosoHeader.PositionListOffset == 0)
+					return false;
+
+				moduleStream.Seek(startOffset + cosoHeader.PositionListOffset, SeekOrigin.Begin);
+			}
+
+			for (int i = 0; i < numOfPositions; i++)
 			{
 				Position position = new Position
 				{
@@ -874,9 +1134,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 		/// Load song information
 		/// </summary>
 		/********************************************************************/
-		private bool LoadSongInfo(ModuleStream moduleStream, int numberOfSubSongs)
+		private bool LoadSongInfo(ModuleStream moduleStream, int numberOfSubSongs, CosoHeader cosoHeader)
 		{
 			songInfoList = new List<SongInfo>();
+
+			if (cosoModeEnabled)
+			{
+				if (cosoHeader.SubSongsOffset == 0)
+					return false;
+
+				moduleStream.Seek(startOffset + cosoHeader.SubSongsOffset, SeekOrigin.Begin);
+			}
 
 			for (int i = 0; i < numberOfSubSongs; i++)
 			{
@@ -889,7 +1157,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 				if (moduleStream.EndOfStream)
 					return false;
 
-				if (songInfo.StartSpeed != 0)
+				if ((songInfo.StartSpeed != 0) && (songInfo.StartPosition <= songInfo.LastPosition))
 					songInfoList.Add(songInfo);
 			}
 
@@ -908,7 +1176,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 		/// Load all the sample information
 		/// </summary>
 		/********************************************************************/
-		private uint[] LoadSampleInfo(ModuleStream moduleStream, int numberOfSamples)
+		private uint[] LoadSampleInfo(ModuleStream moduleStream, int numberOfSamples, CosoHeader cosoHeader)
 		{
 			samples = new Sample[numberOfSamples];
 			uint[] sampleOffsets = new uint[numberOfSamples];
@@ -916,20 +1184,33 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 			Encoding encoder = EncoderCollection.Amiga;
 			byte[] buf = new byte[18];
 
+			if (cosoModeEnabled)
+			{
+				if (cosoHeader.SampleInfoOffset == 0)
+					return null;
+
+				moduleStream.Seek(startOffset + cosoHeader.SampleInfoOffset, SeekOrigin.Begin);
+			}
+
 			for (int i = 0; i < numberOfSamples; i++)
 			{
 				Sample sample = new Sample();
 
-				moduleStream.Read(buf, 0, 18);
-				if (moduleStream.EndOfStream)
-					return null;
+				if (!cosoModeEnabled)
+				{
+					moduleStream.Read(buf, 0, 18);
+					if (moduleStream.EndOfStream)
+						return null;
 
-				sample.Name = encoder.GetString(buf);
+					sample.Name = encoder.GetString(buf);
+				}
+				else
+					sample.Name = string.Empty;
 
 				sampleOffsets[i] = moduleStream.Read_B_UINT32();
 
 				sample.Length = moduleStream.Read_B_UINT16() * 2U;
-				sample.Volume = moduleStream.Read_B_UINT16();
+				sample.Volume = !cosoModeEnabled ? moduleStream.Read_B_UINT16() : (ushort)64;
 				sample.LoopStart = moduleStream.Read_B_UINT16() & ~1U;
 				sample.LoopLength = moduleStream.Read_B_UINT16() * 2U;
 
@@ -952,27 +1233,182 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 		/// Load all the sample data
 		/// </summary>
 		/********************************************************************/
-		private bool LoadSampleData(ModuleStream moduleStream, uint[] sampleOffsets)
+		private bool LoadSampleData(PlayerFileInfo fileInfo, ModuleStream moduleStream, uint[] sampleOffsets, CosoHeader cosoHeader)
 		{
-			long sampleDataStartPosition = moduleStream.Position;
+			ModuleStream extraSampleStream = null;
 
-			for (int i = 0; i < samples.Length; i++)
+			try
 			{
-				Sample sample = samples[i];
-
-				using (ModuleStream sampleDataStream = moduleStream.GetSampleDataStream(i, (int)sample.Length))
+				if (cosoModeEnabled)
 				{
-					sampleDataStream.Seek(sampleDataStartPosition + sampleOffsets[i], SeekOrigin.Begin);
+					if (cosoHeader.SampleDataOffset == -1)
+					{
+						extraSampleStream = fileInfo.Loader?.OpenExtraFileByExtension("samp");
+						if (extraSampleStream == null)
+							return false;
 
-					sample.SampleData = new sbyte[sample.Length];
-					sampleDataStream.ReadSigned(sample.SampleData, 0, (int)sample.Length);
-
-					if (sampleDataStream.EndOfStream)
-						return false;
+						moduleStream = extraSampleStream;
+					}
+					else
+						moduleStream.Seek(startOffset + cosoHeader.SampleDataOffset, SeekOrigin.Begin);
 				}
+
+				long sampleDataStartPosition = moduleStream.Position;
+
+				for (int i = 0; i < samples.Length; i++)
+				{
+					Sample sample = samples[i];
+
+					using (ModuleStream sampleDataStream = moduleStream.GetSampleDataStream(i, (int)sample.Length))
+					{
+						sampleDataStream.Seek(sampleDataStartPosition + sampleOffsets[i], SeekOrigin.Begin);
+
+						sample.SampleData = new sbyte[sample.Length];
+						sampleDataStream.ReadSigned(sample.SampleData, 0, (int)sample.Length);
+
+						if (sampleDataStream.EndOfStream)
+							return false;
+					}
+				}
+			}
+			finally
+			{
+				extraSampleStream?.Dispose();
 			}
 
 			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Initialize sound structures
+		/// </summary>
+		/********************************************************************/
+		private void EnableCosoFeatures(ModuleStream moduleStream, CosoHeader cosoHeader)
+		{
+			// Enable features based on module. Calculate a checksum to find out which
+			// module it is. This list is taken from Flod by Christian Corti (https://www.neoartcr.com/flod.htm)
+			long checksum = cosoHeader.FrequenciesOffset + cosoHeader.EnvelopesOffset + cosoHeader.TracksOffset + cosoHeader.PositionListOffset +
+			               cosoHeader.SubSongsOffset + cosoHeader.SampleInfoOffset + cosoHeader.SampleDataOffset;
+
+			moduleStream.Seek(startOffset + 47, SeekOrigin.Begin);
+			checksum += moduleStream.Read_UINT8();
+
+			effectsEnabled = new int[16];
+
+			switch (checksum)
+			{
+				case 22660:		// Astaroth
+				case 22670:
+				case 18845:
+				case 30015:		// Chambers of Shaolin
+				case 22469:
+				case 3549:		// Over the net
+				{
+					enableMute = true;
+					enablePositionEffect = false;
+					enableFrequencyResetCheck = false;
+					enableVolumeFade = false;
+					convertEffects = false;
+
+					vibratoVersion = 1;
+					portamentoVersion = 1;
+
+					effectsEnabled[2] = 1;
+					effectsEnabled[3] = 1;
+					effectsEnabled[4] = 1;
+					effectsEnabled[7] = 1;
+					effectsEnabled[8] = 1;
+					break;
+				}
+
+				case 16948:		// Dragonflight
+				case 18337:
+				case 13704:
+				{
+					enableMute = false;
+					enablePositionEffect = false;
+					enableFrequencyResetCheck = true;
+					enableVolumeFade = false;
+					convertEffects = false;
+
+					vibratoVersion = 1;
+					portamentoVersion = 1;
+
+					effectsEnabled[2] = 1;
+					effectsEnabled[3] = 1;
+					effectsEnabled[4] = 1;
+					effectsEnabled[5] = 1;
+					effectsEnabled[7] = 2;
+					effectsEnabled[8] = 1;
+					effectsEnabled[9] = 1;
+					break;
+				}
+
+				case 18548:		// Wings of Death
+				case 13928:
+				case 8764:
+				case 17244:
+				case 11397:
+				case 14496:
+				case 14394:
+				case 13578:		// Dragonflight
+				case 6524:
+				{
+					enableMute = false;
+					enablePositionEffect = false;
+					enableFrequencyResetCheck = true;
+					enableVolumeFade = false;
+					convertEffects = true;
+
+					vibratoVersion = 2;
+					portamentoVersion = 1;
+
+					effectsEnabled[2] = 1;
+					effectsEnabled[3] = 1;
+					effectsEnabled[4] = 1;
+					effectsEnabled[5] = 2;
+					effectsEnabled[6] = 1;
+					effectsEnabled[7] = 2;
+					effectsEnabled[8] = 1;
+					effectsEnabled[9] = 1;
+					break;
+				}
+
+				default:
+				{
+					enableMute = false;
+					enablePositionEffect = true;
+					enableFrequencyResetCheck = true;
+					enableVolumeFade = true;
+					convertEffects = false;
+
+					vibratoVersion = 3;
+					portamentoVersion = 2;
+
+					effectsEnabled[2] = 1;
+					effectsEnabled[3] = 1;
+					effectsEnabled[4] = 1;
+					effectsEnabled[5] = 2;
+					effectsEnabled[6] = 1;
+					effectsEnabled[7] = 2;
+					effectsEnabled[8] = 1;
+					effectsEnabled[9] = 1;
+					effectsEnabled[10] = 1;
+					break;
+				}
+			}
+
+			skipIdCheck = true;
+			e9Ands = true;
+			e9FixSample = true;
+			enableEffectLoop = true;
+
+			speedInitValue = 1;
+
+			periodTable = Tables.Periods2;
 		}
 
 
@@ -989,7 +1425,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 			playingInfo = new GlobalPlayingInfo
 			{
 				SpeedCounter = speedInitValue < 0 ? currentSongInfo.StartSpeed : (ushort)speedInitValue,
-				Speed = currentSongInfo.StartSpeed
+				Speed = currentSongInfo.StartSpeed,
+				Random = 0
 			};
 
 			voices = new VoiceInfo[4];
@@ -1027,6 +1464,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 
 					Tick = 0,
 
+					CosoCounter = 0,
+					CosoSpeed = 0,
+
 					Volume = 0,
 					EnvelopeCounter = 1,
 					EnvelopeSpeed = 1,
@@ -1049,7 +1489,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 					SlideCounter = 0,
 					SlideSpeed = 0,
 					SlideActive = false,
-					SlideDone = false
+					SlideDone = false,
+
+					VolumeFade = 100,
+					VolumeVariationDepth = 0,
+					VolumeVariation = 0
 				};
 
 				voices[i] = voiceInfo;
@@ -1097,7 +1541,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 			VoiceInfo voiceInfo = voices[voice];
 			IChannel channel = VirtualChannels[voice];
 
-			if ((voiceInfo.TrackPosition == bytesPerTrack) || ((voiceInfo.Track[voiceInfo.TrackPosition] & 0x7f) == 1))
+			if ((voiceInfo.TrackPosition == voiceInfo.Track.Length) || ((voiceInfo.Track[voiceInfo.TrackPosition] & 0x7f) == 1))
 			{
 				if (voiceInfo.NextPosition == currentSongInfo.LastPosition)
 				{
@@ -1149,7 +1593,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 				voiceInfo.PortaDelta = 0;
 				voiceInfo.CurrentNote = note;
 
-				voiceInfo.PreviousInfo = voiceInfo.Track[(voiceInfo.TrackPosition == 0 ? bytesPerTrack : voiceInfo.TrackPosition) - 1];
+				voiceInfo.PreviousInfo = voiceInfo.Track[(voiceInfo.TrackPosition == 0 ? voiceInfo.Track.Length : voiceInfo.TrackPosition) - 1];
 				voiceInfo.CurrentInfo = voiceInfo.Track[voiceInfo.TrackPosition + 1];
 
 				if (val < 128)
@@ -1199,6 +1643,189 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 
 		/********************************************************************/
 		/// <summary>
+		/// Read the next row for a single channel in COSO mode
+		/// </summary>
+		/********************************************************************/
+		private void ReadNextRowCoso(int voice)
+		{
+			VoiceInfo voiceInfo = voices[voice];
+			IChannel channel = VirtualChannels[voice];
+
+			voiceInfo.CosoCounter--;
+			if (voiceInfo.CosoCounter < 0)
+			{
+				voiceInfo.CosoCounter = voiceInfo.CosoSpeed;
+
+				bool oneMore;
+
+				do
+				{
+					oneMore = false;
+
+					byte val = voiceInfo.Track[voiceInfo.TrackPosition];
+
+					switch (val)
+					{
+						case 0xff:
+						{
+							if (voiceInfo.NextPosition == currentSongInfo.LastPosition)
+							{
+								voiceInfo.NextPosition = currentSongInfo.StartPosition;
+								endReached = true;
+							}
+
+							SinglePositionInfo positionInfo = positionList[voiceInfo.NextPosition].PositionInfo[voice];
+
+							voiceInfo.TrackTranspose = positionInfo.NoteTranspose;
+							val = (byte)positionInfo.EnvelopeTranspose;
+
+							if (enablePositionEffect && (val > 127))
+							{
+								byte val2 = (byte)((val >> 4) & 15);
+								val &= 15;
+
+								if (val2 == 15)
+								{
+									val2 = 100;
+
+									if (val != 0)
+										val2 = (byte)((15 - val + 1) * 6);
+
+									voiceInfo.VolumeFade = val2;
+								}
+								else if (val2 == 8)
+								{
+									// Song stopped
+									endReached = true;
+
+									voiceInfo.NextPosition = currentSongInfo.StartPosition;
+
+									positionInfo = positionList[voiceInfo.NextPosition].PositionInfo[voice];
+
+									voiceInfo.TrackTranspose = positionInfo.NoteTranspose;
+									voiceInfo.EnvelopeTranspose = positionInfo.EnvelopeTranspose;
+								}
+								else if (val2 == 14)
+								{
+									playingInfo.Speed = (ushort)(val & 15);
+									ShowSpeed();
+								}
+							}
+							else
+								voiceInfo.EnvelopeTranspose = (sbyte)val;
+
+							voiceInfo.CurrentTrackNumber = positionInfo.Track;
+							voiceInfo.Track = tracks[positionInfo.Track];
+							voiceInfo.TrackPosition = 0;
+
+							if (voice == 0)
+							{
+								if (HasPositionBeenVisited((int)voiceInfo.NextPosition))
+									endReached = true;
+
+								MarkPositionAsVisited((int)voiceInfo.NextPosition);
+							}
+
+							voiceInfo.NextPosition++;
+
+							ShowPosition();
+							ShowTracks();
+
+							oneMore = true;
+							break;
+						}
+
+						case 0xfe:
+						{
+							voiceInfo.CosoSpeed = (sbyte)voiceInfo.Track[voiceInfo.TrackPosition + 1];
+							voiceInfo.CosoCounter = voiceInfo.CosoSpeed;
+
+							voiceInfo.TrackPosition += 2;
+							oneMore = true;
+							break;
+						}
+
+						case 0xfd:
+						{
+							voiceInfo.CosoSpeed = (sbyte)voiceInfo.Track[voiceInfo.TrackPosition + 1];
+							voiceInfo.CosoCounter = voiceInfo.CosoSpeed;
+
+							voiceInfo.TrackPosition += 2;
+							return;
+						}
+
+						default:
+						{
+							voiceInfo.CurrentNote = val;
+							voiceInfo.CurrentInfo = voiceInfo.Track[voiceInfo.TrackPosition + 1];
+
+							if ((voiceInfo.CurrentInfo & 0xe0) != 0)
+							{
+								voiceInfo.PreviousInfo = voiceInfo.Track[voiceInfo.TrackPosition + 2];
+								voiceInfo.TrackPosition += 3;
+							}
+							else
+								voiceInfo.TrackPosition += 2;
+
+							voiceInfo.PortaDelta = 0;
+
+							if (val < 128)
+							{
+								if (enableMute)
+									channel.Mute();
+
+								val = (byte)((voiceInfo.CurrentInfo & 0x1f) + voiceInfo.EnvelopeTranspose);
+								if (val >= envelopes.Length)
+									val = 0;
+
+								Envelope envelope = envelopes[val];
+
+								voiceInfo.EnvelopeCounter = envelope.EnvelopeSpeed;
+								voiceInfo.EnvelopeSpeed = envelope.EnvelopeSpeed;
+								voiceInfo.EnvelopeSustain = 0;
+
+								voiceInfo.VibratoFlag = 0x40;
+								voiceInfo.VibratoSpeed = envelope.VibratoSpeed;
+								voiceInfo.VibratoDepth = envelope.VibratoDepth;
+								voiceInfo.VibratoDelta = envelope.VibratoDepth;
+								voiceInfo.VibratoDelay = envelope.VibratoDelay;
+
+								voiceInfo.EnvelopeTable = envelope.EnvelopeTable;
+								voiceInfo.EnvelopePosition = 0;
+								voiceInfo.OriginalEnvelopeNumber = val;
+								voiceInfo.CurrentEnvelopeNumber = val;
+
+								byte frequencyNumber = envelope.FrequencyNumber;
+
+								if (!enableFrequencyResetCheck || (frequencyNumber != 0x80))
+								{
+									if ((voiceInfo.CurrentInfo & 0x40) != 0)
+										frequencyNumber = voiceInfo.PreviousInfo;
+
+									if (frequencyNumber < frequencies.Length)
+										voiceInfo.FrequencyTable = frequencies[frequencyNumber];
+									else
+										voiceInfo.FrequencyTable = Tables.DefaultCommandTable;
+
+									voiceInfo.FrequencyPosition = 0;
+									voiceInfo.OriginalFrequencyNumber = frequencyNumber;
+									voiceInfo.CurrentFrequencyNumber = frequencyNumber;
+
+									voiceInfo.Tick = 0;
+								}
+							}
+							break;
+						}
+					}
+				}
+				while (oneMore);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Parse and run effects
 		/// </summary>
 		/********************************************************************/
@@ -1234,7 +1861,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 					{
 						oneMore = false;
 
-						if (voiceInfo.FrequencyPosition == 64)
+						if (voiceInfo.FrequencyPosition == voiceInfo.FrequencyTable.Length)
 						{
 							voiceInfo.FrequencyTable = frequencies[++voiceInfo.CurrentFrequencyNumber];
 							voiceInfo.FrequencyPosition = 0;
@@ -1254,12 +1881,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 								val = voiceInfo.FrequencyTable[voiceInfo.FrequencyPosition];
 							}
 
+							if (convertEffects)
+							{
+								if (val == 0xe5)
+									val = 0xe2;
+								else if (val == 0xe6)
+									val = 0xe4;
+							}
+
 							switch (val)
 							{
 								case 0xe2:
 								{
 									if (effectsEnabled[2] != 0)
 									{
+										voiceInfo.VolumeVariationDepth = 0;
 										voiceInfo.Sample = 0xff;
 
 										byte sampleNumber = voiceInfo.FrequencyTable[voiceInfo.FrequencyPosition + 1];
@@ -1276,6 +1912,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 										voiceInfo.Slide = false;
 
 										voiceInfo.FrequencyPosition += 2;
+										oneMore = enableEffectLoop;
 									}
 									break;
 								}
@@ -1288,6 +1925,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 										voiceInfo.VibratoDepth = voiceInfo.FrequencyTable[voiceInfo.FrequencyPosition + 2];
 
 										voiceInfo.FrequencyPosition += 3;
+										oneMore = enableEffectLoop;
 									}
 									break;
 								}
@@ -1307,6 +1945,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 										voiceInfo.Slide = false;
 
 										voiceInfo.FrequencyPosition += 2;
+										oneMore = enableEffectLoop;
 									}
 									break;
 								}
@@ -1335,6 +1974,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 										{
 											channel.Mute();
 
+											voiceInfo.VolumeVariationDepth = 0;
+
 											voiceInfo.SlideSample = sampleNumber;
 											voiceInfo.SlideEndPosition = (int)sample.Length;
 
@@ -1353,6 +1994,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 											voiceInfo.Slide = true;
 
 											voiceInfo.FrequencyPosition += 9;
+											oneMore = true;
 											break;
 										}
 									}
@@ -1374,6 +2016,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 										voiceInfo.SlideDone = false;
 
 										voiceInfo.FrequencyPosition += 6;
+										oneMore = true;
 									}
 									break;
 								}
@@ -1415,6 +2058,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 											voiceInfo.Slide = false;
 
 											voiceInfo.FrequencyPosition += 2;
+											oneMore = enableEffectLoop;
 											break;
 										}
 									}
@@ -1437,6 +2081,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 								{
 									if (effectsEnabled[9] != 0)
 									{
+										voiceInfo.VolumeVariationDepth = 0;
 										voiceInfo.Sample = 0xff;
 
 										byte sampleNumber = voiceInfo.FrequencyTable[voiceInfo.FrequencyPosition + 1];
@@ -1479,6 +2124,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 										}
 
 										voiceInfo.FrequencyPosition += 3;
+										oneMore = enableEffectLoop;
+									}
+									break;
+								}
+
+								case 0xea:
+								{
+									if (effectsEnabled[10] != 0)
+									{
+										voiceInfo.VolumeVariationDepth = voiceInfo.FrequencyTable[voiceInfo.FrequencyPosition + 1];
+										voiceInfo.VolumeVariation = 0;
+
+										voiceInfo.FrequencyPosition += 2;
+										oneMore = true;
 									}
 									break;
 								}
@@ -1542,7 +2201,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 					Sample sample = samples[voiceInfo.SlideSample];
 
 					uint start = voiceInfo.SlideLoopPosition * 2U;
-					uint len = voiceInfo.SlideLength * 2U;
+					uint len = Math.Min(voiceInfo.SlideLength * 2U, sample.Length - start);
+					if (len == 0)
+						len = sample.Length - start;	// Fix for Ninja 2
+
 					channel.SetSample(sample.SampleData, start, start + len);
 					channel.SetLoop(start, len);
 				}
@@ -1639,28 +2301,47 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 			// Vibrato
 			if (vibratoVersion == 1)
 				period = DoVibratoVersion1(voiceInfo, note, period);
-			else
+			else if (vibratoVersion == 2)
 				period = DoVibratoVersion2(voiceInfo, period);
+			else
+				period = DoVibratoVersion3(voiceInfo, period);
 
 			// Portamento
-			if ((voiceInfo.CurrentInfo & 0x20) != 0)
-			{
-				int val = (sbyte)voiceInfo.PreviousInfo;
-
-				if (val >= 0)
-				{
-					voiceInfo.PortaDelta += (uint)(val << 11);
-					period -= (ushort)(voiceInfo.PortaDelta >> 16);
-				}
-				else
-				{
-					voiceInfo.PortaDelta -= (uint)(val << 11);
-					period += (ushort)(voiceInfo.PortaDelta >> 16);
-				}
-			}
+			if (portamentoVersion == 1)
+				period = DoPortamentoVersion1(voiceInfo, period);
+			else
+				period = DoPortamentoVersion2(voiceInfo, period);
 
 			channel.SetAmigaPeriod(period);
-			channel.SetAmigaVolume(voiceInfo.Volume);
+
+			if (enableVolumeFade)
+			{
+				byte volume = voiceInfo.Volume;
+				byte volFade = voiceInfo.VolumeFade;
+
+				byte volDepth = voiceInfo.VolumeVariationDepth;
+				if (volDepth != 0)
+				{
+					byte volVariation = voiceInfo.VolumeVariation;
+					if (volVariation == 0)
+					{
+						voiceInfo.VolumeVariationDepth = 0;
+
+						int rnd = GetRandomVariation() & 0xff;
+						voiceInfo.VolumeVariation = (byte)(volDepth * rnd / 255);
+						volVariation = voiceInfo.VolumeVariation;
+					}
+
+					volFade -= volVariation;
+				}
+
+				if (volFade > 127)
+					volFade = 0;
+
+				channel.SetAmigaVolume((ushort)(volFade * volume / 100));
+			}
+			else
+				channel.SetAmigaVolume(voiceInfo.Volume);
 		}
 
 
@@ -1738,19 +2419,70 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 		/********************************************************************/
 		private ushort DoVibratoVersion2(VoiceInfo voiceInfo, ushort period)
 		{
-			byte vibratoFlag = voiceInfo.VibratoFlag;
-			int vibratoDepth = voiceInfo.VibratoDepth * 2;
-			int vibratoSpeed = voiceInfo.VibratoSpeed;
-			int vibratoDelta = voiceInfo.VibratoDelta;
-
-			if (vibratoSpeed >= 128)
+			if (voiceInfo.VibratoDelay == 0)
 			{
-				vibratoSpeed &= 0x7f;
-				vibratoFlag ^= 0x01;
+				byte vibratoFlag = voiceInfo.VibratoFlag;
+				int vibratoDepth = voiceInfo.VibratoDepth * 2;
+				int vibratoSpeed = voiceInfo.VibratoSpeed;
+				int vibratoDelta = voiceInfo.VibratoDelta;
+
+				if (vibratoSpeed >= 128)
+				{
+					vibratoSpeed &= 0x7f;
+					vibratoFlag ^= 0x01;
+				}
+
+				if ((vibratoFlag & 0x01) == 0)
+				{
+					if ((vibratoFlag & 0x20) == 0)
+					{
+						vibratoDelta -= vibratoSpeed;
+
+						if (vibratoDelta < 0)
+						{
+							vibratoFlag |= 0x20;
+							vibratoDelta = 0;
+						}
+					}
+					else
+					{
+						vibratoDelta += vibratoSpeed;
+
+						if (vibratoDelta > vibratoDepth)
+						{
+							vibratoFlag = (byte)(vibratoFlag & ~0x20);
+							vibratoDelta = vibratoDepth;
+						}
+					}
+				}
+
+				voiceInfo.VibratoDelta = (byte)vibratoDelta;
+				voiceInfo.VibratoFlag = vibratoFlag;
+
+				period += (ushort)(vibratoDelta - voiceInfo.VibratoDepth);
 			}
+			else
+				voiceInfo.VibratoDelay--;
 
-			if ((vibratoFlag & 0x01) == 0)
+			return period;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handle vibrato version 3 code
+		/// </summary>
+		/********************************************************************/
+		private ushort DoVibratoVersion3(VoiceInfo voiceInfo, ushort period)
+		{
+			if (voiceInfo.VibratoDelay == 0)
 			{
+				byte vibratoFlag = voiceInfo.VibratoFlag;
+				int vibratoDepth = voiceInfo.VibratoDepth;
+				int vibratoSpeed = voiceInfo.VibratoSpeed;
+				int vibratoDelta = voiceInfo.VibratoDelta;
+
 				if ((vibratoFlag & 0x20) == 0)
 				{
 					vibratoDelta -= vibratoSpeed;
@@ -1771,14 +2503,90 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 						vibratoDelta = vibratoDepth;
 					}
 				}
+
+				voiceInfo.VibratoDelta = (byte)vibratoDelta;
+				voiceInfo.VibratoFlag = vibratoFlag;
+
+				period += (ushort)(((vibratoDelta - (voiceInfo.VibratoDepth >> 1)) * period) >> 10);
 			}
-
-			voiceInfo.VibratoDelta = (byte)vibratoDelta;
-			voiceInfo.VibratoFlag = vibratoFlag;
-
-			period += (ushort)(vibratoDelta - voiceInfo.VibratoDepth);
+			else
+				voiceInfo.VibratoDelay--;
 
 			return period;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handle portamento version 1 code
+		/// </summary>
+		/********************************************************************/
+		private ushort DoPortamentoVersion1(VoiceInfo voiceInfo, ushort period)
+		{
+			if ((voiceInfo.CurrentInfo & 0x20) != 0)
+			{
+				int val = (sbyte)voiceInfo.PreviousInfo;
+
+				if (val >= 0)
+				{
+					voiceInfo.PortaDelta += (uint)(val << 11);
+					period -= (ushort)(voiceInfo.PortaDelta >> 16);
+				}
+				else
+				{
+					voiceInfo.PortaDelta -= (uint)(val << 11);
+					period += (ushort)(voiceInfo.PortaDelta >> 16);
+				}
+			}
+
+			return period;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handle portamento version 2 code
+		/// </summary>
+		/********************************************************************/
+		private ushort DoPortamentoVersion2(VoiceInfo voiceInfo, ushort period)
+		{
+			if ((voiceInfo.CurrentInfo & 0x20) != 0)
+			{
+				int val = (sbyte)voiceInfo.PreviousInfo;
+
+				if (val >= 0)
+				{
+					voiceInfo.PortaDelta = (uint)(voiceInfo.PortaDelta + val);
+					val = (int)(voiceInfo.PortaDelta * period);
+					period -= (ushort)(val >> 10);
+				}
+				else
+				{
+					voiceInfo.PortaDelta = (uint)(voiceInfo.PortaDelta - val);
+					val = (int)(voiceInfo.PortaDelta * period);
+					period += (ushort)(val >> 10);
+				}
+			}
+
+			return period;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the next random number
+		/// </summary>
+		/********************************************************************/
+		private ushort GetRandomVariation()
+		{
+			int val = playingInfo.Random + 0x4793;
+			int rotated = (val >> 6) | (val << (16 - 6));
+			playingInfo.Random = (ushort)(rotated ^ val);
+
+			return playingInfo.Random;
 		}
 
 
@@ -1809,6 +2617,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 
 		/********************************************************************/
 		/// <summary>
+		/// Will update the module information with current speed
+		/// </summary>
+		/********************************************************************/
+		private void ShowSpeed()
+		{
+			OnModuleInfoChanged(InfoSpeedLine, FormatSpeed());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will update the module information with all dynamic values
 		/// </summary>
 		/********************************************************************/
@@ -1816,6 +2636,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 		{
 			ShowPosition();
 			ShowTracks();
+			ShowSpeed();
 		}
 
 
@@ -1850,6 +2671,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 			sb.Remove(sb.Length - 2, 2);
 
 			return sb.ToString();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a string containing the current speed
+		/// </summary>
+		/********************************************************************/
+		private string FormatSpeed()
+		{
+			return playingInfo.Speed.ToString();
 		}
 		#endregion
 	}

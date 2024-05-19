@@ -6,15 +6,16 @@
 namespace Polycode.NostalgicPlayer.Agent.Player.Hippel.Containers
 {
 	/// <summary>
-	/// Contain information about a single envelope
+	/// COSO header information. Only used by the loader
 	/// </summary>
-	internal class Envelope
+	internal class CosoHeader
 	{
-		public byte EnvelopeSpeed;
-		public byte FrequencyNumber;
-		public byte VibratoSpeed;
-		public byte VibratoDepth;
-		public byte VibratoDelay;
-		public byte[] EnvelopeTable;
+		public uint FrequenciesOffset;
+		public uint EnvelopesOffset;
+		public uint TracksOffset;
+		public uint PositionListOffset;
+		public uint SubSongsOffset;
+		public uint SampleInfoOffset;
+		public int SampleDataOffset;
 	}
 }

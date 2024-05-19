@@ -14,6 +14,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel.Containers
 	{
 		public ushort SpeedCounter;
 		public ushort Speed;
+		public ushort Random;
 
 		/********************************************************************/
 		/// <summary>

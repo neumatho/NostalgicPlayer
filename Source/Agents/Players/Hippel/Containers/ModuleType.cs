@@ -6,15 +6,12 @@
 namespace Polycode.NostalgicPlayer.Agent.Player.Hippel.Containers
 {
 	/// <summary>
-	/// Contain information about a single envelope
+	/// Holds the different module types
 	/// </summary>
-	internal class Envelope
+	internal enum ModuleType
 	{
-		public byte EnvelopeSpeed;
-		public byte FrequencyNumber;
-		public byte VibratoSpeed;
-		public byte VibratoDepth;
-		public byte VibratoDelay;
-		public byte[] EnvelopeTable;
+		Unknown = 0,
+		Hippel,
+		HippelCoso
 	}
 }

@@ -37,6 +37,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel.Containers
 
 		public byte Tick;
 
+		public sbyte CosoCounter;
+		public sbyte CosoSpeed;
+
 		public byte Volume;
 		public byte EnvelopeCounter;
 		public byte EnvelopeSpeed;
@@ -60,6 +63,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel.Containers
 		public byte SlideSpeed;
 		public bool SlideActive;
 		public bool SlideDone;
+
+		public byte VolumeFade;
+		public byte VolumeVariationDepth;
+		public byte VolumeVariation;
 
 		/********************************************************************/
 		/// <summary>

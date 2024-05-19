@@ -1090,6 +1090,14 @@
             <uap:DisplayName>Hippel</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="hipcfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-hipc">.hipc</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Hippel COSO</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

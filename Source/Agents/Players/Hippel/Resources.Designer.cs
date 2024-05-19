@@ -85,6 +85,20 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Original player by Jochen Hippel.
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///This format is like the Hippel format, but without the player at the beginning. It also compresses the data, that&apos;s why COSO stands for COmpressed SOng. However, there are still some small difference between the players used among the games Jochen has composed for. This player will try to guess what you&apos;re playing by calculate a small checksum and adjust itself according to that.
+        ///
+        ///Some modules only have a single sample file which is  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string IDS_HIP_DESCRIPTION_AGENT2 {
+            get {
+                return ResourceManager.GetString("IDS_HIP_DESCRIPTION_AGENT2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read envelopes.
         /// </summary>
         internal static string IDS_HIP_ERR_LOADING_ENVELOPES {
@@ -225,6 +239,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel {
         internal static string IDS_HIP_NAME_AGENT1 {
             get {
                 return ResourceManager.GetString("IDS_HIP_NAME_AGENT1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hippel COSO.
+        /// </summary>
+        internal static string IDS_HIP_NAME_AGENT2 {
+            get {
+                return ResourceManager.GetString("IDS_HIP_NAME_AGENT2", resourceCulture);
             }
         }
     }

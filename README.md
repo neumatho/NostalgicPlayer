@@ -89,6 +89,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | HCD Protector | .hcd | ProWizard | ModTracker |
 | Heatseeker mc1.0 | .hmc / .crb | ProWizard | ModTracker |
 | Hippel | .hip | | Hippel |
+| Hippel COSO | .hipc | | Hippel |
 | His Master's Noise (Gnomie by Night) | .mod | | ModTracker |
 | HivelyTracker | .hvl | | HivelyTracker |
 | Hornet Packer | .hrt | ProWizard | ModTracker |

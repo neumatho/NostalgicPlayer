@@ -19,7 +19,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 	/// </summary>
 	public class Hippel : AgentBase
 	{
-		private static readonly Guid Agent1Id = Guid.Parse("11ADC278-2497-4DF1-B159-989C18A42661");
+		internal static readonly Guid Agent1Id = Guid.Parse("11ADC278-2497-4DF1-B159-989C18A42661");
+		internal static readonly Guid Agent2Id = Guid.Parse("8C6B4030-91B9-4187-99E3-196BE2591232");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -51,7 +52,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 			{
 				return new AgentSupportInfo[]
 				{
-					new AgentSupportInfo(Resources.IDS_HIP_NAME_AGENT1, Resources.IDS_HIP_DESCRIPTION_AGENT1, Agent1Id)
+					new AgentSupportInfo(Resources.IDS_HIP_NAME_AGENT1, Resources.IDS_HIP_DESCRIPTION_AGENT1, Agent1Id),
+					new AgentSupportInfo(Resources.IDS_HIP_NAME_AGENT2, Resources.IDS_HIP_DESCRIPTION_AGENT2, Agent2Id)
 				};
 			}
 		}
@@ -65,7 +67,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 		/********************************************************************/
 		public override IAgentWorker CreateInstance(Guid typeId)
 		{
-			return new HippelWorker();
+			return new HippelWorker(typeId);
 		}
 		#endregion
 	}
