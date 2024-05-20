@@ -81,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/********************************************************************/
 		public Dac(uint bits)
 		{
-			leakage = 0.01;
+			leakage = 0.0075;
 			dac = new double[bits];
 			dacLength = bits;
 		}

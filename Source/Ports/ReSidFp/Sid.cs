@@ -206,7 +206,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			resampler = null;
 			potX = new Potentiometer();
 			potY = new Potentiometer();
-			cws = CombinedWaveforms.AVERAGE;
+			cws = CombinedWaveforms.STRONG;
 
 			voice[0] = new Voice();
 			voice[1] = new Voice();
@@ -214,8 +214,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 			muted[0] = muted[1] = muted[2] = false;
 
-			Reset();
 			SetChipModel(ChipModel.MOS8580);
+			Reset();
 		}
 
 
