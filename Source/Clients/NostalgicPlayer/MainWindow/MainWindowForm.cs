@@ -4693,6 +4693,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 			try
 			{
+				// Safe check
+				if (moduleListControl.SelectedIndexes.Count == 0)
+					return;
+
 				// Remember which item to select, after removing is done
 				int indexToSelect = moduleListControl.SelectedIndexes[moduleListControl.SelectedIndexes.Count - 1] - moduleListControl.SelectedIndexes.Count + 1;
 
