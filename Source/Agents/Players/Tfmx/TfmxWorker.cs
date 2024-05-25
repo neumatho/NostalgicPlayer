@@ -257,9 +257,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				// Get the start offset to the module information
 				moduleStream.Seek(16, SeekOrigin.Current);
 
-				trackStart = (int)moduleStream.Read_B_UINT32();
-				patternStart = (int)moduleStream.Read_B_UINT32();
-				macroStart = (int)moduleStream.Read_B_UINT32();
+				trackStart = moduleStream.Read_B_INT32();
+				patternStart = moduleStream.Read_B_INT32();
+				macroStart = moduleStream.Read_B_INT32();
 
 				if (trackStart == 0)
 					trackStart = 0x600;
@@ -870,6 +870,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 						break;
 				}
 
+				if (IsStModule(moduleStream, startOffset))
+					return ModuleType.Unknown;
+
 				return gotTimeShare ? ModuleType.Tfmx7V : ModuleType.TfmxPro;
 			}
 
@@ -906,6 +909,50 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			}
 
 			return null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will check the current file to see if it's a ST module
+		/// </summary>
+		/********************************************************************/
+		private static bool IsStModule(ModuleStream moduleStream, int startOffset)
+		{
+			moduleStream.Seek(startOffset + 0x1d4, SeekOrigin.Begin);
+
+			int startIndex;
+			int endIndex = moduleStream.Read_B_INT32();
+
+			if (endIndex == 0)
+			{
+				moduleStream.Seek(startOffset + 0x600, SeekOrigin.Begin);
+				startIndex = moduleStream.Read_B_INT32();
+
+				moduleStream.Seek(startOffset + 0x7fc, SeekOrigin.Begin);
+				endIndex = moduleStream.Read_B_INT32();
+			}
+			else
+			{
+				startIndex = moduleStream.Read_B_INT32();
+
+				moduleStream.Seek(startOffset + startIndex, SeekOrigin.Begin);
+				startIndex = moduleStream.Read_B_INT32();
+			}
+
+			byte[] buffer = new byte[endIndex - startIndex];
+
+			moduleStream.Seek(startOffset + startIndex, SeekOrigin.Begin);
+			moduleStream.Read(buffer, 0, buffer.Length);
+
+			for (int i = 0; i < buffer.Length; i += 4)
+			{
+				if (buffer[i] > 63)
+					return true;
+			}
+
+			return false;
 		}
 		#endregion
 

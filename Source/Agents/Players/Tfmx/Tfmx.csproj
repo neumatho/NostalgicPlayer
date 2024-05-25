@@ -8,7 +8,7 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Player to the TFMX module format.</Description>
-    <Version>2.1.1</Version>
+    <Version>2.1.2</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
