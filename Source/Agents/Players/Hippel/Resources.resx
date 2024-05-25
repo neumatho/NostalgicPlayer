@@ -137,6 +137,12 @@ This format is like the Hippel format, but without the player at the beginning. 
 
 Some modules only have a single sample file which is reused between them. This player can detect that and load and play them as well as the normal module files.</value>
   </data>
+  <data name="IDS_HIP_DESCRIPTION_AGENT3" xml:space="preserve">
+    <value>Original player by Jochen Hippel.
+Converted to C# by Thomas Neumann.
+
+This format is like the Hippel format or Hippel COSO. Some modules have a player at the beginning of the module, some don't. This player can play both formats. The difference between this and the other Hippel formats, is that this one uses 7 voices.</value>
+  </data>
   <data name="IDS_HIP_ERR_LOADING_ENVELOPES" xml:space="preserve">
     <value>Can't read envelopes</value>
   </data>
@@ -179,6 +185,9 @@ Some modules only have a single sample file which is reused between them. This p
   <data name="IDS_HIP_INFODESCLINE5" xml:space="preserve">
     <value>Current speed:</value>
   </data>
+  <data name="IDS_HIP_INFODESCLINE6" xml:space="preserve">
+    <value>Current tempo (Hz):</value>
+  </data>
   <data name="IDS_HIP_NAME" xml:space="preserve">
     <value>Hippel</value>
   </data>
@@ -187,5 +196,8 @@ Some modules only have a single sample file which is reused between them. This p
   </data>
   <data name="IDS_HIP_NAME_AGENT2" xml:space="preserve">
     <value>Hippel COSO</value>
+  </data>
+  <data name="IDS_HIP_NAME_AGENT3" xml:space="preserve">
+    <value>Hippel 7-Voices</value>
   </data>
 </root>

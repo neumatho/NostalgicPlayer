@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Containers.Types;
+
 namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 {
 	/// <summary>
@@ -51,6 +53,31 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 			 214,  202,  190,  180,  170,  160,  151,  143,  135,  127,  120,  113,
 			 113,  113,  113,  113,  113,  113,  113,  113,  113,  113,  113,  113,
 			3424, 3232, 3048, 2880, 2712, 2560, 2416, 2280, 2152, 2032, 1920, 1812
+		];
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Panning values for 4 channels modules
+		/// </summary>
+		/********************************************************************/
+		public static readonly ChannelPanningType[] Pan4 =
+		[
+			ChannelPanningType.Left, ChannelPanningType.Right, ChannelPanningType.Right, ChannelPanningType.Left
+		];
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Panning values for 7 channels modules
+		/// </summary>
+		/********************************************************************/
+		public static readonly ChannelPanningType[] Pan7 =
+		[
+			ChannelPanningType.Right, ChannelPanningType.Right, ChannelPanningType.Right,
+			ChannelPanningType.Left, ChannelPanningType.Left, ChannelPanningType.Left, ChannelPanningType.Right
 		];
 	}
 }

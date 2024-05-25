@@ -99,6 +99,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Original player by Jochen Hippel.
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///This format is like the Hippel format or Hippel COSO. Some modules have a player at the beginning of the module, some don&apos;t. This player can play both formats. The difference between this and the other Hippel formats, is that this one uses 7 voices..
+        /// </summary>
+        internal static string IDS_HIP_DESCRIPTION_AGENT3 {
+            get {
+                return ResourceManager.GetString("IDS_HIP_DESCRIPTION_AGENT3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read envelopes.
         /// </summary>
         internal static string IDS_HIP_ERR_LOADING_ENVELOPES {
@@ -225,6 +237,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Current tempo (Hz):.
+        /// </summary>
+        internal static string IDS_HIP_INFODESCLINE6 {
+            get {
+                return ResourceManager.GetString("IDS_HIP_INFODESCLINE6", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Hippel.
         /// </summary>
         internal static string IDS_HIP_NAME {
@@ -248,6 +269,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel {
         internal static string IDS_HIP_NAME_AGENT2 {
             get {
                 return ResourceManager.GetString("IDS_HIP_NAME_AGENT2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hippel 7-Voices.
+        /// </summary>
+        internal static string IDS_HIP_NAME_AGENT3 {
+            get {
+                return ResourceManager.GetString("IDS_HIP_NAME_AGENT3", resourceCulture);
             }
         }
     }

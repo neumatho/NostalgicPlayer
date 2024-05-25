@@ -13,5 +13,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel.Containers
 		public byte Track;
 		public sbyte NoteTranspose;
 		public sbyte EnvelopeTranspose;
+		public byte Command;
 	}
 }

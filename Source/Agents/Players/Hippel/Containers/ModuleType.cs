@@ -12,6 +12,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel.Containers
 	{
 		Unknown = 0,
 		Hippel,
-		HippelCoso
+		HippelCoso,
+		Hippel7V
 	}
 }

@@ -1098,6 +1098,14 @@
             <uap:DisplayName>Hippel COSO</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="hip7file">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-hip7">.hip7</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Hippel 7-Voices</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
