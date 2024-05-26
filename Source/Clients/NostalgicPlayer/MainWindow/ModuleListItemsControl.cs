@@ -923,9 +923,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			LinearGradientBrush selectedItemBackgroundBrush = new LinearGradientBrush(new Point(0, 0), new Point(0, ItemHeight), selectedBackgroundColor1, selectedBackgroundColor3);
 
-			ColorBlend blend = new ColorBlend();
-			blend.Colors = new[] { selectedBackgroundColor1, selectedBackgroundColor2, selectedBackgroundColor2, selectedBackgroundColor3 };
-			blend.Positions = new[] { 0.0f, 0.1f, 0.7f, 1.0f };
+			ColorBlend blend = new ColorBlend
+			{
+				Colors = [ selectedBackgroundColor1, selectedBackgroundColor2, selectedBackgroundColor2, selectedBackgroundColor3 ],
+				Positions = [ 0.0f, 0.1f, 0.7f, 1.0f ]
+			};
 
 			selectedItemBackgroundBrush.InterpolationColors = blend;
 
@@ -1054,6 +1056,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			int maxWidth = Width - 12 - timeWidth;
 
+			if (item.DefaultSubSong.HasValue)
+				maxWidth -= 12;
+
 			string name = listNumberEnabled ? $"{index + 1}. {item.ListItem.DisplayName}" : item.ListItem.DisplayName;
 			string showName = name;
 			int nameWidth = TextRenderer.MeasureText(g, showName, font).Width;
@@ -1067,6 +1072,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 
 			TextRenderer.DrawText(g, showName, font, new Point(10, y + 1), textColor, TextFormatFlags.NoPrefix);
+
+			if (item.DefaultSubSong.HasValue)
+			{
+				Image image = Resources.IDB_DEFAULT_SUBSONG;
+				g.DrawImage(image, 10 + nameWidth, y + 4, image.Width, image.Height);
+			}
 		}
 
 

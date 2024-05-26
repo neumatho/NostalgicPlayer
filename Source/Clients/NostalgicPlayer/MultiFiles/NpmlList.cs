@@ -110,6 +110,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 					if (listInfo.PlayTime.HasValue)
 						line += ":" + listInfo.PlayTime.Value.Ticks;
 
+					if (listInfo.DefaultSubSong.HasValue)
+						line += "#" + listInfo.DefaultSubSong.Value;
+
 					// And write it
 					sw.WriteLine(line);
 				}
@@ -176,16 +179,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 									Type = archiveMode ? MultiFileInfo.FileType.Archive : MultiFileInfo.FileType.Plain
 								};
 
+								// See if there is stored a default sub-song
+								int searchIndex = line.LastIndexOf('#');
+								if (searchIndex != -1)
+								{
+									// Set the default sub-song
+									fileInfo.DefaultSubSong = int.Parse(line.Substring(searchIndex + 1));
+									line = line.Substring(0, searchIndex);
+								}
+
 								// See if there is stored a module time
-								int timePos = line.LastIndexOf(':');
-								if (timePos != -1)
+								searchIndex = line.LastIndexOf(':');
+								if (searchIndex != -1)
 								{
 									// Set the time
-									long ticks = long.Parse(line.Substring(timePos + 1));
+									long ticks = long.Parse(line.Substring(searchIndex + 1));
 									if (ticks != 0)
 										fileInfo.PlayTime = new TimeSpan(ticks);
 
-									line = line.Substring(0, timePos);
+									line = line.Substring(0, searchIndex);
 								}
 
 								// Check to see if there is loaded any path

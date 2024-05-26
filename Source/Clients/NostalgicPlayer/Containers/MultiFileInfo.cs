@@ -61,5 +61,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers
 		{
 			get; set;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the default sub-song if set
+		/// </summary>
+		/********************************************************************/
+		public int? DefaultSubSong
+		{
+			get; set;
+		}
 	}
 }

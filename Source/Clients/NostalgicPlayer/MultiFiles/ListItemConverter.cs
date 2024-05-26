@@ -28,7 +28,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 				{
 					Type = MultiFileInfo.FileType.Plain,
 					FileName = singleFile.FullPath,
-					PlayTime = listItem.HaveTime ? listItem.Duration : null
+					PlayTime = listItem.HaveTime ? listItem.Duration : null,
+					DefaultSubSong = listItem.DefaultSubSong
 				};
 			}
 
@@ -38,7 +39,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 				{
 					Type = MultiFileInfo.FileType.Archive,
 					FileName = archiveFile.FullPath,
-					PlayTime = listItem.HaveTime ? listItem.Duration : null
+					PlayTime = listItem.HaveTime ? listItem.Duration : null,
+					DefaultSubSong = listItem.DefaultSubSong
 				};
 			}
 
@@ -77,6 +79,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 			ModuleListItem listItem = new ModuleListItem(item);
 			if (fileInfo.PlayTime.HasValue)
 				listItem.Duration = fileInfo.PlayTime.Value;
+
+			listItem.DefaultSubSong = fileInfo.DefaultSubSong;
 
 			return listItem;
 		}

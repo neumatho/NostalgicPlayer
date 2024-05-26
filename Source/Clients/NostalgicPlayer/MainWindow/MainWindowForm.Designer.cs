@@ -462,6 +462,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// listContextMenu
 			// 
 			listContextMenu.Palette = fontPalette;
+			listContextMenu.Opening += ListContextMenu_Opening;
 			// 
 			// diskContextMenu
 			// 

@@ -82,6 +82,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			get; set;
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the default sub-song if set
+		/// </summary>
+		/********************************************************************/
+		public int? DefaultSubSong
+		{
+			get; set;
+		}
+
 		#region IComparable implementation
 		/********************************************************************/
 		/// <summary>

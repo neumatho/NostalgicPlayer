@@ -891,6 +891,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 
 				if ((modulePlayer = player as IModulePlayer) != null)
 				{
+					if ((subSong == -1) && listItem.DefaultSubSong.HasValue)
+						subSong = listItem.DefaultSubSong.Value;
+
 					if (!modulePlayer.SelectSong(subSong, out string errorMessage))
 					{
 						if (showError)

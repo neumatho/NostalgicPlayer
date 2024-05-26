@@ -103,6 +103,26 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap IDB_CLEAR_SUBSONG {
+            get {
+                object obj = ResourceManager.GetObject("IDB_CLEAR_SUBSONG", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IDB_DEFAULT_SUBSONG {
+            get {
+                object obj = ResourceManager.GetObject("IDB_DEFAULT_SUBSONG", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap IDB_DIRECTORY {
             get {
                 object obj = ResourceManager.GetObject("IDB_DIRECTORY", resourceCulture);
@@ -413,6 +433,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap IDB_SET_SUBSONG {
+            get {
+                object obj = ResourceManager.GetObject("IDB_SET_SUBSONG", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap IDB_SHUFFLE {
             get {
                 object obj = ResourceManager.GetObject("IDB_SHUFFLE", resourceCulture);
@@ -495,24 +525,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add directory.
-        /// </summary>
-        internal static string IDS_ADDMENU_DIRECTORY {
-            get {
-                return ResourceManager.GetString("IDS_ADDMENU_DIRECTORY", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add file(s).
-        /// </summary>
-        internal static string IDS_ADDMENU_FILES {
-            get {
-                return ResourceManager.GetString("IDS_ADDMENU_FILES", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to {0}.
         /// </summary>
         internal static string IDS_AGENTDISPLAY_TITLE {
@@ -585,29 +597,110 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add directory.
+        /// </summary>
+        internal static string IDS_CONTEXTMENU_ADD_DIRECTORY {
+            get {
+                return ResourceManager.GetString("IDS_CONTEXTMENU_ADD_DIRECTORY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add file(s).
+        /// </summary>
+        internal static string IDS_CONTEXTMENU_ADD_FILES {
+            get {
+                return ResourceManager.GetString("IDS_CONTEXTMENU_ADD_FILES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Append list.
         /// </summary>
-        internal static string IDS_DISKMENU_APPEND {
+        internal static string IDS_CONTEXTMENU_DISK_APPEND {
             get {
-                return ResourceManager.GetString("IDS_DISKMENU_APPEND", resourceCulture);
+                return ResourceManager.GetString("IDS_CONTEXTMENU_DISK_APPEND", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Load list.
         /// </summary>
-        internal static string IDS_DISKMENU_LOAD {
+        internal static string IDS_CONTEXTMENU_DISK_LOAD {
             get {
-                return ResourceManager.GetString("IDS_DISKMENU_LOAD", resourceCulture);
+                return ResourceManager.GetString("IDS_CONTEXTMENU_DISK_LOAD", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Save list.
         /// </summary>
-        internal static string IDS_DISKMENU_SAVE {
+        internal static string IDS_CONTEXTMENU_DISK_SAVE {
             get {
-                return ResourceManager.GetString("IDS_DISKMENU_SAVE", resourceCulture);
+                return ResourceManager.GetString("IDS_CONTEXTMENU_DISK_SAVE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear default sub-song.
+        /// </summary>
+        internal static string IDS_CONTEXTMENU_LIST_CLEAR_SUBSONG {
+            get {
+                return ResourceManager.GetString("IDS_CONTEXTMENU_LIST_CLEAR_SUBSONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select all.
+        /// </summary>
+        internal static string IDS_CONTEXTMENU_LIST_SELECT_ALL {
+            get {
+                return ResourceManager.GetString("IDS_CONTEXTMENU_LIST_SELECT_ALL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deselect all.
+        /// </summary>
+        internal static string IDS_CONTEXTMENU_LIST_SELECT_NONE {
+            get {
+                return ResourceManager.GetString("IDS_CONTEXTMENU_LIST_SELECT_NONE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Set current sub-song as default.
+        /// </summary>
+        internal static string IDS_CONTEXTMENU_LIST_SET_SUBSONG {
+            get {
+                return ResourceManager.GetString("IDS_CONTEXTMENU_LIST_SET_SUBSONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shuffle.
+        /// </summary>
+        internal static string IDS_CONTEXTMENU_SORT_SHUFFLE {
+            get {
+                return ResourceManager.GetString("IDS_CONTEXTMENU_SORT_SHUFFLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort ascending.
+        /// </summary>
+        internal static string IDS_CONTEXTMENU_SORT_SORT_AZ {
+            get {
+                return ResourceManager.GetString("IDS_CONTEXTMENU_SORT_SORT_AZ", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort descending.
+        /// </summary>
+        internal static string IDS_CONTEXTMENU_SORT_SORT_ZA {
+            get {
+                return ResourceManager.GetString("IDS_CONTEXTMENU_SORT_SORT_ZA", resourceCulture);
             }
         }
         
@@ -1522,24 +1615,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select all.
-        /// </summary>
-        internal static string IDS_SELECTMENU_ALL {
-            get {
-                return ResourceManager.GetString("IDS_SELECTMENU_ALL", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Deselect all.
-        /// </summary>
-        internal static string IDS_SELECTMENU_NONE {
-            get {
-                return ResourceManager.GetString("IDS_SELECTMENU_NONE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Name.
         /// </summary>
         internal static string IDS_SETTINGS_AGENTS_AGENTS_COLUMN_NAME {
@@ -2227,33 +2302,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Shuffle.
-        /// </summary>
-        internal static string IDS_SORTMENU_SHUFFLE {
-            get {
-                return ResourceManager.GetString("IDS_SORTMENU_SHUFFLE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sort ascending.
-        /// </summary>
-        internal static string IDS_SORTMENU_SORT_AZ {
-            get {
-                return ResourceManager.GetString("IDS_SORTMENU_SORT_AZ", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sort descending.
-        /// </summary>
-        internal static string IDS_SORTMENU_SORT_ZA {
-            get {
-                return ResourceManager.GetString("IDS_SORTMENU_SORT_ZA", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Subsongs: {0}/{1}.
         /// </summary>
         internal static string IDS_SUBSONGS {
@@ -2407,6 +2455,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Shows a pop-up menu where you can do different things on the module list.
+        /// </summary>
+        internal static string IDS_TIP_MAIN_LIST {
+            get {
+                return ResourceManager.GetString("IDS_TIP_MAIN_LIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Opens the module information window.
         /// </summary>
         internal static string IDS_TIP_MAIN_MODULEINFO {
@@ -2527,15 +2584,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_TIP_MAIN_SAMP {
             get {
                 return ResourceManager.GetString("IDS_TIP_MAIN_SAMP", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Shows a pop-up menu where you can do different selections on the module list.
-        /// </summary>
-        internal static string IDS_TIP_MAIN_SELECT {
-            get {
-                return ResourceManager.GetString("IDS_TIP_MAIN_SELECT", resourceCulture);
             }
         }
         

@@ -130,6 +130,12 @@
   <data name="IDB_CHECKMARK" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\CheckMark.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="IDB_CLEAR_SUBSONG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\ClearSubSong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IDB_DEFAULT_SUBSONG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\DefaultSubSong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="IDB_DIRECTORY" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Directory.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -222,6 +228,9 @@
   </data>
   <data name="IDB_SAVE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IDB_SET_SUBSONG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\SetSubSong.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="IDB_SHUFFLE" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Shuffle.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -330,12 +339,6 @@ Formats supported:
   <data name="IDS_ABOUT_TITLE" xml:space="preserve">
     <value>About NostalgicPlayer</value>
   </data>
-  <data name="IDS_ADDMENU_DIRECTORY" xml:space="preserve">
-    <value>Add directory</value>
-  </data>
-  <data name="IDS_ADDMENU_FILES" xml:space="preserve">
-    <value>Add file(s)</value>
-  </data>
   <data name="IDS_AGENTDISPLAY_TITLE" xml:space="preserve">
     <value>{0}</value>
   </data>
@@ -360,14 +363,41 @@ Formats supported:
   <data name="IDS_BUT_YES" xml:space="preserve">
     <value>Yes</value>
   </data>
-  <data name="IDS_DISKMENU_APPEND" xml:space="preserve">
+  <data name="IDS_CONTEXTMENU_ADD_DIRECTORY" xml:space="preserve">
+    <value>Add directory</value>
+  </data>
+  <data name="IDS_CONTEXTMENU_ADD_FILES" xml:space="preserve">
+    <value>Add file(s)</value>
+  </data>
+  <data name="IDS_CONTEXTMENU_DISK_APPEND" xml:space="preserve">
     <value>Append list</value>
   </data>
-  <data name="IDS_DISKMENU_LOAD" xml:space="preserve">
+  <data name="IDS_CONTEXTMENU_DISK_LOAD" xml:space="preserve">
     <value>Load list</value>
   </data>
-  <data name="IDS_DISKMENU_SAVE" xml:space="preserve">
+  <data name="IDS_CONTEXTMENU_DISK_SAVE" xml:space="preserve">
     <value>Save list</value>
+  </data>
+  <data name="IDS_CONTEXTMENU_LIST_CLEAR_SUBSONG" xml:space="preserve">
+    <value>Clear default sub-song</value>
+  </data>
+  <data name="IDS_CONTEXTMENU_LIST_SELECT_ALL" xml:space="preserve">
+    <value>Select all</value>
+  </data>
+  <data name="IDS_CONTEXTMENU_LIST_SELECT_NONE" xml:space="preserve">
+    <value>Deselect all</value>
+  </data>
+  <data name="IDS_CONTEXTMENU_LIST_SET_SUBSONG" xml:space="preserve">
+    <value>Set current sub-song as default</value>
+  </data>
+  <data name="IDS_CONTEXTMENU_SORT_SHUFFLE" xml:space="preserve">
+    <value>Shuffle</value>
+  </data>
+  <data name="IDS_CONTEXTMENU_SORT_SORT_AZ" xml:space="preserve">
+    <value>Sort ascending</value>
+  </data>
+  <data name="IDS_CONTEXTMENU_SORT_SORT_ZA" xml:space="preserve">
+    <value>Sort descending</value>
   </data>
   <data name="IDS_ERR_ADD_ITEMS" xml:space="preserve">
     <value>Failed to add items into the list:
@@ -679,12 +709,6 @@ what has changed since your previous version.</value>
   <data name="IDS_SAMPLE_INFO_TITLE" xml:space="preserve">
     <value>Instrument / Sample Information</value>
   </data>
-  <data name="IDS_SELECTMENU_ALL" xml:space="preserve">
-    <value>Select all</value>
-  </data>
-  <data name="IDS_SELECTMENU_NONE" xml:space="preserve">
-    <value>Deselect all</value>
-  </data>
   <data name="IDS_SETTINGS_AGENTS_AGENTS_COLUMN_NAME" xml:space="preserve">
     <value>Name</value>
   </data>
@@ -916,15 +940,6 @@ information</value>
   <data name="IDS_SETTINGS_TITLE" xml:space="preserve">
     <value>Settings</value>
   </data>
-  <data name="IDS_SORTMENU_SHUFFLE" xml:space="preserve">
-    <value>Shuffle</value>
-  </data>
-  <data name="IDS_SORTMENU_SORT_AZ" xml:space="preserve">
-    <value>Sort ascending</value>
-  </data>
-  <data name="IDS_SORTMENU_SORT_ZA" xml:space="preserve">
-    <value>Sort descending</value>
-  </data>
   <data name="IDS_SUBSONGS" xml:space="preserve">
     <value>Subsongs: {0}/{1}</value>
   </data>
@@ -982,6 +997,9 @@ If on the last position, the next module is loaded instead</value>
     <value>Press the left mouse button over here to switch between
 elapsed and remaining time</value>
   </data>
+  <data name="IDS_TIP_MAIN_LIST" xml:space="preserve">
+    <value>Shows a pop-up menu where you can do different things on the module list</value>
+  </data>
   <data name="IDS_TIP_MAIN_MODULEINFO" xml:space="preserve">
     <value>Opens the module information window</value>
   </data>
@@ -1027,9 +1045,6 @@ If on first position, the previous module is loaded instead</value>
     <value>Opens the sample info window where you can see
 a lot of information about the samples in the
 current playing module</value>
-  </data>
-  <data name="IDS_TIP_MAIN_SELECT" xml:space="preserve">
-    <value>Shows a pop-up menu where you can do different selections on the module list</value>
   </data>
   <data name="IDS_TIP_MAIN_SORT" xml:space="preserve">
     <value>Shows a pop-up menu, where you can select different things to do on the module list</value>
