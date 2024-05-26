@@ -72,7 +72,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 
 					if ((guiDisplay.Flags & DisplayFlag.StaticWindow) != 0)
 					{
-						FormBorderStyle = FormBorderStyle.FixedDialog;
+						FormBorderStyle = FormBorderStyle.FixedSingle;
 						MaximizeBox = false;
 
 						Size = new Size(minWidth, minHeight);
