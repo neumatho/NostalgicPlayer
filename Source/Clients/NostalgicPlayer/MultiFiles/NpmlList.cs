@@ -111,7 +111,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 						line += ":" + listInfo.PlayTime.Value.Ticks;
 
 					if (listInfo.DefaultSubSong.HasValue)
-						line += "#" + listInfo.DefaultSubSong.Value;
+						line += "?" + listInfo.DefaultSubSong.Value;
 
 					// And write it
 					sw.WriteLine(line);
@@ -180,7 +180,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 								};
 
 								// See if there is stored a default sub-song
-								int searchIndex = line.LastIndexOf('#');
+								int searchIndex = line.LastIndexOf('?');
 								if (searchIndex != -1)
 								{
 									// Set the default sub-song
