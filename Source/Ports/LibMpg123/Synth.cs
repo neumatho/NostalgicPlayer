@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Runtime.InteropServices;
+using Polycode.NostalgicPlayer.Ports.LibMpg123.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 {
@@ -13,6 +14,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 	/// </summary>
 	internal class Synth
 	{
+		private const Real Real_Plus_32767 = 32767.0f;
+		private const Real Real_Minus_32768 = -32768.0f;
+
 		public delegate void Write_Sample<SAMPLE_T>(ref SAMPLE_T sample, Real sum, ref c_int clip);
 
 		private readonly LibMpg123 lib;
@@ -25,6 +29,150 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		public Synth(LibMpg123 libMpg123)
 		{
 			lib = libMpg123;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_int Int123_Synth_1To1(Memory<Real> bandPtr, c_int channel, Mpg123_Handle fr, bool final)
+		{
+			return lib.synth.DoSynth<c_short>(bandPtr, channel, fr, final, 0x40, Write_Short_Sample);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_int Int123_Synth_1To1_Mono(Memory<Real> bandPtr, Mpg123_Handle fr)
+		{
+			return lib.synth_Mono.DoMonoSynth<c_short>(bandPtr, fr, 0x40, fr.Synths.Plain[(int)Synth_Resample.OneToOne, (int)Synth_Format.Sixteen]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_int Int123_Synth_1To1_M2S(Memory<Real> bandPtr, Mpg123_Handle fr)
+		{
+			return lib.synth_Mono.DoMono2StereoSynth<c_short>(bandPtr, fr, 0x40, fr.Synths.Plain[(int)Synth_Resample.OneToOne, (int)Synth_Format.Sixteen]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_int Int123_Synth_2To1(Memory<Real> bandPtr, int channel, Mpg123_Handle fr, bool final)
+		{
+			return lib.synth.DoSynth<c_short>(bandPtr, channel, fr, final, 0x20, Write_Short_Sample);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_int Int123_Synth_2To1_Mono(Memory<Real> bandPtr, Mpg123_Handle fr)
+		{
+			return lib.synth_Mono.DoMonoSynth<c_short>(bandPtr, fr, 0x20, fr.Synths.Plain[(int)Synth_Resample.TwoToOne, (int)Synth_Format.Sixteen]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_int Int123_Synth_2To1_M2S(Memory<Real> bandPtr, Mpg123_Handle fr)
+		{
+			return lib.synth_Mono.DoMono2StereoSynth<c_short>(bandPtr, fr, 0x20, fr.Synths.Plain[(int)Synth_Resample.TwoToOne, (int)Synth_Format.Sixteen]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_int Int123_Synth_4To1(Memory<Real> bandPtr, int channel, Mpg123_Handle fr, bool final)
+		{
+			return lib.synth.DoSynth<c_short>(bandPtr, channel, fr, final, 0x10, Write_Short_Sample);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_int Int123_Synth_4To1_Mono(Memory<Real> bandPtr, Mpg123_Handle fr)
+		{
+			return lib.synth_Mono.DoMonoSynth<c_short>(bandPtr, fr, 0x10, fr.Synths.Plain[(int)Synth_Resample.FourToOne, (int)Synth_Format.Sixteen]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_int Int123_Synth_4To1_M2S(Memory<Real> bandPtr, Mpg123_Handle fr)
+		{
+			return lib.synth_Mono.DoMono2StereoSynth<c_short>(bandPtr, fr, 0x10, fr.Synths.Plain[(int)Synth_Resample.FourToOne, (int)Synth_Format.Sixteen]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_int Int123_Synth_NToM_Mono(Memory<Real> bandPtr, Mpg123_Handle fr)
+		{
+			return lib.synth_NToM.DoMono<c_short>(bandPtr, fr, Write_Short_Sample);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_int Int123_Synth_NToM_M2S(Memory<Real> bandPtr, Mpg123_Handle fr)
+		{
+			return lib.synth_NToM.DoMono2Stereo<c_short>(bandPtr, fr, Write_Short_Sample);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_int Int123_Synth_NToM(Memory<Real> bandPtr, c_int channel, Mpg123_Handle fr, bool final)
+		{
+			return lib.synth_NToM.DoSynth<c_short>(bandPtr, channel, fr, final, Write_Short_Sample);
 		}
 
 
@@ -146,5 +294,42 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			return clip;
 		}
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Method to produce a short (signed 16bit) output sample from
+		/// internal representation, which may be float, double or indeed
+		/// some integer for fixed point handling
+		/// </summary>
+		/********************************************************************/
+		private void Write_Short_Sample(ref int16_t sample, Real sum, ref c_int clip)
+		{
+			if (sum > Real_Plus_32767)
+			{
+				sample = 0x7fff;
+				clip++;
+			}
+			else if (sum < Real_Minus_32768)
+			{
+				sample = -0x8000;
+				clip++;
+			}
+			else
+				sample = Real_To_Short(sum);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private int16_t Real_To_Short(Real x)
+		{
+			return (int16_t)x;
+		}
+		#endregion
 	}
 }

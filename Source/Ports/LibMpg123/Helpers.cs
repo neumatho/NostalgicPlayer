@@ -239,6 +239,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 		/********************************************************************/
 		/// <summary>
+		/// Finish 16 bit sample to unsigned 16 bit sample
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static uint16_t Conv_SU16(int16_t s)
+		{
+			return (uint16_t)(s + 32768);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/

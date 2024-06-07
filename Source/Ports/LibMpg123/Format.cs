@@ -41,21 +41,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			Mpg123_Enc_Enum.Enc_Alaw_8
 		};
 
-		private static readonly c_int[] enc_Float_Range = { 6, 8 };
-		private static readonly c_int[] enc_8Bit_Range = { 8, 12 };
-		private static readonly c_int[] enc_24Bit_Range = { 2, 6 };
-		private static readonly c_int[] enc_16Bit_Range = { 0, 2 };
+		private static readonly c_int[] enc_Float_Range = [ 6, 8 ];
+		private static readonly c_int[] enc_8Bit_Range = [ 8, 12 ];
+		private static readonly c_int[] enc_24Bit_Range = [ 2, 6 ];
+		private static readonly c_int[] enc_16Bit_Range = [ 0, 2 ];
 
 		/// <summary>
 		/// The list of actually possible encodings
 		/// </summary>
 		private static readonly Mpg123_Enc_Enum[] good_Encodings =
-		{
+		[
+			Mpg123_Enc_Enum.Enc_Signed_16,
+			Mpg123_Enc_Enum.Enc_Unsigned_16,
 			Mpg123_Enc_Enum.Enc_Signed_32,
 			Mpg123_Enc_Enum.Enc_Unsigned_32,
 			Mpg123_Enc_Enum.Enc_Signed_24,
 			Mpg123_Enc_Enum.Enc_Unsigned_24
-		};
+		];
 
 		private readonly LibMpg123 lib;
 
@@ -278,6 +280,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					case Mpg123_Enc_Enum.Enc_Unsigned_32:
 					{
 						fr.Af.Dec_Enc = Mpg123_Enc_Enum.Enc_Signed_32;
+						break;
+					}
+
+					case Mpg123_Enc_Enum.Enc_Unsigned_16:
+					{
+						fr.Af.Dec_Enc = Mpg123_Enc_Enum.Enc_Signed_16;
 						break;
 					}
 
@@ -544,6 +552,47 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					}
 					break;
 				}
+
+				case Mpg123_Enc_Enum.Enc_Signed_16:
+				{
+					switch (fr.Af.Encoding)
+					{
+						case Mpg123_Enc_Enum.Enc_Unsigned_16:
+						{
+							Conv_S16_To_U16(fr.Buffer);
+							break;
+						}
+
+						case Mpg123_Enc_Enum.Enc_Signed_32:
+						{
+							Conv_S16_To_S32(fr.Buffer);
+							break;
+						}
+
+						case Mpg123_Enc_Enum.Enc_Unsigned_32:
+						{
+							Conv_S16_To_S32(fr.Buffer);
+							Conv_S32_To_U32(fr.Buffer);
+							break;
+						}
+
+						case Mpg123_Enc_Enum.Enc_Unsigned_24:
+						{
+							Conv_S16_To_S32(fr.Buffer);
+							Conv_S32_To_U32(fr.Buffer);
+							Chop_Fourth_Byte(fr.Buffer);
+							break;
+						}
+
+						case Mpg123_Enc_Enum.Enc_Signed_24:
+						{
+							Conv_S16_To_S32(fr.Buffer);
+							Chop_Fourth_Byte(fr.Buffer);
+							break;
+						}
+					}
+					break;
+				}
 			}
 
 			if ((fr.P.Flags & Mpg123_Param_Flags.Force_Endian) != 0)
@@ -705,6 +754,51 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			for (c_int i = 0; i < (c_int)count; ++i)
 				uSamples[i] = Helpers.Conv_SU32(sSamples[i]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void Conv_S16_To_U16(OutBuffer buf)
+		{
+			Span<int16_t> sSamples = MemoryMarshal.Cast<c_uchar, int16_t>(buf.Data);
+			Span<uint16_t> uSamples = MemoryMarshal.Cast<c_uchar, uint16_t>(buf.Data);
+			size_t count = buf.Fill / sizeof(int16_t);
+
+			for (c_int i = 0; i < (c_int)count; ++i)
+				uSamples[i] = Helpers.Conv_SU16(sSamples[i]);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void Conv_S16_To_S32(OutBuffer buf)
+		{
+			Span<int16_t> @in = MemoryMarshal.Cast<c_uchar, int16_t>(buf.Data);
+			Span<int32_t> @out = MemoryMarshal.Cast<c_uchar, int32_t>(buf.Data);
+			size_t count = buf.Fill / sizeof(int16_t);
+
+			if (buf.Size < count * sizeof(int32_t))
+				return;
+
+			// Work from the back since output is bigger
+			for (c_int i = (c_int)count - 1; i >= 0; --i)
+			{
+				@out[i] = @in[i];
+
+				// Could just shift bytes, but would have to mess with sign bit
+				@out[i] *= Constant.S32_Rescale;
+			}
+
+			buf.Fill = count * sizeof(int32_t);
 		}
 
 

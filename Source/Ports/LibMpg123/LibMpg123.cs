@@ -316,6 +316,57 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 		/********************************************************************/
 		/// <summary>
+		/// Get the current output format written to the arguments given.
+		/// If the stream is freshly loaded, this will try to parse enough
+		/// of it to give you the format to come. This clears the flag that
+		/// would otherwise make the first decoding call return
+		/// MPG123_NEW_FORMAT
+		/// </summary>
+		/********************************************************************/
+		public Mpg123_Errors Mpg123_GetFormat(out c_long rate, out Mpg123_ChannelCount channels, out Mpg123_Enc_Enum encoding)
+		{
+			return Mpg123_GetFormat2(out rate, out channels, out encoding, true);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Get the current output format written to the arguments given.
+		/// This differs from plain mpg123_getformat() in that you can choose
+		/// _not_ to clear the flag that would trigger the next decoding call
+		/// to return MPG123_NEW_FORMAT in case of a new format arriving
+		/// </summary>
+		/********************************************************************/
+		public Mpg123_Errors Mpg123_GetFormat2(out c_long rate, out Mpg123_ChannelCount channels, out Mpg123_Enc_Enum encoding, bool clear_Flag)
+		{
+			rate = 0;
+			channels = 0;
+			encoding = 0;
+
+			Mpg123_Handle mh = handle;
+
+			if (mh == null)
+				return Mpg123_Errors.Bad_Handle;
+
+			c_int b = Init_Track(mh);
+			if (b < 0)
+				return (Mpg123_Errors)b;
+
+			rate = mh.Af.Rate;
+			channels = (Mpg123_ChannelCount)mh.Af.Channels;
+			encoding = mh.Af.Encoding;
+
+			if (clear_Flag)
+				mh.New_Format = false;
+
+			return Mpg123_Errors.Ok;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Use an opaque handle as bitstream input. This works only with the
 		/// replaced I/O from mpg123_replace_reader_handle() or
 		/// mpg123_reader64()! mpg123_close() will call the cleanup callback
@@ -826,6 +877,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				mi.Flags |= Mpg123_Flags.Original;
 
 			return Mpg123_Errors.Ok;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Get the safe output buffer size for all cases (when you want to
+		/// replace the internal buffer)
+		/// </summary>
+		/********************************************************************/
+		public size_t Mpg123_Safe_Buffer()
+		{
+			// Real is the largest possible output (it's 32bit float, 32bit int or 64bit double)
+			return sizeof(Real) * 2 * 1152 * Constant.NToM_Max;
 		}
 
 
@@ -1367,6 +1432,26 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			}
 
 			return ret;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The max size of one frame's decoded output with current settings.
+		/// Use that to determine an appropriate minimum buffer size for
+		/// decoding one frame
+		/// </summary>
+		/********************************************************************/
+		public size_t Mpg123_OutBlock()
+		{
+			Mpg123_Handle mh = handle;
+
+			// Try to be helpful and never return zero output block size
+			if ((mh != null) && (mh.OutBlock > 0))
+				return mh.OutBlock;
+			else
+				return Mpg123_Safe_Buffer();
 		}
 
 

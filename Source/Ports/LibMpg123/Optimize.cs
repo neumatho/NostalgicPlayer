@@ -79,10 +79,34 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			synth_Base = new Synth_S
 			{
-				Plain = new Synth_S.Func_Synth[,] { { lib.synth_s32.Int123_Synth_1To1_S32 }, { lib.synth_s32.Int123_Synth_2To1_S32 }, { lib.synth_s32.Int123_Synth_4To1_S32 }, { lib.synth_s32.Int123_Synth_NToM_S32 } },
-				Stereo = new Synth_S.Func_Synth_Stereo[,] { { Synth_Stereo_Wrap }, { Synth_Stereo_Wrap }, { Synth_Stereo_Wrap }, { Synth_Stereo_Wrap } },
-				Mono2Stereo = new Synth_S.Func_Synth_Mono[,] { { lib.synth_s32.Int123_Synth_1To1_S32_M2S }, { lib.synth_s32.Int123_Synth_2To1_S32_M2S }, { lib.synth_s32.Int123_Synth_4To1_S32_M2S }, { lib.synth_s32.Int123_Synth_NToM_S32_M2S } },
-				Mono = new Synth_S.Func_Synth_Mono[,] { { lib.synth_s32.Int123_Synth_1To1_S32_Mono }, { lib.synth_s32.Int123_Synth_2To1_S32_Mono }, { lib.synth_s32.Int123_Synth_4To1_S32_Mono }, { lib.synth_s32.Int123_Synth_NToM_S32_Mono } },
+				Plain = new Synth_S.Func_Synth[,]
+				{
+					{ lib.synth.Int123_Synth_1To1, lib.synth_s32.Int123_Synth_1To1_S32 },
+					{ lib.synth.Int123_Synth_2To1, lib.synth_s32.Int123_Synth_2To1_S32 },
+					{ lib.synth.Int123_Synth_4To1, lib.synth_s32.Int123_Synth_4To1_S32 },
+					{ lib.synth.Int123_Synth_NToM, lib.synth_s32.Int123_Synth_NToM_S32 }
+				},
+				Stereo = new Synth_S.Func_Synth_Stereo[,]
+				{
+					{ Synth_Stereo_Wrap, Synth_Stereo_Wrap },
+					{ Synth_Stereo_Wrap, Synth_Stereo_Wrap },
+					{ Synth_Stereo_Wrap, Synth_Stereo_Wrap },
+					{ Synth_Stereo_Wrap, Synth_Stereo_Wrap }
+				},
+				Mono2Stereo = new Synth_S.Func_Synth_Mono[,]
+				{
+					{ lib.synth.Int123_Synth_1To1_M2S, lib.synth_s32.Int123_Synth_1To1_S32_M2S },
+					{ lib.synth.Int123_Synth_2To1_M2S, lib.synth_s32.Int123_Synth_2To1_S32_M2S },
+					{ lib.synth.Int123_Synth_4To1_M2S, lib.synth_s32.Int123_Synth_4To1_S32_M2S },
+					{ lib.synth.Int123_Synth_NToM_M2S, lib.synth_s32.Int123_Synth_NToM_S32_M2S }
+				},
+				Mono = new Synth_S.Func_Synth_Mono[,]
+				{
+					{ lib.synth.Int123_Synth_1To1_Mono, lib.synth_s32.Int123_Synth_1To1_S32_Mono },
+					{ lib.synth.Int123_Synth_2To1_Mono, lib.synth_s32.Int123_Synth_2To1_S32_Mono },
+					{ lib.synth.Int123_Synth_4To1_Mono, lib.synth_s32.Int123_Synth_4To1_S32_Mono },
+					{ lib.synth.Int123_Synth_NToM_Mono, lib.synth_s32.Int123_Synth_NToM_S32_Mono }
+				}
 			};
 		}
 
@@ -133,6 +157,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			if (false)
 			{
 			}
+			else if ((fr.Af.Dec_Enc & Mpg123_Enc_Enum.Enc_16) != 0)
+				basic_Format = Synth_Format.Sixteen;
 			// 24 bit integer means decoding to 32 bit first
 			else if (((fr.Af.Dec_Enc & Mpg123_Enc_Enum.Enc_32) != 0) || ((fr.Af.Dec_Enc & Mpg123_Enc_Enum.Enc_24) != 0))
 				basic_Format = Synth_Format.ThirtyTwo;

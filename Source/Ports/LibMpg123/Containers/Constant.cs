@@ -33,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123.Containers
 		public const int SBLimit = 32;
 		public const int SSLimit = 18;
 
-		public const Real S32_Rescale = 65536;
+		public const int S32_Rescale = 65536;
 
 		public const int Scale_Block = 12;
 

@@ -11,6 +11,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123.Containers
 	internal enum Synth_Format
 	{
 		None = -1,
+		Sixteen,
 		ThirtyTwo,
 		Limit
 	}
