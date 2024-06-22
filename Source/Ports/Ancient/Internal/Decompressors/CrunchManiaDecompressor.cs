@@ -189,8 +189,8 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 				);
 
 				HuffmanDecoder<uint8_t> distanceDecoder = new HuffmanDecoder<uint8_t>(
-					new HuffmanCode<uint8_t>(1, 0b00, 0),
-					new HuffmanCode<uint8_t>(2, 0b10, 1),
+					new HuffmanCode<uint8_t>(1, 0b00, 1),
+					new HuffmanCode<uint8_t>(2, 0b10, 0),
 					new HuffmanCode<uint8_t>(2, 0b11, 2)
 				);
 

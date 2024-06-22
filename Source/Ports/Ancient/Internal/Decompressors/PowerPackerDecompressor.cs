@@ -115,8 +115,8 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 			BackwardInputStream inputStream = new BackwardInputStream(packedData, 8, dataStart);
 			LsbBitReader bitReader = new LsbBitReader(inputStream);
 
-			uint32_t ReadBits(uint32_t count) => Common.Common.RotateBits(bitReader.ReadBitsBe32(count, key), count);
-			uint ReadBit() => bitReader.ReadBitsBe32(1, key);
+			uint32_t ReadBits(uint32_t count) => Common.Common.RotateBits(bitReader.ReadBitsGeneric(count, () => (inputStream.ReadBE32() ^ key, 32)), count);
+			uint ReadBit() => ReadBits(1);
 
 			ReadBits(startShift);
 

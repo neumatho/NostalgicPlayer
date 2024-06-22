@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 			uint16_t b0 = ReadByte();
 			uint16_t b1 = ReadByte();
 
-			return (uint16_t)((b0 << 8) | b1);
+			return (uint16_t)((b1 << 8) | b0);
 		}
 
 
@@ -90,7 +90,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 			uint32_t b2 = ReadByte();
 			uint32_t b3 = ReadByte();
 
-			return (b0 << 24) | (b1 << 16) | (b2 << 8) | b3;
+			return (b3 << 24) | (b2 << 16) | (b1 << 8) | b0;
 		}
 
 
@@ -105,7 +105,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 			uint16_t b0 = ReadByte();
 			uint16_t b1 = ReadByte();
 
-			return (uint16_t)((b1 << 8) | b0);
+			return (uint16_t)((b0 << 8) | b1);
 		}
 
 
@@ -122,7 +122,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 			uint32_t b2 = ReadByte();
 			uint32_t b3 = ReadByte();
 
-			return (b3 << 24) | (b2 << 16) | (b1 << 8) | b0;
+			return (b0 << 24) | (b1 << 16) | (b2 << 8) | b3;
 		}
 		#endregion
 	}

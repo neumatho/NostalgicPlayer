@@ -12,12 +12,12 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 	/// </summary>
 	internal class MsbBitReader
 	{
+		public delegate (uint32_t BufContent, uint8_t BufLength) ReadWord();
+
 		private readonly IInputStream inputStream;
 
 		private uint32_t bufContent = 0;
 		private uint8_t bufLength = 0;
-
-		private delegate (uint32_t BufContent, uint8_t BufLength) ReadWord();
 
 		/********************************************************************/
 		/// <summary>
@@ -66,13 +66,14 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 			this.bufLength = bufLength;
 		}
 
-		#region Private methods
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Read count number of bits by calling the function given
 		/// </summary>
 		/********************************************************************/
-		private uint32_t ReadBitsGeneric(uint32_t count, ReadWord readWord)
+		public uint32_t ReadBitsGeneric(uint32_t count, ReadWord readWord)
 		{
 			uint32_t ret = 0;
 
@@ -93,6 +94,5 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 
 			return ret;
 		}
-		#endregion
 	}
 }
