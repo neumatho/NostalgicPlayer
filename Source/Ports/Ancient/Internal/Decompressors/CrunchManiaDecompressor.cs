@@ -17,19 +17,13 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 	/// </summary>
 	internal class CrunchManiaDecompressor : Decompressor
 	{
-		private static readonly uint8_t[] lengthBits = { 1, 2, 4, 8 };
-		private static readonly uint32_t[] lengthAdditions = { 2, 4, 8, 24 };
-
-		private static readonly uint8_t[] distanceBits = { 9, 5, 14 };
-		private static readonly uint32_t[] distanceAdditions = { 32, 0, 544 };
-
 		private readonly Buffer packedData;
 
-		private uint32_t rawSize;
-		private uint32_t packedSize;
+		private readonly uint32_t rawSize;
+		private readonly uint32_t packedSize;
 
-		private bool isSampled;
-		private bool isLzh;
+		private readonly bool isSampled;
+		private readonly bool isLzh;
 
 		/********************************************************************/
 		/// <summary>
@@ -128,7 +122,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 
 			if (isLzh)
 			{
-				void ReadHuffmanTable(HuffmanDecoder<uint> dec, uint codeLength)
+				void ReadHuffmanTable(HuffmanDecoder<uint32_t> dec, uint32_t codeLength)
 				{
 					uint32_t maxDepth = ReadBits(4);
 					if (maxDepth == 0)
@@ -200,6 +194,9 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 					new HuffmanCode<uint8_t>(2, 0b11, 2)
 				);
 
+				VariableLengthCodeDecoder lengthVlc = new VariableLengthCodeDecoder(1, 2, 4, 8);
+				VariableLengthCodeDecoder distanceVlc = new VariableLengthCodeDecoder(5, 9, 14);
+
 				while (!outputStream.Eof)
 				{
 					if (ReadBit() != 0)
@@ -207,7 +204,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 					else
 					{
 						uint8_t lengthIndex = lengthDecoder.Decode(ReadBit);
-						uint32_t count = ReadBits(lengthBits[lengthIndex]) + lengthAdditions[lengthIndex];
+						uint32_t count = lengthVlc.Decode(ReadBits, lengthIndex) + 2;
 
 						if (count == 23)
 						{
@@ -225,7 +222,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 								count--;
 
 							uint8_t distanceIndex = distanceDecoder.Decode(ReadBit);
-							uint32_t distance = ReadBits(distanceBits[distanceIndex]) + distanceAdditions[distanceIndex];
+							uint32_t distance = distanceVlc.Decode(ReadBits, distanceIndex);
 
 							outputStream.Copy(distance, count);
 						}

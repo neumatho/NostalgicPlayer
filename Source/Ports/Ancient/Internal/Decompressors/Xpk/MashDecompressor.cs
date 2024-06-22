@@ -16,16 +16,6 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 	/// </summary>
 	internal class MashDecompressor : XpkDecompressor
 	{
-		private static readonly uint8_t[] distanceBits =
-		{
-			5, 7, 9, 10, 11, 12, 13, 14
-		};
-
-		private static readonly uint32_t[] distanceAdditions =
-		{
-			0, 0x20, 0xa0, 0x2a0, 0x6a0, 0xea0, 0x1ea0, 0x3ea0
-		};
-
 		private readonly Buffer packedData;
 
 		/********************************************************************/
@@ -94,6 +84,8 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 				new HuffmanCode<uint32_t>(6, 0b111111, 6)
 			);
 
+			VariableLengthCodeDecoder vlcDecoder = new VariableLengthCodeDecoder(5, 7, 9, 10, 11, 12, 13, 14);
+
 			while (!outputStream.Eof)
 			{
 				uint32_t litLength = litDecoder.Decode(ReadBit);
@@ -117,12 +109,6 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 
 				uint32_t count, distance;
 
-				void ReadDistance()
-				{
-					uint32_t tableIndex = ReadBits(3);
-					distance = ReadBits(distanceBits[tableIndex]) + distanceAdditions[tableIndex];
-				}
-
 				if (ReadBit() != 0)
 				{
 					uint32_t countBits;
@@ -137,13 +123,13 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 						throw new DecompressionException();
 
 					count = (uint32_t)(ReadBits(countBits) + (1 << (int)countBits) + 2);
-					ReadDistance();
+					distance = vlcDecoder.Decode(ReadBits, ReadBits(3));
 				}
 				else
 				{
 					if (ReadBit() != 0)
 					{
-						ReadDistance();
+						distance = vlcDecoder.Decode(ReadBits, ReadBits(3));
 						count = 3;
 					}
 					else

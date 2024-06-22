@@ -16,6 +16,11 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 	{
 		private struct Mode
 		{
+			/********************************************************************/
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/********************************************************************/
 			public Mode(uint32_t fourCC, string name)
 			{
 				FourCC = fourCC;
@@ -107,8 +112,8 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 			// (And I'm sure after writing that someone points me to 7 more formats)
 			// Unimplemented reasons are as follows:
 			// 1. Missing - there is no compressor available anywhere
-			// 2. PowerPC only - Amiga OS 4 libraries that are nothing but modern compression methods wrapped in AmigaOS
-			// 3. Float point based formats - Fragile formats that require exact 68881/68882 semantics
+			// 2. PowerPC only - Amiga OS 4 (or 3.5+) libraries that are nothing but modern compression methods wrapped in AmigaOS
+			// 3. Floating point based formats - Fragile formats that require exact 68881/68882 semantics
 			// 4. Encryption formats - Encryption formats requiring a proper passphrase
 			Mode[] modes =
 			{

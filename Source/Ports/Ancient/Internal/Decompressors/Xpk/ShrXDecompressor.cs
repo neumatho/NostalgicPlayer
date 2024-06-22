@@ -14,9 +14,9 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 	/// <summary>
 	/// XPK-SHRI decompressor
 	/// </summary>
-	internal class ShriDecompressor : XpkDecompressor
+	internal class ShrXDecompressor : XpkDecompressor
 	{
-		private class ShriState : State
+		private class ShrXState : State
 		{
 			public uint32_t vLen = 0;
 			public uint32_t vNext = 0;
@@ -24,8 +24,8 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 			public uint32_t[] ar = new uint32_t[999];
 		}
 
-		private static readonly uint32_t[] updates1 = { 358, 359, 386, 387, 414, 415 };
-		private static readonly uint32_t[] updates2 = { 442, 456, 470, 484 };
+		private static readonly uint32_t[] updates1 = [ 358, 359, 386, 387, 414, 415 ];
+		private static readonly uint32_t[] updates2 = [ 442, 456, 470, 484 ];
 
 		private readonly Buffer packedData;
 
@@ -33,33 +33,38 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 		private readonly size_t startOffset;
 		private readonly size_t rawSize;
 
-		private readonly ShriState state;
+		private readonly ShrXState state;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		private ShriDecompressor(uint32_t hdr, Buffer packedData, ref State state)
+		private ShrXDecompressor(uint32_t hdr, Buffer packedData, ref State state)
 		{
 			this.packedData = packedData;
 
-			if (!DetectHeaderXpk(hdr) || (packedData.Size() < 6))
+			if (!DetectHeaderXpk_Shri(hdr) || (packedData.Size() < 6))
 				throw new InvalidFormatException();
 
 			ver = packedData.Read8(0);
+			if ((ver == 0) || (ver > 2))
+				throw new InvalidFormatException();
 
-			// Second byte defines something that does not seem to be terribly important...
-			uint8_t tmp = packedData.Read8(2);
-			if (tmp < 0x80)
+			if (!false)
 			{
-				rawSize = packedData.ReadBe16(2);
-				startOffset = 4;
-			}
-			else
-			{
-				rawSize = ~packedData.ReadBe32(2) + 1;
-				startOffset = 6;
+				// Second byte defines something that does not seem to be terribly important...
+				uint8_t tmp = packedData.Read8(2);
+				if ((tmp & 0x80) != 0)
+				{
+					rawSize = ~packedData.ReadBe32(2) + 1;
+					startOffset = 6;
+				}
+				else
+				{
+					rawSize = packedData.ReadBe16(2);
+					startOffset = 4;
+				}
 			}
 
 			if (state == null)
@@ -67,10 +72,10 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 				if (ver == 2)
 					throw new InvalidFormatException();
 
-				state = new ShriState();
+				state = new ShrXState();
 			}
 
-			this.state = (ShriState)state;
+			this.state = (ShrXState)state;
 		}
 
 
@@ -80,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static bool DetectHeaderXpk(uint32_t hdr)
+		public static bool DetectHeaderXpk_Shri(uint32_t hdr)
 		{
 			return hdr == Common.Common.FourCC("SHRI");
 		}
@@ -92,9 +97,9 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static XpkDecompressor Create(uint32_t hdr, Buffer packedData, ref State state)
+		public static XpkDecompressor Create_Shri(uint32_t hdr, Buffer packedData, ref State state)
 		{
-			return new ShriDecompressor(hdr, packedData, ref state);
+			return new ShrXDecompressor(hdr, packedData, ref state);
 		}
 
 
@@ -174,7 +179,8 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 				return ((mult & 0xffff) * tmp >> 16) + ((mult >> 16) * tmp2 >> 16) + (mult >> 16) * tmp;
 			}
 
-			uint32_t vLen = 0, vNext = 0;
+			uint32_t vLen = 0;
+			uint32_t vNext = 0;
 
 			void Upgrade()
 			{
@@ -189,7 +195,8 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 					if (vValue < 48)
 						Update(vValue + 256, 1);
 
-					uint32_t bits = 0, compare = 4;
+					uint32_t bits = 0;
+					uint32_t compare = 4;
 
 					while (vValue >= compare)
 					{
@@ -233,7 +240,8 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 				}
 			}
 
-			uint32_t stream = 0, shift = 0;
+			uint32_t stream = 0;
+			uint32_t shift = 0;
 
 			void RefillStream()
 			{
@@ -344,10 +352,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 				Array.Copy(state.ar, ar, 999);
 			}
 
-			{
-				Span<uint8_t> buf = inputStream.Consume(4);
-				stream = (uint32_t)((buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | buf[3]);
-			}
+			stream = inputStream.ReadBE32();
 
 			while (!outputStream.Eof)
 			{

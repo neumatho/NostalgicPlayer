@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Ports.Ancient.Exceptions;
 
 namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 {
@@ -15,6 +16,8 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 
 		private uint32_t bufContent = 0;
 		private uint8_t bufLength = 0;
+
+		private delegate (uint32_t BufContent, uint8_t BufLength) ReadWord();
 
 		/********************************************************************/
 		/// <summary>
@@ -35,11 +38,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 		/********************************************************************/
 		public uint32_t ReadBits8(uint32_t count)
 		{
-			return ReadBitsInternal(count, () =>
-			{
-				bufContent = inputStream.ReadByte();
-				bufLength = 8;
-			});
+			return ReadBitsGeneric(count, () => (inputStream.ReadByte(), 8));
 		}
 
 
@@ -51,13 +50,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 		/********************************************************************/
 		public uint32_t ReadBitsBe32(uint32_t count)
 		{
-			return ReadBitsInternal(count, () =>
-			{
-				uint8_t[] tmp = new uint8_t[4];
-				Span<uint8_t> buf = inputStream.Consume(4, tmp);
-				bufContent = (uint32_t)((buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | buf[3]);
-				bufLength = 32;
-			});
+			return ReadBitsGeneric(count, () => (inputStream.ReadBE32(), 32));
 		}
 
 
@@ -79,14 +72,17 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 		/// Read count number of bits by calling the function given
 		/// </summary>
 		/********************************************************************/
-		private uint32_t ReadBitsInternal(uint32_t count, Action readWord)
+		private uint32_t ReadBitsGeneric(uint32_t count, ReadWord readWord)
 		{
 			uint32_t ret = 0;
+
+			if (count > 32)
+				throw new DecompressionException();
 
 			while (count != 0)
 			{
 				if (bufLength == 0)
-					readWord();
+					(bufContent, bufLength) = readWord();
 
 				uint8_t maxCount = Math.Min((uint8_t)count, bufLength);
 				bufLength -= maxCount;

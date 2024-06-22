@@ -3,8 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
-
 namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 {
 	/// <summary>
@@ -23,8 +21,23 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 		uint8_t ReadByte();
 
 		/// <summary>
-		/// Consume the given number of bytes
+		/// Read a 16-bit integer in big-endian format
 		/// </summary>
-		Span<uint8_t> Consume(size_t bytes, uint8_t[] buffer);
+		uint16_t ReadBE16();
+
+		/// <summary>
+		/// Read a 32-bit integer in big-endian format
+		/// </summary>
+		uint32_t ReadBE32();
+
+		/// <summary>
+		/// Read a 16-bit integer in little-endian format
+		/// </summary>
+		uint16_t ReadLE16();
+
+		/// <summary>
+		/// Read a 32-bit integer in little-endian format
+		/// </summary>
+		uint32_t ReadLE32();
 	}
 }

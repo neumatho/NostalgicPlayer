@@ -17,12 +17,19 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 		#region Node class
 		private class Node
 		{
-			public uint32_t[] Sub;
+			public uint32_t Left;
+			public uint32_t Right;
 			public T Value;
 
-			public Node(uint32_t sub0, uint32_t sub1, T value)
+			/********************************************************************/
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/********************************************************************/
+			public Node(uint32_t left, uint32_t right, T value)
 			{
-				Sub = new [] { sub0, sub1 };
+				Left = left;
+				Right = right;
 				Value = value;
 			}
 		}
@@ -67,9 +74,9 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 
 			uint32_t i = 0;
 
-			while ((table[(int)i].Sub[0] != 0) || (table[(int)i].Sub[1] != 0))
+			while ((table[(int)i].Left != 0) || (table[(int)i].Right != 0))
 			{
-				i = table[(int)i].Sub[bitReader() != 0 ? 1 : 0];
+				i = bitReader() != 0 ? table[(int)i].Right : table[(int)i].Left;
 				if (i == 0)
 					throw new DecompressionException();
 			}
@@ -94,10 +101,10 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 				uint32_t codeBit = (currentBit != 0) && (((code.Code >> (currentBit - 1)) & 1) != 0) ? (uint32_t)1 : 0;
 				if (i != length)
 				{
-					if ((currentBit == 0) || ((table[(int)i].Sub[0] == 0) && (table[(int)i].Sub[1] == 0)))
+					if ((currentBit == 0) || ((table[(int)i].Left == 0) && (table[(int)i].Right == 0)))
 						throw new DecompressionException();
 
-					ref uint32_t tmp = ref table[(int)i].Sub[codeBit];
+					ref uint32_t tmp = ref codeBit != 0 ? ref table[(int)i].Right : ref table[(int)i].Left;
 					if (tmp == 0)
 					{
 						i = length;
@@ -120,15 +127,21 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 
 		/********************************************************************/
 		/// <summary>
-		/// Create orderly Huffman table, as used by Deflate and BZip2
+		/// Create orderly Huffman table, as used by Deflate and BZip2 (and
+		/// many others)
 		/// </summary>
 		/********************************************************************/
 		public void CreateOrderlyHuffmanTable(uint8_t[] bitLengths, uint32_t bitTableLength)
 		{
-			uint8_t minDepth = 32, maxDepth = 0;
+			if (bitTableLength > bitLengths.Length)
+				throw new DecompressionException();
+
+			uint8_t minDepth = 32;
+			uint8_t maxDepth = 0;
 
 			// Some optimization: more tables
-			uint16_t[] firstIndex = new uint16_t[33], lastIndex = new uint16_t[33];
+			uint16_t[] firstIndex = new uint16_t[33];
+			uint16_t[] lastIndex = new uint16_t[33];
 			uint16_t[] nextIndexBuffer = new uint16_t[bitTableLength];
 
 			for (uint32_t i = 1; i < 33; i++)

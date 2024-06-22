@@ -17,41 +17,41 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 	internal class RakeDecompressor : XpkDecompressor
 	{
 		// Is there some logic into this?
-		private static readonly uint8_t[][] decTable = new uint8_t[255][]
-		{
-			new uint8_t[] { 1, 0x01}, new uint8_t[] { 3, 0x03}, new uint8_t[] { 5, 0x05}, new uint8_t[] { 6, 0x09}, new uint8_t[] { 7, 0x0c}, new uint8_t[] { 9, 0x13}, new uint8_t[] {12, 0x34}, new uint8_t[] {18, 0xc0},
-			new uint8_t[] {18, 0xc2}, new uint8_t[] {18, 0xc3}, new uint8_t[] {18, 0xc6}, new uint8_t[] {16, 0x79}, new uint8_t[] {18, 0xc7}, new uint8_t[] {18, 0xd6}, new uint8_t[] {18, 0xd7}, new uint8_t[] {18, 0xd8},
-			new uint8_t[] {17, 0xa8}, new uint8_t[] {17, 0x92}, new uint8_t[] {17, 0x8a}, new uint8_t[] {17, 0x82}, new uint8_t[] {16, 0x6c}, new uint8_t[] {17, 0x94}, new uint8_t[] {18, 0xda}, new uint8_t[] {18, 0xca},
-			new uint8_t[] {16, 0x7b}, new uint8_t[] {13, 0x36}, new uint8_t[] {13, 0x39}, new uint8_t[] {13, 0x48}, new uint8_t[] {14, 0x49}, new uint8_t[] {14, 0x50}, new uint8_t[] {15, 0x62}, new uint8_t[] {15, 0x5e},
-			new uint8_t[] {16, 0x6f}, new uint8_t[] {17, 0x83}, new uint8_t[] {17, 0x87}, new uint8_t[] {15, 0x56}, new uint8_t[] {11, 0x21}, new uint8_t[] {12, 0x31}, new uint8_t[] {13, 0x38}, new uint8_t[] {13, 0x3d},
-			new uint8_t[] { 8, 0x0f}, new uint8_t[] { 4, 0x04}, new uint8_t[] { 6, 0x08}, new uint8_t[] {10, 0x1c}, new uint8_t[] {12, 0x27}, new uint8_t[] {13, 0x42}, new uint8_t[] {13, 0x3a}, new uint8_t[] {12, 0x30},
-			new uint8_t[] {12, 0x32}, new uint8_t[] { 9, 0x16}, new uint8_t[] { 8, 0x11}, new uint8_t[] { 7, 0x0b}, new uint8_t[] { 5, 0x06}, new uint8_t[] {10, 0x19}, new uint8_t[] {10, 0x1a}, new uint8_t[] {10, 0x18},
-			new uint8_t[] {11, 0x26}, new uint8_t[] {17, 0x98}, new uint8_t[] {17, 0x99}, new uint8_t[] {17, 0x9b}, new uint8_t[] {17, 0x9e}, new uint8_t[] {17, 0x9f}, new uint8_t[] {17, 0xa6}, new uint8_t[] {16, 0x73},
-			new uint8_t[] {17, 0x7f}, new uint8_t[] {17, 0x81}, new uint8_t[] {17, 0x84}, new uint8_t[] {17, 0x85}, new uint8_t[] {15, 0x5d}, new uint8_t[] {14, 0x4d}, new uint8_t[] {14, 0x4f}, new uint8_t[] {13, 0x45},
-			new uint8_t[] {13, 0x3c}, new uint8_t[] { 9, 0x17}, new uint8_t[] {10, 0x1d}, new uint8_t[] {12, 0xff}, new uint8_t[] {13, 0x41}, new uint8_t[] {17, 0x8c}, new uint8_t[] {18, 0xaa}, new uint8_t[] {19, 0xdb},
-			new uint8_t[] {19, 0xdc}, new uint8_t[] {16, 0x77}, new uint8_t[] {15, 0x63}, new uint8_t[] {16, 0x7c}, new uint8_t[] {16, 0x76}, new uint8_t[] {16, 0x71}, new uint8_t[] {16, 0x7d}, new uint8_t[] {12, 0x2c},
-			new uint8_t[] {13, 0x3b}, new uint8_t[] {16, 0x7a}, new uint8_t[] {16, 0x75}, new uint8_t[] {15, 0x55}, new uint8_t[] {15, 0x60}, new uint8_t[] {16, 0x74}, new uint8_t[] {17, 0xa4}, new uint8_t[] {18, 0xab},
-			new uint8_t[] {18, 0xac}, new uint8_t[] { 7, 0x0a}, new uint8_t[] { 6, 0x07}, new uint8_t[] { 9, 0x15}, new uint8_t[] {11, 0x20}, new uint8_t[] {11, 0x24}, new uint8_t[] {10, 0x1b}, new uint8_t[] { 8, 0x10},
-			new uint8_t[] { 9, 0x12}, new uint8_t[] {12, 0x33}, new uint8_t[] {14, 0x4b}, new uint8_t[] {15, 0x53}, new uint8_t[] {19, 0xdd}, new uint8_t[] {19, 0xde}, new uint8_t[] {18, 0xad}, new uint8_t[] {19, 0xdf},
-			new uint8_t[] {19, 0xe0}, new uint8_t[] {18, 0xae}, new uint8_t[] {17, 0x88}, new uint8_t[] {18, 0xaf}, new uint8_t[] {19, 0xe1}, new uint8_t[] {19, 0xe2}, new uint8_t[] {13, 0x37}, new uint8_t[] {12, 0x2e},
-			new uint8_t[] {18, 0xb0}, new uint8_t[] {18, 0xb1}, new uint8_t[] {19, 0xe3}, new uint8_t[] {19, 0xe4}, new uint8_t[] {18, 0xb2}, new uint8_t[] {18, 0xb3}, new uint8_t[] {19, 0xe5}, new uint8_t[] {19, 0xe6},
-			new uint8_t[] {19, 0xe7}, new uint8_t[] {19, 0xe8}, new uint8_t[] {18, 0xb4}, new uint8_t[] {17, 0x9a}, new uint8_t[] {18, 0xb5}, new uint8_t[] {18, 0xb6}, new uint8_t[] {18, 0xb7}, new uint8_t[] {19, 0xe9},
-			new uint8_t[] {19, 0xea}, new uint8_t[] {18, 0xb8}, new uint8_t[] {19, 0xeb}, new uint8_t[] {19, 0xec}, new uint8_t[] {19, 0xed}, new uint8_t[] {19, 0xee}, new uint8_t[] {18, 0xb9}, new uint8_t[] {19, 0xef},
-			new uint8_t[] {19, 0xf0}, new uint8_t[] {18, 0xbb}, new uint8_t[] {18, 0xbc}, new uint8_t[] {19, 0xf1}, new uint8_t[] {19, 0xf2}, new uint8_t[] {18, 0xbd}, new uint8_t[] {18, 0xbe}, new uint8_t[] {19, 0xf3},
-			new uint8_t[] {19, 0xf4}, new uint8_t[] {18, 0xbf}, new uint8_t[] {18, 0xc1}, new uint8_t[] {19, 0xf5}, new uint8_t[] {19, 0xf6}, new uint8_t[] {18, 0xc4}, new uint8_t[] {18, 0xc5}, new uint8_t[] {17, 0x95},
-			new uint8_t[] {18, 0xc8}, new uint8_t[] {18, 0xc9}, new uint8_t[] {19, 0xf7}, new uint8_t[] {19, 0xf8}, new uint8_t[] {18, 0xcb}, new uint8_t[] {18, 0xcc}, new uint8_t[] {19, 0xf9}, new uint8_t[] {19, 0xfa},
-			new uint8_t[] {18, 0xcd}, new uint8_t[] {18, 0xce}, new uint8_t[] {17, 0x96}, new uint8_t[] {18, 0xcf}, new uint8_t[] {18, 0xd0}, new uint8_t[] {19, 0xfb}, new uint8_t[] {19, 0xfc}, new uint8_t[] {18, 0xd1},
-			new uint8_t[] {18, 0xd2}, new uint8_t[] {18, 0xd3}, new uint8_t[] {17, 0x9c}, new uint8_t[] {17, 0x9d}, new uint8_t[] {18, 0xd4}, new uint8_t[] {18, 0xd5}, new uint8_t[] {17, 0xa0}, new uint8_t[] {17, 0xa1},
-			new uint8_t[] {17, 0xa2}, new uint8_t[] {17, 0xa3}, new uint8_t[] {17, 0xa5}, new uint8_t[] {19, 0xfd}, new uint8_t[] {19, 0xfe}, new uint8_t[] {18, 0xd9}, new uint8_t[] {17, 0xa7}, new uint8_t[] {16, 0x66},
-			new uint8_t[] {15, 0x54}, new uint8_t[] {15, 0x57}, new uint8_t[] {16, 0x6b}, new uint8_t[] {16, 0x68}, new uint8_t[] {14, 0x4c}, new uint8_t[] {14, 0x4e}, new uint8_t[] {12, 0x28}, new uint8_t[] {11, 0x23},
-			new uint8_t[] { 8, 0x0e}, new uint8_t[] { 7, 0x0d}, new uint8_t[] {10, 0x1f}, new uint8_t[] {13, 0x47}, new uint8_t[] {15, 0x64}, new uint8_t[] {15, 0x58}, new uint8_t[] {15, 0x59}, new uint8_t[] {15, 0x5a},
-			new uint8_t[] {12, 0x29}, new uint8_t[] {13, 0x3e}, new uint8_t[] {15, 0x5f}, new uint8_t[] {17, 0x8e}, new uint8_t[] {18, 0xba}, new uint8_t[] {18, 0xa9}, new uint8_t[] {16, 0x70}, new uint8_t[] {14, 0x4a},
-			new uint8_t[] {12, 0x2a}, new uint8_t[] { 9, 0x14}, new uint8_t[] {11, 0x22}, new uint8_t[] {12, 0x2f}, new uint8_t[] {16, 0x7e}, new uint8_t[] {16, 0x67}, new uint8_t[] {16, 0x69}, new uint8_t[] {16, 0x65},
-			new uint8_t[] {15, 0x51}, new uint8_t[] {16, 0x78}, new uint8_t[] {16, 0x6a}, new uint8_t[] {13, 0x46}, new uint8_t[] {11, 0x25}, new uint8_t[] {16, 0x72}, new uint8_t[] {16, 0x6e}, new uint8_t[] {15, 0x5b},
-			new uint8_t[] {15, 0x61}, new uint8_t[] {15, 0x52}, new uint8_t[] {13, 0x40}, new uint8_t[] {13, 0x43}, new uint8_t[] {13, 0x44}, new uint8_t[] {13, 0x3f}, new uint8_t[] {15, 0x5c}, new uint8_t[] {17, 0x93},
-			new uint8_t[] {17, 0x80}, new uint8_t[] {17, 0x8d}, new uint8_t[] {17, 0x8b}, new uint8_t[] {17, 0x86}, new uint8_t[] {17, 0x89}, new uint8_t[] {17, 0x97}, new uint8_t[] {17, 0x8f}, new uint8_t[] {17, 0x90},
-			new uint8_t[] {17, 0x91}, new uint8_t[] {16, 0x6d}, new uint8_t[] {12, 0x2b}, new uint8_t[] {12, 0x2d}, new uint8_t[] {12, 0x35}, new uint8_t[] {10, 0x1e}, new uint8_t[] { 3, 0x02}
-		};
+		private static readonly uint8_t[][] decTable =
+		[
+			[ 1, 0x01], [ 3, 0x03], [ 5, 0x05], [ 6, 0x09], [ 7, 0x0c], [ 9, 0x13], [12, 0x34], [18, 0xc0],
+			[18, 0xc2], [18, 0xc3], [18, 0xc6], [16, 0x79], [18, 0xc7], [18, 0xd6], [18, 0xd7], [18, 0xd8],
+			[17, 0xa8], [17, 0x92], [17, 0x8a], [17, 0x82], [16, 0x6c], [17, 0x94], [18, 0xda], [18, 0xca],
+			[16, 0x7b], [13, 0x36], [13, 0x39], [13, 0x48], [14, 0x49], [14, 0x50], [15, 0x62], [15, 0x5e],
+			[16, 0x6f], [17, 0x83], [17, 0x87], [15, 0x56], [11, 0x21], [12, 0x31], [13, 0x38], [13, 0x3d],
+			[ 8, 0x0f], [ 4, 0x04], [ 6, 0x08], [10, 0x1c], [12, 0x27], [13, 0x42], [13, 0x3a], [12, 0x30],
+			[12, 0x32], [ 9, 0x16], [ 8, 0x11], [ 7, 0x0b], [ 5, 0x06], [10, 0x19], [10, 0x1a], [10, 0x18],
+			[11, 0x26], [17, 0x98], [17, 0x99], [17, 0x9b], [17, 0x9e], [17, 0x9f], [17, 0xa6], [16, 0x73],
+			[17, 0x7f], [17, 0x81], [17, 0x84], [17, 0x85], [15, 0x5d], [14, 0x4d], [14, 0x4f], [13, 0x45],
+			[13, 0x3c], [ 9, 0x17], [10, 0x1d], [12, 0xff], [13, 0x41], [17, 0x8c], [18, 0xaa], [19, 0xdb],
+			[19, 0xdc], [16, 0x77], [15, 0x63], [16, 0x7c], [16, 0x76], [16, 0x71], [16, 0x7d], [12, 0x2c],
+			[13, 0x3b], [16, 0x7a], [16, 0x75], [15, 0x55], [15, 0x60], [16, 0x74], [17, 0xa4], [18, 0xab],
+			[18, 0xac], [ 7, 0x0a], [ 6, 0x07], [ 9, 0x15], [11, 0x20], [11, 0x24], [10, 0x1b], [ 8, 0x10],
+			[ 9, 0x12], [12, 0x33], [14, 0x4b], [15, 0x53], [19, 0xdd], [19, 0xde], [18, 0xad], [19, 0xdf],
+			[19, 0xe0], [18, 0xae], [17, 0x88], [18, 0xaf], [19, 0xe1], [19, 0xe2], [13, 0x37], [12, 0x2e],
+			[18, 0xb0], [18, 0xb1], [19, 0xe3], [19, 0xe4], [18, 0xb2], [18, 0xb3], [19, 0xe5], [19, 0xe6],
+			[19, 0xe7], [19, 0xe8], [18, 0xb4], [17, 0x9a], [18, 0xb5], [18, 0xb6], [18, 0xb7], [19, 0xe9],
+			[19, 0xea], [18, 0xb8], [19, 0xeb], [19, 0xec], [19, 0xed], [19, 0xee], [18, 0xb9], [19, 0xef],
+			[19, 0xf0], [18, 0xbb], [18, 0xbc], [19, 0xf1], [19, 0xf2], [18, 0xbd], [18, 0xbe], [19, 0xf3],
+			[19, 0xf4], [18, 0xbf], [18, 0xc1], [19, 0xf5], [19, 0xf6], [18, 0xc4], [18, 0xc5], [17, 0x95],
+			[18, 0xc8], [18, 0xc9], [19, 0xf7], [19, 0xf8], [18, 0xcb], [18, 0xcc], [19, 0xf9], [19, 0xfa],
+			[18, 0xcd], [18, 0xce], [17, 0x96], [18, 0xcf], [18, 0xd0], [19, 0xfb], [19, 0xfc], [18, 0xd1],
+			[18, 0xd2], [18, 0xd3], [17, 0x9c], [17, 0x9d], [18, 0xd4], [18, 0xd5], [17, 0xa0], [17, 0xa1],
+			[17, 0xa2], [17, 0xa3], [17, 0xa5], [19, 0xfd], [19, 0xfe], [18, 0xd9], [17, 0xa7], [16, 0x66],
+			[15, 0x54], [15, 0x57], [16, 0x6b], [16, 0x68], [14, 0x4c], [14, 0x4e], [12, 0x28], [11, 0x23],
+			[ 8, 0x0e], [ 7, 0x0d], [10, 0x1f], [13, 0x47], [15, 0x64], [15, 0x58], [15, 0x59], [15, 0x5a],
+			[12, 0x29], [13, 0x3e], [15, 0x5f], [17, 0x8e], [18, 0xba], [18, 0xa9], [16, 0x70], [14, 0x4a],
+			[12, 0x2a], [ 9, 0x14], [11, 0x22], [12, 0x2f], [16, 0x7e], [16, 0x67], [16, 0x69], [16, 0x65],
+			[15, 0x51], [16, 0x78], [16, 0x6a], [13, 0x46], [11, 0x25], [16, 0x72], [16, 0x6e], [15, 0x5b],
+			[15, 0x61], [15, 0x52], [13, 0x40], [13, 0x43], [13, 0x44], [13, 0x3f], [15, 0x5c], [17, 0x93],
+			[17, 0x80], [17, 0x8d], [17, 0x8b], [17, 0x86], [17, 0x89], [17, 0x97], [17, 0x8f], [17, 0x90],
+			[17, 0x91], [16, 0x6d], [12, 0x2b], [12, 0x2d], [12, 0x35], [10, 0x1e], [ 3, 0x02]
+		];
 
 		private readonly Buffer packedData;
 
@@ -123,19 +123,18 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 				if (tmp > 32)
 					throw new DecompressionException();
 
-				Span<uint8_t> buf = forwardInputStream.Consume(4);
-				uint32_t content = (uint32_t)((buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | (buf[3]));
+				uint32_t content = forwardInputStream.ReadBE32();
 				bitReader.Reset(content >> tmp, (uint8_t)(32 - tmp));
 			}
 
 			BackwardOutputStream outputStream = new BackwardOutputStream(rawData, 0, rawData.Size());
 
-			HuffmanDecoder<uint32_t> lengthDecoder = new HuffmanDecoder<uint32_t>();
+			HuffmanDecoder<uint8_t> lengthDecoder = new HuffmanDecoder<uint8_t>();
 
 			uint32_t hufCode = 0;
 			foreach (uint8_t[] it in decTable)
 			{
-				lengthDecoder.Insert(new HuffmanCode<uint32_t>(it[0], hufCode >> (32 - it[0]), it[1]));
+				lengthDecoder.Insert(new HuffmanCode<uint8_t>(it[0], hufCode >> (32 - it[0]), it[1]));
 				hufCode += (uint32_t)1 << (32 - it[0]);
 			}
 

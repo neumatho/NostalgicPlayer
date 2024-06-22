@@ -20,7 +20,8 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 			public uint32_t Frequency;
 			public uint32_t Index;
 			public uint32_t Parent;
-			public uint32_t[] Leaves = new uint32_t[2];
+			public uint32_t LeftLeaf;
+			public uint32_t RightLeaf;
 		}
 		#endregion
 
@@ -68,7 +69,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 			uint32_t code = maxCount * 2 - 2;
 
 			while (code >= maxCount)
-				code = nodes[code].Leaves[bitReader() != 0 ? 1 : 0];
+				code = bitReader() != 0 ? nodes[code].RightLeaf : nodes[code].LeftLeaf;
 
 			return code;
 		}
@@ -108,7 +109,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 					ref uint32_t GetParentLeaf(uint32_t currentCode)
 					{
 						Node parent = nodes[nodes[currentCode].Parent];
-						return ref parent.Leaves[(parent.Leaves[0] == currentCode) ? 0 : 1];
+						return ref parent.LeftLeaf == currentCode ? ref parent.LeftLeaf : ref parent.RightLeaf;
 					}
 
 					void Swap(ref uint32_t a, ref uint32_t b)
@@ -158,8 +159,8 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 				nodes[i].Frequency = 1;
 				nodes[i].Index = i + (maxCount - count) * 2;
 				nodes[i].Parent = maxCount * 2 - count + (i >> 1);
-				nodes[i].Leaves[0] = 0;
-				nodes[i].Leaves[1] = 0;
+				nodes[i].LeftLeaf = 0;
+				nodes[i].RightLeaf = 0;
 
 				codeMap[i + (maxCount - count) * 2] = i;
 			}
@@ -172,8 +173,8 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 				nodes[i].Frequency = nodes[l].Frequency + nodes[r].Frequency;
 				nodes[i].Index = i;
 				nodes[i].Parent = maxCount + (i >> 1);
-				nodes[i].Leaves[0] = l;
-				nodes[i].Leaves[1] = r;
+				nodes[i].LeftLeaf = l;
+				nodes[i].RightLeaf = r;
 
 				codeMap[i] = i;
 			}

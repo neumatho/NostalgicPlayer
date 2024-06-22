@@ -27,18 +27,18 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 			public DecompressorType Type;
 		}
 
-		private static DecompressorPair[] decompressors = new DecompressorPair[]
-		{
+		private static readonly DecompressorPair[] decompressors =
+		[
 			new DecompressorPair { First = BlzwDecompressor.DetectHeaderXpk, Second = BlzwDecompressor.Create, Type = DecompressorType.Xpk_Blzw },
 			new DecompressorPair { First = BZip2Decompressor.DetectHeaderXpk, Second = BZip2Decompressor.Create, Type = DecompressorType.Xpk_Bzp2 },
 			new DecompressorPair { First = LhlbDecompressor.DetectHeaderXpk, Second = LhlbDecompressor.Create, Type = DecompressorType.Xpk_Lhlb },
 			new DecompressorPair { First = MashDecompressor.DetectHeaderXpk, Second = MashDecompressor.Create, Type = DecompressorType.Xpk_Mash },
 			new DecompressorPair { First = RakeDecompressor.DetectHeaderXpk, Second = RakeDecompressor.Create, Type = DecompressorType.Xpk_Rake },
-			new DecompressorPair { First = ShriDecompressor.DetectHeaderXpk, Second = ShriDecompressor.Create, Type = DecompressorType.Xpk_Shri },
+			new DecompressorPair { First = ShrXDecompressor.DetectHeaderXpk_Shri, Second = ShrXDecompressor.Create_Shri, Type = DecompressorType.Xpk_Shri },
 			new DecompressorPair { First = SmplDecompressor.DetectHeaderXpk, Second = SmplDecompressor.Create, Type = DecompressorType.Xpk_Smpl },
 			new DecompressorPair { First = SqshDecompressor.DetectHeaderXpk, Second = SqshDecompressor.Create, Type = DecompressorType.Xpk_Sqsh },
 			new DecompressorPair { First = UnimplementedDecompressor.DetectHeaderXpk, Second = UnimplementedDecompressor.Create, Type = DecompressorType.Unknown },
-		};
+		];
 
 		private readonly Buffer packedData;
 
@@ -275,7 +275,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 			if ((len == 0) || (OverflowCheck.Sum(offset, len) > buffer.Size()))
 				return false;
 
-			uint8_t[] tmp = { 0, 0 };
+			uint8_t[] tmp = [ 0, 0 ];
 			for (size_t i = 0; i < len; i++)
 				tmp[i & 1] ^= buffer[offset + i];
 

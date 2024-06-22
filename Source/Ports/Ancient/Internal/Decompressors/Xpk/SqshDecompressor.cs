@@ -27,14 +27,8 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 			{ 8, 7, 6, 2, 3, 4, 5, 0 }
 		};
 
-		private static readonly uint8_t[] lengthBits = { 1, 1, 1, 3, 5 };
-		private static readonly uint32_t[] lengthAdditions = { 2, 4, 6, 8, 16 };
-
-		private static readonly uint8_t[] distanceBits = { 12, 8, 14 };
-		private static readonly uint32_t[] distanceAdditions = { 0x101, 1, 0x1101 };
-
 		private readonly Buffer packedData;
-		private uint32_t rawSize;
+		private readonly uint32_t rawSize;
 
 		/********************************************************************/
 		/// <summary>
@@ -108,33 +102,38 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 
 			ForwardOutputStream outputStream = new ForwardOutputStream(rawData, 0, rawSize);
 
-			HuffmanDecoder<byte> modDecoder = new HuffmanDecoder<byte>(
-				new HuffmanCode<byte>(1, 0b0001, 0),
-				new HuffmanCode<byte>(2, 0b0000, 1),
-				new HuffmanCode<byte>(3, 0b0010, 2),
-				new HuffmanCode<byte>(4, 0b0110, 3),
-				new HuffmanCode<byte>(4, 0b0111, 4)
+			HuffmanDecoder<uint8_t> modDecoder = new HuffmanDecoder<uint8_t>(
+				new HuffmanCode<uint8_t>(1, 0b0001, 0),
+				new HuffmanCode<uint8_t>(2, 0b0000, 1),
+				new HuffmanCode<uint8_t>(3, 0b0010, 2),
+				new HuffmanCode<uint8_t>(4, 0b0110, 3),
+				new HuffmanCode<uint8_t>(4, 0b0111, 4)
 			);
 
-			HuffmanDecoder<byte> lengthDecoder = new HuffmanDecoder<byte>(
-				new HuffmanCode<byte>(1, 0b0000, 0),
-				new HuffmanCode<byte>(2, 0b0010, 1),
-				new HuffmanCode<byte>(3, 0b0110, 2),
-				new HuffmanCode<byte>(4, 0b1110, 3),
-				new HuffmanCode<byte>(4, 0b1111, 4)
+			HuffmanDecoder<uint8_t> lengthDecoder = new HuffmanDecoder<uint8_t>(
+				new HuffmanCode<uint8_t>(1, 0b0000, 0),
+				new HuffmanCode<uint8_t>(2, 0b0010, 1),
+				new HuffmanCode<uint8_t>(3, 0b0110, 2),
+				new HuffmanCode<uint8_t>(4, 0b1110, 3),
+				new HuffmanCode<uint8_t>(4, 0b1111, 4)
 			);
 
-			HuffmanDecoder<byte> distanceDecoder = new HuffmanDecoder<byte>(
-				new HuffmanCode<byte>(1, 0b01, 0),
-				new HuffmanCode<byte>(2, 0b00, 1),
-				new HuffmanCode<byte>(2, 0b01, 2)
+			HuffmanDecoder<uint8_t> distanceDecoder = new HuffmanDecoder<uint8_t>(
+				new HuffmanCode<uint8_t>(1, 0b01, 1),
+				new HuffmanCode<uint8_t>(2, 0b00, 0),
+				new HuffmanCode<uint8_t>(2, 0b01, 2)
 			);
 
 			// First byte is special
 			uint8_t currentSample = ReadByte();
 			outputStream.WriteByte(currentSample);
 
-			uint32_t accum1 = 0, accum2 = 0, prevBits = 0;
+			uint32_t accum1 = 0;
+			uint32_t accum2 = 0;
+			uint32_t prevBits = 0;
+
+			VariableLengthCodeDecoder lengthVlcDecoder = new VariableLengthCodeDecoder(1, 1, 1, 3, 5);
+			VariableLengthCodeDecoder distanceVlcDecoder = new VariableLengthCodeDecoder(8, 12, 14);
 
 			while (!outputStream.Eof)
 			{
@@ -175,9 +174,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 						HandleCondCase();
 					}
 
-					uint32_t mod = modDecoder.Decode(ReadBit);
-
-					switch (mod)
+					switch (modDecoder.Decode(ReadBit))
 					{
 						case 0:
 						{
@@ -236,9 +233,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 
 				if (doRepeat)
 				{
-					uint32_t lengthIndex = lengthDecoder.Decode(ReadBit);
-
-					count = ReadBits(lengthBits[lengthIndex]) + lengthAdditions[lengthIndex];
+					count = lengthVlcDecoder.Decode(ReadBits, lengthDecoder.Decode(ReadBit)) + 2;
 					if (count >= 3)
 					{
 						if (accum1 != 0)
@@ -248,8 +243,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 							accum1--;
 					}
 
-					uint32_t distanceIndex = distanceDecoder.Decode(ReadBit);
-					uint32_t distance = ReadBits(distanceBits[distanceIndex]) + distanceAdditions[distanceIndex];
+					uint32_t distance = distanceVlcDecoder.Decode(ReadBits, distanceDecoder.Decode(ReadBit)) + 1;
 
 					count = Math.Min(count, (uint32_t)(rawSize - outputStream.GetOffset()));
 					currentSample = outputStream.Copy(distance, count);

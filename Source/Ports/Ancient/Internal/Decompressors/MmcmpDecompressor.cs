@@ -16,26 +16,15 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 	/// </summary>
 	internal class MmcmpDecompressor : Decompressor
 	{
-		private static readonly uint8_t[] valueThresholds8 = new uint8_t[8]
-		{
-			0x1, 0x3, 0x7, 0xf, 0x1e, 0x3c, 0x78, 0xf8
-		};
-
-		private static readonly uint8_t[] extraBits8 = new uint8_t[8]
-		{
+		private static readonly uint8_t[] extraBits8 =
+		[
 			3, 3, 3, 3,  2, 1, 0, 0
-		};
+		];
 
-		private static readonly uint16_t[] valueThresholds16 = new uint16_t[16]
-		{
-			0x1, 0x3, 0x7, 0xf, 0x1e, 0x3c, 0x78, 0xf0,
-			0x1f0, 0x3f0, 0x7f0, 0xff0, 0x1ff0, 0x3ff0, 0x7ff0, 0xfff0
-		};
-
-		private static readonly uint8_t[] extraBits16 = new uint8_t[16]
-		{
+		private static readonly uint8_t[] extraBits16 =
+		[
 			4, 4, 4, 4,  3, 2, 1, 0,  0, 0, 0, 0,  0, 0, 0, 0
-		};
+		];
 
 		private readonly Buffer packedData;
 
@@ -62,6 +51,9 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 			blocksOffset = packedData.ReadLe32(18);
 			rawSize = packedData.ReadLe32(14);
 
+			if (rawSize > GetMaxRawSize())
+				throw new InvalidFormatException();
+
 			if (OverflowCheck.Sum(blocksOffset, blocks * 4) > packedData.Size())
 				throw new InvalidFormatException();
 
@@ -74,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 				if (OverflowCheck.Sum(blockAddr, 20) >= packedData.Size())
 					throw new InvalidFormatException();
 
-				uint32_t blockSize = packedData.ReadLe32(blockAddr + 4) + (uint32_t)packedData.ReadLe16(blockAddr + 12) * 8 + 20;
+				uint32_t blockSize = OverflowCheck.Sum(packedData.ReadLe32(blockAddr + 4), (uint32_t)packedData.ReadLe16(blockAddr + 12) * 8 + 20);
 				packedSize = Math.Max(packedSize, OverflowCheck.Sum(blockAddr, blockSize));
 			}
 
@@ -145,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 				if (packTableSize > packedBlockSize)
 					throw new DecompressionException();
 
-				uint16_t bitCount = packedData.ReadLe16(blockAddr + 18);
+				uint32_t bitCount = packedData.ReadLe16(blockAddr + 18) + 1U;
 
 				ForwardInputStream inputStream = new ForwardInputStream(packedData, OverflowCheck.Sum(blockAddr, subBlocks * 8,  20, packTableSize), OverflowCheck.Sum(blockAddr, subBlocks * 8, 20, packedBlockSize));
 				LsbBitReader bitReader = new LsbBitReader(inputStream);
@@ -153,7 +145,8 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 				uint32_t ReadBits(uint32_t count) => bitReader.ReadBits8(count);
 
 				uint32_t currentSubBlock = 0;
-				uint32_t outputOffset = 0, outputSize = 0;
+				uint32_t outputOffset = 0;
+				uint32_t outputSize = 0;
 
 				void ReadNextSubBlock()
 				{
@@ -169,7 +162,9 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 					currentSubBlock++;
 				}
 
-				uint32_t checksum = 0, checksumPartial = 0, checksumRot = 0;
+				uint32_t checksum = 0;
+				uint32_t checksumPartial = 0;
+				uint32_t checksumRot = 0;
 
 				void WriteByte(uint8_t value, bool allowOverrun = false)
 				{
@@ -226,34 +221,40 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 
 					// In case the bit-count is not enough to store a value, symbol at the end
 					// of the codemap is created and this marks as a new bitCount
-					if (bitCount >= 8)
+					if (bitCount > 8)
 						throw new DecompressionException();
 
-					uint8_t[] oldValue = { 0, 0 };
+					uint8_t[] oldValue = [ 0, 0 ];
 					uint32_t chIndex = 0;
-					Buffer tablePtr = packedData.GetNewBuffer(blockAddr + subBlocks * 8 + 20);
+					uint32_t tableOffset = blockAddr + subBlocks * 8 + 20;
 
-					for (uint32_t j = 0; j < unpackedBlockSize;)
+					for (uint32_t j = 0; j < unpackedBlockSize; j++)
 					{
-						uint8_t value = (uint8_t)ReadBits((uint32_t)bitCount + 1);
-						if (value >= valueThresholds8[bitCount])
+						uint8_t extraBitCount = extraBits8[bitCount - 1];
+						uint8_t threshold = (uint8_t)((1 << (int)bitCount) - (1 << (3 - extraBitCount)));
+						uint8_t value = (uint8_t)ReadBits(bitCount);
+
+						if (value >= threshold)
 						{
-							uint32_t newBitCount = ReadBits(extraBits8[bitCount]) + (uint32_t)((value - valueThresholds8[bitCount]) << extraBits8[bitCount]);
+							uint32_t newBitCount = (ReadBits(extraBitCount) | (uint32_t)((value - threshold) << extraBitCount)) + 1;
 							if (bitCount != newBitCount)
 							{
-								bitCount = (ushort)(newBitCount & 0x7);
+								bitCount = newBitCount;
+								j--;
 								continue;
 							}
-
-							value = (uint8_t)(0xf8 + ReadBits(3));
-							if ((value == 0xff) && (ReadBits(1) != 0))
-								break;
+							else
+							{
+								value = (uint8_t)(0xf8 | ReadBits(3));
+								if ((value == 0xff) && (ReadBits(1) != 0))
+									break;
+							}
 						}
 
 						if (value >= packTableSize)
 							throw new DecompressionException();
 
-						value = tablePtr[value];
+						value = packedData[tableOffset + value];
 
 						if ((flags & 2) != 0)
 						{
@@ -266,7 +267,6 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 						}
 
 						WriteByte(value);
-						j++;
 					}
 				}
 				else
@@ -275,36 +275,44 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 					if (bitCount >= 16)
 						throw new DecompressionException();
 
-					int16_t[] oldValue = { 0, 0 };
+					int16_t[] oldValue = [ 0, 0 ];
 					uint32_t chIndex = 0;
 
-					for (uint32_t j = 0; j < unpackedBlockSize;)
+					for (uint32_t j = 0; j < unpackedBlockSize; j += 2)
 					{
-						int32_t value = (int32_t)ReadBits((uint32_t)bitCount + 1);
-						if (value >= valueThresholds16[bitCount])
+						uint8_t extraBitCount = extraBits16[bitCount - 1];
+						uint16_t threshold = (uint16_t)((1 << (int)bitCount) - (1 << (4 - extraBitCount)));
+						uint16_t value = (uint16_t)ReadBits(bitCount);
+
+						if (value >= threshold)
 						{
-							uint32_t newBitCount = ReadBits(extraBits16[bitCount]) + (uint32_t)((value - valueThresholds16[bitCount]) << extraBits16[bitCount]);
+							uint32_t newBitCount = (ReadBits(extraBitCount) | (uint32_t)((value - threshold) << extraBitCount)) + 1;
 							if (bitCount != newBitCount)
 							{
-								bitCount = (uint16_t)(newBitCount & 0xf);
+								bitCount = newBitCount;
+								j -= 2;
 								continue;
 							}
-
-							value = (int32_t)(0xfff0 + ReadBits(4));
-							if ((value == 0xffff) && (ReadBits(1) != 0))
-								break;
+							else
+							{
+								value = (uint16_t)(0xfff0 | ReadBits(4));
+								if ((value == 0xffff) && (ReadBits(1) != 0))
+									break;
+							}
 						}
 
-						if ((value & 1) != 0)
-							value = -value - 1;
+						int32_t sValue = value;
 
-						value >>= 1;
+						if ((sValue & 1) != 0)
+							sValue = -sValue - 1;
+
+						sValue >>= 1;
 
 						if ((flags & 2) != 0)
 						{
 							// Delta
-							value += oldValue[chIndex];
-							oldValue[chIndex] = (int16_t)value;
+							sValue += oldValue[chIndex];
+							oldValue[chIndex] = (int16_t)sValue;
 
 							if ((flags & 0x100) != 0)	// Stereo
 								chIndex ^= 1;
@@ -315,17 +323,15 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 						if ((flags & 0x400) != 0)
 						{
 							// Big endian
-							WriteByte((uint8_t)(value >> 8));
-							WriteByte((uint8_t)value, true);
+							WriteByte((uint8_t)(sValue >> 8));
+							WriteByte((uint8_t)sValue, true);
 						}
 						else
 						{
 							// Little endian
-							WriteByte((uint8_t)value);
-							WriteByte((uint8_t)(value >> 8), true);
+							WriteByte((uint8_t)sValue);
+							WriteByte((uint8_t)(sValue >> 8), true);
 						}
-
-						j += 2;
 					}
 				}
 

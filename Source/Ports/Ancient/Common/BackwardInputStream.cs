@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using Polycode.NostalgicPlayer.Ports.Ancient.Exceptions;
 using Buffer = Polycode.NostalgicPlayer.Ports.Ancient.Common.Buffers.Buffer;
 
@@ -18,19 +17,17 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 
 		private size_t currentOffset;
 		private readonly size_t endOffset;
-		private readonly bool allowOverrun;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public BackwardInputStream(Buffer buffer, size_t startOffset, size_t endOffset, bool allowOverrun = false)
+		public BackwardInputStream(Buffer buffer, size_t startOffset, size_t endOffset)
 		{
 			this.buffer = buffer;
 			currentOffset = endOffset;
 			this.endOffset = startOffset;
-			this.allowOverrun = allowOverrun;
 
 			if ((currentOffset < this.endOffset) || (currentOffset > buffer.Size()) || (this.endOffset > buffer.Size()))
 				throw new DecompressionException();
@@ -57,15 +54,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 		public uint8_t ReadByte()
 		{
 			if (currentOffset <= endOffset)
-			{
-				if (allowOverrun)
-				{
-					--currentOffset;
-					return 0;
-				}
-
 				throw new DecompressionException();
-			}
 
 			uint8_t ret = buffer[--currentOffset];
 
@@ -76,30 +65,64 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 
 		/********************************************************************/
 		/// <summary>
-		/// Consume the given number of bytes
+		/// Read a 16-bit integer in big-endian format
 		/// </summary>
 		/********************************************************************/
-		public Span<uint8_t> Consume(size_t bytes, uint8_t[] buffer)
+		public uint16_t ReadBE16()
 		{
-			if (currentOffset < OverflowCheck.Sum(endOffset, bytes))
-			{
-				if (allowOverrun && (buffer != null))
-				{
-					for (size_t i = bytes; i != 0; i--)
-					{
-						buffer[i - 1] = (currentOffset > endOffset) ? this.buffer[currentOffset - 1] : (uint8_t)0;
-						--currentOffset;
-					}
+			uint16_t b0 = ReadByte();
+			uint16_t b1 = ReadByte();
 
-					return buffer.AsSpan();
-				}
+			return (uint16_t)((b0 << 8) | b1);
+		}
 
-				throw new DecompressionException();
-			}
 
-			currentOffset -= bytes;
 
-			return this.buffer.GetData(currentOffset, bytes);
+		/********************************************************************/
+		/// <summary>
+		/// Read a 32-bit integer in big-endian format
+		/// </summary>
+		/********************************************************************/
+		public uint32_t ReadBE32()
+		{
+			uint32_t b0 = ReadByte();
+			uint32_t b1 = ReadByte();
+			uint32_t b2 = ReadByte();
+			uint32_t b3 = ReadByte();
+
+			return (b0 << 24) | (b1 << 16) | (b2 << 8) | b3;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read a 16-bit integer in little-endian format
+		/// </summary>
+		/********************************************************************/
+		public uint16_t ReadLE16()
+		{
+			uint16_t b0 = ReadByte();
+			uint16_t b1 = ReadByte();
+
+			return (uint16_t)((b1 << 8) | b0);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read a 32-bit integer in little-endian format
+		/// </summary>
+		/********************************************************************/
+		public uint32_t ReadLE32()
+		{
+			uint32_t b0 = ReadByte();
+			uint32_t b1 = ReadByte();
+			uint32_t b2 = ReadByte();
+			uint32_t b3 = ReadByte();
+
+			return (b3 << 24) | (b2 << 16) | (b1 << 8) | b0;
 		}
 		#endregion
 	}

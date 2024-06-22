@@ -225,7 +225,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 							}
 
 							// Create Huffman selectors
-							uint8_t[] selectorMtfMap = { 0, 1, 2, 3, 4, 5 };
+							uint8_t[] selectorMtfMap = [ 0, 1, 2, 3, 4, 5 ];
 
 							for (uint32_t i = 0; i < selectorsUsed; i++)
 							{
