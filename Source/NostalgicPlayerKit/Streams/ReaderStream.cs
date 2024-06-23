@@ -160,18 +160,6 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
-		/// Read data from the stream
-		/// </summary>
-		/********************************************************************/
-		public int ReadSigned(sbyte[] buffer, int offset, int count)
-		{
-			return Read((byte[])(Array)buffer, offset, count);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Write data to the stream
 		/// </summary>
 		/********************************************************************/
@@ -203,6 +191,18 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			get; protected set;
 		} = false;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read data from the stream
+		/// </summary>
+		/********************************************************************/
+		public int ReadSigned(sbyte[] buffer, int offset, int count)
+		{
+			return Read((byte[])(Array)buffer, offset, count);
+		}
 
 
 

@@ -67,7 +67,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | D.O.C. SoundTracker II | .mod | | ModTracker |
 | D.O.C. SoundTracker VI | .mod | | ModTracker |
 | D.O.C. SoundTracker IX | .mod | | ModTracker |
-| Epic Games UMX | .umx | Module Converter | ModTracker / Mpg123 / Xmp |
+| Epic Games UMX | .umx | Module Converter | \* |
 | Eureka Packer | .eureka / .eu | ProWizard | ModTracker |
 | Farandole Composer | .far | | Xmp |
 | FastTracker | .mod | | Xmp |
@@ -109,6 +109,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | MED 2.10 (MED4) | .med | Module Converter | OctaMED |
 | MED 2.10 (MMD0) | .med / .mmd0 / .md0 | | OctaMED |
 | MED Packer | .med / .mmdc | | OctaMED |
+| MO3 | .mo3 | MO3 Converter | \* |
 | Mod's Grave | .wow | | Xmp |
 | Module-Patterncompressor | .pmd3 | ProWizard | ModTracker |
 | Module Protector | .mp | ProWizard | ModTracker |
@@ -158,7 +159,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | RIFF-WAVE (IEEE Float) | .wav | | Sample |
 | RIFF-WAVE (PCM) | .wav | | Sample |
 | Sawteeth | .st | | Sawteeth |
-| SC68 | .sc68 | Module Converter | |
+| SC68 | .sc68 | Module Converter | \* |
 | Scream Tracker 2 | .stm | | Xmp |
 | Scream Tracker 3 | .s3m | | Xmp |
 | Scream Tracker 3 MOD | .mod | | Xmp |

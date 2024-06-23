@@ -94,6 +94,7 @@
     <ProjectReference Include="..\..\Agents\Decrunchers\AncientDecruncher\AncientDecruncher.csproj" />
     <ProjectReference Include="..\..\Agents\Decrunchers\ArchiveDecruncher\ArchiveDecruncher.csproj" />
     <ProjectReference Include="..\..\Agents\Decrunchers\SharpCompressDecruncher\SharpCompressDecruncher.csproj" />
+    <ProjectReference Include="..\..\Agents\ModuleConverters\Mo3Converter\Mo3Converter.csproj" />
     <ProjectReference Include="..\..\Agents\ModuleConverters\ModuleConverter\ModuleConverter.csproj" />
     <ProjectReference Include="..\..\Agents\ModuleConverters\ProWizardConverter\ProWizardConverter.csproj" />
     <ProjectReference Include="..\..\Agents\Output\CoreAudioSettings\CoreAudioSettings.csproj" />

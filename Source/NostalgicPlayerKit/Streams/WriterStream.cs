@@ -3,7 +3,10 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Polycode.NostalgicPlayer.Kit.Streams
@@ -297,7 +300,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// stream
 		/// </summary>
 		/********************************************************************/
-		public void WriteArray_L_UINT16s(ushort[] buffer, int count)
+		public void WriteArray_L_UINT16s(IList<ushort> buffer, int count)
 		{
 			for (int i = 0; i < count; i++)
 				Write_L_UINT16(buffer[i]);
@@ -311,7 +314,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// stream
 		/// </summary>
 		/********************************************************************/
-		public void WriteArray_L_INT16s(short[] buffer, int count)
+		public void WriteArray_L_INT16s(IList<short> buffer, int count)
 		{
 			for (int i = 0; i < count; i++)
 				Write_L_INT16(buffer[i]);
@@ -325,7 +328,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// stream
 		/// </summary>
 		/********************************************************************/
-		public void WriteArray_L_UINT32s(uint[] buffer, int count)
+		public void WriteArray_L_UINT32s(IList<uint> buffer, int count)
 		{
 			for (int i = 0; i < count; i++)
 				Write_L_UINT32(buffer[i]);
@@ -339,7 +342,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// stream
 		/// </summary>
 		/********************************************************************/
-		public void WriteArray_L_INT32s(int[] buffer, int count)
+		public void WriteArray_L_INT32s(IList<int> buffer, int count)
 		{
 			for (int i = 0; i < count; i++)
 				Write_L_INT32(buffer[i]);
@@ -459,7 +462,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// stream
 		/// </summary>
 		/********************************************************************/
-		public void WriteArray_B_UINT16s(ushort[] buffer, int count)
+		public void WriteArray_B_UINT16s(IList<ushort> buffer, int count)
 		{
 			for (int i = 0; i < count; i++)
 				Write_B_UINT16(buffer[i]);
@@ -473,7 +476,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// stream
 		/// </summary>
 		/********************************************************************/
-		public void WriteArray_B_INT16s(short[] buffer, int count)
+		public void WriteArray_B_INT16s(IList<short> buffer, int count)
 		{
 			for (int i = 0; i < count; i++)
 				Write_B_INT16(buffer[i]);
@@ -487,7 +490,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// stream
 		/// </summary>
 		/********************************************************************/
-		public void WriteArray_B_UINT32s(uint[] buffer, int count)
+		public void WriteArray_B_UINT32s(IList<uint> buffer, int count)
 		{
 			for (int i = 0; i < count; i++)
 				Write_B_UINT32(buffer[i]);
@@ -501,7 +504,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// stream
 		/// </summary>
 		/********************************************************************/
-		public void WriteArray_B_INT32s(int[] buffer, int count)
+		public void WriteArray_B_INT32s(IList<int> buffer, int count)
 		{
 			for (int i = 0; i < count; i++)
 				Write_B_INT32(buffer[i]);
@@ -521,6 +524,24 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 			if (bytes.Length > 0)
 				Write(bytes, 0, bytes.Length);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Write a string, so it always use length given bytes. If the array
+		/// is smaller than length, the rest of the bytes are padded using
+		/// the padding byte
+		/// </summary>
+		/********************************************************************/
+		public void WriteString(byte[] str, int length, byte padding = 0x00)
+		{
+			int toWrite = Math.Min(str.Length, length);
+			Write(str, 0, toWrite);
+
+			if (toWrite < length)
+				Write(Enumerable.Repeat(padding, length - toWrite).ToArray());
 		}
 		#endregion
 	}

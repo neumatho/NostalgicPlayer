@@ -78,7 +78,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
-		/// Will read a line. The line is a character sequence4 which is
+		/// Will read a line. The line is a character sequence which is
 		/// terminated by \0 or new-line characters
 		/// </summary>
 		/********************************************************************/
