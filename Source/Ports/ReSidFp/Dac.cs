@@ -62,7 +62,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		///
 		/// "Even in standard transistors a small amount of current leaks even when they are technically switched off."
 		/// </summary>
-		private readonly double leakage;
+		private double leakage;
 
 		/// <summary>
 		/// Analog values
@@ -74,6 +74,9 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// </summary>
 		private readonly uint dacLength;
 
+		private double MOSFET_LEAKAGE_6581 = 0.0075;
+		private double MOSFET_LEAKAGE_8580 = 0.0035;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -81,7 +84,6 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/********************************************************************/
 		public Dac(uint bits)
 		{
-			leakage = 0.0075;
 			dac = new double[bits];
 			dacLength = bits;
 		}
@@ -100,6 +102,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 			// 6581 DACs are not terminated by a 2R resistor
 			bool term = chipModel == ChipModel.MOS8580;
+
+			leakage = chipModel == ChipModel.MOS6581 ? MOSFET_LEAKAGE_6581 : MOSFET_LEAKAGE_8580;
 
 			double vSum = 0.0;
 

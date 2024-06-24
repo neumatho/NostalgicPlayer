@@ -3,6 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+
+using System;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cpu;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp;
 
@@ -15,8 +18,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 	internal class PSidDrv
 	{
 		#region PSID driver
-		private static readonly byte[] psid_driver =
-		{
+		private static readonly byte[] PSID_DRIVER =
+		[
 			0x01, 0x00, 0x6f, 0x36, 0x35, 0x00, 0x00, 0x00,
 			0x00, 0x10, 0xdf, 0x00, 0x00, 0x04, 0x00, 0x00,
 			0x00, 0x40, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00,
@@ -56,12 +59,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			0x0d, 0x82, 0x09, 0x82, 0x04, 0x82, 0x04, 0x82,
 			0x03, 0x82, 0x05, 0x82, 0x0a, 0x82, 0x06, 0x82,
 			0x07, 0x82, 0x00, 0x00, 0x00, 0x00
-		};
+		];
 		#endregion
 
 		#region Poweron
 		private static readonly byte[] powerOn =
-		{
+		[
 			/* addr,   off,  rle, values */
 			/*$0003*/ 0x83, 0x04, 0xaa, 0xb1, 0x91, 0xb3, 0x22,
 			/*$000b*/ 0x03,       0x4c,
@@ -103,12 +106,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			/*$0314*/ 0x81, 0x1f, 0x31, 0xea, 0x66, 0xfe, 0x47, 0xfe, 0x4a, 0xf3, 0x91, 0xf2, 0x0e, 0xf2, 0x50, 0xf2, 0x33, 0xf3, 0x57, 0xf1, 0xca, 0xf1, 0xed, 0xf6, 0x3e, 0xf1, 0x2f, 0xf3, 0x66, 0xfe, 0xa5, 0xf4, 0xed, 0xf5
 
 			/*Total 217*/
-		};
+		];
 		#endregion
 
 		private readonly SidTuneInfo tuneInfo;
 		private string errorString;
 
+		private uint8_t[] psid_driver;
 		private uint8_t[] reloc_driver;
 		private int reloc_size;
 
@@ -197,6 +201,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			// Place PSID driver into ram
 			uint_least16_t relocAddr = (uint_least16_t)(relocStartPage << 8);
 
+			psid_driver = ArrayHelper.CloneArray(PSID_DRIVER);
 			reloc_driver = psid_driver;
 			reloc_size = psid_driver.Length;
 

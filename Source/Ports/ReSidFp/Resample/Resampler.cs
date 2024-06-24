@@ -19,6 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp.Resample
 		/// Output a sample from resampler
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public short GetOutput(int scaleFactor)
 		{
 			int @out = (scaleFactor * Output()) / 2;

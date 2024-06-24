@@ -8,7 +8,7 @@
     <Product>NostalgicPlayer</Product>
     <Description>This is a port of the ReSidFp library created by Dag Lem and Leandro Nini</Description>
     <Platforms>AnyCPU</Platforms>
-    <Version>2.7.1</Version>
+    <Version>2.8.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -20,6 +20,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>bin\ReSidFp.xml</DocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
+  </ItemGroup>
 
   <ItemGroup>
     <Compile Update="Resources.Designer.cs">

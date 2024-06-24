@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Collections.Generic;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 {
@@ -36,7 +37,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		#endregion
 
 		#region Param structure
-		private struct Param
+		private class Param
 		{
 			public double x1;
 			public double x2;
@@ -47,12 +48,11 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		}
 		#endregion
 
+		// Interpolation parameters
 		private readonly Param[] @params;
 
-		/// <summary>
-		/// Offset to last used parameter
-		/// </summary>
-		private int c;
+		// Last used parameters, cached for speed up
+		private Param c;
 
 		/********************************************************************/
 		/// <summary>
@@ -61,8 +61,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/********************************************************************/
 		public Spline(List<Point> input)
 		{
-			@params = new Param[input.Count];
-			c = 0;
+			@params = ArrayHelper.InitializeArray<Param>(input.Count);
+			c = @params[0];
 
 			uint coeffLength = (uint)input.Count - 1;
 
@@ -129,28 +129,28 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/********************************************************************/
 		public Point Evaluate(double x)
 		{
-			if ((x < @params[c].x1) || (x > @params[c].x2))
+			if ((x < c.x1) || (x > c.x2))
 			{
-				for (int i = 0; i < @params.Length; i++)
+				foreach (Param param in @params)
 				{
-					if (x <= @params[i].x2)
+					if (x <= param.x2)
 					{
-						c = i;
+						c = param;
 						break;
 					}
 				}
 			}
 
 			// Interpolate
-			double diff = x - @params[c].x1;
+			double diff = x - c.x1;
 
 			Point @out;
 
 			// y = a*x^3 + b*x^2 + c*x + d
-			@out.x = ((@params[c].a * diff + @params[c].b) * diff + @params[c].c) * diff + @params[c].d;
+			@out.x = ((c.a * diff + c.b) * diff + c.c) * diff + c.d;
 
 			// dy = 3*a*x^2 + 2*b*x + c
-			@out.y = (3.0 * @params[c].a * diff + 2.0 * @params[c].b) * diff + @params[c].c;
+			@out.y = (3.0 * c.a * diff + 2.0 * c.b) * diff + c.c;
 
 			return @out;
 		}

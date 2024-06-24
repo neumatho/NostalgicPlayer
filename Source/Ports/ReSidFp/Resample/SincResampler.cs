@@ -56,11 +56,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp.Resample
 		private readonly int cyclesPerSample;
 		private int sampleOffset;
 		private int outputValue;
-		private readonly short[] sample = new short[RingSize * 2];
-
-		// Cache for the expensive FIR table computation results
-		private static readonly fir_cache_t firCache = new fir_cache_t();
-		private static readonly object firCache_Lock = new object();
+		private readonly int[] sample = new int[RingSize * 2];
 
 		/********************************************************************/
 		/// <summary>
@@ -130,47 +126,35 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp.Resample
 				// The filter test program indicates that the filter performs well, though
 			}
 
-			// Create the map key
-			string firKey = $"{firN};{firRes};{cyclesPerSampleD}";
+			// Allocate memory for FIR tables
+			firTable = new matrix_t((uint)firRes, (uint)firN);
 
-			lock (firCache_Lock)
+			// The cutoff frequency is midway through the transition band, in effect the same as nyquist
+			double wc = Math.PI;
+
+			// Calculate the sinc tables
+			double scale = 32768.0 * wc / cyclesPerSampleD / Math.PI;
+
+			// We're not interested in the fractional part
+			// so use int division before converting to double
+			int tmp = firN / 2;
+			double firN2 = tmp;
+
+			for (int i = 0; i < firRes; i++)
 			{
-				// The FIR computation is expensive and we set sampling parameters often, but
-				// from a very small set of choices. Thus, caching is used to speed initialization
-				if (!firCache.TryGetValue(firKey, out firTable))
+				double jPhase = (double)i / firRes + firN2;
+
+				for (int j = 0; j < firN; j++)
 				{
-					// Allocate memory for FIR tables
-					firTable = new matrix_t((uint)firRes, (uint)firN);
-					firCache[firKey] = firTable;
+					double x = j - jPhase;
 
-					// The cutoff frequency is midway through the transition band, in effect the same as nyquist
-					double wc = Math.PI;
+					double xt = x / firN2;
+					double kaiserXt = Math.Abs(xt) < 1.0 ? I0(beta * Math.Sqrt(1.0 - xt * xt)) / i0Beta : 0.0;
 
-					// Calculate the sinc tables
-					double scale = 32768.0 * wc / cyclesPerSampleD / Math.PI;
+					double wt = wc * x / cyclesPerSampleD;
+					double sincWt = Math.Abs(wt) >= 1e-8 ? Math.Sin(wt) / wt : 1.0;
 
-					// We're not interested in the fractional part
-					// so use int division before converting to double
-					int tmp = firN / 2;
-					double firN2 = tmp;
-
-					for (int i = 0; i < firRes; i++)
-					{
-						double jPhase = (double)i / firRes + firN2;
-
-						for (int j = 0; j < firN; j++)
-						{
-							double x = j - jPhase;
-
-							double xt = x / firN2;
-							double kaiserXt = Math.Abs(xt) < 1.0 ? I0(beta * Math.Sqrt(1.0 - xt * xt)) / i0Beta : 0.0;
-
-							double wt = wc * x / cyclesPerSampleD;
-							double sincWt = Math.Abs(wt) >= 1e-8 ? Math.Sin(wt) / wt : 1.0;
-
-							firTable[(uint)i][j] = (short)(scale * sincWt * kaiserXt);
-						}
-					}
+					firTable[(uint)i][j] = (short)(scale * sincWt * kaiserXt);
 				}
 			}
 		}
@@ -185,12 +169,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp.Resample
 		{
 			bool ready = false;
 
-			// Clip the input as it may overflow the 16 bit range.
-			//
-			// Approximate measured input ranges:
-			// 6581: [-24262,+25080]  (Kawasaki_Synthesizer_Demo)
-			// 8580: [-21514,+35232]  (64_Forever, Drum_Fool)
-			sample[sampleIndex] = sample[sampleIndex + RingSize] = SoftClip(input);
+			sample[sampleIndex] = sample[sampleIndex + RingSize] = input;
 			sampleIndex = (sampleIndex + 1) & (RingSize - 1);
 
 			if (sampleOffset < 1024)
@@ -300,12 +279,12 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp.Resample
 		/********************************************************************/
 		private int Convolve(int a, short[] b, int bLength)
 		{
-			int res = 0;
+			int @out = 0;
 
 			for (int i = 0; i < bLength; i++)
-				res += sample[a++] * b[i];
+				@out += sample[a++] * b[i];
 
-			return (res + (1 << 14)) >> 15;
+			return (@out + (1 << 14)) >> 15;
 		}
 		#endregion
 	}
