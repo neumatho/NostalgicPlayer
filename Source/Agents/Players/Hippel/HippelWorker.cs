@@ -413,8 +413,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						Name = sample.Name,
+						Flags = SampleInfo.SampleFlag.None,
 						Type = SampleInfo.SampleType.Sample,
-						BitSize = SampleInfo.SampleSize._8Bit,
 						Volume = (ushort)(sample.Volume * 4),
 						Panning = -1,
 						Sample = sample.SampleData,
@@ -426,10 +426,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 					{
 						sampleInfo.LoopStart = sample.LoopStart;
 						sampleInfo.LoopLength = sample.LoopLength;
-						sampleInfo.Flags = SampleInfo.SampleFlag.Loop;
+						sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
 					}
-					else
-						sampleInfo.Flags = SampleInfo.SampleFlag.None;
 
 					yield return sampleInfo;
 				}

@@ -359,7 +359,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						Name = EncoderCollection.Amiga.GetString(instInfo.Name),
-						BitSize = SampleInfo.SampleSize._8Bit,
+						Flags = SampleInfo.SampleFlag.None,
 						Volume = 256,
 						Panning = -1,
 						NoteFrequencies = frequencies
@@ -369,7 +369,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 					{
 						// AM sample
 						sampleInfo.Type = SampleInfo.SampleType.Synthesis;
-						sampleInfo.Flags = SampleInfo.SampleFlag.None;
 						sampleInfo.Sample = null;
 						sampleInfo.Length = 0;
 						sampleInfo.LoopStart = 0;
@@ -385,14 +384,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 						if ((instInfo.Flags & 1) != 0)
 						{
 							// Sample loops
-							sampleInfo.Flags = SampleInfo.SampleFlag.Loop;
+							sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
 							sampleInfo.LoopStart = 0;
 							sampleInfo.LoopLength = instInfo.Size;
 						}
 						else
 						{
 							// No loop
-							sampleInfo.Flags = SampleInfo.SampleFlag.None;
 							sampleInfo.LoopStart = 0;
 							sampleInfo.LoopLength = 0;
 						}

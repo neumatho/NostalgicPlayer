@@ -704,7 +704,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 						Name = inst.Name,
 						Flags = SampleInfo.SampleFlag.None,
 						Type = SampleInfo.SampleType.Synthesis,
-						BitSize = SampleInfo.SampleSize._8Bit,
 						Volume = (ushort)(inst.Volume * 4),
 						Panning = -1,
 						Sample = null,
@@ -2386,10 +2385,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 		/********************************************************************/
 		private void PlayBuffer()
 		{
-			VirtualChannels[0].PlayBuffer(leftBuffer, 0, (uint)leftBuffer.Length, 16);
+			VirtualChannels[0].PlayBuffer(leftBuffer, 0, (uint)leftBuffer.Length, PlayBufferFlag._16Bit);
 
 			if (mixerChannels != 1)
-				VirtualChannels[1].PlayBuffer(rightBuffer, 0, (uint)rightBuffer.Length, 16);
+				VirtualChannels[1].PlayBuffer(rightBuffer, 0, (uint)rightBuffer.Length, PlayBufferFlag._16Bit);
 		}
 
 

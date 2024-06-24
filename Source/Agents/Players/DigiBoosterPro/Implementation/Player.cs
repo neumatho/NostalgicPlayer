@@ -6,6 +6,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -355,7 +356,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 			else if (mt.TriggerOffset < 0)
 				mt.TriggerOffset = 0;
 
-			worker.VirtualChannels[channel].PlaySample((short)(mt.Instrument - 1), mt.SampleData, (uint)mt.TriggerOffset, mt.SampleLength, mt.SampleBitSize, mt.PlayBackwards);
+			PlaySampleFlag playFlag = PlaySampleFlag.None;
+
+			if (mt.SampleBitSize == 16)
+				playFlag |= PlaySampleFlag._16Bit;
+
+			if (mt.PlayBackwards)
+				playFlag |= PlaySampleFlag.Backwards;
+
+			worker.VirtualChannels[channel].PlaySample((short)(mt.Instrument - 1), mt.SampleData, (uint)mt.TriggerOffset, mt.SampleLength, playFlag);
 
 			if (mt.SampleLoopLength > 0)
 				worker.VirtualChannels[channel].SetLoop(mt.SampleLoopStartOffset, mt.SampleLoopLength, mt.SampleLoopType);

@@ -804,7 +804,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						new KryptonDataGridViewTextBoxCell { Value = sample.Length },
 						new KryptonDataGridViewTextBoxCell { Value = sample.LoopStart },
 						new KryptonDataGridViewTextBoxCell { Value = sample.LoopLength },
-						new KryptonDataGridViewTextBoxCell { Value = (byte)sample.BitSize },
+						new KryptonDataGridViewTextBoxCell { Value = (sample.Flags & SampleInfo.SampleFlag._16Bit) != 0 ? 16 : 8 },
 						new KryptonDataGridViewTextBoxCell { Value = sample.Volume },
 						new KryptonDataGridViewTextBoxCell { Value = sample.Panning == -1 ? "-" : sample.Panning },
 						new KryptonDataGridViewTextBoxCell { Value = sample.MiddleC },
@@ -1067,7 +1067,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						rightSamples = new (Array data, uint offset, int length)[] { (sampleInfo.SecondSample, sampleInfo.SampleOffset, (int)sampleInfo.Length) };
 				}
 
-				SaveSampleFormatInfo formatInfo = new SaveSampleFormatInfo((byte)sampleInfo.BitSize, channels, sampleInfo.MiddleC, sampleInfo.LoopStart, sampleInfo.LoopLength, sampleInfo.Name, string.Empty);
+				byte bits = (byte)((sampleInfo.Flags & SampleInfo.SampleFlag._16Bit) != 0 ? 16 : 8);
+
+				SaveSampleFormatInfo formatInfo = new SaveSampleFormatInfo(bits, channels, sampleInfo.MiddleC, sampleInfo.LoopStart, sampleInfo.LoopLength, sampleInfo.Name, string.Empty);
 				if (!converterAgent.InitSaver(formatInfo, out string errorMessage))
 				{
 					ShowSimpleErrorMessage(errorMessage);
@@ -1089,18 +1091,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						{
 							if (stereo)
 							{
-								if (sampleInfo.BitSize == SampleInfo.SampleSize._8Bit)
-								{
-									Span<sbyte> left = SampleHelper.ConvertSampleTo8Bit(leftSamples[b].data, leftSamples[b].offset);
-									Span<sbyte> right = SampleHelper.ConvertSampleTo8Bit(rightSamples[b].data, rightSamples[b].offset);
-
-									for (int i = 0, j = 0, cnt = leftSamples[b].length; i < cnt; i++, j += 2)
-									{
-										buffer[j] = left[i] << 24;
-										buffer[j + 1] = right[i] << 24;
-									}
-								}
-								else
+								if ((sampleInfo.Flags & SampleInfo.SampleFlag._16Bit) != 0)
 								{
 									Span<short> left = SampleHelper.ConvertSampleTo16Bit(leftSamples[b].data, leftSamples[b].offset);
 									Span<short> right = SampleHelper.ConvertSampleTo16Bit(rightSamples[b].data, rightSamples[b].offset);
@@ -1111,29 +1102,40 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 										buffer[j + 1] = right[i] << 16;
 									}
 								}
+								else
+								{
+									Span<sbyte> left = SampleHelper.ConvertSampleTo8Bit(leftSamples[b].data, leftSamples[b].offset);
+									Span<sbyte> right = SampleHelper.ConvertSampleTo8Bit(rightSamples[b].data, rightSamples[b].offset);
+
+									for (int i = 0, j = 0, cnt = leftSamples[b].length; i < cnt; i++, j += 2)
+									{
+										buffer[j] = left[i] << 24;
+										buffer[j + 1] = right[i] << 24;
+									}
+								}
 							}
 							else
 							{
-								if (sampleInfo.BitSize == SampleInfo.SampleSize._8Bit)
-								{
-									Span<sbyte> left = SampleHelper.ConvertSampleTo8Bit(leftSamples[b].data, leftSamples[b].offset);
-
-									for (int i = 0, cnt = leftSamples[b].length; i < cnt; i++)
-										buffer[i] = left[i] << 24;
-								}
-								else
+								if ((sampleInfo.Flags & SampleInfo.SampleFlag._16Bit) != 0)
 								{
 									Span<short> left = SampleHelper.ConvertSampleTo16Bit(leftSamples[b].data, leftSamples[b].offset);
 
 									for (int i = 0, cnt = leftSamples[b].length; i < cnt; i++)
 										buffer[i] = left[i] << 16;
 								}
+								else
+								{
+									Span<sbyte> left = SampleHelper.ConvertSampleTo8Bit(leftSamples[b].data, leftSamples[b].offset);
+
+									for (int i = 0, cnt = leftSamples[b].length; i < cnt; i++)
+										buffer[i] = left[i] << 24;
+								}
 							}
 
 							converterAgent.SaveData(fs, buffer, buffer.Length);
 						}
 
-						// Save any left overs
+						// Save any leftovers
 						converterAgent.SaveTail(fs);
 					}
 				}

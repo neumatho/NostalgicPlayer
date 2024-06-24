@@ -500,7 +500,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 						Name = name,
 						Flags = SampleInfo.SampleFlag.None,
 						Type = SampleInfo.SampleType.Sample,
-						BitSize = SampleInfo.SampleSize._8Bit,
 						Volume = 256,
 						Panning = -1,
 						Sample = sample.Data,
@@ -516,7 +515,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 						sampleInfo.Type = SampleInfo.SampleType.Adlib;
 
 					if ((sample.Flg & Xmp_Sample_Flag._16Bit) != 0)
-						sampleInfo.BitSize = SampleInfo.SampleSize._16Bit;
+						sampleInfo.Flags |= SampleInfo.SampleFlag._16Bit;
 
 					// Add extra loop flags if any
 					if ((sample.Flg & Xmp_Sample_Flag.Loop) != 0)
@@ -687,7 +686,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 				for (int i = 0; i < bufferSize; i++)
 					leftBuffer[i] = buffer[i];
 
-				VirtualChannels[0].PlayBuffer(leftBuffer, 0, (uint)bufferSize, 16);
+				VirtualChannels[0].PlayBuffer(leftBuffer, 0, (uint)bufferSize, PlayBufferFlag._16Bit);
 			}
 			else
 			{
@@ -705,8 +704,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 					rightBuffer[i] = buffer[j++];
 				}
 
-				VirtualChannels[0].PlayBuffer(leftBuffer, 0, (uint)bufferSize, 16);
-				VirtualChannels[1].PlayBuffer(rightBuffer, 0, (uint)bufferSize, 16);
+				VirtualChannels[0].PlayBuffer(leftBuffer, 0, (uint)bufferSize, PlayBufferFlag._16Bit);
+				VirtualChannels[1].PlayBuffer(rightBuffer, 0, (uint)bufferSize, PlayBufferFlag._16Bit);
 			}
 		}
 

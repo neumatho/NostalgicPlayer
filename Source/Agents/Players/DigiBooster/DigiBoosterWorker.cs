@@ -7,6 +7,7 @@ using Polycode.NostalgicPlayer.Agent.Player.DigiBooster.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
@@ -455,7 +456,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 					{
 						Name = sample.Name,
 						Type = SampleInfo.SampleType.Sample,
-						BitSize = SampleInfo.SampleSize._8Bit,
 						Volume = (ushort)(sample.Volume * 4),
 						Panning = -1,
 						Sample = sample.SampleData,
@@ -799,7 +799,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 
 							if (channelInfo.BackwardEnabled != 0)
 							{
-								channel.PlaySample((short)(channelInfo.OldSampleNumber - 1), channelInfo.SampleData, 0, sample.Length, backwards: true);
+								channel.PlaySample((short)(channelInfo.OldSampleNumber - 1), channelInfo.SampleData, 0, sample.Length, PlaySampleFlag.Backwards);
 
 								if ((channelInfo.BackwardEnabled == 2) && (sample.LoopLength > 0))
 									channel.SetLoop(sample.LoopStart, sample.LoopLength);

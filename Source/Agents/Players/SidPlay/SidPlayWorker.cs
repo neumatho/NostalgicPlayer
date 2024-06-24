@@ -654,10 +654,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 
 			// Setup the NostalgicPlayer channel
 			IChannel channel = VirtualChannels[0];
-			channel.PlayBuffer(leftOutputBuffer, 0, BufferSize, 16);
+			channel.PlayBuffer(leftOutputBuffer, 0, BufferSize, PlayBufferFlag._16Bit);
 
 			channel = VirtualChannels[1];
-			channel.PlayBuffer(rightOutputBuffer, 0, BufferSize, 16);
+			channel.PlayBuffer(rightOutputBuffer, 0, BufferSize, PlayBufferFlag._16Bit);
 		}
 
 

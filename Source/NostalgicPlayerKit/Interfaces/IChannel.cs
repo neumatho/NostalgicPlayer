@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
 
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
@@ -21,8 +22,8 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <param name="adr">is a pointer to the sample in memory</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
 		/// <param name="length">is the length in samples of the sample</param>
-		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
-		void PlayBuffer(Array adr, uint startOffset, uint length, byte bit = 8);
+		/// <param name="flag">indicate the format of the sample and how to play it</param>
+		void PlayBuffer(Array adr, uint startOffset, uint length, PlayBufferFlag flag = PlayBufferFlag.None);
 
 		/// <summary>
 		/// Will start to play the sample in the channel
@@ -31,9 +32,8 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <param name="adr">is a pointer to the sample in memory</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
 		/// <param name="length">is the length in samples of the sample</param>
-		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
-		/// <param name="backwards">indicate if the sample should be played backwards</param>
-		void PlaySample(short sampleNumber, Array adr, uint startOffset, uint length, byte bit = 8, bool backwards = false);
+		/// <param name="flag">indicate the format of the sample and how to play it</param>
+		void PlaySample(short sampleNumber, Array adr, uint startOffset, uint length, PlaySampleFlag flag = PlaySampleFlag.None);
 
 		/// <summary>
 		/// Will start to play a stereo sample in the channel
@@ -43,9 +43,8 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <param name="rightAdr">is a pointer to the sample in memory to be played in the right speaker</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
 		/// <param name="length">is the length in samples of the sample</param>
-		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
-		/// <param name="backwards">indicate if the sample should be played backwards</param>
-		void PlayStereoSample(short sampleNumber, Array leftAdr, Array rightAdr, uint startOffset, uint length, byte bit = 8, bool backwards = false);
+		/// <param name="flag">indicate the format of the sample and how to play it</param>
+		void PlayStereoSample(short sampleNumber, Array leftAdr, Array rightAdr, uint startOffset, uint length, PlaySampleFlag flag = PlaySampleFlag.None);
 
 		/// <summary>
 		/// Will play the sample in the channel, but first when the current
@@ -62,9 +61,8 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <param name="adr">is a pointer to the sample in memory</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
 		/// <param name="length">is the length in samples of the sample</param>
-		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
-		/// <param name="backwards">indicate if the sample should be played backwards</param>
-		void SetSample(Array adr, uint startOffset, uint length, byte bit = 8, bool backwards = false);
+		/// <param name="flag">indicate the format of the sample and how to play it</param>
+		void SetSample(Array adr, uint startOffset, uint length, PlaySampleFlag flag = PlaySampleFlag.None);
 
 		/// <summary>
 		/// Will play the sample in the channel, but first when the current
@@ -74,9 +72,8 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <param name="rightAdr">is a pointer to the sample in memory to be played in the right speaker</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
 		/// <param name="length">is the length in samples of the sample</param>
-		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
-		/// <param name="backwards">indicate if the sample should be played backwards</param>
-		void SetStereoSample(Array leftAdr, Array rightAdr, uint startOffset, uint length, byte bit = 8, bool backwards = false);
+		/// <param name="flag">indicate the format of the sample and how to play it</param>
+		void SetStereoSample(Array leftAdr, Array rightAdr, uint startOffset, uint length, PlaySampleFlag flag = PlaySampleFlag.None);
 
 		/// <summary>
 		/// Will set the loop point in the sample

@@ -461,8 +461,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						Name = string.Empty,
+						Flags = SampleInfo.SampleFlag.None,
 						Type = SampleInfo.SampleType.Sample,
-						BitSize = SampleInfo.SampleSize._8Bit,
 						Volume = (ushort)(sample.Volume * 4),
 						Panning = -1,
 						Sample = sample.Data,
@@ -473,14 +473,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 					if (sample.LoopLength == 0)
 					{
 						// No loop
-						sampleInfo.Flags = SampleInfo.SampleFlag.None;
 						sampleInfo.LoopStart = 0;
 						sampleInfo.LoopLength = 0;
 					}
 					else
 					{
 						// Sample loops
-						sampleInfo.Flags = SampleInfo.SampleFlag.Loop;
+						sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
 						sampleInfo.LoopStart = sample.LoopStart;
 						sampleInfo.LoopLength = sample.LoopLength;
 					}

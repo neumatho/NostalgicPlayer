@@ -324,11 +324,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 						}
 					}
 
+					SampleInfo.SampleFlag flag = SampleInfo.SampleFlag.None;
+
+					if (sample.Data16 != null)
+						flag |= SampleInfo.SampleFlag._16Bit;
+
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						Name = inst.Name,
+						Flags = flag,
 						Type = SampleInfo.SampleType.Sample,
-						BitSize = sample.Data16 != null ? SampleInfo.SampleSize._16Bit : SampleInfo.SampleSize._8Bit,
 						Volume = (ushort)(inst.Volume * 4),
 						Panning = (short)(inst.Panning + 128),
 						Sample = (Array)sample.Data8 ?? sample.Data16,
@@ -340,13 +345,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro
 
 					if ((inst.Flags & InstrumentFlag.Loop_Mask) != 0)
 					{
-						sampleInfo.Flags = SampleInfo.SampleFlag.Loop;
+						sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
 
 						if ((inst.Flags & InstrumentFlag.PingPong_Loop) != 0)
 							sampleInfo.Flags |= SampleInfo.SampleFlag.PingPong;
 					}
-					else
-						sampleInfo.Flags = SampleInfo.SampleFlag.None;
 
 					yield return sampleInfo;
 				}

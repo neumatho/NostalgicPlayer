@@ -2577,7 +2577,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		{
 			IChannel channel = VirtualChannels[chan];
 
-			channel.PlayBuffer(outBuf[chan], 0, BufSize, 16);
+			channel.PlayBuffer(outBuf[chan], 0, BufSize, PlayBufferFlag._16Bit);
 			channel.SetFrequency(mixerFreq);
 			channel.SetVolume(256);
 
@@ -2737,7 +2737,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				Name = string.Empty,
 				Flags = SampleInfo.SampleFlag.None,
 				Type = SampleInfo.SampleType.Sample,
-				BitSize = SampleInfo.SampleSize._8Bit,
 				Panning = -1,
 				Volume = 256,
 				Sample = sampleData.AsSpan(current.Start, sampleLength).ToArray(),

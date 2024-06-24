@@ -29,6 +29,7 @@ using Polycode.NostalgicPlayer.GuiKit.Controls;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -858,11 +859,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 									frequency *= 1.059463094359;
 							}
 
+							// Find the play flag
+							PlaySampleFlag playFlag = PlaySampleFlag.None;
+
+							if ((sampleInfo.Flags & SampleInfo.SampleFlag._16Bit) != 0)
+								playFlag |= PlaySampleFlag._16Bit;
+
 							// Play it
 							if ((sampleInfo.Flags & SampleInfo.SampleFlag.Stereo) != 0)
-								channel.PlayStereoSample(-1, sample, secondSample, offset, length, (byte)sampleInfo.BitSize);
+								channel.PlayStereoSample(-1, sample, secondSample, offset, length, playFlag);
 							else
-								channel.PlaySample(-1, sample, offset, length, (byte)sampleInfo.BitSize);
+								channel.PlaySample(-1, sample, offset, length, playFlag);
 
 							channel.SetFrequency((uint)frequency);
 

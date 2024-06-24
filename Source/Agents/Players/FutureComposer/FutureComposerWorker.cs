@@ -799,8 +799,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 			SampleInfo sampleInfo = new SampleInfo
 			{
 				Name = string.Empty,
+				Flags = SampleInfo.SampleFlag.None,
 				Type = SampleInfo.SampleType.Sample,
-				BitSize = SampleInfo.SampleSize._8Bit,
 				Volume = 256,
 				Panning = -1,
 				NoteFrequencies = frequencies
@@ -814,13 +814,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 			{
 				sampleInfo.LoopStart = sample.LoopStart;
 				sampleInfo.LoopLength = sample.LoopLength;
-				sampleInfo.Flags = SampleInfo.SampleFlag.Loop;
+				sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
 			}
 			else
 			{
 				sampleInfo.LoopStart = 0;
 				sampleInfo.LoopLength = 0;
-				sampleInfo.Flags = SampleInfo.SampleFlag.None;
 			}
 
 			return sampleInfo;

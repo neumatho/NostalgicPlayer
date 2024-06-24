@@ -366,8 +366,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 						SampleInfo sampleInfo = new SampleInfo
 						{
 							Name = sample.Name,
+							Flags = SampleInfo.SampleFlag.None,
 							Type = SampleInfo.SampleType.Sample,
-							BitSize = SampleInfo.SampleSize._8Bit,
 							Volume = (ushort)(sample.Volume * 4),
 							Panning = -1,
 							Sample = sample.Data,
@@ -378,14 +378,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 						if ((sample.ControlByte & SampleControlFlag.Loop) != 0)
 						{
 							// Sample loops
-							sampleInfo.Flags = SampleInfo.SampleFlag.Loop;
+							sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
 							sampleInfo.LoopStart = sample.LoopStart;
 							sampleInfo.LoopLength = sample.LoopLength;
 						}
 						else
 						{
 							// No loop
-							sampleInfo.Flags = SampleInfo.SampleFlag.None;
 							sampleInfo.LoopStart = 0;
 							sampleInfo.LoopLength = 0;
 						}

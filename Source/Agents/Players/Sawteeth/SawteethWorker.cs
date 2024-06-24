@@ -672,7 +672,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 				ushort pan = (ushort)((((256 - chan[c].Left) * 256) + (256 * chan[c].Right)) / 512);
 
 				// Tell NostalgicPlayer what to play in this channel
-				VirtualChannels[c].PlayBuffer(outBuffers[c], 0, spsPal, 16);
+				VirtualChannels[c].PlayBuffer(outBuffers[c], 0, spsPal, PlayBufferFlag._16Bit);
 				VirtualChannels[c].SetFrequency(44100);
 				VirtualChannels[c].SetVolume(256);
 				VirtualChannels[c].SetPanning(pan);
@@ -721,9 +721,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 					yield return new SampleInfo
 					{
 						Name = inst.Name,
-						Flags = SampleInfo.SampleFlag.None,
+						Flags = SampleInfo.SampleFlag._16Bit,
 						Type = SampleInfo.SampleType.Synthesis,
-						BitSize = SampleInfo.SampleSize._16Bit,
 						Volume = 256,
 						Panning = -1,
 						Sample = null,

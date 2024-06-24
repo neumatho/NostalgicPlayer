@@ -487,7 +487,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						Name = inst.Name,
-						BitSize = SampleInfo.SampleSize._8Bit,
+						Flags = SampleInfo.SampleFlag.None,
 						Volume = inst.EnvVol,
 						Panning = -1,
 						NoteFrequencies = frequencies
@@ -496,7 +496,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 					if (inst.InstType != InstrumentType.Sample)
 					{
 						sampleInfo.Type = SampleInfo.SampleType.Synthesis;
-						sampleInfo.Flags = SampleInfo.SampleFlag.None;
 						sampleInfo.Sample = null;
 						sampleInfo.Length = 0;
 						sampleInfo.LoopStart = 0;
@@ -511,14 +510,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 						if ((inst.RepeatLen == 0) || (inst.RepeatLen == 0xffff))
 						{
 							// No loop
-							sampleInfo.Flags = SampleInfo.SampleFlag.None;
 							sampleInfo.LoopStart = 0;
 							sampleInfo.LoopLength = 0;
 						}
 						else
 						{
 							// Sample loops
-							sampleInfo.Flags = SampleInfo.SampleFlag.Loop;
+							sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
 							sampleInfo.LoopStart = 0;
 							sampleInfo.LoopLength = inst.RepeatLen;
 						}

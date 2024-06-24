@@ -107,11 +107,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// <param name="adr">is a pointer to the sample in memory</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
 		/// <param name="length">is the length in samples of the sample</param>
-		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
+		/// <param name="flag">indicate the format of the sample and how to play it</param>
 		/********************************************************************/
-		public void PlayBuffer(Array adr, uint startOffset, uint length, byte bit)
+		public void PlayBuffer(Array adr, uint startOffset, uint length, PlayBufferFlag flag)
 		{
-			PlaySample(-1, adr, startOffset, length, bit, false);
+			PlaySampleFlag playFlag = PlaySampleFlag.None;
+
+			if ((flag & PlayBufferFlag._16Bit) != 0)
+				playFlag |= PlaySampleFlag._16Bit;
+
+			PlaySample(-1, adr, startOffset, length, playFlag);
 		}
 
 
@@ -124,10 +129,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// <param name="adr">is a pointer to the sample in memory</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
 		/// <param name="length">is the length in samples of the sample</param>
-		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
-		/// <param name="backwards">indicate if the sample should be played backwards</param>
+		/// <param name="flag">indicate the format of the sample and how to play it</param>
 		/********************************************************************/
-		public void PlaySample(short sampleNumber, Array adr, uint startOffset, uint length, byte bit, bool backwards)
+		public void PlaySample(short sampleNumber, Array adr, uint startOffset, uint length, PlaySampleFlag flag)
 		{
 			if (adr == null)
 				throw new ArgumentNullException(nameof(adr));
@@ -141,10 +145,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			if (startOffset > adr.Length)
 				throw new ArgumentException("startOffset is bigger than length", nameof(startOffset));
 
-			if ((bit != 8) && (bit != 16))
-				throw new ArgumentException("Number of bits may only be 8 or 16", nameof(bit));
-
-			SetPlaySampleInfo(sampleNumber, adr, null, startOffset, length, bit, backwards);
+			SetPlaySampleInfo(sampleNumber, adr, null, startOffset, length, flag);
 		}
 
 
@@ -158,10 +159,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// <param name="rightAdr">is a pointer to the sample in memory to be played in the right speaker</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
 		/// <param name="length">is the length in samples of the sample</param>
-		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
-		/// <param name="backwards">indicate if the sample should be played backwards</param>
+		/// <param name="flag">indicate the format of the sample and how to play it</param>
 		/********************************************************************/
-		public void PlayStereoSample(short sampleNumber, Array leftAdr, Array rightAdr, uint startOffset, uint length, byte bit, bool backwards)
+		public void PlayStereoSample(short sampleNumber, Array leftAdr, Array rightAdr, uint startOffset, uint length, PlaySampleFlag flag)
 		{
 			if (leftAdr == null)
 				throw new ArgumentNullException(nameof(leftAdr));
@@ -184,10 +184,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			if (startOffset > leftAdr.Length)
 				throw new ArgumentException("startOffset is bigger than length", nameof(startOffset));
 
-			if ((bit != 8) && (bit != 16))
-				throw new ArgumentException("Number of bits may only be 8 or 16", nameof(bit));
-
-			SetPlaySampleInfo(sampleNumber, leftAdr, rightAdr, startOffset, length, bit, backwards);
+			SetPlaySampleInfo(sampleNumber, leftAdr, rightAdr, startOffset, length, flag);
 		}
 
 
@@ -208,7 +205,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			if (startOffset > sampleInfo.Sample.Length)
 				throw new ArgumentException("startOffset is bigger than length", nameof(startOffset));
 
-			SetNewSampleInfo(sampleInfo.Sample.Left, sampleInfo.Sample.Right, startOffset, length, null, null);
+			SetNewSampleInfo(sampleInfo.Sample.Left, sampleInfo.Sample.Right, startOffset, length, PlaySampleFlag.None);
 			newSampleInfo.Flags = sampleInfo.Flags;
 		}
 
@@ -222,10 +219,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// <param name="adr">is a pointer to the sample in memory</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
 		/// <param name="length">is the length in samples of the sample</param>
-		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
-		/// <param name="backwards">indicate if the sample should be played backwards</param>
+		/// <param name="flag">indicate the format of the sample and how to play it</param>
 		/********************************************************************/
-		public void SetSample(Array adr, uint startOffset, uint length, byte bit, bool backwards)
+		public void SetSample(Array adr, uint startOffset, uint length, PlaySampleFlag flag)
 		{
 			if (adr == null)
 				throw new ArgumentNullException(nameof(adr));
@@ -239,10 +235,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			if (startOffset > adr.Length)
 				throw new ArgumentException("startOffset is bigger than length", nameof(startOffset));
 
-			if ((bit != 8) && (bit != 16))
-				throw new ArgumentException("Number of bits may only be 8 or 16", nameof(bit));
-
-			SetNewSampleInfo(adr, null, startOffset, length, bit, backwards);
+			SetNewSampleInfo(adr, null, startOffset, length, flag);
 		}
 
 
@@ -256,10 +249,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// <param name="rightAdr">is a pointer to the sample in memory to be played in the right speaker</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
 		/// <param name="length">is the length in samples of the sample</param>
-		/// <param name="bit">is the number of bits each sample are, e.g. 8 or 16</param>
-		/// <param name="backwards">indicate if the sample should be played backwards</param>
+		/// <param name="flag">indicate the format of the sample and how to play it</param>
 		/********************************************************************/
-		public void SetStereoSample(Array leftAdr, Array rightAdr, uint startOffset, uint length, byte bit, bool backwards)
+		public void SetStereoSample(Array leftAdr, Array rightAdr, uint startOffset, uint length, PlaySampleFlag flag)
 		{
 			if (leftAdr == null)
 				throw new ArgumentNullException(nameof(leftAdr));
@@ -282,10 +274,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			if (startOffset > leftAdr.Length)
 				throw new ArgumentException("startOffset is bigger than length", nameof(startOffset));
 
-			if ((bit != 8) && (bit != 16))
-				throw new ArgumentException("Number of bits may only be 8 or 16", nameof(bit));
-
-			SetNewSampleInfo(leftAdr, rightAdr, startOffset, length, bit, backwards);
+			SetNewSampleInfo(leftAdr, rightAdr, startOffset, length, flag);
 		}
 
 
@@ -590,7 +579,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Set the sample information in internal variables
 		/// </summary>
 		/********************************************************************/
-		private void SetPlaySampleInfo(short sampleNumber, Array leftAdr, Array rightAdr, uint startOffset, uint length, byte bit, bool backwards)
+		private void SetPlaySampleInfo(short sampleNumber, Array leftAdr, Array rightAdr, uint startOffset, uint length, PlaySampleFlag playFlag)
 		{
 			currentSampleNumber = sampleNumber;
 
@@ -599,7 +588,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 			newSampleInfo = null;
 
-			SetSampleInfo(sampleInfo, leftAdr, rightAdr, startOffset, length, bit, backwards);
+			SetSampleInfo(sampleInfo, leftAdr, rightAdr, startOffset, length, playFlag);
 		}
 
 
@@ -609,11 +598,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Set new sample information in internal variables
 		/// </summary>
 		/********************************************************************/
-		private void SetNewSampleInfo(Array leftAdr, Array rightAdr, uint startOffset, uint length, byte? bit, bool? backwards)
+		private void SetNewSampleInfo(Array leftAdr, Array rightAdr, uint startOffset, uint length, PlaySampleFlag playFlag)
 		{
 			newSampleInfo = new SampleInfo();
 
-			SetSampleInfo(newSampleInfo, leftAdr, rightAdr, startOffset, length, bit, backwards);
+			SetSampleInfo(newSampleInfo, leftAdr, rightAdr, startOffset, length, playFlag);
 		}
 
 
@@ -623,7 +612,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Set the sample information in internal variables
 		/// </summary>
 		/********************************************************************/
-		private void SetSampleInfo(SampleInfo sampleInf, Array leftAdr, Array rightAdr, uint startOffset, uint length, byte? bit, bool? backwards)
+		private void SetSampleInfo(SampleInfo sampleInf, Array leftAdr, Array rightAdr, uint startOffset, uint length, PlaySampleFlag playFlag)
 		{
 			sampleInf.Sample.Left = leftAdr;
 			sampleInf.Sample.Right = rightAdr;
@@ -631,10 +620,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			sampleInf.Sample.Length = length;
 			sampleInf.Flags = ChannelSampleFlag.None;
 
-			if (bit.HasValue && (bit.Value == 16))
+			if ((playFlag & PlaySampleFlag._16Bit) != 0)
 				sampleInf.Flags |= ChannelSampleFlag._16Bit;
 
-			if (backwards.HasValue && backwards.Value)
+			if ((playFlag & PlaySampleFlag.Backwards) != 0)
 				sampleInf.Flags |= ChannelSampleFlag.Backwards;
 		}
 

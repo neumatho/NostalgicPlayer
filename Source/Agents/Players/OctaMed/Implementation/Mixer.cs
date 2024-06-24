@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
@@ -211,19 +212,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			sbyte[] leftAdr = smp.GetPlayBuffer(0, note, ref loopStart, ref loopLen);
 			if (leftAdr != null)
 			{
-				byte bit;
-				uint len;
+				PlaySampleFlag playSampleFlag = PlaySampleFlag.None;
+				uint len = (uint)leftAdr.Length;
 
 				if (smp.Is16Bit())
 				{
-					bit = 16;
-					len = (uint)leftAdr.Length / 2;
+					playSampleFlag |= PlaySampleFlag._16Bit;
+					len /= 2;
 				}
-				else
-				{
-					bit = 8;
-					len = (uint)leftAdr.Length;
-				}
+
+				if ((flags & PlayFlag.Backwards) != 0)
+					playSampleFlag |= PlaySampleFlag.Backwards;
 
 				if (smp.IsStereo())
 				{
@@ -233,13 +232,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 					if (rightAdr != null)
 					{
 						// Okay, tell NostalgicPlayer to play the sample
-						worker.VirtualChannels[chNum].PlayStereoSample((short)instNum, leftAdr, rightAdr, startOffs, len, bit, (flags & PlayFlag.Backwards) != 0);
+						worker.VirtualChannels[chNum].PlayStereoSample((short)instNum, leftAdr, rightAdr, startOffs, len, playSampleFlag);
 					}
 				}
 				else
 				{
 					// Okay, tell NostalgicPlayer to play the sample
-					worker.VirtualChannels[chNum].PlaySample((short)instNum, leftAdr, startOffs, len, bit, (flags & PlayFlag.Backwards) != 0);
+					worker.VirtualChannels[chNum].PlaySample((short)instNum, leftAdr, startOffs, len, playSampleFlag);
 				}
 			}
 

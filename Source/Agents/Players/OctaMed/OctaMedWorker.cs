@@ -1351,7 +1351,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 						{
 							Flags = SampleInfo.SampleFlag.None,
 							Type = SampleInfo.SampleType.Sample,
-							BitSize = SampleInfo.SampleSize._8Bit,
 							Volume = (ushort)(inst.GetInitVol() * 2),
 							Panning = -1,
 							Sample = null,
@@ -1365,7 +1364,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 					{
 						sampleInfo = new SampleInfo
 						{
-							BitSize = sample.Is16Bit() ? SampleInfo.SampleSize._16Bit : SampleInfo.SampleSize._8Bit,
+							Flags = sample.Is16Bit() ? SampleInfo.SampleFlag._16Bit : SampleInfo.SampleFlag.None,
 							Volume = (ushort)(inst.GetInitVol() * 2),
 							Panning = -1,
 							Length = sample.GetLength(),
@@ -1420,13 +1419,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 							if (sample.IsStereo())
 								sampleInfo.MultiOctaveAllSamples[1] = samples.Select(s => s.right).ToArray();
 
-							sampleInfo.Flags = SampleInfo.SampleFlag.MultiOctave;
+							sampleInfo.Flags |= SampleInfo.SampleFlag.MultiOctave;
 						}
 						else
 						{
 							sampleInfo.Sample = sample.GetSampleBuffer(0, 0);
 							sampleInfo.SecondSample = sample.GetSampleBuffer(1, 0);
-							sampleInfo.Flags = SampleInfo.SampleFlag.None;
 						}
 
 						// Find out the type of the sample

@@ -313,8 +313,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						Name = sample.Name,
+						Flags = SampleInfo.SampleFlag.None,
 						Type = SampleInfo.SampleType.Sample,
-						BitSize = SampleInfo.SampleSize._8Bit,
 						Volume = (ushort)(sample.Volume * 4),
 						Panning = -1,
 						LoopStart = sample.LoopStart,
@@ -333,8 +333,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 							sampleInfo.Sample = sample.SampleData;
 							sampleInfo.Length = (uint)sample.SampleData.Length;
 						}
-
-						sampleInfo.Flags = SampleInfo.SampleFlag.None;
 					}
 
 					// Find out the loop information
@@ -344,7 +342,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 						sampleInfo.LoopLength = 0;
 					}
 					else
-						sampleInfo.Flags = SampleInfo.SampleFlag.Loop;
+						sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
 
 					yield return sampleInfo;
 				}

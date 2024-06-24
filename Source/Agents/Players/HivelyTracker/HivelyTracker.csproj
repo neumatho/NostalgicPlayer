@@ -11,7 +11,7 @@
     <Authors>Thomas Neumann</Authors>
     <Product>NostalgicPlayer</Product>
     <Description>Plays modules of type AHX and HivelyTracker</Description>
-    <Version>2.2.0</Version>
+    <Version>2.2.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -504,7 +504,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 
 					SampleInfo sampleInfo = new SampleInfo
 					{
-						BitSize = SampleInfo.SampleSize._8Bit,
+						Flags = SampleInfo.SampleFlag.None,
 						Volume = (ushort)(inst.Volume * 4),
 						Panning = -1,
 						NoteFrequencies = frequencies
@@ -520,14 +520,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 						if (sampleInst.LoopLength <= 2)
 						{
 							// No loop
-							sampleInfo.Flags = SampleInfo.SampleFlag.None;
 							sampleInfo.LoopStart = 0;
 							sampleInfo.LoopLength = 0;
 						}
 						else
 						{
 							// Sample loops
-							sampleInfo.Flags = SampleInfo.SampleFlag.Loop;
+							sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
 							sampleInfo.LoopStart = sampleInst.LoopStart;
 							sampleInfo.LoopLength = sampleInst.LoopLength;
 						}
@@ -538,7 +537,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 						sampleInfo.Name = string.Empty;
 						sampleInfo.Sample = null;
 						sampleInfo.Length = 0;
-						sampleInfo.Flags = SampleInfo.SampleFlag.None;
 						sampleInfo.LoopStart = 0;
 						sampleInfo.LoopLength = 0;
 					}

@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
@@ -25,7 +26,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// have to be the same for each channel
 		/// </summary>
 		/********************************************************************/
-		public void PlayBuffer(Array adr, uint startOffset, uint length, byte bit)
+		public void PlayBuffer(Array adr, uint startOffset, uint length, PlayBufferFlag flag)
 		{
 			bufferLength = length;
 		}
@@ -37,7 +38,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Will start to play the sample in the channel
 		/// </summary>
 		/********************************************************************/
-		public void PlaySample(short sampleNumber, Array adr, uint startOffset, uint length, byte bit, bool backwards)
+		public void PlaySample(short sampleNumber, Array adr, uint startOffset, uint length, PlaySampleFlag flag)
 		{
 		}
 
@@ -48,7 +49,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Will start to play a stereo sample in the channel
 		/// </summary>
 		/********************************************************************/
-		public void PlayStereoSample(short sampleNumber, Array leftAdr, Array rightAdr, uint startOffset, uint length, byte bit, bool backwards)
+		public void PlayStereoSample(short sampleNumber, Array leftAdr, Array rightAdr, uint startOffset, uint length, PlaySampleFlag flag)
 		{
 		}
 
@@ -72,7 +73,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// sample stops or loops. No retrigger is made
 		/// </summary>
 		/********************************************************************/
-		public void SetSample(Array adr, uint startOffset, uint length, byte bit, bool backwards)
+		public void SetSample(Array adr, uint startOffset, uint length, PlaySampleFlag flag)
 		{
 		}
 
@@ -84,7 +85,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// sample stops or loops. No retrigger is made
 		/// </summary>
 		/********************************************************************/
-		public void SetStereoSample(Array leftAdr, Array rightAdr, uint startOffset, uint length, byte bit, bool backwards)
+		public void SetStereoSample(Array leftAdr, Array rightAdr, uint startOffset, uint length, PlaySampleFlag flag)
 		{
 		}
 

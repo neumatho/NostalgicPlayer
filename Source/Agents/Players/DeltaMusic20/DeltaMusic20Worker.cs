@@ -468,7 +468,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 					SampleInfo sampleInfo = new SampleInfo
 					{
 						Name = string.Empty,
-						BitSize = SampleInfo.SampleSize._8Bit,
+						Flags = SampleInfo.SampleFlag.None,
 						Volume = 256,
 						Panning = -1,
 						NoteFrequencies = frequencies
@@ -483,14 +483,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 						if (inst.RepeatLength > 2)
 						{
 							// Sample loops
-							sampleInfo.Flags = SampleInfo.SampleFlag.Loop;
+							sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
 							sampleInfo.LoopStart = inst.RepeatStart;
 							sampleInfo.LoopLength = inst.RepeatLength;
 						}
 						else
 						{
 							// No loop
-							sampleInfo.Flags = SampleInfo.SampleFlag.None;
 							sampleInfo.LoopStart = 0;
 							sampleInfo.LoopLength = 0;
 						}
@@ -498,7 +497,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 					else
 					{
 						sampleInfo.Type = SampleInfo.SampleType.Synthesis;
-						sampleInfo.Flags = SampleInfo.SampleFlag.None;
 						sampleInfo.LoopStart = 0;
 						sampleInfo.LoopLength = 0;
 					}

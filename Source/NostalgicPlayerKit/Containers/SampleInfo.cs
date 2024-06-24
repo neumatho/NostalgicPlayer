@@ -34,14 +34,19 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 			PingPong = 0x02,
 
 			/// <summary>
+			/// The sample is in 16-bit
+			/// </summary>
+			_16Bit = 0x04,
+
+			/// <summary>
 			/// The sample is in stereo
 			/// </summary>
-			Stereo = 0x04,
+			Stereo = 0x08,
 
 			/// <summary>
 			/// The sample contains multiple samples for different octaves
 			/// </summary>
-			MultiOctave = 0x08
+			MultiOctave = 0x10
 		}
 
 		/// <summary>
@@ -68,18 +73,6 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 			/// Adlib / OPL sample
 			/// </summary>
 			Adlib
-		}
-
-		/// <summary>
-		/// The supported sample sizes
-		/// </summary>
-		public enum SampleSize : byte
-		{
-			/// <summary></summary>
-			_8Bit = 8,
-
-			/// <summary></summary>
-			_16Bit = 16
 		}
 
 		/// <summary>
@@ -145,18 +138,6 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// </summary>
 		/********************************************************************/
 		public SampleType Type
-		{
-			get; set;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Holds the number of bits per sample used
-		/// </summary>
-		/********************************************************************/
-		public SampleSize BitSize
 		{
 			get; set;
 		}

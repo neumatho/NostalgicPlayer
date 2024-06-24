@@ -388,8 +388,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10
 						sampleInfo = new SampleInfo
 						{
 							Name = sample.Name,
+							Flags = SampleInfo.SampleFlag.None,
 							Type = SampleInfo.SampleType.Sample,
-							BitSize = SampleInfo.SampleSize._8Bit,
 							Volume = 256,
 							Panning = -1,
 							Sample = sample.SampleData,
@@ -400,14 +400,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10
 						if (sample.LoopStart < 0)
 						{
 							// No loop
-							sampleInfo.Flags = SampleInfo.SampleFlag.None;
 							sampleInfo.LoopStart = 0;
 							sampleInfo.LoopLength = 0;
 						}
 						else
 						{
 							// Sample loops
-							sampleInfo.Flags = SampleInfo.SampleFlag.Loop;
+							sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
 							sampleInfo.LoopStart = (uint)sample.LoopStart;
 							sampleInfo.LoopLength = (uint)sample.SampleData.Length - sampleInfo.LoopStart;
 						}

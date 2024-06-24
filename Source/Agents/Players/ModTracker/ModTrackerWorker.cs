@@ -433,7 +433,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 						Name = sample.SampleName,
 						Flags = sample.LoopLength <= 1 ? SampleInfo.SampleFlag.None : SampleInfo.SampleFlag.Loop,
 						Type = ((amData?[i] != null) && (amData[i].Mark == 0x414d)) || ((hmnSynthData != null) && (hmnSynthData[i] != null)) ? SampleInfo.SampleType.Synthesis : SampleInfo.SampleType.Sample,
-						BitSize = SampleInfo.SampleSize._8Bit,
 						Volume = (ushort)(sample.Volume * 4),
 						Panning = -1,
 						Sample = sample.Data,
