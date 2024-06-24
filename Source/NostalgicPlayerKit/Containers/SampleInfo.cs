@@ -82,10 +82,8 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		{
 			/// <summary>
 			/// The sample itself
-			/// 
-			/// The first index is the channel number
 			/// </summary>
-			public Array[] Sample;
+			public Array Sample;
 
 			/// <summary>
 			/// How many notes to add to the playing note
@@ -104,8 +102,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		}
 
 		private Array sample;
-		private Array secondSample;
-		private Array[][] multiOctaveAllSamples;
+		private Array[] multiOctaveAllSamples;
 		private MultiOctaveInfo[] multiOctaveSamples;
 
 		/********************************************************************/
@@ -199,27 +196,6 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// If the sample is a stereo sample, this holds the right channel
-		/// sample data
-		/// </summary>
-		/********************************************************************/
-		public Array SecondSample
-		{
-			get => secondSample;
-
-			set
-			{
-				if ((value != null) && (value.GetType() != typeof(sbyte[])) && (value.GetType() != typeof(short[])) && (value.GetType() != typeof(byte[])))
-					throw new ArgumentException("Type of array must be either sbyte[], short[] or byte[]", nameof(value));
-
-				secondSample = value;
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Holds the number of samples into the sample array where the real
 		/// data starts
 		/// </summary>
@@ -266,13 +242,10 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// If the sample is a multi octave sample, this property holds all
 		/// the octave samples for each channel. This is needed when saving
 		/// the sample, as not all octave samples may be included in the
-		/// above property.
-		///
-		/// The first index is the channel and the second index is the sample
-		/// number
+		/// above property
 		/// </summary>
 		/********************************************************************/
-		public Array[][] MultiOctaveAllSamples
+		public Array[] MultiOctaveAllSamples
 		{
 			get => multiOctaveAllSamples;
 
@@ -280,8 +253,8 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 			{
 				if (value != null)
 				{
-					if ((value.GetType() != typeof(sbyte[][][])) && (value.GetType() != typeof(short[][][])) && (value.GetType() != typeof(byte[][][])))
-						throw new ArgumentException("Type of array must be either sbyte[][][], short[][][] or byte[][][]", nameof(value));
+					if ((value.GetType() != typeof(sbyte[][])) && (value.GetType() != typeof(short[][])) && (value.GetType() != typeof(byte[][])))
+						throw new ArgumentException("Type of array must be either sbyte[][], short[][] or byte[][]", nameof(value));
 				}
 
 				multiOctaveAllSamples = value;

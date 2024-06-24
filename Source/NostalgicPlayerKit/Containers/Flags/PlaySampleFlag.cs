@@ -16,12 +16,17 @@ namespace Polycode.NostalgicPlayer.Kit.Containers.Flags
 		/// <summary>
 		/// No flags
 		/// </summary>
-		None = 0x0000,
+		None = 0,
 
 		/// <summary>
 		/// Sample is in 16-bit
 		/// </summary>
 		_16Bit = 0x0001,
+
+		/// <summary>
+		/// Sample is in interleaved stereo
+		/// </summary>
+		Stereo = 0x0002,
 
 		/// <summary>
 		/// Play the sample backwards

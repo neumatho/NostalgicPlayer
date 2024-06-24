@@ -1050,22 +1050,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 				int channels = stereo ? 2 : 1;
 
 				// Build list of buffers to be saved
-				(Array data, uint offset, int length)[] leftSamples, rightSamples = null;
+				(Array data, uint offset, int length)[] samples;
 
 				if ((sampleInfo.Flags & SampleInfo.SampleFlag.MultiOctave) != 0)
-				{
-					leftSamples = sampleInfo.MultiOctaveAllSamples[0].OrderBy(s => s.Length).Select(x => (x, 0U, x.Length)).ToArray();
-
-					if (stereo)
-						rightSamples = sampleInfo.MultiOctaveAllSamples[1].OrderBy(s => s.Length).Select(x => (x, 0U, x.Length)).ToArray();
-				}
+					samples = sampleInfo.MultiOctaveAllSamples.OrderBy(s => s.Length).Select(x => (x, 0U, x.Length)).ToArray();
 				else
-				{
-					leftSamples = new (Array data, uint offset, int length)[] { (sampleInfo.Sample, sampleInfo.SampleOffset, (int)sampleInfo.Length) };
-
-					if (stereo)
-						rightSamples = new (Array data, uint offset, int length)[] { (sampleInfo.SecondSample, sampleInfo.SampleOffset, (int)sampleInfo.Length) };
-				}
+					samples = new (Array data, uint offset, int length)[] { (sampleInfo.Sample, sampleInfo.SampleOffset, (int)sampleInfo.Length) };
 
 				byte bits = (byte)((sampleInfo.Flags & SampleInfo.SampleFlag._16Bit) != 0 ? 16 : 8);
 
@@ -1085,51 +1075,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 						converterAgent.SaveHeader(fs);
 
 						// Convert sample to 32-bit
-						int[] buffer = new int[leftSamples.Max(s => s.length) * channels];
+						int[] buffer = new int[samples.Max(s => s.length) * channels];
 
-						for (int b = 0; b < leftSamples.Length; b++)
+						for (int b = 0; b < samples.Length; b++)
 						{
-							if (stereo)
+							int cnt = stereo ? samples[b].length * 2 : samples[b].length;
+
+							if ((sampleInfo.Flags & SampleInfo.SampleFlag._16Bit) != 0)
 							{
-								if ((sampleInfo.Flags & SampleInfo.SampleFlag._16Bit) != 0)
-								{
-									Span<short> left = SampleHelper.ConvertSampleTo16Bit(leftSamples[b].data, leftSamples[b].offset);
-									Span<short> right = SampleHelper.ConvertSampleTo16Bit(rightSamples[b].data, rightSamples[b].offset);
+								Span<short> left = SampleHelper.ConvertSampleTo16Bit(samples[b].data, samples[b].offset);
 
-									for (int i = 0, j = 0, cnt = leftSamples[b].length; i < cnt; i++, j += 2)
-									{
-										buffer[j] = left[i] << 16;
-										buffer[j + 1] = right[i] << 16;
-									}
-								}
-								else
-								{
-									Span<sbyte> left = SampleHelper.ConvertSampleTo8Bit(leftSamples[b].data, leftSamples[b].offset);
-									Span<sbyte> right = SampleHelper.ConvertSampleTo8Bit(rightSamples[b].data, rightSamples[b].offset);
-
-									for (int i = 0, j = 0, cnt = leftSamples[b].length; i < cnt; i++, j += 2)
-									{
-										buffer[j] = left[i] << 24;
-										buffer[j + 1] = right[i] << 24;
-									}
-								}
+								for (int i = 0; i < cnt; i++)
+									buffer[i] = left[i] << 16;
 							}
 							else
 							{
-								if ((sampleInfo.Flags & SampleInfo.SampleFlag._16Bit) != 0)
-								{
-									Span<short> left = SampleHelper.ConvertSampleTo16Bit(leftSamples[b].data, leftSamples[b].offset);
+								Span<sbyte> left = SampleHelper.ConvertSampleTo8Bit(samples[b].data, samples[b].offset);
 
-									for (int i = 0, cnt = leftSamples[b].length; i < cnt; i++)
-										buffer[i] = left[i] << 16;
-								}
-								else
-								{
-									Span<sbyte> left = SampleHelper.ConvertSampleTo8Bit(leftSamples[b].data, leftSamples[b].offset);
-
-									for (int i = 0, cnt = leftSamples[b].length; i < cnt; i++)
-										buffer[i] = left[i] << 24;
-								}
+								for (int i = 0; i < cnt; i++)
+									buffer[i] = left[i] << 24;
 							}
 
 							converterAgent.SaveData(fs, buffer, buffer.Length);

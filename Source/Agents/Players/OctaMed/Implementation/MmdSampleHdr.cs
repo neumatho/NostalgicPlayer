@@ -136,13 +136,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 				{
 					using (ModuleStream sampleDataStream = moduleStream.GetSampleDataStream((int)sampleNumber, (int)numBytes))
 					{
-						for (ushort chCnt = 0; chCnt < (stereo ? 2 : 1); chCnt++)
+						int channels = (stereo ? 2 : 1);
+
+						for (ushort chCnt = 0; chCnt < channels; chCnt++)
 						{
 							for (int oct = 0; ; oct++)
 							{
-								sbyte[] buf = dest.GetSampleBuffer(chCnt, oct);
+								sbyte[] buf = dest.GetSampleBuffer(oct);
 								if (buf == null)
 									break;
+
+								int length = buf.Length;
+								if (dest.IsStereo())
+									length /= 2;
 
 								if (sixtBit)
 								{
@@ -151,18 +157,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 									if ((type & InstrDeltaCode) != 0)
 									{
 										short prev = sampleDataStream.Read_B_INT16();
-										buf16[0] = prev;
+										buf16[chCnt] = prev;
 
-										for (int cnt2 = 1; cnt2 < buf16.Length; cnt2++)
+										for (int cnt2 = 1; cnt2 < length; cnt2++)
 										{
 											prev += sampleDataStream.Read_B_INT16();
-											buf16[cnt2] = prev;
+											buf16[cnt2 * channels + chCnt] = prev;
 										}
 									}
 									else
 									{
-										for (int cnt2 = 0; cnt2 < buf16.Length; cnt2++)
-											buf16[cnt2] = sampleDataStream.Read_B_INT16();
+										for (int cnt2 = 0; cnt2 < length; cnt2++)
+											buf16[cnt2 * channels + chCnt] = sampleDataStream.Read_B_INT16();
 									}
 								}
 								else
@@ -170,18 +176,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 									if ((type & InstrDeltaCode) != 0)
 									{
 										sbyte prev = sampleDataStream.Read_INT8();
-										buf[0] = prev;
+										buf[chCnt] = prev;
 
-										for (int cnt2 = 1; cnt2 < buf.Length; cnt2++)
+										for (int cnt2 = 1; cnt2 < length; cnt2++)
 										{
 											prev += sampleDataStream.Read_INT8();
-											buf[cnt2] = prev;
+											buf[cnt2 * channels + chCnt] = prev;
 										}
 									}
 									else
 									{
-										for (int cnt2 = 0; cnt2 < buf.Length; cnt2++)
-											buf[cnt2] = sampleDataStream.Read_INT8();
+										for (int cnt2 = 0; cnt2 < length; cnt2++)
+											buf[cnt2 * channels + chCnt] = sampleDataStream.Read_INT8();
 									}
 								}
 							}

@@ -21,8 +21,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 	/// </summary>
 	internal class OctaMedWorker : ModulePlayerWithSubSongDurationAgentBase
 	{
-		private readonly ModuleType currentModuleType;
-
 		private uint numSamples;
 		private ushort numChannels;
 
@@ -33,16 +31,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		private const int InfoPatternLine = 4;
 		private const int InfoSpeedLine = 5;
 		private const int InfoTempoLine = 6;
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
-		public OctaMedWorker(ModuleType moduleType = ModuleType.Unknown)
-		{
-			currentModuleType = moduleType;
-		}
 
 		#region IPlayerAgent implementation
 		/********************************************************************/
@@ -1385,15 +1373,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 								uint repLen = sampleInfo.LoopLength;
 								NoteNum note = (NoteNum)(oct * 12);
 
-								sampleInfo.MultiOctaveSamples[oct + 1].Sample = new sbyte[2][];
-
-								sampleInfo.MultiOctaveSamples[oct + 1].Sample[0] = sample.GetPlayBuffer(0, note, ref repeat, ref repLen);
+								sampleInfo.MultiOctaveSamples[oct + 1].Sample = sample.GetPlayBuffer(note, ref repeat, ref repLen);
 								sampleInfo.MultiOctaveSamples[oct + 1].LoopStart = repeat;
 								sampleInfo.MultiOctaveSamples[oct + 1].LoopLength = repLen;
 								sampleInfo.MultiOctaveSamples[oct + 1].NoteAdd = sample.GetNoteDifference(note);
-
-								if (sample.IsStereo())
-									sampleInfo.MultiOctaveSamples[oct + 1].Sample[1] = sample.GetPlayBuffer(1, note, ref repeat, ref repLen);
 							}
 
 							// OctaMed only have 6 octaves, so the first and last will use the same buffer
@@ -1401,31 +1384,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 							sampleInfo.MultiOctaveSamples[7] = sampleInfo.MultiOctaveSamples[6];
 
 							// Remember all samples
-							sampleInfo.MultiOctaveAllSamples = new sbyte[2][][];
-
-							List<(sbyte[] left, sbyte[] right)> samples = new List<(sbyte[] left, sbyte[] right)>();
+							List<sbyte[]> samples = new List<sbyte[]>();
 							oct = 0;
 
-							sbyte[] leftBuf;
-							while ((leftBuf = sample.GetSampleBuffer(0, oct)) != null)
+							sbyte[] sampBuf;
+							while ((sampBuf = sample.GetSampleBuffer(oct)) != null)
 							{
-								sbyte[] rightBuf = sample.GetSampleBuffer(1, oct);
-								samples.Add((leftBuf, rightBuf));
+								samples.Add(sampBuf);
 
 								oct++;
 							}
 
-							sampleInfo.MultiOctaveAllSamples[0] = samples.Select(s => s.left).ToArray();
-							if (sample.IsStereo())
-								sampleInfo.MultiOctaveAllSamples[1] = samples.Select(s => s.right).ToArray();
+							sampleInfo.MultiOctaveAllSamples = samples.ToArray();
 
 							sampleInfo.Flags |= SampleInfo.SampleFlag.MultiOctave;
 						}
 						else
-						{
-							sampleInfo.Sample = sample.GetSampleBuffer(0, 0);
-							sampleInfo.SecondSample = sample.GetSampleBuffer(1, 0);
-						}
+							sampleInfo.Sample = sample.GetSampleBuffer(0);
 
 						// Find out the type of the sample
 						if (sample.IsSynthSound())

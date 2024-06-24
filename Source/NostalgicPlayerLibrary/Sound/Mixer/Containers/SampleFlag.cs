@@ -16,6 +16,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers
 		None = 0,
 
 		_16Bits = 0x0001,
+		Stereo = 0x0002,
 
 		Bidi = 0x0200,
 		Reverse = 0x0400

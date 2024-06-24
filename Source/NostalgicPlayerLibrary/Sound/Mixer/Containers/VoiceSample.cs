@@ -12,8 +12,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers
 	/// </summary>
 	internal class VoiceSample
 	{
-		public Array Left;
-		public Array Right;
+		public Array SampleData;
 		public uint Start;
 		public uint Size;
 	}

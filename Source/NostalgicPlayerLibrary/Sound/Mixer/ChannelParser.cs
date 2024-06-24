@@ -82,7 +82,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			}
 			else
 			{
-				if ((sampleInfo.Sample.Left != null) || (newSampleInfo?.Sample?.Left != null))
+				if ((sampleInfo.Sample.SampleData != null) || (newSampleInfo?.Sample?.SampleData != null))
 				{
 					if ((newSampleInfo != null) && !IsActive)
 					{
@@ -102,8 +102,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 						voiceInfoFlags = VoiceFlag.None;
 						sampleInfoFlags = SampleFlag.None;
 
-						voiceSample.Left = sample.Left;
-						voiceSample.Right = sample.Right;
+						voiceSample.SampleData = sample.SampleData;
 						voiceSample.Start = sample.Start;
 						voiceSample.Size = sample.Length;
 
@@ -119,6 +118,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 						if ((sampleInfo.Flags & ChannelSampleFlag._16Bit) != 0)
 							sampleInfoFlags |= SampleFlag._16Bits;
 
+						if ((sampleInfo.Flags & ChannelSampleFlag.Stereo) != 0)
+							sampleInfoFlags |= SampleFlag.Stereo;
+
 						ccNoteKicked = true;
 
 						// Does sample loops?
@@ -130,8 +132,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 							{
 								VoiceSample loopVoiceSample = voiceSampleInfo.Loop = new VoiceSample();
 
-								loopVoiceSample.Left = loopSample.Left;
-								loopVoiceSample.Right = loopSample.Right;
+								loopVoiceSample.SampleData = loopSample.SampleData;
 								loopVoiceSample.Start = loopSample.Start;
 								loopVoiceSample.Size = loopSample.Length;
 
@@ -175,8 +176,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 								VoiceSampleInfo newVoiceSampleInfo = voiceInfo.NewSampleInfo = new VoiceSampleInfo();
 								VoiceSample newVoiceSample = newVoiceSampleInfo.Sample;
 
-								newVoiceSample.Left = newSample.Left;
-								newVoiceSample.Right = newSample.Right;
+								newVoiceSample.SampleData = newSample.SampleData;
 								newVoiceSample.Start = newSample.Start;
 								newVoiceSample.Size = newSample.Length - newSample.Start;	// Because the new sample is used as loop points, the size need to be the length of the loop and not the sample
 
@@ -189,14 +189,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 								if ((newSampleInfo.Flags & ChannelSampleFlag._16Bit) != 0)
 									sampleInfoFlags |= SampleFlag._16Bits;
 
+								if ((newSampleInfo.Flags & ChannelSampleFlag.Stereo) != 0)
+									sampleInfoFlags |= SampleFlag.Stereo;
+
 								// Does sample loops?
 								if ((newSampleInfo.Loop != null) && (newSampleInfo.Loop.Length > 2))
 								{
 									Sample loopSample = newSampleInfo.Loop;
 									VoiceSample loopVoiceSample = newVoiceSampleInfo.Loop = new VoiceSample();
 
-									loopVoiceSample.Left = loopSample.Left;
-									loopVoiceSample.Right = loopSample.Right;
+									loopVoiceSample.SampleData = loopSample.SampleData;
 									loopVoiceSample.Start = loopSample.Start;
 									loopVoiceSample.Size = loopSample.Length;
 

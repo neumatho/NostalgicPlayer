@@ -114,7 +114,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 			if (moduleType == ModuleType.Unknown)
 				return null;
 
-			return new IdentifyFormatInfo(new OctaMedWorker(moduleType), moduleTypeLookup[moduleType]);
+			return new IdentifyFormatInfo(new OctaMedWorker(), moduleTypeLookup[moduleType]);
 		}
 		#endregion
 	}

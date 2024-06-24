@@ -819,7 +819,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						if (((sampleInfo.Sample != null) || (sampleInfo.MultiOctaveSamples != null)) && (sampleInfo.Length > 0))
 						{
 							Array sample = sampleInfo.Sample;
-							Array secondSample = sampleInfo.SecondSample;
 							uint offset = sampleInfo.SampleOffset;
 							uint length = sampleInfo.Length;
 							uint loopStart = sampleInfo.LoopStart;
@@ -837,8 +836,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 								SampleInfo.MultiOctaveInfo octaveInfo = sampleInfo.MultiOctaveSamples[octave];
 								note += octaveInfo.NoteAdd;
 
-								sample = octaveInfo.Sample[0];
-								secondSample = octaveInfo.Sample.Length > 1 ? octaveInfo.Sample[1] : null;
+								sample = octaveInfo.Sample;
 
 								length = (uint)sample.Length;
 								loopStart = octaveInfo.LoopStart;
@@ -865,11 +863,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							if ((sampleInfo.Flags & SampleInfo.SampleFlag._16Bit) != 0)
 								playFlag |= PlaySampleFlag._16Bit;
 
-							// Play it
 							if ((sampleInfo.Flags & SampleInfo.SampleFlag.Stereo) != 0)
-								channel.PlayStereoSample(-1, sample, secondSample, offset, length, playFlag);
-							else
-								channel.PlaySample(-1, sample, offset, length, playFlag);
+								playFlag |= PlaySampleFlag.Stereo;
+
+							// Play it
+							channel.PlaySample(-1, sample, offset, length, playFlag);
 
 							channel.SetFrequency((uint)frequency);
 

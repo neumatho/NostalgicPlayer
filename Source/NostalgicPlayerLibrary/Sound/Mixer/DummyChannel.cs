@@ -46,17 +46,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 		/********************************************************************/
 		/// <summary>
-		/// Will start to play a stereo sample in the channel
-		/// </summary>
-		/********************************************************************/
-		public void PlayStereoSample(short sampleNumber, Array leftAdr, Array rightAdr, uint startOffset, uint length, PlaySampleFlag flag)
-		{
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Will play the sample in the channel, but first when the current
 		/// sample stops or loops. No retrigger is made
 		/// </summary>
@@ -81,18 +70,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 		/********************************************************************/
 		/// <summary>
-		/// Will play the sample in the channel, but first when the current
-		/// sample stops or loops. No retrigger is made
-		/// </summary>
-		/********************************************************************/
-		public void SetStereoSample(Array leftAdr, Array rightAdr, uint startOffset, uint length, PlaySampleFlag flag)
-		{
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Will set the loop point in the sample
 		/// </summary>
 		/********************************************************************/
@@ -108,17 +85,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// </summary>
 		/********************************************************************/
 		public void SetLoop(Array adr, uint startOffset, uint length, ChannelLoopType type)
-		{
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will set the loop point and change the sample
-		/// </summary>
-		/********************************************************************/
-		public void SetLoop(Array leftAdr, Array rightAdr, uint startOffset, uint length, ChannelLoopType type)
 		{
 		}
 

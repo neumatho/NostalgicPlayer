@@ -34,12 +34,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 
 		private readonly OctaMedWorker worker;
 
-		private readonly sbyte[][][] data = new sbyte[2][][];
+		private sbyte[][] data;
 		private uint dataLen;							// Length of one sample
 		private uint length;							// Sample length in samples
 		private bool isStereo;
 		private bool is16Bit;
-		private ushort channels;						// 1 = Mono, 2 = Stereo
 		private int sampleType;
 		private int numberOfOctaves;					// Holds the number of octaves the sample contains
 
@@ -54,7 +53,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			this.worker = worker;
 
 			dataLen = sizeof(sbyte);
-			channels = 1;
 		}
 
 
@@ -91,15 +89,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// Return the buffer to the sample data
 		/// </summary>
 		/********************************************************************/
-		public sbyte[] GetSampleBuffer(ushort ch, int octave)
+		public sbyte[] GetSampleBuffer(int octave)
 		{
 			if (octave >= numberOfOctaves)
 				return null;
 
-			if (data[ch] == null)
+			if (data == null)
 				return null;
 
-			return data[ch][octave];
+			return data[octave];
 		}
 
 
@@ -109,10 +107,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// Return the buffer to play
 		/// </summary>
 		/********************************************************************/
-		public sbyte[] GetPlayBuffer(ushort ch, NoteNum note, ref uint repeat, ref uint repLen)
+		public sbyte[] GetPlayBuffer(NoteNum note, ref uint repeat, ref uint repLen)
 		{
 			if (sampleType == 0)
-				return data[ch][0];
+				return data[0];
 
 			int octave = note / 12;
 			if (octave > 5)
@@ -122,7 +120,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			repeat <<= bufNum;
 			repLen <<= bufNum;
 
-			return data[ch][bufNum];
+			return data[bufNum];
 		}
 
 
@@ -222,13 +220,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			{
 				// No conversion implemented
 				isStereo = true;
-				channels = 2;
 			}
 			else
 			{
 				// We don't mix the stereo sample together to a mono sample
 				isStereo = false;
-				channels = 1;
 			}
 		}
 
@@ -265,8 +261,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 			sampleType = type > 6 ? 0 : (type & 0x0f);
 			numberOfOctaves = multiOctaveCount[sampleType];
 
-			for (ushort chCnt = 0; chCnt < channels; chCnt++)
-				data[chCnt] = new sbyte[numberOfOctaves][];
+			data = new sbyte[numberOfOctaves][];
 		}
 
 
@@ -278,11 +273,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/********************************************************************/
 		private void SetLength(uint newLen)
 		{
-			for (ushort chCnt = 0; chCnt < channels; chCnt++)
-			{
-				if (newLen != length)
-					InitSampleBuffers(chCnt, dataLen * newLen);
-			}
+			if (newLen != length)
+				InitSampleBuffers(dataLen * newLen);
 
 			length = newLen;
 
@@ -310,21 +302,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// Set sample buffers
 		/// </summary>
 		/********************************************************************/
-		private void InitSampleBuffers(ushort ch, uint len)
+		private void InitSampleBuffers(uint len)
 		{
 			if (len == 0)
-				data[ch] = null;
+				data = null;
 			else
 			{
 				if (numberOfOctaves == 1)
-					data[ch][0] = new sbyte[len];
+				{
+					if (isStereo)
+						len *= 2;
+
+					data[0] = new sbyte[len];
+				}
 				else
 				{
 					uint baseLen = len / (uint)((1 << numberOfOctaves) - 1);
 
+					if (isStereo)
+						baseLen *= 2;
+
 					for (int i = 0; i < numberOfOctaves; i++)
 					{
-						data[ch][i] = new sbyte[baseLen];
+						data[i] = new sbyte[baseLen];
 						baseLen <<= 1;
 					}
 				}

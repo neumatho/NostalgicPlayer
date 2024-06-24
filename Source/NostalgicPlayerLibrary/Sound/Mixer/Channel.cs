@@ -18,14 +18,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		protected class Sample
 		{
 			/// <summary>
-			/// Sample data for the left speaker
+			/// Sample data
 			/// </summary>
-			public Array Left;
-
-			/// <summary>
-			/// Sample data for the right speaker or null for mono samples
-			/// </summary>
-			public Array Right;
+			public Array SampleData;
 
 			/// <summary>
 			/// Start offset or loop offset in the sample in samples, not bytes
@@ -145,46 +140,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			if (startOffset > adr.Length)
 				throw new ArgumentException("startOffset is bigger than length", nameof(startOffset));
 
-			SetPlaySampleInfo(sampleNumber, adr, null, startOffset, length, flag);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will start to play a stereo sample in the channel
-		/// </summary>
-		/// <param name="sampleNumber">is the sample number being played. If unknown, set it to -1</param>
-		/// <param name="leftAdr">is a pointer to the sample in memory to be played in the left speaker</param>
-		/// <param name="rightAdr">is a pointer to the sample in memory to be played in the right speaker</param>
-		/// <param name="startOffset">is the number of samples in the sample to start</param>
-		/// <param name="length">is the length in samples of the sample</param>
-		/// <param name="flag">indicate the format of the sample and how to play it</param>
-		/********************************************************************/
-		public void PlayStereoSample(short sampleNumber, Array leftAdr, Array rightAdr, uint startOffset, uint length, PlaySampleFlag flag)
-		{
-			if (leftAdr == null)
-				throw new ArgumentNullException(nameof(leftAdr));
-
-			if (rightAdr == null)
-				throw new ArgumentNullException(nameof(rightAdr));
-
-			if (leftAdr.GetType() != rightAdr.GetType())
-				throw new ArgumentException("Left and right speaker arrays must be of the same type", nameof(leftAdr));
-
-			if (leftAdr.Length != rightAdr.Length)
-				throw new ArgumentException("Left and right speaker arrays must be of equal size", nameof(leftAdr));
-
-			if ((leftAdr.GetType() != typeof(sbyte[])) && (leftAdr.GetType() != typeof(short[])) && (leftAdr.GetType() != typeof(byte[])))
-				throw new ArgumentException("Type of array must be either sbyte[], short[] or byte[]", nameof(leftAdr));
-
-			if (length == 0)
-				throw new ArgumentException("Length may not be zero", nameof(length));
-
-			if (startOffset > leftAdr.Length)
-				throw new ArgumentException("startOffset is bigger than length", nameof(startOffset));
-
-			SetPlaySampleInfo(sampleNumber, leftAdr, rightAdr, startOffset, length, flag);
+			SetPlaySampleInfo(sampleNumber, adr, startOffset, length, flag);
 		}
 
 
@@ -205,7 +161,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			if (startOffset > sampleInfo.Sample.Length)
 				throw new ArgumentException("startOffset is bigger than length", nameof(startOffset));
 
-			SetNewSampleInfo(sampleInfo.Sample.Left, sampleInfo.Sample.Right, startOffset, length, PlaySampleFlag.None);
+			SetNewSampleInfo(sampleInfo.Sample.SampleData, startOffset, length, PlaySampleFlag.None);
 			newSampleInfo.Flags = sampleInfo.Flags;
 		}
 
@@ -235,46 +191,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			if (startOffset > adr.Length)
 				throw new ArgumentException("startOffset is bigger than length", nameof(startOffset));
 
-			SetNewSampleInfo(adr, null, startOffset, length, flag);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will play the sample in the channel, but first when the current
-		/// sample stops or loops. No retrigger is made
-		/// </summary>
-		/// <param name="leftAdr">is a pointer to the sample in memory to be played in the left speaker</param>
-		/// <param name="rightAdr">is a pointer to the sample in memory to be played in the right speaker</param>
-		/// <param name="startOffset">is the number of samples in the sample to start</param>
-		/// <param name="length">is the length in samples of the sample</param>
-		/// <param name="flag">indicate the format of the sample and how to play it</param>
-		/********************************************************************/
-		public void SetStereoSample(Array leftAdr, Array rightAdr, uint startOffset, uint length, PlaySampleFlag flag)
-		{
-			if (leftAdr == null)
-				throw new ArgumentNullException(nameof(leftAdr));
-
-			if (rightAdr == null)
-				throw new ArgumentNullException(nameof(rightAdr));
-
-			if (leftAdr.GetType() != rightAdr.GetType())
-				throw new ArgumentException("Left and right speaker arrays must be of the same type", nameof(leftAdr));
-
-			if (leftAdr.Length != rightAdr.Length)
-				throw new ArgumentException("Left and right speaker arrays must be of equal size", nameof(leftAdr));
-
-			if ((leftAdr.GetType() != typeof(sbyte[])) && (leftAdr.GetType() != typeof(short[])) && (leftAdr.GetType() != typeof(byte[])))
-				throw new ArgumentException("Type of array must be either sbyte[], short[] or byte[]", nameof(leftAdr));
-
-			if (length == 0)
-				throw new ArgumentException("Length may not be zero", nameof(length));
-
-			if (startOffset > leftAdr.Length)
-				throw new ArgumentException("startOffset is bigger than length", nameof(startOffset));
-
-			SetNewSampleInfo(leftAdr, rightAdr, startOffset, length, flag);
+			SetNewSampleInfo(adr, startOffset, length, flag);
 		}
 
 
@@ -297,7 +214,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			if ((startOffset + length) > (sampleInf.Sample.Start + sampleInf.Sample.Length))
 				throw new ArgumentException("Loop length is bigger than previous set length of sample", nameof(length));
 
-			SetLoopInfo(sampleInf, sampleInf.Sample.Left, sampleInf.Sample.Right, startOffset, length, type);
+			SetLoopInfo(sampleInf, sampleInf.Sample.SampleData, startOffset, length, type);
 		}
 
 
@@ -324,47 +241,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			if (length == 0)
 				throw new ArgumentException("Length may not be zero", nameof(length));
 
-			if (sampleInf.Sample.Right != null)
-				throw new InvalidOperationException("Can only be used on mono samples");
-
-			SetLoopInfo(sampleInf, adr, null, startOffset, length, type);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will set the loop point and change the sample
-		/// </summary>
-		/// <param name="leftAdr">is a pointer to the sample in memory to be played in the left speaker</param>
-		/// <param name="rightAdr">is a pointer to the sample in memory to be played in the right speaker</param>
-		/// <param name="startOffset">is the number of samples in the sample to start</param>
-		/// <param name="length">is the length in samples to loop</param>
-		/// <param name="type">is the type of the loop</param>
-		/********************************************************************/
-		public void SetLoop(Array leftAdr, Array rightAdr, uint startOffset, uint length, ChannelLoopType type)
-		{
-			SampleInfo sampleInf = newSampleInfo ?? sampleInfo;
-
-			if (leftAdr == null)
-				throw new ArgumentNullException(nameof(leftAdr));
-
-			if (rightAdr == null)
-				throw new ArgumentNullException(nameof(rightAdr));
-
-			if (leftAdr.GetType() != rightAdr.GetType())
-				throw new ArgumentException("Left and right speaker arrays must be of the same type", nameof(leftAdr));
-
-			if (leftAdr.Length != rightAdr.Length)
-				throw new ArgumentException("Left and right speaker arrays must be of equal size", nameof(leftAdr));
-
-			if ((leftAdr.GetType() != typeof(sbyte[])) && (leftAdr.GetType() != typeof(short[])) && (leftAdr.GetType() != typeof(byte[])))
-				throw new ArgumentException("Type of array must be either sbyte[], short[] or byte[]", nameof(leftAdr));
-
-			if (length == 0)
-				throw new ArgumentException("Length may not be zero", nameof(length));
-
-			SetLoopInfo(sampleInf, leftAdr, rightAdr, startOffset, length, type);
+			SetLoopInfo(sampleInf, adr, startOffset, length, type);
 		}
 
 
@@ -579,7 +456,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Set the sample information in internal variables
 		/// </summary>
 		/********************************************************************/
-		private void SetPlaySampleInfo(short sampleNumber, Array leftAdr, Array rightAdr, uint startOffset, uint length, PlaySampleFlag playFlag)
+		private void SetPlaySampleInfo(short sampleNumber, Array sampleData, uint startOffset, uint length, PlaySampleFlag playFlag)
 		{
 			currentSampleNumber = sampleNumber;
 
@@ -588,7 +465,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 			newSampleInfo = null;
 
-			SetSampleInfo(sampleInfo, leftAdr, rightAdr, startOffset, length, playFlag);
+			SetSampleInfo(sampleInfo, sampleData, startOffset, length, playFlag);
 		}
 
 
@@ -598,11 +475,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Set new sample information in internal variables
 		/// </summary>
 		/********************************************************************/
-		private void SetNewSampleInfo(Array leftAdr, Array rightAdr, uint startOffset, uint length, PlaySampleFlag playFlag)
+		private void SetNewSampleInfo(Array sampleData, uint startOffset, uint length, PlaySampleFlag playFlag)
 		{
 			newSampleInfo = new SampleInfo();
 
-			SetSampleInfo(newSampleInfo, leftAdr, rightAdr, startOffset, length, playFlag);
+			SetSampleInfo(newSampleInfo, sampleData, startOffset, length, playFlag);
 		}
 
 
@@ -612,16 +489,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Set the sample information in internal variables
 		/// </summary>
 		/********************************************************************/
-		private void SetSampleInfo(SampleInfo sampleInf, Array leftAdr, Array rightAdr, uint startOffset, uint length, PlaySampleFlag playFlag)
+		private void SetSampleInfo(SampleInfo sampleInf, Array sampleData, uint startOffset, uint length, PlaySampleFlag playFlag)
 		{
-			sampleInf.Sample.Left = leftAdr;
-			sampleInf.Sample.Right = rightAdr;
+			sampleInf.Sample.SampleData = sampleData;
 			sampleInf.Sample.Start = startOffset;
 			sampleInf.Sample.Length = length;
 			sampleInf.Flags = ChannelSampleFlag.None;
 
 			if ((playFlag & PlaySampleFlag._16Bit) != 0)
 				sampleInf.Flags |= ChannelSampleFlag._16Bit;
+
+			if ((playFlag & PlaySampleFlag.Stereo) != 0)
+				sampleInf.Flags |= ChannelSampleFlag.Stereo;
 
 			if ((playFlag & PlaySampleFlag.Backwards) != 0)
 				sampleInf.Flags |= ChannelSampleFlag.Backwards;
@@ -634,12 +513,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Set the loop information in internal variables
 		/// </summary>
 		/********************************************************************/
-		private void SetLoopInfo(SampleInfo sampleInf, Array leftAdr, Array rightAdr, uint startOffset, uint length, ChannelLoopType type)
+		private void SetLoopInfo(SampleInfo sampleInf, Array sampleData, uint startOffset, uint length, ChannelLoopType type)
 		{
 			sampleInf.Loop = new Sample
 			{
-				Left = leftAdr,
-				Right = rightAdr,
+				SampleData = sampleData,
 				Start = startOffset,
 				Length = length
 			};

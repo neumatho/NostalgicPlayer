@@ -36,17 +36,6 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		void PlaySample(short sampleNumber, Array adr, uint startOffset, uint length, PlaySampleFlag flag = PlaySampleFlag.None);
 
 		/// <summary>
-		/// Will start to play a stereo sample in the channel
-		/// </summary>
-		/// <param name="sampleNumber">is the sample number being played. If unknown, set it to -1</param>
-		/// <param name="leftAdr">is a pointer to the sample in memory to be played in the left speaker</param>
-		/// <param name="rightAdr">is a pointer to the sample in memory to be played in the right speaker</param>
-		/// <param name="startOffset">is the number of samples in the sample to start</param>
-		/// <param name="length">is the length in samples of the sample</param>
-		/// <param name="flag">indicate the format of the sample and how to play it</param>
-		void PlayStereoSample(short sampleNumber, Array leftAdr, Array rightAdr, uint startOffset, uint length, PlaySampleFlag flag = PlaySampleFlag.None);
-
-		/// <summary>
 		/// Will play the sample in the channel, but first when the current
 		/// sample stops or loops. No retrigger is made
 		/// </summary>
@@ -65,17 +54,6 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		void SetSample(Array adr, uint startOffset, uint length, PlaySampleFlag flag = PlaySampleFlag.None);
 
 		/// <summary>
-		/// Will play the sample in the channel, but first when the current
-		/// sample stops or loops. No retrigger is made
-		/// </summary>
-		/// <param name="leftAdr">is a pointer to the sample in memory to be played in the left speaker</param>
-		/// <param name="rightAdr">is a pointer to the sample in memory to be played in the right speaker</param>
-		/// <param name="startOffset">is the number of samples in the sample to start</param>
-		/// <param name="length">is the length in samples of the sample</param>
-		/// <param name="flag">indicate the format of the sample and how to play it</param>
-		void SetStereoSample(Array leftAdr, Array rightAdr, uint startOffset, uint length, PlaySampleFlag flag = PlaySampleFlag.None);
-
-		/// <summary>
 		/// Will set the loop point in the sample
 		/// </summary>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
@@ -91,16 +69,6 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <param name="length">is the length in samples to loop</param>
 		/// <param name="type">is the type of the loop</param>
 		void SetLoop(Array adr, uint startOffset, uint length, ChannelLoopType type = ChannelLoopType.Normal);
-
-		/// <summary>
-		/// Will set the loop point and change the sample
-		/// </summary>
-		/// <param name="leftAdr">is a pointer to the sample in memory to be played in the left speaker</param>
-		/// <param name="rightAdr">is a pointer to the sample in memory to be played in the right speaker</param>
-		/// <param name="startOffset">is the number of samples in the sample to start</param>
-		/// <param name="length">is the length in samples to loop</param>
-		/// <param name="type">is the type of the loop</param>
-		void SetLoop(Array leftAdr, Array rightAdr, uint startOffset, uint length, ChannelLoopType type = ChannelLoopType.Normal);
 
 		/// <summary>
 		/// Set the current playing position of the sample to the value given
