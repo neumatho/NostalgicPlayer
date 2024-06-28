@@ -501,7 +501,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (xfh.Instruments > 255)
 				return -1;
 
-			if (xfh.Restart > 255)
+			if ((xfh.Restart > 255) && (xfh.Restart != 0xffff))
 				return -1;
 
 			if (xfh.Channels > Constants.Xmp_Max_Channels)
@@ -531,7 +531,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			mod.Chn = xfh.Channels;
 			mod.Pat = xfh.Patterns;
 			mod.Ins = xfh.Instruments;
-			mod.Rst = xfh.Restart;
+			mod.Rst = xfh.Restart > 255 ? 0 : xfh.Restart;
 			mod.Spd = xfh.Tempo;
 			mod.Bpm = xfh.Bpm;
 			mod.Trk = mod.Chn * mod.Pat + 1;
