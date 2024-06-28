@@ -642,7 +642,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 											if (--loop_Count[chn_To_Use] != 0)
 											{
-												// Next iteraction
+												// Next iteration
 												loop_Chn = chn_To_Use;
 											}
 											else

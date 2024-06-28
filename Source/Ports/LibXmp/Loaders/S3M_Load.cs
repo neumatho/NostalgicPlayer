@@ -28,6 +28,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		[Flags]
 		private enum S3M_Flag : uint16
 		{
+			None = 0,
 			St2_Vib = 0x01,			// Not recognized
 			St2_Tempo = 0x02,		// Not recognized
 			Amiga_Slide = 0x04,		// Not recognized
@@ -591,11 +592,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				pp_Pat[i] = f.Hio_Read16L();
 
 			// Default pan positions
-			for (i = 0, sfh.Dp -= 0xfc; (sfh.Dp == 0) && (i < 32); i++)
+			if (sfh.Dp == 0xfc)
 			{
-				uint8 x = f.Hio_Read8();
-				if ((x & S3M_Pan_Set) != 0)
-					mod.Xxc[i].Pan = (x << 4) & 0xff;
+				for (i = 0; i < 32; i++)
+				{
+					uint8 x = f.Hio_Read8();
+					if ((x & S3M_Pan_Set) != 0)
+						mod.Xxc[i].Pan = (x << 4) & 0xff;
+				}
 			}
 
 			m.C4Rate = Constants.C4_Ntsc_Rate;
@@ -609,14 +613,38 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			{
 				case 1:
 				{
-					tracker_Name = string.Format("Scream Tracker {0}.{1:x2}", (sfh.Version & 0x0f00) >> 8, sfh.Version & 0xff);
-					m.Quirk |= Quirk_Flag.St3Bugs;
+					if ((sfh.Version == 0x1320) && (sfh.Special == 0) && ((sfh.OrdNum & 0x0f) == 0) && (sfh.Uc == 0) && ((sfh.Flags & ~(S3M_Flag.Amiga_Range | S3M_Flag.St300_Vols)) == 0) && (sfh.Dp == 0xfc))
+					{
+						if ((sfh.Mv & 0x80) != 0)
+							tracker_Name = "ModPlug Tracker / OpenMPT 1.17";
+						else
+						{
+							// MPT 1.0 alpha5 doesn't set the stereo flag, but MPT 1.0 alpha6 does
+							tracker_Name = "ModPlug Tracker 1.0 alpha";
+						}
+					}
+					else if ((sfh.Version == 0x1320) && (sfh.Special == 0) && (sfh.Uc == 0) && (sfh.Flags == S3M_Flag.None) && (sfh.Dp == 0))
+					{
+						if ((sfh.Gv == 64) && (sfh.Mv == 48))
+							tracker_Name = "PlayerPRO";
+						else	// Always stereo
+							tracker_Name = "Velvet Studio";
+					}
+					else
+					{
+						tracker_Name = string.Format("Scream Tracker {0}.{1:x2}", (sfh.Version & 0x0f00) >> 8, sfh.Version & 0xff);
+						m.Quirk |= Quirk_Flag.St3Bugs;
+					}
 					break;
 				}
 
 				case 2:
 				{
-					tracker_Name = string.Format("Imago Orpheus {0}.{1:x2}", (sfh.Version & 0x0f00) >> 8, sfh.Version & 0xff);
+					if (sfh.Version == 0x2013)
+						tracker_Name = "PlayerPRO";		// PlayerPRO on Intel doesn't byte swap the tracker ID bytes
+					else
+						tracker_Name = string.Format("Imago Orpheus {0}.{1:x2}", (sfh.Version & 0x0f00) >> 8, sfh.Version & 0xff);
+
 					break;
 				}
 

@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers
 		public const c_int SMix_Shift = 16;
 		public const c_int SMix_Mask = 0xffff;
 
-		public const c_int Filter_Shift = 16;
+		public const c_int Filter_Shift = 22;
 		public const c_int AntiClick_Shift = 3;
 
 		public const c_int Pan_Surround = 0x8000;

@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer;
@@ -21,6 +22,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		// settings, you MUST also regenerate the arrays
 		private const c_int Spline_QuantBits = 14;
 		private const c_int Spline_Shift = Spline_QuantBits;
+
+		// Sample pre-amplification is required to fix filter rounding errors
+		// at high sample rates. The non-filtered mixers do not need this
+		private const c_int PreAmp_Bits = 15;
+
+		// IT's WAV output driver uses a clamp that seems to roughly match this:
+		// compare the WAV output of OpenMPT env-flt-max.it and filter-reset.it
+		private const int64 Filter_Min = -65536 * (1 << PreAmp_Bits);
+		private const int64 Filter_Max = 65535 * (1 << PreAmp_Bits);
 
 		/********************************************************************/
 		/// <summary>
@@ -328,6 +338,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			#region VAR_FILTER_MONO
 			c_int fl1 = vi.Filter.L1, fl2 = vi.Filter.L2;
 			int64 a0 = vi.Filter.A0, b0 = vi.Filter.B0, b1 = vi.Filter.B1;
+			int64 sl64;
 			c_int sl;
 			#endregion
 
@@ -345,10 +356,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				c_int vl1 = old_VL >> 8;
 
 				#region MIX_MONO_FILTER
-				sl = (c_int)((a0 * smp_In + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift);
-				Common.Clamp(ref sl, -65536, 65535);
+				sl64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+				sl = Mix_Filter_Clamp(sl64);
 				fl2 = fl1; fl1 = sl;
-				buffer[offset++] += sl * vl1;
+				buffer[offset++] += (sl >> PreAmp_Bits) * vl1;
 				#endregion
 
 				old_VL += delta_L;
@@ -372,10 +383,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				#endregion
 
 				#region MIX_MONO_FILTER
-				sl = (c_int)((a0 * smp_In + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift);
-				Common.Clamp(ref sl, -65536, 65535);
+				sl64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+				sl = Mix_Filter_Clamp(sl64);
 				fl2 = fl1; fl1 = sl;
-				buffer[offset++] += sl * vl;
+				buffer[offset++] += (sl >> PreAmp_Bits) * vl;
 				#endregion
 
 				#region UPDATE_POS
@@ -417,6 +428,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			#region VAR_FILTER_MONO
 			c_int fl1 = vi.Filter.L1, fl2 = vi.Filter.L2;
 			int64 a0 = vi.Filter.A0, b0 = vi.Filter.B0, b1 = vi.Filter.B1;
+			int64 sl64;
 			c_int sl;
 			#endregion
 
@@ -434,10 +446,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				c_int vl1 = old_VL >> 8;
 
 				#region MIX_MONO_FILTER
-				sl = (c_int)((a0 * smp_In + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift);
-				Common.Clamp(ref sl, -65536, 65535);
+				sl64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+				sl = Mix_Filter_Clamp(sl64);
 				fl2 = fl1; fl1 = sl;
-				buffer[offset++] += sl * vl1;
+				buffer[offset++] += (sl >> PreAmp_Bits) * vl1;
 				#endregion
 
 				old_VL += delta_L;
@@ -461,10 +473,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				#endregion
 
 				#region MIX_MONO_FILTER
-				sl = (c_int)((a0 * smp_In + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift);
-				Common.Clamp(ref sl, -65536, 65535);
+				sl64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+				sl = Mix_Filter_Clamp(sl64);
 				fl2 = fl1; fl1 = sl;
-				buffer[offset++] += sl * vl;
+				buffer[offset++] += (sl >> PreAmp_Bits) * vl;
 				#endregion
 
 				#region UPDATE_POS
@@ -513,10 +525,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			#region VAR_FILTER_MONO
 			c_int fl1 = vi.Filter.L1, fl2 = vi.Filter.L2;
 			int64 a0 = vi.Filter.A0, b0 = vi.Filter.B0, b1 = vi.Filter.B1;
+			int64 sl64;
 			c_int sl;
 			#endregion
 
 			c_int fr1 = vi.Filter.R1, fr2 = vi.Filter.R2;
+			int64 sr64;
 			c_int sr;
 			#endregion
 
@@ -535,14 +549,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				c_int vl1 = old_VL >> 8;
 
 				#region MIX_STEREO_FILTER
-				sr = (c_int)((a0 * smp_In + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift);
-				Common.Clamp(ref sr, -65536, 65535);
+				sr64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
+				sr = Mix_Filter_Clamp(sr64);
 				fr2 = fr1; fr1 = sr;
-				sl = (c_int)((a0 * smp_In + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift);
-				Common.Clamp(ref sl, -65536, 65535);
+				sl64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+				sl = Mix_Filter_Clamp(sl64);
 				fl2 = fl1; fl1 = sl;
-				buffer[offset++] += sr * vr1;
-				buffer[offset++] += sl * vl1;
+				buffer[offset++] += (sr >> PreAmp_Bits) * vr1;
+				buffer[offset++] += (sl >> PreAmp_Bits) * vl1;
 				#endregion
 
 				old_VR += delta_R;
@@ -567,14 +581,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				#endregion
 
 				#region MIX_STEREO_FILTER
-				sr = (c_int)((a0 * smp_In + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift);
-				Common.Clamp(ref sr, -65536, 65535);
+				sr64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
+				sr = Mix_Filter_Clamp(sr64);
 				fr2 = fr1; fr1 = sr;
-				sl = (c_int)((a0 * smp_In + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift);
-				Common.Clamp(ref sl, -65536, 65535);
+				sl64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+				sl = Mix_Filter_Clamp(sl64);
 				fl2 = fl1; fl1 = sl;
-				buffer[offset++] += sr * vr;
-				buffer[offset++] += sl * vl;
+				buffer[offset++] += (sr >> PreAmp_Bits) * vr;
+				buffer[offset++] += (sl >> PreAmp_Bits) * vl;
 				#endregion
 
 				#region UPDATE_POS
@@ -629,10 +643,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			#region VAR_FILTER_MONO
 			c_int fl1 = vi.Filter.L1, fl2 = vi.Filter.L2;
 			int64 a0 = vi.Filter.A0, b0 = vi.Filter.B0, b1 = vi.Filter.B1;
+			int64 sl64;
 			c_int sl;
 			#endregion
 
 			c_int fr1 = vi.Filter.R1, fr2 = vi.Filter.R2;
+			int64 sr64;
 			c_int sr;
 			#endregion
 
@@ -651,14 +667,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				c_int vl1 = old_VL >> 8;
 
 				#region MIX_STEREO_FILTER
-				sr = (c_int)((a0 * smp_In + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift);
-				Common.Clamp(ref sr, -65536, 65535);
+				sr64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
+				sr = Mix_Filter_Clamp(sr64);
 				fr2 = fr1; fr1 = sr;
-				sl = (c_int)((a0 * smp_In + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift);
-				Common.Clamp(ref sl, -65536, 65535);
+				sl64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+				sl = Mix_Filter_Clamp(sl64);
 				fl2 = fl1; fl1 = sl;
-				buffer[offset++] += sr * vr1;
-				buffer[offset++] += sl * vl1;
+				buffer[offset++] += (sr >> PreAmp_Bits) * vr1;
+				buffer[offset++] += (sl >> PreAmp_Bits) * vl1;
 				#endregion
 
 				old_VR += delta_R;
@@ -683,14 +699,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				#endregion
 
 				#region MIX_STEREO_FILTER
-				sr = (c_int)((a0 * smp_In + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift);
-				Common.Clamp(ref sr, -65536, 65535);
+				sr64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
+				sr = Mix_Filter_Clamp(sr64);
 				fr2 = fr1; fr1 = sr;
-				sl = (c_int)((a0 * smp_In + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift);
-				Common.Clamp(ref sl, -65536, 65535);
+				sl64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+				sl = Mix_Filter_Clamp(sl64);
 				fl2 = fl1; fl1 = sl;
-				buffer[offset++] += sr * vr;
-				buffer[offset++] += sl * vl;
+				buffer[offset++] += (sr >> PreAmp_Bits) * vr;
+				buffer[offset++] += (sl >> PreAmp_Bits) * vl;
 				#endregion
 
 				#region UPDATE_POS
@@ -711,5 +727,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			vi.Filter.R2 = fr2;
 			#endregion
 		}
+
+		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static c_int Mix_Filter_Clamp(int64 a)
+		{
+			return (c_int)(a < Filter_Min ? Filter_Min : a > Filter_Max ? Filter_Max : a);
+		}
+		#endregion
 	}
 }

@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Dsm_Load.LibXmp_Loader_Dsm,
 
 			Mod_Load.LibXmp_Loader_TestOnly,
-			null
+			null		// List terminator
 		};
 
 		/********************************************************************/

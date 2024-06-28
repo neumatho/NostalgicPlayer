@@ -136,6 +136,30 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 		/********************************************************************/
 		/// <summary>
+		/// Calculate the required number of sample frames to render a tick
+		/// </summary>
+		/********************************************************************/
+		public c_int LibXmp_Mixer_Get_TickSize(c_int freq, c_double time_Factor, c_double rRate, c_int bpm)
+		{
+			if ((freq < 0) || (bpm <= 0) || (time_Factor <= 0.0) || (rRate <= 0.0))
+				return -1;
+
+			c_double calc = freq * time_Factor * rRate / bpm / 1000;
+			if ((calc > c_int.MaxValue) || (calc == c_double.NaN))
+				return -1;
+
+			c_int tickSize = (c_int)calc;
+
+			if (tickSize < (1 << Constants.AntiClick_Shift))
+				tickSize = 1 << Constants.AntiClick_Shift;
+
+			return tickSize;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Fill the output buffer calling one of the handlers. The buffer
 		/// contains sound for one tick (a PAL frame or 1/50s for standard
 		/// vblank-timed mods)
@@ -1230,10 +1254,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Module_Data m = ctx.M;
 			Mixer_Data s = ctx.S;
 
-			s.TickSize = (c_int)(s.Freq * m.Time_Factor * m.RRate / p.Bpm / 1000);
+			s.TickSize = LibXmp_Mixer_Get_TickSize(s.Freq, m.Time_Factor, m.RRate, p.Bpm);
 
-			if (s.TickSize < (1 << Constants.AntiClick_Shift))
-				s.TickSize = 1 << Constants.AntiClick_Shift;
+			// Protect the mixer from broken values caused by xmp_set_tempo_factor
+			if ((s.TickSize < 0) || (s.TickSize > (Constants.Xmp_Max_FrameSize / 2)))
+				s.TickSize = Constants.Xmp_Max_FrameSize / 2;
 
 			c_int byteLen = s.TickSize;
 			if ((~s.Format & Xmp_Format.Mono) != 0)

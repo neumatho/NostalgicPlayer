@@ -385,6 +385,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 		/********************************************************************/
 		/// <summary>
+		/// Modify the replay tempo multiplier
+		/// </summary>
+		/********************************************************************/
+		public c_int Xmp_Set_Tempo_Factor(c_double val)
+		{
+			return control.Xmp_Set_Tempo_Factor(val);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Stop the currently playing module
 		/// </summary>
 		/********************************************************************/

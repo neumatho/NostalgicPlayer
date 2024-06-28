@@ -29,8 +29,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// other machines, and it is unlikely that you'll ever encounter sound in
 		/// one of the Arc's own formats (there are several)
 		/// </summary>
-		private static readonly int8[] vdic_Table = new int8[128]
-		{
+		private static readonly int8[] vdic_Table =
+		[
 			/*   0 */	  0,   0,   0,   0,   0,   0,   0,   0,
 			/*   8 */	  0,   0,   0,   0,   0,   0,   0,   0,
 			/*  16 */	  0,   0,   0,   0,   0,   0,   0,   0,
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			/* 104 */	 46,  48,  50,  52,  54,  56,  58,  60,
 			/* 112 */	 62,  65,  68,  72,  77,  80,  84,  91,
 			/* 120 */	 95,  98, 103, 109, 114, 120, 126, 127
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>
@@ -129,7 +129,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			c_int byteLen = xxs.Len;
 			c_int extraLen = 4;
 
-			// Disable birectional loop flag if sample is not looped
+			// Disable bidirectional loop flag if sample is not looped
 			if ((xxs.Flg & Xmp_Sample_Flag.Loop_BiDir) != 0)
 			{
 				if ((~xxs.Flg & Xmp_Sample_Flag.Loop) != 0)

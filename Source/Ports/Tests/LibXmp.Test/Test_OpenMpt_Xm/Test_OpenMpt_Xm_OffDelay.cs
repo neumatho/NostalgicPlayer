@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_OpenMpt_Xm
 		/// out, no nothing.
 		/// 
 		/// Claudio's note -- I didn't implement the envelope retrigger
-		/// thing, but the test works nontheless. Maybe I'm doing something
+		/// thing, but the test works nonetheless. Maybe I'm doing something
 		/// wrong?
 		/// </summary>
 		/********************************************************************/

@@ -611,6 +611,42 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			p.Inject_Event[channel]._Flag = 1;
 		}
 
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Modify the replay tempo multiplier
+		/// </summary>
+		/********************************************************************/
+		public c_int Xmp_Set_Tempo_Factor(c_double val)
+		{
+			Player_Data p = ctx.P;
+			Module_Data m = ctx.M;
+			Mixer_Data s = ctx.S;
+
+			// This function relies on values initialized by xmp_start_player
+			// and will behave in an undefined manner if called prior
+			if (ctx.State < Xmp_State.Playing)
+				return -(c_int)Xmp_Error.State;
+
+			if ((val < 0.0) || (c_double.IsNaN(val)))
+				return -1;
+
+			val *= 10;
+
+			// s->freq can change between xmp_start_player calls and p->bpm can
+			// change during playback, so repeat these checks in the mixer
+			c_int tickSize = lib.mixer.LibXmp_Mixer_Get_TickSize(s.Freq, val, m.RRate, p.Bpm);
+
+			// ticksize is in frames, XMP_MAX_FRAMESIZE is in frames * 2
+			if ((tickSize < 0) || (tickSize > (Constants.Xmp_Max_FrameSize / 2)))
+				return -1;
+
+			m.Time_Factor = val;
+
+			return 0;
+		}
+
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
