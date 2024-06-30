@@ -87,7 +87,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 					opaque.Xmp_Play_Frame();
 					opaque.Xmp_Get_Frame_Info(out Xmp_Frame_Info info);
 
-					c_int voc = Util.Map_Channel(p, 0);
+					c_int voc = Map_Channel(p, 0);
 					Assert.IsTrue(voc >= 0, "Virtual map");
 					Mixer_Voice vi = p.Virt.Voice_Array[voc];
 

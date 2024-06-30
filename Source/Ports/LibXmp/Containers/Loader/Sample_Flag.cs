@@ -54,6 +54,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Loader
 		Vidc = 0x0080,
 
 		/// <summary>
+		/// Interleaved stereo sample
+		/// </summary>
+		Interleaved = 0x0100,
+
+		/// <summary>
 		/// Play full sample before looping
 		/// </summary>
 		FullRep = 0x0200,

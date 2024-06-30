@@ -25,10 +25,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		private const c_int Lim16_Hi = 32767;
 		private const c_int Lim16_Lo = -32768;
 
-		private const c_int Loop_Prologue = 1;
-		private const c_int Loop_Epilogue = 2;
-
 		private const c_int AntiClick_FPShift = 24;
+
+		private const c_int Loop_Prologue = 1 * 2;	// Stereo
+		private const c_int Loop_Epilogue = 2 * 2;	// Stereo
 
 		private delegate void Mix_Fp(Mixer_Voice vi, int32[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R);
 
@@ -89,6 +89,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				null,
 				null,
 				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
 				null
 			};
 
@@ -101,19 +109,35 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				null,
 				null,
 				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
 				null
 			};
 
 			spline_Mixers = new Mix_Fp[]
 			{
-				Mix_All.LibXmp_Mix_Mono_8Bit_Spline,
-				Mix_All.LibXmp_Mix_Mono_16Bit_Spline,
-				Mix_All.LibXmp_Mix_Stereo_8Bit_Spline,
-				Mix_All.LibXmp_Mix_Stereo_16Bit_Spline,
-				Mix_All.LibXmp_Mix_Mono_8Bit_Spline_Filter,
-				Mix_All.LibXmp_Mix_Mono_16Bit_Spline_Filter,
-				Mix_All.LibXmp_Mix_Stereo_8Bit_Spline_Filter,
-				Mix_All.LibXmp_Mix_Stereo_16Bit_Spline_Filter
+				Mix_All.LibXmp_Mix_MonoOut_Mono_8Bit_Spline,
+				Mix_All.LibXmp_Mix_MonoOut_Mono_16Bit_Spline,
+				Mix_All.LibXmp_Mix_MonoOut_Stereo_8Bit_Spline,
+				Mix_All.LibXmp_Mix_MonoOut_Stereo_16Bit_Spline,
+				Mix_All.LibXmp_Mix_StereoOut_Mono_8Bit_Spline,
+				Mix_All.LibXmp_Mix_StereoOut_Mono_16Bit_Spline,
+				Mix_All.LibXmp_Mix_StereoOut_Stereo_8Bit_Spline,
+				Mix_All.LibXmp_Mix_StereoOut_Stereo_16Bit_Spline,
+				Mix_All.LibXmp_Mix_MonoOut_Mono_8Bit_Spline_Filter,
+				Mix_All.LibXmp_Mix_MonoOut_Mono_16Bit_Spline_Filter,
+				Mix_All.LibXmp_Mix_MonoOut_Stereo_8Bit_Spline_Filter,
+				Mix_All.LibXmp_Mix_MonoOut_Stereo_16Bit_Spline_Filter,
+				Mix_All.LibXmp_Mix_StereoOut_Mono_8Bit_Spline_Filter,
+				Mix_All.LibXmp_Mix_StereoOut_Mono_16Bit_Spline_Filter,
+				Mix_All.LibXmp_Mix_StereoOut_Stereo_8Bit_Spline_Filter,
+				Mix_All.LibXmp_Mix_StereoOut_Stereo_16Bit_Spline_Filter,
 			};
 		}
 
@@ -145,7 +169,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				return -1;
 
 			c_double calc = freq * time_Factor * rRate / bpm / 1000;
-			if ((calc > c_int.MaxValue) || (calc == c_double.NaN))
+			if ((calc > c_int.MaxValue) || c_double.IsNaN(calc))
 				return -1;
 
 			c_int tickSize = (c_int)calc;
@@ -258,17 +282,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				if (vi.Pan == Constants.Pan_Surround)
 				{
-					vol_R = vol * 0x80;
+					vol_L = vol * 0x80;
 
 					if (s.EnableSurround)
-						vol_L = -vol * 0x80;
+						vol_R = -vol * 0x80;
 					else
-						vol_L = vol * 0x80;
+						vol_R = vol * 0x80;
 				}
 				else
 				{
-					vol_R = vol * (0x80 - vi.Pan);
-					vol_L = vol * (0x80 + vi.Pan);
+					vol_L = vol * (0x80 - vi.Pan);
+					vol_R = vol * (0x80 + vi.Pan);
 				}
 
 				if (vi.Smp < mod.Smp)
@@ -361,9 +385,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						if (samples > 0)
 						{
 							if ((~s.Format & Xmp_Format.Mono) != 0)
-								prev_R = s.Buf32[buf_Pos + mix_Size - 2];
-
-							prev_L = s.Buf32[buf_Pos + mix_Size - 1];
+							{
+								prev_L = s.Buf32[buf_Pos + mix_Size - 2];
+								prev_R = s.Buf32[buf_Pos + mix_Size - 1];
+							}
+							else
+								prev_L = s.Buf32[buf_Pos + mix_Size - 1];
 						}
 						else
 							prev_R = prev_L = 0;
@@ -402,9 +429,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							// For Hipolito's anticlick routine
 							if ((~s.Format & Xmp_Format.Mono) != 0)
-								vi.SRight = s.Buf32[buf_Pos - 2] - prev_R;
-
-							vi.SLeft = s.Buf32[buf_Pos - 1] - prev_L;
+							{
+								vi.SLeft = s.Buf32[buf_Pos - 2] - prev_L;
+								vi.SRight = s.Buf32[buf_Pos - 1] - prev_R;
+							}
+							else
+								vi.SLeft = s.Buf32[buf_Pos - 1] - prev_L;
 						}
 					}
 
@@ -575,7 +605,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			vi.FIdx = 0;
 
 			if ((~s.Format & Xmp_Format.Mono) != 0)
-				vi.FIdx |= Mixer_Index_Flag.Stereo;
+				vi.FIdx |= Mixer_Index_Flag.StereoOut;
 
 			Set_Sample_End(voc, 0);
 
@@ -588,6 +618,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			if ((xxs.Flg & Xmp_Sample_Flag._16Bit) != 0)
 				vi.FIdx |= Mixer_Index_Flag._16_Bits;
+
+			if ((xxs.Flg & Xmp_Sample_Flag.Stereo) != 0)
+				vi.FIdx |= Mixer_Index_Flag.Stereo;
 
 			LibXmp_Mixer_VoicePos(voc, 0, ac);
 		}
@@ -935,8 +968,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Mixer_Voice vi = p.Virt.Voice_Array[voc];
 			c_int discharge = s.TickSize >> Constants.AntiClick_Shift;
 
-			c_int smp_R = vi.SRight;
 			c_int smp_L = vi.SLeft;
+			c_int smp_R = vi.SRight;
 			vi.SRight = vi.SLeft = 0;
 
 			if ((smp_L == 0) && (smp_R == 0))
@@ -967,8 +1000,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					uint32 stepMul_Sq = (uint32)(stepMul >> (AntiClick_FPShift - 16));
 					stepMul_Sq *= stepMul_Sq;
 
-					buf[offset++] += (int32)((stepMul_Sq * smp_R) >> 32);
 					buf[offset++] += (int32)((stepMul_Sq * smp_L) >> 32);
+					buf[offset++] += (int32)((stepMul_Sq * smp_R) >> 32);
 				}
 			}
 			else
@@ -1040,13 +1073,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			ld._16Bit = (xxs.Flg & Xmp_Sample_Flag._16Bit) != 0;
 			ld.Active = true;
 
+			// Stereo
+			if ((xxs.Flg & Xmp_Sample_Flag.Stereo) != 0)
+			{
+				ld.Start <<= 1;
+				ld.End <<= 1;
+			}
+
 			bool biDir = (vi.Flags & Mixer_Flag.Voice_BiDir) != 0;
 
 			if (ld._16Bit)
 			{
-				Span<uint16> buf = MemoryMarshal.Cast<byte, uint16>(vi.SPtr);
-				c_int start = (vi.SPtrOffset / 2) + vi.Start;
-				c_int end = (vi.SPtrOffset / 2) + vi.End;
+				Span<uint16> buf = MemoryMarshal.Cast<byte, uint16>(ld.SPtr);
+				c_int start = (ld.SPtrOffset / 2) + ld.Start;
+				c_int end = (ld.SPtrOffset / 2) + ld.End;
 
 				if (!ld.First_Loop)
 				{
@@ -1066,9 +1106,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			}
 			else
 			{
-				uint8[] buf = vi.SPtr;
-				c_int start = vi.SPtrOffset + vi.Start;
-				c_int end = vi.SPtrOffset + vi.End;
+				uint8[] buf = ld.SPtr;
+				c_int start = ld.SPtrOffset + ld.Start;
+				c_int end = ld.SPtrOffset + ld.End;
 
 				if (!ld.First_Loop)
 				{

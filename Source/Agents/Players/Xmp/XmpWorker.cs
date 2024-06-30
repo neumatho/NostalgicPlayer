@@ -517,6 +517,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 					if ((sample.Flg & Xmp_Sample_Flag._16Bit) != 0)
 						sampleInfo.Flags |= SampleInfo.SampleFlag._16Bit;
 
+					if ((sample.Flg & Xmp_Sample_Flag.Stereo) != 0)
+						sampleInfo.Flags |= SampleInfo.SampleFlag.Stereo;
+
 					// Add extra loop flags if any
 					if ((sample.Flg & Xmp_Sample_Flag.Loop) != 0)
 					{

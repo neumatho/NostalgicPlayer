@@ -28,7 +28,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Fuzzer
 				new Playback_Sequence(Playback_Action.Play_End, 0, 0)
 			};
 
-			Util.Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_It_Row_0_Loop_Row_Delay.it", sequence, 4000, 0, 0);
+			Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_It_Row_0_Loop_Row_Delay.it", sequence, 4000, 0, 0);
 		}
 	}
 }

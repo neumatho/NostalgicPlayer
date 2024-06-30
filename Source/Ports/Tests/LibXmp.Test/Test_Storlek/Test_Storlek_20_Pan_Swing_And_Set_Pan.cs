@@ -94,9 +94,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 				Assert.AreEqual(128, values[32 + i], "Pan center not set");
 
 			// Check pan randomness
-			Assert.IsTrue(Util.Check_Randomness(values, 8, 8, 10), "Randomness error");
-			Assert.IsTrue(Util.Check_Randomness(values, 24, 8, 10), "Randomness error");
-			Assert.IsTrue(Util.Check_Randomness(values, 48, 16, 10), "Randomness error");
+			Assert.IsTrue(Check_Randomness(values, 8, 8, 10), "Randomness error");
+			Assert.IsTrue(Check_Randomness(values, 24, 8, 10), "Randomness error");
+			Assert.IsTrue(Check_Randomness(values, 48, 16, 10), "Randomness error");
 
 			opaque.Xmp_End_Player();
 			opaque.Xmp_Release_Module();

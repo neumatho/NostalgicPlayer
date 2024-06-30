@@ -1918,6 +1918,55 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
+		private byte[] Unpack_It_Sample(Xmp_Sample xxs, It_Sample_Header ish, byte[] tmpBuf, Hio f)
+		{
+			c_int bytes = xxs.Len;
+			c_int channels = 1;
+
+			if ((ish.Flags & It_Smp_Flag._16Bit) != 0)
+				bytes <<= 1;
+
+			if ((ish.Flags & It_Smp_Flag.Stereo) != 0)
+			{
+				bytes <<= 1;
+				channels = 2;
+			}
+
+			uint8[] decBuf = new byte[bytes];
+			if (decBuf == null)
+				return null;
+
+			if ((ish.Flags & It_Smp_Flag._16Bit) != 0)
+			{
+				Span<int16> pos = MemoryMarshal.Cast<uint8, int16>(decBuf);
+
+				for (c_int i = 0; i < channels; i++)
+				{
+					Sample.ItSex_Decompress16(f, pos, xxs.Len, tmpBuf, Temp_Buffer_Len, (ish.Convert & It_Cvt_Flag.Diff) != 0);
+					pos = pos.Slice(xxs.Len);
+				}
+			}
+			else
+			{
+				Span<uint8> pos = decBuf;
+
+				for (c_int i = 0; i < channels; i++)
+				{
+					Sample.ItSex_Decompress8(f, pos, xxs.Len, tmpBuf, Temp_Buffer_Len, (ish.Convert & It_Cvt_Flag.Diff) != 0);
+					pos = pos.Slice(xxs.Len);
+				}
+			}
+
+			return decBuf;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		private c_int Load_It_Sample(Module_Data m, c_int i, c_int start, bool sample_Mode, uint8[] tmpBuf, Hio f)
 		{
 			It_Sample_Header ish = new It_Sample_Header();
@@ -1969,6 +2018,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			if ((ish.Flags & It_Smp_Flag._16Bit) != 0)
 				xxs.Flg = Xmp_Sample_Flag._16Bit;
+
+			if ((ish.Flags & It_Smp_Flag.Stereo) != 0)
+				xxs.Flg |= Xmp_Sample_Flag.Stereo;
 
 			xxs.Len = (c_int)ish.Length;
 
@@ -2054,11 +2106,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				// Compressed samples
 				if ((ish.Flags & It_Smp_Flag.Comp) != 0)
 				{
+					c_int samples = xxs.Len;
+
+					if ((ish.Flags & It_Smp_Flag.Stereo) != 0)
+						samples <<= 1;
+
 					// Sanity check - the lower bound on IT compressed
 					// sample size (in bytes) is a little over 1/8th of the
 					// number of SAMPLES in the sample
 					c_long file_Len = f.Hio_Size();
-					c_long min_Size = xxs.Len >> 3;
+					c_long min_Size = samples >> 3;
 					c_long left = file_Len - (c_long)ish.Sample_Ptr;
 
 					// No data to read at all? Just skip it...
@@ -2068,23 +2125,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					if ((file_Len > 0) && (left < min_Size))
 						Force_Sample_Length(xxs, xtra, left << 3);
 
-					uint8[] decBuf = new uint8[xxs.Len * 2];
+					Hio s = f.GetSampleHio(i, samples);
+
+					uint8[] decBuf = Unpack_It_Sample(xxs, ish, tmpBuf, s);
 					if (decBuf == null)
+					{
+						s.Hio_Close();
 						return -1;
-					
-					Hio s = f.GetSampleHio(i, xxs.Len);
+					}
+
+					s.Hio_Close();
 
 					if ((ish.Flags & It_Smp_Flag._16Bit) != 0)
 					{
-						Sample.ItSex_Decompress16(s, MemoryMarshal.Cast<uint8, int16>(decBuf), xxs.Len, tmpBuf, Temp_Buffer_Len, (ish.Convert & It_Cvt_Flag.Diff) != 0);
-
 						if (!BitConverter.IsLittleEndian)
 							cvt |= Sample_Flag.BigEnd;
 					}
-					else
-						Sample.ItSex_Decompress8(s, decBuf, xxs.Len, tmpBuf, Temp_Buffer_Len, (ish.Convert & It_Cvt_Flag.Diff) != 0);
-
-					s.Hio_Close();
 
 					c_int ret = Sample.LibXmp_Load_Sample(m, null, Sample_Flag.NoLoad | cvt, mod.Xxs[i], decBuf);
 					if (ret < 0)

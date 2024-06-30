@@ -74,6 +74,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/********************************************************************/
 		public static c_int LibXmp_Load_Sample(Module_Data m, Hio f, Sample_Flag flags, Xmp_Sample xxs, Span<uint8> buffer)
 		{
+			c_int channels = 1;
+
 			// Adlib FM patches
 			if ((flags & Sample_Flag.Adlib) != 0)
 				return 0;
@@ -127,6 +129,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			// Patches with samples
 			// Allocate extra sample for interpolation
 			c_int byteLen = xxs.Len;
+			c_int frameLen = 1;
 			c_int extraLen = 4;
 
 			// Disable bidirectional loop flag if sample is not looped
@@ -146,6 +149,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			{
 				byteLen *= 2;
 				extraLen *= 2;
+				frameLen *= 2;
+			}
+
+			if ((xxs.Flg & Xmp_Sample_Flag.Stereo) != 0)
+			{
+				byteLen *= 2;
+				extraLen *= 2;
+				frameLen *= 2;
+				channels = 2;
 			}
 
 			// Add guard bytes before the buffer for higher order interpolation
@@ -156,8 +168,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			MemoryMarshal.Cast<byte, uint32>(xxs.Data)[0] = 0;
 			xxs.DataOffset = 4;
 
+			byte[] dest = xxs.Data;
+			int destOffset = xxs.DataOffset;
+
+			// If this is a non-interleaved stereo sample, most conversions need
+			// to occur in an intermediate buffer prior to interleaving. Most
+			// formats supporting stereo samples use non-interleaved stereo
+			if (((xxs.Flg & Xmp_Sample_Flag.Stereo) != 0) && ((~flags & Sample_Flag.Interleaved) != 0))
+			{
+				byte[] tmp = new byte[byteLen];
+				if (tmp == null)
+					goto Err2;
+
+				dest = tmp;
+				destOffset = 0;
+			}
+
 			if ((flags & Sample_Flag.NoLoad) != 0)
-				buffer.Slice(0, byteLen).CopyTo(xxs.Data.AsSpan(xxs.DataOffset));
+				buffer.Slice(0, byteLen).CopyTo(dest.AsSpan(destOffset));
 			else
 			{
 				if ((flags & Sample_Flag.Adpcm) != 0)
@@ -168,21 +196,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					if (f.Hio_Read(table, 1, 16) != 16)
 						goto Err2;
 
-					if (f.Hio_Read(xxs.Data.AsSpan(xxs.DataOffset + x2), 1, (size_t)x2) != (size_t)x2)
+					if (f.Hio_Read(dest.AsSpan(destOffset + x2), 1, (size_t)x2) != (size_t)x2)
 						goto Err2;
 
-					Adpcm4_Decoder(xxs.Data, xxs.DataOffset + x2, xxs.Data, xxs.DataOffset, table, byteLen);
+					Adpcm4_Decoder(dest, destOffset + x2, dest, destOffset, table, byteLen);
 				}
 				else
 				{
-					c_int x = (c_int)f.Hio_Read(xxs.Data.AsSpan(xxs.DataOffset), 1, (size_t)byteLen);
+					c_int x = (c_int)f.Hio_Read(dest.AsSpan(destOffset), 1, (size_t)byteLen);
 					if (x != byteLen)
-						Array.Clear(xxs.Data, xxs.DataOffset + x, byteLen - x);
+						Array.Clear(dest, destOffset + x, byteLen - x);
 				}
 			}
 
 			if ((flags & Sample_Flag._7Bit) != 0)
-				Convert_7Bit_To_8Bit(xxs.Data, xxs.DataOffset, xxs.Len);
+				Convert_7Bit_To_8Bit(dest, destOffset, xxs.Len * channels);
 
 			// Fix endianism if needed
 			if ((xxs.Flg & Xmp_Sample_Flag._16Bit) != 0)
@@ -190,18 +218,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				if (!BitConverter.IsLittleEndian)
 				{
 					if ((~flags & Sample_Flag.BigEnd) != 0)
-						Convert_Endian(xxs.Data, xxs.DataOffset, xxs.Len);
+						Convert_Endian(dest, destOffset, xxs.Len);
 				}
 				else
 				{
 					if ((flags & Sample_Flag.BigEnd) != 0)
-						Convert_Endian(xxs.Data, xxs.DataOffset, xxs.Len);
+						Convert_Endian(dest, destOffset, xxs.Len);
 				}
 			}
 
 			// Convert delta samples
 			if ((flags & Sample_Flag.Diff) != 0)
-				Convert_Delta(xxs.Data, xxs.DataOffset, xxs.Len, (xxs.Flg & Xmp_Sample_Flag._16Bit) != 0);
+				Convert_Delta(dest, destOffset, xxs.Len, (xxs.Flg & Xmp_Sample_Flag._16Bit) != 0, channels);
 			else if ((flags & Sample_Flag._8BDiff) != 0)
 			{
 				c_int len = xxs.Len;
@@ -209,15 +237,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				if ((xxs.Flg & Xmp_Sample_Flag._16Bit) != 0)
 					len *= 2;
 
-				Convert_Delta(xxs.Data, xxs.DataOffset, len, false);
+				Convert_Delta(dest, destOffset, len, false, channels);
 			}
 
 			// Convert samples to signed
 			if ((flags & Sample_Flag.Uns) != 0)
-				Convert_Signal(xxs.Data, xxs.DataOffset, xxs.Len, (xxs.Flg & Xmp_Sample_Flag._16Bit) != 0);
+				Convert_Signal(dest, destOffset, xxs.Len * channels, (xxs.Flg & Xmp_Sample_Flag._16Bit) != 0);
 
 			if ((flags & Sample_Flag.Vidc) != 0)
-				Convert_Vidc_To_Linear(xxs.Data, xxs.DataOffset, xxs.Len);
+				Convert_Vidc_To_Linear(dest, destOffset, xxs.Len * channels);
+
+			// Done converting individual samples; convert to interleaved
+			if (((xxs.Flg & Xmp_Sample_Flag.Stereo) != 0) && ((~flags & Sample_Flag.Interleaved) != 0))
+				Convert_Stereo_Interleaved(xxs.Data, xxs.DataOffset, dest, destOffset, xxs.Len, (xxs.Flg & Xmp_Sample_Flag._16Bit) != 0);
 
 			// Check for full loop samples
 			if ((flags & Sample_Flag.FullRep) != 0)
@@ -227,25 +259,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			}
 
 			// Add extra samples at end
-			if ((xxs.Flg & Xmp_Sample_Flag._16Bit) != 0)
-			{
-				for (c_int i = 0; i < 8; i++)
-					xxs.Data[xxs.DataOffset + byteLen + i] = xxs.Data[xxs.DataOffset + byteLen - 2 + i];
-			}
-			else
-			{
-				for (c_int i = 0; i < 4; i++)
-					xxs.Data[xxs.DataOffset + byteLen + i] = xxs.Data[xxs.DataOffset + byteLen - 1 + i];
-			}
+			for (c_int i = 0; i < extraLen; i++)
+				xxs.Data[xxs.DataOffset + byteLen + i] = xxs.Data[xxs.DataOffset + byteLen - frameLen + i];
 
 			// Add extra samples at start
-			if ((xxs.Flg & Xmp_Sample_Flag._16Bit) != 0)
-			{
-				xxs.Data[xxs.DataOffset - 2] = xxs.Data[xxs.DataOffset];
-				xxs.Data[xxs.DataOffset - 1] = xxs.Data[xxs.DataOffset + 1];
-			}
-			else
-				xxs.Data[xxs.DataOffset - 1] = xxs.Data[xxs.DataOffset];
+			for (c_int i = -1; i >= -4; i--)
+				xxs.Data[xxs.DataOffset + i] = xxs.Data[xxs.DataOffset + frameLen + i];
 
 			return 0;
 
@@ -331,27 +350,35 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// Convert differential to absolute sample data
 		/// </summary>
 		/********************************************************************/
-		private static void Convert_Delta(uint8[] p, int off, c_int l, bool r)
+		private static void Convert_Delta(uint8[] p, int off, c_int frames, bool is_16Bit, c_int channels)
 		{
-			uint16 absVal = 0;
-
-			if (r)
+			if (is_16Bit)
 			{
 				Span<uint16> w = MemoryMarshal.Cast<uint8, uint16>(p);
 				off /= 2;
 
-				for (; l-- != 0;)
+				for (c_int chn = 0; chn < channels; chn++)
 				{
-					absVal = (uint16)(w[off] + absVal);
-					w[off++] = absVal;
+					uint16 absVal = 0;
+
+					for (c_int i = 0; i < frames; i++)
+					{
+						absVal = (uint16)(w[off] + absVal);
+						w[off++] = absVal;
+					}
 				}
 			}
 			else
 			{
-				for (; l-- != 0;)
+				for (c_int chn = 0; chn < channels; chn++)
 				{
-					absVal = (uint16)(p[off] + absVal);
-					p[off++] = (uint8)absVal;
+					uint16 absVal = 0;
+
+					for (c_int i = 0; i < frames; i++)
+					{
+						absVal = (uint16)(p[off] + absVal);
+						p[off++] = (uint8)absVal;
+					}
 				}
 			}
 		}
@@ -396,6 +423,43 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				p[off + 1] = b;
 
 				off += 2;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert non-interleaved stereo to interleaved stereo.
+		/// Due to tracker quirks this should be done after delta decoding,
+		/// etc.
+		/// </summary>
+		/********************************************************************/
+		private static void Convert_Stereo_Interleaved(uint8[] __out, int out_Off, uint8[] _in, int in_Off, c_int frames, bool is_16Bit)
+		{
+			if (is_16Bit)
+			{
+				Span<int16> in_L = MemoryMarshal.Cast<uint8, int16>(_in.AsSpan(in_Off));
+				Span<int16> in_R = in_L.Slice(frames);
+				Span<int16> _out = MemoryMarshal.Cast<uint8, int16>(__out);
+				out_Off /= 2;
+
+				for (c_int i = 0; i < frames; i++)
+				{
+					_out[out_Off++] = in_L[i];
+					_out[out_Off++] = in_R[i];
+				}				
+			}
+			else
+			{
+				Span<uint8> in_L = _in.AsSpan(in_Off);
+				Span<uint8> in_R = in_L.Slice(frames);
+
+				for (c_int i = 0; i < frames; i++)
+				{
+					__out[out_Off++] = in_L[i];
+					__out[out_Off++] = in_R[i];
+				}				
 			}
 		}
 		#endregion

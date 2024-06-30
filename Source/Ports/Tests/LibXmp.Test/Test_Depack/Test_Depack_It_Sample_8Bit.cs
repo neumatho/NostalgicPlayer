@@ -34,7 +34,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Depack
 				c_int ret = Sample.ItSex_Decompress8(f, dest, 4879, tmp, tmp.Length, false);
 				Assert.AreEqual(0, ret, "Decompression fail");
 
-				ret = Util.Check_Md5(dest, 4879, "299C9144AE2349B90B430AAFDE8D799A");
+				ret = Check_Md5(dest, 4879, "299C9144AE2349B90B430AAFDE8D799A");
 				Assert.AreEqual(0, ret, "MD5 error");
 			}
 		}

@@ -29,7 +29,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Fuzzer
 				new Playback_Sequence(Playback_Action.Play_End, 0, 0)
 			};
 
-			Util.Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_Gdm_Bad_Loop.gdm", sequence, 4000, 0, 0);
+			Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_Gdm_Bad_Loop.gdm", sequence, 4000, 0, 0);
 		}
 	}
 }

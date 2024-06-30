@@ -30,12 +30,12 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Fuzzer
 			// This IT contains an instrument envelope with a sustain end value of
 			// 255, well past the number of envelope points. libxmp should ignore
 			// the envelope sustain in this case instead of crashing
-			Util.Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_It_Bad_Env_Sustain.it", sequence, 4000, 0, 0);
+			Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_It_Bad_Env_Sustain.it", sequence, 4000, 0, 0);
 
 			// This IT contains misordered envelope points at the start of the volume
 			// envelope, which could cause the interpolation formula to emit negative
 			// values and overflow later volume calculations (UBSan)
-			Util.Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_It_Bad_Env_Order.it", sequence, 4000, 0, 0);
+			Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_It_Bad_Env_Order.it", sequence, 4000, 0, 0);
 		}
 	}
 }

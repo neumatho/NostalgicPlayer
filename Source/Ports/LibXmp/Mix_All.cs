@@ -34,64 +34,119 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 		/********************************************************************/
 		/// <summary>
-		/// Handler for 8 bit samples, spline interpolated mono output
+		/// Handler for 8-bit mono samples, spline interpolated mono output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_Mono_8Bit_Spline(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_MonoOut_Mono_8Bit_Spline(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_MONO(int8)
-			c_int old_VL = vi.Old_VL;
 
-			#region VAR_NORM
-			c_int smp_In;
+			#region VAR_MONO(int8)
+			const c_int chn = 1;
+
+			#region VAR_NORM(int8)
+			c_int smpL;
 			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr);
 			c_int sPtrOffset = vi.SPtrOffset;
-			c_uint pos = (c_uint)vi.Pos;
+			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
 
 			#endregion
 
+			#endregion
+
+			#region VAR_MONOOUT
+			c_int old_VL = vi.Old_VL;
+			#endregion
+
 			for (; count > ramp; count--)
 			{
-				#region SPLINE_INTERP
-				c_int f = frac >> 6;
-				smp_In = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + (c_int)pos - 1] +
-						  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + (c_int)pos] +
-						  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + (c_int)pos + 2] +
-						  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + (c_int)pos + 1]) >> (Spline_Shift - 8);
-				#endregion
+				{
+					const c_int off = 0;
 
-				#region MIX_MONO_AC
-				buffer[offset++] += smp_In * (old_VL >> 8);
-				old_VL += delta_L;
-				#endregion
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In = smpL;
+
+					#region MIX_MONO_AC
+					{
+						{
+							c_int out_Sample = smp_In;
+							c_int out_Level = old_VL >> 8;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						old_VL += delta_L;
+					}
+					#endregion
+				}
 
 				#region UPDATE_POS
-				frac += step;
-				pos += (c_uint)(frac >> Constants.SMix_Shift);
-				frac &= Constants.SMix_Mask;
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
 				#endregion
 			}
 
 			for (; count != 0; count--)
 			{
-				#region SPLINE_INTERP
-				c_int f = frac >> 6;
-				smp_In = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + (c_int)pos - 1] +
-						  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + (c_int)pos] +
-						  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + (c_int)pos + 2] +
-						  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + (c_int)pos + 1]) >> (Spline_Shift - 8);
-				#endregion
+				{
+					const c_int off = 0;
 
-				#region MIX_MONO
-				buffer[offset++] += smp_In * vl;
-				#endregion
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In = smpL;
+
+					#region MIX_MONO
+					{
+						{
+							c_int out_Sample = smp_In;
+							c_int out_Level = vl;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+					}
+					#endregion
+				}
 
 				#region UPDATE_POS
-				frac += step;
-				pos += (c_uint)(frac >> Constants.SMix_Shift);
-				frac &= Constants.SMix_Mask;
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
 				#endregion
 			}
 		}
@@ -100,64 +155,121 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 		/********************************************************************/
 		/// <summary>
-		/// Handler for 16 bit samples, spline interpolated mono output
+		/// Handler for 16-bit mono samples, spline interpolated mono output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_Mono_16Bit_Spline(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_MonoOut_Mono_16Bit_Spline(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_MONO(int16)
-			c_int old_VL = vi.Old_VL;
 
-			#region VAR_NORM
-			c_int smp_In;
+			#region VAR_MONO(int16)
+			const c_int chn = 1;
+
+			#region VAR_NORM(int16)
+			c_int smpL;
 			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr);
 			c_int sPtrOffset = vi.SPtrOffset / 2;
-			c_uint pos = (c_uint)vi.Pos;
+			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
 
 			#endregion
 
+			#endregion
+
+			#region VAR_MONOOUT
+			c_int old_VL = vi.Old_VL;
+			#endregion
+
 			for (; count > ramp; count--)
 			{
-				#region SPLINE_INTERP_16BIT
-				c_int f = frac >> 6;
-				smp_In = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + (c_int)pos - 1] +
-						  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + (c_int)pos] +
-						  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + (c_int)pos + 2] +
-						  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + (c_int)pos + 1]) >> Spline_Shift;
-				#endregion
+				{
+					const c_int off = 0;
 
-				#region MIX_MONO_AC
-				buffer[offset++] += smp_In * (old_VL >> 8);
-				old_VL += delta_L;
-				#endregion
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In = smpL;
+
+					#region MIX_MONO_AC
+					{
+						{
+							c_int out_Sample = smp_In;
+							c_int out_Level = old_VL >> 8;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						old_VL += delta_L;
+					}
+					#endregion
+				}
 
 				#region UPDATE_POS
-				frac += step;
-				pos += (c_uint)(frac >> Constants.SMix_Shift);
-				frac &= Constants.SMix_Mask;
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
 				#endregion
 			}
 
 			for (; count != 0; count--)
 			{
-				#region SPLINE_INTERP_16BIT
-				c_int f = frac >> 6;
-				smp_In = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + (c_int)pos - 1] +
-						  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + (c_int)pos] +
-						  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + (c_int)pos + 2] +
-						  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + (c_int)pos + 1]) >> Spline_Shift;
-				#endregion
+				{
+					const c_int off = 0;
 
-				#region MIX_MONO
-				buffer[offset++] += smp_In * vl;
-				#endregion
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In = smpL;
+
+					#region MIX_MONO
+					{
+						{
+							c_int out_Sample = smp_In;
+							c_int out_Level = vl;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+					}
+					#endregion
+				}
 
 				#region UPDATE_POS
-				frac += step;
-				pos += (c_uint)(frac >> Constants.SMix_Shift);
-				frac &= Constants.SMix_Mask;
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
 				#endregion
 			}
 		}
@@ -166,73 +278,166 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 		/********************************************************************/
 		/// <summary>
-		/// Handler for 8 bit samples, spline interpolated stereo output
+		/// Handler for 8-bit stereo samples, spline interpolated mono output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_Stereo_8Bit_Spline(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_MonoOut_Stereo_8Bit_Spline(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_STEREO(int8)
 
-			#region VAR_SPLINE_MONO
-			c_int old_VL = vi.Old_VL;
+			#region VAR_STEREO(int8)
+			const c_int chn = 2;
+			c_int smpR;
 
-			#region VAR_NORM
-			c_int smp_In;
+			#region VAR_NORM(int8)
+			c_int smpL;
 			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr);
 			c_int sPtrOffset = vi.SPtrOffset;
-			c_uint pos = (c_uint)vi.Pos;
+			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
 
 			#endregion
 
-			c_int old_VR = vi.Old_VR;
+			#endregion
+
+			#region VAR_MONOOUT
+			c_int old_VL = vi.Old_VL;
 			#endregion
 
 			for (; count > ramp; count--)
 			{
-				#region SPLINE_INTERP
-				c_int f = frac >> 6;
-				smp_In = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + (c_int)pos - 1] +
-						  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + (c_int)pos] +
-						  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + (c_int)pos + 2] +
-						  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + (c_int)pos + 1]) >> (Spline_Shift - 8);
-				#endregion
+				{
+					const c_int off = 0;
 
-				#region MIX_STEREO_AC
-				buffer[offset++] += smp_In * (old_VR >> 8);
-				old_VR += delta_R;
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
 
-				buffer[offset++] += smp_In * (old_VL >> 8);
-				old_VL += delta_L;
-				#endregion
+				{
+					const c_int off = 1;
+
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region MIX_MONO_AVG_AC
+					{
+						{
+							c_int smp_In = (smp_In_L + smp_In_R) >> 1;
+
+							#region MIX_MONO_AC
+							{
+								{
+									c_int out_Sample = smp_In;
+									c_int out_Level = old_VL >> 8;
+
+									#region MIX_OUT
+									{
+										buffer[offset++] += out_Sample * out_Level;
+									}
+									#endregion
+								}
+
+								old_VL += delta_L;
+							}
+							#endregion
+						}
+					}
+					#endregion
+				}
 
 				#region UPDATE_POS
-				frac += step;
-				pos += (c_uint)(frac >> Constants.SMix_Shift);
-				frac &= Constants.SMix_Mask;
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
 				#endregion
 			}
 
 			for (; count != 0; count--)
 			{
-				#region SPLINE_INTERP
-				c_int f = frac >> 6;
-				smp_In = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + (c_int)pos - 1] +
-						  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + (c_int)pos] +
-						  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + (c_int)pos + 2] +
-						  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + (c_int)pos + 1]) >> (Spline_Shift - 8);
-				#endregion
+				{
+					const c_int off = 0;
 
-				#region MIX_STEREO
-				buffer[offset++] += smp_In * vr;
-				buffer[offset++] += smp_In * vl;
-				#endregion
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
+
+				{
+					const c_int off = 1;
+
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region MIX_MONO_AVG
+					{
+						{
+							c_int smp_In = (smp_In_L + smp_In_R) >> 1;
+
+							#region MIX_MONO
+							{
+								{
+									c_int out_Sample = smp_In;
+									c_int out_Level = vl;
+
+									#region MIX_OUT
+									{
+										buffer[offset++] += out_Sample * out_Level;
+									}
+									#endregion
+								}
+							}
+							#endregion
+						}
+					}
+					#endregion
+				}
 
 				#region UPDATE_POS
-				frac += step;
-				pos += (c_uint)(frac >> Constants.SMix_Shift);
-				frac &= Constants.SMix_Mask;
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
 				#endregion
 			}
 		}
@@ -241,24 +446,205 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 		/********************************************************************/
 		/// <summary>
-		/// Handler for 16 bit samples, spline interpolated stereo output
+		/// Handler for 16-bit stereo samples, spline interpolated mono
+		/// output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_Stereo_16Bit_Spline(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_MonoOut_Stereo_16Bit_Spline(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_STEREO(int16)
 
-			#region VAR_SPLINE_MONO
-			c_int old_VL = vi.Old_VL;
+			#region VAR_STEREO(int16)
+			const c_int chn = 2;
+			c_int smpR;
 
-			#region VAR_NORM
-			c_int smp_In;
+			#region VAR_NORM(int16)
+			c_int smpL;
 			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr);
 			c_int sPtrOffset = vi.SPtrOffset / 2;
-			c_uint pos = (c_uint)vi.Pos;
+			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
 
+			#endregion
+
+			#endregion
+
+			#region VAR_MONOOUT
+			c_int old_VL = vi.Old_VL;
+			#endregion
+
+			for (; count > ramp; count--)
+			{
+				{
+					const c_int off = 0;
+
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					const c_int off = 1;
+
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region MIX_MONO_AVG_AC
+					{
+						{
+							c_int smp_In = (smp_In_L + smp_In_R) >> 1;
+
+							#region MIX_MONO_AC
+							{
+								{
+									c_int out_Sample = smp_In;
+									c_int out_Level = old_VL >> 8;
+
+									#region MIX_OUT
+									{
+										buffer[offset++] += out_Sample * out_Level;
+									}
+									#endregion
+								}
+
+								old_VL += delta_L;
+							}
+							#endregion
+						}
+					}
+					#endregion
+				}
+
+				#region UPDATE_POS
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
+				#endregion
+			}
+
+			for (; count != 0; count--)
+			{
+				{
+					const c_int off = 0;
+
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					const c_int off = 1;
+
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region MIX_MONO_AVG
+					{
+						{
+							c_int smp_In = (smp_In_L + smp_In_R) >> 1;
+
+							#region MIX_MONO
+							{
+								{
+									c_int out_Sample = smp_In;
+									c_int out_Level = vl;
+
+									#region MIX_OUT
+									{
+										buffer[offset++] += out_Sample * out_Level;
+									}
+									#endregion
+								}
+							}
+							#endregion
+						}
+					}
+					#endregion
+				}
+
+				#region UPDATE_POS
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
+				#endregion
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handler for 8-bit mono samples, spline interpolated stereo output
+		/// </summary>
+		/********************************************************************/
+		public static void LibXmp_Mix_StereoOut_Mono_8Bit_Spline(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		{
+			#region VAR_SPLINE_MONO(int8)
+
+			#region VAR_MONO(int8)
+			const c_int chn = 1;
+
+			#region VAR_NORM(int8)
+			c_int smpL;
+			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr);
+			c_int sPtrOffset = vi.SPtrOffset;
+			c_int pos = ((c_int)vi.Pos) * chn;
+			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
+			#endregion
+
+			#endregion
+
+			#endregion
+
+			#region VAR_STEREOOUT
+
+			#region VAR_MONOOUT
+			c_int old_VL = vi.Old_VL;
 			#endregion
 
 			c_int old_VR = vi.Old_VR;
@@ -266,48 +652,116 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			for (; count > ramp; count--)
 			{
-				#region SPLINE_INTERP_16BIT
-				c_int f = frac >> 6;
-				smp_In = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + (c_int)pos - 1] +
-						  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + (c_int)pos] +
-						  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + (c_int)pos + 2] +
-						  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + (c_int)pos + 1]) >> Spline_Shift;
-				#endregion
+				{
+					const c_int off = 0;
 
-				#region MIX_STEREO_AC
-				buffer[offset++] += smp_In * (old_VR >> 8);
-				old_VR += delta_R;
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
 
-				buffer[offset++] += smp_In * (old_VL >> 8);
-				old_VL += delta_L;
-				#endregion
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpL;
+
+					#region MIX_STEREO_AC
+					{
+						{
+							c_int out_Sample = smp_In_L;
+							c_int out_Level = old_VL >> 8;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						{
+							c_int out_Sample = smp_In_R;
+							c_int out_Level = old_VR >> 8;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						old_VL += delta_L;
+						old_VR += delta_R;
+					}
+					#endregion
+				}
 
 				#region UPDATE_POS
-				frac += step;
-				pos += (c_uint)(frac >> Constants.SMix_Shift);
-				frac &= Constants.SMix_Mask;
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
 				#endregion
 			}
 
 			for (; count != 0; count--)
 			{
-				#region SPLINE_INTERP_16BIT
-				c_int f = frac >> 6;
-				smp_In = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + (c_int)pos - 1] +
-						  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + (c_int)pos] +
-						  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + (c_int)pos + 2] +
-						  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + (c_int)pos + 1]) >> Spline_Shift;
-				#endregion
+				{
+					const c_int off = 0;
 
-				#region MIX_STEREO
-				buffer[offset++] += smp_In * vr;
-				buffer[offset++] += smp_In * vl;
-				#endregion
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpL;
+
+					#region MIX_STEREO
+					{
+						{
+							c_int out_Sample = smp_In_L;
+							c_int out_Level = vl;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						{
+							c_int out_Sample = smp_In_R;
+							c_int out_Level = vr;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+					}
+					#endregion
+				}
 
 				#region UPDATE_POS
-				frac += step;
-				pos += (c_uint)(frac >> Constants.SMix_Shift);
-				frac &= Constants.SMix_Mask;
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
 				#endregion
 			}
 		}
@@ -316,208 +770,905 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 		/********************************************************************/
 		/// <summary>
-		/// Handler for 8 bit samples, filtered spline interpolated mono
-		/// output
+		/// Handler for 16-bit mono samples, spline interpolated stereo output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_Mono_8Bit_Spline_Filter(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
-		{
-			#region VAR_SPLINE_MONO(int8)
-			c_int old_VL = vi.Old_VL;
-
-			#region VAR_NORM
-			c_int smp_In;
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr);
-			c_int sPtrOffset = vi.SPtrOffset;
-			c_uint pos = (c_uint)vi.Pos;
-			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
-			#endregion
-
-			#endregion
-
-			#region VAR_FILTER_MONO
-			c_int fl1 = vi.Filter.L1, fl2 = vi.Filter.L2;
-			int64 a0 = vi.Filter.A0, b0 = vi.Filter.B0, b1 = vi.Filter.B1;
-			int64 sl64;
-			c_int sl;
-			#endregion
-
-			for (; count > ramp; count--)
-			{
-				#region SPLINE_INTERP
-				c_int f = frac >> 6;
-				smp_In = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + (c_int)pos - 1] +
-						  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + (c_int)pos] +
-						  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + (c_int)pos + 2] +
-						  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + (c_int)pos + 1]) >> (Spline_Shift - 8);
-				#endregion
-
-				#region MIX_MONO_FILTER_AC
-				c_int vl1 = old_VL >> 8;
-
-				#region MIX_MONO_FILTER
-				sl64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
-				sl = Mix_Filter_Clamp(sl64);
-				fl2 = fl1; fl1 = sl;
-				buffer[offset++] += (sl >> PreAmp_Bits) * vl1;
-				#endregion
-
-				old_VL += delta_L;
-				#endregion
-
-				#region UPDATE_POS
-				frac += step;
-				pos += (c_uint)(frac >> Constants.SMix_Shift);
-				frac &= Constants.SMix_Mask;
-				#endregion
-			}
-
-			for (; count != 0; count--)
-			{
-				#region SPLINE_INTERP
-				c_int f = frac >> 6;
-				smp_In = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + (c_int)pos - 1] +
-						  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + (c_int)pos] +
-						  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + (c_int)pos + 2] +
-						  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + (c_int)pos + 1]) >> (Spline_Shift - 8);
-				#endregion
-
-				#region MIX_MONO_FILTER
-				sl64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
-				sl = Mix_Filter_Clamp(sl64);
-				fl2 = fl1; fl1 = sl;
-				buffer[offset++] += (sl >> PreAmp_Bits) * vl;
-				#endregion
-
-				#region UPDATE_POS
-				frac += step;
-				pos += (c_uint)(frac >> Constants.SMix_Shift);
-				frac &= Constants.SMix_Mask;
-				#endregion
-			}
-
-			#region SAVE_FILTER_MONO
-			vi.Filter.L1 = fl1;
-			vi.Filter.L2 = fl2;
-			#endregion
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Handler for 16 bit samples, filtered spline interpolated mono
-		/// output
-		/// </summary>
-		/********************************************************************/
-		public static void LibXmp_Mix_Mono_16Bit_Spline_Filter(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_StereoOut_Mono_16Bit_Spline(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_MONO(int16)
-			c_int old_VL = vi.Old_VL;
 
-			#region VAR_NORM
-			c_int smp_In;
+			#region VAR_MONO(int16)
+			const c_int chn = 1;
+
+			#region VAR_NORM(int16)
+			c_int smpL;
 			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr);
 			c_int sPtrOffset = vi.SPtrOffset / 2;
-			c_uint pos = (c_uint)vi.Pos;
+			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
 
 			#endregion
 
-			#region VAR_FILTER_MONO
-			c_int fl1 = vi.Filter.L1, fl2 = vi.Filter.L2;
-			int64 a0 = vi.Filter.A0, b0 = vi.Filter.B0, b1 = vi.Filter.B1;
-			int64 sl64;
-			c_int sl;
+			#endregion
+
+			#region VAR_STEREOOUT
+
+			#region VAR_MONOOUT
+			c_int old_VL = vi.Old_VL;
+			#endregion
+
+			c_int old_VR = vi.Old_VR;
 			#endregion
 
 			for (; count > ramp; count--)
 			{
-				#region SPLINE_INTERP_16BIT
-				c_int f = frac >> 6;
-				smp_In = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + (c_int)pos - 1] +
-						  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + (c_int)pos] +
-						  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + (c_int)pos + 2] +
-						  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + (c_int)pos + 1]) >> Spline_Shift;
-				#endregion
+				{
+					const c_int off = 0;
 
-				#region MIX_MONO_FILTER_AC
-				c_int vl1 = old_VL >> 8;
+					#region SPLINE_16BIT
+					{
 
-				#region MIX_MONO_FILTER
-				sl64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
-				sl = Mix_Filter_Clamp(sl64);
-				fl2 = fl1; fl1 = sl;
-				buffer[offset++] += (sl >> PreAmp_Bits) * vl1;
-				#endregion
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
 
-				old_VL += delta_L;
-				#endregion
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpL;
+
+					#region MIX_STEREO_AC
+					{
+						{
+							c_int out_Sample = smp_In_L;
+							c_int out_Level = old_VL >> 8;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						{
+							c_int out_Sample = smp_In_R;
+							c_int out_Level = old_VR >> 8;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						old_VL += delta_L;
+						old_VR += delta_R;
+					}
+					#endregion
+				}
 
 				#region UPDATE_POS
-				frac += step;
-				pos += (c_uint)(frac >> Constants.SMix_Shift);
-				frac &= Constants.SMix_Mask;
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
 				#endregion
 			}
 
 			for (; count != 0; count--)
 			{
-				#region SPLINE_INTERP_16BIT
-				c_int f = frac >> 6;
-				smp_In = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + (c_int)pos - 1] +
-						  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + (c_int)pos] +
-						  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + (c_int)pos + 2] +
-						  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + (c_int)pos + 1]) >> Spline_Shift;
-				#endregion
+				{
+					const c_int off = 0;
 
-				#region MIX_MONO_FILTER
-				sl64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
-				sl = Mix_Filter_Clamp(sl64);
-				fl2 = fl1; fl1 = sl;
-				buffer[offset++] += (sl >> PreAmp_Bits) * vl;
-				#endregion
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpL;
+
+					#region MIX_STEREO
+					{
+						{
+							c_int out_Sample = smp_In_L;
+							c_int out_Level = vl;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						{
+							c_int out_Sample = smp_In_R;
+							c_int out_Level = vr;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+					}
+					#endregion
+				}
 
 				#region UPDATE_POS
-				frac += step;
-				pos += (c_uint)(frac >> Constants.SMix_Shift);
-				frac &= Constants.SMix_Mask;
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
 				#endregion
 			}
-
-			#region SAVE_FILTER_MONO
-			vi.Filter.L1 = fl1;
-			vi.Filter.L2 = fl2;
-			#endregion
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Handler for 8 bit samples, filtered spline interpolated stereo
+		/// Handler for 8-bit stereo samples, spline interpolated stereo
 		/// output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_Stereo_8Bit_Spline_Filter(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_StereoOut_Stereo_8Bit_Spline(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_STEREO(int8)
 
-			#region VAR_SPLINE_MONO
-			c_int old_VL = vi.Old_VL;
+			#region VAR_STEREO(int8)
+			const c_int chn = 2;
+			c_int smpR;
 
-			#region VAR_NORM
-			c_int smp_In;
+			#region VAR_NORM(int8)
+			c_int smpL;
 			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr);
 			c_int sPtrOffset = vi.SPtrOffset;
-			c_uint pos = (c_uint)vi.Pos;
+			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
 
 			#endregion
 
+			#endregion
+
+			#region VAR_STEREOOUT
+
+			#region VAR_MONOOUT
+			c_int old_VL = vi.Old_VL;
+			#endregion
+
 			c_int old_VR = vi.Old_VR;
+			#endregion
+
+			for (; count > ramp; count--)
+			{
+				{
+					const c_int off = 0;
+
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
+
+				{
+					const c_int off = 1;
+
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region MIX_STEREO_AC
+					{
+						{
+							c_int out_Sample = smp_In_L;
+							c_int out_Level = old_VL >> 8;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						{
+							c_int out_Sample = smp_In_R;
+							c_int out_Level = old_VR >> 8;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						old_VL += delta_L;
+						old_VR += delta_R;
+					}
+					#endregion
+				}
+
+				#region UPDATE_POS
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
+				#endregion
+			}
+
+			for (; count != 0; count--)
+			{
+				{
+					const c_int off = 0;
+
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
+
+				{
+					const c_int off = 1;
+
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region MIX_STEREO
+					{
+						{
+							c_int out_Sample = smp_In_L;
+							c_int out_Level = vl;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						{
+							c_int out_Sample = smp_In_R;
+							c_int out_Level = vr;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+					}
+					#endregion
+				}
+
+				#region UPDATE_POS
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
+				#endregion
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handler for 16-bit stereo samples, spline interpolated stereo
+		/// output
+		/// </summary>
+		/********************************************************************/
+		public static void LibXmp_Mix_StereoOut_Stereo_16Bit_Spline(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		{
+			#region VAR_SPLINE_STEREO(int16)
+
+			#region VAR_STEREO(int16)
+			const c_int chn = 2;
+			c_int smpR;
+
+			#region VAR_NORM(int16)
+			c_int smpL;
+			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr);
+			c_int sPtrOffset = vi.SPtrOffset / 2;
+			c_int pos = ((c_int)vi.Pos) * chn;
+			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
+			#endregion
+
+			#endregion
+
+			#endregion
+
+			#region VAR_STEREOOUT
+
+			#region VAR_MONOOUT
+			c_int old_VL = vi.Old_VL;
+			#endregion
+
+			c_int old_VR = vi.Old_VR;
+			#endregion
+
+			for (; count > ramp; count--)
+			{
+				{
+					const c_int off = 0;
+
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					const c_int off = 1;
+
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region MIX_STEREO_AC
+					{
+						{
+							c_int out_Sample = smp_In_L;
+							c_int out_Level = old_VL >> 8;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						{
+							c_int out_Sample = smp_In_R;
+							c_int out_Level = old_VR >> 8;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						old_VL += delta_L;
+						old_VR += delta_R;
+					}
+					#endregion
+				}
+
+				#region UPDATE_POS
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
+				#endregion
+			}
+
+			for (; count != 0; count--)
+			{
+				{
+					const c_int off = 0;
+
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					const c_int off = 1;
+
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region MIX_STEREO
+					{
+						{
+							c_int out_Sample = smp_In_L;
+							c_int out_Level = vl;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						{
+							c_int out_Sample = smp_In_R;
+							c_int out_Level = vr;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+					}
+					#endregion
+				}
+
+				#region UPDATE_POS
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
+				#endregion
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handler for 8-bit mono samples, filtered spline interpolated mono
+		/// output
+		/// </summary>
+		/********************************************************************/
+		public static void LibXmp_Mix_MonoOut_Mono_8Bit_Spline_Filter(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		{
+			#region VAR_SPLINE_MONO(int8)
+
+			#region VAR_MONO(int8)
+			const c_int chn = 1;
+
+			#region VAR_NORM(int8)
+			c_int smpL;
+			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr);
+			c_int sPtrOffset = vi.SPtrOffset;
+			c_int pos = ((c_int)vi.Pos) * chn;
+			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
+			#endregion
+
+			#endregion
+
+			#endregion
+
+			#region VAR_FILTER_MONO
+			c_int fl1 = vi.Filter.L1, fl2 = vi.Filter.L2;
+			int64 a0 = vi.Filter.A0, b0 = vi.Filter.B0, b1 = vi.Filter.B1;
+			int64 sl64;
+			c_int sl;
+			#endregion
+
+			#region VAR_MONOOUT
+			c_int old_VL = vi.Old_VL;
+			#endregion
+
+			for (; count > ramp; count--)
+			{
+				{
+					const c_int off = 0;
+
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+
+					#region FILTER_MONO
+					{
+						#region FILTER_LEFT
+						{
+							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl = Mix_Filter_Clamp(sl64);
+							fl2 = fl1; fl1 = sl;
+							smp_In_L = (sl >> PreAmp_Bits);
+						}
+						#endregion
+					}
+					#endregion
+
+					smpL = smp_In_L;
+				}
+
+				{
+					c_int smp_In = smpL;
+
+					#region MIX_MONO_AC
+					{
+						{
+							c_int out_Sample = smp_In;
+							c_int out_Level = old_VL >> 8;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						old_VL += delta_L;
+					}
+					#endregion
+				}
+
+				#region UPDATE_POS
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
+				#endregion
+			}
+
+			for (; count != 0; count--)
+			{
+				{
+					const c_int off = 0;
+
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+
+					#region FILTER_MONO
+					{
+						#region FILTER_LEFT
+						{
+							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl = Mix_Filter_Clamp(sl64);
+							fl2 = fl1; fl1 = sl;
+							smp_In_L = (sl >> PreAmp_Bits);
+						}
+						#endregion
+					}
+					#endregion
+
+					smpL = smp_In_L;
+				}
+
+				{
+					c_int smp_In = smpL;
+
+					#region MIX_MONO
+					{
+						{
+							c_int out_Sample = smp_In;
+							c_int out_Level = vl;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+					}
+					#endregion
+				}
+
+				#region UPDATE_POS
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
+				#endregion
+			}
+
+			#region SAVE_FILTER_MONO
+			{
+				// Note: copying the left to the right here is for just in case these
+				// values don't get cleared between playing stereo/mono samples
+				vi.Filter.L1 = fl1;
+				vi.Filter.L2 = fl2;
+				vi.Filter.R1 = fl1;
+				vi.Filter.R2 = fl2;
+			}
+			#endregion
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handler for 16-bit mono samples, filtered spline interpolated
+		/// mono output
+		/// </summary>
+		/********************************************************************/
+		public static void LibXmp_Mix_MonoOut_Mono_16Bit_Spline_Filter(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		{
+			#region VAR_SPLINE_MONO(int16)
+
+			#region VAR_MONO(int16)
+			const c_int chn = 1;
+
+			#region VAR_NORM(int16)
+			c_int smpL;
+			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr);
+			c_int sPtrOffset = vi.SPtrOffset / 2;
+			c_int pos = ((c_int)vi.Pos) * chn;
+			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
+			#endregion
+
+			#endregion
+
+			#endregion
+
+			#region VAR_FILTER_MONO
+			c_int fl1 = vi.Filter.L1, fl2 = vi.Filter.L2;
+			int64 a0 = vi.Filter.A0, b0 = vi.Filter.B0, b1 = vi.Filter.B1;
+			int64 sl64;
+			c_int sl;
+			#endregion
+
+			#region VAR_MONOOUT
+			c_int old_VL = vi.Old_VL;
+			#endregion
+
+			for (; count > ramp; count--)
+			{
+				{
+					const c_int off = 0;
+
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+
+					#region FILTER_MONO
+					{
+						#region FILTER_LEFT
+						{
+							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl = Mix_Filter_Clamp(sl64);
+							fl2 = fl1; fl1 = sl;
+							smp_In_L = (sl >> PreAmp_Bits);
+						}
+						#endregion
+					}
+					#endregion
+
+					smpL = smp_In_L;
+				}
+
+				{
+					c_int smp_In = smpL;
+
+					#region MIX_MONO_AC
+					{
+						{
+							c_int out_Sample = smp_In;
+							c_int out_Level = old_VL >> 8;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						old_VL += delta_L;
+					}
+					#endregion
+				}
+
+				#region UPDATE_POS
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
+				#endregion
+			}
+
+			for (; count != 0; count--)
+			{
+				{
+					const c_int off = 0;
+
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+
+					#region FILTER_MONO
+					{
+						#region FILTER_LEFT
+						{
+							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl = Mix_Filter_Clamp(sl64);
+							fl2 = fl1; fl1 = sl;
+							smp_In_L = (sl >> PreAmp_Bits);
+						}
+						#endregion
+					}
+					#endregion
+
+					smpL = smp_In_L;
+				}
+
+				{
+					c_int smp_In = smpL;
+
+					#region MIX_MONO
+					{
+						{
+							c_int out_Sample = smp_In;
+							c_int out_Level = vl;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+					}
+					#endregion
+				}
+
+				#region UPDATE_POS
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
+				#endregion
+			}
+
+			#region SAVE_FILTER_MONO
+			{
+				// Note: copying the left to the right here is for just in case these
+				// values don't get cleared between playing stereo/mono samples
+				vi.Filter.L1 = fl1;
+				vi.Filter.L2 = fl2;
+				vi.Filter.R1 = fl1;
+				vi.Filter.R2 = fl2;
+			}
+			#endregion
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handler for 8-bit stereo samples, filtered spline interpolated
+		/// mono output
+		/// </summary>
+		/********************************************************************/
+		public static void LibXmp_Mix_MonoOut_Stereo_8Bit_Spline_Filter(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		{
+			#region VAR_SPLINE_STEREO(int8)
+
+			#region VAR_STEREO(int8)
+			const c_int chn = 2;
+			c_int smpR;
+
+			#region VAR_NORM(int8)
+			c_int smpL;
+			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr);
+			c_int sPtrOffset = vi.SPtrOffset;
+			c_int pos = ((c_int)vi.Pos) * chn;
+			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
+			#endregion
+
+			#endregion
+
 			#endregion
 
 			#region VAR_FILTER_STEREO
@@ -534,79 +1685,222 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			c_int sr;
 			#endregion
 
+			#region VAR_MONOOUT
+			c_int old_VL = vi.Old_VL;
+			#endregion
+
 			for (; count > ramp; count--)
 			{
-				#region SPLINE_INTERP
-				c_int f = frac >> 6;
-				smp_In = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + (c_int)pos - 1] +
-						  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + (c_int)pos] +
-						  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + (c_int)pos + 2] +
-						  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + (c_int)pos + 1]) >> (Spline_Shift - 8);
-				#endregion
+				{
+					const c_int off = 0;
 
-				#region MIX_STEREO_FILTER_AC
-				c_int vr1 = old_VR >> 8;
-				c_int vl1 = old_VL >> 8;
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
 
-				#region MIX_STEREO_FILTER
-				sr64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
-				sr = Mix_Filter_Clamp(sr64);
-				fr2 = fr1; fr1 = sr;
-				sl64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
-				sl = Mix_Filter_Clamp(sl64);
-				fl2 = fl1; fl1 = sl;
-				buffer[offset++] += (sr >> PreAmp_Bits) * vr1;
-				buffer[offset++] += (sl >> PreAmp_Bits) * vl1;
-				#endregion
+				{
+					const c_int off = 1;
 
-				old_VR += delta_R;
-				old_VL += delta_L;
-				#endregion
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region FILTER_STEREO
+					{
+						#region FILTER_LEFT
+						{
+							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl = Mix_Filter_Clamp(sl64);
+							fl2 = fl1; fl1 = sl;
+							smp_In_L = (sl >> PreAmp_Bits);
+						}
+						#endregion
+
+						#region FILTER_RIGHT
+						{
+							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
+							sr = Mix_Filter_Clamp(sr64);
+							fr2 = fr1; fr1 = sr;
+							smp_In_R = (sr >> PreAmp_Bits);
+						}
+						#endregion
+					}
+					#endregion
+
+					smpL = smp_In_L;
+					smpR = smp_In_R;
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region MIX_MONO_AVG_AC
+					{
+						{
+							c_int smp_In = (smp_In_L + smp_In_R) >> 1;
+
+							#region MIX_MONO_AC
+							{
+								{
+									c_int out_Sample = smp_In;
+									c_int out_Level = old_VL >> 8;
+
+									#region MIX_OUT
+									{
+										buffer[offset++] += out_Sample * out_Level;
+									}
+									#endregion
+								}
+
+								old_VL += delta_L;
+							}
+							#endregion
+						}
+					}
+					#endregion
+				}
 
 				#region UPDATE_POS
-				frac += step;
-				pos += (c_uint)(frac >> Constants.SMix_Shift);
-				frac &= Constants.SMix_Mask;
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
 				#endregion
 			}
 
 			for (; count != 0; count--)
 			{
-				#region SPLINE_INTERP
-				c_int f = frac >> 6;
-				smp_In = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + (c_int)pos - 1] +
-						  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + (c_int)pos] +
-						  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + (c_int)pos + 2] +
-						  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + (c_int)pos + 1]) >> (Spline_Shift - 8);
-				#endregion
+				{
+					const c_int off = 0;
 
-				#region MIX_STEREO_FILTER
-				sr64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
-				sr = Mix_Filter_Clamp(sr64);
-				fr2 = fr1; fr1 = sr;
-				sl64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
-				sl = Mix_Filter_Clamp(sl64);
-				fl2 = fl1; fl1 = sl;
-				buffer[offset++] += (sr >> PreAmp_Bits) * vr;
-				buffer[offset++] += (sl >> PreAmp_Bits) * vl;
-				#endregion
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
+
+				{
+					const c_int off = 1;
+
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region FILTER_STEREO
+					{
+						#region FILTER_LEFT
+						{
+							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl = Mix_Filter_Clamp(sl64);
+							fl2 = fl1; fl1 = sl;
+							smp_In_L = (sl >> PreAmp_Bits);
+						}
+						#endregion
+
+						#region FILTER_RIGHT
+						{
+							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
+							sr = Mix_Filter_Clamp(sr64);
+							fr2 = fr1; fr1 = sr;
+							smp_In_R = (sr >> PreAmp_Bits);
+						}
+						#endregion
+					}
+					#endregion
+
+					smpL = smp_In_L;
+					smpR = smp_In_R;
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region MIX_MONO_AVG
+					{
+						{
+							c_int smp_In = (smp_In_L + smp_In_R) >> 1;
+
+							#region MIX_MONO
+							{
+								{
+									c_int out_Sample = smp_In;
+									c_int out_Level = vl;
+
+									#region MIX_OUT
+									{
+										buffer[offset++] += out_Sample * out_Level;
+									}
+									#endregion
+								}
+							}
+							#endregion
+						}
+					}
+					#endregion
+				}
 
 				#region UPDATE_POS
-				frac += step;
-				pos += (c_uint)(frac >> Constants.SMix_Shift);
-				frac &= Constants.SMix_Mask;
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
 				#endregion
 			}
 
 			#region SAVE_FILTER_STEREO
+			{
+				#region SAVE_FILTER_MONO
+				{
+					// Note: copying the left to the right here is for just in case these
+					// values don't get cleared between playing stereo/mono samples
+					vi.Filter.L1 = fl1;
+					vi.Filter.L2 = fl2;
+					vi.Filter.R1 = fl1;
+					vi.Filter.R2 = fl2;
+				}
+				#endregion
 
-			#region SAVE_FILTER_MONO
-			vi.Filter.L1 = fl1;
-			vi.Filter.L2 = fl2;
-			#endregion
-
-			vi.Filter.R1 = fr1;
-			vi.Filter.R2 = fr2;
+				vi.Filter.R1 = fr1;
+				vi.Filter.R2 = fr2;
+			}
 			#endregion
 		}
 
@@ -614,28 +1908,28 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 		/********************************************************************/
 		/// <summary>
-		/// Handler for 16 bit samples, filtered spline interpolated stereo
-		/// output
+		/// Handler for 16-bit stereo samples, filtered spline interpolated
+		/// mono output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_Stereo_16Bit_Spline_Filter(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_MonoOut_Stereo_16Bit_Spline_Filter(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_STEREO(int16)
 
-			#region VAR_SPLINE_MONO
-			c_int old_VL = vi.Old_VL;
+			#region VAR_STEREO(int16)
+			const c_int chn = 2;
+			c_int smpR;
 
-			#region VAR_NORM
-			c_int smp_In;
+			#region VAR_NORM(int16)
+			c_int smpL;
 			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr);
 			c_int sPtrOffset = vi.SPtrOffset / 2;
-			c_uint pos = (c_uint)vi.Pos;
+			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
 
 			#endregion
 
-			c_int old_VR = vi.Old_VR;
 			#endregion
 
 			#region VAR_FILTER_STEREO
@@ -652,79 +1946,1193 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			c_int sr;
 			#endregion
 
+			#region VAR_MONOOUT
+			c_int old_VL = vi.Old_VL;
+			#endregion
+
 			for (; count > ramp; count--)
 			{
-				#region SPLINE_INTERP_16BIT
-				c_int f = frac >> 6;
-				smp_In = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + (c_int)pos - 1] +
-						  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + (c_int)pos] +
-						  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + (c_int)pos + 2] +
-						  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + (c_int)pos + 1]) >> Spline_Shift;
-				#endregion
+				{
+					const c_int off = 0;
 
-				#region MIX_STEREO_FILTER_AC
-				c_int vr1 = old_VR >> 8;
-				c_int vl1 = old_VL >> 8;
+					#region SPLINE_16BIT
+					{
 
-				#region MIX_STEREO_FILTER
-				sr64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
-				sr = Mix_Filter_Clamp(sr64);
-				fr2 = fr1; fr1 = sr;
-				sl64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
-				sl = Mix_Filter_Clamp(sl64);
-				fl2 = fl1; fl1 = sl;
-				buffer[offset++] += (sr >> PreAmp_Bits) * vr1;
-				buffer[offset++] += (sl >> PreAmp_Bits) * vl1;
-				#endregion
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
 
-				old_VR += delta_R;
-				old_VL += delta_L;
-				#endregion
+				{
+					const c_int off = 1;
+
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region FILTER_STEREO
+					{
+						#region FILTER_LEFT
+						{
+							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl = Mix_Filter_Clamp(sl64);
+							fl2 = fl1; fl1 = sl;
+							smp_In_L = (sl >> PreAmp_Bits);
+						}
+						#endregion
+
+						#region FILTER_RIGHT
+						{
+							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
+							sr = Mix_Filter_Clamp(sr64);
+							fr2 = fr1; fr1 = sr;
+							smp_In_R = (sr >> PreAmp_Bits);
+						}
+						#endregion
+					}
+					#endregion
+
+					smpL = smp_In_L;
+					smpR = smp_In_R;
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region MIX_MONO_AVG_AC
+					{
+						{
+							c_int smp_In = (smp_In_L + smp_In_R) >> 1;
+
+							#region MIX_MONO_AC
+							{
+								{
+									c_int out_Sample = smp_In;
+									c_int out_Level = old_VL >> 8;
+
+									#region MIX_OUT
+									{
+										buffer[offset++] += out_Sample * out_Level;
+									}
+									#endregion
+								}
+
+								old_VL += delta_L;
+							}
+							#endregion
+						}
+					}
+					#endregion
+				}
 
 				#region UPDATE_POS
-				frac += step;
-				pos += (c_uint)(frac >> Constants.SMix_Shift);
-				frac &= Constants.SMix_Mask;
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
 				#endregion
 			}
 
 			for (; count != 0; count--)
 			{
-				#region SPLINE_INTERP_16BIT
-				c_int f = frac >> 6;
-				smp_In = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + (c_int)pos - 1] +
-						  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + (c_int)pos] +
-						  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + (c_int)pos + 2] +
-						  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + (c_int)pos + 1]) >> Spline_Shift;
-				#endregion
+				{
+					const c_int off = 0;
 
-				#region MIX_STEREO_FILTER
-				sr64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
-				sr = Mix_Filter_Clamp(sr64);
-				fr2 = fr1; fr1 = sr;
-				sl64 = (a0 * (smp_In << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
-				sl = Mix_Filter_Clamp(sl64);
-				fl2 = fl1; fl1 = sl;
-				buffer[offset++] += (sr >> PreAmp_Bits) * vr;
-				buffer[offset++] += (sl >> PreAmp_Bits) * vl;
-				#endregion
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					const c_int off = 1;
+
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region FILTER_STEREO
+					{
+						#region FILTER_LEFT
+						{
+							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl = Mix_Filter_Clamp(sl64);
+							fl2 = fl1; fl1 = sl;
+							smp_In_L = (sl >> PreAmp_Bits);
+						}
+						#endregion
+
+						#region FILTER_RIGHT
+						{
+							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
+							sr = Mix_Filter_Clamp(sr64);
+							fr2 = fr1; fr1 = sr;
+							smp_In_R = (sr >> PreAmp_Bits);
+						}
+						#endregion
+					}
+					#endregion
+
+					smpL = smp_In_L;
+					smpR = smp_In_R;
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region MIX_MONO_AVG
+					{
+						{
+							c_int smp_In = (smp_In_L + smp_In_R) >> 1;
+
+							#region MIX_MONO
+							{
+								{
+									c_int out_Sample = smp_In;
+									c_int out_Level = vl;
+
+									#region MIX_OUT
+									{
+										buffer[offset++] += out_Sample * out_Level;
+									}
+									#endregion
+								}
+							}
+							#endregion
+						}
+					}
+					#endregion
+				}
 
 				#region UPDATE_POS
-				frac += step;
-				pos += (c_uint)(frac >> Constants.SMix_Shift);
-				frac &= Constants.SMix_Mask;
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
 				#endregion
 			}
 
 			#region SAVE_FILTER_STEREO
+			{
+				#region SAVE_FILTER_MONO
+				{
+					// Note: copying the left to the right here is for just in case these
+					// values don't get cleared between playing stereo/mono samples
+					vi.Filter.L1 = fl1;
+					vi.Filter.L2 = fl2;
+					vi.Filter.R1 = fl1;
+					vi.Filter.R2 = fl2;
+				}
+				#endregion
 
-			#region SAVE_FILTER_MONO
-			vi.Filter.L1 = fl1;
-			vi.Filter.L2 = fl2;
+				vi.Filter.R1 = fr1;
+				vi.Filter.R2 = fr2;
+			}
+			#endregion
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handler for 8-bit mono samples, filtered spline interpolated
+		/// stereo output
+		/// </summary>
+		/********************************************************************/
+		public static void LibXmp_Mix_StereoOut_Mono_8Bit_Spline_Filter(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		{
+			#region VAR_SPLINE_MONO(int8)
+
+			#region VAR_MONO(int8)
+			const c_int chn = 1;
+
+			#region VAR_NORM(int8)
+			c_int smpL;
+			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr);
+			c_int sPtrOffset = vi.SPtrOffset;
+			c_int pos = ((c_int)vi.Pos) * chn;
+			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
 
-			vi.Filter.R1 = fr1;
-			vi.Filter.R2 = fr2;
+			#endregion
+
+			#endregion
+
+			#region VAR_FILTER_MONO
+			c_int fl1 = vi.Filter.L1, fl2 = vi.Filter.L2;
+			int64 a0 = vi.Filter.A0, b0 = vi.Filter.B0, b1 = vi.Filter.B1;
+			int64 sl64;
+			c_int sl;
+			#endregion
+
+			#region VAR_STEREOOUT
+
+			#region VAR_MONOOUT
+			c_int old_VL = vi.Old_VL;
+			#endregion
+
+			c_int old_VR = vi.Old_VR;
+			#endregion
+
+			for (; count > ramp; count--)
+			{
+				{
+					const c_int off = 0;
+
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+
+					#region FILTER_MONO
+					{
+						#region FILTER_LEFT
+						{
+							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl = Mix_Filter_Clamp(sl64);
+							fl2 = fl1; fl1 = sl;
+							smp_In_L = (sl >> PreAmp_Bits);
+						}
+						#endregion
+					}
+					#endregion
+
+					smpL = smp_In_L;
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpL;
+
+					#region MIX_STEREO_AC
+					{
+						{
+							c_int out_Sample = smp_In_L;
+							c_int out_Level = old_VL >> 8;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						{
+							c_int out_Sample = smp_In_R;
+							c_int out_Level = old_VR >> 8;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						old_VL += delta_L;
+						old_VR += delta_R;
+					}
+					#endregion
+				}
+
+				#region UPDATE_POS
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
+				#endregion
+			}
+
+			for (; count != 0; count--)
+			{
+				{
+					const c_int off = 0;
+
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+
+					#region FILTER_MONO
+					{
+						#region FILTER_LEFT
+						{
+							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl = Mix_Filter_Clamp(sl64);
+							fl2 = fl1; fl1 = sl;
+							smp_In_L = (sl >> PreAmp_Bits);
+						}
+						#endregion
+					}
+					#endregion
+
+					smpL = smp_In_L;
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpL;
+
+					#region MIX_STEREO
+					{
+						{
+							c_int out_Sample = smp_In_L;
+							c_int out_Level = vl;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						{
+							c_int out_Sample = smp_In_R;
+							c_int out_Level = vr;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+					}
+					#endregion
+				}
+
+				#region UPDATE_POS
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
+				#endregion
+			}
+
+			#region SAVE_FILTER_MONO
+			{
+				// Note: copying the left to the right here is for just in case these
+				// values don't get cleared between playing stereo/mono samples
+				vi.Filter.L1 = fl1;
+				vi.Filter.L2 = fl2;
+				vi.Filter.R1 = fl1;
+				vi.Filter.R2 = fl2;
+			}
+			#endregion
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handler for 16-bit mono samples, filtered spline interpolated
+		/// stereo output
+		/// </summary>
+		/********************************************************************/
+		public static void LibXmp_Mix_StereoOut_Mono_16Bit_Spline_Filter(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		{
+			#region VAR_SPLINE_MONO(int16)
+
+			#region VAR_MONO(int16)
+			const c_int chn = 1;
+
+			#region VAR_NORM(int16)
+			c_int smpL;
+			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr);
+			c_int sPtrOffset = vi.SPtrOffset / 2;
+			c_int pos = ((c_int)vi.Pos) * chn;
+			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
+			#endregion
+
+			#endregion
+
+			#endregion
+
+			#region VAR_FILTER_MONO
+			c_int fl1 = vi.Filter.L1, fl2 = vi.Filter.L2;
+			int64 a0 = vi.Filter.A0, b0 = vi.Filter.B0, b1 = vi.Filter.B1;
+			int64 sl64;
+			c_int sl;
+			#endregion
+
+			#region VAR_STEREOOUT
+
+			#region VAR_MONOOUT
+			c_int old_VL = vi.Old_VL;
+			#endregion
+
+			c_int old_VR = vi.Old_VR;
+			#endregion
+
+			for (; count > ramp; count--)
+			{
+				{
+					const c_int off = 0;
+
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+
+					#region FILTER_MONO
+					{
+						#region FILTER_LEFT
+						{
+							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl = Mix_Filter_Clamp(sl64);
+							fl2 = fl1; fl1 = sl;
+							smp_In_L = (sl >> PreAmp_Bits);
+						}
+						#endregion
+					}
+					#endregion
+
+					smpL = smp_In_L;
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpL;
+
+					#region MIX_STEREO_AC
+					{
+						{
+							c_int out_Sample = smp_In_L;
+							c_int out_Level = old_VL >> 8;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						{
+							c_int out_Sample = smp_In_R;
+							c_int out_Level = old_VR >> 8;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						old_VL += delta_L;
+						old_VR += delta_R;
+					}
+					#endregion
+				}
+
+				#region UPDATE_POS
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
+				#endregion
+			}
+
+			for (; count != 0; count--)
+			{
+				{
+					const c_int off = 0;
+
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+
+					#region FILTER_MONO
+					{
+						#region FILTER_LEFT
+						{
+							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl = Mix_Filter_Clamp(sl64);
+							fl2 = fl1; fl1 = sl;
+							smp_In_L = (sl >> PreAmp_Bits);
+						}
+						#endregion
+					}
+					#endregion
+
+					smpL = smp_In_L;
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpL;
+
+					#region MIX_STEREO
+					{
+						{
+							c_int out_Sample = smp_In_L;
+							c_int out_Level = vl;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						{
+							c_int out_Sample = smp_In_R;
+							c_int out_Level = vr;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+					}
+					#endregion
+				}
+
+				#region UPDATE_POS
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
+				#endregion
+			}
+
+			#region SAVE_FILTER_MONO
+			{
+				// Note: copying the left to the right here is for just in case these
+				// values don't get cleared between playing stereo/mono samples
+				vi.Filter.L1 = fl1;
+				vi.Filter.L2 = fl2;
+				vi.Filter.R1 = fl1;
+				vi.Filter.R2 = fl2;
+			}
+			#endregion
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handler for 8-bit stereo samples, filtered spline interpolated
+		/// stereo output
+		/// </summary>
+		/********************************************************************/
+		public static void LibXmp_Mix_StereoOut_Stereo_8Bit_Spline_Filter(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		{
+			#region VAR_SPLINE_STEREO(int8)
+
+			#region VAR_STEREO(int8)
+			const c_int chn = 2;
+			c_int smpR;
+
+			#region VAR_NORM(int8)
+			c_int smpL;
+			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr);
+			c_int sPtrOffset = vi.SPtrOffset;
+			c_int pos = ((c_int)vi.Pos) * chn;
+			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
+			#endregion
+
+			#endregion
+
+			#endregion
+
+			#region VAR_FILTER_STEREO
+
+			#region VAR_FILTER_MONO
+			c_int fl1 = vi.Filter.L1, fl2 = vi.Filter.L2;
+			int64 a0 = vi.Filter.A0, b0 = vi.Filter.B0, b1 = vi.Filter.B1;
+			int64 sl64;
+			c_int sl;
+			#endregion
+
+			c_int fr1 = vi.Filter.R1, fr2 = vi.Filter.R2;
+			int64 sr64;
+			c_int sr;
+			#endregion
+
+			#region VAR_STEREOOUT
+
+			#region VAR_MONOOUT
+			c_int old_VL = vi.Old_VL;
+			#endregion
+
+			c_int old_VR = vi.Old_VR;
+			#endregion
+
+			for (; count > ramp; count--)
+			{
+				{
+					const c_int off = 0;
+
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
+
+				{
+					const c_int off = 1;
+
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region FILTER_STEREO
+					{
+						#region FILTER_LEFT
+						{
+							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl = Mix_Filter_Clamp(sl64);
+							fl2 = fl1; fl1 = sl;
+							smp_In_L = (sl >> PreAmp_Bits);
+						}
+						#endregion
+
+						#region FILTER_RIGHT
+						{
+							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
+							sr = Mix_Filter_Clamp(sr64);
+							fr2 = fr1; fr1 = sr;
+							smp_In_R = (sr >> PreAmp_Bits);
+						}
+						#endregion
+					}
+					#endregion
+
+					smpL = smp_In_L;
+					smpR = smp_In_R;
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region MIX_STEREO_AC
+					{
+						{
+							c_int out_Sample = smp_In_L;
+							c_int out_Level = old_VL >> 8;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						{
+							c_int out_Sample = smp_In_R;
+							c_int out_Level = old_VR >> 8;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						old_VL += delta_L;
+						old_VR += delta_R;
+					}
+					#endregion
+				}
+
+				#region UPDATE_POS
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
+				#endregion
+			}
+
+			for (; count != 0; count--)
+			{
+				{
+					const c_int off = 0;
+
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
+
+				{
+					const c_int off = 1;
+
+					#region SPLINE_8BIT
+					{
+						c_int f = frac >> 6;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region FILTER_STEREO
+					{
+						#region FILTER_LEFT
+						{
+							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl = Mix_Filter_Clamp(sl64);
+							fl2 = fl1; fl1 = sl;
+							smp_In_L = (sl >> PreAmp_Bits);
+						}
+						#endregion
+
+						#region FILTER_RIGHT
+						{
+							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
+							sr = Mix_Filter_Clamp(sr64);
+							fr2 = fr1; fr1 = sr;
+							smp_In_R = (sr >> PreAmp_Bits);
+						}
+						#endregion
+					}
+					#endregion
+
+					smpL = smp_In_L;
+					smpR = smp_In_R;
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region MIX_STEREO
+					{
+						{
+							c_int out_Sample = smp_In_L;
+							c_int out_Level = vl;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						{
+							c_int out_Sample = smp_In_R;
+							c_int out_Level = vr;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+					}
+					#endregion
+				}
+
+				#region UPDATE_POS
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
+				#endregion
+			}
+
+			#region SAVE_FILTER_STEREO
+			{
+				#region SAVE_FILTER_MONO
+				{
+					// Note: copying the left to the right here is for just in case these
+					// values don't get cleared between playing stereo/mono samples
+					vi.Filter.L1 = fl1;
+					vi.Filter.L2 = fl2;
+					vi.Filter.R1 = fl1;
+					vi.Filter.R2 = fl2;
+				}
+				#endregion
+
+				vi.Filter.R1 = fr1;
+				vi.Filter.R2 = fr2;
+			}
+			#endregion
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Handler for 16-bit stereo samples, filtered spline interpolated
+		/// stereo output
+		/// </summary>
+		/********************************************************************/
+		public static void LibXmp_Mix_StereoOut_Stereo_16Bit_Spline_Filter(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		{
+			#region VAR_SPLINE_STEREO(int16)
+
+			#region VAR_STEREO(int16)
+			const c_int chn = 2;
+			c_int smpR;
+
+			#region VAR_NORM(int16)
+			c_int smpL;
+			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr);
+			c_int sPtrOffset = vi.SPtrOffset / 2;
+			c_int pos = ((c_int)vi.Pos) * chn;
+			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
+			#endregion
+
+			#endregion
+
+			#endregion
+
+			#region VAR_FILTER_STEREO
+
+			#region VAR_FILTER_MONO
+			c_int fl1 = vi.Filter.L1, fl2 = vi.Filter.L2;
+			int64 a0 = vi.Filter.A0, b0 = vi.Filter.B0, b1 = vi.Filter.B1;
+			int64 sl64;
+			c_int sl;
+			#endregion
+
+			c_int fr1 = vi.Filter.R1, fr2 = vi.Filter.R2;
+			int64 sr64;
+			c_int sr;
+			#endregion
+
+			#region VAR_STEREOOUT
+
+			#region VAR_MONOOUT
+			c_int old_VL = vi.Old_VL;
+			#endregion
+
+			c_int old_VR = vi.Old_VR;
+			#endregion
+
+			for (; count > ramp; count--)
+			{
+				{
+					const c_int off = 0;
+
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					const c_int off = 1;
+
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region FILTER_STEREO
+					{
+						#region FILTER_LEFT
+						{
+							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl = Mix_Filter_Clamp(sl64);
+							fl2 = fl1; fl1 = sl;
+							smp_In_L = (sl >> PreAmp_Bits);
+						}
+						#endregion
+
+						#region FILTER_RIGHT
+						{
+							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
+							sr = Mix_Filter_Clamp(sr64);
+							fr2 = fr1; fr1 = sr;
+							smp_In_R = (sr >> PreAmp_Bits);
+						}
+						#endregion
+					}
+					#endregion
+
+					smpL = smp_In_L;
+					smpR = smp_In_R;
+				}
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region MIX_STEREO_AC
+					{
+						{
+							c_int out_Sample = smp_In_L;
+							c_int out_Level = old_VL >> 8;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						{
+							c_int out_Sample = smp_In_R;
+							c_int out_Level = old_VR >> 8;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						old_VL += delta_L;
+						old_VR += delta_R;
+					}
+					#endregion
+				}
+
+				#region UPDATE_POS
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
+				#endregion
+			}
+
+			for (; count != 0; count--)
+			{
+				{
+					const c_int off = 0;
+
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					const c_int off = 1;
+
+					#region SPLINE_16BIT
+					{
+
+						c_int f = frac >> 6;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+					}
+					#endregion
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region FILTER_STEREO
+					{
+						#region FILTER_LEFT
+						{
+							sl64 = (a0 * (smp_In_L << PreAmp_Bits) + b0 * fl1 + b1 * fl2) >> Constants.Filter_Shift;
+							sl = Mix_Filter_Clamp(sl64);
+							fl2 = fl1; fl1 = sl;
+							smp_In_L = (sl >> PreAmp_Bits);
+						}
+						#endregion
+
+						#region FILTER_RIGHT
+						{
+							sr64 = (a0 * (smp_In_R << PreAmp_Bits) + b0 * fr1 + b1 * fr2) >> Constants.Filter_Shift;
+							sr = Mix_Filter_Clamp(sr64);
+							fr2 = fr1; fr1 = sr;
+							smp_In_R = (sr >> PreAmp_Bits);
+						}
+						#endregion
+					}
+					#endregion
+
+					smpL = smp_In_L;
+					smpR = smp_In_R;
+				}
+
+				{
+					c_int smp_In_L = smpL;
+					c_int smp_In_R = smpR;
+
+					#region MIX_STEREO
+					{
+						{
+							c_int out_Sample = smp_In_L;
+							c_int out_Level = vl;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+
+						{
+							c_int out_Sample = smp_In_R;
+							c_int out_Level = vr;
+
+							#region MIX_OUT
+							{
+								buffer[offset++] += out_Sample * out_Level;
+							}
+							#endregion
+						}
+					}
+					#endregion
+				}
+
+				#region UPDATE_POS
+				{
+					frac += step;
+					pos += (frac >> Constants.SMix_Shift) * chn;
+					frac &= Constants.SMix_Mask;
+				}
+				#endregion
+			}
+
+			#region SAVE_FILTER_STEREO
+			{
+				#region SAVE_FILTER_MONO
+				{
+					// Note: copying the left to the right here is for just in case these
+					// values don't get cleared between playing stereo/mono samples
+					vi.Filter.L1 = fl1;
+					vi.Filter.L2 = fl2;
+					vi.Filter.R1 = fl1;
+					vi.Filter.R2 = fl2;
+				}
+				#endregion
+
+				vi.Filter.R1 = fr1;
+				vi.Filter.R2 = fr2;
+			}
 			#endregion
 		}
 

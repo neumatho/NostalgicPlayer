@@ -20,6 +20,17 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		/// </summary>
 		protected readonly string dataDirectory;
 
+		/// <summary>
+		/// Sample indices for Test.xm and Test.it
+		/// </summary>
+		protected const c_int Test_Xm_Sample_8Bit_Mono = 1;
+		/// <summary></summary>
+		protected const c_int Test_Xm_Sample_16Bit_Mono = 2;
+		/// <summary></summary>
+		protected const c_int Test_Xm_Sample_8Bit_Stereo = 3;
+		/// <summary></summary>
+		protected const c_int Test_Xm_Sample_16Bit_Stereo = 4;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -98,7 +109,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool Is_Big_Endian()
+		protected bool Is_Big_Endian()
 		{
 			return !BitConverter.IsLittleEndian;
 		}

@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Fuzzer
 		[TestMethod]
 		public void Test_Fuzzer_It_Truncated_Header()
 		{
-			Util.Read_File_To_Memory(Path.Combine(dataDirectory, "F"), "Load_It_Truncated_Header.it", out byte[] buffer, out c_long size);
+			Read_File_To_Memory(Path.Combine(dataDirectory, "F"), "Load_It_Truncated_Header.it", out byte[] buffer, out c_long size);
 			Assert.IsNotNull(buffer, "Read file to memory");
 
 			Ports.LibXmp.LibXmp opaque = Ports.LibXmp.LibXmp.Xmp_Create_Context();

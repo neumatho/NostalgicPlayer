@@ -2040,7 +2040,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			Common.Clamp(ref finalPan, 0, 255);
 
-			if (xc.Pan.Surround)
+			if (((s.Format & Xmp_Format.Mono) != 0) || xc.Pan.Surround)
 				finalPan = 0;
 			else
 				finalPan = (finalPan - 0x80) * s.Mix / 100;

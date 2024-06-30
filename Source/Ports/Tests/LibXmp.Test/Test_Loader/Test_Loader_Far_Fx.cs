@@ -28,7 +28,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Loader
 
 			opaque.Xmp_Get_Module_Info(out Xmp_Module_Info info);
 
-			ret = Util.Compare_Module(info.Mod, OpenStream(dataDirectory, "Format_Far_Fx.data"));
+			ret = Compare_Module(info.Mod, OpenStream(dataDirectory, "Format_Far_Fx.data"));
 			Assert.AreEqual(0, ret, "Format not correctly loaded");
 
 			opaque.Xmp_Release_Module();

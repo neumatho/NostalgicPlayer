@@ -36,9 +36,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Depack
 				Assert.AreEqual(0, ret, "Decompression fail");
 
 				if (Is_Big_Endian())
-					Util.Convert_Endian(dest, 0, 4646);
+					Convert_Endian(dest, 0, 4646);
 
-				ret = Util.Check_Md5(dest, 4646 * 2, "1E2395653F9BD7838006572D8FCDB646");
+				ret = Check_Md5(dest, 4646 * 2, "1E2395653F9BD7838006572D8FCDB646");
 				Assert.AreEqual(0, ret, "MD5 error");
 			}
 		}

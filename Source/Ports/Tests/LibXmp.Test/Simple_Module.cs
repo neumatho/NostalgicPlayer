@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal Xmp_Context GetContext(Ports.LibXmp.LibXmp opaque)
+		internal static Xmp_Context GetContext(Ports.LibXmp.LibXmp opaque)
 		{
 			return (Xmp_Context)new PrivateObject(opaque).GetField("ctx");
 		}

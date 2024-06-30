@@ -96,7 +96,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 						Channel_Data xc = p.Xc_Data[i];
 						c_int ci_Period = xc.Info_Period;
 
-						c_int voc = Util.Map_Channel(p, i);
+						c_int voc = Map_Channel(p, i);
 						if ((voc < 0) || ((xc.Note_Flags & Note_Flag.Sample_End) != 0))
 							continue;
 

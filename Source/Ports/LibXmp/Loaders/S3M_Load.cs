@@ -40,6 +40,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		}
 		#endregion
 
+		#region S3M sample flags
+		[Flags]
+		private enum S3M_Samp_Flag : uint8
+		{
+			Loop = 0x01,
+			Stereo = 0x02,
+			_16Bit = 0x04
+		}
+		#endregion
+
 		#region S3M_File_Header
 		private class S3M_File_Header
 		{
@@ -196,7 +206,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			/// <summary>
 			/// Loop/stereo/16 bit samples flags
 			/// </summary>
-			public uint8 Flags;
+			public S3M_Samp_Flag Flags;
 
 			/// <summary>
 			/// C 4 speed
@@ -850,7 +860,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				sih.LoopEnd = DataIo.ReadMem32L(buf, 24);				// Loop end
 				sih.Vol = buf[28];											// Volume
 				sih.Pack = buf[30];											// Packing type
-				sih.Flags = buf[31];										// Loop/stereo/16 bit flags
+				sih.Flags = (S3M_Samp_Flag)buf[31];							// Loop/stereo/16 bit flags
 				sih.C2Spd = DataIo.ReadMem16L(buf, 32);				// C4 speed
 				Array.Copy(buf, 48, sih.Name, 0, 28);	// Instrument name
 				sih.Magic = DataIo.ReadMem32B(buf, 76);				// 'SCRS'
@@ -863,9 +873,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				xxs.Lps = (c_int)sih.LoopBeg;
 				xxs.Lpe = (c_int)sih.LoopEnd;
 
-				xxs.Flg = (sih.Flags & 1) != 0 ? Xmp_Sample_Flag.Loop : Xmp_Sample_Flag.None;
+				xxs.Flg = (sih.Flags & S3M_Samp_Flag.Loop) != 0 ? Xmp_Sample_Flag.Loop : Xmp_Sample_Flag.None;
 
-				if ((sih.Flags & 4) != 0)
+				if ((sih.Flags & S3M_Samp_Flag.Stereo) != 0)
+					xxs.Flg |= Xmp_Sample_Flag.Stereo;
+
+				if ((sih.Flags & S3M_Samp_Flag._16Bit) != 0)
 					xxs.Flg |= Xmp_Sample_Flag._16Bit;
 
 				Sample_Flag load_Sample_Flag = (sfh.Ffi == 1) ? Sample_Flag.None : Sample_Flag.Uns;

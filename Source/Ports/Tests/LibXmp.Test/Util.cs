@@ -19,14 +19,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 	/// <summary>
 	/// 
 	/// </summary>
-	internal static class Util
+	public partial class Test
 	{
 		/********************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Read_File_To_Memory(string path, string fileName, out byte[] _buffer, out c_long _size)
+		protected void Read_File_To_Memory(string path, string fileName, out byte[] _buffer, out c_long _size)
 		{
 			using (Stream s = new FileStream(Path.Combine(path, fileName), FileMode.Open, FileAccess.Read))
 			{
@@ -72,7 +72,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static bool Check_Randomness(c_int[] array, c_int offset, c_int size, c_double sDev)
+		protected bool Check_Randomness(c_int[] array, c_int offset, c_int size, c_double sDev)
 		{
 			c_double avg = 0.0;
 			c_double dev = 0.0;
@@ -97,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Check_Md5(uint8[] buffer, c_int length, string digest)
+		protected c_int Check_Md5(uint8[] buffer, c_int length, string digest)
 		{
 			using (MD5 md5 = MD5.Create())
 			{
@@ -115,7 +115,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Map_Channel(Player_Data p, c_int chn)
+		internal c_int Map_Channel(Player_Data p, c_int chn)
 		{
 			if ((uint32)chn >= p.Virt.Virt_Channels)
 				return -1;
@@ -135,7 +135,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		/// Convert little-endian 16 bit samples to big-endian
 		/// </summary>
 		/********************************************************************/
-		public static void Convert_Endian(uint8[] p, c_int offset, c_int l)
+		protected void Convert_Endian(uint8[] p, c_int offset, c_int l)
 		{
 			c_int off = offset;
 
@@ -156,7 +156,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Compare_Module(Xmp_Module mod, Stream f)
+		protected c_int Compare_Module(Xmp_Module mod, Stream f)
 		{
 			using (StreamReader sr = new StreamReader(f))
 			{
@@ -325,7 +325,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 						len *= 2;
 
 						// Normalize data to little endian for the hash
-						if (Test.Is_Big_Endian())
+						if (Is_Big_Endian())
                             Convert_Endian(xxs.Data, xxs.DataOffset, xxs.Len);
 					}
 
@@ -379,7 +379,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Compare_Playback(string path, string fileName, Playback_Sequence[] sequence, c_int rate, Xmp_Format flags, Xmp_Interp interp)
+		internal void Compare_Playback(string path, string fileName, Playback_Sequence[] sequence, c_int rate, Xmp_Format flags, Xmp_Interp interp)
 		{
 			c_int ret;
 
@@ -419,6 +419,109 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 				seqIndex++;
 			}
 
+			opaque.Xmp_Free_Context();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test raw mixer output data. Used by the mixer regression tests
+		/// </summary>
+		/********************************************************************/
+		protected void Compare_Mixer_Samples_Ext(Ports.LibXmp.LibXmp opaque, string path, string data_File, bool stereo_Out, c_int frames_To_Play)
+		{
+			Xmp_Context ctx = GetContext(opaque);
+			Mixer_Data s = ctx.S;
+
+			using (StreamReader sr = new StreamReader(OpenStream(path, data_File)))
+			{
+				CSScanF csscanf = new CSScanF();
+
+				for (c_int i = 0; i < frames_To_Play; i++)
+				{
+					opaque.Xmp_Play_Frame();
+
+					// Note: tickSize is in frames
+					for (c_int k = 0, j = 0; j < s.TickSize; j++)
+					{
+						string line = sr.ReadLine();
+
+						if (stereo_Out)
+						{
+							c_int ret = csscanf.Parse(line, "%d %d");
+							Assert.AreEqual(2, ret, "Read error");
+
+							c_int val_L = (c_int)csscanf.Results[0];
+							c_int val_R = (c_int)csscanf.Results[1];
+
+							c_int cmp_L = s.Buf32[k++] - val_L;
+							c_int cmp_R = s.Buf32[k++] - val_R;
+
+							Assert.IsTrue((cmp_L >= -1) && (cmp_L <= 1), "Mixing error L");
+							Assert.IsTrue((cmp_R >= -1) && (cmp_R <= 1), "Mixing error R");
+						}
+						else
+						{
+							c_int ret = csscanf.Parse(line, "%d");
+							Assert.AreEqual(1, ret, "Read error");
+
+							c_int val_L = (c_int)csscanf.Results[0];
+
+							c_int cmp_L = s.Buf32[k++] - val_L;
+
+							Assert.IsTrue((cmp_L >= -1) && (cmp_L <= 1), "Mixing error");
+						}
+					}
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Test raw mixer output data using presets chosen specifically for
+		/// the mixer regression tests
+		/// </summary>
+		/********************************************************************/
+		protected void Compare_Mixer_Samples(string path, string data_File, string mod_File, c_int rate, Xmp_Format flags, Xmp_Interp interp, c_int sample, bool filter)
+		{
+			Ports.LibXmp.LibXmp opaque = Ports.LibXmp.LibXmp.Xmp_Create_Context();
+			Assert.IsNotNull(opaque, "Failed to create context");
+			
+			bool stereo_Out = false;
+
+			if ((~flags & Xmp_Format.Mono) != 0)
+				stereo_Out = true;
+
+			c_int ret = LoadModule(path, mod_File, opaque);
+			Assert.AreEqual(0, ret, "Load error");
+
+			c_int frames;
+
+			if (!filter)
+			{
+				frames = 10;
+
+				for (c_int i = 0; i < 5; i++)
+					New_Event(opaque, 0, i, 0, 20 + i * 20, sample, 0, Effects.Fx_Speed, 0x02, Effects.Fx_SetPan, (i - 2) * 60 + 128);
+			}
+			else
+			{
+				frames = 4;
+
+				New_Event(opaque, 0, 0, 0, 30, sample, 0, Effects.Fx_Speed, 0x02, Effects.Fx_Flt_CutOff, 50);
+				New_Event(opaque, 0, 1, 0, 30, sample, 0, Effects.Fx_Speed, 0x02, Effects.Fx_Flt_CutOff, 120);
+			}
+
+			opaque.Xmp_Start_Player(rate, flags);
+			opaque.Xmp_Set_Player(Xmp_Player.Interp, (c_int)interp);
+
+			Compare_Mixer_Samples_Ext(opaque, path, data_File, stereo_Out, frames);
+
+			opaque.Xmp_End_Player();
+			opaque.Xmp_Release_Module();
 			opaque.Xmp_Free_Context();
 		}
 

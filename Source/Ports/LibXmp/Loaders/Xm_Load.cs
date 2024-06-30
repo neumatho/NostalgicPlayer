@@ -501,9 +501,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (xfh.Instruments > 255)
 				return -1;
 
-			if ((xfh.Restart > 255) && (xfh.Restart != 0xffff))
-				return -1;
-
 			if (xfh.Channels > Constants.Xmp_Max_Channels)
 				return -1;
 
@@ -531,7 +528,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			mod.Chn = xfh.Channels;
 			mod.Pat = xfh.Patterns;
 			mod.Ins = xfh.Instruments;
-			mod.Rst = xfh.Restart > 255 ? 0 : xfh.Restart;
+			mod.Rst = xfh.Restart >= xfh.SongLen ? 0 : xfh.Restart;
 			mod.Spd = xfh.Tempo;
 			mod.Bpm = xfh.Bpm;
 			mod.Trk = mod.Chn * mod.Pat + 1;
@@ -1106,6 +1103,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if ((f.Hio_Error() != 0) || (f.Hio_Read(data, 1, (size_t)len - 4) != (size_t)(len - 4)))
 				return -1;
 
+			c_int n;
 			float[] decodedBuffer;
 			uint8[] pcm;
 
@@ -1115,7 +1113,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				{
 					decodedBuffer = new float[vorbis.TotalSamples];
 
-					if (vorbis.ReadSamples(decodedBuffer) != vorbis.TotalSamples)
+					n = vorbis.ReadSamples(decodedBuffer);
+					if ((n != vorbis.TotalSamples) || (vorbis.Channels != 1))
 						return -1;
 				}
 			}
@@ -1124,24 +1123,30 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return -1;
 			}
 
-			xxs.Len = decodedBuffer.Length;
-
 			if ((xxs.Flg & Xmp_Sample_Flag._16Bit) == 0)
 			{
-				pcm = new uint8[xxs.Len];
+				pcm = new uint8[n];
 				Span<int8> pcm8 = MemoryMarshal.Cast<uint8, int8>(pcm);
 
-				for (c_int i = 0; i < xxs.Len; i++)
+				for (c_int i = 0; i < n; i++)
 					pcm8[i] = (int8)((int16)(decodedBuffer[i] * 32767.0f) >> 8);
 			}
 			else
 			{
-				pcm = new uint8[xxs.Len * 2];
+				pcm = new uint8[n * 2];
 				Span<int16> pcm16 = MemoryMarshal.Cast<uint8, int16>(pcm);
 
-				for (c_int i = 0; i < xxs.Len; i++)
+				for (c_int i = 0; i < n; i++)
 					pcm16[i] = (int16)(decodedBuffer[i] * 32767.0f);
 			}
+
+			if ((xxs.Flg & Xmp_Sample_Flag.Stereo) != 0)
+			{
+				// OXM stereo is a single channel non-interleaved stream
+				n >>= 1;
+			}
+
+			xxs.Len = n;
 
 			Sample_Flag flags = Sample_Flag.NoLoad;
 
@@ -1373,6 +1378,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 					if ((xsh[j].Type & Xm_Sample_Flag.Stereo) != 0)
 					{
+						xxs.Flg |= Xmp_Sample_Flag.Stereo;
 						xxs.Len >>= 1;
 						xxs.Lps >>= 1;
 						xxs.Lpe >>= 1;
@@ -1413,11 +1419,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							total_Sample_Size += (c_long)(16 + ((xsh[j].Length + 1) >> 1));
 						else
 							total_Sample_Size += (c_long)xsh[j].Length;
-
-						// TODO: Implement stereo samples.
-						// For now, just skip the right channel
-						if ((xsh[j].Type & Xm_Sample_Flag.Stereo) != 0)
-							f.Hio_Seek((c_long)(xsh[j].Length >> 1), SeekOrigin.Current);
 					}
 				}
 
