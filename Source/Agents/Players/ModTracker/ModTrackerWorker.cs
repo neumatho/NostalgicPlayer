@@ -1496,7 +1496,7 @@ stopLoop:
 				// Find the number of channels used
 				channelNum = (ushort)(currentModuleType == ModuleType.StarTrekker8 ? 8 : 4);
 
-				// If we load a StarTrekker 8-voices module, divide all the
+				// If we load a StarTrekker 8 voices module, divide all the
 				// pattern numbers by 2
 				if (currentModuleType == ModuleType.StarTrekker8)
 				{

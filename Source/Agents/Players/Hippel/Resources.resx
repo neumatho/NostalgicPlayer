@@ -198,6 +198,6 @@ This format is like the Hippel format or Hippel COSO. Some modules have a player
     <value>Hippel COSO</value>
   </data>
   <data name="IDS_HIP_NAME_AGENT3" xml:space="preserve">
-    <value>Hippel 7-Voices</value>
+    <value>Hippel 7 voices</value>
   </data>
 </root>

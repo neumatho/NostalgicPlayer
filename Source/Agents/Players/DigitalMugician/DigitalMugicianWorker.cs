@@ -551,7 +551,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 			// Set panning if needed
 			if (currentModuleType == ModuleType.DigitalMugician2)
 			{
-				// For 7-voices modules, the 7-voices are split into 2 sub-songs.
+				// For 7 voices modules, the 7 voices are split into 2 sub-songs.
 				// The first sub-song only use the first 3 voices, which will be played
 				// normally. The second sub-song will use all 4 voices, which will be
 				// mixed into one

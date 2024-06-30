@@ -273,7 +273,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hippel 7-Voices.
+        ///   Looks up a localized string similar to Hippel 7 voices.
         /// </summary>
         internal static string IDS_HIP_NAME_AGENT3 {
             get {

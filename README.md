@@ -90,7 +90,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Heatseeker mc1.0 | .hmc / .crb | ProWizard | ModTracker |
 | Hippel | .hip | | Hippel |
 | Hippel COSO | .hipc | | Hippel |
-| Hippel 7-Voices | .hip7 | | Hippel |
+| Hippel 7 voices | .hip7 | | Hippel |
 | His Master's Noise (Gnomie by Night) | .mod | | ModTracker |
 | HivelyTracker | .hvl | | HivelyTracker |
 | Hornet Packer | .hrt | ProWizard | ModTracker |

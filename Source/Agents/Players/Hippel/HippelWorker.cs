@@ -588,7 +588,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 			if ((moduleStream.Read_B_UINT16() == 0) && (moduleStream.Read_B_UINT16() == 0))
 				return AgentResult.Unknown;
 
-			// Last check, is it a 7-voices COSO module
+			// Last check, is it 7 voices COSO module
 			if (Has7VoicesStructuresInCoso(moduleStream, 0))
 				return AgentResult.Unknown;
 
@@ -760,7 +760,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 
 		/********************************************************************/
 		/// <summary>
-		/// Set default features for 7-voices modules
+		/// Set default features for 7 voices modules
 		/// </summary>
 		/********************************************************************/
 		private void SetDefault7VoicesFeatures()
@@ -2060,7 +2060,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 
 		/********************************************************************/
 		/// <summary>
-		/// Read the next row for a single channel in 7-voices mode
+		/// Read the next row for a single channel in 7 voices mode
 		/// </summary>
 		/********************************************************************/
 		private void ReadNextRow7Voices(int voice)
@@ -2123,7 +2123,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 		/********************************************************************/
 		/// <summary>
 		/// Will check the position command and execute them (only used in
-		/// 7-voices modules)
+		/// 7 voices modules)
 		/// </summary>
 		/********************************************************************/
 		private void ParsePositionCommand(int voice, ref SinglePositionInfo positionInfo)

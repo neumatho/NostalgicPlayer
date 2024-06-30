@@ -121,7 +121,7 @@
     <value>Original player by Reinier van Vliet.
 Converted to C# by Thomas Neumann.
 
-This player can play both 4-voices and 7-voices Digital Mugician modules.</value>
+This player can play both 4 voices and 7 voices Digital Mugician modules.</value>
   </data>
   <data name="IDS_DMU_DESCRIPTION_AGENT1" xml:space="preserve">
     <value>Original player by Reinier van Vliet.
@@ -133,7 +133,7 @@ This format is the successor of SidMon. The authors want to improve SidMon to a 
     <value>Original player by Reinier van Vliet.
 Converted to C# by Thomas Neumann.
 
-This format is a 7-voices version of the first Digital Mugician editor. It was never released to the public. It works by combining 2 sub-songs into one song. The first 3 voices of the first sub-song are played normally, but all the 4 voices of the second sub-song are mixed together. It tooks so much CPU power to do, so even the display may max be in 16 colors to save DMA cycles.</value>
+This format is a 7 voices version of the first Digital Mugician editor. It was never released to the public. It works by combining 2 sub-songs into one song. The first 3 voices of the first sub-song are played normally, but all the 4 voices of the second sub-song are mixed together. It tooks so much CPU power to do, so even the display may max be in 16 colors to save DMA cycles.</value>
   </data>
   <data name="IDS_DMU_ERR_LOADING_ARPEGGIOS" xml:space="preserve">
     <value>Can't read the arpegio information</value>
