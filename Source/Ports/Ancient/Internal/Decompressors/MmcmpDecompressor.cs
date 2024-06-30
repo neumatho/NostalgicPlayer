@@ -272,7 +272,9 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 				else
 				{
 					// 16 bit compression
-					if (bitCount >= 16)
+					//
+					// Shameless copy paste from 8-bit variant, with minor changes
+					if (bitCount > 16)
 						throw new DecompressionException();
 
 					int16_t[] oldValue = [ 0, 0 ];
