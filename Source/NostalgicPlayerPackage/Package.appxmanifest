@@ -148,7 +148,7 @@
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="audio/x-gdm">.gdm</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>General DigiMusic</uap:DisplayName>
+            <uap:DisplayName>General Digital Music</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
