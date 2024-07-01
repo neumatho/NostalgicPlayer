@@ -76,9 +76,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx {
         ///Converted to C by Jonathan H. Pickard and some fixes by Per Lindén.
         ///Converted to C# and some extra fixes by Thomas Neumann.
         ///
-        ///This format is invented by Chris Hülsbeck and used in a lot of Amiga games, e.g. Turrican and Rock&apos;n&apos;Roll.
-        ///
-        ///This player can play the old TFMX 1.5 modules, both in one and two file formats..
+        ///This is the first version of the format and only a few modules exists in this format. The player can play both one and two file formats..
         /// </summary>
         internal static string IDS_TFMX_DESCRIPTION_AGENT1 {
             get {
@@ -91,9 +89,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx {
         ///Converted to C by Jonathan H. Pickard and some fixes by Per Lindén.
         ///Converted to C# and some extra fixes by Thomas Neumann.
         ///
-        ///This format is invented by Chris Hülsbeck and used in a lot of Amiga games, e.g. Turrican and Rock&apos;n&apos;Roll.
-        ///
-        ///This player can play the newer TFMX Professional modules, both in one and two file formats..
+        ///Most of Chris Hülsbeck music is made with this version. It is still 4 voices modules. The player can play both one and two file formats..
         /// </summary>
         internal static string IDS_TFMX_DESCRIPTION_AGENT2 {
             get {
@@ -106,9 +102,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx {
         ///Converted to C by Jonathan H. Pickard and some fixes by Per Lindén.
         ///Converted to C# and some extra fixes by Thomas Neumann.
         ///
-        ///This format is invented by Chris Hülsbeck and used in a lot of Amiga games, e.g. Turrican and Rock&apos;n&apos;Roll.
-        ///
-        ///This player can play the TFMX modules using 7 voices, both in one and two file formats..
+        ///This is the 7 voices version of this format. Chris used Jochen Hippel mixer, because Jochen had written a great mixer routine on the Amiga. The player can play both one and two file formats..
         /// </summary>
         internal static string IDS_TFMX_DESCRIPTION_AGENT3 {
             get {
