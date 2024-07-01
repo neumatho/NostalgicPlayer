@@ -948,7 +948,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 			for (int i = 0; i < buffer.Length; i += 4)
 			{
-				if (buffer[i] > 63)
+				if ((buffer[i] > 63) && (buffer[i] < 128))
 					return true;
 			}
 
