@@ -154,7 +154,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter {
         ///   Looks up a localized string similar to Written by Thomas Neumann.
         ///MO3 format is created by Ian Luck.
         ///
-        ///The converter will convert a MO3 module into its origin format. The code is based on Johannes Schultz (OpenMPT) and Laurent Clévys documentation..
+        ///The converter will convert a MO3 module into its origin format. The converter is mostly based on code from OpenMPT by Johannes Schultz and documentation by Laurent Clévys..
         /// </summary>
         internal static string IDS_MO3CONV_DESCRIPTION {
             get {
@@ -164,10 +164,10 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter {
         
         /// <summary>
         ///   Looks up a localized string similar to Original format by Ian Luck.
-        ///Converter created by Thomas Neumann based on Johannes Schultz (OpenMPT) and Laurent Clévys documentation.
+        ///Converter created by Thomas Neumann mostly based on code from OpenMPT by Johannes Schultz and documentation by Laurent Clévys.
         ///
         ///MO3 is a file format encapsulating the features of several &quot;MOD&quot; formats (IT, XM, S3M, MTM, MOD, MPTM), but with one big difference: MP3 and OGG compressed samples. A lossless codec is also incorporated for any samples that don&apos;t like lossy encoding, and the whole file structure is compressed too.
-        ///All of this makes it possible to have great reductions in file sizes with [rest of string was truncated]&quot;;.
+        ///All of this makes it possible to have great reductio [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string IDS_MO3CONV_DESCRIPTION_AGENT1 {
             get {
