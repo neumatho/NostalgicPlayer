@@ -208,20 +208,6 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
-		/// Reads a string of the limited byte size from the stream into
-		/// the specified buffer
-		/// </summary>
-		/********************************************************************/
-		public void ReadString(byte[] buffer, int maxLen)
-		{
-			int bytesRead = Read(buffer, 0, maxLen);
-			buffer[bytesRead] = 0x00;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Reads a GUID from the stream
 		/// </summary>
 		/********************************************************************/
@@ -728,6 +714,20 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		{
 			for (int i = 0; i < count; i++)
 				buffer[offset + i] = Read_B_INT32();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Reads a string of the limited byte size from the stream into
+		/// the specified buffer
+		/// </summary>
+		/********************************************************************/
+		public void ReadString(byte[] buffer, int maxLen)
+		{
+			int bytesRead = Read(buffer, 0, maxLen);
+			buffer[bytesRead] = 0x00;
 		}
 
 
