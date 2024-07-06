@@ -8,6 +8,9 @@ using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.Hippel.Containers
 {
+	/// <summary>
+	/// Holds playing information for a single voice
+	/// </summary>
 	internal class VoiceInfo : IDeepCloneable<VoiceInfo>
 	{
 		public byte[] EnvelopeTable;
