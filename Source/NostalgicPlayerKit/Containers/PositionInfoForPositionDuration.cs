@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		internal PositionInfoForPositionDuration(TimeSpan time, float playingFrequency, int[] positionSubSongs, ISnapshot snapshot) : base(time, playingFrequency, snapshot)
+		internal PositionInfoForPositionDuration(TimeSpan time, float playingFrequency, bool amigaFilter, int[] positionSubSongs, ISnapshot snapshot) : base(time, playingFrequency, amigaFilter, snapshot)
 		{
 			PositionSubSongs = new int[positionSubSongs.Length];
 			Array.Copy(positionSubSongs, PositionSubSongs, positionSubSongs.Length);

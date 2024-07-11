@@ -18,10 +18,11 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor (used by module players)
 		/// </summary>
 		/********************************************************************/
-		public PositionInfo(TimeSpan time, float playingFrequency, ISnapshot snapshot)
+		public PositionInfo(TimeSpan time, float playingFrequency, bool amigaFilter, ISnapshot snapshot)
 		{
 			Time = time;
 			PlayingFrequency = playingFrequency;
+			AmigaFilter = amigaFilter;
 			Snapshot = snapshot;
 		}
 
@@ -57,6 +58,18 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// </summary>
 		/********************************************************************/
 		internal float PlayingFrequency
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the state of the Amiga filter
+		/// </summary>
+		/********************************************************************/
+		internal bool AmigaFilter
 		{
 			get;
 		}

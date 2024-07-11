@@ -712,7 +712,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				
 				for (;;)
 				{
-					positionInfoList.Add(new PositionInfo(currentTotalTime, PlayingFrequency, null));
+					positionInfoList.Add(new PositionInfo(currentTotalTime, PlayingFrequency, false, null));
 
 					currentTotalTime += increment;
 					if (currentTotalTime >= songLengths[i])

@@ -77,7 +77,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 					try
 					{
 						List<PositionInfo> positionInfoList = new List<PositionInfo>();
-						positionInfoList.Add(new PositionInfoForPositionDuration(TimeSpan.Zero, PlayingFrequency, originalPositionSubSong, CreateSnapshot()));
+						positionInfoList.Add(new PositionInfoForPositionDuration(TimeSpan.Zero, PlayingFrequency, AmigaFilter, originalPositionSubSong, CreateSnapshot()));
 
 						DateTime safeguardStartTime = DateTime.Now;
 
@@ -90,7 +90,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 							// Time to create a new snapshot?
 							if ((currentTotalTime - lastSnapshotTime) >= IDurationPlayer.NumberOfSecondsBetweenEachSnapshot * 1000.0f)
 							{
-								positionInfoList.Add(new PositionInfoForPositionDuration(new TimeSpan((long)(currentTotalTime * TimeSpan.TicksPerMillisecond)), PlayingFrequency, originalPositionSubSong, CreateSnapshot()));
+								positionInfoList.Add(new PositionInfoForPositionDuration(new TimeSpan((long)(currentTotalTime * TimeSpan.TicksPerMillisecond)), PlayingFrequency, AmigaFilter, originalPositionSubSong, CreateSnapshot()));
 								lastSnapshotTime = currentTotalTime;
 							}
 
@@ -164,6 +164,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 			InitializeWorkingPositionSubSongArray(positionInfo);
 
 			PlayingFrequency = positionInfo.PlayingFrequency;
+			AmigaFilter = positionInfo.AmigaFilter;
 
 			return SetSnapshot(positionInfo.Snapshot, out errorMessage);
 		}
@@ -179,6 +180,8 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		public void SetSongPosition(PositionInfo positionInfo)
 		{
 			PlayingFrequency = positionInfo.PlayingFrequency;
+			AmigaFilter = positionInfo.AmigaFilter;
+
 			SetSnapshot(positionInfo.Snapshot, out _);
 
 			InitializeWorkingPositionSubSongArray((PositionInfoForPositionDuration)positionInfo);
