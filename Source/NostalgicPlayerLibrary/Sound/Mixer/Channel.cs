@@ -464,6 +464,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			flags &= ~ChannelFlag.MuteIt;
 
 			newSampleInfo = null;
+			sampleInfo.Loop = null;
 
 			SetSampleInfo(sampleInfo, sampleData, startOffset, length, playFlag);
 		}
