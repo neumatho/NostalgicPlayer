@@ -168,7 +168,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			// sample to be mixed into the buf[] and the sample is in mono
 
 			VoiceSampleInfo vsi = vnf.SampleInfo;
-			VoiceSample vs = vsi.Sample;
 
 			Array sampleData = vsi.Sample.SampleData;
 
@@ -182,7 +181,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			bool isStereo = (mode & MixerMode.Stereo) != 0;
 
 			// The current size of the playing sample in fixed point
-			long idxSize = vs.Size != 0 ? ((long)vs.Size << FracBits) - 1 : 0;
+			long idxSize = vsi.Sample.Size != 0 ? ((long)vsi.Sample.Size << FracBits) - 1 : 0;
 
 			long idxLoopPos = 0, idxLoopEnd = 0;
 
@@ -234,7 +233,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				}
 				else
 				{
-					VoiceSample setLoop = null;
+					void SetNewSample()
+					{
+						vnf.SampleInfo = vnf.NewSampleInfo;
+						vnf.NewSampleInfo = null;
+
+						vsi = vnf.SampleInfo;
+						vnf.Current = ((long)vsi.Sample.Start) << FracBits;
+						idxSize = vsi.Sample.Size != 0 ? ((long)vsi.Sample.Size << FracBits) - 1 : 0;
+
+						sampleData = vsi.Sample.SampleData;
+					}
 
 					// The sample is playing forward
 					if (vsi.Loop != null)
@@ -242,15 +251,37 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 						if (vnf.Current >= idxLoopEnd)
 						{
 							if (vnf.NewSampleInfo != null)
-							{
-								vnf.SampleInfo = vnf.NewSampleInfo;
-								vnf.NewSampleInfo = null;
-
-								vsi = vnf.SampleInfo;
-								setLoop = vsi.Sample;
-							}
+								SetNewSample();
 							else
-								setLoop = vsi.Loop;
+							{
+								// Loop sample
+								//
+								// Copy the loop address
+								sampleData = vsi.Loop.SampleData;
+
+								// Recalculate loop indexes
+								long idxNewLoopPos = (long)vsi.Loop.Start << FracBits;
+								long idxNewLoopEnd = vsi.Loop.Size != 0 ? ((long)(vsi.Loop.Start + vsi.Loop.Size) << FracBits) - 1 : 0;
+
+								// The sample is looping, so check if it reached the loopEnd index
+								if ((vnf.SampleInfo.Flags & SampleFlag.Bidi) != 0)
+								{
+									// Sample is doing bidirectional loops, so 'bounce'
+									// the current index against the idxLoopEnd
+									vnf.Current = idxNewLoopEnd - (vnf.Current - idxLoopEnd);
+									vnf.Increment = -vnf.Increment;
+									vsi.Flags |= SampleFlag.Reverse;
+								}
+								else
+								{
+									// Normal looping, so set the
+									// current position to loopEnd index
+									vnf.Current = idxNewLoopPos + (vnf.Current - idxLoopEnd);
+								}
+
+								idxLoopPos = idxNewLoopPos;
+								idxLoopEnd = idxNewLoopEnd;
+							}
 						}
 					}
 					else
@@ -259,13 +290,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 						if (vnf.Current >= idxSize)
 						{
 							if (vnf.NewSampleInfo != null)
-							{
-								vnf.SampleInfo = vnf.NewSampleInfo;
-								vnf.NewSampleInfo = null;
-
-								vsi = vnf.SampleInfo;
-								setLoop = vsi.Sample;
-							}
+								SetNewSample();
 							else
 							{
 								// Stop playing this sample
@@ -274,36 +299,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 								break;
 							}
 						}
-					}
-
-					// Loop sample
-					if (setLoop != null)
-					{
-						// Copy the loop address
-						sampleData = setLoop.SampleData;
-
-						// Recalculate loop indexes
-						long idxNewLoopPos = (long)setLoop.Start << FracBits;
-						long idxNewLoopEnd = setLoop.Size != 0 ? ((long)(setLoop.Start + setLoop.Size) << FracBits) - 1 : 0;
-
-						// The sample is looping, so check if it reached the loopEnd index
-						if ((vnf.SampleInfo.Flags & SampleFlag.Bidi) != 0)
-						{
-							// Sample is doing bidirectional loops, so 'bounce'
-							// the current index against the idxLoopEnd
-							vnf.Current = idxNewLoopEnd - (vnf.Current - idxLoopEnd);
-							vnf.Increment = -vnf.Increment;
-							vsi.Flags |= SampleFlag.Reverse;
-						}
-						else
-						{
-							// Normal looping, so set the
-							// current position to loopEnd index
-							vnf.Current = idxNewLoopPos + (vnf.Current - idxLoopEnd);
-						}
-
-						idxLoopPos = idxNewLoopPos;
-						idxLoopEnd = idxNewLoopEnd;
 					}
 				}
 
