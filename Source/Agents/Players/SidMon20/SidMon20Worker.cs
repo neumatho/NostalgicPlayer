@@ -713,6 +713,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20
 				sample.LoopStart = moduleStream.Read_B_UINT16() * 2U;
 				sample.LoopLength = moduleStream.Read_B_UINT16() * 2U;
 
+				if ((sample.LoopStart > sample.Length))
+				{
+					sample.LoopStart = 0;
+					sample.LoopLength = 0;
+				}
+				else if ((sample.LoopStart + sample.LoopLength) > sample.Length)
+					sample.LoopLength = sample.Length - sample.LoopStart;
+
 				// Load negate variables
 				negateInfo.StartOffset = (uint)(moduleStream.Read_B_UINT16() * 2);
 				negateInfo.EndOffset = (uint)(moduleStream.Read_B_UINT16() * 2);
