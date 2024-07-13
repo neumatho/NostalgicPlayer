@@ -239,8 +239,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 						vnf.NewSampleInfo = null;
 
 						vsi = vnf.SampleInfo;
-						vnf.Current = ((long)vsi.Sample.Start) << FracBits;
+						vnf.Current = (long)vsi.Sample.Start << FracBits;
 						idxSize = vsi.Sample.Size != 0 ? ((long)vsi.Sample.Size << FracBits) - 1 : 0;
+
+						if (vsi.Loop != null)
+						{
+							idxLoopPos = (long)vsi.Loop.Start << FracBits;
+							idxLoopEnd = vsi.Loop.Size != 0 ? ((long)(vsi.Loop.Start + vsi.Loop.Size) << FracBits) - 1 : 0;
+						}
+						else
+						{
+							idxLoopPos = 0;
+							idxLoopEnd = 0;
+						}
 
 						sampleData = vsi.Sample.SampleData;
 					}

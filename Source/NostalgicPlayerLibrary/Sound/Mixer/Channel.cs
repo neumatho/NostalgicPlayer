@@ -208,7 +208,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		{
 			SampleInfo sampleInf = newSampleInfo ?? sampleInfo;
 
-			if (startOffset > (sampleInf.Sample.Start + sampleInf.Sample.Length))
+			if (startOffset >= (sampleInf.Sample.Start + sampleInf.Sample.Length))
 				throw new ArgumentException("Start offset is bigger than previous set length of sample", nameof(startOffset));
 
 			if ((startOffset + length) > (sampleInf.Sample.Start + sampleInf.Sample.Length))
@@ -240,6 +240,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 			if (length == 0)
 				throw new ArgumentException("Length may not be zero", nameof(length));
+
+			if (startOffset >= adr.Length)
+				throw new ArgumentException("Start offset is bigger than length of sample", nameof(startOffset));
+
+			if ((startOffset + length) > adr.Length)
+				throw new ArgumentException("Loop length is bigger than length of sample", nameof(length));
 
 			SetLoopInfo(sampleInf, adr, startOffset, length, type);
 		}
