@@ -55,7 +55,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher
 		{
 			try
 			{
-				return new AncientDecruncherStream(new AncientStream(agentName, decompressor.Decompress(), (int)decompressor.GetRawSize()));
+				return new AncientDecruncherStream(new AncientStream(agentName, decompressor));
 			}
 			catch (DecompressionException)
 			{

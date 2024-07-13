@@ -3,16 +3,17 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Polycode.NostalgicPlayer.Ports.Ancient.Internal;
 
 namespace Polycode.NostalgicPlayer.Ports.Ancient
 {
-    /// <summary>
-    /// Main entry point to the API
-    /// </summary>
-    public class Decompressor
+	/// <summary>
+	/// Main entry point to the API
+	/// </summary>
+	public class Decompressor : IDisposable
 	{
 		private readonly DecompressorImpl impl;
 
@@ -24,6 +25,18 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient
 		public Decompressor(Stream crunchedDataStream)
 		{
 			impl = new DecompressorImpl(crunchedDataStream);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Dispose our self
+		/// </summary>
+		/********************************************************************/
+		public void Dispose()
+		{
+			impl.Dispose();
 		}
 
 

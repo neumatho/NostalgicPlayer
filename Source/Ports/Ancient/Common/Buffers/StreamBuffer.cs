@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common.Buffers
 	/// <summary>
 	/// A buffer like implementation based on a stream
 	/// </summary>
-	internal class StreamBuffer : Buffer
+	internal class StreamBuffer : Buffer, IDisposable
 	{
 		private readonly Stream stream;
 		private readonly size_t startOffset;
@@ -36,6 +36,18 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common.Buffers
 		{
 			stream = dataStream;
 			this.startOffset = startOffset;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Dispose our self
+		/// </summary>
+		/********************************************************************/
+		public override void Dispose()
+		{
+			stream.Dispose();
 		}
 
 		#region Overrides

@@ -11,8 +11,19 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common.Buffers
 	/// <summary>
 	/// Base class for all buffer implementations
 	/// </summary>
-	internal abstract class Buffer
+	internal abstract class Buffer : IDisposable
 	{
+		/********************************************************************/
+		/// <summary>
+		/// Dispose our self
+		/// </summary>
+		/********************************************************************/
+		public virtual void Dispose()
+		{
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Get the byte at the index given

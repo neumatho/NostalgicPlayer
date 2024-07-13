@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Exceptions;
+using Polycode.NostalgicPlayer.Ports.Ancient;
 using Polycode.NostalgicPlayer.Ports.Ancient.Exceptions;
 
 namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Streams
@@ -17,6 +18,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Streams
 	internal class AncientStream : Stream
 	{
 		private readonly string agentName;
+		private readonly Decompressor decompressor;
 		private readonly IEnumerator<byte[]> data;
 		private readonly int length;
 		private long position;
@@ -29,16 +31,31 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher.Streams
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public AncientStream(string agentName, IEnumerable<byte[]> decrunchedData, int decrunchedSize)
+		public AncientStream(string agentName, Decompressor decompressor)
 		{
 			this.agentName = agentName;
+			this.decompressor = decompressor;
 
-			data = decrunchedData.GetEnumerator();
-			length = decrunchedSize;
+			data = decompressor.Decompress().GetEnumerator();
+			length = (int)decompressor.GetRawSize();
 			position = 0;
 
 			decrunchedBuffer = null;
 			decrunchedBufferIndex = 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Dispose our self
+		/// </summary>
+		/********************************************************************/
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+
+			decompressor.Dispose();
 		}
 
 		#region Stream implementation

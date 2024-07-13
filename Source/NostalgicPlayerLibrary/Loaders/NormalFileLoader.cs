@@ -36,22 +36,30 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 		{
 			Stream stream = OpenFile(FullPath);
 
-			// Get the original length of the file
-			CrunchedSize = stream.Length;
+			try
+			{
+				// Get the original length of the file
+				CrunchedSize = stream.Length;
 
-			// First try to decrunch the file if needed
-			SingleFileDecruncher decruncher = new SingleFileDecruncher(manager);
-			stream = decruncher.DecrunchFileMultipleLevels(stream);
+				// First try to decrunch the file if needed
+				SingleFileDecruncher decruncher = new SingleFileDecruncher(manager);
+				stream = decruncher.DecrunchFileMultipleLevels(stream);
 
-			// Update sizes
-			ModuleSize = stream.Length;
-			if (ModuleSize == CrunchedSize)
-				CrunchedSize = 0;
+				// Update sizes
+				ModuleSize = stream.Length;
+				if (ModuleSize == CrunchedSize)
+					CrunchedSize = 0;
 
-			// Set algorithms used
-			DecruncherAlgorithms = decruncher.DecruncherAlgorithms;
+				// Set algorithms used
+				DecruncherAlgorithms = decruncher.DecruncherAlgorithms;
 
-			return stream;
+				return stream;
+			}
+			catch (Exception)
+			{
+				stream.Dispose();
+				throw;
+			}
 		}
 
 
@@ -70,15 +78,23 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 			if (stream == null)
 				return null;
 
-			// Decrunch it if needed
-			streamInfo.CrunchedSize = stream.Length;
+			try
+			{
+				// Decrunch it if needed
+				streamInfo.CrunchedSize = stream.Length;
 
-			SingleFileDecruncher decruncher = new SingleFileDecruncher(manager);
-			stream = decruncher.DecrunchFileMultipleLevels(stream);
+				SingleFileDecruncher decruncher = new SingleFileDecruncher(manager);
+				stream = decruncher.DecrunchFileMultipleLevels(stream);
 
-			streamInfo.DecrunchedSize = stream.Length;
+				streamInfo.DecrunchedSize = stream.Length;
 
-			return new ModuleStream(stream, false);
+				return new ModuleStream(stream, false);
+			}
+			catch (Exception)
+			{
+				stream.Dispose();
+				throw;
+			}
 		}
 		#endregion
 
