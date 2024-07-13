@@ -153,6 +153,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 								if (sixtBit)
 								{
 									Span<short> buf16 = MemoryMarshal.Cast<sbyte, short>(buf);
+									length /= 2;
 
 									if ((type & InstrDeltaCode) != 0)
 									{
