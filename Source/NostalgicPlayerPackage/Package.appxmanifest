@@ -1114,6 +1114,22 @@
             <uap:DisplayName>MO3</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="aonfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-aon">.aon</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Art Of Noise</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="aon8file">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-aon8">.aon8</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Art Of Noise 8 voices</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

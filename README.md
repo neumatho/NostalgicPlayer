@@ -42,6 +42,8 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | AHX 1.x | .ahx / .thx | | HivelyTracker |
 | AHX 2.x | .ahx / .thx | | HivelyTracker |
 | AMOS Music Bank | .abk | | AMOS Music Bank |
+| Art Of Noise | .aon | | Art Of Noise |
+| Art Of Noise 8 voices | .aon8 | | Art Of Noise |
 | Asylum Music Format | .amf | | Xmp |
 | Audio Sculpture | .adsc | | ModTracker |
 | AudioIFF | .aiff / .aif | | Sample |

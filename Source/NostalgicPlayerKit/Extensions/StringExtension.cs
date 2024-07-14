@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Text;
+
 namespace Polycode.NostalgicPlayer.Kit.Extensions
 {
 	/// <summary>
@@ -30,6 +32,39 @@ namespace Polycode.NostalgicPlayer.Kit.Extensions
 			}
 
 			return new string(strArray);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert tabs to spaces
+		/// </summary>
+		/********************************************************************/
+		public static string ConvertTabs(this string str, int tabSize)
+		{
+			int index = str.IndexOf('\t');
+			if (index == -1)
+				return str;
+
+			StringBuilder sb = new StringBuilder();
+			int startIndex = 0;
+
+			do
+			{
+				sb.Append(str.Substring(startIndex, index - startIndex));
+				startIndex = index + 1;
+
+				int spacesToInsert = tabSize - (sb.Length % tabSize);
+				sb.Append(new string(' ', spacesToInsert));
+
+				index = str.IndexOf('\t', startIndex);
+			}
+			while (index != -1);
+
+			sb.Append(str.Substring(startIndex));
+
+			return sb.ToString();
 		}
 	}
 }
