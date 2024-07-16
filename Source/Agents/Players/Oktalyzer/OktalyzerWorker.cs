@@ -964,7 +964,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 					VirtualChannels[channelNum].SetLoop(samp.RepeatStart, samp.RepeatLength);
 
 					chanData.ReleaseStart = (uint)samp.RepeatStart + samp.RepeatLength;
-					chanData.ReleaseLength = samp.Length;
+					chanData.ReleaseLength = samp.Length - chanData.ReleaseStart;
 				}
 			}
 

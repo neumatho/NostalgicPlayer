@@ -707,7 +707,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10
 						channel.RetriggerSound = false;
 					}
 					else
-						VirtualChannels[channelNumber].SetSample(inst.SampleData, data, (uint)data + inst.SampleLength);
+						VirtualChannels[channelNumber].SetSample(inst.SampleData, data, inst.SampleLength);
 
 					VirtualChannels[channelNumber].SetLoop(inst.SampleData, data, inst.SampleLength);
 					break;

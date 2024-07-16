@@ -99,18 +99,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 						else
 							newPosition = vnf.NewPosition;
 
-						if ((newPosition >= 0) && (newPosition < (vsi.Loop != null ? (vsi.Loop.Start + vsi.Loop.Size) : vsi.Sample.Size)))
+						if ((newPosition >= 0) && (newPosition < (vsi.Loop != null ? (vsi.Loop.Start + vsi.Loop.Length) : (vsi.Sample.Start + vsi.Sample.Length))))
 							vnf.Current = newPosition << FracBits;
 
 						vnf.Flags &= ~VoiceFlag.ChangePosition;
 					}
 
-					int vol;
-
-					if (vnf.Enabled)
-						vol = vnf.Volume;
-					else
-						vol = 0;
+					int vol = vnf.Enabled ? vnf.Volume : 0;
 
 					vnf.OldLeftVolume = vnf.LeftVolumeSelected;
 					vnf.OldRightVolume = vnf.RightVolumeSelected;
@@ -181,17 +176,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			bool isStereo = (mode & MixerMode.Stereo) != 0;
 
 			// The current size of the playing sample in fixed point
-			long idxSize = vsi.Sample.Size != 0 ? ((long)vsi.Sample.Size << FracBits) - 1 : 0;
+			long idxEnd = vsi.Sample.Length != 0 ? ((long)(vsi.Sample.Start + vsi.Sample.Length) << FracBits) - 1 : 0;
 
-			long idxLoopPos = 0, idxLoopEnd = 0;
+			long idxLoopStart = 0, idxLoopEnd = 0;
 
 			if (vsi.Loop != null)
 			{
 				// The loop start position in fixed point
-				idxLoopPos = (long)vsi.Loop.Start << FracBits;
+				idxLoopStart = (long)vsi.Loop.Start << FracBits;
 
 				// The loop end position in fixed point
-				idxLoopEnd = vsi.Loop.Size != 0 ? ((long)(vsi.Loop.Start + vsi.Loop.Size) << FracBits) - 1 : 0;
+				idxLoopEnd = vsi.Loop.Length != 0 ? ((long)(vsi.Loop.Start + vsi.Loop.Length) << FracBits) - 1 : 0;
 			}
 
 			// Update the 'current' index so the sample loops, or
@@ -201,14 +196,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				if ((vsi.Flags & SampleFlag.Reverse) != 0)
 				{
 					// The sampling is playing in reverse
-					if ((vsi.Loop != null) && (vnf.Current < idxLoopPos))
+					if ((vsi.Loop != null) && (vnf.Current < idxLoopStart))
 					{
 						// The sample is looping, and has reached the loop start index
 						if ((vsi.Flags & SampleFlag.Bidi) != 0)
 						{
 							// Sample is doing bidirectional loops, so 'bounce'
-							// the current index against the idxLoopPos
-							vnf.Current = idxLoopPos + (idxLoopPos - vnf.Current);
+							// the current index against the idxLoopStart
+							vnf.Current = idxLoopStart + (idxLoopStart - vnf.Current);
 							vnf.Increment = -vnf.Increment;
 							vsi.Flags &= ~SampleFlag.Reverse;
 						}
@@ -216,7 +211,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 						{
 							// Normal backwards looping, so set the
 							// current position to loopEnd index
-							vnf.Current = idxLoopEnd - (idxLoopPos - vnf.Current);
+							vnf.Current = idxLoopEnd - (idxLoopStart - vnf.Current);
 						}
 					}
 					else
@@ -240,16 +235,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 						vsi = vnf.SampleInfo;
 						vnf.Current = (long)vsi.Sample.Start << FracBits;
-						idxSize = vsi.Sample.Size != 0 ? ((long)vsi.Sample.Size << FracBits) - 1 : 0;
+						idxEnd = vsi.Sample.Length != 0 ? ((long)(vsi.Sample.Start + vsi.Sample.Length) << FracBits) - 1 : 0;
 
 						if (vsi.Loop != null)
 						{
-							idxLoopPos = (long)vsi.Loop.Start << FracBits;
-							idxLoopEnd = vsi.Loop.Size != 0 ? ((long)(vsi.Loop.Start + vsi.Loop.Size) << FracBits) - 1 : 0;
+							idxLoopStart = (long)vsi.Loop.Start << FracBits;
+							idxLoopEnd = vsi.Loop.Length != 0 ? ((long)(vsi.Loop.Start + vsi.Loop.Length) << FracBits) - 1 : 0;
 						}
 						else
 						{
-							idxLoopPos = 0;
+							idxLoopStart = 0;
 							idxLoopEnd = 0;
 						}
 
@@ -271,8 +266,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 								sampleData = vsi.Loop.SampleData;
 
 								// Recalculate loop indexes
-								long idxNewLoopPos = (long)vsi.Loop.Start << FracBits;
-								long idxNewLoopEnd = vsi.Loop.Size != 0 ? ((long)(vsi.Loop.Start + vsi.Loop.Size) << FracBits) - 1 : 0;
+								long idxNewLoopStart = (long)vsi.Loop.Start << FracBits;
+								long idxNewLoopEnd = vsi.Loop.Length != 0 ? ((long)(vsi.Loop.Start + vsi.Loop.Length) << FracBits) - 1 : 0;
 
 								// The sample is looping, so check if it reached the loopEnd index
 								if ((vnf.SampleInfo.Flags & SampleFlag.Bidi) != 0)
@@ -287,10 +282,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 								{
 									// Normal looping, so set the
 									// current position to loopEnd index
-									vnf.Current = idxNewLoopPos + (vnf.Current - idxLoopEnd);
+									vnf.Current = idxNewLoopStart + (vnf.Current - idxLoopEnd);
 								}
 
-								idxLoopPos = idxNewLoopPos;
+								idxLoopStart = idxNewLoopStart;
 								idxLoopEnd = idxNewLoopEnd;
 							}
 						}
@@ -298,7 +293,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					else
 					{
 						// Sample is not looping, so check if it reached the last position
-						if (vnf.Current >= idxSize)
+						if (vnf.Current >= idxEnd)
 						{
 							if (vnf.NewSampleInfo != null)
 								SetNewSample();
@@ -313,8 +308,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					}
 				}
 
-				long end = (vsi.Flags & SampleFlag.Reverse) != 0 ? vsi.Loop != null ? idxLoopPos : 0 :
-							vsi.Loop != null ? idxLoopEnd : idxSize;
+				long end = (vsi.Flags & SampleFlag.Reverse) != 0 ? vsi.Loop != null ? idxLoopStart : 0 :
+							vsi.Loop != null ? idxLoopEnd : idxEnd;
 
 				// If the sample is not blocked
 				int done;

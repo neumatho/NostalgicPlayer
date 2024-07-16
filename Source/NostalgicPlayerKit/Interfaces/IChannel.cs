@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// </summary>
 		/// <param name="adr">is a pointer to the sample in memory</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
-		/// <param name="length">is the length in samples of the sample</param>
+		/// <param name="length">is the length in samples to be played</param>
 		/// <param name="flag">indicate the format of the sample and how to play it</param>
 		void PlayBuffer(Array adr, uint startOffset, uint length, PlayBufferFlag flag = PlayBufferFlag.None);
 
@@ -31,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <param name="sampleNumber">is the sample number being played. If unknown, set it to -1</param>
 		/// <param name="adr">is a pointer to the sample in memory</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
-		/// <param name="length">is the length in samples of the sample</param>
+		/// <param name="length">is the length in samples to be played</param>
 		/// <param name="flag">indicate the format of the sample and how to play it</param>
 		void PlaySample(short sampleNumber, Array adr, uint startOffset, uint length, PlaySampleFlag flag = PlaySampleFlag.None);
 
@@ -40,7 +40,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// sample stops or loops. No retrigger is made
 		/// </summary>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
-		/// <param name="length">is the length in samples of the sample</param>
+		/// <param name="length">is the length in samples to be played</param>
 		void SetSample(uint startOffset, uint length);
 
 		/// <summary>
@@ -49,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// </summary>
 		/// <param name="adr">is a pointer to the sample in memory</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
-		/// <param name="length">is the length in samples of the sample</param>
+		/// <param name="length">is the length in samples to be played</param>
 		/// <param name="flag">indicate the format of the sample and how to play it</param>
 		void SetSample(Array adr, uint startOffset, uint length, PlaySampleFlag flag = PlaySampleFlag.None);
 

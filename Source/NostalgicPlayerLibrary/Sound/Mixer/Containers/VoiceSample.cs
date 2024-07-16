@@ -14,6 +14,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers
 	{
 		public Array SampleData;
 		public uint Start;
-		public uint Size;
+		public uint Length;
 	}
 }

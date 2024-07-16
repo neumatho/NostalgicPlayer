@@ -826,7 +826,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 					return;
 				}
 
-				channel.PlaySample(trackLine.Sample, channelInfo.SampleData, channelInfo.Start, channelInfo.Length);
+				channel.PlaySample(trackLine.Sample, channelInfo.SampleData, channelInfo.Start, channelInfo.Length - channelInfo.Start);
 				channel.SetAmigaPeriod(channelInfo.Period);
 
 				if (channelInfo.LoopLength != 0)
@@ -1389,7 +1389,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 			}
 
 			if (channelInfo.Length > 0)
-				channel.PlaySample(channelInfo.TrackLine.Sample, channelInfo.SampleData, channelInfo.Start, channelInfo.Length);
+				channel.PlaySample(channelInfo.TrackLine.Sample, channelInfo.SampleData, channelInfo.Start, channelInfo.Length - channelInfo.Start);
 			else
 				channel.Mute();
 		}
@@ -1642,7 +1642,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 			{
 				channelInfo.Retrig = 0;
 
-				channel.PlaySample(channelInfo.TrackLine.Sample, channelInfo.SampleData, channelInfo.Start, channelInfo.Length);
+				channel.PlaySample(channelInfo.TrackLine.Sample, channelInfo.SampleData, channelInfo.Start, channelInfo.Length - channelInfo.Start);
 				channel.SetAmigaPeriod(channelInfo.Period);
 			}
 		}
@@ -1709,7 +1709,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 			{
 				if ((channelInfo.TrackLine.EffectArg & 0x0f) == playingInfo.SpeedCount)
 				{
-					channel.PlaySample(channelInfo.TrackLine.Sample, channelInfo.SampleData, channelInfo.Start, channelInfo.Length);
+					channel.PlaySample(channelInfo.TrackLine.Sample, channelInfo.SampleData, channelInfo.Start, channelInfo.Length - channelInfo.Start);
 					channel.SetAmigaPeriod(channelInfo.Period);
 				}
 			}

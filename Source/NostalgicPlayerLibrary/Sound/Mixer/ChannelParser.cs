@@ -104,7 +104,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 						voiceSample.SampleData = sample.SampleData;
 						voiceSample.Start = sample.Start;
-						voiceSample.Size = sample.Length;
+						voiceSample.Length = sample.Length;
 
 						if ((sampleInfo.Flags & ChannelSampleFlag.Backwards) != 0)
 						{
@@ -134,7 +134,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 								loopVoiceSample.SampleData = loopSample.SampleData;
 								loopVoiceSample.Start = loopSample.Start;
-								loopVoiceSample.Size = loopSample.Length;
+								loopVoiceSample.Length = loopSample.Length;
 
 								if ((sampleInfo.Flags & ChannelSampleFlag.Backwards) != 0)
 									loopVoiceSample.Start = loopSample.Length - loopSample.Start - 1;
@@ -178,7 +178,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 								newVoiceSample.SampleData = newSample.SampleData;
 								newVoiceSample.Start = newSample.Start;
-								newVoiceSample.Size = newSample.Length - newSample.Start;	// Because the new sample is used as loop points, the size need to be the length of the loop and not the sample
+								newVoiceSample.Length = newSample.Length;
 
 								if ((newSampleInfo.Flags & ChannelSampleFlag.Backwards) != 0)
 								{
@@ -200,7 +200,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 									loopVoiceSample.SampleData = loopSample.SampleData;
 									loopVoiceSample.Start = loopSample.Start;
-									loopVoiceSample.Size = loopSample.Length;
+									loopVoiceSample.Length = loopSample.Length;
 
 									if ((sampleInfo.Flags & ChannelSampleFlag.Backwards) != 0)
 										loopVoiceSample.Start = loopSample.Length - loopSample.Start - 1;
@@ -228,7 +228,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			ChannelFlag retFlags = flags;
 			flags = ChannelFlag.None;
 
-			return bufferMode || ((retFlags & ~ChannelFlag.Active) == ChannelFlag.None) ? null : new ChannelChanged(channelEnabled, ccMuted, ccNoteKicked, currentSampleNumber, voiceInfo.SampleInfo.Sample.Size, ccLooping, ccSamplePositionRelative, ccSamplePosition, ccVolume, ccFrequency);
+			return bufferMode || ((retFlags & ~ChannelFlag.Active) == ChannelFlag.None) ? null : new ChannelChanged(channelEnabled, ccMuted, ccNoteKicked, currentSampleNumber, voiceInfo.SampleInfo.Sample.Length, ccLooping, ccSamplePositionRelative, ccSamplePosition, ccVolume, ccFrequency);
 		}
 
 

@@ -867,7 +867,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 								playFlag |= PlaySampleFlag.Stereo;
 
 							// Play it
-							channel.PlaySample(-1, sample, offset, length, playFlag);
+							channel.PlaySample(-1, sample, offset, length - offset, playFlag);
 
 							channel.SetFrequency((uint)frequency);
 

@@ -231,7 +231,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 					playSampleFlag |= PlaySampleFlag.Backwards;
 
 				// Okay, tell NostalgicPlayer to play the sample
-				worker.VirtualChannels[chNum].PlaySample((short)instNum, sampAdr, startOffs, len, playSampleFlag);
+				worker.VirtualChannels[chNum].PlaySample((short)instNum, sampAdr, startOffs, len - startOffs, playSampleFlag);
 			}
 
 			// Set loop

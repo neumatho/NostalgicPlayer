@@ -1283,7 +1283,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20
 
 						if (channel.IsActive)
 						{
-							channel.SetSample(voiceInfo.LoopSample, voiceInfo.LoopOffset, voiceInfo.LoopOffset + voiceInfo.LoopLength);
+							channel.SetSample(voiceInfo.LoopSample, voiceInfo.LoopOffset, voiceInfo.LoopLength);
 							channel.SetLoop(voiceInfo.LoopOffset, voiceInfo.LoopLength);
 						}
 					}

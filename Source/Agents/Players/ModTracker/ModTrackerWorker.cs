@@ -2328,7 +2328,7 @@ stopLoop:
 
 					if (modChan.SynthSample)
 					{
-						chan.SetSample(modChan.SynthData.WaveData, modChan.LoopStart, (uint)(modChan.LoopStart + modChan.LoopLength * 2));
+						chan.SetSample(modChan.SynthData.WaveData, modChan.LoopStart, (uint)(modChan.LoopLength * 2));
 						chan.SetLoop(modChan.LoopStart, (uint)modChan.LoopLength * 2);
 					}
 				}
@@ -2563,7 +2563,8 @@ stopLoop:
 					// Fill out the channel
 					if (modChan.Length > 0)
 					{
-						chan.PlaySample(modChan.SampleNumber, modChan.SampleData, (uint)(modChan.Offset + modChan.StartOffset * 2), (uint)modChan.Length * 2);
+						uint offset = (uint)(modChan.Offset + modChan.StartOffset * 2);
+						chan.PlaySample(modChan.SampleNumber, modChan.SampleData, offset, (uint)((modChan.Length * 2) - offset));
 						SetPeriod(modChan.Period, chan, modChan);
 
 						// Setup loop

@@ -541,9 +541,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 							framesTakenSinceLastCall = 0;
 
 							if (bufferDirect)
-								framesLeft = (int)voiceInfo[0].SampleInfo.Sample.Size;
+								framesLeft = (int)voiceInfo[0].SampleInfo.Sample.Length;
 							else if (bufferMode)
-								framesLeft = (int)(mixerFrequency * voiceInfo[0].SampleInfo.Sample.Size / voiceInfo[0].Frequency);
+								framesLeft = (int)(mixerFrequency * voiceInfo[0].SampleInfo.Sample.Length / voiceInfo[0].Frequency);
 							else
 							{
 								// Calculate the number of frames to mix before the

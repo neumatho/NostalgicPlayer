@@ -101,7 +101,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// </summary>
 		/// <param name="adr">is a pointer to the sample in memory</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
-		/// <param name="length">is the length in samples of the sample</param>
+		/// <param name="length">is the length in samples to be played</param>
 		/// <param name="flag">indicate the format of the sample and how to play it</param>
 		/********************************************************************/
 		public void PlayBuffer(Array adr, uint startOffset, uint length, PlayBufferFlag flag)
@@ -123,7 +123,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// <param name="sampleNumber">is the sample number being played. If unknown, set it to -1</param>
 		/// <param name="adr">is a pointer to the sample in memory</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
-		/// <param name="length">is the length in samples of the sample</param>
+		/// <param name="length">is the length in samples to be played</param>
 		/// <param name="flag">indicate the format of the sample and how to play it</param>
 		/********************************************************************/
 		public void PlaySample(short sampleNumber, Array adr, uint startOffset, uint length, PlaySampleFlag flag)
@@ -137,8 +137,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			if (length == 0)
 				throw new ArgumentException("Length may not be zero", nameof(length));
 
-			if (startOffset > adr.Length)
-				throw new ArgumentException("startOffset is bigger than length", nameof(startOffset));
+			if (startOffset >= adr.Length)
+				throw new ArgumentException("startOffset is bigger than sample array", nameof(startOffset));
+
+			if ((startOffset + length) > adr.Length)
+				throw new ArgumentException("startOffset+length is bigger than sample array", nameof(length));
 
 			SetPlaySampleInfo(sampleNumber, adr, startOffset, length, flag);
 		}
@@ -151,15 +154,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// sample stops or loops. No retrigger is made
 		/// </summary>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
-		/// <param name="length">is the length in samples of the sample</param>
+		/// <param name="length">is the length in samples to be played</param>
 		/********************************************************************/
 		public void SetSample(uint startOffset, uint length)
 		{
 			if (length == 0)
 				throw new ArgumentException("Length may not be zero", nameof(length));
 
-			if (startOffset > sampleInfo.Sample.Length)
-				throw new ArgumentException("startOffset is bigger than length", nameof(startOffset));
+			if (startOffset >= sampleInfo.Sample.SampleData.Length)
+				throw new ArgumentException("startOffset is bigger than sample array", nameof(startOffset));
+
+			if ((startOffset + length) > sampleInfo.Sample.SampleData.Length)
+				throw new ArgumentException("startOffset+length is bigger than sample array", nameof(length));
 
 			SetNewSampleInfo(sampleInfo.Sample.SampleData, startOffset, length, PlaySampleFlag.None);
 			newSampleInfo.Flags = sampleInfo.Flags;
@@ -174,7 +180,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// </summary>
 		/// <param name="adr">is a pointer to the sample in memory</param>
 		/// <param name="startOffset">is the number of samples in the sample to start</param>
-		/// <param name="length">is the length in samples of the sample</param>
+		/// <param name="length">is the length in samples to be played</param>
 		/// <param name="flag">indicate the format of the sample and how to play it</param>
 		/********************************************************************/
 		public void SetSample(Array adr, uint startOffset, uint length, PlaySampleFlag flag)
@@ -188,8 +194,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			if (length == 0)
 				throw new ArgumentException("Length may not be zero", nameof(length));
 
-			if (startOffset > adr.Length)
-				throw new ArgumentException("startOffset is bigger than length", nameof(startOffset));
+			if (startOffset >= adr.Length)
+				throw new ArgumentException("startOffset is bigger than sample array", nameof(startOffset));
+
+			if ((startOffset + length) > adr.Length)
+				throw new ArgumentException("startOffset+length is bigger than sample array", nameof(length));
 
 			SetNewSampleInfo(adr, startOffset, length, flag);
 		}
@@ -212,7 +221,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				throw new ArgumentException("Start offset is bigger than previous set length of sample", nameof(startOffset));
 
 			if ((startOffset + length) > (sampleInf.Sample.Start + sampleInf.Sample.Length))
-				throw new ArgumentException("Loop length is bigger than previous set length of sample", nameof(length));
+				throw new ArgumentException("Start offset + loop length is bigger than length of sample", nameof(length));
 
 			SetLoopInfo(sampleInf, sampleInf.Sample.SampleData, startOffset, length, type);
 		}
@@ -245,7 +254,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				throw new ArgumentException("Start offset is bigger than length of sample", nameof(startOffset));
 
 			if ((startOffset + length) > adr.Length)
-				throw new ArgumentException("Loop length is bigger than length of sample", nameof(length));
+				throw new ArgumentException("Start offset + loop length is bigger than length of sample", nameof(length));
 
 			SetLoopInfo(sampleInf, adr, startOffset, length, type);
 		}

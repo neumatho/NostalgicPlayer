@@ -806,7 +806,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 							}
 							else
 							{
-								channel.PlaySample((short)(channelInfo.OldSampleNumber - 1), channelInfo.SampleData, channelInfo.StartOffset, sample.Length);
+								channel.PlaySample((short)(channelInfo.OldSampleNumber - 1), channelInfo.SampleData, channelInfo.StartOffset, sample.Length - channelInfo.StartOffset);
 
 								if (sample.LoopLength > 0)
 									channel.SetLoop(sample.LoopStart, sample.LoopLength);

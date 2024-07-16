@@ -1574,7 +1574,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 			PlaySampleInfo toPlay = GetSampleData(sample, newNote);
 
 			IChannel channel = VirtualChannels[trackNumber];
-			channel.PlaySample((short)(sampleNumber - 1), sample.SampleData, toPlay.StartOffset, toPlay.Length);
+			channel.PlaySample((short)(sampleNumber - 1), sample.SampleData, toPlay.StartOffset, toPlay.Length - toPlay.StartOffset);
 
 			if (toPlay.LoopLength > 2)
 				channel.SetLoop(toPlay.LoopStart, toPlay.LoopLength);

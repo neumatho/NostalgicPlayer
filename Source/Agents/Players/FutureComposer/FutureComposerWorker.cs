@@ -1054,7 +1054,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 
 								if (dat < 90)
 								{
-									channel.SetSample(sampInfo[dat].Address, sampInfo[dat].LoopStart, (uint)sampInfo[dat].LoopStart + sampInfo[dat].LoopLength);
+									channel.SetSample(sampInfo[dat].Address, sampInfo[dat].LoopStart, sampInfo[dat].LoopLength);
 									channel.SetLoop(sampInfo[dat].LoopStart, sampInfo[dat].LoopLength);
 								}
 

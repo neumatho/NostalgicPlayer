@@ -2373,7 +2373,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 										{
 											uint offset = voiceInfo.FrequencyTable[voiceInfo.FrequencyPosition + 2] * sample.LoopLength;
 
-											channel.PlaySample(sampleNumber, sample.SampleData, offset, sample.LoopLength);
+											channel.PlaySample(sampleNumber, sample.SampleData, offset, sample.LoopLength - offset);
 
 											if (sample.LoopLength > 2)
 												channel.SetLoop(sample.LoopStart, sample.LoopLength);
@@ -2527,7 +2527,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 
 											int length = end - start;
 
-											channel.PlaySample(sampleNumber, sample.SampleData, sampleStartOffset, (uint)(sampleStartOffset + length));
+											channel.PlaySample(sampleNumber, sample.SampleData, sampleStartOffset, (uint)length);
 
 											voiceInfo.EnvelopePosition = 0;
 											voiceInfo.EnvelopeCounter = 1;
@@ -2617,7 +2617,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 					if (len == 0)
 						len = sample.Length - start;	// Fix for Ninja 2
 
-					channel.SetSample(sample.SampleData, start, start + len);
+					channel.SetSample(sample.SampleData, start, len);
 					channel.SetLoop(start, len);
 				}
 			}

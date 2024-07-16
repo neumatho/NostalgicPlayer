@@ -104,7 +104,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				vnf.Active = true;
 			}
 
-			int countInSamples = Math.Min(todoInSamples, (int)vsi.Sample.Size - (int)vnf.Current);
+			int countInSamples = Math.Min(todoInSamples, (int)vsi.Sample.Length - (int)vnf.Current);
 			if (countInSamples > 0)
 			{
 				vol *= 128;
