@@ -1469,7 +1469,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise
 				{
 					voiceInfo.WaveForm = voiceInfo.RepeatStart;
 					voiceInfo.WaveFormOffset = voiceInfo.RepeatOffset;
-					voiceInfo.WaveLen = voiceInfo.RepeatLength;
+					voiceInfo.WaveLen = (ushort)(voiceInfo.RepeatOffset + voiceInfo.RepeatLength);
 				}
 				else
 				{
@@ -2746,15 +2746,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise
 					if (playingInfo.NoiseAvoid)
 					{
 						if ((voiceInfo.OldWaveLen > 255) || (voiceInfo.OldWaveLen == 0) || (voiceInfo.WaveLen > 255))
-							channel.PlaySample(voiceInfo.InstrumentNumber, voiceInfo.WaveForm, voiceInfo.WaveFormOffset, voiceInfo.WaveLen * 2U);
+							channel.PlaySample(voiceInfo.InstrumentNumber, voiceInfo.WaveForm, voiceInfo.WaveFormOffset, (voiceInfo.WaveLen * 2U) - voiceInfo.WaveFormOffset);
 						else
 						{
-							channel.SetSample(voiceInfo.WaveForm, voiceInfo.WaveFormOffset, voiceInfo.WaveLen * 2U);
+							channel.SetSample(voiceInfo.WaveForm, voiceInfo.WaveFormOffset, (voiceInfo.WaveLen * 2U) - voiceInfo.WaveFormOffset);
 							channel.SetSampleNumber(voiceInfo.InstrumentNumber);
 						}
 					}
 					else
-						channel.PlaySample(voiceInfo.InstrumentNumber, voiceInfo.WaveForm, voiceInfo.WaveFormOffset, voiceInfo.WaveLen * 2U);
+						channel.PlaySample(voiceInfo.InstrumentNumber, voiceInfo.WaveForm, voiceInfo.WaveFormOffset, (voiceInfo.WaveLen * 2U) - voiceInfo.WaveFormOffset);
 
 					if ((voiceInfo.RepeatStart != null) && (voiceInfo.RepeatLength > 1))
 					{
