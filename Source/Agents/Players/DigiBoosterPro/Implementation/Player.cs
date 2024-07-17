@@ -364,10 +364,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 			if (mt.PlayBackwards)
 				playFlag |= PlaySampleFlag.Backwards;
 
-			worker.VirtualChannels[channel].PlaySample((short)(mt.Instrument - 1), mt.SampleData, (uint)mt.TriggerOffset, (uint)(mt.SampleLength - mt.TriggerOffset), playFlag);
+			uint length = (uint)(mt.SampleLength - mt.TriggerOffset);
+			if (length > 0)
+			{
+				worker.VirtualChannels[channel].PlaySample((short)(mt.Instrument - 1), mt.SampleData, (uint)mt.TriggerOffset, length, playFlag);
 
-			if (mt.SampleLoopLength > 0)
-				worker.VirtualChannels[channel].SetLoop(mt.SampleLoopStartOffset, mt.SampleLoopLength, mt.SampleLoopType);
+				if (mt.SampleLoopLength > 0)
+					worker.VirtualChannels[channel].SetLoop(mt.SampleLoopStartOffset, mt.SampleLoopLength, mt.SampleLoopType);
+			}
+			else
+				worker.VirtualChannels[channel].Mute();
 
 			mt.VibratoCounter = 0;
 			mt.IsOn = true;
