@@ -321,6 +321,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 					// Get next pattern line
 					playingInfo.PatternPos++;
+
 					if (playingInfo.PattDelayTime != 0)   // New pattern delay time
 					{
 						// Activate the pattern delay
@@ -2434,7 +2435,7 @@ stopLoop:
 						modChan.LoopStart = sample.LoopStart * 2U;
 						modChan.WaveStart = modChan.LoopStart;
 
-						modChan.Length = sample.LoopLength;
+						modChan.Length = (ushort)(sample.LoopStart + sample.LoopLength);
 						modChan.LoopLength = sample.LoopLength;
 					}
 				}
