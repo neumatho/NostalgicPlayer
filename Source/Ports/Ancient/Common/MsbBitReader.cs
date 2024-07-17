@@ -48,6 +48,18 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 		/// Read the number of bits given as argument and return the number
 		/// </summary>
 		/********************************************************************/
+		public uint32_t ReadBitsBe16(uint32_t count)
+		{
+			return ReadBitsGeneric(count, () => (inputStream.ReadBE16(), 16));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read the number of bits given as argument and return the number
+		/// </summary>
+		/********************************************************************/
 		public uint32_t ReadBitsBe32(uint32_t count)
 		{
 			return ReadBitsGeneric(count, () => (inputStream.ReadBE32(), 32));

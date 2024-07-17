@@ -38,6 +38,15 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 			if (!DetectHeader(hdr) || (packedData.Size() < 20))
 				throw new InvalidFormatException();
 
+			if ((hdr == 0x1805_1973) || (hdr == Common.Common.FourCC("CD\xb3\xb9")) || (hdr == Common.Common.FourCC("Iron")) || (hdr == Common.Common.FourCC("MSS!")))
+				hdr = Common.Common.FourCC("CrM2");
+
+			if (hdr == Common.Common.FourCC("mss!"))
+				hdr = Common.Common.FourCC("Crm2");
+
+			if (hdr == Common.Common.FourCC("DCS!"))
+				hdr = Common.Common.FourCC("CrM!");
+
 			rawSize = packedData.ReadBe32(6);
 			packedSize = packedData.ReadBe32(10);
 
@@ -57,13 +66,20 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 		/********************************************************************/
 		public static bool DetectHeader(uint32_t hdr)
 		{
-			if ((hdr == Common.Common.FourCC("CrM!")) ||
-			    (hdr == Common.Common.FourCC("CrM2")) ||
-			    (hdr == Common.Common.FourCC("Crm!")) ||
-			    (hdr == Common.Common.FourCC("Crm2")))
-				return true;
-
-			return false;
+			return hdr switch
+			{
+				var h when h == Common.Common.FourCC("CrM!") => true,
+				var h when h == Common.Common.FourCC("CrM2") => true,
+				var h when h == Common.Common.FourCC("Crm!") => true,
+				var h when h == Common.Common.FourCC("Crm2") => true,
+				var h when h == 0x1805_1973 => true,							// Fears
+				var h when h == Common.Common.FourCC("CD\xb3\xb9") => true,	// BiFi 2
+				var h when h == Common.Common.FourCC("DCS!") => true,		// Sonic Attack / Dual Crew - Shining
+				var h when h == Common.Common.FourCC("Iron") => true,		// Sun / TRSI
+				var h when h == Common.Common.FourCC("MSS!") => true,		// Infection / Mystic
+				var h when h == Common.Common.FourCC("mss!") => true,
+				_ => false
+			};
 		}
 
 

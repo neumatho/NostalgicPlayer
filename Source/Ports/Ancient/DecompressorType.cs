@@ -19,6 +19,8 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient
         /// <summary></summary>
         PowerPacker,
         /// <summary></summary>
+        StoneCracker,
+        /// <summary></summary>
         Xpk_Blzw,
         /// <summary></summary>
         Xpk_Bzp2,

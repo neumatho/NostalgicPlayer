@@ -28,7 +28,9 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal
 			new DecompressorPair { First = CrunchManiaDecompressor.DetectHeader, Second = CrunchManiaDecompressor.Create },
 			new DecompressorPair { First = MmcmpDecompressor.DetectHeader, Second = MmcmpDecompressor.Create },
 			new DecompressorPair { First = PowerPackerDecompressor.DetectHeader, Second = PowerPackerDecompressor.Create },
-			new DecompressorPair { First = XpkMain.DetectHeader, Second = XpkMain.Create }
+			new DecompressorPair { First = XpkMain.DetectHeader, Second = XpkMain.Create },
+			// Putting StoneCracker last since detection can be accidentally be detected instead of correct format
+			new DecompressorPair { First = StoneCrackerDecompressor.DetectHeader, Second = StoneCrackerDecompressor.Create }
 		};
 
 		private readonly DecompressorType type;

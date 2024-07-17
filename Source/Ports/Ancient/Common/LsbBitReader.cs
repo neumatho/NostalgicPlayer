@@ -48,7 +48,19 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common
 		/// Read count number of bits in big endian format
 		/// </summary>
 		/********************************************************************/
-		public uint32_t ReadBitsBe32(uint32_t count, uint32_t xorKey = 0)
+		public uint32_t ReadBitsBe16(uint32_t count)
+		{
+			return ReadBitsGeneric(count, () => (inputStream.ReadBE16(), 16));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read count number of bits in big endian format
+		/// </summary>
+		/********************************************************************/
+		public uint32_t ReadBitsBe32(uint32_t count)
 		{
 			return ReadBitsGeneric(count, () => (inputStream.ReadBE32(), 32));
 		}

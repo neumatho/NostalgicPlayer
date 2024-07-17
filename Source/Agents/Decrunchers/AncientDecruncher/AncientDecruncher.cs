@@ -33,6 +33,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher
 		private static readonly Guid agent9Id = Guid.Parse("61410C72-454A-428F-9EF1-9A3CDB7FA3D0");
 		private static readonly Guid agent10Id = Guid.Parse("8126B435-95E4-4205-A589-8A9B4CFF1DD1");
 		private static readonly Guid agent11Id = Guid.Parse("85226D94-249F-4C52-983B-99858862680D");
+		private static readonly Guid agent12Id = Guid.Parse("844B2EC4-E12A-4252-9362-8571E6B4801A");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -65,7 +66,8 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher
 					new AgentSupportInfo(Resources.IDS_ANC_NAME_AGENT8, Resources.IDS_ANC_DESCRIPTION_AGENT8, agent8Id),
 					new AgentSupportInfo(Resources.IDS_ANC_NAME_AGENT9, Resources.IDS_ANC_DESCRIPTION_AGENT9, agent9Id),
 					new AgentSupportInfo(Resources.IDS_ANC_NAME_AGENT10, Resources.IDS_ANC_DESCRIPTION_AGENT10, agent10Id),
-					new AgentSupportInfo(Resources.IDS_ANC_NAME_AGENT11, Resources.IDS_ANC_DESCRIPTION_AGENT11, agent11Id)
+					new AgentSupportInfo(Resources.IDS_ANC_NAME_AGENT11, Resources.IDS_ANC_DESCRIPTION_AGENT11, agent11Id),
+					new AgentSupportInfo(Resources.IDS_ANC_NAME_AGENT12, Resources.IDS_ANC_DESCRIPTION_AGENT12, agent12Id)
 				};
 			}
 		}
@@ -110,7 +112,10 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher
 				return new AncientWorker(Resources.IDS_ANC_NAME_AGENT10);
 
 			if (typeId == agent11Id)
-				return new AncientWorker(Resources.IDS_ANC_NAME_AGENT11, null);
+				return new AncientWorker(Resources.IDS_ANC_NAME_AGENT11);
+
+			if (typeId == agent12Id)
+				return new AncientWorker(Resources.IDS_ANC_NAME_AGENT12);
 
 			return null;
 		}
@@ -207,6 +212,13 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.AncientDecruncher
 					{
 						agentName = Resources.IDS_ANC_NAME_AGENT11;
 						typeId = agent11Id;
+						break;
+					}
+
+					case DecompressorType.StoneCracker:
+					{
+						agentName = Resources.IDS_ANC_NAME_AGENT12;
+						typeId = agent12Id;
 						break;
 					}
 

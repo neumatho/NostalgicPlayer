@@ -71,7 +71,12 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 		/********************************************************************/
 		public static bool DetectHeader(uint32_t hdr)
 		{
-			return hdr == Common.Common.FourCC("PP20");
+			return (hdr == Common.Common.FourCC("PP20"))
+				|| (hdr == Common.Common.FourCC("CHFC"))	// Sky High Stuntman
+				|| (hdr == Common.Common.FourCC("DEN!"))	// Jewels - Crossroads
+				|| (hdr == Common.Common.FourCC("DXS9"))	// Hopp oder Top, Punkt Punkt Punkt
+				|| (hdr == Common.Common.FourCC("H.D."))	// F1 Challenge
+				|| (hdr == Common.Common.FourCC("RVV!"));	// Hoi AGA Remix
 		}
 
 
