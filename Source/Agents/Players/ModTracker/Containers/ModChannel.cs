@@ -16,11 +16,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 
 		public short SampleNumber;		// Current sample number
 		public sbyte[] SampleData;
-		public ushort Offset;
+		public uint Offset;
 		public ushort Length;
-		public ushort LoopStart;
+		public uint LoopStart;
 		public ushort LoopLength;
-		public ushort StartOffset;
+		public uint StartOffset;
 		public ushort Period;
 		public byte FineTune;
 		public sbyte FineTuneHmn;
@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker.Containers
 		public sbyte PattPos;
 		public byte LoopCount;
 		public byte FunkOffset;
-		public ushort WaveStart;
+		public uint WaveStart;
 		public bool AutoSlide;
 		public byte AutoSlideArg;
 

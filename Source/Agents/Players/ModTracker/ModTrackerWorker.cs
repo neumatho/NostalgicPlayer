@@ -2423,7 +2423,7 @@ stopLoop:
 					if (currentModuleType <= ModuleType.SoundTracker2x)
 					{
 						// Only plays the loop part. Loop start has been converted to words in loader
-						modChan.Offset = (ushort)(sample.LoopStart * 2);
+						modChan.Offset = sample.LoopStart * 2U;
 						modChan.LoopStart = modChan.Offset;
 						modChan.WaveStart = modChan.Offset;
 						modChan.Length = sample.LoopLength;
@@ -2431,17 +2431,17 @@ stopLoop:
 					}
 					else
 					{
-						modChan.LoopStart = (ushort)(sample.LoopStart * 2);
+						modChan.LoopStart = sample.LoopStart * 2U;
 						modChan.WaveStart = modChan.LoopStart;
 
-						modChan.Length = (ushort)(sample.LoopStart + sample.LoopLength);
+						modChan.Length = sample.LoopLength;
 						modChan.LoopLength = sample.LoopLength;
 					}
 				}
 				else
 				{
 					// No loop
-					modChan.LoopStart = sample.LoopStart;
+					modChan.LoopStart = sample.LoopStart * 2U;
 					modChan.WaveStart = modChan.LoopStart;
 					modChan.LoopLength = sample.LoopLength;
 				}
@@ -2555,7 +2555,7 @@ stopLoop:
 						{
 							modChan.DataCounter = 0;
 
-							modChan.StartOffset = (ushort)(modChan.LoopStart / 2);
+							modChan.StartOffset = modChan.LoopStart;
 							modChan.Length = modChan.LoopLength;
 						}
 					}
@@ -2563,8 +2563,8 @@ stopLoop:
 					// Fill out the channel
 					if (modChan.Length > 0)
 					{
-						uint offset = (uint)(modChan.Offset + modChan.StartOffset * 2);
-						chan.PlaySample(modChan.SampleNumber, modChan.SampleData, offset, (uint)((modChan.Length * 2) - offset));
+						uint offset = modChan.Offset + modChan.StartOffset;
+						chan.PlaySample(modChan.SampleNumber, modChan.SampleData, offset, (uint)(modChan.Length * 2));
 						SetPeriod(modChan.Period, chan, modChan);
 
 						// Setup loop
@@ -3135,7 +3135,7 @@ stopLoop:
 				{
 					modChan.FunkOffset = 0;
 
-					ushort waveStart = (ushort)(modChan.WaveStart + 1);
+					uint waveStart = modChan.WaveStart + 1;
 					if (waveStart >= (modChan.LoopStart + modChan.LoopLength * 2))
 						waveStart = modChan.LoopStart;
 
@@ -3765,13 +3765,12 @@ stopLoop:
 			// Calculate the offset
 			ushort offset = (ushort)(modChan.SampleOffset * 128);
 			if (offset < modChan.Length)
-				modChan.StartOffset = offset;
-			else
 			{
-				modChan.Length = modChan.LoopLength;
-				modChan.Offset = modChan.LoopStart;
-				modChan.StartOffset = 0;
+				modChan.Length -= offset;
+				modChan.StartOffset = offset * 2U;
 			}
+			else
+				modChan.Length = 0;
 		}
 
 
@@ -4090,7 +4089,7 @@ stopLoop:
 		{
 			if (modChan.SampleData != null)
 			{
-				int index = modChan.LoopStart;
+				uint index = modChan.LoopStart;
 
 				for (int i = modChan.LoopLength * 2 - 2; i >= 0; i--)
 				{
