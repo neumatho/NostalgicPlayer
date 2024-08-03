@@ -1463,15 +1463,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/********************************************************************/
 		private void ModuleHandler_ClockUpdated(object sender, ClockUpdatedEventArgs e)
 		{
-			// Do only print the information if the module is playing
-			if ((playItem != null) && moduleHandler.IsPlaying)
+			BeginInvoke(() =>
 			{
-				// Set the time offset
-				timeOccurred = e.Time;
+				// Do only print the information if the module is playing
+				if ((playItem != null) && moduleHandler.IsPlaying)
+				{
+					// Set the time offset
+					timeOccurred = e.Time;
 
-				// Print the module information
-				PrintInfo();
-			}
+					// Print the module information
+					PrintInfo();
+				}
+			});
 		}
 
 
