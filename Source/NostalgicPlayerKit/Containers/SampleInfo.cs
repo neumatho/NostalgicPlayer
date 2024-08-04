@@ -86,6 +86,17 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 			public Array Sample;
 
 			/// <summary>
+			/// Holds the number of samples into the sample array where the real
+			/// data starts
+			/// </summary>
+			public uint SampleOffset;
+
+			/// <summary>
+			/// Holds the length of the sample in samples for one channel
+			/// </summary>
+			public uint Length;
+
+			/// <summary>
 			/// How many notes to add to the playing note
 			/// </summary>
 			public int NoteAdd;
@@ -226,8 +237,8 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 				{
 					foreach (MultiOctaveInfo info in value)
 					{
-						if ((info.Sample != null) && (info.Sample.GetType() != typeof(sbyte[][])) && (info.Sample.GetType() != typeof(short[][])) && (value.GetType() != typeof(byte[][])))
-							throw new ArgumentException("Type of array must be either sbyte[][], short[][] or byte[][]", nameof(value));
+						if ((info.Sample != null) && (info.Sample.GetType() != typeof(sbyte[])) && (info.Sample.GetType() != typeof(short[])) && (value.GetType() != typeof(byte[])))
+							throw new ArgumentException("Type of array must be either sbyte[], short[] or byte[]", nameof(value));
 					}
 				}
 

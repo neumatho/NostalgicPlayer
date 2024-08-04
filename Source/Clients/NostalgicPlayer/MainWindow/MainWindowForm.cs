@@ -837,8 +837,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 								note += octaveInfo.NoteAdd;
 
 								sample = octaveInfo.Sample;
+								offset = octaveInfo.SampleOffset;
 
-								length = (uint)sample.Length;
+								length = octaveInfo.Length;
 								loopStart = octaveInfo.LoopStart;
 								loopLength = octaveInfo.LoopLength;
 							}
