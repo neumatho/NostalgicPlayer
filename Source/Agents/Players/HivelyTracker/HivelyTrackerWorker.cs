@@ -725,7 +725,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 		/// </summary>
 		/********************************************************************/
 		public override ChannelChanged[] VisualChannels => visualizerChannels.Select((x, i) =>
-				new ChannelChanged(enabledChannels[i], x.Muted, x.NoteKicked, x.SampleNumber, 0x280, true, false, x.SamplePosition, x.Volume, x.Frequency)).ToArray();
+				new ChannelChanged(enabledChannels[i], x.Muted, x.NoteKicked, x.SampleNumber, -1, -1, 0x280, true, false, x.SamplePosition, x.Volume, x.Frequency)).ToArray();
 		#endregion
 
 		#region ModulePlayerWithPositionDurationAgentBase implementation

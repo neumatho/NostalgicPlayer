@@ -386,7 +386,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 					{
 						Deactivate(visualChannelInfo);
 
-						byte noteNumber = FindNoteNumber(visualChannelInfo.SampleNumber, channelChangedInfo.Frequency.Value);
+						byte noteNumber = FindNoteNumber(visualChannelInfo.SampleNumber, channelChangedInfo.Frequency.Value, channelChangedInfo.Octave, channelChangedInfo.Note);
 						if (noteNumber != byte.MaxValue)
 						{
 							visualChannelInfo.KeyPosition = FindNotePosition(noteNumber, out var reservedIndexes);
@@ -430,22 +430,27 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 		/// Will convert the given frequency to a note number
 		/// </summary>
 		/********************************************************************/
-		private byte FindNoteNumber(short sampleNumber, uint frequency)
+		private byte FindNoteNumber(short sampleNumber, uint frequency, sbyte octave, sbyte note)
 		{
-			if ((noteFrequencies == null) || (sampleNumber >= noteFrequencies.Length))
-				return byte.MaxValue;
-
-			uint[] freqTable = noteFrequencies[sampleNumber];
-			if (freqTable != null)
+			if (octave == -1)
 			{
-				for (int i = 1; i < freqTable.Length; i++)
+				if ((noteFrequencies == null) || (sampleNumber >= noteFrequencies.Length))
+					return byte.MaxValue;
+
+				uint[] freqTable = noteFrequencies[sampleNumber];
+				if (freqTable != null)
 				{
-					if (frequency < freqTable[i])
-						return (byte)(i - 1);
+					for (int i = 1; i < freqTable.Length; i++)
+					{
+						if (frequency < freqTable[i])
+							return (byte)(i - 1);
+					}
 				}
+
+				return byte.MaxValue;
 			}
 
-			return byte.MaxValue;
+			return (byte)(octave * 12 + note);
 		}
 
 

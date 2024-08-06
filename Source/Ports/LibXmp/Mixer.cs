@@ -899,7 +899,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Player_Data p = ctx.P;
 
 			return visualizerChannels.Select((x, i) =>
-				new ChannelChanged(!p.Channel_Mute[i], x.Muted, x.NoteKicked, x.SampleNumber, x.SampleLength, x.Looping, false, x.SamplePosition, x.Volume, x.Frequency)).ToArray();
+				new ChannelChanged(!p.Channel_Mute[i], x.Muted, x.NoteKicked, x.SampleNumber, -1, -1, x.SampleLength, x.Looping, false, x.SamplePosition, x.Volume, x.Frequency)).ToArray();
 		}
 
 		#region Private methods

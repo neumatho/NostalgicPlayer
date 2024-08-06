@@ -169,6 +169,20 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 		/********************************************************************/
 		/// <summary>
+		/// Will tell visuals the correct note and octave being played. This
+		/// can be used when playing multi-octave samples. If this is not
+		/// called, the old behaviour is used by using the frequency the
+		/// sample is played with to find the note
+		/// </summary>
+		/********************************************************************/
+		public void SetNote(byte octave, byte note)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Returns true or false depending on the channel is in use
 		/// </summary>
 		/********************************************************************/

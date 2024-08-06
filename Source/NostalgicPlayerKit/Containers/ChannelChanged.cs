@@ -15,12 +15,14 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public ChannelChanged(bool enabled, bool muted, bool noteKicked, short sampleNumber, uint sampleLength, bool looping, bool samplePositionRelative, int? samplePosition, ushort? volume, uint? frequency)
+		public ChannelChanged(bool enabled, bool muted, bool noteKicked, short sampleNumber, sbyte octave, sbyte note, uint sampleLength, bool looping, bool samplePositionRelative, int? samplePosition, ushort? volume, uint? frequency)
 		{
 			Enabled = enabled;
 			Muted = muted;
 			NoteKicked = noteKicked;
 			SampleNumber = sampleNumber;
+			Octave = octave;
+			Note = note;
 			SampleLength = sampleLength;
 			Looping = looping;
 			SamplePositionRelative = samplePositionRelative;
@@ -73,6 +75,30 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// </summary>
 		/********************************************************************/
 		public short SampleNumber
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the current octave the note is played with or -1 if unknown
+		/// </summary>
+		/********************************************************************/
+		public sbyte Octave
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the current note which is played or -1 if unknown
+		/// </summary>
+		/********************************************************************/
+		public sbyte Note
 		{
 			get;
 		}

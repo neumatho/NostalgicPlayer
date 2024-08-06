@@ -228,7 +228,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			ChannelFlag retFlags = flags;
 			flags = ChannelFlag.None;
 
-			return bufferMode || ((retFlags & ~ChannelFlag.Active) == ChannelFlag.None) ? null : new ChannelChanged(channelEnabled, ccMuted, ccNoteKicked, currentSampleNumber, voiceInfo.SampleInfo.Sample.Length, ccLooping, ccSamplePositionRelative, ccSamplePosition, ccVolume, ccFrequency);
+			return bufferMode || ((retFlags & ~ChannelFlag.Active) == ChannelFlag.None) ? null : new ChannelChanged(channelEnabled, ccMuted, ccNoteKicked, currentSampleNumber, currentOctave, currentNote, voiceInfo.SampleInfo.Sample.Length, ccLooping, ccSamplePositionRelative, ccSamplePosition, ccVolume, ccFrequency);
 		}
 
 

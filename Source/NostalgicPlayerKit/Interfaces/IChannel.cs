@@ -114,6 +114,16 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		void SetSampleNumber(short sampleNumber);
 
 		/// <summary>
+		/// Will tell visuals the correct note and octave being played. This
+		/// can be used when playing multi-octave samples. If this is not
+		/// called, the old behaviour is used by using the frequency the
+		/// sample is played with to find the note
+		/// </summary>
+		/// <param name="octave">is the octave between 0 and 9</param>
+		/// <para> name="note" is the note in the octave between 0 and 11</para>
+		void SetNote(byte octave, byte note);
+
+		/// <summary>
 		/// Returns true or false depending on the channel is in use
 		/// </summary>
 		bool IsActive { get; }

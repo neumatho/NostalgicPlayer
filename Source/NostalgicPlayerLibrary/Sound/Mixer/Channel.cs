@@ -63,6 +63,16 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		protected short currentSampleNumber;
 
 		/// <summary>
+		/// The octave being played or -1 if not set
+		/// </summary>
+		protected sbyte currentOctave;
+
+		/// <summary>
+		/// The note being played or -1 if not set
+		/// </summary>
+		protected sbyte currentNote;
+
+		/// <summary>
 		/// Holds information about the sample to be played
 		/// </summary>
 		protected SampleInfo sampleInfo = new SampleInfo();
@@ -377,6 +387,30 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 		/********************************************************************/
 		/// <summary>
+		/// Will tell visuals the correct note and octave being played. This
+		/// can be used when playing multi-octave samples. If this is not
+		/// called, the old behaviour is used by using the frequency the
+		/// sample is played with to find the note
+		/// </summary>
+		/// <param name="octave">is the octave between 0 and 9</param>
+		/// <para> name="note" is the note in the octave between 0 and 11</para>
+		/********************************************************************/
+		public void SetNote(byte octave, byte note)
+		{
+			if (octave > 9)
+				throw new ArgumentException("Octave should be between 0 and 9", nameof(octave));
+
+			if (note > 11)
+				throw new ArgumentException("Note should be between 0 and 11", nameof(note));
+
+			currentOctave = (sbyte)octave;
+			currentNote = (sbyte)note;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Returns true or false depending on the channel is in use
 		/// </summary>
 		/********************************************************************/
@@ -474,6 +508,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		private void SetPlaySampleInfo(short sampleNumber, Array sampleData, uint startOffset, uint length, PlaySampleFlag playFlag)
 		{
 			currentSampleNumber = sampleNumber;
+			currentOctave = -1;
+			currentNote = -1;
 
 			flags |= ChannelFlag.TrigIt;
 			flags &= ~ChannelFlag.MuteIt;

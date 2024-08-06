@@ -8,7 +8,7 @@
     <RootNamespace>Polycode.NostalgicPlayer.Agent.Visual.Piano</RootNamespace>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <DocumentationFile>bin\Piano.xml</DocumentationFile>
-    <Version>2.1.0</Version>
+    <Version>2.1.1</Version>
     <Authors>Thomas Neumann</Authors>
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
