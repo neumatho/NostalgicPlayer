@@ -393,7 +393,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// sample is played with to find the note
 		/// </summary>
 		/// <param name="octave">is the octave between 0 and 9</param>
-		/// <para> name="note" is the note in the octave between 0 and 11</para>
+		/// <param name="note">is the note in the octave between 0 and 11</param>
 		/********************************************************************/
 		public void SetNote(byte octave, byte note)
 		{
