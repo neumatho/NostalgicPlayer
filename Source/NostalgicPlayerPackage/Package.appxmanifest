@@ -1130,6 +1130,14 @@
             <uap:DisplayName>Art Of Noise 8 voices</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="smusfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-smus">.smus</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>IFF-SMUS</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

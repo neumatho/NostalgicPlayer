@@ -113,6 +113,7 @@
     <ProjectReference Include="..\..\Agents\Players\GameMusicCreator\GameMusicCreator.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Hippel\Hippel.csproj" />
     <ProjectReference Include="..\..\Agents\Players\HivelyTracker\HivelyTracker.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\IffSmus\IffSmus.csproj" />
     <ProjectReference Include="..\..\Agents\Players\JamCracker\JamCracker.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Med\Med.csproj" />
     <ProjectReference Include="..\..\Agents\Players\ModTracker\ModTracker.csproj" />
