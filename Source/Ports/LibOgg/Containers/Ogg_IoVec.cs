@@ -10,8 +10,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 	/// </summary>
 	public class Ogg_IoVec
 	{
+		/// <summary></summary>
 		public byte[] Base;
+		/// <summary></summary>
 		public int Offset;
+		/// <summary></summary>
 		public size_t Len;
 	}
 }

@@ -11,12 +11,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 	/// </summary>
 	public class Ogg_Packet
 	{
+		/// <summary></summary>
 		public byte[] Packet;
+		/// <summary></summary>
 		public int Offset;
+		/// <summary></summary>
 		public c_long Bytes;
+		/// <summary></summary>
 		public bool Bos;
+		/// <summary></summary>
 		public bool Eos;
 
+		/// <summary></summary>
 		public ogg_int64_t GranulePos;
 
 		/// <summary>
