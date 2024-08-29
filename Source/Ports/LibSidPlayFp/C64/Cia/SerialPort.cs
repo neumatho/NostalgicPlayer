@@ -67,7 +67,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 
 		private bool forceFinish;
 
-		private bool model4485;
+		private bool model4485 = false;
 
 		/********************************************************************/
 		/// <summary>
@@ -82,7 +82,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 			flipCntEvent = new EventCallback("flip CNT", FlipCnt);
 			flipFakeEvent = new EventCallback("flip fake", FlipFake);
 			startSdrEvent = new EventCallback("start SDR", DoStartSdr);
-			model4485 = false;
 		}
 
 

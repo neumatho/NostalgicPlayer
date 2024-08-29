@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// <summary>
 		/// Current root position
 		/// </summary>
-		private double x;
+		private double x = 0.0;
 
 		private readonly double vddt;
 		private readonly double vMin;
@@ -67,7 +67,6 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/********************************************************************/
 		public OpAmp(List<Spline.Point> opamp, double vddt, double vMin, double vMax)
 		{
-			x = 0.0;
 			this.vddt = vddt;
 			this.vMin = vMin;
 			this.vMax = vMax;

@@ -295,9 +295,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Vic_II
 		/********************************************************************/
 		public void Chip(model_t model)
 		{
-			maxRasters = modelData[(int)model].rasterLines;
-			cyclesPerLine = modelData[(int)model].cyclesPerLine;
-			clock = modelData[(int)model].clock;
+			int model_Idx = (int)model;
+
+			maxRasters = modelData[model_Idx].rasterLines;
+			cyclesPerLine = modelData[model_Idx].cyclesPerLine;
+			clock = modelData[model_Idx].clock;
 
 			lp.SetScreenSize(maxRasters, cyclesPerLine);
 

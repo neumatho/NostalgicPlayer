@@ -54,9 +54,9 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// </summary>
 		private int vhp;
 
-		private int w0lp_1_s7;
+		private int w0lp_1_s7 = 0;
 
-		private int w0hp_1_s17;
+		private int w0hp_1_s17 = 0;
 
 		/********************************************************************/
 		/// <summary>
@@ -65,9 +65,6 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/********************************************************************/
 		public ExternalFilter()
 		{
-			w0lp_1_s7 = 0;
-			w0hp_1_s17 = 0;
-
 			Reset();
 		}
 

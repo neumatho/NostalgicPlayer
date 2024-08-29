@@ -185,6 +185,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidTune
 			hdr.Songs = SidEndian.Endian_Big16(dataBuf, 14);
 			hdr.Start = SidEndian.Endian_Big16(dataBuf, 16);
 			hdr.Speed = SidEndian.Endian_Big32(dataBuf, 18);
+
 			Array.Copy(dataBuf, 22, hdr.Name, 0, PSid_MaxStrLen);
 			Array.Copy(dataBuf, 54, hdr.Author, 0, PSid_MaxStrLen);
 			Array.Copy(dataBuf, 86, hdr.Released, 0, PSid_MaxStrLen);

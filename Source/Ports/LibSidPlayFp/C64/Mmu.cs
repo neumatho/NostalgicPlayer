@@ -16,12 +16,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		private readonly EventScheduler eventScheduler;
 
 		// CPU port signals
-		private bool loRam, hiRam, charen;
+		private bool loRam = false;
+		private bool hiRam = false;
+		private bool charen = false;
 
 		/// <summary>
 		/// CPU read memory mapping in 4k chunks
 		/// </summary>
-		private readonly IBank[] cpuReadMap = new IBank[16];
+		private readonly ReadFunc[] cpuReadMap = new ReadFunc[16];
 
 		/// <summary>
 		/// CPU write memory mapping in 4k chunks
@@ -61,7 +63,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		/// <summary>
 		/// Random seed
 		/// </summary>
-		private uint seed;
+		private uint seed = 3686734;
+
+		private delegate uint8_t ReadFunc(Mmu self, uint_least16_t addr);
 
 		/********************************************************************/
 		/// <summary>
@@ -71,19 +75,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		public Mmu(EventScheduler scheduler, IOBank ioBank)
 		{
 			eventScheduler = scheduler;
-			loRam = false;
-			hiRam = false;
-			charen = false;
 			this.ioBank = ioBank;
 			zeroRamBank = new ZeroRamBank(this, ramBank);
-			seed = 3686734;
 
-			cpuReadMap[0] = zeroRamBank;
+			cpuReadMap[0] = ReadBank(zeroRamBank);
 			cpuWriteMap[0] = zeroRamBank;
 
 			for (int i = 1; i < 16; i++)
 			{
-				cpuReadMap[i] = ramBank;
+				cpuReadMap[i] = ReadBank(ramBank);
 				cpuWriteMap[i] = ramBank;
 			}
 		}
@@ -258,7 +258,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		/********************************************************************/
 		public uint8_t CpuRead(uint_least16_t addr)
 		{
-			return cpuReadMap[addr >> 12].Peek(addr);
+			return cpuReadMap[addr >> 12](this, addr);
 		}
 
 
@@ -302,16 +302,44 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		/// 
 		/// </summary>
 		/********************************************************************/
+		private static ReadFunc ReadBank(IBank bank)
+		{
+			return (self, addr) => bank.Peek(addr);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private static uint8_t ReadIo(Mmu self, uint_least16_t addr)
+		{
+			return self.ioBank.Peek(addr);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		private void UpdateMappingPhi2()
 		{
-			cpuReadMap[0x0e] = cpuReadMap[0x0f] = hiRam ? kernalRomBank : ramBank;
-			cpuReadMap[0x0a] = cpuReadMap[0x0b] = loRam && hiRam ? basicRomBank : ramBank;
+			ReadFunc readRam = ReadBank(ramBank);
+			cpuReadMap[0x0e] = cpuReadMap[0x0f] = hiRam ? ReadBank(kernalRomBank) : readRam;
+			cpuReadMap[0x0a] = cpuReadMap[0x0b] = loRam && hiRam ? ReadBank(basicRomBank) : readRam;
 
 			if (charen && (loRam || hiRam))
-				cpuReadMap[0x0d] = cpuWriteMap[0x0d] = ioBank;
+			{
+				cpuReadMap[0x0d] = ReadIo;
+				cpuWriteMap[0x0d] = ioBank;
+			}
 			else
 			{
-				cpuReadMap[0x0d] = !charen && (loRam || hiRam) ? characterRomBank : ramBank;
+				cpuReadMap[0x0d] = !charen && (loRam || hiRam) ? ReadBank(characterRomBank) : readRam;
 				cpuWriteMap[0x0d] = ramBank;
 			}
 		}

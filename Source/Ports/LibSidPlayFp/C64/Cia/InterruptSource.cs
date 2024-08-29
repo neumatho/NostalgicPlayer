@@ -32,30 +32,30 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		private readonly EventScheduler eventScheduler;
 
 		// Clock when clear was called last
-		private event_clock_t last_clear;
-		private event_clock_t last_set;
+		private event_clock_t last_clear = 0;
+		private event_clock_t last_set = 0;
 
 		/// <summary>
 		/// Interrupt control register
 		/// </summary>
-		private uint8_t icr;
+		private uint8_t icr = 0;
 
 		/// <summary>
 		/// Interrupt data register
 		/// </summary>
-		protected uint8_t idr;
+		protected uint8_t idr = 0;
 
-		protected uint8_t idrTemp;
+		protected uint8_t idrTemp = 0;
 
 		/// <summary>
 		/// Have we already scheduled CIA->CPU interrupt transition?
 		/// </summary>
-		private bool scheduled;
+		private bool scheduled = false;
 
 		/// <summary>
 		/// Is the irq pin asserted?
 		/// </summary>
-		private bool asserted;
+		private bool asserted = false;
 
 		private readonly EventCallback interruptEvent;
 		private readonly EventCallback updateIdrEvent;
@@ -71,12 +71,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		{
 			this.parent = parent;
 			eventScheduler = scheduler;
-			last_clear = 0;
-			last_set = 0;
-			icr = 0;
-			idr = 0;
-			scheduled = false;
-			asserted = false;
 
 			interruptEvent = new EventCallback("CIA Interrupt", Interrupt);
 			updateIdrEvent = new EventCallback("CIA update ICR", UpdateIdr);

@@ -105,25 +105,25 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			dac.KinkedDac(ChipModel.MOS6581);
 
 			// Create lookup tables for gains / summers
-			void Loop1()
+			void FilterSummer()
 			{
 				OpAmp opAmpModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
 				BuildSummerTable(opAmpModel);
 			}
 
-			void Loop2()
+			void FilterMixer()
 			{
 				OpAmp opAmpModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
 				BuildMixerTable(opAmpModel, 8.0 / 6.0);
 			}
 
-			void Loop3()
+			void FilterGain()
 			{
 				OpAmp opAmpModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
 				BuildVolumeTable(opAmpModel, 12.0);
 			}
 
-			void Loop4()
+			void FilterResonance()
 			{
 				OpAmp opAmpModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
 
@@ -136,7 +136,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				BuildResonanceTable(opAmpModel, resonance_n);
 			}
 
-			void Loop5()
+			void FilterVcrVg()
 			{
 				double nVddt = n16 * (vddt - vMin);
 
@@ -149,7 +149,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				}
 			}
 
-			void Loop6()
+			void FilterVcrIds()
 			{
 				//  EKV model:
 				//
@@ -160,7 +160,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 				// Moderate inversion characteristic current
 				// will be multiplied by uCox later
-				double @is = (2.0 * ut * ut) * wl_vcr;
+				double @is = (2.0 * Ut * Ut) * wl_vcr;
 
 				// Normalize current factor for 1 cycle at 1Mhz
 				double n15 = norm * ((1 << 15) - 1);
@@ -168,24 +168,26 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 				// kVgt_Vx = k*(Vg - Vt) - Vx
 				// I.e. if k != 1.0, Vg must be scaled accordingly
+				double r_N16_2Ut = 1.0 / (n16 * 2.0 * Ut);
+
 				for (int i = 0; i < (1 << 16); i++)
 				{
 					int kVgt_Vx = i - (1 << 15);
-					double log_term = Log1p(Math.Exp((kVgt_Vx / n16) / (2.0 * ut)));
+					double log_term = Log1p(Math.Exp(kVgt_Vx * r_N16_2Ut));
 
 					// Scaled by m*2^15
 					vcr_n_ids_term[i] = n_is * log_term * log_term;
 				}
 			}
 
-			Task loop1Task = Task.Run(Loop1);
-			Task loop2Task = Task.Run(Loop2);
-			Task loop3Task = Task.Run(Loop3);
-			Task loop4Task = Task.Run(Loop4);
-			Task loop5Task = Task.Run(Loop5);
-			Task loop6Task = Task.Run(Loop6);
+			Task summerTask = Task.Run(FilterSummer);
+			Task mixerTask = Task.Run(FilterMixer);
+			Task gainTask = Task.Run(FilterGain);
+			Task resonanceTask = Task.Run(FilterResonance);
+			Task vcrVgTask = Task.Run(FilterVcrVg);
+			Task vcrIdsTask = Task.Run(FilterVcrIds);
 
-			Task.WaitAll(loop1Task, loop2Task, loop3Task, loop4Task, loop5Task, loop6Task);
+			Task.WaitAll(summerTask, mixerTask, gainTask, resonanceTask, vcrVgTask, vcrIdsTask);
 		}
 
 
@@ -216,7 +218,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		public void SetFilterRange(double adjustment)
 		{
 			// Clamp into allowed range
-			adjustment = Math.Max(Math.Min(adjustment, 1.0), 0.0);
+			adjustment = Math.Clamp(adjustment, 0.0, 1.0);
 
 			// Get the new uCox value, in the range [1,40]
 			double new_uCox = (1.0 + 39.0 * adjustment) * 1e-6;

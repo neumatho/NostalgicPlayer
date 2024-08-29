@@ -62,17 +62,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		private mixer_func_t[] mix;
 		private scale_func_t[] scale;
 
-		private int oldRandomValue;
-		private int fastForwardFactor;
+		private int oldRandomValue = 0;
+		private int fastForwardFactor = 1;
 
 		// Mixer settings
 		private readonly short[][] sampleBuffers = new short[2][];
-		private uint_least32_t sampleCount;
-		private uint_least32_t sampleIndex;
+		private uint_least32_t sampleCount = 0;
+		private uint_least32_t sampleIndex = 0;
 
-		private uint_least32_t sampleRate;
+		private uint_least32_t sampleRate = 0;
 
-		private bool stereo;
+		private bool stereo = false;
 
 		private readonly RandomLcg rand;
 
@@ -83,11 +83,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/********************************************************************/
 		public Mixer()
 		{
-			oldRandomValue = 0;
-			fastForwardFactor = 1;
-			sampleCount = 0;
-			sampleRate = 0;
-			stereo = false;
 			rand = new RandomLcg(VOLUME_MAX, 257254);
 
 			mix = new mixer_func_t[] { Mono1 };

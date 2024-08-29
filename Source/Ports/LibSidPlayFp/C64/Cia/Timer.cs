@@ -81,22 +81,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		/// <summary>
 		/// PB6/PB7 Flipflop to signal underflows
 		/// </summary>
-		private bool pbToggle;
+		private bool pbToggle = false;
 
 		/// <summary>
 		/// Current timer value
 		/// </summary>
-		private uint_least16_t timer;
+		private uint_least16_t timer = 0;
 
 		/// <summary>
 		/// Timer start value (Latch)
 		/// </summary>
-		private uint_least16_t latch;
+		private uint_least16_t latch = 0;
 
 		/// <summary>
 		/// Copy of regs[CRA/B]
 		/// </summary>
-		private uint8_t lastControlValue;
+		private uint8_t lastControlValue = 0;
 
 		/// <summary>
 		/// Pointer to the MOS6526 which this Timer belongs to
@@ -106,7 +106,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 		/// <summary>
 		/// CRA/CRB control register / state
 		/// </summary>
-		protected int_least32_t state;
+		protected int_least32_t state = 0;
 
 		/********************************************************************/
 		/// <summary>
@@ -118,12 +118,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia
 			eventObject = new PrivateEvent(name, this);
 			cycleSkippingEvent = new EventCallback("Skip CIA clock decrement cycles", CycleSkippingEvent);
 			eventScheduler = scheduler;
-			pbToggle = false;
-			timer = 0;
-			latch = 0;
-			lastControlValue = 0;
 			this.parent = parent;
-			state = 0;
 		}
 
 

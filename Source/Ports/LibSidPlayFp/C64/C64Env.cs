@@ -42,24 +42,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public abstract uint8_t CpuRead(uint_least16_t addr);
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public abstract void CpuWrite(uint_least16_t addr, uint8_t data);
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
 		public abstract void InterruptIrq(bool state);
 
 

@@ -31,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 		/// Set hook for VICE tests
 		/// </summary>
 		/********************************************************************/
-		internal void SetTestHook(C64Cpu.TestHookHandler handler)
+		internal void SetTestHook(C64CpuBus.TestHookHandler handler)
 		{
 			sidPlayer.SetTestHook(handler);
 		}

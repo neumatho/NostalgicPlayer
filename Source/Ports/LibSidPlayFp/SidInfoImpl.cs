@@ -14,30 +14,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 	{
 		public string speedString;
 
-		public uint maxSids;
+		public uint maxSids = Mixer.MAX_SIDS;
 
-		public uint channels;
+		public uint channels = 1;
 
-		public uint_least16_t driverAddr;
-		public uint_least16_t driverLength;
+		public uint_least16_t driverAddr = 0;
+		public uint_least16_t driverLength = 0;
 
-		public uint_least16_t powerOnDelay;
+		public uint_least16_t powerOnDelay = 0;
 
 		public SidConfig.sid_model_t sidModel;
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
-		public SidInfoImpl()
-		{
-			maxSids = Mixer.MAX_SIDS;
-			channels = 1;
-			driverAddr = 0;
-			driverLength = 0;
-			powerOnDelay = 0;
-		}
 
 		#region Overrides
 		/********************************************************************/

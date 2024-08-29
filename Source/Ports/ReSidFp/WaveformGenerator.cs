@@ -107,76 +107,76 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				(1U << 22) 		// Bit  0
 			);
 
-		private matrix_t model_wave;
-		private matrix_t model_pulldown;
+		private matrix_t model_wave = null;
+		private matrix_t model_pulldown = null;
 
-		private short[] wave;
-		private short[] pulldown;
+		private short[] wave = null;
+		private short[] pulldown = null;
 
 		/// <summary>
 		/// PWout = (PWn/40.95)%
 		/// </summary>
-		private uint pw;
+		private uint pw = 0;
 
-		internal uint shift_register;
+		internal uint shift_register = 0;
 
 		/// <summary>
 		/// Shift register is latched when transitioning to shift phase 1
 		/// </summary>
-		internal uint shift_latch;
+		internal uint shift_latch = 0;
 
 		/// <summary>
 		/// Emulation of pipeline causing bit 19 to clock the shift register
 		/// </summary>
-		private int shift_pipeline;
+		private int shift_pipeline = 0;
 
-		private uint ring_msb_mask;
-		private uint no_noise;
-		internal uint noise_output;
-		private uint no_noise_or_noise_output;
-		private uint no_pulse;
-		private uint pulse_output;
+		private uint ring_msb_mask = 0;
+		private uint no_noise = 0;
+		internal uint noise_output = 0;
+		private uint no_noise_or_noise_output = 0;
+		private uint no_pulse = 0;
+		private uint pulse_output = 0;
 
 		/// <summary>
 		/// The control register right-shifted 4 bits; used for output function table lookup
 		/// </summary>
-		internal uint waveform;
+		internal uint waveform = 0;
 
-		private uint waveform_output;
+		private uint waveform_output = 0;
 
 		/// <summary>
 		/// Current accumulator value
 		/// </summary>
-		private uint accumulator;
+		private uint accumulator = 0x555555;	// Accumulator's even bits are high on powerup
 
 		/// <summary>
 		/// Fout = (Fn*Fclk/16777216)Hz
 		/// </summary>
-		private uint freq;
+		private uint freq = 0;
 
 		/// <summary>
 		/// 8580 tri/saw pipeline
 		/// </summary>
-		private uint tri_saw_pipeline;
+		private uint tri_saw_pipeline = 0x555;
 
 		/// <summary>
 		/// The OSC3 value
 		/// </summary>
-		private uint osc3;
+		private uint osc3 = 0;
 
 		/// <summary>
 		/// Remaining time to fully reset shift register
 		/// </summary>
-		private uint shift_register_reset;
+		private uint shift_register_reset = 0;
 
 		/// <summary>
 		/// The wave signal TTL when no waveform is selected
 		/// </summary>
-		private uint floating_output_ttl;
+		private uint floating_output_ttl = 0;
 
 		// The control register bits. Gate is handled by EnvelopeGenerator
-		private bool test;
-		private bool sync;
+		private bool test = false;
+		private bool sync = false;
 
 		/// <summary>
 		/// Test bit is latched at phi2 for the noise XOR
@@ -186,44 +186,9 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// <summary>
 		/// Tell whether the accumulator MSB was set high on this cycle
 		/// </summary>
-		private bool msb_rising;
+		private bool msb_rising = false;
 
 		private bool is6581;	// This is initialized in the SID constructor
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
-		public WaveformGenerator()
-		{
-			model_wave = null;
-			model_pulldown = null;
-			wave = null;
-			pulldown = null;
-			pw = 0;
-			shift_register = 0;
-			shift_pipeline = 0;
-			ring_msb_mask = 0;
-			no_noise = 0;
-			noise_output = 0;
-			no_noise_or_noise_output = 0;
-			no_pulse = 0;
-			pulse_output = 0;
-			waveform = 0;
-			waveform_output = 0;
-			accumulator = 0x555555;			// Accumulator's even bits are high on powerup
-			freq = 0;
-			tri_saw_pipeline = 0x555;
-			osc3 = 0;
-			shift_register_reset = 0;
-			floating_output_ttl = 0;
-			test = false;
-			sync = false;
-			msb_rising = false;
-		}
-
-
 
 		/********************************************************************/
 		/// <summary>

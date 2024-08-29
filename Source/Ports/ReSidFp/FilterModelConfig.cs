@@ -15,11 +15,12 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		protected readonly double c;
 
 		// Transistor parameters
-		private readonly double vdd;
+		protected const double Ut = 26.0e-3;
+
+		private readonly double vdd;			// Positive supply voltage
 		private readonly double vth;			// Threshold voltage
-		protected readonly double ut;			// Thermal voltage: Ut = kT/q = 8.61734315e-5*T ~ 26mV
-		protected double uCox;					// Transconductance coefficient: u*Cox
 		protected readonly double vddt;			// Vdd - Vth;
+		protected double uCox;					// Transconductance coefficient: u*Cox
 
 		// Derived stuff
 		protected readonly double vMin, vMax;
@@ -28,11 +29,11 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		// Fixed point scaling for 16 bit op-amp output
 		protected readonly double n16;
 
-		// Current factor coefficient for op-amp integrators
-		private double currFactorCoeff;
-
 		private readonly double voice_voltage_range;
 		private readonly double voice_dc_voltage;
+
+		// Current factor coefficient for op-amp integrators
+		private double currFactorCoeff;
 
 		// Lookup tables for gain and summer op-amps in output stage / filter
 		protected readonly ushort[][] mixer = new ushort[8][];			// This is initialized in the derived class constructor
@@ -53,7 +54,6 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			this.c = c;
 			this.vdd = vdd;
 			this.vth = vth;
-			ut = 26.0e-3;
 			vddt = vdd - vth;
 			vMin = opamp_voltage[0].x;
 			vMax = Math.Max(vddt, opamp_voltage[0].y);
@@ -258,18 +258,21 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		protected void BuildSummerTable(OpAmp opAmpModel)
 		{
+			double r_N16 = 1.0 / n16;
+
 			for (int i = 0; i < 5; i++)
 			{
 				int iDiv = 2 + i;		// 2 - 6 input "resistors"
 				int size = iDiv << 16;
 				double n = iDiv;
+				double r_iDiv = 1.0 / iDiv;
 
 				opAmpModel.Reset();
 				summer[i] = new ushort[size];
 
 				for (int vi = 0; vi < size; vi++)
 				{
-					double vIn = vMin + vi / n16 / iDiv;	// vMin .. vMax
+					double vIn = vMin + vi * r_N16 * r_iDiv;	// vMin .. vMax
 					summer[i][vi] = GetNormalizedValue(opAmpModel.Solve(n, vIn));
 				}
 			}
@@ -290,18 +293,21 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		protected void BuildMixerTable(OpAmp opAmpModel, double nRatio)
 		{
+			double r_N16 = 1.0 / n16;
+
 			for (int i = 0; i < 8; i++)
 			{
 				int iDiv = i == 0 ? 1 : i;
 				int size = i == 0 ? 1 : i << 16;
 				double n = i * nRatio;
+				double r_iDiv = 1.0 / iDiv;
 
 				opAmpModel.Reset();
 				mixer[i] = new ushort[size];
 
 				for (int vi = 0; vi < size; vi++)
 				{
-					double vIn = vMin + vi / n16 / iDiv;	// vMin .. vMax
+					double vIn = vMin + vi * r_N16 * r_iDiv;	// vMin .. vMax
 					mixer[i][vi] = GetNormalizedValue(opAmpModel.Solve(n, vIn));
 				}
 			}
@@ -320,6 +326,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		protected void BuildVolumeTable(OpAmp opAmpModel, double nDivisor)
 		{
+			double r_N16 = 1.0 / n16;
+
 			for (int n8 = 0; n8 < 16; n8++)
 			{
 				int size = 1 << 16;
@@ -330,7 +338,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 				for (int vi = 0; vi < size; vi++)
 				{
-					double vIn = vMin + vi / n16;			// vMin .. vMax
+					double vIn = vMin + vi * r_N16;			// vMin .. vMax
 					volume[n8][vi] = GetNormalizedValue(opAmpModel.Solve(n, vIn));
 				}
 			}
@@ -350,6 +358,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		protected void BuildResonanceTable(OpAmp opAmpModel, double[] resonance_n)
 		{
+			double r_N16 = 1.0 / n16;
+
 			for (int n8 = 0; n8 < 16; n8++)
 			{
 				int size = 1 << 16;
@@ -359,7 +369,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 				for (int vi = 0; vi < size; vi++)
 				{
-					double vIn = vMin + vi / n16;			// vMin .. vMax
+					double vIn = vMin + vi * r_N16;			// vMin .. vMax
 					resonance[n8][vi] = GetNormalizedValue(opAmpModel.Solve(resonance_n[n8], vIn));
 				}
 			}

@@ -10,11 +10,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 	/// <summary>
 	/// CPU emulator
 	/// </summary>
-	internal sealed class C64Cpu : Mos6510
+	internal sealed class C64CpuBus : ICpuDataBus
 	{
 		public delegate void TestHookHandler(uint_least16_t addr, uint8_t data);
 
-		private readonly C64Env env;
+		private readonly Mmu mmu;
 
 		private TestHookHandler testHook;
 
@@ -23,9 +23,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public C64Cpu(C64Env env) : base(env.Scheduler())
+		public C64CpuBus(Mmu mmu)
 		{
-			this.env = env;
+			this.mmu = mmu;
 			testHook = null;
 		}
 
@@ -41,15 +41,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 			testHook = handler;
 		}
 
-		#region Overrides
+		#region ICpuDataBus implementation
 		/********************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected override uint8_t CpuRead(uint_least16_t addr)
+		public uint8_t CpuRead(uint_least16_t addr)
 		{
-			return env.CpuRead(addr);
+			return mmu.CpuRead(addr);
 		}
 
 
@@ -59,12 +59,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected override void CpuWrite(uint_least16_t addr, uint8_t data)
+		public void CpuWrite(uint_least16_t addr, uint8_t data)
 		{
 			if (testHook != null)
 				testHook(addr, data);
 
-			env.CpuWrite(addr, data);
+			mmu.CpuWrite(addr, data);
 		}
 		#endregion
 	}

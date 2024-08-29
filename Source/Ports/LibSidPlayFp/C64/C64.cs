@@ -5,6 +5,7 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cia;
+using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cpu;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Vic_II;
 
 namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
@@ -130,20 +131,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		// PAL-N - 3.58205625 MHz
 
 		private static readonly model_data_t[] modelData =
-		{
+		[
 			new model_data_t(4433618.75, 18.0, 50.0, Mos656x.model_t.MOS6569),		// PAL-B
 			new model_data_t(3579545.455, 14.0, 60.0, Mos656x.model_t.MOS6567R8),		// NTSC-M
 			new model_data_t(3579545.455, 14.0, 60.0, Mos656x.model_t.MOS6567R56A),	// Old NTSC-M
 			new model_data_t(3582056.25, 14.0, 50.0, Mos656x.model_t.MOS6572),		// PAL-N
 			new model_data_t(3575611.49, 14.0, 50.0, Mos656x.model_t.MOS6573)			// PAL-M
-		};
+		];
 
 		private static readonly cia_model_data_t[] ciaModelData =
-		{
+		[
 			new cia_model_data_t(Mos652x.model_t.MOS6526),			// Old
 			new cia_model_data_t(Mos652x.model_t.MOS8521),			// New
 			new cia_model_data_t(Mos652x.model_t.MOS6526W4485)		// Old week 4485
-		};
+		];
 
 		#region Private implementation of C64Env
 		private class PrivateC64Env : C64Env
@@ -161,30 +162,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 			}
 
 			#region Overrides
-			/********************************************************************/
-			/// <summary>
-			/// Access memory as seen by CPU
-			/// </summary>
-			/********************************************************************/
-			public override uint8_t CpuRead(uint_least16_t addr)
-			{
-				return parent.mmu.CpuRead(addr);
-			}
-
-
-
-			/********************************************************************/
-			/// <summary>
-			/// Access memory as seen by CPU
-			/// </summary>
-			/********************************************************************/
-			public override void CpuWrite(uint_least16_t addr, uint8_t data)
-			{
-				parent.mmu.CpuWrite(addr, data);
-			}
-
-
-
 			/********************************************************************/
 			/// <summary>
 			/// IRQ trigger signal.
@@ -287,11 +264,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		private readonly EventScheduler eventScheduler = new EventScheduler();
 
 		/// <summary>
-		/// CPU
-		/// </summary>
-		private readonly C64Cpu cpu;
-
-		/// <summary>
 		/// CIA1
 		/// </summary>
 		private readonly C64Cia1 cia1;
@@ -336,6 +308,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		/// </summary>
 		private readonly Mmu mmu;
 
+		/// <summary>
+		/// CPUBus
+		/// </summary>
+		private readonly C64CpuBus cpuBus;
+
+		/// <summary>
+		/// CPU
+		/// </summary>
+		private readonly Mos6510 cpu;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -345,11 +327,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		{
 			c64EnvObject = new PrivateC64Env(eventScheduler, this);
 			cpuFrequency = GetCpuFreq(model_t.PAL_B);
-			cpu = new C64Cpu(c64EnvObject);
 			cia1 = new C64Cia1(c64EnvObject);
 			cia2 = new C64Cia2(c64EnvObject);
 			vic = new C64Vic(c64EnvObject);
 			mmu = new Mmu(eventScheduler, ioBank);
+			cpuBus = new C64CpuBus(mmu);
+			cpu = new Mos6510(eventScheduler, cpuBus);
 			disconnectedBusBank = new DisconnectedBusBank(mmu);
 
 			ResetIoBank();
@@ -362,9 +345,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		/// Set hook for VICE tests
 		/// </summary>
 		/********************************************************************/
-		public void SetTestHook(C64Cpu.TestHookHandler handler)
+		public void SetTestHook(C64CpuBus.TestHookHandler handler)
 		{
-			cpu.SetTestHook(handler);
+			cpuBus.SetTestHook(handler);
 		}
 
 

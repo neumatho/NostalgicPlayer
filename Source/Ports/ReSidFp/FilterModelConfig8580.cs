@@ -107,36 +107,36 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			OPAMP_SIZE)
 		{
 			// Create lookup tables for gains / summers
-			void Loop1()
+			void FilterSummer()
 			{
 				OpAmp opAmpModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
 				BuildSummerTable(opAmpModel);
 			}
 
-			void Loop2()
+			void FilterMixer()
 			{
 				OpAmp opAmpModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
 				BuildMixerTable(opAmpModel, 8.0 / 5.0);
 			}
 
-			void Loop3()
+			void FilterGain()
 			{
 				OpAmp opAmpModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
 				BuildVolumeTable(opAmpModel, 16.0);
 			}
 
-			void Loop4()
+			void FilterResonance()
 			{
 				OpAmp opAmpModel = new OpAmp(new List<Spline.Point>(opamp_voltage), vddt, vMin, vMax);
 				BuildResonanceTable(opAmpModel, resGain);
 			}
 
-			Task loop1Task = Task.Run(Loop1);
-			Task loop2Task = Task.Run(Loop2);
-			Task loop3Task = Task.Run(Loop3);
-			Task loop4Task = Task.Run(Loop4);
+			Task summerTask = Task.Run(FilterSummer);
+			Task mixerTask = Task.Run(FilterMixer);
+			Task gainTask = Task.Run(FilterGain);
+			Task resonanceTask = Task.Run(FilterResonance);
 
-			Task.WaitAll(loop1Task, loop2Task, loop3Task, loop4Task);
+			Task.WaitAll(summerTask, mixerTask, gainTask, resonanceTask);
 		}
 
 

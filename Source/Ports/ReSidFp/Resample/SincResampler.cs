@@ -41,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp.Resample
 		/// </summary>
 		private matrix_t firTable;
 
-		private int sampleIndex;
+		private int sampleIndex = 0;
 
 		/// <summary>
 		/// Filter resolution
@@ -54,8 +54,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp.Resample
 		private int firN;
 
 		private readonly int cyclesPerSample;
-		private int sampleOffset;
-		private int outputValue;
+		private int sampleOffset = 0;
+		private int outputValue = 0;
 		private readonly int[] sample = new int[RingSize * 2];
 
 		/********************************************************************/
@@ -85,10 +85,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp.Resample
 		/********************************************************************/
 		public SincResampler(double clockFrequency, double samplingFrequency, double highestAccurateFrequency)
 		{
-			sampleIndex = 0;
 			cyclesPerSample = (int)(clockFrequency / samplingFrequency * 1024.0);
-			sampleOffset = 0;
-			outputValue = 0;
 
 			// 16-bits -> -96dB stopband attenuation
 			double a = -20.0 * Math.Log10(1.0 / (1 << Bits));
@@ -103,6 +100,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp.Resample
 			double beta = 0.1102 * (a - 8.7);
 			double i0Beta = I0(beta);
 			double cyclesPerSampleD = clockFrequency / samplingFrequency;
+			double inv_CyclesPerSampleD = samplingFrequency / clockFrequency;
 
 			{
 				// The filter order will maximally be 124 with the current constraints.
@@ -119,7 +117,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp.Resample
 				firN |= 1;
 
 				// Error is bounded by err < 1.234 / L^2, so L = sqrt(1.234 / (2^-16)) = sqrt(1.234 * 2^16)
-				firRes = (int)(Math.Ceiling(Math.Sqrt(1.234 * (1 << Bits)) / cyclesPerSampleD));
+				firRes = (int)(Math.Ceiling(Math.Sqrt(1.234 * (1 << Bits)) * inv_CyclesPerSampleD));
 
 				// firN*firRES represent the total resolution of the sinc sampling. JOS
 				// recommends a length of 2^BITS, but we don't quite use that good a filter.
@@ -133,7 +131,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp.Resample
 			double wc = Math.PI;
 
 			// Calculate the sinc tables
-			double scale = 32768.0 * wc / cyclesPerSampleD / Math.PI;
+			double scale = 32768.0 * wc * inv_CyclesPerSampleD / Math.PI;
 
 			// We're not interested in the fractional part
 			// so use int division before converting to double
@@ -151,7 +149,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp.Resample
 					double xt = x / firN2;
 					double kaiserXt = Math.Abs(xt) < 1.0 ? I0(beta * Math.Sqrt(1.0 - xt * xt)) / i0Beta : 0.0;
 
-					double wt = wc * x / cyclesPerSampleD;
+					double wt = wc * x * inv_CyclesPerSampleD;
 					double sincWt = Math.Abs(wt) >= 1e-8 ? Math.Sin(wt) / wt : 1.0;
 
 					firTable[(uint)i][j] = (short)(scale * sincWt * kaiserXt);
@@ -282,7 +280,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp.Resample
 			int @out = 0;
 
 			for (int i = 0; i < bLength; i++)
-				@out += sample[a++] * b[i];
+				@out += sample[a + i] * b[i];
 
 			return (@out + (1 << 14)) >> 15;
 		}

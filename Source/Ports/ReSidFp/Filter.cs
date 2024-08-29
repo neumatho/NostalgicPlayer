@@ -32,77 +32,82 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// <summary>
 		/// Current filter/voice mixer setting
 		/// </summary>
-		private ushort[] currentMixer;
+		private ushort[] currentMixer = null;
 
 		/// <summary>
 		/// Filter input summer setting
 		/// </summary>
-		private ushort[] currentSummer;
+		private ushort[] currentSummer = null;
 
 		/// <summary>
 		/// Filter resonance value
 		/// </summary>
-		private ushort[] currentResonance;
+		private ushort[] currentResonance = null;
 
 		/// <summary>
 		/// Current volume amplifier setting
 		/// </summary>
-		private ushort[] currentVolume;
+		private ushort[] currentVolume = null;
 
 		/// <summary>
 		/// Filter highpass state
 		/// </summary>
-		private int vhp;
+		private int vhp = 0;
 
 		/// <summary>
 		/// Filter bandpass state
 		/// </summary>
-		private int vbp;
+		private int vbp = 0;
 
 		/// <summary>
 		/// Filter lowpass state
 		/// </summary>
-		private int vlp;
+		private int vlp = 0;
 
 		/// <summary>
 		/// Filter external input
 		/// </summary>
-		private int ve;
+		private int ve = 0;
 
 		/// <summary>
 		/// Filter cutoff frequency
 		/// </summary>
-		private uint fc;
+		private uint fc = 0;
 
 		/// <summary>
 		/// Routing to filter or outside filter
 		/// </summary>
-		private bool filt1, filt2, filt3, filtE;
+		private bool filt1 = false;
+		private bool filt2 = false;
+		private bool filt3 = false;
+		private bool filtE = false;
 
 		/// <summary>
 		/// Switch voice 3 off
 		/// </summary>
-		private bool voice3Off;
+		private bool voice3Off = false;
 
 		/// <summary>
 		/// Highpass, bandpass, and lowpass filter modes
 		/// </summary>
-		private bool hp, bp, lp;
+		private bool hp = false;
+		private bool bp = false;
+		private bool lp = false;
 
 		/// <summary>
 		/// Current volume
 		/// </summary>
-		private byte vol;
+		private byte vol = 0;
 
 		/// <summary>
 		/// Filter enabled
 		/// </summary>
-		private bool enabled;
+		private bool enabled = true;
 
 		/// <summary>
 		/// Selects which inputs to route through filter
 		/// </summary>
-		private byte filt;
+		private byte filt = 0;
 
 		/********************************************************************/
 		/// <summary>
@@ -118,26 +123,6 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			volume = fmc.GetVolume();
 			hpIntegrator = fmc.BuildIntegrator();
 			bpIntegrator = fmc.BuildIntegrator();
-			currentMixer = null;
-			currentSummer = null;
-			currentResonance = null;
-			currentVolume = null;
-			vhp = 0;
-			vbp = 0;
-			vlp = 0;
-			ve = 0;
-			fc = 0;
-			filt1 = false;
-			filt2 = false;
-			filt3 = false;
-			filtE = false;
-			voice3Off = false;
-			hp = false;
-			bp = false;
-			lp = false;
-			vol = 0;
-			enabled = true;
-			filt = 0;
 
 			Input(0);
 		}

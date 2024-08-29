@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cpu
 	/// Original Java port by Ken Händel. Later on, it has been hacked to
 	/// improve compatibility with Lorenz suite on VICE's test suite
 	/// </summary>
-	internal abstract class Mos6510
+	internal class Mos6510
 	{
 		private enum AccessMode
 		{
@@ -66,6 +66,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cpu
 		/// Event scheduler
 		/// </summary>
 		private readonly EventScheduler eventScheduler;
+
+		/// <summary>
+		/// Data bus
+		/// </summary>
+		private ICpuDataBus dataBus;
 
 		/// <summary>
 		/// Current instruction and sub-cycle within instruction
@@ -149,9 +154,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cpu
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		protected Mos6510(EventScheduler scheduler)
+		public Mos6510(EventScheduler scheduler, ICpuDataBus bus)
 		{
 			eventScheduler = scheduler;
+			dataBus = bus;
 			noSteal = new EventCallback("CPU-nosteal", EventWithoutSteals);
 			steal = new EventCallback("CPU-steal", EventWithSteals);
 			clearInt = new EventCallback("Remove IRQ", RemoveIrq);
@@ -167,6 +173,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cpu
 			cycle_Data = 0;
 
 			Initialize();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		protected Mos6510(EventScheduler scheduler) : this(scheduler, null)
+		{
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		protected void SetDataBus(ICpuDataBus bus)
+		{
+			dataBus = bus;
 		}
 
 
@@ -216,13 +245,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cpu
 			register_ProgramCounter = cycle_EffectiveAddress;
 		}
 
-		#region Overrides
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Get data from system environment
 		/// </summary>
 		/********************************************************************/
-		protected abstract uint8_t CpuRead(uint_least16_t addr);
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public uint8_t CpuRead(uint_least16_t addr)
+		{
+			return dataBus.CpuRead(addr);
+		}
 
 
 
@@ -231,8 +265,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cpu
 		/// Write data to system environment
 		/// </summary>
 		/********************************************************************/
-		protected abstract void CpuWrite(uint_least16_t addr, uint8_t data);
-		#endregion
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public void CpuWrite(uint_least16_t addr, uint8_t data)
+		{
+			dataBus.CpuWrite(addr, data);
+		}
 
 		#region Interrupt routines
 		/********************************************************************/

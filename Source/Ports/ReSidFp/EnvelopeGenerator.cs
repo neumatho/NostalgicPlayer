@@ -63,104 +63,74 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// <summary>
 		/// XOR shift register for ADSR prescaling
 		/// </summary>
-		private uint lfsr;
+		private uint lfsr = 0x7fff;
 
 		/// <summary>
 		/// Comparison value (period) of the rate counter before next event
 		/// </summary>
-		private uint rate;
+		private uint rate = 0;
 
 		/// <summary>
 		/// During release mode, the SID approximates envelope decay via piecewise
 		/// linear decay rate
 		/// </summary>
-		private uint exponential_counter;
+		private uint exponential_counter = 0;
 
 		// Comparison value (period) of the exponential decay counter before next decrement
-		private uint exponential_counter_period;
-		private uint new_exponential_counter_period;
+		private uint exponential_counter_period = 1;
+		private uint new_exponential_counter_period = 0;
 
-		private uint state_pipeline;
+		private uint state_pipeline = 0;
 
-		private uint envelope_pipeline;
+		private uint envelope_pipeline = 0;
 
-		private uint exponential_pipeline;
+		private uint exponential_pipeline = 0;
 
 		// Current envelope state
-		private State state;
-		private State next_state;
+		private State state = State.RELEASE;
+		private State next_state = State.RELEASE;
 
 		/// <summary>
 		/// Whether counter is enabled. Only switching to ATTACK can release envelope
 		/// </summary>
-		internal bool counter_enabled;
+		internal bool counter_enabled = true;
 
 		/// <summary>
 		/// Gate bit
 		/// </summary>
-		private bool gate;
+		private bool gate = false;
 
-		private bool resetLfsr;
+		private bool resetLfsr = false;
 
 		/// <summary>
 		/// The current digital value of envelope output
 		/// </summary>
-		internal byte envelope_counter;
+		internal byte envelope_counter = 0xaa;
 
 		/// <summary>
 		/// Attack register
 		/// </summary>
-		private byte attack;
+		private byte attack = 0;
 
 		/// <summary>
 		/// Decay register
 		/// </summary>
-		private byte decay;
+		private byte decay = 0;
 
 		/// <summary>
 		/// Sustain register
 		/// </summary>
-		private byte sustain;
+		private byte sustain = 0;
 
 		/// <summary>
 		/// Release register
 		/// </summary>
-		private byte release;
+		private byte release = 0;
 
 		/// <summary>
 		/// The ENV3 value, sampled at the first phase of the clock
 		/// </summary>
-		private byte env3;
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
-		public EnvelopeGenerator()
-		{
-			lfsr = 0x7fff;
-			rate = 0;
-			exponential_counter = 0;
-			exponential_counter_period = 0;
-			new_exponential_counter_period = 0;
-			state_pipeline = 0;
-			envelope_pipeline = 0;
-			exponential_pipeline = 0;
-			state = State.RELEASE;
-			next_state = State.RELEASE;
-			counter_enabled = true;
-			gate = false;
-			resetLfsr = false;
-			envelope_counter = 0xaa;
-			attack = 0;
-			decay = 0;
-			sustain = 0;
-			release = 0;
-			env3 = 0;
-		}
-
-
+		private byte env3 = 0;
 
 		/********************************************************************/
 		/// <summary>

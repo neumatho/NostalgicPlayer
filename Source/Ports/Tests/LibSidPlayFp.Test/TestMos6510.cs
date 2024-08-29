@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 	public class TestMos6510
 	{
 		#region TestCpu class
-		private sealed class TestCpu : Mos6510
+		private sealed class TestCpu : Mos6510, ICpuDataBus
 		{
 			private readonly uint8_t[] mem = new uint8_t[65536];
 
@@ -27,6 +27,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			/********************************************************************/
 			public TestCpu(EventScheduler scheduler) : base(scheduler)
 			{
+				SetDataBus(this);
+
 				mem[0xfffc] = 0x00;
 				mem[0xfffd] = 0x10;
 			}
@@ -55,13 +57,13 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 				return GetInstr() == opcode;
 			}
 
-			#region Overrides
+			#region ICpuDataBus implementation
 			/********************************************************************/
 			/// <summary>
 			/// 
 			/// </summary>
 			/********************************************************************/
-			protected override byte CpuRead(uint_least16_t addr)
+			public new byte CpuRead(uint_least16_t addr)
 			{
 				return mem[addr];
 			}
@@ -73,7 +75,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			/// 
 			/// </summary>
 			/********************************************************************/
-			protected override void CpuWrite(uint_least16_t addr, uint8_t data)
+			public new void CpuWrite(uint_least16_t addr, uint8_t data)
 			{
 				mem[addr] = data;
 			}

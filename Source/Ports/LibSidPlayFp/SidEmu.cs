@@ -20,22 +20,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 
 		private readonly SidBuilder builder;
 
-		protected EventScheduler eventScheduler;
+		protected EventScheduler eventScheduler = null;
 
-		protected event_clock_t accessClk;
+		protected event_clock_t accessClk = 0;
 
 		/// <summary>
 		/// The sample buffer
 		/// </summary>
-		protected short[] buffer;
+		protected short[] buffer = null;
 
 		/// <summary>
 		/// Current position in buffer
 		/// </summary>
-		protected int bufferPos;
+		protected int bufferPos = 0;
 
-		protected bool status;
-		private bool isLocked;
+		protected bool status = true;
+		private bool isLocked = false;
 
 		protected string error;
 
@@ -47,11 +47,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		protected SidEmu(SidBuilder builder)
 		{
 			this.builder = builder;
-			eventScheduler = null;
-			buffer = null;
-			bufferPos = 0;
-			status = true;
-			isLocked = false;
 			error = Resources.IDS_SID_NA;
 		}
 

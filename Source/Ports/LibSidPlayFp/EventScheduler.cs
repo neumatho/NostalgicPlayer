@@ -36,25 +36,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/// <summary>
 		/// The first event of the chain
 		/// </summary>
-		private Event firstEvent;
+		private Event firstEvent = null;
 
 		/// <summary>
 		/// EventScheduler's current clock
 		/// </summary>
-		private event_clock_t currentTime;
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
-		public EventScheduler()
-		{
-			firstEvent = null;
-			currentTime = 0;
-		}
-
-
+		private event_clock_t currentTime = 0;
 
 		/********************************************************************/
 		/// <summary>
