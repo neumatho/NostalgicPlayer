@@ -139,7 +139,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 					break;
 				}
 
-				// Supported / used samples
+				// Used samples
 				case 2:
 				{
 					description = Resources.IDS_EMOD_INFODESCLINE2;

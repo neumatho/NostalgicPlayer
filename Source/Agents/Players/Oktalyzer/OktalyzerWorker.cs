@@ -108,7 +108,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 					break;
 				}
 
-				// Supported / used samples
+				// Used samples
 				case 2:
 				{
 					description = Resources.IDS_OKT_INFODESCLINE2;

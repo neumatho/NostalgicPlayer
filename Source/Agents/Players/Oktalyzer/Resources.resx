@@ -152,7 +152,7 @@ This player is able to play all Oktalyzer modules with 4 to 8 channels.</value>
     <value>Used patterns:</value>
   </data>
   <data name="IDS_OKT_INFODESCLINE2" xml:space="preserve">
-    <value>Supported / used samples:</value>
+    <value>Used samples:</value>
   </data>
   <data name="IDS_OKT_INFODESCLINE3" xml:space="preserve">
     <value>Playing position:</value>

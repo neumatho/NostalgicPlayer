@@ -149,7 +149,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Supported / used samples:.
+        ///   Looks up a localized string similar to Used samples:.
         /// </summary>
         internal static string IDS_OKT_INFODESCLINE2 {
             get {

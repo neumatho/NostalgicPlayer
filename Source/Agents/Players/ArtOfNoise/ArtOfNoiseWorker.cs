@@ -152,7 +152,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise
 					break;
 				}
 
-				// Supported / used samples
+				// Used samples
 				case 2:
 				{
 					description = Resources.IDS_AON_INFODESCLINE2;
