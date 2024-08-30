@@ -14,10 +14,6 @@ jobs:
         with:
           lfs: 'true'
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v1.0.2
-      - name: Install dependencies
-        run: nuget restore Source\NostalgicPlayer.sln
+        uses: microsoft/setup-msbuild@v2
       - name: Build
-        run: msbuild Source\NostalgicPlayer.sln /nologo /nr:false /p:configuration="Release" /p:Platform="Any CPU"
+        run: msbuild Source\NostalgicPlayer.sln -t:rebuild -property:configuration="Release" -property:Platform="Any CPU"
