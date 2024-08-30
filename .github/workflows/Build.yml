@@ -13,11 +13,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           lfs: 'true'
-      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1.0.2
       - name: Install dependencies
-        run: dotnet restore Source\NostalgicPlayer.sln
+        run: nuget restore Source\NostalgicPlayer.sln
       - name: Build
-        run: dotnet build Source\NostalgicPlayer.sln --configuration Release -p:Platform="Any CPU" --no-restore
+        run: msbuild Source\NostalgicPlayer.sln /nologo /nr:false /p:configuration="Release" /p:Platform="Any CPU"
