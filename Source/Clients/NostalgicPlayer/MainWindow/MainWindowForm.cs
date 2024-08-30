@@ -4390,6 +4390,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				if (!string.IsNullOrEmpty(extension))
 					extension = extension.Substring(1).ToLower();
 
+				if (extension == "lnk")
+				{
+					fileName = FindFileNameFromShortcut(fileName);
+
+					extension = Path.GetExtension(fileName);
+					if (!string.IsNullOrEmpty(extension))
+						extension = extension.Substring(1).ToLower();
+				}
+
 				if (checkForList)
 				{
 					if (listExtensions.Contains(extension))
@@ -4456,6 +4465,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Now go through all the directories
 			foreach (string directoryName in Directory.EnumerateDirectories(directory))
 				AddDirectoryToList(directoryName, list, listExtensions, archiveExtensions, checkForList);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will try to get the file name from a shortcut
+		/// </summary>
+		/********************************************************************/
+		private string FindFileNameFromShortcut(string fileName)
+		{
+			string pathOnly = Path.GetDirectoryName(fileName);
+			string fileNameOnly = Path.GetFileName(fileName);
+
+			Shell32.Shell shell = new Shell32.Shell();
+			Shell32.Folder folder = shell.NameSpace(pathOnly);
+			Shell32.FolderItem folderItem = folder.ParseName(fileNameOnly);
+
+			if ((folderItem == null) || !folderItem.IsLink)
+				return fileName;
+
+			return ((Shell32.ShellLinkObject)folderItem.GetLink).Path;
 		}
 
 
