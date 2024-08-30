@@ -9,9 +9,6 @@ on:
 jobs:
   Test:
     runs-on: windows-latest
-    strategy:
-      matrix:
-        dotnet-version: [ '8.0.x' ]
 
     steps:
       - name: Checkout
@@ -24,13 +21,13 @@ jobs:
           repository: libsidplayfp/VICE-testprogs
           lfs: 'true'
           path: ./Source/Ports/Tests/LibSidPlayFp.Test/Vice/VICE-testprogs
-      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v2
       - name: Install dependencies
-        run: dotnet restore Source\NostalgicPlayer.sln
+        run: nuget restore Source\NostalgicPlayer.sln
       - name: Build
-        run: dotnet build Source\NostalgicPlayer.sln --configuration Debug -p:Platform="Any CPU" --no-restore
+        run: msbuild Source\NostalgicPlayer.sln -t:rebuild -property:configuration="Debug" -property:Platform="Any CPU"
       - name: Test
         run: dotnet test Source\Ports\Tests\LibSidPlayFp.Test\LibSidPlayFp.Test.csproj --no-build --verbosity normal
