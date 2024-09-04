@@ -6,7 +6,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Agent.Player.SidPlay.Roms;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 	/// Run all the test from Vice
 	/// (start in debugger for output)
 	/// </summary>
-	[TestFixture]
+	[TestClass]
 	public class TestVice
 	{
 		#region ViceException class
@@ -69,7 +69,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void Test()
 		{
 			string viceDirectory = Path.Combine(GetSolutionDirectory(), "Vice");
@@ -94,7 +94,6 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 
 					string[] args = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 					Debug.WriteLine($"{lineNumber} - Running test {args[0]}");
-					TestContext.Progress.WriteLine($"{lineNumber} - Running test {args[0]}");
 
 					try
 					{
@@ -106,7 +105,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 							successCount++;
 						else
 						{
-							TestContext.Progress.WriteLine(">>> Failed");
+							Debug.WriteLine(">>> Failed");
 							failedCount++;
 						}
 					}
@@ -114,9 +113,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			}
 
 			Debug.WriteLine($"Successful tests: {successCount} - Failed tests {failedCount}");
-			TestContext.Progress.WriteLine($"Successful tests: {successCount} - Failed tests {failedCount}");
 
-			Assert.That(failedCount, Is.EqualTo(0));
+			Assert.AreEqual(0, failedCount);
 		}
 
 		#region Private methods

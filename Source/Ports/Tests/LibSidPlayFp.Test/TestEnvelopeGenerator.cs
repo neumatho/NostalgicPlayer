@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Ports.ReSidFp;
 
 namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
@@ -11,18 +11,17 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 	/// <summary>
 	/// 
 	/// </summary>
-	[TestFixture]
+	[TestClass]
 	public class TestEnvelopeGenerator
 	{
-		private EnvelopeGenerator generator;
+		private readonly EnvelopeGenerator generator;
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		[SetUp]
-		public void Initialize()
+		public TestEnvelopeGenerator()
 		{
 			generator = new EnvelopeGenerator();
 			generator.Reset();
@@ -36,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestAdsrDelayBug()
 		{
 			// If the rate counter comparison value is set below the current value of the
@@ -51,7 +50,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			for (int i = 0; i < 200; i++)
 				generator.Clock();
 
-			Assert.That(generator.ReadEnv(), Is.EqualTo(1));
+			Assert.AreEqual(1, generator.ReadEnv());
 
 			// Set lower attack time
 			// should theoretically clock after 63 cycles
@@ -61,7 +60,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			for (int i = 0; i < 200; i++)
 				generator.Clock();
 
-			Assert.That(generator.ReadEnv(), Is.EqualTo(1));
+			Assert.AreEqual(1, generator.ReadEnv());
 		}
 
 
@@ -71,7 +70,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestFlipFFto00()
 		{
 			// The envelope counter can flip from 0xff to 0x00 by changing state to
@@ -103,7 +102,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			for (int i = 0; i < 315; i++)
 				generator.Clock();
 
-			Assert.That(generator.ReadEnv(), Is.EqualTo(0));
+			Assert.AreEqual(0, generator.ReadEnv());
 		}
 
 
@@ -113,7 +112,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestFlip00toFF()
 		{
 			// The envelope counter can flip from 0x00 to 0xff by changing state to
@@ -125,7 +124,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			generator.WriteAttack_Decay(0x77);
 			generator.WriteSustain_Release(0x77);
 			generator.Clock();
-			Assert.That(generator.ReadEnv(), Is.EqualTo(0));
+			Assert.AreEqual(0, generator.ReadEnv());
 
 			generator.WriteControl_Reg(0x01);
 
@@ -140,7 +139,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			for (int i = 0; i < 315; i++)
 				generator.Clock();
 
-			Assert.That(generator.ReadEnv(), Is.EqualTo(0xff));
+			Assert.AreEqual(0xff, generator.ReadEnv());
 		}
 	}
 }

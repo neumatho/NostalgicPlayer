@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Ports.ReSidFp;
 using Polycode.NostalgicPlayer.Ports.ReSidFp.Containers;
 
@@ -12,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 	/// <summary>
 	/// 
 	/// </summary>
-	[TestFixture]
+	[TestClass]
 	public class TestWaveformGenerator
 	{
 		/********************************************************************/
@@ -20,13 +20,13 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestShiftRegisterInitValue()
 		{
 			WaveformGenerator generator = new WaveformGenerator();
 			generator.Reset();
 
-			Assert.That(generator.shift_register, Is.EqualTo(0x3fffffU));
+			Assert.AreEqual(0x3fffffU, generator.shift_register);
 		}
 
 
@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestClockShiftRegister()
 		{
 			WaveformGenerator generator = new WaveformGenerator();
@@ -51,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			// Shift phase 2
 			generator.Shift_Phase2(0, 0);
 
-			Assert.That(generator.noise_output, Is.EqualTo(0x9e0U));
+			Assert.AreEqual(0x9e0U, generator.noise_output);
 		}
 
 
@@ -61,7 +61,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestNoiseOutput()
 		{
 			WaveformGenerator generator = new WaveformGenerator();
@@ -70,7 +70,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			generator.shift_register = 0x35555f;
 			generator.Set_Noise_Output();
 
-			Assert.That(generator.noise_output, Is.EqualTo(0xe20U));
+			Assert.AreEqual(0xe20U, generator.noise_output);
 		}
 
 
@@ -80,7 +80,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestWriteShiftRegister()
 		{
 			WaveformGenerator generator = new WaveformGenerator();
@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			generator.waveform = 0xf;
 			generator.Write_Shift_Register();
 
-			Assert.That(generator.shift_register, Is.EqualTo(0x2dd6ebU));
+			Assert.AreEqual(0x2dd6ebU, generator.shift_register);
 		}
 
 
@@ -99,7 +99,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestSetTestBit()
 		{
 			matrix_t waveTables = WaveformCalculator.GetInstance().GetWaveTable();
@@ -116,7 +116,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			generator.WriteControl_Reg(0x00);	// Unset test bit
 			generator.Clock();
 
-			Assert.That(generator.noise_output, Is.EqualTo(0x9f0U));
+			Assert.AreEqual(0x9f0U, generator.noise_output);
 		}
 
 
@@ -126,7 +126,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestNoiseWriteBack1()
 		{
 			matrix_t waveTables = WaveformCalculator.GetInstance().GetWaveTable();
@@ -154,56 +154,56 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			generator.WriteControl_Reg(0x80);
 			generator.Clock();
 			generator.Output(modulator);
-			Assert.That(generator.ReadOsc(), Is.EqualTo(0xfc));
+			Assert.AreEqual(0xfc, generator.ReadOsc());
 			generator.WriteControl_Reg(0x88);
 			generator.Clock();
 			generator.Output(modulator);
 			generator.WriteControl_Reg(0x80);
 			generator.Clock();
 			generator.Output(modulator);
-			Assert.That(generator.ReadOsc(), Is.EqualTo(0x6c));
+			Assert.AreEqual(0x6c, generator.ReadOsc());
 			generator.WriteControl_Reg(0x88);
 			generator.Clock();
 			generator.Output(modulator);
 			generator.WriteControl_Reg(0x80);
 			generator.Clock();
 			generator.Output(modulator);
-			Assert.That(generator.ReadOsc(), Is.EqualTo(0xd8));
+			Assert.AreEqual(0xd8, generator.ReadOsc());
 			generator.WriteControl_Reg(0x88);
 			generator.Clock();
 			generator.Output(modulator);
 			generator.WriteControl_Reg(0x80);
 			generator.Clock();
 			generator.Output(modulator);
-			Assert.That(generator.ReadOsc(), Is.EqualTo(0xb1));
+			Assert.AreEqual(0xb1, generator.ReadOsc());
 			generator.WriteControl_Reg(0x88);
 			generator.Clock();
 			generator.Output(modulator);
 			generator.WriteControl_Reg(0x80);
 			generator.Clock();
 			generator.Output(modulator);
-			Assert.That(generator.ReadOsc(), Is.EqualTo(0xd8));
+			Assert.AreEqual(0xd8, generator.ReadOsc());
 			generator.WriteControl_Reg(0x88);
 			generator.Clock();
 			generator.Output(modulator);
 			generator.WriteControl_Reg(0x80);
 			generator.Clock();
 			generator.Output(modulator);
-			Assert.That(generator.ReadOsc(), Is.EqualTo(0x6a));
+			Assert.AreEqual(0x6a, generator.ReadOsc());
 			generator.WriteControl_Reg(0x88);
 			generator.Clock();
 			generator.Output(modulator);
 			generator.WriteControl_Reg(0x80);
 			generator.Clock();
 			generator.Output(modulator);
-			Assert.That(generator.ReadOsc(), Is.EqualTo(0xb1));
+			Assert.AreEqual(0xb1, generator.ReadOsc());
 			generator.WriteControl_Reg(0x88);
 			generator.Clock();
 			generator.Output(modulator);
 			generator.WriteControl_Reg(0x80);
 			generator.Clock();
 			generator.Output(modulator);
-			Assert.That(generator.ReadOsc(), Is.EqualTo(0xf0));
+			Assert.AreEqual(0xf0, generator.ReadOsc());
 		}
 	}
 }

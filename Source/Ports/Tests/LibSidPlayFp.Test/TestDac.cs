@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Ports.ReSidFp;
 using Polycode.NostalgicPlayer.Ports.ReSidFp.Containers;
 
@@ -12,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 	/// <summary>
 	/// 
 	/// </summary>
-	[TestFixture]
+	[TestClass]
 	public class TestDac
 	{
 		private const int DacBits = 8;
@@ -22,10 +22,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestDac6581()
 		{
-			Assert.That(IsDacLinear(ChipModel.MOS6581), Is.False);
+			Assert.IsFalse(IsDacLinear(ChipModel.MOS6581));
 		}
 
 
@@ -35,10 +35,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestDac8580()
 		{
-			Assert.That(IsDacLinear(ChipModel.MOS8580), Is.True);
+			Assert.IsTrue(IsDacLinear(ChipModel.MOS8580));
 		}
 
 
@@ -48,13 +48,13 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestLeak()
 		{
 			double[] dac = new double[1 << DacBits];
 			BuildDac(dac, ChipModel.MOS6581);
 
-			Assert.That(dac[0] > 0);
+			Assert.IsTrue(dac[0] > 0);
 		}
 
 		#region Private methods

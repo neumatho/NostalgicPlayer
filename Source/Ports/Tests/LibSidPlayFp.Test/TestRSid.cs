@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using System.IO;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 	/// <summary>
 	/// 
 	/// </summary>
-	[TestFixture]
+	[TestClass]
 	public class TestRSid
 	{
 		private const int BufferSize = 128;
@@ -65,11 +65,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		[SetUp]
-		public void Initialize()
+		public TestRSid()
 		{
 			Array.Copy(bufferRSid, data, BufferSize);
 		}
@@ -81,12 +80,12 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// Check that unmodified data loads ok
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestLoadOk()
 		{
 			SidTune tune = LoadTune();
-			Assert.That(tune.GetStatus(), Is.True);
-			Assert.That(tune.StatusString(), Is.EqualTo("No errors"));
+			Assert.IsTrue(tune.GetStatus());
+			Assert.AreEqual("No errors", tune.StatusString());
 		}
 
 
@@ -96,14 +95,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// Version must be at least 2 for RSID files
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestUnsupportedVersion()
 		{
 			data[VersionLo] = 0x01;
 
 			SidTune tune = LoadTune();
-			Assert.That(tune.GetStatus(), Is.False);
-			Assert.That(tune.StatusString(), Is.EqualTo("Unsupported RSID version"));
+			Assert.IsFalse(tune.GetStatus());
+			Assert.AreEqual("Unsupported RSID version", tune.StatusString());
 		}
 
 
@@ -113,14 +112,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// Load address must always be 0 for RSID files
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestWrongLoadAddress()
 		{
 			data[LoadAddressLo] = 0xff;
 
 			SidTune tune = LoadTune();
-			Assert.That(tune.GetStatus(), Is.False);
-			Assert.That(tune.StatusString(), Is.EqualTo("File contains invalid data"));
+			Assert.IsFalse(tune.GetStatus());
+			Assert.AreEqual("File contains invalid data", tune.StatusString());
 		}
 
 
@@ -130,15 +129,15 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// Actual load address must NOT be less that $07e8 for RSID files
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestWrongActualLoadAddress()
 		{
 			data[124] = 0xe7;
 			data[125] = 0x07;
 
 			SidTune tune = LoadTune();
-			Assert.That(tune.GetStatus(), Is.False);
-			Assert.That(tune.StatusString(), Is.EqualTo("Bad address data"));
+			Assert.IsFalse(tune.GetStatus());
+			Assert.AreEqual("Bad address data", tune.StatusString());
 		}
 
 
@@ -148,14 +147,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// Play address must always be 0 for RSID files
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestWrongPlayAddress()
 		{
 			data[PlayAddressLo] = 0xff;
 
 			SidTune tune = LoadTune();
-			Assert.That(tune.GetStatus(), Is.False);
-			Assert.That(tune.StatusString(), Is.EqualTo("File contains invalid data"));
+			Assert.IsFalse(tune.GetStatus());
+			Assert.AreEqual("File contains invalid data", tune.StatusString());
 		}
 
 
@@ -165,14 +164,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// Speed must always be 0 for RSID files
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestWrongSpeed()
 		{
 			data[SpeedLoLo] = 0xff;
 
 			SidTune tune = LoadTune();
-			Assert.That(tune.GetStatus(), Is.False);
-			Assert.That(tune.StatusString(), Is.EqualTo("File contains invalid data"));
+			Assert.IsFalse(tune.GetStatus());
+			Assert.AreEqual("File contains invalid data", tune.StatusString());
 		}
 
 
@@ -182,14 +181,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// Data offset must always be 0x007c for RSID files
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestWrongDataOffset()
 		{
 			data[DataOffsetLo] = 0x76;
 
 			SidTune tune = LoadTune();
-			Assert.That(tune.GetStatus(), Is.False);
-			Assert.That(tune.StatusString(), Is.EqualTo("Bad address data"));
+			Assert.IsFalse(tune.GetStatus());
+			Assert.AreEqual("Bad address data", tune.StatusString());
 		}
 
 
@@ -199,14 +198,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// Init address must never point to a ROM area for RSID files
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestWrongInitAddressRom()
 		{
 			data[InitAddressHi] = 0xb0;
 
 			SidTune tune = LoadTune();
-			Assert.That(tune.GetStatus(), Is.False);
-			Assert.That(tune.StatusString(), Is.EqualTo("Bad address data"));
+			Assert.IsFalse(tune.GetStatus());
+			Assert.AreEqual("Bad address data", tune.StatusString());
 		}
 
 
@@ -216,15 +215,15 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// Init address must never be lower than $07e8 for RSID files
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestWrongInitAddressTooLow()
 		{
 			data[InitAddressHi] = 0x07;
 			data[InitAddressLo] = 0xe7;
 
 			SidTune tune = LoadTune();
-			Assert.That(tune.GetStatus(), Is.False);
-			Assert.That(tune.StatusString(), Is.EqualTo("Bad address data"));
+			Assert.IsFalse(tune.GetStatus());
+			Assert.AreEqual("Bad address data", tune.StatusString());
 		}
 
 
@@ -234,14 +233,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// The maximum number of songs is 256
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestTooManySongs()
 		{
 			data[SongsHi] = 0x01;
 			data[SongsLo] = 0x01;
 
 			SidTune tune = LoadTune();
-			Assert.That(tune.GetInfo().Songs(), Is.EqualTo(256U));
+			Assert.AreEqual(256U, tune.GetInfo().Songs());
 		}
 
 
@@ -251,11 +250,11 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// The song number to be played by default has a default of 1
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestDefaultStartSong()
 		{
 			SidTune tune = LoadTune();
-			Assert.That(tune.GetInfo().StartSong(), Is.EqualTo(1U));
+			Assert.AreEqual(1U, tune.GetInfo().StartSong());
 		}
 
 
@@ -265,14 +264,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// If 'start page' is 0 or 0xff, 'page length' must be set to 0
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestWrongPageLength()
 		{
 			data[StartPage] = 0xff;
 			data[PageLength] = 0x77;
 
 			SidTune tune = LoadTune();
-			Assert.That(tune.GetInfo().RelocPages(), Is.EqualTo(0));
+			Assert.AreEqual(0, tune.GetInfo().RelocPages());
 		}
 
 		/*** TEST v3 ***/
@@ -282,14 +281,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// $d420 is a valid second SID address
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestSecondSidAddressOk()
 		{
 			data[VersionLo] = 0x03;
 			data[SecondSidAddress] = 0x42;
 
 			SidTune tune = LoadTune();
-			Assert.That(tune.GetInfo().SidChipBase(1), Is.EqualTo(0xd420));
+			Assert.AreEqual(0xd420, tune.GetInfo().SidChipBase(1));
 		}
 
 
@@ -299,14 +298,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// SecondSidAddress: Only even values are valid
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestWrongSecondSidAddressOdd()
 		{
 			data[VersionLo] = 0x03;
 			data[SecondSidAddress] = 0x43;
 
 			SidTune tune = LoadTune();
-			Assert.That(tune.GetInfo().SidChipBase(1), Is.EqualTo(0));
+			Assert.AreEqual(0, tune.GetInfo().SidChipBase(1));
 		}
 
 
@@ -317,14 +316,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// ($d800-$ddf0) are invalid
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestWrongSecondSidAddressOutOfRange()
 		{
 			data[VersionLo] = 0x03;
 			data[SecondSidAddress] = 0x80;
 
 			SidTune tune = LoadTune();
-			Assert.That(tune.GetInfo().SidChipBase(1), Is.EqualTo(0));
+			Assert.AreEqual(0, tune.GetInfo().SidChipBase(1));
 		}
 
 		/*** TEST v4 ***/
@@ -334,7 +333,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// $d500 is a valid third SID address
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestThirdSidAddressOk()
 		{
 			data[VersionLo] = 0x04;
@@ -342,7 +341,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[ThirdSidAddress] = 0x50;
 
 			SidTune tune = LoadTune();
-			Assert.That(tune.GetInfo().SidChipBase(2), Is.EqualTo(0xd500));
+			Assert.AreEqual(0xd500, tune.GetInfo().SidChipBase(2));
 		}
 
 
@@ -352,7 +351,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// ThirdSidAddress: Only even values are valid
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestWrongThirdSidAddressOdd()
 		{
 			data[VersionLo] = 0x04;
@@ -360,7 +359,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[ThirdSidAddress] = 0x43;
 
 			SidTune tune = LoadTune();
-			Assert.That(tune.GetInfo().SidChipBase(2), Is.EqualTo(0));
+			Assert.AreEqual(0, tune.GetInfo().SidChipBase(2));
 		}
 
 
@@ -371,7 +370,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// ($d800-$ddf0) are invalid
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestWrongThirdSidAddressOutOfRange()
 		{
 			data[VersionLo] = 0x04;
@@ -379,7 +378,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[ThirdSidAddress] = 0x80;
 
 			SidTune tune = LoadTune();
-			Assert.That(tune.GetInfo().SidChipBase(2), Is.EqualTo(0));
+			Assert.AreEqual(0, tune.GetInfo().SidChipBase(2));
 		}
 
 
@@ -389,7 +388,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// The address of the third SID cannot be the same as the second SID
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestWrongThirdSidAddressLikeSecond()
 		{
 			data[VersionLo] = 0x04;
@@ -397,7 +396,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			data[ThirdSidAddress] = 0x42;
 
 			SidTune tune = LoadTune();
-			Assert.That(tune.GetInfo().SidChipBase(2), Is.EqualTo(0));
+			Assert.AreEqual(0, tune.GetInfo().SidChipBase(2));
 		}
 
 		#region Private methods

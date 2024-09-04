@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using System.IO;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 	/// <summary>
 	/// 
 	/// </summary>
-	[TestFixture]
+	[TestClass]
 	public class TestMus
 	{
 		private const int BufferSize = 26;
@@ -39,11 +39,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		[SetUp]
-		public void Initialize()
+		public TestMus()
 		{
 			Array.Copy(bufferMus, data, BufferSize);
 		}
@@ -55,13 +54,13 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestPlayerAddress()
 		{
 			SidTune tune = LoadTune();
 
-			Assert.That(tune.GetInfo().InitAddr(), Is.EqualTo(0xec60));
-			Assert.That(tune.GetInfo().PlayAddr(), Is.EqualTo(0xec80));
+			Assert.AreEqual(0xec60, tune.GetInfo().InitAddr());
+			Assert.AreEqual(0xec80, tune.GetInfo().PlayAddr());
 		}
 
 
@@ -71,15 +70,15 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestWrongVoiceLength()
 		{
 			data[Voice1LenLo] = 0x76;
 
 			SidTune tune = LoadTune();
-			Assert.That(tune.GetStatus(), Is.False);
+			Assert.IsFalse(tune.GetStatus());
 
-			Assert.That(tune.StatusString(), Is.EqualTo("Could not determine file format"));
+			Assert.AreEqual("Could not determine file format", tune.StatusString());
 		}
 
 		#region Private methods

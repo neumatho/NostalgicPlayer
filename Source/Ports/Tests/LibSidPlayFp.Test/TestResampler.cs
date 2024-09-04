@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Ports.ReSidFp.Resample;
 
 namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 	/// <summary>
 	/// 
 	/// </summary>
-	[TestFixture]
+	[TestClass]
 	public class TestResampler
 	{
 		/********************************************************************/
@@ -19,14 +19,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestSoftClip()
 		{
-			Assert.That(Resampler.SoftClipImpl(0) == 0);
-			Assert.That(Resampler.SoftClipImpl(28000) == 28000);
-			Assert.That(Resampler.SoftClipImpl(int.MaxValue) <= 32767);
-			Assert.That(Resampler.SoftClipImpl(-28000) == -28000);
-			Assert.That(Resampler.SoftClipImpl(int.MinValue + 1) >= -32768);
+			Assert.IsTrue(Resampler.SoftClipImpl(0) == 0);
+			Assert.IsTrue(Resampler.SoftClipImpl(28000) == 28000);
+			Assert.IsTrue(Resampler.SoftClipImpl(int.MaxValue) <= 32767);
+			Assert.IsTrue(Resampler.SoftClipImpl(-28000) == -28000);
+			Assert.IsTrue(Resampler.SoftClipImpl(int.MinValue + 1) >= -32768);
 		}
 	}
 }

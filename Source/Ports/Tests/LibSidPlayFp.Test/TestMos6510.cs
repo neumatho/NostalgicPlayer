@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp;
 using Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Cpu;
 
@@ -12,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 	/// <summary>
 	/// 
 	/// </summary>
-	[TestFixture]
+	[TestClass]
 	public class TestMos6510
 	{
 		#region TestCpu class
@@ -95,16 +95,15 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		}
 		#endregion
 
-		private EventScheduler scheduler;
-		private TestCpu cpu;
+		private readonly EventScheduler scheduler;
+		private readonly TestCpu cpu;
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		[SetUp]
-		public void Initialize()
+		public TestMos6510()
 		{
 			scheduler = new EventScheduler();
 			cpu = new TestCpu(scheduler);
@@ -121,7 +120,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// </summary>
 		// http://visual6502.org/JSSim/expert.html?graphics=f&loglevel=2&steps=20&a=0010&d=58eaeaeaeaea&a=fffe&d=2000&a=0020&d=e840&r=0010&irq0=4&irq1=100&logmore=rdy,irq
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestNop()
 		{
 			cpu.SetMem(0, Opcodes.CLIn);
@@ -134,7 +133,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			scheduler.Clock();	// T1
 			scheduler.Clock();	// T0+T2
 			scheduler.Clock();	// T1
-			Assert.That(cpu.Check(Opcodes.BRKn), Is.True);
+			Assert.IsTrue(cpu.Check(Opcodes.BRKn));
 		}
 
 
@@ -146,7 +145,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// </summary>
 		// http://visual6502.org/JSSim/expert.html?graphics=f&loglevel=2&steps=20&a=0010&d=7858eaeaeaea&a=fffe&d=2000&a=0020&d=e840&r=0010&irq0=4&irq1=100&logmore=rdy,irq
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestCli()
 		{
 			cpu.SetMem(0, Opcodes.SEIn);
@@ -160,11 +159,11 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			scheduler.Clock();	// T1
 			scheduler.Clock();	// T0+T2
 			scheduler.Clock();	// T1
-			Assert.That(cpu.Check(Opcodes.NOPn), Is.True);
+			Assert.IsTrue(cpu.Check(Opcodes.NOPn));
 
 			scheduler.Clock();	// T0+T2
 			scheduler.Clock();	// T1
-			Assert.That(cpu.Check(Opcodes.BRKn), Is.True);
+			Assert.IsTrue(cpu.Check(Opcodes.BRKn));
 		}
 
 
@@ -177,7 +176,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// </summary>
 		// http://visual6502.org/JSSim/expert.html?graphics=f&loglevel=2&steps=20&a=0010&d=7858eaeaeaea&a=fffe&d=2000&a=0020&d=e840&r=0010&irq0=4&irq1=100&logmore=rdy,irq&rdy0=6&rdy1=8
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestCliRdy()
 		{
 			cpu.SetMem(0, Opcodes.SEIn);
@@ -194,7 +193,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			cpu.SetRdy(true);
 			scheduler.Clock();	// T0+T2
 			scheduler.Clock();	// T1
-			Assert.That(cpu.Check(Opcodes.BRKn), Is.True);
+			Assert.IsTrue(cpu.Check(Opcodes.BRKn));
 		}
 
 
@@ -206,7 +205,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// </summary>
 		// http://visual6502.org/JSSim/expert.html?graphics=f&loglevel=2&steps=20&a=0010&d=5878eaeaeaea&a=fffe&d=2000&a=0020&d=e840&r=0010&irq0=4&irq1=100&logmore=rdy,irq
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestSei()
 		{
 			cpu.SetMem(0, Opcodes.CLIn);
@@ -220,7 +219,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			scheduler.Clock();	// T1
 			scheduler.Clock();	// T0+T2
 			scheduler.Clock();	// T1
-			Assert.That(cpu.Check(Opcodes.BRKn), Is.True);
+			Assert.IsTrue(cpu.Check(Opcodes.BRKn));
 		}
 
 
@@ -232,7 +231,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// </summary>
 		// http://visual6502.org/JSSim/expert.html?graphics=f&loglevel=2&steps=20&a=0010&d=5878eaeaeaea&a=fffe&d=2000&a=0020&d=e840&r=0010&irq0=4&irq1=100&logmore=rdy,irq&rdy0=6&rdy1=8
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestSeiRdy()
 		{
 			cpu.SetMem(0, Opcodes.CLIn);
@@ -249,7 +248,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			cpu.SetRdy(true);
 			scheduler.Clock();	// T0+T2
 			scheduler.Clock();	// T1
-			Assert.That(cpu.Check(Opcodes.BRKn), Is.True);
+			Assert.IsTrue(cpu.Check(Opcodes.BRKn));
 		}
 
 
@@ -261,7 +260,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// </summary>
 		// http://visual6502.org/JSSim/expert.html?graphics=f&loglevel=2&steps=20&a=0010&d=5878eaeaeaea&a=fffe&d=2000&a=0020&d=e840&r=0010&irq0=6&irq1=100&logmore=rdy,irq&rdy0=6&rdy1=8
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestSeiRdy2()
 		{
 			cpu.SetMem(0, Opcodes.CLIn);
@@ -278,7 +277,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			cpu.SetRdy(true);
 			scheduler.Clock();	// T0+T2
 			scheduler.Clock();	// T1
-			Assert.That(cpu.Check(Opcodes.NOPn), Is.True);
+			Assert.IsTrue(cpu.Check(Opcodes.NOPn));
 		}
 
 
@@ -290,7 +289,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// </summary>
 		// http://visual6502.org/JSSim/expert.html?graphics=f&loglevel=2&steps=30&a=0010&d=58087828eaeaeaea&a=fffe&d=2000&a=0020&d=e840&r=0010&irq0=14&irq1=100&logmore=rdy,irq
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestPlp1()
 		{
 			cpu.SetMem(0, Opcodes.CLIn);
@@ -315,11 +314,11 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			scheduler.Clock();	// T3
 			scheduler.Clock();	// T0
 			scheduler.Clock();	// T1
-			Assert.That(cpu.Check(Opcodes.NOPn), Is.True);
+			Assert.IsTrue(cpu.Check(Opcodes.NOPn));
 
 			scheduler.Clock();	// T0+T2
 			scheduler.Clock();	// T1
-			Assert.That(cpu.Check(Opcodes.BRKn), Is.True);
+			Assert.IsTrue(cpu.Check(Opcodes.BRKn));
 		}
 
 
@@ -331,7 +330,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// </summary>
 		// http://visual6502.org/JSSim/expert.html?graphics=f&loglevel=2&steps=30&a=0010&d=58087828eaeaeaea&a=fffe&d=2000&a=0020&d=e840&r=0010&irq0=14&irq1=100&logmore=rdy,irq&rdy0=20&rdy1=22
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestPlp1Rdy()
 		{
 			cpu.SetMem(0, Opcodes.CLIn);
@@ -359,11 +358,11 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			cpu.SetRdy(true);
 			scheduler.Clock();	// T0
 			scheduler.Clock();	// T1
-			Assert.That(cpu.Check(Opcodes.NOPn), Is.True);
+			Assert.IsTrue(cpu.Check(Opcodes.NOPn));
 
 			scheduler.Clock();	// T0+T2
 			scheduler.Clock();	// T1
-			Assert.That(cpu.Check(Opcodes.BRKn), Is.True);
+			Assert.IsTrue(cpu.Check(Opcodes.BRKn));
 		}
 
 
@@ -375,7 +374,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// </summary>
 		// http://visual6502.org/JSSim/expert.html?graphics=f&loglevel=2&steps=30&a=0010&d=78085828eaeaeaea&a=fffe&d=2000&a=0020&d=e840&r=0010&irq0=14&irq1=100&logmore=rdy,irq
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestPlp2()
 		{
 			cpu.SetMem(0, Opcodes.SEIn);
@@ -400,7 +399,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			scheduler.Clock();	// T3
 			scheduler.Clock();	// T0
 			scheduler.Clock();	// T1
-			Assert.That(cpu.Check(Opcodes.BRKn), Is.True);
+			Assert.IsTrue(cpu.Check(Opcodes.BRKn));
 		}
 
 
@@ -412,7 +411,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// </summary>
 		// http://visual6502.org/JSSim/expert.html?graphics=f&loglevel=2&steps=30&a=0010&d=78085828eaeaeaea&a=fffe&d=2000&a=0020&d=e840&r=0010&irq0=14&irq1=100&logmore=rdy,irq&rdy0=20&rdy1=22
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestPlp2Rdy()
 		{
 			cpu.SetMem(0, Opcodes.SEIn);
@@ -440,7 +439,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			cpu.SetRdy(true);
 			scheduler.Clock();	// T0
 			scheduler.Clock();	// T1
-			Assert.That(cpu.Check(Opcodes.BRKn), Is.True);
+			Assert.IsTrue(cpu.Check(Opcodes.BRKn));
 		}
 	}
 }

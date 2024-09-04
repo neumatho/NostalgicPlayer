@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Collections.Generic;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Polycode.NostalgicPlayer.Ports.ReSidFp;
 
 namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
@@ -12,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 	/// <summary>
 	/// 
 	/// </summary>
-	[TestFixture]
+	[TestClass]
 	public class TestSpline
 	{
 		private const int OpAmpSize = 33;
@@ -59,7 +59,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestMonotonicity()
 		{
 			Spline s = new Spline(new List<Spline.Point>(opamp_voltage));
@@ -68,7 +68,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			for (double x = 0.0; x < 12.0; x += 0.01)
 			{
 				Spline.Point o = s.Evaluate(x);
-				Assert.That(o.x <= old, Is.True);
+				Assert.IsTrue(o.x <= old);
 
 				old = o.x;
 			}
@@ -81,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestPoints()
 		{
 			Spline s = new Spline(new List<Spline.Point>(opamp_voltage));
@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			for (int i = 0; i < OpAmpSize; i++)
 			{
 				Spline.Point o = s.Evaluate(opamp_voltage[i].x);
-				Assert.That(o.x, Is.EqualTo(opamp_voltage[i].y));
+				Assert.AreEqual(opamp_voltage[i].y, o.x);
 			}
 		}
 
@@ -100,7 +100,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		[Test]
+		[TestMethod]
 		public void TestInterpolateOutsideBounds()
 		{
 			Spline.Point[] values =

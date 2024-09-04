@@ -92,9 +92,9 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				else
 				{
 					double dx = dxs[i - 1];
-					double dsNext = dxs[i];
-					double common = dx + dsNext;
-					@params[i].c = 3.0 * common / ((common + dsNext) / m + (common + dx) / mNext);
+					double dxNext = dxs[i];
+					double common = dx + dxNext;
+					@params[i].c = 3.0 * common / ((common + dxNext) / m + (common + dx) / mNext);
 				}
 			}
 
