@@ -76,45 +76,51 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			int successCount = 0;
 			int failedCount = 0;
 
-			// Open test file and run tests
-			using (StreamReader sr = new StreamReader(Path.Combine(viceDirectory, "testlist")))
+			using (StreamWriter consoleWriter = new StreamWriter(Console.OpenStandardOutput()))
 			{
-				int lineNumber = 0;
-
-				while (!sr.EndOfStream)
+				// Open test file and run tests
+				using (StreamReader sr = new StreamReader(Path.Combine(viceDirectory, "testlist")))
 				{
-					string line = sr.ReadLine();
-					lineNumber++;
+					int lineNumber = 0;
 
-					if (string.IsNullOrEmpty(line))
-						continue;
-
-					if (line[0] == '#')
-						continue;
-
-					string[] args = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-					Debug.WriteLine($"{lineNumber} - Running test {args[0]}");
-
-					try
+					while (!sr.EndOfStream)
 					{
-						RunTest(viceDirectory, args);
-					}
-					catch(ViceException ex)
-					{
-						if (ex.Message == "OK")
-							successCount++;
-						else
+						string line = sr.ReadLine();
+						lineNumber++;
+
+						if (string.IsNullOrEmpty(line))
+							continue;
+
+						if (line[0] == '#')
+							continue;
+
+						string[] args = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+						Debug.WriteLine($"{lineNumber} - Running test {args[0]}");
+						consoleWriter.WriteLine($"{lineNumber} - Running test {args[0]}");
+
+						try
 						{
-							Debug.WriteLine(">>> Failed");
-							failedCount++;
+							RunTest(viceDirectory, args);
+						}
+						catch(ViceException ex)
+						{
+							if (ex.Message == "OK")
+								successCount++;
+							else
+							{
+								Debug.WriteLine(">>> Failed");
+								consoleWriter.WriteLine(">>> Failed");
+								failedCount++;
+							}
 						}
 					}
 				}
+
+				Debug.WriteLine($"Successful tests: {successCount} - Failed tests {failedCount}");
+				consoleWriter.WriteLine($"Successful tests: {successCount} - Failed tests {failedCount}");
+
+				Assert.AreEqual(0, failedCount);
 			}
-
-			Debug.WriteLine($"Successful tests: {successCount} - Failed tests {failedCount}");
-
-			Assert.AreEqual(0, failedCount);
 		}
 
 		#region Private methods
