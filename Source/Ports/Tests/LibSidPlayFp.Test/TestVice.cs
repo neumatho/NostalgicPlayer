@@ -83,7 +83,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 				void WriteLine(string line)
 				{
 #if CI
-					consoleWriter.WriteLine(">>> Failed");
+					consoleWriter.WriteLine(line);
 #else
 					Debug.WriteLine(line);
 #endif
