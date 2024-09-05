@@ -76,8 +76,19 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			int successCount = 0;
 			int failedCount = 0;
 
+#if CI
 			using (StreamWriter consoleWriter = new StreamWriter(Console.OpenStandardOutput()))
+#endif
 			{
+				void WriteLine(string line)
+				{
+#if CI
+					consoleWriter.WriteLine(">>> Failed");
+#else
+					Debug.WriteLine(line);
+#endif
+				}
+
 				// Open test file and run tests
 				using (StreamReader sr = new StreamReader(Path.Combine(viceDirectory, "testlist")))
 				{
@@ -95,8 +106,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 							continue;
 
 						string[] args = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-						Debug.WriteLine($"{lineNumber} - Running test {args[0]}");
-						consoleWriter.WriteLine($"{lineNumber} - Running test {args[0]}");
+						WriteLine($"{lineNumber} - Running test {args[0]}");
 
 						try
 						{
@@ -108,16 +118,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 								successCount++;
 							else
 							{
-								Debug.WriteLine(">>> Failed");
-								consoleWriter.WriteLine(">>> Failed");
+								WriteLine(">>> Failed");
 								failedCount++;
 							}
 						}
 					}
 				}
 
-				Debug.WriteLine($"Successful tests: {successCount} - Failed tests {failedCount}");
-				consoleWriter.WriteLine($"Successful tests: {successCount} - Failed tests {failedCount}");
+				WriteLine($"Successful tests: {successCount} - Failed tests {failedCount}");
 
 				Assert.AreEqual(0, failedCount);
 			}

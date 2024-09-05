@@ -23,6 +23,10 @@
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(CI)'=='CI'">
+    <DefineConstants>CI</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Vice\VICE-testprogs\**" />
     <EmbeddedResource Remove="Vice\VICE-testprogs\**" />

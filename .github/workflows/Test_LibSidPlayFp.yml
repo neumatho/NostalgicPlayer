@@ -28,6 +28,6 @@ jobs:
       - name: Install dependencies
         run: nuget restore Source\NostalgicPlayer.sln
       - name: Build
-        run: msbuild Source\NostalgicPlayer.sln -t:rebuild -property:configuration="Debug" -property:Platform="Any CPU"
+        run: msbuild Source\NostalgicPlayer.sln -t:rebuild -property:configuration="Debug" -property:Platform="Any CPU" -property:CI="CI"
       - name: Test
         run: dotnet test Source\Ports\Tests\LibSidPlayFp.Test\LibSidPlayFp.Test.csproj --no-build --verbosity normal
