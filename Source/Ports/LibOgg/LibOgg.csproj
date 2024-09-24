@@ -21,4 +21,8 @@
     <DocumentationFile>bin\LibOgg.xml</DocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
+  </ItemGroup>
+
 </Project>

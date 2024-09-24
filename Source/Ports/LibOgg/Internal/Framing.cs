@@ -3,9 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
-using System.Linq;
-using System.Text;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibOgg.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
@@ -33,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			os.LacingVals = Memory.Ogg_MAlloc<c_int>((size_t)os.LacingStorage);
 			os.GranuleVals = Memory.Ogg_MAlloc<ogg_int64_t>((size_t)os.LacingStorage);
 
-			if ((os.BodyData == null) || (os.LacingVals == null) || (os.GranuleVals == null))
+			if (os.BodyData.IsNull || os.LacingVals.IsNull || os.GranuleVals.IsNull)
 			{
 				os = null;
 				return -1;
@@ -53,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/********************************************************************/
 		public static c_int Ogg_Stream_Check(Ogg_Stream_State os)
 		{
-			if ((os == null) || (os.BodyData == null))
+			if ((os == null) || os.BodyData.IsNull)
 				return -1;
 
 			return 0;
@@ -70,13 +68,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		{
 			if (os != null)
 			{
-				if (os.BodyData != null)
+				if (!os.BodyData.IsNull)
 					Memory.Ogg_Free(os.BodyData);
 
-				if (os.LacingVals != null)
+				if (!os.LacingVals.IsNull)
 					Memory.Ogg_Free(os.LacingVals);
 
-				if (os.GranuleVals != null)
+				if (!os.GranuleVals.IsNull)
 					Memory.Ogg_Free(os.GranuleVals);
 
 				os.Clear();
@@ -124,7 +122,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 				os.BodyFill -= os.BodyReturned;
 
 				if (os.BodyFill != 0)
-					Array.Copy(os.BodyData, os.BodyReturned, os.BodyData, 0, os.BodyFill);
+					CMemory.MemMove(os.BodyData, os.BodyData + os.BodyReturned, os.BodyFill);
 
 				os.BodyReturned = 0;
 			}
@@ -139,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			// future
 			for (i = 0; i < count; ++i)
 			{
-				Array.Copy(iov[i].Base, iov[i].Offset, os.BodyData, os.BodyFill, (long)iov[i].Len);
+				CMemory.MemCpy(os.BodyData + os.BodyFill, iov[i].Base, (int)iov[i].Len);
 				os.BodyFill += (c_int)iov[i].Len;
 			}
 
@@ -179,7 +177,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			Ogg_IoVec iov = new Ogg_IoVec();
 
 			iov.Base = op.Packet;
-			iov.Offset = op.Offset;
 			iov.Len = (size_t)op.Bytes;
 
 			return Ogg_Stream_IoVecIn(os, [ iov ], 1, op.Eos, op.GranulePos);
@@ -224,10 +221,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/********************************************************************/
 		public static c_int Ogg_Stream_PageIn(Ogg_Stream_State os, Ogg_Page og)
 		{
-			byte[] header = og.Header;
-			int headerOffset = og.HeaderOffset;
-			byte[] body = og.Body;
-			int bodyOffset = og.BodyOffset;
+			Pointer<byte> header = og.Header;
+			Pointer<byte> body = og.Body;
 			c_long bodySize = og.BodyLen;
 			c_int segPtr = 0;
 
@@ -238,7 +233,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			ogg_int64_t granulePos = Ogg_Page_GranulePos(og);
 			c_int serialNo = Ogg_Page_SerialNo(og);
 			c_long pageNo = Ogg_Page_PageNo(og);
-			c_int segments = header[headerOffset + 26];
+			c_int segments = header[26];
 
 			if (Ogg_Stream_Check(os) != 0)
 				return -1;
@@ -254,7 +249,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 					os.BodyFill -= br;
 
 					if (os.BodyFill != 0)
-						Array.Copy(os.BodyData, br, os.BodyData, 0, os.BodyFill);
+						CMemory.MemMove(os.BodyData, os.BodyData + br, os.BodyFill);
 
 					os.BodyReturned = 0;
 				}
@@ -264,8 +259,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 					// Segment table
 					if ((os.LacingFill - lr) != 0)
 					{
-						Array.Copy(os.LacingVals, lr, os.LacingVals, 0, os.LacingFill - lr);
-						Array.Copy(os.GranuleVals, lr, os.GranuleVals, 0, os.LacingFill - lr);
+						CMemory.MemMove(os.LacingVals, os.LacingVals + lr, os.LacingFill - lr);
+						CMemory.MemMove(os.GranuleVals, os.GranuleVals + lr, os.LacingFill - lr);
 					}
 
 					os.LacingFill -= lr;
@@ -311,8 +306,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 
 					for (; segPtr < segments; segPtr++)
 					{
-						c_int val = header[headerOffset + 27 + segPtr];
-						bodyOffset += val;
+						c_int val = header[27 + segPtr];
+						body += val;
 						bodySize -= val;
 
 						if (val < 255)
@@ -329,7 +324,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 				if (Os_Body_Expand(os, bodySize) != 0)
 					return -1;
 
-				Array.Copy(body, bodyOffset, os.BodyData, os.BodyFill, bodySize);
+				CMemory.MemCpy(os.BodyData + os.BodyFill, body, bodySize);
 				os.BodyFill += bodySize;
 			}
 
@@ -338,7 +333,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 
 				while (segPtr < segments)
 				{
-					c_int val = header[headerOffset + 27 + segPtr];
+					c_int val = header[27 + segPtr];
 					os.LacingVals[os.LacingFill] = val;
 					os.GranuleVals[os.LacingFill] = -1;
 
@@ -470,7 +465,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		{
 			if (oy != null)
 			{
-				if (oy.Data != null)
+				if (!oy.Data.IsNull)
 					Memory.Ogg_Free(oy.Data);
 
 				oy.Clear();
@@ -501,10 +496,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static Memory<byte> Ogg_Sync_Buffer(Ogg_Sync_State oy, c_long size)
+		public static Pointer<byte> Ogg_Sync_Buffer(Ogg_Sync_State oy, c_long size)
 		{
+			Pointer<byte> nul = new Pointer<byte>();
+
 			if (Ogg_Sync_Check(oy) != 0)
-				return null;
+				return nul;
 
 			// First, clear out any space that has been previously returned
 			if (oy.Returned != 0)
@@ -512,7 +509,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 				oy.Fill -= oy.Returned;
 
 				if (oy.Fill > 0)
-					Array.Copy(oy.Data, oy.Returned, oy.Data, 0, oy.Fill);
+					CMemory.MemMove(oy.Data, oy.Data + oy.Returned, oy.Fill);
 
 				oy.Returned = 0;
 			}
@@ -523,21 +520,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 				if (size > (c_int.MaxValue - 4096 - oy.Fill))
 				{
 					Ogg_Sync_Clear(oy);
-					return null;
+					return nul;
 				}
 
 				c_long newSize = size + oy.Fill + 4096;     // An extra page to be nice
-				byte[] ret;
+				Pointer<byte> ret;
 
-				if (oy.Data != null)
+				if (!oy.Data.IsNull)
 					ret = Memory.Ogg_Realloc(oy.Data, (size_t)newSize);
 				else
 					ret = Memory.Ogg_MAlloc<byte>((size_t)newSize);
 
-				if (ret == null)
+				if (ret.IsNull)
 				{
 					Ogg_Sync_Clear(oy);
-					return null;
+					return nul;
 				}
 
 				oy.Data = ret;
@@ -545,7 +542,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			}
 
 			// Expose a segment at least as large as requested at the fill mark
-			return oy.Data.AsMemory(oy.Fill);
+			return new Pointer<byte>(oy.Data.Buffer, oy.Data.Offset + oy.Fill);
 		}
 
 
@@ -588,8 +585,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			if (Ogg_Sync_Check(oy) != 0)
 				return 0;
 
-			byte[] page = oy.Data;
-			int pageOffset = oy.Returned;
+			Pointer<byte> page = oy.Data + oy.Returned;
 			c_long bytes = oy.Fill - oy.Returned;
 
 			if (oy.HeaderBytes == 0)
@@ -598,16 +594,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 					return 0;		// Not enough for a header
 
 				// Verify capture pattern
-				if (Encoding.ASCII.GetString(page, pageOffset, 4) != "OggS")
+				if (CMemory.MemCmp(page, "OggS", 4) != 0)
 					goto SyncFail;
 
-				c_int headerBytes = page[pageOffset + 26] + 27;
+				c_int headerBytes = page[26] + 27;
 				if (bytes < headerBytes)
 					return 0;		// Not enough for header + seg table
 
 				// Count up body length in the segment table
-				for (c_int i = 0; i < page[pageOffset + 26]; i++)
-					oy.BodyBytes += page[pageOffset + 27 + i];
+				for (c_int i = 0; i < page[26]; i++)
+					oy.BodyBytes += page[27 + i];
 
 				oy.HeaderBytes = headerBytes;
 			}
@@ -618,28 +614,26 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			// The whole test page is buffered. Verify the checksum
 			{
 				// Grab the checksum bytes, set the header field to zero
-				byte[] chkSum = new byte[4];
+				Pointer<byte> chkSum = new Pointer<byte>(new byte[4]);
 				Ogg_Page log = new Ogg_Page();
 
-				Array.Copy(page, pageOffset + 22, chkSum, 0, 4);
-				Array.Clear(page, pageOffset + 22, 4);
+				CMemory.MemCpy(chkSum, page + 22, 4);
+				CMemory.MemSet(page + 22, (byte)0, 4);
 
 				// Set up a temp page struct and recompute the checksum
 				log.Header = page;
-				log.HeaderOffset = pageOffset;
 				log.HeaderLen = oy.HeaderBytes;
-				log.Body = page;
-				log.BodyOffset = pageOffset + oy.HeaderBytes;
+				log.Body = page + oy.HeaderBytes;
 				log.BodyLen = oy.BodyBytes;
 				Ogg_Page_Checksum_Set(log);
 
 				// Compare
-				if (!chkSum.SequenceEqual(page.AsSpan(pageOffset + 22, 4).ToArray()))
+				if (CMemory.MemCmp(chkSum, page + 22, 4) != 0)
 				{
 					// D'oh. Mismatch! Corrupt page (or miscapture and not a page
 					// at all)
 					// Replace the computed checksum with the one actually read in
-					Array.Copy(chkSum, 0, page, pageOffset + 22, 4);
+					CMemory.MemCpy(page + 22, chkSum, 4);
 
 					// Bad checksum. Lose sync
 					goto SyncFail;
@@ -651,10 +645,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 				og = new Ogg_Page();
 
 				og.Header = page;
-				og.HeaderOffset = pageOffset;
 				og.HeaderLen = oy.HeaderBytes;
-				og.Body = page;
-				og.BodyOffset = pageOffset + oy.HeaderBytes;
+				og.Body = page + oy.HeaderBytes;
 				og.BodyLen = oy.BodyBytes;
 			}
 
@@ -670,13 +662,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			oy.BodyBytes = 0;
 
 			// Search for possible capture
-			int nextOffset = Array.IndexOf(page, (byte)'O', pageOffset + 1, bytes - 1);
-			if (nextOffset == -1)
-				nextOffset = oy.Fill;
+			Pointer<byte> next = CMemory.MemChr(page + 1, (byte)'O', bytes - 1);
+			if (next.IsNull)
+				next = oy.Data + oy.Fill;
 
-			oy.Returned = nextOffset;
+			oy.Returned = next - oy.Data;
 
-			return -(nextOffset - pageOffset);
+			return -(next - page);
 		}
 
 
@@ -762,7 +754,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/********************************************************************/
 		public static c_int Ogg_Page_Version(Ogg_Page og)
 		{
-			return og.Header[og.HeaderOffset + 4];
+			return og.Header[4];
 		}
 
 
@@ -774,7 +766,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/********************************************************************/
 		public static bool Ogg_Page_Continued(Ogg_Page og)
 		{
-			return (og.Header[og.HeaderOffset + 5] & 0x01) != 0;
+			return (og.Header[5] & 0x01) != 0;
 		}
 
 
@@ -786,7 +778,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/********************************************************************/
 		public static bool Ogg_Page_Bos(Ogg_Page og)
 		{
-			return (og.Header[og.HeaderOffset + 5] & 0x02) != 0;
+			return (og.Header[5] & 0x02) != 0;
 		}
 
 
@@ -798,7 +790,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/********************************************************************/
 		public static bool Ogg_Page_Eos(Ogg_Page og)
 		{
-			return (og.Header[og.HeaderOffset + 5] & 0x04) != 0;
+			return (og.Header[5] & 0x04) != 0;
 		}
 
 
@@ -810,17 +802,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/********************************************************************/
 		public static ogg_int64_t Ogg_Page_GranulePos(Ogg_Page og)
 		{
-			byte[] page = og.Header;
-			int pageOffset = og.HeaderOffset;
+			Pointer<byte> page = og.Header;
 
-			ogg_uint64_t granulePos = (ogg_uint64_t)page[pageOffset + 13] & 0xff;
-			granulePos = (granulePos << 8) | ((ogg_uint64_t)page[pageOffset + 12] & 0xff);
-			granulePos = (granulePos << 8) | ((ogg_uint64_t)page[pageOffset + 11] & 0xff);
-			granulePos = (granulePos << 8) | ((ogg_uint64_t)page[pageOffset + 10] & 0xff);
-			granulePos = (granulePos << 8) | ((ogg_uint64_t)page[pageOffset + 9] & 0xff);
-			granulePos = (granulePos << 8) | ((ogg_uint64_t)page[pageOffset + 8] & 0xff);
-			granulePos = (granulePos << 8) | ((ogg_uint64_t)page[pageOffset + 7] & 0xff);
-			granulePos = (granulePos << 8) | ((ogg_uint64_t)page[pageOffset + 6] & 0xff);
+			ogg_uint64_t granulePos = (ogg_uint64_t)page[13] & 0xff;
+			granulePos = (granulePos << 8) | ((ogg_uint64_t)page[12] & 0xff);
+			granulePos = (granulePos << 8) | ((ogg_uint64_t)page[11] & 0xff);
+			granulePos = (granulePos << 8) | ((ogg_uint64_t)page[10] & 0xff);
+			granulePos = (granulePos << 8) | ((ogg_uint64_t)page[9] & 0xff);
+			granulePos = (granulePos << 8) | ((ogg_uint64_t)page[8] & 0xff);
+			granulePos = (granulePos << 8) | ((ogg_uint64_t)page[7] & 0xff);
+			granulePos = (granulePos << 8) | ((ogg_uint64_t)page[6] & 0xff);
 
 			return (ogg_int64_t)granulePos;
 		}
@@ -834,10 +825,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/********************************************************************/
 		public static c_int Ogg_Page_SerialNo(Ogg_Page og)
 		{
-			return (c_int)((og.Header[og.HeaderOffset + 14]) |
-							((ogg_uint32_t)og.Header[og.HeaderOffset + 15] << 8) |
-							((ogg_uint32_t)og.Header[og.HeaderOffset + 16] << 16) |
-							((ogg_uint32_t)og.Header[og.HeaderOffset + 17] << 24));
+			return (c_int)((og.Header[14]) |
+							((ogg_uint32_t)og.Header[15] << 8) |
+							((ogg_uint32_t)og.Header[16] << 16) |
+							((ogg_uint32_t)og.Header[17] << 24));
 		}
 
 
@@ -849,10 +840,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/********************************************************************/
 		public static c_long Ogg_Page_PageNo(Ogg_Page og)
 		{
-			return (c_long)((og.Header[og.HeaderOffset + 18]) |
-							((ogg_uint32_t)og.Header[og.HeaderOffset + 19] << 8) |
-							((ogg_uint32_t)og.Header[og.HeaderOffset + 20] << 16) |
-							((ogg_uint32_t)og.Header[og.HeaderOffset + 21] << 24));
+			return (c_long)((og.Header[18]) |
+							((ogg_uint32_t)og.Header[19] << 8) |
+							((ogg_uint32_t)og.Header[20] << 16) |
+							((ogg_uint32_t)og.Header[21] << 24));
 		}
 
 
@@ -869,18 +860,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 				ogg_uint32_t crcReg = 0;
 
 				// Safety; needed for API behavior, but not framing code
-				og.Header[og.HeaderOffset + 22] = 0;
-				og.Header[og.HeaderOffset + 23] = 0;
-				og.Header[og.HeaderOffset + 24] = 0;
-				og.Header[og.HeaderOffset + 25] = 0;
+				og.Header[22] = 0;
+				og.Header[23] = 0;
+				og.Header[24] = 0;
+				og.Header[25] = 0;
 
-				crcReg = Os_Update_Crc(crcReg, og.Header, og.HeaderOffset, og.HeaderLen);
-				crcReg = Os_Update_Crc(crcReg, og.Body, og.BodyOffset, og.BodyLen);
+				crcReg = Os_Update_Crc(crcReg, og.Header, og.HeaderLen);
+				crcReg = Os_Update_Crc(crcReg, og.Body, og.BodyLen);
 
-				og.Header[og.HeaderOffset + 22] = (byte)(crcReg & 0xff);
-				og.Header[og.HeaderOffset + 23] = (byte)((crcReg >> 8) & 0xff);
-				og.Header[og.HeaderOffset + 24] = (byte)((crcReg >> 16) & 0xff);
-				og.Header[og.HeaderOffset + 25] = (byte)((crcReg >> 24) & 0xff);
+				og.Header[22] = (byte)(crcReg & 0xff);
+				og.Header[23] = (byte)((crcReg >> 8) & 0xff);
+				og.Header[24] = (byte)((crcReg >> 16) & 0xff);
+				og.Header[25] = (byte)((crcReg >> 24) & 0xff);
 			}
 		}
 		#endregion
@@ -906,8 +897,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 				if (bodyStorage < (c_long.MaxValue - 1024))
 					bodyStorage += 1024;
 
-				byte[] ret = Memory.Ogg_Realloc(os.BodyData, (size_t)bodyStorage);
-				if (ret == null)
+				Pointer<byte> ret = Memory.Ogg_Realloc(os.BodyData, (size_t)bodyStorage);
+				if (ret.IsNull)
 				{
 					Ogg_Stream_Clear(os);
 					return -1;
@@ -942,8 +933,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 				if (lacingStorage < (c_long.MaxValue - 32))
 					lacingStorage += 32;
 
-				int[] ret = Memory.Ogg_Realloc(os.LacingVals, (size_t)lacingStorage);
-				if (ret == null)
+				Pointer<int> ret = Memory.Ogg_Realloc(os.LacingVals, (size_t)lacingStorage);
+				if (ret.IsNull)
 				{
 					Ogg_Stream_Clear(os);
 					return -1;
@@ -951,8 +942,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 
 				os.LacingVals = ret;
 
-				ogg_int64_t[] ret1 = Memory.Ogg_Realloc(os.GranuleVals, (size_t)lacingStorage);
-				if (ret1 == null)
+				Pointer<ogg_int64_t> ret1 = Memory.Ogg_Realloc(os.GranuleVals, (size_t)lacingStorage);
+				if (ret1.IsNull)
 				{
 					Ogg_Stream_Clear(os);
 					return -1;
@@ -974,23 +965,26 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/// we perform the checksum simultaneously with other copies
 		/// </summary>
 		/********************************************************************/
-		private static ogg_uint32_t Os_Update_Crc(ogg_uint32_t crc, byte[] buffer, int offset, c_int size)
+		private static ogg_uint32_t Os_Update_Crc(ogg_uint32_t crc, Pointer<byte> buffer, c_int size)
 		{
 			while (size >= 8)
 			{
-				crc ^= ((ogg_uint32_t)buffer[offset] << 24) | ((ogg_uint32_t)buffer[offset + 1] << 16) | ((ogg_uint32_t)buffer[offset + 2] << 8) | buffer[offset + 3];
+				crc ^= ((ogg_uint32_t)buffer[0] << 24) | ((ogg_uint32_t)buffer[1] << 16) | ((ogg_uint32_t)buffer[2] << 8) | buffer[3];
 
 				crc = Tables.CrcLookup[7][ crc >> 24        ] ^ Tables.CrcLookup[6][(crc >> 16) & 0xff] ^
 					  Tables.CrcLookup[5][(crc >>  8) & 0xff] ^ Tables.CrcLookup[4][ crc        & 0xff] ^
-					  Tables.CrcLookup[3][buffer[offset + 4]] ^ Tables.CrcLookup[2][buffer[offset + 5]] ^
-					  Tables.CrcLookup[1][buffer[offset + 6]] ^ Tables.CrcLookup[0][buffer[offset + 7]];
+					  Tables.CrcLookup[3][buffer[4]         ] ^ Tables.CrcLookup[2][buffer[5]         ] ^
+					  Tables.CrcLookup[1][buffer[6]         ] ^ Tables.CrcLookup[0][buffer[7]         ];
 
-				offset += 8;
+				buffer += 8;
 				size -= 8;
 			}
 
 			while (size-- != 0)
-				crc = (crc << 8) ^ Tables.CrcLookup[0][((crc >> 24) & 0xff) ^ buffer[offset++]];
+			{
+				crc = (crc << 8) ^ Tables.CrcLookup[0][((crc >> 24) & 0xff) ^ buffer[0]];
+				buffer++;
+			}
 
 			return crc;
 		}
@@ -1079,7 +1073,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 				return 0;
 
 			// Construct the header in temp storage
-			Array.Copy("OggS"u8.ToArray(), os.Header, 4);
+			CMemory.MemCpy(os.Header, "OggS", 4);
 
 			// Stream structure version
 			os.Header[4] = 0x00;
@@ -1148,18 +1142,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			// Set pointers in the ogg_page struct
 			og = new Ogg_Page();
 
-			og.Header = os.Header;
-			og.HeaderOffset = 0;
+			og.Header = new Pointer<byte>(os.Header);
 			og.HeaderLen = os.HeaderFill = vals + 27;
-			og.Body = os.BodyData;
-			og.BodyOffset = os.BodyReturned;
+			og.Body = os.BodyData + os.BodyReturned;
 			og.BodyLen = bytes;
 
 			// Advance the lacing data and set the body_returned pointer
 			os.LacingFill -= vals;
 
-			Array.Copy(os.LacingVals, vals, os.LacingVals, 0, os.LacingFill);
-			Array.Copy(os.GranuleVals, vals, os.GranuleVals, 0, os.LacingFill);
+			CMemory.MemMove(os.LacingVals, os.LacingVals + vals, os.LacingFill);
+			CMemory.MemMove(os.GranuleVals, os.GranuleVals + vals, os.LacingFill);
 
 			os.BodyReturned += bytes;
 
@@ -1221,8 +1213,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 
 				op.Eos = eos;
 				op.Bos = bos;
-				op.Packet = os.BodyData;
-				op.Offset = os.BodyReturned;
+				op.Packet = os.BodyData + os.BodyReturned;
 				op.PacketNo = os.PacketNo;
 				op.GranulePos = os.GranuleVals[ptr];
 				op.Bytes = bytes;

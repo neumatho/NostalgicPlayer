@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibOgg.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
@@ -26,8 +26,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		{
 			b = new OggPack_Buffer();
 
-			b.Buffer = Memory.Ogg_MAlloc<byte>(Buffer_Increment);
-			b.Ptr = 0;
+			b.Ptr = b.Buffer = Memory.Ogg_MAlloc<byte>(Buffer_Increment);
 			b.Buffer[0] = 0x00;
 			b.Storage = Buffer_Increment;
 		}
@@ -58,44 +57,44 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 
 			if ((b.EndByte >= (b.Storage - 4)))
 			{
-				if (b.Buffer == null)
+				if (b.Ptr.IsNull)
 					return;
 
 				if (b.Storage > (c_long.MaxValue - Buffer_Increment))
 					goto Err;
 
-				byte[] ret = Memory.Ogg_Realloc(b.Buffer, (size_t)b.Storage + Buffer_Increment);
-				if (ret == null)
+				Pointer<byte> ret = Memory.Ogg_Realloc(b.Buffer, (size_t)b.Storage + Buffer_Increment);
+				if (ret.IsNull)
 					goto Err;
 
 				b.Buffer = ret;
 				b.Storage += Buffer_Increment;
-				b.Ptr = 0 + b.EndByte;
+				b.Ptr = b.Buffer + b.EndByte;
 			}
 
 			value &= Tables.Mask[bits];
 			bits += b.EndBit;
 
-			b.Buffer[b.Ptr] |= (byte)(value << b.EndBit);
+			b.Ptr[0] |= (byte)(value << b.EndBit);
 
 			if (bits >= 8)
 			{
-				b.Buffer[b.Ptr + 1] = (byte)(value >> (8 - b.EndBit));
+				b.Ptr[1] = (byte)(value >> (8 - b.EndBit));
 
 				if (bits >= 16)
 				{
-					b.Buffer[b.Ptr + 2] = (byte)(value >> (16 - b.EndBit));
+					b.Ptr[2] = (byte)(value >> (16 - b.EndBit));
 
 					if (bits >= 24)
 					{
-						b.Buffer[b.Ptr + 3] = (byte)(value >> (24 - b.EndBit));
+						b.Ptr[3] = (byte)(value >> (24 - b.EndBit));
 
 						if (bits >= 32)
 						{
 							if (b.EndBit != 0)
-								b.Buffer[b.Ptr + 4] = (byte)(value >> (32 - b.EndBit));
+								b.Ptr[4] = (byte)(value >> (32 - b.EndBit));
 							else
-								b.Buffer[b.Ptr + 4] = 0;
+								b.Ptr[4] = 0;
 						}
 					}
 				}
@@ -125,44 +124,44 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 
 			if ((b.EndByte >= (b.Storage - 4)))
 			{
-				if (b.Buffer == null)
+				if (b.Ptr.IsNull)
 					return;
 
 				if (b.Storage > (c_long.MaxValue - Buffer_Increment))
 					goto Err;
 
-				byte[] ret = Memory.Ogg_Realloc(b.Buffer, (size_t)b.Storage + Buffer_Increment);
-				if (ret == null)
+				Pointer<byte> ret = Memory.Ogg_Realloc(b.Buffer, (size_t)b.Storage + Buffer_Increment);
+				if (ret.IsNull)
 					goto Err;
 
 				b.Buffer = ret;
 				b.Storage += Buffer_Increment;
-				b.Ptr = 0 + b.EndByte;
+				b.Ptr = b.Buffer + b.EndByte;
 			}
 
 			value = (value & Tables.Mask[bits]) << (32 - bits);
 			bits += b.EndBit;
 
-			b.Buffer[b.Ptr] |= (byte)(value >> (24 + b.EndBit));
+			b.Ptr[0] |= (byte)(value >> (24 + b.EndBit));
 
 			if (bits >= 8)
 			{
-				b.Buffer[b.Ptr + 1] = (byte)(value >> (16 + b.EndBit));
+				b.Ptr[1] = (byte)(value >> (16 + b.EndBit));
 
 				if (bits >= 16)
 				{
-					b.Buffer[b.Ptr + 2] = (byte)(value >> (8 + b.EndBit));
+					b.Ptr[2] = (byte)(value >> (8 + b.EndBit));
 
 					if (bits >= 24)
 					{
-						b.Buffer[b.Ptr + 3] = (byte)(value >> b.EndBit);
+						b.Ptr[3] = (byte)(value >> b.EndBit);
 
 						if (bits >= 32)
 						{
 							if (b.EndBit != 0)
-								b.Buffer[b.Ptr + 4] = (byte)(value << (8 - b.EndBit));
+								b.Ptr[4] = (byte)(value << (8 - b.EndBit));
 							else
-								b.Buffer[b.Ptr + 4] = 0;
+								b.Ptr[4] = 0;
 						}
 					}
 				}
@@ -185,7 +184,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void OggPack_WriteCopy(OggPack_Buffer b, byte[] source, c_long bits)
+		public static void OggPack_WriteCopy(OggPack_Buffer b, Pointer<byte> source, c_long bits)
 		{
 			OggPack_WriteCopy_Helper(b, source, bits, OggPack_Write, false);
 		}
@@ -197,7 +196,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void OggPackB_WriteCopy(OggPack_Buffer b, byte[] source, c_long bits)
+		public static void OggPackB_WriteCopy(OggPack_Buffer b, Pointer<byte> source, c_long bits)
 		{
 			OggPack_WriteCopy_Helper(b, source, bits, OggPackB_Write, true);
 		}
@@ -211,10 +210,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/********************************************************************/
 		public static void OggPack_Reset(OggPack_Buffer b)
 		{
-			if (b.Buffer == null)
+			if (b.Ptr.IsNull)
 				return;
 
-			b.Ptr = 0;
+			b.Ptr = b.Buffer;
 			b.Buffer[0] = 0;
 			b.EndBit = b.EndByte = 0;
 		}
@@ -240,7 +239,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/********************************************************************/
 		public static void OggPack_WriteClear(OggPack_Buffer b)
 		{
-			if (b.Buffer != null)
+			if (!b.Buffer.IsNull)
 				Memory.Ogg_Free(b.Buffer);
 
 			b.Clear();
@@ -265,12 +264,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void OggPack_ReadInit(out OggPack_Buffer b, byte[] buf, c_int bytes)
+		public static void OggPack_ReadInit(out OggPack_Buffer b, Pointer<byte> buf, c_int bytes)
 		{
 			b = new OggPack_Buffer();
 
-			b.Buffer = buf;
-			b.Ptr = 0;
+			b.Buffer = b.Ptr = buf;
 			b.Storage = bytes;
 		}
 
@@ -281,7 +279,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void OggPackB_ReadInit(out OggPack_Buffer b, byte[] buf, c_int bytes)
+		public static void OggPackB_ReadInit(out OggPack_Buffer b, Pointer<byte> buf, c_int bytes)
 		{
 			OggPack_ReadInit(out b, buf, bytes);
 		}
@@ -314,22 +312,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 					return 0;
 			}
 
-			c_ulong ret = (c_ulong)b.Buffer[b.Ptr] >> b.EndBit;
+			c_ulong ret = (c_ulong)b.Ptr[0] >> b.EndBit;
 
 			if (bits > 8)
 			{
-				ret |= (c_ulong)(b.Buffer[b.Ptr + 1] << (8 - b.EndBit));
+				ret |= (c_ulong)(b.Ptr[1] << (8 - b.EndBit));
 
 				if (bits > 16)
 				{
-					ret |= (c_ulong)(b.Buffer[b.Ptr + 2] << (16 - b.EndBit));
+					ret |= (c_ulong)(b.Ptr[2] << (16 - b.EndBit));
 
 					if (bits > 24)
 					{
-						ret |= (c_ulong)(b.Buffer[b.Ptr + 3] << (24 - b.EndBit));
+						ret |= (c_ulong)(b.Ptr[3] << (24 - b.EndBit));
 
 						if ((bits > 32) && (b.EndBit != 0))
-							ret |= (c_ulong)(b.Buffer[b.Ptr + 4] << (32 - b.EndBit));
+							ret |= (c_ulong)(b.Ptr[4] << (32 - b.EndBit));
 					}
 				}
 			}
@@ -366,22 +364,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 					return 0;
 			}
 
-			c_ulong ret = (c_ulong)b.Buffer[b.Ptr] << (24 + b.EndBit);
+			c_ulong ret = (c_ulong)b.Ptr[0] << (24 + b.EndBit);
 
 			if (bits > 8)
 			{
-				ret |= (c_ulong)(b.Buffer[b.Ptr + 1] << (16 + b.EndBit));
+				ret |= (c_ulong)(b.Ptr[1] << (16 + b.EndBit));
 
 				if (bits > 16)
 				{
-					ret |= (c_ulong)(b.Buffer[b.Ptr + 2] << (8 + b.EndBit));
+					ret |= (c_ulong)(b.Ptr[2] << (8 + b.EndBit));
 
 					if (bits > 24)
 					{
-						ret |= (c_ulong)(b.Buffer[b.Ptr + 3] << b.EndBit);
+						ret |= (c_ulong)(b.Ptr[3] << b.EndBit);
 
 						if ((bits > 32) && (b.EndBit != 0))
-							ret |= (c_ulong)(b.Buffer[b.Ptr + 4] >> (8 - b.EndBit));
+							ret |= (c_ulong)(b.Ptr[4] >> (8 - b.EndBit));
 					}
 				}
 			}
@@ -401,7 +399,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			if (b.EndByte >= b.Storage)
 				return -1;
 
-			return (b.Buffer[b.Ptr] >> b.EndBit) & 1;
+			return (b.Ptr[0] >> b.EndBit) & 1;
 		}
 
 
@@ -416,7 +414,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			if (b.EndByte >= b.Storage)
 				return -1;
 
-			return (b.Buffer[b.Ptr] >> (7 - b.EndBit)) & 1;
+			return (b.Ptr[0] >> (7 - b.EndBit)) & 1;
 		}
 
 
@@ -435,13 +433,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 
 			b.Ptr += bits / 8;
 			b.EndByte += bits / 8;
-			b.EndBit &= bits & 7;
+			b.EndBit = bits & 7;
 
 			return;
 
 			Overflow:
-			b.Buffer = null;
-			b.Ptr = 0;
+			b.Ptr.SetToNull();
 			b.EndByte = b.Storage;
 			b.EndBit = 1;
 		}
@@ -485,22 +482,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 					return 0;
 			}
 
-			c_ulong ret = (c_ulong)b.Buffer[b.Ptr] >> b.EndBit;
+			c_ulong ret = (c_ulong)b.Ptr[0] >> b.EndBit;
 
 			if (bits > 8)
 			{
-				ret |= (c_ulong)(b.Buffer[b.Ptr + 1] << (8 - b.EndBit));
+				ret |= (c_ulong)(b.Ptr[1] << (8 - b.EndBit));
 
 				if (bits > 16)
 				{
-					ret |= (c_ulong)(b.Buffer[b.Ptr + 2] << (16 - b.EndBit));
+					ret |= (c_ulong)(b.Ptr[2] << (16 - b.EndBit));
 
 					if (bits > 24)
 					{
-						ret |= (c_ulong)(b.Buffer[b.Ptr + 3] << (24 - b.EndBit));
+						ret |= (c_ulong)(b.Ptr[3] << (24 - b.EndBit));
 
 						if ((bits > 32) && (b.EndBit != 0))
-							ret |= (c_ulong)(b.Buffer[b.Ptr + 4] << (32 - b.EndBit));
+							ret |= (c_ulong)(b.Ptr[4] << (32 - b.EndBit));
 					}
 				}
 			}
@@ -515,8 +512,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 
 			Overflow:
 			Err:
-			b.Buffer = null;
-			b.Ptr = 0;
+			b.Ptr.SetToNull();
 			b.EndByte = b.Storage;
 			b.EndBit = 1;
 
@@ -551,22 +547,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 					return 0;
 			}
 
-			c_ulong ret = (c_ulong)b.Buffer[b.Ptr] << (24 + b.EndBit);
+			c_ulong ret = (c_ulong)b.Ptr[0] << (24 + b.EndBit);
 
 			if (bits > 8)
 			{
-				ret |= (c_ulong)(b.Buffer[b.Ptr + 1] << (16 + b.EndBit));
+				ret |= (c_ulong)(b.Ptr[1] << (16 + b.EndBit));
 
 				if (bits > 16)
 				{
-					ret |= (c_ulong)(b.Buffer[b.Ptr + 2] << (8 + b.EndBit));
+					ret |= (c_ulong)(b.Ptr[2] << (8 + b.EndBit));
 
 					if (bits > 24)
 					{
-						ret |= (c_ulong)(b.Buffer[b.Ptr + 3] << b.EndBit);
+						ret |= (c_ulong)(b.Ptr[3] << b.EndBit);
 
 						if ((bits > 32) && (b.EndBit != 0))
-							ret |= (c_ulong)(b.Buffer[b.Ptr + 4] >> (8 - b.EndBit));
+							ret |= (c_ulong)(b.Ptr[4] >> (8 - b.EndBit));
 					}
 				}
 			}
@@ -581,8 +577,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 
 			Overflow:
 			Err:
-			b.Buffer = null;
-			b.Ptr = 0;
+			b.Ptr.SetToNull();
 			b.EndByte = b.Storage;
 			b.EndBit = 1;
 
@@ -601,7 +596,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			if (b.EndByte >= b.Storage)
 				goto Overflow;
 
-			c_long ret = (b.Buffer[b.Ptr] >> b.EndBit) & 1;
+			c_long ret = (b.Ptr[0] >> b.EndBit) & 1;
 
 			b.EndBit++;
 
@@ -615,8 +610,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			return ret;
 
 			Overflow:
-			b.Buffer = null;
-			b.Ptr = 0;
+			b.Ptr.SetToNull();
 			b.EndByte = b.Storage;
 			b.EndBit = 1;
 
@@ -635,7 +629,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			if (b.EndByte >= b.Storage)
 				goto Overflow;
 
-			c_long ret = (b.Buffer[b.Ptr] >> (7 - b.EndBit)) & 1;
+			c_long ret = (b.Ptr[0] >> (7 - b.EndBit)) & 1;
 
 			b.EndBit++;
 
@@ -649,8 +643,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			return ret;
 
 			Overflow:
-			b.Buffer = null;
-			b.Ptr = 0;
+			b.Ptr.SetToNull();
 			b.EndByte = b.Storage;
 			b.EndBit = 1;
 
@@ -688,7 +681,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static byte[] OggPack_GetBuffer(OggPack_Buffer b)
+		public static Pointer<byte> OggPack_GetBuffer(OggPack_Buffer b)
 		{
 			return b.Buffer;
 		}
@@ -700,7 +693,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static byte[] OggPackB_GetBuffer(OggPack_Buffer b)
+		public static Pointer<byte> OggPackB_GetBuffer(OggPack_Buffer b)
 		{
 			return OggPack_GetBuffer(b);
 		}
@@ -711,8 +704,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void OggPack_WriteCopy_Helper(OggPack_Buffer b, byte[] source, c_long bits, Write w, bool msb)
+		private static void OggPack_WriteCopy_Helper(OggPack_Buffer b, Pointer<byte> source, c_long bits, Write w, bool msb)
 		{
+			Pointer<byte> ptr = source;
+
 			c_long bytes = bits / 8;
 			c_long pBytes = (b.EndBit + bits) / 8;
 			bits -= bytes * 8;
@@ -720,7 +715,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			// Expand storage up-front
 			if ((b.EndByte + pBytes) >= b.Storage)
 			{
-				if (b.Buffer == null)
+				if (b.Ptr.IsNull)
 					goto Err;
 
 				if (b.Storage > (b.EndByte + pBytes + Buffer_Increment))
@@ -728,12 +723,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 
 				b.Storage = b.EndByte + pBytes + Buffer_Increment;
 
-				byte[] ret = Memory.Ogg_Realloc(b.Buffer, (size_t)b.Storage);
-				if (ret == null)
+				Pointer<byte> ret = Memory.Ogg_Realloc(b.Buffer, (size_t)b.Storage);
+				if (ret.IsNull)
 					goto Err;
 
 				b.Buffer = ret;
-				b.Ptr = b.EndByte;
+				b.Ptr = b.Buffer + b.EndByte;
 			}
 
 			// Copy whole octets
@@ -741,25 +736,25 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			{
 				// Unaligned copy. Do it the hard way
 				for (c_int i = 0; i < bytes; i++)
-					w(b, source[i], 8);
+					w(b, ptr[i], 8);
 			}
 			else
 			{
 				// Aligned block copy
-				Array.Copy(source, 0, b.Buffer, b.Ptr, bytes);
+				CMemory.MemMove(b.Ptr, source, bytes);
 
 				b.Ptr += bytes;
 				b.EndByte += bytes;
-				b.Buffer[b.Ptr] = 0;
+				b.Ptr[0] = 0;
 			}
 
 			// Copy trailing bits
 			if (bits != 0)
 			{
 				if (msb)
-					w(b, (c_ulong)(source[bytes] >> (8 - bits)), bits);
+					w(b, (c_ulong)(ptr[bytes] >> (8 - bits)), bits);
 				else
-					w(b, source[bytes], bits);
+					w(b, ptr[bytes], bits);
 			}
 
 			return;

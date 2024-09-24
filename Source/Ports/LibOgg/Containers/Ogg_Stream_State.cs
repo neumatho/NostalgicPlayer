@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 {
@@ -15,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 		/// <summary>
 		/// Bytes from packet bodies
 		/// </summary>
-		public byte[] BodyData;
+		public Pointer<byte> BodyData;
 
 		/// <summary>
 		/// Storage elements allocated
@@ -35,14 +36,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 		/// <summary>
 		/// The values that will go to the segment table
 		/// </summary>
-		public c_int[] LacingVals;
+		public Pointer<c_int> LacingVals;
 
 		/// <summary>
 		/// Granulepos values for headers. Not compact
 		/// this way, but it is simple coupled to the
 		/// lacing fifo
 		/// </summary>
-		public ogg_int64_t[] GranuleVals;
+		public Pointer<ogg_int64_t> GranuleVals;
 
 		/// <summary></summary>
 		public c_long LacingStorage;
@@ -93,12 +94,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 		/********************************************************************/
 		public void Clear()
 		{
-			BodyData = null;
+			BodyData.SetToNull();
 			BodyStorage = 0;
 			BodyFill = 0;
 			BodyReturned = 0;
-			LacingVals = null;
-			GranuleVals = null;
+			LacingVals.SetToNull();
+			GranuleVals.SetToNull();
 
 			LacingStorage = 0;
 			LacingFill = 0;

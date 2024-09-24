@@ -3,197 +3,147 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
-using Polycode.NostalgicPlayer.Ports.LibOgg.Containers;
-using Polycode.NostalgicPlayer.Ports.LibOgg.Internal;
+using System;
 
-namespace Polycode.NostalgicPlayer.Ports.LibOgg
+namespace Polycode.NostalgicPlayer.Kit.Utility
 {
 	/// <summary>
-	/// Interface to OggPack methods
+	/// This holds a buffer and a start offset. Can be used in C ports, where
+	/// there are a lot of pointer calculations. By using this, you don't need
+	/// to hold the offset by yourself and pass it around.
+	///
+	/// It is almost similar to Span, except that with this, you can also use
+	/// negative indexes to retrieve the data, which is used by some C programs
 	/// </summary>
-	public class OggPack
+	public struct Pointer<T> : IEquatable<Pointer<T>>
 	{
-		private readonly OggPack_Buffer buffer;
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public Pointer(T[] buffer) : this(buffer, 0)
+		{
+		}
+
+
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		private OggPack(OggPack_Buffer b)
+		public Pointer(T[] buffer, int offset)
 		{
-			buffer = b;
+			Buffer = buffer;
+			Offset = offset;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Return the whole buffer
 		/// </summary>
 		/********************************************************************/
-		public static void WriteInit(out OggPack b)
+		public T[] Buffer { get; private set; }
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the offset in the buffer where the first item starts
+		/// </summary>
+		/********************************************************************/
+		public int Offset { get; private set; }
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Clear the pointer
+		/// </summary>
+		/********************************************************************/
+		public void SetToNull()
 		{
-			Bitwise.OggPack_WriteInit(out OggPack_Buffer bu);
-			b = new OggPack(bu);
+			Buffer = null;
+			Offset = 0;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Check to see if the pointer is null
 		/// </summary>
 		/********************************************************************/
-		public void WriteCopy(Pointer<byte> source, c_long bits)
+		public bool IsNull => Buffer == null;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return or set the item at the index given
+		/// </summary>
+		/********************************************************************/
+		public T this[int index]
 		{
-			Bitwise.OggPack_WriteCopy(buffer, source, bits);
+			get => Buffer[Offset + index];
+			set => Buffer[Offset + index] = value;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Return a new pointer where the original pointer is incremented by
+		/// the value given
 		/// </summary>
 		/********************************************************************/
-		public void Reset()
+		public static Pointer<T> operator + (Pointer<T> ptr, int increment)
 		{
-			Bitwise.OggPack_Reset(buffer);
+			return new Pointer<T>(ptr.Buffer, ptr.Offset + increment);
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Return the current pointer with the current offset, but the
+		/// offset will be incremented by one afterwards
 		/// </summary>
 		/********************************************************************/
-		public void WriteClear()
+		public static Pointer<T> operator ++ (Pointer<T> ptr)
 		{
-			Bitwise.OggPack_WriteClear(buffer);
+			return ptr + 1;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Will calculate the difference between the two pointers. Both
+		/// pointers need to use the same buffer
 		/// </summary>
 		/********************************************************************/
-		public static void ReadInit(out OggPack b, byte[] buf, c_int bytes)
+		public static int operator - (Pointer<T> ptr1, Pointer<T> ptr2)
 		{
-			ReadInit(out b, new Pointer<byte>(buf), bytes);
+			if (ptr1.Buffer != ptr2.Buffer)
+				throw new ArgumentException("Both pointers need to use the same buffer");
+
+			return ptr1.Offset - ptr2.Offset;
 		}
 
-
-
+		#region IEquatable implementation
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Compare two pointers
 		/// </summary>
 		/********************************************************************/
-		public static void ReadInit(out OggPack b, Pointer<byte> buf, c_int bytes)
+		public bool Equals(Pointer<T> other)
 		{
-			Bitwise.OggPack_ReadInit(out OggPack_Buffer bu, buf, bytes);
-			b = new OggPack(bu);
+			return (Buffer == other.Buffer) && (Offset == other.Offset);
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public void Write(c_ulong value, c_int bits)
-		{
-			Bitwise.OggPack_Write(buffer, value, bits);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public c_long Look(c_int bits)
-		{
-			return Bitwise.OggPack_Look(buffer, bits);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public c_long Look1()
-		{
-			return Bitwise.OggPack_Look1(buffer);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public void Adv(c_int bits)
-		{
-			Bitwise.OggPack_Adv(buffer, bits);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public c_long Read(c_int bits)
-		{
-			return Bitwise.OggPack_Read(buffer, bits);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public c_long Read1()
-		{
-			return Bitwise.OggPack_Read1(buffer);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public c_long Bytes()
-		{
-			return Bitwise.OggPack_Bytes(buffer);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public Pointer<byte> GetBuffer()
-		{
-			return Bitwise.OggPack_GetBuffer(buffer);
-		}
+		#endregion
 	}
 }

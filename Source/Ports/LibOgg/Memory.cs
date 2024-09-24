@@ -3,7 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
+using System.Runtime.CompilerServices;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOgg
 {
@@ -17,9 +18,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static T[] Ogg_MAlloc<T>(size_t size)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Pointer<T> Ogg_MAlloc<T>(size_t size)
 		{
-			return new T[size];
+			return CMemory.MAlloc<T>((int)size);
 		}
 
 
@@ -29,11 +31,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static T[] Ogg_Realloc<T>(T[] ptr, size_t newSize)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Pointer<T> Ogg_Realloc<T>(Pointer<T> ptr, size_t newSize)
 		{
-			Array.Resize(ref ptr, (int)newSize);
-
-			return ptr;
+			return CMemory.Realloc(ptr, (int)newSize);
 		}
 
 
@@ -43,8 +44,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Ogg_Free<T>(T[] ptr)
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static void Ogg_Free<T>(Pointer<T> ptr)
 		{
+			CMemory.Free(ptr);
 		}
 	}
 }

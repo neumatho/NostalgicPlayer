@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibOgg.Internal;
 
@@ -156,7 +157,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			for (c_long i = 0; i < Test2Size; i++)
 				o.Write(large[i], 32);
 
-			byte[] buffer = o.GetBuffer();
+			Pointer<byte> buffer = o.GetBuffer();
 			c_long bytes = o.Bytes();
 
 			OggPack.ReadInit(out r, buffer, bytes);
@@ -185,7 +186,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			ClipTest(testBuffer3, Test3Size, 1, six, SixSize);
 
 			Console.WriteLine("Testing read past end");
-			OggPack.ReadInit(out r, [ 0, 0, 0, 0, 0, 0, 0, 0], 8);
+			OggPack.ReadInit(out r, [ 0, 0, 0, 0, 0, 0, 0, 0 ], 8);
 
 			for (c_long i = 0; i < 64; i++)
 			{
@@ -277,7 +278,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			for (c_long i = 0; i < Test2Size; i++)
 				ob.Write(large[i], 32);
 
-			byte[] buffer = ob.GetBuffer();
+			Pointer<byte> buffer = ob.GetBuffer();
 			c_long bytes = ob.Bytes();
 
 			OggPackB.ReadInit(out rb, buffer, bytes);
@@ -403,7 +404,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			for (c_long i = 0; i < vals; i++)
 				o.Write(b[i], bits != 0 ? bits : ILog(b[i]));
 
-			byte[] buffer = o.GetBuffer();
+			Pointer<byte> buffer = o.GetBuffer();
 			c_long bytes = o.Bytes();
 			Assert.AreEqual(compSize, bytes, "Wrong number of bytes");
 
@@ -458,7 +459,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			for (c_long i = 0; i < vals; i++)
 				ob.Write(b[i], bits != 0 ? bits : ILog(b[i]));
 
-			byte[] buffer = ob.GetBuffer();
+			Pointer<byte> buffer = ob.GetBuffer();
 			c_long bytes = ob.Bytes();
 			Assert.AreEqual(compSize, bytes, "Wrong number of bytes");
 
@@ -514,14 +515,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			for (c_int i = 0; i < (prefill + copy + 7) / 8; i++)
 				sourceWrite.Write((c_ulong)((i ^ 0x5a) & 0xff), 8);
 
-			byte[] source = sourceWrite.GetBuffer();
+			Pointer<byte> source = sourceWrite.GetBuffer();
 			c_long sourceBytes = sourceWrite.Bytes();
 
 			// Prefill
 			destWrite.WriteCopy(source, prefill);
 
 			// Check buffers; verify end byte masking
-			byte[] dest = destWrite.GetBuffer();
+			Pointer<byte> dest = destWrite.GetBuffer();
 			c_long destBytes = destWrite.Bytes();
 			Assert.AreEqual((prefill + 7) / 8, destBytes, "Wrong number of bytes after prefill");
 
@@ -593,14 +594,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			for (c_int i = 0; i < (prefill + copy + 7) / 8; i++)
 				sourceWrite.Write((c_ulong)((i ^ 0x5a) & 0xff), 8);
 
-			byte[] source = sourceWrite.GetBuffer();
+			Pointer<byte> source = sourceWrite.GetBuffer();
 			c_long sourceBytes = sourceWrite.Bytes();
 
 			// Prefill
 			destWrite.WriteCopy(source, prefill);
 
 			// Check buffers; verify end byte masking
-			byte[] dest = destWrite.GetBuffer();
+			Pointer<byte> dest = destWrite.GetBuffer();
 			c_long destBytes = destWrite.Bytes();
 			Assert.AreEqual((prefill + 7) / 8, destBytes, "Wrong number of bytes after prefill");
 

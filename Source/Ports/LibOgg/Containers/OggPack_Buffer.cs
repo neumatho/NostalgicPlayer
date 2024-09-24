@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Utility;
+
 namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 {
 	/// <summary>
@@ -16,9 +18,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 		public c_int EndBit;
 
 		/// <summary></summary>
-		public byte[] Buffer;
+		public Pointer<byte> Buffer;
 		/// <summary></summary>
-		public int Ptr;
+		public Pointer<byte> Ptr;
 		/// <summary></summary>
 		public c_long Storage;
 
@@ -32,8 +34,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 			EndByte = 0;
 			EndBit = 0;
 
-			Buffer = null;
-			Ptr = 0;
+			Buffer.SetToNull();
+			Ptr.SetToNull();
 			Storage = 0;
 		}
 	}

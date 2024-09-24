@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Utility;
+
 namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 {
 	/// <summary>
@@ -10,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 	/// </summary>
 	internal class Ogg_Sync_State
 	{
-		public byte[] Data;
+		public Pointer<byte> Data;
 		public c_int Storage;
 		public c_int Fill;
 		public c_int Returned;
@@ -26,7 +28,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 		/********************************************************************/
 		public void Clear()
 		{
-			Data = null;
+			Data.SetToNull();
 			Storage = 0;
 			Fill = 0;
 			Returned = 0;

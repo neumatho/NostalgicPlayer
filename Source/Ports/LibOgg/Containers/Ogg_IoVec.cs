@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Utility;
+
 namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 {
 	/// <summary>
@@ -11,9 +13,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 	public class Ogg_IoVec
 	{
 		/// <summary></summary>
-		public byte[] Base;
-		/// <summary></summary>
-		public int Offset;
+		public Pointer<byte> Base;
 		/// <summary></summary>
 		public size_t Len;
 	}
