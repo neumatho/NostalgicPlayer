@@ -186,7 +186,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			ClipTest(testBuffer3, Test3Size, 1, six, SixSize);
 
 			Console.WriteLine("Testing read past end");
-			OggPack.ReadInit(out r, [ 0, 0, 0, 0, 0, 0, 0, 0 ], 8);
+			OggPack.ReadInit(out r, new Pointer<byte>([ 0, 0, 0, 0, 0, 0, 0, 0 ]), 8);
 
 			for (c_long i = 0; i < 64; i++)
 			{
@@ -197,7 +197,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			if ((r.Look(1) != -1) || (r.Read(1) != -1))
 				Assert.Fail("Failed; read past end without -1");
 
-			OggPack.ReadInit(out r, [ 0, 0, 0, 0, 0, 0, 0, 0], 8);
+			OggPack.ReadInit(out r, new Pointer<byte>([ 0, 0, 0, 0, 0, 0, 0, 0]), 8);
 
 			if ((r.Read(30) != 0) || (r.Read(16) != 0))
 				Assert.Fail("Failed 2; got -1 prematurely");
@@ -307,7 +307,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			ClipTestB(testBuffer3, Test3Size, 1, sixB, SixSize);
 
 			Console.WriteLine("Testing read past end");
-			OggPackB.ReadInit(out rb, [ 0, 0, 0, 0, 0, 0, 0, 0], 8);
+			OggPackB.ReadInit(out rb, new Pointer<byte>([ 0, 0, 0, 0, 0, 0, 0, 0]), 8);
 
 			for (c_long i = 0; i < 64; i++)
 			{
@@ -318,7 +318,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 			if ((rb.Look(1) != -1) || (rb.Read(1) != -1))
 				Assert.Fail("Failed; read past end without -1");
 
-			OggPackB.ReadInit(out rb, [ 0, 0, 0, 0, 0, 0, 0, 0], 8);
+			OggPackB.ReadInit(out rb, new Pointer<byte>([ 0, 0, 0, 0, 0, 0, 0, 0]), 8);
 
 			if ((rb.Read(30) != 0) || (rb.Read(16) != 0))
 				Assert.Fail("Failed 2; got -1 prematurely");

@@ -82,18 +82,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void ReadInit(out OggPack b, byte[] buf, c_int bytes)
-		{
-			ReadInit(out b, new Pointer<byte>(buf), bytes);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
 		public static void ReadInit(out OggPack b, Pointer<byte> buf, c_int bytes)
 		{
 			Bitwise.OggPack_ReadInit(out OggPack_Buffer bu, buf, bytes);

@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Pointer<T> MAlloc<T>(int size)
 		{
-			return new Pointer<T>(new T[size]);
+			return new Pointer<T>(size);
 		}
 
 
@@ -124,7 +124,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int MemCmp(Pointer<byte> ptr1, string compareString, int length)
 		{
-			return MemCmp(ptr1, new Pointer<byte>(Encoding.ASCII.GetBytes(compareString)), length);
+			return MemCmp(ptr1, Encoding.ASCII.GetBytes(compareString), length);
 		}
 
 
@@ -158,7 +158,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 					return new Pointer<T>(ptr.Buffer, ptr.Offset + i);
 			}
 
-			return new Pointer<T>();
+			return null;
 		}
 	}
 }

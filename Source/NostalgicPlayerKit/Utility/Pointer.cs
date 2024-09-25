@@ -22,6 +22,19 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
+		public Pointer(T[] buffer, int offset)
+		{
+			Buffer = buffer;
+			Offset = offset;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
 		public Pointer(T[] buffer) : this(buffer, 0)
 		{
 		}
@@ -33,10 +46,8 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Pointer(T[] buffer, int offset)
+		public Pointer(int length) : this(new T[length], 0)
 		{
-			Buffer = buffer;
-			Offset = offset;
 		}
 
 
@@ -132,6 +143,18 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 				throw new ArgumentException("Both pointers need to use the same buffer");
 
 			return ptr1.Offset - ptr2.Offset;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert an array to a pointer
+		/// </summary>
+		/********************************************************************/
+		public static implicit operator Pointer<T>(T[] array)
+		{
+			return new Pointer<T>(array);
 		}
 
 		#region IEquatable implementation

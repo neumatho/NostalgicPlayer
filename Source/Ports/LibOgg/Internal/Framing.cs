@@ -498,10 +498,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/********************************************************************/
 		public static Pointer<byte> Ogg_Sync_Buffer(Ogg_Sync_State oy, c_long size)
 		{
-			Pointer<byte> nul = new Pointer<byte>();
-
 			if (Ogg_Sync_Check(oy) != 0)
-				return nul;
+				return null;
 
 			// First, clear out any space that has been previously returned
 			if (oy.Returned != 0)
@@ -520,7 +518,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 				if (size > (c_int.MaxValue - 4096 - oy.Fill))
 				{
 					Ogg_Sync_Clear(oy);
-					return nul;
+					return null;
 				}
 
 				c_long newSize = size + oy.Fill + 4096;     // An extra page to be nice
@@ -534,7 +532,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 				if (ret.IsNull)
 				{
 					Ogg_Sync_Clear(oy);
-					return nul;
+					return null;
 				}
 
 				oy.Data = ret;
@@ -614,7 +612,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			// The whole test page is buffered. Verify the checksum
 			{
 				// Grab the checksum bytes, set the header field to zero
-				Pointer<byte> chkSum = new Pointer<byte>(new byte[4]);
+				byte[] chkSum = new byte[4];
 				Ogg_Page log = new Ogg_Page();
 
 				CMemory.MemCpy(chkSum, page + 22, 4);
@@ -1142,7 +1140,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 			// Set pointers in the ogg_page struct
 			og = new Ogg_Page();
 
-			og.Header = new Pointer<byte>(os.Header);
+			og.Header = os.Header;
 			og.HeaderLen = os.HeaderFill = vals + 27;
 			og.Body = os.BodyData + os.BodyReturned;
 			og.BodyLen = bytes;
