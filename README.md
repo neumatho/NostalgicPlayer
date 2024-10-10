@@ -15,6 +15,7 @@ NostalgicPlayer is licensed under the <a href="https://github.com/neumatho/Nosta
 * Ancient decruncher (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/Ancient/LICENSE">BSD 2-Clause License</a>)
 * libFLAC (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibFlac/LICENSE">BSD License</a>)
 * libOgg (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibOgg/LICENSE">BSD License</a>)
+* libOpus (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibOpus/LICENSE">BSD License</a>)
 * libXmp (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibXmp/LICENSE">MIT License</a>)
 * Parts of the MO3 converter based on OpenMPT (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Agents/ModuleConverters/Mo3Converter/LICENSE">BSD-3-Clause License</a>)
 * Mpg123 (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibMpg123/LICENSE">GNU Lesser General Public License version 2.1</a>)

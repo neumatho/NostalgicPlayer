@@ -4,6 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Runtime.CompilerServices;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Kit.Utility
 {
@@ -15,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 	/// It is almost similar to Span, except that with this, you can also use
 	/// negative indexes to retrieve the data, which is used by some C programs
 	/// </summary>
-	public struct Pointer<T> : IEquatable<Pointer<T>>
+	public struct Pointer<T> : IEquatable<Pointer<T>>, IDeepCloneable<Pointer<T>>
 	{
 		/********************************************************************/
 		/// <summary>
@@ -94,13 +96,77 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 		/********************************************************************/
 		/// <summary>
+		/// Convert the pointer to a span
+		/// </summary>
+		/********************************************************************/
+		public Span<T> AsSpan()
+		{
+			return new Span<T>(Buffer, Offset, Buffer.Length - Offset);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Clear the array
+		/// </summary>
+		/********************************************************************/
+		public void Clear()
+		{
+			Array.Clear(Buffer, Offset, Buffer.Length - Offset);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return or set the item at the index given
 		/// </summary>
 		/********************************************************************/
-		public T this[int index]
+		public ref T this[int index]
 		{
-			get => Buffer[Offset + index];
-			set => Buffer[Offset + index] = value;
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get => ref Buffer[Offset + index];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return or set the item at the index given
+		/// </summary>
+		/********************************************************************/
+		public ref T this[uint index]
+		{
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get => ref Buffer[Offset + index];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return or set the item at the index given and increment the
+		/// pointer afterwards
+		/// </summary>
+		/********************************************************************/
+		public T this[int index, int increment]
+		{
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get
+			{
+				T val = Buffer[Offset + index];
+				Offset += increment;
+
+				return val;
+			}
+
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			set
+			{
+				Buffer[Offset + index] = value;
+				Offset += increment;
+			}
 		}
 
 
@@ -111,6 +177,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// the value given
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Pointer<T> operator + (Pointer<T> ptr, int increment)
 		{
 			return new Pointer<T>(ptr.Buffer, ptr.Offset + increment);
@@ -120,13 +187,70 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the current pointer with the current offset, but the
-		/// offset will be incremented by one afterwards
+		/// Return a new pointer where the original pointer is incremented by
+		/// the value given
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Pointer<T> operator + (Pointer<T> ptr, uint increment)
+		{
+			return new Pointer<T>(ptr.Buffer, ptr.Offset + (int)increment);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a new pointer where the original pointer is decremented by
+		/// the value given
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Pointer<T> operator - (Pointer<T> ptr, int decrement)
+		{
+			return new Pointer<T>(ptr.Buffer, ptr.Offset - decrement);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a new pointer where the original pointer is decremented by
+		/// the value given
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Pointer<T> operator - (Pointer<T> ptr, uint decrement)
+		{
+			return new Pointer<T>(ptr.Buffer, ptr.Offset - (int)decrement);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a new pointer where the original pointer is incremented by
+		/// one
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Pointer<T> operator ++ (Pointer<T> ptr)
 		{
 			return ptr + 1;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a new pointer where the original pointer is decremented by
+		/// one
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Pointer<T> operator -- (Pointer<T> ptr)
+		{
+			return ptr - 1;
 		}
 
 
@@ -137,6 +261,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// pointers need to use the same buffer
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static int operator - (Pointer<T> ptr1, Pointer<T> ptr2)
 		{
 			if (ptr1.Buffer != ptr2.Buffer)
@@ -149,13 +274,58 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 		/********************************************************************/
 		/// <summary>
+		/// Compare two pointers to see if they point to the same place
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static bool operator == (Pointer<T> ptr1, Pointer<T> ptr2)
+		{
+			return ptr1.Equals(ptr2);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Compare two pointers to see if they don't point to the same place
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static bool operator != (Pointer<T> ptr1, Pointer<T> ptr2)
+		{
+			return !ptr1.Equals(ptr2);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Convert an array to a pointer
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static implicit operator Pointer<T>(T[] array)
 		{
 			return new Pointer<T>(array);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public override bool Equals(object obj) => throw new NotSupportedException();
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// This method is not supported as spans cannot be boxed.
+		/// </summary>
+		/********************************************************************/
+		public override int GetHashCode() => throw new NotSupportedException();
 
 		#region IEquatable implementation
 		/********************************************************************/
@@ -166,6 +336,21 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		public bool Equals(Pointer<T> other)
 		{
 			return (Buffer == other.Buffer) && (Offset == other.Offset);
+		}
+		#endregion
+
+		#region IDeepCloneable implementation
+		/********************************************************************/
+		/// <summary>
+		/// Clone the buffer and pointer
+		/// </summary>
+		/********************************************************************/
+		public Pointer<T> MakeDeepClone()
+		{
+			if (IsNull)
+				return null;
+
+			return new Pointer<T>(ArrayHelper.CloneArray(Buffer), Offset);
 		}
 		#endregion
 	}
