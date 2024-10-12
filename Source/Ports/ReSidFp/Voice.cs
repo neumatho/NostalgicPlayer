@@ -12,28 +12,15 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 	/// </summary>
 	internal class Voice
 	{
-		private readonly WaveformGenerator waveformGenerator;
+		private readonly WaveformGenerator waveformGenerator = new WaveformGenerator();
 
-		private readonly EnvelopeGenerator envelopeGenerator;
+		private readonly EnvelopeGenerator envelopeGenerator = new EnvelopeGenerator();
 
 		/// The DAC LUT for analog waveform output
 		private float[] wavDac;		// This is initialized in the SID constructor
 
 		/// The DAC LUT for analog envelope output
 		private float[] envDac;		// This is initialized in the SID constructor
-
-		/********************************************************************/
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/********************************************************************/
-		public Voice()
-		{
-			waveformGenerator = new WaveformGenerator();
-			envelopeGenerator = new EnvelopeGenerator();
-		}
-
-
 
 		/********************************************************************/
 		/// <summary>

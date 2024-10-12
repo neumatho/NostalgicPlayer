@@ -37,18 +37,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Filter(bool enable)
-		{
-			sid.EnableFilter(enable);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
 		public void Filter6581Curve(double filterCurve)
 		{
 			sid.SetFilter6581Curve(filterCurve);
@@ -169,8 +157,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 
 			try
 			{
-				int halfFreq = (freq > 44000) ? 20000 : 9 * (int)freq / 20;
-				sid.SetSamplingParameters(systemClock, samplingMethod, freq, halfFreq);
+				sid.SetSamplingParameters(systemClock, samplingMethod, freq);
 			}
 			catch (SidErrorException)
 			{

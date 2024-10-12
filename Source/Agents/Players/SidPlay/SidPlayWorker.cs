@@ -584,6 +584,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				return false;
 			}
 
+			// Setup filter
+			uint maxSids = engine.Info().MaxSids();
+			for (uint i = 0; i < maxSids; i++)
+				engine.Filter(i, settings.FilterEnabled);
+
 			firstTime = true;
 
 			// Create duration handler if needed
@@ -808,9 +813,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidPlay
 				errorMessage = sidBuilder.Error();
 				return false;
 			}
-
-			// Setup filter
-			sidBuilder.Filter(settings.FilterEnabled);
 
 			engineConfig.sidEmulation = sidBuilder;
 

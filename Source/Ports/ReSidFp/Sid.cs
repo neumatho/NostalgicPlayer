@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Runtime.CompilerServices;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.ReSidFp.Containers;
 using Polycode.NostalgicPlayer.Ports.ReSidFp.Exceptions;
 using Polycode.NostalgicPlayer.Ports.ReSidFp.Resample;
@@ -118,30 +119,30 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		private readonly Filter8580 filter8580;
 
 		/// <summary>
-		/// External filter that provides high-pass and low-pass filtering
-		/// to adjust sound tone slightly
-		/// </summary>
-		private readonly ExternalFilter externalFilter;
-
-		/// <summary>
 		/// Resampler used by audio generation code
 		/// </summary>
 		private Resampler resampler;
 
 		/// <summary>
+		/// External filter that provides high-pass and low-pass filtering
+		/// to adjust sound tone slightly
+		/// </summary>
+		private readonly ExternalFilter externalFilter = new ExternalFilter();
+
+		/// <summary>
 		/// Paddle X register support
 		/// </summary>
-		private readonly Potentiometer potX;
+		private readonly Potentiometer potX = new Potentiometer();
 
 		/// <summary>
 		/// Paddle Y register support
 		/// </summary>
-		private readonly Potentiometer potY;
+		private readonly Potentiometer potY = new Potentiometer();
 
 		/// <summary>
 		/// SID voices
 		/// </summary>
-		private readonly Voice[] voice =  new Voice[3];
+		private readonly Voice[] voice =  ArrayHelper.InitializeArray<Voice>(3);
 
 		/// <summary>
 		/// Used to amplify the output by x/2 to get an adequate playback volume
@@ -179,11 +180,6 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		private byte busValue;
 
 		/// <summary>
-		/// Flags for muted channels
-		/// </summary>
-		private readonly bool[] muted = new bool[3];
-
-		/// <summary>
 		/// Emulated non-linearity of the envelope DAC
 		/// </summary>
 		private readonly float[] envDac = new float[256];
@@ -202,17 +198,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		{
 			filter6581 = new Filter6581();
 			filter8580 = new Filter8580();
-			externalFilter = new ExternalFilter();
 			resampler = null;
-			potX = new Potentiometer();
-			potY = new Potentiometer();
-			cws = CombinedWaveforms.STRONG;
-
-			voice[0] = new Voice();
-			voice[1] = new Voice();
-			voice[2] = new Voice();
-
-			muted[0] = muted[1] = muted[2] = false;
+			cws = CombinedWaveforms.AVERAGE;
 
 			SetChipModel(ChipModel.MOS8580);
 			Reset();
@@ -525,7 +512,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				// Voice #1 control register
 				case 0x04:
 				{
-					voice[0].WriteControl_Reg(muted[0] ? (byte)0 : value);
+					voice[0].WriteControl_Reg(value);
 					break;
 				}
 
@@ -574,7 +561,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				// Voice #2 control register
 				case 0x0b:
 				{
-					voice[1].WriteControl_Reg(muted[1] ? (byte)0 : value);
+					voice[1].WriteControl_Reg(value);
 					break;
 				}
 
@@ -623,7 +610,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				// Voice #3 control register
 				case 0x12:
 				{
-					voice[2].WriteControl_Reg(muted[2] ? (byte)0 : value);
+					voice[2].WriteControl_Reg(value);
 					break;
 				}
 
@@ -750,7 +737,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// This constraint ensures that the FIR table is not overfilled
 		/// </summary>
 		/********************************************************************/
-		public void SetSamplingParameters(double clockFrequency, SamplingMethod method, double samplingFrequency, double highestAccurateFrequency)
+		public void SetSamplingParameters(double clockFrequency, SamplingMethod method, double samplingFrequency)
 		{
 			externalFilter.SetClockFrequency(clockFrequency);
 
@@ -764,7 +751,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 				case SamplingMethod.RESAMPLE:
 				{
-					resampler = TwoPassSincResampler.Create(clockFrequency, samplingFrequency, highestAccurateFrequency);
+					resampler = TwoPassSincResampler.Create(clockFrequency, samplingFrequency);
 					break;
 				}
 

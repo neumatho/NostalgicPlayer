@@ -118,19 +118,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.Builders.ReSidFpBuilder
 
 			return count;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Toggle SID filter emulation
-		/// </summary>
-		/********************************************************************/
-		public override void Filter(bool enable)
-		{
-			foreach (ReSidFp s in sidObjs)
-				s.Filter(enable);
-		}
 		#endregion
 	}
 }

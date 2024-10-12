@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		public void Poke(uint_least16_t address, uint8_t value)
 		{
 			lastPoke[address & 0x1f] = value;
-			Write((uint_least8_t)(address & 0x1f), value);
+			WriteReg((uint_least8_t)(address & 0x1f), value);
 		}
 
 
@@ -66,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected abstract void Write(uint_least8_t addr, uint8_t data);
+		protected abstract void WriteReg(uint_least8_t addr, uint8_t data);
 
 
 

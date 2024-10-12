@@ -33,13 +33,21 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp.Resample
 		/// Named constructor
 		/// </summary>
 		/********************************************************************/
-		public static TwoPassSincResampler Create(double clockFrequency, double samplingFrequency, double highestAccurateFrequency)
+		public static TwoPassSincResampler Create(double clockFrequency, double samplingFrequency)
 		{
-			// Calculation according to Laurent Ganier. It evaluates to about 120 kHz at typical settings.
-			// Some testing around the chosen value seems to confirm that this does work
-			double intermediateFrequency = 2.0 * highestAccurateFrequency + Math.Sqrt(2.0 * highestAccurateFrequency * clockFrequency * (samplingFrequency - 2.0 * highestAccurateFrequency) / samplingFrequency);
+			// Set the passband frequency slightly below half sampling frequency
+			//   pass_freq <= 0.9*sample_freq/2
+			//
+			// This constraint ensures that the FIR table is not overfilled.
+			// For higher sampling frequencies we're fine with 20KHz
+			double halfFreq = (samplingFrequency > 44000) ? 20000 : samplingFrequency * 0.45;
 
-			return new TwoPassSincResampler(clockFrequency, samplingFrequency, highestAccurateFrequency, intermediateFrequency);
+			// Calculation according to Laurent Ganier.
+			// It evaluates to about 120 kHz at typical settings.
+			// Some testing around the chosen value seems to confirm that this does work
+			double intermediateFrequency = 2.0 * halfFreq + Math.Sqrt(2.0 * halfFreq * clockFrequency * (samplingFrequency - 2.0 * halfFreq) / samplingFrequency);
+
+			return new TwoPassSincResampler(clockFrequency, samplingFrequency, halfFreq, intermediateFrequency);
 		}
 
 		#region Overrides

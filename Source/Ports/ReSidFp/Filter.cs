@@ -3,8 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.Runtime.CompilerServices;
-
 namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 {
 	/// <summary>
@@ -12,62 +10,55 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 	/// </summary>
 	internal abstract class Filter
 	{
-		private readonly FilterModelConfig fmc;
-
 		private readonly ushort[][] mixer;
 		private readonly ushort[][] summer;
 		private readonly ushort[][] resonance;
 		private readonly ushort[][] volume;
 
 		/// <summary>
-		/// VCR + associated capacitor connected to highpass output
+		/// 
 		/// </summary>
-		protected Integrator hpIntegrator;
-
-		/// <summary>
-		/// VCR + associated capacitor connected to bandpass output
-		/// </summary>
-		protected Integrator bpIntegrator;
+		protected readonly FilterModelConfig fmc;
 
 		/// <summary>
 		/// Current filter/voice mixer setting
 		/// </summary>
-		private ushort[] currentMixer = null;
+		protected ushort[] currentMixer = null;
 
 		/// <summary>
 		/// Filter input summer setting
 		/// </summary>
-		private ushort[] currentSummer = null;
+		protected ushort[] currentSummer = null;
 
 		/// <summary>
 		/// Filter resonance value
 		/// </summary>
-		private ushort[] currentResonance = null;
+		protected ushort[] currentResonance = null;
 
 		/// <summary>
 		/// Current volume amplifier setting
 		/// </summary>
-		private ushort[] currentVolume = null;
+		protected ushort[] currentVolume = null;
 
 		/// <summary>
 		/// Filter highpass state
 		/// </summary>
-		private int vhp = 0;
+		protected int vhp = 0;
 
 		/// <summary>
 		/// Filter bandpass state
 		/// </summary>
-		private int vbp = 0;
+		protected int vbp = 0;
 
 		/// <summary>
 		/// Filter lowpass state
 		/// </summary>
-		private int vlp = 0;
+		protected int vlp = 0;
 
 		/// <summary>
 		/// Filter external input
 		/// </summary>
-		private int ve = 0;
+		protected int ve = 0;
 
 		/// <summary>
 		/// Filter cutoff frequency
@@ -77,22 +68,22 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// <summary>
 		/// Routing to filter or outside filter
 		/// </summary>
-		private bool filt1 = false;
-		private bool filt2 = false;
-		private bool filt3 = false;
-		private bool filtE = false;
+		protected bool filt1 = false;
+		protected bool filt2 = false;
+		protected bool filt3 = false;
+		protected bool filtE = false;
 
 		/// <summary>
 		/// Switch voice 3 off
 		/// </summary>
-		private bool voice3Off = false;
+		protected bool voice3Off = false;
 
 		/// <summary>
 		/// Highpass, bandpass, and lowpass filter modes
 		/// </summary>
-		private bool hp = false;
-		private bool bp = false;
-		private bool lp = false;
+		protected bool hp = false;
+		protected bool bp = false;
+		protected bool lp = false;
 
 		/// <summary>
 		/// Current volume
@@ -121,8 +112,6 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			summer = fmc.GetSummer();
 			resonance = fmc.GetResonance();
 			volume = fmc.GetVolume();
-			hpIntegrator = fmc.BuildIntegrator();
-			bpIntegrator = fmc.BuildIntegrator();
 
 			Input(0);
 		}
@@ -242,53 +231,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// SID clocking - 1 cycle
 		/// </summary>
 		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public ushort Clock(float voice1, float voice2, float voice3)
-		{
-			int v1 = fmc.GetNormalizedVoice(voice1);
-			int v2 = fmc.GetNormalizedVoice(voice2);
-
-			// Voice 3 is silenced by voice3Off if it is not routed through the filter
-			int v3 = (filt3 || !voice3Off) ? fmc.GetNormalizedVoice(voice3) : 0;
-
-			int vSum = 0;
-			int vMix = 0;
-
-			if (filt1)
-				vSum += v1;
-			else
-				vMix += v1;
-
-			if (filt2)
-				vSum += v2;
-			else
-				vMix += v2;
-
-			if (filt3)
-				vSum += v3;
-			else
-				vMix += v3;
-
-			if (filtE)
-				vSum += ve;
-			else
-				vMix += ve;
-
-			vhp = currentSummer[currentResonance[vbp] + vlp + vSum];
-			vbp = hpIntegrator.Solve(vhp);
-			vlp = bpIntegrator.Solve(vbp);
-
-			if (lp)
-				vMix += vlp;
-
-			if (bp)
-				vMix += vbp;
-
-			if (hp)
-				vMix += vhp;
-
-			return currentVolume[currentMixer[vMix]];
-		}
+		public abstract ushort Clock(float voice1, float voice2, float voice3);
 
 
 

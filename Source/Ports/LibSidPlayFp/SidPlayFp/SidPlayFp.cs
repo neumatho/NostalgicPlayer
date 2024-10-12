@@ -138,6 +138,30 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 
 		/********************************************************************/
 		/// <summary>
+		/// Mute/unmute a SID channel
+		/// </summary>
+		/********************************************************************/
+		public void Mute(uint sidNum, uint voice, bool enable)
+		{
+			sidPlayer.Mute(sidNum, voice, enable);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Enable/disable SID filter
+		/// </summary>
+		/********************************************************************/
+		public void Filter(uint sidNum, bool enable)
+		{
+			sidPlayer.Filter(sidNum, enable);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Set kernal ROM
 		/// </summary>
 		/********************************************************************/

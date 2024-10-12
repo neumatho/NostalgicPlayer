@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		// All measured chips have op-amps with output voltages (and thus input
 		// voltages) within the range of 0.81V - 10.31V
 		private static readonly Spline.Point[] opamp_voltage =
-		{
+		[
 			new ( 0.81, 10.31),		// Approximate start of actual range
 			new ( 2.40, 10.31),
 			new ( 2.60, 10.30),
@@ -59,7 +59,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			new ( 8.50,  0.89),
 			new ( 10.00,  0.81),
 			new ( 10.31,  0.81)		// Approximate end of actual range
-		};
+		];
 
 		private static FilterModelConfig6581 instance = null;
 		private static readonly object instance6581_Lock = new object();
@@ -262,6 +262,19 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public double GetWl_Snake()
+		{
+			return wl_snake;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public ushort GetVcr_nVg(uint i)
 		{
 			return vcr_nVg[i];
@@ -281,18 +294,6 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 			return (ushort)(tmp + 0.5);
 		}
-
-		#region Overrides
-		/********************************************************************/
-		/// <summary>
-		/// Construct an integrator solver
-		/// </summary>
-		/********************************************************************/
-		public override Integrator BuildIntegrator()
-		{
-			return new Integrator6581(this, wl_snake);
-		}
-		#endregion
 
 		#region Private methods
 		/********************************************************************/

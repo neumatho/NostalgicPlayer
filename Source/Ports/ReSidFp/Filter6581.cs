@@ -80,7 +80,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		//     |   |   |   v1       |    |   |                               |
 		// D0  |   |   |   \ ---R8--+    |   |   +---------------------------+
 		//     |   |   |   |             |   |   |
-		//     R6  R6  R6  R6            R6  R6  R6
+		//     R6  R6  R6  R6            R6* R6* R6*
 		//     |   |   |   | $18         |   |   |  $18
 		//     |    \  |   | D7: 1=open   \   \   \ D6 - D4: 0=open
 		//     |   |   |   |             |   |   |
@@ -115,6 +115,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		//
 		//     R2  ~  2.0*R1
 		//     R6  ~  6.0*R1
+		//     R6* ~  1.07*R6
 		//     R8  ~  8.0*R1
 		//     R24 ~ 24.0*R1
 		//
@@ -291,6 +292,16 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		// terminals are pairwise common), which implies that we can model the two
 		// transistors as one.
 
+		/// <summary>
+		/// VCR + associated capacitor connected to highpass output
+		/// </summary>
+		private Integrator6581 hpIntegrator;
+
+		/// <summary>
+		/// VCR + associated capacitor connected to bandpass output
+		/// </summary>
+		private Integrator6581 bpIntegrator;
+
 		private ushort[] f0_dac;
 
 		/********************************************************************/
@@ -300,6 +311,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/********************************************************************/
 		public Filter6581() : base(FilterModelConfig6581.GetInstance())
 		{
+			hpIntegrator = new Integrator6581(FilterModelConfig6581.GetInstance());
+			bpIntegrator = new Integrator6581(FilterModelConfig6581.GetInstance());
 			f0_dac = FilterModelConfig6581.GetInstance().GetDac(0.5);
 		}
 
@@ -331,14 +344,75 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		#region Overrides
 		/********************************************************************/
 		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public override ushort Clock(float voice1, float voice2, float voice3)
+		{
+			int v1 = fmc.GetNormalizedVoice(voice1);
+			int v2 = fmc.GetNormalizedVoice(voice2);
+
+			// Voice 3 is silenced by voice3Off if it is not routed through the filter
+			int v3 = (filt3 || !voice3Off) ? fmc.GetNormalizedVoice(voice3) : 0;
+
+			int vSum = 0;
+			int vMix = 0;
+
+			if (filt1)
+				vSum += v1;
+			else
+				vMix += v1;
+
+			if (filt2)
+				vSum += v2;
+			else
+				vMix += v2;
+
+			if (filt3)
+				vSum += v3;
+			else
+				vMix += v3;
+
+			if (filtE)
+				vSum += ve;
+			else
+				vMix += ve;
+
+			vhp = currentSummer[currentResonance[vbp] + vlp + vSum];
+			vbp = hpIntegrator.Solve(vhp);
+			vlp = bpIntegrator.Solve(vbp);
+
+			int vFilt = 0;
+
+			if (lp)
+				vFilt += vlp;
+
+			if (bp)
+				vFilt += vbp;
+
+			if (hp)
+				vFilt += vhp;
+
+			// The filter input resistors are slightly bigger than the voice ones
+			// Scale the values accordingly
+			int filterGain = (int)(0.93 * (1 << 12));
+			vFilt = (vFilt * filterGain) >> 12;
+
+			return currentVolume[currentMixer[vMix + vFilt]];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Set filter cutoff frequency
 		/// </summary>
 		/********************************************************************/
 		protected override void UpdateCenterFrequency()
 		{
 			ushort vw = f0_dac[GetFc()];
-			((Integrator6581)hpIntegrator).SetVw(vw);
-			((Integrator6581)bpIntegrator).SetVw(vw);
+			hpIntegrator.SetVw(vw);
+			bpIntegrator.SetVw(vw);
 		}
 		#endregion
 	}

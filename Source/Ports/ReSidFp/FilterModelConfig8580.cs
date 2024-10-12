@@ -64,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		// This is the SID 8580 op-amp voltage transfer function, measured on
 		// CAP1B/CAP1A on a chip marked CSG 8580R5 1690 25
 		private static readonly Spline.Point[] opamp_voltage =
-		{
+		[
 			new ( 1.30,  8.91),		// Approximate start of actual range
 			new ( 4.76,  8.91),
 			new ( 4.77,  8.90),
@@ -86,7 +86,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			new ( 5.00,  1.30),
 			new ( 5.10,  1.30),
 			new ( 8.91,  1.30)		// Approximate end of actual range
-		};
+		];
 
 		private static FilterModelConfig8580 instance = null;
 		private static readonly object instance8580_Lock = new object();
@@ -156,17 +156,5 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				return instance;
 			}
 		}
-
-		#region Overrides
-		/********************************************************************/
-		/// <summary>
-		/// Construct an integrator solver
-		/// </summary>
-		/********************************************************************/
-		public override Integrator BuildIntegrator()
-		{
-			return new Integrator8580(this);
-		}
-		#endregion
 	}
 }

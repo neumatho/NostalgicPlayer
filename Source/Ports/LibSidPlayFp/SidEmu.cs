@@ -37,6 +37,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		protected bool status = true;
 		private bool isLocked = false;
 
+		private bool isFilterDisabled = false;
+
+		// Flags for muted voices
+		private bool[] isMuted;
+
 		protected string error;
 
 		/********************************************************************/
@@ -48,6 +53,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		{
 			this.builder = builder;
 			error = Resources.IDS_SID_NA;
+			isMuted = new bool[4];
 		}
 
 
@@ -58,6 +64,86 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/// </summary>
 		/********************************************************************/
 		public abstract void Clock();
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		protected override void WriteReg(uint_least8_t addr, uint8_t data)
+		{
+			switch (addr)
+			{
+				case 0x04:
+				{
+					if (isMuted[0])
+						data &= 0x0e;
+
+					break;
+				}
+
+				case 0x0b:
+				{
+					if (isMuted[1])
+						data &= 0x0e;
+
+					break;
+				}
+
+				case 0x12:
+				{
+					if (isMuted[2])
+						data &= 0x0e;
+
+					break;
+				}
+
+				case 0x17:
+				{
+					if (isFilterDisabled)
+						data &= 0xf0;
+
+					break;
+				}
+
+				case 0x18:
+				{
+					if (isMuted[3])
+						data |= 0x0f;
+
+					break;
+				}
+			}
+
+			Write(addr, data);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void Voice(uint voice, bool mute)
+		{
+			if (voice < 4)
+				isMuted[voice] = mute;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void Filter(bool enable)
+		{
+			isFilterDisabled = !enable;
+		}
 
 
 
@@ -89,6 +175,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			isLocked = false;
 			eventScheduler = null;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		protected abstract void Write(uint_least8_t addr, uint8_t data);
 
 
 

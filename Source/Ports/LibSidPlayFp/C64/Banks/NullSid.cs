@@ -50,7 +50,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected override void Write(uint8_t addr, uint8_t data)
+		protected override void WriteReg(uint8_t addr, uint8_t data)
 		{
 		}
 

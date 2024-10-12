@@ -233,6 +233,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 				}
 				catch(Exception ex)
 				{
+					SidRelease();
+
 					errorString = ex.Message;
 					cfg.sidEmulation = null;
 
@@ -279,6 +281,34 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			}
 
 			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Mute/unmute a SID channel
+		/// </summary>
+		/********************************************************************/
+		public void Mute(uint sidNum, uint voice, bool enable)
+		{
+			SidEmu s = mixer.GetSid(sidNum);
+			if (s != null)
+				s.Voice(voice, enable);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Enable/disable SID filter
+		/// </summary>
+		/********************************************************************/
+		public void Filter(uint sidNum, bool enable)
+		{
+			SidEmu s = mixer.GetSid(sidNum);
+			if (s != null)
+				s.Filter(enable);
 		}
 
 

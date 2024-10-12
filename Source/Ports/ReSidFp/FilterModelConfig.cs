@@ -179,15 +179,6 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			return vth;
 		}
 
-		#region Overrides
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public abstract Integrator BuildIntegrator();
-		#endregion
-
 		#region Helper methods
 		/********************************************************************/
 		/// <summary>

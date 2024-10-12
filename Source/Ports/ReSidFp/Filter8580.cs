@@ -257,6 +257,16 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// </summary>
 		private const double DAC_WL0 = 0.00615;
 
+		/// <summary>
+		/// VCR + associated capacitor connected to highpass output
+		/// </summary>
+		private Integrator8580 hpIntegrator;
+
+		/// <summary>
+		/// VCR + associated capacitor connected to bandpass output
+		/// </summary>
+		private Integrator8580 bpIntegrator;
+
 		private double cp;
 
 		/********************************************************************/
@@ -266,6 +276,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/********************************************************************/
 		public Filter8580() : base(FilterModelConfig8580.GetInstance())
 		{
+			hpIntegrator = new Integrator8580(FilterModelConfig8580.GetInstance());
+			bpIntegrator = new Integrator8580(FilterModelConfig8580.GetInstance());
 			SetFilterCurve(0.5);
 		}
 
@@ -285,11 +297,65 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			// 1.2 <= cp <= 1.8
 			cp = 1.8 - curvePosition * 3.0 / 5.0;
 
-			((Integrator8580)hpIntegrator).SetV(cp);
-			((Integrator8580)bpIntegrator).SetV(cp);
+			hpIntegrator.SetV(cp);
+			bpIntegrator.SetV(cp);
 		}
 
 		#region Overrides
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public override ushort Clock(float voice1, float voice2, float voice3)
+		{
+			int v1 = fmc.GetNormalizedVoice(voice1);
+			int v2 = fmc.GetNormalizedVoice(voice2);
+
+			// Voice 3 is silenced by voice3Off if it is not routed through the filter
+			int v3 = (filt3 || !voice3Off) ? fmc.GetNormalizedVoice(voice3) : 0;
+
+			int vSum = 0;
+			int vMix = 0;
+
+			if (filt1)
+				vSum += v1;
+			else
+				vMix += v1;
+
+			if (filt2)
+				vSum += v2;
+			else
+				vMix += v2;
+
+			if (filt3)
+				vSum += v3;
+			else
+				vMix += v3;
+
+			if (filtE)
+				vSum += ve;
+			else
+				vMix += ve;
+
+			vhp = currentSummer[currentResonance[vbp] + vlp + vSum];
+			vbp = hpIntegrator.Solve(vhp);
+			vlp = bpIntegrator.Solve(vbp);
+
+			if (lp)
+				vMix += vlp;
+
+			if (bp)
+				vMix += vbp;
+
+			if (hp)
+				vMix += vhp;
+
+			return currentVolume[currentMixer[vMix]];
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Set filter cutoff frequency
@@ -315,8 +381,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			else
 				wl = dacWl / 2.0;
 
-			((Integrator8580)hpIntegrator).SetFc(wl);
-			((Integrator8580)bpIntegrator).SetFc(wl);
+			hpIntegrator.SetFc(wl);
+			bpIntegrator.SetFc(wl);
 		}
 		#endregion
 	}

@@ -50,15 +50,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.SidPlayFp
 		/// </summary>
 		/********************************************************************/
 		public abstract uint Create(uint sids);
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Toggle SID filter emulation
-		/// </summary>
-		/********************************************************************/
-		public abstract void Filter(bool enable);
 		#endregion
 
 		/********************************************************************/
