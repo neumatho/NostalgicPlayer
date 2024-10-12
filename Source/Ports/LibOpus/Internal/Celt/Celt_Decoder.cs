@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using System.Numerics;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
@@ -1041,7 +1040,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		public static OpusError Opus_Custom_Decoder_Ctl_Get<T>(CeltDecoder st, OpusControlGetRequest request, out T _out) where T : INumber<T>
 		{
 			// I know, the casting below in the case statements are not pretty
-			if (typeof(T) == typeof(opus_uint32))
+			if (typeof(T) == typeof(c_int))
+			{
+				switch (request)
+				{
+					case OpusControlGetRequest.Opus_Get_Pitch:
+					{
+						_out = (T)(object)st.postfilter_period;
+						return OpusError.Ok;
+					}
+				}
+			}
+			else if (typeof(T) == typeof(opus_uint32))
 			{
 				switch (request)
 				{
@@ -1054,7 +1064,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			}
 
 			_out = default;
-			return OpusError.Bad_Arg;
+			return OpusError.Unimplemented;
 		}
 
 
@@ -1076,7 +1086,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			}
 
 			_out = default;
-			return OpusError.Bad_Arg;
+			return OpusError.Unimplemented;
 		}
 
 
@@ -1155,7 +1165,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				}
 
 				default:
-					throw new NotSupportedException();
+					return OpusError.Unimplemented;
 			}
 
 			return OpusError.Ok;

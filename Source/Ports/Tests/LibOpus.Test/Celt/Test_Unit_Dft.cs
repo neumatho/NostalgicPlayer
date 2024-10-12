@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test.Celt
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test()
+		public void Test_Dft()
 		{
 			c_int arch = Cpu_Support.Opus_Select_Arch();
 

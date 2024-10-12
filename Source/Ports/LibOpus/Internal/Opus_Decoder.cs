@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using System.Numerics;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
@@ -19,9 +18,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 	{
 		/********************************************************************/
 		/// <summary>
-		/// Initializes a previously allocated decoder state.
-		/// This is intended for applications which use their own allocator
-		/// instead of malloc
+		/// 
 		/// </summary>
 		/********************************************************************/
 		public static OpusError Opus_Decoder_Init(OpusDecoderInternal st, opus_int32 Fs, c_int channels)
@@ -65,16 +62,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 
 		/********************************************************************/
 		/// <summary>
-		/// Allocates and initializes a decoder state.
-		///
-		/// Internally Opus stores data at 48000 Hz, so that should be the
-		/// default value for Fs. However, the decoder can efficiently decode
-		/// to buffers at 8, 12, 16, and 24 kHz so if for some reason the
-		/// caller cannot use data at the full sample rate, or knows the
-		/// compressed data doesn't use the full frequency range, it can
-		/// request decoding at a reduced rate. Likewise, the decoder is
-		/// capable of filling in either mono or interleaved stereo pcm
-		/// buffers, at the caller's request
+		/// 
 		/// </summary>
 		/********************************************************************/
 		public static OpusDecoderInternal Opus_Decoder_Create(opus_int32 Fs, c_int channels, out OpusError error)
@@ -731,6 +719,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
+		public static c_int Opus_Decode_Float(OpusDecoderInternal st, Pointer<byte> data, opus_int32 len, Pointer<opus_val16> pcm, c_int frame_size, bool decode_fec)
+		{
+			if (frame_size <= 0)
+				return (c_int)OpusError.Bad_Arg;
+
+			return Opus_Decode_Native(st, data, len, pcm, frame_size, decode_fec, false, out _, false, null, 0);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public static OpusError Opus_Decoder_Ctl_Get<T>(OpusDecoderInternal st, OpusControlGetRequest request, out T _out) where T : INumber<T>
 		{
 			// I know, the casting below in the case statements are not pretty
@@ -738,6 +741,33 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 			{
 				switch (request)
 				{
+					case OpusControlGetRequest.Opus_Get_Bandwidth:
+					{
+						_out = (T)(object)st.bandwidth;
+						return OpusError.Ok;
+					}
+
+					case OpusControlGetRequest.Opus_Get_Sample_Rate:
+					{
+						_out = (T)(object)st.Fs;
+						return OpusError.Ok;
+					}
+
+					case OpusControlGetRequest.Opus_Get_Pitch:
+					{
+						if (st.prev_mode == PacketMode.Celt_Only)
+							return Celt_Decoder.Celt_Decoder_Ctl_Get(st.celt_dec, OpusControlGetRequest.Opus_Get_Pitch, out _out);
+
+						_out = (T)(object)st.DecControl.prevPitchLag;
+						return OpusError.Ok;
+					}
+
+					case OpusControlGetRequest.Opus_Get_Gain:
+					{
+						_out = (T)(object)st.decode_gain;
+						return OpusError.Ok;
+					}
+
 					case OpusControlGetRequest.Opus_Get_Last_Packet_Duration:
 					{
 						_out = (T)(object)st.last_packet_duration;
@@ -758,7 +788,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 			}
 
 			_out = default;
-			return OpusError.Bad_Arg;
+			return OpusError.Unimplemented;
 		}
 
 
@@ -784,8 +814,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 					break;
 				}
 
+				case OpusControlSetRequest.Opus_Set_Gain:
+				{
+					if ((args.Length == 0) || (args[0].GetType() != typeof(opus_int32)))
+						return OpusError.Bad_Arg;
+
+					opus_int32 value = (opus_int32)args[0];
+					if ((value < -32768) || (value > 32767))
+						return OpusError.Bad_Arg;
+
+					st.decode_gain = value;
+					break;
+				}
+
 				default:
-					throw new NotSupportedException();
+					return OpusError.Unimplemented;
 			}
 
 			return OpusError.Ok;
@@ -795,7 +838,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 
 		/********************************************************************/
 		/// <summary>
-		/// Frees an OpusDecoder allocated by opus_decoder_create()
+		/// 
 		/// </summary>
 		/********************************************************************/
 		public static void Opus_Decoder_Destroy(OpusDecoderInternal st)
@@ -807,7 +850,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 
 		/********************************************************************/
 		/// <summary>
-		/// Gets the bandwidth of an Opus packet
+		/// 
 		/// </summary>
 		/********************************************************************/
 		public static Bandwidth Opus_Packet_Get_Bandwidth(Pointer<byte> data)
@@ -832,7 +875,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 
 		/********************************************************************/
 		/// <summary>
-		/// Gets the number of channels from an Opus packet
+		/// 
 		/// </summary>
 		/********************************************************************/
 		public static c_int Opus_Packet_Get_Nb_Channels(Pointer<byte> data)
@@ -844,7 +887,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 
 		/********************************************************************/
 		/// <summary>
-		/// Gets the number of frames in an Opus packet
+		/// 
 		/// </summary>
 		/********************************************************************/
 		public static c_int Opus_Packet_Get_Nb_Frames(Pointer<byte> packet, opus_int32 len)
@@ -869,7 +912,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 
 		/********************************************************************/
 		/// <summary>
-		/// Gets the number of samples of an Opus packet
+		/// 
 		/// </summary>
 		/********************************************************************/
 		public static c_int Opus_Packet_Get_Nb_Samples(Pointer<byte> packet, opus_int32 len, opus_int32 Fs)
@@ -892,7 +935,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 
 		/********************************************************************/
 		/// <summary>
-		/// Gets the number of samples of an Opus packet
+		/// 
 		/// </summary>
 		/********************************************************************/
 		public static c_int Opus_Decoder_Get_Nb_Samples(OpusDecoderInternal dec, Pointer<byte> packet, opus_int32 len)

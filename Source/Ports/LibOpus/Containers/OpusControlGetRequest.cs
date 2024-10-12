@@ -14,7 +14,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 	{
 		// Opus
 		/// <summary></summary>
+		Opus_Get_Bandwidth = 4009,
+		/// <summary></summary>
+		Opus_Get_Sample_Rate = 4029,
+		/// <summary></summary>
 		Opus_Get_Final_Range = 4031,
+		/// <summary></summary>
+		Opus_Get_Pitch = 4033,
+		/// <summary></summary>
+		Opus_Get_Gain = 4045,	// Should have been 4035
 		/// <summary></summary>
 		Opus_Get_Last_Packet_Duration = 4039,
 

@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test.Celt
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test()
+		public void Test_Cwrs32()
 		{
 			for (c_int t = 0; t < NDims; t++)
 			{

@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test.Celt
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test()
+		public void Test_Rotation()
 		{
 			Test_Rotation(15, 3);
 			Test_Rotation(23, 5);

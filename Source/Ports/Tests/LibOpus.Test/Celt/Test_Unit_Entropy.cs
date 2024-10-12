@@ -28,7 +28,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test.Celt
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test()
+		public void Test_Entropy()
 		{
 			c_long nbits;
 			c_long nbits2;

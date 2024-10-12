@@ -32,19 +32,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 
 		/********************************************************************/
 		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public OpusError Init(opus_int32 Fs, c_int channels)
-		{
-			return Opus_Decoder.Opus_Decoder_Init(opusDecoder, Fs, channels);
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
+		/// Allocates and initializes a decoder state.
+		///
+		/// Internally Opus stores data at 48000 Hz, so that should be the
+		/// default value for Fs. However, the decoder can efficiently decode
+		/// to buffers at 8, 12, 16, and 24 kHz so if for some reason the
+		/// caller cannot use data at the full sample rate, or knows the
+		/// compressed data doesn't use the full frequency range, it can
+		/// request decoding at a reduced rate. Likewise, the decoder is
+		/// capable of filling in either mono or interleaved stereo pcm
+		/// buffers, at the caller's request
 		/// </summary>
 		/********************************************************************/
 		public static OpusDecoder Create(opus_int32 Fs, c_int channels, out OpusError error)
@@ -60,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Decode an Opus packet
 		/// </summary>
 		/********************************************************************/
 		public c_int Decode(Pointer<byte> data, opus_int32 len, Pointer<opus_int16> pcm, c_int frame_size, bool decode_fec)
@@ -72,7 +69,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Decode an Opus packet with floating point output
+		/// </summary>
+		/********************************************************************/
+		public c_int Decode_Float(Pointer<byte> data, opus_int32 len, Pointer<c_float> pcm, c_int frame_size, bool decode_fec)
+		{
+			return Opus_Decoder.Opus_Decode_Float(opusDecoder, data, len, pcm, frame_size, decode_fec);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Perform a CTL function on an Opus decoder
 		/// </summary>
 		/********************************************************************/
 		public OpusError Decoder_Ctl_Get<T>(OpusControlGetRequest request, out T _out) where T : INumber<T>
@@ -84,7 +93,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Perform a CTL function on an Opus decoder
 		/// </summary>
 		/********************************************************************/
 		public OpusError Decoder_Ctl_Set(OpusControlSetRequest request, params object[] args)
@@ -96,7 +105,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Frees an OpusDecoder allocated by Create()
 		/// </summary>
 		/********************************************************************/
 		public void Destroy()
@@ -109,10 +118,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Gets the bandwidth of an Opus packet
 		/// </summary>
 		/********************************************************************/
-		public Bandwidth Packet_Get_Bandwidth(Pointer<byte> data)
+		public static Bandwidth Packet_Get_Bandwidth(Pointer<byte> data)
 		{
 			return Opus_Decoder.Opus_Packet_Get_Bandwidth(data);
 		}
@@ -121,10 +130,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Gets the number of samples per frame from an Opus packet
 		/// </summary>
 		/********************************************************************/
-		public c_int Packet_Get_Nb_Channels(Pointer<byte> data)
+		public static c_int Packet_Get_Samples_Per_Frame(Pointer<byte> data, opus_int32 Fs)
+		{
+			return Opus.Opus_Packet_Get_Samples_Per_Frame(data, Fs);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Gets the number of channels from an Opus packet
+		/// </summary>
+		/********************************************************************/
+		public static c_int Packet_Get_Nb_Channels(Pointer<byte> data)
 		{
 			return Opus_Decoder.Opus_Packet_Get_Nb_Channels(data);
 		}
@@ -133,10 +154,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Gets the number of frames in an Opus packet
 		/// </summary>
 		/********************************************************************/
-		public c_int Packet_Get_Nb_Frames(Pointer<byte> packet, opus_int32 len)
+		public static c_int Packet_Get_Nb_Frames(Pointer<byte> packet, opus_int32 len)
 		{
 			return Opus_Decoder.Opus_Packet_Get_Nb_Frames(packet, len);
 		}
@@ -145,10 +166,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Gets the number of samples of an Opus packet
 		/// </summary>
 		/********************************************************************/
-		public c_int Packet_Get_Nb_Samples(Pointer<byte> packet, opus_int32 len, opus_int32 Fs)
+		public static c_int Packet_Get_Nb_Samples(Pointer<byte> packet, opus_int32 len, opus_int32 Fs)
 		{
 			return Opus_Decoder.Opus_Packet_Get_Nb_Samples(packet, len, Fs);
 		}
@@ -157,7 +178,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Gets the number of samples of an Opus packet
 		/// </summary>
 		/********************************************************************/
 		public c_int Get_Nb_Samples(Pointer<byte> packet, opus_int32 len)

@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test.Celt
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test()
+		public void Test_Laplace()
 		{
 			c_int[] val = new c_int[10000], decay = new c_int[10000];
 			Pointer<byte> ptr = CMemory.MAlloc<byte>(Data_Size);

@@ -398,5 +398,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 
 			return count;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public static c_int Opus_Packet_Parse(Pointer<byte> data, opus_int32 len, out byte out_toc, Pointer<Pointer<byte>> frames, Pointer<opus_int16> size, out c_int payload_offset)
+		{
+			return Opus_Packet_Parse_Impl(data, len, false, out out_toc, frames, size, out payload_offset, out _, out _, out _);
+		}
 	}
 }

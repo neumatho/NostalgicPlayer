@@ -15,6 +15,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 		// Opus
 		/// <summary></summary>
 		Opus_Reset_State = 4028,
+		/// <summary></summary>
+		Opus_Set_Gain = 4034,
 
 		// Celt
 		/// <summary></summary>

@@ -26,7 +26,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test()
+		public void Test_OpusDecode()
 		{
 			double time = (DateTime.Now - new DateTime(1970, 1, 1)).TotalSeconds;
 			iseed = (opus_uint32)time ^ (((opus_uint32)Process.GetCurrentProcess().Id & 65535) << 16);
@@ -47,12 +47,11 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test
 		{
 			opus_int32[] fsv = [ 48000, 24000, 16000, 12000, 8000 ];
 			OpusDecoder[] dec = new OpusDecoder[5 * 2];
-			byte[] modes = new byte[4096];
 
 			opus_uint32 dec_final_range1 = 2;
 			opus_uint32 dec_final_range2 = 2;
 
-			byte[] packet = new byte[Max_Packet];
+			Pointer<byte> packet = CMemory.MAlloc<byte>(Max_Packet);
 
 			Pointer<c_short> outbuf_int = new Pointer<c_short>((Max_Frame_Samp + 16) * 2);
 
@@ -166,7 +165,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test
 				packet[1] = 255;
 				packet[2] = 255;
 
-				c_int err = dec[0].Packet_Get_Nb_Channels(packet);
+				c_int err = OpusDecoder.Packet_Get_Nb_Channels(packet);
 				if (err != ((i & 1) + 1))
 					Test_Failed();
 
@@ -248,6 +247,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test
 				err1 |= outbuf_int[i] != 32749;
 
 			Assert.IsFalse(err1);
+
+			CMemory.Free(outbuf_int);
+			CMemory.Free(packet);
 		}
 		#endregion
 	}

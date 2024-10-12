@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test.Silk
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test()
+		public void Test_LPC_Inv_Pred_Gain()
 		{
 			c_int arch = Cpu_Support.Opus_Select_Arch();
 
