@@ -195,7 +195,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			// Use up the remaining bits
 			foreach (bool prio in prioList)
 			{
-				for (c_int i = start; (i < end) && (bits_left >= C); i++)
+				for (c_int i = start; ((i < end) && (bits_left >= C)); i++)
 				{
 					if ((fine_quant[i] >= Constants.Max_Fine_Bits) || (fine_priority[i] != prio))
 						continue;

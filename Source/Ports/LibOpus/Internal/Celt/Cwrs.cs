@@ -476,7 +476,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			yy = Arch.MAC16_16(yy, val, val);
 
 			// n == 1
-			s = (c_int)(-_i);
+			s = -(c_int)(_i);
 			val = (opus_int16)((_k + s) ^ s);
 			_y[0, 1] = val;
 			yy = Arch.MAC16_16(yy, val, val);

@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
@@ -11,7 +12,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 	/// Is used to encapsulate the data and metadata belonging
 	/// to a single raw Ogg packet
 	/// </summary>
-	public class Ogg_Packet
+	public class Ogg_Packet : IDeepCloneable<Ogg_Packet>
 	{
 		/// <summary></summary>
 		public Pointer<byte> Packet;
@@ -33,5 +34,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 		/// layer) also knows about the gap
 		/// </summary>
 		public ogg_int64_t PacketNo;
+
+		/********************************************************************/
+		/// <summary>
+		/// Clone the current object into a new one
+		/// </summary>
+		/********************************************************************/
+		public Ogg_Packet MakeDeepClone()
+		{
+			return new Ogg_Packet
+			{
+				Packet = Packet.MakeDeepClone(),
+				Bytes = Bytes,
+				Bos = Bos,
+				Eos = Eos,
+				GranulePos = GranulePos,
+				PacketNo = PacketNo
+			};
+		}
 	}
 }

@@ -125,6 +125,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 		/// 
 		/// </summary>
 		/********************************************************************/
+		public c_int Packets()
+		{
+			return Framing.Ogg_Page_Packets(page);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public void Checksum_Set()
 		{
 			Framing.Ogg_Page_Checksum_Set(page);

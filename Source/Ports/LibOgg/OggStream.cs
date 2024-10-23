@@ -29,6 +29,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 
 		/********************************************************************/
 		/// <summary>
+		/// Return the current state
+		/// </summary>
+		/********************************************************************/
+		public Ogg_Stream_State State => state;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
@@ -135,6 +144,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 		public c_int Reset()
 		{
 			return Framing.Ogg_Stream_Reset(state);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public c_int Reset_SerialNo(c_int serialNo)
+		{
+			return Framing.Ogg_Stream_Reset_SerialNo(state, serialNo);
 		}
 
 

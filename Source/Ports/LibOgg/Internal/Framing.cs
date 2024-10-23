@@ -408,6 +408,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
+		public static c_int Ogg_Stream_Reset_SerialNo(Ogg_Stream_State os, c_int serialNo)
+		{
+			if (Ogg_Stream_Check(os) != 0)
+				return -1;
+
+			Ogg_Stream_Reset(os);
+			os.SerialNo = serialNo;
+
+			return 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public static c_int Ogg_Stream_PacketOut(Ogg_Stream_State os, out Ogg_Packet op)
 		{
 			if (Ogg_Stream_Check(os) != 0)
@@ -842,6 +860,42 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 							((ogg_uint32_t)og.Header[19] << 8) |
 							((ogg_uint32_t)og.Header[20] << 16) |
 							((ogg_uint32_t)og.Header[21] << 24));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Returns the number of packets that are completed on this page (if
+		/// the leading packet is begun on a previous page, but ends on this
+		/// page, it's counted.
+		///
+		/// NOTE:
+		/// If a page consists of a packet begun on a previous page, and a
+		/// new packet begun (but not completed) on this page, the return
+		/// will be:
+		///   ogg_page_packets(page)   ==1,
+		///   ogg_page_continued(page) !=0
+		///
+		/// If a page happens to be a single packet that was begun on a
+		/// previous page, and spans to the next page (in the case of a three
+		/// or more page packet), the return will be:
+		///   ogg_page_packets(page)   ==0,
+		///   ogg_page_continued(page) !=0
+		/// </summary>
+		/********************************************************************/
+		public static c_int Ogg_Page_Packets(Ogg_Page og)
+		{
+			c_int n = og.Header[26];
+			c_int count = 0;
+
+			for (c_int i = 0; i < n; i++)
+			{
+				if (og.Header[27 + i] < 255)
+					count++;
+			}
+
+			return count;
 		}
 
 

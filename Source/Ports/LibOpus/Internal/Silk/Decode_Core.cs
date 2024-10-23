@@ -205,7 +205,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 					}
 
 					// Add prediction to LPC excitation
-					sLPC_Q14[Constants.Max_Lpc_Order + i] = Macros.Silk_ADD_SAT32((opus_uint32)pres_Q14[i], (opus_uint32)SigProc_Fix.Silk_LSHIFT_SAT32(LPC_pred_Q10, 4));
+					sLPC_Q14[Constants.Max_Lpc_Order + i] = Macros.Silk_ADD_SAT32(pres_Q14[i], SigProc_Fix.Silk_LSHIFT_SAT32(LPC_pred_Q10, 4));
 
 					// Scale with gain
 					pxq[i] = (opus_int16)SigProc_Fix.Silk_SAT16(SigProc_Fix.Silk_RSHIFT_ROUND(Macros.Silk_SMULWW(sLPC_Q14[Constants.Max_Lpc_Order + i], Gain_Q10), 8));
@@ -219,7 +219,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 			}
 
 			// Save LPC state
-			SigProc_Fix.Silk_MemCpy<opus_int32>(psDec.sLpc_Q14_buf, sLPC_Q14, Constants.Max_Lpc_Order);
+			SigProc_Fix.Silk_MemCpy(psDec.sLpc_Q14_buf, sLPC_Q14, Constants.Max_Lpc_Order);
 		}
 	}
 }

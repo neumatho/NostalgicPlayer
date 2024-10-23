@@ -34,8 +34,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				celt_norm x2 = Xptr[stride];
 
 				Xptr[stride] = Arch.EXTRACT16(Arch.PSHR32(Arch.MAC16_16(Arch.MULT16_16(c, x2), s, x1), 15));
-				Xptr[0] = Arch.EXTRACT16(Arch.PSHR32(Arch.MAC16_16(Arch.MULT16_16(c, x1), ms, x2), 15));
-				Xptr++;
+				Xptr[0, 1] = Arch.EXTRACT16(Arch.PSHR32(Arch.MAC16_16(Arch.MULT16_16(c, x1), ms, x2), 15));
 			}
 
 			Xptr = X + len - 2 * stride - 1;
@@ -46,8 +45,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				celt_norm x2 = Xptr[stride];
 
 				Xptr[stride] = Arch.EXTRACT16(Arch.PSHR32(Arch.MAC16_16(Arch.MULT16_16(c, x2), s, x1), 15));
-				Xptr[0] = Arch.EXTRACT16(Arch.PSHR32(Arch.MAC16_16(Arch.MULT16_16(c, x1), ms, x2), 15));
-				Xptr--;
+				Xptr[0, -1] = Arch.EXTRACT16(Arch.PSHR32(Arch.MAC16_16(Arch.MULT16_16(c, x1), ms, x2), 15));
 			}
 		}
 
@@ -392,16 +390,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/********************************************************************/
 		public static void Renormalise_Vector(Pointer<celt_norm> X, c_int N, opus_val16 gain, c_int arch)
 		{
-			opus_val32 e = Constants.Epsilon + Pitch.Celt_Inner_Prod(X, X, N, arch);
-			opus_val32 t = Arch.VSHR32(e, 0/*2 * (k - 7)*/);
+			opus_val32 E = Constants.Epsilon + Pitch.Celt_Inner_Prod(X, X, N, arch);
+			opus_val32 t = Arch.VSHR32(E, 0/*2 * (k - 7)*/);
 			opus_val16 g = Arch.MULT16_16_P15(MathOps.Celt_Rsqrt_Norm(t), gain);
 
 			Pointer<celt_norm> xptr = X;
 			for (c_int i = 0; i < N; i++)
-			{
-				xptr[0] = Arch.EXTRACT16(Arch.PSHR32(Arch.MULT16_16(g, xptr[0]), 0/*k + 1*/));
-				xptr++;
-			}
+				xptr[0, 1] = Arch.EXTRACT16(Arch.PSHR32(Arch.MULT16_16(g, xptr[0]), 0/*k + 1*/));
 		}
 
 

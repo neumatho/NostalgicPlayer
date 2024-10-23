@@ -70,14 +70,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 				{
 					opus_int32 tmp1 = A_QA[n];
 					opus_int32 tmp2 = A_QA[k - n - 1];
-					opus_int64 tmp64 = SigProc_Fix.Silk_RSHIFT_ROUND64(SigProc_Fix.Silk_SMULL(Macros.Silk_SUB_SAT32((opus_uint32)tmp1, (opus_uint32)MUL32_FRAC_Q(tmp2, rc_Q31, 31)), rc_mult2), mult2Q);
+					opus_int64 tmp64 = SigProc_Fix.Silk_RSHIFT_ROUND64(SigProc_Fix.Silk_SMULL(Macros.Silk_SUB_SAT32(tmp1, MUL32_FRAC_Q(tmp2, rc_Q31, 31)), rc_mult2), mult2Q);
 
 					if ((tmp64 > opus_int32.MaxValue) || (tmp64 < opus_int32.MinValue))
 						return 0;
 
 					A_QA[n] = (opus_int32)tmp64;
 
-					tmp64 = SigProc_Fix.Silk_RSHIFT_ROUND64(SigProc_Fix.Silk_SMULL(Macros.Silk_SUB_SAT32((opus_uint32)tmp2, (opus_uint32)MUL32_FRAC_Q(tmp1, rc_Q31, 31)), rc_mult2), mult2Q);
+					tmp64 = SigProc_Fix.Silk_RSHIFT_ROUND64(SigProc_Fix.Silk_SMULL(Macros.Silk_SUB_SAT32(tmp2, MUL32_FRAC_Q(tmp1, rc_Q31, 31)), rc_mult2), mult2Q);
 
 					if ((tmp64 > opus_int32.MaxValue) || (tmp64 < opus_int32.MinValue))
 						return 0;

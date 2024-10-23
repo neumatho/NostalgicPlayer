@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 	/// <summary>
 	/// Contains the current encode/decode state of a logical Ogg bitstream
 	/// </summary>
-	internal class Ogg_Stream_State
+	public class Ogg_Stream_State
 	{
 		/// <summary>
 		/// Bytes from packet bodies
@@ -85,6 +85,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 		/// layer) also knows about the gap
 		/// </summary>
 		public ogg_int64_t PacketNo;
+
+		/// <summary></summary>
 		public ogg_int64_t GranulePos;
 
 		/********************************************************************/
@@ -92,7 +94,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Clear()
+		internal void Clear()
 		{
 			BodyData.SetToNull();
 			BodyStorage = 0;

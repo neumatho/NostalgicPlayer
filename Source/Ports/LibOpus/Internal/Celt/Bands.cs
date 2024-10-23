@@ -104,10 +104,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			Pointer<celt_norm> x = X + M * eBands[start];
 
 			for (c_int i = 0; i < M * eBands[start]; i++)
-			{
-				f[0] = 0;
-				f++;
-			}
+				f[0, 1] = 0;
 
 			for (c_int i = start; i < end; i++)
 			{
@@ -118,7 +115,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 				do
 				{
-					f[0, 1] = Arch.SHL32(Arch.MULT16_16(x[0, 1], g), 0/*shift*/);
+					f[0, 1] = Arch.SHR32(Arch.MULT16_16(x[0, 1], g), 0/*shift*/);
 				}
 				while (++j < band_end);
 			}
@@ -477,7 +474,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				itheta = Vq.Stereo_Itheta(X, Y, stereo, N, ctx.arch);
 			}
 
-			opus_int32 tell = EntCode.Ec_Tell(ec);
+			opus_int32 tell = (opus_int32)EntCode.Ec_Tell_Frac(ec);
 
 			if (qn != 1)
 			{
@@ -1030,7 +1027,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			if (N == 1)
 				return Quant_Band_N1(ctx, X, Y, lowband_out);
 
-			c_int origFill = fill;
+			c_int orig_fill = fill;
 
 			Compute_Theta(ctx, out Split_Ctx sctx, X, Y, N, ref b, B, B, LM, true, ref fill);
 
@@ -1080,7 +1077,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 				// We use orig_fill here because we want to fold the side, but if
 				// itheta==16384, we'll have cleared the low bits of fill
-				cm = Quant_Band(ctx, x2, N, mbits, B, lowband, LM, lowband_out, Constants.Q15One, lowband_scratch, origFill);
+				cm = Quant_Band(ctx, x2, N, mbits, B, lowband, LM, lowband_out, Constants.Q15One, lowband_scratch, orig_fill);
 
 				// We don't split N=2 bands, so cm is either 1 or 0 (for a fold-collapse),
 				// and there's no need to worry about mixing with the other channel
@@ -1188,7 +1185,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/********************************************************************/
 		public static void Quant_All_Bands(bool encode, CeltMode m, c_int start, c_int end, Pointer<celt_norm> X_, Pointer<celt_norm> Y_, Pointer<byte> collapse_masks,
 											Pointer<celt_ener> bandE, Pointer<c_int> pulses, c_int shortBlocks, Spread spread, bool dual_stereo, c_int intensity,
-											Pointer<c_int> tf_res, opus_int32 total_bits, opus_int32 balance, Ec_Ctx ec, c_int LM, c_int codedBands,
+											Pointer<c_int> tf_res, opus_int32 total_bits, opus_int32 balance, ref Ec_Ctx ec, c_int LM, c_int codedBands,
 											ref opus_uint32 seed, c_int complexity, c_int arch, bool disable_inv)
 		{
 			Pointer<opus_int16> eBands = m.eBands;
@@ -1301,11 +1298,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 					if (!Y_.IsNull)
 						Y = norm;
 
-					lowband_scratch = null;
+					lowband_scratch.SetToNull();
 				}
 
 				if (last && !theta_rdo)
-					lowband_scratch = null;
+					lowband_scratch.SetToNull();
 
 				// Get a conservative estimate of the collapse_mask's for the bands we're
 				// going to be folding from
@@ -1400,7 +1397,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 							Band_Ctx ctx_save2 = ctx.MakeDeepClone();
 
 							Memory.Opus_Copy(X_save2, X, N);
-							Memory.Opus_Copy(Y_save, Y, N);
+							Memory.Opus_Copy(Y_save2, Y, N);
 
 							if (!last)
 								Memory.Opus_Copy(norm_save2, norm + M * eBands[i] - norm_offset, N);

@@ -64,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 					lo = mid;
 			}
 
-			if (bits - (lo == 0 ? -1 : cache[lo]) <= (cache[hi] - bits))
+			if ((bits - (lo == 0 ? -1 : cache[lo])) <= (cache[hi] - bits))
 				return lo;
 			else
 				return hi;
@@ -496,6 +496,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 				if (lo > 0)
 					bits1j += offsets[j];
+
+				bits2j += offsets[j];
 
 				if (offsets[j] > 0)
 					skip_start = j;

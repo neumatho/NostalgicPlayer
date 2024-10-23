@@ -16,6 +16,7 @@ NostalgicPlayer is licensed under the <a href="https://github.com/neumatho/Nosta
 * libFLAC (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibFlac/LICENSE">BSD License</a>)
 * libOgg (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibOgg/LICENSE">BSD License</a>)
 * libOpus (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibOpus/LICENSE">BSD License</a>)
+* libOpusFile (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibOpusFile/LICENSE">BSD License</a>)
 * libXmp (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibXmp/LICENSE">MIT License</a>)
 * Parts of the MO3 converter based on OpenMPT (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Agents/ModuleConverters/Mo3Converter/LICENSE">BSD-3-Clause License</a>)
 * Mpg123 (<a href="https://github.com/neumatho/NostalgicPlayer/blob/main/Source/Ports/LibMpg123/LICENSE">GNU Lesser General Public License version 2.1</a>)
@@ -142,6 +143,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | OggMod | .oxm | | Xmp |
 | Oktalyzer | .okt / .okta | | Oktalyzer |
 | OpenMPT MOD | .mod | | Xmp |
+| Opus | .opus | | Opus |
 | Perfect Song 1 | .pf1 | ProWizard | ModTracker |
 | Perfect Song 2 | .pf2 | ProWizard | ModTracker |
 | Pha Packer | .pha | ProWizard | ModTracker |

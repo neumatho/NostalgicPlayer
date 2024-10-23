@@ -10,15 +10,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 	/// <summary>
 	/// 
 	/// </summary>
-	internal class Ogg_Sync_State
+	public class Ogg_Sync_State
 	{
+		/// <summary></summary>
 		public Pointer<byte> Data;
+		/// <summary></summary>
 		public c_int Storage;
+		/// <summary></summary>
 		public c_int Fill;
+		/// <summary></summary>
 		public c_int Returned;
 
+		/// <summary></summary>
 		public bool Unsynced;
+		/// <summary></summary>
 		public c_int HeaderBytes;
+		/// <summary></summary>
 		public c_int BodyBytes;
 
 		/********************************************************************/
@@ -26,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Clear()
+		internal void Clear()
 		{
 			Data.SetToNull();
 			Storage = 0;

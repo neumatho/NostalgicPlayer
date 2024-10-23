@@ -345,7 +345,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 					LPC_pred_Q10 = Macros.Silk_SMLAWB(LPC_pred_Q10, sLPC_Q14_ptr[Constants.Max_Lpc_Order + i - j - 1], A_Q12[j]);
 
 				// Add prediction to LPC excitation
-				sLPC_Q14_ptr[Constants.Max_Lpc_Order + i] = Macros.Silk_ADD_SAT32((opus_uint32)sLPC_Q14_ptr[Constants.Max_Lpc_Order + i], (opus_uint32)SigProc_Fix.Silk_LSHIFT_SAT32(LPC_pred_Q10, 4));
+				sLPC_Q14_ptr[Constants.Max_Lpc_Order + i] = Macros.Silk_ADD_SAT32(sLPC_Q14_ptr[Constants.Max_Lpc_Order + i], SigProc_Fix.Silk_LSHIFT_SAT32(LPC_pred_Q10, 4));
 
 				// Scale with Gain
 				frame[i] = (opus_int16)SigProc_Fix.Silk_SAT16(SigProc_Fix.Silk_SAT16(SigProc_Fix.Silk_RSHIFT_ROUND(Macros.Silk_SMULWW(sLPC_Q14_ptr[Constants.Max_Lpc_Order + i], prevGain_Q10[1]), 8)));

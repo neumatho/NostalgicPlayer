@@ -35,8 +35,14 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Pointer<T> Realloc<T>(Pointer<T> ptr, int newSize)
 		{
+			if (ptr.IsNull)
+				return MAlloc<T>(newSize);
+
+			if (newSize <= ptr.Length)
+				return ptr;
+
 			T[] newArray = new T[newSize];
-			Array.Copy(ptr.Buffer, ptr.Offset, newArray, 0, Math.Min(newSize, ptr.Buffer.Length - ptr.Offset));
+			Array.Copy(ptr.Buffer, ptr.Offset, newArray, 0, Math.Min(newSize, ptr.Length));
 
 			return new Pointer<T>(newArray);
 		}
@@ -89,7 +95,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void MemCpy<T>(T[] dest, string str, int length)
 		{
-			Array.Copy(Encoding.ASCII.GetBytes(str), dest, length);
+			Array.Copy(Encoding.Latin1.GetBytes(str), dest, length);
 		}
 
 
@@ -122,9 +128,23 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static int MemCmp(Pointer<byte> ptr1, string compareString, int length)
+		public static int MemCmp(Pointer<byte> ptr, string compareString, int length)
 		{
-			return MemCmp(ptr1, Encoding.ASCII.GetBytes(compareString), length);
+			return MemCmp(ptr, Encoding.Latin1.GetBytes(compareString), length);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static int StrCmp(Pointer<byte> ptr, string compareString)
+		{
+			byte[] strBuf = Encoding.Latin1.GetBytes(compareString);
+			return MemCmp(ptr, strBuf, strBuf.Length);
 		}
 
 
@@ -150,7 +170,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static Pointer<T> MemChr<T>(Pointer<T> ptr, T ch, int count)
 		{
-			int searchLength = Math.Min(count, ptr.Buffer.Length - ptr.Offset);
+			int searchLength = Math.Min(count, ptr.Length);
 
 			for (int i = 0; i < searchLength; i++)
 			{

@@ -555,7 +555,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static opus_val16 SCALEOUT(opus_val16 a)
 		{
-			return a * Constants.Celt_Sig_Scale;
+			return a * (1.0f / Constants.Celt_Sig_Scale);
 		}
 
 

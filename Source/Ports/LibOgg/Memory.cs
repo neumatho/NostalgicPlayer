@@ -11,7 +11,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 	/// <summary>
 	/// Different memory methods
 	/// </summary>
-	internal static class Memory
+	public static class Memory
 	{
 		/********************************************************************/
 		/// <summary>

@@ -23,7 +23,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			{
 				for (c_int j = 0; j < 4; j++)
 				{
-					if ((Fs == Static_Modes.Static_Mode_List[i].Fs) && ((frame_size << j) == Static_Modes.Static_Mode_List[i].shortMdctSize * Static_Modes.Static_Mode_List[i].nbShortMdcts))
+					if ((Fs == Static_Modes.Static_Mode_List[i].Fs) && ((frame_size << j) == (Static_Modes.Static_Mode_List[i].shortMdctSize * Static_Modes.Static_Mode_List[i].nbShortMdcts)))
 					{
 						error = OpusError.Ok;
 

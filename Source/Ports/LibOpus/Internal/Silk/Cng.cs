@@ -175,7 +175,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 					}
 
 					// Update states
-					CNG_sig_Q14[Constants.Max_Lpc_Order + i] = Macros.Silk_ADD_SAT32((opus_uint32)CNG_sig_Q14[Constants.Max_Lpc_Order + i], (opus_uint32)SigProc_Fix.Silk_LSHIFT_SAT32(LPC_pred_Q10, 4));
+					CNG_sig_Q14[Constants.Max_Lpc_Order + i] = Macros.Silk_ADD_SAT32(CNG_sig_Q14[Constants.Max_Lpc_Order + i], SigProc_Fix.Silk_LSHIFT_SAT32(LPC_pred_Q10, 4));
 
 					// Scale with Gain and add to input signal
 					frame[i] = SigProc_Fix.Silk_ADD_SAT16(frame[i], SigProc_Fix.Silk_SAT16(SigProc_Fix.Silk_RSHIFT_ROUND(Macros.Silk_SMULWW(CNG_sig_Q14[Constants.Max_Lpc_Order + i], gain_Q10), 8)));

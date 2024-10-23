@@ -201,6 +201,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			for (c_int i = 0; i < N; i++)
 			{
 				Fout = Fout_beg.Slice(i * mm);
+
 				Span<Kiss_Fft_Cpx> Fout0 = Fout;
 				Span<Kiss_Fft_Cpx> Fout1 = Fout0.Slice(m);
 				Span<Kiss_Fft_Cpx> Fout2 = Fout0.Slice(2 * m);

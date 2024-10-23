@@ -1138,6 +1138,14 @@
             <uap:DisplayName>IFF-SMUS</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="opusfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-opus">.opus</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Opus</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

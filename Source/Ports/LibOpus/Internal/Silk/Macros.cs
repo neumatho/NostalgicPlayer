@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static opus_int32 Silk_SMULWB(opus_int32 a32, opus_int32 b32)
 		{
-			return (opus_int32)(((a32 * (opus_int64)((opus_int16)b32))) >> 16);
+			return (opus_int32)((a32 * (opus_int64)((opus_int16)b32)) >> 16);
 		}
 
 
@@ -98,11 +98,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static opus_int32 Silk_ADD_SAT32(opus_uint32 a, opus_uint32 b)
+		public static opus_int32 Silk_ADD_SAT32(opus_int32 a, opus_int32 b)
 		{
-			return ((a + b) & 0x80000000) == 0 ?
-				(a & (b ^ 0x80000000) & 0x80000000) != 0 ? opus_int32.MinValue : (opus_int32)(a + b) :
-				((a | b) & 0x80000000) == 0 ? opus_int32.MaxValue : (opus_int32)(a + b);
+			return (((opus_uint32)a + (opus_uint32)b) & 0x80000000) == 0 ?
+				(((a & b) & 0x80000000) != 0 ? opus_int32.MinValue : a + b) :
+				(((a | b) & 0x80000000) == 0 ? opus_int32.MaxValue : a + b);
 		}
 
 
@@ -113,11 +113,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static opus_int32 Silk_SUB_SAT32(opus_uint32 a, opus_uint32 b)
+		public static opus_int32 Silk_SUB_SAT32(opus_int32 a, opus_int32 b)
 		{
-			return ((a - b) & 0x80000000) == 0 ?
-				(a & (b ^ 0x80000000) & 0x80000000) != 0 ? opus_int32.MinValue : (opus_int32)(a - b) :
-				((a ^ 0x80000000) & b & 0x80000000) != 0 ? opus_int32.MaxValue : (opus_int32)(a - b);
+			return (((opus_uint32)a - (opus_uint32)b) & 0x80000000) == 0 ?
+				((a & (b ^ 0x80000000) & 0x80000000) != 0 ? opus_int32.MinValue : a - b) :
+				(((a ^ 0x80000000) & b & 0x80000000) != 0 ? opus_int32.MaxValue : a - b);
 		}
 
 

@@ -1,0 +1,273 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="IDS_OPUS_DESCRIPTION" xml:space="preserve">
+    <value>Based on libOpus by Xiph.Org Foundation
+Converted to C# by Thomas Neumann.
+
+Opus is a totally open, royalty-free, highly versatile audio codec. Opus is unmatched for interactive speech and music transmission over the Internet, but is also intended for storage and streaming applications. It is standardized by the Internet Engineering Task Force (IETF) as RFC 6716 which incorporated technology from Skype’s SILK codec and Xiph.Org’s CELT codec.</value>
+  </data>
+  <data name="IDS_OPUS_DESCRIPTION_AGENT1" xml:space="preserve">
+    <value>Based on libOpus by Xiph.Org Foundation
+Converted to C# by Thomas Neumann.
+
+Opus is the successor of OggVorbis, MP3 and other lossless audio compression algorithms. It is good to encode both speech and music, because it implements two different algorithms.</value>
+  </data>
+  <data name="IDS_OPUS_ERR_BAD_HEADER" xml:space="preserve">
+    <value>A required header packet was not properly formatted, contained illegal values, or was missing altogether</value>
+  </data>
+  <data name="IDS_OPUS_ERR_BAD_LINK" xml:space="preserve">
+    <value>We failed to find data we had seen before, or the bitstream structure was sufficiently malformed that seeking to the target destination was impossible</value>
+  </data>
+  <data name="IDS_OPUS_ERR_BAD_PACKET" xml:space="preserve">
+    <value>An audio packet failed to decode properly</value>
+  </data>
+  <data name="IDS_OPUS_ERR_BAD_TIMESTAMP" xml:space="preserve">
+    <value>The first or last granule position of a link failed basic validity checks</value>
+  </data>
+  <data name="IDS_OPUS_ERR_FAULT" xml:space="preserve">
+    <value>Internal library error was encountered</value>
+  </data>
+  <data name="IDS_OPUS_ERR_HOLE" xml:space="preserve">
+    <value>There was a hole in the page sequence numbers (e.g., a page was corrupt or missing)</value>
+  </data>
+  <data name="IDS_OPUS_ERR_ILLEGAL_CHANNELS" xml:space="preserve">
+    <value>Only mono and stereo samples are supported at the moment. You tried to play a sample that uses {0} channels.</value>
+  </data>
+  <data name="IDS_OPUS_ERR_IMPL" xml:space="preserve">
+    <value>The stream used a feature that is not implemented, such as an unsupported channel family</value>
+  </data>
+  <data name="IDS_OPUS_ERR_INVAL" xml:space="preserve">
+    <value>One or more parameters to a function were invalid</value>
+  </data>
+  <data name="IDS_OPUS_ERR_NOT_FORMAT" xml:space="preserve">
+    <value>The stream contained a link that did not have any logical Opus streams in it</value>
+  </data>
+  <data name="IDS_OPUS_ERR_NO_SEEK" xml:space="preserve">
+    <value>An operation that requires seeking was requested on an unseekable stream</value>
+  </data>
+  <data name="IDS_OPUS_ERR_READ" xml:space="preserve">
+    <value>An underlying read, seek, or tell operation failed when it should have succeeded</value>
+  </data>
+  <data name="IDS_OPUS_ERR_UNKNOWN" xml:space="preserve">
+    <value>Unknown error</value>
+  </data>
+  <data name="IDS_OPUS_ERR_VERSION" xml:space="preserve">
+    <value>The ID header contained an unrecognized version number</value>
+  </data>
+  <data name="IDS_OPUS_INFODESCLINE0" xml:space="preserve">
+    <value>Track number:</value>
+  </data>
+  <data name="IDS_OPUS_INFODESCLINE1" xml:space="preserve">
+    <value>Album:</value>
+  </data>
+  <data name="IDS_OPUS_INFODESCLINE2" xml:space="preserve">
+    <value>Genre:</value>
+  </data>
+  <data name="IDS_OPUS_INFODESCLINE3" xml:space="preserve">
+    <value>Organization:</value>
+  </data>
+  <data name="IDS_OPUS_INFODESCLINE4" xml:space="preserve">
+    <value>Copyright:</value>
+  </data>
+  <data name="IDS_OPUS_INFODESCLINE5" xml:space="preserve">
+    <value>Description:</value>
+  </data>
+  <data name="IDS_OPUS_INFODESCLINE6" xml:space="preserve">
+    <value>Vendor:</value>
+  </data>
+  <data name="IDS_OPUS_INFODESCLINE7" xml:space="preserve">
+    <value>Bit rate:</value>
+  </data>
+  <data name="IDS_OPUS_INFO_NONE" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="IDS_OPUS_INFO_UNKNOWN" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="IDS_OPUS_NAME" xml:space="preserve">
+    <value>Opus</value>
+  </data>
+  <data name="IDS_OPUS_NAME_AGENT1" xml:space="preserve">
+    <value>Opus</value>
+  </data>
+  <data name="IDS_OPUS_PICTURE_TYPE_ARTIST" xml:space="preserve">
+    <value>Artist</value>
+  </data>
+  <data name="IDS_OPUS_PICTURE_TYPE_BACK_COVER" xml:space="preserve">
+    <value>Back cover</value>
+  </data>
+  <data name="IDS_OPUS_PICTURE_TYPE_BAND" xml:space="preserve">
+    <value>Band</value>
+  </data>
+  <data name="IDS_OPUS_PICTURE_TYPE_BAND_LOGO" xml:space="preserve">
+    <value>Band logo</value>
+  </data>
+  <data name="IDS_OPUS_PICTURE_TYPE_COMPOSER" xml:space="preserve">
+    <value>Composer</value>
+  </data>
+  <data name="IDS_OPUS_PICTURE_TYPE_CONDUCTOR" xml:space="preserve">
+    <value>Conductor</value>
+  </data>
+  <data name="IDS_OPUS_PICTURE_TYPE_DURING_PERFORMANCE" xml:space="preserve">
+    <value>During performance</value>
+  </data>
+  <data name="IDS_OPUS_PICTURE_TYPE_DURING_RECORDING" xml:space="preserve">
+    <value>During recording</value>
+  </data>
+  <data name="IDS_OPUS_PICTURE_TYPE_FILE_ICON" xml:space="preserve">
+    <value>File icon</value>
+  </data>
+  <data name="IDS_OPUS_PICTURE_TYPE_FILE_ICON_STANDARD" xml:space="preserve">
+    <value>Icon</value>
+  </data>
+  <data name="IDS_OPUS_PICTURE_TYPE_FISH" xml:space="preserve">
+    <value>Fish</value>
+  </data>
+  <data name="IDS_OPUS_PICTURE_TYPE_FRONT_COVER" xml:space="preserve">
+    <value>Front cover</value>
+  </data>
+  <data name="IDS_OPUS_PICTURE_TYPE_ILLUSTRATION" xml:space="preserve">
+    <value>Illustration</value>
+  </data>
+  <data name="IDS_OPUS_PICTURE_TYPE_LEAD_ARTIST" xml:space="preserve">
+    <value>Lead artist</value>
+  </data>
+  <data name="IDS_OPUS_PICTURE_TYPE_LEAFLET_PAGE" xml:space="preserve">
+    <value>Leaflet page</value>
+  </data>
+  <data name="IDS_OPUS_PICTURE_TYPE_LYRICIST" xml:space="preserve">
+    <value>Lyricist</value>
+  </data>
+  <data name="IDS_OPUS_PICTURE_TYPE_MEDIA" xml:space="preserve">
+    <value>Media</value>
+  </data>
+  <data name="IDS_OPUS_PICTURE_TYPE_OTHER" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="IDS_OPUS_PICTURE_TYPE_PUBLISHER_LOGO" xml:space="preserve">
+    <value>Publisher logo</value>
+  </data>
+  <data name="IDS_OPUS_PICTURE_TYPE_RECORDING_LOCATION" xml:space="preserve">
+    <value>Recording location</value>
+  </data>
+  <data name="IDS_OPUS_PICTURE_TYPE_VIDEO_SCREEN_CAPTURE" xml:space="preserve">
+    <value>Video screen capture</value>
+  </data>
+</root>

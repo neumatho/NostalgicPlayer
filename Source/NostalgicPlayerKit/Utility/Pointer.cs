@@ -74,6 +74,15 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 		/********************************************************************/
 		/// <summary>
+		/// Return the length of the buffer
+		/// </summary>
+		/********************************************************************/
+		public int Length => Buffer.Length - Offset;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Clear the pointer
 		/// </summary>
 		/********************************************************************/
@@ -101,7 +110,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/********************************************************************/
 		public Span<T> AsSpan()
 		{
-			return new Span<T>(Buffer, Offset, Buffer.Length - Offset);
+			return new Span<T>(Buffer, Offset, Length);
 		}
 
 
@@ -113,7 +122,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/********************************************************************/
 		public void Clear()
 		{
-			Array.Clear(Buffer, Offset, Buffer.Length - Offset);
+			Array.Clear(Buffer, Offset, Length);
 		}
 
 

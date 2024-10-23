@@ -888,7 +888,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			byte[] collapse_masks = new byte[C * nbEBands];
 			Pointer<celt_norm> X = new Pointer<celt_norm>(C * N);		// < Interleaved normalised MDCTs
 
-			Bands.Quant_All_Bands(false, mode, start, end, X, C == 2 ? X + N : null, collapse_masks, null, pulses, shortBlocks, spread_decision, dual_stereo, intensity, tf_res, len * (8 << Constants.BitRes) - anti_collapse_rsv, balance, dec, LM, codedBands, ref st.rng, 0, st.arch, st.disable_inv);
+			Bands.Quant_All_Bands(false, mode, start, end, X, C == 2 ? X + N : null, collapse_masks, null, pulses, shortBlocks, spread_decision, dual_stereo, intensity, tf_res, len * (8 << Constants.BitRes) - anti_collapse_rsv, balance, ref dec, LM, codedBands, ref st.rng, 0, st.arch, st.disable_inv);
 
 			if (anti_collapse_rsv > 0)
 				anti_collapse_on = EntDec.Ec_Dec_Bits(dec, 1) != 0;

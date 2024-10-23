@@ -199,8 +199,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 				for (c_int i = 0; i < N4; i++)
 				{
-					c_int rev = bitrev[0];
-					bitrev++;
+					c_int rev = bitrev[0, 1];
 
 					kiss_fft_scalar yr = Arch.ADD32_ovflw(Kiss_Fft_Guts.S_MUL(xp2[0], t[i]), Kiss_Fft_Guts.S_MUL(xp1[0], t[N4 + i]));
 					kiss_fft_scalar yi = Arch.SUB32_ovflw(Kiss_Fft_Guts.S_MUL(xp1[0], t[i]), Kiss_Fft_Guts.S_MUL(xp2[0], t[N4 + i]));
@@ -226,7 +225,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 				// Loop to (N4+1)>>1 to handle odd N4. When N4 is odd, the
 				// middle pair will be computed twice
-				for (c_int i = 0; i < (N4 + 1) >> 1; i++)
+				for (c_int i = 0; i < ((N4 + 1) >> 1); i++)
 				{
 					// We swap real and imag because we're using an FFT instead of an IFFT
 					kiss_fft_scalar re = yp0[1];
@@ -271,10 +270,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 					kiss_fft_scalar x1 = xp1[0];
 					kiss_fft_scalar x2 = yp1[0];
 
-					yp1[0] = Arch.SUB32_ovflw(Arch.MULT16_32_Q15(wp2[0], x2), Arch.MULT16_32_Q15(wp1[0], x1));
-					yp1++;
-					xp1[0] = Arch.ADD32_ovflw(Arch.MULT16_32_Q15(wp1[0], x2), Arch.MULT16_32_Q15(wp2[0], x1));
-					xp1--;
+					yp1[0, 1] = Arch.SUB32_ovflw(Arch.MULT16_32_Q15(wp2[0], x2), Arch.MULT16_32_Q15(wp1[0], x1));
+					xp1[0, -1] = Arch.ADD32_ovflw(Arch.MULT16_32_Q15(wp1[0], x2), Arch.MULT16_32_Q15(wp2[0], x1));
 
 					wp1++;
 					wp2--;

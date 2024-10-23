@@ -18,6 +18,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 		/// 
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static T Opus_Alloc<T>() where T : new()
 		{
 			return new T();
@@ -30,6 +31,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 		/// 
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void Opus_Free<T>(T ptr)
 		{
 		}
