@@ -209,6 +209,12 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 				return false;
 			}
 
+			if (streamInfo.Channels > 2)
+			{
+				errorMessage = string.Format(Resources.IDS_FLAC_ERR_ILLEGAL_CHANNELS, streamInfo.Channels);
+				return false;
+			}
+
 			formatInfo = new LoadSampleFormatInfo
 			{
 				Bits = (int)streamInfo.Bits_Per_Sample,

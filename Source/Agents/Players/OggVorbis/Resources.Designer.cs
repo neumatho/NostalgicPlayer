@@ -94,6 +94,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Only mono and stereo samples are supported at the moment. You tried to play a sample that uses {0} channels..
+        /// </summary>
+        internal static string IDS_OGG_ERR_ILLEGAL_CHANNELS {
+            get {
+                return ResourceManager.GetString("IDS_OGG_ERR_ILLEGAL_CHANNELS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to None.
         /// </summary>
         internal static string IDS_OGG_INFO_NONE {

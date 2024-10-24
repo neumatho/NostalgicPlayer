@@ -137,6 +137,9 @@ FLAC stands out as the fastest and most widely supported lossless audio codec, a
   <data name="IDS_FLAC_ERR_ENCODER_WRITE_SAMPLES_FAILED" xml:space="preserve">
     <value>Could not encode sample buffer</value>
   </data>
+  <data name="IDS_FLAC_ERR_ILLEGAL_CHANNELS" xml:space="preserve">
+    <value>Only mono and stereo samples are supported at the moment. You tried to play a sample that uses {0} channels.</value>
+  </data>
   <data name="IDS_FLAC_INFODESCLINE0" xml:space="preserve">
     <value>Vendor:</value>
   </data>

@@ -132,6 +132,9 @@ NostalgicPlayer agent by Thomas Neumann.
 
 This player can play the audio format Ogg Vorbis. The format is an open standard / open source project created by Xiphophorus. The format is in the same familly as MP3 and WMA files, which means it's a packed sample format.</value>
   </data>
+  <data name="IDS_OGG_ERR_ILLEGAL_CHANNELS" xml:space="preserve">
+    <value>Only mono and stereo samples are supported at the moment. You tried to play a sample that uses {0} channels.</value>
+  </data>
   <data name="IDS_OGG_INFODESCLINE0" xml:space="preserve">
     <value>Track number:</value>
   </data>

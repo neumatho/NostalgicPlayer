@@ -247,8 +247,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 			reader = new VorbisReader(moduleStream);
 
 			// Remember the frequency to play with
-			channels = reader.Channels;
 			frequency = reader.SampleRate;
+			channels = reader.Channels;
+
+			if (channels > 2)
+			{
+				errorMessage = string.Format(Resources.IDS_OGG_ERR_ILLEGAL_CHANNELS, channels);
+				return false;
+			}
 
 			// Allocate buffers
 			inputBuffer = new float[InputBufSize];
