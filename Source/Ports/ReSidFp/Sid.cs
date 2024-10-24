@@ -392,8 +392,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/********************************************************************/
 		public void Input(int value)
 		{
-			filter6581.Input(value);
-			filter8580.Input(value);
+			filter6581.Input((short)value);
+			filter8580.Input((short)value);
 		}
 
 

@@ -107,11 +107,11 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/********************************************************************/
 		protected Filter(FilterModelConfig fmc)
 		{
-			this.fmc = fmc;
 			mixer = fmc.GetMixer();
 			summer = fmc.GetSummer();
 			resonance = fmc.GetResonance();
 			volume = fmc.GetVolume();
+			this.fmc = fmc;
 
 			Input(0);
 		}
@@ -240,9 +240,9 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// Apply a signal to EXT-IN
 		/// </summary>
 		/********************************************************************/
-		public void Input(int input)
+		public void Input(short input)
 		{
-			ve = fmc.GetNormalizedVoice(input / 65536.0f);
+			ve = fmc.GetNormalizedVoice(input / 32768.0f);
 		}
 		#endregion
 

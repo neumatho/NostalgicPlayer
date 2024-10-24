@@ -374,12 +374,12 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/********************************************************************/
 		private short CalculatePulldown(float[] distanceTable, float topBit, float pulseStrength, float threshold, uint accumulator)
 		{
-			byte[] bit = new byte[12];
+			float[] bit = new float[12];
 
 			for (int i = 0; i < 12; i++)
-				bit[i] = (byte)((accumulator & (1U << i)) != 0 ? 1 : 0);
+				bit[i] = (accumulator & (1U << i)) != 0 ? 1.0f : 0.0f;
 
-			bit[11] = (byte)(bit[11] * topBit);
+			bit[11] *= topBit;
 
 			float[] pulldown = new float[12];
 
@@ -394,7 +394,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 						continue;
 
 					float weight = distanceTable[sb - cb + 12];
-					avg += (1 - bit[cb]) * weight;
+					avg += (1.0f - bit[cb]) * weight;
 					n += weight;
 				}
 
@@ -408,7 +408,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 			for (int i = 0; i < 12; i++)
 			{
-				float bitValue = bit[i] != 0 ? 1.0f - pulldown[i] : 0.0f;
+				float bitValue = bit[i] > 0.0f ? 1.0f - pulldown[i] : 0.0f;
 				if (bitValue > threshold)
 					value |= (short)(1U << i);
 			}
