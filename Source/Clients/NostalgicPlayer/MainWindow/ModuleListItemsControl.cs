@@ -23,6 +23,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 	public partial class ModuleListItemsControl : UserControl
 	{
 		private readonly Color textColor = Color.FromArgb(30, 57, 91);
+		private readonly Color defaultSubSongColor = Color.FromArgb(159, 81, 255);
 
 		private readonly Color selectedBackgroundColor1 = Color.FromArgb(255, 225, 112);
 		private readonly Color selectedBackgroundColor2 = Color.FromArgb(255, 216, 108);
@@ -959,18 +960,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			{
 				using (Font font = FontPalette.GetRegularFont())
 				{
-					using (Brush selectedItemBackgroundBrush = GetSelectedItemBackgroundBrush())
+					using (Font boldFont = new Font(font, FontStyle.Bold))
 					{
-						int count = collection.Count;
-						int height = Height;
-
-						for (int i = vScrollBar.Value, y = 0; i < count; i++)
+						using (Brush selectedItemBackgroundBrush = GetSelectedItemBackgroundBrush())
 						{
-							DrawSingleItem(g, font, selectedItemBackgroundBrush, y, i);
+							int count = collection.Count;
+							int height = Height;
 
-							y += ItemHeight;
-							if (y >= height)
-								break;
+							for (int i = vScrollBar.Value, y = 0; i < count; i++)
+							{
+								DrawSingleItem(g, font, boldFont, selectedItemBackgroundBrush, y, i);
+
+								y += ItemHeight;
+								if (y >= height)
+									break;
+							}
 						}
 					}
 				}
@@ -984,14 +988,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Will draw a single item
 		/// </summary>
 		/********************************************************************/
-		private void DrawSingleItem(Graphics g, Font font, Brush selectedItemBackgroundBrush, int y, int itemIndex)
+		private void DrawSingleItem(Graphics g, Font font, Font boldFont, Brush selectedItemBackgroundBrush, int y, int itemIndex)
 		{
 			ModuleListItem item = collection[itemIndex];
 
 			DrawItemBackground(g, selectedItemBackgroundBrush, y, itemIndex);
 			DrawItemPlayingStatus(g, y, item);
 			int timeWidth = DrawItemDuration(g, font, y, item);
-			DrawItemName(g, font, itemIndex, y, timeWidth, item);
+			DrawItemName(g, font, boldFont, itemIndex, y, timeWidth, item);
 		}
 
 
@@ -1052,12 +1056,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Will draw the name of the item
 		/// </summary>
 		/********************************************************************/
-		private void DrawItemName(Graphics g, Font font, int index, int y, int timeWidth, ModuleListItem item)
+		private void DrawItemName(Graphics g, Font font, Font boldFont, int index, int y, int timeWidth, ModuleListItem item)
 		{
 			int maxWidth = Width - 12 - timeWidth;
+			string defaultSubSong = string.Empty;
 
 			if (item.DefaultSubSong.HasValue)
-				maxWidth -= 12;
+			{
+				defaultSubSong = string.Format(Resources.IDS_DEFAULT_SUBSONG, item.DefaultSubSong.Value + 1);
+				int width = TextRenderer.MeasureText(g, defaultSubSong, boldFont).Width;
+
+				maxWidth -= width;
+			}
 
 			string name = listNumberEnabled ? $"{index + 1}. {item.ListItem.DisplayName}" : item.ListItem.DisplayName;
 			string showName = name;
@@ -1074,10 +1084,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			TextRenderer.DrawText(g, showName, font, new Point(10, y + 1), textColor, TextFormatFlags.NoPrefix);
 
 			if (item.DefaultSubSong.HasValue)
-			{
-				Image image = Resources.IDB_DEFAULT_SUBSONG;
-				g.DrawImage(image, 10 + nameWidth, y + 4, image.Width, image.Height);
-			}
+				TextRenderer.DrawText(g, defaultSubSong, boldFont, new Point(10 + nameWidth, y + 1), defaultSubSongColor, TextFormatFlags.NoPrefix);
 		}
 
 
@@ -1128,9 +1135,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					{
 						using (Font font = FontPalette.GetRegularFont())
 						{
-							using (Brush selectedItemBackgroundBrush = GetSelectedItemBackgroundBrush())
+							using (Font boldFont = new Font(font, FontStyle.Bold))
 							{
-								DrawSingleItem(g, font, selectedItemBackgroundBrush, pos - ItemHeight + 1, indexCheck);
+								using (Brush selectedItemBackgroundBrush = GetSelectedItemBackgroundBrush())
+								{
+									DrawSingleItem(g, font, boldFont, selectedItemBackgroundBrush, pos - ItemHeight + 1, indexCheck);
+								}
 							}
 						}
 					}
