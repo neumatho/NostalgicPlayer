@@ -142,6 +142,21 @@
 								<td>Sets playing time (in seconds) for module if its playing time cannot be calculated. After selected time, NostalgicPlayer skips to next module in playlist. This option can be used with e.g. SID files.
 							</tr>
 							<tr>
+								<td>At end of module</td>
+								<td>Tells what NostalgicPlayer should do when it has played a sub-song in the current module. Possible choices are:
+									<table class="usage2table">
+										<tr>
+											<td>Next module in list</td>
+											<td>Will load and start playing the next module in the module list. If it is the last module in the list, then the "At end of module list" option is in control.</td>
+										</tr>
+										<tr>
+											<td>Next sub-song, then next module</td>
+											<td>Will start playing the next sub-song in the current module. If the last sub-song is being played, then the next module in the module list will be loaded.</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
 								<td>At end of module list</td>
 								<td>Tells what NostalgicPlayer should do when it has played last module in playlist or when you press the next module button. Possible choices are:
 									<table class="usage2table">

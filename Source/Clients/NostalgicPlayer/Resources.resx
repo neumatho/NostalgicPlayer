@@ -271,6 +271,7 @@ Special thanks to these people:
 ¤CJens-Christian Huus
 ¤CMichael van Grunz
 ¤CRaph99 / Thanys
+¤CFanoush
 ¤CAdrien Destugues
 ¤CRobert Baron
 ¤CAnd to all you users out there :-)
@@ -819,6 +820,15 @@ what has changed since your previous version.</value>
   </data>
   <data name="IDS_SETTINGS_MODULES_PLAYING" xml:space="preserve">
     <value>Playing</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_PLAYING_MODULEEND" xml:space="preserve">
+    <value>At end of module</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_PLAYING_MODULEEND_MODULE" xml:space="preserve">
+    <value>Next module in list</value>
+  </data>
+  <data name="IDS_SETTINGS_MODULES_PLAYING_MODULEEND_SUBSONG" xml:space="preserve">
+    <value>Next sub-song, then next module</value>
   </data>
   <data name="IDS_SETTINGS_MODULES_PLAYING_MODULELISTEND" xml:space="preserve">
     <value>At end of module list</value>

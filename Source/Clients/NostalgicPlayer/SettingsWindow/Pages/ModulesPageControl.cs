@@ -43,20 +43,26 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			InitializeComponent();
 
 			// Add items to the combo controls
-			moduleErrorComboBox.Items.AddRange(new object[]
-			{
+			moduleErrorComboBox.Items.AddRange(
+			[
 				Resources.IDS_SETTINGS_MODULES_LOADING_MODULEERROR_SHOW,
 				Resources.IDS_SETTINGS_MODULES_LOADING_MODULEERROR_SKIP,
 				Resources.IDS_SETTINGS_MODULES_LOADING_MODULEERROR_SKIPREMOVE,
 				Resources.IDS_SETTINGS_MODULES_LOADING_MODULEERROR_STOP
-			});
+			]);
 
-			moduleListEndComboBox.Items.AddRange(new object[]
-			{
+			moduleEndComboBox.Items.AddRange(
+			[
+				Resources.IDS_SETTINGS_MODULES_PLAYING_MODULEEND_MODULE,
+				Resources.IDS_SETTINGS_MODULES_PLAYING_MODULEEND_SUBSONG
+			]);
+
+			moduleListEndComboBox.Items.AddRange(
+			[
 				Resources.IDS_SETTINGS_MODULES_PLAYING_MODULELISTEND_EJECT,
 				Resources.IDS_SETTINGS_MODULES_PLAYING_MODULELISTEND_JUMPTOSTART,
 				Resources.IDS_SETTINGS_MODULES_PLAYING_MODULELISTEND_LOOP
-			});
+			]);
 		}
 
 		#region ISettingsPage implementation
@@ -100,6 +106,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			neverEndingCheckBox.Checked = moduleSettings.NeverEnding;
 			neverEndingNumberTextBox.Text = moduleSettings.NeverEndingTimeout.ToString();
 
+			moduleEndComboBox.SelectedIndex = (int)moduleSettings.ModuleEnd;
 			moduleListEndComboBox.SelectedIndex = (int)moduleSettings.ModuleListEnd;
 
 			// Showing
@@ -169,6 +176,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			moduleSettings.NeverEnding = neverEndingCheckBox.Checked;
 			moduleSettings.NeverEndingTimeout = int.Parse(neverEndingNumberTextBox.Text);
 
+			moduleSettings.ModuleEnd = (ModuleSettings.ModuleEndAction)moduleEndComboBox.SelectedIndex;
 			moduleSettings.ModuleListEnd = (ModuleSettings.ModuleListEndAction)moduleListEndComboBox.SelectedIndex;
 
 			// Showing

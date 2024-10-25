@@ -42,6 +42,8 @@
 			neverEndingCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			neverEndingNumberTextBox = new Controls.NumberTextBox();
 			neverEndingLabel = new Krypton.Toolkit.KryptonLabel();
+			moduleEndComboBox = new Krypton.Toolkit.KryptonComboBox();
+			moduleEndLabel = new Krypton.Toolkit.KryptonLabel();
 			moduleListEndComboBox = new Krypton.Toolkit.KryptonComboBox();
 			moduleListEndLabel = new Krypton.Toolkit.KryptonLabel();
 			showingGroupBox = new Krypton.Toolkit.KryptonGroupBox();
@@ -58,11 +60,19 @@
 			((System.ComponentModel.ISupportInitialize)playingGroupBox).BeginInit();
 			((System.ComponentModel.ISupportInitialize)playingGroupBox.Panel).BeginInit();
 			playingGroupBox.Panel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)moduleEndComboBox).BeginInit();
 			((System.ComponentModel.ISupportInitialize)moduleListEndComboBox).BeginInit();
 			((System.ComponentModel.ISupportInitialize)showingGroupBox).BeginInit();
 			((System.ComponentModel.ISupportInitialize)showingGroupBox.Panel).BeginInit();
 			showingGroupBox.Panel.SuspendLayout();
 			SuspendLayout();
+			// 
+			// fontPalette
+			// 
+			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
+			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
+			fontPalette.ThemeName = "";
+			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// controlResource
 			// 
@@ -145,7 +155,6 @@
 			// 
 			// moduleErrorComboBox
 			// 
-			moduleErrorComboBox.CornerRoundingRadius = -1F;
 			moduleErrorComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			moduleErrorComboBox.DropDownWidth = 121;
 			moduleErrorComboBox.IntegralHeight = false;
@@ -154,7 +163,7 @@
 			moduleErrorComboBox.Palette = fontPalette;
 			moduleErrorComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(moduleErrorComboBox, null);
-			moduleErrorComboBox.Size = new System.Drawing.Size(180, 18);
+			moduleErrorComboBox.Size = new System.Drawing.Size(180, 19);
 			moduleErrorComboBox.TabIndex = 3;
 			// 
 			// playingGroupBox
@@ -170,6 +179,8 @@
 			playingGroupBox.Panel.Controls.Add(neverEndingCheckBox);
 			playingGroupBox.Panel.Controls.Add(neverEndingNumberTextBox);
 			playingGroupBox.Panel.Controls.Add(neverEndingLabel);
+			playingGroupBox.Panel.Controls.Add(moduleEndComboBox);
+			playingGroupBox.Panel.Controls.Add(moduleEndLabel);
 			playingGroupBox.Panel.Controls.Add(moduleListEndComboBox);
 			playingGroupBox.Panel.Controls.Add(moduleListEndLabel);
 			controlResource.SetResourceKey(playingGroupBox, "IDS_SETTINGS_MODULES_PLAYING");
@@ -212,29 +223,52 @@
 			neverEndingLabel.TabIndex = 2;
 			neverEndingLabel.Values.Text = "seconds";
 			// 
+			// moduleEndComboBox
+			// 
+			moduleEndComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			moduleEndComboBox.DropDownWidth = 121;
+			moduleEndComboBox.IntegralHeight = false;
+			moduleEndComboBox.Location = new System.Drawing.Point(108, 28);
+			moduleEndComboBox.Name = "moduleEndComboBox";
+			moduleEndComboBox.Palette = fontPalette;
+			moduleEndComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(moduleEndComboBox, null);
+			moduleEndComboBox.Size = new System.Drawing.Size(180, 19);
+			moduleEndComboBox.TabIndex = 4;
+			// 
+			// moduleEndLabel
+			// 
+			moduleEndLabel.Location = new System.Drawing.Point(4, 30);
+			moduleEndLabel.Name = "moduleEndLabel";
+			moduleEndLabel.Palette = fontPalette;
+			moduleEndLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(moduleEndLabel, "IDS_SETTINGS_MODULES_PLAYING_MODULEEND");
+			moduleEndLabel.Size = new System.Drawing.Size(93, 16);
+			moduleEndLabel.TabIndex = 3;
+			moduleEndLabel.Values.Text = "At end of module";
+			// 
 			// moduleListEndComboBox
 			// 
-			moduleListEndComboBox.CornerRoundingRadius = -1F;
 			moduleListEndComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			moduleListEndComboBox.DropDownWidth = 121;
 			moduleListEndComboBox.IntegralHeight = false;
-			moduleListEndComboBox.Location = new System.Drawing.Point(124, 28);
+			moduleListEndComboBox.Location = new System.Drawing.Point(420, 28);
 			moduleListEndComboBox.Name = "moduleListEndComboBox";
 			moduleListEndComboBox.Palette = fontPalette;
 			moduleListEndComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(moduleListEndComboBox, null);
-			moduleListEndComboBox.Size = new System.Drawing.Size(100, 18);
-			moduleListEndComboBox.TabIndex = 4;
+			moduleListEndComboBox.Size = new System.Drawing.Size(100, 19);
+			moduleListEndComboBox.TabIndex = 6;
 			// 
 			// moduleListEndLabel
 			// 
-			moduleListEndLabel.Location = new System.Drawing.Point(4, 30);
+			moduleListEndLabel.Location = new System.Drawing.Point(300, 30);
 			moduleListEndLabel.Name = "moduleListEndLabel";
 			moduleListEndLabel.Palette = fontPalette;
 			moduleListEndLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(moduleListEndLabel, "IDS_SETTINGS_MODULES_PLAYING_MODULELISTEND");
 			moduleListEndLabel.Size = new System.Drawing.Size(109, 16);
-			moduleListEndLabel.TabIndex = 3;
+			moduleListEndLabel.TabIndex = 5;
 			moduleListEndLabel.Values.Text = "At end of module list";
 			// 
 			// showingGroupBox
@@ -258,7 +292,6 @@
 			// 
 			// moduleInfoOrderDownButton
 			// 
-			moduleInfoOrderDownButton.CornerRoundingRadius = -1F;
 			moduleInfoOrderDownButton.Enabled = false;
 			moduleInfoOrderDownButton.Location = new System.Drawing.Point(128, 62);
 			moduleInfoOrderDownButton.Name = "moduleInfoOrderDownButton";
@@ -272,7 +305,6 @@
 			// 
 			// moduleInfoOrderUpButton
 			// 
-			moduleInfoOrderUpButton.CornerRoundingRadius = -1F;
 			moduleInfoOrderUpButton.Enabled = false;
 			moduleInfoOrderUpButton.Location = new System.Drawing.Point(128, 33);
 			moduleInfoOrderUpButton.Name = "moduleInfoOrderUpButton";
@@ -328,6 +360,7 @@
 			playingGroupBox.Panel.ResumeLayout(false);
 			playingGroupBox.Panel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)playingGroupBox).EndInit();
+			((System.ComponentModel.ISupportInitialize)moduleEndComboBox).EndInit();
 			((System.ComponentModel.ISupportInitialize)moduleListEndComboBox).EndInit();
 			((System.ComponentModel.ISupportInitialize)showingGroupBox.Panel).EndInit();
 			showingGroupBox.Panel.ResumeLayout(false);
@@ -358,5 +391,7 @@
 		private Krypton.Toolkit.KryptonLabel moduleInfoOrderLabel;
 		private Krypton.Toolkit.KryptonButton moduleInfoOrderUpButton;
 		private Krypton.Toolkit.KryptonButton moduleInfoOrderDownButton;
+		private Krypton.Toolkit.KryptonLabel moduleEndLabel;
+		private Krypton.Toolkit.KryptonComboBox moduleEndComboBox;
 	}
 }

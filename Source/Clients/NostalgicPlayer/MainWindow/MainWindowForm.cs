@@ -4228,8 +4228,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				PrintInfo();
 
 				// If module loop is off and double buffering is enabled,
-				// check if it's time to load the next module in the list
-				if (!loopCheckButton.Checked && moduleSettings.DoubleBuffering)
+				// check if it's time to load the next module in the list,
+				// except if "next sub-song" option is enabled and not playing
+				// the last sub-song
+				if (!loopCheckButton.Checked && moduleSettings.DoubleBuffering && ((moduleSettings.ModuleEnd != ModuleSettings.ModuleEndAction.NextSubSong) || ((moduleHandler.PlayingModuleInformation.CurrentSong + 1) == moduleHandler.StaticModuleInformation.MaxSongNumber)))
 				{
 					// Is the file already loaded?
 					if (!moduleHandler.IsDoubleBufferingModuleLoaded && (playItem != null))
@@ -4317,6 +4319,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						}
 						else
 						{
+							if (moduleSettings.ModuleEnd == ModuleSettings.ModuleEndAction.NextSubSong)
+							{
+								if ((moduleHandler.PlayingModuleInformation.CurrentSong + 1) < moduleHandler.StaticModuleInformation.MaxSongNumber)
+								{
+									StartSong(moduleHandler.PlayingModuleInformation.CurrentSong + 1);
+									return;
+								}
+							}
+
 							bool loadNext = true;
 
 							// Get the number of modules in the list

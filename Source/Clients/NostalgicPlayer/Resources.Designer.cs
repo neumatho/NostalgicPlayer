@@ -1947,6 +1947,33 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to At end of module.
+        /// </summary>
+        internal static string IDS_SETTINGS_MODULES_PLAYING_MODULEEND {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MODULES_PLAYING_MODULEEND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Next module in list.
+        /// </summary>
+        internal static string IDS_SETTINGS_MODULES_PLAYING_MODULEEND_MODULE {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MODULES_PLAYING_MODULEEND_MODULE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Next sub-song, then next module.
+        /// </summary>
+        internal static string IDS_SETTINGS_MODULES_PLAYING_MODULEEND_SUBSONG {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MODULES_PLAYING_MODULEEND_SUBSONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to At end of module list.
         /// </summary>
         internal static string IDS_SETTINGS_MODULES_PLAYING_MODULELISTEND {

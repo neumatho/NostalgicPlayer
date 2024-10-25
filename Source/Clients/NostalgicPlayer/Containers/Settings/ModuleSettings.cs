@@ -30,6 +30,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 		}
 
 		/// <summary>
+		/// The different actions to take when reached the end of a module
+		/// </summary>
+		public enum ModuleEndAction
+		{
+			/// <summary></summary>
+			NextModule,
+			/// <summary></summary>
+			NextSubSong
+		}
+
+		/// <summary>
 		/// The different actions to take when reached the end of the list
 		/// </summary>
 		public enum ModuleListEndAction
@@ -138,6 +149,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 			get => settings.GetIntEntry("Modules", "NeverEndingTimeout", 180);
 
 			set => settings.SetIntEntry("Modules", "NeverEndingTimeout", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Module end reached
+		/// </summary>
+		/********************************************************************/
+		public ModuleEndAction ModuleEnd
+		{
+			get => settings.GetEnumEntry("Modules", "ModuleEnd", ModuleEndAction.NextModule);
+
+			set => settings.SetEnumEntry("Modules", "ModuleEnd", value);
 		}
 
 
