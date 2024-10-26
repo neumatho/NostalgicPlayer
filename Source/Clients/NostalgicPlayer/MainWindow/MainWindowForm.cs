@@ -3884,10 +3884,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Fix agent settings
 			userSettings.RemoveSection("Players Agents");       // Not used anymore
 
-			FixAgentSettings("Formats", agentManager.GetAllAgents(Manager.AgentType.Players).Union(agentManager.GetAllAgents(Manager.AgentType.ModuleConverters)));
-			FixAgentSettings("Output", agentManager.GetAllAgents(Manager.AgentType.Output));
-			FixAgentSettings("Visuals", agentManager.GetAllAgents(Manager.AgentType.Visuals));
-			FixAgentSettings("Decrunchers", agentManager.GetAllAgents(Manager.AgentType.FileDecrunchers).Union(agentManager.GetAllAgents(Manager.AgentType.ArchiveDecrunchers)));
+			// Build a list that holds which agents that still have some active types
+			Dictionary<Guid, bool> agentsEnableStatus = new Dictionary<Guid, bool>();
+
+			FixAgentSettings("Formats", agentsEnableStatus, agentManager.GetAllAgents(Manager.AgentType.Players).Union(agentManager.GetAllAgents(Manager.AgentType.ModuleConverters)));
+			FixAgentSettings("Output", agentsEnableStatus, agentManager.GetAllAgents(Manager.AgentType.Output));
+			FixAgentSettings("Visuals", agentsEnableStatus, agentManager.GetAllAgents(Manager.AgentType.Visuals));
+			FixAgentSettings("Decrunchers", agentsEnableStatus, agentManager.GetAllAgents(Manager.AgentType.FileDecrunchers).Union(agentManager.GetAllAgents(Manager.AgentType.ArchiveDecrunchers)));
+
+			// Flush all agents that is disabled
+			foreach (Guid agentId in agentsEnableStatus.Where(pair => pair.Value == false).Select(pair => pair.Key))
+				agentManager.UnloadAgent(agentId);
 
 			// And finally, save the settings to disk
 			userSettings.SaveSettings();
@@ -3901,12 +3908,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// plus tell the manager about which agents that are disabled
 		/// </summary>
 		/********************************************************************/
-		private void FixAgentSettings(string prefix, IEnumerable<AgentInfo> agents)
+		private void FixAgentSettings(string prefix, Dictionary<Guid, bool> agentsEnableStatus, IEnumerable<AgentInfo> agents)
 		{
 			string section = prefix + " Agents";
 
 			// Build lookup list
 			Dictionary<Guid, AgentInfo> allAgents = agents.ToDictionary(agentInfo => agentInfo.TypeId, agentInfo => agentInfo);
+
+			// Append the agents to the enable status dictionary, if not already there
+			foreach (AgentInfo agentInfo in allAgents.Values)
+				agentsEnableStatus.TryAdd(agentInfo.AgentId, false);
 
 			// First comes the delete loop. It will scan the section and see
 			// if the agent has been loaded and if it hasn't, the entry will
@@ -3927,11 +3938,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				userSettings.RemoveEntry(section, typeId.ToString("D"));
 
 			// Now take all the loaded agents and add those which does not
-			// exists in the settings file
-			//
-			// This dictionary holds how many types that are enabled for each agent
-			Dictionary<Guid, int> enableCount = allAgents.Values.Select(a => a.AgentId).Distinct().ToDictionary(id => id, id => 0);
-
+			// exist in the settings file
 			foreach (AgentInfo agentInfo in allAgents.Values)
 			{
 				// Does the agent already exists in the settings file?
@@ -3960,12 +3967,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				}
 
 				if (enabled)
-					enableCount[agentInfo.AgentId] = ++enableCount[agentInfo.AgentId];
+					agentsEnableStatus[agentInfo.AgentId] = true;
 			}
-
-			// Flush all agents that is disabled
-			foreach (Guid agentId in enableCount.Where(pair => pair.Value == 0).Select(pair => pair.Key))
-				agentManager.UnloadAgent(agentId);
 		}
 
 
