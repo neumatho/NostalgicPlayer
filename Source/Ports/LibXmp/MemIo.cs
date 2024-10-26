@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			public uint8[] Start;
 			public ptrdiff_t Pos;
 			public ptrdiff_t Size;
-			public bool Free_After_Use;
+			public uint8[] Ptr_Free;
 		}
 
 		private MFile m;
@@ -155,7 +155,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static MemIo MOpen(uint8[] ptr, c_long size, bool free_after_Use)
+		public static MemIo MCOpen(uint8[] ptr, c_long size)
 		{
 			MFile m = new MFile();
 			if (m == null)
@@ -164,7 +164,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			m.Start = ptr;
 			m.Pos = 0;
 			m.Size = size;
-			m.Free_After_Use = free_after_Use;
+			m.Ptr_Free = null;
 
 			return new MemIo(m);
 		}
@@ -185,7 +185,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			m.Start = from.m.Start;
 			m.Pos = from.m.Pos;
 			m.Size = from.m.Size;
-			m.Free_After_Use = false;
+			m.Ptr_Free = null;
 
 			return new MemIo(m);
 		}
@@ -199,8 +199,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/********************************************************************/
 		public int MClose()
 		{
-			if (m.Free_After_Use)
+			if (m.Ptr_Free != null)
+			{
+				m.Ptr_Free = null;
 				m.Start = null;
+			}
 
 			m = null;
 

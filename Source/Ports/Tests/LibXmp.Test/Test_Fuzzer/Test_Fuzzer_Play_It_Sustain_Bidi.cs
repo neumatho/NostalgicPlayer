@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
 
 namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Fuzzer
 {
@@ -37,19 +38,19 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Fuzzer
 			// This module has a sample with a bidi sustain loop and a non-bidi
 			// regular loop. This was able to cause crashes in libxmp due to its
 			// bad bidi and sustain support prior to overhaul
-			Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_It_Sustain_Bidi.it", sequence, 4000, 0, 0);
+			Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_It_Sustain_Bidi.it", sequence, 4000, Xmp_Format.Default, Xmp_Interp.Nearest);
 
 			// This module has a sample with a bidi sustain loop and a non-bidi
 			// regular loop. It encounters an edge case, where sustain is released
 			// when the position is negative but the loop hasn't been reflected
 			// around its starting point yet
-			Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_It_Sustain_Bidi2.it", sequence_Long, 4000, 0, 0);
+			Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_It_Sustain_Bidi2.it", sequence_Long, 4000, Xmp_Format.Default, Xmp_Interp.Nearest);
 
 			// This module has a sample with a bidi sustain loop and an invalid
 			// regular loop. The high frequency it plays at can trigger the mixer
 			// loop's hang detection and leave its position at a negative value,
 			// at which point sustain release can be used to cause trouble
-			Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_It_Sustain_Bidi3.it", sequence_Long, 4000, 0, 0);
+			Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_It_Sustain_Bidi3.it", sequence_Long, 4000, Xmp_Format.Default, Xmp_Interp.Nearest);
 		}
 	}
 }

@@ -21,10 +21,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Read_Mem
 		[TestMethod]
 		public void Test_Read_Mem_Hio_NoSize()
 		{
-			Hio h = Hio.Hio_Open_Mem(null, -1, false);
+			Hio h = Hio.Hio_Open_Const_Mem(null, -1);
 			Assert.IsNull(h, "hio_open");
 
-			h = Hio.Hio_Open_Mem(null, 0, false);
+			h = Hio.Hio_Open_Const_Mem(null, 0);
 			Assert.IsNull(h, "hio_open");
 		}
 	}

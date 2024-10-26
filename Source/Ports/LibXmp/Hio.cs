@@ -599,7 +599,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static Hio Hio_Open_Mem(uint8[] ptr, c_long size, bool free_After_User)
+		public static Hio Hio_Open_Const_Mem(uint8[] ptr, c_long size)
 		{
 			if (size <= 0)
 				return null;
@@ -609,7 +609,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				return null;
 
 			h.Type = Hio_Type.Memory;
-			h.Handle.Mem = MemIo.MOpen(ptr, size, free_After_User);
+			h.Handle.Mem = MemIo.MCOpen(ptr, size);
 			h.Size = size;
 
 			if (h.Handle.Mem == null)

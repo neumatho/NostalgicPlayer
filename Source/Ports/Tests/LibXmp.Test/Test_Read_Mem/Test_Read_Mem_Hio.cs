@@ -28,7 +28,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Read_Mem
 			for (c_int i = 0; i < 100; i++)
 				mem[i] = (uint8)i;
 
-			Hio h = Hio.Hio_Open_Mem(mem, 100, false);
+			Hio h = Hio.Hio_Open_Const_Mem(mem, 100);
 			Assert.IsNotNull(h, "hio_open");
 
 			c_int x = h.Hio_Size();

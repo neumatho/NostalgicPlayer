@@ -16,20 +16,21 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Fuzzer
 	{
 		/********************************************************************/
 		/// <summary>
-		/// Offset + reverse could result in the sample position being
-		/// placed beyond the end of the sample, causing crashes
+		/// This module caused reads from the sample left redzone due to the
+		/// interpolation loop wraparound initialization copying twice as
+		/// many samples as necessary
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test_Fuzzer_Play_It_Offset_Reverse()
+		public void Test_Fuzzer_Play_It_Interpolation_Loop()
 		{
 			Playback_Sequence[] sequence = new Playback_Sequence[]
 			{
-				new Playback_Sequence(Playback_Action.Play_Frames, 4, 0),
+				new Playback_Sequence(Playback_Action.Play_Frames, 2, 0),
 				new Playback_Sequence(Playback_Action.Play_End, 0, 0)
 			};
 
-			Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_It_Offset_Reverse.it", sequence, 4000, Xmp_Format.Default, Xmp_Interp.Nearest);
+			Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_It_Interpolation_Loop.it", sequence, 4000, Xmp_Format.Default, Xmp_Interp.Nearest);
 		}
 	}
 }

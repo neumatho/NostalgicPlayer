@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (size <= 0)
 				return -(c_int)Xmp_Error.Invalid;
 
-			Hio h = Hio.Hio_Open_Mem(mem, size, false);
+			Hio h = Hio.Hio_Open_Const_Mem(mem, size);
 			if (h == null)
 				return -(c_int)Xmp_Error.System;
 
@@ -138,7 +138,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (size <= 0)
 				return -(c_int)Xmp_Error.Invalid;
 
-			Hio h = Hio.Hio_Open_Mem(mem, size, false);
+			Hio h = Hio.Hio_Open_Const_Mem(mem, size);
 			if (h == null)
 				return -(c_int)Xmp_Error.System;
 

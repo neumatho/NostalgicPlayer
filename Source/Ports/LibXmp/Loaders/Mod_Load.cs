@@ -537,9 +537,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			lib.common.LibXmp_Copy_Adjust(out mod.Name, mh.Name, 20, encoder);
 
 			mod.Len = mh.Len;
-			mod.Rst = restartPosition;
 
 			Array.Copy(mh.Order, mod.Xxo, 128);
+
+			if ((mh.Restart < 0x7f) && (mh.Restart != 0x78) && (mh.Restart < mod.Len))
+			{
+				// TODO: An older version of this code was commented out 23+ years ago
+				// and adding this may have rebroke something
+				mod.Rst = mh.Restart;
+			}
 
 			for (c_int i = 0; i < 128; i++)
 			{

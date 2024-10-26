@@ -13,12 +13,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// <summary>
 		/// No mixing is done at all
 		/// </summary>
-		None,
+		None = -1,
 
 		/// <summary>
 		/// Nearest neighbor
 		/// </summary>
-		Nearest,
+		Nearest = 0,
 
 		/// <summary>
 		/// Linear (default)

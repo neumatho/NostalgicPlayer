@@ -27,8 +27,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 		private const c_int AntiClick_FPShift = 24;
 
-		private const c_int Loop_Prologue = 1 * 2;	// Stereo
-		private const c_int Loop_Epilogue = 2 * 2;	// Stereo
+		private const c_int Loop_Prologue = 1;
+		private const c_int Loop_Epilogue = 2;
 
 		private delegate void Mix_Fp(Mixer_Voice vi, int32[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R);
 
@@ -42,8 +42,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			public bool First_Loop;
 			public bool _16Bit;
 			public bool Active;
-			public uint32[] Prologue = new uint[Loop_Prologue];
-			public uint32[] Epilogue = new uint[Loop_Epilogue];
+			public c_int Prologue_Num;
+			public c_int Epilogue_Num;
+			public uint8[] Prologue = new uint8[Loop_Prologue * 2 /* 16 bit */ * 2 /* stereo */];
+			public uint8[] Epilogue = new uint8[Loop_Epilogue * 2 /* 16 bit */ * 2 /* stereo */];
 		}
 		#endregion
 
@@ -1053,12 +1055,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// <summary>
 		/// Backup sample data before and after loop and replace it for
 		/// interpolation.
+		/// TODO: If higher order interpolation than spline is added, the
+		/// copy needs to properly wrap around the loop data (modulo) for
+		/// correct small loops
 		/// TODO: Use an overlap buffer like OpenMPT? This is easier, but a
 		/// little dirty
 		/// </summary>
 		/********************************************************************/
 		private void Init_Sample_Wraparound(Mixer_Data s, Loop_Data ld, Mixer_Voice vi, Xmp_Sample xxs)
 		{
+			c_int prologue_Num = Loop_Prologue;
+			c_int epilogue_Num = Loop_Epilogue;
+
 			if ((vi.SPtr == null) || (s.Interp == Xmp_Interp.Nearest) || ((~xxs.Flg & Xmp_Sample_Flag.Loop) != 0))
 			{
 				ld.Active = false;
@@ -1078,7 +1086,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			{
 				ld.Start <<= 1;
 				ld.End <<= 1;
+
+				prologue_Num <<= 1;
+				epilogue_Num <<= 1;
 			}
+
+			ld.Prologue_Num = prologue_Num;
+			ld.Epilogue_Num = epilogue_Num;
 
 			bool biDir = (vi.Flags & Mixer_Flag.Voice_BiDir) != 0;
 
@@ -1088,21 +1102,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				c_int start = (ld.SPtrOffset / 2) + ld.Start;
 				c_int end = (ld.SPtrOffset / 2) + ld.End;
 
+				Span<uint8> src = MemoryMarshal.Cast<uint16, uint8>(buf.Slice(start - prologue_Num));
+				src.Slice(0, prologue_Num * 2).CopyTo(ld.Prologue);
+
+				src = MemoryMarshal.Cast<uint16, uint8>(buf.Slice(end));
+				src.Slice(0, epilogue_Num * 2).CopyTo(ld.Epilogue);
+
 				if (!ld.First_Loop)
 				{
-					for (c_int i = 0; i < Loop_Prologue; i++)
+					for (c_int i = 0; i < prologue_Num; i++)
 					{
-						c_int j = i - Loop_Prologue;
-						ld.Prologue[i] = buf[start + j];
+						c_int j = i - prologue_Num;
 						buf[start + j] = biDir ? buf[start - 1 - j] : buf[end + j];
 					}
 				}
 
-				for (c_int i = 0; i < Loop_Epilogue; i++)
-				{
-					ld.Epilogue[i] = buf[end + i];
+				for (c_int i = 0; i < epilogue_Num; i++)
 					buf[end + i] = biDir ? buf[end - 1 - i] : buf[start + i];
-				}
 			}
 			else
 			{
@@ -1110,21 +1126,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				c_int start = ld.SPtrOffset + ld.Start;
 				c_int end = ld.SPtrOffset + ld.End;
 
+				Array.Copy(buf, start - prologue_Num, ld.Prologue, 0, prologue_Num);
+				Array.Copy(buf, end, ld.Epilogue, 0, epilogue_Num);
+
 				if (!ld.First_Loop)
 				{
-					for (c_int i = 0; i < Loop_Prologue; i++)
+					for (c_int i = 0; i < prologue_Num; i++)
 					{
-						c_int j = i - Loop_Prologue;
-						ld.Prologue[i] = buf[start + j];
+						c_int j = i - prologue_Num;
 						buf[start + j] = biDir ? buf[start - 1 - j] : buf[end + j];
 					}
 				}
 
-				for (c_int i = 0; i < Loop_Epilogue; i++)
-				{
-					ld.Epilogue[i] = buf[end + i];
+				for (c_int i = 0; i < epilogue_Num; i++)
 					buf[end + i] = biDir ? buf[end - 1 - i] : buf[start + i];
-				}
 			}
 		}
 
@@ -1137,6 +1152,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/********************************************************************/
 		private void Reset_Sample_Wraparound(Loop_Data ld)
 		{
+			c_int prologue_Num = ld.Prologue_Num;
+			c_int epilogue_Num = ld.Epilogue_Num;
+
 			if (!ld.Active)
 				return;
 
@@ -1146,14 +1164,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				c_int start = (ld.SPtrOffset / 2) + ld.Start;
 				c_int end = (ld.SPtrOffset / 2) + ld.End;
 
-				if (!ld.First_Loop)
-				{
-					for (c_int i = 0; i < Loop_Prologue; i++)
-						buf[start + i - Loop_Prologue] = (uint16)ld.Prologue[i];
-				}
+				Span<uint8> dest = MemoryMarshal.Cast<uint16, uint8>(buf.Slice(start - prologue_Num));
+				ld.Prologue.AsSpan(0, prologue_Num * 2).CopyTo(dest);
 
-				for (c_int i = 0; i < Loop_Epilogue; i++)
-					buf[end + i] = (uint16)ld.Epilogue[i];
+				dest = MemoryMarshal.Cast<uint16, uint8>(buf.Slice(end));
+				ld.Epilogue.AsSpan(0, epilogue_Num * 2).CopyTo(dest);
 			}
 			else
 			{
@@ -1161,14 +1176,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				c_int start = ld.SPtrOffset + ld.Start;
 				c_int end = ld.SPtrOffset + ld.End;
 
-				if (!ld.First_Loop)
-				{
-					for (c_int i = 0; i < Loop_Prologue; i++)
-						buf[start + i - Loop_Prologue] = (uint8)ld.Prologue[i];
-				}
-
-				for (c_int i = 0; i < Loop_Epilogue; i++)
-					buf[end + i] = (uint8)ld.Epilogue[i];
+				Array.Copy(ld.Prologue, 0, buf, start - prologue_Num, prologue_Num);
+				Array.Copy(ld.Epilogue, 0, buf, end, epilogue_Num);
 			}
 		}
 
