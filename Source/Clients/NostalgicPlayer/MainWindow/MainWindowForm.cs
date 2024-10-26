@@ -87,6 +87,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		// Module variables
 		private ModuleListItem playItem;
 		private int subSongMultiply;
+		private int startedSubSong;
 
 		// List times
 		private TimeSpan listTime;
@@ -2634,6 +2635,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private void InitSubSongs()
 		{
 			subSongMultiply = 0;
+			startedSubSong = moduleHandler.PlayingModuleInformation.CurrentSong;
 		}
 
 
@@ -4164,6 +4166,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Now tell the module handler to switch song
 			if (moduleHandler.StartSong(playItem, newSong))
 			{
+				startedSubSong = newSong;
+
 				// Initialize all the controls
 				InitControls();
 
@@ -4234,7 +4238,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				// check if it's time to load the next module in the list,
 				// except if "next sub-song" option is enabled and not playing
 				// the last sub-song
-				if (!loopCheckButton.Checked && moduleSettings.DoubleBuffering && ((moduleSettings.ModuleEnd != ModuleSettings.ModuleEndAction.NextSubSong) || ((moduleHandler.PlayingModuleInformation.CurrentSong + 1) == moduleHandler.StaticModuleInformation.MaxSongNumber)))
+				if (!loopCheckButton.Checked && moduleSettings.DoubleBuffering && ((moduleSettings.ModuleEnd != ModuleSettings.ModuleEndAction.NextSubSong) || ((startedSubSong + 1) == moduleHandler.StaticModuleInformation.MaxSongNumber)))
 				{
 					// Is the file already loaded?
 					if (!moduleHandler.IsDoubleBufferingModuleLoaded && (playItem != null))
@@ -4324,9 +4328,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 						{
 							if (moduleSettings.ModuleEnd == ModuleSettings.ModuleEndAction.NextSubSong)
 							{
-								if ((moduleHandler.PlayingModuleInformation.CurrentSong + 1) < moduleHandler.StaticModuleInformation.MaxSongNumber)
+								if ((startedSubSong + 1) < moduleHandler.StaticModuleInformation.MaxSongNumber)
 								{
-									StartSong(moduleHandler.PlayingModuleInformation.CurrentSong + 1);
+									startedSubSong++;
+
+									StartSong(startedSubSong);
 									return;
 								}
 							}
