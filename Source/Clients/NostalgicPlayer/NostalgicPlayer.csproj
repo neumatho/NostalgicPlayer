@@ -9,7 +9,7 @@
     <Company>Polycode</Company>
     <Authors>Thomas Neumann</Authors>
     <ApplicationIcon>App.ico</ApplicationIcon>
-    <Version>2.4.0</Version>
+    <Version>2.5.0</Version>
     <Platforms>x64;x86;AnyCPU;ARM64</Platforms>
   </PropertyGroup>
 
