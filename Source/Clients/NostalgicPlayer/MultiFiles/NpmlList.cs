@@ -184,8 +184,13 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 								if (searchIndex != -1)
 								{
 									// Set the default sub-song
-									fileInfo.DefaultSubSong = int.Parse(line.Substring(searchIndex + 1));
-									line = line.Substring(0, searchIndex);
+									// It seems that it is possible to have ? in filenames on the Amiga,
+									// so we check to see if we could parse the rest
+									if (int.TryParse(line.Substring(searchIndex + 1), out int defaultSong) && (defaultSong >= 0))
+									{
+										fileInfo.DefaultSubSong = defaultSong;
+										line = line.Substring(0, searchIndex);
+									}
 								}
 
 								// See if there is stored a module time
