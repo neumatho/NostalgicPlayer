@@ -18,3 +18,8 @@ jobs:
         run: nuget restore Source\NostalgicPlayer.sln
       - name: Build
         run: msbuild Source\NostalgicPlayer.sln -t:rebuild -property:configuration="Release" -property:Platform="Any CPU"
+      - name: Create artifacts
+        uses: actions/upload-artifact@4
+        with:
+          name: NostalgicPlayer-dev-build-${{github.run_number}}
+          path: Source\Clients\NostalgicPlayer\bin\Release\net*\
