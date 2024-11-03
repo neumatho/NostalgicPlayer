@@ -1,0 +1,108 @@
+Future Composer 1.0 - 1.3
+
+0	00	ID mark (SMOD)
+4	04	Length of sequences in bytes (Song length by divide it with13)
+8	08	Offset to patterns
+12	0C	Length of patterns in bytes
+16	10	Offset to frequency sequence
+20	14	Length of frequency sequence in bytes
+24	18	Offset to volume sequence
+28	1C	Length of volume sequence in bytes
+32	20	Offset to sample data
+36	24	Length of sample data
+40	28	Sample info (10 samples, each use 6 bytes)
+		0	Length in words
+		2	Loop start offset in bytes
+		4	Loop length in words (1 = no loop)
+100	64	Sequences (13 bytes each)
+		0	Voice 1 pattern to play
+		1	Voice 1 transpose value
+		2	Voice 1 sound transpose value
+		3	Voice 2 pattern to play
+		4	Voice 2 transpose value
+		5	Voice 2 sound transpose value
+		6	Voice 3 pattern to play
+		7	Voice 3 transpose value
+		8	Voice 3 sound transpose value
+		9	Voice 4 pattern to play
+		10	Voice 4 transpose value
+		11	Voice 4 sound transpose value
+		12	Default start speed
+
+The rest of the structures are the same as Future Composer 1.4.
+
+
+Future Composer 1.4
+
+0	00	ID mark (FC14)
+4	04	Length of sequences in bytes (Song length by divide it with13)
+8	08	Offset to patterns
+12	0C	Length of patterns in bytes
+16	10	Offset to frequency sequence
+20	14	Length of frequency sequence in bytes
+24	18	Offset to volume sequence
+28	1C	Length of volume sequence in bytes
+32	20	Offset to sample data
+36	24	Offset to wave tables
+40	28	Sample info (10 samples, each use 6 bytes)
+		0	Length in words
+		2	Loop start offset in bytes
+		4	Loop length in words (1 = no loop)
+100	64	Wavetables lengths in word (80 bytes)
+180	B4	Sequences (13 bytes each)
+		0	Voice 1 pattern to play
+		1	Voice 1 transpose value
+		2	Voice 1 sound transpose value
+		3	Voice 2 pattern to play
+		4	Voice 2 transpose value
+		5	Voice 2 sound transpose value
+		6	Voice 3 pattern to play
+		7	Voice 3 transpose value
+		8	Voice 3 sound transpose value
+		9	Voice 4 pattern to play
+		10	Voice 4 transpose value
+		11	Voice 4 sound transpose value
+		12	Default start speed
+
+
+Patterns (64 bytes each, 32 rows):
+
+0	Note
+1	Info + Instrument
+
+
+Frequency sequence (64 bytes each):
+
+Commands:
+
+$E0 x		Position jump
+$E1		End of sequence
+$E2 x		Set waveform (will trig it)
+$E3 x y	New vibrato
+$E4 x		Change waveform (will not trig it, but when the previous waveforms loop, this one is used)
+$E7 x		Pattern jump
+$E8 x		Set sustain time
+$E9 x y	Set sample (x = instrument, y = sample in the instrument)
+$EA x y	Pitchbend
+
+
+Volume sequence (64 bytes each):
+
+Commands:
+
+$E0 x		Position jump
+$E1		End of sequence
+$E8 x		Set volume sustain
+$EA x y	Volume bend
+
+
+Samples:
+
+0	00	ID (SSMP)
+4	04	Sample info (16 bytes for each sample)
+		0	Start offset in bytes
+		4	Length in words
+		6	Loop start offset in bytes
+		8	Loop length in words
+		10
+324	144	Sample data

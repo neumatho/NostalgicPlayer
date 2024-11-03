@@ -1,0 +1,145 @@
+   0       18 ID (" MUGICIAN/SOFTEYES 1990 " or " MUGICIAN2/SOFTEYES 1990" for 7-channels)
+  18        2 Non zero if arpeggios are enabled
+  1A        2 Number of tracks (NOT)
+  1C        4 Number of sequences for sub-song 1 (NOS1)
+  20        4 Number of sequences for sub-song 2 (NOS2)
+  24        4 Number of sequences for sub-song 3 (NOS3)
+  28        4 Number of sequences for sub-song 4 (NOS4)
+  2C        4 Number of sequences for sub-song 5 (NOS5)
+  30        4 Number of sequences for sub-song 6 (NOS6)
+  34        4 Number of sequences for sub-song 7 (NOS7)
+  38        4 Number of sequences for sub-song 8 (NOS8)
+  3C        4 Number of instruments (NOI)
+  40        4 Number of waveforms (NOW)
+  44        4 Number of samples (NOS)
+  48        4 Sample size in bytes (SS)
+  4C     10*8 Sub-song information
+  CC NOS1*2*4 Sequence table for sub-song 1 (1 word * number of channels * NOS1)
+     NOS2*2*4 Sequence table for sub-song 2 (1 word * number of channels * NOS2)
+     NOS3*2*4 Sequence table for sub-song 3 (1 word * number of channels * NOS3)
+     NOS4*2*4 Sequence table for sub-song 4 (1 word * number of channels * NOS4)
+     NOS5*2*4 Sequence table for sub-song 5 (1 word * number of channels * NOS5)
+     NOS6*2*4 Sequence table for sub-song 6 (1 word * number of channels * NOS6)
+     NOS7*2*4 Sequence table for sub-song 7 (1 word * number of channels * NOS7)
+     NOS8*2*4 Sequence table for sub-song 8 (1 word * number of channels * NOS8)
+       NOI*10 Instrument information
+       NOW*80 Waveform samples
+       NOS*20 Sample information
+      NOT*100 Tracks
+           SS Samples
+         8*20 Arpeggios
+
+
+Sub-song information:
+
+ 0 1 Song loop (0 = No, 1 = Yes)
+ 1 1 Loop position
+ 2 1 Song speed
+ 3 1 Number of sequences
+ 4 C Name
+
+
+Sequence table:
+
+ 0 1 Track number
+ 1 1 Transpose
+
+
+Instrument information:
+
+ 0 1 Waveform number (< 32) or sample number (>= 32)
+ 1 1 Loop length in words
+ 2 1 Volume
+ 3 1 Volume speed
+ 4 1 Arpeggio number
+ 5 1 Pitch
+ 6 1 Effect index
+ 7 1 Delay
+ 8 1 Finetune
+ 9 1 Pitch loop
+ A 1 Pitch speed
+ B 1 Effect
+      0 - None
+      1 - Filter
+      2 - Mixing
+      3 - Scr. Left
+      4 - Scr. Right
+      5 - Upsample
+      6 - Downsample
+      7 - Negate
+      8 - Mad mix1
+      9 - Addition
+     10 - Filter 2
+     11 - Morphing
+     12 - Morph F.
+     13 - Filter 3
+     14 - Polygate
+     15 - Colgate
+ C 1 Source wave 1
+ D 1 Source wave 2
+ E 1 Effect speed
+ F 1 Volume loop
+
+
+Sample information:
+
+ 0  4 Start offset from start of samples block
+ 4  4 End offset
+ 8  4 Loop start
+ C 14 Space characters (not used)
+
+
+Tracks:
+
+ 0 1 Note
+ 1 1 Instrument
+ 2 1 Effect
+ 3 1 Effect parameter
+
+
+Effects:
+
+ 0 - None
+ 1 - Pitch bend
+ 2 - No Eff. I
+ 3 - No Vol. I
+ 4 - No E+V I
+ 5 - Pattern length
+ 6 - Song speed
+ 7 - Filter on
+ 8 - Filter off
+ 9 - Switch filter
+ A - No DMA
+ B - Arpeggio change
+ C - N. wander
+ D - Shuffle
+
+
+Internal channel structure
+
+ 0  2 Song number
+ 2  2 Track number
+ 4  2 Last instrument
+ 6  2 Last note
+ 8  2 Transpose
+ A
+ B  1 Pitch bend end note
+ C  2 Last effect parameter
+ E
+ F  1 Effect >= 64 ? Effect - 62 : 1
+10  2 Transposed note period
+12  2 Finetune
+14
+16  2 Volume index
+18  2 Volume speed counter
+1A  2 Arpeggio index
+1C
+1D  1 Instrument delay
+1E  2 Pitch index
+20  4 Sample information pointer
+24  2 Current volume
+26
+29  1 Instrument effect speed
+2A  2 Pitch bend end period
+2C  2 Current pitch bend period
+2E

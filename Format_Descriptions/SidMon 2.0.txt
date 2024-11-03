@@ -1,0 +1,85 @@
+   0   2 Midi mode
+   2   1 Number of positions - 1 (NOP)
+   3   1 Init speed
+   4   2 Size of sample information (64 bytes per sample)
+   6   4 Size of ID
+   A   4 Size of song lengths (SL)
+   E   4 Size of position table (PT)
+  12   4 Size of note transposes (NT)
+  16   4 Size of instrument transposes (IT)
+  1A   4 Size of instruments (I)
+  1E   4 Size of wave list (WL)
+  22   4 Size of arpeggioes (A)
+  26   4 Size of vibratoes (V)
+  2A   4 Size of sample information (SI)
+  2E   4 Size of track table (TT)
+  32   4 Size of tracks (T)
+  36   4 ?
+  3A  1C ID ("SIDMON II - THE MIDI VERSION")
+  56  SL Song length
+      PT Position table
+         Contain 4 * (NOP + 1) bytes holding the track number
+      NT Note transposes
+         Contain 4 * (NOP + 1) bytes holding the note transpose
+      IT Instrument transposes
+         Contain 4 * (NOP + 1) bytes holding the instrument transpose
+       I Instruments
+      WL Waveform lists
+         List of sample numbers. Each waveform list uses 16 bytes
+       A Arpeggios
+         Each arpeggio is 16 bytes long
+       V Vibratoes
+         List of vibrato values. Each vibrato list uses 16 bytes
+      SI Sample information
+      TT Track table
+         Array with offsets into the Tracks block for each track.
+         Each offset are stored as a word
+       T Tracks
+     0/1 Pad byte to make sure we got an even position
+       ? Sample data
+
+
+Instrument information:
+
+ 0  1 Waveform list number
+ 1  1 Waveform length
+ 2  1 Waveform speed
+ 3  1 Waveform delay
+ 4  1 Arpeggio number
+ 5  1 Arpeggio length
+ 6  1 Arpeggio speed
+ 7  1 Arpeggio delay
+ 8  1 Vibrato number
+ 9  1 Vibrato length
+ A  1 Vibrato speed
+ B  1 Vibrato delay
+ C  1 Pitch bend speed
+ D  1 Pitch bend delay
+ E  2 Not used
+10  1 Attack max
+11  1 Attack speed
+12  1 Decay min
+13  1 Decay speed
+14  1 Sustain time
+15  1 Release min
+16  1 Release speed
+17  9 Not used
+
+
+Sample information:
+
+ 0  4 Pointer to start of sample (can not be used directly, since it is a pointer)
+ 4  2 Length in words
+ 6  2 Loop start in words
+ 8  2 Loop length in words
+ A 16 Variables used by the player
+       A  2 Start offset into sample to negate
+       C  2 End offset into sample to stop negate
+       E  2 Start index for 18
+      10  2 Negation status
+      12  2 Negate speed
+      14  4 Negate position
+      18  2 Negation index (0-31)
+      1A  2 Do negation (0 = yes)
+      1C  4 Not used
+20 20 Name of sample

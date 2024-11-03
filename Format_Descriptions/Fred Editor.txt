@@ -1,0 +1,49 @@
+14  ID Mark (Fred Editor)
+2   Number of sub-songs (NOS)
+NOS Start tempo for each sub-song
+NOS Position data for each sub-song
+    4 For each channel
+	  256 Position data
+128 Patterns
+    4  Pattern size (PS)
+    PS Pattern data
+2   Number of instruments (NOI)
+NOI Instrument information
+    32 Name
+	4  Index
+	2  Repeat length (-1 no repeat)
+	2  Length
+	2  Period
+	1  Vib delay
+	1  ?
+	1  Vib speed
+	1  Vib ampl
+	1  Env vol
+	1  Attack speed
+	1  Attack volume
+	1  Decay speed
+	1  Decay volume
+	1  Sustain delay
+	1  Release speed
+	1  Release volume
+    16 Arpeggio
+    1  Arp speed
+	1  Inst type
+	1  Pulse rate min
+	1  Pulse rate plus
+	1  Pulse speed
+	1  Pulse start
+	1  Pulse end
+	1  Pulse delay
+	1  Inst syncro
+	1  Blend
+	1  Blend delay
+	1  Pulse shot counter
+	1  Blend shot counter
+	1  Arp counter
+    12 ?
+2   Number of samples (NSA)
+NSA Sample information
+    2 Instrument index
+	2 Sample data length
+4   End mark (0x12, 0x34, 0x56, 0x78)

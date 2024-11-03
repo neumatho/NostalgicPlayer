@@ -1,0 +1,22 @@
+   0 15 samples, 16 bytes each
+      0 Start
+	  4 Length in words
+	  6 Volume
+	  8 Loop start
+	 12 Loop length (2 = no loop)
+	 14 ?
+ 240 Number of positions
+ 244 Pattern offsets (words)
+ 444 Patterns (length is calculated by taking the max number in pattern offset + 1024)
+   x Sample data
+
+Pattern data:
+
+Uses 1024 bytes each
+
+AAAAAAAA AAAAAAAA BBBBCCCC DDDDDDDD
+
+A = Period
+B = Sample number (0 = no sample)
+C = Effect
+D = Effect argument

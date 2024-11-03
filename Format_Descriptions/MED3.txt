@@ -1,0 +1,52 @@
+  0    4 ID (MED\x03)
+  4 20*x 32 sample names, all zero terminated
+       4 Volume bitmask. One bit for each sample. If set, a volume (1 byte) can be read
+         Sample volumes
+       4 Loop start bitmask. One bit for each sample. If set, a loop start (2 bytes) can be read
+         Loop starts
+       4 Loop length bitmask. One bit for each sample. If set, a loop length (2 bytes) can be read
+         Loop lengths
+       2 Number of blocks (BL)
+       2 Song length (SL)
+      SL Position list
+       2 Tempo
+       1 Playing transpose
+       1 Module flags
+          Bit 0 Filter on
+              1 Jumping
+              2 Every 8th
+              3 Module contains samples
+       2 Slide
+	   4 Jumping mask
+      10 Colors (8 words)
+       4 Midi channel mask. One bit for each sample. If set, a channel (1 byte) can be read
+         Midi channels
+       4 Midi preset mask. One bit for each sample. If set, a preset (1 byte) can be read
+         Midi presets
+    BL*x Packed blocks
+
+If samples are attached, this folows:
+
+       4 Sample mask. One bit for each sample. If set, sample data is present
+         4 Length of sample (SL)
+         2 Type
+        SL Sample data
+
+Block data:
+
+Each block starts with the following structure:
+
+   0   1 Number of tracks
+   1   1 Block flags
+          Bit 0 FirstHalfLineAll
+              1 SecondHalfLineAll
+              2 FirstHalfEffectAll
+              3 SecondHalfEffectAll
+              4 FirstHalfLineNone
+              5 SecondHalfLineNone
+              6 FirstHalfEffectNone
+              7 SecondHalfEffectNone
+   2   2 Block data length (BDL)
+   4 (?) Conversion masks
+
+Then the block data itself with BDL number of bytes.

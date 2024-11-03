@@ -1,0 +1,63 @@
+  0    4 ID (ALL )
+  4    4 Track 1 length (T1L)
+  8    4 Track 2 length (T2L)
+ 12    4 Track 3 length (T3L)
+ 16    4 Track 4 length (T4L)
+ 20    4 Block length (BL)
+ 24 4*20 Instrument lengths, 4 bytes each (IL)
+104  T1L Track 1
+     T2L Track 2
+     T3L Track 3
+     T4L Track 4
+	  BL Block data
+      IL All instruments
+
+
+Track data:
+
+Each track consist of 2 bytes pair, which are:
+
+0 Block number
+1 Transpose value
+
+If both bytes are 0xff, it means the track ends. The next two bytes & 0x7ff is the new position in the track.
+
+
+Block data:
+
+Each block are 64 bytes long. It only contains note information for a single channel. Each row is 4 bytes long, which
+means that a block is 16 rows long.
+
+The 4 bytes has these information:
+
+AAAAAAAA BBBBBBBB CCCCCCCC DDDDDDDD
+
+A = Instrument number to use
+B = Note (remember to add the transpose value to get the real note)
+C = Effect number
+D = Effect argument
+
+
+Instrument data:
+
+ 0 Attack step
+ 1 Attack delay
+ 2 Decay step
+ 3 Decay delay
+ 4 Sustain
+ 6 Release step
+ 7 Release delay
+ 8 Volume
+ 9 Vibrato wait
+10 Vibrato step
+11 Vibrato length
+12 Bend rate
+13 Portamento
+14 Sample
+15 Table delay
+16 Arpeggio
+24 Sound length
+26 Repeat start
+28 Repeat length
+30 Table
+78 Sample data

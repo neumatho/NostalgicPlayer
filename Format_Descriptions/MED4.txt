@@ -1,0 +1,69 @@
+  0    4 ID (MED\x04)
+  4    1 Mask bitmask. One bit for each byte. If set, a new mask byte can be read
+  5      Sample bitmask. One bit for each sample. If set, some sample information can be read
+          0  1 Sample flags (inverted, so 1 means no and 0 means yes (included))
+                Bit 0 Loop start in words (2 bytes)
+                    1 Loop length in words (2 bytes)
+                    2 Midi channel (1 byte)
+                    3 Midi preset (1 byte)
+                  4-5 Volume (1 byte)
+                    6 Transpose (1 byte)
+          1  1 Length of sample name (NL)
+          2 NL Sample name
+               Extra bytes based on the sample flags
+       2 Number of blocks (BL)
+       2 Song length (SL)
+      SL Position list
+       2 Tempo
+       1 Playing transpose
+       1 Module flags
+          Bit 0 Filter on
+              1 Jumping
+              2 Every 8th
+              3 Module contains samples
+              4 Volume is in hex, else BCD
+              5 Sliding (0 = MED, 1 = SoundTracker)
+              6 8 channel
+              7 Slow Hq
+       2 Tempo2
+      14 Colors (10 words)
+      10 Track volumes
+       1 Master volume
+    BL*x Packed blocks
+
+If samples are attached, this folows:
+
+       8 Sample mask. One bit for each sample. If set, sample data is present
+         4 Length of sample (SL)
+         2 Type
+        SL Sample data or synth data depending on the type
+
+After the samples, an IFF like structure follows, with a chunk name and length
+       4 Chunk name
+       4 Length
+         
+       Known chunks:
+
+       MEDV
+         0 2 ?
+         2 1 Major version
+         3 1 Minor version
+
+       ANNO
+         0 x Null terminated string
+
+       HLDC
+	     0 x ??
+
+Block data:
+
+Each block starts with the following structure:
+
+   0   1 Size of block header (BH)
+   1   1 Number of tracks
+   2   1 Number of rows - 1
+   3   2 Block data length (BDL)
+   5 (?) Block flag bytes. 1 byte for 64 rows in a block, e.g. if the number of rows is 146, there are 3 bytes stored here
+     (?) Line and effect masks
+
+Then the block data itself with BDL number of bytes.

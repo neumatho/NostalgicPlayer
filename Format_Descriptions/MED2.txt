@@ -1,0 +1,24 @@
+  0    4 ID (MED\x02)
+  4  500 Sample names (40 bytes each)
+504   20 Sample volumes (32 bytes)
+524   40 Loop starts (32 words)
+564   40 Loop lengths (32 words)
+5A4    2 Number of blocks (BL)
+5A6   64 Position list
+60A    2 Song length
+60C    2 Tempo
+60E    2 Module flags
+          Bit 0 Filter on
+              1 Jumping
+              2 Every 8th
+610    2 Slide
+612	   4 Jumping mask
+616   10 Colors (8 words)
+626 BL*x Blocks
+
+Block data:
+
+Each block starts with the following structure:
+
+  0    4 ?
+  4  400 Block data
