@@ -24,4 +24,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: NostalgicPlayer-dev-build-${{github.run_number}}
-          path: Source\Clients\NostalgicPlayer\bin\Release\NostalgicPlayer-dev-build-*\
+          path: NostalgicPlayer-dev-build-*\
