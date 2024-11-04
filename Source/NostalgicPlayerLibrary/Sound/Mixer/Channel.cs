@@ -65,12 +65,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// <summary>
 		/// The octave being played or -1 if not set
 		/// </summary>
-		protected sbyte currentOctave;
+		protected sbyte currentOctave = -1;
 
 		/// <summary>
 		/// The note being played or -1 if not set
 		/// </summary>
-		protected sbyte currentNote;
+		protected sbyte currentNote = -1;
 
 		/// <summary>
 		/// Holds information about the sample to be played
