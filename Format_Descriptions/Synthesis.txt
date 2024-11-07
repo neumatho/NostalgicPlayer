@@ -1,0 +1,156 @@
+   0      8      Mark (Synth4.0)
+   8      2      Number of positions (NOP)
+   A      2      Number of track rows (NOR)
+   C      4      ???
+  10      1      Number of samples (NOS)
+  11      1      Number of waveforms (NOW)
+  12      1      Number of instruments (NOI)
+  13      1      Number of sub-songs (NSS)
+  14      1      Number of EG (EG)
+  15      1      Number of ADSR (ADSR)
+  16      1      Noise length
+  17      D      ???
+  24     1C      Module name
+  40     8A      Some text about the player, serial number etc.
+  CA      2      ???
+  CC NOS*1C      Sample information
+     NOS*4       Total sample length for each sample
+     EG*80       EG tables
+     ADSR*100    ADSR tables
+	 NOI*1C      Instrument information
+     10*10       Arpeggio tables
+     (NSS+1)*E   Sub-song information (extra sub-song should not be used)
+     NOW*100     Waveforms
+     NOP*10      Position information
+     (NOR+40)*4  Track rows
+	             Sample data
+
+Sub-song information:
+
+   0  4 ???
+   4  1 Speed
+   5  1 Track length
+   6  2 Start position
+   8  2 Stop position
+   A  2 Repeat position
+   C  2 ???
+
+Position information:
+
+Each position contains 4 bytes for each voice. The 4 bytes stands for:
+
+   0  2 Track address
+   2  1 Sound transpose
+   3  1 Note transpose
+
+Track rows:
+
+All the notes are stored as one big track. The track address in the position
+information points to the first row to play at that position.
+
+Each row contains this information:
+
+AAAAAAAA BBBBBBBB CCCCDDDD EEEEEEEE
+
+A = Note (remember to add the transpose value to get the real note)
+B = Instrument number to use
+C = Arpeggio number
+D = Effect number
+    0 = No effect
+	1 = Slide up/down
+	2 = Res. ADSR
+	3 = Res. EGC
+	4 = Track len
+	5 = Skip ST/NT
+	6 = Sync mark
+	7 = Led on/off
+	8 = Song speed
+	9 = Fx on/off
+	A = Fx change
+	B = Change par1
+	C = Change par2
+	D = Change par3
+	E = EGC off
+	F = New volume
+E = Effect argument
+
+
+Instrument information:
+
+   0  1 Waveform / sample number
+   1  1 Synthesis mode (1 = on, 0 = off)
+   2  2 Length of waveform / sample (before loop/oneshot)
+   4  2 Repeat of sample
+   6  1 Volume
+   7  1 Portamento speed
+   8  1 ADSR table on/off
+   9  1 ADSR table number
+   A  2 Length of ADSR table
+   C  2 Arpeggio start address
+   E  1 Arpeggio length
+   F  1 Add arpeggio repeat length
+  10  1 Synthesis mode
+         0 = Fx off
+         1 = Rotate1 (Start position, End position, Synthesis Fx speed)
+		 2 = Rotate2 (Start position, End position, Slow motion level)
+		 3 = Alien (Source synth wave, End position, Slow motion level)
+		 4 = Negator (Start position, End position, Slow motion level)
+		 5 = PolyNeg (Start position, End position, Slow motion level)
+		 6 = Shaker1 (Source synth wave, Mix-in level, Slow motion level)
+		 7 = Shaker2 (Source synth wave, Mix-in level, Slow motion level)
+		 8 = Amf/Lfo (Source synth wave, End position, Slow motion level)
+		 9 = Laser (Laser speed, Laser time, Slow motion level)
+		 A = Oct. Fx1 (Mix-in level, Not in use, Slow motion level)
+		 B = Oct. Fx2 (Mix-in level, Not in use, Slow motion level)
+		 C = Alising (Mix-in level, Alising level, Slow motion level)
+		 D = EG-Fx-1 (Mix-in level, Envelope generator, Slow motion level)
+		 E = EG-Fx-2 (Mix-in level, Envelope generator, Slow motion level)
+		 F = Changer (Destination synth wave, Mix-in level, Slow motion level)
+		10 = FM drum (Modulation level, Modulation factor, Modulation depth)
+  11  1 Synthesis arg 1
+  12  1 Synthesis arg 2
+  13  1 Synthesis arg 3
+  14  1 Vibrato delay
+  15  1 Vibrato speed
+  16  1 Vibrato level
+  17  1 EGC offset
+  18  1 EGC mode (0 = off, 1 = ones, 2 = repeat)
+  19  1 EGC table number
+  1A  2 Length of EGC table
+
+   
+Sample information:
+
+ 0  1 ?
+ 1 1B Sample name 
+
+
+Internal channel structure:
+
+ 0  1 Transposed note
+ 1  1 Previous transposed note
+ 2  1 Slide speed
+ 3  1 Transposed instrument number
+ 4  1 Current volume
+ 5  1 ADSR on/off
+ 6  2 ADSR position
+ 8  1 Vibrato delay
+ 9  1 Vibrato position
+ A  1 ???
+ B  1 EGC mode
+ C  2 EGC position
+ E  2 Slide increment
+10  1 Arpeggio length
+11  1 Portamento speed
+12  2 Portamento speed counter
+14  1 Arp position
+15  1 ???
+16  1 Synthesis mode effect on/off status
+17  1 New synthesis mode effect
+18  1 New synthesis mode parameter 1
+19  1 New synthesis mode parameter 2
+1A  1 New synthesis mode parameter 3
+1B  1 EGC off status
+1C  1 New volume
+1D  1 Slow motion counter
+1E  2 ???

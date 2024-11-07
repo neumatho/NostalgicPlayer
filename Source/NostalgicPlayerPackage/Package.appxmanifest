@@ -1146,6 +1146,14 @@
             <uap:DisplayName>Opus</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="synfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-syn">.syn</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Synthesis</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

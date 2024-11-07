@@ -186,6 +186,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | StarTrekker 8 voices | .mod | | ModTracker |
 | StarTrekker Packer | .stp / .stpk | ProWizard | ModTracker |
 | STIM (Slam Tilt) | .sti | ProWizard | ModTracker |
+| Synthesis | .syn | | Synthesis |
 | TakeTracker | .mod | | Xmp |
 | TFMX 1.5 | .tfx / mdat. / .tfm | | TFMX |
 | TFMX Professional | .tfx / mdat. / .tfm | | TFMX |
