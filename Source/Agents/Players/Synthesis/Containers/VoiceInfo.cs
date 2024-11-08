@@ -25,33 +25,35 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis.Containers
 		public Effect Effect;
 		public byte EffectArg;
 
-		public byte SynthPosition;
 		public byte UseBuffer;
 		public sbyte[] SynthSample1 = new sbyte[256];
 		public sbyte[] SynthSample2 = new sbyte[256];
 
 		public byte TransposedNote;
 		public byte PreviousTransposedNote;
-		public sbyte SlideSpeed;
+
 		public byte TransposedInstrument;
+
 		public byte CurrentVolume;
+		public byte NewVolume;
 
-		public bool AdsrEnabled;
-		public ushort AdsrPosition;
+		public byte ArpeggioPosition;
 
-		public byte VibratoDelay;
-		public byte VibratoPosition;
-
-		public EnvelopeGeneratorCounterMode EnvelopeGeneratorCounterMode;
-		public ushort EnvelopeGeneratorCounterPosition;
-
+		public sbyte SlideSpeed;
 		public short SlideIncrement;
-		public byte ArpeggioLength;
 
 		public sbyte PortamentoSpeed;
 		public short PortamentoSpeedCounter;
 
-		public byte ArpeggioPosition;
+		public byte VibratoDelay;
+		public byte VibratoPosition;
+
+		public bool AdsrEnabled;
+		public ushort AdsrPosition;
+
+		public bool EnvelopeGeneratorCounterDisabled;
+		public EnvelopeGeneratorCounterMode EnvelopeGeneratorCounterMode;
+		public ushort EnvelopeGeneratorCounterPosition;
 
 		public bool SynthEffectDisabled;
 		public SynthesisEffect SynthEffect;
@@ -59,8 +61,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis.Containers
 		public byte SynthEffectArg2;
 		public byte SynthEffectArg3;
 
-		public bool EnvelopeGeneratorCounterDisabled;
-		public byte NewVolume;
+		public byte SynthPosition;
 		public byte SlowMotionCounter;
 
 		/********************************************************************/

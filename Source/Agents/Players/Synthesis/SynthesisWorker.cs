@@ -765,30 +765,33 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis
 					Effect = Effect.None,
 					EffectArg = 0,
 
-					SynthPosition = 0,
+					UseBuffer = 0,
 
 					TransposedNote = 0,
 					PreviousTransposedNote = 0,
-					SlideSpeed = 0,
+
 					TransposedInstrument = 0,
+
 					CurrentVolume = 0,
+					NewVolume = 0,
 
-					AdsrEnabled = false,
-					AdsrPosition = 0,
+					ArpeggioPosition = 0,
 
-					VibratoDelay = 0,
-					VibratoPosition = 0,
-
-					EnvelopeGeneratorCounterMode = EnvelopeGeneratorCounterMode.Off,
-					EnvelopeGeneratorCounterPosition = 0,
-
+					SlideSpeed = 0,
 					SlideIncrement = 0,
-					ArpeggioLength = 0,
 
 					PortamentoSpeed = 0,
 					PortamentoSpeedCounter = 0,
 
-					ArpeggioPosition = 0,
+					VibratoDelay = 0,
+					VibratoPosition = 0,
+
+					AdsrEnabled = false,
+					AdsrPosition = 0,
+
+					EnvelopeGeneratorCounterDisabled = false,
+					EnvelopeGeneratorCounterMode = EnvelopeGeneratorCounterMode.Off,
+					EnvelopeGeneratorCounterPosition = 0,
 
 					SynthEffectDisabled= false,
 					SynthEffect = SynthesisEffect.None,
@@ -796,8 +799,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis
 					SynthEffectArg2 = 0,
 					SynthEffectArg3 = 0,
 
-					EnvelopeGeneratorCounterDisabled = false,
-					NewVolume = 0,
+					SynthPosition = 0,
 					SlowMotionCounter = 0
 				};
 			}
@@ -1057,12 +1059,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis
 					voiceInfo.ArpeggioPosition = 0;
 
 					voiceInfo.PortamentoSpeed = instr.PortamentoSpeed;
-					voiceInfo.ArpeggioLength = instr.ArpeggioLength;
 					voiceInfo.PortamentoSpeedCounter = instr.PortamentoSpeed;
 
 					if (voiceInfo.Effect == Effect.ChangeArg1)
 					{
-						voiceInfo.ArpeggioLength = 0;
 						voiceInfo.PortamentoSpeed = 0;
 						voiceInfo.PortamentoSpeedCounter = 0;
 					}
