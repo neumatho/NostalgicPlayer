@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			Memory<Real> fraction = fr.Layer1;
 			Single single = fr.Single;
 
-			fr.JsBound = (fr.Mode == Mode.Joint_Stereo) ? (fr.Mode_Ext << 2) + 4 : 32;
+			fr.JsBound = (fr.Hdr.Mode == Mode.Joint_Stereo) ? (fr.Hdr.Mode_Ext << 2) + 4 : 32;
 
 			if ((stereo == 1) || (single == Single.Mix))	// I don't see mixing handled here
 				single = Single.Left;

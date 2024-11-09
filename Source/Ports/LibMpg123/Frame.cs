@@ -558,7 +558,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/********************************************************************/
 		public void Int123_Frame_Skip(Mpg123_Handle fr)
 		{
-			if (fr.Lay == 3)
+			if (fr.Hdr.Lay == 3)
 				lib.parse.Int123_Set_Pointer(fr, true, 512);
 		}
 
@@ -696,6 +696,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			Frame_Icy_Reset(fr);
 			lib.readers.Int123_Open_Bad(fr);
 
+			fr.Hdr = new Frame_Header();
 			fr.To_Decode = false;
 			fr.To_Ignore = false;
 			fr.MetaFlags = 0;
@@ -709,15 +710,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			fr.Clip = 0;
 			fr.OldHead = 0;
 			fr.FirstHead = 0;
-			fr.Lay = 0;
 			fr.Vbr = Mpg123_Vbr.Cbr;
 			fr.Abr_Rate = 0;
 			fr.Track_Frames = 0;
 			fr.Track_Samples = -1;
-			fr.FrameSize = 0;
 			fr.Mean_Frames = 0;
 			fr.Mean_FrameSize = 0;
-			fr.FreeSize = 0;
 			fr.LastScale = -1;
 			fr.Rva.Level[0] = -1;
 			fr.Rva.Level[1] = -1;
@@ -740,8 +738,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			fr.Icy.Interval = 0;
 			fr.Icy.Next = 0;
 			fr.HalfPhase = 0;		// Here or indeed only on first-time init?
-			fr.Error_Protection = false;
-			fr.FreeFormat_FrameSize = fr.P.FreeFormat_FrameSize;
+			fr.Hdr.FreeFormat_FrameSize = fr.P.FreeFormat_FrameSize;
 			fr.Enc_Delay = -1;
 			fr.Enc_Padding = -1;
 
@@ -868,11 +865,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			int64_t preShift = fr.P.PreFrames;
 
 			// Layer 3 _really_ needs at least one frame before
-			if ((fr.Lay == 3) && (preShift < 1))
+			if ((fr.Hdr.Lay == 3) && (preShift < 1))
 				preShift = 1;
 
 			// Layer 1 & 2 reall do not need more than 2
-			if ((fr.Lay != 3) && (preShift > 2))
+			if ((fr.Hdr.Lay != 3) && (preShift > 2))
 				preShift = 2;
 
 			return fr.FirstFrame - preShift;

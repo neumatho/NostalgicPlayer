@@ -67,27 +67,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123.Containers
 		public Single Single;
 		public c_int II_SbLimit;
 		public c_int Down_Sample_SbLimit;
-		public c_int Lsf;				// 0: MPEG 1.0; 1: MPEG 2.0/2.5 -- Both used as bool and array index!
 
 		// Many flags in disguise as integers... wasting bytes
-		public bool Mpeg25;
 		public c_int Down_Sample;
 		public c_int Header_Change;
-		public c_int Lay;
+		public Frame_Header Hdr;
 		public c_long Spf;				// Cached count of samples per frame
 		public Func<Mpg123_Handle, c_int> Do_Layer;
-		public bool Error_Protection;
-		public c_int Bitrate_Index;
-		public c_int Sampling_Frequency;
-		public c_int Padding;
-		public bool Extension;
-		public Mode Mode;
-		public c_int Mode_Ext;
-		public bool Copyright;
-		public bool Original;
-		public c_int Emphasis;
-		public c_int FrameSize;			// Computed frame size
-		public c_int FreeSize;			// Free format frame size
 		public Mpg123_Vbr Vbr;
 		public int64_t Num;				// Frame offset ...
 		public int64_t Input_Offset;	// Byte offset of this frame in input stream
@@ -96,8 +82,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123.Containers
 		public Frame_State_Flags State_Flags;
 		public c_char Silent_Resync;	// Do not complain for the next n resyncs
 		public c_uchar[] Xing_Toc;		// The seek TOC from Xing header
-		public bool FreeFormat;
-		public c_long FreeFormat_FrameSize;
 
 		// Bitstream info; bsi
 		public c_int BitIndex;
@@ -124,7 +108,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123.Containers
 		public c_double Mean_FrameSize;
 		public int64_t Mean_Frames;
 		public c_int FSizeOld;
-		public c_int SSize;
 		public c_uint BitReservoir;
 		public readonly c_uchar[][] BsSpace = { new c_uchar[Constant.MaxFrameSize + 512 + 4], new c_uchar[Constant.MaxFrameSize + 512 + 4] };	// MAXFRAMESIZE
 		public c_uchar[] BsBuf;

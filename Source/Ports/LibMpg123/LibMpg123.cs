@@ -818,18 +818,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			mi = new Mpg123_FrameInfo
 			{
-				Version = mh.Mpeg25 ? Mpg123_Version._2_5 : (mh.Lsf != 0) ? Mpg123_Version._2_0 : Mpg123_Version._1_0,
-				Layer = mh.Lay,
+				Version = mh.Hdr.Mpeg25 ? Mpg123_Version._2_5 : (mh.Hdr.Lsf != 0) ? Mpg123_Version._2_0 : Mpg123_Version._1_0,
+				Layer = mh.Hdr.Lay,
 				Rate = parse.Int123_Frame_Freq(mh),
-				Mode_Ext = mh.Mode_Ext,
-				FrameSize = mh.FrameSize + 4,	// Include header
-				Emphasis = mh.Emphasis,
+				Mode_Ext = mh.Hdr.Mode_Ext,
+				FrameSize = mh.Hdr.FrameSize + 4,	// Include header
+				Emphasis = mh.Hdr.Emphasis,
 				BitRate = parse.Int123_Frame_BitRate(mh),
 				Abr_Rate = mh.Abr_Rate,
 				Vbr = mh.Vbr
 			};
 
-			switch (mh.Mode)
+			switch (mh.Hdr.Mode)
 			{
 				case Mode.Stereo:
 				{
@@ -864,16 +864,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			mi.Flags = 0;
 
-			if (mh.Error_Protection)
+			if (mh.Hdr.Error_Protection)
 				mi.Flags |= Mpg123_Flags.Crc;
 
-			if (mh.Copyright)
+			if (mh.Hdr.Copyright)
 				mi.Flags |= Mpg123_Flags.Copyright;
 
-			if (mh.Extension)
+			if (mh.Hdr.Extension)
 				mi.Flags |= Mpg123_Flags.Private;
 
-			if (mh.Original)
+			if (mh.Hdr.Original)
 				mi.Flags |= Mpg123_Flags.Original;
 
 			return Mpg123_Errors.Ok;

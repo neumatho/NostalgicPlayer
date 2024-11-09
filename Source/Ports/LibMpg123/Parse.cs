@@ -117,7 +117,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/********************************************************************/
 		public c_int Int123_Frame_BitRate(Mpg123_Handle fr)
 		{
-			return tabSel_123[fr.Lsf, fr.Lay - 1, fr.Bitrate_Index];
+			return tabSel_123[fr.Hdr.Lsf, fr.Hdr.Lay - 1, fr.Hdr.BitRate_Index];
 		}
 
 
@@ -129,7 +129,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/********************************************************************/
 		public c_long Int123_Frame_Freq(Mpg123_Handle fr)
 		{
-			return freqs[fr.Sampling_Frequency];
+			return freqs[fr.Hdr.Sampling_Frequency];
 		}
 
 
@@ -147,8 +147,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			// TODO: Rework this thing
 			c_int freeFormat_Count = 0;
 
+			// Start with current frame header state as copy for roll-back ability
+			Frame_Header nhdr = fr.Hdr;
+
 			// Stuff that needs resetting if complete frame reading fails
-			c_int oldSize = fr.FrameSize;
 			c_int oldPhase = fr.HalfPhase;
 
 			// The counter for the search-first-header loop.
@@ -156,12 +158,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			// when repeatedly headers are found that do not have valid followup headers
 			c_long headCount = 0;
 
-			fr.FSizeOld = fr.FrameSize;		// For layer 3
+			fr.FSizeOld = fr.Hdr.FrameSize;		// For layer 3
 
 			if (HalfSpeed_Do(fr) == 1)
 				return 1;
 
-			// From now on, old frame data is tainted by parsing attempts
+			// From now on, old frame data is tainted by parsing attempts.
+			// Handling premature effects of decode header now, more decoupling would be welcome
 			fr.To_Decode = fr.To_Ignore = false;
 
 			if (((fr.P.Flags & Mpg123_Param_Flags.No_Frankenstein) != 0) && (((fr.Track_Frames > 0) && (fr.Num >= fr.Track_Frames - 1))))
@@ -175,14 +178,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			if (fr.Rd.Forget != null)
 				fr.Rd.Forget(fr);
 
-			int ret = fr.Rd.Head_Read(fr, out c_ulong newHead);
+			c_int ret = fr.Rd.Head_Read(fr, out c_ulong newHead);
 			if (ret <= 0)
 				goto Read_Frame_Bad;
 
 			Init_Resync:
 			if ((fr.FirstHead == 0) && (Head_Check(newHead) == 0))
 			{
-				ret = Skip_Junk(fr, ref newHead, ref headCount);
+				ret = Skip_Junk(fr, ref newHead, ref headCount, ref nhdr);
 
 				// JUMP_CONCLUSION
 				if (ret < 0)
@@ -200,7 +203,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			ret = Head_Check(newHead);
 			if (ret != 0)
-				ret = Decode_Header(fr, newHead, ref freeFormat_Count);
+				ret = Decode_Header(fr, ref nhdr, newHead, ref freeFormat_Count);
 
 			// JUMP_CONCLUSION
 			if (ret < 0)
@@ -240,7 +243,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			if (fr.FirstHead == 0)
 			{
-				ret = (fr.P.Flags & Mpg123_Param_Flags.No_Readahead) != 0 ? Parse_Good : Do_ReadAhead(fr, newHead);
+				ret = (fr.P.Flags & Mpg123_Param_Flags.No_Readahead) != 0 ? Parse_Good : Do_ReadAhead(fr, ref nhdr, newHead);
 
 				// Readahead can fail with NEED_MORE, in which case we must also make the
 				// just read header available again for next go
@@ -276,9 +279,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				c_uchar[] newBuf = fr.BsSpace[fr.BsNum];
 
 				// Read main data into memory
-				ret = fr.Rd.Read_Frame_Body(fr, newBuf.AsMemory(512), fr.FrameSize);
+				ret = fr.Rd.Read_Frame_Body(fr, newBuf.AsMemory(512), nhdr.FrameSize);
 				if (ret < 0)
+				{
+					// If failed, flip back
 					goto Read_Frame_Bad;
+				}
 
 				fr.BsBufOld = fr.BsBuf;
 				fr.BsBufOldIndex = fr.BsBufIndex;
@@ -287,6 +293,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			}
 
 			fr.BsNum = (fr.BsNum + 1) & 1;
+
+			// We read the frame body, time to apply the matching header.
+			// Even if erroring out later, the header state needs to match the body
+			Apply_Header(fr, ref nhdr);
 
 			if (fr.FirstHead == 0)
 			{
@@ -301,7 +311,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 					// Only check for LAME tag at beginning of whole stream
 					// ... when there indeed is one in between, it's the user's problem
-					if ((fr.Lay == 3) && (Check_Lame_Tag(fr) == 1))
+					if ((fr.Hdr.Lay == 3) && (Check_Lame_Tag(fr) == 1))
 					{
 						// ... In practice, Xing/LAME tags are layer 3 only
 						if (fr.Rd.Forget != null)
@@ -317,6 +327,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			}
 
 			Int123_Set_Pointer(fr, false, 0);
+
+			// No use of nhdr from here on. It is fr.Hdr now!
 
 			// Question: How bad does the floating point value get with repeated recomputation?
 			// Also, considering that we can play the file or parts of many times
@@ -346,7 +358,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			fr.To_Decode = fr.To_Ignore = true;
 
-			if (fr.Error_Protection)
+			if (fr.Hdr.Error_Protection)
 				fr.Crc = lib.getBits.GetBits_(fr, 16);		// Skip crc
 
 			// Let's check for header change after deciding that the new one is good
@@ -394,7 +406,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			if (fr.Err == Mpg123_Errors.Ok)
 				fr.Err = Mpg123_Errors.Err_Reader;
 
-			fr.FrameSize = oldSize;
 			fr.HalfPhase = oldPhase;
 
 			// That return code might be inherited from some feeder action, or reader error
@@ -418,30 +429,30 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		{
 			fr.BitIndex = 0;
 
-			if (fr.Lay == 3)
+			if (fr.Hdr.Lay == 3)
 			{
 				if (part2)
 				{
 					fr.WordPointer = fr.BsBuf;
-					fr.WordPointerIndex = fr.BsBufIndex + fr.SSize - backStep;
+					fr.WordPointerIndex = fr.BsBufIndex + fr.Hdr.SSize - backStep;
 
 					if (backStep != 0)
 						Array.Copy(fr.BsBufOld, fr.BsBufOldIndex + fr.FSizeOld - backStep, fr.WordPointer, fr.WordPointerIndex, backStep);
 
-					fr.Bits_Avail = (fr.FrameSize - fr.SSize + backStep) * 8;
+					fr.Bits_Avail = (fr.Hdr.FrameSize - fr.Hdr.SSize + backStep) * 8;
 				}
 				else
 				{
 					fr.WordPointer = fr.BsBuf;
 					fr.WordPointerIndex = fr.BsBufIndex;
-					fr.Bits_Avail = fr.SSize * 8;
+					fr.Bits_Avail = fr.Hdr.SSize * 8;
 				}
 			}
 			else
 			{
 				fr.WordPointer = fr.BsBuf;
 				fr.WordPointerIndex = fr.BsBufIndex;
-				fr.Bits_Avail = fr.FrameSize * 8;
+				fr.Bits_Avail = fr.Hdr.FrameSize * 8;
 			}
 		}
 
@@ -454,7 +465,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/********************************************************************/
 		public c_double Int123_Compute_Bpf(Mpg123_Handle fr)
 		{
-			return (fr.FrameSize > 0) ? fr.FrameSize + 4.0 : 1.0;
+			return (fr.Hdr.FrameSize > 0) ? fr.Hdr.FrameSize + 4.0 : 1.0;
 		}
 
 		#region Private methods
@@ -544,7 +555,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			//                                    MPEG 1  MPEG 2/2.5 (LSF)
 			// Stereo, Joint Stereo, Dual Channel  32      17
 			// Mono                                17       9
-			c_int lame_Offset = (fr.Stereo == 2) ? (fr.Lsf != 0 ? 17 : 32) : (fr.Lsf != 0 ? 9 : 17);
+			c_int lame_Offset = (fr.Stereo == 2) ? (fr.Hdr.Lsf != 0 ? 17 : 32) : (fr.Hdr.Lsf != 0 ? 9 : 17);
 
 			if ((fr.P.Flags & Mpg123_Param_Flags.Ignore_InfoFrame) != 0)
 				goto Check_Lame_Tag_No;
@@ -554,7 +565,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			// without the search index table! I cannot assume a reasonable minimal size
 			// for the actual data, have to check if each byte of information is present.
 			// But: 4 B Info/Xing + 4 B flags is bare minimum
-			if (fr.FrameSize < (lame_Offset + 8))
+			if (fr.Hdr.FrameSize < (lame_Offset + 8))
 				goto Check_Lame_Tag_No;
 
 			// Only search for tag when all zero before it (apart from checksum)
@@ -585,7 +596,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			// there! I'm always returning 'yes', though
 			if ((xing_Flags & 1) != 0)	// Total bitstram frames
 			{
-				if (fr.FrameSize < (lame_Offset + 4))
+				if (fr.Hdr.FrameSize < (lame_Offset + 4))
 					goto Check_Lame_Tag_Yes;
 
 				c_ulong long_Tmp = Bit_Read_Long(bsBufSpan, ref lame_Offset);
@@ -599,7 +610,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			if ((xing_Flags & 0x2) != 0)	// Total bitstream bytes
 			{
-				if (fr.FrameSize < (lame_Offset + 4))
+				if (fr.Hdr.FrameSize < (lame_Offset + 4))
 					goto Check_Lame_Tag_Yes;
 
 				c_ulong long_Tmp = Bit_Read_Long(bsBufSpan, ref lame_Offset);
@@ -617,7 +628,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			if ((xing_Flags & 0x4) != 0)	// TOC
 			{
-				if (fr.FrameSize < (lame_Offset + 100))
+				if (fr.Hdr.FrameSize < (lame_Offset + 100))
 					goto Check_Lame_Tag_Yes;
 
 				lib.frame.Int123_Frame_Fill_Toc(fr, fr.BsBuf.AsMemory(fr.BsBufIndex + lame_Offset));
@@ -626,7 +637,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			if ((xing_Flags & 0x8) != 0)	// VBR quality
 			{
-				if (fr.FrameSize < (lame_Offset + 4))
+				if (fr.Hdr.FrameSize < (lame_Offset + 4))
 					goto Check_Lame_Tag_Yes;
 
 				Bit_Read_Long(bsBufSpan, ref lame_Offset);
@@ -640,7 +651,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			//     19: Encoder flags
 			//     20: ABR
 			//     21-23: Encoder delays
-			if (fr.FrameSize < (lame_Offset + 24))	// I'm interested in 24 B of extra info
+			if (fr.Hdr.FrameSize < (lame_Offset + 24))	// I'm interested in 24 B of extra info
 				goto Check_Lame_Tag_Yes;
 
 			if (bsBufSpan[lame_Offset] != 0)
@@ -818,8 +829,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		private void HalfSpeed_Prepare(Mpg123_Handle fr)
 		{
 			// Save for repetition
-			if ((fr.P.HalfSpeed != 0) && (fr.Lay == 3))
-				Array.Copy(fr.BsBuf, fr.BsBufIndex, fr.SSave, 0, fr.SSize);
+			if ((fr.P.HalfSpeed != 0) && (fr.Hdr.Lay == 3))
+				Array.Copy(fr.BsBuf, fr.BsBufIndex, fr.SSave, 0, fr.Hdr.SSize);
 		}
 
 
@@ -841,10 +852,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 					Int123_Set_Pointer(fr, false, 0);
 
-					if (fr.Lay == 3)
-						Array.Copy(fr.SSave, 0, fr.BsBuf, fr.BsBufIndex, fr.SSize);
+					if (fr.Hdr.Lay == 3)
+						Array.Copy(fr.SSave, 0, fr.BsBuf, fr.BsBufIndex, fr.Hdr.SSize);
 
-					if (fr.Error_Protection)
+					if (fr.Hdr.Error_Protection)
 						fr.Crc = lib.getBits.GetBits_(fr, 16);	// Skip crc
 
 					return 1;
@@ -870,7 +881,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// stream after all...)
 		/// </summary>
 		/********************************************************************/
-		private c_int Guess_FreeFormat_FrameSize(Mpg123_Handle fr, c_ulong oldHead)
+		private c_int Guess_FreeFormat_FrameSize(Mpg123_Handle fr, c_ulong oldHead, ref c_int frameSize)
 		{
 			if ((fr.RDat.Flags & (ReaderFlags.Seekable | ReaderFlags.Buffered)) == 0)
 				return Parse_Bad;
@@ -880,7 +891,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				return ret;
 
 			// We are already 4 bytes into it
-			c_long i;
+			c_int i;
 			for (i = 4; i < Constant.MaxFrameSize + 4; i++)
 			{
 				ret = fr.Rd.Head_Shift(fr, ref head);
@@ -891,7 +902,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				if ((head & Hdr_SameMask) == (oldHead & Hdr_SameMask))
 				{
 					fr.Rd.Back_Bytes(fr, i + 1);
-					fr.FrameSize = i - 3;
+					frameSize = i - 3;
 
 					return Parse_Good;	// Success!
 				}
@@ -915,46 +926,50 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// Negative: Some error
 		/// 
 		/// You are required to do a head_check() before calling!
+		///
+		/// This now only operates on a frame header struct, not the full frame
+		/// structure. The scope is limited to parsing header information and
+		/// determining the size of the frame body to read. Everything else
+		/// belongs into a later stage of applying header information to the
+		/// main decoder frame structure
 		/// </summary>
 		/********************************************************************/
-		private c_int Decode_Header(Mpg123_Handle fr, c_ulong newHead, ref c_int freeFormat_Count)
+		private c_int Decode_Header(Mpg123_Handle fr, ref Frame_Header fh, c_ulong newHead, ref c_int freeFormat_Count)
 		{
 			// For some reason, the layer and sampling freq settings used to be wrapped
 			// in a weird conditional including MPG123_NO_RESYNC. What was I thinking?
 			// This information has to be consistent
-			fr.Lay = (c_int)(4U - ((newHead & Hdr_Layer) >> Hdr_Layer_Shift));
+			fh.Lay = (c_int)(4U - ((newHead & Hdr_Layer) >> Hdr_Layer_Shift));
 
 			if ((((newHead & Hdr_Version) >> Hdr_Version_Shift) & 0x2) != 0)
 			{
-				fr.Lsf = (((newHead & Hdr_Version) >> Hdr_Version_Shift) & 0x1) != 0 ? 0 : 1;
-				fr.Mpeg25 = false;
-				fr.Sampling_Frequency = (c_int)(((newHead & Hdr_SampleRate) >> Hdr_SampleRate_Shift) + (c_ulong)(fr.Lsf * 3U));
+				fh.Lsf = (((newHead & Hdr_Version) >> Hdr_Version_Shift) & 0x1) != 0 ? 0 : 1;
+				fh.Mpeg25 = false;
+				fh.Sampling_Frequency = (c_int)(((newHead & Hdr_SampleRate) >> Hdr_SampleRate_Shift) + (c_ulong)(fh.Lsf * 3U));
 			}
 			else
 			{
-				fr.Lsf = 1;
-				fr.Mpeg25 = true;
-				fr.Sampling_Frequency = (c_int)(6U + ((newHead & Hdr_SampleRate) >> Hdr_SampleRate_Shift));
+				fh.Lsf = 1;
+				fh.Mpeg25 = true;
+				fh.Sampling_Frequency = (c_int)(6U + ((newHead & Hdr_SampleRate) >> Hdr_SampleRate_Shift));
 			}
 
-			fr.Error_Protection = (((newHead & Hdr_Crc) >> Hdr_Crc_Shift) ^ 0x1) != 0;
-			fr.Bitrate_Index = (c_int)((newHead & Hdr_BitRate) >> Hdr_BitRate_Shift);
-			fr.Padding = (c_int)((newHead & Hdr_Padding) >> Hdr_Padding_Shift);
-			fr.Extension = ((newHead & Hdr_Private) >> Hdr_Private_Shift) != 0;
-			fr.Mode = (Mode)((newHead & Hdr_Channel) >> Hdr_Channel_Shift);
-			fr.Mode_Ext = (c_int)((newHead & Hdr_Chanex) >> Hdr_Chanex_Shift);
-			fr.Copyright = ((newHead & Hdr_Copyright) >> Hdr_Copyright_Shift) != 0;
-			fr.Original = ((newHead & Hdr_Original) >> Hdr_Original_Shift) != 0;
-			fr.Emphasis = (c_int)((newHead & Hdr_Emphasis) >> Hdr_Emphasis_Shift);
-			fr.FreeFormat = (newHead & Hdr_BitRate) == 0;
-
-			fr.Stereo = (fr.Mode == Mode.Mono) ? 1 : 2;
+			fh.Error_Protection = (((newHead & Hdr_Crc) >> Hdr_Crc_Shift) ^ 0x1) != 0;
+			fh.BitRate_Index = (c_int)((newHead & Hdr_BitRate) >> Hdr_BitRate_Shift);
+			fh.Padding = (c_int)((newHead & Hdr_Padding) >> Hdr_Padding_Shift);
+			fh.Extension = ((newHead & Hdr_Private) >> Hdr_Private_Shift) != 0;
+			fh.Mode = (Mode)((newHead & Hdr_Channel) >> Hdr_Channel_Shift);
+			fh.Mode_Ext = (c_int)((newHead & Hdr_Chanex) >> Hdr_Chanex_Shift);
+			fh.Copyright = ((newHead & Hdr_Copyright) >> Hdr_Copyright_Shift) != 0;
+			fh.Original = ((newHead & Hdr_Original) >> Hdr_Original_Shift) != 0;
+			fh.Emphasis = (c_int)((newHead & Hdr_Emphasis) >> Hdr_Emphasis_Shift);
+			fh.FreeFormat = (newHead & Hdr_BitRate) == 0;
 
 			// We can't use tabsel_123 for freeformat, so trying to guess framesize...
-			if (fr.FreeFormat)
+			if (fh.FreeFormat)
 			{
 				// When we first encounter the frame with freeformat, guess framesize
-				if (fr.FreeFormat_FrameSize < 0)
+				if (fh.FreeFormat_FrameSize < 0)
 				{
 					if ((fr.P.Flags & Mpg123_Param_Flags.No_Readahead) != 0)
 						return Parse_Bad;
@@ -964,70 +979,61 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					if (freeFormat_Count > 5)
 						return Parse_Bad;
 
-					int ret = Guess_FreeFormat_FrameSize(fr, newHead);
+					int ret = Guess_FreeFormat_FrameSize(fr, newHead, ref fh.FrameSize);
 					if (ret == Parse_Good)
-						fr.FreeFormat_FrameSize = fr.FrameSize - fr.Padding;
+						fh.FreeFormat_FrameSize = fh.FrameSize - fh.Padding;
 					else
 						return ret;
 				}
 				else	// Freeformat should be CBR, so the same framesize can be used at the 2nd reading or later
-					fr.FrameSize = fr.FreeFormat_FrameSize + fr.Padding;
+					fh.FrameSize = fh.FreeFormat_FrameSize + fh.Padding;
 			}
 
-			switch (fr.Lay)
+			switch (fh.Lay)
 			{
 				case 1:
 				{
-					fr.Spf = 384;
-					fr.Do_Layer = lib.layer1.Int123_Do_Layer1;
-
-					if (!fr.FreeFormat)
+					if (!fh.FreeFormat)
 					{
-						c_long fs = tabSel_123[fr.Lsf, 0, fr.Bitrate_Index] * 12000;
-						fs /= freqs[fr.Sampling_Frequency];
-						fs = ((fs + fr.Padding) << 2) - 4;
-						fr.FrameSize = fs;
+						c_long fs = tabSel_123[fh.Lsf, 0, fh.BitRate_Index] * 12000;
+						fs /= freqs[fh.Sampling_Frequency];
+						fs = ((fs + fh.Padding) << 2) - 4;
+						fh.FrameSize = fs;
 					}
 					break;
 				}
 
 				case 2:
 				{
-					fr.Spf = 1152;
-					fr.Do_Layer = lib.layer2.Int123_Do_Layer2;
-
-					if (!fr.FreeFormat)
+					if (!fh.FreeFormat)
 					{
-						c_long fs = tabSel_123[fr.Lsf, 1, fr.Bitrate_Index] * 144000;
-						fs /= freqs[fr.Sampling_Frequency];
-						fs += fr.Padding - 4;
-						fr.FrameSize = fs;
+						c_long fs = tabSel_123[fh.Lsf, 1, fh.BitRate_Index] * 144000;
+						fs /= freqs[fh.Sampling_Frequency];
+						fs += fh.Padding - 4;
+						fh.FrameSize = fs;
 					}
 					break;
 				}
 
 				case 3:
 				{
-					fr.Spf = fr.Lsf != 0 ? 576 : 1152;	// MPEG 2.5 implies LSF
-					fr.Do_Layer = lib.layer3.Int123_Do_Layer3;
-
-					if (fr.Lsf != 0)
-						fr.SSize = (fr.Stereo == 1) ? 9 : 17;
+					if (fh.Lsf != 0)
+						fh.SSize = (fh.Mode == Mode.Mono) ? 9 : 17;
 					else
-						fr.SSize = (fr.Stereo == 1) ? 17 : 32;
+						fh.SSize = (fh.Mode == Mode.Mono) ? 17 : 32;
 
-					if (fr.Error_Protection)
-						fr.SSize += 2;
+					if (fh.Error_Protection)
+						fh.SSize += 2;
 
-					if (!fr.FreeFormat)
+					if (!fh.FreeFormat)
 					{
-						c_long fs = tabSel_123[fr.Lsf, 2, fr.Bitrate_Index] * 144000;
-						fs /= freqs[fr.Sampling_Frequency] << fr.Lsf;
-						fs += fr.Padding - 4;
-						fr.FrameSize = fs;
+						c_long fs = tabSel_123[fh.Lsf, 2, fh.BitRate_Index] * 144000;
+						fs /= freqs[fh.Sampling_Frequency] << fh.Lsf;
+						fs += fh.Padding - 4;
+						fh.FrameSize = fs;
 					}
 
-					if (fr.FrameSize < fr.SSize)
+					if (fh.FrameSize < fh.SSize)
 						return Parse_Bad;
 
 					break;
@@ -1037,10 +1043,57 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					return Parse_Bad;
 			}
 
-			if (fr.FrameSize > Constant.MaxFrameSize)
+			if (fh.FrameSize > Constant.MaxFrameSize)
 				return Parse_Bad;
 
 			return Parse_Good;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Apply decoded header structure to frame struct, including main
+		/// decoder function pointer
+		/// </summary>
+		/********************************************************************/
+		private void Apply_Header(Mpg123_Handle fr, ref Frame_Header hdr)
+		{
+			// Copy whole struct, do some postprocessing
+			fr.Hdr = hdr;
+			fr.Stereo = (fr.Hdr.Mode == Mode.Mono) ? 1 : 2;
+
+			switch (fr.Hdr.Lay)
+			{
+				case 1:
+				{
+					fr.Spf = 384;
+					fr.Do_Layer = lib.layer1.Int123_Do_Layer1;
+					break;
+				}
+
+				case 2:
+				{
+					fr.Spf = 1152;
+					fr.Do_Layer = lib.layer2.Int123_Do_Layer2;
+					break;
+				}
+
+				case 3:
+				{
+					fr.Spf = fr.Hdr.Lsf != 0 ? 576 : 1152;	// MPEG 2.5 implies LSF
+					fr.Do_Layer = lib.layer3.Int123_Do_Layer3;
+					break;
+				}
+
+				default:
+				{
+					// No error checking/message here, been done in Decode_Header()
+					fr.Spf = 0;
+					fr.Do_Layer = null;
+					break;
+				}
+			}
 		}
 
 
@@ -1051,7 +1104,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// cannot believe what junk is out there!
 		/// </summary>
 		/********************************************************************/
-		private c_int Do_ReadAhead(Mpg123_Handle fr, c_ulong newHead)
+		private c_int Do_ReadAhead(Mpg123_Handle fr, ref Frame_Header nhdr, c_ulong newHead)
 		{
 			c_ulong nextHead = 0;
 			c_int hd = 0;
@@ -1062,7 +1115,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			int64_t start = fr.Rd.Tell(fr);
 
 			// Step framesize bytes forward and read next possible header
-			int64_t oRet = fr.Rd.Skip_Bytes(fr, fr.FrameSize);
+			int64_t oRet = fr.Rd.Skip_Bytes(fr, nhdr.FrameSize);
 			if (oRet < 0)
 				return oRet == (int64_t)Mpg123_Errors.Need_More ? Parse_More : Parse_Err;
 
@@ -1196,7 +1249,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// Watch out for junk/tags on beginning of stream by invalid header
 		/// </summary>
 		/********************************************************************/
-		private c_int Skip_Junk(Mpg123_Handle fr, ref c_ulong newHeadP, ref c_long headCount)
+		private c_int Skip_Junk(Mpg123_Handle fr, ref c_ulong newHeadP, ref c_long headCount, ref Frame_Header nhdr)
 		{
 			c_int ret;
 			c_int freeFormat_Count = 0;
@@ -1260,7 +1313,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				if (ret <= 0)
 					return ret;
 
-				if ((Head_Check(newHead) != 0) && ((ret = Decode_Header(fr, newHead, ref freeFormat_Count)) != 0))
+				if ((Head_Check(newHead) != 0) && ((ret = Decode_Header(fr, ref nhdr, newHead, ref freeFormat_Count)) != 0))
 					break;
 			}
 			while (true);

@@ -95,7 +95,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			II_Select_Table(fr);
 
-			fr.JsBound = (fr.Mode == Mode.Joint_Stereo) ? (fr.Mode_Ext << 2) + 4 : fr.II_SbLimit;
+			fr.JsBound = (fr.Hdr.Mode == Mode.Joint_Stereo) ? (fr.Hdr.Mode_Ext << 2) + 4 : fr.II_SbLimit;
 
 			if (fr.JsBound > fr.II_SbLimit)
 				fr.JsBound = fr.II_SbLimit;
@@ -432,10 +432,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			Al_Table[][] tables = { L2Tables.Alloc_0, L2Tables.Alloc_1, L2Tables.Alloc_2, L2Tables.Alloc_3, L2Tables.Alloc_4 };
 			c_int[] sbLims = { 27, 30, 8, 12, 30 };
 
-			if (fr.Sampling_Frequency >= 3)		// Or equivalent: (fr.lsf == 1)
+			if (fr.Hdr.Sampling_Frequency >= 3)		// Or equivalent: (fr.lsf == 1)
 				table = 4;
 			else
-				table = translate[fr.Sampling_Frequency, 2 - fr.Stereo, fr.Bitrate_Index];
+				table = translate[fr.Hdr.Sampling_Frequency, 2 - fr.Stereo, fr.Hdr.BitRate_Index];
 
 			c_int sbLim = sbLims[table];
 			fr.alloc = tables[table];

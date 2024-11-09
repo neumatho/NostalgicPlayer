@@ -154,7 +154,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			c_int stereo = fr.Stereo;
 			Single single = fr.Single;
 			c_int ms_Stereo, i_Stereo;
-			c_int sFreq = fr.Sampling_Frequency;
+			c_int sFreq = fr.Hdr.Sampling_Frequency;
 			c_int stereo1;
 
 			if (stereo == 1)
@@ -167,15 +167,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			else
 				stereo1 = 2;
 
-			if (fr.Mode == Mode.Joint_Stereo)
+			if (fr.Hdr.Mode == Mode.Joint_Stereo)
 			{
-				ms_Stereo = (fr.Mode_Ext & 0x2) >> 1;
-				i_Stereo = fr.Mode_Ext & 0x1;
+				ms_Stereo = (fr.Hdr.Mode_Ext & 0x2) >> 1;
+				i_Stereo = fr.Hdr.Mode_Ext & 0x1;
 			}
 			else
 				ms_Stereo = i_Stereo = 0;
 
-			c_int granules = fr.Lsf != 0 ? 1 : 2;
+			c_int granules = fr.Hdr.Lsf != 0 ? 1 : 2;
 
 			// Quick hack to keep the music playing
 			// after having seen this nasty test file...
@@ -187,7 +187,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			if (fr.PInfo != null)
 			{
 				fr.PInfo.MainData = (c_int)sideInfo.Main_Data_Begin;
-				fr.PInfo.Padding = fr.Padding;
+				fr.PInfo.Padding = fr.Hdr.Padding;
 			}
 
 			for (c_int gr = 0; gr < granules; gr++)
@@ -206,7 +206,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 					c_long part2Bits;
 
-					if (fr.Lsf != 0)
+					if (fr.Hdr.Lsf != 0)
 						part2Bits = III_Get_Scale_Factors_2(fr, scaleFacs[0], gr_Info, 0);
 					else
 						part2Bits = III_Get_Scale_Factors_1(fr, scaleFacs[0], gr_Info, 0, gr);
@@ -235,7 +235,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 					c_long part2Bits;
 
-					if (fr.Lsf != 0)
+					if (fr.Hdr.Lsf != 0)
 						part2Bits = III_Get_Scale_Factors_2(fr, scaleFacs[1], gr_Info, i_Stereo);
 					else
 						part2Bits = III_Get_Scale_Factors_1(fr, scaleFacs[1], gr_Info, 1, gr);
@@ -275,7 +275,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 					}
 
 					if (i_Stereo != 0)
-						III_I_Stereo(hybridIn, scaleFacs[1], gr_Info, sFreq, ms_Stereo, fr.Lsf);
+						III_I_Stereo(hybridIn, scaleFacs[1], gr_Info, sFreq, ms_Stereo, fr.Hdr.Lsf);
 
 					if ((ms_Stereo != 0) || (i_Stereo != 0) || (single == Single.Mix))
 					{
@@ -586,22 +586,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			c_int powDiff = (single == Single.Mix) ? 4 : 0;
 
 			c_int[][] tabs =
-			{
-				new[] { 2, 9, 5, 3, 4 },
-				new[] { 1, 8, 1, 2, 9 }
-			};
-			c_int[] tab = tabs[fr.Lsf];
+			[
+				[ 2, 9, 5, 3, 4 ],
+				[ 1, 8, 1, 2, 9 ]
+			];
+			c_int[] tab = tabs[fr.Hdr.Lsf];
 
 			{	// First ensure we got enough bits available
 				c_uint needBits = 0;
 				needBits += (c_uint)tab[1];	// main_data begin
 				needBits += (c_uint)(stereo == 1 ? tab[2] : tab[3]);	// Private
 
-				if (fr.Lsf == 0)
+				if (fr.Hdr.Lsf == 0)
 					needBits += (c_uint)stereo * 4;		// Scfsi
 
 				// For each granule for each channel ...
-				needBits += (c_uint)(tab[0] * stereo * (29 + tab[4] + 1 + 22 + (fr.Lsf == 0 ? 1 : 0) + 2));
+				needBits += (c_uint)(tab[0] * stereo * (29 + tab[4] + 1 + 22 + (fr.Hdr.Lsf == 0 ? 1 : 0) + 2));
 
 				if (fr.Bits_Avail < needBits)
 					return 1;
@@ -614,7 +614,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				// Overwrite main_data_begin for the really available bit reservoir
 				lib.getBits.BackBits(fr, tab[1]);
 
-				if (fr.Lsf == 0)
+				if (fr.Hdr.Lsf == 0)
 				{
 					fr.WordPointer[fr.WordPointerIndex] = (c_uchar)(fr.BitReservoir >> 1);
 					fr.WordPointer[fr.WordPointerIndex + 1] = (c_uchar)((fr.BitReservoir & 1) << 7);
@@ -624,7 +624,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 				// Zero "side-info" data for a silence-frame
 				// without touching audio data used as bit reservoir for following frame
-				Array.Clear(fr.WordPointer, fr.WordPointerIndex + 2, fr.SSize - 2);
+				Array.Clear(fr.WordPointer, fr.WordPointerIndex + 2, fr.Hdr.SSize - 2);
 
 				// Reread the new bit reservoir offset
 				si.Main_Data_Begin = lib.getBits.GetBits_(fr, tab[1]);
@@ -632,11 +632,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			// Keep track of the available data bytes for the bit reservoir.
 			// CRC is included in ssize already
-			fr.BitReservoir = (c_uint)(fr.BitReservoir + fr.FrameSize - fr.SSize);
+			fr.BitReservoir = (c_uint)(fr.BitReservoir + fr.Hdr.FrameSize - fr.Hdr.SSize);
 
 			// Limit the reservoir to the max for MPEG 1.0 or 2.x
-			if (fr.BitReservoir > (fr.Lsf == 0 ? 511U : 255U))
-				fr.BitReservoir = (fr.Lsf == 0 ? 511U : 255U);
+			if (fr.BitReservoir > (fr.Hdr.Lsf == 0 ? 511U : 255U))
+				fr.BitReservoir = (fr.Hdr.Lsf == 0 ? 511U : 255U);
 
 			// Now back into less commented territory. It's code. It works
 			if (stereo == 1)
@@ -644,7 +644,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 			else
 				si.Private_Bits = lib.getBits.GetBits_(fr, tab[3]);
 
-			if (fr.Lsf == 0)
+			if (fr.Hdr.Lsf == 0)
 			{
 				for (c_int ch = 0; ch < stereo; ch++)
 				{
@@ -705,14 +705,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 							return 1;
 
 						// Region count/start parameters are implicit in this case
-						if (((fr.Lsf == 0) || (gr_Info.Block_Type == 2)) && !fr.Mpeg25)
+						if (((fr.Hdr.Lsf == 0) || (gr_Info.Block_Type == 2)) && !fr.Hdr.Mpeg25)
 						{
 							gr_Info.Region1Start = 36 >> 1;
 							gr_Info.Region2Start = 576 >> 1;
 						}
 						else
 						{
-							if (fr.Mpeg25)
+							if (fr.Hdr.Mpeg25)
 							{
 								c_int r0c;
 
@@ -754,7 +754,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 						gr_Info.Mixed_Block_Flag = 0;
 					}
 
-					if (fr.Lsf == 0)
+					if (fr.Hdr.Lsf == 0)
 						gr_Info.PreFlag = lib.getBits.Get1Bit(fr);
 
 					gr_Info.ScaleFac_Scale = lib.getBits.Get1Bit(fr);
