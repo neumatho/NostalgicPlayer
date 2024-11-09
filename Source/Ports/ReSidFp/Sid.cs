@@ -307,7 +307,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				Dac dacBuilder = new Dac(OSC_DAC_BITS);
 				dacBuilder.KinkedDac(model);
 
-				double offset = dacBuilder.GetOutput(is6581 ? OFFSET_6581 : OFFSET_8580);
+				//double offset = dacBuilder.GetOutput(is6581 ? OFFSET_6581 : OFFSET_8580);
+				double offset = dacBuilder.GetOutput(0x7ff);
 
 				for (uint i = 0; i < (1 << (int)OSC_DAC_BITS); i++)
 				{
@@ -827,9 +828,17 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private int Output()
 		{
-			float v1 = voice[0].Output(voice[2].Wave());
-			float v2 = voice[1].Output(voice[0].Wave());
-			float v3 = voice[2].Output(voice[1].Wave());
+			float o1 = voice[0].Output(voice[2].Wave());
+			float o2 = voice[1].Output(voice[0].Wave());
+			float o3 = voice[2].Output(voice[1].Wave());
+
+			uint env1 = voice[0].Envelope().Output();
+			uint env2 = voice[1].Envelope().Output();
+			uint env3 = voice[2].Envelope().Output();
+
+			int v1 = filter.GetNormalizedVoice(o1, env1);
+			int v2 = filter.GetNormalizedVoice(o2, env2);
+			int v3 = filter.GetNormalizedVoice(o3, env3);
 
 			int input = filter.Clock(v1, v2, v3);
 

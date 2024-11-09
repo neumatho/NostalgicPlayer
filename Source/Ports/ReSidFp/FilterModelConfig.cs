@@ -11,6 +11,47 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 {
 	internal abstract class FilterModelConfig
 	{
+		/// <summary>
+		/// Hack to add quick dither when converting values from float to int
+		/// and avoid quantization noise.
+		/// Hopefully this can be removed the day we move all the analog part
+		/// processing to floats.
+		///
+		/// Not sure about the effect of using such small buffer of numbers
+		/// since the random sequence repeats every 1024 values but for
+		/// now it seems to do the job
+		/// </summary>
+		private class RandomNoise
+		{
+			private double[] buffer = new double[1024];
+			private int index = 0;
+
+			/********************************************************************/
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/********************************************************************/
+			public RandomNoise()
+			{
+				for (int i = 0; i < 1024; i++)
+					buffer[i] = Random.Shared.NextDouble();
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public double GetNoise()
+			{
+				index = (index + 1) & 0x3ff;
+
+				return buffer[index];
+			}
+		}
+
 		// Capacitor value
 		protected readonly double c;
 
@@ -30,7 +71,6 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		protected readonly double n16;
 
 		private readonly double voice_voltage_range;
-		private readonly double voice_dc_voltage;
 
 		// Current factor coefficient for op-amp integrators
 		private double currFactorCoeff;
@@ -44,12 +84,14 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		// Reverse op-amp transfer function
 		protected readonly ushort[] opamp_rev = new ushort[1 << 16];	// This is initialized in the derived class constructor
 
+		private RandomNoise rnd = new RandomNoise();
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		protected FilterModelConfig(double vvr, double vdv, double c, double vdd, double vth, double uCox, Spline.Point[] opamp_voltage, uint opamp_size)
+		protected FilterModelConfig(double vvr, double c, double vdd, double vth, double uCox, Spline.Point[] opamp_voltage, uint opamp_size)
 		{
 			this.c = c;
 			this.vdd = vdd;
@@ -62,7 +104,6 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			n16 = norm * ((1 << 16) - 1);
 			currFactorCoeff = denorm * (uCox / 2.0 * 1.0e-6 / c);
 			voice_voltage_range = vvr;
-			voice_dc_voltage = vdv;
 
 			SetUCox(uCox);
 
@@ -189,7 +230,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		public ushort GetNormalizedValue(double value)
 		{
 			double tmp = n16 * (value - vMin);
-			return (ushort)(tmp + 0.5);
+			return (ushort)(tmp + rnd.GetNoise());
 		}
 
 
@@ -228,9 +269,9 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int GetNormalizedVoice(float value)
+		public int GetNormalizedVoice(float value, uint env)
 		{
-			return GetNormalizedValue(GetVoiceVoltage(value));
+			return GetNormalizedValue(GetVoiceVoltage(value, env));
 		}
 
 
@@ -378,6 +419,15 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			uCox = new_uCox;
 			currFactorCoeff = denorm * (uCox / 2.0 * 1.0e-6 / c);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		protected abstract double GetVoiceDc(uint env);
 		#endregion
 
 		#region Private methods
@@ -387,9 +437,9 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private double GetVoiceVoltage(float value)
+		private double GetVoiceVoltage(float value, uint env)
 		{
-			return value * voice_voltage_range + voice_dc_voltage;
+			return value * voice_voltage_range + GetVoiceDc(env);
 		}
 		#endregion
 	}

@@ -3,6 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+
+using System.Runtime.CompilerServices;
+
 namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 {
 	/// <summary>
@@ -231,7 +234,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// SID clocking - 1 cycle
 		/// </summary>
 		/********************************************************************/
-		public abstract ushort Clock(float voice1, float voice2, float voice3);
+		public abstract ushort Clock(int voice1, int voice2, int voice3);
 
 
 
@@ -242,7 +245,20 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/********************************************************************/
 		public void Input(short input)
 		{
-			ve = fmc.GetNormalizedVoice(input / 32768.0f);
+			ve = fmc.GetNormalizedVoice(input / 32768.0f, 0);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public int GetNormalizedVoice(float value, uint env)
+		{
+			return fmc.GetNormalizedVoice(value, env);
 		}
 		#endregion
 

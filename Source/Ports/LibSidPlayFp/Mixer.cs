@@ -74,6 +74,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 
 		private bool stereo = false;
 
+		private bool wait = false;
+
 		private readonly RandomLcg rand;
 
 		/********************************************************************/
@@ -130,16 +132,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			int sampCount = chips[0].BufferPos();
 
 			int i = 0;
-			while (i < sampCount)
+			while (
+				(i < sampCount) &&
+				(sampleIndex < sampleCount) &&			// Handle whatever output the SID has generated so far
+				(i + fastForwardFactor < sampCount)		// Are there enough samples to generate the next one?
+			)
 			{
-				// Handle whatever output the SID has generated so far
-				if (sampleIndex >= sampleCount)
-					break;
-
-				// Are there enough samples to generate the next one?
-				if (i + fastForwardFactor >= sampCount)
-					break;
-
 				// This is a crude boxcar low-pass filter to
 				// reduce aliasing during fast forward
 				for (int k = 0; k < buffers.Count; k++)
@@ -174,6 +172,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 
 			foreach (SidEmu s in chips)
 				s.BufferPos(samplesLeft);
+
+			wait = (uint_least32_t)samplesLeft > sampleCount;
 		}
 
 
@@ -189,12 +189,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			//
 			// Don't allow odd counts for stereo playback
 			if (stereo && ((count & 1) != 0))
-				throw new BadBufferSize();
-
-			// TODO short buffers make the emulator crash, should investigate why
-			//      in the meantime set a reasonable lower bound of 5ms
-			uint_least32_t lowerBound = sampleRate / (stereo ? 100U : 200U);
-			if ((count != 0) && (count < lowerBound))
 				throw new BadBufferSize();
 
 			sampleIndex = 0;
@@ -306,7 +300,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/********************************************************************/
 		public bool NotFinished()
 		{
-			return sampleIndex != sampleCount;
+			return sampleIndex < sampleCount;
 		}
 
 
@@ -319,6 +313,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		public uint_least32_t SamplesGenerated()
 		{
 			return sampleIndex;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Wait till we consume the buffer
+		/// </summary>
+		/********************************************************************/
+		public bool Wait()
+		{
+			return wait;
 		}
 
 		#region Private methods

@@ -18,6 +18,9 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 	{
 		private const int DAC_BITS = 11;
 
+		// Power bricks generate voltages slightly out of spec
+		private const double VOLTAGE_SKEW = 1.015;
+
 		private const uint OPAMP_SIZE = 33;
 
 		// This is the SID 6581 op-amp voltage transfer function, measured on
@@ -81,18 +84,20 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		private readonly ushort[] vcr_nVg = new ushort[1 << 16];
 		private readonly double[] vcr_n_ids_term = new double[1 << 16];
 
+		// Voice DC offset LUT
+		private readonly double[] voiceDc = new double[256];
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
 		private FilterModelConfig6581() : base(
-			1.5,		// Voice voltage range
-			5.075,	// Voice DC voltage
-			470e-12,	// Capacitor value
-			12.18,	// Vdd
-			1.31,	// Vth
-			20e-6,	// uCox
+			1.5,						// Voice voltage range FIXME should theoretically be ~3.571V
+			470e-12,					// Capacitor value
+			12.0 * VOLTAGE_SKEW,		// Vdd
+			1.31,					// Vth
+			20e-6,					// uCox
 			opamp_voltage,
 			OPAMP_SIZE)
 		{
@@ -103,6 +108,17 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			dac = new Dac(DAC_BITS);
 
 			dac.KinkedDac(ChipModel.MOS6581);
+
+			{
+				Dac envDec = new Dac(8);
+				envDec.KinkedDac(ChipModel.MOS6581);
+
+				for (int i = 0; i < 256; i++)
+				{
+					double envI = envDec.GetOutput((uint)i);
+					voiceDc[i] = 5.0 * VOLTAGE_SKEW + (0.2143 * envI);
+				}
+			}
 
 			// Create lookup tables for gains / summers
 			void FilterSummer()
@@ -293,6 +309,19 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			double tmp = vcr_n_ids_term[i] * uCox;
 
 			return (ushort)(tmp + 0.5);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// On 6581 the DC offset varies between ~5.0V and ~5.214V depending
+		/// on the envelope value
+		/// </summary>
+		/********************************************************************/
+		protected override double GetVoiceDc(uint env)
+		{
+			return voiceDc[env];
 		}
 
 		#region Private methods

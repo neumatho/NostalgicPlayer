@@ -44,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 		/********************************************************************/
 		public uint8_t Peek(uint_least16_t addr)
 		{
-			return map[addr >> 8 & 0xf].Peek(addr);
+			return map[(addr >> 8) & 0xf].Peek(addr);
 		}
 
 
@@ -56,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp.C64.Banks
 		/********************************************************************/
 		public void Poke(uint_least16_t addr, uint8_t data)
 		{
-			map[addr >> 8 & 0xf].Poke(addr, data);
+			map[(addr >> 8) & 0xf].Poke(addr, data);
 		}
 		#endregion
 	}

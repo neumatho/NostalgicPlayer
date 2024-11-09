@@ -347,13 +347,13 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public override ushort Clock(float voice1, float voice2, float voice3)
+		public override ushort Clock(int voice1, int voice2, int voice3)
 		{
-			int v1 = fmc.GetNormalizedVoice(voice1);
-			int v2 = fmc.GetNormalizedVoice(voice2);
+			int v1 = voice1;
+			int v2 = voice2;
 
 			// Voice 3 is silenced by voice3Off if it is not routed through the filter
-			int v3 = (filt3 || !voice3Off) ? fmc.GetNormalizedVoice(voice3) : 0;
+			int v3 = (filt3 || !voice3Off) ? voice3 : 0;
 
 			int vSum = 0;
 			int vMix = 0;

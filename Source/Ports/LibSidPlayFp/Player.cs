@@ -320,6 +320,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/********************************************************************/
 		public uint_least32_t Play(short[] leftBuffer, short[] rightBuffer, uint_least32_t count)
 		{
+			const uint CYCLES = 3000;
+
 			// Make sure a tune is loaded
 			if (tune == null)
 				return 0;
@@ -346,7 +348,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 							// Clock chips and mix into output buffers
 							while ((isPlaying != state_t.STOPPED) && mixer.NotFinished())
 							{
-								Run(SidEmu.OUTPUTBUFFERSIZE);
+								if (!mixer.Wait())
+									Run(CYCLES);
 
 								mixer.ClockChips();
 								mixer.DoMix();
@@ -360,7 +363,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 							size = (int)(c64.GetMainCpuSpeed() / cfg.frequency);
 							while ((isPlaying != state_t.STOPPED) && (--size != 0))
 							{
-								Run(SidEmu.OUTPUTBUFFERSIZE);
+								Run(CYCLES);
 
 								mixer.ClockChips();
 								mixer.ResetBufs();
@@ -373,7 +376,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 						size = (int)(c64.GetMainCpuSpeed() / cfg.frequency);
 						while ((isPlaying != state_t.STOPPED) && (--size != 0))
 						{
-							Run(SidEmu.OUTPUTBUFFERSIZE);
+							Run(CYCLES);
 						}
 					}
 				}

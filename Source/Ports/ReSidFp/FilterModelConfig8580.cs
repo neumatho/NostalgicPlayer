@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Polycode.NostalgicPlayer.Ports.ReSidFp
@@ -13,6 +14,12 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 	/// </summary>
 	internal sealed class FilterModelConfig8580 : FilterModelConfig
 	{
+		// Reference voltage generated from Vcc by a voltage divider
+		private const double Vref = 4.75;
+
+		// Power bricks generate voltages slightly out of spec
+		private const double VOLTAGE_SKEW = 1.01;
+
 		private const uint OPAMP_SIZE = 21;
 
 		// R1 = 15.3*Ri
@@ -97,8 +104,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// </summary>
 		/********************************************************************/
 		private FilterModelConfig8580() : base(
-			0.24,	// Voice voltage range FIXME measure
-			4.84,	// Voice DC voltage FIXME measure
+			0.24,	// Voice voltage range FIXME should theoretically be ~0,474V
 			22e-9,	// Capacitor value
 			9.09,	// Vdd
 			0.80,	// Vth
@@ -137,6 +143,31 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			Task resonanceTask = Task.Run(FilterResonance);
 
 			Task.WaitAll(summerTask, mixerTask, gainTask, resonanceTask);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public double GetVRef()
+		{
+			return Vref * VOLTAGE_SKEW;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		protected override double GetVoiceDc(uint env)
+		{
+			return GetVRef();
 		}
 
 

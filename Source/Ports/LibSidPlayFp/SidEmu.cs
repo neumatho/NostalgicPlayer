@@ -78,6 +78,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			{
 				case 0x04:
 				{
+					// Ignore writes to control register to mute voices.
+					// Leave test/ring/sync bits untouched
 					if (isMuted[0])
 						data &= 0x0e;
 
@@ -102,6 +104,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 
 				case 0x17:
 				{
+					// Ignore writes to filter to disable filter
 					if (isFilterDisabled)
 						data &= 0xf0;
 
@@ -110,6 +113,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 
 				case 0x18:
 				{
+					// Ignore writes to volume register to mute samples.
+					// Works only for volume based digis.
+					// Trick suggested by LMan
 					if (isMuted[3])
 						data |= 0x0f;
 

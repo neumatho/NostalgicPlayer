@@ -68,8 +68,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		public void SetV(double v)
 		{
 			// Gate voltage is controlled by the switched capacitor voltage divider
-			// Ua = Ue * v = 4.76v  1<v<2
-			double vg = 4.76 * v;
+			// Ua = Ue * v = 4.75v  1<v<2
+			double vg = fmc.GetVRef() * v;
 			double vgt = vg - fmc.GetVth();
 
 			// Vg - Vth, normalized so that translated values can be subtracted:
