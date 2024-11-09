@@ -202,6 +202,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 					sample.LoopLength = (ushort)(moduleStream.Read_B_UINT16() * 2);
 
 					// Sample loop fix
+					if ((sample.LoopStart + sample.LoopLength) > sampleSizes[i])
+						sample.LoopLength = sampleSizes[i] - sample.LoopStart;
+
 					if ((sample.Length != 0) && (sample.LoopStart == sample.Length))
 						sample.Length += sample.LoopLength;
 
