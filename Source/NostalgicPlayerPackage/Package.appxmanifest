@@ -1154,6 +1154,15 @@
             <uap:DisplayName>Synthesis</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="isfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-is">.is</uap:FileType>
+              <uap:FileType ContentType="audio/x-is">.is10</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>InStereo!</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

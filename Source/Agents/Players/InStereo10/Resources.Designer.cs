@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis {
+namespace Polycode.NostalgicPlayer.Agent.Player.InStereo10 {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Polycode.NostalgicPlayer.Agent.Player.Synthesis.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Polycode.NostalgicPlayer.Agent.Player.InStereo10.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,197 +61,197 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Original player by Casrten Herbst and Branko Mikic for Braintrace Design.
+        ///   Looks up a localized string similar to Original player by Hans Bergstedt.
         ///Converted to C# by Thomas Neumann.
         ///
-        ///This player can play Synthesis modules from version 4.0 to 4.2. It is based on the original assembly player from the Amiga..
+        ///This player can play InStereo! version 1.0 modules. It is based on the original assembly player from the Amiga..
         /// </summary>
-        internal static string IDS_SYN_DESCRIPTION {
+        internal static string IDS_IS10_DESCRIPTION {
             get {
-                return ResourceManager.GetString("IDS_SYN_DESCRIPTION", resourceCulture);
+                return ResourceManager.GetString("IDS_IS10_DESCRIPTION", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Original player by Casrten Herbst and Branko Mikic for Braintrace Design.
+        ///   Looks up a localized string similar to Original player by Hans Bergstedt.
         ///Converted to C# by Thomas Neumann.
         ///
-        ///This is the successor of In Stereo! and precursor of Sonic Arranger. As the other editors, this can play synthesis sounds with a lot of different effects including ADSR, envelope generator and 16 synth modifier effects, which sounds really nice..
+        ///This is the precursor of Synthesis and Sonic Arranger. As the other editors, this can play synthesis sounds, but does not have as many features as the later versions..
         /// </summary>
-        internal static string IDS_SYN_DESCRIPTION_AGENT1 {
+        internal static string IDS_IS10_DESCRIPTION_AGENT1 {
             get {
-                return ResourceManager.GetString("IDS_SYN_DESCRIPTION_AGENT1", resourceCulture);
+                return ResourceManager.GetString("IDS_IS10_DESCRIPTION_AGENT1", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the ADSR information.
         /// </summary>
-        internal static string IDS_SYN_ERR_LOADING_ADSR {
+        internal static string IDS_IS10_ERR_LOADING_ADSR {
             get {
-                return ResourceManager.GetString("IDS_SYN_ERR_LOADING_ADSR", resourceCulture);
+                return ResourceManager.GetString("IDS_IS10_ERR_LOADING_ADSR", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the arpeggio.
         /// </summary>
-        internal static string IDS_SYN_ERR_LOADING_ARPEGGIO {
+        internal static string IDS_IS10_ERR_LOADING_ARPEGGIO {
             get {
-                return ResourceManager.GetString("IDS_SYN_ERR_LOADING_ARPEGGIO", resourceCulture);
+                return ResourceManager.GetString("IDS_IS10_ERR_LOADING_ARPEGGIO", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the envelope generator information.
         /// </summary>
-        internal static string IDS_SYN_ERR_LOADING_ENVELOPEGENERATOR {
+        internal static string IDS_IS10_ERR_LOADING_ENVELOPEGENERATOR {
             get {
-                return ResourceManager.GetString("IDS_SYN_ERR_LOADING_ENVELOPEGENERATOR", resourceCulture);
+                return ResourceManager.GetString("IDS_IS10_ERR_LOADING_ENVELOPEGENERATOR", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the module header.
         /// </summary>
-        internal static string IDS_SYN_ERR_LOADING_HEADER {
+        internal static string IDS_IS10_ERR_LOADING_HEADER {
             get {
-                return ResourceManager.GetString("IDS_SYN_ERR_LOADING_HEADER", resourceCulture);
+                return ResourceManager.GetString("IDS_IS10_ERR_LOADING_HEADER", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the instrument information.
         /// </summary>
-        internal static string IDS_SYN_ERR_LOADING_INSTRUMENT {
+        internal static string IDS_IS10_ERR_LOADING_INSTRUMENT {
             get {
-                return ResourceManager.GetString("IDS_SYN_ERR_LOADING_INSTRUMENT", resourceCulture);
+                return ResourceManager.GetString("IDS_IS10_ERR_LOADING_INSTRUMENT", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the module sample.
         /// </summary>
-        internal static string IDS_SYN_ERR_LOADING_SAMPLE {
+        internal static string IDS_IS10_ERR_LOADING_SAMPLE {
             get {
-                return ResourceManager.GetString("IDS_SYN_ERR_LOADING_SAMPLE", resourceCulture);
+                return ResourceManager.GetString("IDS_IS10_ERR_LOADING_SAMPLE", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the sample information.
         /// </summary>
-        internal static string IDS_SYN_ERR_LOADING_SAMPLEINFO {
+        internal static string IDS_IS10_ERR_LOADING_SAMPLEINFO {
             get {
-                return ResourceManager.GetString("IDS_SYN_ERR_LOADING_SAMPLEINFO", resourceCulture);
+                return ResourceManager.GetString("IDS_IS10_ERR_LOADING_SAMPLEINFO", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the track.
         /// </summary>
-        internal static string IDS_SYN_ERR_LOADING_TRACK {
+        internal static string IDS_IS10_ERR_LOADING_TRACK {
             get {
-                return ResourceManager.GetString("IDS_SYN_ERR_LOADING_TRACK", resourceCulture);
+                return ResourceManager.GetString("IDS_IS10_ERR_LOADING_TRACK", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Can&apos;t read the waveform.
         /// </summary>
-        internal static string IDS_SYN_ERR_LOADING_WAVEFORM {
+        internal static string IDS_IS10_ERR_LOADING_WAVEFORM {
             get {
-                return ResourceManager.GetString("IDS_SYN_ERR_LOADING_WAVEFORM", resourceCulture);
+                return ResourceManager.GetString("IDS_IS10_ERR_LOADING_WAVEFORM", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Number of positions:.
         /// </summary>
-        internal static string IDS_SYN_INFODESCLINE0 {
+        internal static string IDS_IS10_INFODESCLINE0 {
             get {
-                return ResourceManager.GetString("IDS_SYN_INFODESCLINE0", resourceCulture);
+                return ResourceManager.GetString("IDS_IS10_INFODESCLINE0", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Number of track rows:.
         /// </summary>
-        internal static string IDS_SYN_INFODESCLINE1 {
+        internal static string IDS_IS10_INFODESCLINE1 {
             get {
-                return ResourceManager.GetString("IDS_SYN_INFODESCLINE1", resourceCulture);
+                return ResourceManager.GetString("IDS_IS10_INFODESCLINE1", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Used instruments:.
         /// </summary>
-        internal static string IDS_SYN_INFODESCLINE2 {
+        internal static string IDS_IS10_INFODESCLINE2 {
             get {
-                return ResourceManager.GetString("IDS_SYN_INFODESCLINE2", resourceCulture);
+                return ResourceManager.GetString("IDS_IS10_INFODESCLINE2", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Used samples:.
         /// </summary>
-        internal static string IDS_SYN_INFODESCLINE3 {
+        internal static string IDS_IS10_INFODESCLINE3 {
             get {
-                return ResourceManager.GetString("IDS_SYN_INFODESCLINE3", resourceCulture);
+                return ResourceManager.GetString("IDS_IS10_INFODESCLINE3", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Used wave tables:.
         /// </summary>
-        internal static string IDS_SYN_INFODESCLINE4 {
+        internal static string IDS_IS10_INFODESCLINE4 {
             get {
-                return ResourceManager.GetString("IDS_SYN_INFODESCLINE4", resourceCulture);
+                return ResourceManager.GetString("IDS_IS10_INFODESCLINE4", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Playing position:.
         /// </summary>
-        internal static string IDS_SYN_INFODESCLINE5 {
+        internal static string IDS_IS10_INFODESCLINE5 {
             get {
-                return ResourceManager.GetString("IDS_SYN_INFODESCLINE5", resourceCulture);
+                return ResourceManager.GetString("IDS_IS10_INFODESCLINE5", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Playing tracks from line:.
         /// </summary>
-        internal static string IDS_SYN_INFODESCLINE6 {
+        internal static string IDS_IS10_INFODESCLINE6 {
             get {
-                return ResourceManager.GetString("IDS_SYN_INFODESCLINE6", resourceCulture);
+                return ResourceManager.GetString("IDS_IS10_INFODESCLINE6", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Current speed:.
         /// </summary>
-        internal static string IDS_SYN_INFODESCLINE7 {
+        internal static string IDS_IS10_INFODESCLINE7 {
             get {
-                return ResourceManager.GetString("IDS_SYN_INFODESCLINE7", resourceCulture);
+                return ResourceManager.GetString("IDS_IS10_INFODESCLINE7", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Synthesis.
+        ///   Looks up a localized string similar to InStereo! 1.0.
         /// </summary>
-        internal static string IDS_SYN_NAME {
+        internal static string IDS_IS10_NAME {
             get {
-                return ResourceManager.GetString("IDS_SYN_NAME", resourceCulture);
+                return ResourceManager.GetString("IDS_IS10_NAME", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Synthesis.
+        ///   Looks up a localized string similar to InStereo! 1.0.
         /// </summary>
-        internal static string IDS_SYN_NAME_AGENT1 {
+        internal static string IDS_IS10_NAME_AGENT1 {
             get {
-                return ResourceManager.GetString("IDS_SYN_NAME_AGENT1", resourceCulture);
+                return ResourceManager.GetString("IDS_IS10_NAME_AGENT1", resourceCulture);
             }
         }
     }

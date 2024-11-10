@@ -107,6 +107,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | IFF-SMUS | .smus | | IFF-SMUS |
 | Imago Orpheus | .imf | | Xmp |
 | Impulse Tracker | .it | | Xmp |
+| InStereo! 1.0 | .is / .is10 | | InStereo! 1.0 |
 | JamCracker | .jam | | JamCracker |
 | Kefrens Sound Machine | .kms | ProWizard | ModTracker |
 | Laxity Tracker | .lax / .unic2 | ProWizard | ModTracker |

@@ -1,0 +1,123 @@
+   0      8      Mark (ISM!V1.2)
+   8      2      Number of positions (NOP)
+   A      2      Number of track rows (NOR)
+   C      4      ???
+  10      1      Number of samples (NOS)
+  11      1      Number of waveforms (NOW)
+  12      1      Number of instruments (NOI)
+  13      1      Number of sub-songs (NSS)
+  14      1      Number of EG (EG)
+  15      1      Number of ADSR (ADSR)
+  16      E      ???
+  24     1C      Module name
+  40     8C      Some text about the player, serial number etc.
+  CC NOS*1C      Sample information
+     NOS*4       Total sample length for each sample
+     EG*80       EG tables
+     ADSR*100    ADSR tables
+	 NOI*1C      Instrument information
+     10*10       Arpeggio tables
+     (NSS+1)*E   Sub-song information (extra sub-song should not be used)
+     NOW*100     Waveforms
+     NOP*10      Position information
+     (NOR+40)*4  Track rows
+	             Sample data
+
+Sub-song information:
+
+   0  4 ???
+   4  1 Speed
+   5  1 Track length
+   6  2 Start position
+   8  2 Stop position
+   A  2 Repeat position
+   C  2 ???
+
+Position information:
+
+Each position contains 4 bytes for each voice. The 4 bytes stands for:
+
+   0  2 Track address
+   2  1 Sound transpose
+   3  1 Note transpose
+
+Track rows:
+
+All the notes are stored as one big track. The track address in the position
+information points to the first row to play at that position.
+
+Each row contains this information:
+
+AAAAAAAA BBBBBBBB CCCCDDDD EEEEEEEE
+
+A = Note (remember to add the transpose value to get the real note)
+B = Instrument number to use
+C = Arpeggio number
+D = Effect number
+    0 = No effect
+	1 = Slide up/down
+	2 = Res. ADSR
+	3 = Res. EGC
+    4 = Set slide increment
+    5 = Set vibrato delay
+    6 = Set vibrato position
+	7 = Set volume
+	8 = Skip NT
+	9 = Skip ST
+	A = Track len
+	B = Skip portamento
+	C = ???
+	D = ???
+	E = Led on/off
+	F = Song speed
+E = Effect argument
+
+
+Instrument information:
+
+   0  1 Waveform / sample number
+   1  1 Synthesis mode (1 = on, 0 = off)
+   2  2 Length of waveform / sample (before loop/oneshot)
+   4  2 Repeat of sample
+   6  1 Volume
+   7  1 Portamento speed
+   8  1 ADSR table on/off
+   9  1 ADSR table number
+   A  2 Length of ADSR table
+   C  2 Not used
+   E  1 Portamento enabled (1 = on, 0 = off)
+   F  5 Not used
+  14  1 Vibrato delay
+  15  1 Vibrato speed
+  16  1 Vibrato level
+  17  1 EGC offset
+  18  1 EGC mode (0 = off, 1 = ones, 2 = repeat)
+  19  1 EGC table number
+  1A  2 Length of EGC table
+
+   
+Sample information:
+
+ 0  1 ?
+ 1 17 Sample name
+18  4 ?
+
+
+Internal channel structure:
+
+ 0  1 Transposed note
+ 1  1 Previous transposed note
+ 2  1 Slide speed
+ 3  1 Transposed instrument number
+ 4  1 Current volume
+ 5  1 ADSR on/off
+ 6  2 ADSR position
+ 8  1 Vibrato delay
+ 9  1 Vibrato position
+ A  1 ???
+ B  1 EGC mode
+ C  2 EGC position
+ E  2 Slide increment
+10  1 Portamento enabled
+11  1 Portamento speed
+12  2 Portamento speed counter

@@ -117,73 +117,73 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="IDS_SYN_DESCRIPTION" xml:space="preserve">
-    <value>Original player by Casrten Herbst and Branko Mikic for Braintrace Design.
+  <data name="IDS_IS10_DESCRIPTION" xml:space="preserve">
+    <value>Original player by Hans Bergstedt.
 Converted to C# by Thomas Neumann.
 
-This player can play Synthesis modules from version 4.0 to 4.2. It is based on the original assembly player from the Amiga.</value>
+This player can play InStereo! version 1.0 modules. It is based on the original assembly player from the Amiga.</value>
   </data>
-  <data name="IDS_SYN_DESCRIPTION_AGENT1" xml:space="preserve">
-    <value>Original player by Casrten Herbst and Branko Mikic for Braintrace Design.
+  <data name="IDS_IS10_DESCRIPTION_AGENT1" xml:space="preserve">
+    <value>Original player by Hans Bergstedt.
 Converted to C# by Thomas Neumann.
 
-This is the successor of In Stereo! and precursor of Sonic Arranger. As the other editors, this can play synthesis sounds with a lot of different effects including ADSR, envelope generator and 16 synth modifier effects, which sounds really nice.</value>
+This is the precursor of Synthesis and Sonic Arranger. As the other editors, this can play synthesis sounds, but does not have as many features as the later versions.</value>
   </data>
-  <data name="IDS_SYN_ERR_LOADING_ADSR" xml:space="preserve">
+  <data name="IDS_IS10_ERR_LOADING_ADSR" xml:space="preserve">
     <value>Can't read the ADSR information</value>
   </data>
-  <data name="IDS_SYN_ERR_LOADING_ARPEGGIO" xml:space="preserve">
+  <data name="IDS_IS10_ERR_LOADING_ARPEGGIO" xml:space="preserve">
     <value>Can't read the arpeggio</value>
   </data>
-  <data name="IDS_SYN_ERR_LOADING_ENVELOPEGENERATOR" xml:space="preserve">
+  <data name="IDS_IS10_ERR_LOADING_ENVELOPEGENERATOR" xml:space="preserve">
     <value>Can't read the envelope generator information</value>
   </data>
-  <data name="IDS_SYN_ERR_LOADING_HEADER" xml:space="preserve">
+  <data name="IDS_IS10_ERR_LOADING_HEADER" xml:space="preserve">
     <value>Can't read the module header</value>
   </data>
-  <data name="IDS_SYN_ERR_LOADING_INSTRUMENT" xml:space="preserve">
+  <data name="IDS_IS10_ERR_LOADING_INSTRUMENT" xml:space="preserve">
     <value>Can't read the instrument information</value>
   </data>
-  <data name="IDS_SYN_ERR_LOADING_SAMPLE" xml:space="preserve">
+  <data name="IDS_IS10_ERR_LOADING_SAMPLE" xml:space="preserve">
     <value>Can't read the module sample</value>
   </data>
-  <data name="IDS_SYN_ERR_LOADING_SAMPLEINFO" xml:space="preserve">
+  <data name="IDS_IS10_ERR_LOADING_SAMPLEINFO" xml:space="preserve">
     <value>Can't read the sample information</value>
   </data>
-  <data name="IDS_SYN_ERR_LOADING_TRACK" xml:space="preserve">
+  <data name="IDS_IS10_ERR_LOADING_TRACK" xml:space="preserve">
     <value>Can't read the track</value>
   </data>
-  <data name="IDS_SYN_ERR_LOADING_WAVEFORM" xml:space="preserve">
+  <data name="IDS_IS10_ERR_LOADING_WAVEFORM" xml:space="preserve">
     <value>Can't read the waveform</value>
   </data>
-  <data name="IDS_SYN_INFODESCLINE0" xml:space="preserve">
+  <data name="IDS_IS10_INFODESCLINE0" xml:space="preserve">
     <value>Number of positions:</value>
   </data>
-  <data name="IDS_SYN_INFODESCLINE1" xml:space="preserve">
+  <data name="IDS_IS10_INFODESCLINE1" xml:space="preserve">
     <value>Number of track rows:</value>
   </data>
-  <data name="IDS_SYN_INFODESCLINE2" xml:space="preserve">
+  <data name="IDS_IS10_INFODESCLINE2" xml:space="preserve">
     <value>Used instruments:</value>
   </data>
-  <data name="IDS_SYN_INFODESCLINE3" xml:space="preserve">
+  <data name="IDS_IS10_INFODESCLINE3" xml:space="preserve">
     <value>Used samples:</value>
   </data>
-  <data name="IDS_SYN_INFODESCLINE4" xml:space="preserve">
+  <data name="IDS_IS10_INFODESCLINE4" xml:space="preserve">
     <value>Used wave tables:</value>
   </data>
-  <data name="IDS_SYN_INFODESCLINE5" xml:space="preserve">
+  <data name="IDS_IS10_INFODESCLINE5" xml:space="preserve">
     <value>Playing position:</value>
   </data>
-  <data name="IDS_SYN_INFODESCLINE6" xml:space="preserve">
+  <data name="IDS_IS10_INFODESCLINE6" xml:space="preserve">
     <value>Playing tracks from line:</value>
   </data>
-  <data name="IDS_SYN_INFODESCLINE7" xml:space="preserve">
+  <data name="IDS_IS10_INFODESCLINE7" xml:space="preserve">
     <value>Current speed:</value>
   </data>
-  <data name="IDS_SYN_NAME" xml:space="preserve">
-    <value>Synthesis</value>
+  <data name="IDS_IS10_NAME" xml:space="preserve">
+    <value>InStereo! 1.0</value>
   </data>
-  <data name="IDS_SYN_NAME_AGENT1" xml:space="preserve">
-    <value>Synthesis</value>
+  <data name="IDS_IS10_NAME_AGENT1" xml:space="preserve">
+    <value>InStereo! 1.0</value>
   </data>
 </root>
