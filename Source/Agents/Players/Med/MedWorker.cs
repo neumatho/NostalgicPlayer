@@ -464,7 +464,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 			numberOfBlocks = moduleStream.Read_B_UINT16();
 
 			byte[] buffer = new byte[100];
-			moduleStream.Read(buffer, 0, 100);
+			moduleStream.ReadInto(buffer, 0, 100);
 
 			songLength = moduleStream.Read_B_UINT16();
 			orders = new byte[songLength];
@@ -551,7 +551,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		{
 			byte[] volumes = new byte[32];
 
-			moduleStream.Read(volumes, 0, 32);
+			moduleStream.ReadInto(volumes, 0, 32);
 
 			return volumes;
 		}
@@ -674,7 +674,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 			songLength = moduleStream.Read_B_UINT16();
 
 			orders = new byte[songLength];
-			moduleStream.Read(orders, 0, songLength);
+			moduleStream.ReadInto(orders, 0, songLength);
 
 			moduleStream.Seek(2, SeekOrigin.Current);		// Skip tempo. Not used in the original player
 			startTempo = 6;
@@ -894,9 +894,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 					effectMask2 = moduleStream.Read_B_UINT32();
 
 				byte[] blockData = new byte[length];
-				moduleStream.Read(blockData, 0, length);
+				int bytesRead = moduleStream.Read(blockData, 0, length);
 
-				if (moduleStream.EndOfStream)
+				if (bytesRead < length)
 					return false;
 
 				UnpackBlock(blockData, track, lineMask1, lineMask2, effectMask1, effectMask2);

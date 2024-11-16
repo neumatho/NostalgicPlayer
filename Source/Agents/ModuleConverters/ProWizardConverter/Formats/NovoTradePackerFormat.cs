@@ -116,7 +116,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			byte[] moduleName = new byte[20];
 
 			moduleStream.Seek(4, SeekOrigin.Begin);
-			moduleStream.Read(moduleName, 0, 16);
+			moduleStream.ReadInto(moduleName, 0, 16);
 
 			return moduleName;
 		}

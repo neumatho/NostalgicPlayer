@@ -444,9 +444,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank
 				ushort loopLength = (ushort)(moduleStream.Read_B_UINT16() * 2);
 				ushort volume = moduleStream.Read_B_UINT16();
 				ushort length = (ushort)(moduleStream.Read_B_UINT16() * 2);
-				moduleStream.Read(name, 0, 16);
+				int bytesRead = moduleStream.Read(name, 0, 16);
 
-				if (moduleStream.EndOfStream)
+				if (bytesRead < 16)
 					return false;
 
 				if (volume > 64)
@@ -621,9 +621,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank
 
 				// Skip default tempo and padding, since it is not used by the original player
 				moduleStream.Seek(4, SeekOrigin.Current);
-				moduleStream.Read(name, 0, 16);
+				int bytesRead = moduleStream.Read(name, 0, 16);
 
-				if (moduleStream.EndOfStream)
+				if (bytesRead < 16)
 					return false;
 
 				SongInfo song = new SongInfo

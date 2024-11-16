@@ -282,16 +282,16 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			trackTable = new byte[4][];
 
 			trackTable[0] = new byte[128];
-			moduleStream.Read(trackTable[0], 0, 128);
+			moduleStream.ReadInto(trackTable[0], 0, 128);
 
 			trackTable[1] = new byte[128];
-			moduleStream.Read(trackTable[1], 0, 128);
+			moduleStream.ReadInto(trackTable[1], 0, 128);
 
 			trackTable[2] = new byte[128];
-			moduleStream.Read(trackTable[2], 0, 128);
+			moduleStream.ReadInto(trackTable[2], 0, 128);
 
 			trackTable[3] = new byte[128];
-			moduleStream.Read(trackTable[3], 0, 128);
+			moduleStream.ReadInto(trackTable[3], 0, 128);
 		}
 
 

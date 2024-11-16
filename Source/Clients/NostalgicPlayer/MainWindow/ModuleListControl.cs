@@ -6,6 +6,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -388,6 +389,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// if none is selected
 		/// </summary>
 		/********************************************************************/
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int SelectedIndex
 		{
 			get => moduleListItemsControl.SelectedIndex;
@@ -410,6 +412,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		/// Hold the item index which is shown in the top of the list
 		/// </summary>
 		/********************************************************************/
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int TopIndex
 		{
 			get => moduleListScrollBar.Value;

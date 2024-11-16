@@ -34,7 +34,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 			byte[] buf = new byte[4];
 
 			wrapperStream.Seek(-4, SeekOrigin.End);
-			wrapperStream.Read(buf, 0, 4);
+			wrapperStream.ReadExactly(buf, 0, 4);
 
 			decrunchedLength = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
 

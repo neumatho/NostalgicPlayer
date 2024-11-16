@@ -447,7 +447,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			if (size > 0)
 			{
-				if (in_ != null)
+				if (in_ != Span<c_uchar>.Empty)
 				{
 					if (readers.Int123_Feed_More(mh, in_, size) != 0)
 						return Mpg123_Errors.Err;

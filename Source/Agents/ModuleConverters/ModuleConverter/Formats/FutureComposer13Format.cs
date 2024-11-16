@@ -307,7 +307,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 			// Load the pattern data into the buffer
 			moduleStream.Seek(offsetsAndLength[0], SeekOrigin.Begin);
-			moduleStream.Read(pattBuf, 0, (int)offsetsAndLength[1]);
+			moduleStream.ReadInto(pattBuf, 0, (int)offsetsAndLength[1]);
 
 			// Scan the pattern data after the portamento flags
 			// and double it's data

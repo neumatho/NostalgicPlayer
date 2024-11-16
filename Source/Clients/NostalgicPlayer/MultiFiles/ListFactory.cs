@@ -54,10 +54,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles
 			stream.Seek(0, SeekOrigin.Begin);
 
 			// Read the first line
-			stream.Read(buffer, 0, 16);
-
-			if (buffer.Skip(3).Take(8).SequenceEqual(npmlSignature))	// Skip BOM
-				return new NpmlList();
+			int bytesRead = stream.Read(buffer, 0, 16);
+			if (bytesRead >= 11)
+			{
+				if (buffer.Skip(3).Take(8).SequenceEqual(npmlSignature))	// Skip BOM
+					return new NpmlList();
+			}
 
 			return null;
 		}

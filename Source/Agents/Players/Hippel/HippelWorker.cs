@@ -119,7 +119,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 			byte[] buffer = new byte[currentModuleType == ModuleType.Hippel7V ? 32768 : 16384];
 
 			moduleStream.Seek(0, SeekOrigin.Begin);
-			moduleStream.Read(buffer, 0, buffer.Length);
+			moduleStream.ReadInto(buffer, 0, buffer.Length);
 
 			// SC68 support are handled in a converter, so ignore these modules here
 			if ((buffer[0] == 0x53) && (buffer[1] == 0x43) && (buffer[2] == 0x36) && (buffer[3] == 0x38))
@@ -1181,8 +1181,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 
 						frequencies[i] = new byte[length];
 
-						moduleStream.Read(frequencies[i], 0, length);
-						if (moduleStream.EndOfStream)
+						int bytesRead = moduleStream.Read(frequencies[i], 0, length);
+						if (bytesRead < length)
 							return false;
 					}
 				}
@@ -1193,8 +1193,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 				{
 					frequencies[i] = new byte[64];
 
-					moduleStream.Read(frequencies[i], 0, 64);
-					if (moduleStream.EndOfStream)
+					int bytesRead = moduleStream.Read(frequencies[i], 0, 64);
+					if (bytesRead < 64)
 						return false;
 				}
 			}
@@ -1224,8 +1224,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 				envelope.VibratoDelay = moduleStream.Read_UINT8();
 				envelope.EnvelopeTable = new byte[Math.Max(0, length - 5)];
 
-				moduleStream.Read(envelope.EnvelopeTable, 0, envelope.EnvelopeTable.Length);
-				if (moduleStream.EndOfStream)
+				int bytesRead = moduleStream.Read(envelope.EnvelopeTable, 0, envelope.EnvelopeTable.Length);
+				if (bytesRead < envelope.EnvelopeTable.Length)
 					return null;
 
 				return envelope;
@@ -1307,8 +1307,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 					int length = offsets[i + 1] - offsets[i];
 					tracks[i] = new byte[length];
 
-					moduleStream.Read(tracks[i], 0, tracks[i].Length);
-					if (moduleStream.EndOfStream)
+					int bytesRead = moduleStream.Read(tracks[i], 0, tracks[i].Length);
+					if (bytesRead < tracks[i].Length)
 						return false;
 				}
 			}
@@ -1318,8 +1318,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 				{
 					tracks[i] = new byte[bytesPerTrack];
 
-					moduleStream.Read(tracks[i], 0, tracks[i].Length);
-					if (moduleStream.EndOfStream)
+					int bytesRead = moduleStream.Read(tracks[i], 0, tracks[i].Length);
+					if (bytesRead < tracks[i].Length)
 						return false;
 				}
 			}
@@ -1451,8 +1451,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 
 				if (!cosoModeEnabled)
 				{
-					moduleStream.Read(buf, 0, 18);
-					if (moduleStream.EndOfStream)
+					int bytesRead = moduleStream.Read(buf, 0, 18);
+					if (bytesRead < 18)
 						return null;
 
 					sample.Name = encoder.GetString(buf);

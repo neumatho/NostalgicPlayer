@@ -56,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 
 			byte[] buf = new byte[24];
 
-			archiveStream.Read(buf, 0, 24);
+			archiveStream.ReadExactly(buf, 0, 24);
 
 			// Check header level
 			if (buf[20] >= 3)

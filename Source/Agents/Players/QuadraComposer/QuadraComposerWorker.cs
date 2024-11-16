@@ -605,8 +605,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 
 			positionList = new byte[numberOfPositions];
 
-			moduleStream.Read(positionList, 0, numberOfPositions);
-			if (moduleStream.EndOfStream)
+			int bytesRead = moduleStream.Read(positionList, 0, numberOfPositions);
+			if (bytesRead < numberOfPositions)
 			{
 				errorMessage = Resources.IDS_EMOD_ERR_LOADING_HEADER;
 				return;

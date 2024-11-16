@@ -143,7 +143,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			byte[] positionList = new byte[numberOfPositions];
 
 			moduleStream.Seek(0xfa, SeekOrigin.Begin);
-			moduleStream.Read(positionList, 0, numberOfPositions);
+			moduleStream.ReadInto(positionList, 0, numberOfPositions);
 
 			return positionList;
 		}

@@ -59,7 +59,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 					lastPattern++;
 
 					moduleStream.Seek(trackTableOffset, SeekOrigin.Begin);
-					moduleStream.Read(trackNumbers, 0, 4);
+					moduleStream.ReadInto(trackNumbers, 0, 4);
 					trackTableOffset += 4;
 
 					// Do we have 4 zeros as the track numbers?

@@ -847,7 +847,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 					moduleStream.Seek(0x1a8a, SeekOrigin.Begin);
 
 					byte[] buf = new byte[32];
-					moduleStream.Read(buf, 0, 32);
+					moduleStream.ReadInto(buf, 0, 32);
 
 					if (buf[0] != 0x00)
 					{
@@ -878,7 +878,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 				moduleStream.Seek(0, SeekOrigin.Begin);
 
 				byte[] buf = new byte[1024];
-				moduleStream.Read(buf, 0, 1024);
+				moduleStream.ReadInto(buf, 0, 1024);
 
 				byte[] compareBuf = "Maniacs of Noise"u8.ToArray();
 

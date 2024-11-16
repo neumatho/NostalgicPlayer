@@ -160,6 +160,24 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 
 		/********************************************************************/
 		/// <summary>
+		/// Does the same as the Read() method, but does not return how many
+		/// bytes that actually has been read.
+		///
+		/// This method has been implemented to overrule the new .NET 9
+		/// compile error, which occur when calling Read() and not using its
+		/// return value
+		/// </summary>
+		/********************************************************************/
+		public void ReadInto(byte[] buffer, int offset, int count)
+		{
+			int read = wrapperStream.Read(buffer, offset, count);
+			EndOfStream = read < count;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Write data to the stream
 		/// </summary>
 		/********************************************************************/
@@ -744,9 +762,9 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 				return string.Empty;
 
 			byte[] bytes = new byte[len];
-			Read(bytes, 0, len);
+			int bytesRead = Read(bytes, 0, len);
 
-			return Encoding.UTF8.GetString(bytes, 0, len);
+			return Encoding.UTF8.GetString(bytes, 0, bytesRead);
 		}
 
 
@@ -762,10 +780,10 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 				return string.Empty;
 
 			byte[] bytes = new byte[len + 1];
-			Read(bytes, 0, len);
-			bytes[len] = 0x00;
+			int bytesRead = Read(bytes, 0, len);
+			bytes[bytesRead] = 0x00;
 
-			return encoder.GetString(bytes, 0, len);
+			return encoder.GetString(bytes, 0, bytesRead);
 		}
 		#endregion
 	}

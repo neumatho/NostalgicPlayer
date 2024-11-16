@@ -154,7 +154,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			byte[] moduleName = new byte[0x16];
 
 			moduleStream.Seek(0, SeekOrigin.Begin);
-			moduleStream.Read(moduleName, 0, 0x16);
+			moduleStream.ReadInto(moduleName, 0, 0x16);
 
 			return moduleName;
 		}
@@ -180,7 +180,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 					name = new byte[22];
 
 					moduleStream.Seek(-1, SeekOrigin.Current);
-					moduleStream.Read(name, 0, 22);
+					moduleStream.ReadInto(name, 0, 22);
 				}
 
 				ushort length = moduleStream.Read_B_UINT16();

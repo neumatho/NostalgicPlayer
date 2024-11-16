@@ -164,7 +164,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			for (int i = 0; i < 31; i++)
 			{
 				byte[] name = new byte[60];
-				moduleStream.Read(name, 0, 60);
+				moduleStream.ReadInto(name, 0, 60);
 
 				ushort length = moduleStream.Read_B_UINT16();
 				ushort loopStart = moduleStream.Read_B_UINT16();

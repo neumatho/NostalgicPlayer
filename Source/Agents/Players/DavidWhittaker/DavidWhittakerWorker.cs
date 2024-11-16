@@ -115,7 +115,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 			byte[] buffer = new byte[16384];
 
 			moduleStream.Seek(0, SeekOrigin.Begin);
-			moduleStream.Read(buffer, 0, buffer.Length);
+			moduleStream.ReadInto(buffer, 0, buffer.Length);
 
 			return TestModule(buffer);
 		}

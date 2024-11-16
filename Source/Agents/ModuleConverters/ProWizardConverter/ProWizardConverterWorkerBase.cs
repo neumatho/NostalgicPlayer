@@ -146,7 +146,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 		protected ushort FindHighestPatternNumber(ModuleStream moduleStream, int positionListLength)
 		{
 			byte[] positionList = new byte[positionListLength];
-			moduleStream.Read(positionList, 0, positionListLength);
+			moduleStream.ReadInto(positionList, 0, positionListLength);
 
 			return FindHighestPatternNumber(positionList);
 		}

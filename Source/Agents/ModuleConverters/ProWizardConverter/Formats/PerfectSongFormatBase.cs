@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			byte[] moduleName = new byte[20];
 
 			moduleStream.Seek(textOffset, SeekOrigin.Begin);
-			moduleStream.Read(moduleName, 0, 20);
+			moduleStream.ReadInto(moduleName, 0, 20);
 
 			return moduleName;
 		}
@@ -53,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 				byte[] name = new byte[22];
 
 				moduleStream.Seek(textOffset + 20 + i * 22, SeekOrigin.Begin);
-				moduleStream.Read(name, 0, 22);
+				moduleStream.ReadInto(name, 0, 22);
 
 				moduleStream.Seek(12 + i * 16, SeekOrigin.Begin);
 

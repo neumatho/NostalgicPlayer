@@ -74,7 +74,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
 			byte[] buf = new byte[20];
-			moduleStream.Read(buf, 0, 20);
+			moduleStream.ReadExactly(buf, 0, 20);
 
 			if (Encoding.ASCII.GetString(buf, 0, 20) != "DIGI Booster module\0")
 				return AgentResult.Unknown;
@@ -213,9 +213,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 
 				// Read the orders
 				orders = new byte[128];
-				moduleStream.Read(orders, 0, 128);
+				int bytesRead = moduleStream.Read(orders, 0, 128);
 
-				if (moduleStream.EndOfStream)
+				if (bytesRead < 128)
 				{
 					errorMessage = Resources.IDS_DIGI_ERR_LOADING_HEADER;
 					return AgentResult.Error;
@@ -550,7 +550,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 			moduleStream.ReadArray_B_UINT32s(lengths, 0, 31);
 			moduleStream.ReadArray_B_UINT32s(loopStarts, 0, 31);
 			moduleStream.ReadArray_B_UINT32s(loopLengths, 0, 31);
-			moduleStream.Read(volumes, 0, 31);
+			moduleStream.ReadInto(volumes, 0, 31);
 			moduleStream.ReadSigned(fineTunes, 0, 31);
 
 			if ((version >= 0x10) && (version <= 0x13))
@@ -599,7 +599,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 				int length = moduleStream.Read_B_UINT16();
 
 				byte[] bitMasks = new byte[64];
-				moduleStream.Read(bitMasks, 0, 64);
+				moduleStream.ReadInto(bitMasks, 0, 64);
 				length -= 64;
 
 				for (int j = 0; j < 64; j++)

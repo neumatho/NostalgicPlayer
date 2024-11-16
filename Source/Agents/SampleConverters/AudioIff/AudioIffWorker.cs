@@ -157,7 +157,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 						moduleStream.Seek(4, SeekOrigin.Current);			// Skip sample frames
 						formatInfo.Bits = moduleStream.Read_B_UINT16();			// Sample size
 
-						moduleStream.Read(freq, 0, 10);				// Extended sample rate
+						moduleStream.ReadExactly(freq, 0, 10);		// Extended sample rate
 						formatInfo.Frequency = (int)IeeeExtended.ConvertFromIeeeExtended(freq);
 
 						// Skip any extra data

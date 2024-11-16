@@ -337,6 +337,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 		/// Tells whether polyphony is enabled or not
 		/// </summary>
 		/********************************************************************/
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool IsPolyphonyEnabled
 		{
 			get

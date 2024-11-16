@@ -67,7 +67,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Opus
 			byte[] buf = new byte[256];
 
 			moduleStream.Seek(0, SeekOrigin.Begin);
-			moduleStream.Read(buf, 0, 256);
+			moduleStream.ReadInto(buf, 0, 256);
 
 			if (OpusFile.Op_Test(null, buf, (ulong)buf.Length) == 0)
 				return AgentResult.Ok;

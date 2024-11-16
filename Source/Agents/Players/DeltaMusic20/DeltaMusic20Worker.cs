@@ -334,9 +334,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 					inst.IsSample = moduleStream.Read_UINT8() == 0xff;
 					inst.SampleNumber = (byte)(moduleStream.Read_UINT8() & 0x7);
 
-					moduleStream.Read(inst.Table, 0, 48);
+					int bytesRead = moduleStream.Read(inst.Table, 0, 48);
 
-					if (moduleStream.EndOfStream)
+					if (bytesRead < 48)
 					{
 						errorMessage = Resources.IDS_DM2_ERR_LOADING_INSTRUMENT;
 						return AgentResult.Error;

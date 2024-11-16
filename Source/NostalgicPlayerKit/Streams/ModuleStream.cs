@@ -192,12 +192,12 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 			byte[] lineBuffer = new byte[lineLength + 1];
 
 			// Store the lines in reverse order in the array.
-			// This helps to skip empty lines in the each later on
+			// This helps to skip empty lines in the Linq expression later on
 			for (int i = numberOfLines - 1; blockSize > 0; i--)
 			{
 				int todo = Math.Min(lineLength, blockSize);
-				Read(lineBuffer, 0, todo);
-				lineBuffer[todo] = 0x00;			// Null terminator, just in case
+				int read = Read(lineBuffer, 0, todo);
+				lineBuffer[read] = 0x00;			// Null terminator, just in case
 
 				string singleLine = encoder.GetString(lineBuffer, 0, lineLength);
 				singleLine = singleLine.Replace('\r', ' ').Replace('\n', ' ').TrimEnd();

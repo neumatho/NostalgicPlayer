@@ -234,12 +234,12 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 			header.PanSeparation = mo3Stream.Read_UINT8();
 			header.SampleVolume = mo3Stream.Read_INT8();
 
-			mo3Stream.Read(header.ChnVolume, 0, 64);
-			mo3Stream.Read(header.ChnPan, 0, 64);
-			mo3Stream.Read(header.SfxMacros, 0, 16);
+			mo3Stream.ReadInto(header.ChnVolume, 0, 64);
+			mo3Stream.ReadInto(header.ChnPan, 0, 64);
+			mo3Stream.ReadInto(header.SfxMacros, 0, 16);
 
-			mo3Stream.Read(header.FixedMacros[0], 0, 128);
-			mo3Stream.Read(header.FixedMacros[1], 0, 128);
+			mo3Stream.ReadInto(header.FixedMacros[0], 0, 128);
+			mo3Stream.ReadInto(header.FixedMacros[1], 0, 128);
 
 			return mo3Stream.EndOfStream || (header.NumChannels == 0) || (header.NumChannels > 64) || (header.RestartPos > header.NumOrders) ||
 				(header.NumInstruments >= 240) || (header.NumSamples >= 240) ? null : header;
@@ -258,8 +258,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 
 			patternInfo.PositionList = new byte[header.NumOrders];
 
-			mo3Stream.Read(patternInfo.PositionList, 0, patternInfo.PositionList.Length);
-			if (mo3Stream.EndOfStream)
+			int bytesRead = mo3Stream.Read(patternInfo.PositionList, 0, patternInfo.PositionList.Length);
+			if (bytesRead < patternInfo.PositionList.Length)
 				return null;
 
 			patternInfo.Sequences = new ushort[header.NumPatterns, header.NumChannels];
@@ -544,7 +544,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 						Data = new byte[len]
 					};
 
-					mo3Stream.Read(plugin.Data, 0, plugin.Data.Length);
+					mo3Stream.ReadInto(plugin.Data, 0, plugin.Data.Length);
 
 					loadedPlugins.Add(plugin);
 				}
@@ -597,7 +597,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 							case ModuleType.Xm:
 							{
 								versChunk.CreatedWithTracker = new byte[len];
-								mo3Stream.Read(versChunk.CreatedWithTracker, 0, versChunk.CreatedWithTracker.Length);
+								mo3Stream.ReadInto(versChunk.CreatedWithTracker, 0, versChunk.CreatedWithTracker.Length);
 								break;
 							}
 
@@ -626,7 +626,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 							Data = new byte[len]
 						};
 
-						mo3Stream.Read(omptChunk.Data, 0, omptChunk.Data.Length);
+						mo3Stream.ReadInto(omptChunk.Data, 0, omptChunk.Data.Length);
 
 						loadedChunks.Add(omptChunk);
 						break;
@@ -641,7 +641,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 							Data = new byte[len]
 						};
 
-						mo3Stream.Read(midiChunk.Data, 0, midiChunk.Data.Length);
+						mo3Stream.ReadInto(midiChunk.Data, 0, midiChunk.Data.Length);
 
 						loadedChunks.Add(midiChunk);
 						break;

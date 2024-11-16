@@ -87,7 +87,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20
 			byte[] buf = new byte[28];
 
 			moduleStream.Seek(58, SeekOrigin.Begin);
-			moduleStream.Read(buf, 0, 28);
+			moduleStream.ReadExactly(buf, 0, 28);
 
 			string id = Encoding.ASCII.GetString(buf);
 			if (id == "SIDMON II - THE MIDI VERSION")
@@ -511,8 +511,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20
 			{
 				list[i] = new T[16];
 
-				moduleStream.Read((byte[])(Array)list[i], 0, 16);
-				if (moduleStream.EndOfStream)
+				int bytesRead = moduleStream.Read((byte[])(Array)list[i], 0, 16);
+				if (bytesRead < 16)
 					return null;
 			}
 
@@ -539,9 +539,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20
 			sbyte[] instrumentTranspose = new sbyte[instrumentTransposeInfo.Length];
 
 			moduleStream.Seek(positionTableInfo.Offset, SeekOrigin.Begin);
-			moduleStream.Read(positions, 0, positions.Length);
+			int bytesRead = moduleStream.Read(positions, 0, positions.Length);
 
-			if (moduleStream.EndOfStream)
+			if (bytesRead < positions.Length)
 				return false;
 
 			moduleStream.Seek(noteTransposeInfo.Offset, SeekOrigin.Begin);
@@ -606,9 +606,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20
 				byte[] trackData = new byte[trackLength];
 
 				moduleStream.Seek(tracksInfo.Offset + trackOffsetTable[i], SeekOrigin.Begin);
-				moduleStream.Read(trackData, 0, (int)trackLength);
+				int bytesRead = moduleStream.Read(trackData, 0, (int)trackLength);
 
-				if (moduleStream.EndOfStream)
+				if (bytesRead < trackLength)
 					return false;
 
 				tracks[i] = new Track
@@ -736,8 +736,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20
 
 				moduleStream.Seek(4, SeekOrigin.Current);
 
-				moduleStream.Read(name, 0, 32);
-				if (moduleStream.EndOfStream)
+				int bytesRead = moduleStream.Read(name, 0, 32);
+				if (bytesRead < 32)
 					return false;
 
 				sample.Name = encoding.GetString(name);

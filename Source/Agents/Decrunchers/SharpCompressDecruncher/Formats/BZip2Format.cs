@@ -57,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.SharpCompressDecruncher.Form
 
 				// Check block header magic bytes (its Pi)
 				byte[] buf = new byte[6];
-				readerStream.Read(buf, 0, 6);
+				readerStream.ReadExactly(buf, 0, 6);
 
 				if ((buf[0] != 0x31) || (buf[1] != 0x41) || (buf[2] != 0x59) || (buf[3] != 0x26) || (buf[4] != 0x53) || (buf[5] != 0x59))
 					return AgentResult.Unknown;

@@ -434,7 +434,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 							}
 
 							// Read PlaySeq name
-							moduleStream.Read(name, 0, 32);
+							moduleStream.ReadInto(name, 0, 32);
 							name[31] = 0x00;
 
 							// Get pointer to PlaySeq commands
@@ -563,9 +563,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 
 							if (markVersion == '0')
 							{
-								moduleStream.Read(blockData, 0, size);
+								int bytesRead = moduleStream.Read(blockData, 0, size);
 
-								if (moduleStream.EndOfStream)
+								if (bytesRead < size)
 								{
 									errorMessage = Resources.IDS_MED_ERR_LOADING_PATTERNS;
 									Cleanup();
@@ -681,9 +681,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 								{
 									byte[] mmdNote = new byte[4];
 									MedNote dn = blk.Note(lineCnt, trkCnt);
-									moduleStream.Read(mmdNote, 0, 4);
+									int bytesRead = moduleStream.Read(mmdNote, 0, 4);
 
-									if (moduleStream.EndOfStream)
+									if (bytesRead < 4)
 									{
 										errorMessage = Resources.IDS_MED_ERR_LOADING_PATTERNS;
 										Cleanup();
@@ -715,7 +715,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 									moduleStream.Seek(blkInfo.BlockName, SeekOrigin.Begin);
 
 									byte[] tmpTxt = new byte[blkInfo.BlockNameLen];
-									moduleStream.Read(tmpTxt, 0, (int)blkInfo.BlockNameLen);
+									moduleStream.ReadInto(tmpTxt, 0, (int)blkInfo.BlockNameLen);
 									blk.SetName(tmpTxt);
 								}
 
@@ -896,7 +896,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 							if (currExp.InstInfoEntrySize >= 40)
 							{
 								byte[] name = new byte[42];
-								moduleStream.Read(name, 0, 40);
+								moduleStream.ReadInto(name, 0, 40);
 								sg.GetInstr(cnt).SetName(name);
 							}
 
@@ -918,7 +918,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 							moduleStream.Seek(currExp.SongNameOffs, SeekOrigin.Begin);
 
 							byte[] tmpTxt = new byte[currExp.SongNameLen];
-							moduleStream.Read(tmpTxt, 0, (int)currExp.SongNameLen);
+							moduleStream.ReadInto(tmpTxt, 0, (int)currExp.SongNameLen);
 							css.SetSongName(tmpTxt);
 
 							// unlimited yellow-grey.mmd1 has an invalid value in SongNameOffs, so the above
@@ -949,7 +949,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 							moduleStream.Seek(currExp.AnnoTextOffs, SeekOrigin.Begin);
 
 							byte[] loadText = new byte[currExp.AnnoTextLength];
-							moduleStream.Read(loadText, 0, (int)currExp.AnnoTextLength);
+							moduleStream.ReadInto(loadText, 0, (int)currExp.AnnoTextLength);
 							sg.SetAnnoText(loadText);
 
 /*							if (moduleStream.EndOfStream)
@@ -1007,7 +1007,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 										byte[] tmpBuff = new byte[80];
 
 										tg.SeekToTag(ExpansionTags.EffectTags.GroupName);
-										moduleStream.Read(tmpBuff, 0, (int)Math.Min(tg.TagVal(ExpansionTags.EffectTags.GroupNameLen), 80));
+										moduleStream.ReadInto(tmpBuff, 0, (int)Math.Min(tg.TagVal(ExpansionTags.EffectTags.GroupNameLen), 80));
 										tmpBuff[79] = 0;
 
 										grp.SetName(tmpBuff);
@@ -1087,7 +1087,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 										byte[] tmpBuff = new byte[82];
 
 										tg.SeekToTag(ExpansionTags.TrackTags.Name);
-										moduleStream.Read(tmpBuff, 0, (int)Math.Min(tg.TagVal(ExpansionTags.TrackTags.NameLen), 81));
+										moduleStream.ReadInto(tmpBuff, 0, (int)Math.Min(tg.TagVal(ExpansionTags.TrackTags.NameLen), 81));
 										tmpBuff[81] = 0;
 
 										css.SetTrackName(cnt, tmpBuff);
@@ -1713,13 +1713,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		{
 			song.NumBlocks = moduleStream.Read_B_UINT16();
 			song.SongLen = moduleStream.Read_B_UINT16();
-			moduleStream.Read(song.PlaySeq, 0, 256);
+			moduleStream.ReadInto(song.PlaySeq, 0, 256);
 			song.DefTempo = moduleStream.Read_B_UINT16();
 			song.PlayTransp = moduleStream.Read_INT8();
 			song.Flags = (MmdFlag)moduleStream.Read_UINT8();
 			song.Flags2 = (MmdFlag2)moduleStream.Read_UINT8();
 			song.Tempo2 = moduleStream.Read_UINT8();
-			moduleStream.Read(song.TrkVol, 0, 16);
+			moduleStream.ReadInto(song.TrkVol, 0, 16);
 			song.MasterVol = moduleStream.Read_UINT8();
 			song.NumSamples = moduleStream.Read_UINT8();
 		}
@@ -1744,7 +1744,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 			expData.InstInfoEntrySize = moduleStream.Read_B_UINT16();
 			expData.Obsolete0 = moduleStream.Read_B_UINT32();
 			expData.Obsolete1 = moduleStream.Read_B_UINT32();
-			moduleStream.Read(expData.ChannelSplit, 0, 4);
+			moduleStream.ReadInto(expData.ChannelSplit, 0, 4);
 			expData.NotInfoOffs = moduleStream.Read_B_UINT32();
 			expData.SongNameOffs = moduleStream.Read_B_UINT32();
 			expData.SongNameLen = moduleStream.Read_B_UINT32();

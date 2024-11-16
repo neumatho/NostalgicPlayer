@@ -56,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher.Formats
 
 			byte[] buf = new byte[4];
 
-			archiveStream.Read(buf, 0, 4);
+			archiveStream.ReadExactly(buf, 0, 4);
 
 			if ((buf[0] != 0x4c) || (buf[1] != 0x5a) || (buf[2] != 0x58) || (buf[3]) != 0x00)	// LZX\0
 				return AgentResult.Unknown;

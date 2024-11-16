@@ -159,7 +159,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			converterStream.Write_B_UINT16(temp);				// Song length
 
 			byte[] tempArray = new byte[256];
-			moduleStream.Read(tempArray, 0, temp);
+			moduleStream.ReadInto(tempArray, 0, temp);
 			converterStream.Write(tempArray, 0, 256);
 
 			temp = moduleStream.Read_B_UINT16();
@@ -178,7 +178,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			// Skip jumping mask and colors
 			moduleStream.Seek(4 + 16, SeekOrigin.Current);
 
-			moduleStream.Read(tempArray, 0, 16);
+			moduleStream.ReadInto(tempArray, 0, 16);
 			converterStream.Write(tempArray, 0, 16);	// Track volumes
 
 			byte temp2 = moduleStream.Read_UINT8();
@@ -391,9 +391,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			moduleStream.Seek(headerStart + blockHeaderLength, SeekOrigin.Begin);
 
 			byte[] blockData = new byte[blockDataLength];
-			moduleStream.Read(blockData, 0, blockDataLength);
+			int bytesRead = moduleStream.Read(blockData, 0, blockDataLength);
 
-			if (moduleStream.EndOfStream)
+			if (bytesRead < blockDataLength)
 				return false;
 
 			// Write block header
@@ -525,7 +525,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			moduleStream.Seek(-Math.Min(1024, moduleStream.Length), SeekOrigin.End);
 			long searchPosition = moduleStream.Position;
 
-			moduleStream.Read(buffer, 0, 1024);
+			moduleStream.ReadInto(buffer, 0, 1024);
 
 			bool found = false;
 			for (int i = 0; i < 1024 - 8; i++)
@@ -560,7 +560,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 						case 0x414e4e4f:	// ANNO
 						{
-							moduleStream.Read(buffer, 0, (int)length);
+							moduleStream.ReadInto(buffer, 0, (int)length);
 							annotation = encoder.GetString(buffer, 0, (int)length);
 							break;
 						}
@@ -568,7 +568,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 						case 0x484c4443:	// HLDC
 						{
 							holdAndDecay = new byte[length];
-							moduleStream.Read(holdAndDecay, 0, (int)length);
+							moduleStream.ReadInto(holdAndDecay, 0, (int)length);
 							break;
 						}
 
@@ -801,7 +801,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 								converterStream.Write_B_UINT16(pair.Value);
 
 								byte[] buffer = new byte[moduleStream.Length];
-								moduleStream.Read(buffer, 0, buffer.Length);
+								moduleStream.ReadInto(buffer, 0, buffer.Length);
 
 								buffer = FixIfIff(buffer);
 								converterStream.Write(buffer, 0, buffer.Length);
@@ -871,11 +871,11 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			converterStream.Write_B_UINT16(waveformCount);
 
 			byte[] buffer = new byte[128];
-			moduleStream.Read(buffer, 0, volumeSequenceLength);
+			moduleStream.ReadInto(buffer, 0, volumeSequenceLength);
 			converterStream.Write(buffer, 0, 128);
 
 			Array.Clear(buffer);
-			moduleStream.Read(buffer, 0, waveformSequenceLength);
+			moduleStream.ReadInto(buffer, 0, waveformSequenceLength);
 			converterStream.Write(buffer, 0, 128);
 
 			if (moduleStream.EndOfStream)

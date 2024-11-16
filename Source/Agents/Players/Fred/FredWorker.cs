@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
 			byte[] buf = new byte[12];
-			moduleStream.Read(buf, 0, 12);
+			moduleStream.ReadExactly(buf, 0, 12);
 
 			if (Encoding.ASCII.GetString(buf, 0, 12) != "Fred Editor ")
 				return AgentResult.Unknown;
@@ -192,9 +192,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 
 				// Read the sub-song start tempos
 				startTempos = new byte[subSongNum];
-				moduleStream.Read(startTempos, 0, subSongNum);
+				int bytesRead = moduleStream.Read(startTempos, 0, subSongNum);
 
-				if (moduleStream.EndOfStream)
+				if (bytesRead < subSongNum)
 				{
 					errorMessage = Resources.IDS_FRED_ERR_LOADING_HEADER;
 					Cleanup();
@@ -241,10 +241,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 					tracks[i] = new byte[trackSize];
 
 					// Read the track data
-					moduleStream.Read(tracks[i], 0, trackSize);
+					bytesRead = moduleStream.Read(tracks[i], 0, trackSize);
 
 					// Did we get some problems?
-					if (moduleStream.EndOfStream)
+					if (bytesRead < trackSize)
 					{
 						errorMessage = Resources.IDS_FRED_ERR_LOADING_SEQUENCES;
 						Cleanup();
@@ -269,7 +269,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 
 					inst.InstrumentNumber = i;
 
-					moduleStream.Read(name, 0, 32);
+					moduleStream.ReadInto(name, 0, 32);
 					inst.Name = encoder.GetString(name);
 
 					uint instIndex = moduleStream.Read_B_UINT32();

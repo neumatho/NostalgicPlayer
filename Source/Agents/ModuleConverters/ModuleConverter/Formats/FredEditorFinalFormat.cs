@@ -141,7 +141,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 			// Get sub-song start tempos
 			byte[] startTempos = new byte[10];
-			moduleStream.Read(startTempos, 0, 10);
+			moduleStream.ReadInto(startTempos, 0, 10);
 			moduleStream.Seek(1, SeekOrigin.Current);
 
 			// Write the start tempos
@@ -190,7 +190,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 			// Load all the track data
 			moduleStream.Seek(trackOffset, SeekOrigin.Begin);
-			moduleStream.Read(trackData, 0, trackSize);
+			moduleStream.ReadInto(trackData, 0, trackSize);
 
 			// Create a list holding all the tracks
 			List<byte[]> tracks = new List<byte[]>();

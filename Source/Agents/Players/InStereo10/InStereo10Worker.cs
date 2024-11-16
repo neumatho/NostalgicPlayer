@@ -85,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo10
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
 			byte[] buf = new byte[8];
-			moduleStream.Read(buf, 0, 8);
+			moduleStream.ReadExactly(buf, 0, 8);
 
 			if (Encoding.ASCII.GetString(buf, 0, 8) == "ISM!V1.2")
 				return AgentResult.Ok;
@@ -268,9 +268,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo10
 
 				// Read envelope generator tables
 				envelopeGeneratorTables = new byte[numberOfEnvelopeGeneratorTables * EnvelopeGeneratorTableLength];
-				moduleStream.Read(envelopeGeneratorTables, 0, envelopeGeneratorTables.Length);
+				int bytesRead = moduleStream.Read(envelopeGeneratorTables, 0, envelopeGeneratorTables.Length);
 
-				if (moduleStream.EndOfStream)
+				if (bytesRead < envelopeGeneratorTables.Length)
 				{
 					errorMessage = Resources.IDS_IS10_ERR_LOADING_ENVELOPEGENERATOR;
 					return AgentResult.Error;
@@ -278,9 +278,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo10
 
 				// Read ADSR tables
 				adsrTables = new byte[numberOfAdsrTables * AdsrTableLength];
-				moduleStream.Read(adsrTables, 0, adsrTables.Length);
+				bytesRead = moduleStream.Read(adsrTables, 0, adsrTables.Length);
 
-				if (moduleStream.EndOfStream)
+				if (bytesRead < adsrTables.Length)
 				{
 					errorMessage = Resources.IDS_IS10_ERR_LOADING_ADSR;
 					return AgentResult.Error;
@@ -324,9 +324,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo10
 
 				// Read arpeggio tables
 				arpeggioTables = new byte[16 * ArpeggioTableLength];
-				moduleStream.Read(arpeggioTables, 0, arpeggioTables.Length);
+				bytesRead = moduleStream.Read(arpeggioTables, 0, arpeggioTables.Length);
 
-				if (moduleStream.EndOfStream)
+				if (bytesRead < arpeggioTables.Length)
 				{
 					errorMessage = Resources.IDS_IS10_ERR_LOADING_ARPEGGIO;
 					return AgentResult.Error;

@@ -145,7 +145,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			for (int i = 0; i < 31; i++)
 			{
 				byte[] name = new byte[22];
-				moduleStream.Read(name, 0, 18);
+				moduleStream.ReadInto(name, 0, 18);
 				moduleStream.Seek(4, SeekOrigin.Current);
 
 				ushort length = moduleStream.Read_B_UINT16();

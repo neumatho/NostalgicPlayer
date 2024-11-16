@@ -76,7 +76,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Common.Buffers
 			size_t todo = Math.Min(count, (size_t)(stream.Length - stream.Position));
 
 			uint8_t[] buffer = new uint8_t[todo];
-			stream.Read(buffer, 0, (int)todo);
+			stream.ReadExactly(buffer, 0, (int)todo);
 
 			return buffer.AsSpan();
 		}

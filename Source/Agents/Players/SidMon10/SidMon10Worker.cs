@@ -98,7 +98,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10
 			byte[] buffer = new byte[4096];
 
 			moduleStream.Seek(0, SeekOrigin.Begin);
-			moduleStream.Read(buffer, 0, buffer.Length);
+			moduleStream.ReadInto(buffer, 0, buffer.Length);
 
 			return TestModule(buffer);
 		}
@@ -1062,7 +1062,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10
 
 				instr.WaveformNumber = moduleStream.Read_B_UINT32();
 
-				moduleStream.Read(instr.Arpeggio, 0, 16);
+				moduleStream.ReadInto(instr.Arpeggio, 0, 16);
 
 				instr.AttackSpeed = moduleStream.Read_UINT8();
 				instr.AttackMax = moduleStream.Read_UINT8();
@@ -1154,9 +1154,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10
 				{
 					byte[] waveInfo = new byte[16];
 
-					moduleStream.Read(waveInfo, 0, 16);
+					int bytesRead = moduleStream.Read(waveInfo, 0, 16);
 
-					if (moduleStream.EndOfStream)
+					if (bytesRead < 16)
 						return false;
 
 					waveformInfo[i] = waveInfo;
@@ -1242,9 +1242,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10
 							int loopStart = moduleStream.Read_B_INT32();
 							uint endOffset = moduleStream.Read_B_UINT32();
 
-							moduleStream.Read(name, 0, 20);
+							int bytesRead = moduleStream.Read(name, 0, 20);
 
-							if (moduleStream.EndOfStream)
+							if (bytesRead < 20)
 								return false;
 
 							if ((loopStart == noLoopValue) || (loopStart >= endOffset) || (startOffset > loopStart))

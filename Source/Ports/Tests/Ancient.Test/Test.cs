@@ -145,7 +145,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.Ancient.Test
 			using (FileStream fs = File.OpenRead(Path.Combine(location, "..\\..\\..\\Test_Files", fileName)))
 			{
 				byte[] buffer = new byte[fs.Length];
-				fs.Read(buffer);
+				fs.ReadExactly(buffer);
 
 				return buffer;
 			}

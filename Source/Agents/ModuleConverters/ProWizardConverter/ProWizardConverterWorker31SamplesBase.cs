@@ -198,7 +198,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter
 
 			// Write song length
 			Span<byte> positionList = GetPositionList(moduleStream);
-			if ((positionList == null) || (positionList.Length == 0) || moduleStream.EndOfStream)
+			if ((positionList == Span<byte>.Empty) || (positionList.Length == 0) || moduleStream.EndOfStream)
 			{
 				errorMessage = Resources.IDS_ERR_LOADING_HEADERINFO;
 				return AgentResult.Error;

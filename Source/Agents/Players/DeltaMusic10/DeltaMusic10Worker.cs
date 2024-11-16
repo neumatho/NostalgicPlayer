@@ -254,7 +254,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10
 							TableDelay = moduleStream.Read_UINT8()
 						};
 
-						moduleStream.Read(inst.Arpeggio, 0, 8);
+						moduleStream.ReadInto(inst.Arpeggio, 0, 8);
 
 						inst.SampleLength = moduleStream.Read_B_UINT16();
 						inst.RepeatStart = moduleStream.Read_B_UINT16();
@@ -263,7 +263,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic10
 						if (!inst.IsSample)
 						{
 							inst.Table = new byte[48];
-							moduleStream.Read(inst.Table, 0, 48);
+							moduleStream.ReadInto(inst.Table, 0, 48);
 						}
 
 						if (moduleStream.EndOfStream)

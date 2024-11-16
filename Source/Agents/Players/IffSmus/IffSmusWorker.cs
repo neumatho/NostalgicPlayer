@@ -731,9 +731,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 						byte[] tempBuffer = new byte[32];
 
 						instrumentStream.Seek(0, SeekOrigin.Begin);
-						instrumentStream.Read(tempBuffer, 0, 32);
+						int bytesRead = instrumentStream.Read(tempBuffer, 0, 32);
 
-						if (instrumentStream.EndOfStream)
+						if (bytesRead < 32)
 						{
 							errorMessage = string.Format(Resources.IDS_SMUS_ERR_LOADING_READ_EXTERNAL_FILE, instrumentFileName);
 							return -1;

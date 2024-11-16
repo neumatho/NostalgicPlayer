@@ -642,7 +642,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			for (int i = 0; i < 15; i++)
 			{
 				moduleStream.Seek(20 + i * 30, SeekOrigin.Begin);
-				moduleStream.Read(buf, 0, 22);
+				moduleStream.ReadInto(buf, 0, 22);
 
 				// Now check the name (but only for the first 7)
 				if (i < 7)
@@ -692,7 +692,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 			// Find the patterns used
 			byte[] pos = new byte[128];
-			moduleStream.Read(pos, 0, 128);
+			moduleStream.ReadInto(pos, 0, 128);
 
 			byte[] usedPatterns = FindUsedPatterns(pos, 128);
 			if (usedPatterns.FirstOrDefault(p => p >= 64) != 0)
@@ -993,7 +993,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 
 				// Find the patterns used
 				byte[] pos = new byte[128];
-				moduleStream.Read(pos, 0, 128);
+				moduleStream.ReadInto(pos, 0, 128);
 
 				if (maybeWow)
 				{
@@ -1122,7 +1122,7 @@ stopLoop:
 
 					for (int i = 0; i < 31; i++)
 					{
-						moduleStream.Read(buf, 0, 30);
+						moduleStream.ReadInto(buf, 0, 30);
 
 						// Check for disk prefix
 						if (((buf[0] == 'S') || (buf[0] == 's')) && ((buf[1] == 'T') || (buf[1] == 't')) && (buf[2] == '-') && (buf[5] == ':'))
@@ -1315,7 +1315,7 @@ stopLoop:
 
 				// Read the song name
 				buf[20] = 0x00;
-				moduleStream.Read(buf, 0, 20);
+				moduleStream.ReadInto(buf, 0, 20);
 
 				songName = encoder.GetString(buf);
 
@@ -1329,7 +1329,7 @@ stopLoop:
 
 					// Read the sample info
 					buf[22] = 0x00;
-					moduleStream.Read(buf, 0, 22);				// Name of the sample
+					moduleStream.ReadInto(buf, 0, 22);				// Name of the sample
 
 					ushort length = moduleStream.Read_B_UINT16();			// Length in words
 					byte fineTune = moduleStream.Read_UINT8();				// Only the low nibble is used (mask it out and extend the sign)
@@ -1476,9 +1476,9 @@ stopLoop:
 				}
 
 				positions = new byte[128];
-				moduleStream.Read(positions, 0, 128);
+				int bytesRead = moduleStream.Read(positions, 0, 128);
 
-				if (moduleStream.EndOfStream)
+				if (bytesRead < 128)
 				{
 					errorMessage = Resources.IDS_MOD_ERR_LOADING_HEADER;
 					Cleanup();
@@ -1581,7 +1581,7 @@ stopLoop:
 						using (ModuleStream sampleDataStream = moduleStream.GetSampleDataStream(i, length))
 						{
 							// Check for Mod Plugin packed samples
-							sampleDataStream.Read(buf, 0, 5);
+							sampleDataStream.ReadInto(buf, 0, 5);
 
 							if ((buf[0] == 0x41) && (buf[1] == 0x44) && (buf[2] == 0x50) && (buf[3] == 0x43) && (buf[4] == 0x4d))	// ADPCM
 							{
@@ -1663,8 +1663,8 @@ stopLoop:
 								synthData.VolumeData = new byte[0x40];
 
 								moduleStream.ReadSigned(synthData.WaveData, 0, synthData.WaveData.Length);
-								moduleStream.Read(synthData.Data, 0, synthData.Data.Length);
-								moduleStream.Read(synthData.VolumeData, 0, synthData.VolumeData.Length);
+								moduleStream.ReadInto(synthData.Data, 0, synthData.Data.Length);
+								moduleStream.ReadInto(synthData.VolumeData, 0, synthData.VolumeData.Length);
 							}
 						}
 					}
@@ -1705,7 +1705,7 @@ stopLoop:
 
 				// Read the song name
 				buf[20] = 0x00;
-				moduleStream.Read(buf, 0, 20);
+				moduleStream.ReadInto(buf, 0, 20);
 
 				songName = encoder.GetString(buf);
 
@@ -1719,7 +1719,7 @@ stopLoop:
 
 					// Read the sample info
 					buf[22] = 0x00;
-					moduleStream.Read(buf, 0, 22);				// Name of the sample
+					moduleStream.ReadInto(buf, 0, 22);				// Name of the sample
 
 					ushort length = moduleStream.Read_B_UINT16();			// Length in words
 					ushort volume = moduleStream.Read_B_UINT16();			// The volume
@@ -1768,9 +1768,9 @@ stopLoop:
 				showTracks = true;
 
 				positions = new byte[128 * 4];
-				moduleStream.Read(positions, 0, positions.Length);
+				int bytesRead = moduleStream.Read(positions, 0, positions.Length);
 
-				if (moduleStream.EndOfStream)
+				if (bytesRead < positions.Length)
 				{
 					errorMessage = Resources.IDS_MOD_ERR_LOADING_HEADER;
 					Cleanup();

@@ -712,10 +712,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise
 			arpeggios = ArrayHelper.InitializeArray<byte>(16, 4);
 
 			for (int i = 0; i < 16; i++)
-				moduleStream.Read(arpeggios[i], 0, 4);
+			{
+				int bytesRead = moduleStream.Read(arpeggios[i], 0, 4);
 
-			if (moduleStream.EndOfStream)
-				errorMessage = Resources.IDS_AON_ERR_LOADING_HEADER;
+				if (bytesRead < 4)
+				{
+					errorMessage = Resources.IDS_AON_ERR_LOADING_HEADER;
+					return;
+				}
+			}
 		}
 
 
@@ -731,9 +736,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise
 
 			positionList = new byte[chunkSize];
 
-			moduleStream.Read(positionList, 0, chunkSize);
+			int bytesRead = moduleStream.Read(positionList, 0, chunkSize);
 
-			if (moduleStream.EndOfStream)
+			if (bytesRead < chunkSize)
 				errorMessage = Resources.IDS_AON_ERR_LOADING_HEADER;
 		}
 

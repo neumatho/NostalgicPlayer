@@ -116,7 +116,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 
 			// Copy the orders
 			byte[] orders = new byte[128];
-			moduleStream.Read(orders, 0, 128);
+			moduleStream.ReadInto(orders, 0, 128);
 			converterStream.Write(orders, 0, 128);
 
 			// Write pad

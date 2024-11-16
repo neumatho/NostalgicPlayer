@@ -730,7 +730,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 
 			// Read the positions
 			patternTable = new byte[128];
-			moduleStream.Read(patternTable, 0, 128);
+			moduleStream.ReadInto(patternTable, 0, 128);
 
 			errorMessage = string.Empty;
 		}

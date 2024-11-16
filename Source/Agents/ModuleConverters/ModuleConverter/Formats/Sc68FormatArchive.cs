@@ -60,7 +60,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			byte[] buf = new byte[56];
 
 			archiveStream.Seek(0, SeekOrigin.Begin);
-			archiveStream.Read(buf, 0, 56);
+			archiveStream.ReadExactly(buf, 0, 56);
 
 			if (Encoding.ASCII.GetString(buf, 0, 55) != Sc68Helper.IdString)
 				return AgentResult.Unknown;

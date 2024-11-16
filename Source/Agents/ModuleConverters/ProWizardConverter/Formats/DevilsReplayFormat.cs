@@ -112,7 +112,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			referenceTableSize = moduleStream.Read_B_UINT16();
 
 			referenceTable = new byte[referenceTableSize];
-			moduleStream.Read(referenceTable, 0, referenceTableSize);
+			moduleStream.ReadInto(referenceTable, 0, referenceTableSize);
 
 			return true;
 		}
@@ -129,7 +129,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			byte[] moduleName = new byte[20];
 
 			moduleStream.Seek(0, SeekOrigin.Begin);
-			moduleStream.Read(moduleName, 0, 20);
+			moduleStream.ReadInto(moduleName, 0, 20);
 
 			return moduleName;
 		}
@@ -146,7 +146,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			for (int i = 0; i < 31; i++)
 			{
 				byte[] name = new byte[22];
-				moduleStream.Read(name, 0, 22);
+				moduleStream.ReadInto(name, 0, 22);
 
 				ushort length = moduleStream.Read_B_UINT16();
 				byte fineTune = moduleStream.Read_UINT8();
@@ -179,7 +179,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			byte[] positionList = new byte[numberOfPositions];
 
 			moduleStream.Seek(0x03b8, SeekOrigin.Begin);
-			moduleStream.Read(positionList, 0, numberOfPositions);
+			moduleStream.ReadInto(positionList, 0, numberOfPositions);
 
 			return positionList;
 		}

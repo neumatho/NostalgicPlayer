@@ -147,7 +147,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			byte[] moduleName = new byte[20];
 
 			moduleStream.Seek(2, SeekOrigin.Begin);
-			moduleStream.Read(moduleName, 0, 13);
+			moduleStream.ReadInto(moduleName, 0, 13);
 
 			return moduleName;
 		}
@@ -296,7 +296,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			moduleStream.Seek(0x200, SeekOrigin.Begin);
 
 			trackTable = new byte[0x200];
-			moduleStream.Read(trackTable, 0, 0x200);
+			moduleStream.ReadInto(trackTable, 0, 0x200);
 		}
 
 

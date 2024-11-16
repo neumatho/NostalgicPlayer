@@ -347,7 +347,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 
 				// Read the frequency sequences
 				moduleStream.Seek(frqOffset, SeekOrigin.Begin);
-				moduleStream.Read(frqSequences, Tables.Silent.Length, frqLength);
+				moduleStream.ReadInto(frqSequences, Tables.Silent.Length, frqLength);
 
 				// Set "end of sequence" mark
 				frqSequences[frqSequences.Length - 1] = 0xe1;
@@ -380,7 +380,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 					volSeq.VibDepth = (sbyte)moduleStream.Read_UINT8();
 					volSeq.VibDelay = moduleStream.Read_UINT8();
 
-					moduleStream.Read(volSeq.Values, 0, 59);
+					moduleStream.ReadInto(volSeq.Values, 0, 59);
 
 					volSequences[i] = volSeq;
 				}

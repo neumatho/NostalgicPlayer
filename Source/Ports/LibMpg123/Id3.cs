@@ -544,7 +544,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 										unsyncBuffer = new c_uchar[frameSize + 1];		// Will need <= bytes, plus a safety zero
 										realData = unsyncBuffer;
 
-										if (realData == null)
+										if (realData == Span<c_uchar>.Empty)
 											continue;
 
 										// Now going byte per byte through the data...
@@ -1186,7 +1186,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			// Get mime type (encoding is always latin-1)
 			workpoint = Next_Text(realData, Mpg123_Id3_Enc.Latin1, realSize, out size_t workpointOffset);
-			if (workpoint == null)
+			if (workpoint == Span<c_uchar>.Empty)
 				return;
 
 			Int123_Id3_To_Utf8(mime, Mpg123_Id3_Enc.Latin1, realData, workpointOffset);
@@ -1200,7 +1200,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			// Get description (encoding is encoding)
 			workpoint = Next_Text(realData, encoding, realSize, out workpointOffset);
-			if (workpoint == null)
+			if (workpoint == Span<c_uchar>.Empty)
 			{
 				lib.Mpg123_Free_String(mime);
 				return;
@@ -1279,7 +1279,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 
 			// Be careful with finding the end of description, I have to honor encoding here
 			text = Next_Text(descr, encoding, realSize - 4, out size_t textOffset);
-			if (text == null)
+			if (text == Span<c_uchar>.Empty)
 				return;
 
 			{	// Just for variable scope
@@ -1366,7 +1366,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 				return;
 
 			text = Next_Text(descr, encoding, realSize - 1, out size_t textOffset);
-			if (text == null)
+			if (text == Span<c_uchar>.Empty)
 				return;
 
 			{	// Just for variable scope

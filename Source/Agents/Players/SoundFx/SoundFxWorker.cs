@@ -235,14 +235,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 
 				// Read the orders
 				orders = new byte[128];
-				moduleStream.Read(orders, 0, 128);
-				moduleStream.Seek(4, SeekOrigin.Current);
+				int bytesRead = moduleStream.Read(orders, 0, 128);
 
-				if (moduleStream.EndOfStream)
+				if (bytesRead < 128)
 				{
 					errorMessage = Resources.IDS_SFX_ERR_LOADING_HEADER;
 					return AgentResult.Error;
 				}
+
+				moduleStream.Seek(4, SeekOrigin.Current);
 
 				// Find highest pattern number
 				maxPattern = 0;

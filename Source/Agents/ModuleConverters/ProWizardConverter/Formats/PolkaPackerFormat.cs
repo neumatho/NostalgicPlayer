@@ -125,7 +125,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			for (int i = 0; i < 31; i++)
 			{
 				byte[] name = new byte[22];
-				moduleStream.Read(name, 0, 18);
+				moduleStream.ReadInto(name, 0, 18);
 
 				moduleStream.Seek(4, SeekOrigin.Current);
 
@@ -162,7 +162,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			restartPosition = moduleStream.Read_UINT8();
 
 			byte[] positionList = new byte[numberOfPositions];
-			moduleStream.Read(positionList, 0, numberOfPositions);
+			moduleStream.ReadInto(positionList, 0, numberOfPositions);
 
 			moduleStream.Seek(128 - numberOfPositions, SeekOrigin.Current);
 			moduleStream.Seek(4, SeekOrigin.Current);

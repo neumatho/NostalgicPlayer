@@ -244,7 +244,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 					subSong.SongSpeed = moduleStream.Read_UINT8();
 					subSong.NumberOfSequences = moduleStream.Read_UINT8();
 
-					moduleStream.Read(buf, 0, 12);
+					moduleStream.ReadInto(buf, 0, 12);
 					subSong.Name = encoder.GetString(buf, 0, 12).Trim();
 
 					subSongs[i] = subSong;
@@ -453,9 +453,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 
 					for (int i = 0; i < 8; i++)
 					{
-						moduleStream.Read(arpeggios[i], 0, 32);
+						int bytesRead = moduleStream.Read(arpeggios[i], 0, 32);
 
-						if (moduleStream.EndOfStream)
+						if (bytesRead < 32)
 						{
 							errorMessage = Resources.IDS_DMU_ERR_LOADING_ARPEGGIOS;
 							Cleanup();
@@ -766,7 +766,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 			byte[] buf = new byte[24];
 
 			moduleStream.Seek(0, SeekOrigin.Begin);
-			moduleStream.Read(buf, 0, 24);
+			moduleStream.ReadExactly(buf, 0, 24);
 
 			// Check the identifier
 			string mark = Encoding.ASCII.GetString(buf, 0, 24);

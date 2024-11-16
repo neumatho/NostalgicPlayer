@@ -294,7 +294,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 					musicLen = (int)(moduleStream.Length - moduleStream.Position);
 
 				musicData = new byte[16384 * 4];
-				moduleStream.Read(musicData, 0, musicLen);
+				moduleStream.ReadInto(musicData, 0, musicLen);
 
 				int offset = ((musicLen + 3) / 4) * 4;
 				musicData[offset] = 0xff;
@@ -944,7 +944,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			byte[] buffer = new byte[endIndex - startIndex];
 
 			moduleStream.Seek(startOffset + startIndex, SeekOrigin.Begin);
-			moduleStream.Read(buffer, 0, buffer.Length);
+			moduleStream.ReadInto(buffer, 0, buffer.Length);
 
 			for (int i = 0; i < buffer.Length; i += 4)
 			{

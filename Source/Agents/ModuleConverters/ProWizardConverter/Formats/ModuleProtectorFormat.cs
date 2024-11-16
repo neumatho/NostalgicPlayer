@@ -196,7 +196,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 			byte[] positionList = new byte[numberOfPositions];
 
 			moduleStream.Seek(startOffset + 0xfa, SeekOrigin.Begin);
-			moduleStream.Read(positionList, 0, numberOfPositions);
+			moduleStream.ReadInto(positionList, 0, numberOfPositions);
 
 			return positionList;
 		}
@@ -230,7 +230,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ProWizardConverter.Form
 
 			for (int i = 0; i < numberOfPatterns; i++)
 			{
-				moduleStream.Read(pattern, 0, 1024);
+				moduleStream.ReadInto(pattern, 0, 1024);
+
 				yield return pattern;
 			}
 

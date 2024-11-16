@@ -64,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 			ModuleStream moduleStream = fileInfo.ModuleStream;
 
 			// Check the module size
-			if (moduleStream.Length < 27)
+			if (moduleStream.Length < 36)
 				return AgentResult.Unknown;
 
 			// Check the mark
@@ -85,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 			byte[] buf = new byte[6];
 
 			moduleStream.Seek(29, SeekOrigin.Begin);
-			moduleStream.Read(buf, 0, 6);
+			moduleStream.ReadExactly(buf, 0, 6);
 
 			if ((buf[0] != 0x76) || (buf[1] != 0x6f) || (buf[2] != 0x72) || (buf[3] != 0x62) || (buf[4] != 0x69) || (buf[5] != 0x73))	// vorbis
 				return AgentResult.Unknown;

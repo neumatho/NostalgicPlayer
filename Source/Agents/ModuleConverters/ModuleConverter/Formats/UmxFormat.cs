@@ -207,7 +207,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			Array.Clear(sig);
 
 			moduleStream.Seek(ofs, SeekOrigin.Begin);
-			moduleStream.Read(sig, 0, 16);
+			moduleStream.ReadInto(sig, 0, 16);
 
 			if (type == UMusic.It)
 			{
@@ -222,11 +222,11 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 				if (Encoding.ASCII.GetString(sig, 0, 16) != "Extended Module:")
 					return -1;
 
-				moduleStream.Read(sig, 0, 16);
+				moduleStream.ReadInto(sig, 0, 16);
 				if (sig[0] != ' ')
 					return -1;
 
-				moduleStream.Read(sig, 0, 16);
+				moduleStream.ReadInto(sig, 0, 16);
 				if (sig[5] != 0x1a)
 					return -1;
 
@@ -251,7 +251,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			}
 
 			moduleStream.Seek(ofs + 44, SeekOrigin.Begin);
-			moduleStream.Read(sig, 0, 4);
+			moduleStream.ReadInto(sig, 0, 4);
 
 			if (type == UMusic.S3M)
 			{
@@ -265,7 +265,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			}
 
 			moduleStream.Seek(ofs + 1080, SeekOrigin.Begin);
-			moduleStream.Read(sig, 0, 4);
+			moduleStream.ReadInto(sig, 0, 4);
 
 			if (type == UMusic.Mod)
 			{
@@ -383,7 +383,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 			byte[] buf = new byte[64];
 
 			moduleStream.Seek(hdr.ExportOffset, SeekOrigin.Begin);
-			moduleStream.Read(buf, 0, 64);
+			moduleStream.ReadInto(buf, 0, 64);
 
 			GetFci(buf.AsSpan(idx), ref idx);			// Skip class index
 			GetFci(buf.AsSpan(idx), ref idx);			// Skip super index
