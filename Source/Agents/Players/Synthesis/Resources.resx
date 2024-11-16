@@ -127,7 +127,7 @@ This player can play Synthesis modules from version 4.0 to 4.2. It is based on t
     <value>Original player by Casrten Herbst and Branko Mikic for Braintrace Design.
 Converted to C# by Thomas Neumann.
 
-This is the successor of In Stereo! and precursor of Sonic Arranger. As the other editors, this can play synthesis sounds with a lot of different effects including ADSR, envelope generator and 16 synth modifier effects, which sounds really nice.</value>
+This is the successor of In Stereo! and precursor of Sonic Arranger. It is based on the InStereo 1.0 player, but extended with a lot of different synth modifier effects.</value>
   </data>
   <data name="IDS_SYN_ERR_LOADING_ADSR" xml:space="preserve">
     <value>Can't read the ADSR information</value>

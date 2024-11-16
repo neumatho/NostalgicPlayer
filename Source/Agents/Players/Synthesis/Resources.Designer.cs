@@ -76,7 +76,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis {
         ///   Looks up a localized string similar to Original player by Casrten Herbst and Branko Mikic for Braintrace Design.
         ///Converted to C# by Thomas Neumann.
         ///
-        ///This is the successor of In Stereo! and precursor of Sonic Arranger. As the other editors, this can play synthesis sounds with a lot of different effects including ADSR, envelope generator and 16 synth modifier effects, which sounds really nice..
+        ///This is the successor of In Stereo! and precursor of Sonic Arranger. It is based on the InStereo 1.0 player, but extended with a lot of different synth modifier effects..
         /// </summary>
         internal static string IDS_SYN_DESCRIPTION_AGENT1 {
             get {
