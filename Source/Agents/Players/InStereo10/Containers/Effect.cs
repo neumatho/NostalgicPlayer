@@ -25,6 +25,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo10.Containers
 		EffC,								// C
 		EffD,								// D
 		SetFilter,							// E
-		SetSpeed,							// F
+		SetSpeed							// F
 	}
 }

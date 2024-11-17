@@ -857,9 +857,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis
 				MarkPositionAsVisited(playingInfo.SongPosition);
 				playingInfo.SongPosition++;
 
-				ShowPosition();
-				ShowTracks();
-
 				SinglePositionInfo[] positionRow = positions[playingInfo.SongPosition - 1];
 
 				for (int i = 0; i < 4; i++)
@@ -871,6 +868,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis
 					voiceInfo.SoundTranspose = posInfo.SoundTranspose;
 					voiceInfo.NoteTranspose = posInfo.NoteTranspose;
 				}
+
+				ShowPosition();
+				ShowTracks();
 			}
 
 			for (int i = 0; i < 4; i++)
@@ -1199,9 +1199,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis
 			DoVibrato(periodInfo, instr, voiceInfo);
 
 			periodInfo.Period = (ushort)(periodInfo.Period + voiceInfo.SlideIncrement);
-
-			if (periodInfo.Period < 113)
-				periodInfo.Period = 113;
 
 			channel.SetAmigaPeriod(periodInfo.Period);
 

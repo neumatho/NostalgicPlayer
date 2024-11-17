@@ -365,7 +365,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/********************************************************************/
 		public void SetAmigaPeriod(uint period)
 		{
-			frequency = period != 0 ? 3546895 / period : 0;
+			if (period != 0)
+			{
+				// Amiga hardware cannot play periods lower than 113
+				if (period < 113)
+					period = 113;
+
+				frequency = 3546895 / period;
+			}
+			else
+				frequency = 0;
+
 			flags |= ChannelFlag.Frequency;
 		}
 
