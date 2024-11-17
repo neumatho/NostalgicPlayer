@@ -135,7 +135,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo10
 				case 2:
 				{
 					description = Resources.IDS_IS10_INFODESCLINE2;
-					value = (instruments.Length - 1).ToString();
+					value = instruments.Length.ToString();
 					break;
 				}
 
