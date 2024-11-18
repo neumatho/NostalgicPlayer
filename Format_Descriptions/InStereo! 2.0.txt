@@ -1,0 +1,145 @@
+   0      8  Mark (IS20DF10)
+   8      4  Song table mark (STBL)
+   C      4  Number of sub-songs (NSS)
+  10  NSS*A  Sub-song information
+          4  Position information mark (OVTB)
+          4  Number of positions (NOP)
+     NOP*10  Position information
+          4  Track rows mark (NTBL)
+          4  Number of track rows (NOR)
+      NOR*4  Track rows
+          4  Samples mark (SAMP)
+          4  Number of samples (NOS)
+     NOS*10  Sample information
+	 NOS*14  Sample names
+      NOS*4  Sample lengths in words
+      NOS*4  Repeat lengths in words
+      NOS*4  Sample lengths in bytes
+          ?  Sample data. The last sample comes first and the first sample is at the end
+          4  Synthesis mark (SYNT)
+          4  Number of instruments (NOI)
+    NOI*3F2  Instrument information
+          8  Editor state mark (EDATV1.0)
+         22  Editor state values
+
+
+Sub-song information:
+
+   0  1  Speed
+   1  1  Track length
+   2  2  Start position
+   4  2  Stop position
+   6  2  Repeat position
+   8  2  Tempo in Hz. If tempo is 0, use 50 instead
+
+
+Position information:
+
+Each position contains 4 bytes for each voice. The 4 bytes stands for:
+
+   0  2 Track address
+   2  1 Sound transpose
+   3  1 Note transpose
+
+
+Track rows:
+
+All the notes are stored as one big track. The track address in the position
+information points to the first row to play at that position.
+
+Each row contains this information:
+
+AAAAAAAA BBBBBBBB CDEEFFFF GGGGGGGG
+
+A = Note (remember to add the transpose value to get the real note)
+B = Instrument number to use
+C = If set, no sound transpose - If set together with D, transpose anyway
+D = If set, no note transpose - If set together with C, transpose anyway
+E = Arpeggio number for synth instruments
+F = Effect number
+    0 = Arpeggio
+    1 = Slide up/down
+    2 = Res. ADSR
+    *3 = 
+    4 = Set vibrato
+    *5 = 
+    *6 = 
+    7 = Set portamento
+    8 = Skip portamento
+    9 = Track len
+    A = Volume increment
+    B = Position jump
+    C = Set volume
+    D = Track break
+    E = Led on/off
+    F = Song speed
+G = Effect argument
+
+
+Sample information:
+
+   0  2 Oneshot length in words
+   2  2 Repeat length in words (0 = loop whole sample, 1 = no loop, other = loop length)
+   4  1 Sample number
+   5  1 Volume
+   6  1 Vibrato delay
+   7  1 Vibrato speed
+   8  1 Vibrato level
+   9  1 Portamento speed
+   A  6 ???
+
+
+Instrument information:
+
+   0    4 Mark (IS20)
+   4   14 Name
+  18    2 Length of waveform
+  1A    1 Volume
+  1B    1 Vibrato delay
+  1C    1 Vibrato speed
+  1D    1 Vibrato level
+  1E    1 Portamento speed
+  1F    1 ADSR length
+  20    1 ADSR repeat
+  21    4 ???
+  25    1 Sustain point
+  26    1 Sustain speed
+  27    1 AMF length
+  28    1 AMF repeat
+  29    1 EG mode (0 = calc, -1 = free)
+  2A    1 EG enabled (0 = no, -1 = yes)
+  2B    1 Start/len
+  2C    1 Stop/rep
+  2D    1 Speed up
+  2E    1 Speed down
+  2F   13 ????
+  42   80 ADSR table
+  C2   80 LFO table
+ 142 3*10 Arpeggios. Each table is: LE (length), RE (repeat), 14 bytes of transpose values. LE+RE = total length
+ 172   80 EG table
+ 1F2  100 Waveform 1
+ 2F2  100 Waveform 2
+
+
+Internal channel structure:
+
+  0  1 Transposed note
+  1  1 Previous transposed note
+  2  1 Slide speed
+  3  1 Sample/synth number
+  4  1 Instrument mode (0 = Sample, -1 = Synthesis)
+  5  1 Current volume
+  6  2 ADSR position
+  8  2 Vibrato position
+  A  2 LFO position
+  C  2 Portamento speed counter
+  E  2 Portamento speed
+ 10  2 Slide value
+ 12  1 Vibrato delay
+ 13  1 Vibrato speed
+ 14  1 Vibrato level
+ 15  1 EG duration
+ 16  2 EG position
+ 18  2 Arpeggio position
+ 1A  2 Sustain counter
+ 1C  2 Arpeggio effect nibble to use
