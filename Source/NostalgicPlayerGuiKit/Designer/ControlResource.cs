@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.GuiKit.Designer
 		/// </summary>
 		/********************************************************************/
 		[Description("Full name of resource class, like YourAppNamespace.Resource1")]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public string ResourceClassName
 		{
 			get; set;
