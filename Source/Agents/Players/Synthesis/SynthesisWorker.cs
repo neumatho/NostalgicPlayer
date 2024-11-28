@@ -966,7 +966,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis
 
 					case Effect.SetSpeed:
 					{
-						if (voiceInfo.EffectArg <= 16)
+						if ((voiceInfo.EffectArg > 0) && (voiceInfo.EffectArg <= 16))
 						{
 							playingInfo.CurrentSpeed = voiceInfo.EffectArg;
 							ShowSpeed();

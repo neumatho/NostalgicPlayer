@@ -1095,7 +1095,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20
 
 				case Effect.SetSpeed:
 				{
-					if (voiceInfo.EffectArg <= 16)
+					if ((voiceInfo.EffectArg > 0) && (voiceInfo.EffectArg <= 16))
 					{
 						playingInfo.CurrentSpeed = voiceInfo.EffectArg;
 						ShowSpeed();
@@ -1289,7 +1289,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20
 				loopStart = sample.OneShotLength;
 				loopLength = sample.RepeatLength;
 			}
-			
+
 			channel.PlaySample(instrNum, data, 0, playLength * 2U);
 
 			if (loopLength != 0)
