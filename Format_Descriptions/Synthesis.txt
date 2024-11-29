@@ -57,21 +57,21 @@ B = Instrument number to use
 C = Arpeggio number
 D = Effect number
     0 = No effect
-	1 = Slide up/down
-	2 = Res. ADSR
-	3 = Res. EGC
-	4 = Track len
-	5 = Skip ST/NT
-	6 = Sync mark
-	7 = Led on/off
-	8 = Song speed
-	9 = Fx on/off
-	A = Fx change
-	B = Change par1
-	C = Change par2
-	D = Change par3
-	E = EGC off
-	F = New volume
+    1 = Slide up/down
+    2 = Res. ADSR
+    3 = Res. EGC
+    4 = Track len
+    5 = Skip ST/NT
+    6 = Sync mark
+    7 = Led on/off
+    8 = Song speed
+    9 = Fx on/off
+    A = Fx change
+    B = Change par1
+    C = Change par2
+    D = Change par3
+    E = EGC off
+    F = New volume
 E = Effect argument
 
 
@@ -92,21 +92,21 @@ Instrument information:
   10  1 Synthesis mode
          0 = Fx off
          1 = Rotate1 (Start position, End position, Synthesis Fx speed)
-		 2 = Rotate2 (Start position, End position, Slow motion level)
-		 3 = Alien (Source synth wave, End position, Slow motion level)
-		 4 = Negator (Start position, End position, Slow motion level)
-		 5 = PolyNeg (Start position, End position, Slow motion level)
-		 6 = Shaker1 (Source synth wave, Mix-in level, Slow motion level)
-		 7 = Shaker2 (Source synth wave, Mix-in level, Slow motion level)
-		 8 = Amf/Lfo (Source synth wave, End position, Slow motion level)
-		 9 = Laser (Laser speed, Laser time, Slow motion level)
-		 A = Oct. Fx1 (Mix-in level, Not in use, Slow motion level)
-		 B = Oct. Fx2 (Mix-in level, Not in use, Slow motion level)
-		 C = Alising (Mix-in level, Alising level, Slow motion level)
-		 D = EG-Fx-1 (Mix-in level, Envelope generator, Slow motion level)
-		 E = EG-Fx-2 (Mix-in level, Envelope generator, Slow motion level)
-		 F = Changer (Destination synth wave, Mix-in level, Slow motion level)
-		10 = FM drum (Modulation level, Modulation factor, Modulation depth)
+         2 = Rotate2 (Start position, End position, Slow motion level)
+         3 = Alien (Source synth wave, End position, Slow motion level)
+         4 = Negator (Start position, End position, Slow motion level)
+         5 = PolyNeg (Start position, End position, Slow motion level)
+         6 = Shaker1 (Source synth wave, Mix-in level, Slow motion level)
+         7 = Shaker2 (Source synth wave, Mix-in level, Slow motion level)
+         8 = Amf/Lfo (Source synth wave, End position, Slow motion level)
+         9 = Laser (Laser speed, Laser time, Slow motion level)
+         A = Oct. Fx1 (Mix-in level, Not in use, Slow motion level)
+         B = Oct. Fx2 (Mix-in level, Not in use, Slow motion level)
+         C = Alising (Mix-in level, Alising level, Slow motion level)
+         D = EG-Fx-1 (Mix-in level, Envelope generator, Slow motion level)
+         E = EG-Fx-2 (Mix-in level, Envelope generator, Slow motion level)
+         F = Changer (Destination synth wave, Mix-in level, Slow motion level)
+        10 = FM drum (Modulation level, Modulation factor, Modulation depth)
   11  1 Synthesis arg 1
   12  1 Synthesis arg 2
   13  1 Synthesis arg 3

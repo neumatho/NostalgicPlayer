@@ -1164,6 +1164,15 @@
             <uap:DisplayName>InStereo!</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="safile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-sa">.sa</uap:FileType>
+              <uap:FileType ContentType="audio/x-sa">.sonic</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Sonic Arranger</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

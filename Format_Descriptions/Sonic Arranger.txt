@@ -1,0 +1,172 @@
+   0      8  Mark (SOARV1.0)
+   8      4  Song table mark (STBL)
+   C      4  Number of sub-songs (NSS)
+  10  NSS*C  Sub-song information
+          4  Position information mark (OVTB)
+          4  Number of positions (NOP)
+     NOP*10  Position information
+          4  Track rows mark (NTBL)
+          4  Number of track rows (NOR)
+      NOR*4  Track rows
+          4  Instruments mark (INST)
+          4  Number of instruments (NOI)
+     NOI*98  Instrument information
+          4  Samples mark (SD8B)
+          4  Number of samples (NOS)
+      NOS*4  Sample lengths in words
+      NOS*4  Repeat lengths in words
+	 NOS*1E  Sample names
+      NOS*4  Sample lengths in bytes
+          ?  Sample data
+          4  Wave tables mark (SYWT)
+          4  Number of wave tables (NOW)
+     NOW*80  Wave tables
+          4  ADSR tables mark (SYAR)
+          4  Number of ADSR tables (NOA)
+     NOA*80  ADSR tables
+          4  AMF tables mark (SYAF)
+          4  Number of AMF tables (NOF)
+     NOF*80  AMF tables
+          8  Editor state mark (EDATV1.1)
+         10  Editor state values
+
+
+Sub-song information:
+
+   0  2  Speed
+   2  2  Track length
+   4  2  Start position
+   6  2  Stop position
+   8  2  Repeat position
+   A  2  Tempo in Hz
+
+
+Position information:
+
+Each position contains 4 bytes for each voice. The 4 bytes stands for:
+
+   0  2 Track address
+   2  1 Sound transpose
+   3  1 Note transpose
+
+
+Track rows:
+
+All the notes are stored as one big track. The track address in the position
+information points to the first row to play at that position.
+
+Each row contains this information:
+
+AAAAAAAA BBBBBBBB CDEEFFFF GGGGGGGG
+
+A = Note (remember to add the transpose value to get the real note)
+B = Instrument number to use
+C = If set, no sound transpose
+D = If set, no note transpose
+E = Arpeggio number for synth instruments
+F = Effect number
+    0 = Arpeggio
+    1 = Slide up/down
+    2 = Restart ADSR
+    3 = Not used
+    4 = Set vibrato
+    5 = Sync
+    6 = Set master volume
+    7 = Set portamento
+    8 = Skip portamento
+    9 = Track len
+    A = Volume slide
+    B = Position jump
+    C = Set volume
+    D = Track break
+    E = Led on/off
+    F = Song speed
+G = Effect argument
+
+
+Instrument information:
+
+    0    2 Instrument type (0 = Sample, 1 = Synthesis)
+    2    2 Sample/waveform number
+    4    2 Oneshot length in words
+    6    2 Repeat length in words (0 = loop whole sample, 1 = no loop, other = loop length)
+	8    8 ???
+   10    2 Volume
+   12    2 Fine tuning
+   14    2 Portamento speed
+   16    2 Vibrato delay
+   18    2 Vibrato speed
+   1A    2 Vibrato level
+   1C    2 AMF wave
+   1E    2 AMF delay
+   20    2 AMF length
+   22    2 AMF repeat
+   24    2 ADSR wave
+   26    2 ADSR delay
+   28    2 ADSR length
+   2A    2 ADSR repeat
+   2C    2 Sustain point
+   2E    2 Sustain delay
+   30   10 ???
+   40    2 Effect arg 1
+   42    2 Effect number
+            0 = Fx off
+            1 = Wave Negator (-, Start position, Stop position)
+            2 = Free Negator (Waveform, Wave length, Wave repeat)
+            3 = Rotate Vertical (Delta value, Start position, End position)
+            4 = Rotate Horizontal (-, Start position, End position)
+			5 = Alien Voice (Waveform, Start position, End position)
+            6 = Poly Negator (-, Start position, End position)
+            7 = Shack Wave 1 (Waveform, Start position, End position)
+            8 = Shack Wave 2 (Waveform, Start position, End position)
+            9 = Metamorph (Destination waveform, Start position, End position)
+            A = Laser Amf (-, Detune, Repeats)
+            B = Wave Alias (Delta value, Start position, End position)
+            C = Noise Generator (-, Start position, End position)
+            D = Low Pass Filter 1 (Delta value, Start position, End position)
+            E = Low Pass Filter 2 (Waveform, Start position, End position)
+            F = Oszilator 1 (Destination waveform, Start position, End position)
+           10 = Noise Generator 2 (-, Start position, End position)
+           11 = FM drum (Level, Factor, Repeats)
+   44    2 Effect arg 2
+   46    2 Effect arg 3
+   48    2 Effect delay
+   4A 3*10 Arpeggios. Each table is: LE (length), RE (repeat), 14 bytes of transpose values. LE+RE = total length
+   7A   1E Name
+
+
+Internal channel structure:
+
+    0 80 Waveform buffer
+   80  2 Transposed note
+   82  2 Previous transposed note
+   84  2 Slide value
+   86  2 Slide speed
+   88  2 Instrument number
+   8A  4 Pointer to instrument info
+   8E  2 Current volume
+   90  2 Volume slide speed
+   92  2 Vibrato position
+   94  2 Vibrato delay
+   96  2 Vibrato speed
+   98  2 Vibrato level
+   9A  2 Portamento speed
+   9C  2 Portamento period
+   9E  2 ADSR position
+   A0  2 Sustain delay counter
+   A2  2 ADSR delay counter
+   A4  2 AMF position
+   A6  2 AMF delay counter
+   A8  2 Synth effect position
+   AA  2 Synth effect wave position
+   AC  2 Effect delay counter
+   AE  2 Arpeggio position
+   B0  2 ???
+   B2  2 Scope volume??
+   B4  1 ???
+   B5  1 Flag (0 = Mute voice)
+   B6  2 Total length of sample in words
+   B8  2 Instrument type (0 = Sample, 1 = Synthesis)
+   BA  4 Pointer to sample
+   BE  4 ???
+   C2  A ???
