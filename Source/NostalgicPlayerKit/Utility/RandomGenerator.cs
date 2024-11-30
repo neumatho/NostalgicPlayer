@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Security.Cryptography;
+using System.Threading;
 
 namespace Polycode.NostalgicPlayer.Kit.Utility
 {
@@ -34,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 	/// </summary>
 	public static class RandomGenerator
 	{
-		private static readonly object lockObject;
+		private static readonly Lock lockObject;
 
 		private static ulong state;			// RNG state. All values are possible
 		private static readonly ulong inc;	// Controls which RNG sequence (stream) is selected. Must *always* be odd
@@ -46,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/********************************************************************/
 		static RandomGenerator()
 		{
-			lockObject = new object();
+			lockObject = new Lock();
 
 			byte[] number = RandomNumberGenerator.GetBytes(8);
 			ulong initState = BitConverter.ToUInt64(number, 0);
