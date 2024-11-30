@@ -66,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "sd2", "sid2", "sid" };
+		public override string[] FileExtensions => [ "sd2", "sid2", "sid" ];
 
 
 

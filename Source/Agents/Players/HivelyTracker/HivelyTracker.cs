@@ -46,18 +46,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 		/// Returns all the formats/types this agent supports
 		/// </summary>
 		/********************************************************************/
-		public override AgentSupportInfo[] AgentInformation
-		{
-			get
-			{
-				return new AgentSupportInfo[]
-				{
-					new AgentSupportInfo(Resources.IDS_HVL_NAME_AGENT1, Resources.IDS_HVL_DESCRIPTION_AGENT1, Agent1Id),
-					new AgentSupportInfo(Resources.IDS_HVL_NAME_AGENT2, Resources.IDS_HVL_DESCRIPTION_AGENT2, Agent2Id),
-					new AgentSupportInfo(Resources.IDS_HVL_NAME_AGENT3, Resources.IDS_HVL_DESCRIPTION_AGENT3, Agent3Id)
-				};
-			}
-		}
+		public override AgentSupportInfo[] AgentInformation =>
+		[
+			new AgentSupportInfo(Resources.IDS_HVL_NAME_AGENT1, Resources.IDS_HVL_DESCRIPTION_AGENT1, Agent1Id),
+			new AgentSupportInfo(Resources.IDS_HVL_NAME_AGENT2, Resources.IDS_HVL_DESCRIPTION_AGENT2, Agent2Id),
+			new AgentSupportInfo(Resources.IDS_HVL_NAME_AGENT3, Resources.IDS_HVL_DESCRIPTION_AGENT3, Agent3Id)
+		];
 
 
 

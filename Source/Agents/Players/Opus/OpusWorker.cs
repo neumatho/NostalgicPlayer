@@ -46,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Opus
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "opus" };
+		public override string[] FileExtensions => [ "opus" ];
 
 
 

@@ -57,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "sa", "sonic" };
+		public override string[] FileExtensions => [ "sa", "sonic" ];
 
 
 

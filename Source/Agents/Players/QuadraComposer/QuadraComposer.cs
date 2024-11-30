@@ -45,16 +45,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 		/// Returns all the formats/types this agent supports
 		/// </summary>
 		/********************************************************************/
-		public override AgentSupportInfo[] AgentInformation
-		{
-			get
-			{
-				return new AgentSupportInfo[]
-				{
-					new AgentSupportInfo(Resources.IDS_EMOD_NAME_AGENT1, Resources.IDS_EMOD_DESCRIPTION_AGENT1, agent1Id)
-				};
-			}
-		}
+		public override AgentSupportInfo[] AgentInformation =>
+		[
+			new AgentSupportInfo(Resources.IDS_EMOD_NAME_AGENT1, Resources.IDS_EMOD_DESCRIPTION_AGENT1, agent1Id)
+		];
 
 
 

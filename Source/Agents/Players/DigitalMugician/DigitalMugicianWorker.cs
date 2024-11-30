@@ -83,7 +83,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "dmu", "mug" };
+		public override string[] FileExtensions => [ "dmu", "mug" ];
 
 
 

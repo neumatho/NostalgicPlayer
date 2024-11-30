@@ -77,7 +77,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "aon", "aon8" };
+		public override string[] FileExtensions => [ "aon", "aon8" ];
 
 
 

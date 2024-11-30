@@ -41,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.GameMusicCreator
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "gmc" };
+		public override string[] FileExtensions => [ "gmc" ];
 
 
 

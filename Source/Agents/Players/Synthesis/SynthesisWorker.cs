@@ -66,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "syn" };
+		public override string[] FileExtensions => [ "syn" ];
 
 
 

@@ -62,7 +62,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sawteeth
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "st" };
+		public override string[] FileExtensions => [ "st" ];
 
 
 

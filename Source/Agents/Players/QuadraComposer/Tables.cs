@@ -138,9 +138,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 		/// </summary>
 		/********************************************************************/
 		public static readonly sbyte[] ArpeggioOffsets =
-		{
+		[
 			-1, 0, 1
-		};
+		];
 
 
 

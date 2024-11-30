@@ -94,7 +94,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "dw", "dwold" };
+		public override string[] FileExtensions => [ "dw", "dwold" ];
 
 
 

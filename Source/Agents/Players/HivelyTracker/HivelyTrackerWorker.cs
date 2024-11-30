@@ -84,7 +84,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "ahx", "thx", "hvl" };
+		public override string[] FileExtensions => [ "ahx", "thx", "hvl" ];
 
 
 

@@ -44,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "dm2" };
+		public override string[] FileExtensions => [ "dm2" ];
 
 
 

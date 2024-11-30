@@ -42,16 +42,10 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff16Sv
 		/// Returns all the formats/types this agent supports
 		/// </summary>
 		/********************************************************************/
-		public override AgentSupportInfo[] AgentInformation
-		{
-			get
-			{
-				return new AgentSupportInfo[]
-				{
-					new AgentSupportInfo(Resources.IDS_IFF16SV_NAME_AGENT1, string.Format(Resources.IDS_IFF16SV_DESCRIPTION, Resources.IDS_IFF16SV_DESCRIPTION_AGENT1), supportedFormats[Format.Pcm])
-				};
-			}
-		}
+		public override AgentSupportInfo[] AgentInformation =>
+		[
+			new AgentSupportInfo(Resources.IDS_IFF16SV_NAME_AGENT1, string.Format(Resources.IDS_IFF16SV_DESCRIPTION, Resources.IDS_IFF16SV_DESCRIPTION_AGENT1), supportedFormats[Format.Pcm])
+		];
 
 
 

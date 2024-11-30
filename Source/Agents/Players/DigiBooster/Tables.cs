@@ -138,9 +138,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		/// </summary>
 		/********************************************************************/
 		public static readonly byte[] ArpeggioList =
-		{
+		[
 			0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1
-		};
+		];
 
 
 
@@ -150,10 +150,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		/// </summary>
 		/********************************************************************/
 		public static readonly byte[] VibratoSin =
-		{
+		[
 			0x00, 0x18, 0x31, 0x4a, 0x61, 0x78, 0x8d, 0xa1, 0xb4, 0xc5, 0xd4, 0xe0, 0xeb, 0xf4, 0xfa, 0xfd,
 			0xff, 0xfd, 0xfa, 0xf4, 0xeb, 0xe0, 0xd4, 0xc5, 0xb4, 0xa1, 0x8d, 0x78, 0x61, 0x4a, 0x31, 0x18
-		};
+		];
 
 
 
@@ -163,7 +163,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		/// </summary>
 		/********************************************************************/
 		public static readonly byte[] Hex =
-		{
+		[
 			 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 0, 0, 0, 0, 0, 0,
 			10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 0, 0, 0, 0, 0, 0,
 			20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 0, 0, 0, 0, 0, 0,
@@ -171,6 +171,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 			40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 0, 0, 0, 0, 0, 0,
 			50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 0, 0, 0, 0, 0, 0,
 			60, 61, 62, 63
-		};
+		];
 	}
 }

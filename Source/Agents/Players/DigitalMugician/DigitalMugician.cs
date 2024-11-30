@@ -46,17 +46,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 		/// Returns all the formats/types this agent supports
 		/// </summary>
 		/********************************************************************/
-		public override AgentSupportInfo[] AgentInformation
-		{
-			get
-			{
-				return new AgentSupportInfo[]
-				{
-					new AgentSupportInfo(Resources.IDS_DMU_NAME_AGENT1, Resources.IDS_DMU_DESCRIPTION_AGENT1, Agent1Id),
-					new AgentSupportInfo(Resources.IDS_DMU_NAME_AGENT2, Resources.IDS_DMU_DESCRIPTION_AGENT2, Agent2Id)
-				};
-			}
-		}
+		public override AgentSupportInfo[] AgentInformation =>
+		[
+			new AgentSupportInfo(Resources.IDS_DMU_NAME_AGENT1, Resources.IDS_DMU_DESCRIPTION_AGENT1, Agent1Id),
+			new AgentSupportInfo(Resources.IDS_DMU_NAME_AGENT2, Resources.IDS_DMU_DESCRIPTION_AGENT2, Agent2Id)
+		];
 
 
 

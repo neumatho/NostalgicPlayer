@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "is", "is20" };
+		public override string[] FileExtensions => [ "is", "is20" ];
 
 
 

@@ -53,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "okt", "okta" };
+		public override string[] FileExtensions => [ "okt", "okta" ];
 
 
 

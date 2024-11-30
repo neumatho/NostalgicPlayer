@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		public static readonly int16_t[] Vibrato =
-		{
+		[
 			   0,   25,   50,   74,   98,  121,  142,  162,
 			 181,  197,  213,  226,  237,  245,  251,  255,
 			 256,  255,  251,  245,  237,  226,  213,  197,
@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 			-181, -197, -213, -226, -237, -245, -251, -255,
 			-256, -255, -251, -245, -237, -226, -213, -197,
 			-181, -162, -142, -121,  -98,  -74,  -50,  -25
-		};
+		];
 
 
 
@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		public static readonly int16_t[] Periods =
-		{
+		[
 			13696, 12928, 12192, 11520, 10848, 10240,  9664,  9120,  8608,  8128,  7680,  7248,
 			 6848,  6464,  6096,  5760,  5424,  5120,  4832,  4560,  4304,  4064,  3840,  3624,
 			 3424,  3232,  3048,  2880,  2712,  2560,  2416,  2280,  2152,  2032,  1920,  1812,
@@ -44,7 +44,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 			  428,   404,   380,   360,   340,   320,   302,   286,   270,   254,   240,   226,
 			  214,   202,   190,   180,   170,   160,   151,   143,   135,   127,   120,   113,
 			  107,   101,    95,    90,    85,    80,    76,    72,    68,    64,    60,    57
-		};
+		];
 
 
 
@@ -54,7 +54,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		public static readonly uint32_t[] MusicScale =
-		{
+		[
 			//   0      +1      +2      +3      +4      +5      +6      +7   Fine tune
 			 65536,  66011,  66489,  66971,  67456,  67945,  68438,  68933,  // C
 			 69433,  69936,  70443,  70953,  71468,  71985,  72507,  73032,  // C#
@@ -68,7 +68,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 			110218, 111017, 111821, 112631, 113448, 114270, 115098, 115932,  // A
 			116772, 117618, 118470, 119329, 120194, 121065, 121942, 122825,  // A#
 			123715, 124612, 125515, 126425, 127341, 128263, 129193, 130129   // H
-		};
+		];
 
 
 
@@ -78,9 +78,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta1 =
-		{
+		[
 			65536
-		};
+		];
 
 
 
@@ -90,9 +90,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta2 =
-		{
+		[
 			65536, 65773
-		};
+		];
 
 
 
@@ -102,9 +102,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta3 =
-		{
+		[
 			65536, 65694, 65852
-		};
+		];
 
 
 
@@ -114,9 +114,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta4 =
-		{
+		[
 			65536, 65654, 65773, 65892
-		};
+		];
 
 
 
@@ -126,9 +126,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta5 =
-		{
+		[
 			65536, 65631, 65726, 65821, 65916
-		};
+		];
 
 
 
@@ -138,9 +138,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta6 =
-		{
+		[
 			65536, 65615, 65694, 65773, 65852, 65932
-		};
+		];
 
 
 
@@ -150,9 +150,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta7 =
-		{
+		[
 			65536, 65604, 65671, 65739, 65807, 65875, 65943
-		};
+		];
 
 
 
@@ -162,9 +162,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta8 =
-		{
+		[
 			65536, 65595, 65654, 65714, 65773, 65832, 65892, 65951
-		};
+		];
 
 
 
@@ -174,9 +174,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta9 =
-		{
+		[
 			65536, 65589, 65641, 65694, 65747, 65799, 65852, 65905, 65958
-		};
+		];
 
 
 
@@ -186,9 +186,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta10 =
-		{
+		[
 			65536, 65583, 65631, 65678, 65726, 65773, 65821, 65868, 65916, 65963
-		};
+		];
 
 
 
@@ -198,9 +198,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta11 =
-		{
+		[
 			65536, 65579, 65622, 65665, 65708, 65751, 65795, 65838, 65881, 65924, 65968
-		};
+		];
 
 
 
@@ -210,10 +210,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta12 =
-		{
+		[
 			65536, 65575, 65615, 65654, 65694, 65733, 65773, 65813, 65852, 65892, 65932,
 			65971
-		};
+		];
 
 
 
@@ -223,10 +223,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta13 =
-		{
+		[
 			65536, 65572, 65609, 65645, 65682, 65718, 65755, 65791, 65828, 65864, 65901,
 			65938, 65974
-		};
+		];
 
 
 
@@ -236,10 +236,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta14 =
-		{
+		[
 			65536, 65570, 65604, 65637, 65671, 65705, 65739, 65773, 65807, 65841, 65875,
 			65909, 65943, 65977
-		};
+		];
 
 
 
@@ -249,10 +249,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta15 =
-		{
+		[
 			65536, 65568, 65599, 65631, 65662, 65694, 65726, 65757, 65789, 65821, 65852,
 			65884, 65916, 65947, 65979
-		};
+		];
 
 
 
@@ -262,10 +262,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta16 =
-		{
+		[
 			65536, 65566, 65595, 65625, 65654, 65684, 65714, 65743, 65773, 65803, 65832,
 			65862, 65892, 65922, 65951, 65981
-		};
+		];
 
 
 
@@ -275,10 +275,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta17 =
-		{
+		[
 			65536, 65564, 65592, 65620, 65647, 65675, 65703, 65731, 65759, 65787, 65815,
 			65843, 65871, 65899, 65927, 65955, 65983
-		};
+		];
 
 
 
@@ -288,10 +288,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta18 =
-		{
+		[
 			65536, 65562, 65589, 65615, 65641, 65668, 65694, 65720, 65747, 65773, 65799,
 			65826, 65852, 65879, 65905, 65932, 65958, 65984
-		};
+		];
 
 
 
@@ -301,10 +301,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta19 =
-		{
+		[
 			65536, 65561, 65586, 65611, 65636, 65661, 65686, 65711, 65736, 65761, 65786,
 			65811, 65836, 65861, 65886, 65911, 65936, 65961, 65986
-		};
+		];
 
 
 
@@ -314,10 +314,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta20 =
-		{
+		[
 			65536, 65560, 65583, 65607, 65631, 65654, 65678, 65702, 65726, 65749, 65773,
 			65797, 65821, 65844, 65868, 65892, 65916, 65939, 65963, 65987
-		};
+		];
 
 
 
@@ -327,10 +327,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta21 =
-		{
+		[
 			65536, 65559, 65581, 65604, 65626, 65649, 65671, 65694, 65717, 65739, 65762,
 			65784, 65807, 65830, 65852, 65875, 65898, 65920, 65943, 65966, 65988
-		};
+		];
 
 
 
@@ -340,10 +340,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta22 =
-		{
+		[
 			65536, 65558, 65579, 65601, 65622, 65644, 65665, 65687, 65708, 65730, 65751,
 			65773, 65795, 65816, 65838, 65859, 65881, 65903, 65924, 65946, 65968, 65989
-		};
+		];
 
 
 
@@ -353,11 +353,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta23 =
-		{
+		[
 			65536, 65557, 65577, 65598, 65618, 65639, 65660, 65680, 65701, 65721, 65742,
 			65763, 65783, 65804, 65825, 65845, 65866, 65887, 65907, 65928, 65949, 65969,
 			65990
-		};
+		];
 
 
 
@@ -367,11 +367,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta24 =
-		{
+		[
 			65536, 65556, 65575, 65595, 65615, 65635, 65654, 65674, 65694, 65714, 65733,
 			65753, 65773, 65793, 65813, 65832, 65852, 65872, 65892, 65912, 65932, 65951,
 			65971, 65991
-		};
+		];
 
 
 
@@ -381,11 +381,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta25 =
-		{
+		[
 			65536, 65555, 65574, 65593, 65612, 65631, 65650, 65669, 65688, 65707, 65726,
 			65745, 65764, 65783, 65802, 65821, 65840, 65859, 65878, 65897, 65916, 65935,
 			65954, 65973, 65992
-		};
+		];
 
 
 
@@ -395,11 +395,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta26 =
-		{
+		[
 			65536, 65554, 65572, 65591, 65609, 65627, 65645, 65664, 65682, 65700, 65718,
 			65737, 65755, 65773, 65791, 65810, 65828, 65846, 65864, 65883, 65901, 65919,
 			65938, 65956, 65974, 65993
-		};
+		];
 
 
 
@@ -409,11 +409,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta27 =
-		{
+		[
 			65536, 65554, 65571, 65589, 65606, 65624, 65641, 65659, 65676, 65694, 65711,
 			65729, 65747, 65764, 65782, 65799, 65817, 65835, 65852, 65870, 65887, 65905,
 			65923, 65940, 65958, 65976, 65993
-		};
+		];
 
 
 
@@ -423,11 +423,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta28 =
-		{
+		[
 			65536, 65553, 65570, 65587, 65604, 65621, 65637, 65654, 65671, 65688, 65705,
 			65722, 65739, 65756, 65773, 65790, 65807, 65824, 65841, 65858, 65875, 65892,
 			65909, 65926, 65943, 65960, 65977, 65994
-		};
+		];
 
 
 
@@ -437,11 +437,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta29 =
-		{
+		[
 			65536, 65552, 65569, 65585, 65601, 65618, 65634, 65650, 65667, 65683, 65699,
 			65716, 65732, 65748, 65765, 65781, 65798, 65814, 65830, 65847, 65863, 65880,
 			65896, 65912, 65929, 65945, 65962, 65978, 65994
-		};
+		];
 
 
 
@@ -451,11 +451,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta30 =
-		{
+		[
 			65536, 65552, 65568, 65583, 65599, 65615, 65631, 65647, 65662, 65678, 65694,
 			65710, 65726, 65741, 65757, 65773, 65789, 65805, 65821, 65836, 65852, 65868,
 			65884, 65900, 65916, 65932, 65947, 65963, 65979, 65995
-		};
+		];
 
 
 
@@ -465,11 +465,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		private static readonly uint32_t[] SmoothPorta31 =
-		{
+		[
 			65536, 65551, 65567, 65582, 65597, 65612, 65628, 65643, 65658, 65674, 65689,
 			65704, 65719, 65735, 65750, 65765, 65781, 65796, 65811, 65827, 65842, 65857,
 			65873, 65888, 65903, 65919, 65934, 65949, 65965, 65980, 65996
-		};
+		];
 
 
 
@@ -479,12 +479,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// </summary>
 		/********************************************************************/
 		public static readonly uint32_t[][] SmoothPorta =
-		{
+		[
 			null, SmoothPorta1, SmoothPorta2, SmoothPorta3, SmoothPorta4, SmoothPorta5,
 			SmoothPorta6, SmoothPorta7, SmoothPorta8, SmoothPorta9, SmoothPorta10, SmoothPorta11, SmoothPorta12, SmoothPorta13,
 			SmoothPorta14, SmoothPorta15, SmoothPorta16, SmoothPorta17, SmoothPorta18, SmoothPorta19, SmoothPorta20, SmoothPorta21,
 			SmoothPorta22, SmoothPorta23, SmoothPorta24, SmoothPorta25, SmoothPorta26, SmoothPorta27, SmoothPorta28, SmoothPorta29,
 			SmoothPorta30, SmoothPorta31
-		};
+		];
 	}
 }

@@ -138,12 +138,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// </summary>
 		/********************************************************************/
 		public static readonly byte[] VibratoTable =
-		{
+		[
 			  0,  24,  49,  74,  97, 120, 141, 161,
 			180, 197, 212, 224, 235, 244, 250, 253,
 			255, 253, 250, 244, 235, 224, 212, 197,
 			180, 161, 141, 120,  97,  74,  49,  24
-		};
+		];
 
 
 
@@ -153,9 +153,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// </summary>
 		/********************************************************************/
 		public static readonly byte[] FunkTable =
-		{
+		[
 			0, 5, 6, 7, 8, 10, 11, 13, 16, 19, 22, 26, 32, 43, 64, 128
-		};
+		];
 
 
 
@@ -235,7 +235,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// </summary>
 		/********************************************************************/
 		public static readonly byte[] AmSinus =
-		{
+		[
 			  0,   2,   4,   6,   8,  11,  13,  15,
 			 17,  20,  22,  24,  26,  28,  30,  33,
 			 35,  37,  39,  41,  43,  45,  47,  50,
@@ -259,6 +259,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			 41,  39,  37,  35,  33,  30,  28,  26,
 			 24,  22,  20,  17,  15,  13,  11,   8,
 			  6,   4,   2,   0
-		};
+		];
 	}
 }

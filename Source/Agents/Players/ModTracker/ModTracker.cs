@@ -58,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 			{ ModuleType.ProTrackerIff, agent16Id }
 		};
 
-		internal static readonly string[] fileExtensions = { "mod", "adsc", "st26", "ice", "ptm" };
+		internal static readonly string[] fileExtensions = [ "mod", "adsc", "st26", "ice", "ptm" ];
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -84,31 +84,25 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 		/// Returns all the formats/types this agent supports
 		/// </summary>
 		/********************************************************************/
-		public override AgentSupportInfo[] AgentInformation
-		{
-			get
-			{
-				return new AgentSupportInfo[]
-				{
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT1, Resources.IDS_MOD_DESCRIPTION_AGENT1, agent1Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT2, Resources.IDS_MOD_DESCRIPTION_AGENT2, agent2Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT3, Resources.IDS_MOD_DESCRIPTION_AGENT3, agent3Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT4, Resources.IDS_MOD_DESCRIPTION_AGENT4, agent4Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT5, Resources.IDS_MOD_DESCRIPTION_AGENT5, agent5Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT6, Resources.IDS_MOD_DESCRIPTION_AGENT6, agent6Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT7, Resources.IDS_MOD_DESCRIPTION_AGENT7, agent7Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT8, Resources.IDS_MOD_DESCRIPTION_AGENT8, agent8Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT9, Resources.IDS_MOD_DESCRIPTION_AGENT9, agent9Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT10, Resources.IDS_MOD_DESCRIPTION_AGENT10, agent10Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT11, Resources.IDS_MOD_DESCRIPTION_AGENT11, agent11Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT12, Resources.IDS_MOD_DESCRIPTION_AGENT12, agent12Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT13, Resources.IDS_MOD_DESCRIPTION_AGENT13, agent13Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT14, Resources.IDS_MOD_DESCRIPTION_AGENT14, agent14Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT15, Resources.IDS_MOD_DESCRIPTION_AGENT15, agent15Id),
-					new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT16, Resources.IDS_MOD_DESCRIPTION_AGENT16, agent16Id)
-				};
-			}
-		}
+		public override AgentSupportInfo[] AgentInformation =>
+		[
+			new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT1, Resources.IDS_MOD_DESCRIPTION_AGENT1, agent1Id),
+			new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT2, Resources.IDS_MOD_DESCRIPTION_AGENT2, agent2Id),
+			new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT3, Resources.IDS_MOD_DESCRIPTION_AGENT3, agent3Id),
+			new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT4, Resources.IDS_MOD_DESCRIPTION_AGENT4, agent4Id),
+			new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT5, Resources.IDS_MOD_DESCRIPTION_AGENT5, agent5Id),
+			new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT6, Resources.IDS_MOD_DESCRIPTION_AGENT6, agent6Id),
+			new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT7, Resources.IDS_MOD_DESCRIPTION_AGENT7, agent7Id),
+			new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT8, Resources.IDS_MOD_DESCRIPTION_AGENT8, agent8Id),
+			new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT9, Resources.IDS_MOD_DESCRIPTION_AGENT9, agent9Id),
+			new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT10, Resources.IDS_MOD_DESCRIPTION_AGENT10, agent10Id),
+			new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT11, Resources.IDS_MOD_DESCRIPTION_AGENT11, agent11Id),
+			new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT12, Resources.IDS_MOD_DESCRIPTION_AGENT12, agent12Id),
+			new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT13, Resources.IDS_MOD_DESCRIPTION_AGENT13, agent13Id),
+			new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT14, Resources.IDS_MOD_DESCRIPTION_AGENT14, agent14Id),
+			new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT15, Resources.IDS_MOD_DESCRIPTION_AGENT15, agent15Id),
+			new AgentSupportInfo(Resources.IDS_MOD_NAME_AGENT16, Resources.IDS_MOD_DESCRIPTION_AGENT16, agent16Id)
+		];
 
 
 

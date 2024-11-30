@@ -66,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "bp", "bp2", "bp3" };
+		public override string[] FileExtensions => [ "bp", "bp2", "bp3" ];
 
 
 

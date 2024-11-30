@@ -43,17 +43,11 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Iff8Svx
 		/// Returns all the formats/types this agent supports
 		/// </summary>
 		/********************************************************************/
-		public override AgentSupportInfo[] AgentInformation
-		{
-			get
-			{
-				return new AgentSupportInfo[]
-				{
-					new AgentSupportInfo(Resources.IDS_IFF8SVX_NAME_AGENT1, string.Format(Resources.IDS_IFF8SVX_DESCRIPTION, Resources.IDS_IFF8SVX_DESCRIPTION_AGENT1), supportedFormats[Format.Pcm]),
-					new AgentSupportInfo(Resources.IDS_IFF8SVX_NAME_AGENT2, string.Format(Resources.IDS_IFF8SVX_DESCRIPTION, Resources.IDS_IFF8SVX_DESCRIPTION_AGENT2), supportedFormats[Format.Fibonacci])
-				};
-			}
-		}
+		public override AgentSupportInfo[] AgentInformation =>
+		[
+			new AgentSupportInfo(Resources.IDS_IFF8SVX_NAME_AGENT1, string.Format(Resources.IDS_IFF8SVX_DESCRIPTION, Resources.IDS_IFF8SVX_DESCRIPTION_AGENT1), supportedFormats[Format.Pcm]),
+			new AgentSupportInfo(Resources.IDS_IFF8SVX_NAME_AGENT2, string.Format(Resources.IDS_IFF8SVX_DESCRIPTION, Resources.IDS_IFF8SVX_DESCRIPTION_AGENT2), supportedFormats[Format.Fibonacci])
+		];
 
 
 

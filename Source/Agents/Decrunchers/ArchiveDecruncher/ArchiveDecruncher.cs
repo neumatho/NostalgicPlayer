@@ -38,17 +38,11 @@ namespace Polycode.NostalgicPlayer.Agent.Decruncher.ArchiveDecruncher
 		/// Returns all the formats/types this agent supports
 		/// </summary>
 		/********************************************************************/
-		public override AgentSupportInfo[] AgentInformation
-		{
-			get
-			{
-				return new AgentSupportInfo[]
-				{
-					new AgentSupportInfo(Resources.IDS_ARD_NAME_AGENT1, Resources.IDS_ARD_DESCRIPTION_AGENT1, agent1Id),
-					new AgentSupportInfo(Resources.IDS_ARD_NAME_AGENT2, Resources.IDS_ARD_DESCRIPTION_AGENT2, agent2Id)
-				};
-			}
-		}
+		public override AgentSupportInfo[] AgentInformation =>
+		[
+			new AgentSupportInfo(Resources.IDS_ARD_NAME_AGENT1, Resources.IDS_ARD_DESCRIPTION_AGENT1, agent1Id),
+			new AgentSupportInfo(Resources.IDS_ARD_NAME_AGENT2, Resources.IDS_ARD_DESCRIPTION_AGENT2, agent2Id)
+		];
 
 
 

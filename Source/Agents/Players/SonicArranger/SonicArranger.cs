@@ -45,16 +45,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 		/// Returns all the formats/types this agent supports
 		/// </summary>
 		/********************************************************************/
-		public override AgentSupportInfo[] AgentInformation
-		{
-			get
-			{
-				return new AgentSupportInfo[]
-				{
-					new AgentSupportInfo(Resources.IDS_SA_NAME_AGENT1, Resources.IDS_SA_DESCRIPTION_AGENT1, agent1Id)
-				};
-			}
-		}
+		public override AgentSupportInfo[] AgentInformation =>
+		[
+			new AgentSupportInfo(Resources.IDS_SA_NAME_AGENT1, Resources.IDS_SA_DESCRIPTION_AGENT1, agent1Id)
+		];
 
 
 

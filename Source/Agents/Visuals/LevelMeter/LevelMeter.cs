@@ -36,16 +36,10 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.LevelMeter
 		/// Returns all the formats/types this agent supports
 		/// </summary>
 		/********************************************************************/
-		public override AgentSupportInfo[] AgentInformation
-		{
-			get
-			{
-				return new AgentSupportInfo[]
-				{
-					new AgentSupportInfo(Resources.IDS_METER_NAME_AGENT1, Resources.IDS_METER_DESCRIPTION_AGENT1, agent1Id)
-				};
-			}
-		}
+		public override AgentSupportInfo[] AgentInformation =>
+		[
+			new AgentSupportInfo(Resources.IDS_METER_NAME_AGENT1, Resources.IDS_METER_DESCRIPTION_AGENT1, agent1Id)
+		];
 
 
 

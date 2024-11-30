@@ -52,22 +52,16 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 		/// Returns all the formats/types this agent supports
 		/// </summary>
 		/********************************************************************/
-		public override AgentSupportInfo[] AgentInformation
-		{
-			get
-			{
-				return new AgentSupportInfo[]
-				{
-					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT1, Resources.IDS_MODCONV_DESCRIPTION_AGENT1, agent1Id),
-					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT2, Resources.IDS_MODCONV_DESCRIPTION_AGENT2, agent2Id),
-					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT3, Resources.IDS_MODCONV_DESCRIPTION_AGENT3, agent3Id),
-					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT4, Resources.IDS_MODCONV_DESCRIPTION_AGENT4, agent4Id),
-					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT5, Resources.IDS_MODCONV_DESCRIPTION_AGENT5, agent5Id),
-					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT6a, Resources.IDS_MODCONV_DESCRIPTION_AGENT6a, agent6aId),
-					new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT6b, Resources.IDS_MODCONV_DESCRIPTION_AGENT6b, agent6bId)
-				};
-			}
-		}
+		public override AgentSupportInfo[] AgentInformation =>
+		[
+			new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT1, Resources.IDS_MODCONV_DESCRIPTION_AGENT1, agent1Id),
+			new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT2, Resources.IDS_MODCONV_DESCRIPTION_AGENT2, agent2Id),
+			new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT3, Resources.IDS_MODCONV_DESCRIPTION_AGENT3, agent3Id),
+			new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT4, Resources.IDS_MODCONV_DESCRIPTION_AGENT4, agent4Id),
+			new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT5, Resources.IDS_MODCONV_DESCRIPTION_AGENT5, agent5Id),
+			new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT6a, Resources.IDS_MODCONV_DESCRIPTION_AGENT6a, agent6aId),
+			new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT6b, Resources.IDS_MODCONV_DESCRIPTION_AGENT6b, agent6bId)
+		];
 
 
 

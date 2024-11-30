@@ -81,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "med" };
+		public override string[] FileExtensions => [ "med" ];
 
 
 

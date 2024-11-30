@@ -49,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "fc", "fc14" };
+		public override string[] FileExtensions => [ "fc", "fc14" ];
 
 
 

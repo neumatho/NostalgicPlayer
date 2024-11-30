@@ -45,16 +45,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/// Returns all the formats/types this agent supports
 		/// </summary>
 		/********************************************************************/
-		public override AgentSupportInfo[] AgentInformation
-		{
-			get
-			{
-				return new AgentSupportInfo[]
-				{
-					new AgentSupportInfo(Resources.IDS_JAM_NAME_AGENT1, Resources.IDS_JAM_DESCRIPTION_AGENT1, agent1Id)
-				};
-			}
-		}
+		public override AgentSupportInfo[] AgentInformation =>
+		[
+			new AgentSupportInfo(Resources.IDS_JAM_NAME_AGENT1, Resources.IDS_JAM_DESCRIPTION_AGENT1, agent1Id)
+		];
 
 
 

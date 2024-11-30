@@ -53,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.QuadraComposer
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "emod" };
+		public override string[] FileExtensions => [ "emod" ];
 
 
 

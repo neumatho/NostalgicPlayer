@@ -95,7 +95,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "hip", "hipc", "hip7" };
+		public override string[] FileExtensions => [ "hip", "hipc", "hip7" ];
 
 
 

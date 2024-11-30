@@ -46,17 +46,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise
 		/// Returns all the formats/types this agent supports
 		/// </summary>
 		/********************************************************************/
-		public override AgentSupportInfo[] AgentInformation
-		{
-			get
-			{
-				return new AgentSupportInfo[]
-				{
-					new AgentSupportInfo(Resources.IDS_AON_NAME_AGENT1, Resources.IDS_AON_DESCRIPTION_AGENT1, Agent1Id),
-					new AgentSupportInfo(Resources.IDS_AON_NAME_AGENT2, Resources.IDS_AON_DESCRIPTION_AGENT2, Agent2Id)
-				};
-			}
-		}
+		public override AgentSupportInfo[] AgentInformation =>
+		[
+			new AgentSupportInfo(Resources.IDS_AON_NAME_AGENT1, Resources.IDS_AON_DESCRIPTION_AGENT1, Agent1Id),
+			new AgentSupportInfo(Resources.IDS_AON_NAME_AGENT2, Resources.IDS_AON_DESCRIPTION_AGENT2, Agent2Id)
+		];
 
 
 

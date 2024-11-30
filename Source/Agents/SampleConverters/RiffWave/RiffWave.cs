@@ -44,18 +44,12 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/// Returns all the formats/types this agent supports
 		/// </summary>
 		/********************************************************************/
-		public override AgentSupportInfo[] AgentInformation
-		{
-			get
-			{
-				return new AgentSupportInfo[]
-				{
-					new AgentSupportInfo(Resources.IDS_RIFFWAVE_NAME_AGENT1, string.Format(Resources.IDS_RIFFWAVE_DESCRIPTION, Resources.IDS_RIFFWAVE_DESCRIPTION_AGENT1), supportedFormats[WaveFormat.WAVE_FORMAT_PCM]),
-					new AgentSupportInfo(Resources.IDS_RIFFWAVE_NAME_AGENT2, string.Format(Resources.IDS_RIFFWAVE_DESCRIPTION, Resources.IDS_RIFFWAVE_DESCRIPTION_AGENT2), supportedFormats[WaveFormat.WAVE_FORMAT_IEEE_FLOAT]),
-					new AgentSupportInfo(Resources.IDS_RIFFWAVE_NAME_AGENT3, string.Format(Resources.IDS_RIFFWAVE_DESCRIPTION, Resources.IDS_RIFFWAVE_DESCRIPTION_AGENT3), supportedFormats[WaveFormat.WAVE_FORMAT_ADPCM])
-				};
-			}
-		}
+		public override AgentSupportInfo[] AgentInformation =>
+		[
+			new AgentSupportInfo(Resources.IDS_RIFFWAVE_NAME_AGENT1, string.Format(Resources.IDS_RIFFWAVE_DESCRIPTION, Resources.IDS_RIFFWAVE_DESCRIPTION_AGENT1), supportedFormats[WaveFormat.WAVE_FORMAT_PCM]),
+			new AgentSupportInfo(Resources.IDS_RIFFWAVE_NAME_AGENT2, string.Format(Resources.IDS_RIFFWAVE_DESCRIPTION, Resources.IDS_RIFFWAVE_DESCRIPTION_AGENT2), supportedFormats[WaveFormat.WAVE_FORMAT_IEEE_FLOAT]),
+			new AgentSupportInfo(Resources.IDS_RIFFWAVE_NAME_AGENT3, string.Format(Resources.IDS_RIFFWAVE_DESCRIPTION, Resources.IDS_RIFFWAVE_DESCRIPTION_AGENT3), supportedFormats[WaveFormat.WAVE_FORMAT_ADPCM])
+		];
 
 
 

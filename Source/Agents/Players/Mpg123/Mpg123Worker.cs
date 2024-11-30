@@ -69,7 +69,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "mp1", "mp2", "mp3", "m2a", "mpg" };
+		public override string[] FileExtensions => [ "mp1", "mp2", "mp3", "m2a", "mpg" ];
 
 
 

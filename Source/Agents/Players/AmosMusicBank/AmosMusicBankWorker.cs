@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "abk" };
+		public override string[] FileExtensions => [ "abk" ];
 
 
 

@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "jam" };
+		public override string[] FileExtensions => [ "jam" ];
 
 
 

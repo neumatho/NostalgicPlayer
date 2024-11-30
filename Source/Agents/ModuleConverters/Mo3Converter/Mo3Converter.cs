@@ -45,16 +45,10 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 		/// Returns all the formats/types this agent supports
 		/// </summary>
 		/********************************************************************/
-		public override AgentSupportInfo[] AgentInformation
-		{
-			get
-			{
-				return new AgentSupportInfo[]
-				{
-					new AgentSupportInfo(Resources.IDS_MO3CONV_NAME_AGENT1, Resources.IDS_MO3CONV_DESCRIPTION_AGENT1, agent1Id)
-				};
-			}
-		}
+		public override AgentSupportInfo[] AgentInformation =>
+		[
+			new AgentSupportInfo(Resources.IDS_MO3CONV_NAME_AGENT1, Resources.IDS_MO3CONV_DESCRIPTION_AGENT1, agent1Id)
+		];
 
 
 

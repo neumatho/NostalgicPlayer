@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 			{ ModuleType.MedPacker , agent6Id },
 		};
 
-		internal static readonly string[] fileExtensions = { "med", "mmd0", "mmd1", "mmd2", "mmd3", "mmdc", "omed", "ocss", "md0", "md1", "md2", "md3" };
+		internal static readonly string[] fileExtensions = [ "med", "mmd0", "mmd1", "mmd2", "mmd3", "mmdc", "omed", "ocss", "md0", "md1", "md2", "md3" ];
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -62,21 +62,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed
 		/// Returns all the formats/types this agent supports
 		/// </summary>
 		/********************************************************************/
-		public override AgentSupportInfo[] AgentInformation
-		{
-			get
-			{
-				return new AgentSupportInfo[]
-				{
-					new AgentSupportInfo(Resources.IDS_MED_NAME_AGENT1, Resources.IDS_MED_DESCRIPTION_AGENT1, agent1Id),
-					new AgentSupportInfo(Resources.IDS_MED_NAME_AGENT2, Resources.IDS_MED_DESCRIPTION_AGENT2, agent2Id),
-					new AgentSupportInfo(Resources.IDS_MED_NAME_AGENT3, Resources.IDS_MED_DESCRIPTION_AGENT3, agent3Id),
-					new AgentSupportInfo(Resources.IDS_MED_NAME_AGENT4, Resources.IDS_MED_DESCRIPTION_AGENT4, agent4Id),
-					new AgentSupportInfo(Resources.IDS_MED_NAME_AGENT5, Resources.IDS_MED_DESCRIPTION_AGENT5, agent5Id),
-					new AgentSupportInfo(Resources.IDS_MED_NAME_AGENT6, Resources.IDS_MED_DESCRIPTION_AGENT6, agent6Id)
-				};
-			}
-		}
+		public override AgentSupportInfo[] AgentInformation =>
+		[
+			new AgentSupportInfo(Resources.IDS_MED_NAME_AGENT1, Resources.IDS_MED_DESCRIPTION_AGENT1, agent1Id),
+			new AgentSupportInfo(Resources.IDS_MED_NAME_AGENT2, Resources.IDS_MED_DESCRIPTION_AGENT2, agent2Id),
+			new AgentSupportInfo(Resources.IDS_MED_NAME_AGENT3, Resources.IDS_MED_DESCRIPTION_AGENT3, agent3Id),
+			new AgentSupportInfo(Resources.IDS_MED_NAME_AGENT4, Resources.IDS_MED_DESCRIPTION_AGENT4, agent4Id),
+			new AgentSupportInfo(Resources.IDS_MED_NAME_AGENT5, Resources.IDS_MED_DESCRIPTION_AGENT5, agent5Id),
+			new AgentSupportInfo(Resources.IDS_MED_NAME_AGENT6, Resources.IDS_MED_DESCRIPTION_AGENT6, agent6Id)
+		];
 
 
 

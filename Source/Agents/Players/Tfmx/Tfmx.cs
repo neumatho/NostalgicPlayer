@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			{ ModuleType.Tfmx7V, agent3Id }
 		};
 
-		internal static readonly string[] fileExtensions = { "tfx", "mdat", "tfm" };
+		internal static readonly string[] fileExtensions = [ "tfx", "mdat", "tfm" ];
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -58,18 +58,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/// Returns all the formats/types this agent supports
 		/// </summary>
 		/********************************************************************/
-		public override AgentSupportInfo[] AgentInformation
-		{
-			get
-			{
-				return new AgentSupportInfo[]
-				{
-					new AgentSupportInfo(Resources.IDS_TFMX_NAME_AGENT1, Resources.IDS_TFMX_DESCRIPTION_AGENT1, agent1Id),
-					new AgentSupportInfo(Resources.IDS_TFMX_NAME_AGENT2, Resources.IDS_TFMX_DESCRIPTION_AGENT2, agent2Id),
-					new AgentSupportInfo(Resources.IDS_TFMX_NAME_AGENT3, Resources.IDS_TFMX_DESCRIPTION_AGENT3, agent3Id)
-				};
-			}
-		}
+		public override AgentSupportInfo[] AgentInformation =>
+		[
+			new AgentSupportInfo(Resources.IDS_TFMX_NAME_AGENT1, Resources.IDS_TFMX_DESCRIPTION_AGENT1, agent1Id),
+			new AgentSupportInfo(Resources.IDS_TFMX_NAME_AGENT2, Resources.IDS_TFMX_DESCRIPTION_AGENT2, agent2Id),
+			new AgentSupportInfo(Resources.IDS_TFMX_NAME_AGENT3, Resources.IDS_TFMX_DESCRIPTION_AGENT3, agent3Id)
+		];
 
 
 

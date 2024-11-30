@@ -53,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "digi" };
+		public override string[] FileExtensions => [ "digi" ];
 
 
 

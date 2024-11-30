@@ -36,16 +36,10 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpinningSquares
 		/// Returns all the formats/types this agent supports
 		/// </summary>
 		/********************************************************************/
-		public override AgentSupportInfo[] AgentInformation
-		{
-			get
-			{
-				return new AgentSupportInfo[]
-				{
-					new AgentSupportInfo(Resources.IDS_SPIN_NAME_AGENT1, Resources.IDS_SPIN_DESCRIPTION_AGENT1, agent1Id)
-				};
-			}
-		}
+		public override AgentSupportInfo[] AgentInformation =>
+		[
+			new AgentSupportInfo(Resources.IDS_SPIN_NAME_AGENT1, Resources.IDS_SPIN_DESCRIPTION_AGENT1, agent1Id)
+		];
 
 
 

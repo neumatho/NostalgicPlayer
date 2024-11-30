@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Fred
 		/// Returns the file extensions that identify this player
 		/// </summary>
 		/********************************************************************/
-		public override string[] FileExtensions => new [] { "frd", "fred" };
+		public override string[] FileExtensions => [ "frd", "fred" ];
 
 
 
