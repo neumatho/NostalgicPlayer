@@ -6,28 +6,29 @@
 using System.Collections.Generic;
 using Polycode.NostalgicPlayer.Ports.Ancient.Common;
 using Polycode.NostalgicPlayer.Ports.Ancient.Common.Buffers;
-using Polycode.NostalgicPlayer.Ports.Ancient.Exceptions;
+using Buffer = Polycode.NostalgicPlayer.Ports.Ancient.Common.Buffers.Buffer;
 
-namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
+namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 {
 	/// <summary>
-	/// XPK-LHLB decompressor
+	/// Lh.library decompressor
 	/// </summary>
-	internal class LhlbDecompressor : XpkDecompressor
+	internal class LhLibraryDecompressor : Decompressor
 	{
 		private readonly Buffer packedData;
+
+		private readonly size_t rawSize;
 
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		private LhlbDecompressor(uint32_t hdr, Buffer packedData)
+		private LhLibraryDecompressor(Buffer packedData, size_t rawSize) : base(DecompressorType.LhLibrary)
 		{
 			this.packedData = packedData;
 
-			if (!DetectHeaderXpk(hdr))
-				throw new InvalidFormatException();
+			this.rawSize = rawSize;
 		}
 
 
@@ -37,21 +38,21 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static bool DetectHeaderXpk(uint32_t hdr)
+		public static Decompressor Create(Buffer packedData, size_t rawSize)
 		{
-			return hdr == Common.Common.FourCC("LHLB");
+			return new LhLibraryDecompressor(packedData, rawSize);
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// 
+		/// Return the length of the decompressed data
 		/// </summary>
 		/********************************************************************/
-		public static XpkDecompressor Create(uint32_t hdr, Buffer packedData, ref State state)
+		public override size_t GetRawSize()
 		{
-			return new LhlbDecompressor(hdr, packedData);
+			return rawSize;
 		}
 
 
@@ -61,10 +62,14 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 		/// Actual decompression
 		/// </summary>
 		/********************************************************************/
-		public override void DecompressImpl(Buffer rawData, List<Buffer> previousBuffers)
+		protected override IEnumerable<uint8_t[]> DecompressImpl()
 		{
+			uint8_t[] outputData = new uint8_t[rawSize];
+			WrappedArrayBuffer rawData = new WrappedArrayBuffer(outputData);
+
 			//
-			// If this code is changed, remember to change LhLibraryDecompressor as well
+			// This code has been copied from LhlbDecompressor. If the original code
+			// is changed, this should also be changed
 			//
 			ForwardInputStream inputStream = new ForwardInputStream(packedData, 0, packedData.Size());
 			MsbBitReader bitReader = new MsbBitReader(inputStream);
@@ -102,6 +107,8 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors.Xpk
 					outputStream.Copy(distance, count);
 				}
 			}
+
+			yield return outputData;
 		}
 	}
 }

@@ -18,11 +18,12 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 	/// </summary>
 	internal class XpkMain : Decompressor
 	{
+		private delegate bool CheckMethod(uint32_t hdr);
 		private delegate XpkDecompressor CreateSubDecompressor(uint32_t hdr, Buffer packedData, ref XpkDecompressor.State state);
 
 		private struct DecompressorPair
 		{
-			public Func<uint32_t, bool> First;
+			public CheckMethod First;
 			public CreateSubDecompressor Second;
 			public DecompressorType Type;
 		}
@@ -152,7 +153,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors
 
 		/********************************************************************/
 		/// <summary>
-		/// Actual decompression
+		/// Return the length of the decompressed data
 		/// </summary>
 		/********************************************************************/
 		public override size_t GetRawSize()

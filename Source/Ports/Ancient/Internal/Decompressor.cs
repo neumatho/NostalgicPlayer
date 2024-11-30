@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using Polycode.NostalgicPlayer.Ports.Ancient.Common.Buffers.Exceptions;
 using Polycode.NostalgicPlayer.Ports.Ancient.Exceptions;
 using Polycode.NostalgicPlayer.Ports.Ancient.Internal.Decompressors;
@@ -17,20 +18,29 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal
     /// </summary>
 	internal abstract class Decompressor
 	{
+		private delegate bool CheckMethod(uint32_t hdr);
+		private delegate Decompressor CreateMethod(Buffer packedData);
+		private delegate Decompressor CreateMethod2(Buffer packedData, size_t rawSize);
+
 		private struct DecompressorPair
 		{
-			public Func<uint32_t, bool> First;
-			public Func<Buffer, Decompressor> Second;
+			public CheckMethod First;
+			public CreateMethod Second;
 		}
 
-		private static DecompressorPair[] decompressors = new DecompressorPair[]
-		{
+		private static readonly DecompressorPair[] decompressors =
+		[
 			new DecompressorPair { First = CrunchManiaDecompressor.DetectHeader, Second = CrunchManiaDecompressor.Create },
 			new DecompressorPair { First = MmcmpDecompressor.DetectHeader, Second = MmcmpDecompressor.Create },
 			new DecompressorPair { First = PowerPackerDecompressor.DetectHeader, Second = PowerPackerDecompressor.Create },
 			new DecompressorPair { First = XpkMain.DetectHeader, Second = XpkMain.Create },
 			// Putting StoneCracker last since detection can be accidentally be detected instead of correct format
 			new DecompressorPair { First = StoneCrackerDecompressor.DetectHeader, Second = StoneCrackerDecompressor.Create }
+		];
+
+		private static readonly Dictionary<DecompressorType, CreateMethod2> typeDecompressors = new Dictionary<DecompressorType, CreateMethod2>
+		{
+			{ DecompressorType.LhLibrary, LhLibraryDecompressor.Create }
 		};
 
 		private readonly DecompressorType type;
@@ -76,6 +86,21 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal
 
 		/********************************************************************/
 		/// <summary>
+		/// Main entry point
+		/// </summary>
+		/********************************************************************/
+		public static Decompressor Create(Buffer packedData, DecompressorType type, size_t rawSize)
+		{
+			if (typeDecompressors.TryGetValue(type, out CreateMethod2 method))
+				return method(packedData, rawSize);
+
+			throw new InvalidFormatException();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the type of the current decompressor
 		/// </summary>
 		/********************************************************************/
@@ -88,7 +113,7 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal
 
 		/********************************************************************/
 		/// <summary>
-		/// Actual decompression
+		/// Return the length of the decompressed data
 		/// </summary>
 		/********************************************************************/
 		public abstract size_t GetRawSize();

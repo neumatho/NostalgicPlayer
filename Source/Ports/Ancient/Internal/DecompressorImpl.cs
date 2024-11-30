@@ -33,6 +33,19 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient.Internal
 
 		/********************************************************************/
 		/// <summary>
+		/// Constructor
+		/// </summary>
+		/********************************************************************/
+		public DecompressorImpl(Stream crunchedDataStream, DecompressorType type, size_t rawSize)
+		{
+			buffer = new StreamBuffer(crunchedDataStream);
+			decompressor = Decompressor.Create(buffer, type, rawSize);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Dispose our self
 		/// </summary>
 		/********************************************************************/

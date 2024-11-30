@@ -16,6 +16,8 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.Ports.Ancient;
+using Polycode.NostalgicPlayer.Ports.Ancient.Exceptions;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 {
@@ -46,6 +48,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 		private VoiceInfo[] voices;
 
 		private bool endReached;
+		private bool compressed;
 
 		private const int InfoPositionLine = 5;
 		private const int InfoTrackLine = 6;
@@ -81,8 +84,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 			byte[] buf = new byte[8];
 			moduleStream.ReadExactly(buf, 0, 8);
 
-			if (Encoding.ASCII.GetString(buf, 0, 8) == "SOARV1.0")
+			string mark = Encoding.ASCII.GetString(buf, 0, 8);
+
+			if (mark == "SOARV1.0")
+			{
+				compressed = false;
+
 				return AgentResult.Ok;
+			}
+
+			if (mark == "@OARV1.0")
+			{
+				// Module is packed with lh.library
+				compressed = true;
+
+				return AgentResult.Ok;
+			}
 
 			return AgentResult.Unknown;
 		}
@@ -193,78 +210,23 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 		/********************************************************************/
 		public override AgentResult Load(PlayerFileInfo fileInfo, out string errorMessage)
 		{
-			errorMessage = string.Empty;
-
 			try
 			{
 				ModuleStream moduleStream = fileInfo.ModuleStream;
-				Encoding encoder = EncoderCollection.Amiga;
 
 				// Skip mark
 				moduleStream.Seek(8, SeekOrigin.Begin);
 
-				if (!ReadSubSongs(moduleStream))
-				{
-					errorMessage = Resources.IDS_SA_ERR_LOADING_HEADER;
-					return AgentResult.Error;
-				}
+				if (compressed)
+					return LoadCompressedModule(moduleStream, out errorMessage);
 
-				if (!ReadPositionInformation(moduleStream))
-				{
-					errorMessage = Resources.IDS_SA_ERR_LOADING_HEADER;
-					return AgentResult.Error;
-				}
-
-				if (!ReadTrackRows(moduleStream))
-				{
-					errorMessage = Resources.IDS_SA_ERR_LOADING_TRACK;
-					return AgentResult.Error;
-				}
-
-				if (!ReadInstrumentInformation(moduleStream, encoder))
-				{
-					errorMessage = Resources.IDS_SA_ERR_LOADING_INSTRUMENT;
-					return AgentResult.Error;
-				}
-
-				if (!ReadSampleInformation(moduleStream, out int numberOfSamples))
-				{
-					errorMessage = Resources.IDS_SA_ERR_LOADING_SAMPLEINFO;
-					return AgentResult.Error;
-				}
-
-				if (!ReadSampleData(moduleStream, numberOfSamples))
-				{
-					errorMessage = Resources.IDS_SA_ERR_LOADING_SAMPLE;
-					return AgentResult.Error;
-				}
-
-				if (!ReadWaveformData(moduleStream))
-				{
-					errorMessage = Resources.IDS_SA_ERR_LOADING_WAVEFORM;
-					return AgentResult.Error;
-				}
-
-				if (!ReadAdsrTables(moduleStream))
-				{
-					errorMessage = Resources.IDS_SA_ERR_LOADING_ADSR;
-					return AgentResult.Error;
-				}
-
-				if (!ReadAmfTables(moduleStream))
-				{
-					errorMessage = Resources.IDS_SA_ERR_LOADING_AMF;
-					return AgentResult.Error;
-				}
+				return LoadNormalModule(moduleStream, out errorMessage);
 			}
 			catch (Exception)
 			{
 				Cleanup();
 				throw;
 			}
-
-			// Ok, we're done
-			return AgentResult.Ok;
 		}
 
 
@@ -473,15 +435,219 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
+		/// Read the whole module
+		/// </summary>
+		/********************************************************************/
+		private AgentResult LoadNormalModule(ModuleStream moduleStream, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			// STBL
+			if ((moduleStream.Read_B_UINT32() != 0x5354424c) || !ReadSubSongs(moduleStream))
+			{
+				errorMessage = Resources.IDS_SA_ERR_LOADING_HEADER;
+				return AgentResult.Error;
+			}
+
+			// OVTB
+			if ((moduleStream.Read_B_UINT32() != 0x4f565442) || !ReadPositionInformation(moduleStream))
+			{
+				errorMessage = Resources.IDS_SA_ERR_LOADING_HEADER;
+				return AgentResult.Error;
+			}
+
+			// NTBL
+			if ((moduleStream.Read_B_UINT32() != 0x4e54424c) || !ReadTrackRows(moduleStream))
+			{
+				errorMessage = Resources.IDS_SA_ERR_LOADING_TRACK;
+				return AgentResult.Error;
+			}
+
+			// INST
+			if ((moduleStream.Read_B_UINT32() != 0x494e5354) || !ReadInstrumentInformation(moduleStream))
+			{
+				errorMessage = Resources.IDS_SA_ERR_LOADING_INSTRUMENT;
+				return AgentResult.Error;
+			}
+
+			// SD8B
+			if ((moduleStream.Read_B_UINT32() != 0x53443842) || !ReadSampleInformation(moduleStream, out int numberOfSamples))
+			{
+				errorMessage = Resources.IDS_SA_ERR_LOADING_SAMPLEINFO;
+				return AgentResult.Error;
+			}
+
+			if (!ReadSampleData(moduleStream, numberOfSamples))
+			{
+				errorMessage = Resources.IDS_SA_ERR_LOADING_SAMPLE;
+				return AgentResult.Error;
+			}
+
+			// SYWT
+			if ((moduleStream.Read_B_UINT32() != 0x53595754) || !ReadWaveformData(moduleStream))
+			{
+				errorMessage = Resources.IDS_SA_ERR_LOADING_WAVEFORM;
+				return AgentResult.Error;
+			}
+
+			// SYAR
+			if ((moduleStream.Read_B_UINT32() != 0x53594152) || !ReadAdsrTables(moduleStream))
+			{
+				errorMessage = Resources.IDS_SA_ERR_LOADING_ADSR;
+				return AgentResult.Error;
+			}
+
+			// SYAF
+			if ((moduleStream.Read_B_UINT32() != 0x53594146) || !ReadAmfTables(moduleStream))
+			{
+				errorMessage = Resources.IDS_SA_ERR_LOADING_AMF;
+				return AgentResult.Error;
+			}
+
+			return AgentResult.Ok;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read the whole module with compressed data
+		/// </summary>
+		/********************************************************************/
+		private AgentResult LoadCompressedModule(ModuleStream moduleStream, out string errorMessage)
+		{
+			errorMessage = string.Empty;
+
+			// @TBL
+			if ((moduleStream.Read_B_UINT32() != 0x4054424c) || !ReadSubSongs(moduleStream))
+			{
+				errorMessage = Resources.IDS_SA_ERR_LOADING_HEADER;
+				return AgentResult.Error;
+			}
+
+			// @VTB
+			if ((moduleStream.Read_B_UINT32() != 0x40565442) || !ReadCompressedData(moduleStream, 4 * 4, ReadPositionInformation))
+			{
+				errorMessage = Resources.IDS_SA_ERR_LOADING_HEADER;
+				return AgentResult.Error;
+			}
+
+			// @TBL
+			if ((moduleStream.Read_B_UINT32() != 0x4054424c) || !ReadCompressedData(moduleStream, 4, ReadTrackRows))
+			{
+				errorMessage = Resources.IDS_SA_ERR_LOADING_TRACK;
+				return AgentResult.Error;
+			}
+
+			// @NST
+			if ((moduleStream.Read_B_UINT32() != 0x404e5354) || !ReadCompressedData(moduleStream, 152, ReadInstrumentInformation))
+			{
+				errorMessage = Resources.IDS_SA_ERR_LOADING_INSTRUMENT;
+				return AgentResult.Error;
+			}
+
+			// @D8B
+			if ((moduleStream.Read_B_UINT32() != 0x40443842) || !ReadSampleInformation(moduleStream, out int numberOfSamples))
+			{
+				errorMessage = Resources.IDS_SA_ERR_LOADING_SAMPLEINFO;
+				return AgentResult.Error;
+			}
+
+			if (!ReadCompressedSampleData(moduleStream, numberOfSamples))
+			{
+				errorMessage = Resources.IDS_SA_ERR_LOADING_SAMPLE;
+				return AgentResult.Error;
+			}
+
+			// @YWT
+			if ((moduleStream.Read_B_UINT32() != 0x40595754) || !ReadCompressedData(moduleStream, 128, ReadWaveformData))
+			{
+				errorMessage = Resources.IDS_SA_ERR_LOADING_WAVEFORM;
+				return AgentResult.Error;
+			}
+
+			// @YAR
+			if ((moduleStream.Read_B_UINT32() != 0x40594152) || !ReadCompressedData(moduleStream, 128, ReadAdsrTables))
+			{
+				errorMessage = Resources.IDS_SA_ERR_LOADING_ADSR;
+				return AgentResult.Error;
+			}
+
+			// @YAF
+			if ((moduleStream.Read_B_UINT32() != 0x40594146) || !ReadCompressedData(moduleStream, 128, ReadAmfTables))
+			{
+				errorMessage = Resources.IDS_SA_ERR_LOADING_AMF;
+				return AgentResult.Error;
+			}
+
+			return AgentResult.Ok;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Read compressed information
+		/// </summary>
+		/********************************************************************/
+		private bool ReadCompressedData(ModuleStream moduleStream, uint elementSize, Func<ModuleStream, uint?, bool> readMethod)
+		{
+			uint count = moduleStream.Read_B_UINT32();
+			if (count == 0)
+				return readMethod(moduleStream, 0);
+
+			uint compressedLength = moduleStream.Read_B_UINT32();
+			uint decompressedLength = count * elementSize;
+
+			byte[] decompressedData = DecompressData(moduleStream, compressedLength, decompressedLength);
+			if (decompressedData == null)
+				return false;
+
+			using (ModuleStream ms = new ModuleStream(new MemoryStream(decompressedData), false))
+			{
+				return readMethod(ms, count);
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Decompress data and return it
+		/// </summary>
+		/********************************************************************/
+		private byte[] DecompressData(ModuleStream moduleStream, uint compressedLength, uint decompressedLength)
+		{
+			try
+			{
+				long oldPosition = moduleStream.Position;
+
+				using (Decompressor decompressor = new Decompressor(new SliceStream(moduleStream, true, oldPosition, compressedLength), DecompressorType.LhLibrary, decompressedLength))
+				{
+					// Decompress the data and flatten all the arrays
+					byte[] decompressedData = decompressor.Decompress().SelectMany(x => x).ToArray();
+
+					// Make sure that the original module stream has the right position for the next part
+					moduleStream.Seek(oldPosition + compressedLength, SeekOrigin.Begin);
+
+					return decompressedData;
+				}
+			}
+			catch (DecompressionException)
+			{
+				return null;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Read sub-song information
 		/// </summary>
 		/********************************************************************/
 		private bool ReadSubSongs(ModuleStream moduleStream)
 		{
-			uint mark = moduleStream.Read_B_UINT32();
-			if (mark != 0x5354424c)		// STBL
-				return false;
-
 			uint numberOfSubSongs = moduleStream.Read_B_UINT32();
 			List<SongInfo> songs = new List<SongInfo>();
 
@@ -520,14 +686,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 		/// Read position information
 		/// </summary>
 		/********************************************************************/
-		private bool ReadPositionInformation(ModuleStream moduleStream)
+		private bool ReadPositionInformation(ModuleStream moduleStream, uint? totalNumberOfPositions = null)
 		{
-			uint mark = moduleStream.Read_B_UINT32();
-			if (mark != 0x4f565442)		// OVTB
-				return false;
-
-			uint totalNumberOfPositions = moduleStream.Read_B_UINT32();
-			positions = new SinglePositionInfo[totalNumberOfPositions][];
+			totalNumberOfPositions ??= moduleStream.Read_B_UINT32();
+			positions = new SinglePositionInfo[totalNumberOfPositions.Value][];
 
 			for (int i = 0; i < totalNumberOfPositions; i++)
 			{
@@ -558,14 +720,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 		/// Read all the track rows
 		/// </summary>
 		/********************************************************************/
-		private bool ReadTrackRows(ModuleStream moduleStream)
+		private bool ReadTrackRows(ModuleStream moduleStream, uint? totalNumberOfTrackRows = null)
 		{
-			uint mark = moduleStream.Read_B_UINT32();
-			if (mark != 0x4e54424c)		// NTBL
-				return false;
-
-			uint totalNumberOfTrackRows = moduleStream.Read_B_UINT32();
-			trackLines = new TrackLine[totalNumberOfTrackRows];
+			totalNumberOfTrackRows ??= moduleStream.Read_B_UINT32();
+			trackLines = new TrackLine[totalNumberOfTrackRows.Value];
 
 			for (int i = 0; i < totalNumberOfTrackRows; i++)
 			{
@@ -600,14 +758,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 		/// Read synth instrument information
 		/// </summary>
 		/********************************************************************/
-		private bool ReadInstrumentInformation(ModuleStream moduleStream, Encoding encoder)
+		private bool ReadInstrumentInformation(ModuleStream moduleStream, uint? numberOfInstruments = null)
 		{
-			uint mark = moduleStream.Read_B_UINT32();
-			if (mark != 0x494e5354)		// INST
-				return false;
+			Encoding encoder = EncoderCollection.Amiga;
 
-			uint numberOfInstruments = moduleStream.Read_B_UINT32();
-			instruments = new Instrument[numberOfInstruments];
+			numberOfInstruments ??= moduleStream.Read_B_UINT32();
+			instruments = new Instrument[numberOfInstruments.Value];
 
 			for (int i = 0; i < numberOfInstruments; i++)
 			{
@@ -682,13 +838,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 		/********************************************************************/
 		private bool ReadSampleInformation(ModuleStream moduleStream, out int numberOfSamples)
 		{
-			uint mark = moduleStream.Read_B_UINT32();
-			if (mark != 0x53443842)		// SD8B
-			{
-				numberOfSamples = 0;
-				return false;
-			}
-
 			numberOfSamples = moduleStream.Read_B_INT32();
 			if (numberOfSamples != 0)
 			{
@@ -738,16 +887,49 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 
 		/********************************************************************/
 		/// <summary>
+		/// Read compressed sample data
+		/// </summary>
+		/********************************************************************/
+		private bool ReadCompressedSampleData(ModuleStream moduleStream, int numberOfSamples)
+		{
+			sampleData = new sbyte[numberOfSamples][];
+
+			if (numberOfSamples > 0)
+			{
+				uint[] sampleLengths = new uint[numberOfSamples];
+				moduleStream.ReadArray_B_UINT32s(sampleLengths, 0, numberOfSamples);
+
+				if (moduleStream.EndOfStream)
+					return false;
+
+				for (int i = 0; i < numberOfSamples; i++)
+				{
+					uint sampleLen = sampleLengths[i];
+
+					if (sampleLen > 0)
+					{
+						uint compressedLength = moduleStream.Read_B_UINT32();
+
+						sampleData[i] = (sbyte[])(Array)DecompressData(moduleStream, compressedLength, sampleLen);
+						if (sampleData[i] == null)
+							return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Read waveform data
 		/// </summary>
 		/********************************************************************/
-		private bool ReadWaveformData(ModuleStream moduleStream)
+		private bool ReadWaveformData(ModuleStream moduleStream, uint? numberOfWaveforms = null)
 		{
-			uint mark = moduleStream.Read_B_UINT32();
-			if (mark != 0x53595754)		// SYWT
-				return false;
-
-			uint numberOfWaveforms = moduleStream.Read_B_UINT32();
+			numberOfWaveforms ??= moduleStream.Read_B_UINT32();
 			waveformData = ArrayHelper.Initialize2Arrays<sbyte>((int)numberOfWaveforms, 128);
 
 			for (int i = 0; i < numberOfWaveforms; i++)
@@ -767,13 +949,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 		/// Read ADSR tables
 		/// </summary>
 		/********************************************************************/
-		private bool ReadAdsrTables(ModuleStream moduleStream)
+		private bool ReadAdsrTables(ModuleStream moduleStream, uint? numberOfAdsrTables = null)
 		{
-			uint mark = moduleStream.Read_B_UINT32();
-			if (mark != 0x53594152)		// SYAR
-				return false;
-
-			uint numberOfAdsrTables = moduleStream.Read_B_UINT32();
+			numberOfAdsrTables ??= moduleStream.Read_B_UINT32();
 			adsrTables = ArrayHelper.Initialize2Arrays<byte>((int)numberOfAdsrTables, 128);
 
 			for (int i = 0; i < numberOfAdsrTables; i++)
@@ -793,13 +971,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 		/// Read AMF tables
 		/// </summary>
 		/********************************************************************/
-		private bool ReadAmfTables(ModuleStream moduleStream)
+		private bool ReadAmfTables(ModuleStream moduleStream, uint? numberOfAmfTables = null)
 		{
-			uint mark = moduleStream.Read_B_UINT32();
-			if (mark != 0x53594146)		// SYAF
-				return false;
-
-			uint numberOfAmfTables = moduleStream.Read_B_UINT32();
+			numberOfAmfTables ??= moduleStream.Read_B_UINT32();
 			amfTables = ArrayHelper.Initialize2Arrays<sbyte>((int)numberOfAmfTables, 128);
 
 			for (int i = 0; i < numberOfAmfTables; i++)

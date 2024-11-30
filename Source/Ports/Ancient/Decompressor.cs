@@ -31,6 +31,21 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient
 
 		/********************************************************************/
 		/// <summary>
+		/// Constructor
+		/// 
+		/// Do only use this, if you know what you're doing and your 100%
+		/// sure that the data given is of the given type
+		/// </summary>
+		/********************************************************************/
+		public Decompressor(Stream crunchedDataStream, DecompressorType type, size_t rawSize)
+		{
+			impl = new DecompressorImpl(crunchedDataStream, type, rawSize);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Dispose our self
 		/// </summary>
 		/********************************************************************/

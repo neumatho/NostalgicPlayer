@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
+    <ProjectReference Include="..\..\..\Ports\Ancient\Ancient.csproj" />
   </ItemGroup>
 
   <ItemGroup>

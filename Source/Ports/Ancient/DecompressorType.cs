@@ -35,6 +35,8 @@ namespace Polycode.NostalgicPlayer.Ports.Ancient
         /// <summary></summary>
         Xpk_Smpl,
         /// <summary></summary>
-        Xpk_Sqsh
+        Xpk_Sqsh,
+        /// <summary></summary>
+        LhLibrary
     }
 }
