@@ -12,6 +12,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20.Containers
 	{
 		public byte Length;
 		public byte Repeat;
-		public byte[] Values = new byte[14];
+		public sbyte[] Values = new sbyte[14];
 	}
 }

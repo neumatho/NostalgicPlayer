@@ -712,7 +712,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20
 					instr.Arpeggios[j].Length = moduleStream.Read_UINT8();
 					instr.Arpeggios[j].Repeat = moduleStream.Read_UINT8();
 
-					bytesRead = moduleStream.Read(instr.Arpeggios[j].Values, 0, 14);
+					bytesRead = moduleStream.ReadSigned(instr.Arpeggios[j].Values, 0, 14);
 					if (bytesRead < 14)
 						return false;
 				}
@@ -1488,9 +1488,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20
 			{
 				Arpeggio arp = instr.Arpeggios[voiceInfo.Arpeggio - 1];
 
-				byte arpVal = arp.Values[voiceInfo.ArpeggioPosition];
-				note += arpVal;
-				prevNote += arpVal;
+				sbyte arpVal = arp.Values[voiceInfo.ArpeggioPosition];
+				note = (byte)(note + arpVal);
+				prevNote = (byte)(prevNote + arpVal);
 
 				if (voiceInfo.ArpeggioPosition == (arp.Length + arp.Repeat))
 					voiceInfo.ArpeggioPosition = arp.Length;
