@@ -27,6 +27,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 		private static readonly Guid agent5Id = Guid.Parse("E03F718C-8FA9-4843-9EBE-6D69EC3A421D");
 		private static readonly Guid agent6aId = Guid.Parse("D6F10415-FCC6-4CDF-8756-EA786786711B");
 		private static readonly Guid agent6bId = Guid.Parse("6221A135-3F32-4499-AB4B-32BFAB93F0EF");
+		private static readonly Guid agent7Id = Guid.Parse("83A34BAD-CA67-4123-845D-9D749AA2EB9B");
 
 		#region IAgent implementation
 		/********************************************************************/
@@ -60,7 +61,8 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 			new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT4, Resources.IDS_MODCONV_DESCRIPTION_AGENT4, agent4Id),
 			new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT5, Resources.IDS_MODCONV_DESCRIPTION_AGENT5, agent5Id),
 			new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT6a, Resources.IDS_MODCONV_DESCRIPTION_AGENT6a, agent6aId),
-			new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT6b, Resources.IDS_MODCONV_DESCRIPTION_AGENT6b, agent6bId)
+			new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT6b, Resources.IDS_MODCONV_DESCRIPTION_AGENT6b, agent6bId),
+			new AgentSupportInfo(Resources.IDS_MODCONV_NAME_AGENT7, Resources.IDS_MODCONV_DESCRIPTION_AGENT7, agent7Id)
 		];
 
 
@@ -94,6 +96,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter
 
 				case var id when id == agent6bId:
 					return new Sc68FormatArchive(Resources.IDS_MODCONV_NAME_AGENT6b);
+
+				case var id when id == agent7Id:
+					return new SonicArrangerFinalFormat();
 			}
 
 			return null;

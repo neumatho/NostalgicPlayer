@@ -179,6 +179,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | SidPlay | .sid / .c64 / .mus / .str / .prg | | SidPlay |
 | SKYT Packer | .skt / .skyt | ProWizard | ModTracker |
 | Sonic Arranger | .sa / .sonic | | Sonic Arranger |
+| Sonic Arranger (Final) | .sa / .sonic | Module Converter | Sonic Arranger |
 | SoundFX 1.x | .sfx | Module Converter | SoundFX |
 | SoundFX 2.0 | .sfx / .sfx2 | | SoundFX |
 | SoundMon 1.1 | .bp / .bp2 | | SoundMon |

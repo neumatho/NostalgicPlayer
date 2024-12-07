@@ -147,6 +147,9 @@
   <data name="IDS_ERR_LOADING_TRACKS" xml:space="preserve">
     <value>Can't read the track information</value>
   </data>
+  <data name="IDS_ERR_LOADING_WAVEFORM" xml:space="preserve">
+    <value>Can't read the waveform</value>
+  </data>
   <data name="IDS_MODCONV_DESCRIPTION" xml:space="preserve">
     <value>Written by Thomas Neumann.
 
@@ -159,6 +162,7 @@ Fred Editor (Final) ➜ Fred Editor
 Future Composer 1.0 - 1.3 ➜ Future Composer 1.4
 MED 2.10 (MED4) ➜ MED 2.10 (MMD0)
 SC68 ➜ Whatever format inside
+Sonic Arranger (Final) ➜ Sonic Arranger
 SoundFX 1.x ➜ SoundFX 2.0</value>
   </data>
   <data name="IDS_MODCONV_DESCRIPTION_AGENT1" xml:space="preserve">
@@ -206,6 +210,16 @@ This converter will extract the module and then hope there exists a player which
 
 SC68 modules can contain several modules in one file. To support this, they are treated as achives with each module as an entry in the archive.</value>
   </data>
+  <data name="IDS_MODCONV_DESCRIPTION_AGENT7" xml:space="preserve">
+    <value>Original player by BrainTrace Design.
+Converted to C# by Thomas Neumann.
+
+This is the successor of InStereo! and Synthesis editors. The file format is the same as InStereo! 2.0, but changed a little bit.
+
+The synthesis sounds has improved a little bit from what InStereo! 2.0 could do. The special synthesis effects from the Synthesis format has also been incorporated, so you can say, that Sonic Arranger is a fusion between InStereo! 2.0 and Synthesis.
+
+The modules contain the player in 68000 assembler in the beginning of the files, but this player will extract the music data and only use that.</value>
+  </data>
   <data name="IDS_MODCONV_NAME" xml:space="preserve">
     <value>Module Converter</value>
   </data>
@@ -229,5 +243,8 @@ SC68 modules can contain several modules in one file. To support this, they are 
   </data>
   <data name="IDS_MODCONV_NAME_AGENT6b" xml:space="preserve">
     <value>SC68</value>
+  </data>
+  <data name="IDS_MODCONV_NAME_AGENT7" xml:space="preserve">
+    <value>Sonic Arranger (Final)</value>
   </data>
 </root>

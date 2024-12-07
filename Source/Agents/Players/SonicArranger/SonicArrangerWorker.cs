@@ -779,7 +779,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 
 				moduleStream.Seek(8, SeekOrigin.Current);
 
-				instr.Volume = moduleStream.Read_B_UINT16();
+				instr.Volume = (ushort)(moduleStream.Read_B_UINT16() & 0xff);
 				instr.FineTuning = (sbyte)moduleStream.Read_B_UINT16();
 
 				instr.PortamentoSpeed = moduleStream.Read_B_UINT16();
@@ -816,7 +816,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 					instr.Arpeggios[j].Length = moduleStream.Read_UINT8();
 					instr.Arpeggios[j].Repeat = moduleStream.Read_UINT8();
 
-					int bytesRead = moduleStream.Read(instr.Arpeggios[j].Values, 0, 14);
+					int bytesRead = moduleStream.ReadSigned(instr.Arpeggios[j].Values, 0, 14);
 					if (bytesRead < 14)
 						return false;
 				}
@@ -1360,10 +1360,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 				if ((loopStart + loopLength) > playLength)
 					loopLength = playLength - loopStart;
 
-				channel.PlaySample((short)(voiceInfo.TransposedInstrument - 1), data, 0, playLength);
+				if (playLength > 0)
+				{
+					channel.PlaySample((short)(voiceInfo.TransposedInstrument - 1), data, 0, playLength);
 
-				if (loopLength != 0)
-					channel.SetLoop(loopStart, loopLength);
+					if (loopLength != 0)
+						channel.SetLoop(loopStart, loopLength);
+				}
+				else
+				{
+					voiceInfo.Flag |= 0x01;
+					ForceQuiet(voiceInfo, channel);
+				}
 			}
 		}
 
@@ -1452,9 +1460,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 			{
 				Arpeggio arp = instr.Arpeggios[voiceInfo.Arpeggio - 1];
 
-				byte arpVal = arp.Values[voiceInfo.ArpeggioPosition];
-				note += arpVal;
-				prevNote += arpVal;
+				sbyte arpVal = arp.Values[voiceInfo.ArpeggioPosition];
+				note = (ushort)(note + arpVal);
+				prevNote = (ushort)(prevNote + arpVal);
 
 				voiceInfo.ArpeggioPosition++;
 
@@ -2162,7 +2170,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 			ushort startPosition = instr.EffectArg2;
 			ushort stopPosition = instr.EffectArg3;
 
-			destWaveform[startPosition] = (sbyte)-destWaveform[startPosition];
+			destWaveform[startPosition + voiceInfo.SynthEffectWavePosition] = (sbyte)-destWaveform[startPosition + voiceInfo.SynthEffectWavePosition];
 
 			voiceInfo.SynthEffectWavePosition++;
 
@@ -2333,6 +2341,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SonicArranger
 					val1 = (sbyte)-val1;
 
 				byte deltaValue = (byte)(waveform[bufferIndex++] & 0x7f);
+				bufferIndex &= 0x7f;
 
 				if (val1 > deltaValue)
 				{

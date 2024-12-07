@@ -60,7 +60,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 			Write_B_UINT32((uint)convertInfo.Length);
 
 			HasSampleDataMarkers = true;
-			ConvertedLength += convertInfo.Length;
+			ConvertedLength += convertInfo.Length - 8;
 		}
 
 

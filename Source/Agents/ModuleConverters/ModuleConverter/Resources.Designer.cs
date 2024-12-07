@@ -151,6 +151,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t read the waveform.
+        /// </summary>
+        internal static string IDS_ERR_LOADING_WAVEFORM {
+            get {
+                return ResourceManager.GetString("IDS_ERR_LOADING_WAVEFORM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Written by Thomas Neumann.
         ///
         ///Converts different module formats (mostly Amiga formats) to another format NostalgicPlayer understands.
@@ -162,6 +171,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         ///Future Composer 1.0 - 1.3 ➜ Future Composer 1.4
         ///MED 2.10 (MED4) ➜ MED 2.10 (MMD0)
         ///SC68 ➜ Whatever format inside
+        ///Sonic Arranger (Final) ➜ Sonic Arranger
         ///SoundFX 1.x ➜ SoundFX 2.0.
         /// </summary>
         internal static string IDS_MODCONV_DESCRIPTION {
@@ -258,6 +268,22 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Original player by BrainTrace Design.
+        ///Converted to C# by Thomas Neumann.
+        ///
+        ///This is the successor of InStereo! and Synthesis editors. The file format is the same as InStereo! 2.0, but changed a little bit.
+        ///
+        ///The synthesis sounds has improved a little bit from what InStereo! 2.0 could do. The special synthesis effects from the Synthesis format has also been incorporated, so you can say, that Sonic Arranger is a fusion between InStereo! 2.0 and Synthesis.
+        ///
+        ///The modules contain the player in 68000 assembler [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string IDS_MODCONV_DESCRIPTION_AGENT7 {
+            get {
+                return ResourceManager.GetString("IDS_MODCONV_DESCRIPTION_AGENT7", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Module Converter.
         /// </summary>
         internal static string IDS_MODCONV_NAME {
@@ -326,6 +352,15 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter {
         internal static string IDS_MODCONV_NAME_AGENT6b {
             get {
                 return ResourceManager.GetString("IDS_MODCONV_NAME_AGENT6b", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sonic Arranger (Final).
+        /// </summary>
+        internal static string IDS_MODCONV_NAME_AGENT7 {
+            get {
+                return ResourceManager.GetString("IDS_MODCONV_NAME_AGENT7", resourceCulture);
             }
         }
     }
