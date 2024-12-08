@@ -6,19 +6,17 @@
 namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 {
 	/// <summary>
-	/// Holds data for Sampled Sound format
+	/// Holds sampled sound sample data
 	/// </summary>
-	internal class SampledSoundData
+	internal class SampledSoundSampleData
 	{
-		public ushort Volume;
+		public string SampleName;
 
-		public ushort[] EnvelopeLevels = new ushort[4];
-		public ushort[] EnvelopeRates = new ushort[4];
-
-		public short VibratoDepth;
-		public ushort VibratoSpeed;
-		public ushort VibratoDelay;
-
-		public SampledSoundSampleData SampleData;
+		// Information from sample file
+		public ushort LengthOfOctaveOne;
+		public ushort LoopLengthOfOctaveOne;
+		public byte StartOctave;
+		public byte EndOctave;
+		public sbyte[] SampleData;
 	}
 }

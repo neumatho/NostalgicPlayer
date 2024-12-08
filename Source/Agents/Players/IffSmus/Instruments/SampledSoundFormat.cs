@@ -49,20 +49,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 			instrumentStream.Seek(0x44, SeekOrigin.Begin);
 			string sampleName = instrumentStream.ReadString(EncoderCollection.Amiga, 32);
 
-			foreach (Instrument instr in instruments)
-			{
-				if ((instr.Format is SampledSoundFormat sampledSoundFormat) && (sampledSoundFormat.formatData.SampleName.Equals(sampleName, StringComparison.OrdinalIgnoreCase)))
-				{
-					// Reuse format data
-					formatData = sampledSoundFormat.formatData;
-					return true;
-				}
-			}
-
-			formatData = new SampledSoundData
-			{
-				SampleName = sampleName
-			};
+			formatData = new SampledSoundData();
 
 			// Skip pointer to data
 			instrumentStream.Seek(4, SeekOrigin.Current);
@@ -81,6 +68,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 				return false;
 			}
 
+			foreach (Instrument instr in instruments)
+			{
+				if ((instr.Format is SampledSoundFormat sampledSoundFormat) && (sampledSoundFormat.formatData.SampleData.SampleName.Equals(sampleName, StringComparison.OrdinalIgnoreCase)))
+				{
+					// Reuse format data
+					formatData.SampleData = sampledSoundFormat.formatData.SampleData;
+					return true;
+				}
+			}
+
+			formatData.SampleData = new SampledSoundSampleData
+			{
+				SampleName = sampleName
+			};
+
 			string sampleFileName = $"{sampleName}.ss";
 			string samplePath = Path.Combine(instrumentPath, sampleFileName);
 
@@ -94,10 +96,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 				}
 
 				// Read the header
-				formatData.LengthOfOctaveOne = sampleStream.Read_B_UINT16();
-				formatData.LoopLengthOfOctaveOne = sampleStream.Read_B_UINT16();
-				formatData.StartOctave = sampleStream.Read_UINT8();
-				formatData.EndOctave = sampleStream.Read_UINT8();
+				formatData.SampleData.LengthOfOctaveOne = sampleStream.Read_B_UINT16();
+				formatData.SampleData.LoopLengthOfOctaveOne = sampleStream.Read_B_UINT16();
+				formatData.SampleData.StartOctave = sampleStream.Read_UINT8();
+				formatData.SampleData.EndOctave = sampleStream.Read_UINT8();
 
 				if (sampleStream.EndOfStream)
 				{
@@ -109,7 +111,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 
 				// Read sample data
 				int sampleLength = (int)(sampleStream.Length - 0x3e);
-				formatData.SampleData = sampleStream.ReadSampleData(instruments.Count, sampleLength, out int readBytes);
+				formatData.SampleData.SampleData = sampleStream.ReadSampleData(instruments.Count, sampleLength, out int readBytes);
 				if (readBytes != sampleLength)
 				{
 					errorMessage = string.Format(Resources.IDS_SMUS_ERR_LOADING_READ_EXTERNAL_FILE, sampleFileName);
@@ -138,7 +140,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 					int octave = -((voice.Note / 12) - 10);
 					int note = voice.Note % 12;
 
-					if ((octave > formatData.EndOctave) || (octave < formatData.StartOctave))
+					if ((octave > formatData.SampleData.EndOctave) || (octave < formatData.SampleData.StartOctave))
 					{
 						voice.InstrumentSetupSequence = InstrumentSetup.Nothing;
 
@@ -159,17 +161,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 					playInfo.Note = (byte)note;
 
 					int temp1 = 1 << octave;
-					int temp2 = 1 << formatData.StartOctave;
+					int temp2 = 1 << formatData.SampleData.StartOctave;
 
-					voice.SampleData = formatData.SampleData;
-					voice.SampleStartOffset = (uint)((temp1 - temp2) * formatData.LengthOfOctaveOne);
-					voice.SampleLengthInWords = (ushort)((formatData.LengthOfOctaveOne * temp1) / 2);
+					voice.SampleData = formatData.SampleData.SampleData;
+					voice.SampleStartOffset = (uint)((temp1 - temp2) * formatData.SampleData.LengthOfOctaveOne);
+					voice.SampleLengthInWords = (ushort)((formatData.SampleData.LengthOfOctaveOne * temp1) / 2);
 
-					if (formatData.LengthOfOctaveOne != formatData.LoopLengthOfOctaveOne)
+					if (formatData.SampleData.LengthOfOctaveOne != formatData.SampleData.LoopLengthOfOctaveOne)
 					{
 						playInfo.LoopSampleData = voice.SampleData;
-						playInfo.LoopStart = (uint)(voice.SampleStartOffset + formatData.LoopLengthOfOctaveOne * temp1);
-						playInfo.LoopLengthInWords = (ushort)(((formatData.LengthOfOctaveOne - formatData.LoopLengthOfOctaveOne) * temp1) / 2);
+						playInfo.LoopStart = (uint)(voice.SampleStartOffset + formatData.SampleData.LoopLengthOfOctaveOne * temp1);
+						playInfo.LoopLengthInWords = (ushort)(((formatData.SampleData.LengthOfOctaveOne - formatData.SampleData.LoopLengthOfOctaveOne) * temp1) / 2);
 					}
 					else
 					{
@@ -298,12 +300,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 				Panning = -1,
 			};
 
-			if (formatData.StartOctave == formatData.EndOctave)
+			if (formatData.SampleData.StartOctave == formatData.SampleData.EndOctave)
 			{
-				sampleInfo.Sample = formatData.SampleData;
-				sampleInfo.Length = (uint)formatData.SampleData.Length;
+				sampleInfo.Sample = formatData.SampleData.SampleData;
+				sampleInfo.Length = (uint)formatData.SampleData.SampleData.Length;
 
-				if (formatData.LengthOfOctaveOne != formatData.LoopLengthOfOctaveOne)
+				if (formatData.SampleData.LengthOfOctaveOne != formatData.SampleData.LoopLengthOfOctaveOne)
 				{
 					sampleInfo.LoopStart = 0;
 					sampleInfo.LoopLength = sampleInfo.Length;
@@ -312,42 +314,42 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 			}
 			else
 			{
-				sampleInfo.Length = (uint)formatData.SampleData.Length;
+				sampleInfo.Length = (uint)formatData.SampleData.SampleData.Length;
 
-				if (formatData.LengthOfOctaveOne != formatData.LoopLengthOfOctaveOne)
+				if (formatData.SampleData.LengthOfOctaveOne != formatData.SampleData.LoopLengthOfOctaveOne)
 				{
 					sampleInfo.LoopStart = 0;
-					sampleInfo.LoopLength = formatData.LoopLengthOfOctaveOne;
+					sampleInfo.LoopLength = formatData.SampleData.LoopLengthOfOctaveOne;
 					sampleInfo.Flags |= SampleInfo.SampleFlag.Loop;
 				}
 
 				SampleInfo.MultiOctaveInfo[] multiOctaveInfo = new SampleInfo.MultiOctaveInfo[8];
 				List<sbyte[]> allSamples = new List<sbyte[]>();
 
-				for (int i = formatData.StartOctave; (i <= formatData.EndOctave) && (i < 8); i++)
+				for (int i = formatData.SampleData.StartOctave; (i <= formatData.SampleData.EndOctave) && (i < 8); i++)
 				{
 					int temp1 = 1 << i;
-					int temp2 = 1 << formatData.StartOctave;
+					int temp2 = 1 << formatData.SampleData.StartOctave;
 
-					multiOctaveInfo[i].Sample = formatData.SampleData;
-					multiOctaveInfo[i].SampleOffset = (uint)((temp1 - temp2) * formatData.LengthOfOctaveOne);
-					multiOctaveInfo[i].Length = (uint)(formatData.LengthOfOctaveOne * temp1);
-					multiOctaveInfo[i].NoteAdd = (i - formatData.StartOctave) * 12;
+					multiOctaveInfo[i].Sample = formatData.SampleData.SampleData;
+					multiOctaveInfo[i].SampleOffset = (uint)((temp1 - temp2) * formatData.SampleData.LengthOfOctaveOne);
+					multiOctaveInfo[i].Length = (uint)(formatData.SampleData.LengthOfOctaveOne * temp1);
+					multiOctaveInfo[i].NoteAdd = (i - formatData.SampleData.StartOctave) * 12;
 
-					if (formatData.LengthOfOctaveOne != formatData.LoopLengthOfOctaveOne)
+					if (formatData.SampleData.LengthOfOctaveOne != formatData.SampleData.LoopLengthOfOctaveOne)
 					{
-						multiOctaveInfo[i].LoopStart = (uint)(formatData.LoopLengthOfOctaveOne * temp1);
-						multiOctaveInfo[i].LoopLength = (uint)((formatData.LengthOfOctaveOne - formatData.LoopLengthOfOctaveOne) * temp1);
+						multiOctaveInfo[i].LoopStart = (uint)(formatData.SampleData.LoopLengthOfOctaveOne * temp1);
+						multiOctaveInfo[i].LoopLength = (uint)((formatData.SampleData.LengthOfOctaveOne - formatData.SampleData.LoopLengthOfOctaveOne) * temp1);
 					}
 
-					allSamples.Add(formatData.SampleData.AsSpan((int)multiOctaveInfo[i].SampleOffset, (int)multiOctaveInfo[i].Length).ToArray());
+					allSamples.Add(formatData.SampleData.SampleData.AsSpan((int)multiOctaveInfo[i].SampleOffset, (int)multiOctaveInfo[i].Length).ToArray());
 				}
 
-				for (int i = 0; i < formatData.StartOctave; i++)
-					multiOctaveInfo[i] = multiOctaveInfo[formatData.StartOctave];
+				for (int i = 0; i < formatData.SampleData.StartOctave; i++)
+					multiOctaveInfo[i] = multiOctaveInfo[formatData.SampleData.StartOctave];
 
-				for (int i = formatData.EndOctave + 1; i < 8; i++)
-					multiOctaveInfo[i] = multiOctaveInfo[formatData.EndOctave];
+				for (int i = formatData.SampleData.EndOctave + 1; i < 8; i++)
+					multiOctaveInfo[i] = multiOctaveInfo[formatData.SampleData.EndOctave];
 
 				sampleInfo.MultiOctaveSamples = multiOctaveInfo;
 				sampleInfo.MultiOctaveAllSamples = allSamples.ToArray();
