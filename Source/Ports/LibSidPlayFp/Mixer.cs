@@ -41,9 +41,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		public const uint MAX_SIDS = 3;
 
 		private const int_least32_t SCALE_FACTOR = 1 << 16;
-		private const double SQRT_0_5 = 0.70710678118654746;
-		private const int_least32_t C1 = (int_least32_t)(1.0 / (1.0 + SQRT_0_5) * SCALE_FACTOR);
-		private const int_least32_t C2 = (int_least32_t)(SQRT_0_5 / (1.0 + SQRT_0_5) * SCALE_FACTOR);
+		private const double SQRT_2 = 1.41421356237;
+		private const double SQRT_3 = 1.73205080757;
+
+		private static readonly int_least32_t[] SCALE =
+		[
+			SCALE_FACTOR,									// 1 chip, no scale
+			(int_least32_t)((1.0 / SQRT_2) * SCALE_FACTOR),	// 2 chips, scale by sqrt(2)
+			(int_least32_t)((1.0 / SQRT_3) * SCALE_FACTOR)	// 3 chips, scale by sqrt(3)
+		];
 
 		/// <summary>
 		/// Maximum allowed volume, must be a power of 2
@@ -195,6 +201,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			sampleCount = count;
 			sampleBuffers[0] = leftBuffer;
 			sampleBuffers[1] = rightBuffer;
+
+			wait = false;
 		}
 
 
@@ -464,7 +472,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/********************************************************************/
 		private int_least32_t Stereo_Ch1_TwoChips()
 		{
-			return iSamples[0];
+			return (int_least32_t)(iSamples[0] + 0.5 * iSamples[1]) * SCALE[1] / SCALE_FACTOR;
 		}
 
 
@@ -476,7 +484,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/********************************************************************/
 		private int_least32_t Stereo_Ch2_TwoChips()
 		{
-			return iSamples[1];
+			return (int_least32_t)(0.5 * iSamples[0] + iSamples[1]) * SCALE[1] / SCALE_FACTOR;
 		}
 
 
@@ -488,7 +496,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/********************************************************************/
 		private int_least32_t Stereo_Ch1_ThreeChips()
 		{
-			return (C1 * iSamples[0] + C2 * iSamples[1]) / SCALE_FACTOR;
+			return (int_least32_t)(iSamples[0] + iSamples[1] + 0.5 * iSamples[2]) * SCALE[2] / SCALE_FACTOR;
 		}
 
 
@@ -500,7 +508,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/********************************************************************/
 		private int_least32_t Stereo_Ch2_ThreeChips()
 		{
-			return (C2 * iSamples[1] + C1 * iSamples[2]) / SCALE_FACTOR;
+			return (int_least32_t)(0.5 * iSamples[0] + iSamples[1] + iSamples[2]) * SCALE[2] / SCALE_FACTOR;
 		}
 		#endregion
 	}

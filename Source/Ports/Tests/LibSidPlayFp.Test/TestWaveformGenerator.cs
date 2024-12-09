@@ -106,6 +106,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 			matrix_t tables = WaveformCalculator.GetInstance().BuildPulldownTable(ChipModel.MOS6581, CombinedWaveforms.AVERAGE);
 
 			WaveformGenerator generator = new WaveformGenerator();
+			generator.SetModel(true);
 			generator.Reset();
 			generator.shift_register = 0x35555e;
 			generator.SetWaveformModels(waveTables);

@@ -17,8 +17,6 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		// acts as a high-pass filter with a cutoff dependent on the attached audio
 		// equipment impedance. Here we suppose an impedance of 10kOhm resulting
 		// in a 3 dB attenuation at 1.6Hz.
-		// To operate properly the 6581 audio output needs a pull-down resistor
-		// (1KOhm recommended, not needed on 8580)
 		//
 		// ~~~
 		//                                 9/12V
@@ -30,15 +28,18 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		//          |        |  pF    +-C----o-----C-----+ 10k
 		//                             470   |           |
 		//         GND      GND         pF   R 1K        | amp
-		//          *                   *    |           +-----
+		//          *                   **   |           +-----
 		//
 		//                                  GND
 		// ~~~
 		//
 		// The STC networks are connected with a [BJT] based [common collector]
 		// used as a voltage follower (featuring a 2SC1815 NPN transistor).
-		// * The C64c board additionally includes a [bootstrap] condenser to increase
-		// the input impedance of the common collector.
+		//
+		// * To operate properly the 6581 audio output needs a pull-down resistor
+		//   (1KOhm recommended, not needed on 8580)
+		// ** The C64c board additionally includes a [bootstrap] condenser to increase
+		//    the input impedance of the common collector.
 		//
 		// [BJT]: https://en.wikipedia.org/wiki/Bipolar_junction_transistor
 		// [common collector]: https://en.wikipedia.org/wiki/Common_collector

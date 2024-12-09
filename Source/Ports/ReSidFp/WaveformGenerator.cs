@@ -607,7 +607,10 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				// In the 6581 the top bit of the accumulator may be driven low by combined waveforms
 				// when the sawtooth is selected
 				if (is6581 && ((waveform & 2) != 0) && ((waveform_output & 0x800) == 0))
+				{
+					msb_rising = false;
 					accumulator &= 0x7fffff;
+				}
 
 				Write_Shift_Register();
 			}

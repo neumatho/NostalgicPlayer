@@ -165,6 +165,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		protected override double GetVoiceDc(uint env)
 		{
 			return GetVRef();

@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 	[TestClass]
 	public class TestSpline
 	{
-		private const int OpAmpSize = 33;
+		private const uint OpAmpSize = 33;
 
 		private static readonly Spline.Point[] opamp_voltage =
 		{
@@ -86,7 +86,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibSidPlayFp.Test
 		{
 			Spline s = new Spline(new List<Spline.Point>(opamp_voltage));
 
-			for (int i = 0; i < OpAmpSize; i++)
+			for (uint i = 0; i < OpAmpSize; i++)
 			{
 				Spline.Point o = s.Evaluate(opamp_voltage[i].x);
 				Assert.AreEqual(opamp_voltage[i].y, o.x);
