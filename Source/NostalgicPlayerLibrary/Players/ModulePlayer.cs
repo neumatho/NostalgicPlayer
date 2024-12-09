@@ -445,6 +445,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					{
 						if (currentPlayer is IDurationPlayer durationPlayer)
 							durationPlayer.SetSongPosition(PlayingModuleInformation.DurationInfo?.PositionInfo[position]);
+
+						ModuleInfoChanged[] moduleInfoChanges = currentPlayer.GetChangedInformation();
+						if ((moduleInfoChanges != null) && (ModuleInfoChanged != null))
+						{
+							foreach (ModuleInfoChanged moduleInfoChanged in moduleInfoChanges)
+								ModuleInfoChanged(this, new ModuleInfoChangedEventArgs(moduleInfoChanged.Line, moduleInfoChanged.Value));
+						}
 					}
 
 					soundStream.SongPosition = position;
