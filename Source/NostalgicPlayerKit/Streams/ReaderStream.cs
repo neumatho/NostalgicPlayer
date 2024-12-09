@@ -170,8 +170,8 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public void ReadInto(byte[] buffer, int offset, int count)
 		{
-			int read = wrapperStream.Read(buffer, offset, count);
-			EndOfStream = read < count;
+			// Need to call Read() and not the wrapper, since it could be overridden
+			int read = Read(buffer, offset, count);
 		}
 
 
