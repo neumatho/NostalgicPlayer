@@ -1173,6 +1173,14 @@
             <uap:DisplayName>Sonic Arranger</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="dssfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-dss">.dss</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Digital Sound Studio</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
