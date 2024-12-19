@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers.Flags
 		/// uses IChannel to play the individual samples. If that's not the
 		/// case, BufferMode is used, sometimes together with BufferDirect.
 		///
-		/// If this flag is set, it indicate that the player itself fill out
+		/// If this flag is set, it indicates that the player itself fill out
 		/// the needed information to give to the visualizers about what
 		/// happens on the different channels
 		/// </summary>

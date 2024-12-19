@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Linq;
+using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
@@ -23,7 +24,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 	{
 		private readonly Manager agentManager;
 
-		private readonly object playerLock = new object();
+		private readonly Lock playerLock = new Lock();
 		private IModulePlayerAgent currentPlayer;
 		private DurationInfo[] allSongsInfo;
 

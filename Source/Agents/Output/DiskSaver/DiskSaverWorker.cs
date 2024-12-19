@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 		private ISampleSaverAgent converterInUse;
 		private IOutputAgent outputAgentInUse;
 
-		private object streamLock;
+		private Lock streamLock;
 		private SoundStream stream;
 		private Stream fileStream;
 
@@ -106,7 +106,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 
 			// Initialize stream
 			stream = null;
-			streamLock = new object();
+			streamLock = new Lock();
 
 			if (settings.OutputAgent == Guid.Empty)
 			{

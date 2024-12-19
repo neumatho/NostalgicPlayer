@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
+using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 
@@ -74,7 +75,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 			public IAgentSettings Settings;
 		}
 
-		private readonly object listLock = new object();
+		private readonly Lock listLock = new Lock();
 		private readonly Dictionary<Guid, AgentLoadInfo> agentsByAgentId = new Dictionary<Guid, AgentLoadInfo>();
 		private readonly Dictionary<AgentType, List<AgentInfo>> agentsByAgentType = new Dictionary<AgentType, List<AgentInfo>>();
 
@@ -128,11 +129,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Agent
 		{
 			lock (listLock)
 			{
-				foreach (List<AgentInfo> agentList in agentsByAgentType.Values)
-				{
-					foreach (AgentInfo agentInfo in agentList)
-						yield return agentInfo;
-				}
+			    return agentsByAgentType.Values.SelectMany(agentList => agentList).ToArray();
 			}
 		}
 

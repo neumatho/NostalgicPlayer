@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.ComponentModel;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Controls
@@ -15,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Controls
 	{
 		private readonly Cursor oldCursor;
 
-		private static object myLock = new object();
+		private static Lock myLock = new Lock();
 		private static int counter = 0;
 
 		/********************************************************************/

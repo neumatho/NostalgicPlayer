@@ -56,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 		private const int LatencyMilliseconds = 200;
 
-		private object streamLock;
+		private Lock streamLock;
 		private SoundStream stream;
 
 		private MMDevice endpoint;
@@ -81,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 		private AutoResetEvent flushBufferEvent;
 
-		private object playingLock;
+		private Lock playingLock;
 		private volatile PlaybackState playbackState;
 		private bool inStreamSwitch;
 
@@ -103,7 +103,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 				settings = new CoreAudioSettings();
 
 				stream = null;
-				streamLock = new object();
+				streamLock = new Lock();
 
 				endpoint = FindEndpointToUse();
 				audioClient = endpoint.AudioClient;
@@ -117,7 +117,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 				flushBufferEvent = new AutoResetEvent(false);
 
 				// Create lock used when playing
-				playingLock = new object();
+				playingLock = new Lock();
 
 				// Initialize the audio engine
 				InitializeAudioEngine();

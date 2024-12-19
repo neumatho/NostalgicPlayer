@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Diagnostics;
+using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Streams;
@@ -22,7 +23,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 		private bool playing;
 
 		private Resampler resampler;
-		private object resamplerLock;
+		private Lock resamplerLock;
 
 		private int maxBufferSizeInFrames;
 		private int delayCount;
@@ -41,7 +42,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 			delayCount = 0;
 
 			resampler = new Resampler();
-			resamplerLock = new object();
+			resamplerLock = new Lock();
 
 			resampler.ClockUpdated += Resampler_ClockUpdated;
 			resampler.PositionChanged += Resampler_PositionChanged;

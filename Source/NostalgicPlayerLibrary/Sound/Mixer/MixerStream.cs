@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Diagnostics;
+using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
 using Polycode.NostalgicPlayer.Kit.Streams;
@@ -19,7 +20,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 	internal class MixerStream : SoundStream
 	{
 		private Mixer mixer;
-		private object mixerLock;
+		private Lock mixerLock;
 
 		/********************************************************************/
 		/// <summary>
@@ -29,7 +30,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		public bool Initialize(Manager agentManager, PlayerConfiguration playerConfiguration, out string errorMessage)
 		{
 			mixer = new Mixer();
-			mixerLock = new object();
+			mixerLock = new Lock();
 
 			mixer.ClockUpdated += Mixer_ClockUpdated;
 			mixer.PositionChanged += Mixer_PositionChanged;

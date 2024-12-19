@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Polycode.NostalgicPlayer.Ports.ReSidFp.Array;
 using Polycode.NostalgicPlayer.Ports.ReSidFp.Containers;
 
@@ -199,7 +200,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 		private readonly matrix_t wfTable;
 		private readonly Dictionary<CombinedWaveformConfig[], matrix_t> pulldownCache = new Dictionary<CombinedWaveformConfig[], Matrix<short>>();
-		private readonly object pulldownCache_Lock = new object();
+		private readonly Lock pulldownCache_Lock = new Lock();
 
 		private delegate float distance_t(float distance, int i);
 

@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 using Microsoft.Extensions.DependencyInjection;
@@ -108,7 +109,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private readonly List<int> randomList;
 
 		private long lastAddedTimeFromExplorer = 0;
-		private readonly object processingEndReached = new object();
+		private readonly Lock processingEndReached = new Lock();
 
 		// Other windows
 		private HelpWindowForm helpWindow = null;

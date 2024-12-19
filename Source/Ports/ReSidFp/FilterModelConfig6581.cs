@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Polycode.NostalgicPlayer.Ports.ReSidFp.Containers;
 
@@ -65,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		];
 
 		private static FilterModelConfig6581 instance = null;
-		private static readonly object instance6581_Lock = new object();
+		private static readonly Lock instance6581_Lock = new Lock();
 
 		// Transistor parameters
 		private readonly double wl_vcr;			// W/L for VCR

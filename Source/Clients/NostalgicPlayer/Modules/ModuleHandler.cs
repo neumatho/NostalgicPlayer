@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow;
 using Polycode.NostalgicPlayer.Kit.Containers;
@@ -32,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		private Manager agentManager;
 		private SoundSettings soundSettings;
 
-		private object outputAgentLock = new object();
+		private Lock outputAgentLock = new Lock();
 		private IOutputAgent outputAgent;
 
 		private List<ModuleItem> loadedFiles;

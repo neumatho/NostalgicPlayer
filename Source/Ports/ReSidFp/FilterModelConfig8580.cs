@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Polycode.NostalgicPlayer.Ports.ReSidFp
@@ -96,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		];
 
 		private static FilterModelConfig8580 instance = null;
-		private static readonly object instance8580_Lock = new object();
+		private static readonly Lock instance8580_Lock = new Lock();
 
 		/********************************************************************/
 		/// <summary>
