@@ -5,6 +5,7 @@ on:
     paths:
       - '**/LibSidPlayFp/**'
       - '**/LibSidPlayFp.Test/**'
+      - '**/ReSidFp/**'
 
 jobs:
   Test:
