@@ -39,6 +39,7 @@
     <ProjectReference Include="..\..\Agents\Output\CoreAudio\CoreAudio.csproj" />
     <ProjectReference Include="..\..\Agents\Players\AmosMusicBank\AmosMusicBank.csproj" />
     <ProjectReference Include="..\..\Agents\Players\ArtOfNoise\ArtOfNoise.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\BenDaglish\BenDaglish.csproj" />
     <ProjectReference Include="..\..\Agents\Players\DavidWhittaker\DavidWhittaker.csproj" />
     <ProjectReference Include="..\..\Agents\Players\DeltaMusic10\DeltaMusic10.csproj" />
     <ProjectReference Include="..\..\Agents\Players\DeltaMusic20\DeltaMusic20.csproj" />

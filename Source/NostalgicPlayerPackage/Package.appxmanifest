@@ -1181,6 +1181,14 @@
             <uap:DisplayName>Digital Sound Studio</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="bdfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-bd">.bd</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Ben Daglish</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

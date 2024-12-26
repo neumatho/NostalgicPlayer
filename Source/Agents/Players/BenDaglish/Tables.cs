@@ -1,0 +1,44 @@
+﻿/******************************************************************************/
+/* This source, or parts thereof, may be used in any software as long the     */
+/* license of NostalgicPlayer is keep. See the LICENSE file for more          */
+/* information.                                                               */
+/******************************************************************************/
+namespace Polycode.NostalgicPlayer.Agent.Player.BenDaglish
+{
+	/// <summary>
+	/// Different tables needed
+	/// </summary>
+	internal static class Tables
+	{
+		public const int FineTuneStartIndex = 4 * 12;
+
+		/********************************************************************/
+		/// <summary>
+		/// Periods
+		/// </summary>
+		/********************************************************************/
+		public static readonly int[] FineTune =
+		[
+			  0x1000,   0x10F3,   0x11F5,   0x1306,   0x1429,   0x155B,   0x16A0,   0x17F9,   0x1965,   0x1AE9,   0x1C82,   0x1E34,
+			  0x2000,   0x21E7,   0x23EB,   0x260D,   0x2851,   0x2AB7,   0x2D41,   0x2FF2,   0x32CC,   0x35D1,   0x3904,   0x3C68,
+			  0x4000,   0x43CE,   0x47D6,   0x4C1B,   0x50A2,   0x556E,   0x5A82,   0x5FE4,   0x6597,   0x6BA2,   0x7208,   0x78D0,
+			  0x8000,   0x879C,   0x8FAC,   0x9837,   0xA145,   0xAADC,   0xB504,   0xBFC8,   0xCB2F,   0xD744,   0xE411,   0xF1A1,
+
+			 0x10000,  0x10F38,  0x11F59,  0x1306F,  0x1428A,  0x155B8,  0x16A09,  0x17F91,  0x1965F,  0x1AE89,  0x1C823,  0x1E343,
+			 0x20000,  0x21E71,  0x23EB3,  0x260DF,  0x28514,  0x2AB70,  0x2D413,  0x2FF22,  0x32CBF,  0x35D13,  0x39047,  0x3C686,
+			 0x40000,  0x43CE3,  0x47D66,  0x4C1BF,  0x50A28,  0x556E0,  0x5A827,  0x5FE44,  0x6597F,  0x6BA27,  0x7208F,  0x78D0D,
+			 0x80000,  0x879C7,  0x8FACD,  0x9837F,  0xA1451,  0xAADC0,  0xB504F,  0xBFC88,  0xCB2FF,  0xD7450,  0xE411F,  0xF1A1B,
+			0x100000, 0x10F38F, 0x11F59A, 0x1307B2, 0x1428A2, 0x155B81, 0x16A09E, 0x17F910, 0x1965FE, 0x1AE8A0, 0x1C823E, 0x1E3438,
+			0x200000, 0x21E71F, 0x23EB35, 0x260DFC, 0x285145, 0x2AB702, 0x2D413C, 0x2FF221, 0x32CBFD, 0x35D13F, 0x39047C, 0x3C6870
+		];
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Used to stop playing a sample
+		/// </summary>
+		/********************************************************************/
+		public static readonly sbyte[] EmptySample = [ 0, 0, 0, 0 ];
+	}
+}

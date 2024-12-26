@@ -1,0 +1,123 @@
+VoicePlaybackInfo
+
+ 0 2 DMA bit
+ 2 2 Interrupt bit
+ 4 2 Hardware register offset
+ 6 2 Delay counter for when to set loop
+ 8 2 Note period
+ A 2 Portamento add value
+ C 2 Final volume
+ E 2 Final volume slide speed
+10 2 Final volume slide increment value
+12 2 Final volume slide speed counter
+14 2 Ticks to play sample
+16 2 Instrument portamento duration
+18 2 Instrument portamento increment value
+1A 2 Instrument vibrato depth
+1C 2 Instrument period add value
+1E 2 Instrument vibrato increment value
+20 4 Pointer to code to set e.g. sample loop
+24 4 Pointer to instrument info
+
+
+VoiceInfo
+
+ 0 2 This voice index into instrument mapping table. Are initialized with these values: 0, 8, 10, 18
+ 2 4 Pointer to next byte in position list
+ 6 4 Pointer to start of track data
+ A 4 Pointer to next byte in track data
+ E 4 Pointer to instrument info
+12 1 Track loop counter
+13 1 Transpose
+14 1 If true, switch to next position or repeat track
+15 1 Ticks left before reading next track command
+16 1 Channel is enabled
+17 1 Transposed note
+18 1 Use new note
+
+1A 4 Pointer to instrument info
+1E 1 Previous transposed note
+1F 1 Portamento 1 enabled
+20 1 Portamento start delay
+21 1 Portamento duration
+22 1 Portamento delta node number
+23 1 Portamento control flag
+24 1 Portamento start delay counter
+25 1 Portamento duration counter
+26 4 Portamento value to add to playing period
+2A 1 Portamento 2 enabled
+2B 1 Volume fade enabled
+2C 1 Volume fade init speed
+2D 1 Volume fade duration
+2E 2 Volume fade add value
+30 1 Volume fade running
+31 1 Volume fade speed
+32 1 Volume fade speed counter
+33 1 Volume fade duration counter
+34 2 Volume fade increment value
+36 2 Volume fade value
+38 2 Channel volume
+3A 2 Channel volume slide speed
+3C 2 Channel volume slide increment value
+3E 1 Control flag start value
+3F
+46 1 Control flag
+
+
+When playing a note, the player uses an instrument number set on the channel.
+This number is between 0 and 7. This number is then used to lookup in a
+mapping table to find the sample number to use. This mapping table is
+initialized to use the first 8 samples.
+
+
+Position list
+
+V1 player:
+
+00-7F    = Track number
+80-BF    = Loop track by <effect> & 1F
+C0-C7 xx = Update instrument mapping table at index <effect> & 7 to sample xx
+FE xx    = Transpose
+FF       = End of position list
+
+V2 player:
+
+00-C7    = Track number
+C8-EF    = Loop track by <effect> & 1F
+F0-F7 xx = Update instrument mapping table at index <effect> - F0 to sample xx
+FD xx    = Start master volume fade. xx = fade speed
+FE xx    = Transpose
+FF       = End of position list
+
+
+Track data
+
+00-7E xx yy = Note. xx is how many ticks to wait until reading next track command. yy is only available on some players and only if xx = 0. yy is the same as xx, but the behaviour of SetupSample() changes
+7F xx       = Wait. xx is how many ticks to wait until reading next track command
+80-88       = Use instrument by <effect> & 7
+89-BF       = Set flag by <effect> & F
+C0 xx yy zz = Portamento 1. xx = start delay, yy = duration, zz = delta number of nodes
+C1          = Stop portamento 1
+C2 xx yy zz = Volume fade. xx = speed, yy = duration, zz = increment value
+C3          = Stop volume fade
+C4 xx       = Portamento 2. xx = duration
+C5          = Stop portamento 2
+C6 xx yy zz = Global volume slide. xx = start value, yy = speed, zz = increment value
+C7          = Stop global volume slide
+FF          = End of track data
+
+
+Instrument info:
+
+ 0 4 Offset to sample data
+ 4 4 Offset to sample data where loop starts
+ 8 2 Length in words (one shot)
+ A 2 Length of loop in words
+ C 2 Volume
+ E 2 Volume fade speed
+10 2 Portamento duration
+12 2 Portamento increment value
+14 2 Vibrato depth
+16 2 Vibrato increment value
+18 2 Note transpose
+1A 2 Fine tune Period

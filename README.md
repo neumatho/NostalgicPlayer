@@ -50,6 +50,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | Asylum Music Format | .amf | | Xmp |
 | Audio Sculpture | .adsc | | ModTracker |
 | AudioIFF | .aiff / .aif | | Sample |
+| Ben Daglish | .bd | | Ben Daglish |
 | Ben Replay | .ben | ProWizard | ModTracker |
 | Binary Packer | .bnr | ProWizard | ModTracker |
 | Channel Player 1 | .ch1 / .chn / .chan | ProWizard | ModTracker |
