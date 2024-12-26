@@ -2526,6 +2526,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 												sample.SampleData[sampleStartOffset + 1] = sample.SampleData[sampleStartOffset];
 
 											int length = end - start;
+											if ((sampleStartOffset + length) >= sampleData.Length)
+												length = sampleData.Length - (int)sampleStartOffset;
 
 											channel.PlaySample(sampleNumber, sample.SampleData, sampleStartOffset, (uint)length);
 
