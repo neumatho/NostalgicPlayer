@@ -1476,7 +1476,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Store_Id3V2(Mpg123_Handle fr, c_ulong first4Bytes, c_uchar[] buf, c_ulong length)
+		private static c_int Store_Id3V2(Mpg123_Handle fr, c_ulong first4Bytes, c_uchar[] buf, c_ulong length)
 		{
 			c_int ret = 1;
 			int64_t ret2;

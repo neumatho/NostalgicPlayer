@@ -808,7 +808,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void Swap_Endian(OutBuffer buf, c_int block)
+		private static void Swap_Endian(OutBuffer buf, c_int block)
 		{
 			if (block >= 2)
 			{
