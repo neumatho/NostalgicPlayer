@@ -61,7 +61,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Opus {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Based on libOpus by Xiph.Org Foundation
+        ///   Looks up a localized string similar to Based on libOpus by Xiph.Org Foundation.
         ///Converted to C# by Thomas Neumann.
         ///
         ///Opus is a totally open, royalty-free, highly versatile audio codec. Opus is unmatched for interactive speech and music transmission over the Internet, but is also intended for storage and streaming applications. It is standardized by the Internet Engineering Task Force (IETF) as RFC 6716 which incorporated technology from Skype’s SILK codec and Xiph.Org’s CELT codec..
@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Opus {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Based on libOpus by Xiph.Org Foundation
+        ///   Looks up a localized string similar to Based on libOpus by Xiph.Org Foundation.
         ///Converted to C# by Thomas Neumann.
         ///
         ///Opus is the successor of OggVorbis, MP3 and other lossless audio compression algorithms. It is good to encode both speech and music, because it implements two different algorithms..

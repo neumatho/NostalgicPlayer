@@ -9,7 +9,7 @@ using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibOgg.Containers;
 using Polycode.NostalgicPlayer.Ports.LibOpus;
 
-namespace Polycode.NostalgicPlayer.Ports.OpusFile.Containers
+namespace Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers
 {
 	/// <summary>
 	/// 

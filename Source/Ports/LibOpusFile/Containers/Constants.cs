@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Ports.OpusFile.Containers
+namespace Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers
 {
 	/// <summary>
 	/// Different constants

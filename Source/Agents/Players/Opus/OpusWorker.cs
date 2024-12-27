@@ -10,8 +10,8 @@ using System.Text;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.Ports.OpusFile;
-using Polycode.NostalgicPlayer.Ports.OpusFile.Containers;
+using Polycode.NostalgicPlayer.Ports.LibOpusFile;
+using Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.Opus
 {

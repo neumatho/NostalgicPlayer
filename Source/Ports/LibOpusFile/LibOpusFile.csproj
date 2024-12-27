@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <RootNamespace>Polycode.NostalgicPlayer.Ports.OpusFile</RootNamespace>
+    <RootNamespace>Polycode.NostalgicPlayer.Ports.LibOpusFile</RootNamespace>
     <Authors>Thomas Neumann</Authors>
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>

@@ -6,9 +6,9 @@
 using System.Text;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
-using Polycode.NostalgicPlayer.Ports.OpusFile.Containers;
+using Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers;
 
-namespace Polycode.NostalgicPlayer.Ports.OpusFile
+namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 {
 	/// <summary>
 	/// 

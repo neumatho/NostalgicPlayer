@@ -7,7 +7,7 @@ using System.IO;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
-namespace Polycode.NostalgicPlayer.Ports.OpusFile.Containers
+namespace Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers
 {
 	/// <summary>
 	/// The callbacks used to access non-FILE stream resources.

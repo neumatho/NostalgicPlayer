@@ -7,7 +7,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
-namespace Polycode.NostalgicPlayer.Ports.OpusFile
+namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 {
 	/// <summary>
 	/// 

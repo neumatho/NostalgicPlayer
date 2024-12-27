@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IDS_OPUS_DESCRIPTION" xml:space="preserve">
-    <value>Based on libOpus by Xiph.Org Foundation
+    <value>Based on libOpus by Xiph.Org Foundation.
 Converted to C# by Thomas Neumann.
 
 Opus is a totally open, royalty-free, highly versatile audio codec. Opus is unmatched for interactive speech and music transmission over the Internet, but is also intended for storage and streaming applications. It is standardized by the Internet Engineering Task Force (IETF) as RFC 6716 which incorporated technology from Skype’s SILK codec and Xiph.Org’s CELT codec.</value>
   </data>
   <data name="IDS_OPUS_DESCRIPTION_AGENT1" xml:space="preserve">
-    <value>Based on libOpus by Xiph.Org Foundation
+    <value>Based on libOpus by Xiph.Org Foundation.
 Converted to C# by Thomas Neumann.
 
 Opus is the successor of OggVorbis, MP3 and other lossless audio compression algorithms. It is good to encode both speech and music, because it implements two different algorithms.</value>

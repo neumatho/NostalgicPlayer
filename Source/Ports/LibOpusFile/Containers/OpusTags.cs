@@ -5,7 +5,7 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.Utility;
 
-namespace Polycode.NostalgicPlayer.Ports.OpusFile.Containers
+namespace Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers
 {
 	/// <summary>
 	/// The metadata from an Ogg Opus stream.

@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Ports.OpusFile.Containers
+namespace Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers
 {
 	/// <summary>
 	/// We use this to remember the pages we found while enumerating the links of a

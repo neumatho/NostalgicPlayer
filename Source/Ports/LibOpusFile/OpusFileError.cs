@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Ports.OpusFile
+namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 {
 	/// <summary>
 	/// List of possible error codes
