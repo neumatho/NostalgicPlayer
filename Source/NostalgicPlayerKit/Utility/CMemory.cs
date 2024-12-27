@@ -20,7 +20,33 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Pointer<T> MAlloc<T>(int size)
+		public static Pointer<T> MAlloc<T>(int size) where T : struct
+		{
+			return CAlloc<T>(size);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Pointer<T> MAllocObj<T>(int size) where T : new()
+		{
+			return CAllocObj<T>(size);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Pointer<T> CAlloc<T>(int size) where T : struct
 		{
 			return new Pointer<T>(size);
 		}
@@ -33,7 +59,22 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Pointer<T> Realloc<T>(Pointer<T> ptr, int newSize)
+		public static Pointer<T> CAllocObj<T>(int size) where T : new()
+		{
+			T[] array = ArrayHelper.InitializeArray<T>(size);
+
+			return new Pointer<T>(array);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Pointer<T> Realloc<T>(Pointer<T> ptr, int newSize) where T : struct
 		{
 			if (ptr.IsNull)
 				return MAlloc<T>(newSize);
@@ -43,6 +84,32 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 			T[] newArray = new T[newSize];
 			Array.Copy(ptr.Buffer, ptr.Offset, newArray, 0, Math.Min(newSize, ptr.Length));
+
+			return new Pointer<T>(newArray);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static Pointer<T> ReallocObj<T>(Pointer<T> ptr, int newSize) where T : new()
+		{
+			if (ptr.IsNull)
+				return MAllocObj<T>(newSize);
+
+			if (newSize <= ptr.Length)
+				return ptr;
+
+			T[] newArray = new T[newSize];
+			int copyLength = Math.Min(newSize, ptr.Length);
+			Array.Copy(ptr.Buffer, ptr.Offset, newArray, 0, copyLength);
+
+			for (int i = copyLength; i < newSize; i++)
+				newArray[i] = new T();
 
 			return new Pointer<T>(newArray);
 		}

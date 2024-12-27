@@ -1402,7 +1402,7 @@ namespace Polycode.NostalgicPlayer.Ports.OpusFile
 						return (c_int)OpusFileError.Fault;
 
 					clinks = 2 * clinks + 1;
-					links = Memory.Ogg_Realloc(links, (size_t)clinks);
+					links = Memory.Ogg_ReallocObj(links, (size_t)clinks);
 					if (links == null)
 						return (c_int)OpusFileError.Fault;
 
@@ -1605,7 +1605,7 @@ namespace Polycode.NostalgicPlayer.Ports.OpusFile
 			}
 
 			// Trim back the links array if necessary
-			links = Memory.Ogg_Realloc(links, (size_t)nlinks);
+			links = Memory.Ogg_ReallocObj(links, (size_t)nlinks);
 			if (links != null)
 				_of.links = links;
 
@@ -1958,8 +1958,7 @@ namespace Polycode.NostalgicPlayer.Ports.OpusFile
 
 			// Don't seek yet.
 			// Set up a 'single' (current) logical bitstream entry for partial open
-			_of.links = Memory.Ogg_MAlloc<OggOpusLink>(1);
-			_of.links[0] = new OggOpusLink();
+			_of.links = Memory.Ogg_MAllocObj<OggOpusLink>(1);
 
 			// The serialno gets filled in later by op_fetch_headers()
 			OggStream.Init(out _of.os, -1);
