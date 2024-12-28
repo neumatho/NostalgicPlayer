@@ -115,7 +115,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 
 			Array.Copy(sIIR, clone.sIIR, sIIR.Length);
 
-			if (!Coefs.IsNull)
+			if (Coefs.IsNotNull)
 				clone.Coefs = Coefs.MakeDeepClone();
 
 			return clone;

@@ -105,6 +105,15 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 		/********************************************************************/
 		/// <summary>
+		/// Check to see if the pointer is not null
+		/// </summary>
+		/********************************************************************/
+		public bool IsNotNull => Buffer != null;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Convert the pointer to a span
 		/// </summary>
 		/********************************************************************/

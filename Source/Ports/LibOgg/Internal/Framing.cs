@@ -68,13 +68,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		{
 			if (os != null)
 			{
-				if (!os.BodyData.IsNull)
+				if (os.BodyData.IsNotNull)
 					Memory.Ogg_Free(os.BodyData);
 
-				if (!os.LacingVals.IsNull)
+				if (os.LacingVals.IsNotNull)
 					Memory.Ogg_Free(os.LacingVals);
 
-				if (!os.GranuleVals.IsNull)
+				if (os.GranuleVals.IsNotNull)
 					Memory.Ogg_Free(os.GranuleVals);
 
 				os.Clear();
@@ -483,7 +483,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		{
 			if (oy != null)
 			{
-				if (!oy.Data.IsNull)
+				if (oy.Data.IsNotNull)
 					Memory.Ogg_Free(oy.Data);
 
 				oy.Clear();
@@ -542,7 +542,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 				c_long newSize = size + oy.Fill + 4096;     // An extra page to be nice
 				Pointer<byte> ret;
 
-				if (!oy.Data.IsNull)
+				if (oy.Data.IsNotNull)
 					ret = Memory.Ogg_Realloc(oy.Data, (size_t)newSize);
 				else
 					ret = Memory.Ogg_MAlloc<byte>((size_t)newSize);

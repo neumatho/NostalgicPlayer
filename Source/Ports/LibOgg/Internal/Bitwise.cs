@@ -239,7 +239,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/********************************************************************/
 		public static void OggPack_WriteClear(OggPack_Buffer b)
 		{
-			if (!b.Buffer.IsNull)
+			if (b.Buffer.IsNotNull)
 				Memory.Ogg_Free(b.Buffer);
 
 			b.Clear();

@@ -117,7 +117,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			OggSync.Init(out OggSync oy);
 			Pointer<byte> data = oy.Buffer((c_long)_initial_bytes);
 
-			if (!data.IsNull)
+			if (data.IsNotNull)
 			{
 				CMemory.MemCpy(data, _initial_data, (int)_initial_bytes);
 				oy.Wrote((c_long)_initial_bytes);

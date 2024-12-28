@@ -264,7 +264,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			size_t size = _len + 1;
 
 			Pointer<byte> ret = Memory.Ogg_MAlloc<byte>(size);
-			if (!ret.IsNull)
+			if (ret.IsNotNull)
 			{
 				CMemory.MemCpy(ret, _s, (int)_len);
 				ret[(uint)_len] = 0x00;

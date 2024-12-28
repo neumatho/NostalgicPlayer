@@ -383,7 +383,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 
 			for (c_int i = 0; i < count; i++)
 			{
-				if (!frames.IsNull)
+				if (frames.IsNotNull)
 					frames[i] = data;
 
 				data += size[i];

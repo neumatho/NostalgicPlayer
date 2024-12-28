@@ -675,7 +675,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			bool encode = ctx.encode;
 			Ec_Ctx ec = ctx.ec;
 
-			c_int stereo = !Y.IsNull ? 1 : 0;
+			c_int stereo = Y.IsNotNull ? 1 : 0;
 			c_int c = 0;
 
 			do
@@ -702,7 +702,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			}
 			while (++c < (1 + stereo));
 
-			if (!lowband_out.IsNull)
+			if (lowband_out.IsNotNull)
 				lowband_out[0] = Arch.SHR16(X[0], 4);
 
 			return 1;
@@ -778,7 +778,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				c_int sbits = b - mbits;
 				ctx.remaining_bits -= qalloc;
 
-				if (!lowband.IsNull)
+				if (lowband.IsNotNull)
 					next_lowband2 = lowband + N;	// >32-bit split case
 
 				opus_int32 rebalance = ctx.remaining_bits;
@@ -914,7 +914,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				// Band recombining to increase frequency resolution
 			}
 
-			if (!lowband_scratch.IsNull && !lowband.IsNull && ((recombine != 0) || (((N_B & 1) == 0) && (tf_change < 0)) || (B0 > 1)))
+			if (lowband_scratch.IsNotNull && lowband.IsNotNull && ((recombine != 0) || (((N_B & 1) == 0) && (tf_change < 0)) || (B0 > 1)))
 			{
 				Memory.Opus_Copy(lowband_scratch, lowband, N);
 				lowband = lowband_scratch;
@@ -925,7 +925,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				if (encode)
 					Haar1(X, N >> k, 1 << k);
 
-				if (!lowband.IsNull)
+				if (lowband.IsNotNull)
 					Haar1(lowband, N >> k, 1 << k);
 
 				fill = bit_interleave_table[fill & 0x0f] | bit_interleave_table[fill >> 4] << 2;
@@ -940,7 +940,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				if (encode)
 					Haar1(X, N_B, B);
 
-				if (!lowband.IsNull)
+				if (lowband.IsNotNull)
 					Haar1(lowband, N_B, B);
 
 				fill |= fill << B;
@@ -959,7 +959,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				if (encode)
 					Deinterleave_Hadamard(X, N_B >> recombine, B0 << recombine, longBlocks);
 
-				if (!lowband.IsNull)
+				if (lowband.IsNotNull)
 					Deinterleave_Hadamard(lowband, N_B >> recombine, B0 << recombine, longBlocks);
 			}
 
@@ -993,7 +993,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				B <<= recombine;
 
 				// Scale output for later folding
-				if (!lowband_out.IsNull)
+				if (lowband_out.IsNotNull)
 				{
 					opus_val16 n = MathOps.Celt_Sqrt(Arch.SHL32(Arch.EXTEND32(N0), 22));
 
@@ -1190,8 +1190,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		{
 			Pointer<opus_int16> eBands = m.eBands;
 			bool update_lowband = true;
-			c_int C = !Y_.IsNull ? 2 : 1;
-			bool theta_rdo = encode && !Y_.IsNull && !dual_stereo && (complexity >= 8);
+			c_int C = Y_.IsNotNull ? 2 : 1;
+			bool theta_rdo = encode && Y_.IsNotNull && !dual_stereo && (complexity >= 8);
 			bool resynth = !encode || theta_rdo;
 			Band_Ctx ctx = new Band_Ctx();
 
@@ -1257,7 +1257,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				Pointer<celt_norm> X = X_ + M * eBands[i];
 				Pointer<celt_norm> Y;
 
-				if (!Y_.IsNull)
+				if (Y_.IsNotNull)
 					Y = Y_ + M * eBands[i];
 				else
 					Y = null;
@@ -1295,7 +1295,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				{
 					X = norm;
 
-					if (!Y_.IsNull)
+					if (Y_.IsNotNull)
 						Y = norm;
 
 					lowband_scratch.SetToNull();
@@ -1365,7 +1365,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				}
 				else
 				{
-					if (!Y.IsNull)
+					if (Y.IsNotNull)
 					{
 						if (theta_rdo && (i < intensity))
 						{

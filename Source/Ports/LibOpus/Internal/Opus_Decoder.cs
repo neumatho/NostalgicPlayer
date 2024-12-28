@@ -177,7 +177,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 				frame_size = Arch.IMIN(frame_size, st.frame_size);
 			}
 
-			if (!data.IsNull)
+			if (data.IsNotNull)
 			{
 				audiosize = st.frame_size;
 				mode = st.mode;
@@ -232,7 +232,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 			c_int pcm_transition_silk_size = Constants.Alloc_None;
 			c_int pcm_transition_celt_size = Constants.Alloc_None;
 
-			if (!data.IsNull && (st.prev_mode != PacketMode.None) && (((mode == PacketMode.Celt_Only) && (st.prev_mode != PacketMode.Celt_Only) && !st.prev_redundancy) || ((mode != PacketMode.Celt_Only) && (st.prev_mode == PacketMode.Celt_Only))))
+			if (data.IsNotNull && (st.prev_mode != PacketMode.None) && (((mode == PacketMode.Celt_Only) && (st.prev_mode != PacketMode.Celt_Only) && !st.prev_redundancy) || ((mode != PacketMode.Celt_Only) && (st.prev_mode == PacketMode.Celt_Only))))
 			{
 				transition = true;
 
@@ -271,7 +271,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 				// The SILK PLC cannot produce frames of less than 10 ms
 				st.DecControl.payloadSize_ms = Arch.IMAX(10, 1000 * audiosize / st.Fs);
 
-				if (!data.IsNull)
+				if (data.IsNotNull)
 				{
 					st.DecControl.nChannelsInternal = st.stream_channels;
 
@@ -326,7 +326,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 
 			c_int start_band = 0;
 
-			if (!decode_fec && (mode != PacketMode.Celt_Only) && !data.IsNull && ((EntCode.Ec_Tell(dec) + 17 + 20 * (mode == PacketMode.Hybrid ? 1 : 0)) <= (8 * len)))
+			if (!decode_fec && (mode != PacketMode.Celt_Only) && data.IsNotNull && ((EntCode.Ec_Tell(dec) + 17 + 20 * (mode == PacketMode.Hybrid ? 1 : 0)) <= (8 * len)))
 			{
 				// Check if we have a redundant 0-8 kHz band
 				if (mode == PacketMode.Hybrid)
@@ -691,7 +691,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 			if (frame_size <= 0)
 				return (c_int)OpusError.Bad_Arg;
 
-			if (!data.IsNull && (len > 0) && !decode_fec)
+			if (data.IsNotNull && (len > 0) && !decode_fec)
 			{
 				c_int nb_samples = Opus_Decoder_Get_Nb_Samples(st, data, len);
 				if (nb_samples > 0)
