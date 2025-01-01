@@ -3,26 +3,25 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using System;
+using Polycode.NostalgicPlayer.Ports.LibVorbis.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
+namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class OggPack_Buffer
+	internal class VorbisInfoFloor0 : IVorbisInfoFloor
 	{
-		/// <summary></summary>
-		public c_long EndByte;
-		/// <summary></summary>
-		public c_int EndBit;
+		public c_int order;
+		public c_long rate;
+		public c_long barkmap;
 
-		/// <summary></summary>
-		public Pointer<byte> Buffer;
-		/// <summary></summary>
-		public Pointer<byte> Ptr;
-		/// <summary></summary>
-		public c_long Storage;
+		public c_int ampbits;
+		public c_int ampdB;
+
+		public c_int numbooks;		// <= 16
+		public readonly c_int[] books = new c_int[16];
 
 		/********************************************************************/
 		/// <summary>
@@ -31,12 +30,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 		/********************************************************************/
 		public void Clear()
 		{
-			EndByte = 0;
-			EndBit = 0;
+			order = 0;
+			rate = 0;
+			barkmap = 0;
+			ampbits = 0;
+			ampdB = 0;
+			numbooks = 0;
 
-			Buffer.SetToNull();
-			Ptr.SetToNull();
-			Storage = 0;
+			Array.Clear(books);
 		}
 	}
 }

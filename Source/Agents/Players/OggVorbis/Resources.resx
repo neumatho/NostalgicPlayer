@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="IDS_DESCRIPTION" xml:space="preserve">
-    <value>Original player by Andrew Ward.
+    <value>Based on libVorbis by Xiph.Org Foundation.
 NostalgicPlayer agent by Thomas Neumann.
 
 Ogg Vorbis is a fully open, non-proprietary, patent-and-royalty-free, general-purpose compressed audio format for mid to high quality (8kHz-48.0kHz, 16+ bit, polyphonic) audio and music at fixed and variable bitrates from 16 to 128 kbps/channel. This places Vorbis in the same competitive class as audio representations such as MPEG-4 (AAC), and similar to, but higher performance than MPEG-1/2 audio layer 3, MPEG-4 audio (TwinVQ), WMA and PAC.</value>
@@ -127,13 +127,52 @@ Ogg Vorbis is a fully open, non-proprietary, patent-and-royalty-free, general-pu
     <value>Ogg Vorbis</value>
   </data>
   <data name="IDS_OGG_DESCRIPTION_AGENT1" xml:space="preserve">
-    <value>Original player by Andrew Ward.
+    <value>Based on libVorbis by Xiph.Org Foundation.
 NostalgicPlayer agent by Thomas Neumann.
 
 This player can play the audio format Ogg Vorbis. The format is an open standard / open source project created by Xiphophorus. The format is in the same familly as MP3 and WMA files, which means it's a packed sample format.</value>
   </data>
+  <data name="IDS_OGG_ERR_BAD_HEADER" xml:space="preserve">
+    <value>A required header packet was not properly formatted, contained illegal values, or was missing altogether</value>
+  </data>
+  <data name="IDS_OGG_ERR_BAD_LINK" xml:space="preserve">
+    <value>We failed to find data we had seen before, or the bitstream structure was sufficiently malformed that seeking to the target destination was impossible</value>
+  </data>
+  <data name="IDS_OGG_ERR_BAD_PACKET" xml:space="preserve">
+    <value>An audio packet failed to decode properly</value>
+  </data>
+  <data name="IDS_OGG_ERR_FAULT" xml:space="preserve">
+    <value>Internal library error was encountered</value>
+  </data>
+  <data name="IDS_OGG_ERR_HOLE" xml:space="preserve">
+    <value>There was a hole in the page sequence numbers (e.g., a page was corrupt or missing)</value>
+  </data>
   <data name="IDS_OGG_ERR_ILLEGAL_CHANNELS" xml:space="preserve">
     <value>Only mono and stereo samples are supported at the moment. You tried to play a sample that uses {0} channels.</value>
+  </data>
+  <data name="IDS_OGG_ERR_IMPL" xml:space="preserve">
+    <value>The stream used a feature that is not implemented, such as an unsupported channel family</value>
+  </data>
+  <data name="IDS_OGG_ERR_INVAL" xml:space="preserve">
+    <value>One or more parameters to a function were invalid</value>
+  </data>
+  <data name="IDS_OGG_ERR_NOT_AUDIO" xml:space="preserve">
+    <value>The packet is not an audio packet</value>
+  </data>
+  <data name="IDS_OGG_ERR_NOT_FORMAT" xml:space="preserve">
+    <value>The stream contained a link that did not have any logical Vorbis streams in it</value>
+  </data>
+  <data name="IDS_OGG_ERR_NO_SEEK" xml:space="preserve">
+    <value>An operation that requires seeking was requested on an unseekable stream</value>
+  </data>
+  <data name="IDS_OGG_ERR_READ" xml:space="preserve">
+    <value>An underlying read, seek, or tell operation failed when it should have succeeded</value>
+  </data>
+  <data name="IDS_OGG_ERR_UNKNOWN" xml:space="preserve">
+    <value>Unknown error</value>
+  </data>
+  <data name="IDS_OGG_ERR_VERSION" xml:space="preserve">
+    <value>The ID header contained an unrecognized version number</value>
   </data>
   <data name="IDS_OGG_INFODESCLINE0" xml:space="preserve">
     <value>Track number:</value>

@@ -7,12 +7,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using NVorbis;
-using NVorbis.Contracts;
 using Polycode.NostalgicPlayer.Agent.Player.OggVorbis.Containers;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.Ports.LibVorbis;
+using Polycode.NostalgicPlayer.Ports.LibVorbis.Containers;
+using Polycode.NostalgicPlayer.Ports.LibVorbisFile;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 {
@@ -21,14 +23,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 	/// </summary>
 	internal class OggVorbisWorker : SamplePlayerWithDurationAgentBase
 	{
-		private const int InputBufSize = 32 * 1024;
-
-		private VorbisReader reader;
+		private VorbisFile vorbisFile;
 
 		private int channels;
 		private int frequency;
-
-		private float[] inputBuffer;
 
 		private string songName;
 		private string artist;
@@ -61,36 +59,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 		/********************************************************************/
 		public override AgentResult Identify(PlayerFileInfo fileInfo)
 		{
-			ModuleStream moduleStream = fileInfo.ModuleStream;
+			 ModuleStream moduleStream = fileInfo.ModuleStream;
 
 			// Check the module size
 			if (moduleStream.Length < 36)
 				return AgentResult.Unknown;
 
-			// Check the mark
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
-			if (moduleStream.Read_B_UINT32() != 0x4f676753)		// OggS
-				return AgentResult.Unknown;
+			if (VorbisFile.Ov_Test(moduleStream, true, out VorbisFile testVorbisFile, null, 0) == VorbisError.Ok)
+			{
+				testVorbisFile.Ov_Clear();
 
-			// Check the stream structure version
-			if (moduleStream.Read_UINT8() != 0x00)
-				return AgentResult.Unknown;
+				return AgentResult.Ok;
+			}
 
-			// Check the header type flag
-			if ((moduleStream.Read_UINT8() & 0xf8) != 0x00)
-				return AgentResult.Unknown;
-
-			// Check the second mark
-			byte[] buf = new byte[6];
-
-			moduleStream.Seek(29, SeekOrigin.Begin);
-			moduleStream.ReadExactly(buf, 0, 6);
-
-			if ((buf[0] != 0x76) || (buf[1] != 0x6f) || (buf[2] != 0x72) || (buf[3] != 0x62) || (buf[4] != 0x69) || (buf[5] != 0x73))	// vorbis
-				return AgentResult.Unknown;
-
-			return AgentResult.Ok;
+			return AgentResult.Unknown;
 		}
 
 
@@ -243,12 +227,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 			if (!base.InitPlayer(moduleStream, out errorMessage))
 				return false;
 
-			// Initialize the reader
-			reader = new VorbisReader(moduleStream);
+			// Get a handle, which is used on all other calls
+			VorbisError result = VorbisFile.Ov_Open(moduleStream, true, out vorbisFile, null, 0);
+			if (result != VorbisError.Ok)
+			{
+				errorMessage = GetErrorString(result);
+				return false;
+			}
 
-			// Remember the frequency to play with
-			frequency = reader.SampleRate;
-			channels = reader.Channels;
+			// Get player data
+			VorbisInfo info = vorbisFile.Ov_Info(0);
+
+			frequency = info.rate;
+			channels = info.channels;
 
 			if (channels > 2)
 			{
@@ -256,22 +247,86 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 				return false;
 			}
 
-			// Allocate buffers
-			inputBuffer = new float[InputBufSize];
-
 			// Get meta data
-			ITagData tags = reader.Tags;
+			VorbisComment comment = vorbisFile.Ov_Comment(0);
 
-			songName = tags.Title;
-			artist = tags.Artist;
-			trackNum = string.IsNullOrEmpty(tags.TrackNumber) ? Resources.IDS_OGG_INFO_UNKNOWN : tags.TrackNumber;
-			album = string.IsNullOrEmpty(tags.Album) ? Resources.IDS_OGG_INFO_UNKNOWN : tags.Album;
-			genre = tags.Genres.Count == 0 ? Resources.IDS_OGG_INFO_UNKNOWN : string.Join(", ", tags.Genres);
-			organization = string.IsNullOrEmpty(tags.Organization) ? Resources.IDS_OGG_INFO_UNKNOWN : tags.Organization;
-			copyright = string.IsNullOrEmpty(tags.Copyright) ? Resources.IDS_OGG_INFO_UNKNOWN : tags.Copyright;
-			descrip = string.IsNullOrEmpty(tags.Description) ? Resources.IDS_OGG_INFO_NONE : tags.Description;
-			vendor = string.IsNullOrEmpty(tags.EncoderVendor) ? Resources.IDS_OGG_INFO_UNKNOWN : tags.EncoderVendor;
-			pictures = ParsePictures(tags);
+			vendor = Encoding.UTF8.GetString(comment.vendor.Buffer, comment.vendor.Offset, comment.vendor.Length - 1);
+			if (string.IsNullOrEmpty(vendor))
+				vendor = Resources.IDS_OGG_INFO_UNKNOWN;
+
+			trackNum = Resources.IDS_OGG_INFO_UNKNOWN;
+			album = Resources.IDS_OGG_INFO_UNKNOWN;
+			genre = Resources.IDS_OGG_INFO_UNKNOWN;
+			organization = Resources.IDS_OGG_INFO_UNKNOWN;
+			copyright = Resources.IDS_OGG_INFO_UNKNOWN;
+			descrip = Resources.IDS_OGG_INFO_NONE;
+
+			List<PictureInfo> collectedPictures = new List<PictureInfo>();
+
+			foreach (var tag in ParseTags(comment))
+			{
+				switch (tag.tagName)
+				{
+					case "TITLE":
+					{
+						songName = tag.tagValue;
+						break;
+					}
+
+					case "ARTIST":
+					{
+						artist = tag.tagValue;
+						break;
+					}
+
+					case "TRACKNUMBER":
+					{
+						trackNum = tag.tagValue;
+						break;
+					}
+
+					case "ALBUM":
+					{
+						album = tag.tagValue;
+						break;
+					}
+
+					case "GENRE":
+					{
+						genre = tag.tagValue;
+						break;
+					}
+
+					case "ORGANIZATION":
+					{
+						organization = tag.tagValue;
+						break;
+					}
+
+					case "COPYRIGHT":
+					{
+						copyright = tag.tagValue;
+						break;
+					}
+
+					case "DESCRIPTION":
+					{
+						descrip = tag.tagValue;
+						break;
+					}
+
+					case "METADATA_BLOCK_PICTURE":
+					{
+						PictureInfo pictureInfo = ParsePicture(tag.tagValue);
+						if (pictureInfo != null)
+							collectedPictures.Add(pictureInfo);
+
+						break;
+					}
+				}
+			}
+
+			pictures = collectedPictures.Count > 0 ? collectedPictures.ToArray() : null;
 
 			return true;
 		}
@@ -285,12 +340,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 		/********************************************************************/
 		public override void CleanupPlayer()
 		{
-			inputBuffer = null;
-
-			if (reader != null)
+			if (vorbisFile != null)
 			{
-				reader.Dispose();
-				reader = null;
+				vorbisFile.Ov_Clear();
+				vorbisFile = null;
 			}
 
 			base.CleanupPlayer();
@@ -310,12 +363,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 
 			errorMessage = string.Empty;
 
-			// Reset the sample position
-			// (need this check, else NVorbis crashes with an "index out of range" exception)
-			if (reader.TimePosition != TimeSpan.Zero)
-				reader.TimePosition = TimeSpan.Zero;
-
-			bitRate = reader.NominalBitrate / 1000;
+			VorbisInfo info = vorbisFile.Ov_Info(0);
+			bitRate = info.bitrate_nominal / 1000;
 
 			return true;
 		}
@@ -343,12 +392,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 			}
 
 			// Has the bit rate changed
-			int newBitRate = reader.Streams[0].Stats.InstantBitRate / 1000;
-			if (newBitRate != bitRate)
+			int newBitRate = vorbisFile.Ov_Bitrate_Instant();
+			if (newBitRate > 0)
 			{
-				bitRate = newBitRate;
+				newBitRate /= 1000;
 
-				OnModuleInfoChanged(InfoBitRateLine, bitRate.ToString());
+				if (newBitRate != bitRate)
+				{
+					bitRate = newBitRate;
+
+					OnModuleInfoChanged(InfoBitRateLine, bitRate.ToString());
+				}
 			}
 
 			return filled;
@@ -381,7 +435,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 		/********************************************************************/
 		protected override TimeSpan GetTotalDuration()
 		{
-			return reader.TotalTime;
+			double totalTime = vorbisFile.Ov_Time_Total(-1);
+
+			return TimeSpan.FromSeconds(totalTime);
 		}
 
 
@@ -393,83 +449,139 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 		/********************************************************************/
 		protected override void SetPosition(TimeSpan time)
 		{
-			reader.TimePosition = time;
+			vorbisFile.Ov_Time_Seek(time.TotalSeconds);
 		}
 		#endregion
 
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
-		/// Parse the Vorbis picture metadata block
+		/// Helper method to get the string of an error
 		/// </summary>
 		/********************************************************************/
-		private PictureInfo[] ParsePictures(ITagData tags)
+		private string GetErrorString(VorbisError error)
+		{
+			switch (error)
+			{
+				case VorbisError.Hole:
+					return Resources.IDS_OGG_ERR_HOLE;
+
+				case VorbisError.Read:
+					return Resources.IDS_OGG_ERR_READ;
+
+				case VorbisError.Fault:
+					return Resources.IDS_OGG_ERR_FAULT;
+
+				case VorbisError.Impl:
+					return Resources.IDS_OGG_ERR_IMPL;
+
+				case VorbisError.Inval:
+					return Resources.IDS_OGG_ERR_INVAL;
+
+				case VorbisError.NotVorbis:
+					return Resources.IDS_OGG_ERR_NOT_FORMAT;
+
+				case VorbisError.BadHeader:
+					return Resources.IDS_OGG_ERR_BAD_HEADER;
+
+				case VorbisError.Version:
+					return Resources.IDS_OGG_ERR_VERSION;
+
+				case VorbisError.NotAudio:
+					return Resources.IDS_OGG_ERR_NOT_AUDIO;
+
+				case VorbisError.BadPacket:
+					return Resources.IDS_OGG_ERR_BAD_PACKET;
+
+				case VorbisError.BadLink:
+					return Resources.IDS_OGG_ERR_BAD_LINK;
+
+				case VorbisError.NoSeek:
+					return Resources.IDS_OGG_ERR_NO_SEEK;
+
+				default:
+					return Resources.IDS_OGG_ERR_UNKNOWN;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Parse a Vorbis picture metadata block
+		/// </summary>
+		/********************************************************************/
+		private PictureInfo ParsePicture(string pictureValue)
 		{
 			try
 			{
-				IReadOnlyList<string> allPictures = tags.GetTagMulti("METADATA_BLOCK_PICTURE");
-				if (allPictures.Count == 0)
-					return null;
-
-				List<PictureInfo> pictureList = new List<PictureInfo>();
-
-				foreach (string base64 in allPictures)
+				using (ReaderStream rs = new ReaderStream(new MemoryStream(Convert.FromBase64String(pictureValue))))
 				{
-					try
-					{
-						using (ReaderStream rs = new ReaderStream(new MemoryStream(Convert.FromBase64String(base64))))
-						{
-							PictureType pictureType = (PictureType)rs.Read_B_INT32();
+					PictureType pictureType = (PictureType)rs.Read_B_INT32();
 
-							int length = rs.Read_B_INT32();
-							byte[] bytes = new byte[length];
+					int length = rs.Read_B_INT32();
+					byte[] bytes = new byte[length];
 
-							if (rs.Read(bytes, 0, length) != length)
-								continue;
+					if (rs.Read(bytes, 0, length) != length)
+						return null;
 
-							string mimeType = Encoding.ASCII.GetString(bytes);
-							if (mimeType == "-->")	// URL, we do not support that
-								continue;
+					string mimeType = Encoding.ASCII.GetString(bytes);
+					if (mimeType == "-->")	// URL, we do not support that
+						return null;
 
-							length = rs.Read_B_INT32();
-							bytes = new byte[length];
+					length = rs.Read_B_INT32();
+					bytes = new byte[length];
 
-							if (rs.Read(bytes, 0, length) != length)
-								continue;
+					if (rs.Read(bytes, 0, length) != length)
+						return null;
 
-							string description = Encoding.UTF8.GetString(bytes);
+					string description = Encoding.UTF8.GetString(bytes);
 
-							// Skip width, height, color depth and number of colors
-							rs.Seek(4 * 4, SeekOrigin.Current);
+					// Skip width, height, color depth and number of colors
+					rs.Seek(4 * 4, SeekOrigin.Current);
 
-							// Get the picture data
-							length = rs.Read_B_INT32();
-							bytes = new byte[length];
+					// Get the picture data
+					length = rs.Read_B_INT32();
+					bytes = new byte[length];
 
-							if (rs.Read(bytes, 0, length) != length)
-								continue;
+					if (rs.Read(bytes, 0, length) != length)
+						return null;
 
-							string type = GetTypeDescription(pictureType);
+					string type = GetTypeDescription(pictureType);
 
-							if (string.IsNullOrEmpty(description))
-								description = type;
-							else
-								description = $"{type}: {description}";
+					if (string.IsNullOrEmpty(description))
+						description = type;
+					else
+						description = $"{type}: {description}";
 
-							pictureList.Add(new PictureInfo(bytes, description));
-						}
-					}
-					catch (Exception)
-					{
-						// Ignore exception
-					}
+					return new PictureInfo(bytes, description);
 				}
-
-				return pictureList.Count > 0 ? pictureList.ToArray() : null;
 			}
 			catch (Exception)
 			{
 				return null;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Convert the tags to something that is easier to read
+		/// </summary>
+		/********************************************************************/
+		private IEnumerable<(string tagName, string tagValue)> ParseTags(VorbisComment comment)
+		{
+			Encoding encoder = Encoding.UTF8;
+
+			for (int i = 0; i < comment.comments; i++)
+			{
+				int length = comment.comment_lengths[i];
+				string tag = encoder.GetString(comment.user_comments[i].Buffer, comment.user_comments[i].Offset, length);
+
+				int index = tag.IndexOf('=');
+				if (index > 0)
+					yield return (tag.Substring(0, index).ToUpper(), tag.Substring(index + 1));
 			}
 		}
 
@@ -565,17 +677,22 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 
 			while (count > 0)
 			{
-				int todo = Math.Min(count, InputBufSize);
-				int done = reader.ReadSamples(inputBuffer, 0, todo);
-				if (done == 0)
+				int done = vorbisFile.Ov_Read_Float(out Pointer<float>[] buffer, count / channels, out _);
+				if (done == (int)VorbisError.Hole)
+					continue;
+
+				if (done <= 0)
 					break;
 
 				// Convert the floats into 32-bit integers
 				for (int i = 0; i < done; i++)
-					outputBuffer[offset++] = (int)(inputBuffer[i] * 2147483647.0f);
+				{
+					for (int j = 0; j < channels; j++)
+						outputBuffer[offset++] = (int)(buffer[j][i] * 2147483647.0f);
+				}
 
-				count -= done;
-				total += done;
+				count -= done * channels;
+				total += done * channels;
 			}
 
 			return total;

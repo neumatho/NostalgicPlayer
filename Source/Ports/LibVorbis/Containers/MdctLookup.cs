@@ -4,25 +4,22 @@
 /* information.                                                               */
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.Ports.LibVorbis.Interfaces;
 
-namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
+namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class OggPack_Buffer
+	internal class MdctLookup : IVorbisLookTransform
 	{
-		/// <summary></summary>
-		public c_long EndByte;
-		/// <summary></summary>
-		public c_int EndBit;
+		public c_int n;
+		public c_int log2n;
 
-		/// <summary></summary>
-		public Pointer<byte> Buffer;
-		/// <summary></summary>
-		public Pointer<byte> Ptr;
-		/// <summary></summary>
-		public c_long Storage;
+		public Pointer<Data_Type> trig;
+		public c_int[] bitrev;
+
+		public Data_Type scale;
 
 		/********************************************************************/
 		/// <summary>
@@ -31,12 +28,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 		/********************************************************************/
 		public void Clear()
 		{
-			EndByte = 0;
-			EndBit = 0;
-
-			Buffer.SetToNull();
-			Ptr.SetToNull();
-			Storage = 0;
+			n = 0;
+			log2n = 0;
+			trig.SetToNull();
+			bitrev = null;
+			scale = 0;
 		}
 	}
 }

@@ -3,40 +3,25 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using System;
+using System.Runtime.CompilerServices;
 
-namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
+namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class OggPack_Buffer
+	internal static class Os
 	{
-		/// <summary></summary>
-		public c_long EndByte;
-		/// <summary></summary>
-		public c_int EndBit;
-
-		/// <summary></summary>
-		public Pointer<byte> Buffer;
-		/// <summary></summary>
-		public Pointer<byte> Ptr;
-		/// <summary></summary>
-		public c_long Storage;
-
 		/********************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Clear()
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static c_double Rint(c_double x)
 		{
-			EndByte = 0;
-			EndBit = 0;
-
-			Buffer.SetToNull();
-			Ptr.SetToNull();
-			Storage = 0;
+			return Math.Floor(x + 0.5f);
 		}
 	}
 }

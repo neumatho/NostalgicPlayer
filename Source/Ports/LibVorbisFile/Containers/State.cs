@@ -3,40 +3,22 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
-
-namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
+namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile.Containers
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class OggPack_Buffer
+	internal enum State
 	{
 		/// <summary></summary>
-		public c_long EndByte;
+		NotOpen = 0,
 		/// <summary></summary>
-		public c_int EndBit;
-
+		PartOpen = 1,
 		/// <summary></summary>
-		public Pointer<byte> Buffer;
+		Opened = 2,
 		/// <summary></summary>
-		public Pointer<byte> Ptr;
+		StreamSet = 3,
 		/// <summary></summary>
-		public c_long Storage;
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		public void Clear()
-		{
-			EndByte = 0;
-			EndBit = 0;
-
-			Buffer.SetToNull();
-			Ptr.SetToNull();
-			Storage = 0;
-		}
+		InitSet = 4
 	}
 }

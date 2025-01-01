@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>Polycode.NostalgicPlayer.Ports.LibVorbis</RootNamespace>
+    <Authors>Thomas Neumann</Authors>
+    <Company>Polycode</Company>
+    <Product>NostalgicPlayer</Product>
+    <Description>This is a port of the libvorbis library created by Xiph.org Foundation</Description>
+    <Platforms>AnyCPU</Platforms>
+    <Version>1.3.7</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\LibVorbis.xml</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\LibVorbis.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
+    <ProjectReference Include="..\LibOgg\LibOgg.csproj" />
+  </ItemGroup>
+
+</Project>

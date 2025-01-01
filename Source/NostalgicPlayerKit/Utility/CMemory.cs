@@ -136,7 +136,8 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void MemMove<T>(Pointer<T> dest, Pointer<T> source, int length)
 		{
-			Array.Copy(source.Buffer, source.Offset, dest.Buffer, dest.Offset, length);
+			if (length > 0)
+				Array.Copy(source.Buffer, source.Offset, dest.Buffer, dest.Offset, length);
 		}
 
 
@@ -149,7 +150,8 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void MemCpy<T>(Pointer<T> dest, Pointer<T> source, int length)
 		{
-			Array.Copy(source.Buffer, source.Offset, dest.Buffer, dest.Offset, length);
+			if (length > 0)
+				Array.Copy(source.Buffer, source.Offset, dest.Buffer, dest.Offset, length);
 		}
 
 
@@ -162,7 +164,8 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static void MemCpy<T>(T[] dest, string str, int length)
 		{
-			Array.Copy(Encoding.Latin1.GetBytes(str), dest, length);
+			if (length > 0)
+				Array.Copy(Encoding.Latin1.GetBytes(str), dest, length);
 		}
 
 

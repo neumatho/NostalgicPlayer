@@ -5,24 +5,17 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.Utility;
 
-namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
+namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class OggPack_Buffer
+	public class AllocChain
 	{
 		/// <summary></summary>
-		public c_long EndByte;
+		public Pointer<byte> ptr;
 		/// <summary></summary>
-		public c_int EndBit;
-
-		/// <summary></summary>
-		public Pointer<byte> Buffer;
-		/// <summary></summary>
-		public Pointer<byte> Ptr;
-		/// <summary></summary>
-		public c_long Storage;
+		public AllocChain next;
 
 		/********************************************************************/
 		/// <summary>
@@ -31,12 +24,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 		/********************************************************************/
 		public void Clear()
 		{
-			EndByte = 0;
-			EndBit = 0;
-
-			Buffer.SetToNull();
-			Ptr.SetToNull();
-			Storage = 0;
+			ptr.SetToNull();
+			next = null;
 		}
 	}
 }

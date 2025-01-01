@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 	/// It is almost similar to Span, except that with this, you can also use
 	/// negative indexes to retrieve the data, which is used by some C programs
 	/// </summary>
-	public struct Pointer<T> : IEquatable<Pointer<T>>, IDeepCloneable<Pointer<T>>
+	public struct Pointer<T> : IEquatable<Pointer<T>>, IComparable<Pointer<T>>, IDeepCloneable<Pointer<T>>
 	{
 		/********************************************************************/
 		/// <summary>
@@ -132,6 +132,18 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		public void Clear()
 		{
 			Array.Clear(Buffer, Offset, Length);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Clear some part of the array
+		/// </summary>
+		/********************************************************************/
+		public void Clear(int length)
+		{
+			Array.Clear(Buffer, Offset, length);
 		}
 
 
@@ -318,6 +330,58 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 		/********************************************************************/
 		/// <summary>
+		/// Compare two pointers
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static bool operator > (Pointer<T> ptr1, Pointer<T> ptr2)
+		{
+			return ptr1.CompareTo(ptr2) > 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Compare two pointers
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static bool operator < (Pointer<T> ptr1, Pointer<T> ptr2)
+		{
+			return ptr1.CompareTo(ptr2) < 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Compare two pointers
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static bool operator >= (Pointer<T> ptr1, Pointer<T> ptr2)
+		{
+			return ptr1.CompareTo(ptr2) >= 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Compare two pointers
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static bool operator <= (Pointer<T> ptr1, Pointer<T> ptr2)
+		{
+			return ptr1.CompareTo(ptr2) <= 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Convert an array to a pointer
 		/// </summary>
 		/********************************************************************/
@@ -354,6 +418,27 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		public bool Equals(Pointer<T> other)
 		{
 			return (Buffer == other.Buffer) && (Offset == other.Offset);
+		}
+		#endregion
+
+		#region IComparable implementation
+		/********************************************************************/
+		/// <summary>
+		/// Compare two pointers
+		/// </summary>
+		/********************************************************************/
+		public int CompareTo(Pointer<T> other)
+		{
+			if (other.IsNull)
+				return 1;
+
+			if (IsNull)
+				return -1;
+
+			if (Buffer != other.Buffer)
+				throw new ArgumentException("Both pointers need to use the same buffer");
+
+			return Offset.CompareTo(other.Offset);
 		}
 		#endregion
 

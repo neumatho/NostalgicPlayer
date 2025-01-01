@@ -3,40 +3,33 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
-
-namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
+namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class OggPack_Buffer
+	internal static class Window
 	{
-		/// <summary></summary>
-		public c_long EndByte;
-		/// <summary></summary>
-		public c_int EndBit;
-
-		/// <summary></summary>
-		public Pointer<byte> Buffer;
-		/// <summary></summary>
-		public Pointer<byte> Ptr;
-		/// <summary></summary>
-		public c_long Storage;
+		private static readonly c_float[][] vwin =
+		[
+			WindowTables.VWin64,
+			WindowTables.VWin128,
+			WindowTables.VWin256,
+			WindowTables.VWin512,
+			WindowTables.VWin1024,
+			WindowTables.VWin2048,
+			WindowTables.VWin4096,
+			WindowTables.VWin8192
+		];
 
 		/********************************************************************/
 		/// <summary>
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void Clear()
+		public static c_float[] Vorbis_Window_Get(c_int n)
 		{
-			EndByte = 0;
-			EndBit = 0;
-
-			Buffer.SetToNull();
-			Ptr.SetToNull();
-			Storage = 0;
+			return vwin[n];
 		}
 	}
 }

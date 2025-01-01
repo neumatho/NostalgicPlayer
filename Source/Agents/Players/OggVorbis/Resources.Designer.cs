@@ -61,10 +61,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Original player by Andrew Ward.
+        ///   Looks up a localized string similar to Based on libVorbis by Xiph.Org Foundation.
         ///NostalgicPlayer agent by Thomas Neumann.
         ///
-        ///Ogg Vorbis is a fully open, non-proprietary, patent-and-royalty-free, general-purpose compressed audio format for mid to high quality (8kHz-48.0kHz, 16+ bit, polyphonic) audio and music at fixed and variable bitrates from 16 to 128 kbps/channel. This places Vorbis in the same competitive class as audio representations such as MPEG-4 (AAC), and similar to, but higher performance than MPEG-1/2 audio layer 3, MPEG-4 audio (TwinVQ), WM [rest of string was truncated]&quot;;.
+        ///Ogg Vorbis is a fully open, non-proprietary, patent-and-royalty-free, general-purpose compressed audio format for mid to high quality (8kHz-48.0kHz, 16+ bit, polyphonic) audio and music at fixed and variable bitrates from 16 to 128 kbps/channel. This places Vorbis in the same competitive class as audio representations such as MPEG-4 (AAC), and similar to, but higher performance than MPEG-1/2 audio layer 3, MPEG-4 audio ( [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string IDS_DESCRIPTION {
             get {
@@ -82,7 +82,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Original player by Andrew Ward.
+        ///   Looks up a localized string similar to Based on libVorbis by Xiph.Org Foundation.
         ///NostalgicPlayer agent by Thomas Neumann.
         ///
         ///This player can play the audio format Ogg Vorbis. The format is an open standard / open source project created by Xiphophorus. The format is in the same familly as MP3 and WMA files, which means it&apos;s a packed sample format..
@@ -94,11 +94,128 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A required header packet was not properly formatted, contained illegal values, or was missing altogether.
+        /// </summary>
+        internal static string IDS_OGG_ERR_BAD_HEADER {
+            get {
+                return ResourceManager.GetString("IDS_OGG_ERR_BAD_HEADER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to We failed to find data we had seen before, or the bitstream structure was sufficiently malformed that seeking to the target destination was impossible.
+        /// </summary>
+        internal static string IDS_OGG_ERR_BAD_LINK {
+            get {
+                return ResourceManager.GetString("IDS_OGG_ERR_BAD_LINK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An audio packet failed to decode properly.
+        /// </summary>
+        internal static string IDS_OGG_ERR_BAD_PACKET {
+            get {
+                return ResourceManager.GetString("IDS_OGG_ERR_BAD_PACKET", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Internal library error was encountered.
+        /// </summary>
+        internal static string IDS_OGG_ERR_FAULT {
+            get {
+                return ResourceManager.GetString("IDS_OGG_ERR_FAULT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There was a hole in the page sequence numbers (e.g., a page was corrupt or missing).
+        /// </summary>
+        internal static string IDS_OGG_ERR_HOLE {
+            get {
+                return ResourceManager.GetString("IDS_OGG_ERR_HOLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Only mono and stereo samples are supported at the moment. You tried to play a sample that uses {0} channels..
         /// </summary>
         internal static string IDS_OGG_ERR_ILLEGAL_CHANNELS {
             get {
                 return ResourceManager.GetString("IDS_OGG_ERR_ILLEGAL_CHANNELS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The stream used a feature that is not implemented, such as an unsupported channel family.
+        /// </summary>
+        internal static string IDS_OGG_ERR_IMPL {
+            get {
+                return ResourceManager.GetString("IDS_OGG_ERR_IMPL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One or more parameters to a function were invalid.
+        /// </summary>
+        internal static string IDS_OGG_ERR_INVAL {
+            get {
+                return ResourceManager.GetString("IDS_OGG_ERR_INVAL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An operation that requires seeking was requested on an unseekable stream.
+        /// </summary>
+        internal static string IDS_OGG_ERR_NO_SEEK {
+            get {
+                return ResourceManager.GetString("IDS_OGG_ERR_NO_SEEK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The packet is not an audio packet.
+        /// </summary>
+        internal static string IDS_OGG_ERR_NOT_AUDIO {
+            get {
+                return ResourceManager.GetString("IDS_OGG_ERR_NOT_AUDIO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The stream contained a link that did not have any logical Vorbis streams in it.
+        /// </summary>
+        internal static string IDS_OGG_ERR_NOT_FORMAT {
+            get {
+                return ResourceManager.GetString("IDS_OGG_ERR_NOT_FORMAT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An underlying read, seek, or tell operation failed when it should have succeeded.
+        /// </summary>
+        internal static string IDS_OGG_ERR_READ {
+            get {
+                return ResourceManager.GetString("IDS_OGG_ERR_READ", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown error.
+        /// </summary>
+        internal static string IDS_OGG_ERR_UNKNOWN {
+            get {
+                return ResourceManager.GetString("IDS_OGG_ERR_UNKNOWN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The ID header contained an unrecognized version number.
+        /// </summary>
+        internal static string IDS_OGG_ERR_VERSION {
+            get {
+                return ResourceManager.GetString("IDS_OGG_ERR_VERSION", resourceCulture);
             }
         }
         
