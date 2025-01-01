@@ -688,7 +688,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 				for (int i = 0; i < done; i++)
 				{
 					for (int j = 0; j < channels; j++)
-						outputBuffer[offset++] = (int)(buffer[j][i] * 2147483647.0f);
+						outputBuffer[offset++] = Math.Clamp((int)(buffer[j][i] * 0x8000000), -0x8000000, 0x7ffffff) << 4;
 				}
 
 				count -= done * channels;

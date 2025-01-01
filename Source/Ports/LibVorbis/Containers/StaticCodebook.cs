@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 		/// <summary>
 		/// 
 		/// </summary>
-		public c_int allocedp;
+		public bool allocedp;
 
 		/********************************************************************/
 		/// <summary>
@@ -89,7 +89,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 			q_quant = 0;
 			q_sequencep = 0;
 			quantlist = null;
-			allocedp = 0;
+			allocedp = false;
 		}
 	}
 }

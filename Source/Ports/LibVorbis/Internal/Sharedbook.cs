@@ -360,7 +360,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/********************************************************************/
 		public static void Vorbis_Staticbook_Destroy(StaticCodebook b)
 		{
-			if (b.allocedp != 0)
+			if (b.allocedp)
 			{
 				if (b.quantlist != null)
 					b.quantlist = null;

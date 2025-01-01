@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		public static StaticCodebook Vorbis_Staticbook_Unpack(OggPack opb)
 		{
 			StaticCodebook s = new StaticCodebook();
-			s.allocedp = 1;
+			s.allocedp = true;
 
 			// Make sure alignment is correct
 			if (opb.Read(24) != 0x564342)
@@ -267,7 +267,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			{
 				ogg_uint32_t testword = Bitreverse((ogg_uint32_t)lok);
 
-				while ((hi -lo) > 1)
+				while ((hi - lo) > 1)
 				{
 					c_long p = (hi - lo) >> 1;
 					c_long test = book.codelist[lo + p] > testword ? 1 : 0;
@@ -406,6 +406,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 				for (c_int i = 0; i < n;)
 				{
 					c_int entry = Decode_Packed_Entry_Number(book, b);
+
 					if (entry == -1)
 						return -1;
 
@@ -442,6 +443,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 				for (c_long i = offset / ch; i < m;)
 				{
 					c_long entry = Decode_Packed_Entry_Number(book, b);
+
 					if (entry == -1)
 						return -1;
 
