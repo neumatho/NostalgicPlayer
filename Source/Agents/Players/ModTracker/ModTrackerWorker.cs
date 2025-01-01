@@ -1085,16 +1085,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 								// This check has been uncommented, because it is not very
 								// secure way, e.g. Klisje Paa Klisje was wrongly detected
 								// as ProTracker, which it isn't
-/*									case Effect.SetSpeed:
+								//
+								// Note 2: Reintroduced this check again, but changed the
+								// speed check is over 125 instead of 31. This will fix
+								// Santa's Workchip, but some modules which was detected
+								// as NoiseTracker will now become ProTracker
+								case Effect.SetSpeed:
 								{
-									if (d > 31)
+									if ((d > 125) && (d < 255))
 									{
 										retVal = ModuleType.ProTracker;
 										goto stopLoop;
 									}
 									break;
 								}
-*/
+
 								case Effect.ExtraEffect:
 								{
 									if (d >= 16)
