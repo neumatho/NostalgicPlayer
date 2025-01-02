@@ -8,9 +8,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using NVorbis;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.Ports.LibVorbis;
+using Polycode.NostalgicPlayer.Ports.LibVorbis.Containers;
+using Polycode.NostalgicPlayer.Ports.LibVorbisFile;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Format;
@@ -1103,41 +1105,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if ((f.Hio_Error() != 0) || (f.Hio_Read(data, 1, (size_t)len - 4) != (size_t)(len - 4)))
 				return -1;
 
-			c_int n;
-			float[] decodedBuffer;
 			uint8[] pcm;
 
-			try
-			{
-				using (VorbisReader vorbis = new VorbisReader(new MemoryStream(data)))
-				{
-					decodedBuffer = new float[vorbis.TotalSamples];
+			c_int n = Vorbis_Decode_Memory(data, len, out c_int ch, out c_int _, out int16[] pcm16);
 
-					n = vorbis.ReadSamples(decodedBuffer);
-					if ((n != vorbis.TotalSamples) || (vorbis.Channels != 1))
-						return -1;
-				}
-			}
-			catch (Exception)
-			{
+			if ((n < 0) || (ch != 1))
 				return -1;
-			}
 
 			if ((xxs.Flg & Xmp_Sample_Flag._16Bit) == 0)
 			{
 				pcm = new uint8[n];
-				Span<int8> pcm8 = MemoryMarshal.Cast<uint8, int8>(pcm);
 
 				for (c_int i = 0; i < n; i++)
-					pcm8[i] = (int8)((int16)(decodedBuffer[i] * 32767.0f) >> 8);
+					pcm[i] = (uint8)(pcm16[i] >> 8);
 			}
 			else
 			{
 				pcm = new uint8[n * 2];
-				Span<int16> pcm16 = MemoryMarshal.Cast<uint8, int16>(pcm);
-
-				for (c_int i = 0; i < n; i++)
-					pcm16[i] = (int16)(decodedBuffer[i] * 32767.0f);
+				pcm16.CopyTo(MemoryMarshal.Cast<uint8, int16>(pcm));
 			}
 
 			if ((xxs.Flg & Xmp_Sample_Flag.Stereo) != 0)
@@ -1558,6 +1543,65 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			}
 
 			return Format.Xm;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private c_int Vorbis_Decode_Memory(uint8[] data, c_int len, out c_int ch, out c_int rate, out int16[] decodedBuffer)
+		{
+			VorbisError result = VorbisFile.Ov_Open(new MemoryStream(data), false, out VorbisFile vorbisFile, null, 0);
+			if (result != VorbisError.Ok)
+			{
+				ch = 0;
+				rate = 0;
+				decodedBuffer = null;
+
+				return -1;
+			}
+
+			long todo = vorbisFile.Ov_Pcm_Total(-1);
+
+			VorbisInfo info = vorbisFile.Ov_Info(-1);
+			ch = info.channels;
+			rate = info.rate;
+
+			if (ch != 1)
+			{
+				decodedBuffer = null;
+
+				return -1;
+			}
+
+			decodedBuffer = new int16[todo];
+
+			int offset = 0;
+			int total = 0;
+
+			while (todo > 0)
+			{
+				int done = vorbisFile.Ov_Read_Float(out Pointer<c_float>[] buffer, (c_int)todo, out _);
+				if (done == (int)VorbisError.Hole)
+					continue;
+
+				if (done <= 0)
+					break;
+
+				// Copy the samples into one buffer
+				for (int i = 0; i < done; i++)
+					decodedBuffer[offset++] = (short)Math.Clamp(buffer[0][i] * 32767, -32768, 32767);
+
+				todo -= done;
+				total += done;
+			}
+
+			vorbisFile.Ov_Clear();
+
+			return total;
 		}
 		#endregion
 	}
