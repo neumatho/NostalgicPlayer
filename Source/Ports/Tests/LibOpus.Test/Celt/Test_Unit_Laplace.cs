@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt;
 
@@ -25,7 +26,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test.Celt
 		public void Test_Laplace()
 		{
 			c_int[] val = new c_int[10000], decay = new c_int[10000];
-			Pointer<byte> ptr = CMemory.MAlloc<byte>(Data_Size);
+			CPointer<byte> ptr = CMemory.MAlloc<byte>(Data_Size);
 
 			EntEnc.Ec_Enc_Init(out Ec_Enc enc, ptr, Data_Size);
 

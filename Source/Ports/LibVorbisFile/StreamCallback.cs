@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.IO;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 {
@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static size_t Read(Pointer<byte> ptr, size_t size, size_t nmemb, object datasource)
+		public static size_t Read(CPointer<byte> ptr, size_t size, size_t nmemb, object datasource)
 		{
 			// Check for empty read
 			int toRead = (int)(size * nmemb);

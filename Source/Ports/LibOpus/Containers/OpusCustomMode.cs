@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 {
@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 		/// <summary>
 		/// Definition for each "pseudo-critical band"
 		/// </summary>
-		public Pointer<opus_int16> eBands;
+		public CPointer<opus_int16> eBands;
 
 		public c_int maxLM;
 		public c_int nbShortMdcts;
@@ -36,10 +36,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 		/// <summary>
 		/// Number of bits in each band for several rates
 		/// </summary>
-		public Pointer<byte> allocVectors;
-		public Pointer<opus_int16> logN;
+		public CPointer<byte> allocVectors;
+		public CPointer<opus_int16> logN;
 
-		public Pointer<opus_val16> window;
+		public CPointer<opus_val16> window;
 		public Mdct_Lookup mdct = new Mdct_Lookup();
 		public PulseCache cache = new PulseCache();
 	}

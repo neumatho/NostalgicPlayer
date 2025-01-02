@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
@@ -141,7 +141,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static T Matrix_Ptr<T>(Pointer<T> Matrix_base_adr, opus_int row, opus_int column, opus_int N)
+		public static T Matrix_Ptr<T>(CPointer<T> Matrix_base_adr, opus_int row, opus_int column, opus_int N)
 		{
 			return Matrix_base_adr[row * N + column];
 		}

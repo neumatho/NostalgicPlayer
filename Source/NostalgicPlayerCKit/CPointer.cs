@@ -6,8 +6,9 @@
 using System;
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
-namespace Polycode.NostalgicPlayer.Kit.Utility
+namespace Polycode.NostalgicPlayer.CKit
 {
 	/// <summary>
 	/// This holds a buffer and a start offset. Can be used in C ports, where
@@ -17,14 +18,14 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 	/// It is almost similar to Span, except that with this, you can also use
 	/// negative indexes to retrieve the data, which is used by some C programs
 	/// </summary>
-	public struct Pointer<T> : IEquatable<Pointer<T>>, IComparable<Pointer<T>>, IDeepCloneable<Pointer<T>>
+	public struct CPointer<T> : IEquatable<CPointer<T>>, IComparable<CPointer<T>>, IDeepCloneable<CPointer<T>>
 	{
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Pointer(T[] buffer, int offset)
+		public CPointer(T[] buffer, int offset)
 		{
 			Buffer = buffer;
 			Offset = offset;
@@ -37,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Pointer(T[] buffer) : this(buffer, 0)
+		public CPointer(T[] buffer) : this(buffer, 0)
 		{
 		}
 
@@ -48,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Pointer(int length) : this(new T[length], 0)
+		public CPointer(int length) : this(new T[length], 0)
 		{
 		}
 
@@ -208,9 +209,9 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Pointer<T> operator + (Pointer<T> ptr, int increment)
+		public static CPointer<T> operator + (CPointer<T> ptr, int increment)
 		{
-			return new Pointer<T>(ptr.Buffer, ptr.Offset + increment);
+			return new CPointer<T>(ptr.Buffer, ptr.Offset + increment);
 		}
 
 
@@ -222,9 +223,9 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Pointer<T> operator + (Pointer<T> ptr, uint increment)
+		public static CPointer<T> operator + (CPointer<T> ptr, uint increment)
 		{
-			return new Pointer<T>(ptr.Buffer, ptr.Offset + (int)increment);
+			return new CPointer<T>(ptr.Buffer, ptr.Offset + (int)increment);
 		}
 
 
@@ -236,9 +237,9 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Pointer<T> operator - (Pointer<T> ptr, int decrement)
+		public static CPointer<T> operator - (CPointer<T> ptr, int decrement)
 		{
-			return new Pointer<T>(ptr.Buffer, ptr.Offset - decrement);
+			return new CPointer<T>(ptr.Buffer, ptr.Offset - decrement);
 		}
 
 
@@ -250,9 +251,9 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Pointer<T> operator - (Pointer<T> ptr, uint decrement)
+		public static CPointer<T> operator - (CPointer<T> ptr, uint decrement)
 		{
-			return new Pointer<T>(ptr.Buffer, ptr.Offset - (int)decrement);
+			return new CPointer<T>(ptr.Buffer, ptr.Offset - (int)decrement);
 		}
 
 
@@ -264,7 +265,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Pointer<T> operator ++ (Pointer<T> ptr)
+		public static CPointer<T> operator ++ (CPointer<T> ptr)
 		{
 			return ptr + 1;
 		}
@@ -278,7 +279,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Pointer<T> operator -- (Pointer<T> ptr)
+		public static CPointer<T> operator -- (CPointer<T> ptr)
 		{
 			return ptr - 1;
 		}
@@ -292,7 +293,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static int operator - (Pointer<T> ptr1, Pointer<T> ptr2)
+		public static int operator - (CPointer<T> ptr1, CPointer<T> ptr2)
 		{
 			if (ptr1.Buffer != ptr2.Buffer)
 				throw new ArgumentException("Both pointers need to use the same buffer");
@@ -308,7 +309,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool operator == (Pointer<T> ptr1, Pointer<T> ptr2)
+		public static bool operator == (CPointer<T> ptr1, CPointer<T> ptr2)
 		{
 			return ptr1.Equals(ptr2);
 		}
@@ -321,7 +322,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool operator != (Pointer<T> ptr1, Pointer<T> ptr2)
+		public static bool operator != (CPointer<T> ptr1, CPointer<T> ptr2)
 		{
 			return !ptr1.Equals(ptr2);
 		}
@@ -334,7 +335,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool operator > (Pointer<T> ptr1, Pointer<T> ptr2)
+		public static bool operator > (CPointer<T> ptr1, CPointer<T> ptr2)
 		{
 			return ptr1.CompareTo(ptr2) > 0;
 		}
@@ -347,7 +348,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool operator < (Pointer<T> ptr1, Pointer<T> ptr2)
+		public static bool operator < (CPointer<T> ptr1, CPointer<T> ptr2)
 		{
 			return ptr1.CompareTo(ptr2) < 0;
 		}
@@ -360,7 +361,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool operator >= (Pointer<T> ptr1, Pointer<T> ptr2)
+		public static bool operator >= (CPointer<T> ptr1, CPointer<T> ptr2)
 		{
 			return ptr1.CompareTo(ptr2) >= 0;
 		}
@@ -373,7 +374,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static bool operator <= (Pointer<T> ptr1, Pointer<T> ptr2)
+		public static bool operator <= (CPointer<T> ptr1, CPointer<T> ptr2)
 		{
 			return ptr1.CompareTo(ptr2) <= 0;
 		}
@@ -386,9 +387,9 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static implicit operator Pointer<T>(T[] array)
+		public static implicit operator CPointer<T>(T[] array)
 		{
-			return new Pointer<T>(array);
+			return new CPointer<T>(array);
 		}
 
 
@@ -415,7 +416,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// Compare two pointers
 		/// </summary>
 		/********************************************************************/
-		public bool Equals(Pointer<T> other)
+		public bool Equals(CPointer<T> other)
 		{
 			return (Buffer == other.Buffer) && (Offset == other.Offset);
 		}
@@ -427,7 +428,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// Compare two pointers
 		/// </summary>
 		/********************************************************************/
-		public int CompareTo(Pointer<T> other)
+		public int CompareTo(CPointer<T> other)
 		{
 			if (other.IsNull)
 				return 1;
@@ -448,12 +449,12 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// Clone the buffer and pointer
 		/// </summary>
 		/********************************************************************/
-		public Pointer<T> MakeDeepClone()
+		public CPointer<T> MakeDeepClone()
 		{
 			if (IsNull)
 				return null;
 
-			return new Pointer<T>(ArrayHelper.CloneArray(Buffer), Offset);
+			return new CPointer<T>(ArrayHelper.CloneArray(Buffer), Offset);
 		}
 		#endregion
 	}

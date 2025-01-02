@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
@@ -18,15 +18,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// Core decoder. Performs inverse NSQ operation LTP + LPC
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_Decode_Core(Silk_Decoder_State psDec, Silk_Decoder_Control psDecCtrl, Pointer<opus_int16> xq, Pointer<opus_int16> pulses, c_int arch)
+		public static void Silk_Decode_Core(Silk_Decoder_State psDec, Silk_Decoder_Control psDecCtrl, CPointer<opus_int16> xq, CPointer<opus_int16> pulses, c_int arch)
 		{
 			opus_int lag = 0;
 			opus_int16[] A_Q12_tmp = new opus_int16[Constants.Max_Lpc_Order];
 
-			Pointer<opus_int16> sLTP = new Pointer<opus_int16>(psDec.ltp_mem_length);
-			Pointer<opus_int32> sLTP_Q15 = new Pointer<opus_int32>(psDec.ltp_mem_length + psDec.frame_length);
+			CPointer<opus_int16> sLTP = new CPointer<opus_int16>(psDec.ltp_mem_length);
+			CPointer<opus_int32> sLTP_Q15 = new CPointer<opus_int32>(psDec.ltp_mem_length + psDec.frame_length);
 			opus_int32[] res_Q14 = new opus_int32[psDec.subfr_length];
-			Pointer<opus_int32> sLPC_Q14 = new Pointer<opus_int32>(psDec.subfr_length + Constants.Max_Lpc_Order);
+			CPointer<opus_int32> sLPC_Q14 = new CPointer<opus_int32>(psDec.subfr_length + Constants.Max_Lpc_Order);
 
 			opus_int32 offset_Q10 = Tables_Other.Silk_Quantization_Offsets_Q10[(int)psDec.indices.signalType >> 1][psDec.indices.quantOffsetType];
 
@@ -64,20 +64,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 			// Copy LPC state
 			SigProc_Fix.Silk_MemCpy(sLPC_Q14, psDec.sLpc_Q14_buf, Constants.Max_Lpc_Order);
 
-			Pointer<opus_int32> pexc_Q14 = psDec.exc_Q14;
-			Pointer<opus_int16> pxq = xq;
+			CPointer<opus_int32> pexc_Q14 = psDec.exc_Q14;
+			CPointer<opus_int16> pxq = xq;
 			opus_int sLTP_buf_idx = psDec.ltp_mem_length;
 
 			// Loop over subframes
 			for (opus_int k = 0; k < psDec.nb_subfr; k++)
 			{
-				Pointer<opus_int32> pres_Q14 = res_Q14;
-				Pointer<opus_int16> A_Q12 = psDecCtrl.PredCoef_Q12[k >> 1];
+				CPointer<opus_int32> pres_Q14 = res_Q14;
+				CPointer<opus_int16> A_Q12 = psDecCtrl.PredCoef_Q12[k >> 1];
 
 				// Preload LPC coeficients to array on stack. Gives small performance gain
 				SigProc_Fix.Silk_MemCpy(A_Q12_tmp, A_Q12, psDec.LPC_Order);
 
-				Pointer<opus_int16> B_Q14 = psDecCtrl.LTPCoef_Q14 + k * Constants.Ltp_Order;
+				CPointer<opus_int16> B_Q14 = psDecCtrl.LTPCoef_Q14 + k * Constants.Ltp_Order;
 				SignalType signalType = psDec.indices.signalType;
 
 				opus_int32 Gain_Q10 = SigProc_Fix.Silk_RSHIFT(psDecCtrl.Gains_Q16[k], 6);
@@ -151,7 +151,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 				if (signalType == SignalType.Voiced)
 				{
 					// Set up pointer
-					Pointer<opus_int32> pred_lag_ptr = sLTP_Q15 + sLTP_buf_idx - lag + Constants.Ltp_Order / 2;
+					CPointer<opus_int32> pred_lag_ptr = sLTP_Q15 + sLTP_buf_idx - lag + Constants.Ltp_Order / 2;
 
 					for (opus_int i = 0; i < psDec.subfr_length; i++)
 					{

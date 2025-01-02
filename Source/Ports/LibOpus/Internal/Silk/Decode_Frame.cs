@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static SilkError Silk_Decode_Frame(Silk_Decoder_State psDec, Ec_Dec psRangeDec, Pointer<opus_int16> pOut, out opus_int32 pN, LostFlag lostFlag, CodeType condCoding, c_int arch)
+		public static SilkError Silk_Decode_Frame(Silk_Decoder_State psDec, Ec_Dec psRangeDec, CPointer<opus_int16> pOut, out opus_int32 pN, LostFlag lostFlag, CodeType condCoding, c_int arch)
 		{
 			SilkError ret = SilkError.No_Error;
 

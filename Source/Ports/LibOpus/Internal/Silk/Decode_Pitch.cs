@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
@@ -18,10 +18,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// Pitch analyser function
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_Decode_Pitch(opus_int16 lagIndex, opus_int8 contourIndex, Pointer<opus_int> pitch_lags, opus_int Fs_kHz, opus_int nb_subfr)
+		public static void Silk_Decode_Pitch(opus_int16 lagIndex, opus_int8 contourIndex, CPointer<opus_int> pitch_lags, opus_int Fs_kHz, opus_int nb_subfr)
 		{
 			opus_int cbk_size;
-			Pointer<opus_int8> Lag_CB_ptr;
+			CPointer<opus_int8> Lag_CB_ptr;
 
 			if (Fs_kHz == 8)
 			{

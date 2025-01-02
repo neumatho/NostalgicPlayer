@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
@@ -78,7 +78,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Comb_Filter_Const_C(Pointer<opus_val32> y, Pointer<opus_val32> x, c_int T, c_int N, opus_val16 g10, opus_val16 g11, opus_val16 g12)
+		public static void Comb_Filter_Const_C(CPointer<opus_val32> y, CPointer<opus_val32> x, c_int T, c_int N, opus_val16 g10, opus_val16 g11, opus_val16 g12)
 		{
 			opus_val32 x4 = x[-T - 2];
 			opus_val32 x3 = x[-T - 1];
@@ -108,7 +108,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Comb_Filter(Pointer<opus_val32> y, Pointer<opus_val32> x, c_int T0, c_int T1, c_int N, opus_val16 g0, opus_val16 g1, c_int tapset0, c_int tapset1, Pointer<opus_val16> window, c_int overlap, c_int arch)
+		public static void Comb_Filter(CPointer<opus_val32> y, CPointer<opus_val32> x, c_int T0, c_int T1, c_int N, opus_val16 g0, opus_val16 g1, c_int tapset0, c_int tapset1, CPointer<opus_val16> window, c_int overlap, c_int arch)
 		{
 			if ((g0 == 0) && (g1 == 0))
 			{
@@ -179,7 +179,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Init_Caps(CeltMode m, Pointer<c_int> cap, c_int LM, c_int C)
+		public static void Init_Caps(CeltMode m, CPointer<c_int> cap, c_int LM, c_int C)
 		{
 			for (c_int i = 0; i < m.nbEBands; i++)
 			{

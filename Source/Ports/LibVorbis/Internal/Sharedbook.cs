@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Containers;
 
@@ -19,9 +19,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		private const int VQ_FMAN = 21;
 		private const int VQ_FEXP_BIAS = 768;	// Bias toward values smaller than 1
 
-		private class Sort32a : IComparer<Pointer<ogg_uint32_t>>
+		private class Sort32a : IComparer<CPointer<ogg_uint32_t>>
 		{
-			public int Compare(Pointer<ogg_uint32_t> a, Pointer<ogg_uint32_t> b)
+			public int Compare(CPointer<ogg_uint32_t> a, CPointer<ogg_uint32_t> b)
 			{
 				return (a[0] > b[0] ? 1 : 0) - (a[0] < b[0] ? 1 : 0);
 			}
@@ -81,11 +81,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// codewords first. Extended to handle unused entries (length 0)
 		/// </summary>
 		/********************************************************************/
-		private static Pointer<ogg_uint32_t> Make_Words(Pointer<byte> l, c_long n, c_long sparsecount)
+		private static CPointer<ogg_uint32_t> Make_Words(CPointer<byte> l, c_long n, c_long sparsecount)
 		{
 			c_long i, count = 0;
 			ogg_uint32_t[] marker = new ogg_uint32_t[33];
-			Pointer<ogg_uint32_t> r = Memory.Ogg_MAlloc<ogg_uint32_t>((size_t)(sparsecount != 0 ? sparsecount : n));
+			CPointer<ogg_uint32_t> r = Memory.Ogg_MAlloc<ogg_uint32_t>((size_t)(sparsecount != 0 ? sparsecount : n));
 
 			for (i = 0; i < n; i++)
 			{
@@ -261,7 +261,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// unpacked
 		/// </summary>
 		/********************************************************************/
-		private static Pointer<c_float> Book_Unquantize(StaticCodebook b, c_int n, Pointer<c_int> sparsemap)
+		private static CPointer<c_float> Book_Unquantize(StaticCodebook b, c_int n, CPointer<c_int> sparsemap)
 		{
 			c_long count = 0;
 
@@ -269,7 +269,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			{
 				c_float mindel = Float32_Unpack(b.q_min);
 				c_float delta = Float32_Unpack(b.q_delta);
-				Pointer<c_float> r = Memory.Ogg_CAlloc<c_float>((size_t)(n * b.dim));
+				CPointer<c_float> r = Memory.Ogg_CAlloc<c_float>((size_t)(n * b.dim));
 
 				// maptype 1 and 2 both use a quantized value vector, but
 				// different sizes
@@ -454,8 +454,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 				// by sorted bitreversed codeword to allow treeless decode
 
 				// Perform sort
-				Pointer<ogg_uint32_t> codes = Make_Words(s.lengthlist, s.entries, c.used_entries);
-				Pointer<ogg_uint32_t>[] codep = new Pointer<ogg_uint32_t>[n];
+				CPointer<ogg_uint32_t> codes = Make_Words(s.lengthlist, s.entries, c.used_entries);
+				CPointer<ogg_uint32_t>[] codep = new CPointer<ogg_uint32_t>[n];
 
 				if (codes == null)
 					goto ErrOut;

@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
@@ -22,9 +22,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Exp_Rotation1(Pointer<celt_norm> X, c_int len, c_int stride, opus_val16 c, opus_val16 s)
+		private static void Exp_Rotation1(CPointer<celt_norm> X, c_int len, c_int stride, opus_val16 c, opus_val16 s)
 		{
-			Pointer<celt_norm> Xptr = X;
+			CPointer<celt_norm> Xptr = X;
 
 			opus_val16 ms = Arch.NEG16(s);
 
@@ -56,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Exp_Rotation(Pointer<celt_norm> X, c_int len, c_int dir, c_int stride, c_int K, Spread spread)
+		public static void Exp_Rotation(CPointer<celt_norm> X, c_int len, c_int dir, c_int stride, c_int K, Spread spread)
 		{
 			c_int stride2 = 0;
 
@@ -113,7 +113,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// the pitch
 		/// </summary>
 		/********************************************************************/
-		private static void Normalise_Residual(Pointer<c_int> iy, Pointer<celt_norm> X, c_int N, opus_val32 Ryy, opus_val16 gain)
+		private static void Normalise_Residual(CPointer<c_int> iy, CPointer<celt_norm> X, c_int N, opus_val32 Ryy, opus_val16 gain)
 		{
 			opus_val32 t = Arch.VSHR32(Ryy, 0/*2 * (k - 7)*/);
 			opus_val16 g = Arch.MULT16_16_P15(MathOps.Celt_Rsqrt_Norm(t), gain);
@@ -133,7 +133,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_uint Extract_Collapse_Mask(Pointer<c_int> iy, c_int N, c_int B)
+		private static c_uint Extract_Collapse_Mask(CPointer<c_int> iy, c_int N, c_int B)
 		{
 			if (B <= 1)
 				return 1;
@@ -169,7 +169,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static opus_val16 Op_Pvq_Search_C(Pointer<celt_norm> X, Pointer<c_int> iy, c_int K, c_int N, c_int arch)
+		private static opus_val16 Op_Pvq_Search_C(CPointer<celt_norm> X, CPointer<c_int> iy, c_int K, c_int N, c_int arch)
 		{
 			celt_norm[] y = new celt_norm[N];
 			c_int[] signx = new c_int[N];
@@ -326,7 +326,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static opus_val16 Op_Pvq_Search(Pointer<celt_norm> X, Pointer<c_int> iy, c_int K, c_int N, c_int arch)
+		public static opus_val16 Op_Pvq_Search(CPointer<celt_norm> X, CPointer<c_int> iy, c_int K, c_int N, c_int arch)
 		{
 			return Op_Pvq_Search_C(X, iy, K, N, arch);
 		}
@@ -338,7 +338,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_uint Alg_Quant(Pointer<celt_norm> X, c_int N, c_int K, Spread spread, c_int B, Ec_Enc enc, opus_val16 gain, bool resynth, c_int arch)
+		public static c_uint Alg_Quant(CPointer<celt_norm> X, c_int N, c_int K, Spread spread, c_int B, Ec_Enc enc, opus_val16 gain, bool resynth, c_int arch)
 		{
 			// Covers vectorization by up to 4
 			c_int[] iy = new c_int[N + 3];
@@ -368,7 +368,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// to produce the final normalised signal in the current band
 		/// </summary>
 		/********************************************************************/
-		public static c_uint Alg_Unquant(Pointer<celt_norm> X, c_int N, c_int K, Spread spread, c_int B, Ec_Dec dec, opus_val16 gain)
+		public static c_uint Alg_Unquant(CPointer<celt_norm> X, c_int N, c_int K, Spread spread, c_int B, Ec_Dec dec, opus_val16 gain)
 		{
 			c_int[] iy = new c_int[N];
 
@@ -388,13 +388,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Renormalise_Vector(Pointer<celt_norm> X, c_int N, opus_val16 gain, c_int arch)
+		public static void Renormalise_Vector(CPointer<celt_norm> X, c_int N, opus_val16 gain, c_int arch)
 		{
 			opus_val32 E = Constants.Epsilon + Pitch.Celt_Inner_Prod(X, X, N, arch);
 			opus_val32 t = Arch.VSHR32(E, 0/*2 * (k - 7)*/);
 			opus_val16 g = Arch.MULT16_16_P15(MathOps.Celt_Rsqrt_Norm(t), gain);
 
-			Pointer<celt_norm> xptr = X;
+			CPointer<celt_norm> xptr = X;
 			for (c_int i = 0; i < N; i++)
 				xptr[0, 1] = Arch.EXTRACT16(Arch.PSHR32(Arch.MULT16_16(g, xptr[0]), 0/*k + 1*/));
 		}
@@ -406,7 +406,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Stereo_Itheta(Pointer<celt_norm> X, Pointer<celt_norm> Y, bool stereo, c_int N, c_int arch)
+		public static c_int Stereo_Itheta(CPointer<celt_norm> X, CPointer<celt_norm> Y, bool stereo, c_int N, c_int arch)
 		{
 			opus_val32 Emid = Constants.Epsilon;
 			opus_val32 Eside = Constants.Epsilon;

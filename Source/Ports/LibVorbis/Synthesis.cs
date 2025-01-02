@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibOgg.Containers;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Containers;
@@ -79,7 +79,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 
 			// Alloc pcm passback storage
 			vb.pcmend = ci.blocksizes[vb.W];
-			vb.pcm = new Pointer<c_float>[vi.channels];
+			vb.pcm = new CPointer<c_float>[vi.channels];
 
 			for (c_int i = 0; i < vi.channels; i++)
 				vb.pcm[i] = Block.Vorbis_Block_Alloc<c_float>(vb, vb.pcmend);

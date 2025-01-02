@@ -4,8 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.IO;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers
 {
@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers
 		/// <summary>
 		/// Reads up to _nbytes bytes of data from _stream
 		/// </summary>
-		public delegate c_int Op_Read_Func(object _stream, Pointer<byte> _ptr, c_int nbytes);
+		public delegate c_int Op_Read_Func(object _stream, CPointer<byte> _ptr, c_int nbytes);
 
 		/// <summary>
 		/// Sets the position indicator for _stream.

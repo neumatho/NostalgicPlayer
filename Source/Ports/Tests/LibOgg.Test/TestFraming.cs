@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibOgg.Containers;
 
@@ -564,7 +564,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 
 			{
 				// Build a bunch of pages for testing
-				Pointer<byte> data = Memory.Ogg_MAlloc<byte>(1024 * 1024);
+				CPointer<byte> data = Memory.Ogg_MAlloc<byte>(1024 * 1024);
 				c_int[] pl = [ 0, 1,1,98,4079, 1,1,2954,2057, 76,34,912,0,234,1000,1000, 1000,300,-1 ];
 				c_int inPtr = 0;
 				OggPage[] og = new OggPage[5];
@@ -917,7 +917,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 		/********************************************************************/
 		private void TestPack(int[] pl, int[][] headers, c_int byteSkip, c_int pageSkip, c_int packetSkip)
 		{
-			Pointer<byte> data = Memory.Ogg_MAlloc<byte>(1024 * 1024);		// For scripted test cases only
+			CPointer<byte> data = Memory.Ogg_MAlloc<byte>(1024 * 1024);		// For scripted test cases only
 			c_long inPtr = 0;
 			c_long outPtr = 0;
 			c_long dePtr = 0;
@@ -986,8 +986,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 
 						// Have a complete page; submit it to sync/decode
 						{
-							Pointer<byte> buf = oy.Buffer(og.Page.HeaderLen + og.Page.BodyLen);
-							Pointer<byte> next = buf;
+							CPointer<byte> buf = oy.Buffer(og.Page.HeaderLen + og.Page.BodyLen);
+							CPointer<byte> next = buf;
 
 							byteSkipCount += og.Page.HeaderLen;
 
@@ -1087,7 +1087,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void CheckPage(Pointer<byte> data, int[] header, OggPage og)
+		private void CheckPage(CPointer<byte> data, int[] header, OggPage og)
 		{
 			// Test data
 			for (c_long j = 0; j < og.Page.BodyLen; j++)
@@ -1159,7 +1159,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOgg.Test
 		/********************************************************************/
 		private void CopyPage(OggPage og)
 		{
-			Pointer<byte> temp = Memory.Ogg_MAlloc<byte>((size_t)og.Page.HeaderLen);
+			CPointer<byte> temp = Memory.Ogg_MAlloc<byte>((size_t)og.Page.HeaderLen);
 			CMemory.MemCpy(temp, og.Page.Header, og.Page.HeaderLen);
 			og.Page.Header = temp;
 

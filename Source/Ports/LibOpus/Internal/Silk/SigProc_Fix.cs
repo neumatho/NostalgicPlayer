@@ -3,10 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-
 using System;
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 {
@@ -46,7 +45,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Silk_MemCpy<T>(Pointer<T> dest, Pointer<T> src, int size)
+		public static void Silk_MemCpy<T>(CPointer<T> dest, CPointer<T> src, int size)
 		{
 			CMemory.MemCpy(dest, src, size);
 		}
@@ -72,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Silk_MemSet<T>(Pointer<T> ptr, T value, int length)
+		public static void Silk_MemSet<T>(CPointer<T> ptr, T value, int length)
 		{
 			CMemory.MemSet(ptr, value, length);
 		}
@@ -85,7 +84,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Silk_MemMove<T>(Pointer<T> dest, Pointer<T> src, int size)
+		public static void Silk_MemMove<T>(CPointer<T> dest, CPointer<T> src, int size)
 		{
 			CMemory.MemMove(dest, src, size);
 		}

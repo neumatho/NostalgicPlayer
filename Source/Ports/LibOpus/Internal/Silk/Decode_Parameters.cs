@@ -3,8 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
-using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 {
@@ -74,7 +74,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 				Decode_Pitch.Silk_Decode_Pitch(psDec.indices.lagIndex, psDec.indices.contourIndex, psDecCtrl.pitchL, psDec.fs_kHz, psDec.nb_subfr);
 
 				// Decode Codebook Index
-				Pointer<opus_int8> cbk_ptr_Q7 = Tables_LTP.Silk_LTP_Vq_Ptrs_Q7[psDec.indices.PERIndex];	// Set pointer to start of codebook
+				CPointer<opus_int8> cbk_ptr_Q7 = Tables_LTP.Silk_LTP_Vq_Ptrs_Q7[psDec.indices.PERIndex];	// Set pointer to start of codebook
 				opus_int Ix;
 
 				for (opus_int k = 0; k < psDec.nb_subfr; k++)

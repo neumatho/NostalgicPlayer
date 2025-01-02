@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void Silk_NLSF2A_Find_Poly(Pointer<opus_int32> _out, Pointer<opus_int32> cLSF, opus_int dd)
+		private static void Silk_NLSF2A_Find_Poly(CPointer<opus_int32> _out, CPointer<opus_int32> cLSF, opus_int dd)
 		{
 			_out[0] = SigProc_Fix.Silk_LSHIFT(1, QA);
 			_out[1] = -cLSF[0];
@@ -63,9 +63,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// spectral frequencies
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_NLSF2A(Pointer<opus_int16> a_Q12, Pointer<opus_int16> NLSF, opus_int d, c_int arch)
+		public static void Silk_NLSF2A(CPointer<opus_int16> a_Q12, CPointer<opus_int16> NLSF, opus_int d, c_int arch)
 		{
-			Pointer<opus_int32> cos_LSF_QA = new Pointer<opus_int32>(Constants.Silk_Max_Order_Lpc);
+			CPointer<opus_int32> cos_LSF_QA = new CPointer<opus_int32>(Constants.Silk_Max_Order_Lpc);
 			opus_int32[] P = new opus_int32[Constants.Silk_Max_Order_Lpc / 2 + 1];
 			opus_int32[] Q = new opus_int32[Constants.Silk_Max_Order_Lpc / 2 + 1];
 			opus_int32[] a32_QA1 = new opus_int32[Constants.Silk_Max_Order_Lpc];

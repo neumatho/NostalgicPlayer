@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
@@ -20,13 +20,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static Pointer<opus_int16> Silk_Resampler_Private_IIR_FIR_INTERPOL(Pointer<opus_int16> _out, Pointer<opus_int16> buf, opus_int32 max_index_Q16, opus_int32 index_increment_Q16)
+		private static CPointer<opus_int16> Silk_Resampler_Private_IIR_FIR_INTERPOL(CPointer<opus_int16> _out, CPointer<opus_int16> buf, opus_int32 max_index_Q16, opus_int32 index_increment_Q16)
 		{
 			// Interpolate upsampled signal and store in output array
 			for (opus_int32 index_Q16 = 0; index_Q16 < max_index_Q16; index_Q16 += index_increment_Q16)
 			{
 				opus_int32 table_index = Macros.Silk_SMULWB(index_Q16 & 0xffff, 12);
-				Pointer<opus_int16> buf_ptr = buf + (index_Q16 >> 16);
+				CPointer<opus_int16> buf_ptr = buf + (index_Q16 >> 16);
 
 				opus_int32 res_Q15 = Macros.Silk_SMULBB(buf_ptr[0], Resampler_Rom.Silk_Resampler_Frac_FIR_12[table_index][0]);
 				res_Q15 = Macros.Silk_SMLABB(res_Q15, buf_ptr[1], Resampler_Rom.Silk_Resampler_Frac_FIR_12[table_index][1]);
@@ -51,11 +51,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// FIR interpolation
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_Resampler_Private_IIR_FIR(Silk_Resampler_State_Struct SS, Pointer<opus_int16> _out, Pointer<opus_int16> _in, opus_int32 inLen)
+		public static void Silk_Resampler_Private_IIR_FIR(Silk_Resampler_State_Struct SS, CPointer<opus_int16> _out, CPointer<opus_int16> _in, opus_int32 inLen)
 		{
 			Silk_Resampler_State_Struct S = SS;
 
-			Pointer<opus_int16> buf = new Pointer<opus_int16>(2 * S.batchSize + Constants.Resampler_Order_Fir_12);
+			CPointer<opus_int16> buf = new CPointer<opus_int16>(2 * S.batchSize + Constants.Resampler_Order_Fir_12);
 
 			// Copy buffered samples to start of buffer
 			SigProc_Fix.Silk_MemCpy_Span(buf.AsSpan(), S.sFIR.i16, Constants.Resampler_Order_Fir_12);

@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 {
@@ -13,8 +13,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 	internal class PulseCache
 	{
 		public c_int size;
-		public Pointer<opus_int16> index;
-		public Pointer<byte> bits;
-		public Pointer<byte> caps;
+		public CPointer<opus_int16> index;
+		public CPointer<byte> bits;
+		public CPointer<byte> caps;
 	}
 }

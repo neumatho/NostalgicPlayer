@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 		public c_int n;
 		public c_int log2n;
 
-		public Pointer<Data_Type> trig;
+		public CPointer<Data_Type> trig;
 		public c_int[] bitrev;
 
 		public Data_Type scale;

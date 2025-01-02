@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 {
@@ -17,16 +17,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 		/// Unlimited user comment fields. libvorbis writes 'libvorbis'
 		/// whatever vendor is set to in encode
 		/// </summary>
-		public Pointer<Pointer<byte>> user_comments;
+		public CPointer<CPointer<byte>> user_comments;
 
 		/// <summary></summary>
-		public Pointer<c_int> comment_lengths;
+		public CPointer<c_int> comment_lengths;
 
 		/// <summary></summary>
 		public c_int comments;
 
 		/// <summary></summary>
-		public Pointer<byte> vendor;
+		public CPointer<byte> vendor;
 
 		/********************************************************************/
 		/// <summary>

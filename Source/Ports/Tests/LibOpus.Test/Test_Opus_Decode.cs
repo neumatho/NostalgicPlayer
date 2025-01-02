@@ -6,6 +6,7 @@
 using System;
 using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibOpus;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
@@ -51,14 +52,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test
 			opus_uint32 dec_final_range1 = 2;
 			opus_uint32 dec_final_range2 = 2;
 
-			Pointer<byte> packet = CMemory.MAlloc<byte>(Max_Packet);
+			CPointer<byte> packet = CMemory.MAlloc<byte>(Max_Packet);
 
-			Pointer<c_short> outbuf_int = new Pointer<c_short>((Max_Frame_Samp + 16) * 2);
+			CPointer<c_short> outbuf_int = new CPointer<c_short>((Max_Frame_Samp + 16) * 2);
 
 			for (opus_int32 i = 0; i < (Max_Frame_Samp + 16) * 2; i++)
 				outbuf_int[i] = 32749;
 
-			Pointer<c_short> outbuf = outbuf_int + 8 * 2;
+			CPointer<c_short> outbuf = outbuf_int + 8 * 2;
 
 			Console.WriteLine($"Starting {5*2} decoders");
 

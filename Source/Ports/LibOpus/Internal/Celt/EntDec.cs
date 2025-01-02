@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
@@ -124,7 +124,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Ec_Dec_Init(out Ec_Dec _this, Pointer<byte> _buf, opus_uint32 _storage)
+		public static void Ec_Dec_Init(out Ec_Dec _this, CPointer<byte> _buf, opus_uint32 _storage)
 		{
 			_this = new Ec_Dec();
 
@@ -225,7 +225,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Ec_Dec_Icdf(Ec_Dec _this, Pointer<byte> _icdf, c_uint _ftb)
+		public static c_int Ec_Dec_Icdf(Ec_Dec _this, CPointer<byte> _icdf, c_uint _ftb)
 		{
 			opus_uint32 s = _this.rng;
 			opus_uint32 d = _this.val;

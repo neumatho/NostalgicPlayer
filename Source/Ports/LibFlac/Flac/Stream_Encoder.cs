@@ -2812,8 +2812,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			{
 				Flac__StreamMetadata_StreamInfo metaStreamInfo = (Flac__StreamMetadata_StreamInfo)encoder.Private.StreamInfo.Data;
 
-				metaStreamInfo.Min_FrameSize = Math.Min(bytes, metaStreamInfo.Min_FrameSize);
-				metaStreamInfo.Max_FrameSize = Math.Max(bytes, metaStreamInfo.Max_FrameSize);
+				metaStreamInfo.Min_FrameSize = (uint32_t)Math.Min(bytes, metaStreamInfo.Min_FrameSize);
+				metaStreamInfo.Max_FrameSize = (uint32_t)Math.Max(bytes, metaStreamInfo.Max_FrameSize);
 			}
 
 			return true;

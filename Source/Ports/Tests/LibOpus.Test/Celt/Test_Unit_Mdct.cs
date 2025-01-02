@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt;
@@ -61,7 +62,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void Check(Pointer<kiss_fft_scalar> _in, Pointer<kiss_fft_scalar> _out, c_int nfft, bool isinverse)
+		private void Check(CPointer<kiss_fft_scalar> _in, CPointer<kiss_fft_scalar> _out, c_int nfft, bool isinverse)
 		{
 			c_double errpow = 0, sigpow = 0;
 
@@ -98,7 +99,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void Check_Inv(Pointer<kiss_fft_scalar> _in, Pointer<kiss_fft_scalar> _out, c_int nfft, bool isinverse)
+		private void Check_Inv(CPointer<kiss_fft_scalar> _in, CPointer<kiss_fft_scalar> _out, c_int nfft, bool isinverse)
 		{
 			c_double errpow = 0, sigpow = 0;
 
@@ -153,10 +154,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test.Celt
 
 			Mdct_Lookup cfg = mode.mdct;
 
-			Pointer<kiss_fft_scalar> _in = CMemory.MAlloc<kiss_fft_scalar>((int)buflen);
-			Pointer<kiss_fft_scalar> in_copy = CMemory.MAlloc<kiss_fft_scalar>((int)buflen);
-			Pointer<kiss_fft_scalar> _out = CMemory.MAlloc<kiss_fft_scalar>((int)buflen);
-			Pointer<opus_val16> window = CMemory.MAlloc<opus_val16>(nfft / 2);
+			CPointer<kiss_fft_scalar> _in = CMemory.MAlloc<kiss_fft_scalar>((int)buflen);
+			CPointer<kiss_fft_scalar> in_copy = CMemory.MAlloc<kiss_fft_scalar>((int)buflen);
+			CPointer<kiss_fft_scalar> _out = CMemory.MAlloc<kiss_fft_scalar>((int)buflen);
+			CPointer<opus_val16> window = CMemory.MAlloc<opus_val16>(nfft / 2);
 
 			for (c_int k = 0; k < nfft; ++k)
 				_in[k] = (RandomGenerator.GetRandomNumber() % 32768) - 16384;

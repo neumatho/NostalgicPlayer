@@ -4,8 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 {
@@ -15,13 +15,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 	internal class Silk_Decoder_State : IDeepCloneable<Silk_Decoder_State>
 	{
 		public opus_int32 prev_gain_Q16;
-		public Pointer<opus_int32> exc_Q14 = new Pointer<opus_int32>(Constants.Max_Frame_Length);
+		public CPointer<opus_int32> exc_Q14 = new CPointer<opus_int32>(Constants.Max_Frame_Length);
 		public readonly opus_int32[] sLpc_Q14_buf = new opus_int32[Constants.Max_Lpc_Order];
 
 		/// <summary>
 		/// Buffer for output signal
 		/// </summary>
-		public Pointer<opus_int16> outBuf = new Pointer<opus_int16>(Constants.Max_Frame_Length + 2 * Constants.Max_Sub_Frame_Length);
+		public CPointer<opus_int16> outBuf = new CPointer<opus_int16>(Constants.Max_Frame_Length + 2 * Constants.Max_Sub_Frame_Length);
 
 		/// <summary>
 		/// Previous lag
@@ -81,12 +81,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 		/// <summary>
 		/// Pointer to iCDF table for low bits of pitch lag index
 		/// </summary>
-		public Pointer<opus_uint8> pitch_lag_low_bits_iCDF;
+		public CPointer<opus_uint8> pitch_lag_low_bits_iCDF;
 
 		/// <summary>
 		/// Pointer to iCDF table for pitch contour index
 		/// </summary>
-		public Pointer<opus_uint8> pitch_contour_iCDF;
+		public CPointer<opus_uint8> pitch_contour_iCDF;
 
 		// For buffering payload in case of more frames per packet
 		public opus_int nFramesDecoded;

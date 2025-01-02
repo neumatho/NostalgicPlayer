@@ -6,8 +6,9 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
-namespace Polycode.NostalgicPlayer.Kit.Utility
+namespace Polycode.NostalgicPlayer.CKit
 {
 	/// <summary>
 	/// C like memory methods
@@ -20,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Pointer<T> MAlloc<T>(int size) where T : struct
+		public static CPointer<T> MAlloc<T>(int size) where T : struct
 		{
 			return CAlloc<T>(size);
 		}
@@ -33,7 +34,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Pointer<T> MAllocObj<T>(int size) where T : new()
+		public static CPointer<T> MAllocObj<T>(int size) where T : new()
 		{
 			return CAllocObj<T>(size);
 		}
@@ -46,9 +47,9 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Pointer<T> CAlloc<T>(int size) where T : struct
+		public static CPointer<T> CAlloc<T>(int size) where T : struct
 		{
-			return new Pointer<T>(size);
+			return new CPointer<T>(size);
 		}
 
 
@@ -59,11 +60,11 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Pointer<T> CAllocObj<T>(int size) where T : new()
+		public static CPointer<T> CAllocObj<T>(int size) where T : new()
 		{
 			T[] array = ArrayHelper.InitializeArray<T>(size);
 
-			return new Pointer<T>(array);
+			return new CPointer<T>(array);
 		}
 
 
@@ -74,7 +75,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Pointer<T> Realloc<T>(Pointer<T> ptr, int newSize) where T : struct
+		public static CPointer<T> Realloc<T>(CPointer<T> ptr, int newSize) where T : struct
 		{
 			if (ptr.IsNull)
 				return MAlloc<T>(newSize);
@@ -85,7 +86,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 			T[] newArray = new T[newSize];
 			Array.Copy(ptr.Buffer, ptr.Offset, newArray, 0, Math.Min(newSize, ptr.Length));
 
-			return new Pointer<T>(newArray);
+			return new CPointer<T>(newArray);
 		}
 
 
@@ -96,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Pointer<T> ReallocObj<T>(Pointer<T> ptr, int newSize) where T : new()
+		public static CPointer<T> ReallocObj<T>(CPointer<T> ptr, int newSize) where T : new()
 		{
 			if (ptr.IsNull)
 				return MAllocObj<T>(newSize);
@@ -111,7 +112,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 			for (int i = copyLength; i < newSize; i++)
 				newArray[i] = new T();
 
-			return new Pointer<T>(newArray);
+			return new CPointer<T>(newArray);
 		}
 
 
@@ -122,7 +123,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Free<T>(Pointer<T> ptr)
+		public static void Free<T>(CPointer<T> ptr)
 		{
 		}
 
@@ -134,7 +135,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void MemMove<T>(Pointer<T> dest, Pointer<T> source, int length)
+		public static void MemMove<T>(CPointer<T> dest, CPointer<T> source, int length)
 		{
 			if (length > 0)
 				Array.Copy(source.Buffer, source.Offset, dest.Buffer, dest.Offset, length);
@@ -148,7 +149,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void MemCpy<T>(Pointer<T> dest, Pointer<T> source, int length)
+		public static void MemCpy<T>(CPointer<T> dest, CPointer<T> source, int length)
 		{
 			if (length > 0)
 				Array.Copy(source.Buffer, source.Offset, dest.Buffer, dest.Offset, length);
@@ -176,7 +177,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static int MemCmp(Pointer<byte> ptr1, Pointer<byte> ptr2, int length)
+		public static int MemCmp(CPointer<byte> ptr1, CPointer<byte> ptr2, int length)
 		{
 			for (int i = 0; i < length; i++)
 			{
@@ -198,7 +199,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static int MemCmp(Pointer<byte> ptr, string compareString, int length)
+		public static int MemCmp(CPointer<byte> ptr, string compareString, int length)
 		{
 			return MemCmp(ptr, Encoding.Latin1.GetBytes(compareString), length);
 		}
@@ -211,7 +212,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static int StrCmp(Pointer<byte> ptr, string compareString)
+		public static int StrCmp(CPointer<byte> ptr, string compareString)
 		{
 			byte[] strBuf = Encoding.Latin1.GetBytes(compareString);
 			return MemCmp(ptr, strBuf, strBuf.Length);
@@ -225,7 +226,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void MemSet<T>(Pointer<T> ptr, T value, int length)
+		public static void MemSet<T>(CPointer<T> ptr, T value, int length)
 		{
 			ptr.Buffer.AsSpan(ptr.Offset, length).Fill(value);
 		}
@@ -238,14 +239,14 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static Pointer<T> MemChr<T>(Pointer<T> ptr, T ch, int count)
+		public static CPointer<T> MemChr<T>(CPointer<T> ptr, T ch, int count)
 		{
 			int searchLength = Math.Min(count, ptr.Length);
 
 			for (int i = 0; i < searchLength; i++)
 			{
 				if (ptr[i].Equals(ch))
-					return new Pointer<T>(ptr.Buffer, ptr.Offset + i);
+					return new CPointer<T>(ptr.Buffer, ptr.Offset + i);
 			}
 
 			return null;

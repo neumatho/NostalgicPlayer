@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Text;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers;
 
@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_uint Op_Parse_UInt16LE(Pointer<byte> _data)
+		private static c_uint Op_Parse_UInt16LE(CPointer<byte> _data)
 		{
 			return _data[0] | (c_uint)_data[1] << 8;
 		}
@@ -32,7 +32,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Op_Parse_Int16LE(Pointer<byte> _data)
+		private static c_int Op_Parse_Int16LE(CPointer<byte> _data)
 		{
 			c_int ret = _data[0] | _data[1] << 8;
 
@@ -46,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static opus_uint32 Op_Parse_UInt32LE(Pointer<byte> _data)
+		private static opus_uint32 Op_Parse_UInt32LE(CPointer<byte> _data)
 		{
 			return _data[0] | (opus_uint32)_data[1] << 8 | (opus_uint32)_data[2] << 16 | (opus_uint32)_data[3] << 24;
 		}
@@ -58,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static opus_uint32 Op_Parse_UInt32BE(Pointer<byte> _data)
+		private static opus_uint32 Op_Parse_UInt32BE(CPointer<byte> _data)
 		{
 			return _data[3] | (opus_uint32)_data[2] << 8 | (opus_uint32)_data[1] << 16 | (opus_uint32)_data[0] << 24;
 		}
@@ -70,7 +70,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// Parses the contents of the ID header packet of an Ogg Opus stream
 		/// </summary>
 		/********************************************************************/
-		public static OpusFileError Opus_Head_Parse(OpusHead _head, Pointer<byte> _data, size_t _len)
+		public static OpusFileError Opus_Head_Parse(OpusHead _head, CPointer<byte> _data, size_t _len)
 		{
 			if (_len < 8)
 				return OpusFileError.NotFormat;
@@ -227,7 +227,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			// We only support growing.
 			// Trimming requires cleaning up the allocated strings in the old space, and
 			// is best handled separately if it's ever needed
-			Pointer<c_int> comment_lengths = Memory.Ogg_Realloc(_tags.Comment_Lengths, size);
+			CPointer<c_int> comment_lengths = Memory.Ogg_Realloc(_tags.Comment_Lengths, size);
 			if (comment_lengths.IsNull)
 				return (c_int)OpusFileError.Fault;
 
@@ -238,7 +238,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			_tags.Comment_Lengths = comment_lengths;
 
 			size = _ncomments + 1;
-			Pointer<Pointer<byte>> user_comments = Memory.Ogg_Realloc(_tags.User_Comments, size);
+			CPointer<CPointer<byte>> user_comments = Memory.Ogg_Realloc(_tags.User_Comments, size);
 			if (user_comments.IsNull)
 				return (c_int)OpusFileError.Fault;
 
@@ -259,11 +259,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// length
 		/// </summary>
 		/********************************************************************/
-		private static Pointer<byte> Op_Strdup_With_Len(Pointer<byte> _s, size_t _len)
+		private static CPointer<byte> Op_Strdup_With_Len(CPointer<byte> _s, size_t _len)
 		{
 			size_t size = _len + 1;
 
-			Pointer<byte> ret = Memory.Ogg_MAlloc<byte>(size);
+			CPointer<byte> ret = Memory.Ogg_MAlloc<byte>(size);
 			if (ret.IsNotNull)
 			{
 				CMemory.MemCpy(ret, _s, (int)_len);
@@ -283,7 +283,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// guaranteed, and assumes the caller will clear it on error
 		/// </summary>
 		/********************************************************************/
-		private static c_int Opus_Tags_Parse_Impl(OpusTags _tags, Pointer<byte> _data, size_t _len)
+		private static c_int Opus_Tags_Parse_Impl(OpusTags _tags, CPointer<byte> _data, size_t _len)
 		{
 			size_t len = _len;
 
@@ -404,7 +404,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// stream
 		/// </summary>
 		/********************************************************************/
-		public static c_int Opus_Tags_Parse(OpusTags _tags, Pointer<byte> _data, size_t _len)
+		public static c_int Opus_Tags_Parse(OpusTags _tags, CPointer<byte> _data, size_t _len)
 		{
 			if (_tags != null)
 			{
@@ -434,7 +434,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Opus_Tagncompare(string _tag_name, Pointer<byte> _comment)
+		private static c_int Opus_Tagncompare(string _tag_name, CPointer<byte> _comment)
 		{
 			c_int ret = Internal.Op_Strncasecmp(_tag_name, _comment);
 
@@ -451,7 +451,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		private static c_int Opus_Tags_Get_Gain(OpusTags _tags, out c_int _gain_q8, string _tag_name)
 		{
 			int _tag_len = _tag_name.Length;
-			Pointer<Pointer<byte>> comments = _tags.User_Comments;
+			CPointer<CPointer<byte>> comments = _tags.User_Comments;
 			c_int ncomments = _tags.Comments;
 
 			// Look for the first valid tag with the name _tag_name and use that
@@ -459,7 +459,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			{
 				if (Opus_Tagncompare(_tag_name, comments[ci]) == 0)
 				{
-					Pointer<byte> p = comments[ci] + _tag_len + 1;
+					CPointer<byte> p = comments[ci] + _tag_len + 1;
 					c_int negative = 0;
 
 					if (p[0] == '-')
@@ -542,7 +542,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static bool Op_Is_Jpeg(Pointer<byte> _buf, size_t _buf_sz)
+		private static bool Op_Is_Jpeg(CPointer<byte> _buf, size_t _buf_sz)
 		{
 			return (_buf_sz >= 3) && (CMemory.MemCmp(_buf, "\xFF\xD8\xFF", 3) == 0);
 		}
@@ -555,7 +555,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// size of a JPEG
 		/// </summary>
 		/********************************************************************/
-		private static void Op_Extract_Jpeg_Params(Pointer<byte> _buf, size_t _buf_sz, ref opus_uint32 _width, ref opus_uint32 _height, ref opus_uint32 _depth, ref opus_uint32 _colors, ref c_int _has_palette)
+		private static void Op_Extract_Jpeg_Params(CPointer<byte> _buf, size_t _buf_sz, ref opus_uint32 _width, ref opus_uint32 _height, ref opus_uint32 _depth, ref opus_uint32 _colors, ref c_int _has_palette)
 		{
 			if (Op_Is_Jpeg(_buf, _buf_sz))
 			{
@@ -616,7 +616,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static bool Op_Is_Png(Pointer<byte> _buf, size_t _buf_sz)
+		private static bool Op_Is_Png(CPointer<byte> _buf, size_t _buf_sz)
 		{
 			return (_buf_sz >= 8) && (CMemory.MemCmp(_buf, "\x89PNG\x0D\x0A\x1A\x0A", 8) == 0);
 		}
@@ -629,7 +629,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// size of a PNG
 		/// </summary>
 		/********************************************************************/
-		private static void Op_Extract_Png_Params(Pointer<byte> _buf, size_t _buf_sz, ref opus_uint32 _width, ref opus_uint32 _height, ref opus_uint32 _depth, ref opus_uint32 _colors, ref c_int _has_palette)
+		private static void Op_Extract_Png_Params(CPointer<byte> _buf, size_t _buf_sz, ref opus_uint32 _width, ref opus_uint32 _height, ref opus_uint32 _depth, ref opus_uint32 _colors, ref c_int _has_palette)
 		{
 			if (Op_Is_Png(_buf, _buf_sz))
 			{
@@ -688,7 +688,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static bool Op_Is_Gif(Pointer<byte> _buf, size_t _buf_sz)
+		private static bool Op_Is_Gif(CPointer<byte> _buf, size_t _buf_sz)
 		{
 			return (_buf_sz >= 6) && ((CMemory.MemCmp(_buf, "GIF87a", 6) == 0) || (CMemory.MemCmp(_buf, "GIF89a", 6) == 0));
 		}
@@ -701,7 +701,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// size of a GIF
 		/// </summary>
 		/********************************************************************/
-		private static void Op_Extract_Gif_Params(Pointer<byte> _buf, size_t _buf_sz, ref opus_uint32 _width, ref opus_uint32 _height, ref opus_uint32 _depth, ref opus_uint32 _colors, ref c_int _has_palette)
+		private static void Op_Extract_Gif_Params(CPointer<byte> _buf, size_t _buf_sz, ref opus_uint32 _width, ref opus_uint32 _height, ref opus_uint32 _depth, ref opus_uint32 _colors, ref c_int _has_palette)
 		{
 			if (Op_Is_Gif(_buf, _buf_sz) && (_buf_sz >= 14))
 			{
@@ -725,7 +725,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// and assumes the caller will clear it on error
 		/// </summary>
 		/********************************************************************/
-		private static c_int Opus_Picture_Tag_Parse_Impl(OpusPictureTag _pic, string _tag, Pointer<byte> _buf, size_t _buf_sz, size_t _base64_sz)
+		private static c_int Opus_Picture_Tag_Parse_Impl(OpusPictureTag _pic, string _tag, CPointer<byte> _buf, size_t _buf_sz, size_t _base64_sz)
 		{
 			size_t i;
 
@@ -779,7 +779,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			if (mime_type_length > (_buf_sz - 32))
 				return (c_int)OpusFileError.NotFormat;
 
-			Pointer<byte> mime_type = Memory.Ogg_MAlloc<byte>(mime_type_length + 1);
+			CPointer<byte> mime_type = Memory.Ogg_MAlloc<byte>(mime_type_length + 1);
 			if (mime_type.IsNull)
 				return (c_int)OpusFileError.Fault;
 
@@ -795,7 +795,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			if (description_length > (_buf_sz - mime_type_length - 32))
 				return (c_int)OpusFileError.NotFormat;
 
-			Pointer<byte> description = Memory.Ogg_MAlloc<byte>(description_length + 1);
+			CPointer<byte> description = Memory.Ogg_MAlloc<byte>(description_length + 1);
 			if (description.IsNull)
 				return (c_int)OpusFileError.Fault;
 
@@ -990,7 +990,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 				return (c_int)OpusFileError.NotFormat;
 
 			// Allocate an extra byte to allow appending a terminating NUL to URL data
-			Pointer<byte> buf = CMemory.MAlloc<byte>((int)buf_sz + 1);
+			CPointer<byte> buf = CMemory.MAlloc<byte>((int)buf_sz + 1);
 			if (buf.IsNull)
 				return (c_int)OpusFileError.Fault;
 

@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Internal;
@@ -311,9 +311,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test
 		[TestMethod]
 		public void Test_Parse()
 		{
-			Pointer<byte> packet = new Pointer<byte>(1276);
+			CPointer<byte> packet = new CPointer<byte>(1276);
 			byte toc;
-			Pointer<byte>[] frames = new Pointer<byte>[48];
+			CPointer<byte>[] frames = new CPointer<byte>[48];
 			c_short[] size = new c_short[48];
 			c_int payload_offset, ret;
 

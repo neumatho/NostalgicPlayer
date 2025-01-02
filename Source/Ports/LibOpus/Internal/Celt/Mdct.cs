@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Clt_Mdct_Forward(Mdct_Lookup l, Pointer<kiss_fft_scalar> _in, Pointer<kiss_fft_scalar> _out, Pointer<opus_val16> window, c_int overlap, c_int shift, c_int stride, c_int arch)
+		public static void Clt_Mdct_Forward(Mdct_Lookup l, CPointer<kiss_fft_scalar> _in, CPointer<kiss_fft_scalar> _out, CPointer<opus_val16> window, c_int overlap, c_int shift, c_int stride, c_int arch)
 		{
 			Clt_Mdct_Forward_C(l, _in, _out, window, overlap, shift, stride, arch);
 		}
@@ -33,13 +33,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// Forward MDCT trashes the input array
 		/// </summary>
 		/********************************************************************/
-		private static void Clt_Mdct_Forward_C(Mdct_Lookup l, Pointer<kiss_fft_scalar> _in, Pointer<kiss_fft_scalar> _out, Pointer<opus_val16> window, c_int overlap, c_int shift, c_int stride, c_int arch)
+		private static void Clt_Mdct_Forward_C(Mdct_Lookup l, CPointer<kiss_fft_scalar> _in, CPointer<kiss_fft_scalar> _out, CPointer<opus_val16> window, c_int overlap, c_int shift, c_int stride, c_int arch)
 		{
 			Kiss_Fft_State st = l.kfft[shift];
 			opus_val16 scale = st.scale;
 
 			c_int N = l.n;
-			Pointer<kiss_twiddle_scalar> trig = l.trig;
+			CPointer<kiss_twiddle_scalar> trig = l.trig;
 
 			for (c_int i = 0; i < shift; i++)
 			{
@@ -56,11 +56,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			// Consider the input to be composed of four blocks: [a, b, c, d]
 			// Window, shuffle, fold
 			{
-				Pointer<kiss_fft_scalar> xp1 = _in + (overlap >> 1);
-				Pointer<kiss_fft_scalar> xp2 = _in + N2 - 1 + (overlap >> 1);
-				Pointer<kiss_fft_scalar> yp = f;
-				Pointer<opus_val16> wp1 = window + (overlap >> 1);
-				Pointer<opus_val16> wp2 = window + (overlap >> 1) - 1;
+				CPointer<kiss_fft_scalar> xp1 = _in + (overlap >> 1);
+				CPointer<kiss_fft_scalar> xp2 = _in + N2 - 1 + (overlap >> 1);
+				CPointer<kiss_fft_scalar> yp = f;
+				CPointer<opus_val16> wp1 = window + (overlap >> 1);
+				CPointer<opus_val16> wp2 = window + (overlap >> 1) - 1;
 
 				c_int i;
 				for (i = 0; i < ((overlap + 3) >> 2); i++)
@@ -106,8 +106,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 			// Pre-rotation
 			{
-				Pointer<kiss_fft_scalar> yp = f;
-				Pointer<kiss_twiddle_scalar> t = trig;
+				CPointer<kiss_fft_scalar> yp = f;
+				CPointer<kiss_twiddle_scalar> t = trig;
 
 				for (c_int i = 0; i < N4; i++)
 				{
@@ -135,10 +135,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 			// Post-rotate
 			{
-				Pointer<Kiss_Fft_Cpx> fp = f2;
-				Pointer<kiss_fft_scalar> yp1 = _out;
-				Pointer<kiss_fft_scalar> yp2 = _out + stride * (N2 - 1);
-				Pointer<kiss_twiddle_scalar> t = trig;
+				CPointer<Kiss_Fft_Cpx> fp = f2;
+				CPointer<kiss_fft_scalar> yp1 = _out;
+				CPointer<kiss_fft_scalar> yp2 = _out + stride * (N2 - 1);
+				CPointer<kiss_twiddle_scalar> t = trig;
 
 				for (c_int i = 0; i < N4; i++)
 				{
@@ -162,7 +162,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Clt_Mdct_Backward(Mdct_Lookup l, Pointer<kiss_fft_scalar> _in, Pointer<kiss_fft_scalar> _out, Pointer<opus_val16> window, c_int overlap, c_int shift, c_int stride, c_int arch)
+		public static void Clt_Mdct_Backward(Mdct_Lookup l, CPointer<kiss_fft_scalar> _in, CPointer<kiss_fft_scalar> _out, CPointer<opus_val16> window, c_int overlap, c_int shift, c_int stride, c_int arch)
 		{
 			Clt_Mdct_Backward_C(l, _in, _out, window, overlap, shift, stride, arch);
 		}
@@ -174,10 +174,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Clt_Mdct_Backward_C(Mdct_Lookup l, Pointer<kiss_fft_scalar> _in, Pointer<kiss_fft_scalar> _out, Pointer<opus_val16> window, c_int overlap, c_int shift, c_int stride, c_int arch)
+		private static void Clt_Mdct_Backward_C(Mdct_Lookup l, CPointer<kiss_fft_scalar> _in, CPointer<kiss_fft_scalar> _out, CPointer<opus_val16> window, c_int overlap, c_int shift, c_int stride, c_int arch)
 		{
 			c_int N = l.n;
-			Pointer<kiss_twiddle_scalar> trig = l.trig;
+			CPointer<kiss_twiddle_scalar> trig = l.trig;
 
 			for (c_int i = 0; i < shift; i++)
 			{
@@ -191,11 +191,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			// Pre-rotate
 			{
 				// Temp pointers to make it really clear to the compiler what we're doing
-				Pointer<kiss_fft_scalar> xp1 = _in;
-				Pointer<kiss_fft_scalar> xp2 = _in + stride * (N2 - 1);
-				Pointer<kiss_fft_scalar> yp = _out + (overlap >> 1);
-				Pointer<kiss_twiddle_scalar> t = trig;
-				Pointer<opus_int16> bitrev = l.kfft[shift].bitrev;
+				CPointer<kiss_fft_scalar> xp1 = _in;
+				CPointer<kiss_fft_scalar> xp2 = _in + stride * (N2 - 1);
+				CPointer<kiss_fft_scalar> yp = _out + (overlap >> 1);
+				CPointer<kiss_twiddle_scalar> t = trig;
+				CPointer<opus_int16> bitrev = l.kfft[shift].bitrev;
 
 				for (c_int i = 0; i < N4; i++)
 				{
@@ -219,9 +219,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			// Post-rotate and de-shuffle from both ends of the buffer at once to make
 			// it in-place
 			{
-				Pointer<kiss_fft_scalar> yp0 = _out + (overlap >> 1);
-				Pointer<kiss_fft_scalar> yp1 = _out + (overlap >> 1) + N2 - 2;
-				Pointer<kiss_twiddle_scalar> t = trig;
+				CPointer<kiss_fft_scalar> yp0 = _out + (overlap >> 1);
+				CPointer<kiss_fft_scalar> yp1 = _out + (overlap >> 1) + N2 - 2;
+				CPointer<kiss_twiddle_scalar> t = trig;
 
 				// Loop to (N4+1)>>1 to handle odd N4. When N4 is odd, the
 				// middle pair will be computed twice
@@ -260,10 +260,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 			// Mirror on both sides for TDAC
 			{
-				Pointer<kiss_fft_scalar> xp1 = _out + overlap - 1;
-				Pointer<kiss_fft_scalar> yp1 = _out;
-				Pointer<opus_val16> wp1 = window;
-				Pointer<opus_val16> wp2 = window + overlap - 1;
+				CPointer<kiss_fft_scalar> xp1 = _out + overlap - 1;
+				CPointer<kiss_fft_scalar> yp1 = _out;
+				CPointer<opus_val16> wp1 = window;
+				CPointer<opus_val16> wp2 = window + overlap - 1;
 
 				for (c_int i = 0; i < (overlap / 2); i++)
 				{

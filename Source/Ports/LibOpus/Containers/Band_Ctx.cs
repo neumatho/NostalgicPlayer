@@ -3,8 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 {
@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 		public c_int tf_change;
 		public Ec_Ctx ec;
 		public opus_int32 remaining_bits;
-		public Pointer<celt_ener> bandE;
+		public CPointer<celt_ener> bandE;
 		public opus_uint32 seed;
 		public c_int arch;
 		public c_int theta_round;

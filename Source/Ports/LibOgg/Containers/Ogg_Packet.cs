@@ -3,8 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 {
@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 	public class Ogg_Packet : IDeepCloneable<Ogg_Packet>
 	{
 		/// <summary></summary>
-		public Pointer<byte> Packet;
+		public CPointer<byte> Packet;
 		/// <summary></summary>
 		public c_long Bytes;
 		/// <summary></summary>

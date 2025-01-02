@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Containers;
 
@@ -38,25 +38,25 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile.Containers
 		public c_int links;
 
 		/// <summary></summary>
-		public Pointer<ogg_int64_t> offsets;
+		public CPointer<ogg_int64_t> offsets;
 
 		/// <summary></summary>
-		public Pointer<ogg_int64_t> dataoffsets;
+		public CPointer<ogg_int64_t> dataoffsets;
 
 		/// <summary></summary>
-		public Pointer<c_long> serialnos;
+		public CPointer<c_long> serialnos;
 
 		/// <summary>
 		/// Overloaded to maintain binary compatibility; x2 size, stores both
 		/// beginning and end values
 		/// </summary>
-		public Pointer<ogg_int64_t> pcmlengths;
+		public CPointer<ogg_int64_t> pcmlengths;
 
 		/// <summary></summary>
-		public Pointer<VorbisInfo> vi;
+		public CPointer<VorbisInfo> vi;
 
 		/// <summary></summary>
-		public Pointer<VorbisComment> vc;
+		public CPointer<VorbisComment> vc;
 
 		// Decoding working state local storage
 

@@ -6,7 +6,7 @@
 using System;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player;

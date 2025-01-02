@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		public static c_int Bits2Pulses(CeltMode m, c_int band, c_int LM, c_int bits)
 		{
 			LM++;
-			Pointer<byte> cache = m.cache.bits + m.cache.index[LM * m.nbEBands + band];
+			CPointer<byte> cache = m.cache.bits + m.cache.index[LM * m.nbEBands + band];
 
 			c_int lo = 0;
 			c_int hi = cache[0];
@@ -81,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		public static c_int Pulses2Bits(CeltMode m, c_int band, c_int LM, c_int pulses)
 		{
 			LM++;
-			Pointer<byte> cache = m.cache.bits + m.cache.index[LM * m.nbEBands + band];
+			CPointer<byte> cache = m.cache.bits + m.cache.index[LM * m.nbEBands + band];
 
 			return pulses == 0 ? 0 : cache[pulses] + 1;
 		}
@@ -94,9 +94,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static c_int Interp_Bits2Pulses(CeltMode m, c_int start, c_int end, c_int skip_start, Pointer<c_int> bits1, Pointer<c_int> bits2, Pointer<c_int> thresh, Pointer<c_int> cap,
+		private static c_int Interp_Bits2Pulses(CeltMode m, c_int start, c_int end, c_int skip_start, CPointer<c_int> bits1, CPointer<c_int> bits2, CPointer<c_int> thresh, CPointer<c_int> cap,
 												opus_int32 total, out opus_int32 _balance, c_int skip_rsv, ref c_int intensity, c_int intensity_rsv, ref bool dual_stereo, c_int dual_stereo_rsv,
-												Pointer<c_int> bits, Pointer<c_int> ebits, Pointer<bool> fine_priority, c_int C, c_int LM, Ec_Ctx ec, bool encode, c_int prev, c_int signalBandwidth)
+												CPointer<c_int> bits, CPointer<c_int> ebits, CPointer<bool> fine_priority, c_int C, c_int LM, Ec_Ctx ec, bool encode, c_int prev, c_int signalBandwidth)
 		{
 			opus_int32 psum;
 			c_int j;
@@ -392,8 +392,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Clt_Compute_Allocation(CeltMode m, c_int start, c_int end, Pointer<c_int> offsets, Pointer<c_int> cap, c_int alloc_trim, ref c_int intensity, ref bool dual_stereo,
-													opus_int32 total, out opus_int32 balance, Pointer<c_int> pulses, Pointer<c_int> ebits, Pointer<bool> fine_priority,
+		public static c_int Clt_Compute_Allocation(CeltMode m, c_int start, c_int end, CPointer<c_int> offsets, CPointer<c_int> cap, c_int alloc_trim, ref c_int intensity, ref bool dual_stereo,
+													opus_int32 total, out opus_int32 balance, CPointer<c_int> pulses, CPointer<c_int> ebits, CPointer<bool> fine_priority,
 													c_int C, c_int LM, Ec_Ctx ec, bool encode, c_int prev, c_int signalBandwidth)
 		{
 			total = Arch.IMAX(total, 0);

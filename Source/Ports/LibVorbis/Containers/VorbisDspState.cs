@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Interfaces;
 
 namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
@@ -21,9 +21,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 		public VorbisInfo vi;
 
 		/// <summary></summary>
-		public Pointer<c_float>[] pcm;
+		public CPointer<c_float>[] pcm;
 		/// <summary></summary>
-		public Pointer<c_float>[] pcmret;
+		public CPointer<c_float>[] pcmret;
 		/// <summary></summary>
 		public c_int pcm_storage;
 		/// <summary></summary>

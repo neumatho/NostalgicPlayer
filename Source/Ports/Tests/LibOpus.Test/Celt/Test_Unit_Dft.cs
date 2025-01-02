@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt;
@@ -53,7 +54,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void Check(Pointer<Kiss_Fft_Cpx> _in, Pointer<Kiss_Fft_Cpx> _out, c_int nfft, bool isinverse)
+		private void Check(CPointer<Kiss_Fft_Cpx> _in, CPointer<Kiss_Fft_Cpx> _out, c_int nfft, bool isinverse)
 		{
 			c_double errpow = 0, sigpow = 0;
 
@@ -122,8 +123,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test.Celt
 
 			Kiss_Fft_State cfg = mode.mdct.kfft[id];
 
-			Pointer<Kiss_Fft_Cpx> _in = CMemory.MAlloc<Kiss_Fft_Cpx>((int)buflen);
-			Pointer<Kiss_Fft_Cpx> _out = CMemory.MAlloc<Kiss_Fft_Cpx>((int)buflen);
+			CPointer<Kiss_Fft_Cpx> _in = CMemory.MAlloc<Kiss_Fft_Cpx>((int)buflen);
+			CPointer<Kiss_Fft_Cpx> _out = CMemory.MAlloc<Kiss_Fft_Cpx>((int)buflen);
 
 			for (c_int k = 0; k < nfft; ++k)
 			{

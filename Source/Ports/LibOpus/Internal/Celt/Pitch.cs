@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Find_Best_Pitch(Pointer<opus_val32> xcorr, Pointer<opus_val16> y, c_int len, c_int max_pitch, Pointer<c_int> best_pitch)
+		private static void Find_Best_Pitch(CPointer<opus_val32> xcorr, CPointer<opus_val16> y, c_int len, c_int max_pitch, CPointer<c_int> best_pitch)
 		{
 			opus_val32 Syy = 1;
 			opus_val16[] best_num = new opus_val16[2];
@@ -81,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Celt_Fir5(Pointer<opus_val16> x, Pointer<opus_val16> num, c_int N)
+		private static void Celt_Fir5(CPointer<opus_val16> x, CPointer<opus_val16> num, c_int N)
 		{
 			opus_val16 num0 = num[0];
 			opus_val16 num1 = num[1];
@@ -121,7 +121,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Pitch_Downsample(Pointer<Pointer<celt_sig>> x, Pointer<opus_val16> x_lp, c_int len, c_int C, c_int arch)
+		public static void Pitch_Downsample(CPointer<CPointer<celt_sig>> x, CPointer<opus_val16> x_lp, c_int len, c_int C, c_int arch)
 		{
 			opus_val32[] ac = new opus_val32[5];
 			opus_val16 tmp = Constants.Q15One;
@@ -176,7 +176,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Celt_Pitch_Xcorr_C(Pointer<opus_val16> _x, Pointer<opus_val16> _y, Pointer<opus_val32> xcorr, c_int len, c_int max_pitch, c_int arch)
+		public static void Celt_Pitch_Xcorr_C(CPointer<opus_val16> _x, CPointer<opus_val16> _y, CPointer<opus_val32> xcorr, c_int len, c_int max_pitch, c_int arch)
 		{
 			c_int i;
 
@@ -207,7 +207,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Pitch_Search(Pointer<opus_val16> x_lp, Pointer<opus_val16> y, c_int len, c_int max_pitch, out c_int pitch, c_int arch)
+		public static void Pitch_Search(CPointer<opus_val16> x_lp, CPointer<opus_val16> y, c_int len, c_int max_pitch, out c_int pitch, c_int arch)
 		{
 			c_int[] best_pitch = [ 0, 0 ];
 
@@ -274,7 +274,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Xcorr_Kernel_C(Pointer<opus_val16> x, Pointer<opus_val16> y, Pointer<opus_val32> sum, c_int len)
+		public static void Xcorr_Kernel_C(CPointer<opus_val16> x, CPointer<opus_val16> y, CPointer<opus_val32> sum, c_int len)
 		{
 			c_int j;
 			opus_val16 y_3 = 0;
@@ -375,7 +375,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Xcorr_Kernel(Pointer<opus_val16> x, Pointer<opus_val16> y, Pointer<opus_val32> sum, c_int len, c_int arch)
+		public static void Xcorr_Kernel(CPointer<opus_val16> x, CPointer<opus_val16> y, CPointer<opus_val32> sum, c_int len, c_int arch)
 		{
 			Xcorr_Kernel_C(x, y, sum, len);
 		}
@@ -388,7 +388,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Dual_Inner_Prod_C(Pointer<opus_val16> x, Pointer<opus_val16> y01, Pointer<opus_val16> y02, c_int N, out opus_val32 xy1, out opus_val32 xy2)
+		public static void Dual_Inner_Prod_C(CPointer<opus_val16> x, CPointer<opus_val16> y01, CPointer<opus_val16> y02, c_int N, out opus_val32 xy1, out opus_val32 xy2)
 		{
 			opus_val32 xy01 = 0;
 			opus_val32 xy02 = 0;
@@ -411,7 +411,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Dual_Inner_Prod(Pointer<opus_val16> x, Pointer<opus_val16> y01, Pointer<opus_val16> y02, c_int N, out opus_val32 xy1, out opus_val32 xy2, c_int arch)
+		public static void Dual_Inner_Prod(CPointer<opus_val16> x, CPointer<opus_val16> y01, CPointer<opus_val16> y02, c_int N, out opus_val32 xy1, out opus_val32 xy2, c_int arch)
 		{
 			Dual_Inner_Prod_C(x, y01, y02, N, out xy1, out xy2);
 		}
@@ -424,7 +424,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static opus_val32 Celt_Inner_Prod_C(Pointer<opus_val16> x, Pointer<opus_val16> y, c_int N)
+		public static opus_val32 Celt_Inner_Prod_C(CPointer<opus_val16> x, CPointer<opus_val16> y, c_int N)
 		{
 			opus_val32 xy = 0;
 
@@ -442,7 +442,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static opus_val32 Celt_Inner_Prod(Pointer<opus_val16> x, Pointer<opus_val16> y, c_int N, c_int arch)
+		public static opus_val32 Celt_Inner_Prod(CPointer<opus_val16> x, CPointer<opus_val16> y, c_int N, c_int arch)
 		{
 			return Celt_Inner_Prod_C(x, y, N);
 		}
@@ -455,7 +455,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Celt_Pitch_Xcorr(Pointer<opus_val16> _x, Pointer<opus_val16> _y, Pointer<opus_val32> xcorr, c_int len, c_int max_pitch, c_int arch)
+		public static void Celt_Pitch_Xcorr(CPointer<opus_val16> _x, CPointer<opus_val16> _y, CPointer<opus_val32> xcorr, c_int len, c_int max_pitch, c_int arch)
 		{
 			Celt_Pitch_Xcorr_C(_x, _y, xcorr, len, max_pitch, arch);
 		}
@@ -468,7 +468,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Comb_Filter_Const(Pointer<opus_val32> y, Pointer<opus_val32> x, c_int T, c_int N, opus_val16 g10, opus_val16 g11, opus_val16 g12, c_int arch)
+		public static void Comb_Filter_Const(CPointer<opus_val32> y, CPointer<opus_val32> x, c_int T, c_int N, opus_val16 g10, opus_val16 g11, opus_val16 g12, c_int arch)
 		{
 			Celt.Comb_Filter_Const_C(y, x, T, N, g10, g11, g12);
 		}

@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// Gains scalar dequantization, uniform on log scale
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_Gains_Dequant(Pointer<opus_int32> gain_Q16, Pointer<opus_int8> ind, ref opus_int8 prev_ind, bool conditional, opus_int nb_subfr)
+		public static void Silk_Gains_Dequant(CPointer<opus_int32> gain_Q16, CPointer<opus_int8> ind, ref opus_int8 prev_ind, bool conditional, opus_int nb_subfr)
 		{
 			for (opus_int k = 0; k < nb_subfr; k++)
 			{

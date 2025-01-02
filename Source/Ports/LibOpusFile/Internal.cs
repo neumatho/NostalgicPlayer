@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 {
@@ -76,7 +76,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// case of ASCII characters
 		/// </summary>
 		/********************************************************************/
-		public static c_int Op_Strncasecmp(string _a, Pointer<byte> _b)
+		public static c_int Op_Strncasecmp(string _a, CPointer<byte> _b)
 		{
 			c_int _n = _a.Length;
 

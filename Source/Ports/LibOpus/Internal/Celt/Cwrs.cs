@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 {
@@ -296,13 +296,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			1409933619
 		];
 
-		private static readonly Pointer<opus_uint32>[] celt_Pvq_U_Row =
+		private static readonly CPointer<opus_uint32>[] celt_Pvq_U_Row =
 		[
-			new Pointer<opus_uint32>(celt_Pvq_U_Data, 0),  new Pointer<opus_uint32>(celt_Pvq_U_Data, 176), new Pointer<opus_uint32>(celt_Pvq_U_Data, 351),
-			new Pointer<opus_uint32>(celt_Pvq_U_Data, 525), new Pointer<opus_uint32>(celt_Pvq_U_Data, 698), new Pointer<opus_uint32>(celt_Pvq_U_Data, 870),
-			new Pointer<opus_uint32>(celt_Pvq_U_Data, 1041), new Pointer<opus_uint32>(celt_Pvq_U_Data, 1131), new Pointer<opus_uint32>(celt_Pvq_U_Data, 1178),
-			new Pointer<opus_uint32>(celt_Pvq_U_Data, 1207), new Pointer<opus_uint32>(celt_Pvq_U_Data, 1226), new Pointer<opus_uint32>(celt_Pvq_U_Data, 1240),
-			new Pointer<opus_uint32>(celt_Pvq_U_Data, 1248), new Pointer<opus_uint32>(celt_Pvq_U_Data, 1254), new Pointer<opus_uint32>(celt_Pvq_U_Data, 1257)
+			new CPointer<opus_uint32>(celt_Pvq_U_Data, 0),  new CPointer<opus_uint32>(celt_Pvq_U_Data, 176), new CPointer<opus_uint32>(celt_Pvq_U_Data, 351),
+			new CPointer<opus_uint32>(celt_Pvq_U_Data, 525), new CPointer<opus_uint32>(celt_Pvq_U_Data, 698), new CPointer<opus_uint32>(celt_Pvq_U_Data, 870),
+			new CPointer<opus_uint32>(celt_Pvq_U_Data, 1041), new CPointer<opus_uint32>(celt_Pvq_U_Data, 1131), new CPointer<opus_uint32>(celt_Pvq_U_Data, 1178),
+			new CPointer<opus_uint32>(celt_Pvq_U_Data, 1207), new CPointer<opus_uint32>(celt_Pvq_U_Data, 1226), new CPointer<opus_uint32>(celt_Pvq_U_Data, 1240),
+			new CPointer<opus_uint32>(celt_Pvq_U_Data, 1248), new CPointer<opus_uint32>(celt_Pvq_U_Data, 1254), new CPointer<opus_uint32>(celt_Pvq_U_Data, 1257)
 		];
 		#endregion
 
@@ -338,7 +338,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static opus_uint32 Icwrs(c_int _n, Pointer<c_int> _y)
+		public static opus_uint32 Icwrs(c_int _n, CPointer<c_int> _y)
 		{
 			c_int j = _n - 1;
 			opus_uint32 i = _y[j] < 0 ? 1U : 0U;
@@ -365,7 +365,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Encode_Pulses(Pointer<c_int> _y, c_int _n, c_int _k, Ec_Enc _enc)
+		public static void Encode_Pulses(CPointer<c_int> _y, c_int _n, c_int _k, Ec_Enc _enc)
 		{
 			EntEnc.Ec_Enc_UInt(_enc, Icwrs(_n, _y), Celt_Pvq_V(_n, _k));
 		}
@@ -377,7 +377,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static opus_val32 Cwrsi(c_int _n, c_int _k, opus_uint32 _i, Pointer<c_int> _y)
+		public static opus_val32 Cwrsi(c_int _n, c_int _k, opus_uint32 _i, CPointer<c_int> _y)
 		{
 			opus_uint32 p;
 			c_int s;
@@ -392,7 +392,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				// Lots of pulses case:
 				if (_k >= _n)
 				{
-					Pointer<opus_uint32> row = celt_Pvq_U_Row[_n];
+					CPointer<opus_uint32> row = celt_Pvq_U_Row[_n];
 
 					// Are the pulses in this dimension negative?
 					p = row[_k + 1];
@@ -491,7 +491,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static opus_val32 Decode_Pulses(Pointer<c_int> _y, c_int _n, c_int _k, Ec_Dec _dec)
+		public static opus_val32 Decode_Pulses(CPointer<c_int> _y, c_int _n, c_int _k, Ec_Dec _dec)
 		{
 			return Cwrsi(_n, _k, EntDec.Ec_Dec_UInt(_dec, Celt_Pvq_V(_n, _k)), _y);
 		}

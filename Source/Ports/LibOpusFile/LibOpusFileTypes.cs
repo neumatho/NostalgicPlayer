@@ -3,18 +3,4 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.CKit;
-
-namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
-{
-	/// <summary>
-	/// 
-	/// </summary>
-	internal class Mdct_Lookup
-	{
-		public c_int n;
-		public c_int maxshift;
-		public Kiss_Fft_State[] kfft = new Kiss_Fft_State[4];
-		public CPointer<kiss_twiddle_scalar> trig;
-	}
-}
+global using op_sample = System.Single;

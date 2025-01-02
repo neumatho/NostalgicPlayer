@@ -5,9 +5,9 @@
 /******************************************************************************/
 using System;
 using System.Runtime.CompilerServices;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibMpg123.Containers;
 using Polycode.NostalgicPlayer.Kit;
-using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Ports.LibMpg123
 {

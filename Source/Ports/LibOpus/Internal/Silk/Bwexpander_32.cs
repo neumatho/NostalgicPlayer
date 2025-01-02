@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 {
@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// be applied there
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_Bwexpander_32(Pointer<opus_int32> ar, opus_int d, opus_int32 chirp_Q16)
+		public static void Silk_Bwexpander_32(CPointer<opus_int32> ar, opus_int d, opus_int32 chirp_Q16)
 		{
 			opus_int32 chirp_minus_one_Q16 = chirp_Q16 - 65536;
 

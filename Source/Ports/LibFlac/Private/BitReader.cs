@@ -1140,7 +1140,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 			// Now have to byteswap on LE machines
 			if (BitConverter.IsLittleEndian)
 			{
-				end = (br.Words * Constants.Flac__Bytes_Per_Word + br.Bytes + bytes + (Constants.Flac__Bytes_Per_Word - 1)) / Constants.Flac__Bytes_Per_Word;
+				end = (uint32_t)((br.Words * Constants.Flac__Bytes_Per_Word + br.Bytes + bytes + (Constants.Flac__Bytes_Per_Word - 1)) / Constants.Flac__Bytes_Per_Word);
 
 				for (start = br.Words; start < end; start++)
 					br.Buffer[start] = Swap_Be_Word_To_Host(br.Buffer[start]);
@@ -1151,7 +1151,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 			//   buffer[BE]: 11 22 33 44 55 66 77 88 99 AA BB CC DD EE FF ??
 			//   buffer[LE]: 44 33 22 11 88 77 66 55 CC BB AA 99 ?? FF EE DD
 			// Finally we'll update the reader values
-			end = br.Words * Constants.Flac__Bytes_Per_Word + br.Bytes + bytes;
+			end = (uint32_t)(br.Words * Constants.Flac__Bytes_Per_Word + br.Bytes + bytes);
 			br.Words = end / Constants.Flac__Bytes_Per_Word;
 			br.Bytes = end % Constants.Flac__Bytes_Per_Word;
 

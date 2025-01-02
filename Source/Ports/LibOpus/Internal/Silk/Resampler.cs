@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
@@ -203,7 +203,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// Input and output sampling rate are at most 48000 Hz
 		/// </summary>
 		/********************************************************************/
-		public static SilkError Silk_Resampler(Silk_Resampler_State_Struct S, Pointer<opus_int16> _out, Pointer<opus_int16> _in, opus_int32 inLen)
+		public static SilkError Silk_Resampler(Silk_Resampler_State_Struct S, CPointer<opus_int16> _out, CPointer<opus_int16> _in, opus_int32 inLen)
 		{
 			opus_int nSamples = S.Fs_in_kHz - S.inputDelay;
 

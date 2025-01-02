@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Agent.SampleConverter.AudioIff
 {

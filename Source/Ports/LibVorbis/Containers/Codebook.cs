@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 {
@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 		/// <summary>
 		/// List of dim*entries actual entry values
 		/// </summary>
-		public Pointer<c_float> valuelist;
+		public CPointer<c_float> valuelist;
 
 		/// <summary>
 		/// List of bitstream codewords for each entry

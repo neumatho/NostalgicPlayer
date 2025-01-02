@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
@@ -142,7 +142,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Ec_Enc_Init(out Ec_Enc _this, Pointer<byte> _buf, opus_uint32 _size)
+		public static void Ec_Enc_Init(out Ec_Enc _this, CPointer<byte> _buf, opus_uint32 _size)
 		{
 			_this = new Ec_Enc();
 
@@ -235,7 +235,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Ec_Enc_Icdf(Ec_Enc _this, c_int _s, Pointer<byte> _icdf, c_uint _ftb)
+		public static void Ec_Enc_Icdf(Ec_Enc _this, c_int _s, CPointer<byte> _icdf, c_uint _ftb)
 		{
 			opus_uint32 r = _this.rng >> (int)_ftb;
 

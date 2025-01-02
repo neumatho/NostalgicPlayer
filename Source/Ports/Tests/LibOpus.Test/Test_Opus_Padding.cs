@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
@@ -43,8 +43,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test
 		/********************************************************************/
 		private void Test_Overflow()
 		{
-			Pointer<byte> _in = CMemory.MAlloc<byte>(PacketSize);
-			Pointer<opus_int16> _out = CMemory.MAlloc<opus_int16>(FrameSize * Channels);
+			CPointer<byte> _in = CMemory.MAlloc<byte>(PacketSize);
+			CPointer<opus_int16> _out = CMemory.MAlloc<opus_int16>(FrameSize * Channels);
 
 			Console.Write("  Checking for padding overflow...");
 

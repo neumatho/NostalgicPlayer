@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibVorbis;
@@ -1584,7 +1585,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			while (todo > 0)
 			{
-				int done = vorbisFile.Ov_Read_Float(out Pointer<c_float>[] buffer, (c_int)todo, out _);
+				int done = vorbisFile.Ov_Read_Float(out CPointer<c_float>[] buffer, (c_int)todo, out _);
 				if (done == (int)VorbisError.Hole)
 					continue;
 

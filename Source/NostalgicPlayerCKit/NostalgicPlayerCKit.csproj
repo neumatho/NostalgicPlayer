@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>Polycode.NostalgicPlayer.CKit</RootNamespace>
+    <Company>Polycode</Company>
+    <Product>NostalgicPlayer</Product>
+    <Authors>Thomas Neumann</Authors>
+    <Description>Kit with special C implementations used specially in ports</Description>
+    <Version>2.5.0</Version>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath></OutputPath>
+    <DocumentationFile>bin\NostalgicPlayerCKit.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath></OutputPath>
+    <DocumentationFile>bin\NostalgicPlayerCKit.xml</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <WarningsAsErrors />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
+  </ItemGroup>
+
+</Project>

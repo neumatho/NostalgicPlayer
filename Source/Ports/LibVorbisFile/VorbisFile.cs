@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.IO;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibOgg.Containers;
 using Polycode.NostalgicPlayer.Ports.LibVorbis;
@@ -48,7 +48,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 
 			if (vf.datasource != null)
 			{
-				Pointer<byte> buffer = vf.oy.Buffer(ReadSize);
+				CPointer<byte> buffer = vf.oy.Buffer(ReadSize);
 				c_long bytes = (c_long)vf.callbacks.Read_Func(buffer, 1, ReadSize, vf.datasource);
 
 				if (bytes > 0)
@@ -221,7 +221,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void Add_Serialno(OggPage og, ref Pointer<c_long> serialno_list, ref c_int n)
+		private void Add_Serialno(OggPage og, ref CPointer<c_long> serialno_list, ref c_int n)
 		{
 			c_long s = og.SerialNo();
 			n++;
@@ -241,7 +241,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 		/// Returns nonzero if found
 		/// </summary>
 		/********************************************************************/
-		private c_int Lookup_Serialno(c_long s, Pointer<c_long> serialno_list, c_int n)
+		private c_int Lookup_Serialno(c_long s, CPointer<c_long> serialno_list, c_int n)
 		{
 			if (serialno_list.IsNotNull)
 			{
@@ -264,7 +264,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Lookup_Page_Serialno(OggPage og, Pointer<c_long> serialno_list, c_int n)
+		private c_int Lookup_Page_Serialno(OggPage og, CPointer<c_long> serialno_list, c_int n)
 		{
 			c_long s = og.SerialNo();
 
@@ -283,7 +283,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 		/// it will return the info of last page and alter *serialno
 		/// </summary>
 		/********************************************************************/
-		private ogg_int64_t Get_Prev_Page_Serial(ogg_int64_t begin, Pointer<c_long> serial_list, c_int serial_n, ref c_int serialno, ref ogg_int64_t granpos)
+		private ogg_int64_t Get_Prev_Page_Serial(ogg_int64_t begin, CPointer<c_long> serial_list, c_int serial_n, ref c_int serialno, ref ogg_int64_t granpos)
 		{
 			OggPage og = null;
 			ogg_int64_t end = begin;
@@ -359,7 +359,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 		/// non-streaming input sources
 		/// </summary>
 		/********************************************************************/
-		private c_int Fetch_Headers(VorbisInfo vi, VorbisComment vc, ref Pointer<c_long> serialno_list, ref c_int serialno_n, OggPage og_ptr)
+		private c_int Fetch_Headers(VorbisInfo vi, VorbisComment vc, ref CPointer<c_long> serialno_list, ref c_int serialno_n, OggPage og_ptr)
 		{
 			return Fetch_Headers(vi, vc, true, ref serialno_list, ref serialno_n, og_ptr);
 		}
@@ -374,7 +374,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 		/********************************************************************/
 		private c_int Fetch_Headers(VorbisInfo vi, VorbisComment vc, OggPage og_ptr)
 		{
-			Pointer<c_long> serialno_list = new Pointer<c_long>();
+			CPointer<c_long> serialno_list = new CPointer<c_long>();
 			c_int serialno_n = 0;
 
 			return Fetch_Headers(vi, vc, false, ref serialno_list, ref serialno_n, og_ptr);
@@ -388,7 +388,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 		/// non-streaming input sources
 		/// </summary>
 		/********************************************************************/
-		private c_int Fetch_Headers(VorbisInfo vi, VorbisComment vc, bool hasSerialnos, ref Pointer<c_long> serialno_list, ref c_int serialno_n, OggPage og_ptr)
+		private c_int Fetch_Headers(VorbisInfo vi, VorbisComment vc, bool hasSerialnos, ref CPointer<c_long> serialno_list, ref c_int serialno_n, OggPage og_ptr)
 		{
 			c_int ret;
 			bool allbos = false;
@@ -631,7 +631,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 		/// time
 		/// </summary>
 		/********************************************************************/
-		private c_int Bisect_Forward_Serialno(ogg_int64_t begin, ogg_int64_t searched, ogg_int64_t end, ogg_int64_t endgran, c_int endserial, Pointer<c_long> currentno_list, c_int currentnos, c_long m)
+		private c_int Bisect_Forward_Serialno(ogg_int64_t begin, ogg_int64_t searched, ogg_int64_t end, ogg_int64_t endgran, c_int endserial, CPointer<c_long> currentno_list, c_int currentnos, c_long m)
 		{
 			ogg_int64_t dataoffset = searched;
 			ogg_int64_t endsearched = end;
@@ -689,7 +689,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 				// Last page is not in the starting stream's serial number list,
 				// so we have multiple links. Find where the stream that begins
 				// our bisection ends
-				Pointer<c_long> next_serialno_list = null;
+				CPointer<c_long> next_serialno_list = null;
 				c_int next_serialnos = 0;
 				VorbisInfo vi = new VorbisInfo();
 				VorbisComment vc = new VorbisComment();
@@ -1107,10 +1107,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Ov_Open1(object f, out VorbisFile vorbisFile, Pointer<byte> initial, c_long ibytes, OvCallbacks callbacks)
+		private static c_int Ov_Open1(object f, out VorbisFile vorbisFile, CPointer<byte> initial, c_long ibytes, OvCallbacks callbacks)
 		{
 			c_int offsettest = ((f != null) && (callbacks.Seek_Func != null)) ? callbacks.Seek_Func(f, 0, SeekOrigin.Current) : -1;
-			Pointer<c_long> serialno_list = null;
+			CPointer<c_long> serialno_list = null;
 			c_int serialno_list_size = 0;
 
 			OggVorbisFile vf = new OggVorbisFile();
@@ -1127,7 +1127,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 			// stream)
 			if (initial.IsNotNull)
 			{
-				Pointer<byte> buffer = vf.oy.Buffer(ibytes);
+				CPointer<byte> buffer = vf.oy.Buffer(ibytes);
 				CMemory.MemCpy(buffer, initial, ibytes);
 				vf.oy.Wrote(ibytes);
 			}
@@ -1262,7 +1262,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 		/// bitstream sections that are truncated/woogie
 		/// </summary>
 		/********************************************************************/
-		public static VorbisError Ov_Open_Callbacks(object f, out VorbisFile vorbisFile, Pointer<byte> initial, c_long ibytes, OvCallbacks callbacks)
+		public static VorbisError Ov_Open_Callbacks(object f, out VorbisFile vorbisFile, CPointer<byte> initial, c_long ibytes, OvCallbacks callbacks)
 		{
 			c_int ret = Ov_Open1(f, out vorbisFile, initial, ibytes, callbacks);
 			if (ret != 0)
@@ -1278,7 +1278,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static VorbisError Ov_Open(Stream f, bool leaveOpen, out VorbisFile vorbisFile, Pointer<byte> initial, c_long ibytes)
+		public static VorbisError Ov_Open(Stream f, bool leaveOpen, out VorbisFile vorbisFile, CPointer<byte> initial, c_long ibytes)
 		{
 			OvCallbacks callbacks = new OvCallbacks
 			{
@@ -1305,7 +1305,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 		/// the file if this call returns an error
 		/// </summary>
 		/********************************************************************/
-		public static VorbisError Ov_Test_Callbacks(object f, out VorbisFile vorbisFile, Pointer<byte> initial, c_long ibytes, OvCallbacks callbacks)
+		public static VorbisError Ov_Test_Callbacks(object f, out VorbisFile vorbisFile, CPointer<byte> initial, c_long ibytes, OvCallbacks callbacks)
 		{
 			return (VorbisError)Ov_Open1(f, out vorbisFile, initial, ibytes, callbacks);
 		}
@@ -1317,7 +1317,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static VorbisError Ov_Test(Stream f, bool leaveOpen, out VorbisFile vorbisFile, Pointer<byte> initial, c_long ibytes)
+		public static VorbisError Ov_Test(Stream f, bool leaveOpen, out VorbisFile vorbisFile, CPointer<byte> initial, c_long ibytes)
 		{
 			OvCallbacks callbacks = new OvCallbacks
 			{
@@ -2229,7 +2229,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 		/// *section) set to the logical bitstream number
 		/// </summary>
 		/********************************************************************/
-		public c_long Ov_Read_Float(out Pointer<c_float>[] pcm_channels, c_int length, out c_int bitstream)
+		public c_long Ov_Read_Float(out CPointer<c_float>[] pcm_channels, c_int length, out c_int bitstream)
 		{
 			pcm_channels = null;
 			bitstream = 0;
@@ -2241,7 +2241,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile
 			{
 				if (vf.ready_state == State.InitSet)
 				{
-					c_long samples = Block.Vorbis_Synthesis_Pcmout(vf.vd, out Pointer<c_float>[] pcm);
+					c_long samples = Block.Vorbis_Synthesis_Pcmout(vf.vd, out CPointer<c_float>[] pcm);
 
 					if (samples != 0)
 					{

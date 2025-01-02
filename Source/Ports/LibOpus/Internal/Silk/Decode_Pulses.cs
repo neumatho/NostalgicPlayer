@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt;
 
@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// Decode quantization indices of excitation
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_Decode_Pulses(Ec_Dec psRangeDec, Pointer<opus_int16> pulses, SignalType signalType, opus_int quantOffsetType, opus_int frame_length)
+		public static void Silk_Decode_Pulses(Ec_Dec psRangeDec, CPointer<opus_int16> pulses, SignalType signalType, opus_int quantOffsetType, opus_int frame_length)
 		{
 			opus_int[] sum_pulses = new opus_int[Constants.Max_Nb_Shell_Blocks];
 			opus_int[] nLshifts = new opus_int[Constants.Max_Nb_Shell_Blocks];
@@ -51,7 +51,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 					nLshifts[i]++;
 
 					// When we've already got 10 LSBs, we shift the table to not allow (SILK_MAX_PULSES + 1)
-					sum_pulses[i] = EntDec.Ec_Dec_Icdf(psRangeDec, new Pointer<opus_uint8>(Tables_Pulses_Per_Block.Silk_Pulses_Per_Block_iCDF[Constants.N_Rate_Levels - 1], nLshifts[i] == 10 ? 1 : 0), 8);
+					sum_pulses[i] = EntDec.Ec_Dec_Icdf(psRangeDec, new CPointer<opus_uint8>(Tables_Pulses_Per_Block.Silk_Pulses_Per_Block_iCDF[Constants.N_Rate_Levels - 1], nLshifts[i] == 10 ? 1 : 0), 8);
 				}
 			}
 
@@ -74,7 +74,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 				if (nLshifts[i] > 0)
 				{
 					opus_int nLS = nLshifts[i];
-					Pointer<opus_int16> pulses_ptr = pulses + Macros.Silk_SMULBB(i, Constants.Shell_Codec_Frame_Length);
+					CPointer<opus_int16> pulses_ptr = pulses + Macros.Silk_SMULBB(i, Constants.Shell_Codec_Frame_Length);
 
 					for (opus_int k = 0; k < Constants.Shell_Codec_Frame_Length; k++)
 					{

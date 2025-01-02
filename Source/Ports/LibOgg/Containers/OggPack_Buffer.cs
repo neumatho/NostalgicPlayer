@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 {
@@ -18,9 +18,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Containers
 		public c_int EndBit;
 
 		/// <summary></summary>
-		public Pointer<byte> Buffer;
+		public CPointer<byte> Buffer;
 		/// <summary></summary>
-		public Pointer<byte> Ptr;
+		public CPointer<byte> Ptr;
 		/// <summary></summary>
 		public c_long Storage;
 

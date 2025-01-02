@@ -3,7 +3,7 @@
 // Declare assembly as CLS compliant.
 //[assembly: System.CLSCompliant(true)]
 
-namespace Polycode.NostalgicPlayer.Kit.Utility
+namespace Polycode.NostalgicPlayer.CKit
 {
     /// <summary>
     /// Implements several <a href="http://en.cppreference.com/w/c/numeric/math">C Standard</a> mathematical functions that are missing from the .NET framework.

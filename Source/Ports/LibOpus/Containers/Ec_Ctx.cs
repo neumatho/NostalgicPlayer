@@ -3,8 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 {
@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 		/// <summary>
 		/// Buffered input/output
 		/// </summary>
-		public Pointer<byte> buf;
+		public CPointer<byte> buf;
 
 		/// <summary>
 		/// The size of the buffer

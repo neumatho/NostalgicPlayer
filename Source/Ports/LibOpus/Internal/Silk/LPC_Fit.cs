@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 {
@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// fixes should also be applied there
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_LPC_Fit(Pointer<opus_int16> a_QOUT, Pointer<opus_int32> a_QIN, opus_int QOUT, opus_int QIN, opus_int d)
+		public static void Silk_LPC_Fit(CPointer<opus_int16> a_QOUT, CPointer<opus_int32> a_QIN, opus_int QOUT, opus_int QIN, opus_int d)
 		{
 			opus_int i, idx = 0;
 

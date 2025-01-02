@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOgg.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
@@ -63,7 +63,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 				if (b.Storage > (c_long.MaxValue - Buffer_Increment))
 					goto Err;
 
-				Pointer<byte> ret = Memory.Ogg_Realloc(b.Buffer, (size_t)b.Storage + Buffer_Increment);
+				CPointer<byte> ret = Memory.Ogg_Realloc(b.Buffer, (size_t)b.Storage + Buffer_Increment);
 				if (ret.IsNull)
 					goto Err;
 
@@ -130,7 +130,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 				if (b.Storage > (c_long.MaxValue - Buffer_Increment))
 					goto Err;
 
-				Pointer<byte> ret = Memory.Ogg_Realloc(b.Buffer, (size_t)b.Storage + Buffer_Increment);
+				CPointer<byte> ret = Memory.Ogg_Realloc(b.Buffer, (size_t)b.Storage + Buffer_Increment);
 				if (ret.IsNull)
 					goto Err;
 
@@ -184,7 +184,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void OggPack_WriteCopy(OggPack_Buffer b, Pointer<byte> source, c_long bits)
+		public static void OggPack_WriteCopy(OggPack_Buffer b, CPointer<byte> source, c_long bits)
 		{
 			OggPack_WriteCopy_Helper(b, source, bits, OggPack_Write, false);
 		}
@@ -196,7 +196,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void OggPackB_WriteCopy(OggPack_Buffer b, Pointer<byte> source, c_long bits)
+		public static void OggPackB_WriteCopy(OggPack_Buffer b, CPointer<byte> source, c_long bits)
 		{
 			OggPack_WriteCopy_Helper(b, source, bits, OggPackB_Write, true);
 		}
@@ -264,7 +264,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void OggPack_ReadInit(out OggPack_Buffer b, Pointer<byte> buf, c_int bytes)
+		public static void OggPack_ReadInit(out OggPack_Buffer b, CPointer<byte> buf, c_int bytes)
 		{
 			b = new OggPack_Buffer();
 
@@ -279,7 +279,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void OggPackB_ReadInit(out OggPack_Buffer b, Pointer<byte> buf, c_int bytes)
+		public static void OggPackB_ReadInit(out OggPack_Buffer b, CPointer<byte> buf, c_int bytes)
 		{
 			OggPack_ReadInit(out b, buf, bytes);
 		}
@@ -681,7 +681,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static Pointer<byte> OggPack_GetBuffer(OggPack_Buffer b)
+		public static CPointer<byte> OggPack_GetBuffer(OggPack_Buffer b)
 		{
 			return b.Buffer;
 		}
@@ -693,7 +693,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static Pointer<byte> OggPackB_GetBuffer(OggPack_Buffer b)
+		public static CPointer<byte> OggPackB_GetBuffer(OggPack_Buffer b)
 		{
 			return OggPack_GetBuffer(b);
 		}
@@ -704,9 +704,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void OggPack_WriteCopy_Helper(OggPack_Buffer b, Pointer<byte> source, c_long bits, Write w, bool msb)
+		private static void OggPack_WriteCopy_Helper(OggPack_Buffer b, CPointer<byte> source, c_long bits, Write w, bool msb)
 		{
-			Pointer<byte> ptr = source;
+			CPointer<byte> ptr = source;
 
 			c_long bytes = bits / 8;
 			c_long pBytes = (b.EndBit + bits) / 8;
@@ -723,7 +723,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg.Internal
 
 				b.Storage = b.EndByte + pBytes + Buffer_Increment;
 
-				Pointer<byte> ret = Memory.Ogg_Realloc(b.Buffer, (size_t)b.Storage);
+				CPointer<byte> ret = Memory.Ogg_Realloc(b.Buffer, (size_t)b.Storage);
 				if (ret.IsNull)
 					goto Err;
 

@@ -67,14 +67,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			if ((ptrdiff_t)should_Read > can_Read)
 			{
-				m.Start.AsSpan(m.Pos, can_Read).CopyTo(buf);
+				m.Start.AsSpan((int)m.Pos, (int)can_Read).CopyTo(buf);
 				m.Pos += can_Read;
 
 				return (size_t)can_Read / size;
 			}
 			else
 			{
-				m.Start.AsSpan(m.Pos, (int)should_Read).CopyTo(buf);
+				m.Start.AsSpan((int)m.Pos, (int)should_Read).CopyTo(buf);
 				m.Pos += (ptrdiff_t)should_Read;
 
 				return num;
@@ -133,7 +133,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/********************************************************************/
 		public c_long MTell()
 		{
-			return m.Pos;
+			return (c_long)m.Pos;
 		}
 
 

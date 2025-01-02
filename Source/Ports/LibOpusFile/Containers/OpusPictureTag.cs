@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers
 {
@@ -25,12 +25,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers
 		/// but #data_length is set to the length of the string excluding that
 		/// terminating NUL
 		/// </summary>
-		public Pointer<byte> Mime_Type;
+		public CPointer<byte> Mime_Type;
 
 		/// <summary>
 		/// The description of the picture, in UTF-8
 		/// </summary>
-		public Pointer<byte> Description;
+		public CPointer<byte> Description;
 
 		/// <summary>
 		/// The width of the picture in pixels
@@ -62,7 +62,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers
 		/// <summary>
 		/// The binary picture data
 		/// </summary>
-		public Pointer<byte> Data;
+		public CPointer<byte> Data;
 
 		/// <summary>
 		/// The format of the picture data, if known

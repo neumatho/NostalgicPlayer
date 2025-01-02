@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
@@ -19,10 +19,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void _Celt_Lpc(Pointer<opus_val16> _lpc, Pointer<opus_val32> ac, c_int p)
+		public static void _Celt_Lpc(CPointer<opus_val16> _lpc, CPointer<opus_val32> ac, c_int p)
 		{
 			opus_val32 error = ac[0];
-			Pointer<c_float> lpc = _lpc;
+			CPointer<c_float> lpc = _lpc;
 
 			Memory.Opus_Clear(lpc, p);
 
@@ -67,7 +67,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Celt_Fir_C(Pointer<opus_val16> x, Pointer<opus_val16> num, Pointer<opus_val16> y, c_int N, c_int ord, c_int arch)
+		public static void Celt_Fir_C(CPointer<opus_val16> x, CPointer<opus_val16> num, CPointer<opus_val16> y, c_int N, c_int ord, c_int arch)
 		{
 			c_int i;
 			opus_val16[] rnum = new opus_val16[ord];
@@ -111,7 +111,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Celt_Fir(Pointer<opus_val16> x, Pointer<opus_val16> num, Pointer<opus_val16> y, c_int N, c_int ord, c_int arch)
+		public static void Celt_Fir(CPointer<opus_val16> x, CPointer<opus_val16> num, CPointer<opus_val16> y, c_int N, c_int ord, c_int arch)
 		{
 			Celt_Fir_C(x, num, y, N, ord, arch);
 		}
@@ -123,11 +123,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Celt_Iir(Pointer<opus_val32> _x, Pointer<opus_val16> den, Pointer<opus_val32> _y, c_int N, c_int ord, Pointer<opus_val16> mem, c_int arch)
+		public static void Celt_Iir(CPointer<opus_val32> _x, CPointer<opus_val16> den, CPointer<opus_val32> _y, c_int N, c_int ord, CPointer<opus_val16> mem, c_int arch)
 		{
 			c_int i;
 			opus_val16[] rden = new opus_val16[ord];
-			Pointer<opus_val16> y = new Pointer<opus_val16>(N + ord);
+			CPointer<opus_val16> y = new CPointer<opus_val16>(N + ord);
 
 			for (i = 0; i < ord; i++)
 				rden[i] = den[ord - i - 1];
@@ -192,10 +192,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int _Celt_Autocorr(Pointer<opus_val16> x, Pointer<opus_val32> ac, Pointer<opus_val16> window, c_int overlap, c_int lag, c_int n, c_int arch)
+		public static c_int _Celt_Autocorr(CPointer<opus_val16> x, CPointer<opus_val32> ac, CPointer<opus_val16> window, c_int overlap, c_int lag, c_int n, c_int arch)
 		{
 			c_int fastN = n - lag;
-			Pointer<opus_val16> xptr;
+			CPointer<opus_val16> xptr;
 			opus_val16[] xx = new opus_val16[n];
 
 			if (overlap == 0)

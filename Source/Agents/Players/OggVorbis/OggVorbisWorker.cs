@@ -8,10 +8,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Polycode.NostalgicPlayer.Agent.Player.OggVorbis.Containers;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibVorbis;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Containers;
 using Polycode.NostalgicPlayer.Ports.LibVorbisFile;
@@ -677,7 +677,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 
 			while (count > 0)
 			{
-				int done = vorbisFile.Ov_Read_Float(out Pointer<float>[] buffer, count / channels, out _);
+				int done = vorbisFile.Ov_Read_Float(out CPointer<float>[] buffer, count / channels, out _);
 				if (done == (int)VorbisError.Hole)
 					continue;
 

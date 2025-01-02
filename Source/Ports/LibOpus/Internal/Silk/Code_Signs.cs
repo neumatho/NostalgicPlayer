@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt;
 
@@ -33,14 +33,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// Decodes signs of excitation
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_Decode_Signs(Ec_Dec psRangeDec, Pointer<opus_int16> pulses, opus_int length, SignalType signalType, opus_int quantOffsetType, Pointer<opus_int> sum_pulses)
+		public static void Silk_Decode_Signs(Ec_Dec psRangeDec, CPointer<opus_int16> pulses, opus_int length, SignalType signalType, opus_int quantOffsetType, CPointer<opus_int> sum_pulses)
 		{
 			opus_uint8[] icdf = new opus_uint8[2];
 
 			icdf[1] = 0;
-			Pointer<opus_int16> q_ptr = pulses;
+			CPointer<opus_int16> q_ptr = pulses;
 			opus_int i = Macros.Silk_SMULBB(7, SigProc_Fix.Silk_ADD_LSHIFT(quantOffsetType, (int)signalType, 1));
-			Pointer<opus_uint8> icdf_ptr = new Pointer<opus_uint8>(Tables_Pulses_Per_Block.Silk_Sign_iCDF, i);
+			CPointer<opus_uint8> icdf_ptr = new CPointer<opus_uint8>(Tables_Pulses_Per_Block.Silk_Sign_iCDF, i);
 			length = SigProc_Fix.Silk_RSHIFT(length + Constants.Shell_Codec_Frame_Length / 2, Constants.Log2_Shell_Codec_Frame_Length);
 
 			for (i = 0; i < length; i++)

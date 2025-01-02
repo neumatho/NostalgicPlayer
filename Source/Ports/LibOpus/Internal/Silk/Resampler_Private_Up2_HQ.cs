@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// by a notch filter just above Nyquist
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_Resampler_Private_Up2_HQ(Pointer<opus_int32> S, Pointer<opus_int16> _out, Pointer<opus_int16> _in, opus_int32 len)
+		public static void Silk_Resampler_Private_Up2_HQ(CPointer<opus_int32> S, CPointer<opus_int16> _out, CPointer<opus_int16> _in, opus_int32 len)
 		{
 			// Internal variables and state are in Q10 format
 			for (opus_int32 k = 0; k < len; k++)
@@ -79,7 +79,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_Resampler_Private_Up2_HQ_Wrapper(Silk_Resampler_State_Struct SS, Pointer<opus_int16> _out, Pointer<opus_int16> _in, opus_int32 len)
+		public static void Silk_Resampler_Private_Up2_HQ_Wrapper(Silk_Resampler_State_Struct SS, CPointer<opus_int16> _out, CPointer<opus_int16> _in, opus_int32 len)
 		{
 			Silk_Resampler_State_Struct S = SS;
 			Silk_Resampler_Private_Up2_HQ(S.sIIR, _out, _in, len);

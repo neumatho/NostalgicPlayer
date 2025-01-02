@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using System.IO;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibOgg.Containers;
 using Polycode.NostalgicPlayer.Ports.LibOpus;
@@ -92,7 +92,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// codecs, such as video)
 		/// </summary>
 		/********************************************************************/
-		public static OpusFileError Op_Test(OpusHead _head, Pointer<byte> _initial_data, size_t _initial_bytes)
+		public static OpusFileError Op_Test(OpusHead _head, CPointer<byte> _initial_data, size_t _initial_bytes)
 		{
 			// The first page of a normal Opus file will be at most 57 bytes (27 Ogg
 			// page header bytes + 1 lacing value + 21 Opus header bytes + 8 channel
@@ -115,7 +115,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 
 			OpusFileError err;
 			OggSync.Init(out OggSync oy);
-			Pointer<byte> data = oy.Buffer((c_long)_initial_bytes);
+			CPointer<byte> data = oy.Buffer((c_long)_initial_bytes);
 
 			if (data.IsNotNull)
 			{
@@ -185,7 +185,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/********************************************************************/
 		private c_int Op_Get_Data(c_int _nbytes)
 		{
-			Pointer<byte> buffer = _of.oy.Buffer(_nbytes);
+			CPointer<byte> buffer = _of.oy.Buffer(_nbytes);
 			c_int nbytes = _of.callbacks.Read(_of.stream, buffer, _nbytes);
 
 			if (nbytes > 0)
@@ -302,11 +302,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Op_Add_Serialno(OggPage _og, ref Pointer<ogg_uint32_t> _serialnos, ref c_int _nserialnos, ref c_int _cserialnos)
+		private c_int Op_Add_Serialno(OggPage _og, ref CPointer<ogg_uint32_t> _serialnos, ref c_int _nserialnos, ref c_int _cserialnos)
 		{
 			ogg_uint32_t s = (ogg_uint32_t)_og.SerialNo();
 
-			Pointer<ogg_uint32_t> serialnos = _serialnos;
+			CPointer<ogg_uint32_t> serialnos = _serialnos;
 			c_int nserialnos = _nserialnos;
 			c_int cserialnos = _cserialnos;
 
@@ -337,7 +337,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// Returns nonzero if found
 		/// </summary>
 		/********************************************************************/
-		private c_int Op_Lookup_Serialno(ogg_uint32_t _s, Pointer<ogg_uint32_t> _serialnos, c_int _nserialnos)
+		private c_int Op_Lookup_Serialno(ogg_uint32_t _s, CPointer<ogg_uint32_t> _serialnos, c_int _nserialnos)
 		{
 			c_int i;
 
@@ -355,7 +355,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Op_Lookup_Page_Serialno(OggPage _og, Pointer<ogg_uint32_t> _serialnos, c_int _nserialnos)
+		private c_int Op_Lookup_Page_Serialno(OggPage _og, CPointer<ogg_uint32_t> _serialnos, c_int _nserialnos)
 		{
 			return Op_Lookup_Serialno((ogg_uint32_t)_og.SerialNo(), _serialnos, _nserialnos);
 		}
@@ -378,7 +378,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// the info of the last page
 		/// </summary>
 		/********************************************************************/
-		private c_int Op_Get_Prev_Page_Serial(out OpusSeekRecord _sr, opus_int64 _offset, ogg_uint32_t _serialno, Pointer<ogg_uint32_t> _serialnos, c_int _nserialnos)
+		private c_int Op_Get_Prev_Page_Serial(out OpusSeekRecord _sr, opus_int64 _offset, ogg_uint32_t _serialno, CPointer<ogg_uint32_t> _serialnos, c_int _nserialnos)
 		{
 			_sr = null;
 
@@ -479,7 +479,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// we seek-back-and-read-forward
 		/// </summary>
 		/********************************************************************/
-		private opus_int64 Op_Get_Last_Page(out ogg_int64_t _gp, opus_int64 _offset, ogg_uint32_t _serialno, Pointer<ogg_uint32_t> _serialnos, c_int _nserialnos)
+		private opus_int64 Op_Get_Last_Page(out ogg_int64_t _gp, opus_int64 _offset, ogg_uint32_t _serialno, CPointer<ogg_uint32_t> _serialnos, c_int _nserialnos)
 		{
 			_gp = 0;
 
@@ -563,7 +563,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// This is important for non-streaming input sources
 		/// </summary>
 		/********************************************************************/
-		private c_int Op_Fetch_Headers_Impl(OpusHead _head, OpusTags _tags, bool hasSerialnos, ref Pointer<ogg_uint32_t> _serialnos, ref c_int _nserialnos, ref c_int _cserialnos, ref OggPage _og)
+		private c_int Op_Fetch_Headers_Impl(OpusHead _head, OpusTags _tags, bool hasSerialnos, ref CPointer<ogg_uint32_t> _serialnos, ref c_int _nserialnos, ref c_int _cserialnos, ref OggPage _og)
 		{
 			c_int ret;
 
@@ -696,7 +696,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/********************************************************************/
 		private c_int Op_Fetch_Headers(OpusHead _head, OpusTags _tags, OggPage _og)
 		{
-			Pointer<ogg_uint32_t> serialnos = new Pointer<ogg_uint32_t>();
+			CPointer<ogg_uint32_t> serialnos = new CPointer<ogg_uint32_t>();
 			c_int nserialnos = 0;
 			c_int cserialnos = 0;
 
@@ -710,7 +710,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Op_Fetch_Headers(OpusHead _head, OpusTags _tags, ref Pointer<ogg_uint32_t> _serialnos, ref c_int _nserialnos, ref c_int _cserialnos, OggPage _og)
+		private c_int Op_Fetch_Headers(OpusHead _head, OpusTags _tags, ref CPointer<ogg_uint32_t> _serialnos, ref c_int _nserialnos, ref c_int _cserialnos, OggPage _og)
 		{
 			return Op_Fetch_Headers(_head, _tags, true, ref _serialnos, ref _nserialnos, ref _cserialnos, _og);
 		}
@@ -722,7 +722,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Op_Fetch_Headers(OpusHead _head, OpusTags _tags, bool hasSerialnos, ref Pointer<ogg_uint32_t> _serialnos, ref c_int _nserialnos, ref c_int _cserialnos, OggPage _og)
+		private c_int Op_Fetch_Headers(OpusHead _head, OpusTags _tags, bool hasSerialnos, ref CPointer<ogg_uint32_t> _serialnos, ref c_int _nserialnos, ref c_int _cserialnos, OggPage _og)
 		{
 			if (_og == null)
 			{
@@ -922,7 +922,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// negative value on error
 		/// </summary>
 		/********************************************************************/
-		private c_int Op_Get_Packet_Duration(Pointer<byte> _data, c_int _len)
+		private c_int Op_Get_Packet_Duration(CPointer<byte> _data, c_int _len)
 		{
 			c_int nframes = OpusDecoder.Packet_Get_Nb_Frames(_data, _len);
 			if (nframes < 0)
@@ -946,7 +946,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// _of.op_count is set to the number of packets collected
 		/// </summary>
 		/********************************************************************/
-		private opus_int32 Op_Collect_Audio_Packets(Pointer<c_int> _durations)
+		private opus_int32 Op_Collect_Audio_Packets(CPointer<c_int> _durations)
 		{
 			// Count the durations of all packets in the page
 			c_int op_count = 0;
@@ -1194,7 +1194,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// fail
 		/// </summary>
 		/********************************************************************/
-		private c_int Op_Find_Final_Pcm_Offset(Pointer<ogg_uint32_t> _serialnos, c_int _nserialnos, OggOpusLink _link, opus_int64 _offset, ogg_uint32_t _end_serialno, ogg_int64_t _end_gp, ref ogg_int64_t _total_duration)
+		private c_int Op_Find_Final_Pcm_Offset(CPointer<ogg_uint32_t> _serialnos, c_int _nserialnos, OggOpusLink _link, opus_int64 _offset, ogg_uint32_t _end_serialno, ogg_int64_t _end_gp, ref ogg_int64_t _total_duration)
 		{
 			// For the time being, fetch end PCM offset the simple way
 			ogg_uint32_t cur_serialno = _link.serialno;
@@ -1289,7 +1289,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// streams we've found is 0
 		/// </summary>
 		/********************************************************************/
-		private opus_int64 Op_Predict_Link_Start(Pointer<OpusSeekRecord> _sr, c_int _nsr, opus_int64 _searched, opus_int64 _end_searched, opus_int32 _bias)
+		private opus_int64 Op_Predict_Link_Start(CPointer<OpusSeekRecord> _sr, c_int _nsr, opus_int64 _searched, opus_int64 _end_searched, opus_int32 _bias)
 		{
 			// Require that we be at least OP_CHUNK_SIZE from the end.
 			// We don't require that we be at least OP_CHUNK_SIZE from the beginning,
@@ -1367,16 +1367,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Op_Bisect_Forward_Serialno(opus_int64 _searched, Pointer<OpusSeekRecord> _sr, c_int _csr, ref Pointer<ogg_uint32_t> _serialnos, ref c_int _nserialnos, ref c_int _cserialnos)
+		private c_int Op_Bisect_Forward_Serialno(opus_int64 _searched, CPointer<OpusSeekRecord> _sr, c_int _csr, ref CPointer<ogg_uint32_t> _serialnos, ref c_int _nserialnos, ref c_int _cserialnos)
 		{
 			OggPage og = null;
 			c_int nlinks;
 			c_int clinks;
-			Pointer<ogg_uint32_t> serialnos;
+			CPointer<ogg_uint32_t> serialnos;
 			c_int nserialnos;
 			c_int ret;
 
-			Pointer<OggOpusLink> links = _of.links;
+			CPointer<OggOpusLink> links = _of.links;
 			nlinks = clinks = _of.nlinks;
 			ogg_int64_t total_duration = 0;
 
@@ -1710,7 +1710,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 				_of.od_coupled_count = coupled_count;
 				_of.od_channel_count = channel_count;
 
-				CMemory.MemCpy(_of.od_mapping, (Pointer<byte>)head.Mapping, channel_count);
+				CMemory.MemCpy(_of.od_mapping, (CPointer<byte>)head.Mapping, channel_count);
 			}
 
 			_of.ready_state = State.InitSet;
@@ -1870,7 +1870,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 //TNE				Opus_Multistream_Decoder_Destroy(_of.od);
 			_of.od.Destroy();
 
-			Pointer<OggOpusLink> links = _of.links;
+			CPointer<OggOpusLink> links = _of.links;
 
 			if (!_of.seekable)
 			{
@@ -1905,7 +1905,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Op_Open1(object _stream, OpusFileCallbacks _cb, Pointer<byte> _initial_data, size_t _initial_bytes)
+		private c_int Op_Open1(object _stream, OpusFileCallbacks _cb, CPointer<byte> _initial_data, size_t _initial_bytes)
 		{
 			_of.Clear();
 
@@ -1932,7 +1932,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			// decoding entire files from RAM
 			if (_initial_bytes > 0)
 			{
-				Pointer<byte> buffer = _of.oy.Buffer((c_long)_initial_bytes);
+				CPointer<byte> buffer = _of.oy.Buffer((c_long)_initial_bytes);
 				CMemory.MemCpy(buffer, _initial_data, (int)_initial_bytes);
 				_of.oy.Wrote((c_long)_initial_bytes);
 			}
@@ -2068,7 +2068,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// buffered until you are sure of the stream type)
 		/// </summary>
 		/********************************************************************/
-		public static OpusFile Op_Test_Callbacks(object _stream, OpusFileCallbacks _cb, Pointer<byte> _initial_data, size_t _initial_bytes, out OpusFileError _error)
+		public static OpusFile Op_Test_Callbacks(object _stream, OpusFileCallbacks _cb, CPointer<byte> _initial_data, size_t _initial_bytes, out OpusFileError _error)
 		{
 			OpusFile of = new OpusFile(new OggOpusFile());
 			c_int ret = (c_int)OpusFileError.Fault;
@@ -2099,7 +2099,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// Open a stream using the given set of callbacks to access it
 		/// </summary>
 		/********************************************************************/
-		public static OpusFile Op_Open_Callbacks(object _stream, OpusFileCallbacks _cb, Pointer<byte> _initial_data, size_t _initial_bytes, out OpusFileError _error)
+		public static OpusFile Op_Open_Callbacks(object _stream, OpusFileCallbacks _cb, CPointer<byte> _initial_data, size_t _initial_bytes, out OpusFileError _error)
 		{
 			OpusFile of = Op_Test_Callbacks(_stream, _cb, _initial_data, _initial_bytes, out _error);
 			if (of != null)
@@ -2202,7 +2202,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			if ((_of.ready_state < State.Opened) || !_of.seekable || (_li >= nlinks))
 				return (ogg_int64_t)OpusFileError.Inval;
 
-			Pointer<OggOpusLink> links = _of.links;
+			CPointer<OggOpusLink> links = _of.links;
 
 			// We verify that the granule position differences are larger than the
 			// pre-skip and that the total duration does not overflow during link
@@ -2345,7 +2345,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/********************************************************************/
 		private c_int Op_Get_Link_From_Serialno(c_int _cur_link, opus_int64 _page_offset, ogg_uint32_t _serialno)
 		{
-			Pointer<OggOpusLink> links = _of.links;
+			CPointer<OggOpusLink> links = _of.links;
 			c_int nlinks = _of.nlinks;
 			c_int li_lo = 0;
 
@@ -2388,7 +2388,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			c_int ret;
 
 			bool seekable = _of.seekable;
-			Pointer<OggOpusLink> links = _of.links;
+			CPointer<OggOpusLink> links = _of.links;
 			c_int cur_link = seekable ? _of.cur_link : 0;
 			ogg_uint32_t cur_serialno = links[cur_link].serialno;
 
@@ -3205,7 +3205,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		private ogg_int64_t Op_Get_Granulepos(ogg_int64_t _pcm_offset, out c_int _li)
 		{
 			c_int nlinks = _of.nlinks;
-			Pointer<OggOpusLink> links = _of.links;
+			CPointer<OggOpusLink> links = _of.links;
 			c_int li_lo = 0;
 			c_int li_hi = nlinks;
 
@@ -3383,7 +3383,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 
 			if (_of.seekable)
 			{
-				Pointer<OggOpusLink> links = _of.links;
+				CPointer<OggOpusLink> links = _of.links;
 				c_int nlinks = _of.nlinks;
 				nchannels_max = 1;
 
@@ -3407,7 +3407,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// Decode a single packet into the target buffer
 		/// </summary>
 		/********************************************************************/
-		private c_int Op_Decode(Pointer<op_sample> _pcm, Ogg_Packet _op, c_int _nsamples, c_int _nchannels)
+		private c_int Op_Decode(CPointer<op_sample> _pcm, Ogg_Packet _op, c_int _nsamples, c_int _nchannels)
 		{
 			c_int ret;
 
@@ -3440,7 +3440,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// op_read() or op_read_float()
 		/// </summary>
 		/********************************************************************/
-		private c_int Op_Read_Native(Pointer<op_sample> _pcm, c_int _buf_size, out c_int _li)
+		private c_int Op_Read_Native(CPointer<op_sample> _pcm, c_int _buf_size, out c_int _li)
 		{
 			_li = 0;
 
@@ -3506,7 +3506,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 						if ((duration * nchannels) > _buf_size)
 						{
 							// If the user's buffer is too small, decode into a scratch buffer
-							Pointer<op_sample> buf = _of.od_buffer;
+							CPointer<op_sample> buf = _of.od_buffer;
 
 							if (buf.IsNull)
 							{
@@ -3614,7 +3614,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		///   buffer)
 		/// </summary>
 		/********************************************************************/
-		public c_int Op_Read_Float(Pointer<c_float> _pcm, c_int _buf_size, out c_int _li)
+		public c_int Op_Read_Float(CPointer<c_float> _pcm, c_int _buf_size, out c_int _li)
 		{
 			_of.state_channel_count = 0;
 

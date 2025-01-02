@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 {
@@ -17,11 +17,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// LPC analysis filter
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_LPC_Analysis_Filter(Pointer<opus_int16> _out, Pointer<opus_int16> _in, Pointer<opus_int16> B, opus_int32 len, opus_int32 d, c_int arch)
+		public static void Silk_LPC_Analysis_Filter(CPointer<opus_int16> _out, CPointer<opus_int16> _in, CPointer<opus_int16> B, opus_int32 len, opus_int32 d, c_int arch)
 		{
 			for (c_int ix = d; ix < len; ix++)
 			{
-				Pointer<opus_int16> in_ptr = _in + ix - 1;
+				CPointer<opus_int16> in_ptr = _in + ix - 1;
 
 				opus_int32 out32_Q12 = Macros.Silk_SMULBB(in_ptr[0], B[0]);
 

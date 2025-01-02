@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Containers;
@@ -98,9 +99,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 		/// reused allocated memory as the original code does.
 		/// </summary>
 		/********************************************************************/
-		internal static Pointer<T> Vorbis_Block_Alloc<T>(VorbisBlock vb, c_long items)
+		internal static CPointer<T> Vorbis_Block_Alloc<T>(VorbisBlock vb, c_long items)
 		{
-			return new Pointer<T>(items);
+			return new CPointer<T>(items);
 		}
 
 
@@ -110,7 +111,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 		/// 
 		/// </summary>
 		/********************************************************************/
-		internal static Pointer<byte> Vorbis_Block_Alloc(VorbisBlock vb, c_long bytes)
+		internal static CPointer<byte> Vorbis_Block_Alloc(VorbisBlock vb, c_long bytes)
 		{
 			// TNE: This method as well as Vorbis_Block_Ripcord has been modified,
 			//      since some part of the original code is not possible in C#.
@@ -138,7 +139,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 			}
 
 			{
-				Pointer<byte> ret = vb.localstore + vb.localtop;
+				CPointer<byte> ret = vb.localstore + vb.localtop;
 				vb.localtop += bytes;
 
 				return ret;
@@ -286,8 +287,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 			// Initialize the storage vectors. blocksize[1] is small for encode,
 			// but the correct size for decode
 			v.pcm_storage = ci.blocksizes[1];
-			v.pcm = new Pointer<c_float>[vi.channels];
-			v.pcmret = new Pointer<c_float>[vi.channels];
+			v.pcm = new CPointer<c_float>[vi.channels];
+			v.pcmret = new CPointer<c_float>[vi.channels];
 
 			{
 				for (c_int i = 0; i < vi.channels; i++)
@@ -533,8 +534,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 						{
 							// Large/large
 							c_float[] w = Window.Vorbis_Window_Get(b.window[1] - hs);
-							Pointer<c_float> pcm = v.pcm[j] + prevCenter;
-							Pointer<c_float> p = vb.pcm[j];
+							CPointer<c_float> pcm = v.pcm[j] + prevCenter;
+							CPointer<c_float> p = vb.pcm[j];
 
 							for (c_int i = 0; i < n1; i++)
 								pcm[i] = pcm[i] * w[n1 - i - 1] + p[i] * w[i];
@@ -543,8 +544,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 						{
 							// Large/small
 							c_float[] w = Window.Vorbis_Window_Get(b.window[0] - hs);
-							Pointer<c_float> pcm = v.pcm[j] + prevCenter + n1 / 2 - n0 / 2;
-							Pointer<c_float> p = vb.pcm[j];
+							CPointer<c_float> pcm = v.pcm[j] + prevCenter + n1 / 2 - n0 / 2;
+							CPointer<c_float> p = vb.pcm[j];
 
 							for (c_int i = 0; i < n0; i++)
 								pcm[i] = pcm[i] * w[n0 - i - 1] + p[i] * w[i];
@@ -556,8 +557,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 						{
 							// Small/large
 							c_float[] w = Window.Vorbis_Window_Get(b.window[0] - hs);
-							Pointer<c_float> pcm = v.pcm[j] + prevCenter;
-							Pointer<c_float> p = vb.pcm[j] + n1 / 2 - n0 / 2;
+							CPointer<c_float> pcm = v.pcm[j] + prevCenter;
+							CPointer<c_float> p = vb.pcm[j] + n1 / 2 - n0 / 2;
 
 							c_int i;
 							for (i = 0; i < n0; i++)
@@ -570,8 +571,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 						{
 							// Small/small
 							c_float[] w = Window.Vorbis_Window_Get(b.window[0] - hs);
-							Pointer<c_float> pcm = v.pcm[j] + prevCenter;
-							Pointer<c_float> p = vb.pcm[j];
+							CPointer<c_float> pcm = v.pcm[j] + prevCenter;
+							CPointer<c_float> p = vb.pcm[j];
 
 							for (c_int i = 0; i < n0; i++)
 								pcm[i] = pcm[i] * w[n0 - i - 1] + p[i] * w[i];
@@ -580,8 +581,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 
 					// The copy section
 					{
-						Pointer<c_float> pcm = v.pcm[j] + thisCenter;
-						Pointer<c_float> p = vb.pcm[j] + n;
+						CPointer<c_float> pcm = v.pcm[j] + thisCenter;
+						CPointer<c_float> p = vb.pcm[j] + n;
 
 						for (c_int i = 0; i < n; i++)
 							pcm[i] = p[i];
@@ -739,7 +740,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Vorbis_Synthesis_Pcmout(VorbisDspState v, out Pointer<c_float>[] pcm)
+		public static c_int Vorbis_Synthesis_Pcmout(VorbisDspState v, out CPointer<c_float>[] pcm)
 		{
 			return Vorbis_Synthesis_Pcmout(v, out pcm, true);
 		}
@@ -751,7 +752,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 		/// pcm==null indicates we just want the pending samples, no more
 		/// </summary>
 		/********************************************************************/
-		private static c_int Vorbis_Synthesis_Pcmout(VorbisDspState v, out Pointer<c_float>[] pcm, bool hasPcm)
+		private static c_int Vorbis_Synthesis_Pcmout(VorbisDspState v, out CPointer<c_float>[] pcm, bool hasPcm)
 		{
 			pcm = null;
 

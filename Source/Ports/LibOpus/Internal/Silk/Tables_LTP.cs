@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 {
@@ -158,7 +158,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static readonly Pointer<opus_uint8>[] Silk_LTP_Gain_iCDF_Ptrs =
+		public static readonly CPointer<opus_uint8>[] Silk_LTP_Gain_iCDF_Ptrs =
 		[
 			Silk_LTP_Gain_iCDF_0,
 			Silk_LTP_Gain_iCDF_1,
@@ -172,7 +172,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static readonly Pointer<opus_int8>[] Silk_LTP_Vq_Ptrs_Q7 =
+		public static readonly CPointer<opus_int8>[] Silk_LTP_Vq_Ptrs_Q7 =
 		[
 			Silk_LTP_Gain_Vq_0,
 			Silk_LTP_Gain_Vq_1,

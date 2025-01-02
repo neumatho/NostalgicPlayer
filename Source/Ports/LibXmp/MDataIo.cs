@@ -59,7 +59,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			if (can_Read >= 2)
 			{
-				uint16 n = DataIo.ReadMem16L(m.Start, m.Pos);
+				uint16 n = DataIo.ReadMem16L(m.Start, (int)m.Pos);
 				m.Pos += 2;
 				err = 0;
 
@@ -88,7 +88,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			if (can_Read >= 2)
 			{
-				uint16 n = DataIo.ReadMem16B(m.Start, m.Pos);
+				uint16 n = DataIo.ReadMem16B(m.Start, (int)m.Pos);
 				m.Pos += 2;
 				err = 0;
 
@@ -117,7 +117,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			if (can_Read >= 3)
 			{
-				uint32 n = DataIo.ReadMem24L(m.Start, m.Pos);
+				uint32 n = DataIo.ReadMem24L(m.Start, (int)m.Pos);
 				m.Pos += 3;
 				err = 0;
 
@@ -146,7 +146,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			if (can_Read >= 3)
 			{
-				uint32 n = DataIo.ReadMem24B(m.Start, m.Pos);
+				uint32 n = DataIo.ReadMem24B(m.Start, (int)m.Pos);
 				m.Pos += 3;
 				err = 0;
 
@@ -175,7 +175,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			if (can_Read >= 4)
 			{
-				uint32 n = DataIo.ReadMem32L(m.Start, m.Pos);
+				uint32 n = DataIo.ReadMem32L(m.Start, (int)m.Pos);
 				m.Pos += 4;
 				err = 0;
 
@@ -204,7 +204,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			if (can_Read >= 4)
 			{
-				uint32 n = DataIo.ReadMem32B(m.Start, m.Pos);
+				uint32 n = DataIo.ReadMem32B(m.Start, (int)m.Pos);
 				m.Pos += 4;
 				err = 0;
 

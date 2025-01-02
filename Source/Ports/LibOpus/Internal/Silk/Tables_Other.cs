@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
@@ -83,7 +83,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static readonly Pointer<opus_uint8>[] Silk_LBRR_Flags_iCDF_Ptr =
+		public static readonly CPointer<opus_uint8>[] Silk_LBRR_Flags_iCDF_Ptr =
 		[
 			Silk_LBRR_Flags_2_iCDF,
 			Silk_LBRR_Flags_3_iCDF

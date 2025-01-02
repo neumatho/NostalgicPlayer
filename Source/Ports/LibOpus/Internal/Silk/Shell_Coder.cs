@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void Decode_Split(Pointer<opus_int16> p_child1, Pointer<opus_int16> p_child2, Ec_Dec psRangeDec, opus_int p, Pointer<opus_uint8> shell_table)
+		private static void Decode_Split(CPointer<opus_int16> p_child1, CPointer<opus_int16> p_child2, Ec_Dec psRangeDec, opus_int p, CPointer<opus_uint8> shell_table)
 		{
 			if (p > 0)
 			{
@@ -41,11 +41,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// Shell decoder, operates on one shell code frame of 16 pulses
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_Shell_Decoder(Pointer<opus_int16> pulses0, Ec_Dec psRangeDec, opus_int pulses4)
+		public static void Silk_Shell_Decoder(CPointer<opus_int16> pulses0, Ec_Dec psRangeDec, opus_int pulses4)
 		{
-			Pointer<opus_int16> pulses3 = new Pointer<opus_int16>(2);
-			Pointer<opus_int16> pulses2 = new Pointer<opus_int16>(4);
-			Pointer<opus_int16> pulses1 = new Pointer<opus_int16>(8);
+			CPointer<opus_int16> pulses3 = new CPointer<opus_int16>(2);
+			CPointer<opus_int16> pulses2 = new CPointer<opus_int16>(4);
+			CPointer<opus_int16> pulses1 = new CPointer<opus_int16>(8);
 
 			Decode_Split(pulses3     , pulses3 + 1 , psRangeDec, pulses4   , Tables_Pulses_Per_Block.Silk_Shell_Code_Table3);
 

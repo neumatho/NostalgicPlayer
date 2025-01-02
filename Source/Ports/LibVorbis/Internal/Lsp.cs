@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 {
@@ -40,7 +40,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// Side effect: changes *lsp to cosines of lsp
 		/// </summary>
 		/********************************************************************/
-		public static void Vorbis_Lsp_To_Curve(Pointer<c_float> curve, Pointer<c_int> map, c_int n, c_int ln, Span<c_float> lsp, c_int m, c_float amp, c_float ampoffset)
+		public static void Vorbis_Lsp_To_Curve(CPointer<c_float> curve, CPointer<c_int> map, c_int n, c_int ln, Span<c_float> lsp, c_int m, c_float amp, c_float ampoffset)
 		{
 			c_int i;
 			c_float wdel = (c_float)Math.PI / ln;

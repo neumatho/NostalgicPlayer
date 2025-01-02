@@ -5,8 +5,8 @@
 /******************************************************************************/
 using System;
 using System.Runtime.InteropServices;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 {
@@ -55,7 +55,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 		public readonly opus_int32[] sIIR = new opus_int32[Constants.Silk_Resampler_Max_Iir_Order];
 
 		public SFirUnion sFIR = new SFirUnion();
-		public Pointer<opus_int16> delayBuf = new Pointer<opus_int16>(48);
+		public CPointer<opus_int16> delayBuf = new CPointer<opus_int16>(48);
 		public ResamplerType resampler_function;
 		public opus_int batchSize;
 		public opus_int32 invRatio_Q16;
@@ -64,7 +64,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 		public opus_int Fs_in_kHz;
 		public opus_int Fs_out_kHz;
 		public opus_int inputDelay;
-		public Pointer<opus_int16> Coefs;
+		public CPointer<opus_int16> Coefs;
 
 		/********************************************************************/
 		/// <summary>

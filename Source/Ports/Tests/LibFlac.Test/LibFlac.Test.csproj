@@ -22,7 +22,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\LibFlac\Ordinals.cs" Link="Ordinals.cs" />
+    <Compile Include="..\..\..\NostalgicPlayerCKit\CTypes.cs" Link="CTypes.cs" />
+    <Compile Include="..\..\LibFlac\LibFlacTypes.cs" Link="LibFlacTypes.cs" />
   </ItemGroup>
 
   <ItemGroup>

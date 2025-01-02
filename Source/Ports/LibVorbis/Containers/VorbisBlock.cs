@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Interfaces;
 
@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 		/// <summary>
 		/// This is a pointer into local storage
 		/// </summary>
-		public Pointer<c_float>[] pcm;
+		public CPointer<c_float>[] pcm;
 		/// <summary></summary>
 		public OggPack opb;
 
@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 		// Local storage to avoid remallocing; it's up the the mapping to
 		// structure it
 		/// <summary></summary>
-		public Pointer<byte> localstore;
+		public CPointer<byte> localstore;
 		/// <summary></summary>
 		public c_long localtop;
 		/// <summary></summary>

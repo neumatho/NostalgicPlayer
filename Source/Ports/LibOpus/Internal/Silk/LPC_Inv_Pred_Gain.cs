@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
@@ -36,7 +36,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// coefficients are stable (all poles within unit circle)
 		/// </summary>
 		/********************************************************************/
-		private static opus_int32 LPC_Inverse_Pred_Gain_QA_C(Pointer<opus_int32> A_QA, opus_int order)
+		private static opus_int32 LPC_Inverse_Pred_Gain_QA_C(CPointer<opus_int32> A_QA, opus_int order)
 		{
 			opus_int k;
 			opus_int32 rc_Q31, rc_mult1_Q30;
@@ -113,7 +113,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// For input in Q12 domain
 		/// </summary>
 		/********************************************************************/
-		private static opus_int32 LPC_Inverse_Pred_Gain_C(Pointer<opus_int16> A_Q12, opus_int order)
+		private static opus_int32 LPC_Inverse_Pred_Gain_C(CPointer<opus_int16> A_Q12, opus_int order)
 		{
 			opus_int32[] Atmp_QA = new opus_int32[Constants.Silk_Max_Order_Lpc];
 			opus_int32 DC_resp = 0;
@@ -140,7 +140,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static opus_int32 Silk_LPC_Inverse_Pred_Gain(Pointer<opus_int16> A_Q12, opus_int order, c_int arch)
+		public static opus_int32 Silk_LPC_Inverse_Pred_Gain(CPointer<opus_int16> A_Q12, opus_int order, c_int arch)
 		{
 			return LPC_Inverse_Pred_Gain_C(A_Q12, order);
 		}

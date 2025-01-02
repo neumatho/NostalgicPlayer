@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 {
@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// NLSF stabilizer, for a single input data vector
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_NLSF_Stabilize(Pointer<opus_int16> NLSF_Q15, Pointer<opus_int16> NDeltaMin_Q15, opus_int L)
+		public static void Silk_NLSF_Stabilize(CPointer<opus_int16> NLSF_Q15, CPointer<opus_int16> NDeltaMin_Q15, opus_int L)
 		{
 			opus_int I = 0, loops;
 

@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOgg.Containers;
 using Polycode.NostalgicPlayer.Ports.LibOgg.Internal;
 
@@ -86,7 +86,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Pointer<byte> Buffer(c_long size)
+		public CPointer<byte> Buffer(c_long size)
 		{
 			return Framing.Ogg_Sync_Buffer(state, size);
 		}

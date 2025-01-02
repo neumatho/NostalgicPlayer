@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt;
 
@@ -65,7 +65,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static SilkError Silk_Decode(Silk_Decoder decState, Silk_DecControlStruct decControl, LostFlag lostFlag, bool newPacketFlag, Ec_Dec psRangeDec, Pointer<opus_int16> samplesOut, out opus_int32 nSamplesOut, c_int arch)
+		public static SilkError Silk_Decode(Silk_Decoder decState, Silk_DecControlStruct decControl, LostFlag lostFlag, bool newPacketFlag, Ec_Dec psRangeDec, CPointer<opus_int16> samplesOut, out opus_int32 nSamplesOut, c_int arch)
 		{
 			nSamplesOut = 0;
 
@@ -73,7 +73,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 			SilkError ret = SilkError.No_Error;
 			SilkError resultRet;
 			opus_int32 nSamplesOutDec = 0;
-			Pointer<opus_int16>[] samplesOut1_tmp = new Pointer<opus_int16>[2];
+			CPointer<opus_int16>[] samplesOut1_tmp = new CPointer<opus_int16>[2];
 			opus_int32[] MS_pred_Q13 = new opus_int32[2];
 			Silk_Decoder psDec = decState;
 			Silk_Decoder_State[] channel_state = psDec.channel_state;
@@ -261,7 +261,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 			// usage. We need to use a < and not a <= because of the two extra samples
 			bool delay_stack_alloc = (decControl.internalSampleRate * decControl.nChannelsInternal) < (decControl.API_sampleRate * decControl.nChannelsAPI);
 
-			Pointer<opus_int16> samplesOut1_tmp_storage1 = new Pointer<opus_int16>(delay_stack_alloc ? Constants.Alloc_None : decControl.nChannelsInternal * (channel_state[0].frame_length + 2));
+			CPointer<opus_int16> samplesOut1_tmp_storage1 = new CPointer<opus_int16>(delay_stack_alloc ? Constants.Alloc_None : decControl.nChannelsInternal * (channel_state[0].frame_length + 2));
 
 			if (delay_stack_alloc)
 			{
@@ -331,14 +331,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 
 			// Set up pointers to temp buffers
 			opus_int16[] samplesOut2_tmp = new opus_int16[decControl.nChannelsAPI == 2 ? nSamplesOut : Constants.Alloc_None];
-			Pointer<opus_int16> resample_out_ptr;
+			CPointer<opus_int16> resample_out_ptr;
 
 			if (decControl.nChannelsAPI == 2)
 				resample_out_ptr = samplesOut2_tmp;
 			else
 				resample_out_ptr = samplesOut;
 
-			Pointer<opus_int16> samplesOut1_tmp_storage2 = new Pointer<opus_int16>(delay_stack_alloc ? decControl.nChannelsInternal * (channel_state[0].frame_length + 2) : Constants.Alloc_None);
+			CPointer<opus_int16> samplesOut1_tmp_storage2 = new CPointer<opus_int16>(delay_stack_alloc ? decControl.nChannelsInternal * (channel_state[0].frame_length + 2) : Constants.Alloc_None);
 
 			if (delay_stack_alloc)
 			{

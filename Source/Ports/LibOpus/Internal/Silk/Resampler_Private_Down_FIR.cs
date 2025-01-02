@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static Pointer<opus_int16> Silk_Resampler_Private_Down_FIR_INTERPOL(Pointer<opus_int16> _out, Pointer<opus_int32> buf, Pointer<opus_int16> FIR_Coefs, opus_int FIR_Order, opus_int FIR_Fracs, opus_int32 max_index_Q16, opus_int32 index_increment_Q16)
+		private static CPointer<opus_int16> Silk_Resampler_Private_Down_FIR_INTERPOL(CPointer<opus_int16> _out, CPointer<opus_int32> buf, CPointer<opus_int16> FIR_Coefs, opus_int FIR_Order, opus_int FIR_Fracs, opus_int32 max_index_Q16, opus_int32 index_increment_Q16)
 		{
 			switch (FIR_Order)
 			{
@@ -29,13 +29,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 					for (opus_int32 index_Q16 = 0; index_Q16 < max_index_Q16; index_Q16 += index_increment_Q16)
 					{
 						// Integer part gives pointer to buffered output
-						Pointer<opus_int32> buf_ptr = buf + SigProc_Fix.Silk_RSHIFT(index_Q16, 16);
+						CPointer<opus_int32> buf_ptr = buf + SigProc_Fix.Silk_RSHIFT(index_Q16, 16);
 
 						// Fractional part gives interpolation coefficients
 						opus_int32 interpol_ind = Macros.Silk_SMULWB(index_Q16 & 0xffff, FIR_Fracs);
 
 						// Inner product
-						Pointer<opus_int16> interpol_ptr = FIR_Coefs + Constants.Resampler_Down_Order_Fir0 / 2 * interpol_ind;
+						CPointer<opus_int16> interpol_ptr = FIR_Coefs + Constants.Resampler_Down_Order_Fir0 / 2 * interpol_ind;
 
 						opus_int32 res_Q6 = Macros.Silk_SMULWB(buf_ptr[0], interpol_ptr[0]);
 						res_Q6 = Macros.Silk_SMLAWB(res_Q6, buf_ptr[1], interpol_ptr[1]);
@@ -70,7 +70,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 					for (opus_int32 index_Q16 = 0; index_Q16 < max_index_Q16; index_Q16 += index_increment_Q16)
 					{
 						// Integer part gives pointer to buffered output
-						Pointer<opus_int32> buf_ptr = buf + SigProc_Fix.Silk_RSHIFT(index_Q16, 16);
+						CPointer<opus_int32> buf_ptr = buf + SigProc_Fix.Silk_RSHIFT(index_Q16, 16);
 
 						// Inner product
 						opus_int32 res_Q6 = Macros.Silk_SMULWB(SigProc_Fix.Silk_ADD32(buf_ptr[0], buf_ptr[23]), FIR_Coefs[0]);
@@ -97,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 					for (opus_int32 index_Q16 = 0; index_Q16 < max_index_Q16; index_Q16 += index_increment_Q16)
 					{
 						// Integer part gives pointer to buffered output
-						Pointer<opus_int32> buf_ptr = buf + SigProc_Fix.Silk_RSHIFT(index_Q16, 16);
+						CPointer<opus_int32> buf_ptr = buf + SigProc_Fix.Silk_RSHIFT(index_Q16, 16);
 
 						// Inner product
 						opus_int32 res_Q6 = Macros.Silk_SMULWB(SigProc_Fix.Silk_ADD32(buf_ptr[0], buf_ptr[35]), FIR_Coefs[0]);
@@ -136,16 +136,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// Resample with a 2nd order AR filter followed by FIR interpolation
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_Resampler_Private_Down_FIR(Silk_Resampler_State_Struct SS, Pointer<opus_int16> _out, Pointer<opus_int16> _in, opus_int32 inLen)
+		public static void Silk_Resampler_Private_Down_FIR(Silk_Resampler_State_Struct SS, CPointer<opus_int16> _out, CPointer<opus_int16> _in, opus_int32 inLen)
 		{
 			Silk_Resampler_State_Struct S = SS;
 
-			Pointer<opus_int32> buf = new Pointer<opus_int32>(S.batchSize + S.FIR_Order);
+			CPointer<opus_int32> buf = new CPointer<opus_int32>(S.batchSize + S.FIR_Order);
 
 			// Copy buffered samples to start of buffer
 			SigProc_Fix.Silk_MemCpy_Span(buf.AsSpan(), S.sFIR.i32, S.FIR_Order);
 
-			Pointer<opus_int16> FIR_Coefs = S.Coefs + 2;
+			CPointer<opus_int16> FIR_Coefs = S.Coefs + 2;
 
 			// Iterate over blocks of frameSizeIn input samples
 			opus_int32 index_increment_Q16 = S.invRatio_Q16;

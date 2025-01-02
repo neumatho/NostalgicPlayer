@@ -203,7 +203,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 
 			Format_Input(ref ctx.Internal_Buf, signal, channels, samples, bytes_Per_Sample);
 
-			Flac__Md5Update(ctx.Internal_Buf.P8, bytes_Needed);
+			Flac__Md5Update(ctx.Internal_Buf.P8, (uint32_t)bytes_Needed);
 
 			return true;
 		}

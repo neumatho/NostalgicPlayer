@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt;
 
@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Opus_Pcm_Soft_Clip(Pointer<c_float> _x, c_int N, c_int C, Pointer<c_float> declip_mem)
+		public static void Opus_Pcm_Soft_Clip(CPointer<c_float> _x, c_int N, c_int C, CPointer<c_float> declip_mem)
 		{
 			if ((C < 1) || (N < 1) || _x.IsNull || declip_mem.IsNull)
 				return;
@@ -33,7 +33,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 
 			for (c_int c = 0; c < C; c++)
 			{
-				Pointer<c_float> x = _x + c;
+				CPointer<c_float> x = _x + c;
 				c_float a = declip_mem[c];
 
 				// Continue applying the non-linearity from the previous frame to avoid
@@ -136,7 +136,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Parse_Size(Pointer<byte> data, opus_int32 len, out opus_int16 size)
+		private static c_int Parse_Size(CPointer<byte> data, opus_int32 len, out opus_int16 size)
 		{
 			if (len < 1)
 			{
@@ -167,7 +167,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Opus_Packet_Get_Samples_Per_Frame(Pointer<byte> data, opus_int32 Fs)
+		public static c_int Opus_Packet_Get_Samples_Per_Frame(CPointer<byte> data, opus_int32 Fs)
 		{
 			c_int audiosize;
 
@@ -197,7 +197,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Opus_Packet_Parse_Impl(Pointer<byte> data, opus_int32 len, bool self_delimited, out byte out_toc, Pointer<Pointer<byte>> frames, Pointer<opus_int16> size, out c_int payload_offset, out opus_int32 packet_offset, out Pointer<byte> padding, out opus_int32 padding_len)
+		public static c_int Opus_Packet_Parse_Impl(CPointer<byte> data, opus_int32 len, bool self_delimited, out byte out_toc, CPointer<CPointer<byte>> frames, CPointer<opus_int16> size, out c_int payload_offset, out opus_int32 packet_offset, out CPointer<byte> padding, out opus_int32 padding_len)
 		{
 			out_toc = 0;
 			payload_offset = 0;
@@ -206,7 +206,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 			padding_len = 0;
 
 			opus_int32 pad = 0;
-			Pointer<byte> data0 = data;
+			CPointer<byte> data0 = data;
 
 			if (size.IsNull || (len < 0))
 				return (c_int)OpusError.Bad_Arg;
@@ -406,7 +406,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Opus_Packet_Parse(Pointer<byte> data, opus_int32 len, out byte out_toc, Pointer<Pointer<byte>> frames, Pointer<opus_int16> size, out c_int payload_offset)
+		public static c_int Opus_Packet_Parse(CPointer<byte> data, opus_int32 len, out byte out_toc, CPointer<CPointer<byte>> frames, CPointer<opus_int16> size, out c_int payload_offset)
 		{
 			return Opus_Packet_Parse_Impl(data, len, false, out out_toc, frames, size, out payload_offset, out _, out _, out _);
 		}

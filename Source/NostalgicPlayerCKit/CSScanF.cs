@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Polycode.NostalgicPlayer.Kit.Utility
+namespace Polycode.NostalgicPlayer.CKit
 {
 	/// <summary>
 	/// Class that provides functionality of the standard C library sscanf()

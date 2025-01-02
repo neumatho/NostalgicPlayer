@@ -7,7 +7,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibVorbis;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Containers;
 using Polycode.NostalgicPlayer.Ports.LibVorbisFile;
@@ -95,7 +95,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Decoders
 
 			while (todo > 0)
 			{
-				int done = vorbisFile.Ov_Read_Float(out Pointer<float>[] buffer, (int)todo, out _);
+				int done = vorbisFile.Ov_Read_Float(out CPointer<float>[] buffer, (int)todo, out _);
 				if (done == (int)VorbisError.Hole)
 					continue;
 

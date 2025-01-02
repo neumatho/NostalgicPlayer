@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.IO;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile.Containers
 {
@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbisFile.Containers
 		/// <summary>
 		/// 
 		/// </summary>
-		public delegate size_t Read_Del(Pointer<byte> ptr, size_t size, size_t nmemb, object datasource);
+		public delegate size_t Read_Del(CPointer<byte> ptr, size_t size, size_t nmemb, object datasource);
 
 		/// <summary>
 		/// 

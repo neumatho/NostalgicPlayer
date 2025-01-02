@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
@@ -94,7 +94,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				{
 					Fout = Fout_beg.Slice(i * mm);
 
-					Pointer<Kiss_Twiddle_Cpx> tw3, tw2, tw1;
+					CPointer<Kiss_Twiddle_Cpx> tw3, tw2, tw1;
 					tw3 = tw2 = tw1 = st.twiddles;
 
 					// m is guaranteed to  be a multiple of 4
@@ -146,7 +146,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			{
 				Fout = Fout_beg.Slice(i * mm);
 
-				Pointer<Kiss_Twiddle_Cpx> tw2, tw1;
+				CPointer<Kiss_Twiddle_Cpx> tw2, tw1;
 				tw1 = tw2 = st.twiddles;
 
 				// For non-custom modes, m is guaranteed to be a multiple of 4
@@ -196,7 +196,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 			Kiss_Twiddle_Cpx ya = st.twiddles[(int)fstride * m];
 			Kiss_Twiddle_Cpx yb = st.twiddles[(int)fstride * 2 * m];
-			Pointer<Kiss_Twiddle_Cpx> tw = st.twiddles;
+			CPointer<Kiss_Twiddle_Cpx> tw = st.twiddles;
 
 			for (c_int i = 0; i < N; i++)
 			{
@@ -329,7 +329,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Opus_Fft(Kiss_Fft_State st, Pointer<Kiss_Fft_Cpx> fin, Span<Kiss_Fft_Cpx> fout, c_int arch)
+		public static void Opus_Fft(Kiss_Fft_State st, CPointer<Kiss_Fft_Cpx> fin, Span<Kiss_Fft_Cpx> fout, c_int arch)
 		{
 			Opus_Fft_C(st, fin, fout);
 		}
@@ -341,7 +341,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Opus_Fft_C(Kiss_Fft_State st, Pointer<Kiss_Fft_Cpx> fin, Span<Kiss_Fft_Cpx> fout)
+		private static void Opus_Fft_C(Kiss_Fft_State st, CPointer<Kiss_Fft_Cpx> fin, Span<Kiss_Fft_Cpx> fout)
 		{
 			opus_val16 scale = st.scale;
 
@@ -364,7 +364,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public static void Opus_Ifft(Kiss_Fft_State st, Pointer<Kiss_Fft_Cpx> fin, Span<Kiss_Fft_Cpx> fout, c_int arch)
+		public static void Opus_Ifft(Kiss_Fft_State st, CPointer<Kiss_Fft_Cpx> fin, Span<Kiss_Fft_Cpx> fout, c_int arch)
 		{
 			Opus_Ifft_C(st, fin, fout);
 		}
@@ -376,7 +376,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Opus_Ifft_C(Kiss_Fft_State st, Pointer<Kiss_Fft_Cpx> fin, Span<Kiss_Fft_Cpx> fout)
+		private static void Opus_Ifft_C(Kiss_Fft_State st, CPointer<Kiss_Fft_Cpx> fin, Span<Kiss_Fft_Cpx> fout)
 		{
 			// Bit-reverse the input
 			for (c_int i = 0; i < st.nfft; i++)

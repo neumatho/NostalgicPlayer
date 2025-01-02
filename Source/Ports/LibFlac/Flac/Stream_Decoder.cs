@@ -695,7 +695,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				decoder.Private.Metadata_Filter_Ids_Capacity *= 2;
 			}
 
-			Array.Copy(id, 0, decoder.Private.Metadata_Filter_Ids, decoder.Private.Metadata_Filter_Ids_Count * (Constants.Flac__Stream_Metadata_Application_Id_Len / 8), (Constants.Flac__Stream_Metadata_Application_Id_Len / 8));
+			Array.Copy(id, 0, decoder.Private.Metadata_Filter_Ids, (int)(decoder.Private.Metadata_Filter_Ids_Count * (Constants.Flac__Stream_Metadata_Application_Id_Len / 8)), (Constants.Flac__Stream_Metadata_Application_Id_Len / 8));
 			decoder.Private.Metadata_Filter_Ids_Count++;
 
 			return true;
@@ -795,7 +795,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				decoder.Private.Metadata_Filter_Ids_Capacity *= 2;
 			}
 
-			Array.Copy(id, 0, decoder.Private.Metadata_Filter_Ids, decoder.Private.Metadata_Filter_Ids_Count * (Constants.Flac__Stream_Metadata_Application_Id_Len / 8), (Constants.Flac__Stream_Metadata_Application_Id_Len / 8));
+			Array.Copy(id, 0, decoder.Private.Metadata_Filter_Ids, (int)(decoder.Private.Metadata_Filter_Ids_Count * (Constants.Flac__Stream_Metadata_Application_Id_Len / 8)), (Constants.Flac__Stream_Metadata_Application_Id_Len / 8));
 			decoder.Private.Metadata_Filter_Ids_Count++;
 
 			return true;

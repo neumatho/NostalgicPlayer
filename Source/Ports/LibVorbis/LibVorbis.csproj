@@ -22,6 +22,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\NostalgicPlayerCKit\CTypes.cs" Link="CTypes.cs" />
+    <Compile Include="..\LibOgg\LibOggTypes.cs" Link="LibOggTypes.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\NostalgicPlayerCKit\NostalgicPlayerCKit.csproj" />
     <ProjectReference Include="..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
     <ProjectReference Include="..\LibOgg\LibOgg.csproj" />
   </ItemGroup>

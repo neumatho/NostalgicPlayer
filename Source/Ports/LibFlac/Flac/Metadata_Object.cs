@@ -1080,14 +1080,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 			size_t nn = (size_t)encodedFieldName.Length - 1;
 			size_t nv = (size_t)encodedFieldValue.Length - 1;
-			newEntry.Length = nn + 1 + nv;
+			newEntry.Length = (Flac__uint32)(nn + 1 + nv);
 			newEntry.Entry = Alloc.Safe_MAlloc_Add_4Op<Flac__byte>(nn, 1, nv, 1);
 			if (newEntry.Entry == null)
 				return false;
 
-			Array.Copy(encodedFieldName, 0, newEntry.Entry, 0, nn);
+			Array.Copy(encodedFieldName, 0, newEntry.Entry, 0, (int)nn);
 			newEntry.Entry[nn] = (byte)'=';
-			Array.Copy(encodedFieldValue, 0, newEntry.Entry, nn + 1, nv);
+			Array.Copy(encodedFieldValue, 0, newEntry.Entry, (int)(nn + 1), (int)nv);
 			newEntry.Entry[newEntry.Length] = 0x00;
 
 			entry = newEntry;
@@ -1680,10 +1680,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 			// Here we should do the copy, but since we always creates a new byte array, this argument is not used
 			metaPicture.Mime_Type = new byte[new_Length + 1];
-			Array.Copy(@new, metaPicture.Mime_Type, new_Length);
+			Array.Copy(@new, metaPicture.Mime_Type, (int)new_Length);
 
-			@object.Length -= old_Length;
-			@object.Length += new_Length;
+			@object.Length -= (uint32_t)old_Length;
+			@object.Length += (uint32_t)new_Length;
 
 			return true;
 		}
@@ -1720,10 +1720,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 			// Here we should do the copy, but since we always creates a new byte array, this argument is not used
 			metaPicture.Description = new byte[new_Length + 1];
-			Array.Copy(@new, metaPicture.Description, new_Length);
+			Array.Copy(@new, metaPicture.Description, (int)new_Length);
 
-			@object.Length -= old_Length;
-			@object.Length += new_Length;
+			@object.Length -= (uint32_t)old_Length;
+			@object.Length += (uint32_t)new_Length;
 
 			return true;
 		}

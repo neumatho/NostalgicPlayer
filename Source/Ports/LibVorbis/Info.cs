@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibOgg.Containers;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Containers;
@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void V_ReadString(OggPack o, Pointer<byte> buf, c_int bytes)
+		private static void V_ReadString(OggPack o, CPointer<byte> buf, c_int bytes)
 		{
 			while (bytes-- != 0)
 				buf[0, 1] = (byte)o.Read(8);
@@ -247,7 +247,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis
 				goto Err_Out;
 
 			vc.comments = i;
-			vc.user_comments = Memory.Ogg_CAlloc<Pointer<byte>>((size_t)vc.comments + 1);
+			vc.user_comments = Memory.Ogg_CAlloc<CPointer<byte>>((size_t)vc.comments + 1);
 			vc.comment_lengths = Memory.Ogg_CAlloc<c_int>((size_t)vc.comments + 1);
 
 			for (i = 0; i < vc.comments; i++)

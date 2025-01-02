@@ -23,6 +23,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\NostalgicPlayerCKit\NostalgicPlayerCKit.csproj" />
     <ProjectReference Include="..\..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj">
       <Private>false</Private>
     </ProjectReference>

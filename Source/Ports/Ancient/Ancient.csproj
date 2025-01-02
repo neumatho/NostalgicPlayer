@@ -22,6 +22,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\NostalgicPlayerCKit\CTypes.cs" Link="CTypes.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
   </ItemGroup>
 

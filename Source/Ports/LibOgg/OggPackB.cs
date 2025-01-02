@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOgg.Containers;
 using Polycode.NostalgicPlayer.Ports.LibOgg.Internal;
 
@@ -46,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void WriteCopy(Pointer<byte> source, c_long bits)
+		public void WriteCopy(CPointer<byte> source, c_long bits)
 		{
 			Bitwise.OggPackB_WriteCopy(buffer, source, bits);
 		}
@@ -82,7 +82,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void ReadInit(out OggPackB b, Pointer<byte> buf, c_int bytes)
+		public static void ReadInit(out OggPackB b, CPointer<byte> buf, c_int bytes)
 		{
 			Bitwise.OggPackB_ReadInit(out OggPack_Buffer bu, buf, bytes);
 			b = new OggPackB(bu);
@@ -179,7 +179,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOgg
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public Pointer<byte> GetBuffer()
+		public CPointer<byte> GetBuffer()
 		{
 			return Bitwise.OggPackB_GetBuffer(buffer);
 		}

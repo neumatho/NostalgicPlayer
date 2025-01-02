@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt;
@@ -19,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// Decode mid/side predictors
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_Stereo_Decode_Pred(Ec_Dec psRangeDec, Pointer<opus_int32> pred_Q13)
+		public static void Silk_Stereo_Decode_Pred(Ec_Dec psRangeDec, CPointer<opus_int32> pred_Q13)
 		{
 			opus_int[][] ix = ArrayHelper.Initialize2Arrays<opus_int>(2, 3);
 

@@ -6,7 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Containers;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Interfaces;
@@ -15,9 +15,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 {
 	internal static class Floor1
 	{
-		private class IComp : IComparer<Pointer<c_int>>
+		private class IComp : IComparer<CPointer<c_int>>
 		{
-			public int Compare(Pointer<c_int> a, Pointer<c_int> b)
+			public int Compare(CPointer<c_int> a, CPointer<c_int> b)
 			{
 				return a[0] - b[0];
 			}
@@ -129,10 +129,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			// Don't allow repeated values in post list as they'd result in
 			// zero-length segments
 			{
-				Pointer<c_int>[] sortpointer = new Pointer<c_int>[Constants.Vif_Posit + 2];
+				CPointer<c_int>[] sortpointer = new CPointer<c_int>[Constants.Vif_Posit + 2];
 
 				for (c_int j = 0; j < (count + 2); j++)
-					sortpointer[j] = new Pointer<c_int>(info.postlist, j);
+					sortpointer[j] = new CPointer<c_int>(info.postlist, j);
 
 				Array.Sort(sortpointer, 0, count + 2, new IComp());
 
@@ -160,7 +160,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/********************************************************************/
 		private static IVorbisLookFloor Look(VorbisDspState vd, IVorbisInfoFloor @in)
 		{
-			Pointer<c_int>[] sortpointer = new Pointer<c_int>[Constants.Vif_Posit + 2];
+			CPointer<c_int>[] sortpointer = new CPointer<c_int>[Constants.Vif_Posit + 2];
 			VorbisInfoFloor1 info = (VorbisInfoFloor1)@in;
 			VorbisLookFloor1 look = new VorbisLookFloor1();
 			c_int n = 0;
@@ -182,7 +182,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 
 			// Also store a sorted position index
 			for (c_int i = 0; i < n; i++)
-				sortpointer[i] = new Pointer<c_int>(info.postlist, i);
+				sortpointer[i] = new CPointer<c_int>(info.postlist, i);
 
 			Array.Sort(sortpointer, 0, n, new IComp());
 
@@ -294,7 +294,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Render_Line(c_int n, c_int x0, c_int x1, c_int y0, c_int y1, Pointer<c_float> d)
+		private static void Render_Line(c_int n, c_int x0, c_int x1, c_int y0, c_int y1, CPointer<c_float> d)
 		{
 			c_int dy = y1 - y0;
 			c_int adx = x1 - x0;
@@ -336,7 +336,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static Pointer<byte> Inverse1(VorbisBlock vb, IVorbisLookFloor @in)
+		private static CPointer<byte> Inverse1(VorbisBlock vb, IVorbisLookFloor @in)
 		{
 			VorbisLookFloor1 look = (VorbisLookFloor1)@in;
 			VorbisInfoFloor1 info = look.vi;
@@ -347,7 +347,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			// Unpack wrapped/predicted values from stream
 			if (vb.opb.Read(1) == 1)
 			{
-				Pointer<byte> retBuffer = Block.Vorbis_Block_Alloc<byte>(vb, look.posts * sizeof(c_int));
+				CPointer<byte> retBuffer = Block.Vorbis_Block_Alloc<byte>(vb, look.posts * sizeof(c_int));
 				Span<c_int> fit_value = MemoryMarshal.Cast<byte, c_int>(retBuffer.AsSpan());
 
 				fit_value[0] = vb.opb.Read(Sharedbook.Ov_ILog((ogg_uint32_t)look.quant_q - 1));
@@ -437,7 +437,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Inverse2(VorbisBlock vb, IVorbisLookFloor i, Pointer<byte> memo, Pointer<c_float> @out)
+		private static c_int Inverse2(VorbisBlock vb, IVorbisLookFloor i, CPointer<byte> memo, CPointer<c_float> @out)
 		{
 			VorbisLookFloor1 look = (VorbisLookFloor1)i;
 			VorbisInfoFloor1 info = look.vi;

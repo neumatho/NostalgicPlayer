@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Numerics;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
@@ -86,10 +86,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// dependency loop in the IIR filter
 		/// </summary>
 		/********************************************************************/
-		private static void Deemphasis_Stereo_Simple(Pointer<Pointer<celt_sig>> _in, Pointer<opus_val16> pcm, c_int N, opus_val16 coef0, Pointer<celt_sig> mem)
+		private static void Deemphasis_Stereo_Simple(CPointer<CPointer<celt_sig>> _in, CPointer<opus_val16> pcm, c_int N, opus_val16 coef0, CPointer<celt_sig> mem)
 		{
-			Pointer<celt_sig> x0 = _in[0];
-			Pointer<celt_sig> x1 = _in[1];
+			CPointer<celt_sig> x0 = _in[0];
+			CPointer<celt_sig> x1 = _in[1];
 
 			celt_sig m0 = mem[0];
 			celt_sig m1 = mem[1];
@@ -118,7 +118,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Deemphasis(Pointer<Pointer<celt_sig>> _in, Pointer<opus_val16> pcm, c_int N, c_int C, c_int downsample, Pointer<opus_val16> coef, Pointer<celt_sig> mem, bool accum)
+		public static void Deemphasis(CPointer<CPointer<celt_sig>> _in, CPointer<opus_val16> pcm, c_int N, c_int C, c_int downsample, CPointer<opus_val16> coef, CPointer<celt_sig> mem, bool accum)
 		{
 			bool apply_downsampling = false;
 
@@ -137,8 +137,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			do
 			{
 				celt_sig m = mem[c];
-				Pointer<celt_sig> x = _in[c];
-				Pointer<opus_val16> y = pcm + c;
+				CPointer<celt_sig> x = _in[c];
+				CPointer<opus_val16> y = pcm + c;
 
 				if (downsample > 1)
 				{
@@ -182,12 +182,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Celt_Synthesis(CeltMode mode, Pointer<celt_norm> X, Pointer<Pointer<celt_sig>> out_syn, Pointer<opus_val16> oldBandE, c_int start, c_int effEnd, c_int C, c_int CC, bool isTransient, c_int LM, c_int downsample, bool silence, c_int arch)
+		public static void Celt_Synthesis(CeltMode mode, CPointer<celt_norm> X, CPointer<CPointer<celt_sig>> out_syn, CPointer<opus_val16> oldBandE, c_int start, c_int effEnd, c_int C, c_int CC, bool isTransient, c_int LM, c_int downsample, bool silence, c_int arch)
 		{
 			c_int overlap = mode.overlap;
 			c_int nbEBands = mode.nbEBands;
 			c_int N = mode.shortMdctSize << LM;
-			Pointer<celt_sig> freq = new Pointer<celt_sig>(N);	// < Interleaved signal MDCTs
+			CPointer<celt_sig> freq = new CPointer<celt_sig>(N);	// < Interleaved signal MDCTs
 			c_int M = 1 << LM;
 
 			c_int c;
@@ -214,7 +214,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				Bands.Denormalise_Bands(mode, X, freq, oldBandE, start, effEnd, M, downsample, silence);
 
 				// Store a temporary copy in the output buffer because the IMDCT destroys its input
-				Pointer<celt_sig> freq2 = out_syn[1] + overlap / 2;
+				CPointer<celt_sig> freq2 = out_syn[1] + overlap / 2;
 
 				Memory.Opus_Copy(freq2, freq, N);
 
@@ -227,7 +227,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			else if ((CC == 1) && (C == 2))
 			{
 				// Downmixing a stereo stream to mono
-				Pointer<celt_sig> freq2 = out_syn[0] + overlap / 2;
+				CPointer<celt_sig> freq2 = out_syn[0] + overlap / 2;
 
 				Bands.Denormalise_Bands(mode, X, freq, oldBandE, start, effEnd, M, downsample, silence);
 
@@ -274,7 +274,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Tf_Decode(c_int start, c_int end, bool isTransient, Pointer<c_int> tf_res, c_int LM, Ec_Dec dec)
+		private static void Tf_Decode(c_int start, c_int end, bool isTransient, CPointer<c_int> tf_res, c_int LM, Ec_Dec dec)
 		{
 			opus_uint32 budget = dec.storage * 8;
 			opus_uint32 tell = (opus_uint32)EntCode.Ec_Tell(dec);
@@ -312,9 +312,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Celt_Plc_Pitch_Search(Pointer<Pointer<celt_sig>> decode_mem, c_int C, c_int arch)
+		private static c_int Celt_Plc_Pitch_Search(CPointer<CPointer<celt_sig>> decode_mem, c_int C, c_int arch)
 		{
-			Pointer<opus_val16> lp_pitch_buf = new Pointer<opus_val16>(Decode_Buffer_Size >> 1);
+			CPointer<opus_val16> lp_pitch_buf = new CPointer<opus_val16>(Decode_Buffer_Size >> 1);
 
 			Pitch.Pitch_Downsample(decode_mem, lp_pitch_buf, Decode_Buffer_Size, C, arch);
 			Pitch.Pitch_Search(lp_pitch_buf + (Plc_Pitch_Lag_Max >> 1), lp_pitch_buf, Decode_Buffer_Size - Plc_Pitch_Lag_Max, Plc_Pitch_Lag_Max - Plc_Pitch_Lag_Min, out c_int pitch_index, arch);
@@ -332,7 +332,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/********************************************************************/
 		private static void Prefilter_And_Fold(CeltDecoder st, c_int N)
 		{
-			Pointer<Pointer<celt_sig>> decode_mem = new Pointer<Pointer<celt_sig>>(2);
+			CPointer<CPointer<celt_sig>> decode_mem = new CPointer<CPointer<celt_sig>>(2);
 			OpusCustomMode mode = st.mode;
 			c_int overlap = st.overlap;
 			c_int CC = st.channels;
@@ -373,13 +373,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		private static void Celt_Decode_Lost(CeltDecoder st, c_int N, c_int LM)
 		{
 			c_int C = st.channels;
-			Pointer<Pointer<celt_sig>> decode_mem = new Pointer<Pointer<celt_sig>>(2);
-			Pointer<Pointer<celt_sig>> out_syn = new Pointer<Pointer<celt_sig>>(2);
+			CPointer<CPointer<celt_sig>> decode_mem = new CPointer<CPointer<celt_sig>>(2);
+			CPointer<CPointer<celt_sig>> out_syn = new CPointer<CPointer<celt_sig>>(2);
 
 			OpusCustomMode mode = st.mode;
 			c_int nbEBands = mode.nbEBands;
 			c_int overlap = mode.overlap;
-			Pointer<opus_int16> eBands = mode.eBands;
+			CPointer<opus_int16> eBands = mode.eBands;
 
 			c_int c = 0;
 
@@ -390,11 +390,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			}
 			while (++c < C);
 
-			Pointer<opus_val16> lpc = st.lpc;
-			Pointer<opus_val16> oldBandE = st.oldEBands;
-			Pointer<opus_val16> oldLogE = st.oldLogE;
-			Pointer<opus_val16> oldLogE2 = st.oldLogE2;
-			Pointer<opus_val16> backgroundLogE = st.backgroundLogE;
+			CPointer<opus_val16> lpc = st.lpc;
+			CPointer<opus_val16> oldBandE = st.oldEBands;
+			CPointer<opus_val16> oldLogE = st.oldLogE;
+			CPointer<opus_val16> oldLogE2 = st.oldLogE2;
+			CPointer<opus_val16> backgroundLogE = st.backgroundLogE;
 
 			c_int loss_duration = st.loss_duration;
 			c_int start = st.start;
@@ -406,7 +406,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				c_int end = st.end;
 				c_int effEnd = Arch.IMAX(start, Arch.IMIN(end, mode.effEBands));
 
-				Pointer<celt_norm> X = new Pointer<celt_norm>(C * N);	// < Interleaved normalised MDCTs
+				CPointer<celt_norm> X = new CPointer<celt_norm>(C * N);	// < Interleaved normalised MDCTs
 				c = 0;
 
 				do
@@ -476,8 +476,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 				opus_val16[] _exc = new opus_val16[Constants.Max_Period + Constants.Celt_Lpc_Order];
 				opus_val16[] fir_tmp = new opus_val16[exc_length];
-				Pointer<opus_val16> exc = new Pointer<opus_val16>(_exc, Constants.Celt_Lpc_Order);
-				Pointer<opus_val16> window = mode.window;
+				CPointer<opus_val16> exc = new CPointer<opus_val16>(_exc, Constants.Celt_Lpc_Order);
+				CPointer<opus_val16> window = mode.window;
 
 				c = 0;
 
@@ -485,7 +485,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				{
 					opus_val32 S1 = 0;
 
-					Pointer<celt_sig> buf = decode_mem[c];
+					CPointer<celt_sig> buf = decode_mem[c];
 
 					for (c_int i = 0; i < (Constants.Max_Period + Constants.Celt_Lpc_Order); i++)
 						exc[i - Constants.Celt_Lpc_Order] = Arch.SROUND16(buf[Decode_Buffer_Size - Constants.Max_Period - Constants.Celt_Lpc_Order + i], Constants.Sig_Shift);
@@ -635,10 +635,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Celt_Decode_With_Ec_Dred(CeltDecoder st, Pointer<byte> data, c_int len, Pointer<opus_val16> pcm, c_int frame_size, Ec_Dec dec, bool accum)
+		public static c_int Celt_Decode_With_Ec_Dred(CeltDecoder st, CPointer<byte> data, c_int len, CPointer<opus_val16> pcm, c_int frame_size, Ec_Dec dec, bool accum)
 		{
-			Pointer<Pointer<celt_sig>> decode_mem = new Pointer<Pointer<celt_sig>>(2);
-			Pointer<Pointer<celt_sig>> out_syn = new Pointer<Pointer<celt_sig>>(2);
+			CPointer<CPointer<celt_sig>> decode_mem = new CPointer<CPointer<celt_sig>>(2);
+			CPointer<CPointer<celt_sig>> out_syn = new CPointer<CPointer<celt_sig>>(2);
 
 			c_int CC = st.channels;
 			c_int intensity = 0;
@@ -649,16 +649,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			OpusCustomMode mode = st.mode;
 			c_int nbEBands = mode.nbEBands;
 			c_int overlap = mode.overlap;
-			Pointer<opus_int16> eBands = mode.eBands;
+			CPointer<opus_int16> eBands = mode.eBands;
 			c_int start = st.start;
 			c_int end = st.end;
 			frame_size *= st.downsample;
 
-			Pointer<opus_val16> lpc = st.lpc;
-			Pointer<opus_val16> oldBandE = st.oldEBands;
-			Pointer<opus_val16> oldLogE = st.oldLogE;
-			Pointer<opus_val16> oldLogE2 = st.oldLogE2;
-			Pointer<opus_val16> backgroundLogE = st.backgroundLogE;
+			CPointer<opus_val16> lpc = st.lpc;
+			CPointer<opus_val16> oldBandE = st.oldEBands;
+			CPointer<opus_val16> oldLogE = st.oldLogE;
+			CPointer<opus_val16> oldLogE2 = st.oldLogE2;
+			CPointer<opus_val16> backgroundLogE = st.backgroundLogE;
 
 			c_int LM;
 			{
@@ -886,7 +886,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 			// Decode fixed codebook
 			byte[] collapse_masks = new byte[C * nbEBands];
-			Pointer<celt_norm> X = new Pointer<celt_norm>(C * N);		// < Interleaved normalised MDCTs
+			CPointer<celt_norm> X = new CPointer<celt_norm>(C * N);		// < Interleaved normalised MDCTs
 
 			Bands.Quant_All_Bands(false, mode, start, end, X, C == 2 ? X + N : null, collapse_masks, null, pulses, shortBlocks, spread_decision, dual_stereo, intensity, tf_res, len * (8 << Constants.BitRes) - anti_collapse_rsv, balance, ref dec, LM, codedBands, ref st.rng, 0, st.arch, st.disable_inv);
 
@@ -1001,7 +1001,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Celt_Decode_With_Ec(CeltDecoder st, Pointer<byte> data, c_int len, Pointer<opus_val16> pcm, c_int frame_size, Ec_Dec dec, bool accum)
+		public static c_int Celt_Decode_With_Ec(CeltDecoder st, CPointer<byte> data, c_int len, CPointer<opus_val16> pcm, c_int frame_size, Ec_Dec dec, bool accum)
 		{
 			return Celt_Decode_With_Ec_Dred(st, data, len, pcm, frame_size, dec, accum);
 		}

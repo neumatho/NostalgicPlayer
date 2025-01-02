@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Runtime.InteropServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Containers;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Interfaces;
@@ -190,7 +190,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static Pointer<byte> Inverse1(VorbisBlock vb, IVorbisLookFloor i)
+		private static CPointer<byte> Inverse1(VorbisBlock vb, IVorbisLookFloor i)
 		{
 			VorbisLookFloor0 look = (VorbisLookFloor0)i;
 			VorbisInfoFloor0 info = look.vi;
@@ -212,7 +212,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 					// The additional b->dim is a guard against any possible stack
 					// smash; b->dim is provably more than we can overflow the
 					// vector
-					Pointer<byte> retBuffer = Block.Vorbis_Block_Alloc<byte>(vb, sizeof(c_float) * (look.m + b.dim + 1));
+					CPointer<byte> retBuffer = Block.Vorbis_Block_Alloc<byte>(vb, sizeof(c_float) * (look.m + b.dim + 1));
 					Span<c_float> lsp = MemoryMarshal.Cast<byte, c_float>(retBuffer.AsSpan());
 
 					if (CodebookImpl.Vorbis_Book_Decodev_Set(b, lsp, vb.opb, look.m) == -1)
@@ -243,7 +243,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Inverse2(VorbisBlock vb, IVorbisLookFloor i, Pointer<byte> memo, Pointer<c_float> @out)
+		private static c_int Inverse2(VorbisBlock vb, IVorbisLookFloor i, CPointer<byte> memo, CPointer<c_float> @out)
 		{
 			VorbisLookFloor0 look = (VorbisLookFloor0)i;
 			VorbisInfoFloor0 info = look.vi;

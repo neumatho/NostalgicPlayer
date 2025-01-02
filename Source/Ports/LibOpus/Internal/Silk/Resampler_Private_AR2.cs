@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 {
@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// Second order AR filter with single delay elements
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_Resampler_Private_AR2(Pointer<opus_int32> S, Pointer<opus_int32> out_Q8, Pointer<opus_int16> _in, Pointer<opus_int16> A_Q14, opus_int32 len)
+		public static void Silk_Resampler_Private_AR2(CPointer<opus_int32> S, CPointer<opus_int32> out_Q8, CPointer<opus_int16> _in, CPointer<opus_int16> A_Q14, opus_int32 len)
 		{
 			for (opus_int32 k = 0; k < len; k++)
 			{

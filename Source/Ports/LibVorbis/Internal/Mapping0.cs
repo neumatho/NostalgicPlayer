@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Containers;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Interfaces;
@@ -131,11 +131,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 
 			c_long n = vb.pcmend = ci.blocksizes[vb.W];
 
-			Pointer<c_float>[] pcmbundle = new Pointer<c_float>[vi.channels];
+			CPointer<c_float>[] pcmbundle = new CPointer<c_float>[vi.channels];
 			bool[] zerobundle = new bool[vi.channels];
 
 			bool[] nonzero = new bool[vi.channels];
-			Pointer<byte>[] floormemo = new Pointer<byte>[vi.channels];
+			CPointer<byte>[] floormemo = new CPointer<byte>[vi.channels];
 
 			// Recover the spectral envelope; store it in the PCM vector for now
 			for (c_int i = 0; i < vi.channels; i++)
@@ -185,8 +185,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			// Channel coupling
 			for (c_int i = info.coupling_steps - 1; i >= 0; i--)
 			{
-				Pointer<c_float> pcmM = vb.pcm[info.coupling_mag[i]];
-				Pointer<c_float> pcmA = vb.pcm[info.coupling_ang[i]];
+				CPointer<c_float> pcmM = vb.pcm[info.coupling_mag[i]];
+				CPointer<c_float> pcmA = vb.pcm[info.coupling_ang[i]];
 
 				for (c_int j = 0; j < (n / 2); j++)
 				{
@@ -225,7 +225,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			// Compute and apply spectral envelope
 			for (c_int i = 0; i < vi.channels; i++)
 			{
-				Pointer<c_float> pcm = vb.pcm[i];
+				CPointer<c_float> pcm = vb.pcm[i];
 				c_int submap = info.chmuxlist[i];
 
 				Registry.floor_P[ci.floor_type[info.floorsubmap[submap]]].Inverse2(vb, b.flr[info.floorsubmap[submap]], floormemo[i], pcm);
@@ -235,7 +235,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			// only MDCT right now
 			for (c_int i = 0; i < vi.channels; i++)
 			{
-				Pointer<c_float> pcm = vb.pcm[i];
+				CPointer<c_float> pcm = vb.pcm[i];
 				Mdct.Mdct_Backward((MdctLookup)b.transform[vb.W][0], pcm, pcm);
 			}
 

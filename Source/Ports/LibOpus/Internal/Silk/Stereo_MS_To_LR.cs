@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// signal
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_Stereo_MS_To_LR(Stereo_Dec_State state, Pointer<opus_int16> x1, Pointer<opus_int16> x2, Pointer<opus_int32> pred_Q13, opus_int fs_kHz, opus_int frame_length)
+		public static void Silk_Stereo_MS_To_LR(Stereo_Dec_State state, CPointer<opus_int16> x1, CPointer<opus_int16> x2, CPointer<opus_int32> pred_Q13, opus_int fs_kHz, opus_int frame_length)
 		{
 			// Buffering
 			SigProc_Fix.Silk_MemCpy(x1, state.sMid, 2);

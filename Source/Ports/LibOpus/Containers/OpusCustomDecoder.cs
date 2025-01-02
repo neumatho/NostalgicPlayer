@@ -4,8 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
@@ -46,12 +46,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 		// TNE: In the original code, all these arrays are allocated as
 		// one big block of memory and stored in decode_mem. The pointers
 		// are then calculated. I have decided to use separate arrays instead
-		public Pointer<celt_sig> decode_mem;
-		public Pointer<opus_val16> lpc;
-		public Pointer<opus_val16> oldEBands;
-		public Pointer<opus_val16> oldLogE;
-		public Pointer<opus_val16> oldLogE2;
-		public Pointer<opus_val16> backgroundLogE;
+		public CPointer<celt_sig> decode_mem;
+		public CPointer<opus_val16> lpc;
+		public CPointer<opus_val16> oldEBands;
+		public CPointer<opus_val16> oldLogE;
+		public CPointer<opus_val16> oldLogE2;
+		public CPointer<opus_val16> backgroundLogE;
 
 		/********************************************************************/
 		/// <summary>
@@ -62,12 +62,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 		{
 			CeltMode m = Modes.Opus_Custom_Mode_Create(48000, 960, out _);
 
-			decode_mem = new Pointer<celt_sig>(channels * (Celt_Decoder.Decode_Buffer_Size + m.overlap));
-			lpc = new Pointer<opus_val16>(channels * Constants.Celt_Lpc_Order);
-			oldEBands = new Pointer<opus_val16>(2 * m.nbEBands);
-			oldLogE = new Pointer<opus_val16>(2 * m.nbEBands);
-			oldLogE2 = new Pointer<opus_val16>(2 * m.nbEBands);
-			backgroundLogE = new Pointer<opus_val16>(2 * m.nbEBands);
+			decode_mem = new CPointer<celt_sig>(channels * (Celt_Decoder.Decode_Buffer_Size + m.overlap));
+			lpc = new CPointer<opus_val16>(channels * Constants.Celt_Lpc_Order);
+			oldEBands = new CPointer<opus_val16>(2 * m.nbEBands);
+			oldLogE = new CPointer<opus_val16>(2 * m.nbEBands);
+			oldLogE2 = new CPointer<opus_val16>(2 * m.nbEBands);
+			backgroundLogE = new CPointer<opus_val16>(2 * m.nbEBands);
 		}
 
 

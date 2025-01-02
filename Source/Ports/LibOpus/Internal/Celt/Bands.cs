@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
@@ -85,9 +85,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// unit-energy bands
 		/// </summary>
 		/********************************************************************/
-		public static void Denormalise_Bands(CeltMode m, Pointer<celt_norm> X, Pointer<celt_sig> freq, Pointer<opus_val16> bandLogE, c_int start, c_int end, c_int M, c_int downsample, bool silence)
+		public static void Denormalise_Bands(CeltMode m, CPointer<celt_norm> X, CPointer<celt_sig> freq, CPointer<opus_val16> bandLogE, c_int start, c_int end, c_int M, c_int downsample, bool silence)
 		{
-			Pointer<opus_int16> eBands = m.eBands;
+			CPointer<opus_int16> eBands = m.eBands;
 			c_int N = M * m.shortMdctSize;
 			c_int bound = M * eBands[end];
 
@@ -100,8 +100,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				start = end = 0;
 			}
 
-			Pointer<celt_sig> f = freq;
-			Pointer<celt_norm> x = X + M * eBands[start];
+			CPointer<celt_sig> f = freq;
+			CPointer<celt_norm> x = X + M * eBands[start];
 
 			for (c_int i = 0; i < M * eBands[start]; i++)
 				f[0, 1] = 0;
@@ -131,7 +131,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// MDCTs
 		/// </summary>
 		/********************************************************************/
-		public static void Anti_Collapse(CeltMode m, Pointer<celt_norm> X_, Pointer<byte> collapse_masks, c_int LM, c_int C, c_int size, c_int start, c_int end, Pointer<opus_val16> logE, Pointer<opus_val16> prev1logE, Pointer<opus_val16> prev2logE, Pointer<c_int> pulses, opus_uint32 seed, c_int arch)
+		public static void Anti_Collapse(CeltMode m, CPointer<celt_norm> X_, CPointer<byte> collapse_masks, c_int LM, c_int C, c_int size, c_int start, c_int end, CPointer<opus_val16> logE, CPointer<opus_val16> prev1logE, CPointer<opus_val16> prev2logE, CPointer<c_int> pulses, opus_uint32 seed, c_int arch)
 		{
 			for (c_int i = start; i < end; i++)
 			{
@@ -170,7 +170,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 					r = Arch.MIN16(thresh, r);
 					r = r * sqrt_1;
 
-					Pointer<celt_norm> X = X_ + c * size + (m.eBands[i] << LM);
+					CPointer<celt_norm> X = X_ + c * size + (m.eBands[i] << LM);
 
 					for (c_int k = 0; k < (1 << LM); k++)
 					{
@@ -229,7 +229,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Intensity_Stereo(CeltMode m, Pointer<celt_norm> X, Pointer<celt_norm> Y, Pointer<celt_ener> bandE, c_int bandID, c_int N)
+		private static void Intensity_Stereo(CeltMode m, CPointer<celt_norm> X, CPointer<celt_norm> Y, CPointer<celt_ener> bandE, c_int bandID, c_int N)
 		{
 			c_int i = bandID;
 			opus_val16 left = Arch.VSHR32(bandE[i], 0/*shift*/);
@@ -256,7 +256,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Stereo_Split(Pointer<celt_norm> X, Pointer<celt_norm> Y, c_int N)
+		private static void Stereo_Split(CPointer<celt_norm> X, CPointer<celt_norm> Y, c_int N)
 		{
 			for (c_int j = 0; j < N; j++)
 			{
@@ -275,7 +275,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Stereo_Merge(Pointer<celt_norm> X, Pointer<celt_norm> Y, opus_val16 mid, c_int N, c_int arch)
+		private static void Stereo_Merge(CPointer<celt_norm> X, CPointer<celt_norm> Y, opus_val16 mid, c_int N, c_int arch)
 		{
 			// Compute the norm of x+y and x-y as |x|^2 + |y|^2 +/- sum(xy)
 			Pitch.Dual_Inner_Prod(Y, X, Y, N, out opus_val32 xp, out opus_val32 side, arch);
@@ -317,14 +317,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Deinterleave_Hadamard(Pointer<celt_norm> X, c_int N0, c_int stride, bool hadamard)
+		private static void Deinterleave_Hadamard(CPointer<celt_norm> X, c_int N0, c_int stride, bool hadamard)
 		{
 			c_int N = N0 * stride;
 			celt_norm[] tmp = new celt_norm[N];
 
 			if (hadamard)
 			{
-				Pointer<c_int> ordery = new Pointer<c_int>(ordery_table, stride - 2);
+				CPointer<c_int> ordery = new CPointer<c_int>(ordery_table, stride - 2);
 
 				for (c_int i = 0; i < stride; i++)
 				{
@@ -351,14 +351,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Interleave_Hadamard(Pointer<celt_norm> X, c_int N0, c_int stride, bool hadamard)
+		private static void Interleave_Hadamard(CPointer<celt_norm> X, c_int N0, c_int stride, bool hadamard)
 		{
 			c_int N = N0 * stride;
 			celt_norm[] tmp = new celt_norm[N];
 
 			if (hadamard)
 			{
-				Pointer<c_int> ordery = new Pointer<c_int>(ordery_table, stride - 2);
+				CPointer<c_int> ordery = new CPointer<c_int>(ordery_table, stride - 2);
 
 				for (c_int i = 0; i < stride; i++)
 				{
@@ -385,7 +385,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Haar1(Pointer<celt_norm> X, c_int N0, c_int stride)
+		private static void Haar1(CPointer<celt_norm> X, c_int N0, c_int stride)
 		{
 			N0 >>= 1;
 
@@ -443,7 +443,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Compute_Theta(Band_Ctx ctx, out Split_Ctx sctx, Pointer<celt_norm> X, Pointer<celt_norm> Y, c_int N, ref c_int b, c_int B, c_int B0, c_int LM, bool stereo, ref c_int fill)
+		private static void Compute_Theta(Band_Ctx ctx, out Split_Ctx sctx, CPointer<celt_norm> X, CPointer<celt_norm> Y, c_int N, ref c_int b, c_int B, c_int B0, c_int LM, bool stereo, ref c_int fill)
 		{
 			c_int itheta = 0;
 			c_int delta;
@@ -455,7 +455,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			c_int i = ctx.i;
 			c_int intensity = ctx.intensity;
 			Ec_Ctx ec = ctx.ec;
-			Pointer<celt_ener> bandE = ctx.bandE;
+			CPointer<celt_ener> bandE = ctx.bandE;
 
 			// Decide on the resolution to give to the split parameter theta
 			c_int pulse_cap = m.logN[i] + LM * (1 << Constants.BitRes);
@@ -669,9 +669,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_uint Quant_Band_N1(Band_Ctx ctx, Pointer<celt_norm> X, Pointer<celt_norm> Y, Pointer<celt_norm> lowband_out)
+		private static c_uint Quant_Band_N1(Band_Ctx ctx, CPointer<celt_norm> X, CPointer<celt_norm> Y, CPointer<celt_norm> lowband_out)
 		{
-			Pointer<celt_norm> x = X;
+			CPointer<celt_norm> x = X;
 			bool encode = ctx.encode;
 			Ec_Ctx ec = ctx.ec;
 
@@ -718,13 +718,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// so bands can end up being split in 8 parts
 		/// </summary>
 		/********************************************************************/
-		private static c_uint Quant_Partition(Band_Ctx ctx, Pointer<celt_norm> X, c_int N, c_int b, c_int B, Pointer<celt_norm> lowband, c_int LM, opus_val16 gain, c_int fill)
+		private static c_uint Quant_Partition(Band_Ctx ctx, CPointer<celt_norm> X, c_int N, c_int b, c_int B, CPointer<celt_norm> lowband, c_int LM, opus_val16 gain, c_int fill)
 		{
 			c_int imid = 0, iside = 0;
 			c_int B0 = B;
 			opus_val16 mid = 0, side = 0;
 			c_uint cm = 0;
-			Pointer<celt_norm> Y = null;
+			CPointer<celt_norm> Y = null;
 
 			bool encode = ctx.encode;
 			CeltMode m = ctx.m;
@@ -733,11 +733,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			Ec_Ctx ec = ctx.ec;
 
 			// If we need 1.5 more bit than we can produce, split the band in two
-			Pointer<byte> cache = m.cache.bits + m.cache.index[(LM + 1) * m.nbEBands + i];
+			CPointer<byte> cache = m.cache.bits + m.cache.index[(LM + 1) * m.nbEBands + i];
 
 			if ((LM != -1) && (b > (cache[cache[0]] + 12)) && (N > 2))
 			{
-				Pointer<celt_norm> next_lowband2 = null;
+				CPointer<celt_norm> next_lowband2 = null;
 
 				N >>= 1;
 				Y = X + N;
@@ -888,7 +888,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// the mono case
 		/// </summary>
 		/********************************************************************/
-		private static c_uint Quant_Band(Band_Ctx ctx, Pointer<celt_norm> X, c_int N, c_int b, c_int B, Pointer<celt_norm> lowband, c_int LM, Pointer<celt_norm> lowband_out, opus_val16 gain, Pointer<celt_norm> lowband_scratch, c_int fill)
+		private static c_uint Quant_Band(Band_Ctx ctx, CPointer<celt_norm> X, c_int N, c_int b, c_int B, CPointer<celt_norm> lowband, c_int LM, CPointer<celt_norm> lowband_out, opus_val16 gain, CPointer<celt_norm> lowband_scratch, c_int fill)
 		{
 			c_int N0 = N;
 			c_int N_B = N;
@@ -1015,7 +1015,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// the stereo case
 		/// </summary>
 		/********************************************************************/
-		private static c_uint Quant_Band_Stereo(Band_Ctx ctx, Pointer<celt_norm> X, Pointer<celt_norm> Y, c_int N, c_int b, c_int B, Pointer<celt_norm> lowband, c_int LM, Pointer<celt_norm> lowband_out, Pointer<celt_norm> lowband_scratch, c_int fill)
+		private static c_uint Quant_Band_Stereo(Band_Ctx ctx, CPointer<celt_norm> X, CPointer<celt_norm> Y, c_int N, c_int b, c_int B, CPointer<celt_norm> lowband, c_int LM, CPointer<celt_norm> lowband_out, CPointer<celt_norm> lowband_scratch, c_int fill)
 		{
 			c_uint cm = 0;
 			c_int mbits, sbits;
@@ -1058,8 +1058,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				bool c = itheta > 8192;
 				ctx.remaining_bits -= qalloc + sbits;
 
-				Pointer<celt_norm> x2 = c ? Y : X;
-				Pointer<celt_norm> y2 = c ? X : Y;
+				CPointer<celt_norm> x2 = c ? Y : X;
+				CPointer<celt_norm> y2 = c ? X : Y;
 
 				if (sbits != 0)
 				{
@@ -1162,9 +1162,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Special_Hybrid_Folding(CeltMode m, Pointer<celt_norm> norm, Pointer<celt_norm> norm2, c_int start, c_int M, bool dual_stereo)
+		private static void Special_Hybrid_Folding(CeltMode m, CPointer<celt_norm> norm, CPointer<celt_norm> norm2, c_int start, c_int M, bool dual_stereo)
 		{
-			Pointer<opus_int16> eBands = m.eBands;
+			CPointer<opus_int16> eBands = m.eBands;
 			c_int n1 = M * (eBands[start + 1] - eBands[start]);
 			c_int n2 = M * (eBands[start + 2] - eBands[start + 1]);
 
@@ -1183,12 +1183,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Quant_All_Bands(bool encode, CeltMode m, c_int start, c_int end, Pointer<celt_norm> X_, Pointer<celt_norm> Y_, Pointer<byte> collapse_masks,
-											Pointer<celt_ener> bandE, Pointer<c_int> pulses, c_int shortBlocks, Spread spread, bool dual_stereo, c_int intensity,
-											Pointer<c_int> tf_res, opus_int32 total_bits, opus_int32 balance, ref Ec_Ctx ec, c_int LM, c_int codedBands,
+		public static void Quant_All_Bands(bool encode, CeltMode m, c_int start, c_int end, CPointer<celt_norm> X_, CPointer<celt_norm> Y_, CPointer<byte> collapse_masks,
+											CPointer<celt_ener> bandE, CPointer<c_int> pulses, c_int shortBlocks, Spread spread, bool dual_stereo, c_int intensity,
+											CPointer<c_int> tf_res, opus_int32 total_bits, opus_int32 balance, ref Ec_Ctx ec, c_int LM, c_int codedBands,
 											ref opus_uint32 seed, c_int complexity, c_int arch, bool disable_inv)
 		{
-			Pointer<opus_int16> eBands = m.eBands;
+			CPointer<opus_int16> eBands = m.eBands;
 			bool update_lowband = true;
 			c_int C = Y_.IsNotNull ? 2 : 1;
 			bool theta_rdo = encode && Y_.IsNotNull && !dual_stereo && (complexity >= 8);
@@ -1202,8 +1202,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 			// No need to allocate norm for the last band because we don't need an
 			// output in that band
 			celt_norm[] _norm = new celt_norm[C * (M * eBands[m.nbEBands - 1] - norm_offset)];
-			Pointer<celt_norm> norm = _norm;
-			Pointer<celt_norm> norm2 = norm + M * eBands[m.nbEBands - 1] - norm_offset;
+			CPointer<celt_norm> norm = _norm;
+			CPointer<celt_norm> norm2 = norm + M * eBands[m.nbEBands - 1] - norm_offset;
 
 			// For decoding, we can use the last band as scratch space because we don't need that
 			// scratch space for the last band and we don't care about the data there until we're
@@ -1216,7 +1216,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				resynth_alloc = Constants.Alloc_None;
 
 			celt_norm[] _lowband_scratch = new celt_norm[resynth_alloc];
-			Pointer<celt_norm> lowband_scratch;
+			CPointer<celt_norm> lowband_scratch;
 
 			if (encode && resynth)
 				lowband_scratch = _lowband_scratch;
@@ -1254,8 +1254,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 				ctx.i = i;
 				bool last = i == (end - 1);
 
-				Pointer<celt_norm> X = X_ + M * eBands[i];
-				Pointer<celt_norm> Y;
+				CPointer<celt_norm> X = X_ + M * eBands[i];
+				CPointer<celt_norm> Y;
 
 				if (Y_.IsNotNull)
 					Y = Y_ + M * eBands[i];
@@ -1404,7 +1404,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 
 							c_int nstart_bytes = (c_int)ec_save.offs;
 							c_int nend_bytes = (c_int)ec_save.storage;
-							Pointer<byte> bytes_buf = ec_save.buf + nstart_bytes;
+							CPointer<byte> bytes_buf = ec_save.buf + nstart_bytes;
 							c_int save_bytes = nend_bytes - nstart_bytes;
 							Memory.Opus_Copy(bytes_save, bytes_buf, save_bytes);
 

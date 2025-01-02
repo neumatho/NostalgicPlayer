@@ -4,8 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Numerics;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Internal;
 
@@ -60,7 +60,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 		/// Decode an Opus packet
 		/// </summary>
 		/********************************************************************/
-		public c_int Decode(Pointer<byte> data, opus_int32 len, Pointer<opus_int16> pcm, c_int frame_size, bool decode_fec)
+		public c_int Decode(CPointer<byte> data, opus_int32 len, CPointer<opus_int16> pcm, c_int frame_size, bool decode_fec)
 		{
 			return Opus_Decoder.Opus_Decode(opusDecoder, data, len, pcm, frame_size, decode_fec);
 		}
@@ -72,7 +72,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 		/// Decode an Opus packet with floating point output
 		/// </summary>
 		/********************************************************************/
-		public c_int Decode_Float(Pointer<byte> data, opus_int32 len, Pointer<c_float> pcm, c_int frame_size, bool decode_fec)
+		public c_int Decode_Float(CPointer<byte> data, opus_int32 len, CPointer<c_float> pcm, c_int frame_size, bool decode_fec)
 		{
 			return Opus_Decoder.Opus_Decode_Float(opusDecoder, data, len, pcm, frame_size, decode_fec);
 		}
@@ -121,7 +121,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 		/// Gets the bandwidth of an Opus packet
 		/// </summary>
 		/********************************************************************/
-		public static Bandwidth Packet_Get_Bandwidth(Pointer<byte> data)
+		public static Bandwidth Packet_Get_Bandwidth(CPointer<byte> data)
 		{
 			return Opus_Decoder.Opus_Packet_Get_Bandwidth(data);
 		}
@@ -133,7 +133,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 		/// Gets the number of samples per frame from an Opus packet
 		/// </summary>
 		/********************************************************************/
-		public static c_int Packet_Get_Samples_Per_Frame(Pointer<byte> data, opus_int32 Fs)
+		public static c_int Packet_Get_Samples_Per_Frame(CPointer<byte> data, opus_int32 Fs)
 		{
 			return Opus.Opus_Packet_Get_Samples_Per_Frame(data, Fs);
 		}
@@ -145,7 +145,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 		/// Gets the number of channels from an Opus packet
 		/// </summary>
 		/********************************************************************/
-		public static c_int Packet_Get_Nb_Channels(Pointer<byte> data)
+		public static c_int Packet_Get_Nb_Channels(CPointer<byte> data)
 		{
 			return Opus_Decoder.Opus_Packet_Get_Nb_Channels(data);
 		}
@@ -157,7 +157,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 		/// Gets the number of frames in an Opus packet
 		/// </summary>
 		/********************************************************************/
-		public static c_int Packet_Get_Nb_Frames(Pointer<byte> packet, opus_int32 len)
+		public static c_int Packet_Get_Nb_Frames(CPointer<byte> packet, opus_int32 len)
 		{
 			return Opus_Decoder.Opus_Packet_Get_Nb_Frames(packet, len);
 		}
@@ -169,7 +169,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 		/// Gets the number of samples of an Opus packet
 		/// </summary>
 		/********************************************************************/
-		public static c_int Packet_Get_Nb_Samples(Pointer<byte> packet, opus_int32 len, opus_int32 Fs)
+		public static c_int Packet_Get_Nb_Samples(CPointer<byte> packet, opus_int32 len, opus_int32 Fs)
 		{
 			return Opus_Decoder.Opus_Packet_Get_Nb_Samples(packet, len, Fs);
 		}
@@ -181,7 +181,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus
 		/// Gets the number of samples of an Opus packet
 		/// </summary>
 		/********************************************************************/
-		public c_int Get_Nb_Samples(Pointer<byte> packet, opus_int32 len)
+		public c_int Get_Nb_Samples(CPointer<byte> packet, opus_int32 len)
 		{
 			return Opus_Decoder.Opus_Decoder_Get_Nb_Samples(opusDecoder, packet, len);
 		}

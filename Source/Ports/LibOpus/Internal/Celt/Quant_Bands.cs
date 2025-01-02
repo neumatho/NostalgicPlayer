@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
@@ -97,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Unquant_Coarse_Energy(CeltMode m, c_int start, c_int end, Pointer<opus_val16> oldEBands, bool intra, Ec_Dec dec, c_int C, c_int LM)
+		public static void Unquant_Coarse_Energy(CeltMode m, c_int start, c_int end, CPointer<opus_val16> oldEBands, bool intra, Ec_Dec dec, c_int C, c_int LM)
 		{
 			byte[] prob_model = e_prob_model[LM][intra ? 1 : 0];
 			opus_val32[] prev = [ 0, 0 ];
@@ -161,7 +161,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Unquant_Fine_Energy(CeltMode m, c_int start, c_int end, Pointer<opus_val16> oldEBands, Pointer<c_int> fine_quant, Ec_Dec dec, c_int C)
+		public static void Unquant_Fine_Energy(CeltMode m, c_int start, c_int end, CPointer<opus_val16> oldEBands, CPointer<c_int> fine_quant, Ec_Dec dec, c_int C)
 		{
 			// Decode finer resolution
 			for (c_int i = start; i < end; i++)
@@ -188,7 +188,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Unquant_Energy_Finalise(CeltMode m, c_int start, c_int end, Pointer<opus_val16> oldEBands, Pointer<c_int> fine_quant, Pointer<bool> fine_priority, c_int bits_left, Ec_Dec dec, c_int C)
+		public static void Unquant_Energy_Finalise(CeltMode m, c_int start, c_int end, CPointer<opus_val16> oldEBands, CPointer<c_int> fine_quant, CPointer<bool> fine_priority, c_int bits_left, Ec_Dec dec, c_int C)
 		{
 			bool[] prioList = [ false, true ];
 

@@ -142,7 +142,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 				return false;
 			}
 
-			crc = Crc.Flac__Crc16(buffer, bytes);
+			crc = Crc.Flac__Crc16(buffer, (uint32_t)bytes);
 			Flac__BitWriter_Release_Buffer();
 
 			return true;
@@ -165,7 +165,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 				return false;
 			}
 
-			crc = Crc.Flac__Crc8(buffer, bytes);
+			crc = Crc.Flac__Crc8(buffer, (uint32_t)bytes);
 			Flac__BitWriter_Release_Buffer();
 
 			return true;

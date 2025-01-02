@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.IO;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Op_Stream_Read(object _stream, Pointer<byte> _ptr, c_int _buf_size)
+		private static c_int Op_Stream_Read(object _stream, CPointer<byte> _ptr, c_int _buf_size)
 		{
 			// Check for empty read
 			if (_buf_size <= 0)

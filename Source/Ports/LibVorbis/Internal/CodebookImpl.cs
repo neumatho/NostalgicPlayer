@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Containers;
 
@@ -333,13 +333,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// layer
 		/// </summary>
 		/********************************************************************/
-		public static c_long Vorbis_Book_Decodevs_Add(Codebook book, Pointer<c_float> a, OggPack b, c_int n)
+		public static c_long Vorbis_Book_Decodevs_Add(Codebook book, CPointer<c_float> a, OggPack b, c_int n)
 		{
 			if (book.used_entries > 0)
 			{
 				c_int step = n / book.dim;
 				c_long[] entry = new c_long[step];
-				Pointer<c_float>[] t = new Pointer<c_float>[step];
+				CPointer<c_float>[] t = new CPointer<c_float>[step];
 
 				for (c_int i = 0; i < step; i++)
 				{
@@ -369,7 +369,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// layer
 		/// </summary>
 		/********************************************************************/
-		public static c_long Vorbis_Book_Decodev_Add(Codebook book, Pointer<c_float> a, OggPack b, c_int n)
+		public static c_long Vorbis_Book_Decodev_Add(Codebook book, CPointer<c_float> a, OggPack b, c_int n)
 		{
 			if (book.used_entries > 0)
 			{
@@ -380,7 +380,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 					if (entry == -1)
 						return -1;
 
-					Pointer<c_float> t = book.valuelist + entry * book.dim;
+					CPointer<c_float> t = book.valuelist + entry * book.dim;
 
 					for (c_int j = 0; (i < n) && (j < book.dim);)
 						a[i++] += t[j++];
@@ -410,7 +410,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 					if (entry == -1)
 						return -1;
 
-					Pointer<c_float> t = book.valuelist + entry * book.dim;
+					CPointer<c_float> t = book.valuelist + entry * book.dim;
 
 					for (c_int j = 0; (i < n) && (j < book.dim);)
 						a[i++] = t[j++];
@@ -432,7 +432,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_long Vorbis_Book_Decodevv_Add(Codebook book, Pointer<c_float>[] a, c_long offset, c_int ch, OggPack b, c_int n)
+		public static c_long Vorbis_Book_Decodevv_Add(Codebook book, CPointer<c_float>[] a, c_long offset, c_int ch, OggPack b, c_int n)
 		{
 			c_int chptr = 0;
 
@@ -448,7 +448,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 						return -1;
 
 					{
-						Pointer<c_float> t = book.valuelist + entry * book.dim;
+						CPointer<c_float> t = book.valuelist + entry * book.dim;
 
 						for (c_long j = 0; (i < m) && (j < book.dim); j++)
 						{

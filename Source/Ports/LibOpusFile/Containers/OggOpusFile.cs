@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibOgg.Containers;
 using Polycode.NostalgicPlayer.Ports.LibOpus;
@@ -41,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers
 		/// If stream isn't seekable (e.g., it's a pipe), only the current
 		/// link appears
 		/// </summary>
-		public Pointer<OggOpusLink> links;
+		public CPointer<OggOpusLink> links;
 
 		/// <summary>
 		/// The number of serial numbers from a single link
@@ -58,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers
 		/// This is a scratch buffer used when scanning the BOS pages at the
 		/// start of each link
 		/// </summary>
-		public Pointer<ogg_uint32_t> serialnos;
+		public CPointer<ogg_uint32_t> serialnos;
 
 		/// <summary>
 		/// This is the current offset of the data processed by the
@@ -186,7 +186,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers
 		/// <summary>
 		/// The buffered data for one decoded packet
 		/// </summary>
-		public Pointer<op_sample> od_buffer;
+		public CPointer<op_sample> od_buffer;
 
 		/// <summary>
 		/// The current position in the decoded buffer

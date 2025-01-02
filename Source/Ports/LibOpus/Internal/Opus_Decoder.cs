@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Numerics;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Celt;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk;
@@ -97,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static void Smooth_Fade(Pointer<opus_val16> in1, Pointer<opus_val16> in2, Pointer<opus_val16> _out, c_int overlap, c_int channels, Pointer<opus_val16> window, opus_int32 Fs)
+		private static void Smooth_Fade(CPointer<opus_val16> in1, CPointer<opus_val16> in2, CPointer<opus_val16> _out, c_int overlap, c_int channels, CPointer<opus_val16> window, opus_int32 Fs)
 		{
 			c_int inc = 48000 / Fs;
 
@@ -118,7 +118,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static PacketMode Opus_Packet_Get_Mode(Pointer<byte> data)
+		private static PacketMode Opus_Packet_Get_Mode(CPointer<byte> data)
 		{
 			PacketMode mode;
 
@@ -139,12 +139,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Opus_Decode_Frame(OpusDecoderInternal st, Pointer<byte> data, opus_int32 len, Pointer<opus_val16> pcm, c_int frame_size, bool decode_fec)
+		private static c_int Opus_Decode_Frame(OpusDecoderInternal st, CPointer<byte> data, opus_int32 len, CPointer<opus_val16> pcm, c_int frame_size, bool decode_fec)
 		{
 			SilkError silk_ret = SilkError.No_Error;
 			c_int celt_ret = 0;
 			Ec_Dec dec = null;
-			Pointer<opus_val16> pcm_transition = null;
+			CPointer<opus_val16> pcm_transition = null;
 
 			c_int audiosize;
 			PacketMode mode;
@@ -263,7 +263,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 			// SILK processing
 			if (mode != PacketMode.Celt_Only)
 			{
-				Pointer<opus_int16> pcm_ptr = pcm_silk;
+				CPointer<opus_int16> pcm_ptr = pcm_silk;
 
 				if (st.prev_mode == PacketMode.Celt_Only)
 					Dec_Api.Silk_ResetDecoder(silk_dec);
@@ -415,7 +415,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 
 			// Only allocation memory for redundancy if/when needed
 			c_int redundant_audio_size = redundancy ? F5 * st.channels : Constants.Alloc_None;
-			Pointer<opus_val16> redundant_audio = new opus_val16[redundant_audio_size];
+			CPointer<opus_val16> redundant_audio = new opus_val16[redundant_audio_size];
 
 			// 5 ms redundant frame for CELT->SILK
 			if (redundancy && celt_to_silk)
@@ -479,7 +479,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 					pcm[i] = pcm[i] + ((1.0f / 32768.0f) * pcm_silk[i]);
 			}
 
-			Pointer<opus_val16> window;
+			CPointer<opus_val16> window;
 			{
 				if (Celt_Decoder.Celt_Decoder_Ctl_Get(celt_dec, OpusControlGetRequest.Celt_Get_Mode, out CeltMode celtMode) != OpusError.Ok)
 					return (c_int)OpusError.Internal_Error;
@@ -570,7 +570,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Opus_Decode_Native(OpusDecoderInternal st, Pointer<byte> data, opus_int32 len, Pointer<opus_val16> pcm, c_int frame_size, bool decode_fec, bool self_delimited, out opus_int32 packet_offset, bool soft_clip, OpusDRED dred, opus_int32 dred_offset)
+		private static c_int Opus_Decode_Native(OpusDecoderInternal st, CPointer<byte> data, opus_int32 len, CPointer<opus_val16> pcm, c_int frame_size, bool decode_fec, bool self_delimited, out opus_int32 packet_offset, bool soft_clip, OpusDRED dred, opus_int32 dred_offset)
 		{
 			packet_offset = 0;
 
@@ -686,7 +686,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Opus_Decode(OpusDecoderInternal st, Pointer<byte> data, opus_int32 len, Pointer<opus_int16> pcm, c_int frame_size, bool decode_fec)
+		public static c_int Opus_Decode(OpusDecoderInternal st, CPointer<byte> data, opus_int32 len, CPointer<opus_int16> pcm, c_int frame_size, bool decode_fec)
 		{
 			if (frame_size <= 0)
 				return (c_int)OpusError.Bad_Arg;
@@ -719,7 +719,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Opus_Decode_Float(OpusDecoderInternal st, Pointer<byte> data, opus_int32 len, Pointer<opus_val16> pcm, c_int frame_size, bool decode_fec)
+		public static c_int Opus_Decode_Float(OpusDecoderInternal st, CPointer<byte> data, opus_int32 len, CPointer<opus_val16> pcm, c_int frame_size, bool decode_fec)
 		{
 			if (frame_size <= 0)
 				return (c_int)OpusError.Bad_Arg;
@@ -853,7 +853,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static Bandwidth Opus_Packet_Get_Bandwidth(Pointer<byte> data)
+		public static Bandwidth Opus_Packet_Get_Bandwidth(CPointer<byte> data)
 		{
 			Bandwidth bandwidth;
 
@@ -878,7 +878,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Opus_Packet_Get_Nb_Channels(Pointer<byte> data)
+		public static c_int Opus_Packet_Get_Nb_Channels(CPointer<byte> data)
 		{
 			return (data[0] & 0x4) != 0 ? 2 : 1;
 		}
@@ -890,7 +890,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Opus_Packet_Get_Nb_Frames(Pointer<byte> packet, opus_int32 len)
+		public static c_int Opus_Packet_Get_Nb_Frames(CPointer<byte> packet, opus_int32 len)
 		{
 			if (len < 1)
 				return (c_int)OpusError.Bad_Arg;
@@ -915,7 +915,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Opus_Packet_Get_Nb_Samples(Pointer<byte> packet, opus_int32 len, opus_int32 Fs)
+		public static c_int Opus_Packet_Get_Nb_Samples(CPointer<byte> packet, opus_int32 len, opus_int32 Fs)
 		{
 			c_int count = Opus_Packet_Get_Nb_Frames(packet, len);
 
@@ -938,7 +938,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int Opus_Decoder_Get_Nb_Samples(OpusDecoderInternal dec, Pointer<byte> packet, opus_int32 len)
+		public static c_int Opus_Decoder_Get_Nb_Samples(OpusDecoderInternal dec, CPointer<byte> packet, opus_int32 len)
 		{
 			return Opus_Packet_Get_Nb_Samples(packet, len, dec.Fs);
 		}

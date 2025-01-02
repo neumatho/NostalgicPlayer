@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 {
@@ -13,7 +13,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 	public class AllocChain
 	{
 		/// <summary></summary>
-		public Pointer<byte> ptr;
+		public CPointer<byte> ptr;
 		/// <summary></summary>
 		public AllocChain next;
 

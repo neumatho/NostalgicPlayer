@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Interfaces;
 
@@ -18,8 +18,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Containers
 		public delegate IVorbisLookFloor Look_Del(VorbisDspState vd, IVorbisInfoFloor i);
 		public delegate void Free_Info_Del(IVorbisInfoFloor i);
 		public delegate void Free_Look_Del(IVorbisLookFloor i);
-		public delegate Pointer<byte> Inverse1_Del(VorbisBlock vb, IVorbisLookFloor i);
-		public delegate c_int Inverse2_Del(VorbisBlock vb, IVorbisLookFloor i, Pointer<byte> memo, Pointer<c_float> @out);
+		public delegate CPointer<byte> Inverse1_Del(VorbisBlock vb, IVorbisLookFloor i);
+		public delegate c_int Inverse2_Del(VorbisBlock vb, IVorbisLookFloor i, CPointer<byte> memo, CPointer<c_float> @out);
 
 		public required Unpack_Del Unpack;
 		public required Look_Del Look;

@@ -120,9 +120,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Share
 
 			Array.Resize(ref newPtr, (int)size);
 
-			if ((oldPtr == null) || (size > oldPtr.Length))
+			if ((oldPtr == null) || (size > (size_t)oldPtr.Length))
 			{
-				for (int i = oldPtr?.Length ?? 0; i < size; i++)
+				for (int i = oldPtr?.Length ?? 0; i < (int)size; i++)
 					newPtr[i] = new T();
 			}
 

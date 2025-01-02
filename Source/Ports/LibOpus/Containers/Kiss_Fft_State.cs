@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 {
@@ -16,8 +16,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 		public opus_val16 scale;
 		public c_int shift;
 		public opus_int16[] factors = new opus_int16[2 * Constants.MaxFactors];
-		public Pointer<opus_int16> bitrev;
-		public Pointer<Kiss_Twiddle_Cpx> twiddles;
-		public Pointer<Arch_Fft_State> arch_fft;
+		public CPointer<opus_int16> bitrev;
+		public CPointer<Kiss_Twiddle_Cpx> twiddles;
+		public CPointer<Arch_Fft_State> arch_fft;
 	}
 }

@@ -8,7 +8,7 @@ global using Reg_Type = System.Single;
 
 using System;
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Containers;
 
@@ -71,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		public static void Mdct_Init(MdctLookup lookup, c_int n)
 		{
 			c_int[] bitrev = new c_int[n / 4];
-			Pointer<Data_Type> T = Memory.Ogg_MAlloc<Data_Type>((size_t)(n + n / 4));
+			CPointer<Data_Type> T = Memory.Ogg_MAlloc<Data_Type>((size_t)(n + n / 4));
 
 			c_int n2 = n >> 1;
 			c_int log2n = lookup.log2n = (c_int)Os.Rint(Math.Log(n) / Math.Log(2.0f));
@@ -125,7 +125,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void Mdct_Butterfly_8(Pointer<Data_Type> x)
+		private static void Mdct_Butterfly_8(CPointer<Data_Type> x)
 		{
 			Reg_Type r0 = x[6] + x[2];
 			Reg_Type r1 = x[6] - x[2];
@@ -156,7 +156,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void Mdct_Butterfly_16(Pointer<Data_Type> x)
+		private static void Mdct_Butterfly_16(CPointer<Data_Type> x)
 		{
 			Reg_Type r0 = x[1] - x[9];
 			Reg_Type r1 = x[0] - x[8];
@@ -199,7 +199,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void Mdct_Butterfly_32(Pointer<Data_Type> x)
+		private static void Mdct_Butterfly_32(CPointer<Data_Type> x)
 		{
 			Reg_Type r0 = x[30] - x[14];
 			Reg_Type r1 = x[31] - x[15];
@@ -270,10 +270,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void Mdct_Butterfly_First(Pointer<Data_Type> T, Pointer<Data_Type> x, c_int points)
+		private static void Mdct_Butterfly_First(CPointer<Data_Type> T, CPointer<Data_Type> x, c_int points)
 		{
-			Pointer<Data_Type> x1 = x + points - 8;
-			Pointer<Data_Type> x2 = x + (points >> 1) - 8;
+			CPointer<Data_Type> x1 = x + points - 8;
+			CPointer<Data_Type> x2 = x + (points >> 1) - 8;
 			Reg_Type r0;
 			Reg_Type r1;
 
@@ -322,10 +322,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void Mdct_Butterfly_Generic(Pointer<Data_Type> T, Pointer<Data_Type> x, c_int points, c_int trigint)
+		private static void Mdct_Butterfly_Generic(CPointer<Data_Type> T, CPointer<Data_Type> x, c_int points, c_int trigint)
 		{
-			Pointer<Data_Type> x1 = x + points - 8;
-			Pointer<Data_Type> x2 = x + (points >> 1) - 8;
+			CPointer<Data_Type> x1 = x + points - 8;
+			CPointer<Data_Type> x2 = x + (points >> 1) - 8;
 			Reg_Type r0;
 			Reg_Type r1;
 
@@ -381,9 +381,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void Mdct_Butterflies(MdctLookup init, Pointer<Data_Type> x, c_int points)
+		private static void Mdct_Butterflies(MdctLookup init, CPointer<Data_Type> x, c_int points)
 		{
-			Pointer<Data_Type> T = init.trig;
+			CPointer<Data_Type> T = init.trig;
 			c_int stages = init.log2n - 5;
 
 			if (--stages > 0)
@@ -428,18 +428,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void Mdct_Bitreverse(MdctLookup init, Pointer<Data_Type> x)
+		private static void Mdct_Bitreverse(MdctLookup init, CPointer<Data_Type> x)
 		{
 			c_int n = init.n;
-			Pointer<c_int> bit = init.bitrev;
-			Pointer<Data_Type> w0 = x;
-			Pointer<Data_Type> w1 = x = w0 + (n >> 1);
-			Pointer<Data_Type> T = init.trig + n;
+			CPointer<c_int> bit = init.bitrev;
+			CPointer<Data_Type> w0 = x;
+			CPointer<Data_Type> w1 = x = w0 + (n >> 1);
+			CPointer<Data_Type> T = init.trig + n;
 
 			do
 			{
-				Pointer<Data_Type> x0 = x + bit[0];
-				Pointer<Data_Type> x1 = x + bit[1];
+				CPointer<Data_Type> x0 = x + bit[0];
+				CPointer<Data_Type> x1 = x + bit[1];
 
 				Reg_Type r0 = x0[1] - x1[1];
 				Reg_Type r1 = x0[0] + x1[0];
@@ -486,16 +486,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Mdct_Backward(MdctLookup init, Pointer<Data_Type> @in, Pointer<Data_Type> @out)
+		public static void Mdct_Backward(MdctLookup init, CPointer<Data_Type> @in, CPointer<Data_Type> @out)
 		{
 			c_int n = init.n;
 			c_int n2 = n >> 1;
 			c_int n4 = n >> 2;
 
 			// Rotate
-			Pointer<Data_Type> iX = @in + n2 - 7;
-			Pointer<Data_Type> oX = @out + n2 + n4;
-			Pointer<Data_Type> T = init.trig + n4;
+			CPointer<Data_Type> iX = @in + n2 - 7;
+			CPointer<Data_Type> oX = @out + n2 + n4;
+			CPointer<Data_Type> T = init.trig + n4;
 
 			do
 			{
@@ -534,8 +534,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 
 			// Rotate + window
 			{
-				Pointer<Data_Type> oX1 = @out + n2 + n4;
-				Pointer<Data_Type> oX2 = @out + n2 + n4;
+				CPointer<Data_Type> oX1 = @out + n2 + n4;
+				CPointer<Data_Type> oX2 = @out + n2 + n4;
 				iX = @out;
 				T = init.trig + n2;
 

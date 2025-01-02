@@ -262,18 +262,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 
 					size_t len = (size_t)metaPicture.Mime_Type.Length - 1;	// Is zero terminated
 
-					if (!bw.Flac__BitWriter_Write_Raw_UInt32(len, Constants.Flac__Stream_Metadata_Picture_Mime_Type_Length_Len))
+					if (!bw.Flac__BitWriter_Write_Raw_UInt32((Flac__uint32)len, Constants.Flac__Stream_Metadata_Picture_Mime_Type_Length_Len))
 						return false;
 
-					if (!bw.Flac__BitWriter_Write_Byte_Block(metaPicture.Mime_Type, len))
+					if (!bw.Flac__BitWriter_Write_Byte_Block(metaPicture.Mime_Type, (uint32_t)len))
 						return false;
 
 					len = (size_t)metaPicture.Description.Length - 1;	// Is zero terminated
 
-					if (!bw.Flac__BitWriter_Write_Raw_UInt32(len, Constants.Flac__Stream_Metadata_Picture_Description_Length_Len))
+					if (!bw.Flac__BitWriter_Write_Raw_UInt32((Flac__uint32)len, Constants.Flac__Stream_Metadata_Picture_Description_Length_Len))
 						return false;
 
-					if (!bw.Flac__BitWriter_Write_Byte_Block(metaPicture.Description, len))
+					if (!bw.Flac__BitWriter_Write_Byte_Block(metaPicture.Description, (uint32_t)len))
 						return false;
 
 					if (!bw.Flac__BitWriter_Write_Raw_UInt32(metaPicture.Width, Constants.Flac__Stream_Metadata_Picture_Width_Len))

@@ -3,8 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 {
@@ -17,14 +17,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 		public opus_int16 order;
 		public opus_int16 quantStepSize_Q16;
 		public opus_int16 invQuantStepSize_Q6;
-		public Pointer<opus_uint8> CB1_NLSF_Q8;
-		public Pointer<opus_int16> CB1_Wght_Q9;
-		public Pointer<opus_uint8> CB1_iCDF;
-		public Pointer<opus_uint8> pred_Q8;
-		public Pointer<opus_uint8> ec_sel;
-		public Pointer<opus_uint8> ec_iCDF;
-		public Pointer<opus_uint8> ec_Rates_Q5;
-		public Pointer<opus_int16> deltaMin_Q15;
+		public CPointer<opus_uint8> CB1_NLSF_Q8;
+		public CPointer<opus_int16> CB1_Wght_Q9;
+		public CPointer<opus_uint8> CB1_iCDF;
+		public CPointer<opus_uint8> pred_Q8;
+		public CPointer<opus_uint8> ec_sel;
+		public CPointer<opus_uint8> ec_iCDF;
+		public CPointer<opus_uint8> ec_Rates_Q5;
+		public CPointer<opus_int16> deltaMin_Q15;
 
 		/********************************************************************/
 		/// <summary>

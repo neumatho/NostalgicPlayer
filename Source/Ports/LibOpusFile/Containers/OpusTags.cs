@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers
 {
@@ -38,12 +38,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers
 		/// <summary>
 		/// The array of comment string vectors
 		/// </summary>
-		public Pointer<Pointer<byte>> User_Comments;
+		public CPointer<CPointer<byte>> User_Comments;
 
 		/// <summary>
 		/// An array of the corresponding length of each vector, in bytes
 		/// </summary>
-		public Pointer<c_int> Comment_Lengths;
+		public CPointer<c_int> Comment_Lengths;
 
 		/// <summary>
 		/// The total number of comment streams
@@ -54,6 +54,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers
 		/// The null-terminated vendor string.
 		/// This identifies the software used to encode the stream
 		/// </summary>
-		public Pointer<byte> Vendor;
+		public CPointer<byte> Vendor;
 	}
 }

@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 {
@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_Insertion_Sort_Increasing_All_Values_Int16(Pointer<opus_int16> a, opus_int L)
+		public static void Silk_Insertion_Sort_Increasing_All_Values_Int16(CPointer<opus_int16> a, opus_int L)
 		{
 			// Sort vector elements by value, increasing order
 			for (opus_int i = 1; i < L; i++)

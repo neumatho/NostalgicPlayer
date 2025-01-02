@@ -34,8 +34,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\LibSidPlayFp\LibSidPlayTypes.cs" Link="LibSidPlayTypes.cs" />
-    <Compile Include="..\..\ReSidFp\ReSidTypes.cs" Link="ReSidTypes.cs" />
+    <Compile Include="..\..\..\NostalgicPlayerCKit\CTypes.cs" Link="CTypes.cs" />
+    <Compile Include="..\..\ReSidFp\ReSidFpTypes.cs" Link="ReSidFpTypes.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void Silk_NLSF_Residual_Dequant(Pointer<opus_int16> x_Q10, Pointer<opus_int8> indices, Pointer<opus_uint8> pred_coef_Q8, opus_int quant_step_size_Q16, opus_int16 order)
+		private static void Silk_NLSF_Residual_Dequant(CPointer<opus_int16> x_Q10, CPointer<opus_int8> indices, CPointer<opus_uint8> pred_coef_Q8, opus_int quant_step_size_Q16, opus_int16 order)
 		{
 			opus_int out_Q10 = 0;
 
@@ -46,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// NLSF vector decoder
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_NLSF_Decode(Pointer<opus_int16> pNLSF_Q15, Pointer<opus_int8> NLSFIndicies, Silk_NLSF_CB_Struct psNLSF_CB)
+		public static void Silk_NLSF_Decode(CPointer<opus_int16> pNLSF_Q15, CPointer<opus_int8> NLSFIndicies, Silk_NLSF_CB_Struct psNLSF_CB)
 		{
 			opus_uint8[] pred_Q8 = new opus_uint8[Constants.Max_Lpc_Order];
 			opus_int16[] ec_ix = new opus_int16[Constants.Max_Lpc_Order];
@@ -59,8 +59,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 			Silk_NLSF_Residual_Dequant(res_Q10, NLSFIndicies + 1, pred_Q8, psNLSF_CB.quantStepSize_Q16, psNLSF_CB.order);
 
 			// Apply inverse square-rooted weights to first stage and add to output
-			Pointer<opus_uint8> pCB_element = psNLSF_CB.CB1_NLSF_Q8 + NLSFIndicies[0] * psNLSF_CB.order;
-			Pointer<opus_int16> pCB_Wght_Q9 = psNLSF_CB.CB1_Wght_Q9 + NLSFIndicies[0] * psNLSF_CB.order;
+			CPointer<opus_uint8> pCB_element = psNLSF_CB.CB1_NLSF_Q8 + NLSFIndicies[0] * psNLSF_CB.order;
+			CPointer<opus_int16> pCB_Wght_Q9 = psNLSF_CB.CB1_Wght_Q9 + NLSFIndicies[0] * psNLSF_CB.order;
 
 			for (opus_int i = 0; i < psNLSF_CB.order; i++)
 			{

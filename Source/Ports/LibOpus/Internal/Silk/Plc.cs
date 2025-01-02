@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
@@ -41,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_PLC(Silk_Decoder_State psDec, Silk_Decoder_Control psDecCtrl, Pointer<opus_int16> frame, bool lost, c_int arch)
+		public static void Silk_PLC(Silk_Decoder_State psDec, Silk_Decoder_Control psDecCtrl, CPointer<opus_int16> frame, bool lost, c_int arch)
 		{
 			// PLC control function
 			if (psDec.fs_kHz != psDec.sPLC.fs_kHz)
@@ -154,13 +154,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void Silk_PLC_Energy(out opus_int32 energy1, out opus_int shift1, out opus_int32 energy2, out opus_int shift2, Pointer<opus_int32> exc_Q14, Pointer<opus_int32> prevGain_Q10, c_int subfr_length, c_int nb_subfr)
+		private static void Silk_PLC_Energy(out opus_int32 energy1, out opus_int shift1, out opus_int32 energy2, out opus_int shift2, CPointer<opus_int32> exc_Q14, CPointer<opus_int32> prevGain_Q10, c_int subfr_length, c_int nb_subfr)
 		{
-			Pointer<opus_int16> exc_buf = new Pointer<opus_int16>(2 * subfr_length);
+			CPointer<opus_int16> exc_buf = new CPointer<opus_int16>(2 * subfr_length);
 
 			// Find random noise component
 			// Scale previous excitation signal
-			Pointer<opus_int16> exc_buf_ptr = exc_buf;
+			CPointer<opus_int16> exc_buf_ptr = exc_buf;
 
 			for (c_int k = 0; k < 2; k++)
 			{
@@ -183,14 +183,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void Silk_PLC_Conceal(Silk_Decoder_State psDec, Silk_Decoder_Control psDecCtrl, Pointer<opus_int16> frame, c_int arch)
+		private static void Silk_PLC_Conceal(Silk_Decoder_State psDec, Silk_Decoder_Control psDecCtrl, CPointer<opus_int16> frame, c_int arch)
 		{
 			opus_int16[] A_Q12 = new opus_int16[Constants.Max_Lpc_Order];
 			Silk_PLC_Struct psPLC = psDec.sPLC;
 			opus_int32[] prevGain_Q10 = new opus_int32[2];
 
-			Pointer<opus_int32> sLTP_Q14 = new Pointer<opus_int32>(psDec.ltp_mem_length + psDec.frame_length);
-			Pointer<opus_int16> sLTP = new Pointer<opus_int16>(psDec.ltp_mem_length);
+			CPointer<opus_int32> sLTP_Q14 = new CPointer<opus_int32>(psDec.ltp_mem_length + psDec.frame_length);
+			CPointer<opus_int16> sLTP = new CPointer<opus_int16>(psDec.ltp_mem_length);
 
 			prevGain_Q10[0] = SigProc_Fix.Silk_RSHIFT(psPLC.prevGain_Q16[0], 6);
 			prevGain_Q10[1] = SigProc_Fix.Silk_RSHIFT(psPLC.prevGain_Q16[1], 6);
@@ -200,7 +200,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 
 			Silk_PLC_Energy(out opus_int32 energy1, out opus_int shift1, out opus_int32 energy2, out opus_int shift2, psDec.exc_Q14, prevGain_Q10, psDec.subfr_length, psDec.nb_subfr);
 
-			Pointer<opus_int32> rand_ptr;
+			CPointer<opus_int32> rand_ptr;
 
 			if (SigProc_Fix.Silk_RSHIFT(energy1, shift2) < SigProc_Fix.Silk_RSHIFT(energy2, shift1))
 			{
@@ -214,7 +214,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 			}
 
 			// Set up Gain to random noise component
-			Pointer<opus_int16> B_Q14 = psPLC.LTPCoef_Q14;
+			CPointer<opus_int16> B_Q14 = psPLC.LTPCoef_Q14;
 			opus_int16 rand_scale_Q14 = psPLC.randScale_Q14;
 
 			// Set up attenuation gains
@@ -280,7 +280,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 			for (opus_int k = 0; k < psDec.nb_subfr; k++)
 			{
 				// Set up pointer
-				Pointer<opus_int32> pred_lag_ptr = sLTP_Q14 + sLTP_buf_idx - lag + Constants.Ltp_Order / 2;
+				CPointer<opus_int32> pred_lag_ptr = sLTP_Q14 + sLTP_buf_idx - lag + Constants.Ltp_Order / 2;
 
 				for (opus_int i = 0; i < psDec.subfr_length; i++)
 				{
@@ -320,7 +320,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 			/***************************/
 			/* LPC synthesis filtering */
 			/***************************/
-			Pointer<opus_int32> sLPC_Q14_ptr = sLTP_Q14 + psDec.ltp_mem_length - Constants.Max_Lpc_Order;
+			CPointer<opus_int32> sLPC_Q14_ptr = sLTP_Q14 + psDec.ltp_mem_length - Constants.Max_Lpc_Order;
 
 			// Copy LPC state
 			SigProc_Fix.Silk_MemCpy(sLPC_Q14_ptr, psDec.sLpc_Q14_buf, Constants.Max_Lpc_Order);
@@ -371,7 +371,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// Glues concealed frames with new good received frames
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_PLC_Glue_Frames(Silk_Decoder_State psDec, Pointer<opus_int16> frame, opus_int length)
+		public static void Silk_PLC_Glue_Frames(Silk_Decoder_State psDec, CPointer<opus_int16> frame, opus_int length)
 		{
 			Silk_PLC_Struct psPLC = psDec.sPLC;
 

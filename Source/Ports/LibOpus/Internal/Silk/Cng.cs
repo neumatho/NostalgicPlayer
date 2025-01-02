@@ -4,7 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System.Runtime.CompilerServices;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOpus.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
@@ -20,7 +20,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void Silk_CNG_Exc(Pointer<opus_int32> exc_Q14, Pointer<opus_int32> exc_buf_Q14, opus_int length, ref opus_int32 rand_seed)
+		private static void Silk_CNG_Exc(CPointer<opus_int32> exc_Q14, CPointer<opus_int32> exc_buf_Q14, opus_int length, ref opus_int32 rand_seed)
 		{
 			opus_int exc_mask = Constants.Cng_Buf_Mask_Max;
 
@@ -69,7 +69,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// Updates CNG estimate, and applies the CNG when packet was lost
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_CNG(Silk_Decoder_State psDec, Silk_Decoder_Control psDecCtrl, Pointer<opus_int16> frame, opus_int length)
+		public static void Silk_CNG(Silk_Decoder_State psDec, Silk_Decoder_Control psDecCtrl, CPointer<opus_int16> frame, opus_int length)
 		{
 			opus_int16[] A_Q12 = new opus_int16[Constants.Max_Lpc_Order];
 			Silk_CNG_Struct psCNG = psDec.sCNG;
@@ -121,7 +121,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 			// Add CNG when packet is lost or during DTX
 			if (psDec.lossCnt != 0)
 			{
-				Pointer<opus_int32> CNG_sig_Q14 = new Pointer<opus_int32>(length + Constants.Max_Lpc_Order);
+				CPointer<opus_int32> CNG_sig_Q14 = new CPointer<opus_int32>(length + Constants.Max_Lpc_Order);
 
 				// Generate CNG excitation
 				opus_int32 gain_Q16 = Macros.Silk_SMULWW(psDec.sPLC.randScale_Q14, psDec.sPLC.prevGain_Q16[1]);

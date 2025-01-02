@@ -4,8 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
-using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 {
@@ -14,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 	/// </summary>
 	internal class Silk_CNG_Struct : IDeepCloneable<Silk_CNG_Struct>
 	{
-		public Pointer<opus_int32> CNG_exc_buf_Q14 = new Pointer<opus_int32>(Constants.Max_Frame_Length);
+		public CPointer<opus_int32> CNG_exc_buf_Q14 = new CPointer<opus_int32>(Constants.Max_Frame_Length);
 		public readonly opus_int16[] CNG_smth_NLSF_Q15 = new opus_int16[Constants.Max_Lpc_Order];
 		public readonly opus_int32[] CNG_synth_state = new opus_int32[Constants.Max_Lpc_Order];
 		public opus_int32 CNG_smth_Gain_Q16;

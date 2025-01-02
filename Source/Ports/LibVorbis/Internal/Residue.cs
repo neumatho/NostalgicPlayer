@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibOgg;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Containers;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Interfaces;
@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 	/// </summary>
 	internal static class Residue
 	{
-		private delegate c_long Decode_Del(Codebook book, Pointer<c_float> a, OggPack b, c_int n);
+		private delegate c_long Decode_Del(Codebook book, CPointer<c_float> a, OggPack b, c_int n);
 
 		/********************************************************************/
 		/// <summary>
@@ -265,7 +265,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// error
 		/// </summary>
 		/********************************************************************/
-		private static c_int _01inverse(VorbisBlock vb, IVorbisLookResidue vl, Pointer<c_float>[] @in, c_int ch, Decode_Del decodepart)
+		private static c_int _01inverse(VorbisBlock vb, IVorbisLookResidue vl, CPointer<c_float>[] @in, c_int ch, Decode_Del decodepart)
 		{
 			VorbisLookResidue0 look = (VorbisLookResidue0)vl;
 			VorbisInfoResidue0 info = look.info;
@@ -281,7 +281,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			{
 				c_int partvals = n / samples_per_partition;
 				c_int partwords = (partvals + partitions_per_word - 1) / partitions_per_word;
-				Pointer<c_int[]>[] partword = new Pointer<c_int[]>[ch];
+				CPointer<c_int[]>[] partword = new CPointer<c_int[]>[ch];
 
 				for (c_long j = 0; j < ch; j++)
 					partword[j] = Block.Vorbis_Block_Alloc<c_int[]>(vb, partwords);
@@ -344,7 +344,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Res0_Inverse(VorbisBlock vb, IVorbisLookResidue vl, Pointer<c_float>[] @in, Pointer<bool> nonzero, c_int ch)
+		private static c_int Res0_Inverse(VorbisBlock vb, IVorbisLookResidue vl, CPointer<c_float>[] @in, CPointer<bool> nonzero, c_int ch)
 		{
 			c_int used = 0;
 
@@ -367,7 +367,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Res1_Inverse(VorbisBlock vb, IVorbisLookResidue vl, Pointer<c_float>[] @in, Pointer<bool> nonzero, c_int ch)
+		private static c_int Res1_Inverse(VorbisBlock vb, IVorbisLookResidue vl, CPointer<c_float>[] @in, CPointer<bool> nonzero, c_int ch)
 		{
 			c_int used = 0;
 
@@ -390,7 +390,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 		/// Duplicate code here as speed is somewhat more important
 		/// </summary>
 		/********************************************************************/
-		private static c_int Res2_Inverse(VorbisBlock vb, IVorbisLookResidue vl, Pointer<c_float>[] @in, Pointer<bool> nonzero, c_int ch)
+		private static c_int Res2_Inverse(VorbisBlock vb, IVorbisLookResidue vl, CPointer<c_float>[] @in, CPointer<bool> nonzero, c_int ch)
 		{
 			VorbisLookResidue0 look = (VorbisLookResidue0)vl;
 			VorbisInfoResidue0 info = look.info;
@@ -406,7 +406,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibVorbis.Internal
 			{
 				c_int partvals = n / samples_per_partition;
 				c_int partwords = (partvals + partitions_per_word - 1) / partitions_per_word;
-				Pointer<c_int[]> partword = Block.Vorbis_Block_Alloc<c_int[]>(vb, partwords);
+				CPointer<c_int[]> partword = Block.Vorbis_Block_Alloc<c_int[]>(vb, partwords);
 				c_long i, l;
 
 				for (i = 0; i < ch; i++)

@@ -3,7 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 {
@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal.Silk
 		/// vector of int16s to make it fit in an int32
 		/// </summary>
 		/********************************************************************/
-		public static void Silk_Sum_Sqr_Shift(out opus_int32 energy, out opus_int shift, Pointer<opus_int16> x, opus_int len)
+		public static void Silk_Sum_Sqr_Shift(out opus_int32 energy, out opus_int shift, CPointer<opus_int16> x, opus_int len)
 		{
 			opus_int i;
 			opus_uint32 nrg_tmp;
