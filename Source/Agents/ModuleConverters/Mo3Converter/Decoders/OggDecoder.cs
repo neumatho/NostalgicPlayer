@@ -6,8 +6,11 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using NVorbis;
 using Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers;
+using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.Ports.LibVorbis;
+using Polycode.NostalgicPlayer.Ports.LibVorbis.Containers;
+using Polycode.NostalgicPlayer.Ports.LibVorbisFile;
 
 namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Decoders
 {
@@ -39,26 +42,14 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Decoders
 				ms = new MemoryStream(sharedHeaderSize + sampleInfo.Chunk.Length);
 				ms.Write(sharedChunk, 0, sharedHeaderSize);
 				ms.Write(sampleInfo.Chunk);
+
+				ms.Seek(0, SeekOrigin.Begin);
 			}
 			else
 				ms = new MemoryStream(sampleInfo.Chunk);
 
-			float[] decodedBuffer;
-
-			try
-			{
-				using (VorbisReader vorbis = new VorbisReader(ms))
-				{
-					decodedBuffer = new float[vorbis.TotalSamples * vorbis.Channels];
-
-					if (vorbis.ReadSamples(decodedBuffer) < (vorbis.TotalSamples - 1))
-						return false;
-				}
-			}
-			catch (Exception)
-			{
+			if (!VorbisDecode(ms, out short[] decodedBuffer))
 				return false;
-			}
 
 			if ((sampleInfo.SampleHeader.Flags & SampleInfoFlag._16Bit) == 0)
 			{
@@ -66,16 +57,62 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Decoders
 				Span<sbyte> pcm8 = MemoryMarshal.Cast<byte, sbyte>(sampleInfo.SampleData);
 
 				for (int i = 0; i < decodedBuffer.Length; i++)
-					pcm8[i] = (sbyte)((short)(decodedBuffer[i] * 32767.0f) >> 8);
+					pcm8[i] = (sbyte)(decodedBuffer[i] >> 8);
 			}
 			else
 			{
 				sampleInfo.SampleData = new byte[decodedBuffer.Length * 2];
-				Span<short> pcm16 = MemoryMarshal.Cast<byte, short>(sampleInfo.SampleData);
-
-				for (int i = 0; i < decodedBuffer.Length; i++)
-					pcm16[i] = (short)(decodedBuffer[i] * 32767.0f);
+				decodedBuffer.CopyTo(MemoryMarshal.Cast<byte, short>(sampleInfo.SampleData));
 			}
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private bool VorbisDecode(MemoryStream ms, out short[] decodedBuffer)
+		{
+			VorbisError result = VorbisFile.Ov_Open(ms, false, out VorbisFile vorbisFile, null, 0);
+			if (result != VorbisError.Ok)
+			{
+				decodedBuffer = null;
+
+				return false;
+			}
+
+			long todo = vorbisFile.Ov_Pcm_Total(-1);
+
+			VorbisInfo info = vorbisFile.Ov_Info(-1);
+
+			decodedBuffer = new short[todo * info.channels];
+
+			int offset = 0;
+
+			while (todo > 0)
+			{
+				int done = vorbisFile.Ov_Read_Float(out Pointer<float>[] buffer, (int)todo, out _);
+				if (done == (int)VorbisError.Hole)
+					continue;
+
+				if (done <= 0)
+					break;
+
+				// Copy the samples into one buffer
+				for (int i = 0; i < done; i++)
+				{
+					for (int j = 0; j < info.channels; j++)
+						decodedBuffer[offset++] = (short)Math.Clamp(buffer[j][i] * 32767, -32768, 32767);
+				}
+
+				todo -= done;
+			}
+
+			vorbisFile.Ov_Clear();
 
 			return true;
 		}
