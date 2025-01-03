@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 using Krypton.Toolkit;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Bases;
@@ -36,6 +37,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		private int pictureIndex;
 		private int nextPictureIndex;
 
+		private Lock animationLock;
 		private bool animationRunning;
 		private bool pictureFading;
 		private double easePosition;
@@ -87,6 +89,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 
 			if (!DesignMode)
 			{
+				animationLock = new Lock();
+
 				InitializeWindow(mainWindow, optionSettings);
 
 				// Load window settings
@@ -292,19 +296,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/********************************************************************/
 		private void PictureGroup_Resize(object sender, EventArgs e)
 		{
-			// Replace the next/previous buttons
-			int newYPos = ((pictureBox.Height - previousPictureButton.Height) / 2) + pictureBox.Location.Y;
-			previousPictureButton.Location = new Point(8, newYPos);
-			nextPictureButton.Location = new Point(pictureGroup.Width - nextPictureButton.Width - 8, newYPos);
-
-			// Resize picture and label
-			if (pictures != null)
+			lock (animationLock)
 			{
-				if (currentPictureBitmap != null)
-					CreateAllPictureBitmaps(pictureIndex, ref currentPictureBitmap, ref currentLabelBitmap);
+				// Replace the next/previous buttons
+				int newYPos = ((pictureBox.Height - previousPictureButton.Height) / 2) + pictureBox.Location.Y;
+				previousPictureButton.Location = new Point(8, newYPos);
+				nextPictureButton.Location = new Point(pictureGroup.Width - nextPictureButton.Width - 8, newYPos);
 
-				if (newPictureBitmap != null)
-					CreateAllPictureBitmaps(nextPictureIndex, ref newPictureBitmap, ref newLabelBitmap);
+				// Resize picture and label
+				if (pictures != null)
+				{
+					if (currentPictureBitmap != null)
+						CreateAllPictureBitmaps(pictureIndex, ref currentPictureBitmap, ref currentLabelBitmap);
+
+					if (newPictureBitmap != null)
+						CreateAllPictureBitmaps(nextPictureIndex, ref newPictureBitmap, ref newLabelBitmap);
+				}
 			}
 		}
 
@@ -317,12 +324,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/********************************************************************/
 		private void Picture_Paint(object sender, PaintEventArgs e)
 		{
-			if (currentPictureBitmap != null)
-				e.Graphics.DrawImage(currentPictureBitmap, currentXPos, 0);
+			lock (animationLock)
+			{
+				if (currentPictureBitmap != null)
+					e.Graphics.DrawImage(currentPictureBitmap, currentXPos, 0);
 
-			Bitmap bitmapToDraw = fadePictureBitmap ?? newPictureBitmap;
-			if (bitmapToDraw != null)
-				e.Graphics.DrawImage(bitmapToDraw, newXPos, 0);
+				Bitmap bitmapToDraw = fadePictureBitmap ?? newPictureBitmap;
+				if (bitmapToDraw != null)
+					e.Graphics.DrawImage(bitmapToDraw, newXPos, 0);
+			}
 		}
 
 
@@ -334,12 +344,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/********************************************************************/
 		private void PictureLabel_Paint(object sender, PaintEventArgs e)
 		{
-			Bitmap bitmapToDraw = currentFadeLabelBitmap ?? currentLabelBitmap;
-			if (bitmapToDraw != null)
-				e.Graphics.DrawImage(bitmapToDraw, 0, 0);
+			lock (animationLock)
+			{
+				Bitmap bitmapToDraw = currentFadeLabelBitmap ?? currentLabelBitmap;
+				if (bitmapToDraw != null)
+					e.Graphics.DrawImage(bitmapToDraw, 0, 0);
 
-			if (newFadeLabelBitmap != null)
-				e.Graphics.DrawImage(newFadeLabelBitmap, 0, 0);
+				if (newFadeLabelBitmap != null)
+					e.Graphics.DrawImage(newFadeLabelBitmap, 0, 0);
+			}
 		}
 
 
@@ -351,92 +364,95 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/********************************************************************/
 		private void AnimationTimer_Tick(object sender, EventArgs e)
 		{
-			animationRunning = true;
-
-			currentOpacity -= FadeIncrement;
-			newOpacity += FadeIncrement;
-
-			if (newOpacity >= 1.0f)
+			lock (animationLock)
 			{
-				currentOpacity = 0.0f;
-				newOpacity = 1.0f;
-			}
+				animationRunning = true;
 
-			if (!pictureFading)
-			{
-				// EaseOutCubic
-				double pos = 1.0 - Math.Pow(1 - easePosition, 3.0);
-				int posDiff = (int)(pos * pictureGroup.Width);
+				currentOpacity -= FadeIncrement;
+				newOpacity += FadeIncrement;
 
-				if (pictureIndex <= nextPictureIndex)
+				if (newOpacity >= 1.0f)
 				{
-					currentXPos = -posDiff;
-					newXPos = pictureGroup.Width - posDiff;
+					currentOpacity = 0.0f;
+					newOpacity = 1.0f;
+				}
+
+				if (!pictureFading)
+				{
+					// EaseOutCubic
+					double pos = 1.0 - Math.Pow(1 - easePosition, 3.0);
+					int posDiff = (int)(pos * pictureGroup.Width);
+
+					if (pictureIndex <= nextPictureIndex)
+					{
+						currentXPos = -posDiff;
+						newXPos = pictureGroup.Width - posDiff;
+					}
+					else
+					{
+						currentXPos = posDiff;
+						newXPos = -(pictureGroup.Width - posDiff);
+					}
+
+					easePosition += EaseIncrement;
+
+					if (easePosition > 1.0)
+						easePosition = 1.0;
+				}
+				else
+					easePosition = 1.0;
+
+				if ((newOpacity == 1.0f) && (easePosition == 1.0))
+				{
+					animationTimer.Stop();
+					animationRunning = false;
+					pictureFading = false;
+
+					currentFadeLabelBitmap?.Dispose();
+					currentFadeLabelBitmap = null;
+
+					newFadeLabelBitmap?.Dispose();
+					newFadeLabelBitmap = null;
+
+					currentLabelBitmap?.Dispose();
+					currentLabelBitmap = newLabelBitmap;
+					newLabelBitmap = null;
+
+					fadePictureBitmap?.Dispose();
+					fadePictureBitmap = null;
+
+					currentPictureBitmap?.Dispose();
+					currentPictureBitmap = newPictureBitmap;
+					newPictureBitmap = null;
+
+					currentXPos = 0;
+
+					pictureIndex = nextPictureIndex;
+
+					ShowHideArrows();
 				}
 				else
 				{
-					currentXPos = posDiff;
-					newXPos = -(pictureGroup.Width - posDiff);
+					currentFadeLabelBitmap?.Dispose();
+					newFadeLabelBitmap?.Dispose();
+
+					if (currentLabelBitmap != null)
+						currentFadeLabelBitmap = SetOpacity(currentLabelBitmap, currentOpacity);
+
+					newFadeLabelBitmap = SetOpacity(newLabelBitmap, newOpacity);
+
+					if (pictureFading)
+					{
+						newXPos = 0;
+
+						fadePictureBitmap?.Dispose();
+						fadePictureBitmap = SetOpacity(newPictureBitmap, newOpacity);
+					}
 				}
 
-				easePosition += EaseIncrement;
-
-				if (easePosition > 1.0)
-					easePosition = 1.0;
+				pictureLabelPictureBox.Invalidate();
+				pictureBox.Invalidate();
 			}
-			else
-				easePosition = 1.0;
-
-			if ((newOpacity == 1.0f) && (easePosition == 1.0))
-			{
-				animationTimer.Stop();
-				animationRunning = false;
-				pictureFading = false;
-
-				currentFadeLabelBitmap?.Dispose();
-				currentFadeLabelBitmap = null;
-
-				newFadeLabelBitmap?.Dispose();
-				newFadeLabelBitmap = null;
-
-				currentLabelBitmap?.Dispose();
-				currentLabelBitmap = newLabelBitmap;
-				newLabelBitmap = null;
-
-				fadePictureBitmap?.Dispose();
-				fadePictureBitmap = null;
-
-				currentPictureBitmap?.Dispose();
-				currentPictureBitmap = newPictureBitmap;
-				newPictureBitmap = null;
-
-				currentXPos = 0;
-
-				pictureIndex = nextPictureIndex;
-
-				ShowHideArrows();
-			}
-			else
-			{
-				currentFadeLabelBitmap?.Dispose();
-				newFadeLabelBitmap?.Dispose();
-
-				if (currentLabelBitmap != null)
-					currentFadeLabelBitmap = SetOpacity(currentLabelBitmap, currentOpacity);
-
-				newFadeLabelBitmap = SetOpacity(newLabelBitmap, newOpacity);
-
-				if (pictureFading)
-				{
-					newXPos = 0;
-
-					fadePictureBitmap?.Dispose();
-					fadePictureBitmap = SetOpacity(newPictureBitmap, newOpacity);
-				}
-			}
-
-			pictureLabelPictureBox.Invalidate();
-			pictureBox.Invalidate();
 		}
 		#endregion
 
@@ -621,16 +637,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/********************************************************************/
 		private void InitializePictures()
 		{
-			pictureIndex = 0;
-			nextPictureIndex = 0;
+			lock (animationLock)
+			{
+				pictureIndex = 0;
+				nextPictureIndex = 0;
 
-			previousPictureButton.Visible = false;
-			nextPictureButton.Visible = false;
+				previousPictureButton.Visible = false;
+				nextPictureButton.Visible = false;
 
-			CreateAllPictureBitmaps(0, ref newPictureBitmap, ref newLabelBitmap);
+				CreateAllPictureBitmaps(0, ref newPictureBitmap, ref newLabelBitmap);
 
-			pictureFading = true;
-			StartAnimation();
+				pictureFading = true;
+				StartAnimation();
+			}
 		}
 
 
@@ -642,29 +661,35 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/********************************************************************/
 		private void CleanupPictures()
 		{
-			currentLabelBitmap?.Dispose();
-			currentLabelBitmap = null;
+			lock (animationLock)
+			{
+				animationTimer.Stop();
+				animationRunning = false;
 
-			currentFadeLabelBitmap?.Dispose();
-			currentFadeLabelBitmap = null;
+				currentLabelBitmap?.Dispose();
+				currentLabelBitmap = null;
 
-			newLabelBitmap?.Dispose();
-			newLabelBitmap = null;
+				currentFadeLabelBitmap?.Dispose();
+				currentFadeLabelBitmap = null;
 
-			newFadeLabelBitmap?.Dispose();
-			newFadeLabelBitmap = null;
+				newLabelBitmap?.Dispose();
+				newLabelBitmap = null;
 
-			currentPictureBitmap?.Dispose();
-			currentPictureBitmap = null;
+				newFadeLabelBitmap?.Dispose();
+				newFadeLabelBitmap = null;
 
-			newPictureBitmap?.Dispose();
-			newPictureBitmap = null;
+				currentPictureBitmap?.Dispose();
+				currentPictureBitmap = null;
 
-			fadePictureBitmap?.Dispose();
-			fadePictureBitmap = null;
+				newPictureBitmap?.Dispose();
+				newPictureBitmap = null;
 
-			previousPictureButton.Visible = false;
-			nextPictureButton.Visible = false;
+				fadePictureBitmap?.Dispose();
+				fadePictureBitmap = null;
+
+				previousPictureButton.Visible = false;
+				nextPictureButton.Visible = false;
+			}
 		}
 
 
@@ -690,12 +715,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/********************************************************************/
 		private void ShowPreviousPicture()
 		{
-			if (!animationRunning && (pictureIndex > 0))
+			lock (animationLock)
 			{
-				nextPictureIndex = pictureIndex - 1;
+				if (!animationRunning && (pictureIndex > 0))
+				{
+					nextPictureIndex = pictureIndex - 1;
 
-				CreateAllPictureBitmaps(nextPictureIndex, ref newPictureBitmap, ref newLabelBitmap);
-				StartAnimation();
+					CreateAllPictureBitmaps(nextPictureIndex, ref newPictureBitmap, ref newLabelBitmap);
+					StartAnimation();
+				}
 			}
 		}
 
@@ -708,12 +736,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 		/********************************************************************/
 		private void ShowNextPicture()
 		{
-			if (!animationRunning && (pictureIndex < pictures.Length - 1))
+			lock (animationLock)
 			{
-				nextPictureIndex = pictureIndex + 1;
+				if (!animationRunning && (pictureIndex < pictures.Length - 1))
+				{
+					nextPictureIndex = pictureIndex + 1;
 
-				CreateAllPictureBitmaps(nextPictureIndex, ref newPictureBitmap, ref newLabelBitmap);
-				StartAnimation();
+					CreateAllPictureBitmaps(nextPictureIndex, ref newPictureBitmap, ref newLabelBitmap);
+					StartAnimation();
+				}
 			}
 		}
 
