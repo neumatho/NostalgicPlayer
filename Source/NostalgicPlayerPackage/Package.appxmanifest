@@ -1189,6 +1189,14 @@
             <uap:DisplayName>Ben Daglish</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="mafile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-ma">.ma</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Music Assembler</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
