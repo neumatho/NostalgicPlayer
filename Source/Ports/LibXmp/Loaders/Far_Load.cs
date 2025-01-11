@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using System.Text;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
@@ -122,7 +123,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (f.Hio_Read32B() != Magic_FAR)
 				return -1;
 
-			lib.common.LibXmp_Read_Title(f, out t, 0, encoder);
+			lib.common.LibXmp_Read_Title(f, out t, 40, encoder);
 
 			return 0;
 		}
@@ -159,11 +160,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (ffh.Tempo >= 16)
 				return -1;
 
-			uint8[] comment = new uint8[ffh.TextLen + Comment_MaxLines + 1];
-			if (comment != null)
+			CPointer<uint8> comment = CMemory.MAlloc<uint8>(ffh.TextLen + Comment_MaxLines + 1);
+			if (comment.IsNotNull)
 			{
 				Far_Read_Text(comment, ffh.TextLen, f);
-				m.Comment = encoder.GetString(comment).Replace('\u25d9', '\n');
+				m.Comment = encoder.GetString(comment.AsSpan()).Replace('\u25d9', '\n');
 			}
 			else
 				f.Hio_Seek(ffh.TextLen, SeekOrigin.Current);	// Skip song text
@@ -190,7 +191,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			mod.Chn = 16;
 			mod.Len = ffh2.SongLen;
 			mod.Rst = ffh2.Restart;
-			Array.Copy(ffh2.Order, mod.Xxo, mod.Len);
+			CMemory.MemCpy<byte>(mod.Xxo, ffh2.Order, mod.Len);
 
 			for (mod.Pat = i = 0; i < 256; i++)
 			{
@@ -231,8 +232,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return -1;
 
 			// Read and convert patterns
-			uint8[] patBuf = new uint8[256 * 16 * 4];
-			if (patBuf == null)
+			CPointer<uint8> patBuf = CMemory.MAlloc<uint8>(256 * 16 * 4);
+			if (patBuf.IsNull)
 				return -1;
 
 			for (i = 0; i < mod.Pat; i++)
@@ -260,7 +261,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				if (f.Hio_Read(patBuf, (size_t)rows * 64, 1) < 1)
 					goto Err;
 
-				c_int pos = 0;
+				CPointer<uint8> pos = patBuf;
 
 				for (c_int j = 0; j < mod.Xxp[i].Rows; j++)
 				{
@@ -271,10 +272,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						if ((k == 0) && (j == brk))
 							@event.F2T = Effects.Fx_Break;
 
-						uint8 note = patBuf[pos++];
-						uint8 ins = patBuf[pos++];
-						uint8 vol = patBuf[pos++];
-						uint8 fxb = patBuf[pos++];
+						uint8 note = pos[0, 1];
+						uint8 ins = pos[0, 1];
+						uint8 vol = pos[0, 1];
+						uint8 fxb = pos[0, 1];
 
 						if (note != 0)
 							@event.Note = (byte)(note + 48);
@@ -290,7 +291,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				}
 			}
 
-			patBuf = null;
+			CMemory.Free(patBuf);
 
 			// Allocate tracks for any patterns referenced with a size of 0. These
 			// use the configured pattern break position, which is 64 by default
@@ -388,6 +389,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			return 0;
 
 			Err:
+			CMemory.Free(patBuf);
 			return -1;
 		}
 
@@ -576,36 +578,34 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void Far_Read_Text(byte[] dest, size_t textLen, Hio f)
+		private void Far_Read_Text(CPointer<byte> dest, size_t textLen, Hio f)
 		{
 			// FAR module text uses 132-char lines with no line breaks...
 			if (textLen > Comment_MaxLines * 132)
 				textLen = Comment_MaxLines * 132;
 
-			size_t destOffset = 0;
-
 			while (textLen != 0)
 			{
 				size_t end = Math.Min(textLen, 132);
 				textLen -= end;
-				end = f.Hio_Read(dest.AsSpan((int)destOffset), 1, end);
+				end = f.Hio_Read(dest, 1, end);
 
 				size_t lastChar = 0;
 
 				for (size_t i = 0; i < end; i++)
 				{
 					// Nulls in the text area are equivalent to spaces
-					if (dest[destOffset + i] == 0x00)
-						dest[destOffset + i] = 0x20;
-					else if (dest[destOffset + i] != 0x20)
+					if (dest[i] == 0x00)
+						dest[i] = 0x20;
+					else if (dest[i] != ' ')
 						lastChar = i;
 				}
 
-				destOffset += lastChar + 1;
-				dest[destOffset++] = 0x0a;
+				dest += lastChar + 1;
+				dest[0, 1] = 0x0a;
 			}
 
-			dest[destOffset] = 0x00;
+			dest[0] = 0x00;
 		}
 		#endregion
 	}

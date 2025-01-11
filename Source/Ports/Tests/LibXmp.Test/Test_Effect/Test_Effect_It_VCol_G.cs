@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 	{
 		// From 08_sad_song.it, channel 06, pattern 004/011
 		private static readonly c_int[] vals_It_VCol =
-		{
+		[
 			214, 214, 214, 214,	// 0
 			214, 214, 214, 214,	// 1
 			214, 214, 214, 214,	// 2
@@ -81,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			191, 191, 191, 191,	// 61
 			191, 185, 180, 180,	// 62
 			180, 180, 180, 180	// 63
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>

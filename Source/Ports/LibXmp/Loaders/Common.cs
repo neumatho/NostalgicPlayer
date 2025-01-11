@@ -6,6 +6,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
@@ -21,12 +22,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 	{
 		// OpenMPT uses a slightly different table
 		private static readonly uint8[] preAmp_Table =
-		{
+		[
 			0x60, 0x60, 0x60, 0x70,	// 0-7
 			0x80, 0x88, 0x90, 0x98,	// 8-15
 			0xA0, 0xA4, 0xA8, 0xB0,	// 16-23
 			0xB4, 0xB8, 0xBC, 0xC0	// 24-31
-		};
+		];
 
 		private readonly LibXmp lib;
 
@@ -321,7 +322,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void LibXmp_Instrument_Name(Xmp_Module mod, c_int i, uint8[] r, c_int n, Encoding encoder)
+		public void LibXmp_Instrument_Name(Xmp_Module mod, c_int i, CPointer<uint8> r, c_int n, Encoding encoder)
 		{
 			Ports.LibXmp.Common.Clamp(ref n, 0, 31);
 
@@ -335,9 +336,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void LibXmp_Copy_Adjust(out string s, uint8[] r, c_int n, Encoding encoder)
+		public void LibXmp_Copy_Adjust(out string s, CPointer<uint8> r, c_int n, Encoding encoder)
 		{
-			s = encoder.GetString(r, 0, n).TrimEnd();
+			s = encoder.GetString(r.Buffer, r.Offset, n).TrimEnd();
 		}
 
 
@@ -373,7 +374,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public c_int LibXmp_Test_Name(uint8[] s, c_int n, Test_Name flags)
+		public c_int LibXmp_Test_Name(CPointer<uint8> s, c_int n, Test_Name flags)
 		{
 			for (c_int i = 0; i < n; i++)
 			{
@@ -422,18 +423,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// "newer-version-trackers commands". Which they aren't
 		/// </summary>
 		/********************************************************************/
-		public void LibXmp_Decode_NoiseTracker_Event(Xmp_Event @event, uint8[] patBuf, c_int mod_Event)
+		public void LibXmp_Decode_NoiseTracker_Event(Xmp_Event @event, CPointer<uint8> mod_Event)
 		{
 			@event.Clear();
 
-			@event.Note = (byte)lib.period.LibXmp_Period_To_Note((Ports.LibXmp.Common.Lsn(patBuf[mod_Event]) << 8) + patBuf[mod_Event + 1]);
-			@event.Ins = (byte)((Ports.LibXmp.Common.Msn(patBuf[mod_Event]) << 4) | Ports.LibXmp.Common.Msn(patBuf[mod_Event + 2]));
-			c_int fxT = Ports.LibXmp.Common.Lsn(patBuf[mod_Event + 2]);
+			@event.Note = (byte)lib.period.LibXmp_Period_To_Note((Ports.LibXmp.Common.Lsn(mod_Event[0]) << 8) + mod_Event[1]);
+			@event.Ins = (byte)((Ports.LibXmp.Common.Msn(mod_Event[0]) << 4) | Ports.LibXmp.Common.Msn(mod_Event[2]));
+			c_int fxT = Ports.LibXmp.Common.Lsn(mod_Event[2]);
 
 			if ((fxT <= 0x06) || ((fxT >= 0x0a) && (fxT != 0x0e)))
 			{
 				@event.FxT = (byte)fxT;
-				@event.FxP = patBuf[mod_Event + 3];
+				@event.FxP = mod_Event[3];
 			}
 
 			LibXmp_Disable_Continue_Fx(@event);
@@ -446,19 +447,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public void LibXmp_Decode_ProTracker_Event(Xmp_Event @event, uint8[] patBuf, c_int mod_Event)
+		public void LibXmp_Decode_ProTracker_Event(Xmp_Event @event, CPointer<uint8> mod_Event)
 		{
-			c_int fxT = Ports.LibXmp.Common.Lsn(patBuf[mod_Event + 2]);
+			c_int fxT = Ports.LibXmp.Common.Lsn(mod_Event[2]);
 
 			@event.Clear();
 
-			@event.Note = (byte)lib.period.LibXmp_Period_To_Note((Ports.LibXmp.Common.Lsn(patBuf[mod_Event]) << 8) + patBuf[mod_Event + 1]);
-			@event.Ins = (byte)((Ports.LibXmp.Common.Msn(patBuf[mod_Event]) << 4) | Ports.LibXmp.Common.Msn(patBuf[mod_Event + 2]));
+			@event.Note = (byte)lib.period.LibXmp_Period_To_Note((Ports.LibXmp.Common.Lsn(mod_Event[0]) << 8) + mod_Event[1]);
+			@event.Ins = (byte)((Ports.LibXmp.Common.Msn(mod_Event[0]) << 4) | Ports.LibXmp.Common.Msn(mod_Event[2]));
 
 			if (fxT != 0x08)
 			{
 				@event.FxT = (byte)fxT;
-				@event.FxP = patBuf[mod_Event + 3];
+				@event.FxP = mod_Event[3];
 			}
 
 			LibXmp_Disable_Continue_Fx(@event);

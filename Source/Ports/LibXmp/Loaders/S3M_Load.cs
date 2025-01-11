@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using System.Text;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
@@ -354,8 +355,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Create = Create
 		};
 
-		private static readonly uint8[] fx = new uint8[27]
-		{
+		private static readonly uint8[] fx =
+		[
 			None,
 			Effects.Fx_S3M_Speed,		// Axx: Set speed to xx (the default is 06)
 			Effects.Fx_Jump,			// Bxx: Jump to order xx (hexadecimal)
@@ -383,7 +384,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Effects.Fx_SetPan,			// Xxx: Set pan
 			None,
 			None
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>
@@ -449,22 +450,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			S3M_File_Header sfh = new S3M_File_Header();
 			S3M_Instrument_Header sih = new S3M_Instrument_Header();
 			S3M_Adlib_Header sah = new S3M_Adlib_Header();
-			uint16[] pp_Ins;				// Parapointers to instruments
-			uint16[] pp_Pat;                // Parapointers to patterns
+			CPointer<uint16> pp_Ins;				// Parapointers to instruments
+			CPointer<uint16> pp_Pat;                // Parapointers to patterns
 			bool stereo;
-			uint8[] buf = new uint8[96];
+			CPointer<uint8> buf = new CPointer<uint8>(96);
 
 			if (f.Hio_Read(buf, 1, 96) != 96)
 				goto Err;
 
-			Array.Copy(buf, sfh.Name, 28);	// Song name
-			sfh.Type = buf[30];												// File type
-			sfh.OrdNum = DataIo.ReadMem16L(buf, 32);					// Number of orders (must be even)
-			sfh.InsNum = DataIo.ReadMem16L(buf, 34);					// Number of instruments
-			sfh.PatNum = DataIo.ReadMem16L(buf, 36);					// Number of patterns
-			sfh.Flags = (S3M_Flag)DataIo.ReadMem16L(buf, 38);			// Flags
-			sfh.Version = DataIo.ReadMem16L(buf, 40);					// Tracker ID and version
-			sfh.Ffi = DataIo.ReadMem16L(buf, 42);						// File format information
+			CMemory.MemCpy(sfh.Name, buf, 28);		// Song name
+			sfh.Type = buf[30];											// File type
+			sfh.OrdNum = DataIo.ReadMem16L(buf + 32);					// Number of orders (must be even)
+			sfh.InsNum = DataIo.ReadMem16L(buf + 34);					// Number of instruments
+			sfh.PatNum = DataIo.ReadMem16L(buf + 36);					// Number of patterns
+			sfh.Flags = (S3M_Flag)DataIo.ReadMem16L(buf + 38);		// Flags
+			sfh.Version = DataIo.ReadMem16L(buf + 40);				// Tracker ID and version
+			sfh.Ffi = DataIo.ReadMem16L(buf + 42);					// File format information
 
 			// Sanity check
 			if ((sfh.Ffi != 1) && (sfh.Ffi != 2))
@@ -473,28 +474,28 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if ((sfh.OrdNum > 255) || (sfh.InsNum > 255) || (sfh.PatNum > 255))
 				goto Err;
 
-			sfh.Magic = DataIo.ReadMem32B(buf, 44);					// 'SCRM'
-			sfh.Gv = buf[48];												// Global volume
-			sfh.Is = buf[49];												// Initial speed
-			sfh.It = buf[50];												// Initial tempo
-			sfh.Mv = buf[51];												// Master volume
-			sfh.Uc = buf[52];												// Ultra click removal
-			sfh.Dp = buf[53];												// Default pan positions if 0xfc
-			Array.Copy(buf, 54, sfh.Rsvd2, 0, 8);	// Reserved
-			sfh.Special = DataIo.ReadMem16L(buf, 62);					// Ptr to special custom data
-			Array.Copy(buf, 64, sfh.ChSet, 0, 32);	// Channel settings
+			sfh.Magic = DataIo.ReadMem32B(buf + 44);					// 'SCRM'
+			sfh.Gv = buf[48];											// Global volume
+			sfh.Is = buf[49];											// Initial speed
+			sfh.It = buf[50];											// Initial tempo
+			sfh.Mv = buf[51];											// Master volume
+			sfh.Uc = buf[52];											// Ultra click removal
+			sfh.Dp = buf[53];											// Default pan positions if 0xfc
+			CMemory.MemCpy(sfh.Rsvd2, buf + 54, 8);	// Reserved
+			sfh.Special = DataIo.ReadMem16L(buf + 62);				// Ptr to special custom data
+			CMemory.MemCpy(sfh.ChSet, buf + 64, 32);// Channel settings
 
 			if (sfh.Magic != Magic_SCRM)
 				goto Err;
 
 			lib.common.LibXmp_Copy_Adjust(out mod.Name, sfh.Name, 28, encoder);
 
-			pp_Ins = new uint16[sfh.InsNum];
-			if (pp_Ins == null)
+			pp_Ins = CMemory.CAlloc<uint16>(sfh.InsNum);
+			if (pp_Ins.IsNull)
 				goto Err;
 
-			pp_Pat = new uint16[sfh.PatNum];
-			if (pp_Pat == null)
+			pp_Pat = CMemory.CAlloc<uint16>(sfh.PatNum);
+			if (pp_Pat.IsNull)
 				goto Err2;
 
 			if ((sfh.Flags & S3M_Flag.Amiga_Range) != 0)
@@ -819,13 +820,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				{
 					// OPL2 FM instrument
 
-					Array.Copy(buf, 1, sah.DosName, 0, 12);	// DOS file name
-					Array.Copy(buf, 16, sah.Reg, 0, 12);		// Adlib registers
+					CMemory.MemCpy(sah.DosName, buf + 1, 12);// DOS file name
+					CMemory.MemCpy(sah.Reg, buf + 16, 12);	// Adlib registers
 					sah.Vol = buf[28];
 					sah.Dsk = buf[29];
-					sah.C2Spd = DataIo.ReadMem16L(buf, 32);			// C4 speed
-					Array.Copy(buf, 48, sah.Name, 0, 28);	// Instrument name
-					sah.Magic = DataIo.ReadMem32B(buf, 76);			// 'SCRI'
+					sah.C2Spd = DataIo.ReadMem16L(buf + 32);			// C4 speed
+					CMemory.MemCpy(sah.Name, buf + 48, 28);	// Instrument name
+					sah.Magic = DataIo.ReadMem32B(buf + 76);			// 'SCRI'
 
 					if (sah.Magic != Magic_SCRI)
 						goto Err3;
@@ -848,22 +849,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					continue;
 				}
 
-				Array.Copy(buf, 1, sih.DosName, 0, 12);	// DOS file name
-				sih.MemSeg_Hi = buf[13];									// High byte of sample pointer
-				sih.MemSeg = DataIo.ReadMem16L(buf, 14);				// Pointer to sample data
-				sih.Length = DataIo.ReadMem32L(buf, 16);				// Length
+				CMemory.MemCpy(sih.DosName, buf + 1, 12);	// DOS file name
+				sih.MemSeg_Hi = buf[13];								// High byte of sample pointer
+				sih.MemSeg = DataIo.ReadMem16L(buf + 14);				// Pointer to sample data
+				sih.Length = DataIo.ReadMem32L(buf + 16);				// Length
 
 				if (sih.Length > Constants.Max_Sample_Size)
 					goto Err3;
 
-				sih.LoopBeg = DataIo.ReadMem32L(buf, 20);				// Loop begin
-				sih.LoopEnd = DataIo.ReadMem32L(buf, 24);				// Loop end
-				sih.Vol = buf[28];											// Volume
-				sih.Pack = buf[30];											// Packing type
-				sih.Flags = (S3M_Samp_Flag)buf[31];							// Loop/stereo/16 bit flags
-				sih.C2Spd = DataIo.ReadMem16L(buf, 32);				// C4 speed
-				Array.Copy(buf, 48, sih.Name, 0, 28);	// Instrument name
-				sih.Magic = DataIo.ReadMem32B(buf, 76);				// 'SCRS'
+				sih.LoopBeg = DataIo.ReadMem32L(buf + 20);			// Loop begin
+				sih.LoopEnd = DataIo.ReadMem32L(buf + 24);			// Loop end
+				sih.Vol = buf[28];										// Volume
+				sih.Pack = buf[30];										// Packing type
+				sih.Flags = (S3M_Samp_Flag)buf[31];						// Loop/stereo/16 bit flags
+				sih.C2Spd = DataIo.ReadMem16L(buf + 32);				// C4 speed
+				CMemory.MemCpy(sih.Name, buf + 48, 28);// Instrument name
+				sih.Magic = DataIo.ReadMem32B(buf + 76);				// 'SCRS'
 
 				if ((buf[0] == 1) && (sih.Magic != Magic_SCRS))
 					goto Err3;
@@ -908,15 +909,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (modPlugin)
 				lib.common.LibXmp_Set_Type(m, "MOD Plugin packed S3M");
 
+			CMemory.Free(pp_Pat);
+			CMemory.Free(pp_Ins);
+
 			m.Quirk |= Quirk_Flag.St3 | Quirk_Flag.ArpMem;
 			m.Read_Event_Type = Read_Event.St3;
 
 			return 0;
 
 			Err3:
-			pp_Pat = null;
+			CMemory.Free(pp_Pat);
 			Err2:
-			pp_Ins = null;
+			CMemory.Free(pp_Ins);
 			Err:
 			return -1;
 		}

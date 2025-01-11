@@ -6,7 +6,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibXmp;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Loader;
@@ -49,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Sample_Load
 				Set(s, 101, 150, 180, Xmp_Sample_Flag._16Bit | Xmp_Sample_Flag.Loop | Xmp_Sample_Flag.Loop_BiDir);
 				f.Hio_Seek(0, SeekOrigin.Begin);
 				Sample.LibXmp_Load_Sample(m, f, Sample_Flag.None, s, null);
-				Assert.IsNotNull(s.Data, "Didn't allocate sample data");
+				Assert.IsTrue(s.Data.IsNotNull, "Didn't allocate sample data");
 				Assert.AreEqual(0, s.Lps, "Didn't fix invalid loop start");
 				Assert.AreEqual(0, s.Lpe, "Didn't fix invalid loop end");
 				Assert.AreEqual(Xmp_Sample_Flag._16Bit, s.Flg, "Didn't reset loop flags");
@@ -59,7 +59,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Sample_Load
 				Set(s, 101, 50, 40, Xmp_Sample_Flag._16Bit | Xmp_Sample_Flag.Loop | Xmp_Sample_Flag.Loop_BiDir);
 				f.Hio_Seek(0, SeekOrigin.Begin);
 				Sample.LibXmp_Load_Sample(m, f, Sample_Flag.None, s, null);
-				Assert.IsNotNull(s.Data, "Didn't allocate sample data");
+				Assert.IsTrue(s.Data.IsNotNull, "Didn't allocate sample data");
 				Assert.AreEqual(0, s.Lps, "Didn't fix invalid loop start");
 				Assert.AreEqual(0, s.Lpe, "Didn't fix invalid loop end");
 				Assert.AreEqual(Xmp_Sample_Flag._16Bit, s.Flg, "Didn't reset loop flags");
@@ -69,29 +69,29 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Sample_Load
 				Set(s, 101, 0, 102, Xmp_Sample_Flag._16Bit);
 				f.Hio_Seek(0, SeekOrigin.Begin);
 				Sample.LibXmp_Load_Sample(m, f, Sample_Flag.None, s, null);
-				Assert.IsNotNull(s.Data, "Didn't allocate sample data");
+				Assert.IsTrue(s.Data.IsNotNull, "Didn't allocate sample data");
 				Assert.AreEqual(101, s.Lpe, "Didn't fix invalid loop end");
-				Assert.IsTrue(ArrayHelper.ArrayCompare(s.Data, s.DataOffset, MemoryMarshal.Cast<c_short, uint8>(buffer).ToArray(), 0, 202), "Sample data error");
-				Assert.AreEqual(s.Data[s.DataOffset], s.Data[s.DataOffset - 2], "Sample prologue error");
-				Assert.AreEqual(s.Data[s.DataOffset + 1], s.Data[s.DataOffset - 1], "Sample prologue error");
-				Assert.AreEqual(s.Data[s.DataOffset + 200], s.Data[s.DataOffset + 202], "Sample prologue error");
-				Assert.AreEqual(s.Data[s.DataOffset + 201], s.Data[s.DataOffset + 203], "Sample prologue error");
-				Assert.AreEqual(s.Data[s.DataOffset + 202], s.Data[s.DataOffset + 204], "Sample prologue error");
-				Assert.AreEqual(s.Data[s.DataOffset + 203], s.Data[s.DataOffset + 205], "Sample prologue error");
+				Assert.AreEqual(0, CMemory.MemCmp(s.Data, MemoryMarshal.Cast<c_short, uint8>(buffer).ToArray(), 202), "Sample data error");
+				Assert.AreEqual(s.Data[0], s.Data[-2], "Sample prologue error");
+				Assert.AreEqual(s.Data[1], s.Data[-1], "Sample prologue error");
+				Assert.AreEqual(s.Data[200], s.Data[202], "Sample prologue error");
+				Assert.AreEqual(s.Data[201], s.Data[203], "Sample prologue error");
+				Assert.AreEqual(s.Data[202], s.Data[204], "Sample prologue error");
+				Assert.AreEqual(s.Data[203], s.Data[205], "Sample prologue error");
 				Clear(s);
 
 				// Load sample from file w/ loop
 				Set(s, 101, 20, 80, Xmp_Sample_Flag._16Bit | Xmp_Sample_Flag.Loop);
 				f.Hio_Seek(0, SeekOrigin.Begin);
 				Sample.LibXmp_Load_Sample(m, f, Sample_Flag.None, s, null);
-				Assert.IsNotNull(s.Data, "Didn't allocate sample data");
-				Assert.IsTrue(ArrayHelper.ArrayCompare(s.Data, s.DataOffset, MemoryMarshal.Cast<c_short, uint8>(buffer).ToArray(), 0, 202), "Sample data error");
-				Assert.AreEqual(s.Data[s.DataOffset], s.Data[s.DataOffset - 2], "Sample prologue error");
-				Assert.AreEqual(s.Data[s.DataOffset + 1], s.Data[s.DataOffset - 1], "Sample prologue error");
-				Assert.AreEqual(s.Data[s.DataOffset + 200], s.Data[s.DataOffset + 202], "Sample prologue error");
-				Assert.AreEqual(s.Data[s.DataOffset + 201], s.Data[s.DataOffset + 203], "Sample prologue error");
-				Assert.AreEqual(s.Data[s.DataOffset + 202], s.Data[s.DataOffset + 204], "Sample prologue error");
-				Assert.AreEqual(s.Data[s.DataOffset + 203], s.Data[s.DataOffset + 205], "Sample prologue error");
+				Assert.IsTrue(s.Data.IsNotNull, "Didn't allocate sample data");
+				Assert.AreEqual(0, CMemory.MemCmp(s.Data, MemoryMarshal.Cast<c_short, uint8>(buffer).ToArray(), 202), "Sample data error");
+				Assert.AreEqual(s.Data[0], s.Data[-2], "Sample prologue error");
+				Assert.AreEqual(s.Data[1], s.Data[-1], "Sample prologue error");
+				Assert.AreEqual(s.Data[200], s.Data[202], "Sample prologue error");
+				Assert.AreEqual(s.Data[201], s.Data[203], "Sample prologue error");
+				Assert.AreEqual(s.Data[202], s.Data[204], "Sample prologue error");
+				Assert.AreEqual(s.Data[203], s.Data[205], "Sample prologue error");
 				Clear(s);
 
 				f.Hio_Close();

@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using System.Text;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
@@ -95,7 +96,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			/// Constructor
 			/// </summary>
 			/********************************************************************/
-			public Mod_Magic(uint32 magic, bool flag, InternalFormat id, c_int ch)
+			public Mod_Magic(string magic, bool flag, InternalFormat id, c_int ch)
 			{
 				Magic = magic;
 				Flag = flag;
@@ -103,27 +104,27 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				Ch = ch;
 			}
 
-			public uint32 Magic;
+			public string Magic;
 			public bool Flag;
 			public InternalFormat Id;
 			public c_int Ch;
 		}
 
 		private static readonly Mod_Magic[] mod_Magic =
-		{
-			new Mod_Magic(Common.Magic4("M.K."), false, InternalFormat.ProTracker, 4),
-			new Mod_Magic(Common.Magic4("6CHN"), false, InternalFormat.FastTracker, 6),
-			new Mod_Magic(Common.Magic4("8CHN"), false, InternalFormat.FastTracker, 8),
-			new Mod_Magic(Common.Magic4("CD61"), true, InternalFormat.Octalyser, 6),		// Atari STe/Falcon
-			new Mod_Magic(Common.Magic4("CD81"), true, InternalFormat.Octalyser, 8),		// Atari STe/Falcon
-			new Mod_Magic(Common.Magic4("TDZ1"), true, InternalFormat.TakeTracker, 1),		// TakeTracker 1ch
-			new Mod_Magic(Common.Magic4("TDZ2"), true, InternalFormat.TakeTracker, 2),		// TakeTracker 2ch
-			new Mod_Magic(Common.Magic4("TDZ3"), true, InternalFormat.TakeTracker, 3),		// TakeTracker 3ch
-			new Mod_Magic(Common.Magic4("TDZ4"), true, InternalFormat.TakeTracker, 4),		// TakeTracker 4ch
-			new Mod_Magic(Common.Magic4("FA04"), true, InternalFormat.DigitalTracker, 4),	// Atari Falcon
-			new Mod_Magic(Common.Magic4("FA06"), true, InternalFormat.DigitalTracker, 6),	// Atari Falcon
-			new Mod_Magic(Common.Magic4("FA08"), true, InternalFormat.DigitalTracker, 8)	// Atari Falcon
-		};
+		[
+			new Mod_Magic("M.K.", false, InternalFormat.ProTracker, 4),
+			new Mod_Magic("6CHN", false, InternalFormat.FastTracker, 6),
+			new Mod_Magic("8CHN", false, InternalFormat.FastTracker, 8),
+			new Mod_Magic("CD61", true, InternalFormat.Octalyser, 6),		// Atari STe/Falcon
+			new Mod_Magic("CD81", true, InternalFormat.Octalyser, 8),		// Atari STe/Falcon
+			new Mod_Magic("TDZ1", true, InternalFormat.TakeTracker, 1),		// TakeTracker 1ch
+			new Mod_Magic("TDZ2", true, InternalFormat.TakeTracker, 2),		// TakeTracker 2ch
+			new Mod_Magic("TDZ3", true, InternalFormat.TakeTracker, 3),		// TakeTracker 3ch
+			new Mod_Magic("TDZ4", true, InternalFormat.TakeTracker, 4),		// TakeTracker 4ch
+			new Mod_Magic("FA04", true, InternalFormat.DigitalTracker, 4),	// Atari Falcon
+			new Mod_Magic("FA06", true, InternalFormat.DigitalTracker, 6),	// Atari Falcon
+			new Mod_Magic("FA08", true, InternalFormat.DigitalTracker, 8)	// Atari Falcon
+		];
 
 		private readonly ExternalFormat format;
 		private readonly LibXmp lib;
@@ -351,30 +352,28 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			t = null;
 
-			byte[] buf = new byte[4];
+			CPointer<byte> buf = new CPointer<byte>(4);
 
 			f.Hio_Seek(start + 1080, SeekOrigin.Begin);
 			if (f.Hio_Read(buf, 1, 4) < 4)
 				return -1;
 
-			if ((buf[2] == 'C') && (buf[3] == 'H') && char.IsDigit((char)buf[0]) && char.IsDigit((char)buf[1]))
+			if ((CMemory.StrNCmp(buf + 2, "CH", 2) == 0) && char.IsDigit((char)buf[0]) && char.IsDigit((char)buf[1]))
 			{
 				i = (buf[0] - '0') * 10 + buf[1] - '0';
 				if ((i > 0) && (i <= 32))
 					goto Found;
 			}
 
-			if ((buf[1] == 'C') && (buf[2] == 'H') && (buf[3] == 'N') && char.IsDigit((char)buf[0]))
+			if ((CMemory.StrNCmp(buf + 1, "CHN", 3) == 0) && char.IsDigit((char)buf[0]))
 			{
 				if ((buf[0] - '0') != 0)
 					goto Found;
 			}
 
-			uint32 magic = Common.Magic4(buf[0], buf[1], buf[2], buf[3]);
-
 			for (i = 0; i < mod_Magic.Length; i++)
 			{
-				if (mod_Magic[i].Magic == magic)
+				if (CMemory.MemCmp(buf, mod_Magic[i].Magic, 4) == 0)
 					break;
 			}
 
@@ -538,7 +537,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			mod.Len = mh.Len;
 
-			Array.Copy(mh.Order, mod.Xxo, 128);
+			CMemory.MemCpy<byte>(mod.Xxo, mh.Order, 128);
 
 			if ((mh.Restart < 0x7f) && (mh.Restart != 0x78) && (mh.Restart < mod.Len))
 			{
@@ -599,19 +598,25 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return -1;
 
 			// Load and convert patterns
-			uint8[] patBuf = new uint8[64 * 4 * mod.Chn];
-			if (patBuf == null)
+			CPointer<uint8> patBuf = CMemory.MAlloc<uint8>(64 * 4 * mod.Chn);
+			if (patBuf.IsNull)
 				return -1;
 
 			for (c_int i = 0; i < mod.Pat; i++)
 			{
 				if (lib.common.LibXmp_Alloc_Pattern_Tracks(mod, i, 64) < 0)
+				{
+					CMemory.Free(patBuf);
 					return -1;
+				}
 
 				if (f.Hio_Read(patBuf, (size_t)(64 * 4 * mod.Chn), 1) < 1)
+				{
+					CMemory.Free(patBuf);
 					return -1;
+				}
 
-				c_int mod_Event = 0;
+				CPointer<uint8> mod_Event = patBuf;
 
 				for (c_int j = 0; j < 64; j++)
 				{
@@ -620,16 +625,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 					for (c_int k = 0; k < mod.Chn; k++)
 					{
-						c_int period = (Ports.LibXmp.Common.Lsn(patBuf[mod_Event]) << 8) | patBuf[mod_Event + 1];
+						c_int period = (Ports.LibXmp.Common.Lsn(mod_Event[0]) << 8) | mod_Event[1];
 						if ((period != 0) && ((period < 108) || (period > 907)))
 							out_Of_Range = true;
 
 						// Needs CIA/VBlank detection?
-						if (Ports.LibXmp.Common.Lsn(patBuf[mod_Event + 2]) == 0x0f)
+						if (Ports.LibXmp.Common.Lsn(mod_Event[2]) == 0x0f)
 						{
-							if (patBuf[mod_Event + 3] >= 0x20)
+							if (mod_Event[3] >= 0x20)
 							{
-								pat_High_Fxx[i] = patBuf[mod_Event + 3];
+								pat_High_Fxx[i] = mod_Event[3];
 								m.Compare_VBlank = true;
 								high_Fxx = true;
 								bpm_Row = true;
@@ -645,7 +650,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						sameRow_Fxx = true;
 				}
 
-				mod_Event = 0;
+				mod_Event = patBuf;
 
 				for (c_int j = 0; j < 64; j++)
 				{
@@ -658,13 +663,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							case InternalFormat.Probably_NoiseTracker:
 							case InternalFormat.NoiseTracker:
 							{
-								lib.common.LibXmp_Decode_NoiseTracker_Event(@event, patBuf, mod_Event);
+								lib.common.LibXmp_Decode_NoiseTracker_Event(@event, mod_Event);
 								break;
 							}
 
 							default:
 							{
-								lib.common.LibXmp_Decode_ProTracker_Event(@event, patBuf, mod_Event);
+								lib.common.LibXmp_Decode_ProTracker_Event(@event, mod_Event);
 								break;
 							}
 						}
@@ -673,6 +678,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					}
 				}
 			}
+
+			CMemory.Free(patBuf);
 
 			// VBlank detection routine.
 			// Despite VBlank being dependent on the tracker used, VBlank detection
@@ -858,7 +865,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				uint8[] buf = new uint8[5];
 				c_int num = (c_int)f.Hio_Read(buf, 1, 5);
 
-				if ((num == 5) && (buf[0] == 'A')  && (buf[1] == 'D') && (buf[2] == 'P') && (buf[3] == 'C') && (buf[4] == 'M'))
+				if ((num == 5) && (CMemory.MemCmp(buf, "ADPCM", 5) == 0))
 					flags |= Sample_Flag.Adpcm;
 				else
 					f.Hio_Seek(pos, SeekOrigin.Begin);
@@ -914,15 +921,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Validate_Pattern(uint8[] buf)
+		private c_int Validate_Pattern(CPointer<uint8> buf)
 		{
 			for (c_int i = 0; i < 64; i++)
 			{
 				for (c_int j = 0; j < 4; j++)
 				{
-					c_int d = (i * 4 + j) * 4;
+					CPointer<uint8> d = buf + (i * 4 + j) * 4;
 
-					if ((buf[d] >> 4) > 1)
+					if ((d[0] >> 4) > 1)
 						return -1;
 				}
 			}
@@ -1275,12 +1282,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				maybe_Wow = false;
 
 			f.Hio_Seek(start + 1080, SeekOrigin.Begin);
-			uint32 magic = f.Hio_Read32B();
-			mkMark = magic == Common.Magic4("M.K.");
+
+			CPointer<byte> magic = new CPointer<byte>(4);
+			f.Hio_Read(magic, 1, 4);
+			mkMark = CMemory.StrNCmp(magic, "M.K.", 4) == 0;
 
 			for (c_int i = 0; i < mod_Magic.Length; i++)
 			{
-				if (mod_Magic[i].Magic == magic)
+				if (CMemory.StrNCmp(magic, mod_Magic[i].Magic, 4) == 0)
 				{
 					channels = mod_Magic[i].Ch;
 					trackerId = mod_Magic[i].Id;
@@ -1294,13 +1303,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			if (channels == 0)
 			{
-				char digit1 = (char)((magic & 0xff000000) >> 24);
-				char digit2 = (char)((magic & 0x00ff0000) >> 16);
-
-				if (((magic & 0x0000ffff) == Common.Magic4('\0', '\0', 'C', 'H')) && char.IsDigit(digit1) && char.IsDigit(digit2))
-					channels = (digit1 - '0') * 10 + digit2 - '0';
-				else if (((magic & 0x00ffffff) == Common.Magic4('\0', 'C', 'H', 'N')) && char.IsDigit(digit1))
-					channels = digit1 - '0';
+				if ((CMemory.StrNCmp(magic + 2, "CH", 2) == 0) && char.IsDigit((char)magic[1]) && char.IsDigit((char)magic[2]))
+					channels = (magic[0] - '0') * 10 + magic[1] - '0';
+				else if ((CMemory.StrNCmp(magic + 1, "CHN", 3) == 0) && char.IsDigit((char)magic[0]))
+					channels = magic[0] - '0';
 				else
 					return InternalFormat.NotRecognized;
 
@@ -1339,7 +1345,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				c_int num_Read = (c_int)f.Hio_Read(idBuffer, 1, 4);
 				f.Hio_Seek(pos, SeekOrigin.Begin);
 
-				if ((num_Read == 4) && (Common.Magic4(idBuffer[0], idBuffer[1], idBuffer[2], idBuffer[3]) == Common.Magic4("FLEX")))
+				if ((num_Read == 4) && (CMemory.MemCmp(idBuffer, "FLEX", 4) == 0))
 				{
 					trackerId = InternalFormat.FlexTrax;
 					needs_Timing_Detection = false;
@@ -1362,7 +1368,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			// Worst case if there are still issues with this, OpenMPT validates later
 			// patterns in potential WOW files (where sample data would be located in a
 			// regular M.K. MOD) to rule out false positives
-			if ((magic == Common.Magic4("M.K.")) && maybe_Wow && ((0x43c + pat * 32 * 0x40 + smp_Size) == (fileSize & ~1)))
+			if ((CMemory.StrNCmp(magic, "M.K.", 4) == 0) && maybe_Wow && ((0x43c + pat * 32 * 0x40 + smp_Size) == (fileSize & ~1)))
 			{
 				channels = 8;
 				trackerId = InternalFormat.ModsGrave;
@@ -1374,7 +1380,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Skip_Test:
 			if ((trackerId is InternalFormat.ProTracker or InternalFormat.NoiseTracker or InternalFormat.Probably_NoiseTracker or InternalFormat.SoundTracker or InternalFormat.Unknown) || mkMark)
 			{
-				uint8[] patBuf = new uint8[64 * 4 * channels];
+				CPointer<uint8> patBuf = CMemory.MAlloc<uint8>(64 * 4 * channels);
 				out_Of_Range = false;
 				bool sameRow_Fxx = false;
 
@@ -1385,7 +1391,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					if (f.Hio_Read(patBuf, (size_t)(64 * 4 * channels), 1) < 1)
 						break;
 
-					c_int mod_Event = 0;
+					CPointer<uint8> mod_Event = patBuf;
 
 					for (c_int j = 0; j < 64; j++)
 					{
@@ -1394,23 +1400,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 						for (c_int k = 0; k < channels; k++)
 						{
-							c_int period = (Ports.LibXmp.Common.Lsn(patBuf[mod_Event]) << 8) | patBuf[mod_Event + 1];
+							c_int period = (Ports.LibXmp.Common.Lsn(mod_Event[0]) << 8) | mod_Event[1];
 							if ((period != 0) && ((period < 113/*108*/) || (period > 856/*907*/)))
 								out_Of_Range = true;
 
 							// Filter Noisetracker events
 							if (trackerId == InternalFormat.Probably_NoiseTracker)
 							{
-								uint8 fxT = Ports.LibXmp.Common.Lsn(patBuf[mod_Event + 2]);
-								uint8 fxP = Ports.LibXmp.Common.Lsn(patBuf[mod_Event + 3]);
+								uint8 fxT = Ports.LibXmp.Common.Lsn(mod_Event[2]);
+								uint8 fxP = Ports.LibXmp.Common.Lsn(mod_Event[3]);
 
 								if (((fxT > 0x06) && (fxT < 0x0a)) || ((fxT == 0x0e) && (fxP > 1)))
 									trackerId = InternalFormat.Unknown;
 							}
 
-							if (Ports.LibXmp.Common.Lsn(patBuf[mod_Event + 2]) == 0x0f)
+							if (Ports.LibXmp.Common.Lsn(mod_Event[2]) == 0x0f)
 							{
-								if (patBuf[mod_Event + 3] >= 0x20)
+								if (mod_Event[3] >= 0x20)
 									bpm_Row = true;
 								else
 									speed_Row = true;

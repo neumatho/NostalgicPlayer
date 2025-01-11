@@ -27,7 +27,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected void Read_File_To_Memory(string path, string fileName, out byte[] _buffer, out c_long _size)
+		protected void Read_File_To_Memory(string path, string fileName, out CPointer<byte> _buffer, out c_long _size)
 		{
 			using (Stream s = new FileStream(Path.Combine(path, fileName), FileMode.Open, FileAccess.Read))
 			{
@@ -46,8 +46,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 					return;
 				}
 
-				byte[] buffer = new byte[size];
-				if (buffer == null)
+				CPointer<byte> buffer = CMemory.MAlloc<byte>(size);
+				if (buffer.IsNull)
 				{
 					f.Hio_Close();
 					return;
@@ -73,18 +73,18 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected bool Check_Randomness(c_int[] array, c_int offset, c_int size, c_double sDev)
+		protected bool Check_Randomness(CPointer<c_int> array, c_int size, c_double sDev)
 		{
 			c_double avg = 0.0;
 			c_double dev = 0.0;
 
 			for (c_int i = 0; i < size; i++)
-				avg += array[offset + i];
+				avg += array[i];
 
 			avg /= size;
 
 			for (c_int i = 0; i < size; i++)
-				dev += Math.Pow(avg - array[offset + i], 2);
+				dev += Math.Pow(avg - array[i], 2);
 
 			dev = Math.Sqrt(dev / size);
 
@@ -98,11 +98,11 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		protected c_int Check_Md5(uint8[] buffer, c_int length, string digest)
+		protected c_int Check_Md5(CPointer<uint8> buffer, c_int length, string digest)
 		{
 			using (MD5 md5 = MD5.Create())
 			{
-				byte[] checksum = md5.ComputeHash(buffer, 0, length);
+				byte[] checksum = md5.ComputeHash(buffer.Buffer, buffer.Offset, length);
 
 				string d = Helpers.ToHex(checksum);
 				return string.CompareOrdinal(d, digest);
@@ -136,17 +136,15 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		/// Convert little-endian 16 bit samples to big-endian
 		/// </summary>
 		/********************************************************************/
-		protected void Convert_Endian(uint8[] p, c_int offset, c_int l)
+		protected void Convert_Endian(CPointer<uint8> p, c_int l)
 		{
-			c_int off = offset;
-
 			for (c_int i = 0; i < l; i++)
 			{
-				uint8 b = p[off];
-				p[off] = p[off + 1];
-				p[off + 1] = b;
+				uint8 b = p[0];
+				p[0] = p[1];
+				p[1] = b;
 
-				off += 2;
+				p += 2;
 			}
 		}
 
@@ -327,7 +325,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 
 						// Normalize data to little endian for the hash
 						if (Is_Big_Endian())
-                            Convert_Endian(xxs.Data, xxs.DataOffset, xxs.Len);
+                            Convert_Endian(xxs.Data, xxs.Len);
 					}
 
 					line = sr.ReadLine();
@@ -341,11 +339,11 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 					Assert.AreEqual(x, (int)xxs.Flg, "Sample flags");
 
 					s = s.Substring(1);
-					if ((len > 0) && (xxs.Data != null))
+					if ((len > 0) && (xxs.Data.IsNotNull))
 					{
 						using (MD5 md5 = MD5.Create())
 						{
-							byte[] checksum = md5.ComputeHash(xxs.Data, xxs.DataOffset, len);
+							byte[] checksum = md5.ComputeHash(xxs.Data.Buffer, xxs.Data.Offset, len);
 							string d = Helpers.ToHex(checksum);
 							Assert.AreEqual(s.Substring(0, 32).ToUpper(), d, "Sample data");
 						}

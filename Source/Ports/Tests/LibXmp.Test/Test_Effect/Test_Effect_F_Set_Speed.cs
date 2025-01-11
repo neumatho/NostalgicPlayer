@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 	public partial class Test_Effect
 	{
 		private static readonly c_int[] vals_F =
-		{
+		[
 			125, 3, 125, 3, 125, 3,		// Set speed to 0x03
 			125, 31, 125, 31, 125, 31,
 			125, 31, 125, 31, 125, 31,
@@ -31,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			125, 2, 125, 2,				// Set speed to 0x02
 			32, 2, 32, 2,				// Set speed to 0x20
 			128, 2, 128, 2				// Set speed to 0x80
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>

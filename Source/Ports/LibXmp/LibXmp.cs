@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.IO;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player;
@@ -117,7 +118,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// Load a module from memory into the specified player context
 		/// </summary>
 		/********************************************************************/
-		public c_int Xmp_Load_Module_From_Memory(uint8[] mem, c_long size)
+		public c_int Xmp_Load_Module_From_Memory(CPointer<uint8> mem, c_long size)
 		{
 			return load.Xmp_Load_Module_From_Memory(mem, size);
 		}
@@ -156,7 +157,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// module
 		/// </summary>
 		/********************************************************************/
-		public c_int Xmp_Test_Module_From_Memory(uint8[] mem, c_long size, out Xmp_Test_Info info)
+		public c_int Xmp_Test_Module_From_Memory(CPointer<uint8> mem, c_long size, out Xmp_Test_Info info)
 		{
 			return load.Xmp_Test_Module_From_Memory(mem, size, out info);
 		}

@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 	public partial class Test_Effect
 	{
 		private static readonly c_int[] vals_FVib =
-		{
+		[
 			143, 143, 143, 143, 144, 144,
 			144, 144, 144, 144, 144, 144,
 			254, 254, 254, 255, 255, 255,
@@ -26,7 +26,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			804, 804, 803, 804, 808, 812,
 			1440, 1440, 1445, 1444, 1438, 1435,
 			1438, 1438, 1446, 1444, 1435, 1435
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>

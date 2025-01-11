@@ -16,40 +16,40 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 	public partial class Test_Effect
 	{
 		private static readonly c_int[] vals_Ft2_8 =
-		{
+		[
 			128, 128, 128,		// C-5 1 880   Play instrument w/ center pan
 			255, 255, 255,		// --- - 8FF   Set pan to right
 			255, 255, 255,		// F-5 - ---   New note keeps previous pan
 			255, 255, 255,		// --- - 8FF   Set new pan
 			0, 0, 0				// --- 1 ---   New inst resets to left pan
-		};
+		];
 
 		private static readonly c_int[] vals_St3_8 =
-		{
+		[
 			128, 128, 128,		// C-5 1 880   Play instrument w/ center pan
 			255, 255, 255,		// --- - 8FF   Set pan to right
 			255, 255, 255,		// F-5 - ---   New note keeps previous pan
 			255, 255, 255,		// --- - 8FF   Set new pan
 			0, 0, 0				// --- 1 ---   New inst resets to left pan
-		};
+		];
 
 		private static readonly c_int[] vals_It_8 =
-		{
+		[
 			128, 128, 128,		// C-5 1 880   Play instrument w/ center pan
 			255, 255, 255,		// --- - 8FF   Set pan to right
 			0, 0, 0,			// F-5 - ---   New note uses instrument pan
 			255, 255, 255,		// --- - 8FF   Set new pan
 			0, 0, 0				// --- 1 ---   New inst resets to left pan
-		};
+		];
 
 		private static readonly c_int[] vals_Dp_8 =
-		{
+		[
 			128, 128, 128,		// C-5 1 880   Play instrument w/ center pan
 			255, 255, 255,		// --- - 8FF   Set pan to right
 			255, 255, 255,		// F-5 - ---   Instrument pan is disabled
 			255, 255, 255,		// --- - 8FF   Set new pan
 			255, 255, 255		// --- 1 ---   New inst resets to left pan
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>

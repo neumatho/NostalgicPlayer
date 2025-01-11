@@ -6,7 +6,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibXmp;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Loader;
@@ -48,9 +48,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Sample_Load
 				Set(s, 101, 0, 102, Xmp_Sample_Flag._16Bit);
 				f.Hio_Seek(0, SeekOrigin.Begin);
 				Sample.LibXmp_Load_Sample(m, f, Sample_Flag.None, s, null);
-				Assert.IsNotNull(s.Data, "Didn't allocate sample data");
+				Assert.IsTrue(s.Data.IsNotNull, "Didn't allocate sample data");
 				Assert.AreEqual(101, s.Lpe, "Didn't fix invalid loop end");
-				Assert.IsTrue(ArrayHelper.ArrayCompare(s.Data, s.DataOffset, MemoryMarshal.Cast<c_short, uint8>(buffer).ToArray(), 0, 202), "Sample data error");
+				Assert.AreEqual(0, CMemory.MemCmp(s.Data, MemoryMarshal.Cast<c_short, uint8>(buffer).ToArray(), 202), "Sample data error");
 				Clear(s);
 
 				// Disable sample load
@@ -58,7 +58,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Sample_Load
 				f.Hio_Seek(0, SeekOrigin.Begin);
 				m.SmpCtl |= Xmp_SmpCtl_Flag.Skip;
 				Sample.LibXmp_Load_Sample(m, f, Sample_Flag.None, s, null);
-				Assert.IsNull(s.Data, "Didn't skip sample load");
+				Assert.IsTrue(s.Data.IsNull, "Didn't skip sample load");
 
 				f.Hio_Close();
 			}

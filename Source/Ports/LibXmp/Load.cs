@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using System.Security.Cryptography;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
@@ -45,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// module
 		/// </summary>
 		/********************************************************************/
-		public c_int Xmp_Test_Module_From_Memory(uint8[] mem, c_long size, out Xmp_Test_Info info)
+		public c_int Xmp_Test_Module_From_Memory(CPointer<uint8> mem, c_long size, out Xmp_Test_Info info)
 		{
 			info = null;
 
@@ -131,7 +132,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// Load a module from memory into the specified player context
 		/// </summary>
 		/********************************************************************/
-		public c_int Xmp_Load_Module_From_Memory(uint8[] mem, c_long size)
+		public c_int Xmp_Load_Module_From_Memory(CPointer<uint8> mem, c_long size)
 		{
 			Module_Data m = ctx.M;
 
@@ -291,9 +292,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void Set_Md5Sum(Hio f, byte[] digest)
+		private void Set_Md5Sum(Hio f, c_uchar[] digest)
 		{
-			byte[] buf = new byte[BufLen];
+			c_uchar[] buf = new c_uchar[BufLen];
 
 			f.Hio_Seek(0, SeekOrigin.Begin);
 

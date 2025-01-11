@@ -17,7 +17,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 	public partial class Test_Effect
 	{
 		private static readonly c_int[] vals_NS_RT =
-		{
+		[
 			856, 856, 856, 808, 808, 808, 763,
 			763, 763, 720, 720, 720, 679, 679,
 			679, 679, 679, 641, 641, 641, 605,
@@ -31,10 +31,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			170, 170, 170, 191, 191, 191, 214,
 			214, 214, 240, 240, 270, 270, 303,
 			303, 360, 428, 509, 605, 720, 856
-		};
+		];
 
 		private static readonly bool[] vals2_NS_RT =
-		{
+		[
 			true, false, false, true, false, false, true,
 			false, false, true, false, false, true, false,
 			false, false, false, true, false, false, true,
@@ -48,7 +48,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			false, false, false, true, false, false, true,
 			false, false, true, false, true, false, true,
 			false, true, true, true, true, true, true
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>

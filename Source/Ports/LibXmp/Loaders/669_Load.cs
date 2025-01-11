@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using System.Text;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
@@ -124,14 +125,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 		// Effects bug fixed by Miod Vallat <miodrag@multimania.com>
 		private static readonly uint8[] fx =
-		{
+		[
 			Effects.Fx_669_Porta_Up,
 			Effects.Fx_669_Porta_Dn,
 			Effects.Fx_669_TPorta,
 			Effects.Fx_669_FineTune,
 			Effects.Fx_669_Vibrato,
 			Effects.Fx_Speed_Cp
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>
@@ -255,7 +256,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			}
 
 			mod.Len = i;
-			Array.Copy(sfh.Order, mod.Xxo, mod.Len);
+			CMemory.MemCpy<uint8>(mod.Xxo, sfh.Order, mod.Len);
 
 			mod.Spd = 6;
 			mod.Bpm = 78;

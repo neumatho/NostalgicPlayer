@@ -6,6 +6,7 @@
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
@@ -30,13 +31,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		private const c_int Loop_Prologue = 1;
 		private const c_int Loop_Epilogue = 2;
 
-		private delegate void Mix_Fp(Mixer_Voice vi, int32[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R);
+		private delegate void Mix_Fp(Mixer_Voice vi, CPointer<int32> buffer, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R);
 
 		#region Loop_Data class
 		private class Loop_Data
 		{
-			public byte[] SPtr;
-			public c_int SPtrOffset;
+			public CPointer<byte> SPtr;
 			public c_int Start;
 			public c_int End;
 			public bool First_Loop;
@@ -44,8 +44,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			public bool Active;
 			public c_int Prologue_Num;
 			public c_int Epilogue_Num;
-			public uint8[] Prologue = new uint8[Loop_Prologue * 2 /* 16 bit */ * 2 /* stereo */];
-			public uint8[] Epilogue = new uint8[Loop_Epilogue * 2 /* 16 bit */ * 2 /* stereo */];
+			public readonly uint8[] Prologue = new uint8[Loop_Prologue * 2 /* 16 bit */ * 2 /* stereo */];
+			public readonly uint8[] Epilogue = new uint8[Loop_Epilogue * 2 /* 16 bit */ * 2 /* stereo */];
 		}
 		#endregion
 
@@ -205,7 +205,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			c_int samples, size;
 			c_int vol, vol_L, vol_R, voc, uSmp;
 			c_int prev_L, prev_R = 0;
-			c_int buf_Pos;
+			CPointer<c_int> buf_Pos;
 			Mix_Fp mix_Fn;
 			Mix_Fp[] mixerSet;
 
@@ -254,7 +254,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				if ((vi.Flags & Mixer_Flag.AntiClick) != 0)
 				{
 					if (s.Interp > Xmp_Interp.Nearest)
-						Do_AntiClick(voc, null, 0, 0);
+						Do_AntiClick(voc, null, 0);
 
 					vi.Flags &= ~Mixer_Flag.AntiClick;
 				}
@@ -275,7 +275,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				vi.Pos0 = (c_int)vi.Pos;
 
-				buf_Pos = 0;
+				buf_Pos = s.Buf32;
 				vol = vi.Vol;
 
 				// Mix volume (S3M and IT)
@@ -388,11 +388,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						{
 							if ((~s.Format & Xmp_Format.Mono) != 0)
 							{
-								prev_L = s.Buf32[buf_Pos + mix_Size - 2];
-								prev_R = s.Buf32[buf_Pos + mix_Size - 1];
+								prev_L = buf_Pos[mix_Size - 2];
+								prev_R = buf_Pos[mix_Size - 1];
 							}
 							else
-								prev_L = s.Buf32[buf_Pos + mix_Size - 1];
+								prev_L = buf_Pos[mix_Size - 1];
 						}
 						else
 							prev_R = prev_L = 0;
@@ -404,7 +404,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						mix_Fn = mixerSet[(c_int)mixer_Id];
 
 						// Call the output handler
-						if ((samples > 0) && (vi.SPtr != null))
+						if ((samples > 0) && vi.SPtr.IsNotNull)
 						{
 							c_int rSize = 0;
 
@@ -423,7 +423,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 							}
 
 							if (mix_Fn != null)
-								mix_Fn(vi, s.Buf32, buf_Pos, samples, vol_L >> 8, vol_R >> 8, (c_int)(step_Dir * (1 << Constants.SMix_Shift)), rSize, delta_L, delta_R);
+								mix_Fn(vi, buf_Pos, samples, vol_L >> 8, vol_R >> 8, (c_int)(step_Dir * (1 << Constants.SMix_Shift)), rSize, delta_L, delta_R);
 
 							buf_Pos += mix_Size;
 							vi.Old_VL += samples * delta_L;
@@ -432,11 +432,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 							// For Hipolito's anticlick routine
 							if ((~s.Format & Xmp_Format.Mono) != 0)
 							{
-								vi.SLeft = s.Buf32[buf_Pos - 2] - prev_L;
-								vi.SRight = s.Buf32[buf_Pos - 1] - prev_R;
+								vi.SLeft = buf_Pos[-2] - prev_L;
+								vi.SRight = buf_Pos[-1] - prev_R;
 							}
 							else
-								vi.SLeft = s.Buf32[buf_Pos - 1] - prev_L;
+								vi.SLeft = buf_Pos[-1] - prev_L;
 						}
 					}
 
@@ -470,7 +470,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					// First sample loop run
 					if (!Has_Active_Loop(vi, xxs) || split_NoLoop)
 					{
-						Do_AntiClick(voc, s.Buf32, buf_Pos, size);
+						Do_AntiClick(voc, buf_Pos, size);
 						Set_Sample_End(voc, 1);
 						size = 0;
 						continue;
@@ -499,7 +499,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if ((s.Format & Xmp_Format._8Bit) != 0)
 				DownMix_Int_8Bit(s.Buffer, s.Buf32, size, s.Amplify, (s.Format & Xmp_Format.Unsigned) != 0 ? 0x80 : 0);
 			else
-				DownMix_Int_16Bit(MemoryMarshal.Cast<sbyte, int16>(s.Buffer), s.Buf32, size, s.Amplify, (s.Format & Xmp_Format.Unsigned) != 0 ? 0x8000 : 0);
+				DownMix_Int_16Bit(MemoryMarshal.Cast<sbyte, int16>(s.Buffer.AsSpan()), s.Buf32, size, s.Amplify, (s.Format & Xmp_Format.Unsigned) != 0 ? 0x8000 : 0);
 
 			s.DtRight = s.DtLeft = 0;
 		}
@@ -612,7 +612,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Set_Sample_End(voc, 0);
 
 			vi.SPtr = xxs.Data;
-			vi.SPtrOffset = xxs.DataOffset;
 			vi.FIdx |= Mixer_Index_Flag.Active;
 
 			if (Common.Has_Quirk(m, Quirk_Flag.Filter) && ((s.Dsp & Xmp_Dsp.LowPass) != 0))
@@ -833,11 +832,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Mixer_Data s = ctx.S;
 
 			s.Buffer = new int8[Constants.Xmp_Max_FrameSize * sizeof(int16)];
-			if (s.Buffer == null)
+			if (s.Buffer.IsNull)
 				goto Err;
 
 			s.Buf32 = new int32[Constants.Xmp_Max_FrameSize];
-			if (s.Buf32 == null)
+			if (s.Buf32.IsNull)
 				goto Err1;
 
 			s.Freq = rate;
@@ -853,7 +852,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			return 0;
 
 			Err1:
-			s.Buffer = null;
+			s.Buffer.SetToNull();
 			Err:
 			return -1;
 		}
@@ -869,8 +868,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		{
 			Mixer_Data s = ctx.S;
 
-			s.Buf32 = null;
-			s.Buffer = null;
+			s.Buf32.SetToNull();
+			s.Buffer.SetToNull();
 		}
 
 
@@ -911,7 +910,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// output
 		/// </summary>
 		/********************************************************************/
-		private void DownMix_Int_8Bit(sbyte[] dest, int32[] src, c_int num, c_int amp, c_int offs)
+		private void DownMix_Int_8Bit(CPointer<sbyte> dest, CPointer<int32> src, c_int num, c_int amp, c_int offs)
 		{
 		}
 
@@ -923,7 +922,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// stereo output
 		/// </summary>
 		/********************************************************************/
-		private void DownMix_Int_16Bit(Span<int16> dest, int32[] src, c_int num, c_int amp, c_int offs)
+		private void DownMix_Int_16Bit(Span<int16> dest, CPointer<int32> src, c_int num, c_int amp, c_int offs)
 		{
 			c_int shift = DownMix_Shift - amp;
 
@@ -963,7 +962,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// Ok, it's messy, but it works :-) Hipolito
 		/// </summary>
 		/********************************************************************/
-		private void Do_AntiClick(c_int voc, int32[] buf, c_int offset, c_int count)
+		private void Do_AntiClick(c_int voc, CPointer<int32> buf, c_int count)
 		{
 			Player_Data p = ctx.P;
 			Mixer_Data s = ctx.S;
@@ -977,10 +976,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if ((smp_L == 0) && (smp_R == 0))
 				return;
 
-			if (buf == null)
+			if (buf.IsNull)
 			{
 				buf = s.Buf32;
-				offset = 0;
 				count = discharge;
 			}
 			else if (count > discharge)
@@ -1002,8 +1000,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					uint32 stepMul_Sq = (uint32)(stepMul >> (AntiClick_FPShift - 16));
 					stepMul_Sq *= stepMul_Sq;
 
-					buf[offset++] += (int32)((stepMul_Sq * smp_L) >> 32);
-					buf[offset++] += (int32)((stepMul_Sq * smp_R) >> 32);
+					buf[0] += (int32)((stepMul_Sq * smp_L) >> 32);
+					buf[1] += (int32)((stepMul_Sq * smp_R) >> 32);
+					buf += 2;
 				}
 			}
 			else
@@ -1014,7 +1013,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					uint32 stepMul_Sq = (uint32)(stepMul >> (AntiClick_FPShift - 16));
 					stepMul_Sq *= stepMul_Sq;
 
-					buf[offset++] += (int32)((stepMul_Sq * smp_L) >> 32);
+					buf[0] += (int32)((stepMul_Sq * smp_L) >> 32);
+					buf++;
 				}
 			}
 		}
@@ -1067,14 +1067,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			c_int prologue_Num = Loop_Prologue;
 			c_int epilogue_Num = Loop_Epilogue;
 
-			if ((vi.SPtr == null) || (s.Interp == Xmp_Interp.Nearest) || ((~xxs.Flg & Xmp_Sample_Flag.Loop) != 0))
+			if (vi.SPtr.IsNull || (s.Interp == Xmp_Interp.Nearest) || ((~xxs.Flg & Xmp_Sample_Flag.Loop) != 0))
 			{
 				ld.Active = false;
 				return;
 			}
 
 			ld.SPtr = vi.SPtr;
-			ld.SPtrOffset = vi.SPtrOffset;
 			ld.Start = vi.Start;
 			ld.End = vi.End;
 			ld.First_Loop = !((vi.Flags & Mixer_Flag.Sample_Loop) != 0);
@@ -1098,48 +1097,45 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			if (ld._16Bit)
 			{
-				Span<uint16> buf = MemoryMarshal.Cast<byte, uint16>(ld.SPtr);
-				c_int start = (ld.SPtrOffset / 2) + ld.Start;
-				c_int end = (ld.SPtrOffset / 2) + ld.End;
+				Span<uint16> buf = MemoryMarshal.Cast<byte, uint16>(ld.SPtr.Buffer);
+				int sPtrOffset = ld.SPtr.Offset / 2;
+				c_int start = ld.Start;
+				c_int end = ld.End;
 
-				Span<uint8> src = MemoryMarshal.Cast<uint16, uint8>(buf.Slice(start - prologue_Num));
-				src.Slice(0, prologue_Num * 2).CopyTo(ld.Prologue);
-
-				src = MemoryMarshal.Cast<uint16, uint8>(buf.Slice(end));
-				src.Slice(0, epilogue_Num * 2).CopyTo(ld.Epilogue);
+				CMemory.MemCpy(ld.Prologue, ld.SPtr + (start * 2 - prologue_Num * 2), prologue_Num * 2);
+				CMemory.MemCpy(ld.Epilogue, ld.SPtr + end * 2, epilogue_Num * 2);
 
 				if (!ld.First_Loop)
 				{
 					for (c_int i = 0; i < prologue_Num; i++)
 					{
 						c_int j = i - prologue_Num;
-						buf[start + j] = biDir ? buf[start - 1 - j] : buf[end + j];
+						buf[sPtrOffset + start + j] = biDir ? buf[sPtrOffset + start - 1 - j] : buf[sPtrOffset + end + j];
 					}
 				}
 
 				for (c_int i = 0; i < epilogue_Num; i++)
-					buf[end + i] = biDir ? buf[end - 1 - i] : buf[start + i];
+					buf[sPtrOffset + end + i] = biDir ? buf[sPtrOffset + end - 1 - i] : buf[sPtrOffset + start + i];
 			}
 			else
 			{
-				uint8[] buf = ld.SPtr;
-				c_int start = ld.SPtrOffset + ld.Start;
-				c_int end = ld.SPtrOffset + ld.End;
+				CPointer<uint8> start = ld.SPtr + ld.Start;
+				CPointer<uint8> end = ld.SPtr + ld.End;
 
-				Array.Copy(buf, start - prologue_Num, ld.Prologue, 0, prologue_Num);
-				Array.Copy(buf, end, ld.Epilogue, 0, epilogue_Num);
+				CMemory.MemCpy(ld.Prologue, start - prologue_Num, prologue_Num);
+				CMemory.MemCpy(ld.Epilogue, end, epilogue_Num);
 
 				if (!ld.First_Loop)
 				{
 					for (c_int i = 0; i < prologue_Num; i++)
 					{
 						c_int j = i - prologue_Num;
-						buf[start + j] = biDir ? buf[start - 1 - j] : buf[end + j];
+						start[j] = biDir ? start[-1 - j] : end[j];
 					}
 				}
 
 				for (c_int i = 0; i < epilogue_Num; i++)
-					buf[end + i] = biDir ? buf[end - 1 - i] : buf[start + i];
+					end[i] = biDir ? end[-1 - i] : start[i];
 			}
 		}
 
@@ -1160,24 +1156,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			if (ld._16Bit)
 			{
-				Span<uint16> buf = MemoryMarshal.Cast<byte, uint16>(ld.SPtr);
-				c_int start = (ld.SPtrOffset / 2) + ld.Start;
-				c_int end = (ld.SPtrOffset / 2) + ld.End;
+				c_int start = ld.Start;
+				c_int end = ld.End;
 
-				Span<uint8> dest = MemoryMarshal.Cast<uint16, uint8>(buf.Slice(start - prologue_Num));
-				ld.Prologue.AsSpan(0, prologue_Num * 2).CopyTo(dest);
-
-				dest = MemoryMarshal.Cast<uint16, uint8>(buf.Slice(end));
-				ld.Epilogue.AsSpan(0, epilogue_Num * 2).CopyTo(dest);
+				CMemory.MemCpy(ld.SPtr + (start - prologue_Num) * 2, ld.Prologue, prologue_Num * 2);
+				CMemory.MemCpy(ld.SPtr + end * 2, ld.Epilogue, epilogue_Num * 2);
 			}
 			else
 			{
-				uint8[] buf = ld.SPtr;
-				c_int start = ld.SPtrOffset + ld.Start;
-				c_int end = ld.SPtrOffset + ld.End;
+				CPointer<uint8> start = ld.SPtr + ld.Start;
+				CPointer<uint8> end = ld.SPtr + ld.End;
 
-				Array.Copy(ld.Prologue, 0, buf, start - prologue_Num, prologue_Num);
-				Array.Copy(ld.Epilogue, 0, buf, end, epilogue_Num);
+				CMemory.MemCpy(start - prologue_Num, ld.Prologue, prologue_Num);
+				CMemory.MemCpy(end, ld.Epilogue, epilogue_Num);
 			}
 		}
 
@@ -1313,7 +1304,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if ((~s.Format & Xmp_Format.Mono) != 0)
 				byteLen *= 2;
 
-			Array.Clear(s.Buf32, 0, byteLen);
+			CMemory.MemSet(s.Buf32, 0, byteLen);
 		}
 
 

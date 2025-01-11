@@ -3,8 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using System.IO;
+using Polycode.NostalgicPlayer.CKit;
 
 namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 {
@@ -14,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 	public class Xmp_Callbacks
 	{
 		/// <summary></summary>
-		public delegate c_ulong Read_Delegate(Span<uint8> dest, c_ulong len, c_ulong nMemB, object priv);
+		public delegate c_ulong Read_Delegate(CPointer<uint8> dest, c_ulong len, c_ulong nMemB, object priv);
 		/// <summary></summary>
 		public delegate c_int Seek_Delegate(object priv, c_long offset, SeekOrigin whence);
 		/// <summary></summary>
@@ -22,24 +22,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// <summary></summary>
 		public delegate c_int Close_Delegate(object priv);
 
-		/// <summary>
-		/// 
-		/// </summary>
+		/// <summary></summary>
 		public Read_Delegate Read_Func;
 
-		/// <summary>
-		/// 
-		/// </summary>
+		/// <summary></summary>
 		public Seek_Delegate Seek_Func;
 
-		/// <summary>
-		/// 
-		/// </summary>
+		/// <summary></summary>
 		public Tell_Delegate Tell_Func;
 
-		/// <summary>
-		/// 
-		/// </summary>
+		/// <summary></summary>
 		public Close_Delegate Close_Func;
 	}
 }

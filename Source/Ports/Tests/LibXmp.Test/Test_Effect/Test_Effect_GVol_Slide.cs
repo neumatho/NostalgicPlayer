@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 	public partial class Test_Effect
 	{
 		private static readonly c_int[] vals_GVS =
-		{
+		[
 			64, 62, 60,		// Down 2
 			60, 58, 56,		// Memory
 			56, 57, 58,		// Up 1
@@ -27,7 +27,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			62, 62, 62,		// Memory
 			64, 64, 64,		// Memory
 			64, 64, 64		// Limit
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>

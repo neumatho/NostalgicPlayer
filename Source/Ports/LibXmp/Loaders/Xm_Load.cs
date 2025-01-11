@@ -446,12 +446,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			t = null;
 
-			byte[] buf = new byte[20];
+			CPointer<byte> buf = new CPointer<byte>(20);
 
 			if (f.Hio_Read(buf, 1, 17) < 17)		// ID text
 				return -1;
 
-			if (Encoding.ASCII.GetString(buf, 0, 17) != "Extended Module: ")
+			if (CMemory.MemCmp(buf, "Extended Module: ", 17) != 0)
 				return -1;
 
 			lib.common.LibXmp_Read_Title(f, out t, 20, encoder);
@@ -472,27 +472,27 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Xm_File_Header xfh = new Xm_File_Header();
 			bool claims_Ft2 = false;
 			bool is_Mpt_116 = false;
-			byte[] buf = new byte[80];
+			CPointer<byte> buf = new CPointer<byte>(80);
 
 			if (f.Hio_Read(buf, 80, 1) != 1)
 				return -1;
 
-			Array.Copy(buf, xfh.Id, 17);	// ID text
-			Array.Copy(buf, 17, xfh.Name, 0, 20);	// Module name
+			CMemory.MemCpy(xfh.Id, buf, 17);		// ID text
+			CMemory.MemCpy(xfh.Name, buf + 17, 20);	// Module name
 
 			// Skip 0x1a
 
-			Array.Copy(buf, 38, xfh.Tracker, 0, 20);	// Tracker name
-			xfh.Version = DataIo.ReadMem16L(buf, 58);		// Version number, minor-major
-			xfh.HeaderSz = DataIo.ReadMem32L(buf, 60);	// Header size
-			xfh.SongLen = DataIo.ReadMem16L(buf, 64);		// Song length
-			xfh.Restart = DataIo.ReadMem16L(buf, 66);		// Restart position
-			xfh.Channels = DataIo.ReadMem16L(buf, 68);	// Number of channels
-			xfh.Patterns = DataIo.ReadMem16L(buf, 70);	// Number of patterns
-			xfh.Instruments = DataIo.ReadMem16L(buf, 72);	// Number of instruments
-			xfh.Flags = (Xm_Flags)DataIo.ReadMem16L(buf, 74);// 0=Amiga freq table, 1=Linear
-			xfh.Tempo = DataIo.ReadMem16L(buf, 76);		// Default tempo
-			xfh.Bpm = DataIo.ReadMem16L(buf, 78);			// Default BPM
+			CMemory.MemCpy(xfh.Tracker, buf + 38, 20);// Tracker name
+			xfh.Version = DataIo.ReadMem16L(buf + 58);		// Version number, minor-major
+			xfh.HeaderSz = DataIo.ReadMem32L(buf + 60);		// Header size
+			xfh.SongLen = DataIo.ReadMem16L(buf + 64);		// Song length
+			xfh.Restart = DataIo.ReadMem16L(buf + 66);		// Restart position
+			xfh.Channels = DataIo.ReadMem16L(buf + 68);		// Number of channels
+			xfh.Patterns = DataIo.ReadMem16L(buf + 70);		// Number of patterns
+			xfh.Instruments = DataIo.ReadMem16L(buf + 72);	// Number of instruments
+			xfh.Flags = (Xm_Flags)DataIo.ReadMem16L(buf + 74);// 0=Amiga freq table, 1=Linear
+			xfh.Tempo = DataIo.ReadMem16L(buf + 76);			// Default tempo
+			xfh.Bpm = DataIo.ReadMem16L(buf + 78);			// Default BPM
 
 			// Sanity checks
 			if (xfh.SongLen > 256)
@@ -510,7 +510,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			// FT2 and MPT allow up to 255 BPM. OpenMPT allows up to 1000 BPM
 			if ((xfh.Tempo >= 32) || (xfh.Bpm < 32) || (xfh.Bpm > 1000))
 			{
-				if (Encoding.ASCII.GetString(xfh.Tracker, 0, 6) != "MED2XM")
+				if (CMemory.MemCmp(xfh.Tracker, "MED2XM", 6) != 0)
 					return -1;
 			}
 
@@ -520,7 +520,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if ((len < 0) || (len > 256))
 				return -1;
 
-			Array.Clear(xfh.Order);
+			CMemory.MemSet<uint8>(xfh.Order, 0, xfh.Order.Length);
 
 			if (f.Hio_Read(xfh.Order, (size_t)len, 1) != 1)	// Pattern order table
 				return -1;
@@ -539,7 +539,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			m.C4Rate = Constants.C4_Ntsc_Rate;
 			m.Period_Type = (xfh.Flags & Xm_Flags.Linear_Period_Mode) != 0 ? Containers.Common.Period.Linear : Containers.Common.Period.Amiga;
 
-			Array.Copy(xfh.Order, mod.Xxo, mod.Len);
+			CMemory.MemCpy<uint8>(mod.Xxo, xfh.Order, mod.Len);
 
 			string tracker_Name = Encoding.ASCII.GetString(xfh.Tracker).TrimEnd(' ', '\0');
 
@@ -700,7 +700,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Load_Xm_Pattern(Module_Data m, c_int num, c_int version, uint8[] patBuf, Hio f)
+		private c_int Load_Xm_Pattern(Module_Data m, c_int num, c_int version, CPointer<uint8> patBuf, Hio f)
 		{
 			c_int headSize = version > 0x0102 ? 9 : 8;
 			Xmp_Module mod = m.Mod;
@@ -731,11 +731,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return 0;
 
 			c_int size = xph.DataSize;
-			int pat = 0;
+			CPointer<uint8> pat = patBuf;
 
 			c_int size_Read = (c_int)f.Hio_Read(patBuf, 1, (size_t)size);
 			if (size_Read < size)
-				Array.Clear(patBuf, size_Read, size - size_Read);
+				CMemory.MemSet<uint8>(patBuf + size_Read, 0, size - size_Read);
 
 			for (c_int j = 0; j < r; j++)
 			{
@@ -746,7 +746,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					if (--size < 0)
 						goto Err;
 
-					uint8 b = patBuf[pat++];
+					uint8 b = pat[0, 1];
 					if ((b & Xm_Event_Packing) != 0)
 					{
 						if ((b & Xm_Event_Note_Follows) != 0)
@@ -754,7 +754,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							if (--size < 0)
 								goto Err;
 
-							@event.Note = patBuf[pat++];
+							@event.Note = pat[0, 1];
 						}
 
 						if ((b & Xm_Event_Instrument_Follows) != 0)
@@ -762,7 +762,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							if (--size < 0)
 								goto Err;
 
-							@event.Ins = patBuf[pat++];
+							@event.Ins = pat[0, 1];
 						}
 
 						if ((b & Xm_Event_Volume_Follows) != 0)
@@ -770,7 +770,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							if (--size < 0)
 								goto Err;
 
-							@event.Vol = patBuf[pat++];
+							@event.Vol = pat[0, 1];
 						}
 
 						if ((b & Xm_Event_FxType_Follows) != 0)
@@ -778,7 +778,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							if (--size < 0)
 								goto Err;
 
-							@event.FxT = patBuf[pat++];
+							@event.FxT = pat[0, 1];
 						}
 
 						if ((b & Xm_Event_FxParm_Follows) != 0)
@@ -786,7 +786,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							if (--size < 0)
 								goto Err;
 
-							@event.FxP = patBuf[pat++];
+							@event.FxP = pat[0, 1];
 						}
 					}
 					else
@@ -796,10 +796,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							goto Err;
 
 						@event.Note = b;
-						@event.Ins = patBuf[pat++];
-						@event.Vol = patBuf[pat++];
-						@event.FxT = patBuf[pat++];
-						@event.FxP = patBuf[pat++];
+						@event.Ins = pat[0, 1];
+						@event.Vol = pat[0, 1];
+						@event.FxT = pat[0, 1];
+						@event.FxP = pat[0, 1];
 					}
 
 					// Sanity check
@@ -1030,8 +1030,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (lib.common.LibXmp_Init_Pattern(mod) < 0)
 				return -1;
 
-			uint8[] patBuf = new uint8[65536];
-			if (patBuf == null)
+			CPointer<uint8> patBuf = CMemory.CAlloc<uint8>(65536);
+			if (patBuf.IsNull)
 				return -1;
 
 			for (i = 0; i < mod.Pat - 1; i++)
@@ -1056,9 +1056,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					mod.Xxp[i].Index[j] = t;
 			}
 
+			CMemory.Free(patBuf);
 			return 0;
 
 			Err:
+			CMemory.Free(patBuf);
 			return -1;
 		}
 
@@ -1097,8 +1099,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/********************************************************************/
 		private c_int OggDec(Module_Data m, Hio f, Xmp_Sample xxs, c_int len)
 		{
-			uint8[] data = new uint8[len];
-			if (data == null)
+			CPointer<uint8> data = CMemory.CAlloc<uint8>(len);
+			if (data.IsNull)
 				return -1;
 
 			f.Hio_Read32B();
@@ -1106,24 +1108,28 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if ((f.Hio_Error() != 0) || (f.Hio_Read(data, 1, (size_t)len - 4) != (size_t)(len - 4)))
 				return -1;
 
-			uint8[] pcm;
+			CPointer<uint8> pcm;
 
-			c_int n = Vorbis_Decode_Memory(data, len, out c_int ch, out c_int _, out int16[] pcm16);
+			c_int n = Vorbis_Decode_Memory(data, len, out c_int ch, out c_int _, out CPointer<int16> pcm16);
+			CMemory.Free(data);
 
 			if ((n < 0) || (ch != 1))
+			{
+				CMemory.Free(pcm16);
 				return -1;
+			}
 
 			if ((xxs.Flg & Xmp_Sample_Flag._16Bit) == 0)
 			{
-				pcm = new uint8[n];
+				pcm = new CPointer<uint8>(n);
 
 				for (c_int i = 0; i < n; i++)
 					pcm[i] = (uint8)(pcm16[i] >> 8);
 			}
 			else
 			{
-				pcm = new uint8[n * 2];
-				pcm16.CopyTo(MemoryMarshal.Cast<uint8, int16>(pcm));
+				pcm = new CPointer<uint8>(n * 2);
+				pcm16.AsSpan().CopyTo(MemoryMarshal.Cast<uint8, int16>(pcm.AsSpan()));
 			}
 
 			if ((xxs.Flg & Xmp_Sample_Flag.Stereo) != 0)
@@ -1140,6 +1146,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				flags |= Sample_Flag.BigEnd;
 
 			c_int ret = Sample.LibXmp_Load_Sample(m, null, flags, xxs, pcm);
+			CMemory.Free(pcm16);
 
 			return ret;
 		}
@@ -1158,7 +1165,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Xm_Instrument xi = new Xm_Instrument();
 			Xm_Sample_Header[] xsh = ArrayHelper.InitializeArray<Xm_Sample_Header>(Xm_Max_Samples_Per_Inst);
 			c_int sample_Num = 0;
-			uint8[] buf = new uint8[208];
+			CPointer<uint8> buf = new CPointer<uint8>(208);
 
 			// ESTIMATED value! We don't know the actual value at this point
 			mod.Smp = Constants.Max_Samples;
@@ -1182,14 +1189,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				if (f.Hio_Read(buf, Xm_Inst_Header_Size + 4, 1) != 1)
 					break;
 
-				xih.Size = DataIo.ReadMem32L(buf, 0);		// Instrument size
-				Array.Copy(buf, 4, xih.Name, 0, 22);		// Instrument name
+				xih.Size = DataIo.ReadMem32L(buf);				// Instrument size
+				CMemory.MemCpy(xih.Name, buf + 4, 22);// Instrument name
 				xih.Type = buf[26];								// Instrument type (always 0)
-				xih.Samples = DataIo.ReadMem16L(buf, 27);	// Number of samples
-				xih.Sh_Size = DataIo.ReadMem32L(buf, 29);	// Sample header size
+				xih.Samples = DataIo.ReadMem16L(buf + 27);	// Number of samples
+				xih.Sh_Size = DataIo.ReadMem32L(buf + 29);	// Sample header size
 
 				// Sanity check
 				if ((c_int)xih.Size < Xm_Inst_Header_Size)
+					return -1;
+
+				if ((xih.Samples > Xm_Max_Samples_Per_Inst) || ((xih.Samples > 0) && (xih.Sh_Size > 0x100)))
 					return -1;
 
 				lib.common.LibXmp_Instrument_Name(mod, i, xih.Name, 22, encoder);
@@ -1229,41 +1239,41 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				}
 				else
 				{
-					int b = 0;
+					CPointer<uint8> b = buf;
 
 					if (f.Hio_Read(buf, 208, 1) != 1)
 						return -1;
 
-					Array.Copy(buf, b, xi.Sample, 0, 96);
+					CMemory.MemCpy(xi.Sample, b, 96);
 					b += 96;
 
 					for (c_int j = 0; j < 24; j++)
 					{
-						xi.V_Env[j] = DataIo.ReadMem16L(buf, b);	// Points for volume envelope
+						xi.V_Env[j] = DataIo.ReadMem16L(b);	// Points for volume envelope
 						b += 2;
 					}
 
 					for (c_int j = 0; j < 24; j++)
 					{
-						xi.P_Env[j] = DataIo.ReadMem16L(buf, b);	// Points for panning envelope
+						xi.P_Env[j] = DataIo.ReadMem16L(b);	// Points for panning envelope
 						b += 2;
 					}
 
-					xi.V_Pts = buf[b++];					// Number of volume points
-					xi.P_Pts = buf[b++];					// Number of pan points
-					xi.V_Sus = buf[b++];					// Volume sustain point
-					xi.V_Start = buf[b++];					// Volume loop start point
-					xi.V_End = buf[b++];					// Volume loop end point
-					xi.P_Sus = buf[b++];					// Pan sustain point
-					xi.P_Start = buf[b++];					// Pan loop start point
-					xi.P_End = buf[b++];					// Pan loop end point
-					xi.V_Type = (Xm_Envelope_Flag)buf[b++];
-					xi.P_Type = (Xm_Envelope_Flag)buf[b++];
-					xi.Y_Wave = buf[b++];					// Vibrato waveform
-					xi.Y_Sweep = buf[b++];					// Vibrato sweep
-					xi.Y_Depth = buf[b++];					// Vibrato depth
-					xi.Y_Rate = buf[b++];					// Vibrato rate
-					xi.V_Fade = DataIo.ReadMem16L(buf, b);	// Volume fadeout
+					xi.V_Pts = b[0, 1];					// Number of volume points
+					xi.P_Pts = b[0, 1];					// Number of pan points
+					xi.V_Sus = b[0, 1];					// Volume sustain point
+					xi.V_Start = b[0, 1];				// Volume loop start point
+					xi.V_End = b[0, 1];					// Volume loop end point
+					xi.P_Sus = b[0, 1];					// Pan sustain point
+					xi.P_Start = b[0, 1];				// Pan loop start point
+					xi.P_End = b[0, 1];					// Pan loop end point
+					xi.V_Type = (Xm_Envelope_Flag)b[0, 1];
+					xi.P_Type = (Xm_Envelope_Flag)b[0, 1];
+					xi.Y_Wave = b[0, 1];					// Vibrato waveform
+					xi.Y_Sweep = b[0, 1];				// Vibrato sweep
+					xi.Y_Depth = b[0, 1];				// Vibrato depth
+					xi.Y_Rate = b[0, 1];					// Vibrato rate
+					xi.V_Fade = DataIo.ReadMem16L(b);	// Volume fadeout
 
 					// Skip reserved space
 					if (f.Hio_Seek((c_int)xih.Size - (Xm_Inst_Header_Size + Xm_Inst_Size), SeekOrigin.Current) < 0)
@@ -1306,35 +1316,38 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				for (c_int j = 0; j < xxi.Nsm; j++, sample_Num++)
 				{
 					Xmp_SubInstrument sub = xxi.Sub[j];
-					int b = 0;
+					CPointer<uint8> b = buf;
 
 					if (sample_Num >= mod.Smp)
-						return -1;
+					{
+						if (lib.common.LibXmp_Realloc_Samples(m, mod.Smp * 3 / 2) < 0)
+							return -1;
+					}
 
 					Xmp_Sample xxs = mod.Xxs[sample_Num];
 
 					if (f.Hio_Read(buf, 40, 1) != 1)
 						return -1;
 
-					xsh[j].Length = DataIo.ReadMem32L(buf, b);		// Sample length
+					xsh[j].Length = DataIo.ReadMem32L(b);		// Sample length
 					b += 4;
 
 					// Sanity check
 					if (xsh[j].Length > Constants.Max_Sample_Size)
 						return -1;
 
-					xsh[j].Loop_Start = DataIo.ReadMem32L(buf, b);	// Sample loop start
+					xsh[j].Loop_Start = DataIo.ReadMem32L(b);	// Sample loop start
 					b += 4;
-					xsh[j].Loop_Length = DataIo.ReadMem32L(buf, b);	// Sample loop length
+					xsh[j].Loop_Length = DataIo.ReadMem32L(b);	// Sample loop length
 					b += 4;
 
-					xsh[j].Volume = buf[b++];						// Volume
-					xsh[j].FineTune = (int8)buf[b++];				// Finetune (-128..+127)
-					xsh[j].Type = (Xm_Sample_Flag)buf[b++];			// Flags
-					xsh[j].Pan = buf[b++];							// Panning (0-255)
-					xsh[j].RelNote = (int8)buf[b++];				// Relative note number
-					xsh[j].Reserved = buf[b++];
-					Array.Copy(buf, b, xsh[j].Name, 0, 22);
+					xsh[j].Volume = b[0, 1];					// Volume
+					xsh[j].FineTune = (int8)b[0, 1];			// Finetune (-128..+127)
+					xsh[j].Type = (Xm_Sample_Flag)b[0, 1];		// Flags
+					xsh[j].Pan = b[0, 1];						// Panning (0-255)
+					xsh[j].RelNote = (int8)b[0, 1];				// Relative note number
+					xsh[j].Reserved = b[0, 1];
+					CMemory.MemCpy(xsh[j].Name, b, 22);
 
 					sub.Vol = xsh[j].Volume;
 					sub.Pan = xsh[j].Pan;
@@ -1553,9 +1566,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_int Vorbis_Decode_Memory(uint8[] data, c_int len, out c_int ch, out c_int rate, out int16[] decodedBuffer)
+		private c_int Vorbis_Decode_Memory(CPointer<uint8> data, c_int len, out c_int ch, out c_int rate, out CPointer<int16> decodedBuffer)
 		{
-			VorbisError result = VorbisFile.Ov_Open(new MemoryStream(data), false, out VorbisFile vorbisFile, null, 0);
+			VorbisError result = VorbisFile.Ov_Open(new MemoryStream(data.Buffer, data.Offset, data.Length), false, out VorbisFile vorbisFile, null, 0);
 			if (result != VorbisError.Ok)
 			{
 				ch = 0;
@@ -1578,7 +1591,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return -1;
 			}
 
-			decodedBuffer = new int16[todo];
+			decodedBuffer = CMemory.CAlloc<int16>((int)todo);
+			if (decodedBuffer.IsNull)
+				return -1;
 
 			int offset = 0;
 			int total = 0;

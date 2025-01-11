@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 	public partial class Test_Effect
 	{
 		private static readonly c_int[] vals_4 =
-		{
+		[
 			143, 143, 144, 146, 147, 148,
 			149, 149, 150, 150, 150, 149,
 			254, 254, 257, 259, 261, 261,
@@ -27,10 +27,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			792, 792, 785, 792, 808, 824,
 			1440, 1440, 1462, 1456, 1431, 1417,
 			1429, 1429, 1466, 1456, 1417, 1419
-		};
+		];
 
 		private static readonly c_int[] vals2_4 =
-		{
+		[
 			143, 144, 146, 147, 148, 149,
 			150, 150, 150, 150, 148, 146,
 			254, 257, 259, 261, 261, 261,
@@ -41,10 +41,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			785, 792, 808, 824, 831, 824,
 			1440, 1462, 1456, 1431, 1417, 1431,
 			1461, 1463, 1424, 1414, 1451, 1468
-		};
+		];
 
 		private static readonly c_int[] vals3_4 =
-		{
+		[
 			143, 143, 144, 145, 145, 146,
 			146, 146, 146, 146, 145, 144,
 			254, 255, 256, 257, 257, 257,
@@ -55,7 +55,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			797, 800, 808, 816, 819, 816,
 			1440, 1451, 1448, 1436, 1429, 1436,
 			1450, 1451, 1432, 1427, 1445, 1454
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>

@@ -15,14 +15,14 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 	public partial class Test_Effect
 	{
 		private static readonly c_int[] vals_PV =
-		{
+		[
 			143, 143, 154, 158, 154, 143,
 			132, 132, 128, 132, 143, 154,
 			158, 158, 154, 143, 132, 128,
 			132, 132, 143, 154, 158, 154,
 			143, 143, 143, 143, 143, 143,
 			143, 143, 143, 143, 143, 143
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>

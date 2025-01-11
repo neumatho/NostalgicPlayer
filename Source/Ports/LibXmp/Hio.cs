@@ -3,9 +3,11 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
@@ -392,9 +394,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public size_t Hio_Read(Span<int8> buf, size_t size, size_t num)
+		public size_t Hio_Read(CPointer<int8> buf, size_t size, size_t num)
 		{
-			return Hio_Read(MemoryMarshal.Cast<int8, uint8>(buf), size, num);
+			// This is only called with small buffers, so we allocate a temporary
+			// buffer and copy the data to the passed buffer
+			uint8[] tempBuf = new uint8[size * num];
+
+			size_t read = Hio_Read(tempBuf, size, num);
+			MemoryMarshal.Cast<uint8, int8>(tempBuf.AsSpan(0, (int)read)).CopyTo(buf.AsSpan());
+
+			return read;
 		}
 
 
@@ -404,7 +413,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public size_t Hio_Read(Span<uint8> buf, size_t size, size_t num)
+		public size_t Hio_Read(CPointer<uint8> buf, size_t size, size_t num)
 		{
 			size_t ret = 0;
 
@@ -414,7 +423,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					try
 					{
-						ret = (size_t)h.Handle.File.Read(buf.Slice(0, (int)(num * size))) / size;
+						ret = (size_t)h.Handle.File.Read(buf.Buffer, buf.Offset, (int)(num * size)) / size;
 						if (ret != num)
 							h.Error = Constants.EOF;
 					}
@@ -599,7 +608,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static Hio Hio_Open_Const_Mem(uint8[] ptr, c_long size)
+		public static Hio Hio_Open_Const_Mem(CPointer<uint8> ptr, c_long size)
 		{
 			if (size <= 0)
 				return null;

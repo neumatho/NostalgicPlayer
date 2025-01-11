@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System.IO;
 using System.Runtime.CompilerServices;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibXmp
@@ -255,10 +256,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static uint16 ReadMem16L(uint8[] m, int offset)
+		public static uint16 ReadMem16L(CPointer<uint8> m)
 		{
-			uint32 a = m[offset];
-			uint32 b = m[offset + 1];
+			uint32 a = m[0];
+			uint32 b = m[1];
 
 			return (uint16)((b << 8) | a);
 		}
@@ -270,10 +271,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static uint16 ReadMem16B(uint8[] m, int offset)
+		public static uint16 ReadMem16B(CPointer<uint8> m)
 		{
-			uint32 a = m[offset];
-			uint32 b = m[offset + 1];
+			uint32 a = m[0];
+			uint32 b = m[1];
 
 			return (uint16)((a << 8) | b);
 		}
@@ -285,11 +286,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static uint32 ReadMem24L(uint8[] m, int offset)
+		public static uint32 ReadMem24L(CPointer<uint8> m)
 		{
-			uint32 a = m[offset];
-			uint32 b = m[offset + 1];
-			uint32 c = m[offset + 2];
+			uint32 a = m[0];
+			uint32 b = m[1];
+			uint32 c = m[2];
 
 			return (c << 16) | (b << 8) | a;
 		}
@@ -301,11 +302,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static uint32 ReadMem24B(uint8[] m, int offset)
+		public static uint32 ReadMem24B(CPointer<uint8> m)
 		{
-			uint32 a = m[offset];
-			uint32 b = m[offset + 1];
-			uint32 c = m[offset + 2];
+			uint32 a = m[0];
+			uint32 b = m[1];
+			uint32 c = m[2];
 
 			return (a << 16) | (b << 8) | c;
 		}
@@ -317,12 +318,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static uint32 ReadMem32L(uint8[] m, int offset)
+		public static uint32 ReadMem32L(CPointer<uint8> m)
 		{
-			uint32 a = m[offset];
-			uint32 b = m[offset + 1];
-			uint32 c = m[offset + 2];
-			uint32 d = m[offset + 3];
+			uint32 a = m[0];
+			uint32 b = m[1];
+			uint32 c = m[2];
+			uint32 d = m[3];
 
 			return (d << 24) | (c << 16) | (b << 8) | a;
 		}
@@ -334,12 +335,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static uint32 ReadMem32B(uint8[] m, int offset)
+		public static uint32 ReadMem32B(CPointer<uint8> m)
 		{
-			uint32 a = m[offset];
-			uint32 b = m[offset + 1];
-			uint32 c = m[offset + 2];
-			uint32 d = m[offset + 3];
+			uint32 a = m[0];
+			uint32 b = m[1];
+			uint32 c = m[2];
+			uint32 d = m[3];
 
 			return (a << 24) | (b << 16) | (c << 8) | d;
 		}

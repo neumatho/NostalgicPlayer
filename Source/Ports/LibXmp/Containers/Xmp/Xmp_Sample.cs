@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.CKit;
+
 namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 {
 	/// <summary>
@@ -38,11 +40,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// <summary>
 		/// Sample data
 		/// </summary>
-		public byte[] Data;
-
-		/// <summary>
-		/// Offset into Data where the real sample data starts
-		/// </summary>
-		public int DataOffset;
+		public CPointer<byte> Data;
 	}
 }

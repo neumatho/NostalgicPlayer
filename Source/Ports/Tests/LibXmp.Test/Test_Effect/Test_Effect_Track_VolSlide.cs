@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 	public partial class Test_Effect
 	{
 		private static readonly c_int[] vals_Trk_VS =
-		{
+		[
 			64, 62, 60, 58,		// Down 2
 			58, 56, 54, 52,		// Memory
 			52, 53, 54, 55,		// Up 1
@@ -28,10 +28,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			10, 10, 10, 10,		// Set 10
 			10, 25, 40, 55,		// Slide 0xf2
 			55, 56, 57, 58		// Slide 0x1f
-		};
+		];
 
 		private static readonly c_int[] vals_Fine_Trk_VS =
-		{
+		[
 			64, 62, 60, 58,		// Down 2
 			58, 56, 54, 52,		// Memory
 			52, 53, 54, 55,		// Up 1
@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			10, 10, 10, 10,		// Set 10
 			8, 8, 8, 8,			// Fine slide down 2
 			9, 9, 9, 9			// Fine slide up 1
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>

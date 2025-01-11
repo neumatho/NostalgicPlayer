@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 	public partial class Test_Effect
 	{
 		private static readonly c_int[] vals_Pan =
-		{
+		[
 			128, 173, 173, 173, 173, 173,
 			173, 212, 212, 212, 212, 212,
 			212, 238, 238, 238, 238, 238,
@@ -25,7 +25,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			150, 128, 128, 128, 128, 128,
 			128, 128, 128, 128, 128, 128,
 			128, 106, 106, 106, 106, 106
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>

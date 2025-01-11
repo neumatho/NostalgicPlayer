@@ -502,8 +502,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 						Type = SampleInfo.SampleType.Sample,
 						Volume = 256,
 						Panning = -1,
-						Sample = sample.Data,
-						SampleOffset = (uint)sample.DataOffset,
+						Sample = sample.Data.Buffer,
+						SampleOffset = (uint)sample.Data.Offset,
 						Length = (uint)sample.Len,
 						LoopStart = (uint)sample.Lps,
 						LoopLength = (uint)(sample.Lpe - sample.Lps)
@@ -679,7 +679,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		private void PlayBuffer(Xmp_Frame_Info frameInfo)
 		{
 			int bufferSize = frameInfo.Buffer_Size / 2;
-			Span<short> buffer = MemoryMarshal.Cast<sbyte, short>(frameInfo.Buffer);
+			Span<short> buffer = MemoryMarshal.Cast<sbyte, short>(frameInfo.Buffer.AsSpan());
 
 			if (mixerChannels == 1)
 			{

@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 	public partial class Test_Effect
 	{
 		private static readonly c_int[] patternLoop_Vals1 =
-		{
+		[
 			0, 0, 0,
 			1, 1, 1,
 			1, 1, 1,
@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			1, 1, 1,
 			1, 1, 1,
 			2, 2, 2
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>

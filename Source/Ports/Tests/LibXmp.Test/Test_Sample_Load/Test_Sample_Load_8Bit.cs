@@ -7,7 +7,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Polycode.NostalgicPlayer.Kit.Utility;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibXmp;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Loader;
@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Sample_Load
 				Set(s, 101, 150, 180, Xmp_Sample_Flag.Loop | Xmp_Sample_Flag.Loop_BiDir);
 				f.Hio_Seek(0, SeekOrigin.Begin);
 				Sample.LibXmp_Load_Sample(m, f, Sample_Flag.None, s, null);
-				Assert.IsNotNull(s.Data, "Didn't allocate sample data");
+				Assert.IsTrue(s.Data.IsNotNull, "Didn't allocate sample data");
 				Assert.AreEqual(0, s.Lps, "Didn't fix invalid loop start");
 				Assert.AreEqual(0, s.Lpe, "Didn't fix invalid loop end");
 				Assert.AreEqual(Xmp_Sample_Flag.None, s.Flg, "Didn't reset loop flags");
@@ -57,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Sample_Load
 				Set(s, 101, 50, 40, Xmp_Sample_Flag.Loop | Xmp_Sample_Flag.Loop_BiDir);
 				f.Hio_Seek(0, SeekOrigin.Begin);
 				Sample.LibXmp_Load_Sample(m, f, Sample_Flag.None, s, null);
-				Assert.IsNotNull(s.Data, "Didn't allocate sample data");
+				Assert.IsTrue(s.Data.IsNotNull, "Didn't allocate sample data");
 				Assert.AreEqual(0, s.Lps, "Didn't fix invalid loop start");
 				Assert.AreEqual(0, s.Lpe, "Didn't fix invalid loop end");
 				Assert.AreEqual(Xmp_Sample_Flag.None, s.Flg, "Didn't reset loop flags");
@@ -67,23 +67,23 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Sample_Load
 				Set(s, 101, 0, 102, Xmp_Sample_Flag.None);
 				f.Hio_Seek(0, SeekOrigin.Begin);
 				Sample.LibXmp_Load_Sample(m, f, Sample_Flag.None, s, null);
-				Assert.IsNotNull(s.Data, "Didn't allocate sample data");
+				Assert.IsTrue(s.Data.IsNotNull, "Didn't allocate sample data");
 				Assert.AreEqual(101, s.Lpe, "Didn't fix invalid loop end");
-				Assert.IsTrue(ArrayHelper.ArrayCompare(s.Data, s.DataOffset, MemoryMarshal.Cast<int8, uint8>(buffer).ToArray(), 0, 101), "Sample data error");
-				Assert.AreEqual(s.Data[s.DataOffset], s.Data[s.DataOffset - 1], "Sample prologue error");
-				Assert.AreEqual(s.Data[s.DataOffset + 100], s.Data[s.DataOffset + 101], "Sample prologue error");
-				Assert.AreEqual(s.Data[s.DataOffset + 101], s.Data[s.DataOffset + 102], "Sample prologue error");
+				Assert.AreEqual(0, CMemory.MemCmp(s.Data, MemoryMarshal.Cast<int8, uint8>(buffer).ToArray(), 101), "Sample data error");
+				Assert.AreEqual(s.Data[0], s.Data[-1], "Sample prologue error");
+				Assert.AreEqual(s.Data[100], s.Data[101], "Sample prologue error");
+				Assert.AreEqual(s.Data[101], s.Data[102], "Sample prologue error");
 				Clear(s);
 
 				// Load sample from file w/ loop
 				Set(s, 101, 20, 80, Xmp_Sample_Flag.Loop);
 				f.Hio_Seek(0, SeekOrigin.Begin);
 				Sample.LibXmp_Load_Sample(m, f, Sample_Flag.None, s, null);
-				Assert.IsNotNull(s.Data, "Didn't allocate sample data");
-				Assert.IsTrue(ArrayHelper.ArrayCompare(s.Data, s.DataOffset, MemoryMarshal.Cast<int8, uint8>(buffer).ToArray(), 0, 101), "Sample data error");
-				Assert.AreEqual(s.Data[s.DataOffset], s.Data[s.DataOffset - 1], "Sample prologue error");
-				Assert.AreEqual(s.Data[s.DataOffset + 100], s.Data[s.DataOffset + 101], "Sample prologue error");
-				Assert.AreEqual(s.Data[s.DataOffset + 101], s.Data[s.DataOffset + 102], "Sample prologue error");
+				Assert.IsTrue(s.Data.IsNotNull, "Didn't allocate sample data");
+				Assert.AreEqual(0, CMemory.MemCmp(s.Data, MemoryMarshal.Cast<int8, uint8>(buffer).ToArray(), 101), "Sample data error");
+				Assert.AreEqual(s.Data[0], s.Data[-1], "Sample prologue error");
+				Assert.AreEqual(s.Data[100], s.Data[101], "Sample prologue error");
+				Assert.AreEqual(s.Data[101], s.Data[102], "Sample prologue error");
 				Clear(s);
 
 				f.Hio_Close();
@@ -104,7 +104,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Sample_Load
 			s.Lps = y;
 			s.Lpe = z;
 			s.Flg = w;
-			s.Data = null;
+			s.Data.SetToNull();
 		}
 
 

@@ -15,8 +15,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static readonly int16[] Cubic_Spline_Lut0 = new int16[1024]
-		{
+		public static readonly int16[] Cubic_Spline_Lut0 =
+		[
 			0, -8, -16, -24, -32, -40, -47, -55,
 			-63, -71, -78, -86, -94, -101, -109, -117,
 			-124, -132, -139, -146, -154, -161, -169, -176,
@@ -145,7 +145,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			-4, -4, -4, -3, -3, -3, -2, -2,
 			-2, -2, -2, -1, -1, -1, -1, -1,
 			0, 0, 0, 0, 0, 0, 0, 0
-		};
+		];
 
 
 
@@ -154,8 +154,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static readonly int16[] Cubic_Spline_Lut1 = new int16[1024]
-		{
+		public static readonly int16[] Cubic_Spline_Lut1 =
+		[
 			16384, 16384, 16384, 16384, 16384, 16383, 16382, 16381,
 			16381, 16381, 16380, 16379, 16379, 16377, 16377, 16376,
 			16374, 16373, 16371, 16370, 16369, 16366, 16366, 16364,
@@ -284,7 +284,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			210, 200, 191, 182, 172, 163, 154, 145,
 			136, 127, 118, 109, 100, 92, 83, 75,
 			66, 58, 49, 41, 32, 24, 16, 8
-		};
+		];
 
 
 
@@ -293,8 +293,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static readonly int16[] Cubic_Spline_Lut2 = new int16[1024]
-		{
+		public static readonly int16[] Cubic_Spline_Lut2 =
+		[
 			0, 8, 16, 24, 32, 41, 49, 58,
 			66, 75, 83, 92, 100, 109, 118, 127,
 			136, 145, 154, 163, 172, 182, 191, 200,
@@ -423,7 +423,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			16361, 16364, 16366, 16366, 16369, 16370, 16371, 16373,
 			16374, 16376, 16377, 16377, 16379, 16379, 16380, 16381,
 			16381, 16381, 16382, 16383, 16384, 16384, 16384, 16384
-		};
+		];
 
 
 
@@ -432,8 +432,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static readonly int16[] Cubic_Spline_Lut3 = new int16[1024]
-		{
+		public static readonly int16[] Cubic_Spline_Lut3 =
+		[
 			0, 0, 0, 0, 0, 0, 0, 0,
 			0, -1, -1, -1, -1, -1, -2, -2,
 			-2, -2, -2, -3, -3, -3, -4, -4,
@@ -562,6 +562,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			-183, -176, -169, -161, -154, -146, -139, -132,
 			-124, -117, -109, -101, -94, -86, -78, -71,
 			-63, -55, -47, -40, -32, -24, -16, -8
-		};
+		];
 	}
 }

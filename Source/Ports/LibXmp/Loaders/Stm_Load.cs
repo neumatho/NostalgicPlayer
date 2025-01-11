@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using System.Text;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
@@ -113,7 +114,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		// this in some songs to give the lead some character. However, when played
 		// in ModPlug Tracker, this effect doesn't work the way it did back then
 		private static readonly uint8[] fx =
-		{
+		[
 			Fx_None,
 			Effects.Fx_Speed,			// A - Set tempo to [INFO]. 60 normal
 			Effects.Fx_Jump,			// B - Break pattern and jmp to order [INFO]
@@ -130,7 +131,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Fx_None,
 			Fx_None,
 			Fx_None
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>
@@ -167,7 +168,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			t = null;
 
-			uint8[] buf = new uint8[8];
+			CPointer<uint8> buf = new CPointer<uint8>(8);
 
 			f.Hio_Seek(start + 20, SeekOrigin.Begin);
 			if (f.Hio_Read(buf, 1, 8) < 8)
@@ -188,7 +189,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (f.Hio_Read(buf, 1, 4) < 4)
 				return -1;
 
-			if ((buf[0] == 'S') && (buf[1] == 'C') && (buf[2] == 'R') && (buf[3] == 'M'))	// We don't want STX files
+			if (CMemory.MemCmp(buf, "SCRM", 4) == 0)	// We don't want STX files
 				return -1;
 
 			f.Hio_Seek(start + 0, SeekOrigin.Begin);
@@ -301,9 +302,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			lib.common.LibXmp_Copy_Adjust(out mod.Name, sfh.Name, 20, encoder);
 
-			if ((sfh.Magic[0] == 0) || (Encoding.ASCII.GetString(sfh.Magic, 0, 5) == "PCSTV") || (Encoding.ASCII.GetString(sfh.Magic, 0, 8) == "!Scream!"))
+			if ((sfh.Magic[0] == 0) || (CMemory.StrNCmp(sfh.Magic, "PCSTV", 5) == 0) || (CMemory.StrNCmp(sfh.Magic, "!Scream!", 8) == 0))
 				lib.common.LibXmp_Set_Type(m, string.Format("Scream Tracker {0}.{1:D2}", sfh.VerMaj, sfh.VerMin));
-			else if (Encoding.ASCII.GetString(sfh.Magic, 0, 8) == "SWavePro")
+			else if (CMemory.StrNCmp(sfh.Magic, "SWavePro", 8) == 0)
 				lib.common.LibXmp_Set_Type(m, string.Format("SoundWave Pro {0}.{1:D2}", sfh.VerMaj, sfh.VerMin));
 			else
 				lib.common.LibXmp_Copy_Adjust(out mod.Type, sfh.Magic, 8, encoder);

@@ -95,7 +95,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 			// If it doesn't play exactly like that then some of the player flow
 			// state persisted after the position change
 			Set_Position_MidFx_Data[] data =
-			{
+			[
 				new Set_Position_MidFx_Data(0, 0, 60, 64),
 				new Set_Position_MidFx_Data(0, 1, 60, 64),
 				new Set_Position_MidFx_Data(1, 0, 72, 64),
@@ -106,7 +106,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 				new Set_Position_MidFx_Data(3, 1, 65, 64),
 				new Set_Position_MidFx_Data(4, 0, 65, 0),
 				new Set_Position_MidFx_Data(0, 0, 0, 0)
-			};
+			];
 
 			c_int ret = LoadModule(dataDirectory, fileName, opaque);
 			Assert.AreEqual(0, ret, "Load module");

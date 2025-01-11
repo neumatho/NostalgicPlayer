@@ -6,6 +6,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer;
 
@@ -37,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// Handler for 8-bit mono samples, spline interpolated mono output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_MonoOut_Mono_8Bit_Spline(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_MonoOut_Mono_8Bit_Spline(Mixer_Voice vi, CPointer<c_int> buffer, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_MONO(int8)
 
@@ -46,8 +47,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr);
-			c_int sPtrOffset = vi.SPtrOffset;
+			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr.Buffer);
+			int sPtrOffset = vi.SPtr.Offset;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -63,15 +64,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
@@ -87,7 +88,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -109,15 +111,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
@@ -133,7 +135,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -158,7 +161,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// Handler for 16-bit mono samples, spline interpolated mono output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_MonoOut_Mono_16Bit_Spline(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_MonoOut_Mono_16Bit_Spline(Mixer_Voice vi, CPointer<c_int> buffer, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_MONO(int16)
 
@@ -167,8 +170,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr);
-			c_int sPtrOffset = vi.SPtrOffset / 2;
+			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr.Buffer);
+			int sPtrOffset = vi.SPtr.Offset / 2;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -184,16 +187,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
@@ -209,7 +212,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -231,16 +235,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
@@ -256,7 +260,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -281,7 +286,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// Handler for 8-bit stereo samples, spline interpolated mono output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_MonoOut_Stereo_8Bit_Spline(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_MonoOut_Stereo_8Bit_Spline(Mixer_Voice vi, CPointer<c_int> buffer, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_STEREO(int8)
 
@@ -291,8 +296,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr);
-			c_int sPtrOffset = vi.SPtrOffset;
+			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr.Buffer);
+			int sPtrOffset = vi.SPtr.Offset;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -308,29 +313,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
 
 				{
-					const c_int off = 1;
+					c_int off = 1 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
@@ -352,7 +357,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 									#region MIX_OUT
 									{
-										buffer[offset++] += out_Sample * out_Level;
+										buffer[0] += out_Sample * out_Level;
+										buffer++;
 									}
 									#endregion
 								}
@@ -377,29 +383,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
 
 				{
-					const c_int off = 1;
+					c_int off = 1 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
@@ -421,7 +427,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 									#region MIX_OUT
 									{
-										buffer[offset++] += out_Sample * out_Level;
+										buffer[0] += out_Sample * out_Level;
+										buffer++;
 									}
 									#endregion
 								}
@@ -450,7 +457,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_MonoOut_Stereo_16Bit_Spline(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_MonoOut_Stereo_16Bit_Spline(Mixer_Voice vi, CPointer<c_int> buffer, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_STEREO(int16)
 
@@ -460,8 +467,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr);
-			c_int sPtrOffset = vi.SPtrOffset / 2;
+			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr.Buffer);
+			int sPtrOffset = vi.SPtr.Offset / 2;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -477,31 +484,31 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
 
 				{
-					const c_int off = 1;
+					c_int off = 1 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
@@ -523,7 +530,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 									#region MIX_OUT
 									{
-										buffer[offset++] += out_Sample * out_Level;
+										buffer[0] += out_Sample * out_Level;
+										buffer++;
 									}
 									#endregion
 								}
@@ -548,31 +556,31 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
 
 				{
-					const c_int off = 1;
+					c_int off = 1 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
@@ -594,7 +602,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 									#region MIX_OUT
 									{
-										buffer[offset++] += out_Sample * out_Level;
+										buffer[0] += out_Sample * out_Level;
+										buffer++;
 									}
 									#endregion
 								}
@@ -622,7 +631,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// Handler for 8-bit mono samples, spline interpolated stereo output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_StereoOut_Mono_8Bit_Spline(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_StereoOut_Mono_8Bit_Spline(Mixer_Voice vi, CPointer<c_int> buffer, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_MONO(int8)
 
@@ -631,8 +640,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr);
-			c_int sPtrOffset = vi.SPtrOffset;
+			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr.Buffer);
+			int sPtrOffset = vi.SPtr.Offset;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -653,15 +662,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
@@ -678,7 +687,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -689,7 +699,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -712,15 +723,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
@@ -737,7 +748,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -748,7 +760,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -773,7 +786,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// Handler for 16-bit mono samples, spline interpolated stereo output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_StereoOut_Mono_16Bit_Spline(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_StereoOut_Mono_16Bit_Spline(Mixer_Voice vi, CPointer<c_int> buffer, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_MONO(int16)
 
@@ -782,8 +795,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr);
-			c_int sPtrOffset = vi.SPtrOffset / 2;
+			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr.Buffer);
+			int sPtrOffset = vi.SPtr.Offset / 2;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -804,16 +817,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
@@ -830,7 +843,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -841,7 +855,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -864,16 +879,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
@@ -890,7 +905,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -901,7 +917,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -927,7 +944,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_StereoOut_Stereo_8Bit_Spline(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_StereoOut_Stereo_8Bit_Spline(Mixer_Voice vi, CPointer<c_int> buffer, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_STEREO(int8)
 
@@ -937,8 +954,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr);
-			c_int sPtrOffset = vi.SPtrOffset;
+			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr.Buffer);
+			int sPtrOffset = vi.SPtr.Offset;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -959,29 +976,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
 
 				{
-					const c_int off = 1;
+					c_int off = 1 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
@@ -998,7 +1015,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -1009,7 +1027,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -1032,29 +1051,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
 
 				{
-					const c_int off = 1;
+					c_int off = 1 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
@@ -1071,7 +1090,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -1082,7 +1102,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -1108,7 +1129,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_StereoOut_Stereo_16Bit_Spline(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_StereoOut_Stereo_16Bit_Spline(Mixer_Voice vi, CPointer<c_int> buffer, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_STEREO(int16)
 
@@ -1118,8 +1139,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr);
-			c_int sPtrOffset = vi.SPtrOffset / 2;
+			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr.Buffer);
+			int sPtrOffset = vi.SPtr.Offset / 2;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -1140,31 +1161,31 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
 
 				{
-					const c_int off = 1;
+					c_int off = 1 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
@@ -1181,7 +1202,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -1192,7 +1214,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -1215,31 +1238,31 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
 
 				{
-					const c_int off = 1;
+					c_int off = 1 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
@@ -1256,7 +1279,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -1267,7 +1291,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -1293,7 +1318,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_MonoOut_Mono_8Bit_Spline_Filter(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_MonoOut_Mono_8Bit_Spline_Filter(Mixer_Voice vi, CPointer<c_int> buffer, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_MONO(int8)
 
@@ -1302,8 +1327,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr);
-			c_int sPtrOffset = vi.SPtrOffset;
+			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr.Buffer);
+			int sPtrOffset = vi.SPtr.Offset;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -1326,15 +1351,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
@@ -1369,7 +1394,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -1391,15 +1417,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
@@ -1434,7 +1460,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -1471,7 +1498,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// mono output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_MonoOut_Mono_16Bit_Spline_Filter(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_MonoOut_Mono_16Bit_Spline_Filter(Mixer_Voice vi, CPointer<c_int> buffer, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_MONO(int16)
 
@@ -1480,8 +1507,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr);
-			c_int sPtrOffset = vi.SPtrOffset / 2;
+			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr.Buffer);
+			int sPtrOffset = vi.SPtr.Offset / 2;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -1504,16 +1531,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
@@ -1548,7 +1575,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -1570,16 +1598,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
@@ -1614,7 +1642,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -1651,7 +1680,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// mono output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_MonoOut_Stereo_8Bit_Spline_Filter(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_MonoOut_Stereo_8Bit_Spline_Filter(Mixer_Voice vi, CPointer<c_int> buffer, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_STEREO(int8)
 
@@ -1661,8 +1690,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr);
-			c_int sPtrOffset = vi.SPtrOffset;
+			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr.Buffer);
+			int sPtrOffset = vi.SPtr.Offset;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -1692,29 +1721,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
 
 				{
-					const c_int off = 1;
+					c_int off = 1 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
@@ -1766,7 +1795,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 									#region MIX_OUT
 									{
-										buffer[offset++] += out_Sample * out_Level;
+										buffer[0] += out_Sample * out_Level;
+										buffer++;
 									}
 									#endregion
 								}
@@ -1791,29 +1821,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
 
 				{
-					const c_int off = 1;
+					c_int off = 1 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
@@ -1865,7 +1895,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 									#region MIX_OUT
 									{
-										buffer[offset++] += out_Sample * out_Level;
+										buffer[0] += out_Sample * out_Level;
+										buffer++;
 									}
 									#endregion
 								}
@@ -1912,7 +1943,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// mono output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_MonoOut_Stereo_16Bit_Spline_Filter(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_MonoOut_Stereo_16Bit_Spline_Filter(Mixer_Voice vi, CPointer<c_int> buffer, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_STEREO(int16)
 
@@ -1922,8 +1953,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr);
-			c_int sPtrOffset = vi.SPtrOffset / 2;
+			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr.Buffer);
+			int sPtrOffset = vi.SPtr.Offset / 2;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -1953,31 +1984,31 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
 
 				{
-					const c_int off = 1;
+					c_int off = 1 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
@@ -2029,7 +2060,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 									#region MIX_OUT
 									{
-										buffer[offset++] += out_Sample * out_Level;
+										buffer[0] += out_Sample * out_Level;
+										buffer++;
 									}
 									#endregion
 								}
@@ -2054,31 +2086,31 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
 
 				{
-					const c_int off = 1;
+					c_int off = 1 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
@@ -2130,7 +2162,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 									#region MIX_OUT
 									{
-										buffer[offset++] += out_Sample * out_Level;
+										buffer[0] += out_Sample * out_Level;
+										buffer++;
 									}
 									#endregion
 								}
@@ -2177,7 +2210,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// stereo output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_StereoOut_Mono_8Bit_Spline_Filter(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_StereoOut_Mono_8Bit_Spline_Filter(Mixer_Voice vi, CPointer<c_int> buffer, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_MONO(int8)
 
@@ -2186,8 +2219,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr);
-			c_int sPtrOffset = vi.SPtrOffset;
+			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr.Buffer);
+			int sPtrOffset = vi.SPtr.Offset;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -2215,15 +2248,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
@@ -2259,7 +2292,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -2270,7 +2304,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -2293,15 +2328,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
@@ -2337,7 +2372,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -2348,7 +2384,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -2385,7 +2422,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// stereo output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_StereoOut_Mono_16Bit_Spline_Filter(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_StereoOut_Mono_16Bit_Spline_Filter(Mixer_Voice vi, CPointer<c_int> buffer, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_MONO(int16)
 
@@ -2394,8 +2431,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr);
-			c_int sPtrOffset = vi.SPtrOffset / 2;
+			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr.Buffer);
+			int sPtrOffset = vi.SPtr.Offset / 2;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -2423,16 +2460,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
@@ -2468,7 +2505,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -2479,7 +2517,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -2502,16 +2541,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
@@ -2547,7 +2586,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -2558,7 +2598,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -2595,7 +2636,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// stereo output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_StereoOut_Stereo_8Bit_Spline_Filter(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_StereoOut_Stereo_8Bit_Spline_Filter(Mixer_Voice vi, CPointer<c_int> buffer, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_STEREO(int8)
 
@@ -2605,8 +2646,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int8)
 			c_int smpL;
-			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr);
-			c_int sPtrOffset = vi.SPtrOffset;
+			Span<int8> sPtr = MemoryMarshal.Cast<byte, int8>(vi.SPtr.Buffer);
+			int sPtrOffset = vi.SPtr.Offset;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -2641,29 +2682,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
 
 				{
-					const c_int off = 1;
+					c_int off = 1 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
@@ -2710,7 +2751,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -2721,7 +2763,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -2744,29 +2787,29 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
 
 				{
-					const c_int off = 1;
+					c_int off = 1 + sPtrOffset;
 
 					#region SPLINE_8BIT
 					{
 						c_int f = frac >> 6;
-						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> (Spline_Shift - 8);
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> (Spline_Shift - 8);
 					}
 					#endregion
 				}
@@ -2813,7 +2856,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -2824,7 +2868,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -2868,7 +2913,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// stereo output
 		/// </summary>
 		/********************************************************************/
-		public static void LibXmp_Mix_StereoOut_Stereo_16Bit_Spline_Filter(Mixer_Voice vi, c_int[] buffer, c_int offset, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
+		public static void LibXmp_Mix_StereoOut_Stereo_16Bit_Spline_Filter(Mixer_Voice vi, CPointer<c_int> buffer, c_int count, c_int vl, c_int vr, c_int step, c_int ramp, c_int delta_L, c_int delta_R)
 		{
 			#region VAR_SPLINE_STEREO(int16)
 
@@ -2878,8 +2923,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			#region VAR_NORM(int16)
 			c_int smpL;
-			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr);
-			c_int sPtrOffset = vi.SPtrOffset / 2;
+			Span<int16> sPtr = MemoryMarshal.Cast<byte, int16>(vi.SPtr.Buffer);
+			int sPtrOffset = vi.SPtr.Offset / 2;
 			c_int pos = ((c_int)vi.Pos) * chn;
 			c_int frac = (c_int)((1 << Constants.SMix_Shift) * (vi.Pos - (c_int)vi.Pos));
 			#endregion
@@ -2914,31 +2959,31 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count > ramp; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
 
 				{
-					const c_int off = 1;
+					c_int off = 1 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
@@ -2984,7 +3029,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -2995,7 +3041,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -3018,31 +3065,31 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (; count != 0; count--)
 			{
 				{
-					const c_int off = 0;
+					c_int off = 0 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpL = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
 
 				{
-					const c_int off = 1;
+					c_int off = 1 + sPtrOffset;
 
 					#region SPLINE_16BIT
 					{
 
 						c_int f = frac >> 6;
-						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[sPtrOffset + pos + off - chn] +
-							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[sPtrOffset + pos + off] +
-							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[sPtrOffset + pos + off + (chn << 1)] +
-							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[sPtrOffset + pos + off + chn]) >> Spline_Shift;
+						smpR = (PreComp_Lut.Cubic_Spline_Lut0[f] * sPtr[pos + off - chn] +
+							  PreComp_Lut.Cubic_Spline_Lut1[f] * sPtr[pos + off] +
+							  PreComp_Lut.Cubic_Spline_Lut3[f] * sPtr[pos + off + (chn << 1)] +
+							  PreComp_Lut.Cubic_Spline_Lut2[f] * sPtr[pos + off + chn]) >> Spline_Shift;
 					}
 					#endregion
 				}
@@ -3089,7 +3136,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}
@@ -3100,7 +3148,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 							#region MIX_OUT
 							{
-								buffer[offset++] += out_Sample * out_Level;
+								buffer[0] += out_Sample * out_Level;
+								buffer++;
 							}
 							#endregion
 						}

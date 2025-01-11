@@ -16,13 +16,13 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 	public partial class Test_Effect
 	{
 		private static readonly c_int[] vals_GV =
-		{
+		[
 			32, 32, 32,		// Set as 0x20
 			0, 0, 0,		// Set as 0x00
 			64, 64, 64,		// Set as 0x40
 			64, 64, 64,		// Set as 0x41
 			64, 64, 64		// Set as 0x90
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>

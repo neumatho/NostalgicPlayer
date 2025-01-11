@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
@@ -65,7 +66,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		/// <summary>
 		/// Pointer to sound buffer
 		/// </summary>
-		public int8[] Buffer;
+		public CPointer<int8> Buffer;
 
 		/// <summary>
 		/// Used buffer size

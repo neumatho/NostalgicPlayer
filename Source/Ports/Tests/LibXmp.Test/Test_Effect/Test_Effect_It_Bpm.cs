@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 	public partial class Test_Effect
 	{
 		private static readonly c_int[] vals_It_Bpm =
-		{
+		[
 			80, 80, 80,		// Set tempo
 			80, 78, 76,		// Slide down 2
 			76, 77, 78,		// Slide up 1
@@ -35,7 +35,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			251, 253, 255,	// Slide up 2
 			252, 252, 252,	// Set as 0xfc
 			252, 254, 255	// Slide up (T00)
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>

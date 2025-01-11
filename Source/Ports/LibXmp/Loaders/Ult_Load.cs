@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Text;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
@@ -116,12 +117,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			t = null;
 
-			uint8[] buf = new uint8[15];
+			CPointer<uint8> buf = new CPointer<uint8>(15);
 
 			if (f.Hio_Read(buf, 1, 15) < 15)
 				return -1;
 
-			if (Encoding.ASCII.GetString(buf, 0, 14) != "MAS_UTrack_V00")
+			if (CMemory.MemCmp(buf, "MAS_UTrack_V00", 14) != 0)
 				return -1;
 
 			if ((buf[14] < '1') || (buf[14] > '4'))
@@ -147,7 +148,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Ult_Header2 ufh2 = new Ult_Header2();
 			Ult_Instrument uih = new Ult_Instrument();
 			Ult_Event ue = new Ult_Event();
-			string[] verStr = { "< 1.4", "1.4", "1.5", "1.6" };
+			string[] verStr = [ "< 1.4", "1.4", "1.5", "1.6" ];
 
 			f.Hio_Read(ufh.Magic, 15, 1);
 			f.Hio_Read(ufh.Name, 32, 1);
@@ -470,37 +471,35 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void Ult_Read_Text(byte[] dest, size_t textLen, Hio f)
+		private void Ult_Read_Text(CPointer<byte> dest, size_t textLen, Hio f)
 		{
 			// ULT module text uses 32-char lines with no line breaks...
 			if (textLen > Comment_MaxLines * 32)
 				textLen = Comment_MaxLines * 32;
 
-			size_t destOffset = 0;
-
 			while (textLen != 0)
 			{
 				size_t end = Math.Min(textLen, 32);
 				textLen -= end;
-				end = f.Hio_Read(dest.AsSpan((int)destOffset), 1, end);
+				end = f.Hio_Read(dest, 1, end);
 
 				size_t lastChar = 0;
 
 				for (size_t i = 0; i < end; i++)
 				{
 					// Nulls in the text area are equivalent to spaces
-					if (dest[destOffset + i] == 0x00)
-						dest[destOffset + i] = 0x20;
-					else if (dest[destOffset + i] != 0x20)
+					if (dest[i] == 0x00)
+						dest[i] = 0x20;
+					else if (dest[i] != 0x20)
 						lastChar = i;
 				}
 
-				destOffset += lastChar + 1;
-				dest[destOffset++] = 0x0a;
+				dest += lastChar + 1;
+				dest[0, 1] = 0x0a;
 			}
 
-			if (destOffset < (size_t)dest.Length)
-				dest[destOffset] = 0x00;
+			if (dest.Length > 0)
+				dest[0] = 0x00;
 		}
 		#endregion
 	}

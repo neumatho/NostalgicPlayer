@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
@@ -53,7 +54,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		public (
 			c_int Consumed,
 			c_int In_Size,
-			sbyte[] In_Buffer
+			CPointer<sbyte> In_Buffer
 		) Buffer_Data;
 
 		/// <summary>

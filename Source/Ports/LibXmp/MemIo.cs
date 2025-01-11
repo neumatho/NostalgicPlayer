@@ -3,9 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using System.IO;
 using System.Runtime.CompilerServices;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibXmp
@@ -17,10 +17,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 	{
 		private class MFile
 		{
-			public uint8[] Start;
+			public CPointer<uint8> Start;
 			public ptrdiff_t Pos;
 			public ptrdiff_t Size;
-			public uint8[] Ptr_Free;
+			public CPointer<uint8> Ptr_Free;
 		}
 
 		private MFile m;
@@ -57,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public size_t MRead(Span<uint8> buf, size_t size, size_t num)
+		public size_t MRead(CPointer<uint8> buf, size_t size, size_t num)
 		{
 			size_t should_Read = size * num;
 			ptrdiff_t can_Read = Can_Read();
@@ -67,14 +67,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			if ((ptrdiff_t)should_Read > can_Read)
 			{
-				m.Start.AsSpan((int)m.Pos, (int)can_Read).CopyTo(buf);
+				CMemory.MemCpy(buf, m.Start + m.Pos, (int)can_Read);
 				m.Pos += can_Read;
 
 				return (size_t)can_Read / size;
 			}
 			else
 			{
-				m.Start.AsSpan((int)m.Pos, (int)should_Read).CopyTo(buf);
+				CMemory.MemCpy(buf, m.Start + m.Pos, (int)should_Read);
 				m.Pos += (ptrdiff_t)should_Read;
 
 				return num;
@@ -155,7 +155,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static MemIo MCOpen(uint8[] ptr, c_long size)
+		public static MemIo MCOpen(CPointer<uint8> ptr, c_long size)
 		{
 			MFile m = new MFile();
 			if (m == null)

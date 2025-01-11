@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
 
@@ -70,8 +71,8 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 				mod.Xxs[i].Lps = 0;
 				mod.Xxs[i].Lpe = 10000;
 				mod.Xxs[i].Flg = Xmp_Sample_Flag.Loop;
-				mod.Xxs[i].Data = new byte[11000];
-				mod.Xxs[i].DataOffset = 4;
+				mod.Xxs[i].Data = CMemory.CAlloc<uint8>(11000);
+				mod.Xxs[i].Data += 4;
 			}
 
 			// End of module creation

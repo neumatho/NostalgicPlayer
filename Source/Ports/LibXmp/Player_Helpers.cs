@@ -166,7 +166,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		protected bool Is_Valid_Sample(Xmp_Module mod, c_int x)
 		{
-			return ((uint32)x < mod.Smp) && (mod.Xxs[x].Data != null);
+			return ((uint32)x < mod.Smp) && mod.Xxs[x].Data.IsNotNull;
 		}
 
 

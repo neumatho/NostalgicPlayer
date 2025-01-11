@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibXmp;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
@@ -40,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 		[TestMethod]
 		public void Test_Storlek_20_Pan_Swing_And_Set_Pan()
 		{
-			c_int[] values = new c_int[64];
+			CPointer<c_int> values = new CPointer<c_int>(64);
 
 			Ports.LibXmp.LibXmp opaque = Ports.LibXmp.LibXmp.Xmp_Create_Context();
 
@@ -94,9 +95,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Storlek
 				Assert.AreEqual(128, values[32 + i], "Pan center not set");
 
 			// Check pan randomness
-			Assert.IsTrue(Check_Randomness(values, 8, 8, 10), "Randomness error");
-			Assert.IsTrue(Check_Randomness(values, 24, 8, 10), "Randomness error");
-			Assert.IsTrue(Check_Randomness(values, 48, 16, 10), "Randomness error");
+			Assert.IsTrue(Check_Randomness(values + 8, 8, 10), "Randomness error");
+			Assert.IsTrue(Check_Randomness(values + 24, 8, 10), "Randomness error");
+			Assert.IsTrue(Check_Randomness(values + 48, 16, 10), "Randomness error");
 
 			opaque.Xmp_End_Player();
 			opaque.Xmp_Release_Module();

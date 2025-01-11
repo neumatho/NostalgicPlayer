@@ -3,9 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
 
 namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
@@ -132,11 +132,11 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private c_ulong Read_Func(Span<uint8> dest, c_ulong len, c_ulong nMemB, object priv)
+		private c_ulong Read_Func(CPointer<uint8> dest, c_ulong len, c_ulong nMemB, object priv)
 		{
 			Stream f = (Stream)priv;
 
-			return (c_ulong)f.Read(dest.Slice(0, (int)(len * nMemB))) / len;
+			return (c_ulong)f.Read(dest.Buffer, dest.Offset, (int)(len * nMemB)) / len;
 		}
 
 

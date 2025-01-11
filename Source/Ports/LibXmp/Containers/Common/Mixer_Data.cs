@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
 
 namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
@@ -45,12 +46,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		/// <summary>
 		/// Output buffer
 		/// </summary>
-		public int8[] Buffer;
+		public CPointer<int8> Buffer;
 
 		/// <summary>
 		/// Temporary buffer for 32 bit samples
 		/// </summary>
-		public int32[] Buf32;
+		public CPointer<int32> Buf32;
 
 		/// <summary>
 		/// Default softmixer voices number

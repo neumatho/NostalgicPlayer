@@ -6,6 +6,7 @@
 using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
@@ -46,8 +47,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		#region Midi_Stream class
 		private class Midi_Stream
 		{
-			public sbyte[] Data;
-			public c_int Pos;
+			public CPointer<sbyte> Pos;
 			public c_int Buffer;
 			public c_int Param;
 		}
@@ -417,7 +417,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (ctx.State < Xmp_State.Playing)
 				return -(c_int)Xmp_Error.State;
 
-			// This port do not do any mixing by itself, so we return with an error
+			// The rest of this method is not needed by NostalgicPlayer and
+			// is therefore not implemented
 			return -(c_int)Xmp_Error.Internal;
 		}
 
@@ -889,9 +890,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				return val;
 			}
 
-			while (@in.Data[@in.Pos] != 0)
+			while (@in.Pos[0] != 0)
 			{
-				c_int val = @in.Data[@in.Pos++];
+				c_int val = @in.Pos[0, 1];
 
 				if ((val >= '0') && (val <= '9'))
 					return val - '0';
@@ -1054,12 +1055,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		{
 			Midi_Stream @in = new Midi_Stream();
 
-			@in.Data = midi.Data;
-			@in.Pos = 0;
+			@in.Pos = midi.Data;
 			@in.Buffer = -1;
 			@in.Param = param;
 
-			while (@in.Data[@in.Pos] != 0)
+			while (@in.Pos[0] != 0)
 			{
 				// Very simple MIDI 1.0 parser--most bytes can just be ignored
 				// (or passed through, if libxmp gets MIDI output). All bytes
@@ -1227,11 +1227,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				if (++xc.InvLoop.Pos > len)
 					xc.InvLoop.Pos = 0;
 
-				if (xxs.Data == null)
+				if (xxs.Data.IsNull)
 					return;
 
 				if ((~xxs.Flg & Xmp_Sample_Flag._16Bit) != 0)
-					xxs.Data[xxs.DataOffset + lps + xc.InvLoop.Pos] ^= 0xff;
+					xxs.Data[lps + xc.InvLoop.Pos] ^= 0xff;
 			}
 		}
 

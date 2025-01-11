@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Virt;
 
@@ -116,12 +117,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer
 		/// <summary>
 		/// Sample pointer
 		/// </summary>
-		public byte[] SPtr;
-
-		/// <summary>
-		/// Offset into SPtr where the real sample data starts
-		/// </summary>
-		public int SPtrOffset;
+		public CPointer<byte> SPtr;
 
 		/// <summary>
 		/// Filter variables
@@ -177,8 +173,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer
 			SLeft = 0;
 			SRight = 0;
 			Flags = 0;
-			SPtr = null;
-			SPtrOffset = 0;
+			SPtr.SetToNull();
 			Filter.R1 = 0;
 			Filter.R2 = 0;
 			Filter.L1 = 0;

@@ -21,7 +21,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 		}
 
 		private static readonly Pos_Row[] vals_LJ =
-		{
+		[
 			new Pos_Row { Pos = 0, Row = 0 },		// Jump to 16 (fwd)
 			new Pos_Row { Pos = 0, Row = 16 },		// Jump to 12 (back)
 			new Pos_Row { Pos = 0, Row = 12 },
@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			new Pos_Row { Pos = 6, Row = 0 },
 			new Pos_Row { Pos = 6, Row = 0 },
 			new Pos_Row { Pos = 6, Row = 0 }
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>

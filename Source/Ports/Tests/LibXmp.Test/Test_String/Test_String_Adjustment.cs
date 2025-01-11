@@ -21,8 +21,11 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_String
 		[TestMethod]
 		public void Test_String_Adjustment()
 		{
-			char[] str = { 'h', 'e', 'l', 'l', 'o', (char)1, (char)2, (char)30, (char)31, (char)127,
-				(char)128, 'w', 'o', 'r', 'l', 'd', ' ', ' ', ' ', (char)0 };
+			char[] str =
+			[
+				'h', 'e', 'l', 'l', 'o', (char)1, (char)2, (char)30, (char)31, (char)127,
+				(char)128, 'w', 'o', 'r', 'l', 'd', ' ', ' ', ' ', (char)0
+			];
 			string _string = new string(str);
 
 			Load_Helpers.LibXmp_Adjust_String(ref _string);

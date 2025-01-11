@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 	public partial class Test_Effect
 	{
 		private static readonly c_int[] vals_It_PS =
-		{
+		[
 			0, 0, 0,
 			0, 0, 0,
 			0, 5, 10,
@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			5, 5, 5,
 			255, 255, 255,
 			255, 255, 255
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>

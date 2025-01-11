@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using System.Text;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
@@ -89,7 +90,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private const uint8 Fx_None = 0xff;
 
 		private static readonly uint8[] fx =
-		{
+		[
 			Fx_None,
 			Effects.Fx_Speed,
 			Effects.Fx_Jump,
@@ -101,7 +102,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Effects.Fx_Vibrato,
 			Effects.Fx_Tremor,
 			Effects.Fx_Arpeggio
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>
@@ -138,21 +139,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		{
 			t = null;
 
-			uint8[] buf = new uint8[8];
+			CPointer<uint8> buf = new CPointer<uint8>(8);
 
 			f.Hio_Seek(start + 20, SeekOrigin.Begin);
 			if (f.Hio_Read(buf, 1, 8) < 8)
 				return -1;
 
-			string id = Encoding.ASCII.GetString(buf, 0, 8);
-			if ((id != "!Scream!") && (id != "BMOD2STM"))
+			if ((CMemory.MemCmp(buf, "!Scream!", 8) != 0) && (CMemory.MemCmp(buf, "BMOD2STM", 8) != 0))
 				return -1;
 
 			f.Hio_Seek(start + 60, SeekOrigin.Begin);
 			if (f.Hio_Read(buf, 1, 4) < 4)
 				return -1;
 
-			if ((buf[0] != 'S') || (buf[1] != 'C') || (buf[2] != 'R') || (buf[3] != 'M'))
+			if (CMemory.MemCmp(buf, "SCRM", 4) != 0)
 				return -1;
 
 			f.Hio_Seek(start + 0, SeekOrigin.Begin);
@@ -203,7 +203,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return -1;
 
 			// BMOD2STM does not convert pitch
-			if (Encoding.ASCII.GetString(sfh.Magic, 0, 8) == "BMOD2STM")
+			if (CMemory.StrNCmp(sfh.Magic, "BMOD2STM", 8) == 0)
 				bmod2stm = true;
 
 			mod.Ins = sfh.InsNum;
@@ -230,12 +230,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			else
 				lib.common.LibXmp_Set_Type(m, string.Format("STM2STX 1.{0}", broken ? 0 : 1));
 
-			uint16[] pp_Pat = new uint16[mod.Pat];
-			if (pp_Pat == null)
+			CPointer<uint16> pp_Pat = CMemory.CAlloc<uint16>(mod.Pat);
+			if (pp_Pat.IsNull)
 				goto Err;
 
-			uint16[] pp_Ins = new uint16[mod.Ins];
-			if (pp_Ins == null)
+			CPointer<uint16> pp_Ins = CMemory.CAlloc<uint16>(mod.Ins);
+			if (pp_Ins.IsNull)
 				goto Err2;
 
 			// Read pattern pointers
@@ -403,8 +403,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				}
 			}
 
-			pp_Ins = null;
-			pp_Pat = null;
+			CMemory.Free(pp_Ins);
+			CMemory.Free(pp_Pat);
 
 			// Read samples
 			for (c_int i = 0; i < mod.Ins; i++)
@@ -419,9 +419,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			return 0;
 
 			Err3:
-			pp_Ins = null;
+			CMemory.Free(pp_Ins);
 			Err2:
-			pp_Pat = null;
+			CMemory.Free(pp_Pat);
 			Err:
 			return -1;
 		}

@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using System.Text;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
@@ -322,8 +323,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			// attempted to remap it to index 0 and subtract 1 from the index,
 			// breaking modules that directly reference the empty track in the
 			// order table (see "cosmos st.amf")
-			c_int[] trkMap = new c_int[mod.Trk + 1];
-			if (trkMap == null)
+			CPointer<c_int> trkMap = CMemory.CAlloc<c_int>(mod.Trk + 1);
+			if (trkMap.IsNull)
 				return -1;
 
 			c_int newTrk = 0;
@@ -353,6 +354,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			}
 
 			mod.Trk = newTrk + 1;		// + empty track
+			CMemory.Free(trkMap);
 
 			if (f.Hio_Error() != 0)
 				return -1;

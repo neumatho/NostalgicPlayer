@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using System.Text;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
@@ -144,7 +145,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 		// Effect conversion table
 		private static readonly uint8[] fx =
-		{
+		[
 			None,
 			Effects.Fx_S3M_Speed,
 			Effects.Fx_S3M_Bpm,
@@ -181,7 +182,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Effects.Fx_Extended,
 			Effects.Fx_Chorus,
 			Effects.Fx_Reverb
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>
@@ -307,7 +308,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			mod.Trk = mod.Pat * mod.Chn;
 
-			Array.Copy(ih.Pos, mod.Xxo, mod.Len);
+			CMemory.MemCpy<uint8>(mod.Xxo, ih.Pos, mod.Len);
 
 			for (i = 0; i < mod.Len; i++)
 			{

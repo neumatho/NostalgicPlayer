@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Runtime.CompilerServices;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 
 namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
@@ -19,8 +20,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 	{
 		private class It_Stream
 		{
-			public uint8[] Buf;
-			public c_int Pos;
+			public CPointer<uint8> Pos;
 			public size_t Left;
 			public uint32 Bits;
 			public c_int Num_Bits;
@@ -32,12 +32,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int ItSex_Decompress8(Hio src, Span<uint8> dst, c_int len, uint8[] tmp, c_int tmpLen, bool it215)
+		public static c_int ItSex_Decompress8(Hio src, CPointer<uint8> dst, c_int len, CPointer<uint8> tmp, c_int tmpLen, bool it215)
 		{
 			It_Stream @in = new It_Stream();
 			uint32 block_Count = 0;
 			uint8 left = 0, temp = 0, temp2 = 0;
-			int dstOffset = 0;
 
 			while (len != 0)
 			{
@@ -114,7 +113,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					bits += temp;
 					temp = (uint8)bits;
 					temp2 += temp;
-					dst[(int)(dstOffset + pos)] = it215 ? temp2 : temp;
+					dst[pos] = it215 ? temp2 : temp;
 
 					Skip_Byte:
 					pos++;
@@ -127,7 +126,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				// Move on
 				block_Count -= d;
 				len -= (c_int)d;
-				dstOffset += (c_int)d;
+				dst += d;
 			}
 
 			return 0;
@@ -140,7 +139,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public static c_int ItSex_Decompress16(Hio src, Span<int16> dst, c_int len, uint8[] tmp, c_int tmpLen, bool it215)
+		public static c_int ItSex_Decompress16(Hio src, Span<int16> dst, c_int len, CPointer<uint8> tmp, c_int tmpLen, bool it215)
 		{
 			It_Stream @in = new It_Stream();
 			uint32 block_Count = 0;
@@ -286,7 +285,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				}
 
 				// Buffer should be zero-padded to 4-byte alignment
-				@in.Bits = (uint32)(@in.Buf[@in.Pos] | (@in.Buf[@in.Pos + 1] << 8) | (@in.Buf[@in.Pos + 2] << 16) | (@in.Buf[@in.Pos + 3] << 24));
+				@in.Bits = (uint32)(@in.Pos[0] | (@in.Pos[1] << 8) | (@in.Pos[2] << 16) | (@in.Pos[3] << 24));
 
 				uint32 used = (uint32)Math.Min(@in.Left, 4);
 
@@ -311,10 +310,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Init_Block(It_Stream @in, uint8[] tmp, c_int tmpLen, Hio src)
+		private static c_int Init_Block(It_Stream @in, CPointer<uint8> tmp, c_int tmpLen, Hio src)
 		{
-			@in.Buf = tmp;
-			@in.Pos = 0;
+			@in.Pos = tmp;
 			@in.Left = src.Hio_Read16L();
 			@in.Bits = 0;
 			@in.Num_Bits = 0;

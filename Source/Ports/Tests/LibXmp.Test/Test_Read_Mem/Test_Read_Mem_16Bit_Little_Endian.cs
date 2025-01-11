@@ -21,9 +21,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Read_Mem
 		[TestMethod]
 		public void Test_Read_Mem_16Bit_Little_Endian()
 		{
-			uint8[] mem = new uint8[] { 1, 2, 3, 4 };
+			uint8[] mem = [ 1, 2, 3, 4 ];
 
-			uint32 x = DataIo.ReadMem16L(mem, 0);
+			uint32 x = DataIo.ReadMem16L(mem);
 			Assert.AreEqual(0x00000201U, x, "Read error");
 		}
 	}

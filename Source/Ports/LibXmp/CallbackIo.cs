@@ -3,9 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System;
 using System.IO;
 using System.Runtime.CompilerServices;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
 
@@ -45,7 +45,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public uint8 CbRead8(out c_int err)
 		{
-			uint8[] x = new uint8[] { 0xff };
+			uint8[] x = [ 0xff ];
 
 			size_t r = f.Callbacks.Read_Func(x, 1, 1, f.Priv);
 			err = (r == 1) ? 0 : Constants.EOF;
@@ -85,7 +85,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			f.Eof = err != 0;
 
 			if (r != 0)
-				x = DataIo.ReadMem16L(buf, 0);
+				x = DataIo.ReadMem16L(buf);
 
 			return x;
 		}
@@ -108,7 +108,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			f.Eof = err != 0;
 
 			if (r != 0)
-				x = DataIo.ReadMem16B(buf, 0);
+				x = DataIo.ReadMem16B(buf);
 
 			return x;
 		}
@@ -131,7 +131,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			f.Eof = err != 0;
 
 			if (r != 0)
-				x = DataIo.ReadMem24L(buf, 0);
+				x = DataIo.ReadMem24L(buf);
 
 			return x;
 		}
@@ -154,7 +154,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			f.Eof = err != 0;
 
 			if (r != 0)
-				x = DataIo.ReadMem24B(buf, 0);
+				x = DataIo.ReadMem24B(buf);
 
 			return x;
 		}
@@ -177,7 +177,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			f.Eof = err != 0;
 
 			if (r != 0)
-				x = DataIo.ReadMem32L(buf, 0);
+				x = DataIo.ReadMem32L(buf);
 
 			return x;
 		}
@@ -200,7 +200,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			f.Eof = err != 0;
 
 			if (r != 0)
-				x = DataIo.ReadMem32B(buf, 0);
+				x = DataIo.ReadMem32B(buf);
 
 			return x;
 		}
@@ -213,7 +213,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public size_t CbRead(Span<uint8> dest, size_t len, size_t nMemB)
+		public size_t CbRead(CPointer<uint8> dest, size_t len, size_t nMemB)
 		{
 			size_t r = f.Callbacks.Read_Func(dest, (c_ulong)len, (c_ulong)nMemB, f.Priv);
 			f.Eof = r < nMemB;

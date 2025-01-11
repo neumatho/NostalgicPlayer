@@ -177,8 +177,40 @@ namespace Polycode.NostalgicPlayer.CKit
 
 		/********************************************************************/
 		/// <summary>
+		/// Return or set the item at the index given
+		/// </summary>
+		/********************************************************************/
+		public ref T this[long index]
+		{
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get => ref Buffer[Offset + index];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return or set the item at the index given
+		/// </summary>
+		/********************************************************************/
+		public ref T this[ulong index]
+		{
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			get => ref Buffer[Offset + (long)index];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return or set the item at the index given and increment the
 		/// pointer afterwards
+		///
+		/// Examples of usage:
+		///
+		/// a = *p++ → a = p[0, 1]
+		/// *p++ = a → p[0, 1] = a
+		///	*p++ += a → p[0] += a; p++
 		/// </summary>
 		/********************************************************************/
 		public T this[int index, int increment]
@@ -232,6 +264,34 @@ namespace Polycode.NostalgicPlayer.CKit
 
 		/********************************************************************/
 		/// <summary>
+		/// Return a new pointer where the original pointer is incremented by
+		/// the value given
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static CPointer<T> operator + (CPointer<T> ptr, long increment)
+		{
+			return new CPointer<T>(ptr.Buffer, (int)(ptr.Offset + increment));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a new pointer where the original pointer is incremented by
+		/// the value given
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static CPointer<T> operator + (CPointer<T> ptr, ulong increment)
+		{
+			return new CPointer<T>(ptr.Buffer, (int)(ptr.Offset + (long)increment));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return a new pointer where the original pointer is decremented by
 		/// the value given
 		/// </summary>
@@ -254,6 +314,34 @@ namespace Polycode.NostalgicPlayer.CKit
 		public static CPointer<T> operator - (CPointer<T> ptr, uint decrement)
 		{
 			return new CPointer<T>(ptr.Buffer, ptr.Offset - (int)decrement);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a new pointer where the original pointer is decremented by
+		/// the value given
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static CPointer<T> operator - (CPointer<T> ptr, long decrement)
+		{
+			return new CPointer<T>(ptr.Buffer, (int)(ptr.Offset - decrement));
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return a new pointer where the original pointer is decremented by
+		/// the value given
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static CPointer<T> operator - (CPointer<T> ptr, ulong decrement)
+		{
+			return new CPointer<T>(ptr.Buffer, (int)(ptr.Offset - (long)decrement));
 		}
 
 

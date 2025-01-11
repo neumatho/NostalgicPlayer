@@ -23,14 +23,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		}
 
 		private static readonly Module_Quirk[] mq =
-		{
+		[
 			new Module_Quirk
 			{
 				Md5 = new byte[16],
 				Flags = Xmp_Flags.None,
 				Mode = 0
 			}
-		};
+		];
 
 		private readonly LibXmp lib;
 		private readonly Xmp_Context ctx;

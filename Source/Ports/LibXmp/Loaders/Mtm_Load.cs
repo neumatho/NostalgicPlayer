@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using System.Text;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
@@ -107,7 +108,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (f.Hio_Read(buf, 1, 4) < 4)
 				return -1;
 
-			if ((buf[0] != 'M') || (buf[1] != 'T') || (buf[2] != 'M') || (buf[3] != 0x10))
+			if (CMemory.MemCmp(buf, "MTM", 3) != 0)
+				return -1;
+
+			if (buf[3] != 0x10)
 				return -1;
 
 			lib.common.LibXmp_Read_Title(f, out t, 20, encoder);
@@ -127,7 +131,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			Xmp_Module mod = m.Mod;
 			Mtm_File_Header mfh = new Mtm_File_Header();
 			Mtm_Instrument_Header mih = new Mtm_Instrument_Header();
-			uint8[] mt = new uint8[192];
+			CPointer<uint8> mt = new CPointer<uint8>(192);
 			bool[] fxx = new bool[2];
 
 			f.Hio_Read(mfh.Magic, 3, 1);		// "MTM"
@@ -241,15 +245,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				for (c_int j = 0; j < 64; j++)
 				{
 					Xmp_Event e = mod.Xxt[i].Event[j];
-					c_int d = j * 3;
+					CPointer<uint8> d = mt + j * 3;
 
-					e.Note = (byte)(mt[d] >> 2);
+					e.Note = (byte)(d[0] >> 2);
 					if (e.Note != 0)
 						e.Note += 37;
 
-					e.Ins = (byte)(((mt[d] & 0x3) << 4) + Ports.LibXmp.Common.Msn(mt[d + 1]));
-					e.FxT = Ports.LibXmp.Common.Lsn(mt[d + 1]);
-					e.FxP = mt[d + 2];
+					e.Ins = (byte)(((d[0] & 0x3) << 4) + Ports.LibXmp.Common.Msn(d[1]));
+					e.FxT = Ports.LibXmp.Common.Lsn(d[1]);
+					e.FxP = d[2];
 
 					if (e.FxT > Effects.Fx_Speed)
 						e.FxT = e.FxP = 0;

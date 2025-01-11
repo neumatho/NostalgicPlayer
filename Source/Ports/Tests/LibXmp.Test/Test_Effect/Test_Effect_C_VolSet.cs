@@ -16,7 +16,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 	public partial class Test_Effect
 	{
 		private static readonly c_int[] vals_C =
-		{
+		[
 			48, 48, 48,		// Set 0x30
 			64, 64, 64,		// Instrument default
 			0, 0, 0,		// Set 0x00
@@ -25,10 +25,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			64, 64, 64,		// Set 0x50
 			64, 64, 64,		// Set 0x51
 			64, 64, 64		// Set 0xa0
-		};
+		];
 
 		private static readonly c_int[] vals2_C =
-		{
+		[
 			38, 38, 38,		// Set 0x30
 			51, 51, 51,		// Instrument default
 			0, 0, 0,		// Set 0x00
@@ -37,10 +37,10 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			64, 64, 64,		// Set 0x50
 			64, 64, 64,		// Set 0x51
 			64, 64, 64		// Set 0xa0
-		};
+		];
 
 		private static readonly c_int[] vals3_C =
-		{
+		[
 			16, 16, 16,		// Set 0x30
 			0, 0, 0,		// Instrument default
 			64, 64, 64,		// Set 0x00
@@ -49,7 +49,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			0, 0, 0,		// Set 0x50
 			0, 0, 0,		// Set 0x51
 			0, 0, 0			// Set 0xa0
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>

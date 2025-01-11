@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 	public partial class Test_Effect
 	{
 		private static readonly c_int[] vals_S3M_Bpm =
-		{
+		[
 			80, 80, 80,		// Set tempo
 			20, 20, 20,		// Set tempo 0x02
 			20, 20, 20,		// Set tempo 0x11
@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 			20, 20, 20,		// Set tempo 0x01
 			255, 255, 255,	// Set tempo 0xff
 			20, 20, 20		// Set tempo 0x11
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>

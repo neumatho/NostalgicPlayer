@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using System.Text;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
@@ -71,7 +72,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (f.Hio_Read(buf, 1, 32) < 32)
 				return -1;
 
-			if (Encoding.ASCII.GetString(buf, 0, 32) != "ASYLUM Music Format V1.0\0\0\0\0\0\0\0\0")
+			if (CMemory.MemCmp(buf, "ASYLUM Music Format V1.0\0\0\0\0\0\0\0\0", 32) != 0)
 				return -1;
 
 			lib.common.LibXmp_Read_Title(f, out t, 0, encoder);
@@ -118,7 +119,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			// Read and convert instruments and samples
 			for (c_int i = 0; i < mod.Ins; i++)
 			{
-				uint8[] insBuf = new uint8[37];
+				CPointer<uint8> insBuf = new CPointer<uint8>(37);
 
 				if (lib.common.LibXmp_Alloc_SubInstrument(mod, i, 1) < 0)
 					return -1;
@@ -133,9 +134,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				mod.Xxi[i].Sub[0].Pan = 0x80;
 				mod.Xxi[i].Sub[0].Sid = i;
 
-				mod.Xxs[i].Len = (c_int)DataIo.ReadMem32L(insBuf, 25);
-				mod.Xxs[i].Lps = (c_int)DataIo.ReadMem32L(insBuf, 29);
-				mod.Xxs[i].Lpe = mod.Xxs[i].Lps + (c_int)DataIo.ReadMem32L(insBuf, 33);
+				mod.Xxs[i].Len = (c_int)DataIo.ReadMem32L(insBuf + 25);
+				mod.Xxs[i].Lps = (c_int)DataIo.ReadMem32L(insBuf + 29);
+				mod.Xxs[i].Lpe = mod.Xxs[i].Lps + (c_int)DataIo.ReadMem32L(insBuf + 33);
 
 				// Sanity check - ASYLUM modules are converted from MODs
 				if ((uint32)mod.Xxs[i].Len >= 0x20000)
@@ -158,19 +159,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				if (f.Hio_Read(buf, 1, 2048) < 2048)
 					return -1;
 
-				c_int pos = 0;
+				CPointer<uint8> pos = buf;
 
 				for (c_int j = 0; j < 64 * 8; j++)
 				{
 					Xmp_Event @event = Ports.LibXmp.Common.Event(m, i, j % 8, j / 8);
+					@event.Clear();
 
-					uint8 note = buf[pos++];
+					uint8 note = pos[0, 1];
 					if (note != 0)
 						@event.Note = (byte)(note + 13);
 
-					@event.Ins = buf[pos++];
-					@event.FxT = buf[pos++];
-					@event.FxP = buf[pos++];
+					@event.Ins = pos[0, 1];
+					@event.FxT = pos[0, 1];
+					@event.FxP = pos[0, 1];
 
 					// TODO: m07.amf and m12.amf from Crusader: No Remorse
 					// use 0x1b for what looks *plausibly* like retrigger.

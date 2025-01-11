@@ -47,7 +47,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_OpenMpt_It
 			}
 
 			// Check pan randomness
-			Assert.IsTrue(Check_Randomness(values, 0, 64, 10), "Randomness error");
+			Assert.IsTrue(Check_Randomness(values, 64, 10), "Randomness error");
 
 			opaque.Xmp_End_Player();
 			opaque.Xmp_Release_Module();
