@@ -802,6 +802,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 			if (id1 == 0x434f534f)											// COSO
 				return true;
 
+			// Digital Tracker
+			if (id1 == 0x442e542e)                                          // D.T.
+				return true;
+
 			// Gameboy Sound System
 			uint maskedId = id1 & 0xffffff00;
 
