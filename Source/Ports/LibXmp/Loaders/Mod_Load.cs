@@ -130,6 +130,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		private readonly LibXmp lib;
 
 		private InternalFormat tracker_Id;
+		private bool detected;
 		private c_int channels;
 		private uint8 restartPosition;
 		private bool needs_Timing_Detection;
@@ -380,7 +381,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (i >= mod_Magic.Length)
 				return -1;
 
-			bool detected = mod_Magic[i].Flag;
+			detected = mod_Magic[i].Flag;
 
 			// Sanity check to prevent loading NoiseRunner and other module
 			// formats with valid magic at offset 1080 (e.g. His Master's Noise)
@@ -782,13 +783,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				case InternalFormat.Octalyser:
 				{
 					tracker = "Octalyser";
-					m.Quirk |= Quirk_Flag.OctalyserLoop;
+
+					if (detected)
+						m.Flow_Mode = FlowMode_Flag.Mode_Octalyser;
+
 					break;
 				}
 
 				case InternalFormat.DigitalTracker:
 				{
 					tracker = "Digital Tracker";
+					m.Flow_Mode = FlowMode_Flag.Mode_DTM_203;
 					break;
 				}
 
@@ -1223,13 +1228,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		/********************************************************************/
 		private InternalFormat FindInternalFormat(Hio f, c_int start)
 		{
-			bool detected = false;
+			detected = false;
 			InternalFormat trackerId = InternalFormat.ProTracker;
 			bool maybe_Wow = true;
 			needs_Timing_Detection = false;
 			out_Of_Range = false;
 			c_int smp_Size = 0;
 			bool has_Big_Samples = false;
+			bool invert_loop = false;
 			c_long fileSize = f.Hio_Size();
 
 			channels = 0;
@@ -1303,7 +1309,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			if (channels == 0)
 			{
-				if ((CMemory.StrNCmp(magic + 2, "CH", 2) == 0) && char.IsDigit((char)magic[1]) && char.IsDigit((char)magic[2]))
+				if ((CMemory.StrNCmp(magic + 2, "CH", 2) == 0) && char.IsDigit((char)magic[0]) && char.IsDigit((char)magic[1]))
 					channels = (magic[0] - '0') * 10 + magic[1] - '0';
 				else if ((CMemory.StrNCmp(magic + 1, "CHN", 3) == 0) && char.IsDigit((char)magic[0]))
 					channels = magic[0] - '0';
@@ -1349,6 +1355,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				{
 					trackerId = InternalFormat.FlexTrax;
 					needs_Timing_Detection = false;
+					detected = true;
 					goto Skip_Test;
 				}
 			}
@@ -1373,6 +1380,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				channels = 8;
 				trackerId = InternalFormat.ModsGrave;
 				needs_Timing_Detection = false;
+				detected = true;
 			}
 			else
 				trackerId = Get_Tracker_Id(f, start, trackerId, restart, pat);
@@ -1422,6 +1430,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 									speed_Row = true;
 							}
 
+							// Usage of effect EFx is typically Protracker invert loop
+							if ((Ports.LibXmp.Common.Lsn(mod_Event[2]) == 0xe) && (Ports.LibXmp.Common.Msn(mod_Event[3]) == 0xf))
+								invert_loop = true;
+
 							mod_Event += 4;
 						}
 
@@ -1441,6 +1453,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						if (trackerId is InternalFormat.ProTracker or InternalFormat.NoiseTracker or InternalFormat.Probably_NoiseTracker or InternalFormat.SoundTracker)
 							trackerId = InternalFormat.Unknown;
 					}
+					else if (invert_loop && !detected && ((trackerId == InternalFormat.NoiseTracker) || (trackerId == InternalFormat.Probably_NoiseTracker)))
+					{
+						// Switch Noisetracker to Protracker to disable event filtering
+						trackerId = InternalFormat.ProTracker;
+					}
 				}
 
 				Done:
@@ -1449,6 +1466,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					if (trackerId is InternalFormat.NoiseTracker or InternalFormat.Probably_NoiseTracker or InternalFormat.SoundTracker)
 						trackerId = InternalFormat.Unknown;
 				}
+			}
+
+			if (invert_loop && !detected && !out_Of_Range)
+			{
+				// If EFx was detected and NO notes were out of range,
+				// that's a string indicator of a Protracker origin
+				if (trackerId != InternalFormat.OpenMpt)
+					trackerId = InternalFormat.ProTracker;
+
+				detected = true;
 			}
 
 			return trackerId;

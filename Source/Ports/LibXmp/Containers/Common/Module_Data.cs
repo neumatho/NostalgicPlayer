@@ -97,6 +97,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		public Quirk_Flag Quirk;
 
 		/// <summary>
+		/// Flow quirks, esp. Pattern Loop
+		/// </summary>
+		public FlowMode_Flag Flow_Mode;
+
+		/// <summary>
 		/// 
 		/// </summary>
 		public Read_Event Read_Event_Type;

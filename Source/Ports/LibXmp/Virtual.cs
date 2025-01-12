@@ -478,6 +478,46 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// 
 		/// </summary>
 		/********************************************************************/
+		public c_int LibXmp_Virt_QueuePatch(c_int chn, c_int ins, c_int smp, c_int note)
+		{
+			// Protracker 1/2 implements instrument swap in a strange way--the
+			// volume/finetune take effect immediately but the sample change
+			// does not apply until the current playing sample reaches the end of
+			// its loop (or stops, if it's a one-off)
+			Player_Data p = ctx.P;
+
+			if ((uint32)chn >= p.Virt.Virt_Channels)
+				return -1;
+
+			if (ins < 0)
+				smp = -1;
+
+			c_int voc = p.Virt.Virt_Channel[chn].Map;
+
+			if (voc > Free)
+			{
+				lib.mixer.LibXmp_Mixer_QueuePatch(voc, smp);
+
+				if (ins >= 0)
+					p.Virt.Voice_Array[voc].Ins = ins;
+
+				return chn;
+			}
+
+			// Original sample stopped--start a new note
+			if (smp < 0)
+				return -1;
+
+			return LibXmp_Virt_SetPatch(chn, ins, smp, note, 0, Xmp_Inst_Nna.Cut, Xmp_Inst_Dct.Off, Xmp_Inst_Dca.Cut);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public void LibXmp_Virt_VoicePos(c_int chn, c_double pos)
 		{
 			Player_Data p = ctx.P;

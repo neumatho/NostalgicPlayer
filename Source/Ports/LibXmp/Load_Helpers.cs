@@ -91,7 +91,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			m.VolBase = 0x40;
 			m.GVol = m.GVolBase = 0x40;
 			m.Vol_Table = null;
-			m.Quirk = 0;
+			m.Quirk = Quirk_Flag.None;
+			m.Flow_Mode = FlowMode_Flag.Mode_Generic;
 			m.Read_Event_Type = Read_Event.Mod;
 			m.Period_Type = Containers.Common.Period.Amiga;
 			m.Compare_VBlank = false;
@@ -302,6 +303,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					m.C4Rate = Constants.C4_Pal_Rate;
 					m.Quirk = Quirk_Flag.None;
+					m.Flow_Mode = FlowMode_Flag.Mode_Generic;
 					m.Read_Event_Type = Read_Event.Mod;
 					m.Period_Type = Containers.Common.Period.Amiga;
 					break;
@@ -311,6 +313,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					m.C4Rate = Constants.C4_Pal_Rate;
 					m.Quirk = Quirk_Flag.NoBpm;
+					m.Flow_Mode = FlowMode_Flag.Mode_Generic;
 					m.Read_Event_Type = Read_Event.Mod;
 					m.Period_Type = Containers.Common.Period.ModRng;
 					break;
@@ -320,6 +323,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					m.C4Rate = Constants.C4_Pal_Rate;
 					m.Quirk = Quirk_Flag.ProTrack;
+					m.Flow_Mode = FlowMode_Flag.Mode_Generic;
 					m.Read_Event_Type = Read_Event.Mod;
 					m.Period_Type = Containers.Common.Period.ModRng;
 					break;
@@ -330,6 +334,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					q = m.Quirk & (Quirk_Flag.VsAll | Quirk_Flag.ArpMem);
 					m.C4Rate = Constants.C4_Ntsc_Rate;
 					m.Quirk = Quirk_Flag.St3 | q;
+					m.Flow_Mode = FlowMode_Flag.Mode_ST3_321;
 					m.Read_Event_Type = Read_Event.St3;
 					break;
 				}
@@ -339,6 +344,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					q = m.Quirk & (Quirk_Flag.VsAll | Quirk_Flag.ArpMem);
 					m.C4Rate = Constants.C4_Ntsc_Rate;
 					m.Quirk = Quirk_Flag.St3 | Quirk_Flag.St3Bugs | q;
+					m.Flow_Mode = FlowMode_Flag.Mode_ST3_321;
 					m.Read_Event_Type = Read_Event.St3;
 					break;
 				}
@@ -349,6 +355,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					m.C4Rate = Constants.C4_Ntsc_Rate;
 					m.Quirk = Quirk_Flag.St3 | Quirk_Flag.St3Bugs | q;
 					m.Quirk &= ~Quirk_Flag.RstChn;
+					m.Flow_Mode = FlowMode_Flag.Mode_ST3_321;
 					m.Read_Event_Type = Read_Event.St3;
 					break;
 				}
@@ -357,6 +364,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					m.C4Rate = Constants.C4_Ntsc_Rate;
 					m.Quirk = Quirk_Flag.Ft2;
+					m.Flow_Mode = FlowMode_Flag.Mode_Generic;
 					m.Read_Event_Type = Read_Event.Ft2;
 					break;
 				}
@@ -365,6 +373,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					m.C4Rate = Constants.C4_Ntsc_Rate;
 					m.Quirk = Quirk_Flag.Ft2 | Quirk_Flag.Ft2Bugs;
+					m.Flow_Mode = FlowMode_Flag.Mode_Generic;
 					m.Read_Event_Type = Read_Event.Ft2;
 					break;
 				}
@@ -373,6 +382,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					m.C4Rate = Constants.C4_Ntsc_Rate;
 					m.Quirk = Quirk_Flag.It | Quirk_Flag.VibHalf | Quirk_Flag.VibInv;
+					m.Flow_Mode = FlowMode_Flag.Mode_IT_210;
 					m.Read_Event_Type = Read_Event.It;
 					break;
 				}
@@ -382,6 +392,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					m.C4Rate = Constants.C4_Ntsc_Rate;
 					m.Quirk = Quirk_Flag.It | Quirk_Flag.VibHalf | Quirk_Flag.VibInv;
 					m.Quirk &= ~(Quirk_Flag.Virtual | Quirk_Flag.RstChn);
+					m.Flow_Mode = FlowMode_Flag.Mode_IT_210;
 					m.Read_Event_Type = Read_Event.It;
 					break;
 				}

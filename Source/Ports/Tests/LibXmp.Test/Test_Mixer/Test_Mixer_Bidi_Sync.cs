@@ -61,11 +61,11 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Mixer
 		/********************************************************************/
 		private void Bidi_Sync_Helper(Ports.LibXmp.LibXmp opaque, string str)
 		{
-//			Bidi_Sync_Test_Mode(opaque, 8000, Xmp_Interp.Nearest, str + ":nearest:8k");
 //			Bidi_Sync_Test_Mode(opaque, 8000, Xmp_Interp.Linear, str + ":linear:8k");
 			Bidi_Sync_Test_Mode(opaque, 8000, Xmp_Interp.Spline, str + ":spline:8k");
 //			Bidi_Sync_Test_Mode(opaque, 11025, Xmp_Interp.Nearest, str + ":nearest:11k");
 //			Bidi_Sync_Test_Mode(opaque, 11025, Xmp_Interp.Linear, str + ":linear:11k");
+			Bidi_Sync_Test_Mode(opaque, 11025, Xmp_Interp.Spline, str + ":spline:11k");
 		}
 
 

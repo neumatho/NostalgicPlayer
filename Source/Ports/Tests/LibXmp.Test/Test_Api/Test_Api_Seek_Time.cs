@@ -30,9 +30,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 			5, 5, 5, 5, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9,
 			9, 9, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12, 13,
 			13, 13, 14, 14, 14, 14, 15, 15, 15, 15, 16, 16, 16,
-			17, 17, 18, 18, 18, 18, 18, 18, 19, 19, 20, 20, 20,
-			21, 21, 21, 21, 22, 22, 22, 22, 23, 23, 23, 24, 24,
-			24, 24, 25, 25, 25, 25, 26, 26, 26, 27, 27, 28, 28
+			17, 17, 18, 18, 18, 18, 18, 18, 19, 19, 19, 20, 20,
+			20, 20, 21, 21, 21, 21, 22, 22, 22, 22, 23, 23, 23,
+			24, 24, 24, 24, 25, 25, 25, 25, 26, 26, 26, 27, 27
 		];
 
 		/********************************************************************/
@@ -46,7 +46,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 			// Seek ode2ptk
 			Ports.LibXmp.LibXmp ctx = Ports.LibXmp.LibXmp.Xmp_Create_Context();
 
-			LoadModule(dataDirectory, "Ode2Ptk.s3m", ctx);
+			LoadModule(dataDirectory, "Ode2Ptk.mod", ctx);
 			ctx.Xmp_Start_Player(8000, 0);
 
 			for (c_int i = 0; i < 100; i++)

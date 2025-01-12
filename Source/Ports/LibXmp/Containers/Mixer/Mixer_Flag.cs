@@ -17,6 +17,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer
 		AntiClick = (1 << 1),
 		Sample_Loop = (1 << 2),
 		Voice_Reverse = (1 << 3),
-		Voice_BiDir = (1 << 4)
+		Voice_BiDir = (1 << 4),
+		Sample_Queued = (1 << 5),
+		Sample_Paused = (1 << 6)
 	}
 }

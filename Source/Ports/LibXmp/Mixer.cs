@@ -297,13 +297,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					vol_R = vol * (0x80 + vi.Pan);
 				}
 
-				if (vi.Smp < mod.Smp)
+				// Sample is paused - skip channel unless a new sample is queued
+				if ((vi.Flags & Mixer_Flag.Sample_Paused) != 0)
 				{
-					xxs = mod.Xxs[vi.Smp];
-					xtra = m.Xtra[vi.Smp];
-					c5Spd = (c_int)m.Xtra[vi.Smp].C5Spd;
+					if (((~vi.Flags & Mixer_Flag.Sample_Queued) != 0) || (vi.Queued.Smp < 0))
+					{
+						vi.Flags &= ~Mixer_Flag.Sample_Queued;
+						continue;
+					}
+
+					Hotswap_Sample(vi, voc, vi.Queued.Smp);
+					Get_Current_Sample(vi, out xxs, out xtra, out c5Spd);
+
+					vi.Pos = vi.Start;
 				}
 				else
+					Get_Current_Sample(vi, out xxs, out xtra, out c5Spd);
+
+				if (xxs == null)
 					continue;
 
 				step = Constants.C4_Period * c5Spd / s.Freq / vi.Period;
@@ -314,7 +325,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				if ((step < 0.001) || (step > c_short.MaxValue))
 					continue;
 
-				Adjust_Voice_End(vi, xxs, xtra);
 				Init_Sample_Wraparound(s, loop_Data, vi, xxs);
 
 				rampSize = s.TickSize >> Constants.AntiClick_Shift;
@@ -442,44 +452,67 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 					vi.Pos += step_Dir * samples;
 
-					// No more samples in this tick
 					size -= samples;
 
-					if (size <= 0)
+					// One-shot samples do not loop
+					if ((!Has_Active_Loop(vi, xxs) || split_NoLoop) && ((vi.Flags & Mixer_Flag.Sample_Queued) == 0))
 					{
-						if (Has_Active_Loop(vi, xxs))
+						if (size > 0)
 						{
-							// This isn't particularly important for
-							// forward loops, but reverse loops need
-							// to be corrected here to avoid their
-							// negative positions getting clamped
-							// in later ticks
-							if ((((~vi.Flags & Mixer_Flag.Voice_Reverse) != 0) && (vi.Pos >= vi.End)) ||
-								(((vi.Flags & Mixer_Flag.Voice_Reverse) != 0) && (vi.Pos <= vi.Start)))
-							{
-								if (Loop_Reposition(vi, xxs, xtra))
-								{
-									Reset_Sample_Wraparound(loop_Data);
-									Init_Sample_Wraparound(s, loop_Data, vi, xxs);
-								}
-							}
-						}
-						continue;
-					}
+							Do_AntiClick(voc, buf_Pos, size);
+							Set_Sample_End(voc, 1);
 
-					// First sample loop run
-					if (!Has_Active_Loop(vi, xxs) || split_NoLoop)
-					{
-						Do_AntiClick(voc, buf_Pos, size);
-						Set_Sample_End(voc, 1);
+							// Next sample should ramp
+							vol_L = vol_R = 0;
+						}
+
 						size = 0;
 						continue;
 					}
 
-					if (Loop_Reposition(vi, xxs, xtra))
+					// Loop before continuing to the next channel if the
+					// tick is complete. This is particularly important
+					// for reverse loops to avoid position clamping
+					if ((size > 0) ||
+						(((~vi.Flags & Mixer_Flag.Voice_Reverse) != 0) && (vi.Pos >= vi.End)) ||
+						(((vi.Flags & Mixer_Flag.Voice_Reverse) != 0) && (vi.Pos <= vi.Start)))
 					{
-						Reset_Sample_Wraparound(loop_Data);
-						Init_Sample_Wraparound(s, loop_Data, vi, xxs);
+						if ((vi.Flags & Mixer_Flag.Sample_Queued) != 0)
+						{
+							// Protracker sample swap
+							Do_AntiClick(voc, buf_Pos, size);
+
+							if ((vi.Queued.Smp < 0) || (!Has_Active_Loop(vi, xxs) && ((mod.Xxs[vi.Queued.Smp].Flg & Xmp_Sample_Flag.Loop) == 0)))
+							{
+								// Invalid samples and one-shots that
+								// are being replaced by one shots
+								// (OpenMPT PTStoppedSwap.mod) stop
+								// the current sample. If the current
+								// sample is looped, it needs to be paused
+								vi.Flags &= ~Mixer_Flag.Sample_Queued;
+								vi.Flags |= Mixer_Flag.Sample_Paused;
+								Set_Sample_End(voc, 1);
+
+								// Next sample should ramp
+								vol_L = vol_R = 0;
+								size = 0;
+								continue;
+							}
+
+							Reset_Sample_Wraparound(loop_Data);
+							Hotswap_Sample(vi, voc, vi.Queued.Smp);
+							Get_Current_Sample(vi, out xxs, out xtra, out c5Spd);
+							Init_Sample_Wraparound(s, loop_Data, vi, xxs);
+
+							vi.Pos = vi.Start;
+							continue;
+						}
+
+						if (Loop_Reposition(vi, xxs, xtra))
+						{
+							Reset_Sample_Wraparound(loop_Data);
+							Init_Sample_Wraparound(s, loop_Data, vi, xxs);
+						}
 					}
 				}
 
@@ -518,6 +551,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Mixer_Voice vi = p.Virt.Voice_Array[voc];
 			Xmp_Sample xxs;
 			Extra_Sample_Data xtra;
+
+			// Position changes e.g. retrigger make the new sample take effect
+			// if queued (OpenMPT InstrSwapRetrigger.mod)
+			if ((vi.Flags & Mixer_Flag.Sample_Queued) != 0)
+			{
+				vi.Flags &= ~Mixer_Flag.Sample_Queued;
+
+				if (vi.Queued.Smp < 0)
+					vi.Flags |= Mixer_Flag.Sample_Paused;
+				else if (vi.Smp != vi.Queued.Smp)
+					Hotswap_Sample(vi, voc, vi.Queued.Smp);
+
+				vi.Flags |= Mixer_Flag.Sample_Loop;
+			}
 
 			if (vi.Smp < m.Mod.Smp)
 			{
@@ -602,7 +649,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			vi.Smp = smp;
 			vi.Vol = 0;
 			vi.Pan = 0;
-			vi.Flags &= ~(Mixer_Flag.Sample_Loop | Mixer_Flag.Voice_Reverse | Mixer_Flag.Voice_BiDir);
+			vi.Flags &= ~(Mixer_Flag.Sample_Loop | Mixer_Flag.Sample_Queued | Mixer_Flag.Sample_Paused | Mixer_Flag.Voice_Reverse | Mixer_Flag.Voice_BiDir);
 
 			vi.FIdx = 0;
 
@@ -624,6 +671,30 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				vi.FIdx |= Mixer_Index_Flag.Stereo;
 
 			LibXmp_Mixer_VoicePos(voc, 0, ac);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Replace the current playing sample when it reaches the end of its
+		/// sample loop, a la Protracker 1/2. The new sample will begin
+		/// playing at the start of its loop if it is looped, the start of
+		/// the sample if it is a one-shot, and it will not play and instead
+		/// pause the channel if both the original and the new sample are
+		/// one-shots or if the new sample is empty/invalid/-1
+		/// </summary>
+		/********************************************************************/
+		public void LibXmp_Mixer_QueuePatch(c_int voc, c_int smp)
+		{
+			Player_Data p = ctx.P;
+			Mixer_Voice vi = p.Virt.Voice_Array[voc];
+
+			if ((smp != vi.Smp) || ((vi.Flags & Mixer_Flag.Sample_Paused) != 0))
+			{
+				vi.Queued.Smp = smp;
+				vi.Flags |= Mixer_Flag.Sample_Queued;
+			}
 		}
 
 
@@ -1279,6 +1350,54 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			}
 
 			return loop_Changed;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void Hotswap_Sample(Mixer_Voice vi, c_int voc, c_int smp)
+		{
+			c_int vol = vi.Vol;
+			c_int pan = vi.Pan;
+
+			LibXmp_Mixer_SetPatch(voc, smp, false);
+
+			vi.Flags |= Mixer_Flag.Sample_Loop;
+			vi.Vol = vol;
+			vi.Pan = pan;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void Get_Current_Sample(Mixer_Voice vi, out Xmp_Sample xxs, out Extra_Sample_Data xtra, out c_int c5spd)
+		{
+			Module_Data m = ctx.M;
+			Xmp_Module mod = m.Mod;
+
+			if (vi.Smp < mod.Smp)
+			{
+				xxs = mod.Xxs[vi.Smp];
+				xtra = m.Xtra[vi.Smp];
+				c5spd = (c_int)m.Xtra[vi.Smp].C5Spd;
+			}
+			else
+			{
+				xxs = null;
+				xtra = null;
+				c5spd = 0;
+				return;
+			}
+
+			Adjust_Voice_End(vi, xxs, xtra);
 		}
 
 

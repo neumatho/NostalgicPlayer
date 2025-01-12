@@ -543,7 +543,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			m.C4Rate = Constants.C4_Ntsc_Rate;
 			m.Quirk |= Quirk_Flag.Filter | Quirk_Flag.St3 | Quirk_Flag.ArpMem;
+			m.Flow_Mode = FlowMode_Flag.Mode_Orpheus;
 			m.Read_Event_Type = Read_Event.St3;
+
+			m.GVol = ih.Vol;
+			m.MVol = ih.Amp;
+			m.MVolBase = 48;
+			Ports.LibXmp.Common.Clamp(ref m.MVol, 4, 127);
 
 			return 0;
 		}

@@ -26,7 +26,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		/********************************************************************/
 		protected void Compare_Mixer_Data(string path, string mod, string data)
 		{
-			Compare_Mixer_Data(path, mod, data, 1, false);
+			Compare_Mixer_Data(path, mod, data, 1, false, Xmp_Mode.Auto);
 		}
 
 
@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		/********************************************************************/
 		protected void Compare_Mixer_Data_Loops(string path, string mod, string data, c_int loops)
 		{
-			Compare_Mixer_Data(path, mod, data, loops, false);
+			Compare_Mixer_Data(path, mod, data, loops, false, Xmp_Mode.Auto);
 		}
 
 
@@ -50,7 +50,19 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		/********************************************************************/
 		protected void Compare_Mixer_Data_No_Rv(string path, string mod, string data)
 		{
-			Compare_Mixer_Data(path, mod, data, 1, true);
+			Compare_Mixer_Data(path, mod, data, 1, true, Xmp_Mode.Auto);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		protected void Compare_Mixer_Data_Player_Mode(string path, string mod, string data, Xmp_Mode mode)
+		{
+			Compare_Mixer_Data(path, mod, data, 1, false, mode);
 		}
 
 		#region Private methods
@@ -59,7 +71,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private void Compare_Mixer_Data(string path, string mod, string data, c_int loops, bool ignore_Rv)
+		private void Compare_Mixer_Data(string path, string mod, string data, c_int loops, bool ignore_Rv, Xmp_Mode mode)
 		{
 			using (StreamReader sr = new StreamReader(OpenStream(path, data)))
 			{
@@ -76,6 +88,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test
 
 				opaque.Xmp_Start_Player(44100, 0);
 				opaque.Xmp_Set_Player(Xmp_Player.Mix, 100);
+				opaque.Xmp_Set_Player(Xmp_Player.Mode, (c_int)mode);
 
 				c_int max_Channels = p.Virt.Virt_Channels;
 

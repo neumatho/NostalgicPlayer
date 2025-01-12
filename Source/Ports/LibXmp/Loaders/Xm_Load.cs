@@ -679,6 +679,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			{
 				lib.common.LibXmp_Set_Type(m, string.Format("ModPlug Tracker 1.16 XM {0}.{1:D2}", xfh.Version >> 8, xfh.Version & 0xff));
 
+				m.Quirk &= ~Quirk_Flag.Ft2Bugs;
+				m.Flow_Mode = FlowMode_Flag.Mode_MPT_116;
 				m.MVolBase = 48;
 				m.MVol = 48;
 
@@ -1119,7 +1121,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return -1;
 			}
 
-			if ((xxs.Flg & Xmp_Sample_Flag._16Bit) == 0)
+			if (((xxs.Flg & Xmp_Sample_Flag._16Bit) == 0) && (n > 0))
 			{
 				pcm = new CPointer<uint8>(n);
 

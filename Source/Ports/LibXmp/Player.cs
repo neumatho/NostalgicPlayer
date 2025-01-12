@@ -126,7 +126,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			f.JumpLine = 0;
 			f.Jump = -1;
 			f.PBreak = false;
-			f.Loop_Chn = 0;
+			f.Loop_Dest = -1;
+			f.Loop_Param = -1;
+			f.Loop_Start = -1;
+			f.Loop_Count = 0;
+			f.Loop_Active_Num = 0;
 			f.Delay = 0;
 			f.RowDelay = RowDelay_Flag.None;
 			f.RowDelay_Set = RowDelay_Flag.None;
@@ -286,8 +290,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				return -(c_int)Xmp_Error.End;
 
 			lib.mixer.LibXmp_Mixer_Prepare_Frame();
-
-			f.Loop_Set = false;
 
 			// Check reposition
 			if (p.Ord != p.Pos)
@@ -1201,6 +1203,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Xmp_Sample xxs = lib.sMix.LibXmp_Get_Sample(xc.Smp);
 			Module_Data m = ctx.M;
 			c_int lps = 0, len = -1;
+
+			// If an instrument number is present, reset the position
+			if ((ctx.P.Frame == 0) && Test(xc, Channel_Flag.New_Ins))
+				xc.InvLoop.Pos = 0;
 
 			xc.InvLoop.Count += invLoop_Table[xc.InvLoop.Speed];
 
@@ -2338,7 +2344,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					xc.Volume += rVal[xc.Retrig.Type].S;
 					xc.Volume *= rVal[xc.Retrig.Type].M;
 					xc.Volume /= rVal[xc.Retrig.Type].D;
-					xc.Retrig.Count = Common.Lsn(xc.Retrig.Val);
+					xc.Retrig.Count = xc.Retrig.Val;
 
 					if (xc.Retrig.Limit > 0)
 					{
@@ -2459,6 +2465,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			p.Pos = p.Ord;
 			p.Frame = 0;
 
+			// Scream Tracker 3, Imago Orpheus: position change resets loop vars.
+			// For some reason the pattern jump effect does not do this in IMF
+			if (Common.Has_Flow_Mode(m, FlowMode_Flag.Loop_Pattern_Reset))
+			{
+				f.Loop_Start = -1;
+				f.Loop_Count = 0;
+
+				for (c_int i = 0; i < mod.Chn; i++)
+				{
+					f.Loop[i].Start = 0;
+					f.Loop[i].Count = 0;
+				}
+			}
+
 			f.Jump_In_Pat = -1;
 
 			// Reset persistent effects at new pattern
@@ -2483,6 +2503,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 			p.Frame = 0;
 			f.Delay = 0;
+			f.Loop_Param = -1;
 
 			if (f.PBreak)
 			{
@@ -2506,10 +2527,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				else
 					f.RowDelay--;
 
-				if (f.Loop_Chn != 0)
+				if (f.Loop_Dest >= 0)
 				{
-					p.Row = f.Loop[f.Loop_Chn - 1].Start;
-					f.Loop_Chn = 0;
+					p.Row = f.Loop_Dest;
+					f.Loop_Dest = -1;
 				}
 
 				// Check end of pattern

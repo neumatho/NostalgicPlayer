@@ -3,32 +3,24 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
 
-namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Fuzzer
+namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public partial class Test_Fuzzer
+	public partial class Test_Effect
 	{
 		/********************************************************************/
 		/// <summary>
-		/// This input caused hangs in the IT loader due to missing EOF
-		/// checks during the pattern scan and pattern loading loops
+		/// Test Ultra Tracker tempo effects
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test_Fuzzer_It_Truncated_Pattern()
+		public void Test_Effect_Pattern_Loop_It100()
 		{
-			Ports.LibXmp.LibXmp opaque = Ports.LibXmp.LibXmp.Xmp_Create_Context();
-
-			c_int ret = LoadModule(Path.Combine(dataDirectory, "F"), "Load_It_Truncated_Pattern.it", opaque);
-			Assert.AreEqual(-(c_int)Xmp_Error.Load, ret, "Module load");
-
-			opaque.Xmp_Free_Context();
+			Compare_Mixer_Data(dataDirectory, "Pattern_Loop_It100.it", "Pattern_Loop_It100.data");
 		}
 	}
 }

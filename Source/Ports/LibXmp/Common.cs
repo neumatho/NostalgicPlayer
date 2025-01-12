@@ -159,6 +159,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public static bool Has_Flow_Mode(Module_Data m, FlowMode_Flag x)
+		{
+			return (m.Flow_Mode & x) != 0;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public static bool Is_Player_Mode_Mod(Module_Data m)
 		{
 			return m.Read_Event_Type == Read_Event.Mod;

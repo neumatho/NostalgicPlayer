@@ -358,95 +358,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						@event.FxP = ue.FxP;
 						@event.F2P = ue.F2P;
 
-						switch (@event.FxT)
-						{
-							// Tone portamento
-							case 0x03:
-							{
-								@event.FxT = Effects.Fx_Ult_TPorta;
-								break;
-							}
-
-							// 'Special' effect
-							// Reserved
-							case 0x05:
-							case 0x06:
-							{
-								@event.FxT = @event.FxP = 0;
-								break;
-							}
-
-							// Pan
-							case 0x0b:
-							{
-								@event.FxT = Effects.Fx_SetPan;
-								@event.FxP <<= 4;
-								break;
-							}
-
-							// Sample offset
-							case 0x09:
-							{
-								// TODO: fine sample offset
-								@event.FxP <<= 2;
-								break;
-							}
-
-							case 0x0f:
-							{
-								// This is just a hack to make "The Blessing.ult" play correctly.
-								// Will be removed again, when libxmp has a proper solution
-								if ((@event.FxP >= 0x20) && (@event.FxP < 0x30))
-									@event.FxP = 0x1f;
-
-								break;
-							}
-						}
-
-						switch (@event.F2T)
-						{
-							// Tone portamento
-							case 0x03:
-							{
-								@event.F2T = Effects.Fx_Ult_TPorta;
-								break;
-							}
-
-							// 'Special' effect
-							// Reserved
-							case 0x05:
-							case 0x06:
-							{
-								@event.F2T = @event.F2P = 0;
-								break;
-							}
-
-							// Pan
-							case 0x0b:
-							{
-								@event.F2T = Effects.Fx_SetPan;
-								@event.F2P <<= 4;
-								break;
-							}
-
-							// Sample offset
-							case 0x09:
-							{
-								// TODO: fine sample offset
-								@event.F2P <<= 2;
-								break;
-							}
-
-							case 0x0f:
-							{
-								// This is just a hack to make "The Blessing.ult" play correctly.
-								// Will be removed again, when libxmp has a proper solution
-								if ((@event.F2P >= 0x20) && (@event.F2P < 0x30))
-									@event.F2P = 0x1f;
-
-								break;
-							}
-						}
+						Ult_Translate_Effect(ref @event.FxT, ref @event.FxP);
+						Ult_Translate_Effect(ref @event.F2T, ref @event.F2P);
 					}
 				}
 			}
@@ -466,6 +379,61 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 		}
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void Ult_Translate_Effect(ref uint8 fxT, ref uint8 fxP)
+		{
+			switch (fxT)
+			{
+				// Tone portamento
+				case 0x03:
+				{
+					fxT = Effects.Fx_Ult_TPorta;
+					break;
+				}
+
+				// 'Special' effect
+				// Reserved
+				case 0x05:
+				case 0x06:
+				{
+					fxT = fxP = 0;
+					break;
+				}
+
+				// Pan
+				case 0x0b:
+				{
+					fxT = Effects.Fx_SetPan;
+					fxP <<= 4;
+					break;
+				}
+
+				// Sample offset
+				case 0x09:
+				{
+					// TODO: fine sample offset (requires new effect or 2 more effect lanes)
+					fxP <<= 2;
+					break;
+				}
+
+				// Speed/BPM
+				// 00:    Default speed (6)/BPM (125)
+				// 01-2f: Set speed
+				// 30-ff: Set BPM (CIA compatible)
+				case 0x0f:
+				{
+					fxT = Effects.Fx_Ult_Tempo;
+					break;
+				}
+			}
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// 

@@ -119,6 +119,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Mixer
 		/// </summary>
 		public CPointer<byte> SPtr;
 
+		public (
+			c_int Smp,
+			c_int Dummy
+		) Queued;
+
 		/// <summary>
 		/// Filter variables
 		/// </summary>

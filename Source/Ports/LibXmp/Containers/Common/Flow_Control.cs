@@ -17,9 +17,33 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		public c_int Jump;
 		public c_int Delay;
 		public c_int JumpLine;
-		public c_int Loop_Chn;
+
+		/// <summary>
+		/// Pattern loop destination, -1 for none
+		/// </summary>
+		public c_int Loop_Dest;
+
+		/// <summary>
+		/// Last loop param for Digital Tracker
+		/// </summary>
+		public c_int Loop_Param;
+
+		/// <summary>
+		/// Global loop target for S3M et al.
+		/// </summary>
+		public c_int Loop_Start;
+
+		/// <summary>
+		/// Global loop count for S3M et al.
+		/// </summary>
+		public c_int Loop_Count;
+
+		/// <summary>
+		/// Number of active loops for scan
+		/// </summary>
+		public c_int Loop_Active_Num;
+
 		public c_int Jump_In_Pat;
-		public bool Loop_Set;
 
 		public Pattern_Loop[] Loop;
 

@@ -1492,6 +1492,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			string tracker_Name;
 			bool sample_Mode = (~ifh.Flags & It_Flag.Use_Inst) != 0;
 
+			m.Flow_Mode = FlowMode_Flag.Mode_IT_210;
+
 			switch (ifh.Cwt >> 8)
 			{
 				case 0x00:
@@ -1515,6 +1517,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 						// ModPlug Tracker files aren't really IMPM 2.00
 						ifh.Cmwt = (uint16)(sample_Mode ? 0x100 : 0x214);
+						m.Flow_Mode = FlowMode_Flag.Mode_MPT_116;
 						is_Mpt_116 = true;
 					}
 					else if ((ifh.Cmwt == 0x200) && (ifh.Cwt == 0x0202) && pat_Before_Smp)
@@ -1526,6 +1529,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 						// samples/instruments
 						tracker_Name = "ModPlug Tracker 1.0 pre-alpha";
 						ifh.Cmwt = (uint16)(sample_Mode ? 0x100 : 0x200);
+
+						// TODO: Pre-alpha 4 has its own Pattern Loop behavior;
+						// the <= 1.16 behavior is present in pre-alpha 6
+						m.Flow_Mode = FlowMode_Flag.Mode_MPT_116;
 						is_Mpt_116 = true;
 					}
 					else if (ifh.Cwt == 0x0216)
@@ -1535,8 +1542,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					else if ((ifh.Cwt == 0x0214) && (ifh.Rsvd == Common.Magic4('C', 'H', 'B', 'I')))
 						tracker_Name = "Chibi Tracker";
 					else
+					{
 						tracker_Name = string.Format("Impulse Tracker {0}.{1:x2}", (ifh.Cwt & 0x0f00) >> 8, ifh.Cwt & 0xff);
 
+						if (ifh.Cwt < 0x104)
+							m.Flow_Mode = FlowMode_Flag.Mode_IT_100;
+						else if (ifh.Cwt < 0x210)
+							m.Flow_Mode = FlowMode_Flag.Mode_IT_104;
+					}
 					break;
 				}
 
@@ -1546,6 +1559,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					if (ifh.Cwt == 0x0888)
 					{
 						tracker_Name = "OpenMPT 1.17";
+
+						// TODO: 1.17.02.49 onward implement IT 2.10+
+						// Pattern Loop when the IT compatibility flag is set
+						// (by default, it is not set)
+						m.Flow_Mode = FlowMode_Flag.Mode_MPT_116;
 						is_Mpt_116 = true;
 					}
 					else if (ifh.Cwt == 0x7fff)
@@ -1860,7 +1878,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			}
 
 			xxi.Nsm = k;
-			xxi.Vol = i2h.Gbv >> 1;
+			xxi.Vol = Math.Min(i2h.Gbv, (byte)128) >> 1;
 
 			if (k != 0)
 			{
@@ -2067,7 +2085,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					if (sub.Sid == i)
 					{
 						sub.Vol = ish.Vol;
-						sub.Gvl = ish.Gvl;
+						sub.Gvl = Math.Min(ish.Gvl, (byte)64);
 						sub.Vra = ish.Vis;	// Sample to sub-instrument vibrato
 						sub.Vde = ish.Vid << 1;
 						sub.Vwf = ish.Vit;

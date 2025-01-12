@@ -30,7 +30,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 			Xmp_State state = (Xmp_State)ctx.Xmp_Get_Player(Xmp_Player.State);
 			Assert.AreEqual(Xmp_State.Unloaded, state, "State error");
 
-			LoadModule(dataDirectory, "Ode2Ptk.s3m", ctx);
+			LoadModule(dataDirectory, "Ode2Ptk.mod", ctx);
 
 			state = (Xmp_State)ctx.Xmp_Get_Player(Xmp_Player.State);
 			Assert.AreEqual(Xmp_State.Loaded, state, "State error");

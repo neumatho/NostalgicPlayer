@@ -15,8 +15,9 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_OpenMpt_Xm
 	{
 		/********************************************************************/
 		/// <summary>
-		/// E1x, E2x, X1x and X2x memory should not be shared. Both channels
-		/// should sound identical if effect memory is applied correctly
+		/// 1xx, 2xx, E1x, E2x, X1x and X2x memory should not be shared.
+		/// Both channels should sound identical if effect memory is applied
+		/// correctly
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]

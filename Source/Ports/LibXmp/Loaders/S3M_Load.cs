@@ -614,6 +614,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			}
 
 			m.C4Rate = Constants.C4_Ntsc_Rate;
+			m.Flow_Mode = FlowMode_Flag.Mode_ST3_321;
 
 			if (sfh.Version == 0x1300)
 				m.Quirk |= Quirk_Flag.VsAll;
@@ -633,6 +634,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 							// MPT 1.0 alpha5 doesn't set the stereo flag, but MPT 1.0 alpha6 does
 							tracker_Name = "ModPlug Tracker 1.0 alpha";
 						}
+
+						m.Flow_Mode = FlowMode_Flag.Mode_MPT_116;
 					}
 					else if ((sfh.Version == 0x1320) && (sfh.Special == 0) && (sfh.Uc == 0) && (sfh.Flags == S3M_Flag.None) && (sfh.Dp == 0))
 					{
@@ -645,6 +648,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					{
 						tracker_Name = string.Format("Scream Tracker {0}.{1:x2}", (sfh.Version & 0x0f00) >> 8, sfh.Version & 0xff);
 						m.Quirk |= Quirk_Flag.St3Bugs;
+
+						if (sfh.Version < 0x1303)
+							m.Flow_Mode = FlowMode_Flag.Mode_ST3_301;
 					}
 					break;
 				}
@@ -654,13 +660,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					if (sfh.Version == 0x2013)
 						tracker_Name = "PlayerPRO";		// PlayerPRO on Intel doesn't byte swap the tracker ID bytes
 					else
+					{
 						tracker_Name = string.Format("Imago Orpheus {0}.{1:x2}", (sfh.Version & 0x0f00) >> 8, sfh.Version & 0xff);
-
+						m.Flow_Mode = FlowMode_Flag.Mode_Orpheus;
+					}
 					break;
 				}
 
 				case 3:
 				{
+					m.Flow_Mode = FlowMode_Flag.Mode_IT_210;
+
 					if (sfh.Version == 0x3216)
 						tracker_Name = "Impulse Tracker 2.14v3";
 					else if (sfh.Version == 0x3217)

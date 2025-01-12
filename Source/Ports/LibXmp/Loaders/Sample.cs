@@ -98,9 +98,33 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return 0;
 			}
 
+			// Patches with samples
+			// Allocate extra sample for interpolation
+			c_int byteLen = xxs.Len;
+			c_int frameLen = 1;
+			c_int extraLen = 4;
+
+			if ((xxs.Flg & Xmp_Sample_Flag._16Bit) != 0)
+			{
+				byteLen *= 2;
+				extraLen *= 2;
+				frameLen *= 2;
+			}
+
+			if ((xxs.Flg & Xmp_Sample_Flag.Stereo) != 0)
+			{
+				byteLen *= 2;
+				extraLen *= 2;
+				frameLen *= 2;
+				channels = 2;
+			}
+
 			// If this sample starts at or after EOF, skip it entirely
 			if ((~flags & Sample_Flag.NoLoad) != 0)
 			{
+				c_long remaining = 0;
+				c_long over = 0;
+
 				if (f == null)
 					return 0;
 
@@ -111,8 +135,43 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 					return 0;
 
 				// If this sample goes past EOF, truncate it
-				if (((file_Pos + xxs.Len) > file_Len) && ((~flags & Sample_Flag.Adpcm) != 0))
-					xxs.Len = file_Len - file_Pos;
+				remaining = file_Len - file_Pos;
+
+				if ((flags & Sample_Flag.Adpcm) != 0)
+				{
+					c_long bound = 16 + ((byteLen + 1) >> 1);
+
+					if (remaining < 16)
+						return 0;
+
+					if (bound > remaining)
+					{
+						over = bound - remaining;
+						byteLen = (remaining - 16) << 1;
+					}
+				}
+				else
+				{
+					if (byteLen > remaining)
+					{
+						over = byteLen - remaining;
+						byteLen = remaining;
+					}
+				}
+
+				if (over != 0)
+				{
+					// Trim extra bytes non-aligned to sample frame
+					byteLen -= byteLen & (frameLen - 1);
+
+					xxs.Len = byteLen;
+
+					if ((xxs.Flg & Xmp_Sample_Flag._16Bit) != 0)
+						xxs.Len >>= 1;
+
+					if ((xxs.Flg & Xmp_Sample_Flag.Stereo) != 0)
+						xxs.Len >>= 1;
+				}
 			}
 
 			// Loop parameters sanity check
@@ -128,12 +187,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				xxs.Flg &= ~(Xmp_Sample_Flag.Loop | Xmp_Sample_Flag.Loop_BiDir);
 			}
 
-			// Patches with samples
-			// Allocate extra sample for interpolation
-			c_int byteLen = xxs.Len;
-			c_int frameLen = 1;
-			c_int extraLen = 4;
-
 			// Disable bidirectional loop flag if sample is not looped
 			if ((xxs.Flg & Xmp_Sample_Flag.Loop_BiDir) != 0)
 			{
@@ -145,21 +198,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			{
 				if ((~xxs.Flg & Xmp_Sample_Flag.SLoop) != 0)
 					xxs.Flg &= ~Xmp_Sample_Flag.SLoop_BiDir;
-			}
-
-			if ((xxs.Flg & Xmp_Sample_Flag._16Bit) != 0)
-			{
-				byteLen *= 2;
-				extraLen *= 2;
-				frameLen *= 2;
-			}
-
-			if ((xxs.Flg & Xmp_Sample_Flag.Stereo) != 0)
-			{
-				byteLen *= 2;
-				extraLen *= 2;
-				frameLen *= 2;
-				channels = 2;
 			}
 
 			// Add guard bytes before the buffer for higher order interpolation
@@ -320,10 +358,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			for (c_int i = 0; i < l; i++)
 			{
 				uint8 x = p[i];
-				p[i] = (uint8)vdic_Table[x >> 1];
-
-				if ((x & 0x01) != 0)
-					p[i] = (uint8)((int8)p[i] * -1);
+				int8 amp = vdic_Table[x >> 1];
+				p[i] = (uint8)((x & 0x01) != 0 ? -amp : amp);
 			}
 		}
 

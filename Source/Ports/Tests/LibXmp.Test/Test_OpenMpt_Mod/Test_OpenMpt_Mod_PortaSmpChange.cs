@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
 
 namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_OpenMpt_Mod
 {
@@ -24,17 +25,20 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_OpenMpt_Mod
 		///   end (ProTracker 1/2). If the sample loops, the new sample
 		///   should be activated after the loop ended.
 		///
-		/// o the new sample should be applied (ProTracker 3, various other
-		///   players)
+		/// o the old sample should keep playing (various other players)
 		///
-		/// OpenMPT implements the second option, which is also how it works
-		/// in e.g. XM and S3M files
+		/// OpenMPT implements the second option in normal playback mode and
+		/// the first option in ProTracker 1/2 mode
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
 		public void Test_OpenMpt_Mod_PortaSmpChange()
 		{
-			Compare_Mixer_Data(Path.Combine(dataDirectory, "OpenMpt", "Mod"), "PortaSmpChange.mod", "PortaSmpChange.data");
+			// Test generic MOD player behavior
+			Compare_Mixer_Data_Player_Mode(Path.Combine(dataDirectory, "OpenMpt", "Mod"), "PortaSmpChange.mod", "PortaSmpChange.data", Xmp_Mode.Mod);
+
+			// Test ProTracker 1/2 behavior
+			Compare_Mixer_Data(Path.Combine(dataDirectory, "OpenMpt", "Mod"), "PortaSmpChange.mod", "PortaSmpChange_PT.data");
 		}
 	}
 }

@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Player
 			Ports.LibXmp.LibXmp opaque = Ports.LibXmp.LibXmp.Xmp_Create_Context();
 			Assert.IsNotNull(opaque, "Can't create context");
 
-			c_int ret = LoadModule(dataDirectory, "Ode2Ptk.s3m", opaque);
+			c_int ret = LoadModule(dataDirectory, "Ode2Ptk.mod", opaque);
 			Assert.AreEqual(0, ret, "Can't load module");
 
 			opaque.Xmp_Start_Player(44100, 0);

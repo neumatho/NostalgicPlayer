@@ -187,7 +187,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		{
 			Module_Data m = ctx.M;
 
-			if ((sub != null) && (note >= 0))
+			// TODO: blocking period updates on whether or not the event has a
+			//       valid instrument seems suspicious, but almost every format uses
+			//       this. Only allow Protracker to update without it for now
+			if ((sub == null) && !Common.Has_Quirk(m, Quirk_Flag.ProTrack))
+				return;
+
+			if (note >= 0)
 			{
 				c_double per = lib.period.LibXmp_Note_To_Period(note, xc.FineTune, xc.Per_Adj);
 
@@ -255,6 +261,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private bool Is_Mod_Retrig(byte x, byte p)
+		{
+			return (x == Effects.Fx_Extended) && (Common.Msn(p) == Effects.Ex_Retrig) && (Common.Lsn(p) != 0);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private void Set_Patch(c_int chn, c_int ins, c_int smp, c_int note)
 		{
 			lib.virt.LibXmp_Virt_SetPatch(chn, ins, smp, note, 0, 0, 0, 0);
@@ -273,16 +292,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Module_Data m = ctx.M;
 			Xmp_Module mod = m.Mod;
 			Channel_Data xc = p.Xc_Data[chn];
+			Xmp_SubInstrument sub = null;
 			bool new_Invalid_Ins = false;
-			Xmp_SubInstrument sub;
+			bool new_Swap_Ins = false;
 
 			xc.Flags = Channel_Flag.None;
 			c_int note = -1;
 			bool is_TonePorta = false;
+			bool is_Retrig = false;
 			bool use_Ins_Vol = false;
 
 			if (Is_TonePorta(e.FxT) || Is_TonePorta(e.F2T))
 				is_TonePorta = true;
+
+			if (Is_Mod_Retrig(e.FxT, e.FxP) || Is_Mod_Retrig(e.F2T, e.F2P))
+				is_Retrig = true;
 
 			// Check instrument
 			if (e.Ins != 0)
@@ -299,6 +323,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				if (Is_Valid_Instrument(mod, ins))
 				{
 					sub = Get_SubInstrument(ins, e.Note - 1);
+
+					if (sub != null)
+					{
+						new_Swap_Ins = true;
+
+						// Finetune is always loaded, but only applies
+						// when the period is updated by a note/porta
+						// (OpenMPT finetune.mod, PortaSwapPT.mod)
+						if (Common.Has_Quirk(m, Quirk_Flag.ProTrack))
+						{
+							xc.FineTune = sub.Fin;
+							xc.Ins = ins;
+						}
+					}
 
 					if (is_TonePorta)
 					{
@@ -317,18 +355,26 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						xc.Ins = ins;
 						xc.Ins_Fade = mod.Xxi[ins].Rls;
-
-						if (sub != null)
-						{
-							if (Common.Has_Quirk(m, Quirk_Flag.ProTrack))
-								xc.FineTune = sub.Fin;
-						}
 					}
 				}
 				else
 				{
 					new_Invalid_Ins = true;
-					lib.virt.LibXmp_Virt_ResetChannel(chn);
+
+					// Invalid instruments do not reset the channel in
+					// Protracker; instead, they set the current sample
+					// to the invalid sample, which stops the current
+					// sample at the end of its loop.
+					//
+					// OpenMPT PTInstrSwap.mod: uses a null sample to pause
+					// a looping sample, plays several on a channel with no note.
+					//
+					// OpenMPT PTSwapEmpty.mod: repeatedly pauses and
+					// restarts a sample using a null sample
+					if (!Common.Has_Quirk(m, Quirk_Flag.ProTrack) || is_Retrig)
+						lib.virt.LibXmp_Virt_ResetChannel(chn);
+					else
+						lib.virt.LibXmp_Virt_QueuePatch(chn, -1, -1, 0);
 				}
 			}
 
@@ -349,19 +395,20 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 					sub = Get_SubInstrument(xc.Ins, xc.Key);
 
-					if (!new_Invalid_Ins && (sub != null))
+					if (sub != null)
 					{
 						c_int transp = mod.Xxi[xc.Ins].Map[xc.Key].Xpo;
 
 						note = xc.Key + sub.Xpo + transp;
 						c_int smp = sub.Sid;
 
-						if (!Is_Valid_Sample(mod, smp))
+						if (new_Invalid_Ins || !Is_Valid_Sample(mod, smp))
 							smp = -1;
 
 						if ((smp >= 0) && (smp < mod.Smp))
 						{
 							Set_Patch(chn, xc.Ins, smp, note);
+							new_Swap_Ins = false;
 							xc.Smp = smp;
 						}
 					}
@@ -369,8 +416,28 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					{
 						xc.Flags = Channel_Flag.None;
 						use_Ins_Vol = false;
+						note = xc.Key;
 					}
 				}
+
+				if (note >= 0)
+				{
+					xc.Note = note;
+					Set_Note(xc, Note_Flag.Set);
+				}
+			}
+
+			// Protracker 1/2 sample swap occurs when a sample number is
+			// encountered without a note or with a note and toneporta. The new
+			// instrument is switched to when the current sample reaches its loop
+			// end. A valid note must have been played in this channel before.
+			//
+			// Empty samples can also be set, which stops the sample at the end
+			// of its loop (see above)
+			if (new_Swap_Ins && (sub != null) && Common.Has_Quirk(m, Quirk_Flag.ProTrack) && Test_Note(xc, Note_Flag.Set))
+			{
+				lib.virt.LibXmp_Virt_QueuePatch(chn, e.Ins - 1, sub.Sid, xc.Note);
+				xc.Smp = sub.Sid;
 			}
 
 			sub = Get_SubInstrument(xc.Ins, xc.Key);
@@ -399,10 +466,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (sub == null)
 				return 0;
 
-			if (note >= 0)
-			{
-				xc.Note = note;
+			if ((note >= 0) && !new_Invalid_Ins)
 				lib.virt.LibXmp_Virt_VoicePos(chn, xc.Offset.Val);
+			else if (new_Swap_Ins && is_Retrig && Common.Has_Quirk(m, Quirk_Flag.ProTrack))
+			{
+				// Protracker: an instrument number with no note and retrigger
+				// triggers the new sample on tick 0. Other effects that set
+				// RETRIG should not. (OpenMPT InstrSwapRetrigger.mod)
+				lib.virt.LibXmp_Virt_VoicePos(chn, 0);
 			}
 
 			if (Test(xc, Channel_Flag.Offset))

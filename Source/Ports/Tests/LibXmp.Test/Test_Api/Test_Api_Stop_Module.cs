@@ -24,7 +24,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Api
 			Ports.LibXmp.LibXmp ctx = Ports.LibXmp.LibXmp.Xmp_Create_Context();
 			c_int ret;
 
-			LoadModule(dataDirectory, "Ode2Ptk.s3m", ctx);
+			LoadModule(dataDirectory, "Ode2Ptk.mod", ctx);
 			ctx.Xmp_Start_Player(8000, 0);
 
 			for (c_int i = 0; i < 100; i++)

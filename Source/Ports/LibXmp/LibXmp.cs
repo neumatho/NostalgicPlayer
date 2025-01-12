@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			extras = new Extras(ctx);
 			virt = new Virtual(this, ctx);
 			common = new Loaders.Common(this);
-			scan = new Scan(ctx);
+			scan = new Scan(this, ctx);
 			period = new Period(ctx);
 			lfo = new Lfo(ctx);
 			mixer = new Mixer(this, ctx);

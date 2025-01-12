@@ -67,6 +67,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers
 		public const uint8 Ex_InvLoop = 0x0f;
 
 		/// <summary>
+		/// XM extended effects
+		/// </summary>
+		public const uint8 Xx_Xf_Porta_Up = 0x01;
+		public const uint8 Xx_Xf_Porta_Dn = 0x02;
+
+		/// <summary>
 		/// Oktalyzer effects
 		/// </summary>
 		public const uint8 Fx_Okt_Arp3 = 0x70;
@@ -113,8 +119,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers
 		public const uint8 Fx_Far_Delay = 0x6e;			// FAR note offset
 
 		/// <summary>
-		/// Other frequency based effects (ULT, etc)
+		/// ULT effects
 		/// </summary>
+		public const uint8 Fx_Ult_Tempo = 0x5f;
 		public const uint8 Fx_Ult_TPorta = 0x6f;
 
 		/// <summary>
@@ -168,6 +175,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers
 		public const uint8 Fx_Pitch_Add = 0xb8;			// SFX add steps to current note
 		public const uint8 Fx_Pitch_Sub = 0xb9;			// SFX add steps to current note
 		public const uint8 Fx_Line_Jump = 0xba;			// Archimedes jump to line in current order
+		public const uint8 Fx_Retrig = 0xbb;			// Retrigger with extended range (LIQ, DSym)
 
 		public const uint8 Fx_Surround = 0x8d;			// S3M/IT
 		public const uint8 Fx_Reverse = 0x8f;			// XM/IT/others: play forward/reverse

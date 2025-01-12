@@ -34,9 +34,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		ProTrack = (1 << 2),
 
 		/// <summary>
-		/// Octalyser (Atari) loop mode
+		/// Retrigger one time only
 		/// </summary>
-		OctalyserLoop = (1 << 3),
+		RtOnce = (1 << 3),
 
 		/// <summary>
 		/// Scream Tracker 3 bug compatibility

@@ -390,6 +390,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 
 			m.Quirk |= Quirk_Flag.ArpMem | Quirk_Flag.FineFx;
 
+			// BWSB actually gets several aspects of this wrong, but this
+			// seems to be the intent. No original GDMs exist so it's not
+			// likely there's a reason to simulate its mistakes here
+			m.Flow_Mode = FlowMode_Flag.Mode_ST3_321;
+
 			return 0;
 		}
 

@@ -51,6 +51,12 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Fuzzer
 			// loop's hang detection and leave its position at a negative value,
 			// at which point sustain release can be used to cause trouble
 			Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_It_Sustain_Bidi3.it", sequence_Long, 4000, Xmp_Format.Default, Xmp_Interp.Nearest);
+
+			// This module encountered a similar issue to the sustain/bidi
+			// bugs--the position advances far past the end of the sample at
+			// very low sample rates, which the effect S9F Reverse can then
+			// cause a crash at
+			Compare_Playback(Path.Combine(dataDirectory, "F"), "Play_It_Reverse_Past_End.it", sequence_Long, 4000, Xmp_Format.Default, Xmp_Interp.Nearest);
 		}
 	}
 }

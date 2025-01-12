@@ -200,28 +200,28 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 		/********************************************************************/
 		/// <summary>
-		/// Extra fine portamento
+		/// Extra fine portamento up
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private void Do_Fx_Xf_Porta(Channel_Data xc, uint8 fxP)
+		private void Do_Fx_Xf_Porta_Up(Channel_Data xc, uint8 fxP)
 		{
 			Set(xc, Channel_Flag.Fine_Bend);
+			xc.Freq.FSlide = -0.25 * fxP;
+		}
 
-			switch (Common.Msn(fxP))
-			{
-				case 1:
-				{
-					xc.Freq.FSlide = -0.25 * Common.Lsn(fxP);
-					break;
-				}
 
-				case 2:
-				{
-					xc.Freq.FSlide = 0.25 * Common.Lsn(fxP);
-					break;
-				}
-			}
+
+		/********************************************************************/
+		/// <summary>
+		/// Extra fine portamento down
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void Do_Fx_Xf_Porta_Dn(Channel_Data xc, uint8 fxP)
+		{
+			Set(xc, Channel_Flag.Fine_Bend);
+			xc.Freq.FSlide = 0.25 * fxP;
 		}
 
 
@@ -280,6 +280,24 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				p.Speed = fxP;
 				p.St26_Speed = 0;
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Retrigger
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private void Do_Fx_Retrigger(Channel_Data xc, uint8 fxP, Module_Data m)
+		{
+			Set(xc, Channel_Flag.Retrig);
+
+			xc.Retrig.Val = fxP;
+			xc.Retrig.Count = fxP + 1;
+			xc.Retrig.Type = 0;
+			xc.Retrig.Limit = Common.Has_Quirk(m, Quirk_Flag.RtOnce) ? 1 : 0;
 		}
 
 
@@ -391,32 +409,32 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 							case 0xe:
 							{
 								fxP &= 0x0f;
-								fxP |= 0x10;
-								Do_Fx_Xf_Porta(xc, fxP);
+								Do_Fx_Xf_Porta_Up(xc, fxP);
 								return;
 							}
 						}
 					}
 
-					Set(xc, Channel_Flag.PitchBend);
-
 					if (fxP != 0)
 					{
+						Set(xc, Channel_Flag.PitchBend);
+
 						xc.Freq.Slide = -fxP;
 
 						if (Common.Has_Quirk(m, Quirk_Flag.UniSld))
 							xc.Porta.Memory = fxP;
 					}
-					else if (xc.Freq.Slide > 0)
-						xc.Freq.Slide *= -1;
-
 					break;
 				}
 
 				// Portamento down
 				case Effects.Fx_Porta_Dn:
 				{
-					Effect_Memory(m, xc, ref fxP, ref xc.Freq.Memory);
+					// FT2 has separate up and down memory
+					if (Common.Has_Quirk(m, Quirk_Flag.Ft2Bugs))
+						Effect_Memory(m, xc, ref fxP, ref xc.Freq.Down_Memory);
+					else
+						Effect_Memory(m, xc, ref fxP, ref xc.Freq.Memory);
 
 					if (Common.Has_Quirk(m, Quirk_Flag.FineFx) && ((fNum == 0) || !Common.Has_Quirk(m, Quirk_Flag.ItVPor)))
 					{
@@ -432,25 +450,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 							case 0xe:
 							{
 								fxP &= 0x0f;
-								fxP |= 0x20;
-								Do_Fx_Xf_Porta(xc, fxP);
+								Do_Fx_Xf_Porta_Dn(xc, fxP);
 								return;
 							}
 						}
 					}
 
-					Set(xc, Channel_Flag.PitchBend);
-
 					if (fxP != 0)
 					{
+						Set(xc, Channel_Flag.PitchBend);
+
 						xc.Freq.Slide = fxP;
 
 						if (Common.Has_Quirk(m, Quirk_Flag.UniSld))
 							xc.Porta.Memory = fxP;
 					}
-					else if (xc.Freq.Slide < 0)
-						xc.Freq.Slide *= -1;
-
 					break;
 				}
 
@@ -744,58 +758,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						// Loop pattern
 						case Effects.Ex_Pattern_Loop:
 						{
-							bool is_Octalyser = Common.Has_Quirk(m, Quirk_Flag.OctalyserLoop);
-
-							// Atari Octalyser seems to have the loop arguments as global instead
-							// of channel separated. At least what I can see from 8er-mod.
-							//
-							// The replay sources that I got my hands on, does not support E6x, so
-							// I can not verify it. However, Dammed Illusion have the same E6x on
-							// multiple channels, so that's why the "Loop_Set" has been introduced
-							// so the loop count isn't decremented too many times
-							if (is_Octalyser)
-								chn = 0;
-
-							if (fxP == 0)
-							{
-								// Mark start of loop
-								f.Loop[chn].Start = p.Row;
-
-								if (Common.Has_Quirk(m, Quirk_Flag.Ft2Bugs))
-									p.Flow.JumpLine = p.Row;
-							}
-							else
-							{
-								// End of loop
-								if (f.Loop[chn].Count != 0)
-								{
-									if (!is_Octalyser || !f.Loop_Set)
-									{
-										f.Loop_Set = true;
-
-										if (--f.Loop[chn].Count != 0)
-										{
-											// **** H:FIXME ****
-											f.Loop_Chn = ++chn;
-										}
-										else
-										{
-											if (Common.Has_Quirk(m, Quirk_Flag.S3MLoop))
-												f.Loop[chn].Start = p.Row + 1;
-										}
-									}
-								}
-								else
-								{
-									if (!is_Octalyser || !f.Loop_Set)
-									{
-										f.Loop_Set = true;
-
-										f.Loop[chn].Count = fxP;
-										f.Loop_Chn = ++chn;
-									}
-								}
-							}
+							LibXmp_Process_Pattern_Loop(f, chn, p.Row, fxP);
 							break;
 						}
 
@@ -816,12 +779,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 						// Retrig note
 						case Effects.Ex_Retrig:
 						{
-							Set(xc, Channel_Flag.Retrig);
-
-							xc.Retrig.Val = fxP;
-							xc.Retrig.Count = Common.Lsn(xc.Retrig.Val) + 1;
-							xc.Retrig.Type = 0;
-							xc.Retrig.Limit = 0;
+							Do_Fx_Retrigger(xc, fxP, m);
 							break;
 						}
 
@@ -1047,7 +1005,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				// Pattern break with hex parameter
 				case Effects.Fx_It_Break:
 				{
-					if (f.Loop_Chn == 0)
+					// IT break is not applied if a lower channel looped (2.00+).
+					// (Labyrinth of Zeux ZX_11.it "Raceway")
+					if (f.Loop_Dest < 0)
 					{
 						p.Flow.PBreak = true;
 						p.Flow.JumpLine = fxP;
@@ -1194,12 +1154,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 					if (fxP != 0)
 					{
-						xc.Retrig.Val = fxP;
-						xc.Retrig.Type = Common.Msn(xc.Retrig.Val);
+						xc.Retrig.Val = Common.Lsn(fxP);
+						xc.Retrig.Type = Common.Msn(fxP);
 					}
 
 					if (note != 0)
-						xc.Retrig.Count = Common.Lsn(xc.Retrig.Val) + 1;
+						xc.Retrig.Count = xc.Retrig.Val + 1;
 
 					xc.Retrig.Limit = 0;
 
@@ -1233,7 +1193,27 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				// Extra fine portamento
 				case Effects.Fx_Xf_Porta:
 				{
-					Do_Fx_Xf_Porta(xc, fxP);
+					h = Common.Msn(fxP);
+					fxP &= 0x0f;
+
+					switch (h)
+					{
+						// Extra fine portamento up
+						case Effects.Xx_Xf_Porta_Up:
+						{
+							Effect_Memory(m, xc, ref fxP, ref xc.Fine_Porta.Xf_Up_Memory);
+							Do_Fx_Xf_Porta_Up(xc, fxP);
+							break;
+						}
+
+						// Extra fine portamento down
+						case Effects.Xx_Xf_Porta_Dn:
+						{
+							Effect_Memory(m, xc, ref fxP, ref xc.Fine_Porta.Xf_Dn_Memory);
+							Do_Fx_Xf_Porta_Dn(xc, fxP);
+							break;
+						}
+					}
 					break;
 				}
 
@@ -1848,6 +1828,27 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				// ULT effects
 
+				// ULT tempo
+				case Effects.Fx_Ult_Tempo:
+				{
+					// Has unusual semantics and is hard to split into multiple
+					// effects, due to ULT's two effects lanes per channel:
+					// 
+					// 00:    Reset both speed and BPM to the default 6/125.
+					// 01-2f: Set speed
+					// 30-ff: Set BPM (CIA compatible)
+					if (fxP == 0)
+					{
+						p.Speed = 6;
+						p.St26_Speed = 0;
+						fxP = 125;
+					}
+					else if (fxP < 0x30)
+						goto case Effects.Fx_S3M_Speed;
+
+					goto case Effects.Fx_S3M_Bpm;
+				}
+
 				// ULT tone portamento
 				case Effects.Fx_Ult_TPorta:
 				{
@@ -1889,6 +1890,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 					p.Flow.JumpLine = fxP;
 					p.Flow.Jump_In_Pat = p.Ord;
+					break;
+				}
+
+				// Retrigger with extended range
+				case Effects.Fx_Retrig:
+				{
+					Do_Fx_Retrigger(xc, fxP, m);
 					break;
 				}
 

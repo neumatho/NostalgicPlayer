@@ -223,7 +223,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 		public (
 			c_int Slide,		// Frequency slide value
 			c_double FSlide,	// Fine frequency slide value
-			c_int Memory		// Portamento effect memory
+			c_int Memory,		// Portamento effect memory
+			c_int Down_Memory	// Portamento down effect memory (XM)
 		) Freq;
 
 		public (
@@ -236,7 +237,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Player
 
 		public (
 			c_int Up_Memory,	// FT2 has separate memories for these
-			c_int Down_Memory	// cases (see Porta-LinkMem.xm)
+			c_int Down_Memory,	// cases (see Porta-LinkMem.xm)
+			c_int Xf_Up_Memory,
+			c_int Xf_Dn_Memory
 		) Fine_Porta;
 
 		public (

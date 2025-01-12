@@ -3,26 +3,24 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_OpenMpt_Xm
+namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 {
 	/// <summary>
 	/// 
 	/// </summary>
-	public partial class Test_OpenMpt_Xm
+	public partial class Test_Effect
 	{
 		/********************************************************************/
 		/// <summary>
-		/// Arpeggio parameters are clamped differently than the base note.
-		/// Not sure how this worked, it has been ages since I fixed this
+		/// Test Ultra Tracker tempo effects
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
-		public void Test_OpenMpt_Xm_ArpeggioClamp()
+		public void Test_Effect_Pattern_Loop_It104()
 		{
-			Compare_Mixer_Data(Path.Combine(dataDirectory, "OpenMpt", "Xm"), "ArpeggioClamp.xm", "ArpeggioClamp.data");
+			Compare_Mixer_Data(dataDirectory, "Pattern_Loop_It104.it", "Pattern_Loop_It104.data");
 		}
 	}
 }

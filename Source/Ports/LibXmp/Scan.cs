@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
@@ -21,6 +22,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 		private const c_int S3M_End = 0xff;
 
+		private readonly LibXmp lib;
 		private readonly Xmp_Context ctx;
 
 		/********************************************************************/
@@ -28,8 +30,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public Scan(Xmp_Context ctx)
+		public Scan(LibXmp libXmp, Xmp_Context ctx)
 		{
+			lib = libXmp;
 			this.ctx = ctx;
 		}
 
@@ -140,9 +143,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Xmp_Module mod = m.Mod;
 			Xmp_Track[] tracks = new Xmp_Track[Constants.Xmp_Max_Channels];
 			c_int pDelay = 0;
-			c_int[] loop_Count = new c_int[Constants.Xmp_Max_Channels];
-			c_int[] loop_Row = new c_int[Constants.Xmp_Max_Channels];
+			Pattern_Loop[] loop = ArrayHelper.InitializeArray<Pattern_Loop>(Constants.Xmp_Max_Channels);
 			c_int pat;
+			c_double time_calc;
 
 			// Was 255, but Global trash goes to 318.
 			// Higher limit for MEDs, defiance.crybaby.5 has blocks with 2048+ rows
@@ -154,17 +157,27 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			for (c_int i = 0; i < mod.Len; i++)
 			{
 				pat = mod.Xxo[i];
-				Array.Clear(m.Scan_Cnt[i], 0, pat >= mod.Pat ? 1 : mod.Xxp[pat].Rows != 0 ? mod.Xxp[pat].Rows : 1);
+				CMemory.MemSet<uint8>(m.Scan_Cnt[i], 0, pat >= mod.Pat ? 1 : mod.Xxp[pat].Rows != 0 ? mod.Xxp[pat].Rows : 1);
 			}
+
+			// Use temporary flow control so the scan can borrow the player's
+			// Pattern Loop Handler
+			Flow_Control f = new Flow_Control();
+
+			f.Loop = loop;
 
 			for (c_int i = 0; i < mod.Chn; i++)
 			{
-				loop_Count[i] = 0;
-				loop_Row[i] = -1;
+				loop[i].Start = 0;
+				loop[i].Count = 0;
 			}
 
-			c_int loop_Num = 0;
-			c_int loop_Chn = -1;
+			f.Loop_Dest = -1;
+			f.Loop_Param = -1;
+			f.Loop_Start = -1;
+			f.Loop_Count = 0;
+			f.Loop_Active_Num = 0;
+
 			c_int line_Jump = 0;
 
 			c_int gvl = mod.Gvl;
@@ -275,6 +288,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				if (break_Row >= mod.Xxp[pat].Rows)
 					break_Row = 0;
 
+				// Changing patterns may reset loop vars
+				if (Common.Has_Flow_Mode(m, FlowMode_Flag.Loop_Pattern_Reset))
+				{
+					f.Loop_Start = -1;
+					f.Loop_Count = 0;
+
+					for (c_int i = 0; i < mod.Chn; i++)
+					{
+						f.Loop[i].Start = 0;
+						f.Loop[i].Count = 0;
+					}
+				}
+
 				// Loops can cross pattern boundaries, so check if we're not looping
 				if ((m.Scan_Cnt[ord][break_Row] != 0) && !inside_Loop)
 					break;
@@ -289,7 +315,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					info.Gvl = gvl;
 					info.Bpm = bpm;
 					info.Speed = speed;
-					info.Time = (c_int)(time + m.Time_Factor * frame_Count * base_Time / bpm);
+
+					// TODO: double ord_data::time
+					time_calc = time + m.Time_Factor * frame_Count * base_Time / bpm;
+					info.Time = time_calc > c_int.MaxValue ? c_int.MaxValue : (c_int)time_calc;
+
 					info.St26_Speed = st26_Speed;
 				}
 
@@ -312,8 +342,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				for (; row < last_Row; row++, row_Count++, row_Count_Total++)
 				{
-					bool loop_Set = false;
-
 					// Prevent crashes caused by large softmixer frames
 					if (bpm < Constants.Xmp_Min_Bpm)
 						bpm = Constants.Xmp_Min_Bpm;
@@ -332,7 +360,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					if (row_Count_Total > row_Limit)
 						goto End_Module;
 
-					if ((loop_Num == 0) && (line_Jump == 0) && (m.Scan_Cnt[ord][row] != 0))
+					if ((f.Loop_Active_Num == 0) && (line_Jump == 0) && (m.Scan_Cnt[ord][row] != 0))
 					{
 						row_Count--;
 						goto End_Module;
@@ -496,6 +524,56 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 							}
 						}
 
+						// ULT tempo processing
+
+						if ((f1 == Effects.Fx_Ult_Tempo) || (f2 == Effects.Fx_Ult_Tempo))
+						{
+							c_int parm2 = 0;
+							parm = 0;
+
+							if (f2 == Effects.Fx_Ult_Tempo)
+							{
+								if (p2 == 0)
+								{
+									parm = 6;
+									parm2 = 125;
+								}
+								else if (p2 < 0x30)
+									parm = p2;
+								else
+									parm2 = p2;
+							}
+
+							if (f1 == Effects.Fx_Ult_Tempo)
+							{
+								if (p1 == 0)
+								{
+									parm = 6;
+									parm2 = 125;
+								}
+								else if (p1 < 0x30)
+									parm = p1;
+								else
+									parm2 = p1;
+							}
+
+							frame_Count += row_Count * speed;
+							row_Count = 0;
+
+							if (parm > 0)
+							{
+								speed = parm;
+								st26_Speed = 0;
+							}
+
+							if (parm2 > 0)
+							{
+								time += m.Time_Factor * frame_Count * base_Time / bpm;
+								frame_Count = 0;
+								bpm = parm2;
+							}
+						}
+
 						if (((f1 == Effects.Fx_S3M_Speed) && (p1 != 0)) || ((f2 == Effects.Fx_S3M_Speed) && (p2 != 0)))
 						{
 							parm = (f1 == Effects.Fx_S3M_Speed) ? p1 : p2;
@@ -575,7 +653,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 							frame_Count += (p1 & 0x0f) * speed;
 						}
 
-						if (f1 == Effects.Fx_It_Break)
+						// IT break is not applied if a lower channel looped (2.00+).
+						// (Labyrinth of Zeux ZX_11.it "Raceway")
+						if ((f1 == Effects.Fx_It_Break) && (f.Loop_Dest < 0))
 						{
 							break_Row = p1;
 							last_Row = 0;
@@ -618,73 +698,36 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 							if ((parm >> 4) == Effects.Ex_Patt_Delay)
 							{
 								if ((m.Read_Event_Type != Read_Event.St3) || (pDelay == 0))
-								{
 									pDelay = parm & 0x0f;
-									frame_Count += pDelay * speed;
-								}
 							}
 
 							if ((parm >> 4) == Effects.Ex_Pattern_Loop)
 							{
-								bool is_Octalyser = Common.Has_Quirk(m, Quirk_Flag.OctalyserLoop);
+								// QUIRK_FT2BUGS may set break_row
+								f.JumpLine = break_Row;
+								lib.player.LibXmp_Process_Pattern_Loop(f, chn, row, Common.Lsn(parm));
+								break_Row = f.JumpLine;
 
-								c_int chn_To_Use = is_Octalyser ? 0 : chn;
-
-								parm &= 0x0f;
-								if (parm != 0)
-								{
-									// Loop end
-									if (loop_Count[chn_To_Use] != 0)
-									{
-										if (!is_Octalyser || !loop_Set)
-										{
-											loop_Set = true;
-
-											if (--loop_Count[chn_To_Use] != 0)
-											{
-												// Next iteration
-												loop_Chn = chn_To_Use;
-											}
-											else
-											{
-												// Finish looping
-												loop_Num--;
-												inside_Loop = false;
-
-												if ((m.Quirk & Quirk_Flag.S3MLoop) != 0)
-													loop_Row[chn_To_Use] = row;
-											}
-										}
-									}
-									else
-									{
-										if (!is_Octalyser || !loop_Set)
-										{
-											loop_Set = true;
-
-											loop_Count[chn_To_Use] = parm;
-											loop_Chn = chn_To_Use;
-											loop_Num++;
-										}
-									}
-								}
-								else
-								{
-									// Loop start
-									loop_Row[chn_To_Use] = row - 1;
+								// Attempt to detect the inside of a loop
+								// TODO: This won't detect all cases
+								if ((Common.Lsn(parm) > 0) && (f.Loop_Dest < 0))
+									inside_Loop = false;
+								else if (Common.Lsn(parm) == 0)
 									inside_Loop = true;
-
-									if (Common.Has_Quirk(m, Quirk_Flag.Ft2Bugs))
-										break_Row = row;
-								}
 							}
 						}
 					}
 
-					if (loop_Chn >= 0)
+					if (pDelay > 0)
+						frame_Count += pDelay * speed;
+
+					f.Loop_Param = -1;
+
+					if (f.Loop_Dest >= 0)
 					{
-						row = loop_Row[loop_Chn];
-						loop_Chn = -1;
+						// -1 as it will be incremented immediately by the loop
+						row = f.Loop_Dest - 1;
+						f.Loop_Dest = -1;
 					}
 
 					if (st26_Speed != 0)
@@ -735,7 +778,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			time -= start_Time;
 			frame_Count += row_Count * speed;
 
-			return (c_int)(time + m.Time_Factor * frame_Count * base_Time / bpm);
+			// TODO: double ord_data::time
+			time_calc = time + m.Time_Factor * frame_Count * base_Time / bpm;
+
+			return time_calc > c_int.MaxValue ? c_int.MaxValue : (c_int)time_calc;
 		}
 
 

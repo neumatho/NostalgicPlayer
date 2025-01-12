@@ -13,7 +13,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		public c_int Speed;
 		public c_int Bpm;
 		public c_int Gvl;
-		public c_int Time;
+		public c_int Time;	// TODO: double
 		public c_int Start_Row;
 		public c_int St26_Speed;
 	}
