@@ -1197,6 +1197,14 @@
             <uap:DisplayName>Music Assembler</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="pumafile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-puma">.puma</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>PumaTracker</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

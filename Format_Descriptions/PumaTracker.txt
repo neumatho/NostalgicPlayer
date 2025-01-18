@@ -1,0 +1,157 @@
+Module format:
+
+ 0             C Module name
+ C             2 Number of positions - 1 (NOP)
+ E             2 Number of tracks (NOT)
+10             2 Number of instruments (NOI)
+12
+14         A * 4 Sample start offsets
+3C         A * 2 Sample lengths in words
+50 (NOP + 1) * E Position list
+    NOT * x      Tracks
+                 Extra "patt" mark
+                 Instruments
+                 Extra "inst" mark
+				 Samples
+
+
+Position list:
+
+ 0 1 Track number for voice 1
+ 1 2 Instrument transpose for voice 1
+ 2 3 Note transpose for voice 1
+ 3 1 Track number for voice 2
+ 4 2 Instrument transpose for voice 2
+ 5 3 Note transpose for voice 2
+ 6 1 Track number for voice 3
+ 7 2 Instrument transpose for voice 3
+ 8 3 Note transpose for voice 3
+ 9 1 Track number for voice 4
+ A 2 Instrument transpose for voice 4
+ B 3 Note transpose for voice 4
+ C 1 Speed
+ D 1 Not used
+
+
+Tracks:
+
+ 0 4 Mark (patt)
+ 4   Track data
+
+AAAAAAAA BBBCCCCC DDDDDDDD EEEEEEEE
+
+A = Note
+B = Effect:
+    0: None
+    1: Set volume
+    2: Portamento down
+    3: Portamento up
+C = Instrument number
+D = Effect argument
+E = Number of rows until next note
+
+
+Instruments
+
+ 0 4 Mark (inst)
+ 4 x Volume data commands (from documentation):
+     * C0-aa-bb-cc
+          aa is the number of the sample (or waveform) used.
+             Numbers between 00 and 09 included are samples.
+             Numbers between 0A and 33 are waveforms.
+          bb is the step to skip waveforms.
+             If bb=0 then there is no effect.
+             If you want to use a sample, you must set bb to 0.
+          cc is the number of waveforms to be played
+
+     * A0-aa-bb-cc: This instruction makes the volume vary.
+          aa is the volume at the beginning.
+          bb is the volume at the end.
+          cc is the length of time to achieve the volume variation.
+
+     * E0-00-00-00: This instruction stops the sound (It cuts the voice).
+
+     * B0-aa-00-00: This instruction is the GOTO or LOOP command.
+              It permits to restarts a sound at any step of the volume sequence
+              (It's used for echo, make a never-ending sound or restart a
+              sound).
+              The aa number is the number of the line to reach multiplied by 4.
+   4 Mark (insf)
+   x Frequency data commands (from documentation):
+     * D0-aa-bb-cc: This instruction keeps the frequency constant.
+          aa is the offset of the note multiplied by 2 (always even) and it's
+             added to the played note. A value of 18 means that the frequency
+             is transposed of 1 octave up.
+          bb is unused.
+          cc is the length of time while the frequency doesn't vary.
+
+     * A0-aa-bb-cc: This instruction makes the frequency vary.
+          aa is a value added to the frequency of the note at the beginning.
+          bb is a value added to the frequency of the note at the end.
+          cc is the number of VBL
+
+     * E0-00-00-00: See above
+	 * B0-aa-00-00:
+
+
+Voice structure:
+
+ 0 4 Hardware register
+ 4 4 Pointer to sample data
+ 8 2 Sample length in words
+ A 2 Period
+ C 2 Volume slide value
+ E 4 Pointer to track
+12 1 Number of rows until next note
+13
+14 1 Flag
+15 1 Volume
+18 1 Instrument transpose
+19 1 Note transpose
+1A 4 Pointer to instrument volume data
+1E 4 Pointer to instrument frequency data
+22 1 Flag
+23
+24 1 Instrument volume data position
+25 1 Instrument frequency data position
+26 1 Volume slide tick counter
+27 1 Volume slide remaining time
+28 1 Volume slide delta
+29 1 Frequency vary tick counter
+2A 1 Volume slide direction
+2B
+2C 2 Frequency vary value
+2E
+30 4 Frequency vary add value
+34 1 Waveform add value
+35 1 Waveform number
+36 1 Number of waveforms to change
+37
+38 2 Portamento effect add value
+3A 1 Transposed note
+
+
+
+
+6C0 M       Modul data
+6C4         Voice 1
+700         Voice 2
+73C         Voice 3
+778         Voice 4
+7B4     130 Speed counter
+7B5     131 Current row number
+7B6 M2  132 Current position
+7B7
+    260 134 Current speed
+	    136 ??
+		138 ??
+		13A ???
+
+7B8 M4      Period table
+84A M5      Empty instrument
+852 M6      Pointer til instruments: volume, frequency
+95A M7      Pointer til tracks
+B5A M8      Pointer til sample data
+B82         Pointer til waveforms (0x20 bytes stykket, 0x2A ialt)
+C2A M9      Sample lengths
+C92 M10     Waveforms
