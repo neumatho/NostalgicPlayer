@@ -3911,14 +3911,15 @@ stopLoop:
 			}
 			else if (IsNoiseTracker())
 			{
-				if (newSpeed > 31)
-					newSpeed = 31;
-				else if (newSpeed == 0)
-					newSpeed = 1;
+				if (newSpeed != 0)
+				{
+					if (newSpeed > 31)
+						newSpeed = 31;
 
-				// Set the new speed
-				playingInfo.SpeedEven = newSpeed;
-				playingInfo.SpeedOdd = newSpeed;
+					// Set the new speed
+					playingInfo.SpeedEven = newSpeed;
+					playingInfo.SpeedOdd = newSpeed;
+				}
 			}
 			else
 			{
