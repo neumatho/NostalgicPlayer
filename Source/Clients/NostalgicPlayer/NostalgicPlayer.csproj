@@ -100,7 +100,7 @@
   <ItemGroup>
     <PackageReference Include="Krypton.Navigator" Version="85.24.10.288" />
     <PackageReference Include="Krypton.Toolkit" Version="85.24.10.288" />
-    <PackageReference Include="System.IO.Hashing" Version="9.0.0" />
+    <PackageReference Include="System.IO.Hashing" Version="9.0.1" />
   </ItemGroup>
 
   <ItemGroup>
