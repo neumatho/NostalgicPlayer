@@ -8,7 +8,7 @@
     <Product>NostalgicPlayer</Product>
     <Description>Plays audio mpeg files with layer 1/2/3 using Mpg123 library</Description>
     <Platforms>AnyCPU</Platforms>
-    <Version>2.1.6-1</Version>
+    <Version>2.1.7</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

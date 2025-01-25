@@ -770,62 +770,103 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 			uint id1 = moduleStream.Read_B_UINT32();
 			uint id2 = moduleStream.Read_B_UINT32();
 
+			uint maskedId1 = id1 & 0xffffff00;
+			uint maskedId2 = id2 & 0xffffff00;
+
 			// If starts with ID3, then it is probably a valid file
-			if ((id1 & 0xffffff00) == 0x49443300)
+			if (maskedId1 == 0x49443300)
 				return false;
 
 			// Beepola
 			if ((id1 == 0x4242534f) && ((id2 & 0xffff0000) == 0x4e470000))	// BBSONG
 				return true;
 
-			// Funktracker
-			if (id1 == 0x46756e6b)											// Funk
-				return true;
-
-			// Nintendo Sound Format
-			if (id1 == 0x4e45534d)											// NESM
-				return true;
-
-			// Nintendo SPC
-			if (id1 == 0x534e4553)											// SNES
-				return true;
-
-			// SC68
-			if (id1 == 0x53433638)											// SC68
-				return true;
-
-			// Impulse Tracker
-			if (id1 == 0x494d504d)											// IMPM
-				return true;
-
-			// Hippel COSO
-			if (id1 == 0x434f534f)											// COSO
+			// AY - Enul
+			if ((id1 == 0x5a584159) && (id2 == 0x454d554c))					// ZXAYEMUL
 				return true;
 
 			// Digital Tracker
 			if (id1 == 0x442e542e)                                          // D.T.
 				return true;
 
-			// Gameboy Sound System
-			uint maskedId = id1 & 0xffffff00;
+			// Digitrakker
+			if (id1 == 0x444d444c)											// DMDL
+				return true;
 
-			if (maskedId == 0x47425300)										// GBS
+			// EasyTrax
+			if ((id1 == 0x45415359) && (id2 == 0x54524158))					// EASYTRAX
+				return true;
+
+			// FAC SoundTracker
+			if ((id1 == 0xfe0080ff) && (maskedId2 == 0xbf008000))
+				return true;
+
+			// Funktracker
+			if (id1 == 0x46756e6b)											// Funk
+				return true;
+
+			// Gameboy Sound System
+			if (maskedId1 == 0x47425300)									// GBS
 				return true;
 
 			// Graoumf Tracker
-			if (maskedId == 0x47544b00)										// GTK
+			if (maskedId1 == 0x47544b00)									// GTK
 				return true;
 
 			// Graoumf Tracker 2
-			if (maskedId == 0x47543200)										// GT2
+			if (maskedId1 == 0x47543200)									// GT2
+				return true;
+
+			// Hippel COSO
+			if (id1 == 0x434f534f)											// COSO
+				return true;
+
+			// Impulse Tracker
+			if (id1 == 0x494d504d)											// IMPM
 				return true;
 
 			// MO3
-			if (maskedId == 0x4d4f3300)										// MO3
+			if (maskedId1 == 0x4d4f3300)									// MO3
+				return true;
+
+			// MusicLine Editor
+			if ((id1 == 0x4d4c4544) && (id2 == 0x4d4f444c))					// MLEDMODL
+				return true;
+
+			// Nintendo Sound Format
+			if (id1 == 0x4e45534d)											// NESM
+				return true;
+
+			// NoiseTrekker 2
+			if ((id1 == 0x54574e4e) && (id2 == 0x534e4732))					// TWNNNG2
+				return true;
+
+			// Nintendo SPC
+			if (id1 == 0x534e4553)											// SNES
+				return true;
+
+			// Organya
+			if (id1 == 0x4f72672d)											// Org-
+				return true;
+
+			// RamTracker
+			if (id1 == 0x54524b30)											// TRK0
+				return true;
+
+			// SC68
+			if (id1 == 0x53433638)											// SC68
+				return true;
+
+			// V2
+			if (id1 == 0x60000000)
 				return true;
 
 			// YM
-			if (maskedId == 0x594d3500)										// YM5
+			if (maskedId1 == 0x594d3500)									// YM5
+				return true;
+
+			// YMST
+			if (id1 == 0x594d5354)											// YMST
 				return true;
 
 			// Delitracker custom
