@@ -442,8 +442,8 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano.Display
 				{
 					for (int i = 1; i < freqTable.Length; i++)
 					{
-						if (frequency < freqTable[i])
-							return (byte)(i - 1);
+						if (frequency <= freqTable[i])
+							return (byte)i;
 					}
 				}
 
