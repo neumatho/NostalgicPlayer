@@ -208,6 +208,62 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Loaders
 
 		/********************************************************************/
 		/// <summary>
+		/// Will try to open an external file in the "Instruments" directory.
+		/// The search starts from the current directory where the module is
+		/// stored and then goes up to the root directory. If the file cannot
+		/// be found, null is returned
+		/// </summary>
+		/********************************************************************/
+		public ModuleStream TryOpenExternalFileInInstruments(string externalFileName, out string usedDirectoryName)
+		{
+			return TryOpenExternalFile("Instruments", externalFileName, out usedDirectoryName);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will try to open an external file in the directory given. The
+		/// search starts from the current directory where the module is
+		/// stored and then goes up to the root directory. If the file cannot
+		/// be found, null is returned
+		/// </summary>
+		/********************************************************************/
+		public ModuleStream TryOpenExternalFile(string externalDirectoryName, string externalFileName, out string usedDirectoryName)
+		{
+			bool isArchive = ArchivePath.IsArchivePath(fileName);
+			string moduleDirectoryName = isArchive ? Path.GetDirectoryName(ArchivePath.GetEntryName(fileName)) : Path.GetDirectoryName(fileName);
+
+			for (;;)
+			{
+				string newDirectory = isArchive ? ArchivePath.CombinePathParts(ArchivePath.GetArchiveName(fileName), moduleDirectoryName) : moduleDirectoryName;
+				usedDirectoryName = Path.Combine(newDirectory, externalDirectoryName);
+				string fullPath = Path.Combine(usedDirectoryName, externalFileName);
+
+				ModuleStream instrumentStream = OpenExtraFileByFileName(fullPath, true);
+
+				// Did we get any file at all
+				if (instrumentStream != null)
+					return instrumentStream;
+
+				int index = moduleDirectoryName.LastIndexOf(Path.DirectorySeparatorChar);
+				if (index == -1)
+					break;
+
+				moduleDirectoryName = moduleDirectoryName.Substring(0, index);
+				if (string.IsNullOrEmpty(moduleDirectoryName) || (moduleDirectoryName[^1] == ':'))
+					break;
+			}
+
+			usedDirectoryName = null;
+
+			return null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will add the sizes of the previous opened extra file to the
 		/// size properties
 		/// </summary>

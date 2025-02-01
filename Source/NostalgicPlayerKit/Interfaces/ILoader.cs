@@ -58,6 +58,22 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		ModuleStream OpenExtraFileByFileName(string fullFileName, bool addSize);
 
 		/// <summary>
+		/// Will try to open an external file in the "Instruments" directory.
+		/// The search starts from the current directory where the module is
+		/// stored and then goes up to the root directory. If the file cannot
+		/// be found, null is returned
+		/// </summary>
+		ModuleStream TryOpenExternalFileInInstruments(string externalFileName, out string usedDirectoryName);
+
+		/// <summary>
+		/// Will try to open an external file in the directory given. The
+		/// search starts from the current directory where the module is
+		/// stored and then goes up to the root directory. If the file cannot
+		/// be found, null is returned
+		/// </summary>
+		ModuleStream TryOpenExternalFile(string externalDirectoryName, string externalFileName, out string usedDirectoryName);
+
+		/// <summary>
 		/// Will add the sizes of the previous opened extra file to the
 		/// size properties
 		/// </summary>

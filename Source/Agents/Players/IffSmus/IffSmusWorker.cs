@@ -151,9 +151,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 
 				moduleInfo = new ModuleInfo();
 
-				bool isArchive = ArchivePath.IsArchivePath(fileInfo.FileName);
-				string directoryName = isArchive ? Path.GetDirectoryName(ArchivePath.GetEntryName(fileInfo.FileName)) : Path.GetDirectoryName(fileInfo.FileName);
-
 				Encoding encoder = EncoderCollection.Amiga;
 
 				// Skip the header
@@ -214,7 +211,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 						// Instrument (INS1)
 						case 0x494e5331:
 						{
-							ParseIns1(fileInfo, moduleStream, chunkSize, encoder, isArchive, directoryName, out errorMessage);
+							ParseIns1(fileInfo, moduleStream, chunkSize, encoder, out errorMessage);
 							break;
 						}
 
@@ -533,7 +530,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 		/// Parses the INS1 chunk
 		/// </summary>
 		/********************************************************************/
-		private void ParseIns1(PlayerFileInfo fileInfo, ModuleStream moduleStream, int chunkSize, Encoding encoder, bool isArchive, string directoryName, out string errorMessage)
+		private void ParseIns1(PlayerFileInfo fileInfo, ModuleStream moduleStream, int chunkSize, Encoding encoder, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
@@ -563,7 +560,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 				return;
 			}
 
-			int instrumentNumber = LoadInstrument(fileInfo, isArchive, directoryName, name, out errorMessage);
+			int instrumentNumber = LoadInstrument(fileInfo, name, out errorMessage);
 			if (instrumentNumber != -1)
 				moduleInfo.InstrumentMapper[register] = instrumentNumber + 1;
 		}
@@ -694,7 +691,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 		/// Load a single sample as extern file
 		/// </summary>
 		/********************************************************************/
-		private int LoadInstrument(PlayerFileInfo fileInfo, bool isArchive, string directoryName, string instrName, out string errorMessage)
+		private int LoadInstrument(PlayerFileInfo fileInfo, string instrName, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
@@ -714,60 +711,45 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 				return instrumentNumber;
 
 			string instrumentFileName = $"{instrName}.instr";
+			string instrumentPath = string.Empty;
 
-			for (;;)
+			using (ModuleStream instrumentStream = fileInfo.Loader?.TryOpenExternalFileInInstruments(instrumentFileName, out instrumentPath))
 			{
-				string newDirectory = isArchive ? ArchivePath.CombinePathParts(ArchivePath.GetArchiveName(fileInfo.FileName), directoryName) : directoryName;
-
-				string instrumentPath = Path.Combine(newDirectory, "Instruments");
-				string fullPath = Path.Combine(instrumentPath, instrumentFileName);
-
-				using (ModuleStream instrumentStream = fileInfo.Loader?.OpenExtraFileByFileName(fullPath, true))
+				// Did we get any file at all
+				if (instrumentStream != null)
 				{
-					// Did we get any file at all
-					if (instrumentStream != null)
+					// Read first 32 bytes
+					byte[] tempBuffer = new byte[32];
+
+					instrumentStream.Seek(0, SeekOrigin.Begin);
+					int bytesRead = instrumentStream.Read(tempBuffer, 0, 32);
+
+					if (bytesRead < 32)
 					{
-						// Read first 32 bytes
-						byte[] tempBuffer = new byte[32];
-
-						instrumentStream.Seek(0, SeekOrigin.Begin);
-						int bytesRead = instrumentStream.Read(tempBuffer, 0, 32);
-
-						if (bytesRead < 32)
-						{
-							errorMessage = string.Format(Resources.IDS_SMUS_ERR_LOADING_READ_EXTERNAL_FILE, instrumentFileName);
-							return -1;
-						}
-
-						// Try to find the instrument format
-						IInstrumentFormat format = InstrumentFactory.CreateInstrumentFormat(tempBuffer);
-						if (format == null)
-						{
-							errorMessage = string.Format(Resources.IDS_SMUS_ERR_LOADING_READ_EXTERNAL_FILE, instrumentFileName);
-							return -1;
-						}
-
-						if (!format.Load(instrumentStream, fileInfo, instrumentPath, instrumentFileName, globalInfo.Instruments, out errorMessage))
-							return -1;
-
-						instrumentNumber = globalInfo.Instruments.Count;
-						globalInfo.Instruments.Add(new Instrument
-						{
-							Name = instrName,
-							Format = format
-						});
-
-						return instrumentNumber;
+						errorMessage = string.Format(Resources.IDS_SMUS_ERR_LOADING_READ_EXTERNAL_FILE, instrumentFileName);
+						return -1;
 					}
+
+					// Try to find the instrument format
+					IInstrumentFormat format = InstrumentFactory.CreateInstrumentFormat(tempBuffer);
+					if (format == null)
+					{
+						errorMessage = string.Format(Resources.IDS_SMUS_ERR_LOADING_READ_EXTERNAL_FILE, instrumentFileName);
+						return -1;
+					}
+
+					if (!format.Load(instrumentStream, fileInfo, instrumentPath, instrumentFileName, globalInfo.Instruments, out errorMessage))
+						return -1;
+
+					instrumentNumber = globalInfo.Instruments.Count;
+					globalInfo.Instruments.Add(new Instrument
+					{
+						Name = instrName,
+						Format = format
+					});
+
+					return instrumentNumber;
 				}
-
-				int index = directoryName.LastIndexOf(Path.DirectorySeparatorChar);
-				if (index == -1)
-					break;
-
-				directoryName = directoryName.Substring(0, index);
-				if (string.IsNullOrEmpty(directoryName) || (directoryName[^1] == ':'))
-					break;
 			}
 
 			errorMessage = string.Format(Resources.IDS_SMUS_ERR_LOADING_OPEN_EXTERNAL_FILE, instrumentFileName);

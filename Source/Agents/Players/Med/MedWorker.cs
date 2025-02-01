@@ -11,7 +11,6 @@ using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
-using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.Med
 {
@@ -1078,14 +1077,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		{
 			errorMessage = string.Empty;
 
-			bool isArchive = ArchivePath.IsArchivePath(fileInfo.FileName);
-			string directoryName = isArchive ? Path.GetDirectoryName(ArchivePath.GetEntryName(fileInfo.FileName)) : Path.GetDirectoryName(fileInfo.FileName);
-
 			for (int i = 1; i < 32; i++)
 			{
 				if (!string.IsNullOrEmpty(samples[i].Name))
 				{
-					if (LoadSingleExternalSample(fileInfo, isArchive, directoryName, i, out errorMessage) != AgentResult.Ok)
+					if (LoadSingleExternalSample(fileInfo, i, out errorMessage) != AgentResult.Ok)
 						return AgentResult.Error;
 				}
 			}
@@ -1100,45 +1096,31 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 		/// Load a single sample as extern file
 		/// </summary>
 		/********************************************************************/
-		private AgentResult LoadSingleExternalSample(PlayerFileInfo fileInfo, bool isArchive, string directoryName, int sampleNumber, out string errorMessage)
+		private AgentResult LoadSingleExternalSample(PlayerFileInfo fileInfo, int sampleNumber, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
 			Sample sample = samples[sampleNumber];
 
-			for (;;)
+			using (ModuleStream moduleStream = fileInfo.Loader?.TryOpenExternalFileInInstruments(sample.Name, out _))
 			{
-				string newDirectory = isArchive ? ArchivePath.CombinePathParts(ArchivePath.GetArchiveName(fileInfo.FileName), directoryName) : directoryName;
-				string samplePath = Path.Combine(newDirectory, "Instruments", sample.Name);
-
-				using (ModuleStream moduleStream = fileInfo.Loader?.OpenExtraFileByFileName(samplePath, true))
+				// Did we get any file at all
+				if (moduleStream != null)
 				{
-					// Did we get any file at all
-					if (moduleStream != null)
+					moduleStream.Seek(0, SeekOrigin.Begin);
+					sample.SampleData = moduleStream.ReadSampleData(sampleNumber, (int)moduleStream.Length, out _);
+
+					sample.SampleData = FixIfIff(sample.SampleData);
+					if (sample.SampleData == null)
 					{
-						moduleStream.Seek(0, SeekOrigin.Begin);
-						sample.SampleData = moduleStream.ReadSampleData(sampleNumber, (int)moduleStream.Length, out _);
-
-						sample.SampleData = FixIfIff(sample.SampleData);
-						if (sample.SampleData == null)
-						{
-							errorMessage = string.Format(Resources.IDS_MED_ERR_LOADING_EXTERNAL_SAMPLE, sample.Name);
-							return AgentResult.Error;
-						}
-
-						sample.Type = SampleType.Normal;
-
-						return AgentResult.Ok;
+						errorMessage = string.Format(Resources.IDS_MED_ERR_LOADING_EXTERNAL_SAMPLE, sample.Name);
+						return AgentResult.Error;
 					}
+
+					sample.Type = SampleType.Normal;
+
+					return AgentResult.Ok;
 				}
-
-				int index = directoryName.LastIndexOf(Path.DirectorySeparatorChar);
-				if (index == -1)
-					break;
-
-				directoryName = directoryName.Substring(0, index);
-				if (string.IsNullOrEmpty(directoryName) || (directoryName[^1] == ':'))
-					break;
 			}
 
 			errorMessage = string.Format(Resources.IDS_MED_ERR_LOADING_EXTERNAL_SAMPLE, sample.Name);

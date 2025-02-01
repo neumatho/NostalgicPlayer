@@ -771,54 +771,37 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 		/********************************************************************/
 		private bool WriteSingleExternalSample(PlayerFileInfo fileInfo, ConverterStream converterStream, int sampleNumber)
 		{
-			bool isArchive = ArchivePath.IsArchivePath(fileInfo.FileName);
-			string directoryName = isArchive ? Path.GetDirectoryName(ArchivePath.GetEntryName(fileInfo.FileName)) : Path.GetDirectoryName(fileInfo.FileName);
-
-			for (;;)
+			foreach (KeyValuePair<string, ushort> pair in searchDirectories)
 			{
-				foreach (KeyValuePair<string, ushort> pair in searchDirectories)
+				using (ModuleStream moduleStream = fileInfo.Loader?.TryOpenExternalFile(pair.Key, sampleNames[sampleNumber], out _))
 				{
-					string newDirectory = isArchive ? ArchivePath.CombinePathParts(ArchivePath.GetArchiveName(fileInfo.FileName), directoryName) : directoryName;
-					string samplePath = Path.Combine(newDirectory, pair.Key, sampleNames[sampleNumber]);
+					// Did we get any file at all
+					if (moduleStream == null)
+						continue;
 
-					using (ModuleStream moduleStream = fileInfo.Loader?.OpenExtraFileByFileName(samplePath, true))
+					moduleStream.Seek(0, SeekOrigin.Begin);
+
+					switch (pair.Value)
 					{
-						// Did we get any file at all
-						if (moduleStream == null)
-							continue;
+						case 0xfffe:
+						case 0xffff:
+							return WriteSynthInformation(moduleStream, converterStream, sampleNumber, pair.Value, true);
 
-						moduleStream.Seek(0, SeekOrigin.Begin);
-
-						switch (pair.Value)
+						default:
 						{
-							case 0xfffe:
-							case 0xffff:
-								return WriteSynthInformation(moduleStream, converterStream, sampleNumber, pair.Value, true);
+							converterStream.Write_B_UINT32((uint)moduleStream.Length);
+							converterStream.Write_B_UINT16(pair.Value);
 
-							default:
-							{
-								converterStream.Write_B_UINT32((uint)moduleStream.Length);
-								converterStream.Write_B_UINT16(pair.Value);
+							byte[] buffer = new byte[moduleStream.Length];
+							moduleStream.ReadInto(buffer, 0, buffer.Length);
 
-								byte[] buffer = new byte[moduleStream.Length];
-								moduleStream.ReadInto(buffer, 0, buffer.Length);
+							buffer = FixIfIff(buffer);
+							converterStream.Write(buffer, 0, buffer.Length);
 
-								buffer = FixIfIff(buffer);
-								converterStream.Write(buffer, 0, buffer.Length);
-
-								return true;
-							}
+							return true;
 						}
 					}
 				}
-
-				int index = directoryName.LastIndexOf(Path.DirectorySeparatorChar);
-				if (index == -1)
-					break;
-
-				directoryName = directoryName.Substring(0, index);
-				if (string.IsNullOrEmpty(directoryName) || (directoryName[^1] == ':'))
-					break;
 			}
 
 			return false;
