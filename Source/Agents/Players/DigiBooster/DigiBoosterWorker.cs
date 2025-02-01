@@ -449,7 +449,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 							period = (ushort)(period - ((period * sample.FineTune) / 140));
 						}
 
-						frequencies[4 * 12 + j] = 3546895U / period;
+						frequencies[4 * 12 + j] = PeriodToFrequency(period);
 					}
 
 					yield return new SampleInfo

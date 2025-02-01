@@ -301,8 +301,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.BenDaglish
 
 					for (int j = 0; j < 8 * 12; j++)
 					{
-						uint period = (ushort)(((((Tables.FineTune[j] & 0xffff) * sample.FineTunePeriod) >> 16) + ((Tables.FineTune[j] >> 16) * sample.FineTunePeriod)) & 0xffff);
-						frequencies[8 * 12 - j] = 3546895U / period;
+						ushort period = (ushort)(((((Tables.FineTune[j] & 0xffff) * sample.FineTunePeriod) >> 16) + ((Tables.FineTune[j] >> 16) * sample.FineTunePeriod)) & 0xffff);
+						frequencies[8 * 12 - j] = PeriodToFrequency(period);
 					}
 
 					SampleInfo sampleInfo = new SampleInfo

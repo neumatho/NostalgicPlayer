@@ -609,7 +609,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 				uint[] frequencies = new uint[10 * 12];
 
 				for (int j = 0; j < 5 * 12; j++)
-					frequencies[2 * 12 + j] = 3546895U / Tables.Periods[5 * 12 + j];
+					frequencies[2 * 12 + j] = PeriodToFrequency(Tables.Periods[5 * 12 + j]);
 
 				for (int i = 0; i < 10; i++)
 				{

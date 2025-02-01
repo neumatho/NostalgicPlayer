@@ -401,8 +401,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DavidWhittaker
 
 					for (int j = 0; j < Tables.Periods3.Length; j++)
 					{
-						uint period = (uint)((Tables.Periods3[j] * sample.FineTunePeriod) >> 10);
-						frequencies[1 * 12 - 3 + j] = 3546895U / period;
+						ushort period = (ushort)((Tables.Periods3[j] * sample.FineTunePeriod) >> 10);
+						frequencies[1 * 12 - 3 + j] = PeriodToFrequency(period);
 					}
 
 					SampleInfo sampleInfo = new SampleInfo

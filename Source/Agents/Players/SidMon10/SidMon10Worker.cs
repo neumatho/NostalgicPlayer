@@ -355,7 +355,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon10
 					uint[] frequencies = new uint[10 * 12];
 
 					for (int k = 0; k < 5 * 12; k++)
-						frequencies[2 * 12 - 2 + k] = 3546895U / periods[8 + instr.FineTune * fineTuneMultiply + k];
+						frequencies[2 * 12 - 2 + k] = PeriodToFrequency(periods[8 + instr.FineTune * fineTuneMultiply + k]);
 
 					SampleInfo sampleInfo;
 

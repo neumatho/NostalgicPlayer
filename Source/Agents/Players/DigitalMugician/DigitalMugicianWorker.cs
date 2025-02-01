@@ -628,7 +628,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalMugician
 					uint[] frequencies = new uint[10 * 12];
 
 					for (int k = 0; k < 5 * 12 - 2; k++)
-						frequencies[2 * 12 + k] = 3546895U / Tables.Periods[6 + instr.Finetune * 64 + k];
+						frequencies[2 * 12 + k] = PeriodToFrequency(Tables.Periods[6 + instr.Finetune * 64 + k]);
 
 					SampleInfo sampleInfo;
 

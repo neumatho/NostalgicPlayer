@@ -384,7 +384,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 				uint[] frequencies = new uint[10 * 12];
 
 				for (int j = 0; j < 4 + 3 * 12; j++)
-					frequencies[4 * 12 - 4 + j] = 3546895U / (ushort)Tables.NoteTable[2 * 12 - 4 + j];
+					frequencies[4 * 12 - 4 + j] = PeriodToFrequency((ushort)Tables.NoteTable[2 * 12 - 4 + j]);
 
 				foreach (Sample sample in samples)
 				{

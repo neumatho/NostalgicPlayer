@@ -693,7 +693,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 				uint[] frequencies = new uint[10 * 12];
 
 				for (int j = 0; j < 5 * 12; j++)
-					frequencies[2 * 12 + j] = (uint)(3546895 / Tables.PeriodTable[j + 1]);
+					frequencies[2 * 12 + j] = PeriodToFrequency((ushort)Tables.PeriodTable[j + 1]);
 
 				for (int i = 1; i <= song.InstrumentNr; i++)
 				{

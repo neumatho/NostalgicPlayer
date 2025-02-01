@@ -315,7 +315,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigitalSoundStudio
 					uint[] frequencies = new uint[10 * 12];
 
 					for (int j = 0; j < 4 * 12; j++)
-						frequencies[3 * 12 + j] = 3546895U / Tables.Periods[sample.FineTune, j];
+						frequencies[3 * 12 + j] = PeriodToFrequency(Tables.Periods[sample.FineTune, j]);
 
 					SampleInfo sampleInfo = new SampleInfo
 					{

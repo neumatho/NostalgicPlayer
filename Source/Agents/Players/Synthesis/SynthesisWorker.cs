@@ -560,7 +560,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Synthesis
 				uint[] frequencies = new uint[10 * 12];
 
 				for (int j = 0; j < 9 * 12; j++)
-					frequencies[j] = 3546895U / Tables.Periods[1 + j];
+					frequencies[j] = PeriodToFrequency(Tables.Periods[1 + j]);
 
 				foreach (Instrument instr in instruments.SkipLast(1))	// It seems that the last instrument always point to the first sample and is not used
 				{

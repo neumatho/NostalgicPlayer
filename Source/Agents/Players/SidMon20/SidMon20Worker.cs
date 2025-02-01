@@ -298,7 +298,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SidMon20
 				uint[] frequencies = new uint[10 * 12];
 
 				for (int i = 0; i < 6 * 12; i++)
-					frequencies[2 * 12 - 9 + i] = 3546895U / Tables.Periods[1 + i];
+					frequencies[2 * 12 - 9 + i] = PeriodToFrequency(Tables.Periods[1 + i]);
 
 				foreach (Sample sample in samples)
 				{

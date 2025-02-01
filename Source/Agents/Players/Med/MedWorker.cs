@@ -298,12 +298,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 				if (currentModuleType == ModuleType.Med112)
 				{
 					for (byte j = 0; j < 4 * 12; j++)
-						frequencies[4 * 12 + j] = 3546895U / Tables.Periods112[j];
+						frequencies[4 * 12 + j] = PeriodToFrequency(Tables.Periods112[j]);
 				}
 				else
 				{
 					for (byte j = 0; j < 3 * 12; j++)
-						frequencies[4 * 12 + j] = 3546895U / Tables.Periods200[j];
+						frequencies[4 * 12 + j] = PeriodToFrequency(Tables.Periods200[j]);
 				}
 
 				for (uint i = 1; i < 32; i++)		// Skip first sample, since it will always be empty

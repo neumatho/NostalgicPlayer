@@ -464,8 +464,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ArtOfNoise
 
 					for (int j = 0; j < Tables.Periods.GetLength(1); j++)
 					{
-						uint period = Tables.Periods[instr.FineTune, j];
-						freqs[2 * 12 + j] = 3546895U / period;
+						ushort period = Tables.Periods[instr.FineTune, j];
+						freqs[2 * 12 + j] = PeriodToFrequency(period);
 					}
 
 					SampleInfo sampleInfo = new SampleInfo

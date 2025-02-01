@@ -310,7 +310,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.InStereo20
 				uint[] frequencies = new uint[10 * 12];
 
 				for (int j = 0; j < 9 * 12; j++)
-					frequencies[j] = 3546895U / Tables.Periods[1 + j];
+					frequencies[j] = PeriodToFrequency(Tables.Periods[1 + j]);
 
 				foreach (Sample sample in samples)
 				{

@@ -371,7 +371,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.PumaTracker
 				uint[] frequencies = new uint[10 * 12];
 
 				for (int j = 0; j < 6 * 12; j++)
-					frequencies[1 * 12 + j] = 3546895U / Tables.Periods[1 + j];
+					frequencies[1 * 12 + j] = PeriodToFrequency(Tables.Periods[1 + j]);
 
 				for (int i = 0; i < 10; i++)
 				{

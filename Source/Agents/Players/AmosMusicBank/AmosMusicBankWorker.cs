@@ -319,7 +319,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.AmosMusicBank
 				uint[] frequencies = new uint[10 * 12];
 
 				for (int i = 0; i < 3 * 12; i++)
-					frequencies[4 * 12 + i] = 3546895U / Tables.Periods[i];
+					frequencies[4 * 12 + i] = PeriodToFrequency(Tables.Periods[i]);
 
 				foreach (Sample sample in samples)
 				{

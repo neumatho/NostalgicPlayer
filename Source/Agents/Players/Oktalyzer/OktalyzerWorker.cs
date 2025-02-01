@@ -394,7 +394,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Oktalyzer
 				uint[] frequencies = new uint[10 * 12];
 
 				for (int j = 0; j < 3 * 12; j++)
-					frequencies[4 * 12 + j] = 3546895U / (ushort)Tables.Periods[j];
+					frequencies[4 * 12 + j] = PeriodToFrequency((ushort)Tables.Periods[j]);
 
 				foreach (Sample sample in samples)
 				{

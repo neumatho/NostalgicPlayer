@@ -352,7 +352,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.JamCracker
 				uint[] frequencies = new uint[10 * 12];
 
 				for (int j = 0; j < 3 + 3 * 12; j++)
-					frequencies[4 * 12 - 3 + j] = 3546895U / Tables.Periods[j];
+					frequencies[4 * 12 - 3 + j] = PeriodToFrequency(Tables.Periods[j]);
 
 				foreach (InstInfo instInfo in instTable)
 				{

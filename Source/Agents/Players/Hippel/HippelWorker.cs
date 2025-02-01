@@ -404,8 +404,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 
 				for (int j = 0; j < Tables.Periods1.Length; j++)
 				{
-					uint period = Tables.Periods1[j];
-					freqs[3 * 12 + j] = 3546895U / period;
+					ushort period = Tables.Periods1[j];
+					freqs[3 * 12 + j] = PeriodToFrequency(period);
 				}
 
 				foreach (Sample sample in samples)

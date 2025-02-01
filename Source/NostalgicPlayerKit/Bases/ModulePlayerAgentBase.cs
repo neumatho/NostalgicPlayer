@@ -294,6 +294,18 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		{
 			return (ushort)(PlayingFrequency * 2.5f);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the frequency from a period
+		/// </summary>
+		/********************************************************************/
+		protected uint PeriodToFrequency(ushort period)
+		{
+			return 3546895U / period;
+		}
 		#endregion
 	}
 }

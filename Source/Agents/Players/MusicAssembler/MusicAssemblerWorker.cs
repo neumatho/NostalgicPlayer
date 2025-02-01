@@ -301,7 +301,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.MusicAssembler
 				uint[] frequencies = new uint[10 * 12];
 
 				for (int j = 0; j < 4 * 12; j++)
-					frequencies[3 * 12 + j] = 3546895U / Tables.Periods[j];
+					frequencies[3 * 12 + j] = PeriodToFrequency(Tables.Periods[j]);
 
 				foreach (Sample sample in samples)
 				{

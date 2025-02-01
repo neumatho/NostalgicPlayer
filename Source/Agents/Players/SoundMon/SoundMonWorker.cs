@@ -496,7 +496,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundMon
 				uint[] frequencies = new uint[10 * 12];
 
 				for (int j = 0; j < 7 * 12; j++)
-					frequencies[1 * 12 + j] = 3546895U / Tables.Periods[j];
+					frequencies[1 * 12 + j] = PeriodToFrequency(Tables.Periods[j]);
 
 				for (int i = 0; i < 15; i++)
 				{

@@ -426,7 +426,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.ModTracker
 					else
 					{
 						for (int j = 0; j < 3 * 12; j++)
-							frequencies[4 * 12 + j] = 3546895U / Tables.Periods[sample.FineTune, j];
+							frequencies[4 * 12 + j] = PeriodToFrequency(Tables.Periods[sample.FineTune, j]);
 					}
 
 					yield return new SampleInfo

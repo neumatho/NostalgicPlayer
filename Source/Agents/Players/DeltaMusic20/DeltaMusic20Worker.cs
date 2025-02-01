@@ -458,7 +458,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DeltaMusic20
 				uint[] frequencies = new uint[10 * 12];
 
 				for (int j = 0; j < 6 * 12; j++)
-					frequencies[1 * 12 + j] = 3546895U / Tables.Periods[j + 1];
+					frequencies[1 * 12 + j] = PeriodToFrequency(Tables.Periods[j + 1]);
 
 				foreach (Instrument inst in instruments)
 				{
