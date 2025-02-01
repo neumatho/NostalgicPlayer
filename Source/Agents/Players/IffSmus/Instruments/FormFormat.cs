@@ -11,6 +11,7 @@ using Polycode.NostalgicPlayer.Agent.Player.IffSmus.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 {
@@ -19,7 +20,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 	/// </summary>
 	internal class FormFormat : IInstrumentFormat
 	{
-		private FormData formatData;
+		private IffSample formatData;
+		private ushort numberOfHiOctavesToSkip;
 
 		/********************************************************************/
 		/// <summary>
@@ -47,88 +49,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 
 			instrumentStream.Seek(0, SeekOrigin.Begin);
 
-			if (instrumentStream.Read_B_UINT32() != 0x464f524d)		// FORM
-			{
-				errorMessage = string.Format(Resources.IDS_SMUS_ERR_LOADING_READ_EXTERNAL_FILE, instrumentFileName);
-				return false;
-			}
+			LoadResult result = IffSampleLoader.Load(instrumentStream, instruments.Count, out formatData);
 
-			uint formLength = instrumentStream.Read_B_UINT32();
-
-			if (instrumentStream.Read_B_UINT32() != 0x38535658)		// 8SVX
-			{
-				errorMessage = string.Format(Resources.IDS_SMUS_ERR_LOADING_READ_EXTERNAL_FILE, instrumentFileName);
-				return false;
-			}
-
-			formLength -= 4;
-
-			formatData = new FormData();
-
-			while (formLength > 0)
-			{
-				uint chunkName = instrumentStream.Read_B_UINT32();
-				uint chunkLength = instrumentStream.Read_B_UINT32();
-				formLength -= 8;
-
-				if ((chunkLength % 2) != 0)
-					chunkLength++;
-
-				switch (chunkName)
-				{
-					// VHDR
-					case 0x56484452:
-					{
-						formatData.OneShotHiSamples = instrumentStream.Read_B_UINT32();
-						formatData.RepeatHiSamples = instrumentStream.Read_B_UINT32();
-						formatData.SamplesPerHiCycle = instrumentStream.Read_B_UINT32();
-						formatData.SamplesPerSec = instrumentStream.Read_B_UINT16();
-						formatData.Octaves = instrumentStream.Read_UINT8();
-
-						byte compressed = instrumentStream.Read_UINT8();
-						if (compressed != 0)
-						{
-							errorMessage = string.Format(Resources.IDS_SMUS_ERR_LOADING_READ_EXTERNAL_FILE, instrumentFileName);
-							return false;
-						}
-
-						formatData.Volume = instrumentStream.Read_B_UINT32();
-
-						formLength -= 20;
-						chunkLength -= 20;
-						break;
-					}
-
-					// BODY
-					case 0x424f4459:
-					{
-						if ((formatData.SampleData != null) || (formatData.Octaves == 0))
-						{
-							errorMessage = string.Format(Resources.IDS_SMUS_ERR_LOADING_READ_EXTERNAL_FILE, instrumentFileName);
-							return false;
-						}
-
-						formatData.SampleData = instrumentStream.ReadSampleData(instruments.Count, (int)chunkLength, out int readBytes);
-						if (readBytes != chunkLength)
-						{
-							errorMessage = string.Format(Resources.IDS_SMUS_ERR_LOADING_READ_EXTERNAL_FILE, instrumentFileName);
-							return false;
-						}
-
-						formLength -= chunkLength;
-						chunkLength = 0;
-						break;
-					}
-				}
-
-				if (chunkLength > 0)
-				{
-					instrumentStream.Seek(chunkLength, SeekOrigin.Current);
-					formLength -= chunkLength;
-				}
-			}
-
-			if (formatData.SampleData == null)
+			if (result != LoadResult.Ok)
 			{
 				errorMessage = string.Format(Resources.IDS_SMUS_ERR_LOADING_READ_EXTERNAL_FILE, instrumentFileName);
 				return false;
@@ -156,7 +79,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 					break;
 			}
 
-			formatData.NumberOfHiOctavesToSkip = count;
+			numberOfHiOctavesToSkip = count;
 
 			return true;
 		}
@@ -183,7 +106,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 					playInfo.Octave = (byte)octave;
 					playInfo.Note = (byte)note;
 
-					int octaveInFormat = (-(octave - 10)) - formatData.NumberOfHiOctavesToSkip;
+					int octaveInFormat = (-(octave - 10)) - numberOfHiOctavesToSkip;
 					if ((octaveInFormat < 0) || (octaveInFormat >= formatData.Octaves))
 					{
 						voice.InstrumentSetupSequence = InstrumentSetup.Nothing;
@@ -323,7 +246,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 				SampleInfo.MultiOctaveInfo[] multiOctaveInfo = new SampleInfo.MultiOctaveInfo[8];
 				List<sbyte[]> allSamples = new List<sbyte[]>();
 
-				for (int i = 0, j = formatData.NumberOfHiOctavesToSkip; (i < formatData.Octaves) && (j < 8); i++, j++)
+				for (int i = 0, j = numberOfHiOctavesToSkip; (i < formatData.Octaves) && (j < 8); i++, j++)
 				{
 					uint sampleLength = formatData.OneShotHiSamples + formatData.RepeatHiSamples;
 					uint startOffset = (sampleLength << i) - sampleLength;
@@ -345,11 +268,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 					allSamples.Add(formatData.SampleData.AsSpan((int)multiOctaveInfo[j].SampleOffset, (int)multiOctaveInfo[j].Length).ToArray());
 				}
 
-				for (int i = 0; i < formatData.NumberOfHiOctavesToSkip; i++)
-					multiOctaveInfo[i] = multiOctaveInfo[formatData.NumberOfHiOctavesToSkip];
+				for (int i = 0; i < numberOfHiOctavesToSkip; i++)
+					multiOctaveInfo[i] = multiOctaveInfo[numberOfHiOctavesToSkip];
 
-				for (int i = formatData.NumberOfHiOctavesToSkip + formatData.Octaves; i < 8; i++)
-					multiOctaveInfo[i] = multiOctaveInfo[formatData.NumberOfHiOctavesToSkip + formatData.Octaves - 1];
+				for (int i = numberOfHiOctavesToSkip + formatData.Octaves; i < 8; i++)
+					multiOctaveInfo[i] = multiOctaveInfo[numberOfHiOctavesToSkip + formatData.Octaves - 1];
 
 				sampleInfo.MultiOctaveSamples = multiOctaveInfo;
 				sampleInfo.MultiOctaveAllSamples = allSamples.ToArray();

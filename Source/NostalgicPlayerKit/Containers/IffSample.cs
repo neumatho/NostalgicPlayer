@@ -3,12 +3,12 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
+namespace Polycode.NostalgicPlayer.Kit.Containers
 {
 	/// <summary>
 	/// Holds data for IFF sample format
 	/// </summary>
-	internal class FormData
+	public class IffSample
 	{
 		// VHDR information
 		public uint OneShotHiSamples;
@@ -18,7 +18,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 		public byte Octaves;
 		public uint Volume;
 
-		public ushort NumberOfHiOctavesToSkip;
 		public sbyte[] SampleData;
 	}
 }
