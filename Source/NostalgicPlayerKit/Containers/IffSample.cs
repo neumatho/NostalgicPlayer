@@ -10,14 +10,24 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 	/// </summary>
 	public class IffSample
 	{
+		//
 		// VHDR information
+		//
+
+		/// <summary></summary>
 		public uint OneShotHiSamples;
+		/// <summary></summary>
 		public uint RepeatHiSamples;
+		/// <summary></summary>
 		public uint SamplesPerHiCycle;
+		/// <summary></summary>
 		public ushort SamplesPerSec;
+		/// <summary></summary>
 		public byte Octaves;
+		/// <summary></summary>
 		public uint Volume;
 
+		/// <summary></summary>
 		public sbyte[] SampleData;
 	}
 }
