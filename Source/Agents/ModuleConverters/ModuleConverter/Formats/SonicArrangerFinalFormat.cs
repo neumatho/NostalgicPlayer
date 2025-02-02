@@ -92,7 +92,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.ModuleConverter.Formats
 					return AgentResult.Unknown;
 
 				check1 = check - check1;
-				if ((check1 & 0xff0c) != check1)
+				if ((check1 % 12) != 0)
 					return AgentResult.Unknown;
 
 				if ((check1 / 12) > 32)
