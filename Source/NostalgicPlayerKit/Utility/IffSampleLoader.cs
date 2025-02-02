@@ -31,7 +31,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 				return LoadResult.UnknownFormat;
 			}
 
-			uint formLength = moduleStream.Read_B_UINT32();
+			uint originalFormLength = moduleStream.Read_B_UINT32();
 
 			if (moduleStream.Read_B_UINT32() != 0x38535658)		// 8SVX
 			{
@@ -41,7 +41,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 				return LoadResult.UnknownFormat;
 			}
 
-			formLength -= 4;
+			uint formLength = originalFormLength - 4;
 
 			IffSample info = new IffSample();
 
@@ -82,6 +82,10 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 						if ((info.SampleData != null) || (info.Octaves == 0))
 							return LoadResult.Error;
 
+						// Some samples store the body length in words. Check for this
+						if (((chunkLength * 2) + moduleStream.Position - 8) == originalFormLength)
+							chunkLength *= 2;
+
 						info.SampleData = moduleStream.ReadSampleData(sampleNumber, (int)chunkLength, out int readBytes);
 						if (readBytes != chunkLength)
 							return LoadResult.Error;
@@ -101,6 +105,10 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 
 			if (info.SampleData == null)
 				return LoadResult.Error;
+
+			// Some samples have 0 in both one-shot and repeat fields. Fix them
+			if ((info.OneShotHiSamples == 0) && (info.RepeatHiSamples == 0))
+				info.OneShotHiSamples = (uint)info.SampleData.Length;
 
 			iffSample = info;
 

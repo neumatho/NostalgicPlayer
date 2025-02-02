@@ -1205,6 +1205,14 @@
             <uap:DisplayName>PumaTracker</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="ftmfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-ftm">.ftm</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Face The Music</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
