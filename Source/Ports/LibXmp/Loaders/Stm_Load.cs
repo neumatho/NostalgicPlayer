@@ -174,7 +174,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			if (f.Hio_Read(buf, 1, 8) < 8)
 				return -1;
 
-			if (lib.common.LibXmp_Test_Name(buf, 8, 0) != 0)		// Tracker name should be ASCII
+			if (lib.common.LibXmp_Test_Name(buf, 8, Test_Name.None) != 0)		// Tracker name should be ASCII
 				return -1;
 
 			// EOF should be 0x1a. Putup10.stm and putup11.stm have 2 instead
@@ -183,6 +183,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return -1;
 
 			if (f.Hio_Read8() > Stm_Type_Module)
+				return -1;
+
+			buf[0] = f.Hio_Read8();
+			buf[1] = f.Hio_Read8();
+			uint16 version = (uint16)((100 * buf[0]) + buf[1]);
+
+			if ((version != 110) && (version != 200) && (version != 210) && (version != 220) && (version != 221))
 				return -1;
 
 			f.Hio_Seek(start + 60, SeekOrigin.Begin);
