@@ -67,6 +67,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
+			// Check the mark
+			uint mark = moduleStream.Read_B_UINT32();
+			if (mark != 0x4f676753)			// OggS
+				return AgentResult.Unknown;
+
+			moduleStream.Seek(0, SeekOrigin.Begin);
+
 			if (VorbisFile.Ov_Test(moduleStream, true, out VorbisFile testVorbisFile, null, 0) == VorbisError.Ok)
 			{
 				testVorbisFile.Ov_Clear();
