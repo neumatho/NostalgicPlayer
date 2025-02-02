@@ -515,7 +515,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 				{
 					int index = (((sbyte)buffer[i + 2] << 8) | buffer[i + 3]) + i + 2;
 
-					if (index >= (buffer.Length - 4))
+					if ((index < 0) || (index >= (buffer.Length - 4)))
 						return AgentResult.Unknown;
 
 					if ((buffer[index] == 'T') && (buffer[index + 1] == 'F') && (buffer[index + 2] == 'M') && (buffer[index + 3] == 'X'))
