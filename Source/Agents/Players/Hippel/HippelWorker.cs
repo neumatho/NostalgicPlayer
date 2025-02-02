@@ -744,8 +744,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Hippel
 			if ((headerIndex + subSongOffset) >= moduleStream.Length)
 				return false;
 
+			// If number of samples is 0, it is probably an ST module
+			if (moduleStream.Read_B_UINT16() == 0)
+				return false;
+
 			// If it's 7 voices, there should be 4 words with are all zero
 			moduleStream.Seek(headerIndex + subSongOffset, SeekOrigin.Begin);
+
+			if ((moduleStream.Position + 8) > moduleStream.Length)
+				return false;
 
 			if ((moduleStream.Read_B_UINT32() != 0) || (moduleStream.Read_B_UINT32() != 0))
 				return false;
