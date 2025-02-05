@@ -300,7 +300,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus.Instruments
 				Panning = -1,
 			};
 
-			if (formatData.SampleData.StartOctave == formatData.SampleData.EndOctave)
+			if ((formatData.SampleData.StartOctave == formatData.SampleData.EndOctave) || (formatData.SampleData.StartOctave >= 8))
 			{
 				sampleInfo.Sample = formatData.SampleData.SampleData;
 				sampleInfo.Length = (uint)formatData.SampleData.SampleData.Length;
