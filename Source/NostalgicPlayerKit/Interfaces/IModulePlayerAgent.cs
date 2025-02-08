@@ -26,6 +26,12 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		AgentResult Load(PlayerFileInfo fileInfo, out string errorMessage);
 
 		/// <summary>
+		/// Return a string containing a warning string. If there is no
+		/// warning, an empty string is returned
+		/// </summary>
+		string GetWarning();
+
+		/// <summary>
 		/// Initializes the player
 		/// </summary>
 		bool InitPlayer(out string errorMessage);

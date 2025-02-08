@@ -73,6 +73,17 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The module uses the following DSP effects/VST-plugins. These are not supported.
+        ///
+        ///{0}.
+        /// </summary>
+        internal static string IDS_XMP_ERR_HAVE_DSP {
+            get {
+                return ResourceManager.GetString("IDS_XMP_ERR_HAVE_DSP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to load module.
         /// </summary>
         internal static string IDS_XMP_ERR_LOADING {

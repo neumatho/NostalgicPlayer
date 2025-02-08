@@ -300,22 +300,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
-		/// Will show an error message to the user
-		/// </summary>
-		/********************************************************************/
-		public void ShowSimpleErrorMessage(string message)
-		{
-			using (CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error))
-			{
-				dialog.AddButton(Resources.IDS_BUT_OK, 'O');
-				dialog.ShowDialog(this);
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Open the help window if not already open
 		/// </summary>
 		/********************************************************************/
@@ -331,6 +315,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			}
 
 			helpWindow.Navigate(newUrl);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will show an error message to the user
+		/// </summary>
+		/********************************************************************/
+		public void ShowSimpleErrorMessage(string message)
+		{
+			using (CustomMessageBox dialog = new CustomMessageBox(message, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Error))
+			{
+				dialog.AddButton(Resources.IDS_BUT_OK, 'O');
+				dialog.ShowDialog(this);
+			}
 		}
 
 
@@ -468,6 +468,25 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 					ChangePlayItem(null);
 					break;
 				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will show a question to the user
+		/// </summary>
+		/********************************************************************/
+		public bool ShowQuestion(string question)
+		{
+			using (CustomMessageBox dialog = new CustomMessageBox(question, Resources.IDS_MAIN_TITLE, CustomMessageBox.IconType.Question))
+			{
+				dialog.AddButton(Resources.IDS_BUT_YES, 'y');
+				dialog.AddButton(Resources.IDS_BUT_NO, 'n');
+				dialog.ShowDialog(this);
+
+				return dialog.GetButtonResult('n') == 'y';
 			}
 		}
 
@@ -4103,22 +4122,28 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			ModuleListItem listItem = moduleListControl.Items[index];
 
-			moduleHandler.PlayModule(listItem);
+			if (moduleHandler.PlayModule(listItem))
+			{
+				// Initialize other stuff in the window
+				InitSubSongs();
 
-			// Initialize other stuff in the window
-			InitSubSongs();
+				// Mark the item in the list
+				ChangePlayItem(listItem);
 
-			// Mark the item in the list
-			ChangePlayItem(listItem);
+				// Initialize controls
+				InitControls();
 
-			// Initialize controls
-			InitControls();
+				// Update database
+				UpdateDatabase(listItem);
 
-			// Update database
-			UpdateDatabase(listItem);
-
-			// And refresh other windows
-			RefreshWindows(true);
+				// And refresh other windows
+				RefreshWindows(true);
+			}
+			else
+			{
+				// Free loaded module
+				StopAndFreeModule();
+			}
 		}
 
 

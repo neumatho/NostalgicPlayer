@@ -61,6 +61,19 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Return a string containing a warning string. If there is no
+		/// warning, an empty string is returned
+		/// </summary>
+		/********************************************************************/
+		public virtual string GetWarning()
+		{
+			return string.Empty;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Initializes the player
 		/// </summary>
 		/********************************************************************/

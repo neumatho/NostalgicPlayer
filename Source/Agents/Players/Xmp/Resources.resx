@@ -123,6 +123,11 @@ Ported to NostalgicPlayer by Thomas Neumann.
 
 This player uses the LibXmp which stands for Extended Module Player Library. It support a lot of different module format including the popular formats like Scream Tracker 3, Fast Tracker II and Impulse Tracker.</value>
   </data>
+  <data name="IDS_XMP_ERR_HAVE_DSP" xml:space="preserve">
+    <value>The module uses the following DSP effects/VST-plugins. These are not supported.
+
+{0}</value>
+  </data>
   <data name="IDS_XMP_ERR_LOADING" xml:space="preserve">
     <value>Failed to load module</value>
   </data>

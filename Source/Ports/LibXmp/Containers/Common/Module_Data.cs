@@ -170,5 +170,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		/// 
 		/// </summary>
 		public Xmp_Module_Flags Module_Flags;
+
+		/// <summary>
+		/// Names of found DSP effects/VST plugins
+		/// </summary>
+		public string[] DspEffects;
 	}
 }

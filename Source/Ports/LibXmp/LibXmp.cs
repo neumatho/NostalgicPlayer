@@ -494,6 +494,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 		/********************************************************************/
 		/// <summary>
+		/// Retrieve VST plugin names
+		/// </summary>
+		/********************************************************************/
+		public string[] Xmp_Get_Used_Dsp_Effects()
+		{
+			return ctx.M.DspEffects;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will create a snapshot of the current player state
 		/// </summary>
 		/********************************************************************/

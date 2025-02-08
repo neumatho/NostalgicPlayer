@@ -16,6 +16,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 	public interface IPlayer
 	{
 		/// <summary>
+		/// Return a string containing a warning string. If there is no
+		/// warning, an empty string is returned
+		/// </summary>
+		string GetWarning(Loader loader);
+
+		/// <summary>
 		/// Will initialize the player
 		/// </summary>
 		bool InitPlayer(PlayerConfiguration playerConfiguration, out string errorMessage);

@@ -68,6 +68,15 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 					return;
 				}
 
+				IPlayer player = loader.Player;
+
+				string warningMessage = player.GetWarning(loader);
+				if (!string.IsNullOrEmpty(warningMessage))
+				{
+					Console.WriteLine(warningMessage);
+					Console.WriteLine();
+				}
+
 				try
 				{
 					// Find the output agent to use
@@ -88,8 +97,6 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 
 					try
 					{
-						IPlayer player = loader.Player;
-
 						if (!player.InitPlayer(new PlayerConfiguration(outputAgent, loader, new MixerConfiguration
 							{
 								EnableAmigaFilter = true,

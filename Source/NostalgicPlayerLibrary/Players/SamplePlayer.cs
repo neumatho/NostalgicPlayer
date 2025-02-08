@@ -47,6 +47,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		#region IPlayer implementation
 		/********************************************************************/
 		/// <summary>
+		/// Return a string containing a warning string. If there is no
+		/// warning, an empty string is returned
+		/// </summary>
+		/********************************************************************/
+		public string GetWarning(Loader loader)
+		{
+			return string.Empty;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will initialize the player
 		/// </summary>
 		/********************************************************************/

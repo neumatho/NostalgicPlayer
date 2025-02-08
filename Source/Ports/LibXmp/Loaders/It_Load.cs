@@ -4,7 +4,9 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Polycode.NostalgicPlayer.CKit;
@@ -836,19 +838,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 			for (c_int i = 0; i < mod.Pat; i++)
 				pp_Pat[i] = f.Hio_Read32L();
 
+			// Skip edit history if it exists
+			if ((ifh.Special & It_Special.Edit_History) != 0)
+			{
+				c_int skip = f.Hio_Read16L() * 8;
+				if ((f.Hio_Error() != 0) || ((skip != 0) && (f.Hio_Seek(skip, SeekOrigin.Current) < 0)))
+					goto Err4;
+			}
+
 			if (((ifh.Flags & It_Flag.Midi_Config) != 0) || ((ifh.Special & It_Special.Spec_MidiCfg) != 0))
 			{
-				// Skip edit history if it exists
-				if ((ifh.Special & It_Special.Edit_History) != 0)
-				{
-					c_int skip = f.Hio_Read16L() * 8;
-					if ((f.Hio_Error() != 0) || ((skip != 0) && (f.Hio_Seek(skip, SeekOrigin.Current) < 0)))
-						goto Err4;
-				}
-
 				if (Load_It_Midi_Config(m, f) < 0)
 					goto Err4;
 			}
+
+			m.DspEffects = CheckForDspEffects(pp_Ins, pp_Smp, pp_Pat, ifh, f);
 
 			if ((mod.Smp != 0) && (mod.Pat != 0) && (pp_Pat[0] != 0) && (pp_Pat[0] < pp_Smp[0]))
 				pat_Before_Smp = true;
@@ -2380,6 +2384,75 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Loaders
 				return true;
 
 			return false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check if the module contains any DSP effects/VST plugins
+		/// </summary>
+		/********************************************************************/
+		private string[] CheckForDspEffects(CPointer<uint32> pp_Ins, CPointer<uint32> pp_Smp, CPointer<uint32> pp_Pat, It_File_Header ifh, Hio f)
+		{
+			List<string> effects = new List<string>();
+
+			uint8[] buf = new uint8[64];
+			uint32 minPointer = uint32.MaxValue;
+
+			minPointer = Math.Min(minPointer, MinValue(pp_Ins));
+			minPointer = Math.Min(minPointer, MinValue(pp_Smp));
+			minPointer = Math.Min(minPointer, MinValue(pp_Pat));
+
+			if (ifh.Special.HasFlag(It_Special.Has_Msg))
+				minPointer = Math.Min(minPointer, ifh.MsgOfs);
+
+			while (f.Hio_Tell() < minPointer)
+			{
+				uint32 code = f.Hio_Read32B();
+				uint32 length = f.Hio_Read32L();
+
+				if (code == 0x5854504d)		// XTPM
+					break;
+
+				if ((code >= 0x46583030) && (code <= 0x46583939))	// FX00-FX99
+				{
+					// VST plugin. Find the name
+					f.Hio_Seek(64, SeekOrigin.Current);
+
+					f.Hio_Read(buf, 64, 1);
+					effects.Add(encoder.GetString(buf));
+
+					length -= 128;
+				}
+
+				f.Hio_Seek((c_long)length, SeekOrigin.Current);
+			}
+
+			return effects.Count == 0 ? null : effects.Distinct().OrderBy(x => x).ToArray();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private uint32 MinValue(CPointer<uint32> pp)
+		{
+			uint32 minValue = uint32.MaxValue;
+
+			if (pp.IsNotNull)
+			{
+				for (int i = pp.Length - 1; i >= 0; i--)
+				{
+					if (pp[i] < minValue)
+						minValue = pp[i];
+				}
+			}
+
+			return minValue;
 		}
 		#endregion
 	}

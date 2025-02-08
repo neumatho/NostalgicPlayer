@@ -349,8 +349,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/// Will start playing the given module
 		/// </summary>
 		/********************************************************************/
-		public void PlayModule(ModuleListItem listItem)
+		public bool PlayModule(ModuleListItem listItem)
 		{
+			bool result = true;
+
 			lock (loadedFiles)
 			{
 				// Did we have any modules loaded at all?
@@ -361,7 +363,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					loadedFiles.RemoveAt(0);
 
 					// Start playing the new module
-					StartPlaying(listItem, -1, -1);
+					result = StartPlaying(listItem, -1, -1);
 
 					// Free the previous module
 					IPlayer player = item.Loader.Player;
@@ -384,12 +386,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					player.ClockUpdated -= Player_ClockUpdated;
 
 					// Cleanup the player
-					player.CleanupPlayer(false);
+					player.CleanupPlayer(!result);
 
 					// Unload the module
 					item.Loader.Unload();
 				}
 			}
+
+			return result;
 		}
 
 
@@ -874,15 +878,36 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 		/********************************************************************/
 		/// <summary>
 		/// Will start to play the song number given
+		///
+		/// NOTE: This method needs to be called from the main GUI thread
 		/// </summary>
 		/********************************************************************/
 		private bool StartPlaying(ModuleListItem listItem, int subSong, int startPos, bool showError = true)
 		{
 			IPlayer player = GetActivePlayer();
 
-			// Is there any modules loaded?
+			// Are there any modules loaded?
 			if (player != null)
 			{
+				if (showError)
+				{
+					string warningMessage = string.Empty;
+
+					lock (loadedFiles)
+					{
+						if (IsModuleLoaded)
+							warningMessage = player.GetWarning(loadedFiles[0].Loader);
+					}
+
+					if (!string.IsNullOrEmpty(warningMessage))
+					{
+						player.StopPlaying();
+
+						if (!mainWindowForm.ShowQuestion(string.Format(Resources.IDS_ERR_PLAYER_WARNINGS, player.StaticModuleInformation.PlayerName, warningMessage)))
+							return false;
+					}
+				}
+
 				// Change the volume
 				SetVolume(currentMasterVolume);
 
@@ -898,7 +923,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					if (!modulePlayer.SelectSong(subSong, out string errorMessage))
 					{
 						if (showError)
-							ShowErrorMessage(errorMessage, listItem);
+							mainWindowForm.ShowErrorMessage(errorMessage, listItem);
 
 						return false;
 					}
@@ -930,7 +955,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 						if (!player.StartPlaying(loadedFiles[0].Loader, out string errorMessage, mixerConfiguration))
 						{
 							if (showError && !string.IsNullOrEmpty(errorMessage))
-								ShowErrorMessage(string.Format(Resources.IDS_ERR_INIT_PLAYER, player.StaticModuleInformation.PlayerAgentInfo.AgentName, errorMessage), listItem);
+								mainWindowForm.ShowErrorMessage(string.Format(Resources.IDS_ERR_INIT_PLAYER, player.StaticModuleInformation.PlayerAgentInfo.AgentName, errorMessage), listItem);
 
 							return false;
 						}

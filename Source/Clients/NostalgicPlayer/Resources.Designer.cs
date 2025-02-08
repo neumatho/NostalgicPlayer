@@ -533,7 +533,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No.
+        ///   Looks up a localized string similar to &amp;No.
         /// </summary>
         internal static string IDS_BUT_NO {
             get {
@@ -578,7 +578,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Yes.
+        ///   Looks up a localized string similar to &amp;Yes.
         /// </summary>
         internal static string IDS_BUT_YES {
             get {
@@ -788,6 +788,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         internal static string IDS_ERR_PLAYER_FAILED {
             get {
                 return ResourceManager.GetString("IDS_ERR_PLAYER_FAILED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Player {0} returned the following warnings:
+        ///
+        ///{1}
+        ///
+        ///Do you want to continue?.
+        /// </summary>
+        internal static string IDS_ERR_PLAYER_WARNINGS {
+            get {
+                return ResourceManager.GetString("IDS_ERR_PLAYER_WARNINGS", resourceCulture);
             }
         }
         
