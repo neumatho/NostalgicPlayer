@@ -69,22 +69,6 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
-		/// Check if MIDI is used
-		/// </summary>
-		/********************************************************************/
-		private void CheckMidi(Mo3Module module)
-		{
-			if (module.Header.FixedMacros.SelectMany(x => x).Any(x => x != 0))
-				throw new NotImplementedException("Macros not implemented yet");
-
-			if (module.Header.SfxMacros.Any(x => x != 0))
-				throw new NotImplementedException("Macros not implemented yet");
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Check if the module is in OpenMPT format
 		/// </summary>
 		/********************************************************************/
@@ -246,9 +230,6 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 
 			long currentPosition = converterStream.Position;
 			converterStream.WriteArray_L_UINT32s(Enumerable.Repeat<uint>(0, spaceToReserve).ToArray(), spaceToReserve);
-
-			// For some reason, it seems like 2 extra zero bytes are written after this
-			converterStream.Write_L_UINT16(0);
 
 			return currentPosition;
 		}

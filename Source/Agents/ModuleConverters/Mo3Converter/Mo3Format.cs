@@ -540,7 +540,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 
 					FxPlugin plugin = new FxPlugin
 					{
-						Plugin = plug,
+						Plugin = (byte)(plug - 1),
 						Data = new byte[len]
 					};
 
