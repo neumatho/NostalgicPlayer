@@ -798,19 +798,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 
 			playingInfo.RepeatCount = -1;
 
-			SetTimer(11932);	// ~60 Hz
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set tempo
-		/// </summary>
-		/********************************************************************/
-		private void SetTimer(ushort ciaTimerValue)
-		{
-			PlayingFrequency = 709379f / ciaTimerValue;
+			SetCiaTimerTempo(11932);	// ~60 Hz
 		}
 
 
@@ -945,7 +933,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.IffSmus
 					ushort tempo = Tables.Tempo[playingInfo.CurrentTempo];
 					playingInfo.CalculatedSpeed = (ushort)(tempo >> 12);
 					playingInfo.CalculatedTempo = (ushort)((tempo << 15) / (playingInfo.CalculatedSpeed << 12));
-					SetTimer((ushort)((playingInfo.CalculatedTempo * 11932) >> 15));
+					SetCiaTimerTempo((ushort)((playingInfo.CalculatedTempo * 11932) >> 15));
 
 					ShowTempo();
 				}

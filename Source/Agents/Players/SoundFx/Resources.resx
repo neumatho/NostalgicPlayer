@@ -159,7 +159,7 @@ The SoundFX file format is like SoundTracker. It only have a few effects, but it
     <value>Playing pattern:</value>
   </data>
   <data name="IDS_SFX_INFODESCLINE5" xml:space="preserve">
-    <value>Current tempo (BPM):</value>
+    <value>Current tempo (Hz):</value>
   </data>
   <data name="IDS_SFX_NAME" xml:space="preserve">
     <value>SoundFX</value>

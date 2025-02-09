@@ -1222,14 +1222,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Med
 				PlayingFrequency = 1f / ((625000f / newTempo) / 1000000);
 			else
 			{
-				int ciaTempo;
+				ushort ciaTempo;
 
 				if (newTempo > 10)
-					ciaTempo = 470000 / newTempo;
+					ciaTempo = (ushort)(470000 / newTempo);
 				else
 					ciaTempo = Tables.SoundTrackerTempos[newTempo];
 
-				PlayingFrequency = 709379f / ciaTempo;
+				SetCiaTimerTempo(ciaTempo);
 			}
 
 			ShowTempo();

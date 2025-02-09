@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using Polycode.NostalgicPlayer.Agent.Player.SoundFx.Containers;
@@ -137,11 +138,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 					break;
 				}
 
-				// Current tempo (BPM)
+				// Current tempo (Hz)
 				case 5:
 				{
 					description = Resources.IDS_SFX_INFODESCLINE5;
-					value = GetBpmTempo().ToString();
+					value = PlayingFrequency.ToString("F2", CultureInfo.InvariantCulture);
 					break;
 				}
 
@@ -504,7 +505,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx
 			channelInfo = ArrayHelper.InitializeArray<Channel>(4);
 
 			// Calculate the frequency to play with
-			PlayingFrequency = 1773447.0f / delay / 2.5f;
+			SetCiaTimerTempo(delay);
 		}
 
 

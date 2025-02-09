@@ -287,7 +287,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
-		/// Calculates the frequency to the BPM you give and change the
+		/// Calculates the frequency from the BPM you give and change the
 		/// playing speed
 		/// </summary>
 		/********************************************************************/
@@ -300,12 +300,13 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
-		/// Return the BPM calculated from the current playing frequency
+		/// Calculates the frequency from an Amiga CIA value and change the
+		/// playing speed
 		/// </summary>
 		/********************************************************************/
-		protected ushort GetBpmTempo()
+		protected void SetCiaTimerTempo(ushort ciaTimerValue)
 		{
-			return (ushort)(PlayingFrequency * 2.5f);
+			PlayingFrequency = 709379.0f / ciaTimerValue;
 		}
 
 

@@ -861,7 +861,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic
 				InitializeVoiceWithLatestVolumeAndInstrument(voices[i]);
 			}
 
-			SetTimer(startCiaTimerValue);
+			SetCiaTimerTempo(startCiaTimerValue);
 			AmigaFilter = (flag & 0x02) != 0;
 
 			endReached = false;
@@ -2732,7 +2732,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic
 			if (ciaTempo < 0x1000)
 				ciaTempo = 0x1000;
 
-			SetTimer(ciaTempo);
+			SetCiaTimerTempo(ciaTempo);
 			ShowTempo();
 		}
 
@@ -2923,18 +2923,6 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FaceTheMusic
 					channel.SetPanning((ushort)Tables.PanPos[i]);
 				}
 			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Set tempo
-		/// </summary>
-		/********************************************************************/
-		private void SetTimer(ushort ciaTimerValue)
-		{
-			PlayingFrequency = 709379f / ciaTimerValue;
 		}
 
 

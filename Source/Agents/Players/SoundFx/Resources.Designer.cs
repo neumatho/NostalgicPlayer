@@ -168,7 +168,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.SoundFx {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Current tempo (BPM):.
+        ///   Looks up a localized string similar to Current tempo (Hz):.
         /// </summary>
         internal static string IDS_SFX_INFODESCLINE5 {
             get {
