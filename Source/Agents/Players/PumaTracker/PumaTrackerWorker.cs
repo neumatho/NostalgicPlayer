@@ -695,7 +695,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.PumaTracker
 						samples[i] = new byte[length];
 
 						int readBytes = sampleStream.Read(samples[i], 0, length);
-						if (readBytes < (length - 8))
+						if (readBytes < (length - 48))
 							return false;
 					}
 				}
