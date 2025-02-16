@@ -1213,6 +1213,14 @@
             <uap:DisplayName>Face The Music</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="rkfile">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/x-rk">.rk</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Ron Klaren</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

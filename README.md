@@ -175,6 +175,7 @@ Modules in all supported formats can be found on my homepage at https://nostalgi
 | RIFF-WAVE (ADPCM) | .wav | | Sample |
 | RIFF-WAVE (IEEE Float) | .wav | | Sample |
 | RIFF-WAVE (PCM) | .wav | | Sample |
+| Ron Klaren | .rk | | Ron Klaren |
 | Sawteeth | .st | | Sawteeth |
 | SC68 | .sc68 | Module Converter | \* |
 | Scream Tracker 2 | .stm | | Xmp |

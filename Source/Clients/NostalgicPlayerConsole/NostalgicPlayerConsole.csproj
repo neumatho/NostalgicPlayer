@@ -67,6 +67,7 @@
     <ProjectReference Include="..\..\Agents\Players\Opus\Opus.csproj" />
     <ProjectReference Include="..\..\Agents\Players\PumaTracker\PumaTracker.csproj" />
     <ProjectReference Include="..\..\Agents\Players\QuadraComposer\QuadraComposer.csproj" />
+    <ProjectReference Include="..\..\Agents\Players\RonKlaren\RonKlaren.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Sample\Sample.csproj" />
     <ProjectReference Include="..\..\Agents\Players\Sawteeth\Sawteeth.csproj" />
     <ProjectReference Include="..\..\Agents\Players\SidMon10\SidMon10.csproj" />
