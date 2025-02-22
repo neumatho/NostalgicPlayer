@@ -1507,21 +1507,31 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 		/// 
 		/// </summary>
 		/********************************************************************/
+		public static uint64_t Flac__Lpc_Max_Prediction_Value_Before_Shift(uint32_t subframe_Bps, Flac__int32[] qlp_Coeff, uint32_t order)
+		{
+			Flac__uint64 max_Abs_Sample_Value = (Flac__uint64)(1) << ((int)subframe_Bps - 1);
+			Flac__uint32 abs_Sum_Of_Qlp_Coeff = 0;
+
+			for (uint32_t i = 0; i < order; i++)
+				abs_Sum_Of_Qlp_Coeff += (Flac__uint32)Math.Abs(qlp_Coeff[i]);
+
+			return max_Abs_Sample_Value * abs_Sum_Of_Qlp_Coeff;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
 		public static uint32_t Flac__Lpc_Max_Prediction_Before_Shift_Bps(uint32_t subframe_Bps, Flac__int32[] qlp_Coeff, uint32_t order)
 		{
 			// This used to be subframe_bps + qlp_coeff_precision + FLAC__bitmath_ilog2(order)
 			// but that treats both the samples as well as the predictor as unknown. The
 			// predictor is known however, so taking the log2 of the sum of the absolute values
 			// of all coefficients is a more accurate representation of the predictor
-			Flac__int32 abs_Sum_Of_Qlp_Coeff = 0;
-
-			for (uint32_t i = 0; i < order; i++)
-				abs_Sum_Of_Qlp_Coeff += Math.Abs(qlp_Coeff[i]);
-
-			if (abs_Sum_Of_Qlp_Coeff == 0)
-				abs_Sum_Of_Qlp_Coeff = 1;
-
-			return subframe_Bps + BitMath.Flac__BitMath_SiLog2(abs_Sum_Of_Qlp_Coeff);
+			return BitMath.Flac__BitMath_SiLog2((Flac__int64)Flac__Lpc_Max_Prediction_Value_Before_Shift(subframe_Bps, qlp_Coeff, order));
 		}
 
 
@@ -1533,12 +1543,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 		/********************************************************************/
 		public static uint32_t Flac__Lpc_Max_Residual_Bps(uint32_t subframe_Bps, Flac__int32[] qlp_Coeff, uint32_t order, int lp_Quantization)
 		{
-			Flac__int32 predictor_Sum_Bps = (Flac__int32)Flac__Lpc_Max_Prediction_Before_Shift_Bps(subframe_Bps, qlp_Coeff, order) - lp_Quantization;
+			Flac__uint64 max_Abs_Sample_Value = (Flac__uint64)(1) << ((int)subframe_Bps - 1);
+			Flac__uint64 max_Prediction_Value_After_Shift = (Flac__uint64)(-1 * ((-1 * (Flac__int64)Flac__Lpc_Max_Prediction_Value_Before_Shift(subframe_Bps, qlp_Coeff, order)) >> lp_Quantization));
+			Flac__uint64 max_Residual_Value = max_Abs_Sample_Value + max_Prediction_Value_After_Shift;
 
-			if ((int)subframe_Bps > predictor_Sum_Bps)
-				return subframe_Bps + 1;
-			else
-				return (uint32_t)predictor_Sum_Bps + 1;
+			return BitMath.Flac__BitMath_SiLog2((Flac__int64)max_Residual_Value);
 		}
 
 

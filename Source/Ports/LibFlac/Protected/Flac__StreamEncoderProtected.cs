@@ -37,6 +37,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Protected
 		public Flac__bool Limit_Min_Bitrate;
 		public Flac__StreamMetadata[] Metadata;
 		public uint32_t Num_Metadata_Blocks;
+		public uint32_t Num_Threads;
 		public Flac__uint64 StreamInfo_Offset;
 		public Flac__uint64 Seekable_Offset;
 		public Flac__uint64 Audio_Offset;

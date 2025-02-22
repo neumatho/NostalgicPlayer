@@ -26,9 +26,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 		private const uint32_t Flac__BitWriter_Default_Capacity = 32768 / sizeof(bwWord);	// Size in words
 
 		/// <summary>
-		/// When growing, increment 4K at a time
+		/// When growing, increment with 1/4th at a time
 		/// </summary>
-		private const uint32_t Flac__BitWriter_Default_Increment = 4096 / sizeof(bwWord);	// Size in words
+		private const int32_t Flac__BitWriter_Default_Grow_Fraction = 2;   // Means grow by >> 2 (1/4th) of current size
 
 		private class Flac__BitWriter
 		{
@@ -799,12 +799,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 				return false;
 			}
 
-			// Round up capacity increase to the nearest FLAC__BITWRITER_DEFAULT_INCREMENT
-			if (((new_Capacity - bw.Capacity) % Flac__BitWriter_Default_Increment) != 0)
-				new_Capacity += Flac__BitWriter_Default_Increment - ((new_Capacity - bw.Capacity) % Flac__BitWriter_Default_Increment);
+			// As reallocation can be quite expensive, grow exponentially
+			if ((new_Capacity - bw.Capacity) < (bw.Capacity >> Flac__BitWriter_Default_Grow_Fraction))
+				new_Capacity = bw.Capacity + (bw.Capacity >> Flac__BitWriter_Default_Grow_Fraction);
 
 			// Make sure we got everything right
-			Debug.Assert((new_Capacity - bw.Capacity) % Flac__BitWriter_Default_Increment == 0);
 			Debug.Assert(new_Capacity > bw.Capacity);
 			Debug.Assert(new_Capacity >= bw.Words + ((bw.Bits + bits_To_Add + Constants.Flac__Bits_Per_Word - 1) / Constants.Flac__Bits_Per_Word));
 

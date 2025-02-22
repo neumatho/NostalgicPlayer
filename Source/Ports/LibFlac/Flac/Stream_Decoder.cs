@@ -315,6 +315,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			public Flac__bool Do_Md5_Checking;							// Initially gets Protected.Md5_Checking but is turned off after a seek or if the metadata has a zero MD5
 			public Flac__bool Internal_Reset_Hack;						// Used only during init() so we can call reset to set up the decoder without rewinding the input
 			public Flac__bool Is_Seeking;
+			public Flac__bool Is_Indexing;								// To be able to seek in chained streams
 			public Md5 Md5;
 			public Flac__byte[] Computed_Md5Sum;						// This is the sum we computed from the decoded data
 
@@ -326,6 +327,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			public Flac__uint64 Target_Sample;
 			public uint32_t Unparseable_Frame_Count;	// Used to tell whether we're decoding a future version of FLAC or just got a bad sync
 			public IBitReader BitReader;
+			public Flac__bool Error_Has_Been_Sent;		// To check whether a missing frame has been signalled yet
 		}
 
 		private Flac__StreamDecoder decoder;
@@ -586,6 +588,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			}
 
 			decoder.Private.Is_Seeking = false;
+			decoder.Private.Is_Indexing = false;
 
 			Set_Defaults(decoder);
 
@@ -634,7 +637,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// type
 		/// </summary>
 		/// <param name="type">See above</param>
-		/// <returns>False if the decoder is already initialized, else true</returns>
+		/// <returns>False if type is invalid, else true</returns>
 		/********************************************************************/
 		public Flac__bool Flac__Stream_Decoder_Set_Metadata_Respond(Flac__MetadataType type)
 		{
@@ -645,9 +648,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 			// Double protection
 			if (type > Flac__MetadataType.Max_Metadata_Type)
-				return false;
-
-			if (decoder.Protected.State != Flac__StreamDecoderState.Uninitialized)
 				return false;
 
 			decoder.Private.Metadata_Filter[(int32_t)type] = true;
@@ -666,7 +666,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// of the given id
 		/// </summary>
 		/// <param name="id">See above</param>
-		/// <returns>False if the decoder is already initialized, else true</returns>
+		/// <returns>False when memory allocation fails, else true</returns>
 		/********************************************************************/
 		public Flac__bool Flac__Stream_Decoder_Set_Metadata_Respond_Application(Flac__byte[] id)
 		{
@@ -674,9 +674,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			Debug.Assert(decoder.Private != null);
 			Debug.Assert(decoder.Protected != null);
 			Debug.Assert(id != null);
-
-			if (decoder.Protected.State != Flac__StreamDecoderState.Uninitialized)
-				return false;
 
 			if (decoder.Private.Metadata_Filter[(int32_t)Flac__MetadataType.Application])
 				return true;
@@ -707,16 +704,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// <summary>
 		/// Direct the decoder to pass on all metadata blocks of any type
 		/// </summary>
-		/// <returns>False if the decoder is already initialized, else true</returns>
+		/// <returns>Always true</returns>
 		/********************************************************************/
 		public Flac__bool Flac__Stream_Decoder_Set_Metadata_Respond_All()
 		{
 			Debug.Assert(decoder != null);
 			Debug.Assert(decoder.Private != null);
 			Debug.Assert(decoder.Protected != null);
-
-			if (decoder.Protected.State != Flac__StreamDecoderState.Uninitialized)
-				return false;
 
 			for (uint32_t i = 0; i < decoder.Private.Metadata_Filter.Length; i++)
 				decoder.Private.Metadata_Filter[i] = true;
@@ -734,7 +728,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// given type
 		/// </summary>
 		/// <param name="type">See above</param>
-		/// <returns>False if the decoder is already initialized, else true</returns>
+		/// <returns>False if type is invalid, else true</returns>
 		/********************************************************************/
 		public Flac__bool Flac__Stream_Decoder_Set_Metadata_Ignore(Flac__MetadataType type)
 		{
@@ -745,9 +739,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 			// Double protection
 			if (type > Flac__MetadataType.Max_Metadata_Type)
-				return false;
-
-			if (decoder.Protected.State != Flac__StreamDecoderState.Uninitialized)
 				return false;
 
 			decoder.Private.Metadata_Filter[(int32_t)type] = false;
@@ -766,7 +757,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// of the given id
 		/// </summary>
 		/// <param name="id">See above</param>
-		/// <returns>False if the decoder is already initialized, else true</returns>
+		/// <returns>False if memory allocation fails, else true</returns>
 		/********************************************************************/
 		public Flac__bool Flac__Stream_Decoder_Set_Metadata_Ignore_Application(Flac__byte[] id)
 		{
@@ -774,9 +765,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			Debug.Assert(decoder.Private != null);
 			Debug.Assert(decoder.Protected != null);
 			Debug.Assert(id != null);
-
-			if (decoder.Protected.State != Flac__StreamDecoderState.Uninitialized)
-				return false;
 
 			if (!decoder.Private.Metadata_Filter[(int32_t)Flac__MetadataType.Application])
 				return true;
@@ -807,16 +795,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// <summary>
 		/// Direct the decoder to filter out all metadata blocks of any type
 		/// </summary>
-		/// <returns>False if the decoder is already initialized, else true</returns>
+		/// <returns>Always true</returns>
 		/********************************************************************/
 		public Flac__bool Flac__Stream_Decoder_Set_Metadata_Ignore_All()
 		{
 			Debug.Assert(decoder != null);
 			Debug.Assert(decoder.Private != null);
 			Debug.Assert(decoder.Protected != null);
-
-			if (decoder.Protected.State != Flac__StreamDecoderState.Uninitialized)
-				return false;
 
 			Array.Clear(decoder.Private.Metadata_Filter);
 			decoder.Private.Metadata_Filter_Ids_Count = 0;
@@ -988,6 +973,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			if (!decoder.Private.Internal_Reset_Hack && (decoder.Protected.State == Flac__StreamDecoderState.Uninitialized))
 				return false;
 
+			if (decoder.Protected.State == Flac__StreamDecoderState.Memory_Allocation_Error)
+				return false;
+
 			decoder.Private.Samples_Decoded = 0;
 			decoder.Private.Do_Md5_Checking = false;
 			decoder.Private.Last_Seen_FrameSync = 0;
@@ -1089,42 +1077,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					return false;	// Seekable and seek fails, reset fails
 			}
 
-			decoder.Protected.State = Flac__StreamDecoderState.Search_For_Metadata;
-
-			decoder.Private.Has_Stream_Info = false;
-
-			if ((Flac__StreamMetadata_SeekTable)decoder.Private.Seek_Table.Data != null)
-				((Flac__StreamMetadata_SeekTable)decoder.Private.Seek_Table.Data).Points = null;
-
-			decoder.Private.Has_Seek_Table = false;
-
-			decoder.Private.Do_Md5_Checking = decoder.Protected.Md5_Checking;
-
-			// This goes in Reset() and not Flush() because according to the spec, a
-			// fixed-blocksize stream must stay that way through the whole stream
-			decoder.Private.Fixed_Block_Size = decoder.Private.Next_Fixed_Block_Size = 0;
-
-			// We initialize the Flac__Md5Context even though we may never use it. This
-			// is because MD5 checking may be turned on to start and then turned off if
-			// a seek occurs. So we init the context here and finalize it in
-			// Flac__Stream_Decoder_Finish() to make sure things are always cleaned up
-			// properly
-			if (!decoder.Private.Internal_Reset_Hack)
-			{
-				// Only finish MD5 context when it has been initialized
-				// (i.e. when internal_reset_hack is not set)
-				decoder.Private.Md5.Flac__Md5Final();
-			}
-			else
-				decoder.Private.Internal_Reset_Hack = false;
-
-			decoder.Private.Md5 = new Md5();
-			decoder.Private.Md5.Flac__Md5Init();
-
-			decoder.Private.First_Frame_Offset = 0;
-			decoder.Private.Unparseable_Frame_Count = 0;
-			decoder.Private.Last_Seen_FrameSync = 0;
-			decoder.Private.Last_Frame_Is_Set = false;
+			Reset_Decoder_Internal();
 
 			return true;
 		}
@@ -1202,6 +1155,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					}
 
 					case Flac__StreamDecoderState.End_Of_Stream:
+					case Flac__StreamDecoderState.End_Of_Link:
 					case Flac__StreamDecoderState.Aborted:
 						return true;
 
@@ -1255,6 +1209,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					case Flac__StreamDecoderState.Search_For_Frame_Sync:
 					case Flac__StreamDecoderState.Read_Frame:
 					case Flac__StreamDecoderState.End_Of_Stream:
+					case Flac__StreamDecoderState.End_Of_Link:
 					case Flac__StreamDecoderState.Aborted:
 						return true;
 
@@ -1262,6 +1217,42 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 						return false;
 				}
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		///  Finish the decoding process of the current link.
+		/// Checks MD5 for current link and start processing of the next
+		/// link. This function should only be used when the decoder state
+		/// is FLAC__STREAM_DECODER_END_OF_LINK. After calling this function,
+		/// the state is set to FLAC__STREAM_DECODER_SEARCH_FOR_METADATA.
+		/// </summary>
+		/// <returns>False if MD5 checking is on AND a STREAMINFO block was available AND the MD5 signature in the STREAMINFO block was non-zero AND the signature does not match the one computed by the decoder; else true</returns>
+		/********************************************************************/
+		public Flac__bool Flac__Stream_Decoder_Finish_Link()
+		{
+			Flac__bool md5_Failed = false;
+
+			Debug.Assert(decoder != null);
+			Debug.Assert(decoder.Private != null);
+			Debug.Assert(decoder.Protected != null);
+
+			if (decoder.Protected.State != Flac__StreamDecoderState.End_Of_Link)
+				return true;	// This function should not be called in any other state
+
+			decoder.Private.Md5.Flac__Md5Final();
+
+			if (decoder.Private.Do_Md5_Checking)
+			{
+				if (!decoder.Private.Computed_Md5Sum.AsSpan().SequenceEqual(((Flac__StreamMetadata_StreamInfo)decoder.Private.Stream_Info.Data)?.Md5Sum))
+					md5_Failed = true;
+			}
+
+			Reset_Decoder_Internal();
+
+			return !md5_Failed;
 		}
 
 
@@ -1307,16 +1298,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 					case Flac__StreamDecoderState.Search_For_Frame_Sync:
 					{
-						if (!Frame_Sync())
+						if (!Frame_Sync() && (decoder.Protected.State != Flac__StreamDecoderState.End_Of_Link) && (decoder.Protected.State != Flac__StreamDecoderState.Memory_Allocation_Error))
 							return true;	// Above function sets the status for us
 
 						break;
 					}
+
 					case Flac__StreamDecoderState.Read_Frame:
 					{
 						if (!Read_Frame(out _, true))
 							return false;	// Above function sets the status for us
 
+						break;
+					}
+
+					case Flac__StreamDecoderState.End_Of_Link:
+					{
+						Flac__Stream_Decoder_Finish_Link();
 						break;
 					}
 
@@ -1397,6 +1395,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					}
 
 					case Flac__StreamDecoderState.End_Of_Stream:
+					case Flac__StreamDecoderState.End_Of_Link:
 					case Flac__StreamDecoderState.Aborted:
 						return true;
 
@@ -1418,6 +1417,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// FLAC__STREAM_DECODER_SEEK_ERROR, then the decoder must be flushed
 		/// with Flac__Stream_Decoder_Flush() or reset with
 		/// Flac__Stream_Decoder_Reset() before decoding can continue.
+		///
+		/// When seeking in a chained stream with decoding of such streams
+		/// enabled with FLAC__stream_decoder_set_decode_chained_stream(),
+		/// this function seeks in the whole stream, over all links. When
+		/// a seek to another link is performed, the decoder will also
+		/// return metadata blocks of that link. If this is not desired,
+		/// use FLAC__stream_decoder_set_metadata_ignore_all() before
+		/// seeking
 		/// </summary>
 		/// <param name="sample">The target sample number to seek to</param>
 		/// <returns>True for successful, else false</returns>
@@ -1527,6 +1534,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 			decoder.Private.Do_Md5_Checking = decoder.Protected.Md5_Checking;
 			decoder.Private.Is_Seeking = false;
+			decoder.Private.Is_Indexing = false;
 
 			decoder.Private.Internal_Reset_Hack = true;		// So the following reset does not try to rewind the input
 			if (!Flac__Stream_Decoder_Reset())
@@ -1669,6 +1677,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 			if (decoder.Private.Side_SubFrame != null)
 				decoder.Private.Side_SubFrame = null;
+
+			// Only grow per channel buffers, even if number of channels increases
+			if (decoder.Private.Output_Capacity > size)
+				size = decoder.Private.Output_Capacity;
 
 			for (uint32_t i = 0; i < channels; i++)
 			{
@@ -2853,15 +2865,17 @@ Skip:
 					// Check whether decoded data actually fits bps
 					for (uint32_t channel = 0; channel < decoder.Private.Frame.Header.Channels; channel++)
 					{
+						int shift_Bits = (int)(32 - decoder.Private.Frame.Header.Bits_Per_Sample);
+						int lower_Limit = int32_t.MinValue >> shift_Bits;
+						int upper_Limit = int32_t.MaxValue >> shift_Bits;
+
 						for (uint32_t i = 0; i < decoder.Private.Frame.Header.BlockSize; i++)
 						{
-							int shift_Bits = (int)(32 - decoder.Private.Frame.Header.Bits_Per_Sample);
-
 							// Check whether shift_Bits MSBs are 'empty' by shifting up and down
-							if ((decoder.Private.Output[channel][i] < (int32_t.MinValue >> shift_Bits)) || (decoder.Private.Output[channel][i] > (int32_t.MaxValue >> shift_Bits)))
+							if ((decoder.Private.Output[channel][i] < lower_Limit) || (decoder.Private.Output[channel][i] > upper_Limit))
 							{
 								// Bad frame, emit error
-								Send_Error_To_Client(Flac__StreamDecoderErrorStatus.Crc_Mismatch);
+								Send_Error_To_Client(Flac__StreamDecoderErrorStatus.Out_Of_Bounds);
 								decoder.Protected.State = Flac__StreamDecoderState.Search_For_Frame_Sync;
 								break;
 							}
@@ -2885,6 +2899,13 @@ Skip:
 				if ((decoder.Private.Last_Frame.Header.Sample_Number + decoder.Private.Last_Frame.Header.BlockSize) < decoder.Private.Frame.Header.Sample_Number)
 				{
 					uint32_t padding_Samples_Needed = (uint32_t)(decoder.Private.Frame.Header.Sample_Number - (decoder.Private.Last_Frame.Header.Sample_Number + decoder.Private.Last_Frame.Header.BlockSize));
+
+					// Send an error that we lost sync, but only in case no error
+					// has been sent yet. This is the case if exactly one or more
+					// frames are missing, and the frames before and after it
+					// are complete
+					if (!decoder.Private.Error_Has_Been_Sent)
+						Send_Error_To_Client(Flac__StreamDecoderErrorStatus.Missing_Frame);
 
 					// Do some extra validation to assure last frame an current frame
 					// header are both valid before adding silence in-between.
@@ -2948,6 +2969,8 @@ Skip:
 					}
 				}
 			}
+
+			decoder.Private.Error_Has_Been_Sent = false;
 
 			if ((decoder.Protected.State == Flac__StreamDecoderState.Search_For_Frame_Sync) || (decoder.Protected.State == Flac__StreamDecoderState.End_Of_Stream))
 			{
@@ -4113,7 +4136,16 @@ Skip:
 					}
 					else if (bytes == 0)
 					{
-						if ((status == Flac__StreamDecoderReadStatus.End_Of_Stream) || ((decoder.Private.Eof_Callback != null) && decoder.Private.Eof_Callback(streamDecoder, decoder.Private.Client_Data)))
+						if (status == Flac__StreamDecoderReadStatus.End_Of_Link)
+						{
+							if (decoder.Private.Input.Flac__BitReader_Is_Consumed_Byte_Aligned())
+								decoder.Protected.State = Flac__StreamDecoderState.End_Of_Link;
+							else
+								decoder.Protected.State = Flac__StreamDecoderState.Ogg_Error;
+
+							return false;
+						}
+						else if ((status == Flac__StreamDecoderReadStatus.End_Of_Stream) || ((decoder.Private.Eof_Callback != null) && decoder.Private.Eof_Callback(streamDecoder, decoder.Private.Client_Data)))
 						{
 							decoder.Protected.State = Flac__StreamDecoderState.End_Of_Stream;
 							return false;
@@ -4228,7 +4260,7 @@ Skip:
 			decoder.Private.Last_Frame = frame;	// Save the frame
 			decoder.Private.Last_Frame_Is_Set = true;
 
-			if (decoder.Private.Is_Seeking)
+			if (decoder.Private.Is_Seeking && !decoder.Private.Is_Indexing)
 			{
 				Flac__uint64 this_Frame_Sample = frame.Header.Sample_Number;
 				Flac__uint64 next_Frame_Sample = this_Frame_Sample + frame.Header.BlockSize;
@@ -4275,7 +4307,7 @@ Skip:
 				else
 					return Flac__StreamDecoderWriteStatus.Continue;
 			}
-			else
+			else if (!decoder.Private.Is_Indexing)
 			{
 				// If we never got STREAMINFO, turn off MD5 checking to save
 				// cycles since we don't have a sum to compare to anyway
@@ -4290,6 +4322,8 @@ Skip:
 
 				return decoder.Private.Write_Callback(this, frame, buffer, decoder.Private.Client_Data);
 			}
+			else
+				return Flac__StreamDecoderWriteStatus.Continue;
 		}
 
 
@@ -4302,7 +4336,10 @@ Skip:
 		private void Send_Error_To_Client(Flac__StreamDecoderErrorStatus status)
 		{
 			if (!decoder.Private.Is_Seeking)
+			{
+				decoder.Private.Error_Has_Been_Sent = true;
 				decoder.Private.Error_Callback(this, status, decoder.Private.Client_Data);
+			}
 			else if (status == Flac__StreamDecoderErrorStatus.Unparseable_Stream)
 				decoder.Private.Unparseable_Frame_Count++;
 		}
@@ -4434,15 +4471,25 @@ Skip:
 
 			Debug.Assert(upper_Bound_Sample >= lower_Bound_Sample);
 
-			// There are 2 insidious ways that the following equality occurs, which we need to fix:
+			// There are 3 insidious ways that the following equality occurs, which
+			// we need to fix:
 			//  1) total_Samples is 0 (unknown) and target_Sample is 0
 			//  2) total_Samples is 0 (unknown) and target_Sample happens to be
 			//     exactly equal to the last seek point in the seek table; this
 			//     means there is no seek point above it, and upper_Bound_Samples
 			//     remains equal to the estimate (of target_Samples) we made above
 			// In either case it does not hurt to move upper_Bound_Sample up by 1
+			//  3) the file is corrupt
 			if (upper_Bound_Sample == lower_Bound_Sample)
-				upper_Bound_Sample++;
+			{
+				if (total_Samples == 0)
+					upper_Bound_Sample++;
+				else
+				{
+					decoder.Protected.State = Flac__StreamDecoderState.Seek_Error;
+					return false;
+				}
+			}
 
 			decoder.Private.Target_Sample = target_Sample;
 
@@ -4454,7 +4501,7 @@ Skip:
 					return false;
 
 				// Check if the bounds are still ok
-				if ((lower_Bound_Sample >= upper_Bound_Sample) || (lower_Bound > upper_Bound) || (upper_Bound >= int64_t.MaxValue))
+				if ((lower_Bound_Sample >= upper_Bound_Sample) || (lower_Bound > upper_Bound) || (upper_Bound >= int64_t.MaxValue) || (target_Sample > upper_Bound_Sample))
 				{
 					decoder.Protected.State = Flac__StreamDecoderState.Seek_Error;
 					return false;
@@ -4506,7 +4553,9 @@ Skip:
 					}
 					else
 					{
-						decoder.Protected.State = Flac__StreamDecoderState.Seek_Error;
+						if ((decoder.Protected.State != Flac__StreamDecoderState.Aborted) && (decoder.Protected.State != Flac__StreamDecoderState.Memory_Allocation_Error))
+							decoder.Protected.State = Flac__StreamDecoderState.Seek_Error;
+
 						return false;
 					}
 				}
@@ -4710,6 +4759,57 @@ Skip:
 			{
 				return false;
 			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private void Reset_Decoder_Internal()
+		{
+			// This code resets only the FLAC parser and decoder, not the Ogg part,
+			// nor the input buffering etc. This is used to prepare the FLAC
+			// decoder to receive another Ogg chain link
+			decoder.Protected.State = Flac__StreamDecoderState.Search_For_Metadata;
+
+			decoder.Private.Has_Stream_Info = false;
+
+			if ((Flac__StreamMetadata_SeekTable)decoder.Private.Seek_Table.Data != null)
+				((Flac__StreamMetadata_SeekTable)decoder.Private.Seek_Table.Data).Points = null;
+
+			decoder.Private.Has_Seek_Table = false;
+
+			decoder.Private.Do_Md5_Checking = decoder.Protected.Md5_Checking;
+
+			// This goes in Reset() and not Flush() because according to the spec, a
+			// fixed-blocksize stream must stay that way through the whole stream
+			decoder.Private.Fixed_Block_Size = decoder.Private.Next_Fixed_Block_Size = 0;
+
+			// We initialize the Flac__Md5Context even though we may never use it. This
+			// is because MD5 checking may be turned on to start and then turned off if
+			// a seek occurs. So we init the context here and finalize it in
+			// Flac__Stream_Decoder_Finish() to make sure things are always cleaned up
+			// properly
+			if (!decoder.Private.Internal_Reset_Hack)
+			{
+				// Only finish MD5 context when it has been initialized
+				// (i.e. when internal_reset_hack is not set)
+				decoder.Private.Md5.Flac__Md5Final();
+			}
+			else
+				decoder.Private.Internal_Reset_Hack = false;
+
+			decoder.Private.Md5 = new Md5();
+			decoder.Private.Md5.Flac__Md5Init();
+
+			decoder.Private.First_Frame_Offset = 0;
+			decoder.Private.Unparseable_Frame_Count = 0;
+			decoder.Private.Last_Seen_FrameSync = 0;
+			decoder.Private.Last_Frame_Is_Set = false;
+			decoder.Private.Error_Has_Been_Sent = false;
 		}
 		#endregion
 	}

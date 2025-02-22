@@ -28,6 +28,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac.Containers.Decoder
 		/// <summary>
 		/// An unrecoverable error occurred. The decoder will return from the process call
 		/// </summary>
-		Abort
+		Abort,
+
+		/// <summary>
+		/// The read was attempted while at the end of the link. The semantics
+		/// are the same as for FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM
+		/// </summary>
+		End_Of_Link
 	}
 }

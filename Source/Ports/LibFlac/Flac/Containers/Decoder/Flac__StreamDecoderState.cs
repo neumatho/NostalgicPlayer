@@ -38,6 +38,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac.Containers.Decoder
 		End_Of_Stream,
 
 		/// <summary>
+		/// An error occurred in the underlying Ogg layer
+		/// </summary>
+		Ogg_Error,
+
+		/// <summary>
 		/// An error occurred while seeking. The decoder must be flushed
 		/// with Flac__Stream_Decoder_Flush() or reset with
 		/// Flac__Stream_Decoder_Reset() before decoding can continue
@@ -60,6 +65,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac.Containers.Decoder
 		/// Flac__Stream_Decoder_Init_*() functions must be called before samples
 		/// can be processed
 		/// </summary>
-		Uninitialized
+		Uninitialized,
+
+		/// <summary>
+		/// The decoder has reached the end of an Ogg FLAC chain link and a new
+		/// link follows; FLAC__stream_decoder_finish_link() has to be called to
+		/// progress. This state is only returned when decoding of chained
+		/// streams is enabled with
+		/// </summary>
+		End_Of_Link
 	}
 }

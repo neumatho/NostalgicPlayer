@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// Return the vendor string
 		/// </summary>
 		/********************************************************************/
-		public static string Flac__Vendor_String => "NostalgicPlayer (reference libFLAC 1.4.3 20230623)";
+		public static string Flac__Vendor_String => "NostalgicPlayer (reference libFLAC 1.5.0 20250211)";
 
 
 

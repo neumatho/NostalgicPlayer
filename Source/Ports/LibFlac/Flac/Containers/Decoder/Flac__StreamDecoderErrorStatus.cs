@@ -48,6 +48,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac.Containers.Decoder
 		/// <summary>
 		/// The decoder encountered a corrupted metadata block
 		/// </summary>
-		Bad_Metadata
+		Bad_Metadata,
+
+		/// <summary>
+		/// The decoder encountered a otherwise valid frame in which
+		/// the decoded samples exceeded the range offered by the stated
+		/// bit depth
+		/// </summary>
+		Out_Of_Bounds,
+
+		/// <summary>
+		/// Two adjacent frames had frame numbers increasing by more than
+		/// 1 or sample numbers increasing by more than the blocksize,
+		/// indicating that one or more frame/frames was missing between
+		/// them. The decoder will sent out one or more ´fake' constant
+		/// subframes to fill up the gap
+		/// </summary>
+		Missing_Frame,
 	}
 }

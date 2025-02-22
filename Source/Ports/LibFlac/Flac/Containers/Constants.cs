@@ -35,6 +35,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac.Containers
 		public const uint32_t Flac__Max_Extra_Residual_Bps = 4;
 
 		/// <summary></summary>
+		public const uint32_t Flac__Stream_Encoder_Max_Threads = 64;
+
+		/// <summary></summary>
+		public const uint32_t Flac__Stream_Encoder_Max_ThreadTasks = 130;
+
+		/// <summary></summary>
 		public const uint32_t Flac__Max_Apodization_Functions = 32;
 
 		/// <summary>

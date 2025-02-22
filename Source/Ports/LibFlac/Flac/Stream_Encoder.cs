@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibFlac.Flac.Containers;
 using Polycode.NostalgicPlayer.Ports.LibFlac.Flac.Containers.Encoder;
@@ -260,6 +261,83 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		public delegate void Flac__StreamEncoderProgressCallback(Stream_Encoder encoder, Flac__uint64 bytes_Written, Flac__uint64 samples_Written, uint32_t frames_Written, uint32_t total_Frames_Estimates, object client_Data);
 		#endregion
 
+		#region PThread_Cond_T class
+		private class PThread_Cond_T : IDisposable
+		{
+			private readonly AutoResetEvent autoResetEvent;
+			private readonly ManualResetEvent manualResetEvent;
+
+			/********************************************************************/
+			/// <summary>
+			/// Constructor
+			/// </summary>
+			/********************************************************************/
+			public PThread_Cond_T()
+			{
+				autoResetEvent = new AutoResetEvent(false);
+				manualResetEvent = new ManualResetEvent(false);
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// Cleanup
+			/// </summary>
+			/********************************************************************/
+			public void Dispose()
+			{
+				autoResetEvent.Dispose();
+				manualResetEvent.Dispose();
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public void Wait(Mutex mutex)
+			{
+				mutex.ReleaseMutex();
+				WaitHandle.WaitAny([ autoResetEvent, manualResetEvent ]);
+				mutex.WaitOne();
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public void Signal()
+			{
+				autoResetEvent.Set();
+			}
+
+
+
+			/********************************************************************/
+			/// <summary>
+			/// 
+			/// </summary>
+			/********************************************************************/
+			public void Broadcast()
+			{
+				manualResetEvent.Set();
+			}
+		}
+		#endregion
+
+		private class Verify_Input_Fifo
+		{
+			public Flac__int32[][] Data = new Flac__int32[Constants.Flac__Max_Channels][];
+			public uint32_t Size;	// of each data[] in samples
+			public uint32_t Tail;
+		}
+
 		private class Apply_Apodization_State_Struct
 		{
 			public uint32_t A;
@@ -296,19 +374,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			public string Apodization;
 		}
 
-		private class Flac__StreamEncoder
+		/// <summary>
+		/// Thread-private data
+		/// </summary>
+		private class Flac__StreamEncoderThreadTask
 		{
-			public Flac__StreamEncoderProtected Protected;
-			public Flac__StreamEncoderPrivate Private;
-		}
-
-		private class Flac__StreamEncoderPrivate
-		{
-			public uint32_t Input_Capacity;																// Current size (in samples) of the signal and residual buffers
 			public Flac__int32[][] Integer_Signal = new Flac__int32[Constants.Flac__Max_Channels][];	// The integer version of the input signal
 			public Flac__int32[][] Integer_Signal_Mid_Size = new Flac__int32[2][];						// The integer version of the mid-side input signal (stereo only)
 			public Flac__int64[] Integer_Signal_33Bit_Side;												// 33-bit side for 32-bit stereo decorrelation
-			public Flac__real[][] Window = new Flac__real[Constants.Flac__Max_Apodization_Functions][];	// The pre-computed floating-point window for each apodization function
 			public Flac__real[] Windowed_Signal;														// The Integer_Signal[] * current Window[]
 			public uint32_t[] SubFrame_Bps = new uint32_t[Constants.Flac__Max_Channels];				// The effective bits per sample of the input signal (stream bps - wasted bits)
 			public uint32_t[] SubFrame_Bps_Mid_Side = new uint32_t[2];									// The effective bits per sample of the mid-side input signal (stream bps - wasted bits + 0/1)
@@ -329,9 +402,40 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			public Flac__uint64[] Abs_Residual_Partition_Sums;											// Workspace where the sum of abs(candidate residual) for each partition is stored
 			public uint32_t[] Raw_Bits_Per_Partition;													// Workspace where the sum of silog2(candidate residual) for each partition is stored
 			public BitWriter Frame;																		// The current frame being worked on
-			public uint32_t Loose_Mid_Side_Stereo_Frames;												// Rounded number of frames the encoder will use before trying both independent and mid/side frames again
-			public uint32_t Loose_Mid_Side_Stereo_Frame_Count;											// Number of frames using the current channel assignment
-			public Flac__ChannelAssignment Last_Channel_Assignment;
+			public uint32_t Current_Frame_Number;
+			public Flac__int32[][] Integer_Signal_Unaligned = new Flac__int32[Constants.Flac__Max_Channels][];
+			public Flac__int32[][] Integer_Signal_Mid_Side_Unaligned = new Flac__int32[2][];
+			public Flac__int64[] Integer_Signal_33Bit_Side_Unaligned;
+			public Flac__real[] Windowed_Signal_Unaligned;
+			public Flac__int32[][][] Residual_Workspace_Unaligned = ArrayHelper.InitializeArrayWithArray<Flac__int32>((int)Constants.Flac__Max_Channels, 2);
+			public Flac__int32[][][] Residual_Workspace_Mid_Side_Unaligned = ArrayHelper.InitializeArrayWithArray<Flac__int32>(2, 2);
+			public Flac__uint64[] Abs_Residual_Partition_Sums_Unaligned;
+			public Flac__uint64[] Raw_Bits_Per_Partition_Unaligned;
+			public Flac__real[][] Lp_Coeff = ArrayHelper.InitializeArray<Flac__real>((int)Constants.Flac__Max_Lpc_Order, (int)Constants.Flac__Max_Lpc_Order);	// From Process_SubFrame()
+			public Flac__EntropyCodingMethod_PartitionedRiceContents[] Partitioned_Rice_Contents_Extra = ArrayHelper.InitializeArray<Flac__EntropyCodingMethod_PartitionedRiceContents>(2);	// From Find_Best_Partition_Order()
+			public Flac__bool Disable_Constant_SubFrames;
+			public Mutex Mutex_This_Task;						// To lock whole threadtask
+			public PThread_Cond_T Cond_Task_Done;
+			public Flac__bool Task_Done;
+			public Flac__bool ReturnValue;
+		}
+
+		private class Flac__StreamEncoder
+		{
+			public Flac__StreamEncoderProtected Protected;
+			public Flac__StreamEncoderPrivate Private;
+		}
+
+		/// <summary>
+		/// Private class data
+		/// </summary>
+		private class Flac__StreamEncoderPrivate
+		{
+			public Flac__StreamEncoderThreadTask[] ThreadTask = new Flac__StreamEncoderThreadTask[Constants.Flac__Stream_Encoder_Max_ThreadTasks];
+			public Thread[] Thread = new Thread[Constants.Flac__Stream_Encoder_Max_Threads];
+			public uint32_t Input_Capacity;																// Current size (in samples) of the signal and residual buffers
+			public Flac__real[][] Window = new Flac__real[Constants.Flac__Max_Apodization_Functions][];	// The pre-computed floating-point window for each apodization function
+			public Flac__real[][] Window_Unaligned = new Flac__real[Constants.Flac__Max_Apodization_Functions][];
 			public Flac__StreamMetadata StreamInfo;														// Scratchpad for STREAMINFO as it is built
 			public Flac__StreamMetadata_SeekTable Seek_Table;											// Pointer into encoder.Protected.Metadata where the seek table is
 			public uint32_t Current_Sample_Number;
@@ -349,28 +453,33 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			public Flac__StreamEncoderProgressCallback Progress_Callback;
 			public object Client_Data;
 			public uint32_t First_SeekPoint_To_Check;
-			public Stream File;																			// Only used when encoding to a file
+			public Stream File;									// Only used when encoding to a file
 			public bool Leave_Stream_Open;
 			public Flac__uint64 Bytes_Written;
 			public Flac__uint64 Samples_Written;
 			public uint32_t Frames_Written;
 			public uint32_t Total_Frames_Estimate;
-			public Flac__int32[][] Integer_Signal_Unaligned = new Flac__int32[Constants.Flac__Max_Channels][];
-			public Flac__int32[][] Integer_Signal_Mid_Side_Unaligned = new Flac__int32[2][];
-			public Flac__int64[] Integer_Signal_33Bit_Side_Unaligned;
-			public Flac__real[][] Window_Unaligned = new Flac__real[Constants.Flac__Max_Apodization_Functions][];
-			public Flac__real[] Windowed_Signal_Unaligned;
-			public Flac__int32[][][] Residual_Workspace_Unaligned = ArrayHelper.InitializeArrayWithArray<Flac__int32>((int)Constants.Flac__Max_Channels, 2);
-			public Flac__int32[][][] Residual_Workspace_Mid_Side_Unaligned = ArrayHelper.InitializeArrayWithArray<Flac__int32>(2, 2);
-			public Flac__uint64[] Abs_Residual_Partition_Sums_Unaligned;
-			public Flac__uint64[] Raw_Bits_Per_Partition_Unaligned;
-			public Flac__real[][] Lp_Coeff = ArrayHelper.InitializeArray<Flac__real>((int)Constants.Flac__Max_Lpc_Order, (int)Constants.Flac__Max_Lpc_Order);	// From Process_SubFrame()
-			public Flac__EntropyCodingMethod_PartitionedRiceContents[] Partitioned_Rice_Contents_Extra = ArrayHelper.InitializeArray<Flac__EntropyCodingMethod_PartitionedRiceContents>(2);	// From Find_Best_Partition_Order()
-			public Flac__bool Is_Being_Deleted;		// If true, call to ..._Finish() from ..._Delete() will not call the callbacks
+			public Flac__bool Is_Being_Deleted;					// If true, call to ..._Finish() from ..._Delete() will not call the callbacks
+			public uint32_t Num_ThreadTasks;
+			public uint32_t Num_Created_Threads;
+			public uint32_t Next_Thread;						// This is the next thread that needs start, or needs to finish and be restarted
+			public uint32_t Num_Started_ThreadTasks;
+			public uint32_t Num_Available_ThreadTasks;          // Number of threadtasks that are available to work on
+			public uint32_t Num_Running_Threads;
+			public uint32_t Next_ThreadTask;					// Next threadtask that is available to work on
+			public Mutex Mutex_Md5_Fifo;
+			public Mutex Mutex_Work_Queue;						// To lock work related variables in this struct
+			public PThread_Cond_T Cond_Md5_Emptied;				// To signal to main thread that MD5 queue has been emptied
+			public PThread_Cond_T Cond_Work_Available;			// To signal to threads that work is available
+			public PThread_Cond_T Cond_Wake_Up_Thread;			// To signal that one sleeping thread can wake up
+			public Flac__bool Md5_Active;
+			public Flac__bool Finish_Work_Threads;
+			public int32_t Overcomitted_Indicator;
+			public Verify_Input_Fifo Md5_Fifo = new Verify_Input_Fifo();
 		}
 
 		private static readonly CompressionLevels[] compression_Levels =
-		{
+		[
 			new CompressionLevels(false, false, 0, 0, false, false, 0, 3, "tukey(5e-1)"),
 			new CompressionLevels(true, true, 0, 0, false, false, 0, 3, "tukey(5e-1)"),
 			new CompressionLevels(true, false, 0, 0, false, false, 0, 3, "tukey(5e-1)"),
@@ -380,7 +489,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			new CompressionLevels(true, false, 8, 0, false, false, 0, 6, "subdivide_tukey(2)"),
 			new CompressionLevels(true, false, 12, 0, false, false, 0, 6, "subdivide_tukey(2)"),
 			new CompressionLevels(true, false, 12, 0, false, false, 0, 6, "subdivide_tukey(3)")
-		};
+		];
 
 		// Number of samples that will be overread to watch for end of stream. By
 		// 'overread', we mean that the Flac__Stream_Encoder_Process*() calls will
@@ -421,8 +530,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		{
 			Stream_Encoder encoder = new Stream_Encoder();
 
-			encoder.encoder.Private.Frame = BitWriter.Flac__BitWriter_New();
-			if (encoder.encoder.Private.Frame == null)
+			encoder.encoder.Private.ThreadTask[0] = new Flac__StreamEncoderThreadTask();
+
+			encoder.encoder.Private.ThreadTask[0].Frame = BitWriter.Flac__BitWriter_New();
+			if (encoder.encoder.Private.ThreadTask[0].Frame == null)
 				return null;
 
 			encoder.encoder.Private.File = null;
@@ -435,42 +546,42 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 			for (uint32_t i = 0; i < Constants.Flac__Max_Channels; i++)
 			{
-				encoder.encoder.Private.SubFrame_Workspace_Ptr[i][0] = encoder.encoder.Private.SubFrame_Workspace[i][0];
-				encoder.encoder.Private.SubFrame_Workspace_Ptr[i][1] = encoder.encoder.Private.SubFrame_Workspace[i][1];
+				encoder.encoder.Private.ThreadTask[0].SubFrame_Workspace_Ptr[i][0] = encoder.encoder.Private.ThreadTask[0].SubFrame_Workspace[i][0];
+				encoder.encoder.Private.ThreadTask[0].SubFrame_Workspace_Ptr[i][1] = encoder.encoder.Private.ThreadTask[0].SubFrame_Workspace[i][1];
 			}
 
 			for (uint32_t i = 0; i < 2; i++)
 			{
-				encoder.encoder.Private.SubFrame_Workspace_Ptr_Mid_Side[i][0] = encoder.encoder.Private.SubFrame_Workspace_Mid_Side[i][0];
-				encoder.encoder.Private.SubFrame_Workspace_Ptr_Mid_Side[i][1] = encoder.encoder.Private.SubFrame_Workspace_Mid_Side[i][1];
+				encoder.encoder.Private.ThreadTask[0].SubFrame_Workspace_Ptr_Mid_Side[i][0] = encoder.encoder.Private.ThreadTask[0].SubFrame_Workspace_Mid_Side[i][0];
+				encoder.encoder.Private.ThreadTask[0].SubFrame_Workspace_Ptr_Mid_Side[i][1] = encoder.encoder.Private.ThreadTask[0].SubFrame_Workspace_Mid_Side[i][1];
 			}
 
 			for (uint32_t i = 0; i < Constants.Flac__Max_Channels; i++)
 			{
-				encoder.encoder.Private.Partitioned_Rice_Contents_Workspace_Ptr[i][0] = encoder.encoder.Private.Partitioned_Rice_Contents_Workspace[i][0];
-				encoder.encoder.Private.Partitioned_Rice_Contents_Workspace_Ptr[i][1] = encoder.encoder.Private.Partitioned_Rice_Contents_Workspace[i][1];
+				encoder.encoder.Private.ThreadTask[0].Partitioned_Rice_Contents_Workspace_Ptr[i][0] = encoder.encoder.Private.ThreadTask[0].Partitioned_Rice_Contents_Workspace[i][0];
+				encoder.encoder.Private.ThreadTask[0].Partitioned_Rice_Contents_Workspace_Ptr[i][1] = encoder.encoder.Private.ThreadTask[0].Partitioned_Rice_Contents_Workspace[i][1];
 			}
 
 			for (uint32_t i = 0; i < 2; i++)
 			{
-				encoder.encoder.Private.Partitioned_Rice_Contents_Workspace_Ptr_Mid_Side[i][0] = encoder.encoder.Private.Partitioned_Rice_Contents_Workspace_Mid_Side[i][0];
-				encoder.encoder.Private.Partitioned_Rice_Contents_Workspace_Ptr_Mid_Side[i][1] = encoder.encoder.Private.Partitioned_Rice_Contents_Workspace_Mid_Side[i][1];
+				encoder.encoder.Private.ThreadTask[0].Partitioned_Rice_Contents_Workspace_Ptr_Mid_Side[i][0] = encoder.encoder.Private.ThreadTask[0].Partitioned_Rice_Contents_Workspace_Mid_Side[i][0];
+				encoder.encoder.Private.ThreadTask[0].Partitioned_Rice_Contents_Workspace_Ptr_Mid_Side[i][1] = encoder.encoder.Private.ThreadTask[0].Partitioned_Rice_Contents_Workspace_Mid_Side[i][1];
 			}
 
 			for (uint32_t i = 0; i < Constants.Flac__Max_Channels; i++)
 			{
-				Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Init(encoder.encoder.Private.Partitioned_Rice_Contents_Workspace[i][0]);
-				Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Init(encoder.encoder.Private.Partitioned_Rice_Contents_Workspace[i][1]);
+				Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Init(encoder.encoder.Private.ThreadTask[0].Partitioned_Rice_Contents_Workspace[i][0]);
+				Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Init(encoder.encoder.Private.ThreadTask[0].Partitioned_Rice_Contents_Workspace[i][1]);
 			}
 
 			for (uint32_t i = 0; i < 2; i++)
 			{
-				Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Init(encoder.encoder.Private.Partitioned_Rice_Contents_Workspace_Mid_Side[i][0]);
-				Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Init(encoder.encoder.Private.Partitioned_Rice_Contents_Workspace_Mid_Side[i][1]);
+				Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Init(encoder.encoder.Private.ThreadTask[0].Partitioned_Rice_Contents_Workspace_Mid_Side[i][0]);
+				Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Init(encoder.encoder.Private.ThreadTask[0].Partitioned_Rice_Contents_Workspace_Mid_Side[i][1]);
 			}
 
 			for (uint32_t i = 0; i < 2; i++)
-				Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Init(encoder.encoder.Private.Partitioned_Rice_Contents_Extra[i]);
+				Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Init(encoder.encoder.Private.ThreadTask[0].Partitioned_Rice_Contents_Extra[i]);
 
 			return encoder;
 		}
@@ -490,7 +601,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 			Debug.Assert(encoder.Protected != null);
 			Debug.Assert(encoder.Private != null);
-			Debug.Assert(encoder.Private.Frame != null);
+			Debug.Assert(encoder.Private.ThreadTask[0] != null);
+			Debug.Assert(encoder.Private.ThreadTask[0].Frame != null);
 
 			encoder.Private.Is_Being_Deleted = true;
 
@@ -498,20 +610,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 			for (uint32_t i = 0; i < Constants.Flac__Max_Channels; i++)
 			{
-				Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Clear(encoder.Private.Partitioned_Rice_Contents_Workspace[i][0]);
-				Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Clear(encoder.Private.Partitioned_Rice_Contents_Workspace[i][1]);
+				Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Clear(encoder.Private.ThreadTask[0].Partitioned_Rice_Contents_Workspace[i][0]);
+				Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Clear(encoder.Private.ThreadTask[0].Partitioned_Rice_Contents_Workspace[i][1]);
 			}
 
 			for (uint32_t i = 0; i < 2; i++)
 			{
-				Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Clear(encoder.Private.Partitioned_Rice_Contents_Workspace_Mid_Side[i][0]);
-				Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Clear(encoder.Private.Partitioned_Rice_Contents_Workspace_Mid_Side[i][1]);
+				Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Clear(encoder.Private.ThreadTask[0].Partitioned_Rice_Contents_Workspace_Mid_Side[i][0]);
+				Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Clear(encoder.Private.ThreadTask[0].Partitioned_Rice_Contents_Workspace_Mid_Side[i][1]);
 			}
 
 			for (uint32_t i = 0; i < 2; i++)
-				Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Clear(encoder.Private.Partitioned_Rice_Contents_Extra[i]);
+				Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Clear(encoder.Private.ThreadTask[0].Partitioned_Rice_Contents_Extra[i]);
 
-			encoder.Private.Frame.Flac__BitWriter_Delete();
+			encoder.Private.ThreadTask[0].Frame.Flac__BitWriter_Delete();
+			encoder.Private.ThreadTask[0] = null;
 			encoder.Private = null;
 			encoder.Protected = null;
 			encoder = null;
@@ -656,7 +769,70 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 			if ((encoder.Protected.State == Flac__StreamEncoderState.Ok) && !encoder.Private.Is_Being_Deleted)
 			{
-				if (encoder.Private.Current_Sample_Number != 0)
+				Flac__bool ok = true;
+
+				// First finish threads
+				if (encoder.Protected.Num_Threads > 1)
+				{
+					// This is quite complicated, so here is an explanation on what is supposed to happen
+					// 
+					// Thread no.0 and threadtask no.0 are reserved for non-threaded operation, so counting
+					// here starts at 1, which makes things slightly more complicated.
+					// 
+					// If the file processed was very short compared to the requested number of threadtasks,
+					// not all threadtasks have been populated yet. Handling that is easy: threadtask no.1 needs
+					// to be processed first, monotonically increasing until the last populated threadtask is
+					// processed. This number is stored in encoder->private_->num_started_threadtasks
+					// 
+					// If the file is longer, the next due frame chronologically might not be in threadtasks
+					// number 1, because the threadtasks work like a ringbuffer. To access this, the variable
+					// twrap starts counting at the next due frame, and the modulo operator (%) is used to
+					// "wrap" the number with the number of threadtasks. So, if the next due task is 3
+					// and 4 tasks are started, twrap increases 3, 4, 5, 6, and t follows with values 3, 4, 1, 2
+					uint32_t start, end;
+
+					if (encoder.Private.Num_Started_ThreadTasks < encoder.Private.Num_ThreadTasks)
+					{
+						start = 1;
+						end = encoder.Private.Num_Started_ThreadTasks;
+					}
+					else
+					{
+						start = encoder.Private.Next_Thread;
+						end = encoder.Private.Next_Thread + encoder.Private.Num_ThreadTasks - 1;
+					}
+
+					for (uint32_t twrap = start; twrap < end; twrap++)
+					{
+						Debug.Assert(twrap > 0);
+
+						uint32_t t = (twrap - 1) % (encoder.Private.Num_ThreadTasks - 1) + 1;
+
+						// Lock mutex, if task isn't done yet, wait for condition
+						encoder.Private.ThreadTask[t].Mutex_This_Task.WaitOne();
+
+						while (!encoder.Private.ThreadTask[t].Task_Done)
+							encoder.Private.ThreadTask[t].Cond_Task_Done.Wait(encoder.Private.ThreadTask[t].Mutex_This_Task);
+
+						if (!encoder.Private.ThreadTask[t].ReturnValue)
+							ok = false;
+
+						if (ok && !Write_BitBuffer(encoder.Private.ThreadTask[t], encoder.Protected.BlockSize, false))
+							ok = false;
+
+						encoder.Private.ThreadTask[t].Mutex_This_Task.ReleaseMutex();
+					}
+
+					// Wait for MD5 calculation to finish
+					encoder.Private.Mutex_Work_Queue.WaitOne();
+
+					while (encoder.Private.Md5_Active || encoder.Private.Md5_Fifo.Tail > 0)
+						encoder.Private.Cond_Md5_Emptied.Wait(encoder.Private.Mutex_Work_Queue);
+
+					encoder.Private.Mutex_Work_Queue.ReleaseMutex();
+				}
+
+				if (ok && encoder.Private.Current_Sample_Number != 0)
 				{
 					encoder.Protected.BlockSize = encoder.Private.Current_Sample_Number;
 
@@ -669,6 +845,22 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					if (!Process_Frame(true))
 						error = true;
 				}
+			}
+
+			if (encoder.Protected.Num_Threads > 1)
+			{
+				// Properly finish all threads
+				encoder.Private.Mutex_Work_Queue.WaitOne();
+
+				for (uint32_t t = 1; t < encoder.Private.Num_Created_Threads; t++)
+					encoder.Private.Finish_Work_Threads = true;
+
+				encoder.Private.Cond_Wake_Up_Thread.Broadcast();
+				encoder.Private.Cond_Work_Available.Broadcast();
+				encoder.Private.Mutex_Work_Queue.ReleaseMutex();
+
+				for (uint32_t t = 1; t < encoder.Private.Num_Created_Threads; t++)
+					encoder.Private.Thread[t].Join();
 			}
 
 			if (encoder.Protected.Do_Md5)
@@ -1380,6 +1572,64 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 		/********************************************************************/
 		/// <summary>
+		/// Set the maximum number of threads to use during encoding.
+		/// Set to a value different than 1 to enable multithreaded encoding.
+		///
+		/// Note that enabling multithreading encoding (i.e., setting a value
+		/// different than 1) results in the behaviour of
+		/// FLAC__stream_encoder_finish(), FLAC__stream_encoder_process(),
+		/// FLAC__stream_encoder_process_interleaved() subtly changing.
+		/// For example, calling one of the process functions with enough
+		/// samples to fill a block might not always result in a call to
+		/// the write callback with a frame coding these samples. Instead,
+		/// blocks with samples are distributed among worker threads,
+		/// meaning that the first few calls to those functions will return
+		/// very quickly, while later calls might block if all threads are
+		/// occupied. Also, certain calls to the process functions will
+		/// results in several calls to the write callback, while subsequent
+		/// calls might again return very quickly with no calls to the write
+		/// callback.
+		///
+		/// Also, a call to FLAC__stream_encoder_finish() blocks while
+		/// waiting for all threads to finish, and therefore might take much
+		/// longer than when not multithreading and result in multiple calls
+		/// to the write callback.
+		///
+		/// Calls to the write callback are guaranteed to be in the correct
+		/// order.
+		///
+		/// Currently, passing a value of 0 is synonymous with a value of 1,
+		/// but this might change in the future.
+		///
+		/// Default 1
+		/// <param name="value">See above</param>
+		/// <returns>FLAC__STREAM_ENCODER_SET_NUM_THREADS_OK if the number of threads was set correctly, FLAC__STREAM_ENCODER_SET_NUM_THREADS_NOT_COMPILED_WITH_MULTITHREADING_ENABLED when multithreading was not enabled at compilation, FLAC__STREAM_ENCODER_SET_NUM_THREADS_ALREADY_INITIALIZED when the encoder was already initialized, FLAC__STREAM_ENCODER_SET_NUM_THREADS_TOO_MANY_THREADS when the number of threads was larger than the maximum allowed number of threads (currently 128)</returns>
+		/// </summary>
+		/********************************************************************/
+		public Flac__StreamEncoderSetNumThreads Flac__Stream_Encoder_Set_Num_Threads(uint32_t value)
+		{
+			Debug.Assert(encoder != null);
+			Debug.Assert(encoder.Private != null);
+			Debug.Assert(encoder.Protected != null);
+
+			if (encoder.Protected.State != Flac__StreamEncoderState.Uninitialized)
+				return Flac__StreamEncoderSetNumThreads.Already_Initialized;
+
+			if (value > Constants.Flac__Stream_Encoder_Max_Threads)
+				return Flac__StreamEncoderSetNumThreads.Too_Many_Threads;
+
+			if (value == 0)
+				encoder.Protected.Num_Threads = 1;
+			else
+				encoder.Protected.Num_Threads = value;
+
+			return Flac__StreamEncoderSetNumThreads.Ok;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Set an estimate of the total samples that will be encoded.
 		/// This is merely an estimate and may be set to 0 if unknown.
 		/// This value will be written to the STREAMINFO block before
@@ -1782,6 +2032,23 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 		/********************************************************************/
 		/// <summary>
+		/// Get maximum number of threads setting.
+		/// <returns>See Flac__Stream_Encoder_Set_Num_Threads()</returns>
+		/// </summary>
+		/********************************************************************/
+		public uint32_t Flac__Stream_Encoder_Get_Num_Threads()
+		{
+			Debug.Assert(encoder != null);
+			Debug.Assert(encoder.Private != null);
+			Debug.Assert(encoder.Protected != null);
+
+			return encoder.Protected.Num_Threads;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Get the previously set estimate of the total samples to be
 		/// encoded. The encoder merely mimics back the value given to
 		/// Flac__Stream_Encoder_Set_Total_Samples_Estimate() since it has no
@@ -1869,7 +2136,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 						}
 					}
 
-					Array.Copy(buffer[channel], j, encoder.Private.Integer_Signal[channel], encoder.Private.Current_Sample_Number, n);
+					Array.Copy(buffer[channel], j, encoder.Private.ThreadTask[0].Integer_Signal[channel], encoder.Private.Current_Sample_Number, n);
 				}
 
 				j += n;
@@ -1886,7 +2153,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 					// Move unprocessed overread samples to beginnings of arrays
 					for (uint32_t channel = 0; channel < channels; channel++)
-						encoder.Private.Integer_Signal[channel][0] = encoder.Private.Integer_Signal[channel][blockSize];
+						encoder.Private.ThreadTask[0].Integer_Signal[channel][0] = encoder.Private.ThreadTask[0].Integer_Signal[channel][blockSize];
 
 					encoder.Private.Current_Sample_Number = 1;
 				}
@@ -1950,7 +2217,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 							return false;
 						}
 
-						encoder.Private.Integer_Signal[channel][i] = buffer[k++];
+						encoder.Private.ThreadTask[0].Integer_Signal[channel][i] = buffer[k++];
 					}
 				}
 
@@ -1967,7 +2234,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					Debug.Assert(Overread == 1);	// Assert we only overread 1 sample which simplifies the rest of the code below
 
 					for (uint32_t channel = 0; channel < channels; channel++)
-						encoder.Private.Integer_Signal[channel][0] = encoder.Private.Integer_Signal[channel][blockSize];
+						encoder.Private.ThreadTask[0].Integer_Signal[channel][0] = encoder.Private.ThreadTask[0].Integer_Signal[channel][blockSize];
 
 					encoder.Private.Current_Sample_Number = 1;
 				}
@@ -2177,42 +2444,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 			encoder.Private.Input_Capacity = 0;
 
-			for (uint32_t i = 0; i < encoder.Protected.Channels; i++)
-				encoder.Private.Integer_Signal_Unaligned[i] = encoder.Private.Integer_Signal[i] = null;
-
-			for (uint32_t i = 0; i < 2; i++)
-				encoder.Private.Integer_Signal_Mid_Side_Unaligned[i] = encoder.Private.Integer_Signal_Mid_Size[i] = null;
-
-			encoder.Private.Integer_Signal_33Bit_Side_Unaligned = encoder.Private.Integer_Signal_33Bit_Side = null;
-
-			for (uint32_t i = 0; i < encoder.Protected.Num_Apodizations; i++)
-				encoder.Private.Window_Unaligned[i] = encoder.Private.Window[i] = null;
-
-			encoder.Private.Windowed_Signal_Unaligned = encoder.Private.Windowed_Signal = null;
-
-			for (uint32_t i = 0; i < encoder.Protected.Channels; i++)
-			{
-				encoder.Private.Residual_Workspace_Unaligned[i][0] = encoder.Private.Residual_Workspace[i][0] = null;
-				encoder.Private.Residual_Workspace_Unaligned[i][1] = encoder.Private.Residual_Workspace[i][1] = null;
-				encoder.Private.Best_SubFrame[i] = 0;
-			}
-
-			for (uint32_t i = 0; i < 2; i++)
-			{
-				encoder.Private.Residual_Workspace_Mid_Side_Unaligned[i][0] = encoder.Private.Residual_Workspace_Mid_Side[i][0] = null;
-				encoder.Private.Residual_Workspace_Mid_Side_Unaligned[i][1] = encoder.Private.Residual_Workspace_Mid_Side[i][1] = null;
-				encoder.Private.Best_SubFrame_Bits_Mid_Side[i] = 0;
-			}
-
-			encoder.Private.Abs_Residual_Partition_Sums_Unaligned = encoder.Private.Abs_Residual_Partition_Sums = null;
-			encoder.Private.Raw_Bits_Per_Partition_Unaligned = null;
-			encoder.Private.Raw_Bits_Per_Partition = null;
-			encoder.Private.Loose_Mid_Side_Stereo_Frames = (uint32_t)(encoder.Protected.Sample_Rate * 0.4 / encoder.Protected.BlockSize + 0.5);
-
-			if (encoder.Private.Loose_Mid_Side_Stereo_Frames == 0)
-				encoder.Private.Loose_Mid_Side_Stereo_Frames = 1;
-
-			encoder.Private.Loose_Mid_Side_Stereo_Frame_Count = 0;
 			encoder.Private.Current_Sample_Number = 0;
 			encoder.Private.Current_Frame_Number = 0;
 
@@ -2231,16 +2462,142 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			encoder.Private.Metadata_Callback = metadata_Callback;
 			encoder.Private.Client_Data = client_Data;
 
+			if (encoder.Protected.Num_Threads > 1)
+			{
+				encoder.Private.Num_ThreadTasks = encoder.Protected.Num_Threads * 2 + 2;	// First threadtask is reserved for main thread
+
+				encoder.Private.Mutex_Md5_Fifo = new Mutex();
+				encoder.Private.Mutex_Work_Queue = new Mutex();
+				encoder.Private.Cond_Md5_Emptied = new PThread_Cond_T();
+				encoder.Private.Cond_Work_Available = new PThread_Cond_T();
+				encoder.Private.Cond_Wake_Up_Thread = new PThread_Cond_T();
+
+				if (encoder.Protected.Do_Md5)
+				{
+					encoder.Private.Md5_Fifo.Size = (encoder.Protected.BlockSize + Overread) * (encoder.Private.Num_ThreadTasks + 2);
+
+					for (uint32_t i = 0; i < encoder.Protected.Channels; i++)
+					{
+						encoder.Private.Md5_Fifo.Data[i] = Alloc.Safe_MAlloc_Mul_2Op_P<Flac__int32>(1, encoder.Private.Md5_Fifo.Size);
+						if (encoder.Private.Md5_Fifo.Data[i] == null)
+						{
+							encoder.Private.Mutex_Md5_Fifo.Dispose();
+							encoder.Private.Mutex_Work_Queue.Dispose();
+							encoder.Private.Cond_Md5_Emptied.Dispose();
+							encoder.Private.Cond_Work_Available.Dispose();
+							encoder.Private.Cond_Wake_Up_Thread.Dispose();
+
+							encoder.Protected.State = Flac__StreamEncoderState.Memory_Allocation_Error;
+							return Flac__StreamEncoderInitStatus.Encoder_Error;
+						}
+					}
+				}
+
+				encoder.Private.Md5_Fifo.Tail = 0;
+
+				for (uint32_t t = 1; t < encoder.Private.Num_ThreadTasks; t++)
+				{
+					encoder.Private.ThreadTask[t] = new Flac__StreamEncoderThreadTask();
+
+					encoder.Private.ThreadTask[t].Frame = BitWriter.Flac__BitWriter_New();
+					if (encoder.Private.ThreadTask[t].Frame == null)
+					{
+						encoder.Private.ThreadTask[t] = null;
+						encoder.Protected.State = Flac__StreamEncoderState.Memory_Allocation_Error;
+
+						return Flac__StreamEncoderInitStatus.Encoder_Error;
+					}
+
+					encoder.Private.ThreadTask[t].Mutex_This_Task = new Mutex();
+					encoder.Private.ThreadTask[t].Cond_Task_Done = new PThread_Cond_T();
+
+					for (uint32_t i = 0; i < Constants.Flac__Max_Channels; i++)
+					{
+						encoder.Private.ThreadTask[t].SubFrame_Workspace_Ptr[i][0] = encoder.Private.ThreadTask[t].SubFrame_Workspace[i][0];
+						encoder.Private.ThreadTask[t].SubFrame_Workspace_Ptr[i][1] = encoder.Private.ThreadTask[t].SubFrame_Workspace[i][1];
+					}
+
+					for (uint32_t i = 0; i < 2; i++)
+					{
+						encoder.Private.ThreadTask[t].SubFrame_Workspace_Ptr_Mid_Side[i][0] = encoder.Private.ThreadTask[t].SubFrame_Workspace_Mid_Side[i][0];
+						encoder.Private.ThreadTask[t].SubFrame_Workspace_Ptr_Mid_Side[i][1] = encoder.Private.ThreadTask[t].SubFrame_Workspace_Mid_Side[i][1];
+					}
+
+					for (uint32_t i = 0; i < Constants.Flac__Max_Channels; i++)
+					{
+						encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Workspace_Ptr[i][0] = encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Workspace[i][0];
+						encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Workspace_Ptr[i][1] = encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Workspace[i][1];
+					}
+
+					for (uint32_t i = 0; i < 2; i++)
+					{
+						encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Workspace_Ptr_Mid_Side[i][0] = encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Workspace_Mid_Side[i][0];
+						encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Workspace_Ptr_Mid_Side[i][1] = encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Workspace_Mid_Side[i][1];
+					}
+
+					for (uint32_t i = 0; i < Constants.Flac__Max_Channels; i++)
+					{
+						Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Init(encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Workspace[i][0]);
+						Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Init(encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Workspace[i][1]);
+					}
+
+					for (uint32_t i = 0; i < 2; i++)
+					{
+						Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Init(encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Workspace_Mid_Side[i][0]);
+						Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Init(encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Workspace_Mid_Side[i][1]);
+					}
+
+					for (uint32_t i = 0; i < 2; i++)
+						Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Init(encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Extra[i]);
+				}
+			}
+
+			for (uint32_t i = 0; i < encoder.Protected.Num_Apodizations; i++)
+				encoder.Private.Window_Unaligned[i] = encoder.Private.Window[i] = null;
+
+			for (uint32_t t = 0; t < encoder.Private.Num_ThreadTasks; t++)
+			{
+				for (uint32_t i = 0; i < encoder.Protected.Channels; i++)
+					encoder.Private.ThreadTask[t].Integer_Signal_Unaligned[i] = encoder.Private.ThreadTask[t].Integer_Signal[i] = null;
+
+				for (uint32_t i = 0; i < 2; i++)
+					encoder.Private.ThreadTask[t].Integer_Signal_Mid_Side_Unaligned[i] = encoder.Private.ThreadTask[t].Integer_Signal_Mid_Size[i] = null;
+
+				encoder.Private.ThreadTask[t].Integer_Signal_33Bit_Side_Unaligned = encoder.Private.ThreadTask[t].Integer_Signal_33Bit_Side = null;
+				encoder.Private.ThreadTask[t].Windowed_Signal_Unaligned = encoder.Private.ThreadTask[t].Windowed_Signal = null;
+
+				for (uint32_t i = 0; i < encoder.Protected.Channels; i++)
+				{
+					encoder.Private.ThreadTask[t].Residual_Workspace_Unaligned[i][0] = encoder.Private.ThreadTask[t].Residual_Workspace[i][0] = null;
+					encoder.Private.ThreadTask[t].Residual_Workspace_Unaligned[i][1] = encoder.Private.ThreadTask[t].Residual_Workspace[i][1] = null;
+					encoder.Private.ThreadTask[t].Best_SubFrame[i] = 0;
+				}
+
+				for (uint32_t i = 0; i < 2; i++)
+				{
+					encoder.Private.ThreadTask[t].Residual_Workspace_Mid_Side_Unaligned[i][0] = encoder.Private.ThreadTask[t].Residual_Workspace_Mid_Side[i][0] = null;
+					encoder.Private.ThreadTask[t].Residual_Workspace_Mid_Side_Unaligned[i][1] = encoder.Private.ThreadTask[t].Residual_Workspace_Mid_Side[i][1] = null;
+					encoder.Private.ThreadTask[t].Best_SubFrame_Bits_Mid_Side[i] = 0;
+				}
+
+				encoder.Private.ThreadTask[t].Abs_Residual_Partition_Sums_Unaligned = encoder.Private.ThreadTask[t].Abs_Residual_Partition_Sums = null;
+				encoder.Private.ThreadTask[t].Raw_Bits_Per_Partition_Unaligned = null;
+				encoder.Private.ThreadTask[t].Raw_Bits_Per_Partition = null;
+			}
+
 			if (!Resize_Buffers(encoder.Protected.BlockSize))
 			{
 				// The above function sets the state for us in case of an error
 				return Flac__StreamEncoderInitStatus.Encoder_Error;
 			}
 
-			if (!encoder.Private.Frame.Flac__BitWriter_Init())
+			for (uint32_t t = 0; t < encoder.Private.Num_ThreadTasks; t++)
 			{
-				encoder.Protected.State = Flac__StreamEncoderState.Memory_Allocation_Error;
-				return Flac__StreamEncoderInitStatus.Encoder_Error;
+				if (!encoder.Private.ThreadTask[t].Frame.Flac__BitWriter_Init())
+				{
+					encoder.Protected.State = Flac__StreamEncoderState.Memory_Allocation_Error;
+					return Flac__StreamEncoderInitStatus.Encoder_Error;
+				}
 			}
 
 			// These must be done before we write any metadata, because that
@@ -2252,13 +2609,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			encoder.Protected.Audio_Offset = 0;
 
 			// Write the stream header
-			if (!encoder.Private.Frame.Flac__BitWriter_Write_Raw_UInt32(Constants.Flac__Stream_Sync, Constants.Flac__Stream_Sync_Len))
+			if (!encoder.Private.ThreadTask[0].Frame.Flac__BitWriter_Write_Raw_UInt32(Constants.Flac__Stream_Sync, Constants.Flac__Stream_Sync_Len))
 			{
 				encoder.Protected.State = Flac__StreamEncoderState.Framing_Error;
 				return Flac__StreamEncoderInitStatus.Encoder_Error;
 			}
 
-			if (!Write_BitBuffer(0, false))
+			if (!Write_BitBuffer(encoder.Private.ThreadTask[0], 0, false))
 			{
 				// The above function sets the state for us in case of an error
 				return Flac__StreamEncoderInitStatus.Encoder_Error;
@@ -2288,13 +2645,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				encoder.Private.Md5.Flac__Md5Init();
 			}
 
-			if (!Stream_Encoder_Framing.Flac__Add_Metadata_Block(encoder.Private.StreamInfo, encoder.Private.Frame, true))
+			if (!Stream_Encoder_Framing.Flac__Add_Metadata_Block(encoder.Private.StreamInfo, encoder.Private.ThreadTask[0].Frame, true))
 			{
 				encoder.Protected.State = Flac__StreamEncoderState.Framing_Error;
 				return Flac__StreamEncoderInitStatus.Encoder_Error;
 			}
 
-			if (!Write_BitBuffer(0, false))
+			if (!Write_BitBuffer(encoder.Private.ThreadTask[0], 0, false))
 			{
 				// The above function sets the state for us in case of an error
 				return Flac__StreamEncoderInitStatus.Encoder_Error;
@@ -2324,13 +2681,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				metaVorbis_Comment.Num_Comments = 0;
 				metaVorbis_Comment.Comments = null;
 
-				if (!Stream_Encoder_Framing.Flac__Add_Metadata_Block(vorbis_Comment, encoder.Private.Frame, true))
+				if (!Stream_Encoder_Framing.Flac__Add_Metadata_Block(vorbis_Comment, encoder.Private.ThreadTask[0].Frame, true))
 				{
 					encoder.Protected.State = Flac__StreamEncoderState.Framing_Error;
 					return Flac__StreamEncoderInitStatus.Encoder_Error;
 				}
 
-				if (!Write_BitBuffer(0, false))
+				if (!Write_BitBuffer(encoder.Private.ThreadTask[0], 0, false))
 				{
 					// The above function sets the state for us in case of an error
 					return Flac__StreamEncoderInitStatus.Encoder_Error;
@@ -2342,13 +2699,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			{
 				encoder.Protected.Metadata[i].Is_Last = i == encoder.Protected.Num_Metadata_Blocks - 1;
 
-				if (!Stream_Encoder_Framing.Flac__Add_Metadata_Block(encoder.Protected.Metadata[i], encoder.Private.Frame, true))
+				if (!Stream_Encoder_Framing.Flac__Add_Metadata_Block(encoder.Protected.Metadata[i], encoder.Private.ThreadTask[0].Frame, true))
 				{
 					encoder.Protected.State = Flac__StreamEncoderState.Framing_Error;
 					return Flac__StreamEncoderInitStatus.Encoder_Error;
 				}
 
-				if (!Write_BitBuffer(0, false))
+				if (!Write_BitBuffer(encoder.Private.ThreadTask[0], 0, false))
 				{
 					// The above function sets the state for us in case of an error
 					return Flac__StreamEncoderInitStatus.Encoder_Error;
@@ -2479,6 +2836,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			encoder.encoder.Protected.Limit_Min_Bitrate = false;
 			encoder.encoder.Protected.Metadata = null;
 			encoder.encoder.Protected.Num_Metadata_Blocks = 0;
+			encoder.encoder.Protected.Num_Threads = 1;
 
 			encoder.encoder.Private.Seek_Table = null;
 			encoder.encoder.Private.Disable_Constant_SubFrames = false;
@@ -2490,6 +2848,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			encoder.encoder.Private.Metadata_Callback = null;
 			encoder.encoder.Private.Progress_Callback = null;
 			encoder.encoder.Private.Client_Data = null;
+			encoder.encoder.Private.Num_ThreadTasks = 1;
+			encoder.encoder.Private.Num_Created_Threads = 1;
+			encoder.encoder.Private.Next_Thread = 1;
+			encoder.encoder.Private.Num_Running_Threads = 1;
+			encoder.encoder.Private.Num_Started_ThreadTasks = 1;
+			encoder.encoder.Private.Num_Available_ThreadTasks = 0;
+			encoder.encoder.Private.Overcomitted_Indicator = 0;
+			encoder.encoder.Private.Next_ThreadTask = 1;
+			encoder.encoder.Private.Md5_Active = false;
+			encoder.encoder.Private.Finish_Work_Threads = false;
 
 			encoder.Flac__Stream_Encoder_Set_Compression_Level(5);
 		}
@@ -2511,55 +2879,110 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				encoder.Protected.Num_Metadata_Blocks = 0;
 			}
 
-			for (uint32_t i = 0; i < encoder.Protected.Channels; i++)
-			{
-				if (encoder.Private.Integer_Signal_Unaligned[i] != null)
-					encoder.Private.Integer_Signal_Unaligned[i] = null;
-			}
-
-			for (uint32_t i = 0; i < 2; i++)
-			{
-				if (encoder.Private.Integer_Signal_Mid_Side_Unaligned[i] != null)
-					encoder.Private.Integer_Signal_Mid_Side_Unaligned[i] = null;
-			}
-
-			if (encoder.Private.Integer_Signal_33Bit_Side_Unaligned != null)
-				encoder.Private.Integer_Signal_33Bit_Side_Unaligned = null;
-
 			for (uint32_t i = 0; i < encoder.Protected.Num_Apodizations; i++)
 			{
 				if (encoder.Private.Window_Unaligned[i] != null)
 					encoder.Private.Window_Unaligned[i] = null;
 			}
 
-			if (encoder.Private.Windowed_Signal_Unaligned != null)
-				encoder.Private.Windowed_Signal_Unaligned = null;
-
-			for (uint32_t channel = 0; channel < encoder.Protected.Channels; channel++)
+			for (uint32_t t = 0; t < encoder.Private.Num_ThreadTasks; t++)
 			{
+				if (encoder.Private.ThreadTask[t] == null)
+					continue;
+
+				for (uint32_t i = 0; i < encoder.Protected.Channels; i++)
+				{
+					if (encoder.Private.ThreadTask[t].Integer_Signal_Unaligned[i] != null)
+						encoder.Private.ThreadTask[t].Integer_Signal_Unaligned[i] = null;
+				}
+
 				for (uint32_t i = 0; i < 2; i++)
 				{
-					if (encoder.Private.Residual_Workspace_Unaligned[channel][i] != null)
-						encoder.Private.Residual_Workspace_Unaligned[channel][i] = null;
+					if (encoder.Private.ThreadTask[t].Integer_Signal_Mid_Side_Unaligned[i] != null)
+						encoder.Private.ThreadTask[t].Integer_Signal_Mid_Side_Unaligned[i] = null;
+				}
+
+				if (encoder.Private.ThreadTask[t].Integer_Signal_33Bit_Side_Unaligned != null)
+					encoder.Private.ThreadTask[t].Integer_Signal_33Bit_Side_Unaligned = null;
+
+				if (encoder.Private.ThreadTask[t].Windowed_Signal_Unaligned != null)
+					encoder.Private.ThreadTask[t].Windowed_Signal_Unaligned = null;
+
+				for (uint32_t channel = 0; channel < encoder.Protected.Channels; channel++)
+				{
+					for (uint32_t i = 0; i < 2; i++)
+					{
+						if (encoder.Private.ThreadTask[t].Residual_Workspace_Unaligned[channel][i] != null)
+							encoder.Private.ThreadTask[t].Residual_Workspace_Unaligned[channel][i] = null;
+					}
+				}
+
+				for (uint32_t channel = 0; channel < encoder.Protected.Channels; channel++)
+				{
+					for (uint32_t i = 0; i < 2; i++)
+					{
+						if (encoder.Private.ThreadTask[t].Residual_Workspace_Mid_Side_Unaligned[channel][i] != null)
+							encoder.Private.ThreadTask[t].Residual_Workspace_Mid_Side_Unaligned[channel][i] = null;
+					}
+				}
+
+				if (encoder.Private.ThreadTask[t].Abs_Residual_Partition_Sums_Unaligned != null)
+					encoder.Private.ThreadTask[t].Abs_Residual_Partition_Sums_Unaligned = null;
+
+				if (encoder.Private.ThreadTask[t].Raw_Bits_Per_Partition_Unaligned != null)
+					encoder.Private.ThreadTask[t].Raw_Bits_Per_Partition_Unaligned = null;
+
+				for (uint32_t i = 0; i < Constants.Flac__Max_Channels; i++)
+				{
+					Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Clear(encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Workspace[i][0]);
+					Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Clear(encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Workspace[i][1]);
+				}
+
+				for (uint32_t i = 0; i < 2; i++)
+				{
+					Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Clear(encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Workspace_Mid_Side[i][0]);
+					Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Clear(encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Workspace_Mid_Side[i][1]);
+				}
+
+				for (uint32_t i = 0; i < 2; i++)
+					Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Clear(encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Extra[i]);
+
+				if (t > 0)
+				{
+					encoder.Private.ThreadTask[t].Frame.Flac__BitWriter_Delete();
+					encoder.Private.ThreadTask[t].Mutex_This_Task.Dispose();
+					encoder.Private.ThreadTask[t].Cond_Task_Done.Dispose();
+
+					encoder.Private.ThreadTask[t] = null;
 				}
 			}
 
-			for (uint32_t channel = 0; channel < encoder.Protected.Channels; channel++)
+			if (encoder.Protected.Num_Threads > 1)
 			{
-				for (uint32_t i = 0; i < 2; i++)
+				encoder.Private.Mutex_Md5_Fifo.Dispose();
+				encoder.Private.Mutex_Md5_Fifo = null;
+
+				encoder.Private.Mutex_Work_Queue.Dispose();
+				encoder.Private.Mutex_Work_Queue = null;
+
+				encoder.Private.Cond_Md5_Emptied.Dispose();
+				encoder.Private.Cond_Md5_Emptied = null;
+
+				encoder.Private.Cond_Work_Available.Dispose();
+				encoder.Private.Cond_Work_Available = null;
+
+				encoder.Private.Cond_Wake_Up_Thread.Dispose();
+				encoder.Private.Cond_Wake_Up_Thread = null;
+
+				if (encoder.Protected.Do_Md5)
 				{
-					if (encoder.Private.Residual_Workspace_Mid_Side_Unaligned[channel][i] != null)
-						encoder.Private.Residual_Workspace_Mid_Side_Unaligned[channel][i] = null;
+					for (uint32_t i = 0; i < encoder.Protected.Channels; i++)
+					{
+						if (encoder.Private.Md5_Fifo.Data[i] != null)
+							encoder.Private.Md5_Fifo.Data[i] = null;
+					}
 				}
 			}
-
-			if (encoder.Private.Abs_Residual_Partition_Sums_Unaligned != null)
-				encoder.Private.Abs_Residual_Partition_Sums_Unaligned = null;
-
-			if (encoder.Private.Raw_Bits_Per_Partition_Unaligned != null)
-				encoder.Private.Raw_Bits_Per_Partition_Unaligned = null;
-
-			encoder.Private.Frame.Flac__BitWriter_Free();
 		}
 
 
@@ -2579,59 +3002,63 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			// To avoid excessive malloc'ing, we only grow the buffer; no shrinking
 			if (new_BlockSize > encoder.Private.Input_Capacity)
 			{
-				for (uint32_t i = 0; ok && i < encoder.Protected.Channels; i++)
-					ok = ok && Memory.Flac__Memory_Alloc_Aligned_Int32_Array(new_BlockSize + 4 + Overread, ref encoder.Private.Integer_Signal_Unaligned[i], ref encoder.Private.Integer_Signal[i]);
-
-				for (uint32_t i = 0; ok && i < 2; i++)
-					ok = ok && Memory.Flac__Memory_Alloc_Aligned_Int32_Array(new_BlockSize + 4 + Overread, ref encoder.Private.Integer_Signal_Mid_Side_Unaligned[i], ref encoder.Private.Integer_Signal_Mid_Size[i]);
-
-				ok = ok && Memory.Flac__Memory_Alloc_Aligned_Int64_Array(new_BlockSize + 4 + Overread, ref encoder.Private.Integer_Signal_33Bit_Side_Unaligned, ref encoder.Private.Integer_Signal_33Bit_Side);
-
 				if (ok && (encoder.Protected.Max_Lpc_Order > 0))
 				{
 					for (uint32_t i = 0; ok && i < encoder.Protected.Num_Apodizations; i++)
 						ok = ok && Memory.Flac__Memory_Alloc_Aligned_Real_Array(new_BlockSize, ref encoder.Private.Window_Unaligned[i], ref encoder.Private.Window[i]);
-
-					ok = ok && Memory.Flac__Memory_Alloc_Aligned_Real_Array(new_BlockSize, ref encoder.Private.Windowed_Signal_Unaligned, ref encoder.Private.Windowed_Signal);
 				}
 
-				for (uint32_t channel = 0; ok && channel < encoder.Protected.Channels; channel++)
+				for (uint32_t t = 0; t < encoder.Private.Num_ThreadTasks; t++)
 				{
-					for (uint32_t i = 0; i < 2; i++)
-						ok = ok && Memory.Flac__Memory_Alloc_Aligned_Int32_Array(new_BlockSize, ref encoder.Private.Residual_Workspace_Unaligned[channel][i], ref encoder.Private.Residual_Workspace[channel][i]);
-				}
+					for (uint32_t i = 0; ok && i < encoder.Protected.Channels; i++)
+						ok = ok && Memory.Flac__Memory_Alloc_Aligned_Int32_Array(new_BlockSize + 4 + Overread, ref encoder.Private.ThreadTask[t].Integer_Signal_Unaligned[i], ref encoder.Private.ThreadTask[t].Integer_Signal[i]);
 
-				for (uint32_t channel = 0; ok && channel < encoder.Protected.Channels; channel++)
-				{
-					for (uint32_t i = 0; i < 2; i++)
+					for (uint32_t i = 0; ok && i < 2; i++)
+						ok = ok && Memory.Flac__Memory_Alloc_Aligned_Int32_Array(new_BlockSize + 4 + Overread, ref encoder.Private.ThreadTask[t].Integer_Signal_Mid_Side_Unaligned[i], ref encoder.Private.ThreadTask[t].Integer_Signal_Mid_Size[i]);
+
+					ok = ok && Memory.Flac__Memory_Alloc_Aligned_Int64_Array(new_BlockSize + 4 + Overread, ref encoder.Private.ThreadTask[t].Integer_Signal_33Bit_Side_Unaligned, ref encoder.Private.ThreadTask[t].Integer_Signal_33Bit_Side);
+
+					if (ok && (encoder.Protected.Max_Lpc_Order > 0))
+						ok = ok && Memory.Flac__Memory_Alloc_Aligned_Real_Array(new_BlockSize, ref encoder.Private.ThreadTask[t].Windowed_Signal_Unaligned, ref encoder.Private.ThreadTask[t].Windowed_Signal);
+
+					for (uint32_t channel = 0; ok && channel < encoder.Protected.Channels; channel++)
 					{
-						ok = ok && Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Ensure_Size(encoder.Private.Partitioned_Rice_Contents_Workspace[channel][i], encoder.Protected.Max_Residual_Partition_Order);
-						ok = ok && Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Ensure_Size(encoder.Private.Partitioned_Rice_Contents_Workspace[channel][i], encoder.Protected.Max_Residual_Partition_Order);
+						for (uint32_t i = 0; i < 2; i++)
+							ok = ok && Memory.Flac__Memory_Alloc_Aligned_Int32_Array(new_BlockSize, ref encoder.Private.ThreadTask[t].Residual_Workspace_Unaligned[channel][i], ref encoder.Private.ThreadTask[t].Residual_Workspace[channel][i]);
 					}
+
+					for (uint32_t channel = 0; ok && channel < encoder.Protected.Channels; channel++)
+					{
+						for (uint32_t i = 0; ok && i < 2; i++)
+						{
+							ok = ok && Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Ensure_Size(encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Workspace[channel][i], encoder.Protected.Max_Residual_Partition_Order);
+							ok = ok && Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Ensure_Size(encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Workspace[channel][i], encoder.Protected.Max_Residual_Partition_Order);
+						}
+					}
+
+					for (uint32_t channel = 0; ok && channel < 2; channel++)
+					{
+						for (uint32_t i = 0; ok && i < 2; i++)
+							ok = ok && Memory.Flac__Memory_Alloc_Aligned_Int32_Array(new_BlockSize, ref encoder.Private.ThreadTask[t].Residual_Workspace_Mid_Side_Unaligned[channel][i], ref encoder.Private.ThreadTask[t].Residual_Workspace_Mid_Side[channel][i]);
+					}
+
+					for (uint32_t channel = 0; ok && channel < encoder.Protected.Channels; channel++)
+					{
+						for (uint32_t i = 0; ok && i < 2; i++)
+							ok = ok && Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Ensure_Size(encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Workspace_Mid_Side[channel][i], encoder.Protected.Max_Residual_Partition_Order);
+					}
+
+					for (uint32_t i = 0; ok && i < 2; i++)
+						ok = ok && Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Ensure_Size(encoder.Private.ThreadTask[t].Partitioned_Rice_Contents_Extra[i], encoder.Protected.Max_Residual_Partition_Order);
+
+					// The *2 is an approximation to the series 1 + 1/2 + 1/4 + ... that sums tree occupies in a flat array
+					// @@@ new_BlockSize*2 is too pessimistic, but to fix, we need smarter logic
+					// because a smaller new_BlockSize can actually increase the # of partitions;
+					// would require moving this out into a separate function, then checking its
+					// capacity against the need of the current blockSize&min/max_Partition_Order
+					// (and maybe predictor order)
+					ok = ok && Memory.Flac__Memory_Alloc_Aligned_UInt64_Array(new_BlockSize * 2, ref encoder.Private.ThreadTask[t].Abs_Residual_Partition_Sums_Unaligned, ref encoder.Private.ThreadTask[t].Abs_Residual_Partition_Sums);
 				}
-
-				for (uint32_t channel = 0; ok && channel < 2; channel++)
-				{
-					for (uint32_t i = 0; i < 2; i++)
-						ok = ok && Memory.Flac__Memory_Alloc_Aligned_Int32_Array(new_BlockSize, ref encoder.Private.Residual_Workspace_Mid_Side_Unaligned[channel][i], ref encoder.Private.Residual_Workspace_Mid_Side[channel][i]);
-				}
-
-				for (uint32_t channel = 0; ok && channel < encoder.Protected.Channels; channel++)
-				{
-					for (uint32_t i = 0; i < 2; i++)
-						ok = ok && Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Ensure_Size(encoder.Private.Partitioned_Rice_Contents_Workspace_Mid_Side[channel][i], encoder.Protected.Max_Residual_Partition_Order);
-				}
-
-				for (uint32_t i = 0; i < 2; i++)
-					ok = ok && Format.Flac__Format_Entropy_Coding_Method_Partitioned_Rice_Contents_Ensure_Size(encoder.Private.Partitioned_Rice_Contents_Extra[i], encoder.Protected.Max_Residual_Partition_Order);
-
-				// The *2 is an approximation to the series 1 + 1/2 + 1/4 + ... that sums tree occupies in a flat array
-				// @@@ new_BlockSize*2 is too pessimistic, but to fix, we need smarter logic
-				// because a smaller new_BlockSize can actually increase the # of partitions;
-				// would require moving this out into a separate function, then checking its
-				// capacity against the need of the current blockSize&min/max_Partition_Order
-				// (and maybe predictor order)
-				ok = ok && Memory.Flac__Memory_Alloc_Aligned_UInt64_Array(new_BlockSize * 2, ref encoder.Private.Abs_Residual_Partition_Sums_Unaligned, ref encoder.Private.Abs_Residual_Partition_Sums);
 			}
 
 			if (ok)
@@ -2786,11 +3213,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private Flac__bool Write_BitBuffer(uint32_t samples, Flac__bool is_Last_Block)
+		private Flac__bool Write_BitBuffer(Flac__StreamEncoderThreadTask threadTask, uint32_t samples, Flac__bool is_Last_Block)
 		{
-			Debug.Assert(encoder.Private.Frame.Flac__BitWriter_Is_Byte_Aligned());
+			Debug.Assert(threadTask.Frame.Flac__BitWriter_Is_Byte_Aligned());
 
-			if (!encoder.Private.Frame.Flac__BitWriter_Get_Buffer(out Span<Flac__byte> buffer, out size_t bytes))
+			if (!threadTask.Frame.Flac__BitWriter_Get_Buffer(out Span<Flac__byte> buffer, out size_t bytes))
 			{
 				encoder.Protected.State = Flac__StreamEncoderState.Memory_Allocation_Error;
 				return false;
@@ -2798,15 +3225,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 			if (Write_Frame(buffer, bytes, samples, is_Last_Block) != Flac__StreamEncoderWriteStatus.Ok)
 			{
-				encoder.Private.Frame.Flac__BitWriter_Release_Buffer();
-				encoder.Private.Frame.Flac__BitWriter_Clear();
+				threadTask.Frame.Flac__BitWriter_Release_Buffer();
+				threadTask.Frame.Flac__BitWriter_Clear();
 
 				encoder.Protected.State = Flac__StreamEncoderState.Client_Error;
 				return false;
 			}
 
-			encoder.Private.Frame.Flac__BitWriter_Release_Buffer();
-			encoder.Private.Frame.Flac__BitWriter_Clear();
+			threadTask.Frame.Flac__BitWriter_Release_Buffer();
+			threadTask.Frame.Flac__BitWriter_Clear();
 
 			if (samples > 0)
 			{
@@ -2842,6 +3269,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			{
 				Flac__MetadataType type = (Flac__MetadataType)(buffer[0] & 0x7f);
 
+				// FLAC__STREAM_ENCODER_TELL_STATUS_UNSUPPORTED just means we didn't get the offset; no error
+				if ((encoder.Private.Tell_Callback != null) && (encoder.Private.Tell_Callback(this, out output_Position, encoder.Private.Client_Data) == Flac__StreamEncoderTellStatus.Error))
+				{
+					encoder.Protected.State = Flac__StreamEncoderState.Client_Error;
+					return Flac__StreamEncoderWriteStatus.Fatal_Error;
+				}
+
 				if (type == Flac__MetadataType.StreamInfo)
 					encoder.Protected.StreamInfo_Offset = output_Position;
 				else if ((type == Flac__MetadataType.SeekTable) && (encoder.Protected.Seekable_Offset == 0))
@@ -2864,6 +3298,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 						break;
 					else if (test_Sample >= frame_First_Sample)
 					{
+						// FLAC__STREAM_ENCODER_TELL_STATUS_UNSUPPORTED just means we didn't get the offset; no error
+						if ((output_Position == 0) && (encoder.Private.Tell_Callback != null) && (encoder.Private.Tell_Callback(this, out output_Position, encoder.Private.Client_Data) == Flac__StreamEncoderTellStatus.Error))
+						{
+							encoder.Protected.State = Flac__StreamEncoderState.Client_Error;
+							return Flac__StreamEncoderWriteStatus.Fatal_Error;
+						}
+
 						encoder.Private.Seek_Table.Points[i].Sample_Number = frame_First_Sample;
 						encoder.Private.Seek_Table.Points[i].Stream_Offset = output_Position - encoder.Protected.Audio_Offset;
 						encoder.Private.Seek_Table.Points[i].Frame_Samples = blockSize;
@@ -2966,14 +3407,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 										  - 4
 				                      ) / 8;
 
-				if (samples > (1L << (int)Constants.Flac__Stream_Metadata_StreamInfo_Total_Samples_Len))
-					samples = 0;
+				Flac__uint64 samples_uint36 = samples;
 
-				b[0] = (Flac__byte)(((bps - 1) << 4) | ((samples >> 32) & 0x0f));
-				b[1] = (Flac__byte)((samples >> 24) & 0xff);
-				b[2] = (Flac__byte)((samples >> 16) & 0xff);
-				b[3] = (Flac__byte)((samples >> 8) & 0xff);
-				b[4] = (Flac__byte)(samples & 0xff);
+				if (samples > (1L << (int)Constants.Flac__Stream_Metadata_StreamInfo_Total_Samples_Len))
+					samples_uint36 = 0;
+
+				b[0] = (Flac__byte)(((bps - 1) << 4) | ((samples_uint36 >> 32) & 0x0f));
+				b[1] = (Flac__byte)((samples_uint36 >> 24) & 0xff);
+				b[2] = (Flac__byte)((samples_uint36 >> 16) & 0xff);
+				b[3] = (Flac__byte)((samples_uint36 >> 8) & 0xff);
+				b[4] = (Flac__byte)(samples_uint36 & 0xff);
 
 				if ((seek_Status = encoder.Private.Seek_Callback(this, encoder.Protected.StreamInfo_Offset + total_Samples_Byte_Offset, encoder.Private.Client_Data)) != Flac__StreamEncoderSeekStatus.Ok)
 				{
@@ -3023,6 +3466,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			// Write seektable
 			if ((encoder.Private.Seek_Table != null) && (encoder.Private.Seek_Table.Num_Points > 0) && (encoder.Protected.Seekable_Offset > 0))
 			{
+				// Convert unused seekpoints to placeholders
+				for (uint32_t i = 0; i < encoder.Private.Seek_Table.Num_Points; i++)
+				{
+					if (encoder.Private.Seek_Table.Points[i].Sample_Number > samples)
+						encoder.Private.Seek_Table.Points[i].Sample_Number = Constants.Flac__Stream_Metadata_SeekPoint_Placeholder;
+				}
+
 				Format.Flac__Format_SeekTable_Sort(encoder.Private.Seek_Table);
 
 				Debug.Assert(Format.Flac__Format_SeekTable_Is_Legal(encoder.Private.Seek_Table));
@@ -3079,43 +3529,199 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/********************************************************************/
 		private Flac__bool Process_Frame(Flac__bool is_Last_Block)
 		{
-			Debug.Assert(encoder.Protected.State == Flac__StreamEncoderState.Ok);
-
-			// Accumulate raw signal to the MD5 signature
-			if (encoder.Protected.Do_Md5 && !encoder.Private.Md5.Flac__Md5Accumulate(encoder.Private.Integer_Signal, encoder.Protected.Channels, encoder.Protected.BlockSize, (encoder.Protected.Bits_Per_Sample + 7) / 8))
+			if ((encoder.Protected.Num_Threads < 2) || is_Last_Block)
 			{
-				encoder.Protected.State = Flac__StreamEncoderState.Memory_Allocation_Error;
-				return false;
+				Debug.Assert(encoder.Protected.State == Flac__StreamEncoderState.Ok);
+
+				// Accumulate raw signal to the MD5 signature
+				if (encoder.Protected.Do_Md5 && !encoder.Private.Md5.Flac__Md5Accumulate(encoder.Private.ThreadTask[0].Integer_Signal, encoder.Protected.Channels, encoder.Protected.BlockSize, (encoder.Protected.Bits_Per_Sample + 7) / 8))
+				{
+					encoder.Protected.State = Flac__StreamEncoderState.Memory_Allocation_Error;
+					return false;
+				}
+
+				// Process the frame header and subframes into the frame bitbuffer
+				encoder.Private.ThreadTask[0].Current_Frame_Number = encoder.Private.Current_Frame_Number;
+
+				if (!Process_SubFrames(encoder.Private.ThreadTask[0]))
+				{
+					// The above function sets the state for us in case of an error
+					return false;
+				}
+
+				// Zero-pad the frame to a byte_boundary
+				if (!encoder.Private.ThreadTask[0].Frame.Flac__BitWriter_Zero_Pad_To_Byte_Boundary())
+				{
+					encoder.Protected.State = Flac__StreamEncoderState.Memory_Allocation_Error;
+					return false;
+				}
+
+				// CRC-16 the whole thing
+				Debug.Assert(encoder.Private.ThreadTask[0].Frame.Flac__BitWriter_Is_Byte_Aligned());
+
+				if (!encoder.Private.ThreadTask[0].Frame.Flac__BitWriter_Get_Write_Crc16(out Flac__uint16 crc) || !encoder.Private.ThreadTask[0].Frame.Flac__BitWriter_Write_Raw_UInt32(crc, Constants.Flac__Frame_Footer_Crc_Len))
+				{
+					encoder.Protected.State = Flac__StreamEncoderState.Memory_Allocation_Error;
+					return false;
+				}
+
+				// Write it
+				if (!Write_BitBuffer(encoder.Private.ThreadTask[0], encoder.Protected.BlockSize, is_Last_Block))
+				{
+					// The above function sets the state for us in case of an error
+					return false;
+				}
 			}
-
-			// Process the frame header and subframes into the frame bitbuffer
-			if (!Process_SubFrames())
+			else
 			{
-				// The above function sets the state for us in case of an error
-				return false;
-			}
+				// This bit is quite complicated, so here are some pointers:
+				// 
+				// When this bit of code is reached for the first time, new threads are spawned and
+				// threadtasks are populated until the total number of threads equals the requested number
+				// of threads. Next, threadtasks are populated until they there are no more available.
+				// Next, this main thread checks whether the threadtask that is due chronologically is
+				// done. If it is, the bitbuffer is written and the threadtask memory reused for the next
+				// frame. If it is not done, the main thread checks whether there is enough work left in the
+				// queue. If there is a lot of work left, the main thread starts on some of it too.
+				// If not a lot of work is left, the main thread goes to sleep until the frame due first is
+				// finished.
+				// 
+				// - encoder->private_->next_thread is the number of the next thread to be created or, when
+				//    the required number of threads is created, the next threadtask to be populated,
+				//    or, when all threadtasks have been populated once, the next threadtask that needs
+				//    to finish and thus reused.
+				// - encoder->private_->next_threadtask is the number of the next threadtask that a thread
+				//    can start work on.
+				// 
+				// So, in effect, next_thread is (after startup) a pointer considering the chronological
+				// order, so input/output isn't shuffled. next_threadtask is a pointer to the next task that
+				// hasn't been picked up by a thread yet. This distinction enables threads to work on frames
+				// in a non-chronological order
+				// 
+				// encoder->protected_->num_threads is the max number of threads that can be spawned
+				// encoder->private_->num_created_threads is the number of threads that has been spawned
+				// encoder->private_->num_threadtasks keeps track of how many threadtasks are available
+				// encoder->private_->num_started_threadtasks keeps track of how many threadtasks have been populated
+				// 
+				// NOTE: thread no. 0 and threadtask no. 0 are reserved for non-threaded operations, so next_thread
+				// and next_threadtask start at 1
+				if (encoder.Private.Num_Created_Threads < encoder.Protected.Num_Threads)
+				{
+					// Create a new thread
+					encoder.Private.Thread[encoder.Private.Next_Thread] = new Thread(Process_Frame_Thread);
+					encoder.Private.Thread[encoder.Private.Next_Thread].Start();
 
-			// Zero-pad the frame to a byte_boundary
-			if (!encoder.Private.Frame.Flac__BitWriter_Zero_Pad_To_Byte_Boundary())
-			{
-				encoder.Protected.State = Flac__StreamEncoderState.Memory_Allocation_Error;
-				return false;
-			}
+					encoder.Private.Num_Created_Threads++;
+				}
+				else if (encoder.Private.Num_Started_ThreadTasks == encoder.Private.Num_ThreadTasks)
+				{
+					// If the first task in the queue is still running, check whether there is enough work
+					// left in the queue. If there is, start on some.
+					//
+					// First, check whether the mutex for the next due task is locked or free. If it is free (and thus acquired now) and
+					// the task is done, proceed to the next bit (writing the bitbuffer). If it is either currently locked or not yet
+					// processed, choose between starting on some work (if there is enough work in the queue) or waiting for the task
+					// to finish. Either way, release the mutex first, so it doesn't get interlocked with the work queue mutex 
+					bool mutex_result = !encoder.Private.ThreadTask[encoder.Private.Next_Thread].Mutex_This_Task.WaitOne(0);
 
-			// CRC-16 the whole thing
-			Debug.Assert(encoder.Private.Frame.Flac__BitWriter_Is_Byte_Aligned());
+					while (mutex_result || !encoder.Private.ThreadTask[encoder.Private.Next_Thread].Task_Done)
+					{
+						if (!mutex_result)
+							encoder.Private.ThreadTask[encoder.Private.Next_Thread].Mutex_This_Task.ReleaseMutex();
 
-			if (!encoder.Private.Frame.Flac__BitWriter_Get_Write_Crc16(out Flac__uint16 crc) || !encoder.Private.Frame.Flac__BitWriter_Write_Raw_UInt32(crc, Constants.Flac__Frame_Footer_Crc_Len))
-			{
-				encoder.Protected.State = Flac__StreamEncoderState.Memory_Allocation_Error;
-				return false;
-			}
+						encoder.Private.Mutex_Work_Queue.WaitOne();
 
-			// Write it
-			if (!Write_BitBuffer(encoder.Protected.BlockSize, is_Last_Block))
-			{
-				// The above function sets the state for us in case of an error
-				return false;
+						if (encoder.Private.Num_Available_ThreadTasks > (encoder.Protected.Num_Threads - 1))
+						{
+							Flac__StreamEncoderThreadTask task = encoder.Private.ThreadTask[encoder.Private.Next_ThreadTask];
+							encoder.Private.Num_Available_ThreadTasks--;
+							encoder.Private.Next_ThreadTask++;
+
+							if (encoder.Private.Next_ThreadTask == encoder.Private.Num_ThreadTasks)
+								encoder.Private.Next_ThreadTask = 1;
+
+							encoder.Private.Mutex_Work_Queue.ReleaseMutex();
+
+							task.Mutex_This_Task.WaitOne();
+							Process_Frame_Thread_Inner(task);
+							mutex_result = !encoder.Private.ThreadTask[encoder.Private.Next_Thread].Mutex_This_Task.WaitOne(0);
+						}
+						else
+						{
+							encoder.Private.Mutex_Work_Queue.ReleaseMutex();
+							encoder.Private.ThreadTask[encoder.Private.Next_Thread].Mutex_This_Task.WaitOne();
+
+							while (!encoder.Private.ThreadTask[encoder.Private.Next_Thread].Task_Done)
+								encoder.Private.ThreadTask[encoder.Private.Next_Thread].Cond_Task_Done.Wait(encoder.Private.ThreadTask[encoder.Private.Next_Thread].Mutex_This_Task);
+
+							mutex_result = false;
+						}
+					}
+
+					// Task is finished, write bitbuffer
+					if (!encoder.Private.ThreadTask[encoder.Private.Next_Thread].ReturnValue)
+					{
+						encoder.Private.ThreadTask[encoder.Private.Next_Thread].Mutex_This_Task.ReleaseMutex();
+						return false;
+					}
+
+					if (!Write_BitBuffer(encoder.Private.ThreadTask[encoder.Private.Next_Thread], encoder.Protected.BlockSize, is_Last_Block))
+					{
+						// The above function sets the state for us in case of an error
+						encoder.Private.ThreadTask[encoder.Private.Next_Thread].Mutex_This_Task.ReleaseMutex();
+						return false;
+					}
+
+					encoder.Private.ThreadTask[encoder.Private.Next_Thread].Mutex_This_Task.ReleaseMutex();
+				}
+
+				// Copy input data for MD5 calculation
+				if (encoder.Protected.Do_Md5)
+				{
+					encoder.Private.Mutex_Work_Queue.WaitOne();
+
+					while ((encoder.Private.Md5_Fifo.Tail + encoder.Protected.BlockSize) > encoder.Private.Md5_Fifo.Size)
+					{
+						encoder.Private.Cond_Md5_Emptied.Wait(encoder.Private.Mutex_Work_Queue);
+					}
+
+					encoder.Private.Mutex_Work_Queue.ReleaseMutex();
+					encoder.Private.Mutex_Md5_Fifo.WaitOne();
+
+					for (uint32_t i = 0; i < encoder.Protected.Channels; i++)
+						Array.Copy(encoder.Private.ThreadTask[0].Integer_Signal[i], 0, encoder.Private.Md5_Fifo.Data[i], encoder.Private.Md5_Fifo.Tail, encoder.Protected.BlockSize);
+
+					encoder.Private.Mutex_Work_Queue.WaitOne();
+					encoder.Private.Md5_Fifo.Tail += encoder.Protected.BlockSize;
+
+					encoder.Private.Cond_Work_Available.Signal();
+					encoder.Private.Mutex_Work_Queue.ReleaseMutex();
+					encoder.Private.Mutex_Md5_Fifo.ReleaseMutex();
+				}
+
+				// Copy input data for frame creation
+				encoder.Private.ThreadTask[encoder.Private.Next_Thread].Mutex_This_Task.WaitOne();
+
+				for (uint32_t i = 0; i < encoder.Protected.Channels; i++)
+					Array.Copy(encoder.Private.ThreadTask[0].Integer_Signal[i], encoder.Private.ThreadTask[encoder.Private.Next_Thread].Integer_Signal[i], encoder.Protected.BlockSize);
+
+				encoder.Private.ThreadTask[encoder.Private.Next_Thread].Current_Frame_Number = encoder.Private.Current_Frame_Number;
+				encoder.Private.ThreadTask[encoder.Private.Next_Thread].Mutex_This_Task.ReleaseMutex();
+
+				encoder.Private.Mutex_Work_Queue.WaitOne();
+
+				if (encoder.Private.Num_Started_ThreadTasks < encoder.Private.Num_ThreadTasks)
+					encoder.Private.Num_Started_ThreadTasks++;
+
+				encoder.Private.Num_Available_ThreadTasks++;
+				encoder.Private.ThreadTask[encoder.Private.Next_Thread].Task_Done = false;
+				encoder.Private.Cond_Work_Available.Signal();
+				encoder.Private.Mutex_Work_Queue.ReleaseMutex();
+
+				encoder.Private.Next_Thread++;
+
+				if (encoder.Private.Next_Thread == encoder.Private.Num_ThreadTasks)
+					encoder.Private.Next_Thread = 1;
 			}
 
 			// Get ready for the next frame
@@ -3133,11 +3739,162 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private Flac__bool Process_SubFrames()
+		private void Process_Frame_Thread()
+		{
+			encoder.Private.Mutex_Work_Queue.WaitOne();
+			encoder.Private.Num_Running_Threads++;
+			encoder.Private.Mutex_Work_Queue.ReleaseMutex();
+
+			while (true)
+			{
+				encoder.Private.Mutex_Work_Queue.WaitOne();
+
+				if (encoder.Private.Finish_Work_Threads)
+				{
+					encoder.Private.Mutex_Work_Queue.ReleaseMutex();
+					return;
+				}
+
+				// The code below pauses and restarts threads if it is noticed threads are often put too sleep
+				// because of a lack of work. This reduces overhead when too many threads are active. The
+				// overcommited indicator is increased when no tasks are available, decreased when more tasks
+				// are available then threads are running, and reset when a thread is woken up or put to sleep
+				if (encoder.Private.Num_Available_ThreadTasks == 0)
+					encoder.Private.Overcomitted_Indicator++;
+				else if (encoder.Private.Num_Available_ThreadTasks > encoder.Private.Num_Running_Threads)
+					encoder.Private.Overcomitted_Indicator--;
+
+				if (encoder.Private.Overcomitted_Indicator < -20)
+				{
+					encoder.Private.Overcomitted_Indicator = 0;
+					encoder.Private.Cond_Wake_Up_Thread.Signal();
+				}
+				else if ((encoder.Private.Overcomitted_Indicator > 20) && (encoder.Private.Num_Running_Threads > 2))
+				{
+					encoder.Private.Overcomitted_Indicator = 0;
+					encoder.Private.Num_Running_Threads--;
+
+					encoder.Private.Cond_Wake_Up_Thread.Wait(encoder.Private.Mutex_Work_Queue);
+					encoder.Private.Num_Running_Threads++;
+				}
+
+				while ((encoder.Private.Num_Available_ThreadTasks == 0) && (encoder.Private.Md5_Active || (encoder.Private.Md5_Fifo.Tail == 0)))
+				{
+					if (encoder.Private.Finish_Work_Threads)
+					{
+						encoder.Private.Mutex_Work_Queue.ReleaseMutex();
+						return;
+					}
+
+					encoder.Private.Cond_Work_Available.Wait(encoder.Private.Mutex_Work_Queue);
+				}
+
+				if (encoder.Protected.Do_Md5 && !encoder.Private.Md5_Active && (encoder.Private.Md5_Fifo.Tail > 0))
+				{
+					uint32_t length = 0;
+					encoder.Private.Md5_Active = true;
+
+					while (encoder.Private.Md5_Fifo.Tail > 0)
+					{
+						length = encoder.Private.Md5_Fifo.Tail;
+						encoder.Private.Mutex_Work_Queue.ReleaseMutex();
+
+						if (!encoder.Private.Md5.Flac__Md5Accumulate(encoder.Private.Md5_Fifo.Data, encoder.Protected.Channels, length, (encoder.Protected.Bits_Per_Sample + 7) / 8))
+						{
+							encoder.Protected.State = Flac__StreamEncoderState.Memory_Allocation_Error;
+							return;
+						}
+
+						encoder.Private.Mutex_Md5_Fifo.WaitOne();
+
+						for (uint32_t channel = 0; channel < encoder.Protected.Channels; channel++)
+							Array.Copy(encoder.Private.Md5_Fifo.Data[channel], length, encoder.Private.Md5_Fifo.Data[channel], 0, encoder.Private.Md5_Fifo.Tail - length);
+
+						encoder.Private.Mutex_Work_Queue.WaitOne();
+						encoder.Private.Md5_Fifo.Tail -= length;
+						encoder.Private.Cond_Md5_Emptied.Signal();
+						encoder.Private.Mutex_Md5_Fifo.ReleaseMutex();
+					}
+
+					encoder.Private.Md5_Active = false;
+					encoder.Private.Mutex_Work_Queue.ReleaseMutex();
+				}
+				else if (encoder.Private.Num_Available_ThreadTasks > 0)
+				{
+					Flac__StreamEncoderThreadTask task = encoder.Private.ThreadTask[encoder.Private.Next_ThreadTask];
+					encoder.Private.Num_Available_ThreadTasks--;
+					encoder.Private.Next_ThreadTask++;
+
+					if (encoder.Private.Next_ThreadTask == encoder.Private.Num_ThreadTasks)
+						encoder.Private.Next_ThreadTask = 1;
+
+					encoder.Private.Mutex_Work_Queue.ReleaseMutex();
+					task.Mutex_This_Task.WaitOne();
+
+					if (!Process_Frame_Thread_Inner(task))
+						return;
+				}
+				else
+					encoder.Private.Mutex_Work_Queue.ReleaseMutex();
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private Flac__bool Process_Frame_Thread_Inner(Flac__StreamEncoderThreadTask task)
+		{
+			Flac__bool ok = true;
+
+			// Process the frame header and subframes into the frame bitbuffer
+			if (ok && !Process_SubFrames(task))
+			{
+				// The above function sets the state for us in case of an error
+				ok = false;
+			}
+
+			// Zero-pad the frame to a byte_boundary
+			if (ok && !task.Frame.Flac__BitWriter_Zero_Pad_To_Byte_Boundary())
+			{
+				encoder.Protected.State = Flac__StreamEncoderState.Memory_Allocation_Error;
+				ok = false;
+			}
+
+			// CRC-16 the whole thing
+			Debug.Assert(!ok || task.Frame.Flac__BitWriter_Is_Byte_Aligned());
+
+			if (ok && (!task.Frame.Flac__BitWriter_Get_Write_Crc16(out Flac__uint16 crc) || !task.Frame.Flac__BitWriter_Write_Raw_UInt32(crc, Constants.Flac__Frame_Footer_Crc_Len)))
+			{
+				encoder.Protected.State = Flac__StreamEncoderState.Memory_Allocation_Error;
+				ok = false;
+			}
+
+			task.ReturnValue = ok;
+			task.Task_Done = true;
+
+			task.Cond_Task_Done.Signal();
+			task.Mutex_This_Task.ReleaseMutex();
+
+			return true;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		private Flac__bool Process_SubFrames(Flac__StreamEncoderThreadTask threadTask)
 		{
 			uint32_t min_Partition_Order = encoder.Protected.Min_Residual_Partition_Order;
-			Flac__bool backup_Disable_Constant_SubFrames = encoder.Private.Disable_Constant_SubFrames;
 			Flac__bool all_SubFrames_Constant = true;
+
+			threadTask.Disable_Constant_SubFrames = encoder.Private.Disable_Constant_SubFrames;
 
 			// Calculate the min,max Rice partition orders
 			uint32_t max_Partition_Order = Format.Flac__Format_Get_Max_Rice_Partition_Order_From_BlockSize(encoder.Protected.BlockSize);
@@ -3153,7 +3910,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			frame_Header.Channel_Assignment = Flac__ChannelAssignment.Independent;	// The default unless the encoder determines otherwise
 			frame_Header.Bits_Per_Sample = encoder.Protected.Bits_Per_Sample;
 			frame_Header.Number_Type = Flac__FrameNumberType.Frame_Number;
-			frame_Header.Frame_Number = encoder.Private.Current_Frame_Number;
+			frame_Header.Frame_Number = threadTask.Current_Frame_Number;
 
 			// Figure out what channel assignments to try
 			Flac__bool do_Independent, do_Mid_Side;
@@ -3162,15 +3919,40 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			{
 				if (encoder.Protected.Loose_Mid_Side_Stereo)
 				{
-					if (encoder.Private.Loose_Mid_Side_Stereo_Frame_Count == 0)
+					uint64_t sumAbsLR = 0, sumAbsMS = 0;
+
+					if (encoder.Protected.Bits_Per_Sample < 25)
+					{
+						for (uint32_t i = 1; i < encoder.Protected.BlockSize; i++)
+						{
+							int32_t predictionLeft = threadTask.Integer_Signal[0][i] - threadTask.Integer_Signal[0][i - 1];
+							int32_t predictionRight = threadTask.Integer_Signal[1][i] - threadTask.Integer_Signal[1][i - 1];
+							sumAbsLR += (uint64_t)(Math.Abs(predictionLeft) + Math.Abs(predictionRight));
+							sumAbsMS += (uint64_t)(Math.Abs((predictionLeft + predictionRight) >> 1) + Math.Abs(predictionLeft - predictionRight));
+						}
+					}
+					else	// bps 25 or higher
+					{
+						for (uint32_t i = 1; i < encoder.Protected.BlockSize; i++)
+						{
+							int64_t predictionLeft = (int64_t)threadTask.Integer_Signal[0][i] - threadTask.Integer_Signal[0][i - 1];
+							int64_t predictionRight = (int64_t)threadTask.Integer_Signal[1][i] - threadTask.Integer_Signal[1][i - 1];
+							sumAbsLR += (uint64_t)(Math.Abs(predictionLeft) + Math.Abs(predictionRight));
+							sumAbsMS += (uint64_t)(Math.Abs((predictionLeft + predictionRight) >> 1) + Math.Abs(predictionLeft - predictionRight));
+						}
+					}
+
+					if (sumAbsLR < sumAbsMS)
 					{
 						do_Independent = true;
-						do_Mid_Side = true;
+						do_Mid_Side = false;
+						frame_Header.Channel_Assignment = Flac__ChannelAssignment.Independent;
 					}
 					else
 					{
-						do_Independent = encoder.Private.Last_Channel_Assignment == Flac__ChannelAssignment.Independent;
-						do_Mid_Side = !do_Independent;
+						do_Independent = false;
+						do_Mid_Side = true;
+						frame_Header.Channel_Assignment = Flac__ChannelAssignment.Mid_Side;
 					}
 				}
 				else
@@ -3196,16 +3978,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				{
 					for (uint32_t i = 0; i < encoder.Protected.BlockSize; i++)
 					{
-						encoder.Private.Integer_Signal_Mid_Size[1][i] = encoder.Private.Integer_Signal[0][i] - encoder.Private.Integer_Signal[1][i];
-						encoder.Private.Integer_Signal_Mid_Size[0][i] = (encoder.Private.Integer_Signal[0][i] + encoder.Private.Integer_Signal[1][i]) >> 1;	// NOTE: not the same as 'mid = (signal[0][j] + signal[1][j]) / 2' !
+						threadTask.Integer_Signal_Mid_Size[1][i] = threadTask.Integer_Signal[0][i] - threadTask.Integer_Signal[1][i];
+						threadTask.Integer_Signal_Mid_Size[0][i] = (threadTask.Integer_Signal[0][i] + threadTask.Integer_Signal[1][i]) >> 1;	// NOTE: not the same as 'mid = (signal[0][j] + signal[1][j]) / 2' !
 					}
 				}
 				else
 				{
 					for (uint32_t i = 0; i < encoder.Protected.BlockSize; i++)
 					{
-						encoder.Private.Integer_Signal_33Bit_Side[i] = (Flac__int64)encoder.Private.Integer_Signal[0][i] - encoder.Private.Integer_Signal[1][i];
-						encoder.Private.Integer_Signal_Mid_Size[0][i] = (Flac__int32)(((Flac__int64)encoder.Private.Integer_Signal[0][i] + encoder.Private.Integer_Signal[1][i]) >> 1);	// NOTE: not the same as 'mid = (signal[0][j] + signal[1][j]) / 2' !
+						threadTask.Integer_Signal_33Bit_Side[i] = (Flac__int64)threadTask.Integer_Signal[0][i] - threadTask.Integer_Signal[1][i];
+						threadTask.Integer_Signal_Mid_Size[0][i] = (Flac__int32)(((Flac__int64)threadTask.Integer_Signal[0][i] + threadTask.Integer_Signal[1][i]) >> 1);	// NOTE: not the same as 'mid = (signal[0][j] + signal[1][j]) / 2' !
 					}
 				}
 			}
@@ -3215,13 +3997,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			{
 				for (uint32_t channel = 0; channel < encoder.Protected.Channels; channel++)
 				{
-					uint32_t w = Get_Wasted_Bits(encoder.Private.Integer_Signal[channel], encoder.Protected.BlockSize);
+					uint32_t w = Get_Wasted_Bits(threadTask.Integer_Signal[channel], encoder.Protected.BlockSize);
 
 					if (w > encoder.Protected.Bits_Per_Sample)
 						w = encoder.Protected.Bits_Per_Sample;
 
-					encoder.Private.SubFrame_Workspace[channel][0].Wasted_Bits = encoder.Private.SubFrame_Workspace[channel][1].Wasted_Bits = w;
-					encoder.Private.SubFrame_Bps[channel] = encoder.Protected.Bits_Per_Sample - w;
+					threadTask.SubFrame_Workspace[channel][0].Wasted_Bits = threadTask.SubFrame_Workspace[channel][1].Wasted_Bits = w;
+					threadTask.SubFrame_Bps[channel] = encoder.Protected.Bits_Per_Sample - w;
 				}
 			}
 
@@ -3234,15 +4016,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					uint32_t w;
 
 					if ((encoder.Protected.Bits_Per_Sample < 32) || (channel == 0))
-						w = Get_Wasted_Bits(encoder.Private.Integer_Signal_Mid_Size[channel], encoder.Protected.BlockSize);
+						w = Get_Wasted_Bits(threadTask.Integer_Signal_Mid_Size[channel], encoder.Protected.BlockSize);
 					else
-						w = Get_Wasted_Bits_Wide(encoder.Private.Integer_Signal_33Bit_Side, encoder.Private.Integer_Signal_Mid_Size[channel], encoder.Protected.BlockSize);
+						w = Get_Wasted_Bits_Wide(threadTask.Integer_Signal_33Bit_Side, threadTask.Integer_Signal_Mid_Size[channel], encoder.Protected.BlockSize);
 
 					if (w > encoder.Protected.Bits_Per_Sample)
 						w = encoder.Protected.Bits_Per_Sample;
 
-					encoder.Private.SubFrame_Workspace_Mid_Side[channel][0].Wasted_Bits = encoder.Private.SubFrame_Workspace_Mid_Side[channel][1].Wasted_Bits = w;
-					encoder.Private.SubFrame_Bps_Mid_Side[channel] = encoder.Protected.Bits_Per_Sample - w + (channel == 0 ? 0U : 1);
+					threadTask.SubFrame_Workspace_Mid_Side[channel][0].Wasted_Bits = threadTask.SubFrame_Workspace_Mid_Side[channel][1].Wasted_Bits = w;
+					threadTask.SubFrame_Bps_Mid_Side[channel] = encoder.Protected.Bits_Per_Sample - w + (channel == 0 ? 0U : 1);
 				}
 			}
 
@@ -3256,17 +4038,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 						// This frame contains only constant subframes at this point.
 						// To prevent the frame from becoming too small, make sure
 						// the last subframe isn't constant
-						encoder.Private.Disable_Constant_SubFrames = true;
+						threadTask.Disable_Constant_SubFrames = true;
 					}
 
-					if (!Process_SubFrame(min_Partition_Order, max_Partition_Order, frame_Header, encoder.Private.SubFrame_Bps[channel], encoder.Private.Integer_Signal[channel],
-						    encoder.Private.SubFrame_Workspace_Ptr[channel], encoder.Private.Partitioned_Rice_Contents_Workspace_Ptr[channel], encoder.Private.Residual_Workspace[channel],
-						    out encoder.Private.Best_SubFrame[channel], out encoder.Private.Best_SubFrame_Bits[channel]))
+					if (!Process_SubFrame(threadTask, min_Partition_Order, max_Partition_Order, frame_Header, threadTask.SubFrame_Bps[channel], threadTask.Integer_Signal[channel],
+						    threadTask.SubFrame_Workspace_Ptr[channel], threadTask.Partitioned_Rice_Contents_Workspace_Ptr[channel], threadTask.Residual_Workspace[channel],
+						    out threadTask.Best_SubFrame[channel], out threadTask.Best_SubFrame_Bits[channel]))
 					{
 						return false;
 					}
 
-					if (encoder.Private.SubFrame_Workspace[channel][encoder.Private.Best_SubFrame[channel]].Type != Flac__SubFrameType.Constant)
+					if (threadTask.SubFrame_Workspace[channel][threadTask.Best_SubFrame[channel]].Type != Flac__SubFrameType.Constant)
 						all_SubFrames_Constant = false;
 				}
 			}
@@ -3280,14 +4062,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				{
 					Array integer_Signal;
 
-					if (encoder.Private.SubFrame_Bps_Mid_Side[channel] <= 32)
-						integer_Signal = encoder.Private.Integer_Signal_Mid_Size[channel];
+					if (threadTask.SubFrame_Bps_Mid_Side[channel] <= 32)
+						integer_Signal = threadTask.Integer_Signal_Mid_Size[channel];
 					else
-						integer_Signal = encoder.Private.Integer_Signal_33Bit_Side;
+						integer_Signal = threadTask.Integer_Signal_33Bit_Side;
 
-					if (!Process_SubFrame(min_Partition_Order, max_Partition_Order, frame_Header, encoder.Private.SubFrame_Bps_Mid_Side[channel], integer_Signal,
-						    encoder.Private.SubFrame_Workspace_Ptr_Mid_Side[channel], encoder.Private.Partitioned_Rice_Contents_Workspace_Ptr_Mid_Side[channel], encoder.Private.Residual_Workspace_Mid_Side[channel],
-						    out encoder.Private.Best_SubFrame_Mid_Side[channel], out encoder.Private.Best_SubFrame_Bits_Mid_Side[channel]))
+					if (!Process_SubFrame(threadTask, min_Partition_Order, max_Partition_Order, frame_Header, threadTask.SubFrame_Bps_Mid_Side[channel], integer_Signal,
+						    threadTask.SubFrame_Workspace_Ptr_Mid_Side[channel], threadTask.Partitioned_Rice_Contents_Workspace_Ptr_Mid_Side[channel], threadTask.Residual_Workspace_Mid_Side[channel],
+						    out threadTask.Best_SubFrame_Mid_Side[channel], out threadTask.Best_SubFrame_Bits_Mid_Side[channel]))
 					{
 						return false;
 					}
@@ -3295,7 +4077,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			}
 
 			// Compose the frame bitbuffer
-			if (do_Mid_Side)
+			if ((do_Independent && do_Mid_Side) || encoder.Protected.Loose_Mid_Side_Stereo)
 			{
 				uint32_t left_Bps = 0;
 				uint32_t right_Bps = 0;
@@ -3305,9 +4087,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 				Debug.Assert(encoder.Protected.Channels == 2);
 
-				if (encoder.Protected.Loose_Mid_Side_Stereo && (encoder.Private.Loose_Mid_Side_Stereo_Frame_Count > 0))
-					channel_Assignment = encoder.Private.Last_Channel_Assignment == Flac__ChannelAssignment.Independent ? Flac__ChannelAssignment.Independent : Flac__ChannelAssignment.Mid_Side;
-				else
+				if (!encoder.Protected.Loose_Mid_Side_Stereo)
 				{
 					uint32_t[] bits = new uint32_t[4];	// WATCHOUT - indexed by Flac__ChannelAssignment
 
@@ -3315,22 +4095,19 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					Debug.Assert((int)Flac__ChannelAssignment.Left_Side == 1);
 					Debug.Assert((int)Flac__ChannelAssignment.Right_Side == 2);
 					Debug.Assert((int)Flac__ChannelAssignment.Mid_Side == 3);
-					Debug.Assert(do_Independent || do_Mid_Side);
 
 					// We have to figure out which channel assignment results in the smallest frame
-					bits[(int)Flac__ChannelAssignment.Independent] = encoder.Private.Best_SubFrame_Bits[0] + encoder.Private.Best_SubFrame_Bits[1];
-					bits[(int)Flac__ChannelAssignment.Left_Side] = encoder.Private.Best_SubFrame_Bits[0] + encoder.Private.Best_SubFrame_Bits_Mid_Side[1];
-					bits[(int)Flac__ChannelAssignment.Right_Side] = encoder.Private.Best_SubFrame_Bits[1] + encoder.Private.Best_SubFrame_Bits_Mid_Side[1];
-					bits[(int)Flac__ChannelAssignment.Mid_Side] = encoder.Private.Best_SubFrame_Bits_Mid_Side[0] + encoder.Private.Best_SubFrame_Bits_Mid_Side[1];
+					bits[(int)Flac__ChannelAssignment.Independent] = threadTask.Best_SubFrame_Bits[0] + threadTask.Best_SubFrame_Bits[1];
+					bits[(int)Flac__ChannelAssignment.Left_Side] = threadTask.Best_SubFrame_Bits[0] + threadTask.Best_SubFrame_Bits_Mid_Side[1];
+					bits[(int)Flac__ChannelAssignment.Right_Side] = threadTask.Best_SubFrame_Bits[1] + threadTask.Best_SubFrame_Bits_Mid_Side[1];
+					bits[(int)Flac__ChannelAssignment.Mid_Side] = threadTask.Best_SubFrame_Bits_Mid_Side[0] + threadTask.Best_SubFrame_Bits_Mid_Side[1];
 
 					channel_Assignment = Flac__ChannelAssignment.Independent;
 					uint32_t min_Bits = bits[(int)channel_Assignment];
 
 					// When doing loose mid side stereo, ignore left side
 					// and right side options
-					uint32_t ca = encoder.Protected.Loose_Mid_Side_Stereo ? 3U : 1U;
-
-					for (; ca <= 3; ca++)
+					for (uint32_t ca = 1; ca <= 3; ca++)
 					{
 						if (bits[ca] < min_Bits)
 						{
@@ -3338,43 +4115,43 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 							channel_Assignment = (Flac__ChannelAssignment)ca;
 						}
 					}
+
+					frame_Header.Channel_Assignment = channel_Assignment;
 				}
 
-				frame_Header.Channel_Assignment = channel_Assignment;
-
-				if (!Stream_Encoder_Framing.Flac__Frame_Add_Header(frame_Header, encoder.Private.Frame))
+				if (!Stream_Encoder_Framing.Flac__Frame_Add_Header(frame_Header, threadTask.Frame))
 				{
 					encoder.Protected.State = Flac__StreamEncoderState.Framing_Error;
 					return false;
 				}
 
-				switch (channel_Assignment)
+				switch (frame_Header.Channel_Assignment)
 				{
 					case Flac__ChannelAssignment.Independent:
 					{
-						left_SubFrame = encoder.Private.SubFrame_Workspace[0][encoder.Private.Best_SubFrame[0]];
-						right_SubFrame = encoder.Private.SubFrame_Workspace[1][encoder.Private.Best_SubFrame[1]];
+						left_SubFrame = threadTask.SubFrame_Workspace[0][threadTask.Best_SubFrame[0]];
+						right_SubFrame = threadTask.SubFrame_Workspace[1][threadTask.Best_SubFrame[1]];
 						break;
 					}
 
 					case Flac__ChannelAssignment.Left_Side:
 					{
-						left_SubFrame = encoder.Private.SubFrame_Workspace[0][encoder.Private.Best_SubFrame[0]];
-						right_SubFrame = encoder.Private.SubFrame_Workspace_Mid_Side[1][encoder.Private.Best_SubFrame_Mid_Side[1]];
+						left_SubFrame = threadTask.SubFrame_Workspace[0][threadTask.Best_SubFrame[0]];
+						right_SubFrame = threadTask.SubFrame_Workspace_Mid_Side[1][threadTask.Best_SubFrame_Mid_Side[1]];
 						break;
 					}
 
 					case Flac__ChannelAssignment.Right_Side:
 					{
-						left_SubFrame = encoder.Private.SubFrame_Workspace_Mid_Side[1][encoder.Private.Best_SubFrame_Mid_Side[1]];
-						right_SubFrame = encoder.Private.SubFrame_Workspace[1][encoder.Private.Best_SubFrame[1]];
+						left_SubFrame = threadTask.SubFrame_Workspace_Mid_Side[1][threadTask.Best_SubFrame_Mid_Side[1]];
+						right_SubFrame = threadTask.SubFrame_Workspace[1][threadTask.Best_SubFrame[1]];
 						break;
 					}
 
 					case Flac__ChannelAssignment.Mid_Side:
 					{
-						left_SubFrame = encoder.Private.SubFrame_Workspace_Mid_Side[0][encoder.Private.Best_SubFrame_Mid_Side[0]];
-						right_SubFrame = encoder.Private.SubFrame_Workspace_Mid_Side[1][encoder.Private.Best_SubFrame_Mid_Side[1]];
+						left_SubFrame = threadTask.SubFrame_Workspace_Mid_Side[0][threadTask.Best_SubFrame_Mid_Side[0]];
+						right_SubFrame = threadTask.SubFrame_Workspace_Mid_Side[1][threadTask.Best_SubFrame_Mid_Side[1]];
 						break;
 					}
 
@@ -3385,33 +4162,33 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 					}
 				}
 
-				switch (channel_Assignment)
+				switch (frame_Header.Channel_Assignment)
 				{
 					case Flac__ChannelAssignment.Independent:
 					{
-						left_Bps = encoder.Private.SubFrame_Bps[0];
-						right_Bps = encoder.Private.SubFrame_Bps[1];
+						left_Bps = threadTask.SubFrame_Bps[0];
+						right_Bps = threadTask.SubFrame_Bps[1];
 						break;
 					}
 
 					case Flac__ChannelAssignment.Left_Side:
 					{
-						left_Bps = encoder.Private.SubFrame_Bps[0];
-						right_Bps = encoder.Private.SubFrame_Bps_Mid_Side[1];
+						left_Bps = threadTask.SubFrame_Bps[0];
+						right_Bps = threadTask.SubFrame_Bps_Mid_Side[1];
 						break;
 					}
 
 					case Flac__ChannelAssignment.Right_Side:
 					{
-						left_Bps = encoder.Private.SubFrame_Bps_Mid_Side[1];
-						right_Bps = encoder.Private.SubFrame_Bps[1];
+						left_Bps = threadTask.SubFrame_Bps_Mid_Side[1];
+						right_Bps = threadTask.SubFrame_Bps[1];
 						break;
 					}
 
 					case Flac__ChannelAssignment.Mid_Side:
 					{
-						left_Bps = encoder.Private.SubFrame_Bps_Mid_Side[0];
-						right_Bps = encoder.Private.SubFrame_Bps_Mid_Side[1];
+						left_Bps = threadTask.SubFrame_Bps_Mid_Side[0];
+						right_Bps = threadTask.SubFrame_Bps_Mid_Side[1];
 						break;
 					}
 
@@ -3423,15 +4200,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				}
 
 				// Note that encoder_Add_SubFrame sets the state for us in case of an error
-				if (!Add_SubFrame(frame_Header.BlockSize, left_Bps, left_SubFrame, encoder.Private.Frame))
+				if (!Add_SubFrame(frame_Header.BlockSize, left_Bps, left_SubFrame, threadTask.Frame))
 					return false;
 
-				if (!Add_SubFrame(frame_Header.BlockSize, right_Bps, right_SubFrame, encoder.Private.Frame))
+				if (!Add_SubFrame(frame_Header.BlockSize, right_Bps, right_SubFrame, threadTask.Frame))
 					return false;
 			}
 			else
 			{
-				if (!Stream_Encoder_Framing.Flac__Frame_Add_Header(frame_Header, encoder.Private.Frame))
+				Debug.Assert(do_Independent);
+
+				if (!Stream_Encoder_Framing.Flac__Frame_Add_Header(frame_Header, threadTask.Frame))
 				{
 					encoder.Protected.State = Flac__StreamEncoderState.Framing_Error;
 					return false;
@@ -3439,24 +4218,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 				for (uint32_t channel = 0; channel < encoder.Protected.Channels; channel++)
 				{
-					if (!Add_SubFrame(frame_Header.BlockSize, encoder.Private.SubFrame_Bps[channel], encoder.Private.SubFrame_Workspace[channel][encoder.Private.Best_SubFrame[channel]], encoder.Private.Frame))
+					if (!Add_SubFrame(frame_Header.BlockSize, threadTask.SubFrame_Bps[channel], threadTask.SubFrame_Workspace[channel][threadTask.Best_SubFrame[channel]], threadTask.Frame))
 					{
 						// The above function sets the state for us in case of an error
 						return false;
 					}
 				}
 			}
-
-			if (encoder.Protected.Loose_Mid_Side_Stereo)
-			{
-				encoder.Private.Loose_Mid_Side_Stereo_Frame_Count++;
-
-				if (encoder.Private.Loose_Mid_Side_Stereo_Frame_Count >= encoder.Private.Loose_Mid_Side_Stereo_Frames)
-					encoder.Private.Loose_Mid_Side_Stereo_Frame_Count = 0;
-			}
-
-			encoder.Private.Last_Channel_Assignment = frame_Header.Channel_Assignment;
-			encoder.Private.Disable_Constant_SubFrames = backup_Disable_Constant_SubFrames;
 
 			return true;
 		}
@@ -3468,7 +4236,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private Flac__bool Process_SubFrame(uint32_t min_Partition_Order, uint32_t max_Partition_Order, Flac__FrameHeader frame_Header, uint32_t subFrame_Bps, Array integer_Signal, Flac__SubFrame[] subFrame, Flac__EntropyCodingMethod_PartitionedRiceContents[] partitioned_Rice_Contents, Flac__int32[][] residual, out uint32_t best_SubFrame, out uint32_t best_Bits)
+		private Flac__bool Process_SubFrame(Flac__StreamEncoderThreadTask threadTask, uint32_t min_Partition_Order, uint32_t max_Partition_Order, Flac__FrameHeader frame_Header, uint32_t subFrame_Bps, Array integer_Signal, Flac__SubFrame[] subFrame, Flac__EntropyCodingMethod_PartitionedRiceContents[] partitioned_Rice_Contents, Flac__int32[][] residual, out uint32_t best_SubFrame, out uint32_t best_Bits)
 		{
 			float[] fixed_Residual_Bits_Per_Sample = new float[Constants.Flac__Max_Fixed_Order + 1];
 			Apply_Apodization_State_Struct apply_Apodization_State = new Apply_Apodization_State_Struct();
@@ -3519,7 +4287,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				}
 
 				// Check for constant subframe
-				if (!encoder.Private.Disable_Constant_SubFrames && (fixed_Residual_Bits_Per_Sample[1] == 0.0))
+				if (!threadTask.Disable_Constant_SubFrames && (fixed_Residual_Bits_Per_Sample[1] == 0.0))
 				{
 					// The above means it's possible all samples are the same value; now double-check it
 					signal_Is_Constant = true;
@@ -3591,7 +4359,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 								continue;	// Don't even try
 
 							uint32_t invertBest_SubFrame = _best_SubFrame == 0 ? 1U : 0;
-							uint32_t candidate_Bits = Evaluate_Fixed_SubFrame(integer_Signal, residual[invertBest_SubFrame], encoder.Private.Abs_Residual_Partition_Sums, encoder.Private.Raw_Bits_Per_Partition, frame_Header.BlockSize, subFrame_Bps, fixed_Order, rice_Parameter_Limit, min_Partition_Order, max_Partition_Order, subFrame[invertBest_SubFrame], partitioned_Rice_Contents[invertBest_SubFrame]);
+							uint32_t candidate_Bits = Evaluate_Fixed_SubFrame(threadTask, integer_Signal, residual[invertBest_SubFrame], threadTask.Abs_Residual_Partition_Sums, threadTask.Raw_Bits_Per_Partition, frame_Header.BlockSize, subFrame_Bps, fixed_Order, rice_Parameter_Limit, min_Partition_Order, max_Partition_Order, subFrame[invertBest_SubFrame], partitioned_Rice_Contents[invertBest_SubFrame]);
 							if (candidate_Bits < _best_Bits)
 							{
 								_best_SubFrame = _best_SubFrame == 0 ? 1U : 0;
@@ -3621,7 +4389,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 								uint32_t min_Lpc_Order;
 								uint32_t max_Lpc_Order_This_Apodization = max_Lpc_Order;
 
-								if (!Apply_Apodization(apply_Apodization_State, frame_Header.BlockSize, lpc_Error, ref max_Lpc_Order_This_Apodization, subFrame_Bps, integer_Signal, out uint32_t guess_Lpc_Order))
+								if (!Apply_Apodization(threadTask, apply_Apodization_State, frame_Header.BlockSize, lpc_Error, ref max_Lpc_Order_This_Apodization, subFrame_Bps, integer_Signal, out uint32_t guess_Lpc_Order))
 								{
 									// If Apply_Apodization fails, try next apodization
 									continue;
@@ -3659,7 +4427,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 									for (uint32_t qlp_Coeff_Precision = min_Qlp_Coeff_Precision; qlp_Coeff_Precision <= max_Qlp_Coeff_Precision; qlp_Coeff_Precision++)
 									{
 										uint32_t invertBest_SubFrame = _best_SubFrame == 0 ? 1U : 0;
-										uint32_t candidate_Bits = Evaluate_Lpc_SubFrame(integer_Signal, residual[invertBest_SubFrame], encoder.Private.Abs_Residual_Partition_Sums, encoder.Private.Raw_Bits_Per_Partition, encoder.Private.Lp_Coeff[lpc_Order - 1], frame_Header.BlockSize, subFrame_Bps, lpc_Order, qlp_Coeff_Precision, rice_Parameter_Limit, min_Partition_Order, max_Partition_Order, subFrame[invertBest_SubFrame], partitioned_Rice_Contents[invertBest_SubFrame]);
+										uint32_t candidate_Bits = Evaluate_Lpc_SubFrame(threadTask, integer_Signal, residual[invertBest_SubFrame], threadTask.Abs_Residual_Partition_Sums, threadTask.Raw_Bits_Per_Partition, threadTask.Lp_Coeff[lpc_Order - 1], frame_Header.BlockSize, subFrame_Bps, lpc_Order, qlp_Coeff_Precision, rice_Parameter_Limit, min_Partition_Order, max_Partition_Order, subFrame[invertBest_SubFrame], partitioned_Rice_Contents[invertBest_SubFrame]);
 										if (candidate_Bits > 0)	// if == 0m there was a problem quantizing the lpcoeffs
 										{
 											if (candidate_Bits < _best_Bits)
@@ -3737,7 +4505,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private Flac__bool Apply_Apodization(Apply_Apodization_State_Struct apply_Apodization_State, uint32_t blockSize, double[] lpc_Error, ref uint32_t max_Lpc_Order_This_Apodization, uint32_t subFrame_Bps, Array integer_Signal, out uint32_t guess_Lpc_Order)
+		private Flac__bool Apply_Apodization(Flac__StreamEncoderThreadTask threadTask, Apply_Apodization_State_Struct apply_Apodization_State, uint32_t blockSize, double[] lpc_Error, ref uint32_t max_Lpc_Order_This_Apodization, uint32_t subFrame_Bps, Array integer_Signal, out uint32_t guess_Lpc_Order)
 		{
 			apply_Apodization_State.Current_Apodization = encoder.Protected.Apodizations[apply_Apodization_State.A];
 
@@ -3745,11 +4513,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			{
 				// Window full subblock
 				if (subFrame_Bps <= 32)
-					Lpc.Flac__Lpc_Window_Data((Flac__int32[])integer_Signal, encoder.Private.Window[apply_Apodization_State.A], encoder.Private.Windowed_Signal, blockSize);
+					Lpc.Flac__Lpc_Window_Data((Flac__int32[])integer_Signal, encoder.Private.Window[apply_Apodization_State.A], threadTask.Windowed_Signal, blockSize);
 				else
-					Lpc.Flac__Lpc_Window_Data_Wide((Flac__int64[])integer_Signal, encoder.Private.Window[apply_Apodization_State.A], encoder.Private.Windowed_Signal, blockSize);
+					Lpc.Flac__Lpc_Window_Data_Wide((Flac__int64[])integer_Signal, encoder.Private.Window[apply_Apodization_State.A], threadTask.Windowed_Signal, blockSize);
 
-				encoder.Private.Lpc.Compute_Autocorrelation(encoder.Private.Windowed_Signal, blockSize, max_Lpc_Order_This_Apodization + 1, apply_Apodization_State.Autoc);
+				encoder.Private.Lpc.Compute_Autocorrelation(threadTask.Windowed_Signal, blockSize, max_Lpc_Order_This_Apodization + 1, apply_Apodization_State.Autoc);
 
 				if (apply_Apodization_State.Current_Apodization.Type == Flac__ApodizationFunction.Subdivide_Tukey)
 				{
@@ -3779,11 +4547,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				{
 					// On even c, evaluate the (c/2)th partial window of size blocksize/b
 					if (subFrame_Bps <= 32)
-						Lpc.Flac__Lpc_Window_Data_Partial((int32_t[])integer_Signal, encoder.Private.Window[apply_Apodization_State.A], encoder.Private.Windowed_Signal, blockSize, blockSize / apply_Apodization_State.B / 2, (apply_Apodization_State.C / 2 * blockSize) / apply_Apodization_State.B);
+						Lpc.Flac__Lpc_Window_Data_Partial((int32_t[])integer_Signal, encoder.Private.Window[apply_Apodization_State.A], threadTask.Windowed_Signal, blockSize, blockSize / apply_Apodization_State.B / 2, (apply_Apodization_State.C / 2 * blockSize) / apply_Apodization_State.B);
 					else
-						Lpc.Flac__Lpc_Window_Data_Partial_Wide((int64_t[])integer_Signal, encoder.Private.Window[apply_Apodization_State.A], encoder.Private.Windowed_Signal, blockSize, blockSize / apply_Apodization_State.B / 2, (apply_Apodization_State.C / 2 * blockSize) / apply_Apodization_State.B);
+						Lpc.Flac__Lpc_Window_Data_Partial_Wide((int64_t[])integer_Signal, encoder.Private.Window[apply_Apodization_State.A], threadTask.Windowed_Signal, blockSize, blockSize / apply_Apodization_State.B / 2, (apply_Apodization_State.C / 2 * blockSize) / apply_Apodization_State.B);
 
-					encoder.Private.Lpc.Compute_Autocorrelation(encoder.Private.Windowed_Signal, blockSize / apply_Apodization_State.B, max_Lpc_Order_This_Apodization + 1, apply_Apodization_State.Autoc);
+					encoder.Private.Lpc.Compute_Autocorrelation(threadTask.Windowed_Signal, blockSize / apply_Apodization_State.B, max_Lpc_Order_This_Apodization + 1, apply_Apodization_State.Autoc);
 				}
 				else
 				{
@@ -3803,7 +4571,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 				return false;
 			}
 
-			Lpc.Flac__Lpc_Compute_Lp_Coefficients(apply_Apodization_State.Autoc, ref max_Lpc_Order_This_Apodization, encoder.Private.Lp_Coeff, lpc_Error);
+			Lpc.Flac__Lpc_Compute_Lp_Coefficients(apply_Apodization_State.Autoc, ref max_Lpc_Order_This_Apodization, threadTask.Lp_Coeff, lpc_Error);
 			guess_Lpc_Order = Lpc.Flac__Lpc_Compute_Best_Order(lpc_Error, max_Lpc_Order_This_Apodization, blockSize, subFrame_Bps + (encoder.Protected.Do_Qlp_Coeff_Prec_Search ? Constants.Flac__Min_Qlp_Coeff_Precision : encoder.Protected.Qlp_Coeff_Precision));
 
 			return true;
@@ -3897,7 +4665,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private uint32_t Evaluate_Fixed_SubFrame(Array signal, Flac__int32[] residual, Flac__uint64[] abs_Residual_Partition_Sums, uint32_t[] raw_Bits_Per_Partition, uint32_t blockSize, uint32_t subFrame_Bps, uint32_t order, uint32_t rice_Parameter_Limit, uint32_t min_Partition_Order, uint32_t max_Partition_Order, Flac__SubFrame subFrame, Flac__EntropyCodingMethod_PartitionedRiceContents partition_Rice_Contents)
+		private uint32_t Evaluate_Fixed_SubFrame(Flac__StreamEncoderThreadTask threadTask, Array signal, Flac__int32[] residual, Flac__uint64[] abs_Residual_Partition_Sums, uint32_t[] raw_Bits_Per_Partition, uint32_t blockSize, uint32_t subFrame_Bps, uint32_t order, uint32_t rice_Parameter_Limit, uint32_t min_Partition_Order, uint32_t max_Partition_Order, Flac__SubFrame subFrame, Flac__EntropyCodingMethod_PartitionedRiceContents partition_Rice_Contents)
 		{
 			uint32_t residual_Samples = blockSize - order;
 
@@ -3919,7 +4687,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			partitionedRice.Contents = partition_Rice_Contents;
 			@fixed.Residual = residual;
 
-			uint32_t residual_Bits = Find_Best_Partition_Order(residual, abs_Residual_Partition_Sums, raw_Bits_Per_Partition, residual_Samples, order, rice_Parameter_Limit, min_Partition_Order, max_Partition_Order, subFrame_Bps, @fixed.Entropy_Coding_Method);
+			uint32_t residual_Bits = Find_Best_Partition_Order(threadTask, residual, abs_Residual_Partition_Sums, raw_Bits_Per_Partition, residual_Samples, order, rice_Parameter_Limit, min_Partition_Order, max_Partition_Order, subFrame_Bps, @fixed.Entropy_Coding_Method);
 
 			@fixed.Order = order;
 
@@ -3950,7 +4718,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private uint32_t Evaluate_Lpc_SubFrame(Array signal, Flac__int32[] residual, Flac__uint64[] abs_Residual_Partition_Sums, uint32_t[] raw_Bits_Per_Partition, Flac__real[] lp_Coeff, uint32_t blockSize, uint32_t subFrame_Bps, uint32_t order, uint32_t qlp_Coeff_Precision, uint32_t rice_Parameter_Limit, uint32_t min_Partition_Order, uint32_t max_Partition_Order, Flac__SubFrame subFrame, Flac__EntropyCodingMethod_PartitionedRiceContents partition_Rice_Contents)
+		private uint32_t Evaluate_Lpc_SubFrame(Flac__StreamEncoderThreadTask threadTask, Array signal, Flac__int32[] residual, Flac__uint64[] abs_Residual_Partition_Sums, uint32_t[] raw_Bits_Per_Partition, Flac__real[] lp_Coeff, uint32_t blockSize, uint32_t subFrame_Bps, uint32_t order, uint32_t qlp_Coeff_Precision, uint32_t rice_Parameter_Limit, uint32_t min_Partition_Order, uint32_t max_Partition_Order, Flac__SubFrame subFrame, Flac__EntropyCodingMethod_PartitionedRiceContents partition_Rice_Contents)
 		{
 			Flac__int32[] qlp_Coeff = new Flac__int32[Constants.Flac__Max_Lpc_Order];	// WATCHOUT: The size is important; some x86 intrinsic routines need more than lpc order elements
 			uint32_t residual_Samples = blockSize - order;
@@ -4006,7 +4774,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			rice.Contents = partition_Rice_Contents;
 			lpc.Residual = residual;
 
-			uint32_t residual_Bits = Find_Best_Partition_Order(residual, abs_Residual_Partition_Sums, raw_Bits_Per_Partition, residual_Samples, order, rice_Parameter_Limit, min_Partition_Order, max_Partition_Order, subFrame_Bps, lpc.Entropy_Coding_Method);
+			uint32_t residual_Bits = Find_Best_Partition_Order(threadTask, residual, abs_Residual_Partition_Sums, raw_Bits_Per_Partition, residual_Samples, order, rice_Parameter_Limit, min_Partition_Order, max_Partition_Order, subFrame_Bps, lpc.Entropy_Coding_Method);
 
 			lpc.Order = order;
 			lpc.Qlp_Coeff_Precision = qlp_Coeff_Precision;
@@ -4070,7 +4838,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private uint32_t Find_Best_Partition_Order(Flac__int32[] residual, Flac__uint64[] abs_Residual_Partition_Sums, uint32_t[] raw_Bits_Per_Partition, uint32_t residual_Samples, uint32_t predictor_Order, uint32_t rice_Parameter_Limit, uint32_t min_Partition_Order, uint32_t max_Partition_Order, uint32_t bps, Flac__EntropyCodingMethod best_Ecm)
+		private uint32_t Find_Best_Partition_Order(Flac__StreamEncoderThreadTask threadTask, Flac__int32[] residual, Flac__uint64[] abs_Residual_Partition_Sums, uint32_t[] raw_Bits_Per_Partition, uint32_t residual_Samples, uint32_t predictor_Order, uint32_t rice_Parameter_Limit, uint32_t min_Partition_Order, uint32_t max_Partition_Order, uint32_t bps, Flac__EntropyCodingMethod best_Ecm)
 		{
 			uint32_t best_Residual_Bits = 0;
 			uint32_t best_Parameters_Index = 0;
@@ -4085,7 +4853,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			{
 				for (int partition_Order = (int)max_Partition_Order, sum = 0; partition_Order >= (int)min_Partition_Order; partition_Order--)
 				{
-					if (!Set_Partitioned_Rice(abs_Residual_Partition_Sums, raw_Bits_Per_Partition, sum, residual_Samples, predictor_Order, rice_Parameter_Limit, (uint32_t)partition_Order, encoder.Private.Partitioned_Rice_Contents_Extra[best_Parameters_Index == 0 ? 1 : 0], out uint32_t residual_Bits))
+					if (!Set_Partitioned_Rice(abs_Residual_Partition_Sums, raw_Bits_Per_Partition, sum, residual_Samples, predictor_Order, rice_Parameter_Limit, (uint32_t)partition_Order, threadTask.Partitioned_Rice_Contents_Extra[best_Parameters_Index == 0 ? 1 : 0], out uint32_t residual_Bits))
 					{
 						Debug.Assert(best_Residual_Bits != 0);
 						break;
@@ -4111,8 +4879,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 			{
 				Flac__EntropyCodingMethod_PartitionedRiceContents prc = partitionedRice.Contents;
 
-				// Save bes parameters and raw_Bits
-				Array.Copy(encoder.Private.Partitioned_Rice_Contents_Extra[best_Parameters_Index].Parameters, 0, prc.Parameters, 0, 1 << (int)best_Partition_Order);
+				// Save best parameters and raw_Bits
+				Array.Copy(threadTask.Partitioned_Rice_Contents_Extra[best_Parameters_Index].Parameters, 0, prc.Parameters, 0, 1 << (int)best_Partition_Order);
 
 				// Now need to check if the type should be changed to
 				// Flac__Entropy_Coding_Method_Partitioned_Rice2 based on the

@@ -628,18 +628,32 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Flac
 
 			if ((num > 0) && (total_Samples > 0))
 			{
-				Flac__StreamMetadata_SeekTable metaSeekTable = (Flac__StreamMetadata_SeekTable)@object.Data;
+				Flac__StreamMetadata_SeekTable seek_Table = (Flac__StreamMetadata_SeekTable)@object.Data;
 
-				uint32_t i = metaSeekTable.Num_Points;
+				uint32_t i = seek_Table.Num_Points;
 
-				if (!Flac__Metadata_Object_SeekTable_Resize_Points(@object, metaSeekTable.Num_Points + num))
+				if (!Flac__Metadata_Object_SeekTable_Resize_Points(@object, seek_Table.Num_Points + num))
 					return false;
 
-				for (uint32_t j = 0; j < num; i++, j++)
+				if (total_Samples < (uint32_t.MaxValue / num))
 				{
-					metaSeekTable.Points[i].Sample_Number = total_Samples * j / num;
-					metaSeekTable.Points[i].Stream_Offset = 0;
-					metaSeekTable.Points[i].Frame_Samples = 0;
+					// No risk of overflow
+					for (uint32_t j = 0; j < num; i++, j++)
+					{
+						seek_Table.Points[i].Sample_Number = total_Samples * j / num;
+						seek_Table.Points[i].Stream_Offset = 0;
+						seek_Table.Points[i].Frame_Samples = 0;
+					}
+				}
+				else
+				{
+					// Less precise, but can handle total_samples near UINT64_MAX
+					for (uint32_t j = 0; j < num; i++, j++)
+					{
+						seek_Table.Points[i].Sample_Number = total_Samples / num * j;
+						seek_Table.Points[i].Stream_Offset = 0;
+						seek_Table.Points[i].Frame_Samples = 0;
+					}
 				}
 			}
 

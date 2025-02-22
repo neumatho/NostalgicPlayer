@@ -330,6 +330,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 			flacEncoder.Flac__Stream_Encoder_Set_Bits_Per_Sample(formatInfo.Bits);
 			flacEncoder.Flac__Stream_Encoder_Set_Channels((uint)formatInfo.Channels);
 			flacEncoder.Flac__Stream_Encoder_Set_Sample_Rate(formatInfo.Frequency);
+			flacEncoder.Flac__Stream_Encoder_Set_Num_Threads(4);
 
 			return true;
 		}

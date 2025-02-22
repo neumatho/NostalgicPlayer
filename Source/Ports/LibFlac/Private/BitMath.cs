@@ -14,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 	internal static class BitMath
 	{
 		private static readonly uint8_t[] byte_To_Unary_Table =
-		{
+		[
 			8, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4,
 			3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
 			2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
@@ -31,15 +31,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		};
+		];
 
 		private static readonly uint8_t[] debruijn_Idx64 =
-		{
+		[
 			 0,  1,  2,  7,  3, 13,  8, 19,  4, 25, 14, 28,  9, 34, 20, 40,
 			 5, 17, 26, 38, 15, 46, 29, 48, 10, 31, 35, 54, 21, 50, 41, 57,
 			63,  6, 12, 18, 24, 27, 33, 39, 16, 37, 45, 47, 30, 53, 49, 56,
 			62, 11, 23, 32, 36, 44, 52, 55, 61, 22, 43, 51, 60, 42, 59, 58
-		};
+		];
 
 		/********************************************************************/
 		/// <summary>
@@ -145,6 +145,35 @@ namespace Polycode.NostalgicPlayer.Ports.LibFlac.Private
 			v = (v < 0) ? (-(v + 1)) : v;
 
 			return Flac__BitMath_ILog2_Wide((Flac__uint64)v) + 2;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// The intent of this is to calculate how many extra bits
+		/// multiplication by a certain number requires. So, if a signal fits
+		/// in a certain number of bits (for example 16) than multiplying by
+		/// a number (for example 1024) grows that storage requirement (to
+		/// 26 in this example). In effect this is the log2 rounded up
+		/// </summary>
+		/********************************************************************/
+		public static uint32_t Flac__BitMath_Extra_Mulbits_Unsigned(Flac__uint32 v)
+		{
+			if (v == 0)
+				return 0;
+
+			uint32_t ilog2 = Flac__BitMath_ILog2(v);
+			if (((v >> (int)ilog2) << (int)ilog2) == v)
+			{
+				// v is power of 2
+				return ilog2;
+			}
+			else
+			{
+				// v is not a power of 2, return one higher
+				return ilog2 + 1;
+			}
 		}
 
 		#region Private methods
