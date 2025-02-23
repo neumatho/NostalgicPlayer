@@ -3214,7 +3214,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				moduleInfoWindow.Show();
 			}
 
-			if (mainWindowSettings.OpenFavoriteSongSystemWindow)
+			if (mainWindowSettings.OpenFavoriteSongSystemWindow && optionSettings.UseDatabase)
 			{
 				favoriteSongSystemWindow = new FavoriteSongSystemForm(this, database, optionSettings);
 				favoriteSongSystemWindow.Show();
