@@ -54,6 +54,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		private Queue<ChannelDataInfo> channelLatencyQueue;
 		private int channelLatencySamplesLeft;
 
+		private readonly Lock sampleDataListLock = new Lock();
 		private List<SampleDataInfo> sampleDataList;
 		private long currentSampleDataTimeWhenFilling;
 		private long currentSampleDataTimeForTimer;
@@ -70,9 +71,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 
 			channelLatencyQueue = new Queue<ChannelDataInfo>();
 
-			sampleDataList = new List<SampleDataInfo>();
-			currentSampleDataTimeWhenFilling = 0;
-			currentSampleDataTimeForTimer = 0;
+			lock (sampleDataListLock)
+			{
+				sampleDataList = new List<SampleDataInfo>();
+				currentSampleDataTimeWhenFilling = 0;
+				currentSampleDataTimeForTimer = 0;
+			}
 
 			// Create the trigger events
 			channelChangedEvent = new AutoResetEvent(false);
@@ -122,12 +126,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 				thread = null;
 			}
 
-			// Clear variables
-			channelChangedEvent?.Dispose();
-			channelChangedEvent = null;
+			lock (sampleDataListLock)
+			{
+				// Clear variables
+				channelChangedEvent?.Dispose();
+				channelChangedEvent = null;
 
-			channelLatencyQueue = null;
-			sampleDataList = null;
+				channelLatencyQueue = null;
+				sampleDataList = null;
+			}
 		}
 
 
@@ -173,7 +180,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 			foreach (IVisualAgent visualAgent in manager.GetRegisteredVisualAgent())
 				visualAgent.SetPauseState(paused);
 
-			lock (sampleDataList)
+			lock (sampleDataListLock)
 			{
 				sampleDataList.Clear();
 				sampleDataLatencyLeft = currentLatency;
@@ -267,7 +274,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 						TimeWhenBufferWasRendered = currentSampleDataTimeWhenFilling
 					};
 
-					lock (sampleDataList)
+					lock (sampleDataListLock)
 					{
 						sampleDataList.Add(info);
 					}
@@ -294,7 +301,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 
 			channelLatencyQueue.Clear();
 
-			lock (sampleDataList)
+			lock (sampleDataListLock)
 			{
 				sampleDataList.Clear();
 			}
@@ -357,13 +364,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		{
 			SampleDataInfo sampleDataInfo = null;
 
-			lock (sampleDataList)
+			lock (sampleDataListLock)
 			{
 				if (sampleDataLatencyLeft > 0)
 					sampleDataLatencyLeft -= SampleBufferSizeInMs;
 				else
 				{
-					if (sampleDataList.Count > 0)
+					if ((sampleDataList != null) && (sampleDataList.Count > 0))
 					{
 						// Check if we're behind in time. This can happen if e.g. using the Disk Saver
 						// output agent. If so, skip some of the buffers until we're in sync again
