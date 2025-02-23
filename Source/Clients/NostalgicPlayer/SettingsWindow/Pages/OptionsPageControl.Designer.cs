@@ -177,7 +177,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			tooltipsCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(tooltipsCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_TOOLTIPS");
 			tooltipsCheckBox.Size = new System.Drawing.Size(96, 16);
-			tooltipsCheckBox.TabIndex = 5;
+			tooltipsCheckBox.TabIndex = 6;
 			tooltipsCheckBox.Values.Text = "Button tool tips";
 			// 
 			// showNameInTitleCheckBox
@@ -188,7 +188,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			showNameInTitleCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(showNameInTitleCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SHOWNAME");
 			showNameInTitleCheckBox.Size = new System.Drawing.Size(167, 16);
-			showNameInTitleCheckBox.TabIndex = 6;
+			showNameInTitleCheckBox.TabIndex = 7;
 			showNameInTitleCheckBox.Values.Text = "Show module name in titlebar";
 			// 
 			// showListNumberCheckBox
@@ -209,9 +209,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			showFullPathCheckBox.Palette = fontPalette;
 			showFullPathCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(showFullPathCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SHOWFULLPATH");
-			showFullPathCheckBox.Size = new System.Drawing.Size(159, 16);
+			showFullPathCheckBox.Size = new System.Drawing.Size(120, 16);
 			showFullPathCheckBox.TabIndex = 5;
-			showFullPathCheckBox.Values.Text = "Show full path in module list";
+			showFullPathCheckBox.Values.Text = "Show full path in list";
 			// 
 			// separateWindowsCheckBox
 			// 
@@ -221,7 +221,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			separateWindowsCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(separateWindowsCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SEPARATEWINDOWS");
 			separateWindowsCheckBox.Size = new System.Drawing.Size(169, 28);
-			separateWindowsCheckBox.TabIndex = 7;
+			separateWindowsCheckBox.TabIndex = 8;
 			separateWindowsCheckBox.Values.Text = "Separate each window in task\r\nswitcher";
 			separateWindowsCheckBox.CheckedChanged += SeparateWindows_CheckedChanged;
 			// 
@@ -234,7 +234,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			windowPanel.Name = "windowPanel";
 			controlResource.SetResourceKey(windowPanel, null);
 			windowPanel.Size = new System.Drawing.Size(186, 17);
-			windowPanel.TabIndex = 8;
+			windowPanel.TabIndex = 9;
 			// 
 			// showWindowsInTaskBarCheckBox
 			// 
@@ -255,7 +255,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			useDatabaseCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(useDatabaseCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_USEDATABASE");
 			useDatabaseCheckBox.Size = new System.Drawing.Size(169, 28);
-			useDatabaseCheckBox.TabIndex = 9;
+			useDatabaseCheckBox.TabIndex = 10;
 			useDatabaseCheckBox.Values.Text = "Use database to store module\r\ninformation";
 			// 
 			// scanFilesCheckBox
@@ -266,7 +266,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			scanFilesCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(scanFilesCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SCANFILES");
 			scanFilesCheckBox.Size = new System.Drawing.Size(104, 16);
-			scanFilesCheckBox.TabIndex = 10;
+			scanFilesCheckBox.TabIndex = 11;
 			scanFilesCheckBox.Values.Text = "Scan added files";
 			scanFilesCheckBox.CheckedChanged += ScanFiles_CheckedChanged;
 			// 
@@ -279,7 +279,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			scanFilesPanel.Name = "scanFilesPanel";
 			controlResource.SetResourceKey(scanFilesPanel, null);
 			scanFilesPanel.Size = new System.Drawing.Size(177, 38);
-			scanFilesPanel.TabIndex = 11;
+			scanFilesPanel.TabIndex = 12;
 			// 
 			// extractPlayingTimeCheckBox
 			// 
