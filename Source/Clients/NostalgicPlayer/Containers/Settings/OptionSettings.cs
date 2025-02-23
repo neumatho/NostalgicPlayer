@@ -112,6 +112,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
+		/// Show full path as tool tip in module list
+		/// </summary>
+		/********************************************************************/
+		public bool ShowFullPath
+		{
+			get => settings.GetBoolEntry("Options", "ShowFullPath", false);
+
+			set => settings.SetBoolEntry("Options", "ShowFullPath", value);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Tool tips
 		/// </summary>
 		/********************************************************************/

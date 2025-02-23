@@ -570,6 +570,18 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// Enable/disable full path viewing
+		/// </summary>
+		/********************************************************************/
+		public void EnableFullPath(bool enable)
+		{
+			moduleListItemsControl.EnableFullPath(enable);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return information about the last drag'n'drop that has been made
 		/// </summary>
 		/********************************************************************/

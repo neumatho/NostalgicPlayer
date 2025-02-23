@@ -529,6 +529,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				SetTitle();
 				moduleListControl.EnableListNumber(optionSettings.ShowListNumber);
+				moduleListControl.EnableFullPath(optionSettings.ShowFullPath);
 
 				if (optionSettings.UseDatabase)
 				{

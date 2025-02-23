@@ -30,9 +30,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private void InitializeComponent()
 		{
 			components = new System.ComponentModel.Container();
-			controlResource = new GuiKit.Designer.ControlResource();
+			controlResource = new Polycode.NostalgicPlayer.GuiKit.Designer.ControlResource();
 			generalGroupBox = new Krypton.Toolkit.KryptonGroupBox();
-			fontPalette = new GuiKit.Components.FontPalette(components);
+			fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
 			addJumpCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			addToListCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			rememberListCheckBox = new Krypton.Toolkit.KryptonCheckBox();
@@ -42,6 +42,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			tooltipsCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			showNameInTitleCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			showListNumberCheckBox = new Krypton.Toolkit.KryptonCheckBox();
+			showFullPathCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			separateWindowsCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			windowPanel = new System.Windows.Forms.Panel();
 			showWindowsInTaskBarCheckBox = new Krypton.Toolkit.KryptonCheckBox();
@@ -81,15 +82,23 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			generalGroupBox.Panel.Controls.Add(tooltipsCheckBox);
 			generalGroupBox.Panel.Controls.Add(showNameInTitleCheckBox);
 			generalGroupBox.Panel.Controls.Add(showListNumberCheckBox);
+			generalGroupBox.Panel.Controls.Add(showFullPathCheckBox);
 			generalGroupBox.Panel.Controls.Add(separateWindowsCheckBox);
 			generalGroupBox.Panel.Controls.Add(windowPanel);
 			generalGroupBox.Panel.Controls.Add(useDatabaseCheckBox);
 			generalGroupBox.Panel.Controls.Add(scanFilesCheckBox);
 			generalGroupBox.Panel.Controls.Add(scanFilesPanel);
 			controlResource.SetResourceKey(generalGroupBox, "IDS_SETTINGS_OPTIONS_GENERAL");
-			generalGroupBox.Size = new System.Drawing.Size(592, 154);
+			generalGroupBox.Size = new System.Drawing.Size(592, 175);
 			generalGroupBox.TabIndex = 0;
 			generalGroupBox.Values.Heading = "General";
+			// 
+			// fontPalette
+			// 
+			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
+			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
+			fontPalette.ThemeName = "";
+			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// addJumpCheckBox
 			// 
@@ -192,6 +201,17 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			showListNumberCheckBox.Size = new System.Drawing.Size(142, 16);
 			showListNumberCheckBox.TabIndex = 4;
 			showListNumberCheckBox.Values.Text = "Show item number in list";
+			// 
+			// showFullPathCheckBox
+			// 
+			showFullPathCheckBox.Location = new System.Drawing.Point(4, 131);
+			showFullPathCheckBox.Name = "showFullPathCheckBox";
+			showFullPathCheckBox.Palette = fontPalette;
+			showFullPathCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(showFullPathCheckBox, "IDS_SETTINGS_OPTIONS_GENERAL_SHOWFULLPATH");
+			showFullPathCheckBox.Size = new System.Drawing.Size(159, 16);
+			showFullPathCheckBox.TabIndex = 5;
+			showFullPathCheckBox.Values.Text = "Show full path in module list";
 			// 
 			// separateWindowsCheckBox
 			// 
@@ -322,5 +342,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private System.Windows.Forms.Panel scanFilesPanel;
 		private Krypton.Toolkit.KryptonCheckBox extractPlayingTimeCheckBox;
 		private Krypton.Toolkit.KryptonCheckBox removeUnknownCheckBox;
+		private Krypton.Toolkit.KryptonCheckBox showFullPathCheckBox;
 	}
 }

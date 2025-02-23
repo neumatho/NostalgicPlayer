@@ -38,9 +38,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		private VScrollBar vScrollBar;
 
 		private bool listNumberEnabled;
+		private bool showFullPathEnabled;
 
 		private int lastItemSelected;
 		private int deltaToLastSelected;
+
+		private int lastToolTipItem;
 
 		private ModuleListControl.ItemCollection collection;
 		private readonly SortedDictionary<int, ModuleListItem> selectedItems;
@@ -64,9 +67,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			InitializeComponent();
 
 			listNumberEnabled = false;
+			showFullPathEnabled = false;
 
 			lastItemSelected = -1;
 			deltaToLastSelected = 0;
+
+			lastToolTipItem = -1;
 
 			selectedItems = new SortedDictionary<int, ModuleListItem>();
 			publicSelectedItems = null;
@@ -299,6 +305,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			listNumberEnabled = enable;
 
 			Invalidate();
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Enable/disable full path viewing
+		/// </summary>
+		/********************************************************************/
+		public void EnableFullPath(bool enable)
+		{
+			showFullPathEnabled = enable;
+
+			lastToolTipItem = -1;
+			toolTip.SetToolTip(this, string.Empty);
 		}
 
 
@@ -710,6 +731,22 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 				// Stop drag functionality by clearing the rectangle
 				dragBoxFromMouseDown = Rectangle.Empty;
+			}
+			else
+			{
+				if (showFullPathEnabled)
+				{
+					int index = IndexFromPoint(e.Location);
+					if (index != lastToolTipItem)
+					{
+						lastToolTipItem = index;
+
+						if (index != -1)
+							toolTip.SetToolTip(this, collection[index].ListItem.FullPath);
+						else
+							toolTip.SetToolTip(this, string.Empty);
+					}
+				}
 			}
 
 			base.OnMouseMove(e);

@@ -914,6 +914,9 @@ in Module Information window</value>
     <value>Separate each window in task
 switcher</value>
   </data>
+  <data name="IDS_SETTINGS_OPTIONS_GENERAL_SHOWFULLPATH" xml:space="preserve">
+    <value>Show full path in list</value>
+  </data>
   <data name="IDS_SETTINGS_OPTIONS_GENERAL_SHOWLISTNUMBER" xml:space="preserve">
     <value>Show item number in list</value>
   </data>

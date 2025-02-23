@@ -30,6 +30,7 @@
 		{
 			components = new System.ComponentModel.Container();
 			scrollTimer = new System.Windows.Forms.Timer(components);
+			toolTip = new System.Windows.Forms.ToolTip(components);
 			SuspendLayout();
 			// 
 			// scrollTimer
@@ -50,5 +51,6 @@
 		#endregion
 
 		private System.Windows.Forms.Timer scrollTimer;
+		private System.Windows.Forms.ToolTip toolTip;
 	}
 }

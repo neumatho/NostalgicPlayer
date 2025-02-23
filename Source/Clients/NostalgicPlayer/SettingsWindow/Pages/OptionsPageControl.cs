@@ -72,6 +72,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			rememberListPositionCheckBox.Checked = optionSettings.RememberListPosition;
 			rememberModulePositionCheckBox.Checked = optionSettings.RememberModulePosition;
 			showListNumberCheckBox.Checked = optionSettings.ShowListNumber;
+			showFullPathCheckBox.Checked = optionSettings.ShowFullPath;
 
 			tooltipsCheckBox.Checked = optionSettings.ToolTips;
 			showNameInTitleCheckBox.Checked = optionSettings.ShowNameInTitle;
@@ -112,6 +113,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			optionSettings.RememberListPosition = rememberListPositionCheckBox.Checked;
 			optionSettings.RememberModulePosition = rememberModulePositionCheckBox.Checked;
 			optionSettings.ShowListNumber = showListNumberCheckBox.Checked;
+			optionSettings.ShowFullPath = showFullPathCheckBox.Checked;
 
 			optionSettings.ToolTips = tooltipsCheckBox.Checked;
 			optionSettings.ShowNameInTitle = showNameInTitleCheckBox.Checked;

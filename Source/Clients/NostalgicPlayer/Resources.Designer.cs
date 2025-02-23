@@ -2214,6 +2214,15 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show full path in list.
+        /// </summary>
+        internal static string IDS_SETTINGS_OPTIONS_GENERAL_SHOWFULLPATH {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_OPTIONS_GENERAL_SHOWFULLPATH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show item number in list.
         /// </summary>
         internal static string IDS_SETTINGS_OPTIONS_GENERAL_SHOWLISTNUMBER {
