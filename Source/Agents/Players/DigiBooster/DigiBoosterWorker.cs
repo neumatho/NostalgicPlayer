@@ -806,10 +806,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBooster
 							}
 							else
 							{
-								channel.PlaySample((short)(channelInfo.OldSampleNumber - 1), channelInfo.SampleData, channelInfo.StartOffset, sample.Length - channelInfo.StartOffset);
+								uint length = sample.Length - channelInfo.StartOffset;
 
-								if (sample.LoopLength > 0)
-									channel.SetLoop(sample.LoopStart, sample.LoopLength);
+								if (length > 0)
+								{
+									channel.PlaySample((short)(channelInfo.OldSampleNumber - 1), channelInfo.SampleData, channelInfo.StartOffset, length);
+
+									if (sample.LoopLength > 0)
+										channel.SetLoop(sample.LoopStart, sample.LoopLength);
+								}
+								else
+								{
+									// Trying to play an empty sample
+									if (sample.LoopLength > 0)
+									{
+										channel.PlaySample((short)(channelInfo.OldSampleNumber - 1), channelInfo.SampleData, sample.LoopStart, sample.LoopLength);
+										channel.SetLoop(sample.LoopStart, sample.LoopLength);
+									}
+									else
+										channel.Mute();
+								}
 							}
 						}
 					}
