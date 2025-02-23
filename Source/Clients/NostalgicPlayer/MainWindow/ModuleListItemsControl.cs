@@ -1040,8 +1040,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			if (!item.HaveTime)
 				return 0;
 
-			TimeSpan tempTime = new TimeSpan((((long)item.Duration.TotalMilliseconds + 500) / 1000 * 1000) * TimeSpan.TicksPerMillisecond);
-			string moduleTime = tempTime.ToString((int)tempTime.TotalHours > 0 ? Resources.IDS_TIMEFORMAT : Resources.IDS_TIMEFORMAT_SMALL);
+			string moduleTime = item.Duration.ToString((int)item.Duration.TotalHours > 0 ? Resources.IDS_TIMEFORMAT : Resources.IDS_TIMEFORMAT_SMALL);
 
 			Size size = TextRenderer.MeasureText(g, moduleTime, font);
 			TextRenderer.DrawText(g, moduleTime, font, new Point(Width - size.Width, y + 1), textColor, TextFormatFlags.NoPrefix);

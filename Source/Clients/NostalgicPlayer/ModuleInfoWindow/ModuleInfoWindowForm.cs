@@ -499,11 +499,10 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 					val = Resources.IDS_MODULE_INFO_UNKNOWN;
 				else
 				{
-					TimeSpan time = new TimeSpan((((long)floatingInfo.DurationInfo.TotalTime.TotalMilliseconds + 500) / 1000 * 1000) * TimeSpan.TicksPerMillisecond);
-					if ((int)time.TotalHours > 0)
-						val = time.ToString(Resources.IDS_TIMEFORMAT);
+					if ((int)floatingInfo.DurationInfo.TotalTime.TotalHours > 0)
+						val = floatingInfo.DurationInfo.TotalTime.ToString(Resources.IDS_TIMEFORMAT);
 					else
-						val = time.ToString(Resources.IDS_TIMEFORMAT_SMALL);
+						val = floatingInfo.DurationInfo.TotalTime.ToString(Resources.IDS_TIMEFORMAT_SMALL);
 				}
 
 				moduleInfoInfoDataGridView.Rows.Add(Resources.IDS_MODULE_INFO_ITEM_TIME, val);

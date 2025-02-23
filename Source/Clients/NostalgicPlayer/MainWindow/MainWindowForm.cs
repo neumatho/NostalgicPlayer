@@ -3730,22 +3730,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// Build the selected time string
 			string selStr, listStr;
 
-			TimeSpan tempTime = new TimeSpan((((long)selectedTime.TotalMilliseconds + 500) / 1000 * 1000) * TimeSpan.TicksPerMillisecond);
-			if ((int)tempTime.TotalDays > 0)
-				selStr = tempTime.ToString(Resources.IDS_TIMEFORMAT_BIG);
-			else if ((int)tempTime.TotalHours > 0)
-				selStr = tempTime.ToString(Resources.IDS_TIMEFORMAT);
+			if ((int)selectedTime.TotalDays > 0)
+				selStr = selectedTime.ToString(Resources.IDS_TIMEFORMAT_BIG);
+			else if ((int)selectedTime.TotalHours > 0)
+				selStr = selectedTime.ToString(Resources.IDS_TIMEFORMAT);
 			else
-				selStr = tempTime.ToString(Resources.IDS_TIMEFORMAT_SMALL);
+				selStr = selectedTime.ToString(Resources.IDS_TIMEFORMAT_SMALL);
 
 			// And build the list time string
-			tempTime = new TimeSpan((((long)listTime.TotalMilliseconds + 500) / 1000 * 1000) * TimeSpan.TicksPerMillisecond);
-			if ((int)tempTime.TotalDays > 0)
-				listStr = tempTime.ToString(Resources.IDS_TIMEFORMAT_BIG);
-			else if ((int)tempTime.TotalHours > 0)
-				listStr = tempTime.ToString(Resources.IDS_TIMEFORMAT);
+			if ((int)listTime.TotalDays > 0)
+				listStr = listTime.ToString(Resources.IDS_TIMEFORMAT_BIG);
+			else if ((int)listTime.TotalHours > 0)
+				listStr = listTime.ToString(Resources.IDS_TIMEFORMAT);
 			else
-				listStr = tempTime.ToString(Resources.IDS_TIMEFORMAT_SMALL);
+				listStr = listTime.ToString(Resources.IDS_TIMEFORMAT_SMALL);
 
 			// And update the label control
 			timeLabel.Text = $"{selStr}/{listStr}";
