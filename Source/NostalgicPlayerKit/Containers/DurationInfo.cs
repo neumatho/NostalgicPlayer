@@ -20,6 +20,9 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		public DurationInfo(TimeSpan totalTime, PositionInfo[] positionInfo, TimeSpan[] playerPositionTime, TimeSpan? restartTime = null)
 		{
 			TotalTime = TimeSpan.FromSeconds(Math.Round(totalTime.TotalSeconds, MidpointRounding.AwayFromZero));
+			if ((TotalTime.TotalSeconds == 0) && (totalTime.TotalSeconds > 0))
+				TotalTime = TimeSpan.FromSeconds(1);
+
 			PositionInfo = positionInfo;
 			PlayerPositionTime = playerPositionTime;
 			RestartTime = restartTime;
