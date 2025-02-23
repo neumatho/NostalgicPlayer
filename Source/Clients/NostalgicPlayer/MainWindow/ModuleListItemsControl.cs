@@ -756,6 +756,20 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 
 		/********************************************************************/
 		/// <summary>
+		/// Is called when the mouse move outside the list control
+		/// </summary>
+		/********************************************************************/
+		protected override void OnMouseLeave(EventArgs e)
+		{
+			toolTip.SetToolTip(this, string.Empty);
+
+			base.OnMouseLeave(e);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Is called when the mouse enters the list control and a dragging
 		/// begins
 		/// </summary>
