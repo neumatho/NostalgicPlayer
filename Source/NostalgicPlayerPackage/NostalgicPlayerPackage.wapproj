@@ -53,7 +53,7 @@
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-    <PackageCertificateKeyFile>NostalgicPlayerPackage_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateThumbprint>BA467EE0B9E2C6B8D12A232C340C4FDB24A4603C</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <AppxBundle>Always</AppxBundle>
