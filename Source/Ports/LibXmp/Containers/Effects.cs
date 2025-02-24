@@ -150,6 +150,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers
 		public const uint8 Fx_Hold_Decay = 0x90;
 		public const uint8 Fx_SetPitch = 0x91;
 		public const uint8 Fx_Vibrato2 = 0x92;
+		public const uint8 Fx_Med_Retrig = 0x93;
 
 		/// <summary>
 		/// PTM effects

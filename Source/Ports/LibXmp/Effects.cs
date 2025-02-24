@@ -1738,6 +1738,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 					break;
 				}
 
+				// MED 1Fxy delay x, then retrig every y
+				case Effects.Fx_Med_Retrig:
+				{
+					// Initial delay is computed at frame loop
+					Set(xc, Channel_Flag.Retrig);
+					xc.Retrig.Val = Common.Lsn(fxP);
+					xc.Retrig.Count = Common.Lsn(fxP) + 1;
+					xc.Retrig.Type = 0;
+					xc.Retrig.Limit = 0;
+					break;
+				}
+
 				// Set speed and ...
 				case Effects.Fx_Speed_Cp:
 				{

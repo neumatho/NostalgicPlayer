@@ -1442,6 +1442,21 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				goto Do_Delay;
 			}
 
+			// MED retrigger: reset retrigger so it doesn't continue during the delay
+			if ((e.FxT == Effects.Fx_Med_Retrig) && (Common.Msn(e.FxP) != 0))
+			{
+				Reset(xc, Channel_Flag.Retrig);
+				xc.Delay = Common.Msn(e.FxP) + 1;
+				goto Do_Delay;
+			}
+
+			if ((e.F2T == Effects.Fx_Med_Retrig) && (Common.Msn(e.F2P) != 0))
+			{
+				Reset(xc, Channel_Flag.Retrig);
+				xc.Delay = Common.Msn(e.FxP) + 1;
+				goto Do_Delay;
+			}
+
 			return 0;
 
 			Do_Delay:
