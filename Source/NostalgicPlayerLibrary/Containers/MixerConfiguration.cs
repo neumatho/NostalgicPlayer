@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
+using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Interfaces;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
@@ -12,10 +14,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 	/// </summary>
 	public class MixerConfiguration
 	{
+		/********************************************************************/
 		/// <summary>
-		/// The maximum number of channels supported
+		/// Constructor
 		/// </summary>
-		public const int MaxNumberOfChannels = 64;
+		/********************************************************************/
+		public MixerConfiguration()
+		{
+			ChannelsEnabled = new bool[IChannel.MaxNumberOfChannels];
+			Array.Fill(ChannelsEnabled, true);
+		}
+
+
 
 		/********************************************************************/
 		/// <summary>
@@ -97,8 +107,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/********************************************************************/
 		public bool[] ChannelsEnabled
 		{
-			get; set;
-		} = null;
+			get;
+		}
 
 
 

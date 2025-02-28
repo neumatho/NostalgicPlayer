@@ -65,7 +65,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// tells your player about the different mixer settings you need to
 		/// take care of
 		/// </summary>
-		void ChangeMixerConfiguration(MixerInfo mixerInfo);
+		void ChangeMixerConfiguration(PlayerMixerInfo mixerInfo);
 
 		/// <summary>
 		/// This is the main player method

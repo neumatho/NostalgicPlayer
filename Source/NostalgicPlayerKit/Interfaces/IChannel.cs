@@ -15,6 +15,11 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 	public interface IChannel
 	{
 		/// <summary>
+		/// The maximum number of channels supported
+		/// </summary>
+		public const int MaxNumberOfChannels = 64;
+
+		/// <summary>
 		/// Will start to play the buffer in the channel. Only use this if
 		/// your player is running in buffer mode. Note that the length then
 		/// have to be the same for each channel

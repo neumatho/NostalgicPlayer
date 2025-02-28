@@ -3,13 +3,15 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Interfaces;
+
 namespace Polycode.NostalgicPlayer.Kit.Containers
 {
 	/// <summary>
 	/// Holds different mixer configurations your player need
 	/// to take care of, if BufferDirect mode is used
 	/// </summary>
-	public class MixerInfo
+	public class PlayerMixerInfo
 	{
 		/********************************************************************/
 		/// <summary>
@@ -55,7 +57,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/********************************************************************/
 		public bool[] ChannelsEnabled
 		{
-			get; set;
-		}
+			get;
+		} = new bool[IChannel.MaxNumberOfChannels];
 	}
 }

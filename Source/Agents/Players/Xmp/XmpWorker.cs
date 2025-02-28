@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		private short[] leftBuffer;
 		private short[] rightBuffer;
 
-		private MixerInfo lastMixerInfo;
+		private PlayerMixerInfo lastMixerInfo;
 
 		private const int InfoPositionLine = 4;
 		private const int InfoPatternOrTracksLine = 5;
@@ -345,7 +345,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		/// take care of
 		/// </summary>
 		/********************************************************************/
-		public override void ChangeMixerConfiguration(MixerInfo mixerInfo)
+		public override void ChangeMixerConfiguration(PlayerMixerInfo mixerInfo)
 		{
 			base.ChangeMixerConfiguration(mixerInfo);
 

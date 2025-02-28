@@ -62,10 +62,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// This is the main mixer method
 		/// </summary>
 		/********************************************************************/
-		public override void Mixing(int[][] channelMap, int offsetInFrames, int todoInFrames, MixerMode mode)
+		public override void Mixing(MixerInfo mixerInfo, int[][] channelMap, int offsetInFrames, int todoInFrames)
 		{
-			bool isStereo = (mode & MixerMode.Stereo) != 0;
-			int offsetInSamples = offsetInFrames * (isStereo ? 2 : 1);
+			int offsetInSamples = offsetInFrames * mixerInfo.MixerChannels;
 
 			// Loop through all the channels and mix the samples into the buffer
 			for (int t = 0; t < channelNumber; t++)
@@ -110,7 +109,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					vnf.OldLeftVolume = vnf.LeftVolumeSelected;
 					vnf.OldRightVolume = vnf.RightVolumeSelected;
 
-					if ((mode & MixerMode.Stereo) != 0)
+					if (mixerInfo.MixerChannels == 2)
 					{
 						if (vnf.Panning != (int)ChannelPanningType.Surround)
 						{
@@ -132,7 +131,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 						vnf.LeftVolumeSelected = vol;
 					}
 
-					AddChannel(vnf, channelMap[t], offsetInSamples, todoInFrames, mode);
+					AddChannel(mixerInfo, vnf, channelMap[t], offsetInSamples, todoInFrames);
 				}
 			}
 		}
@@ -145,9 +144,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// in the supplied buffer
 		/// </summary>
 		/********************************************************************/
-		public override void ConvertMixedData(byte[] dest, int offsetInBytes, int[] source, int todoInSamples, int samplesToSkip, bool isStereo, bool swapSpeakers)
+		public override void ConvertMixedData(MixerInfo mixerInfo, byte[] dest, int offsetInBytes, int[] source, int todoInFrames, int samplesToSkip)
 		{
-			MixConvertTo32(MemoryMarshal.Cast<byte, int>(dest), offsetInBytes / 4, source, todoInSamples, samplesToSkip, isStereo, swapSpeakers);
+			MixConvertTo32(mixerInfo, MemoryMarshal.Cast<byte, int>(dest), offsetInBytes / 4, source, todoInFrames * mixerInfo.MixerChannels, samplesToSkip);
 		}
 		#endregion
 
@@ -157,7 +156,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Mix a channel into the buffer
 		/// </summary>
 		/********************************************************************/
-		private void AddChannel(VoiceInfo vnf, int[] buf, int offsetInSamples, int todoInFrames, MixerMode mode)
+		private void AddChannel(MixerInfo mixerInfo, VoiceInfo vnf, int[] buf, int offsetInSamples, int todoInFrames)
 		{
 			// todoInFrames at this point is actually the same as todoInSamples, since it works on the
 			// sample to be mixed into the buf[] and the sample is in mono
@@ -172,8 +171,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				vnf.Active = false;
 				return;
 			}
-
-			bool isStereo = (mode & MixerMode.Stereo) != 0;
 
 			// The current size of the playing sample in fixed point
 			long idxEnd = vsi.Sample.Length != 0 ? ((long)(vsi.Sample.Start + vsi.Sample.Length) << FracBits) - 1 : 0;
@@ -335,26 +332,26 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				{
 					if ((vsi.Flags & SampleFlag.Stereo) != 0)
 					{
-						if (isStereo && (vnf.Panning != (int)ChannelPanningType.Surround))
+						if ((mixerInfo.MixerChannels == 2) && (vnf.Panning != (int)ChannelPanningType.Surround))
 						{
 							int oldVolume = vnf.RightVolumeSelected;
 							vnf.RightVolumeSelected = 0;
-							MixSample(vnf, sampleData, 0, buf, offsetInSamples, done, 2, mode);	// Left channel
+							MixSample(mixerInfo, vnf, sampleData, 0, buf, offsetInSamples, done, 2);	// Left channel
 							vnf.RightVolumeSelected = oldVolume;
 
 							oldVolume = vnf.LeftVolumeSelected;
 							vnf.LeftVolumeSelected = 0;
-							vnf.Current = MixSample(vnf, sampleData, 1, buf, offsetInSamples, done, 2, mode);	// Right channel
+							vnf.Current = MixSample(mixerInfo, vnf, sampleData, 1, buf, offsetInSamples, done, 2);	// Right channel
 							vnf.LeftVolumeSelected = oldVolume;
 						}
 						else
 						{
-							MixSample(vnf, sampleData, 0, buf, offsetInSamples, done, 2, mode);
-							vnf.Current = MixSample(vnf, sampleData, 1, buf, offsetInSamples, done, 2, mode);
+							MixSample(mixerInfo, vnf, sampleData, 0, buf, offsetInSamples, done, 2);
+							vnf.Current = MixSample(mixerInfo, vnf, sampleData, 1, buf, offsetInSamples, done, 2);
 						}
 					}
 					else
-						vnf.Current = MixSample(vnf, sampleData, 0, buf, offsetInSamples, done, 1, mode);
+						vnf.Current = MixSample(mixerInfo, vnf, sampleData, 0, buf, offsetInSamples, done, 1);
 				}
 				else
 				{
@@ -363,7 +360,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				}
 
 				todoInFrames -= done;
-				offsetInSamples += isStereo ? done << 1 : done;
+				offsetInSamples += mixerInfo.MixerChannels == 2 ? done << 1 : done;
 			}
 		}
 		#endregion
@@ -375,19 +372,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Mix the given sample into the output buffers
 		/// </summary>
 		/********************************************************************/
-		private long MixSample(VoiceInfo vnf, Array s, int sourceOffset, int[] buf, int offsetInSamples, int todoInSamples, int step, MixerMode mode)
+		private long MixSample(MixerInfo mixerInfo, VoiceInfo vnf, Array s, int sourceOffset, int[] buf, int offsetInSamples, int todoInSamples, int step)
 		{
 			// Check to see if we need to make interpolation on the mixing
-			if ((mode & MixerMode.Interpolation) != 0)
+			if (mixerInfo.EnableInterpolation)
 			{
 				if ((vnf.SampleInfo.Flags & SampleFlag._16Bits) != 0)
 				{
 					Span<short> source = SampleHelper.ConvertSampleTo16Bit(s, 0);
 
 					// 16 bit input sample to be mixed
-					if ((mode & MixerMode.Stereo) != 0)
+					if (mixerInfo.MixerChannels == 2)
 					{
-						if ((vnf.Panning == (int)ChannelPanningType.Surround) && ((mode & MixerMode.Surround) != 0))
+						if ((vnf.Panning == (int)ChannelPanningType.Surround) && mixerInfo.EnableSurround)
 							return Mix16SurroundInterpolation(source, sourceOffset, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, step, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
 
 						return Mix16StereoInterpolation(source, sourceOffset, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, step, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
@@ -400,9 +397,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					Span<sbyte> source = SampleHelper.ConvertSampleTo8Bit(s, 0);
 
 					// 8 bit input sample to be mixed
-					if ((mode & MixerMode.Stereo) != 0)
+					if (mixerInfo.MixerChannels == 2)
 					{
-						if ((vnf.Panning == (int)ChannelPanningType.Surround) && ((mode & MixerMode.Surround) != 0))
+						if ((vnf.Panning == (int)ChannelPanningType.Surround) && mixerInfo.EnableSurround)
 							return Mix8SurroundInterpolation(source, sourceOffset, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, step, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
 
 						return Mix8StereoInterpolation(source, sourceOffset, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, step, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
@@ -418,9 +415,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				Span<short> source = SampleHelper.ConvertSampleTo16Bit(s, 0);
 
 				// 16 bit input sample to be mixed
-				if ((mode & MixerMode.Stereo) != 0)
+				if (mixerInfo.MixerChannels == 2)
 				{
-					if ((vnf.Panning == (int)ChannelPanningType.Surround) && ((mode & MixerMode.Surround) != 0))
+					if ((vnf.Panning == (int)ChannelPanningType.Surround) && mixerInfo.EnableSurround)
 						return Mix16SurroundNormal(source, sourceOffset, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, step, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
 
 					return Mix16StereoNormal(source, sourceOffset, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, step, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
@@ -433,9 +430,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				Span<sbyte> source = SampleHelper.ConvertSampleTo8Bit(s, 0);
 
 				// 8 bit input sample to be mixed
-				if ((mode & MixerMode.Stereo) != 0)
+				if (mixerInfo.MixerChannels == 2)
 				{
-					if ((vnf.Panning == (int)ChannelPanningType.Surround) && ((mode & MixerMode.Surround) != 0))
+					if ((vnf.Panning == (int)ChannelPanningType.Surround) && mixerInfo.EnableSurround)
 						return Mix8SurroundNormal(source, sourceOffset, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, step, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
 
 					return Mix8StereoNormal(source, sourceOffset, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, step, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
@@ -1029,14 +1026,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Converts the mixed data to a 32 bit sample buffer
 		/// </summary>
 		/********************************************************************/
-		private void MixConvertTo32(Span<int> dest, int offsetInSamples, int[] source, int countInSamples, int samplesToSkip, bool isStereo, bool swapSpeakers)
+		private void MixConvertTo32(MixerInfo mixerInfo, Span<int> dest, int offsetInSamples, int[] source, int countInSamples, int samplesToSkip)
 		{
 			long x1, x2, x3, x4;
 			int remain;
 
 			int sourceOffset = 0;
 
-			if (swapSpeakers)
+			if (mixerInfo.SwapSpeakers)
 			{
 				if (samplesToSkip == 0)
 				{
@@ -1082,7 +1079,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			}
 			else
 			{
-				if (isStereo)
+				if (mixerInfo.MixerChannels == 2)
 				{
 					if (samplesToSkip == 0)
 					{

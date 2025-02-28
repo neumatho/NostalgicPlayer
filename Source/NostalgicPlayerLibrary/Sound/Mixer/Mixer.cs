@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
@@ -44,12 +45,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		private MixerBase currentMixer;
 		private Visualizer currentVisualizer;
 
-		private MixerMode mixerMode;			// Which modes the mixer has to work in
-		private MixerMode currentMode;			// Is the current mode the mixer uses
+		private Lock mixerInfoLock = new Lock();
+		private MixerInfo mixerInfo;			// The current mixer information
+
 		private int mixerFrequency;				// The mixer frequency
 		private int virtualChannelNumber;		// The number of channels the module use
 		private int outputChannelNumber;		// The number of channels the output want
-		private int mixerChannels;				// Number of channels mixed. Can either be 1 or 2
 
 		private int[] mixBuffer;				// The buffer to hold the mixed data
 		private int bufferSizeInFrames;			// The maximum number of frames a buffer can be
@@ -62,11 +63,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 		private int[] extraChannelsMixBuffer;
 		private byte[] extraTempBuffer;
-
-		private bool swapSpeakers;
-		private bool emulateFilter;
-
-		private bool[] channelsEnabled;
 
 		private Dictionary<int, int[]> groupBuffers;
 		private int[][] channelMap;
@@ -86,11 +82,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		{
 			// Initialize member variables
 			playing = false;
-
-			mixerMode = MixerMode.None;
-
-			swapSpeakers = false;
-			emulateFilter = false;
 		}
 
 
@@ -126,9 +117,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				filterPrevLeft = 0;
 				filterPrevRight = 0;
 
-				// Set flag for different mixer modes
-				mixerMode = MixerMode.None;
-
 				// Allocate the visual component
 				currentVisualizer = new Visualizer();
 
@@ -155,7 +143,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				InitializeExtraChannels(playerConfiguration.MixerConfiguration.ExtraChannels);
 
 				// Initialize the mixers
-				ChangeConfiguration(playerConfiguration.MixerConfiguration);
+				lock (mixerInfoLock)
+				{
+					mixerInfo = new MixerInfo();
+					ChangeConfiguration(playerConfiguration.MixerConfiguration);
+				}
 			}
 			catch (Exception ex)
 			{
@@ -199,6 +191,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 			// Cleanup member variables
 			currentPlayer = null;
+
+			lock (mixerInfoLock)
+			{
+				mixerInfo = null;
+			}
 
 			base.Cleanup();
 		}
@@ -283,15 +280,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			mixerFrequency = outputInformation.Frequency;
 			outputChannelNumber = outputInformation.Channels;
 
-			mixerChannels = 1;
+			int mixerChannels = outputChannelNumber >= 2 ? 2 : 1;
 
-			if (outputChannelNumber >= 2)
+			lock (mixerInfoLock)
 			{
-				mixerMode |= MixerMode.Stereo;
-				mixerChannels = 2;
+				mixerInfo.MixerChannels = mixerChannels;
 			}
-			else
-				mixerMode &= ~MixerMode.Stereo;
 
 			// Get the maximum number of frames the given destination
 			// buffer from the output agent can be
@@ -340,30 +334,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			currentMixer?.SetStereoSeparation(mixerConfiguration.StereoSeparator);
 			currentVisualizer?.SetVisualsLatency(mixerConfiguration.VisualsLatency);
 
-			if (mixerConfiguration.EnableInterpolation)
-				mixerMode |= MixerMode.Interpolation;
-			else
-				mixerMode &= ~MixerMode.Interpolation;
+			lock (mixerInfoLock)
+			{
+				mixerInfo.EnableInterpolation = mixerConfiguration.EnableInterpolation;
+				mixerInfo.EnableSurround = mixerConfiguration.EnableSurround;
+				mixerInfo.SwapSpeakers = mixerConfiguration.SwapSpeakers;
+				mixerInfo.EmulateFilter = mixerConfiguration.EnableAmigaFilter;
 
-			if (mixerConfiguration.EnableSurround)
-				mixerMode |= MixerMode.Surround;
-			else
-				mixerMode &= ~MixerMode.Surround;
-
-			swapSpeakers = mixerConfiguration.SwapSpeakers;
-			emulateFilter = mixerConfiguration.EnableAmigaFilter;
-
-			channelsEnabled = mixerConfiguration.ChannelsEnabled;
+				Array.Copy(mixerConfiguration.ChannelsEnabled, mixerInfo.ChannelsEnabled, mixerConfiguration.ChannelsEnabled.Length);
+			}
 
 			lock (currentPlayer)
 			{
-				currentPlayer.ChangeMixerConfiguration(new MixerInfo
-				{
-					StereoSeparator = mixerConfiguration.StereoSeparator,
-					EnableInterpolation = mixerConfiguration.EnableInterpolation,
-					EnableSurround = mixerConfiguration.EnableSurround,
-					ChannelsEnabled = mixerConfiguration.ChannelsEnabled
-				});
+				currentPlayer.ChangeMixerConfiguration(mixerInfo);
 			}
 		}
 
@@ -377,47 +360,53 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/********************************************************************/
 		public int Mixing(byte[] buffer, int offsetInBytes, int frameCount, out bool hasEndReached)
 		{
-			// Remember the mixing mode. The reason to hold this in another
-			// variable, it when the user change the mixing mode, it won't
-			// be changed in the middle of a mixing, but used the next
-			// time this method is called
-			currentMode = mixerMode;
+			MixerInfo currentMixerInfo;
 
-			bool isStereo = (currentMode & MixerMode.Stereo) != 0;
-			bool swap = isStereo ? swapSpeakers : false;
+			lock (mixerInfoLock)
+			{
+				// Remember the mixer information in a local variable.
+				// The reason to hold this in another variable, it when the
+				// user change the mixing mode, it won't be changed in the
+				// middle of a mixing, but used the next time this method is called
+				if (mixerInfo == null)
+				{
+					hasEndReached = true;
+					return 0;
+				}
+
+				currentMixerInfo = new MixerInfo(mixerInfo);
+			}
 
 			// Find out how many frames to process
 			int framesToProcess = Math.Min(frameCount, bufferSizeInFrames);
 
-			int totalFramesProcessed = DoMixing(framesToProcess, out hasEndReached);
+			int totalFramesProcessed = DoMixing(currentMixerInfo, framesToProcess, out hasEndReached);
 			if (totalFramesProcessed == 0)
 				Array.Clear(buffer);
-
-			int totalSamplesProcessed = totalFramesProcessed * (isStereo ? 2 : 1);
 
 			if (playing)
 			{
 				// Add extra effects if enabled
-				AddEffects(mixBuffer, totalSamplesProcessed);
+				AddEffects(currentMixerInfo, mixBuffer, totalFramesProcessed);
 
 				// Add Amiga low-pass filter if enabled
-				AddAmigaFilter(mixBuffer, totalSamplesProcessed);
+				AddAmigaFilter(currentMixerInfo, mixBuffer, totalFramesProcessed);
 			}
 
 			// Now convert the mixed data to our output format
-			int samplesToSkip = isStereo ? outputChannelNumber - 2 : 0;
-			currentMixer.ConvertMixedData(buffer, offsetInBytes, mixBuffer, totalSamplesProcessed, samplesToSkip, isStereo, swap);
+			int samplesToSkip = currentMixerInfo.MixerChannels == 2 ? outputChannelNumber - 2 : 0;
+			currentMixer.ConvertMixedData(currentMixerInfo, buffer, offsetInBytes, mixBuffer, totalFramesProcessed, samplesToSkip);
 
 			// Mix extra channels into the output buffer
-			int totalFrames = MixExtraChannels(framesToProcess);
+			int totalFrames = MixExtraChannels(currentMixerInfo, framesToProcess);
 			if (totalFrames > 0)
-				AddExtraChannelsIntoOutput(buffer, offsetInBytes, totalFrames, samplesToSkip, isStereo, swap);
+				AddExtraChannelsIntoOutput(currentMixerInfo, buffer, offsetInBytes, totalFrames, samplesToSkip);
 
 			// Calculate total frames really written
 			totalFrames = Math.Max(totalFramesProcessed, totalFrames);
 
 			// Tell visual agents about the mixed data
-			currentVisualizer.TellAgentsAboutMixedData(buffer, offsetInBytes, Math.Max(totalFrames, framesToProcess) * outputChannelNumber, outputChannelNumber, swap);
+			currentVisualizer.TellAgentsAboutMixedData(buffer, offsetInBytes, Math.Max(totalFrames, framesToProcess) * outputChannelNumber, outputChannelNumber, currentMixerInfo.SwapSpeakers);
 
 			return totalFrames;
 		}
@@ -482,7 +471,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// and mix the main module samples
 		/// </summary>
 		/********************************************************************/
-		private int DoMixing(int todoInFrames, out bool hasEndReached)
+		private int DoMixing(MixerInfo mixerInfo, int framesToProcess, out bool hasEndReached)
 		{
 			hasEndReached = false;
 
@@ -499,8 +488,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				// This method is called right after the previous buffer has been player,
 				// so at this point, add the number of samples played since last call
 				DoTimedEvents();
-				IncreaseCurrentTime(todoInFrames);
+				IncreaseCurrentTime(framesToProcess);
 
+				int todoInFrames = framesToProcess;
 				while (todoInFrames > 0)
 				{
 					if (framesLeft == 0)
@@ -517,10 +507,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 							ChannelChanged[] channelChanges = new ChannelChanged[virtualChannelNumber];
 
 							for (int t = 0; t < virtualChannelNumber; t++)
-							{
-								bool channelEnabled = (channelsEnabled != null) && (t < channelsEnabled.Length) ? channelsEnabled[t] : true;
-								channelChanges[t] = ((ChannelParser)currentPlayer.VirtualChannels[t]).ParseInfo(voiceInfo[t], click, channelEnabled, bufferMode);
-							}
+								channelChanges[t] = ((ChannelParser)currentPlayer.VirtualChannels[t]).ParseInfo(voiceInfo[t], click, mixerInfo.ChannelsEnabled[t], bufferMode);
 
 							if (enableChannelVisualization)
 								channelChanges = currentPlayer.VisualChannels;
@@ -528,7 +515,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 							// If at least one channel has changed its information,
 							// tell visual agents about it
 							if ((channelChanges != null) && channelChanges.Any(x => x != null))
-								currentVisualizer.QueueChannelChange(channelChanges, framesTakenSinceLastCall * mixerChannels);
+								currentVisualizer.QueueChannelChange(channelChanges, framesTakenSinceLastCall * mixerInfo.MixerChannels);
 
 							// If any module information has been updated, queue those
 							ModuleInfoChanged[] moduleInfoChanges = currentPlayer.GetChangedInformation();
@@ -551,7 +538,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 								framesLeft = (int)(mixerFrequency / currentPlayer.PlayingFrequency);
 							}
 
-							BuildChannelMap();
+							BuildChannelMap(mixerInfo);
 
 							if (currentPlayer.HasEndReached)
 							{
@@ -581,10 +568,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					int leftInFrames = Math.Min(framesLeft, todoInFrames);
 
 					// Call visualizers
-					currentVisualizer.TellAgentsAboutChannelChange(leftInFrames * mixerChannels);
+					currentVisualizer.TellAgentsAboutChannelChange(leftInFrames * mixerInfo.MixerChannels);
 
 					// And mix it
-					currentMixer.Mixing(channelMap, totalFrames, leftInFrames, currentMode);
+					currentMixer.Mixing(mixerInfo, channelMap, totalFrames, leftInFrames);
 
 					// Calculate new values for the counter variables
 					framesTakenSinceLastCall += leftInFrames;
@@ -596,10 +583,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					{
 						// Check all the channels to see if they are still active and
 						// enable/disable the channels depending on the user settings
-						for (int t = 0, cnt = channelsEnabled == null ? virtualChannelNumber : Math.Min(virtualChannelNumber, channelsEnabled.Length); t < cnt; t++)
+						for (int t = 0, cnt = Math.Min(virtualChannelNumber, mixerInfo.ChannelsEnabled.Length); t < cnt; t++)
 						{
 							((ChannelParser)currentPlayer.VirtualChannels[t]).Active(currentMixer.IsActive(t));
-							currentMixer.EnableChannel(t, (channelsEnabled == null) || channelsEnabled[t]);
+							currentMixer.EnableChannel(t, mixerInfo.ChannelsEnabled[t]);
 						}
 					}
 				}
@@ -615,7 +602,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// This will mix any extra samples playing
 		/// </summary>
 		/********************************************************************/
-		private int MixExtraChannels(int todoInFrames)
+		private int MixExtraChannels(MixerInfo mixerInfo, int todoInFrames)
 		{
 			int totalFrames = 0;
 
@@ -639,7 +626,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					}
 
 					// Mix the data
-					extraChannelsMixer.Mixing(chanMap, 0, todoInFrames, currentMode);
+					extraChannelsMixer.Mixing(mixerInfo, chanMap, 0, todoInFrames);
 
 					// Check all the channels to see if they are still active
 					for (int t = 0; t < extraChannelsNumber; t++)
@@ -659,12 +646,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Will mix the channel mixer and extra channel mixer data together
 		/// </summary>
 		/********************************************************************/
-		private void AddExtraChannelsIntoOutput(byte[] buffer, int offsetInBytes, int todoInFrames, int samplesToSkip, bool isStereo, bool swap)
+		private void AddExtraChannelsIntoOutput(MixerInfo mixerInfo, byte[] buffer, int offsetInBytes, int todoInFrames, int samplesToSkip)
 		{
 			if ((extraTempBuffer == null) || (extraTempBuffer.Length < buffer.Length))
 				extraTempBuffer = new byte[buffer.Length];
 
-			extraChannelsMixer.ConvertMixedData(extraTempBuffer, 0, extraChannelsMixBuffer, todoInFrames * mixerChannels, samplesToSkip, isStereo, swap);
+			extraChannelsMixer.ConvertMixedData(mixerInfo, extraTempBuffer, 0, extraChannelsMixBuffer, todoInFrames, samplesToSkip);
 
 			Span<int> source = MemoryMarshal.Cast<byte, int>(extraTempBuffer);
 			Span<int> dest = MemoryMarshal.Cast<byte, int>(buffer);
@@ -686,7 +673,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Build a map of output buffers for each channel
 		/// </summary>
 		/********************************************************************/
-		private void BuildChannelMap()
+		private void BuildChannelMap(MixerInfo mixerInfo)
 		{
 			IEffectMaster effectMaster = currentPlayer.EffectMaster;
 			if (effectMaster != null)
@@ -700,7 +687,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 						if (!groupBuffers.TryGetValue(group, out int[] buffer))
 						{
 							// No buffer found, allocate a new one
-							buffer = new int[bufferSizeInFrames * mixerChannels];
+							buffer = new int[bufferSizeInFrames * mixerInfo.MixerChannels];
 							groupBuffers[group] = buffer;
 						}
 
@@ -722,7 +709,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Adds extra DSP effects from e.g. the current player
 		/// </summary>
 		/********************************************************************/
-		private void AddEffects(int[] dest, int todoInSamples)
+		private void AddEffects(MixerInfo mixerInfo, int[] dest, int todoInFrames)
 		{
 			// Add effect on each group and mix them together
 			lock (currentPlayer)
@@ -730,7 +717,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				IEffectMaster effectMaster = currentPlayer.EffectMaster;
 				if (effectMaster != null)
 				{
-					bool isStereo = (currentMode & MixerMode.Stereo) != 0;
+					bool isStereo = mixerInfo.MixerChannels == 2;
+					int todoInSamples = todoInFrames * mixerInfo.MixerChannels;
 
 					foreach (KeyValuePair<int, int[]> pair in groupBuffers)
 					{
@@ -752,19 +740,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Adds the Amiga LED filter if enabled
 		/// </summary>
 		/********************************************************************/
-		private void AddAmigaFilter(int[] dest, int todoInSamples)
+		private void AddAmigaFilter(MixerInfo mixerInfo, int[] dest, int todoInFrames)
 		{
 			// Should we emulate the filter at all
-			if (emulateFilter && currentPlayer.AmigaFilter)
+			if (mixerInfo.EmulateFilter && currentPlayer.AmigaFilter)
 			{
 				int offset = 0;
+				int todo = todoInFrames;
 
-				if ((currentMode & MixerMode.Stereo) != 0)
+				if (mixerInfo.MixerChannels == 2)
 				{
 					// Stereo buffer
-					todoInSamples /= 2;
-
-					while (todoInSamples-- != 0)
+					while (todo-- != 0)
 					{
 						filterPrevLeft = (dest[offset] + filterPrevLeft * 3) >> 2;
 						dest[offset++] = filterPrevLeft;
@@ -776,7 +763,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				else
 				{
 					// Mono buffer
-					while (todoInSamples-- != 0)
+					while (todo-- != 0)
 					{
 						filterPrevLeft = (dest[offset] + filterPrevLeft * 3) >> 2;
 						dest[offset++] = filterPrevLeft;

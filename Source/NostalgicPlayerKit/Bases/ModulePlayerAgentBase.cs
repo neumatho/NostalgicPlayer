@@ -146,7 +146,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// take care of
 		/// </summary>
 		/********************************************************************/
-		public virtual void ChangeMixerConfiguration(MixerInfo mixerInfo)
+		public virtual void ChangeMixerConfiguration(PlayerMixerInfo mixerInfo)
 		{
 		}
 

@@ -429,16 +429,19 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		/********************************************************************/
 		private void SetMixerSettings()
 		{
-			moduleHandler.ChangeMixerSettings(new MixerConfiguration
+			MixerConfiguration configuration = new MixerConfiguration
 			{
 				StereoSeparator = soundSettings.StereoSeparation,
 				VisualsLatency = soundSettings.VisualsLatency * 20,
 				EnableInterpolation = soundSettings.Interpolation,
 				SwapSpeakers = soundSettings.SwapSpeakers,
 				EnableSurround = soundSettings.Surround,
-				EnableAmigaFilter = soundSettings.AmigaFilter,
-				ChannelsEnabled = moduleHandler.GetEnabledChannels()
-			});
+				EnableAmigaFilter = soundSettings.AmigaFilter
+			};
+
+			Array.Copy(moduleHandler.GetEnabledChannels(), configuration.ChannelsEnabled, configuration.ChannelsEnabled.Length);
+
+			moduleHandler.ChangeMixerSettings(configuration);
 		}
 
 

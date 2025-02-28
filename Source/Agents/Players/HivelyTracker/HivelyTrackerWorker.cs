@@ -56,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 
 		private int stereoSeparation;
 		private bool[] enabledChannels;
-		private MixerInfo lastMixerInfo;
+		private PlayerMixerInfo lastMixerInfo;
 
 		private VisualizerChannel[] visualizerChannels;
 
@@ -630,7 +630,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.HivelyTracker
 		/// take care of
 		/// </summary>
 		/********************************************************************/
-		public override void ChangeMixerConfiguration(MixerInfo mixerInfo)
+		public override void ChangeMixerConfiguration(PlayerMixerInfo mixerInfo)
 		{
 			base.ChangeMixerConfiguration(mixerInfo);
 

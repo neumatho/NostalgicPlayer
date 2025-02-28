@@ -119,12 +119,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				SwapSpeakers = sndSettings.SwapSpeakers,
 				EnableSurround = sndSettings.Surround,
 				EnableAmigaFilter = sndSettings.AmigaFilter,
-				ChannelsEnabled = new bool[MixerConfiguration.MaxNumberOfChannels],
 				ExtraChannels = mainWindow
 			};
-
-			// Initialize the channels enable array
-			Array.Fill(mixerConfiguration.ChannelsEnabled, true);
 
 			// Initialize the loader
 			loadedFiles = new List<ModuleItem>();
