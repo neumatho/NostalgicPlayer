@@ -55,9 +55,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// This is the main mixer method
 		/// </summary>
 		/********************************************************************/
-		public override void Mixing(MixerInfo mixerInfo, int[][] channelMap, int offsetInFrames, int todoInFrames)
+		public override void Mixing(MixerInfo currentMixerInfo, int[][] channelMap, int offsetInFrames, int todoInFrames)
 		{
-			if (mixerInfo.MixerChannels == 2)
+			if (currentMixerInfo.MixerChannels == 2)
 			{
 				int leftVolume = voiceInfo[0].Enabled ? MasterVolume : 0;
 				int rightVolume = voiceInfo[1].Enabled ? MasterVolume : 0;
@@ -81,9 +81,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// in the supplied buffer
 		/// </summary>
 		/********************************************************************/
-		public override void ConvertMixedData(MixerInfo mixerInfo, byte[] dest, int offsetInBytes, int[] source, int todoInFrames, int samplesToSkip)
+		public override void ConvertMixedData(MixerInfo currentMixerInfo, byte[] dest, int offsetInBytes, int[] source, int todoInFrames, int samplesToSkip)
 		{
-			MixConvertTo32(mixerInfo, MemoryMarshal.Cast<byte, int>(dest), offsetInBytes / 4, source, todoInFrames * mixerInfo.MixerChannels, samplesToSkip);
+			MixConvertTo32(currentMixerInfo, MemoryMarshal.Cast<byte, int>(dest), offsetInBytes / 4, source, todoInFrames * currentMixerInfo.MixerChannels, samplesToSkip);
 		}
 		#endregion
 
@@ -145,14 +145,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Converts the mixed data to a 32 bit sample buffer
 		/// </summary>
 		/********************************************************************/
-		private void MixConvertTo32(MixerInfo mixerInfo, Span<int> dest, int offsetInSamples, int[] source, int countInSamples, int samplesToSkip)
+		private void MixConvertTo32(MixerInfo currentMixerInfo, Span<int> dest, int offsetInSamples, int[] source, int countInSamples, int samplesToSkip)
 		{
 			int x1, x2, x3, x4;
 			int remain;
 
 			int sourceOffset = 0;
 
-			if (mixerInfo.SwapSpeakers)
+			if (currentMixerInfo.SwapSpeakers)
 			{
 				if (samplesToSkip == 0)
 				{
@@ -190,7 +190,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			}
 			else
 			{
-				if (mixerInfo.MixerChannels == 2)
+				if (currentMixerInfo.MixerChannels == 2)
 				{
 					if (samplesToSkip == 0)
 					{

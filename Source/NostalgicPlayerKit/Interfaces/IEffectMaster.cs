@@ -28,11 +28,11 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Will add effects to a channel group
 		/// </summary>
-		void AddChannelGroupEffects(int group, int[] dest, int todoInSamples, uint mixerFrequency, bool stereo);
+		void AddChannelGroupEffects(int group, int[] dest, int todoInFrames, uint mixerFrequency, bool stereo);
 
 		/// <summary>
 		/// Will add effects to the final mixed output
 		/// </summary>
-		void AddGlobalEffects(int[] dest, int todoInSamples, uint mixerFrequency, bool stereo);
+		void AddGlobalEffects(int[] dest, int todoInFrames, uint mixerFrequency, bool stereo);
 	}
 }
