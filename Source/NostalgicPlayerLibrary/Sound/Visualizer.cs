@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 	{
 		private class ChannelDataInfo
 		{
-			public int SamplesLeftBeforeTriggering;
+			public int FramesLeftBeforeTriggering;
 			public ChannelChanged[] ChannelChanges;
 		}
 
@@ -52,7 +52,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		private int currentLatency;
 
 		private Queue<ChannelDataInfo> channelLatencyQueue;
-		private int channelLatencySamplesLeft;
+		private int channelLatencyFramesLeft;
 
 		private readonly Lock sampleDataListLock = new Lock();
 		private List<SampleDataInfo> sampleDataList;
@@ -194,11 +194,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		/// Will queue the given channel change information
 		/// </summary>
 		/********************************************************************/
-		public void QueueChannelChange(ChannelChanged[] changes, int samplesTakenSinceLastCall)
+		public void QueueChannelChange(ChannelChanged[] changes, int framesTakenSinceLastCall)
 		{
 			ChannelDataInfo channelDataInfo = new ChannelDataInfo
 			{
-				SamplesLeftBeforeTriggering = samplesTakenSinceLastCall,
+				FramesLeftBeforeTriggering = framesTakenSinceLastCall,
 				ChannelChanges = changes
 			};
 
@@ -212,24 +212,24 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		/// Will call all visual agents and tell them about channel changes
 		/// </summary>
 		/********************************************************************/
-		public void TellAgentsAboutChannelChange(int samplesProcessed)
+		public void TellAgentsAboutChannelChange(int framesProcessed)
 		{
-			channelLatencySamplesLeft -= samplesProcessed;
-			if (channelLatencySamplesLeft < 0)
+			channelLatencyFramesLeft -= framesProcessed;
+			if (channelLatencyFramesLeft < 0)
 			{
-				samplesProcessed = -channelLatencySamplesLeft;
-				channelLatencySamplesLeft = 0;
+				framesProcessed = -channelLatencyFramesLeft;
+				channelLatencyFramesLeft = 0;
 			}
 
-			if (channelLatencySamplesLeft == 0)
+			if (channelLatencyFramesLeft == 0)
 			{
-				while ((channelLatencyQueue.Count > 0) && (samplesProcessed > 0))
+				while ((channelLatencyQueue.Count > 0) && (framesProcessed > 0))
 				{
 					ChannelDataInfo peekInfo = channelLatencyQueue.Peek();
-					int todo = Math.Min(samplesProcessed, peekInfo.SamplesLeftBeforeTriggering);
+					int todo = Math.Min(framesProcessed, peekInfo.FramesLeftBeforeTriggering);
 
-					peekInfo.SamplesLeftBeforeTriggering -= todo;
-					if (peekInfo.SamplesLeftBeforeTriggering == 0)
+					peekInfo.FramesLeftBeforeTriggering -= todo;
+					if (peekInfo.FramesLeftBeforeTriggering == 0)
 					{
 						channelChanges = channelLatencyQueue.Dequeue().ChannelChanges;
 
@@ -237,7 +237,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 						channelChangedEvent.Set();
 					}
 
-					samplesProcessed -= todo;
+					framesProcessed -= todo;
 				}
 			}
 		}
@@ -250,11 +250,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		/// data
 		/// </summary>
 		/********************************************************************/
-		public void TellAgentsAboutMixedData(byte[] buffer, int offsetInBytes, int countInSamples, int numberOfChannels, bool swapSpeakers)
+		public void TellAgentsAboutMixedData(byte[] buffer, int offsetInBytes, int countInFrames, int numberOfChannels, bool swapSpeakers)
 		{
-			while (countInSamples > 0)
+			while (countInFrames > 0)
 			{
-				int todoInSamples = Math.Min(countInSamples, visualBuffer.Length - visualBufferOffset);
+				int todoInSamples = Math.Min(countInFrames * numberOfChannels, visualBuffer.Length - visualBufferOffset);
 
 				// Mixed output is already in 32-bit, so just copy the data
 				Buffer.BlockCopy(buffer, offsetInBytes, visualBuffer, visualBufferOffset * 4, todoInSamples * 4);
@@ -262,7 +262,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 				visualBufferOffset += todoInSamples;
 				offsetInBytes += todoInSamples * 4;
 
-				countInSamples -= todoInSamples;
+				countInFrames -= todoInSamples / numberOfChannels;
 
 				if (visualBufferOffset == visualBuffer.Length)
 				{
@@ -296,7 +296,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		/********************************************************************/
 		private void InitializeVisualsLatency()
 		{
-			channelLatencySamplesLeft = (int)(((float)mixerFrequency / 1000) * currentLatency);
+			channelLatencyFramesLeft = (int)(((float)mixerFrequency / 1000) * currentLatency);
 			sampleDataLatencyLeft = currentLatency;
 
 			channelLatencyQueue.Clear();

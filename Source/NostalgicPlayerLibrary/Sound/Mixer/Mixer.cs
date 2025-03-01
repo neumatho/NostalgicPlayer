@@ -45,7 +45,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		private MixerBase currentMixer;
 		private Visualizer currentVisualizer;
 
-		private Lock mixerInfoLock = new Lock();
+		private readonly Lock mixerInfoLock = new Lock();
 		private MixerInfo mixerInfo;			// The current mixer information
 
 		private int mixerFrequency;				// The mixer frequency
@@ -406,7 +406,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			totalFrames = Math.Max(totalFramesProcessed, totalFrames);
 
 			// Tell visual agents about the mixed data
-			currentVisualizer.TellAgentsAboutMixedData(buffer, offsetInBytes, Math.Max(totalFrames, framesToProcess) * outputChannelNumber, outputChannelNumber, currentMixerInfo.SwapSpeakers);
+			currentVisualizer.TellAgentsAboutMixedData(buffer, offsetInBytes, Math.Max(totalFrames, framesToProcess), outputChannelNumber, currentMixerInfo.SwapSpeakers);
 
 			return totalFrames;
 		}
@@ -518,7 +518,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 							// If at least one channel has changed its information,
 							// tell visual agents about it
 							if ((channelChanges != null) && channelChanges.Any(x => x != null))
-								currentVisualizer.QueueChannelChange(channelChanges, framesTakenSinceLastCall * currentMixerInfo.MixerChannels);
+								currentVisualizer.QueueChannelChange(channelChanges, framesTakenSinceLastCall);
 
 							// If any module information has been updated, queue those
 							ModuleInfoChanged[] moduleInfoChanges = currentPlayer.GetChangedInformation();
@@ -571,7 +571,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					int leftInFrames = Math.Min(framesLeft, todoInFrames);
 
 					// Call visualizers
-					currentVisualizer.TellAgentsAboutChannelChange(leftInFrames * currentMixerInfo.MixerChannels);
+					currentVisualizer.TellAgentsAboutChannelChange(leftInFrames);
 
 					// And mix it
 					currentMixer.Mixing(currentMixerInfo, channelMap, totalFrames, leftInFrames);

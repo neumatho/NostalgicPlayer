@@ -233,7 +233,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 			ResampleConvertTo32(MemoryMarshal.Cast<byte, int>(buffer), offsetInBytes / 4, sampleBuffer, totalSamplesProcessed, samplesToSkip, isStereo, isStereo ? swapSpeakers : false);
 
 			// Tell visual agents about the mixed data
-			currentVisualizer.TellAgentsAboutMixedData(buffer, offsetInBytes, totalFramesProcessed * outputChannels, outputChannels, swapSpeakers);
+			currentVisualizer.TellAgentsAboutMixedData(buffer, offsetInBytes, totalFramesProcessed, outputChannels, swapSpeakers);
 
 			return totalFramesProcessed;
 		}
