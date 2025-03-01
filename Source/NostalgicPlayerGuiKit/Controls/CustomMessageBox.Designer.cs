@@ -30,7 +30,7 @@
 		{
 			components = new System.ComponentModel.Container();
 			messageLabel = new Krypton.Toolkit.KryptonLabel();
-			fontPalette = new Components.FontPalette(components);
+			fontPalette = new Polycode.NostalgicPlayer.GuiKit.Components.FontPalette(components);
 			pictureBox = new System.Windows.Forms.PictureBox();
 			messagePanel = new System.Windows.Forms.Panel();
 			buttonPanel = new System.Windows.Forms.Panel();

@@ -105,6 +105,8 @@ namespace Polycode.NostalgicPlayer.GuiKit.Controls
 		/********************************************************************/
 		public void SetMessage(string message)
 		{
+			message = message.Replace("&", "&&");
+
 			messageLabel.Text = message;
 			originalMessage = message;
 		}
