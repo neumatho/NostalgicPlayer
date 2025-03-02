@@ -20,29 +20,47 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// in the output buffer to take each channel from
 		/// </summary>
 		/********************************************************************/
-		public int[] BuildChannelMapping(MixerInfo currentMixerInfo, int outputChannelCount)
+		public int[] BuildChannelMapping(MixerInfo currentMixerInfo, int mixerChannelCount, int outputChannelCount)
 		{
+			int[] mapping = new int[mixerChannelCount];
+
+			// Currently, I know that the mixingChannelCount is always 2,
+			// so I can optimize the code a bit. This will change when
+			// supporting more than 2 channels from a player
 			if (outputChannelCount == 1)
-				return [ 0 ];
+			{
+				mapping[0] = 0;
+				mapping[1] = 0;
+			}
+			else
+			{
+				if (currentMixerInfo.SwapSpeakers)
+				{
+					mapping[0] = 1;
+					mapping[1] = 0;
+				}
+				else
+				{
+					mapping[0] = 0;
+					mapping[1] = 1;
+				}
+			}
 
-			if (currentMixerInfo.SwapSpeakers)
-				return [ 1, 0 ];
-
-			return [ 0, 1 ];
+			return mapping;
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Initialize extra channels
+		/// Convert the mixing buffers to output format
 		/// </summary>
 		/********************************************************************/
-		public void ConvertToOutputFormat(MixerBufferInfo[] mixingBuffers, byte[] outputBuffer, int offsetInBytes, int[] channelMapping, int outputChannelCount, int todoInFrames)
+		public void ConvertToOutputFormat(MixerBufferInfo[] mixingBuffers, byte[] outputBuffer, int offsetInBytes, int todoInFrames, int[] channelMapping, int outputChannelCount)
 		{
 			Span<int> buffer = MemoryMarshal.Cast<byte, int>(outputBuffer.AsSpan(offsetInBytes));
 
-			if (channelMapping.Length == 1)
+			if (outputChannelCount == 1)
 			{
 				// Mono
 				int[] sourceBuffer1 = mixingBuffers[0].Buffer;
@@ -53,7 +71,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			}
 			else
 			{
-				// Stereo
+				// Stereo or above
 				int[] sourceBuffer1 = mixingBuffers[channelMapping[0]].Buffer;
 				int[] sourceBuffer2 = mixingBuffers[channelMapping[1]].Buffer;
 
@@ -61,6 +79,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				{
 					buffer[j] = sourceBuffer1[i];
 					buffer[j + 1] = sourceBuffer2[i];
+
+					for (int k = 2; k < outputChannelCount; k++)
+						buffer[j + k] = 0;
 				}
 			}
 		}

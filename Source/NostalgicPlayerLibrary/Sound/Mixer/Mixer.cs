@@ -409,7 +409,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 			int totalFramesProcessed = DoMixing(currentMixerInfo, framesToProcess, out hasEndReached);
 			if (totalFramesProcessed == 0)
-				Array.Clear(buffer, offsetInBytes, frameCount * outputChannelCount);
+				Array.Clear(buffer, offsetInBytes, frameCount * outputChannelCount * 4);        // 4 because the sample size is 32 bit
 
 			if (playing)
 			{
@@ -431,11 +431,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				currentMixer.ConvertMixedData(bufferInfo.Buffer, totalFrames);
 
 			// Convert to output format
-			int[] channelMapping = converter.BuildChannelMapping(currentMixerInfo, outputChannelCount);
-			converter.ConvertToOutputFormat(mixingBuffers, buffer, offsetInBytes, channelMapping, outputChannelCount, totalFrames);
+			int[] channelMapping = converter.BuildChannelMapping(currentMixerInfo, mixerChannelCount, outputChannelCount);
+			converter.ConvertToOutputFormat(mixingBuffers, buffer, offsetInBytes, totalFrames, channelMapping, outputChannelCount);
 
 			// Tell visual agents about the mixed data
-			currentVisualizer.TellAgentsAboutMixedData(buffer, offsetInBytes, totalFrames, channelMapping);
+			currentVisualizer.TellAgentsAboutMixedData(buffer, offsetInBytes, Math.Max(totalFrames, framesToProcess), channelMapping, outputChannelCount);
 
 			return totalFrames;
 		}

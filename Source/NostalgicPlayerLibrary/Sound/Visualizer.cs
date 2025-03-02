@@ -27,6 +27,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		{
 			public int[] Buffer;
 			public int[] ChannelMapping;
+			public int OutputChannelCount;
 			public long TimeWhenBufferWasRendered;
 		}
 
@@ -249,12 +250,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		/// data
 		/// </summary>
 		/********************************************************************/
-		public void TellAgentsAboutMixedData(byte[] buffer, int offsetInBytes, int countInFrames, int[] channelMapping)
+		public void TellAgentsAboutMixedData(byte[] buffer, int offsetInBytes, int countInFrames, int[] channelMapping, int outputChannelCount)
 		{
 			while (countInFrames > 0)
 			{
-				int numberOfChannels = channelMapping.Length;
-				int todoInSamples = Math.Min(countInFrames * numberOfChannels, visualBuffer.Length - visualBufferOffset);
+				int todoInSamples = Math.Min(countInFrames * outputChannelCount, visualBuffer.Length - visualBufferOffset);
 
 				// Mixed output is already in 32-bit, so just copy the data
 				Buffer.BlockCopy(buffer, offsetInBytes, visualBuffer, visualBufferOffset * 4, todoInSamples * 4);
@@ -262,7 +262,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 				visualBufferOffset += todoInSamples;
 				offsetInBytes += todoInSamples * 4;
 
-				countInFrames -= todoInSamples / numberOfChannels;
+				countInFrames -= todoInSamples / outputChannelCount;
 
 				if (visualBufferOffset == visualBuffer.Length)
 				{
@@ -270,6 +270,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 					{
 						Buffer = visualBuffer,
 						ChannelMapping = channelMapping,
+						OutputChannelCount = outputChannelCount,
 						TimeWhenBufferWasRendered = currentSampleDataTimeWhenFilling
 					};
 
@@ -397,7 +398,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 
 			if (sampleDataInfo != null)
 			{
-				NewSampleData sampleData = new NewSampleData(sampleDataInfo.Buffer, sampleDataInfo.ChannelMapping);
+				NewSampleData sampleData = new NewSampleData(sampleDataInfo.Buffer, sampleDataInfo.ChannelMapping, sampleDataInfo.OutputChannelCount);
 
 				foreach (IVisualAgent visualAgent in manager.GetRegisteredVisualAgent())
 				{

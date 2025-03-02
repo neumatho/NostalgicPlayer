@@ -78,13 +78,13 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.LevelMeter.Display
 			long levelL = 0;
 			long levelR = 0;
 
-			if (sampleData.ChannelMapping.Length >= 2)
+			if (sampleData.ChannelCount >= 2)
 			{
 				int[] sample = sampleData.SampleData;
 				int leftChannel = sampleData.ChannelMapping[0];
 				int rightChannel = sampleData.ChannelMapping[1];
 
-				int increment = sampleData.ChannelMapping.Length;
+				int increment = sampleData.ChannelCount;
 
 				for (int i = 0; i < sampleData.SampleData.Length; i += increment)
 				{

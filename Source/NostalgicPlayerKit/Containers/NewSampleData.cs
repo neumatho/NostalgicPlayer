@@ -15,10 +15,11 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public NewSampleData(int[] buffer, int[] channelMapping)
+		public NewSampleData(int[] buffer, int[] channelMapping, int channelCount)
 		{
 			SampleData = buffer;
 			ChannelMapping = channelMapping;
+			ChannelCount = channelCount;
 		}
 
 
@@ -43,6 +44,18 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// </summary>
 		/********************************************************************/
 		public int[] ChannelMapping
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Hold the number of channels used in SampleData
+		/// </summary>
+		/********************************************************************/
+		public int ChannelCount
 		{
 			get;
 		}
