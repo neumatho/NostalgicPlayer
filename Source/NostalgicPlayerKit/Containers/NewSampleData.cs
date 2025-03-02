@@ -15,11 +15,10 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public NewSampleData(int[] buffer, int numberOfChannels, bool swapSpeakers)
+		public NewSampleData(int[] buffer, int[] channelMapping)
 		{
 			SampleData = buffer;
-			NumberOfChannels = numberOfChannels;
-			SwapSpeakers = swapSpeakers;
+			ChannelMapping = channelMapping;
 		}
 
 
@@ -38,27 +37,12 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the total number of channels used in the buffer
+		/// Hold indexes for each channel into the sample data, e.g. for
+		/// normal stereo output it will be 0, 1. If speaker swapping has
+		/// been enabled, it will be 1, 0
 		/// </summary>
 		/********************************************************************/
-		public int NumberOfChannels
-		{
-			get;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Tells if you need to swap left and right speakers.
-		///
-		/// This option is usually used by the user, if the sounds come out
-		/// of the wrong speakers. So when enabled, the samples for
-		/// left/right is swapped in the SampleData buffer, but the
-		/// visualization should not be swapped
-		/// </summary>
-		/********************************************************************/
-		public bool SwapSpeakers
+		public int[] ChannelMapping
 		{
 			get;
 		}

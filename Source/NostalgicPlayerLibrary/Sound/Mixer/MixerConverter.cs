@@ -16,14 +16,33 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 	{
 		/********************************************************************/
 		/// <summary>
+		/// Build channel mapping table. Will return an array with indexes
+		/// in the output buffer to take each channel from
+		/// </summary>
+		/********************************************************************/
+		public int[] BuildChannelMapping(MixerInfo currentMixerInfo, int outputChannelCount)
+		{
+			if (outputChannelCount == 1)
+				return [ 0 ];
+
+			if (currentMixerInfo.SwapSpeakers)
+				return [ 1, 0 ];
+
+			return [ 0, 1 ];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Initialize extra channels
 		/// </summary>
 		/********************************************************************/
-		public void ConvertToOutputFormat(MixerInfo currentMixerInfo, MixerBufferInfo[] mixingBuffers, byte[] outputBuffer, int offsetInBytes, int outputChannelCount, int todoInFrames)
+		public void ConvertToOutputFormat(MixerBufferInfo[] mixingBuffers, byte[] outputBuffer, int offsetInBytes, int[] channelMapping, int outputChannelCount, int todoInFrames)
 		{
 			Span<int> buffer = MemoryMarshal.Cast<byte, int>(outputBuffer.AsSpan(offsetInBytes));
 
-			if (outputChannelCount == 1)
+			if (channelMapping.Length == 1)
 			{
 				// Mono
 				int[] sourceBuffer1 = mixingBuffers[0].Buffer;
@@ -35,18 +54,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			else
 			{
 				// Stereo
-				int[] sourceBuffer1, sourceBuffer2;
-
-				if (currentMixerInfo.SwapSpeakers)
-				{
-					sourceBuffer1 = mixingBuffers[1].Buffer;
-					sourceBuffer2 = mixingBuffers[0].Buffer;
-				}
-				else
-				{
-					sourceBuffer1 = mixingBuffers[0].Buffer;
-					sourceBuffer2 = mixingBuffers[1].Buffer;
-				}
+				int[] sourceBuffer1 = mixingBuffers[channelMapping[0]].Buffer;
+				int[] sourceBuffer2 = mixingBuffers[channelMapping[1]].Buffer;
 
 				for (int i = 0, j = 0; i < todoInFrames; i++, j += outputChannelCount)
 				{

@@ -102,7 +102,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpectrumAnalyzer
 		/********************************************************************/
 		public void SampleData(NewSampleData sampleData)
 		{
-			analyzer?.AddValues(sampleData.SampleData, sampleData.NumberOfChannels);
+			analyzer?.AddValues(sampleData.SampleData, sampleData.ChannelMapping.Length);
 		}
 		#endregion
 

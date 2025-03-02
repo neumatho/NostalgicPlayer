@@ -26,8 +26,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		private class SampleDataInfo
 		{
 			public int[] Buffer;
-			public int NumberOfChannels;
-			public bool SwapSpeakers;
+			public int[] ChannelMapping;
 			public long TimeWhenBufferWasRendered;
 		}
 
@@ -250,10 +249,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		/// data
 		/// </summary>
 		/********************************************************************/
-		public void TellAgentsAboutMixedData(byte[] buffer, int offsetInBytes, int countInFrames, int numberOfChannels, bool swapSpeakers)
+		public void TellAgentsAboutMixedData(byte[] buffer, int offsetInBytes, int countInFrames, int[] channelMapping)
 		{
 			while (countInFrames > 0)
 			{
+				int numberOfChannels = channelMapping.Length;
 				int todoInSamples = Math.Min(countInFrames * numberOfChannels, visualBuffer.Length - visualBufferOffset);
 
 				// Mixed output is already in 32-bit, so just copy the data
@@ -269,8 +269,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 					SampleDataInfo info = new SampleDataInfo
 					{
 						Buffer = visualBuffer,
-						NumberOfChannels = numberOfChannels,
-						SwapSpeakers = swapSpeakers,
+						ChannelMapping = channelMapping,
 						TimeWhenBufferWasRendered = currentSampleDataTimeWhenFilling
 					};
 
@@ -398,7 +397,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 
 			if (sampleDataInfo != null)
 			{
-				NewSampleData sampleData = new NewSampleData(sampleDataInfo.Buffer, sampleDataInfo.NumberOfChannels, sampleDataInfo.SwapSpeakers);
+				NewSampleData sampleData = new NewSampleData(sampleDataInfo.Buffer, sampleDataInfo.ChannelMapping);
 
 				foreach (IVisualAgent visualAgent in manager.GetRegisteredVisualAgent())
 				{

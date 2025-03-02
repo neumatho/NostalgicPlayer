@@ -78,18 +78,19 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.LevelMeter.Display
 			long levelL = 0;
 			long levelR = 0;
 
-			if (sampleData.NumberOfChannels >= 2)
+			if (sampleData.ChannelMapping.Length >= 2)
 			{
-				int increment = sampleData.NumberOfChannels;
+				int[] sample = sampleData.SampleData;
+				int leftChannel = sampleData.ChannelMapping[0];
+				int rightChannel = sampleData.ChannelMapping[1];
+
+				int increment = sampleData.ChannelMapping.Length;
 
 				for (int i = 0; i < sampleData.SampleData.Length; i += increment)
 				{
-					levelL = Math.Max(levelL, Math.Abs((long)sampleData.SampleData[i]));
-					levelR = Math.Max(levelR, Math.Abs((long)sampleData.SampleData[i + 1]));
+					levelL = Math.Max(levelL, Math.Abs((long)sample[i + leftChannel]));
+					levelR = Math.Max(levelR, Math.Abs((long)sample[i + rightChannel]));
 				}
-
-				if (sampleData.SwapSpeakers)
-					(levelL, levelR) = (levelR, levelL);
 			}
 			else
 			{

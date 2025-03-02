@@ -431,10 +431,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				currentMixer.ConvertMixedData(bufferInfo.Buffer, totalFrames);
 
 			// Convert to output format
-			converter.ConvertToOutputFormat(currentMixerInfo, mixingBuffers, buffer, offsetInBytes, outputChannelCount, totalFrames);
+			int[] channelMapping = converter.BuildChannelMapping(currentMixerInfo, outputChannelCount);
+			converter.ConvertToOutputFormat(mixingBuffers, buffer, offsetInBytes, channelMapping, outputChannelCount, totalFrames);
 
 			// Tell visual agents about the mixed data
-			currentVisualizer.TellAgentsAboutMixedData(buffer, offsetInBytes, totalFrames, outputChannelCount, currentMixerInfo.SwapSpeakers);
+			currentVisualizer.TellAgentsAboutMixedData(buffer, offsetInBytes, totalFrames, channelMapping);
 
 			return totalFrames;
 		}
