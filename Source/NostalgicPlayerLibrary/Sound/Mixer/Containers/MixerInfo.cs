@@ -36,7 +36,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers
 			EnableSurround = source.EnableSurround;
 			SwapSpeakers = source.SwapSpeakers;
 			EmulateFilter = source.EmulateFilter;
-			MixerChannels = source.MixerChannels;
 
 			Array.Copy(source.ChannelsEnabled, ChannelsEnabled, ChannelsEnabled.Length);
 		}
@@ -63,18 +62,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers
 		/// </summary>
 		/********************************************************************/
 		public bool EmulateFilter
-		{
-			get; set;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Number of channels mixed. Can either be 1 or 2
-		/// </summary>
-		/********************************************************************/
-		public int MixerChannels
 		{
 			get; set;
 		}

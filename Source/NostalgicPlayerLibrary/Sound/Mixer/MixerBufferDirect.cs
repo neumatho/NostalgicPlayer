@@ -55,9 +55,9 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// This is the main mixer method
 		/// </summary>
 		/********************************************************************/
-		public override void Mixing(MixerInfo currentMixerInfo, int[][] channelMap, int offsetInFrames, int todoInFrames)
+		public override void Mixing(MixerInfo currentMixerInfo, int[][][] channelMap, int offsetInFrames, int todoInFrames)
 		{
-			if (currentMixerInfo.MixerChannels == 2)
+/*			if (currentMixerInfo.MixerChannels == 2)
 			{
 				int leftVolume = voiceInfo[0].Enabled ? MasterVolume : 0;
 				int rightVolume = voiceInfo[1].Enabled ? MasterVolume : 0;
@@ -70,20 +70,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				int volume = voiceInfo[0].Enabled ? MasterVolume : 0;
 
 				AddPlayerSamples(voiceInfo[0], channelMap[0], offsetInFrames, 1, todoInFrames, volume);
-			}
+			}*///XX
 		}
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Convert the mix buffer to the output format and store the result
-		/// in the supplied buffer
+		/// Convert the mixing buffer to 32 bit
 		/// </summary>
 		/********************************************************************/
-		public override void ConvertMixedData(MixerInfo currentMixerInfo, byte[] dest, int offsetInBytes, int[] source, int todoInFrames, int samplesToSkip)
+		public override void ConvertMixedData(int[] buffer, int todoInFrames)
 		{
-			MixConvertTo32(currentMixerInfo, MemoryMarshal.Cast<byte, int>(dest), offsetInBytes / 4, source, todoInFrames * currentMixerInfo.MixerChannels, samplesToSkip);
+//XX			MixConvertTo32(currentMixerInfo, MemoryMarshal.Cast<byte, int>(dest), offsetInBytes / 4, source, todoInFrames * currentMixerInfo.MixerChannels, samplesToSkip);
 		}
 		#endregion
 
@@ -112,7 +111,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				if ((vsi.Flags & SampleFlag._16Bits) != 0)
 				{
 					// 16-bit
-					Span<short> source = SampleHelper.ConvertSampleTo16Bit(vsi.Sample.SampleData, 0);
+					Span<short> source = SampleHelper.ConvertSampleTypeTo16Bit(vsi.Sample.SampleData, 0);
 
 					for (int i = (int)vnf.Current; i < vnf.Current + countInSamples; i++)
 					{
@@ -125,7 +124,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				else
 				{
 					// 8-bit
-					Span<sbyte> source = SampleHelper.ConvertSampleTo8Bit(vsi.Sample.SampleData, 0);
+					Span<sbyte> source = SampleHelper.ConvertSampleTypeTo8Bit(vsi.Sample.SampleData, 0);
 
 					for (int i = (int)vnf.Current; i < vnf.Current + countInSamples; i++)
 					{
@@ -147,7 +146,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/********************************************************************/
 		private void MixConvertTo32(MixerInfo currentMixerInfo, Span<int> dest, int offsetInSamples, int[] source, int countInSamples, int samplesToSkip)
 		{
-			int x1, x2, x3, x4;
+/*			int x1, x2, x3, x4;
 			int remain;
 
 			int sourceOffset = 0;
@@ -236,7 +235,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			}
 
 			while (remain-- != 0)
-				dest[offsetInSamples++] = source[sourceOffset++];
+				dest[offsetInSamples++] = source[sourceOffset++];*///XX
 		}
 		#endregion
 	}

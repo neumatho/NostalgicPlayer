@@ -18,7 +18,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Utility
 		/// Convert a sample array to 8-bit format
 		/// </summary>
 		/********************************************************************/
-		public static Span<sbyte> ConvertSampleTo8Bit(Array sample, uint offset)
+		public static Span<sbyte> ConvertSampleTypeTo8Bit(Array sample, uint offset)
 		{
 			Type type = sample.GetType().GetElementType();
 
@@ -38,7 +38,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Utility
 		/// Convert a sample array to 16-bit format
 		/// </summary>
 		/********************************************************************/
-		public static Span<short> ConvertSampleTo16Bit(Array sample, uint offset)
+		public static Span<short> ConvertSampleTypeTo16Bit(Array sample, uint offset)
 		{
 			Type type = sample.GetType().GetElementType();
 

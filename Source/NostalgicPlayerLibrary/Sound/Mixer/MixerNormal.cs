@@ -4,7 +4,6 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Utility;
@@ -62,12 +61,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// This is the main mixer method
 		/// </summary>
 		/********************************************************************/
-		public override void Mixing(MixerInfo currentMixerInfo, int[][] channelMap, int offsetInFrames, int todoInFrames)
+		public override void Mixing(MixerInfo currentMixerInfo, int[][][] channelMap, int offsetInFrames, int todoInFrames)
 		{
-			int offsetInSamples = offsetInFrames * currentMixerInfo.MixerChannels;
-
 			// Loop through all the channels and mix the samples into the buffer
-			for (int t = 0; t < channelNumber; t++)
+			for (int t = 0; t < virtualChannelCount; t++)
 			{
 				VoiceInfo vnf = voiceInfo[t];
 				VoiceSampleInfo vsi = vnf.SampleInfo;
@@ -106,32 +103,23 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 					int vol = vnf.Enabled ? vnf.Volume : 0;
 
-					vnf.OldLeftVolume = vnf.LeftVolumeSelected;
-					vnf.OldRightVolume = vnf.RightVolumeSelected;
+					Array.Copy(vnf.PanningVolume, vnf.OldPanningVolume, vnf.PanningVolume.Length);
 
-					if (currentMixerInfo.MixerChannels == 2)
+					if (vnf.Panning != (int)ChannelPanningType.Surround)
 					{
-						if (vnf.Panning != (int)ChannelPanningType.Surround)
-						{
-							// Stereo, calculate the volume with panning
-							int pan = (((vnf.Panning - 128) * stereoSeparation) / 128) + 128;
+						// Stereo, calculate the volume with panning
+						int pan = (((vnf.Panning - 128) * stereoSeparation) / 128) + 128;
 
-							vnf.LeftVolumeSelected = (vol * ((int)ChannelPanningType.Right - pan)) >> 8;
-							vnf.RightVolumeSelected = (vol * pan) >> 8;
-						}
-						else
-						{
-							// Dolby Surround
-							vnf.LeftVolumeSelected = vnf.RightVolumeSelected = vol / 2;
-						}
+						vnf.PanningVolume[0] = (vol * ((int)ChannelPanningType.Right - pan)) >> 8;
+						vnf.PanningVolume[1] = (vol * pan) >> 8;
 					}
 					else
 					{
-						// Well, just mono
-						vnf.LeftVolumeSelected = vol;
+						// Dolby Surround
+						vnf.PanningVolume[0] = vnf.PanningVolume[1] = vol / 2;
 					}
 
-					AddChannel(currentMixerInfo, vnf, channelMap[t], offsetInSamples, todoInFrames);
+					AddChannel(currentMixerInfo, vnf, channelMap[t], offsetInFrames, todoInFrames);
 				}
 			}
 		}
@@ -140,13 +128,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 		/********************************************************************/
 		/// <summary>
-		/// Convert the mix buffer to the output format and store the result
-		/// in the supplied buffer
+		/// Convert the mixing buffers to 32 bit
 		/// </summary>
 		/********************************************************************/
-		public override void ConvertMixedData(MixerInfo currentMixerInfo, byte[] dest, int offsetInBytes, int[] source, int todoInFrames, int samplesToSkip)
+		public override void ConvertMixedData(int[] buffer, int todoInFrames)
 		{
-			MixConvertTo32(currentMixerInfo, MemoryMarshal.Cast<byte, int>(dest), offsetInBytes / 4, source, todoInFrames * currentMixerInfo.MixerChannels, samplesToSkip);
+			MixConvertTo32(buffer, todoInFrames);
 		}
 		#endregion
 
@@ -156,7 +143,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Mix a channel into the buffer
 		/// </summary>
 		/********************************************************************/
-		private void AddChannel(MixerInfo currentMixerInfo, VoiceInfo vnf, int[] buf, int offsetInSamples, int todoInFrames)
+		private void AddChannel(MixerInfo currentMixerInfo, VoiceInfo vnf, int[][] mixingBuffers, int offsetInFrames, int todoInFrames)
 		{
 			// todoInFrames at this point is actually the same as todoInSamples, since it works on the
 			// sample to be mixed into the buf[] and the sample is in mono
@@ -330,28 +317,61 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 				if (vnf.Volume != 0)
 				{
+					long newCurrent = endPos;
+					int rampVolume = vnf.RampVolume;
+
 					if ((vsi.Flags & SampleFlag.Stereo) != 0)
 					{
-						if ((currentMixerInfo.MixerChannels == 2) && (vnf.Panning != (int)ChannelPanningType.Surround))
-						{
-							int oldVolume = vnf.RightVolumeSelected;
-							vnf.RightVolumeSelected = 0;
-							MixSample(currentMixerInfo, vnf, sampleData, 0, buf, offsetInSamples, done, 2);	// Left channel
-							vnf.RightVolumeSelected = oldVolume;
+						// Left channel
+						if (vnf.PanningVolume[0] != 0)
+							newCurrent = MixSample(currentMixerInfo, vnf, sampleData, 0, 2, vnf.PanningVolume[0], vnf.OldPanningVolume[0], ref rampVolume, mixingBuffers[0], offsetInFrames, done);
 
-							oldVolume = vnf.LeftVolumeSelected;
-							vnf.LeftVolumeSelected = 0;
-							vnf.Current = MixSample(currentMixerInfo, vnf, sampleData, 1, buf, offsetInSamples, done, 2);	// Right channel
-							vnf.LeftVolumeSelected = oldVolume;
-						}
-						else
+						// Right channel
+						if (vnf.PanningVolume[1] != 0)
 						{
-							MixSample(currentMixerInfo, vnf, sampleData, 0, buf, offsetInSamples, done, 2);
-							vnf.Current = MixSample(currentMixerInfo, vnf, sampleData, 1, buf, offsetInSamples, done, 2);
+							rampVolume = vnf.RampVolume;
+							newCurrent = MixSample(currentMixerInfo, vnf, sampleData, 1, 2, vnf.PanningVolume[1], vnf.OldPanningVolume[1], ref rampVolume, mixingBuffers[1], offsetInFrames, done);	
 						}
 					}
 					else
-						vnf.Current = MixSample(currentMixerInfo, vnf, sampleData, 0, buf, offsetInSamples, done, 1);
+					{
+						if ((vnf.Panning == (int)ChannelPanningType.Surround) && currentMixerInfo.EnableSurround)
+						{
+							// Mix the same sample into both front channels, but with negative volume on right channel
+							// to encode it as Dolby Pro Logic surround
+							if (vnf.PanningVolume[0] != 0)
+							{
+								MixSample(currentMixerInfo, vnf, sampleData, 0, 1, vnf.PanningVolume[0], vnf.OldPanningVolume[0], ref rampVolume, mixingBuffers[0], offsetInFrames, done);
+
+								rampVolume = vnf.RampVolume;
+								newCurrent = MixSample(currentMixerInfo, vnf, sampleData, 0, 1, -vnf.PanningVolume[0], vnf.OldPanningVolume[0], ref rampVolume, mixingBuffers[1], offsetInFrames, done);
+							}
+
+							// Take the rest of the channels
+							for (int i = 2; i < mixingBuffers.Length; i++)
+							{
+								if (vnf.PanningVolume[i] != 0)
+								{
+									rampVolume = vnf.RampVolume;
+									newCurrent = MixSample(currentMixerInfo, vnf, sampleData, 0, 1, vnf.PanningVolume[i], vnf.OldPanningVolume[i], ref rampVolume, mixingBuffers[i], offsetInFrames, done);
+								}
+							}
+						}
+						else
+						{
+							for (int i = 0; i < mixingBuffers.Length; i++)
+							{
+								if (vnf.PanningVolume[i] != 0)
+								{
+									rampVolume = vnf.RampVolume;
+									newCurrent = MixSample(currentMixerInfo, vnf, sampleData, 0, 1, vnf.PanningVolume[i], vnf.OldPanningVolume[i], ref rampVolume, mixingBuffers[i], offsetInFrames, done);
+								}
+							}
+						}
+					}
+
+					vnf.RampVolume = rampVolume;
+					vnf.Current = newCurrent;
 				}
 				else
 				{
@@ -360,137 +380,74 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				}
 
 				todoInFrames -= done;
-				offsetInSamples += currentMixerInfo.MixerChannels == 2 ? done << 1 : done;
+				offsetInFrames += done;
 			}
 		}
 		#endregion
 
 		#region Real mixing methods
-
 		/********************************************************************/
 		/// <summary>
 		/// Mix the given sample into the output buffers
 		/// </summary>
 		/********************************************************************/
-		private long MixSample(MixerInfo currentMixerInfo, VoiceInfo vnf, Array s, int sourceOffset, int[] buf, int offsetInSamples, int todoInSamples, int step)
+		private long MixSample(MixerInfo currentMixerInfo, VoiceInfo vnf, Array sampleData, uint sampleStartOffset, int sampleStep, int volume, int oldVolume, ref int rampVolume, int[] mixingBuffer, int offsetInFrames, int todoInFrames)
 		{
 			// Check to see if we need to make interpolation on the mixing
 			if (currentMixerInfo.EnableInterpolation)
 			{
 				if ((vnf.SampleInfo.Flags & SampleFlag._16Bits) != 0)
 				{
-					Span<short> source = SampleHelper.ConvertSampleTo16Bit(s, 0);
+					Span<short> source = SampleHelper.ConvertSampleTypeTo16Bit(sampleData, sampleStartOffset);
 
-					// 16 bit input sample to be mixed
-					if (currentMixerInfo.MixerChannels == 2)
-					{
-						if ((vnf.Panning == (int)ChannelPanningType.Surround) && currentMixerInfo.EnableSurround)
-							return Mix16SurroundInterpolation(source, sourceOffset, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, step, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
-
-						return Mix16StereoInterpolation(source, sourceOffset, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, step, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
-					}
-
-					return Mix16MonoInterpolation(source, sourceOffset, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, step, vnf.LeftVolumeSelected, vnf.OldLeftVolume, ref vnf.RampVolume);
+					return Mix16Interpolation(source, sampleStep, mixingBuffer, offsetInFrames, vnf.Current, vnf.Increment, todoInFrames, volume, oldVolume, ref rampVolume);
 				}
 				else
 				{
-					Span<sbyte> source = SampleHelper.ConvertSampleTo8Bit(s, 0);
-
 					// 8 bit input sample to be mixed
-					if (currentMixerInfo.MixerChannels == 2)
-					{
-						if ((vnf.Panning == (int)ChannelPanningType.Surround) && currentMixerInfo.EnableSurround)
-							return Mix8SurroundInterpolation(source, sourceOffset, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, step, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
+					Span<sbyte> source = SampleHelper.ConvertSampleTypeTo8Bit(sampleData, sampleStartOffset);
 
-						return Mix8StereoInterpolation(source, sourceOffset, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, step, vnf.LeftVolumeSelected, vnf.RightVolumeSelected, vnf.OldLeftVolume, vnf.OldRightVolume, ref vnf.RampVolume);
-					}
-
-					return Mix8MonoInterpolation(source, sourceOffset, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, step, vnf.LeftVolumeSelected, vnf.OldLeftVolume, ref vnf.RampVolume);
+					return Mix8Interpolation(source, sampleStep, mixingBuffer, offsetInFrames, vnf.Current, vnf.Increment, todoInFrames, volume, oldVolume, ref rampVolume);
 				}
 			}
 
 			// No interpolation
 			if ((vnf.SampleInfo.Flags & SampleFlag._16Bits) != 0)
 			{
-				Span<short> source = SampleHelper.ConvertSampleTo16Bit(s, 0);
-
 				// 16 bit input sample to be mixed
-				if (currentMixerInfo.MixerChannels == 2)
-				{
-					if ((vnf.Panning == (int)ChannelPanningType.Surround) && currentMixerInfo.EnableSurround)
-						return Mix16SurroundNormal(source, sourceOffset, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, step, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
+				Span<short> source = SampleHelper.ConvertSampleTypeTo16Bit(sampleData, sampleStartOffset);
 
-					return Mix16StereoNormal(source, sourceOffset, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, step, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
-				}
-
-				return Mix16MonoNormal(source, sourceOffset, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, step, vnf.LeftVolumeSelected);
+				return Mix16Normal(source, sampleStep, mixingBuffer, offsetInFrames, vnf.Current, vnf.Increment, todoInFrames, volume);
 			}
 			else
 			{
-				Span<sbyte> source = SampleHelper.ConvertSampleTo8Bit(s, 0);
-
 				// 8 bit input sample to be mixed
-				if (currentMixerInfo.MixerChannels == 2)
-				{
-					if ((vnf.Panning == (int)ChannelPanningType.Surround) && currentMixerInfo.EnableSurround)
-						return Mix8SurroundNormal(source, sourceOffset, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, step, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
+				Span<sbyte> source = SampleHelper.ConvertSampleTypeTo8Bit(sampleData, sampleStartOffset);
 
-					return Mix8StereoNormal(source, sourceOffset, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, step, vnf.LeftVolumeSelected, vnf.RightVolumeSelected);
-				}
-
-				return Mix8MonoNormal(source, sourceOffset, buf, offsetInSamples, vnf.Current, vnf.Increment, todoInSamples, step, vnf.LeftVolumeSelected);
+				return Mix8Normal(source, sampleStep, mixingBuffer, offsetInFrames, vnf.Current, vnf.Increment, todoInFrames, volume);
 			}
 		}
 
 		#region 8 bit sample
-
-		#region Normal
 		/********************************************************************/
 		/// <summary>
-		/// Mixes a 8 bit sample into a mono output buffer
+		/// Mixes an 8 bit sample into the output buffer
 		/// </summary>
 		/********************************************************************/
-		private long Mix8MonoNormal(Span<sbyte> source, int sourceOffset, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int step, int volSel)
+		private long Mix8Normal(Span<sbyte> source, int sampleStep, int[] dest, int offsetInFrames, long index, long increment, int todoInFrames, int volume)
 		{
 			int len = source.Length;
 
-			while (todoInSamples-- != 0)
+			while (todoInFrames-- != 0)
 			{
-				long idx = (index >> FracBits) * step + sourceOffset;
-				if (idx >= len)
-					break;
-
-				int sample = source[(int)idx] << 7;
-				index += increment;
-
-				dest[offsetInSamples++] += volSel * sample;
-			}
-
-			return index;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Mixes a 8 bit sample into a stereo output buffer
-		/// </summary>
-		/********************************************************************/
-		private long Mix8StereoNormal(Span<sbyte> source, int sourceOffset, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int step, int lVolSel, int rVolSel)
-		{
-			int len = source.Length;
-
-			while (todoInSamples-- != 0)
-			{
-				long idx = (index >> FracBits) * step + sourceOffset;
+				long idx = (index >> FracBits) * sampleStep;
 				if (idx >= len)
 					break;
 
 				int sample = source[(int)idx] << 8;
 				index += increment;
 
-				dest[offsetInSamples++] += lVolSel * sample;
-				dest[offsetInSamples++] += rVolSel * sample;
+				dest[offsetInFrames++] += volume * sample;
 			}
 
 			return index;
@@ -500,257 +457,78 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 		/********************************************************************/
 		/// <summary>
-		/// Mixes a 8 bit surround sample into a stereo output buffer
+		/// Mixes an 8 bit sample into the output buffer with interpolation
 		/// </summary>
 		/********************************************************************/
-		private long Mix8SurroundNormal(Span<sbyte> source, int sourceOffset, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int step, int lVolSel, int rVolSel)
+		private long Mix8Interpolation(Span<sbyte> source, int sampleStep, int[] dest, int offsetInFrames, long index, long increment, int todoInFrames, int volume, int oldVolume, ref int rampVolume)
 		{
 			int len = source.Length;
 
-			if (lVolSel >= rVolSel)
+			if (rampVolume != 0)
 			{
-				while (todoInSamples-- != 0)
+				oldVolume -= volume;
+
+				while (todoInFrames-- != 0)
 				{
-					long idx = (index >> FracBits) * step + sourceOffset;
-					if (idx >= len)
-						break;
-
-					int sample = source[(int)idx] << 8;
-					index += increment;
-
-					dest[offsetInSamples++] += lVolSel * sample;
-					dest[offsetInSamples++] -= lVolSel * sample;
-				}
-			}
-			else
-			{
-				while (todoInSamples-- != 0)
-				{
-					long idx = (index >> FracBits) * step + sourceOffset;
-					if (idx >= len)
-						break;
-
-					int sample = source[(int)idx] << 8;
-					index += increment;
-
-					dest[offsetInSamples++] -= rVolSel * sample;
-					dest[offsetInSamples++] += rVolSel * sample;
-				}
-			}
-
-			return index;
-		}
-		#endregion
-
-		#region Interpolation
-		/********************************************************************/
-		/// <summary>
-		/// Mixes a 8 bit sample into a mono output buffer with interpolation
-		/// </summary>
-		/********************************************************************/
-		private long Mix8MonoInterpolation(Span<sbyte> source, int sourceOffset, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int step, int volSel, int oldVol, ref int rampVol)
-		{
-			int len = source.Length;
-
-			if (rampVol != 0)
-			{
-				oldVol -= volSel;
-
-				while (todoInSamples-- != 0)
-				{
-					int idx = (int)((index >> FracBits) * step + sourceOffset);
-					if (idx >= len)
-						break;
-
-					long a = (long)source[idx] << 7;
-					long b = idx + step >= source.Length ? a : (long)source[idx + step] << 7;
-
-					int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
-					index += increment;
-
-					dest[offsetInSamples++] += ((volSel << ClickShift) + oldVol * rampVol) * sample >> ClickShift;
-
-					if (--rampVol == 0)
-						break;
-				}
-
-				if (todoInSamples < 0)
-					return index;
-			}
-
-			while (todoInSamples-- != 0)
-			{
-				int idx = (int)((index >> FracBits) * step + sourceOffset);
-				if (idx >= len)
-					break;
-
-				long a = (long)source[idx] << 7;
-				long b = idx + step >= source.Length ? a : (long)source[idx + step] << 7;
-
-				int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
-				index += increment;
-
-				dest[offsetInSamples++] += volSel * sample;
-			}
-
-			return index;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Mixes a 8 bit sample into a stereo output buffer with
-		/// interpolation
-		/// </summary>
-		/********************************************************************/
-		private long Mix8StereoInterpolation(Span<sbyte> source, int sourceOffset, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int step, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
-		{
-			int len = source.Length;
-
-			if (rampVol != 0)
-			{
-				oldLVol -= lVolSel;
-				oldRVol -= rVolSel;
-
-				while (todoInSamples-- != 0)
-				{
-					int idx = (int)((index >> FracBits) * step + sourceOffset);
+					int idx = (int)((index >> FracBits) * sampleStep);
 					if (idx >= len)
 						break;
 
 					long a = (long)source[idx] << 8;
-					long b = idx + step >= source.Length ? a : (long)source[idx + step] << 8;
+					long b = idx + sampleStep >= source.Length ? a : (long)source[idx + sampleStep] << 8;
 
 					int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
 					index += increment;
 
-					dest[offsetInSamples++] += ((lVolSel << ClickShift) + oldLVol * rampVol) * sample >> ClickShift;
-					dest[offsetInSamples++] += ((rVolSel << ClickShift) + oldRVol * rampVol) * sample >> ClickShift;
+					dest[offsetInFrames++] += ((volume << ClickShift) + oldVolume * rampVolume) * sample >> ClickShift;
 
-					if (--rampVol == 0)
+					if (--rampVolume == 0)
 						break;
 				}
 
-				if (todoInSamples < 0)
+				if (todoInFrames < 0)
 					return index;
 			}
 
-			while (todoInSamples-- != 0)
+			while (todoInFrames-- != 0)
 			{
-				int idx = (int)((index >> FracBits) * step + sourceOffset);
+				int idx = (int)((index >> FracBits) * sampleStep);
 				if (idx >= len)
 					break;
 
 				long a = (long)source[idx] << 8;
-				long b = idx + step >= source.Length ? a : (long)source[idx + step] << 8;
+				long b = idx + sampleStep >= source.Length ? a : (long)source[idx + sampleStep] << 8;
 
 				int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
 				index += increment;
 
-				dest[offsetInSamples++] += lVolSel * sample;
-				dest[offsetInSamples++] += rVolSel * sample;
+				dest[offsetInFrames++] += volume * sample;
 			}
 
 			return index;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Mixes a 8 bit surround sample into a stereo output buffer with
-		/// interpolation
-		/// </summary>
-		/********************************************************************/
-		private long Mix8SurroundInterpolation(Span<sbyte> source, int sourceOffset, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int step, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
-		{
-			int oldVol, vol;
-			int len = source.Length;
-
-			if (lVolSel >= rVolSel)
-			{
-				vol = lVolSel;
-				oldVol = oldLVol;
-			}
-			else
-			{
-				vol = rVolSel;
-				oldVol = oldRVol;
-			}
-
-			if (rampVol != 0)
-			{
-				oldVol -= vol;
-
-				while (todoInSamples-- != 0)
-				{
-					int idx = (int)((index >> FracBits) * step + sourceOffset);
-					if (idx >= len)
-						break;
-
-					long a = (long)source[idx] << 8;
-					long b = idx + step >= source.Length ? a : (long)source[idx + step] << 8;
-
-					int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
-					index += increment;
-
-					sample = ((vol << ClickShift) + oldVol * rampVol) * sample >> ClickShift;
-					dest[offsetInSamples++] += sample;
-					dest[offsetInSamples++] -= sample;
-
-					if (--rampVol == 0)
-						break;
-				}
-
-				if (todoInSamples < 0)
-					return index;
-			}
-
-			while (todoInSamples-- != 0)
-			{
-				int idx = (int)((index >> FracBits) * step + sourceOffset);
-				if (idx >= len)
-					break;
-
-				long a = (long)source[idx] << 8;
-				long b = idx + step >= source.Length ? a : (long)source[idx + step] << 8;
-
-				int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
-				index += increment;
-
-				dest[offsetInSamples++] += vol * sample;
-				dest[offsetInSamples++] -= vol * sample;
-			}
-
-			return index;
-		}
-		#endregion
-
 		#endregion
 
 		#region 16 bit sample
-
-		#region Normal
 		/********************************************************************/
 		/// <summary>
-		/// Mixes a 16 bit sample into a mono output buffer
+		/// Mixes a 16 bit sample into the output buffer
 		/// </summary>
 		/********************************************************************/
-		private long Mix16MonoNormal(Span<short> source, int sourceOffset, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int step, int volSel)
+		private long Mix16Normal(Span<short> source, int sampleStep, int[] dest, int offsetInFrames, long index, long increment, int todoInFrames, int volume)
 		{
 			int len = source.Length;
 
-			while (todoInSamples-- != 0)
+			while (todoInFrames-- != 0)
 			{
-				long idx = (index >> FracBits) * step + sourceOffset;
+				long idx = (index >> FracBits) * sampleStep;
 				if (idx >= len)
 					break;
 
 				int sample = source[(int)idx];
 				index += increment;
 
-				dest[offsetInSamples++] += volSel * sample;
+				dest[offsetInFrames++] += volume * sample;
 			}
 
 			return index;
@@ -760,260 +538,56 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 		/********************************************************************/
 		/// <summary>
-		/// Mixes a 16 bit sample into a stereo output buffer
+		/// Mixes a 16 bit sample into the output buffer with interpolation
 		/// </summary>
 		/********************************************************************/
-		private long Mix16StereoNormal(Span<short> source, int sourceOffset, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int step, int lVolSel, int rVolSel)
+		private long Mix16Interpolation(Span<short> source, int sampleStep, int[] dest, int offsetInSamples, long index, long increment, int todoInFrames, int volume, int oldVolume, ref int rampVolume)
 		{
 			int len = source.Length;
 
-			while (todoInSamples-- != 0)
+			if (rampVolume != 0)
 			{
-				long idx = (index >> FracBits) * step + sourceOffset;
-				if (idx >= len)
-					break;
+				oldVolume -= volume;
 
-				int sample = source[(int)idx];
-				index += increment;
-
-				dest[offsetInSamples++] += lVolSel * sample;
-				dest[offsetInSamples++] += rVolSel * sample;
-			}
-
-			return index;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Mixes a 16 bit surround sample into a stereo output buffer
-		/// </summary>
-		/********************************************************************/
-		private long Mix16SurroundNormal(Span<short> source, int sourceOffset, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int step, int lVolSel, int rVolSel)
-		{
-			int len = source.Length;
-
-			if (lVolSel >= rVolSel)
-			{
-				while (todoInSamples-- != 0)
+				while (todoInFrames-- != 0)
 				{
-					long idx = (index >> FracBits) * step + sourceOffset;
-					if (idx >= len)
-						break;
-
-					int sample = source[(int)idx];
-					index += increment;
-
-					dest[offsetInSamples++] += lVolSel * sample;
-					dest[offsetInSamples++] -= lVolSel * sample;
-				}
-			}
-			else
-			{
-				while (todoInSamples-- != 0)
-				{
-					long idx = (index >> FracBits) * step + sourceOffset;
-					if (idx >= len)
-						break;
-
-					int sample = source[(int)idx];
-					index += increment;
-
-					dest[offsetInSamples++] -= rVolSel * sample;
-					dest[offsetInSamples++] += rVolSel * sample;
-				}
-			}
-
-			return index;
-		}
-		#endregion
-
-		#region Interpolation
-		/********************************************************************/
-		/// <summary>
-		/// Mixes a 16 bit sample into a mono output buffer with interpolation
-		/// </summary>
-		/********************************************************************/
-		private long Mix16MonoInterpolation(Span<short> source, int sourceOffset, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int step, int volSel, int oldVol, ref int rampVol)
-		{
-			int len = source.Length;
-
-			if (rampVol != 0)
-			{
-				oldVol -= volSel;
-
-				while (todoInSamples-- != 0)
-				{
-					int idx = (int)((index >> FracBits) * step + sourceOffset);
+					int idx = (int)((index >> FracBits) * sampleStep);
 					if (idx >= len)
 						break;
 
 					long a = source[idx];
-					long b = idx + step >= len ? a : source[idx + step];
+					long b = idx + sampleStep >= len ? a : source[idx + sampleStep];
 
 					int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
 					index += increment;
 
-					dest[offsetInSamples++] += ((volSel << ClickShift) + oldVol * rampVol) * sample >> ClickShift;
+					dest[offsetInSamples++] += ((volume << ClickShift) + oldVolume * rampVolume) * sample >> ClickShift;
 
-					if (--rampVol == 0)
+					if (--rampVolume == 0)
 						break;
 				}
 
-				if (todoInSamples < 0)
+				if (todoInFrames < 0)
 					return index;
 			}
 
-			while (todoInSamples-- != 0)
+			while (todoInFrames-- != 0)
 			{
-				int idx = (int)((index >> FracBits) * step + sourceOffset);
+				int idx = (int)((index >> FracBits) * sampleStep);
 				if (idx >= len)
 					break;
 
 				long a = source[idx];
-				long b = idx + step >= len ? a : source[idx + step];
+				long b = idx + sampleStep >= len ? a : source[idx + sampleStep];
 
 				int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
 				index += increment;
 
-				dest[offsetInSamples++] += volSel * sample;
+				dest[offsetInSamples++] += volume * sample;
 			}
 
 			return index;
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Mixes a 16 bit sample into a stereo output buffer with
-		/// interpolation
-		/// </summary>
-		/********************************************************************/
-		private long Mix16StereoInterpolation(Span<short> source, int sourceOffset, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int step, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
-		{
-			int len = source.Length;
-
-			if (rampVol != 0)
-			{
-				oldLVol -= lVolSel;
-				oldRVol -= rVolSel;
-
-				while (todoInSamples-- != 0)
-				{
-					int idx = (int)((index >> FracBits) * step + sourceOffset);
-					if (idx >= len)
-						break;
-
-					long a = source[idx];
-					long b = idx + step >= len ? a : source[idx + step];
-
-					int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
-					index += increment;
-
-					dest[offsetInSamples++] += ((lVolSel << ClickShift) + oldLVol * rampVol) * sample >> ClickShift;
-					dest[offsetInSamples++] += ((rVolSel << ClickShift) + oldRVol * rampVol) * sample >> ClickShift;
-
-					if (--rampVol == 0)
-						break;
-				}
-
-				if (todoInSamples < 0)
-					return index;
-			}
-
-			while (todoInSamples-- != 0)
-			{
-				int idx = (int)((index >> FracBits) * step + sourceOffset);
-				if (idx >= len)
-					break;
-
-				long a = source[idx];
-				long b = idx + step >= len ? a : source[idx + step];
-
-				int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
-				index += increment;
-
-				dest[offsetInSamples++] += lVolSel * sample;
-				dest[offsetInSamples++] += rVolSel * sample;
-			}
-
-			return index;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Mixes a 16 bit surround sample into a stereo output buffer with
-		/// interpolation
-		/// </summary>
-		/********************************************************************/
-		private long Mix16SurroundInterpolation(Span<short> source, int sourceOffset, int[] dest, int offsetInSamples, long index, long increment, int todoInSamples, int step, int lVolSel, int rVolSel, int oldLVol, int oldRVol, ref int rampVol)
-		{
-			int oldVol, vol;
-			int len = source.Length;
-
-			if (lVolSel >= rVolSel)
-			{
-				vol = lVolSel;
-				oldVol = oldLVol;
-			}
-			else
-			{
-				vol = rVolSel;
-				oldVol = oldRVol;
-			}
-
-			if (rampVol != 0)
-			{
-				oldVol -= vol;
-
-				while (todoInSamples-- != 0)
-				{
-					int idx = (int)((index >> FracBits) * step + sourceOffset);
-					if (idx >= len)
-						break;
-
-					long a = source[idx];
-					long b = idx + step >= len ? a : source[idx + step];
-
-					int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
-					index += increment;
-
-					sample = ((vol << ClickShift) + oldVol * rampVol) * sample >> ClickShift;
-					dest[offsetInSamples++] += sample;
-					dest[offsetInSamples++] -= sample;
-
-					if (--rampVol == 0)
-						break;
-				}
-
-				if (todoInSamples < 0)
-					return index;
-			}
-
-			while (todoInSamples-- != 0)
-			{
-				int idx = (int)((index >> FracBits) * step + sourceOffset);
-				if (idx >= len)
-					break;
-
-				long a = source[idx];
-				long b = idx + step >= len ? a : source[idx + step];
-
-				int sample = (int)(a + ((b - a) * (index & FracMask) >> FracBits));
-				index += increment;
-
-				dest[offsetInSamples++] += vol * sample;
-				dest[offsetInSamples++] -= vol * sample;
-			}
-
-			return index;
-		}
-		#endregion
-
 		#endregion
 
 		#endregion
@@ -1023,127 +597,41 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 		/********************************************************************/
 		/// <summary>
-		/// Converts the mixed data to a 32 bit sample buffer
+		/// Converts the mixed data to 32 bit in same buffer
 		/// </summary>
 		/********************************************************************/
-		private void MixConvertTo32(MixerInfo currentMixerInfo, Span<int> dest, int offsetInSamples, int[] source, int countInSamples, int samplesToSkip)
+		private void MixConvertTo32(int[] buffer, int todoInFrames)
 		{
 			long x1, x2, x3, x4;
-			int remain;
 
-			int sourceOffset = 0;
+			int offset = 0;
+			int remain = todoInFrames & 3;
 
-			if (currentMixerInfo.SwapSpeakers)
+			for (todoInFrames >>= 2; todoInFrames != 0; todoInFrames--)
 			{
-				if (samplesToSkip == 0)
-				{
-					remain = countInSamples & 3;
+				x1 = (long)buffer[offset] << MixBitShift;
+				x2 = (long)buffer[offset + 1] << MixBitShift;
+				x3 = (long)buffer[offset + 2] << MixBitShift;
+				x4 = (long)buffer[offset + 3] << MixBitShift;
 
-					for (countInSamples >>= 2; countInSamples != 0; countInSamples--)
-					{
-						x1 = (long)source[sourceOffset++] << MixBitShift;
-						x2 = (long)source[sourceOffset++] << MixBitShift;
-						x3 = (long)source[sourceOffset++] << MixBitShift;
-						x4 = (long)source[sourceOffset++] << MixBitShift;
+				x1 = (x1 >= 2147483647) ? 2147483647 - 1 : (x1 < -2147483647) ? -2147483647 : x1;
+				x2 = (x2 >= 2147483647) ? 2147483647 - 1 : (x2 < -2147483647) ? -2147483647 : x2;
+				x3 = (x3 >= 2147483647) ? 2147483647 - 1 : (x3 < -2147483647) ? -2147483647 : x3;
+				x4 = (x4 >= 2147483647) ? 2147483647 - 1 : (x4 < -2147483647) ? -2147483647 : x4;
 
-						x1 = (x1 >= 2147483647) ? 2147483647 - 1 : (x1 < -2147483647) ? -2147483647 : x1;
-						x2 = (x2 >= 2147483647) ? 2147483647 - 1 : (x2 < -2147483647) ? -2147483647 : x2;
-						x3 = (x3 >= 2147483647) ? 2147483647 - 1 : (x3 < -2147483647) ? -2147483647 : x3;
-						x4 = (x4 >= 2147483647) ? 2147483647 - 1 : (x4 < -2147483647) ? -2147483647 : x4;
+				buffer[offset] = (int)x1;
+				buffer[offset + 1] = (int)x2;
+				buffer[offset + 2] = (int)x3;
+				buffer[offset + 3] = (int)x4;
 
-						dest[offsetInSamples++] = (int)x2;
-						dest[offsetInSamples++] = (int)x1;
-						dest[offsetInSamples++] = (int)x4;
-						dest[offsetInSamples++] = (int)x3;
-					}
-				}
-				else
-				{
-					remain = countInSamples & 1;
-
-					for (countInSamples >>= 1; countInSamples != 0; countInSamples--)
-					{
-						x1 = (long)source[sourceOffset++] << MixBitShift;
-						x2 = (long)source[sourceOffset++] << MixBitShift;
-
-						x1 = (x1 >= 2147483647) ? 2147483647 - 1 : (x1 < -2147483647) ? -2147483647 : x1;
-						x2 = (x2 >= 2147483647) ? 2147483647 - 1 : (x2 < -2147483647) ? -2147483647 : x2;
-
-						dest[offsetInSamples++] = (int)x2;
-						dest[offsetInSamples++] = (int)x1;
-
-						for (int i = 0; i < samplesToSkip; i++)
-							dest[offsetInSamples++] = 0;
-					}
-				}
-			}
-			else
-			{
-				if (currentMixerInfo.MixerChannels == 2)
-				{
-					if (samplesToSkip == 0)
-					{
-						remain = countInSamples & 3;
-
-						for (countInSamples >>= 2; countInSamples != 0; countInSamples--)
-						{
-							x1 = (long)source[sourceOffset++] << MixBitShift;
-							x2 = (long)source[sourceOffset++] << MixBitShift;
-							x3 = (long)source[sourceOffset++] << MixBitShift;
-							x4 = (long)source[sourceOffset++] << MixBitShift;
-
-							x1 = (x1 >= 2147483647) ? 2147483647 - 1 : (x1 < -2147483647) ? -2147483647 : x1;
-							x2 = (x2 >= 2147483647) ? 2147483647 - 1 : (x2 < -2147483647) ? -2147483647 : x2;
-							x3 = (x3 >= 2147483647) ? 2147483647 - 1 : (x3 < -2147483647) ? -2147483647 : x3;
-							x4 = (x4 >= 2147483647) ? 2147483647 - 1 : (x4 < -2147483647) ? -2147483647 : x4;
-
-							dest[offsetInSamples++] = (int)x1;
-							dest[offsetInSamples++] = (int)x2;
-							dest[offsetInSamples++] = (int)x3;
-							dest[offsetInSamples++] = (int)x4;
-						}
-					}
-					else
-					{
-						remain = countInSamples & 1;
-
-						for (countInSamples >>= 1; countInSamples != 0; countInSamples--)
-						{
-							x1 = (long)source[sourceOffset++] << MixBitShift;
-							x2 = (long)source[sourceOffset++] << MixBitShift;
-
-							x1 = (x1 >= 2147483647) ? 2147483647 - 1 : (x1 < -2147483647) ? -2147483647 : x1;
-							x2 = (x2 >= 2147483647) ? 2147483647 - 1 : (x2 < -2147483647) ? -2147483647 : x2;
-
-							dest[offsetInSamples++] = (int)x1;
-							dest[offsetInSamples++] = (int)x2;
-
-							for (int i = 0; i < samplesToSkip; i++)
-								dest[offsetInSamples++] = 0;
-						}
-					}
-				}
-				else
-				{
-					remain = 0;
-
-					for (; countInSamples != 0; countInSamples--)
-					{
-						x1 = (long)source[sourceOffset++] << MixBitShift;
-						x1 = (x1 >= 2147483647) ? 2147483647 - 1 : (x1 < -2147483647) ? -2147483647 : x1;
-						dest[offsetInSamples++] = (int)x1;
-					}
-				}
+				offset += 4;
 			}
 
 			while (remain-- != 0)
 			{
-				x1 = (long)source[sourceOffset++] << MixBitShift;
+				x1 = (long)buffer[offset] << MixBitShift;
 				x1 = (x1 >= 2147483647) ? 2147483647 - 1 : (x1 < -2147483647) ? -2147483647 : x1;
-				dest[offsetInSamples++] = (int)x1;
-
-				for (int i = 0; i < samplesToSkip; i++)
-					dest[offsetInSamples++] = 0;
+				buffer[offset++] = (int)x1;
 			}
 		}
 		#endregion

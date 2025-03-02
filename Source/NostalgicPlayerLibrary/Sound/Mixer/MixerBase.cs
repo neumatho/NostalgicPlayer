@@ -14,9 +14,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 	/// </summary>
 	internal abstract class MixerBase
 	{
-		protected int mixerFrequency;		// The mixer frequency
-		protected int channelNumber;		// Number of channels this mixer use
-		protected int stereoSeparation;		// This is the stereo separation (0-128)
+		protected int mixerFrequency;			// The mixer frequency
+		protected int virtualChannelCount;		// The number of channels the module use
+		protected int mixerChannelCount;		// The number of channels to mix in
+		protected int stereoSeparation;			// This is the stereo separation (0-128)
 
 		protected VoiceInfo[] voiceInfo;
 
@@ -41,13 +42,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Will initialize global mixer stuff as well as local mixer stuff
 		/// </summary>
 		/********************************************************************/
-		public void Initialize(int channels)
+		public void Initialize(int virtualChannels, int mixerChannels)
 		{
 			// Start to remember the arguments
-			channelNumber = channels;
+			virtualChannelCount = virtualChannels;
+			mixerChannelCount = mixerChannels;
 
 			// Allocate and initialize the VoiceInfo structures
-			voiceInfo = new VoiceInfo[channels];
+			voiceInfo = new VoiceInfo[virtualChannelCount];
 
 			// Clear the voices
 			ClearVoices();
@@ -80,7 +82,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/********************************************************************/
 		public void ClearVoices()
 		{
-			for (int i = 0; i < channelNumber; i++)
+			for (int i = 0; i < virtualChannelCount; i++)
 			{
 				voiceInfo[i] = new VoiceInfo
 				{
@@ -93,10 +95,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					Volume = 0,
 					Panning = (int)((((i & 3) == 0) || ((i & 3) == 3)) ? ChannelPanningType.Left : ChannelPanningType.Right),
 					RampVolume = 0,
-					LeftVolumeSelected = 0,
-					RightVolumeSelected = 0,
-					OldLeftVolume = 0,
-					OldRightVolume = 0,
+					PanningVolume = new int[mixerChannelCount],
+					OldPanningVolume = new int[mixerChannelCount],
 					Current = 0,
 					Increment = 0
 				};
@@ -200,16 +200,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// This is the main mixer method
 		/// </summary>
 		/********************************************************************/
-		public abstract void Mixing(MixerInfo currentMixerInfo, int[][] channelMap, int offsetInFrames, int todoInFrames);
+		public abstract void Mixing(MixerInfo currentMixerInfo, int[][][] channelMap, int offsetInFrames, int todoInFrames);
 
 
 
 		/********************************************************************/
 		/// <summary>
-		/// Convert the mix buffer to the output format and store the result
-		/// in the supplied buffer
+		/// Convert the mixing buffer to 32 bit
 		/// </summary>
 		/********************************************************************/
-		public abstract void ConvertMixedData(MixerInfo currentMixerInfo, byte[] dest, int offsetInBytes, int[] source, int todoInFrames, int samplesToSkip);
+		public abstract void ConvertMixedData(int[] buffer, int todoInFrames);
 	}
 }

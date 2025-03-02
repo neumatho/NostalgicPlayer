@@ -1084,14 +1084,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SampleInfoWindow
 
 							if ((sampleInfo.Flags & SampleInfo.SampleFlag._16Bit) != 0)
 							{
-								Span<short> left = SampleHelper.ConvertSampleTo16Bit(samples[b].data, samples[b].offset);
+								Span<short> left = SampleHelper.ConvertSampleTypeTo16Bit(samples[b].data, samples[b].offset);
 
 								for (int i = 0; i < cnt; i++)
 									buffer[i] = left[i] << 16;
 							}
 							else
 							{
-								Span<sbyte> left = SampleHelper.ConvertSampleTo8Bit(samples[b].data, samples[b].offset);
+								Span<sbyte> left = SampleHelper.ConvertSampleTypeTo8Bit(samples[b].data, samples[b].offset);
 
 								for (int i = 0; i < cnt; i++)
 									buffer[i] = left[i] << 24;

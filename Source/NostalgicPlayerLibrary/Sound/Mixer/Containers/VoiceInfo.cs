@@ -22,10 +22,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers
 		public int Volume;						// Current volume
 		public int Panning;						// Current panning position
 		public int RampVolume;
-		public int LeftVolumeSelected;			// Volume factor in range 0-255
-		public int RightVolumeSelected;
-		public int OldLeftVolume;
-		public int OldRightVolume;
+		public int[] PanningVolume;				// Volume factor in range 0-255
+		public int[] OldPanningVolume;
 		public long Current;					// Current index in the sample
 		public long Increment;					// Increment value
 	}

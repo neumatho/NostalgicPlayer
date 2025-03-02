@@ -1825,7 +1825,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dolby Prologic  surround.
+        ///   Looks up a localized string similar to Dolby Pro Logic surround.
         /// </summary>
         internal static string IDS_SETTINGS_MIXER_GENERAL_SURROUND {
             get {

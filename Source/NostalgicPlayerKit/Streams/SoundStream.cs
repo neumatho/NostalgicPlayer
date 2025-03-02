@@ -21,13 +21,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Indicate if the stream supports reading
 		/// </summary>
 		/********************************************************************/
-		public override bool CanRead
-		{
-			get
-			{
-				return true;
-			}
-		}
+		public override bool CanRead => true;
 
 
 
@@ -36,13 +30,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Indicate if the stream supports writing
 		/// </summary>
 		/********************************************************************/
-		public override bool CanWrite
-		{
-			get
-			{
-				return false;
-			}
-		}
+		public override bool CanWrite => false;
 
 
 
@@ -51,14 +39,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Indicate if the stream supports seeking
 		/// </summary>
 		/********************************************************************/
-		public override bool CanSeek
-		{
-			get
-			{
-				return false;
-			}
-		}
-
+		public override bool CanSeek => false;
 
 
 
@@ -67,13 +48,7 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// Return the length of the data
 		/// </summary>
 		/********************************************************************/
-		public override long Length
-		{
-			get
-			{
-				throw new NotSupportedException();
-			}
-		}
+		public override long Length => throw new NotSupportedException();
 
 
 
@@ -84,15 +59,9 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/********************************************************************/
 		public override long Position
 		{
-			get
-			{
-				throw new NotSupportedException();
-			}
+			get => throw new NotSupportedException();
 
-			set
-			{
-				throw new NotSupportedException();
-			}
+			set => throw new NotSupportedException();
 		}
 
 

@@ -114,7 +114,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
-		/// Dolby Prologic surround
+		/// Dolby Pro Logic surround
 		/// </summary>
 		/********************************************************************/
 		public bool Surround
