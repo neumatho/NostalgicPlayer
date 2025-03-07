@@ -250,17 +250,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		/// data
 		/// </summary>
 		/********************************************************************/
-		public void TellAgentsAboutMixedData(byte[] buffer, int offsetInBytes, int countInFrames, int[] channelMapping, int outputChannelCount)
+		public void TellAgentsAboutMixedData(Span<int> buffer, int countInFrames, int[] channelMapping, int outputChannelCount)
 		{
+			int sourceOffset = 0;
+
 			while (countInFrames > 0)
 			{
 				int todoInSamples = Math.Min(countInFrames * outputChannelCount, visualBuffer.Length - visualBufferOffset);
 
 				// Mixed output is already in 32-bit, so just copy the data
-				Buffer.BlockCopy(buffer, offsetInBytes, visualBuffer, visualBufferOffset * 4, todoInSamples * 4);
+				buffer.Slice(sourceOffset, todoInSamples).CopyTo(visualBuffer.AsSpan(visualBufferOffset));
 
 				visualBufferOffset += todoInSamples;
-				offsetInBytes += todoInSamples * 4;
+				sourceOffset += todoInSamples;
 
 				countInFrames -= todoInSamples / outputChannelCount;
 

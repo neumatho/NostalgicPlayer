@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
@@ -204,7 +205,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					if (mixer == null)
 						return 0;
 
-					framesMixed = mixer.Mixing(buffer, offsetInBytes, frameCount, out bool hasEndReached);
+					Span<int> bufferSpan = MemoryMarshal.Cast<byte, int>(buffer.AsSpan(offsetInBytes));
+					framesMixed = mixer.Mixing(bufferSpan, frameCount, out bool hasEndReached);
 					HasEndReached = hasEndReached;
 				}
 

@@ -16,14 +16,5 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers
 		/// </summary>
 		/********************************************************************/
 		public int[] Buffer;
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// The previous filter value in the last round
-		/// </summary>
-		/********************************************************************/
-		public int FilterPrevValue;
 	}
 }

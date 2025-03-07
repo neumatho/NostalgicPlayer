@@ -4,7 +4,6 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers;
 
 namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
@@ -56,10 +55,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Convert the mixing buffers to output format
 		/// </summary>
 		/********************************************************************/
-		public void ConvertToOutputFormat(MixerBufferInfo[] mixingBuffers, byte[] outputBuffer, int offsetInBytes, int todoInFrames, int[] channelMapping, int outputChannelCount)
+		public void ConvertToOutputFormat(MixerBufferInfo[] mixingBuffers, Span<int> outputBuffer, int todoInFrames, int[] channelMapping, int outputChannelCount)
 		{
-			Span<int> buffer = MemoryMarshal.Cast<byte, int>(outputBuffer.AsSpan(offsetInBytes));
-
 			if (outputChannelCount == 1)
 			{
 				// Mono
@@ -67,7 +64,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				int[] sourceBuffer2 = mixingBuffers[1].Buffer;
 
 				for (int i = 0; i < todoInFrames; i++)
-					buffer[i] = (int)(((long)sourceBuffer1[i] + sourceBuffer2[i]) * 0.707f);
+					outputBuffer[i] = (int)(((long)sourceBuffer1[i] + sourceBuffer2[i]) * 0.707f);
 			}
 			else
 			{
@@ -77,11 +74,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 				for (int i = 0, j = 0; i < todoInFrames; i++, j += outputChannelCount)
 				{
-					buffer[j] = sourceBuffer1[i];
-					buffer[j + 1] = sourceBuffer2[i];
+					outputBuffer[j] = sourceBuffer1[i];
+					outputBuffer[j + 1] = sourceBuffer2[i];
 
 					for (int k = 2; k < outputChannelCount; k++)
-						buffer[j + k] = 0;
+						outputBuffer[j + k] = 0;
 				}
 			}
 		}
