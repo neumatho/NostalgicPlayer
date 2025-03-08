@@ -4,7 +4,6 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
-using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Utility;
 
@@ -23,6 +22,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/********************************************************************/
 		protected override void InitMixer()
 		{
+			if (virtualChannelCount != mixerChannelCount)
+				throw new ArgumentException("Both virtual and mixer channel counts need to be the same");
 		}
 
 
@@ -57,20 +58,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/********************************************************************/
 		public override void Mixing(MixerInfo currentMixerInfo, int[][][] channelMap, int offsetInFrames, int todoInFrames)
 		{
-/*			if (currentMixerInfo.MixerChannels == 2)
-			{
-				int leftVolume = voiceInfo[0].Enabled ? MasterVolume : 0;
-				int rightVolume = voiceInfo[1].Enabled ? MasterVolume : 0;
-
-				AddPlayerSamples(voiceInfo[0], channelMap[0], offsetInFrames * 2, 2, todoInFrames, leftVolume);
-				AddPlayerSamples(voiceInfo[1], channelMap[1], offsetInFrames * 2 + 1, 2, todoInFrames, rightVolume);
-			}
-			else
-			{
-				int volume = voiceInfo[0].Enabled ? MasterVolume : 0;
-
-				AddPlayerSamples(voiceInfo[0], channelMap[0], offsetInFrames, 1, todoInFrames, volume);
-			}*///XX
+			for (int i = 0; i < virtualChannelCount; i++)
+				AddPlayerSamples(voiceInfo[i], channelMap[i][i], offsetInFrames, todoInFrames);
 		}
 
 
@@ -82,7 +71,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/********************************************************************/
 		public override void ConvertMixedData(int[] buffer, int todoInFrames)
 		{
-//XX			MixConvertTo32(currentMixerInfo, MemoryMarshal.Cast<byte, int>(dest), offsetInBytes / 4, source, todoInFrames * currentMixerInfo.MixerChannels, samplesToSkip);
 		}
 		#endregion
 
@@ -92,7 +80,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Convert the output from the player to 32-bit samples
 		/// </summary>
 		/********************************************************************/
-		private void AddPlayerSamples(VoiceInfo vnf, int[] dest, int destOffsetInSamples, int destSkip, int todoInSamples, int vol)
+		private void AddPlayerSamples(VoiceInfo vnf, int[] mixingBuffer, int offsetInFrames, int todoInFrames)
 		{
 			VoiceSampleInfo vsi = vnf.SampleInfo;
 
@@ -103,9 +91,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				vnf.Active = true;
 			}
 
-			int countInSamples = Math.Min(todoInSamples, (int)vsi.Sample.Length - (int)vnf.Current);
-			if (countInSamples > 0)
+			int countInFrames = Math.Min(todoInFrames, (int)vsi.Sample.Length - (int)vnf.Current);
+			if (countInFrames > 0)
 			{
+				int vol = vnf.Enabled ? MasterVolume : 0;
 				vol *= 128;
 
 				if ((vsi.Flags & SampleFlag._16Bits) != 0)
@@ -113,129 +102,22 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					// 16-bit
 					Span<short> source = SampleHelper.ConvertSampleTypeTo16Bit(vsi.Sample.SampleData, 0);
 
-					for (int i = (int)vnf.Current; i < vnf.Current + countInSamples; i++)
-					{
-						dest[destOffsetInSamples] = (int)((((long)source[i] << 16) * vol) / 32768);
-						destOffsetInSamples += destSkip;
-					}
+					for (int i = (int)vnf.Current; i < (vnf.Current + countInFrames); i++)
+						mixingBuffer[offsetInFrames++] = (int)((((long)source[i] << 16) * vol) / 32768);
 
-					vnf.Current += countInSamples;
+					vnf.Current += countInFrames;
 				}
 				else
 				{
 					// 8-bit
 					Span<sbyte> source = SampleHelper.ConvertSampleTypeTo8Bit(vsi.Sample.SampleData, 0);
 
-					for (int i = (int)vnf.Current; i < vnf.Current + countInSamples; i++)
-					{
-						dest[destOffsetInSamples] = (int)((((long)source[i] << 32) * vol) / 32768);
-						destOffsetInSamples += destSkip;
-					}
+					for (int i = (int)vnf.Current; i < (vnf.Current + countInFrames); i++)
+						mixingBuffer[offsetInFrames++] = (int)((((long)source[i] << 32) * vol) / 32768);
 
-					vnf.Current += countInSamples;
+					vnf.Current += countInFrames;
 				}
 			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Converts the mixed data to a 32 bit sample buffer
-		/// </summary>
-		/********************************************************************/
-		private void MixConvertTo32(MixerInfo currentMixerInfo, Span<int> dest, int offsetInSamples, int[] source, int countInSamples, int samplesToSkip)
-		{
-/*			int x1, x2, x3, x4;
-			int remain;
-
-			int sourceOffset = 0;
-
-			if (currentMixerInfo.SwapSpeakers)
-			{
-				if (samplesToSkip == 0)
-				{
-					remain = countInSamples & 3;
-
-					for (countInSamples >>= 2; countInSamples != 0; countInSamples--)
-					{
-						x1 = source[sourceOffset++];
-						x2 = source[sourceOffset++];
-						x3 = source[sourceOffset++];
-						x4 = source[sourceOffset++];
-
-						dest[offsetInSamples++] = x2;
-						dest[offsetInSamples++] = x1;
-						dest[offsetInSamples++] = x4;
-						dest[offsetInSamples++] = x3;
-					}
-				}
-				else
-				{
-					remain = countInSamples & 1;
-
-					for (countInSamples >>= 1; countInSamples != 0; countInSamples--)
-					{
-						x1 = source[sourceOffset++];
-						x2 = source[sourceOffset++];
-
-						dest[offsetInSamples++] = x2;
-						dest[offsetInSamples++] = x1;
-
-						for (int i = 0; i < samplesToSkip; i++)
-							dest[offsetInSamples++] = 0;
-					}
-				}
-			}
-			else
-			{
-				if (currentMixerInfo.MixerChannels == 2)
-				{
-					if (samplesToSkip == 0)
-					{
-						remain = countInSamples & 3;
-
-						for (countInSamples >>= 2; countInSamples != 0; countInSamples--)
-						{
-							x1 = source[sourceOffset++];
-							x2 = source[sourceOffset++];
-							x3 = source[sourceOffset++];
-							x4 = source[sourceOffset++];
-
-							dest[offsetInSamples++] = x1;
-							dest[offsetInSamples++] = x2;
-							dest[offsetInSamples++] = x3;
-							dest[offsetInSamples++] = x4;
-						}
-					}
-					else
-					{
-						remain = countInSamples & 1;
-
-						for (countInSamples >>= 1; countInSamples != 0; countInSamples--)
-						{
-							x1 = source[sourceOffset++];
-							x2 = source[sourceOffset++];
-
-							dest[offsetInSamples++] = x1;
-							dest[offsetInSamples++] = x2;
-
-							for (int i = 0; i < samplesToSkip; i++)
-								dest[offsetInSamples++] = 0;
-						}
-					}
-				}
-				else
-				{
-					remain = 0;
-
-					for (; countInSamples != 0; countInSamples--)
-						dest[offsetInSamples++] = source[sourceOffset++];
-				}
-			}
-
-			while (remain-- != 0)
-				dest[offsetInSamples++] = source[sourceOffset++];*///XX
 		}
 		#endregion
 	}

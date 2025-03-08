@@ -19,17 +19,31 @@ namespace Polycode.NostalgicPlayer.Kit.Containers.Flags
 		None = 0,
 
 		/// <summary>
-		/// Set this if your player can change to a certain position. You also
-		/// need to implement SetSongPosition() in the IDurationPlayer interface
+		/// Set this if your player can change to a certain position. You
+		/// also need to implement SetSongPosition() in the IDurationPlayer
+		/// interface
 		/// </summary>
 		SetPosition = 0x0001,
 
 		/// <summary>
 		/// If this flag is set, the player is switched to buffer mode,
 		/// which means your Play() method will only be called, when a
-		/// new buffer needs to be set
+		/// new buffer needs to be set. The player will have a buffer
+		/// for each channel, but need to handle sample looping etc.
+		/// by itself
 		/// </summary>
 		BufferMode = 0x0100,
+
+		/// <summary>
+		/// If this flag is set together with BufferMode, the buffer mode
+		/// goes into direct mode.
+		///
+		/// That means, your output goes around NostalgicPlayer mixer, so the
+		/// player need to do the mixing itself and output samples in the
+		/// right frequency. You will get that information via the
+		/// SetOutputFormat() method in your player
+		/// </summary>
+		BufferDirect = 0x0200,
 
 		/// <summary>
 		/// This flag can only be used together with BufferMode.
@@ -42,22 +56,12 @@ namespace Polycode.NostalgicPlayer.Kit.Containers.Flags
 		/// the needed information to give to the visualizers about what
 		/// happens on the different channels
 		/// </summary>
-		Visualize = 0x0200,
+		Visualize = 0x1000,
 
 		/// <summary>
-		/// If this flag is set together with BufferMode, the buffer mode
-		/// goes into direct mode.
-		///
-		/// That means, your output goes around NostalgicPlayer mixer, so the
-		/// output samples need to be in the right frequency and either in
-		/// mono or stereo. You will get that information via the SetOutputFormat()
-		/// method in your player
-		/// </summary>
-		BufferDirect = 0x1000,
-
-		/// <summary>
-		/// This flag can only be set together with BufferDirect. It indicate, that
-		/// you have your own enable/disable channel implementation
+		/// This flag can only be set together with BufferDirect. It
+		/// indicate, that you have your own enable/disable channel
+		/// implementation
 		/// </summary>
 		EnableChannels = 0x2000
 	}
