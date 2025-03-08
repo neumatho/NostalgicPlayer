@@ -55,13 +55,13 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Convert the mixing buffers to output format
 		/// </summary>
 		/********************************************************************/
-		public void ConvertToOutputFormat(MixerBufferInfo[] mixingBuffers, Span<int> outputBuffer, int todoInFrames, int[] channelMapping, int outputChannelCount)
+		public void ConvertToOutputFormat(int[][] mixingBuffers, Span<int> outputBuffer, int todoInFrames, int[] channelMapping, int outputChannelCount)
 		{
 			if (outputChannelCount == 1)
 			{
 				// Mono
-				int[] sourceBuffer1 = mixingBuffers[0].Buffer;
-				int[] sourceBuffer2 = mixingBuffers[1].Buffer;
+				int[] sourceBuffer1 = mixingBuffers[0];
+				int[] sourceBuffer2 = mixingBuffers[1];
 
 				for (int i = 0; i < todoInFrames; i++)
 					outputBuffer[i] = (int)(((long)sourceBuffer1[i] + sourceBuffer2[i]) * 0.707f);
@@ -69,8 +69,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			else
 			{
 				// Stereo or above
-				int[] sourceBuffer1 = mixingBuffers[channelMapping[0]].Buffer;
-				int[] sourceBuffer2 = mixingBuffers[channelMapping[1]].Buffer;
+				int[] sourceBuffer1 = mixingBuffers[channelMapping[0]];
+				int[] sourceBuffer2 = mixingBuffers[channelMapping[1]];
 
 				for (int i = 0, j = 0; i < todoInFrames; i++, j += outputChannelCount)
 				{

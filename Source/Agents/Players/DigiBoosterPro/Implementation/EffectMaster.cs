@@ -21,9 +21,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		{
 			public EchoArguments Arguments;
 			public uint MixerFrequency;
-			public bool StereoMode;
 
-			public short[] DelayLine;				// Echo delay line
+			public short[][] DelayLine;				// Echo delay line
 			public int BufferSize;					// Delay line length in frames
 			public int WritePos;					// Current write position in the delay line
 			public int DelayTime;					// In frames
@@ -163,23 +162,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// Will add effects to a channel group
 		/// </summary>
 		/********************************************************************/
-		public void AddChannelGroupEffects(int group, int[] dest, int todoInFrames, uint mixerFrequency, bool stereo)
+		public void AddChannelGroupEffects(int group, int[][] dest, int todoInFrames, uint mixerFrequency)
 		{
 			if (effectGroups.TryGetValue(group, out EffectGroupInfo effectGroupInfo))
 			{
-				if ((effectGroupInfo.DelayLine == null) || (mixerFrequency != effectGroupInfo.MixerFrequency) || (stereo != effectGroupInfo.StereoMode))
+				if ((effectGroupInfo.DelayLine == null) || (mixerFrequency != effectGroupInfo.MixerFrequency))
 				{
 					effectGroupInfo.MixerFrequency = mixerFrequency;
-					effectGroupInfo.StereoMode = stereo;
 
 					InitializeBuffer(effectGroupInfo);
 					RecalculateCoefficients(effectGroupInfo);
 				}
 
-				if (effectGroupInfo.StereoMode)
-					DoEchoStereo(effectGroupInfo, dest, todoInFrames);
-				else
-					DoEchoMono(effectGroupInfo, dest, todoInFrames);
+				DoEcho(effectGroupInfo, dest, todoInFrames);
 			}
 		}
 
@@ -190,7 +185,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 		/// Will add effects to the final mixed output
 		/// </summary>
 		/********************************************************************/
-		public void AddGlobalEffects(int[] dest, int todoInFrames, uint mixerFrequency, bool stereo)
+		public void AddGlobalEffects(int[][] dest, int todoInFrames, uint mixerFrequency)
 		{
 		}
 		#endregion
@@ -244,7 +239,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 			// 16 bytes (4 stereo frames) for SIMD
 			effectGroupInfo.BufferSize = (int)(((effectGroupInfo.MixerFrequency >> 1) + (effectGroupInfo.MixerFrequency >> 6) + 3) & ~4);
 
-			effectGroupInfo.DelayLine = new short[effectGroupInfo.BufferSize * (effectGroupInfo.StereoMode ? 2 : 1)];
+			effectGroupInfo.DelayLine = ArrayHelper.Initialize2Arrays<short>(2, effectGroupInfo.BufferSize);
 			effectGroupInfo.WritePos = 0;
 		}
 
@@ -271,10 +266,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 
 		/********************************************************************/
 		/// <summary>
-		/// Will add the echo effect on the given mono buffer
+		/// Will add the echo effect on the given buffer
 		/// </summary>
 		/********************************************************************/
-		private void DoEchoMono(EffectGroupInfo effectGroupInfo, int[] dest, int todoInFrames)
+		private void DoEcho(EffectGroupInfo effectGroupInfo, int[][] dest, int todoInFrames)
 		{
 			int bufferOffset = 0;
 
@@ -284,52 +279,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 				if (readPos < 0)
 					readPos += effectGroupInfo.BufferSize;
 
-				int delayOffset = readPos;
-
 				// Calculation of samples being stored in the delay line
-				int sample = dest[bufferOffset] >> 16;
-				int sampleDelay = effectGroupInfo.DelayLine[delayOffset];
-
-				int a = sample * effectGroupInfo.NCrossNBack;
-				a += sampleDelay * effectGroupInfo.NCrossPBack;
-
-				effectGroupInfo.DelayLine[effectGroupInfo.WritePos] = (short)(a >> 16);
-
-				effectGroupInfo.WritePos++;
-				if (effectGroupInfo.WritePos == effectGroupInfo.BufferSize)
-					effectGroupInfo.WritePos = 0;
-
-				// Output samples now
-				dest[bufferOffset++] = ((sample * effectGroupInfo.NMix + sampleDelay * effectGroupInfo.PMix) >> 8) << 16;
-
-				todoInFrames--;
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will add the echo effect on the given stereo buffer
-		/// </summary>
-		/********************************************************************/
-		private void DoEchoStereo(EffectGroupInfo effectGroupInfo, int[] dest, int todoInFrames)
-		{
-			int bufferOffset = 0;
-
-			while (todoInFrames > 0)
-			{
-				int readPos = effectGroupInfo.WritePos - effectGroupInfo.DelayTime;
-				if (readPos < 0)
-					readPos += effectGroupInfo.BufferSize;
-
-				int delayOffset = readPos << 1;
-
-				// Calculation of samples being stored in the delay line
-				int left = dest[bufferOffset] >> 16;
-				int right = dest[bufferOffset + 1] >> 16;
-				int leftDelay = effectGroupInfo.DelayLine[delayOffset++];
-				int rightDelay = effectGroupInfo.DelayLine[delayOffset];
+				int left = dest[0][bufferOffset] >> 16;
+				int right = dest[1][bufferOffset] >> 16;
+				int leftDelay = effectGroupInfo.DelayLine[0][readPos];
+				int rightDelay = effectGroupInfo.DelayLine[1][readPos];
 
 				int al = left * effectGroupInfo.NCrossNBack;
 				al += right * effectGroupInfo.PCrossNBack;
@@ -341,16 +295,16 @@ namespace Polycode.NostalgicPlayer.Agent.Player.DigiBoosterPro.Implementation
 				ar += rightDelay * effectGroupInfo.NCrossPBack;
 				ar += leftDelay * effectGroupInfo.PCrossPBack;
 
-				effectGroupInfo.DelayLine[effectGroupInfo.WritePos << 1] = (short)(al >> 16);
-				effectGroupInfo.DelayLine[(effectGroupInfo.WritePos << 1) + 1] = (short)(ar >> 16);
+				effectGroupInfo.DelayLine[0][effectGroupInfo.WritePos] = (short)(al >> 16);
+				effectGroupInfo.DelayLine[1][effectGroupInfo.WritePos] = (short)(ar >> 16);
 
 				effectGroupInfo.WritePos++;
 				if (effectGroupInfo.WritePos == effectGroupInfo.BufferSize)
 					effectGroupInfo.WritePos = 0;
 
 				// Output samples now
-				dest[bufferOffset++] = ((left * effectGroupInfo.NMix + leftDelay * effectGroupInfo.PMix) >> 8) << 16;
-				dest[bufferOffset++] = ((right * effectGroupInfo.NMix + rightDelay * effectGroupInfo.PMix) >> 8) << 16;
+				dest[0][bufferOffset] = ((left * effectGroupInfo.NMix + leftDelay * effectGroupInfo.PMix) >> 8) << 16;
+				dest[1][bufferOffset++] = ((right * effectGroupInfo.NMix + rightDelay * effectGroupInfo.PMix) >> 8) << 16;
 
 				todoInFrames--;
 			}

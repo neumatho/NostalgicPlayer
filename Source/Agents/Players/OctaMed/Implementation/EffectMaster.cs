@@ -169,10 +169,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// Will add effects to a channel group
 		/// </summary>
 		/********************************************************************/
-		public void AddChannelGroupEffects(int group, int[] dest, int todoInFrames, uint mixerFrequency, bool stereo)
+		public void AddChannelGroupEffects(int group, int[][] dest, int todoInFrames, uint mixerFrequency)
 		{
 			EffectGroup effectGroup = GetGroup(group);
-			effectGroup?.DoEffects(dest, todoInFrames, mixerFrequency, stereo);
+			effectGroup?.DoEffects(dest, todoInFrames, mixerFrequency);
 		}
 
 
@@ -182,10 +182,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// Will add effects to the final mixed output
 		/// </summary>
 		/********************************************************************/
-		public void AddGlobalEffects(int[] dest, int todoInFrames, uint mixerFrequency, bool stereo)
+		public void AddGlobalEffects(int[][] dest, int todoInFrames, uint mixerFrequency)
 		{
 			if (groups.Count == 1)
-				GlobalGroup.DoEffects(dest, todoInFrames, mixerFrequency, stereo);
+				GlobalGroup.DoEffects(dest, todoInFrames, mixerFrequency);
 		}
 		#endregion
 

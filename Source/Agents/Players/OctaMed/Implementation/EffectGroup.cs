@@ -17,14 +17,13 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 	{
 		private SubSong subSong;
 		private uint lastMixerFrequency;
-		private bool lastStereoMode;
 
 		private string name;
 
 		private EchoMode echoMode;
 		private byte echoDepth;
 		private ushort echoLength;
-		private int[] echoBuffer;
+		private int[][] echoBuffer;
 		private int echoPosition;
 
 		private sbyte stereoSeparator;
@@ -144,12 +143,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// Will add DSP effect to the mixed output
 		/// </summary>
 		/********************************************************************/
-		public void DoEffects(int[] dest, int todoInFrames, uint mixerFrequency, bool stereo)
+		public void DoEffects(int[][] dest, int todoInFrames, uint mixerFrequency)
 		{
 			if (echoMode != EchoMode.None)
-				DoEcho(dest, todoInFrames, mixerFrequency, stereo);
+				DoEcho(dest, todoInFrames, mixerFrequency);
 
-			if (stereo && (stereoSeparator != 0) && subSong.GetStereo())
+			if ((stereoSeparator != 0) && subSong.GetStereo())
 				DoStereoSeparation(dest, todoInFrames);
 		}
 
@@ -176,40 +175,29 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// Apply echo to the output
 		/// </summary>
 		/********************************************************************/
-		private void DoEcho(int[] dest, int todoInFrames, uint mixerFrequency, bool stereo)
+		private void DoEcho(int[][] dest, int todoInFrames, uint mixerFrequency)
 		{
 			if ((echoLength > 0) && (echoDepth > 0))
 			{
-				if ((echoBuffer == null) || (mixerFrequency != lastMixerFrequency) || (stereo != lastStereoMode))
+				if ((echoBuffer == null) || (mixerFrequency != lastMixerFrequency))
 				{
 					uint bufLen = echoLength * mixerFrequency / 1000;
-					if (stereo)
-						bufLen *= 2;
 
-					echoBuffer = new int[bufLen];
+					echoBuffer = ArrayHelper.Initialize2Arrays<int>(2, (int)bufLen);
 					lastMixerFrequency = mixerFrequency;
-					lastStereoMode = stereo;
 				}
 
 				switch (echoMode)
 				{
 					case EchoMode.Normal:
 					{
-						if (stereo)
-							DoNormalEchoStereo(dest, todoInFrames);
-						else
-							DoNormalEchoMono(dest, todoInFrames);
-
+						DoNormalEcho(dest, todoInFrames);
 						break;
 					}
 
 					case EchoMode.CrossEcho:
 					{
-						if (stereo)
-							DoCrossEchoStereo(dest, todoInFrames);
-						else
-							DoNormalEchoMono(dest, todoInFrames);
-
+						DoCrossEcho(dest, todoInFrames);
 						break;
 					}
 				}
@@ -220,26 +208,30 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 
 		/********************************************************************/
 		/// <summary>
-		/// Apply normal echo to the mono output
+		/// Apply normal echo to the output
 		/// </summary>
 		/********************************************************************/
-		private void DoNormalEchoMono(int[] dest, int todoInFrames)
+		private void DoNormalEcho(int[][] dest, int todoInFrames)
 		{
 			int copied = 0;
+			int echoBufferLength = echoBuffer[0].Length;
 
 			while (copied < todoInFrames)
 			{
-				if (echoPosition >= echoBuffer.Length)
+				if (echoPosition >= echoBufferLength)
 					echoPosition = 0;
 
-				int toCopy = Math.Min(todoInFrames - copied, echoBuffer.Length - echoPosition);
+				int toCopy = Math.Min(todoInFrames - copied, echoBufferLength - echoPosition);
 				if (toCopy == 0)
 					break;
 
 				for (int i = 0; i < toCopy; i++)
 				{
-					dest[copied] += echoBuffer[echoPosition] >> echoDepth;
-					echoBuffer[echoPosition++] = dest[copied++];
+					dest[0][copied] += echoBuffer[0][echoPosition] >> echoDepth;
+					echoBuffer[0][echoPosition] = dest[0][copied];
+
+					dest[1][copied] += echoBuffer[1][echoPosition] >> echoDepth;
+					echoBuffer[1][echoPosition++] = dest[1][copied++];
 				}
 			}
 		}
@@ -248,62 +240,30 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 
 		/********************************************************************/
 		/// <summary>
-		/// Apply normal echo to the stereo output
+		/// Apply cross echo to the output
 		/// </summary>
 		/********************************************************************/
-		private void DoNormalEchoStereo(int[] dest, int todoInFrames)
+		private void DoCrossEcho(int[][] dest, int todoInFrames)
 		{
 			int copied = 0;
-			int todoInSamples = todoInFrames * 2;
+			int echoBufferLength = echoBuffer[0].Length;
 
-			while (copied < todoInSamples)
+			while (copied < todoInFrames)
 			{
-				if (echoPosition >= echoBuffer.Length)
+				if (echoPosition >= echoBufferLength)
 					echoPosition = 0;
 
-				int toCopy = Math.Min(todoInSamples - copied, echoBuffer.Length - echoPosition) / 2;
+				int toCopy = Math.Min(todoInFrames - copied, echoBufferLength - echoPosition);
 				if (toCopy == 0)
 					break;
 
 				for (int i = 0; i < toCopy; i++)
 				{
-					dest[copied] += echoBuffer[echoPosition] >> echoDepth;
-					echoBuffer[echoPosition++] = dest[copied++];
+					dest[0][copied] += echoBuffer[1][echoPosition] >> echoDepth;
+					dest[1][copied] += echoBuffer[0][echoPosition] >> echoDepth;
 
-					dest[copied] += echoBuffer[echoPosition] >> echoDepth;
-					echoBuffer[echoPosition++] = dest[copied++];
-				}
-			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Apply cross echo to the stereo output
-		/// </summary>
-		/********************************************************************/
-		private void DoCrossEchoStereo(int[] dest, int todoInFrames)
-		{
-			int copied = 0;
-			int todoInSamples = todoInFrames * 2;
-
-			while (copied < todoInSamples)
-			{
-				if (echoPosition >= echoBuffer.Length)
-					echoPosition = 0;
-
-				int toCopy = Math.Min(todoInSamples - copied, echoBuffer.Length - echoPosition) / 2;
-				if (toCopy == 0)
-					break;
-
-				for (int i = 0; i < toCopy; i++)
-				{
-					dest[copied] += echoBuffer[echoPosition + 1] >> echoDepth;
-					dest[copied + 1] += echoBuffer[echoPosition] >> echoDepth;
-
-					echoBuffer[echoPosition++] = dest[copied++];
-					echoBuffer[echoPosition++] = dest[copied++];
+					echoBuffer[0][echoPosition] = dest[0][copied];
+					echoBuffer[1][echoPosition++] = dest[1][copied++];
 				}
 			}
 		}
@@ -315,32 +275,32 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 		/// Apply stereo separation to the output
 		/// </summary>
 		/********************************************************************/
-		private void DoStereoSeparation(int[] dest, int todoInFrames)
+		private void DoStereoSeparation(int[][] dest, int todoInFrames)
 		{
 			if (stereoSeparator < 0)
 			{
 				int shift = stereoSeparator + 5;
 
-				for (int i = 0, j = 0; i < todoInFrames; i++, j += 2)
+				for (int i = 0; i < todoInFrames; i++)
 				{
-					int left = dest[j];
-					int right = dest[j + 1];
+					int left = dest[0][i];
+					int right = dest[1][i];
 
-					dest[j] += right >> shift;
-					dest[j + 1] += left >> shift;
+					dest[0][i] += right >> shift;
+					dest[1][i] += left >> shift;
 				}
 			}
 			else
 			{
 				int shift = 5 - stereoSeparator;
 
-				for (int i = 0, j = 0; i < todoInFrames; i++, j += 2)
+				for (int i = 0; i < todoInFrames; i++)
 				{
-					int left = dest[j];
-					int right = dest[j + 1];
+					int left = dest[0][i];
+					int right = dest[1][i];
 
-					dest[j] -= right >> shift;
-					dest[j + 1] -= left >> shift;
+					dest[0][i] -= right >> shift;
+					dest[1][i] -= left >> shift;
 				}
 			}
 		}
