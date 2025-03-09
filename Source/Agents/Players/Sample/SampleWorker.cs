@@ -8,6 +8,7 @@ using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 {
@@ -21,6 +22,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		private LoadSampleFormatInfo formatInfo;
 
 		private long totalLength;
+
+		private int[] decodeBuffer;
 
 		/********************************************************************/
 		/// <summary>
@@ -178,6 +181,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		/********************************************************************/
 		public override void CleanupPlayer()
 		{
+			decodeBuffer = null;
+
 			loaderAgent.CleanupLoader();
 
 			base.CleanupPlayer();
@@ -209,12 +214,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 		/// given
 		/// </summary>
 		/********************************************************************/
-		public override int LoadDataBlock(int[] outputBuffer, int count)
+		public override int LoadDataBlock(int[][] outputBuffer, int countInFrames)
 		{
-			// Load the next block of data
-			int filled = loaderAgent.LoadData(modStream, outputBuffer, count, formatInfo);
+			// Allocate/reallocate decode buffer if needed
+			if ((decodeBuffer == null) || ((countInFrames * formatInfo.Channels) > decodeBuffer.Length))
+				decodeBuffer = new int[countInFrames * formatInfo.Channels];
 
-			if (filled == 0)
+			// Load the next block of data
+			int filledInSamples = loaderAgent.LoadData(modStream, decodeBuffer, countInFrames * formatInfo.Channels, formatInfo);
+			int filledInFrames = filledInSamples / formatInfo.Channels;
+
+			if (filledInSamples > 0)
+				SoundHelper.SplitBuffer(formatInfo.Channels, decodeBuffer, outputBuffer, filledInFrames);
+			else
 			{
 				OnEndReached();
 
@@ -225,7 +237,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 					loaderAgent.SetSamplePosition(modStream, 0, formatInfo);
 			}
 
-			return filled;
+			return filledInFrames;
 		}
 
 

@@ -6,12 +6,12 @@
 using System;
 using Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers;
 
-namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
+namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 {
 	/// <summary>
 	/// Helper class to convert between mixer buffers to output buffers
 	/// </summary>
-	internal class MixerConverter
+	internal class ChannelConverter
 	{
 		/********************************************************************/
 		/// <summary>
@@ -23,25 +23,32 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		{
 			int[] mapping = new int[mixerChannelCount];
 
-			// Currently, I know that the mixingChannelCount is always 2,
-			// so I can optimize the code a bit. This will change when
-			// supporting more than 2 channels from a player
-			if (outputChannelCount == 1)
+			if (mixerChannelCount == 1)
 			{
 				mapping[0] = 0;
-				mapping[1] = 0;
 			}
 			else
 			{
-				if (currentMixerInfo.SwapSpeakers)
+				// Currently, I know that the mixingChannelCount is always 2,
+				// so I can optimize the code a bit. This will change when
+				// supporting more than 2 channels from a player
+				if (outputChannelCount == 1)
 				{
-					mapping[0] = 1;
+					mapping[0] = 0;
 					mapping[1] = 0;
 				}
 				else
 				{
-					mapping[0] = 0;
-					mapping[1] = 1;
+					if (currentMixerInfo.SwapSpeakers)
+					{
+						mapping[0] = 1;
+						mapping[1] = 0;
+					}
+					else
+					{
+						mapping[0] = 0;
+						mapping[1] = 1;
+					}
 				}
 			}
 
@@ -57,7 +64,32 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/********************************************************************/
 		public void ConvertToOutputFormat(int[][] mixingBuffers, Span<int> outputBuffer, int todoInFrames, int[] channelMapping, int outputChannelCount)
 		{
-			if (outputChannelCount == 1)
+			if (channelMapping.Length == 1)
+			{
+				if (outputChannelCount == 1)
+				{
+					// Mono
+					int[] sourceBuffer = mixingBuffers[0];
+
+					for (int i = 0; i < todoInFrames; i++)
+						outputBuffer[i] = sourceBuffer[i];
+				}
+				else
+				{
+					// Stereo or above
+					int[] sourceBuffer = mixingBuffers[channelMapping[0]];
+
+					for (int i = 0, j = 0; i < todoInFrames; i++, j += outputChannelCount)
+					{
+						outputBuffer[j] = sourceBuffer[i];
+						outputBuffer[j + 1] = sourceBuffer[i];
+
+						for (int k = 2; k < outputChannelCount; k++)
+							outputBuffer[j + k] = 0;
+					}
+				}
+			}
+			else if (outputChannelCount == 1)
 			{
 				// Mono
 				int[] sourceBuffer1 = mixingBuffers[0];

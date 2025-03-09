@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		private bool playing;
 
 		private MixerBase currentMixer;
-		private MixerConverter converter;
+		private ChannelConverter converter;
 		private Visualizer currentVisualizer;
 		private AmigaFilter amigaFilter;
 
@@ -120,7 +120,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				currentVisualizer = new Visualizer();
 
 				// Allocate mixer to use
-				converter = new MixerConverter();
+				converter = new ChannelConverter();
 
 				if (bufferDirect)
 					currentMixer = new MixerBufferDirect();
@@ -651,10 +651,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					{
 						// Check all the channels to see if they are still active and
 						// enable/disable the channels depending on the user settings
-						for (int t = 0, cnt = Math.Min(virtualChannelCount, currentMixerInfo.ChannelsEnabled.Length); t < cnt; t++)
+						for (int t = 0; t < virtualChannelCount; t++)
 						{
 							((ChannelParser)currentPlayer.VirtualChannels[t]).Active(currentMixer.IsActive(t));
-							currentMixer.EnableChannel(t, currentMixerInfo.ChannelsEnabled[t]);
+
+							if (t < currentMixerInfo.ChannelsEnabled.Length)
+								currentMixer.EnableChannel(t, currentMixerInfo.ChannelsEnabled[t]);
 						}
 					}
 				}

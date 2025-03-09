@@ -48,7 +48,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// Will load and decode a data block and store it in the buffer
 		/// given
 		/// </summary>
-		int LoadDataBlock(int[] outputBuffer, int count);
+		int LoadDataBlock(int[][] outputBuffer, int countInFrames);
 
 		/// <summary>
 		/// Return the number of channels the sample uses

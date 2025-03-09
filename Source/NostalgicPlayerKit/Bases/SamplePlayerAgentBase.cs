@@ -97,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 		/// given
 		/// </summary>
 		/********************************************************************/
-		public abstract int LoadDataBlock(int[] outputBuffer, int count);
+		public abstract int LoadDataBlock(int[][] outputBuffer, int countInFrames);
 
 
 

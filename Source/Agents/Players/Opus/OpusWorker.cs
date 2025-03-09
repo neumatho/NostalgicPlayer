@@ -370,12 +370,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Opus
 		/// given
 		/// </summary>
 		/********************************************************************/
-		public override int LoadDataBlock(int[] outputBuffer, int count)
+		public override int LoadDataBlock(int[][] outputBuffer, int countInFrames)
 		{
 			// Load the next block of data
-			int filled = LoadData(outputBuffer, count);
+			int filledInFrames = LoadData(outputBuffer, countInFrames);
 
-			if (filled == 0)
+			if (filledInFrames == 0)
 			{
 				OnEndReached();
 
@@ -393,7 +393,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Opus
 				OnModuleInfoChanged(InfoBitRateLine, bitRate.ToString());
 			}
 
-			return filled;
+			return filledInFrames;
 		}
 
 
@@ -500,32 +500,36 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Opus
 		/// Read next block of data
 		/// </summary>
 		/********************************************************************/
-		private int LoadData(int[] outputBuffer, int count)
+		private int LoadData(int[][] outputBuffer, int countInFrames)
 		{
 			int offset = 0;
-			int total = 0;
+			int totalInFrames = 0;
 
-			while (count > 0)
+			while (countInFrames > 0)
 			{
-				int todo = Math.Min(count, inputBuffer.Length);
-				int done = opusFile.Op_Read_Float(inputBuffer, todo, out _);
+				int todoInFrames = Math.Min(countInFrames, inputBuffer.Length);
+				int done = opusFile.Op_Read_Float(inputBuffer, todoInFrames, out _);
 				if (done == (int)OpusFileError.Hole)
 					continue;
 
 				if (done <= 0)
 					break;
 
-				done *= channels;
-
 				// Convert the floats into 32-bit integers
-				for (int i = 0; i < done; i++)
-					outputBuffer[offset++] = Math.Clamp((int)(inputBuffer[i] * 0x8000000), -0x8000000, 0x7ffffff) << 4;
+				for (int i = 0; i < channels; i++)
+				{
+					int[] outBuffer = outputBuffer[i];
 
-				count -= done;
-				total += done;
+					for (int j = 0, inOffset = i; j < done; j++, inOffset += channels)
+						outBuffer[offset + j] = Math.Clamp((int)(inputBuffer[inOffset] * 0x8000000), -0x8000000, 0x7ffffff) << 4;
+				}
+
+				offset += done;
+				countInFrames -= done;
+				totalInFrames += done;
 			}
 
-			return total;
+			return totalInFrames;
 		}
 
 

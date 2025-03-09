@@ -384,12 +384,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 		/// given
 		/// </summary>
 		/********************************************************************/
-		public override int LoadDataBlock(int[] outputBuffer, int count)
+		public override int LoadDataBlock(int[][] outputBuffer, int countInFrames)
 		{
 			// Load the next block of data
-			int filled = LoadData(outputBuffer, count);
+			int filledInFrames = LoadData(outputBuffer, countInFrames);
 
-			if (filled == 0)
+			if (filledInFrames == 0)
 			{
 				OnEndReached();
 
@@ -412,7 +412,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 				}
 			}
 
-			return filled;
+			return filledInFrames;
 		}
 
 
@@ -677,14 +677,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 		/// Read next block of data
 		/// </summary>
 		/********************************************************************/
-		private int LoadData(int[] outputBuffer, int count)
+		private int LoadData(int[][] outputBuffer, int countInFrames)
 		{
 			int offset = 0;
-			int total = 0;
+			int totalInFrames = 0;
 
-			while (count > 0)
+			while (countInFrames > 0)
 			{
-				int done = vorbisFile.Ov_Read_Float(out CPointer<float>[] buffer, count / channels, out _);
+				int done = vorbisFile.Ov_Read_Float(out CPointer<float>[] buffer, countInFrames, out _);
 				if (done == (int)VorbisError.Hole)
 					continue;
 
@@ -692,17 +692,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 					break;
 
 				// Convert the floats into 32-bit integers
-				for (int i = 0; i < done; i++)
+				for (int i = 0; i < channels; i++)
 				{
-					for (int j = 0; j < channels; j++)
-						outputBuffer[offset++] = Math.Clamp((int)(buffer[j][i] * 0x8000000), -0x8000000, 0x7ffffff) << 4;
+					CPointer<float> inBuffer = buffer[i];
+					int[] outBuffer = outputBuffer[i];
+
+					for (int j = 0; j < done; j++)
+						outBuffer[offset + j] = Math.Clamp((int)(inBuffer[j] * 0x8000000), -0x8000000, 0x7ffffff) << 4;
 				}
 
-				count -= done * channels;
-				total += done * channels;
+				offset += done;
+				countInFrames -= done;
+				totalInFrames += done;
 			}
 
-			return total;
+			return totalInFrames;
 		}
 		#endregion
 	}

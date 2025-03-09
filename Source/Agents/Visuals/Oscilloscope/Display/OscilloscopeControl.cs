@@ -68,7 +68,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
 		{
 			lock (this)
 			{
-				if (sampleData.ChannelCount >= 2)
+				if (sampleData.ChannelMapping.Length >= 2)
 				{
 					leftSpeakerOscilloscopeControl.DrawSample(sampleData.SampleData, sampleData.ChannelMapping[0], sampleData.ChannelCount);
 					rightSpeakerOscilloscopeControl.DrawSample(sampleData.SampleData, sampleData.ChannelMapping[1], sampleData.ChannelCount);

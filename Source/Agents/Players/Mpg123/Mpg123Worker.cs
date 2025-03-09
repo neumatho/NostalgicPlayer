@@ -15,6 +15,7 @@ using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
+using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.Ports.LibMpg123;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
@@ -49,6 +50,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		private PictureInfo[] pictures;
 
 		private LibMpg123 mpg123Handle;
+
+		private int[] decodeBuffer;
 
 		private const int InfoBitRateLine = 6;
 
@@ -434,6 +437,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		/********************************************************************/
 		public override void CleanupPlayer()
 		{
+			decodeBuffer = null;
 			frameInfo = null;
 
 			if (mpg123Handle != null)
@@ -473,12 +477,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 		/// given
 		/// </summary>
 		/********************************************************************/
-		public override int LoadDataBlock(int[] outputBuffer, int count)
+		public override int LoadDataBlock(int[][] outputBuffer, int countInFrames)
 		{
-			// Load the next block of data
-			int filled = LoadData(outputBuffer, count);
+			// Allocate/reallocate decode buffer if needed
+			int channels = ChannelCount;
 
-			if (filled == 0)
+			if ((decodeBuffer == null) || ((countInFrames * channels) > decodeBuffer.Length))
+				decodeBuffer = new int[countInFrames * channels];
+
+			// Load the next block of data
+			int filledInSamples = LoadData(decodeBuffer, countInFrames * channels);
+			int filledInFrames = filledInSamples / channels;
+
+			if (filledInSamples > 0)
+				SoundHelper.SplitBuffer(channels, decodeBuffer, outputBuffer, filledInFrames);
+			else
 			{
 				OnEndReached();
 
@@ -498,7 +511,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Mpg123
 				}
 			}
 
-			return filled;
+			return filledInFrames;
 		}
 
 

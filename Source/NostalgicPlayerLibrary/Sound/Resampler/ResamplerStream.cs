@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
@@ -235,7 +236,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 						return todoInFrames;
 					}
 
-					int framesTaken = resampler.Resampling(buffer, offsetInBytes, frameCount, out bool hasEndReached);
+					Span<int> bufferSpan = MemoryMarshal.Cast<byte, int>(buffer.AsSpan(offsetInBytes));
+					int framesTaken = resampler.Resampling(bufferSpan, frameCount, out bool hasEndReached);
 					HasEndReached = hasEndReached;
 
 					if (hasEndReached)

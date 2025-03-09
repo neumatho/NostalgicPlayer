@@ -7,7 +7,7 @@
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Player to the Ogg Vorbis samples.</Description>
-    <Version>2.1.1</Version>
+    <Version>2.1.2</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
