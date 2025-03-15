@@ -283,11 +283,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 
 				for (int i = 0; i < todoInFrames; i++)
 				{
-					int left = dest[0][i];
-					int right = dest[1][i];
+					long left = dest[0][i];
+					long right = dest[1][i];
 
-					dest[0][i] += right >> shift;
-					dest[1][i] += left >> shift;
+					long newLeft = left + (right >> shift);
+					long newRight = right + (left >> shift);
+
+					if (newLeft > int.MaxValue)
+						newLeft = int.MaxValue;
+					else if (newLeft < int.MinValue)
+						newLeft = int.MinValue;
+
+					if (newRight > int.MaxValue)
+						newRight = int.MaxValue;
+					else if (newRight < int.MinValue)
+						newRight = int.MinValue;
+
+					dest[0][i] = (int)newLeft;
+					dest[1][i] = (int)newRight;
 				}
 			}
 			else
@@ -299,8 +312,21 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation
 					int left = dest[0][i];
 					int right = dest[1][i];
 
-					dest[0][i] -= right >> shift;
-					dest[1][i] -= left >> shift;
+					long newLeft = left - (right >> shift);
+					long newRight = right - (left >> shift);
+
+					if (newLeft > int.MaxValue)
+						newLeft = int.MaxValue;
+					else if (newLeft < int.MinValue)
+						newLeft = int.MinValue;
+
+					if (newRight > int.MaxValue)
+						newRight = int.MaxValue;
+					else if (newRight < int.MinValue)
+						newRight = int.MinValue;
+
+					dest[0][i] = (int)newLeft;
+					dest[1][i] = (int)newRight;
 				}
 			}
 		}
