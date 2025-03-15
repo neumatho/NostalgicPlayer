@@ -3,6 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Collections.ObjectModel;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
+
 namespace Polycode.NostalgicPlayer.Kit.Containers
 {
 	/// <summary>
@@ -15,7 +18,7 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public NewSampleData(int[] buffer, int[] channelMapping, int channelCount)
+		public NewSampleData(int[] buffer, ReadOnlyDictionary<SpeakerFlag, int> channelMapping, int channelCount)
 		{
 			SampleData = buffer;
 			ChannelMapping = channelMapping;
@@ -38,12 +41,10 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Hold indexes for each channel into the sample data, e.g. for
-		/// normal stereo output it will be 0, 1. If speaker swapping has
-		/// been enabled, it will be 1, 0
+		/// Tells which channel each speaker use
 		/// </summary>
 		/********************************************************************/
-		public int[] ChannelMapping
+		public ReadOnlyDictionary<SpeakerFlag, int> ChannelMapping
 		{
 			get;
 		}

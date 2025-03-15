@@ -7,6 +7,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 
 namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
 {
@@ -68,10 +69,10 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
 		{
 			lock (this)
 			{
-				if (sampleData.ChannelMapping.Length >= 2)
+				if (sampleData.ChannelMapping.Count >= 2)
 				{
-					leftSpeakerOscilloscopeControl.DrawSample(sampleData.SampleData, sampleData.ChannelMapping[0], sampleData.ChannelCount);
-					rightSpeakerOscilloscopeControl.DrawSample(sampleData.SampleData, sampleData.ChannelMapping[1], sampleData.ChannelCount);
+					leftSpeakerOscilloscopeControl.DrawSample(sampleData.SampleData, sampleData.ChannelMapping[SpeakerFlag.FrontLeft], sampleData.ChannelCount);
+					rightSpeakerOscilloscopeControl.DrawSample(sampleData.SampleData, sampleData.ChannelMapping[SpeakerFlag.FrontRight], sampleData.ChannelCount);
 				}
 				else
 				{

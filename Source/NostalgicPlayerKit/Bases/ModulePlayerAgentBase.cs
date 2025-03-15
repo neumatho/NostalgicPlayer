@@ -163,6 +163,15 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Return which speakers the player uses
+		/// </summary>
+		/********************************************************************/
+		public virtual SpeakerFlag SpeakerFlags => SpeakerFlag.FrontLeft | SpeakerFlag.FrontRight;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the number of channels the module want to reserve
 		/// </summary>
 		/********************************************************************/

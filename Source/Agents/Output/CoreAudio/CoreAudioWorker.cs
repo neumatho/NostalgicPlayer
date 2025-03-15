@@ -11,8 +11,10 @@ using System.Threading;
 using NAudio.CoreAudioApi;
 using NAudio.CoreAudioApi.Interfaces;
 using NAudio.Wave;
+using Polycode.NostalgicPlayer.Agent.Output.CoreAudio.NAudio;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
@@ -311,7 +313,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 				stream?.Dispose();
 
 				int bytesPerSample = outputFormat.BitsPerSample / 8;
-				soundStream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, (outputFormat.AverageBytesPerSecond / bytesPerSample / outputFormat.Channels) * LatencyMilliseconds / 1000));
+				int bufferSizeInFrames = (outputFormat.AverageBytesPerSecond / bytesPerSample / outputFormat.Channels) * LatencyMilliseconds / 1000;
+				soundStream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, bufferSizeInFrames, (SpeakerFlag)outputFormat.ChannelMask()));
 				stream = soundStream;
 			}
 
@@ -526,7 +529,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudio
 
 					// Tell the mixer about new sample rates etc.
 					int bytesPerSample = outputFormat.BitsPerSample / 8;
-					stream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, (outputFormat.AverageBytesPerSecond / bytesPerSample / outputFormat.Channels) * LatencyMilliseconds / 1000));
+					int bufferSizeInFrames = (outputFormat.AverageBytesPerSecond / bytesPerSample / outputFormat.Channels) * LatencyMilliseconds / 1000;
+					stream.SetOutputFormat(new OutputInfo(outputFormat.Channels, outputFormat.SampleRate, bufferSizeInFrames, (SpeakerFlag)outputFormat.ChannelMask()));
 
 					playbackState = oldState;
 				}

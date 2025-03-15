@@ -27,7 +27,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 
 		private ISamplePlayerAgent currentPlayer;
 
-		private ChannelConverter converter;
+		private DownMixer downMixer;
 		private Visualizer currentVisualizer;
 
 		private int inputFrequency;
@@ -69,9 +69,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 				inputFrequency = currentPlayer.Frequency;
 				inputChannelCount = currentPlayer.ChannelCount;
 
-				// Allocate converter
-				converter = new ChannelConverter();
-
 				// Allocate the visual component
 				currentVisualizer = new Visualizer();
 
@@ -109,7 +106,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 			currentVisualizer?.Cleanup();
 			currentVisualizer = null;
 
-			converter = null;
+			downMixer = null;
 
 			lock (mixerInfoLock)
 			{
@@ -181,6 +178,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 			resampleBuffer = ArrayHelper.Initialize2Arrays<int>(inputChannelCount, bufferSizeInFrames);
 
 			currentVisualizer.SetOutputFormat(outputInformation);
+
+			lock (currentPlayer)
+			{
+				downMixer = new DownMixer(currentPlayer.SpeakerFlags, outputInformation.AvailableSpeakers);
+			}
 		}
 
 
@@ -234,13 +236,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Resampler
 			int totalFramesProcessed = ResampleSample(currentMixerInfo, framesToProcess, out hasEndReached);
 
 			// And then convert the resampled sample to the output format
-			//
-			// Build channel mapping table
-			int[] channelMapping = converter.BuildChannelMapping(currentMixerInfo, inputChannelCount, outputChannelCount);
-			converter.ConvertToOutputFormat(resampleBuffer, outputBuffer, totalFramesProcessed, channelMapping, outputChannelCount);
+			downMixer.ConvertToOutputFormat(currentMixerInfo, resampleBuffer, outputBuffer, totalFramesProcessed);
 
 			// Tell visual agents about the mixed data
-			currentVisualizer.TellAgentsAboutMixedData(outputBuffer, totalFramesProcessed, channelMapping, outputChannelCount);
+			currentVisualizer.TellAgentsAboutMixedData(outputBuffer, totalFramesProcessed, downMixer.GetVisualizersChannelMapping(currentMixerInfo), outputChannelCount);
 
 			return totalFramesProcessed;
 		}

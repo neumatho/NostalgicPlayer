@@ -5,8 +5,10 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 
@@ -26,7 +28,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		private class SampleDataInfo
 		{
 			public int[] Buffer;
-			public int[] ChannelMapping;
+			public ReadOnlyDictionary<SpeakerFlag, int> ChannelMapping;
 			public int OutputChannelCount;
 			public long TimeWhenBufferWasRendered;
 		}
@@ -250,7 +252,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		/// data
 		/// </summary>
 		/********************************************************************/
-		public void TellAgentsAboutMixedData(Span<int> buffer, int countInFrames, int[] channelMapping, int outputChannelCount)
+		public void TellAgentsAboutMixedData(Span<int> buffer, int countInFrames, ReadOnlyDictionary<SpeakerFlag, int> channelMapping, int outputChannelCount)
 		{
 			int sourceOffset = 0;
 

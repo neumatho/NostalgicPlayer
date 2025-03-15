@@ -312,7 +312,8 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 				if (outputAgentInUse == null)
 				{
 					int channels = settings.OutputType == DiskSaverSettings.OutType.Stereo ? 2 : 1;
-					soundStream.SetOutputFormat(new OutputInfo(channels, settings.OutputFrequency, mixerBufferSizeInFrames));
+					SpeakerFlag speakers = channels == 1 ? SpeakerFlag.FrontCenter : SpeakerFlag.FrontLeft | SpeakerFlag.FrontRight;
+					soundStream.SetOutputFormat(new OutputInfo(channels, settings.OutputFrequency, mixerBufferSizeInFrames, speakers));
 
 					formatInfo = new SaveSampleFormatInfo((byte)settings.OutputSize, channels, (uint)settings.OutputFrequency, 0, 0, moduleName, author);
 				}

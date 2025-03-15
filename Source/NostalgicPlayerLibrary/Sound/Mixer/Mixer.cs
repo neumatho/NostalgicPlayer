@@ -43,7 +43,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		private bool playing;
 
 		private MixerBase currentMixer;
-		private ChannelConverter converter;
+		private DownMixer downMixer;
 		private Visualizer currentVisualizer;
 		private AmigaFilter amigaFilter;
 
@@ -119,9 +119,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				// Allocate the visual component
 				currentVisualizer = new Visualizer();
 
-				// Allocate mixer to use
-				converter = new ChannelConverter();
-
 				if (bufferDirect)
 					currentMixer = new MixerBufferDirect();
 				else
@@ -176,7 +173,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			// Deallocate mixer
 			currentMixer?.Cleanup();
 			currentMixer = null;
-			converter = null;
+			downMixer = null;
 
 			// Deallocate the visualizer
 			currentVisualizer?.Cleanup();
@@ -301,6 +298,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			{
 				if ((currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferMode) != 0)
 					currentPlayer.SetOutputFormat((uint)mixerFrequency, outputInformation.Channels);
+
+				downMixer = new DownMixer(currentPlayer.SpeakerFlags, outputInformation.AvailableSpeakers);
 			}
 
 			// Create pool of buffers needed for extra effects
@@ -420,9 +419,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				currentMixerInfo = new MixerInfo(mixerInfo);
 			}
 
-			// Build channel mapping table
-			int[] channelMapping = converter.BuildChannelMapping(currentMixerInfo, mixerChannelCount, outputChannelCount);
-
 			// Find out how many frames to process
 			int framesToProcess = Math.Min(frameCount, bufferSizeInFrames);
 
@@ -438,7 +434,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				AddEffects(totalFramesProcessed);
 
 				// Convert to output format
-				converter.ConvertToOutputFormat(mixingBuffers, outputBuffer, totalFramesProcessed, channelMapping, outputChannelCount);
+				downMixer.ConvertToOutputFormat(currentMixerInfo, mixingBuffers, outputBuffer, totalFramesProcessed);
 
 				// Add Amiga low-pass filter if enabled
 				if (currentMixerInfo.EmulateFilter && currentPlayer.AmigaFilter)
@@ -456,7 +452,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			int totalFrames = Math.Max(totalFramesProcessed, extraFramesProcessed);
 
 			// Tell visual agents about the mixed data
-			currentVisualizer.TellAgentsAboutMixedData(outputBuffer, Math.Max(totalFrames, framesToProcess), channelMapping, outputChannelCount);
+			currentVisualizer.TellAgentsAboutMixedData(outputBuffer, Math.Max(totalFrames, framesToProcess), downMixer.GetVisualizersChannelMapping(currentMixerInfo), outputChannelCount);
 
 			return totalFrames;
 		}
@@ -723,8 +719,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				currentMixer.ConvertMixedData(buffer, todoInFrames);
 
 			// Convert to output format
-			int[] channelMapping = converter.BuildChannelMapping(currentMixerInfo, mixerChannelCount, outputChannelCount);
-			converter.ConvertToOutputFormat(extraChannelsMixingBuffer, extraChannelsTempBuffer, todoInFrames, channelMapping, outputChannelCount);
+			downMixer.ConvertToOutputFormat(currentMixerInfo, extraChannelsMixingBuffer, extraChannelsTempBuffer, todoInFrames);
 
 			// Mix extra output format into the main output format
 			int todoInSamples = todoInFrames * outputChannelCount;

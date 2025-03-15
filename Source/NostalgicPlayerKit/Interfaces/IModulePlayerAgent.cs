@@ -73,6 +73,11 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		void Play();
 
 		/// <summary>
+		/// Return which speakers the player uses
+		/// </summary>
+		SpeakerFlag SpeakerFlags { get; }
+
+		/// <summary>
 		/// Return the number of channels the module want to reserve
 		/// </summary>
 		int VirtualChannelCount { get; }

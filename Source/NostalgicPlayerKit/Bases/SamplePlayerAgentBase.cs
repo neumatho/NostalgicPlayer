@@ -103,6 +103,15 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
+		/// Return which speakers the player uses
+		/// </summary>
+		/********************************************************************/
+		public virtual SpeakerFlag SpeakerFlags => ChannelCount == 1 ? SpeakerFlag.FrontCenter : SpeakerFlag.FrontLeft | SpeakerFlag.FrontRight;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the number of channels the sample uses
 		/// </summary>
 		/********************************************************************/

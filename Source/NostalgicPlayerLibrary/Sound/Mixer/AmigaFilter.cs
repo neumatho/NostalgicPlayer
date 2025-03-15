@@ -94,13 +94,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/********************************************************************/
 		public void Apply(Span<int> buffer, int framesTodo)
 		{
-			int todoInSamples = framesTodo * previousFilterValues.Length;
+			int numberOfChannels = previousFilterValues.Length;
+			int todoInSamples = framesTodo * numberOfChannels;
 
-			for (int i = 0; i < previousFilterValues.Length; i++)
+			for (int i = 0; i < numberOfChannels; i++)
 			{
 				FilterValues prevValues = previousFilterValues[i];
 
-				for (int j = i; j < todoInSamples; j += previousFilterValues.Length)
+				for (int j = i; j < todoInSamples; j += numberOfChannels)
 				{
 					long input = buffer[j];
 					long output = (b0 * input + b1 * prevValues.X1 + b2 * prevValues.X2 - a1 * prevValues.Y1 - a2 * prevValues.Y2) >> Scale;

@@ -51,6 +51,11 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		int LoadDataBlock(int[][] outputBuffer, int countInFrames);
 
 		/// <summary>
+		/// Return which speakers the player uses
+		/// </summary>
+		SpeakerFlag SpeakerFlags { get; }
+
+		/// <summary>
 		/// Return the number of channels the sample uses
 		/// </summary>
 		int ChannelCount { get; }

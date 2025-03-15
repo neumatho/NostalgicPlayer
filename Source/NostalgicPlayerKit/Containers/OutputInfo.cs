@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
+
 namespace Polycode.NostalgicPlayer.Kit.Containers
 {
 	/// <summary>
@@ -24,11 +26,12 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public OutputInfo(int channels, int frequency, int bufferSizeInFrames)
+		public OutputInfo(int channels, int frequency, int bufferSizeInFrames, SpeakerFlag availableSpeakers)
 		{
 			Channels = channels;
 			Frequency = frequency;
 			BufferSizeInFrames = bufferSizeInFrames;
+			AvailableSpeakers = availableSpeakers;
 		}
 
 
@@ -63,6 +66,19 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 		/// </summary>
 		/********************************************************************/
 		public int BufferSizeInFrames
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the available speakers. The number of flags set should
+		/// match the number of channels
+		/// </summary>
+		/********************************************************************/
+		public SpeakerFlag AvailableSpeakers
 		{
 			get;
 		}

@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 
 namespace Polycode.NostalgicPlayer.Agent.Visual.LevelMeter.Display
 {
@@ -78,11 +79,11 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.LevelMeter.Display
 			long levelL = 0;
 			long levelR = 0;
 
-			if (sampleData.ChannelMapping.Length >= 2)
+			if (sampleData.ChannelMapping.Count >= 2)
 			{
 				int[] sample = sampleData.SampleData;
-				int leftChannel = sampleData.ChannelMapping[0];
-				int rightChannel = sampleData.ChannelMapping[1];
+				int leftChannel = sampleData.ChannelMapping[SpeakerFlag.FrontLeft];
+				int rightChannel = sampleData.ChannelMapping[SpeakerFlag.FrontRight];
 
 				int increment = sampleData.ChannelCount;
 
