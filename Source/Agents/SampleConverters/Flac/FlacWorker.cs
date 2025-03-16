@@ -209,7 +209,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 				return false;
 			}
 
-			if (streamInfo.Channels > 2)
+			if (streamInfo.Channels > 8)
 			{
 				errorMessage = string.Format(Resources.IDS_FLAC_ERR_ILLEGAL_CHANNELS, streamInfo.Channels);
 				return false;
@@ -219,6 +219,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 			{
 				Bits = (int)streamInfo.Bits_Per_Sample,
 				Channels = (int)streamInfo.Channels,
+				Speakers = FindSpeakers(),
 				Frequency = (int)streamInfo.Sample_Rate,
 				Pictures = pictures.Count > 0 ? pictures.ToArray() : null
 			};
@@ -419,6 +420,46 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 		#region Private methods
 		/********************************************************************/
 		/// <summary>
+		/// Find out which speakers are used in the sample
+		/// </summary>
+		/********************************************************************/
+		private SpeakerFlag FindSpeakers()
+		{
+			switch (streamInfo.Channels)
+			{
+				case 1:
+					return SpeakerFlag.FrontCenter;
+
+				case 2:
+					return SpeakerFlag.FrontLeft | SpeakerFlag.FrontRight;
+
+				case 3:
+					return SpeakerFlag.FrontLeft | SpeakerFlag.FrontRight | SpeakerFlag.FrontCenter;
+
+				case 4:
+					return SpeakerFlag.FrontLeft | SpeakerFlag.FrontRight | SpeakerFlag.BackLeft | SpeakerFlag.BackRight;
+
+				case 5:
+					return SpeakerFlag.FrontLeft | SpeakerFlag.FrontRight | SpeakerFlag.FrontCenter | SpeakerFlag.BackLeft | SpeakerFlag.BackRight;
+
+				case 6:
+					return SpeakerFlag.FrontLeft | SpeakerFlag.FrontRight | SpeakerFlag.FrontCenter | SpeakerFlag.LowFrequency | SpeakerFlag.BackLeft | SpeakerFlag.BackRight;
+
+				case 7:
+					return SpeakerFlag.FrontLeft | SpeakerFlag.FrontRight | SpeakerFlag.FrontCenter | SpeakerFlag.LowFrequency | SpeakerFlag.BackCenter | SpeakerFlag.SideLeft | SpeakerFlag.SideRight;
+
+				case 8:
+					return SpeakerFlag.FrontLeft | SpeakerFlag.FrontRight | SpeakerFlag.FrontCenter | SpeakerFlag.LowFrequency | SpeakerFlag.BackLeft | SpeakerFlag.BackRight | SpeakerFlag.SideLeft | SpeakerFlag.SideRight;
+
+				default:
+					return 0;
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Is called for each metadata frame
 		/// </summary>
 		/********************************************************************/
@@ -474,18 +515,12 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.Flac
 			// Store the read data into our buffer
 			int shift = 32 - (int)streamInfo.Bits_Per_Sample;
 
-			if (streamInfo.Channels == 1)
+			for (int c = 0; c < streamInfo.Channels; c++)
 			{
-				for (int i = 0, cnt = (int)frame.Header.BlockSize, j = bufferOffset; i < cnt; i++)
-					decodedDataBuffer[j++] = buffer[0][i] << shift;
-			}
-			else
-			{
-				for (int i = 0, cnt = (int)frame.Header.BlockSize, j = bufferOffset; i < cnt; i++)
-				{
-					decodedDataBuffer[j++] = buffer[0][i] << shift;
-					decodedDataBuffer[j++] = buffer[1][i] << shift;
-				}
+				int[] sourceBuffer = buffer[c];
+
+				for (int i = 0, cnt = (int)frame.Header.BlockSize, j = bufferOffset + c; i < cnt; i++, j += (int)streamInfo.Channels)
+					decodedDataBuffer[j] = sourceBuffer[i] << shift;
 			}
 
 			bufferFilled += blockSize;
