@@ -124,7 +124,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave.Formats
 		/// Loads any extra header information from the 'fmt ' chunk
 		/// </summary>
 		/********************************************************************/
-		protected override int LoadExtraHeaderInfo(ModuleStream moduleStream, LoadSampleFormatInfo formatInfo, out string errorMessage)
+		protected override int LoadExtraHeaderInfo(ModuleStream moduleStream, LoadSampleFormatInfo formatInfo, bool extendedFormat, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 

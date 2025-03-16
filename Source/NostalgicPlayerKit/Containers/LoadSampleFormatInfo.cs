@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 
 namespace Polycode.NostalgicPlayer.Kit.Containers
 {
@@ -28,6 +29,8 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 			/// </summary>
 			Loop = 0x01
 		}
+
+		private SpeakerFlag speakers = 0;
 
 		/********************************************************************/
 		/// <summary>
@@ -91,13 +94,32 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Holds the number of channels. This can either be 1 for mono or
-		/// 2 for stereo
+		/// Holds the number of channels
 		/// </summary>
 		/********************************************************************/
 		public int Channels
 		{
 			get; set;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds which speakers the channels map to
+		/// </summary>
+		/********************************************************************/
+		public SpeakerFlag Speakers
+		{
+			get
+			{
+				if (speakers == 0)
+					return Channels == 1 ? SpeakerFlag.FrontCenter : SpeakerFlag.FrontLeft | SpeakerFlag.FrontRight;
+
+				return speakers;
+			}
+
+			set => speakers = value;
 		}
 
 

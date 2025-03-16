@@ -39,7 +39,7 @@ namespace Polycode.NostalgicPlayer.Kit.Utility
 				{
 					int[] outBuffer = outputBuffers[i];
 
-					for (int j = 0, inputOffset = 0; j < framesToCopy; j++, inputOffset += numberOfChannels)
+					for (int j = 0, inputOffset = i; j < framesToCopy; j++, inputOffset += numberOfChannels)
 						outBuffer[j] = inputBuffer[inputOffset];
 				}
 			}

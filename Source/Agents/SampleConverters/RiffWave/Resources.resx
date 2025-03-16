@@ -138,9 +138,6 @@ The code is based on SoX (Sound eXchange).</value>
   <data name="IDS_RIFFWAVE_ERR_EXTRAHEADER" xml:space="preserve">
     <value>The length of extra header information ({0} bytes) does not match with the length the format require</value>
   </data>
-  <data name="IDS_RIFFWAVE_ERR_ILLEGALCHANNEL" xml:space="preserve">
-    <value>This loader only support mono and stereo samples. You tried to play a sample that uses {0} channels.</value>
-  </data>
   <data name="IDS_RIFFWAVE_ERR_INVALIDBITSIZE" xml:space="preserve">
     <value>The number of bits ({0}) in the sample is not supported</value>
   </data>

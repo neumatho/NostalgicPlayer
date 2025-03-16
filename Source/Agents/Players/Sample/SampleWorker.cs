@@ -6,6 +6,7 @@
 using System;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Kit.Utility;
@@ -239,6 +240,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 
 			return filledInFrames;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return which speakers the player uses
+		/// </summary>
+		/********************************************************************/
+		public override SpeakerFlag SpeakerFlags => formatInfo.Speakers;
 
 
 

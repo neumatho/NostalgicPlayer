@@ -19,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -108,15 +108,6 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave {
         internal static string IDS_RIFFWAVE_ERR_EXTRAHEADER {
             get {
                 return ResourceManager.GetString("IDS_RIFFWAVE_ERR_EXTRAHEADER", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This loader only support mono and stereo samples. You tried to play a sample that uses {0} channels..
-        /// </summary>
-        internal static string IDS_RIFFWAVE_ERR_ILLEGALCHANNEL {
-            get {
-                return ResourceManager.GetString("IDS_RIFFWAVE_ERR_ILLEGALCHANNEL", resourceCulture);
             }
         }
         

@@ -6,6 +6,7 @@
 using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
@@ -188,7 +189,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 					case 0x666d7420:
 					{
 						// Begin to read the chunk data
-						moduleStream.Seek(2, SeekOrigin.Current);				// Skip sample format (we know what it is)
+						WaveFormat format = (WaveFormat)moduleStream.Read_L_UINT16();
 						formatInfo.Channels = moduleStream.Read_L_UINT16();			// Number of channels
 						formatInfo.Frequency = (int)moduleStream.Read_L_UINT32();	// Sample rate
 						bytesPerSecond = moduleStream.Read_L_UINT32();				// Average bytes per second
@@ -199,7 +200,7 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 						InitBasicLoader();
 
 						// Read extra header information
-						int extraData = LoadExtraHeaderInfo(moduleStream, formatInfo, out errorMessage);
+						int extraData = LoadExtraHeaderInfo(moduleStream, formatInfo, format == WaveFormat.WAVE_FORMAT_EXTENSIBLE, out errorMessage);
 						if (!string.IsNullOrEmpty(errorMessage))
 							return false;
 
@@ -284,13 +285,6 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 				return false;
 			}
 
-			// Is the number of channels one we support
-			if (formatInfo.Channels > 2)
-			{
-				errorMessage = string.Format(Resources.IDS_RIFFWAVE_ERR_ILLEGALCHANNEL, formatInfo.Channels);
-				return false;
-			}
-
 			return true;
 		}
 
@@ -367,11 +361,28 @@ namespace Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave
 		/// Loads any extra header information from the 'fmt ' chunk
 		/// </summary>
 		/********************************************************************/
-		protected virtual int LoadExtraHeaderInfo(ModuleStream moduleStream, LoadSampleFormatInfo formatInfo, out string errorMessage)
+		protected virtual int LoadExtraHeaderInfo(ModuleStream moduleStream, LoadSampleFormatInfo formatInfo, bool extendedFormat, out string errorMessage)
 		{
 			errorMessage = string.Empty;
 
-			return 0;
+			if (!extendedFormat)
+				return 0;
+
+			// Get the length of the extra information
+			ushort extraLen = moduleStream.Read_L_UINT16();
+
+			if (extraLen != 22)
+			{
+				errorMessage = string.Format(Resources.IDS_RIFFWAVE_ERR_EXTRAHEADER, extraLen);
+				return 0;
+			}
+
+			moduleStream.Seek(2, SeekOrigin.Current);
+
+			// Read which speakers are used
+			formatInfo.Speakers = (SpeakerFlag)moduleStream.Read_L_UINT16();
+
+			return 3 * 2;
 		}
 
 
