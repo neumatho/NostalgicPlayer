@@ -15,6 +15,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren.Containers
 		SetInstrument = 0x82,
 		EndSong = 0x83,
 		ChangeAdsrSpeed = 0x84,
+		EndSong2 = 0x85,
 		EndOfTrack = 0xff
 	}
 }

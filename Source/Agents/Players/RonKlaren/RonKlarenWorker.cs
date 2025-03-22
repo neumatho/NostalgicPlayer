@@ -26,6 +26,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren
 		private const int HeaderSize = 32;
 		private const int MinFileSize = 0xa40;
 
+		private bool clearAdsrStateOnPortamento;
+
 		private ushort ciaValue;
 		private int currentSong;
 
@@ -201,6 +203,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren
 					errorMessage = Resources.IDS_RK_ERR_LOADING_INFO;
 					return AgentResult.Error;
 				}
+
+				EnableTrackFeatures(searchBuffer);
 
 				uint[,] subSongTrackOffsets = LoadSubSongInfo(moduleStream, ref numberOfSubSongs, subSongOffset);
 				if (subSongTrackOffsets == null)
@@ -686,6 +690,36 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren
 
 		/********************************************************************/
 		/// <summary>
+		/// Enable/disable track command features
+		/// </summary>
+		/********************************************************************/
+		private void EnableTrackFeatures(byte[] searchBuffer)
+		{
+			int searchLength = searchBuffer.Length;
+			int index;
+
+			clearAdsrStateOnPortamento = false;
+
+			for (index = HeaderSize; index < (searchLength - 4); index += 2)
+			{
+				if ((searchBuffer[index] == 0x0c) && (searchBuffer[index + 1] == 0x12) && (searchBuffer[index + 2] == 0x00))
+				{
+					if (searchBuffer[index + 3] == 0x81)
+					{
+						if (index < (searchLength - 10))
+						{
+							if ((searchBuffer[index + 8] == 0x42) && (searchBuffer[index + 9] == 0x68))
+								clearAdsrStateOnPortamento = true;
+						}
+					}
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Load all the track list offsets for each sub-song
 		/// </summary>
 		/********************************************************************/
@@ -897,6 +931,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren
 					return 3;
 
 				case Effect.EndSong:
+				case Effect.EndSong2:
 				case Effect.EndOfTrack:
 					return 0;
 			}
@@ -1317,54 +1352,40 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren
 
 			do
 			{
-				byte cmd = voiceInfo.TrackData[voiceInfo.TrackDataPosition];
-
-				switch ((Effect)cmd)
+				if ((Effect)voiceInfo.TrackData[voiceInfo.TrackDataPosition] == Effect.SetArpeggio)
 				{
-					case Effect.SetArpeggio:
-					{
-						ParseTrackArpeggio(voiceInfo);
-						break;
-					}
-
-					case Effect.SetPortamento:
-					{
-						ParseTrackPortamento(voiceInfo);
-						takeOneMore = false;
-						break;
-					}
-
-					case Effect.SetInstrument:
-					{
-						ParseTrackInstrument(voiceInfo, channel);
-						break;
-					}
-
-					case Effect.EndSong:
-					{
-						ParseTrackEndSong();
-						return;
-					}
-
-					case Effect.ChangeAdsrSpeed:
-					{
-						ParseTrackChangeAdsrSpeed(voiceInfo);
-						break;
-					}
-
-					case Effect.EndOfTrack:
-					{
-						ParseTrackEndOfTrack(voiceInfo);
-						break;
-					}
-
-					default:
-					{
-						ParseTrackNewNote(voiceInfo, channel);
-						takeOneMore = false;
-						break;
-					}
+					ParseTrackArpeggio(voiceInfo);
 				}
+
+				if ((Effect)voiceInfo.TrackData[voiceInfo.TrackDataPosition] == Effect.SetPortamento)
+				{
+					ParseTrackPortamento(voiceInfo);
+					takeOneMore = false;
+					continue;
+				}
+
+				if ((Effect)voiceInfo.TrackData[voiceInfo.TrackDataPosition] == Effect.SetInstrument)
+					ParseTrackInstrument(voiceInfo, channel);
+
+				if ((Effect)voiceInfo.TrackData[voiceInfo.TrackDataPosition] == Effect.EndSong)
+				{
+					ParseTrackEndSong();
+					return;
+				}
+
+				if ((Effect)voiceInfo.TrackData[voiceInfo.TrackDataPosition] == Effect.ChangeAdsrSpeed)
+					ParseTrackChangeAdsrSpeed(voiceInfo);
+
+				if ((Effect)voiceInfo.TrackData[voiceInfo.TrackDataPosition] == Effect.EndSong2)
+				{
+					ParseTrackEndSong();
+					return;
+				}
+
+				if (voiceInfo.TrackData[voiceInfo.TrackDataPosition] >= 0x80)
+					ParseTrackEndOfTrack(voiceInfo);
+				else
+					takeOneMore = ParseTrackNewNote(voiceInfo, channel);
 			}
 			while (takeOneMore);
 
@@ -1404,7 +1425,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren
 			if (transposedNote >= Tables.Periods.Length)
 				transposedNote = (ushort)(Tables.Periods.Length - 1);
 
-			voiceInfo.AdsrState = 0;
+			if (clearAdsrStateOnPortamento)
+				voiceInfo.AdsrState = 0;
+
 			voiceInfo.PortamentoEndPeriod = Tables.Periods[transposedNote];
 			voiceInfo.PortamentoIncrement = increment;
 			voiceInfo.WaitCounter = (byte)(waitCounter * 4 - 1);
@@ -1512,7 +1535,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren
 		/// Parse new note
 		/// </summary>
 		/********************************************************************/
-		private void ParseTrackNewNote(VoiceInfo voiceInfo, IChannel channel)
+		private bool ParseTrackNewNote(VoiceInfo voiceInfo, IChannel channel)
 		{
 			byte note = voiceInfo.TrackData[voiceInfo.TrackDataPosition];
 			byte waitCount = voiceInfo.TrackData[voiceInfo.TrackDataPosition + 1];
@@ -1525,13 +1548,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.RonKlaren
 			voiceInfo.CurrentNote = note;
 			voiceInfo.Period = Tables.Periods[transposedNote];
 
-			if (waitCount != 0)
-			{
-				voiceInfo.WaitCounter = (byte)(waitCount * 4 - 1);
-				voiceInfo.AdsrState = 0;
+			if (waitCount == 0)
+				return true;
 
-				PlaySample(voiceInfo, channel);
-			}
+			voiceInfo.WaitCounter = (byte)(waitCount * 4 - 1);
+			voiceInfo.AdsrState = 0;
+
+			PlaySample(voiceInfo, channel);
+
+			return false;
 		}
 
 
