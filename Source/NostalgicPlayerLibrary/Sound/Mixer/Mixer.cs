@@ -716,7 +716,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 			// Now convert the mixed data to real 32 bit samples
 			foreach (int[] buffer in extraChannelsMixingBuffer)
-				currentMixer.ConvertMixedData(buffer, todoInFrames);
+				extraChannelsMixer.ConvertMixedData(buffer, todoInFrames);
 
 			// Convert to output format
 			downMixer.ConvertToOutputFormat(currentMixerInfo, extraChannelsMixingBuffer, extraChannelsTempBuffer, todoInFrames);
