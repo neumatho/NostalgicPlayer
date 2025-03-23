@@ -40,6 +40,13 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 				return false;
 			}
 
+			DecodeSampleInfo[] decodeSampleInfo = Mo3SampleWriter.PrepareSamples(module, moduleStream);
+			if (decodeSampleInfo == null)
+			{
+				errorMessage = Resources.IDS_ERR_LOADING_SAMPLES;
+				return false;
+			}
+
 			VersChunk versChunk = WriteHeader(module, converterStream);
 			WriteChannelPannings(module, converterStream);
 			WriteChannelVolumes(module, converterStream);
@@ -49,11 +56,12 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 			WriteOmptChunk(module, converterStream);
 			WriteFxPlugin(module, converterStream);
 			WriteComment(module, converterStream);
+
 			List<uint> instrumentInfoOffsets = WriteInstrumentInfo(module, converterStream, versChunk);
 			List<uint> sampleInfoOffsets = WriteSampleInfo(module, converterStream);
 			List<uint> patternOffsets = WritePatterns(module, converterStream);
 
-			List<uint> sampleDataOffsets = WriteSampleData(module, moduleStream, converterStream);
+			List<uint> sampleDataOffsets = WriteSampleData(converterStream, decodeSampleInfo);
 			if (sampleDataOffsets == null)
 			{
 				errorMessage = Resources.IDS_ERR_LOADING_SAMPLES;
@@ -986,13 +994,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 		/// Will write all the sample data
 		/// </summary>
 		/********************************************************************/
-		private List<uint> WriteSampleData(Mo3Module module, ModuleStream moduleStream, ConverterStream converterStream)
+		private List<uint> WriteSampleData(ConverterStream converterStream, DecodeSampleInfo[] decodeSampleInfo)
 		{
 			List<uint> offsets = new List<uint>();
-
-			DecodeSampleInfo[] decodeSampleInfo = Mo3SampleWriter.PrepareSamples(module, moduleStream);
-			if (decodeSampleInfo == null)
-				return null;
 
 			foreach (DecodeSampleInfo sampleInfo in decodeSampleInfo)
 			{

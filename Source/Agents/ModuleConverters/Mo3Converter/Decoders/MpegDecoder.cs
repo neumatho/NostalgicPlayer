@@ -46,6 +46,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Decoders
 				lengthInBytes = lengthInSamples * bytesPerSample;
 
 				sampleInfo.SampleData = sampleInfo.SampleData.AsSpan(encoderDelay, (int)lengthInBytes).ToArray();
+
+				if (sampleInfo.SampleHeader.LoopEnd > sampleInfo.SampleHeader.Length)
+					sampleInfo.SampleHeader.LoopEnd = sampleInfo.SampleHeader.Length;
 			}
 
 			return true;

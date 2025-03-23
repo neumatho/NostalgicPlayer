@@ -28,6 +28,13 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 		{
 			errorMessage = string.Empty;
 
+			DecodeSampleInfo[] decodeSampleInfo = Mo3SampleWriter.PrepareSamples(module, moduleStream, true);
+			if (decodeSampleInfo == null)
+			{
+				errorMessage = Resources.IDS_ERR_LOADING_SAMPLES;
+				return false;
+			}
+
 			WriteSongName(module, converterStream);
 			WriteHeader(module, converterStream);
 			WritePositionList(module, converterStream);
@@ -37,13 +44,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 
 			List<ushort> sampleInfoParaPointers = WriteSampleInfo(module, converterStream);
 			List<ushort> patternParaPointers = WritePatterns(module, converterStream);
-
-			List<uint> sampleDataParaPointers = WriteSampleData(module, moduleStream, converterStream, sampleInfoParaPointers);
-			if (sampleDataParaPointers == null)
-			{
-				errorMessage = Resources.IDS_ERR_LOADING_SAMPLES;
-				return false;
-			}
+			List<uint> sampleDataParaPointers = WriteSampleData(converterStream, sampleInfoParaPointers, decodeSampleInfo);
 
 			WriteParaPointers(converterStream, paraPointersPosition, sampleInfoParaPointers, patternParaPointers, sampleDataParaPointers);
 
@@ -616,13 +617,9 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 		/// Will write all the sample data
 		/// </summary>
 		/********************************************************************/
-		private List<uint> WriteSampleData(Mo3Module module, ModuleStream moduleStream, ConverterStream converterStream, List<ushort> sampleInfoParaPointers)
+		private List<uint> WriteSampleData(ConverterStream converterStream, List<ushort> sampleInfoParaPointers, DecodeSampleInfo[] decodeSampleInfo)
 		{
 			List<uint> paraPointers = new List<uint>();
-
-			DecodeSampleInfo[] decodeSampleInfo = Mo3SampleWriter.PrepareSamples(module, moduleStream, true);
-			if (decodeSampleInfo == null)
-				return null;
 
 			for (int i = 0; i < decodeSampleInfo.Length; i++)
 			{

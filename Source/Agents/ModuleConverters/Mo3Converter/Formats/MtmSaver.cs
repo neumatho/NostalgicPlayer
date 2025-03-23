@@ -29,6 +29,13 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 
 			List<byte[]> comment = BuildCommentList(module);
 
+			DecodeSampleInfo[] decodeSampleInfo = Mo3SampleWriter.PrepareSamples(module, moduleStream, true);
+			if (decodeSampleInfo == null)
+			{
+				errorMessage = Resources.IDS_ERR_LOADING_SAMPLES;
+				return false;
+			}
+
 			WriteMark(module, converterStream);
 			WriteSongName(module, converterStream);
 			WriteHeader(module, comment, converterStream);
@@ -37,12 +44,7 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 			WriteTracks(module, converterStream);
 			WriteSequence(module, converterStream);
 			WriteComment(comment, converterStream);
-
-			if (!Mo3SampleWriter.PrepareAndWriteSamples(module, moduleStream, converterStream, true))
-			{
-				errorMessage = Resources.IDS_ERR_LOADING_SAMPLES;
-				return false;
-			}
+			Mo3SampleWriter.WriteSamples(decodeSampleInfo, converterStream);
 
 			return true;
 		}

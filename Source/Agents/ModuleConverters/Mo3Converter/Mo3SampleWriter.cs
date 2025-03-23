@@ -18,24 +18,6 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 	{
 		/********************************************************************/
 		/// <summary>
-		/// Will unpack and save the sample data
-		/// </summary>
-		/********************************************************************/
-		public static bool PrepareAndWriteSamples(Mo3Module module, ModuleStream moduleStream, ConverterStream converterStream, bool unsigned = false)
-		{
-			DecodeSampleInfo[] decodeSampleInfo = PrepareSamples(module, moduleStream, unsigned);
-			if (decodeSampleInfo == null)
-				return false;
-
-			WriteSamples(decodeSampleInfo, converterStream);
-
-			return true;
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Will unpack and prepare all the samples
 		/// </summary>
 		/********************************************************************/
@@ -96,8 +78,18 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 					// Duplicate sample
 					byte[] sourceSample = decodeSampleInfo[i + sample.CompressedSize].SampleData;
 
-					sampleInfo.SampleData = new byte[sourceSample.Length];
-					Array.Copy(sourceSample, sampleInfo.SampleData, sourceSample.Length);
+					if (sourceSample != null)
+					{
+						sampleInfo.SampleData = new byte[sourceSample.Length];
+						Array.Copy(sourceSample, sampleInfo.SampleData, sourceSample.Length);
+					}
+					else
+					{
+						sample.Length = 0;
+						sample.LoopStart = 0;
+						sample.LoopEnd = 0;
+						sample.Flags = 0;
+					}
 				}
 				else
 				{

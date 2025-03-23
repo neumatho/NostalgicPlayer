@@ -494,6 +494,14 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter
 					sampleInfo.Flags |= SampleInfoFlag._16Bit;
 				}
 
+				// Some modules have a loop, but no length
+				if (sampleInfo.Length == 0)
+				{
+					sampleInfo.LoopStart = 0;
+					sampleInfo.LoopEnd = 0;
+					sampleInfo.Flags &= ~(SampleInfoFlag.Loop | SampleInfoFlag.PingPongLoop);
+				}
+
 				samples[i] = sampleInfo;
 			}
 

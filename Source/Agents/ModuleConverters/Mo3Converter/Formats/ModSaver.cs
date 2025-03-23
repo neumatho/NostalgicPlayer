@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Containers;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
@@ -37,23 +38,51 @@ namespace Polycode.NostalgicPlayer.Agent.ModuleConverter.Mo3Converter.Formats
 		{
 			errorMessage = string.Empty;
 
+			DecodeSampleInfo[] decodeSampleInfo = Mo3SampleWriter.PrepareSamples(module, moduleStream);
+			if (decodeSampleInfo == null)
+			{
+				errorMessage = Resources.IDS_ERR_LOADING_SAMPLES;
+				return false;
+			}
+
+			ConvertTo8Bit(decodeSampleInfo);
+
 			WriteSongName(module, converterStream);
 			WriteSampleInfo(module, converterStream);
 			WritePositionList(module, converterStream);
 			WriteMark(module, converterStream);
 			WritePatterns(module, converterStream);
-
-			if (!Mo3SampleWriter.PrepareAndWriteSamples(module, moduleStream, converterStream))
-			{
-				errorMessage = Resources.IDS_ERR_LOADING_SAMPLES;
-				return false;
-			}
+			Mo3SampleWriter.WriteSamples(decodeSampleInfo, converterStream);
 
 			return true;
 		}
 		#endregion
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// Make sure that all samples are in 8-bit
+		/// </summary>
+		/********************************************************************/
+		private void ConvertTo8Bit(DecodeSampleInfo[] decodeSampleInfo)
+		{
+			foreach (DecodeSampleInfo sampleInfo in decodeSampleInfo)
+			{
+				if ((sampleInfo.SampleData != null) && sampleInfo.SampleHeader.Flags.HasFlag(SampleInfoFlag._16Bit))
+				{
+					Span<short> source = MemoryMarshal.Cast<byte, short>(sampleInfo.SampleData);
+					byte[] dest = new byte[source.Length];
+
+					for (int i = 0; i < source.Length; i++)
+						dest[i] = (byte)(source[i] >> 8);
+
+					sampleInfo.SampleData = dest;
+				}
+			}
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Write back the song name
