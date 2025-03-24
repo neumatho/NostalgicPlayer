@@ -1488,8 +1488,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 		{
 			BeginInvoke(() =>
 			{
-				// Do only print the information if the module is playing
-				if ((playItem != null) && moduleHandler.IsPlaying)
+				if (playItem != null)
 				{
 					// Set the time offset
 					timeOccurred = e.Time;
