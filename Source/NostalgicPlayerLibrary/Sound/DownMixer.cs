@@ -26,6 +26,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		private readonly ChannelFactorDictionary channelFactors;
 		private readonly long[][] tempBuffers;
 
+		private float adjustVolumeBy;
+
 		/********************************************************************/
 		/// <summary>
 		/// Constructor
@@ -41,6 +43,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 			outputChannelCountToUse = FindNumberOfOutputChannelsToUse(realOutputChannelsCount);
 			channelFactors = FindChannelFactorDictionary();
 			tempBuffers = new long[outputChannelCountToUse][];
+
+			adjustVolumeBy = 1.0f;
 		}
 
 
@@ -106,12 +110,17 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 
 				for (int j = 0; j < todoInFrames; j++, destIndex += realOutputChannelsCount)
 				{
-					long val = sourceBuffer[j] >> 1;
+					long val;
 
-					if (val > int.MaxValue)
-						val = int.MaxValue;
-					else if (val < int.MinValue)
-						val = int.MinValue;
+					for(;;)
+					{
+						val = (long)(sourceBuffer[j] * adjustVolumeBy);
+
+						if ((val <= int.MaxValue) && (val >= int.MinValue))
+							break;
+
+						adjustVolumeBy *= 0.9f;
+					}
 
 					outputBuffer[destIndex] = (int)val;
 				}
