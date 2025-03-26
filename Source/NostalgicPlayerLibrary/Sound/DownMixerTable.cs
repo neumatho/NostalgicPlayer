@@ -174,7 +174,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 						{ SpeakerFlag.FrontLeft, Full },
 						{ SpeakerFlag.FrontRight, None },
 						{ SpeakerFlag.FrontCenter, Sqrt2 },
-						{ SpeakerFlag.SideLeft, None },
+						{ SpeakerFlag.SideLeft, Sqrt2 },
 						{ SpeakerFlag.SideRight, None },
 						{ SpeakerFlag.BackLeft, None },
 						{ SpeakerFlag.BackRight, None },
@@ -193,7 +193,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 						{ SpeakerFlag.FrontRight, Full },
 						{ SpeakerFlag.FrontCenter, Sqrt2 },
 						{ SpeakerFlag.SideLeft, None },
-						{ SpeakerFlag.SideRight, None },
+						{ SpeakerFlag.SideRight, Sqrt2 },
 						{ SpeakerFlag.BackLeft, None },
 						{ SpeakerFlag.BackRight, None },
 						{ SpeakerFlag.TopCenter, Sqrt4 },
@@ -205,50 +205,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 					}
 				},
 				{
-					SpeakerFlag.SideLeft, new Dictionary<SpeakerFlag, float>
-					{
-						{ SpeakerFlag.FrontLeft, None },
-						{ SpeakerFlag.FrontRight, None },
-						{ SpeakerFlag.FrontCenter, None },
-						{ SpeakerFlag.SideLeft, Full },
-						{ SpeakerFlag.SideRight, None },
-						{ SpeakerFlag.BackLeft, Full },
-						{ SpeakerFlag.BackRight, None },
-						{ SpeakerFlag.TopCenter, Sqrt4 },
-						{ SpeakerFlag.TopFrontLeft, None },
-						{ SpeakerFlag.TopFrontCenter, None },
-						{ SpeakerFlag.TopFrontRight, None },
-						{ SpeakerFlag.TopBackLeft, Sqrt2 },
-						{ SpeakerFlag.TopBackRight, None }
-					}
-				},
-				{
-					SpeakerFlag.SideRight, new Dictionary<SpeakerFlag, float>
-					{
-						{ SpeakerFlag.FrontLeft, None },
-						{ SpeakerFlag.FrontRight, None },
-						{ SpeakerFlag.FrontCenter, None },
-						{ SpeakerFlag.SideLeft, None },
-						{ SpeakerFlag.SideRight, Full },
-						{ SpeakerFlag.BackLeft, None },
-						{ SpeakerFlag.BackRight, Full },
-						{ SpeakerFlag.TopCenter, Sqrt4 },
-						{ SpeakerFlag.TopFrontLeft, None },
-						{ SpeakerFlag.TopFrontCenter, None },
-						{ SpeakerFlag.TopFrontRight, None },
-						{ SpeakerFlag.TopBackLeft, None },
-						{ SpeakerFlag.TopBackRight, Sqrt2 }
-					}
-				},
-				// Sometimes the side speakers is marked as back speakers, so have
-				// the same layout for back speakers as well
-				{
 					SpeakerFlag.BackLeft, new Dictionary<SpeakerFlag, float>
 					{
 						{ SpeakerFlag.FrontLeft, None },
 						{ SpeakerFlag.FrontRight, None },
 						{ SpeakerFlag.FrontCenter, None },
-						{ SpeakerFlag.SideLeft, Full },
+						{ SpeakerFlag.SideLeft, Sqrt2 },
 						{ SpeakerFlag.SideRight, None },
 						{ SpeakerFlag.BackLeft, Full },
 						{ SpeakerFlag.BackRight, None },
@@ -267,7 +229,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 						{ SpeakerFlag.FrontRight, None },
 						{ SpeakerFlag.FrontCenter, None },
 						{ SpeakerFlag.SideLeft, None },
-						{ SpeakerFlag.SideRight, Full },
+						{ SpeakerFlag.SideRight, Sqrt2 },
 						{ SpeakerFlag.BackLeft, None },
 						{ SpeakerFlag.BackRight, Full },
 						{ SpeakerFlag.TopCenter, Sqrt4 },
@@ -290,7 +252,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 						{ SpeakerFlag.FrontLeft, Full },
 						{ SpeakerFlag.FrontRight, None },
 						{ SpeakerFlag.FrontCenter, None },
-						{ SpeakerFlag.SideLeft, None },
+						{ SpeakerFlag.SideLeft, Sqrt2 },
 						{ SpeakerFlag.SideRight, None },
 						{ SpeakerFlag.BackLeft, None },
 						{ SpeakerFlag.BackRight, None },
@@ -309,7 +271,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 						{ SpeakerFlag.FrontRight, Full },
 						{ SpeakerFlag.FrontCenter, None },
 						{ SpeakerFlag.SideLeft, None },
-						{ SpeakerFlag.SideRight, None },
+						{ SpeakerFlag.SideRight, Sqrt2 },
 						{ SpeakerFlag.BackLeft, None },
 						{ SpeakerFlag.BackRight, None },
 						{ SpeakerFlag.TopCenter, Sqrt5 },
@@ -339,50 +301,12 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 					}
 				},
 				{
-					SpeakerFlag.SideLeft, new Dictionary<SpeakerFlag, float>
-					{
-						{ SpeakerFlag.FrontLeft, None },
-						{ SpeakerFlag.FrontRight, None },
-						{ SpeakerFlag.FrontCenter, None },
-						{ SpeakerFlag.SideLeft, Full },
-						{ SpeakerFlag.SideRight, None },
-						{ SpeakerFlag.BackLeft, Full },
-						{ SpeakerFlag.BackRight, None },
-						{ SpeakerFlag.TopCenter, Sqrt5 },
-						{ SpeakerFlag.TopFrontLeft, None },
-						{ SpeakerFlag.TopFrontCenter, None },
-						{ SpeakerFlag.TopFrontRight, None },
-						{ SpeakerFlag.TopBackLeft, Sqrt2 },
-						{ SpeakerFlag.TopBackRight, None }
-					}
-				},
-				{
-					SpeakerFlag.SideRight, new Dictionary<SpeakerFlag, float>
-					{
-						{ SpeakerFlag.FrontLeft, None },
-						{ SpeakerFlag.FrontRight, None },
-						{ SpeakerFlag.FrontCenter, None },
-						{ SpeakerFlag.SideLeft, None },
-						{ SpeakerFlag.SideRight, Full },
-						{ SpeakerFlag.BackLeft, None },
-						{ SpeakerFlag.BackRight, Full },
-						{ SpeakerFlag.TopCenter, Sqrt5 },
-						{ SpeakerFlag.TopFrontLeft, None },
-						{ SpeakerFlag.TopFrontCenter, None },
-						{ SpeakerFlag.TopFrontRight, None },
-						{ SpeakerFlag.TopBackLeft, None },
-						{ SpeakerFlag.TopBackRight, Sqrt2 }
-					}
-				},
-				// Sometimes the side speakers is marked as back speakers, so have
-				// the same layout for back speakers as well
-				{
 					SpeakerFlag.BackLeft, new Dictionary<SpeakerFlag, float>
 					{
 						{ SpeakerFlag.FrontLeft, None },
 						{ SpeakerFlag.FrontRight, None },
 						{ SpeakerFlag.FrontCenter, None },
-						{ SpeakerFlag.SideLeft, Full },
+						{ SpeakerFlag.SideLeft, Sqrt2 },
 						{ SpeakerFlag.SideRight, None },
 						{ SpeakerFlag.BackLeft, Full },
 						{ SpeakerFlag.BackRight, None },
@@ -401,7 +325,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 						{ SpeakerFlag.FrontRight, None },
 						{ SpeakerFlag.FrontCenter, None },
 						{ SpeakerFlag.SideLeft, None },
-						{ SpeakerFlag.SideRight, Full },
+						{ SpeakerFlag.SideRight, Sqrt2 },
 						{ SpeakerFlag.BackLeft, None },
 						{ SpeakerFlag.BackRight, Full },
 						{ SpeakerFlag.TopCenter, Sqrt5 },
