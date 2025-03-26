@@ -106,7 +106,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 
 				for (int j = 0; j < todoInFrames; j++, destIndex += realOutputChannelsCount)
 				{
-					long val = sourceBuffer[j];
+					long val = sourceBuffer[j] >> 1;
 
 					if (val > int.MaxValue)
 						val = int.MaxValue;
