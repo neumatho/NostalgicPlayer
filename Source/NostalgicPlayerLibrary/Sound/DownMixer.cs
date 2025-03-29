@@ -24,7 +24,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		private readonly int realOutputChannelsCount;
 		private readonly int outputChannelCountToUse;
 		private readonly ChannelFactorDictionary channelFactors;
-		private readonly long[][] tempBuffers;
+		private readonly Dictionary<int, long[]> tempBuffers;
+		private int tempBufferSize;
 
 		private float adjustVolumeBy;
 
@@ -42,7 +43,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 			realOutputChannelsCount = outputSpeakerToChannelMap.Count;
 			outputChannelCountToUse = FindNumberOfOutputChannelsToUse(realOutputChannelsCount);
 			channelFactors = FindChannelFactorDictionary();
-			tempBuffers = new long[outputChannelCountToUse][];
+			tempBuffers = outputSpeakerToChannelMap
+				.Where(x => x.Key != SpeakerFlag.LowFrequency)
+				.ToDictionary(x => x.Value, x => (long[])null);
+			tempBufferSize = 0;
 
 			adjustVolumeBy = 1.0f;
 		}
@@ -57,16 +61,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		public void ConvertToOutputFormat(MixerInfo currentMixerInfo, int[][] mixingBuffers, Span<int> outputBuffer, int todoInFrames)
 		{
 			// Allocate temporary mixing buffers
-			if ((tempBuffers[0] == null) || (tempBuffers[0].Length < todoInFrames))
+			if (tempBufferSize < todoInFrames)
 			{
-				for (int i = 0; i < outputChannelCountToUse; i++)
-					tempBuffers[i] = new long[todoInFrames];
+				foreach (KeyValuePair<int, long[]> pair in tempBuffers)
+					tempBuffers[pair.Key] = new long[todoInFrames];
+
+				tempBufferSize = todoInFrames;
 			}
 			else
 			{
 				// Clear the temp buffers
-				for (int i = 0; i < outputChannelCountToUse; i++)
-					Array.Clear(tempBuffers[i]);
+				foreach (long[] buffer in tempBuffers.Values)
+					Array.Clear(buffer);
 			}
 
 			// Down-mix each channel
@@ -100,49 +106,57 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 			}
 
 			// Convert temp buffers to output buffer
-			for (int i = 0; i < outputChannelCountToUse; i++)
+			HashSet<int> channelsToClear = outputSpeakerToChannelMap.Values.ToHashSet();
+
+			foreach (int outputSpeakerIndex in outputSpeakerToChannelMap.Values)
 			{
-				long[] sourceBuffer = tempBuffers[i];
-				int destIndex = i;
-
-				if (currentMixerInfo.SwapSpeakers && speakerSwappingMap.TryGetValue(i, out int newChannel))
-					destIndex = newChannel;
-
-				for (int j = 0; j < todoInFrames; j++, destIndex += realOutputChannelsCount)
+				if (tempBuffers.TryGetValue(outputSpeakerIndex, out long[] sourceBuffer))
 				{
-					long val;
+					int destIndex = outputSpeakerIndex;
 
-					for(;;)
+					if (currentMixerInfo.SwapSpeakers && speakerSwappingMap.TryGetValue(outputSpeakerIndex, out int newChannel))
+						destIndex = newChannel;
+
+					for (int j = 0; j < todoInFrames; j++, destIndex += realOutputChannelsCount)
 					{
-						val = (long)(sourceBuffer[j] * adjustVolumeBy);
+						long val;
 
-						if ((val <= int.MaxValue) && (val >= int.MinValue))
-							break;
+						for(;;)
+						{
+							val = (long)(sourceBuffer[j] * adjustVolumeBy);
 
-						adjustVolumeBy *= 0.9f;
+							if ((val <= int.MaxValue) && (val >= int.MinValue))
+								break;
+
+							adjustVolumeBy *= 0.9f;
+						}
+
+						outputBuffer[destIndex] = (int)val;
 					}
 
-					outputBuffer[destIndex] = (int)val;
+					channelsToClear.Remove(outputSpeakerIndex);
 				}
-			}
-
-			// Make sure extra output channels are cleared
-			for (int i = outputChannelCountToUse; i < realOutputChannelsCount; i++)
-			{
-				int destIndex = i;
-
-				for (int j = 0; j < todoInFrames; j++, destIndex += realOutputChannelsCount)
-					outputBuffer[destIndex] = 0;
 			}
 
 			// If both input and output has subwoofer, copy the subwoofer channel to the output
 			if (playerSpeakerToChannelMap.TryGetValue(SpeakerFlag.LowFrequency, out int playerSubwooferChannel) && outputSpeakerToChannelMap.TryGetValue(SpeakerFlag.LowFrequency, out int outputSubwooferChannel))
 			{
+				channelsToClear.Remove(outputSubwooferChannel);
+
 				int[] sourceBuffer = mixingBuffers[playerSubwooferChannel];
 				int destIndex = outputSubwooferChannel;
 
 				for (int i = 0; i < todoInFrames; i++, destIndex += realOutputChannelsCount)
 					outputBuffer[destIndex] = sourceBuffer[i];
+			}
+
+			// Make sure extra output channels are cleared
+			foreach (int outputSpeakerIndex in channelsToClear)
+			{
+				int destIndex = outputSpeakerIndex;
+
+				for (int j = 0; j < todoInFrames; j++, destIndex += realOutputChannelsCount)
+					outputBuffer[destIndex] = 0;
 			}
 		}
 
