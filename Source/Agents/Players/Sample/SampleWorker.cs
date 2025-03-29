@@ -245,7 +245,10 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Sample
 
 		/********************************************************************/
 		/// <summary>
-		/// Return which speakers the player uses
+		/// Return which speakers the player uses.
+		/// 
+		/// Note that the outputBuffer in LoadDataBlock match the defined
+		/// order in SpeakerFlag enum
 		/// </summary>
 		/********************************************************************/
 		public override SpeakerFlag SpeakerFlags => formatInfo.Speakers;

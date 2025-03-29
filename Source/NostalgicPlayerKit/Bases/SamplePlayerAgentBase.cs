@@ -103,7 +103,10 @@ namespace Polycode.NostalgicPlayer.Kit.Bases
 
 		/********************************************************************/
 		/// <summary>
-		/// Return which speakers the player uses
+		/// Return which speakers the player uses.
+		/// 
+		/// Note that the outputBuffer in LoadDataBlock match the defined
+		/// order in SpeakerFlag enum
 		/// </summary>
 		/********************************************************************/
 		public virtual SpeakerFlag SpeakerFlags => ChannelCount == 1 ? SpeakerFlag.FrontCenter : SpeakerFlag.FrontLeft | SpeakerFlag.FrontRight;

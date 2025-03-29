@@ -51,7 +51,10 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		int LoadDataBlock(int[][] outputBuffer, int countInFrames);
 
 		/// <summary>
-		/// Return which speakers the player uses
+		/// Return which speakers the player uses.
+		/// 
+		/// Note that the outputBuffer in LoadDataBlock match the defined
+		/// order in SpeakerFlag enum
 		/// </summary>
 		SpeakerFlag SpeakerFlags { get; }
 
