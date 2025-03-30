@@ -11,6 +11,7 @@ using Polycode.NostalgicPlayer.Agent.Player.OggVorbis.Containers;
 using Polycode.NostalgicPlayer.CKit;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Ports.LibVorbis;
 using Polycode.NostalgicPlayer.Ports.LibVorbis.Containers;
@@ -248,7 +249,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 			frequency = info.rate;
 			channels = info.channels;
 
-			if (channels > 2)
+			if (channels > 8)
 			{
 				errorMessage = string.Format(Resources.IDS_OGG_ERR_ILLEGAL_CHANNELS, channels);
 				return false;
@@ -414,6 +415,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 
 			return filledInFrames;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return which speakers the player uses.
+		/// 
+		/// Note that the outputBuffer in LoadDataBlock match the defined
+		/// order in SpeakerFlag enum
+		/// </summary>
+		/********************************************************************/
+		public override SpeakerFlag SpeakerFlags => Tables.ChannelToSpeaker[channels - 1];
 
 
 
@@ -692,10 +705,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
 					break;
 
 				// Convert the floats into 32-bit integers
+				int[] channelMapping = Tables.InputToOutput[channels - 1];
+
 				for (int i = 0; i < channels; i++)
 				{
 					CPointer<float> inBuffer = buffer[i];
-					int[] outBuffer = outputBuffer[i];
+					int[] outBuffer = outputBuffer[channelMapping[i]];
 
 					for (int j = 0; j < done; j++)
 						outBuffer[offset + j] = Math.Clamp((int)(inBuffer[j] * 0x8000000), -0x8000000, 0x7ffffff) << 4;
