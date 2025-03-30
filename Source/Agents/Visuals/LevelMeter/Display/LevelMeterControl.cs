@@ -7,6 +7,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using ABI.System.Collections.Generic;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 
@@ -20,6 +21,16 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.LevelMeter.Display
 		private const int SpaceBetweenMeters = 4;
 
 		private Bitmap backgroundBitmap;
+
+		private SpeakerFlag speakers;
+
+		private static readonly (SpeakerFlag, string)[] speakerOrder =
+		[
+			(SpeakerFlag.FrontLeft, "FL"), (SpeakerFlag.FrontCenter, "FC"), (SpeakerFlag.FrontRight, "FR"),
+			(SpeakerFlag.SideLeft, "SL"), (SpeakerFlag.SideRight, "SR"),
+			(SpeakerFlag.BackLeft, "BL"), (SpeakerFlag.BackRight, "BR"),
+			(SpeakerFlag.LowFrequency, "LFE")
+		];
 
 		/********************************************************************/
 		/// <summary>
@@ -38,10 +49,12 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.LevelMeter.Display
 		/// Initializes the visual
 		/// </summary>
 		/********************************************************************/
-		public void InitVisual()
+		public void InitVisual(SpeakerFlag speakersToShow)
 		{
 			lock (this)
 			{
+				speakers = speakersToShow;
+
 				DestroyMeters();
 				CreateMeters();
 			}
@@ -76,38 +89,31 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.LevelMeter.Display
 		public void SampleData(NewSampleData sampleData)
 		{
 			// Find the max level of each speaker
-			long levelL = 0;
-			long levelR = 0;
+			long[] maxLevels = new long[sampleData.ChannelMapping.Count];
 
-			if (sampleData.ChannelMapping.Count >= 2)
+			int[] sample = sampleData.SampleData;
+			int increment = sampleData.ChannelCount;
+
+			int controlIndex = 0;
+
+			foreach ((SpeakerFlag speaker, _) in speakerOrder)
 			{
-				int[] sample = sampleData.SampleData;
-				int leftChannel = sampleData.ChannelMapping[SpeakerFlag.FrontLeft];
-				int rightChannel = sampleData.ChannelMapping[SpeakerFlag.FrontRight];
-
-				int increment = sampleData.ChannelCount;
-
-				for (int i = 0; i < sampleData.SampleData.Length; i += increment)
+				if (speakers.HasFlag(speaker))
 				{
-					levelL = Math.Max(levelL, Math.Abs((long)sample[i + leftChannel]));
-					levelR = Math.Max(levelR, Math.Abs((long)sample[i + rightChannel]));
-				}
-			}
-			else
-			{
-				foreach (int sample in sampleData.SampleData)
-					levelL = Math.Max(levelL, Math.Abs((long)sample));
+					int channelIndex = sampleData.ChannelMapping[speaker];
+					long max = 0;
 
-				levelR = levelL;
+					for (int i = channelIndex; i < sampleData.SampleData.Length; i += increment)
+						max = Math.Max(max, Math.Abs((long)sample[i]));
+
+					maxLevels[controlIndex++] = max;
+				}
 			}
 
 			lock (this)
 			{
-				if (levelsPanel.Controls.Count > 0)
-				{
-					((SpeakerLevelMeterControl)levelsPanel.Controls[0]).UpdateLevel(levelL);
-					((SpeakerLevelMeterControl)levelsPanel.Controls[1]).UpdateLevel(levelR);
-				}
+				for (int i = 0; i < levelsPanel.Controls.Count; i++)
+					((SpeakerLevelMeterControl)levelsPanel.Controls[i]).UpdateLevel(maxLevels[i]);
 			}
 		}
 
@@ -157,11 +163,14 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.LevelMeter.Display
 		/********************************************************************/
 		private void CreateMeters()
 		{
-			SpeakerLevelMeterControl ctrl = new SpeakerLevelMeterControl('L');
-			levelsPanel.Controls.Add(ctrl);
-
-			ctrl = new SpeakerLevelMeterControl('R');
-			levelsPanel.Controls.Add(ctrl);
+			foreach ((SpeakerFlag speaker, string name) in speakerOrder)
+			{
+				if (speakers.HasFlag(speaker))
+				{
+					SpeakerLevelMeterControl ctrl = new SpeakerLevelMeterControl(name);
+					levelsPanel.Controls.Add(ctrl);
+				}
+			}
 
 			// Now layout the panels
 			LayoutPanels();
@@ -197,22 +206,26 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.LevelMeter.Display
 		/********************************************************************/
 		private void LayoutPanels()
 		{
-			if (levelsPanel.Controls.Count > 0)
+			int numberOfLevels = levelsPanel.Controls.Count;
+
+			if (numberOfLevels > 0)
 			{
 				Size clientArea = levelsPanel.ClientSize;
 				int width = clientArea.Width;
-				int height = (clientArea.Height - SpaceBetweenMeters) / 2;
+				int height = (clientArea.Height - (numberOfLevels * SpaceBetweenMeters - SpaceBetweenMeters)) / numberOfLevels;
+				if (height < 24)
+					height = 24;
+
 				Size size = new Size(width, height);
-
 				int yPos = 0;
-				Control ctrl = levelsPanel.Controls[0];
-				ctrl.Size = size;
-				ctrl.Location = new Point(0, yPos);
 
-				yPos = clientArea.Height - height;
-				ctrl = levelsPanel.Controls[1];
-				ctrl.Size = size;
-				ctrl.Location = new Point(0, yPos);
+				foreach (Control ctrl in levelsPanel.Controls)
+				{
+					ctrl.Size = size;
+					ctrl.Location = new Point(0, yPos);
+
+					yPos += height + SpaceBetweenMeters;
+				}
 
 				// Check if the background image need to be recreated
 				if ((backgroundBitmap == null) || (backgroundBitmap.Size != size))
@@ -235,8 +248,8 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.LevelMeter.Display
 						}
 					}
 
-					((SpeakerLevelMeterControl)levelsPanel.Controls[0]).SetBackgroundBitmap(backgroundBitmap);
-					((SpeakerLevelMeterControl)levelsPanel.Controls[1]).SetBackgroundBitmap(backgroundBitmap);
+					foreach (SpeakerLevelMeterControl ctrl in levelsPanel.Controls)
+						ctrl.SetBackgroundBitmap(backgroundBitmap);
 
 					// Now it is safe to dispose, because the speaker controls has been updated with the new bitmap
 					oldBackgroundBitmap?.Dispose();

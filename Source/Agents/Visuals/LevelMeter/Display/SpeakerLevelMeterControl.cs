@@ -45,7 +45,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.LevelMeter.Display
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SpeakerLevelMeterControl(char speakerName)
+		public SpeakerLevelMeterControl(string speakerName)
 		{
 			InitializeComponent();
 
@@ -53,7 +53,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.LevelMeter.Display
 
 			SetStyle(ControlStyles.UserPaint, true);
 
-			speaker = speakerName.ToString();
+			speaker = speakerName;
 
 			levelDecay = 1.0f - (float)Math.Exp(-1.0f / (RefreshRate * 0.2f));
 			peakDecay = 1.0f - (float)Math.Exp(-1.0f / (RefreshRate * 0.5f));
