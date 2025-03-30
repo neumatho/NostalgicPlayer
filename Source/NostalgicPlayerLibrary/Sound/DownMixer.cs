@@ -128,7 +128,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 							if ((val <= int.MaxValue) && (val >= int.MinValue))
 								break;
 
-							adjustVolumeBy *= 0.9f;
+							float newVal = (float)int.MaxValue / Math.Abs(sourceBuffer[j]);
+							if (newVal == adjustVolumeBy)
+								newVal -= 0.0001f;
+
+							adjustVolumeBy = newVal;
 						}
 
 						outputBuffer[destIndex] = (int)val;
