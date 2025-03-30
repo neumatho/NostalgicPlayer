@@ -337,6 +337,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 		/********************************************************************/
 		/// <summary>
+		/// Return which speakers that are used to play the sound
+		/// </summary>
+		/********************************************************************/
+		public SpeakerFlag VisualizerSpeakers => downMixer?.VisualizerSpeakers ?? 0;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will change the configuration
 		/// </summary>
 		/********************************************************************/

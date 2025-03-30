@@ -55,7 +55,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Piano
 		/// Initializes the visual
 		/// </summary>
 		/********************************************************************/
-		public void InitVisual(int channels, int virtualChannels)
+		public void InitVisual(int channels, int virtualChannels, SpeakerFlag speakersToShow)
 		{
 			userControl.InitVisual(virtualChannels);
 		}

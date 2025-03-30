@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
@@ -93,6 +94,28 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				lock (mixerLock)
 				{
 					mixer.SetOutputFormat(outputInformation);
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return which speakers that are used to play the sound. Is first
+		/// available after calling SetOutputFormat()
+		/// </summary>
+		/********************************************************************/
+		public override SpeakerFlag VisualizerSpeakers
+		{
+			get
+			{
+				if (mixerLock == null)
+					return 0;
+
+				lock (mixerLock)
+				{
+					return mixer.VisualizerSpeakers;
 				}
 			}
 		}

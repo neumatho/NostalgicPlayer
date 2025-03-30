@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Events;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 
 namespace Polycode.NostalgicPlayer.Kit.Streams
 {
@@ -119,6 +120,19 @@ namespace Polycode.NostalgicPlayer.Kit.Streams
 		/// </summary>
 		/********************************************************************/
 		public abstract void SetOutputFormat(OutputInfo outputInfo);
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return which speakers that are used to play the sound. Is first
+		/// available after calling SetOutputFormat()
+		/// </summary>
+		/********************************************************************/
+		public abstract SpeakerFlag VisualizerSpeakers
+		{
+			get;
+		}
 
 
 

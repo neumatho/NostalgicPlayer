@@ -23,7 +23,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 
 		private readonly int realOutputChannelsCount;
 		private readonly int outputChannelCountToUse;
+		private readonly bool hasSubwoofer;
 		private readonly ChannelFactorDictionary channelFactors;
+		private readonly SpeakerFlag visualizerSpeakers;
+
 		private readonly Dictionary<int, long[]> tempBuffers;
 		private int tempBufferSize;
 
@@ -42,7 +45,10 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 
 			realOutputChannelsCount = outputSpeakerToChannelMap.Count;
 			outputChannelCountToUse = FindNumberOfOutputChannelsToUse(realOutputChannelsCount);
+			hasSubwoofer = playerSpeakerToChannelMap.ContainsKey(SpeakerFlag.LowFrequency) && outputSpeakerToChannelMap.ContainsKey(SpeakerFlag.LowFrequency);
 			channelFactors = FindChannelFactorDictionary();
+			visualizerSpeakers = FindVisualizerSpeakers();
+
 			tempBuffers = outputSpeakerToChannelMap
 				.Where(x => x.Key != SpeakerFlag.LowFrequency)
 				.ToDictionary(x => x.Value, x => (long[])null);
@@ -168,24 +174,35 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 
 		/********************************************************************/
 		/// <summary>
+		/// Return which speakers that are used to play the sound
+		/// </summary>
+		/********************************************************************/
+		public SpeakerFlag VisualizerSpeakers => visualizerSpeakers;
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Build channel mapping table for visualizers.
 		/// </summary>
 		/********************************************************************/
 		public ReadOnlyDictionary<SpeakerFlag, int> GetVisualizersChannelMapping(MixerInfo currentMixerInfo)
 		{
-			Dictionary<SpeakerFlag, int> visualizerSpeakerToChannelMap = outputSpeakerToChannelMap;
+			Dictionary<SpeakerFlag, int> visualizerSpeakerToChannelMap = outputSpeakerToChannelMap.Where(x => visualizerSpeakers.HasFlag(x.Key)).ToDictionary();
 
 			if (currentMixerInfo.SwapSpeakers)
 			{
-				visualizerSpeakerToChannelMap = new();
+				Dictionary<SpeakerFlag, int> newVisualizerSpeakerToChannelMap = new();
 
-				foreach (KeyValuePair<SpeakerFlag, int> speaker in outputSpeakerToChannelMap)
+				foreach (KeyValuePair<SpeakerFlag, int> speaker in visualizerSpeakerToChannelMap)
 				{
 					if (speakerSwappingMap.TryGetValue(speaker.Value, out int newChannel))
-						visualizerSpeakerToChannelMap[speaker.Key] = newChannel;
+						newVisualizerSpeakerToChannelMap[speaker.Key] = newChannel;
 					else
-						visualizerSpeakerToChannelMap[speaker.Key] = speaker.Value;
+						newVisualizerSpeakerToChannelMap[speaker.Key] = speaker.Value;
 				}
+
+				visualizerSpeakerToChannelMap = newVisualizerSpeakerToChannelMap;
 			}
 
 			return new ReadOnlyDictionary<SpeakerFlag, int>(visualizerSpeakerToChannelMap);
@@ -298,6 +315,32 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 			}
 
 			return factorDictionary;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will return which speakers there actually will have output data
+		/// </summary>
+		/********************************************************************/
+		private SpeakerFlag FindVisualizerSpeakers()
+		{
+			SpeakerFlag result = 0;
+
+			foreach (SpeakerFlag playerSpeaker in playerSpeakerToChannelMap.Keys)
+			{
+				foreach (KeyValuePair<SpeakerFlag, Dictionary<SpeakerFlag, float>> pair in channelFactors)
+				{
+					if (pair.Value.TryGetValue(playerSpeaker, out float factor) && (factor != 0.0f))
+						result |= pair.Key;
+				}
+			}
+
+			if (hasSubwoofer)
+				result |= SpeakerFlag.LowFrequency;
+
+			return result;
 		}
 		#endregion
 	}

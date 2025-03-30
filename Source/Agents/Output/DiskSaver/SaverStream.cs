@@ -6,6 +6,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Streams;
 
 namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
@@ -53,6 +54,16 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver
 
 			wrapperStream.SetOutputFormat(outputInfo);
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return which speakers that are used to play the sound. Is first
+		/// available after calling SetOutputFormat()
+		/// </summary>
+		/********************************************************************/
+		public override SpeakerFlag VisualizerSpeakers => wrapperStream.VisualizerSpeakers;
 
 
 

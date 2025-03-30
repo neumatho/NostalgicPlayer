@@ -281,6 +281,19 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 
 		/********************************************************************/
 		/// <summary>
+		/// Return which speakers are used to play the module
+		/// </summary>
+		/********************************************************************/
+		public SpeakerFlag PlayBackSpeakers
+		{
+			get;
+			internal set;   // Cannot set this information in constructor and therefore will be set later on when information is available
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return a list of all the algorithms used to decrunch the module.
 		/// If null, no decruncher has been used
 		/// </summary>

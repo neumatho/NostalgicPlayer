@@ -215,6 +215,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					if (outputAgent.SwitchStream(soundStream, loader.FileName, StaticModuleInformation.ModuleName, StaticModuleInformation.Author, out errorMessage) == AgentResult.Error)
 						return false;
 
+					StaticModuleInformation.PlayBackSpeakers = soundStream.VisualizerSpeakers;
+
 					// Build note frequency table
 					uint[][] noteFrequencies = null;
 					if (StaticModuleInformation.Samples != null)
@@ -234,7 +236,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 						if (!channelChangeEnabled && (visualAgent is IChannelChangeVisualAgent))
 							continue;
 
-						visualAgent.InitVisual(StaticModuleInformation.Channels, StaticModuleInformation.VirtualChannels);
+						visualAgent.InitVisual(StaticModuleInformation.Channels, StaticModuleInformation.VirtualChannels, StaticModuleInformation.PlayBackSpeakers);
 
 						if (visualAgent is IChannelChangeVisualAgent channelChangeVisualAgent)
 							channelChangeVisualAgent.SetNoteFrequencies(noteFrequencies);

@@ -56,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.LevelMeter
 		/// Initializes the visual
 		/// </summary>
 		/********************************************************************/
-		public void InitVisual(int channels, int virtualChannels)
+		public void InitVisual(int channels, int virtualChannels, SpeakerFlag speakersToShow)
 		{
 			userControl.InitVisual();
 		}

@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
+
 namespace Polycode.NostalgicPlayer.Kit.Interfaces
 {
 	/// <summary>
@@ -17,7 +19,7 @@ namespace Polycode.NostalgicPlayer.Kit.Interfaces
 		/// <summary>
 		/// Initializes the visual
 		/// </summary>
-		void InitVisual(int channels, int virtualChannels);
+		void InitVisual(int channels, int virtualChannels, SpeakerFlag speakersToShow);
 
 		/// <summary>
 		/// Cleanup the visual

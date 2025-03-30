@@ -199,6 +199,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 				if (outputAgent.SwitchStream(soundStream, loader.FileName, StaticModuleInformation.ModuleName, StaticModuleInformation.Author, out errorMessage) == AgentResult.Error)
 					return false;
 
+				StaticModuleInformation.PlayBackSpeakers = soundStream.VisualizerSpeakers;
+
 				// Tell all visuals to start
 				foreach (IVisualAgent visualAgent in agentManager.GetRegisteredVisualAgent())
 				{
@@ -207,7 +209,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 					if (visualAgent is IChannelChangeVisualAgent)
 						continue;
 
-					visualAgent.InitVisual(StaticModuleInformation.Channels, StaticModuleInformation.VirtualChannels);
+					visualAgent.InitVisual(StaticModuleInformation.Channels, StaticModuleInformation.VirtualChannels, StaticModuleInformation.PlayBackSpeakers);
 				}
 
 				outputAgent.Play();

@@ -56,7 +56,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
 		/// Initializes the visual
 		/// </summary>
 		/********************************************************************/
-		public void InitVisual(int channels, int virtualChannels)
+		public void InitVisual(int channels, int virtualChannels, SpeakerFlag speakersToShow)
 		{
 		}
 

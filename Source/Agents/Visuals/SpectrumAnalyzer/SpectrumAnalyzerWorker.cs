@@ -61,7 +61,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.SpectrumAnalyzer
 		/// Initializes the visual
 		/// </summary>
 		/********************************************************************/
-		public void InitVisual(int channels, int virtualChannels)
+		public void InitVisual(int channels, int virtualChannels, SpeakerFlag speakersToShow)
 		{
 			analyzer = new Analyzer(FftLength);
 			analyzer.FftCalculated += Analyzer_FftCalculated;
