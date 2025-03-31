@@ -84,6 +84,25 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
 
 		/********************************************************************/
 		/// <summary>
+		/// Clear the drawing sample
+		/// </summary>
+		/********************************************************************/
+		public void ClearSample()
+		{
+			lock (this)
+			{
+				foreach (Control control in oscilloscopesPanel.Controls)
+				{
+					SpeakerOscilloscopeControl oscilloscopeControl = (SpeakerOscilloscopeControl)control.Controls[0];
+					oscilloscopeControl.DrawSample(null, 0, 0);
+				}
+			}
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Will tell each channel to draw itself
 		/// </summary>
 		/********************************************************************/

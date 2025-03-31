@@ -83,7 +83,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
 		public void SetPauseState(bool paused)
 		{
 			if (paused)
-				userControl.CleanupVisual();
+				userControl.ClearSample();
 		}
 		#endregion
 
