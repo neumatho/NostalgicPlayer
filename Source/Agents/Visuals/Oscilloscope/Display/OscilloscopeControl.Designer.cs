@@ -29,77 +29,47 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			this.leftPanel = new System.Windows.Forms.Panel();
-			this.leftSpeakerOscilloscopeControl = new Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display.SpeakerOscilloscopeControl();
-			this.rightPanel = new System.Windows.Forms.Panel();
-			this.rightSpeakerOscilloscopeControl = new Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display.SpeakerOscilloscopeControl();
-			this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-			this.leftPanel.SuspendLayout();
-			this.rightPanel.SuspendLayout();
-			this.SuspendLayout();
+			components = new System.ComponentModel.Container();
+			toolTip = new System.Windows.Forms.ToolTip(components);
+			oscilloscopesPanel = new System.Windows.Forms.Panel();
+			hashPanel = new System.Windows.Forms.Panel();
+			SuspendLayout();
 			// 
-			// leftPanel
+			// oscilloscopesPanel
 			// 
-			this.leftPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.leftPanel.Controls.Add(this.leftSpeakerOscilloscopeControl);
-			this.leftPanel.Location = new System.Drawing.Point(8, 8);
-			this.leftPanel.Name = "leftPanel";
-			this.leftPanel.Size = new System.Drawing.Size(138, 138);
-			this.leftPanel.TabIndex = 0;
+			oscilloscopesPanel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			oscilloscopesPanel.Location = new System.Drawing.Point(8, 8);
+			oscilloscopesPanel.Name = "oscilloscopesPanel";
+			oscilloscopesPanel.Size = new System.Drawing.Size(284, 128);
+			oscilloscopesPanel.TabIndex = 0;
+			oscilloscopesPanel.Visible = false;
 			// 
-			// leftSpeakerOscilloscopeControl
+			// hashPanel
 			// 
-			this.leftSpeakerOscilloscopeControl.BackColor = System.Drawing.Color.Black;
-			this.leftSpeakerOscilloscopeControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.leftSpeakerOscilloscopeControl.ForeColor = System.Drawing.Color.Green;
-			this.leftSpeakerOscilloscopeControl.Location = new System.Drawing.Point(0, 0);
-			this.leftSpeakerOscilloscopeControl.Name = "leftSpeakerOscilloscopeControl";
-			this.leftSpeakerOscilloscopeControl.Size = new System.Drawing.Size(134, 134);
-			this.leftSpeakerOscilloscopeControl.TabIndex = 0;
-			// 
-			// rightPanel
-			// 
-			this.rightPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.rightPanel.Controls.Add(this.rightSpeakerOscilloscopeControl);
-			this.rightPanel.Location = new System.Drawing.Point(154, 8);
-			this.rightPanel.Name = "rightPanel";
-			this.rightPanel.Size = new System.Drawing.Size(138, 138);
-			this.rightPanel.TabIndex = 1;
-			// 
-			// rightSpeakerOscilloscopeControl
-			// 
-			this.rightSpeakerOscilloscopeControl.BackColor = System.Drawing.Color.Black;
-			this.rightSpeakerOscilloscopeControl.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.rightSpeakerOscilloscopeControl.ForeColor = System.Drawing.Color.Green;
-			this.rightSpeakerOscilloscopeControl.Location = new System.Drawing.Point(0, 0);
-			this.rightSpeakerOscilloscopeControl.Name = "rightSpeakerOscilloscopeControl";
-			this.rightSpeakerOscilloscopeControl.Size = new System.Drawing.Size(134, 134);
-			this.rightSpeakerOscilloscopeControl.TabIndex = 0;
+			hashPanel.BackgroundImage = Resources.IDB_HASH;
+			hashPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			hashPanel.Location = new System.Drawing.Point(0, 0);
+			hashPanel.Name = "hashPanel";
+			hashPanel.Size = new System.Drawing.Size(300, 144);
+			hashPanel.TabIndex = 0;
 			// 
 			// OscilloscopeControl
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.Controls.Add(this.rightPanel);
-			this.Controls.Add(this.leftPanel);
-			this.MinimumSize = new System.Drawing.Size(300, 150);
-			this.Name = "OscilloscopeControl";
-			this.Size = new System.Drawing.Size(300, 150);
-			this.VisibleChanged += new System.EventHandler(this.Control_VisibleChanged);
-			this.Click += new System.EventHandler(this.Control_Click);
-			this.Resize += new System.EventHandler(this.Control_Resize);
-			this.leftPanel.ResumeLayout(false);
-			this.rightPanel.ResumeLayout(false);
-			this.ResumeLayout(false);
+			AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+			Controls.Add(hashPanel);
+			Controls.Add(oscilloscopesPanel);
+			MinimumSize = new System.Drawing.Size(300, 144);
+			Name = "OscilloscopeControl";
+			Size = new System.Drawing.Size(300, 144);
+			Click += Control_Click;
+			Resize += Control_Resize;
+			ResumeLayout(false);
 
 		}
 
 		#endregion
-
-		private System.Windows.Forms.Panel leftPanel;
-		private System.Windows.Forms.Panel rightPanel;
-		private SpeakerOscilloscopeControl leftSpeakerOscilloscopeControl;
-		private SpeakerOscilloscopeControl rightSpeakerOscilloscopeControl;
 		private System.Windows.Forms.ToolTip toolTip;
+		private System.Windows.Forms.Panel oscilloscopesPanel;
+		private System.Windows.Forms.Panel hashPanel;
 	}
 }

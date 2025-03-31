@@ -5,6 +5,8 @@
 /******************************************************************************/
 using System.Drawing;
 using System.Windows.Forms;
+using Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Containers;
+using Polycode.NostalgicPlayer.GuiKit.Components;
 
 namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
 {
@@ -13,12 +15,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
 	/// </summary>
 	internal partial class SpeakerOscilloscopeControl : UserControl
 	{
-		public enum ScopeType
-		{
-			Filled,
-			Lines,
-			Dots
-		}
+		private readonly string speaker;
 
 		private int[] sampleData;
 		private int sampleOffset;
@@ -31,11 +28,15 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public SpeakerOscilloscopeControl()
+		public SpeakerOscilloscopeControl(string speakerName)
 		{
 			InitializeComponent();
 
+			Font = FontPalette.GetRegularFont();
+
 			SetStyle(ControlStyles.UserPaint, true);
+
+			speaker = speakerName;
 		}
 
 
@@ -71,39 +72,6 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
 			scopeType = type;
 		}
 
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Will rotate the scope type
-		/// </summary>
-		/********************************************************************/
-		public ScopeType RotateScopeType()
-		{
-			switch (scopeType)
-			{
-				case ScopeType.Filled:
-				{
-					scopeType = ScopeType.Lines;
-					break;
-				}
-
-				case ScopeType.Lines:
-				{
-					scopeType = ScopeType.Dots;
-					break;
-				}
-
-				default:
-				{
-					scopeType = ScopeType.Filled;
-					break;
-				}
-			}
-
-			return scopeType;
-		}
-
 		#region Event handlers
 		/********************************************************************/
 		/// <summary> 
@@ -124,7 +92,7 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
 		/********************************************************************/
 		private void Control_Click(object sender, System.EventArgs e)
 		{
-			((OscilloscopeControl)Parent.Parent).SwitchScopeType();
+			((OscilloscopeControl)Parent.Parent.Parent).SwitchScopeType();
 		}
 		#endregion
 
@@ -189,6 +157,9 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display
 						}
 					}
 				}
+
+				// Draw the speaker name
+				g.DrawString(speaker, Font, Brushes.White, 4, 4);
 			}
 		}
 

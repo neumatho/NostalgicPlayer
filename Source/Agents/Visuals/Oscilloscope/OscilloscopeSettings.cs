@@ -5,7 +5,7 @@
 /******************************************************************************/
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Display;
+using Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope.Containers;
 using Polycode.NostalgicPlayer.Kit;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
@@ -45,14 +45,14 @@ namespace Polycode.NostalgicPlayer.Agent.Visual.Oscilloscope
 		/// Which output device to use
 		/// </summary>
 		/********************************************************************/
-		public SpeakerOscilloscopeControl.ScopeType ScopeType
+		public ScopeType ScopeType
 		{
 			get
 			{
-				if (Enum.TryParse(settings.GetStringEntry("General", "ScopeType"), out SpeakerOscilloscopeControl.ScopeType type))
+				if (Enum.TryParse(settings.GetStringEntry("General", "ScopeType"), out ScopeType type))
 					return type;
 
-				return SpeakerOscilloscopeControl.ScopeType.Filled;
+				return ScopeType.Filled;
 			}
 
 			set => settings.SetStringEntry("General", "ScopeType", value.ToString());
