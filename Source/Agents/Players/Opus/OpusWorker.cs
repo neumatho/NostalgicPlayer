@@ -9,6 +9,7 @@ using System.IO;
 using System.Text;
 using Polycode.NostalgicPlayer.Kit.Bases;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Streams;
 using Polycode.NostalgicPlayer.Ports.LibOpusFile;
 using Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers;
@@ -227,7 +228,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Opus
 
 			// Get player data
 			channels = opusFile.Op_Channel_Count(0);
-			if (channels > 2)
+			if (channels > 8)
 			{
 				errorMessage = string.Format(Resources.IDS_OPUS_ERR_ILLEGAL_CHANNELS, channels);
 				return false;
@@ -400,6 +401,18 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Opus
 
 		/********************************************************************/
 		/// <summary>
+		/// Return which speakers the player uses.
+		/// 
+		/// Note that the outputBuffer in LoadDataBlock match the defined
+		/// order in SpeakerFlag enum
+		/// </summary>
+		/********************************************************************/
+		public override SpeakerFlag SpeakerFlags => Tables.ChannelToSpeaker[channels - 1];
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Return the number of channels the sample uses
 		/// </summary>
 		/********************************************************************/
@@ -516,9 +529,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Opus
 					break;
 
 				// Convert the floats into 32-bit integers
+				int[] channelMapping = Tables.InputToOutput[channels - 1];
+
 				for (int i = 0; i < channels; i++)
 				{
-					int[] outBuffer = outputBuffer[i];
+					int[] outBuffer = outputBuffer[channelMapping[i]];
 
 					for (int j = 0, inOffset = i; j < done; j++, inOffset += channels)
 						outBuffer[offset + j] = Math.Clamp((int)(inputBuffer[inOffset] * 0x8000000), -0x8000000, 0x7ffffff) << 4;

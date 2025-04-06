@@ -8,7 +8,7 @@
     <Product>NostalgicPlayer</Product>
     <Description>This is a port of the libopusfile library created by Xiph.org Foundation</Description>
     <Platforms>AnyCPU</Platforms>
-    <Version>0.12</Version>
+    <Version>0.12-1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

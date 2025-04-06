@@ -26,6 +26,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Containers
 		/// <summary></summary>
 		Opus_Get_Last_Packet_Duration = 4039,
 
+		// MultiStream
+		/// <summary></summary>
+		Opus_MultiStream_Decoder_State = 5122,
+
 		// Celt
 		/// <summary></summary>
 		Celt_Get_Mode = 10015

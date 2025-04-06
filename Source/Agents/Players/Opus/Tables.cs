@@ -5,7 +5,7 @@
 /******************************************************************************/
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 
-namespace Polycode.NostalgicPlayer.Agent.Player.OggVorbis
+namespace Polycode.NostalgicPlayer.Agent.Player.Opus
 {
 	/// <summary>
 	/// Different tables needed

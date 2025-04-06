@@ -570,7 +570,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpus.Internal
 		/// 
 		/// </summary>
 		/********************************************************************/
-		private static c_int Opus_Decode_Native(OpusDecoderInternal st, CPointer<byte> data, opus_int32 len, CPointer<opus_val16> pcm, c_int frame_size, bool decode_fec, bool self_delimited, out opus_int32 packet_offset, bool soft_clip, OpusDRED dred, opus_int32 dred_offset)
+		public static c_int Opus_Decode_Native(OpusDecoderInternal st, CPointer<byte> data, opus_int32 len, CPointer<opus_val16> pcm, c_int frame_size, bool decode_fec, bool self_delimited, out opus_int32 packet_offset, bool soft_clip, OpusDRED dred, opus_int32 dred_offset)
 		{
 			packet_offset = 0;
 

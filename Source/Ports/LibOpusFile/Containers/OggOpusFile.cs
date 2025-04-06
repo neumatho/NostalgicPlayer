@@ -147,11 +147,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile.Containers
 
 		/// <summary>
 		/// Central working state for the packet-to-PCM decoder
-		/// TNE: This is not supported at the moment, therefore commented out
-		/// and replaced with the normal decoder
 		/// </summary>
-//		public OpusMSDecoder od;
-		public OpusDecoder od;
+		public OpusMsDecoder od;
 
 		/// <summary>
 		/// The application-provided packet decode callback

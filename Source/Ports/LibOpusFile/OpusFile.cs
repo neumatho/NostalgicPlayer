@@ -22,7 +22,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 		/// <summary>
 		/// 
 		/// </summary>
-		public delegate c_int Op_Decode_Cb_Func(object _ctx, OpusDecoder _decoder, Array _pcm, Ogg_Packet _op, c_int _nsamples, c_int _nchannels, DecodeFormat _format, c_int _li);
+		public delegate c_int Op_Decode_Cb_Func(object _ctx, OpusMsDecoder _decoder, Array _pcm, Ogg_Packet _op, c_int _nsamples, c_int _nchannels, DecodeFormat _format, c_int _li);
 
 		/// <summary>
 		/// The maximum number of bytes in a page (including page headers)
@@ -1668,7 +1668,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			}
 
 			gain_q8 = Internal.Op_Clamp(-32768, gain_q8, 32767);
-//TNE			Opus_Multistream_Decoder_Ctl(_of.od, OpusControlSetRequest.Opus_Set_Gain, gain_q8);
 			_of.od.Decoder_Ctl_Set(OpusControlSetRequest.Opus_Set_Gain, gain_q8);
 		}
 
@@ -1696,13 +1695,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 
 			// Check to see if the current decoder is compatible with the current link
 			if ((_of.od != null) && (_of.od_stream_count == stream_count) && (_of.od_coupled_count == coupled_count) && (_of.od_channel_count == channel_count) && (CMemory.MemCmp(_of.od_mapping, head.Mapping, channel_count) == 0))
-//TNE				Opus_Multistream_Decoder_Ctl(_of.od, OpusControlSetRequest.Opus_Reset_State);
 				_of.od.Decoder_Ctl_Set(OpusControlSetRequest.Opus_Reset_State);
 			else
 			{
-//TNE				Opus_Multistream_Decoder_Destroy(_of.od);
-//				_of.od = Opus_Multistream_Decoder_Create(48000, channel_count, stream_count, coupled_count, head.mapping, out c_int err);
-				_of.od = OpusDecoder.Create(48000, channel_count, out _);
+				_of.od = OpusMsDecoder.Create(48000, channel_count, stream_count, coupled_count, head.Mapping, out _);
 				if (_of.od == null)
 					return (c_int)OpusFileError.Fault;
 
@@ -1866,9 +1862,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 			Memory.Ogg_Free(_of.od_buffer);
 			_of.od_buffer.SetToNull();
 
-		if (_of.od != null)
-//TNE				Opus_Multistream_Decoder_Destroy(_of.od);
-			_of.od.Destroy();
+			if (_of.od != null)
+				_of.od.Destroy();
 
 			CPointer<OggOpusLink> links = _of.links;
 
@@ -3419,8 +3414,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibOpusFile
 
 			// If the application didn't want to handle decoding, do it ourselves
 			if (ret == Constants.Op_Dec_Use_Default)
-//TNE				ret = Opus_Multistream_Decode(_of.od, _op.Packet, _op.Bytes, _pcm, _nsamples, false);
 				ret = _of.od.Decode_Float(_op.Packet, _op.Bytes, _pcm, _nsamples, false);
+
 			// If the application returned a positive value other than 0 or
 			// OP_DEC_USE_DEFAULT, fail
 			else if (ret > 0)

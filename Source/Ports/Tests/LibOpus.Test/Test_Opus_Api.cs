@@ -87,7 +87,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test
 
 			Console.WriteLine("    opus_decoder_create() ........................ OK");
 
-			err = dec.Decoder_Ctl_Get(OpusControlGetRequest.Opus_Get_Final_Range, out opus_uint32 dec_final_range);
+			err = dec.Decoder_Ctl_Get(OpusControlGetRequest.Opus_Get_Final_Range, out opus_uint32 _);
 			if (err != OpusError.Ok)
 				Test_Failed();
 
@@ -296,6 +296,286 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibOpus.Test
 			dec.Destroy();
 
 			Console.WriteLine("                   All decoder interface tests passed");
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[TestMethod]
+		public void Test_MSDec_Api()
+		{
+			OpusMsDecoder dec;
+			OpusDecoder streamdec;
+			opus_int32 i;
+			byte[] packet = new byte[1276];
+			byte[] mapping = new byte[256];
+			c_float[] fbuf = new c_float[960 * 2];
+			c_short[] sbuf = new c_short[960 * 2];
+			OpusError err;
+
+			mapping[0] = 0;
+			mapping[1] = 0;
+
+			// First test invalid configurations which should fail
+			Console.WriteLine("  Multistream decoder basic API tests");
+			Console.WriteLine("  ---------------------------------------------------");
+
+			// Test with unsupported sample rates
+			for (c_int c = 1; c < 3; c++)
+			{
+				for (i = -7; i <= 96000; i++)
+				{
+					c_int fs;
+
+					if (((i == 8000) || (i == 12000) || (i == 16000) || (i == 24000) || (i == 48000)) && ((c == 1) || (c == 2)))
+						continue;
+
+					switch (i)
+					{
+						case -5:
+						{
+							fs = -8000;
+							break;
+						}
+
+						case -6:
+						{
+							fs = Int32.MaxValue;
+							break;
+						}
+
+						case -7:
+						{
+							fs = Int32.MinValue;
+							break;
+						}
+
+						default:
+						{
+							fs = i;
+							break;
+						}
+					}
+
+					dec = OpusMsDecoder.Create(fs, c, 1, c - 1, mapping, out err);
+					if ((err != OpusError.Bad_Arg) || (dec != null))
+						Test_Failed();
+				}
+			}
+
+			mapping[0] = 0;
+			mapping[1] = 1;
+
+			dec = OpusMsDecoder.Create(48000, 2, 1, 0, mapping, out err);
+			if ((err != OpusError.Bad_Arg) || (dec != null))
+				Test_Failed();
+
+			mapping[0] = mapping[1] = 0;
+
+			dec = OpusMsDecoder.Create(48000, 2, 1, 0, mapping, out err);
+			if ((err != OpusError.Ok) || (dec == null))
+				Test_Failed();
+
+			dec.Destroy();
+
+			dec = OpusMsDecoder.Create(48000, 1, 4, 1, mapping, out err);
+			if ((err != OpusError.Ok) || (dec == null))
+				Test_Failed();
+
+			dec.Destroy();
+
+			dec = OpusMsDecoder.Create(48000, 2, 1, 1, mapping, out err);
+			if ((err != OpusError.Ok) || (dec == null))
+				Test_Failed();
+
+			dec.Destroy();
+
+			dec = OpusMsDecoder.Create(48000, 255, 255, 1, mapping, out err);
+			if ((err != OpusError.Bad_Arg) || (dec != null))
+				Test_Failed();
+
+			dec = OpusMsDecoder.Create(48000, -1, 1, 1, mapping, out err);
+			if ((err != OpusError.Bad_Arg) || (dec != null))
+				Test_Failed();
+
+			dec = OpusMsDecoder.Create(48000, 0, 1, 1, mapping, out err);
+			if ((err != OpusError.Bad_Arg) || (dec != null))
+				Test_Failed();
+
+			dec = OpusMsDecoder.Create(48000, 1, -1, 2, mapping, out err);
+			if ((err != OpusError.Bad_Arg) || (dec != null))
+				Test_Failed();
+
+			dec = OpusMsDecoder.Create(48000, 1, -1, -1, mapping, out err);
+			if ((err != OpusError.Bad_Arg) || (dec != null))
+				Test_Failed();
+
+			dec = OpusMsDecoder.Create(48000, 256, 255, 1, mapping, out err);
+			if ((err != OpusError.Bad_Arg) || (dec != null))
+				Test_Failed();
+
+			dec = OpusMsDecoder.Create(48000, 256, 255, 0, mapping, out err);
+			if ((err != OpusError.Bad_Arg) || (dec != null))
+				Test_Failed();
+
+			mapping[0] = 255;
+			mapping[1] = 1;
+			mapping[2] = 2;
+
+			dec = OpusMsDecoder.Create(48000, 3, 2, 0, mapping, out err);
+			if ((err != OpusError.Bad_Arg) || (dec != null))
+				Test_Failed();
+
+			mapping[0] = 0;
+			mapping[1] = 0;
+			mapping[2] = 0;
+
+			dec = OpusMsDecoder.Create(48000, 3, 2, 1, mapping, out err);
+			if ((err != OpusError.Ok) || (dec == null))
+				Test_Failed();
+
+			dec.Destroy();
+
+			mapping[0] = 0;
+			mapping[1] = 255;
+			mapping[2] = 1;
+			mapping[3] = 2;
+			mapping[4] = 3;
+
+			dec = OpusMsDecoder.Create(48001, 5, 4, 1, mapping, out err);
+			if ((err != OpusError.Bad_Arg) || (dec != null))
+				Test_Failed();
+
+			mapping[0] = 0;
+			mapping[1] = 255;
+			mapping[2] = 1;
+			mapping[3] = 2;
+
+			dec = OpusMsDecoder.Create(48000, 4, 2, 1, mapping, out err);
+			if ((err != OpusError.Ok) || (dec == null))
+				Test_Failed();
+
+			Console.WriteLine("    opus_multistream_decoder_create() ............ OK");
+
+			err = dec.Decoder_Ctl_Get(OpusControlGetRequest.Opus_Get_Final_Range, out opus_uint32 _);
+			if (err != OpusError.Ok)
+				Test_Failed();
+
+			Console.WriteLine("    OPUS_GET_FINAL_RANGE ......................... OK");
+
+			err = dec.Decoder_Ctl_Get(OpusControlGetRequest.Opus_MultiStream_Decoder_State, -1, out streamdec);
+			if (err != OpusError.Bad_Arg)
+				Test_Failed();
+
+			err = dec.Decoder_Ctl_Get(OpusControlGetRequest.Opus_MultiStream_Decoder_State, 1, out streamdec);
+			if ((err != OpusError.Ok) || (streamdec == null))
+				Test_Failed();
+
+			err = dec.Decoder_Ctl_Get(OpusControlGetRequest.Opus_MultiStream_Decoder_State, 2, out streamdec);
+			if (err != OpusError.Bad_Arg)
+				Test_Failed();
+
+			err = dec.Decoder_Ctl_Get(OpusControlGetRequest.Opus_MultiStream_Decoder_State, 0, out streamdec);
+			if ((err != OpusError.Ok) || (streamdec == null))
+				Test_Failed();
+
+			Console.WriteLine("    OPUS_MULTISTREAM_GET_DECODER_STATE ........... OK");
+
+			for (opus_int32 j = 0; j < 2; j++)
+			{
+				err = dec.Decoder_Ctl_Get(OpusControlGetRequest.Opus_MultiStream_Decoder_State, j, out OpusDecoder od);
+				if (err != OpusError.Ok)
+					Test_Failed();
+
+				err = od.Decoder_Ctl_Get(OpusControlGetRequest.Opus_Get_Gain, out i);
+				if ((err != OpusError.Ok) || (i != 0))
+					Test_Failed();
+			}
+
+			err = dec.Decoder_Ctl_Set(OpusControlSetRequest.Opus_Set_Gain, 15);
+			if (err != OpusError.Ok)
+				Test_Failed();
+
+			Console.WriteLine("    OPUS_SET_GAIN ................................ OK");
+
+			for (opus_int32 j = 0; j < 2; j++)
+			{
+				err = dec.Decoder_Ctl_Get(OpusControlGetRequest.Opus_MultiStream_Decoder_State, j, out OpusDecoder od);
+				if (err != OpusError.Ok)
+					Test_Failed();
+
+				err = od.Decoder_Ctl_Get(OpusControlGetRequest.Opus_Get_Gain, out i);
+				if ((err != OpusError.Ok) || (i != 15))
+					Test_Failed();
+			}
+
+			Console.WriteLine("    OPUS_GET_GAIN ................................ OK");
+
+			err = dec.Decoder_Ctl_Get(OpusControlGetRequest.Opus_Get_Bandwidth, out i);
+			if ((err != OpusError.Ok) || (i != 0))
+				Test_Failed();
+
+			Console.WriteLine("    OPUS_GET_BANDWIDTH ........................... OK");
+
+			err = dec.Decoder_Ctl_Get((OpusControlGetRequest)OpusError.Unimplemented, out opus_uint32 _);
+			if (err != OpusError.Unimplemented)
+				Test_Failed();
+
+			Console.WriteLine("    OPUS_UNIMPLEMENTED ........................... OK");
+
+			// Reset the decoder
+			if (dec.Decoder_Ctl_Set(OpusControlSetRequest.Opus_Reset_State) != OpusError.Ok)
+				Test_Failed();
+
+			Console.WriteLine("    OPUS_RESET_STATE ............................. OK");
+
+			dec.Destroy();
+
+			dec = OpusMsDecoder.Create(48000, 2, 1, 1, mapping, out err);
+			if ((err != OpusError.Ok) || (dec == null))
+				Test_Failed();
+
+			packet[0] = (63 << 2) | 3;
+			packet[1] = 49;
+
+			for (opus_int32 j = 2; j < 51; j++)
+				packet[j] = 0;
+
+			if ((OpusError)dec.Decode(packet, 51, sbuf, 960, false) != OpusError.Invalid_Packet)
+				Test_Failed();
+
+			packet[0] = 63 << 2;
+			packet[1] = packet[2] = 0;
+
+			if ((OpusError)dec.Decode(packet, -1, sbuf, 960, false) != OpusError.Bad_Arg)
+				Test_Failed();
+
+			if ((OpusError)dec.Decode(packet, 3, sbuf, -960, false) != OpusError.Bad_Arg)
+				Test_Failed();
+
+			if ((OpusError)dec.Decode(packet, 3, sbuf, 60, false) != OpusError.Buffer_Too_Small)
+				Test_Failed();
+
+			if ((OpusError)dec.Decode(packet, 3, sbuf, 480, false) != OpusError.Buffer_Too_Small)
+				Test_Failed();
+
+			if (dec.Decode(packet, 3, sbuf, 960, false) != 960)
+				Test_Failed();
+
+			Console.WriteLine("    opus_multistream_decode() .................... OK");
+
+			if (dec.Decode_Float(packet, 3, fbuf, 960, false) != 960)
+				Test_Failed();
+
+			Console.WriteLine("    opus_multistream_decode_float() .............. OK");
+
+			dec.Destroy();
+
+			Console.WriteLine("       All multistream decoder interface tests passed");
 		}
 
 
