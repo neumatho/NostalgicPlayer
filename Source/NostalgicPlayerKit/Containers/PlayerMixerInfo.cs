@@ -39,10 +39,10 @@ namespace Polycode.NostalgicPlayer.Kit.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Indicate if surround is enabled
+		/// Indicate which surround mode to use
 		/// </summary>
 		/********************************************************************/
-		public bool EnableSurround
+		public SurroundMode SurroundMode
 		{
 			get; set;
 		}

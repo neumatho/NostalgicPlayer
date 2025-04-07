@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.PlayerLibrary.Loaders;
 
@@ -18,10 +19,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public PlayerConfiguration(IOutputAgent outputAgent, Loader loader, MixerConfiguration mixerConfiguration)
+		public PlayerConfiguration(IOutputAgent outputAgent, Loader loader, SurroundMode surroundMode, MixerConfiguration mixerConfiguration)
 		{
 			OutputAgent = outputAgent;
 			Loader = loader;
+			SurroundMode = surroundMode;
 			MixerConfiguration = mixerConfiguration;
 		}
 
@@ -45,6 +47,18 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 		/// </summary>
 		/********************************************************************/
 		public Loader Loader
+		{
+			get;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Holds the surround mode to use
+		/// </summary>
+		/********************************************************************/
+		public SurroundMode SurroundMode
 		{
 			get;
 		}

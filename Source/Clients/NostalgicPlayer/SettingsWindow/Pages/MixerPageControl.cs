@@ -34,7 +34,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private int originalVisualsLatency;
 		private bool originalInterpolation;
 		private bool originalSwapSpeakers;
-		private bool originalSurround;
 		private bool originalAmigaFilter;
 
 		private int channelsUsed;
@@ -50,6 +49,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		public MixerPageControl()
 		{
 			InitializeComponent();
+
+			// Add items to the combo controls
+			surroundModeComboBox.Items.AddRange(
+			[
+				Resources.IDS_SETTINGS_MIXER_GENERAL_SURROUND_NONE,
+				Resources.IDS_SETTINGS_MIXER_GENERAL_SURROUND_PROLOGIC,
+				Resources.IDS_SETTINGS_MIXER_GENERAL_SURROUND_REAL
+			]);
 
 			// Create channel checkboxes
 			channelCheckBoxes = new KryptonCheckBox[MaxNumberOfChannels];
@@ -146,8 +153,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			originalVisualsLatency = visualsLatencyTrackBar.Value = soundSettings.VisualsLatency;
 			originalInterpolation = interpolationCheckBox.Checked = soundSettings.Interpolation;
 			originalSwapSpeakers = swapSpeakersCheckBox.Checked = soundSettings.SwapSpeakers;
-			originalSurround = surroundCheckBox.Checked = soundSettings.Surround;
 			originalAmigaFilter = amigaFilterCheckBox.Checked = soundSettings.AmigaFilter;
+
+			surroundModeComboBox.SelectedIndex = (int)soundSettings.SurroundMode;
 
 			// Setup channels
 			doNotTrigChannelChanged = true;
@@ -189,8 +197,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			originalVisualsLatency = soundSettings.VisualsLatency = visualsLatencyTrackBar.Value;
 			originalInterpolation = soundSettings.Interpolation = interpolationCheckBox.Checked;
 			originalSwapSpeakers = soundSettings.SwapSpeakers = swapSpeakersCheckBox.Checked;
-			originalSurround = soundSettings.Surround = surroundCheckBox.Checked;
 			originalAmigaFilter = soundSettings.AmigaFilter = amigaFilterCheckBox.Checked;
+
+			soundSettings.SurroundMode = (SurroundMode)surroundModeComboBox.SelectedIndex;
 
 			soundSettings.OutputAgent = ((AgentInfo)((KryptonListItem)outputAgentComboBox.SelectedItem).Tag).TypeId;
 		}
@@ -219,7 +228,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			soundSettings.VisualsLatency = originalVisualsLatency;
 			soundSettings.Interpolation = originalInterpolation;
 			soundSettings.SwapSpeakers = originalSwapSpeakers;
-			soundSettings.Surround = originalSurround;
 			soundSettings.AmigaFilter = originalAmigaFilter;
 
 			SetMixerSettings();
@@ -291,20 +299,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private void SwapSpeakersCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			soundSettings.SwapSpeakers = swapSpeakersCheckBox.Checked;
-
-			SetMixerSettings();
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Is called when the user change surround
-		/// </summary>
-		/********************************************************************/
-		private void SurroundCheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			soundSettings.Surround = surroundCheckBox.Checked;
 
 			SetMixerSettings();
 		}
@@ -435,7 +429,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 				VisualsLatency = soundSettings.VisualsLatency * 20,
 				EnableInterpolation = soundSettings.Interpolation,
 				SwapSpeakers = soundSettings.SwapSpeakers,
-				EnableSurround = soundSettings.Surround,
 				EnableAmigaFilter = soundSettings.AmigaFilter
 			};
 

@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Utility;
@@ -335,7 +336,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					}
 					else
 					{
-						if ((vnf.Panning == (int)ChannelPanningType.Surround) && currentMixerInfo.EnableSurround)
+						if ((vnf.Panning == (int)ChannelPanningType.Surround) && (currentMixerInfo.SurroundMode != SurroundMode.None))//XX
 						{
 							// Mix the same sample into both front channels, but with negative volume on right channel
 							// to encode it as Dolby Pro Logic surround

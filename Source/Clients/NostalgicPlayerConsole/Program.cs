@@ -97,7 +97,7 @@ namespace Polycode.NostalgicPlayer.Client.ConsolePlayer
 
 					try
 					{
-						if (!player.InitPlayer(new PlayerConfiguration(outputAgent, loader, new MixerConfiguration
+						if (!player.InitPlayer(new PlayerConfiguration(outputAgent, loader, SurroundMode.None, new MixerConfiguration
 							{
 								EnableAmigaFilter = true,
 								StereoSeparator = 100

@@ -33,7 +33,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers
 		{
 			StereoSeparator = source.StereoSeparator;
 			EnableInterpolation = source.EnableInterpolation;
-			EnableSurround = source.EnableSurround;
+			SurroundMode = source.SurroundMode;
 			SwapSpeakers = source.SwapSpeakers;
 			EmulateFilter = source.EmulateFilter;
 

@@ -13,6 +13,7 @@ using Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow.ListItem;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.Modules;
 using Polycode.NostalgicPlayer.Client.GuiPlayer.MultiFiles;
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Utility;
 using Polycode.NostalgicPlayer.PlayerLibrary.Agent;
 using Polycode.NostalgicPlayer.PlayerLibrary.Containers;
@@ -362,7 +363,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 							{
 								IPlayer player = loader.Player;
 
-								if (player.InitPlayer(new PlayerConfiguration(null, loader, new MixerConfiguration()), out string _))
+								if (player.InitPlayer(new PlayerConfiguration(null, loader, SurroundMode.None, new MixerConfiguration()), out string _))
 								{
 									try
 									{

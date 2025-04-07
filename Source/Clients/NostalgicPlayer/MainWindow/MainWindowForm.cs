@@ -2877,6 +2877,12 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 				version++;
 			}
 
+			if (version == 2)
+			{
+				ConvertSettingsToVersion3();
+				version++;
+			}
+
 			userSettings.SetIntEntry("General", "Version", version);
 		}
 
@@ -2914,6 +2920,21 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			userSettings.RemoveEntry("Options", "NeverEnding");
 			userSettings.RemoveEntry("Options", "NeverEndingTimeout");
 			userSettings.RemoveEntry("Options", "ModuleListEnd");
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will convert the settings from version 2 to version 3
+		/// </summary>
+		/********************************************************************/
+		private void ConvertSettingsToVersion3()
+		{
+			bool boolValue = userSettings.GetBoolEntry("Sound", "Surround");
+			userSettings.SetEnumEntry("Sound", "SurroundMode", boolValue ? SurroundMode.DolbyProLogic : SurroundMode.None);
+
+			userSettings.RemoveEntry("Sound", "Surround");
 		}
 
 

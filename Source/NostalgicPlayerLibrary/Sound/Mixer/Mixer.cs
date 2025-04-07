@@ -143,7 +143,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				// Initialize the mixers
 				lock (mixerInfoLock)
 				{
-					mixerInfo = new MixerInfo();
+					mixerInfo = new MixerInfo
+					{
+						SurroundMode = playerConfiguration.SurroundMode
+					};
+
 					ChangeConfiguration(playerConfiguration.MixerConfiguration);
 				}
 			}
@@ -360,7 +364,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 			{
 				mixerInfo.StereoSeparator = mixerConfiguration.StereoSeparator;
 				mixerInfo.EnableInterpolation = mixerConfiguration.EnableInterpolation;
-				mixerInfo.EnableSurround = mixerConfiguration.EnableSurround;
 				mixerInfo.SwapSpeakers = mixerConfiguration.SwapSpeakers;
 				mixerInfo.EmulateFilter = mixerConfiguration.EnableAmigaFilter;
 

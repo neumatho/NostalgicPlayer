@@ -77,18 +77,6 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Containers
 
 		/********************************************************************/
 		/// <summary>
-		/// Indicate if surround is enabled
-		/// </summary>
-		/********************************************************************/
-		public bool EnableSurround
-		{
-			get; set;
-		} = false;
-
-
-
-		/********************************************************************/
-		/// <summary>
 		/// Indicate if Amiga filter should be emulated
 		/// </summary>
 		/********************************************************************/

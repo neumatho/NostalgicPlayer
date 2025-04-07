@@ -4,6 +4,7 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Utility;
 
 namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
@@ -114,14 +115,14 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Containers.Settings
 
 		/********************************************************************/
 		/// <summary>
-		/// Dolby Pro Logic surround
+		/// Which surround mode to use
 		/// </summary>
 		/********************************************************************/
-		public bool Surround
+		public SurroundMode SurroundMode
 		{
-			get => settings.GetBoolEntry("Sound", "Surround", false);
+			get => settings.GetEnumEntry("Sound", "SurroundMode", SurroundMode.None);
 
-			set => settings.SetBoolEntry("Sound", "Surround", value);
+			set => settings.SetEnumEntry("Sound", "SurroundMode", value);
 		}
 
 

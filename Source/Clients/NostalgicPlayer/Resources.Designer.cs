@@ -1825,11 +1825,38 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dolby Pro Logic surround.
+        ///   Looks up a localized string similar to Surround mode.
         /// </summary>
         internal static string IDS_SETTINGS_MIXER_GENERAL_SURROUND {
             get {
                 return ResourceManager.GetString("IDS_SETTINGS_MIXER_GENERAL_SURROUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_GENERAL_SURROUND_NONE {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_GENERAL_SURROUND_NONE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dolby Pro Logic.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_GENERAL_SURROUND_PROLOGIC {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_GENERAL_SURROUND_PROLOGIC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Real channels.
+        /// </summary>
+        internal static string IDS_SETTINGS_MIXER_GENERAL_SURROUND_REAL {
+            get {
+                return ResourceManager.GetString("IDS_SETTINGS_MIXER_GENERAL_SURROUND_REAL", resourceCulture);
             }
         }
         

@@ -784,7 +784,16 @@ what has changed since your previous version.</value>
     <value>Stereo separation</value>
   </data>
   <data name="IDS_SETTINGS_MIXER_GENERAL_SURROUND" xml:space="preserve">
-    <value>Dolby Pro Logic surround</value>
+    <value>Surround mode</value>
+  </data>
+  <data name="IDS_SETTINGS_MIXER_GENERAL_SURROUND_NONE" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="IDS_SETTINGS_MIXER_GENERAL_SURROUND_PROLOGIC" xml:space="preserve">
+    <value>Dolby Pro Logic</value>
+  </data>
+  <data name="IDS_SETTINGS_MIXER_GENERAL_SURROUND_REAL" xml:space="preserve">
+    <value>Real channels</value>
   </data>
   <data name="IDS_SETTINGS_MIXER_GENERAL_SWAPSPEAKERS" xml:space="preserve">
     <value>Swap left and right speakers</value>

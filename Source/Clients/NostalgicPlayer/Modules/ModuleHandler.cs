@@ -117,7 +117,6 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 				VisualsLatency = sndSettings.VisualsLatency * 20,
 				EnableInterpolation = sndSettings.Interpolation,
 				SwapSpeakers = sndSettings.SwapSpeakers,
-				EnableSurround = sndSettings.Surround,
 				EnableAmigaFilter = sndSettings.AmigaFilter,
 				ExtraChannels = mainWindow
 			};
@@ -297,7 +296,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.Modules
 					}
 
 					// Setup player settings
-					PlayerConfiguration playerConfig = new PlayerConfiguration(outputAgent, item.Loader, mixerConfiguration);
+					PlayerConfiguration playerConfig = new PlayerConfiguration(outputAgent, item.Loader, soundSettings.SurroundMode, mixerConfiguration);
 
 					// Initialize the module
 					if (!item.Loader.Player.InitPlayer(playerConfig, out errorMessage))

@@ -350,7 +350,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 			base.ChangeMixerConfiguration(mixerInfo);
 
 			libXmp.Xmp_Set_Player(Xmp_Player.Mix, mixerInfo.StereoSeparator);
-			libXmp.Xmp_Set_Player(Xmp_Player.Surround, mixerInfo.EnableSurround ? 1 : 0);
+			libXmp.Xmp_Set_Player(Xmp_Player.Surround, mixerInfo.SurroundMode == SurroundMode.DolbyProLogic ? 1 : 0);//XX
 
 			for (int i = 0; i < ModuleChannelCount; i++)
 			{

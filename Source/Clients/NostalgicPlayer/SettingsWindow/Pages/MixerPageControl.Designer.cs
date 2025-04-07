@@ -42,7 +42,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			amigaFilterCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			interpolationCheckBox = new Krypton.Toolkit.KryptonCheckBox();
 			swapSpeakersCheckBox = new Krypton.Toolkit.KryptonCheckBox();
-			surroundCheckBox = new Krypton.Toolkit.KryptonCheckBox();
+			surroundModeLabel = new Krypton.Toolkit.KryptonLabel();
+			surroundModeComboBox = new Krypton.Toolkit.KryptonComboBox();
 			outputGroupBox = new Krypton.Toolkit.KryptonGroupBox();
 			outputAgentSettingsButton = new Krypton.Toolkit.KryptonButton();
 			outputAgentComboBox = new Krypton.Toolkit.KryptonComboBox();
@@ -56,6 +57,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			((System.ComponentModel.ISupportInitialize)generalGroupBox).BeginInit();
 			((System.ComponentModel.ISupportInitialize)generalGroupBox.Panel).BeginInit();
 			generalGroupBox.Panel.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)surroundModeComboBox).BeginInit();
 			((System.ComponentModel.ISupportInitialize)outputGroupBox).BeginInit();
 			((System.ComponentModel.ISupportInitialize)outputGroupBox.Panel).BeginInit();
 			outputGroupBox.Panel.SuspendLayout();
@@ -89,7 +91,8 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			generalGroupBox.Panel.Controls.Add(amigaFilterCheckBox);
 			generalGroupBox.Panel.Controls.Add(interpolationCheckBox);
 			generalGroupBox.Panel.Controls.Add(swapSpeakersCheckBox);
-			generalGroupBox.Panel.Controls.Add(surroundCheckBox);
+			generalGroupBox.Panel.Controls.Add(surroundModeLabel);
+			generalGroupBox.Panel.Controls.Add(surroundModeComboBox);
 			controlResource.SetResourceKey(generalGroupBox, "IDS_SETTINGS_MIXER_GENERAL");
 			generalGroupBox.Size = new System.Drawing.Size(592, 135);
 			generalGroupBox.TabIndex = 0;
@@ -207,17 +210,29 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			swapSpeakersCheckBox.Values.Text = "Swap left and right speakers";
 			swapSpeakersCheckBox.CheckedChanged += SwapSpeakersCheckBox_CheckedChanged;
 			// 
-			// surroundCheckBox
+			// surroundModeLabel
 			// 
-			surroundCheckBox.Location = new System.Drawing.Point(200, 70);
-			surroundCheckBox.Name = "surroundCheckBox";
-			surroundCheckBox.Palette = fontPalette;
-			surroundCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
-			controlResource.SetResourceKey(surroundCheckBox, "IDS_SETTINGS_MIXER_GENERAL_SURROUND");
-			surroundCheckBox.Size = new System.Drawing.Size(147, 16);
-			surroundCheckBox.TabIndex = 8;
-			surroundCheckBox.Values.Text = "Dolby Pro Logic surround";
-			surroundCheckBox.CheckedChanged += SurroundCheckBox_CheckedChanged;
+			surroundModeLabel.Location = new System.Drawing.Point(197, 70);
+			surroundModeLabel.Name = "surroundModeLabel";
+			surroundModeLabel.Palette = fontPalette;
+			surroundModeLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(surroundModeLabel, "IDS_SETTINGS_MIXER_GENERAL_SURROUND");
+			surroundModeLabel.Size = new System.Drawing.Size(86, 16);
+			surroundModeLabel.TabIndex = 3;
+			surroundModeLabel.Values.Text = "Surround mode";
+			// 
+			// surroundModeComboBox
+			// 
+			surroundModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			surroundModeComboBox.DropDownWidth = 120;
+			surroundModeComboBox.IntegralHeight = false;
+			surroundModeComboBox.Location = new System.Drawing.Point(288, 69);
+			surroundModeComboBox.Name = "surroundModeComboBox";
+			surroundModeComboBox.Palette = fontPalette;
+			surroundModeComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
+			controlResource.SetResourceKey(surroundModeComboBox, null);
+			surroundModeComboBox.Size = new System.Drawing.Size(120, 19);
+			surroundModeComboBox.TabIndex = 8;
 			// 
 			// outputGroupBox
 			// 
@@ -360,6 +375,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			generalGroupBox.Panel.ResumeLayout(false);
 			generalGroupBox.Panel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)generalGroupBox).EndInit();
+			((System.ComponentModel.ISupportInitialize)surroundModeComboBox).EndInit();
 			((System.ComponentModel.ISupportInitialize)outputGroupBox.Panel).EndInit();
 			outputGroupBox.Panel.ResumeLayout(false);
 			outputGroupBox.Panel.PerformLayout();
@@ -390,10 +406,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 		private Krypton.Toolkit.KryptonButton channels32_47Button;
 		private Krypton.Toolkit.KryptonButton channels48_63Button;
 		private Krypton.Toolkit.KryptonCheckBox swapSpeakersCheckBox;
-		private Krypton.Toolkit.KryptonCheckBox surroundCheckBox;
 		private GuiKit.Components.FontPalette fontPalette;
 		private Krypton.Toolkit.KryptonLabel visualsLatencyLabel;
 		private Krypton.Toolkit.KryptonTrackBar visualsLatencyTrackBar;
 		private Krypton.Toolkit.KryptonLabel visualsLatencyMsLabel;
+		private Krypton.Toolkit.KryptonComboBox surroundModeComboBox;
+		private Krypton.Toolkit.KryptonLabel surroundModeLabel;
 	}
 }
