@@ -4,6 +4,8 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Collections.ObjectModel;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Utility;
 
@@ -56,7 +58,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// This is the main mixer method
 		/// </summary>
 		/********************************************************************/
-		public override void Mixing(MixerInfo currentMixerInfo, int[][][] channelMap, int offsetInFrames, int todoInFrames)
+		public override void Mixing(MixerInfo currentMixerInfo, int[][][] channelMap, int offsetInFrames, int todoInFrames, ReadOnlyDictionary<SpeakerFlag, int> playerSpeakerToChannelMap)
 		{
 			for (int i = 0; i < virtualChannelCount; i++)
 				AddPlayerSamples(voiceInfo[i], channelMap[i][i], offsetInFrames, todoInFrames);

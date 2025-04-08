@@ -4,7 +4,10 @@
 /* information.                                                               */
 /******************************************************************************/
 using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using Polycode.NostalgicPlayer.Kit.Containers;
+using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Containers.Types;
 using Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer.Containers;
 using Polycode.NostalgicPlayer.PlayerLibrary.Utility;
@@ -62,7 +65,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// This is the main mixer method
 		/// </summary>
 		/********************************************************************/
-		public override void Mixing(MixerInfo currentMixerInfo, int[][][] channelMap, int offsetInFrames, int todoInFrames)
+		public override void Mixing(MixerInfo currentMixerInfo, int[][][] channelMap, int offsetInFrames, int todoInFrames, ReadOnlyDictionary<SpeakerFlag, int> playerSpeakerToChannelMap)
 		{
 			// Loop through all the channels and mix the samples into the buffer
 			for (int t = 0; t < virtualChannelCount; t++)
@@ -106,21 +109,47 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 					Array.Copy(vnf.PanningVolume, vnf.OldPanningVolume, vnf.PanningVolume.Length);
 
+					int frontLeftSpeaker = playerSpeakerToChannelMap[SpeakerFlag.FrontLeft];
+					int frontRightSpeaker = playerSpeakerToChannelMap[SpeakerFlag.FrontRight];
+
 					if (vnf.Panning != (int)ChannelPanningType.Surround)
 					{
 						// Stereo, calculate the volume with panning
 						int pan = (((vnf.Panning - 128) * stereoSeparation) / 128) + 128;
 
-						vnf.PanningVolume[0] = (vol * ((int)ChannelPanningType.Right - pan)) >> 8;
-						vnf.PanningVolume[1] = (vol * pan) >> 8;
+						vnf.PanningVolume[frontLeftSpeaker] = (vol * ((int)ChannelPanningType.Right - pan)) >> 8;
+						vnf.PanningVolume[frontRightSpeaker] = (vol * pan) >> 8;
 					}
 					else
 					{
-						// Dolby Surround
-						vnf.PanningVolume[0] = vnf.PanningVolume[1] = vol / 2;
+						// Surround
+						vol /= 2;
+
+						if (currentMixerInfo.SurroundMode == SurroundMode.DolbyProLogic)
+							vnf.PanningVolume[frontLeftSpeaker] = vnf.PanningVolume[frontRightSpeaker] = vol;
+						else
+						{
+							vnf.PanningVolume[frontLeftSpeaker] = 0;
+							vnf.PanningVolume[frontRightSpeaker] = 0;
+
+							if (playerSpeakerToChannelMap.TryGetValue(SpeakerFlag.BackCenter, out int backCenterSpeaker))
+							{
+								vnf.PanningVolume[backCenterSpeaker] = vol;
+							}
+							else if (playerSpeakerToChannelMap.TryGetValue(SpeakerFlag.BackLeft, out int backLeftSpeaker) && playerSpeakerToChannelMap.TryGetValue(SpeakerFlag.BackRight, out int backRightSpeaker))
+							{
+								vnf.PanningVolume[backLeftSpeaker] = vol;
+								vnf.PanningVolume[backRightSpeaker] = vol;
+							}
+							else
+							{
+								vnf.PanningVolume[frontLeftSpeaker] = vol;
+								vnf.PanningVolume[frontRightSpeaker] = vol;
+							}
+						}
 					}
 
-					AddChannel(currentMixerInfo, vnf, channelMap[t], offsetInFrames, todoInFrames);
+					AddChannel(currentMixerInfo, vnf, channelMap[t], offsetInFrames, todoInFrames, playerSpeakerToChannelMap);
 				}
 			}
 		}
@@ -144,7 +173,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 		/// Mix a channel into the buffer
 		/// </summary>
 		/********************************************************************/
-		private void AddChannel(MixerInfo currentMixerInfo, VoiceInfo vnf, int[][] mixingBuffers, int offsetInFrames, int todoInFrames)
+		private void AddChannel(MixerInfo currentMixerInfo, VoiceInfo vnf, int[][] mixingBuffers, int offsetInFrames, int todoInFrames, ReadOnlyDictionary<SpeakerFlag, int> playerSpeakerToChannelMap)
 		{
 			// todoInFrames at this point is actually the same as todoInSamples, since it works on the
 			// sample to be mixed into the buf[] and the sample is in mono
@@ -321,40 +350,38 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					long newCurrent = endPos;
 					int rampVolume = vnf.RampVolume;
 
+					int frontLeftSpeaker = playerSpeakerToChannelMap[SpeakerFlag.FrontLeft];
+					int frontRightSpeaker = playerSpeakerToChannelMap[SpeakerFlag.FrontRight];
+
 					if ((vsi.Flags & SampleFlag.Stereo) != 0)
 					{
 						// Left channel
-						if (vnf.PanningVolume[0] != 0)
-							newCurrent = MixSample(currentMixerInfo, vnf, sampleData, 0, 2, vnf.PanningVolume[0], vnf.OldPanningVolume[0], ref rampVolume, mixingBuffers[0], offsetInFrames, done);
+						if (vnf.PanningVolume[frontLeftSpeaker] != 0)
+							newCurrent = MixSample(currentMixerInfo, vnf, sampleData, 0, 2, vnf.PanningVolume[frontLeftSpeaker], vnf.OldPanningVolume[frontLeftSpeaker], ref rampVolume, mixingBuffers[frontLeftSpeaker], offsetInFrames, done);
 
 						// Right channel
-						if (vnf.PanningVolume[1] != 0)
+						if (vnf.PanningVolume[frontRightSpeaker] != 0)
 						{
 							rampVolume = vnf.RampVolume;
-							newCurrent = MixSample(currentMixerInfo, vnf, sampleData, 1, 2, vnf.PanningVolume[1], vnf.OldPanningVolume[1], ref rampVolume, mixingBuffers[1], offsetInFrames, done);	
+							newCurrent = MixSample(currentMixerInfo, vnf, sampleData, 1, 2, vnf.PanningVolume[frontRightSpeaker], vnf.OldPanningVolume[frontRightSpeaker], ref rampVolume, mixingBuffers[frontRightSpeaker], offsetInFrames, done);
 						}
 					}
 					else
 					{
-						if ((vnf.Panning == (int)ChannelPanningType.Surround) && (currentMixerInfo.SurroundMode != SurroundMode.None))//XX
+						if ((vnf.Panning == (int)ChannelPanningType.Surround) && (currentMixerInfo.SurroundMode == SurroundMode.DolbyProLogic))
 						{
 							// Mix the same sample into both front channels, but with negative volume on right channel
 							// to encode it as Dolby Pro Logic surround
-							if (vnf.PanningVolume[0] != 0)
-							{
-								MixSample(currentMixerInfo, vnf, sampleData, 0, 1, vnf.PanningVolume[0], vnf.OldPanningVolume[0], ref rampVolume, mixingBuffers[0], offsetInFrames, done);
-
-								rampVolume = vnf.RampVolume;
-								newCurrent = MixSample(currentMixerInfo, vnf, sampleData, 0, 1, -vnf.PanningVolume[0], vnf.OldPanningVolume[0], ref rampVolume, mixingBuffers[1], offsetInFrames, done);
-							}
-
-							// Take the rest of the channels
-							for (int i = 2; i < mixingBuffers.Length; i++)
+							for (int i = 0; i < mixingBuffers.Length; i++)
 							{
 								if (vnf.PanningVolume[i] != 0)
 								{
 									rampVolume = vnf.RampVolume;
-									newCurrent = MixSample(currentMixerInfo, vnf, sampleData, 0, 1, vnf.PanningVolume[i], vnf.OldPanningVolume[i], ref rampVolume, mixingBuffers[i], offsetInFrames, done);
+
+									if (i == frontRightSpeaker)
+										newCurrent = MixSample(currentMixerInfo, vnf, sampleData, 0, 1, -vnf.PanningVolume[i], vnf.OldPanningVolume[i], ref rampVolume, mixingBuffers[i], offsetInFrames, done);
+									else
+										newCurrent = MixSample(currentMixerInfo, vnf, sampleData, 0, 1, vnf.PanningVolume[i], vnf.OldPanningVolume[i], ref rampVolume, mixingBuffers[i], offsetInFrames, done);
 								}
 							}
 						}

@@ -111,8 +111,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				bufferDirect = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferDirect) != 0;
 
 				// Get player information
-				virtualChannelCount = bufferDirect ? 2 : currentPlayer.VirtualChannelCount;
-				mixerChannelCount = 2;
+				mixerChannelCount = Enum.GetValues<SpeakerFlag>().Count(flag => (currentPlayer.SpeakerFlags & flag) != 0);	// Count number of bits set
+				virtualChannelCount = bufferDirect ? mixerChannelCount : currentPlayer.VirtualChannelCount;
 				enableChannelVisualization = bufferMode && ((currentPlayer.SupportFlags & ModulePlayerSupportFlag.Visualize) != 0);
 				enableChannelsSupport = !bufferDirect || ((currentPlayer.SupportFlags & ModulePlayerSupportFlag.EnableChannels) == 0);
 
@@ -648,7 +648,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 					currentVisualizer.TellAgentsAboutChannelChange(leftInFrames);
 
 					// And mix it
-					currentMixer.Mixing(currentMixerInfo, mixerBufferMap, totalFrames, leftInFrames);
+					currentMixer.Mixing(currentMixerInfo, mixerBufferMap, totalFrames, leftInFrames, downMixer.PlayerSpeakerToChannelMap);
 
 					// Calculate new values for the counter variables
 					framesTakenSinceLastCall += leftInFrames;
@@ -702,7 +702,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 						((ChannelParser)extraChannelsChannels[i]).ParseInfo(voiceInfo[i], click, true, false);
 
 					// Mix the data
-					extraChannelsMixer.Mixing(currentMixerInfo, extraChannelsMixerBufferMap, 0, todoInFrames);
+					extraChannelsMixer.Mixing(currentMixerInfo, extraChannelsMixerBufferMap, 0, todoInFrames, downMixer.PlayerSpeakerToChannelMap);
 
 					// Check all the channels to see if they are still active
 					for (int t = 0; t < extraChannelsNumber; t++)

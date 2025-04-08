@@ -17,8 +17,8 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 	/// </summary>
 	internal class DownMixer
 	{
-		private readonly Dictionary<SpeakerFlag, int> playerSpeakerToChannelMap;
-		private readonly Dictionary<SpeakerFlag, int> outputSpeakerToChannelMap;
+		private readonly ReadOnlyDictionary<SpeakerFlag, int> playerSpeakerToChannelMap;
+		private readonly ReadOnlyDictionary<SpeakerFlag, int> outputSpeakerToChannelMap;
 		private readonly Dictionary<int, int> speakerSwappingMap;
 
 		private readonly int realOutputChannelsCount;
@@ -56,6 +56,15 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 
 			adjustVolumeBy = 1.0f;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the channel mapping for player speakers
+		/// </summary>
+		/********************************************************************/
+		public ReadOnlyDictionary<SpeakerFlag, int> PlayerSpeakerToChannelMap => playerSpeakerToChannelMap;
 
 
 
@@ -214,7 +223,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 		/// Convert speaker flags into a channel mapping
 		/// </summary>
 		/********************************************************************/
-		private Dictionary<SpeakerFlag, int> BuildChannelMap(SpeakerFlag speakers)
+		private ReadOnlyDictionary<SpeakerFlag, int> BuildChannelMap(SpeakerFlag speakers)
 		{
 			Dictionary<SpeakerFlag, int> map = new();
 
@@ -226,7 +235,7 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound
 					map.Add(flag, channel++);
 			}
 
-			return map;
+			return new ReadOnlyDictionary<SpeakerFlag, int>(map);
 		}
 
 
