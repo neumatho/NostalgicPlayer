@@ -6,15 +6,19 @@
 namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx.Containers
 {
 	/// <summary>
-	/// One file format structure
+	/// TFMX-MOD one file format structure
 	/// </summary>
-	internal class OneFile
+	internal class TfmxModHeader
 	{
-		public uint Mark;				// TFHD
-		public uint HeaderSize;
-		public byte Type;				// 0 = Unchecked, 1 = 1.5, 2 = Pro, 3 = 7V. Bit 7 = forced
-		public byte Version;
-		public uint MdatSize;
-		public uint SmplSize;
+		public uint OffsetToSample;
+		public uint OffsetToInfo;
+		public uint Reserved;
+
+		// This information is from the info structure
+		public int StartSong;
+		public string Author;
+		public string Game;
+		public byte Flag;
+		public string Title;
 	}
 }

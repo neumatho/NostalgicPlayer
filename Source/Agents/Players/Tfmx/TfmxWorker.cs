@@ -43,7 +43,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		private readonly ModuleType currentModuleType;
 		private readonly bool isLittleEndian;
 
+		private int startSong;
 		private int currentSong;
+
+		private string moduleName;
+		private string author;
 
 		private string[] comment;
 
@@ -120,6 +124,24 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		{
 			return AgentResult.Unknown;
 		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the name of the module
+		/// </summary>
+		/********************************************************************/
+		public override string ModuleName => moduleName;
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return the name of the author
+		/// </summary>
+		/********************************************************************/
+		public override string Author => author;
 
 
 
@@ -236,11 +258,14 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				ModuleStream moduleStream = fileInfo.ModuleStream;
 				Encoding encoder = EncoderCollection.Amiga;
 
-				OneFile header = IsOneFile(moduleStream);
-				int startOffset = header != null ? (int)header.HeaderSize : 0;
+				LoadInfo loadInfo = GetModuleLoadInfo(moduleStream);
 
-				// Skip the mark and other stuff
-				moduleStream.Seek(startOffset + 16, SeekOrigin.Begin);
+				startSong = loadInfo.StartSong;
+				moduleName = loadInfo.ModuleName;
+				author = loadInfo.Author;
+
+				// Seek to the start of module data and skip header stuff
+				moduleStream.Seek(loadInfo.ModuleStartOffset + 16, SeekOrigin.Begin);
 
 				// Read the comment block
 				comment = moduleStream.ReadCommentBlock(6 * 40, 40, encoder);
@@ -288,10 +313,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 				moduleStream.Seek(36, SeekOrigin.Current);
 
 				// Now read the rest of the file
-				if (header != null)
-					musicLen = (int)header.MdatSize;
-				else
-					musicLen = (int)(moduleStream.Length - moduleStream.Position);
+				musicLen = (int)(loadInfo.ModuleStartOffset + loadInfo.ModuleSize - moduleStream.Position);
 
 				musicData = new byte[16384 * 4];
 				moduleStream.ReadInto(musicData, 0, musicLen);
@@ -357,17 +379,61 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 					sh += 2;
 				}
 
+				// Fix sub-songs
+				int maxNumberOfZero = 3;
+
+				for (int i = 0; i < 32; i++)
+				{
+					if (maxNumberOfZero == 0)
+						songStart[i] = ushort.MaxValue;
+
+					// Extra check added by Thomas Neumann
+					if ((songStart[i] == 0x1ff) || (songEnd[i] == 0x1ff))
+						songStart[i] = ushort.MaxValue;
+
+					// Check for Abandoned Places - Part1_2 and Part1_3.
+					// There is only one sub-song. Added by Thomas Neumann
+					if (songStart[i] >= numTrackSteps)
+						songStart[i] = ushort.MaxValue;
+
+					if ((songStart[i] == 0) && (songEnd[i] == 0))
+					{
+						songStart[i] = ushort.MaxValue;
+						maxNumberOfZero--;
+					}
+				}
+
+				// Remove duplicate songs
+				for (int i = 0; i < 32; i++)
+				{
+					if (songStart[i] == ushort.MaxValue)
+						continue;
+
+					for (int j = i + 1; j < 32; j++)
+					{
+						if ((songStart[j] == songStart[i]) && (songEnd[j] == songEnd[i]))
+							songStart[j] = ushort.MaxValue;
+					}
+				}
+
+				// Fix default song
+				for (int i = startSong; i >= 0; i--)
+				{
+					if (songStart[i] == ushort.MaxValue)
+						startSong--;
+				}
+
 				// Now the song is fully loaded, except for the sample data.
 				// Everything is done but fixing endianess on the actual
 				// pattern and macro data. The routines that use the data do
 				// it for themselves
-				if (header != null)
+				if (loadInfo.SampleStartOffset != -1)
 				{
-					// Okay, we need to load the sample data here
-					sampleLen = (int)header.SmplSize;
+					// Okay, we need to load the sample data from the same file
+					sampleLen = loadInfo.SampleSize;
 
 					// Read the sample data
-					moduleStream.Seek(header.HeaderSize + header.MdatSize, SeekOrigin.Begin);
+					moduleStream.Seek(loadInfo.SampleStartOffset, SeekOrigin.Begin);
 					sampleData = moduleStream.ReadSampleData(0, sampleLen, out int readBytes);
 					if (readBytes != sampleLen)
 					{
@@ -625,32 +691,9 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		{
 			get
 			{
-				short songNum = -1;
-				short maxNumberOfZero = 2;
+				int songCount = songStart.Count(x => x != ushort.MaxValue);
 
-				// Find the number of sub-songs
-				for (int i = 0; (i < 32) && (maxNumberOfZero > 0); i++)
-				{
-					songNum++;
-					if (songStart[i] == 0)
-						maxNumberOfZero--;
-
-					// Extra check added by Thomas Neumann
-					if ((songStart[i] == 0x1ff) || (songEnd[i] == 0x1ff))
-						break;
-
-					// Check for Abandoned Places - Part1_2 and Part1_3.
-					// There is only one sub-song. Added by Thomas Neumann
-					if (songStart[i] >= numTrackSteps)
-						break;
-
-					if ((songStart[i] == songEnd[i]) && (songStart[i] == 0) && (songStart[i + 1] == 0))
-						break;
-				}
-
-				int songCount = songNum == 0 ? 1 : songNum;
-
-				return new SubSongInfo(songCount, 0);
+				return new SubSongInfo(songCount, startSong);
 			}
 		}
 
@@ -729,19 +772,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			int startOffset = 0;
 
 			// First check for one-file format
-			OneFile header = IsOneFile(moduleStream);
-			if (header != null)
+			TfhdHeader tfhdHeader = IsTfhdFile(moduleStream);
+			if (tfhdHeader != null)
 			{
 				// Check to see if the module is forced or not checked
-				if (((header.Type & 128) != 0) || ((header.Type & 127) == 0))
+				if (((tfhdHeader.Type & 128) != 0) || ((tfhdHeader.Type & 127) == 0))
 				{
 					// Well, we can't count on the type now, so we skip
 					// the header and make our own check
-					startOffset = (int)header.HeaderSize;
+					startOffset = (int)tfhdHeader.HeaderSize;
 				}
 				else
 				{
-					switch (header.Type & 127)
+					switch (tfhdHeader.Type & 127)
 					{
 						case 1:
 							return ModuleType.Tfmx15;
@@ -755,6 +798,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 					return ModuleType.Unknown;
 				}
+			}
+			else
+			{
+				TfmxModHeader modHeader = IsTfmxModFile(moduleStream, false);
+				if (modHeader != null)
+					startOffset = 20;
 			}
 
 			// Check for two-file format. Read the mark
@@ -883,29 +932,30 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 		/********************************************************************/
 		/// <summary>
-		/// Will check the current file to see if it's in one-file format.
+		/// Will check the current file to see if it's in TFHD format.
 		/// If that is true, it will load the structure
 		/// </summary>
 		/********************************************************************/
-		private static OneFile IsOneFile(ModuleStream moduleStream)
+		private static TfhdHeader IsTfhdFile(ModuleStream moduleStream)
 		{
 			// Seek to the start of the file
 			moduleStream.Seek(0, SeekOrigin.Begin);
 
 			// Check the mark
-			OneFile oneFile = new OneFile();
-			oneFile.Mark = moduleStream.Read_B_UINT32();
+			uint mark = moduleStream.Read_B_UINT32();
 
-			if (oneFile.Mark == 0x54464844)		// TFHD
+			if (mark == 0x54464844)		// TFHD
 			{
-				// Ok, it seems it's a one-file, so read the whole structure
-				oneFile.HeaderSize = moduleStream.Read_B_UINT32();
-				oneFile.Type = moduleStream.Read_UINT8();
-				oneFile.Version = moduleStream.Read_UINT8();
-				oneFile.MdatSize = moduleStream.Read_B_UINT32();
-				oneFile.SmplSize = moduleStream.Read_B_UINT32();
+				// Ok, it seems it's a TFHD file, so read the whole structure
+				TfhdHeader header = new TfhdHeader();
 
-				return oneFile;
+				header.HeaderSize = moduleStream.Read_B_UINT32();
+				header.Type = moduleStream.Read_UINT8();
+				header.Version = moduleStream.Read_UINT8();
+				header.MdatSize = moduleStream.Read_B_UINT32();
+				header.SmplSize = moduleStream.Read_B_UINT32();
+
+				return header;
 			}
 
 			return null;
@@ -953,6 +1003,141 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 			}
 
 			return false;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will check the current file to see if it's in TFMX-MOD format.
+		/// If that is true, it will load the structure
+		/// </summary>
+		/********************************************************************/
+		private static TfmxModHeader IsTfmxModFile(ModuleStream moduleStream, bool loadInfo)
+		{
+			// Seek to the start of the file
+			moduleStream.Seek(0, SeekOrigin.Begin);
+
+			// Check the mark
+			uint mark1 = moduleStream.Read_B_UINT32();
+			uint mark2 = moduleStream.Read_B_UINT32();
+
+			if ((mark1 == 0x54464d58) && (mark2 == 0x2d4d4f44))		// TFMX-MOD
+			{
+				TfmxModHeader header = new TfmxModHeader();
+
+				header.OffsetToSample = moduleStream.Read_L_UINT32();
+				header.OffsetToInfo = moduleStream.Read_L_UINT32();
+				header.Reserved = moduleStream.Read_L_UINT32();
+
+				if (loadInfo)
+				{
+					Encoding encoder = EncoderCollection.Win1252;
+
+					moduleStream.Seek(header.OffsetToInfo, SeekOrigin.Begin);
+
+					while (moduleStream.Position < moduleStream.Length)
+					{
+						byte type = moduleStream.Read_UINT8();
+						if (type == 0)
+						{
+							moduleStream.Seek(4, SeekOrigin.Current);
+							header.StartSong = moduleStream.Read_UINT8();
+							break;
+						}
+
+						ushort length = moduleStream.Read_L_UINT16();
+
+						switch (type)
+						{
+							case 1:
+							{
+								header.Author = moduleStream.ReadString(encoder, length);
+								break;
+							}
+
+							case 2:
+							{
+								header.Game = moduleStream.ReadString(encoder, length);
+								break;
+							}
+
+							case 5:
+							{
+								header.Flag = moduleStream.Read_UINT8();
+								break;
+							}
+
+							case 6:
+							{
+								header.Title = moduleStream.ReadString(encoder, length);
+								break;
+							}
+
+							default:
+							{
+								moduleStream.Seek(length, SeekOrigin.Current);
+								break;
+							}
+						}
+					}
+				}
+
+				return header;
+			}
+
+			return null;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Will figure out what file type the module is and return enough
+		/// information to load it
+		/// </summary>
+		/********************************************************************/
+		private LoadInfo GetModuleLoadInfo(ModuleStream moduleStream)
+		{
+			LoadInfo loadInfo = new LoadInfo
+			{
+				StartSong = 0,
+				ModuleName = string.Empty,
+				Author = string.Empty
+			};
+
+			TfhdHeader tfhdHeader = IsTfhdFile(moduleStream);
+			if (tfhdHeader != null)
+			{
+				loadInfo.ModuleStartOffset = (int)tfhdHeader.HeaderSize;
+				loadInfo.ModuleSize = (int)tfhdHeader.MdatSize;
+				loadInfo.SampleStartOffset = (int)tfhdHeader.HeaderSize + (int)tfhdHeader.MdatSize;
+				loadInfo.SampleSize = (int)tfhdHeader.SmplSize;
+			}
+			else
+			{
+				TfmxModHeader modHeader = IsTfmxModFile(moduleStream, true);
+				if (modHeader != null)
+				{
+					loadInfo.ModuleStartOffset = 20;
+					loadInfo.ModuleSize = (int)(modHeader.OffsetToSample - 20);
+					loadInfo.SampleStartOffset = (int)modHeader.OffsetToSample;
+					loadInfo.SampleSize = (int)(modHeader.OffsetToInfo - modHeader.OffsetToSample);
+
+					loadInfo.StartSong = modHeader.StartSong;
+					loadInfo.ModuleName = $"{modHeader.Game} - {modHeader.Title}";
+					loadInfo.Author = modHeader.Author;
+				}
+				else
+				{
+					loadInfo.ModuleStartOffset = 0;
+					loadInfo.ModuleSize = (int)moduleStream.Length;
+					loadInfo.SampleStartOffset = -1;
+					loadInfo.SampleSize = -1;
+				}
+			}
+
+			return loadInfo;
 		}
 		#endregion
 
@@ -1036,8 +1221,19 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 		/********************************************************************/
 		private void InitializeSound(int songNumber)
 		{
+			// Find real song number
+			for (currentSong = 0; currentSong < 32; currentSong++)
+			{
+				if (songStart[currentSong] == ushort.MaxValue)
+					songNumber++;
+
+				if (songNumber == 0)
+					break;
+
+				songNumber--;
+			}
+
 			// Initialize member variables
-			currentSong = songNumber;
 			firstTime = true;
 
 			playingInfo.Loops = 0;		// Infinity loop on the modules
@@ -1051,7 +1247,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Tfmx
 
 			// Initialize the player
 			TfmxInit();
-			StartSong(songNumber, 0);
+			StartSong(currentSong, 0);
 		}
 
 
