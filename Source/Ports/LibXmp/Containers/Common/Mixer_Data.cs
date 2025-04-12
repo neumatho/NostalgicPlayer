@@ -54,6 +54,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		public CPointer<int32> Buf32;
 
 		/// <summary>
+		/// Output buffer for rear speakers
+		/// </summary>
+		public CPointer<int8> BufferRear;
+
+		/// <summary>
+		/// Temporary buffer for 32 bit samples for real speakers
+		/// </summary>
+		public CPointer<int32> Buf32Rear;
+
+		/// <summary>
 		/// Default softmixer voices number
 		/// </summary>
 		public c_int NumVoc;
@@ -86,6 +96,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common
 		/// <summary>
 		/// Indicate if surround should be handled or not
 		/// </summary>
-		public bool EnableSurround;
+		public Surround EnableSurround;
 	}
 }

@@ -110,35 +110,14 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 				bufferMode = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferMode) != 0;
 				bufferDirect = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferDirect) != 0;
 
-				// Get player information
-				mixerChannelCount = Enum.GetValues<SpeakerFlag>().Count(flag => (currentPlayer.SpeakerFlags & flag) != 0);	// Count number of bits set
-				virtualChannelCount = bufferDirect ? mixerChannelCount : currentPlayer.VirtualChannelCount;
-				enableChannelVisualization = bufferMode && ((currentPlayer.SupportFlags & ModulePlayerSupportFlag.Visualize) != 0);
-				enableChannelsSupport = !bufferDirect || ((currentPlayer.SupportFlags & ModulePlayerSupportFlag.EnableChannels) == 0);
-
-				// Allocate the visual component
+				// Allocate and initialize he visual component
 				currentVisualizer = new Visualizer();
+				currentVisualizer.Initialize(agentManager);
 
 				if (bufferDirect)
 					currentMixer = new MixerBufferDirect();
 				else
 					currentMixer = new MixerNormal();
-
-				// Initialize the mixer
-				currentMixer.Initialize(virtualChannelCount, mixerChannelCount);
-
-				// Allocate channel objects
-				IChannel[] channels = new IChannel[virtualChannelCount];
-				for (int i = 0; i < virtualChannelCount; i++)
-					channels[i] = new ChannelParser();
-
-				currentPlayer.VirtualChannels = channels;
-
-				// Initialize the visualizer
-				currentVisualizer.Initialize(agentManager);
-
-				// Initialize extra channels
-				InitializeExtraChannels(playerConfiguration.MixerConfiguration.ExtraChannels);
 
 				// Initialize the mixers
 				lock (mixerInfoLock)
@@ -150,6 +129,26 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Sound.Mixer
 
 					ChangeConfiguration(playerConfiguration.MixerConfiguration);
 				}
+
+				// Get player information
+				SpeakerFlag speakerFlags = currentPlayer.SpeakerFlags;
+				mixerChannelCount = Enum.GetValues<SpeakerFlag>().Count(flag => (speakerFlags & flag) != 0);	// Count number of bits set
+				virtualChannelCount = bufferDirect ? mixerChannelCount : currentPlayer.VirtualChannelCount;
+				enableChannelVisualization = bufferMode && ((currentPlayer.SupportFlags & ModulePlayerSupportFlag.Visualize) != 0);
+				enableChannelsSupport = !bufferDirect || ((currentPlayer.SupportFlags & ModulePlayerSupportFlag.EnableChannels) == 0);
+
+				// Initialize the mixer
+				currentMixer.Initialize(virtualChannelCount, mixerChannelCount);
+
+				// Allocate channel objects
+				IChannel[] channels = new IChannel[virtualChannelCount];
+				for (int i = 0; i < virtualChannelCount; i++)
+					channels[i] = new ChannelParser();
+
+				currentPlayer.VirtualChannels = channels;
+
+				// Initialize extra channels
+				InitializeExtraChannels(playerConfiguration.MixerConfiguration.ExtraChannels);
 			}
 			catch (Exception ex)
 			{

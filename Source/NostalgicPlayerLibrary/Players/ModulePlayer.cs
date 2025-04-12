@@ -595,7 +595,11 @@ namespace Polycode.NostalgicPlayer.PlayerLibrary.Players
 		{
 			if (currentPlayer is IDurationPlayer durationPlayer)
 			{
-				currentPlayer.VirtualChannels = new IChannel[currentPlayer.VirtualChannelCount];
+				SpeakerFlag speakerFlags = currentPlayer.SpeakerFlags;
+				int mixerChannelCount = Enum.GetValues<SpeakerFlag>().Count(flag => (speakerFlags & flag) != 0);	// Count number of bits set
+				int virtualChannelCount = (currentPlayer.SupportFlags & ModulePlayerSupportFlag.BufferDirect) != 0 ? mixerChannelCount : currentPlayer.VirtualChannelCount;
+
+				currentPlayer.VirtualChannels = new IChannel[virtualChannelCount];
 
 				for (int i = 0; i < currentPlayer.VirtualChannels.Length; i++)
 					currentPlayer.VirtualChannels[i] = new DummyChannel();

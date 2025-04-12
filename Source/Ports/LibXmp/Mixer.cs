@@ -286,10 +286,15 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				{
 					vol_L = vol * 0x80;
 
-					if (s.EnableSurround)
+					if (s.EnableSurround == Surround.DolbyProLogic)
 						vol_R = -vol * 0x80;
 					else
-						vol_R = vol * 0x80;
+					{
+						vol_R = vol_L;
+
+						if (s.EnableSurround == Surround.RealChannels)
+							buf_Pos = s.Buf32Rear;
+					}
 				}
 				else
 				{
@@ -533,6 +538,14 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				DownMix_Int_8Bit(s.Buffer, s.Buf32, size, s.Amplify, (s.Format & Xmp_Format.Unsigned) != 0 ? 0x80 : 0);
 			else
 				DownMix_Int_16Bit(MemoryMarshal.Cast<sbyte, int16>(s.Buffer.AsSpan()), s.Buf32, size, s.Amplify, (s.Format & Xmp_Format.Unsigned) != 0 ? 0x8000 : 0);
+
+			if (s.EnableSurround == Surround.RealChannels)
+			{
+				if ((s.Format & Xmp_Format._8Bit) != 0)
+					DownMix_Int_8Bit(s.BufferRear, s.Buf32Rear, size, s.Amplify, (s.Format & Xmp_Format.Unsigned) != 0 ? 0x80 : 0);
+				else
+					DownMix_Int_16Bit(MemoryMarshal.Cast<sbyte, int16>(s.BufferRear.AsSpan()), s.Buf32Rear, size, s.Amplify, (s.Format & Xmp_Format.Unsigned) != 0 ? 0x8000 : 0);
+			}
 
 			s.DtRight = s.DtLeft = 0;
 		}
@@ -910,6 +923,17 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			if (s.Buf32.IsNull)
 				goto Err1;
 
+			if (s.EnableSurround == Surround.RealChannels)
+			{
+				s.BufferRear = new int8[Constants.Xmp_Max_FrameSize * sizeof(int16)];
+				if (s.BufferRear.IsNull)
+					goto Err2;
+
+				s.Buf32Rear = new int32[Constants.Xmp_Max_FrameSize];
+				if (s.Buf32Rear.IsNull)
+					goto Err3;
+			}
+
 			s.Freq = rate;
 			s.Format = format;
 			s.Amplify = Constants.Default_Amplify;
@@ -918,10 +942,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			s.Dsp = Xmp_Dsp.LowPass;		// Enable filters by default
 			s.DtRight = s.DtLeft = 0;
 			s.BiDir_Adjust = 0;
-			s.EnableSurround = true;
 
 			return 0;
 
+			Err3:
+			s.BufferRear.SetToNull();
+			Err2:
+			s.Buf32.SetToNull();
 			Err1:
 			s.Buffer.SetToNull();
 			Err:
@@ -1424,6 +1451,9 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				byteLen *= 2;
 
 			CMemory.MemSet(s.Buf32, 0, byteLen);
+
+			if (s.EnableSurround == Surround.RealChannels)
+				CMemory.MemSet(s.Buf32Rear, 0, byteLen);
 		}
 
 

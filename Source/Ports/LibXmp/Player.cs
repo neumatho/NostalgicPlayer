@@ -529,6 +529,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			info.Frame_Time = (c_int)(p.Frame_Time * 1000);
 			info.Time = (c_int)p.Current_Time;
 			info.Buffer = s.Buffer;
+			info.BufferRear = s.BufferRear;
 
 			info.Total_Size = Constants.Xmp_Max_FrameSize;
 			info.Buffer_Size = s.TickSize;

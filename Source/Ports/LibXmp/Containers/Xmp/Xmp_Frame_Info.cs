@@ -69,6 +69,11 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp
 		public CPointer<int8> Buffer;
 
 		/// <summary>
+		/// Pointer to sound buffer for rear speakers
+		/// </summary>
+		public CPointer<int8> BufferRear;
+
+		/// <summary>
 		/// Used buffer size
 		/// </summary>
 		public c_int Buffer_Size;

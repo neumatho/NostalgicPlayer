@@ -13,6 +13,7 @@ using Polycode.NostalgicPlayer.Kit.Containers;
 using Polycode.NostalgicPlayer.Kit.Containers.Flags;
 using Polycode.NostalgicPlayer.Kit.Interfaces;
 using Polycode.NostalgicPlayer.Ports.LibXmp;
+using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Common;
 using Polycode.NostalgicPlayer.Ports.LibXmp.Containers.Xmp;
 
 namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
@@ -28,6 +29,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 		private Xmp_Module_Info moduleInfo;
 
 		private bool hasInstruments;
+		private bool useSurround;
 
 		private int playingPosition;
 		private int playingPattern;
@@ -37,6 +39,8 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 		private short[] leftBuffer;
 		private short[] rightBuffer;
+		private short[] leftRearBuffer;
+		private short[] rightRearBuffer;
 
 		private PlayerMixerInfo lastMixerInfo;
 
@@ -249,6 +253,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 			libXmp.Xmp_Get_Module_Info(out moduleInfo);
 
 			hasInstruments = (moduleInfo.Mod.Ins != moduleInfo.Mod.Smp) || moduleInfo.Mod.Xxi.Any(x => x.Nsm > 1) || moduleInfo.Mod.Xxs.Any(x => !string.IsNullOrEmpty(x.Name));
+			useSurround = DoesModuleUseSurround();
 
 			return AgentResult.Ok;
 		}
@@ -285,6 +290,11 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 			libXmp = null;
 
 			moduleInfo = null;
+
+			leftBuffer = null;
+			rightBuffer = null;
+			leftRearBuffer = null;
+			rightRearBuffer = null;
 
 			base.CleanupPlayer();
 		}
@@ -350,7 +360,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 			base.ChangeMixerConfiguration(mixerInfo);
 
 			libXmp.Xmp_Set_Player(Xmp_Player.Mix, mixerInfo.StereoSeparator);
-			libXmp.Xmp_Set_Player(Xmp_Player.Surround, mixerInfo.SurroundMode == SurroundMode.DolbyProLogic ? 1 : 0);//XX
+			libXmp.Xmp_Set_Player(Xmp_Player.Surround, (int)mixerInfo.SurroundMode);
 
 			for (int i = 0; i < ModuleChannelCount; i++)
 			{
@@ -413,6 +423,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 			if (endReached)
 				OnEndReached(afterInfo.Pos);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Return which speakers the player uses
+		/// </summary>
+		/********************************************************************/
+		public override SpeakerFlag SpeakerFlags
+		{
+			get
+			{
+				SpeakerFlag flags = SpeakerFlag.FrontLeft | SpeakerFlag.FrontRight;
+
+				if (useSurround && ((Surround)libXmp.Xmp_Get_Player(Xmp_Player.Surround) == Surround.RealChannels))
+					flags |= SpeakerFlag.BackLeft | SpeakerFlag.BackRight;
+
+				return flags;
+			}
 		}
 
 
@@ -698,7 +728,7 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 			int bufferSize = frameInfo.Buffer_Size / 2;
 			Span<short> buffer = MemoryMarshal.Cast<sbyte, short>(frameInfo.Buffer.AsSpan());
 
-			if (mixerChannels == 1)
+			if (VirtualChannels.Length == 1)
 			{
 				if ((leftBuffer == null) || (leftBuffer.Length < bufferSize))
 					leftBuffer = new short[bufferSize];
@@ -726,6 +756,26 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 
 				VirtualChannels[0].PlayBuffer(leftBuffer, 0, (uint)bufferSize, PlayBufferFlag._16Bit);
 				VirtualChannels[1].PlayBuffer(rightBuffer, 0, (uint)bufferSize, PlayBufferFlag._16Bit);
+
+				if (VirtualChannels.Length == 4)
+				{
+					buffer = MemoryMarshal.Cast<sbyte, short>(frameInfo.BufferRear.AsSpan());
+
+					if ((leftRearBuffer == null) || (leftRearBuffer.Length < bufferSize))
+					{
+						leftRearBuffer = new short[bufferSize];
+						rightRearBuffer = new short[bufferSize];
+					}
+
+					for (int i = 0, j = 0; i < bufferSize; i++)
+					{
+						leftRearBuffer[i] = buffer[j++];
+						rightRearBuffer[i] = buffer[j++];
+					}
+
+					VirtualChannels[2].PlayBuffer(leftRearBuffer, 0, (uint)bufferSize, PlayBufferFlag._16Bit);
+					VirtualChannels[3].PlayBuffer(rightRearBuffer, 0, (uint)bufferSize, PlayBufferFlag._16Bit);
+				}
 			}
 		}
 
@@ -741,6 +791,39 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 			double d = note + (double)fineTune / 128;
 
 			return 13696.0 / Math.Pow(2, d / 12);
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
+		/// Check if the module uses surround
+		/// </summary>
+		/********************************************************************/
+		private bool DoesModuleUseSurround()
+		{
+			Xmp_Module mod = moduleInfo.Mod;
+
+			// First check all channel properties
+			foreach (Xmp_Channel channel in mod.Xxc)
+			{
+				if (channel.Flg.HasFlag(Xmp_Channel_Flag.Surround))
+					return true;
+			}
+
+			// Now check all the patterns for surround effect
+			foreach (Xmp_Track track in mod.Xxt)
+			{
+				for (int i = 0; i < track.Rows; i++)
+				{
+					Xmp_Event ev = track.Event[i];
+
+					if (((ev.FxT == 0x8d) && (ev.FxP != 0)) || ((ev.F2T == 0x8d) && (ev.F2P != 0)))   // Surround effect
+						return true;
+				}
+			}
+
+			return false;
 		}
 
 

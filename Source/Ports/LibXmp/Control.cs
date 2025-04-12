@@ -317,7 +317,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				if (ctx.State >= Xmp_State.Loaded)
 					return -(c_int)Xmp_Error.State;
 			}
-			else if (parm == Xmp_Player.Voices)
+			else if ((parm == Xmp_Player.Voices) || (parm == Xmp_Player.Surround))
 			{
 				// These should be set before start playing
 				if (ctx.State >= Xmp_State.Playing)
@@ -452,7 +452,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 
 				case Xmp_Player.Surround:
 				{
-					s.EnableSurround = val != 0;
+					s.EnableSurround = (Surround)val;
 					break;
 				}
 			}
@@ -474,7 +474,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 			Mixer_Data s = ctx.S;
 			c_int ret = -(c_int)Xmp_Error.Invalid;
 
-			if ((parm == Xmp_Player.SmpCtl) || (parm == Xmp_Player.DefPan))
+			if ((parm == Xmp_Player.SmpCtl) || (parm == Xmp_Player.DefPan) || (parm == Xmp_Player.Surround))
 			{
 				// Can read these at any time
 			}
@@ -562,6 +562,12 @@ namespace Polycode.NostalgicPlayer.Ports.LibXmp
 				case Xmp_Player.Voices:
 				{
 					ret = s.NumVoc;
+					break;
+				}
+
+				case Xmp_Player.Surround:
+				{
+					ret = (int)s.EnableSurround;
 					break;
 				}
 			}
