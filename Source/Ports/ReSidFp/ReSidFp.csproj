@@ -3,22 +3,17 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>Polycode.NostalgicPlayer.Ports.ReSidFp</RootNamespace>
+    <DocumentationFile>bin\ReSidFp.xml</DocumentationFile>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Authors>Thomas Neumann</Authors>
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>This is a port of the ReSidFp library created by Dag Lem and Leandro Nini</Description>
-    <Platforms>AnyCPU</Platforms>
     <Version>2.12.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\ReSidFp.xml</DocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\ReSidFp.xml</DocumentationFile>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>

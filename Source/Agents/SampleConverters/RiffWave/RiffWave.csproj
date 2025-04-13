@@ -2,32 +2,22 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave</RootNamespace>
+    <DocumentationFile>bin\RiffWave.xml</DocumentationFile>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Authors>Thomas Neumann</Authors>
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
     <Description>Can load and save RIFF-WAVE samples</Description>
-    <RootNamespace>Polycode.NostalgicPlayer.Agent.SampleConverter.RiffWave</RootNamespace>
-    <Version>2.1.0</Version>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath></OutputPath>
-    <DocumentationFile>bin\RiffWave.xml</DocumentationFile>
+    <Version>3.1.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath></OutputPath>
-    <DocumentationFile>bin\RiffWave.xml</DocumentationFile>
-    <DebugType>portable</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj">
-      <Private>false</Private>
-    </ProjectReference>
+    <ProjectReference Include="..\..\..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
   </ItemGroup>
 
   <ItemGroup>

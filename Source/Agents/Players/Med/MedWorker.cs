@@ -3,7 +3,10 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Text;
 using Polycode.NostalgicPlayer.Agent.Player.Med.Containers;
 using Polycode.NostalgicPlayer.Kit;

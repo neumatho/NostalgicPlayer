@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Windows.Forms;
 using Polycode.NostalgicPlayer.Agent.Visual.Piano.Display;
 using Polycode.NostalgicPlayer.GuiKit.Interfaces;
 using Polycode.NostalgicPlayer.Kit.Containers;

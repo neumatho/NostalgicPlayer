@@ -3,6 +3,9 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Polycode.NostalgicPlayer.Agent.Player.Fred.Containers;
 using Polycode.NostalgicPlayer.Kit;

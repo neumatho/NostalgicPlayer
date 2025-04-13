@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System.Collections.Generic;
+
 namespace Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Synth
 {
 	/// <summary>

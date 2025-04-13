@@ -5,81 +5,49 @@
     <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>Polycode.NostalgicPlayer.Client.GuiPlayer</RootNamespace>
-    <Description>Music player with an user interface</Description>
-    <Company>Polycode</Company>
+    <DocumentationFile>bin\NostalgicPlayer.xml</DocumentationFile>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <SelfContained>false</SelfContained>
     <Authors>Thomas Neumann</Authors>
-    <ApplicationIcon>App.ico</ApplicationIcon>
+    <Company>Polycode</Company>
+    <Description>Music player with an user interface</Description>
     <Version>2.6.0</Version>
+    <ApplicationIcon>App.ico</ApplicationIcon>
     <Platforms>x64;x86;AnyCPU;ARM64</Platforms>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-    <OutputPath></OutputPath>
-    <DocumentationFile>bin\NostalgicPlayer.xml</DocumentationFile>
     <RuntimeIdentifier>win-x86</RuntimeIdentifier>
-    <SelfContained>false</SelfContained>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutputPath></OutputPath>
-    <DocumentationFile>bin\NostalgicPlayer.xml</DocumentationFile>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <SelfContained>false</SelfContained>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <OutputPath />
-    <DocumentationFile>bin\NostalgicPlayer.xml</DocumentationFile>
     <RuntimeIdentifier>win-arm64</RuntimeIdentifier>
-    <SelfContained>false</SelfContained>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath />
-    <DocumentationFile>bin\NostalgicPlayer.xml</DocumentationFile>
-    <SelfContained>false</SelfContained>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <OutputPath></OutputPath>
-    <DocumentationFile>bin\NostalgicPlayer.xml</DocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DebugType>portable</DebugType>
-    <DebugSymbols>true</DebugSymbols>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <RuntimeIdentifier>win-x86</RuntimeIdentifier>
-    <SelfContained>false</SelfContained>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutputPath></OutputPath>
-    <DocumentationFile>bin\NostalgicPlayer.xml</DocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DebugType>portable</DebugType>
-    <DebugSymbols>true</DebugSymbols>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <SelfContained>false</SelfContained>
-    <WarningsAsErrors />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
-    <OutputPath />
-    <DocumentationFile>bin\NostalgicPlayer.xml</DocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DebugType>portable</DebugType>
-    <DebugSymbols>true</DebugSymbols>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <RuntimeIdentifier>win-arm64</RuntimeIdentifier>
-    <SelfContained>false</SelfContained>
-    <WarningsAsErrors />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath />
-    <DocumentationFile>bin\NostalgicPlayer.xml</DocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DebugType>portable</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-    <SelfContained>false</SelfContained>
-    <WarningsAsErrors />
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
@@ -92,8 +60,8 @@
       <VersionMajor>1</VersionMajor>
       <Guid>50a7e9b0-70ef-11d1-b75a-00a0c90564fe</Guid>
       <Lcid>0</Lcid>
-      <Isolated>false</Isolated>
-      <EmbedInteropTypes>true</EmbedInteropTypes>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
 

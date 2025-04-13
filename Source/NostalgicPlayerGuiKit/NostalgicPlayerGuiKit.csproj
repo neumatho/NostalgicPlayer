@@ -4,6 +4,8 @@
     <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>Polycode.NostalgicPlayer.GuiKit</RootNamespace>
+    <DocumentationFile>bin\NostalgicPlayerGuiKit.xml</DocumentationFile>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Authors>Thomas Neumann</Authors>
     <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
@@ -11,47 +13,31 @@
     <Version>2.6.0</Version>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath></OutputPath>
-    <DocumentationFile>bin\NostalgicPlayerGuiKit.xml</DocumentationFile>
-  </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath></OutputPath>
-    <DocumentationFile>bin\NostalgicPlayerGuiKit.xml</DocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DebugType>portable</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-    <WarningsAsErrors />
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\NostalgicPlayerKit\NostalgicPlayerKit.csproj">
-	    <Private>false</Private>
-	  </ProjectReference>
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NostalgicPlayerKit\NostalgicPlayerKit.csproj" />
+  </ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Controls\" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Krypton.Toolkit" Version="85.24.10.288" />
+  </ItemGroup>
 
-	<ItemGroup>
-	  <PackageReference Include="Krypton.Toolkit" Version="85.24.10.288" />
-	</ItemGroup>
+  <ItemGroup>
+    <Compile Update="Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
 
-	<ItemGroup>
-	  <Compile Update="Resources.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>Resources.resx</DependentUpon>
-	  </Compile>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Update="Resources.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-	  </EmbeddedResource>
-	</ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
 
 </Project>

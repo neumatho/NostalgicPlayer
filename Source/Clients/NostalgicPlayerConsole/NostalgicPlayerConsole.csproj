@@ -4,25 +4,17 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>Polycode.NostalgicPlayer.Client.ConsolePlayer</RootNamespace>
-    <Description>Simple player that can be started from the console</Description>
-    <Company>Polycode</Company>
+    <DocumentationFile>bin\NostalgicPlayerConsole.xml</DocumentationFile>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Authors>Thomas Neumann</Authors>
+    <Company>Polycode</Company>
     <Product>NostalgicPlayer</Product>
+    <Description>Simple player that can be started from the console</Description>
     <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\NostalgicPlayerConsole.xml</DocumentationFile>
-    <OutputPath />
-  </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\NostalgicPlayerConsole.xml</DocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DebugType>portable</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath />
-    <WarningsAsErrors />
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>

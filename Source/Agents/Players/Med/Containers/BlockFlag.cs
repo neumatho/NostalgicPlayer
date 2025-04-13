@@ -3,6 +3,8 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
+
 namespace Polycode.NostalgicPlayer.Agent.Player.Med.Containers
 {
 	/// <summary>

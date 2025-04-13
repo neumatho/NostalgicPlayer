@@ -3,6 +3,7 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
 using System.Runtime.CompilerServices;
 using Polycode.NostalgicPlayer.Kit.Utility;
 

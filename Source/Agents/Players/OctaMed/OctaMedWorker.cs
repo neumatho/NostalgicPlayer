@@ -3,7 +3,10 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
+using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Containers;
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation;
 using Polycode.NostalgicPlayer.Agent.Player.OctaMed.Implementation.Block;
