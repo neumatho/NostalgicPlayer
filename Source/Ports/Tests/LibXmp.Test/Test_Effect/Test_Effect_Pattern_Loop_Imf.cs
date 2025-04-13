@@ -14,7 +14,7 @@ namespace Polycode.NostalgicPlayer.Ports.Tests.LibXmp.Test.Test_Effect
 	{
 		/********************************************************************/
 		/// <summary>
-		/// Test Ultra Tracker tempo effects
+		/// 
 		/// </summary>
 		/********************************************************************/
 		[TestMethod]
