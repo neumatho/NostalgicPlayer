@@ -225,6 +225,12 @@ namespace Polycode.NostalgicPlayer.Agent.Player.FutureComposer
 					samp.LoopLength = (ushort)(moduleStream.Read_B_UINT16() * 2);
 					samp.Multi = null;
 
+					if (samp.LoopStart >= samp.Length)
+					{
+						samp.LoopStart = 0;
+						samp.LoopLength = 2;
+					}
+
 					sampInfo[i] = samp;
 				}
 
