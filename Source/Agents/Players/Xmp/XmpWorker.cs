@@ -814,12 +814,15 @@ namespace Polycode.NostalgicPlayer.Agent.Player.Xmp
 			// Now check all the patterns for surround effect
 			foreach (Xmp_Track track in mod.Xxt)
 			{
-				for (int i = 0; i < track.Rows; i++)
+				if (track != null)
 				{
-					Xmp_Event ev = track.Event[i];
+					for (int i = 0; i < track.Rows; i++)
+					{
+						Xmp_Event ev = track.Event[i];
 
-					if (((ev.FxT == 0x8d) && (ev.FxP != 0)) || ((ev.F2T == 0x8d) && (ev.F2P != 0)))   // Surround effect
-						return true;
+						if (((ev.FxT == 0x8d) && (ev.FxP != 0)) || ((ev.F2T == 0x8d) && (ev.F2P != 0)))   // Surround effect
+							return true;
+					}
 				}
 			}
 
