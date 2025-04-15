@@ -57,6 +57,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 
 		private readonly SidRandom rand;
 
+		private uint_least32_t startTime = 0;
+
 		/// <summary>
 		/// PAL/NTSC switch value
 		/// </summary>
@@ -161,7 +163,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/********************************************************************/
 		public uint_least32_t TimeMs()
 		{
-			return c64.GetTimeMs();
+			return c64.GetTimeMs() - startTime;
 		}
 
 
@@ -189,8 +191,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			if (!force && !cfg.Compare(config))
 				return true;
 
-			// Check for base sampling frequency
-			if (config.frequency < 8000)
+			// Check for a sane sampling frequency
+			if ((config.frequency < 8000) || (config.frequency > 192000))
 			{
 				errorString = Resources.IDS_SID_ERR_UNSUPPORTED_FREQ;
 				return false;
@@ -448,8 +450,18 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 				powerOnDelay = (uint_least16_t)((rand.Next() >> 3) & SidConfig.MAX_POWER_ON_DELAY);
 			}
 
+			// Run for calculated number of cycles
+			for (int i = 0; i <= powerOnDelay; i++)
+			{
+				for (int j = 0; j < 100; j++)
+					c64.Clock();
+
+				mixer.ClockChips();
+				mixer.ResetBufs();
+			}
+
 			PSidDrv driver = new PSidDrv(tune.GetInfo());
-			driver.PowerOnDelay(powerOnDelay);
+
 			if (!driver.DrvReloc())
 				throw new ConfigErrorException(driver.ErrorString());
 
@@ -463,6 +475,16 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 				throw new ConfigErrorException(tune.StatusString());
 
 			c64.ResetCpu();
+
+			startTime = c64.GetTimeMs();
+#if false
+			// Run for some cycles until the initialization routine is done
+			for (int j = 0; j < 50; j++)
+				c64.Clock();
+
+			mixer.ClockChips();
+			mixer.ResetBufs();
+#endif
 		}
 
 

@@ -60,7 +60,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		private delegate int scale_func_t(uint ch);
 
 		private readonly List<SidEmu> chips = new List<SidEmu>();
-		private readonly List<short[]> buffers = new List<short[]>();		// Contains output buffers for each SID chip
 
 		private int_least32_t[] iSamples;
 		private int_least32_t[] volume;
@@ -146,10 +145,10 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			{
 				// This is a crude boxcar low-pass filter to
 				// reduce aliasing during fast forward
-				for (int k = 0; k < buffers.Count; k++)
+				for (int k = 0; k < chips.Count; k++)
 				{
 					int_least32_t sample = 0;
-					short[] buffer = buffers[k];
+					short[] buffer = chips[k].Buffer();
 
 					for (int j = 0; j < fastForwardFactor; j++)
 						sample += buffer[i + j];
@@ -173,11 +172,13 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			// Move the unhandled data to start of buffer, if any
 			int samplesLeft = sampCount - i;
 
-			foreach (short[] buf in buffers)
-				Array.Copy(buf, i, buf, 0, samplesLeft);
+			foreach (SidEmu chip in chips)
+			{
+				short[] buffer = chip.Buffer();
+				Array.Copy(buffer, i, buffer, 0, samplesLeft);
 
-			foreach (SidEmu s in chips)
-				s.BufferPos(samplesLeft);
+				chip.BufferPos(samplesLeft);
+			}
 
 			wait = (uint_least32_t)samplesLeft > sampleCount;
 		}
@@ -215,7 +216,6 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		public void ClearSids()
 		{
 			chips.Clear();
-			buffers.Clear();
 		}
 
 
@@ -230,9 +230,8 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 			if (chip != null)
 			{
 				chips.Add(chip);
-				buffers.Add(chip.Buffer());
 
-				iSamples = new int_least32_t[buffers.Count];
+				iSamples = new int_least32_t[chips.Count];
 
 				if (mix.Length > 0)
 					UpdateParams();
@@ -384,7 +383,7 @@ namespace Polycode.NostalgicPlayer.Ports.LibSidPlayFp
 		/********************************************************************/
 		private void UpdateParams()
 		{
-			switch (buffers.Count)
+			switch (chips.Count)
 			{
 				case 1:
 				{

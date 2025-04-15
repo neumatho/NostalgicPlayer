@@ -113,7 +113,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public int Clock(int input)
 		{
-			int vi = (input << 11) - (1 << (11 + 15));
+			int vi = input << 11;
 			int dVlp = (w0lp_1_s7 * (vi - vlp) >> 7);
 			int dVhp = (w0hp_1_s17 * (vlp - vhp) >> 17);
 

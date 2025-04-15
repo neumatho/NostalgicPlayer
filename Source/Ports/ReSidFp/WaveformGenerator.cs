@@ -190,6 +190,10 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 		private bool is6581;	// This is initialized in the SID constructor
 
+		// The other two waveform generators, for syncing and ring mod.
+		private WaveformGenerator prevVoice;
+		private WaveformGenerator nextVoice;
+
 		/********************************************************************/
 		/// <summary>
 		/// 
@@ -216,6 +220,19 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 		/********************************************************************/
 		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		public void SetOtherWaveforms(WaveformGenerator prev, WaveformGenerator next)
+		{
+			prevVoice = prev;
+			nextVoice = next;
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Set the chip model.
 		/// Must be called before any operation
 		/// </summary>
@@ -234,13 +251,13 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// so that they are in the same state
 		/// </summary>
 		/********************************************************************/
-		public void Synchronize(WaveformGenerator syncDest, WaveformGenerator syncSource)
+		public void Synchronize()
 		{
 			// A special case occurs when a sync source is synced itself on the same
 			// cycle as when its MSB is set high. In this case the destination will
 			// not be synched. This has been verified by sampling OSC3
-			if (msb_rising && syncDest.sync && !(sync && syncSource.msb_rising))
-				syncDest.accumulator = 0;
+			if (msb_rising && nextVoice.sync && !(sync && prevVoice.msb_rising))
+				nextVoice.accumulator = 0;
 		}
 
 
@@ -493,12 +510,12 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 		/********************************************************************/
 		/// <summary>
-		/// Read sync value
+		/// Read sync value from following voice
 		/// </summary>
 		/********************************************************************/
-		public bool ReadSync()
+		public bool ReadFollowingVoiceSync()
 		{
-			return sync;
+			return nextVoice.sync;
 		}
 
 
@@ -577,12 +594,12 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public uint Output(WaveformGenerator ringModulator)
+		public uint Output()
 		{
 			// Set output value
 			if (waveform != 0)
 			{
-				uint ix = (accumulator ^ (~ringModulator.accumulator & ring_msb_mask)) >> 12;
+				uint ix = (accumulator ^ (~prevVoice.accumulator & ring_msb_mask)) >> 12;
 
 				// The bit masks no_pulse and no_noise are used to achieve branch-free
 				// calculation of the output value

@@ -201,6 +201,10 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			resampler = null;
 			cws = CombinedWaveforms.AVERAGE;
 
+			voice[0].SetOtherVoices(voice[2], voice[1]);
+			voice[1].SetOtherVoices(voice[0], voice[2]);
+			voice[2].SetOtherVoices(voice[1], voice[0]);
+
 			SetChipModel(ChipModel.MOS8580);
 			Reset();
 		}
@@ -697,7 +701,10 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 						voice[1].Envelope().Clock();
 						voice[2].Envelope().Clock();
 
-						if (resampler.Input(Output()))
+						int sidOutput = filter.Clock(voice[0], voice[1], voice[2]);
+						int c64Output = externalFilter.Clock(sidOutput - (1 << 15));
+
+						if (resampler.Input(c64Output))
 							buf[s++] = resampler.GetOutput(scaleFactor);
 					}
 
@@ -774,7 +781,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			{
 				// Synchronize the 3 waveform generators
 				for (int i = 0; i < 3; i++)
-					voice[i].Wave().Synchronize(voice[(i + 1) % 3].Wave(), voice[(i + 2) % 3].Wave());
+					voice[i].Wave().Synchronize();
 			}
 
 			// Calculate the time to next voice sync
@@ -785,7 +792,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 				WaveformGenerator wave = voice[i].Wave();
 				uint freq = wave.ReadFreq();
 
-				if (wave.ReadTest() || (freq == 0) || !voice[(i + 1) % 3].Wave().ReadSync())
+				if (wave.ReadTest() || (freq == 0) || !voice[i].Wave().ReadFollowingVoiceSync())
 					continue;
 
 				uint accumulator = wave.ReadAccumulator();
@@ -816,33 +823,6 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 					busValueTtl = 0;
 				}
 			}
-		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// Get output sample
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private int Output()
-		{
-			float o1 = voice[0].Output(voice[2].Wave());
-			float o2 = voice[1].Output(voice[0].Wave());
-			float o3 = voice[2].Output(voice[1].Wave());
-
-			uint env1 = voice[0].Envelope().Output();
-			uint env2 = voice[1].Envelope().Output();
-			uint env3 = voice[2].Envelope().Output();
-
-			int v1 = filter.GetNormalizedVoice(o1, env1);
-			int v2 = filter.GetNormalizedVoice(o2, env2);
-			int v3 = filter.GetNormalizedVoice(o3, env3);
-
-			int input = filter.Clock(v1, v2, v3);
-
-			return externalFilter.Clock(input);
 		}
 		#endregion
 	}

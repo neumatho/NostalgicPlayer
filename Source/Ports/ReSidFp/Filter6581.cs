@@ -347,38 +347,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// 
 		/// </summary>
 		/********************************************************************/
-		public override ushort Clock(int voice1, int voice2, int voice3)
+		protected override int SolveIntegrators()
 		{
-			int v1 = voice1;
-			int v2 = voice2;
-
-			// Voice 3 is silenced by voice3Off if it is not routed through the filter
-			int v3 = (filt3 || !voice3Off) ? voice3 : 0;
-
-			int vSum = 0;
-			int vMix = 0;
-
-			if (filt1)
-				vSum += v1;
-			else
-				vMix += v1;
-
-			if (filt2)
-				vSum += v2;
-			else
-				vMix += v2;
-
-			if (filt3)
-				vSum += v3;
-			else
-				vMix += v3;
-
-			if (filtE)
-				vSum += ve;
-			else
-				vMix += ve;
-
-			vhp = currentSummer[currentResonance[vbp] + vlp + vSum];
 			vbp = hpIntegrator.Solve(vhp);
 			vlp = bpIntegrator.Solve(vbp);
 
@@ -396,9 +366,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			// The filter input resistors are slightly bigger than the voice ones
 			// Scale the values accordingly
 			int filterGain = (int)(0.93 * (1 << 12));
-			vFilt = (vFilt * filterGain) >> 12;
 
-			return currentVolume[currentMixer[vMix + vFilt]];
+			return (vFilt * filterGain) >> 12;
 		}
 
 

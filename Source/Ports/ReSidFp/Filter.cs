@@ -3,7 +3,6 @@
 /* license of NostalgicPlayer is keep. See the LICENSE file for more          */
 /* information.                                                               */
 /******************************************************************************/
-
 using System.Runtime.CompilerServices;
 
 namespace Polycode.NostalgicPlayer.Ports.ReSidFp
@@ -21,27 +20,27 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// <summary>
 		/// 
 		/// </summary>
-		protected readonly FilterModelConfig fmc;
+		private readonly FilterModelConfig fmc;
 
 		/// <summary>
 		/// Current filter/voice mixer setting
 		/// </summary>
-		protected ushort[] currentMixer = null;
+		private ushort[] currentMixer = null;
 
 		/// <summary>
 		/// Filter input summer setting
 		/// </summary>
-		protected ushort[] currentSummer = null;
+		private ushort[] currentSummer = null;
 
 		/// <summary>
 		/// Filter resonance value
 		/// </summary>
-		protected ushort[] currentResonance = null;
+		private ushort[] currentResonance = null;
 
 		/// <summary>
 		/// Current volume amplifier setting
 		/// </summary>
-		protected ushort[] currentVolume = null;
+		private ushort[] currentVolume = null;
 
 		/// <summary>
 		/// Filter highpass state
@@ -61,7 +60,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// <summary>
 		/// Filter external input
 		/// </summary>
-		protected int ve = 0;
+		private int ve = 0;
 
 		/// <summary>
 		/// Filter cutoff frequency
@@ -71,15 +70,15 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// <summary>
 		/// Routing to filter or outside filter
 		/// </summary>
-		protected bool filt1 = false;
-		protected bool filt2 = false;
-		protected bool filt3 = false;
-		protected bool filtE = false;
+		private bool filt1 = false;
+		private bool filt2 = false;
+		private bool filt3 = false;
+		private bool filtE = false;
 
 		/// <summary>
 		/// Switch voice 3 off
 		/// </summary>
-		protected bool voice3Off = false;
+		private bool voice3Off = false;
 
 		/// <summary>
 		/// Highpass, bandpass, and lowpass filter modes
@@ -191,6 +190,52 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 		/********************************************************************/
 		/// <summary>
+		/// SID clocking - 1 cycle
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		public ushort Clock(Voice voice1, Voice voice2, Voice voice3)
+		{
+			int V1 = GetNormalizedVoice(voice1);
+			int V2 = GetNormalizedVoice(voice2);
+
+			// Voice 3 is silenced by voice3off if it is not routed through the filter
+			int V3 = (filt3 || !voice3Off) ? GetNormalizedVoice(voice3) : 0;
+
+			int Vsum = 0;
+			int Vmix = 0;
+
+			if (filt1)
+				Vsum += V1;
+			else
+				Vmix += V1;
+
+			if (filt2)
+				Vsum += V2;
+			else
+				Vmix += V2;
+
+			if (filt3)
+				Vsum += V3;
+			else
+				Vmix += V3;
+
+			if (filtE)
+				Vsum += ve;
+			else
+				Vmix += ve;
+
+			vhp = currentSummer[currentResonance[vbp] + vlp + Vsum];
+
+			Vmix += SolveIntegrators();
+
+			return currentVolume[currentMixer[Vmix]];
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Enable filter
 		/// </summary>
 		/********************************************************************/
@@ -231,10 +276,10 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 		/********************************************************************/
 		/// <summary>
-		/// SID clocking - 1 cycle
+		/// Update filter cutoff frequency
 		/// </summary>
 		/********************************************************************/
-		public abstract ushort Clock(int voice1, int voice2, int voice3);
+		protected abstract int SolveIntegrators();
 
 
 
@@ -247,19 +292,6 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		{
 			ve = fmc.GetNormalizedVoice(input / 32768.0f, 0);
 		}
-
-
-
-		/********************************************************************/
-		/// <summary>
-		/// 
-		/// </summary>
-		/********************************************************************/
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public int GetNormalizedVoice(float value, uint env)
-		{
-			return fmc.GetNormalizedVoice(value, env);
-		}
 		#endregion
 
 		#region Helper methods
@@ -268,6 +300,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// Get the filter cutoff register value
 		/// </summary>
 		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		protected int GetFc()
 		{
 			return (int)fc;
@@ -275,6 +308,19 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		#endregion
 
 		#region Private methods
+		/********************************************************************/
+		/// <summary>
+		/// 
+		/// </summary>
+		/********************************************************************/
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private int GetNormalizedVoice(Voice v)
+		{
+			return fmc.GetNormalizedVoice(v.Output(), v.Envelope().Output());
+		}
+
+
+
 		/********************************************************************/
 		/// <summary>
 		/// Update filter resonance

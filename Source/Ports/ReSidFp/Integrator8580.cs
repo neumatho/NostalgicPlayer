@@ -53,9 +53,8 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/********************************************************************/
 		public void SetFc(double wl)
 		{
-			// Normalized current factor, 1 cycle at 1Mhz.
-			// Fit in 5 bits
-			n_dac = fmc.GetNormalizedCurrentFactor(wl);
+			// Normalized current factor, 1 cycle at 1Mhz
+			n_dac = fmc.GetNormalizedCurrentFactor(17, wl);
 		}
 
 
@@ -94,7 +93,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			uint vgdt_2 = vgdt * vgdt;
 
 			// DAC current, scaled by (1/m)*2^13*m*2^16*m*2^16*2^-15 = m*2^30
-			int n_I_dac = n_dac * ((int)(vgst_2 - vgdt_2) >> 15);
+			int n_I_dac = (n_dac * ((int)(vgst_2 - vgdt_2) >> 15)) >> 4;
 
 			// Change in capacitor charge
 			vc += n_I_dac;

@@ -50,6 +50,18 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 
 		/********************************************************************/
 		/// <summary>
+		/// Set the modulator voice
+		/// </summary>
+		/********************************************************************/
+		public void SetOtherVoices(Voice prev, Voice next)
+		{
+			waveformGenerator.SetOtherWaveforms(prev.Wave(), next.Wave());
+		}
+
+
+
+		/********************************************************************/
+		/// <summary>
 		/// Amplitude modulated waveform output.
 		///
 		/// The waveform DAC generates a voltage between virtual ground and
@@ -64,9 +76,9 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public float Output(WaveformGenerator ringModulator)
+		public float Output()
 		{
-			uint wav = waveformGenerator.Output(ringModulator);
+			uint wav = waveformGenerator.Output();
 			uint env = envelopeGenerator.Output();
 
 			// DAC imperfections are emulated by using the digital output

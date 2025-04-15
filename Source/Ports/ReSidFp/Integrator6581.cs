@@ -185,7 +185,7 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 			uint vgdt_2 = vgdt * vgdt;
 
 			// "Snake" current, scaled by (1/m)*2^13*m*2^16*m*2^16*2^-15 = m*2^30
-			int n_I_snake = fmc.GetNormalizedCurrentFactor(wlSnake) * ((int)(vgst_2 - vgdt_2) >> 15);
+			int n_I_snake = fmc.GetNormalizedCurrentFactor(13, wlSnake) * ((int)(vgst_2 - vgdt_2) >> 15);
 
 			// VCR gate voltage.		// Scaled by m*2^16
 			// Vg = Vddt - sqrt(((Vddt - vW)^2 + Vgdt^2)/2)

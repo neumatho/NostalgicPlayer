@@ -5,6 +5,7 @@
 /******************************************************************************/
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace Polycode.NostalgicPlayer.Ports.ReSidFp
@@ -241,9 +242,9 @@ namespace Polycode.NostalgicPlayer.Ports.ReSidFp
 		/// </summary>
 		/********************************************************************/
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		public ushort GetNormalizedCurrentFactor(double wl)
+		public ushort GetNormalizedCurrentFactor(int N, double wl)
 		{
-			double tmp = (1 << 13) * currFactorCoeff * wl;
+			double tmp = (1 << N) * currFactorCoeff * wl;
 			return (ushort)(tmp + 0.5);
 		}
 
