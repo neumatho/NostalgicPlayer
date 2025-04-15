@@ -91,7 +91,7 @@
 			addButton.Enabled = false;
 			addButton.Location = new System.Drawing.Point(8, 200);
 			addButton.Name = "addButton";
-			addButton.Palette = bigFontPalette;
+			addButton.LocalCustomPalette = bigFontPalette;
 			addButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(addButton, "IDS_FAVORITE_BUTTON_ADD");
 			addButton.Size = new System.Drawing.Size(90, 21);
@@ -117,7 +117,7 @@
 			removeButton.Enabled = false;
 			removeButton.Location = new System.Drawing.Point(102, 200);
 			removeButton.Name = "removeButton";
-			removeButton.Palette = bigFontPalette;
+			removeButton.LocalCustomPalette = bigFontPalette;
 			removeButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(removeButton, "IDS_FAVORITE_BUTTON_REMOVE");
 			removeButton.Size = new System.Drawing.Size(90, 21);
@@ -130,7 +130,7 @@
 			resetButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
 			resetButton.Location = new System.Drawing.Point(324, 200);
 			resetButton.Name = "resetButton";
-			resetButton.Palette = bigFontPalette;
+			resetButton.LocalCustomPalette = bigFontPalette;
 			resetButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(resetButton, "IDS_FAVORITE_BUTTON_RESET");
 			resetButton.Size = new System.Drawing.Size(90, 21);
@@ -159,7 +159,7 @@
 			showComboBox.IntegralHeight = false;
 			showComboBox.Location = new System.Drawing.Point(196, 202);
 			showComboBox.Name = "showComboBox";
-			showComboBox.Palette = fontPalette;
+			showComboBox.LocalCustomPalette = fontPalette;
 			showComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(showComboBox, null);
 			showComboBox.Size = new System.Drawing.Size(90, 19);
@@ -172,7 +172,7 @@
 			otherNumberTextBox.Enabled = false;
 			otherNumberTextBox.Location = new System.Drawing.Point(290, 201);
 			otherNumberTextBox.Name = "otherNumberTextBox";
-			otherNumberTextBox.Palette = fontPalette;
+			otherNumberTextBox.LocalCustomPalette = fontPalette;
 			otherNumberTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(otherNumberTextBox, null);
 			otherNumberTextBox.Size = new System.Drawing.Size(30, 20);
@@ -193,7 +193,7 @@
 			MinimizeBox = false;
 			MinimumSize = new System.Drawing.Size(438, 264);
 			Name = "FavoriteSongSystemForm";
-			Palette = fontPalette;
+			LocalCustomPalette = fontPalette;
 			PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(this, null);
 			FormClosed += FavoriteSongSystemWindowForm_FormClosed;

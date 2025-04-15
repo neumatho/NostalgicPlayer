@@ -84,7 +84,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			navigator.Owner = null;
 			navigator.PageBackStyle = Krypton.Toolkit.PaletteBackStyle.ControlClient;
 			navigator.Pages.AddRange(new Krypton.Navigator.KryptonPage[] { navigatorOptionsPage, navigatorModulesPage, navigatorPathsPage, navigatorMixerPage, navigatorAgentsPage });
-			navigator.Palette = fontPalette;
+			navigator.LocalCustomPalette = fontPalette;
 			navigator.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			navigator.Panel.PanelBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			controlResource.SetResourceKey(navigator, null);
@@ -228,7 +228,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			applyButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
 			applyButton.Location = new System.Drawing.Point(528, 399);
 			applyButton.Name = "applyButton";
-			applyButton.Palette = bigFontPalette;
+			applyButton.LocalCustomPalette = bigFontPalette;
 			applyButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(applyButton, "IDS_SETTINGS_BUTTON_APPLY");
 			applyButton.Size = new System.Drawing.Size(90, 25);
@@ -249,7 +249,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			cancelButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
 			cancelButton.Location = new System.Drawing.Point(430, 399);
 			cancelButton.Name = "cancelButton";
-			cancelButton.Palette = bigFontPalette;
+			cancelButton.LocalCustomPalette = bigFontPalette;
 			cancelButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(cancelButton, "IDS_SETTINGS_BUTTON_CANCEL");
 			cancelButton.Size = new System.Drawing.Size(90, 25);
@@ -262,7 +262,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			okButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
 			okButton.Location = new System.Drawing.Point(332, 399);
 			okButton.Name = "okButton";
-			okButton.Palette = bigFontPalette;
+			okButton.LocalCustomPalette = bigFontPalette;
 			okButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(okButton, "IDS_SETTINGS_BUTTON_OK");
 			okButton.Size = new System.Drawing.Size(90, 25);
@@ -283,7 +283,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow
 			MaximizeBox = false;
 			MinimizeBox = false;
 			Name = "SettingsWindowForm";
-			Palette = fontPalette;
+			LocalCustomPalette = fontPalette;
 			PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(this, null);
 			FormClosed += SettingsWindowForm_FormClosed;

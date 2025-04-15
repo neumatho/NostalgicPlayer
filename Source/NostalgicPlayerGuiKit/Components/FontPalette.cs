@@ -15,7 +15,7 @@ namespace Polycode.NostalgicPlayer.GuiKit.Components
 	/// Set the palette property on all your controls
 	/// </summary>
 	[ToolboxItem(true)]
-	public partial class FontPalette : PaletteOffice2010Blue
+	public partial class FontPalette : KryptonCustomPaletteBase
 	{
 		private const float DefaultFontSize = 8.0f;
 
@@ -39,6 +39,8 @@ namespace Polycode.NostalgicPlayer.GuiKit.Components
 		public FontPalette()
 		{
 			InitializeComponent();
+
+			BasePalette = new PaletteOffice2010Blue();
 		}
 
 
@@ -48,11 +50,9 @@ namespace Polycode.NostalgicPlayer.GuiKit.Components
 		/// Constructor
 		/// </summary>
 		/********************************************************************/
-		public FontPalette(IContainer container)
+		public FontPalette(IContainer container) : this()
 		{
 			container.Add(this);
-
-			InitializeComponent();
 		}
 
 
@@ -166,7 +166,7 @@ namespace Polycode.NostalgicPlayer.GuiKit.Components
 		/// </summary>
 		/********************************************************************/
 		[DefaultValue(DefaultFontSize)]
-		public new float BaseFontSize
+		public float BaseFontSize
 		{
 			get => baseFontSize;
 
@@ -225,6 +225,7 @@ namespace Polycode.NostalgicPlayer.GuiKit.Components
 		/// Gets the padding between the border and content drawing
 		/// </summary>
 		/********************************************************************/
+//		public override Padding GetBorderContentPadding(KryptonForm owningForm, PaletteContentStyle style, PaletteState state)
 		public override Padding GetContentPadding(PaletteContentStyle style, PaletteState state)
 		{
 			switch (style)
@@ -237,6 +238,7 @@ namespace Polycode.NostalgicPlayer.GuiKit.Components
 					return gridPadding;
 			}
 
+//			return base.GetBorderContentPadding(owningForm, style, state);
 			return base.GetContentPadding(style, state);
 		}
 

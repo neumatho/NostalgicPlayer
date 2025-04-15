@@ -94,7 +94,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.startScanTextBox.Location = new System.Drawing.Point(100, 38);
 			this.startScanTextBox.Name = "startScanTextBox";
-			this.startScanTextBox.Palette = this.fontPalette;
+			this.startScanTextBox.LocalCustomPalette = this.fontPalette;
 			this.startScanTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.startScanTextBox, null);
 			this.startScanTextBox.Size = new System.Drawing.Size(454, 20);
@@ -104,7 +104,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.startScanLabel.Location = new System.Drawing.Point(4, 40);
 			this.startScanLabel.Name = "startScanLabel";
-			this.startScanLabel.Palette = this.fontPalette;
+			this.startScanLabel.LocalCustomPalette = this.fontPalette;
 			this.startScanLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.startScanLabel, "IDS_SETTINGS_PATHS_STARTSCANPATH");
 			this.startScanLabel.Size = new System.Drawing.Size(84, 16);
@@ -129,7 +129,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.moduleTextBox.Location = new System.Drawing.Point(100, 70);
 			this.moduleTextBox.Name = "moduleTextBox";
-			this.moduleTextBox.Palette = this.fontPalette;
+			this.moduleTextBox.LocalCustomPalette = this.fontPalette;
 			this.moduleTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.moduleTextBox, null);
 			this.moduleTextBox.Size = new System.Drawing.Size(454, 20);
@@ -139,7 +139,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.moduleLabel.Location = new System.Drawing.Point(4, 72);
 			this.moduleLabel.Name = "moduleLabel";
-			this.moduleLabel.Palette = this.fontPalette;
+			this.moduleLabel.LocalCustomPalette = this.fontPalette;
 			this.moduleLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.moduleLabel, "IDS_SETTINGS_PATHS_MODULEPATH");
 			this.moduleLabel.Size = new System.Drawing.Size(70, 16);
@@ -164,7 +164,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.listTextBox.Location = new System.Drawing.Point(100, 102);
 			this.listTextBox.Name = "listTextBox";
-			this.listTextBox.Palette = this.fontPalette;
+			this.listTextBox.LocalCustomPalette = this.fontPalette;
 			this.listTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.listTextBox, null);
 			this.listTextBox.Size = new System.Drawing.Size(454, 20);
@@ -174,7 +174,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			// 
 			this.listLabel.Location = new System.Drawing.Point(4, 104);
 			this.listLabel.Name = "listLabel";
-			this.listLabel.Palette = this.fontPalette;
+			this.listLabel.LocalCustomPalette = this.fontPalette;
 			this.listLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.listLabel, "IDS_SETTINGS_PATHS_LISTPATH");
 			this.listLabel.Size = new System.Drawing.Size(52, 16);

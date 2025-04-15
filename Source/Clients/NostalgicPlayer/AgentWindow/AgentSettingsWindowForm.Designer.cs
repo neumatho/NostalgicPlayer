@@ -90,7 +90,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.AgentWindow
 			applyButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
 			applyButton.Location = new System.Drawing.Point(204, 78);
 			applyButton.Name = "applyButton";
-			applyButton.Palette = bigFontPalette;
+			applyButton.LocalCustomPalette = bigFontPalette;
 			applyButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(applyButton, "IDS_SETTINGS_BUTTON_APPLY");
 			applyButton.Size = new System.Drawing.Size(90, 25);

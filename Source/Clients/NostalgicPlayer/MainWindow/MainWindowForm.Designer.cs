@@ -104,9 +104,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			infoLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
 			infoLabel.AutoSize = false;
+			infoLabel.LocalCustomPalette = bigFontPalette;
 			infoLabel.Location = new System.Drawing.Point(3, 3);
 			infoLabel.Name = "infoLabel";
-			infoLabel.Palette = bigFontPalette;
 			infoLabel.PaletteMode = PaletteMode.Custom;
 			infoLabel.Size = new System.Drawing.Size(374, 16);
 			infoLabel.TabIndex = 0;
@@ -114,18 +114,16 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// bigFontPalette
 			// 
-			bigFontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
 			bigFontPalette.BaseFontSize = 9F;
 			bigFontPalette.BasePaletteType = BasePaletteType.Custom;
-			bigFontPalette.ThemeName = "";
-			bigFontPalette.UseKryptonFileDialogs = true;
+			bigFontPalette.ThemeName = "PaletteOffice2010Base";
+			bigFontPalette.UseThemeFormChromeBorderWidth = InheritBool.True;
 			// 
 			// fontPalette
 			// 
-			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
 			fontPalette.BasePaletteType = BasePaletteType.Custom;
-			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
+			fontPalette.ThemeName = "PaletteOffice2010Base";
+			fontPalette.UseThemeFormChromeBorderWidth = InheritBool.True;
 			// 
 			// infoGroup
 			// 
@@ -147,6 +145,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			moduleInfoButton.Name = "moduleInfoButton";
 			moduleInfoButton.Size = new System.Drawing.Size(24, 24);
 			moduleInfoButton.TabIndex = 2;
+			moduleInfoButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			moduleInfoButton.Values.Image = (System.Drawing.Image)resources.GetObject("moduleInfoButton.Values.Image");
 			moduleInfoButton.Values.Text = "";
 			// 
@@ -188,6 +187,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			diskButton.Name = "diskButton";
 			diskButton.Size = new System.Drawing.Size(24, 24);
 			diskButton.TabIndex = 7;
+			diskButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			diskButton.Values.Image = (System.Drawing.Image)resources.GetObject("diskButton.Values.Image");
 			diskButton.Values.Text = "";
 			// 
@@ -197,6 +197,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			listButton.Name = "listButton";
 			listButton.Size = new System.Drawing.Size(24, 24);
 			listButton.TabIndex = 6;
+			listButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			listButton.Values.Image = (System.Drawing.Image)resources.GetObject("listButton.Values.Image");
 			listButton.Values.Text = "";
 			// 
@@ -206,6 +207,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			moveModulesDownButton.Name = "moveModulesDownButton";
 			moveModulesDownButton.Size = new System.Drawing.Size(24, 24);
 			moveModulesDownButton.TabIndex = 5;
+			moveModulesDownButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			moveModulesDownButton.Values.Image = (System.Drawing.Image)resources.GetObject("moveModulesDownButton.Values.Image");
 			moveModulesDownButton.Values.Text = "";
 			// 
@@ -215,6 +217,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			moveModulesUpButton.Name = "moveModulesUpButton";
 			moveModulesUpButton.Size = new System.Drawing.Size(24, 24);
 			moveModulesUpButton.TabIndex = 4;
+			moveModulesUpButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			moveModulesUpButton.Values.Image = (System.Drawing.Image)resources.GetObject("moveModulesUpButton.Values.Image");
 			moveModulesUpButton.Values.Text = "";
 			// 
@@ -224,6 +227,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			sortModulesButton.Name = "sortModulesButton";
 			sortModulesButton.Size = new System.Drawing.Size(24, 24);
 			sortModulesButton.TabIndex = 3;
+			sortModulesButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			sortModulesButton.Values.Image = (System.Drawing.Image)resources.GetObject("sortModulesButton.Values.Image");
 			sortModulesButton.Values.Text = "";
 			// 
@@ -233,6 +237,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			swapModulesButton.Name = "swapModulesButton";
 			swapModulesButton.Size = new System.Drawing.Size(24, 24);
 			swapModulesButton.TabIndex = 2;
+			swapModulesButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			swapModulesButton.Values.Image = (System.Drawing.Image)resources.GetObject("swapModulesButton.Values.Image");
 			swapModulesButton.Values.Text = "";
 			// 
@@ -242,6 +247,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			removeModuleButton.Name = "removeModuleButton";
 			removeModuleButton.Size = new System.Drawing.Size(24, 24);
 			removeModuleButton.TabIndex = 1;
+			removeModuleButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			removeModuleButton.Values.Image = (System.Drawing.Image)resources.GetObject("removeModuleButton.Values.Image");
 			removeModuleButton.Values.Text = "";
 			// 
@@ -251,6 +257,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			addModuleButton.Name = "addModuleButton";
 			addModuleButton.Size = new System.Drawing.Size(24, 24);
 			addModuleButton.TabIndex = 0;
+			addModuleButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			addModuleButton.Values.Image = (System.Drawing.Image)resources.GetObject("addModuleButton.Values.Image");
 			addModuleButton.Values.Text = "";
 			// 
@@ -272,9 +279,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// totalLabel
 			// 
 			totalLabel.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+			totalLabel.LocalCustomPalette = bigFontPalette;
 			totalLabel.Location = new System.Drawing.Point(138, 7);
 			totalLabel.Name = "totalLabel";
-			totalLabel.Palette = bigFontPalette;
 			totalLabel.PaletteMode = PaletteMode.Custom;
 			totalLabel.Size = new System.Drawing.Size(28, 18);
 			totalLabel.TabIndex = 1;
@@ -282,9 +289,9 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			// 
 			// timeLabel
 			// 
+			timeLabel.LocalCustomPalette = bigFontPalette;
 			timeLabel.Location = new System.Drawing.Point(3, 7);
 			timeLabel.Name = "timeLabel";
-			timeLabel.Palette = bigFontPalette;
 			timeLabel.PaletteMode = PaletteMode.Custom;
 			timeLabel.Size = new System.Drawing.Size(62, 18);
 			timeLabel.TabIndex = 0;
@@ -328,6 +335,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			pauseCheckButton.Name = "pauseCheckButton";
 			pauseCheckButton.Size = new System.Drawing.Size(24, 24);
 			pauseCheckButton.TabIndex = 8;
+			pauseCheckButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			pauseCheckButton.Values.Image = (System.Drawing.Image)resources.GetObject("pauseCheckButton.Values.Image");
 			pauseCheckButton.Values.Text = "";
 			// 
@@ -337,6 +345,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			ejectButton.Name = "ejectButton";
 			ejectButton.Size = new System.Drawing.Size(24, 24);
 			ejectButton.TabIndex = 7;
+			ejectButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			ejectButton.Values.Image = (System.Drawing.Image)resources.GetObject("ejectButton.Values.Image");
 			ejectButton.Values.Text = "";
 			// 
@@ -346,6 +355,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			nextModuleButton.Name = "nextModuleButton";
 			nextModuleButton.Size = new System.Drawing.Size(24, 24);
 			nextModuleButton.TabIndex = 6;
+			nextModuleButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			nextModuleButton.Values.Image = (System.Drawing.Image)resources.GetObject("nextModuleButton.Values.Image");
 			nextModuleButton.Values.Text = "";
 			// 
@@ -355,6 +365,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			nextSongButton.Name = "nextSongButton";
 			nextSongButton.Size = new System.Drawing.Size(24, 24);
 			nextSongButton.TabIndex = 5;
+			nextSongButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			nextSongButton.Values.Image = (System.Drawing.Image)resources.GetObject("nextSongButton.Values.Image");
 			nextSongButton.Values.Text = "";
 			// 
@@ -364,6 +375,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			fastForwardButton.Name = "fastForwardButton";
 			fastForwardButton.Size = new System.Drawing.Size(24, 24);
 			fastForwardButton.TabIndex = 4;
+			fastForwardButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			fastForwardButton.Values.Image = (System.Drawing.Image)resources.GetObject("fastForwardButton.Values.Image");
 			fastForwardButton.Values.Text = "";
 			// 
@@ -373,6 +385,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			playButton.Name = "playButton";
 			playButton.Size = new System.Drawing.Size(24, 24);
 			playButton.TabIndex = 3;
+			playButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			playButton.Values.Image = (System.Drawing.Image)resources.GetObject("playButton.Values.Image");
 			playButton.Values.Text = "";
 			// 
@@ -382,6 +395,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			rewindButton.Name = "rewindButton";
 			rewindButton.Size = new System.Drawing.Size(24, 24);
 			rewindButton.TabIndex = 2;
+			rewindButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			rewindButton.Values.Image = (System.Drawing.Image)resources.GetObject("rewindButton.Values.Image");
 			rewindButton.Values.Text = "";
 			// 
@@ -391,6 +405,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			previousSongButton.Name = "previousSongButton";
 			previousSongButton.Size = new System.Drawing.Size(24, 24);
 			previousSongButton.TabIndex = 1;
+			previousSongButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			previousSongButton.Values.Image = (System.Drawing.Image)resources.GetObject("previousSongButton.Values.Image");
 			previousSongButton.Values.Text = "";
 			// 
@@ -400,6 +415,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			previousModuleButton.Name = "previousModuleButton";
 			previousModuleButton.Size = new System.Drawing.Size(24, 24);
 			previousModuleButton.TabIndex = 0;
+			previousModuleButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			previousModuleButton.Values.Image = (System.Drawing.Image)resources.GetObject("previousModuleButton.Values.Image");
 			previousModuleButton.Values.Text = "";
 			// 
@@ -424,6 +440,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			loopCheckButton.Name = "loopCheckButton";
 			loopCheckButton.Size = new System.Drawing.Size(24, 24);
 			loopCheckButton.TabIndex = 0;
+			loopCheckButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			loopCheckButton.Values.Image = (System.Drawing.Image)resources.GetObject("loopCheckButton.Values.Image");
 			loopCheckButton.Values.Text = "";
 			// 
@@ -433,6 +450,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			favoritesButton.Name = "favoritesButton";
 			favoritesButton.Size = new System.Drawing.Size(24, 24);
 			favoritesButton.TabIndex = 1;
+			favoritesButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			favoritesButton.Values.Image = Resources.IDB_FAVORITES;
 			favoritesButton.Values.Text = "";
 			// 
@@ -442,6 +460,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			sampleInfoButton.Name = "sampleInfoButton";
 			sampleInfoButton.Size = new System.Drawing.Size(24, 24);
 			sampleInfoButton.TabIndex = 2;
+			sampleInfoButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			sampleInfoButton.Values.Image = (System.Drawing.Image)resources.GetObject("sampleInfoButton.Values.Image");
 			sampleInfoButton.Values.Text = "";
 			// 
@@ -452,25 +471,26 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			muteCheckButton.Name = "muteCheckButton";
 			muteCheckButton.Size = new System.Drawing.Size(27, 24);
 			muteCheckButton.TabIndex = 3;
+			muteCheckButton.Values.DropDownArrowColor = System.Drawing.Color.Empty;
 			muteCheckButton.Values.Image = (System.Drawing.Image)resources.GetObject("muteCheckButton.Values.Image");
 			muteCheckButton.Values.Text = "";
 			// 
 			// sortContextMenu
 			// 
-			sortContextMenu.Palette = fontPalette;
+			sortContextMenu.LocalCustomPalette = fontPalette;
 			// 
 			// listContextMenu
 			// 
-			listContextMenu.Palette = fontPalette;
+			listContextMenu.LocalCustomPalette = fontPalette;
 			listContextMenu.Opening += ListContextMenu_Opening;
 			// 
 			// diskContextMenu
 			// 
-			diskContextMenu.Palette = fontPalette;
+			diskContextMenu.LocalCustomPalette = fontPalette;
 			// 
 			// addContextMenu
 			// 
-			addContextMenu.Palette = fontPalette;
+			addContextMenu.LocalCustomPalette = fontPalette;
 			// 
 			// moduleListControl
 			// 
@@ -497,11 +517,11 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.MainWindow
 			Controls.Add(menuStrip);
 			Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
 			KeyPreview = true;
+			LocalCustomPalette = fontPalette;
 			MainMenuStrip = menuStrip;
 			Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			MinimumSize = new System.Drawing.Size(432, 320);
 			Name = "MainWindowForm";
-			Palette = fontPalette;
 			PaletteMode = PaletteMode.Custom;
 			((System.ComponentModel.ISupportInitialize)infoGroup.Panel).EndInit();
 			infoGroup.Panel.ResumeLayout(false);

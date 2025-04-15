@@ -42,7 +42,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 			// 
 			deviceLabel.Location = new System.Drawing.Point(0, 9);
 			deviceLabel.Name = "deviceLabel";
-			deviceLabel.Palette = fontPalette;
+			deviceLabel.LocalCustomPalette = fontPalette;
 			deviceLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(deviceLabel, "IDS_SETTINGS_DEVICE");
 			deviceLabel.Size = new System.Drawing.Size(78, 16);
@@ -54,7 +54,6 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
 			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// controlResource
 			// 
@@ -68,7 +67,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.CoreAudioSettings
 			deviceComboBox.IntegralHeight = false;
 			deviceComboBox.Location = new System.Drawing.Point(87, 8);
 			deviceComboBox.Name = "deviceComboBox";
-			deviceComboBox.Palette = fontPalette;
+			deviceComboBox.LocalCustomPalette = fontPalette;
 			deviceComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(deviceComboBox, null);
 			deviceComboBox.Size = new System.Drawing.Size(305, 18);

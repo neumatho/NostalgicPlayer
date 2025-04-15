@@ -68,7 +68,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			// 
 			this.pathLabel.Location = new System.Drawing.Point(4, 10);
 			this.pathLabel.Name = "pathLabel";
-			this.pathLabel.Palette = this.fontPalette;
+			this.pathLabel.LocalCustomPalette = this.fontPalette;
 			this.pathLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.pathLabel, "IDS_SETTINGS_PATH");
 			this.pathLabel.Size = new System.Drawing.Size(33, 16);
@@ -81,7 +81,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.pathTextBox.Location = new System.Drawing.Point(41, 8);
 			this.pathTextBox.Name = "pathTextBox";
-			this.pathTextBox.Palette = this.fontPalette;
+			this.pathTextBox.LocalCustomPalette = this.fontPalette;
 			this.pathTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.pathTextBox, null);
 			this.pathTextBox.Size = new System.Drawing.Size(461, 20);
@@ -103,7 +103,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			// 
 			this.eigthBitRadioButton.Location = new System.Drawing.Point(0, 0);
 			this.eigthBitRadioButton.Name = "eigthBitRadioButton";
-			this.eigthBitRadioButton.Palette = this.fontPalette;
+			this.eigthBitRadioButton.LocalCustomPalette = this.fontPalette;
 			this.eigthBitRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.eigthBitRadioButton, "IDS_SETTINGS_8BIT");
 			this.eigthBitRadioButton.Size = new System.Drawing.Size(43, 16);
@@ -114,7 +114,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			// 
 			this.sixthteenBitRadioButton.Location = new System.Drawing.Point(0, 20);
 			this.sixthteenBitRadioButton.Name = "sixthteenBitRadioButton";
-			this.sixthteenBitRadioButton.Palette = this.fontPalette;
+			this.sixthteenBitRadioButton.LocalCustomPalette = this.fontPalette;
 			this.sixthteenBitRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.sixthteenBitRadioButton, "IDS_SETTINGS_16BIT");
 			this.sixthteenBitRadioButton.Size = new System.Drawing.Size(49, 16);
@@ -137,7 +137,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			// 
 			this.thirtytwoRadioButton.Location = new System.Drawing.Point(0, 40);
 			this.thirtytwoRadioButton.Name = "thirtytwoRadioButton";
-			this.thirtytwoRadioButton.Palette = this.fontPalette;
+			this.thirtytwoRadioButton.LocalCustomPalette = this.fontPalette;
 			this.thirtytwoRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.thirtytwoRadioButton, "IDS_SETTINGS_32BIT");
 			this.thirtytwoRadioButton.Size = new System.Drawing.Size(49, 16);
@@ -159,7 +159,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			// 
 			this.stereoRadioButton.Location = new System.Drawing.Point(0, 20);
 			this.stereoRadioButton.Name = "stereoRadioButton";
-			this.stereoRadioButton.Palette = this.fontPalette;
+			this.stereoRadioButton.LocalCustomPalette = this.fontPalette;
 			this.stereoRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.stereoRadioButton, "IDS_SETTINGS_STEREO");
 			this.stereoRadioButton.Size = new System.Drawing.Size(54, 16);
@@ -170,7 +170,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			// 
 			this.monoRadioButton.Location = new System.Drawing.Point(0, 0);
 			this.monoRadioButton.Name = "monoRadioButton";
-			this.monoRadioButton.Palette = this.fontPalette;
+			this.monoRadioButton.LocalCustomPalette = this.fontPalette;
 			this.monoRadioButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.monoRadioButton, "IDS_SETTINGS_MONO");
 			this.monoRadioButton.Size = new System.Drawing.Size(50, 16);
@@ -182,7 +182,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			this.formatLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.formatLabel.Location = new System.Drawing.Point(171, 39);
 			this.formatLabel.Name = "formatLabel";
-			this.formatLabel.Palette = this.fontPalette;
+			this.formatLabel.LocalCustomPalette = this.fontPalette;
 			this.formatLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.formatLabel, "IDS_SETTINGS_FORMAT");
 			this.formatLabel.Size = new System.Drawing.Size(77, 16);
@@ -199,7 +199,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			this.formatComboBox.IntegralHeight = false;
 			this.formatComboBox.Location = new System.Drawing.Point(175, 55);
 			this.formatComboBox.Name = "formatComboBox";
-			this.formatComboBox.Palette = this.fontPalette;
+			this.formatComboBox.LocalCustomPalette = this.fontPalette;
 			this.formatComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.formatComboBox, null);
 			this.formatComboBox.Size = new System.Drawing.Size(160, 18);
@@ -224,7 +224,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			this.passThroughLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.passThroughLabel.Location = new System.Drawing.Point(373, 39);
 			this.passThroughLabel.Name = "passThroughLabel";
-			this.passThroughLabel.Palette = this.fontPalette;
+			this.passThroughLabel.LocalCustomPalette = this.fontPalette;
 			this.passThroughLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.passThroughLabel, "IDS_SETTINGS_PASSTHROUGH");
 			this.passThroughLabel.Size = new System.Drawing.Size(139, 16);
@@ -240,7 +240,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			this.passThroughComboBox.IntegralHeight = false;
 			this.passThroughComboBox.Location = new System.Drawing.Point(374, 55);
 			this.passThroughComboBox.Name = "passThroughComboBox";
-			this.passThroughComboBox.Palette = this.fontPalette;
+			this.passThroughComboBox.LocalCustomPalette = this.fontPalette;
 			this.passThroughComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.passThroughComboBox, null);
 			this.passThroughComboBox.Size = new System.Drawing.Size(154, 18);
@@ -252,7 +252,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			// 
 			this.frequencyLabel.Location = new System.Drawing.Point(9, 5);
 			this.frequencyLabel.Name = "frequencyLabel";
-			this.frequencyLabel.Palette = this.fontPalette;
+			this.frequencyLabel.LocalCustomPalette = this.fontPalette;
 			this.frequencyLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.frequencyLabel, "IDS_SETTINGS_FREQUENCY");
 			this.frequencyLabel.Size = new System.Drawing.Size(62, 16);
@@ -277,7 +277,7 @@ namespace Polycode.NostalgicPlayer.Agent.Output.DiskSaver.Settings
 			this.frequencyValueLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.frequencyValueLabel.Location = new System.Drawing.Point(494, 5);
 			this.frequencyValueLabel.Name = "frequencyValueLabel";
-			this.frequencyValueLabel.Palette = this.fontPalette;
+			this.frequencyValueLabel.LocalCustomPalette = this.fontPalette;
 			this.frequencyValueLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.frequencyValueLabel, null);
 			this.frequencyValueLabel.Size = new System.Drawing.Size(41, 16);
