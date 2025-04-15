@@ -42,7 +42,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.HelpWindow
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(860, 855);
 			this.Name = "HelpWindowForm";
-			this.Palette = this.fontPalette;
+			this.LocalCustomPalette = this.fontPalette;
 			this.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.ResumeLayout(false);
 

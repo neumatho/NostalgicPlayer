@@ -117,7 +117,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.settingsButton.Enabled = false;
 			this.settingsButton.Location = new System.Drawing.Point(4, 282);
 			this.settingsButton.Name = "settingsButton";
-			this.settingsButton.Palette = this.bigFontPalette;
+			this.settingsButton.LocalCustomPalette = this.bigFontPalette;
 			this.settingsButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.settingsButton, "IDS_SETTINGS_AGENTS_SETTINGS");
 			this.settingsButton.Size = new System.Drawing.Size(138, 25);
@@ -130,7 +130,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.SettingsWindow.Pages
 			this.displayButton.Enabled = false;
 			this.displayButton.Location = new System.Drawing.Point(153, 282);
 			this.displayButton.Name = "displayButton";
-			this.displayButton.Palette = this.bigFontPalette;
+			this.displayButton.LocalCustomPalette = this.bigFontPalette;
 			this.displayButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			this.controlResource.SetResourceKey(this.displayButton, "IDS_SETTINGS_AGENTS_DISPLAY");
 			this.displayButton.Size = new System.Drawing.Size(138, 25);
