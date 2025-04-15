@@ -134,7 +134,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			navigator.NavigatorMode = Krypton.Navigator.NavigatorMode.BarTabGroup;
 			navigator.PageBackStyle = Krypton.Toolkit.PaletteBackStyle.ControlClient;
 			navigator.Pages.AddRange(new Krypton.Navigator.KryptonPage[] { navigatorInfoPage, navigatorCommentPage, navigatorLyricsPage, navigatorPicturePage });
-			navigator.Palette = fontPalette;
+			navigator.LocalCustomPalette = fontPalette;
 			navigator.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			navigator.Panel.PanelBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			navigator.SelectedIndex = 0;
@@ -309,7 +309,7 @@ namespace Polycode.NostalgicPlayer.Client.GuiPlayer.ModuleInfoWindow
 			MinimizeBox = false;
 			MinimumSize = new System.Drawing.Size(316, 239);
 			Name = "ModuleInfoWindowForm";
-			Palette = fontPalette;
+			LocalCustomPalette = fontPalette;
 			PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			FormClosed += ModuleInfoWindowForm_FormClosed;
 			((System.ComponentModel.ISupportInitialize)moduleInfoInfoDataGridView).EndInit();

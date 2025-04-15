@@ -72,7 +72,6 @@
 			fontPalette.BaseFont = new System.Drawing.Font("Segoe UI", 9F);
 			fontPalette.BasePaletteType = Krypton.Toolkit.BasePaletteType.Custom;
 			fontPalette.ThemeName = "";
-			fontPalette.UseKryptonFileDialogs = true;
 			// 
 			// controlResource
 			// 
@@ -83,7 +82,7 @@
 			loadingGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			loadingGroupBox.Location = new System.Drawing.Point(8, 4);
 			loadingGroupBox.Name = "loadingGroupBox";
-			loadingGroupBox.Palette = fontPalette;
+			loadingGroupBox.LocalCustomPalette = fontPalette;
 			loadingGroupBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			// 
 			// 
@@ -101,7 +100,7 @@
 			// 
 			doubleBufferingCheckBox.Location = new System.Drawing.Point(4, 5);
 			doubleBufferingCheckBox.Name = "doubleBufferingCheckBox";
-			doubleBufferingCheckBox.Palette = fontPalette;
+			doubleBufferingCheckBox.LocalCustomPalette = fontPalette;
 			doubleBufferingCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(doubleBufferingCheckBox, "IDS_SETTINGS_MODULES_LOADING_DOUBLEBUFFERING");
 			doubleBufferingCheckBox.Size = new System.Drawing.Size(104, 16);
@@ -125,7 +124,7 @@
 			// 
 			earlyLoadLabel.Location = new System.Drawing.Point(494, 5);
 			earlyLoadLabel.Name = "earlyLoadLabel";
-			earlyLoadLabel.Palette = fontPalette;
+			earlyLoadLabel.LocalCustomPalette = fontPalette;
 			earlyLoadLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(earlyLoadLabel, "IDS_SETTINGS_MODULES_LOADING_EARLYLOAD");
 			earlyLoadLabel.Size = new System.Drawing.Size(59, 16);
@@ -146,7 +145,7 @@
 			// 
 			moduleErrorLabel.Location = new System.Drawing.Point(4, 62);
 			moduleErrorLabel.Name = "moduleErrorLabel";
-			moduleErrorLabel.Palette = fontPalette;
+			moduleErrorLabel.LocalCustomPalette = fontPalette;
 			moduleErrorLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(moduleErrorLabel, "IDS_SETTINGS_MODULES_LOADING_MODULEERROR");
 			moduleErrorLabel.Size = new System.Drawing.Size(166, 16);
@@ -160,7 +159,7 @@
 			moduleErrorComboBox.IntegralHeight = false;
 			moduleErrorComboBox.Location = new System.Drawing.Point(180, 60);
 			moduleErrorComboBox.Name = "moduleErrorComboBox";
-			moduleErrorComboBox.Palette = fontPalette;
+			moduleErrorComboBox.LocalCustomPalette = fontPalette;
 			moduleErrorComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(moduleErrorComboBox, null);
 			moduleErrorComboBox.Size = new System.Drawing.Size(180, 19);
@@ -171,7 +170,7 @@
 			playingGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			playingGroupBox.Location = new System.Drawing.Point(8, 116);
 			playingGroupBox.Name = "playingGroupBox";
-			playingGroupBox.Palette = fontPalette;
+			playingGroupBox.LocalCustomPalette = fontPalette;
 			playingGroupBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			// 
 			// 
@@ -192,7 +191,7 @@
 			// 
 			neverEndingCheckBox.Location = new System.Drawing.Point(4, 5);
 			neverEndingCheckBox.Name = "neverEndingCheckBox";
-			neverEndingCheckBox.Palette = fontPalette;
+			neverEndingCheckBox.LocalCustomPalette = fontPalette;
 			neverEndingCheckBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(neverEndingCheckBox, "IDS_SETTINGS_MODULES_PLAYING_NEVERENDING");
 			neverEndingCheckBox.Size = new System.Drawing.Size(166, 16);
@@ -206,7 +205,7 @@
 			neverEndingNumberTextBox.Location = new System.Drawing.Point(180, 3);
 			neverEndingNumberTextBox.MaxLength = 3;
 			neverEndingNumberTextBox.Name = "neverEndingNumberTextBox";
-			neverEndingNumberTextBox.Palette = fontPalette;
+			neverEndingNumberTextBox.LocalCustomPalette = fontPalette;
 			neverEndingNumberTextBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(neverEndingNumberTextBox, null);
 			neverEndingNumberTextBox.Size = new System.Drawing.Size(32, 20);
@@ -216,7 +215,7 @@
 			// 
 			neverEndingLabel.Location = new System.Drawing.Point(216, 5);
 			neverEndingLabel.Name = "neverEndingLabel";
-			neverEndingLabel.Palette = fontPalette;
+			neverEndingLabel.LocalCustomPalette = fontPalette;
 			neverEndingLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(neverEndingLabel, "IDS_SETTINGS_MODULES_PLAYING_NEVERENDING_SECONDS");
 			neverEndingLabel.Size = new System.Drawing.Size(51, 16);
@@ -230,7 +229,7 @@
 			moduleEndComboBox.IntegralHeight = false;
 			moduleEndComboBox.Location = new System.Drawing.Point(108, 28);
 			moduleEndComboBox.Name = "moduleEndComboBox";
-			moduleEndComboBox.Palette = fontPalette;
+			moduleEndComboBox.LocalCustomPalette = fontPalette;
 			moduleEndComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(moduleEndComboBox, null);
 			moduleEndComboBox.Size = new System.Drawing.Size(180, 19);
@@ -240,7 +239,7 @@
 			// 
 			moduleEndLabel.Location = new System.Drawing.Point(4, 30);
 			moduleEndLabel.Name = "moduleEndLabel";
-			moduleEndLabel.Palette = fontPalette;
+			moduleEndLabel.LocalCustomPalette = fontPalette;
 			moduleEndLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(moduleEndLabel, "IDS_SETTINGS_MODULES_PLAYING_MODULEEND");
 			moduleEndLabel.Size = new System.Drawing.Size(93, 16);
@@ -254,7 +253,7 @@
 			moduleListEndComboBox.IntegralHeight = false;
 			moduleListEndComboBox.Location = new System.Drawing.Point(420, 28);
 			moduleListEndComboBox.Name = "moduleListEndComboBox";
-			moduleListEndComboBox.Palette = fontPalette;
+			moduleListEndComboBox.LocalCustomPalette = fontPalette;
 			moduleListEndComboBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(moduleListEndComboBox, null);
 			moduleListEndComboBox.Size = new System.Drawing.Size(100, 19);
@@ -264,7 +263,7 @@
 			// 
 			moduleListEndLabel.Location = new System.Drawing.Point(300, 30);
 			moduleListEndLabel.Name = "moduleListEndLabel";
-			moduleListEndLabel.Palette = fontPalette;
+			moduleListEndLabel.LocalCustomPalette = fontPalette;
 			moduleListEndLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(moduleListEndLabel, "IDS_SETTINGS_MODULES_PLAYING_MODULELISTEND");
 			moduleListEndLabel.Size = new System.Drawing.Size(109, 16);
@@ -276,7 +275,7 @@
 			showingGroupBox.GroupBackStyle = Krypton.Toolkit.PaletteBackStyle.TabLowProfile;
 			showingGroupBox.Location = new System.Drawing.Point(8, 196);
 			showingGroupBox.Name = "showingGroupBox";
-			showingGroupBox.Palette = fontPalette;
+			showingGroupBox.LocalCustomPalette = fontPalette;
 			showingGroupBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			// 
 			// 
@@ -295,7 +294,7 @@
 			moduleInfoOrderDownButton.Enabled = false;
 			moduleInfoOrderDownButton.Location = new System.Drawing.Point(128, 62);
 			moduleInfoOrderDownButton.Name = "moduleInfoOrderDownButton";
-			moduleInfoOrderDownButton.Palette = fontPalette;
+			moduleInfoOrderDownButton.LocalCustomPalette = fontPalette;
 			moduleInfoOrderDownButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(moduleInfoOrderDownButton, "IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_DOWN");
 			moduleInfoOrderDownButton.Size = new System.Drawing.Size(60, 25);
@@ -308,7 +307,7 @@
 			moduleInfoOrderUpButton.Enabled = false;
 			moduleInfoOrderUpButton.Location = new System.Drawing.Point(128, 33);
 			moduleInfoOrderUpButton.Name = "moduleInfoOrderUpButton";
-			moduleInfoOrderUpButton.Palette = fontPalette;
+			moduleInfoOrderUpButton.LocalCustomPalette = fontPalette;
 			moduleInfoOrderUpButton.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(moduleInfoOrderUpButton, "IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_UP");
 			moduleInfoOrderUpButton.Size = new System.Drawing.Size(60, 25);
@@ -320,7 +319,7 @@
 			// 
 			moduleInfoOrderLabel.Location = new System.Drawing.Point(4, 5);
 			moduleInfoOrderLabel.Name = "moduleInfoOrderLabel";
-			moduleInfoOrderLabel.Palette = fontPalette;
+			moduleInfoOrderLabel.LocalCustomPalette = fontPalette;
 			moduleInfoOrderLabel.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(moduleInfoOrderLabel, "IDS_SETTINGS_MODULES_SHOWING_MODULEINFO_ORDER");
 			moduleInfoOrderLabel.Size = new System.Drawing.Size(155, 28);
@@ -331,7 +330,7 @@
 			// 
 			moduleInfoOrderListBox.Location = new System.Drawing.Point(4, 33);
 			moduleInfoOrderListBox.Name = "moduleInfoOrderListBox";
-			moduleInfoOrderListBox.Palette = fontPalette;
+			moduleInfoOrderListBox.LocalCustomPalette = fontPalette;
 			moduleInfoOrderListBox.PaletteMode = Krypton.Toolkit.PaletteMode.Custom;
 			controlResource.SetResourceKey(moduleInfoOrderListBox, null);
 			moduleInfoOrderListBox.Size = new System.Drawing.Size(120, 89);
